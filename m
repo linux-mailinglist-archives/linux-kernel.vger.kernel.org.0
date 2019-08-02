@@ -2,73 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F297F9DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 283C57FA0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:32:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391804AbfHBNaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:30:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33632 "EHLO mx1.redhat.com"
+        id S2404265AbfHBNat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:30:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41196 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404019AbfHBNaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:30:12 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S2404243AbfHBNao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:30:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5BF773086222;
-        Fri,  2 Aug 2019 13:30:12 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 9E74C60BF7;
-        Fri,  2 Aug 2019 13:30:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri,  2 Aug 2019 15:30:12 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 15:30:01 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelianov <xemul@virtuozzo.com>,
-        Jann Horn <jannh@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-Subject: Re: [PATCH v2 1/2] fork: extend clone3() to support CLONE_SET_TID
-Message-ID: <20190802133001.GE20111@redhat.com>
-References: <20190731161223.2928-1-areber@redhat.com>
- <20190802131943.hkvcssv74j25xmmt@brauner.io>
+        by mx1.redhat.com (Postfix) with ESMTPS id 43EB030833B0;
+        Fri,  2 Aug 2019 13:30:44 +0000 (UTC)
+Received: from krava (ovpn-204-20.brq.redhat.com [10.40.204.20])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D93985C22F;
+        Fri,  2 Aug 2019 13:30:40 +0000 (UTC)
+Date:   Fri, 2 Aug 2019 15:30:39 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Keeping <john@metanate.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] perf unwind: fix libunwind when tid != pid
+Message-ID: <20190802133039.GE27223@krava>
+References: <20190729172430.14880-1-john@metanate.com>
+ <20190729172430.14880-2-john@metanate.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190802131943.hkvcssv74j25xmmt@brauner.io>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 02 Aug 2019 13:30:12 +0000 (UTC)
+In-Reply-To: <20190729172430.14880-2-john@metanate.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 02 Aug 2019 13:30:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02, Christian Brauner wrote:
->
-> On Wed, Jul 31, 2019 at 06:12:22PM +0200, Adrian Reber wrote:
-> > The main motivation to add CLONE_SET_TID to clone3() is CRIU.
-> >
-> > To restore a process with the same PID/TID CRIU currently uses
-> > /proc/sys/kernel/ns_last_pid. It writes the desired (PID - 1) to
-> > ns_last_pid and then (quickly) does a clone(). This works most of the
-> > time, but it is racy. It is also slow as it requires multiple syscalls.
->
-> Can you elaborate how this is racy, please. Afaict, CRIU will always
-> usually restore in a new pid namespace that it controls, right?
+On Mon, Jul 29, 2019 at 06:24:30PM +0100, John Keeping wrote:
+> Commit e5adfc3e7e77 ("perf map: Synthesize maps only for thread group
+> leader") changed the recording side so that we no longer get mmap events
+> for threads other than the thread group leader.
+> 
+> When a file recorded after this change is loaded, the lack of mmap
+> records mean that unwinding is not set up for any other threads.
 
-Why? No. For example you can checkpoint (not sure this is correct word)
-a single process in your namespace, then (try to restore) it. 
+sry I dont' follow what's the problem here, could you please
+describe the scenrio where the current code is failing in
+more details
 
-> What is
-> the exact race?
+> 
+> Following the rationale in that commit, move the libunwind fields into
+> struct map_groups and update the libunwind functions to take this
+> instead of the struct thread.  This is only required for
+> unwind__finish_access which must now be called from map_groups__delete
+> and the others are changed for symmetry.
+> 
+> Note that unwind__get_entries keeps the thread argument since it is
+> required for symbol lookup and the libdw unwind provider uses the thread
+> ID.
 
-something else in the same namespace can fork() right after criu writes
-the pid-for-restore into ns_last_pid.
+SNIP
 
-Oleg.
+> @@ -59,37 +59,31 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
+>  		return 0;
+>  	}
+>  out_register:
+> -	unwind__register_ops(thread, ops);
+> +	unwind__register_ops(mg, ops);
+>  
+> -	err = thread->unwind_libunwind_ops->prepare_access(thread);
+> +	err = mg->unwind_libunwind_ops->prepare_access(mg);
+>  	if (initialized)
+>  		*initialized = err ? false : true;
+>  	return err;
+>  }
+>  
+> -void unwind__flush_access(struct thread *thread)
+> +void unwind__flush_access(struct map_groups *mg)
+>  {
+> -	if (!dwarf_callchain_users)
+> -		return;
 
+why did you remove this check?
+
+> -
+> -	if (thread->unwind_libunwind_ops)
+> -		thread->unwind_libunwind_ops->flush_access(thread);
+> +	if (mg->unwind_libunwind_ops)
+> +		mg->unwind_libunwind_ops->flush_access(mg);
+>  }
+>  
+> -void unwind__finish_access(struct thread *thread)
+> +void unwind__finish_access(struct map_groups *mg)
+>  {
+> -	if (!dwarf_callchain_users)
+> -		return;
+
+why did you remove this check?
+
+thanks,
+jirka
