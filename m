@@ -2,58 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71C5D7EFB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E41C7EFAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:57:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732477AbfHBI7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:59:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49748 "EHLO mx1.suse.de"
+        id S1732084AbfHBI51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:57:27 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41812 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728232AbfHBI7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:59:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AA743AB8C;
-        Fri,  2 Aug 2019 08:59:49 +0000 (UTC)
-Date:   Fri, 2 Aug 2019 10:59:47 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] mm: memcontrol: switch to rcu protection in
- drain_all_stock()
-Message-ID: <20190802085947.GC6461@dhcp22.suse.cz>
-References: <20190801233513.137917-1-guro@fb.com>
- <20190802080422.GA6461@dhcp22.suse.cz>
+        id S1728157AbfHBI50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:57:26 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D7B11396BBB377ADAA3F;
+        Fri,  2 Aug 2019 16:57:24 +0800 (CST)
+Received: from huawei.com (10.175.102.38) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 2 Aug 2019
+ 16:57:17 +0800
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ak@linux.intel.com>,
+        <adrian.hunter@intel.com>, <yao.jin@linux.intel.com>,
+        <tmricht@linux.ibm.com>, <brueckner@linux.ibm.com>,
+        <songliubraving@fb.com>, <gregkh@linuxfoundation.org>,
+        <kim.phillips@arm.com>
+CC:     <gengdongjiu@huawei.com>, <wxf.wang@hisilicon.com>,
+        <liwei391@huawei.com>, <tanxiaojun@huawei.com>,
+        <huawei.libin@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <jeremy.linton@arm.com>, <linux-perf-users@vger.kernel.org>
+Subject: [RFC PATCH 0/3] perf tools: Add support for "report" for some spe events
+Date:   Fri, 2 Aug 2019 17:40:10 +0800
+Message-ID: <1564738813-10944-1-git-send-email-tanxiaojun@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802080422.GA6461@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 02-08-19 10:04:22, Michal Hocko wrote:
-> On Thu 01-08-19 16:35:13, Roman Gushchin wrote:
-> > Commit 72f0184c8a00 ("mm, memcg: remove hotplug locking from try_charge")
-> > introduced css_tryget()/css_put() calls in drain_all_stock(),
-> > which are supposed to protect the target memory cgroup from being
-> > released during the mem_cgroup_is_descendant() call.
-> > 
-> > However, it's not completely safe. In theory, memcg can go away
-> > between reading stock->cached pointer and calling css_tryget().
-> 
-> I have to remember how is this whole thing supposed to work, it's been
-> some time since I've looked into that.
+After the commit ffd3d18c20b8 ("perf tools: Add ARM Statistical
+Profiling Extensions (SPE) support") is merged, "perf record" and
+"perf report --dump-raw-trace" have been supported. However, the
+raw data that is dumped cannot be used without parsing.
 
-OK, I guess I remember now and I do not see how the race is possible.
-Stock cache is keeping its memcg alive because it elevates the reference
-counting for each cached charge. And that should keep the whole chain up
-to the root (of draining) alive, no? Or do I miss something, could you
-generate a sequence of events that would lead to use-after-free?
+This patchset is to improve the "perf report" support for spe, and
+further process the data. Currently, support for the three events
+of llc-miss, tlb-miss, and branch-miss is added.
+
+More details in [2/3].
+
+Tan Xiaojun (3):
+  perf tools: Move arm-spe-pkt-decoder.h/c to the new dir
+  perf tools: Add support for "report" for some spe events
+  perf report: add --spe options for arm-spe
+
+ tools/perf/Documentation/perf-report.txt           |   9 +
+ tools/perf/builtin-report.c                        |   5 +
+ tools/perf/util/Build                              |   2 +-
+ tools/perf/util/arm-spe-decoder/Build              |   1 +
+ tools/perf/util/arm-spe-decoder/arm-spe-decoder.c  | 214 ++++++
+ tools/perf/util/arm-spe-decoder/arm-spe-decoder.h  |  51 ++
+ .../util/arm-spe-decoder/arm-spe-pkt-decoder.c     | 462 +++++++++++++
+ .../util/arm-spe-decoder/arm-spe-pkt-decoder.h     |  45 ++
+ tools/perf/util/arm-spe-pkt-decoder.c              | 462 -------------
+ tools/perf/util/arm-spe-pkt-decoder.h              |  43 --
+ tools/perf/util/arm-spe.c                          | 717 ++++++++++++++++++++-
+ tools/perf/util/auxtrace.c                         |  45 ++
+ tools/perf/util/auxtrace.h                         |  27 +
+ tools/perf/util/session.h                          |   2 +
+ 14 files changed, 1544 insertions(+), 541 deletions(-)
+ create mode 100644 tools/perf/util/arm-spe-decoder/Build
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.c
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-pkt-decoder.h
+ delete mode 100644 tools/perf/util/arm-spe-pkt-decoder.c
+ delete mode 100644 tools/perf/util/arm-spe-pkt-decoder.h
+
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
