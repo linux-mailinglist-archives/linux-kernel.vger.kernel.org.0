@@ -2,78 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 710588017C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 21:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B50780186
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 22:02:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406889AbfHBT7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 15:59:08 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:44747 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2406868AbfHBT7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 15:59:08 -0400
-Received: from [10.0.101.109] (unknown [62.214.191.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 90CDF201A3C39;
-        Fri,  2 Aug 2019 21:59:06 +0200 (CEST)
-Subject: Re: Device to write to all (serial) consoles
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-serial@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Donald Buczek <buczek@molgen.mpg.de>
-References: <32c2d26f-ec4a-b9a6-b42c-07b27f99ea28@molgen.mpg.de>
- <20190802160243.GA15484@kroah.com>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <cab1fe06-0dc7-e7c1-50ac-cc01773c5ef5@molgen.mpg.de>
-Date:   Fri, 2 Aug 2019 21:59:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2406926AbfHBUCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 16:02:53 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41363 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406874AbfHBUCw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 16:02:52 -0400
+Received: by mail-lj1-f193.google.com with SMTP id d24so73938329ljg.8
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 13:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hpuTzhx1FVHJuZgr5jSuA0pIA55oDK7JUhCEyDcVxSE=;
+        b=wBmt0ywLgJWYJj9xynw/KNxS4SjEr9t/KIEOPU24ufBNh19LovY3N7lJPm24nnqQ20
+         pIKJTS1vLifN8c/woH0Oci4IWjOAFLYr6r8eUw5pCEq8B2d/myDS1Bb7AA2ubg4f/pz8
+         I7z8m93YOo+xslV5nrBNuYZok8tVIdfNZ/RoU8whUspDiy6ovAEvzCTcGOue5S/0FdsR
+         adfDiYkW8sCdw/qcymjvfpWxnxVQxJDB09Ht3CFphaHGDujMqpjiLwBL3d900USKyhQb
+         gZVLgsa/d1BNdPl5fOJcmSV2+RnKYKaZpF/sozNkgPtVsLYfwF1VMTC6zjigDx83L5Ec
+         wkyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=hpuTzhx1FVHJuZgr5jSuA0pIA55oDK7JUhCEyDcVxSE=;
+        b=C66C5dKr72Ah4ac1mOkHj4P9FHG6PWcAd9n5tm16s/jzJHAGcjZl12+1bsMU4Ei84j
+         oLamW1TPKFHqicOGrsX1B7407oVPxmjYKrrHB5xP9IiEB9rg+vrQ6jlW9dChghTO5kbC
+         LvRFmTnwCZwvHKwcQgjS/udi3N2dfus4GOTnoFGr5af8sxH+NxJCefUKIrJY2OR15dWj
+         TjK+U2HDbhUqwkCgYfxVZXPNZBNBZRQ8+ZfFFbKFLO8hXnq6AGmmnETyPeR0kwWfYH2n
+         56tf51kJ6qaRGW+Anhatuvpl7Phk2N8qXy+Wia4RhsOEon7xLiSVZfisbUDRA7ZrM6OX
+         qC2Q==
+X-Gm-Message-State: APjAAAUyNjqus8euhAlMjBV4UtOGXE4R4hDAuBuly9c20LLbPA7UE+M9
+        oIocj6l3Nd45LaBriYyFFiNV5A==
+X-Google-Smtp-Source: APXvYqymmJrFLTIXAe+TUNpfoqDVseuubO+65puK/r0ZaVIIPwwihmwSZMwKoArtmav+J1QnBRcwHw==
+X-Received: by 2002:a2e:7a19:: with SMTP id v25mr1650866ljc.39.1564776170382;
+        Fri, 02 Aug 2019 13:02:50 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:29d:bda0:a422:fe4d:8f49:44c4])
+        by smtp.gmail.com with ESMTPSA id j23sm13046148lfb.93.2019.08.02.13.02.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Aug 2019 13:02:49 -0700 (PDT)
+Subject: Re: [PATCH v16 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        lee.jones@linaro.org, marek.vasut@gmail.com,
+        miquel.raynal@bootlin.com
+References: <1564539258-16313-1-git-send-email-masonccyang@mxic.com.tw>
+ <1564539258-16313-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <3d01957a-7318-274f-f3d5-6cd00850511b@cogentembedded.com>
+Date:   Fri, 2 Aug 2019 23:02:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190802160243.GA15484@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <1564539258-16313-2-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Greg,
+Hello!
 
+On 07/31/2019 05:14 AM, Mason Yang wrote:
 
-On 02.08.19 18:02, Greg Kroah-Hartman wrote:
-> On Fri, Aug 02, 2019 at 03:23:08PM +0200, Paul Menzel wrote:
-
->> On a lot of devices, like servers, you have more than one serial console,
->> and you do not always know, how they are numbered. Therefore, we start a
->> console on ttyS0 and ttyS1.
->>
->> In user space, we also would like to write to both consoles to not worry
->> about the numbering. Writing to `/dev/console` only write to the active
->> console.
+> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
 > 
-> So the same data to multiple console devices with just one userspace
-> call?  Why?
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..648d14e
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,754 @@
+[...]
+> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+> +{
+> +	//
+> +	// NOTE: The 0x260 are undocumented bits, but they must be set.
+> +	//	 RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+> +	//	 0x0 : the delay is biggest,
+> +	//	 0x1 : the delay is 2nd biggest,
+> +	//	 On H3 ES1.x, the value should be 0, while on others,
+> +	//	 the value should be 6.
+> +	//
+> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
+> +				  RPC_PHYCNT_STRTIM(6) | 0x260);
+> +
+> +	//
+> +	// NOTE: The 0x1511144 are undocumented bits, but they must be set
+> +	//       for RPC_PHYOFFSET1.
+> +	//	 The 0x31 are undocumented bits, but they must be set
+> +	//	 for RPC_PHYOFFSET2.
+> +	//
+> +	regmap_write(rpc->regmap, RPC_PHYOFFSET1, RPC_PHYOFFSET1_DDRTMG(3) |
+> +		     0x1511144);
+> +	regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x31 |
+> +		     RPC_PHYOFFSET2_OCTTMG(4));
+> +	regmap_write(rpc->regmap, RPC_SSLDR, RPC_SSLDR_SPNDL(7) |
+> +		     RPC_SSLDR_SLNDL(7) | RPC_SSLDR_SCKDL(7));
+> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+> +		     RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+> +		     RPC_CMNCR_BSZ(0));
+> +}
+[...]
+> +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
+> +			   const void *tx_buf, void *rx_buf)
+> +{
+[...]
+> +err_out:
+> +	return reset_control_reset(rpc->rstc);
 
-Because the cable is always connected to the port on the back side, and 
-sometimes the port in the front has ID 0, and the one in the back 1, and 
-other times vice versa. We do not want to track that, and it would be 
-convenient to just write to both ports.
+   Don't toy need to call rpc_spi_hw_init(( here? The reset would spoil
+the PHY/etc register setup otherwise...
 
->>      $ more /proc/consoles # I think
->>      tty0                 -WU (EC p  )    4:1
->>      ttyS0                -W- (E  p a)    4:65
->>      ttyS1                -W- (E  p a)    4:65
->>
->> Does a device exist, or can a device be configured so you can write to
->> all (serial) consoles from user space?
-> 
-> With one syscall, not that I know of, sorry.
+[...]
 
-Can such a device be created with udev or so?
-
-
-Kind regards,
-
-Paul
+MBR, Sergei
