@@ -2,78 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CFA97EEA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C4567EEAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404034AbfHBIRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:17:09 -0400
-Received: from mx1.emlix.com ([188.40.240.192]:35886 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404014AbfHBIRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:17:06 -0400
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id 0C61F60946;
-        Fri,  2 Aug 2019 10:17:05 +0200 (CEST)
-From:   Rolf Eike Beer <eb@emlix.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Greg KH <greg@kroah.com>, stable@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.9.180 build fails with gcc 9 and 'cleanup_module' specifies less restrictive attribute than its target =?UTF-8?B?4oCm?=
-Date:   Fri, 02 Aug 2019 10:17:04 +0200
-Message-ID: <4007272.nJfEYfeqza@devpool35>
-Organization: emlix GmbH
-In-Reply-To: <CANiq72n2E4Ue0MU5mWitSbsscizPQKML0QQx_DBwJVni+eWMHQ@mail.gmail.com>
-References: <259986242.BvXPX32bHu@devpool35> <20190606185900.GA19937@kroah.com> <CANiq72n2E4Ue0MU5mWitSbsscizPQKML0QQx_DBwJVni+eWMHQ@mail.gmail.com>
+        id S2404064AbfHBIRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:17:47 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36411 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbfHBIRr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:17:47 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n4so76303584wrs.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 01:17:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=APOXhup+sZGXS5d0UC7uGeTiWB/G8v81K64OFOYtTQY=;
+        b=imgQeg8WKX5elrpnBo5+Jyc+J2wa2D6bHcCGZPczcMLi+Si978q+Pm1oJdvXaBN/sG
+         Go4EDCHwDom1dD+oVVrjxltqgt0kK8H538G0OI7Vd9pQTJ6sD0PusF/sXoxcudd9uGCy
+         aoeQXIrToTU0H4VSLwVAzplkSD3IIZtxj2rHA1SLZkSGR3rpi/ywh0Gp2z/kObf9bIzJ
+         J9Kt8q+xI2+PuYhAAPnpOTDbZaT2KYOQPeTxC+YuiKcwTj4FjiP7qnkJWgVQ+F/30pzK
+         AKnYXDf+a2x4cQO8yWCw16eBnmeiFoQOy52NodztMx3OO42O+C/Gb+r1RamZqGUFdM2d
+         okQA==
+X-Gm-Message-State: APjAAAU9mbrJ8TwNkRMx3SjThoW4j9algHPhR5QWX12e7SIAG7CN/Cei
+        uQvaAnZUSJ5gQW3RAPngCoDSAf1UL7M=
+X-Google-Smtp-Source: APXvYqxouFvTCxPN5ary3LSNHZng7Fu6r6547Mi/qZeNJXWg0W3zH8U/xLY5N3dAloNhdOrtFxV+kg==
+X-Received: by 2002:a5d:4101:: with SMTP id l1mr7547509wrp.202.1564733864909;
+        Fri, 02 Aug 2019 01:17:44 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:4013:e920:9388:c3ff? ([2001:b07:6468:f312:4013:e920:9388:c3ff])
+        by smtp.gmail.com with ESMTPSA id p18sm75207312wrm.16.2019.08.02.01.17.43
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Aug 2019 01:17:44 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 06/19] RISC-V: KVM: Implement VCPU interrupts and
+ requests handling
+To:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190802074620.115029-1-anup.patel@wdc.com>
+ <20190802074620.115029-7-anup.patel@wdc.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <98eaa917-8270-ecdc-2420-491ed1c903d8@redhat.com>
+Date:   Fri, 2 Aug 2019 10:17:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2919239.1tgsZgVOpZ"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+In-Reply-To: <20190802074620.115029-7-anup.patel@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart2919239.1tgsZgVOpZ
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+On 02/08/19 09:47, Anup Patel wrote:
+> +	/* VCPU interrupts */
+> +	unsigned long irqs_pending;
+> +	unsigned long irqs_pending_mask;
+> +
 
-Am Samstag, 8. Juni 2019, 14:00:34 CEST schrieb Miguel Ojeda:
-> On Thu, Jun 6, 2019 at 8:59 PM Greg KH <greg@kroah.com> wrote:
-> > "manually fixing it up" means "hacked it to pieces" to me, I have no
-> > idea what the end result really was :)
-> >=20
-> > If someone wants to send me some patches I can actually apply, that
-> > would be best...
->=20
-> I will give it a go whenever I get some free time :)
+This deserves a comment on the locking policy (none for producer,
+vcpu_lock for consumers).
 
-I fear this has never happened, did it?
-
-Eike
-=2D-=20
-Rolf Eike Beer, emlix GmbH, http://www.emlix.com
-=46on +49 551 30664-0, Fax +49 551 30664-11
-Gothaer Platz 3, 37083 G=C3=B6ttingen, Germany
-Sitz der Gesellschaft: G=C3=B6ttingen, Amtsgericht G=C3=B6ttingen HR B 3160
-Gesch=C3=A4ftsf=C3=BChrung: Heike Jordan, Dr. Uwe Kracke =E2=80=93 Ust-IdNr=
-=2E: DE 205 198 055
-
-emlix - smart embedded open source
---nextPart2919239.1tgsZgVOpZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCXUPxgAAKCRCr5FH7Xu2t
-/MnXA/wIyiTuEKU/RL+E+Mp4M3W4PnHlYfRL9rmX1ZvudWZvt7nykx3c3RcrDb4X
-2e3V8u4FxoqqFab9TnaR6Aio1tDcQ9lufrNzVKoa2VpfW/Yb5IBckJxUbrp65p88
-kJwjl7rPZ2oPF80iuHhOs7jpy1YvM9tv0ca8MRUXnQR5a4DZgw==
-=T7ca
------END PGP SIGNATURE-----
-
---nextPart2919239.1tgsZgVOpZ--
-
-
-
+Paolo
