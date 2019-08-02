@@ -2,69 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8A97FB82
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 716A97FB85
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394865AbfHBNsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:48:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48674 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730199AbfHBNsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:48:30 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85CC920679;
-        Fri,  2 Aug 2019 13:48:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564753709;
-        bh=yrUhfboA+pxlwVQceH5hZCnB8tZ8n2uD14vFSNTwoFg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0jGh3uFTyMfE0JevXIUjXo4dTNgOjHMJFiFePLYswMhTdzF9QdEKqdS/aNJBzOUlX
-         LQThVc2endYLqXhXno2aXAGbqSV6Dg1GGHiusQNfuWVzT2D/JuCjZvlBrAgrhpwfqn
-         VQ7Fkjdnj5z/Te0a6+I0MjMGqQkgnjBedsQCIJsE=
-Date:   Fri, 2 Aug 2019 09:48:28 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        syzbot+d952e5e28f5fb7718d23@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH 5.2 03/20] ALSA: usb-audio: Sanity checks for each pipe
- and EP types
-Message-ID: <20190802134828.GA797@sasha-vm>
-References: <20190802092055.131876977@linuxfoundation.org>
- <20190802092058.248343532@linuxfoundation.org>
+        id S2436552AbfHBNs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:48:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:9876 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727856AbfHBNs4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:48:56 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x72DkZBt091280;
+        Fri, 2 Aug 2019 09:48:34 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u4nrqsetm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Aug 2019 09:48:34 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x72Dl1Nc093221;
+        Fri, 2 Aug 2019 09:48:33 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u4nrqsesp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Aug 2019 09:48:33 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x72DjUYS008189;
+        Fri, 2 Aug 2019 13:48:32 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma02wdc.us.ibm.com with ESMTP id 2u0e85wry3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Aug 2019 13:48:32 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x72DmV0a55181734
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 2 Aug 2019 13:48:31 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BBF13112062;
+        Fri,  2 Aug 2019 13:48:31 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E307112061;
+        Fri,  2 Aug 2019 13:48:30 +0000 (GMT)
+Received: from leobras.br.ibm.com (unknown [9.18.235.147])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  2 Aug 2019 13:48:29 +0000 (GMT)
+Message-ID: <324f76484616473f8842cf26678abc5bd68a258a.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] pseries/hotplug-memory.c: Change rc variable to bool
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     David Hildenbrand <david@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Fri, 02 Aug 2019 10:48:29 -0300
+In-Reply-To: <78612e21-de54-4bd2-c22f-1c67aed29b2e@redhat.com>
+References: <20190801231055.19603-1-leonardo@linux.ibm.com>
+         <69821502-a449-d1a8-c2e8-a1aa67cca02f@redhat.com>
+         <78612e21-de54-4bd2-c22f-1c67aed29b2e@redhat.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-2d0TCPWTvo5CtPychdE9"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190802092058.248343532@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908020142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 11:39:57AM +0200, Greg Kroah-Hartman wrote:
->From: Takashi Iwai <tiwai@suse.de>
->
->commit 801ebf1043ae7b182588554cc9b9ad3c14bc2ab5 upstream.
->
->The recent USB core code performs sanity checks for the given pipe and
->EP types, and it can be hit by manipulated USB descriptors by syzbot.
->For making syzbot happier, this patch introduces a local helper for a
->sanity check in the driver side and calls it at each place before the
->message handling, so that we can avoid the WARNING splats.
->
->Reported-by: syzbot+d952e5e28f5fb7718d23@syzkaller.appspotmail.com
->Signed-off-by: Takashi Iwai <tiwai@suse.de>
->Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This commit has a fix: 5d78e1c2b7f4b ("ALSA: usb-audio: Fix gpf in
-snd_usb_pipe_sanity_check") which was not pulled by Linus yet.
+--=-2d0TCPWTvo5CtPychdE9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I'm going to drop this commit and re-queue it together with it's fix
-once it makes it upstream.
+On Fri, 2019-08-02 at 09:23 +0200, David Hildenbrand wrote:
+>  subtle changes in a "Change rc variable to bool"
+> patch should be avoided.
 
---
-Thanks,
-Sasha
+You are right.
+If it was a valid change, I should give it a patch for itself.
+I will keep that in mind next time.
+
+Thanks for helping!
+
+--=-2d0TCPWTvo5CtPychdE9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl1EPy0ACgkQlQYWtz9S
+ttSG7hAA35fzoY8Uf6QlMYIzT5tFCJFMi9XDduN5Lkey2lS8rr3d+Ihmd+2AhMqG
+V20mXTUHUo3zKbpqLjYkuL5PnqI319j53Qj4FuS9hqlZTz0U+4mS0KXyywb41V1A
+i0tWj6A7beFoC0p+awdWPio/5X5iXWA4cCQii7p/d+NNJb/XqXELnN0dlDgKAmin
+QDbuyajt1dXAepISnzMQUmR5PJ8CHGTBRk0Oc9a/qP0O0QnkhfrL8nS8j1PsoNZY
+bV+XXQ/Y2gTnv0ByfwlsDkL3JcDBfggRkJuQRcVdoE4tSLShpE5nrjUrtTpTdq3P
+jKg92tQCrSA9YTkC/ddL7NQE9m1yERzCHlypjDNqwKnI8/slUtPfVgH+wgCY5ObS
+FJaeC6EYpQsAuxMNdKPZG7beL+8MNjH1uhgbZC2eWGO+wnJRyowZ+i4Xe5aYV/Aw
+qE6Ud5Tb/jKMyizOPBxeZ48IGfmKVKkwZvbluXqvhjSytKxjsn+RZCky3qY8jh8p
+Ppp1/VtshnAELCPmQ/R7+5N0f4i8k6L8YoAooR8ff6apXWl4QLvikpUtczkVl7hm
+X+h8K7qg1wYrAdT+nE5owqYzX5HmDi8z/ne9cCgooVq7MzY+ppBkYCC7OKW+49tB
+vzF2WsIB62UbNKONXCB/H1IpD32pPS6YPr8TCg6fmbEIKS4Z3VM=
+=ys0t
+-----END PGP SIGNATURE-----
+
+--=-2d0TCPWTvo5CtPychdE9--
+
