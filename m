@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B187F3D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E4F27F3C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405997AbfHBJwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:52:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57952 "EHLO mail.kernel.org"
+        id S2406052AbfHBJwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:52:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405506AbfHBJwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:52:22 -0400
+        id S2406008AbfHBJw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:52:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD0C12087E;
-        Fri,  2 Aug 2019 09:52:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76617206A2;
+        Fri,  2 Aug 2019 09:52:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739541;
-        bh=JhVQ6HvL8lgdRKvB0Rs7J5y76zHkECUXeabJ9WDEpQs=;
+        s=default; t=1564739549;
+        bh=co30g/jq4olQsJE+balnUC9/AIYcYBjcjkhhdBOkyuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PFOuOVmSIpw3lduU+UHIeiPzhqEjYPahsM1NWCGac6FtFa8ure+Z4Dba5872Oz9ch
-         BPbrUunZbFEjo9IVRms0XRP7rBm5711M47MFMmZK0fiH2mF3WWMrTiCUD8sGJYv6Hn
-         8cRev063lDGOoL8Nbp8BxY64kW/YSPJ0sAYNYbXc=
+        b=HUQOubPna1mx/XGybeWBHETlxaGUYzMdNnWJUtuuZ5JgdjpyDANJ9shqqR6iQhBoJ
+         a5xDWxev2ytnZ6QiIUsHkeqifLXCK1qvkdeEUrxfejNGitsQ9jFt0e3MV3or0FyPTZ
+         aTnozQtUWKUIUmMGZpEhUEN5vJpwXuwMudI7k+nE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.9 205/223] x86/speculation/mds: Apply more accurate check on hypervisor platform
-Date:   Fri,  2 Aug 2019 11:37:10 +0200
-Message-Id: <20190802092250.298635264@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 208/223] ALSA: hda - Add a conexant codec entry to let mute led work
+Date:   Fri,  2 Aug 2019 11:37:13 +0200
+Message-Id: <20190802092250.415271634@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -43,41 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 517c3ba00916383af6411aec99442c307c23f684 upstream.
+commit 3f8809499bf02ef7874254c5e23fc764a47a21a0 upstream.
 
-X86_HYPER_NATIVE isn't accurate for checking if running on native platform,
-e.g. CONFIG_HYPERVISOR_GUEST isn't set or "nopv" is enabled.
+This conexant codec isn't in the supported codec list yet, the hda
+generic driver can drive this codec well, but on a Lenovo machine
+with mute/mic-mute leds, we need to apply CXT_FIXUP_THINKPAD_ACPI
+to make the leds work. After adding this codec to the list, the
+driver patch_conexant.c will apply THINKPAD_ACPI to this machine.
 
-Checking the CPU feature bit X86_FEATURE_HYPERVISOR to determine if it's
-running on native platform is more accurate.
-
-This still doesn't cover the platforms on which X86_FEATURE_HYPERVISOR is
-unsupported, e.g. VMware, but there is nothing which can be done about this
-scenario.
-
-Fixes: 8a4b06d391b0 ("x86/speculation/mds: Add sysfs reporting for MDS")
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1564022349-17338-1-git-send-email-zhenzhong.duan@oracle.com
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/bugs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1205,7 +1205,7 @@ static ssize_t l1tf_show_state(char *buf
- static ssize_t mds_show_state(char *buf)
- {
- #ifdef CONFIG_HYPERVISOR_GUEST
--	if (x86_hyper) {
-+	if (boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
- 		return sprintf(buf, "%s; SMT Host state unknown\n",
- 			       mds_strings[mds_mitigation]);
- 	}
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -1011,6 +1011,7 @@ static int patch_conexant_auto(struct hd
+  */
+ 
+ static const struct hda_device_id snd_hda_id_conexant[] = {
++	HDA_CODEC_ENTRY(0x14f11f86, "CX8070", patch_conexant_auto),
+ 	HDA_CODEC_ENTRY(0x14f12008, "CX8200", patch_conexant_auto),
+ 	HDA_CODEC_ENTRY(0x14f15045, "CX20549 (Venice)", patch_conexant_auto),
+ 	HDA_CODEC_ENTRY(0x14f15047, "CX20551 (Waikiki)", patch_conexant_auto),
 
 
