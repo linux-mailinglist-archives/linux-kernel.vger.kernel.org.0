@@ -2,77 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE737F2B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3B037F2A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:50:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405413AbfHBJpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:45:20 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41215 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405386AbfHBJpP (ORCPT
+        id S2391941AbfHBJpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:45:32 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35226 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405432AbfHBJpZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:45:15 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o101so77510787ota.8;
-        Fri, 02 Aug 2019 02:45:15 -0700 (PDT)
+        Fri, 2 Aug 2019 05:45:25 -0400
+Received: by mail-ot1-f65.google.com with SMTP id j19so862476otq.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 02:45:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Gwtot9TeklRqzA2mlAgP0qsNYR8mpKfqgQpyD7Xv9xQ=;
+        b=OUgcLNqK0s105ZDr95woraa74qxDrAheewlOE/XzMooHzoMBTbOARD5eNRHUSiMzcq
+         IhBwJjTC9G7fBq9w/3UeeyRGEAdquOmn9Os9vU6NAyAtgvlfkjPl5wARtAnfrlzi0Zzz
+         ZKHDCHSnQDuSytpcS279y89/7KWtlagEAyreQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=SIowbSyyRLa8kaPpGYFd2/TLvoMN+6bid3yfLLFVdbc=;
-        b=Une64RcEBB8g8ZhWmlTDhjip6lr0q8lw6a6dXpvmLR0WBC189Qk3jkXzIWrls39bnl
-         xdqomLhjNqOWBAl1YuLi2bPc4tOJVbrXBIvQfoyIJOCyXTEKg5q3Tfg8x18I4uFqXVx0
-         jXqJYPWDMcPvEuWexo7iRrehTn9ZbqrNwbuIMWz/63SNG+z1x0Z1ckbVwr4uPV1lZG3R
-         UNOD0uyl21PIafqSSS0HTCjg35a85s0wW1Y3jtcaSZT8QU6EHoXFpk3EvHAZFVw0GOG2
-         Ag0TYC4iIWbU1P4THLEU6kQYAN4q2YpkpLkvrXF0ctyEtVCkjo79Md4rnfLMNgcrPqi3
-         GchA==
-X-Gm-Message-State: APjAAAWxQ+eTTUmE8DnVgDJz39FLT440o2lzAJjaTGshW6xySRdW+MUW
-        Te6RJD0mt2Qr8iN7jm30SgH1snNKmz1EuT0Tmn07fpjo
-X-Google-Smtp-Source: APXvYqxo93Yl4vmPUr6mRr+3EBhZW4gSNFTKEYcIn760n+OBzQDV0oxl23NPUILTh0tZyODqwvAEFBDhHnP3GGcMLsk=
-X-Received: by 2002:a05:6830:8a:: with SMTP id a10mr69081583oto.167.1564739114618;
- Fri, 02 Aug 2019 02:45:14 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Gwtot9TeklRqzA2mlAgP0qsNYR8mpKfqgQpyD7Xv9xQ=;
+        b=jJxP6a+fLLXbliZeRO9yOJTbUDuFptmfZ/lMj6FEhSw50nmI0hFAM8621NEMgT75Oh
+         g6qH7o4utkgW0skDsZmr7N6EwteD4vmwzDGD7yiFDZNoRZw8ZzZ+CMYIcO7j8yfEppMS
+         5nNhaCVxrs4keFQuPIQVjnruWTnWbuk7VETbYpG+eEmAO4Ykakzj6OfpelkpKMGGA1fZ
+         mv+FUZoNkPZRgXBDKYqexxCK3jtTdPCdKeVQT2Ebo/o3MJN/VF8c/kZ+DQvnm04AJZz2
+         AD8dmcsVfWebMg1BVWphxwsVmcJSUwF/nNsr1IHQe3HhPAwg4+xlYDFrZH/0w7hGeiVq
+         rZEw==
+X-Gm-Message-State: APjAAAUdNEh2uB3YK/yb8I6tE9R080dFGMpx5pENMDlioo4dkqyxHUwR
+        6xLf1zsorwslrMluBDsLiwfRTPz/j4rwufULM/4=
+X-Google-Smtp-Source: APXvYqx6atiJUG/sjs4BaoFmi9Wh4Qwt4Vg1uYeBCLXFTQH2NdA5pxfrEzBWroGoy1Iiodaypgy51Sk3SvFRrEeldqM=
+X-Received: by 2002:a05:6830:ce:: with SMTP id x14mr84006580oto.188.1564739124649;
+ Fri, 02 Aug 2019 02:45:24 -0700 (PDT)
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 2 Aug 2019 11:45:03 +0200
-Message-ID: <CAJZ5v0i+ZJEdVw=sZfB1KUuqJFWA=mSfB6jL66c1HFfZN9MR6g@mail.gmail.com>
-Subject: [GIT PULL] Power management fix for v5.3-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1564571048-15029-1-git-send-email-lowry.li@arm.com>
+ <1564571048-15029-3-git-send-email-lowry.li@arm.com> <20190731132002.dut5mdsqgh7b75iv@DESKTOP-E1NTVVP.localdomain>
+ <20190802092920.4la5cwrltv2m6dke@DESKTOP-E1NTVVP.localdomain> <CAKMK7uEZaFEcs90+U3vzgH69+95BD58Dt=J=gT6=n6oah5Nbyg@mail.gmail.com>
+In-Reply-To: <CAKMK7uEZaFEcs90+U3vzgH69+95BD58Dt=J=gT6=n6oah5Nbyg@mail.gmail.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 2 Aug 2019 11:45:13 +0200
+Message-ID: <CAKMK7uH38rxyTyuYRGJ6NBejyUxQ6Qvr1CdjH2kpXiq+3-=t8Q@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] drm: Clear the fence pointer when writeback job signaled
+To:     Brian Starkey <Brian.Starkey@arm.com>
+Cc:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "eric@anholt.net" <eric@anholt.net>,
+        "kieran.bingham+renesas@ideasonboard.com" 
+        <kieran.bingham+renesas@ideasonboard.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>, nd <nd@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Aug 2, 2019 at 11:43 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> On Fri, Aug 2, 2019 at 11:29 AM Brian Starkey <Brian.Starkey@arm.com> wrote:
+> >
+> > Hi Lowry,
+> >
+> > On Thu, Aug 01, 2019 at 06:34:08AM +0000, Lowry Li (Arm Technology China) wrote:
+> > > Hi Brian,
+> > >
+> > > On Wed, Jul 31, 2019 at 09:20:04PM +0800, Brian Starkey wrote:
+> > > > Hi Lowry,
+> > > >
+> > > > Thanks for this cleanup.
+> > > >
+> > > > On Wed, Jul 31, 2019 at 11:04:45AM +0000, Lowry Li (Arm Technology China) wrote:
+> > > > > During it signals the completion of a writeback job, after releasing
+> > > > > the out_fence, we'd clear the pointer.
+> > > > >
+> > > > > Check if fence left over in drm_writeback_cleanup_job(), release it.
+> > > > >
+> > > > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/drm_writeback.c | 23 +++++++++++++++--------
+> > > > >  1 file changed, 15 insertions(+), 8 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> > > > > index ff138b6..43d9e3b 100644
+> > > > > --- a/drivers/gpu/drm/drm_writeback.c
+> > > > > +++ b/drivers/gpu/drm/drm_writeback.c
+> > > > > @@ -324,6 +324,9 @@ void drm_writeback_cleanup_job(struct drm_writeback_job *job)
+> > > > >   if (job->fb)
+> > > > >           drm_framebuffer_put(job->fb);
+> > > > >
+> > > > > + if (job->out_fence)
+> > > >
+> > > > I'm thinking it might be a good idea to signal the fence with an error
+> > > > here, if it's not already signaled. Otherwise, if there's someone
+> > > > waiting (which there shouldn't be), they're going to be waiting a very
+> > > > long time :-)
+> > > >
+> > > > Thanks,
+> > > > -Brian
+> > > >
+> > > Here it happened at atomic_check failed and test only commit. For both
+> > > cases, the commit has been dropped and it's only a clean up. So here better
+> > > not be treated as an error case:)
+> >
+> > If anyone else has a reference on the fence, then IMO it absolutely is
+> > an error to reach this point without the fence being signaled -
+> > because it means that the fence will never be signaled.
+> >
+> > I don't think the API gives you a way to check if this is the last
+> > reference, so it's safest to just make sure the fence is signalled
+> > before dropping the reference.
+> >
+> > It just feels wrong to me to have the possibility of a dangling fence
+> > which is never going to get signalled; and it's an easy defensive step
+> > to make sure it can never happen.
+> >
+> > I know it _shouldn't_ happen, but we often put in handling for cases
+> > which shouldn't happen, because they frequently do happen :-)
+>
+> We're not as paranoid with the vblank fences either, so not sure why
+> we need to be this paranoid with writeback fences. If your driver
+> grabs anything from the atomic state in ->atomic_check it's buggy
+> anyway.
+>
+> If you want to fix this properly I think we need to move the call to
+> prepare_signalling() in between atomic_check and atomic_commit. Then I
+> think it makes sense to also force-complete the fence on error ...
+>
+> > > Since for userspace, it should have been failed or a test only case, so
+> > > writebace fence should not be signaled.
+> >
+> > It's not only userspace that can wait on fences (and in fact this
+> > fence will never even reach userspace if the commit fails), the driver
+> > may have taken a copy to use for "something".
 
-Please pull from the tag
-
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-5.3-rc3
-
-with top-most commit 42787ed79638dc7f0f8d5c164caba1e87bfab50f
-
- ACPI: PM: Fix regression in acpi_device_set_power()
-
-on top of commit 609488bc979f99f805f34e9a32c1e3b71179d10b
-
- Linux 5.3-rc2
-
-to receive a power management fix for 5.3-rc3.
-
-This fixes a recent regression affecting ACPI device power management.
-
-Thanks!
-
-
----------------
-
-Rafael J. Wysocki (1):
-      ACPI: PM: Fix regression in acpi_device_set_power()
-
----------------
-
- drivers/acpi/device_pm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I forgot to add: you can check this by looking at the fence reference
+count. A WARN_ON if that's more than 1 on cleanup (but also for the
+out fences) could be a nice addition.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
