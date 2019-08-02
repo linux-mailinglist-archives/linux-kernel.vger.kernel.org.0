@@ -2,43 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 879587EC12
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:24:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCD5C7EC0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387739AbfHBFXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 01:23:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49094 "EHLO mx1.redhat.com"
+        id S2387587AbfHBFXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 01:23:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51680 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732740AbfHBFWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 01:22:55 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1732801AbfHBFW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 01:22:56 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5B32C307D988;
-        Fri,  2 Aug 2019 05:22:54 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0A86A308FBA0;
+        Fri,  2 Aug 2019 05:22:55 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-81.ams2.redhat.com [10.36.116.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DF1819C68;
-        Fri,  2 Aug 2019 05:22:53 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E44060605;
+        Fri,  2 Aug 2019 05:22:54 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 64A709D12; Fri,  2 Aug 2019 07:22:50 +0200 (CEST)
+        id C54ED9D13; Fri,  2 Aug 2019 07:22:50 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     ckoenig.leichtzumerken@gmail.com, thomas@shipmail.org,
         tzimmermann@suse.de, daniel@ffwll.ch, bskeggs@redhat.com,
         Gerd Hoffmann <kraxel@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 10/17] drm/ttm: switch ttm core from bo->resv to bo->base.resv
-Date:   Fri,  2 Aug 2019 07:22:40 +0200
-Message-Id: <20190802052247.18427-11-kraxel@redhat.com>
+Subject: [PATCH v4 11/17] drm/radeon: switch driver from bo->resv to bo->base.resv
+Date:   Fri,  2 Aug 2019 07:22:41 +0200
+Message-Id: <20190802052247.18427-12-kraxel@redhat.com>
 In-Reply-To: <20190802052247.18427-1-kraxel@redhat.com>
 References: <20190802052247.18427-1-kraxel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 02 Aug 2019 05:22:54 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 02 Aug 2019 05:22:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,602 +50,240 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Reviewed-by: Christian König <christian.koenig@amd.com>
 ---
- include/drm/ttm/ttm_bo_driver.h        | 12 ++--
- drivers/gpu/drm/ttm/ttm_bo.c           | 96 +++++++++++++-------------
- drivers/gpu/drm/ttm/ttm_bo_util.c      | 16 ++---
- drivers/gpu/drm/ttm/ttm_bo_vm.c        |  6 +-
- drivers/gpu/drm/ttm/ttm_execbuf_util.c | 20 +++---
- drivers/gpu/drm/ttm/ttm_tt.c           |  2 +-
- 6 files changed, 76 insertions(+), 76 deletions(-)
+ drivers/gpu/drm/radeon/radeon_benchmark.c | 4 ++--
+ drivers/gpu/drm/radeon/radeon_cs.c        | 2 +-
+ drivers/gpu/drm/radeon/radeon_display.c   | 2 +-
+ drivers/gpu/drm/radeon/radeon_gem.c       | 6 +++---
+ drivers/gpu/drm/radeon/radeon_mn.c        | 2 +-
+ drivers/gpu/drm/radeon/radeon_object.c    | 9 ++++-----
+ drivers/gpu/drm/radeon/radeon_test.c      | 8 ++++----
+ drivers/gpu/drm/radeon/radeon_ttm.c       | 2 +-
+ drivers/gpu/drm/radeon/radeon_uvd.c       | 2 +-
+ drivers/gpu/drm/radeon/radeon_vm.c        | 6 +++---
+ 10 files changed, 21 insertions(+), 22 deletions(-)
 
-diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
-index c9b8ba492f24..5b54e3254d13 100644
---- a/include/drm/ttm/ttm_bo_driver.h
-+++ b/include/drm/ttm/ttm_bo_driver.h
-@@ -654,14 +654,14 @@ static inline int __ttm_bo_reserve(struct ttm_buffer_object *bo,
- 		if (WARN_ON(ticket))
- 			return -EBUSY;
+diff --git a/drivers/gpu/drm/radeon/radeon_benchmark.c b/drivers/gpu/drm/radeon/radeon_benchmark.c
+index 7ce5064a59f6..1ea50ce16312 100644
+--- a/drivers/gpu/drm/radeon/radeon_benchmark.c
++++ b/drivers/gpu/drm/radeon/radeon_benchmark.c
+@@ -122,7 +122,7 @@ static void radeon_benchmark_move(struct radeon_device *rdev, unsigned size,
+ 	if (rdev->asic->copy.dma) {
+ 		time = radeon_benchmark_do_move(rdev, size, saddr, daddr,
+ 						RADEON_BENCHMARK_COPY_DMA, n,
+-						dobj->tbo.resv);
++						dobj->tbo.base.resv);
+ 		if (time < 0)
+ 			goto out_cleanup;
+ 		if (time > 0)
+@@ -133,7 +133,7 @@ static void radeon_benchmark_move(struct radeon_device *rdev, unsigned size,
+ 	if (rdev->asic->copy.blit) {
+ 		time = radeon_benchmark_do_move(rdev, size, saddr, daddr,
+ 						RADEON_BENCHMARK_COPY_BLIT, n,
+-						dobj->tbo.resv);
++						dobj->tbo.base.resv);
+ 		if (time < 0)
+ 			goto out_cleanup;
+ 		if (time > 0)
+diff --git a/drivers/gpu/drm/radeon/radeon_cs.c b/drivers/gpu/drm/radeon/radeon_cs.c
+index d206654b31ad..7e5254a34e84 100644
+--- a/drivers/gpu/drm/radeon/radeon_cs.c
++++ b/drivers/gpu/drm/radeon/radeon_cs.c
+@@ -257,7 +257,7 @@ static int radeon_cs_sync_rings(struct radeon_cs_parser *p)
+ 	list_for_each_entry(reloc, &p->validated, tv.head) {
+ 		struct reservation_object *resv;
  
--		success = reservation_object_trylock(bo->resv);
-+		success = reservation_object_trylock(bo->base.resv);
- 		return success ? 0 : -EBUSY;
+-		resv = reloc->robj->tbo.resv;
++		resv = reloc->robj->tbo.base.resv;
+ 		r = radeon_sync_resv(p->rdev, &p->ib.sync, resv,
+ 				     reloc->tv.num_shared);
+ 		if (r)
+diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
+index ea6b752dd3a4..7bf73230ac0b 100644
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -533,7 +533,7 @@ static int radeon_crtc_page_flip_target(struct drm_crtc *crtc,
+ 		DRM_ERROR("failed to pin new rbo buffer before flip\n");
+ 		goto cleanup;
  	}
+-	work->fence = dma_fence_get(reservation_object_get_excl(new_rbo->tbo.resv));
++	work->fence = dma_fence_get(reservation_object_get_excl(new_rbo->tbo.base.resv));
+ 	radeon_bo_get_tiling_flags(new_rbo, &tiling_flags, NULL);
+ 	radeon_bo_unreserve(new_rbo);
  
- 	if (interruptible)
--		ret = reservation_object_lock_interruptible(bo->resv, ticket);
-+		ret = reservation_object_lock_interruptible(bo->base.resv, ticket);
+diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/radeon/radeon_gem.c
+index 7238007f5aa4..03873f21a734 100644
+--- a/drivers/gpu/drm/radeon/radeon_gem.c
++++ b/drivers/gpu/drm/radeon/radeon_gem.c
+@@ -114,7 +114,7 @@ static int radeon_gem_set_domain(struct drm_gem_object *gobj,
+ 	}
+ 	if (domain == RADEON_GEM_DOMAIN_CPU) {
+ 		/* Asking for cpu access wait for object idle */
+-		r = reservation_object_wait_timeout_rcu(robj->tbo.resv, true, true, 30 * HZ);
++		r = reservation_object_wait_timeout_rcu(robj->tbo.base.resv, true, true, 30 * HZ);
+ 		if (!r)
+ 			r = -EBUSY;
+ 
+@@ -449,7 +449,7 @@ int radeon_gem_busy_ioctl(struct drm_device *dev, void *data,
+ 	}
+ 	robj = gem_to_radeon_bo(gobj);
+ 
+-	r = reservation_object_test_signaled_rcu(robj->tbo.resv, true);
++	r = reservation_object_test_signaled_rcu(robj->tbo.base.resv, true);
+ 	if (r == 0)
+ 		r = -EBUSY;
  	else
--		ret = reservation_object_lock(bo->resv, ticket);
-+		ret = reservation_object_lock(bo->base.resv, ticket);
- 	if (ret == -EINTR)
- 		return -ERESTARTSYS;
- 	return ret;
-@@ -745,10 +745,10 @@ static inline int ttm_bo_reserve_slowpath(struct ttm_buffer_object *bo,
- 	WARN_ON(!kref_read(&bo->kref));
+@@ -478,7 +478,7 @@ int radeon_gem_wait_idle_ioctl(struct drm_device *dev, void *data,
+ 	}
+ 	robj = gem_to_radeon_bo(gobj);
  
- 	if (interruptible)
--		ret = ww_mutex_lock_slow_interruptible(&bo->resv->lock,
-+		ret = ww_mutex_lock_slow_interruptible(&bo->base.resv->lock,
- 						       ticket);
- 	else
--		ww_mutex_lock_slow(&bo->resv->lock, ticket);
-+		ww_mutex_lock_slow(&bo->base.resv->lock, ticket);
+-	ret = reservation_object_wait_timeout_rcu(robj->tbo.resv, true, true, 30 * HZ);
++	ret = reservation_object_wait_timeout_rcu(robj->tbo.base.resv, true, true, 30 * HZ);
+ 	if (ret == 0)
+ 		r = -EBUSY;
+ 	else if (ret < 0)
+diff --git a/drivers/gpu/drm/radeon/radeon_mn.c b/drivers/gpu/drm/radeon/radeon_mn.c
+index 8c3871ed23a9..0d64ace0e6c1 100644
+--- a/drivers/gpu/drm/radeon/radeon_mn.c
++++ b/drivers/gpu/drm/radeon/radeon_mn.c
+@@ -163,7 +163,7 @@ static int radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
+ 				continue;
+ 			}
  
- 	if (likely(ret == 0))
- 		ttm_bo_del_sub_from_lru(bo);
-@@ -773,7 +773,7 @@ static inline void ttm_bo_unreserve(struct ttm_buffer_object *bo)
- 	else
- 		ttm_bo_move_to_lru_tail(bo, NULL);
- 	spin_unlock(&bo->bdev->glob->lru_lock);
--	reservation_object_unlock(bo->resv);
-+	reservation_object_unlock(bo->base.resv);
- }
+-			r = reservation_object_wait_timeout_rcu(bo->tbo.resv,
++			r = reservation_object_wait_timeout_rcu(bo->tbo.base.resv,
+ 				true, false, MAX_SCHEDULE_TIMEOUT);
+ 			if (r <= 0)
+ 				DRM_ERROR("(%ld) failed to wait for user bo\n", r);
+diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/radeon/radeon_object.c
+index 66a21332ed4f..4e8d1d82dc0e 100644
+--- a/drivers/gpu/drm/radeon/radeon_object.c
++++ b/drivers/gpu/drm/radeon/radeon_object.c
+@@ -262,7 +262,6 @@ int radeon_bo_create(struct radeon_device *rdev,
+ 	r = ttm_bo_init(&rdev->mman.bdev, &bo->tbo, size, type,
+ 			&bo->placement, page_align, !kernel, acc_size,
+ 			sg, resv, &radeon_ttm_bo_destroy);
+-	bo->tbo.base.resv = bo->tbo.resv;
+ 	up_read(&rdev->pm.mclk_lock);
+ 	if (unlikely(r != 0)) {
+ 		return r;
+@@ -611,7 +610,7 @@ int radeon_bo_get_surface_reg(struct radeon_bo *bo)
+ 	int steal;
+ 	int i;
  
- /*
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index cd3a179a7e25..4d43a241e7eb 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -173,7 +173,7 @@ static void ttm_bo_add_mem_to_lru(struct ttm_buffer_object *bo,
- 	struct ttm_bo_device *bdev = bo->bdev;
- 	struct ttm_mem_type_manager *man;
+-	lockdep_assert_held(&bo->tbo.resv->lock.base);
++	lockdep_assert_held(&bo->tbo.base.resv->lock.base);
  
--	reservation_object_assert_held(bo->resv);
-+	reservation_object_assert_held(bo->base.resv);
- 
- 	if (!list_empty(&bo->lru))
- 		return;
-@@ -244,7 +244,7 @@ static void ttm_bo_bulk_move_set_pos(struct ttm_lru_bulk_move_pos *pos,
- void ttm_bo_move_to_lru_tail(struct ttm_buffer_object *bo,
- 			     struct ttm_lru_bulk_move *bulk)
- {
--	reservation_object_assert_held(bo->resv);
-+	reservation_object_assert_held(bo->base.resv);
- 
- 	ttm_bo_del_from_lru(bo);
- 	ttm_bo_add_to_lru(bo);
-@@ -277,8 +277,8 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
- 		if (!pos->first)
- 			continue;
- 
--		reservation_object_assert_held(pos->first->resv);
--		reservation_object_assert_held(pos->last->resv);
-+		reservation_object_assert_held(pos->first->base.resv);
-+		reservation_object_assert_held(pos->last->base.resv);
- 
- 		man = &pos->first->bdev->man[TTM_PL_TT];
- 		list_bulk_move_tail(&man->lru[i], &pos->first->lru,
-@@ -292,8 +292,8 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
- 		if (!pos->first)
- 			continue;
- 
--		reservation_object_assert_held(pos->first->resv);
--		reservation_object_assert_held(pos->last->resv);
-+		reservation_object_assert_held(pos->first->base.resv);
-+		reservation_object_assert_held(pos->last->base.resv);
- 
- 		man = &pos->first->bdev->man[TTM_PL_VRAM];
- 		list_bulk_move_tail(&man->lru[i], &pos->first->lru,
-@@ -307,8 +307,8 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
- 		if (!pos->first)
- 			continue;
- 
--		reservation_object_assert_held(pos->first->resv);
--		reservation_object_assert_held(pos->last->resv);
-+		reservation_object_assert_held(pos->first->base.resv);
-+		reservation_object_assert_held(pos->last->base.resv);
- 
- 		lru = &pos->first->bdev->glob->swap_lru[i];
- 		list_bulk_move_tail(lru, &pos->first->swap, &pos->last->swap);
-@@ -439,12 +439,12 @@ static int ttm_bo_individualize_resv(struct ttm_buffer_object *bo)
- {
- 	int r;
- 
--	if (bo->resv == &bo->base._resv)
-+	if (bo->base.resv == &bo->base._resv)
+ 	if (!bo->tiling_flags)
  		return 0;
- 
- 	BUG_ON(!reservation_object_trylock(&bo->base._resv));
- 
--	r = reservation_object_copy_fences(&bo->base._resv, bo->resv);
-+	r = reservation_object_copy_fences(&bo->base._resv, bo->base.resv);
- 	if (r)
- 		reservation_object_unlock(&bo->base._resv);
- 
-@@ -482,23 +482,23 @@ static void ttm_bo_cleanup_refs_or_queue(struct ttm_buffer_object *bo)
- 		/* Last resort, if we fail to allocate memory for the
- 		 * fences block for the BO to become idle
- 		 */
--		reservation_object_wait_timeout_rcu(bo->resv, true, false,
-+		reservation_object_wait_timeout_rcu(bo->base.resv, true, false,
- 						    30 * HZ);
- 		spin_lock(&glob->lru_lock);
- 		goto error;
- 	}
- 
- 	spin_lock(&glob->lru_lock);
--	ret = reservation_object_trylock(bo->resv) ? 0 : -EBUSY;
-+	ret = reservation_object_trylock(bo->base.resv) ? 0 : -EBUSY;
- 	if (!ret) {
- 		if (reservation_object_test_signaled_rcu(&bo->base._resv, true)) {
- 			ttm_bo_del_from_lru(bo);
- 			spin_unlock(&glob->lru_lock);
--			if (bo->resv != &bo->base._resv)
-+			if (bo->base.resv != &bo->base._resv)
- 				reservation_object_unlock(&bo->base._resv);
- 
- 			ttm_bo_cleanup_memtype_use(bo);
--			reservation_object_unlock(bo->resv);
-+			reservation_object_unlock(bo->base.resv);
- 			return;
- 		}
- 
-@@ -514,9 +514,9 @@ static void ttm_bo_cleanup_refs_or_queue(struct ttm_buffer_object *bo)
- 			ttm_bo_add_to_lru(bo);
- 		}
- 
--		reservation_object_unlock(bo->resv);
-+		reservation_object_unlock(bo->base.resv);
- 	}
--	if (bo->resv != &bo->base._resv)
-+	if (bo->base.resv != &bo->base._resv)
- 		reservation_object_unlock(&bo->base._resv);
- 
- error:
-@@ -550,7 +550,7 @@ static int ttm_bo_cleanup_refs(struct ttm_buffer_object *bo,
- 	int ret;
- 
- 	if (unlikely(list_empty(&bo->ddestroy)))
--		resv = bo->resv;
-+		resv = bo->base.resv;
- 	else
- 		resv = &bo->base._resv;
- 
-@@ -563,7 +563,7 @@ static int ttm_bo_cleanup_refs(struct ttm_buffer_object *bo,
- 		long lret;
- 
- 		if (unlock_resv)
--			reservation_object_unlock(bo->resv);
-+			reservation_object_unlock(bo->base.resv);
- 		spin_unlock(&glob->lru_lock);
- 
- 		lret = reservation_object_wait_timeout_rcu(resv, true,
-@@ -576,7 +576,7 @@ static int ttm_bo_cleanup_refs(struct ttm_buffer_object *bo,
- 			return -EBUSY;
- 
- 		spin_lock(&glob->lru_lock);
--		if (unlock_resv && !reservation_object_trylock(bo->resv)) {
-+		if (unlock_resv && !reservation_object_trylock(bo->base.resv)) {
- 			/*
- 			 * We raced, and lost, someone else holds the reservation now,
- 			 * and is probably busy in ttm_bo_cleanup_memtype_use.
-@@ -593,7 +593,7 @@ static int ttm_bo_cleanup_refs(struct ttm_buffer_object *bo,
- 
- 	if (ret || unlikely(list_empty(&bo->ddestroy))) {
- 		if (unlock_resv)
--			reservation_object_unlock(bo->resv);
-+			reservation_object_unlock(bo->base.resv);
- 		spin_unlock(&glob->lru_lock);
- 		return ret;
- 	}
-@@ -606,7 +606,7 @@ static int ttm_bo_cleanup_refs(struct ttm_buffer_object *bo,
- 	ttm_bo_cleanup_memtype_use(bo);
- 
- 	if (unlock_resv)
--		reservation_object_unlock(bo->resv);
-+		reservation_object_unlock(bo->base.resv);
- 
- 	return 0;
- }
-@@ -632,14 +632,14 @@ static bool ttm_bo_delayed_delete(struct ttm_bo_device *bdev, bool remove_all)
- 		kref_get(&bo->list_kref);
- 		list_move_tail(&bo->ddestroy, &removed);
- 
--		if (remove_all || bo->resv != &bo->base._resv) {
-+		if (remove_all || bo->base.resv != &bo->base._resv) {
- 			spin_unlock(&glob->lru_lock);
--			reservation_object_lock(bo->resv, NULL);
-+			reservation_object_lock(bo->base.resv, NULL);
- 
- 			spin_lock(&glob->lru_lock);
- 			ttm_bo_cleanup_refs(bo, false, !remove_all, true);
- 
--		} else if (reservation_object_trylock(bo->resv)) {
-+		} else if (reservation_object_trylock(bo->base.resv)) {
- 			ttm_bo_cleanup_refs(bo, false, !remove_all, true);
- 		} else {
- 			spin_unlock(&glob->lru_lock);
-@@ -708,7 +708,7 @@ static int ttm_bo_evict(struct ttm_buffer_object *bo,
- 	struct ttm_placement placement;
- 	int ret = 0;
- 
--	reservation_object_assert_held(bo->resv);
-+	reservation_object_assert_held(bo->base.resv);
- 
- 	placement.num_placement = 0;
- 	placement.num_busy_placement = 0;
-@@ -778,8 +778,8 @@ static bool ttm_bo_evict_swapout_allowable(struct ttm_buffer_object *bo,
+@@ -737,7 +736,7 @@ void radeon_bo_get_tiling_flags(struct radeon_bo *bo,
+ 				uint32_t *tiling_flags,
+ 				uint32_t *pitch)
  {
- 	bool ret = false;
+-	lockdep_assert_held(&bo->tbo.resv->lock.base);
++	lockdep_assert_held(&bo->tbo.base.resv->lock.base);
  
--	if (bo->resv == ctx->resv) {
--		reservation_object_assert_held(bo->resv);
-+	if (bo->base.resv == ctx->resv) {
-+		reservation_object_assert_held(bo->base.resv);
- 		if (ctx->flags & TTM_OPT_FLAG_ALLOW_RES_EVICT
- 		    || !list_empty(&bo->ddestroy))
- 			ret = true;
-@@ -787,7 +787,7 @@ static bool ttm_bo_evict_swapout_allowable(struct ttm_buffer_object *bo,
- 		if (busy)
- 			*busy = false;
- 	} else {
--		ret = reservation_object_trylock(bo->resv);
-+		ret = reservation_object_trylock(bo->base.resv);
- 		*locked = ret;
- 		if (busy)
- 			*busy = !ret;
-@@ -815,10 +815,10 @@ static int ttm_mem_evict_wait_busy(struct ttm_buffer_object *busy_bo,
- 		return -EBUSY;
+ 	if (tiling_flags)
+ 		*tiling_flags = bo->tiling_flags;
+@@ -749,7 +748,7 @@ int radeon_bo_check_tiling(struct radeon_bo *bo, bool has_moved,
+ 				bool force_drop)
+ {
+ 	if (!force_drop)
+-		lockdep_assert_held(&bo->tbo.resv->lock.base);
++		lockdep_assert_held(&bo->tbo.base.resv->lock.base);
  
- 	if (ctx->interruptible)
--		r = reservation_object_lock_interruptible(busy_bo->resv,
-+		r = reservation_object_lock_interruptible(busy_bo->base.resv,
- 							  ticket);
- 	else
--		r = reservation_object_lock(busy_bo->resv, ticket);
-+		r = reservation_object_lock(busy_bo->base.resv, ticket);
+ 	if (!(bo->tiling_flags & RADEON_TILING_SURFACE))
+ 		return 0;
+@@ -871,7 +870,7 @@ int radeon_bo_wait(struct radeon_bo *bo, u32 *mem_type, bool no_wait)
+ void radeon_bo_fence(struct radeon_bo *bo, struct radeon_fence *fence,
+ 		     bool shared)
+ {
+-	struct reservation_object *resv = bo->tbo.resv;
++	struct reservation_object *resv = bo->tbo.base.resv;
  
- 	/*
- 	 * TODO: It would be better to keep the BO locked until allocation is at
-@@ -826,7 +826,7 @@ static int ttm_mem_evict_wait_busy(struct ttm_buffer_object *busy_bo,
- 	 * of TTM.
- 	 */
- 	if (!r)
--		reservation_object_unlock(busy_bo->resv);
-+		reservation_object_unlock(busy_bo->base.resv);
- 
- 	return r == -EDEADLK ? -EBUSY : r;
- }
-@@ -852,7 +852,7 @@ static int ttm_mem_evict_first(struct ttm_bo_device *bdev,
- 			if (!ttm_bo_evict_swapout_allowable(bo, ctx, &locked,
- 							    &busy)) {
- 				if (busy && !busy_bo &&
--				    bo->resv->lock.ctx != ticket)
-+				    bo->base.resv->lock.ctx != ticket)
- 					busy_bo = bo;
- 				continue;
- 			}
-@@ -860,7 +860,7 @@ static int ttm_mem_evict_first(struct ttm_bo_device *bdev,
- 			if (place && !bdev->driver->eviction_valuable(bo,
- 								      place)) {
- 				if (locked)
--					reservation_object_unlock(bo->resv);
-+					reservation_object_unlock(bo->base.resv);
- 				continue;
- 			}
- 			break;
-@@ -932,9 +932,9 @@ static int ttm_bo_add_move_fence(struct ttm_buffer_object *bo,
- 	spin_unlock(&man->move_lock);
- 
- 	if (fence) {
--		reservation_object_add_shared_fence(bo->resv, fence);
-+		reservation_object_add_shared_fence(bo->base.resv, fence);
- 
--		ret = reservation_object_reserve_shared(bo->resv, 1);
-+		ret = reservation_object_reserve_shared(bo->base.resv, 1);
- 		if (unlikely(ret)) {
- 			dma_fence_put(fence);
- 			return ret;
-@@ -967,7 +967,7 @@ static int ttm_bo_mem_force_space(struct ttm_buffer_object *bo,
- 		if (mem->mm_node)
- 			break;
- 		ret = ttm_mem_evict_first(bdev, mem->mem_type, place, ctx,
--					  bo->resv->lock.ctx);
-+					  bo->base.resv->lock.ctx);
- 		if (unlikely(ret != 0))
- 			return ret;
- 	} while (1);
-@@ -1089,7 +1089,7 @@ int ttm_bo_mem_space(struct ttm_buffer_object *bo,
- 	bool type_found = false;
- 	int i, ret;
- 
--	ret = reservation_object_reserve_shared(bo->resv, 1);
-+	ret = reservation_object_reserve_shared(bo->base.resv, 1);
- 	if (unlikely(ret))
- 		return ret;
- 
-@@ -1170,7 +1170,7 @@ static int ttm_bo_move_buffer(struct ttm_buffer_object *bo,
- 	int ret = 0;
- 	struct ttm_mem_reg mem;
- 
--	reservation_object_assert_held(bo->resv);
-+	reservation_object_assert_held(bo->base.resv);
- 
- 	mem.num_pages = bo->num_pages;
- 	mem.size = mem.num_pages << PAGE_SHIFT;
-@@ -1240,7 +1240,7 @@ int ttm_bo_validate(struct ttm_buffer_object *bo,
- 	int ret;
- 	uint32_t new_flags;
- 
--	reservation_object_assert_held(bo->resv);
-+	reservation_object_assert_held(bo->base.resv);
- 	/*
- 	 * Check whether we need to move buffer.
- 	 */
-@@ -1332,7 +1332,7 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
- 	if (resv) {
- 		bo->resv = resv;
- 		bo->base.resv = resv;
--		reservation_object_assert_held(bo->resv);
-+		reservation_object_assert_held(bo->base.resv);
- 	} else {
- 		bo->resv = &bo->base._resv;
- 		bo->base.resv = &bo->base._resv;
-@@ -1360,7 +1360,7 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
- 	 * since otherwise lockdep will be angered in radeon.
- 	 */
- 	if (!resv) {
--		locked = reservation_object_trylock(bo->resv);
-+		locked = reservation_object_trylock(bo->base.resv);
- 		WARN_ON(!locked);
- 	}
- 
-@@ -1804,13 +1804,13 @@ int ttm_bo_wait(struct ttm_buffer_object *bo,
- 	long timeout = 15 * HZ;
- 
- 	if (no_wait) {
--		if (reservation_object_test_signaled_rcu(bo->resv, true))
-+		if (reservation_object_test_signaled_rcu(bo->base.resv, true))
- 			return 0;
+ 	if (shared)
+ 		reservation_object_add_shared_fence(resv, &fence->base);
+diff --git a/drivers/gpu/drm/radeon/radeon_test.c b/drivers/gpu/drm/radeon/radeon_test.c
+index 0f6ba81a1669..a5e1d2139e80 100644
+--- a/drivers/gpu/drm/radeon/radeon_test.c
++++ b/drivers/gpu/drm/radeon/radeon_test.c
+@@ -120,11 +120,11 @@ static void radeon_do_test_moves(struct radeon_device *rdev, int flag)
+ 		if (ring == R600_RING_TYPE_DMA_INDEX)
+ 			fence = radeon_copy_dma(rdev, gtt_addr, vram_addr,
+ 						size / RADEON_GPU_PAGE_SIZE,
+-						vram_obj->tbo.resv);
++						vram_obj->tbo.base.resv);
  		else
- 			return -EBUSY;
- 	}
- 
--	timeout = reservation_object_wait_timeout_rcu(bo->resv, true,
-+	timeout = reservation_object_wait_timeout_rcu(bo->base.resv, true,
- 						      interruptible, timeout);
- 	if (timeout < 0)
- 		return timeout;
-@@ -1818,7 +1818,7 @@ int ttm_bo_wait(struct ttm_buffer_object *bo,
- 	if (timeout == 0)
- 		return -EBUSY;
- 
--	reservation_object_add_excl_fence(bo->resv, NULL);
-+	reservation_object_add_excl_fence(bo->base.resv, NULL);
- 	return 0;
- }
- EXPORT_SYMBOL(ttm_bo_wait);
-@@ -1934,7 +1934,7 @@ int ttm_bo_swapout(struct ttm_bo_global *glob, struct ttm_operation_ctx *ctx)
- 	 * already swapped buffer.
- 	 */
- 	if (locked)
--		reservation_object_unlock(bo->resv);
-+		reservation_object_unlock(bo->base.resv);
- 	kref_put(&bo->list_kref, ttm_bo_release_list);
- 	return ret;
- }
-@@ -1972,14 +1972,14 @@ int ttm_bo_wait_unreserved(struct ttm_buffer_object *bo)
- 	ret = mutex_lock_interruptible(&bo->wu_mutex);
- 	if (unlikely(ret != 0))
- 		return -ERESTARTSYS;
--	if (!ww_mutex_is_locked(&bo->resv->lock))
-+	if (!ww_mutex_is_locked(&bo->base.resv->lock))
- 		goto out_unlock;
--	ret = reservation_object_lock_interruptible(bo->resv, NULL);
-+	ret = reservation_object_lock_interruptible(bo->base.resv, NULL);
- 	if (ret == -EINTR)
- 		ret = -ERESTARTSYS;
- 	if (unlikely(ret != 0))
- 		goto out_unlock;
--	reservation_object_unlock(bo->resv);
-+	reservation_object_unlock(bo->base.resv);
- 
- out_unlock:
- 	mutex_unlock(&bo->wu_mutex);
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_util.c b/drivers/gpu/drm/ttm/ttm_bo_util.c
-index f5009c1b6a9c..425a6d627b30 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_util.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
-@@ -517,9 +517,9 @@ static int ttm_buffer_object_transfer(struct ttm_buffer_object *bo,
- 	kref_init(&fbo->base.kref);
- 	fbo->base.destroy = &ttm_transfered_destroy;
- 	fbo->base.acc_size = 0;
--	fbo->base.resv = &fbo->base.base._resv;
--	reservation_object_init(fbo->base.resv);
--	ret = reservation_object_trylock(fbo->base.resv);
-+	fbo->base.base.resv = &fbo->base.base._resv;
-+	reservation_object_init(fbo->base.base.resv);
-+	ret = reservation_object_trylock(fbo->base.base.resv);
- 	WARN_ON(!ret);
- 
- 	*new_obj = &fbo->base;
-@@ -689,7 +689,7 @@ int ttm_bo_move_accel_cleanup(struct ttm_buffer_object *bo,
- 	int ret;
- 	struct ttm_buffer_object *ghost_obj;
- 
--	reservation_object_add_excl_fence(bo->resv, fence);
-+	reservation_object_add_excl_fence(bo->base.resv, fence);
- 	if (evict) {
- 		ret = ttm_bo_wait(bo, false, false);
- 		if (ret)
-@@ -716,7 +716,7 @@ int ttm_bo_move_accel_cleanup(struct ttm_buffer_object *bo,
- 		if (ret)
- 			return ret;
- 
--		reservation_object_add_excl_fence(ghost_obj->resv, fence);
-+		reservation_object_add_excl_fence(ghost_obj->base.resv, fence);
- 
- 		/**
- 		 * If we're not moving to fixed memory, the TTM object
-@@ -752,7 +752,7 @@ int ttm_bo_pipeline_move(struct ttm_buffer_object *bo,
- 
- 	int ret;
- 
--	reservation_object_add_excl_fence(bo->resv, fence);
-+	reservation_object_add_excl_fence(bo->base.resv, fence);
- 
- 	if (!evict) {
- 		struct ttm_buffer_object *ghost_obj;
-@@ -772,7 +772,7 @@ int ttm_bo_pipeline_move(struct ttm_buffer_object *bo,
- 		if (ret)
- 			return ret;
- 
--		reservation_object_add_excl_fence(ghost_obj->resv, fence);
-+		reservation_object_add_excl_fence(ghost_obj->base.resv, fence);
- 
- 		/**
- 		 * If we're not moving to fixed memory, the TTM object
-@@ -841,7 +841,7 @@ int ttm_bo_pipeline_gutting(struct ttm_buffer_object *bo)
- 	if (ret)
- 		return ret;
- 
--	ret = reservation_object_copy_fences(ghost->resv, bo->resv);
-+	ret = reservation_object_copy_fences(ghost->base.resv, bo->base.resv);
- 	/* Last resort, wait for the BO to be idle when we are OOM */
- 	if (ret)
- 		ttm_bo_wait(bo, false, false);
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-index fb6875a789b7..85f5bcbe0c76 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-@@ -71,7 +71,7 @@ static vm_fault_t ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
- 		ttm_bo_get(bo);
- 		up_read(&vmf->vma->vm_mm->mmap_sem);
- 		(void) dma_fence_wait(bo->moving, true);
--		reservation_object_unlock(bo->resv);
-+		reservation_object_unlock(bo->base.resv);
- 		ttm_bo_put(bo);
- 		goto out_unlock;
- 	}
-@@ -131,7 +131,7 @@ static vm_fault_t ttm_bo_vm_fault(struct vm_fault *vmf)
- 	 * for reserve, and if it fails, retry the fault after waiting
- 	 * for the buffer to become unreserved.
- 	 */
--	if (unlikely(!reservation_object_trylock(bo->resv))) {
-+	if (unlikely(!reservation_object_trylock(bo->base.resv))) {
- 		if (vmf->flags & FAULT_FLAG_ALLOW_RETRY) {
- 			if (!(vmf->flags & FAULT_FLAG_RETRY_NOWAIT)) {
- 				ttm_bo_get(bo);
-@@ -296,7 +296,7 @@ static vm_fault_t ttm_bo_vm_fault(struct vm_fault *vmf)
- out_io_unlock:
- 	ttm_mem_io_unlock(man);
- out_unlock:
--	reservation_object_unlock(bo->resv);
-+	reservation_object_unlock(bo->base.resv);
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/ttm/ttm_execbuf_util.c b/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-index 957ec375a4ba..861c4145b462 100644
---- a/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-+++ b/drivers/gpu/drm/ttm/ttm_execbuf_util.c
-@@ -39,7 +39,7 @@ static void ttm_eu_backoff_reservation_reverse(struct list_head *list,
- 	list_for_each_entry_continue_reverse(entry, list, head) {
- 		struct ttm_buffer_object *bo = entry->bo;
- 
--		reservation_object_unlock(bo->resv);
-+		reservation_object_unlock(bo->base.resv);
- 	}
- }
- 
-@@ -71,7 +71,7 @@ void ttm_eu_backoff_reservation(struct ww_acquire_ctx *ticket,
- 
- 		if (list_empty(&bo->lru))
- 			ttm_bo_add_to_lru(bo);
--		reservation_object_unlock(bo->resv);
-+		reservation_object_unlock(bo->base.resv);
- 	}
- 	spin_unlock(&glob->lru_lock);
- 
-@@ -114,7 +114,7 @@ int ttm_eu_reserve_buffers(struct ww_acquire_ctx *ticket,
- 
- 		ret = __ttm_bo_reserve(bo, intr, (ticket == NULL), ticket);
- 		if (!ret && unlikely(atomic_read(&bo->cpu_writers) > 0)) {
--			reservation_object_unlock(bo->resv);
-+			reservation_object_unlock(bo->base.resv);
- 
- 			ret = -EBUSY;
- 
-@@ -130,7 +130,7 @@ int ttm_eu_reserve_buffers(struct ww_acquire_ctx *ticket,
- 			if (!entry->num_shared)
- 				continue;
- 
--			ret = reservation_object_reserve_shared(bo->resv,
-+			ret = reservation_object_reserve_shared(bo->base.resv,
- 								entry->num_shared);
- 			if (!ret)
- 				continue;
-@@ -144,16 +144,16 @@ int ttm_eu_reserve_buffers(struct ww_acquire_ctx *ticket,
- 
- 		if (ret == -EDEADLK) {
- 			if (intr) {
--				ret = ww_mutex_lock_slow_interruptible(&bo->resv->lock,
-+				ret = ww_mutex_lock_slow_interruptible(&bo->base.resv->lock,
- 								       ticket);
- 			} else {
--				ww_mutex_lock_slow(&bo->resv->lock, ticket);
-+				ww_mutex_lock_slow(&bo->base.resv->lock, ticket);
- 				ret = 0;
- 			}
- 		}
- 
- 		if (!ret && entry->num_shared)
--			ret = reservation_object_reserve_shared(bo->resv,
-+			ret = reservation_object_reserve_shared(bo->base.resv,
- 								entry->num_shared);
- 
- 		if (unlikely(ret != 0)) {
-@@ -201,14 +201,14 @@ void ttm_eu_fence_buffer_objects(struct ww_acquire_ctx *ticket,
- 	list_for_each_entry(entry, list, head) {
- 		bo = entry->bo;
- 		if (entry->num_shared)
--			reservation_object_add_shared_fence(bo->resv, fence);
-+			reservation_object_add_shared_fence(bo->base.resv, fence);
+ 			fence = radeon_copy_blit(rdev, gtt_addr, vram_addr,
+ 						 size / RADEON_GPU_PAGE_SIZE,
+-						 vram_obj->tbo.resv);
++						 vram_obj->tbo.base.resv);
+ 		if (IS_ERR(fence)) {
+ 			DRM_ERROR("Failed GTT->VRAM copy %d\n", i);
+ 			r = PTR_ERR(fence);
+@@ -171,11 +171,11 @@ static void radeon_do_test_moves(struct radeon_device *rdev, int flag)
+ 		if (ring == R600_RING_TYPE_DMA_INDEX)
+ 			fence = radeon_copy_dma(rdev, vram_addr, gtt_addr,
+ 						size / RADEON_GPU_PAGE_SIZE,
+-						vram_obj->tbo.resv);
++						vram_obj->tbo.base.resv);
  		else
--			reservation_object_add_excl_fence(bo->resv, fence);
-+			reservation_object_add_excl_fence(bo->base.resv, fence);
- 		if (list_empty(&bo->lru))
- 			ttm_bo_add_to_lru(bo);
- 		else
- 			ttm_bo_move_to_lru_tail(bo, NULL);
--		reservation_object_unlock(bo->resv);
-+		reservation_object_unlock(bo->base.resv);
+ 			fence = radeon_copy_blit(rdev, vram_addr, gtt_addr,
+ 						 size / RADEON_GPU_PAGE_SIZE,
+-						 vram_obj->tbo.resv);
++						 vram_obj->tbo.base.resv);
+ 		if (IS_ERR(fence)) {
+ 			DRM_ERROR("Failed VRAM->GTT copy %d\n", i);
+ 			r = PTR_ERR(fence);
+diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/radeon/radeon_ttm.c
+index f43ff0e0641d..35ac75a11d38 100644
+--- a/drivers/gpu/drm/radeon/radeon_ttm.c
++++ b/drivers/gpu/drm/radeon/radeon_ttm.c
+@@ -244,7 +244,7 @@ static int radeon_move_blit(struct ttm_buffer_object *bo,
+ 	BUILD_BUG_ON((PAGE_SIZE % RADEON_GPU_PAGE_SIZE) != 0);
+ 
+ 	num_pages = new_mem->num_pages * (PAGE_SIZE / RADEON_GPU_PAGE_SIZE);
+-	fence = radeon_copy(rdev, old_start, new_start, num_pages, bo->resv);
++	fence = radeon_copy(rdev, old_start, new_start, num_pages, bo->base.resv);
+ 	if (IS_ERR(fence))
+ 		return PTR_ERR(fence);
+ 
+diff --git a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/radeon_uvd.c
+index ff4f794d1c86..311e69c2ed7f 100644
+--- a/drivers/gpu/drm/radeon/radeon_uvd.c
++++ b/drivers/gpu/drm/radeon/radeon_uvd.c
+@@ -477,7 +477,7 @@ static int radeon_uvd_cs_msg(struct radeon_cs_parser *p, struct radeon_bo *bo,
+ 		return -EINVAL;
  	}
- 	spin_unlock(&glob->lru_lock);
- 	if (ticket)
-diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm_tt.c
-index e3a0691582ff..00b4a3337840 100644
---- a/drivers/gpu/drm/ttm/ttm_tt.c
-+++ b/drivers/gpu/drm/ttm/ttm_tt.c
-@@ -48,7 +48,7 @@ int ttm_tt_create(struct ttm_buffer_object *bo, bool zero_alloc)
- 	struct ttm_bo_device *bdev = bo->bdev;
- 	uint32_t page_flags = 0;
  
--	reservation_object_assert_held(bo->resv);
-+	reservation_object_assert_held(bo->base.resv);
+-	f = reservation_object_get_excl(bo->tbo.resv);
++	f = reservation_object_get_excl(bo->tbo.base.resv);
+ 	if (f) {
+ 		r = radeon_fence_wait((struct radeon_fence *)f, false);
+ 		if (r) {
+diff --git a/drivers/gpu/drm/radeon/radeon_vm.c b/drivers/gpu/drm/radeon/radeon_vm.c
+index 8512b02e9583..e48a05533126 100644
+--- a/drivers/gpu/drm/radeon/radeon_vm.c
++++ b/drivers/gpu/drm/radeon/radeon_vm.c
+@@ -702,7 +702,7 @@ int radeon_vm_update_page_directory(struct radeon_device *rdev,
+ 	if (ib.length_dw != 0) {
+ 		radeon_asic_vm_pad_ib(rdev, &ib);
  
- 	if (bdev->need_dma32)
- 		page_flags |= TTM_PAGE_FLAG_DMA32;
+-		radeon_sync_resv(rdev, &ib.sync, pd->tbo.resv, true);
++		radeon_sync_resv(rdev, &ib.sync, pd->tbo.base.resv, true);
+ 		WARN_ON(ib.length_dw > ndw);
+ 		r = radeon_ib_schedule(rdev, &ib, NULL, false);
+ 		if (r) {
+@@ -830,8 +830,8 @@ static int radeon_vm_update_ptes(struct radeon_device *rdev,
+ 		uint64_t pte;
+ 		int r;
+ 
+-		radeon_sync_resv(rdev, &ib->sync, pt->tbo.resv, true);
+-		r = reservation_object_reserve_shared(pt->tbo.resv, 1);
++		radeon_sync_resv(rdev, &ib->sync, pt->tbo.base.resv, true);
++		r = reservation_object_reserve_shared(pt->tbo.base.resv, 1);
+ 		if (r)
+ 			return r;
+ 
 -- 
 2.18.1
 
