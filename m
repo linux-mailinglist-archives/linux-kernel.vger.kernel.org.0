@@ -2,64 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D31627F4F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C8D7F4F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391482AbfHBKW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:22:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49648 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731757AbfHBKW2 (ORCPT
+        id S2391274AbfHBKYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:24:43 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:16789 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731757AbfHBKYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:22:28 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1htUhc-0001k3-1s; Fri, 02 Aug 2019 10:22:24 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][net-next] net/mlx5: remove self-assignment on esw->dev
-Date:   Fri,  2 Aug 2019 11:22:23 +0100
-Message-Id: <20190802102223.26198-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 2 Aug 2019 06:24:43 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x72AO3Rx020587;
+        Fri, 2 Aug 2019 19:24:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x72AO3Rx020587
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564741444;
+        bh=n/3z6sxaqwSze/Hh8Zph16qQQC76psZH8+GynZc23WU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tGiZVQqGT7EqYbksnJJ0djQ5kZhKsAl/+vab7Wy8U+yKjVTrRKoHaDI+QP9sq5OYa
+         jermtuapMlHk1J6BG8rwxv2QXg127jtU8atuvbbB+8PLq56Zi6Lo11vN4xiUlMiz58
+         0BIi4Ko7jIkHz/nGl0UUd8kEMjj1pQivGz5wgufwxqmF2ogYB1Ir2qfTTdtYI0rlnn
+         9R7ZZC16GSllBQWoeVaNDR32oj4c0aniNu0viO+JFxr9HunUsH7LYocSzQVbT4s4vB
+         AeCRdlgDh7j1EBp30qtMksy2E1Aoy11WAJQazcet0kjn1W7cK69FY8Pqp9+5SUTLKM
+         FT+z6Pbgw/5AA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Don Brace <don.brace@microsemi.com>,
+        Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: revive single target %.ko
+Date:   Fri,  2 Aug 2019 19:23:58 +0900
+Message-Id: <20190802102358.28408-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+I removed the single target %.ko in commit ff9b45c55b26 ("kbuild:
+modpost: read modules.order instead of $(MODVERDIR)/*.mod") because
+the modpost stage does not work reliably. For instance, the module
+dependency, modversion, etc. do not work if we lack symbol information
+from the other modules.
 
-There is a self assignment of esw->dev to itself, clean this up by
-removing it.
+Yet, some people still want to build only one module in their interest,
+and it may be still useful if it is used within those limitations.
 
-Addresses-Coverity: ("Self assignment")
-Fixes: 6cedde451399 ("net/mlx5: E-Switch, Verify support QoS element type")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: ff9b45c55b26 ("kbuild: modpost: read modules.order instead of $(MODVERDIR)/*.mod")
+Reported-by: Don Brace <don.brace@microsemi.com>
+Reported-by: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-index f4ace5f8e884..de0894b695e3 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1413,7 +1413,7 @@ static int esw_vport_egress_config(struct mlx5_eswitch *esw,
+ Makefile | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 571cf862d7a4..e4c7211f5a3b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -997,6 +997,8 @@ endif
  
- static bool element_type_supported(struct mlx5_eswitch *esw, int type)
- {
--	struct mlx5_core_dev *dev = esw->dev = esw->dev;
-+	struct mlx5_core_dev *dev = esw->dev;
+ PHONY += prepare0
  
- 	switch (type) {
- 	case SCHEDULING_CONTEXT_ELEMENT_TYPE_TSAR:
++export MODORDER := $(if $(KBUILD_EXTMOD),$(KBUILD_EXTMOD)/)modules.order
++
+ ifeq ($(KBUILD_EXTMOD),)
+ core-y		+= kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
+ 
+@@ -1766,6 +1768,10 @@ build-dir = $(patsubst %/,%,$(dir $(build-target)))
+ 	$(Q)$(MAKE) $(build)=$(build-dir) $(build-target)
+ %.symtypes: prepare FORCE
+ 	$(Q)$(MAKE) $(build)=$(build-dir) $(build-target)
++%.ko: prepare FORCE
++	$(Q)$(MAKE) $(build)=$(build-dir) $(build-target:.ko=.mod)
++	$(Q)echo $(build-target) > $(MODORDER)
++	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost || { rm -f $(MODORDER); false; }
+ 
+ # Modules
+ PHONY += /
 -- 
-2.20.1
+2.17.1
 
