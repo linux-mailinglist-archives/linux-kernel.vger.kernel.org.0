@@ -2,94 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2387C7F9A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 575167F9A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394647AbfHBN0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:26:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37558 "EHLO mail.kernel.org"
+        id S2394804AbfHBN2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:28:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391370AbfHBN0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:26:46 -0400
+        id S2394606AbfHBN0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:26:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FA29217D6;
-        Fri,  2 Aug 2019 13:26:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D5542182B;
+        Fri,  2 Aug 2019 13:26:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752405;
-        bh=hWwEHFuevGp1O7an+MVFFfzJVMbNQ41keR2NXr10SIc=;
+        s=default; t=1564752406;
+        bh=VVxsq61HM4FJq2hk/9dtNslDpOfsR3HIn+5Rc34ofNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c+QoTHzTbh5++AE5jbpS11QysDfenol8cqkBR0DhgAlcDR9ZveA/6Vgd4OL/yerOj
-         IVr04VnHAw6BjCyrnyaSz09zh52OAqJQ7JjWVpGpXDBrpKxtXvVVyUcyREdzHUN3fM
-         AjUVpnSuABsGnzyuMtSO6iJkwAAE785PzztW9mDM=
+        b=IvXhXHoiUJmjm7JEdyTN6zkLDmK8YDSaMeNedYcd/wscujJa4O9W2/HK2sdEwOHr+
+         qHiSYAng6Aj39Zw0fxoxpQ9MNHN4/Oo6MECnt4SB3joyF7Jlmm5S4GGviH/MiZhCOb
+         RurBjTIv4dMexqcgvcZds0thVQPc67jPh+1GftDA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Norris <briannorris@chromium.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 03/17] mac80211: don't warn about CW params when not using them
-Date:   Fri,  2 Aug 2019 09:26:20 -0400
-Message-Id: <20190802132635.14885-3-sashal@kernel.org>
+Cc:     =?UTF-8?q?Bj=C3=B6rn=20Gerhart?= <gerhart@posteo.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 04/17] hwmon: (nct6775) Fix register address and added missed tolerance for nct6106
+Date:   Fri,  2 Aug 2019 09:26:21 -0400
+Message-Id: <20190802132635.14885-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802132635.14885-1-sashal@kernel.org>
 References: <20190802132635.14885-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Björn Gerhart <gerhart@posteo.de>
 
-[ Upstream commit d2b3fe42bc629c2d4002f652b3abdfb2e72991c7 ]
+[ Upstream commit f3d43e2e45fd9d44ba52d20debd12cd4ee9c89bf ]
 
-ieee80211_set_wmm_default() normally sets up the initial CW min/max for
-each queue, except that it skips doing this if the driver doesn't
-support ->conf_tx. We still end up calling drv_conf_tx() in some cases
-(e.g., ieee80211_reconfig()), which also still won't do anything
-useful...except it complains here about the invalid CW parameters.
+Fixed address of third NCT6106_REG_WEIGHT_DUTY_STEP, and
+added missed NCT6106_REG_TOLERANCE_H.
 
-Let's just skip the WARN if we weren't going to do anything useful with
-the parameters.
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Link: https://lore.kernel.org/r/20190718015712.197499-1-briannorris@chromium.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 6c009501ff200 ("hwmon: (nct6775) Add support for NCT6102D/6106D")
+Signed-off-by: Bjoern Gerhart <gerhart@posteo.de>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/driver-ops.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/hwmon/nct6775.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/mac80211/driver-ops.c b/net/mac80211/driver-ops.c
-index c258f1041d330..df2e4e3112177 100644
---- a/net/mac80211/driver-ops.c
-+++ b/net/mac80211/driver-ops.c
-@@ -169,11 +169,16 @@ int drv_conf_tx(struct ieee80211_local *local,
- 	if (!check_sdata_in_driver(sdata))
- 		return -EIO;
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index d3c6115f16b90..db38dff3f9867 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -696,7 +696,7 @@ static const u16 NCT6106_REG_TARGET[] = { 0x111, 0x121, 0x131 };
+ static const u16 NCT6106_REG_WEIGHT_TEMP_SEL[] = { 0x168, 0x178, 0x188 };
+ static const u16 NCT6106_REG_WEIGHT_TEMP_STEP[] = { 0x169, 0x179, 0x189 };
+ static const u16 NCT6106_REG_WEIGHT_TEMP_STEP_TOL[] = { 0x16a, 0x17a, 0x18a };
+-static const u16 NCT6106_REG_WEIGHT_DUTY_STEP[] = { 0x16b, 0x17b, 0x17c };
++static const u16 NCT6106_REG_WEIGHT_DUTY_STEP[] = { 0x16b, 0x17b, 0x18b };
+ static const u16 NCT6106_REG_WEIGHT_TEMP_BASE[] = { 0x16c, 0x17c, 0x18c };
+ static const u16 NCT6106_REG_WEIGHT_DUTY_BASE[] = { 0x16d, 0x17d, 0x18d };
  
--	if (WARN_ONCE(params->cw_min == 0 ||
--		      params->cw_min > params->cw_max,
--		      "%s: invalid CW_min/CW_max: %d/%d\n",
--		      sdata->name, params->cw_min, params->cw_max))
-+	if (params->cw_min == 0 || params->cw_min > params->cw_max) {
-+		/*
-+		 * If we can't configure hardware anyway, don't warn. We may
-+		 * never have initialized the CW parameters.
-+		 */
-+		WARN_ONCE(local->ops->conf_tx,
-+			  "%s: invalid CW_min/CW_max: %d/%d\n",
-+			  sdata->name, params->cw_min, params->cw_max);
- 		return -EINVAL;
-+	}
- 
- 	trace_drv_conf_tx(local, sdata, ac, params);
- 	if (local->ops->conf_tx)
+@@ -3478,6 +3478,7 @@ static int nct6775_probe(struct platform_device *pdev)
+ 		data->REG_FAN_TIME[0] = NCT6106_REG_FAN_STOP_TIME;
+ 		data->REG_FAN_TIME[1] = NCT6106_REG_FAN_STEP_UP_TIME;
+ 		data->REG_FAN_TIME[2] = NCT6106_REG_FAN_STEP_DOWN_TIME;
++		data->REG_TOLERANCE_H = NCT6106_REG_TOLERANCE_H;
+ 		data->REG_PWM[0] = NCT6106_REG_PWM;
+ 		data->REG_PWM[1] = NCT6106_REG_FAN_START_OUTPUT;
+ 		data->REG_PWM[2] = NCT6106_REG_FAN_STOP_OUTPUT;
 -- 
 2.20.1
 
