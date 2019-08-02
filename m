@@ -2,71 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E51827E79C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 03:46:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EE497E79E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 03:46:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731944AbfHBBqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 21:46:42 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44849 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731827AbfHBBqm (ORCPT
+        id S1732087AbfHBBqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 21:46:49 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36761 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731827AbfHBBqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 21:46:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id t16so35075850pfe.11;
-        Thu, 01 Aug 2019 18:46:42 -0700 (PDT)
+        Thu, 1 Aug 2019 21:46:49 -0400
+Received: by mail-pl1-f195.google.com with SMTP id k8so33000998plt.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 18:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wLrJwcUbAlAZBvbLYx5iZ6fkS9RVbU5U/+b/jH7b5PI=;
-        b=dEBoBePzfzEAhlohTUW9iv6gMd3sE9fXz9Wn6KwHsE/wNdj6o4DM9/n8xD0pqwaxmx
-         PJCtAfjmOuT90vUfaVevnw8d9x7lGTb+5EtyWtxhUrLdxMxuU8UjO63cjpfLE31IXkUQ
-         b+KcYlMnDTTU3qYOZW7engjNYstR37BH6FxddN9NGyo0MMumNcvaWGSFMfQTDBD7veAS
-         sN3IaDtkz5/7FatGlRuJtOjtrXXUOJ3t9MMUQEV83ZS7QWeMEDL2excVRKfDm9bFwz/q
-         2IHO5ncJfLyVGkhJBAeDJOwIjai9euQmFI2c6g2k835SKCIAte4uf9meWK81ogfW8yT1
-         UoXg==
+        bh=RdectgfrxPnoPm3S0YOxCABzXoqfRDNzFQDiE47h5Vs=;
+        b=TY09FB3oduRwswYsXlYBN0hfEOMZHFs67R2ix0H5rE97soa1j1YHKiUNwyGO44M/iy
+         71RT+aJ+oTzpdw0MwKYvn838kra3RTwW/eVouela+oW6XdLugu8NldyRHn2jobIy9+sw
+         uEXhwwG/CSZu+Vl38cCE9vKx9mW7ALXIlbJsRSNOiia1rlqm6z7cjst19uwYaxDOFQeP
+         yL/PUuRJ1PK4xPW4SZ8OvgF3Y26kOO5vfzh3dwqduAFc0+/fhC4nGRQmB5TOuTz0U2c/
+         0JzVNwo9IAVDqP8B48B5HpUQTieRFKYP7ANZUWv0E+DOfyIi3bPRZgrvOd3FoWszir5B
+         v5KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wLrJwcUbAlAZBvbLYx5iZ6fkS9RVbU5U/+b/jH7b5PI=;
-        b=Q/VSFnsGFc+OlxqZrH3XOvhLGka4GEhVS1e+moXyj2p8W4EtL/t+WMakkDl6/4fsaB
-         Wx+C6V1ny75DdxdlMV8BaMj+xBo1psTaVm9NNARBvpuWw0PPqDx7Kw53GHGX6B5K4spB
-         xedhSNexWdZDQWCnORoXl9CLDIqPVzEORQ+5MY+eS1BqSGvcstsLh5LiPVcNoDdbwZ32
-         CrK6GDAEUdR3xZGQz7diOnGEwNz5Z69pqk0oR3PQ9BOG+7Br2SmJQ7bYs6qtnRes/usB
-         eY12/KR6NwkDc5VI5jzhIw08AX74mzn7S5yH0/S7hu/kcBnyv9+k2fkgEXqzDDG2/6tI
-         /EfA==
-X-Gm-Message-State: APjAAAW8nFZ4YNeEmZ5BrPJ7c6So++xwipc09SMxa7HeyoYdjrq1SddV
-        ecfwMddkK5FHNssvPWknA3w=
-X-Google-Smtp-Source: APXvYqyz72H3jw23ZXyhl3tD28HFBu/J0BdHnsqDx2ZON6i6f+7lLXHmHArzMJBLvP1GkXbUCBbFxg==
-X-Received: by 2002:a63:5550:: with SMTP id f16mr10691565pgm.426.1564710401658;
-        Thu, 01 Aug 2019 18:46:41 -0700 (PDT)
+        bh=RdectgfrxPnoPm3S0YOxCABzXoqfRDNzFQDiE47h5Vs=;
+        b=Frx5ETomP0Cml5L3bV0nDhPDPwi32ZSZ/kpVE6gCaUG7BN4cVG5b8lpxb1OfrciapY
+         pRA6s7QojVXwPCZUAVfGEwT+V1bzP0DHulcbH/ZIcir+9RzpS0Q/tS3Hd27Ra+xHO5UC
+         ylhbeQx69goYnUGCqX+0Oq3SHF79CYmsMQtGWekQFZ7V7gR3znZpeP/P9UxHGkTZJPyB
+         k4hvgaHBvcRI1z9l6ilQ3B5WOyI5eE08nO71Iup60SA9pje/hT6iizIvYE+vYoOO4sAO
+         FPZ7Gi09w9hrP8AjbGaRWhkg07dI3j4AtlObVdoBBd3eAHZXThdTh5ioGYd5nActIbC8
+         v41w==
+X-Gm-Message-State: APjAAAVOF2B3zhZeGwZE0YubgDU9tgUIXk08g6pCKP5izv41o/iT/nEs
+        sPk1GrCzqHUr2cgKhZ5brLI=
+X-Google-Smtp-Source: APXvYqz6v2LAs+vWsP5Ju77kwgKl89h9PYXGlo3CLDM3qT09S/MYoeAP/LE5J4NH3n4L///VC5y3Uw==
+X-Received: by 2002:a17:902:324:: with SMTP id 33mr125126557pld.340.1564710408379;
+        Thu, 01 Aug 2019 18:46:48 -0700 (PDT)
 Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id r15sm79474631pfh.121.2019.08.01.18.46.35
+        by smtp.gmail.com with ESMTPSA id 5sm6703488pgh.93.2019.08.01.18.46.45
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 18:46:40 -0700 (PDT)
+        Thu, 01 Aug 2019 18:46:47 -0700 (PDT)
 From:   Chuhong Yuan <hslester96@gmail.com>
 Cc:     Christoph Hellwig <hch@lst.de>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Robin Murphy <robin.murphy@arm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-pm@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2 00/10] Replace strncmp with str_has_prefix
-Date:   Fri,  2 Aug 2019 09:46:18 +0800
-Message-Id: <20190802014617.8623-1-hslester96@gmail.com>
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v2 01/10] dma: debug: Replace strncmp with str_has_prefix
+Date:   Fri,  2 Aug 2019 09:46:43 +0800
+Message-Id: <20190802014643.8681-1-hslester96@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -76,56 +63,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 72921427d46b
-("string.h: Add str_has_prefix() helper function")
-introduced str_has_prefix() to substitute error-prone
-strncmp(str, const, len).
+strncmp(str, const, len) is error-prone because len
+is easy to have typo.
+The example is the hard-coded len has counting error
+or sizeof(const) forgets - 1.
+So we prefer using newly introduced str_has_prefix
+to substitute such strncmp.
 
-strncmp(str, const, len) is easy to have error in len
-because of counting error or sizeof(const) without - 1.
-
-These patches replace such pattern with str_has_prefix()
-to avoid hard coded constant length and sizeof.
-
-Besides, str_has_prefix() returns the length of prefix
-when the comparison returns true.
-We can use this return value to substitute some hard-coding.
-
-Changelog:
-
-v1 -> v2:
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+Changes in v2:
   - Revise the description.
-  - Use the return value of str_has_prefix() to eliminate
-    hard coding.
-  - Remove possible false positives and add newly detected
-    one in upstream.
 
-Chuhong Yuan (10):
-  dma: debug: Replace strncmp with str_has_prefix
-  gcov: Replace strncmp with str_has_prefix
-  locking/locktorture: Replace strncmp with str_has_prefix
-  module: Replace strncmp with str_has_prefix
-  PM / sleep: Replace strncmp with str_has_prefix
-  printk: Replace strncmp with str_has_prefix
-  reboot: Replace strncmp with str_has_prefix
-  sched: Replace strncmp with str_has_prefix
-  userns: Replace strncmp with str_has_prefix
-  watchdog: Replace strncmp with str_has_prefix
+ kernel/dma/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- kernel/dma/debug.c           |  2 +-
- kernel/gcov/fs.c             |  2 +-
- kernel/locking/locktorture.c |  8 ++++----
- kernel/module.c              |  2 +-
- kernel/power/main.c          |  2 +-
- kernel/printk/braille.c      | 10 ++++++----
- kernel/printk/printk.c       | 14 ++++++++------
- kernel/reboot.c              |  6 ++++--
- kernel/sched/debug.c         |  5 +++--
- kernel/sched/isolation.c     |  9 +++++----
- kernel/user_namespace.c      | 10 +++++-----
- kernel/watchdog.c            |  8 ++++----
- 12 files changed, 43 insertions(+), 35 deletions(-)
-
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index 099002d84f46..0f9e1aba3e1a 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -970,7 +970,7 @@ static __init int dma_debug_cmdline(char *str)
+ 	if (!str)
+ 		return -EINVAL;
+ 
+-	if (strncmp(str, "off", 3) == 0) {
++	if (str_has_prefix(str, "off")) {
+ 		pr_info("debugging disabled on kernel command line\n");
+ 		global_disable = true;
+ 	}
 -- 
 2.20.1
 
