@@ -2,120 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 748E07FF33
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 19:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8FCD7FF3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 19:06:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404002AbfHBREt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 13:04:49 -0400
-Received: from foss.arm.com ([217.140.110.172]:55210 "EHLO foss.arm.com"
+        id S2404169AbfHBRGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 13:06:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731663AbfHBREt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 13:04:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A9D2344;
-        Fri,  2 Aug 2019 10:04:48 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 983793F575;
-        Fri,  2 Aug 2019 10:04:47 -0700 (PDT)
-Subject: Re: [PATCH v2 03/24] EDAC, ghes: Remove pvt->detail_location string
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190624150758.6695-1-rrichter@marvell.com>
- <20190624150758.6695-4-rrichter@marvell.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <abbab8fd-d87e-d37d-b077-9f43474beaf8@arm.com>
-Date:   Fri, 2 Aug 2019 18:04:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2403954AbfHBRGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 13:06:04 -0400
+Received: from localhost (unknown [106.51.106.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0DE220644;
+        Fri,  2 Aug 2019 17:06:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564765563;
+        bh=zyFQjXyh3QHHzXm6u/m7sXjNjCXkfXoAXKp3IdMcjwk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FZi0aW7hN7atOO49xnVUT7RbRhGIanyxnc5VBG93AS4P3SJ0v/zGLXClQD8S2xJ6z
+         PCJDaMZtexuQbRv6gDsfqWaxRMC7juiESX4QHIRZZO3uGxw5lu0D6fVOOTnDdmcOKn
+         BbpDXMIhg1sJyGfUHJ+ocJxX/PhdGY9uzxb98+h0=
+Date:   Fri, 2 Aug 2019 22:34:50 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+        alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        broonie@kernel.org, srinivas.kandagatla@linaro.org,
+        jank@cadence.com, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [alsa-devel] [RFC PATCH 21/40] soundwire: export helpers to find
+ row and column values
+Message-ID: <20190802170450.GY12733@vkoul-mobl.Dlink>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-22-pierre-louis.bossart@linux.intel.com>
+ <20190726144325.GH16003@ubuntu>
+ <d6268a75-b38c-aee5-0463-af8b602286bb@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190624150758.6695-4-rrichter@marvell.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6268a75-b38c-aee5-0463-af8b602286bb@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
-
-On 24/06/2019 16:08, Robert Richter wrote:
-> The detail_location[] string in struct ghes_edac_pvt is complete
-> useless and data is just copied around. Put everything into
-> e->other_detail from the beginning.
+On 26-07-19, 10:26, Pierre-Louis Bossart wrote:
 > 
-> Signed-off-by: Robert Richter <rrichter@marvell.com>
-> ---
+> 
+> On 7/26/19 9:43 AM, Guennadi Liakhovetski wrote:
+> > On Thu, Jul 25, 2019 at 06:40:13PM -0500, Pierre-Louis Bossart wrote:
+> > > Add a prefix for common tables and export 2 helpers to set the frame
+> > > shapes based on row/col values.
+> > > 
+> > > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> > > ---
+> > >   drivers/soundwire/bus.h    |  7 +++++--
+> > >   drivers/soundwire/stream.c | 14 ++++++++------
+> > >   2 files changed, 13 insertions(+), 8 deletions(-)
+> > > 
+> > > diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
+> > > index 06ac4adb0074..c57c9c23f6ca 100644
+> > > --- a/drivers/soundwire/bus.h
+> > > +++ b/drivers/soundwire/bus.h
+> > > @@ -73,8 +73,11 @@ struct sdw_msg {
+> > >   #define SDW_DOUBLE_RATE_FACTOR		2
+> > > -extern int rows[SDW_FRAME_ROWS];
+> > > -extern int cols[SDW_FRAME_COLS];
+> > > +extern int sdw_rows[SDW_FRAME_ROWS];
+> > > +extern int sdw_cols[SDW_FRAME_COLS];
+> > 
+> > So these arrays actually have to be exported? In the current (5.2) sources they
+> > seem to only be used in stream.c, maybe make them static there?
+> > 
+> > > +
+> > > +int sdw_find_row_index(int row);
+> > > +int sdw_find_col_index(int col);
+> 
+> yes, they need to be exported, they are used by the allocation algorithm (in
+> Patch 27).
+> Others will need this for non-Intel solutions, it's really a part of the
+> standard definition and should be shared.
+> I can improve the commit message to make this explicit.
 
+Yes that would help! And also move it to before it's usage so it clear
+that it is used in next one.
 
-> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-> index d095d98d6a8d..049de73c3bad 100644
-> --- a/drivers/edac/ghes_edac.c
-> +++ b/drivers/edac/ghes_edac.c
-> @@ -21,8 +21,7 @@ struct ghes_edac_pvt {
->  	struct mem_ctl_info *mci;
->  
->  	/* Buffers for the error handling routine */
-> -	char detail_location[240];
-> -	char other_detail[160];
-> +	char other_detail[400];
->  	char msg[80];
->  };
->  
-> @@ -224,13 +223,14 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  	e->error_count = 1;
->  	e->grain = 1;
->  	strcpy(e->label, "unknown label");
-> -	e->msg = pvt->msg;
-> -	e->other_detail = pvt->other_detail;
->  	e->top_layer = -1;
->  	e->mid_layer = -1;
->  	e->low_layer = -1;
-> -	*pvt->other_detail = '\0';
-> +	e->msg = pvt->msg;
-> +	e->other_detail = pvt->other_detail;
-> +
->  	*pvt->msg = '\0';
-> +	*pvt->other_detail = '\0';
->  
->  	switch (sev) {
->  	case GHES_SEV_CORRECTED:
-> @@ -361,6 +361,8 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  
->  	/* All other fields are mapped on e->other_detail */
->  	p = pvt->other_detail;
-> +	p += snprintf(p, sizeof(pvt->other_detail),
-> +		"APEI location: %s ", e->location);
->  	if (mem_err->validation_bits & CPER_MEM_VALID_ERROR_STATUS) {
->  		u64 status = mem_err->error_status;
->  
-> @@ -443,12 +445,10 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  	grain_bits = fls_long(e->grain - 1);
->  
->  	/* Generate the trace event */
-> -	snprintf(pvt->detail_location, sizeof(pvt->detail_location),
-> -		 "APEI location: %s %s", e->location, e->other_detail);
->  	trace_mc_event(type, e->msg, e->label, e->error_count,
->  		       mci->mc_idx, e->top_layer, e->mid_layer, e->low_layer,
->  		       (e->page_frame_number << PAGE_SHIFT) | e->offset_in_page,
-> -		       grain_bits, e->syndrome, pvt->detail_location);
-> +		       grain_bits, e->syndrome, e->other_detail);
->  
->  	edac_raw_mc_handle_error(type, mci, e);
->  	spin_unlock_irqrestore(&ghes_lock, flags);
-
-After a game of spot-the-difference: you added a newline.
-Reviewed-by: James Morse <james.morse@arm.com>
-
-Previously here:
-https://lore.kernel.org/linux-edac/7017c91e-8923-c8d2-26ca-875328ab855a@arm.com/
-
-Please pick up tags when posting a new version.
-
-
-Thanks,
-
-James
+-- 
+~Vinod
