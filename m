@@ -2,147 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85C367F6C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:24:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF4447F6C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388835AbfHBMYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:24:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:45793 "EHLO ozlabs.org"
+        id S2389054AbfHBM00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:26:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729422AbfHBMYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:24:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S2388599AbfHBM00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:26:26 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 460RDj5TGBz9sDB;
-        Fri,  2 Aug 2019 22:24:37 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v2] PCI: rpaphp: Avoid a sometimes-uninitialized warning
-In-Reply-To: <20190802001102.GG151852@google.com>
-References: <20190603174323.48251-1-natechancellor@gmail.com> <20190603221157.58502-1-natechancellor@gmail.com> <20190722024313.GB55142@archlinux-threadripper> <87lfwq7lzb.fsf@concordia.ellerman.id.au> <20190802001102.GG151852@google.com>
-Date:   Fri, 02 Aug 2019 22:24:36 +1000
-Message-ID: <87v9vfkb5n.fsf@concordia.ellerman.id.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id BC0FE216C8;
+        Fri,  2 Aug 2019 12:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564748785;
+        bh=kIIZtblZbuCqo9WjiJ5UtNU7pGxfSPAyt6llS1XpeDA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1i6+doQ/3AOnD2X9uXKlqS4o84ghqoa7PcKwYwDLDHYODITX9nuK5skmW84+YeBUY
+         X+OnOcBA3HtRVTfvUMIQmdCA0VxUiCbWGwhxlewdEGFsp6g9WXI7KcjdG4uVWn7Tzr
+         E2mU+rqr8v4Xrfrch4f+GW7oJJlFWcqm7yNG3x6U=
+Date:   Fri, 2 Aug 2019 14:26:23 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 4/4] serial: 8250: Don't check for mctrl_gpio_init()
+ returning -ENOSYS
+Message-ID: <20190802122623.GA25281@kroah.com>
+References: <20190802100349.8659-1-frieder.schrempf@kontron.de>
+ <20190802100349.8659-4-frieder.schrempf@kontron.de>
+ <20190802121555.dl6rpjphgaxdvcke@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190802121555.dl6rpjphgaxdvcke@pengutronix.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn Helgaas <helgaas@kernel.org> writes:
-> On Mon, Jul 22, 2019 at 02:05:12PM +1000, Michael Ellerman wrote:
->> Nathan Chancellor <natechancellor@gmail.com> writes:
->> > On Mon, Jun 03, 2019 at 03:11:58PM -0700, Nathan Chancellor wrote:
->> >> When building with -Wsometimes-uninitialized, clang warns:
->> >> 
->> >> drivers/pci/hotplug/rpaphp_core.c:243:14: warning: variable 'fndit' is
->> >> used uninitialized whenever 'for' loop exits because its condition is
->> >> false [-Wsometimes-uninitialized]
->> >>         for (j = 0; j < entries; j++) {
->> >>                     ^~~~~~~~~~~
->> >> drivers/pci/hotplug/rpaphp_core.c:256:6: note: uninitialized use occurs
->> >> here
->> >>         if (fndit)
->> >>             ^~~~~
->> >> drivers/pci/hotplug/rpaphp_core.c:243:14: note: remove the condition if
->> >> it is always true
->> >>         for (j = 0; j < entries; j++) {
->> >>                     ^~~~~~~~~~~
->> >> drivers/pci/hotplug/rpaphp_core.c:233:14: note: initialize the variable
->> >> 'fndit' to silence this warning
->> >>         int j, fndit;
->> >>                     ^
->> >>                      = 0
->> >> 
->> >> fndit is only used to gate a sprintf call, which can be moved into the
->> >> loop to simplify the code and eliminate the local variable, which will
->> >> fix this warning.
->> >> 
->> >> Link: https://github.com/ClangBuiltLinux/linux/issues/504
->> >> Fixes: 2fcf3ae508c2 ("hotplug/drc-info: Add code to search ibm,drc-info property")
->> >> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
->> >> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->> >> ---
->> >> 
->> >> v1 -> v2:
->> >> 
->> >> * Eliminate fndit altogether by shuffling the sprintf call into the for
->> >>   loop and changing the if conditional, as suggested by Nick.
->> >> 
->> >>  drivers/pci/hotplug/rpaphp_core.c | 18 +++++++-----------
->> >>  1 file changed, 7 insertions(+), 11 deletions(-)
->> >> 
->> >> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
->> >> index bcd5d357ca23..c3899ee1db99 100644
->> >> --- a/drivers/pci/hotplug/rpaphp_core.c
->> >> +++ b/drivers/pci/hotplug/rpaphp_core.c
->> >> @@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
->> >>  	struct of_drc_info drc;
->> >>  	const __be32 *value;
->> >>  	char cell_drc_name[MAX_DRC_NAME_LEN];
->> >> -	int j, fndit;
->> >> +	int j;
->> >>  
->> >>  	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
->> >>  	if (info == NULL)
->> >> @@ -245,17 +245,13 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
->> >>  
->> >>  		/* Should now know end of current entry */
->> >>  
->> >> -		if (my_index > drc.last_drc_index)
->> >> -			continue;
->> >> -
->> >> -		fndit = 1;
->> >> -		break;
->> >> +		/* Found it */
->> >> +		if (my_index <= drc.last_drc_index) {
->> >> +			sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
->> >> +				my_index);
->> >> +			break;
->> >> +		}
->> >>  	}
->> >> -	/* Found it */
->> >> -
->> >> -	if (fndit)
->> >> -		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
->> >> -			my_index);
->> >>  
->> >>  	if (((drc_name == NULL) ||
->> >>  	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
->> >> -- 
->> >> 2.22.0.rc3
->> >> 
->> >
->> > Hi all,
->> >
->> > Could someone please pick this up?
->> 
->> I'll take it.
->> 
->> I was expecting Bjorn to take it as a PCI patch, but I realise now that
->> I merged that code in the first place so may as well take this too.
->> 
->> I'll put it in my next branch once that opens next week.
->
-> Sorry, I should have done something with this.  Did you take it,
-> Michael?  I don't see it in -next and haven't figured out where to
-> look in your git tree, so I can't tell.  Just let me know either way
-> so I know whether to drop this or apply it.
+On Fri, Aug 02, 2019 at 02:15:55PM +0200, Uwe Kleine-König wrote:
+> On Fri, Aug 02, 2019 at 10:04:11AM +0000, Schrempf Frieder wrote:
+> > From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> > 
+> > Now that the mctrl_gpio code returns NULL instead of ERR_PTR(-ENOSYS)
+> > if CONFIG_GPIOLIB is disabled, we can safely remove this check.
+> > 
+> > Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> 
+> @greg: This patch doesn't depend on patch 2; ditto for patch 3. So only
+> taking patches 1, 3 and 4 should be fine. This way Frieder's v4 only
+> have to care for patch 2. (Assuming noone objects to 1, 3 and 4 of
+> course.)
 
-Yes I have it in my next-test, which will eventually become my next when
-I get time to rebase it, test and push etc:
+Sounds good, I'll do that, thanks.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/log/?h=next-test
-
-So no further action required on your part.
-
-cheers
+greg k-h
