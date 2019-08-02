@@ -2,186 +2,643 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71B5E7F5E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 13:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BF87F5E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 13:22:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392334AbfHBLVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 07:21:45 -0400
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:15764 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731327AbfHBLVp (ORCPT
+        id S2392349AbfHBLWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 07:22:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32822 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731327AbfHBLWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 07:21:45 -0400
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x72BIp3K020028;
-        Fri, 2 Aug 2019 04:21:30 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=proofpoint;
- bh=xIceUSo1Z6tqIOMoFigWZGYECzRz5X3zNzAIju9KkQ0=;
- b=copLnrWuym2GC3WRwXBZPjxc1f11Yers3dMDLijgmG5URFIIw4YNVoHTVqGphHN72gyW
- wGnMM4vujL8Itz/o9vyqAyO7eWAKdcFUCVSc4HBkNFHKcPo1LVMz7I20fNxIyHQaAu2C
- xA+xuoK70mvwlgPkFw6K1JDxmGbANQRUg/cSVSKjw2Q7HJA44/CaoQluGdm+ytQliads
- 0Xhgam1EcZA2ZACiPXK+isusdFJhmH1GFt7lzMkHdprmQH+h2FrIbYsQWxyayGq+yG3Q
- DOFJKRIVcpOMcTfuWbjC/CCbRsVQdo+OZmt7EtX8V6CGoVkSxnX4Dhs51LDYZepYepg4 VA== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=aniljoy@cadence.com
-Received: from nam01-sn1-obe.outbound.protection.outlook.com (mail-sn1nam01lp2057.outbound.protection.outlook.com [104.47.32.57])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2u49awa6c0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 02 Aug 2019 04:21:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AH2kW82gb2KJIwjikKDl3Jytos8S+bCvyEyLrofCUF/NvJKjNmLuoWFl+cemS9yLAUcy3mxLHfVR3/37wsfw5XbvEcA0BQx4yrZH8e+x0Su5z8g68SaBRLPz+PzWixR8DMjvZ184aUUVcWfGCgo8UntbQdPkKt4X9d/3ri1jA3bdMN9gHrfP0sNzrQ3iQNnmbc7m3c6nAJ/PYqfl2fJwiHXdgC67gmwSymz4B8fQ4N2fYZu8u8BRwRQkKY+GFiZHNL9RCWV5Wv9B+GiitAEc9vwPG8NmhIBub6N5/npeOkQR6YQrHZ9hvBcCPeHNQkimu6KGMa1n5Z8wfU+q0D9WoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xIceUSo1Z6tqIOMoFigWZGYECzRz5X3zNzAIju9KkQ0=;
- b=cdo0o3X5cGjrQwPVUpVWAFeASqaeuWHQEH8OfBqeP+q+fgiMQ4+8rgbBpLQd+d/TBabtQvud/8tnRuRS27AEWUyKjiqeTzhLPrrPFrlXas/UbYM8OONbZQp/cpTFF00Ckg/5gjYexWzvecMcnH+QejxviXJx6Nz7vcvhQdebUUlXQs16BN5JCXRtOs6DsQoLq0R/lmxJnKxB03ToK3/B77CrHBj5JoCRK9DkLQvt6G1YwobMpjeZZw6vXCfcVnRAN/eOznChcZc1yJ6IlPnOJ8Z3Px1kCeTO8bmXUbCj1l7Pu4OUIwKh2gdc2lzH4iPhN0FVqvJ4eIhX2Tjs64P1EQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=softfail (sender ip is
- 158.140.1.28) smtp.rcpttodomain=synopsys.com
- smtp.mailfrom=cadence.com;dmarc=fail (p=none sp=none pct=100) action=none
- header.from=cadence.com;dkim=none (message not signed);arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xIceUSo1Z6tqIOMoFigWZGYECzRz5X3zNzAIju9KkQ0=;
- b=gYGdpuUTtcfEeR+zdtJZ9BXnBjaHFZUq9EvXkYFYtQnRWQ1GX4c/NvKmr3trBx561tlz/qlTiJXEaY7j4sqHaP1YEJxWAwpSTsLMrShu2Mzf0m3t7fL0HVVw+9/5UTqiS3WLpZy+7LAKY/0gQZ6xgr7bCYJIuUsMFkv5ZUVwuo8=
-Received: from BYAPR07CA0026.namprd07.prod.outlook.com (2603:10b6:a02:bc::39)
- by SN6PR07MB4351.namprd07.prod.outlook.com (2603:10b6:805:57::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2136.12; Fri, 2 Aug
- 2019 11:21:28 +0000
-Received: from CO1NAM05FT059.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::207) by BYAPR07CA0026.outlook.office365.com
- (2603:10b6:a02:bc::39) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2115.13 via Frontend
- Transport; Fri, 2 Aug 2019 11:21:27 +0000
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx2.cadence.com (158.140.1.28) by
- CO1NAM05FT059.mail.protection.outlook.com (10.152.96.177) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.8 via Frontend Transport; Fri, 2 Aug 2019 11:21:27 +0000
-Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id x72BLNZQ016628
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Fri, 2 Aug 2019 04:21:24 -0700
-X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
-Received: from maileu3.global.cadence.com (10.160.88.99) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Fri, 2 Aug 2019 13:21:22 +0200
-Received: from lvlogina.cadence.com (10.165.176.102) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Fri, 2 Aug 2019 13:21:22 +0200
-Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x72BLMPI018989;
-        Fri, 2 Aug 2019 12:21:22 +0100
-Received: (from aniljoy@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x72BLHZV018821;
-        Fri, 2 Aug 2019 12:21:17 +0100
-From:   Anil Varughese <aniljoy@cadence.com>
-To:     <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
-        <pedrom.sousa@synopsys.com>
-CC:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>, <hare@suse.de>,
-        <aniljoy@cadence.com>, <rafalc@cadence.com>, <mparab@cadence.com>,
-        <jank@cadence.com>, <pawell@cadence.com>, <vigneshr@ti.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] scsi: ufs: Configure clock in .hce_enable_notify() in Cadence UFS
-Date:   Fri, 2 Aug 2019 12:21:12 +0100
-Message-ID: <20190802112112.18714-1-aniljoy@cadence.com>
-X-Mailer: git-send-email 2.15.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-OrganizationHeadersPreserved: maileu3.global.cadence.com
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(39860400002)(346002)(376002)(2980300002)(189003)(199004)(36092001)(36756003)(186003)(6666004)(356004)(87636003)(478600001)(336012)(76130400001)(426003)(70586007)(70206006)(4326008)(476003)(47776003)(126002)(1076003)(26826003)(2201001)(7636002)(246002)(50466002)(316002)(42186006)(48376002)(2906002)(16586007)(26005)(2616005)(5660300002)(51416003)(50226002)(110136005)(54906003)(486006)(14444005)(8676002)(305945005)(86362001)(8936002)(142923001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4351;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 199927d7-7477-47e6-c7b6-08d7173b8fb0
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328);SRVR:SN6PR07MB4351;
-X-MS-TrafficTypeDiagnostic: SN6PR07MB4351:
-X-Microsoft-Antispam-PRVS: <SN6PR07MB435114B144CDC8BB4F958861A8D90@SN6PR07MB4351.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 011787B9DD
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: /pwLi9r3e7iv6228l6Ehv+ezqg87zdWULjkG5sOk66/LRCxyXLbjlYhEwSefgS5OLYDP6QgVTjVrVAb04cBWFqQnSuRkFb4atBnrlfk5Ck2sNNvsG7Z9iGAJPg3TpXKorpwInwrrE7rtSiLwsuT4dGcyJw/zhynyINaEnhrwmc9WvNhgrDF+Srfgqdzb5aeTE2rHAJMhBh1T9vP3BxntSskeRbPLlTeyOir4DWtF5+mmnqNiRR8i1JMXVzT35e2dRebE0Ppeq9O+BlTCXisoghMO8l3abtTQl3qludriOSf/wR8jsMqmFFZIEhGv7DN3C95ePAlia5PlhQZAwUycHXcLDfbw0qnYtNqH/f4IG8S9OVy0Dnf8rT1EuMqfO+CM7NY1Voq8zL2Euf2AXQiYkM8rlFXlDU0hggXY6u5i+A8=
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2019 11:21:27.4518
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 199927d7-7477-47e6-c7b6-08d7173b8fb0
-X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4351
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
- include:mktomail.com include:spf-0014ca01.pphosted.com
- include:spf.protection.outlook.com include:auth.msgapp.com
- include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908020117
+        Fri, 2 Aug 2019 07:22:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=bhPZc34HeQ535rT0iZLm+ZZanJiRU64L3b7GFJx9TQ8=; b=Ldbk+/sifXQ0
+        DTkWxBtCuxsK3buwCK//Urr0K8Hc3TeaBJPtiv/s5O/cYo4YF/dd8ZBgdGmgI+aJvZcrrPsN3YJWj
+        HmeJEW7W2XCpoJRgll1NNtJM9KYP/0+/RxWRBq9ou/bRKSI+EbnrlOaAOe73zTVo0k1/sZXdOqnPm
+        g5m7Y=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1htVdH-0007Rl-HY; Fri, 02 Aug 2019 11:21:59 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id D11942742DA7; Fri,  2 Aug 2019 12:21:58 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     alsa-devel@alsa-project.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: Remove dev_err() usage after platform_get_irq()" to the asoc tree
+In-Reply-To: <20190730181557.90391-50-swboyd@chromium.org>
+X-Patchwork-Hint: ignore
+Message-Id: <20190802112158.D11942742DA7@ypsilon.sirena.org.uk>
+Date:   Fri,  2 Aug 2019 12:21:58 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Configure CDNS_UFS_REG_HCLKDIV in .hce_enable_notify() instead of
-.setup_clock() because if UFSHCD resets the controller ip because
-of phy or device related errors then CDNS_UFS_REG_HCLKDIV is
-reset to default value and .setup_clock() is not called later
-in the sequence whereas .hce_enable_notify will be called everytime
-controller is reenabled.
+The patch
 
-Signed-off-by: Anil Varughese <aniljoy@cadence.com>
+   ASoC: Remove dev_err() usage after platform_get_irq()
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From cf9441adb1a35506d7606866c382b9d8614169b5 Mon Sep 17 00:00:00 2001
+From: Stephen Boyd <swboyd@chromium.org>
+Date: Tue, 30 Jul 2019 11:15:49 -0700
+Subject: [PATCH] ASoC: Remove dev_err() usage after platform_get_irq()
+
+We don't need dev_err() messages when platform_get_irq() fails now that
+platform_get_irq() prints an error message itself when something goes
+wrong. Let's remove these prints with a simple semantic patch.
+
+// <smpl>
+@@
+expression ret;
+struct platform_device *E;
+@@
+
+ret =
+(
+platform_get_irq(E, ...)
+|
+platform_get_irq_byname(E, ...)
+);
+
+if ( \( ret < 0 \| ret <= 0 \) )
+{
+(
+-if (ret != -EPROBE_DEFER)
+-{ ...
+-dev_err(...);
+-... }
+|
+...
+-dev_err(...);
+)
+...
+}
+// </smpl>
+
+While we're here, remove braces on if statements that only have one
+statement (manually).
+
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Link: https://lore.kernel.org/r/20190730181557.90391-50-swboyd@chromium.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/scsi/ufs/cdns-pltfrm.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ sound/soc/atmel/atmel-classd.c             |  7 ++-----
+ sound/soc/atmel/atmel-pdmic.c              |  7 ++-----
+ sound/soc/bcm/cygnus-ssp.c                 |  7 ++-----
+ sound/soc/codecs/msm8916-wcd-analog.c      | 12 +++---------
+ sound/soc/codecs/twl6040.c                 |  4 +---
+ sound/soc/fsl/fsl_asrc.c                   |  4 +---
+ sound/soc/fsl/fsl_esai.c                   |  4 +---
+ sound/soc/fsl/fsl_sai.c                    |  4 +---
+ sound/soc/fsl/fsl_spdif.c                  |  4 +---
+ sound/soc/fsl/fsl_ssi.c                    |  4 +---
+ sound/soc/fsl/imx-ssi.c                    |  4 +---
+ sound/soc/kirkwood/kirkwood-i2s.c          |  4 +---
+ sound/soc/mediatek/common/mtk-btcvsd.c     |  4 +---
+ sound/soc/mediatek/mt2701/mt2701-afe-pcm.c |  4 +---
+ sound/soc/mediatek/mt8173/mt8173-afe-pcm.c |  4 +---
+ sound/soc/mxs/mxs-saif.c                   |  8 ++------
+ sound/soc/qcom/lpass-platform.c            |  5 +----
+ sound/soc/sof/intel/bdw.c                  |  5 +----
+ sound/soc/sof/intel/byt.c                  |  5 +----
+ sound/soc/sprd/sprd-mcdt.c                 |  4 +---
+ sound/soc/sti/sti_uniperif.c               |  4 +---
+ sound/soc/stm/stm32_i2s.c                  |  5 +----
+ sound/soc/stm/stm32_sai.c                  |  4 +---
+ sound/soc/stm/stm32_spdifrx.c              |  4 +---
+ sound/soc/sunxi/sun4i-i2s.c                |  4 +---
+ sound/soc/uniphier/aio-dma.c               |  4 +---
+ sound/soc/xilinx/xlnx_formatter_pcm.c      |  2 --
+ sound/soc/xtensa/xtfpga-i2s.c              |  1 -
+ 28 files changed, 32 insertions(+), 100 deletions(-)
 
-diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
-index 86dbb723f..993519080 100644
---- a/drivers/scsi/ufs/cdns-pltfrm.c
-+++ b/drivers/scsi/ufs/cdns-pltfrm.c
-@@ -62,17 +62,16 @@ static int cdns_ufs_set_hclkdiv(struct ufs_hba *hba)
+diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
+index 0f2c574f27f1..e98601eccfa3 100644
+--- a/sound/soc/atmel/atmel-classd.c
++++ b/sound/soc/atmel/atmel-classd.c
+@@ -571,11 +571,8 @@ static int atmel_classd_probe(struct platform_device *pdev)
+ 	dd->pdata = pdata;
+ 
+ 	dd->irq = platform_get_irq(pdev, 0);
+-	if (dd->irq < 0) {
+-		ret = dd->irq;
+-		dev_err(dev, "failed to could not get irq: %d\n", ret);
+-		return ret;
+-	}
++	if (dd->irq < 0)
++		return dd->irq;
+ 
+ 	dd->pclk = devm_clk_get(dev, "pclk");
+ 	if (IS_ERR(dd->pclk)) {
+diff --git a/sound/soc/atmel/atmel-pdmic.c b/sound/soc/atmel/atmel-pdmic.c
+index e09c28349e0d..04ec6f0af179 100644
+--- a/sound/soc/atmel/atmel-pdmic.c
++++ b/sound/soc/atmel/atmel-pdmic.c
+@@ -612,11 +612,8 @@ static int atmel_pdmic_probe(struct platform_device *pdev)
+ 	dd->dev = dev;
+ 
+ 	dd->irq = platform_get_irq(pdev, 0);
+-	if (dd->irq < 0) {
+-		ret = dd->irq;
+-		dev_err(dev, "failed to get irq: %d\n", ret);
+-		return ret;
+-	}
++	if (dd->irq < 0)
++		return dd->irq;
+ 
+ 	dd->pclk = devm_clk_get(dev, "pclk");
+ 	if (IS_ERR(dd->pclk)) {
+diff --git a/sound/soc/bcm/cygnus-ssp.c b/sound/soc/bcm/cygnus-ssp.c
+index b7c358b48d8d..2f9357d7da96 100644
+--- a/sound/soc/bcm/cygnus-ssp.c
++++ b/sound/soc/bcm/cygnus-ssp.c
+@@ -1342,11 +1342,8 @@ static int cygnus_ssp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	cygaud->irq_num = platform_get_irq(pdev, 0);
+-	if (cygaud->irq_num <= 0) {
+-		dev_err(dev, "platform_get_irq failed\n");
+-		err = cygaud->irq_num;
+-		return err;
+-	}
++	if (cygaud->irq_num <= 0)
++		return cygaud->irq_num;
+ 
+ 	err = audio_clk_init(pdev, cygaud);
+ 	if (err) {
+diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
+index 368b6c09474b..667e9f73aba3 100644
+--- a/sound/soc/codecs/msm8916-wcd-analog.c
++++ b/sound/soc/codecs/msm8916-wcd-analog.c
+@@ -1185,10 +1185,8 @@ static int pm8916_wcd_analog_spmi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq_byname(pdev, "mbhc_switch_int");
+-	if (irq < 0) {
+-		dev_err(dev, "failed to get mbhc switch irq\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_threaded_irq(dev, irq, NULL,
+ 			       pm8916_mbhc_switch_irq_handler,
+@@ -1200,10 +1198,8 @@ static int pm8916_wcd_analog_spmi_probe(struct platform_device *pdev)
+ 
+ 	if (priv->mbhc_btn_enabled) {
+ 		irq = platform_get_irq_byname(pdev, "mbhc_but_press_det");
+-		if (irq < 0) {
+-			dev_err(dev, "failed to get button press irq\n");
++		if (irq < 0)
+ 			return irq;
+-		}
+ 
+ 		ret = devm_request_threaded_irq(dev, irq, NULL,
+ 				       mbhc_btn_press_irq_handler,
+@@ -1214,10 +1210,8 @@ static int pm8916_wcd_analog_spmi_probe(struct platform_device *pdev)
+ 			dev_err(dev, "cannot request mbhc button press irq\n");
+ 
+ 		irq = platform_get_irq_byname(pdev, "mbhc_but_rel_det");
+-		if (irq < 0) {
+-			dev_err(dev, "failed to get button release irq\n");
++		if (irq < 0)
+ 			return irq;
+-		}
+ 
+ 		ret = devm_request_threaded_irq(dev, irq, NULL,
+ 				       mbhc_btn_release_irq_handler,
+diff --git a/sound/soc/codecs/twl6040.c b/sound/soc/codecs/twl6040.c
+index 472c2fff34a8..f34637afee51 100644
+--- a/sound/soc/codecs/twl6040.c
++++ b/sound/soc/codecs/twl6040.c
+@@ -1108,10 +1108,8 @@ static int twl6040_probe(struct snd_soc_component *component)
+ 	priv->component = component;
+ 
+ 	priv->plug_irq = platform_get_irq(pdev, 0);
+-	if (priv->plug_irq < 0) {
+-		dev_err(component->dev, "invalid irq: %d\n", priv->plug_irq);
++	if (priv->plug_irq < 0)
+ 		return priv->plug_irq;
+-	}
+ 
+ 	INIT_DELAYED_WORK(&priv->hs_jack.work, twl6040_accessory_work);
+ 
+diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
+index cbbf6257f08a..cfa40ef6b1ca 100644
+--- a/sound/soc/fsl/fsl_asrc.c
++++ b/sound/soc/fsl/fsl_asrc.c
+@@ -885,10 +885,8 @@ static int fsl_asrc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no irq for node %s\n", pdev->name);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, fsl_asrc_isr, 0,
+ 			       dev_name(&pdev->dev), asrc_priv);
+diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
+index 4ce8ac769244..5832144beb9f 100644
+--- a/sound/soc/fsl/fsl_esai.c
++++ b/sound/soc/fsl/fsl_esai.c
+@@ -962,10 +962,8 @@ static int fsl_esai_probe(struct platform_device *pdev)
+ 				PTR_ERR(esai_priv->spbaclk));
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no irq for node %s\n", pdev->name);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, esai_isr, 0,
+ 			       esai_priv->name, esai_priv);
+diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+index 6d3c6c8d50ce..8f4d9fa95599 100644
+--- a/sound/soc/fsl/fsl_sai.c
++++ b/sound/soc/fsl/fsl_sai.c
+@@ -831,10 +831,8 @@ static int fsl_sai_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no irq for node %s\n", pdev->name);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, fsl_sai_isr, 0, np->name, sai);
+ 	if (ret) {
+diff --git a/sound/soc/fsl/fsl_spdif.c b/sound/soc/fsl/fsl_spdif.c
+index 4842e6df9a2d..7858a5499ac5 100644
+--- a/sound/soc/fsl/fsl_spdif.c
++++ b/sound/soc/fsl/fsl_spdif.c
+@@ -1248,10 +1248,8 @@ static int fsl_spdif_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no irq for node %s\n", pdev->name);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, spdif_isr, 0,
+ 			       dev_name(&pdev->dev), spdif_priv);
+diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
+index fa862af25c1a..b0a6fead1a6a 100644
+--- a/sound/soc/fsl/fsl_ssi.c
++++ b/sound/soc/fsl/fsl_ssi.c
+@@ -1510,10 +1510,8 @@ static int fsl_ssi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ssi->irq = platform_get_irq(pdev, 0);
+-	if (ssi->irq < 0) {
+-		dev_err(dev, "no irq for node %s\n", pdev->name);
++	if (ssi->irq < 0)
+ 		return ssi->irq;
+-	}
+ 
+ 	/* Set software limitations for synchronous mode except AC97 */
+ 	if (ssi->synchronous && !fsl_ssi_is_ac97(ssi)) {
+diff --git a/sound/soc/fsl/imx-ssi.c b/sound/soc/fsl/imx-ssi.c
+index 9038b61317be..42031ba7da31 100644
+--- a/sound/soc/fsl/imx-ssi.c
++++ b/sound/soc/fsl/imx-ssi.c
+@@ -520,10 +520,8 @@ static int imx_ssi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ssi->irq = platform_get_irq(pdev, 0);
+-	if (ssi->irq < 0) {
+-		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", ssi->irq);
++	if (ssi->irq < 0)
+ 		return ssi->irq;
+-	}
+ 
+ 	ssi->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(ssi->clk)) {
+diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
+index 5076ec4cc7a6..61226fefe1c4 100644
+--- a/sound/soc/kirkwood/kirkwood-i2s.c
++++ b/sound/soc/kirkwood/kirkwood-i2s.c
+@@ -537,10 +537,8 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->io);
+ 
+ 	priv->irq = platform_get_irq(pdev, 0);
+-	if (priv->irq < 0) {
+-		dev_err(&pdev->dev, "platform_get_irq failed: %d\n", priv->irq);
++	if (priv->irq < 0)
+ 		return priv->irq;
+-	}
+ 
+ 	if (np) {
+ 		priv->burst = 128;		/* might be 32 or 128 */
+diff --git a/sound/soc/mediatek/common/mtk-btcvsd.c b/sound/soc/mediatek/common/mtk-btcvsd.c
+index c7a81c4be068..d00608c73c6e 100644
+--- a/sound/soc/mediatek/common/mtk-btcvsd.c
++++ b/sound/soc/mediatek/common/mtk-btcvsd.c
+@@ -1335,10 +1335,8 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
+ 
+ 	/* irq */
+ 	irq_id = platform_get_irq(pdev, 0);
+-	if (irq_id <= 0) {
+-		dev_err(dev, "%pOFn no irq found\n", dev->of_node);
++	if (irq_id <= 0)
+ 		return irq_id < 0 ? irq_id : -ENXIO;
+-	}
+ 
+ 	ret = devm_request_irq(dev, irq_id, mtk_btcvsd_snd_irq_handler,
+ 			       IRQF_TRIGGER_LOW, "BTCVSD_ISR_Handle",
+diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
+index 7064a9fd6f74..9af76ae315a5 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
++++ b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
+@@ -1342,10 +1342,8 @@ static int mt2701_afe_pcm_dev_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	irq_id = platform_get_irq_byname(pdev, "asys");
+-	if (irq_id < 0) {
+-		dev_err(dev, "unable to get ASYS IRQ\n");
++	if (irq_id < 0)
+ 		return irq_id;
+-	}
+ 
+ 	ret = devm_request_irq(dev, irq_id, mt2701_asys_isr,
+ 			       IRQF_TRIGGER_NONE, "asys-isr", (void *)afe);
+diff --git a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+index 90bd2c92cae7..0ee29255e731 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
++++ b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+@@ -1074,10 +1074,8 @@ static int mt8173_afe_pcm_dev_probe(struct platform_device *pdev)
+ 	afe->dev = &pdev->dev;
+ 
+ 	irq_id = platform_get_irq(pdev, 0);
+-	if (irq_id <= 0) {
+-		dev_err(afe->dev, "np %pOFn no irq\n", afe->dev->of_node);
++	if (irq_id <= 0)
+ 		return irq_id < 0 ? irq_id : -ENXIO;
+-	}
+ 	ret = devm_request_irq(afe->dev, irq_id, mt8173_afe_irq_handler,
+ 			       0, "Afe_ISR_Handle", (void *)afe);
+ 	if (ret) {
+diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
+index a2c79426513b..1e38ce858326 100644
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@ -790,12 +790,8 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 		return PTR_ERR(saif->base);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		ret = irq;
+-		dev_err(&pdev->dev, "failed to get irq resource: %d\n",
+-			ret);
+-		return ret;
+-	}
++	if (irq < 0)
++		return irq;
+ 
+ 	saif->dev = &pdev->dev;
+ 	ret = devm_request_irq(&pdev->dev, irq, mxs_saif_irq, 0,
+diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
+index cf7a299f4547..4c745baa39f7 100644
+--- a/sound/soc/qcom/lpass-platform.c
++++ b/sound/soc/qcom/lpass-platform.c
+@@ -564,11 +564,8 @@ int asoc_qcom_lpass_platform_register(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	drvdata->lpaif_irq = platform_get_irq_byname(pdev, "lpass-irq-lpaif");
+-	if (drvdata->lpaif_irq < 0) {
+-		dev_err(&pdev->dev, "error getting irq handle: %d\n",
+-			drvdata->lpaif_irq);
++	if (drvdata->lpaif_irq < 0)
+ 		return -ENODEV;
+-	}
+ 
+ 	/* ensure audio hardware is disabled */
+ 	ret = regmap_write(drvdata->lpaif_map,
+diff --git a/sound/soc/sof/intel/bdw.c b/sound/soc/sof/intel/bdw.c
+index 70d524ef9bc0..4bb9636da990 100644
+--- a/sound/soc/sof/intel/bdw.c
++++ b/sound/soc/sof/intel/bdw.c
+@@ -613,11 +613,8 @@ static int bdw_probe(struct snd_sof_dev *sdev)
+ 
+ 	/* register our IRQ */
+ 	sdev->ipc_irq = platform_get_irq(pdev, desc->irqindex_host_ipc);
+-	if (sdev->ipc_irq < 0) {
+-		dev_err(sdev->dev, "error: failed to get IRQ at index %d\n",
+-			desc->irqindex_host_ipc);
++	if (sdev->ipc_irq < 0)
+ 		return sdev->ipc_irq;
+-	}
+ 
+ 	dev_dbg(sdev->dev, "using IRQ %d\n", sdev->ipc_irq);
+ 	ret = devm_request_threaded_irq(sdev->dev, sdev->ipc_irq,
+diff --git a/sound/soc/sof/intel/byt.c b/sound/soc/sof/intel/byt.c
+index 107d711efc3f..000d576f6a8d 100644
+--- a/sound/soc/sof/intel/byt.c
++++ b/sound/soc/sof/intel/byt.c
+@@ -728,11 +728,8 @@ static int byt_acpi_probe(struct snd_sof_dev *sdev)
+ irq:
+ 	/* register our IRQ */
+ 	sdev->ipc_irq = platform_get_irq(pdev, desc->irqindex_host_ipc);
+-	if (sdev->ipc_irq < 0) {
+-		dev_err(sdev->dev, "error: failed to get IRQ at index %d\n",
+-			desc->irqindex_host_ipc);
++	if (sdev->ipc_irq < 0)
+ 		return sdev->ipc_irq;
+-	}
+ 
+ 	dev_dbg(sdev->dev, "using IRQ %d\n", sdev->ipc_irq);
+ 	ret = devm_request_threaded_irq(sdev->dev, sdev->ipc_irq,
+diff --git a/sound/soc/sprd/sprd-mcdt.c b/sound/soc/sprd/sprd-mcdt.c
+index 7448015a4935..f439e5503a3c 100644
+--- a/sound/soc/sprd/sprd-mcdt.c
++++ b/sound/soc/sprd/sprd-mcdt.c
+@@ -959,10 +959,8 @@ static int sprd_mcdt_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, mcdt);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "Failed to get MCDT interrupt\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, sprd_mcdt_irq_handler,
+ 			       0, "sprd-mcdt", mcdt);
+diff --git a/sound/soc/sti/sti_uniperif.c b/sound/soc/sti/sti_uniperif.c
+index 645bcbe91601..ee4a0151e63e 100644
+--- a/sound/soc/sti/sti_uniperif.c
++++ b/sound/soc/sti/sti_uniperif.c
+@@ -426,10 +426,8 @@ static int sti_uniperiph_cpu_dai_of(struct device_node *node,
+ 				     UNIPERIF_FIFO_DATA_OFFSET(uni);
+ 
+ 	uni->irq = platform_get_irq(priv->pdev, 0);
+-	if (uni->irq < 0) {
+-		dev_err(dev, "Failed to get IRQ resource\n");
++	if (uni->irq < 0)
+ 		return -ENXIO;
+-	}
+ 
+ 	uni->type = dev_data->type;
+ 
+diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
+index ba6452dab69b..3e7226a53e53 100644
+--- a/sound/soc/stm/stm32_i2s.c
++++ b/sound/soc/stm/stm32_i2s.c
+@@ -855,11 +855,8 @@ static int stm32_i2s_parse_dt(struct platform_device *pdev,
+ 
+ 	/* Get irqs */
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		if (irq != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "no irq for node %s\n", pdev->name);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, stm32_i2s_isr, IRQF_ONESHOT,
+ 			       dev_name(&pdev->dev), i2s);
+diff --git a/sound/soc/stm/stm32_sai.c b/sound/soc/stm/stm32_sai.c
+index 1ac5103cea78..ef4273361d0d 100644
+--- a/sound/soc/stm/stm32_sai.c
++++ b/sound/soc/stm/stm32_sai.c
+@@ -193,10 +193,8 @@ static int stm32_sai_probe(struct platform_device *pdev)
+ 
+ 	/* init irqs */
+ 	sai->irq = platform_get_irq(pdev, 0);
+-	if (sai->irq < 0) {
+-		dev_err(&pdev->dev, "no irq for node %s\n", pdev->name);
++	if (sai->irq < 0)
+ 		return sai->irq;
+-	}
+ 
+ 	/* reset */
+ 	rst = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
+index ee71b898897b..cd4b235fce57 100644
+--- a/sound/soc/stm/stm32_spdifrx.c
++++ b/sound/soc/stm/stm32_spdifrx.c
+@@ -909,10 +909,8 @@ static int stm32_spdifrx_parse_of(struct platform_device *pdev,
+ 	}
+ 
+ 	spdifrx->irq = platform_get_irq(pdev, 0);
+-	if (spdifrx->irq < 0) {
+-		dev_err(&pdev->dev, "No irq for node %s\n", pdev->name);
++	if (spdifrx->irq < 0)
+ 		return spdifrx->irq;
+-	}
+ 
+ 	return 0;
  }
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index 9b2232908b65..d97d694c48df 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -1087,10 +1087,8 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
+ 		return PTR_ERR(regs);
  
- /**
-- * Sets clocks used by the controller
-+ * Called before and after HCE enable bit is set.
-  * @hba: host controller instance
-- * @on: if true, enable clocks, otherwise disable
-  * @status: notify stage (pre, post change)
-  *
-  * Return zero for success and non-zero for failure
-  */
--static int cdns_ufs_setup_clocks(struct ufs_hba *hba, bool on,
--				 enum ufs_notify_change_status status)
-+static int cdns_ufs_hce_enable_notify(struct ufs_hba *hba,
-+				      enum ufs_notify_change_status status)
- {
--	if ((!on) || (status == PRE_CHANGE))
-+	if (status != PRE_CHANGE)
- 		return 0;
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "Can't retrieve our interrupt\n");
++	if (irq < 0)
+ 		return irq;
+-	}
  
- 	return cdns_ufs_set_hclkdiv(hba);
-@@ -114,13 +113,13 @@ static int cdns_ufs_m31_16nm_phy_initialization(struct ufs_hba *hba)
+ 	i2s->variant = of_device_get_match_data(&pdev->dev);
+ 	if (!i2s->variant) {
+diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
+index 862346d66774..e8446cc4e8f8 100644
+--- a/sound/soc/uniphier/aio-dma.c
++++ b/sound/soc/uniphier/aio-dma.c
+@@ -289,10 +289,8 @@ int uniphier_aiodma_soc_register_platform(struct platform_device *pdev)
+ 		return PTR_ERR(chip->regmap);
  
- static const struct ufs_hba_variant_ops cdns_ufs_pltfm_hba_vops = {
- 	.name = "cdns-ufs-pltfm",
--	.setup_clocks = cdns_ufs_setup_clocks,
-+	.hce_enable_notify = cdns_ufs_hce_enable_notify,
- };
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "Could not get irq.\n");
++	if (irq < 0)
+ 		return irq;
+-	}
  
- static const struct ufs_hba_variant_ops cdns_ufs_m31_16nm_pltfm_hba_vops = {
- 	.name = "cdns-ufs-pltfm",
- 	.init = cdns_ufs_init,
--	.setup_clocks = cdns_ufs_setup_clocks,
-+	.hce_enable_notify = cdns_ufs_hce_enable_notify,
- 	.phy_initialization = cdns_ufs_m31_16nm_phy_initialization,
- };
+ 	ret = devm_request_irq(dev, irq, aiodma_irq,
+ 			       IRQF_SHARED, dev_name(dev), pdev);
+diff --git a/sound/soc/xilinx/xlnx_formatter_pcm.c b/sound/soc/xilinx/xlnx_formatter_pcm.c
+index dc8721f4f56b..48970efe7838 100644
+--- a/sound/soc/xilinx/xlnx_formatter_pcm.c
++++ b/sound/soc/xilinx/xlnx_formatter_pcm.c
+@@ -613,7 +613,6 @@ static int xlnx_formatter_pcm_probe(struct platform_device *pdev)
+ 		aud_drv_data->mm2s_irq = platform_get_irq_byname(pdev,
+ 								 "irq_mm2s");
+ 		if (aud_drv_data->mm2s_irq < 0) {
+-			dev_err(dev, "xlnx audio mm2s irq resource failed\n");
+ 			ret = aud_drv_data->mm2s_irq;
+ 			goto clk_err;
+ 		}
+@@ -640,7 +639,6 @@ static int xlnx_formatter_pcm_probe(struct platform_device *pdev)
+ 		aud_drv_data->s2mm_irq = platform_get_irq_byname(pdev,
+ 								 "irq_s2mm");
+ 		if (aud_drv_data->s2mm_irq < 0) {
+-			dev_err(dev, "xlnx audio s2mm irq resource failed\n");
+ 			ret = aud_drv_data->s2mm_irq;
+ 			goto clk_err;
+ 		}
+diff --git a/sound/soc/xtensa/xtfpga-i2s.c b/sound/soc/xtensa/xtfpga-i2s.c
+index 9da395d14a8d..efd374f114a0 100644
+--- a/sound/soc/xtensa/xtfpga-i2s.c
++++ b/sound/soc/xtensa/xtfpga-i2s.c
+@@ -570,7 +570,6 @@ static int xtfpga_i2s_probe(struct platform_device *pdev)
  
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+-		dev_err(&pdev->dev, "No IRQ resource\n");
+ 		err = irq;
+ 		goto err;
+ 	}
 -- 
-2.15.0
+2.20.1
 
