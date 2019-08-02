@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CCD27F099
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1218E7F09A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:30:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404647AbfHBJan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:30:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56244 "EHLO mail.kernel.org"
+        id S2390927AbfHBJar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:30:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390892AbfHBJaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:30:39 -0400
+        id S2389860AbfHBJap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:30:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C746217D6;
-        Fri,  2 Aug 2019 09:30:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7646B21773;
+        Fri,  2 Aug 2019 09:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738238;
-        bh=JuhRSmBX0mAWu4MOAAa5191HylAiXO9c/yYSHGBkxmw=;
+        s=default; t=1564738244;
+        bh=ycUDnsQKkWThdZ5y5ZpWalnox5FAaBuUuHXK3gz8thw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m63yE100CsymCpJhu4tkyIOGoVDKRAGPJCUHQ3dmz/0O1QPgUwomTZkaCsxbMjf1/
-         W1TFNF+bqDqCTBWqxGhO/lpKKVyVAE76uloLa+7n6qlcOzLfBdrAfNUJ+sd6OOadHC
-         ZFduICvRB3mQ9teKdo75RTa1E+YHJey489rHc2Kk=
+        b=JUiy0cWwHwGApattfwU0cT8k21U4PN/28a/tgCHX5P3ZU/O6iI/bEq7T6qr9rOvyv
+         M1SdrqslfwPy45ABSWHwYD+1WodSkc2ILZfsrolRh5HJzYXvCUwieDpSmsyQyFWBml
+         aP5D8EXE7BdUzrncyE4kI4E8LGnYhEohLRDzXNRU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 026/158] perf test 6: Fix missing kvm module load for s390
-Date:   Fri,  2 Aug 2019 11:27:27 +0200
-Message-Id: <20190802092208.918163805@linuxfoundation.org>
+Subject: [PATCH 4.4 028/158] gpio: omap: ensure irq is enabled before wakeup
+Date:   Fri,  2 Aug 2019 11:27:29 +0200
+Message-Id: <20190802092209.368323286@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -47,85 +46,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 53fe307dfd309e425b171f6272d64296a54f4dff ]
+[ Upstream commit c859e0d479b3b4f6132fc12637c51e01492f31f6 ]
 
-Command
+Documentation states:
 
-   # perf test -Fv 6
+  NOTE: There must be a correlation between the wake-up enable and
+  interrupt-enable registers. If a GPIO pin has a wake-up configured
+  on it, it must also have the corresponding interrupt enabled (on
+  one of the two interrupt lines).
 
-fails with error
+Ensure that this condition is always satisfied by enabling the detection
+events after enabling the interrupt, and disabling the detection before
+disabling the interrupt.  This ensures interrupt/wakeup events can not
+happen until both the wakeup and interrupt enables correlate.
 
-   running test 100 'kvm-s390:kvm_s390_create_vm' failed to parse
-    event 'kvm-s390:kvm_s390_create_vm', err -1, str 'unknown tracepoint'
-    event syntax error: 'kvm-s390:kvm_s390_create_vm'
-                         \___ unknown tracepoint
+If we do any clearing, clear between the interrupt enable/disable and
+trigger setting.
 
-when the kvm module is not loaded or not built in.
-
-Fix this by adding a valid function which tests if the module
-is loaded. Loaded modules (or builtin KVM support) have a
-directory named
-  /sys/kernel/debug/tracing/events/kvm-s390
-for this tracepoint.
-
-Check for existence of this directory.
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20190604053504.43073-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/parse-events.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/gpio/gpio-omap.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 54af2f2e2ee4..1a35ab044c11 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -12,6 +12,32 @@
- #define PERF_TP_SAMPLE_TYPE (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME | \
- 			     PERF_SAMPLE_CPU | PERF_SAMPLE_PERIOD)
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index f23136825a6e..6e65c02baad1 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -821,9 +821,9 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
  
-+#if defined(__s390x__)
-+/* Return true if kvm module is available and loaded. Test this
-+ * and retun success when trace point kvm_s390_create_vm
-+ * exists. Otherwise this test always fails.
-+ */
-+static bool kvm_s390_create_vm_valid(void)
-+{
-+	char *eventfile;
-+	bool rc = false;
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	bank->irq_usage &= ~(BIT(offset));
+-	omap_set_gpio_irqenable(bank, offset, 0);
+-	omap_clear_gpio_irqstatus(bank, offset);
+ 	omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
++	omap_clear_gpio_irqstatus(bank, offset);
++	omap_set_gpio_irqenable(bank, offset, 0);
+ 	if (!LINE_USED(bank->mod_usage, offset))
+ 		omap_clear_gpio_debounce(bank, offset);
+ 	omap_disable_gpio_module(bank, offset);
+@@ -865,8 +865,8 @@ static void omap_gpio_mask_irq(struct irq_data *d)
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+-	omap_set_gpio_irqenable(bank, offset, 0);
+ 	omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
++	omap_set_gpio_irqenable(bank, offset, 0);
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
+@@ -878,9 +878,6 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+-	if (trigger)
+-		omap_set_gpio_triggering(bank, offset, trigger);
+-
+ 	omap_set_gpio_irqenable(bank, offset, 1);
+ 
+ 	/*
+@@ -888,9 +885,13 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+ 	 * is cleared, thus after the handler has run. OMAP4 needs this done
+ 	 * after enabing the interrupt to clear the wakeup status.
+ 	 */
+-	if (bank->level_mask & BIT(offset))
++	if (bank->regs->leveldetect0 && bank->regs->wkup_en &&
++	    trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
+ 		omap_clear_gpio_irqstatus(bank, offset);
+ 
++	if (trigger)
++		omap_set_gpio_triggering(bank, offset, trigger);
 +
-+	eventfile = get_events_file("kvm-s390");
-+
-+	if (eventfile) {
-+		DIR *mydir = opendir(eventfile);
-+
-+		if (mydir) {
-+			rc = true;
-+			closedir(mydir);
-+		}
-+		put_events_file(eventfile);
-+	}
-+
-+	return rc;
-+}
-+#endif
-+
- static int test__checkevent_tracepoint(struct perf_evlist *evlist)
- {
- 	struct perf_evsel *evsel = perf_evlist__first(evlist);
-@@ -1561,6 +1587,7 @@ static struct evlist_test test__events[] = {
- 	{
- 		.name  = "kvm-s390:kvm_s390_create_vm",
- 		.check = test__checkevent_tracepoint,
-+		.valid = kvm_s390_create_vm_valid,
- 		.id    = 100,
- 	},
- #endif
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
 -- 
 2.20.1
 
