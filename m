@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22FBC7F471
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87537F4A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:07:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391275AbfHBJcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:32:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59646 "EHLO mail.kernel.org"
+        id S2391151AbfHBJcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:32:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390069AbfHBJch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:32:37 -0400
+        id S2391114AbfHBJcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:32:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F340217D6;
-        Fri,  2 Aug 2019 09:32:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6D582184B;
+        Fri,  2 Aug 2019 09:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738356;
-        bh=HMENl/L5+knTn/Fjjyg+GxPo4hsqznlJ+G8e9eT390w=;
+        s=default; t=1564738323;
+        bh=1hMfmmA0PNkSO6RzFUnz11bLMpC7ntsOqeilrPYu9yc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qcqFuMU/wmKweBFz+bMUjdmq0Z1/Ix1BgCBkouZuq8Kqxi+ANONk/hluJjSN/x2Cv
-         yvz88RK31dBkGPOyX6h+zn7Httq74RZbqTdDpgKmbdAulmi7X86/A8+epVL8cnOiRx
-         G4KH6M9BeIxwFcwAjb8DK15TbO5+2kpCckdIlsIs=
+        b=nuYA6TRaY+FG3Bw2CaqcxE9iVL6XfH/Xm4Of6ox17BG2FWxSO6jzniFjk8V1ve2sE
+         xFehkYZI0GEnKyIC7Ps22whdUYsadSrEM9i7lWRPTCgAX0PeY98VAUmO7x+SL7xOKw
+         ZO9n0y2eMmKiE3AbFHjepIxDyWGx9lCxOxBDx54I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Robinson <pbrobinson@gmail.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.4 055/158] crypto: ghash - fix unaligned memory access in ghash_setkey()
-Date:   Fri,  2 Aug 2019 11:27:56 +0200
-Message-Id: <20190802092215.230683299@linuxfoundation.org>
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 059/158] regulator: s2mps11: Fix buck7 and buck8 wrong voltages
+Date:   Fri,  2 Aug 2019 11:28:00 +0200
+Message-Id: <20190802092216.027230835@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -44,57 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit 5c6bc4dfa515738149998bb0db2481a4fdead979 upstream.
+commit 16da0eb5ab6ef2dd1d33431199126e63db9997cc upstream.
 
-Changing ghash_mod_init() to be subsys_initcall made it start running
-before the alignment fault handler has been installed on ARM.  In kernel
-builds where the keys in the ghash test vectors happened to be
-misaligned in the kernel image, this exposed the longstanding bug that
-ghash_setkey() is incorrectly casting the key buffer (which can have any
-alignment) to be128 for passing to gf128mul_init_4k_lle().
+On S2MPS11 device, the buck7 and buck8 regulator voltages start at 750
+mV, not 600 mV.  Using wrong minimal value caused shifting of these
+regulator values by 150 mV (e.g. buck7 usually configured to v1.35 V was
+reported as 1.2 V).
 
-Fix this by memcpy()ing the key to a temporary buffer.
+On most of the boards these regulators are left in default state so this
+was only affecting reported voltage.  However if any driver wanted to
+change them, then effectively it would set voltage 150 mV higher than
+intended.
 
-Don't fix it by setting an alignmask on the algorithm instead because
-that would unnecessarily force alignment of the data too.
-
-Fixes: 2cdc6899a88e ("crypto: ghash - Add GHASH digest algorithm for GCM")
-Reported-by: Peter Robinson <pbrobinson@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Tested-by: Peter Robinson <pbrobinson@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: <stable@vger.kernel.org>
+Fixes: cb74685ecb39 ("regulator: s2mps11: Add samsung s2mps11 regulator driver")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/ghash-generic.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/regulator/s2mps11.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/crypto/ghash-generic.c
-+++ b/crypto/ghash-generic.c
-@@ -34,6 +34,7 @@ static int ghash_setkey(struct crypto_sh
- 			const u8 *key, unsigned int keylen)
- {
- 	struct ghash_ctx *ctx = crypto_shash_ctx(tfm);
-+	be128 k;
- 
- 	if (keylen != GHASH_BLOCK_SIZE) {
- 		crypto_shash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
-@@ -42,7 +43,12 @@ static int ghash_setkey(struct crypto_sh
- 
- 	if (ctx->gf128)
- 		gf128mul_free_4k(ctx->gf128);
--	ctx->gf128 = gf128mul_init_4k_lle((be128 *)key);
-+
-+	BUILD_BUG_ON(sizeof(k) != GHASH_BLOCK_SIZE);
-+	memcpy(&k, key, GHASH_BLOCK_SIZE); /* avoid violating alignment rules */
-+	ctx->gf128 = gf128mul_init_4k_lle(&k);
-+	memzero_explicit(&k, GHASH_BLOCK_SIZE);
-+
- 	if (!ctx->gf128)
- 		return -ENOMEM;
- 
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -382,8 +382,8 @@ static const struct regulator_desc s2mps
+ 	regulator_desc_s2mps11_buck1_4(4),
+ 	regulator_desc_s2mps11_buck5,
+ 	regulator_desc_s2mps11_buck67810(6, MIN_600_MV, STEP_6_25_MV),
+-	regulator_desc_s2mps11_buck67810(7, MIN_600_MV, STEP_12_5_MV),
+-	regulator_desc_s2mps11_buck67810(8, MIN_600_MV, STEP_12_5_MV),
++	regulator_desc_s2mps11_buck67810(7, MIN_750_MV, STEP_12_5_MV),
++	regulator_desc_s2mps11_buck67810(8, MIN_750_MV, STEP_12_5_MV),
+ 	regulator_desc_s2mps11_buck9,
+ 	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV),
+ };
 
 
