@@ -2,53 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C60B7F6A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88C467F6A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:13:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392583AbfHBMOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:14:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389277AbfHBMOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:14:12 -0400
-Received: from localhost (unknown [122.167.106.83])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AADA42183F;
-        Fri,  2 Aug 2019 12:14:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564748051;
-        bh=yPGd9w2AChJ9TwF477eGZmoBAjtFbH7nOLUGrIYSj78=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EUvfP4OCekM7yfrQ3NTkWTQ/Ild9U8FGJYxL/dg0BMFgW5yHo508BUVBdo2bnQGzp
-         K835l57uNDTDLK9PERDHn+m/pIK1u/DB55LOQpZYKhctyPELAXBKtsmg1Uxozl/+Wc
-         bNf1TXdYHUBVjkW2CKfuhpD89u5wcX+Ryjh2/ZCQ=
-Date:   Fri, 2 Aug 2019 17:42:58 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [RFC PATCH 13/40] soundwire: cadence_master: fix register
- definition for SLAVE_STATE
-Message-ID: <20190802121258.GO12733@vkoul-mobl.Dlink>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-14-pierre-louis.bossart@linux.intel.com>
+        id S2392577AbfHBMNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:13:07 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38581 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387770AbfHBMNG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:13:06 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1htWQg-0007Z6-9a; Fri, 02 Aug 2019 14:13:02 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1htWQf-0006uo-UD; Fri, 02 Aug 2019 14:13:01 +0200
+Date:   Fri, 2 Aug 2019 14:13:01 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 3/4] serial: sh-sci: Don't check for mctrl_gpio_init()
+ returning -ENOSYS
+Message-ID: <20190802121301.br4y6554rkcqrcdi@pengutronix.de>
+References: <20190802100349.8659-1-frieder.schrempf@kontron.de>
+ <20190802100349.8659-3-frieder.schrempf@kontron.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190725234032.21152-14-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190802100349.8659-3-frieder.schrempf@kontron.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-07-19, 18:40, Pierre-Louis Bossart wrote:
-> wrong prefix and wrong macro.
+On Fri, Aug 02, 2019 at 10:04:10AM +0000, Schrempf Frieder wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> Now that the mctrl_gpio code returns NULL instead of ERR_PTR(-ENOSYS)
+> if CONFIG_GPIOLIB is disabled, we can safely remove this check.
+> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Applied, thanks
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+Thanks
+Uwe
 
 -- 
-~Vinod
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
