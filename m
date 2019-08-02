@@ -2,140 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C80577F270
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB8997F1A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405853AbfHBJsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:48:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53960 "EHLO mail.kernel.org"
+        id S2390995AbfHBJkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:40:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58836 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391902AbfHBJse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:48:34 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2388919AbfHBJkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:40:15 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 648B4206A2;
-        Fri,  2 Aug 2019 09:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739312;
-        bh=7IWG8TuhT4R5+XGGcFt1xYMtCoyUQsfDNejMvWZnSAA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s9AClJ4OcAcScoS5yByUDDrLIHp92OfZYqZLg0K+22ZtWqicxH11MuRECpxH04s3a
-         +MFn7WCxX77W1mWuOThqdgGVCWebyEuzu58/5F40TO8q3jzdRs/Vt6Rb/rLQxblpFi
-         ZnUjbn0Uq64150K4ZQZo+g7BzazF7SQEOHaP9iZc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 178/223] PCI: xilinx-nwl: Fix Multi MSI data programming
-Date:   Fri,  2 Aug 2019 11:36:43 +0200
-Message-Id: <20190802092249.274158991@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
-References: <20190802092238.692035242@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mx1.redhat.com (Postfix) with ESMTPS id 3DA173001A6C;
+        Fri,  2 Aug 2019 09:40:14 +0000 (UTC)
+Received: from [10.72.12.134] (ovpn-12-134.pek2.redhat.com [10.72.12.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 15D4F60BE2;
+        Fri,  2 Aug 2019 09:40:08 +0000 (UTC)
+Subject: Re: [PATCH V2 7/9] vhost: do not use RCU to synchronize MMU notifier
+ with worker
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20190731084655.7024-1-jasowang@redhat.com>
+ <20190731084655.7024-8-jasowang@redhat.com> <20190731123935.GC3946@ziepe.ca>
+ <7555c949-ae6f-f105-6e1d-df21ddae9e4e@redhat.com>
+ <20190731193057.GG3946@ziepe.ca>
+ <a3bde826-6329-68e4-2826-8a9de4c5bd1e@redhat.com>
+ <20190801141512.GB23899@ziepe.ca>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <42ead87b-1749-4c73-cbe4-29dbeb945041@redhat.com>
+Date:   Fri, 2 Aug 2019 17:40:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190801141512.GB23899@ziepe.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 02 Aug 2019 09:40:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 181fa434d0514e40ebf6e9721f2b72700287b6e2 ]
 
-According to the PCI Local Bus specification Revision 3.0,
-section 6.8.1.3 (Message Control for MSI), endpoints that
-are Multiple Message Capable as defined by bits [3:1] in
-the Message Control for MSI can request a number of vectors
-that is power of two aligned.
-
-As specified in section 6.8.1.6 "Message data for MSI", the Multiple
-Message Enable field (bits [6:4] of the Message Control register)
-defines the number of low order message data bits the function is
-permitted to modify to generate its system software allocated
-vectors.
-
-The MSI controller in the Xilinx NWL PCIe controller supports a number
-of MSI vectors specified through a bitmap and the hwirq number for an
-MSI, that is the value written in the MSI data TLP is determined by
-the bitmap allocation.
-
-For instance, in a situation where two endpoints sitting on
-the PCI bus request the following MSI configuration, with
-the current PCI Xilinx bitmap allocation code (that does not
-align MSI vector allocation on a power of two boundary):
-
-Endpoint #1: Requesting 1 MSI vector - allocated bitmap bits 0
-Endpoint #2: Requesting 2 MSI vectors - allocated bitmap bits [1,2]
-
-The bitmap value(s) corresponds to the hwirq number that is programmed
-into the Message Data for MSI field in the endpoint MSI capability
-and is detected by the root complex to fire the corresponding
-MSI irqs. The value written in Message Data for MSI field corresponds
-to the first bit allocated in the bitmap for Multi MSI vectors.
-
-The current Xilinx NWL MSI allocation code allows a bitmap allocation
-that is not a power of two boundaries, so endpoint #2, is allowed to
-toggle Message Data bit[0] to differentiate between its two vectors
-(meaning that the MSI data will be respectively 0x0 and 0x1 for the two
-vectors allocated to endpoint #2).
-
-This clearly aliases with the Endpoint #1 vector allocation, resulting
-in a broken Multi MSI implementation.
-
-Update the code to allocate MSI bitmap ranges with a power of two
-alignment, fixing the bug.
-
-Fixes: ab597d35ef11 ("PCI: xilinx-nwl: Add support for Xilinx NWL PCIe Host Controller")
-Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/host/pcie-xilinx-nwl.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-xilinx-nwl.c
-index 94fdd295aae2..3bba87af0b6b 100644
---- a/drivers/pci/host/pcie-xilinx-nwl.c
-+++ b/drivers/pci/host/pcie-xilinx-nwl.c
-@@ -456,15 +456,13 @@ static int nwl_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
- 	int i;
- 
- 	mutex_lock(&msi->lock);
--	bit = bitmap_find_next_zero_area(msi->bitmap, INT_PCI_MSI_NR, 0,
--					 nr_irqs, 0);
--	if (bit >= INT_PCI_MSI_NR) {
-+	bit = bitmap_find_free_region(msi->bitmap, INT_PCI_MSI_NR,
-+				      get_count_order(nr_irqs));
-+	if (bit < 0) {
- 		mutex_unlock(&msi->lock);
- 		return -ENOSPC;
- 	}
- 
--	bitmap_set(msi->bitmap, bit, nr_irqs);
--
- 	for (i = 0; i < nr_irqs; i++) {
- 		irq_domain_set_info(domain, virq + i, bit + i, &nwl_irq_chip,
- 				domain->host_data, handle_simple_irq,
-@@ -482,7 +480,8 @@ static void nwl_irq_domain_free(struct irq_domain *domain, unsigned int virq,
- 	struct nwl_msi *msi = &pcie->msi;
- 
- 	mutex_lock(&msi->lock);
--	bitmap_clear(msi->bitmap, data->hwirq, nr_irqs);
-+	bitmap_release_region(msi->bitmap, data->hwirq,
-+			      get_count_order(nr_irqs));
- 	mutex_unlock(&msi->lock);
- }
- 
--- 
-2.20.1
+On 2019/8/1 下午10:15, Jason Gunthorpe wrote:
+> On Thu, Aug 01, 2019 at 01:02:18PM +0800, Jason Wang wrote:
+>> On 2019/8/1 上午3:30, Jason Gunthorpe wrote:
+>>> On Wed, Jul 31, 2019 at 09:28:20PM +0800, Jason Wang wrote:
+>>>> On 2019/7/31 下午8:39, Jason Gunthorpe wrote:
+>>>>> On Wed, Jul 31, 2019 at 04:46:53AM -0400, Jason Wang wrote:
+>>>>>> We used to use RCU to synchronize MMU notifier with worker. This leads
+>>>>>> calling synchronize_rcu() in invalidate_range_start(). But on a busy
+>>>>>> system, there would be many factors that may slow down the
+>>>>>> synchronize_rcu() which makes it unsuitable to be called in MMU
+>>>>>> notifier.
+>>>>>>
+>>>>>> A solution is SRCU but its overhead is obvious with the expensive full
+>>>>>> memory barrier. Another choice is to use seqlock, but it doesn't
+>>>>>> provide a synchronization method between readers and writers. The last
+>>>>>> choice is to use vq mutex, but it need to deal with the worst case
+>>>>>> that MMU notifier must be blocked and wait for the finish of swap in.
+>>>>>>
+>>>>>> So this patch switches use a counter to track whether or not the map
+>>>>>> was used. The counter was increased when vq try to start or finish
+>>>>>> uses the map. This means, when it was even, we're sure there's no
+>>>>>> readers and MMU notifier is synchronized. When it was odd, it means
+>>>>>> there's a reader we need to wait it to be even again then we are
+>>>>>> synchronized.
+>>>>> You just described a seqlock.
+>>>> Kind of, see my explanation below.
+>>>>
+>>>>
+>>>>> We've been talking about providing this as some core service from mmu
+>>>>> notifiers because nearly every use of this API needs it.
+>>>> That would be very helpful.
+>>>>
+>>>>
+>>>>> IMHO this gets the whole thing backwards, the common pattern is to
+>>>>> protect the 'shadow pte' data with a seqlock (usually open coded),
+>>>>> such that the mmu notififer side has the write side of that lock and
+>>>>> the read side is consumed by the thread accessing or updating the SPTE.
+>>>> Yes, I've considered something like that. But the problem is, mmu notifier
+>>>> (writer) need to wait for the vhost worker to finish the read before it can
+>>>> do things like setting dirty pages and unmapping page.  It looks to me
+>>>> seqlock doesn't provide things like this.
+>>> The seqlock is usually used to prevent a 2nd thread from accessing the
+>>> VA while it is being changed by the mm. ie you use something seqlocky
+>>> instead of the ugly mmu_notifier_unregister/register cycle.
+>>
+>> Yes, so we have two mappings:
+>>
+>> [1] vring address to VA
+>> [2] VA to PA
+>>
+>> And have several readers and writers
+>>
+>> 1) set_vring_num_addr(): writer of both [1] and [2]
+>> 2) MMU notifier: reader of [1] writer of [2]
+>> 3) GUP: reader of [1] writer of [2]
+>> 4) memory accessors: reader of [1] and [2]
+>>
+>> Fortunately, 1) 3) and 4) have already synchronized through vq->mutex. We
+>> only need to deal with synchronization between 2) and each of the reset:
+>> Sync between 1) and 2): For mapping [1], I do
+>> mmu_notifier_unregister/register. This help to avoid holding any lock to do
+>> overlap check.
+> I suspect you could have done this with a RCU technique instead of
+> register/unregister.
 
 
+Probably. But the issue to be addressed by this patch is the 
+synchronization between MMU notifier and vhost worker.
 
+
+>
+>> Sync between 2) and 4): For mapping [1], both are readers, no need any
+>> synchronization. For mapping [2], synchronize through RCU (or something
+>> simliar to seqlock).
+> You can't really use a seqlock, seqlocks are collision-retry locks,
+> and the semantic here is that invalidate_range_start *MUST* not
+> continue until thread doing #4 above is guarenteed no longer touching
+> the memory.
+
+
+Yes, that's the tricky part. For hardware like CPU, kicking through IPI 
+is sufficient for synchronization. But for vhost kthread, it requires a 
+low overhead synchronization.
+
+
+>
+> This must be a proper barrier, like a spinlock, mutex, or
+> synchronize_rcu.
+
+
+I start with synchronize_rcu() but both you and Michael raise some 
+concern. Then I try spinlock and mutex:
+
+1) spinlock: add lots of overhead on datapath, this leads 0 performance 
+improvement.
+
+2) SRCU: full memory barrier requires on srcu_read_lock(), which still 
+leads little performance improvement
+
+3) mutex: a possible issue is need to wait for the page to be swapped in 
+(is this unacceptable ?), another issue is that we need hold vq lock 
+during range overlap check.
+
+4) using vhost_flush_work() instead of synchronize_rcu(): still need to 
+wait for swap. But can do overlap checking without the lock
+
+
+>
+> And, again, you can't re-invent a spinlock with open coding and get
+> something better.
+
+
+So the question is if waiting for swap is considered to be unsuitable 
+for MMU notifiers. If not, it would simplify codes. If not, we still 
+need to figure out a possible solution.
+
+Btw, I come up another idea, that is to disable preemption when vhost 
+thread need to access the memory. Then register preempt notifier and if 
+vhost thread is preempted, we're sure no one will access the memory and 
+can do the cleanup.
+
+Thanks
+
+
+>
+> Jason
