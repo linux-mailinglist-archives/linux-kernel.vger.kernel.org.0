@@ -2,93 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90FE37F4E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E7B7F4E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:20:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390403AbfHBKTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:19:48 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37907 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730509AbfHBKTr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:19:47 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r9so72319579ljg.5;
-        Fri, 02 Aug 2019 03:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fGBuTFqAyAj2SvbKj/G2jivACOslP7MbhI6gu5H3H9I=;
-        b=MPDKQ7pD9hLCaB4mMrjjDD4pDd5I1b0v86GUrdk+9H51jnm2oDXwo37FqTFWTgsZ84
-         RMB6ALfrxUdW6R/f+flRuhuYV1Xpo843krtmq0d3TdhL6KIAgPkV8SLJmh2lAzITNwuE
-         Fte5IKFXZmElEo9bLC7S9syxay5R4u+qJCkVd/iUpQ8goLajV54hdbOUWO3WAiYNoL3P
-         7zvfES4AZ4beDbi46U99a0tz2CNnwUKqkIVtLrp0JqAmkb6/lGwTmQGjljJ7nO/enbMM
-         rHsVwLlytDQK6Tc0TmRlObyQxYLj0kW1rdVBtspdUIomaoxFXPfJDC2OnZc/Yt7xhM7I
-         OOog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fGBuTFqAyAj2SvbKj/G2jivACOslP7MbhI6gu5H3H9I=;
-        b=B/7JF2qd+iZSBzR+W/Din8ht8iBVC9hRyTS7KFMmFedXea3GOYfBXW5c7Ho5cysjHb
-         OdEzlV8mO+rVD+ShFpvRC3/GMfByGjhyDN3L9ax5eiHh74V5MhOev2SCG36MH5NF4jrr
-         x6rFLoRV7fEHX3iBgKeo6nUT8LMEmQMHDtTciTKMlt8vxszZvgHaZdvWbYQ+D/3LnrIY
-         nfGRlqXPpfFbgCgkvXaaC4yyPuqBUL+MhhEgNiLFzqcT4UoS12VH3diLEK1ZQ+KfCCmq
-         wyrUxmzdr12YqgU63wo/H6dQfxLF/hsjWxhqMYL/NIY/Q7tKy2pCd0HlKtrIZ0O7u8ZR
-         hHiw==
-X-Gm-Message-State: APjAAAXFuekID4k9MWmTsonD2HeyhVIpejV1EeCjML4DI/ZZlIytlKVC
-        itMZlaKpeM5lktBNkPniZeCxX/mufZ8I0z2HpvKM9mC1
-X-Google-Smtp-Source: APXvYqzzKlttQbwJtenbmXL7wZ9ffMLL+Cel02QakOlRtlFS2m8PpyPnLg15CyLpoJT0GFJPQPVlfYezNARFbzNMjfo=
-X-Received: by 2002:a2e:9198:: with SMTP id f24mr72249856ljg.221.1564741185385;
- Fri, 02 Aug 2019 03:19:45 -0700 (PDT)
+        id S2391311AbfHBKUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:20:40 -0400
+Received: from foss.arm.com ([217.140.110.172]:49040 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389243AbfHBKUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 06:20:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E44A3344;
+        Fri,  2 Aug 2019 03:20:38 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26BB63F71F;
+        Fri,  2 Aug 2019 03:20:34 -0700 (PDT)
+Date:   Fri, 2 Aug 2019 11:20:32 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Subject: Re: [PATCH v19 00/15] arm64: untag user pointers passed to the kernel
+Message-ID: <20190802102031.GB4175@arrakis.emea.arm.com>
+References: <cover.1563904656.git.andreyknvl@google.com>
+ <8c618cc9-ae68-9769-c5bb-67f1295abc4e@intel.com>
+ <13b4cf53-3ecb-f7e7-b504-d77af15d77aa@arm.com>
+ <CAAeHK+zTFqsLiB3Wf0bAi5A8ukQX5ZuvfUg4td-=r5UhBsUBOQ@mail.gmail.com>
+ <96fd8da4-a912-f6cc-2b32-5791027dbbd5@intel.com>
 MIME-Version: 1.0
-References: <259986242.BvXPX32bHu@devpool35> <20190606185900.GA19937@kroah.com>
- <CANiq72n2E4Ue0MU5mWitSbsscizPQKML0QQx_DBwJVni+eWMHQ@mail.gmail.com> <4007272.nJfEYfeqza@devpool35>
-In-Reply-To: <4007272.nJfEYfeqza@devpool35>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 2 Aug 2019 12:19:33 +0200
-Message-ID: <CANiq72=T8nH3HHkYvWF+vPMscgwXki1Ugiq6C9PhVHJUHAwDYw@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_Linux_4=2E9=2E180_build_fails_with_gcc_9_and_=27cleanu?=
-        =?UTF-8?Q?p=5Fmodule=27_specifies_less_restrictive_attribute_than_its_targ?=
-        =?UTF-8?Q?et_=E2=80=A6?=
-To:     Rolf Eike Beer <eb@emlix.com>
-Cc:     Greg KH <greg@kroah.com>, stable@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96fd8da4-a912-f6cc-2b32-5791027dbbd5@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 10:17 AM Rolf Eike Beer <eb@emlix.com> wrote:
->
-> Am Samstag, 8. Juni 2019, 14:00:34 CEST schrieb Miguel Ojeda:
-> > On Thu, Jun 6, 2019 at 8:59 PM Greg KH <greg@kroah.com> wrote:
-> > > "manually fixing it up" means "hacked it to pieces" to me, I have no
-> > > idea what the end result really was :)
-> > >
-> > > If someone wants to send me some patches I can actually apply, that
-> > > would be best...
-> >
-> > I will give it a go whenever I get some free time :)
->
-> I fear this has never happened, did it?
+On Thu, Aug 01, 2019 at 08:36:47AM -0700, Dave Hansen wrote:
+> On 8/1/19 5:48 AM, Andrey Konovalov wrote:
+> > On Thu, Aug 1, 2019 at 2:11 PM Kevin Brodsky <kevin.brodsky@arm.com> wrote:
+> >> On 31/07/2019 17:50, Dave Hansen wrote:
+> >>> On 7/23/19 10:58 AM, Andrey Konovalov wrote:
+> >>>> The mmap and mremap (only new_addr) syscalls do not currently accept
+> >>>> tagged addresses. Architectures may interpret the tag as a background
+> >>>> colour for the corresponding vma.
+> >>>
+> >>> What the heck is a "background colour"? :)
+> >>
+> >> Good point, this is some jargon that we started using for MTE, the idea being that
+> >> the kernel could set a tag value (specified during mmap()) as "background colour" for
+> >> anonymous pages allocated in that range.
+> >>
+> >> Anyway, this patch series is not about MTE. Andrey, for v20 (if any), I think it's
+> >> best to drop this last sentence to avoid any confusion.
 
-No. Between summer, holidays and a conference I didn't get to do it.
+Indeed, the part with the "background colour" and even the "currently"
+adverb should be dropped.
 
-Done the minimal approach here:
+Also, if we merge the patches via different trees anyway, I don't think
+there is a need for Andrey to integrate them with his series. We can
+pick them up directly in the arm64 tree (once the review finished).
 
-  https://github.com/ojeda/linux/commits/compiler-attributes-backport
+> OK, but what does that mean for tagged addresses getting passed to
+> mmap/mremap?  That sentence read to me like "architectures might allow
+> tags for ...something...".  So do we accept tagged addresses into those
+> syscalls?
 
-Tested building a handful of drivers with gcc 4.6.4, 8.3.0 and 9.1.1.
+If mmap() does not return a tagged address, the reasoning is that it
+should not accept one as an address hint (with or without MAP_FIXED).
+Note that these docs should only describe the top-byte-ignore ABI while
+leaving the memory tagging for a future patchset.
 
-Greg, I could backport the entire compiler_attributes.h, but given
-this is stable, we are supposed to minimize changes, right?
+In that future patchset, we may want to update the mmap() ABI to allow,
+only in conjunction with PROT_MTE, a tagged pointer as an address
+argument. In such case mmap() will return a tagged address and the pages
+pre-coloured (on fault) with the tag requested by the user. As I said,
+that's to be discussed later in the year.
 
-I tried to imitate what you do in other stable patches, please check
-the Cc:, Link: lines and the "commit ... upstream" just in case.
-
-HTH,
-
-Cheers,
-Miguel
+-- 
+Catalin
