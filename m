@@ -2,95 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71AF17FAE7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B05B7FB1F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:37:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406198AbfHBNfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:35:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36735 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406126AbfHBNfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:35:36 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7FA03882F2;
-        Fri,  2 Aug 2019 13:35:36 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-81.ams2.redhat.com [10.36.116.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DB2A860C47;
-        Fri,  2 Aug 2019 13:35:32 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id DCD6916E05; Fri,  2 Aug 2019 15:35:31 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 15:35:31 +0200
-From:   "kraxel@redhat.com" <kraxel@redhat.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     "Zhang, Tina" <tina.zhang@intel.com>,
-        "Lu, Kechen" <kechen.lu@intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Yuan, Hang" <hang.yuan@intel.com>
-Subject: Re: [RFC PATCH v4 2/6] vfio: Introduce vGPU display irq type
-Message-ID: <20190802133531.4zwsjltvjisq4sfz@sirius.home.kraxel.org>
-References: <20190718155640.25928-1-kechen.lu@intel.com>
- <20190718155640.25928-3-kechen.lu@intel.com>
- <20190719102516.60af527f@x1.home>
- <31185F57AF7C4B4F87C41E735C23A6FE64E06F@shsmsx102.ccr.corp.intel.com>
- <20190722134124.16c55c2f@x1.home>
- <237F54289DF84E4997F34151298ABEBC876BC9AD@SHSMSX101.ccr.corp.intel.com>
- <20190722191830.425d1593@x1.home>
+        id S2393417AbfHBNhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:37:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59048 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388919AbfHBNhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:37:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EA545AFA4;
+        Fri,  2 Aug 2019 13:37:15 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 186BF1E433B; Fri,  2 Aug 2019 15:37:15 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 15:37:14 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jan Kara <jack@suse.cz>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
+        Theodore Tso <tytso@mit.edu>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>, linux-ext4@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V2 6/7] fs/jbd2: Make state lock a spinlock
+Message-ID: <20190802133714.GN25064@quack2.suse.cz>
+References: <20190801010126.245731659@linutronix.de>
+ <20190801010944.457499601@linutronix.de>
+ <20190801175703.GH25064@quack2.suse.cz>
+ <alpine.DEB.2.21.1908012010020.1789@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190722191830.425d1593@x1.home>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 02 Aug 2019 13:35:36 +0000 (UTC)
+In-Reply-To: <alpine.DEB.2.21.1908012010020.1789@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
-
-> > > Couldn't you expose this as another capability within the IRQ_INFO return
-> > > data?  If you were to define it as a macro, I assume that means it would be
-> > > hard coded, in which case this probably becomes an Intel specific IRQ, rather
-> > > than what appears to be framed as a generic graphics IRQ extension.  A new
-> > > capability could instead allow the vendor to specify their own value, where
-> > > we could define how userspace should interpret and make use of this value.
-> > > Thanks,  
-> > Good suggestion. Currently, vfio_irq_info is used to save one irq
-> > info. What we need here is to use it to save several events info.
-> > Maybe we could figure out a general layout of this capability so that
-> > it can be leveraged by others, not only for display irq/events.
+On Thu 01-08-19 20:12:11, Thomas Gleixner wrote:
+> On Thu, 1 Aug 2019, Jan Kara wrote:
+> > On Thu 01-08-19 03:01:32, Thomas Gleixner wrote:
+> > > As almost all functions which use this lock have a journal head pointer
+> > > readily available, it makes more sense to remove the lock helper inlines
+> > > and write out spin_*lock() at all call sites.
+> > > 
+> > 
+> > Just a heads up that I didn't miss this patch. Just it has some bugs and I
+> > figured that rather than explaining to you subtleties of jh lifetime it is
+> > easier to fix up the problems myself since you're probably not keen on
+> > becoming jbd2 developer ;)... which was more complex than I thought so I'm
+> > not completely done yet. Hopefuly tomorrow.
 > 
-> You could also expose a device specific IRQ with count > 1 (ie. similar
-> to MSI/X) and avoid munging the eventfd value, which is not something
-> we do elsewhere, at least in vfio.  Thanks,
+> I'm curious where I was too naive :)
 
-Well, the basic idea is to use the eventfd value to signal the kind of
-changes which did happen, simliar to IRQ status register bits.
+Well, the most obvious where places where the result ended up being like
 
-So, when the guest changes the primary plane, the mdev driver notes
-this.  Same with the cursor plane.  On vblank (when the guests update
-is actually applied) the mdev driver wakes the eventfd and uses eventfd
-value to signal whenever primary plane or cursor plane or both did
-change.
+	jbd2_journal_put_journal_head(jh);
+	spin_unlock(&jh->state_lock);
 
-Then userspace knows which planes need an update without an extra
-VFIO_DEVICE_QUERY_GFX_PLANE roundtrip to the kernel.
+That's possible use-after-free.
 
-Alternatively we could have one eventfd for each change type.  But given
-that these changes are typically applied at the same time (vblank) we
-would have multiple eventfds being signaled at the same time.  Which
-doesn't look ideal to me ...
+But there were also other more subtle places where
+jbd2_journal_put_journal_head() was not directly visible as it was hidden
+inside journal list handling functions such as __jbd2_journal_refile_buffer()
+or so. And these needed some more work.
 
-cheers,
-  Gerd
+Anyway, I'm now done fixing up the patch, doing some xfstests runs to verify
+things didn't break in any obvious way...
 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
