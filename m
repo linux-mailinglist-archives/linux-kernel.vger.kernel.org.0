@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0367F7FA94
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 641157FA5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405353AbfHBNdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:33:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34346 "EHLO mail.kernel.org"
+        id S2405295AbfHBNcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:32:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394038AbfHBNXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:23:47 -0400
+        id S2394045AbfHBNXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:23:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1BF221773;
-        Fri,  2 Aug 2019 13:23:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C71021871;
+        Fri,  2 Aug 2019 13:23:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752226;
-        bh=RCTO222v17HqwPnQWRTuT5GQsu5fdnXXUfoG/R+0S14=;
+        s=default; t=1564752228;
+        bh=rrYouaVCH6+g84DRzKEb/llKvyhpuHqX24pGbNCMj6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I00o/D5o1YAB+MxC4ccbZp0sDP4tbPLoJw8OUACA8zzKBR5c18v87QdtotuJ7YU3o
-         6pZcNlqhNV2Nei34cd4tq6KthzyktCTSoW2qOFci7fhsIHXMo4vNMWpA3dr++A8tYA
-         lgKs+tYUFLwwVL7JpvxX+oa7QahWlJt/yxRgO/Oo=
+        b=H7YXv4AuvOoHeKllgnqeicW5E9tPdK5Od+2ijcVA/NuosCTWd+M13LVI4o/UN7xo1
+         33YiucbOlK72a5Hi61/tAmh/fON8R/kiHzqsYofQY7lQy5IA4jv8/NSrzjggj2fkgo
+         FWOFW2wgbcJR2cZiE3r+qhgDD0sb8wEivK0XLPJY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 21/42] cpufreq/pasemi: fix use-after-free in pas_cpufreq_cpu_init()
-Date:   Fri,  2 Aug 2019 09:22:41 -0400
-Message-Id: <20190802132302.13537-21-sashal@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 23/42] ALSA: compress: Fix regression on compressed capture streams
+Date:   Fri,  2 Aug 2019 09:22:43 -0400
+Message-Id: <20190802132302.13537-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802132302.13537-1-sashal@kernel.org>
 References: <20190802132302.13537-1-sashal@kernel.org>
@@ -45,73 +43,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-[ Upstream commit e0a12445d1cb186d875410d093a00d215bec6a89 ]
+[ Upstream commit 4475f8c4ab7b248991a60d9c02808dbb813d6be8 ]
 
-The cpu variable is still being used in the of_get_property() call
-after the of_node_put() call, which may result in use-after-free.
+A previous fix to the stop handling on compressed capture streams causes
+some knock on issues. The previous fix updated snd_compr_drain_notify to
+set the state back to PREPARED for capture streams. This causes some
+issues however as the handling for snd_compr_poll differs between the
+two states and some user-space applications were relying on the poll
+failing after the stream had been stopped.
 
-Fixes: a9acc26b75f6 ("cpufreq/pasemi: fix possible object reference leak")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+To correct this regression whilst still fixing the original problem the
+patch was addressing, update the capture handling to skip the PREPARED
+state rather than skipping the SETUP state as it has done until now.
+
+Fixes: 4f2ab5e1d13d ("ALSA: compress: Fix stop handling on compressed capture streams")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/pasemi-cpufreq.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ include/sound/compress_driver.h |  5 +----
+ sound/core/compress_offload.c   | 16 +++++++++++-----
+ 2 files changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index c7710c149de85..a0620c9ec0649 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -145,10 +145,18 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	int err = -ENODEV;
+diff --git a/include/sound/compress_driver.h b/include/sound/compress_driver.h
+index e87f2d5b3cc65..127c2713b543a 100644
+--- a/include/sound/compress_driver.h
++++ b/include/sound/compress_driver.h
+@@ -171,10 +171,7 @@ static inline void snd_compr_drain_notify(struct snd_compr_stream *stream)
+ 	if (snd_BUG_ON(!stream))
+ 		return;
  
- 	cpu = of_get_cpu_node(policy->cpu, NULL);
-+	if (!cpu)
-+		goto out;
+-	if (stream->direction == SND_COMPRESS_PLAYBACK)
+-		stream->runtime->state = SNDRV_PCM_STATE_SETUP;
+-	else
+-		stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
++	stream->runtime->state = SNDRV_PCM_STATE_SETUP;
  
-+	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
- 	of_node_put(cpu);
--	if (!cpu)
-+	if (!max_freqp) {
-+		err = -EINVAL;
- 		goto out;
+ 	wake_up(&stream->runtime->sleep);
+ }
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index 8b78ddffa509a..44e81cf302401 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -575,10 +575,7 @@ snd_compr_set_params(struct snd_compr_stream *stream, unsigned long arg)
+ 		stream->metadata_set = false;
+ 		stream->next_track = false;
+ 
+-		if (stream->direction == SND_COMPRESS_PLAYBACK)
+-			stream->runtime->state = SNDRV_PCM_STATE_SETUP;
+-		else
+-			stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
++		stream->runtime->state = SNDRV_PCM_STATE_SETUP;
+ 	} else {
+ 		return -EPERM;
+ 	}
+@@ -694,8 +691,17 @@ static int snd_compr_start(struct snd_compr_stream *stream)
+ {
+ 	int retval;
+ 
+-	if (stream->runtime->state != SNDRV_PCM_STATE_PREPARED)
++	switch (stream->runtime->state) {
++	case SNDRV_PCM_STATE_SETUP:
++		if (stream->direction != SND_COMPRESS_CAPTURE)
++			return -EPERM;
++		break;
++	case SNDRV_PCM_STATE_PREPARED:
++		break;
++	default:
+ 		return -EPERM;
 +	}
 +
-+	/* we need the freq in kHz */
-+	max_freq = *max_freqp / 1000;
- 
- 	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
- 	if (!dn)
-@@ -185,16 +193,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	}
- 
- 	pr_debug("init cpufreq on CPU %d\n", policy->cpu);
--
--	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
--	if (!max_freqp) {
--		err = -EINVAL;
--		goto out_unmap_sdcpwr;
--	}
--
--	/* we need the freq in kHz */
--	max_freq = *max_freqp / 1000;
--
- 	pr_debug("max clock-frequency is at %u kHz\n", max_freq);
- 	pr_debug("initializing frequency table\n");
- 
-@@ -212,9 +210,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 
- 	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
- 
--out_unmap_sdcpwr:
--	iounmap(sdcpwr_mapbase);
--
- out_unmap_sdcasr:
- 	iounmap(sdcasr_mapbase);
- out:
+ 	retval = stream->ops->trigger(stream, SNDRV_PCM_TRIGGER_START);
+ 	if (!retval)
+ 		stream->runtime->state = SNDRV_PCM_STATE_RUNNING;
 -- 
 2.20.1
 
