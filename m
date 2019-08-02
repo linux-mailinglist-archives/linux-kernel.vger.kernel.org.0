@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19E2C7F2C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 758477F2BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392007AbfHBJvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:51:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48926 "EHLO mail.kernel.org"
+        id S2405790AbfHBJux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:50:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729283AbfHBJpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:45:14 -0400
+        id S2391477AbfHBJpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:45:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 476A8206A2;
-        Fri,  2 Aug 2019 09:45:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 682782087E;
+        Fri,  2 Aug 2019 09:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739113;
-        bh=2ESkXxAvTvZIfncEBRc3XdXfkRgD3Iqvmv/FnfHq/ts=;
+        s=default; t=1564739118;
+        bh=3rJFkMkaF6i6+N+CP0PMLPJyRCQ20v0GyX5nZVhhU28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uzIpHuwkLRbmBIrwmT5legzDmMP3O4N1RFhrtUxzQ2vPcifJAXslJSSP2Q3iFE19R
-         pSJBiuu13a03a55A6U3HTiR671ncfciIX+SUWrh53u4lcxgZ/2/rfEHiJki5ryDMZM
-         cqzyaZVdG9UmhHfba01dxXFQw01JLHZJnYiUL1DE=
+        b=G5/O5LZhr8DI3kyUMypb2MFOY3WyXctE3UydQwgmVUaIyxwNKjhOB8P0/AavoIgvs
+         6UiLr8YmvX6OIRiHbvKR0LjM0cKYplybhVG7S7qoz+jxzhWqQwOJKqHFJzD0PkYW1Q
+         vFj7F7iaKQnXeb6TwqN47mTF1fbpZe4b/NIpGWrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Willy Tarreau <w@1wt.eu>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 104/223] floppy: fix div-by-zero in setup_format_params
-Date:   Fri,  2 Aug 2019 11:35:29 +0200
-Message-Id: <20190802092245.963045786@linuxfoundation.org>
+Subject: [PATCH 4.9 106/223] floppy: fix invalid pointer dereference in drive_name
+Date:   Fri,  2 Aug 2019 11:35:31 +0200
+Message-Id: <20190802092246.115916000@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -45,25 +45,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f3554aeb991214cbfafd17d55e2bfddb50282e32 ]
+[ Upstream commit 9b04609b784027968348796a18f601aed9db3789 ]
 
-This fixes a divide by zero error in the setup_format_params function of
+This fixes the invalid pointer dereference in the drive_name function of
 the floppy driver.
 
-Two consecutive ioctls can trigger the bug: The first one should set the
-drive geometry with such .sect and .rate values for the F_SECT_PER_TRACK
-to become zero.  Next, the floppy format operation should be called.
+The native_format field of the struct floppy_drive_params is used as
+floppy_type array index in the drive_name function.  Thus, the field
+should be checked the same way as the autodetect field.
 
-A floppy disk is not required to be inserted.  An unprivileged user
-could trigger the bug if the device is accessible.
+To trigger the bug, one could use a value out of range and set the drive
+parameters with the FDSETDRVPRM ioctl.  Next, FDGETDRVTYP ioctl should
+be used to call the drive_name.  A floppy disk is not required to be
+inserted.
 
-The patch checks F_SECT_PER_TRACK for a non-zero value in the
-set_geometry function.  The proper check should involve a reasonable
-upper limit for the .sect and .rate fields, but it could change the
-UAPI.
+CAP_SYS_ADMIN is required to call FDSETDRVPRM.
 
-The patch also checks F_SECT_PER_TRACK in the setup_format_params, and
-cancels the formatting operation in case of zero.
+The patch adds the check for a value of the native_format field to be in
+the '0 <= x < ARRAY_SIZE(floppy_type)' range of the floppy_type array
+indices.
 
 The bug was found by syzkaller.
 
@@ -73,29 +73,49 @@ Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/floppy.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/block/floppy.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 --- a/drivers/block/floppy.c
 +++ b/drivers/block/floppy.c
-@@ -2114,6 +2114,9 @@ static void setup_format_params(int trac
- 	raw_cmd->kernel_data = floppy_track_buffer;
- 	raw_cmd->length = 4 * F_SECT_PER_TRACK;
+@@ -3384,7 +3384,8 @@ static int fd_getgeo(struct block_device
+ 	return 0;
+ }
  
-+	if (!F_SECT_PER_TRACK)
-+		return;
+-static bool valid_floppy_drive_params(const short autodetect[8])
++static bool valid_floppy_drive_params(const short autodetect[8],
++		int native_format)
+ {
+ 	size_t floppy_type_size = ARRAY_SIZE(floppy_type);
+ 	size_t i = 0;
+@@ -3395,6 +3396,9 @@ static bool valid_floppy_drive_params(co
+ 			return false;
+ 	}
+ 
++	if (native_format < 0 || native_format >= floppy_type_size)
++		return false;
 +
- 	/* allow for about 30ms for data transport per track */
- 	head_shift = (F_SECT_PER_TRACK + 5) / 6;
+ 	return true;
+ }
  
-@@ -3236,6 +3239,8 @@ static int set_geometry(unsigned int cmd
- 	/* sanity checking for parameters. */
- 	if (g->sect <= 0 ||
- 	    g->head <= 0 ||
-+	    /* check for zero in F_SECT_PER_TRACK */
-+	    (unsigned char)((g->sect << 2) >> FD_SIZECODE(g)) == 0 ||
- 	    g->track <= 0 || g->track > UDP->tracks >> STRETCH(g) ||
- 	    /* check if reserved bits are set */
- 	    (g->stretch & ~(FD_STRETCH | FD_SWAPSIDES | FD_SECTBASEMASK)) != 0)
+@@ -3524,7 +3528,8 @@ static int fd_locked_ioctl(struct block_
+ 		SUPBOUND(size, strlen((const char *)outparam) + 1);
+ 		break;
+ 	case FDSETDRVPRM:
+-		if (!valid_floppy_drive_params(inparam.dp.autodetect))
++		if (!valid_floppy_drive_params(inparam.dp.autodetect,
++				inparam.dp.native_format))
+ 			return -EINVAL;
+ 		*UDP = inparam.dp;
+ 		break;
+@@ -3723,7 +3728,7 @@ static int compat_setdrvprm(int drive,
+ 		return -EPERM;
+ 	if (copy_from_user(&v, arg, sizeof(struct compat_floppy_drive_params)))
+ 		return -EFAULT;
+-	if (!valid_floppy_drive_params(v.autodetect))
++	if (!valid_floppy_drive_params(v.autodetect, v.native_format))
+ 		return -EINVAL;
+ 	mutex_lock(&floppy_mutex);
+ 	UDP->cmos = v.cmos;
 
 
