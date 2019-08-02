@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 438197F2AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 994C87F2D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405494AbfHBJuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:50:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50284 "EHLO mail.kernel.org"
+        id S2405898AbfHBJvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:51:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405499AbfHBJqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:46:11 -0400
+        id S2405876AbfHBJvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:51:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8D942171F;
-        Fri,  2 Aug 2019 09:46:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD8872064A;
+        Fri,  2 Aug 2019 09:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739170;
-        bh=RSxo86md8Iroy417st3d8Ja6MLXzxYiLawRSfVwbvy4=;
+        s=default; t=1564739495;
+        bh=goHfdpkyjRkUxgqH3PRtuRUvEVTPWNxCNirmAlAXiTE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mwYQzEytu/kaTjMhtCj97O8oMZfXPduV4cz+Lo7Z6Mv4xMqgkaSr0/ypBNYQOeWXW
-         PFoLSnurOdkOmt7Q18XaGt6g5pwxO+oA+Kn+SwUlyPMRcmoiuqQjrJb6vyMaBwdDUA
-         UyuqJuWrCtv5aOMDKRb9zJssMsZRRK2LHU9VYfS4=
+        b=N+F5/N2xS17DE2+KW71cST1dRyNTwfdPsA/svXoYfIznhTmRFB3ox5P6YxhUua6P2
+         8YcpTcrWamBuODt3HZlpJuS9lKDRmERuI55lPmMhgh1myF0S1G+P481LBbw0UCv8Zq
+         S6w7SDfrUOxYHiii8kawOuLaHycytO8lsdsN9iSc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Marcus Seyfarth <m.seyfarth@gmail.com>
-Subject: [PATCH 4.9 140/223] sky2: Disable MSI on ASUS P6T
-Date:   Fri,  2 Aug 2019 11:36:05 +0200
-Message-Id: <20190802092247.815563464@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 162/223] pinctrl: rockchip: fix leaked of_node references
+Date:   Fri,  2 Aug 2019 11:36:27 +0200
+Message-Id: <20190802092248.664754116@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -44,41 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+[ Upstream commit 3c89c70634bb0b6f48512de873e7a45c7e1fbaa5 ]
 
-[ Upstream commit a261e3797506bd561700be643fe1a85bf81e9661 ]
+The call to of_parse_phandle returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-The onboard sky2 NIC on ASUS P6T WS PRO doesn't work after PM resume
-due to the infamous IRQ problem.  Disabling MSI works around it, so
-let's add it to the blacklist.
+Detected by coccinelle with the following warnings:
+./drivers/pinctrl/pinctrl-rockchip.c:3221:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-rockchip.c:3223:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
 
-Unfortunately the BIOS on the machine doesn't fill the standard
-DMI_SYS_* entry, so we pick up DMI_BOARD_* entries instead.
-
-BugLink: https://bugzilla.suse.com/show_bug.cgi?id=1142496
-Reported-and-tested-by: Marcus Seyfarth <m.seyfarth@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/sky2.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pinctrl/pinctrl-rockchip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -4939,6 +4939,13 @@ static const struct dmi_system_id msi_bl
- 			DMI_MATCH(DMI_PRODUCT_NAME, "P-79"),
- 		},
- 	},
-+	{
-+		.ident = "ASUS P6T",
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK Computer INC."),
-+			DMI_MATCH(DMI_BOARD_NAME, "P6T"),
-+		},
-+	},
- 	{}
- };
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index f826793e972c..417cd3bd7e0c 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2208,6 +2208,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+ 						    base,
+ 						    &rockchip_regmap_config);
+ 		}
++		of_node_put(node);
+ 	}
  
+ 	bank->irq = irq_of_parse_and_map(bank->of_node, 0);
+-- 
+2.20.1
+
 
 
