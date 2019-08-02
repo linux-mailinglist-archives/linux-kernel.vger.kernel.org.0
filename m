@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E002B7F1BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E52E7F1AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:41:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404650AbfHBJlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:41:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43186 "EHLO mail.kernel.org"
+        id S2391765AbfHBJlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:41:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391012AbfHBJla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:41:30 -0400
+        id S2391178AbfHBJk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:40:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E844216C8;
-        Fri,  2 Aug 2019 09:41:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0C2520679;
+        Fri,  2 Aug 2019 09:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738889;
-        bh=qpd/yOb7hCGGWr5xjoaoJ/O2mcFbfXdzoQlG2AbF0zs=;
+        s=default; t=1564738856;
+        bh=rdBbQIUYNfkRm8ZkQ0N6taQuyISkbv8YCK+SvbUbs/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DExCKmEW4rXlvUgOSJTXBxH23OV+itRb9mGMs21glDAzOlJv3clJB4SsNjzN3rAkQ
-         FTOe/bgYUsuRy9V67IIZP+ACCe5IX7+OpnQHtx8IphLTsajEwa8eWcsmAw3GcG3ChH
-         iVy28QW87PfzbBjHNvDWYb+eFes2wCPIzya4HjSA=
+        b=M0f+DXTjI65No5b4j5lFBjRX4S4l04qO9ELLUGM1PETJ6Wm1C1q8AiyIiiH4Z0moa
+         ww5Pjj2CNdFHkzmxNxFIo1h4QONPaKoef1lYwlb7uMlCuKxw+abNppdJx/H+jCUjt8
+         gBgrOaRw5ot2fB29Rrv70tr7YBtdYu8+sKhj80cM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 020/223] media: mc-device.c: dont memset __user pointer contents
-Date:   Fri,  2 Aug 2019 11:34:05 +0200
-Message-Id: <20190802092240.375444660@linuxfoundation.org>
+Subject: [PATCH 4.9 022/223] net: phy: Check against net_device being NULL
+Date:   Fri,  2 Aug 2019 11:34:07 +0200
+Message-Id: <20190802092240.481519565@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -45,41 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 518fa4e0e0da97ea2e17c95ab57647ce748a96e2 ]
+[ Upstream commit 82c76aca81187b3d28a6fb3062f6916450ce955e ]
 
-You can't memset the contents of a __user pointer. Instead, call copy_to_user to
-copy links.reserved (which is zeroed) to the user memory.
+In general, we don't want MAC drivers calling phy_attach_direct with the
+net_device being NULL. Add checks against this in all the functions
+calling it: phy_attach() and phy_connect_direct().
 
-This fixes this sparse warning:
-
-SPARSE:drivers/media/mc/mc-device.c drivers/media/mc/mc-device.c:521:16:  warning: incorrect type in argument 1 (different address spaces)
-
-Fixes: f49308878d720 ("media: media_device_enum_links32: clean a reserved field")
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/media-device.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/phy/phy_device.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-index 6062c0cfa632..73a2dba475d0 100644
---- a/drivers/media/media-device.c
-+++ b/drivers/media/media-device.c
-@@ -490,8 +490,9 @@ static long media_device_enum_links32(struct media_device *mdev,
- 	if (ret)
- 		return ret;
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 5048a6df6a8e..5c2c72b1ef8b 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -673,6 +673,9 @@ int phy_connect_direct(struct net_device *dev, struct phy_device *phydev,
+ {
+ 	int rc;
  
--	memset(ulinks->reserved, 0, sizeof(ulinks->reserved));
--
-+	if (copy_to_user(ulinks->reserved, links.reserved,
-+			 sizeof(ulinks->reserved)))
-+		return -EFAULT;
- 	return 0;
- }
++	if (!dev)
++		return -EINVAL;
++
+ 	rc = phy_attach_direct(dev, phydev, phydev->dev_flags, interface);
+ 	if (rc)
+ 		return rc;
+@@ -965,6 +968,9 @@ struct phy_device *phy_attach(struct net_device *dev, const char *bus_id,
+ 	struct device *d;
+ 	int rc;
  
++	if (!dev)
++		return ERR_PTR(-EINVAL);
++
+ 	/* Search the list of PHY devices on the mdio bus for the
+ 	 * PHY with the requested name
+ 	 */
 -- 
 2.20.1
 
