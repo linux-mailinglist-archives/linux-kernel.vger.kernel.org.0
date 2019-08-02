@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 133B27F1C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C387F1C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:42:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404937AbfHBJlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:41:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43826 "EHLO mail.kernel.org"
+        id S2404949AbfHBJmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:42:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404918AbfHBJlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:41:53 -0400
+        id S2404936AbfHBJl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:41:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76B782086A;
-        Fri,  2 Aug 2019 09:41:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15159216C8;
+        Fri,  2 Aug 2019 09:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738913;
-        bh=fGCeSEBzvf1nKJNtELjY/pPwIsiJlgax2LnW3Hs02WY=;
+        s=default; t=1564738915;
+        bh=MBp/or1l6BZIgsFb6sbHo7FdFcSwAjctPQ/psK6lJBk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GsowGQqOD6sxtFNvsv2l5fQA4dsOy+ZM7QZWqaillBXOEFFtuQ6uAO24vhM50uk71
-         d+iwZ39a6Wl6Tikj0Z8cwXZ0KqAWJkZF8XptHtw0CILCLHnEI9sKJ1Ef9RZkER4TKF
-         ep6Yb1sCZxE6GfQuxj0Vq/g9Okxipzu24XZih7Bw=
+        b=a+5pV51rBYAw0y9Jg4A//7lhv3dUwJJhQFlFVT6hc1Ozf4jdH2LN3PiEbfPbf2CZ4
+         tlRXsf95qUTpJSOjimfANFZQoJOlw4puSdux3BlocykbfvaXVzCq5vsihoCFBSOc/m
+         zF4TjGsBTDlKnKWwyaUfZIcua8mrqfLoCCs3ffTk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Borislav Petkov <bp@suse.de>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 044/223] EDAC/sysfs: Fix memory leak when creating a csrow object
-Date:   Fri,  2 Aug 2019 11:34:29 +0200
-Message-Id: <20190802092241.820601377@linuxfoundation.org>
+Subject: [PATCH 4.9 045/223] ipsec: select crypto ciphers for xfrm_algo
+Date:   Fri,  2 Aug 2019 11:34:30 +0200
+Message-Id: <20190802092241.873650362@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -47,50 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 585fb3d93d32dbe89e718b85009f9c322cc554cd ]
+[ Upstream commit 597179b0ba550bd83fab1a9d57c42a9343c58514 ]
 
-In edac_create_csrow_object(), the reference to the object is not
-released when adding the device to the device hierarchy fails
-(device_add()). This may result in a memory leak.
+kernelci.org reports failed builds on arc because of what looks
+like an old missed 'select' statement:
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: https://lkml.kernel.org/r/1555554438-103953-1-git-send-email-bianpan2016@163.com
+net/xfrm/xfrm_algo.o: In function `xfrm_probe_algs':
+xfrm_algo.c:(.text+0x1e8): undefined reference to `crypto_has_ahash'
+
+I don't see this in randconfig builds on other architectures, but
+it's fairly clear we want to select the hash code for it, like we
+do for all its other users. As Herbert points out, CRYPTO_BLKCIPHER
+is also required even though it has not popped up in build tests.
+
+Fixes: 17bc19702221 ("ipsec: Use skcipher and ahash when probing algorithms")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/edac_mc_sysfs.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/xfrm/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index 40d792e96b75..203ebe348b77 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -426,6 +426,8 @@ static inline int nr_pages_per_csrow(struct csrow_info *csrow)
- static int edac_create_csrow_object(struct mem_ctl_info *mci,
- 				    struct csrow_info *csrow, int index)
- {
-+	int err;
-+
- 	csrow->dev.type = &csrow_attr_type;
- 	csrow->dev.bus = mci->bus;
- 	csrow->dev.groups = csrow_dev_groups;
-@@ -438,7 +440,11 @@ static int edac_create_csrow_object(struct mem_ctl_info *mci,
- 	edac_dbg(0, "creating (virtual) csrow node %s\n",
- 		 dev_name(&csrow->dev));
+diff --git a/net/xfrm/Kconfig b/net/xfrm/Kconfig
+index bda1a13628a8..c09336b5a028 100644
+--- a/net/xfrm/Kconfig
++++ b/net/xfrm/Kconfig
+@@ -9,6 +9,8 @@ config XFRM_ALGO
+ 	tristate
+ 	select XFRM
+ 	select CRYPTO
++	select CRYPTO_HASH
++	select CRYPTO_BLKCIPHER
  
--	return device_add(&csrow->dev);
-+	err = device_add(&csrow->dev);
-+	if (err)
-+		put_device(&csrow->dev);
-+
-+	return err;
- }
- 
- /* Create a CSROW object under specifed edac_mc_device */
+ config XFRM_USER
+ 	tristate "Transformation user configuration interface"
 -- 
 2.20.1
 
