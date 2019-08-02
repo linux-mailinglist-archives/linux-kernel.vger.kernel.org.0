@@ -2,196 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA3DC7EE85
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A3957EE88
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403952AbfHBINp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:13:45 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:54907 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2403892AbfHBINj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:13:39 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 7EF4A396;
-        Fri,  2 Aug 2019 04:13:38 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 02 Aug 2019 04:13:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=hmlf4bC9Vk0FOVsRROWxGhLGg/u
-        unUQ/nq5d4O95tew=; b=Ny4OHMQMoqcMrY+tWTzIApNCg+FX+KSqJHYj7abssop
-        toh+VaCKe6MTSJLBM1hcilU6kjZD+5SqXJMahC9SnEwrQpTgyP3dH61g1/7wzpLl
-        4pQWIdvqPdasYEjTPT1qo4RL1Jm29I9XQOAkiW8uTz23yyStsbyMYYc/cQ3ZiwL4
-        A3P6mpanGdTrDMvoJRX49eBccssfSYYpz5qvJ4KxKs3opFuL46qFjnf4DXiips0z
-        V6O6TK4uHIqtyVlb9bv+SWhZgBGUg+YIcWd6S2WHY7o40WaErx8JE6kcooE1DZqL
-        9OLainm9hzArFW7WsFumfrjD3ovexPrZLcdKupch8Iw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=hmlf4b
-        C9Vk0FOVsRROWxGhLGg/uunUQ/nq5d4O95tew=; b=K1DePlk6Gqrk4YpHg+l5Qt
-        ZDBeimBKVcY91nhgIa3NC/J1XzDXrI6Kv16gnRGZFJdZ1zICkPyShFcEg7F9JCTQ
-        HkV2x8gyGO2WuqjApL1FR7wr4TB+1ILhG6Xtlw7Lg6hH3hbOCxohwSSSDBujw+4x
-        k4xj475g8gDfzhlFrvn8mcI/K/aMCpycv2XPqSIOJb2MzXc4bF8gmB7egWka1cc2
-        CFRN9jtL/Z8HzumVhjo16vaPz591A+R7hdTyTGwemgUBbYnQPDe9kI3U32B+N5mk
-        H8lWgI37iEdKVQysIqTrGNYTxAi0Cxd50cjjpBACQIuxTJPNJXQyPdbhfKcgqp6g
-        ==
-X-ME-Sender: <xms:sfBDXYi1lQAfIJB3D7Dy1OkGi2UGbez2V5TKswApwmXXs_Oox8Guag>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleekgdduvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
-    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
-    vehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:sfBDXcgNSa1To1MGB_40mcRldwRciEckmE7CBnnIIVCBIE-jIWoJKQ>
-    <xmx:sfBDXWi4fRRj1eQcOYCPkX-jFhZzRLJv5e53P_7WmL5i-OhlrKh_3Q>
-    <xmx:sfBDXUKxKhLsAsLV9gdeFP29kCuUCJJgTsKkR7QOPqMYZX3I5RQUaA>
-    <xmx:svBDXSQ7Kqp33DubGvo4EQ-1rTJhVe1RmWPc6q0PflOtQBUpksQrOg>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 61E788005C;
-        Fri,  2 Aug 2019 04:13:37 -0400 (EDT)
-Date:   Fri, 2 Aug 2019 10:13:35 +0200
-From:   Greg KH <greg@kroah.com>
-To:     "Yan, Zheng" <zyan@redhat.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        idryomov@redhat.com, jlayton@redhat.com, stable@vger.kernel.org
-Subject: Re: [PATCH 8/8] ceph: hold i_ceph_lock when removing caps for
- freeing inode
-Message-ID: <20190802081335.GJ26174@kroah.com>
-References: <20190523080646.19632-8-zyan@redhat.com>
- <20190529131452.43F372081C@mail.kernel.org>
- <1fb32a0f-545c-2ace-3dcd-8df6ca9d32e6@redhat.com>
+        id S2389195AbfHBIOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:14:46 -0400
+Received: from verein.lst.de ([213.95.11.211]:50730 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726937AbfHBIOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:14:46 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 9F17E68B05; Fri,  2 Aug 2019 10:14:41 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 10:14:41 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Will Deacon <will@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        Shawn Anastasio <shawn@anastas.io>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-mapping: fix page attributes for dma_mmap_*
+Message-ID: <20190802081441.GA9725@lst.de>
+References: <20190801142118.21225-1-hch@lst.de> <20190801142118.21225-2-hch@lst.de> <20190801162305.3m32chycsdjmdejk@willie-the-truck> <20190801163457.GB26588@lst.de> <20190801164411.kmsl4japtfkgvzxe@willie-the-truck>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1fb32a0f-545c-2ace-3dcd-8df6ca9d32e6@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190801164411.kmsl4japtfkgvzxe@willie-the-truck>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 09:46:35AM +0800, Yan, Zheng wrote:
-> On 5/29/19 9:14 PM, Sasha Levin wrote:
-> > Hi,
+On Thu, Aug 01, 2019 at 05:44:12PM +0100, Will Deacon wrote:
+> > > Although arch_dma_mmap_pgprot() is a bit of a misnomer now that it only
+> > > gets involved in the non-coherent case.
 > > 
-> > [This is an automated email]
-> > 
-> > This commit has been processed because it contains a -stable tag.
-> > The stable tag indicates that it's relevant for the following trees: all
-> > 
-> > The bot has tested the following trees: v5.1.4, v5.0.18, v4.19.45, v4.14.121, v4.9.178, v4.4.180, v3.18.140.
-> > 
-> > v5.1.4: Build OK!
-> > v5.0.18: Failed to apply! Possible dependencies:
-> >      e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-> > 
-> > v4.19.45: Failed to apply! Possible dependencies:
-> >      e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-> > 
-> > v4.14.121: Failed to apply! Possible dependencies:
-> >      a1c6b8358171c ("ceph: define argument structure for handle_cap_grant")
-> >      a57d9064e4ee4 ("ceph: flush pending works before shutdown super")
-> >      e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-> > 
-> > v4.9.178: Failed to apply! Possible dependencies:
-> >      a1c6b8358171c ("ceph: define argument structure for handle_cap_grant")
-> >      a57d9064e4ee4 ("ceph: flush pending works before shutdown super")
-> >      e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-> > 
-> > v4.4.180: Failed to apply! Possible dependencies:
-> >      13d1ad16d05ee ("libceph: move message allocation out of ceph_osdc_alloc_request()")
-> >      34b759b4a22b0 ("ceph: kill ceph_empty_snapc")
-> >      3f1af42ad0fad ("libceph: enable large, variable-sized OSD requests")
-> >      5be0389dac662 ("ceph: re-send AIO write request when getting -EOLDSNAP error")
-> >      7627151ea30bc ("libceph: define new ceph_file_layout structure")
-> >      779fe0fb8e188 ("ceph: rados pool namespace support")
-> >      922dab6134178 ("libceph, rbd: ceph_osd_linger_request, watch/notify v2")
-> >      a1c6b8358171c ("ceph: define argument structure for handle_cap_grant")
-> >      ae458f5a171ba ("libceph: make r_request msg_size calculation clearer")
-> >      c41d13a31fefe ("rbd: use header_oid instead of header_name")
-> >      c8fe9b17d055f ("ceph: Asynchronous IO support")
-> >      d30291b985d18 ("libceph: variable-sized ceph_object_id")
-> >      e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-> > 
-> > v3.18.140: Failed to apply! Possible dependencies:
-> >      10183a69551f7 ("ceph: check OSD caps before read/write")
-> >      28127bdd2f843 ("ceph: convert inline data to normal data before data write")
-> >      31c542a199d79 ("ceph: add inline data to pagecache")
-> >      5be0389dac662 ("ceph: re-send AIO write request when getting -EOLDSNAP error")
-> >      70db4f3629b34 ("ceph: introduce a new inode flag indicating if cached dentries are ordered")
-> >      745a8e3bccbc6 ("ceph: don't pre-allocate space for cap release messages")
-> >      7627151ea30bc ("libceph: define new ceph_file_layout structure")
-> >      779fe0fb8e188 ("ceph: rados pool namespace support")
-> >      83701246aee8f ("ceph: sync read inline data")
-> >      a1c6b8358171c ("ceph: define argument structure for handle_cap_grant")
-> >      affbc19a68f99 ("ceph: make sure syncfs flushes all cap snaps")
-> >      c8fe9b17d055f ("ceph: Asynchronous IO support")
-> >      d30291b985d18 ("libceph: variable-sized ceph_object_id")
-> >      d3383a8e37f80 ("ceph: avoid block operation when !TASK_RUNNING (ceph_mdsc_sync)")
-> >      e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-> >      e96a650a8174e ("ceph, rbd: delete unnecessary checks before two function calls")
-> > 
-> > 
-> > How should we proceed with this patch?
-> > 
+> > A better name is welcome.
 > 
-> please use following patch for old kernels
-> 
-> Regards
-> Yan, Zheng
-> 
-> ---
-> From 55937416f12e096621b06ada7554cacb89d06e97 Mon Sep 17 00:00:00 2001
-> From: "Yan, Zheng" <zyan@redhat.com>
-> Date: Thu, 23 May 2019 11:01:37 +0800
-> Subject: [PATCH] ceph: hold i_ceph_lock when removing caps for freeing inode
-> 
-> ceph_d_revalidate(, LOOKUP_RCU) may call __ceph_caps_issued_mask()
-> on a freeing inode.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@redhat.com>
-> ---
->  fs/ceph/caps.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index ff5d32cf9578..0fb4e919cdce 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -1119,20 +1119,23 @@ static int send_cap_msg(struct cap_msg_args *arg)
->  }
-> 
->  /*
-> - * Queue cap releases when an inode is dropped from our cache.  Since
-> - * inode is about to be destroyed, there is no need for i_ceph_lock.
-> + * Queue cap releases when an inode is dropped from our cache.
->   */
->  void ceph_queue_caps_release(struct inode *inode)
->  {
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct rb_node *p;
-> 
-> +	/* lock i_ceph_lock, because ceph_d_revalidate(..., LOOKUP_RCU)
-> +	 * may call __ceph_caps_issued_mask() on a freeing inode. */
-> +	spin_lock(&ci->i_ceph_lock);
->  	p = rb_first(&ci->i_caps);
->  	while (p) {
->  		struct ceph_cap *cap = rb_entry(p, struct ceph_cap, ci_node);
->  		p = rb_next(p);
->  		__ceph_remove_cap(cap, true);
->  	}
-> +	spin_unlock(&ci->i_ceph_lock);
->  }
-> 
->  /*
-> -- 
-> 2.17.2
+> How about arch_dma_noncoherent_mmap_pgprot() ? Too long?
 
-Thanks for the backport, now queued up.
+Sounds a little long yes.  And doesn't fix the additional problem that
+we don't just it for mmap but also for the in-kernel remapping these
+days.
 
-greg k-h
+> > But my worry is how this interacts with architectures that have an
+> > uncached segment (mips, nios2, microblaze, extensa) where we'd have
+> > the kernel access DMA_ATTR_WRITE_COMBINE mappigns using the uncached
+> > segment, and userspace mmaps using pgprot_writecombine, which could
+> > lead to aliasing issues.  But then again mips already supports
+> > DMA_ATTR_WRITE_COMBINE, so this must be ok somehow.  I guess I'll
+> > need to field that question to the relevant parties.
+> 
+> Or it's always been busted and happens to work out in practice...
+
+I've sent a ping to the mips folks.  While we'are at it:  arm64
+and arm32 (optionally) map dma coherent allocations as write combine.
+I suspect this hasn't always just been busted but intentional (of course!),
+but is there any chance to get a quote from the arm architecture spec
+on why this is fine as it looks rather confusion?
+
+Also if we assume mips is buggy DMA_ATTR_WRITE_COMBINE really just seems
+to be there for old arm platforms, which makes the scope pretty limited.
