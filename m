@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4E2D7F825
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:13:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9924B7F836
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393068AbfHBNMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:12:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47660 "EHLO mx1.redhat.com"
+        id S2393146AbfHBNNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:13:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39746 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393060AbfHBNMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:12:38 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S2393004AbfHBNMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:12:32 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 23FF83091799;
-        Fri,  2 Aug 2019 13:12:38 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 001223090FC8;
+        Fri,  2 Aug 2019 13:12:31 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-81.ams2.redhat.com [10.36.116.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F0E885D96E;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B0F7D5D704;
         Fri,  2 Aug 2019 13:12:31 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 821769D20; Fri,  2 Aug 2019 15:12:28 +0200 (CEST)
+        id 995619D21; Fri,  2 Aug 2019 15:12:28 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
@@ -29,13 +29,13 @@ Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
         Daniel Vetter <daniel@ffwll.ch>,
         virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v7 16/18] drm/virtio: drop virtio_gpu_object_{ref,unref}
-Date:   Fri,  2 Aug 2019 15:12:23 +0200
-Message-Id: <20190802131225.17760-17-kraxel@redhat.com>
+Subject: [PATCH v7 17/18] drm/virtio: drop virtio_gpu_object_{reserve,unreserve}
+Date:   Fri,  2 Aug 2019 15:12:24 +0200
+Message-Id: <20190802131225.17760-18-kraxel@redhat.com>
 In-Reply-To: <20190802131225.17760-1-kraxel@redhat.com>
 References: <20190802131225.17760-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 02 Aug 2019 13:12:38 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 02 Aug 2019 13:12:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -45,35 +45,41 @@ No users left.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_drv.h | 15 ---------------
- 1 file changed, 15 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_drv.h | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
 diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index d4d82679d83a..59f71dc94017 100644
+index 59f71dc94017..fb35831ed351 100644
 --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
 +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -363,21 +363,6 @@ struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
- 	struct drm_device *dev, struct dma_buf_attachment *attach,
- 	struct sg_table *sgt);
- 
--static inline struct virtio_gpu_object*
--virtio_gpu_object_ref(struct virtio_gpu_object *bo)
--{
--	drm_gem_object_get(&bo->base.base);
--	return bo;
--}
--
--static inline void virtio_gpu_object_unref(struct virtio_gpu_object **bo)
--{
--	if ((*bo) == NULL)
--		return;
--	drm_gem_object_put(&(*bo)->base.base);
--	*bo = NULL;
--}
--
- static inline u64 virtio_gpu_object_mmap_offset(struct virtio_gpu_object *bo)
- {
+@@ -368,27 +368,6 @@ static inline u64 virtio_gpu_object_mmap_offset(struct virtio_gpu_object *bo)
  	return drm_vma_node_offset_addr(&bo->base.base.vma_node);
+ }
+ 
+-static inline int virtio_gpu_object_reserve(struct virtio_gpu_object *bo)
+-{
+-	int r;
+-
+-	r = reservation_object_lock_interruptible(bo->base.base.resv, NULL);
+-	if (unlikely(r != 0)) {
+-		if (r != -EINTR) {
+-			struct virtio_gpu_device *qdev =
+-				bo->base.base.dev->dev_private;
+-			dev_err(qdev->dev, "%p reserve failed\n", bo);
+-		}
+-		return r;
+-	}
+-	return 0;
+-}
+-
+-static inline void virtio_gpu_object_unreserve(struct virtio_gpu_object *bo)
+-{
+-	reservation_object_unlock(bo->base.base.resv);
+-}
+-
+ /* virgl debufs */
+ int virtio_gpu_debugfs_init(struct drm_minor *minor);
+ 
 -- 
 2.18.1
 
