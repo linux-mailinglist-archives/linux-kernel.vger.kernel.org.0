@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F9D7F210
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F71C7F1FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:44:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405276AbfHBJon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:44:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48006 "EHLO mail.kernel.org"
+        id S2391955AbfHBJoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:44:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405267AbfHBJog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:44:36 -0400
+        id S2387493AbfHBJoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:44:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01739206A2;
-        Fri,  2 Aug 2019 09:44:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BADB12086A;
+        Fri,  2 Aug 2019 09:44:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739075;
-        bh=q9sMUCzCjEnEdAMJ/VmD7ONcEsB2+1D51FFCJLn0kZA=;
+        s=default; t=1564739047;
+        bh=mHVSsY+aIe2ABUom4lGfb7SfOBQJVP6taFFhmEbuhvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aEOWuYcWFKoe5KtR0f0YhrrJMJMXmbKYMo8R/Nxy8tVBaUMXcjnY9OLAhG26Zwb2z
-         w7AaS19djJdn5bLSFL2lZc88etWMqryCSfS1Yrh/jHHi+yZc740hZDk2C4J3E70q9N
-         74b85Q43/u6if+rGEyspPw/MtdjIiOowYlRLL0HU=
+        b=ejC50a46F8KDLiTGHcF0Hsp4ZrOOhcgoygbrdjwSqXryYjPDXpTeefVAmRNFclZ+b
+         FJTqWCC92hNQTPBJjn5u9Ccut8hwUMEmP23Iir8KAJf5FfY+EXQycEyXdAKcXwPfPz
+         nCUw4RukOycOqVDez0n8crxDu4nwRyjW7pBf2Veg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.9 088/223] NFSv4: Handle the special Linux file open access mode
-Date:   Fri,  2 Aug 2019 11:35:13 +0200
-Message-Id: <20190802092244.762091182@linuxfoundation.org>
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.9 092/223] media: v4l2: Test type instead of cfg->type in v4l2_ctrl_new_custom()
+Date:   Fri,  2 Aug 2019 11:35:17 +0200
+Message-Id: <20190802092245.089332434@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -43,49 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Boris Brezillon <boris.brezillon@collabora.com>
 
-commit 44942b4e457beda00981f616402a1a791e8c616e upstream.
+commit 07d89227a983df957a6a7c56f7c040cde9ac571f upstream.
 
-According to the open() manpage, Linux reserves the access mode 3
-to mean "check for read and write permission on the file and return
-a file descriptor that can't be used for reading or writing."
+cfg->type can be overridden by v4l2_ctrl_fill() and the new value is
+stored in the local type var. Fix the tests to use this local var.
 
-Currently, the NFSv4 code will ask the server to open the file,
-and will use an incorrect share access mode of 0. Since it has
-an incorrect share access mode, the client later forgets to send
-a corresponding close, meaning it can leak stateids on the server.
-
-Fixes: ce4ef7c0a8a05 ("NFS: Split out NFS v4 file operations")
-Cc: stable@vger.kernel.org # 3.6+
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Fixes: 0996517cf8ea ("V4L/DVB: v4l2: Add new control handling framework")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+[hverkuil-cisco@xs4all.nl: change to !qmenu and !qmenu_int (checkpatch)]
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/inode.c    |    1 +
- fs/nfs/nfs4file.c |    2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-ctrls.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -950,6 +950,7 @@ int nfs_open(struct inode *inode, struct
- 	nfs_fscache_open_file(inode, filp);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(nfs_open);
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -2103,16 +2103,15 @@ struct v4l2_ctrl *v4l2_ctrl_new_custom(s
+ 		v4l2_ctrl_fill(cfg->id, &name, &type, &min, &max, &step,
+ 								&def, &flags);
  
- /*
-  * This function is called whenever some part of NFS notices that
---- a/fs/nfs/nfs4file.c
-+++ b/fs/nfs/nfs4file.c
-@@ -49,7 +49,7 @@ nfs4_file_open(struct inode *inode, stru
- 		return err;
- 
- 	if ((openflags & O_ACCMODE) == 3)
--		openflags--;
-+		return nfs_open(inode, filp);
- 
- 	/* We can't create new files here */
- 	openflags &= ~(O_CREAT|O_EXCL);
+-	is_menu = (cfg->type == V4L2_CTRL_TYPE_MENU ||
+-		   cfg->type == V4L2_CTRL_TYPE_INTEGER_MENU);
++	is_menu = (type == V4L2_CTRL_TYPE_MENU ||
++		   type == V4L2_CTRL_TYPE_INTEGER_MENU);
+ 	if (is_menu)
+ 		WARN_ON(step);
+ 	else
+ 		WARN_ON(cfg->menu_skip_mask);
+-	if (cfg->type == V4L2_CTRL_TYPE_MENU && qmenu == NULL)
++	if (type == V4L2_CTRL_TYPE_MENU && !qmenu) {
+ 		qmenu = v4l2_ctrl_get_menu(cfg->id);
+-	else if (cfg->type == V4L2_CTRL_TYPE_INTEGER_MENU &&
+-		 qmenu_int == NULL) {
++	} else if (type == V4L2_CTRL_TYPE_INTEGER_MENU && !qmenu_int) {
+ 		handler_set_err(hdl, -EINVAL);
+ 		return NULL;
+ 	}
 
 
