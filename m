@@ -2,117 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3503D7EF58
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DBC67EF5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404255AbfHBIc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:32:26 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:36593 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729866AbfHBIcZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:32:25 -0400
-Received: from [167.98.27.226] (helo=[10.35.6.253])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1htSz4-0002ns-CI; Fri, 02 Aug 2019 09:32:18 +0100
-Subject: Re: [alsa-devel] [PATCH v2 3/3] ASoC: TDA7802: Add turn-on diagnostic
- routine
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
- <20190730120937.16271-4-thomas.preston@codethink.co.uk>
- <20190730141935.GF4264@sirena.org.uk>
- <45156592-a90f-b4f8-4d30-9631c03f1280@codethink.co.uk>
- <20190730155027.GJ4264@sirena.org.uk>
- <9b47a360-3b62-b968-b8d5-8639dc4b468d@codethink.co.uk>
- <20190801234241.GG5488@sirena.org.uk>
-From:   Thomas Preston <thomas.preston@codethink.co.uk>
-Message-ID: <472cc4ee-2e80-8b08-d842-79c65df572f3@codethink.co.uk>
-Date:   Fri, 2 Aug 2019 09:32:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2404266AbfHBIce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:32:34 -0400
+Received: from verein.lst.de ([213.95.11.211]:50925 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729866AbfHBIcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:32:33 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 86EAE68C7B; Fri,  2 Aug 2019 10:32:30 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 10:32:30 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     dan.j.williams@intel.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memremap: move from kernel/ to mm/
+Message-ID: <20190802083230.GB11000@lst.de>
+References: <20190722094143.18387-1-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20190801234241.GG5488@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722094143.18387-1-hch@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/2019 00:42, Mark Brown wrote:
-> On Tue, Jul 30, 2019 at 05:28:11PM +0100, Thomas Preston wrote:
->> On 30/07/2019 16:50, Mark Brown wrote:
-> 
->>> Like I say it's not just debugfs though, there's the standard driver
->>> interface too.
-> 
->> Ah right, I understand. So if we run the turn-on diagnostics routine, there's
->> nothing stopping anyone from interacting with the device in other ways.
-> 
->> I guess there's no way to share that mutex with ALSA? In that case, it doesn't
->> matter if this mutex is there or not - this feature is incompatible. How
->> compatible do debugfs interfaces have to be? I was under the impression anything
->> goes. I would argue that the debugfs is better off for having the mutex so
->> that no one re-reads "diagnostic" within the 5s poll timeout.
-> 
-> It's not really something that's supported; like Charles says the DAPM
-> mutex is exposed but if the regular controls would still be able to do
-> stuff.  It is kind of a "you broke it, you fix it" thing but on the
-> other hand it's better to make things safer if we can since it might not
-> be obvious later on why things are broken.
-> 
->> Alternatively, this diagnostic feature could be handled with an external-handler
->> kcontrol SOC_SINGLE_EXT? I'm not sure if this is an atomic interface either.
->>
->> What would be acceptable?
-> 
-> Yes, that's definitely doable - we've got some other drivers with
-> similar things like calibration triggers exposed that way.
-> 
+Andrew,
 
-One problem with using a kcontrol as a trigger for the turn-on diagnostic
-is that the diagnostic routine has a "return value".
-
-It goes like this:
-- Bring device to low-quiescent state
-- Initiate diagnostics
-- Poll for diagnostics-complete bit
-- Read the four channel status registers
-
-The final read clears the status registers, so this isn't something I
-can just do with regmap.
-
-One idea I had was to initiate the turn-on diagnostics using a kcontrol,
-whose handler saves the four channel status registers and an epoch in
-tda7802_priv. Then this can be read from debugfs. But it seems strange
-to have to turn on this control over here, then go over there and read
-this value.
-
-Hm, maybe a better idea is to have the turn on diagnostic only run on
-device probe (as its name suggests!), and print something to dmesg:
-
-	modprobe tda7802 turn_on_diagnostic=1
-
-	tda7802-codec i2c-TDA7802:00: Turn on diagnostic 04 04 04 04
-
-Kirill Marinushkin mentioned this in the first review [0], it just didn't
-really sink in until now!
-
-[0] https://lkml.org/lkml/2019/6/14/1344
+I've seen you've queued this up in -mm, but the explicit intent here was
+to quickly merge this after -rc1 so that the move doesn't conflict with
+further development for 5.3.  Any chance you could send this patch on
+to Linus?
