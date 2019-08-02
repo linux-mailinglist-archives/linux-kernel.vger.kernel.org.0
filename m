@@ -2,76 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF067F06A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA3F77F080
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388658AbfHBJ0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:26:25 -0400
-Received: from mail-wr1-f52.google.com ([209.85.221.52]:46789 "EHLO
-        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730881AbfHBJ0Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:26:24 -0400
-Received: by mail-wr1-f52.google.com with SMTP id z1so76418182wru.13
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 02:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=qhrlOJ2JM4o+i+Qmz94W6ZJfxQ+QxCzhzVh/WMOBHD8=;
-        b=DPV0TMNIGP+dn31KaFIVyjWR7xjvq11adkL8AFnvyuiarba1hsyFcForhFCDi2k1uu
-         nU8hd3kwVXSZn1JJ0COsa8bIVq5VjzGjpNvIblO5qS/fUWEpAgJnkg9TiN1/xLFGHpN0
-         VqoV3bXPqo3WsuBzmElotp0RVler2IAaYPu1U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=qhrlOJ2JM4o+i+Qmz94W6ZJfxQ+QxCzhzVh/WMOBHD8=;
-        b=POweXn28fqQUfnGz+f9URQ/UFxY3pGpwun2k7HAHV1pW/1PbtrHD5kiVrX11ECwMHv
-         pf6una7iiOUbFY/1l0HtQ2KTHxd5Zl5l6oc7jPDnOUxCr2Cj+TsPVStKKIqlSoLhJCdD
-         BY721xWE7SBAghb6cw+tanGMDRwA3sHuIUPSe27RaEnI8umPJK0mEgqsHmyRkVFzyj2C
-         xd+ZK9ALnuRvUMRQ1E/JskfWkzvYOiNJ6/pTOYkpAk7cRUpfvKzIdYXHG5Ym8Hb5Fq69
-         1q/qofsPUBT4hB9TFlFavCQXDfn0urSBU3rgsUkilCnfFF6/W8ZyFV/Kfkdc0b7K5Bsx
-         IJyA==
-X-Gm-Message-State: APjAAAXetEN+oRemzw3Mdm3OZfvjOxZuJYNm3NpBq2yLbqujSwn7s4lR
-        U7Ks+6Vrf1RqQYAjHAgq1wU0cZwwENMLCQ==
-X-Google-Smtp-Source: APXvYqwGwZ0VocLa/XZEhbbscLUKhSQpVrSnkUqTkyidP3sq0h/jBqG+vUTf2i+Pf3pVB1PBRh/Vlg==
-X-Received: by 2002:adf:fdcc:: with SMTP id i12mr25246427wrs.88.1564737982495;
-        Fri, 02 Aug 2019 02:26:22 -0700 (PDT)
-Received: from [10.230.40.234] ([192.19.215.250])
-        by smtp.gmail.com with ESMTPSA id y16sm78599834wrw.33.2019.08.02.02.26.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Aug 2019 02:26:21 -0700 (PDT)
-To:     Linux Kernel <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
-Subject: [BUILD REGRESSION] building single .ko not working in 5.3-rc1
-Message-ID: <9c4425f0-3428-214b-a4f2-237bbae2f495@broadcom.com>
-Date:   Fri, 2 Aug 2019 11:26:20 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388881AbfHBJ35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:29:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726716AbfHBJ34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:29:56 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EC9421783;
+        Fri,  2 Aug 2019 09:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564738195;
+        bh=HP3/a2oZIL74Jk6LrFo/J/9++kAyvAYs/l+UguAunkM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qfeMe/qcYWtf53z3Z9dF+oxGOcJaUAjCrGcvyULlxDBqw36yQU/hChfAu0qTelaID
+         AQinUj+FtVVIUkZhspjFMhGHrN/Vdn4Xy9kV9Z5cgxDvejZLF7uVIenpCf4bBryTIS
+         npr/gwuhMBk+ptEwJPy9Nyab4WzCSqGcusck5tcw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stefan Hellermann <stefan@the2masters.de>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 001/158] MIPS: ath79: fix ar933x uart parity mode
+Date:   Fri,  2 Aug 2019 11:27:02 +0200
+Message-Id: <20190802092203.934918516@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
+References: <20190802092203.671944552@linuxfoundation.org>
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In previous kernel versions I could do:
+[ Upstream commit db13a5ba2732755cf13320f3987b77cf2a71e790 ]
 
-make M=net/wireless cfg80211.ko
+While trying to get the uart with parity working I found setting even
+parity enabled odd parity insted. Fix the register settings to match
+the datasheet of AR9331.
 
-However, in 5.3-rc1 I now get:
+A similar patch was created by 8devices, but not sent upstream.
+https://github.com/8devices/openwrt-8devices/commit/77c5586ade3bb72cda010afad3f209ed0c98ea7c
 
-$ make M=net/wireless cfg80211.ko
-make[1]: *** No rule to make target `cfg80211.ko'.  Stop.
-make: *** [sub-make] Error 2
+Signed-off-by: Stefan Hellermann <stefan@the2masters.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/mips/include/asm/mach-ath79/ar933x_uart.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The 'modules' target is working, but sometimes there are multiple 
-modules and I only want to build just one explicitly. Can this option be 
-restored?
+diff --git a/arch/mips/include/asm/mach-ath79/ar933x_uart.h b/arch/mips/include/asm/mach-ath79/ar933x_uart.h
+index c2917b39966b..bba2c8837951 100644
+--- a/arch/mips/include/asm/mach-ath79/ar933x_uart.h
++++ b/arch/mips/include/asm/mach-ath79/ar933x_uart.h
+@@ -27,8 +27,8 @@
+ #define AR933X_UART_CS_PARITY_S		0
+ #define AR933X_UART_CS_PARITY_M		0x3
+ #define	  AR933X_UART_CS_PARITY_NONE	0
+-#define	  AR933X_UART_CS_PARITY_ODD	1
+-#define	  AR933X_UART_CS_PARITY_EVEN	2
++#define	  AR933X_UART_CS_PARITY_ODD	2
++#define	  AR933X_UART_CS_PARITY_EVEN	3
+ #define AR933X_UART_CS_IF_MODE_S	2
+ #define AR933X_UART_CS_IF_MODE_M	0x3
+ #define	  AR933X_UART_CS_IF_MODE_NONE	0
+-- 
+2.20.1
 
-Regards,
-Arend
+
+
