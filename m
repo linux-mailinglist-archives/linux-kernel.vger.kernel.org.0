@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43EDE7F3B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E234C7F337
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406986AbfHBJ7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:59:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34000 "EHLO mail.kernel.org"
+        id S2406259AbfHBJzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:55:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406528AbfHBJz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:55:26 -0400
+        id S2405891AbfHBJzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:55:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC8442086A;
-        Fri,  2 Aug 2019 09:55:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8BD22064A;
+        Fri,  2 Aug 2019 09:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739725;
-        bh=YYYz1aKx97Ii5R7lI2bmjC8XYExlbd+kK6xQ8flCFfc=;
+        s=default; t=1564739702;
+        bh=cAoUcOjnmzMRNF1VPYweVorQUEoaXhXYKXN/g31bwFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oIuScfaImV8vANWwcpYIYbd0sjUzV7NyZ3KLDWPAJUp6CGzrKPYWGqhTupES1aT0B
-         behDjNmey0UC+SZqAVwQOThoiUfce44VnHVdqeKY//sFsGr7Yt/lUuphDlHAVG5VBJ
-         sqcNRHR27PpxCvTSC6VGY7CzYlaXHfHuRJTXcHBs=
+        b=AV5b50SmiyH8LqvveeqonMBBuDZdwsF15ANHMSefMhkU6aAulVMOqA97kI+6VL3PM
+         vFJL6/kY0Wpwspy6Hf89G58wdbL06DUsupzcZjho6iqgC24FD2iDABTap6yPpTl0H0
+         /ZjdadUh0GXq7uWKq7weauLvtvR99nYh155q0JBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sunil Muthuswamy <sunilmut@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 01/32] hv_sock: Add support for delayed close
-Date:   Fri,  2 Aug 2019 11:39:35 +0200
-Message-Id: <20190802092102.084353778@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Qian Lu <luqia@amazon.com>
+Subject: [PATCH 4.14 04/25] NFS: Refactor nfs_lookup_revalidate()
+Date:   Fri,  2 Aug 2019 11:39:36 +0200
+Message-Id: <20190802092100.188767748@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190802092101.913646560@linuxfoundation.org>
-References: <20190802092101.913646560@linuxfoundation.org>
+In-Reply-To: <20190802092058.428079740@linuxfoundation.org>
+References: <20190802092058.428079740@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,192 +44,295 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sunil Muthuswamy <sunilmut@microsoft.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit a9eeb998c28d5506616426bd3a216bd5735a18b8 upstream.
+commit 5ceb9d7fdaaf6d8ced6cd7861cf1deb9cd93fa47 upstream.
 
-Currently, hvsock does not implement any delayed or background close
-logic. Whenever the hvsock socket is closed, a FIN is sent to the peer, and
-the last reference to the socket is dropped, which leads to a call to
-.destruct where the socket can hang indefinitely waiting for the peer to
-close it's side. The can cause the user application to hang in the close()
-call.
+Refactor the code in nfs_lookup_revalidate() as a stepping stone towards
+optimising and fixing nfs4_lookup_revalidate().
 
-This change implements proper STREAM(TCP) closing handshake mechanism by
-sending the FIN to the peer and the waiting for the peer's FIN to arrive
-for a given timeout. On timeout, it will try to terminate the connection
-(i.e. a RST). This is in-line with other socket providers such as virtio.
-
-This change does not address the hang in the vmbus_hvsock_device_unregister
-where it waits indefinitely for the host to rescind the channel. That
-should be taken up as a separate fix.
-
-Signed-off-by: Sunil Muthuswamy <sunilmut@microsoft.com>
-Reviewed-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Qian Lu <luqia@amazon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/vmw_vsock/hyperv_transport.c |  110 +++++++++++++++++++++++++++------------
- 1 file changed, 78 insertions(+), 32 deletions(-)
+ fs/nfs/dir.c |  222 +++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 126 insertions(+), 96 deletions(-)
 
---- a/net/vmw_vsock/hyperv_transport.c
-+++ b/net/vmw_vsock/hyperv_transport.c
-@@ -35,6 +35,9 @@
- /* The MTU is 16KB per the host side's design */
- #define HVS_MTU_SIZE		(1024 * 16)
- 
-+/* How long to wait for graceful shutdown of a connection */
-+#define HVS_CLOSE_TIMEOUT (8 * HZ)
-+
- struct vmpipe_proto_header {
- 	u32 pkt_type;
- 	u32 data_size;
-@@ -290,19 +293,32 @@ static void hvs_channel_cb(void *ctx)
- 		sk->sk_write_space(sk);
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -1059,6 +1059,100 @@ int nfs_neg_need_reval(struct inode *dir
+ 	return !nfs_check_verifier(dir, dentry, flags & LOOKUP_RCU);
  }
  
--static void hvs_close_connection(struct vmbus_channel *chan)
-+static void hvs_do_close_lock_held(struct vsock_sock *vsk,
-+				   bool cancel_timeout)
- {
--	struct sock *sk = get_per_channel_state(chan);
--	struct vsock_sock *vsk = vsock_sk(sk);
--
--	lock_sock(sk);
-+	struct sock *sk = sk_vsock(vsk);
- 
--	sk->sk_state = TCP_CLOSE;
- 	sock_set_flag(sk, SOCK_DONE);
--	vsk->peer_shutdown |= SEND_SHUTDOWN | RCV_SHUTDOWN;
--
-+	vsk->peer_shutdown = SHUTDOWN_MASK;
-+	if (vsock_stream_has_data(vsk) <= 0)
-+		sk->sk_state = TCP_CLOSING;
- 	sk->sk_state_change(sk);
-+	if (vsk->close_work_scheduled &&
-+	    (!cancel_timeout || cancel_delayed_work(&vsk->close_work))) {
-+		vsk->close_work_scheduled = false;
-+		vsock_remove_sock(vsk);
-+
-+		/* Release the reference taken while scheduling the timeout */
-+		sock_put(sk);
++static int
++nfs_lookup_revalidate_done(struct inode *dir, struct dentry *dentry,
++			   struct inode *inode, int error)
++{
++	switch (error) {
++	case 1:
++		dfprintk(LOOKUPCACHE, "NFS: %s(%pd2) is valid\n",
++			__func__, dentry);
++		return 1;
++	case 0:
++		nfs_mark_for_revalidate(dir);
++		if (inode && S_ISDIR(inode->i_mode)) {
++			/* Purge readdir caches. */
++			nfs_zap_caches(inode);
++			/*
++			 * We can't d_drop the root of a disconnected tree:
++			 * its d_hash is on the s_anon list and d_drop() would hide
++			 * it from shrink_dcache_for_unmount(), leading to busy
++			 * inodes on unmount and further oopses.
++			 */
++			if (IS_ROOT(dentry))
++				return 1;
++		}
++		dfprintk(LOOKUPCACHE, "NFS: %s(%pd2) is invalid\n",
++				__func__, dentry);
++		return 0;
 +	}
++	dfprintk(LOOKUPCACHE, "NFS: %s(%pd2) lookup returned error %d\n",
++				__func__, dentry, error);
++	return error;
 +}
 +
-+static void hvs_close_connection(struct vmbus_channel *chan)
++static int
++nfs_lookup_revalidate_negative(struct inode *dir, struct dentry *dentry,
++			       unsigned int flags)
 +{
-+	struct sock *sk = get_per_channel_state(chan);
- 
-+	lock_sock(sk);
-+	hvs_do_close_lock_held(vsock_sk(sk), true);
- 	release_sock(sk);
- }
- 
-@@ -445,50 +461,80 @@ static int hvs_connect(struct vsock_sock
- 	return vmbus_send_tl_connect_request(&h->vm_srv_id, &h->host_srv_id);
- }
- 
-+static void hvs_shutdown_lock_held(struct hvsock *hvs, int mode)
-+{
-+	struct vmpipe_proto_header hdr;
-+
-+	if (hvs->fin_sent || !hvs->chan)
-+		return;
-+
-+	/* It can't fail: see hvs_channel_writable_bytes(). */
-+	(void)hvs_send_data(hvs->chan, (struct hvs_send_buf *)&hdr, 0);
-+	hvs->fin_sent = true;
++	int ret = 1;
++	if (nfs_neg_need_reval(dir, dentry, flags)) {
++		if (flags & LOOKUP_RCU)
++			return -ECHILD;
++		ret = 0;
++	}
++	return nfs_lookup_revalidate_done(dir, dentry, NULL, ret);
 +}
 +
- static int hvs_shutdown(struct vsock_sock *vsk, int mode)
++static int
++nfs_lookup_revalidate_delegated(struct inode *dir, struct dentry *dentry,
++				struct inode *inode)
++{
++	nfs_set_verifier(dentry, nfs_save_change_attribute(dir));
++	return nfs_lookup_revalidate_done(dir, dentry, inode, 1);
++}
++
++static int
++nfs_lookup_revalidate_dentry(struct inode *dir, struct dentry *dentry,
++			     struct inode *inode)
++{
++	struct nfs_fh *fhandle;
++	struct nfs_fattr *fattr;
++	struct nfs4_label *label;
++	int ret;
++
++	ret = -ENOMEM;
++	fhandle = nfs_alloc_fhandle();
++	fattr = nfs_alloc_fattr();
++	label = nfs4_label_alloc(NFS_SERVER(inode), GFP_KERNEL);
++	if (fhandle == NULL || fattr == NULL || IS_ERR(label))
++		goto out;
++
++	ret = NFS_PROTO(dir)->lookup(dir, &dentry->d_name, fhandle, fattr, label);
++	if (ret < 0) {
++		if (ret == -ESTALE || ret == -ENOENT)
++			ret = 0;
++		goto out;
++	}
++	ret = 0;
++	if (nfs_compare_fh(NFS_FH(inode), fhandle))
++		goto out;
++	if (nfs_refresh_inode(inode, fattr) < 0)
++		goto out;
++
++	nfs_setsecurity(inode, fattr, label);
++	nfs_set_verifier(dentry, nfs_save_change_attribute(dir));
++
++	/* set a readdirplus hint that we had a cache miss */
++	nfs_force_use_readdirplus(dir);
++	ret = 1;
++out:
++	nfs_free_fattr(fattr);
++	nfs_free_fhandle(fhandle);
++	nfs4_label_free(label);
++	return nfs_lookup_revalidate_done(dir, dentry, inode, ret);
++}
++
+ /*
+  * This is called every time the dcache has a lookup hit,
+  * and we should check whether we can really trust that
+@@ -1070,58 +1164,36 @@ int nfs_neg_need_reval(struct inode *dir
+  * If the parent directory is seen to have changed, we throw out the
+  * cached dentry and do a new lookup.
+  */
+-static int nfs_lookup_revalidate(struct dentry *dentry, unsigned int flags)
++static int
++nfs_do_lookup_revalidate(struct inode *dir, struct dentry *dentry,
++			 unsigned int flags)
  {
- 	struct sock *sk = sk_vsock(vsk);
--	struct vmpipe_proto_header hdr;
--	struct hvs_send_buf *send_buf;
--	struct hvsock *hvs;
+-	struct inode *dir;
+ 	struct inode *inode;
+-	struct dentry *parent;
+-	struct nfs_fh *fhandle = NULL;
+-	struct nfs_fattr *fattr = NULL;
+-	struct nfs4_label *label = NULL;
+ 	int error;
  
- 	if (!(mode & SEND_SHUTDOWN))
- 		return 0;
+-	if (flags & LOOKUP_RCU) {
+-		parent = ACCESS_ONCE(dentry->d_parent);
+-		dir = d_inode_rcu(parent);
+-		if (!dir)
+-			return -ECHILD;
+-	} else {
+-		parent = dget_parent(dentry);
+-		dir = d_inode(parent);
+-	}
+ 	nfs_inc_stats(dir, NFSIOS_DENTRYREVALIDATE);
+ 	inode = d_inode(dentry);
  
- 	lock_sock(sk);
--
--	hvs = vsk->trans;
--	if (hvs->fin_sent)
--		goto out;
--
--	send_buf = (struct hvs_send_buf *)&hdr;
--
--	/* It can't fail: see hvs_channel_writable_bytes(). */
--	(void)hvs_send_data(hvs->chan, send_buf, 0);
--
--	hvs->fin_sent = true;
--out:
-+	hvs_shutdown_lock_held(vsk->trans, mode);
- 	release_sock(sk);
- 	return 0;
- }
+-	if (!inode) {
+-		if (nfs_neg_need_reval(dir, dentry, flags)) {
+-			if (flags & LOOKUP_RCU)
+-				return -ECHILD;
+-			goto out_bad;
+-		}
+-		goto out_valid;
+-	}
++	if (!inode)
++		return nfs_lookup_revalidate_negative(dir, dentry, flags);
  
--static void hvs_release(struct vsock_sock *vsk)
-+static void hvs_close_timeout(struct work_struct *work)
- {
-+	struct vsock_sock *vsk =
-+		container_of(work, struct vsock_sock, close_work.work);
- 	struct sock *sk = sk_vsock(vsk);
--	struct hvsock *hvs = vsk->trans;
--	struct vmbus_channel *chan;
+ 	if (is_bad_inode(inode)) {
+-		if (flags & LOOKUP_RCU)
+-			return -ECHILD;
+ 		dfprintk(LOOKUPCACHE, "%s: %pd2 has dud inode\n",
+ 				__func__, dentry);
+ 		goto out_bad;
+ 	}
  
-+	sock_hold(sk);
- 	lock_sock(sk);
-+	if (!sock_flag(sk, SOCK_DONE))
-+		hvs_do_close_lock_held(vsk, false);
+ 	if (NFS_PROTO(dir)->have_delegation(inode, FMODE_READ))
+-		goto out_set_verifier;
++		return nfs_lookup_revalidate_delegated(dir, dentry, inode);
  
--	sk->sk_state = TCP_CLOSING;
--	vsock_remove_sock(vsk);
+ 	/* Force a full look up iff the parent directory has changed */
+ 	if (!nfs_is_exclusive_create(dir, flags) &&
+ 	    nfs_check_verifier(dir, dentry, flags & LOOKUP_RCU)) {
+ 		error = nfs_lookup_verify_inode(inode, flags);
+ 		if (error) {
+-			if (flags & LOOKUP_RCU)
+-				return -ECHILD;
+ 			if (error == -ESTALE)
+-				goto out_zap_parent;
+-			goto out_error;
++				nfs_zap_caches(dir);
++			goto out_bad;
+ 		}
+ 		nfs_advise_use_readdirplus(dir);
+ 		goto out_valid;
+@@ -1133,81 +1205,39 @@ static int nfs_lookup_revalidate(struct
+ 	if (NFS_STALE(inode))
+ 		goto out_bad;
+ 
+-	error = -ENOMEM;
+-	fhandle = nfs_alloc_fhandle();
+-	fattr = nfs_alloc_fattr();
+-	if (fhandle == NULL || fattr == NULL)
+-		goto out_error;
 -
-+	vsk->close_work_scheduled = false;
- 	release_sock(sk);
-+	sock_put(sk);
+-	label = nfs4_label_alloc(NFS_SERVER(inode), GFP_NOWAIT);
+-	if (IS_ERR(label))
+-		goto out_error;
+-
+ 	trace_nfs_lookup_revalidate_enter(dir, dentry, flags);
+-	error = NFS_PROTO(dir)->lookup(dir, &dentry->d_name, fhandle, fattr, label);
++	error = nfs_lookup_revalidate_dentry(dir, dentry, inode);
+ 	trace_nfs_lookup_revalidate_exit(dir, dentry, flags, error);
+-	if (error == -ESTALE || error == -ENOENT)
+-		goto out_bad;
+-	if (error)
+-		goto out_error;
+-	if (nfs_compare_fh(NFS_FH(inode), fhandle))
+-		goto out_bad;
+-	if ((error = nfs_refresh_inode(inode, fattr)) != 0)
+-		goto out_bad;
+-
+-	nfs_setsecurity(inode, fattr, label);
+-
+-	nfs_free_fattr(fattr);
+-	nfs_free_fhandle(fhandle);
+-	nfs4_label_free(label);
++	return error;
++out_valid:
++	return nfs_lookup_revalidate_done(dir, dentry, inode, 1);
++out_bad:
++	if (flags & LOOKUP_RCU)
++		return -ECHILD;
++	return nfs_lookup_revalidate_done(dir, dentry, inode, 0);
 +}
  
--	chan = hvs->chan;
--	if (chan)
--		hvs_shutdown(vsk, RCV_SHUTDOWN | SEND_SHUTDOWN);
-+/* Returns true, if it is safe to remove socket; false otherwise */
-+static bool hvs_close_lock_held(struct vsock_sock *vsk)
+-	/* set a readdirplus hint that we had a cache miss */
+-	nfs_force_use_readdirplus(dir);
++static int
++nfs_lookup_revalidate(struct dentry *dentry, unsigned int flags)
 +{
-+	struct sock *sk = sk_vsock(vsk);
-+
-+	if (!(sk->sk_state == TCP_ESTABLISHED ||
-+	      sk->sk_state == TCP_CLOSING))
-+		return true;
-+
-+	if ((sk->sk_shutdown & SHUTDOWN_MASK) != SHUTDOWN_MASK)
-+		hvs_shutdown_lock_held(vsk->trans, SHUTDOWN_MASK);
-+
-+	if (sock_flag(sk, SOCK_DONE))
-+		return true;
-+
-+	/* This reference will be dropped by the delayed close routine */
-+	sock_hold(sk);
-+	INIT_DELAYED_WORK(&vsk->close_work, hvs_close_timeout);
-+	vsk->close_work_scheduled = true;
-+	schedule_delayed_work(&vsk->close_work, HVS_CLOSE_TIMEOUT);
-+	return false;
-+}
++	struct dentry *parent;
++	struct inode *dir;
++	int ret;
  
-+static void hvs_release(struct vsock_sock *vsk)
-+{
-+	struct sock *sk = sk_vsock(vsk);
-+	bool remove_sock;
-+
-+	lock_sock(sk);
-+	remove_sock = hvs_close_lock_held(vsk);
-+	release_sock(sk);
-+	if (remove_sock)
-+		vsock_remove_sock(vsk);
+-out_set_verifier:
+-	nfs_set_verifier(dentry, nfs_save_change_attribute(dir));
+- out_valid:
+ 	if (flags & LOOKUP_RCU) {
++		parent = ACCESS_ONCE(dentry->d_parent);
++		dir = d_inode_rcu(parent);
++		if (!dir)
++			return -ECHILD;
++		ret = nfs_do_lookup_revalidate(dir, dentry, flags);
+ 		if (parent != ACCESS_ONCE(dentry->d_parent))
+ 			return -ECHILD;
+-	} else
++	} else {
++		parent = dget_parent(dentry);
++		ret = nfs_do_lookup_revalidate(d_inode(parent), dentry, flags);
+ 		dput(parent);
+-	dfprintk(LOOKUPCACHE, "NFS: %s(%pd2) is valid\n",
+-			__func__, dentry);
+-	return 1;
+-out_zap_parent:
+-	nfs_zap_caches(dir);
+- out_bad:
+-	WARN_ON(flags & LOOKUP_RCU);
+-	nfs_free_fattr(fattr);
+-	nfs_free_fhandle(fhandle);
+-	nfs4_label_free(label);
+-	nfs_mark_for_revalidate(dir);
+-	if (inode && S_ISDIR(inode->i_mode)) {
+-		/* Purge readdir caches. */
+-		nfs_zap_caches(inode);
+-		/*
+-		 * We can't d_drop the root of a disconnected tree:
+-		 * its d_hash is on the s_anon list and d_drop() would hide
+-		 * it from shrink_dcache_for_unmount(), leading to busy
+-		 * inodes on unmount and further oopses.
+-		 */
+-		if (IS_ROOT(dentry))
+-			goto out_valid;
+ 	}
+-	dput(parent);
+-	dfprintk(LOOKUPCACHE, "NFS: %s(%pd2) is invalid\n",
+-			__func__, dentry);
+-	return 0;
+-out_error:
+-	WARN_ON(flags & LOOKUP_RCU);
+-	nfs_free_fattr(fattr);
+-	nfs_free_fhandle(fhandle);
+-	nfs4_label_free(label);
+-	dput(parent);
+-	dfprintk(LOOKUPCACHE, "NFS: %s(%pd2) lookup returned error %d\n",
+-			__func__, dentry, error);
+-	return error;
++	return ret;
  }
  
- static void hvs_destruct(struct vsock_sock *vsk)
+ /*
 
 
