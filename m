@@ -2,91 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46DC57F135
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 636E37F0D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:32:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390799AbfHBJhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:37:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404833AbfHBJgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:36:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 242122184B;
-        Fri,  2 Aug 2019 09:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738575;
-        bh=UOlWSdtchKYsBmJqg8duIoQQ3H+xRyAdBrbbFVsXwRg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UhNDG1GEQTFaCZjGVB3n3nwhrbg9ULMKKyFIYa8c8u72lNv/aF80inBJJqQrGbkh9
-         Pi6mw0RmBb5bwMBSfFloVroVTYjUcs0qydQX3HiPG2bFZno69zE5u6HQBd0MsGixii
-         4s1IG+4s0j+BKGAYSkkSeFk3McvdEoHdfKzoRA50=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.4 158/158] ceph: hold i_ceph_lock when removing caps for freeing inode
-Date:   Fri,  2 Aug 2019 11:29:39 +0200
-Message-Id: <20190802092233.875646888@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
-References: <20190802092203.671944552@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2391299AbfHBJcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:32:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47558 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390208AbfHBJcx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:32:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VqZFWxYVaUyhcuckDh3toTCzxHPZyFXRQKZUhqggFXI=; b=GoQZna+i55ANnp670+KAk3j4T
+        9iUvNxWhNh4GE989znF+XY5olW08Wy3IhDB8tCUij90HkRkVUxM1qrKT+GTC7xCp+T31aLPdF+1DQ
+        f+tmPXYCr5/Xs0iyB+Iz0zEJ8TAY3KNgMaYHgXt7bbN3XF+m9CtaKhgKX0/6zeMUQijY9HZ6h1Uv5
+        yNVg/1bp0jvtQAQI3dC0MSvCYD+w/koQ6FkNtC3o6SHCbuUYOFIyyipCW1yKD3/J0vfvV9ZDlnuO7
+        RJhmpTQi1w/wacf2gqAp+z9qt+wg/ib3ODK8iJEZ0fG7NruEkvEDTY/iHi78e5v7RsGZOrzqRjBdd
+        PM4KuTLow==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1htTva-00016v-F3; Fri, 02 Aug 2019 09:32:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1C4492029F4CB; Fri,  2 Aug 2019 11:32:44 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 11:32:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 0/5] Fix FIFO-99 abuse
+Message-ID: <20190802093244.GF2332@hirez.programming.kicks-ass.net>
+References: <20190801111348.530242235@infradead.org>
+ <20190801131707.5rpyydznnhz474la@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801131707.5rpyydznnhz474la@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yan, Zheng <zyan@redhat.com>
+On Thu, Aug 01, 2019 at 02:17:07PM +0100, Qais Yousef wrote:
+> On 08/01/19 13:13, Peter Zijlstra wrote:
+> > I noticed a bunch of kthreads defaulted to FIFO-99, fix them.
+> > 
+> > The generic default is FIFO-50, the admin will have to configure the system
+> > anyway.
+> > 
+> > For some the purpose is to be above OTHER and then FIFO-1 really is sufficient.
+> 
+> I was looking in this area too and was thinking of a way to consolidate the
+> creation of RT/DL tasks in the kernel and the way we set the priority.
+> 
+> Does it make sense to create a new header for RT priorities for kthreads
+> created in the kernel so that we can easily track and rationale about the
+> relative priorities of in-kernel RT tasks?
+> 
+> When working in the FW world such a header helped a lot in understanding what
+> runs at each priority level and how to reason about what priority level makes
+> sense for a new item. It could be a nice single point of reference; even for
+> admins.
 
-commit d6e47819721ae2d9d090058ad5570a66f3c42e39 upstream.
+Well, SCHED_FIFO is a broken scheduler model; that is, it is
+fundamentally incapable of resource management, which is the one thing
+an OS really should be doing.
 
-ceph_d_revalidate(, LOOKUP_RCU) may call __ceph_caps_issued_mask()
-on a freeing inode.
+This is of course the reason it is limited to privileged users only.
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Worse still; it is fundamentally impossible to compose static priority
+workloads. You cannot take two correctly working static prio workloads
+and smash them together and still expect them to work.
 
----
- fs/ceph/caps.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+For this reason 'all' FIFO tasks the kernel creates are basically at:
 
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1072,20 +1072,23 @@ static int send_cap_msg(struct ceph_mds_
- }
- 
- /*
-- * Queue cap releases when an inode is dropped from our cache.  Since
-- * inode is about to be destroyed, there is no need for i_ceph_lock.
-+ * Queue cap releases when an inode is dropped from our cache.
-  */
- void ceph_queue_caps_release(struct inode *inode)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct rb_node *p;
- 
-+	/* lock i_ceph_lock, because ceph_d_revalidate(..., LOOKUP_RCU)
-+	 * may call __ceph_caps_issued_mask() on a freeing inode. */
-+	spin_lock(&ci->i_ceph_lock);
- 	p = rb_first(&ci->i_caps);
- 	while (p) {
- 		struct ceph_cap *cap = rb_entry(p, struct ceph_cap, ci_node);
- 		p = rb_next(p);
- 		__ceph_remove_cap(cap, true);
- 	}
-+	spin_unlock(&ci->i_ceph_lock);
- }
- 
- /*
+  MAX_RT_PRIO / 2
 
+The administrator _MUST_ configure the system, the kernel simply doesn't
+know enough information to make a sensible choice.
 
+Now, Geert suggested so make make a define for that, but how about we do
+something like:
+
+/*
+ * ${the above explanation}
+ */
+int kernel_setscheduler_fifo(struct task_struct *p)
+{
+	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 };
+	return sched_setscheduler_nocheck(p, SCHED_FIFO, &sp);
+}
+
+And then take away sched_setscheduler*().
