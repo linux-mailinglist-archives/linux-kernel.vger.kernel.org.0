@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA577F329
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C00937F332
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406434AbfHBJyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:54:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60796 "EHLO mail.kernel.org"
+        id S2406399AbfHBJyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:54:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406416AbfHBJyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:54:19 -0400
+        id S2406234AbfHBJyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:54:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C5482064A;
-        Fri,  2 Aug 2019 09:54:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CD9320665;
+        Fri,  2 Aug 2019 09:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739658;
-        bh=JdmM0h11XKGI//MComHgva4g0M6lgwdu1zWCGSxrjoU=;
+        s=default; t=1564739680;
+        bh=IT/nPQmLVMr0/q8u+khDrqWAleTbLW533zhfaYi2BZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YVUgDRkTVKz/qwDQ2jky3jQ3EcfKb4H4rgp0q96rb2x9CZHzQMAOL7mBuw/VbYb/m
-         neOa6fHIC3DSihHKZys4bAET6JN2gCr1VbYMar+nyz51Na/qZrJgGrfAcqnF6so4V6
-         GeCRJLFIkJR4pWPwl98YoJIPgnsiOmDt+Xij5eE8=
+        b=GT+zm7cScVp1K9FsUWXMqweAcszy3/+jLG7l/3/SfMDMgU000HlBPvTHADcCgTlgl
+         6lIAlJ8WxeZDOZaUFLD6vZs1roUekOaLGTL1ArrcHSkyylJ9d/5BBvgisCw3N/FIvZ
+         Cuw/rms5RJ5PnKGRAOxKUBFqeaSV4t0zSoKcx8k0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sunil Muthuswamy <sunilmut@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/25] vsock: correct removal of socket from the list
-Date:   Fri,  2 Aug 2019 11:39:34 +0200
-Message-Id: <20190802092059.689248414@linuxfoundation.org>
+        stable@vger.kernel.org, Stan Hu <stanhu@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Qian Lu <luqia@amazon.com>
+Subject: [PATCH 4.14 03/25] NFS: Fix dentry revalidation on NFSv4 lookup
+Date:   Fri,  2 Aug 2019 11:39:35 +0200
+Message-Id: <20190802092100.091227808@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092058.428079740@linuxfoundation.org>
 References: <20190802092058.428079740@linuxfoundation.org>
@@ -43,95 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sunil Muthuswamy <sunilmut@microsoft.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit d5afa82c977ea06f7119058fa0eb8519ea501031 upstream.
+commit be189f7e7f03de35887e5a85ddcf39b91b5d7fc1 upstream.
 
-The current vsock code for removal of socket from the list is both
-subject to race and inefficient. It takes the lock, checks whether
-the socket is in the list, drops the lock and if the socket was on the
-list, deletes it from the list. This is subject to race because as soon
-as the lock is dropped once it is checked for presence, that condition
-cannot be relied upon for any decision. It is also inefficient because
-if the socket is present in the list, it takes the lock twice.
+We need to ensure that inode and dentry revalidation occurs correctly
+on reopen of a file that is already open. Currently, we can end up
+not revalidating either in the case of NFSv4.0, due to the 'cached open'
+path.
+Let's fix that by ensuring that we only do cached open for the special
+cases of open recovery and delegation return.
 
-Signed-off-by: Sunil Muthuswamy <sunilmut@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Stan Hu <stanhu@gmail.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Qian Lu <luqia@amazon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/vmw_vsock/af_vsock.c |   38 +++++++-------------------------------
- 1 file changed, 7 insertions(+), 31 deletions(-)
+ fs/nfs/nfs4proc.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -288,7 +288,8 @@ EXPORT_SYMBOL_GPL(vsock_insert_connected
- void vsock_remove_bound(struct vsock_sock *vsk)
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -1317,12 +1317,20 @@ static bool nfs4_mode_match_open_stateid
+ 	return false;
+ }
+ 
+-static int can_open_cached(struct nfs4_state *state, fmode_t mode, int open_mode)
++static int can_open_cached(struct nfs4_state *state, fmode_t mode,
++		int open_mode, enum open_claim_type4 claim)
  {
- 	spin_lock_bh(&vsock_table_lock);
--	__vsock_remove_bound(vsk);
-+	if (__vsock_in_bound_table(vsk))
-+		__vsock_remove_bound(vsk);
- 	spin_unlock_bh(&vsock_table_lock);
- }
- EXPORT_SYMBOL_GPL(vsock_remove_bound);
-@@ -296,7 +297,8 @@ EXPORT_SYMBOL_GPL(vsock_remove_bound);
- void vsock_remove_connected(struct vsock_sock *vsk)
- {
- 	spin_lock_bh(&vsock_table_lock);
--	__vsock_remove_connected(vsk);
-+	if (__vsock_in_connected_table(vsk))
-+		__vsock_remove_connected(vsk);
- 	spin_unlock_bh(&vsock_table_lock);
- }
- EXPORT_SYMBOL_GPL(vsock_remove_connected);
-@@ -332,35 +334,10 @@ struct sock *vsock_find_connected_socket
- }
- EXPORT_SYMBOL_GPL(vsock_find_connected_socket);
+ 	int ret = 0;
  
--static bool vsock_in_bound_table(struct vsock_sock *vsk)
--{
--	bool ret;
--
--	spin_lock_bh(&vsock_table_lock);
--	ret = __vsock_in_bound_table(vsk);
--	spin_unlock_bh(&vsock_table_lock);
--
--	return ret;
--}
--
--static bool vsock_in_connected_table(struct vsock_sock *vsk)
--{
--	bool ret;
--
--	spin_lock_bh(&vsock_table_lock);
--	ret = __vsock_in_connected_table(vsk);
--	spin_unlock_bh(&vsock_table_lock);
--
--	return ret;
--}
--
- void vsock_remove_sock(struct vsock_sock *vsk)
- {
--	if (vsock_in_bound_table(vsk))
--		vsock_remove_bound(vsk);
--
--	if (vsock_in_connected_table(vsk))
--		vsock_remove_connected(vsk);
-+	vsock_remove_bound(vsk);
-+	vsock_remove_connected(vsk);
- }
- EXPORT_SYMBOL_GPL(vsock_remove_sock);
+ 	if (open_mode & (O_EXCL|O_TRUNC))
+ 		goto out;
++	switch (claim) {
++	case NFS4_OPEN_CLAIM_NULL:
++	case NFS4_OPEN_CLAIM_FH:
++		goto out;
++	default:
++		break;
++	}
+ 	switch (mode & (FMODE_READ|FMODE_WRITE)) {
+ 		case FMODE_READ:
+ 			ret |= test_bit(NFS_O_RDONLY_STATE, &state->flags) != 0
+@@ -1617,7 +1625,7 @@ static struct nfs4_state *nfs4_try_open_
  
-@@ -491,8 +468,7 @@ static void vsock_pending_work(struct wo
- 	 * incoming packets can't find this socket, and to reduce the reference
- 	 * count.
- 	 */
--	if (vsock_in_connected_table(vsk))
--		vsock_remove_connected(vsk);
-+	vsock_remove_connected(vsk);
+ 	for (;;) {
+ 		spin_lock(&state->owner->so_lock);
+-		if (can_open_cached(state, fmode, open_mode)) {
++		if (can_open_cached(state, fmode, open_mode, claim)) {
+ 			update_open_stateflags(state, fmode);
+ 			spin_unlock(&state->owner->so_lock);
+ 			goto out_return_state;
+@@ -2141,7 +2149,8 @@ static void nfs4_open_prepare(struct rpc
+ 	if (data->state != NULL) {
+ 		struct nfs_delegation *delegation;
  
- 	sk->sk_state = TCP_CLOSE;
- 
+-		if (can_open_cached(data->state, data->o_arg.fmode, data->o_arg.open_flags))
++		if (can_open_cached(data->state, data->o_arg.fmode,
++					data->o_arg.open_flags, claim))
+ 			goto out_no_action;
+ 		rcu_read_lock();
+ 		delegation = rcu_dereference(NFS_I(data->state->inode)->delegation);
 
 
