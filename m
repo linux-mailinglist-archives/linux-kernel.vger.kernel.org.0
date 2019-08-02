@@ -2,71 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0849580319
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 481D78031E
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437437AbfHBXTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 19:19:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59186 "EHLO mail.kernel.org"
+        id S2437444AbfHBXUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 19:20:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729267AbfHBXTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 19:19:46 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 404272087E;
-        Fri,  2 Aug 2019 23:19:45 +0000 (UTC)
+        id S2388599AbfHBXUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 19:20:02 -0400
+Subject: Re: [GIT PULL] parisc architecture fixes for kernel v5.3-rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564787985;
-        bh=YU++tyFGcf6FgkDOi6izWRA7uaMXKRdOOC3CjOX9euM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NdIaKsCiF+u0y6wygd8WBq6MQW7yjmnvfVv5BeASL9ZOHC/B66AgZXY+dsDKqmcAz
-         KBM+O23q0edTYgcQQFZGpE8dYVWgHpUQ7W7Ox8VF093NbL240T+YvMoezET5/odM+E
-         FaAV6DLt9RoJVqoIpVp6xhWn7w4K9qX+kRx0eqgw=
-Subject: Re: [PATCH 4.9 000/223] 4.9.187-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190802092238.692035242@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <e2d79657-db37-a315-fb16-3baf3825028f@kernel.org>
-Date:   Fri, 2 Aug 2019 17:19:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        s=default; t=1564788001;
+        bh=w7pLLNi5wooNeDeJ/x3nTG9XxghUGlex9IME0/qMU04=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=xolDVK0+9DslIG3/7r77C+chHLfLf6LUTYtKDXdgLEOXKXyzlMVABJWFfogyRSBmx
+         P191Ne3tSBeRe60f/9LfuIQYRqEcSZnJtpIo91p9PWKppk24XA1MDTdcrwA23hIGxw
+         /Uf0okfpfoi5it4dLX6/9CzJbEbU0rNtJNgRD2SI=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190802160447.GA27285@ls3530.fritz.box>
+References: <20190802160447.GA27285@ls3530.fritz.box>
+X-PR-Tracked-List-Id: <linux-parisc.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190802160447.GA27285@ls3530.fritz.box>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git
+ parisc-5.3-4
+X-PR-Tracked-Commit-Id: f2c5ed0dd5004c2cff5c0e3d430a107576fcc17f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9100fc5ae83e64d99fd3300104893ef0e0b0aadb
+Message-Id: <156478800176.22769.2117525589731444415.pr-tracker-bot@kernel.org>
+Date:   Fri, 02 Aug 2019 23:20:01 +0000
+To:     Helge Deller <deller@gmx.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        John David Anglin <dave.anglin@bell.net>,
+        Sven Schnelle <svens@stackframe.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/2/19 3:33 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.187 release.
-> There are 223 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun 04 Aug 2019 09:19:34 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.187-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+The pull request you sent on Fri, 2 Aug 2019 18:04:47 +0200:
 
-Compiled and booted on my test system. No dmesg regressions.
+> git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-5.3-4
 
-thanks,
--- Shuah
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9100fc5ae83e64d99fd3300104893ef0e0b0aadb
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
