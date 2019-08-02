@@ -2,97 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A016C7F6B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85C367F6C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:24:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732377AbfHBMVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:21:16 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37163 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729422AbfHBMVP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:21:15 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so51884764wrr.4
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 05:21:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=H5wGh69dp/2MC7doWK21wK95kqVnSSNKp+yReUaFMfw=;
-        b=BFng/ii5ClHBf1j1zpaCDA5IzvC99gvtcgwdudRhLryKG6xIUyU9jDeLLixoNyvf/B
-         ixf/kgetSJEvj3F0WY3AGf1a4QSlN0zXBU5B10YKflkzqLpq6TH+Y+fk0tGT0u4oe6Rx
-         Nh1yBs2HgyGjOoN00wDW73WDIqtCQyDEhMI+cOqYBUqyCFAAQmwdHPv5RAaAtgG+3PZl
-         3lbtMZl6nZQcY6Y9QipEhJFrv1Q9gnxHnsZAmwZ84CwgSYsRVnlobDOfxt0WotLodijs
-         IkZOKAZf/4fVuX7kXJhVsArdgSO7DkbilnpByIQ9omEPIKpFIAWQ2abShToFNQbduEcq
-         vs6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=H5wGh69dp/2MC7doWK21wK95kqVnSSNKp+yReUaFMfw=;
-        b=al0yfM5WPHnG07uDErpfRr9H6Im7l4j30Vbco9RKk8q0uDchtOwMjEOLVZ3m4Bm13s
-         D8yTRxvHMjS2sVXiRNYeQKM8Z5SF9CcRYIunjeuPYBiSQBO9u7DvnMAuxLMgIWDOsSO2
-         uNl9x9Ze5lfdBeEcjP9qAJgCH0NKGUS5my3PiaDQHYk8eXzrUaCZiXxUbPQHe0ZxPc6y
-         stw/5iGOFgPsYWKq241bbJyddcK570jTC041IEjxwLSelTRvbgngxlayqEZxWFig4sbX
-         UiSlYlc0hgeZSyT/BeHQY3e5etjT6cqMxxizk6+ld2Lw9jLESsqY9UpftuitRG+TOxdJ
-         p8rg==
-X-Gm-Message-State: APjAAAWh8EvsHj/Jl3j3CXo8t9bMC7nsTuVsfpy5V3VhmC3/g9uiMI/1
-        XA4KTAB8JjemUhQo7Eaag6TGkRaOyOPZRg==
-X-Google-Smtp-Source: APXvYqy+ImRfcO++8pTE4rtugXo1crID7Pxh+mRV5Xz2OkfmY1enRlxel8RpiDgIXD3i69edDA16dw==
-X-Received: by 2002:a5d:46d1:: with SMTP id g17mr92750552wrs.160.1564748472965;
-        Fri, 02 Aug 2019 05:21:12 -0700 (PDT)
-Received: from localhost.localdomain (62-178-82-229.cable.dynamic.surfer.at. [62.178.82.229])
-        by smtp.gmail.com with ESMTPSA id n9sm120612691wrp.54.2019.08.02.05.21.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 02 Aug 2019 05:21:12 -0700 (PDT)
-From:   Christian Gmeiner <christian.gmeiner@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     etnaviv@lists.freedesktop.org,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] arm64: defconfig: CONFIG_DRM_ETNAVIV=m
-Date:   Fri,  2 Aug 2019 14:20:28 +0200
-Message-Id: <20190802122102.3932-1-christian.gmeiner@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        id S2388835AbfHBMYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:24:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:45793 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729422AbfHBMYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:24:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 460RDj5TGBz9sDB;
+        Fri,  2 Aug 2019 22:24:37 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2] PCI: rpaphp: Avoid a sometimes-uninitialized warning
+In-Reply-To: <20190802001102.GG151852@google.com>
+References: <20190603174323.48251-1-natechancellor@gmail.com> <20190603221157.58502-1-natechancellor@gmail.com> <20190722024313.GB55142@archlinux-threadripper> <87lfwq7lzb.fsf@concordia.ellerman.id.au> <20190802001102.GG151852@google.com>
+Date:   Fri, 02 Aug 2019 22:24:36 +1000
+Message-ID: <87v9vfkb5n.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For imx8 we want to enable etnaviv, let's enable it
-in defconfig, it will be useful to have it enabled for KernelCI
-boot and runtime testing.
+Bjorn Helgaas <helgaas@kernel.org> writes:
+> On Mon, Jul 22, 2019 at 02:05:12PM +1000, Michael Ellerman wrote:
+>> Nathan Chancellor <natechancellor@gmail.com> writes:
+>> > On Mon, Jun 03, 2019 at 03:11:58PM -0700, Nathan Chancellor wrote:
+>> >> When building with -Wsometimes-uninitialized, clang warns:
+>> >> 
+>> >> drivers/pci/hotplug/rpaphp_core.c:243:14: warning: variable 'fndit' is
+>> >> used uninitialized whenever 'for' loop exits because its condition is
+>> >> false [-Wsometimes-uninitialized]
+>> >>         for (j = 0; j < entries; j++) {
+>> >>                     ^~~~~~~~~~~
+>> >> drivers/pci/hotplug/rpaphp_core.c:256:6: note: uninitialized use occurs
+>> >> here
+>> >>         if (fndit)
+>> >>             ^~~~~
+>> >> drivers/pci/hotplug/rpaphp_core.c:243:14: note: remove the condition if
+>> >> it is always true
+>> >>         for (j = 0; j < entries; j++) {
+>> >>                     ^~~~~~~~~~~
+>> >> drivers/pci/hotplug/rpaphp_core.c:233:14: note: initialize the variable
+>> >> 'fndit' to silence this warning
+>> >>         int j, fndit;
+>> >>                     ^
+>> >>                      = 0
+>> >> 
+>> >> fndit is only used to gate a sprintf call, which can be moved into the
+>> >> loop to simplify the code and eliminate the local variable, which will
+>> >> fix this warning.
+>> >> 
+>> >> Link: https://github.com/ClangBuiltLinux/linux/issues/504
+>> >> Fixes: 2fcf3ae508c2 ("hotplug/drc-info: Add code to search ibm,drc-info property")
+>> >> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+>> >> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>> >> ---
+>> >> 
+>> >> v1 -> v2:
+>> >> 
+>> >> * Eliminate fndit altogether by shuffling the sprintf call into the for
+>> >>   loop and changing the if conditional, as suggested by Nick.
+>> >> 
+>> >>  drivers/pci/hotplug/rpaphp_core.c | 18 +++++++-----------
+>> >>  1 file changed, 7 insertions(+), 11 deletions(-)
+>> >> 
+>> >> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+>> >> index bcd5d357ca23..c3899ee1db99 100644
+>> >> --- a/drivers/pci/hotplug/rpaphp_core.c
+>> >> +++ b/drivers/pci/hotplug/rpaphp_core.c
+>> >> @@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+>> >>  	struct of_drc_info drc;
+>> >>  	const __be32 *value;
+>> >>  	char cell_drc_name[MAX_DRC_NAME_LEN];
+>> >> -	int j, fndit;
+>> >> +	int j;
+>> >>  
+>> >>  	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
+>> >>  	if (info == NULL)
+>> >> @@ -245,17 +245,13 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+>> >>  
+>> >>  		/* Should now know end of current entry */
+>> >>  
+>> >> -		if (my_index > drc.last_drc_index)
+>> >> -			continue;
+>> >> -
+>> >> -		fndit = 1;
+>> >> -		break;
+>> >> +		/* Found it */
+>> >> +		if (my_index <= drc.last_drc_index) {
+>> >> +			sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
+>> >> +				my_index);
+>> >> +			break;
+>> >> +		}
+>> >>  	}
+>> >> -	/* Found it */
+>> >> -
+>> >> -	if (fndit)
+>> >> -		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
+>> >> -			my_index);
+>> >>  
+>> >>  	if (((drc_name == NULL) ||
+>> >>  	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
+>> >> -- 
+>> >> 2.22.0.rc3
+>> >> 
+>> >
+>> > Hi all,
+>> >
+>> > Could someone please pick this up?
+>> 
+>> I'll take it.
+>> 
+>> I was expecting Bjorn to take it as a PCI patch, but I realise now that
+>> I merged that code in the first place so may as well take this too.
+>> 
+>> I'll put it in my next branch once that opens next week.
+>
+> Sorry, I should have done something with this.  Did you take it,
+> Michael?  I don't see it in -next and haven't figured out where to
+> look in your git tree, so I can't tell.  Just let me know either way
+> so I know whether to drop this or apply it.
 
-Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Yes I have it in my next-test, which will eventually become my next when
+I get time to rebase it, test and push etc:
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0e58ef02880c..ae5bbbce8a30 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -531,6 +531,7 @@ CONFIG_DRM_PANEL_SIMPLE=m
- CONFIG_DRM_SII902X=m
- CONFIG_DRM_I2C_ADV7511=m
- CONFIG_DRM_VC4=m
-+CONFIG_DRM_ETNAVIV=m
- CONFIG_DRM_HISI_HIBMC=m
- CONFIG_DRM_HISI_KIRIN=m
- CONFIG_DRM_MESON=m
--- 
-2.21.0
+https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/log/?h=next-test
 
+So no further action required on your part.
+
+cheers
