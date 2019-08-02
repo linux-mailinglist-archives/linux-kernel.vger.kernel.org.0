@@ -2,69 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A5A80379
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 02:29:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 627B980388
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 02:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392682AbfHCA3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 20:29:44 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:52538 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392478AbfHCA3o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 20:29:44 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id C1DAD1264F78D;
-        Fri,  2 Aug 2019 17:29:43 -0700 (PDT)
-Date:   Fri, 02 Aug 2019 17:29:42 -0700 (PDT)
-Message-Id: <20190802.172942.1360727502972215986.davem@davemloft.net>
-To:     suyj.fnst@cn.fujitsu.com
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v3] net: ipv6: Fix a bug in ndisc_send_ns when
- netdev only has a global address
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1564537972-76503-1-git-send-email-suyj.fnst@cn.fujitsu.com>
-References: <1564537972-76503-1-git-send-email-suyj.fnst@cn.fujitsu.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S2392771AbfHCAf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 20:35:27 -0400
+Received: from aibo.runbox.com ([91.220.196.211]:32998 "EHLO aibo.runbox.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390153AbfHCAf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 20:35:26 -0400
+X-Greylist: delayed 2543 seconds by postgrey-1.27 at vger.kernel.org; Fri, 02 Aug 2019 20:35:25 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
+         s=rbselector1; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+        References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date;
+        bh=TazsGP7cxXXZSH2JMdVr/ycQv/4+Lei21hIYlZrb6xM=; b=mSZhvIMybaEUGW2OxkQfP8J5QB
+        igMTDE0QXHFlO3lb0R+yQULAbE3S+M1bMoVYT8uGb1mWkLiRm7XegpBzkz8DlRLMY5UCGefdlqo2f
+        0mgXs1D/giWOKJlfyzm8+shV6sYdI6cmF6cMDnoILREV66eFRjMRe3V+aOMe7rdAizXGE2WDZ2xiF
+        vxTNK6a/awBRFGvn2hKDUkVWjdxbxfZ/WEm2Ay+6o5BvE2QDbXmXxPEiwplHhhQ+/6nq2IaTprvkF
+        u2uz+j80/xZ338ZrqqrfuFKEHrWmo0me2j0EMZFuVgAITbhu7NFvsOV4B4qlC1vnvSiXlhkDcMGiu
+        MFQ64LQw==;
+Received: from [10.9.9.203] (helo=mailfront21.runbox)
+        by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+        (envelope-from <m.v.b@runbox.com>)
+        id 1hthM4-0003Go-ED; Sat, 03 Aug 2019 01:53:00 +0200
+Received: by mailfront21.runbox with esmtpsa  (uid:769847 )  (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.90_1)
+        id 1hthLu-0002Rb-L9; Sat, 03 Aug 2019 01:52:51 +0200
+Date:   Fri, 2 Aug 2019 19:52:43 -0400
+From:   "M. Vefa Bicakci" <m.v.b@runbox.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, joonas.kylmala@iki.fi,
+        ulfalizer@gmail.com, linux-stable <stable@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kconfig: fix missing choice values in auto.conf
+Message-ID: <20190802195243.09a87651@runbox.com>
+In-Reply-To: <20190712060709.20609-1-yamada.masahiro@socionext.com>
+References: <20190712060709.20609-1-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 02 Aug 2019 17:29:44 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
-Date: Wed, 31 Jul 2019 09:52:52 +0800
+Hello,
 
-> When the egress interface does not have a link local address, it can
-> not communicate with other hosts.
-> 
-> In RFC4861, 7.2.2 says
-> "If the source address of the packet prompting the solicitation is the
-> same as one of the addresses assigned to the outgoing interface, that
-> address SHOULD be placed in the IP Source Address of the outgoing
-> solicitation.  Otherwise, any one of the addresses assigned to the
-> interface should be used."
-> 
-> In this patch we try get a global address if we get ll address failed.
-> 
-> Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
-> ---
-> Changes since V2:
-> 	- Let banned_flags under the scope of its use.
+> conf_write() must be changed accordingly. Currently, it clears
+> SYMBOL_WRITE after the symbol is written into the .config file. This
+> is needed to prevent it from writing the same symbol multiple times in
+> case the symbol is declared in two or more locations. I added the new
+> flag SYMBOL_WRITTEN, to track the symbols that have been written.
+[snip]
+> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+> index cbb6efa4a5a6..e0972b255aac 100644
+> --- a/scripts/kconfig/confdata.c
+> +++ b/scripts/kconfig/confdata.c
+[snip]
+> @@ -903,7 +904,7 @@ int conf_write(const char *name)
+>  				fprintf(out, "\n");
+>  				need_newline = false;
+>  			}
+> -			sym->flags &= ~SYMBOL_WRITE;
+> +			sym->flags |= SYMBOL_WRITTEN;
 
-I do not want to apply this.
+The SYMBOL_WRITTEN flag is never cleared after being set in this
+function, which unfortunately causes data loss to occur when a user
+starts xconfig, gconfig, or nconfig and saves a config file more than
+once. Every save operation after the first one causes the saved .config
+file to contain only comments.
 
-The only situation where this can occur is when userland is managing the
-interface addresses and has failed to properly add a link local address.
+I am appending a patch that resolves this issue. The patch is a bit
+ugly because of the code duplication, but it fixes this bug. (I have
+lightly tested the patch.) Even if the patch is not merged, I would
+appreciate it if this bug could be fixed.
 
-That is a failure by userspace to uphold it's responsibilites when it
-has taken over management of these issues, not a situation the kernel
-should handle.
+Thank you,
 
-Sorry.
+Vefa
+
+=== 8< === Patch Follows === >8 ===
+
+From: "M. Vefa Bicakci" <m.v.b@runbox.com>
+Date: Fri, 2 Aug 2019 17:44:40 -0400
+Subject: [PATCH] kconfig: Clear "written" flag to avoid data loss
+
+Prior to this commit, starting nconfig, xconfig or gconfig, and saving
+the .config file more than once caused data loss, where a .config file
+that contained only comments would be written to disk starting from the
+second save operation.
+
+This bug manifests itself because the SYMBOL_WRITTEN flag is never
+cleared after the first call to conf_write, and subsequent calls to
+conf_write then skip all of the configuration symbols due to the
+SYMBOL_WRITTEN flag being set.
+
+This commit resolves this issue by clearing the SYMBOL_WRITTEN flag
+from all symbols before conf_write returns.
+
+Fixes: 8e2442a5f86e ("kconfig: fix missing choice values in auto.conf")
+Cc: linux-stable <stable@vger.kernel.org> # 4.19+
+Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
+---
+ scripts/kconfig/confdata.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index 1134892599da..24fe0c851e8c 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -840,6 +840,35 @@ int conf_write_defconfig(const char *filename)
+ 	return 0;
+ }
+ 
++static void conf_clear_written_flag(void)
++{
++	struct menu *menu;
++	struct symbol *sym;
++
++	menu = rootmenu.list;
++	while (menu) {
++		sym = menu->sym;
++		if (sym && (sym->flags & SYMBOL_WRITTEN))
++			sym->flags &= ~SYMBOL_WRITTEN;
++
++		if (menu->list) {
++			menu = menu->list;
++			continue;
++		}
++
++		if (menu->next) {
++			menu = menu->next;
++		} else {
++			while ((menu = menu->parent)) {
++				if (menu->next) {
++					menu = menu->next;
++					break;
++				}
++			}
++		}
++	}
++}
++
+ int conf_write(const char *name)
+ {
+ 	FILE *out;
+@@ -930,6 +959,8 @@ int conf_write(const char *name)
+ 	}
+ 	fclose(out);
+ 
++	conf_clear_written_flag();
++
+ 	if (*tmpname) {
+ 		if (is_same(name, tmpname)) {
+ 			conf_message("No change to %s", name);
+-- 
+2.21.0
+
