@@ -2,75 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E8D7EA8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 05:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EABFD7EA96
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 05:04:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfHBDCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 23:02:43 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40848 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbfHBDCn (ORCPT
+        id S1728482AbfHBDE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 23:04:29 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41902 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726825AbfHBDE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 23:02:43 -0400
-Received: by mail-qt1-f196.google.com with SMTP id a15so72477795qtn.7;
-        Thu, 01 Aug 2019 20:02:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pMvBx1hh8/G6Czd/FV/OwlwQ8LJ13TfBmKizcKZrRrs=;
-        b=HHpUAOqqbJLsZvBpfU4B2ieP1G/ChCo8uBUPMEmCma/20hEezhFd8aoEeR1umSF8st
-         7GxteKnxNfdURFGMMp6U/7upsqAq16TOUhW4ynIdOjUInlB+AfUCDBkFzVQKITorXkBw
-         D8rvt6E/LHBk1CNSmBCzubB5Ews/Mo/hG3wE4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pMvBx1hh8/G6Czd/FV/OwlwQ8LJ13TfBmKizcKZrRrs=;
-        b=b5mUm4/RVpg3U1DNFF83cmqZCMAoowxRrGM55kNoTTKv5qXBWBkyUzmXfim8htNGAi
-         V2VcRUASl3wiaOWFO20rZjfxdk7Gm0WCJlOQRo3tWmrMXjEoYeQhGQI0Vni7dufSSxZu
-         pkWXt7lDFMr6f7W9S22/tO/zj+SumyOq5oApuTGxLwz7yygH7nBNBPr1vDKBHQtDWrzT
-         KiJRDoOZIoWzfbuc/dICtHWh12LsIM/pNVKvyxJn/pnB2qUsLN1SFUjtSi3Ce15VhFAH
-         cVjmCurA5CCwEyDAhCVfkGlpqobQUuzrhYfjZqbHJQXO2XUy6H1o78k9b3CgH3PYSULG
-         50gQ==
-X-Gm-Message-State: APjAAAVda9tRluc4aGIoBe2NQEZfC4r9sImJogmKlpUJeWm+CVaYR0BM
-        iYw0XbE1mN5Kw3tZH4BtBUwkttSDmC6rFFiHtO8=
-X-Google-Smtp-Source: APXvYqz7mHdc8lBlyD3HcADLWRy1k1ur3idhBRDnYpffy7ym+Av1tf5AlRYkmS9IXaNcLXyUw56O4NlOlpWTDVLcclE=
-X-Received: by 2002:ac8:2fc8:: with SMTP id m8mr94544340qta.269.1564714962033;
- Thu, 01 Aug 2019 20:02:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190802010155.489238-1-taoren@fb.com>
-In-Reply-To: <20190802010155.489238-1-taoren@fb.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 2 Aug 2019 03:02:30 +0000
-Message-ID: <CACPK8XdS4m9+74oxK0-ed3ZLr_QCh--AsFgGcF-OpLw24v9g4Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: aspeed: Add Facebook Wedge100 BMC
-To:     Tao Ren <taoren@fb.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        devicetree <devicetree@vger.kernel.org>,
+        Thu, 1 Aug 2019 23:04:28 -0400
+X-UUID: c92cdbe318cf414695363abda4ef831d-20190802
+X-UUID: c92cdbe318cf414695363abda4ef831d-20190802
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 160514836; Fri, 02 Aug 2019 11:04:20 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 2 Aug 2019 11:04:19 +0800
+Received: from [172.21.84.99] (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 2 Aug 2019 11:04:19 +0800
+Message-ID: <1564715059.4231.6.camel@mtksdccf07>
+Subject: Re: [PATCH v3] kasan: add memory corruption identification for
+ software tag-based mode
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+CC:     Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Vasily Gorbik" <gor@linux.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+        <linux-mediatek@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Date:   Fri, 2 Aug 2019 11:04:19 +0800
+In-Reply-To: <f29ee964-cf12-1b5d-e570-1d5baa49a580@virtuozzo.com>
+References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
+         <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
+         <1560447999.15814.15.camel@mtksdccf07>
+         <1560479520.15814.34.camel@mtksdccf07>
+         <1560744017.15814.49.camel@mtksdccf07>
+         <CACT4Y+Y3uS59rXf92ByQuFK_G4v0H8NNnCY1tCbr4V+PaZF3ag@mail.gmail.com>
+         <1560774735.15814.54.camel@mtksdccf07>
+         <1561974995.18866.1.camel@mtksdccf07>
+         <CACT4Y+aMXTBE0uVkeZz+MuPx3X1nESSBncgkScWvAkciAxP1RA@mail.gmail.com>
+         <ebc99ee1-716b-0b18-66ab-4e93de02ce50@virtuozzo.com>
+         <1562640832.9077.32.camel@mtksdccf07>
+         <d9fd1d5b-9516-b9b9-0670-a1885e79f278@virtuozzo.com>
+         <1562839579.5846.12.camel@mtksdccf07>
+         <37897fb7-88c1-859a-dfcc-0a5e89a642e0@virtuozzo.com>
+         <1563160001.4793.4.camel@mtksdccf07>
+         <9ab1871a-2605-ab34-3fd3-4b44a0e17ab7@virtuozzo.com>
+         <1563789162.31223.3.camel@mtksdccf07>
+         <e62da62a-2a63-3a1c-faeb-9c5561a5170c@virtuozzo.com>
+         <1564144097.515.3.camel@mtksdccf07>
+         <71df2bd5-7bc8-2c82-ee31-3f68c3b6296d@virtuozzo.com>
+         <1564147164.515.10.camel@mtksdccf07>
+         <f29ee964-cf12-1b5d-e570-1d5baa49a580@virtuozzo.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: EFC55C8D8568410C5734BD4FCFD4848B3C4EE4673A27E15E32FD2B157FABFEE12000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Aug 2019 at 01:02, Tao Ren <taoren@fb.com> wrote:
-> +
-> +       chosen {
-> +               stdout-path = &uart3;
-> +               bootargs = "debug console=ttyS2,9600n8 root=/dev/ram rw";
+On Wed, 2019-07-31 at 20:04 +0300, Andrey Ryabinin wrote:
+> 
+> On 7/26/19 4:19 PM, Walter Wu wrote:
+> > On Fri, 2019-07-26 at 15:52 +0300, Andrey Ryabinin wrote:
+> >>
+> >> On 7/26/19 3:28 PM, Walter Wu wrote:
+> >>> On Fri, 2019-07-26 at 15:00 +0300, Andrey Ryabinin wrote:
+> >>>>
+> >>>
+> >>>>>
+> >>>>>
+> >>>>> I remember that there are already the lists which you concern. Maybe we
+> >>>>> can try to solve those problems one by one.
+> >>>>>
+> >>>>> 1. deadlock issue? cause by kmalloc() after kfree()?
+> >>>>
+> >>>> smp_call_on_cpu()
+> >>>
+> >>>>> 2. decrease allocation fail, to modify GFP_NOWAIT flag to GFP_KERNEL?
+> >>>>
+> >>>> No, this is not gonna work. Ideally we shouldn't have any allocations there.
+> >>>> It's not reliable and it hurts performance.
+> >>>>
+> >>> I dont know this meaning, we need create a qobject and put into
+> >>> quarantine, so may need to call kmem_cache_alloc(), would you agree this
+> >>> action?
+> >>>
+> >>
+> >> How is this any different from what you have now?
+> > 
+> > I originally thought you already agreed the free-list(tag-based
+> > quarantine) after fix those issue. If no allocation there,
+> 
+> If no allocation there, than it must be somewhere else.
+> We known exactly the amount of memory we need, so it's possible to preallocate it in advance.
+> 
+I see. We will implement an extend slub to record five free backtrack
+and free pointer tag, and determine whether it is oob or uaf by the free
+pointer tag. If you have other ideas, please tell me. Thanks.
 
-Are you sure you want 'debug' in your boot arguments?
+ 
 
-The rest lgtm. I can remove debug when applying, or leave it there if
-it was intentional.
-
-Cheers,
-
-Joel
