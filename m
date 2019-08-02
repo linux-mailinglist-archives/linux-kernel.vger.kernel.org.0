@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 596257F1C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 297397F1CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:42:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404965AbfHBJmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:42:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44054 "EHLO mail.kernel.org"
+        id S2391160AbfHBJmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:42:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404951AbfHBJmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:42:01 -0400
+        id S2404972AbfHBJmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:42:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2226C20679;
-        Fri,  2 Aug 2019 09:42:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E6FB20679;
+        Fri,  2 Aug 2019 09:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738920;
-        bh=oaZnE9Jk6GztqufE3LxR85wb6msRuuZ5v6/2wlSDO5I=;
+        s=default; t=1564738925;
+        bh=/DV9CHil6J37fOfeVXDFOKvl3xLSyptrMMdA8BMeJbk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y+WcmxCyjS2QlXsBmNwbL0K/vj3TCBAzVZsxCYj16OazXwBRQzeG/X62enfv/DFd5
-         nMsVmhkkwpSCSbKskmOzP8G3uP/CGQ98b1kwavzsJ6Kjvl3ROPuuLt7YQYj84d/mcP
-         YZSZ5FI1vDiea2SrEz+V5ukGeNMTPUPAGolT4AEk=
+        b=OpJwCJ4J+wwcZB8xVSLbxoBWaPZn6Fsm+qBB5r93nCIn3XDby6ftYdRaGwgV/QYXv
+         EkPbiWBV5TFw0HEWG5CS4lZYbKvfX+Hiz1Exkyw+4soUkCS/gkuJSHfkZSiG6s/YP4
+         hRZP50MatVIpGRMuSQ/Y9Z1K56zCkbCsuCJ4uTkk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 032/223] perf cs-etm: Properly set the value of old and head in snapshot mode
-Date:   Fri,  2 Aug 2019 11:34:17 +0200
-Message-Id: <20190802092241.067466818@linuxfoundation.org>
+Subject: [PATCH 4.9 034/223] gpio: omap: fix lack of irqstatus_raw0 for OMAP4
+Date:   Fri,  2 Aug 2019 11:34:19 +0200
+Message-Id: <20190802092241.187303366@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -51,203 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e45c48a9a4d20ebc7b639a62c3ef8f4b08007027 ]
+[ Upstream commit 64ea3e9094a1f13b96c33244a3fb3a0f45690bd2 ]
 
-This patch adds the necessary intelligence to properly compute the value
-of 'old' and 'head' when operating in snapshot mode.  That way we can
-get the latest information in the AUX buffer and be compatible with the
-generic AUX ring buffer mechanic.
+Commit 384ebe1c2849 ("gpio/omap: Add DT support to GPIO driver") added
+the register definition tables to the gpio-omap driver. Subsequently to
+that commit, commit 4e962e8998cc ("gpio/omap: remove cpu_is_omapxxxx()
+checks from *_runtime_resume()") added definitions for irqstatus_raw*
+registers to the legacy OMAP4 definitions, but missed the DT
+definitions.
 
-Tester notes:
+This causes an unintentional change of behaviour for the 1.101 errata
+workaround on OMAP4 platforms. Fix this oversight.
 
-> Leo, have you had the chance to test/review this one? Suzuki?
-
-Sure.  I applied this patch on the perf/core branch (with latest
-commit 3e4fbf36c1e3 'perf augmented_raw_syscalls: Move reading
-filename to the loop') and passed testing with below steps:
-
-  # perf record -e cs_etm/@tmc_etr0/ -S -m,64 --per-thread ./sort &
-  [1] 19097
-  Bubble sorting array of 30000 elements
-
-  # kill -USR2 19097
-  # kill -USR2 19097
-  # kill -USR2 19097
-  [ perf record: Woken up 4 times to write data ]
-  [ perf record: Captured and wrote 0.753 MB perf.data ]
-
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Tested-by: Leo Yan <leo.yan@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190605161633.12245-1-mathieu.poirier@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 4e962e8998cc ("gpio/omap: remove cpu_is_omapxxxx() checks from *_runtime_resume()")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/arm/util/cs-etm.c | 127 +++++++++++++++++++++++++++++-
- 1 file changed, 123 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-omap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index 47d584da5819..f6cff278aa5d 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -41,6 +41,8 @@ struct cs_etm_recording {
- 	struct auxtrace_record	itr;
- 	struct perf_pmu		*cs_etm_pmu;
- 	struct perf_evlist	*evlist;
-+	int			wrapped_cnt;
-+	bool			*wrapped;
- 	bool			snapshot_mode;
- 	size_t			snapshot_size;
- };
-@@ -458,16 +460,131 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
- 	return 0;
- }
- 
--static int cs_etm_find_snapshot(struct auxtrace_record *itr __maybe_unused,
-+static int cs_etm_alloc_wrapped_array(struct cs_etm_recording *ptr, int idx)
-+{
-+	bool *wrapped;
-+	int cnt = ptr->wrapped_cnt;
-+
-+	/* Make @ptr->wrapped as big as @idx */
-+	while (cnt <= idx)
-+		cnt++;
-+
-+	/*
-+	 * Free'ed in cs_etm_recording_free().  Using realloc() to avoid
-+	 * cross compilation problems where the host's system supports
-+	 * reallocarray() but not the target.
-+	 */
-+	wrapped = realloc(ptr->wrapped, cnt * sizeof(bool));
-+	if (!wrapped)
-+		return -ENOMEM;
-+
-+	wrapped[cnt - 1] = false;
-+	ptr->wrapped_cnt = cnt;
-+	ptr->wrapped = wrapped;
-+
-+	return 0;
-+}
-+
-+static bool cs_etm_buffer_has_wrapped(unsigned char *buffer,
-+				      size_t buffer_size, u64 head)
-+{
-+	u64 i, watermark;
-+	u64 *buf = (u64 *)buffer;
-+	size_t buf_size = buffer_size;
-+
-+	/*
-+	 * We want to look the very last 512 byte (chosen arbitrarily) in
-+	 * the ring buffer.
-+	 */
-+	watermark = buf_size - 512;
-+
-+	/*
-+	 * @head is continuously increasing - if its value is equal or greater
-+	 * than the size of the ring buffer, it has wrapped around.
-+	 */
-+	if (head >= buffer_size)
-+		return true;
-+
-+	/*
-+	 * The value of @head is somewhere within the size of the ring buffer.
-+	 * This can be that there hasn't been enough data to fill the ring
-+	 * buffer yet or the trace time was so long that @head has numerically
-+	 * wrapped around.  To find we need to check if we have data at the very
-+	 * end of the ring buffer.  We can reliably do this because mmap'ed
-+	 * pages are zeroed out and there is a fresh mapping with every new
-+	 * session.
-+	 */
-+
-+	/* @head is less than 512 byte from the end of the ring buffer */
-+	if (head > watermark)
-+		watermark = head;
-+
-+	/*
-+	 * Speed things up by using 64 bit transactions (see "u64 *buf" above)
-+	 */
-+	watermark >>= 3;
-+	buf_size >>= 3;
-+
-+	/*
-+	 * If we find trace data at the end of the ring buffer, @head has
-+	 * been there and has numerically wrapped around at least once.
-+	 */
-+	for (i = watermark; i < buf_size; i++)
-+		if (buf[i])
-+			return true;
-+
-+	return false;
-+}
-+
-+static int cs_etm_find_snapshot(struct auxtrace_record *itr,
- 				int idx, struct auxtrace_mmap *mm,
--				unsigned char *data __maybe_unused,
-+				unsigned char *data,
- 				u64 *head, u64 *old)
- {
-+	int err;
-+	bool wrapped;
-+	struct cs_etm_recording *ptr =
-+			container_of(itr, struct cs_etm_recording, itr);
-+
-+	/*
-+	 * Allocate memory to keep track of wrapping if this is the first
-+	 * time we deal with this *mm.
-+	 */
-+	if (idx >= ptr->wrapped_cnt) {
-+		err = cs_etm_alloc_wrapped_array(ptr, idx);
-+		if (err)
-+			return err;
-+	}
-+
-+	/*
-+	 * Check to see if *head has wrapped around.  If it hasn't only the
-+	 * amount of data between *head and *old is snapshot'ed to avoid
-+	 * bloating the perf.data file with zeros.  But as soon as *head has
-+	 * wrapped around the entire size of the AUX ring buffer it taken.
-+	 */
-+	wrapped = ptr->wrapped[idx];
-+	if (!wrapped && cs_etm_buffer_has_wrapped(data, mm->len, *head)) {
-+		wrapped = true;
-+		ptr->wrapped[idx] = true;
-+	}
-+
- 	pr_debug3("%s: mmap index %d old head %zu new head %zu size %zu\n",
- 		  __func__, idx, (size_t)*old, (size_t)*head, mm->len);
- 
--	*old = *head;
--	*head += mm->len;
-+	/* No wrap has occurred, we can just use *head and *old. */
-+	if (!wrapped)
-+		return 0;
-+
-+	/*
-+	 * *head has wrapped around - adjust *head and *old to pickup the
-+	 * entire content of the AUX buffer.
-+	 */
-+	if (*head >= mm->len) {
-+		*old = *head - mm->len;
-+	} else {
-+		*head += mm->len;
-+		*old = *head - mm->len;
-+	}
- 
- 	return 0;
- }
-@@ -508,6 +625,8 @@ static void cs_etm_recording_free(struct auxtrace_record *itr)
- {
- 	struct cs_etm_recording *ptr =
- 			container_of(itr, struct cs_etm_recording, itr);
-+
-+	zfree(&ptr->wrapped);
- 	free(ptr);
- }
- 
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 038882183bdf..bd12b433f964 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1585,6 +1585,8 @@ static struct omap_gpio_reg_offs omap4_gpio_regs = {
+ 	.clr_dataout =		OMAP4_GPIO_CLEARDATAOUT,
+ 	.irqstatus =		OMAP4_GPIO_IRQSTATUS0,
+ 	.irqstatus2 =		OMAP4_GPIO_IRQSTATUS1,
++	.irqstatus_raw0 =	OMAP4_GPIO_IRQSTATUSRAW0,
++	.irqstatus_raw1 =	OMAP4_GPIO_IRQSTATUSRAW1,
+ 	.irqenable =		OMAP4_GPIO_IRQSTATUSSET0,
+ 	.irqenable2 =		OMAP4_GPIO_IRQSTATUSSET1,
+ 	.set_irqenable =	OMAP4_GPIO_IRQSTATUSSET0,
 -- 
 2.20.1
 
