@@ -2,132 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C18EB800BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 21:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B32B6800D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 21:22:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392035AbfHBTPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 15:15:46 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.43]:41088 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391984AbfHBTPq (ORCPT
+        id S2404384AbfHBTWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 15:22:55 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:28822 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2403874AbfHBTWy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 15:15:46 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id C462F20427
-        for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2019 14:15:44 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id td1khCzLt90ontd1kh3pj7; Fri, 02 Aug 2019 14:15:44 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oc4AOSiWl2lCiQnPdkuEFM9SDJW1XSDtDJ29fXEPlhM=; b=XDEIu4eu/j9WOOXkZ01OOBh6hM
-        aTPH9Y69Pjb/5SEGg9xCm0PFJs1pnlEiy9UQOwgqbaLQbL3W14G83xmdN/GxM3enfu+/kPWguQ4V+
-        JB2k6IyHnydpveoNrSXMzNYhboBwdflY3x3ZdVPvOUH3n0kA1enCOuTpPiuwugAG8imKN0k6VGrYP
-        R7Ku0eMHPbQProwP7aLhOEetU4ucRuqc0OYF/Yg5ijLFu4OMMN2jfKPxWOYpKKblV5b4s3/WbM87J
-        7z6+H6qUr5CnauHlYua5HqEqbWfD6BodqRsHzRk27/r+2jDXWnrbXHVrd1HI/BFVVOdGTIHSApkbv
-        P9kSmEiw==;
-Received: from [187.192.11.120] (port=33024 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1htd1j-002zj8-JL; Fri, 02 Aug 2019 14:15:43 -0500
-Date:   Fri, 2 Aug 2019 14:15:42 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] video: fbdev: omapfb_main: Mark expected switch fall-throughs
-Message-ID: <20190802191542.GA32751@embeddedor>
+        Fri, 2 Aug 2019 15:22:54 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x72JJqFm022956
+        for <linux-kernel@vger.kernel.org>; Fri, 2 Aug 2019 12:22:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=19Ja20qRJPcfJ8p53GQiWI0ZYQb3kQ8wKj9C14D15zo=;
+ b=dj10JLqr4TfBGwCeyDo/3BMpKggBGMOPO+uvDx1zGiGrxvKvORY5RcF/eebwabL4khdX
+ KUGZg43cUkrqp0VajwiIkwPNtKUFyyRNgJ9kfnis1SdSSRq4mUVLf09M9lo8sKdw0CIB
+ 019IhIbD7iDU9LacYmcloNto77/2U8Abrdo= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2u4s2tgj9n-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 12:22:53 -0700
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Fri, 2 Aug 2019 12:22:51 -0700
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id 6989B153186A0; Fri,  2 Aug 2019 12:22:47 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        Hillf Danton <hdanton@sina.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH v2] mm: memcontrol: switch to rcu protection in drain_all_stock()
+Date:   Fri, 2 Aug 2019 12:22:41 -0700
+Message-ID: <20190802192241.3253165-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1htd1j-002zj8-JL
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:33024
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=915 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908020203
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark switch cases where we are expecting to fall through.
+Commit 72f0184c8a00 ("mm, memcg: remove hotplug locking from try_charge")
+introduced css_tryget()/css_put() calls in drain_all_stock(),
+which are supposed to protect the target memory cgroup from being
+released during the mem_cgroup_is_descendant() call.
 
-This patch fixes the following warning (Building: omap1_defconfig arm):
+However, it's not completely safe. In theory, memcg can go away
+between reading stock->cached pointer and calling css_tryget().
 
-drivers/video/fbdev/omap/omapfb_main.c:449:23: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/video/fbdev/omap/omapfb_main.c:1549:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/video/fbdev/omap/omapfb_main.c:1547:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/video/fbdev/omap/omapfb_main.c:1545:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/video/fbdev/omap/omapfb_main.c:1543:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/video/fbdev/omap/omapfb_main.c:1540:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/video/fbdev/omap/omapfb_main.c:1538:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/video/fbdev/omap/omapfb_main.c:1535:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+This can happen if drain_all_stock() races with drain_local_stock()
+performed on the remote cpu as a result of a work, scheduled
+by the previous invocation of drain_all_stock().
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+The race is a bit theoretical and there are few chances to trigger
+it, but the current code looks a bit confusing, so it makes sense
+to fix it anyway. The code looks like as if css_tryget() and
+css_put() are used to protect stocks drainage. It's not necessary
+because stocked pages are holding references to the cached cgroup.
+And it obviously won't work for works, scheduled on other cpus.
+
+So, let's read the stock->cached pointer and evaluate the memory
+cgroup inside a rcu read section, and get rid of
+css_tryget()/css_put() calls.
+
+v2: added some explanations to the commit message, no code changes
+
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Hillf Danton <hdanton@sina.com>
 ---
- drivers/video/fbdev/omap/omapfb_main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ mm/memcontrol.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbdev/omap/omapfb_main.c
-index 90eca64e3144..702cca59bda1 100644
---- a/drivers/video/fbdev/omap/omapfb_main.c
-+++ b/drivers/video/fbdev/omap/omapfb_main.c
-@@ -447,6 +447,7 @@ static int set_color_mode(struct omapfb_plane_struct *plane,
- 		return 0;
- 	case 12:
- 		var->bits_per_pixel = 16;
-+		/* fall through */
- 	case 16:
- 		if (plane->fbdev->panel->bpp == 12)
- 			plane->color_mode = OMAPFB_COLOR_RGB444;
-@@ -1534,20 +1535,27 @@ static void omapfb_free_resources(struct omapfb_device *fbdev, int state)
- 	case OMAPFB_ACTIVE:
- 		for (i = 0; i < fbdev->mem_desc.region_cnt; i++)
- 			unregister_framebuffer(fbdev->fb_info[i]);
-+		/* fall through */
- 	case 7:
- 		omapfb_unregister_sysfs(fbdev);
-+		/* fall through */
- 	case 6:
- 		if (fbdev->panel->disable)
- 			fbdev->panel->disable(fbdev->panel);
-+		/* fall through */
- 	case 5:
- 		omapfb_set_update_mode(fbdev, OMAPFB_UPDATE_DISABLED);
-+		/* fall through */
- 	case 4:
- 		planes_cleanup(fbdev);
-+		/* fall through */
- 	case 3:
- 		ctrl_cleanup(fbdev);
-+		/* fall through */
- 	case 2:
- 		if (fbdev->panel->cleanup)
- 			fbdev->panel->cleanup(fbdev->panel);
-+		/* fall through */
- 	case 1:
- 		dev_set_drvdata(fbdev->dev, NULL);
- 		kfree(fbdev);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 5c7b9facb0eb..d856b64426b7 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2235,21 +2235,22 @@ static void drain_all_stock(struct mem_cgroup *root_memcg)
+ 	for_each_online_cpu(cpu) {
+ 		struct memcg_stock_pcp *stock = &per_cpu(memcg_stock, cpu);
+ 		struct mem_cgroup *memcg;
++		bool flush = false;
+ 
++		rcu_read_lock();
+ 		memcg = stock->cached;
+-		if (!memcg || !stock->nr_pages || !css_tryget(&memcg->css))
+-			continue;
+-		if (!mem_cgroup_is_descendant(memcg, root_memcg)) {
+-			css_put(&memcg->css);
+-			continue;
+-		}
+-		if (!test_and_set_bit(FLUSHING_CACHED_CHARGE, &stock->flags)) {
++		if (memcg && stock->nr_pages &&
++		    mem_cgroup_is_descendant(memcg, root_memcg))
++			flush = true;
++		rcu_read_unlock();
++
++		if (flush &&
++		    !test_and_set_bit(FLUSHING_CACHED_CHARGE, &stock->flags)) {
+ 			if (cpu == curcpu)
+ 				drain_local_stock(&stock->work);
+ 			else
+ 				schedule_work_on(cpu, &stock->work);
+ 		}
+-		css_put(&memcg->css);
+ 	}
+ 	put_cpu();
+ 	mutex_unlock(&percpu_charge_mutex);
 -- 
-2.22.0
+2.21.0
 
