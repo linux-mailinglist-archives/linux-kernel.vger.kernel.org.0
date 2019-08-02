@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 621877FB0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB8067FB09
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:37:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406396AbfHBNgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:36:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58486 "EHLO mail.kernel.org"
+        id S2406366AbfHBNge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:36:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393288AbfHBNUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:20:10 -0400
+        id S2393305AbfHBNUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:20:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C771F216C8;
-        Fri,  2 Aug 2019 13:20:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD0FC2173E;
+        Fri,  2 Aug 2019 13:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752009;
-        bh=phiVujId+WFxGQoYspshRxrrMTJTXAXY6Se9fQv9PWA=;
+        s=default; t=1564752012;
+        bh=a7cc0qIF7OBAKtAeI32olxn86HEJddZqs8H8D7st0jE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dpu63Biasha1DELDgtmR78oQ2nIVAQbuzgPbAljy+rhj4nMyBm5cHW3Dq2PCwr0+E
-         TjBxiv7erOGN3sXydD2qg7GCfrCtGEtqB0Ry6rIgziO9+8sfS47G/C7EYcreLNpl8Q
-         Igow+9k55EckjpNlSK8cRLJGydLz+aq4BrRRIGBg=
+        b=xHXcOvUXOk/NwkpZ0gx+/8tqLoGauvB577sISgKzdT5lKaaizg/yzpWE4+OeHGRfY
+         t4cBHoR78aJqRfM3ixppV8jDfRV1DpvzkL4aA8haCuP+MBlQtXsmthByTJTSoD/a8H
+         gPkkufRPZuNK61pL7baPUyoKu5lxNqrFErnhETJA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Phil Sutter <phil@nwl.cc>, Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     Murton Liu <murton.liu@amd.com>, Tony Cheng <Tony.Cheng@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 15/76] netfilter: nf_tables: Support auto-loading for inet nat
-Date:   Fri,  2 Aug 2019 09:18:49 -0400
-Message-Id: <20190802131951.11600-15-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 17/76] drm/amd/display: Clock does not lower in Updateplanes
+Date:   Fri,  2 Aug 2019 09:18:51 -0400
+Message-Id: <20190802131951.11600-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802131951.11600-1-sashal@kernel.org>
 References: <20190802131951.11600-1-sashal@kernel.org>
@@ -44,34 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Sutter <phil@nwl.cc>
+From: Murton Liu <murton.liu@amd.com>
 
-[ Upstream commit b4f1483cbfa5fafca4874e90063f75603edbc210 ]
+[ Upstream commit 492d9ec244923420af96db6b69ad7d575859aa92 ]
 
-Trying to create an inet family nat chain would not cause
-nft_chain_nat.ko module to auto-load due to missing module alias. Add a
-proper one with hard-coded family value 1 for the pseudo-family
-NFPROTO_INET.
+[why]
+We reset the optimized_required in atomic_plane_disable
+flag immediately after it is set in atomic_plane_disconnect, causing us to
+never have flag set during next flip in UpdatePlanes.
 
-Fixes: d164385ec572 ("netfilter: nat: add inet family nat support")
-Signed-off-by: Phil Sutter <phil@nwl.cc>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+[how]
+Optimize directly after each time plane is removed.
+
+Signed-off-by: Murton Liu <murton.liu@amd.com>
+Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_chain_nat.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/net/netfilter/nft_chain_nat.c b/net/netfilter/nft_chain_nat.c
-index 2f89bde3c61cb..ff9ac8ae0031f 100644
---- a/net/netfilter/nft_chain_nat.c
-+++ b/net/netfilter/nft_chain_nat.c
-@@ -142,3 +142,6 @@ MODULE_ALIAS_NFT_CHAIN(AF_INET, "nat");
- #ifdef CONFIG_NF_TABLES_IPV6
- MODULE_ALIAS_NFT_CHAIN(AF_INET6, "nat");
- #endif
-+#ifdef CONFIG_NF_TABLES_INET
-+MODULE_ALIAS_NFT_CHAIN(1, "nat");	/* NFPROTO_INET */
-+#endif
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+index 9e4d70a0055e1..c7b4c3048b71d 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+@@ -2416,6 +2416,12 @@ static void dcn10_apply_ctx_for_surface(
+ 		if (removed_pipe[i])
+ 			dcn10_disable_plane(dc, &dc->current_state->res_ctx.pipe_ctx[i]);
+ 
++	for (i = 0; i < dc->res_pool->pipe_count; i++)
++		if (removed_pipe[i]) {
++			dc->hwss.optimize_bandwidth(dc, context);
++			break;
++		}
++
+ 	if (dc->hwseq->wa.DEGVIDCN10_254)
+ 		hubbub1_wm_change_req_wa(dc->res_pool->hubbub);
+ }
 -- 
 2.20.1
 
