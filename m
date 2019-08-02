@@ -2,43 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A0C97F3C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1215D7F3D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407041AbfHBKAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:00:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58526 "EHLO mail.kernel.org"
+        id S2406006AbfHBJw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:52:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406065AbfHBJwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:52:44 -0400
+        id S2405811AbfHBJwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:52:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 802ED20880;
-        Fri,  2 Aug 2019 09:52:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40E72206A2;
+        Fri,  2 Aug 2019 09:52:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739564;
-        bh=sjU39/06cAWp44DyUMSwwUya99C8wbkAQnuEq44IuLc=;
+        s=default; t=1564739538;
+        bh=F3xEu7dp5QQ6tel3JOLvaCiGrTfOh3hsxHZD8ZXf8Tc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eY6wPkYup9bzX/ceEPQjirBE/GPKzS1EosiGw572J4gMrcILZr0Pmm7VfaRxazrF+
-         riD0A25TF3CCBf6HjCGbGFdSIwYOq53fa12C2t7oh6ZRyKQfDND/r372F3BfdrEI45
-         I5a4qnH2vbmVIos6zC4BdoB+NqidjvqRB9PNWkuc=
+        b=OTAIqlqXwcKGL1RjiyyYInuTLJ17Mf1dEAl3fmkvVxLK77U+3AtKmDIMAmsqw1shI
+         AIkwPscTlP/5RBVPaxX7X1GyUbeekf2w0IJTF/t34BL/pNenQxz9QT0Yoe5hR+edPA
+         crbtwwwtnIMjO9dTBHzYA8ZJbrzY/VpHAyn/J4Ws=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Yuyang Du <duyuyang@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, arnd@arndb.de,
-        frederic@kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 200/223] locking/lockdep: Fix lock used or unused stats error
-Date:   Fri,  2 Aug 2019 11:37:05 +0200
-Message-Id: <20190802092250.101586900@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.9 204/223] x86/sysfb_efi: Add quirks for some devices with swapped width and height
+Date:   Fri,  2 Aug 2019 11:37:09 +0200
+Message-Id: <20190802092250.260939348@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -51,77 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 68d41d8c94a31dfb8233ab90b9baf41a2ed2da68 ]
+From: Hans de Goede <hdegoede@redhat.com>
 
-The stats variable nr_unused_locks is incremented every time a new lock
-class is register and decremented when the lock is first used in
-__lock_acquire(). And after all, it is shown and checked in lockdep_stats.
+commit d02f1aa39189e0619c3525d5cd03254e61bf606a upstream.
 
-However, under configurations that either CONFIG_TRACE_IRQFLAGS or
-CONFIG_PROVE_LOCKING is not defined:
+Some Lenovo 2-in-1s with a detachable keyboard have a portrait screen but
+advertise a landscape resolution and pitch, resulting in a messed up
+display if the kernel tries to show anything on the efifb (because of the
+wrong pitch).
 
-The commit:
+Fix this by adding a new DMI match table for devices which need to have
+their width and height swapped.
 
-  091806515124b20 ("locking/lockdep: Consolidate lock usage bit initialization")
+At first it was tried to use the existing table for overriding some of the
+efifb parameters, but some of the affected devices have variants with
+different LCD resolutions which will not work with hardcoded override
+values.
 
-missed marking the LOCK_USED flag at IRQ usage initialization because
-as mark_usage() is not called. And the commit:
+Reference: https://bugzilla.redhat.com/show_bug.cgi?id=1730783
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190721152418.11644-1-hdegoede@redhat.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-  886532aee3cd42d ("locking/lockdep: Move mark_lock() inside CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING")
-
-further made mark_lock() not defined such that the LOCK_USED cannot be
-marked at all when the lock is first acquired.
-
-As a result, we fix this by not showing and checking the stats under such
-configurations for lockdep_stats.
-
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Yuyang Du <duyuyang@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: arnd@arndb.de
-Cc: frederic@kernel.org
-Link: https://lkml.kernel.org/r/20190709101522.9117-1-duyuyang@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/lockdep_proc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kernel/sysfb_efi.c |   46 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index a0f61effad25..c482de6f5262 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -229,6 +229,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 		      nr_hardirq_read_safe = 0, nr_hardirq_read_unsafe = 0,
- 		      sum_forward_deps = 0;
+--- a/arch/x86/kernel/sysfb_efi.c
++++ b/arch/x86/kernel/sysfb_efi.c
+@@ -231,9 +231,55 @@ static const struct dmi_system_id efifb_
+ 	{},
+ };
  
-+#ifdef CONFIG_PROVE_LOCKING
- 	list_for_each_entry(class, &all_lock_classes, lock_entry) {
- 
- 		if (class->usage_mask == 0)
-@@ -260,12 +261,12 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ_READ)
- 			nr_hardirq_read_unsafe++;
- 
--#ifdef CONFIG_PROVE_LOCKING
- 		sum_forward_deps += lockdep_count_forward_deps(class);
--#endif
- 	}
- #ifdef CONFIG_DEBUG_LOCKDEP
- 	DEBUG_LOCKS_WARN_ON(debug_atomic_read(nr_unused_locks) != nr_unused);
-+#endif
++/*
++ * Some devices have a portrait LCD but advertise a landscape resolution (and
++ * pitch). We simply swap width and height for these devices so that we can
++ * correctly deal with some of them coming with multiple resolutions.
++ */
++static const struct dmi_system_id efifb_dmi_swap_width_height[] __initconst = {
++	{
++		/*
++		 * Lenovo MIIX310-10ICR, only some batches have the troublesome
++		 * 800x1280 portrait screen. Luckily the portrait version has
++		 * its own BIOS version, so we match on that.
++		 */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "MIIX 310-10ICR"),
++			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1HCN44WW"),
++		},
++	},
++	{
++		/* Lenovo MIIX 320-10ICR with 800x1280 portrait screen */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_VERSION,
++					"Lenovo MIIX 320-10ICR"),
++		},
++	},
++	{
++		/* Lenovo D330 with 800x1280 or 1200x1920 portrait screen */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_VERSION,
++					"Lenovo ideapad D330-10IGM"),
++		},
++	},
++	{},
++};
 +
- #endif
- 	seq_printf(m, " lock-classes:                  %11lu [max: %lu]\n",
- 			nr_lock_classes, MAX_LOCKDEP_KEYS);
--- 
-2.20.1
-
+ __init void sysfb_apply_efi_quirks(void)
+ {
+ 	if (screen_info.orig_video_isVGA != VIDEO_TYPE_EFI ||
+ 	    !(screen_info.capabilities & VIDEO_CAPABILITY_SKIP_QUIRKS))
+ 		dmi_check_system(efifb_dmi_system_table);
++
++	if (screen_info.orig_video_isVGA == VIDEO_TYPE_EFI &&
++	    dmi_check_system(efifb_dmi_swap_width_height)) {
++		u16 temp = screen_info.lfb_width;
++
++		screen_info.lfb_width = screen_info.lfb_height;
++		screen_info.lfb_height = temp;
++		screen_info.lfb_linelength = 4 * screen_info.lfb_width;
++	}
+ }
 
 
