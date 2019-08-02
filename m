@@ -2,74 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1487F060
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7950A7F063
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388398AbfHBJYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:24:47 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:18765 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726716AbfHBJYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:24:46 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id x729OV9N012895;
-        Fri, 2 Aug 2019 11:24:31 +0200
-Date:   Fri, 2 Aug 2019 11:24:31 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, security@kernel.org,
-        linux-doc@vger.kernel.org, Jiri Kosina <jkosina@suse.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: [PATCH] Documentation/admin-guide: Embargoed hardware security
- issues
-Message-ID: <20190802092431.GB12845@1wt.eu>
-References: <20190725130113.GA12932@kroah.com>
- <20190802044908.GA12834@1wt.eu>
- <20190802065729.GA24024@kroah.com>
+        id S2388561AbfHBJZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:25:01 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:50819 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbfHBJZB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:25:01 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x729Oh4h002438, This message is accepted by code: ctloc85258
+Received: from RS-CAS02.realsil.com.cn (doc.realsil.com.cn[172.29.17.3](maybeforged))
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x729Oh4h002438
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 2 Aug 2019 17:24:43 +0800
+Received: from RS-MBS01.realsil.com.cn ([::1]) by RS-CAS02.realsil.com.cn
+ ([::1]) with mapi id 14.03.0439.000; Fri, 2 Aug 2019 17:24:43 +0800
+From:   =?gb2312?B?wr3W7M6w?= <alex_lu@realsil.com.cn>
+To:     Marcel Holtmann <marcel@holtmann.org>
+CC:     Johan Hedberg <johan.hedberg@gmail.com>,
+        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Max Chou <max.chou@realtek.com>
+Subject: Re: [PATCH] Bluetooth: btusb: Fix suspend issue for Realtek
+Thread-Topic: [PATCH] Bluetooth: btusb: Fix suspend issue for Realtek
+Thread-Index: AdVJEnw6lyZvhN5hStGPGGi5ajS2Cg==
+Date:   Fri, 2 Aug 2019 09:24:42 +0000
+Message-ID: <0551C926975A174EA8972327741C7889EE73768F@RS-MBS01.realsil.com.cn>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.29.36.107]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802065729.GA24024@kroah.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 08:57:29AM +0200, Greg Kroah-Hartman wrote:
-> On Fri, Aug 02, 2019 at 06:49:08AM +0200, Willy Tarreau wrote:
-> > Hi Greg, Thomas,
-> > 
-> > On Thu, Jul 25, 2019 at 03:01:13PM +0200, Greg Kroah-Hartman wrote:
-> > > +The list is encrypted and email to the list can be sent by either PGP or
-> > > +S/MIME encrypted and must be signed with the reporter's PGP key or S/MIME
-> > > +certificate. The list's PGP key and S/MIME certificate are available from
-> > > +https://www.kernel.org/....
-> > 
-> > Just thinking, wouldn't it be useful to strongly encourage that the
-> > document should be in plain text format ? Otherwise the door remains open
-> > for sending you a self-extractable EXE file which contains an encrypted
-> > Word doc, which is not the most useful to handle especially to copy-paste
-> > mitigation code nor to comment on. Even some occasional PDFs we've seen
-> > on the sec@k.o list were sometimes quite detailed but less convenient
-> > than the vast majority of plain text ones, particularly when it comes
-> > to quoting some parts.
-> 
-> What document are you referring to here?  This just describes how the
-> encrypted mailing list is going to work, not anything else.
-
-I mean the document describing the issue that the reporter is going to
-send to the mailing list.
-
-> But yes, we have had some "encrypted pdfs" be sent to us recently that
-> no one can decrypt unless they run Windows or do some really crazy hacks
-> with the gstreamer pipeline.  But that's separate from this specific
-> mailing list, we can always just tell people to not do foolish things if
-> that happens again (like we did in this case.)
-
-That was exactly my point :-)  Just like the process indicates what list
-to contact to report an issue, it can also indicate the preferred way to
-efficiently report these issues.
-
-Willy
+SGkgTWFyY2VsLA0KR290IGl0LCB0aGFua3MuDQpJIHdpbGwgY2hhbmdlIHRoZSBwYXRjaCBhbmQg
+cmVzdWJtaXQgaXQuDQoNClJlZ2FyZHMNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBCbHVldG9v
+dGg6IGJ0dXNiOiBGaXggc3VzcGVuZCBpc3N1ZSBmb3IgUmVhbHRlaw0KPiANCj4gSGkgQWxleCwN
+Cj4gDQo+ID4gRnJvbSB0aGUgcGVyc3BlY3RpdmUgb2YgY29udHJvbGxlciwgZ2xvYmFsIHN1c3Bl
+bmQgbWVhbnMgdGhlcmUgaXMgbm8NCj4gPiBTRVRfRkVBVFVSRSAoREVWSUNFX1JFTU9URV9XQUtF
+VVApIGFuZCBjb250cm9sbGVyIHdvdWxkIGRyb3AgdGhlDQo+ID4gZmlybXdhcmUuIEl0IHdvdWxk
+IGNvbnN1bWUgbGVzcyBwb3dlci4gU28gd2Ugc2hvdWxkIG5vdCBzZW5kIHRoaXMga2luZA0KPiA+
+IG9mIFNFVF9GRUFUVVJFIHdoZW4gaG9zdCBnb2VzIHRvIHN1c3BlbmQgc3RhdGUuDQo+ID4gT3Ro
+ZXJ3aXNlLCB3aGVuIG1ha2luZyBkZXZpY2UgZW50ZXIgc2VsZWN0aXZlIHN1c3BlbmQsIGhvc3Qg
+c2hvdWxkIHNlbmQNCj4gPiBTRVRfRkVBVFVSRSB0byBtYWtlIHN1cmUgdGhlIGZpcm13YXJlIHJl
+bWFpbnMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4IEx1IDxhbGV4X2x1QHJlYWxzaWwu
+Y29tLmNuPg0KPiA+IC0tLQ0KPiA+IGRyaXZlcnMvYmx1ZXRvb3RoL2J0dXNiLmMgfCA0MA0KPiAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0NCj4gPiAxIGZpbGUgY2hhbmdl
+ZCwgMzYgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2JsdWV0b290aC9idHVzYi5jIGIvZHJpdmVycy9ibHVldG9vdGgvYnR1c2IuYw0K
+PiA+IGluZGV4IDUwYWVkNTI1OWMyYi4uNjlmNmI0MjA4OTAxIDEwMDY0NA0KPiA+IC0tLSBhL2Ry
+aXZlcnMvYmx1ZXRvb3RoL2J0dXNiLmMNCj4gPiArKysgYi9kcml2ZXJzL2JsdWV0b290aC9idHVz
+Yi5jDQo+ID4gQEAgLTQyNiw2ICs0MjYsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRtaV9zeXN0
+ZW1faWQNCj4gYnR1c2JfbmVlZHNfcmVzZXRfcmVzdW1lX3RhYmxlW10gPSB7DQo+ID4gI2RlZmlu
+ZSBCVFVTQl9ESUFHX1JVTk5JTkcJMTANCj4gPiAjZGVmaW5lIEJUVVNCX09PQl9XQUtFX0VOQUJM
+RUQJMTENCj4gPiAjZGVmaW5lIEJUVVNCX0hXX1JFU0VUX0FDVElWRQkxMg0KPiA+ICsjZGVmaW5l
+IEJUVVNCX1FVSVJLX1NVU1BFTkQJMTMNCj4gDQo+IEkgdGhpbmsgdGhpcyBuYW1lIGlzIG5vdCBy
+ZWFsbHkgZGVzY3JpcHRpdmUuIFdoYXQgYWJvdXQNCj4gQlRVU0JfU1VTUEVORF9ESVNBQkxFIG9y
+IEJUVVNCX1dBS0VVUF9ESVNBQkxFIG9yDQo+IEJUVVNCX1JFTU9URV9XQUtFVVAgb3Igc29tZXRo
+aW5nIHRoYXQgaXMgcmF0aGVyIGNsZWFyLg0KPiANCj4gPg0KPiA+IHN0cnVjdCBidHVzYl9kYXRh
+IHsNCj4gPiAJc3RydWN0IGhjaV9kZXYgICAgICAgKmhkZXY7DQo+ID4gQEAgLTExNjUsNiArMTE2
+NiwxNSBAQCBzdGF0aWMgaW50IGJ0dXNiX29wZW4oc3RydWN0IGhjaV9kZXYgKmhkZXYpDQo+ID4g
+CSAqLw0KPiA+IAlkZXZpY2Vfd2FrZXVwX2VuYWJsZSgmZGF0YS0+dWRldi0+ZGV2KTsNCj4gPg0K
+PiA+ICsJLyogRGlzYWJsZSBkZXZpY2UgcmVtb3RlIHdha2V1cCB3aGVuIGhvc3QgaXMgc3VzcGVu
+ZGVkDQo+ID4gKwkgKiBGb3IgUmVhbHRlayBjaGlwcywgZ2xvYmFsIHN1c3BlbmQgd2l0aG91dA0K
+PiA+ICsJICogU0VUX0ZFQVRVUkUgKERFVklDRV9SRU1PVEVfV0FLRVVQKSBjYW4gc2F2ZSBtb3Jl
+IHBvd2VyDQo+IGluIGRldmljZS4NCj4gPiArCSAqLw0KPiA+ICsjaWZkZWYgQ09ORklHX0JUX0hD
+SUJUVVNCX1JUTA0KPiA+ICsJaWYgKHRlc3RfYml0KEJUVVNCX1FVSVJLX1NVU1BFTkQsICZkYXRh
+LT5mbGFncykpDQo+ID4gKwkJZGV2aWNlX3dha2V1cF9kaXNhYmxlKCZkYXRhLT51ZGV2LT5kZXYp
+Ow0KPiA+ICsjZW5kaWYNCj4gPiArDQo+IA0KPiBJIGhhdmUgbm8gaWRlYSB3aGF0IHRoZSAjaWZk
+ZWYgZG9lcyBoZXJlLiBMaW1pdGluZyBpdCB0byBIQ0lCVFVTQl9SVEwgc2VlbXMNCj4gcG9pbnRs
+ZXNzLg0KPiANCj4gPiAJaWYgKHRlc3RfYW5kX3NldF9iaXQoQlRVU0JfSU5UUl9SVU5OSU5HLCAm
+ZGF0YS0+ZmxhZ3MpKQ0KPiA+IAkJZ290byBkb25lOw0KPiA+DQo+ID4gQEAgLTEyMjcsNiArMTIz
+NywxMyBAQCBzdGF0aWMgaW50IGJ0dXNiX2Nsb3NlKHN0cnVjdCBoY2lfZGV2ICpoZGV2KQ0KPiA+
+IAkJZ290byBmYWlsZWQ7DQo+ID4NCj4gPiAJZGF0YS0+aW50Zi0+bmVlZHNfcmVtb3RlX3dha2V1
+cCA9IDA7DQo+ID4gKw0KPiA+ICsJLyogRW5hYmxlIHJlbW90ZSB3YWtlIHVwIGZvciBhdXRvLXN1
+c3BlbmQgKi8NCj4gPiArI2lmZGVmIENPTkZJR19CVF9IQ0lCVFVTQl9SVEwNCj4gPiArCWlmICh0
+ZXN0X2JpdChCVFVTQl9RVUlSS19TVVNQRU5ELCAmZGF0YS0+ZmxhZ3MpKQ0KPiA+ICsJCWRhdGEt
+PmludGYtPm5lZWRzX3JlbW90ZV93YWtldXAgPSAxOw0KPiA+ICsjZW5kaWYNCj4gPiArDQo+IA0K
+PiBTYW1lIGNvbW1lbnQgYXMgYWJvdmUuIE5vIG5lZWQgZm9yIHRoZSAjaWZkZWYuDQo+IA0KPiA+
+IAlkZXZpY2Vfd2FrZXVwX2Rpc2FibGUoJmRhdGEtPnVkZXYtPmRldik7DQo+ID4gCXVzYl9hdXRv
+cG1fcHV0X2ludGVyZmFjZShkYXRhLT5pbnRmKTsNCj4gPg0KPiA+IEBAIC0zMTg1LDExICszMjAy
+LDExIEBAIHN0YXRpYyBpbnQgYnR1c2JfcHJvYmUoc3RydWN0IHVzYl9pbnRlcmZhY2UNCj4gKmlu
+dGYsDQo+ID4gCWlmIChpZC0+ZHJpdmVyX2luZm8gJiBCVFVTQl9SRUFMVEVLKSB7DQo+ID4gCQlo
+ZGV2LT5zZXR1cCA9IGJ0cnRsX3NldHVwX3JlYWx0ZWs7DQo+ID4NCj4gPiAtCQkvKiBSZWFsdGVr
+IGRldmljZXMgbG9zZSB0aGVpciB1cGRhdGVkIGZpcm13YXJlIG92ZXIgc3VzcGVuZCwNCj4gPiAt
+CQkgKiBidXQgdGhlIFVTQiBodWIgZG9lc24ndCBub3RpY2UgYW55IHN0YXR1cyBjaGFuZ2UuDQo+
+ID4gLQkJICogRXhwbGljaXRseSByZXF1ZXN0IGEgZGV2aWNlIHJlc2V0IG9uIHJlc3VtZS4NCj4g
+PiArCQkvKiBSZWFsdGVrIGRldmljZXMgbG9zZSB0aGVpciB1cGRhdGVkIGZpcm13YXJlIG92ZXIg
+Z2xvYmFsDQo+ID4gKwkJICogc3VzcGVuZCB0aGF0IG1lYW5zIGhvc3QgZG9lc24ndCBzZW5kIFNF
+VF9GRUFUVVJFDQo+ID4gKwkJICogKERFVklDRV9SRU1PVEVfV0FLRVVQKQ0KPiA+IAkJICovDQo+
+ID4gLQkJaW50ZXJmYWNlX3RvX3VzYmRldihpbnRmKS0+cXVpcmtzIHw9DQo+IFVTQl9RVUlSS19S
+RVNFVF9SRVNVTUU7DQo+ID4gKwkJc2V0X2JpdChCVFVTQl9RVUlSS19TVVNQRU5ELCAmZGF0YS0+
+ZmxhZ3MpOw0KPiA+IAl9DQo+ID4gI2VuZGlmDQo+ID4NCj4gPiBAQCAtMzM2Myw2ICszMzgwLDIx
+IEBAIHN0YXRpYyBpbnQgYnR1c2Jfc3VzcGVuZChzdHJ1Y3QgdXNiX2ludGVyZmFjZQ0KPiAqaW50
+ZiwgcG1fbWVzc2FnZV90IG1lc3NhZ2UpDQo+ID4gCQllbmFibGVfaXJxKGRhdGEtPm9vYl93YWtl
+X2lycSk7DQo+ID4gCX0NCj4gPg0KPiA+ICsjaWZkZWYgQ09ORklHX0JUX0hDSUJUVVNCX1JUTA0K
+PiA+ICsJLyogRm9yIGdsb2JhbCBzdXNwZW5kLCBSZWFsdGVrIGRldmljZXMgbG9zZSB0aGUgbG9h
+ZGVkIGZ3DQo+ID4gKwkgKiBpbiB0aGVtLiBCdXQgZm9yIGF1dG9zdXNwZW5kLCBmaXJtd2FyZSBz
+aG91bGQgcmVtYWluLg0KPiA+ICsJICogQWN0dWFsbHksIGl0IGRlcGVuZHMgb24gd2hldGhlciB0
+aGUgdXNiIGhvc3Qgc2VuZHMNCj4gPiArCSAqIHNldCBmZWF0dXJlIChlbmFibGUgd2FrZXVwKSBv
+ciBub3QuDQo+ID4gKwkgKi8NCj4gPiArCWlmICh0ZXN0X2JpdChCVFVTQl9RVUlSS19TVVNQRU5E
+LCAmZGF0YS0+ZmxhZ3MpKSB7DQo+ID4gKwkJaWYgKFBNU0dfSVNfQVVUTyhtZXNzYWdlKSAmJg0K
+PiA+ICsJCSAgICBkZXZpY2VfY2FuX3dha2V1cCgmZGF0YS0+dWRldi0+ZGV2KSkNCj4gPiArCQkJ
+ZGF0YS0+dWRldi0+ZG9fcmVtb3RlX3dha2V1cCA9IDE7DQo+ID4gKwkJZWxzZSBpZiAoIVBNU0df
+SVNfQVVUTyhtZXNzYWdlKSkNCj4gPiArCQkJZGF0YS0+dWRldi0+cmVzZXRfcmVzdW1lID0gMTsN
+Cj4gPiArCX0NCj4gPiArI2VuZGlmDQo+ID4gKw0KPiANCj4gVGhlICNpZmRlZiBpcyBhbHNvIG5v
+dCBuZWVkZWQgaGVyZS4NCj4gDQo+IFJlZ2FyZHMNCj4gDQo+IE1hcmNlbA0KPiANCj4gDQo+IC0t
+LS0tLVBsZWFzZSBjb25zaWRlciB0aGUgZW52aXJvbm1lbnQgYmVmb3JlIHByaW50aW5nIHRoaXMg
+ZS1tYWlsLg0K
