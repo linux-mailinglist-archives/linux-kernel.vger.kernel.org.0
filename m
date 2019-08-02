@@ -2,131 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D6E7EAEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 06:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 381207EADF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 06:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729814AbfHBEEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 00:04:22 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:54431 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729150AbfHBEEW (ORCPT
+        id S1729144AbfHBEAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 00:00:13 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52713 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbfHBEAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 00:04:22 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x722h7or006793
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Thu, 1 Aug 2019 19:43:07 -0700 (PDT)
-Received: from [128.224.162.237] (128.224.162.237) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server id 14.3.468.0; Thu, 1 Aug 2019
- 19:43:06 -0700
-Subject: Re: [PATCH v2] tracing: Function stack size and its name mismatch in
- arm64
-To:     Will Deacon <will@kernel.org>
-CC:     <rostedt@goodmis.org>, <mingo@redhat.com>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <joel@joelfernandes.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190801083340.57075-1-jiping.ma2@windriver.com>
- <20190801094156.emo36ekvrm74nndl@willie-the-truck>
-From:   Jiping Ma <Jiping.Ma2@windriver.com>
-Message-ID: <47e90170-e971-c2f5-b6c9-d3c6a694a4a7@windriver.com>
-Date:   Fri, 2 Aug 2019 10:43:03 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Fri, 2 Aug 2019 00:00:13 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s3so66495724wms.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 21:00:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I/Kfc6ZbOZnKoxJL7rV1rbyTQYfEjNQbR94dlPzKkok=;
+        b=RJKKjy4lH/3bgMCwOjm1J18wa06vOSJLnIfHMmvULIy2YSHW3G15WM/m7+XeVtQwTr
+         UtiihTcbvICV40K4Nt5x73lPEsV6pBUGS2RPKA5G47fKyoSSsc05AlAuvBSyjU7yAX3Z
+         UoEhsAOtv282G86OCYcLO5YN8helw4/uL1qOeUEBiTmpuinXLeVN3veX4kAGMwHIkC65
+         EKZaEk2RjAR5n1/oURiPuFkOL29Vt+pAgswdD0zpyPv3xy2fYhEiWrtIozD6TCcfhHcV
+         OMLP1cmi5mf327NBxa+CEE9sTtQnunCR/GUerMu62fmDkaROt4YIFVsA2qWBl2CNKsLY
+         7Dvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I/Kfc6ZbOZnKoxJL7rV1rbyTQYfEjNQbR94dlPzKkok=;
+        b=Ocbx4+/uIgn6WaZdf9heHz9Fgf508Pyp4M4lw7E2O3phGOGiIS8H5vdO8aoOD05rZH
+         FHqPS6QyEiD0GmGp35S1tzNAPrkqxdQ+Szjj/oATfqMgNtjaD17g7LNuULT2HilEK5fL
+         kprLxuqH7ak/cVVvVIKWpBAawqMSqCeJsppDCzfLPRBUIQheUdHjzIk83TIohBnFnWrU
+         kA2PS0w6HjPkbqIv2NeVUfo9dXzTSeRvM3yM7hYhk5+xuzyeCI3Fqsp+arqvZNyjD4O0
+         76QI26DMHZHMw/AFesxMDCrOmlAn2ldV4N9ZmLEk//Ewz7RkPRZHmAjLUnyszJPl7WVh
+         6faw==
+X-Gm-Message-State: APjAAAVFqiB+yikQQ2MNmMvqrYApW7HuHPyU3NJ7jEAGSYnwDzGwH9OI
+        /UJvem+Qnczj2H1fu6IgUVP2gdmvkCriGLuLgPcP3g==
+X-Google-Smtp-Source: APXvYqyGKKA06Ook1nC1Ms5baz5sFRFDqfDRQkOGCbnR8q7MWD+Cy/I3+JJpDuoiot2nNz8c8O4OOUXtH5DkcbO6xGI=
+X-Received: by 2002:a1c:cfc5:: with SMTP id f188mr1649160wmg.24.1564718409992;
+ Thu, 01 Aug 2019 21:00:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190801094156.emo36ekvrm74nndl@willie-the-truck>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20190729115544.17895-1-anup.patel@wdc.com> <20190729115544.17895-6-anup.patel@wdc.com>
+ <9f9d09e5-49bc-f8e3-cfe1-bd5221e3b683@redhat.com> <CAAhSdy3JZVEEnPnssALaxvCsyznF=rt=7-d5J_OgQEJv6cPhxQ@mail.gmail.com>
+ <66c4e468-7a69-31e7-778b-228908f0e737@redhat.com> <CAAhSdy3b-o6y1fsYi1iQcCN=9ZuC98TLCqjHCYAzOCx+N+_89w@mail.gmail.com>
+ <828f01a9-2f11-34b6-7753-dc8fa7aa0d18@redhat.com> <CAAhSdy19_dEL7e_sEFYi-hXvhVerm_cr3BdZ-TRw0aTTL-O9ZQ@mail.gmail.com>
+ <816c70e7-0ea3-1dde-510e-f1d5c6a02dd5@redhat.com>
+In-Reply-To: <816c70e7-0ea3-1dde-510e-f1d5c6a02dd5@redhat.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Fri, 2 Aug 2019 09:29:59 +0530
+Message-ID: <CAAhSdy0Er92SCPSyYj-59PAwXvZkgfWbJQwr_qQKGXp3s43xqA@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/16] RISC-V: KVM: Implement VCPU interrupts and
+ requests handling
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019年08月01日 17:41, Will Deacon wrote:
-> On Thu, Aug 01, 2019 at 04:33:40PM +0800, Jiping Ma wrote:
->> In arm64, the PC of the frame is matched to the last frame function,
->> rather than the function of his frame. For the following example, the
->> stack size of occupy_stack_init function should be 3376, rather than 176.
->>
->> Wrong info:
->> Depth Size Location (16 entries)
->> ----- ---- --------
->> 0) 5400 16 __update_load_avg_se.isra.2+0x28/0x220
->> 1) 5384 96 put_prev_entity+0x250/0x338
->> 2) 5288 80 pick_next_task_fair+0x4c4/0x508
->> 3) 5208 72 __schedule+0x100/0x600
->> 4) 5136 184 preempt_schedule_common+0x28/0x48
->> 5) 4952 32 preempt_schedule+0x28/0x30
->> 6) 4920 16 vprintk_emit+0x170/0x1f8
->> 7) 4904 128 vprintk_default+0x48/0x58
->> 8) 4776 64 vprintk_func+0xf8/0x1c8
->> 9) 4712 112 printk+0x70/0x90
->> 10) 4600 176 occupy_stack_init+0x64/0xc0 [kernel_stack]
->> 11) 4424 3376 do_one_initcall+0x68/0x248
->> 12) 1048 144 do_init_module+0x60/0x1f0
->> 13) 904 48 load_module+0x1d50/0x2340
->> 14) 856 352 sys_finit_module+0xd0/0xe8
->> 15) 504 504 el0_svc_naked+0x30/0x34
->>
->> Correct info:
->> Depth Size Location (18 entries)
->> ----- ---- --------
->> 0) 5464 48 cgroup_rstat_updated+0x20/0x100
->> 1) 5416 32 cgroup_base_stat_cputime_account_end.isra.0+0x30/0x60
->> 2) 5384 32 __cgroup_account_cputime+0x3c/0x48
->> 3) 5352 64 update_curr+0xc4/0x1d0
->> 4) 5288 72 pick_next_task_fair+0x444/0x508
->> 5) 5216 184 __schedule+0x100/0x600
->> 6) 5032 32 preempt_schedule_common+0x28/0x48
->> 7) 5000 16 preempt_schedule+0x28/0x30
->> 8) 4984 128 vprintk_emit+0x170/0x1f8
->> 9) 4856 64 vprintk_default+0x48/0x58
->> 10) 4792 112 vprintk_func+0xf8/0x1c8
->> 11) 4680 176 printk+0x70/0x90
->> 12) 4504 80 func_test+0x7c/0xb8 [kernel_stack]
->> 13) 4424 3376 occupy_stack_init+0x7c/0xc0 [kernel_stack]
->> 14) 1048 144 do_one_initcall+0x68/0x248
->> 15) 904 48 do_init_module+0x60/0x1f0
->> 16) 856 352 load_module+0x1d50/0x2340
->> 17) 504 504 sys_finit_module+0xd0/0xe8
->>
->> Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
->> ---
->>   kernel/trace/trace_stack.c | 28 ++++++++++++++++++++++++++--
->>   1 file changed, 26 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
->> index 5d16f73898db..ed80b95abf06 100644
->> --- a/kernel/trace/trace_stack.c
->> +++ b/kernel/trace/trace_stack.c
->> @@ -40,16 +40,28 @@ static void print_max_stack(void)
->>   
->>   	pr_emerg("        Depth    Size   Location    (%d entries)\n"
->>   			   "        -----    ----   --------\n",
->> +#ifdef CONFIG_ARM64
->> +			   stack_trace_nr_entries - 1);
->> +#else
->>   			   stack_trace_nr_entries);
-> Sorry, but I have no idea what the problem is here. All I know is that the
-> solution looks highly dubious and I find it very hard to believe that the
-> arm64 backtracing code is uniquely special as to deserve being called out
-> like this. I suspect there's a bug lurking somewhere, but you really need
-> to do a better job of explaining the issue rather than simply providing a
-> couple of backtraces with no context.
+On Tue, Jul 30, 2019 at 7:38 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> *Why* does the frame appear to be off-by-one?
-Because the PC is LR in ARM64 stack actually.  Following is ARM64 stack 
-layout. Please refer to the figure 3 in 
-http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf
-             LR
-             FP
-             ......
-             LR
-             FP
-Jiping
+> On 30/07/19 15:35, Anup Patel wrote:
+> > On Tue, Jul 30, 2019 at 6:48 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+> >>
+> >> On 30/07/19 14:45, Anup Patel wrote:
+> >>> Here's some text from RISC-V spec regarding SIP CSR:
+> >>> "software interrupt-pending (SSIP) bit in the sip register. A pending
+> >>> supervisor-level software interrupt can be cleared by writing 0 to the SSIP bit
+> >>> in sip. Supervisor-level software interrupts are disabled when the SSIE bit in
+> >>> the sie register is clear."
+> >>>
+> >>> Without RISC-V hypervisor extension, the SIP is essentially a restricted
+> >>> view of MIP CSR. Also as-per above, S-mode SW can only write 0 to SSIP
+> >>> bit in SIP CSR whereas it can only be set by M-mode SW or some HW
+> >>> mechanism (such as S-mode CLINT).
+> >>
+> >> But that's not what the spec says.  It just says (just before the
+> >> sentence you quoted):
+> >>
+> >>    A supervisor-level software interrupt is triggered on the current
+> >>    hart by writing 1 to its supervisor software interrupt-pending (SSIP)
+> >>    bit in the sip register.
+> >
+> > Unfortunately, this statement does not state who is allowed to write 1
+> > in SIP.SSIP bit.
 >
-> Will
+> If it doesn't state who is allowed to write 1, whoever has access to sip
+> can.
+>
+> > I quoted MIP CSR documentation to highlight the fact that only M-mode
+> > SW can set SSIP bit.
+> >
+> > In fact, I had same understanding as you have regarding SSIP bit
+> > until we had MSIP issue in OpenSBI.
+> > (https://github.com/riscv/opensbi/issues/128)
+> >
+> >> and it's not written anywhere that S-mode SW cannot write 1.  In fact
+> >> that text is even under sip, not under mip, so IMO there's no doubt that
+> >> S-mode SW _can_ write 1, and the hypervisor must operate accordingly.
+> >
+> > Without hypervisor support, SIP CSR is nothing but a restricted view of
+> > MIP CSR thats why MIP CSR documentation applies here.
+>
+> But the privileged spec says mip.MSIP is read-only, it cannot be cleared
+> (as in the above OpenSBI issue).  So mip.MSIP and sip.SSIP are already
+> different in that respect, and I don't see how the spec says that S-mode
+> SW cannot set sip.SSIP.
+>
+> (As an aside, why would M-mode even bother using sip and not mip to
+> write 1 to SSIP?).
+>
+> > I think this discussion deserves a Github issue on RISC-V ISA manual.
+>
+> Perhaps, but I think it makes more sense this way.  The question remains
+> of why M-mode is not allowed to write to MSIP/MEIP/MTIP.  My guess is
+> that then MSIP/MEIP/MTIP are simply a read-only view of an external pin,
+> so it simplifies hardware a tiny bit by forcing acks to go through the
+> MMIO registers.
+>
+> > If my interpretation is incorrect then it would be really strange that
+> > HART in S-mode SW can inject IPI to itself by writing 1 to SIP.SSIP bit.
+>
+> Well, it can be useful, for example Windows does it when interrupt
+> handlers want to schedule some work to happen out of interrupt context.
+>  Going through SBI would be unpleasant if it causes an HS-mode trap.
 
+Another way of artificially injecting interrupt would be using interrupt
+controller, where Windows can just write to some pending register of
+interrupt controller.
+
+I have raised a new Github issue on GitHub for clarity on this. You can
+add your comments to this issue as well.
+https://github.com/riscv/riscv-isa-manual/issues/425
+
+Also, I have raised a proposal to support mechanism for external entity
+(such as PLICv2 with virtualization support) to inject virtual interrupts.
+https://github.com/riscv/riscv-isa-manual/issues/429
+
+Regards,
+Anup
