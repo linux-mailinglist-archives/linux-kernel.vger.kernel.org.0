@@ -2,66 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D15B680325
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D6280322
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437486AbfHBXUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 19:20:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59932 "EHLO mail.kernel.org"
+        id S2437469AbfHBXUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 19:20:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387495AbfHBXUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 19:20:33 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F38422087E;
-        Fri,  2 Aug 2019 23:20:31 +0000 (UTC)
+        id S2437454AbfHBXUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 19:20:12 -0400
+Subject: Re: [GIT PULL] xen: fixes for 5.3-rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564788032;
-        bh=5MDWMZ+Bb+H1JLI7zlax6RlbYeorlnYGQAZD3xSaKLo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CtHrXPeQaqIFT1kGAnW5DOoL8nsvXXEeu7tkt5g7Mxl5bfl8RedIJaHQArwrWFdyE
-         L6JPaV9JlfPhnE00BtjeQHNIQxZJVil3TZyX3zyNKIgyRLxJhVb4OkCNmO4/AZdcIn
-         J1SflbREfyPuEfw1L3nbDzBH3pDvS3rV2LZ8uIN8=
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Gary Hook <gary.hook@amd.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 0/2] crypto: ccp - Remove unnecessary includes
-Date:   Fri,  2 Aug 2019 18:20:10 -0500
-Message-Id: <20190802232013.15957-1-helgaas@kernel.org>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        s=default; t=1564788011;
+        bh=3lPqaAxly1FD9PM4K5DpOANPnWOJvGrh2mV6GDIZ+wc=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=MtMFjuTrBaMA/B28MsUqFszAeQEc8Fm4TCfcb2J6Sw/6+vOpjFLFK/kECSPiJFKF9
+         zb9sIJb22aFtSqACU+AdW9y9JIFFOhWqQ/uHnvjN5buMmbZEKcze1P91E77lhPlk4q
+         3WP47gLVD1n7XRPdTF+wwM9wV9INWjcZpoG5bxMU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190802144746.18653-1-jgross@suse.com>
+References: <20190802144746.18653-1-jgross@suse.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190802144746.18653-1-jgross@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
+ for-linus-5.3a-rc3-tag
+X-PR-Tracked-Commit-Id: b877ac9815a8fe7e5f6d7fdde3dc34652408840a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: dcb8cfbd8fe9e62c7d64e82288d3ffe2502b7371
+Message-Id: <156478801106.22769.3689998217625205699.pr-tracker-bot@kernel.org>
+Date:   Fri, 02 Aug 2019 23:20:11 +0000
+To:     Juergen Gross <jgross@suse.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+The pull request you sent on Fri,  2 Aug 2019 16:47:46 +0200:
 
-CCP includes <linux/pci.h> many times unnecessarily.  Add a couple
-DMA-related includes for dma_direction and dma_get_mask(), which were
-previously included indirectly via <linux/pci.h>.  Then remove the
-unnecessary includes of <linux/pci.h>.
+> git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-5.3a-rc3-tag
 
-Bjorn Helgaas (2):
-  crypto: ccp - Include DMA declarations explicitly
-  crypto: ccp - Remove unnecessary linux/pci.h include
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/dcb8cfbd8fe9e62c7d64e82288d3ffe2502b7371
 
- drivers/crypto/ccp/ccp-crypto.h    | 1 -
- drivers/crypto/ccp/ccp-dev-v3.c    | 1 -
- drivers/crypto/ccp/ccp-dev-v5.c    | 1 -
- drivers/crypto/ccp/ccp-dev.h       | 2 +-
- drivers/crypto/ccp/ccp-dmaengine.c | 1 +
- drivers/crypto/ccp/ccp-ops.c       | 1 -
- drivers/crypto/ccp/psp-dev.h       | 1 -
- drivers/crypto/ccp/sp-dev.h        | 1 -
- 8 files changed, 2 insertions(+), 7 deletions(-)
+Thank you!
 
 -- 
-2.22.0.770.g0f2c4a37fd-goog
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
