@@ -2,98 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FFFA7FA51
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 077E27FA9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:34:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405124AbfHBNcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:32:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55568 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405016AbfHBNcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:32:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 25141B62C;
-        Fri,  2 Aug 2019 13:32:20 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F0EE61E433B; Fri,  2 Aug 2019 15:31:54 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 15:31:54 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
-        Theodore Tso <tytso@mit.edu>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Joel Becker <jlbec@evilplan.org>, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 6/7] fs/jbd2: Make state lock a spinlock
-Message-ID: <20190802133154.GM25064@quack2.suse.cz>
-References: <20190801010126.245731659@linutronix.de>
- <20190801010944.457499601@linutronix.de>
- <20190801112849.GB31381@hirez.programming.kicks-ass.net>
+        id S2391894AbfHBNdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:33:24 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48144 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389830AbfHBNdU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:33:20 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6C1438037F; Fri,  2 Aug 2019 15:33:06 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 15:33:17 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     syzbot <syzbot+b156665cf4d1b5e00c76@syzkaller.appspotmail.com>
+Cc:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        len.brown@intel.com, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        rjw@rjwysocki.net, syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in __pm_runtime_resume
+Message-ID: <20190802133317.GA5538@amd>
+References: <000000000000cd0435058f21e8c3@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
 Content-Disposition: inline
-In-Reply-To: <20190801112849.GB31381@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <000000000000cd0435058f21e8c3@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 01-08-19 13:28:49, Peter Zijlstra wrote:
-> On Thu, Aug 01, 2019 at 03:01:32AM +0200, Thomas Gleixner wrote:
-> 
-> > @@ -1931,7 +1932,7 @@ static void __jbd2_journal_temp_unlink_b
-> >  	transaction_t *transaction;
-> >  	struct buffer_head *bh = jh2bh(jh);
-> >  
-> > -	J_ASSERT_JH(jh, jbd_is_locked_bh_state(bh));
-> > +	assert_spin_locked(&jh->state_lock);
-> >  	transaction = jh->b_transaction;
-> >  	if (transaction)
-> >  		assert_spin_locked(&transaction->t_journal->j_list_lock);
-> 
-> > @@ -2415,7 +2416,7 @@ void __jbd2_journal_file_buffer(struct j
-> >  	int was_dirty = 0;
-> >  	struct buffer_head *bh = jh2bh(jh);
-> >  
-> > -	J_ASSERT_JH(jh, jbd_is_locked_bh_state(bh));
-> > +	assert_spin_locked(&jh->state_lock);
-> >  	assert_spin_locked(&transaction->t_journal->j_list_lock);
-> >  
-> >  	J_ASSERT_JH(jh, jh->b_jlist < BJ_Types);
-> 
-> > @@ -2500,7 +2501,7 @@ void __jbd2_journal_refile_buffer(struct
-> >  	int was_dirty, jlist;
-> >  	struct buffer_head *bh = jh2bh(jh);
-> >  
-> > -	J_ASSERT_JH(jh, jbd_is_locked_bh_state(bh));
-> > +	assert_spin_locked(&jh->state_lock);
-> >  	if (jh->b_transaction)
-> >  		assert_spin_locked(&jh->b_transaction->t_journal->j_list_lock);
-> >  
-> 
-> Do those want to be:
-> 
->   lockdep_assert_held(&jh->state_lock);
-> 
-> instead? The difference is of course that lockdep_assert_held() requires
-> the current context to hold the lock, where assert_*_locked() merely
-> checks _someone_ holds it.
 
-Yeah, jbd2 doesn't play any weird locking tricks so lockdep_assert_held()
-is fine. I'll replace those when I'm updating the patch.
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-								Honza
+On Fri 2019-08-02 05:58:05, syzbot wrote:
+> Hello,
+>=20
+> syzbot found the following crash on:
+>=20
+> HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D146071b4600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D792eb47789f57=
+810
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Db156665cf4d1b5e=
+00c76
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>=20
+> Unfortunately, I don't have any reproducer for this crash yet.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I asked a question, noone bothered to reply, yet you spam me again?
+
+You are a bad bot. Go away. Come back when your human master is
+willing to communicate.
+
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1EO50ACgkQMOfwapXb+vKYhQCdHY91WvBbV3DB8W3q/3RcVQjz
+/pEAn0cD5LtqdCPW2XZorEGD4M4g0uPN
+=iWNk
+-----END PGP SIGNATURE-----
+
+--qMm9M+Fa2AknHoGS--
