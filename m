@@ -2,258 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 594CD7EBEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:23:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C08B7EC0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732985AbfHBFW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 01:22:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36684 "EHLO mx1.redhat.com"
+        id S1732792AbfHBFWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 01:22:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33748 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732848AbfHBFW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 01:22:56 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1732712AbfHBFWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 01:22:53 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 852A530BD1C1;
-        Fri,  2 Aug 2019 05:22:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2969CB59A0;
+        Fri,  2 Aug 2019 05:22:53 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-81.ams2.redhat.com [10.36.116.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 425E85D9CD;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D25760922;
         Fri,  2 Aug 2019 05:22:52 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 51FC59D7D; Fri,  2 Aug 2019 07:22:49 +0200 (CEST)
+        id 7B3AC9D7F; Fri,  2 Aug 2019 07:22:49 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     ckoenig.leichtzumerken@gmail.com, thomas@shipmail.org,
         tzimmermann@suse.de, daniel@ffwll.ch, bskeggs@redhat.com,
         Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        nouveau@lists.freedesktop.org (open list:DRM DRIVER FOR NVIDIA
-        GEFORCE/QUADRO GPUS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 06/17] drm/nouveau: use embedded gem object
-Date:   Fri,  2 Aug 2019 07:22:36 +0200
-Message-Id: <20190802052247.18427-7-kraxel@redhat.com>
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 07/17] drm/ttm: use gem reservation object
+Date:   Fri,  2 Aug 2019 07:22:37 +0200
+Message-Id: <20190802052247.18427-8-kraxel@redhat.com>
 In-Reply-To: <20190802052247.18427-1-kraxel@redhat.com>
 References: <20190802052247.18427-1-kraxel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 02 Aug 2019 05:22:55 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 02 Aug 2019 05:22:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop drm_gem_object from nouveau_bo, use the
-ttm_buffer_object.base instead.
-
-Build tested only.
+Drop ttm_resv from ttm_buffer_object, use the gem reservation object
+(base._resv) instead.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Acked-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_bo.h      |  5 -----
- drivers/gpu/drm/nouveau/nouveau_gem.h     |  2 +-
- drivers/gpu/drm/nouveau/nouveau_abi16.c   |  4 ++--
- drivers/gpu/drm/nouveau/nouveau_bo.c      |  6 +++---
- drivers/gpu/drm/nouveau/nouveau_display.c |  8 ++++----
- drivers/gpu/drm/nouveau/nouveau_gem.c     | 15 ++++++++-------
- drivers/gpu/drm/nouveau/nouveau_prime.c   |  4 ++--
- 7 files changed, 20 insertions(+), 24 deletions(-)
+ include/drm/ttm/ttm_bo_api.h      |  1 -
+ drivers/gpu/drm/ttm/ttm_bo.c      | 39 ++++++++++++++++++-------------
+ drivers/gpu/drm/ttm/ttm_bo_util.c |  2 +-
+ 3 files changed, 24 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.h b/drivers/gpu/drm/nouveau/nouveau_bo.h
-index 383ac36d5869..d675efe8e7f9 100644
---- a/drivers/gpu/drm/nouveau/nouveau_bo.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_bo.h
-@@ -35,11 +35,6 @@ struct nouveau_bo {
+diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
+index 082550cac92c..fa050f0328ab 100644
+--- a/include/drm/ttm/ttm_bo_api.h
++++ b/include/drm/ttm/ttm_bo_api.h
+@@ -235,7 +235,6 @@ struct ttm_buffer_object {
+ 	struct sg_table *sg;
  
- 	struct nouveau_drm_tile *tile;
+ 	struct reservation_object *resv;
+-	struct reservation_object ttm_resv;
+ 	struct mutex wu_mutex;
+ };
  
--	/* Only valid if allocated via nouveau_gem_new() and iff you hold a
--	 * gem reference to it! For debugging, use gem.filp != NULL to test
--	 * whether it is valid. */
--	struct drm_gem_object gem;
--
- 	/* protect by the ttm reservation lock */
- 	int pin_refcnt;
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.h b/drivers/gpu/drm/nouveau/nouveau_gem.h
-index d67e2f9ec59c..40ba0f1ba5aa 100644
---- a/drivers/gpu/drm/nouveau/nouveau_gem.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.h
-@@ -10,7 +10,7 @@
- static inline struct nouveau_bo *
- nouveau_gem_object(struct drm_gem_object *gem)
+diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+index 58c403eda04e..36738f1a486d 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -160,7 +160,8 @@ static void ttm_bo_release_list(struct kref *list_kref)
+ 	ttm_tt_destroy(bo->ttm);
+ 	atomic_dec(&bo->bdev->glob->bo_count);
+ 	dma_fence_put(bo->moving);
+-	reservation_object_fini(&bo->ttm_resv);
++	if (!ttm_bo_uses_embedded_gem_object(bo))
++		reservation_object_fini(&bo->base._resv);
+ 	mutex_destroy(&bo->wu_mutex);
+ 	bo->destroy(bo);
+ 	ttm_mem_global_free(bdev->glob->mem_glob, acc_size);
+@@ -438,14 +439,14 @@ static int ttm_bo_individualize_resv(struct ttm_buffer_object *bo)
  {
--	return gem ? container_of(gem, struct nouveau_bo, gem) : NULL;
-+	return gem ? container_of(gem, struct nouveau_bo, bo.base) : NULL;
- }
+ 	int r;
  
- /* nouveau_gem.c */
-diff --git a/drivers/gpu/drm/nouveau/nouveau_abi16.c b/drivers/gpu/drm/nouveau/nouveau_abi16.c
-index 0c585dc5f5c3..e2bae1424502 100644
---- a/drivers/gpu/drm/nouveau/nouveau_abi16.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_abi16.c
-@@ -139,7 +139,7 @@ nouveau_abi16_chan_fini(struct nouveau_abi16 *abi16,
- 	if (chan->ntfy) {
- 		nouveau_vma_del(&chan->ntfy_vma);
- 		nouveau_bo_unpin(chan->ntfy);
--		drm_gem_object_put_unlocked(&chan->ntfy->gem);
-+		drm_gem_object_put_unlocked(&chan->ntfy->bo.base);
+-	if (bo->resv == &bo->ttm_resv)
++	if (bo->resv == &bo->base._resv)
+ 		return 0;
+ 
+-	BUG_ON(!reservation_object_trylock(&bo->ttm_resv));
++	BUG_ON(!reservation_object_trylock(&bo->base._resv));
+ 
+-	r = reservation_object_copy_fences(&bo->ttm_resv, bo->resv);
++	r = reservation_object_copy_fences(&bo->base._resv, bo->resv);
+ 	if (r)
+-		reservation_object_unlock(&bo->ttm_resv);
++		reservation_object_unlock(&bo->base._resv);
+ 
+ 	return r;
+ }
+@@ -456,8 +457,8 @@ static void ttm_bo_flush_all_fences(struct ttm_buffer_object *bo)
+ 	struct dma_fence *fence;
+ 	int i;
+ 
+-	fobj = reservation_object_get_list(&bo->ttm_resv);
+-	fence = reservation_object_get_excl(&bo->ttm_resv);
++	fobj = reservation_object_get_list(&bo->base._resv);
++	fence = reservation_object_get_excl(&bo->base._resv);
+ 	if (fence && !fence->ops->signaled)
+ 		dma_fence_enable_sw_signaling(fence);
+ 
+@@ -490,11 +491,11 @@ static void ttm_bo_cleanup_refs_or_queue(struct ttm_buffer_object *bo)
+ 	spin_lock(&glob->lru_lock);
+ 	ret = reservation_object_trylock(bo->resv) ? 0 : -EBUSY;
+ 	if (!ret) {
+-		if (reservation_object_test_signaled_rcu(&bo->ttm_resv, true)) {
++		if (reservation_object_test_signaled_rcu(&bo->base._resv, true)) {
+ 			ttm_bo_del_from_lru(bo);
+ 			spin_unlock(&glob->lru_lock);
+-			if (bo->resv != &bo->ttm_resv)
+-				reservation_object_unlock(&bo->ttm_resv);
++			if (bo->resv != &bo->base._resv)
++				reservation_object_unlock(&bo->base._resv);
+ 
+ 			ttm_bo_cleanup_memtype_use(bo);
+ 			reservation_object_unlock(bo->resv);
+@@ -515,8 +516,8 @@ static void ttm_bo_cleanup_refs_or_queue(struct ttm_buffer_object *bo)
+ 
+ 		reservation_object_unlock(bo->resv);
  	}
+-	if (bo->resv != &bo->ttm_resv)
+-		reservation_object_unlock(&bo->ttm_resv);
++	if (bo->resv != &bo->base._resv)
++		reservation_object_unlock(&bo->base._resv);
  
- 	if (chan->heap.block_size)
-@@ -339,7 +339,7 @@ nouveau_abi16_ioctl_channel_alloc(ABI16_IOCTL_ARGS)
- 			goto done;
+ error:
+ 	kref_get(&bo->list_kref);
+@@ -551,7 +552,7 @@ static int ttm_bo_cleanup_refs(struct ttm_buffer_object *bo,
+ 	if (unlikely(list_empty(&bo->ddestroy)))
+ 		resv = bo->resv;
+ 	else
+-		resv = &bo->ttm_resv;
++		resv = &bo->base._resv;
+ 
+ 	if (reservation_object_test_signaled_rcu(resv, true))
+ 		ret = 0;
+@@ -631,7 +632,7 @@ static bool ttm_bo_delayed_delete(struct ttm_bo_device *bdev, bool remove_all)
+ 		kref_get(&bo->list_kref);
+ 		list_move_tail(&bo->ddestroy, &removed);
+ 
+-		if (remove_all || bo->resv != &bo->ttm_resv) {
++		if (remove_all || bo->resv != &bo->base._resv) {
+ 			spin_unlock(&glob->lru_lock);
+ 			reservation_object_lock(bo->resv, NULL);
+ 
+@@ -1332,9 +1333,15 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
+ 		bo->resv = resv;
+ 		reservation_object_assert_held(bo->resv);
+ 	} else {
+-		bo->resv = &bo->ttm_resv;
++		bo->resv = &bo->base._resv;
++	}
++	if (!ttm_bo_uses_embedded_gem_object(bo)) {
++		/*
++		 * bo.gem is not initialized, so we have to setup the
++		 * struct elements we want use regardless.
++		 */
++		reservation_object_init(&bo->base._resv);
  	}
+-	reservation_object_init(&bo->ttm_resv);
+ 	atomic_inc(&bo->bdev->glob->bo_count);
+ 	drm_vma_node_reset(&bo->vma_node);
  
--	ret = drm_gem_handle_create(file_priv, &chan->ntfy->gem,
-+	ret = drm_gem_handle_create(file_priv, &chan->ntfy->bo.base,
- 				    &init->notifier_handle);
- 	if (ret)
- 		goto done;
-diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
-index 6f1217b3e6b9..abbbabd12241 100644
---- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-@@ -136,7 +136,7 @@ nouveau_bo_del_ttm(struct ttm_buffer_object *bo)
- 	struct drm_device *dev = drm->dev;
- 	struct nouveau_bo *nvbo = nouveau_bo(bo);
- 
--	if (unlikely(nvbo->gem.filp))
-+	if (unlikely(nvbo->bo.base.filp))
- 		DRM_ERROR("bo %p still attached to GEM object\n", bo);
- 	WARN_ON(nvbo->pin_refcnt > 0);
- 	nv10_bo_put_tile_region(dev, nvbo->tile, NULL);
-@@ -299,7 +299,7 @@ nouveau_bo_new(struct nouveau_cli *cli, u64 size, int align,
- 			  type, &nvbo->placement,
- 			  align >> PAGE_SHIFT, false, acc_size, sg,
- 			  robj, nouveau_bo_del_ttm);
--	nvbo->gem.resv = nvbo->bo.resv;
-+	nvbo->bo.base.resv = nvbo->bo.resv;
- 
- 	if (ret) {
- 		/* ttm will call nouveau_bo_del_ttm if it fails.. */
-@@ -1402,7 +1402,7 @@ nouveau_bo_verify_access(struct ttm_buffer_object *bo, struct file *filp)
- {
- 	struct nouveau_bo *nvbo = nouveau_bo(bo);
- 
--	return drm_vma_node_verify_access(&nvbo->gem.vma_node,
-+	return drm_vma_node_verify_access(&nvbo->bo.base.vma_node,
- 					  filp->private_data);
- }
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
-index 832da8e0020d..fc8f5bb73ca8 100644
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -201,7 +201,7 @@ nouveau_user_framebuffer_destroy(struct drm_framebuffer *drm_fb)
- 	struct nouveau_framebuffer *fb = nouveau_framebuffer(drm_fb);
- 
- 	if (fb->nvbo)
--		drm_gem_object_put_unlocked(&fb->nvbo->gem);
-+		drm_gem_object_put_unlocked(&fb->nvbo->bo.base);
- 
- 	drm_framebuffer_cleanup(drm_fb);
- 	kfree(fb);
-@@ -214,7 +214,7 @@ nouveau_user_framebuffer_create_handle(struct drm_framebuffer *drm_fb,
- {
- 	struct nouveau_framebuffer *fb = nouveau_framebuffer(drm_fb);
- 
--	return drm_gem_handle_create(file_priv, &fb->nvbo->gem, handle);
-+	return drm_gem_handle_create(file_priv, &fb->nvbo->bo.base, handle);
- }
- 
- static const struct drm_framebuffer_funcs nouveau_framebuffer_funcs = {
-@@ -660,8 +660,8 @@ nouveau_display_dumb_create(struct drm_file *file_priv, struct drm_device *dev,
- 	if (ret)
- 		return ret;
- 
--	ret = drm_gem_handle_create(file_priv, &bo->gem, &args->handle);
--	drm_gem_object_put_unlocked(&bo->gem);
-+	ret = drm_gem_handle_create(file_priv, &bo->bo.base, &args->handle);
-+	drm_gem_object_put_unlocked(&bo->bo.base);
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
-index b4bda716564d..2f484ab7dbca 100644
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -205,13 +205,13 @@ nouveau_gem_new(struct nouveau_cli *cli, u64 size, int align, uint32_t domain,
- 
- 	/* Initialize the embedded gem-object. We return a single gem-reference
- 	 * to the caller, instead of a normal nouveau_bo ttm reference. */
--	ret = drm_gem_object_init(drm->dev, &nvbo->gem, nvbo->bo.mem.size);
-+	ret = drm_gem_object_init(drm->dev, &nvbo->bo.base, nvbo->bo.mem.size);
- 	if (ret) {
- 		nouveau_bo_ref(NULL, pnvbo);
- 		return -ENOMEM;
- 	}
- 
--	nvbo->bo.persistent_swap_storage = nvbo->gem.filp;
-+	nvbo->bo.persistent_swap_storage = nvbo->bo.base.filp;
- 	return 0;
- }
- 
-@@ -268,15 +268,16 @@ nouveau_gem_ioctl_new(struct drm_device *dev, void *data,
- 	if (ret)
- 		return ret;
- 
--	ret = drm_gem_handle_create(file_priv, &nvbo->gem, &req->info.handle);
-+	ret = drm_gem_handle_create(file_priv, &nvbo->bo.base,
-+				    &req->info.handle);
- 	if (ret == 0) {
--		ret = nouveau_gem_info(file_priv, &nvbo->gem, &req->info);
-+		ret = nouveau_gem_info(file_priv, &nvbo->bo.base, &req->info);
- 		if (ret)
- 			drm_gem_handle_delete(file_priv, req->info.handle);
- 	}
- 
- 	/* drop reference from allocate - handle holds it now */
--	drm_gem_object_put_unlocked(&nvbo->gem);
-+	drm_gem_object_put_unlocked(&nvbo->bo.base);
- 	return ret;
- }
- 
-@@ -355,7 +356,7 @@ validate_fini_no_ticket(struct validate_op *op, struct nouveau_channel *chan,
- 		list_del(&nvbo->entry);
- 		nvbo->reserved_by = NULL;
- 		ttm_bo_unreserve(&nvbo->bo);
--		drm_gem_object_put_unlocked(&nvbo->gem);
-+		drm_gem_object_put_unlocked(&nvbo->bo.base);
- 	}
- }
- 
-@@ -493,7 +494,7 @@ validate_list(struct nouveau_channel *chan, struct nouveau_cli *cli,
- 	list_for_each_entry(nvbo, list, entry) {
- 		struct drm_nouveau_gem_pushbuf_bo *b = &pbbo[nvbo->pbbo_index];
- 
--		ret = nouveau_gem_set_domain(&nvbo->gem, b->read_domains,
-+		ret = nouveau_gem_set_domain(&nvbo->bo.base, b->read_domains,
- 					     b->write_domains,
- 					     b->valid_domains);
- 		if (unlikely(ret)) {
-diff --git a/drivers/gpu/drm/nouveau/nouveau_prime.c b/drivers/gpu/drm/nouveau/nouveau_prime.c
-index ec50017692d4..9d6bcebefcda 100644
---- a/drivers/gpu/drm/nouveau/nouveau_prime.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_prime.c
-@@ -79,13 +79,13 @@ struct drm_gem_object *nouveau_gem_prime_import_sg_table(struct drm_device *dev,
- 
- 	/* Initialize the embedded gem-object. We return a single gem-reference
- 	 * to the caller, instead of a normal nouveau_bo ttm reference. */
--	ret = drm_gem_object_init(dev, &nvbo->gem, nvbo->bo.mem.size);
-+	ret = drm_gem_object_init(dev, &nvbo->bo.base, nvbo->bo.mem.size);
- 	if (ret) {
- 		nouveau_bo_ref(NULL, &nvbo);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	return &nvbo->gem;
-+	return &nvbo->bo.base;
- }
- 
- int nouveau_gem_prime_pin(struct drm_gem_object *obj)
+diff --git a/drivers/gpu/drm/ttm/ttm_bo_util.c b/drivers/gpu/drm/ttm/ttm_bo_util.c
+index 9f918b992f7e..05fbcaf6a3f2 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo_util.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
+@@ -517,7 +517,7 @@ static int ttm_buffer_object_transfer(struct ttm_buffer_object *bo,
+ 	kref_init(&fbo->base.kref);
+ 	fbo->base.destroy = &ttm_transfered_destroy;
+ 	fbo->base.acc_size = 0;
+-	fbo->base.resv = &fbo->base.ttm_resv;
++	fbo->base.resv = &fbo->base.base._resv;
+ 	reservation_object_init(fbo->base.resv);
+ 	ret = reservation_object_trylock(fbo->base.resv);
+ 	WARN_ON(!ret);
 -- 
 2.18.1
 
