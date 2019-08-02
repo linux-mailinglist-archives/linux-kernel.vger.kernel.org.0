@@ -2,176 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 203D47F686
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:10:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D463C7F68F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388176AbfHBMKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:10:23 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:57160 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729980AbfHBMKX (ORCPT
+        id S2392531AbfHBMKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:10:42 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38878 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388969AbfHBMKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:10:23 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x72CACt7020957, This message is accepted by code: ctloc85258
-Received: from RS-CAS02.realsil.com.cn (ms1.realsil.com.cn[172.29.17.3](maybeforged))
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x72CACt7020957
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 2 Aug 2019 20:10:13 +0800
-Received: from toshiba (172.29.36.108) by RS-CAS02.realsil.com.cn
- (172.29.17.3) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 2 Aug 2019
- 20:10:12 +0800
-Date:   Fri, 2 Aug 2019 20:10:29 +0800
-From:   Alex Lu <alex_lu@realsil.com.cn>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     Johan Hedberg <johan.hedberg@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Max Chou <max.chou@realtek.com>
-Subject: [PATCH] Bluetooth: btrtl: Save firmware and config
-Message-ID: <20190802121029.GA8795@toshiba>
+        Fri, 2 Aug 2019 08:10:41 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f5so27165402pgu.5;
+        Fri, 02 Aug 2019 05:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=byjiNq9HtMcT98CUosHBBSmbXQTSvoTkbqa7rLBdSEY=;
+        b=vZ1r17FMnkBg6TQJeK3FPgfRalxF6pjwpN2HDnLQaZdTdIaw1fDZpdu1SsmX6HulAR
+         UDyLa51RZM77/lN8xZ4T03ImABpzGWvAuQYKDQrZ7cqZj85MjpU13QIKky9DI23ov9h4
+         //EpBTCu5n5lUiI+DU3qYlaXCZLJf4qON1E4gUQgXs7ShcR/Qteq0UdsayYauo1WwPow
+         H23sg9qdFn4ksqSI+dl6H9HHMtUHRFgpxTRqFHYF7M30azerWksy0/NGdFqsCG3WGFbA
+         0EiZZCboqJiOLVY1idtdGLPicOz90MJ4vxW6M/MJwFX4nEBgdMXLktXBx2v7pnAYl6Or
+         ukcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=byjiNq9HtMcT98CUosHBBSmbXQTSvoTkbqa7rLBdSEY=;
+        b=MPPH1q7IxUceJkwkSBj6k2pjxu0Ooa0bIo3dV8Z96O9zB1bEj/O+WIQGWc5JAMmVcS
+         FZklJ6+eQpQqLOygfNyrF7vxvWrLRb0+fSTynYZXAka/paxgynMJMuZbfTunhonB2vih
+         eXsjQuaBZaeTJZbFiH07R/Cv1xGSQ1Ohux20kl3JaJFbrQod6TXxlT7lA77tHIJ16qqi
+         2yd/DeiN9xt/aEXmFqSMyx80rMRbRVJFoqpPhnxXO3aBOzR2Ng7ilaD0OlvbRMab9jHs
+         47L5X+IeAPbvXGLU4wG8TcxQSU3MtMlOteUQGSK+SbtPd4Thq6me50xMQSW0zHQS3KYH
+         cbGw==
+X-Gm-Message-State: APjAAAWy9JH8lUTt+fo9NxbNVZV7DvO5TpTk4SdZ31J7iNUD/m07563j
+        LK/1UKTOMjePa7C4S+JFdzY=
+X-Google-Smtp-Source: APXvYqyIz77r32l6lZeGFjpjjHZlgC5V5xylcFOfkb9tIaJGHh9MrFB1VSgzgP+AC/sS0WSTmADKPw==
+X-Received: by 2002:a62:ac11:: with SMTP id v17mr59470346pfe.236.1564747840855;
+        Fri, 02 Aug 2019 05:10:40 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id g62sm8243541pje.11.2019.08.02.05.10.37
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 02 Aug 2019 05:10:40 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH 0/3] Use refcount_t for refcount
+Date:   Fri,  2 Aug 2019 20:10:35 +0800
+Message-Id: <20190802121035.1315-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [172.29.36.108]
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Lu <alex_lu@realsil.com.cn>
+Reference counters are preferred to use refcount_t instead of
+atomic_t.
+This is because the implementation of refcount_t can prevent
+overflows and detect possible use-after-free.
 
-usb reset resume will cause downloading firmware again and
-requesting firmware may be failed while host is resuming
+First convert the refcount field to refcount_t in mlx5/driver.h.
+Then convert the uses to refcount_() APIs.
 
-Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
----
- drivers/bluetooth/btrtl.c | 77 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 73 insertions(+), 4 deletions(-)
+Chuhong Yuan (3):
+  mlx5: Use refcount_t for refcount
+  net/mlx5: Use refcount_() APIs
+  IB/mlx5: Use refcount_() APIs
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 208feef63de4..69f0c2765443 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -56,6 +56,10 @@ struct btrtl_device_info {
- 	int cfg_len;
- };
- 
-+static struct btrtl_device_info dev_info = {
-+	NULL, 0, NULL, 0, NULL, 0
-+};
-+
- static const struct id_table ic_id_table[] = {
- 	{ IC_MATCH_FL_LMPSUBV, RTL_ROM_LMP_8723A, 0x0,
- 	  .config_needed = false,
-@@ -553,8 +557,19 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
- 			goto err_free;
- 	}
- 
--	btrtl_dev->fw_len = rtl_load_file(hdev, btrtl_dev->ic_info->fw_name,
--					  &btrtl_dev->fw_data);
-+	if (dev_info.ic_info == NULL ||
-+	    dev_info.ic_info != btrtl_dev->ic_info) {
-+		btrtl_dev->fw_len = rtl_load_file(hdev,
-+						  btrtl_dev->ic_info->fw_name,
-+						  &btrtl_dev->fw_data);
-+	} else {
-+		if (dev_info.fw_len)
-+			btrtl_dev->fw_data = kmemdup(dev_info.fw_data,
-+						     dev_info.fw_len,
-+						     GFP_KERNEL);
-+		if (btrtl_dev->fw_data)
-+			btrtl_dev->fw_len = dev_info.fw_len;
-+	}
- 	if (btrtl_dev->fw_len < 0) {
- 		rtl_dev_err(hdev, "firmware file %s not found\n",
- 			    btrtl_dev->ic_info->fw_name);
-@@ -570,8 +585,18 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
- 			snprintf(cfg_name, sizeof(cfg_name), "%s.bin",
- 				 btrtl_dev->ic_info->cfg_name);
- 		}
--		btrtl_dev->cfg_len = rtl_load_file(hdev, cfg_name,
--						   &btrtl_dev->cfg_data);
-+		if (dev_info.ic_info == NULL ||
-+		    dev_info.ic_info != btrtl_dev->ic_info) {
-+			btrtl_dev->cfg_len = rtl_load_file(hdev, cfg_name,
-+							&btrtl_dev->cfg_data);
-+		} else {
-+			if (dev_info.cfg_len)
-+				btrtl_dev->cfg_data = kmemdup(dev_info.cfg_data,
-+							      dev_info.cfg_len,
-+							      GFP_KERNEL);
-+			if (btrtl_dev->cfg_data)
-+				btrtl_dev->cfg_len = dev_info.cfg_len;
-+		}
- 		if (btrtl_dev->ic_info->config_needed &&
- 		    btrtl_dev->cfg_len <= 0) {
- 			rtl_dev_err(hdev, "mandatory config file %s not found\n",
-@@ -620,6 +645,29 @@ int btrtl_download_firmware(struct hci_dev *hdev,
- }
- EXPORT_SYMBOL_GPL(btrtl_download_firmware);
- 
-+static void dev_fw_free(void)
-+{
-+	kfree(dev_info.fw_data);
-+	kfree(dev_info.cfg_data);
-+	memset(&dev_info, 0, sizeof(dev_info));
-+}
-+
-+static void dev_fw_dup(struct btrtl_device_info *btrtl_dev)
-+{
-+	dev_info.ic_info = btrtl_dev->ic_info;
-+	dev_info.rom_version = btrtl_dev->rom_version;
-+
-+	dev_info.fw_len = btrtl_dev->fw_len;
-+	if (dev_info.fw_len)
-+		dev_info.fw_data = kmemdup(btrtl_dev->fw_data,
-+					   btrtl_dev->fw_len,
-+					   GFP_KERNEL);
-+	dev_info.cfg_len = btrtl_dev->cfg_len;
-+	if (dev_info.cfg_len)
-+		dev_info.cfg_data = kmemdup(btrtl_dev->cfg_data,
-+					    btrtl_dev->cfg_len, GFP_KERNEL);
-+}
-+
- int btrtl_setup_realtek(struct hci_dev *hdev)
- {
- 	struct btrtl_device_info *btrtl_dev;
-@@ -630,6 +678,10 @@ int btrtl_setup_realtek(struct hci_dev *hdev)
- 		return PTR_ERR(btrtl_dev);
- 
- 	ret = btrtl_download_firmware(hdev, btrtl_dev);
-+	if (!ret && btrtl_dev->ic_info != dev_info.ic_info) {
-+		dev_fw_free();
-+		dev_fw_dup(btrtl_dev);
-+	}
- 
- 	btrtl_free(btrtl_dev);
- 
-@@ -745,6 +797,23 @@ int btrtl_get_uart_settings(struct hci_dev *hdev,
- }
- EXPORT_SYMBOL_GPL(btrtl_get_uart_settings);
- 
-+static int btrtl_module_init(void)
-+{
-+	BT_INFO("btrtl: init");
-+
-+	return 0;
-+}
-+
-+static void btrtl_module_exit(void)
-+{
-+	BT_INFO("btrtl: exit");
-+
-+	dev_fw_free();
-+}
-+
-+module_init(btrtl_module_init);
-+module_exit(btrtl_module_exit)
-+
- MODULE_AUTHOR("Daniel Drake <drake@endlessm.com>");
- MODULE_DESCRIPTION("Bluetooth support for Realtek devices ver " VERSION);
- MODULE_VERSION(VERSION);
+ drivers/infiniband/hw/mlx5/srq_cmd.c         | 6 +++---
+ drivers/net/ethernet/mellanox/mlx5/core/qp.c | 6 +++---
+ include/linux/mlx5/driver.h                  | 2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
 -- 
-2.19.2
+2.20.1
 
