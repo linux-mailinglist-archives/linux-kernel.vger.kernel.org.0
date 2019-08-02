@@ -2,174 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14FA67F41F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E3887F3FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404913AbfHBJlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:41:52 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:57139 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404893AbfHBJls (ORCPT
+        id S2407122AbfHBKBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:01:53 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41269 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405130AbfHBJnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:41:48 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x729f7Br010041
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 2 Aug 2019 02:41:07 -0700 (PDT)
-Received: from pek-lpggp2 (128.224.153.75) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.40) with Microsoft SMTP Server id 14.3.468.0; Fri, 2 Aug 2019
- 02:41:07 -0700
-Received: by pek-lpggp2 (Postfix, from userid 20544)    id 1F6A472190A; Fri,  2
- Aug 2019 17:41:03 +0800 (CST)
-From:   Jiping Ma <jiping.ma2@windriver.com>
-To:     <rostedt@goodmis.org>, <mingo@redhat.com>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <joel@joelfernandes.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <jiping.ma2@windriver.com>
-Subject: [PATCH v3] tracing: Function stack size and its name mismatch in arm64
-Date:   Fri, 2 Aug 2019 17:41:03 +0800
-Message-ID: <20190802094103.163576-1-jiping.ma2@windriver.com>
-X-Mailer: git-send-email 2.18.1
+        Fri, 2 Aug 2019 05:43:52 -0400
+Received: by mail-oi1-f196.google.com with SMTP id g7so56358152oia.8
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 02:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A+FPU/vGw66DQH6ItIezOEVqjuBIxZcPX9USWgAb1jM=;
+        b=SUOcFbPy5rxss1N6dYEveiIIOMKAwymDOUtmfTGkpGgQ/Xpr3UWjMsAcCCDkBnqdup
+         1eq2a1R6v6DN0QkaPATZN5n0kE4ue5wnZyoBJTKNOqWawLO3d/A97+DsCdyNlpGcjyQZ
+         XE6laiEawO4BJz5p9iAOjzFnHPln42mGtcH2k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A+FPU/vGw66DQH6ItIezOEVqjuBIxZcPX9USWgAb1jM=;
+        b=JfDDPrWi/wN4boRyRqx9Y0JlFuTlj1y5P5aVZGsS1Lu8WFNtqhCtwV0ATLwCWqHL9O
+         2OywW4KvegL/7K/uTSZo9oTDM9KcA9rExdrdnbueAo7b+082m54jBlyhhBtdnhdsEfzz
+         hfFA0AANzINHy02VweSa+9bmM/sk9Fh7HI6TTUPWMfwd6jTkI9tMR2k0os9nrHn8rq7D
+         rRtMb2tl/ifvbl5qtz/LwsuQsc5EWkpl00dsjiHBUy6ofjPzWvRiNGGK9te/a4rf2Rtt
+         +OYZzDR+eVql1Q0lWrSe9f2CWH4Ntwxf4olHhwhRmT/Ox1Q4IaIAwAeNvStE7gFGObf2
+         UpNw==
+X-Gm-Message-State: APjAAAUO5/Um9eE6P6/N7nG8zIajxWOJm3eBGpTcmQ1kaeW3SuBE2jWw
+        NV7fEMOnsmJQv/nE4h+JFaJS24K1vDtHfazxqfOANg==
+X-Google-Smtp-Source: APXvYqwrE1bn5ct0WaJ9P1S7sbbbgAxT5gZWv30BGTYJ1sG1vdgqFLWcTAJ+BcSNC7gWOTWkKRRExPmjXgf4HAnSNP0=
+X-Received: by 2002:aca:b104:: with SMTP id a4mr2199449oif.14.1564739031061;
+ Fri, 02 Aug 2019 02:43:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1564571048-15029-1-git-send-email-lowry.li@arm.com>
+ <1564571048-15029-3-git-send-email-lowry.li@arm.com> <20190731132002.dut5mdsqgh7b75iv@DESKTOP-E1NTVVP.localdomain>
+ <20190802092920.4la5cwrltv2m6dke@DESKTOP-E1NTVVP.localdomain>
+In-Reply-To: <20190802092920.4la5cwrltv2m6dke@DESKTOP-E1NTVVP.localdomain>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 2 Aug 2019 11:43:39 +0200
+Message-ID: <CAKMK7uEZaFEcs90+U3vzgH69+95BD58Dt=J=gT6=n6oah5Nbyg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] drm: Clear the fence pointer when writeback job signaled
+To:     Brian Starkey <Brian.Starkey@arm.com>
+Cc:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "eric@anholt.net" <eric@anholt.net>,
+        "kieran.bingham+renesas@ideasonboard.com" 
+        <kieran.bingham+renesas@ideasonboard.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>, nd <nd@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is not PC in ARM64 stack, LR is used to for walk_stackframe in
-ARM64. Tere is no the issue in ARM32 because there is PC in ARM32 stack.
-PC is used to calculate the stack size in trace_stack.c, so the
-function name and its stack size appear to be off-by-one.
-ARM64 stack layout:
-	LR
-        FP
-        ......
-        LR
-        FP
-        ......
+On Fri, Aug 2, 2019 at 11:29 AM Brian Starkey <Brian.Starkey@arm.com> wrote:
+>
+> Hi Lowry,
+>
+> On Thu, Aug 01, 2019 at 06:34:08AM +0000, Lowry Li (Arm Technology China) wrote:
+> > Hi Brian,
+> >
+> > On Wed, Jul 31, 2019 at 09:20:04PM +0800, Brian Starkey wrote:
+> > > Hi Lowry,
+> > >
+> > > Thanks for this cleanup.
+> > >
+> > > On Wed, Jul 31, 2019 at 11:04:45AM +0000, Lowry Li (Arm Technology China) wrote:
+> > > > During it signals the completion of a writeback job, after releasing
+> > > > the out_fence, we'd clear the pointer.
+> > > >
+> > > > Check if fence left over in drm_writeback_cleanup_job(), release it.
+> > > >
+> > > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> > > > ---
+> > > >  drivers/gpu/drm/drm_writeback.c | 23 +++++++++++++++--------
+> > > >  1 file changed, 15 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> > > > index ff138b6..43d9e3b 100644
+> > > > --- a/drivers/gpu/drm/drm_writeback.c
+> > > > +++ b/drivers/gpu/drm/drm_writeback.c
+> > > > @@ -324,6 +324,9 @@ void drm_writeback_cleanup_job(struct drm_writeback_job *job)
+> > > >   if (job->fb)
+> > > >           drm_framebuffer_put(job->fb);
+> > > >
+> > > > + if (job->out_fence)
+> > >
+> > > I'm thinking it might be a good idea to signal the fence with an error
+> > > here, if it's not already signaled. Otherwise, if there's someone
+> > > waiting (which there shouldn't be), they're going to be waiting a very
+> > > long time :-)
+> > >
+> > > Thanks,
+> > > -Brian
+> > >
+> > Here it happened at atomic_check failed and test only commit. For both
+> > cases, the commit has been dropped and it's only a clean up. So here better
+> > not be treated as an error case:)
+>
+> If anyone else has a reference on the fence, then IMO it absolutely is
+> an error to reach this point without the fence being signaled -
+> because it means that the fence will never be signaled.
+>
+> I don't think the API gives you a way to check if this is the last
+> reference, so it's safest to just make sure the fence is signalled
+> before dropping the reference.
+>
+> It just feels wrong to me to have the possibility of a dangling fence
+> which is never going to get signalled; and it's an easy defensive step
+> to make sure it can never happen.
+>
+> I know it _shouldn't_ happen, but we often put in handling for cases
+> which shouldn't happen, because they frequently do happen :-)
 
-Wrong info:
-Depth Size Location (16 entries)
------ ---- --------
-0) 5400 16 __update_load_avg_se.isra.2+0x28/0x220
-1) 5384 96 put_prev_entity+0x250/0x338
-2) 5288 80 pick_next_task_fair+0x4c4/0x508
-3) 5208 72 __schedule+0x100/0x600
-4) 5136 184 preempt_schedule_common+0x28/0x48
-5) 4952 32 preempt_schedule+0x28/0x30
-6) 4920 16 vprintk_emit+0x170/0x1f8
-7) 4904 128 vprintk_default+0x48/0x58
-8) 4776 64 vprintk_func+0xf8/0x1c8
-9) 4712 112 printk+0x70/0x90
-10) 4600 176 occupy_stack_init+0x64/0xc0 [kernel_stack]
-11) 4424 3376 do_one_initcall+0x68/0x248
-12) 1048 144 do_init_module+0x60/0x1f0
-13) 904 48 load_module+0x1d50/0x2340
-14) 856 352 sys_finit_module+0xd0/0xe8
-15) 504 504 el0_svc_naked+0x30/0x34
+We're not as paranoid with the vblank fences either, so not sure why
+we need to be this paranoid with writeback fences. If your driver
+grabs anything from the atomic state in ->atomic_check it's buggy
+anyway.
 
-Correct info:
-Depth Size Location (18 entries)
------ ---- --------
-0) 5464 48 cgroup_rstat_updated+0x20/0x100
-1) 5416 32 cgroup_base_stat_cputime_account_end.isra.0+0x30/0x60
-2) 5384 32 __cgroup_account_cputime+0x3c/0x48
-3) 5352 64 update_curr+0xc4/0x1d0
-4) 5288 72 pick_next_task_fair+0x444/0x508
-5) 5216 184 __schedule+0x100/0x600
-6) 5032 32 preempt_schedule_common+0x28/0x48
-7) 5000 16 preempt_schedule+0x28/0x30
-8) 4984 128 vprintk_emit+0x170/0x1f8
-9) 4856 64 vprintk_default+0x48/0x58
-10) 4792 112 vprintk_func+0xf8/0x1c8
-11) 4680 176 printk+0x70/0x90
-12) 4504 80 func_test+0x7c/0xb8 [kernel_stack]
-13) 4424 3376 occupy_stack_init+0x7c/0xc0 [kernel_stack]
-14) 1048 144 do_one_initcall+0x68/0x248
-15) 904 48 do_init_module+0x60/0x1f0
-16) 856 352 load_module+0x1d50/0x2340
-17) 504 504 sys_finit_module+0xd0/0xe8
+If you want to fix this properly I think we need to move the call to
+prepare_signalling() in between atomic_check and atomic_commit. Then I
+think it makes sense to also force-complete the fence on error ...
+-Daniel
 
-Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
----
- kernel/trace/trace_stack.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+> > Since for userspace, it should have been failed or a test only case, so
+> > writebace fence should not be signaled.
+>
+> It's not only userspace that can wait on fences (and in fact this
+> fence will never even reach userspace if the commit fails), the driver
+> may have taken a copy to use for "something".
+>
+> Cheers,
+> -Brian
+>
+> >
+> > Best regards,
+> > Lowry
+> > > > +         dma_fence_put(job->out_fence);
+> > > > +
+> > > >   kfree(job);
+> > > >  }
+> >
+> > --
+> > Regards,
+> > Lowry
 
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 5d16f73898db..ed80b95abf06 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -40,16 +40,28 @@ static void print_max_stack(void)
- 
- 	pr_emerg("        Depth    Size   Location    (%d entries)\n"
- 			   "        -----    ----   --------\n",
-+#ifdef CONFIG_ARM64
-+			   stack_trace_nr_entries - 1);
-+#else
- 			   stack_trace_nr_entries);
--
-+#endif
-+#ifdef CONFIG_ARM64
-+	for (i = 1; i < stack_trace_nr_entries; i++) {
-+#else
- 	for (i = 0; i < stack_trace_nr_entries; i++) {
-+#endif
- 		if (i + 1 == stack_trace_nr_entries)
- 			size = stack_trace_index[i];
- 		else
- 			size = stack_trace_index[i] - stack_trace_index[i+1];
- 
-+#ifdef CONFIG_ARM64
-+		pr_emerg("%3ld) %8d   %5d   %pS\n", i-1, stack_trace_index[i],
-+				size, (void *)stack_dump_trace[i-1]);
-+#else
- 		pr_emerg("%3ld) %8d   %5d   %pS\n", i, stack_trace_index[i],
- 				size, (void *)stack_dump_trace[i]);
-+#endif
- 	}
- }
- 
-@@ -324,8 +336,11 @@ static int t_show(struct seq_file *m, void *v)
- 		seq_printf(m, "        Depth    Size   Location"
- 			   "    (%d entries)\n"
- 			   "        -----    ----   --------\n",
-+#ifdef CONFIG_ARM64
-+			   stack_trace_nr_entries - 1);
-+#else
- 			   stack_trace_nr_entries);
--
-+#endif
- 		if (!stack_tracer_enabled && !stack_trace_max_size)
- 			print_disabled(m);
- 
-@@ -334,6 +349,10 @@ static int t_show(struct seq_file *m, void *v)
- 
- 	i = *(long *)v;
- 
-+#ifdef CONFIG_ARM64
-+	if (i == 0)
-+		return 0;
-+#endif
- 	if (i >= stack_trace_nr_entries)
- 		return 0;
- 
-@@ -342,9 +361,14 @@ static int t_show(struct seq_file *m, void *v)
- 	else
- 		size = stack_trace_index[i] - stack_trace_index[i+1];
- 
-+#ifdef CONFIG_ARM64
-+	seq_printf(m, "%3ld) %8d   %5d   ", i-1, stack_trace_index[i], size);
-+	trace_lookup_stack(m, i-1);
-+#else
- 	seq_printf(m, "%3ld) %8d   %5d   ", i, stack_trace_index[i], size);
- 
- 	trace_lookup_stack(m, i);
-+#endif
- 
- 	return 0;
- }
+
+
 -- 
-2.18.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
