@@ -2,127 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC027FF64
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 19:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 347CF7FF6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 19:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404555AbfHBRR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 13:17:59 -0400
-Received: from foss.arm.com ([217.140.110.172]:55390 "EHLO foss.arm.com"
+        id S2391829AbfHBRUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 13:20:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391083AbfHBRR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 13:17:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18322344;
-        Fri,  2 Aug 2019 10:17:58 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B6AB3F575;
-        Fri,  2 Aug 2019 10:17:57 -0700 (PDT)
-Date:   Fri, 2 Aug 2019 18:17:55 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     will@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] arm64 fixes for 5.3-rc3
-Message-ID: <20190802171753.GA56033@arrakis.emea.arm.com>
+        id S2388134AbfHBRUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 13:20:20 -0400
+Received: from localhost (unknown [106.51.106.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31F5820B7C;
+        Fri,  2 Aug 2019 17:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564766420;
+        bh=wff88TISwv4kNTmhGtyEipuGD0E7PUtarxD7H8iS0SE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E+tR6OQhKe0wWMRkqMN6KQnpI/DTVmFk6QzZqPkddtBsUHhvPPUzYN6L8BR3jPuE7
+         tcbJ8KWr5Pf3vlSnPQyz0HzUkzARjcEJhXYa5Pzhwt/rmTqufeydN74lJ4yrTyCyil
+         9WrtKkDgs504UqUzV6oeNBXNtRGaE4bgLCGLtAF4=
+Date:   Fri, 2 Aug 2019 22:49:06 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [RFC PATCH 26/40] soundwire: cadence_master: fix divider setting
+ in clock register
+Message-ID: <20190802171906.GB12733@vkoul-mobl.Dlink>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-27-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190725234032.21152-27-pierre-louis.bossart@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 25-07-19, 18:40, Pierre-Louis Bossart wrote:
+> From: Rander Wang <rander.wang@linux.intel.com>
+> 
+> The existing code uses an OR operation which would mix the original
+> divider setting with the new one, resulting in an invalid
+> configuration that can make codecs hang.
 
-Please pull the arm64 fixes below. Thanks.
-
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
-
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
-
-for you to fetch changes up to d8bb6718c4db9bcd075dde7ff55d46091ccfae15:
-
-  arm64: Make debug exception handlers visible from RCU (2019-08-02 11:56:01 +0100)
-
-----------------------------------------------------------------
-arm64 fixes:
-
-- Update the compat layer to allow single-byte watchpoints on all
-  addresses (similar to the native support)
-
-- arm_pmu: fix the restoration of the counters on the
-  CPU_PM_ENTER_FAILED path
-
-- Fix build regression with vDSO and Makefile not stripping
-  CROSS_COMPILE_COMPAT
-
-- Fix the CTR_EL0 (cache type register) sanitisation on heterogeneous
-  machines (e.g. big.LITTLE)
-
-- Fix the interrupt controller priority mask value when pseudo-NMIs are
-  enabled
-
-- arm64 kprobes fixes: recovering of the PSTATE.D flag in the
-  single-step exception handler, NOKPROBE annotations for unwind_frame()
-  and walk_stackframe(), remove unneeded rcu_read_lock/unlock from debug
-  handlers
-
-- Several gcc fall-through warnings
-
-- Unused variable warnings
-
-----------------------------------------------------------------
-Anders Roxell (2):
-      arm64: smp: Mark expected switch fall-through
-      arm64: module: Mark expected switch fall-through
-
-Julien Thierry (1):
-      arm64: Lower priority mask for GIC_PRIO_IRQON
-
-Masami Hiramatsu (4):
-      arm64: unwind: Prohibit probing on return_address()
-      arm64: Remove unneeded rcu_read_lock from debug handlers
-      arm64: kprobes: Recover pstate.D in single-step exception handler
-      arm64: Make debug exception handlers visible from RCU
-
-Qian Cai (3):
-      arm64/efi: fix variable 'si' set but not used
-      arm64/mm: fix variable 'pud' set but not used
-      arm64/mm: fix variable 'tag' set but not used
-
-Vincenzo Frascino (1):
-      arm64: vdso: Fix Makefile regression
-
-Will Deacon (4):
-      arm64: compat: Allow single-byte watchpoints on all addresses
-      drivers/perf: arm_pmu: Fix failure path in PM notifier
-      arm64: hw_breakpoint: Fix warnings about implicit fallthrough
-      arm64: cpufeature: Fix feature comparison for CTR_EL0.{CWG,ERG}
-
- arch/arm64/Makefile                 |  2 +-
- arch/arm64/include/asm/arch_gicv3.h |  6 ++++
- arch/arm64/include/asm/cpufeature.h |  7 +++--
- arch/arm64/include/asm/daifflags.h  |  2 ++
- arch/arm64/include/asm/efi.h        |  6 +++-
- arch/arm64/include/asm/memory.h     | 10 +++++--
- arch/arm64/include/asm/pgtable.h    |  4 +--
- arch/arm64/include/asm/ptrace.h     |  2 +-
- arch/arm64/kernel/cpufeature.c      |  8 ++++--
- arch/arm64/kernel/debug-monitors.c  | 14 +++++----
- arch/arm64/kernel/hw_breakpoint.c   | 11 +++++--
- arch/arm64/kernel/module.c          |  4 +++
- arch/arm64/kernel/probes/kprobes.c  | 40 ++++----------------------
- arch/arm64/kernel/return_address.c  |  3 ++
- arch/arm64/kernel/smp.c             |  2 +-
- arch/arm64/kernel/stacktrace.c      |  3 ++
- arch/arm64/mm/fault.c               | 57 +++++++++++++++++++++++++++++++------
- drivers/perf/arm_pmu.c              |  2 +-
- 18 files changed, 117 insertions(+), 66 deletions(-)
+This looked fine but fails to apply, feel free to send as a fix
 
 -- 
-Catalin
+~Vinod
