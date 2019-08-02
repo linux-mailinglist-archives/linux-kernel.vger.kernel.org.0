@@ -2,70 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B49C17EF57
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:32:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3826D7EF4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:30:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404244AbfHBIcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:32:23 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:50566 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726535AbfHBIcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:32:22 -0400
-Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x728Twth028074
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 2 Aug 2019 01:31:03 -0700
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
- 14.3.468.0; Fri, 2 Aug 2019 01:30:29 -0700
-From:   <zhe.he@windriver.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
-        <namhyung@kernel.org>, <kan.liang@linux.intel.com>,
-        <eranian@google.com>, <alexey.budankov@linux.intel.com>,
-        <linux-kernel@vger.kernel.org>, <zhe.he@windriver.com>
-Subject: [PATCH 2/2] perf: Fix writing to illegal memory in handling cpumap mask
-Date:   Fri, 2 Aug 2019 16:29:52 +0800
-Message-ID: <1564734592-15624-2-git-send-email-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564734592-15624-1-git-send-email-zhe.he@windriver.com>
-References: <1564734592-15624-1-git-send-email-zhe.he@windriver.com>
+        id S2404197AbfHBIaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:30:14 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36788 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731185AbfHBIaO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:30:14 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n4so76340990wrs.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 01:30:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+MjSLRhTHy/z+LM8sRLnyEruabbpzZhCsOii1dxVU9Y=;
+        b=SUifxYEa7EV1FZnh/CbwjTsf3V9F4jCxKT5U+YyPuYr26jiQgcLRkDb4aU6c05c2jC
+         YXzDSj5HpSZRmVdzOl6GjcQXX5y8EsIUsGON6aH7i5fBA0X1yXYmNW4OweZbqGCqY8Im
+         Hug4pvAyz9gNAwBknouFPA0MGbv5+3uRJcgkNEUjcF5mxhOrn1U9QJ0n85ndm3XaVJqr
+         qv+bhjyAZ+4zg+kgQjXps5yOP0dzmbvU4j/4oWmA3bKXg3wVJ3GyapPeckV7vGIwSUZI
+         W3nER1De2WyL8Xyh5TBPjhXAis+7cskSFlZMbzsNphvzfIMTOUc+YlvWHVViwpKWacV4
+         /M8w==
+X-Gm-Message-State: APjAAAXgrq5cJMjdNv4UicggS1H2H4NtDks7VRySbpVXYG8l+EnCMWhr
+        lLTxHCoa8vR+qt0ZUK/v1WdfuqNvxag=
+X-Google-Smtp-Source: APXvYqxQ8H0EwfjmiYP1/SUacCSArAMVaY+7Hsw2aimu6rkqpcHBrjydXWxpNn5htwW5YM1MsKxGqQ==
+X-Received: by 2002:adf:dcc6:: with SMTP id x6mr117116586wrm.322.1564734611723;
+        Fri, 02 Aug 2019 01:30:11 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:4013:e920:9388:c3ff? ([2001:b07:6468:f312:4013:e920:9388:c3ff])
+        by smtp.gmail.com with ESMTPSA id b8sm99851723wmh.46.2019.08.02.01.30.10
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Aug 2019 01:30:11 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 08/19] RISC-V: KVM: Implement VCPU world-switch
+To:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190802074620.115029-1-anup.patel@wdc.com>
+ <20190802074620.115029-9-anup.patel@wdc.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <72d8efbf-ec62-ab1e-68bf-e0c5f0bc256e@redhat.com>
+Date:   Fri, 2 Aug 2019 10:30:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190802074620.115029-9-anup.patel@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+On 02/08/19 09:47, Anup Patel wrote:
+> +	/* Save Host SSTATUS, HSTATUS, SCRATCH and STVEC */
+> +	csrr	t0, CSR_SSTATUS
+> +	REG_S	t0, (KVM_ARCH_HOST_SSTATUS)(a0)
+> +	csrr	t1, CSR_HSTATUS
+> +	REG_S	t1, (KVM_ARCH_HOST_HSTATUS)(a0)
+> +	csrr	t2, CSR_SSCRATCH
+> +	REG_S	t2, (KVM_ARCH_HOST_SSCRATCH)(a0)
+> +	csrr	t3, CSR_STVEC
+> +	REG_S	t3, (KVM_ARCH_HOST_STVEC)(a0)
+> +
 
-cpu_map__snprint_mask would write to illegal memory pointed by zalloc(0)
-when there is only one cpu.
+A possible optimization: if these cannot change while Linux runs (I am
+thinking especially of STVEC and HSTATUS, but perhaps SSCRATCH can be
+saved on kvm_arch_vcpu_load too) you can avoid the csrr and store.
 
-This patch fixes the calculation and adds sanity check against the input
-parameters.
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
- tools/perf/util/cpumap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 3acfbe3..39cce66 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -751,7 +751,10 @@ size_t cpu_map__snprint_mask(struct cpu_map *map, char *buf, size_t size)
- 	unsigned char *bitmap;
- 	int last_cpu = cpu_map__cpu(map, map->nr - 1);
- 
--	bitmap = zalloc((last_cpu + 7) / 8);
-+	if (buf == NULL)
-+		return 0;
-+
-+	bitmap = zalloc(last_cpu / 8 + 1);
- 	if (bitmap == NULL) {
- 		buf[0] = '\0';
- 		return 0;
--- 
-2.7.4
-
+Paolo
