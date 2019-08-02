@@ -2,89 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 626657FE2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 18:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EEDB7FE28
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 18:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389633AbfHBQJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 12:09:31 -0400
-Received: from vern.gendns.com ([98.142.107.122]:42544 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389527AbfHBQJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 12:09:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=5lPK0SoTI4WivVBlQ9V5Or5hsa5f4C2zi5txmZLiDXk=; b=x/8NUPy9GYoK/3ZMnIU7rsBH5Q
-        FK/PnJoOW2As+ToVB3LSg2p5I2uuuCxaIJ/FdaFyEp/MM2FfqDXZQi2Y0yZrPFuDdslFV0yXEQrEo
-        Yekp0W7LVivL+2P0VBAmFUM4/mrXEJXHt0Ij0+7jlu4V2Pwtuuu0XpaIo1VqscTa4rPCQGHrcGagF
-        UEmVsh/sCBBBKPbQNrDZL3KKjG8O+22SM/SPMIdkcG3UYq/jYkNo7bWUym+8Vk1fDtQxxyTQ0XXBw
-        F9VLKz9Kj+t+kLTpQ3KcwMZ7liFDK+aBKKSXW0wNQPot+o7ZUfYwiu1JtOTioRcsgmRMM+gUNAsk/
-        ei8pnOpg==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:42682 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <david@lechnology.com>)
-        id 1hta7P-004v16-AL; Fri, 02 Aug 2019 12:09:23 -0400
-Subject: Re: [PATCH 2/4] counter: new TI eQEP driver
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc:     linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-References: <20190722154538.5314-1-david@lechnology.com>
- <20190722154538.5314-3-david@lechnology.com> <20190802092727.GB30522@icarus>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <f45ec1f4-6463-12d9-9459-35fe7b46671a@lechnology.com>
-Date:   Fri, 2 Aug 2019 11:09:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2389438AbfHBQJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 12:09:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39412 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729142AbfHBQJV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 12:09:21 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b7so33862269pls.6
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 09:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=vIcQA2KA1u1cJzPna8nM9BSUnuzFAzAZtGdtd+N8hs0=;
+        b=g4o9eUlqyL0gwki7sXdFt6IvjZR0q6OtGR+upFq7aVv72eKM6R2OrUg0QjsX38NiY3
+         evHtDhmwET/2VhSa9MwC93J6kW+RFULYUWMg5rIgX6ROfRRwHrlYBTFIFz6n2f6YAQTZ
+         6MXVyzuc3YEWtsKaHdVnnOGAptV3yAX9C/ilc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vIcQA2KA1u1cJzPna8nM9BSUnuzFAzAZtGdtd+N8hs0=;
+        b=OYN4doUSAXGkPNEprxI9P0urE7ctZ3O032Zpy/OHPnN2BB7O2pfHZnfLJg2U2tu9DW
+         BRtiWsw+pkB1gjFJQ47y8UFtLPMdp7dk3Ezwoklx4DqGIoAVK+VUOfFuEPkp04jgtyZb
+         F+H64x1AF81B1mrSVZz6KEIKjbQH9yLAm5lFF5a5tN2YPWSR0XlPz5zKbajLeQw/WxY4
+         AiG4qdWZ8+QPuMCId0XkeXIELcUvNnakVLZoXCGlTR37O5zp1C4w86IU0W4gisI2TmZM
+         pZy2/JkIFl6P21fPNHDdYMy+ufxusegFOZ/mu/9I5oVNH9LOiktlPgZurEUoR3m+bXf1
+         FlrA==
+X-Gm-Message-State: APjAAAVmHf8Ek3lS6WS10Jer/CYQwrcsT5RlnAmK9ZVhkuEGzZBeuW6b
+        laB3LSCcxIa66wqUmYNQAA+bcw==
+X-Google-Smtp-Source: APXvYqy8uiREkCLirNdJkob3wNATvXUMFhZyqSAyZ/FMLG7Sp71cjltngrB6lS31sQ0QKjHhg8f9eQ==
+X-Received: by 2002:a17:902:704a:: with SMTP id h10mr128810027plt.337.1564762161303;
+        Fri, 02 Aug 2019 09:09:21 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f7sm74037399pfd.43.2019.08.02.09.09.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Aug 2019 09:09:20 -0700 (PDT)
+Date:   Fri, 2 Aug 2019 09:09:19 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Neil Horman <nhorman@tuxdriver.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Shawn Landden <shawn@git.icu>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] compiler_attributes.h: Add 'fallthrough' pseudo
+ keyword for switch/case use
+Message-ID: <201908020907.4E056142@keescook>
+References: <765E740C-4259-4835-A58D-432006628BAC@zytor.com>
+ <20190731184832.GZ31381@hirez.programming.kicks-ass.net>
+ <F1AB2846-CA91-41ED-B8E7-3799895DCF06@zytor.com>
+ <CANiq72=s1nu9=R9ypFwL+J4NGT_yUkwahpgOOOXzezvNfDrx5g@mail.gmail.com>
+ <F2529DE6-B500-44DC-AE72-45A304AD719B@zytor.com>
+ <20190801122429.GY31398@hirez.programming.kicks-ass.net>
+ <0BCDEED9-0B72-4412-909F-76C20D54983E@zytor.com>
+ <CANiq72kg+duBe_srpcco-P17=3OC2c1ys=rGMVY8Z9FxZ69sdw@mail.gmail.com>
+ <20190802110042.GA6957@hmswarspite.think-freely.org>
+ <20190802123418.GA3722@amd>
 MIME-Version: 1.0
-In-Reply-To: <20190802092727.GB30522@icarus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802123418.GA3722@amd>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/2/19 4:27 AM, William Breathitt Gray wrote:
->> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
->> index a7e57516959e..ddcbb8573894 100644
->> --- a/drivers/pwm/Kconfig
->> +++ b/drivers/pwm/Kconfig
->> @@ -499,7 +499,7 @@ config  PWM_TIEHRPWM
->>   
->>   config  PWM_TIPWMSS
->>   	bool
->> -	default y if (ARCH_OMAP2PLUS) && (PWM_TIECAP || PWM_TIEHRPWM)
->> +	default y if (ARCH_OMAP2PLUS) && (PWM_TIECAP || PWM_TIEHRPWM || TI_EQEP)
->>   	help
->>   	  PWM Subsystem driver support for AM33xx SOC.
-> I was surprised to see this pwm Kconfig change in this patch. Is
-> PWM_TIPWMSS required for TI_EQEP to work? If not required, then this
-> could be a separate patch; otherwise, put in a mention about why in the
-> commit message so that the purpose of this change is clearer.
-> 
+On Fri, Aug 02, 2019 at 02:34:18PM +0200, Pavel Machek wrote:
+> I like the "fallthrough". It looks like "return" and it should, no
+> need to have __'s there..
 
-This enables the parent bus for power management. Since this is the second
-comment about this, I wonder if it would make sense to move this out of the
-PWM subsystem and into drivers/bus/ since it is no longer exclusive to PWM
-devices.
+Yeah, it would have the same feel as "break", "continue", "return"...
+
+The only place I see this already used is in net/sctp/sm_make_chunk.c,
+as a label, which would be trivial to adjust...
+
+-- 
+Kees Cook
