@@ -2,95 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 530627EF64
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7785B7EF5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404284AbfHBIfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:35:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42738 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729739AbfHBIfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:35:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B5825AD35;
-        Fri,  2 Aug 2019 08:35:10 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id EF9621E3F4D; Thu,  1 Aug 2019 19:57:03 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 19:57:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
-        Theodore Tso <tytso@mit.edu>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Joel Becker <jlbec@evilplan.org>, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 6/7] fs/jbd2: Make state lock a spinlock
-Message-ID: <20190801175703.GH25064@quack2.suse.cz>
-References: <20190801010126.245731659@linutronix.de>
- <20190801010944.457499601@linutronix.de>
+        id S2404233AbfHBIcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:32:22 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:50568 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729866AbfHBIcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:32:22 -0400
+Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x728Twtg028074
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 2 Aug 2019 01:30:19 -0700
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.468.0; Fri, 2 Aug 2019 01:29:55 -0700
+From:   <zhe.he@windriver.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <kan.liang@linux.intel.com>,
+        <eranian@google.com>, <alexey.budankov@linux.intel.com>,
+        <linux-kernel@vger.kernel.org>, <zhe.he@windriver.com>
+Subject: [PATCH 1/2] perf: Fix failure to set cpumask when only one cpu
+Date:   Fri, 2 Aug 2019 16:29:51 +0800
+Message-ID: <1564734592-15624-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801010944.457499601@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 01-08-19 03:01:32, Thomas Gleixner wrote:
-> Bit-spinlocks are problematic on PREEMPT_RT if functions which might sleep
-> on RT, e.g. spin_lock(), alloc/free(), are invoked inside the lock held
-> region because bit spinlocks disable preemption even on RT.
-> 
-> A first attempt was to replace state lock with a spinlock placed in struct
-> buffer_head and make the locking conditional on PREEMPT_RT and
-> DEBUG_BIT_SPINLOCKS.
-> 
-> Jan pointed out that there is a 4 byte hole in struct journal_head where a
-> regular spinlock fits in and he would not object to convert the state lock
-> to a spinlock unconditionally.
-> 
-> Aside of solving the RT problem, this also gains lockdep coverage for the
-> journal head state lock (bit-spinlocks are not covered by lockdep as it's
-> hard to fit a lockdep map into a single bit).
-> 
-> The trivial change would have been to convert the jbd_*lock_bh_state()
-> inlines, but that comes with the downside that these functions take a
-> buffer head pointer which needs to be converted to a journal head pointer
-> which adds another level of indirection.
-> 
-> As almost all functions which use this lock have a journal head pointer
-> readily available, it makes more sense to remove the lock helper inlines
-> and write out spin_*lock() at all call sites.
-> 
-> Fixup all locking comments as well.
-> 
-> Suggested-by: Jan Kara <jack@suse.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "Theodore Ts'o" <tytso@mit.edu>
-> Cc: Mark Fasheh <mark@fasheh.com>
-> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-> Cc: Joel Becker <jlbec@evilplan.org>
-> Cc: Jan Kara <jack@suse.com>
-> Cc: linux-ext4@vger.kernel.org
+From: He Zhe <zhe.he@windriver.com>
 
-Just a heads up that I didn't miss this patch. Just it has some bugs and I
-figured that rather than explaining to you subtleties of jh lifetime it is
-easier to fix up the problems myself since you're probably not keen on
-becoming jbd2 developer ;)... which was more complex than I thought so I'm
-not completely done yet. Hopefuly tomorrow.
+The buffer containing string used to set cpumask is overwritten by end of
+string later in cpu_map__snprint_mask due to not enough memory space, when
+there is only one cpu. And thus causes the following failure.
 
-								Honza
+$ perf ftrace ls
+failed to reset ftrace
+
+This patch fixes the calculation of cpumask string size.
+
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+ tools/perf/builtin-ftrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+index 66d5a66..0193128 100644
+--- a/tools/perf/builtin-ftrace.c
++++ b/tools/perf/builtin-ftrace.c
+@@ -173,7 +173,7 @@ static int set_tracing_cpumask(struct cpu_map *cpumap)
+ 	int last_cpu;
+ 
+ 	last_cpu = cpu_map__cpu(cpumap, cpumap->nr - 1);
+-	mask_size = (last_cpu + 3) / 4 + 1;
++	mask_size = last_cpu / 4 + 2; /* one more byte for EOS */
+ 	mask_size += last_cpu / 32; /* ',' is needed for every 32th cpus */
+ 
+ 	cpumask = malloc(mask_size);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.7.4
+
