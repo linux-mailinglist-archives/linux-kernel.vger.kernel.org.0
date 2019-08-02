@@ -2,154 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58B47EBE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E416A7EBEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:23:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732654AbfHBFVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 01:21:07 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:65134 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726626AbfHBFVH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 01:21:07 -0400
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x725Hw3a004680;
-        Thu, 1 Aug 2019 22:20:44 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=7YRtrjjEZQx1hFHzZ7Rzbx68eQ50VUzRxqGu1B3Fwas=;
- b=Rp25KIx3eqZQ12clgKPLWtVZZZfI5GUdIISB3Q9P2tmh2TWw+zQmCOVAYFGwZZQwdrXC
- OwWBCYvmqCGViO+ZxlxzuWmPzL1nT/toldys7JxBhQAjEE4Ejvfa0nv6Sftq8x/tbxBg
- Ur0UfGR/U+SwDwYioUT4OqX0KvKI5CpiIJo= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0001303.ppops.net with ESMTP id 2u449gj30c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 01 Aug 2019 22:20:44 -0700
-Received: from ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) by
- ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 1 Aug 2019 22:20:43 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Thu, 1 Aug 2019 22:20:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kx5KGRhjI75s7tqh4jELuvf6XniWcfbFsTA3DAgHs0QNd3xmNk8zAIcjXd+i2JZ+yKyVtHn+PkvX3AoR2WgtgNsFy5eHlol17DQJDFRpP2NRB215N5OLIO3uQzAZ7pCw5u8JTiD7izpgEVq5aHtM2N7JBRRksNK7ta2SHiVZn552+PLu2KgOC3qUkZPeGdvWVdYAR8fgkbgxrmmxyYlJzFvSQ3b+EMRDpsaBWdT6Q+k0C1OPne2aWPTuiFNs7xaWqCnEPGhED5XxqqaVT72HO3iYpVmgAMInaafuZSqhX8mQNglsBAn5sUOrji29+A2YhzBgybXt9YiE0vni4HaEFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7YRtrjjEZQx1hFHzZ7Rzbx68eQ50VUzRxqGu1B3Fwas=;
- b=GanocCAop9em2dAxvKFvsDIex+Yo9xV0wMlSi2/wwb00qO2OhXyTAYH61v/NNPrMGo4mLkd/dX0B896fmRZCHKkxww3R3dVjcE3RXcks3wSyr7pw00/Mt58oRnCzJ8+ks6nJhwRAgACc/OrtvI9YKdb6eOZoK4mX41K6jxjayv8T48/C0PNiSLrSXUNvRVRZ5HNlFKdroUbfXHpMJb/EjlLLPYOeHeVv5Bm+1laYgZyEmt3HkFMNQyjMf0Dkg9SuCqj+5ErjZ+DcWEm8I28UyPMY7qkcCYl+HIE6XnV4jwgyPxnnkTT4gwI/3atdsO8WBfK03LktmHu+2RZPPYE+Fw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
- header.d=fb.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7YRtrjjEZQx1hFHzZ7Rzbx68eQ50VUzRxqGu1B3Fwas=;
- b=cfHNTQPaKy+iyCmP9MW3wppJcBOL97I0fTf8ovOJvHClIIudNgWk+RjpGwkdbKU5pc2SLTON+Tt539yvb1CFrlyqmDLA4LasdQU9SvwZO9pTLkv70sR2e0u33xd58lBKsz431vG2X26k8bG3EVj5H2sVY3Ow2gQZmWeWJKioyEw=
-Received: from MWHPR15MB1216.namprd15.prod.outlook.com (10.175.2.17) by
- MWHPR15MB1197.namprd15.prod.outlook.com (10.175.7.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.16; Fri, 2 Aug 2019 05:20:42 +0000
-Received: from MWHPR15MB1216.namprd15.prod.outlook.com
- ([fe80::c66:6d60:f6e5:773c]) by MWHPR15MB1216.namprd15.prod.outlook.com
- ([fe80::c66:6d60:f6e5:773c%8]) with mapi id 15.20.2136.010; Fri, 2 Aug 2019
- 05:20:42 +0000
-From:   Tao Ren <taoren@fb.com>
-To:     Joel Stanley <joel@jms.id.au>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Subject: Re: [PATCH v2] ARM: dts: aspeed: Add Facebook Wedge100 BMC
-Thread-Topic: [PATCH v2] ARM: dts: aspeed: Add Facebook Wedge100 BMC
-Thread-Index: AQHVSOg2lZoVHrZ29U2XlvDXnsufaKbnQZOA//+bUYA=
-Date:   Fri, 2 Aug 2019 05:20:41 +0000
-Message-ID: <606273F4-E021-4AAF-9F59-F363E4FFF92A@fb.com>
-References: <20190802041010.1234178-1-taoren@fb.com>
- <CACPK8XcuwNE3aBrsgn-paTZt-EtF6pc6WwYBQef5xc7157bk2g@mail.gmail.com>
-In-Reply-To: <CACPK8XcuwNE3aBrsgn-paTZt-EtF6pc6WwYBQef5xc7157bk2g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.1a.0.190609
-x-originating-ip: [2620:10d:c090:180::1:94d1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7d9f0837-79c0-47a0-c8d2-08d7170929de
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1197;
-x-ms-traffictypediagnostic: MWHPR15MB1197:
-x-microsoft-antispam-prvs: <MWHPR15MB1197AD2CD9BE3D4676210120B2D90@MWHPR15MB1197.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 011787B9DD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(136003)(396003)(39860400002)(366004)(47680400002)(43544003)(199004)(189003)(6506007)(33656002)(5660300002)(76116006)(14454004)(66476007)(66556008)(64756008)(53936002)(66946007)(66446008)(478600001)(81166006)(486006)(68736007)(4326008)(36756003)(11346002)(476003)(446003)(46003)(81156014)(2616005)(71190400001)(6512007)(71200400001)(25786009)(8676002)(305945005)(316002)(186003)(54906003)(86362001)(8936002)(7736002)(6116002)(256004)(2906002)(229853002)(58126008)(6436002)(53546011)(76176011)(6486002)(6916009)(102836004)(6246003)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1197;H:MWHPR15MB1216.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qu2vQKv/PweLZWEe/h/0DGEeIRhLt9jTD6F+1UM3YtYZjjw5pR/uC4cXF1HYbD9cODX8AnyA3S1cRc1fcXEL0ZYWIP1VLMb4GTRO3FtRm4LFOk7TxBONqteGug2wVN5HIvRA9MisWNgruWyPrp2QMhoyjaJinEiv5dcFLVcj6g4xnUvVj+YgOlYPVEQcy98KNOf8oJIuyiQRE8j5QaXrzKQ8sYuoY/txWjrJWweXJTCNRF2ymEthCy0Ah1rGNdnQbwk6ndsQs7mcSmSTYMEPkas9UAc1rprPYrxtJTVinp9B2Hpe5ZKKcJ3Mxxojnt/nMpdkJptvHUIgBrbb+AvOH5y94v+FNtZ/99P75YOkWhcdrDUE/FsbhKuL/I2QRAf7jGiiTgguLwKvcCkKj7acceJqw2zkYbByYZFdArFZcQs=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FA155B7D2FF44B408295ED3794A270FC@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1732681AbfHBFWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 01:22:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34624 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726626AbfHBFWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 01:22:51 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 79FF619CF26;
+        Fri,  2 Aug 2019 05:22:51 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-81.ams2.redhat.com [10.36.116.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A22C85D9CD;
+        Fri,  2 Aug 2019 05:22:48 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id D31C017474; Fri,  2 Aug 2019 07:22:47 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     ckoenig.leichtzumerken@gmail.com, thomas@shipmail.org,
+        tzimmermann@suse.de, daniel@ffwll.ch, bskeggs@redhat.com,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 01/17] drm/ttm: add gem base object
+Date:   Fri,  2 Aug 2019 07:22:31 +0200
+Message-Id: <20190802052247.18427-2-kraxel@redhat.com>
+In-Reply-To: <20190802052247.18427-1-kraxel@redhat.com>
+References: <20190802052247.18427-1-kraxel@redhat.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d9f0837-79c0-47a0-c8d2-08d7170929de
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2019 05:20:41.9574
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: taoren@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1197
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908020056
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 02 Aug 2019 05:22:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gOC8xLzE5LCA5OjIxIFBNLCAiSm9lbCBTdGFubGV5IiA8am9lbEBqbXMuaWQuYXU+IHdyb3Rl
-Og0KDQo+ICBPbiBGcmksIDIgQXVnIDIwMTkgYXQgMDQ6MTAsIFRhbyBSZW4gPHRhb3JlbkBmYi5j
-b20+IHdyb3RlOg0KPj4NCj4+IEFkZCBpbml0aWFsIHZlcnNpb24gb2YgZGV2aWNlIHRyZWUgZm9y
-IEZhY2Vib29rIFdlZGdlMTAwIEFTVDI0MDAgQk1DDQo+PiBwbGF0Zm9ybS4NCj4+DQo+PiBTaWdu
-ZWQtb2ZmLWJ5OiBUYW8gUmVuIDx0YW9yZW5AZmIuY29tPg0KPj4gUmV2aWV3ZWQtYnk6IEFuZHJl
-dyBKZWZmZXJ5IDxhbmRyZXdAYWouaWQuYXU+DQo+PiAtLS0NCj4+ICBDaGFuZ2VzIGluIHYyOg0K
-Pj4gIC0gcmVtb3ZlICJkZWJ1ZyIgZnJvbSBib290YXJncy4NCj4gICAgDQo+IFRoYW5rcy4gSSBh
-cHBsaWVkIHdlZGdlNDAgYW5kIHRoZW4gdGhpcyBvbmUgZmFpbHMgdG8gYXBwbHkgZHVlIHRvDQo+
-IGNvbmZsaWN0cyBpbiB0aGUgTWFrZWZpbGUuIE5leHQgdGltZSB5b3UgaGF2ZSB0d28gcGF0Y2hl
-cywgc2VuZCB0aGVtDQo+IGFzIGEgc2VyaWVzIHRoZXkgYXBwbHkgb25lIGF0b3AgdGhlIG90aGVy
-Lg0KDQpJIHRob3VnaHQgYWJvdXQgYXNraW5nIHlvdSBpZiBJIHNob3VsZCBzZW5kIHRoZW0gYXMg
-YSBzZXJpZXMgYWx0aG91Z2ggdGhleSBhcmUgbG9naWNhbGx5IGluZGVwZW5kZW50IHBhdGNoZXMu
-Lg0KU29ycnkgYWJvdXQgdGhhdCBhbmQgSSB3aWxsIGRvIHNvIGZvciBmdXR1cmUgcGF0Y2hlcy4N
-Cg0KPiAgVGhlIG5hbWluZyBvZiB0aGVzZSB0d28gZmlsZXMgc3VnZ2VzdHMgdGhleSBjb21lIGZy
-b20gYSBmYW1pbHkuIEkNCj4gIG5vdGljZWQgdGhlcmUncyB2ZXJ5IG1pbm9yIGRpZmZlcmVuY2Vz
-LCBhIHBjYTk1NDggc3dpdGNoIGFuZCB0aGUgdXNlDQo+ICBvZiBhIHdhdGNoZG9nLg0KPiAgDQo+
-ICBBcmUgdGhlc2UgZGV2aWNlIHRyZWVzIGNvbXBsZXRlPyBJZiB5ZXMsIGRvIHlvdSB0aGluayBp
-dCdzIHdvcnRod2hpbGUNCj4gIHRvIGhhdmUgYSBjb21tb24gd2VkZ2UgZGVzY3JpcHRpb24gaW4g
-ZWcuDQo+ICBhc3BlZWQtYm1jLWZhY2Vib29rLXdlZGdlLmR0c2ksIGFuZCBwdXQgdGhlIHVuaXF1
-ZSBkZXNjcmlwdGlvbiBpbg0KPiAgcmVzcGVjdGl2ZSBkdHMgYm9hcmQgZmlsZXM/DQo+ICAgDQo+
-ICBUaGUgdXBzaWRlIG9mIHRoaXMgaXMgcmVkdWNlZCBkdXBsaWNhdGlvbi4NCj4gIA0KPiAgSWYg
-eW91IGhhdmUgYSByZWFzb24gbm90IHRvLCB0aGVuIHRoYXQgaXMgb2theSBhbmQgd2UgY2FuIGxl
-YXZlIGl0IGFzDQo+ICB5b3Ugc3VibWl0dGVkIHRoZW0uDQoNClRoYW5rIHlvdSBmb3IgdGhlIHN1
-Z2dlc3Rpb24uIEknbSBhbHNvIGNvbnNpZGVyaW5nIG1vdmluZyBjb21tb24gc3R1ZmYgaW50byAi
-ZHRzaSIgZmlsZSwgYnV0IGxldCBtZSB0YWtlIGNhcmUgb2YgaXQgaW4gYSBzZXBhcmF0ZSBwYXRj
-aCwgbWFpbmx5IGJlY2F1c2U6DQogIDEpIEkgaGF2ZSBvbmUgbW9yZSBCTUMgcGxhdGZvcm0gKGdh
-bGF4eTEwMCkgd2hpY2ggaXMgYWxzbyBzaW1pbGFyIHRvIHdlZGdlLg0KICAgICAgSSBoYXZlbid0
-IHN0YXJ0ZWQgdGhlIHBsYXRmb3JtLCBidXQgb25jZSBJIGhhdmUgZ2FsYXh5MTAwIGRldmljZSB0
-cmVlIHJlYWR5LCBpdCB3b3VsZCBiZSBlYXNpZXIgZm9yIG1lIHRvIGV4dHJhY3QgY29tbW9uIHBh
-cnQuDQogIDIpIHRoZSBkZXZpY2UgdHJlZSBpcyBub3QgY29tcGxldGUgeWV0Lg0KICAgICAgRm9y
-IGV4YW1wbGUsIGFsbCB0aGUgaTJjIGRldmljZXMgYXJlIHN0aWxsIGNyZWF0ZWQgZnJvbSB1c2Vy
-c3BhY2UuDQogICAgICBJJ20gdHJ5aW5nIHRvIG1vdmUgdGhlIGxvZ2ljIGZyb20gdXNlcnNwYWNl
-IHRvIGRldmljZSB0cmVlIGJ1dCBJIGhhdmVuJ3QgZGVjaWRlZCB3aGF0IHRvIGRvIHdpdGggdGhv
-c2UgY3BsZC9mcGdhIGRldmljZXMuDQoNCg0KQ2hlZXJzLA0KDQpUYW8NCg0K
+Add drm_gem_object struct to ttm_buffer_object, so ttm objects are a gdm
+object superclass.  Add a function to check whenever a given bo actually
+uses the embedded drm_gem_object.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+---
+ include/drm/ttm/ttm_bo_api.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
+index 49d9cdfc58f2..082550cac92c 100644
+--- a/include/drm/ttm/ttm_bo_api.h
++++ b/include/drm/ttm/ttm_bo_api.h
+@@ -31,6 +31,7 @@
+ #ifndef _TTM_BO_API_H_
+ #define _TTM_BO_API_H_
+ 
++#include <drm/drm_gem.h>
+ #include <drm/drm_hashtab.h>
+ #include <drm/drm_vma_manager.h>
+ #include <linux/kref.h>
+@@ -127,6 +128,7 @@ struct ttm_tt;
+ /**
+  * struct ttm_buffer_object
+  *
++ * @base: drm_gem_object superclass data.
+  * @bdev: Pointer to the buffer object device structure.
+  * @type: The bo type.
+  * @destroy: Destruction function. If NULL, kfree is used.
+@@ -169,6 +171,8 @@ struct ttm_tt;
+  */
+ 
+ struct ttm_buffer_object {
++	struct drm_gem_object base;
++
+ 	/**
+ 	 * Members constant at init.
+ 	 */
+@@ -768,4 +772,23 @@ int ttm_bo_swapout(struct ttm_bo_global *glob,
+ 			struct ttm_operation_ctx *ctx);
+ void ttm_bo_swapout_all(struct ttm_bo_device *bdev);
+ int ttm_bo_wait_unreserved(struct ttm_buffer_object *bo);
++
++/**
++ * ttm_bo_uses_embedded_gem_object - check if the given bo uses the
++ * embedded drm_gem_object.
++ *
++ * Most ttm drivers are using gem too, so the embedded
++ * ttm_buffer_object.base will be initialized by the driver (before
++ * calling ttm_bo_init).  It is also possible to use ttm without gem
++ * though (vmwgfx does that).
++ *
++ * This helper will figure whenever a given ttm bo is a gem object too
++ * or not.
++ *
++ * @bo: The bo to check.
++ */
++static inline bool ttm_bo_uses_embedded_gem_object(struct ttm_buffer_object *bo)
++{
++	return bo->base.dev != NULL;
++}
+ #endif
+-- 
+2.18.1
+
