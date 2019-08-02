@@ -2,101 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E546A7F4FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EA87F502
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:28:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391826AbfHBK0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:26:16 -0400
-Received: from foss.arm.com ([217.140.110.172]:49194 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730941AbfHBK0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:26:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DED4344;
-        Fri,  2 Aug 2019 03:26:15 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (unknown [10.1.194.52])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A04543F71F;
-        Fri,  2 Aug 2019 03:26:14 -0700 (PDT)
-Date:   Fri, 2 Aug 2019 11:26:12 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 0/5] Fix FIFO-99 abuse
-Message-ID: <20190802102611.54sae3onftck5fye@e107158-lin.cambridge.arm.com>
-References: <20190801111348.530242235@infradead.org>
- <20190801131707.5rpyydznnhz474la@e107158-lin.cambridge.arm.com>
- <20190802093244.GF2332@hirez.programming.kicks-ass.net>
+        id S2391850AbfHBK2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:28:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56750 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730941AbfHBK2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 06:28:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 55B5CAE03;
+        Fri,  2 Aug 2019 10:28:28 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 460861E3F4D; Fri,  2 Aug 2019 12:28:27 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 12:28:27 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Roald Strauss <mr_lou@dewfall.dk>,
+        "Steven J. Magnani" <steve.magnani@digidescorp.com>,
+        Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: UDF filesystem image with Write-Once UDF Access Type
+Message-ID: <20190802102827.GI25064@quack2.suse.cz>
+References: <20190712100224.s2chparxszlbnill@pali>
+ <20190801073530.GA25064@quack2.suse.cz>
+ <20190801083800.GC25064@quack2.suse.cz>
+ <20190801085755.amohgsxdcmzf2nzc@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190802093244.GF2332@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190801085755.amohgsxdcmzf2nzc@pali>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/19 11:32, Peter Zijlstra wrote:
-> On Thu, Aug 01, 2019 at 02:17:07PM +0100, Qais Yousef wrote:
-> > On 08/01/19 13:13, Peter Zijlstra wrote:
-> > > I noticed a bunch of kthreads defaulted to FIFO-99, fix them.
-> > > 
-> > > The generic default is FIFO-50, the admin will have to configure the system
-> > > anyway.
-> > > 
-> > > For some the purpose is to be above OTHER and then FIFO-1 really is sufficient.
+On Thu 01-08-19 10:57:55, Pali Rohár wrote:
+> On Thursday 01 August 2019 10:38:00 Jan Kara wrote:
+> > Hum, looks like a problem with mkudffs. Relevant debug messages look like:
 > > 
-> > I was looking in this area too and was thinking of a way to consolidate the
-> > creation of RT/DL tasks in the kernel and the way we set the priority.
+> > UDF-fs: fs/udf/super.c:671:udf_check_vsd: Starting at sector 16 (2048 byte sectors)
+> > UDF-fs: fs/udf/super.c:824:udf_load_pvoldesc: recording time 2019/08/01 09:47 (1078)
+> > UDF-fs: fs/udf/super.c:836:udf_load_pvoldesc: volIdent[] = 'LinuxUDF'
+> > UDF-fs: fs/udf/super.c:844:udf_load_pvoldesc: volSetIdent[] = '1564645645200563LinuxUDF'
+> > UDF-fs: fs/udf/super.c:1462:udf_load_logicalvol: Partition (0:0) type 1 on volume 1
+> > UDF-fs: fs/udf/super.c:1462:udf_load_logicalvol: Partition (1:0) type 2 on volume 1
+> > UDF-fs: fs/udf/super.c:1471:udf_load_logicalvol: FileSet found in LogicalVolDesc at block=0, partition=1
+> > UDF-fs: fs/udf/super.c:1218:udf_load_partdesc: Searching map: (0 == 0)
+> > UDF-fs: fs/udf/super.c:1060:udf_fill_partdesc_info: Partition (0 type 1511) starts at physical 288, block length 524000
+> > UDF-fs: fs/udf/super.c:1060:udf_fill_partdesc_info: Partition (1 type 2012) starts at physical 288, block length 524000
+> > UDF-fs: fs/udf/misc.c:223:udf_read_tagged: location mismatch block 524287, tag 0 != 523999
+> > UDF-fs: error (device ubdb): udf_read_inode: (ino 524287) failed !bh
 > > 
-> > Does it make sense to create a new header for RT priorities for kthreads
-> > created in the kernel so that we can easily track and rationale about the
-> > relative priorities of in-kernel RT tasks?
+> > So the fact that location tag was 0 in block 524287 (which should contain
+> > VAT inode) suggests there's something fishy with how / where mkudffs
+> > creates the VAT inode. Can you have a look?
 > > 
-> > When working in the FW world such a header helped a lot in understanding what
-> > runs at each priority level and how to reason about what priority level makes
-> > sense for a new item. It could be a nice single point of reference; even for
-> > admins.
+> > BTW, mkudffs messages look like:
+> > filename=/tmp/image
+> > label=LinuxUDF
+> > uuid=1564645645200563
+> > blocksize=2048
+> > blocks=524288
+> > udfrev=2.01
+> > vatblock=319
+> > start=0, blocks=16, type=RESERVED 
+> > start=16, blocks=4, type=VRS 
+> > start=20, blocks=76, type=USPACE 
+> > start=96, blocks=16, type=MVDS 
+> > start=112, blocks=16, type=USPACE 
+> > start=128, blocks=1, type=LVID 
+> > start=129, blocks=95, type=USPACE 
+> > start=224, blocks=16, type=RVDS 
+> > start=240, blocks=16, type=USPACE 
+> > start=256, blocks=1, type=ANCHOR 
+> > start=257, blocks=31, type=USPACE 
+> > start=288, blocks=524000, type=PSPACE 
+> > 
+> > which suggests that VAT was indeed allocated somewhere in the beginning of
+> > the partition.
 > 
-> Well, SCHED_FIFO is a broken scheduler model; that is, it is
-> fundamentally incapable of resource management, which is the one thing
-> an OS really should be doing.
+> For write-once media you are not able to modify size of UDF partition.
+> So if you are creating image for CD-R disc, you need to specify size of
+> UDF filesystem to match size of CD-R disc. VAT is always burned to the
+> last block of current track on CD-R.
 > 
-> This is of course the reason it is limited to privileged users only.
+> Therefore if you had pre-allocated big image file for CD-R and then you
+> run mkudffs for cdr on it, you lost information what is the last used
+> block on that cdr image. Normally for optical drivers kernel use mmc
+> commands to retrieve last block of current session and based on it find
+> VAT. But image files loaded via /dev/loop are not optical drivers and
+> therefore do not have ability "hardware" ability to ask where is the
+> last used block. IIRC in this case kernel just fallback to the last
+> block of block device for VAT, which in this case is not correct.
 > 
-> Worse still; it is fundamentally impossible to compose static priority
-> workloads. You cannot take two correctly working static prio workloads
-> and smash them together and still expect them to work.
-> 
-> For this reason 'all' FIFO tasks the kernel creates are basically at:
-> 
->   MAX_RT_PRIO / 2
-> 
-> The administrator _MUST_ configure the system, the kernel simply doesn't
-> know enough information to make a sensible choice.
-> 
-> Now, Geert suggested so make make a define for that, but how about we do
-> something like:
-> 
-> /*
->  * ${the above explanation}
->  */
-> int kernel_setscheduler_fifo(struct task_struct *p)
-> {
-> 	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 };
-> 	return sched_setscheduler_nocheck(p, SCHED_FIFO, &sp);
-> }
-> 
-> And then take away sched_setscheduler*().
+> What should help is to truncate image file to "correct" size after
+> running mkudffs with --media-type=cdr. Maybe mkudffs itself should do it
+> when was asked to create UDF filesystem for CD-R on existing image file.
 
-Yes a somewhat enforced default makes more sense to me. I assume you no longer
-want to put the kthreads that just need to be above OTHER in FIFO-1?
-
-While at it, since we will cram all kthreads on the same priority, isn't
-a SCHED_RR a better choice now? I think the probability of a clash is pretty
-low, but when it happens, shouldn't we try to guarantee some fairness?
-
---
-Qais Yousef
+Ah, right. Thanks for explanation. I somehow assumed that mkudffs will be
+considering the last block of the "device file" the last block that it has
+to record but you're right that on second though that doesn't really make
+sense.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
