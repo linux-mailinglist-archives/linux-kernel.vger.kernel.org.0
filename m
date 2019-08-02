@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9EE17F215
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 441087F216
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:45:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405326AbfHBJo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:44:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48410 "EHLO mail.kernel.org"
+        id S2405337AbfHBJo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:44:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405311AbfHBJox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:44:53 -0400
+        id S2403954AbfHBJo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:44:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E7BF20B7C;
-        Fri,  2 Aug 2019 09:44:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CABB21726;
+        Fri,  2 Aug 2019 09:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739093;
-        bh=k7QKfa6LAB3aq55137f4pRDRtYGr0cL0lak7C6T98mM=;
+        s=default; t=1564739095;
+        bh=6wl/sh3c5xisdjPWXnVAYZ+Biy68tXVcGJNcha7fBhg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DYx/41GA0pdepIRr6YdDVpocvMTgBvud8j4i/Br6be5252BVMS9kqO1c0lX2JdmZk
-         dUufi4D/qDng0Z11nffYaO3yzzSu5KzUm5IVehxm+oe7Uyp+q2EgEz6e64OrVww8yo
-         fob1rDpG0ajTCI8WkJvDyDbMAVL+ysBzmr7QsLw0=
+        b=c4ptJZ2Y4OflcinpNCMIAkwLsIJYFnTSTl/Uv9M2DcSfwuEr9yfaOpp566eJk8IPx
+         dkH2azpcWq+OXdtmRHd4Cd8Q65VPmtnSBtwlp6SQqfbaIa/3pJ7W/maGFYCt4Ky+/e
+         aykntjWbAi83Cq8ZkDUp/bFYOSjaenmQWjWOdSgY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cfir Cohen <cfir@google.com>,
-        Gary R Hook <gary.hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 110/223] crypto: ccp - Validate the the error value used to index error messages
-Date:   Fri,  2 Aug 2019 11:35:35 +0200
-Message-Id: <20190802092246.372422602@linuxfoundation.org>
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jake Oshins <jakeo@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH 4.9 111/223] PCI: hv: Delete the device earlier from hbus->children for hot-remove
+Date:   Fri,  2 Aug 2019 11:35:36 +0200
+Message-Id: <20190802092246.437519832@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -44,151 +47,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hook, Gary <Gary.Hook@amd.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit 52393d617af7b554f03531e6756facf2ea687d2e upstream.
+commit e74d2ebdda33b3bdd1826b5b92e9aa45bdf92bb3 upstream.
 
-The error code read from the queue status register is only 6 bits wide,
-but we need to verify its value is within range before indexing the error
-messages.
+After we send a PCI_EJECTION_COMPLETE message to the host, the host will
+immediately send us a PCI_BUS_RELATIONS message with
+relations->device_count == 0, so pci_devices_present_work(), running on
+another thread, can find the being-ejected device, mark the
+hpdev->reported_missing to true, and run list_move_tail()/list_del() for
+the device -- this races hv_eject_device_work() -> list_del().
 
-Fixes: 81422badb3907 ("crypto: ccp - Make syslog errors human-readable")
-Cc: <stable@vger.kernel.org>
-Reported-by: Cfir Cohen <cfir@google.com>
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Move the list_del() in hv_eject_device_work() to an earlier place, i.e.,
+before we send PCI_EJECTION_COMPLETE, so later the
+pci_devices_present_work() can't see the device.
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Jake Oshins <jakeo@microsoft.com>
+Acked-by: K. Y. Srinivasan <kys@microsoft.com>
+CC: Haiyang Zhang <haiyangz@microsoft.com>
+CC: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/crypto/ccp/ccp-dev.c |  102 ++++++++++++++++++++++---------------------
- drivers/crypto/ccp/ccp-dev.h |    2 
- 2 files changed, 55 insertions(+), 49 deletions(-)
+ drivers/pci/host/pci-hyperv.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/ccp/ccp-dev.c
-+++ b/drivers/crypto/ccp/ccp-dev.c
-@@ -40,57 +40,63 @@ struct ccp_tasklet_data {
- 	struct ccp_cmd *cmd;
- };
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -1607,6 +1607,10 @@ static void hv_eject_device_work(struct
+ 		pci_unlock_rescan_remove();
+ 	}
  
--/* Human-readable error strings */
--char *ccp_error_codes[] = {
--	"",
--	"ERR 01: ILLEGAL_ENGINE",
--	"ERR 02: ILLEGAL_KEY_ID",
--	"ERR 03: ILLEGAL_FUNCTION_TYPE",
--	"ERR 04: ILLEGAL_FUNCTION_MODE",
--	"ERR 05: ILLEGAL_FUNCTION_ENCRYPT",
--	"ERR 06: ILLEGAL_FUNCTION_SIZE",
--	"ERR 07: Zlib_MISSING_INIT_EOM",
--	"ERR 08: ILLEGAL_FUNCTION_RSVD",
--	"ERR 09: ILLEGAL_BUFFER_LENGTH",
--	"ERR 10: VLSB_FAULT",
--	"ERR 11: ILLEGAL_MEM_ADDR",
--	"ERR 12: ILLEGAL_MEM_SEL",
--	"ERR 13: ILLEGAL_CONTEXT_ID",
--	"ERR 14: ILLEGAL_KEY_ADDR",
--	"ERR 15: 0xF Reserved",
--	"ERR 16: Zlib_ILLEGAL_MULTI_QUEUE",
--	"ERR 17: Zlib_ILLEGAL_JOBID_CHANGE",
--	"ERR 18: CMD_TIMEOUT",
--	"ERR 19: IDMA0_AXI_SLVERR",
--	"ERR 20: IDMA0_AXI_DECERR",
--	"ERR 21: 0x15 Reserved",
--	"ERR 22: IDMA1_AXI_SLAVE_FAULT",
--	"ERR 23: IDMA1_AIXI_DECERR",
--	"ERR 24: 0x18 Reserved",
--	"ERR 25: ZLIBVHB_AXI_SLVERR",
--	"ERR 26: ZLIBVHB_AXI_DECERR",
--	"ERR 27: 0x1B Reserved",
--	"ERR 27: ZLIB_UNEXPECTED_EOM",
--	"ERR 27: ZLIB_EXTRA_DATA",
--	"ERR 30: ZLIB_BTYPE",
--	"ERR 31: ZLIB_UNDEFINED_SYMBOL",
--	"ERR 32: ZLIB_UNDEFINED_DISTANCE_S",
--	"ERR 33: ZLIB_CODE_LENGTH_SYMBOL",
--	"ERR 34: ZLIB _VHB_ILLEGAL_FETCH",
--	"ERR 35: ZLIB_UNCOMPRESSED_LEN",
--	"ERR 36: ZLIB_LIMIT_REACHED",
--	"ERR 37: ZLIB_CHECKSUM_MISMATCH0",
--	"ERR 38: ODMA0_AXI_SLVERR",
--	"ERR 39: ODMA0_AXI_DECERR",
--	"ERR 40: 0x28 Reserved",
--	"ERR 41: ODMA1_AXI_SLVERR",
--	"ERR 42: ODMA1_AXI_DECERR",
--	"ERR 43: LSB_PARITY_ERR",
-+ /* Human-readable error strings */
-+#define CCP_MAX_ERROR_CODE	64
-+ static char *ccp_error_codes[] = {
-+ 	"",
-+	"ILLEGAL_ENGINE",
-+	"ILLEGAL_KEY_ID",
-+	"ILLEGAL_FUNCTION_TYPE",
-+	"ILLEGAL_FUNCTION_MODE",
-+	"ILLEGAL_FUNCTION_ENCRYPT",
-+	"ILLEGAL_FUNCTION_SIZE",
-+	"Zlib_MISSING_INIT_EOM",
-+	"ILLEGAL_FUNCTION_RSVD",
-+	"ILLEGAL_BUFFER_LENGTH",
-+	"VLSB_FAULT",
-+	"ILLEGAL_MEM_ADDR",
-+	"ILLEGAL_MEM_SEL",
-+	"ILLEGAL_CONTEXT_ID",
-+	"ILLEGAL_KEY_ADDR",
-+	"0xF Reserved",
-+	"Zlib_ILLEGAL_MULTI_QUEUE",
-+	"Zlib_ILLEGAL_JOBID_CHANGE",
-+	"CMD_TIMEOUT",
-+	"IDMA0_AXI_SLVERR",
-+	"IDMA0_AXI_DECERR",
-+	"0x15 Reserved",
-+	"IDMA1_AXI_SLAVE_FAULT",
-+	"IDMA1_AIXI_DECERR",
-+	"0x18 Reserved",
-+	"ZLIBVHB_AXI_SLVERR",
-+	"ZLIBVHB_AXI_DECERR",
-+	"0x1B Reserved",
-+	"ZLIB_UNEXPECTED_EOM",
-+	"ZLIB_EXTRA_DATA",
-+	"ZLIB_BTYPE",
-+	"ZLIB_UNDEFINED_SYMBOL",
-+	"ZLIB_UNDEFINED_DISTANCE_S",
-+	"ZLIB_CODE_LENGTH_SYMBOL",
-+	"ZLIB _VHB_ILLEGAL_FETCH",
-+	"ZLIB_UNCOMPRESSED_LEN",
-+	"ZLIB_LIMIT_REACHED",
-+	"ZLIB_CHECKSUM_MISMATCH0",
-+	"ODMA0_AXI_SLVERR",
-+	"ODMA0_AXI_DECERR",
-+	"0x28 Reserved",
-+	"ODMA1_AXI_SLVERR",
-+	"ODMA1_AXI_DECERR",
- };
- 
--void ccp_log_error(struct ccp_device *d, int e)
-+void ccp_log_error(struct ccp_device *d, unsigned int e)
- {
--	dev_err(d->dev, "CCP error: %s (0x%x)\n", ccp_error_codes[e], e);
-+	if (WARN_ON(e >= CCP_MAX_ERROR_CODE))
-+		return;
++	spin_lock_irqsave(&hpdev->hbus->device_list_lock, flags);
++	list_del(&hpdev->list_entry);
++	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
 +
-+	if (e < ARRAY_SIZE(ccp_error_codes))
-+		dev_err(d->dev, "CCP error %d: %s\n", e, ccp_error_codes[e]);
-+	else
-+		dev_err(d->dev, "CCP error %d: Unknown Error\n", e);
- }
+ 	memset(&ctxt, 0, sizeof(ctxt));
+ 	ejct_pkt = (struct pci_eject_response *)&ctxt.pkt.message;
+ 	ejct_pkt->message_type.type = PCI_EJECTION_COMPLETE;
+@@ -1615,10 +1619,6 @@ static void hv_eject_device_work(struct
+ 			 sizeof(*ejct_pkt), (unsigned long)&ctxt.pkt,
+ 			 VM_PKT_DATA_INBAND, 0);
  
- /* List of CCPs, CCP count, read-write access lock, and access functions
---- a/drivers/crypto/ccp/ccp-dev.h
-+++ b/drivers/crypto/ccp/ccp-dev.h
-@@ -607,7 +607,7 @@ void ccp_platform_exit(void);
- void ccp_add_device(struct ccp_device *ccp);
- void ccp_del_device(struct ccp_device *ccp);
- 
--extern void ccp_log_error(struct ccp_device *, int);
-+extern void ccp_log_error(struct ccp_device *, unsigned int);
- 
- struct ccp_device *ccp_alloc_struct(struct device *dev);
- bool ccp_queues_suspended(struct ccp_device *ccp);
+-	spin_lock_irqsave(&hpdev->hbus->device_list_lock, flags);
+-	list_del(&hpdev->list_entry);
+-	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
+-
+ 	put_pcichild(hpdev, hv_pcidev_ref_childlist);
+ 	put_pcichild(hpdev, hv_pcidev_ref_initial);
+ 	put_pcichild(hpdev, hv_pcidev_ref_pnp);
 
 
