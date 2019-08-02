@@ -2,208 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C4957ED5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 09:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F457ED52
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 09:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389583AbfHBHYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 03:24:21 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:33066 "EHLO inva020.nxp.com"
+        id S2389472AbfHBHVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 03:21:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52668 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389568AbfHBHYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 03:24:19 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5E6461A02D2;
-        Fri,  2 Aug 2019 09:24:17 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2E5191A011B;
-        Fri,  2 Aug 2019 09:24:13 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0438E402F2;
-        Fri,  2 Aug 2019 15:24:06 +0800 (SGT)
-From:   Richard Zhu <hongxing.zhu@nxp.com>
-To:     jassisinghbrar@gmail.com, o.rempel@pengutronix.de,
-        aisheng.dong@nxp.com
-Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v4 2/2] mailbox: imx: add support for imx v1 mu
-Date:   Fri,  2 Aug 2019 15:01:40 +0800
-Message-Id: <1564729300-30374-3-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564729300-30374-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1564729300-30374-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729406AbfHBHVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 03:21:10 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 56E3D5AFD9;
+        Fri,  2 Aug 2019 07:21:09 +0000 (UTC)
+Received: from [10.36.116.87] (ovpn-116-87.ams2.redhat.com [10.36.116.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 792C5100032A;
+        Fri,  2 Aug 2019 07:21:06 +0000 (UTC)
+Subject: Re: [PATCH 1/1] pseries/hotplug-memory.c: Replace nested ifs by
+ switch-case
+To:     Leonardo Bras <leonardo@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Rob Herring <robh@kernel.org>
+References: <20190801225251.17864-1-leonardo@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <a01e8782-c59c-4c77-76f2-f4c36d1d9ed9@redhat.com>
+Date:   Fri, 2 Aug 2019 09:21:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190801225251.17864-1-leonardo@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 02 Aug 2019 07:21:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a version 1.0 MU on i.MX7ULP platform.
-One new version ID register is added, and it's offset is 0.
-TRn registers are defined at the offset 0x20 ~ 0x2C.
-RRn registers are defined at the offset 0x40 ~ 0x4C.
-SR/CR registers are defined at 0x60/0x64.
-Extend this driver to support it.
+On 02.08.19 00:52, Leonardo Bras wrote:
+> I noticed these nested ifs can be easily replaced by switch-cases,
+> which can improve readability.
+> 
+> Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+> ---
+>  .../platforms/pseries/hotplug-memory.c        | 26 +++++++++++++------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Suggested-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/mailbox/imx-mailbox.c | 55 ++++++++++++++++++++++++++++++-------------
- 1 file changed, 38 insertions(+), 17 deletions(-)
+More LOC but seems to be the right thing to do
 
-diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index 3ecebdc..dc08ef4 100644
---- a/drivers/mailbox/imx-mailbox.c
-+++ b/drivers/mailbox/imx-mailbox.c
-@@ -12,19 +12,11 @@
- #include <linux/of_device.h>
- #include <linux/slab.h>
- 
--/* Transmit Register */
--#define IMX_MU_xTRn(x)		(0x00 + 4 * (x))
--/* Receive Register */
--#define IMX_MU_xRRn(x)		(0x10 + 4 * (x))
--/* Status Register */
--#define IMX_MU_xSR		0x20
- #define IMX_MU_xSR_GIPn(x)	BIT(28 + (3 - (x)))
- #define IMX_MU_xSR_RFn(x)	BIT(24 + (3 - (x)))
- #define IMX_MU_xSR_TEn(x)	BIT(20 + (3 - (x)))
- #define IMX_MU_xSR_BRDIP	BIT(9)
- 
--/* Control Register */
--#define IMX_MU_xCR		0x24
- /* General Purpose Interrupt Enable */
- #define IMX_MU_xCR_GIEn(x)	BIT(28 + (3 - (x)))
- /* Receive Interrupt Enable */
-@@ -44,6 +36,13 @@ enum imx_mu_chan_type {
- 	IMX_MU_TYPE_RXDB,	/* Rx doorbell */
- };
- 
-+struct imx_mu_dcfg {
-+	u32	xTR[4];		/* Transmit Registers */
-+	u32	xRR[4];		/* Receive Registers */
-+	u32	xSR;		/* Status Register */
-+	u32	xCR;		/* Control Register */
-+};
-+
- struct imx_mu_con_priv {
- 	unsigned int		idx;
- 	char			irq_desc[IMX_MU_CHAN_NAME_SIZE];
-@@ -61,12 +60,27 @@ struct imx_mu_priv {
- 	struct mbox_chan	mbox_chans[IMX_MU_CHANS];
- 
- 	struct imx_mu_con_priv  con_priv[IMX_MU_CHANS];
-+	const struct imx_mu_dcfg	*dcfg;
- 	struct clk		*clk;
- 	int			irq;
- 
- 	bool			side_b;
- };
- 
-+static const struct imx_mu_dcfg imx_mu_cfg_imx6sx = {
-+	.xTR	= {0x0, 0x4, 0x8, 0xc},
-+	.xRR	= {0x10, 0x14, 0x18, 0x1c},
-+	.xSR	= 0x20,
-+	.xCR	= 0x24,
-+};
-+
-+static const struct imx_mu_dcfg imx_mu_cfg_imx7ulp = {
-+	.xTR	= {0x20, 0x24, 0x28, 0x2c},
-+	.xRR	= {0x40, 0x44, 0x48, 0x4c},
-+	.xSR	= 0x60,
-+	.xCR	= 0x64,
-+};
-+
- static struct imx_mu_priv *to_imx_mu_priv(struct mbox_controller *mbox)
- {
- 	return container_of(mbox, struct imx_mu_priv, mbox);
-@@ -88,10 +102,10 @@ static u32 imx_mu_xcr_rmw(struct imx_mu_priv *priv, u32 set, u32 clr)
- 	u32 val;
- 
- 	spin_lock_irqsave(&priv->xcr_lock, flags);
--	val = imx_mu_read(priv, IMX_MU_xCR);
-+	val = imx_mu_read(priv, priv->dcfg->xCR);
- 	val &= ~clr;
- 	val |= set;
--	imx_mu_write(priv, val, IMX_MU_xCR);
-+	imx_mu_write(priv, val, priv->dcfg->xCR);
- 	spin_unlock_irqrestore(&priv->xcr_lock, flags);
- 
- 	return val;
-@@ -111,8 +125,8 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
- 	struct imx_mu_con_priv *cp = chan->con_priv;
- 	u32 val, ctrl, dat;
- 
--	ctrl = imx_mu_read(priv, IMX_MU_xCR);
--	val = imx_mu_read(priv, IMX_MU_xSR);
-+	ctrl = imx_mu_read(priv, priv->dcfg->xCR);
-+	val = imx_mu_read(priv, priv->dcfg->xSR);
- 
- 	switch (cp->type) {
- 	case IMX_MU_TYPE_TX:
-@@ -138,10 +152,10 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
- 		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_TIEn(cp->idx));
- 		mbox_chan_txdone(chan, 0);
- 	} else if (val == IMX_MU_xSR_RFn(cp->idx)) {
--		dat = imx_mu_read(priv, IMX_MU_xRRn(cp->idx));
-+		dat = imx_mu_read(priv, priv->dcfg->xRR[cp->idx]);
- 		mbox_chan_received_data(chan, (void *)&dat);
- 	} else if (val == IMX_MU_xSR_GIPn(cp->idx)) {
--		imx_mu_write(priv, IMX_MU_xSR_GIPn(cp->idx), IMX_MU_xSR);
-+		imx_mu_write(priv, IMX_MU_xSR_GIPn(cp->idx), priv->dcfg->xSR);
- 		mbox_chan_received_data(chan, NULL);
- 	} else {
- 		dev_warn_ratelimited(priv->dev, "Not handled interrupt\n");
-@@ -159,7 +173,7 @@ static int imx_mu_send_data(struct mbox_chan *chan, void *data)
- 
- 	switch (cp->type) {
- 	case IMX_MU_TYPE_TX:
--		imx_mu_write(priv, *arg, IMX_MU_xTRn(cp->idx));
-+		imx_mu_write(priv, *arg, priv->dcfg->xTR[cp->idx]);
- 		imx_mu_xcr_rmw(priv, IMX_MU_xCR_TIEn(cp->idx), 0);
- 		break;
- 	case IMX_MU_TYPE_TXDB:
-@@ -270,7 +284,7 @@ static void imx_mu_init_generic(struct imx_mu_priv *priv)
- 		return;
- 
- 	/* Set default MU configuration */
--	imx_mu_write(priv, 0, IMX_MU_xCR);
-+	imx_mu_write(priv, 0, priv->dcfg->xCR);
- }
- 
- static int imx_mu_probe(struct platform_device *pdev)
-@@ -278,6 +292,7 @@ static int imx_mu_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct imx_mu_priv *priv;
-+	const struct imx_mu_dcfg *dcfg;
- 	unsigned int i;
- 	int ret;
- 
-@@ -295,6 +310,11 @@ static int imx_mu_probe(struct platform_device *pdev)
- 	if (priv->irq < 0)
- 		return priv->irq;
- 
-+	dcfg = of_device_get_match_data(dev);
-+	if (!dcfg)
-+		return -EINVAL;
-+	priv->dcfg = dcfg;
-+
- 	priv->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(priv->clk)) {
- 		if (PTR_ERR(priv->clk) != -ENOENT)
-@@ -348,7 +368,8 @@ static int imx_mu_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id imx_mu_dt_ids[] = {
--	{ .compatible = "fsl,imx6sx-mu" },
-+	{ .compatible = "fsl,imx7ulp-mu", .data = &imx_mu_cfg_imx7ulp },
-+	{ .compatible = "fsl,imx6sx-mu", .data = &imx_mu_cfg_imx6sx },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, imx_mu_dt_ids);
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+> 
+> diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> index 46d0d35b9ca4..8e700390f3d6 100644
+> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c
+> +++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> @@ -880,34 +880,44 @@ int dlpar_memory(struct pseries_hp_errorlog *hp_elog)
+>  
+>  	switch (hp_elog->action) {
+>  	case PSERIES_HP_ELOG_ACTION_ADD:
+> -		if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_COUNT) {
+> +		switch (hp_elog->id_type) {
+> +		case PSERIES_HP_ELOG_ID_DRC_COUNT:
+>  			count = hp_elog->_drc_u.drc_count;
+>  			rc = dlpar_memory_add_by_count(count);
+> -		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_INDEX) {
+> +			break;
+> +		case PSERIES_HP_ELOG_ID_DRC_INDEX:
+>  			drc_index = hp_elog->_drc_u.drc_index;
+>  			rc = dlpar_memory_add_by_index(drc_index);
+> -		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_IC) {
+> +			break;
+> +		case PSERIES_HP_ELOG_ID_DRC_IC:
+>  			count = hp_elog->_drc_u.ic.count;
+>  			drc_index = hp_elog->_drc_u.ic.index;
+>  			rc = dlpar_memory_add_by_ic(count, drc_index);
+> -		} else {
+> +			break;
+> +		default:
+>  			rc = -EINVAL;
+> +			break;
+>  		}
+>  
+>  		break;
+>  	case PSERIES_HP_ELOG_ACTION_REMOVE:
+> -		if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_COUNT) {
+> +		switch (hp_elog->id_type) {
+> +		case PSERIES_HP_ELOG_ID_DRC_COUNT:
+>  			count = hp_elog->_drc_u.drc_count;
+>  			rc = dlpar_memory_remove_by_count(count);
+> -		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_INDEX) {
+> +			break;
+> +		case PSERIES_HP_ELOG_ID_DRC_INDEX:
+>  			drc_index = hp_elog->_drc_u.drc_index;
+>  			rc = dlpar_memory_remove_by_index(drc_index);
+> -		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_IC) {
+> +			break;
+> +		case PSERIES_HP_ELOG_ID_DRC_IC:
+>  			count = hp_elog->_drc_u.ic.count;
+>  			drc_index = hp_elog->_drc_u.ic.index;
+>  			rc = dlpar_memory_remove_by_ic(count, drc_index);
+> -		} else {
+> +			break;
+> +		default:
+>  			rc = -EINVAL;
+> +			break;
+>  		}
+>  
+>  		break;
+> 
+
+
 -- 
-2.7.4
 
+Thanks,
+
+David / dhildenb
