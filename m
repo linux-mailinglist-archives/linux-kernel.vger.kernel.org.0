@@ -2,29 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8260E7EC38
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ADB67EC43
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:50:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732979AbfHBFsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 01:48:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56630 "EHLO mx1.suse.de"
+        id S2388168AbfHBFuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 01:50:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56986 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728714AbfHBFsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 01:48:45 -0400
+        id S1728714AbfHBFuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 01:50:00 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 587C2AE91;
-        Fri,  2 Aug 2019 05:48:44 +0000 (UTC)
-Date:   Fri, 02 Aug 2019 07:48:47 +0200
-Message-ID: <s5hv9vgrubk.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id DF543AFD2;
+        Fri,  2 Aug 2019 05:49:58 +0000 (UTC)
+Date:   Fri, 02 Aug 2019 07:50:01 +0200
+Message-ID: <s5htvb0ru9i.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     Colin King <colin.king@canonical.com>
-Cc:     <alsa-devel@alsa-project.org>, Jaroslav Kysela <perex@perex.cz>,
+To:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+Cc:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "hui.wang@canonical.com" <hui.wang@canonical.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "pierre-louis.bossart@linux.intel.com" 
+        <pierre-louis.bossart@linux.intel.com>,
+        "yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
         Takashi Iwai <tiwai@suse.com>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: isa/wavefront: remove redundant assignment to pointer bptr
-In-Reply-To: <20190801162824.32217-1-colin.king@canonical.com>
-References: <20190801162824.32217-1-colin.king@canonical.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>,
+        David Wang <DavidWang@zhaoxin.com>,
+        "Herry Yang(BJ-RD)" <HerryYang@zhaoxin.com>,
+        "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>
+Subject: Re: [PATCH] ALSA: hda: Add support of Zhaoxin controller
+In-Reply-To: <6a423679a72a4acb88233559fae0507b@zhaoxin.com>
+References: <6a423679a72a4acb88233559fae0507b@zhaoxin.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -35,17 +46,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 01 Aug 2019 18:28:24 +0200,
-Colin King wrote:
+On Fri, 02 Aug 2019 05:04:08 +0200,
+Tony W Wang-oc wrote:
 > 
-> From: Colin Ian King <colin.king@canonical.com>
+> Add the new PCI ID 0x1d17 0x3288 Zhaoxin controller support
 > 
-> The pointer bptr is being assigned a value that is never read
-> and it is being updated in the next statement with a new value.
-> The initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
 
 Applied, thanks.
 
