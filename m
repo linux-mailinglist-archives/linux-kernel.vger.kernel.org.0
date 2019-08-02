@@ -2,123 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA1177F6CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:26:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6423F7F6D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:27:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392501AbfHBM0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:26:53 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:57911 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388599AbfHBM0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:26:52 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 460RHF4fMDz9sBF;
-        Fri,  2 Aug 2019 22:26:49 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Leonardo Bras <leonardo@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Nathan Lynch <nathanl@linux.ibm.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/1] pseries/hotplug-memory.c: Replace nested ifs by switch-case
-In-Reply-To: <20190801225251.17864-1-leonardo@linux.ibm.com>
-References: <20190801225251.17864-1-leonardo@linux.ibm.com>
-Date:   Fri, 02 Aug 2019 22:26:48 +1000
-Message-ID: <87sgqjkb1z.fsf@concordia.ellerman.id.au>
+        id S2392607AbfHBM1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:27:42 -0400
+Received: from sonic308-56.consmr.mail.ne1.yahoo.com ([66.163.187.31]:39745
+        "EHLO sonic308-56.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388599AbfHBM1m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:27:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1564748860; bh=tPdyM4f7Tq8kspt5syr9wxbiHLUxanV8lkCr2Pkkkas=; h=Date:From:Reply-To:Subject:From:Subject; b=VTUoly0p7ES2Ixq22NviOrwQKzo3BGRr5wX2Ns9PEzCCQlygrMPx+jEX2rcxwC8OtdwKjGxyYWyhv9I236BzILUc3TDf/vrf2VE54WhndHZGo3TN5K2pEnf0TdmpFqL088ZODULGeD7+KkEn+y48KltZDkFHZyMRSlELZrH+C+sjWJjaboWYmnt6qrkjc3xkUW3xkNKw1LM9o4gVElA15jbYGVLLf25Ia1Ghx/tYae9LpsoylIvBndyLFM9KvUfA82gQH1qzIyM9tj+eyR2AdP2Djit4vM9RiiSqqitLMMraB/jKqoiifXbIfGFCvBadU9Hu0L2TlundsqjVRuVjkA==
+X-YMail-OSG: LGYhDFEVM1lewJ8rJFRf9kbwMfMjJWBipXC0of3ugQg6Z3AVn3whVS13ZQ5wKit
+ yibqZdXVDy2Ee4BaXhns9djvWxERXLJ5lcI3dvZrqINNp9YSvE_GeHd1fmLkvKIeMuOruxcS9gug
+ W27RHGx8QQW5vjDy1k2T3I.ocQu.6MPgI_NE7Zt84IJiwt6GD8rwj1kTwGne.RfKeRd.r0FckVco
+ mrKUEmngpeknYk0BQUUfM30C_rcoZ78cOG.t.SuDzeMWDK3Tz745EFfVG1LWXYbPLI2f5e.0HUvF
+ WAHs5e8w12KIBNi_0i9KCuBaDFV2WzG.n_SeCx1HosdraHQXQPot0EqGV8fxm10btLxoGtw0q4VY
+ wUM711kSXgNBw2m8.HuE7rKzzQR.lTZukI21wQ.4NIvnM7c.d8GnSZ4IWsA5qoZSNPtBVJjIy9gP
+ 1jlqLT2D7HizO9s.XUT9aVOORE4hNXVSUCTzbxJJjS40ep0OqcmPLAnPxIk8LVpVeFhWdOHiQwDQ
+ CRcfN0r352C0LePHmbjzKXe0w8zyUGH.nt9o8NUN.mKo74qc0NI3jh4CLCdkbougGABSQZjwdc31
+ qAdoGa3Ifr6L_pzbdx5VT8MLFvM_Z2ergqlIG7PpMKsZj1OGXyB_1Mq0AJVWK4Uc.gVXmlAh9e8w
+ _yY5oCMZbMq3ASQovb0CZsKsfNDVNOgEFnk7cuMbzUV0Hp6eUaga32.xk7CDB5Hf7y0QQns5zI0a
+ qbtFIija40SoiEgWNAiHStS9pN_Wv8fjUJaktBGYQiDE_.rf3NBR5TdIOUlOiH0nWxxHDt4AF.RW
+ qv0tj3SH0uliaEJDkScF6gFhrQqBlHe98enJzkHqTwNydIKLB50kPfBgJDfnk3.OKHhEYa76Eb91
+ qLWeyfd1aXw9ZBPOYpBQgBY1xdQpGJYNZMXDgJ6c7IF.Ep_9WztQsXN5wiikvGXnTki5CtK9oHQa
+ wmtQXtmSSuuA3ThRNUWEHPOuKNK5KDntYmTkyaeAMZPaAF94PemTwo4Zrw7yOb2eGcmK8oUUjX74
+ mTH5.PzImziI3AWE2Ht7ECXJPvosMxRjUFHrwN9tNmL9aQvvaSo9oRmDhQu2ZphAG19szTergsSv
+ a2.7AnOLkgvvBasZKn4CkxkqeKWDCcziOKD8qGbSQXlF8kCJ8Rf9wBuu8esMFvQGqaPREm26sTXu
+ EzbGPdaFo74jVxxNiH9Rly1C3mNH_kcNjcvPgcp9flq1D_zrZJ8vznZY-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 2 Aug 2019 12:27:40 +0000
+Date:   Fri, 2 Aug 2019 12:27:39 +0000 (UTC)
+From:   Aisha Gaddafi <gaddafiaisha25552@aol.com>
+Reply-To: gaisha983@gmail.com
+Message-ID: <220361650.143829.1564748859288@mail.yahoo.com>
+Subject: Dear Friend,
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Leonardo Bras <leonardo@linux.ibm.com> writes:
-> I noticed these nested ifs can be easily replaced by switch-cases,
-> which can improve readability.
->
-> Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
-> ---
->  .../platforms/pseries/hotplug-memory.c        | 26 +++++++++++++------
->  1 file changed, 18 insertions(+), 8 deletions(-)
+Dear Friend,
 
-Thanks, this looks sensible.
+I came across your e-mail contact prior a private search while in need of 
+your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
+three Children. I am the only biological Daughter of late Libyan President 
+(Late Colonel Muammar Gaddafi).
 
-Please use "powerpc/" as the prefix on your patches, eg. in this case:
+I have investment funds worth Twenty Seven Million Five Hundred Thousand 
+United State Dollar ($27.500.000.00 ) and i need a trusted investment 
+Manager/Partner because of my current refugee status, however, I am 
+interested in you for investment project assistance in your country, may be 
+from there, we can build business relationship in the nearest future.
 
-"powerpc/pseries/hotplug-memory.c: Replace nested ifs by switch-case"
+I am willing to negotiate investment/business profit sharing ratio with you 
+base on the future investment earning profits.
 
-I'll fix it up this time when I apply.
+If you are willing to handle this project on my behalf kindly reply urgent 
+to enable me provide you more information about the investment funds.
 
-cheers
+Your Urgent Reply Will Be Appreciated.
 
-> diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-> index 46d0d35b9ca4..8e700390f3d6 100644
-> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-> +++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-> @@ -880,34 +880,44 @@ int dlpar_memory(struct pseries_hp_errorlog *hp_elog)
->  
->  	switch (hp_elog->action) {
->  	case PSERIES_HP_ELOG_ACTION_ADD:
-> -		if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_COUNT) {
-> +		switch (hp_elog->id_type) {
-> +		case PSERIES_HP_ELOG_ID_DRC_COUNT:
->  			count = hp_elog->_drc_u.drc_count;
->  			rc = dlpar_memory_add_by_count(count);
-> -		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_INDEX) {
-> +			break;
-> +		case PSERIES_HP_ELOG_ID_DRC_INDEX:
->  			drc_index = hp_elog->_drc_u.drc_index;
->  			rc = dlpar_memory_add_by_index(drc_index);
-> -		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_IC) {
-> +			break;
-> +		case PSERIES_HP_ELOG_ID_DRC_IC:
->  			count = hp_elog->_drc_u.ic.count;
->  			drc_index = hp_elog->_drc_u.ic.index;
->  			rc = dlpar_memory_add_by_ic(count, drc_index);
-> -		} else {
-> +			break;
-> +		default:
->  			rc = -EINVAL;
-> +			break;
->  		}
->  
->  		break;
->  	case PSERIES_HP_ELOG_ACTION_REMOVE:
-> -		if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_COUNT) {
-> +		switch (hp_elog->id_type) {
-> +		case PSERIES_HP_ELOG_ID_DRC_COUNT:
->  			count = hp_elog->_drc_u.drc_count;
->  			rc = dlpar_memory_remove_by_count(count);
-> -		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_INDEX) {
-> +			break;
-> +		case PSERIES_HP_ELOG_ID_DRC_INDEX:
->  			drc_index = hp_elog->_drc_u.drc_index;
->  			rc = dlpar_memory_remove_by_index(drc_index);
-> -		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_IC) {
-> +			break;
-> +		case PSERIES_HP_ELOG_ID_DRC_IC:
->  			count = hp_elog->_drc_u.ic.count;
->  			drc_index = hp_elog->_drc_u.ic.index;
->  			rc = dlpar_memory_remove_by_ic(count, drc_index);
-> -		} else {
-> +			break;
-> +		default:
->  			rc = -EINVAL;
-> +			break;
->  		}
->  
->  		break;
-> -- 
-> 2.20.1
+Best Regards
+Mrs Aisha Gaddafi
+(gaisha983@gmail.com)
