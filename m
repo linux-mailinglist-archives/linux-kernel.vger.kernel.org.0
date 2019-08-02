@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1100A7F0C2
+	by mail.lfdr.de (Postfix) with ESMTP id 8443B7F0C3
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391195AbfHBJcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:32:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59070 "EHLO mail.kernel.org"
+        id S2390324AbfHBJcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:32:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404732AbfHBJcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:32:17 -0400
+        id S2391191AbfHBJcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:32:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2FAA217F5;
-        Fri,  2 Aug 2019 09:32:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63060217D6;
+        Fri,  2 Aug 2019 09:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738336;
-        bh=vEhUZ+Q3+GdfmwxGBZSPIZgy2ZjNQyg/VSCztUWkVZY=;
+        s=default; t=1564738338;
+        bh=ZgwQnHW9qbACH2wauFG8EO9BfA2QDmU0QRpAI0NIdI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cvG5i38Bm2GUdIZLnlFTEBmKRL/6DFD7DXAGoPPjTchozIS97hkp56P6rWLSbUG9e
-         IlKP7lgeDeT600ZtkwYRTatZdnDO0PyZ+fzIOqQFtt9QNRKP2jfAkgKfO+GHvu4evW
-         1FhZKIBKJu5pafEE+GeFLCb/IUShbFTkAfjfnzuU=
+        b=hzVckPf4igC2g5380phc6p4UAtU0UZ33nSwsqRvnXE1XW+6kecSWNJGjBiULp7ZT+
+         WXjdixzPBI5uccgf+SgsFEy4ItkVQ1w+6fkj1zWWqvSOQCz11E5ZF4IQSyv5vslsUg
+         bmvPa9Z8LJyety1m0EPFfFJptpKrZl23utVInvfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@collabora.com>,
+        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.4 064/158] media: v4l2: Test type instead of cfg->type in v4l2_ctrl_new_custom()
-Date:   Fri,  2 Aug 2019 11:28:05 +0200
-Message-Id: <20190802092217.079913640@linuxfoundation.org>
+Subject: [PATCH 4.4 065/158] media: coda: Remove unbalanced and unneeded mutex unlock
+Date:   Fri,  2 Aug 2019 11:28:06 +0200
+Message-Id: <20190802092217.291610771@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -45,47 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@collabora.com>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-commit 07d89227a983df957a6a7c56f7c040cde9ac571f upstream.
+commit 766b9b168f6c75c350dd87c3e0bc6a9b322f0013 upstream.
 
-cfg->type can be overridden by v4l2_ctrl_fill() and the new value is
-stored in the local type var. Fix the tests to use this local var.
+The mutex unlock in the threaded interrupt handler is not paired
+with any mutex lock. Remove it.
 
-Fixes: 0996517cf8ea ("V4L/DVB: v4l2: Add new control handling framework")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-[hverkuil-cisco@xs4all.nl: change to !qmenu and !qmenu_int (checkpatch)]
+This bug has been here for a really long time, so it applies
+to any stable repo.
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: stable@vger.kernel.org
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-ctrls.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/media/platform/coda/coda-bit.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -2073,16 +2073,15 @@ struct v4l2_ctrl *v4l2_ctrl_new_custom(s
- 		v4l2_ctrl_fill(cfg->id, &name, &type, &min, &max, &step,
- 								&def, &flags);
- 
--	is_menu = (cfg->type == V4L2_CTRL_TYPE_MENU ||
--		   cfg->type == V4L2_CTRL_TYPE_INTEGER_MENU);
-+	is_menu = (type == V4L2_CTRL_TYPE_MENU ||
-+		   type == V4L2_CTRL_TYPE_INTEGER_MENU);
- 	if (is_menu)
- 		WARN_ON(step);
- 	else
- 		WARN_ON(cfg->menu_skip_mask);
--	if (cfg->type == V4L2_CTRL_TYPE_MENU && qmenu == NULL)
-+	if (type == V4L2_CTRL_TYPE_MENU && !qmenu) {
- 		qmenu = v4l2_ctrl_get_menu(cfg->id);
--	else if (cfg->type == V4L2_CTRL_TYPE_INTEGER_MENU &&
--		 qmenu_int == NULL) {
-+	} else if (type == V4L2_CTRL_TYPE_INTEGER_MENU && !qmenu_int) {
- 		handler_set_err(hdl, -EINVAL);
- 		return NULL;
+--- a/drivers/media/platform/coda/coda-bit.c
++++ b/drivers/media/platform/coda/coda-bit.c
+@@ -2107,7 +2107,6 @@ irqreturn_t coda_irq_handler(int irq, vo
+ 	if (ctx == NULL) {
+ 		v4l2_err(&dev->v4l2_dev,
+ 			 "Instance released before the end of transaction\n");
+-		mutex_unlock(&dev->coda_mutex);
+ 		return IRQ_HANDLED;
  	}
+ 
 
 
