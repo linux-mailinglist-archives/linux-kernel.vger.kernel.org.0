@@ -2,72 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07A4680332
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 706F280333
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389537AbfHBXZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 19:25:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34312 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389345AbfHBXZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 19:25:42 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E8BB20880;
-        Fri,  2 Aug 2019 23:25:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564788341;
-        bh=moP7yGELMRVCRSa3TC3FlTzQYEhiVNu9R5lupCR9Qn8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=vKQMlmDU3AM3YsVYf14Jv5x0wb4ORtK0ZFCcsAv9tD+15ls53oK1ynatJvV8ZPfpw
-         KuAFnhzUqiGpz/Hhw2WUrGoF7E1/fftL+/Zm2HDMZHzgos+X1Fa74onMLrHSKM6imN
-         cLi3gf105PZKdcfUisx3LPivd0bSi8pdfawNiJbg=
-Subject: Re: [PATCH 5.2 00/20] 5.2.6-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190802092055.131876977@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <3245056b-0437-72d8-6aeb-749e6bce8793@kernel.org>
-Date:   Fri, 2 Aug 2019 17:25:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2389769AbfHBX0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 19:26:49 -0400
+Received: from smtprelay0088.hostedemail.com ([216.40.44.88]:45777 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389345AbfHBX0t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 19:26:49 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 98FC3837F24A;
+        Fri,  2 Aug 2019 23:26:47 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:7576:8985:9025:9036:10004:10400:10848:10967:11232:11658:11914:12043:12297:12555:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21611:21627:21740:30029:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: deer92_3b20a69384253
+X-Filterd-Recvd-Size: 2168
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  2 Aug 2019 23:26:46 +0000 (UTC)
+Message-ID: <120880ae17b399cb5239522d8c229c717aaa81a5.camel@perches.com>
+Subject: Re: [PATCH] net: sctp: Rename fallthrough label to unhandled
+From:   Joe Perches <joe@perches.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     nhorman@tuxdriver.com, vyasevich@gmail.com,
+        marcelo.leitner@gmail.com, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 02 Aug 2019 16:26:44 -0700
+In-Reply-To: <20190802.161932.1776993765494484851.davem@davemloft.net>
+References: <eac3fe457d553a2b366e1c1898d47ae8c048087c.camel@perches.com>
+         <20190731121646.GD9823@hmswarspite.think-freely.org>
+         <a03a23728d3b468942a20b55f70babceaec587ee.camel@perches.com>
+         <20190802.161932.1776993765494484851.davem@davemloft.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-In-Reply-To: <20190802092055.131876977@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/2/19 3:39 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.6 release.
-> There are 20 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, 2019-08-02 at 16:19 -0700, David Miller wrote:
+> From: Joe Perches <joe@perches.com>
+> Date: Fri, 02 Aug 2019 10:47:34 -0700
 > 
-> Responses should be made by Sun 04 Aug 2019 09:19:34 AM UTC.
-> Anything received after that time might be too late.
+> > On Wed, 2019-07-31 at 08:16 -0400, Neil Horman wrote:
+> >> On Wed, Jul 31, 2019 at 04:32:43AM -0700, Joe Perches wrote:
+> >> > On Wed, 2019-07-31 at 07:19 -0400, Neil Horman wrote:
+> >> > > On Tue, Jul 30, 2019 at 10:04:37PM -0700, Joe Perches wrote:
+> >> > > > fallthrough may become a pseudo reserved keyword so this only use of
+> >> > > > fallthrough is better renamed to allow it.
+> > 
+> > Can you or any other maintainer apply this patch
+> > or ack it so David Miller can apply it?
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+> I, like others, don't like the lack of __ in the keyword.  It's kind of
+> rediculous the problems it creates to pollute the global namespace like
+> that and yes also inconsistent with other shorthands for builtins.
 
-Compiled and booted on my test system. No dmesg regressions.
+Please add that to the conversation on the RFC thread.
+https://lore.kernel.org/patchwork/patch/1108577/
 
-thanks,
--- Shuah
+In any case, fallthrough is not really a good label
+name for this use.
+
 
