@@ -2,128 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBBBD7F780
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 933C47F796
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392757AbfHBMzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:55:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40050 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404801AbfHBMz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:55:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C4AA9AD85;
-        Fri,  2 Aug 2019 12:55:27 +0000 (UTC)
-Date:   Fri, 2 Aug 2019 14:55:26 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Linux I2C <linux-i2c@vger.kernel.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
-        Andrew Cooks <acooks@rationali.st>, linux-acpi@vger.kernel.org,
-        platypus-sw@opengear.com, "Tobin C . Harding" <me@tobin.cc>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Will Wagner <willw@carallon.com>
-Subject: [PATCH v5 3/3] i2c: piix4: Add ACPI support
-Message-ID: <20190802145526.6edba0a6@endymion>
-In-Reply-To: <20190802145109.38dd4045@endymion>
-References: <20190802145109.38dd4045@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2392834AbfHBM4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:56:21 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56083 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390382AbfHBM4S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:56:18 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a15so67867512wmj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 05:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=yjEMe5wuk6zRJXQKT5fhkZ+36XC9uZHCWgmdHyE58XY=;
+        b=OBpDVFZIBBIkpNcqE4jGwaWXitaI6CuguZip4iFoAXWKm8LSDhYbAE2Tm8Nm5hOu6L
+         n6+Bj0rHVMZID2sbxyEjT06dzgqarhID7D5J4TgPbZnrR4nLHu85F3T6erUeUBYxWem8
+         KuR1vdqRSZL0Gcp5K/CRMXc08PUyBFewGyU2a6QjSrX4UN1wDbgskMuq9ZGCAJRO2OCb
+         7mG0uTSaTgH6rrMb8aEJFxBUZT44+m2tMxAjau92B2RwttZFGM2Hej5S6Ilb8QtoN2r4
+         XYr3ftU3MdtxrjNUnRv6bXNEddH/aH5QCL3D8x0DyiIaN+rbrwotL4yoHzK5FNpUZEj1
+         v+Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=yjEMe5wuk6zRJXQKT5fhkZ+36XC9uZHCWgmdHyE58XY=;
+        b=QzxfZe3JjluSIOXU1usct+ixYTLFeF5uitlk9IXTRuNhsVF0qNciHE6AS8gVEWCi9+
+         UhG6NunviSOO3qkDoqWiBYPyXa6PzIxKPudV4CrrMVRl2RsiUsr8WR2BbC93AT3VobjG
+         h1AGTq1O7dwgBiEXM6K1EqymHJCgMLyE0FfkfTA+aKtM02p4Zw4cDLnyXa5mvxniQKjJ
+         QjUJOH/mH+hzK3CxaHm1RaSOKcCSayiFpGMW3FwxDQMDMojNH+DNtc4YnmSQrOtcbaou
+         bA131ixGH0ogxkREqok6XRo82j/cMs4SdPKai6FyRupsp5CTsef4V8sPSJTwNxIZL56T
+         FCrA==
+X-Gm-Message-State: APjAAAWVTc/d25EfN3/I9sIj4HkX2cOAqh8mwp6sf9kt24ZYzBF0gOyb
+        gRk6P9YW3TUdpNd5LDDv4RZ8v/TO5wg=
+X-Google-Smtp-Source: APXvYqyxJYBXSeg7k/KW2FWFciZ8HrfRdGOIn8Juel+e3FPcNzJpzc0sn9K7d6Pj7Awoh+u+XFLLTQ==
+X-Received: by 2002:a1c:3:: with SMTP id 3mr4569287wma.6.1564750575947;
+        Fri, 02 Aug 2019 05:56:15 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:dfa:cc47:b267:2a71])
+        by smtp.gmail.com with ESMTPSA id i6sm69543930wrv.47.2019.08.02.05.56.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 02 Aug 2019 05:56:15 -0700 (PDT)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     pauld@redhat.com, valentin.schneider@arm.com,
+        srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH v3] sched/fair: use utilization to select misfit task
+Date:   Fri,  2 Aug 2019 14:56:12 +0200
+Message-Id: <1564750572-20251-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1564670424-26023-9-git-send-email-vincent.guittot@linaro.org>
+References: <1564670424-26023-9-git-send-email-vincent.guittot@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the i2c-piix4 SMBus controller driver to enumerate I2C slave
-devices using ACPI. It builds on the related I2C mux device work
-in commit 8eb5c87a92c0 ("i2c: add ACPI support for I2C mux ports")
+utilization is used to detect a misfit task but the load is then used to
+select the task on the CPU which can lead to select a small task with
+high weight instead of the task that triggered the misfit migration.
 
-In the i2c-piix4 driver the adapters are enumerated as:
- Main SMBus adapter Port 0, Port 2, ..., aux port (i.e., ASF adapter)
-
-However, in the AMD BKDG documentation[1], the implied order of ports is:
- Main SMBus adapter Port 0, ASF adapter, Port 2, Port 3, ...
-
-This ordering difference is unfortunate. We assume that ACPI
-developers will use the AMD documentation ordering, so we have to
-pass an extra parameter to piix4_add_adapter().
-
-[1] 52740 BIOS and Kernel Developer's Guide (BKDG) for AMD Family 16h
-Models 30h-3Fh Processors
-
-Based on earlier work by Andrew Cooks.
-
-Reported-by: Andrew Cooks <andrew.cooks@opengear.com>
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
-Changes since v4:
- * Fix code alignment (reported by Tobin C. Harding)
- * Adjust to changes in previous patch
- * Use the SMBus numbering documented by AMD
+Keep tracking load instead of utilization but check that 
+task doesn't fit CPU's capacity when selecting the task to detach as
+suggested by Valentin 
 
- drivers/i2c/busses/i2c-piix4.c |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ kernel/sched/fair.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
---- linux-5.2.orig/drivers/i2c/busses/i2c-piix4.c	2019-08-02 14:26:02.197346075 +0200
-+++ linux-5.2/drivers/i2c/busses/i2c-piix4.c	2019-08-02 14:40:40.990505068 +0200
-@@ -811,7 +811,8 @@ static int piix4_adapter_count;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 53e64a7..8496118 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7487,15 +7487,9 @@ static int detach_tasks(struct lb_env *env)
+ 			break;
  
- static int piix4_add_adapter(struct pci_dev *dev, unsigned short smba,
- 			     bool sb800_main, u8 port, bool notify_imc,
--			     const char *name, struct i2c_adapter **padap)
-+			     u8 hw_port_nr, const char *name,
-+			     struct i2c_adapter **padap)
- {
- 	struct i2c_adapter *adap;
- 	struct i2c_piix4_adapdata *adapdata;
-@@ -843,6 +844,12 @@ static int piix4_add_adapter(struct pci_
- 	/* set up the sysfs linkage to our parent device */
- 	adap->dev.parent = &dev->dev;
+ 		case migrate_misfit:
+-			load = task_h_load(p);
+-
+-			/*
+-			 * utilization of misfit task might decrease a bit
+-			 * since it has been recorded. Be conservative in the
+-			 * condition.
+-			 */
+-			if (load < env->imbalance)
+-				goto next;
++			/* This is not a misfit task */
++                       if (task_fits_capacity(p, capacity_of(env->src_cpu)))
++			       goto next;
  
-+	if (has_acpi_companion(&dev->dev)) {
-+		acpi_preset_companion(&adap->dev,
-+				      ACPI_COMPANION(&dev->dev),
-+				      hw_port_nr);
-+	}
-+
- 	snprintf(adap->name, sizeof(adap->name),
- 		"SMBus PIIX4 adapter%s at %04x", name, smba);
- 
-@@ -876,7 +883,10 @@ static int piix4_add_adapters_sb800(stru
- 	}
- 
- 	for (port = 0; port < piix4_adapter_count; port++) {
-+		u8 hw_port_nr = port == 0 ? 0 : port + 1;
-+
- 		retval = piix4_add_adapter(dev, smba, true, port, notify_imc,
-+					   hw_port_nr,
- 					   piix4_main_port_names_sb800[port],
- 					   &piix4_main_adapters[port]);
- 		if (retval < 0)
-@@ -947,8 +957,8 @@ static int piix4_probe(struct pci_dev *d
- 			return retval;
- 
- 		/* Try to register main SMBus adapter, give up if we can't */
--		retval = piix4_add_adapter(dev, retval, false, 0, false, "",
--					   &piix4_main_adapters[0]);
-+		retval = piix4_add_adapter(dev, retval, false, 0, false, 0,
-+					   "", &piix4_main_adapters[0]);
- 		if (retval < 0)
- 			return retval;
- 	}
-@@ -974,7 +984,7 @@ static int piix4_probe(struct pci_dev *d
- 	if (retval > 0) {
- 		/* Try to add the aux adapter if it exists,
- 		 * piix4_add_adapter will clean up if this fails */
--		piix4_add_adapter(dev, retval, false, 0, false,
-+		piix4_add_adapter(dev, retval, false, 0, false, 1,
- 				  is_sb800 ? piix4_aux_port_name_sb800 : "",
- 				  &piix4_aux_adapter);
- 	}
-
+ 			env->imbalance = 0;
+ 			break;
 -- 
-Jean Delvare
-SUSE L3 Support
+2.7.4
+
