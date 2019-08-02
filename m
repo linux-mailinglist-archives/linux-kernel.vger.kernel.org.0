@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895B77F0AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 917497F0C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404717AbfHBJbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:31:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57904 "EHLO mail.kernel.org"
+        id S2391253AbfHBJcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:32:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404701AbfHBJbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:31:36 -0400
+        id S2391237AbfHBJcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:32:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA802217D6;
-        Fri,  2 Aug 2019 09:31:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 196F721850;
+        Fri,  2 Aug 2019 09:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738295;
-        bh=leisaepSVJkzorCkSQ48wKuQW5CkpQ/yTefoWGUaz9Q=;
+        s=default; t=1564738351;
+        bh=I06RNdYcByR94qLyHaDl6aMiJ8X6lrOOBOL94bolbQ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DloISP7jzoSCzqy4CFpmSaGFu5rv7qXnYy9AvegzZ6QI3AjZ3FPrkU9yUOfBd4uHS
-         MxuPW21sNi1irpPgZzgJAbFKfPSF6iX/vN/B7+Qfqzbfb6vks+i6HrojZA7ZFIouWY
-         9W3Z3bSu4R1zp2GPjS7umotzEGPgJofhFT9Zg71g=
+        b=ESwR1tGdAE3gvu9Umec3T2cRiHdBpMHiNXmtMdXLGCGmLCKG1q+Y6TRbvKYd4YBWC
+         nexEkoah25wygun+Zvh3QY5YZg7qfdC4t8By+QWV5rerDT55dQZD2tLjx/NtEbRCgN
+         WKOhU9nR/e3nsx+f0DuSkZteDoRUM/DTfTXElWjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Mauro S. M. Rodrigues" <maurosr@linux.vnet.ibm.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Matti Kamunen <matti.kamunen@synopsys.com>,
+        Ari Timonen <ari.timonen@synopsys.com>,
+        Matias Karhumaa <matias.karhumaa@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 048/158] ixgbe: Check DDM existence in transceiver before access
-Date:   Fri,  2 Aug 2019 11:27:49 +0200
-Message-Id: <20190802092213.808825843@linuxfoundation.org>
+Subject: [PATCH 4.4 053/158] Bluetooth: Check state in l2cap_disconnect_rsp
+Date:   Fri,  2 Aug 2019 11:27:54 +0200
+Message-Id: <20190802092214.848267324@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -47,61 +46,218 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 655c91414579d7bb115a4f7898ee726fc18e0984 ]
+[ Upstream commit 28261da8a26f4915aa257d12d506c6ba179d961f ]
 
-Some transceivers may comply with SFF-8472 but not implement the Digital
-Diagnostic Monitoring (DDM) interface described in it. The existence of
-such area is specified by bit 6 of byte 92, set to 1 if implemented.
+Because of both sides doing L2CAP disconnection at the same time, it
+was possible to receive L2CAP Disconnection Response with CID that was
+already freed. That caused problems if CID was already reused and L2CAP
+Connection Request with same CID was sent out. Before this patch kernel
+deleted channel context regardless of the state of the channel.
 
-Currently, due to not checking this bit ixgbe fails trying to read SFP
-module's eeprom with the follow message:
+Example where leftover Disconnection Response (frame #402) causes local
+device to delete L2CAP channel which was not yet connected. This in
+turn confuses remote device's stack because same CID is re-used without
+properly disconnecting.
 
-ethtool -m enP51p1s0f0
-Cannot get Module EEPROM data: Input/output error
+Btmon capture before patch:
+** snip **
+> ACL Data RX: Handle 43 flags 0x02 dlen 8                #394 [hci1] 10.748949
+      Channel: 65 len 4 [PSM 3 mode 0] {chan 2}
+      RFCOMM: Disconnect (DISC) (0x43)
+         Address: 0x03 cr 1 dlci 0x00
+         Control: 0x53 poll/final 1
+         Length: 0
+         FCS: 0xfd
+< ACL Data TX: Handle 43 flags 0x00 dlen 8                #395 [hci1] 10.749062
+      Channel: 65 len 4 [PSM 3 mode 0] {chan 2}
+      RFCOMM: Unnumbered Ack (UA) (0x63)
+         Address: 0x03 cr 1 dlci 0x00
+         Control: 0x73 poll/final 1
+         Length: 0
+         FCS: 0xd7
+< ACL Data TX: Handle 43 flags 0x00 dlen 12               #396 [hci1] 10.749073
+      L2CAP: Disconnection Request (0x06) ident 17 len 4
+        Destination CID: 65
+        Source CID: 65
+> HCI Event: Number of Completed Packets (0x13) plen 5    #397 [hci1] 10.752391
+        Num handles: 1
+        Handle: 43
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #398 [hci1] 10.753394
+        Num handles: 1
+        Handle: 43
+        Count: 1
+> ACL Data RX: Handle 43 flags 0x02 dlen 12               #399 [hci1] 10.756499
+      L2CAP: Disconnection Request (0x06) ident 26 len 4
+        Destination CID: 65
+        Source CID: 65
+< ACL Data TX: Handle 43 flags 0x00 dlen 12               #400 [hci1] 10.756548
+      L2CAP: Disconnection Response (0x07) ident 26 len 4
+        Destination CID: 65
+        Source CID: 65
+< ACL Data TX: Handle 43 flags 0x00 dlen 12               #401 [hci1] 10.757459
+      L2CAP: Connection Request (0x02) ident 18 len 4
+        PSM: 1 (0x0001)
+        Source CID: 65
+> ACL Data RX: Handle 43 flags 0x02 dlen 12               #402 [hci1] 10.759148
+      L2CAP: Disconnection Response (0x07) ident 17 len 4
+        Destination CID: 65
+        Source CID: 65
+= bluetoothd: 00:1E:AB:4C:56:54: error updating services: Input/o..   10.759447
+> HCI Event: Number of Completed Packets (0x13) plen 5    #403 [hci1] 10.759386
+        Num handles: 1
+        Handle: 43
+        Count: 1
+> ACL Data RX: Handle 43 flags 0x02 dlen 12               #404 [hci1] 10.760397
+      L2CAP: Connection Request (0x02) ident 27 len 4
+        PSM: 3 (0x0003)
+        Source CID: 65
+< ACL Data TX: Handle 43 flags 0x00 dlen 16               #405 [hci1] 10.760441
+      L2CAP: Connection Response (0x03) ident 27 len 8
+        Destination CID: 65
+        Source CID: 65
+        Result: Connection successful (0x0000)
+        Status: No further information available (0x0000)
+< ACL Data TX: Handle 43 flags 0x00 dlen 27               #406 [hci1] 10.760449
+      L2CAP: Configure Request (0x04) ident 19 len 19
+        Destination CID: 65
+        Flags: 0x0000
+        Option: Maximum Transmission Unit (0x01) [mandatory]
+          MTU: 1013
+        Option: Retransmission and Flow Control (0x04) [mandatory]
+          Mode: Basic (0x00)
+          TX window size: 0
+          Max transmit: 0
+          Retransmission timeout: 0
+          Monitor timeout: 0
+          Maximum PDU size: 0
+> HCI Event: Number of Completed Packets (0x13) plen 5    #407 [hci1] 10.761399
+        Num handles: 1
+        Handle: 43
+        Count: 1
+> ACL Data RX: Handle 43 flags 0x02 dlen 16               #408 [hci1] 10.762942
+      L2CAP: Connection Response (0x03) ident 18 len 8
+        Destination CID: 66
+        Source CID: 65
+        Result: Connection successful (0x0000)
+        Status: No further information available (0x0000)
+*snip*
 
-Because it fails to read the additional 256 bytes in which it was assumed
-to exist the DDM data.
+Similar case after the patch:
+*snip*
+> ACL Data RX: Handle 43 flags 0x02 dlen 8            #22702 [hci0] 1664.411056
+      Channel: 65 len 4 [PSM 3 mode 0] {chan 3}
+      RFCOMM: Disconnect (DISC) (0x43)
+         Address: 0x03 cr 1 dlci 0x00
+         Control: 0x53 poll/final 1
+         Length: 0
+         FCS: 0xfd
+< ACL Data TX: Handle 43 flags 0x00 dlen 8            #22703 [hci0] 1664.411136
+      Channel: 65 len 4 [PSM 3 mode 0] {chan 3}
+      RFCOMM: Unnumbered Ack (UA) (0x63)
+         Address: 0x03 cr 1 dlci 0x00
+         Control: 0x73 poll/final 1
+         Length: 0
+         FCS: 0xd7
+< ACL Data TX: Handle 43 flags 0x00 dlen 12           #22704 [hci0] 1664.411143
+      L2CAP: Disconnection Request (0x06) ident 11 len 4
+        Destination CID: 65
+        Source CID: 65
+> HCI Event: Number of Completed Pac.. (0x13) plen 5  #22705 [hci0] 1664.414009
+        Num handles: 1
+        Handle: 43
+        Count: 1
+> HCI Event: Number of Completed Pac.. (0x13) plen 5  #22706 [hci0] 1664.415007
+        Num handles: 1
+        Handle: 43
+        Count: 1
+> ACL Data RX: Handle 43 flags 0x02 dlen 12           #22707 [hci0] 1664.418674
+      L2CAP: Disconnection Request (0x06) ident 17 len 4
+        Destination CID: 65
+        Source CID: 65
+< ACL Data TX: Handle 43 flags 0x00 dlen 12           #22708 [hci0] 1664.418762
+      L2CAP: Disconnection Response (0x07) ident 17 len 4
+        Destination CID: 65
+        Source CID: 65
+< ACL Data TX: Handle 43 flags 0x00 dlen 12           #22709 [hci0] 1664.421073
+      L2CAP: Connection Request (0x02) ident 12 len 4
+        PSM: 1 (0x0001)
+        Source CID: 65
+> ACL Data RX: Handle 43 flags 0x02 dlen 12           #22710 [hci0] 1664.421371
+      L2CAP: Disconnection Response (0x07) ident 11 len 4
+        Destination CID: 65
+        Source CID: 65
+> HCI Event: Number of Completed Pac.. (0x13) plen 5  #22711 [hci0] 1664.424082
+        Num handles: 1
+        Handle: 43
+        Count: 1
+> HCI Event: Number of Completed Pac.. (0x13) plen 5  #22712 [hci0] 1664.425040
+        Num handles: 1
+        Handle: 43
+        Count: 1
+> ACL Data RX: Handle 43 flags 0x02 dlen 12           #22713 [hci0] 1664.426103
+      L2CAP: Connection Request (0x02) ident 18 len 4
+        PSM: 3 (0x0003)
+        Source CID: 65
+< ACL Data TX: Handle 43 flags 0x00 dlen 16           #22714 [hci0] 1664.426186
+      L2CAP: Connection Response (0x03) ident 18 len 8
+        Destination CID: 66
+        Source CID: 65
+        Result: Connection successful (0x0000)
+        Status: No further information available (0x0000)
+< ACL Data TX: Handle 43 flags 0x00 dlen 27           #22715 [hci0] 1664.426196
+      L2CAP: Configure Request (0x04) ident 13 len 19
+        Destination CID: 65
+        Flags: 0x0000
+        Option: Maximum Transmission Unit (0x01) [mandatory]
+          MTU: 1013
+        Option: Retransmission and Flow Control (0x04) [mandatory]
+          Mode: Basic (0x00)
+          TX window size: 0
+          Max transmit: 0
+          Retransmission timeout: 0
+          Monitor timeout: 0
+          Maximum PDU size: 0
+> ACL Data RX: Handle 43 flags 0x02 dlen 16           #22716 [hci0] 1664.428804
+      L2CAP: Connection Response (0x03) ident 12 len 8
+        Destination CID: 66
+        Source CID: 65
+        Result: Connection successful (0x0000)
+        Status: No further information available (0x0000)
+*snip*
 
-This issue was noticed using a Mellanox Passive DAC PN 01FT738. The eeprom
-data was confirmed by Mellanox as correct and present in other Passive
-DACs in from other manufacturers.
+Fix is to check that channel is in state BT_DISCONN before deleting the
+channel.
 
-Signed-off-by: "Mauro S. M. Rodrigues" <maurosr@linux.vnet.ibm.com>
-Reviewed-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+This bug was found while fuzzing Bluez's OBEX implementation using
+Synopsys Defensics.
+
+Reported-by: Matti Kamunen <matti.kamunen@synopsys.com>
+Reported-by: Ari Timonen <ari.timonen@synopsys.com>
+Signed-off-by: Matias Karhumaa <matias.karhumaa@gmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c | 3 ++-
- drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h     | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ net/bluetooth/l2cap_core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-index d681273bd39d..9d38634071a4 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-@@ -3133,7 +3133,8 @@ static int ixgbe_get_module_info(struct net_device *dev,
- 		page_swap = true;
- 	}
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index 46afd560f242..c25f1e4846cd 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -4363,6 +4363,12 @@ static inline int l2cap_disconnect_rsp(struct l2cap_conn *conn,
  
--	if (sff8472_rev == IXGBE_SFF_SFF_8472_UNSUP || page_swap) {
-+	if (sff8472_rev == IXGBE_SFF_SFF_8472_UNSUP || page_swap ||
-+	    !(addr_mode & IXGBE_SFF_DDM_IMPLEMENTED)) {
- 		/* We have a SFP, but it does not support SFF-8472 */
- 		modinfo->type = ETH_MODULE_SFF_8079;
- 		modinfo->eeprom_len = ETH_MODULE_SFF_8079_LEN;
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-index 5abd66c84d00..7b7dc6d7d159 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-@@ -70,6 +70,7 @@
- #define IXGBE_SFF_SOFT_RS_SELECT_10G		0x8
- #define IXGBE_SFF_SOFT_RS_SELECT_1G		0x0
- #define IXGBE_SFF_ADDRESSING_MODE		0x4
-+#define IXGBE_SFF_DDM_IMPLEMENTED		0x40
- #define IXGBE_SFF_QSFP_DA_ACTIVE_CABLE		0x1
- #define IXGBE_SFF_QSFP_DA_PASSIVE_CABLE		0x8
- #define IXGBE_SFF_QSFP_CONNECTOR_NOT_SEPARABLE	0x23
+ 	l2cap_chan_lock(chan);
+ 
++	if (chan->state != BT_DISCONN) {
++		l2cap_chan_unlock(chan);
++		mutex_unlock(&conn->chan_lock);
++		return 0;
++	}
++
+ 	l2cap_chan_hold(chan);
+ 	l2cap_chan_del(chan, 0);
+ 
 -- 
 2.20.1
 
