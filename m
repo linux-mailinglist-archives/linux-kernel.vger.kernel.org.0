@@ -2,163 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B942B7FC7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 16:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A2A87FC85
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 16:48:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436730AbfHBOr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 10:47:27 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36223 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436716AbfHBOr0 (ORCPT
+        id S2404349AbfHBOsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 10:48:02 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1740 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731919AbfHBOsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 10:47:26 -0400
-Received: by mail-lj1-f195.google.com with SMTP id i21so73118797ljj.3;
-        Fri, 02 Aug 2019 07:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+3glAiGKhuEDNJUpDzDakal4T8PJZgARPlC6as0O+dc=;
-        b=DG5RfcjRN6PaSlDmYV3U/dpGFOGQn6H7LESYUzCLQATPMAA7Qtk9bIUpUeibaADa2k
-         8yed6zddy7nEdDadeegWD4JF3z+36PwS2syPhw08GYMzOoKWGn3cLaODhj/TLpdNViWF
-         SyPhWduqUq5L9Gud66cODAC3LlwtEqB2LhIJML7z/pkEnaUpvmLbaxCf7OqycEkG37oh
-         wynkd5QmoeUbrECyJ+q0Tm3y22GhnRAhmE5t0B/TvUKms5seH39/1M6pjXmcDtGBIKfA
-         xTVH7hwk2c1RsaT8pG+/lK/X1CnwL7ApMBAvddx2wNlExTtgFCHTy5MZJCB3e4crs7IK
-         JcZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+3glAiGKhuEDNJUpDzDakal4T8PJZgARPlC6as0O+dc=;
-        b=BAO44gDfmMGvkz7QH31U7PQO13bchmGh0TiVSmNNPfk5CCwVyJYQfiOac4S6HOxcxv
-         ZsdHTyXTIIje5RMqKoC9UqNzBxGZ8blpbhazidh7prAKjlYVTGNxTLwn3a8wZwBgFeuE
-         6b7yXTcw8h9+TCtjwsIwhvM0xYXxTE8rh2yOx7sK35ss58GCO0s12BCD+va09ifh4G7Q
-         VbnTAz0n8eblx7rJZi4yn1r0iw4KFYWxpQ2Hk91jaFAfLTDuir9rS5fjI7BriTFtnrfk
-         Y1lCJEiS1D+KbIIsTiz1Cz1783iUzegJD2wvXcrhiOWpjtdPTM62A1fmRIoJcohDuOdt
-         KW9A==
-X-Gm-Message-State: APjAAAWZFBGSlxq4sM+BBGxfhrYMQ6EFtxIDxwH5P9U9iZQ8FUeOg6Bb
-        ThFAVT9479PIRK8mlMRiXetRhCqt
-X-Google-Smtp-Source: APXvYqxcWd81wLwW1HnIMVXA2OeDcW7m1IlnXPXXct1U6Uj2NPWiSQDOeXA1+FeT3O/thOZ6KoZF8w==
-X-Received: by 2002:a2e:b60c:: with SMTP id r12mr23070576ljn.124.1564757243919;
-        Fri, 02 Aug 2019 07:47:23 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id n24sm15338397ljc.25.2019.08.02.07.47.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Aug 2019 07:47:23 -0700 (PDT)
-Subject: Re: [PATCH v2 1/3] dt-bindings: regulator: Document regulators
- coupling of NVIDIA Tegra20/30 SoCs
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190725151832.9802-1-digetx@gmail.com>
- <20190725151832.9802-2-digetx@gmail.com>
-Message-ID: <ae79a9c0-7c87-63e4-8555-b80851cb22cd@gmail.com>
-Date:   Fri, 2 Aug 2019 17:47:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 2 Aug 2019 10:48:02 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x72EaJNq005392;
+        Fri, 2 Aug 2019 16:47:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=N8rgZWIZfOw81q7QuM18Tttp0ZdrCfm1/QUNIZC/5bM=;
+ b=KqUvXDckPZyMTnjcTF4guAysii2fBpfThquE/WOr+K6iec9ZCasTAjCaVoHBc694o/nA
+ IocwSQWQ9NiMwq5QF2oY40wO4jJZ7mbzbLYAWz/44U3O1kyYXaYCRfMWN/+Gnmyhqq3h
+ koYoCPpSZSAcBPN1XfGoiyVTdRSW3RczZnlNDgfimraWV9IbHNMpWHyQ32ETRf7TjLOz
+ Nv011AIcA7qb3HtK6DQ5Dni+YbVRPbP93ZxJsI+XBR/bhohdv0MpgMB5hQVAIKNWFGDT
+ Icw0ZbXBFx2Vh4HxzOnXGWvBS9k1cMl8n4lpWWsZLtx0nZq2v20lut9fEJfjyGBPoTE+ 6A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2u3vd07vqr-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 02 Aug 2019 16:47:50 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EA83231;
+        Fri,  2 Aug 2019 14:47:49 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D68092C54E2;
+        Fri,  2 Aug 2019 16:47:49 +0200 (CEST)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 2 Aug 2019
+ 16:47:49 +0200
+Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 2 Aug 2019 16:47:49
+ +0200
+From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+Subject: [PATCH] drm/stm: ltdc: add pinctrl for DPI encoder mode
+Date:   Fri, 2 Aug 2019 16:47:42 +0200
+Message-ID: <1564757262-6166-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190725151832.9802-2-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.23.97]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-25.07.2019 18:18, Dmitry Osipenko пишет:
-> There is voltage coupling between three regulators on Tegra20 boards and
-> between two on Tegra30. The voltage coupling is a SoC-level feature and
-> thus it is mandatory and common for all of the Tegra boards.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../nvidia,tegra-regulators-coupling.txt      | 65 +++++++++++++++++++
->  1 file changed, 65 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt b/Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
-> new file mode 100644
-> index 000000000000..4bf2dbf7c6cc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
-> @@ -0,0 +1,65 @@
-> +NVIDIA Tegra Regulators Coupling
-> +================================
-> +
-> +NVIDIA Tegra SoC's have a mandatory voltage-coupling between regulators.
-> +Thus on Tegra20 there are 3 coupled regulators and on NVIDIA Tegra30
-> +there are 2.
-> +
-> +Tegra20 voltage coupling
-> +------------------------
-> +
-> +On Tegra20 SoC's there are 3 coupled regulators: CORE, RTC and CPU.
-> +The CORE and RTC voltages shall be in a range of 170mV from each other
-> +and they both shall be higher than the CPU voltage by at least 120mV.
-> +
-> +Tegra30 voltage coupling
-> +------------------------
-> +
-> +On Tegra30 SoC's there are 2 coupled regulators: CORE and CPU. The CORE
-> +and CPU voltages shall be in a range of 300mV from each other and CORE
-> +voltage shall be higher than the CPU by N mV, where N depends on the CPU
-> +voltage.
-> +
-> +Required properties:
-> +- nvidia,tegra-core-regulator: Boolean property that designates regulator
-> +  as the "Core domain" voltage regulator.
-> +- nvidia,tegra-rtc-regulator: Boolean property that designates regulator
-> +  as the "RTC domain" voltage regulator.
-> +- nvidia,tegra-cpu-regulator: Boolean property that designates regulator
-> +  as the "CPU domain" voltage regulator.
-> +
-> +Example:
-> +
-> +	pmic {
-> +		regulators {
-> +			core_vdd_reg: core {
-> +				regulator-name = "vdd_core";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1300000>;
-> +				regulator-coupled-with = <&rtc_vdd_reg &cpu_vdd_reg>;
-> +				regulator-coupled-max-spread = <170000 550000>;
-> +
-> +				nvidia,tegra-core-regulator;
-> +			};
-> +
-> +			rtc_vdd_reg: rtc {
-> +				regulator-name = "vdd_rtc";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1300000>;
-> +				regulator-coupled-with = <&core_vdd_reg &cpu_vdd_reg>;
-> +				regulator-coupled-max-spread = <170000 550000>;
-> +
-> +				nvidia,tegra-rtc-regulator;
-> +			};
-> +
-> +			cpu_vdd_reg: cpu {
-> +				regulator-name = "vdd_cpu";
-> +				regulator-min-microvolt = <750000>;
-> +				regulator-max-microvolt = <1125000>;
-> +				regulator-coupled-with = <&core_vdd_reg &rtc_vdd_reg>;
-> +				regulator-coupled-max-spread = <550000 550000>;
-> +
-> +				nvidia,tegra-cpu-regulator;
-> +			};
-> +		};
-> +	};
-> 
+The implementation of functions encoder_enable and encoder_disable
+make possible to control the pinctrl according to the encoder type.
+The pinctrl must be activated only if the encoder type is DPI.
+This helps to move the DPI-related pinctrl configuration from
+all the panel or bridge to the LTDC dt node.
 
-Hello Rob,
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+---
+ drivers/gpu/drm/stm/ltdc.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Are you okay with this patch? We just need to mark the SoC voltage
-regulators appropriately and regulators themselves vary from board to
-board, hence this binding is not something that could be done using
-YAML, I guess.
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index 3ab4fbf..1c4fde0 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -15,6 +15,7 @@
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+ #include <linux/of_graph.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+@@ -1040,6 +1041,36 @@ static const struct drm_encoder_funcs ltdc_encoder_funcs = {
+ 	.destroy = drm_encoder_cleanup,
+ };
+ 
++static void ltdc_encoder_disable(struct drm_encoder *encoder)
++{
++	struct drm_device *ddev = encoder->dev;
++
++	DRM_DEBUG_DRIVER("\n");
++
++	/* Set to sleep state the pinctrl whatever type of encoder */
++	pinctrl_pm_select_sleep_state(ddev->dev);
++}
++
++static void ltdc_encoder_enable(struct drm_encoder *encoder)
++{
++	struct drm_device *ddev = encoder->dev;
++
++	DRM_DEBUG_DRIVER("\n");
++
++	/*
++	 * Set to default state the pinctrl only with DPI type.
++	 * Others types like DSI, don't need pinctrl due to
++	 * internal bridge (the signals do not come out of the chipset).
++	 */
++	if (encoder->encoder_type == DRM_MODE_ENCODER_DPI)
++		pinctrl_pm_select_default_state(ddev->dev);
++}
++
++static const struct drm_encoder_helper_funcs ltdc_encoder_helper_funcs = {
++	.disable = ltdc_encoder_disable,
++	.enable = ltdc_encoder_enable,
++};
++
+ static int ltdc_encoder_init(struct drm_device *ddev, struct drm_bridge *bridge)
+ {
+ 	struct drm_encoder *encoder;
+@@ -1055,6 +1086,8 @@ static int ltdc_encoder_init(struct drm_device *ddev, struct drm_bridge *bridge)
+ 	drm_encoder_init(ddev, encoder, &ltdc_encoder_funcs,
+ 			 DRM_MODE_ENCODER_DPI, NULL);
+ 
++	drm_encoder_helper_add(encoder, &ltdc_encoder_helper_funcs);
++
+ 	ret = drm_bridge_attach(encoder, bridge, NULL);
+ 	if (ret) {
+ 		drm_encoder_cleanup(encoder);
+@@ -1280,6 +1313,8 @@ int ltdc_load(struct drm_device *ddev)
+ 
+ 	clk_disable_unprepare(ldev->pixel_clk);
+ 
++	pinctrl_pm_select_sleep_state(ddev->dev);
++
+ 	pm_runtime_enable(ddev->dev);
+ 
+ 	return 0;
+-- 
+2.7.4
+
