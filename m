@@ -2,129 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54BA67FBEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 16:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 164A17FC08
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 16:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436656AbfHBOTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 10:19:08 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44770 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbfHBOTI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 10:19:08 -0400
-Received: by mail-ed1-f67.google.com with SMTP id k8so72487666edr.11;
-        Fri, 02 Aug 2019 07:19:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=S+20xmULIleEgfurI+8J/o6iN60n5mNoEMYMpzqwBn0=;
-        b=I5R/SbOCUyNpGi/j5ETYAUO8K7/Z+fCVItbSmqyN79qPhkMCfaoRZnqC1ZNRtL0/QP
-         YsF0FSkOb75Qgelvv0hD2fQF8hh2Y5lWRg4gYFtpcMZcBrNd6rstIxVNbqeiAfbn/PQy
-         PphA5CmAwCX+3uzCii5HPuO/3QOkqr9+bXOAhxQ4+PMEiSXCOJArrW+qyeD9DO1wf6Qu
-         CzuDPMCXEmere7MHNMEEH8eSfRUolI/g1X8vwtQnaGjvwBYglDxB/NLGtBHv45S28FNS
-         xTmxZt0A6Ff3CYcg9nIXeVQsz05JXDxS1SNbAfXN2owwZFFj/dlpsDRnLWaYSUlksYIR
-         JajA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S+20xmULIleEgfurI+8J/o6iN60n5mNoEMYMpzqwBn0=;
-        b=UMwOSXXc5Wguv+lGDvCJCFCcsO7jSMWp1+QQrm47E6BxTB339SrevkyyLJZJ71xxMc
-         brxdy1Wz6A1fSG6Ast25hFSmvKWUjV6ajuUq7EKaYdgcP+81mlwFVVNdIxrZIlkC964k
-         lYpHabS/Aa/0iCDACEMBJTf2arn7lPY1AEyxkETvkw2q/9RctkWT5dhYqvasgdUKQ0Eg
-         ZqpoGBD8pbbMzYMYCFWFO2K8q4DzWG/0X47QN48EC8S3j6qbQQQmBqfJCdWEEWVg2NmX
-         MGHazQdL+8EzaEOwDqqACklR+YpJTkwTtlQz0KgGEoz06Co6g1cyWtEPiCg6bSToUke5
-         Tc6Q==
-X-Gm-Message-State: APjAAAW8ID0yKPZnE9oOdfya/K26hGK2hEOHOfdEMZ6FZxS9WZh3PuzI
-        aaDEkzAQ1KEpH930kwqmYgI=
-X-Google-Smtp-Source: APXvYqy5YJPKTxgGPhjH5kwyrm9Ly98QXxCID8DOnXDCaD0/Lm5hWk8MsjiIsiPNPEhadgoxC319rg==
-X-Received: by 2002:a17:906:e2c2:: with SMTP id gr2mr105900563ejb.284.1564755546154;
-        Fri, 02 Aug 2019 07:19:06 -0700 (PDT)
-Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
-        by smtp.gmail.com with ESMTPSA id k5sm13005950eja.41.2019.08.02.07.19.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 02 Aug 2019 07:19:05 -0700 (PDT)
-Date:   Fri, 2 Aug 2019 16:19:04 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 4.9 000/223] 4.9.187-stable review
-Message-ID: <20190802141904.GA11962@ulmo>
-References: <20190802092238.692035242@linuxfoundation.org>
+        id S2392365AbfHBOWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 10:22:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:45140 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726667AbfHBOWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 10:22:33 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2019 07:22:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,338,1559545200"; 
+   d="scan'208";a="167245949"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga008.jf.intel.com with ESMTP; 02 Aug 2019 07:22:29 -0700
+Date:   Fri, 2 Aug 2019 08:19:52 -0600
+From:   Keith Busch <keith.busch@intel.com>
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH 26/34] mm/gup_benchmark.c: convert put_page() to
+ put_user_page*()
+Message-ID: <20190802141952.GA18214@localhost.localdomain>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802022005.5117-27-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190802022005.5117-27-jhubbard@nvidia.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 01, 2019 at 07:19:57PM -0700, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> For pages that were retained via get_user_pages*(), release those pages
+> via the new put_user_page*() routines, instead of via put_page() or
+> release_pages().
+> 
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> ("mm: introduce put_user_page*(), placeholder versions").
+> 
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Michael S. Tsirkin <mst@redhat.com>
+> Cc: YueHaibing <yuehaibing@huawei.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
---Dxnq1zWXvFF0Q93v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks fine.
 
-On Fri, Aug 02, 2019 at 11:33:45AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.187 release.
-> There are 223 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Sun 04 Aug 2019 09:19:34 AM UTC.
-> Anything received after that time might be too late.
->=20
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.187=
--rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
- linux-4.9.y
-> and the diffstat can be found below.
->=20
-> thanks,
->=20
-> greg k-h
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-All tests passing for Tegra...
-
-Test results for stable-v4.9:
-    8 builds:   8 pass, 0 fail
-    16 boots:   16 pass, 0 fail
-    24 tests:   24 pass, 0 fail
-
-Linux version:  4.9.187-rc1-g5380ded2525d
-Boards tested:  tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Thierry
-
---Dxnq1zWXvFF0Q93v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1ERlMACgkQ3SOs138+
-s6G5vhAAgZZWGODGGHY5R4k9PVj954QvJEyPIf8BK9D016s0YV9ki06E3d9unoMh
-JbOzHZrwCEWP4Af4s1J64DaxA5OVnAx9+6m+WcDjdZHYvNPodb3ILHzLcWGoV+PZ
-yJkTP9WTv+Mk91BOvQqYdRp0CDSSrpDFXNUcP2UPVzo495R61A0qfJAtg5XtmiA9
-FScV4ceQjWpoDA81sThSgNquUinZsGAeV4At7ovvM2XDIU++SIrIugVY0WxqtEc5
-exMwzhNvKNxGoR1rBNYC3k4DfaOtyBpVogK8JsNQoM6bIvrlTHjTucqaSdoCON6n
-Df8a5EiR0X81zIPyeQFROWfL2bcQQt+rK+tcCXjgGEk8ODSZWN7nnwjgfr3iw4ag
-8qSjJnD6jIsgpFvhC5a//c5qSLWy2ResoN5eD5G7pSbTrZmiNDGaW12kcJat9GVV
-sraa9gmIkMcSyHHI1G9r4fMA4ZEQcEaoLr8dHmHexUMI+0KhmCJQ7pXqwKP8txOh
-zWfocPBthLS2hes3JYhOsJDUhMFnxlWRYEBcLxf4kSmMN0G9x+0/7Bp2k24UeufN
-qKGC5b24qiu9Je9EOWOmvRGbVuzi+HXX0CJ5BB4Gj7qUQboIEtXmXIisw8EbYJFM
-9jySs4LwlQHnplX1pV3PymqNPwDxmcl4NqY7/ubrBhzUxDzmZX0=
-=fv1b
------END PGP SIGNATURE-----
-
---Dxnq1zWXvFF0Q93v--
+>  mm/gup_benchmark.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
+> index 7dd602d7f8db..515ac8eeb6ee 100644
+> --- a/mm/gup_benchmark.c
+> +++ b/mm/gup_benchmark.c
+> @@ -79,7 +79,7 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
+>  	for (i = 0; i < nr_pages; i++) {
+>  		if (!pages[i])
+>  			break;
+> -		put_page(pages[i]);
+> +		put_user_page(pages[i]);
+>  	}
+>  	end_time = ktime_get();
+>  	gup->put_delta_usec = ktime_us_delta(end_time, start_time);
+> -- 
