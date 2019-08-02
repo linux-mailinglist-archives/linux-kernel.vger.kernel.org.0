@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EB517F2A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EBD7F2B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391969AbfHBJpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:45:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49258 "EHLO mail.kernel.org"
+        id S2405873AbfHBJu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:50:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405370AbfHBJp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:45:29 -0400
+        id S2391942AbfHBJpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:45:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B800720679;
-        Fri,  2 Aug 2019 09:45:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86C2C206A2;
+        Fri,  2 Aug 2019 09:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739129;
-        bh=SipdAuyC52gfeobWDnLZNj0rO8IMaAtTeLAVQJI1mFg=;
+        s=default; t=1564739137;
+        bh=mIUD1UpAOTEIUTEwksaaIW6EKVZYhNbc1zhEQXcWRns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RyVItj122ALPHJ3/LZR3rNOTM+28FfOEh5yvRGIWNjFMO0JXmmapTTOnTQSzTr87q
-         X1dRInHXsiETxM6I1exttu6p0joZ0EdCY9hMUnyCpPrFpa1XCQpvD1E2R8yuwbTIJt
-         M1Nsm5RQQ3cshNh4FEhSHqr56+xv5F4Vj/QLFy+o=
+        b=J5r1jH9frJgid6CO7xmzTH568bkJB4s8QrRfYLYI6gRyDJ+mKvCAS+W52hurI/veL
+         XeoCq8lqsHUgtUy22qM/IbQV/AiSPHykBUsWeyEEheHfwnfxqLvP4YeSL/DN0ngTYb
+         jqeb5oUy4WzYI1TMlkSTmfspZp1n/zhx36m11I/A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.9 124/223] dm bufio: fix deadlock with loop device
-Date:   Fri,  2 Aug 2019 11:35:49 +0200
-Message-Id: <20190802092247.153499892@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 127/223] lib/strscpy: Shut up KASAN false-positives in strscpy()
+Date:   Fri,  2 Aug 2019 11:35:52 +0200
+Message-Id: <20190802092247.281302082@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -43,47 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+[ Upstream commit 1a3241ff10d038ecd096d03380327f2a0b5840a6 ]
 
-commit bd293d071ffe65e645b4d8104f9d8fe15ea13862 upstream.
+strscpy() performs the word-at-a-time optimistic reads.  So it may may
+access the memory past the end of the object, which is perfectly fine
+since strscpy() doesn't use that (past-the-end) data and makes sure the
+optimistic read won't cross a page boundary.
 
-When thin-volume is built on loop device, if available memory is low,
-the following deadlock can be triggered:
+Use new read_word_at_a_time() to shut up the KASAN.
 
-One process P1 allocates memory with GFP_FS flag, direct alloc fails,
-memory reclaim invokes memory shrinker in dm_bufio, dm_bufio_shrink_scan()
-runs, mutex dm_bufio_client->lock is acquired, then P1 waits for dm_buffer
-IO to complete in __try_evict_buffer().
+Note that this potentially could hide some bugs.  In example bellow,
+stscpy() will copy more than we should (1-3 extra uninitialized bytes):
 
-But this IO may never complete if issued to an underlying loop device
-that forwards it using direct-IO, which allocates memory using
-GFP_KERNEL (see: do_blockdev_direct_IO()).  If allocation fails, memory
-reclaim will invoke memory shrinker in dm_bufio, dm_bufio_shrink_scan()
-will be invoked, and since the mutex is already held by P1 the loop
-thread will hang, and IO will never complete.  Resulting in ABBA
-deadlock.
+        char dst[8];
+        char *src;
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        src = kmalloc(5, GFP_KERNEL);
+        memset(src, 0xff, 5);
+        strscpy(dst, src, 8);
 
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-bufio.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ lib/string.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/dm-bufio.c
-+++ b/drivers/md/dm-bufio.c
-@@ -1585,9 +1585,7 @@ dm_bufio_shrink_scan(struct shrinker *sh
- 	unsigned long freed;
+diff --git a/lib/string.c b/lib/string.c
+index 1cd9757291b1..8f1a2a04e22f 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -202,7 +202,7 @@ ssize_t strscpy(char *dest, const char *src, size_t count)
+ 	while (max >= sizeof(unsigned long)) {
+ 		unsigned long c, data;
  
- 	c = container_of(shrink, struct dm_bufio_client, shrinker);
--	if (sc->gfp_mask & __GFP_FS)
--		dm_bufio_lock(c);
--	else if (!dm_bufio_trylock(c))
-+	if (!dm_bufio_trylock(c))
- 		return SHRINK_STOP;
- 
- 	freed  = __scan(c, sc->nr_to_scan, sc->gfp_mask);
+-		c = *(unsigned long *)(src+res);
++		c = read_word_at_a_time(src+res);
+ 		if (has_zero(c, &data, &constants)) {
+ 			data = prep_zero_mask(c, data, &constants);
+ 			data = create_zero_mask(data);
+-- 
+2.20.1
+
 
 
