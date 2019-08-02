@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DA477F3E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8525C7F3E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405227AbfHBJoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:44:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46004 "EHLO mail.kernel.org"
+        id S2407096AbfHBKBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:01:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391488AbfHBJnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:43:12 -0400
+        id S2405225AbfHBJoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:44:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCB112086A;
-        Fri,  2 Aug 2019 09:43:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CD49206A2;
+        Fri,  2 Aug 2019 09:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738992;
-        bh=9eaYUajJCWUORYIELbRhhwap7w2FWbuSby3EDs7IJEg=;
+        s=default; t=1564739060;
+        bh=ANVUNEMAe1jn6TZ1TL+1KmUas0lezeRrXvXkB9h6ki8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IOV54WcEcqMp5K9TJqCqm3f4yTtvTVRxzKV8R/qmkYJJtximGhWBOGe74i00qQjit
-         mEZQ7vIK3vS8F3SbhRwGu4JR55Xq/tYsywZz8D+bXI2tjVjq+sAAkafwBUTygzH+8i
-         zBH3VvPuF/aZfXYJbfRFR1pISulGELKX6VadEUSY=
+        b=JNl9bSuAKp8PzD2ZPn71l9XX76zY82cFpbfSANiunDsMbMuehK0cRgUQJfBOMETtu
+         CTodjy83u0Llq1vByh0dFKsS56WrJZu7OZwTBq4x5LgLhhGqdbzz0OuzZ3+z9GK/g7
+         yzXJm+F2gFz86GtbK4F3JbxTwY0HfqsDl8AqOgFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 075/223] scsi: NCR5380: Reduce goto statements in NCR5380_select()
-Date:   Fri,  2 Aug 2019 11:35:00 +0200
-Message-Id: <20190802092243.696800783@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        linux-crypto@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 082/223] crypto: crypto4xx - fix a potential double free in ppc4xx_trng_probe
+Date:   Fri,  2 Aug 2019 11:35:07 +0200
+Message-Id: <20190802092244.274402583@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -44,73 +49,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-commit 6a162836997c10bbefb7c7ca772201cc45c0e4a6 upstream.
+commit 95566aa75cd6b3b404502c06f66956b5481194b3 upstream.
 
-Replace a 'goto' statement with a simple 'return' where possible.  This
-improves readability. No functional change.
+There is a possible double free issue in ppc4xx_trng_probe():
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+85:	dev->trng_base = of_iomap(trng, 0);
+86:	of_node_put(trng);          ---> released here
+87:	if (!dev->trng_base)
+88:		goto err_out;
+...
+110:	ierr_out:
+111:		of_node_put(trng);  ---> double released here
+...
+
+This issue was detected by using the Coccinelle software.
+We fix it by removing the unnecessary of_node_put().
+
+Fixes: 5343e674f32f ("crypto4xx: integrate ppc4xx-rng into crypto4xx")
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: <stable@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Allison Randal <allison@lohutok.net>
+Cc: Armijn Hemel <armijn@tjaldur.nl>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/NCR5380.c |   21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ drivers/crypto/amcc/crypto4xx_trng.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -1086,7 +1086,7 @@ static struct scsi_cmnd *NCR5380_select(
- 	if (!hostdata->selecting) {
- 		/* Command was aborted */
- 		NCR5380_write(MODE_REG, MR_BASE);
--		goto out;
-+		return NULL;
- 	}
- 	if (err < 0) {
- 		NCR5380_write(MODE_REG, MR_BASE);
-@@ -1135,7 +1135,7 @@ static struct scsi_cmnd *NCR5380_select(
- 	if (!hostdata->selecting) {
- 		NCR5380_write(MODE_REG, MR_BASE);
- 		NCR5380_write(INITIATOR_COMMAND_REG, ICR_BASE);
--		goto out;
-+		return NULL;
- 	}
+--- a/drivers/crypto/amcc/crypto4xx_trng.c
++++ b/drivers/crypto/amcc/crypto4xx_trng.c
+@@ -111,7 +111,6 @@ void ppc4xx_trng_probe(struct crypto4xx_
+ 	return;
  
- 	dsprintk(NDEBUG_ARBITRATION, instance, "won arbitration\n");
-@@ -1218,13 +1218,16 @@ static struct scsi_cmnd *NCR5380_select(
- 		spin_lock_irq(&hostdata->lock);
- 		NCR5380_write(INITIATOR_COMMAND_REG, ICR_BASE);
- 		NCR5380_write(SELECT_ENABLE_REG, hostdata->id_mask);
-+
- 		/* Can't touch cmd if it has been reclaimed by the scsi ML */
--		if (hostdata->selecting) {
--			cmd->result = DID_BAD_TARGET << 16;
--			complete_cmd(instance, cmd);
--			dsprintk(NDEBUG_SELECTION, instance, "target did not respond within 250ms\n");
--			cmd = NULL;
--		}
-+		if (!hostdata->selecting)
-+			return NULL;
-+
-+		cmd->result = DID_BAD_TARGET << 16;
-+		complete_cmd(instance, cmd);
-+		dsprintk(NDEBUG_SELECTION, instance,
-+			"target did not respond within 250ms\n");
-+		cmd = NULL;
- 		goto out;
- 	}
- 
-@@ -1257,7 +1260,7 @@ static struct scsi_cmnd *NCR5380_select(
- 	}
- 	if (!hostdata->selecting) {
- 		do_abort(instance);
--		goto out;
-+		return NULL;
- 	}
- 
- 	dsprintk(NDEBUG_SELECTION, instance, "target %d selected, going into MESSAGE OUT phase.\n",
+ err_out:
+-	of_node_put(trng);
+ 	iounmap(dev->trng_base);
+ 	kfree(rng);
+ 	dev->trng_base = NULL;
 
 
