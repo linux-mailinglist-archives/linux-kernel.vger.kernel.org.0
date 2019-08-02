@@ -2,69 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68DA3801B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 22:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1C72801B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 22:23:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436952AbfHBUW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 16:22:27 -0400
-Received: from mga06.intel.com ([134.134.136.31]:7287 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391221AbfHBUW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 16:22:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2019 13:22:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,339,1559545200"; 
-   d="scan'208";a="201783048"
-Received: from psathya-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.36.242])
-  by fmsmga002.fm.intel.com with ESMTP; 02 Aug 2019 13:22:10 -0700
-Date:   Fri, 2 Aug 2019 23:22:09 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        id S2436969AbfHBUXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 16:23:36 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39010 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436954AbfHBUXg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 16:23:36 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l9so75181389qtu.6;
+        Fri, 02 Aug 2019 13:23:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7b+QpyZJy6WVG+CsDdFzQqS3UP4BUviIhmtTS57SLxI=;
+        b=Efl24pIIAWTWx/nSPf8qxs1ZdBAjZceq8NkYlGnae0RIl+ZKMw339lWIdlkxxn4PD8
+         LLQuPj9yp5pqYUC5/1w7dIDh7FbAFJEqm1vWWNN1my3zWreokDhXB8eTJ6WWbz6sdT5a
+         7EjatRff4kM50cooNbVjk13Ru0PTpDhOOmj5vN1s1TUR41Yv4NSwps4icALMfgXhx6ci
+         dp7aczZfvp+7Rhiwjsiz7sfvjSHexhT5mfldf1gVYbIpwqzlWIHCFojSR3y+OoVjudW/
+         uRgR8KlY0316lBONQG0moGnOy/hglJXHhhgYHwl5PvDId86NwAfEuJ4ZEwc1WEroiXQx
+         CKWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7b+QpyZJy6WVG+CsDdFzQqS3UP4BUviIhmtTS57SLxI=;
+        b=VwLM0+i/MVu5CfAdrhZAxE6bPuegXkarvSm4ELps5n1PKIpyjd5prhewxpHDIeNe9p
+         EC6aTiqEkZ1wc5pgPXrvMh5SdC6KCPTRWw6dWtm+PRcGrZoh1fOt60Tu8BZ566SPCRLG
+         YfidWNCIJyEA8JL6bWv9pgeRO3E6lvhZ+ttR2QfXvbT4VhOnFs1x+w1RugljrUdisJuL
+         tp+coupFe+5jB2RBbFj8aVIqlTfGeez2St7Aqe21ojfmPP2bymOIAbEOHExBJLCxbrMR
+         WGJbxriaL89bkVzermFjdBN1ot9t4vCKnbyzdJwJJwsF8aeqVH4wHEldKjKJHI4KyHYD
+         HVyQ==
+X-Gm-Message-State: APjAAAVvAJ5AYTOCRdSYF77980yfKnYso8mzwDNPGfiN+KAkreGWvfWT
+        kczWBbKE1NAAPeHpSkx0kByhICV4MQu7Bg==
+X-Google-Smtp-Source: APXvYqxng4ujPdMSOl8LXJMqkhOtwXaWv/1GkHPTS6Mif0yJO/ekUiIXcAXJ4oiId/EKiwuZviAUGw==
+X-Received: by 2002:aed:3f29:: with SMTP id p38mr95861962qtf.126.1564777415353;
+        Fri, 02 Aug 2019 13:23:35 -0700 (PDT)
+Received: from 541fc7a84f4a.ime.usp.br ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id y9sm32294338qki.116.2019.08.02.13.23.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 02 Aug 2019 13:23:34 -0700 (PDT)
+From:   Thiago Bonotto <thbonotto@gmail.com>
+To:     Karsten Keil <isdn@linux-pingi.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH v2 1/6] hwrng: core: Freeze khwrng thread during suspend
-Message-ID: <20190802202209.2jzeosacc66mtnpr@linux.intel.com>
-References: <20190716224518.62556-1-swboyd@chromium.org>
- <20190716224518.62556-2-swboyd@chromium.org>
+        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
+Subject: [PATCH] staging: isdn: remove unnecessary parentheses
+Date:   Fri,  2 Aug 2019 20:23:23 +0000
+Message-Id: <20190802202323.27117-1-thbonotto@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190716224518.62556-2-swboyd@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 03:45:13PM -0700, Stephen Boyd wrote:
-> The hwrng_fill() function can run while devices are suspending and
-> resuming. If the hwrng is behind a bus such as i2c or SPI and that bus
-> is suspended, the hwrng may hang the bus while attempting to add some
-> randomness. It's been observed on ChromeOS devices with suspend-to-idle
-> (s2idle) and an i2c based hwrng that this kthread may run and ask the
-> hwrng device for randomness before the i2c bus has been resumed.
-> 
-> Let's make this kthread freezable so that we don't try to touch the
-> hwrng during suspend/resume. This ensures that we can't cause the hwrng
-> backing driver to get into a bad state because the device is guaranteed
-> to be resumed before the hwrng kthread is thawed.
-> 
-> Cc: Andrey Pronin <apronin@chromium.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: Duncan Laurie <dlaurie@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Fix the following checkpatch error:
 
-This does not need a fixes tag?
+ERROR: return is not a function, parentheses are not required
+FILE: drivers/staging/isdn/hysdn/hysdn_net.c:289:
++        return (0);                /* and return success */
 
-/Jarkko
+Signed-off-by: Thiago Bonotto <thbonotto@gmail.com>
+---
+Hello, this is my first contribution :)
+Thanks for reviewing 
+
+ drivers/staging/isdn/hysdn/hysdn_net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/isdn/hysdn/hysdn_net.c b/drivers/staging/isdn/hysdn/hysdn_net.c
+index bea37ae30..dcb9ef7a2 100644
+--- a/drivers/staging/isdn/hysdn/hysdn_net.c
++++ b/drivers/staging/isdn/hysdn/hysdn_net.c
+@@ -286,7 +286,7 @@ hysdn_net_create(hysdn_card *card)
+ 
+ 	if (card->debug_flags & LOG_NET_INIT)
+ 		hysdn_addlog(card, "network device created");
+-	return (0);		/* and return success */
++	return 0;		/* and return success */
+ }				/* hysdn_net_create */
+ 
+ /***************************************************************************/
+-- 
+2.20.1
+
