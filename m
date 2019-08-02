@@ -2,75 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E5197F7B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DA57F7B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:02:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403885AbfHBNB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:01:26 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34251 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbfHBNB0 (ORCPT
+        id S2404050AbfHBNCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:02:38 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35083 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389446AbfHBNCh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:01:26 -0400
-Received: by mail-lf1-f68.google.com with SMTP id b29so45658062lfq.1;
-        Fri, 02 Aug 2019 06:01:24 -0700 (PDT)
+        Fri, 2 Aug 2019 09:02:37 -0400
+Received: by mail-io1-f65.google.com with SMTP id m24so152014770ioo.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 06:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XPjbHLrTX3WXA9Ntzf5RZ9TssASBW6mGGuFC8KEUjyw=;
-        b=dwXW3sQ1gZHh+gRq6qCK5o3eZJpyhGlJgFFZayH/Sya/bRwtGnN4CZqKyF+rKZku/P
-         udMzRXLJ7pEPcXL7stFEsO47l0qXmt920GmdWDAMVDj18RfIPqn3pQ1y0QlrdLo1ArCK
-         uavw0gIWYA1LuPoZYwcLgbvRIRwuz+vCT5+LNq2RpaEjv9OjwgrGKbiO/tkpurZW3svz
-         1OZynV3nZj7x2TH+6swuahUxFAANgqT+irGrMK1f+X12Q0DlfRN4zbJ5QH8E8xOrTDb8
-         e3/eG5XaEyNjVAUo+W3h1jZmIWKc44WXRaZumTyqyN/PWbCnt+xltuWeDj+uJcXe2R7u
-         eq5g==
+        d=brauner.io; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IycbSoYk5b7V8lkB9aLkTECX3VyEXPgVPC8ebdeRhy0=;
+        b=O9OEH6Bj8CYMK7KM0KFs9tyA/P2LHpHF145h8wg5UV6I+lz/xNUlahcLEl3i29vheB
+         XlslpLIaML9ispCXTHDW9rbYCVW5/B0a2gzhW96VOI4ROcUsSlV1QFKWoEU6eQFIrfMR
+         KrU2iSbjlkzoDypAzcBkgMjJ3IEso02pgaeLTOuRfHWSqmEm7LN8py9NtPf53nzPDnV0
+         UYFbSnXpX1U9cDRRxqh7g7LTzfnnDZUP8dCoveEoEdWp5+lGHEDkWkCmqrKzsSwwTEKQ
+         oryhwelZaPoP9hDjYI3FGtTdMSnIndCb2OdAPGmHhOWS1fA/FIajP/p5JlEMM5JNVRRK
+         TZsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XPjbHLrTX3WXA9Ntzf5RZ9TssASBW6mGGuFC8KEUjyw=;
-        b=C8AYtRdqoUTdOaWHWLW+Bkxdk4K6/yrQ12JI4EL18Im1aQeRt8uVJQPd44IkFm8AaG
-         KvjBevzQ9Rd/d4l1EizQXpmaH7fQFQDJpTaIVMg7byezH1QBzZNpv2yFAUHpvHiHMj9A
-         hFS0zmkgzILrdWOZ7Zb8yC9ZuE2Dow8/4AO56Vgyn+nvg8Rl3+6p0jVFIgLkrGTIqOW/
-         DPUWWXs5s2yPkhFsaIfEhj4fXw4Nk4b9hM2kPIZGbj55WXZDraBux2UMMhMgeJeMMFmD
-         ENwX5UxTzLsU7Vq/vDDb+mKNmE5rTWaNRthpZnf7Hyeg8pp0vjNfzBJ2A76aDGb6s/6l
-         IoAA==
-X-Gm-Message-State: APjAAAXzm8H1thMIWu9AYlhDapL68I0RL8GneWepIoS/9BfTvPm+oagW
-        xD3fO+mz3QxwLB1vXZjmuPDNmsreaJptPW/juAd3MUIR
-X-Google-Smtp-Source: APXvYqxiKkwBi4xLTfvgUAojfGuzhW4u7kOwlwxiEYsHNcEGsyCBb4vsdI8em1/OEli/xASVhzr7eSFPuDI0ByvqFpQ=
-X-Received: by 2002:a19:e006:: with SMTP id x6mr63042828lfg.165.1564750884322;
- Fri, 02 Aug 2019 06:01:24 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IycbSoYk5b7V8lkB9aLkTECX3VyEXPgVPC8ebdeRhy0=;
+        b=nR64wZjY+P0Uj8zSJjPhqzKbXSe88xpSHuhTx299qXFnz5wdT7I/7TxRVLIM35PRXn
+         J0dtOshHDEwhP9xS47jWomtzw3pMIoF2FQAxQw1o7184o1PuX/aDy4dsaBqbEYqlt+k0
+         RBCRDNU/RGIE8TL6Tithuh3nWL85OzHfZQnDLEMlwURNeeRcLGU8bgWITS66Hbfkqm+X
+         ke1Yej6sq5n6aqel1/Ui/F1zlLkBNBPj6Qt2wyjFJGJZ5T9MUf+VuZNd0Hsl+FrTAnGV
+         rrsc7IMGIvp8g+rtM7XOF4bTD5sTGEwypKvuIHTlZYHtXHrLBBV0j4HeuPFIRXaicHMY
+         +JPw==
+X-Gm-Message-State: APjAAAWdmfhNFKPB/7iOSmY2367Zcj0paOLp5ApFabM4DYA47g2adS5S
+        YF5f+Ci3WxG3ODlUv2ljDpo=
+X-Google-Smtp-Source: APXvYqxPv1Y+mJuGVcmS9DJBaVp1FVjlGTDK7Rek0XCeDHrJYqTzYwAk5RMYRCbvqzjuTFNkFx3cTw==
+X-Received: by 2002:a5d:8890:: with SMTP id d16mr76293890ioo.274.1564750956954;
+        Fri, 02 Aug 2019 06:02:36 -0700 (PDT)
+Received: from brauner.io ([162.223.5.78])
+        by smtp.gmail.com with ESMTPSA id u17sm66939463iob.57.2019.08.02.06.02.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 02 Aug 2019 06:02:36 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
+Date:   Fri, 2 Aug 2019 15:02:35 +0200
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Adrian Reber <areber@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelianov <xemul@virtuozzo.com>,
+        Jann Horn <jannh@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>
+Subject: Re: [PATCH v2 1/2] fork: extend clone3() to support CLONE_SET_TID
+Message-ID: <20190802130214.l6vporvni7nnbnif@brauner.io>
+References: <20190731161223.2928-1-areber@redhat.com>
+ <20190731174135.GA30225@redhat.com>
+ <20190802072511.GD18263@dcbz.redhat.com>
+ <20190802124738.GC20111@redhat.com>
 MIME-Version: 1.0
-References: <259986242.BvXPX32bHu@devpool35> <20190606185900.GA19937@kroah.com>
- <CANiq72n2E4Ue0MU5mWitSbsscizPQKML0QQx_DBwJVni+eWMHQ@mail.gmail.com>
- <4007272.nJfEYfeqza@devpool35> <CANiq72=T8nH3HHkYvWF+vPMscgwXki1Ugiq6C9PhVHJUHAwDYw@mail.gmail.com>
- <20190802103346.GA14255@kroah.com> <CANiq72kcZZwp2MRVF5Ls+drXCzVbCfZ7wZ8Y+rU93oGohVAGsQ@mail.gmail.com>
- <20190802112542.GA29534@kroah.com>
-In-Reply-To: <20190802112542.GA29534@kroah.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 2 Aug 2019 15:01:13 +0200
-Message-ID: <CANiq72mSLmP-EaOgY0m2qgTMVsAnyE6iuW5Kjdw5mSy1ZH0y-A@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_Linux_4=2E9=2E180_build_fails_with_gcc_9_and_=27cleanu?=
-        =?UTF-8?Q?p=5Fmodule=27_specifies_less_restrictive_attribute_than_its_targ?=
-        =?UTF-8?Q?et_=E2=80=A6?=
-To:     Greg KH <greg@kroah.com>
-Cc:     Rolf Eike Beer <eb@emlix.com>, stable@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190802124738.GC20111@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 1:25 PM Greg KH <greg@kroah.com> wrote:
->
-> But it still doesn't work for 4.14.y and 4.19.y, so we are probably
-> missing something there.  So if you want to fix that up, I'd appreciate
-> patches to do so :)
+On Fri, Aug 02, 2019 at 02:47:38PM +0200, Oleg Nesterov wrote:
+> On 08/02, Adrian Reber wrote:
+> >
+> > On Wed, Jul 31, 2019 at 07:41:36PM +0200, Oleg Nesterov wrote:
+> > > But the main question is how it can really help if ns->level > 0, unlikely
+> > > CRIU will ever need to clone the process with the same pid_nr == set_tid
+> > > in the ns->parent chain.
+> >
+> > Not sure I understand what you mean. For CRIU only the PID in the PID
+> > namespace is relevant.
+> 
+> If it runs "inside" this namespace. But in this case alloc_pid() should
+> use nr == set_tid only once in the main loop, when i == ns->level.
+> 
+> It doesn't need to have the same pid_nr in the parent pid namespace.
+> 
+> And in fact we should not allow criu (or anything else) to control the child's
+> pid_nr in the parent(s) namespace.
 
-Hm... For 4.19.y and 4.14.y, I cannot see the init/exit_module
-warnings under GCC 9.1.1. What do you mean it does not work?
+This should definitely not be possible!
 
-Cheers,
-Miguel
+> 
+> Right?
+> 
+> > > So may be kernel_clone_args->set_tid should be pid_t __user *set_tid_array?
+> > > Or I missed something ?
+> >
+> > Not sure why and how an array would be needed. Could you give me some
+> > more details why you think this is needed.
+> 
+> IIURC, criu can restore the process tree along with nested pid namespaces.
+
+Hm, I'm not a fan of this array approach...
+
+> 
+> how can this patch help in this case?
+> 
+> But again, perhaps I missed something. I forgot everything about criu.
+> 
+> Oleg.
+> 
