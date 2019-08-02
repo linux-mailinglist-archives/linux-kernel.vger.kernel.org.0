@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0447F8FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:24:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 236C57F8FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731263AbfHBNXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:23:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34162 "EHLO mail.kernel.org"
+        id S2394044AbfHBNXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:23:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393993AbfHBNXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:23:38 -0400
+        id S2394003AbfHBNXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:23:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07C4B2182B;
-        Fri,  2 Aug 2019 13:23:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BEF22186A;
+        Fri,  2 Aug 2019 13:23:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752217;
-        bh=zPLz72vRdQQ+nd03SVM/WPAEGpHOT1B5O8fp02BVKSA=;
+        s=default; t=1564752219;
+        bh=bYD0X8shc65cQyWWgd2mplLd3b7elQqoBA9LQVHfwyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Iv+0n2c51kMksIzOn94Xnwh+73wTGjNz1HDuEYaAjTRwNTEEfD2PYPyQL44VaFDh4
-         kJ+nwo+0zbvjLE9CEpPMMIpAiR5aeXlpc0VTBcd8MNmFgQ71FisEkMgHE1UDY8lCqu
-         EXS/wyfWPrUNJA0mZ0raNlHyKkMPm+KZN/ROZ5jQ=
+        b=a/9c0V5KcwbHHu/Eg0IBlgNCmJ6IqAc/h5wCcBPXKf/Sg4RH3NE1kBQai179tmg12
+         ta7RjoIfPjnLXQ/w94L0yL6l8xaisUv9mmonjCzbTwwib4bfYfZrS1HbdZDOxEXo/I
+         EojxzhAyg3tc4wZZ7im/pZL9m+2WB1WOOyKsUiSw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     John Crispin <john@phrozen.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 13/42] nl80211: fix NL80211_HE_MAX_CAPABILITY_LEN
-Date:   Fri,  2 Aug 2019 09:22:33 -0400
-Message-Id: <20190802132302.13537-13-sashal@kernel.org>
+Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 15/42] allocate_flower_entry: should check for null deref
+Date:   Fri,  2 Aug 2019 09:22:35 -0400
+Message-Id: <20190802132302.13537-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802132302.13537-1-sashal@kernel.org>
 References: <20190802132302.13537-1-sashal@kernel.org>
@@ -43,33 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Crispin <john@phrozen.org>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 5edaac063bbf1267260ad2a5b9bb803399343e58 ]
+[ Upstream commit bb1320834b8a80c6ac2697ab418d066981ea08ba ]
 
-NL80211_HE_MAX_CAPABILITY_LEN has changed between D2.0 and D4.0. It is now
-MAC (6) + PHY (11) + MCS (12) + PPE (25) = 54.
+allocate_flower_entry does not check for allocation success, but tries
+to deref the result. I only moved the spin_lock under null check, because
+ the caller is checking allocation's status at line 652.
 
-Signed-off-by: John Crispin <john@phrozen.org>
-Link: https://lore.kernel.org/r/20190627095832.19445-1-john@phrozen.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/nl80211.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/nl80211.h b/include/uapi/linux/nl80211.h
-index 7acc16f349427..fa43dd5a7b3dc 100644
---- a/include/uapi/linux/nl80211.h
-+++ b/include/uapi/linux/nl80211.h
-@@ -2732,7 +2732,7 @@ enum nl80211_attrs {
- #define NL80211_HT_CAPABILITY_LEN		26
- #define NL80211_VHT_CAPABILITY_LEN		12
- #define NL80211_HE_MIN_CAPABILITY_LEN           16
--#define NL80211_HE_MAX_CAPABILITY_LEN           51
-+#define NL80211_HE_MAX_CAPABILITY_LEN           54
- #define NL80211_MAX_NR_CIPHER_SUITES		5
- #define NL80211_MAX_NR_AKM_SUITES		2
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
+index f2aba5b160c2d..d45c435a599d6 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
+@@ -67,7 +67,8 @@ static struct ch_tc_pedit_fields pedits[] = {
+ static struct ch_tc_flower_entry *allocate_flower_entry(void)
+ {
+ 	struct ch_tc_flower_entry *new = kzalloc(sizeof(*new), GFP_KERNEL);
+-	spin_lock_init(&new->lock);
++	if (new)
++		spin_lock_init(&new->lock);
+ 	return new;
+ }
  
 -- 
 2.20.1
