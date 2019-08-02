@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D77147F213
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9EE17F215
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405314AbfHBJox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:44:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48372 "EHLO mail.kernel.org"
+        id S2405326AbfHBJo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:44:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405299AbfHBJou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:44:50 -0400
+        id S2405311AbfHBJox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:44:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 037232086A;
-        Fri,  2 Aug 2019 09:44:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E7BF20B7C;
+        Fri,  2 Aug 2019 09:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739090;
-        bh=6EyA4BUqKDgjHynT9MTmCSzzqmkbv0iQoAtfbugv96Q=;
+        s=default; t=1564739093;
+        bh=k7QKfa6LAB3aq55137f4pRDRtYGr0cL0lak7C6T98mM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R8szWsRjRN88EYj4e9me7AFSZZ6gb4QT+/vNztEZ2xX5uAFbCnoF97tnO99BX5PU3
-         Cw5osIhVa8EpNNYUHPCaJCjrRMNiY9IzcUJcXehea0laV3yro9c4zuOQ3FtQZilYlz
-         qk0G0SlddWLarr9dIi9Islpvlhf6gr6qf4+OVOpE=
+        b=DYx/41GA0pdepIRr6YdDVpocvMTgBvud8j4i/Br6be5252BVMS9kqO1c0lX2JdmZk
+         dUufi4D/qDng0Z11nffYaO3yzzSu5KzUm5IVehxm+oe7Uyp+q2EgEz6e64OrVww8yo
+         fob1rDpG0ajTCI8WkJvDyDbMAVL+ysBzmr7QsLw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 4.9 109/223] gpu: ipu-v3: ipu-ic: Fix saturation bit offset in TPMEM
-Date:   Fri,  2 Aug 2019 11:35:34 +0200
-Message-Id: <20190802092246.318964135@linuxfoundation.org>
+        stable@vger.kernel.org, Cfir Cohen <cfir@google.com>,
+        Gary R Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 110/223] crypto: ccp - Validate the the error value used to index error messages
+Date:   Fri,  2 Aug 2019 11:35:35 +0200
+Message-Id: <20190802092246.372422602@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -43,36 +44,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+From: Hook, Gary <Gary.Hook@amd.com>
 
-commit 3d1f62c686acdedf5ed9642b763f3808d6a47d1e upstream.
+commit 52393d617af7b554f03531e6756facf2ea687d2e upstream.
 
-The saturation bit was being set at bit 9 in the second 32-bit word
-of the TPMEM CSC. This isn't correct, the saturation bit is bit 42,
-which is bit 10 of the second word.
+The error code read from the queue status register is only 6 bits wide,
+but we need to verify its value is within range before indexing the error
+messages.
 
-Fixes: 1aa8ea0d2bd5d ("gpu: ipu-v3: Add Image Converter unit")
-
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Fixes: 81422badb3907 ("crypto: ccp - Make syslog errors human-readable")
+Cc: <stable@vger.kernel.org>
+Reported-by: Cfir Cohen <cfir@google.com>
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/gpu/ipu-v3/ipu-ic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/ipu-v3/ipu-ic.c
-+++ b/drivers/gpu/ipu-v3/ipu-ic.c
-@@ -256,7 +256,7 @@ static int init_csc(struct ipu_ic *ic,
- 	writel(param, base++);
+---
+ drivers/crypto/ccp/ccp-dev.c |  102 ++++++++++++++++++++++---------------------
+ drivers/crypto/ccp/ccp-dev.h |    2 
+ 2 files changed, 55 insertions(+), 49 deletions(-)
+
+--- a/drivers/crypto/ccp/ccp-dev.c
++++ b/drivers/crypto/ccp/ccp-dev.c
+@@ -40,57 +40,63 @@ struct ccp_tasklet_data {
+ 	struct ccp_cmd *cmd;
+ };
  
- 	param = ((a[0] & 0x1fe0) >> 5) | (params->scale << 8) |
--		(params->sat << 9);
-+		(params->sat << 10);
- 	writel(param, base++);
+-/* Human-readable error strings */
+-char *ccp_error_codes[] = {
+-	"",
+-	"ERR 01: ILLEGAL_ENGINE",
+-	"ERR 02: ILLEGAL_KEY_ID",
+-	"ERR 03: ILLEGAL_FUNCTION_TYPE",
+-	"ERR 04: ILLEGAL_FUNCTION_MODE",
+-	"ERR 05: ILLEGAL_FUNCTION_ENCRYPT",
+-	"ERR 06: ILLEGAL_FUNCTION_SIZE",
+-	"ERR 07: Zlib_MISSING_INIT_EOM",
+-	"ERR 08: ILLEGAL_FUNCTION_RSVD",
+-	"ERR 09: ILLEGAL_BUFFER_LENGTH",
+-	"ERR 10: VLSB_FAULT",
+-	"ERR 11: ILLEGAL_MEM_ADDR",
+-	"ERR 12: ILLEGAL_MEM_SEL",
+-	"ERR 13: ILLEGAL_CONTEXT_ID",
+-	"ERR 14: ILLEGAL_KEY_ADDR",
+-	"ERR 15: 0xF Reserved",
+-	"ERR 16: Zlib_ILLEGAL_MULTI_QUEUE",
+-	"ERR 17: Zlib_ILLEGAL_JOBID_CHANGE",
+-	"ERR 18: CMD_TIMEOUT",
+-	"ERR 19: IDMA0_AXI_SLVERR",
+-	"ERR 20: IDMA0_AXI_DECERR",
+-	"ERR 21: 0x15 Reserved",
+-	"ERR 22: IDMA1_AXI_SLAVE_FAULT",
+-	"ERR 23: IDMA1_AIXI_DECERR",
+-	"ERR 24: 0x18 Reserved",
+-	"ERR 25: ZLIBVHB_AXI_SLVERR",
+-	"ERR 26: ZLIBVHB_AXI_DECERR",
+-	"ERR 27: 0x1B Reserved",
+-	"ERR 27: ZLIB_UNEXPECTED_EOM",
+-	"ERR 27: ZLIB_EXTRA_DATA",
+-	"ERR 30: ZLIB_BTYPE",
+-	"ERR 31: ZLIB_UNDEFINED_SYMBOL",
+-	"ERR 32: ZLIB_UNDEFINED_DISTANCE_S",
+-	"ERR 33: ZLIB_CODE_LENGTH_SYMBOL",
+-	"ERR 34: ZLIB _VHB_ILLEGAL_FETCH",
+-	"ERR 35: ZLIB_UNCOMPRESSED_LEN",
+-	"ERR 36: ZLIB_LIMIT_REACHED",
+-	"ERR 37: ZLIB_CHECKSUM_MISMATCH0",
+-	"ERR 38: ODMA0_AXI_SLVERR",
+-	"ERR 39: ODMA0_AXI_DECERR",
+-	"ERR 40: 0x28 Reserved",
+-	"ERR 41: ODMA1_AXI_SLVERR",
+-	"ERR 42: ODMA1_AXI_DECERR",
+-	"ERR 43: LSB_PARITY_ERR",
++ /* Human-readable error strings */
++#define CCP_MAX_ERROR_CODE	64
++ static char *ccp_error_codes[] = {
++ 	"",
++	"ILLEGAL_ENGINE",
++	"ILLEGAL_KEY_ID",
++	"ILLEGAL_FUNCTION_TYPE",
++	"ILLEGAL_FUNCTION_MODE",
++	"ILLEGAL_FUNCTION_ENCRYPT",
++	"ILLEGAL_FUNCTION_SIZE",
++	"Zlib_MISSING_INIT_EOM",
++	"ILLEGAL_FUNCTION_RSVD",
++	"ILLEGAL_BUFFER_LENGTH",
++	"VLSB_FAULT",
++	"ILLEGAL_MEM_ADDR",
++	"ILLEGAL_MEM_SEL",
++	"ILLEGAL_CONTEXT_ID",
++	"ILLEGAL_KEY_ADDR",
++	"0xF Reserved",
++	"Zlib_ILLEGAL_MULTI_QUEUE",
++	"Zlib_ILLEGAL_JOBID_CHANGE",
++	"CMD_TIMEOUT",
++	"IDMA0_AXI_SLVERR",
++	"IDMA0_AXI_DECERR",
++	"0x15 Reserved",
++	"IDMA1_AXI_SLAVE_FAULT",
++	"IDMA1_AIXI_DECERR",
++	"0x18 Reserved",
++	"ZLIBVHB_AXI_SLVERR",
++	"ZLIBVHB_AXI_DECERR",
++	"0x1B Reserved",
++	"ZLIB_UNEXPECTED_EOM",
++	"ZLIB_EXTRA_DATA",
++	"ZLIB_BTYPE",
++	"ZLIB_UNDEFINED_SYMBOL",
++	"ZLIB_UNDEFINED_DISTANCE_S",
++	"ZLIB_CODE_LENGTH_SYMBOL",
++	"ZLIB _VHB_ILLEGAL_FETCH",
++	"ZLIB_UNCOMPRESSED_LEN",
++	"ZLIB_LIMIT_REACHED",
++	"ZLIB_CHECKSUM_MISMATCH0",
++	"ODMA0_AXI_SLVERR",
++	"ODMA0_AXI_DECERR",
++	"0x28 Reserved",
++	"ODMA1_AXI_SLVERR",
++	"ODMA1_AXI_DECERR",
+ };
  
- 	param = ((a[1] & 0x1f) << 27) | ((c[0][1] & 0x1ff) << 18) |
+-void ccp_log_error(struct ccp_device *d, int e)
++void ccp_log_error(struct ccp_device *d, unsigned int e)
+ {
+-	dev_err(d->dev, "CCP error: %s (0x%x)\n", ccp_error_codes[e], e);
++	if (WARN_ON(e >= CCP_MAX_ERROR_CODE))
++		return;
++
++	if (e < ARRAY_SIZE(ccp_error_codes))
++		dev_err(d->dev, "CCP error %d: %s\n", e, ccp_error_codes[e]);
++	else
++		dev_err(d->dev, "CCP error %d: Unknown Error\n", e);
+ }
+ 
+ /* List of CCPs, CCP count, read-write access lock, and access functions
+--- a/drivers/crypto/ccp/ccp-dev.h
++++ b/drivers/crypto/ccp/ccp-dev.h
+@@ -607,7 +607,7 @@ void ccp_platform_exit(void);
+ void ccp_add_device(struct ccp_device *ccp);
+ void ccp_del_device(struct ccp_device *ccp);
+ 
+-extern void ccp_log_error(struct ccp_device *, int);
++extern void ccp_log_error(struct ccp_device *, unsigned int);
+ 
+ struct ccp_device *ccp_alloc_struct(struct device *dev);
+ bool ccp_queues_suspended(struct ccp_device *ccp);
 
 
