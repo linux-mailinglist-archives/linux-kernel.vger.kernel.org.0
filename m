@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 386697FFAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 19:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B2D77FFAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 19:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405350AbfHBRcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 13:32:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46540 "EHLO mail.kernel.org"
+        id S2405390AbfHBRca (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 13:32:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405145AbfHBRcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 13:32:01 -0400
+        id S2404697AbfHBRc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 13:32:29 -0400
 Received: from localhost (unknown [106.51.106.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64D79217D6;
-        Fri,  2 Aug 2019 17:31:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E4422173E;
+        Fri,  2 Aug 2019 17:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564767120;
-        bh=xzeUvxNQZP/5YdCw/FcqyiP94v61eID4Y+IJB6rOLZk=;
+        s=default; t=1564767148;
+        bh=42TcOR8lS2f4rqcNgv/niQ1OOyQQzpjCyw97d3CbBJc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=foz5wlEbhJylMNd02mn/a+5p6LgJbzCZtUdZov47IEY0AUIs3qfTwx8jMbpWmJZUi
-         du/LPrDYAuJ11VgWg9XwtV1mvCQWXc/WMgXulA5z37aUjtUfB/K975WSFsYkmWdhFW
-         JiYvmvpnHp0dkHKvX9Or12XweqtV6GluNW7+nvCE=
-Date:   Fri, 2 Aug 2019 23:00:47 +0530
+        b=x9BL9G2Kw4NQEbSxHNPZXSuhGOfSHgkh5qHdHBCyS5Wrf9VHcLOe8Oip+FTcTP51k
+         3hLx2392faQcsX/oBnPZhQpxEzxA2877L+sTjU+0s0VgOs1GURmEPOexe/kD3/XTnc
+         feAP8fSlqIrgQlrD20IyLpzECruU05jWXzabEXfg=
+Date:   Fri, 2 Aug 2019 23:01:15 +0530
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
         jank@cadence.com, srinivas.kandagatla@linaro.org,
         slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [RFC PATCH 34/40] soundwire: intel: ignore disabled links for
- suspend/resume
-Message-ID: <20190802173047.GD12733@vkoul-mobl.Dlink>
+Subject: Re: [RFC PATCH 35/40] soundwire: intel: export helper to exit reset
+Message-ID: <20190802173115.GE12733@vkoul-mobl.Dlink>
 References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-35-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-36-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190725234032.21152-35-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20190725234032.21152-36-pierre-louis.bossart@linux.intel.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,43 +46,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 25-07-19, 18:40, Pierre-Louis Bossart wrote:
 
-Please add explanation why..
+Here as well
 
 > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 > ---
->  drivers/soundwire/intel.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>  drivers/soundwire/cadence_master.c | 9 +++++++--
+>  drivers/soundwire/cadence_master.h | 1 +
+>  drivers/soundwire/intel.c          | 4 ++++
+>  3 files changed, 12 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+> index 4a189e487830..f486fe15fb46 100644
+> --- a/drivers/soundwire/cadence_master.c
+> +++ b/drivers/soundwire/cadence_master.c
+> @@ -780,7 +780,11 @@ EXPORT_SYMBOL(sdw_cdns_thread);
+>   * init routines
+>   */
+>  
+> -static int do_reset(struct sdw_cdns *cdns)
+> +/**
+> + * sdw_cdns_exit_reset() - Program reset parameters and start bus operations
+> + * @cdns: Cadence instance
+> + */
+> +int sdw_cdns_exit_reset(struct sdw_cdns *cdns)
+>  {
+>  	int ret;
+>  
+> @@ -804,6 +808,7 @@ static int do_reset(struct sdw_cdns *cdns)
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL(sdw_cdns_exit_reset);
+>  
+>  /**
+>   * sdw_cdns_enable_interrupt() - Enable SDW interrupts and update config
+> @@ -839,7 +844,7 @@ int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
+>  
+>  	cdns_writel(cdns, CDNS_MCP_INTMASK, mask);
+>  
+> -	return do_reset(cdns);
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(sdw_cdns_enable_interrupt);
+>  
+> diff --git a/drivers/soundwire/cadence_master.h b/drivers/soundwire/cadence_master.h
+> index de97bc22acb7..2b551f9226f3 100644
+> --- a/drivers/soundwire/cadence_master.h
+> +++ b/drivers/soundwire/cadence_master.h
+> @@ -161,6 +161,7 @@ irqreturn_t sdw_cdns_thread(int irq, void *dev_id);
+>  int sdw_cdns_init(struct sdw_cdns *cdns);
+>  int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
+>  		      struct sdw_cdns_stream_config config);
+> +int sdw_cdns_exit_reset(struct sdw_cdns *cdns);
+>  int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns);
+>  
+>  void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root);
 > diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-> index 1477c35f616f..a976480d6f36 100644
+> index a976480d6f36..9ebe38e4d979 100644
 > --- a/drivers/soundwire/intel.c
 > +++ b/drivers/soundwire/intel.c
-> @@ -1161,6 +1161,12 @@ static int intel_suspend(struct device *dev)
+> @@ -1112,6 +1112,8 @@ static int intel_probe(struct platform_device *pdev)
 >  
->  	sdw = dev_get_drvdata(dev);
+>  	ret = sdw_cdns_enable_interrupt(&sdw->cdns);
 >  
-> +	if (sdw->cdns.bus.prop.hw_disabled) {
-> +		dev_dbg(dev, "SoundWire master %d is disabled, ignoring\n",
-> +			sdw->cdns.bus.link_id);
-> +		return 0;
-> +	}
+> +	ret = sdw_cdns_exit_reset(&sdw->cdns);
 > +
->  	ret = intel_link_power_down(sdw);
+>  	/* Register DAIs */
+>  	ret = intel_register_dai(sdw);
 >  	if (ret) {
->  		dev_err(dev, "Link power down failed: %d", ret);
-> @@ -1179,6 +1185,12 @@ static int intel_resume(struct device *dev)
+> @@ -1199,6 +1201,8 @@ static int intel_resume(struct device *dev)
 >  
->  	sdw = dev_get_drvdata(dev);
+>  	sdw_cdns_enable_interrupt(&sdw->cdns);
 >  
-> +	if (sdw->cdns.bus.prop.hw_disabled) {
-> +		dev_dbg(dev, "SoundWire master %d is disabled, ignoring\n",
-> +			sdw->cdns.bus.link_id);
-> +		return 0;
-> +	}
+> +	ret = sdw_cdns_exit_reset(&sdw->cdns);
 > +
->  	ret = intel_init(sdw);
->  	if (ret) {
->  		dev_err(dev, "%s failed: %d", __func__, ret);
+>  	return ret;
+>  }
+>  
 > -- 
 > 2.20.1
 
