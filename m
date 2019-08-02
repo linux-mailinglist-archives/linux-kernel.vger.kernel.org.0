@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F117F19D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A05B07F199
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390567AbfHBJkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:40:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60280 "EHLO mail.kernel.org"
+        id S2404776AbfHBJdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:33:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390199AbfHBJdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:33:00 -0400
+        id S2404773AbfHBJdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:33:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A97D21773;
-        Fri,  2 Aug 2019 09:32:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF2B8217D7;
+        Fri,  2 Aug 2019 09:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738379;
-        bh=HTzsNutJs+NDHlyKyr5gNZRKLHxqFdPDMKB7go8FtKY=;
+        s=default; t=1564738382;
+        bh=vgCLMKW+NQvuHw3CHGVcHXOkLZcyuLSi4AZxwb9uRkI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vIZfs3zMHHOxZaFQPnqZ7XHlKJ1rAz7VJ3nn0nngNaoaac70NIRsO252TT8fXLriu
-         fvAtz2hwn2yvxMDEdBbFV10cQ8NlMfv9/l0yoUsZLOhAGgK8/C/5BY0ut0bZBbCz/F
-         pfNqBNPeWdgaDtV65SNqcojGA8BwmxoqpHCS64Dk=
+        b=o60p+NQKJi9Sth+Tkvlobfp82u9Is+ouUJCPMmUt2sq6Nvvk8jBe/ltNOcR8v/GLR
+         8eugv/NsPaK/HfeRCVw4gJklgkN4X8OaL2Lm/Nkoq/MIhwGJOogUUqF6Hjhv9GWWFI
+         ThmFsIXBWTd2ZD/jVpNI+LAhE1xc+ZruZONUoNsQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Tyler Hicks <tyhicks@canonical.com>
-Subject: [PATCH 4.4 081/158] eCryptfs: fix a couple type promotion bugs
-Date:   Fri,  2 Aug 2019 11:28:22 +0200
-Message-Id: <20190802092220.628368349@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ammy Yi <ammy.yi@intel.com>
+Subject: [PATCH 4.4 082/158] intel_th: msu: Fix single mode with disabled IOMMU
+Date:   Fri,  2 Aug 2019 11:28:23 +0200
+Message-Id: <20190802092220.878378356@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -43,51 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit 0bdf8a8245fdea6f075a5fede833a5fcf1b3466c upstream.
+commit 918b8646497b5dba6ae82d4a7325f01b258972b9 upstream.
 
-ECRYPTFS_SIZE_AND_MARKER_BYTES is type size_t, so if "rc" is negative
-that gets type promoted to a high positive value and treated as success.
+Commit 4e0eaf239fb3 ("intel_th: msu: Fix single mode with IOMMU") switched
+the single mode code to use dma mapping pages obtained from the page
+allocator, but with IOMMU disabled, that may lead to using SWIOTLB bounce
+buffers and without additional sync'ing, produces empty trace buffers.
 
-Fixes: 778aeb42a708 ("eCryptfs: Cleanup and optimize ecryptfs_lookup_interpose()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-[tyhicks: Use "if/else if" rather than "if/if"]
-Cc: stable@vger.kernel.org
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Fix this by using a DMA32 GFP flag to the page allocation in single mode,
+as the device supports full 32-bit DMA addressing.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: 4e0eaf239fb3 ("intel_th: msu: Fix single mode with IOMMU")
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reported-by: Ammy Yi <ammy.yi@intel.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190621161930.60785-4-alexander.shishkin@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ecryptfs/crypto.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/hwtracing/intel_th/msu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1041,8 +1041,10 @@ int ecryptfs_read_and_validate_header_re
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -625,7 +625,7 @@ static int msc_buffer_contig_alloc(struc
+ 		goto err_out;
  
- 	rc = ecryptfs_read_lower(file_size, 0, ECRYPTFS_SIZE_AND_MARKER_BYTES,
- 				 inode);
--	if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
--		return rc >= 0 ? -EINVAL : rc;
-+	if (rc < 0)
-+		return rc;
-+	else if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
-+		return -EINVAL;
- 	rc = ecryptfs_validate_marker(marker);
- 	if (!rc)
- 		ecryptfs_i_size_init(file_size, inode);
-@@ -1400,8 +1402,10 @@ int ecryptfs_read_and_validate_xattr_reg
- 	rc = ecryptfs_getxattr_lower(ecryptfs_dentry_to_lower(dentry),
- 				     ECRYPTFS_XATTR_NAME, file_size,
- 				     ECRYPTFS_SIZE_AND_MARKER_BYTES);
--	if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
--		return rc >= 0 ? -EINVAL : rc;
-+	if (rc < 0)
-+		return rc;
-+	else if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
-+		return -EINVAL;
- 	rc = ecryptfs_validate_marker(marker);
- 	if (!rc)
- 		ecryptfs_i_size_init(file_size, inode);
+ 	ret = -ENOMEM;
+-	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
++	page = alloc_pages(GFP_KERNEL | __GFP_ZERO | GFP_DMA32, order);
+ 	if (!page)
+ 		goto err_free_sgt;
+ 
 
 
