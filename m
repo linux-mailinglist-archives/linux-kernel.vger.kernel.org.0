@@ -2,162 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3B037F2A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A1F7F2B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391941AbfHBJpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:45:32 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35226 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405432AbfHBJpZ (ORCPT
+        id S2405874AbfHBJuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:50:44 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:39175 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404933AbfHBJuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:45:25 -0400
-Received: by mail-ot1-f65.google.com with SMTP id j19so862476otq.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 02:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Gwtot9TeklRqzA2mlAgP0qsNYR8mpKfqgQpyD7Xv9xQ=;
-        b=OUgcLNqK0s105ZDr95woraa74qxDrAheewlOE/XzMooHzoMBTbOARD5eNRHUSiMzcq
-         IhBwJjTC9G7fBq9w/3UeeyRGEAdquOmn9Os9vU6NAyAtgvlfkjPl5wARtAnfrlzi0Zzz
-         ZKHDCHSnQDuSytpcS279y89/7KWtlagEAyreQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gwtot9TeklRqzA2mlAgP0qsNYR8mpKfqgQpyD7Xv9xQ=;
-        b=jJxP6a+fLLXbliZeRO9yOJTbUDuFptmfZ/lMj6FEhSw50nmI0hFAM8621NEMgT75Oh
-         g6qH7o4utkgW0skDsZmr7N6EwteD4vmwzDGD7yiFDZNoRZw8ZzZ+CMYIcO7j8yfEppMS
-         5nNhaCVxrs4keFQuPIQVjnruWTnWbuk7VETbYpG+eEmAO4Ykakzj6OfpelkpKMGGA1fZ
-         mv+FUZoNkPZRgXBDKYqexxCK3jtTdPCdKeVQT2Ebo/o3MJN/VF8c/kZ+DQvnm04AJZz2
-         AD8dmcsVfWebMg1BVWphxwsVmcJSUwF/nNsr1IHQe3HhPAwg4+xlYDFrZH/0w7hGeiVq
-         rZEw==
-X-Gm-Message-State: APjAAAUdNEh2uB3YK/yb8I6tE9R080dFGMpx5pENMDlioo4dkqyxHUwR
-        6xLf1zsorwslrMluBDsLiwfRTPz/j4rwufULM/4=
-X-Google-Smtp-Source: APXvYqx6atiJUG/sjs4BaoFmi9Wh4Qwt4Vg1uYeBCLXFTQH2NdA5pxfrEzBWroGoy1Iiodaypgy51Sk3SvFRrEeldqM=
-X-Received: by 2002:a05:6830:ce:: with SMTP id x14mr84006580oto.188.1564739124649;
- Fri, 02 Aug 2019 02:45:24 -0700 (PDT)
+        Fri, 2 Aug 2019 05:50:35 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1htUCg-0001sw-HD; Fri, 02 Aug 2019 11:50:26 +0200
+Date:   Fri, 2 Aug 2019 11:50:20 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Qais Yousef <qais.yousef@arm.com>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 0/5] Fix FIFO-99 abuse
+In-Reply-To: <20190802093244.GF2332@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1908021149110.3924@nanos.tec.linutronix.de>
+References: <20190801111348.530242235@infradead.org> <20190801131707.5rpyydznnhz474la@e107158-lin.cambridge.arm.com> <20190802093244.GF2332@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <1564571048-15029-1-git-send-email-lowry.li@arm.com>
- <1564571048-15029-3-git-send-email-lowry.li@arm.com> <20190731132002.dut5mdsqgh7b75iv@DESKTOP-E1NTVVP.localdomain>
- <20190802092920.4la5cwrltv2m6dke@DESKTOP-E1NTVVP.localdomain> <CAKMK7uEZaFEcs90+U3vzgH69+95BD58Dt=J=gT6=n6oah5Nbyg@mail.gmail.com>
-In-Reply-To: <CAKMK7uEZaFEcs90+U3vzgH69+95BD58Dt=J=gT6=n6oah5Nbyg@mail.gmail.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 2 Aug 2019 11:45:13 +0200
-Message-ID: <CAKMK7uH38rxyTyuYRGJ6NBejyUxQ6Qvr1CdjH2kpXiq+3-=t8Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] drm: Clear the fence pointer when writeback job signaled
-To:     Brian Starkey <Brian.Starkey@arm.com>
-Cc:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "eric@anholt.net" <eric@anholt.net>,
-        "kieran.bingham+renesas@ideasonboard.com" 
-        <kieran.bingham+renesas@ideasonboard.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "laurent.pinchart@ideasonboard.com" 
-        <laurent.pinchart@ideasonboard.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>, nd <nd@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 11:43 AM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Fri, Aug 2, 2019 at 11:29 AM Brian Starkey <Brian.Starkey@arm.com> wrote:
-> >
-> > Hi Lowry,
-> >
-> > On Thu, Aug 01, 2019 at 06:34:08AM +0000, Lowry Li (Arm Technology China) wrote:
-> > > Hi Brian,
-> > >
-> > > On Wed, Jul 31, 2019 at 09:20:04PM +0800, Brian Starkey wrote:
-> > > > Hi Lowry,
-> > > >
-> > > > Thanks for this cleanup.
-> > > >
-> > > > On Wed, Jul 31, 2019 at 11:04:45AM +0000, Lowry Li (Arm Technology China) wrote:
-> > > > > During it signals the completion of a writeback job, after releasing
-> > > > > the out_fence, we'd clear the pointer.
-> > > > >
-> > > > > Check if fence left over in drm_writeback_cleanup_job(), release it.
-> > > > >
-> > > > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/drm_writeback.c | 23 +++++++++++++++--------
-> > > > >  1 file changed, 15 insertions(+), 8 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-> > > > > index ff138b6..43d9e3b 100644
-> > > > > --- a/drivers/gpu/drm/drm_writeback.c
-> > > > > +++ b/drivers/gpu/drm/drm_writeback.c
-> > > > > @@ -324,6 +324,9 @@ void drm_writeback_cleanup_job(struct drm_writeback_job *job)
-> > > > >   if (job->fb)
-> > > > >           drm_framebuffer_put(job->fb);
-> > > > >
-> > > > > + if (job->out_fence)
-> > > >
-> > > > I'm thinking it might be a good idea to signal the fence with an error
-> > > > here, if it's not already signaled. Otherwise, if there's someone
-> > > > waiting (which there shouldn't be), they're going to be waiting a very
-> > > > long time :-)
-> > > >
-> > > > Thanks,
-> > > > -Brian
-> > > >
-> > > Here it happened at atomic_check failed and test only commit. For both
-> > > cases, the commit has been dropped and it's only a clean up. So here better
-> > > not be treated as an error case:)
-> >
-> > If anyone else has a reference on the fence, then IMO it absolutely is
-> > an error to reach this point without the fence being signaled -
-> > because it means that the fence will never be signaled.
-> >
-> > I don't think the API gives you a way to check if this is the last
-> > reference, so it's safest to just make sure the fence is signalled
-> > before dropping the reference.
-> >
-> > It just feels wrong to me to have the possibility of a dangling fence
-> > which is never going to get signalled; and it's an easy defensive step
-> > to make sure it can never happen.
-> >
-> > I know it _shouldn't_ happen, but we often put in handling for cases
-> > which shouldn't happen, because they frequently do happen :-)
->
-> We're not as paranoid with the vblank fences either, so not sure why
-> we need to be this paranoid with writeback fences. If your driver
-> grabs anything from the atomic state in ->atomic_check it's buggy
-> anyway.
->
-> If you want to fix this properly I think we need to move the call to
-> prepare_signalling() in between atomic_check and atomic_commit. Then I
-> think it makes sense to also force-complete the fence on error ...
->
-> > > Since for userspace, it should have been failed or a test only case, so
-> > > writebace fence should not be signaled.
-> >
-> > It's not only userspace that can wait on fences (and in fact this
-> > fence will never even reach userspace if the commit fails), the driver
-> > may have taken a copy to use for "something".
+On Fri, 2 Aug 2019, Peter Zijlstra wrote:
+> On Thu, Aug 01, 2019 at 02:17:07PM +0100, Qais Yousef wrote:
+> > On 08/01/19 13:13, Peter Zijlstra wrote:
+> > > I noticed a bunch of kthreads defaulted to FIFO-99, fix them.
+> > > 
+> > > The generic default is FIFO-50, the admin will have to configure the system
+> > > anyway.
+> > > 
+> > > For some the purpose is to be above OTHER and then FIFO-1 really is sufficient.
+> > 
+> > I was looking in this area too and was thinking of a way to consolidate the
+> > creation of RT/DL tasks in the kernel and the way we set the priority.
+> > 
+> > Does it make sense to create a new header for RT priorities for kthreads
+> > created in the kernel so that we can easily track and rationale about the
+> > relative priorities of in-kernel RT tasks?
+> > 
+> > When working in the FW world such a header helped a lot in understanding what
+> > runs at each priority level and how to reason about what priority level makes
+> > sense for a new item. It could be a nice single point of reference; even for
+> > admins.
+> 
+> Well, SCHED_FIFO is a broken scheduler model; that is, it is
+> fundamentally incapable of resource management, which is the one thing
+> an OS really should be doing.
+> 
+> This is of course the reason it is limited to privileged users only.
+> 
+> Worse still; it is fundamentally impossible to compose static priority
+> workloads. You cannot take two correctly working static prio workloads
+> and smash them together and still expect them to work.
+> 
+> For this reason 'all' FIFO tasks the kernel creates are basically at:
+> 
+>   MAX_RT_PRIO / 2
+> 
+> The administrator _MUST_ configure the system, the kernel simply doesn't
+> know enough information to make a sensible choice.
+> 
+> Now, Geert suggested so make make a define for that, but how about we do
+> something like:
+> 
+> /*
+>  * ${the above explanation}
+>  */
+> int kernel_setscheduler_fifo(struct task_struct *p)
+> {
+> 	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 };
+> 	return sched_setscheduler_nocheck(p, SCHED_FIFO, &sp);
+> }
+> 
+> And then take away sched_setscheduler*().
 
-I forgot to add: you can check this by looking at the fence reference
-count. A WARN_ON if that's more than 1 on cleanup (but also for the
-out fences) could be a nice addition.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Yes, please.
+
+     tglx
+
