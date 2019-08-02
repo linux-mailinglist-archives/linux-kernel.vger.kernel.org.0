@@ -2,105 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58E027F731
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 457747F728
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:46:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389798AbfHBMrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:47:46 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48186 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730003AbfHBMrp (ORCPT
+        id S2389697AbfHBMqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:46:15 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33831 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728567AbfHBMqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:47:45 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x72Clhkb013670;
-        Fri, 2 Aug 2019 07:47:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564750063;
-        bh=SuUzlKhtHBayh83JtSydpVMlTi0S6ttWT130+rq4NmU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Y60GKzjN1O2YhyQ2s/FO6azlAmsjHt8oxXRMeo4WZZE3kLFbUNyqMCaC0E9Jjup6T
-         UOYO89Kb/pGzR9iKUTRqTAeg1GXj5FkYuQYQ7uGyd4xUtp/VZ8b9nmvtOh5wQuGh8a
-         EPF9vofOSyyaCwMoo9Ra1O888tKOfwGPTgYb3FdU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x72ClhGr036771
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 2 Aug 2019 07:47:43 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 2 Aug
- 2019 07:47:42 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 2 Aug 2019 07:47:42 -0500
-Received: from [172.24.145.64] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x72CleaQ096146;
-        Fri, 2 Aug 2019 07:47:41 -0500
-Subject: Re: [PATCH 8/9] phy: ti: am654-serdes: Don't reference clk_init_data
- after registration
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Roger Quadros <rogerq@ti.com>
-References: <20190731193517.237136-1-sboyd@kernel.org>
- <20190731193517.237136-9-sboyd@kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <85f4dd66-0e99-7ecf-5b18-ad1715520ceb@ti.com>
-Date:   Fri, 2 Aug 2019 18:15:55 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 2 Aug 2019 08:46:15 -0400
+Received: by mail-qk1-f193.google.com with SMTP id t8so54635611qkt.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 05:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6ql0O82ncHZU71SnaUyYlbcaPGtvlWm+BrLQDkFEDbY=;
+        b=MRMA2whmjpLNxlhbDl5mBbGm/wxr+mnLnwdUEiOzNBsQbTy974xui1zcbJXuaVeMgi
+         +e6pAPXNKqJ5FLrB5btG3fWEwJOZCNVqx7WhXgNhnlz2EhhnCC/jrtDsn55I0rQrPbEs
+         kTXxKo2YuV2bT1/e1Z1A6Wf8qvRURa8Gr3WBc9QO7dijfCQypZgeANqmpaiWdSJoUCtu
+         VXKmwcx2rj/qqL+7cWXldCjZ59ch1b87c5iVVd4Ql5AT2hWXZoJ7MKekKjw5eD86xgli
+         DTGd7yg7MsSW0a1wLwfpAvBC9sgR49+QmZEGlFoYAgcWlKpxKOv19D6RuAJw4q09e1/M
+         Xu1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6ql0O82ncHZU71SnaUyYlbcaPGtvlWm+BrLQDkFEDbY=;
+        b=LQ2IxTzQMILqAQa8vfp5T39iLuQH20ijmrj8LWc3znuhf864CASQDgc6bbFB3U8FLp
+         giUhmYy/KuT36hRVURwNXXyooRHJGUGGJ9QzJd/bScGbNdnt/l1jYcj51u7KrSz/+CGh
+         LCjKjLgKYclI7fv4CVSMCpvdDEc6zt3Rm90Dc46Tv4yp3+r/yH+G65kVFYvQeg6Rk2Mp
+         bnBkPD1+RTaX/yHJceAA147Jo4qUC5byBJR/ifvqlqpBFNQ2dF+j2pVQdLNbZIMluhQJ
+         z6kjKxxHfnrrwk0QU5jPfXvQ9gkVaxYj25qrFvaVHqZ/H9fKEizsve0lTb7YPMwBz2M/
+         N3YA==
+X-Gm-Message-State: APjAAAWcBGQYMMqeX+9X0PJ6la1zKymLdi/ZfzuL3hwx/sQMf8buC+KF
+        6/v+JHSUKoDdzSpM+Lh//X53tA==
+X-Google-Smtp-Source: APXvYqxtz2vM6y/fN8WSSWPve6vWs8cD8+KUQAMGJTQIxCltGAZYGzTtsZ3uymeGSjZYIgEaLwJYTg==
+X-Received: by 2002:a37:bc03:: with SMTP id m3mr89369627qkf.199.1564749974287;
+        Fri, 02 Aug 2019 05:46:14 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id l19sm41561137qtb.6.2019.08.02.05.46.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Aug 2019 05:46:13 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1htWwn-0003D2-5A; Fri, 02 Aug 2019 09:46:13 -0300
+Date:   Fri, 2 Aug 2019 09:46:13 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH V2 7/9] vhost: do not use RCU to synchronize MMU notifier
+ with worker
+Message-ID: <20190802124613.GA11245@ziepe.ca>
+References: <20190731084655.7024-1-jasowang@redhat.com>
+ <20190731084655.7024-8-jasowang@redhat.com>
+ <20190731123935.GC3946@ziepe.ca>
+ <7555c949-ae6f-f105-6e1d-df21ddae9e4e@redhat.com>
+ <20190731193057.GG3946@ziepe.ca>
+ <a3bde826-6329-68e4-2826-8a9de4c5bd1e@redhat.com>
+ <20190801141512.GB23899@ziepe.ca>
+ <42ead87b-1749-4c73-cbe4-29dbeb945041@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190731193517.237136-9-sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42ead87b-1749-4c73-cbe4-29dbeb945041@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 02, 2019 at 05:40:07PM +0800, Jason Wang wrote:
+> > This must be a proper barrier, like a spinlock, mutex, or
+> > synchronize_rcu.
+> 
+> 
+> I start with synchronize_rcu() but both you and Michael raise some
+> concern.
 
+I've also idly wondered if calling synchronize_rcu() under the various
+mm locks is a deadlock situation.
 
-On 01/08/19 1:05 AM, Stephen Boyd wrote:
-> A future patch is going to change semantics of clk_register() so that
-> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-> referencing this member here so that we don't run into NULL pointer
-> exceptions.
+> Then I try spinlock and mutex:
 > 
-> Cc: Roger Quadros <rogerq@ti.com>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> 
-> Please ack so I can take this through clk tree
+> 1) spinlock: add lots of overhead on datapath, this leads 0 performance
+> improvement.
 
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+I think the topic here is correctness not performance improvement
+
+> 2) SRCU: full memory barrier requires on srcu_read_lock(), which still leads
+> little performance improvement
+ 
+> 3) mutex: a possible issue is need to wait for the page to be swapped in (is
+> this unacceptable ?), another issue is that we need hold vq lock during
+> range overlap check.
+
+I have a feeling that mmu notififers cannot safely become dependent on
+progress of swap without causing deadlock. You probably should avoid
+this.
+
+> > And, again, you can't re-invent a spinlock with open coding and get
+> > something better.
 > 
->  drivers/phy/ti/phy-am654-serdes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> So the question is if waiting for swap is considered to be unsuitable for
+> MMU notifiers. If not, it would simplify codes. If not, we still need to
+> figure out a possible solution.
 > 
-> diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
-> index f8edd0840fa2..398a8c9b675a 100644
-> --- a/drivers/phy/ti/phy-am654-serdes.c
-> +++ b/drivers/phy/ti/phy-am654-serdes.c
-> @@ -335,6 +335,7 @@ static int serdes_am654_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct serdes_am654_clk_mux *mux = to_serdes_am654_clk_mux(hw);
->  	struct regmap *regmap = mux->regmap;
-> +	const char *name = clk_hw_get_name(hw);
->  	unsigned int reg = mux->reg;
->  	int clk_id = mux->clk_id;
->  	int parents[SERDES_NUM_CLOCKS];
-> @@ -374,8 +375,7 @@ static int serdes_am654_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->  		 * This can never happen, unless we missed
->  		 * a valid combination in serdes_am654_mux_table.
->  		 */
-> -		WARN(1, "Failed to find the parent of %s clock\n",
-> -		     hw->init->name);
-> +		WARN(1, "Failed to find the parent of %s clock\n", name);
->  		return -EINVAL;
->  	}
->  
-> 
+> Btw, I come up another idea, that is to disable preemption when vhost thread
+> need to access the memory. Then register preempt notifier and if vhost
+> thread is preempted, we're sure no one will access the memory and can do the
+> cleanup.
+
+I think you should use the spinlock so at least the code is obviously
+functionally correct and worry about designing some properly justified
+performance change after.
+
+Jason
