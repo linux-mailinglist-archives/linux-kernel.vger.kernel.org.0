@@ -2,130 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 903EA801CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 22:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8672801D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 22:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394368AbfHBUfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 16:35:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35967 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732848AbfHBUfq (ORCPT
+        id S2394660AbfHBUhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 16:37:55 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:2990 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbfHBUhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 16:35:46 -0400
-Received: from 162-237-133-238.lightspeed.rcsntx.sbcglobal.net ([162.237.133.238] helo=elm)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <tyhicks@canonical.com>)
-        id 1hteH3-0006zl-Sv; Fri, 02 Aug 2019 20:35:38 +0000
-Date:   Fri, 2 Aug 2019 15:35:33 -0500
-From:   Tyler Hicks <tyhicks@canonical.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
-        nayna@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH] KEYS: trusted: allow module init if TPM is inactive or
- deactivated
-Message-ID: <20190802203532.GF26616@elm>
-References: <20190705163735.11539-1-roberto.sassu@huawei.com>
- <20190711194811.rfsohbfc3a7carpa@linux.intel.com>
- <b4454a78-1f1b-cc75-114a-99926e097b05@huawei.com>
- <20190801163215.mfkagoafkxscesne@linux.intel.com>
- <e50c4cfa-1f0c-6f4d-1910-010a8d874393@huawei.com>
- <20190802142721.GA26616@elm>
- <20190802194226.oiztvme5klkmw6fh@linux.intel.com>
- <20190802202343.GE26616@elm>
+        Fri, 2 Aug 2019 16:37:55 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d449f210002>; Fri, 02 Aug 2019 13:37:53 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 02 Aug 2019 13:37:52 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 02 Aug 2019 13:37:52 -0700
+Received: from [10.2.165.119] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
+ 2019 20:37:51 +0000
+Subject: Re: [PATCH v7 07/20] clk: tegra: clk-periph: Add save and restore
+ support
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+ <1564532424-10449-8-git-send-email-skomatineni@nvidia.com>
+ <c703b4fc-9ebb-0fd4-11de-80974b5c3842@gmail.com>
+ <614e3fec-cfa2-9e49-6130-d6de253acf03@nvidia.com>
+ <92e95688-1984-9967-d47c-57380466a0f2@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <d8d2732f-8fde-4702-edab-67edf459ec3d@nvidia.com>
+Date:   Fri, 2 Aug 2019 13:37:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802202343.GE26616@elm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <92e95688-1984-9967-d47c-57380466a0f2@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564778273; bh=cyC5zanfI3+yNQLqeE9zrQ4J05Iah311csGQUOV+kNA=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=YMtYKH1j0i0dLJqHRKU/MC5m9rkYbgRWADoGehwsxWsc0HBKKKXNyZnTPWKRAKCJz
+         nhMxdpVOHxZxmdpqr9p++0xbY3cYaqw3UXGoydrRMJNQjHA1dIeTvIGRiE6GK3wmPQ
+         bTNuxfDIJuag6CoPLUBFZxPuHKajif43T+3hCnw7fYSFRdGLvKGuGig1zUDa7x6adB
+         I77WlVgEJfhdwISQwNHvwqzAc9Lv5KXzTLoSFj402VLiCNVWu8oqlA2N/hwpS3yf/u
+         M0xAaNq+ZU+Xc/0brtZyTladYXn+tpvsa6M4heTLBL4xZJwGZRIowaLw2OzdEGYVV6
+         UutEIWfuwIC+A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-02 15:23:43, Tyler Hicks wrote:
-> On 2019-08-02 22:42:26, Jarkko Sakkinen wrote:
-> > On Fri, Aug 02, 2019 at 09:27:22AM -0500, Tyler Hicks wrote:
-> > > On 2019-08-02 10:21:16, Roberto Sassu wrote:
-> > > > On 8/1/2019 6:32 PM, Jarkko Sakkinen wrote:
-> > > > > On Mon, Jul 15, 2019 at 06:44:28PM +0200, Roberto Sassu wrote:
-> > > > > > According to the bug report at https://bugs.archlinux.org/task/62678,
-> > > > > > the trusted module is a dependency of the ecryptfs module. We should
-> > > > > > load the trusted module even if the TPM is inactive or deactivated.
-> > > > > > 
-> > > > > > Given that commit 782779b60faa ("tpm: Actually fail on TPM errors during
-> > > > > > "get random"") changes the return code of tpm_get_random(), the patch
-> > > > > > should be modified to ignore the -EIO error. I will send a new version.
-> > > > > 
-> > > > > Do you have information where this dependency comes from?
-> > > > 
-> > > > ecryptfs retrieves the encryption key from encrypted keys (see
-> > > > ecryptfs_get_encrypted_key()).
-> > > 
-> > > That has been there for many years with any problems. It was added
-> > > in 2011:
-> > > 
-> > >  commit 1252cc3b232e582e887623dc5f70979418caaaa2
-> > >  Author: Roberto Sassu <roberto.sassu@polito.it>
-> > >  Date:   Mon Jun 27 13:45:45 2011 +0200
-> > > 
-> > >      eCryptfs: added support for the encrypted key type
-> > > 
-> > > What's recently changed the situation is this patch:
-> > > 
-> > >  commit 240730437deb213a58915830884e1a99045624dc
-> > >  Author: Roberto Sassu <roberto.sassu@huawei.com>
-> > >  Date:   Wed Feb 6 17:24:51 2019 +0100
-> > > 
-> > >      KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()
-> > > 
-> > > Now eCryptfs has a hard dependency on a TPM chip that's working
-> > > as expected even if eCryptfs (or the rest of the system) isn't utilizing
-> > > the TPM. If the TPM behaves unexpectedly, you can't access your files.
-> > > We need to get this straightened out soon.
-> > 
-> > I agree with this conclusion that eCryptfs needs to be fixed, not
-> > another workaround to trusted.ko.
-> 
-> That wasn't the conclusion that I came to. I prefer Robert's proposed
-> change to trusted.ko.
-> 
-> How do you propose that this be fixed in eCryptfs?
-> 
-> Removing encrypted_key support from eCryptfs is the only way that I can
-> see to fix the bug in eCryptfs. That support has been there since 2011.
-> I'm not sure of the number of users that would be broken by removing
-> encrypted_key support. I don't think the number is high but I can't say
-> that confidently.
 
-AFAICT, this bug doesn't only affect eCryptfs. It also affects Intel
-nvdimm support starting with:
-
- commit 4c6926a23b76ea23403976290cd45a7a143f6500
- Author: Dave Jiang <dave.jiang@intel.com>
- Date:   Thu Dec 6 12:40:01 2018 -0800
-
-     acpi/nfit, libnvdimm: Add unlock of nvdimm support for Intel DIMMs
-
-So without a workaround in trusted.ko, encrypted_key support will need
-to be removed from eCryptfs and nvdimm to address this issue.
-
-Tyler
-
-> 
-> Roberto, what was your use case when you added encrypted_key support to
-> eCryptfs back then? Are you aware of any users of eCryptfs +
-> encrypted_keys?
-> 
-> Jarkko, removing a long-standing feature is potentially more disruptive
-> to users than adding a workaround to trusted.ko which already requires a
-> similar workaround. I don't think that I agree with you on the proper
-> fix here.
-> 
-> Tyler
-> 
-> > 
-> > /Jarkko
+On 8/2/19 1:20 PM, Dmitry Osipenko wrote:
+> 02.08.2019 21:43, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 8/2/19 5:32 AM, Dmitry Osipenko wrote:
+>>> 31.07.2019 3:20, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> This patch implements save and restore context for peripheral fixed
+>>>> clock ops, peripheral gate clock ops, sdmmc mux clock ops, and
+>>>> peripheral clock ops.
+>>>>
+>>>> During system suspend, core power goes off and looses the settings
+>>>> of the Tegra CAR controller registers.
+>>>>
+>>>> So during suspend entry clock and reset state of peripherals is saved
+>>>> and on resume they are restored to have clocks back to same rate and
+>>>> state as before suspend.
+>>>>
+>>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>  =C2=A0 drivers/clk/tegra/clk-periph-fixed.c | 33
+>>>> ++++++++++++++++++++++++++++++++
+>>>>  =C2=A0 drivers/clk/tegra/clk-periph-gate.c=C2=A0 | 34
+>>>> +++++++++++++++++++++++++++++++++
+>>>>  =C2=A0 drivers/clk/tegra/clk-periph.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 37
+>>>> ++++++++++++++++++++++++++++++++++++
+>>>>  =C2=A0 drivers/clk/tegra/clk-sdmmc-mux.c=C2=A0=C2=A0=C2=A0 | 28 +++++=
+++++++++++++++++++++++
+>>>>  =C2=A0 drivers/clk/tegra/clk.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 ++++++
+>>>>  =C2=A0 5 files changed, 138 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/tegra/clk-periph-fixed.c
+>>>> b/drivers/clk/tegra/clk-periph-fixed.c
+>>>> index c088e7a280df..21b24530fa00 100644
+>>>> --- a/drivers/clk/tegra/clk-periph-fixed.c
+>>>> +++ b/drivers/clk/tegra/clk-periph-fixed.c
+>>>> @@ -60,11 +60,44 @@ tegra_clk_periph_fixed_recalc_rate(struct clk_hw
+>>>> *hw,
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return (unsigned long)rate;
+>>>>  =C2=A0 }
+>>>>  =C2=A0 +static int tegra_clk_periph_fixed_save_context(struct clk_hw =
+*hw)
+>>>> +{
+>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_clk_periph_fixed *fixed =3D
+>>>> to_tegra_clk_periph_fixed(hw);
+>>>> +=C2=A0=C2=A0=C2=A0 u32 mask =3D 1 << (fixed->num % 32);
+>>> This could be BIT(fixed->num % 32).
+>>>
+>>>> +=C2=A0=C2=A0=C2=A0 fixed->enb_ctx =3D readl_relaxed(fixed->base +
+>>>> fixed->regs->enb_reg) &
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 mask;
+>>>> +=C2=A0=C2=A0=C2=A0 fixed->rst_ctx =3D readl_relaxed(fixed->base +
+>>>> fixed->regs->rst_reg) &
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 mask;
+>>> The enb_ctx/rst_ctx are booleans, while you assigning an integer value
+>>> here. You're getting away here because bool is an 32bit unsigned int,
+>>> but you shouldn't rely on it and always explicitly convert to a bool.
+>>>
+>>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>>> +}
+>>>> +
+>>>> +static void tegra_clk_periph_fixed_restore_context(struct clk_hw *hw)
+>>>> +{
+>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_clk_periph_fixed *fixed =3D
+>>>> to_tegra_clk_periph_fixed(hw);
+>>>> +=C2=A0=C2=A0=C2=A0 u32 mask =3D 1 << (fixed->num % 32);
+>>>> +
+>>>> +=C2=A0=C2=A0=C2=A0 if (fixed->enb_ctx)
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writel_relaxed(mask, fixed=
+->base + fixed->regs->enb_set_reg);
+>>>> +=C2=A0=C2=A0=C2=A0 else
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writel_relaxed(mask, fixed=
+->base + fixed->regs->enb_clr_reg);
+>>>> +
+>>>> +=C2=A0=C2=A0=C2=A0 udelay(2);
+>>> Will be better to read out and compare the hardware's state with the
+>>> restored one, then bail out if the state is unchanged.
+>>>
+>>> Shouldn't it be fence_udelay()?
+>>>
+>>>> +=C2=A0=C2=A0=C2=A0 if (!fixed->rst_ctx) {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 udelay(5); /* reset propog=
+ation delay */
+>>> Why delaying is done before the writing to the reset register?
+>> During SC7 exit, peripheral reset state is set to POR state. So some
+>> peripherals will already be in reset state and making sure of
+>> propagation delay before releasing from reset.
+>>
+>> It should be rst_clr_reg. will fix in next rev
+>>
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writel_relaxed(mask, fixed=
+->base + fixed->regs->rst_reg);
+>>> I'm not quite sure what's going on here, this looks wrong.
+>>>
+>>> 1. rst_reg points to RST_DEVICES_x
+>>> 2. Each bit of RST_DEVICES_x represents the reset-assertion state of
+>>> each individual device
+>>> 3. By writing to rst_reg, all (!) devices are deasserted, except the on=
+e
+>>> device which corresponds to the mask
+>>> 4. The reset is asserted for a single device, while !fixed->rst_ctx
+>>> means that it actually should be deasserted (?)
+>>>
+>>> Apparently you should use rst_set_reg / rst_clr_reg.
+>> Yes, It should be rst_clr_reg. will fix in next rev
+>>>> +=C2=A0=C2=A0=C2=A0 }
+>>> What about the case where rst_ctx=3Dtrue?
+>> ON SC7 exit, state of RST_DEV will be POR state where most peripherals
+>> will already be in reset state.
+>>
+>> Few of them which are not in reset state in POR values are those that
+>> need to stay de-asserted across the boot states anyway.
+> Okay, sounds reasonable.
+>
+> BTW, it would be nice if you could add a brief clarifying comment to the
+> code for each of the questions asked during of the review.
+OK, Will add comments in code ...
