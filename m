@@ -2,86 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF8BF7FADC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA807FAE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405985AbfHBNfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:35:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405938AbfHBNe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:34:56 -0400
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 985B721842;
-        Fri,  2 Aug 2019 13:34:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752895;
-        bh=AOM4fOrWcXJ0jseQxBiq/7aKw9Ers/tE8HeByVSd9QE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NPdPO8QNKIFHyLclnfIENqqo8qqzd5J2DZ9sZ7Xl1c9FNVHe6c95crzwNrqo7EOty
-         dHW/39rLodUwarCNs5QSW5E2JjLbuXcx1MMEE2ukSTUdQMBunSX0DqBS2bF7Y/zEAX
-         IpxS3njbolU9vgEwncAH1+MMasCMnSLGN9Qxvn24=
-Received: by mail-qk1-f173.google.com with SMTP id d15so54752163qkl.4;
-        Fri, 02 Aug 2019 06:34:55 -0700 (PDT)
-X-Gm-Message-State: APjAAAVXvGAJt0YQrTA6Qc4+mBJ339fibdQ+klG8GeQ1N5ji8RU48u9f
-        jZiJj/0nwgtUtYpwmgtwCYRVt4bhptDiyH/89Q==
-X-Google-Smtp-Source: APXvYqygjBn1/EWko56cFZKxIUhfaf9MMi7BKzf/8JqnTcJxDMsyOkDdJi2i2SRjWDVkquDwVn6DCbZfSUuL3VM0CT0=
-X-Received: by 2002:a05:620a:1447:: with SMTP id i7mr91698408qkl.254.1564752894791;
- Fri, 02 Aug 2019 06:34:54 -0700 (PDT)
+        id S2406067AbfHBNfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:35:10 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44889 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406017AbfHBNfH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:35:07 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t14so33641892plr.11
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 06:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=FUKwvsUakiLdWHeLmkm41eeKrCNSJsxR9s2deeLtAuU=;
+        b=FMAo8/vMKAG3Z081LK7599yv8zpQ5D1bMJw/Chyc6hnWkWEUo3NtEviyx4qmTuoLAu
+         s/81LhUqS6pnSzJ5KEV/XM744D5k8ZgDTQNogZU5IMvzmejd4Y2sMifoYG/ikmpctugZ
+         EUnXnEtqKJgtRF1tcCwX916sa8aGaIcKWLMRm6BZGPuNbE4Z3F2ErVvlwPnmxtweyF2K
+         SS779zE83lL5bpAS8mOJ/opldu5ZFMsAFgxmimKF4D1NeOyGLnt6z9by0WJB/TUTEr/Y
+         /q7HO6go55GE33Vt0iklPJzIUXu4OQD66lPdunc9FCEeTv6ceu+Immxa0kkzPac8IKw5
+         jd5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=FUKwvsUakiLdWHeLmkm41eeKrCNSJsxR9s2deeLtAuU=;
+        b=c4EmrScZrzL0xsyqpTIlvUPrbTun4RVP/4nxt1DqeCh+vav8rM/gIFRX98L7J+4R93
+         IB/LJZvUgLBQ68fVOdXai2/+LelE8+V9DmcoybkO0k4Qg7YhWqilYkUJAjb0/7vEaRvm
+         D3pa948MZzIYNb5vHxLiTJEhpumOoQEsc/ZUKUhk7U8SwhIVJoNTbM2bcwv2CHM0Y4ug
+         Z+vrpoom7tIEezFvQ7C3wk/Bl46jmQoAA/2e31wXXSzldJPUa54ChMyZmcl0FT3fKrls
+         /iNutnKvN6JLdMTNaBCtWZ9atgJy2PLyzHAVBormyOOmMRtMHv0S3LOcTHCWm/jkvRj0
+         j2cA==
+X-Gm-Message-State: APjAAAUvc7KTwuZxqRTJfxC7Bn/n8h14YKaBuFZRAmPYIEp/1QMMSJLh
+        UtbcJv53tHReLYffJ03ctFk=
+X-Google-Smtp-Source: APXvYqwCXqnpwkproCYUNPLmAwfyhMI2JJoAiWiv9cKeSy9WaCOxpDHDV717uA6xD2DJ2hwr19LRfA==
+X-Received: by 2002:a17:902:aa88:: with SMTP id d8mr124580948plr.274.1564752906788;
+        Fri, 02 Aug 2019 06:35:06 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id g66sm73903121pfb.44.2019.08.02.06.35.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 02 Aug 2019 06:35:06 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Fri, 2 Aug 2019 22:35:03 +0900
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH 2/2] i915: do not leak module ref counter
+Message-ID: <20190802133503.GA18318@tigerII.localdomain>
+References: <20190802123956.2450-1-sergey.senozhatsky@gmail.com>
+ <20190802123956.2450-2-sergey.senozhatsky@gmail.com>
+ <156475071634.6598.8668583907388398632@skylake-alporthouse-com>
+ <156475141863.6598.6809215010139776043@skylake-alporthouse-com>
+ <20190802131523.GB466@tigerII.localdomain>
 MIME-Version: 1.0
-References: <20190722154538.5314-1-david@lechnology.com> <20190722154538.5314-2-david@lechnology.com>
- <20190727204836.1514265d@archlinux> <20190802072513.GA30522@icarus>
-In-Reply-To: <20190802072513.GA30522@icarus>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 2 Aug 2019 07:34:42 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLA+m5vKZQ1WwWusnVHwX+nnuApiwKXUnmP6ti-PvMZ-g@mail.gmail.com>
-Message-ID: <CAL_JsqLA+m5vKZQ1WwWusnVHwX+nnuApiwKXUnmP6ti-PvMZ-g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: counter: new bindings for TI eQEP
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc:     David Lechner <david@lechnology.com>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190802131523.GB466@tigerII.localdomain>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 1:25 AM William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
->
-> On Sat, Jul 27, 2019 at 08:48:36PM +0100, Jonathan Cameron wrote:
-> > On Mon, 22 Jul 2019 10:45:35 -0500
-> > David Lechner <david@lechnology.com> wrote:
-> >
-> > > This documents device tree binding for the Texas Instruments Enhanced
-> > > Quadrature Encoder Pulse (eQEP) Module found in various TI SoCs.
-> > >
-> > > Signed-off-by: David Lechner <david@lechnology.com>
-> >
-> > Up to William given it is a counter binding, (unless Rob overrules)
-> > but new bindings are generally preferred as yaml.
-> >
-> > Content looks fine to me.
-> >
-> > Thanks,
-> >
-> > Jonathan
->
-> Rob,
->
-> Would you prefer these bindings as yaml, or shall I accept them as they
-> are now?
+On (08/02/19 22:15), Sergey Senozhatsky wrote:
+[..]
+> > > Looking around, it looks like we always need to drop type after
+> > > mounting. Should the
+> > >         put_filesystem(type);
+> > > be here instead?
+> > > 
+> > > Anyway, nice catch.
+> > 
+> > Sigh. put_filesystem() is part of fs internals. I'd be tempted to add
+> 
+> Good catch!
+> 
+> So we can switch to vfs_kern_mount(), I guess, but pass different options,
+> depending on has_transparent_hugepage().
 
-Still up to you at this point, but I certainly prefer them to be DT schema.
+Hmm. This doesn't look exactly right. It appears that vfs_kern_mount()
+has a slightly different purpose. It's for drivers which register their
+own fstype and fs_context/sb callbacks. A typical usage would be
 
-Rob
+	static struct file_system_type nfsd_fs_type = {
+		.owner→ →       = THIS_MODULE,
+		.name→  →       = "nfsd",
+		.init_fs_context = nfsd_init_fs_context,
+		.kill_sb→       = nfsd_umount,
+	};
+	MODULE_ALIAS_FS("nfsd");
+
+	vfs_kern_mount(&nfsd_fs_type, SB_KERNMOUNT, "nfsd", NULL);
+
+i915 is a different beast, it just wants to mount fs and reconfigure
+it, it doesn't want to be an fs. So it seems that current kern_mount()
+is actually right.
+
+Maybe we need to export put_filesystem() instead.
+
+	-ss
