@@ -2,66 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F0E97F4E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D31627F4F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390956AbfHBKUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:20:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54846 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389243AbfHBKUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:20:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4649EAE03;
-        Fri,  2 Aug 2019 10:20:34 +0000 (UTC)
-Subject: Re: [RFC PATCH 2/3] mm, compaction: use MIN_COMPACT_COSTLY_PRIORITY
- everywhere for costly orders
-To:     Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190724175014.9935-1-mike.kravetz@oracle.com>
- <20190724175014.9935-3-mike.kravetz@oracle.com>
- <278da9d8-6781-b2bc-8de6-6a71e879513c@suse.cz>
- <0942e0c2-ac06-948e-4a70-a29829cbcd9c@oracle.com>
- <89ba8e07-b0f8-4334-070e-02fbdfc361e3@suse.cz>
- <2f1d6779-2b87-4699-abf7-0aa59a2e74d9@oracle.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <a0f01341-a5d8-d015-c37e-4932eaafd868@suse.cz>
-Date:   Fri, 2 Aug 2019 12:20:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2391482AbfHBKW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:22:29 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49648 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731757AbfHBKW2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 06:22:28 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1htUhc-0001k3-1s; Fri, 02 Aug 2019 10:22:24 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][net-next] net/mlx5: remove self-assignment on esw->dev
+Date:   Fri,  2 Aug 2019 11:22:23 +0100
+Message-Id: <20190802102223.26198-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <2f1d6779-2b87-4699-abf7-0aa59a2e74d9@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/1/19 10:33 PM, Mike Kravetz wrote:
-> On 8/1/19 6:01 AM, Vlastimil Babka wrote:
->> Could you try testing the patch below instead? It should hopefully
->> eliminate the stalls. If it makes hugepage allocation give up too early,
->> we'll know we have to involve __GFP_RETRY_MAYFAIL in allowing the
->> MIN_COMPACT_PRIORITY priority. Thanks!
-> 
-> Thanks.  This patch does eliminate the stalls I was seeing.
+From: Colin Ian King <colin.king@canonical.com>
 
-Great, thanks! I'll send a proper patch then.
+There is a self assignment of esw->dev to itself, clean this up by
+removing it.
 
-> In my testing, there is little difference in how many hugetlb pages are
-> allocated.  It does not appear to be giving up/failing too early.  But,
-> this is only with __GFP_RETRY_MAYFAIL.  The real concern would with THP
-> requests.  Any suggestions on how to test that?
+Addresses-Coverity: ("Self assignment")
+Fixes: 6cedde451399 ("net/mlx5: E-Switch, Verify support QoS element type")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-AFAICS the default THP defrag mode is unaffected, as GFP_TRANSHUGE_LIGHT doesn't
-include __GFP_DIRECT_RECLAIM, so it never reaches this code. Madvised THP
-allocations will be affected, which should best be tested the same way as Andrea
-and Mel did in the __GFP_THISNODE debate.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+index f4ace5f8e884..de0894b695e3 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1413,7 +1413,7 @@ static int esw_vport_egress_config(struct mlx5_eswitch *esw,
+ 
+ static bool element_type_supported(struct mlx5_eswitch *esw, int type)
+ {
+-	struct mlx5_core_dev *dev = esw->dev = esw->dev;
++	struct mlx5_core_dev *dev = esw->dev;
+ 
+ 	switch (type) {
+ 	case SCHEDULING_CONTEXT_ELEMENT_TYPE_TSAR:
+-- 
+2.20.1
 
