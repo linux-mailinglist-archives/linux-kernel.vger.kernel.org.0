@@ -2,197 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77037E943
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 04:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B087EA0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 04:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389552AbfHBCYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 22:24:02 -0400
-Received: from mail-lf1-f43.google.com ([209.85.167.43]:43354 "EHLO
-        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731638AbfHBCX6 (ORCPT
+        id S2389903AbfHBC0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 22:26:37 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41706 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389848AbfHBC0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 22:23:58 -0400
-Received: by mail-lf1-f43.google.com with SMTP id c19so51758327lfm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 19:23:56 -0700 (PDT)
+        Thu, 1 Aug 2019 22:26:33 -0400
+Received: by mail-io1-f67.google.com with SMTP id j5so144768998ioj.8;
+        Thu, 01 Aug 2019 19:26:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=avfAa/7L14uB9QkcSbxP0pdLgxgaet/skvZa0szQ5IY=;
-        b=QV1yUR7ucwzp8P/EGXo8Gz3EwqkDbwjC37rULF73+IKsEBAorgPwmSp2Cy8WRcaqrV
-         cB2eYJJQ0+83OrZjZR2BjY0SdLQz1NKVjQFRcwf2MREaXh9fsAzVJ43FxGM1+mfEiIj3
-         jokJeHmzhfdNLH7xWUK+jRbyHMXitRgzl4OywY6NTO1oCuLjOYJ5kNWYpa68Xcf5hBQU
-         RdtErgVmAILdCdcNJL4luRCuf291vQtNb17qqTPlXSKFRh+xZ6ek02PznHvqbAnErV29
-         H4amLBJBpxSpC9UK3HDgniTrolnCiJVF2OLd1sIZRWrbkaEiHwgaqGgnedlEFEZ/jG9p
-         cBvA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3jE/qOtP1fz3hEG4RtDQhO7tMIcvYMp5O+T6euuQUcE=;
+        b=bW3cGh8WxyTsYRSlys+blG/7dyjyHuuJdV0CGpicWGTcMv1lMBIUJFzGI3ZxbivNp/
+         kGBVZFEOzphL7mdDABnFlkKMzahiyYkxYpKQYI9TdiLAx9gOxHLYNQsP8vjk8m3NKS7r
+         PnvuUvC/m5mN01hHSwFHhu6kCCMzO8spTMPZlZuiPhBfRrbAtLvPoKeOjg8+dp6pCvZC
+         kbwJNMfkmxjNlajmzjhwXXyC+UQ56we+n1ud+C3meYTiVxedTqFrbLUujt2PwCJWsNu9
+         23D4FZieUPeho65AsuIyVBIJ6fCqQW/GCsH3rBryYAf8UCUu2zZwPvbHAmGlRSvpNLh+
+         zhUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=avfAa/7L14uB9QkcSbxP0pdLgxgaet/skvZa0szQ5IY=;
-        b=oJwz+cHpZPVpmyhPjdCt34ACbSL/0WMQzhLNAf0jd5yOXJGUIMV3ABfY8Fe5hq0CUU
-         NrL7kW8mEOV4wGBvQ+uMOGM5EBCsoIdYNdJVWhkZlf1zhu0crxQNqGtzEPrva4iBIA4B
-         Y7crT+4AYM5l//zZljZNtFuybJpD5TaA3akkbMR5Km28FHqttlB7nVS3FaTTEsPiS7vM
-         lK9iwsxCe2AO8qhHwEadoEmqZOqchwHu8B+4Gb8RRbjxC9iJdjOBmQMi5G4IetaQT0C+
-         0sDJqj0oVXZIcur34w6igfG4u23FGwWwQpeO0SwVwqeqU8l1my8NG8UIjx5BGC/Ouw0t
-         Ps2g==
-X-Gm-Message-State: APjAAAWFkvy8NXhv1iHiXy0i1r7jvnloFO9zJsC1X4HDtsldK7PBJ6yh
-        An5qrEUAReCDkCZZbJMO/8CWQ4pBcHGJHYTQJUIo2Vmc
-X-Google-Smtp-Source: APXvYqwx/g6dE/6hV5oTXlX6VP2+9JeyMq7cx9Mp5n4CGVHpBg1cjMn+Gymm/h6P6abHXBHTf6vDy1hDIvUX3J9Lg7M=
-X-Received: by 2002:a05:6512:51c:: with SMTP id o28mr65112767lfb.67.1564712635593;
- Thu, 01 Aug 2019 19:23:55 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3jE/qOtP1fz3hEG4RtDQhO7tMIcvYMp5O+T6euuQUcE=;
+        b=a5b3LJ53Ln3DcFdd6ERxCp0LXIaZdLFoM49y7zcqlQ67oED413BqxKi8tYRTpFx1CO
+         WFxCenPdDbmTOtC7Pq61ZQDST8I+CUxJIyfHcmKxj5QaRR1i67hQVWG0NQkCc7SZu39i
+         cF+1UK6JCRzAW5vsEfQQiJHTqhG3zHkEHRB3GCudYF51yiQU3UU6XWQaKTNR8SKq28mr
+         hWhvO9rL/NNK3jdmaDMmrK221XTOyrctcwBZtBOojML1tFnH8oUR0FAJAOkg9jhaKPV8
+         j44oEeTuB1FmyGTjyy2GSXgLWjGK5jRUBml8aCpoGCQeu4TQdHqIrADRyLcGB2lNzy1Y
+         t7UA==
+X-Gm-Message-State: APjAAAUmx8oc6uezaRVsJib4k+rC9BzuQlBnR4qv03cGx60fbXHvweK4
+        lPzzPg2YPMF9cd4HecuKzBWxnaEgrXrtIzm33Sc=
+X-Google-Smtp-Source: APXvYqypHgvjA7X7cmae9+y5zSYvl+e77KaCUfJ6RL6RNUikeasXpNPo9yD4B0mY1IZK6pdZKcqCKLatRUR2EIk2sxw=
+X-Received: by 2002:a6b:ed09:: with SMTP id n9mr9894028iog.153.1564712792776;
+ Thu, 01 Aug 2019 19:26:32 -0700 (PDT)
 MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 2 Aug 2019 12:23:44 +1000
-Message-ID: <CAPM=9twvuac3guTTT-Y5O65GscWLG-NwOdyUCmHFi0HOcQM1DA@mail.gmail.com>
-Subject: drm fixes for 5.3-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-20-deepa.kernel@gmail.com>
+ <201907292129.AC796230@keescook> <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
+In-Reply-To: <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Thu, 1 Aug 2019 19:26:21 -0700
+Message-ID: <CABeXuvrmNkUOH5ZU59Kg4Ge1cFE9nqp9NhTPJjus5KkCrYeC6w@mail.gmail.com>
+Subject: Re: [PATCH 19/20] pstore: fs superblock limits
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Jul 30, 2019 at 12:36 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Jul 30, 2019 at 6:31 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
+> > > Also update the gran since pstore has microsecond granularity.
+> >
+> > So, I'm fine with this, but technically the granularity depends on the
+> > backend storage... many have no actual time keeping, though. My point is,
+> > pstore's timestamps are really mostly a lie, but the most common backend
+> > (ramoops) is seconds-granularity.
+> >
+> > So, I'm fine with this, but it's a lie but it's a lie that doesn't
+> > matter, so ...
+> >
+> > Acked-by: Kees Cook <keescook@chromium.org>
+> >
+> > I'm open to suggestions to improve it...
+>
+> If we don't care about using sub-second granularity, then setting it
+> to one second unconditionally here will make it always use that and
+> report it correctly.
 
-Thanks to Daniel for handling the email the last couple of weeks, flus
-and break-ins combined to derail me. Surprised nothing materialised
-today to take me out again.
+Should this printf in ramoops_write_kmsg_hdr() also be fixed then?
 
-I've also tried embedding the summary into the signed pull request,
-since all the cool kids seemed to be doing it, it's a bit messy in my
-workflow as I do most of my stuff remotely including signing, but I
-usually edit the summary locally.
+        RAMOOPS_KERNMSG_HDR "%lld.%06lu-%c\n",
+        (time64_t)record->time.tv_sec,
+        record->time.tv_nsec / 1000,
+        record->compressed ? 'C' : 'D');
+    persistent_ram_write(prz, hdr, len);
 
-Otherwise, just more amdgpu navi fixes, msm fixes and a single nouveau
-regression fix.
+ramoops_read_kmsg_hdr() doesn't read this as microseconds. Seems like
+a mismatch from above.
+
+If we want to agree that we just want seconds granularity for pstore,
+we could replace the tv_nsec part to be all 0's if anybody else is
+depending on this format.
+I could drop this patch from the series and post that patch seperately.
 
 Thanks,
-Dave.
-
-drm-fixes-2019-08-02:
-drm pull fixes for 5.3-rc3
-
-amdgpu:
-    navi10 temperature and pstate fixes
-    vcn dynamic power management fix
-    CS ioctl error handling fix
-    debugfs info leak fix
-    amdkfd VegaM fix.
-
-msm:
-    dma sync call fix
-    mdp5 dsi command mode fix
-    fall-through fixes
-    disabled GPU fix
-
-nouveau:
-    regression fix for displayport MST support.
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b=
-:
-
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-08-02
-
-for you to fetch changes up to f8981e0309e9004c6e86d218049045700c79d740:
-
-  Merge tag 'msm-fixes-2019_08_01' of
-https://gitlab.freedesktop.org/drm/msm into drm-fixes (2019-08-02
-10:17:25 +1000)
-
-----------------------------------------------------------------
-drm pull fixes for 5.3-rc3
-
-amdgpu:
-    navi10 temperature and pstate fixes
-    vcn dynamic power management fix
-    CS ioctl error handling fix
-    debugfs info leak fix
-    amdkfd VegaM fix.
-
-msm:
-    dma sync call fix
-    mdp5 dsi command mode fix
-    fall-through fixes
-    disabled GPU fix
-
-nouveau:
-    regression fix for displayport MST support.
-
-----------------------------------------------------------------
-Alex Deucher (1):
-      drm/amdgpu/powerplay: use proper revision id for navi
-
-Brian Masney (1):
-      drm/msm: add support for per-CRTC max_vblank_count on mdp5
-
-Christian K=C3=B6nig (1):
-      drm/amdgpu: fix error handling in amdgpu_cs_process_fence_dep
-
-Dave Airlie (2):
-      Merge tag 'drm-fixes-5.3-2019-07-31' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-      Merge tag 'msm-fixes-2019_08_01' of
-https://gitlab.freedesktop.org/drm/msm into drm-fixes
-
-Evan Quan (7):
-      drm/amd/powerplay: fix null pointer dereference around dpm state rela=
-tes
-      drm/amd/powerplay: enable SW SMU reset functionality
-      drm/amd/powerplay: add new sensor type for VCN powergate status
-      drm/amd/powerplay: support VCN powergate status retrieval on Raven
-      drm/amd/powerplay: support VCN powergate status retrieval for SW SMU
-      drm/amd/powerplay: correct Navi10 VCN powergate control (v2)
-      drm/amd/powerplay: correct UVD/VCE/VCN power status retrieval
-
-Jeffrey Hugo (1):
-      drm: msm: Fix add_gpu_components
-
-Jordan Crouse (1):
-      drm/msm: Annotate intentional switch statement fall throughs
-
-Kent Russell (1):
-      drm/amdkfd: Fix byte align on VegaM
-
-Kevin Wang (2):
-      drm/amd/powerplay: add callback function of get_thermal_temperature_r=
-ange
-      drm/amd/powerplay: fix temperature granularity error in smu11
-
-Lyude Paul (1):
-      drm/nouveau: Only release VCPI slots on mode changes
-
-Rob Clark (1):
-      drm/msm: Use the correct dma_sync calls in msm_gem
-
-Wang Xiayang (1):
-      drm/amdgpu: fix a potential information leaking bug
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c  |  3 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c            | 26 ++++----
- drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c       |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c            | 74 +++++++++++++++----=
-----
- drivers/gpu/drm/amd/include/kgd_pp_interface.h    |  1 +
- drivers/gpu/drm/amd/powerplay/amdgpu_smu.c        | 23 ++++---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c |  9 +++
- drivers/gpu/drm/amd/powerplay/inc/amdgpu_smu.h    |  1 -
- drivers/gpu/drm/amd/powerplay/navi10_ppt.c        | 48 +++++++++------
- drivers/gpu/drm/amd/powerplay/smu_v11_0.c         | 36 ++++++-----
- drivers/gpu/drm/amd/powerplay/vega20_ppt.c        | 34 ++++-------
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c             |  2 +
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c             |  1 +
- drivers/gpu/drm/msm/adreno/adreno_gpu.c           |  1 +
- drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c         | 16 ++++-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c          |  2 +-
- drivers/gpu/drm/msm/msm_drv.c                     |  3 +-
- drivers/gpu/drm/msm/msm_gem.c                     | 47 ++++++++++++--
- drivers/gpu/drm/nouveau/dispnv50/disp.c           |  2 +-
- 19 files changed, 215 insertions(+), 116 deletions(-)
+-Deepa
