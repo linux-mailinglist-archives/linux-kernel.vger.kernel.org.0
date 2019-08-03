@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A877780459
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 06:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 996F28045B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 06:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbfHCE1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 3 Aug 2019 00:27:24 -0400
+        id S1726058AbfHCE1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 3 Aug 2019 00:27:25 -0400
 Received: from esa4.hgst.iphmx.com ([216.71.154.42]:20709 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbfHCE1Y (ORCPT
+        with ESMTP id S1725783AbfHCE1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 3 Aug 2019 00:27:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1564806444; x=1596342444;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=WGA9LNHmgoVjWNUYeIrs9rW619vN81TklxixEztnNLM=;
-  b=B1V8eWADGSkrYUFDZ/ZMQ4w74tGGF9Dvc25CT3aLYn+T0BfWDG0H289q
-   WRif4C5kykvgneWStJzh7Vz3C3bPwz0qH6hrDh94s96Nk1gnlFuSuIaXP
-   1D55lAj1sSH+JNczuQRhh7s+Pa+/O3QiZgj1FlcwPBMse0obZO92yRchr
-   CeKzIDDUrTWE8yoEDTEszdFbRbG21lNSvPAon2l6v7t6L3xqyDFgVEQXK
-   ulC/f89rBFISw+G2+HrbeWqj4MKTqzK3iT8YUdD5Nd7GJ8voY7dI6NOkO
-   PgQNYUB7HuuG9vWuuN9fZrTnhSlpK9SxuMUWqipTfvAsPKdrLE9S8IB3t
-   Q==;
-IronPort-SDR: ce8LwsTAQqL3CR+9JjjbjNIKjXHvg3d7bgM6FESm97RdhPH8DAlpwVpUmMovz3VjRwao46lLya
- cNih3AeXaQRU6ZPdQrbHHtAyiRtMbetMRgQFDSo+o5UkM8ml4iWYuhlrvBx9t2/1O5FtnL7W0M
- l/SusShq4C2SoHROR+31MVk88HySM06u6rpU57ZbTYFLD425mp+cGpDLr0QNyceJl2jHsRApXr
- jU5foArlEEUuQ7J2C5M4Kq3CfuZ75QsyOmF544VuQKJe7rB4cPOzjJNOqdHz8ZKU1BamrQC/pp
- yaE=
+  t=1564806445; x=1596342445;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=w14oJ81u6w2W34wdULaaio4UuiCV/eOoDOsEOvwCQng=;
+  b=bqfu6Aakj1HaXXLwELvcqGgCFvCpdcZly8H9kONURXRhEu9G1gsxJL+h
+   Z7H/3q9RnPR2/23JmD8vTbrohQcyfTl0ALPPM9gYE4CDEFD8jXiRyWEUf
+   PWhLo2ixxLQ6vrht3R2kPqrlNCZG2eqG0D3sYiV/dC0uVwKPJ2LLN2XTI
+   /fo4ZCWFhbSf73z5jWMLai/m1RUaMGsMrThcC0Xdj10TLrxfg3IkuiLfg
+   VFD+7E3CIOXqDdQlMaS5thg/fnQ8a5zsS3rx2799iaUGGypaS+J57rQ0y
+   JKDnJnbJm5SqT5I8iq6cYz1SBfxNtMHnEa46GiuPNzeMBIGOchKO4qBFU
+   g==;
+IronPort-SDR: hz+0ko6rLnCqJoQeldSLAlfP8Tx6fD4Y/vNx1lBxsYaKpfvMhyA0MJklsKqrTW94bvojUY3Uql
+ W37hVH7u4hEwSMZfwdaIpl2Tjt4czaGu2jHXyJyjv3GG/Y2rBSy89qt04/eFAqwO29fueA1Xw5
+ 3LOf29KQG8x1XuXFX+4j/VPkdqwb1u+Vp511ATYQqvbEXBcrSK654uUkWuXSnhJA9sk9/XRuY6
+ gkhgolV5i6xczVVTwVBMvTR6slfUka8y+hijf0VRLgg3SGUEF9RzYWjW51lJMkrJJzq3HGocEy
+ jEs=
 X-IronPort-AV: E=Sophos;i="5.64,340,1559491200"; 
-   d="scan'208";a="114857027"
+   d="scan'208";a="114857030"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
   by ob1.hgst.iphmx.com with ESMTP; 03 Aug 2019 12:27:24 +0800
-IronPort-SDR: swoI6hO3CerZebrmSrcWFGTWXXQtgwgacSgtib9t9Zlh7JdRSmpfk3wNiHb9ghvSFDkAvX99vN
- FTIUFN9vAUqVgrDCc0oUHFOiGw3a4mMU2LTmAFaYup0Vk466Y7rxCMFGk0sgFbWQFemnEJ2nUA
- MniMfw+sZs1AvTM+KHIbe5k1o+V4atg/NJoP9ZXERlpdzslBwZ7NFA/VxASwRsUCHZsZe/Tk3t
- KJPJ4r6gGLEtJvad+jzfz4ukkR/HDsZSk08P8ngDsYSUmL0c736w+Juypk14ftAInqxf+72+z2
- kMDI61Vty4q/LtJycTSqiAOf
+IronPort-SDR: iGs7c2k5z9Xlm0S2HI6if3JWKqGdrQt7LBHXSlxtjXxGkrQfSDryXeHlVBf8tLRplkd8hwr5pd
+ lAjWS+E+0DhqZrSFZtJmqUB2YmwIcFNMIQOTvAhFzBj9Loiu95jwnVPIwQaUXyVAJWj3cBjhIs
+ tHck9VpOtxEwCYrFpmNYqIpXjiL3JVH6PWZoWPn1pH7xu6az3VlSa7EOm3yWGOjbrz+TOOUfbt
+ 0R6vRXoCY6gAkud3F1//WQI5udWCQG4cuZzHwuCzUW/P1PH+BPav+jDcDcoSFzXzh8QsngmmVi
+ l/O7D3McF+K9J6ZuM1w+ukzi
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2019 21:25:18 -0700
-IronPort-SDR: QXW8xcKK5nFNUmRNgUr/m0wldyNbVndOvpTNiNeTvE0moFFjOp9Ub+Ee/L6VfiNmNggTMwmJ8r
- CAnVg8TA3d6xkLB09DKJSy1uEesSSnvhvMVmIxH4+RdqkiOB1A12LwDgeehVptgUm67QfvOSmh
- uNnwGrUbMFPuhFp7iLEIkXNCZjxNhxNYDZbefXEnjJNCSxZgt0FZrY7M/JLZle4OChfDFUyFN0
- Uso741IWCnJefG04G+bZP47adDLO8zj/3CseWcC6JAXEea+X1u485icJhcOasvBTR2/PQmBeGM
- ilw=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2019 21:25:19 -0700
+IronPort-SDR: EV3f/F8qxlIo9igWSYgtFHn6XxX3ySMuuexxzaM4Yu0/BwkXYIf0EXQa8FJRTxMZ69F3KbJ2G5
+ CMXdctZnNrCIGAk1KMNOfxGra4Hg7xLqElkQLojhEil4USPW8gvAKAqypu3gvmQz3Owq4v4YB/
+ 9JFJqui0O20wOwyVGJEY2SX1LA2DqI7wB/rNrs49TlslpT6qzjwAoek7bgLHYSq+2sI1qTkAvM
+ l/9gSfipVdVCVkLcNjLVVHF9TGlbKqwJJO6RPYxguiovwlAnqfJt837WDOOVu3ncs62uVG0qpa
+ JbI=
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip01.wdc.com with ESMTP; 02 Aug 2019 21:27:24 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 02 Aug 2019 21:27:25 -0700
 From:   Atish Patra <atish.patra@wdc.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Atish Patra <atish.patra@wdc.com>,
@@ -64,10 +64,12 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Rob Herring <robh+dt@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v4 0/4] Miscellaneous fixes 
-Date:   Fri,  2 Aug 2019 21:27:19 -0700
-Message-Id: <20190803042723.7163-1-atish.patra@wdc.com>
+Subject: [PATCH v4 1/4] RISC-V: Remove per cpu clocksource
+Date:   Fri,  2 Aug 2019 21:27:20 -0700
+Message-Id: <20190803042723.7163-2-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190803042723.7163-1-atish.patra@wdc.com>
+References: <20190803042723.7163-1-atish.patra@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,41 +77,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series have some unrelated fixes related
-to clocksource, dt-bindings and isa strings.
+There is only one clocksource in RISC-V. The boot cpu initializes
+that clocksource. No need to keep a percpu data structure.
 
-I combined them into series as most of them are
-prerequisite for kvm patch series.
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+---
+ drivers/clocksource/timer-riscv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Changes from v3->v4:
-1. Removed export module patch.
-2. Updated dt binding description.
-
-Changes from v2->v3:
-1. Updated commit text of dt binding patch.
-2. Removed couple of remaining uppercase usage.
-
-Changes from v1->v2:
-
-1. Dropped the case-insensitive support patch and added a dt-bindings
-   update patch.
-2. Added a export symbol patch.
-
-Anup Patel (1):
-RISC-V: Add riscv_isa reprensenting ISA features common across CPUs
-
-Atish Patra (3):
-RISC-V: Remove per cpu clocksource
-RISC-V: Fix unsupported isa string info.
-dt-bindings: Update the riscv,isa string description
-
-.../devicetree/bindings/riscv/cpus.yaml       |  4 ++
-arch/riscv/include/asm/hwcap.h                | 16 +++++++
-arch/riscv/kernel/cpu.c                       | 47 +++++++++++++++----
-arch/riscv/kernel/cpufeature.c                | 39 +++++++++++++--
-drivers/clocksource/timer-riscv.c             |  6 +--
-5 files changed, 95 insertions(+), 17 deletions(-)
-
---
+diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+index 5e6038fbf115..09e031176bc6 100644
+--- a/drivers/clocksource/timer-riscv.c
++++ b/drivers/clocksource/timer-riscv.c
+@@ -55,7 +55,7 @@ static u64 riscv_sched_clock(void)
+ 	return get_cycles64();
+ }
+ 
+-static DEFINE_PER_CPU(struct clocksource, riscv_clocksource) = {
++static struct clocksource riscv_clocksource = {
+ 	.name		= "riscv_clocksource",
+ 	.rating		= 300,
+ 	.mask		= CLOCKSOURCE_MASK(64),
+@@ -92,7 +92,6 @@ void riscv_timer_interrupt(void)
+ static int __init riscv_timer_init_dt(struct device_node *n)
+ {
+ 	int cpuid, hartid, error;
+-	struct clocksource *cs;
+ 
+ 	hartid = riscv_of_processor_hartid(n);
+ 	if (hartid < 0) {
+@@ -112,8 +111,7 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+ 
+ 	pr_info("%s: Registering clocksource cpuid [%d] hartid [%d]\n",
+ 	       __func__, cpuid, hartid);
+-	cs = per_cpu_ptr(&riscv_clocksource, cpuid);
+-	error = clocksource_register_hz(cs, riscv_timebase);
++	error = clocksource_register_hz(&riscv_clocksource, riscv_timebase);
+ 	if (error) {
+ 		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
+ 		       error, cpuid);
+-- 
 2.21.0
 
