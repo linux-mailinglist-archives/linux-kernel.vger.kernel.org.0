@@ -2,85 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2597480624
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 14:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F27458062D
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 14:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390349AbfHCMZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 3 Aug 2019 08:25:18 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:38763 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389812AbfHCMZR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Aug 2019 08:25:17 -0400
-Received: from [10.0.20.195] ([201.48.35.65])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id tt5ohodKHqTdhtt5th5KbI; Sat, 03 Aug 2019 14:25:15 +0200
-Subject: Re: [PATCH] media input infrastructure:tw686x...
-To:     Mark Balantzyan <mbalant3@gmail.com>
-Cc:     ezequiel@vanguardiasur.com.ar, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <alpine.DEB.2.21.1907291256080.16959@mbalantz-desktop>
- <40d14e23-636e-ed8a-6608-99427f5b8169@xs4all.nl>
- <alpine.OSX.2.21.1907311431410.3567@exun.local>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <cdc0c943-f5be-f970-ff51-1cd14f605b01@xs4all.nl>
-Date:   Sat, 3 Aug 2019 09:24:59 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2390436AbfHCMcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 3 Aug 2019 08:32:02 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4162 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390353AbfHCMcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Aug 2019 08:32:02 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 890D4767DC1D811C6EAB;
+        Sat,  3 Aug 2019 20:31:58 +0800 (CST)
+Received: from huawei.com (10.67.189.167) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Sat, 3 Aug 2019
+ 20:31:50 +0800
+From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+To:     <davem@davemloft.net>, <yisen.zhuang@huawei.com>,
+        <salil.mehta@huawei.com>, <xiaojiangfeng@huawei.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <leeyou.li@huawei.com>, <xiaowei774@huawei.com>,
+        <nixiaoming@huawei.com>
+Subject: [PATCH v1 0/3] net: hisilicon: Fix a few problems with hip04_eth
+Date:   Sat, 3 Aug 2019 20:31:38 +0800
+Message-ID: <1564835501-90257-1-git-send-email-xiaojiangfeng@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
 MIME-Version: 1.0
-In-Reply-To: <alpine.OSX.2.21.1907311431410.3567@exun.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfMEjDcdQWAgUcUcbaKJnV6E7pCJvjqI2ps6Y52yOZWf0nXUtlGX4ctch/sN5CsEw4OjRTeDGBBkJ3qUPffIHqhX2ghi0Fx9s55LWdYJ8tCgNFIejUC/A
- Jn9AFSJbGb7zWo2mScCK6yHBiwoDQR7ARk16Ayvqy4iJw9HhSxHB7pnW0qBR5bfdfuBx68Qod5ucIIN+OSfvg6eRx7S9cG9yY6FWWQ5r3orJA0aEV17/6kMc
- iLSs02QnALJOh+kt9+nhAIy/jskrlAHnNEa4AFhWL8vnm2iu6c0v3PZ6KkM1Lb5W
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.167]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+During the use of the hip04_eth driver,
+several problems were found,
+which solved the hip04_tx_reclaim reentry problem,
+fixed the problem that hip04_mac_start_xmit never
+returns NETDEV_TX_BUSY
+and the dma_map_single failed on the arm64 platform.
 
-On 7/31/19 6:32 PM, Mark Balantzyan wrote:
-> Hi Hans, all,
-> 
-> Sorry for the poor patching, I am a student and as you may tell still 
-> new to this system. At the time of the patching, I wasn't fully informed 
-> of all the requirements that go into such things, and am still learning.
-> 
-> Would it be alright if I submit a report instead? In order to, I am 
-> (still, sorry) trying to understand the issue at hand. How in fact may 
-> the release() callback be overridden (by a tw686x-specific function) to 
-> free the dma memory and call video_device_release()? To my understanding 
-> at the time, this was merely a re-implementation of video_device_release 
-> with said requirements and subtraction of extra features from 
-> tw686x_video_free()..
+Jiangfeng Xiao (3):
+  net: hisilicon: make hip04_tx_reclaim non-reentrant
+  net: hisilicon: fix hip04-xmit never return TX_BUSY
+  net: hisilicon: Fix dma_map_single failed on arm64
 
-Sorry, you'll need to discuss this with your mentor. I really don't have 
-time to look at reports or anything like that. I'm a media subsystem 
-maintainer, not your mentor. And I expect that you spend time trying to 
-understand the code by looking at how other drivers do this and look at 
-kernel documentation like this:
+ drivers/net/ethernet/hisilicon/hip04_eth.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-https://linuxtv.org/downloads/v4l-dvb-apis-new/media_kapi.html
-
-Regards,
-
-	Hans
-
-> 
->      This release() callback is called by the V4L2 framework when the 
-> last user
->      of the device closes its filehandle, so that's a good point to free 
-> all
->      the memory. Doing it earlier (as the current code does) runs the 
-> risk that someone might
->      still access that memory, and you don't want that.
-> 
-> Yes, I definitely don't want that. :)
-> 
-> Thank you,
-> Mark
-> 
+-- 
+1.8.5.6
 
