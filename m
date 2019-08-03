@@ -2,115 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0DC480869
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 23:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C92480873
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 23:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbfHCVfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 3 Aug 2019 17:35:05 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36952 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729094AbfHCVfF (ORCPT
+        id S1729151AbfHCVte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 3 Aug 2019 17:49:34 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33183 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728817AbfHCVtd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Aug 2019 17:35:05 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 19so37713956pfa.4
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2019 14:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PTxWia5xX02WvPnp2uEjiefvHrcZPYIX5+0Wgmee+Pk=;
-        b=LTBMYcGzprbtDGxIPHTf+oSjKUa835LMfKM954lEhmz+dBkkqUqtOJuQvbiblw4vd0
-         GoP1eLNv7wZc5YD48YCn3EXEOYHkiMqHZXDm0HT74/Fnsln15p2M+FMDtfUEo9+cNASL
-         eew7Yft64f19KCGbHBFjh7qomGhRTphDYYZZQqgdmkDKXQ4b5qEvTzhOtb0fRUCJj6ua
-         72sIPDvS6+5nXSfs9PsqwzDjy1jTo6F2aONBUSPEifF6KTo9EPmKheMw5WOQ6BUSKdGB
-         h53w2aSVsZWsGgS23iJRf5nJVWuMoanOok/W7SY8ovQQfrQ51Yu7podFtey2EllUiQcZ
-         tAPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PTxWia5xX02WvPnp2uEjiefvHrcZPYIX5+0Wgmee+Pk=;
-        b=gufC5FkQHBKrD+bsnLKJRTXUsb2cUXFQFdvVfz1+d15WVTPMrOTcqHH/M1xPUbmDLu
-         24K+gEt6POubzZlCCzpw2z88Aft3jfFz2LyBB9nfajVBorvD049T4762OWs2CAsAzQs7
-         irhHqwrNocxM5wzOh1PEyb0Sxk3qjji1hVcFEbN7drXP8TIgq+z4SYjJ8s8n0KCKRW4F
-         y+1+y1hqipXGgXlvXB+mNPWoxSASLCZbFPlPxgSYrcZrSllAPVi1jLMMX6eZBCyhVi7f
-         naSI3JVh15cy2UZepa8f1ON2lEhaxyWhXZLsvWfsl1/ZZrhGIn3KCGhN93WKIxrX112r
-         97XA==
-X-Gm-Message-State: APjAAAWPG4KXOWXWtbYkZlK4Cxbd/qWmzq3oXGWO5U0BaatxF9ThvxNc
-        mv1bEsxILKNsWAwteqwsZCM=
-X-Google-Smtp-Source: APXvYqyVNiG19eszv1DY0YcDZcQN1aciZqj6gfPTL8J5HnF4633On3P7FwvAUAIKGJZz+shhd/HxLw==
-X-Received: by 2002:a62:764d:: with SMTP id r74mr68806329pfc.110.1564868104374;
-        Sat, 03 Aug 2019 14:35:04 -0700 (PDT)
-Received: from localhost.localdomain ([117.243.24.232])
-        by smtp.gmail.com with ESMTPSA id 201sm95844106pfz.24.2019.08.03.14.35.00
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 03 Aug 2019 14:35:03 -0700 (PDT)
-From:   z3phyr <cristianoprasath@gmail.com>
-Cc:     z3phyr <cristianoprasath@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Straube <straube.linux@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix lines greater than 80 characters
-Date:   Sun,  4 Aug 2019 08:34:53 +0530
-Message-Id: <20190804030456.10567-1-cristianoprasath@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        Sat, 3 Aug 2019 17:49:33 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 2F6AC8029D; Sat,  3 Aug 2019 23:49:19 +0200 (CEST)
+Date:   Sat, 3 Aug 2019 23:49:30 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>
+Subject: Re: [PATCH 4.19 21/32] vhost_net: fix possible infinite loop
+Message-ID: <20190803214930.GB22416@amd>
+References: <20190802092101.913646560@linuxfoundation.org>
+ <20190802092108.665019390@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="yNb1oOkm5a9FJOVX"
+Content-Disposition: inline
+In-Reply-To: <20190802092108.665019390@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch error for "line over 80 characters"
 
-Signed-off-by: z3phyr <cristianoprasath@gmail.com>
----
- drivers/staging/pi433/pi433_if.h | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+--yNb1oOkm5a9FJOVX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/staging/pi433/pi433_if.h b/drivers/staging/pi433/pi433_if.h
-index 9feb95c431cb..74b6e2513813 100644
---- a/drivers/staging/pi433/pi433_if.h
-+++ b/drivers/staging/pi433/pi433_if.h
-@@ -115,11 +115,14 @@ struct pi433_rx_cfg {
- 	__u8			bw_exponent;	/* during AFC: 0x8b */
- 	enum dagc		dagc;
- 
--	/* packet format */
-+    /* packet format */
- 	enum option_on_off	enable_sync;
--	enum option_on_off	enable_length_byte;	  /* should be used in combination with sync, only */
--	enum address_filtering	enable_address_filtering; /* operational with sync, only */
--	enum option_on_off	enable_crc;		  /* only operational, if sync on and fixed length or length byte is used */
-+    /* should be used in combination with sync, only */
-+	enum option_on_off	enable_length_byte;
-+	/* operational with sync, only */
-+	enum address_filtering	enable_address_filtering;
-+	/* only operational, if sync on and fixed length or length byte is used */
-+	enum option_on_off	enable_crc;
- 
- 	__u8			sync_length;
- 	__u8			fixed_message_length;
-@@ -132,10 +135,14 @@ struct pi433_rx_cfg {
- 
- #define PI433_IOC_MAGIC			'r'
- 
--#define PI433_IOC_RD_TX_CFG	_IOR(PI433_IOC_MAGIC, PI433_TX_CFG_IOCTL_NR, char[sizeof(struct pi433_tx_cfg)])
--#define PI433_IOC_WR_TX_CFG	_IOW(PI433_IOC_MAGIC, PI433_TX_CFG_IOCTL_NR, char[sizeof(struct pi433_tx_cfg)])
-+#define PI433_IOC_RD_TX_CFG	_IOR(PI433_IOC_MAGIC, PI433_TX_CFG_IOCTL_NR,\
-+char[sizeof(struct pi433_tx_cfg)])
-+#define PI433_IOC_WR_TX_CFG	_IOW(PI433_IOC_MAGIC, PI433_TX_CFG_IOCTL_NR,\
-+char[sizeof(struct pi433_tx_cfg)])
- 
--#define PI433_IOC_RD_RX_CFG	_IOR(PI433_IOC_MAGIC, PI433_RX_CFG_IOCTL_NR, char[sizeof(struct pi433_rx_cfg)])
--#define PI433_IOC_WR_RX_CFG	_IOW(PI433_IOC_MAGIC, PI433_RX_CFG_IOCTL_NR, char[sizeof(struct pi433_rx_cfg)])
-+#define PI433_IOC_RD_RX_CFG	_IOR(PI433_IOC_MAGIC, PI433_RX_CFG_IOCTL_NR,\
-+char[sizeof(struct pi433_rx_cfg)])
-+#define PI433_IOC_WR_RX_CFG	_IOW(PI433_IOC_MAGIC, PI433_RX_CFG_IOCTL_NR,\
-+char[sizeof(struct pi433_rx_cfg)])
- 
- #endif /* PI433_H */
--- 
-2.22.0
+Hi!
 
+> This makes it possible to trigger a infinite while..continue loop
+> through the co-opreation of two VMs like:
+>=20
+> 1) Malicious VM1 allocate 1 byte rx buffer and try to slow down the
+>    vhost process as much as possible e.g using indirect descriptors or
+>    other.
+> 2) Malicious VM2 generate packets to VM1 as fast as possible
+>=20
+> Fixing this by checking against weight at the end of RX and TX
+> loop. This also eliminate other similar cases when:
+>=20
+> - userspace is consuming the packets in the meanwhile
+> - theoretical TOCTOU attack if guest moving avail index back and forth
+>   to hit the continue after vhost find guest just add new buffers
+>=20
+> This addresses CVE-2019-3900.
+>=20
+
+> @@ -551,7 +551,7 @@ static void handle_tx_copy(struct vhost_
+>  	int err;
+>  	int sent_pkts =3D 0;
+> =20
+> -	for (;;) {
+> +	do {
+>  		bool busyloop_intr =3D false;
+> =20
+>  		head =3D get_tx_bufs(net, nvq, &msg, &out, &in, &len,
+> @@ -592,9 +592,7 @@ static void handle_tx_copy(struct vhost_
+>  				 err, len);
+>  		if (++nvq->done_idx >=3D VHOST_NET_BATCH)
+>  			vhost_net_signal_used(nvq);
+> -		if (vhost_exceeds_weight(vq, ++sent_pkts, total_len))
+> -			break;
+> -	}
+> +	} while (likely(!vhost_exceeds_weight(vq, ++sent_pkts, total_len)));
+> =20
+>  	vhost_net_signal_used(nvq);
+>  }
+
+So this part does not really change anything, right?
+
+> @@ -618,7 +616,7 @@ static void handle_tx_zerocopy(struct vh
+>  	bool zcopy_used;
+>  	int sent_pkts =3D 0;
+> =20
+> -	for (;;) {
+> +	do {
+>  		bool busyloop_intr;
+> =20
+>  		/* Release DMAs done buffers first */
+> @@ -693,10 +691,7 @@ static void handle_tx_zerocopy(struct vh
+>  		else
+>  			vhost_zerocopy_signal_used(net, vq);
+>  		vhost_net_tx_packet(net);
+> -		if (unlikely(vhost_exceeds_weight(vq, ++sent_pkts,
+> -						  total_len)))
+> -			break;
+> -	}
+> +	} while (likely(!vhost_exceeds_weight(vq, ++sent_pkts, total_len)));
+>  }
+> =20
+>  /* Expects to be always run from workqueue - which acts as
+
+Neither does this. Equivalent code. Changelog says it fixes something
+for the transmit so... is that intentional?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--yNb1oOkm5a9FJOVX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1GAWoACgkQMOfwapXb+vKqLQCeKjbltG2/AnHByP+uOanOB5px
+xo0AoJVoT+xb0rMMp+R2JF4xzzBJDI5N
+=5tkE
+-----END PGP SIGNATURE-----
+
+--yNb1oOkm5a9FJOVX--
