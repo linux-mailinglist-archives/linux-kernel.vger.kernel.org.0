@@ -2,137 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 658CA80627
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 14:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB9F80636
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 14:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390523AbfHCMcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 3 Aug 2019 08:32:02 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4163 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390259AbfHCMcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Aug 2019 08:32:02 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7FB3845D03C61DAABD11;
-        Sat,  3 Aug 2019 20:31:58 +0800 (CST)
-Received: from huawei.com (10.67.189.167) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Sat, 3 Aug 2019
- 20:31:51 +0800
-From:   Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-To:     <davem@davemloft.net>, <yisen.zhuang@huawei.com>,
-        <salil.mehta@huawei.com>, <xiaojiangfeng@huawei.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <leeyou.li@huawei.com>, <xiaowei774@huawei.com>,
-        <nixiaoming@huawei.com>
-Subject: [PATCH v1 3/3] net: hisilicon: Fix dma_map_single failed on arm64
-Date:   Sat, 3 Aug 2019 20:31:41 +0800
-Message-ID: <1564835501-90257-4-git-send-email-xiaojiangfeng@huawei.com>
-X-Mailer: git-send-email 1.8.5.6
-In-Reply-To: <1564835501-90257-1-git-send-email-xiaojiangfeng@huawei.com>
-References: <1564835501-90257-1-git-send-email-xiaojiangfeng@huawei.com>
+        id S2390731AbfHCMs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 3 Aug 2019 08:48:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42926 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389830AbfHCMs4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Aug 2019 08:48:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t132so37411697pgb.9
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2019 05:48:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mPBzboYRcSiBqM/IaS9KHDrYF6HIPHgc+gMKUe1oePc=;
+        b=jA7Ho25HlEsNJGaLyKpTv9u/2TBmHzNo9vDOc/DAdt8UhJUAu0FM2uQ54dffS63Bxc
+         n1Ys28HE7q4lznjuvN7w7tua6QTs8ToC7a4qXQT0nTQ6uYM1g+V1oYEUmcNh4rR4r9Ml
+         90qvG5GCiHaW4OpazMgiQpXWV+IA5hT0XuHn+VIZmhdWZ3NRaCY05QpMM0sCUDcAUDFV
+         xLSNjwwfXKr9/7e6m8YBN+BRBCib1uSymIPrwf4a46otvSHChzvHRtX03TW9hZGkNGak
+         owulhoIfTVBaR4my+w/Fa0Nq82+A+f6VuE7gK7HZAm09Lqf9OSTM6vdheeE0HchL9+KA
+         eWPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mPBzboYRcSiBqM/IaS9KHDrYF6HIPHgc+gMKUe1oePc=;
+        b=Vyg4oT6RoaoHQwL9ldLdn0I8pRu/kmjUdQ2uBU0RPPSRtpOv0+pWEhsVQmh6KV656g
+         IS+8F7JxQoqDJ7kvOggJIDKp3ajTcgxlkCtLkINufk71jXthqgNvpEsoY2zZmmtSMw4Q
+         tWSq1HmtKL24k8mQaK7UJG89rBa6X+9PiBKB98RRgjWIjiKBka+4azRKJz3t4ZTfB3+v
+         24mvp7Akpj7LmWA3NWoJsH1IncCdqyO1Wa/KzXfTnMuZ1LnNeQnw8wQ/k/+eCLVnL7A7
+         hdweOq9h6fKLoeu0UpEDNm+gdqQuE8sz8cb2EA9VZEHM45FpXkKzORPMRCRyjiBeQPa/
+         i4ew==
+X-Gm-Message-State: APjAAAVEyAAcxhxfWq0Gs1Q4pimziU834d8TOrOLEkFOV9R2zKjmJIAW
+        URMa0xz5GxrPJHGxVqAoyN1R
+X-Google-Smtp-Source: APXvYqzg/vdX3hd8IM1upuWxyfqFud/2R8eWcmRII4bh4fJaTYTu9UtaTyHvaFflbm2AmnG6EKCr4w==
+X-Received: by 2002:a62:3c3:: with SMTP id 186mr64445790pfd.21.1564836535369;
+        Sat, 03 Aug 2019 05:48:55 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:618e:61ce:f0f1:2151:3036:855b])
+        by smtp.gmail.com with ESMTPSA id l1sm105106428pfl.9.2019.08.03.05.48.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 03 Aug 2019 05:48:54 -0700 (PDT)
+Date:   Sat, 3 Aug 2019 18:18:49 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/9] clk: actions: Don't reference clk_init_data after
+ registration
+Message-ID: <20190803124849.GB11140@Mani-XPS-13-9360>
+References: <20190731193517.237136-1-sboyd@kernel.org>
+ <20190731193517.237136-2-sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.167]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731193517.237136-2-sboyd@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the arm64 platform, executing "ifconfig eth0 up" will fail,
-returning "ifconfig: SIOCSIFFLAGS: Input/output error."
+On Wed, Jul 31, 2019 at 12:35:09PM -0700, Stephen Boyd wrote:
+> A future patch is going to change semantics of clk_register() so that
+> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+> referencing this member here so that we don't run into NULL pointer
+> exceptions.
+> 
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-ndev->dev is not initialized, dma_map_single->get_dma_ops->
-dummy_dma_ops->__dummy_map_page will return DMA_ERROR_CODE
-directly, so when we use dma_map_single, the first parameter
-is to use the device of platform_device.
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
----
- drivers/net/ethernet/hisilicon/hip04_eth.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+Thanks,
+Mani
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index d775b98..c841674 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -220,6 +220,7 @@ struct hip04_priv {
- 	unsigned int reg_inten;
- 
- 	struct napi_struct napi;
-+	struct device *dev;
- 	struct net_device *ndev;
- 
- 	struct tx_desc *tx_desc;
-@@ -465,7 +466,7 @@ static int hip04_tx_reclaim(struct net_device *ndev, bool force)
- 		}
- 
- 		if (priv->tx_phys[tx_tail]) {
--			dma_unmap_single(&ndev->dev, priv->tx_phys[tx_tail],
-+			dma_unmap_single(priv->dev, priv->tx_phys[tx_tail],
- 					 priv->tx_skb[tx_tail]->len,
- 					 DMA_TO_DEVICE);
- 			priv->tx_phys[tx_tail] = 0;
-@@ -516,8 +517,8 @@ static void hip04_start_tx_timer(struct hip04_priv *priv)
- 		return NETDEV_TX_BUSY;
- 	}
- 
--	phys = dma_map_single(&ndev->dev, skb->data, skb->len, DMA_TO_DEVICE);
--	if (dma_mapping_error(&ndev->dev, phys)) {
-+	phys = dma_map_single(priv->dev, skb->data, skb->len, DMA_TO_DEVICE);
-+	if (dma_mapping_error(priv->dev, phys)) {
- 		dev_kfree_skb(skb);
- 		return NETDEV_TX_OK;
- 	}
-@@ -596,7 +597,7 @@ static int hip04_rx_poll(struct napi_struct *napi, int budget)
- 			goto refill;
- 		}
- 
--		dma_unmap_single(&ndev->dev, priv->rx_phys[priv->rx_head],
-+		dma_unmap_single(priv->dev, priv->rx_phys[priv->rx_head],
- 				 RX_BUF_SIZE, DMA_FROM_DEVICE);
- 		priv->rx_phys[priv->rx_head] = 0;
- 
-@@ -625,9 +626,9 @@ static int hip04_rx_poll(struct napi_struct *napi, int budget)
- 		buf = netdev_alloc_frag(priv->rx_buf_size);
- 		if (!buf)
- 			goto done;
--		phys = dma_map_single(&ndev->dev, buf,
-+		phys = dma_map_single(priv->dev, buf,
- 				      RX_BUF_SIZE, DMA_FROM_DEVICE);
--		if (dma_mapping_error(&ndev->dev, phys))
-+		if (dma_mapping_error(priv->dev, phys))
- 			goto done;
- 		priv->rx_buf[priv->rx_head] = buf;
- 		priv->rx_phys[priv->rx_head] = phys;
-@@ -730,9 +731,9 @@ static int hip04_mac_open(struct net_device *ndev)
- 	for (i = 0; i < RX_DESC_NUM; i++) {
- 		dma_addr_t phys;
- 
--		phys = dma_map_single(&ndev->dev, priv->rx_buf[i],
-+		phys = dma_map_single(priv->dev, priv->rx_buf[i],
- 				      RX_BUF_SIZE, DMA_FROM_DEVICE);
--		if (dma_mapping_error(&ndev->dev, phys))
-+		if (dma_mapping_error(priv->dev, phys))
- 			return -EIO;
- 
- 		priv->rx_phys[i] = phys;
-@@ -766,7 +767,7 @@ static int hip04_mac_stop(struct net_device *ndev)
- 
- 	for (i = 0; i < RX_DESC_NUM; i++) {
- 		if (priv->rx_phys[i]) {
--			dma_unmap_single(&ndev->dev, priv->rx_phys[i],
-+			dma_unmap_single(priv->dev, priv->rx_phys[i],
- 					 RX_BUF_SIZE, DMA_FROM_DEVICE);
- 			priv->rx_phys[i] = 0;
- 		}
-@@ -909,6 +910,7 @@ static int hip04_mac_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv = netdev_priv(ndev);
-+	priv->dev = d;
- 	priv->ndev = ndev;
- 	platform_set_drvdata(pdev, ndev);
- 	SET_NETDEV_DEV(ndev, &pdev->dev);
--- 
-1.8.5.6
-
+> ---
+> 
+> Please ack so I can take this through clk tree
+> 
+>  drivers/clk/actions/owl-common.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+> index 32dd29e0a37e..71b683c4e643 100644
+> --- a/drivers/clk/actions/owl-common.c
+> +++ b/drivers/clk/actions/owl-common.c
+> @@ -68,6 +68,7 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
+>  	struct clk_hw *hw;
+>  
+>  	for (i = 0; i < hw_clks->num; i++) {
+> +		const char *name = hw->init->name;
+>  
+>  		hw = hw_clks->hws[i];
+>  
+> @@ -77,7 +78,7 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
+>  		ret = devm_clk_hw_register(dev, hw);
+>  		if (ret) {
+>  			dev_err(dev, "Couldn't register clock %d - %s\n",
+> -				i, hw->init->name);
+> +				i, name);
+>  			return ret;
+>  		}
+>  	}
+> -- 
+> Sent by a computer through tubes
+> 
