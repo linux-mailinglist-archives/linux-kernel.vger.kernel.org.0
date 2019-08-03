@@ -2,318 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 619AB806AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 16:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50737806B9
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 16:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390379AbfHCOUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 3 Aug 2019 10:20:52 -0400
-Received: from onstation.org ([52.200.56.107]:57384 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727768AbfHCOUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Aug 2019 10:20:45 -0400
-Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 9BB4C3E9D1;
-        Sat,  3 Aug 2019 14:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1564842045;
-        bh=Iwvhut8K+CN5T3f6u68dB0enkpni2//8TEDTdDJODFk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G5hMH0bJhaxhkeGjJUOzzkLlEc6mDIWUiB5aHwKMZ13sqcRBsS7Jz3cBna1lbJdTb
-         FUasdac4iWHFtzQJPZsZRfWdX8Z0LY1wy/IiwTPmxMyV30WfAtMo/9PgrT6He46yJ5
-         N6qDsoVP7EukWYJyLy/AfSBEwzwzF889BV+FrdcU=
-From:   Brian Masney <masneyb@onstation.org>
-To:     agross@kernel.org, robdclark@gmail.com, sean@poorly.run,
-        robh+dt@kernel.org, bjorn.andersson@linaro.org
-Cc:     airlied@linux.ie, daniel@ffwll.ch, mark.rutland@arm.com,
-        jonathan@marek.ca, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        jcrouse@codeaurora.org
-Subject: [PATCH v4 6/6] drm/msm/gpu: add ocmem init/cleanup functions
-Date:   Sat,  3 Aug 2019 10:20:26 -0400
-Message-Id: <20190803142026.9647-7-masneyb@onstation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190803142026.9647-1-masneyb@onstation.org>
-References: <20190803142026.9647-1-masneyb@onstation.org>
+        id S2390553AbfHCOWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 3 Aug 2019 10:22:21 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42864 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387961AbfHCOWU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Aug 2019 10:22:20 -0400
+Received: by mail-wr1-f67.google.com with SMTP id x1so30161444wrr.9
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2019 07:22:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=pCfohYs8T32A19JLY6vISbISUxroBlfym93fGYfRr+E=;
+        b=AXhHfC1tm+QX/DkuNbWYsTjgpxASutqA+u/VxrmHuZ1jdkrBnEmT4/LqlpkaWGHkFB
+         ZYUnucQlG9b8gV2/oNbiSuBK8RXsUZ37+FFWrgysRtXtXHIHIcsdcPFlnZFZmHamTEZZ
+         80iw2ArHmMAI50p7n333RZziq1WDoEiJ0GiL2/HMrgKQQzQxUecC5aCqIE1J8Jldp+uN
+         vJD3+K2Ap2N8dHiVLXqbrMHn9DTfPOR2SRqHU3Tt/Uom6X9t9DyP0y6bGCiSi+rVeU0L
+         lS36f7xPL8cM0iSllv+5934pKfSGUyXyWHViq/fiWIlbiHNnn2UepjhIA7iCYIZqev4P
+         tB0A==
+X-Gm-Message-State: APjAAAUpk095Qw/G/R7KP2qrx6R7UuVLiDnVAkxgw8s5fv3d35F8Bk/S
+        TiyhR154CZs25t7cG+WpEMKEOZ0fhlU=
+X-Google-Smtp-Source: APXvYqwPi8bA+g/jNI8HBOAABGEfbB4NDTQofyXWsEPOem86rXd+Bv5YYMpEtflmrNZso+TxMQgNoQ==
+X-Received: by 2002:a5d:4e08:: with SMTP id p8mr4291441wrt.20.1564842137832;
+        Sat, 03 Aug 2019 07:22:17 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
+        by smtp.gmail.com with ESMTPSA id v65sm91701974wme.31.2019.08.03.07.22.16
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sat, 03 Aug 2019 07:22:17 -0700 (PDT)
+Subject: Re: memory leak in pty_common_install
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     syzbot <syzbot+bdebcbf44250d75bdd82@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <0000000000002cd2b1058ee760fe@google.com>
+ <9ad9f8ee-4674-9665-1de5-001268d922bf@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0e43eb9e-e69d-b2a5-b98e-8dd3b9b030d2@suse.cz>
+Date:   Sat, 3 Aug 2019 16:22:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <9ad9f8ee-4674-9665-1de5-001268d922bf@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The files a3xx_gpu.c and a4xx_gpu.c have ifdefs for the OCMEM support
-that was missing upstream. Add two new functions (adreno_gpu_ocmem_init
-and adreno_gpu_ocmem_cleanup) that removes some duplicated code.
+On 02. 08. 19, 8:23, Jiri Slaby wrote:
+> On 30. 07. 19, 17:08, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    6789f873 Merge tag 'pm-5.3-rc2' of
+>> git://git.kernel.org/pu..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1696897c600000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=339b6a6b3640d115
+>> dashboard link:
+>> https://syzkaller.appspot.com/bug?extid=bdebcbf44250d75bdd82
+>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153d7544600000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+bdebcbf44250d75bdd82@syzkaller.appspotmail.com
+>>
+>> BUG: memory leak
+>> unreferenced object 0xffff88810d84d400 (size 512):
+>>   comm "syz-executor.5", pid 7522, jiffies 4294954305 (age 14.260s)
+>>   hex dump (first 32 bytes):
+>>     50 d4 84 0d 81 88 ff ff e0 ff ff ff 0f 00 00 00  P...............
+>>     10 d4 84 0d 81 88 ff ff 10 d4 84 0d 81 88 ff ff  ................
+>>   backtrace:
+>>     [<000000003d61da44>] kmemleak_alloc_recursive
+>> include/linux/kmemleak.h:43 [inline]
+>>     [<000000003d61da44>] slab_post_alloc_hook mm/slab.h:522 [inline]
+>>     [<000000003d61da44>] slab_alloc mm/slab.c:3319 [inline]
+>>     [<000000003d61da44>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3548
+>>     [<00000000a6239e0a>] kmalloc include/linux/slab.h:552 [inline]
+>>     [<00000000a6239e0a>] pty_common_install+0x4e/0x2b0
+>> drivers/tty/pty.c:391
+> 
+> So this is tty_port for o_tty.
+> 
+> ...
+> 
+>> BUG: memory leakx
+>> unreferenced object 0xffff88810e639800 (size 1024):
+>>   comm "syz-executor.5", pid 7522, jiffies 4294954305 (age 14.260s)
+>>   hex dump (first 32 bytes):
+>>     01 54 00 00 01 00 00 00 00 00 00 00 00 00 00 00  .T..............
+>>     00 83 fa 19 82 88 ff ff a0 7f 9b 83 ff ff ff ff  ................
+>>   backtrace:
+>>     [<000000003d61da44>] kmemleak_alloc_recursive
+>> include/linux/kmemleak.h:43 [inline]
+>>     [<000000003d61da44>] slab_post_alloc_hook mm/slab.h:522 [inline]
+>>     [<000000003d61da44>] slab_alloc mm/slab.c:3319 [inline]
+>>     [<000000003d61da44>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3548
+>>     [<000000001cfffc30>] kmalloc include/linux/slab.h:552 [inline]
+>>     [<000000001cfffc30>] kzalloc include/linux/slab.h:748 [inline]
+>>     [<000000001cfffc30>] alloc_tty_struct+0x3f/0x290
+>> drivers/tty/tty_io.c:2981
+>>     [<000000001946a70c>] pty_common_install+0xac/0x2b0
+>> drivers/tty/pty.c:399
+> 
+> And this is o_tty proper. So we leak whole o_tty under some
+> circumstances... Trying to reproduce.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
-Changes since v3:
-- None
+And I failed.
 
-Changes since v2:
-- Check for -ENODEV error of_get_ocmem()
-- remove fail_cleanup_ocmem label in a[34]xx_gpu_init
+Looking into the code, I also can't find the scenario. One virtually
+possible could be hangup_work being cancelled while release_one_tty was
+scheduled on it. But I see this nowhere.
 
-Changes since v1:
-- remove CONFIG_QCOM_OCMEM #ifdefs
-- use unsigned long for memory addresses instead of uint32_t
-- add 'depends on QCOM_OCMEM || QCOM_OCMEM=n' to Kconfig
+A C reproducer would help.
 
- drivers/gpu/drm/msm/Kconfig             |  1 +
- drivers/gpu/drm/msm/adreno/a3xx_gpu.c   | 28 +++++------------
- drivers/gpu/drm/msm/adreno/a3xx_gpu.h   |  3 +-
- drivers/gpu/drm/msm/adreno/a4xx_gpu.c   | 25 ++++------------
- drivers/gpu/drm/msm/adreno/a4xx_gpu.h   |  3 +-
- drivers/gpu/drm/msm/adreno/adreno_gpu.c | 40 +++++++++++++++++++++++++
- drivers/gpu/drm/msm/adreno/adreno_gpu.h | 10 +++++++
- 7 files changed, 66 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-index 9c37e4de5896..b3d3b2172659 100644
---- a/drivers/gpu/drm/msm/Kconfig
-+++ b/drivers/gpu/drm/msm/Kconfig
-@@ -7,6 +7,7 @@ config DRM_MSM
- 	depends on OF && COMMON_CLK
- 	depends on MMU
- 	depends on INTERCONNECT || !INTERCONNECT
-+	depends on QCOM_OCMEM || QCOM_OCMEM=n
- 	select QCOM_MDT_LOADER if ARCH_QCOM
- 	select REGULATOR
- 	select DRM_KMS_HELPER
-diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-index ec82aaa21734..07ddcc529573 100644
---- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-@@ -6,10 +6,6 @@
-  * Copyright (c) 2014 The Linux Foundation. All rights reserved.
-  */
- 
--#ifdef CONFIG_MSM_OCMEM
--#  include <mach/ocmem.h>
--#endif
--
- #include "a3xx_gpu.h"
- 
- #define A3XX_INT0_MASK \
-@@ -195,9 +191,9 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
- 		gpu_write(gpu, REG_A3XX_RBBM_GPR0_CTL, 0x00000000);
- 
- 	/* Set the OCMEM base address for A330, etc */
--	if (a3xx_gpu->ocmem_hdl) {
-+	if (a3xx_gpu->ocmem.hdl) {
- 		gpu_write(gpu, REG_A3XX_RB_GMEM_BASE_ADDR,
--			(unsigned int)(a3xx_gpu->ocmem_base >> 14));
-+			(unsigned int)(a3xx_gpu->ocmem.base >> 14));
- 	}
- 
- 	/* Turn on performance counters: */
-@@ -318,10 +314,7 @@ static void a3xx_destroy(struct msm_gpu *gpu)
- 
- 	adreno_gpu_cleanup(adreno_gpu);
- 
--#ifdef CONFIG_MSM_OCMEM
--	if (a3xx_gpu->ocmem_base)
--		ocmem_free(OCMEM_GRAPHICS, a3xx_gpu->ocmem_hdl);
--#endif
-+	adreno_gpu_ocmem_cleanup(&a3xx_gpu->ocmem);
- 
- 	kfree(a3xx_gpu);
- }
-@@ -494,17 +487,10 @@ struct msm_gpu *a3xx_gpu_init(struct drm_device *dev)
- 
- 	/* if needed, allocate gmem: */
- 	if (adreno_is_a330(adreno_gpu)) {
--#ifdef CONFIG_MSM_OCMEM
--		/* TODO this is different/missing upstream: */
--		struct ocmem_buf *ocmem_hdl =
--				ocmem_allocate(OCMEM_GRAPHICS, adreno_gpu->gmem);
--
--		a3xx_gpu->ocmem_hdl = ocmem_hdl;
--		a3xx_gpu->ocmem_base = ocmem_hdl->addr;
--		adreno_gpu->gmem = ocmem_hdl->len;
--		DBG("using %dK of OCMEM at 0x%08x", adreno_gpu->gmem / 1024,
--				a3xx_gpu->ocmem_base);
--#endif
-+		ret = adreno_gpu_ocmem_init(&adreno_gpu->base.pdev->dev,
-+					    adreno_gpu, &a3xx_gpu->ocmem);
-+		if (ret)
-+			goto fail;
- 	}
- 
- 	if (!gpu->aspace) {
-diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.h b/drivers/gpu/drm/msm/adreno/a3xx_gpu.h
-index 5dc33e5ea53b..c555fb13e0d7 100644
---- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.h
-@@ -19,8 +19,7 @@ struct a3xx_gpu {
- 	struct adreno_gpu base;
- 
- 	/* if OCMEM is used for GMEM: */
--	uint32_t ocmem_base;
--	void *ocmem_hdl;
-+	struct adreno_ocmem ocmem;
- };
- #define to_a3xx_gpu(x) container_of(x, struct a3xx_gpu, base)
- 
-diff --git a/drivers/gpu/drm/msm/adreno/a4xx_gpu.c b/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
-index ab2b752566d8..b01388a9e89e 100644
---- a/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
-@@ -2,9 +2,6 @@
- /* Copyright (c) 2014 The Linux Foundation. All rights reserved.
-  */
- #include "a4xx_gpu.h"
--#ifdef CONFIG_MSM_OCMEM
--#  include <soc/qcom/ocmem.h>
--#endif
- 
- #define A4XX_INT0_MASK \
- 	(A4XX_INT0_RBBM_AHB_ERROR |        \
-@@ -188,7 +185,7 @@ static int a4xx_hw_init(struct msm_gpu *gpu)
- 			(1 << 30) | 0xFFFF);
- 
- 	gpu_write(gpu, REG_A4XX_RB_GMEM_BASE_ADDR,
--			(unsigned int)(a4xx_gpu->ocmem_base >> 14));
-+			(unsigned int)(a4xx_gpu->ocmem.base >> 14));
- 
- 	/* Turn on performance counters: */
- 	gpu_write(gpu, REG_A4XX_RBBM_PERFCTR_CTL, 0x01);
-@@ -318,10 +315,7 @@ static void a4xx_destroy(struct msm_gpu *gpu)
- 
- 	adreno_gpu_cleanup(adreno_gpu);
- 
--#ifdef CONFIG_MSM_OCMEM
--	if (a4xx_gpu->ocmem_base)
--		ocmem_free(OCMEM_GRAPHICS, a4xx_gpu->ocmem_hdl);
--#endif
-+	adreno_gpu_ocmem_cleanup(&a4xx_gpu->ocmem);
- 
- 	kfree(a4xx_gpu);
- }
-@@ -578,17 +572,10 @@ struct msm_gpu *a4xx_gpu_init(struct drm_device *dev)
- 
- 	/* if needed, allocate gmem: */
- 	if (adreno_is_a4xx(adreno_gpu)) {
--#ifdef CONFIG_MSM_OCMEM
--		/* TODO this is different/missing upstream: */
--		struct ocmem_buf *ocmem_hdl =
--				ocmem_allocate(OCMEM_GRAPHICS, adreno_gpu->gmem);
--
--		a4xx_gpu->ocmem_hdl = ocmem_hdl;
--		a4xx_gpu->ocmem_base = ocmem_hdl->addr;
--		adreno_gpu->gmem = ocmem_hdl->len;
--		DBG("using %dK of OCMEM at 0x%08x", adreno_gpu->gmem / 1024,
--				a4xx_gpu->ocmem_base);
--#endif
-+		ret = adreno_gpu_ocmem_init(dev->dev, adreno_gpu,
-+					    &a4xx_gpu->ocmem);
-+		if (ret)
-+			goto fail;
- 	}
- 
- 	if (!gpu->aspace) {
-diff --git a/drivers/gpu/drm/msm/adreno/a4xx_gpu.h b/drivers/gpu/drm/msm/adreno/a4xx_gpu.h
-index d506311ee240..a01448cba2ea 100644
---- a/drivers/gpu/drm/msm/adreno/a4xx_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/a4xx_gpu.h
-@@ -16,8 +16,7 @@ struct a4xx_gpu {
- 	struct adreno_gpu base;
- 
- 	/* if OCMEM is used for GMEM: */
--	uint32_t ocmem_base;
--	void *ocmem_hdl;
-+	struct adreno_ocmem ocmem;
- };
- #define to_a4xx_gpu(x) container_of(x, struct a4xx_gpu, base)
- 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index 9acbbc0f3232..62e3ada0f7c8 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -14,6 +14,7 @@
- #include <linux/pm_opp.h>
- #include <linux/slab.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <soc/qcom/ocmem.h>
- #include "adreno_gpu.h"
- #include "msm_gem.h"
- #include "msm_mmu.h"
-@@ -892,6 +893,45 @@ static int adreno_get_pwrlevels(struct device *dev,
- 	return 0;
- }
- 
-+int adreno_gpu_ocmem_init(struct device *dev, struct adreno_gpu *adreno_gpu,
-+			  struct adreno_ocmem *adreno_ocmem)
-+{
-+	struct ocmem_buf *ocmem_hdl;
-+	struct ocmem *ocmem;
-+
-+	ocmem = of_get_ocmem(dev);
-+	if (IS_ERR(ocmem)) {
-+		if (PTR_ERR(ocmem) == -ENODEV) {
-+			/*
-+			 * Return success since either the ocmem property was
-+			 * not specified in device tree, or ocmem support is
-+			 * not compiled into the kernel.
-+			 */
-+			return 0;
-+		}
-+
-+		return PTR_ERR(ocmem);
-+	}
-+
-+	ocmem_hdl = ocmem_allocate(ocmem, OCMEM_GRAPHICS, adreno_gpu->gmem);
-+	if (IS_ERR(ocmem_hdl))
-+		return PTR_ERR(ocmem_hdl);
-+
-+	adreno_ocmem->ocmem = ocmem;
-+	adreno_ocmem->base = ocmem_hdl->addr;
-+	adreno_ocmem->hdl = ocmem_hdl;
-+	adreno_gpu->gmem = ocmem_hdl->len;
-+
-+	return 0;
-+}
-+
-+void adreno_gpu_ocmem_cleanup(struct adreno_ocmem *adreno_ocmem)
-+{
-+	if (adreno_ocmem && adreno_ocmem->base)
-+		ocmem_free(adreno_ocmem->ocmem, OCMEM_GRAPHICS,
-+			   adreno_ocmem->hdl);
-+}
-+
- int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
- 		struct adreno_gpu *adreno_gpu,
- 		const struct adreno_gpu_funcs *funcs, int nr_rings)
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-index c7441fb8313e..d225a8a92e58 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-@@ -126,6 +126,12 @@ struct adreno_gpu {
- };
- #define to_adreno_gpu(x) container_of(x, struct adreno_gpu, base)
- 
-+struct adreno_ocmem {
-+	struct ocmem *ocmem;
-+	unsigned long base;
-+	void *hdl;
-+};
-+
- /* platform config data (ie. from DT, or pdata) */
- struct adreno_platform_config {
- 	struct adreno_rev rev;
-@@ -236,6 +242,10 @@ void adreno_dump(struct msm_gpu *gpu);
- void adreno_wait_ring(struct msm_ringbuffer *ring, uint32_t ndwords);
- struct msm_ringbuffer *adreno_active_ring(struct msm_gpu *gpu);
- 
-+int adreno_gpu_ocmem_init(struct device *dev, struct adreno_gpu *adreno_gpu,
-+			  struct adreno_ocmem *ocmem);
-+void adreno_gpu_ocmem_cleanup(struct adreno_ocmem *ocmem);
-+
- int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
- 		struct adreno_gpu *gpu, const struct adreno_gpu_funcs *funcs,
- 		int nr_rings);
--- 
-2.21.0
-
+> BTW the reproducer says:
+> ioctl$TCSETS(r0, 0x40045431, ...)
+> 
+> But 0x40045431 is TIOCSPTLCK, not TCSETS.
+> 
+> thanks,-- 
+js
+suse labs
