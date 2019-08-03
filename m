@@ -2,70 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF4A68038C
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 02:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A6EF80391
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 02:45:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392805AbfHCAmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 20:42:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389781AbfHCAmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 20:42:19 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A5D62087E;
-        Sat,  3 Aug 2019 00:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564792938;
-        bh=QWMlU6tOGtjY+ZagXZH1w3wsUBJYvnKFyDdlJoUwrMM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FdkFbFImrxSMA7WuTTE8waU77hFzeBhQncdmd7TzT6uv28lW7gmw61NgG7Gitpin4
-         ghKynQ0n3IKocbFlMIVqsmL9VBLnAypRfs08hDXpXgZkx4hIKW+HzoqUmc/KNMQe6c
-         59pw8hP+2vngTdwzejM58B+M/d1dVvB3+XLZzXnk=
-Date:   Sat, 3 Aug 2019 09:42:12 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the arm64-fixes tree
-Message-Id: <20190803094212.3ff4b1ba33c50c63173c8d31@kernel.org>
-In-Reply-To: <20190802074813.73b82a14@canb.auug.org.au>
-References: <20190802074813.73b82a14@canb.auug.org.au>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2392861AbfHCApR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 20:45:17 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44549 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388048AbfHCApR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 20:45:17 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p17so78835039wrf.11;
+        Fri, 02 Aug 2019 17:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p2nPvXeiMRCbIp019RSfslQHC+wLOXTRda/OBXWWDLk=;
+        b=O9jHmeinzFdk0HUuIlJYgzDWnzM0u/x89eydbjc0Ghqs9dQwrVClCrv9PxjAO+nOgc
+         UOhhFPzo1owoGQIYIbwtLNbSohjjCktGzuHET0iRF2QA2d7mzBqYX5Lub0aXtTk7KCBH
+         5Tq0YAeLRgjykjvHLZFq6LbX21DCzAx/ZZ6ZA72t94EC6LrZ2T3w8YHLFTvBlzdk1Fkv
+         cMDYxoepav+xVwtYSk5C5gClah5xHmXVYLncS/ZqKkmiYw5QYMot3pnZtGB89pH8fGfi
+         PpwhR1YAdNMBP6PvYzcU3lI6yYINT4r0v7cQ3Ml4rUX7CMXfAaqchh909fzszg+/c1D1
+         YDlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p2nPvXeiMRCbIp019RSfslQHC+wLOXTRda/OBXWWDLk=;
+        b=knFA99sDtWbxyE41VFtk1Hp0SgyUO/ZRfUa/c23maYcRN7zQcRhCMQPcakUZ70RW4f
+         yMvGC1YMqpG7x7ifNPyp5w1Ax/iXleP6kWvrLPYY71J6I5QIPnjxQBRwz9acyShJMLrl
+         TDldhyD2CSsXb1jR0Fg4RqzmlXjwfafytrHYkPb49g++07/EVsAuy14Tc3QWc+NREKBH
+         hy3HwztlqD+Ei3ojR1rxsoRRH7vGcsi3kD/VWIJXo9/HGMp2uX6SJ86EtFmCOqAM2N1D
+         hQqOd6GdHW5OsBHNkHo9mFM+pnETcdboTlzwC9lHAKtE+AUeJo97YRMvt3syUzWtszOf
+         wEuQ==
+X-Gm-Message-State: APjAAAVUfbEanzh2fJsrYi82JeKr6UwE6siKRpMpGGlfGrsDyyZalHUX
+        t8vMmmlQmtE7CRsppHIJu5GnXiDNBeD2YUvkWllUdFAhfa0=
+X-Google-Smtp-Source: APXvYqycYdpO8LrjkPFP5CxL4/LTWJJoR+m/XspgpFNdlVEJi3FOAxMCgZIZIQCoyJqzoMZul1a4qVtyziPxQ0M2MTA=
+X-Received: by 2002:a5d:50d1:: with SMTP id f17mr17510387wrt.124.1564793115204;
+ Fri, 02 Aug 2019 17:45:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190702080123.904399496@linuxfoundation.org> <20190702080126.138655706@linuxfoundation.org>
+ <0f105a3696611dc10aa4d7c5c22ffac031b3c098.camel@nokia.com>
+ <20190802072834.GC26174@kroah.com> <88c88ec44e93c07170891bdf391d2b6251c7041a.camel@nokia.com>
+In-Reply-To: <88c88ec44e93c07170891bdf391d2b6251c7041a.camel@nokia.com>
+From:   Xin Long <lucien.xin@gmail.com>
+Date:   Sat, 3 Aug 2019 08:45:03 +0800
+Message-ID: <CADvbK_cOU00xqML35NMf3jk+S81kRLteHODf6Y-OsxPRDurSoQ@mail.gmail.com>
+Subject: Re: [PATCH 4.14 43/43] tipc: pass tunnel dev as NULL to udp_tunnel(6)_xmit_skb
+To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "syzbot+a43d8d4e7e8a7a9e149e@syzkaller.appspotmail.com" 
+        <syzbot+a43d8d4e7e8a7a9e149e@syzkaller.appspotmail.com>,
+        "syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com" 
+        <syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com>,
+        "syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com" 
+        <syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com>,
+        "syzbot+a9e23ea2aa21044c2798@syzkaller.appspotmail.com" 
+        <syzbot+a9e23ea2aa21044c2798@syzkaller.appspotmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "syzbot+0290d2290a607e035ba1@syzkaller.appspotmail.com" 
+        <syzbot+0290d2290a607e035ba1@syzkaller.appspotmail.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "syzbot+9d4c12bfd45a58738d0a@syzkaller.appspotmail.com" 
+        <syzbot+9d4c12bfd45a58738d0a@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Aug 2019 07:48:13 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, Aug 2, 2019 at 7:03 PM Rantala, Tommi T. (Nokia - FI/Espoo)
+<tommi.t.rantala@nokia.com> wrote:
+>
+> On Fri, 2019-08-02 at 09:28 +0200, gregkh@linuxfoundation.org wrote:
+> > On Thu, Aug 01, 2019 at 10:17:30AM +0000, Rantala, Tommi T. (Nokia -
+> > FI/Espoo) wrote:
+> > > Hi,
+> > >
+> > > This tipc patch added in 4.14.132 is triggering a crash for me,
+> > > revert
+> > > fixes it.
+> > >
+> > > Anyone have ideas if some other commits missing in 4.14.x to make
+> > > this
+> > > work...?
+> >
+> > Do you also hav a problem with 4.19.y?  How about 5.2.y?  If not, can
+> > you do 'git bisect' to find the patch that fixes the issue?
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> Hi, please pick this to 4.14.y and 4.19.y, tested that it fixes the
+> crash in both:
+>
+> commit 5684abf7020dfc5f0b6ba1d68eda3663871fce52
+> Author: Xin Long <lucien.xin@gmail.com>
+> Date:   Mon Jun 17 21:34:13 2019 +0800
+>
+>     ip_tunnel: allow not to count pkts on tstats by setting skb's dev
+> to NULL
+Thanks Rantala,
 
-> Hi all,
-> 
-> In commit
-> 
->   72de4a283cb1 ("arm64: kprobes: Recover pstate.D in single-step exception handler")
-> 
-> Fixes tag
-> 
->   Fixes: commit 7419333fa15e ("arm64: kprobe: Always clear pstate.D in breakpoint exception handler")
-> 
-> has these problem(s):
-> 
->   - leading word 'commit' unexpected
+sorry for late, I was in a trip.
 
-Oops, sorry. It was my mistake to add "commit", it should be removed.
-Will, should I remove it? or could you modify on your tree?
+The patch belongs to a patchset:
 
-Thank you,
+https://www.spinics.net/lists/netdev/msg578674.html
 
+So this commit should also be included:
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+commit 6f6a8622057c92408930c31698394fae1557b188
+Author: Xin Long <lucien.xin@gmail.com>
+Date:   Mon Jun 17 21:34:14 2019 +0800
+
+    ip6_tunnel: allow not to count pkts on tstats by passing dev as NULL
+
+Next time I think I should put "Fixes:" flag into each patch.
+
+>
+>
+> For 5.2.y nothing is needed, these commits were in v5.2-rc6 already.
+>
+> -Tommi
+>
