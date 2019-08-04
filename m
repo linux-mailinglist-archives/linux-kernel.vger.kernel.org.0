@@ -2,77 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4C980B45
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 16:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 182ED80B46
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 16:52:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbfHDOvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 10:51:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43228 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbfHDOvG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 10:51:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=P/zOwjyMDiKc1v+p6ZRShkdB95dG/e//ZfkvMl5MS6k=; b=fQ5dFKej4xq/uXyqVPRhDbpqO
-        JKakj5ZDbulmYdas8afErzvQ14ng2iQhML5AylUqQ5YGMjBL0Lyaf1T4WDcAxVZ3S++TSCSxlZjdI
-        +z4MIsjfZ8S32xhXyoB2AkCMc10JlIdNZhtFO71r7M7ERibwg6DZzsKj57cY0g+/HVzXBfdnOIJau
-        o/LcoktysARDOgRfkCEFTNyy3oDb9+JIuvDa7FT7eAYjCaBCaC6idhPklWk4mV1zwqt3qCDEMOc6w
-        F5sS94w6gmuimthekjWC8hYOWFjD5bJ3V+MVzsTWN4w5QghIf3eqjES0HZb4EbK5Gl1Erp8cJ4Tko
-        ODLQ009Hg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1huHqW-0007QM-RM; Sun, 04 Aug 2019 14:50:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 962A620274D79; Sun,  4 Aug 2019 16:50:51 +0200 (CEST)
-Date:   Sun, 4 Aug 2019 16:50:51 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH RFC tip/core/rcu 01/14] rcu/nocb: Atomic ->len field in
- rcu_segcblist structure
-Message-ID: <20190804145051.GG2349@hirez.programming.kicks-ass.net>
-References: <20190802151435.GA1081@linux.ibm.com>
- <20190802151501.13069-1-paulmck@linux.ibm.com>
+        id S1726444AbfHDOwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 10:52:01 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:59766 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726181AbfHDOwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Aug 2019 10:52:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=j8VdqIQ8dJCQg66t0XShnIYIOvNwsHrmT7xHQgMAnSQ=; b=ktHMOT70nx8YWSJEVkNw8K/kv2
+        wHIlsypDeYfKw0tUOlKLoU1zAqvRRX5JXBoUY99mfGyTh8LcXzSXyA30Td/wJhHdYraetkAXTZtXa
+        qLRELuRtqYfPdpBZr45N4o+Wd/LB5QPA1VZm801lifTunI5j/ctHRIKIxE1SKs2ldQQ4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1huHrU-0001qV-Cu; Sun, 04 Aug 2019 16:51:52 +0200
+Date:   Sun, 4 Aug 2019 16:51:52 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Tao Ren <taoren@fb.com>
+Cc:     Vladimir Oltean <olteanv@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Arun Parameswaran <arun.parameswaran@broadcom.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>
+Subject: Re: [PATCH net-next v3] net: phy: broadcom: add 1000Base-X support
+ for BCM54616S
+Message-ID: <20190804145152.GA6800@lunn.ch>
+References: <20190802215419.313512-1-taoren@fb.com>
+ <CA+h21hrOEape89MTqCUyGFt=f6ba7Q-2KcOsN_Vw2Qv8iq86jw@mail.gmail.com>
+ <53e18a01-3d08-3023-374f-2c712c4ee9ea@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190802151501.13069-1-paulmck@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <53e18a01-3d08-3023-374f-2c712c4ee9ea@fb.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 08:14:48AM -0700, Paul E. McKenney wrote:
-> +/*
-> + * Exchange the numeric length of the specified rcu_segcblist structure
-> + * with the specified value.  This can cause the ->len field to disagree
-> + * with the actual number of callbacks on the structure.  This exchange is
-> + * fully ordered with respect to the callers accesses both before and after.
-> + */
-> +long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
-> +{
-> +#ifdef CONFIG_RCU_NOCB_CPU
-> +	return atomic_long_xchg(&rsclp->len, v);
-> +#else
-> +	long ret = rsclp->len;
-> +
-> +	smp_mb(); /* Up to the caller! */
-> +	WRITE_ONCE(rsclp->len, v);
-> +	smp_mb(); /* Up to the caller! */
-> +	return ret;
-> +#endif
-> +}
+> > The patchset looks better now. But is it ok, I wonder, to keep
+> > PHY_BCM_FLAGS_MODE_1000BX in phydev->dev_flags, considering that
+> > phy_attach_direct is overwriting it?
+> 
 
-That one's weird; for matching semantics the load needs to be between
-the memory barriers.
+> I checked ftgmac100 driver (used on my machine) and it calls
+> phy_connect_direct which passes phydev->dev_flags when calling
+> phy_attach_direct: that explains why the flag is not cleared in my
+> case.
+
+Yes, that is the way it is intended to be used. The MAC driver can
+pass flags to the PHY. It is a fragile API, since the MAC needs to
+know what PHY is being used, since the flags are driver specific.
+
+One option would be to modify the assignment in phy_attach_direct() to
+OR in the flags passed to it with flags which are already in
+phydev->dev_flags.
+
+	Andrew
