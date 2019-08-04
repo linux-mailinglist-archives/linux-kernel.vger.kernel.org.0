@@ -2,89 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E8480813
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 21:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2366980817
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 21:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbfHCToa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 3 Aug 2019 15:44:30 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41924 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728542AbfHCTo3 (ORCPT
+        id S1728905AbfHCT6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 3 Aug 2019 15:58:49 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48065 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727067AbfHCT6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Aug 2019 15:44:29 -0400
-Received: by mail-lj1-f196.google.com with SMTP id d24so75861506ljg.8;
-        Sat, 03 Aug 2019 12:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iSfWQiyPm4CSNo1QZhxcFsbnyy4ONPqQIsRIrlI2JSU=;
-        b=sq65spdvfcqDWMWURm2mHPrMbeRMwOYn/2PNDwct/VRghQiSBcMoest3DKnfTtoV2s
-         Ytl22OOHj5muQD/Q2wrKOfyZYeWRiiOCoVmXdCOYvyRcSHB57cgnBRgHAy6FE9Z5BB5V
-         S1/OuUP1EHY+5YIvOfmZrOlVVgqIat8jGpyAonoN9UuteEv7l0U7wRFs7QjeGZ3AQs4/
-         2yyKPl7LprUPS5jwY3oMmin9CXG/YjwlzZRNis2M8U7GFQv/XDWhdTMStl9UUOMPW91h
-         79ckcXtRwqrPpVNUHepG4ua9qsG59MvKyaYlYD2vJVB6YPEp8/6PO8WyFshRCqc8tpAp
-         xKew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iSfWQiyPm4CSNo1QZhxcFsbnyy4ONPqQIsRIrlI2JSU=;
-        b=WnbrDgnxUc96NPleONrX5JCZgoX/FDjGvNP+4SwKyBFV+ZeLEyOmWSA0vWrvnihqp0
-         w7+qLOeGBVj9znSD0Uf63ZwqOkpXSIaKbW0AU5IwThyXnYAkPMz0kg/aTHMx0cptcSHh
-         PEWFnhcpGadOEbB9ccwwdJikyzokJZgLsueV+hYOcsIbESIJ10ZN8VdK/jCWunWTMVQN
-         EH6URN9klpSir1iT+l61itKVMMakEInoO0SpTLcULy7E/HAMu78R34bG+2L9a7it1by1
-         G+D30WvXOUoYAw7Tn5ZmqHxuKmP10rcP1Vdw/sI5aDrV3biYqtTqXFBt20En54/6GEXe
-         Yy/Q==
-X-Gm-Message-State: APjAAAXfNTmmoqwMTFv6QTanfL78uHMBt65Z1+MKlKQ2AQXZ/VOwVUuY
-        2vNF0+vQfrIy1wJAnqcYOYV5SXh79QoE7RH307A=
-X-Google-Smtp-Source: APXvYqxY/XpjHES7liLUUPw/H+GchVxNIeIfBBsMA/zMcEwU6uAUSiweB0Vj673JXCFgPTdpn0Pper1ktkVC2v53spk=
-X-Received: by 2002:a2e:b009:: with SMTP id y9mr63538189ljk.152.1564861467169;
- Sat, 03 Aug 2019 12:44:27 -0700 (PDT)
+        Sat, 3 Aug 2019 15:58:49 -0400
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sat, 3 Aug 2019 12:58:40 -0700
+Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 5A791B26C6;
+        Sat,  3 Aug 2019 15:58:39 -0400 (EDT)
+From:   Ajay Kaher <akaher@vmware.com>
+To:     <aarcange@redhat.com>, <jannh@google.com>, <oleg@redhat.com>,
+        <peterx@redhat.com>, <rppt@linux.ibm.com>, <jgg@mellanox.com>,
+        <mhocko@suse.com>
+CC:     <jglisse@redhat.com>, <akpm@linux-foundation.org>,
+        <mike.kravetz@oracle.com>, <viro@zeniv.linux.org.uk>,
+        <riandrews@android.com>, <arve@android.com>,
+        <yishaih@mellanox.com>, <dledford@redhat.com>,
+        <sean.hefty@intel.com>, <hal.rosenstock@gmail.com>,
+        <matanb@mellanox.com>, <leonro@mellanox.com>,
+        <gregkh@linuxfoundation.org>, <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <devel@driverdev.osuosl.org>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <akaher@vmware.com>, <srinidhir@vmware.com>, <bvikas@vmware.com>,
+        <srivatsab@vmware.com>, <srivatsa@csail.mit.edu>,
+        <amakhalov@vmware.com>, <vsirnapalli@vmware.com>
+Subject: [PATCH v6 1/3] [v4.9.y] coredump: fix race condition between mmget_not_zero()/get_task_mm() and core dumping
+Date:   Sun, 4 Aug 2019 09:29:25 +0530
+Message-ID: <1564891168-30016-1-git-send-email-akaher@vmware.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <1564859856-5916-1-git-send-email-jrdr.linux@gmail.com> <20190803192051.GC1131@ZenIV.linux.org.uk>
-In-Reply-To: <20190803192051.GC1131@ZenIV.linux.org.uk>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Sun, 4 Aug 2019 01:20:04 +0530
-Message-ID: <CAFqt6zb5phXBZCVwLVcRBQ8hqdMQ-SLX0q4jgTJu-vwHXH_A1A@mail.gmail.com>
-Subject: Re: [PATCH] arch/alpha: Remove dead code
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru,
-        Matt Turner <mattst88@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        rppt@linux.vnet.ibm.com, Michal Hocko <mhocko@suse.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Burton <paul.burton@mips.com>,
-        Colin King <colin.king@canonical.com>,
-        Greg KH <gregkh@linuxfoundation.org>, rfontana@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>, firoz.khan@linaro.org,
-        Jann Horn <jannh@google.com>, namit@vmware.com,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: akaher@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 4, 2019 at 12:50 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Sun, Aug 04, 2019 at 12:47:36AM +0530, Souptick Joarder wrote:
-> > These are dead code since 2.6.11. If there is no plan to use
-> > it further, this can be removed forever.
->
-> What's the point in removing ifdefed-out debugging printks?
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-If those debugging printks are kept under "#if 0" purposefully, then those
-can be left as it is. Other parts are under "if 0" can be removed as those are
-not used since 2.6.11.
+commit 04f5866e41fb70690e28397487d8bd8eea7d712a upstream.
 
-How about keeping those debugging printk under some CONFIG_*_DEBUG option ?
+The core dumping code has always run without holding the mmap_sem for
+writing, despite that is the only way to ensure that the entire vma
+layout will not change from under it.  Only using some signal
+serialization on the processes belonging to the mm is not nearly enough.
+This was pointed out earlier.  For example in Hugh's post from Jul 2017:
 
-While browsing source code, I figure out there are huge amount of dead
-code under
-'#if 0"  and some of them are maintained since 2.6.* . I send few
-similar patches for fbdev
-driver and those are merged to linux-next.
-But how about cleaning it in entire tree ( module wise) ? Does it make sense ?
+  https://lkml.kernel.org/r/alpine.LSU.2.11.1707191716030.2055@eggly.anvils
+
+  "Not strictly relevant here, but a related note: I was very surprised
+   to discover, only quite recently, how handle_mm_fault() may be called
+   without down_read(mmap_sem) - when core dumping. That seems a
+   misguided optimization to me, which would also be nice to correct"
+
+In particular because the growsdown and growsup can move the
+vm_start/vm_end the various loops the core dump does around the vma will
+not be consistent if page faults can happen concurrently.
+
+Pretty much all users calling mmget_not_zero()/get_task_mm() and then
+taking the mmap_sem had the potential to introduce unexpected side
+effects in the core dumping code.
+
+Adding mmap_sem for writing around the ->core_dump invocation is a
+viable long term fix, but it requires removing all copy user and page
+faults and to replace them with get_dump_page() for all binary formats
+which is not suitable as a short term fix.
+
+For the time being this solution manually covers the places that can
+confuse the core dump either by altering the vma layout or the vma flags
+while it runs.  Once ->core_dump runs under mmap_sem for writing the
+function mmget_still_valid() can be dropped.
+
+Allowing mmap_sem protected sections to run in parallel with the
+coredump provides some minor parallelism advantage to the swapoff code
+(which seems to be safe enough by never mangling any vma field and can
+keep doing swapins in parallel to the core dumping) and to some other
+corner case.
+
+In order to facilitate the backporting I added "Fixes: 86039bd3b4e6"
+however the side effect of this same race condition in /proc/pid/mem
+should be reproducible since before 2.6.12-rc2 so I couldn't add any
+other "Fixes:" because there's no hash beyond the git genesis commit.
+
+Because find_extend_vma() is the only location outside of the process
+context that could modify the "mm" structures under mmap_sem for
+reading, by adding the mmget_still_valid() check to it, all other cases
+that take the mmap_sem for reading don't need the new check after
+mmget_not_zero()/get_task_mm().  The expand_stack() in page fault
+context also doesn't need the new check, because all tasks under core
+dumping are frozen.
+
+Link: http://lkml.kernel.org/r/20190325224949.11068-1-aarcange@redhat.com
+Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Reported-by: Jann Horn <jannh@google.com>
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Reviewed-by: Jann Horn <jannh@google.com>
+Acked-by: Jason Gunthorpe <jgg@mellanox.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[akaher@vmware.com: stable 4.9 backport
+-  handle binder_update_page_range - mhocko@suse.com]
+Signed-off-by: Ajay Kaher <akaher@vmware.com>
+---
+ drivers/android/binder.c |  6 ++++++
+ fs/proc/task_mmu.c       | 18 ++++++++++++++++++
+ fs/userfaultfd.c         |  9 +++++++++
+ include/linux/mm.h       | 20 ++++++++++++++++++++
+ mm/mmap.c                |  6 +++++-
+ 5 files changed, 58 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 29632a6..8056759 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -581,6 +581,12 @@ static int binder_update_page_range(struct binder_proc *proc, int allocate,
+ 
+ 	if (mm) {
+ 		down_write(&mm->mmap_sem);
++		if (!mmget_still_valid(mm)) {
++			if (allocate == 0)
++				goto free_range;
++			goto err_no_vma;
++		}
++
+ 		vma = proc->vma;
+ 		if (vma && mm != proc->vma_vm_mm) {
+ 			pr_err("%d: vma mm and task mm mismatch\n",
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 5138e78..4b207b1 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1057,6 +1057,24 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
+ 					count = -EINTR;
+ 					goto out_mm;
+ 				}
++				/*
++				 * Avoid to modify vma->vm_flags
++				 * without locked ops while the
++				 * coredump reads the vm_flags.
++				 */
++				if (!mmget_still_valid(mm)) {
++					/*
++					 * Silently return "count"
++					 * like if get_task_mm()
++					 * failed. FIXME: should this
++					 * function have returned
++					 * -ESRCH if get_task_mm()
++					 * failed like if
++					 * get_proc_task() fails?
++					 */
++					up_write(&mm->mmap_sem);
++					goto out_mm;
++				}
+ 				for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 					vma->vm_flags &= ~VM_SOFTDIRTY;
+ 					vma_set_page_prot(vma);
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 784d667..8bf425a 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -479,6 +479,8 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+ 	 * taking the mmap_sem for writing.
+ 	 */
+ 	down_write(&mm->mmap_sem);
++	if (!mmget_still_valid(mm))
++		goto skip_mm;
+ 	prev = NULL;
+ 	for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 		cond_resched();
+@@ -501,6 +503,7 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+ 		vma->vm_flags = new_flags;
+ 		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+ 	}
++skip_mm:
+ 	up_write(&mm->mmap_sem);
+ 	mmput(mm);
+ wakeup:
+@@ -802,6 +805,9 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+ 		goto out;
+ 
+ 	down_write(&mm->mmap_sem);
++	if (!mmget_still_valid(mm))
++		goto out_unlock;
++
+ 	vma = find_vma_prev(mm, start, &prev);
+ 	if (!vma)
+ 		goto out_unlock;
+@@ -947,6 +953,9 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+ 		goto out;
+ 
+ 	down_write(&mm->mmap_sem);
++	if (!mmget_still_valid(mm))
++		goto out_unlock;
++
+ 	vma = find_vma_prev(mm, start, &prev);
+ 	if (!vma)
+ 		goto out_unlock;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 4784660..9b36cc5 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1192,6 +1192,26 @@ void zap_page_range(struct vm_area_struct *vma, unsigned long address,
+ 		unsigned long size, struct zap_details *);
+ void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+ 		unsigned long start, unsigned long end);
++/*
++ * This has to be called after a get_task_mm()/mmget_not_zero()
++ * followed by taking the mmap_sem for writing before modifying the
++ * vmas or anything the coredump pretends not to change from under it.
++ *
++ * NOTE: find_extend_vma() called from GUP context is the only place
++ * that can modify the "mm" (notably the vm_start/end) under mmap_sem
++ * for reading and outside the context of the process, so it is also
++ * the only case that holds the mmap_sem for reading that must call
++ * this function. Generally if the mmap_sem is hold for reading
++ * there's no need of this check after get_task_mm()/mmget_not_zero().
++ *
++ * This function can be obsoleted and the check can be removed, after
++ * the coredump code will hold the mmap_sem for writing before
++ * invoking the ->core_dump methods.
++ */
++static inline bool mmget_still_valid(struct mm_struct *mm)
++{
++	return likely(!mm->core_state);
++}
+ 
+ /**
+  * mm_walk - callbacks for walk_page_range
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 3f2314a..19368fb 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2448,7 +2448,8 @@ find_extend_vma(struct mm_struct *mm, unsigned long addr)
+ 	vma = find_vma_prev(mm, addr, &prev);
+ 	if (vma && (vma->vm_start <= addr))
+ 		return vma;
+-	if (!prev || expand_stack(prev, addr))
++	/* don't alter vm_end if the coredump is running */
++	if (!prev || !mmget_still_valid(mm) || expand_stack(prev, addr))
+ 		return NULL;
+ 	if (prev->vm_flags & VM_LOCKED)
+ 		populate_vma_page_range(prev, addr, prev->vm_end, NULL);
+@@ -2474,6 +2475,9 @@ find_extend_vma(struct mm_struct *mm, unsigned long addr)
+ 		return vma;
+ 	if (!(vma->vm_flags & VM_GROWSDOWN))
+ 		return NULL;
++	/* don't alter vm_start if the coredump is running */
++	if (!mmget_still_valid(mm))
++		return NULL;
+ 	start = vma->vm_start;
+ 	if (expand_stack(vma, addr))
+ 		return NULL;
+-- 
+2.7.4
+
