@@ -2,108 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA4880C96
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 22:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A76F480CA0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 22:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfHDUcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 16:32:35 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:49030 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbfHDUcf (ORCPT
+        id S1726771AbfHDUh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 16:37:57 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39379 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbfHDUh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 16:32:35 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 051E7886BF
-        for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2019 08:32:32 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1564950752;
-        bh=tegd89vFijqIdzQ79b+Q5otg8XB6JewNAHl+LPZxs3c=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=zJokoDCE2lcUhCqwcSEoDKECNj2ns65Q+tYzjHGiF8BlUTjSvXs/vbiL01duVCCnD
-         TC/g/FMDGWhXIjq8VPu+UwnLTIVMp7Te25fW2B/mCByrx6ZgB58GMG5Txm9kgqOFoC
-         vKQ+x9YLajFWOfaZhPjHQvAMHE1kf5HZg4PjGiyb3Pm5uROAT/SaYI91rSPHgQmjY9
-         MbtC/VzMim6SgKzKk4jU9s0jr8287ytrwA85Fm6Pl+W+6YM4T0BZb6THrXzYtxoSJU
-         uGDPaNF7N44/GM/C6vdsqnwZAPTlBfgcHdQ4BglKOdZNRiG1X6kxbkFhTmfZDgXXWG
-         IvxUFb8iMt/NQ==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d4740df0000>; Mon, 05 Aug 2019 08:32:31 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Mon, 5 Aug 2019 08:32:26 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Mon, 5 Aug 2019 08:32:26 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     "christophe.leroy@c-s.fr" <christophe.leroy@c-s.fr>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>
-CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] powerpc: Remove inaccessible CMDLINE default
-Thread-Topic: [PATCH] powerpc: Remove inaccessible CMDLINE default
-Thread-Index: AQHVSO+BYedDSPkTQUuUDGl4P2DrBqbmiHsAgAQj8AA=
-Date:   Sun, 4 Aug 2019 20:32:26 +0000
-Message-ID: <1564950746.27215.3.camel@alliedtelesis.co.nz>
-References: <20190802050232.22978-1-chris.packham@alliedtelesis.co.nz>
-         <43422528-c2fc-a2c8-49e6-0f6b2c791648@c-s.fr>
-In-Reply-To: <43422528-c2fc-a2c8-49e6-0f6b2c791648@c-s.fr>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D07377008B989F47A25F2C2948D1A0FB@atlnz.lc>
-Content-Transfer-Encoding: base64
+        Sun, 4 Aug 2019 16:37:57 -0400
+Received: by mail-wm1-f65.google.com with SMTP id u25so60740367wmc.4;
+        Sun, 04 Aug 2019 13:37:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=614oQfNECnBl76zZMuP6DD7lsJ4uFIehr7gg2GuUSuc=;
+        b=udRZwvBy56EHj8w5FiQd5HmvHtoeIayI3x/yvR6sDJ+Ewn7z6yi6mu6NWlwcZAmS8D
+         WtiBRgG2YRRcKwLv9ELIX1/WwhbIuGA3JDAmeEeDqydM0Qigb41mROG+XqaZs6JgDKeG
+         aZiHbcZzbbtS3Wdmk4sivf6kI0cuBaeOc/0YiFZYn2QEy71YOfDiE0YTlvXUHcoKXwga
+         yqY9MZsRA5iUHQvgvqyw31kKMRL5MRmOT8Ub3f3s79jEmAj0QJagrIvlYSpnyA6irJRo
+         tY+ILDpiR09VHgcAF5dmquq+hnRhMYccvKffAcSmQB+ZW+z04xOzeor4jZU8bKwMAdFP
+         vauw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=614oQfNECnBl76zZMuP6DD7lsJ4uFIehr7gg2GuUSuc=;
+        b=pphna/jYAuwTopmwpiDJVYAfrsQits0d1rFDQPSxZSGiw5HDN845vR5LpHZ1+raJ6C
+         5OjVB4KjhKBDSUahKrqLtLXPj5V+RLX/QKpHNWW4fbnCwO436259geUR6IspVVooJcD6
+         GY9BkwnGI/56HcoJpV0qyOhnNzqpkbyTMz9PAo6pP+TpDce4BkbalJUcqft1kYN34mDu
+         AenWoughFsReyaktXJb5GMuZNSPBsIe8HTRT7ZiMCKyaClvAainHYmpND9wEssFSzbAy
+         hapqp454xHytnKyv8fhGwDlrWB4zOQpTF6BTTy0ld3BCMEE6b1acKBjI5yfWMBFDncLB
+         zPMQ==
+X-Gm-Message-State: APjAAAU/rHir25pqAH7SIWM0+0/exJ28gLXSInbABnrfwDcE251XTwj+
+        SeZiljmsDS53wuXdoqzJdVY=
+X-Google-Smtp-Source: APXvYqxWQqaUp9OfLwLuDJf120aVTFuhjtTQ9WayyTg2GRXAT9S11eHNFLdnTlvX3jYer7/a2+NswA==
+X-Received: by 2002:a05:600c:2146:: with SMTP id v6mr14194434wml.59.1564951074997;
+        Sun, 04 Aug 2019 13:37:54 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.gmail.com with ESMTPSA id v16sm75542601wrn.28.2019.08.04.13.37.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 04 Aug 2019 13:37:54 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] drm/tegra: dc: Turn off and reset hardware across suspend-resume
+Date:   Sun,  4 Aug 2019 23:37:02 +0300
+Message-Id: <20190804203702.16073-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTA4LTAyIGF0IDA3OjE4ICswMjAwLCBDaHJpc3RvcGhlIExlcm95IHdyb3Rl
-Og0KPiANCj4gTGUgMDIvMDgvMjAxOSDDoCAwNzowMiwgQ2hyaXMgUGFja2hhbSBhIMOpY3JpdMKg
-Og0KPiA+IA0KPiA+IFNpbmNlIGNvbW1pdCBjYmU0NmJkNGY1MTAgKCJwb3dlcnBjOiByZW1vdmUg
-Q09ORklHX0NNRExJTkUgI2lmZGVmDQo+ID4gbWVzcyIpDQo+ID4gQ09ORklHX0NNRExJTkUgaGFz
-IGFsd2F5cyBoYWQgYSB2YWx1ZSByZWdhcmRsZXNzIG9mDQo+ID4gQ09OTklHX0NNRExJTkVfQk9P
-TC4NCj4gcy9DT05OSUcvQ09ORklHLw0KPiANCj4gPiANCj4gPiANCj4gPiBGb3IgZXhhbXBsZToN
-Cj4gPiANCj4gPiDCoCAkIG1ha2UgQVJDSD1wb3dlcnBjIGRlZmNvbmZpZw0KPiA+IMKgICQgY2F0
-IC5jb25maWcNCj4gPiDCoCAjIENPTkZJR19DTURMSU5FX0JPT0wgaXMgbm90IHNldA0KPiA+IMKg
-IENPTkZJR19DTURMSU5FPSIiDQo+ID4gDQo+ID4gV2hlbiBlbmFibGluZyBDT05OSUdfQ01ETElO
-RV9CT09MIHRoaXMgdmFsdWUgaXMga2VwdCBtYWtpbmcgdGhlDQo+ID4gJ2RlZmF1bHQNCj4gPiAi
-Li4uIiBpZiBDT05OSUdfQ01ETElORV9CT09MJyBpbmVmZmVjdGl2ZS4NCj4gcy9DT05OSUcvQ09O
-RklHLw0KPiANCg0KV2lsbCBmaXggaW4gdjIuDQoNCj4gPiANCj4gPiANCj4gPiDCoCAkIC4vc2Ny
-aXB0cy9jb25maWcgLS1lbmFibGUgQ09ORklHX0NNRExJTkVfQk9PTA0KPiA+IMKgICQgY2F0IC5j
-b25maWcNCj4gPiDCoCBDT05GSUdfQ01ETElORV9CT09MPXkNCj4gPiDCoCBDT05GSUdfQ01ETElO
-RT0iIg0KPiA+IA0KPiA+IEFkZGl0aW9uYWxseSBhbGwgdGhlIGluLXRyZWUgcG93ZXJwYyBkZWZj
-b25maWdzIHRoYXQgc2V0DQo+ID4gQ09ORklHX0NNRExJTkVfQk9PTD15IGFsc28gc2V0IENPTkZJ
-R19DTURMSU5FIHRvIHNvbWV0aGluZyBlbHNlLg0KPiA+IEZvcg0KPiA+IHRoZXNlIHJlYXNvbnMg
-cmVtb3ZlIHRoZSBpbmFjY2Vzc2libGUgZGVmYXVsdC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5
-OiBDaHJpcyBQYWNraGFtIDxjaHJpcy5wYWNraGFtQGFsbGllZHRlbGVzaXMuY28ubno+DQo+IFJl
-dmlld2VkLWJ5OiBDaHJpc3RvcGhlIExlcm95IDxjaHJpc3RvcGhlLmxlcm95QGMtcy5mcj4NCj4g
-DQo+ID4gDQo+ID4gLS0tDQo+ID4gVGhpcyBzaG91bGQgYmUgaW5kZXBlbmRlbnQgb2YgaHR0cDov
-L3BhdGNod29yay5vemxhYnMub3JnL3BhdGNoLzExNA0KPiA+IDA4MTEvIGJ1dA0KPiA+IEkndmUg
-Z2VuZXJhdGVkIHRoaXMgcGF0Y2ggb24gYSBzdHJlYW0gdGhhdCBoYXMgaXQgYXBwbGllZCBsb2Nh
-bGx5Lg0KPiA+IA0KPiA+IMKgIGFyY2gvcG93ZXJwYy9LY29uZmlnIHwgMSAtDQo+ID4gwqAgMSBm
-aWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9w
-b3dlcnBjL0tjb25maWcgYi9hcmNoL3Bvd2VycGMvS2NvbmZpZw0KPiA+IGluZGV4IGQ0MTNmZTFi
-NDA1OC4uNmZjYTZlYmE2YWVlIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvcG93ZXJwYy9LY29uZmln
-DQo+ID4gKysrIGIvYXJjaC9wb3dlcnBjL0tjb25maWcNCj4gPiBAQCAtODQ0LDcgKzg0NCw2IEBA
-IGNvbmZpZyBDTURMSU5FX0JPT0wNCj4gPiDCoMKgDQo+ID4gwqAgY29uZmlnIENNRExJTkUNCj4g
-PiDCoMKgCXN0cmluZyAiSW5pdGlhbCBrZXJuZWwgY29tbWFuZCBzdHJpbmciIGlmIENNRExJTkVf
-Qk9PTA0KPiA+IC0JZGVmYXVsdCAiY29uc29sZT10dHlTMCw5NjAwIGNvbnNvbGU9dHR5MCByb290
-PS9kZXYvc2RhMiINCj4gPiBpZiBDTURMSU5FX0JPT0wNCj4gPiDCoMKgCWRlZmF1bHQgIiINCj4g
-PiDCoMKgCWhlbHANCj4gPiDCoMKgCcKgwqBPbiBzb21lIHBsYXRmb3JtcywgdGhlcmUgaXMgY3Vy
-cmVudGx5IG5vIHdheSBmb3IgdGhlDQo+ID4gYm9vdCBsb2FkZXIgdG8NCj4gPiANCj4gSSB0aGlu
-ayB3ZSBjb3VsZCBhbHNvIGdldCByaWQgb2YgQ01ETElORV9CT09MIHRvdGFsbHkgYW5kIHVzZSBD
-TURMSU5FDQo+ICE9wqANCj4gIiIgaW5zdGVhZC4NCg0KVGhlIG9ubHkgcmVhc29uIEkgY2FuIHNl
-ZSB0byBrZWVwIENNRExJTkVfQk9PTCBpcyB0aGF0IGl0IGhpZGVzIHRoZQ0KdGV4dCBpbnB1dCBm
-b3LCoENNRExJTkUgd2hpY2ggc2VlbXMgdG8gYmUgYSBwYXR0ZXJuIGluIEtjb25maWcuIEhhcHB5
-IHRvDQpyZW1vdmUgaXQgaWYgdGhhdCdzIHRoZSBjb25zZW5zdXMuwqANCg0KSSdsbCB3YWl0IGZv
-ciB0aGUgZHVzdCB0byBzZXR0bGUgb24gbXkgb3RoZXIgcGF0Y2ggYmVmb3JlIHNlbmRpbmcgYSB2
-Mg0Kb2YgdGhpcyBvbmUuDQoNCj4gDQo+IENocmlzdG9waGU=
+The drivers core bumps runtime PM refcount during of entering into
+suspend to workaround some problem where parent device may become turned
+off before its children. For now CRTCs are only getting disabled on
+suspend and in order to actually suspend the display controllers hardware,
+the runtime PM needed to be "forced" into suspend mode.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/drm/tegra/dc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 4a75d149e368..6c8f5222d558 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2572,6 +2572,8 @@ static int tegra_dc_resume(struct device *dev)
+ 
+ static const struct dev_pm_ops tegra_dc_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dc_suspend, tegra_dc_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
+ };
+ 
+ struct platform_driver tegra_dc_driver = {
+-- 
+2.22.0
+
