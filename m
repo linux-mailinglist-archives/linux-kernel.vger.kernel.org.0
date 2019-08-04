@@ -2,157 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B11880C9E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 22:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E11E480CA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 22:48:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfHDUhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 16:37:41 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:44492 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfHDUhk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 16:37:40 -0400
-Received: by mail-wr1-f47.google.com with SMTP id p17so82326651wrf.11
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2019 13:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iWNx36oE65qDX237zR+lZS9AWYsuEyWJDxjNBY9blK0=;
-        b=D7Zvh7ZPBd4iqC/Q5Wm6OwoJ/awGKA0wkPMXwPfGBh4FNPvqRoXckuqzpmqlK5f4Tm
-         AlYyfd2TbJEvfKiQ8FaPU/QQti2R3A1MVghi0W9a05BC6BbvjUN4etE09sF2gvZMPLbW
-         GYcN3NQ3nE5niIOPulwOCnSzO/8/BxwEB2G024DbnyfeqzbjzmHdQyPJDMgCTR7ovDpJ
-         Uje9XQm7xfhdcIaMMdcJqvnJI7shyLbJoyvB6cWuUuw6SwAgyiOVfXa/iz48Nh/yRmUM
-         qTTOZT7oC0CGfBV89kUK8dVAXbLbtFduJTuvgjFH6m63FrET47cIDFPAcJv7S6340f1D
-         K6dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iWNx36oE65qDX237zR+lZS9AWYsuEyWJDxjNBY9blK0=;
-        b=eYW3WlEku2C45eyLtujBmMDekxrHgEk5ebCu1kTa/oFUCy0miQSZ4FZ0LgyNSrGA2j
-         sUBBzJICGfZrbJnI4y3hABi51fdbRbGY1v27hXc3OfYu73N+Oialy27dNVObIRfHnWip
-         FcRWWrt9dk2l7gQXoT/7dZ4kvu2D7OjZyd6yweokyUlzoRu2jcituTC71I6vRfsOCEcy
-         gvPyzRWiXoAYibVx/X+6v3Ox+rO2EMIX9gnIOdqZJJ6rUSyGiXFyp8cbimvZ7Uwpqmro
-         vj4XMaEZFMewEN4IZUWSqrK6nfz+hRSLlYvxozUx6VVJXlniLPxSTGg13xgcPP0ZRh8f
-         KIXg==
-X-Gm-Message-State: APjAAAXtEl99aSvAGVSpBNxPMQ2oAtbglrp56qUfEmTDt7s4hl2D4fbf
-        4huT9m/EJwaKdOuOG0yUc7U=
-X-Google-Smtp-Source: APXvYqyTWB9R4tRJdC9jjgJogZyHbfXuKMw5tdVoyIAdZaN3t6ehoi+AxW2zKM6Cdriqqr4H15qsTA==
-X-Received: by 2002:adf:e444:: with SMTP id t4mr55585602wrm.262.1564951056732;
-        Sun, 04 Aug 2019 13:37:36 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id c30sm160412887wrb.15.2019.08.04.13.37.35
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 04 Aug 2019 13:37:35 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] drm/amd/powerplay: Zero initialize some variables
-Date:   Sun,  4 Aug 2019 13:37:13 -0700
-Message-Id: <20190804203713.13724-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.23.0.rc1
+        id S1726743AbfHDUsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 16:48:17 -0400
+Received: from mga09.intel.com ([134.134.136.24]:45944 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726346AbfHDUsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Aug 2019 16:48:17 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Aug 2019 13:48:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,347,1559545200"; 
+   d="scan'208";a="348926486"
+Received: from rmohamed-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.37.16])
+  by orsmga005.jf.intel.com with ESMTP; 04 Aug 2019 13:48:08 -0700
+Date:   Sun, 4 Aug 2019 23:48:07 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jens.wiklander@linaro.org,
+        corbet@lwn.net, dhowells@redhat.com, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, ard.biesheuvel@linaro.org,
+        daniel.thompson@linaro.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        tee-dev@lists.linaro.org
+Subject: Re: [RFC v2 0/6] Introduce TEE based Trusted Keys support
+Message-ID: <20190804204807.ajhy3jhwie3oq6d5@linux.intel.com>
+References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns (only Navi warning shown but Arcturus warns as well):
+On Tue, Jul 30, 2019 at 05:53:34PM +0530, Sumit Garg wrote:
+>   tee: optee: allow kernel pages to register as shm
+>   tee: enable support to register kernel memory
+>   tee: add private login method for kernel clients
+>   KEYS: trusted: Introduce TEE based Trusted Keys
+>   doc: keys: Document usage of TEE based Trusted Keys
+>   MAINTAINERS: Add entry for TEE based Trusted Keys
 
-drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:1534:4: warning:
-variable 'asic_default_power_limit' is used uninitialized whenever '?:'
-condition is false [-Wsometimes-uninitialized]
-                        smu_read_smc_arg(smu, &asic_default_power_limit);
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/amd/amdgpu/../powerplay/inc/amdgpu_smu.h:588:3: note:
-expanded from macro 'smu_read_smc_arg'
-        ((smu)->funcs->read_smc_arg? (smu)->funcs->read_smc_arg((smu), (arg)) : 0)
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:1550:30: note:
-uninitialized use occurs here
-                smu->default_power_limit = asic_default_power_limit;
-                                           ^~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:1534:4: note:
-remove the '?:' if its condition is always true
-                        smu_read_smc_arg(smu, &asic_default_power_limit);
-                        ^
-drivers/gpu/drm/amd/amdgpu/../powerplay/inc/amdgpu_smu.h:588:3: note:
-expanded from macro 'smu_read_smc_arg'
-        ((smu)->funcs->read_smc_arg? (smu)->funcs->read_smc_arg((smu), (arg)) : 0)
-         ^
-drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:1517:35: note:
-initialize the variable 'asic_default_power_limit' to silence this
-warning
-        uint32_t asic_default_power_limit;
-                                         ^
-                                          = 0
-1 warning generated.
+Skimmed through the patches. I think it is better to sort out the
+current LKM dependency issue with trusted.ko and get TPM 1.2 and TPM 2.0
+trusted keys code consolidated before it makes sense to really go detail
+on this.
 
-As the code is currently written, if read_smc_arg were ever NULL, arg
-would fail to be initialized but the code would continue executing as
-normal because the return value would just be zero.
-
-There are a few different possible solutions to resolve this class
-of warnings which have appeared in these drivers before:
-
-1. Assume the function pointer will never be NULL and eliminate the
-   wrapper macros.
-
-2. Have the wrapper macros initialize arg when the function pointer is
-   NULL.
-
-3. Have the wrapper macros return an error code instead of 0 when the
-   function pointer is NULL so that the callsites can properly bail out
-   before arg can be used.
-
-4. Initialize arg at the top of its function.
-
-Number four is the path of least resistance right now as every other
-change will be driver wide so do that here. I only make the comment
-now as food for thought.
-
-Fixes: b4af964e75c4 ("drm/amd/powerplay: make power limit retrieval as asic specific")
-Link: https://github.com/ClangBuiltLinux/linux/issues/627
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/gpu/drm/amd/powerplay/arcturus_ppt.c | 2 +-
- drivers/gpu/drm/amd/powerplay/navi10_ppt.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
-index 215f7173fca8..b92eded7374f 100644
---- a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
-@@ -1326,7 +1326,7 @@ static int arcturus_get_power_limit(struct smu_context *smu,
- 				     bool asic_default)
- {
- 	PPTable_t *pptable = smu->smu_table.driver_pptable;
--	uint32_t asic_default_power_limit;
-+	uint32_t asic_default_power_limit = 0;
- 	int ret = 0;
- 	int power_src;
- 
-diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-index 106352a4fb82..d844bc8411aa 100644
---- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-@@ -1514,7 +1514,7 @@ static int navi10_get_power_limit(struct smu_context *smu,
- 				     bool asic_default)
- {
- 	PPTable_t *pptable = smu->smu_table.driver_pptable;
--	uint32_t asic_default_power_limit;
-+	uint32_t asic_default_power_limit = 0;
- 	int ret = 0;
- 	int power_src;
- 
--- 
-2.23.0.rc1
-
+/Jarkko
