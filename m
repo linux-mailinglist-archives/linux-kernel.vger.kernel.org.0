@@ -2,121 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 465D380C0B
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 20:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A191280C29
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 21:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfHDSqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 14:46:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8684 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726392AbfHDSqC (ORCPT
+        id S1726716AbfHDTWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 15:22:14 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38433 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbfHDTWO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 14:46:02 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x74IfgLK045267;
-        Sun, 4 Aug 2019 14:45:24 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u62ccv76w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 04 Aug 2019 14:45:23 -0400
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x74IgQNK046657;
-        Sun, 4 Aug 2019 14:45:23 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u62ccv76k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 04 Aug 2019 14:45:23 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x74Iev10032704;
-        Sun, 4 Aug 2019 18:45:22 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma02dal.us.ibm.com with ESMTP id 2u51w6194f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 04 Aug 2019 18:45:22 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x74IjLsv46137682
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 4 Aug 2019 18:45:21 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A16AAB205F;
-        Sun,  4 Aug 2019 18:45:21 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F927B2064;
-        Sun,  4 Aug 2019 18:45:21 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.150.228])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun,  4 Aug 2019 18:45:21 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D18CB16C9A4A; Sun,  4 Aug 2019 11:45:23 -0700 (PDT)
-Date:   Sun, 4 Aug 2019 11:45:23 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH RFC tip/core/rcu 01/14] rcu/nocb: Atomic ->len field in
- rcu_segcblist structure
-Message-ID: <20190804184523.GE28441@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <20190802151435.GA1081@linux.ibm.com>
- <20190802151501.13069-1-paulmck@linux.ibm.com>
- <20190804145051.GG2349@hirez.programming.kicks-ass.net>
- <20190804145246.GC2386@hirez.programming.kicks-ass.net>
+        Sun, 4 Aug 2019 15:22:14 -0400
+Received: by mail-ed1-f67.google.com with SMTP id r12so41966962edo.5;
+        Sun, 04 Aug 2019 12:22:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pj0ikRyiM2M9/CD5d5FXd58Pei1+6t41sEsA8s09Pcw=;
+        b=gPsfzmbWFNebo/r/tjyKdRsMpRqU7/GEJfVm12iwmr3CNve3wsyxGbCCPz/l4auW7j
+         JPHC/iGCWCazjhXUo/D9KqaSGNBR1FDgiuaMKXJ7csIm6LSP9oPszFw2+rn5MwDyTxes
+         8RkOp2C3q/x1XIognnm732OGX1WYSZVsDKzM0Ct+yCeSh5C79g8D/sS5rphnKHMvFmkx
+         LTZkHNeAr3L62qSi4W6sgffugyxMDLgSu1QnB4jR6VZsLDcA4i1j82xcpWm8Yswl5T6P
+         khPBEn4QQNyuy+ZXFDUDoarTya3UGTurgdSA6k/salgjZ7FMA22rOKhSfc1U8YbQ90ib
+         GvKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pj0ikRyiM2M9/CD5d5FXd58Pei1+6t41sEsA8s09Pcw=;
+        b=QUXMb9W0Av9gKH/ASswsfJglmGG/vTWZPWuhsSg+Km5vyz/bj6F1e/kLC9c+JjvkBo
+         95aiAT8D5wqv0WpjY7M/nmoFL1x5lkfRkUvMQ77mMw6TvQ38EI5y2ZoqFB8acTakTUUp
+         7DHDlwJgUEBR9KmiX/7j3u+6K3YYKQDfC8c075DfHd7MgSxTh62MqcfdcLQAxKZlaHfv
+         E3+6t+0PDBNfeDcvnE/H4u5Yv4K8W2vygiaeIDMHNU/unUzHnPSYObjtk9THbdirvVNB
+         6id684Gk3l7+kATYxUVzeZIfJzrla78J9G+KjDzBfQ5leOy/d2X+KNggQrjFXV23GB9m
+         qPQQ==
+X-Gm-Message-State: APjAAAUSCJRZ5FG50CzcEDTUQFE2pO8ArFOUB9TMiREJmUzstxbdgjnk
+        s8qnCMOzE/kkLEo6GvdKJw5OEKj63ZleecvQHSM=
+X-Google-Smtp-Source: APXvYqySJFhDQZLNHXF8JQtrbX7ltOk9v6vkJxguWkKjYjXZq6sNO150ER/Wv1dGCfkPRz29WtcXiXs6SnoLaT60K5s=
+X-Received: by 2002:a17:906:19d3:: with SMTP id h19mr13839881ejd.300.1564946532348;
+ Sun, 04 Aug 2019 12:22:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190804145246.GC2386@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-04_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908040217
+References: <20190802215419.313512-1-taoren@fb.com> <CA+h21hrOEape89MTqCUyGFt=f6ba7Q-2KcOsN_Vw2Qv8iq86jw@mail.gmail.com>
+ <53e18a01-3d08-3023-374f-2c712c4ee9ea@fb.com> <20190804145152.GA6800@lunn.ch>
+ <CA+h21hrUDaSxKpsy9TuWqwgaxKYaoXHyhgS=xSoAcPwxXzvrHg@mail.gmail.com> <f8de2514-081a-0e6e-fbe2-bcafcd459646@gmail.com>
+In-Reply-To: <f8de2514-081a-0e6e-fbe2-bcafcd459646@gmail.com>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Sun, 4 Aug 2019 22:22:01 +0300
+Message-ID: <CA+h21hov3WzqYSUcxOnH0DOMO2dYdh_Q30Q_GQJpxa4nFM7MsQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3] net: phy: broadcom: add 1000Base-X support
+ for BCM54616S
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Tao Ren <taoren@fb.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Arun Parameswaran <arun.parameswaran@broadcom.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 04, 2019 at 04:52:46PM +0200, Peter Zijlstra wrote:
-> On Sun, Aug 04, 2019 at 04:50:51PM +0200, Peter Zijlstra wrote:
-> > On Fri, Aug 02, 2019 at 08:14:48AM -0700, Paul E. McKenney wrote:
-> > > +/*
-> > > + * Exchange the numeric length of the specified rcu_segcblist structure
-> > > + * with the specified value.  This can cause the ->len field to disagree
-> > > + * with the actual number of callbacks on the structure.  This exchange is
-> > > + * fully ordered with respect to the callers accesses both before and after.
-> > > + */
-> > > +long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
-> > > +{
-> > > +#ifdef CONFIG_RCU_NOCB_CPU
-> > > +	return atomic_long_xchg(&rsclp->len, v);
-> > > +#else
-> > > +	long ret = rsclp->len;
-> > > +
-> > > +	smp_mb(); /* Up to the caller! */
-> > > +	WRITE_ONCE(rsclp->len, v);
-> > > +	smp_mb(); /* Up to the caller! */
-> > > +	return ret;
-> > > +#endif
-> > > +}
-> > 
-> > That one's weird; for matching semantics the load needs to be between
-> > the memory barriers.
-> 
-> Also, since you WRITE_ONCE() the thing, the load needs to be a
-> READ_ONCE().
+On Sun, 4 Aug 2019 at 19:07, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>
+> On 04.08.2019 17:59, Vladimir Oltean wrote:
+> > On Sun, 4 Aug 2019 at 17:52, Andrew Lunn <andrew@lunn.ch> wrote:
+> >>
+> >>>> The patchset looks better now. But is it ok, I wonder, to keep
+> >>>> PHY_BCM_FLAGS_MODE_1000BX in phydev->dev_flags, considering that
+> >>>> phy_attach_direct is overwriting it?
+> >>>
+> >>
+> >>> I checked ftgmac100 driver (used on my machine) and it calls
+> >>> phy_connect_direct which passes phydev->dev_flags when calling
+> >>> phy_attach_direct: that explains why the flag is not cleared in my
+> >>> case.
+> >>
+> >> Yes, that is the way it is intended to be used. The MAC driver can
+> >> pass flags to the PHY. It is a fragile API, since the MAC needs to
+> >> know what PHY is being used, since the flags are driver specific.
+> >>
+> >> One option would be to modify the assignment in phy_attach_direct() to
+> >> OR in the flags passed to it with flags which are already in
+> >> phydev->dev_flags.
+> >>
+> >>         Andrew
+> >
+> > Even if that were the case (patching phy_attach_direct to apply a
+> > logical-or to dev_flags), it sounds fishy to me that the genphy code
+> > is unable to determine that this PHY is running in 1000Base-X mode.
+> >
+> > In my opinion it all boils down to this warning:
+> >
+> > "PHY advertising (0,00000200,000062c0) more modes than genphy
+> > supports, some modes not advertised".
+> >
+> The genphy code deals with Clause 22 + Gigabit BaseT only.
+> Question is whether you want aneg at all in 1000Base-X mode and
+> what you want the config_aneg callback to do.
+> There may be some inspiration in the Marvel PHY drivers.
+>
 
-Not in this case, because ->len is written only by the CPU in question
-in the !RCU_NOCB_CPU case.
+AN for 1000Base-X still gives you duplex and pause frame settings. I
+thought the base page format for exchanging that info is standardized
+in clause 37.
+Does genphy cover only copper media by design, or is it desirable to
+augment genphy_read_status?
 
-It would not be hard to convince me that adding READ_ONCE() would be
-cheap and easy future-proofing, but Linus has objected to that sort of
-thing in the past.
-
-							Thanx, Paul
+> > You see, the 0x200 in the above advertising mask corresponds exactly
+> > to this definition from ethtool.h:
+> >     ETHTOOL_LINK_MODE_1000baseX_Full_BIT    = 41,
+> >
+> > But it gets truncated and hence lost.
+> >
+> > Regards,
+> > -Vladimir
+> >
+> Heiner
