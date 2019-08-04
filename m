@@ -2,225 +2,456 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B02780C27
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 21:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D62F80C2C
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 21:25:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfHDTWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 15:22:08 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:51718 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbfHDTWH (ORCPT
+        id S1726755AbfHDTY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 15:24:58 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46344 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbfHDTY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 15:22:07 -0400
-Received: by mail-io1-f71.google.com with SMTP id c5so89242953iom.18
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2019 12:22:07 -0700 (PDT)
+        Sun, 4 Aug 2019 15:24:58 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c2so35548848plz.13
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2019 12:24:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=scEd4BaMmOZYg8wjnySdZIRDDLwAi2pTgaWRwRzYfvg=;
+        b=pVd3oWMRdFBqrVuCcJVz4RjAhFOSVW3v4icdU7lrgklgrojcsrmXxCVNbtyuY9mSvr
+         /Nzgqi/3v/nb5rMQMSMhbvqyq0Ce8QESLUt8UrztncQf1IUzNSsAciK2x8WfAQ2l0Ijj
+         g8FciFnb8BbzglmX5/Zlus7cFvSQxIJcFNGRM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=K2bVT6ZOOjGyOLIQG171mN/PwJP9OKv/BhNIfDVNcCk=;
-        b=hKbjZc7DKPN6cpjRKWErUmZfFZlJ3OMm+zBS6nBdgeH2K+RIWdSALyEhzLeYU4R40n
-         /Mjtq2tZ0OVniZGC61OwsnR2qj7u0Dd9T+uBtdMaH+DyE6fvhMC6ej78ZD24UQdmQP9V
-         /TKvJ5uLxaZHAppJ4KIB12UPJsn9GWAfVyEGsC/oomo3HDSNDN7ED21C41x4qe8JlxJx
-         o47lQmZxxH6p4CKY6I256IIMP/mE/K6BOry5/wl1etIp2SLysKNvayaMPO6avjQ1Q/kq
-         ZD/sdJS7L2Xli3qKf4IkIKUk3Siit1hgocsfiKdfAlRq3k7JkVGIM2ANo9IMmDjIsOnu
-         VQ3Q==
-X-Gm-Message-State: APjAAAXuUKQnbfYJPnsbwIvaS3nqM4c4qbwraU29GKPFcy8BAQ4tjq6a
-        t/kfU0eLCHYb0CztzetQCwhkZe0LXtuzO7pr/YDMRZG1XNJR
-X-Google-Smtp-Source: APXvYqzGqhkkjXSUI8RwOm5HArT3svauh5bcbgoBZIYieqX9CivgXfkdNgixm/CpzILB0LF/+QUR35jH48+ccdClMpKfKG9pqH1L
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=scEd4BaMmOZYg8wjnySdZIRDDLwAi2pTgaWRwRzYfvg=;
+        b=l8jv2aCnlWzby+M7oyEIPUWvPQkVsRyUQj4epDbcbYCdp+vW0kMogr4YPyrjUvR/it
+         tiyWFg6NQJj8dHQEiKcWBlzxpRQDpdsI0/7QJn5BhhmnZei/DxXc3/mvVNHg+YaH7xnj
+         QZP7HJRIwQ7uuipiLADyTJ0hipNr4It+eielc97Bt1x6s11sV51c8oWzfUya+YlO+Gfb
+         DmrHPBtF+TRStU7RJWDAoTF+ialdnNyhw8GKJ87/fwOp+5EXfq9rf408YSwkK+VwUjmT
+         1xD/zKoXtyRCU2DfqMD23MF6SeLdcD5qvAYF6ie7gD4QIHmdaDjEa4sdRqMtGkAGD2Qg
+         GSJg==
+X-Gm-Message-State: APjAAAVHQ6FlMcma6tZILdb3D7haFYrEr0RgIjqMGzMtix+csR0Qa+CI
+        nGMzlZWKujTpUt68fGyqWjM=
+X-Google-Smtp-Source: APXvYqwEMhOnq40URoEwGzv+gCxa8GInrMPhzEAsiyLeEv+RuZgP+7RMXbGHGHHXCNkLPmHkYiALrA==
+X-Received: by 2002:a17:902:684:: with SMTP id 4mr141171102plh.138.1564946697189;
+        Sun, 04 Aug 2019 12:24:57 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id i123sm113472634pfe.147.2019.08.04.12.24.55
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 04 Aug 2019 12:24:56 -0700 (PDT)
+Date:   Sun, 4 Aug 2019 15:24:54 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com
+Subject: Re: [PATCH tip/core/rcu 03/11] rcu/nocb: Provide separate no-CBs
+ grace-period kthreads
+Message-ID: <20190804192454.GB83025@google.com>
+References: <20190801225009.GA17155@linux.ibm.com>
+ <20190801225028.18225-3-paulmck@linux.ibm.com>
+ <20190803174127.GA83025@google.com>
+ <20190803194611.GB28441@linux.ibm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:114:: with SMTP id s20mr14096981iot.122.1564946526539;
- Sun, 04 Aug 2019 12:22:06 -0700 (PDT)
-Date:   Sun, 04 Aug 2019 12:22:06 -0700
-In-Reply-To: <00000000000091efa6058f0fe3d9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ce99fb058f4f81bc@google.com>
-Subject: Re: KASAN: use-after-free Read in hiddev_release
-From:   syzbot <syzbot+62a1e04fd3ec2abf099e@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190803194611.GB28441@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Sat, Aug 03, 2019 at 12:46:11PM -0700, Paul E. McKenney wrote:
+> On Sat, Aug 03, 2019 at 01:41:27PM -0400, Joel Fernandes wrote:
+> > On Thu, Aug 01, 2019 at 03:50:20PM -0700, Paul E. McKenney wrote:
+> > > Currently, there is one no-CBs rcuo kthread per CPU, and these kthreads
+> > > are divided into groups.  The first rcuo kthread to come online in a
+> > > given group is that group's leader, and the leader both waits for grace
+> > > periods and invokes its CPU's callbacks.  The non-leader rcuo kthreads
+> > > only invoke callbacks.
+> > > 
+> > > This works well in the real-time/embedded environments for which it was
+> > > intended because such environments tend not to generate all that many
+> > > callbacks.  However, given huge floods of callbacks, it is possible for
+> > > the leader kthread to be stuck invoking callbacks while its followers
+> > > wait helplessly while their callbacks pile up.  This is a good recipe
+> > > for an OOM, and rcutorture's new callback-flood capability does generate
+> > > such OOMs.
+> > > 
+> > > One strategy would be to wait until such OOMs start happening in
+> > > production, but similar OOMs have in fact happened starting in 2018.
+> > > It would therefore be wise to take a more proactive approach.
+> > 
+> > I haven't looked much into nocbs/nohz_full stuff (yet). In particular, I did
+> > not even know that the rcuo threads do grace period life-cycle management and
+> > waiting, I thought only the RCU GP threads did :-/. however, it seems this is
+> > a completely separate grace-period management state machine outside of the
+> > RCU GP thread right?
+> 
+> No, the rcuo kthreads interact with the main RCU GP kthread, initiating
+> new grace periods when needed and being awakened as needed by the RCU
+> GP kthread.
 
-HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f6f53a600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-dashboard link: https://syzkaller.appspot.com/bug?extid=62a1e04fd3ec2abf099e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15394cfc600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f0da8a600000
+Ok, I see the interactions in rcu_nocb_wait_gp(). This what I was thinking
+too is that there has to be these interactions with the main RCU GP kthread,
+for anything to work :) Thanks for the explanation!
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+62a1e04fd3ec2abf099e@syzkaller.appspotmail.com
+> > I was wondering for this patch, could we also just have the rcuo
+> > leader handle both callback execution and waking other non-leader threads at
+> > the same time? So like, execute few callbacks, then do the wake up of the
+> > non-leaders to execute their callbacks, the get back to executing their own
+> > callbacks, etc. That way we don't need a separate rcuog thread to wait for
+> > grace period, would that not work?
+> 
+> I did look into that, but it was more complex and also didn't foster
+> sharing of rcu_do_batch(), which used to only be for non-offloaded
+> callbacks but now does both.  Besides which, invoking callbacks would
+> degrade the rcuog kthread's response to new callbacks and the like.
 
-==================================================================
-BUG: KASAN: use-after-free in __lock_acquire+0x302a/0x3b50  
-kernel/locking/lockdep.c:3753
-Read of size 8 at addr ffff8881d60d1c88 by task syz-executor289/2034
+Makes sense.
 
-CPU: 0 PID: 2034 Comm: syz-executor289 Not tainted 5.3.0-rc2+ #25
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:612
-  __lock_acquire+0x302a/0x3b50 kernel/locking/lockdep.c:3753
-  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x32/0x50 kernel/locking/spinlock.c:159
-  hiddev_release+0x82/0x520 drivers/hid/usbhid/hiddev.c:221
-  __fput+0x2d7/0x840 fs/file_table.c:280
-  task_work_run+0x13f/0x1c0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x8ef/0x2c50 kernel/exit.c:878
-  do_group_exit+0x125/0x340 kernel/exit.c:982
-  __do_sys_exit_group kernel/exit.c:993 [inline]
-  __se_sys_exit_group kernel/exit.c:991 [inline]
-  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:991
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444618
-Code: Bad RIP value.
-RSP: 002b:00007ffd1e60a0d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444618
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004c4270 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d6180 R14: 0000000000000000 R15: 0000000000000000
+> > If you don't mind could you share with me a kvm.sh command (which has config,
+> > boot parameters etc) that can produce the OOM without this patch? I'd
+> > like to take a closer look at it.
+> 
+> Here you go:
+> 
+> tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 8 --duration 120 --configs TREE04
+> 
+> If you add "--memory 1G" in mainline, the OOMs go away.  Or at least
+> decrease substantially in probability.
 
-Allocated by task 21:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:487 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
-  kmalloc include/linux/slab.h:552 [inline]
-  kzalloc include/linux/slab.h:748 [inline]
-  hiddev_connect+0x242/0x5b0 drivers/hid/usbhid/hiddev.c:900
-  hid_connect+0x239/0xbb0 drivers/hid/hid-core.c:1882
-  hid_hw_start drivers/hid/hid-core.c:1981 [inline]
-  hid_hw_start+0xa2/0x130 drivers/hid/hid-core.c:1972
-  appleir_probe+0x13e/0x1a0 drivers/hid/hid-appleir.c:308
-  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
-  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+I could reproduce it, it look around 5-10 minutes for the OOM for 512MB
+memory. Thanks.
 
-Freed by task 21:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
-  slab_free_hook mm/slub.c:1423 [inline]
-  slab_free_freelist_hook mm/slub.c:1470 [inline]
-  slab_free mm/slub.c:3012 [inline]
-  kfree+0xe4/0x2f0 mm/slub.c:3953
-  hiddev_connect.cold+0x45/0x5c drivers/hid/usbhid/hiddev.c:914
-  hid_connect+0x239/0xbb0 drivers/hid/hid-core.c:1882
-  hid_hw_start drivers/hid/hid-core.c:1981 [inline]
-  hid_hw_start+0xa2/0x130 drivers/hid/hid-core.c:1972
-  appleir_probe+0x13e/0x1a0 drivers/hid/hid-appleir.c:308
-  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
-  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> > Is there also a short answer for my the RCU GP thread cannot do the job of
+> > these new rcuog threads?
+> 
+> First, the code is more complicated when you do it that way (and yes,
+> I did actually write it out in pen on paper).  Second, if the CPU
+> corresponding to the combined grace-period/callback kthread is doing the
+> call_rcu() flooding, you are between a rock and a hard place.  On the
+> one hand, you want that kthread to do nothing but invoke callbacks so
+> as to have half a chance of keeping up, and on the other hand you need
+> it to check state frequently so as to react in a timely fashion to a
+> CPU corresponding to one of its callback kthreads starting a second
+> callback flood.
 
-The buggy address belongs to the object at ffff8881d60d1b80
-  which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 264 bytes inside of
-  512-byte region [ffff8881d60d1b80, ffff8881d60d1d80)
-The buggy address belongs to the page:
-page:ffffea0007583400 refcount:1 mapcount:0 mapping:ffff8881da002500  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 ffffea000765a980 0000000800000008 ffff8881da002500
-raw: 0000000000000000 00000000000c000c 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+> Introducing rcug grace-period-only kthreads means that you get the best of
+> both worlds.  Plus last year's flavor consolidation decreased the number
+> of rcuo kthreads from either 2N or 3N to N, so increasing it to only
+> (N + sqrt(N)) should be just fine.  Though I would expect that there
+> will be at least some screaming and shouting.  ;-)
 
-Memory state around the buggy address:
-  ffff8881d60d1b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881d60d1c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8881d60d1c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                       ^
-  ffff8881d60d1d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881d60d1d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+Ok got it. Yes, fewer newer threads now even with nocb improvements :)
 
+thanks,
+
+ - Joel
+
+
+> 
+> 							Thanx, Paul
+> 
+> > thanks a lot,
+> > 
+> >  - Joel
+> > 
+> > 
+> > > This commit therefore features per-CPU rcuo kthreads that do nothing
+> > > but invoke callbacks.  Instead of having one of these kthreads act as
+> > > leader, each group has a separate rcog kthread that handles grace periods
+> > > for its group.  Because these rcuog kthreads do not invoke callbacks,
+> > > callback floods on one CPU no longer block callbacks from reaching the
+> > > rcuc callback-invocation kthreads on other CPUs.
+> > > 
+> > > This change does introduce additional kthreads, however:
+> > > 
+> > > 1.	The number of additional kthreads is about the square root of
+> > > 	the number of CPUs, so that a 4096-CPU system would have only
+> > > 	about 64 additional kthreads.  Note that recent changes
+> > > 	decreased the number of rcuo kthreads by a factor of two
+> > > 	(CONFIG_PREEMPT=n) or even three (CONFIG_PREEMPT=y), so
+> > > 	this still represents a significant improvement on most systems.
+> > > 
+> > > 2.	The leading "rcuo" of the rcuog kthreads should allow existing
+> > > 	scripting to affinity these additional kthreads as needed, the
+> > > 	same as for the rcuop and rcuos kthreads.  (There are no longer
+> > > 	any rcuob kthreads.)
+> > > 
+> > > 3.	A state-machine approach was considered and rejected.  Although
+> > > 	this would allow the rcuo kthreads to continue their dual
+> > > 	leader/follower roles, it complicates callback invocation
+> > > 	and makes it more difficult to consolidate rcuo callback
+> > > 	invocation with existing softirq callback invocation.
+> > > 
+> > > The introduction of rcuog kthreads should thus be acceptable.
+> > > 
+> > > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > ---
+> > >  kernel/rcu/tree.h        |   6 +-
+> > >  kernel/rcu/tree_plugin.h | 115 +++++++++++++++++++--------------------
+> > >  2 files changed, 61 insertions(+), 60 deletions(-)
+> > > 
+> > > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+> > > index 32b3348d3a4d..dc3c53cb9608 100644
+> > > --- a/kernel/rcu/tree.h
+> > > +++ b/kernel/rcu/tree.h
+> > > @@ -200,8 +200,8 @@ struct rcu_data {
+> > >  	atomic_long_t nocb_q_count_lazy; /*  invocation (all stages). */
+> > >  	struct rcu_head *nocb_cb_head;	/* CBs ready to invoke. */
+> > >  	struct rcu_head **nocb_cb_tail;
+> > > -	struct swait_queue_head nocb_wq; /* For nocb kthreads to sleep on. */
+> > > -	struct task_struct *nocb_cb_kthread;
+> > > +	struct swait_queue_head nocb_cb_wq; /* For nocb kthreads to sleep on. */
+> > > +	struct task_struct *nocb_gp_kthread;
+> > >  	raw_spinlock_t nocb_lock;	/* Guard following pair of fields. */
+> > >  	int nocb_defer_wakeup;		/* Defer wakeup of nocb_kthread. */
+> > >  	struct timer_list nocb_timer;	/* Enforce finite deferral. */
+> > > @@ -211,6 +211,8 @@ struct rcu_data {
+> > >  					/* CBs waiting for GP. */
+> > >  	struct rcu_head **nocb_gp_tail;
+> > >  	bool nocb_gp_sleep;		/* Is the nocb GP thread asleep? */
+> > > +	struct swait_queue_head nocb_gp_wq; /* For nocb kthreads to sleep on. */
+> > > +	struct task_struct *nocb_cb_kthread;
+> > >  	struct rcu_data *nocb_next_cb_rdp;
+> > >  					/* Next rcu_data in wakeup chain. */
+> > >  
+> > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > > index 5a72700c3a32..c3b6493313ab 100644
+> > > --- a/kernel/rcu/tree_plugin.h
+> > > +++ b/kernel/rcu/tree_plugin.h
+> > > @@ -1531,7 +1531,7 @@ static void __wake_nocb_leader(struct rcu_data *rdp, bool force,
+> > >  	struct rcu_data *rdp_leader = rdp->nocb_gp_rdp;
+> > >  
+> > >  	lockdep_assert_held(&rdp->nocb_lock);
+> > > -	if (!READ_ONCE(rdp_leader->nocb_cb_kthread)) {
+> > > +	if (!READ_ONCE(rdp_leader->nocb_gp_kthread)) {
+> > >  		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
+> > >  		return;
+> > >  	}
+> > > @@ -1541,7 +1541,7 @@ static void __wake_nocb_leader(struct rcu_data *rdp, bool force,
+> > >  		del_timer(&rdp->nocb_timer);
+> > >  		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
+> > >  		smp_mb(); /* ->nocb_gp_sleep before swake_up_one(). */
+> > > -		swake_up_one(&rdp_leader->nocb_wq);
+> > > +		swake_up_one(&rdp_leader->nocb_gp_wq);
+> > >  	} else {
+> > >  		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
+> > >  	}
+> > > @@ -1646,7 +1646,7 @@ static void __call_rcu_nocb_enqueue(struct rcu_data *rdp,
+> > >  	smp_mb__after_atomic(); /* Store *old_rhpp before _wake test. */
+> > >  
+> > >  	/* If we are not being polled and there is a kthread, awaken it ... */
+> > > -	t = READ_ONCE(rdp->nocb_cb_kthread);
+> > > +	t = READ_ONCE(rdp->nocb_gp_kthread);
+> > >  	if (rcu_nocb_poll || !t) {
+> > >  		trace_rcu_nocb_wake(rcu_state.name, rdp->cpu,
+> > >  				    TPS("WakeNotPoll"));
+> > > @@ -1786,7 +1786,7 @@ static void rcu_nocb_wait_gp(struct rcu_data *rdp)
+> > >   * No-CBs GP kthreads come here to wait for additional callbacks to show up.
+> > >   * This function does not return until callbacks appear.
+> > >   */
+> > > -static void nocb_leader_wait(struct rcu_data *my_rdp)
+> > > +static void nocb_gp_wait(struct rcu_data *my_rdp)
+> > >  {
+> > >  	bool firsttime = true;
+> > >  	unsigned long flags;
+> > > @@ -1794,12 +1794,10 @@ static void nocb_leader_wait(struct rcu_data *my_rdp)
+> > >  	struct rcu_data *rdp;
+> > >  	struct rcu_head **tail;
+> > >  
+> > > -wait_again:
+> > > -
+> > >  	/* Wait for callbacks to appear. */
+> > >  	if (!rcu_nocb_poll) {
+> > >  		trace_rcu_nocb_wake(rcu_state.name, my_rdp->cpu, TPS("Sleep"));
+> > > -		swait_event_interruptible_exclusive(my_rdp->nocb_wq,
+> > > +		swait_event_interruptible_exclusive(my_rdp->nocb_gp_wq,
+> > >  				!READ_ONCE(my_rdp->nocb_gp_sleep));
+> > >  		raw_spin_lock_irqsave(&my_rdp->nocb_lock, flags);
+> > >  		my_rdp->nocb_gp_sleep = true;
+> > > @@ -1838,7 +1836,7 @@ static void nocb_leader_wait(struct rcu_data *my_rdp)
+> > >  			trace_rcu_nocb_wake(rcu_state.name, my_rdp->cpu,
+> > >  					    TPS("WokeEmpty"));
+> > >  		}
+> > > -		goto wait_again;
+> > > +		return;
+> > >  	}
+> > >  
+> > >  	/* Wait for one grace period. */
+> > > @@ -1862,34 +1860,47 @@ static void nocb_leader_wait(struct rcu_data *my_rdp)
+> > >  		rdp->nocb_cb_tail = rdp->nocb_gp_tail;
+> > >  		*tail = rdp->nocb_gp_head;
+> > >  		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
+> > > -		if (rdp != my_rdp && tail == &rdp->nocb_cb_head) {
+> > > +		if (tail == &rdp->nocb_cb_head) {
+> > >  			/* List was empty, so wake up the kthread.  */
+> > > -			swake_up_one(&rdp->nocb_wq);
+> > > +			swake_up_one(&rdp->nocb_cb_wq);
+> > >  		}
+> > >  	}
+> > > +}
+> > >  
+> > > -	/* If we (the GP kthreads) don't have CBs, go wait some more. */
+> > > -	if (!my_rdp->nocb_cb_head)
+> > > -		goto wait_again;
+> > > +/*
+> > > + * No-CBs grace-period-wait kthread.  There is one of these per group
+> > > + * of CPUs, but only once at least one CPU in that group has come online
+> > > + * at least once since boot.  This kthread checks for newly posted
+> > > + * callbacks from any of the CPUs it is responsible for, waits for a
+> > > + * grace period, then awakens all of the rcu_nocb_cb_kthread() instances
+> > > + * that then have callback-invocation work to do.
+> > > + */
+> > > +static int rcu_nocb_gp_kthread(void *arg)
+> > > +{
+> > > +	struct rcu_data *rdp = arg;
+> > > +
+> > > +	for (;;)
+> > > +		nocb_gp_wait(rdp);
+> > > +	return 0;
+> > >  }
+> > >  
+> > >  /*
+> > >   * No-CBs CB kthreads come here to wait for additional callbacks to show up.
+> > > - * This function does not return until callbacks appear.
+> > > + * This function returns true ("keep waiting") until callbacks appear and
+> > > + * then false ("stop waiting") when callbacks finally do appear.
+> > >   */
+> > > -static void nocb_follower_wait(struct rcu_data *rdp)
+> > > +static bool nocb_follower_wait(struct rcu_data *rdp)
+> > >  {
+> > > -	for (;;) {
+> > > -		trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("FollowerSleep"));
+> > > -		swait_event_interruptible_exclusive(rdp->nocb_wq,
+> > > -					 READ_ONCE(rdp->nocb_cb_head));
+> > > -		if (smp_load_acquire(&rdp->nocb_cb_head)) {
+> > > -			/* ^^^ Ensure CB invocation follows _head test. */
+> > > -			return;
+> > > -		}
+> > > -		WARN_ON(signal_pending(current));
+> > > -		trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WokeEmpty"));
+> > > +	trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("FollowerSleep"));
+> > > +	swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
+> > > +				 READ_ONCE(rdp->nocb_cb_head));
+> > > +	if (smp_load_acquire(&rdp->nocb_cb_head)) { /* VVV */
+> > > +		/* ^^^ Ensure CB invocation follows _head test. */
+> > > +		return false;
+> > >  	}
+> > > +	WARN_ON(signal_pending(current));
+> > > +	trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WokeEmpty"));
+> > > +	return true;
+> > >  }
+> > >  
+> > >  /*
+> > > @@ -1899,7 +1910,7 @@ static void nocb_follower_wait(struct rcu_data *rdp)
+> > >   * have to do quite so many wakeups (as in they only need to wake the
+> > >   * no-CBs GP kthreads, not the CB kthreads).
+> > >   */
+> > > -static int rcu_nocb_kthread(void *arg)
+> > > +static int rcu_nocb_cb_kthread(void *arg)
+> > >  {
+> > >  	int c, cl;
+> > >  	unsigned long flags;
+> > > @@ -1911,10 +1922,8 @@ static int rcu_nocb_kthread(void *arg)
+> > >  	/* Each pass through this loop invokes one batch of callbacks */
+> > >  	for (;;) {
+> > >  		/* Wait for callbacks. */
+> > > -		if (rdp->nocb_gp_rdp == rdp)
+> > > -			nocb_leader_wait(rdp);
+> > > -		else
+> > > -			nocb_follower_wait(rdp);
+> > > +		while (nocb_follower_wait(rdp))
+> > > +			continue;
+> > >  
+> > >  		/* Pull the ready-to-invoke callbacks onto local list. */
+> > >  		raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
+> > > @@ -2048,7 +2057,8 @@ void __init rcu_init_nohz(void)
+> > >  static void __init rcu_boot_init_nocb_percpu_data(struct rcu_data *rdp)
+> > >  {
+> > >  	rdp->nocb_tail = &rdp->nocb_head;
+> > > -	init_swait_queue_head(&rdp->nocb_wq);
+> > > +	init_swait_queue_head(&rdp->nocb_cb_wq);
+> > > +	init_swait_queue_head(&rdp->nocb_gp_wq);
+> > >  	rdp->nocb_cb_tail = &rdp->nocb_cb_head;
+> > >  	raw_spin_lock_init(&rdp->nocb_lock);
+> > >  	timer_setup(&rdp->nocb_timer, do_nocb_deferred_wakeup_timer, 0);
+> > > @@ -2056,50 +2066,39 @@ static void __init rcu_boot_init_nocb_percpu_data(struct rcu_data *rdp)
+> > >  
+> > >  /*
+> > >   * If the specified CPU is a no-CBs CPU that does not already have its
+> > > - * rcuo kthread, spawn it.  If the CPUs are brought online out of order,
+> > > - * this can require re-organizing the GP-CB relationships.
+> > > + * rcuo CB kthread, spawn it.  Additionally, if the rcuo GP kthread
+> > > + * for this CPU's group has not yet been created, spawn it as well.
+> > >   */
+> > >  static void rcu_spawn_one_nocb_kthread(int cpu)
+> > >  {
+> > > -	struct rcu_data *rdp;
+> > > -	struct rcu_data *rdp_last;
+> > > -	struct rcu_data *rdp_old_leader;
+> > > -	struct rcu_data *rdp_spawn = per_cpu_ptr(&rcu_data, cpu);
+> > > +	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
+> > > +	struct rcu_data *rdp_gp;
+> > >  	struct task_struct *t;
+> > >  
+> > >  	/*
+> > >  	 * If this isn't a no-CBs CPU or if it already has an rcuo kthread,
+> > >  	 * then nothing to do.
+> > >  	 */
+> > > -	if (!rcu_is_nocb_cpu(cpu) || rdp_spawn->nocb_cb_kthread)
+> > > +	if (!rcu_is_nocb_cpu(cpu) || rdp->nocb_cb_kthread)
+> > >  		return;
+> > >  
+> > >  	/* If we didn't spawn the GP kthread first, reorganize! */
+> > > -	rdp_old_leader = rdp_spawn->nocb_gp_rdp;
+> > > -	if (rdp_old_leader != rdp_spawn && !rdp_old_leader->nocb_cb_kthread) {
+> > > -		rdp_last = NULL;
+> > > -		rdp = rdp_old_leader;
+> > > -		do {
+> > > -			rdp->nocb_gp_rdp = rdp_spawn;
+> > > -			if (rdp_last && rdp != rdp_spawn)
+> > > -				rdp_last->nocb_next_cb_rdp = rdp;
+> > > -			if (rdp == rdp_spawn) {
+> > > -				rdp = rdp->nocb_next_cb_rdp;
+> > > -			} else {
+> > > -				rdp_last = rdp;
+> > > -				rdp = rdp->nocb_next_cb_rdp;
+> > > -				rdp_last->nocb_next_cb_rdp = NULL;
+> > > -			}
+> > > -		} while (rdp);
+> > > -		rdp_spawn->nocb_next_cb_rdp = rdp_old_leader;
+> > > +	rdp_gp = rdp->nocb_gp_rdp;
+> > > +	if (!rdp_gp->nocb_gp_kthread) {
+> > > +		t = kthread_run(rcu_nocb_gp_kthread, rdp_gp,
+> > > +				"rcuog/%d", rdp_gp->cpu);
+> > > +		if (WARN_ONCE(IS_ERR(t), "%s: Could not start rcuo GP kthread, OOM is now expected behavior\n", __func__))
+> > > +			return;
+> > > +		WRITE_ONCE(rdp_gp->nocb_gp_kthread, t);
+> > >  	}
+> > >  
+> > >  	/* Spawn the kthread for this CPU. */
+> > > -	t = kthread_run(rcu_nocb_kthread, rdp_spawn,
+> > > +	t = kthread_run(rcu_nocb_cb_kthread, rdp,
+> > >  			"rcuo%c/%d", rcu_state.abbr, cpu);
+> > > -	if (WARN_ONCE(IS_ERR(t), "%s: Could not start rcuo kthread, OOM is now expected behavior\n", __func__))
+> > > +	if (WARN_ONCE(IS_ERR(t), "%s: Could not start rcuo CB kthread, OOM is now expected behavior\n", __func__))
+> > >  		return;
+> > > -	WRITE_ONCE(rdp_spawn->nocb_cb_kthread, t);
+> > > +	WRITE_ONCE(rdp->nocb_cb_kthread, t);
+> > > +	WRITE_ONCE(rdp->nocb_gp_kthread, rdp_gp->nocb_gp_kthread);
+> > >  }
+> > >  
+> > >  /*
+> > > -- 
+> > > 2.17.1
+> > > 
+> > 
