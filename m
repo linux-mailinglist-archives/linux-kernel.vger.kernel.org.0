@@ -2,125 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2606A8086A
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 23:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0DC480869
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 23:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbfHCVgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 3 Aug 2019 17:36:20 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34976 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729093AbfHCVgU (ORCPT
+        id S1729127AbfHCVfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 3 Aug 2019 17:35:05 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36952 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729094AbfHCVfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Aug 2019 17:36:20 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d23so77541554qto.2
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2019 14:36:19 -0700 (PDT)
+        Sat, 3 Aug 2019 17:35:05 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 19so37713956pfa.4
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2019 14:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PTxWia5xX02WvPnp2uEjiefvHrcZPYIX5+0Wgmee+Pk=;
+        b=LTBMYcGzprbtDGxIPHTf+oSjKUa835LMfKM954lEhmz+dBkkqUqtOJuQvbiblw4vd0
+         GoP1eLNv7wZc5YD48YCn3EXEOYHkiMqHZXDm0HT74/Fnsln15p2M+FMDtfUEo9+cNASL
+         eew7Yft64f19KCGbHBFjh7qomGhRTphDYYZZQqgdmkDKXQ4b5qEvTzhOtb0fRUCJj6ua
+         72sIPDvS6+5nXSfs9PsqwzDjy1jTo6F2aONBUSPEifF6KTo9EPmKheMw5WOQ6BUSKdGB
+         h53w2aSVsZWsGgS23iJRf5nJVWuMoanOok/W7SY8ovQQfrQ51Yu7podFtey2EllUiQcZ
+         tAPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EkifmyHxwnsPs8regEBTA5tK93nCtmZrIpRMe8ScOn4=;
-        b=pozg1dSRKjEU13w2HBoStZrcc1JNPoerWcbMmJHyu7pNxUGHP5POZ+HLfHWhUdh8wf
-         Nf1pgH7loHVYurh/92r4IgfdeXJ1DWvbIBFbl9tgRm7t9YqydOOQi2BU3lN0HCO6uxFr
-         v5va9YKXIxhs1PbqSJHMD2v+S52qKcDDr+mODa5J0AbREgMMsyd+DsjDhfrV/EOFtW/m
-         t2huwgG6VSExCBoM8HmF1+KBpYmLvzQAv0aaG6WyCI/CzRz2gth2C1hgE4Y/aNwsF3O6
-         xqY3Di4bJ12Yjf5jKFsGtAaiaDyPcY4y52dVGPU47TFHf/9ge6hIRaX4wA0yV8kC/DTG
-         E6cQ==
-X-Gm-Message-State: APjAAAWu3OnXI/FP7px9tT9pGfp6XAGl5gQ52x6QZ1WIZHfpLRNw7Rs0
-        ewKba5xJHubHSuvlo7s1yV24OA==
-X-Google-Smtp-Source: APXvYqyFdgNs0jCQVpmdi8dR64CNPy6wD73snHAaLEfC40B+RZ0ZopacAYTEXjRinq1ReEeoFWNEuA==
-X-Received: by 2002:ac8:32ec:: with SMTP id a41mr103176717qtb.375.1564868179417;
-        Sat, 03 Aug 2019 14:36:19 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id g3sm33648801qke.105.2019.08.03.14.36.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PTxWia5xX02WvPnp2uEjiefvHrcZPYIX5+0Wgmee+Pk=;
+        b=gufC5FkQHBKrD+bsnLKJRTXUsb2cUXFQFdvVfz1+d15WVTPMrOTcqHH/M1xPUbmDLu
+         24K+gEt6POubzZlCCzpw2z88Aft3jfFz2LyBB9nfajVBorvD049T4762OWs2CAsAzQs7
+         irhHqwrNocxM5wzOh1PEyb0Sxk3qjji1hVcFEbN7drXP8TIgq+z4SYjJ8s8n0KCKRW4F
+         y+1+y1hqipXGgXlvXB+mNPWoxSASLCZbFPlPxgSYrcZrSllAPVi1jLMMX6eZBCyhVi7f
+         naSI3JVh15cy2UZepa8f1ON2lEhaxyWhXZLsvWfsl1/ZZrhGIn3KCGhN93WKIxrX112r
+         97XA==
+X-Gm-Message-State: APjAAAWPG4KXOWXWtbYkZlK4Cxbd/qWmzq3oXGWO5U0BaatxF9ThvxNc
+        mv1bEsxILKNsWAwteqwsZCM=
+X-Google-Smtp-Source: APXvYqyVNiG19eszv1DY0YcDZcQN1aciZqj6gfPTL8J5HnF4633On3P7FwvAUAIKGJZz+shhd/HxLw==
+X-Received: by 2002:a62:764d:: with SMTP id r74mr68806329pfc.110.1564868104374;
+        Sat, 03 Aug 2019 14:35:04 -0700 (PDT)
+Received: from localhost.localdomain ([117.243.24.232])
+        by smtp.gmail.com with ESMTPSA id 201sm95844106pfz.24.2019.08.03.14.35.00
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 03 Aug 2019 14:36:18 -0700 (PDT)
-Date:   Sat, 3 Aug 2019 17:36:13 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH V2 7/9] vhost: do not use RCU to synchronize MMU notifier
- with worker
-Message-ID: <20190803172944-mutt-send-email-mst@kernel.org>
-References: <20190731084655.7024-8-jasowang@redhat.com>
- <20190731123935.GC3946@ziepe.ca>
- <7555c949-ae6f-f105-6e1d-df21ddae9e4e@redhat.com>
- <20190731193057.GG3946@ziepe.ca>
- <a3bde826-6329-68e4-2826-8a9de4c5bd1e@redhat.com>
- <20190801141512.GB23899@ziepe.ca>
- <42ead87b-1749-4c73-cbe4-29dbeb945041@redhat.com>
- <20190802124613.GA11245@ziepe.ca>
- <20190802100414-mutt-send-email-mst@kernel.org>
- <20190802172418.GB11245@ziepe.ca>
+        Sat, 03 Aug 2019 14:35:03 -0700 (PDT)
+From:   z3phyr <cristianoprasath@gmail.com>
+Cc:     z3phyr <cristianoprasath@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Straube <straube.linux@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Fix lines greater than 80 characters
+Date:   Sun,  4 Aug 2019 08:34:53 +0530
+Message-Id: <20190804030456.10567-1-cristianoprasath@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802172418.GB11245@ziepe.ca>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 02:24:18PM -0300, Jason Gunthorpe wrote:
-> On Fri, Aug 02, 2019 at 10:27:21AM -0400, Michael S. Tsirkin wrote:
-> > On Fri, Aug 02, 2019 at 09:46:13AM -0300, Jason Gunthorpe wrote:
-> > > On Fri, Aug 02, 2019 at 05:40:07PM +0800, Jason Wang wrote:
-> > > > > This must be a proper barrier, like a spinlock, mutex, or
-> > > > > synchronize_rcu.
-> > > > 
-> > > > 
-> > > > I start with synchronize_rcu() but both you and Michael raise some
-> > > > concern.
-> > > 
-> > > I've also idly wondered if calling synchronize_rcu() under the various
-> > > mm locks is a deadlock situation.
-> > > 
-> > > > Then I try spinlock and mutex:
-> > > > 
-> > > > 1) spinlock: add lots of overhead on datapath, this leads 0 performance
-> > > > improvement.
-> > > 
-> > > I think the topic here is correctness not performance improvement
-> > 
-> > The topic is whether we should revert
-> > commit 7f466032dc9 ("vhost: access vq metadata through kernel virtual address")
-> > 
-> > or keep it in. The only reason to keep it is performance.
-> 
-> Yikes, I'm not sure you can ever win against copy_from_user using
-> mmu_notifiers?
+Fix checkpatch error for "line over 80 characters"
 
-Ever since copy_from_user started playing with flags (for SMAP) and
-added speculation barriers there's a chance we can win by accessing
-memory through the kernel address.
+Signed-off-by: z3phyr <cristianoprasath@gmail.com>
+---
+ drivers/staging/pi433/pi433_if.h | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/staging/pi433/pi433_if.h b/drivers/staging/pi433/pi433_if.h
+index 9feb95c431cb..74b6e2513813 100644
+--- a/drivers/staging/pi433/pi433_if.h
++++ b/drivers/staging/pi433/pi433_if.h
+@@ -115,11 +115,14 @@ struct pi433_rx_cfg {
+ 	__u8			bw_exponent;	/* during AFC: 0x8b */
+ 	enum dagc		dagc;
+ 
+-	/* packet format */
++    /* packet format */
+ 	enum option_on_off	enable_sync;
+-	enum option_on_off	enable_length_byte;	  /* should be used in combination with sync, only */
+-	enum address_filtering	enable_address_filtering; /* operational with sync, only */
+-	enum option_on_off	enable_crc;		  /* only operational, if sync on and fixed length or length byte is used */
++    /* should be used in combination with sync, only */
++	enum option_on_off	enable_length_byte;
++	/* operational with sync, only */
++	enum address_filtering	enable_address_filtering;
++	/* only operational, if sync on and fixed length or length byte is used */
++	enum option_on_off	enable_crc;
+ 
+ 	__u8			sync_length;
+ 	__u8			fixed_message_length;
+@@ -132,10 +135,14 @@ struct pi433_rx_cfg {
+ 
+ #define PI433_IOC_MAGIC			'r'
+ 
+-#define PI433_IOC_RD_TX_CFG	_IOR(PI433_IOC_MAGIC, PI433_TX_CFG_IOCTL_NR, char[sizeof(struct pi433_tx_cfg)])
+-#define PI433_IOC_WR_TX_CFG	_IOW(PI433_IOC_MAGIC, PI433_TX_CFG_IOCTL_NR, char[sizeof(struct pi433_tx_cfg)])
++#define PI433_IOC_RD_TX_CFG	_IOR(PI433_IOC_MAGIC, PI433_TX_CFG_IOCTL_NR,\
++char[sizeof(struct pi433_tx_cfg)])
++#define PI433_IOC_WR_TX_CFG	_IOW(PI433_IOC_MAGIC, PI433_TX_CFG_IOCTL_NR,\
++char[sizeof(struct pi433_tx_cfg)])
+ 
+-#define PI433_IOC_RD_RX_CFG	_IOR(PI433_IOC_MAGIC, PI433_RX_CFG_IOCTL_NR, char[sizeof(struct pi433_rx_cfg)])
+-#define PI433_IOC_WR_RX_CFG	_IOW(PI433_IOC_MAGIC, PI433_RX_CFG_IOCTL_NR, char[sizeof(struct pi433_rx_cfg)])
++#define PI433_IOC_RD_RX_CFG	_IOR(PI433_IOC_MAGIC, PI433_RX_CFG_IOCTL_NR,\
++char[sizeof(struct pi433_rx_cfg)])
++#define PI433_IOC_WR_RX_CFG	_IOW(PI433_IOC_MAGIC, PI433_RX_CFG_IOCTL_NR,\
++char[sizeof(struct pi433_rx_cfg)])
+ 
+ #endif /* PI433_H */
+-- 
+2.22.0
 
-Another reason would be to access it from e.g. softirq
-context. copy_from_user will only work if the
-correct mmu is active.
-
-
-> The synchronization requirements are likely always
-> more expensive unless large and scattered copies are being done..
-> 
-> The rcu is about the only simple approach that could be less
-> expensive, and that gets back to the question if you can block an
-> invalidate_start_range in synchronize_rcu or not..
-> 
-> So, frankly, I'd revert it until someone could prove the rcu solution is
-> OK..
-
-I have it all disabled at compile time, so reverting isn't urgent
-anymore. I'll wait a couple more days to decide what's cleanest.
-
-> BTW, how do you get copy_from_user to work outside a syscall?
-
-By switching to the correct mm.
-
-> 
-> Also, why can't this just permanently GUP the pages? In fact, where
-> does it put_page them anyhow? Worrying that 7f466 adds a get_user page
-> but does not add a put_page??
-> 
-> Jason
