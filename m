@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A9C780D08
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 00:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 082E680D19
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 00:49:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfHDWt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 18:49:28 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37103 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726982AbfHDWtY (ORCPT
+        id S1727464AbfHDWto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 18:49:44 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42534 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbfHDWth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 18:49:24 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 19so38589442pfa.4;
-        Sun, 04 Aug 2019 15:49:23 -0700 (PDT)
+        Sun, 4 Aug 2019 18:49:37 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t132so38659688pgb.9;
+        Sun, 04 Aug 2019 15:49:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WGaquJbd5n3vWHVjzVcVo6+uSZsjc3dg9cLGAnxVc2E=;
-        b=S3jwFjBv5vti4GSNOLl7usS2vDqH0Q9mdQIeQBRHCABbXZXQSp9OsVY/w2xyL7nTP8
-         ZYecNdZYrgO7L+BkQcVPzicUza9nsgbAymJTn56ppaJJ1MbzTKSlKgcZSuVPBHENjv96
-         hkgFAzqYxwazXKgNX9N/DjLopqfptr24zOfeivm8zYWH/Y75M1kPiFzhZPYTKsRYejq8
-         i/m0sGMLE0jqJ3DENlV+rsSfWOzYUSK0mHJPDAK/WyMC/O+T7ek80SstkS2+jwGF+2aN
-         2FgMJxAUKbEXaB1QNjEZ05NRrBMlTBOCQS3Bubk6f7+zHMTxlbMDQcuH/aK8PZQ95vOe
-         ii3g==
+        bh=34zW6BJN89MycamN6XZc+aPi3iIpUXsyW4mngm2d11Q=;
+        b=Vl3ziFlsVP8d5c8y0YmW6fDZsGTWTBWfBuMUsCvUNMfO41hPRu5nz6knOx+9Exr4dm
+         faLIZ6PGv5svewcMn6NrpUtC2sVsC+7jyMTiSPQOkMWSlMNBGkEc5Hzdhl1GLUQ+lU00
+         s8/u7LPhlwjUp5vP9Cq58ZxyRYaJggFlYisUFFtIS444ycMw8U/APZaIEYWga3Yussps
+         tKIhHu6BLxxDR9A3QUeopRp/JQJFEZSB+ASswX2FluN7nR+bVi9w3B9Wm/JRet3KnCM9
+         BzOgVm6BdbLPf53jqaXQstPr6PLJxFbgM+ClIPWs4p2Wp5bWVtpTaVjy3ylfOWo6XjbI
+         VLCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WGaquJbd5n3vWHVjzVcVo6+uSZsjc3dg9cLGAnxVc2E=;
-        b=RpjqlaaaX4pat4OSpcXE1tzArAswqgkVuvdAraU/qccYChwBMBo1vMZOy1A4qqbpCm
-         YtvN2s4VtDRGmZFnhNAU6d6fKiczTv6jVRugcDcC9mRcHFgZr5JdGMCHelPyhhR4m+q/
-         E1kxAve7nDuGR7g3Nwnpcr+5VmJxQKE2Cz/owk5t4nxZcrVTaRiWeSSOxd3w0+4LvU4A
-         fi5u0PHEBGHsqhwqvh03+LYSI23BoWM/ny+MiL3TWafuY7KDcx85HxHyLoCXT3nX0mBB
-         2tBqFzZwBwLiHqFRQqd6HcAAg427MPBes7xjcgXy5bIB47iHKVRd/IywC6U7hrQZFEzj
-         B0KQ==
-X-Gm-Message-State: APjAAAX4glajkWwaQXd0viZPlIHow/gAtBsFCi+GzV0nTCO/uww6YjWz
-        se+1ab207NKcs6JHKLuumgs=
-X-Google-Smtp-Source: APXvYqzMm6zKD1x+1cfVe8U+T090I2azs0Ee52Xlzl7grLFlv9DOqy91TsDRd0lMc4ZI9h+s7gPOKQ==
-X-Received: by 2002:a65:41c6:: with SMTP id b6mr76655023pgq.269.1564958963508;
-        Sun, 04 Aug 2019 15:49:23 -0700 (PDT)
+        bh=34zW6BJN89MycamN6XZc+aPi3iIpUXsyW4mngm2d11Q=;
+        b=WD2++toZrTPeY0hWKVCFoQg9J8pLj6+JQwcf083rLQ7ZwBM5MjOAk4fk79xvXi7600
+         o2SHdA1p5bARhftAIk1jCqkbsH9+7aHswzhA+KD9er3vbHSndUi/dByky8qZAcZcd3Kq
+         xL/TmzJ8zD+xIuKg9OLvMri+5XsOZpF9XkzlzxxyiYxzuiVYEOB7dymmU/wcczhM83he
+         XwHkdMYw13AfWIlTSWss+c+z3i1aLTVVgg8ddImB/5kOozFUgVmBo3W6Yba5XwH0KvhE
+         FWbGuLTuB95ECXN07LiM/ZSpgWCIU8+1U4LsvS3QfU0NpBje1fz/O4OGW09kcqUgRYHq
+         hNVw==
+X-Gm-Message-State: APjAAAV69j+uKDvFCr+JZjq8TR92LjRYt1VPDjHBOcC+nfGqmdZZpXKH
+        aoZh4OBJM532y0yt1RrsiQg=
+X-Google-Smtp-Source: APXvYqzZzuc1CJxZdFJgWU/FwmUoZ/p878RlqbCeEzJ5+atuTCZn+89D3JrxmbErf1XY9IXgA3NZ2A==
+X-Received: by 2002:a17:90a:f498:: with SMTP id bx24mr15350312pjb.91.1564958976783;
+        Sun, 04 Aug 2019 15:49:36 -0700 (PDT)
 Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id r6sm35946836pjb.22.2019.08.04.15.49.22
+        by smtp.gmail.com with ESMTPSA id r6sm35946836pjb.22.2019.08.04.15.49.35
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 04 Aug 2019 15:49:23 -0700 (PDT)
+        Sun, 04 Aug 2019 15:49:36 -0700 (PDT)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -68,12 +68,14 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         netdev@vger.kernel.org, rds-devel@oss.oracle.com,
         sparclinux@vger.kernel.org, x86@kernel.org,
         xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: [PATCH v2 03/34] net/ceph: convert put_page() to put_user_page*()
-Date:   Sun,  4 Aug 2019 15:48:44 -0700
-Message-Id: <20190804224915.28669-4-jhubbard@nvidia.com>
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <jroedel@suse.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH v2 11/34] scif: convert put_page() to put_user_page*()
+Date:   Sun,  4 Aug 2019 15:48:52 -0700
+Message-Id: <20190804224915.28669-12-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190804224915.28669-1-jhubbard@nvidia.com>
 References: <20190804224915.28669-1-jhubbard@nvidia.com>
@@ -94,37 +96,55 @@ release_pages().
 This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
 ("mm: introduce put_user_page*(), placeholder versions").
 
-Acked-by: Jeff Layton <jlayton@kernel.org>
-
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: Sage Weil <sage@redhat.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: ceph-devel@vger.kernel.org
-Cc: netdev@vger.kernel.org
+Cc: Sudeep Dutt <sudeep.dutt@intel.com>
+Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Zhen Lei <thunder.leizhen@huawei.com>
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- net/ceph/pagevec.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/misc/mic/scif/scif_rma.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/net/ceph/pagevec.c b/net/ceph/pagevec.c
-index 64305e7056a1..c88fff2ab9bd 100644
---- a/net/ceph/pagevec.c
-+++ b/net/ceph/pagevec.c
-@@ -12,13 +12,7 @@
+diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+index 01e27682ea30..d84ed9466920 100644
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -113,13 +113,14 @@ static int scif_destroy_pinned_pages(struct scif_pinned_pages *pin)
+ 	int writeable = pin->prot & SCIF_PROT_WRITE;
+ 	int kernel = SCIF_MAP_KERNEL & pin->map_flags;
  
- void ceph_put_page_vector(struct page **pages, int num_pages, bool dirty)
- {
--	int i;
--
--	for (i = 0; i < num_pages; i++) {
--		if (dirty)
--			set_page_dirty_lock(pages[i]);
--		put_page(pages[i]);
+-	for (j = 0; j < pin->nr_pages; j++) {
+-		if (pin->pages[j] && !kernel) {
++	if (kernel) {
++		for (j = 0; j < pin->nr_pages; j++) {
+ 			if (writeable)
+-				SetPageDirty(pin->pages[j]);
++				set_page_dirty_lock(pin->pages[j]);
+ 			put_page(pin->pages[j]);
+ 		}
 -	}
-+	put_user_pages_dirty_lock(pages, num_pages, dirty);
- 	kvfree(pages);
- }
- EXPORT_SYMBOL(ceph_put_page_vector);
++	} else
++		put_user_pages_dirty_lock(pin->pages, pin->nr_pages, writeable);
+ 
+ 	scif_free(pin->pages,
+ 		  pin->nr_pages * sizeof(*pin->pages));
+@@ -1385,11 +1386,9 @@ int __scif_pin_pages(void *addr, size_t len, int *out_prot,
+ 				if (ulimit)
+ 					__scif_dec_pinned_vm_lock(mm, nr_pages);
+ 				/* Roll back any pinned pages */
+-				for (i = 0; i < pinned_pages->nr_pages; i++) {
+-					if (pinned_pages->pages[i])
+-						put_page(
+-						pinned_pages->pages[i]);
+-				}
++				put_user_pages(pinned_pages->pages,
++					       pinned_pages->nr_pages);
++
+ 				prot &= ~SCIF_PROT_WRITE;
+ 				try_upgrade = false;
+ 				goto retry;
 -- 
 2.22.0
 
