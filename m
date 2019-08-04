@@ -2,140 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52E3080C92
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 22:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5BE280C99
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 22:32:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfHDUZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 16:25:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726392AbfHDUZj (ORCPT
+        id S1726780AbfHDUcj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 16:32:39 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33912 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbfHDUci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 16:25:39 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x74KMBpc018760;
-        Sun, 4 Aug 2019 16:24:46 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u5qn6g5u0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 04 Aug 2019 16:24:46 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x74KMcs7019432;
-        Sun, 4 Aug 2019 16:24:46 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u5qn6g5tr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 04 Aug 2019 16:24:45 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x74KOjE3004344;
-        Sun, 4 Aug 2019 20:24:45 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma02wdc.us.ibm.com with ESMTP id 2u51w612af-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 04 Aug 2019 20:24:45 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x74KOi8A10945276
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 4 Aug 2019 20:24:44 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BBC96B205F;
-        Sun,  4 Aug 2019 20:24:44 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86269B2064;
-        Sun,  4 Aug 2019 20:24:44 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.150.228])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun,  4 Aug 2019 20:24:44 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id EEA0016C9A2E; Sun,  4 Aug 2019 13:24:46 -0700 (PDT)
-Date:   Sun, 4 Aug 2019 13:24:46 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH RFC tip/core/rcu 14/14] rcu/nohz: Make multi_cpu_stop()
- enable tick on all online CPUs
-Message-ID: <20190804202446.GA25634@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <20190802151435.GA1081@linux.ibm.com>
- <20190802151501.13069-14-paulmck@linux.ibm.com>
- <20190804144317.GF2349@hirez.programming.kicks-ass.net>
- <20190804144835.GB2386@hirez.programming.kicks-ass.net>
- <20190804184159.GC28441@linux.ibm.com>
+        Sun, 4 Aug 2019 16:32:38 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 31so82359083wrm.1;
+        Sun, 04 Aug 2019 13:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b//BVTOWECD890zQi6jVIN8Ht0AZ1dnw7ou61dAnurM=;
+        b=mHOdijeUbuPibzEwbzMeTtjwNiZN5QXAw8QRNjZVDA1rBBGHGK+/glzZOjum+jhxUx
+         UGhDjIolJ6AWTTm3uyFZS3b8DpOZreTPDNjV6MgnF5Fj6CQvr29f0manRItqRdQwIZoI
+         sFbOnpkkiWsexWrCInLsUWcFV/PtKCuUZFi3gsa80r6zT5oYvNrD/idfslI7G51YZjuG
+         qyN/cx9Fj3FaT9L4s5s+U2BZziMuh5hmCwbeHBBo1i4K69BeQ3wCxdeLnZa0OPoyc3ZK
+         vQzojEh+u7iGxCvBq8FFTZQBW1GqsOWcWqXi73MzpioGPN7Fa59pzXYZSbdF83KrSPme
+         xeNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b//BVTOWECD890zQi6jVIN8Ht0AZ1dnw7ou61dAnurM=;
+        b=tTeCprilHCQnmqutAa79eXqKpny6ex7RHH6ASkcwzRfeJvBJBMlMbfXjD+m5nabI/K
+         mJuSnkhiOoIv7D5TPJWY1ZSNhBA9cSRYf8z8wEi1nxuIyA0Pm5Uyz2A4M7Gw/nfXJy/s
+         jzwy86j54ZA0s3cR945QDMzbaSg2/UcHycCWZFPqYJ0UWkptkHO/LK20HGG3LIux75bS
+         SXeDxCsVLRB7SZOezM2Jv51aBEJ0ieWIh7uOL9ph2z+S7Sead3AAe434xA60xsE1t6DO
+         QCCWkRb0dvvw/nOivVw/2QkiHKXR8eLcluEEAqnmKkgo0v51DKO8ou6kdqWAl9nBQnFE
+         vR0Q==
+X-Gm-Message-State: APjAAAVj1yS6wARD/J0Wmpokdn87GZ9IUJfIX/2TIPsSAwhgKAFH+TKI
+        1en9K/rC6i/Sect5/dVDiiU=
+X-Google-Smtp-Source: APXvYqwRY3GwJLIUcmbZk9vKGubQIFMPocKrEibYRevO9wl66mW2BHGQg4Ruld0509MVkkryVuh7Mg==
+X-Received: by 2002:adf:a341:: with SMTP id d1mr108869494wrb.260.1564950755243;
+        Sun, 04 Aug 2019 13:32:35 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.gmail.com with ESMTPSA id b2sm112066619wrp.72.2019.08.04.13.32.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 04 Aug 2019 13:32:34 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/2] soc/tegra: pmc: Query PCLK clock rate at probe time
+Date:   Sun,  4 Aug 2019 23:29:26 +0300
+Message-Id: <20190804202927.15014-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190804184159.GC28441@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-04_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908040238
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 04, 2019 at 11:41:59AM -0700, Paul E. McKenney wrote:
-> On Sun, Aug 04, 2019 at 04:48:35PM +0200, Peter Zijlstra wrote:
-> > On Sun, Aug 04, 2019 at 04:43:17PM +0200, Peter Zijlstra wrote:
-> > > On Fri, Aug 02, 2019 at 08:15:01AM -0700, Paul E. McKenney wrote:
-> > > > The multi_cpu_stop() function relies on the scheduler to gain control from
-> > > > whatever is running on the various online CPUs, including any nohz_full
-> > > > CPUs running long loops in kernel-mode code.  Lack of the scheduler-clock
-> > > > interrupt on such CPUs can delay multi_cpu_stop() for several minutes
-> > > > and can also result in RCU CPU stall warnings.  This commit therefore
-> > > > causes multi_cpu_stop() to enable the scheduler-clock interrupt on all
-> > > > online CPUs.
-> > > 
-> > > This sounds wrong; should we be fixing sched_can_stop_tick() instead to
-> > > return false when the stop task is runnable?
-> 
-> Agreed.  However, it is proving surprisingly hard to come up with a
-> code sequence that has the effect of rcu_nocb without nohz_full.
-> And rcu_nocb works just fine.  With nohz_full also in place, I am
-> decreasing the failure rate, but it still fails, perhaps a few times
-> per hour of TREE04 rcutorture on an eight-CPU system.  (My 12-CPU
-> system stubbornly refuses to fail.  Good thing I kept the eight-CPU
-> system around, I guess.)
-> 
-> When I arrive at some sequence of actions that actually work reliably,
-> then by all means let's put it somewhere in the NO_HZ_FULL machinery!
-> 
-> > And even without that; I don't understand how we're not instantly
-> > preempted the moment we enqueue the stop task.
-> 
-> There is no preemption because CONFIG_PREEMPT=n for the scenarios still
-> having trouble.  Yes, there are cond_resched() calls, but they don't do
-> anything unless the appropriate flags are set, which won't always happen
-> without the tick, apparently.  Or without -something- that isn't always
-> happening as it should.
-> 
-> > Any enqueue, should go through check_preempt_curr() which will be an
-> > instant resched_curr() when we just woke the stop class.
-> 
-> I did try hitting all of the CPUs with resched_cpu().  Ten times on each
-> CPU with a ten-jiffy wait between each.  This might have decreased the
-> probability of excessively long CPU-stopper waits by a factor of two or
-> three, but it did not eliminate the excessively long waits.
-> 
-> What else should I try?
-> 
-> For example, are there any diagnostics I could collect, say from within
-> the CPU stopper when things are taking too long?  I see CPU-stopper
-> delays in excess of five -minutes-, so this is anything but subtle.
+It is possible to get a lockup if kernel decides to enter LP2 cpuidle
+from some clk-notifier, in that case CCF's "prepare" mutex is kept locked
+and thus clk_get_rate(pclk) blocks on the same mutex with interrupts being
+disabled.
 
-For whatever it is worth, the things on my list include using 25 rounds
-of resched_cpu() on each CPU with ten-jiffy wait between each (instead of
-merely 10 rounds), using waitqueues or some such to actually force a
-meaningful context switch on the other CPUs, etc.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-							Thanx, Paul
+Changelog:
+
+v4: Added clk-notifier to track PCLK rate-changes, which may become useful
+    in the future. That's done in response to v3 review comment from Peter
+    De Schrijver.
+
+    Now properly handling case where clk pointer is intentionally NULL on
+    the driver's probe.
+
+v3: Changed commit's message because I actually recalled what was the
+    initial reason for the patch, since the problem reoccurred once again.
+
+v2: Addressed review comments that were made by Jon Hunter to v1 by
+    not moving the memory barrier, replacing one missed clk_get_rate()
+    with pmc->rate, handling possible clk_get_rate() error on probe and
+    slightly adjusting the commits message.
+
+ drivers/soc/tegra/pmc.c | 71 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 53 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 9f9c1c677cf4..4e44943d0b26 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -309,6 +309,7 @@ static const char * const tegra210_reset_sources[] = {
+  * @pctl_dev: pin controller exposed by the PMC
+  * @domain: IRQ domain provided by the PMC
+  * @irq: chip implementation for the IRQ domain
++ * @clk_nb: pclk clock changes handler
+  */
+ struct tegra_pmc {
+ 	struct device *dev;
+@@ -344,6 +345,8 @@ struct tegra_pmc {
+ 
+ 	struct irq_domain *domain;
+ 	struct irq_chip irq;
++
++	struct notifier_block clk_nb;
+ };
+ 
+ static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+@@ -1192,7 +1195,7 @@ static int tegra_io_pad_prepare(struct tegra_pmc *pmc, enum tegra_io_pad id,
+ 		return err;
+ 
+ 	if (pmc->clk) {
+-		rate = clk_get_rate(pmc->clk);
++		rate = pmc->rate;
+ 		if (!rate) {
+ 			dev_err(pmc->dev, "failed to get clock rate\n");
+ 			return -ENODEV;
+@@ -1433,6 +1436,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
+ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+ {
+ 	unsigned long long rate = 0;
++	u64 ticks;
+ 	u32 value;
+ 
+ 	switch (mode) {
+@@ -1441,31 +1445,22 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+ 		break;
+ 
+ 	case TEGRA_SUSPEND_LP2:
+-		rate = clk_get_rate(pmc->clk);
++		rate = pmc->rate;
+ 		break;
+ 
+ 	default:
+ 		break;
+ 	}
+ 
+-	if (WARN_ON_ONCE(rate == 0))
+-		rate = 100000000;
+-
+-	if (rate != pmc->rate) {
+-		u64 ticks;
+-
+-		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+-		do_div(ticks, USEC_PER_SEC);
+-		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
++	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
++	do_div(ticks, USEC_PER_SEC);
++	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+ 
+-		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+-		do_div(ticks, USEC_PER_SEC);
+-		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
++	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
++	do_div(ticks, USEC_PER_SEC);
++	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+ 
+-		wmb();
+-
+-		pmc->rate = rate;
+-	}
++	wmb();
+ 
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+ 	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
+@@ -2019,6 +2014,20 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+ 	return 0;
+ }
+ 
++static int tegra_pmc_clk_notify_cb(struct notifier_block *nb,
++				   unsigned long action, void *ptr)
++{
++	struct clk_notifier_data *data = ptr;
++	struct tegra_pmc *pmc;
++
++	if (action == POST_RATE_CHANGE) {
++		pmc = container_of(nb, struct tegra_pmc, clk_nb);
++		pmc->rate = data->new_rate;
++	}
++
++	return NOTIFY_OK;
++}
++
+ static int tegra_pmc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base;
+@@ -2082,6 +2091,30 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 		pmc->clk = NULL;
+ 	}
+ 
++	/*
++	 * PCLK clock rate can't be retrieved using CLK API because it
++	 * causes lockup if CPU enters LP2 idle state from some other
++	 * CLK notifier, hence we're caching the rate's value locally.
++	 */
++	if (pmc->clk) {
++		pmc->clk_nb.notifier_call = tegra_pmc_clk_notify_cb;
++		err = clk_notifier_register(pmc->clk, &pmc->clk_nb);
++		if (err) {
++			dev_err(&pdev->dev,
++				"failed to register clk notifier\n");
++			return err;
++		}
++
++		pmc->rate = clk_get_rate(pmc->clk);
++	}
++
++	if (!pmc->rate) {
++		if (pmc->clk)
++			dev_err(&pdev->dev, "failed to get pclk rate\n");
++
++		pmc->rate = 100000000;
++	}
++
+ 	pmc->dev = &pdev->dev;
+ 
+ 	tegra_pmc_init(pmc);
+@@ -2133,6 +2166,8 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ cleanup_sysfs:
+ 	device_remove_file(&pdev->dev, &dev_attr_reset_reason);
+ 	device_remove_file(&pdev->dev, &dev_attr_reset_level);
++	clk_notifier_unregister(pmc->clk, &pmc->clk_nb);
++
+ 	return err;
+ }
+ 
+-- 
+2.22.0
+
