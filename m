@@ -2,191 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C58F80AA1
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 12:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0809980ABA
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2019 13:59:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726679AbfHDKiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 06:38:18 -0400
-Received: from mga01.intel.com ([192.55.52.88]:31912 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfHDKiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 06:38:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Aug 2019 03:38:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,345,1559545200"; 
-   d="scan'208";a="167679032"
-Received: from hao-dev.bj.intel.com ([10.238.157.65])
-  by orsmga008.jf.intel.com with ESMTP; 04 Aug 2019 03:38:10 -0700
-From:   Wu Hao <hao.wu@intel.com>
-To:     gregkh@linuxfoundation.org, mdf@kernel.org,
-        linux-fpga@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org,
-        Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
-Subject: [PATCH v4 12/12] Documentation: fpga: dfl: add descriptions for virtualization and new interfaces.
-Date:   Sun,  4 Aug 2019 18:20:22 +0800
-Message-Id: <1564914022-3710-13-git-send-email-hao.wu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564914022-3710-1-git-send-email-hao.wu@intel.com>
-References: <1564914022-3710-1-git-send-email-hao.wu@intel.com>
+        id S1726155AbfHDLow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 07:44:52 -0400
+Received: from dougal.metanate.com ([90.155.101.14]:38613 "EHLO metanate.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726030AbfHDLow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Aug 2019 07:44:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
+         s=stronger; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References
+        :In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=XFXKBtacMj7+iS2hJMQvDhIU6Wwk+FtP4wcUdSXcXdw=; b=BfD08WN9sQgszj4PKofDZRXqSy
+        Vhtn/kZkuJ201sqCNJeS25cnVxoNAIEJHb3mgaF28rN3n5hXR3driv77qPZ2q0cY3s0pvNgCctlnx
+        S0htVDvPFLf4JRm4qLUFhyCH0D6gUHCL+WEld4Ym86XPFJ+ZLeZeGLz+0EIFz9evyF+98t4It2UJX
+        Lrx39s58u0xPBzFhNSMUb3fRnpQzfLE5c2PwyhImHcHBXwUXX/w2HsZz1H1fKizpbj6krW7mobYCD
+        I4OotSIOWr55z3rHLTJhAOB5+OFTNW8DAgrFMYd/fn+NOThQK0JOHAKYsb4lmUgZcg0hGnhVZFO/O
+        oCN5Q5gQ==;
+Received: from johnkeeping.plus.com ([81.174.171.191] helo=donbot)
+        by shrek.metanate.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <john@metanate.com>)
+        id 1huEwF-0006Wo-Sj; Sun, 04 Aug 2019 12:44:36 +0100
+Date:   Sun, 4 Aug 2019 12:44:34 +0100
+From:   John Keeping <john@metanate.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] perf unwind: fix libunwind when tid != pid
+Message-ID: <20190804124434.204da4ac.john@metanate.com>
+In-Reply-To: <20190802133039.GE27223@krava>
+References: <20190729172430.14880-1-john@metanate.com>
+        <20190729172430.14880-2-john@metanate.com>
+        <20190802133039.GE27223@krava>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Authenticated: YES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds virtualization support description for DFL based
-FPGA devices (based on PCIe SRIOV), and introductions to new
-interfaces added by new dfl private feature drivers.
+On Fri, 2 Aug 2019 15:30:39 +0200
+Jiri Olsa <jolsa@redhat.com> wrote:
 
-[mdf@kernel.org: Fixed up to make it work with new reStructuredText docs]
-Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
- Documentation/fpga/dfl.rst | 105 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
+> On Mon, Jul 29, 2019 at 06:24:30PM +0100, John Keeping wrote:
+> > Commit e5adfc3e7e77 ("perf map: Synthesize maps only for thread group
+> > leader") changed the recording side so that we no longer get mmap events
+> > for threads other than the thread group leader.
+> > 
+> > When a file recorded after this change is loaded, the lack of mmap
+> > records mean that unwinding is not set up for any other threads.  
+> 
+> sry I dont' follow what's the problem here, could you please
+> describe the scenrio where the current code is failing in
+> more details
 
-diff --git a/Documentation/fpga/dfl.rst b/Documentation/fpga/dfl.rst
-index 2f125ab..6fa483f 100644
---- a/Documentation/fpga/dfl.rst
-+++ b/Documentation/fpga/dfl.rst
-@@ -87,6 +87,8 @@ The following functions are exposed through ioctls:
- - Get driver API version (DFL_FPGA_GET_API_VERSION)
- - Check for extensions (DFL_FPGA_CHECK_EXTENSION)
- - Program bitstream (DFL_FPGA_FME_PORT_PR)
-+- Assign port to PF (DFL_FPGA_FME_PORT_ASSIGN)
-+- Release port from PF (DFL_FPGA_FME_PORT_RELEASE)
- 
- More functions are exposed through sysfs
- (/sys/class/fpga_region/regionX/dfl-fme.n/):
-@@ -102,6 +104,10 @@ More functions are exposed through sysfs
-      one FPGA device may have more than one port, this sysfs interface indicates
-      how many ports the FPGA device has.
- 
-+ Global error reporting management (errors/)
-+     error reporting sysfs interfaces allow user to read errors detected by the
-+     hardware, and clear the logged errors.
-+
- 
- FIU - PORT
- ==========
-@@ -143,6 +149,10 @@ More functions are exposed through sysfs:
-  Read Accelerator GUID (afu_id)
-      afu_id indicates which PR bitstream is programmed to this AFU.
- 
-+ Error reporting (errors/)
-+     error reporting sysfs interfaces allow user to read port/afu errors
-+     detected by the hardware, and clear the logged errors.
-+
- 
- DFL Framework Overview
- ======================
-@@ -218,6 +228,101 @@ the compat_id exposed by the target FPGA region. This check is usually done by
- userspace before calling the reconfiguration IOCTL.
- 
- 
-+FPGA virtualization - PCIe SRIOV
-+================================
-+This section describes the virtualization support on DFL based FPGA device to
-+enable accessing an accelerator from applications running in a virtual machine
-+(VM). This section only describes the PCIe based FPGA device with SRIOV support.
-+
-+Features supported by the particular FPGA device are exposed through Device
-+Feature Lists, as illustrated below:
-+
-+::
-+
-+    +-------------------------------+  +-------------+
-+    |              PF               |  |     VF      |
-+    +-------------------------------+  +-------------+
-+        ^            ^         ^              ^
-+        |            |         |              |
-+  +-----|------------|---------|--------------|-------+
-+  |     |            |         |              |       |
-+  |  +-----+     +-------+ +-------+      +-------+   |
-+  |  | FME |     | Port0 | | Port1 |      | Port2 |   |
-+  |  +-----+     +-------+ +-------+      +-------+   |
-+  |                  ^         ^              ^       |
-+  |                  |         |              |       |
-+  |              +-------+ +------+       +-------+   |
-+  |              |  AFU  | |  AFU |       |  AFU  |   |
-+  |              +-------+ +------+       +-------+   |
-+  |                                                   |
-+  |            DFL based FPGA PCIe Device             |
-+  +---------------------------------------------------+
-+
-+FME is always accessed through the physical function (PF).
-+
-+Ports (and related AFUs) are accessed via PF by default, but could be exposed
-+through virtual function (VF) devices via PCIe SRIOV. Each VF only contains
-+1 Port and 1 AFU for isolation. Users could assign individual VFs (accelerators)
-+created via PCIe SRIOV interface, to virtual machines.
-+
-+The driver organization in virtualization case is illustrated below:
-+::
-+
-+    +-------++------++------+             |
-+    | FME   || FME  || FME  |             |
-+    | FPGA  || FPGA || FPGA |             |
-+    |Manager||Bridge||Region|             |
-+    +-------++------++------+             |
-+    +-----------------------+  +--------+ |             +--------+
-+    |          FME          |  |  AFU   | |             |  AFU   |
-+    |         Module        |  | Module | |             | Module |
-+    +-----------------------+  +--------+ |             +--------+
-+          +-----------------------+       |       +-----------------------+
-+          | FPGA Container Device |       |       | FPGA Container Device |
-+          |  (FPGA Base Region)   |       |       |  (FPGA Base Region)   |
-+          +-----------------------+       |       +-----------------------+
-+            +------------------+          |         +------------------+
-+            | FPGA PCIE Module |          | Virtual | FPGA PCIE Module |
-+            +------------------+   Host   | Machine +------------------+
-+   -------------------------------------- | ------------------------------
-+             +---------------+            |          +---------------+
-+             | PCI PF Device |            |          | PCI VF Device |
-+             +---------------+            |          +---------------+
-+
-+FPGA PCIe device driver is always loaded first once a FPGA PCIe PF or VF device
-+is detected. It:
-+
-+* Finishes enumeration on both FPGA PCIe PF and VF device using common
-+  interfaces from DFL framework.
-+* Supports SRIOV.
-+
-+The FME device driver plays a management role in this driver architecture, it
-+provides ioctls to release Port from PF and assign Port to PF. After release
-+a port from PF, then it's safe to expose this port through a VF via PCIe SRIOV
-+sysfs interface.
-+
-+To enable accessing an accelerator from applications running in a VM, the
-+respective AFU's port needs to be assigned to a VF using the following steps:
-+
-+#. The PF owns all AFU ports by default. Any port that needs to be
-+   reassigned to a VF must first be released through the
-+   DFL_FPGA_FME_PORT_RELEASE ioctl on the FME device.
-+
-+#. Once N ports are released from PF, then user can use command below
-+   to enable SRIOV and VFs. Each VF owns only one Port with AFU.
-+
-+   ::
-+
-+      echo N > $PCI_DEVICE_PATH/sriov_numvfs
-+
-+#. Pass through the VFs to VMs
-+
-+#. The AFU under VF is accessible from applications in VM (using the
-+   same driver inside the VF).
-+
-+Note that an FME can't be assigned to a VF, thus PR and other management
-+functions are only available via the PF.
-+
- Device enumeration
- ==================
- This section introduces how applications enumerate the fpga device from
--- 
-1.8.3.1
+With perf compiled to use libunwind, run:
 
+	perf record --call-graph=dwarf -t $TID -- sleep 5
+	perf report
+
+If $TID is a process, then the output has the call graph, but if it's a
+secondary thread then it is as if --no-call-graph was specified.
+
+> > 
+> > Following the rationale in that commit, move the libunwind fields into
+> > struct map_groups and update the libunwind functions to take this
+> > instead of the struct thread.  This is only required for
+> > unwind__finish_access which must now be called from map_groups__delete
+> > and the others are changed for symmetry.
+> > 
+> > Note that unwind__get_entries keeps the thread argument since it is
+> > required for symbol lookup and the libdw unwind provider uses the thread
+> > ID.  
+> 
+> SNIP
+> 
+> > @@ -59,37 +59,31 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
+> >  		return 0;
+> >  	}
+> >  out_register:
+> > -	unwind__register_ops(thread, ops);
+> > +	unwind__register_ops(mg, ops);
+> >  
+> > -	err = thread->unwind_libunwind_ops->prepare_access(thread);
+> > +	err = mg->unwind_libunwind_ops->prepare_access(mg);
+> >  	if (initialized)
+> >  		*initialized = err ? false : true;
+> >  	return err;
+> >  }
+> >  
+> > -void unwind__flush_access(struct thread *thread)
+> > +void unwind__flush_access(struct map_groups *mg)
+> >  {
+> > -	if (!dwarf_callchain_users)
+> > -		return;  
+> 
+> why did you remove this check?
+
+I don't think there is any way for unwind_libunwind_ops to be set if
+!dwarf_callchain_users so this is redundant given the following
+condition.
+
+But this should probably be a separate patch.
+
+> > -
+> > -	if (thread->unwind_libunwind_ops)
+> > -		thread->unwind_libunwind_ops->flush_access(thread);
+> > +	if (mg->unwind_libunwind_ops)
+> > +		mg->unwind_libunwind_ops->flush_access(mg);
+> >  }
+> >  
+> > -void unwind__finish_access(struct thread *thread)
+> > +void unwind__finish_access(struct map_groups *mg)
+> >  {
+> > -	if (!dwarf_callchain_users)
+> > -		return;  
+> 
+> why did you remove this check?
+
+Likewise.
+
+
+Regards,
+John
