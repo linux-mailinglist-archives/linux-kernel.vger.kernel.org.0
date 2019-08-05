@@ -2,173 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2117282349
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93CB482360
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 19:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729152AbfHEQ6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 12:58:39 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37502 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbfHEQ6j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:58:39 -0400
-Received: from [10.137.184.118] (unknown [131.107.147.118])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 21E2620B7186;
-        Mon,  5 Aug 2019 09:58:37 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/2] sys-hypervisor: /sys/hypervisor/type for Hyper-V
-To:     Nuno Das Neves "<Nuno.Das@microsoft.com>;" Nuno Das Neves
-         "<Nuno.Das@microsoft.com>;" "gregkh@linuxfoundation.org"
-         "<gregkh@linuxfoundation.org>;" Sasha Levin
-         "<Alexander.Levin@microsoft.com>;" Haiyang Zhang
-         "<haiyangz@microsoft.com>;" KY Srinivasan
-         "<kys@microsoft.com>;" Michael Kelley <mikelley@microsoft.com>
-References: <1564183046-128211-1-git-send-email-nudasnev@microsoft.com>
- <1564183046-128211-2-git-send-email-nudasnev@microsoft.com>
- <MN2PR21MB1216DBB3BD918B6DCC738E30CCC30@MN2PR21MB1216.namprd21.prod.outlook.com>
- <MWHPR21MB07015125F311AF5E2A8D813883DD0@MWHPR21MB0701.namprd21.prod.outlook.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Nuno Das Neves <nuno.das@linux.microsoft.com>
-Message-ID: <c3cbae7a-d0d1-4c63-ccf1-10f73dd25fc9@linux.microsoft.com>
-Date:   Mon, 5 Aug 2019 09:58:37 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729704AbfHERBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 13:01:46 -0400
+Received: from mga18.intel.com ([134.134.136.126]:51650 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728871AbfHERBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 13:01:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 09:52:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
+   d="scan'208";a="257772967"
+Received: from buildpc-hp-z230.iind.intel.com (HELO buildpc-HP-Z230) ([10.223.89.34])
+  by orsmga001.jf.intel.com with ESMTP; 05 Aug 2019 09:52:29 -0700
+Date:   Mon, 5 Aug 2019 22:24:22 +0530
+From:   Sanyog Kale <sanyog.r.kale@intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com
+Subject: Re: [RFC PATCH 27/40] soundwire: Add Intel resource management
+ algorithm
+Message-ID: <20190805165422.GB24889@buildpc-HP-Z230>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-28-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <MWHPR21MB07015125F311AF5E2A8D813883DD0@MWHPR21MB0701.namprd21.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725234032.21152-28-pierre-louis.bossart@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/29/2019 3:54 PM, Nuno Das Neves wrote:
-> *From:*Stephen Hemminger <sthemmin@microsoft.com>
-> *Sent:* Friday, 26 July 2019 5:43 PM
-> *To:* Nuno Das Neves <Nuno.Das@microsoft.com>; Nuno Das Neves <Nuno.Das@microsoft.com>; gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>; Sasha Levin <Alexander.Levin@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>; KY Srinivasan <kys@microsoft.com>; Michael Kelley <mikelley@microsoft.com>
-> *Cc:* linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
-> *Subject:* Re: [RFC PATCH 1/2] sys-hypervisor: /sys/hypervisor/type for Hyper-V
->  
-> I am not sure about this. 
-> The existing tools like lscpu just use CPUID. What is does this addition add?
+On Thu, Jul 25, 2019 at 06:40:19PM -0500, Pierre-Louis Bossart wrote:
+> This algorithm computes bus parameters like clock frequency, frame
+> shape and port transport parameters based on active stream(s) running
+> on the bus.
 > 
-The main motivation is to replicate functionality available on Xen.
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-> *From:* Nuno Das Neves <nudasnev@microsoft.com>
-> *Sent:* Friday, July 26, 2019 4:17 PM
-> *To:* Nuno Das Neves <Nuno.Das@microsoft.com>; gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>; Stephen Hemminger <sthemmin@microsoft.com>; Sasha Levin <Alexander.Levin@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>; KY Srinivasan <kys@microsoft.com>; Michael Kelley <mikelley@microsoft.com>
-> *Cc:* linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
-> *Subject:* [RFC PATCH 1/2] sys-hypervisor: /sys/hypervisor/type for Hyper-V
->  
-> Populate /sys/hypervisor with entries for Hyper-V.
-> This patch adds /sys/hypervisor/type which contains "Hyper-V".
+> This implementation is optimal for Intel platforms. Developers can
+> also implement their own .compute_params() callback for specific
+> resource management algorithm.
 > 
-> Signed-off-by: Nuno Das Neves <nudasnev@microsoft.com>
+> Credits: this patch is based on an earlier internal contribution by
+> Vinod Koul, Sanyog Kale, Shreyas Nc and Hardik Shah. All hard-coded
+> values were removed from the initial contribution to use BIOS
+> information instead.
+> 
+> FIXME: remove checkpatch report
+> WARNING: Reusing the krealloc arg is almost always a bug
+> +			group->rates = krealloc(group->rates,
+> 
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 > ---
->  .../ABI/stable/sysfs-hypervisor-hyperv        |  7 ++++
->  drivers/hv/Kconfig                            | 10 +++++
->  drivers/hv/Makefile                           |  7 ++--
->  drivers/hv/sys-hypervisor.c                   | 41 +++++++++++++++++++
->  4 files changed, 62 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/ABI/stable/sysfs-hypervisor-hyperv
->  create mode 100644 drivers/hv/sys-hypervisor.c
+>  drivers/soundwire/Makefile                  |   2 +-
+>  drivers/soundwire/algo_dynamic_allocation.c | 403 ++++++++++++++++++++
+>  drivers/soundwire/bus.c                     |   3 +
+>  drivers/soundwire/bus.h                     |  46 ++-
+>  drivers/soundwire/stream.c                  |  20 +
+>  include/linux/soundwire/sdw.h               |   5 +
+>  6 files changed, 476 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/soundwire/algo_dynamic_allocation.c
 > 
-> diff --git a/Documentation/ABI/stable/sysfs-hypervisor-hyperv b/Documentation/ABI/stable/sysfs-hypervisor-hyperv
+> diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
+> index 88990cac48a7..f59a9d4a28fd 100644
+> --- a/drivers/soundwire/Makefile
+> +++ b/drivers/soundwire/Makefile
+> @@ -5,7 +5,7 @@
+>  
+>  #Bus Objs
+>  soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o \
+> -			debugfs.o
+> +			debugfs.o algo_dynamic_allocation.o
+>  
+>  obj-$(CONFIG_SOUNDWIRE_BUS) += soundwire-bus.o
+>  
+> diff --git a/drivers/soundwire/algo_dynamic_allocation.c b/drivers/soundwire/algo_dynamic_allocation.c
 > new file mode 100644
-> index 000000000000..58380ea81315
+> index 000000000000..89edb39162b8
 > --- /dev/null
-> +++ b/Documentation/ABI/stable/sysfs-hypervisor-hyperv
-> @@ -0,0 +1,7 @@
-> +What:          /sys/hypervisor/type
-> +Date:          July 2019
-> +KernelVersion: 5.2.1
-> +Contact:       linux-hyperv@vger.kernel.org
-> +Description:   If running under Hyper-V:
-> +               Type of hypervisor:
-> +               "Hyper-V": Hyper-V hypervisor
-> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-> index 1c1a2514d6f3..e693adf0b77f 100644
-> --- a/drivers/hv/Kconfig
-> +++ b/drivers/hv/Kconfig
-> @@ -25,4 +25,14 @@ config HYPERV_BALLOON
->          help
->            Select this option to enable Hyper-V Balloon driver.
->  
-> +config HYPERV_SYS_HYPERVISOR
-> +       bool "Create Hyper-V entries under /sys/hypervisor"
-> +       depends on HYPERV && SYSFS
-> +       select SYS_HYPERVISOR
-> +       default y
-> +       help
-> +         Create Hyper-V entries under /sys/hypervisor (e.g., type). When running
-> +         native or on another hypervisor, /sys/hypervisor may still be
-> +         present, but it will have no Hyper-V entries.
-> +
->  endmenu
-> diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile
-> index a1eec7177c2d..87f569659555 100644
-> --- a/drivers/hv/Makefile
-> +++ b/drivers/hv/Makefile
-> @@ -1,7 +1,8 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -obj-$(CONFIG_HYPERV)           += hv_vmbus.o
-> -obj-$(CONFIG_HYPERV_UTILS)     += hv_utils.o
-> -obj-$(CONFIG_HYPERV_BALLOON)   += hv_balloon.o
-> +obj-$(CONFIG_HYPERV)                   += hv_vmbus.o
-> +obj-$(CONFIG_HYPERV_UTILS)             += hv_utils.o
-> +obj-$(CONFIG_HYPERV_BALLOON)           += hv_balloon.o
-> +obj-$(CONFIG_HYPERV_SYS_HYPERVISOR)    += sys-hypervisor.o
->  
->  CFLAGS_hv_trace.o = -I$(src)
->  CFLAGS_hv_balloon.o = -I$(src)
-> diff --git a/drivers/hv/sys-hypervisor.c b/drivers/hv/sys-hypervisor.c
-> new file mode 100644
-> index 000000000000..eb3d2a6502c4
-> --- /dev/null
-> +++ b/drivers/hv/sys-hypervisor.c
-> @@ -0,0 +1,41 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +++ b/drivers/soundwire/algo_dynamic_allocation.c
+> @@ -0,0 +1,403 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2015-18 Intel Corporation.
 > +
 > +/*
-> + * Copyright (C) 2019, Microsoft, Inc.
+> + * Bandwidth management algorithm based on 2^n gears
 > + *
-> + * Authored by: Nuno Das Neves <nudasnev@microsoft.com>
 > + */
 > +
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/kobject.h>
-> +#include <linux/err.h>
+> +#include <linux/device.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/slab.h>
+> +#include <linux/soundwire/sdw.h>
+> +#include "bus.h"
 > +
-> +#include <asm/hypervisor.h>
+> +#define SDW_STRM_RATE_GROUPING		1
 > +
-> +static ssize_t type_show(struct kobject *obj,
-> +                       struct kobj_attribute *attr,
-> +                       char *buf)
+> +struct sdw_group_params {
+> +	unsigned int rate;
+> +	int full_bw;
+> +	int payload_bw;
+> +	int hwidth;
+> +};
+> +
+> +struct sdw_group {
+> +	unsigned int count;
+> +	unsigned int max_size;
+> +	unsigned int *rates;
+> +};
+> +
+> +struct sdw_transport_data {
+> +	int hstart;
+> +	int hstop;
+> +	int block_offset;
+> +	int sub_block_offset;
+> +};
+> +
+> +
+> +/**
+> + * sdw_compute_port_params: Compute transport and port parameters
+> + *
+> + * @bus: SDW Bus instance
+> + */
+> +static int sdw_compute_port_params(struct sdw_bus *bus)
 > +{
-> +       return sprintf(buf, "Hyper-V\n");
+> +	struct sdw_group_params *params = NULL;
+> +	struct sdw_group group;
+> +	int ret;
+> +
+> +	ret = sdw_get_group_count(bus, &group);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	if (group.count == 0)
+> +		goto out;
+> +
+> +	params = kcalloc(group.count, sizeof(*params), GFP_KERNEL);
+> +	if (!params) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	/* Compute transport parameters for grouped streams */
+> +	ret = sdw_compute_group_params(bus, params,
+> +				       &group.rates[0], group.count);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	_sdw_compute_port_params(bus, params, group.count);
+> +
+> +out:
+> +	kfree(params);
+> +	kfree(group.rates);
+> +
+> +	return ret;
 > +}
 > +
-> +static struct kobj_attribute type_attr = __ATTR_RO(type);
-> +
-> +static int __init hyperv_sysfs_type_init(void)
+> +static int sdw_select_row_col(struct sdw_bus *bus, int clk_freq)
 > +{
-> +       return sysfs_create_file(hypervisor_kobj, &type_attr.attr);
+> +	struct sdw_master_prop *prop = &bus->prop;
+> +	int frame_int, frame_freq;
+> +	int r, c;
+> +
+> +	for (c = 0; c < SDW_FRAME_COLS; c++) {
+> +		for (r = 0; r < SDW_FRAME_ROWS; r++) {
+> +			if (sdw_rows[r] != prop->default_row ||
+> +			    sdw_cols[c] != prop->default_col)
+> +				continue;
+
+Are we only supporting default rows and cols?
+
+> +
+> +			frame_int = sdw_rows[r] * sdw_cols[c];
+> +			frame_freq = clk_freq / frame_int;
+> +
+> +			if ((clk_freq - (frame_freq * SDW_FRAME_CTRL_BITS)) <
+> +			    bus->params.bandwidth)
+> +				continue;
+> +
+> +			bus->params.row = sdw_rows[r];
+> +			bus->params.col = sdw_cols[c];
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
 > +}
 > +
-> +static int __init hyper_sysfs_init(void)
-> +{
-> +       int ret;
-> +
-> +       if (!hypervisor_is_type(X86_HYPER_MS_HYPERV))
-> +               return -ENODEV;
-> +
-> +       ret = hyperv_sysfs_type_init();
-> +
-> +       return ret;
-> +}
-> +device_initcall(hyper_sysfs_init);
 > -- 
-> 2.17.1
+> 2.20.1
 > 
+
+-- 
