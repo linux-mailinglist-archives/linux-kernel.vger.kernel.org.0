@@ -2,96 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F44D816A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC785816B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbfHEKPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 06:15:23 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37924 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbfHEKPW (ORCPT
+        id S1728315AbfHEKQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 06:16:34 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35888 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728190AbfHEKQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:15:22 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r9so78816431ljg.5
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 03:15:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EVUakBz4HVrBvU5WozBP9zRGYaZ2u063yCbTr8IH9wg=;
-        b=h7hSXRNhw+BgWJVjsm3CUTt+gZ14IRMN5LjwbEypK2d6eMw0PVs2ntw/YUTNTo6K5c
-         YvYdlQu43bwvSdSCHbk9ALOWXZGSYh2Z6De9g/Su7n1CVvElbTYf5Sk4V3CWU/t6arn5
-         QL5v+l4NitaSIZfsmJrgpY7tfjio4lzr/M6up+lXW9V3Ps9ZuOirB94gxrz8x1FG8GQs
-         RttJ3Vra50Bu2sxlntxYoVh4k7IcugIs4VJCZaH9TonMZSuJSrbdbZTXGgz+gcjtPoyh
-         AP/Ox8IvhETub7PSCfZSGGX1tuRPisg0IWmhPaXV0jTRZ/ydreArtzV03pszTkbXybr9
-         hJFg==
+        Mon, 5 Aug 2019 06:16:33 -0400
+Received: by mail-ed1-f65.google.com with SMTP id k21so78154441edq.3;
+        Mon, 05 Aug 2019 03:16:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EVUakBz4HVrBvU5WozBP9zRGYaZ2u063yCbTr8IH9wg=;
-        b=afpKD6Jo78wx/Nb3mPMtifNCze73h61LxEzRsFtUHxFZvwUed8iy/2kNs9GSycJebf
-         FwVyrqKjqP1ltJNeYFFRtw+AAwIOwjcnf6VaGJqiGxtCgcSdnYl+S5UF0dK4O/1flzdq
-         W3229sZjb5Ibo1p6zRjB1OjqwNqWVtnlvlSHwXC3XWsKM6fxjKSG5nZ2F8Km0XkDvoMk
-         rgNxEsIQj0+9ZHslnezV3iu+heqzu5qT0XEnhaMBWRskvh5436CI9nO3x8mbKQGrfGtJ
-         yBF0+bCq6dxhDt5OlOiLtLOFyO0z3ZAq7x6BlLp0iWtR2xkq324by5xIdVxwi+y38ulm
-         y1Tw==
-X-Gm-Message-State: APjAAAX+1jRW2GSrQfF3n4pXCrisRNZn0M8hREKQvIE0KjEfqJzbWLry
-        RccnwztLhl7bP3MukpmvIFr3AaR/rv8ySJHxn6qc8A==
-X-Google-Smtp-Source: APXvYqySHuR6d+bEQrsbTHzEENtYOVUi+8awDm/vDpXZ3zt3zWFIJstQGj1Z5v+QGxwqmgpUNdelEqXuxOip7mnqSPc=
-X-Received: by 2002:a2e:8195:: with SMTP id e21mr9719149ljg.62.1565000120908;
- Mon, 05 Aug 2019 03:15:20 -0700 (PDT)
+        bh=3byZm4WW5S66f9sH9AAiCJ18IamGlDO717O/42CmSCg=;
+        b=gt/k6a71k8lNHd/S6ml9DU9yj5zJQ4XfIW24iRo4Sz0Qugt0d8rIms/CrfJQc9ARf9
+         VjqTLD3qoTAx+RIQEpazxpQ0trQMieBBb9GZkN2n+Z+kBbbLvY09DqnRYxXzyYXvmW0b
+         51oHu0PV2r1LVEMKJ1G7fZZ9AbelehL3INlMUIny4I82QhLTbECTY/uXts1TOkv0G3kx
+         Omxqcpy5/f8zfR3Lq2Pns0CLoZISxKIJQbNHI/HNJ0ZlKDehLL7X71fdX2aERclow+EK
+         89S+gxy9TzUYRyyy0dHuqkB3w+iY1QjaF+erF0AWnmNgKfAEFKhDL24jN3z8ZF+vwxlp
+         tPdA==
+X-Gm-Message-State: APjAAAXHA3vTlmCunbSFhI3iva+CpVa4ppnmLxavLXhowp8QWYqLIgBS
+        7sQSDu4IVS0osiDj9989RPCX3swelbA=
+X-Google-Smtp-Source: APXvYqxAN0sxCtDc4KhWPVHTXzChQfZCMBd7qpDFXGJMW0lrk+7+ss52WdJZUbQ1knMd9Zk3P8ACpw==
+X-Received: by 2002:aa7:c515:: with SMTP id o21mr132330413edq.2.1565000190536;
+        Mon, 05 Aug 2019 03:16:30 -0700 (PDT)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id h10sm18916541edn.86.2019.08.05.03.16.29
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 03:16:30 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id c2so80591053wrm.8;
+        Mon, 05 Aug 2019 03:16:29 -0700 (PDT)
+X-Received: by 2002:adf:c613:: with SMTP id n19mr104922068wrg.109.1565000189770;
+ Mon, 05 Aug 2019 03:16:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <1564053416-32192-1-git-send-email-amelie.delaunay@st.com>
-In-Reply-To: <1564053416-32192-1-git-send-email-amelie.delaunay@st.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 5 Aug 2019 12:15:09 +0200
-Message-ID: <CACRpkdbeTQE1SGFeU0NQzgYxz_rjA_6Lw=3WLmeAF7pyEw7aLA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: stmfx: update pinconf settings
-To:     Amelie Delaunay <amelie.delaunay@st.com>
-Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-stm32@st-md-mailman.stormreply.com
+References: <20190412120730.473-1-megous@megous.com> <20190412120730.473-3-megous@megous.com>
+In-Reply-To: <20190412120730.473-3-megous@megous.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 5 Aug 2019 18:16:14 +0800
+X-Gmail-Original-Message-ID: <CAGb2v675j-aCLMgPJOzr9yx1XxsUvHRr_K7VnL=p8mSdwpu2jw@mail.gmail.com>
+Message-ID: <CAGb2v675j-aCLMgPJOzr9yx1XxsUvHRr_K7VnL=p8mSdwpu2jw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 2/3] rtc: sun6i: Add support for H6 RTC
+To:     =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-rtc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 1:16 PM Amelie Delaunay <amelie.delaunay@st.com> wrote:
+On Fri, Apr 12, 2019 at 8:07 PM megous via linux-sunxi
+<linux-sunxi@googlegroups.com> wrote:
+>
+> From: Ondrej Jirman <megous@megous.com>
+>
+> RTC on H6 is mostly the same as on H5 and H3. It has slight differences
+> mostly in features that are not yet supported by this driver.
+>
+> Some differences are already stated in the comments in existing code.
+> One other difference is that H6 has extra bit in LOSC_CTRL_REG, called
+> EXT_LOSC_EN to enable/disable external low speed crystal oscillator.
+>
+> It also has bit EXT_LOSC_STA in LOSC_AUTO_SWT_STA_REG, to check whether
+> external low speed oscillator is working correctly.
+>
+> This patch adds support for enabling LOSC when necessary:
+>
+> - during reparenting
+> - when probing the clock
+>
+> H6 also has capacbility to automatically reparent RTC clock from
+> external crystal oscillator, to internal RC oscillator, if external
+> oscillator fails. This is enabled by default. Disable it during
+> probe.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> ---
+>  drivers/rtc/rtc-sun6i.c | 40 ++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 38 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+> index 11f56de52179..7375a530c565 100644
+> --- a/drivers/rtc/rtc-sun6i.c
+> +++ b/drivers/rtc/rtc-sun6i.c
+> @@ -41,9 +41,11 @@
+>  /* Control register */
+>  #define SUN6I_LOSC_CTRL                                0x0000
+>  #define SUN6I_LOSC_CTRL_KEY                    (0x16aa << 16)
+> +#define SUN6I_LOSC_CTRL_AUTO_SWT_BYPASS                BIT(15)
 
-> From: Alexandre Torgue <alexandre.torgue@st.com>
->
-> According to the following tab (coming from STMFX datasheet), updates
-> have to done in stmfx_pinconf_set function:
->
-> -"type" has to be set when "bias" is configured as "pull-up or pull-down"
-> -PIN_CONFIG_DRIVE_PUSH_PULL should only be used when gpio is configured as
->  output. There is so no need to check direction.
->
-> DIR | TYPE | PUPD | MFX GPIO configuration
-> ----|------|------|---------------------------------------------------
-> 1   | 1    | 1    | OUTPUT open drain with internal pull-up resistor
-> ----|------|------|---------------------------------------------------
-> 1   | 1    | 0    | OUTPUT open drain with internal pull-down resistor
-> ----|------|------|---------------------------------------------------
-> 1   | 0    | 0/1  | OUTPUT push pull no pull
-> ----|------|------|---------------------------------------------------
-> 0   | 1    | 1    | INPUT with internal pull-up resistor
-> ----|------|------|---------------------------------------------------
-> 0   | 1    | 0    | INPUT with internal pull-down resistor
-> ----|------|------|---------------------------------------------------
-> 0   | 0    | 1    | INPUT floating
-> ----|------|------|---------------------------------------------------
-> 0   | 0    | 0    | analog (GPIO not used, default setting)
->
-> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Manual says bit 14? Or is this different from LOSC_AUTO_SWT_EN?
 
-Patch applied.
+The rest looks ok.
 
-Yours,
-Linus Walleij
+ChenYu
