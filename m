@@ -2,97 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6929881720
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:34:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 137FF8172C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:36:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbfHEKeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 06:34:07 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39659 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727230AbfHEKeG (ORCPT
+        id S1728344AbfHEKgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 06:36:18 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33388 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728237AbfHEKgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:34:06 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x3so3749226lfn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 03:34:05 -0700 (PDT)
+        Mon, 5 Aug 2019 06:36:17 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h10so7405858ljg.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 03:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JGtqwITu2uNu0KF6vt+VLLqwcEMqaP+PiWiHY6OQtsY=;
-        b=YDCLR3lXJ7d0Z4YqSLxOVJjSXKF8PSiCsmyC82hOuP2j31RTZ71Jfi1KO2C3/XZXBd
-         KQNt15eK9ofwpKOSOcx7bYoa3rQTLBLpFstYZ/qLz2mxDZrlVUtJwXyJx+ItO33Ezynx
-         WpdvKBDW/WZ2hQx86yBCUsOt7jRWtlx8pjHekN91U+LLlUkyjW2j3KSb3DOog57r/11E
-         XuFvzq1mzUcEE82AT7fBdtAS9JUxMEwuM98z7XNaQVFOK9Bsbnh6zPdNnNnxEZrouQk4
-         Tn1osA5l/+HfcEaWZMruPnpCx0m/wXh03YNEis8QlPwSSxC6JG7TeVU/4VtJdH7iPLyl
-         W44A==
+         :cc;
+        bh=WMDXKniohFuBPRLguP0pUUrpe4kGWQLXsJ2UgVzEajY=;
+        b=Ja3y/qCciaFzokLgL6u25vb1VO7Jhd9hDVgi831a5t9rj9AH9Un97C+tZ2f0nZEfH6
+         4D1vVJRh9qg+tqEo+zKbHUZq8lWz8hQOwwRPR3gomDMkjUS4pRhVtqFhPNrain1SuaOr
+         N6vly5/z6MlhpO1oDoBNJG6X5kHjq4Esv3E9SaDVBY9KSAZ2swaRFmzu6u/e+0ZHK7pZ
+         k+CX1SeKUVCBajhNjiMExFEk5RgmYg9qiXnYAXCD3PbiKWZnJIZ3tDIm5MESgqVbbjN9
+         eLdGt+lPl19J3ik/4xmhMzMB6BUjfJjxYQm15K+vO83/Te5WnuvP+l1NmhkMYq4cUeXT
+         Nn9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JGtqwITu2uNu0KF6vt+VLLqwcEMqaP+PiWiHY6OQtsY=;
-        b=twiQ1eWtv/AKP1AiTNwEwizISfwYSOzlodh5E/y1iVUuhqx+jSgXNetzR0xsRybTm3
-         fg4UI2MBV6d3qeCXXvJXHGIUI63W8lpvzVvd8CpDsA6kYeqI23rBHLXN8h+hh5IEeHCU
-         UWo51n+gWA+se4HcgduJbxNLYFx/u840z6XXcdmwwk2/WP9DkoKb3Eo4vLz5zeh9X1ZG
-         //CU0nEPRBhm5AdGTkW/FBk4cznJBTy4Y1R3OG832Ezh+Ej+RFfn8/WOIucKvOx1GuTM
-         /ItQ81Vhm3LutRusSZrulHDvhfDCYHzalIb7kiBEAsHgt60EETzsbkstVL6FTo69WPwu
-         0oSw==
-X-Gm-Message-State: APjAAAXQex6g1k07xVCajdKFNrRnGxtVLJ9Yo4719+rrxLl0viYyiE+d
-        3ZVTFTnx2ohkFKFjDwmESQ0W5DXcuXqRaFnSqPHB7g==
-X-Google-Smtp-Source: APXvYqzH+R60ewO8XJ2gzoKiGmqUfBqtDJ2yUJTWbBfcdO++jKdzS/wcmFQSFHQC4vAyafrpnBTKHWgC43U+he1CuA8=
-X-Received: by 2002:a19:ed11:: with SMTP id y17mr1890223lfy.141.1565001244892;
- Mon, 05 Aug 2019 03:34:04 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=WMDXKniohFuBPRLguP0pUUrpe4kGWQLXsJ2UgVzEajY=;
+        b=rB7aOL02CezVTWCWSf5a7CVTWV34llZxheHs9jfQhgHckkZtGtx2ofxEIkbpail6/G
+         6FVKN1BAiby5V4bfWTcd0Hjt+MKlB2yKbO4ENYkJ84PhCsTUd2MDagV6QzBA4xHpr32x
+         UUaYsm/V1t49op9OU7p9rYK7XLvFNsnA/fbhzNDenZ8J4LIxg3Bzg71cxKnRNe6mxO8u
+         H58mGEMicIUhGCy0vuO5J/ptwnrdizwTS57uRKCNhehrrk8ClVTRYCefA8AlfRMyLpM8
+         baljsMsn+2nb0xa30Dt0fgAzeMIMXpu4NXY0kvNDmKoOOUxc+qYGbTHm1m1V9Gyl05kA
+         ZM3g==
+X-Gm-Message-State: APjAAAW3JyonLENxqh6FXTJoN9wcYpIou326TidxJDwkHo9nI0Eh46/a
+        IzeUZJQ5Ei9DsfsZWYYD4uOEGc12f/YrlTpqpkJHbZfl
+X-Google-Smtp-Source: APXvYqyB/49/aeHh2mx864HdyglYXRLbeplrleopj5uZcs1oTYM9hcI7bKMIk3eFK+kMXyQkKYCUTOCwVkAKT2Az3D8=
+X-Received: by 2002:a2e:2c14:: with SMTP id s20mr16472034ljs.54.1565001375393;
+ Mon, 05 Aug 2019 03:36:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190726112816.19723-1-anders.roxell@linaro.org>
-In-Reply-To: <20190726112816.19723-1-anders.roxell@linaro.org>
+References: <20190728031227.49140-1-icenowy@aosc.io> <20190728031227.49140-2-icenowy@aosc.io>
+In-Reply-To: <20190728031227.49140-2-icenowy@aosc.io>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 5 Aug 2019 12:33:53 +0200
-Message-ID: <CACRpkdYyEi1Z9a2uz88Rks3QMYzV4W_cJ2FJ4pY1Hn6_qdAeeA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: spmi-gpio: Mark expected switch fall-through
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        MSM <linux-arm-msm@vger.kernel.org>,
+Date:   Mon, 5 Aug 2019 12:36:03 +0200
+Message-ID: <CACRpkdY65Ob-zbd+c4reUzYtXdk441horQ0ykL08YeBrgXWqQw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] pinctrl: sunxi: v3s: introduce support for V3
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 1:28 PM Anders Roxell <anders.roxell@linaro.org> wr=
-ote:
+On Sun, Jul 28, 2019 at 5:13 AM Icenowy Zheng <icenowy@aosc.io> wrote:
 
-> When fall-through warnings was enabled by default the following warnings
-> was starting to show up:
+> Introduce the GPIO pins that is only available on V3 (not on V3s) to the
+> V3s pinctrl driver.
 >
-> ../drivers/pinctrl/qcom/pinctrl-spmi-gpio.c: In function =E2=80=98pmic_gp=
-io_populate=E2=80=99:
-> ../drivers/pinctrl/qcom/pinctrl-spmi-gpio.c:815:20: warning: this stateme=
-nt may fall
->  through [-Wimplicit-fallthrough=3D]
->    pad->have_buffer =3D true;
->    ~~~~~~~~~~~~~~~~~^~~~~~
-> ../drivers/pinctrl/qcom/pinctrl-spmi-gpio.c:816:2: note: here
->   case PMIC_GPIO_SUBTYPE_GPIOC_4CH:
->   ^~~~
-> ../drivers/pinctrl/qcom/pinctrl-spmi-gpio.c:820:20: warning: this stateme=
-nt may fall
->  through [-Wimplicit-fallthrough=3D]
->    pad->have_buffer =3D true;
->    ~~~~~~~~~~~~~~~~~^~~~~~
-> ../drivers/pinctrl/qcom/pinctrl-spmi-gpio.c:821:2: note: here
->   case PMIC_GPIO_SUBTYPE_GPIOC_8CH:
->   ^~~~
->
-> Rework so that the compiler doesn't warn about fall-through.
->
-> Fixes: d93512ef0f0e ("Makefile: Globally enable fall-through warning")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Patch applied.
+Patch applied to the pinctrl tree.
 
-Yours,
+Ypurs,
 Linus Walleij
