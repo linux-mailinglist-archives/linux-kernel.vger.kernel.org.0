@@ -2,207 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9D2381701
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D46581709
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbfHEK0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 06:26:39 -0400
-Received: from mga17.intel.com ([192.55.52.151]:7819 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728281AbfHEK0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:26:39 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 03:26:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,349,1559545200"; 
-   d="scan'208";a="192386489"
-Received: from buildpc-hp-z230.iind.intel.com (HELO buildpc-HP-Z230) ([10.223.89.34])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Aug 2019 03:26:35 -0700
-Date:   Mon, 5 Aug 2019 15:58:28 +0530
-From:   Sanyog Kale <sanyog.r.kale@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com
-Subject: Re: [RFC PATCH 25/40] soundwire: intel: use BIOS information to set
- clock dividers
-Message-ID: <20190805102828.GF22437@buildpc-HP-Z230>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-26-pierre-louis.bossart@linux.intel.com>
+        id S1728233AbfHEK3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 06:29:33 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45971 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727357AbfHEK3c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 06:29:32 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m23so78764794lje.12
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 03:29:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DgQS0RVhrSHQQR06ywIE1zI7rR3vFUB6ECm2IurTYyo=;
+        b=TJhyTIrKmge5lMJkKhRDhrf0usgOVPRIyssINJZl9KhrEAjHwotzV+X21lZDDYjC0M
+         P5pVYNVHlNLwMG3LHRidN3jSvU8cYH8mYP/HTeo8EPKiSj/OHOwF2Zwyoh2thRu68rI6
+         L6f9lF1QgFORxs4MHrtWAchdW/d96ikEcF+nWE2Vkl7i1/HeViHAUcYXzQMVIfltapDE
+         FgEiiihR9xs6jdYn3JmiKcqLTRBUvgTAnT6c/pBWxNLXPr0jmin9OJyi+v+k+lwBAeW/
+         Z/2QzPXTscDPB1xCTgCTXbL1xI5xl7zlaawW4GmILlyuBUEu1F/RnYhe5TJO7H6vyzE/
+         bcnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DgQS0RVhrSHQQR06ywIE1zI7rR3vFUB6ECm2IurTYyo=;
+        b=gx1lXLr2iJSI+7YMySFEgyn7yK25k7VmR1/cD+unhUzqBnWmcXXAm+sM+5xpA/c8Ui
+         5u2Io3AfomJknXjIBUe7C5JwODmkqosYfXkniJlcD9MYyCFbJ8gxCUdPsKsQM/jCxMVX
+         i12IjTuYnkAWkot4K9qGjN52mNfe1582gChqK7Q1ks221Ygp3tdOyNt0CLumehgYyeh4
+         hQ7ETIdQpJw16cOWHq9okRxMtexbBaT3pu7VYmxYPKC64jhukDvowsHAl2srVmQc46y+
+         sAXQSCzgkHNYvYIMPaqece+S7nR8kF0LkOot4dcqs445/RXht/TaaegQtTt6NiJwk6qh
+         b5NA==
+X-Gm-Message-State: APjAAAXzOw+rygajW7l8EQnskuneqpEhpTtRyLQVthZGYwBkGxRvqfgv
+        BGRdRptKeMiUJKe6jhU+AzHOj+B2V6iSDB2UsYNRCg==
+X-Google-Smtp-Source: APXvYqwiNvI+PlbXBDdXFR2b7KDlreAp73XJI0KzmpIJ2V9t3xStoSZeInn1tp918uDCSC1a31ftyr1FKdpYYFKfQjE=
+X-Received: by 2002:a05:651c:28c:: with SMTP id b12mr13784957ljo.69.1565000970574;
+ Mon, 05 Aug 2019 03:29:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725234032.21152-26-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <cover.1562597164.git.hns@goldelico.com> <8ae7cf816b22ef9cecee0d789fcf9e8a06495c39.1562597164.git.hns@goldelico.com>
+ <20190724194259.GA25847@bogus> <2EA06398-E45B-481B-9A26-4DD2E043BF9C@goldelico.com>
+ <CAL_JsqLe_Y9Z6MRt7ojgSVKAb9n95S8j=eGidSVNz2T83j-zPQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqLe_Y9Z6MRt7ojgSVKAb9n95S8j=eGidSVNz2T83j-zPQ@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 5 Aug 2019 12:29:19 +0200
+Message-ID: <CACRpkdY0AVnkRa8sV_Z54qfX9SYufvaYYhU0k2+LitXo0sLx2w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] DTS: ARM: gta04: introduce legacy spi-cs-high to make
+ display work again
+To:     Rob Herring <robh@kernel.org>
+Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 06:40:17PM -0500, Pierre-Louis Bossart wrote:
-> The BIOS provides an Intel-specific property, let's use it to avoid
-> hard-coded clock dividers.
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/cadence_master.c | 26 ++++++++++++++++++++++----
->  drivers/soundwire/intel.c          | 26 ++++++++++++++++++++++++++
->  include/linux/soundwire/sdw.h      |  2 ++
->  3 files changed, 50 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-> index d84344e29f71..10ebcef2e84e 100644
-> --- a/drivers/soundwire/cadence_master.c
-> +++ b/drivers/soundwire/cadence_master.c
-> @@ -173,8 +173,6 @@
->  #define CDNS_PDI_CONFIG_PORT			GENMASK(4, 0)
->  
->  /* Driver defaults */
-> -
-> -#define CDNS_DEFAULT_CLK_DIVIDER		0
->  #define CDNS_DEFAULT_SSP_INTERVAL		0x18
->  #define CDNS_TX_TIMEOUT				2000
->  
-> @@ -973,7 +971,10 @@ static u32 cdns_set_default_frame_shape(int n_rows, int n_cols)
->   */
->  int sdw_cdns_init(struct sdw_cdns *cdns)
->  {
-> +	struct sdw_bus *bus = &cdns->bus;
-> +	struct sdw_master_prop *prop = &bus->prop;
->  	u32 val;
-> +	int divider;
->  	int ret;
->  
->  	/* Exit clock stop */
-> @@ -985,9 +986,17 @@ int sdw_cdns_init(struct sdw_cdns *cdns)
->  	}
->  
->  	/* Set clock divider */
-> +	divider	= (prop->mclk_freq / prop->max_clk_freq) - 1;
+On Fri, Jul 26, 2019 at 12:43 AM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Jul 25, 2019 at 12:23 AM H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-Do you expect mclk_freq and max_clk_freq to be same?
+> > I tried to convince Linus that this is the right way but he convinced
+> > me that a fix that handles all cases does not exist.
+> >
+> > There seem to be embedded devices with older DTB (potentially in ROM)
+> > which provide a plain 0 value for a gpios definition. And either with
+> > or without spi-cs-high.
+> >
+> > Since "0" is the same as "GPIO_ACTIVE_HIGH", the absence of
+> > spi-cs-high was and must be interpreted as active low for these
+> > devices. This leads to the inversion logic in code.
+> >
+> > AFAIR it boils down to the question if gpiolib and the bindings
+> > should still support such legacy devices with out-of tree DTB,
+> > but force in-tree DTS to add the legacy spi-cs-high property.
+> >
+> > Or if we should fix the 2 or 3 cases of in-tree legacy cases
+> > and potentially break out-of tree DTBs.
+>
+> If it is small number of platforms, then the kernel could handle those
+> cases explicitly as needed.
+>
+> > IMHO it is more general to keep the out-of-tree DTBs working
+> > and "fix" what we can control (in-tree DTS).
+>
+> If we do this, then we need to not call spi-cs-high legacy because
+> we're stuck with it forever.
 
->  	val = cdns_readl(cdns, CDNS_MCP_CLK_CTRL0);
-> -	val |= CDNS_DEFAULT_CLK_DIVIDER;
-> +	val |= divider;
->  	cdns_writel(cdns, CDNS_MCP_CLK_CTRL0, val);
-> +	cdns_writel(cdns, CDNS_MCP_CLK_CTRL1, val);
-> +
-> +	pr_err("plb: mclk %d max_freq %d divider %d register %x\n",
-> +	       prop->mclk_freq,
-> +	       prop->max_clk_freq,
-> +	       divider,
-> +	       val);
+I agree. The background on it is here:
+https://lkml.org/lkml/2019/4/2/4
 
-This can be removed.
+Not using the negatively defined (i.e. if it is no there, the line is
+by default active low) spi-cs-high would break
+PowerPC, who were AFAICT using this to ship devices.
 
->  
->  	/* Set the default frame shape */
->  	val = cdns_set_default_frame_shape(prop->default_row,
-> @@ -1035,6 +1044,7 @@ EXPORT_SYMBOL(sdw_cdns_init);
->  
->  int cdns_bus_conf(struct sdw_bus *bus, struct sdw_bus_params *params)
->  {
-> +	struct sdw_master_prop *prop = &bus->prop;
->  	struct sdw_cdns *cdns = bus_to_cdns(bus);
->  	int mcp_clkctrl_off, mcp_clkctrl;
->  	int divider;
-> @@ -1044,7 +1054,9 @@ int cdns_bus_conf(struct sdw_bus *bus, struct sdw_bus_params *params)
->  		return -EINVAL;
->  	}
->  
-> -	divider	= (params->max_dr_freq / params->curr_dr_freq) - 1;
-> +	divider	= prop->mclk_freq * SDW_DOUBLE_RATE_FACTOR /
-
-What is the reason for not using max_dr_freq? Its precomputed as
-prop->max_clk_freq * SDW_DOUBLE_RATE_FACTOR;
-
-> +		params->curr_dr_freq;
-> +	divider--; /* divider is 1/(N+1) */
->  
->  	if (params->next_bank)
->  		mcp_clkctrl_off = CDNS_MCP_CLK_CTRL1;
-> @@ -1055,6 +1067,12 @@ int cdns_bus_conf(struct sdw_bus *bus, struct sdw_bus_params *params)
->  	mcp_clkctrl |= divider;
->  	cdns_writel(cdns, mcp_clkctrl_off, mcp_clkctrl);
->  
-> +	pr_err("plb: mclk * 2 %d curr_dr_freq %d divider %d register %x\n",
-> +	       prop->mclk_freq * SDW_DOUBLE_RATE_FACTOR,
-> +	       params->curr_dr_freq,
-> +	       divider,
-> +	       mcp_clkctrl);
-> +
->  	return 0;
->  }
->  EXPORT_SYMBOL(cdns_bus_conf);
-> diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-> index c718c9c67a37..796ac2bc8cea 100644
-> --- a/drivers/soundwire/intel.c
-> +++ b/drivers/soundwire/intel.c
-> @@ -917,11 +917,37 @@ static int intel_register_dai(struct sdw_intel *sdw)
->  					  dais, num_dai);
->  }
->  
-> +static int sdw_master_read_intel_prop(struct sdw_bus *bus)
-> +{
-> +	struct sdw_master_prop *prop = &bus->prop;
-> +	struct fwnode_handle *link;
-> +	char name[32];
-> +	int nval, i;
-> +
-> +	/* Find master handle */
-> +	snprintf(name, sizeof(name),
-> +		 "mipi-sdw-link-%d-subproperties", bus->link_id);
-> +
-> +	link = device_get_named_child_node(bus->dev, name);
-> +	if (!link) {
-> +		dev_err(bus->dev, "Master node %s not found\n", name);
-> +		return -EIO;
-> +	}
-> +
-> +	fwnode_property_read_u32(link,
-> +				 "intel-sdw-ip-clock",
-> +				 &prop->mclk_freq);
-> +	return 0;
-> +}
-> +
->  static int intel_prop_read(struct sdw_bus *bus)
->  {
->  	/* Initialize with default handler to read all DisCo properties */
->  	sdw_master_read_prop(bus);
->  
-> +	/* read Intel-specific properties */
-> +	sdw_master_read_intel_prop(bus);
-> +
->  	return 0;
->  }
->  
-> diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-> index 31d1e8acf25b..b6acc436ac80 100644
-> --- a/include/linux/soundwire/sdw.h
-> +++ b/include/linux/soundwire/sdw.h
-> @@ -379,6 +379,7 @@ struct sdw_slave_prop {
->   * @dynamic_frame: Dynamic frame shape supported
->   * @err_threshold: Number of times that software may retry sending a single
->   * command
-> + * @mclk_freq: clock reference passed to SoundWire Master, in Hz.
->   */
->  struct sdw_master_prop {
->  	u32 revision;
-> @@ -393,6 +394,7 @@ struct sdw_master_prop {
->  	u32 default_col;
->  	bool dynamic_frame;
->  	u32 err_threshold;
-> +	u32 mclk_freq;
->  };
->  
->  int sdw_master_read_prop(struct sdw_bus *bus);
-> -- 
-> 2.20.1
-> 
-
--- 
+Yours,
+Linus Walleij
