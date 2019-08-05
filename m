@@ -2,191 +2,416 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF587814E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3FE381505
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:13:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbfHEJMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 05:12:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35352 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728118AbfHEJM2 (ORCPT
+        id S1728333AbfHEJNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:13:17 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:14294 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728054AbfHEJMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 05:12:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zRn6JVJn4nNeK9wOHHuTKPsPuOuS2mnSYsSa9Gwz7Rk=; b=RG4oxykeFe0JQMLxGAJ/8S5At7
-        GAA+923n7YeCeXJyTRg/ZL9Qyb+qPDEIyukrr+DcbOQq72koKv2qN+5j1CU6aIokVzQ4sVzvBcaiJ
-        ++jVLfUSymTseLXFVf6usBQU9aUsW7R0FxhIbLRtCrsmVz8LQgwJ2h4VX31/Ozvyyx21f60h2MbfJ
-        CWwUfwJuwZHzEiXGtZ7U22+YZJWxrZr02eb2yC5TmivTYjwDHaczSqQXwDnYMVNCh9482Q9MSjCK8
-        Uqnfuucwd7+du9IIxt0oItEHV40lhkfFXb38uyDMXjoCcwQxHlFnUp8mqXfI+3ot63ZjpR2ENbrpS
-        Qlh3exXQ==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1huZ2V-00058g-L3; Mon, 05 Aug 2019 09:12:24 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Takashi Iwai <tiwai@suse.de>, Robin Murphy <robin.murphy@arm.com>,
-        Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] dma-mapping: provide a better default ->get_required_mask
-Date:   Mon,  5 Aug 2019 12:11:59 +0300
-Message-Id: <20190805091159.7826-8-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190805091159.7826-1-hch@lst.de>
-References: <20190805091159.7826-1-hch@lst.de>
+        Mon, 5 Aug 2019 05:12:16 -0400
+X-UUID: 320e597a903a454cb07d4981b6971616-20190805
+X-UUID: 320e597a903a454cb07d4981b6971616-20190805
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 1390472719; Mon, 05 Aug 2019 17:12:05 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 5 Aug 2019 17:12:07 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 5 Aug 2019 17:12:07 +0800
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>,
+        Wendell Lin <wendell.lin@mediatek.com>,
+        Ivan Tseng <ivan.tseng@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH 11/11] arm64: dts: add dts nodes for MT6779
+Date:   Mon, 5 Aug 2019 17:12:00 +0800
+Message-ID: <1564996320-10897-12-git-send-email-mars.cheng@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
+References: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most dma_map_ops instances are IOMMUs that work perfectly fine in 32-bits
-of IOVA space, and the generic direct mapping code already provides its
-own routines that is intelligent based on the amount of memory actually
-present.  Wire up the dma-direct routine for the ARM direct mapping code
-as well, and otherwise default to the constant 32-bit mask.  This way
-we only need to override it for the occasional odd IOMMU that requires
-64-bit IOVA support, or IOMMU drivers that are more efficient if they
-can fall back to the direct mapping.
+this adds initial MT6779 dts settings fo board support,
+including cpu, gic, timer, ccf, pinctrl, uart...etc.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 ---
- arch/arm/mm/dma-mapping.c               |  3 +++
- arch/powerpc/platforms/ps3/system-bus.c |  7 ------
- arch/x86/kernel/amd_gart_64.c           |  1 +
- kernel/dma/mapping.c                    | 30 +++++++++----------------
- 4 files changed, 14 insertions(+), 27 deletions(-)
+ arch/arm64/boot/dts/mediatek/Makefile        |    1 +
+ arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi |   99 +++++++++++
+ arch/arm64/boot/dts/mediatek/mt6779.dts      |  229 ++++++++++++++++++++++++++
+ 3 files changed, 329 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6779.dts
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 4410af33c5c4..9c9a23e5600d 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -14,6 +14,7 @@
- #include <linux/list.h>
- #include <linux/init.h>
- #include <linux/device.h>
-+#include <linux/dma-direct.h>
- #include <linux/dma-mapping.h>
- #include <linux/dma-noncoherent.h>
- #include <linux/dma-contiguous.h>
-@@ -192,6 +193,7 @@ const struct dma_map_ops arm_dma_ops = {
- 	.sync_sg_for_cpu	= arm_dma_sync_sg_for_cpu,
- 	.sync_sg_for_device	= arm_dma_sync_sg_for_device,
- 	.dma_supported		= arm_dma_supported,
-+	.get_required_mask	= dma_direct_get_required_mask,
- };
- EXPORT_SYMBOL(arm_dma_ops);
- 
-@@ -212,6 +214,7 @@ const struct dma_map_ops arm_coherent_dma_ops = {
- 	.map_sg			= arm_dma_map_sg,
- 	.map_resource		= dma_direct_map_resource,
- 	.dma_supported		= arm_dma_supported,
-+	.get_required_mask	= dma_direct_get_required_mask,
- };
- EXPORT_SYMBOL(arm_coherent_dma_ops);
- 
-diff --git a/arch/powerpc/platforms/ps3/system-bus.c b/arch/powerpc/platforms/ps3/system-bus.c
-index 70fcc9736a8c..3542b7bd6a46 100644
---- a/arch/powerpc/platforms/ps3/system-bus.c
-+++ b/arch/powerpc/platforms/ps3/system-bus.c
-@@ -686,18 +686,12 @@ static int ps3_dma_supported(struct device *_dev, u64 mask)
- 	return mask >= DMA_BIT_MASK(32);
- }
- 
--static u64 ps3_dma_get_required_mask(struct device *_dev)
--{
--	return DMA_BIT_MASK(32);
--}
--
- static const struct dma_map_ops ps3_sb_dma_ops = {
- 	.alloc = ps3_alloc_coherent,
- 	.free = ps3_free_coherent,
- 	.map_sg = ps3_sb_map_sg,
- 	.unmap_sg = ps3_sb_unmap_sg,
- 	.dma_supported = ps3_dma_supported,
--	.get_required_mask = ps3_dma_get_required_mask,
- 	.map_page = ps3_sb_map_page,
- 	.unmap_page = ps3_unmap_page,
- 	.mmap = dma_common_mmap,
-@@ -710,7 +704,6 @@ static const struct dma_map_ops ps3_ioc0_dma_ops = {
- 	.map_sg = ps3_ioc0_map_sg,
- 	.unmap_sg = ps3_ioc0_unmap_sg,
- 	.dma_supported = ps3_dma_supported,
--	.get_required_mask = ps3_dma_get_required_mask,
- 	.map_page = ps3_ioc0_map_page,
- 	.unmap_page = ps3_unmap_page,
- 	.mmap = dma_common_mmap,
-diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
-index a65b4a9c7f87..d02662238b57 100644
---- a/arch/x86/kernel/amd_gart_64.c
-+++ b/arch/x86/kernel/amd_gart_64.c
-@@ -680,6 +680,7 @@ static const struct dma_map_ops gart_dma_ops = {
- 	.dma_supported			= dma_direct_supported,
- 	.mmap				= dma_common_mmap,
- 	.get_sgtable			= dma_common_get_sgtable,
-+	.get_required_mask		= dma_direct_get_required_mask,
- };
- 
- static void gart_iommu_shutdown(void)
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 47765c96fe09..96599f39f67a 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -247,25 +247,6 @@ int dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
- }
- EXPORT_SYMBOL(dma_mmap_attrs);
- 
--static u64 dma_default_get_required_mask(struct device *dev)
--{
--	u32 low_totalram = ((max_pfn - 1) << PAGE_SHIFT);
--	u32 high_totalram = ((max_pfn - 1) >> (32 - PAGE_SHIFT));
--	u64 mask;
--
--	if (!high_totalram) {
--		/* convert to mask just covering totalram */
--		low_totalram = (1 << (fls(low_totalram) - 1));
--		low_totalram += low_totalram - 1;
--		mask = low_totalram;
--	} else {
--		high_totalram = (1 << (fls(high_totalram) - 1));
--		high_totalram += high_totalram - 1;
--		mask = (((u64)high_totalram) << 32) + 0xffffffff;
--	}
--	return mask;
--}
--
- u64 dma_get_required_mask(struct device *dev)
- {
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
-@@ -274,7 +255,16 @@ u64 dma_get_required_mask(struct device *dev)
- 		return dma_direct_get_required_mask(dev);
- 	if (ops->get_required_mask)
- 		return ops->get_required_mask(dev);
--	return dma_default_get_required_mask(dev);
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index 458bbc4..53f1c61 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt6779-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi b/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
+new file mode 100644
+index 0000000..aca1e2b
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
+@@ -0,0 +1,99 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (c) 2019 MediaTek Inc.
++ * Author: Mars.C <mars.cheng@mediatek.com>
++ *
++ */
 +
-+	/*
-+	 * We require every DMA ops implementation to at least support a 32-bit
-+	 * DMA mask (and use bounce buffering if that isn't supported in
-+	 * hardware).  As the direct mapping code has its own routine to
-+	 * actually report an optimal mask we default to 32-bit here as that
-+	 * is the right thing for most IOMMUs, and at least not actively
-+	 * harmful in general.
-+	 */
-+	return DMA_BIT_MASK(32);
- }
- EXPORT_SYMBOL_GPL(dma_get_required_mask);
- 
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "mediatek,mt6779";
++	interrupt-parent = <&sysirq>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			enable-method = "psci";
++			reg = <0x000>;
++		};
++	};
++
++	uart_clk: dummy26m {
++		compatible = "fixed-clock";
++		clock-frequency = <26000000>;
++		#clock-cells = <0>;
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_PPI 13
++			      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14
++			      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11
++			      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10
++			      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	soc {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		compatible = "simple-bus";
++		ranges;
++
++		gic: interrupt-controller@0c000000 {
++			compatible = "arm,gic-v3";
++			#interrupt-cells = <3>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			#redistributor-regions = <1>;
++			interrupt-parent = <&gic>;
++			interrupt-controller;
++			reg = <0 0x0c000000 0 0x40000>, // distributor
++			      <0 0x0c040000 0 0x200000>; // redistributor
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		sysirq: intpol-controller@0c53a650 {
++			compatible = "mediatek,mt6779-sysirq",
++				     "mediatek,mt6577-sysirq";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			interrupt-parent = <&gic>;
++			reg = <0 0x0c53a650 0 0x50>;
++		};
++
++		uart0: serial@11002000 {
++			compatible = "mediatek,mt6779-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11002000 0 0x400>;
++			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&uart_clk>;
++			status = "disabled";
++		};
++
++		uart1: serial@11003000 {
++			compatible = "mediatek,mt6779-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11003000 0 0x400>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&uart_clk>;
++			status = "disabled";
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt6779.dts b/arch/arm64/boot/dts/mediatek/mt6779.dts
+new file mode 100644
+index 0000000..daa25b7
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt6779.dts
+@@ -0,0 +1,229 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (c) 2019 MediaTek Inc.
++ * Author: Mars.C <mars.cheng@mediatek.com>
++ *
++ */
++
++#include <dt-bindings/clock/mt6779-clk.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "mediatek,mt6779";
++	interrupt-parent = <&sysirq>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			enable-method = "psci";
++			reg = <0x000>;
++		};
++
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			enable-method = "psci";
++			reg = <0x100>;
++		};
++
++		cpu2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			enable-method = "psci";
++			reg = <0x200>;
++		};
++
++		cpu3: cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			enable-method = "psci";
++			reg = <0x300>;
++		};
++
++		cpu4: cpu@4 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			enable-method = "psci";
++			reg = <0x400>;
++		};
++
++		cpu5: cpu@5 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			enable-method = "psci";
++			reg = <0x500>;
++		};
++
++		cpu6: cpu@6 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a75";
++			enable-method = "psci";
++			reg = <0x600>;
++		};
++
++		cpu7: cpu@7 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a75";
++			enable-method = "psci";
++			reg = <0x700>;
++		};
++	};
++
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
++
++	clk32k: oscillator@1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "clk32k";
++	};
++
++	uart_clk: dummy26m {
++		compatible = "fixed-clock";
++		clock-frequency = <26000000>;
++		#clock-cells = <0>;
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
++	};
++
++	soc {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		compatible = "simple-bus";
++		ranges;
++
++		gic: interrupt-controller@0c000000 {
++			compatible = "arm,gic-v3";
++			#interrupt-cells = <3>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			#redistributor-regions = <1>;
++			interrupt-parent = <&gic>;
++			interrupt-controller;
++			reg = <0 0x0c000000 0 0x40000>,  /* GICD */
++			      <0 0x0c040000 0 0x200000>, /* GICR */
++			      <0 0x0c400000 0 0x2000>,   /* GICC */
++			      <0 0x0c410000 0 0x1000>,   /* GICH */
++			      <0 0x0c420000 0 0x2000>;   /* GICV */
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		sysirq: intpol-controller@0c53a650 {
++			compatible = "mediatek,mt6779-sysirq",
++				     "mediatek,mt6577-sysirq";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			interrupt-parent = <&gic>;
++			reg = <0 0x0c53a650 0 0x50>;
++		};
++
++		topckgen: clock-controller@10000000 {
++			compatible = "mediatek,mt6779-topckgen", "syscon";
++			reg = <0 0x10000000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		infracfg_ao: clock-controller@10001000 {
++			compatible = "mediatek,mt6779-infracfg_ao", "syscon";
++			reg = <0 0x10001000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		apmixed: clock-controller@1000c000 {
++			compatible = "mediatek,mt6779-apmixed", "syscon";
++			reg = <0 0x1000c000 0 0xe00>;
++			#clock-cells = <1>;
++		};
++
++		uart0: serial@11002000 {
++			compatible = "mediatek,mt6779-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11002000 0 0x400>;
++			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&uart_clk>;
++			status = "disabled";
++		};
++
++		uart1: serial@11003000 {
++			compatible = "mediatek,mt6779-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11003000 0 0x400>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&uart_clk>;
++			status = "disabled";
++		};
++
++		audio: clock-controller@11210000 {
++			compatible = "mediatek,mt6779-audio", "syscon";
++			reg = <0 0x11210000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		mfgcfg: clock-controller@13fbf000 {
++			compatible = "mediatek,mt6779-mfgcfg", "syscon";
++			reg = <0 0x13fbf000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		mmsys: clock-controller@14000000 {
++			compatible = "mediatek,mt6779-mmsys", "syscon";
++			reg = <0 0x14000000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		imgsys: clock-controller@15020000 {
++			compatible = "mediatek,mt6779-imgsys", "syscon";
++			reg = <0 0x15020000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		vdecsys: clock-controller@16000000 {
++			compatible = "mediatek,mt6779-vdecsys", "syscon";
++			reg = <0 0x16000000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		vencsys: clock-controller@17000000 {
++			compatible = "mediatek,mt6779-vencsys", "syscon";
++			reg = <0 0x17000000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		camsys: clock-controller@1a000000 {
++			compatible = "mediatek,mt6779-camsys", "syscon";
++			reg = <0 0x1a000000 0 0x10000>;
++			#clock-cells = <1>;
++		};
++
++		ipesys: clock-controller@1b000000 {
++			compatible = "mediatek,mt6779-ipesys", "syscon";
++			reg = <0 0x1b000000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++	};
++};
 -- 
-2.20.1
+1.7.9.5
 
