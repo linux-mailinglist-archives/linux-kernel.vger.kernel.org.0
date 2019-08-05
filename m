@@ -2,127 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AC8382263
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 470F68227F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:35:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729639AbfHEQat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 12:30:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:33996 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfHEQat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:30:49 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 09:30:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
-   d="scan'208";a="178892890"
-Received: from buildpc-hp-z230.iind.intel.com (HELO buildpc-HP-Z230) ([10.223.89.34])
-  by orsmga006.jf.intel.com with ESMTP; 05 Aug 2019 09:30:41 -0700
-Date:   Mon, 5 Aug 2019 22:02:33 +0530
-From:   Sanyog Kale <sanyog.r.kale@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com
-Subject: Re: [alsa-devel] [RFC PATCH 23/40] soundwire: stream: fix disable
- sequence
-Message-ID: <20190805163233.GA24889@buildpc-HP-Z230>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-24-pierre-louis.bossart@linux.intel.com>
- <20190805095620.GD22437@buildpc-HP-Z230>
- <12799e97-d6e3-5027-a409-0fe37dba86fd@linux.intel.com>
+        id S1729088AbfHEQfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 12:35:07 -0400
+Received: from mail-qk1-f171.google.com ([209.85.222.171]:34109 "EHLO
+        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728701AbfHEQfH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 12:35:07 -0400
+Received: by mail-qk1-f171.google.com with SMTP id t8so60563870qkt.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 09:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YiRlEkepGMSBghGordYKrd53LhTX7Zo4aO4skFP+FPQ=;
+        b=KvAAsEp7EBlmFnFm4A3RAJMlB16Gu/ClvhmFXF3/nwkvC5G3iN4z6D5ZAIMQe6rNqy
+         C9y9oS1wkZ6b0qlJqiG5dKcARxLYs606StbTrx5pU50S/+YvdJKieH9ziJKmkBTXHyxr
+         vd8kTNJR5d72pYVhLyhomafAyREIb+BcHb5B0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YiRlEkepGMSBghGordYKrd53LhTX7Zo4aO4skFP+FPQ=;
+        b=rHLV/lhKwrAj0kB7ayYbFCuUZQ19rGrjtwzxTctGz3UvEO/9Ig7uIBK/n3hAUYNk5X
+         mvadbZumf5b0ZgK+XPo/TghiB9vG0Hy93EMelm9sEAPFO9Fr1L5jvPtmGgACglfpLP8l
+         9s2k/Djm5uwFdySraU4uWTHIrtqR0PT+JRPCfMwtQe28WM8gkMH4AWl9cfZzHONav5Mk
+         XIN7Ismn1PKDo0pEPj3JO5ZJEUWwV+un7cIBIc0a17zC9JdKSo19RulHKARwZ8KqLe4O
+         ibHGGWslplTPMjy4I+SefJxtUlysOR3V1G++P44Ebo7vRrVZalBkinQwK8zQqFYgJzf/
+         iRCA==
+X-Gm-Message-State: APjAAAW548lJPOs2pLcDQPLj1Lyzlk/GIcMhY7gVKlbj2qRz7rwX89Qr
+        d0t2/0Yo8zYSKyUJbho9uOKD5+omNWqLMdokM3tdtw==
+X-Google-Smtp-Source: APXvYqwpHxcg06Mbli+NdzWaalL0e2240Scm0EbQOE4XY2ybkQPkjSSR20aWvi9JTpQhhWlZ4idPL5YNwkECJiwlU5I=
+X-Received: by 2002:a37:660b:: with SMTP id a11mr99152263qkc.342.1565022905887;
+ Mon, 05 Aug 2019 09:35:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12799e97-d6e3-5027-a409-0fe37dba86fd@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190703040135.169843-1-hsinyi@chromium.org>
+In-Reply-To: <20190703040135.169843-1-hsinyi@chromium.org>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Mon, 5 Aug 2019 09:34:40 -0700
+Message-ID: <CAJMQK-jaLi9QaZ4n0TguL7GD_rdn6VVNnf-3=j2XwGbUHwrgBw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] add support for rng-seed
+To:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 10:33:25AM -0500, Pierre-Louis Bossart wrote:
-> 
-> 
-> On 8/5/19 4:56 AM, Sanyog Kale wrote:
-> > On Thu, Jul 25, 2019 at 06:40:15PM -0500, Pierre-Louis Bossart wrote:
-> > > When we disable the stream and then call hw_free, two bank switches
-> > > will be handled and as a result we re-enable the stream on hw_free.
-> > > 
-> > 
-> > I didnt quite get why there will be two bank switches as part of disable flow
-> > which leads to enabling of stream?
-> 
-> You have two bank switches, one to stop streaming and on in de-prepare. It's
-> symmetrical with the start sequence, where we do a bank switch to prepare
-> and another to enable.
+Ping on the thread.
+Should the series be proceeded?
 
-Got it. I misunderstood it that two bank switches are performed as part of
-disable_stream.
-
-> 
-> Let's assume we are using bank0 when streaming.
-> 
-> Before the first bank switch, the channel_enable is set to false in the
-> alternate bank1. When the bank switch happens, bank1 become active and the
-> streaming stops. But bank0 registers have not been modified so when we do
-> the second bank switch in de-prepare we make bank0 active, and the ch_enable
-> bits are still set so streaming will restart... When we stop streaming, we
-> need to make sure the ch_enable bits are cleared in the two banks.
-
-This is clear. Even though the channels remains enabled, i believe there
-won't be any data pushed on lines as stream will be closed.
-
-Regarding mirroring approach, I assume after bank switch we will take
-snapshot of active bank and program same in inactive bank.
-
-> 
-> 
-> > 
-> > > Make sure the stream is disabled on both banks.
-> > > 
-> > > TODO: we need to completely revisit all this and make sure we have a
-> > > mirroring mechanism between current and alternate banks.
-> > > 
-> > > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> > > ---
-> > >   drivers/soundwire/stream.c | 19 ++++++++++++++++++-
-> > >   1 file changed, 18 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-> > > index 53f5e790fcd7..75b9ad1fb1a6 100644
-> > > --- a/drivers/soundwire/stream.c
-> > > +++ b/drivers/soundwire/stream.c
-> > > @@ -1637,7 +1637,24 @@ static int _sdw_disable_stream(struct sdw_stream_runtime *stream)
-> > >   		}
-> > >   	}
-> > > -	return do_bank_switch(stream);
-> > > +	ret = do_bank_switch(stream);
-> > > +	if (ret < 0) {
-> > > +		dev_err(bus->dev, "Bank switch failed: %d\n", ret);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	/* make sure alternate bank (previous current) is also disabled */
-> > > +	list_for_each_entry(m_rt, &stream->master_list, stream_node) {
-> > > +		bus = m_rt->bus;
-> > > +		/* Disable port(s) */
-> > > +		ret = sdw_enable_disable_ports(m_rt, false);
-> > > +		if (ret < 0) {
-> > > +			dev_err(bus->dev, "Disable port(s) failed: %d\n", ret);
-> > > +			return ret;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	return 0;
-> > >   }
-> > >   /**
-> > > -- 
-> > > 2.20.1
-> > > 
-> > 
-
--- 
+Thanks
