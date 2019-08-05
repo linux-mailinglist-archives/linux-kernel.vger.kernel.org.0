@@ -2,183 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD2B8240D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 19:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7827082416
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 19:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfHERfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 13:35:23 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52978 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbfHERfU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 13:35:20 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s3so75524795wms.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 10:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=voIGteRKzC/qSuQGdpeb7TWmnO42XbJGR9gOLDIKzNg=;
-        b=D0/nb0ynp0+/NN/I31H2GkdmcTcSLMkZuFcSQE0HqexTJkfxbM0I1Ils5kaRDo7tiP
-         Drr1zsaeA6rcO71KQtE97knYSx8gUpS3s/3GoH30zQl+6sZtnjRRYsRacygHOVI+SxtY
-         vse6ZeQhrh+CxUtOsItv5XOgbXkUxPbkVCUyUFtQf3U8XOxlnwZ6Bp909jZF7Kslm7c/
-         vxEZf09KzU0oNRsTOOtufFG1eCvagJPnrw3QnTbO+a5hnIxm3IMD8r+sMn8McZxntCLh
-         zqFrtiiQa3c7iO48VElFeapRmqG0ElwPJLt2LDIXSWSzsAFLogj2wB3IYaiiZcntMD6q
-         qa4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=voIGteRKzC/qSuQGdpeb7TWmnO42XbJGR9gOLDIKzNg=;
-        b=Xk+E9h5tPiFmla20+wLB8w2bTdO/d13Q05jSrSSMoZsRID0dtR/q7PNM9Wqbf+MYEp
-         Nrcdo3YuQ2DtznrQPOgbCwHgn9jyQk1bkGvmr72Vje6eqDwm1QJjOq0vJMujLgTlRC1A
-         hIJDIZkErPRqtZ2EBT3PCpkoFr/EtU/4SRaMxOT6FgAOatD2luA/ilsfzWkLgfebH7Fc
-         1Lemf5/aurYAglRenB3YO69fS2VbZNck77qtyMH/u8azJYBtcBvHW2gML7lCzc21ICr7
-         S5PwQcdiCOCNIZ0G/CmTrxoW2twmU2H/lzQerot0t7S4/5ymLPdEbss296XlZenhSZny
-         qshg==
-X-Gm-Message-State: APjAAAXnVl/fNWvGuIx9z+MQXxbmYIjoJjgQJNO4pE0phgrQV9XaBB/W
-        qQvO32Iy4Agn8UsAFM7dTuM=
-X-Google-Smtp-Source: APXvYqxODCJB13Jawwu8Mg5f2yTFS25pDZ23H3dWl07Uw97SQr/4vepa5Q7IoGpVnOMZk6ZwTgg/Bw==
-X-Received: by 2002:a1c:d185:: with SMTP id i127mr20260159wmg.63.1565026518788;
-        Mon, 05 Aug 2019 10:35:18 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id x24sm81228244wmh.5.2019.08.05.10.35.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2019 10:35:18 -0700 (PDT)
-Message-ID: <5d4868d6.1c69fb81.684ee.334f@mx.google.com>
-Date:   Mon, 05 Aug 2019 10:35:18 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1729212AbfHERjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 13:39:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51470 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726779AbfHERjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 13:39:08 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 74DB8C056807;
+        Mon,  5 Aug 2019 17:39:06 +0000 (UTC)
+Received: from rt4.app.eng.rdu2.redhat.com (rt4.app.eng.rdu2.redhat.com [10.10.161.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D7C3E5DA60;
+        Mon,  5 Aug 2019 17:39:01 +0000 (UTC)
+Received: from rt4.app.eng.rdu2.redhat.com (localhost [127.0.0.1])
+        by rt4.app.eng.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id x75Hd0BJ023399;
+        Mon, 5 Aug 2019 13:39:00 -0400
+Received: (from apache@localhost)
+        by rt4.app.eng.rdu2.redhat.com (8.14.4/8.14.4/Submit) id x75Hcnwa023396;
+        Mon, 5 Aug 2019 13:38:49 -0400
+From:   Red Hat Product Security <secalert@redhat.com>
+X-PGP-Public-Key: https://www.redhat.com/security/650d5882.txt
+Subject: [engineering.redhat.com #494100] Question on submitting patch for a security bug
+Reply-To: secalert@redhat.com
+In-Reply-To: <CAJ7L_Gp2HJoFOVxTgakCJw3LMuiPY0+60-giOtw3OwRD6zyNTQ@mail.gmail.com>
+References: <RT-Ticket-494100@engineering.redhat.com>
+ <CAJ7L_Gp2HJoFOVxTgakCJw3LMuiPY0+60-giOtw3OwRD6zyNTQ@mail.gmail.com>
+Message-ID: <rt-4.0.13-23214-1565026728-1358.494100-5-0@engineering.redhat.com>
+X-RT-Loop-Prevention: engineering.redhat.com
+RT-Ticket: engineering.redhat.com #494100
+Managed-BY: RT 4.0.13 (http://www.bestpractical.com/rt/)
+RT-Originator: pjp@redhat.com
+To:     b.zolnierkie@samsung.com, bob.liu@oracle.com,
+        chuck.lever@oracle.com, davem@davemloft.net, emamd001@umn.edu,
+        gregkh@linuxfoundation.org, kubakici@wp.pl, kvalo@codeaurora.org,
+        navid.emamdoost@gmail.com, sam@ravnborg.org
+CC:     airlied@linux.ie, alexandre.belloni@bootlin.com,
+        alexandre.torgue@st.com, allison@lohutok.net,
+        andriy.shevchenko@linux.intel.com, anna.schumaker@netapp.com,
+        axboe@kernel.dk, bfields@fieldses.org, colin.king@canonical.com,
+        daniel@ffwll.ch, devel@driverdev.osuosl.org,
+        dri-devel@lists.freedesktop.org, joabreu@synopsys.com,
+        johnfwhitmore@gmail.com, josef@toxicpanda.com, jslaby@suse.com,
+        kjlu@umn.edu, kstewart@linuxfoundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-serial@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-wireless@vger.kernel.org, matthias.bgg@gmail.com,
+        matthias@redhat.com, mcoquelin.stm32@gmail.com,
+        nbd@other.debian.org, netdev@vger.kernel.org,
+        nishkadg.linux@gmail.com, peppe.cavallaro@st.com, smccaman@umn.edu,
+        tglx@linutronix.de, thierry.reding@gmail.com,
+        trond.myklebust@hammerspace.com, unglinuxdriver@microchip.com,
+        vishal@chelsio.com, vkoul@kernel.org
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Kernel: v4.4.187-23-gb9a28e18ca89
-X-Kernelci-Branch: linux-4.4.y
-X-Kernelci-Report-Type: boot
-In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
-References: <20190805124918.070468681@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 00/22] 4.4.188-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+X-RT-Original-Encoding: utf-8
+Date:   Mon, 5 Aug 2019 13:38:48 -0400
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 05 Aug 2019 17:39:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.4.y boot: 93 boots: 1 failed, 54 passed with 38 offline (=
-v4.4.187-23-gb9a28e18ca89)
+Hello Navid,
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.4.y/kernel/v4.4.187-23-gb9a28e18ca89/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
-/kernel/v4.4.187-23-gb9a28e18ca89/
+On Thu, 18 Jul 2019 01:30:20 GMT, emamd001@umn.edu wrote:
+> I've found a null dereference bug in the Linux kernel source code. I was
+> wondering should I cc the patch to you as well (along with the
+> maintainers)?
 
-Tree: stable-rc
-Branch: linux-4.4.y
-Git Describe: v4.4.187-23-gb9a28e18ca89
-Git Commit: b9a28e18ca89602f69c795d8e0438f59d92cbf7b
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 44 unique boards, 20 SoC families, 14 builds out of 190
+No. Please do not cc <secalert@redhat.com> on the upstream kernel patches.
+It is meant for reporting security issues only.
 
-Boot Regressions Detected:
+Going through the patches here
 
-arm:
+1. Issues in ../staging/ drivers are not considered for CVE, they are not to be
+used
+in production environment.
 
-    sunxi_defconfig:
-        gcc-8:
-          sun4i-a10-cubieboard:
-              lab-baylibre-seattle: failing since 1 day (last pass: v4.4.18=
-6-157-gd9815060e3ec - first fail: v4.4.187)
-          sun5i-r8-chip:
-              lab-baylibre-seattle: failing since 1 day (last pass: v4.4.18=
-6-157-gd9815060e3ec - first fail: v4.4.187)
-          sun7i-a20-bananapi:
-              lab-baylibre-seattle: failing since 1 day (last pass: v4.4.18=
-6-157-gd9815060e3ec - first fail: v4.4.187)
+2. Many of the patches listed fix NULL pointer dereference when memory
+allocation
+fails and returns NULL.
 
-Boot Failure Detected:
+3. Do you happen to have reproducers for these issues? Could an unprivileged
+user trigger them?
 
-arm64:
-    defconfig:
-        gcc-8:
-            qcom-qdf2400: 1 failed lab
+> Also, I was wondering what are the steps to get CVE for the bug (this is
+> the first time I am reporting a bug)?
 
-Offline Platforms:
+Generally CVE is assigned after confirming that a given issue really is a
+security issue. And it may
+have impact ranging from information leakage, DoS to privilege escalation or
+maybe arbitrary code
+execution. Every NULL pointer dereference is not security issue.
 
-arm64:
 
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
-arm:
-
-    tegra_defconfig:
-        gcc-8
-            tegra20-iris-512: 1 offline lab
-
-    exynos_defconfig:
-        gcc-8
-            exynos5250-arndale: 1 offline lab
-            exynos5420-arndale-octa: 1 offline lab
-            exynos5800-peach-pi: 1 offline lab
-
-    multi_v7_defconfig:
-        gcc-8
-            bcm4708-smartrg-sr400ac: 1 offline lab
-            bcm72521-bcm97252sffe: 1 offline lab
-            bcm7445-bcm97445c: 1 offline lab
-            exynos5250-arndale: 1 offline lab
-            exynos5420-arndale-octa: 1 offline lab
-            exynos5800-peach-pi: 1 offline lab
-            imx6dl-wandboard_dual: 1 offline lab
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            meson8b-odroidc1: 1 offline lab
-            omap3-beagle: 1 offline lab
-            omap4-panda: 1 offline lab
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            stih410-b2120: 1 offline lab
-            sun4i-a10-cubieboard: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-            tegra20-iris-512: 1 offline lab
-            vf610-colibri-eval-v3: 1 offline lab
-
-    omap2plus_defconfig:
-        gcc-8
-            omap3-beagle: 1 offline lab
-            omap4-panda: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            da850-evm: 1 offline lab
-            dm365evm,legacy: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        gcc-8
-            imx6dl-wandboard_dual: 1 offline lab
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            vf610-colibri-eval-v3: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun4i-a10-cubieboard: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
+Hope it helps. Thank you.
 ---
-For more info write to <info@kernelci.org>
+Prasad J Pandit / Red Hat Product Security Team
+
