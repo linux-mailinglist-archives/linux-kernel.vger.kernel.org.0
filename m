@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D2F81C1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BD681D15
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:29:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbfHENUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:20:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56486 "EHLO mail.kernel.org"
+        id S1730405AbfHEN3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:29:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728800AbfHENU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:20:26 -0400
+        id S1729521AbfHENV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:21:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA34D20657;
-        Mon,  5 Aug 2019 13:20:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F1AE20657;
+        Mon,  5 Aug 2019 13:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011225;
-        bh=Suut7lwdLdJ61gbHawlyeba1bXqBVef4rcqN5FBxiIw=;
+        s=default; t=1565011318;
+        bh=o6jECbd2EVMdLcJQkzMk83SqAzqrv5t5ccuMHCqAbDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K3uG/d4eJ2VLGYr2kL9tSmV8xxuy/YBf4T7Mhuj2umxq3CT84kDkcR6hQOsQGfWaB
-         8XwCi2WPlv5uMIzJC2baR+N2rqXpSO9JX9lUtn6MlnmiQPgpIZCEM/t/5gTMgJ+p70
-         69eiNVRuTosKcJN2aFURDqEH9Cuf8iOywWctN6w0=
+        b=09Rv0V6udxjniV3WcK/H+eHMMIfztyZutqSvWHrstMJww0UzkrxrGKcxkjUQrKQdh
+         UAcQHjId6asRoOlNxZ2W+g3lDXeFQrVxnF+d+A368FaBCk+8v/MSW6qL7fsgY4NnUW
+         HS6mr4x45edvTNGosM5Doi8ibwsCnSHw9OkC86uw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 004/131] clk: meson: mpll: properly handle spread spectrum
-Date:   Mon,  5 Aug 2019 15:01:31 +0200
-Message-Id: <20190805124951.724105609@linuxfoundation.org>
+Subject: [PATCH 5.2 005/131] ARM: dts: rockchip: Mark that the rk3288 timer might stop in suspend
+Date:   Mon,  5 Aug 2019 15:01:32 +0200
+Message-Id: <20190805124951.787798602@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
 References: <20190805124951.453337465@linuxfoundation.org>
@@ -45,62 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f9b3eeebef6aabaa37a351715374de53b6da860c ]
+[ Upstream commit 8ef1ba39a9fa53d2205e633bc9b21840a275908e ]
 
-The bit 'SSEN' available on some MPLL DSS outputs is not related to the
-fractional part of the divider but to the function called
-'Spread Spectrum'.
+This is similar to commit e6186820a745 ("arm64: dts: rockchip: Arch
+counter doesn't tick in system suspend").  Specifically on the rk3288
+it can be seen that the timer stops ticking in suspend if we end up
+running through the "osc_disable" path in rk3288_slp_mode_set().  In
+that path the 24 MHz clock will turn off and the timer stops.
 
-This function might be used to solve EM issues by adding a jitter on
-clock signal. This widens the signal spectrum and weakens the peaks in it.
+To test this, I ran this on a Chrome OS filesystem:
+  before=$(date); \
+  suspend_stress_test -c1 --suspend_min=30 --suspend_max=31; \
+  echo ${before}; date
 
-While spread spectrum might be useful for some application, it is
-problematic for others, such as audio.
+...and I found that unless I plug in a device that requests USB wakeup
+to be active that the two calls to "date" would show that fewer than
+30 seconds passed.
 
-This patch introduce a new flag to the MPLL driver to enable (or not) the
-spread spectrum function.
+NOTE: deep suspend (where the 24 MHz clock gets disabled) isn't
+supported yet on upstream Linux so this was tested on a downstream
+kernel.
 
-Fixes: 1f737ffa13ef ("clk: meson: mpll: fix mpll0 fractional part ignored")
-Tested-by: Martin Blumenstingl<martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/clk-mpll.c | 9 ++++++---
- drivers/clk/meson/clk-mpll.h | 1 +
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/rk3288.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index f76850d99e591..d3f42e0864313 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -119,9 +119,12 @@ static int mpll_set_rate(struct clk_hw *hw,
- 	meson_parm_write(clk->map, &mpll->sdm, sdm);
- 	meson_parm_write(clk->map, &mpll->sdm_en, 1);
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index aa017abf4f421..f7bc886a4b513 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -231,6 +231,7 @@
+ 			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+ 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		clock-frequency = <24000000>;
++		arm,no-tick-in-suspend;
+ 	};
  
--	/* Set additional fractional part enable if required */
--	if (MESON_PARM_APPLICABLE(&mpll->ssen))
--		meson_parm_write(clk->map, &mpll->ssen, 1);
-+	/* Set spread spectrum if possible */
-+	if (MESON_PARM_APPLICABLE(&mpll->ssen)) {
-+		unsigned int ss =
-+			mpll->flags & CLK_MESON_MPLL_SPREAD_SPECTRUM ? 1 : 0;
-+		meson_parm_write(clk->map, &mpll->ssen, ss);
-+	}
- 
- 	/* Set the integer divider part */
- 	meson_parm_write(clk->map, &mpll->n2, n2);
-diff --git a/drivers/clk/meson/clk-mpll.h b/drivers/clk/meson/clk-mpll.h
-index cf79340006dd7..0f948430fed48 100644
---- a/drivers/clk/meson/clk-mpll.h
-+++ b/drivers/clk/meson/clk-mpll.h
-@@ -23,6 +23,7 @@ struct meson_clk_mpll_data {
- };
- 
- #define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
-+#define CLK_MESON_MPLL_SPREAD_SPECTRUM	BIT(1)
- 
- extern const struct clk_ops meson_clk_mpll_ro_ops;
- extern const struct clk_ops meson_clk_mpll_ops;
+ 	timer: timer@ff810000 {
 -- 
 2.20.1
 
