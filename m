@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C8CD81C0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A875481C95
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbfHENTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:19:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55754 "EHLO mail.kernel.org"
+        id S1730752AbfHENZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:25:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729672AbfHENTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:19:39 -0400
+        id S1729303AbfHENZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:25:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BF00216F4;
-        Mon,  5 Aug 2019 13:19:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0CA62067D;
+        Mon,  5 Aug 2019 13:25:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011179;
-        bh=eeFIHSL2xp6/VvCSYq3PlJ1aasNV2jep2XmQvnOX6eg=;
+        s=default; t=1565011520;
+        bh=9dDrCWgZrg4/MuNSUfC6kDqwGiZ/UAEPGVrGs3N+2EI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wE7/Wte9VDmTxACJ5fmXwcvlrTVwfY3X9jckfN6Wu8qyGVkvgq1qFItK6rp7Lw14v
-         FPoEp75YaVgnqCwc1sMBrREOIsrtTbPrWUWVKrLDuAAVWQyb2c4FN6NQonHJgx68Ri
-         z55vuJcsoXXkELjSLjWVh5Kk1Ldvxbi/ITXRO8Lg=
+        b=peB5Jue1maxl4qZHwAtkWBz7IKhjEfSqKUJsf9qnf+Yag4s+fkLYi0A++yBla8jKM
+         MBVvJYRYX4zFXc4eK6Lj9b8+xfrMmcpz4a7Zi8fIvkf9vKEy8c6JrDK7T4gQf8Bvrd
+         a4BV4vAth/5Mr3pq5wF756DM7MnZ2Py9JgnaHJx0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, x86@kernel.org,
-        Borislav Petkov <bp@alien8.de>,
-        Duncan Roe <duncan_roe@optusnet.com.au>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 73/74] x86/vdso: Prevent segfaults due to hoisted vclock reads
-Date:   Mon,  5 Aug 2019 15:03:26 +0200
-Message-Id: <20190805124941.688410363@linuxfoundation.org>
+        stable@vger.kernel.org, Yi Zhang <yi.zhang@redhat.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.2 120/131] RDMA/bnxt_re: Honor vlan_id in GID entry comparison
+Date:   Mon,  5 Aug 2019 15:03:27 +0200
+Message-Id: <20190805124959.995091220@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
+In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
+References: <20190805124951.453337465@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,67 +45,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Selvin Xavier <selvin.xavier@broadcom.com>
 
-commit ff17bbe0bb405ad8b36e55815d381841f9fdeebc upstream.
+commit c56b593d2af4cbd189c6af5fd6790728fade80cc upstream.
 
-GCC 5.5.0 sometimes cleverly hoists reads of the pvclock and/or hvclock
-pages before the vclock mode checks.  This creates a path through
-vclock_gettime() in which no vclock is enabled at all (due to disabled
-TSC on old CPUs, for example) but the pvclock or hvclock page
-nevertheless read.  This will segfault on bare metal.
+A GID entry consists of GID, vlan, netdev and smac.  Extend GID duplicate
+check comparisons to consider vlan_id as well to support IPv6 VLAN based
+link local addresses. Introduce a new structure (bnxt_qplib_gid_info) to
+hold gid and vlan_id information.
 
-This fixes commit 459e3a21535a ("gcc-9: properly declare the
-{pv,hv}clock_page storage") in the sense that, before that commit, GCC
-didn't seem to generate the offending code.  There was nothing wrong
-with that commit per se, and -stable maintainers should backport this to
-all supported kernels regardless of whether the offending commit was
-present, since the same crash could just as easily be triggered by the
-phase of the moon.
+The issue is discussed in the following thread
+https://lore.kernel.org/r/AM0PR05MB4866CFEDCDF3CDA1D7D18AA5D1F20@AM0PR05MB4866.eurprd05.prod.outlook.com
 
-On GCC 9.1.1, this doesn't seem to affect the generated code at all, so
-I'm not too concerned about performance regressions from this fix.
-
-Cc: stable@vger.kernel.org
-Cc: x86@kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Reported-by: Duncan Roe <duncan_roe@optusnet.com.au>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 823b23da7113 ("IB/core: Allow vlan link local address based RoCE GIDs")
+Cc: <stable@vger.kernel.org> # v5.2+
+Link: https://lore.kernel.org/r/20190715091913.15726-1-selvin.xavier@broadcom.com
+Reported-by: Yi Zhang <yi.zhang@redhat.com>
+Co-developed-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Tested-by: Yi Zhang <yi.zhang@redhat.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/vdso/vclock_gettime.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c  |    7 +++++--
+ drivers/infiniband/hw/bnxt_re/qplib_res.c |   13 +++++++++----
+ drivers/infiniband/hw/bnxt_re/qplib_res.h |    2 +-
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c  |   14 +++++++++-----
+ drivers/infiniband/hw/bnxt_re/qplib_sp.h  |    7 ++++++-
+ 5 files changed, 30 insertions(+), 13 deletions(-)
 
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -191,13 +191,24 @@ notrace static inline u64 vgetsns(int *m
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -308,6 +308,7 @@ int bnxt_re_del_gid(const struct ib_gid_
+ 	struct bnxt_re_dev *rdev = to_bnxt_re_dev(attr->device, ibdev);
+ 	struct bnxt_qplib_sgid_tbl *sgid_tbl = &rdev->qplib_res.sgid_tbl;
+ 	struct bnxt_qplib_gid *gid_to_del;
++	u16 vlan_id = 0xFFFF;
  
- 	if (gtod->vclock_mode == VCLOCK_TSC)
- 		cycles = vread_tsc();
+ 	/* Delete the entry from the hardware */
+ 	ctx = *context;
+@@ -317,7 +318,8 @@ int bnxt_re_del_gid(const struct ib_gid_
+ 	if (sgid_tbl && sgid_tbl->active) {
+ 		if (ctx->idx >= sgid_tbl->max)
+ 			return -EINVAL;
+-		gid_to_del = &sgid_tbl->tbl[ctx->idx];
++		gid_to_del = &sgid_tbl->tbl[ctx->idx].gid;
++		vlan_id = sgid_tbl->tbl[ctx->idx].vlan_id;
+ 		/* DEL_GID is called in WQ context(netdevice_event_work_handler)
+ 		 * or via the ib_unregister_device path. In the former case QP1
+ 		 * may not be destroyed yet, in which case just return as FW
+@@ -335,7 +337,8 @@ int bnxt_re_del_gid(const struct ib_gid_
+ 		}
+ 		ctx->refcnt--;
+ 		if (!ctx->refcnt) {
+-			rc = bnxt_qplib_del_sgid(sgid_tbl, gid_to_del, true);
++			rc = bnxt_qplib_del_sgid(sgid_tbl, gid_to_del,
++						 vlan_id,  true);
+ 			if (rc) {
+ 				dev_err(rdev_to_dev(rdev),
+ 					"Failed to remove GID: %#x", rc);
+--- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
+@@ -488,7 +488,7 @@ static int bnxt_qplib_alloc_sgid_tbl(str
+ 				     struct bnxt_qplib_sgid_tbl *sgid_tbl,
+ 				     u16 max)
+ {
+-	sgid_tbl->tbl = kcalloc(max, sizeof(struct bnxt_qplib_gid), GFP_KERNEL);
++	sgid_tbl->tbl = kcalloc(max, sizeof(*sgid_tbl->tbl), GFP_KERNEL);
+ 	if (!sgid_tbl->tbl)
+ 		return -ENOMEM;
+ 
+@@ -526,9 +526,10 @@ static void bnxt_qplib_cleanup_sgid_tbl(
+ 	for (i = 0; i < sgid_tbl->max; i++) {
+ 		if (memcmp(&sgid_tbl->tbl[i], &bnxt_qplib_gid_zero,
+ 			   sizeof(bnxt_qplib_gid_zero)))
+-			bnxt_qplib_del_sgid(sgid_tbl, &sgid_tbl->tbl[i], true);
++			bnxt_qplib_del_sgid(sgid_tbl, &sgid_tbl->tbl[i].gid,
++					    sgid_tbl->tbl[i].vlan_id, true);
+ 	}
+-	memset(sgid_tbl->tbl, 0, sizeof(struct bnxt_qplib_gid) * sgid_tbl->max);
++	memset(sgid_tbl->tbl, 0, sizeof(*sgid_tbl->tbl) * sgid_tbl->max);
+ 	memset(sgid_tbl->hw_id, -1, sizeof(u16) * sgid_tbl->max);
+ 	memset(sgid_tbl->vlan, 0, sizeof(u8) * sgid_tbl->max);
+ 	sgid_tbl->active = 0;
+@@ -537,7 +538,11 @@ static void bnxt_qplib_cleanup_sgid_tbl(
+ static void bnxt_qplib_init_sgid_tbl(struct bnxt_qplib_sgid_tbl *sgid_tbl,
+ 				     struct net_device *netdev)
+ {
+-	memset(sgid_tbl->tbl, 0, sizeof(struct bnxt_qplib_gid) * sgid_tbl->max);
++	u32 i;
 +
-+	/*
-+	 * For any memory-mapped vclock type, we need to make sure that gcc
-+	 * doesn't cleverly hoist a load before the mode check.  Otherwise we
-+	 * might end up touching the memory-mapped page even if the vclock in
-+	 * question isn't enabled, which will segfault.  Hence the barriers.
-+	 */
- #ifdef CONFIG_PARAVIRT_CLOCK
--	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
-+	else if (gtod->vclock_mode == VCLOCK_PVCLOCK) {
-+		barrier();
- 		cycles = vread_pvclock(mode);
-+	}
- #endif
- #ifdef CONFIG_HYPERV_TSCPAGE
--	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
-+	else if (gtod->vclock_mode == VCLOCK_HVCLOCK) {
-+		barrier();
- 		cycles = vread_hvclock(mode);
-+	}
- #endif
- 	else
- 		return 0;
++	for (i = 0; i < sgid_tbl->max; i++)
++		sgid_tbl->tbl[i].vlan_id = 0xffff;
++
+ 	memset(sgid_tbl->hw_id, -1, sizeof(u16) * sgid_tbl->max);
+ }
+ 
+--- a/drivers/infiniband/hw/bnxt_re/qplib_res.h
++++ b/drivers/infiniband/hw/bnxt_re/qplib_res.h
+@@ -111,7 +111,7 @@ struct bnxt_qplib_pd_tbl {
+ };
+ 
+ struct bnxt_qplib_sgid_tbl {
+-	struct bnxt_qplib_gid		*tbl;
++	struct bnxt_qplib_gid_info	*tbl;
+ 	u16				*hw_id;
+ 	u16				max;
+ 	u16				active;
+--- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+@@ -213,12 +213,12 @@ int bnxt_qplib_get_sgid(struct bnxt_qpli
+ 			index, sgid_tbl->max);
+ 		return -EINVAL;
+ 	}
+-	memcpy(gid, &sgid_tbl->tbl[index], sizeof(*gid));
++	memcpy(gid, &sgid_tbl->tbl[index].gid, sizeof(*gid));
+ 	return 0;
+ }
+ 
+ int bnxt_qplib_del_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
+-			struct bnxt_qplib_gid *gid, bool update)
++			struct bnxt_qplib_gid *gid, u16 vlan_id, bool update)
+ {
+ 	struct bnxt_qplib_res *res = to_bnxt_qplib(sgid_tbl,
+ 						   struct bnxt_qplib_res,
+@@ -236,7 +236,8 @@ int bnxt_qplib_del_sgid(struct bnxt_qpli
+ 		return -ENOMEM;
+ 	}
+ 	for (index = 0; index < sgid_tbl->max; index++) {
+-		if (!memcmp(&sgid_tbl->tbl[index], gid, sizeof(*gid)))
++		if (!memcmp(&sgid_tbl->tbl[index].gid, gid, sizeof(*gid)) &&
++		    vlan_id == sgid_tbl->tbl[index].vlan_id)
+ 			break;
+ 	}
+ 	if (index == sgid_tbl->max) {
+@@ -262,8 +263,9 @@ int bnxt_qplib_del_sgid(struct bnxt_qpli
+ 		if (rc)
+ 			return rc;
+ 	}
+-	memcpy(&sgid_tbl->tbl[index], &bnxt_qplib_gid_zero,
++	memcpy(&sgid_tbl->tbl[index].gid, &bnxt_qplib_gid_zero,
+ 	       sizeof(bnxt_qplib_gid_zero));
++	sgid_tbl->tbl[index].vlan_id = 0xFFFF;
+ 	sgid_tbl->vlan[index] = 0;
+ 	sgid_tbl->active--;
+ 	dev_dbg(&res->pdev->dev,
+@@ -296,7 +298,8 @@ int bnxt_qplib_add_sgid(struct bnxt_qpli
+ 	}
+ 	free_idx = sgid_tbl->max;
+ 	for (i = 0; i < sgid_tbl->max; i++) {
+-		if (!memcmp(&sgid_tbl->tbl[i], gid, sizeof(*gid))) {
++		if (!memcmp(&sgid_tbl->tbl[i], gid, sizeof(*gid)) &&
++		    sgid_tbl->tbl[i].vlan_id == vlan_id) {
+ 			dev_dbg(&res->pdev->dev,
+ 				"SGID entry already exist in entry %d!\n", i);
+ 			*index = i;
+@@ -351,6 +354,7 @@ int bnxt_qplib_add_sgid(struct bnxt_qpli
+ 	}
+ 	/* Add GID to the sgid_tbl */
+ 	memcpy(&sgid_tbl->tbl[free_idx], gid, sizeof(*gid));
++	sgid_tbl->tbl[free_idx].vlan_id = vlan_id;
+ 	sgid_tbl->active++;
+ 	if (vlan_id != 0xFFFF)
+ 		sgid_tbl->vlan[free_idx] = 1;
+--- a/drivers/infiniband/hw/bnxt_re/qplib_sp.h
++++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.h
+@@ -84,6 +84,11 @@ struct bnxt_qplib_gid {
+ 	u8				data[16];
+ };
+ 
++struct bnxt_qplib_gid_info {
++	struct bnxt_qplib_gid gid;
++	u16 vlan_id;
++};
++
+ struct bnxt_qplib_ah {
+ 	struct bnxt_qplib_gid		dgid;
+ 	struct bnxt_qplib_pd		*pd;
+@@ -221,7 +226,7 @@ int bnxt_qplib_get_sgid(struct bnxt_qpli
+ 			struct bnxt_qplib_sgid_tbl *sgid_tbl, int index,
+ 			struct bnxt_qplib_gid *gid);
+ int bnxt_qplib_del_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
+-			struct bnxt_qplib_gid *gid, bool update);
++			struct bnxt_qplib_gid *gid, u16 vlan_id, bool update);
+ int bnxt_qplib_add_sgid(struct bnxt_qplib_sgid_tbl *sgid_tbl,
+ 			struct bnxt_qplib_gid *gid, u8 *mac, u16 vlan_id,
+ 			bool update, u32 *index);
 
 
