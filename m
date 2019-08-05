@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8D3F81496
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 10:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3069B8149C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfHEI7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 04:59:54 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33643 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbfHEI7y (ORCPT
+        id S1727947AbfHEJAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:00:03 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35942 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727855AbfHEJAC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 04:59:54 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n190so4250238pgn.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 01:59:53 -0700 (PDT)
+        Mon, 5 Aug 2019 05:00:02 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r7so39302684pfl.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 02:00:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FIbiHcGDYSov0UE7VA5uO1KbDNgvOwrKf/S6d4sgUvg=;
-        b=EDZTk6FnPwJnYHzVY2dB6l0getqsLnh2GZ70TOet6d1NN2FYg19k31wxZpmVhbRZOI
-         OmmLeqAxuSFO2qg8o1gRqMoQHjRH1oL3WLUvTsIInFb+tFJBPhg7aww5pW5UR+tGIIrH
-         Ti7W2MfJmUfw84YYcaLBHWFjgwPDjmKpU9t8gwKnE+vmQ+FMzEfbfLpuxIxWtBYTW6S8
-         loMM9VHYGN2EnX6cU7IAa6PW80sSdWwGlaR2KXZvoL2g/OeHgADcZm7CuH1EHavNLYaq
-         73cssw1P7SLpKmsMNMcv1tcq5sEblqYjlfhOaOXAqH3NLAtYJ8+0RLf0Z65LEa9ajLDY
-         ++HA==
+        bh=rjwVvQQidw169Jm3n3lgZp9lgXOA8D2Mu3C4QxVGgVE=;
+        b=LjlqH2tntzgY1ntlSynASEYypUp7REv5zTRSmv7L02OieZzVhFWPNxJQbR9Q8A/M2a
+         EuFxy7OulufVEDaQ+LePJNT1VZEbjiBNVIgItbAVfO9zyt4LkZutFHb//EazkR9clAa7
+         e3F+LHEw+JVZaAyTDpPB0bjxU7Rd2lUcx5OTGVmJglNEXkvYRFN1QlbMF8lYiRc0Ph4v
+         pGsQQ9J8HchC4ZGH08Dre6X9FWN6MAFL7LMr6AZh93JPWg2s9MbamxT5ziAdNhKICKVw
+         s9TVE0x+fMiRb4sqlvHqCMBJCgb4Kgjwdl3eNCO4xNMeQQQENeBcvSdVLek57fZjFUx1
+         kIPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=FIbiHcGDYSov0UE7VA5uO1KbDNgvOwrKf/S6d4sgUvg=;
-        b=VeG6AxTQZalwO4yegvymDZ8P5GCyr6BRGP7ktllqaRaQZsTi832DSfeIbw4WHbompG
-         N+Q+XyW/YdPFRZyXd+adr4iFGMOr0S5oTnWWdzmqF0x5ac5JyZ67Z9PcKOl6tOWe+C5R
-         z83FIQOjjwlC7zj2tlgratlZ6JGSg+wf/5m6y80rMxMSE49eAfKjdojhxQM9bhXP3OCb
-         l7oR1qyww96MF2z32tfDIlFgKG4PDoXD/g20rkuAxZzV9iCmJOi1/Om+HpURpXeVu+oe
-         WKTHgltVw8MWoM+JspdBCxpwPLBjMtd3cbPEIlhP7zv5so0TygnDakV+2KwMtO+8aVeG
-         Cq2w==
-X-Gm-Message-State: APjAAAWVw4SLon1+lwnbic8OVOG2rhF2OFwC62M2dJeZGz+/SwbWgGDZ
-        cv3cSzRXHVGNEAXblr/PjQ==
-X-Google-Smtp-Source: APXvYqxzK4bknrl6FhPLuz+tGHkR7LApM/9uwty0Ya3DxRCeJxpJA+oBwJ1i6hIMnyWrfDw/J0Ki0w==
-X-Received: by 2002:a63:6f81:: with SMTP id k123mr138151417pgc.12.1564995593254;
-        Mon, 05 Aug 2019 01:59:53 -0700 (PDT)
+        bh=rjwVvQQidw169Jm3n3lgZp9lgXOA8D2Mu3C4QxVGgVE=;
+        b=W74+OmqIiHBD036+WW5AlJ9H+0xePHTbO1BixaLhdTRYgc/j5AL+MxaZf3VxrAU79u
+         OnwLXacjFjRXhalAH19L4PYMQinkS6DDKV+RGCUxWOdlhVM0e7NhFNAKh2bk+c2FDSv1
+         xUpXu10OK+jT33wYbcFJFvxQCRsYd631vthK0UFZTEXTFuL6JuhHhGZLgBEV8pnMBHKC
+         u8jgBE7LAeImTM26LCVFeNZ7hqiCSjMX5Fry35JXc09GWZLfWbY9yqwr4KYRSauoxaL3
+         LiPbUrFyvI8rHCopCXrrRtf8zHP0Sv1L5YEsv3sPsfBbQc9S8JxzMcqXfRNVO5fwYKxv
+         XNhA==
+X-Gm-Message-State: APjAAAXevPunUEc3A8hzicSz8r389jlB8qI/cuGG/VvH8lWQw/UI5rsm
+        9QJW6GwKnhENlbFjXKmKLw==
+X-Google-Smtp-Source: APXvYqxstvmcgSEvAGL5AqyDdQHV4VwtlIe0+Q52UdII4WmPbfTosaLohriF1ORHBihtrnNQCSTylw==
+X-Received: by 2002:a17:90a:d814:: with SMTP id a20mr17104592pjv.48.1564995600804;
+        Mon, 05 Aug 2019 02:00:00 -0700 (PDT)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id v184sm82428375pfb.82.2019.08.05.01.59.46
+        by smtp.gmail.com with ESMTPSA id v184sm82428375pfb.82.2019.08.05.01.59.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2019 01:59:52 -0700 (PDT)
+        Mon, 05 Aug 2019 02:00:00 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>, x86@kernel.org
@@ -60,9 +60,9 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>, Ingo Molnar <mingo@redhat.com>,
         Eric Biederman <ebiederm@xmission.com>,
         linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>,
         Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org
-Subject: [PATCH 2/4] x86/apic: record capped cpu in generic_processor_info()
-Date:   Mon,  5 Aug 2019 16:58:57 +0800
-Message-Id: <1564995539-29609-3-git-send-email-kernelfans@gmail.com>
+Subject: [PATCH 3/4] x86/smp: send capped cpus to a stable state when smp_init()
+Date:   Mon,  5 Aug 2019 16:58:58 +0800
+Message-Id: <1564995539-29609-4-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1564995539-29609-1-git-send-email-kernelfans@gmail.com>
 References: <1564995539-29609-1-git-send-email-kernelfans@gmail.com>
@@ -71,11 +71,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No matter the cpu is capped by nr_cpus option, recording the mapping
-between all cpus' id and apic id
+*** Back ground ***
 
-Later this mapping will be used by BSP to sent SIPI to bring capped cpu to
-stable state
+On x86 it's required to have all logical CPUs set CR4.MCE=1. Otherwise, a
+broadcast MCE observing CR4.MCE=0b on any core will shutdown the machine.
+
+The option 'nosmt' has already complied with the above rule by Thomas's
+patch. For detail, refer to 506a66f3748 (Revert "x86/apic: Ignore secondary
+threads if nosmt=force")
+
+But for nr_cpus option, the exposure to broadcast MCE is a little
+complicated, and can be categorized into three cases.
+
+-1. boot up by BIOS. Since no one set CR4.MCE=1, nr_cpus risks rebooting by
+broadcast MCE.
+
+-2. boot up by "kexec -p nr_cpus=".  Since the 1st kernel has all cpus'
+CR4.MCE=1 set before kexec -p, nr_cpus is free of rebooting by broadcast
+MCE. Furthermore, the crashed kernel's wreckage, including page table and
+text, is not touched by capture kernel. Hence if MCE event happens on
+capped cpu, do_machine_check->__mc_check_crashing_cpu() runs smoothly and
+returns immediately, the capped cpu is still pinned on "halt".
+
+-3. boot up by "kexec -l nr_cpus=". As "kexec -p", it is free of rebooting
+by broadcast MCE. But the 1st kernel's wreckage is discarded and changed.
+when capped cpus execute do_machine_check(), they may crack the new kernel.
+But this is not related with broadcast MCE, and need an extra fix.
+
+In a word, only case 1 suffers from unexpected rebooting due to broadcast
+MCE.
+
+*** Solution ***
+
+When fixing case 1, "nr_cpus" can not follow the same way as "nosmt".
+Because nr_cpus limits the allocation of percpu area and some other kthread
+memory, which is critical to cpu hotplug framework.
+
+Instead, developing a dedicated SIPI callback make_capped_cpu_stable() for
+capped cpu, which does not lean on percpu area to work.
+
+BTW this patch has side effect to suppress case 3. It brings capped cpu to
+make_capped_cpu_stable() in the 2nd kernel's context, instead of leaving
+them with the 1st kernel's context.
 
 Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 To: Thomas Gleixner <tglx@linutronix.de>
@@ -98,111 +135,190 @@ Cc: Dave Young <dyoung@redhat.com>
 Cc: Baoquan He <bhe@redhat.com>
 Cc: kexec@lists.infradead.org
 ---
- arch/x86/include/asm/smp.h   |  2 ++
- arch/x86/kernel/apic/apic.c  | 21 +++++++++++++++------
- arch/x86/kernel/cpu/common.c |  4 ++++
- 3 files changed, 21 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/apic.h  |  1 +
+ arch/x86/include/asm/smp.h   |  1 +
+ arch/x86/kernel/apic/apic.c  |  2 +-
+ arch/x86/kernel/cpu/common.c |  3 ++
+ arch/x86/kernel/smpboot.c    | 83 ++++++++++++++++++++++++++++++++++++++++++++
+ kernel/smp.c                 |  6 ++++
+ 6 files changed, 95 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index e647aa0..02232e3 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -49,6 +49,7 @@ static inline void generic_apic_probe(void)
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 
++extern int cpuid_to_apicid[];
+ extern int apic_verbosity;
+ extern int local_apic_timer_c2_ok;
+ 
 diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index e1356a3..5f63399 100644
+index 5f63399..f67ce77 100644
 --- a/arch/x86/include/asm/smp.h
 +++ b/arch/x86/include/asm/smp.h
-@@ -196,5 +196,7 @@ extern void nmi_selftest(void);
- #define nmi_selftest() do { } while (0)
+@@ -197,6 +197,7 @@ extern void nmi_selftest(void);
  #endif
  
-+extern struct cpumask *cpu_capped_mask;
-+
+ extern struct cpumask *cpu_capped_mask;
++extern struct cpumask *cpu_capped_done_mask;
+ 
  #endif /* __ASSEMBLY__ */
  #endif /* _ASM_X86_SMP_H */
 diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index f4f603a..6a57bad3 100644
+index 6a57bad3..b86c9e6 100644
 --- a/arch/x86/kernel/apic/apic.c
 +++ b/arch/x86/kernel/apic/apic.c
-@@ -2296,9 +2296,10 @@ static int allocate_logical_cpuid(int apicid)
+@@ -2244,7 +2244,7 @@ static int nr_logical_cpuids = 1;
+ /*
+  * Used to store mapping between logical CPU IDs and APIC IDs.
+  */
+-static int cpuid_to_apicid[] = {
++int cpuid_to_apicid[] = {
+ 	[0 ... NR_CPUS - 1] = -1,
+ };
  
- int generic_processor_info(int apicid, int version)
- {
--	int cpu, max = nr_cpu_ids;
-+	int thiscpu, cpu, max = nr_cpu_ids;
- 	bool boot_cpu_detected = physid_isset(boot_cpu_physical_apicid,
- 				phys_cpu_present_map);
-+	bool capped = false;
- 
- 	/*
- 	 * boot_cpu_physical_apicid is designed to have the apicid
-@@ -2322,7 +2323,7 @@ int generic_processor_info(int apicid, int version)
- 	if (disabled_cpu_apicid != BAD_APICID &&
- 	    disabled_cpu_apicid != read_apic_id() &&
- 	    disabled_cpu_apicid == apicid) {
--		int thiscpu = num_processors + disabled_cpus;
-+		thiscpu = num_processors + disabled_cpus;
- 
- 		pr_warning("APIC: Disabling requested cpu."
- 			   " Processor %d/0x%x ignored.\n",
-@@ -2338,7 +2339,7 @@ int generic_processor_info(int apicid, int version)
- 	 */
- 	if (!boot_cpu_detected && num_processors >= nr_cpu_ids - 1 &&
- 	    apicid != boot_cpu_physical_apicid) {
--		int thiscpu = max + disabled_cpus - 1;
-+		thiscpu = max + disabled_cpus - 1;
- 
- 		pr_warning(
- 			"APIC: NR_CPUS/possible_cpus limit of %i almost"
-@@ -2346,20 +2347,28 @@ int generic_processor_info(int apicid, int version)
- 			"  Processor %d/0x%x ignored.\n", max, thiscpu, apicid);
- 
- 		disabled_cpus++;
--		return -EINVAL;
-+		capped = true;
- 	}
- 
- 	if (num_processors >= nr_cpu_ids) {
--		int thiscpu = max + disabled_cpus;
-+		thiscpu = max + disabled_cpus;
- 
- 		pr_warning("APIC: NR_CPUS/possible_cpus limit of %i "
- 			   "reached. Processor %d/0x%x ignored.\n",
- 			   max, thiscpu, apicid);
- 
- 		disabled_cpus++;
--		return -EINVAL;
-+		capped = true;
- 	}
- 
-+	if (capped) {
-+		/* record the mapping between capped cpu and apicid */
-+		if (thiscpu < NR_CPUS && cpu_capped_mask != NULL) {
-+			cpuid_to_apicid[thiscpu] = apicid;
-+			cpumask_set_cpu(thiscpu, cpu_capped_mask);
-+		}
-+		return -EINVAL;
-+	}
- 	if (apicid == boot_cpu_physical_apicid) {
- 		/*
- 		 * x86_bios_cpu_apicid is required to have processors listed
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 1147217..4d87df5 100644
+index 4d87df5..1a62b37 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -66,6 +66,9 @@ u32 elf_hwcap2 __read_mostly;
- cpumask_var_t cpu_initialized_mask;
- cpumask_var_t cpu_callout_mask;
- cpumask_var_t cpu_callin_mask;
-+/* size of NR_CPUS is required. */
-+struct cpumask __cpu_capped_mask __initdata;
-+struct cpumask *cpu_capped_mask;
+@@ -69,6 +69,8 @@ cpumask_var_t cpu_callin_mask;
+ /* size of NR_CPUS is required. */
+ struct cpumask __cpu_capped_mask __initdata;
+ struct cpumask *cpu_capped_mask;
++struct cpumask __cpu_capped_done_mask __initdata;
++struct cpumask *cpu_capped_done_mask;
  
  /* representing cpus for which sibling maps can be computed */
  cpumask_var_t cpu_sibling_setup_mask;
-@@ -84,6 +87,7 @@ void __init setup_cpu_local_masks(void)
- 	alloc_bootmem_cpumask_var(&cpu_callin_mask);
+@@ -88,6 +90,7 @@ void __init setup_cpu_local_masks(void)
  	alloc_bootmem_cpumask_var(&cpu_callout_mask);
  	alloc_bootmem_cpumask_var(&cpu_sibling_setup_mask);
-+	cpu_capped_mask = &__cpu_capped_mask;
+ 	cpu_capped_mask = &__cpu_capped_mask;
++	cpu_capped_done_mask = &__cpu_capped_done_mask;
  }
  
  static void default_init(struct cpuinfo_x86 *c)
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index fdbd47c..d247fbd 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1014,6 +1014,89 @@ int common_cpu_up(unsigned int cpu, struct task_struct *idle)
+ 	return 0;
+ }
+ 
++/* SIPI callback for the capped cpu */
++static void notrace make_capped_cpu_stable(void *unused)
++{
++	unsigned int apic_id;
++	int i, cpu = -1;
++
++	/* protect against MCE broadcast */
++	native_write_cr4(X86_CR4_MCE);
++	x2apic_setup();
++	apic_id = read_apic_id();
++	for (i = 0; i < NR_CPUS; i++)
++		if (cpuid_to_apicid[i] == apic_id) {
++			cpu = i;
++			break;
++		}
++
++	/* trampoline_*.S has loaded idt with 0, 0 */
++
++	/* No response to any interrupt */
++	disable_local_APIC();
++	/* Done with the temporary stack, signal the master to go ahead */
++	if (cpu != -1) {
++		cpumask_clear_cpu(cpu, cpu_capped_mask);
++		cpumask_set_cpu(cpu, cpu_capped_done_mask);
++	}
++
++	/* run without stack and can not have the __init attribute */
++	do {
++		asm volatile("hlt" : : : "memory");
++	} while (true);
++}
++
++static void __init do_stable_cpu(int cpu)
++{
++	static char capped_tmp_stack[512];
++	int cpu0_nmi_registered = 0, apicid = cpuid_to_apicid[cpu];
++	unsigned long start_ip = real_mode_header->trampoline_start;
++	unsigned long timeout, boot_error = 0;
++
++	/* invalid percpu area */
++	initial_gs = 0;
++	/*
++	 * Borrow the value of cpu 0. Since capped cpu segment shadow register
++	 * can cache the content, and keep it unchanged.
++	 */
++	early_gdt_descr.address = (unsigned long)get_cpu_gdt_rw(0);
++	initial_code = (unsigned long)make_capped_cpu_stable;
++	initial_stack  = (unsigned long)&capped_tmp_stack;
++
++	if (apic->wakeup_secondary_cpu)
++		boot_error = apic->wakeup_secondary_cpu(apicid, start_ip);
++	else
++		boot_error = wakeup_cpu_via_init_nmi(cpu, start_ip, apicid,
++						     &cpu0_nmi_registered);
++	if (cpu0_nmi_registered)
++		unregister_nmi_handler(NMI_LOCAL, "wake_cpu0");
++
++	if (!boot_error) {
++		/* Wait 10s total for first sign of life from capped cpu */
++		boot_error = -1;
++		timeout = jiffies + 10*HZ;
++		while (time_before(jiffies, timeout)) {
++			if (cpumask_test_cpu(cpu, cpu_capped_done_mask))
++				break;
++			schedule();
++		}
++	}
++}
++
++void __init bring_capped_cpu_stable(void)
++{
++	int cpu;
++
++	/* Guest does not suffer from MCE broadcast */
++	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
++		return;
++
++	for_each_cpu(cpu, cpu_capped_mask)
++		do_stable_cpu(cpu);
++	cpu_capped_mask = NULL;
++	cpu_capped_done_mask = NULL;
++}
++
+ /*
+  * NOTE - on most systems this is a PHYSICAL apic ID, but on multiquad
+  * (ie clustered apic addressing mode), this is a LOGICAL apic ID.
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 7dbcb40..de528b7 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -574,6 +574,10 @@ void __init setup_nr_cpu_ids(void)
+ 	nr_cpu_ids = find_last_bit(cpumask_bits(cpu_possible_mask),NR_CPUS) + 1;
+ }
+ 
++void __weak __init bring_capped_cpu_stable(void)
++{
++}
++
+ /* Called by boot processor to activate the rest. */
+ void __init smp_init(void)
+ {
+@@ -593,6 +597,8 @@ void __init smp_init(void)
+ 			cpu_up(cpu);
+ 	}
+ 
++	/* force cpus capped by nr_cpus option into stable state */
++	bring_capped_cpu_stable();
+ 	num_nodes = num_online_nodes();
+ 	num_cpus  = num_online_cpus();
+ 	pr_info("Brought up %d node%s, %d CPU%s\n",
 -- 
 2.7.5
 
