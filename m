@@ -2,91 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F08881AC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDEDE81A29
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730115AbfHENJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:09:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47262 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729211AbfHENI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:08:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0CAC2075B;
-        Mon,  5 Aug 2019 13:08:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010538;
-        bh=7BSbn3tM72/0DGPULT67fewpqTSUU33aag1yFIWmkl0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=upY9xddS6bojt52cxcD2fMA46yClPzJd74M6jqI57oMDxyqMnAbuQigm/sGFLoBrt
-         6YPETTv9iZf2qSN5SZRRBy7ph/VG4S31RqH6SJdmnrxAVG4B68Th8yMBi4RdAoZgFK
-         7s6jdRkImWsgfvadkX8Axwx87wv7RumBk3HurGYI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 01/74] ARM: riscpc: fix DMA
-Date:   Mon,  5 Aug 2019 15:02:14 +0200
-Message-Id: <20190805124935.945668453@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
-User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1728748AbfHENCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:02:22 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39860 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfHENCW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:02:22 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u25so62568256wmc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 06:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VD+kO2freT4druqcnh49hR6u8OkuGawcql9pBt221gM=;
+        b=mjk8vH9McUPXmutExi9LK5ex7zl16u6Y1A29MLJPWpdqRchOSAGR8yhmK2fOTAo0rR
+         0sDiFCY/K4jh+admqvlB/o99ab6xeNCWhc+kpHUH51vRLHk1iEDDajMTVrPVdzhGXOez
+         b+MOpvwyHe3E8z4ck7Lc0JsxTJblE1HTqoVBH2bnCZr3MsUkmySVvX+rpBLWbpbktUmu
+         hP/XHt8UiQrWbTdDNDhsijdtesI8b0m8A9EZshbEb+4cGVeTBIWdn2VjubV1sCDeTZXR
+         sMr8q3TOfj4wjtw/b/DQ2XLzpqs0aaxo9LDtJ1wfglDOLg/WFdPVPnB9ccDGeJ8Az1yz
+         MGtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VD+kO2freT4druqcnh49hR6u8OkuGawcql9pBt221gM=;
+        b=jyEyDC3Q8VbxvSkcu6N4i5heMkX5sPxUxgpYifidIeqNHGjAGP/yt2/A3DwSCjqq7F
+         C78n7eXTK/rvUbhtGKO0iVzjSEPRk+HNxc6u5FJ0aTwQm0WB0lFsTsUvVT2K8uSoehJZ
+         bfsnS1t2SoeGgdooCIAZmTO8L5nCkCrHKY4rxqpSqsRYGbiXQuZujNiL842naNi3l0ct
+         dq7/SbvoUblCJ6Z6PlnAvXImBa+WZvSTX4QYUFPTByfLGZtujS7jRvcyBOLQnKdY2q5P
+         c6HoTydN/Hya3LNvEgrFdT+2b2+gnOjKpouVb9ufbMrO8nPJ61VGkpFcHhbnhnYva66e
+         9mSA==
+X-Gm-Message-State: APjAAAUYNhJCVd8E/LUZuGIEIqw/BBl3Fckaw5v48EPhsuwbFjjlVweG
+        rdnMqpAZuH8rE68villnO3maUw==
+X-Google-Smtp-Source: APXvYqwxgFax/fM7iqjP2wFpKMs36pqx4aCRyV/P5qvPCozjg2IOFjiFHWnYt60j8Qx7Ktjguvx6VQ==
+X-Received: by 2002:a1c:4e14:: with SMTP id g20mr18419431wmh.3.1565010140443;
+        Mon, 05 Aug 2019 06:02:20 -0700 (PDT)
+Received: from radium.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id v23sm74950359wmj.32.2019.08.05.06.02.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 06:02:19 -0700 (PDT)
+From:   Fabien Parent <fparent@baylibre.com>
+To:     robh+dt@kernel.org, matthias.bgg@gmail.com
+Cc:     linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Fabien Parent <fparent@baylibre.com>
+Subject: [PATCH] dt-bindings: rng: mtk-rng: Add documentation for MT8516
+Date:   Mon,  5 Aug 2019 15:02:15 +0200
+Message-Id: <20190805130215.20499-1-fparent@baylibre.com>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ffd9a1ba9fdb7f2bd1d1ad9b9243d34e96756ba2 ]
+This commit adds the device-tree documentation for the RNG IP on the
+MediaTek MT8516 SoC.
 
-DMA got broken a while back in two different ways:
-1) a change in the behaviour of disable_irq() to wait for the interrupt
-   to finish executing causes us to deadlock at the end of DMA.
-2) a change to avoid modifying the scatterlist left the first transfer
-   uninitialised.
-
-DMA is only used with expansion cards, so has gone unnoticed.
-
-Fixes: fa4e99899932 ("[ARM] dma: RiscPC: don't modify DMA SG entries")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Fabien Parent <fparent@baylibre.com>
 ---
- arch/arm/mach-rpc/dma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/rng/mtk-rng.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-rpc/dma.c b/arch/arm/mach-rpc/dma.c
-index fb48f3141fb4d..c4c96661eb89a 100644
---- a/arch/arm/mach-rpc/dma.c
-+++ b/arch/arm/mach-rpc/dma.c
-@@ -131,7 +131,7 @@ static irqreturn_t iomd_dma_handle(int irq, void *dev_id)
- 	} while (1);
- 
- 	idma->state = ~DMA_ST_AB;
--	disable_irq(irq);
-+	disable_irq_nosync(irq);
- 
- 	return IRQ_HANDLED;
- }
-@@ -174,6 +174,9 @@ static void iomd_enable_dma(unsigned int chan, dma_t *dma)
- 				DMA_FROM_DEVICE : DMA_TO_DEVICE);
- 		}
- 
-+		idma->dma_addr = idma->dma.sg->dma_address;
-+		idma->dma_len = idma->dma.sg->length;
-+
- 		iomd_writeb(DMA_CR_C, dma_base + CR);
- 		idma->state = DMA_ST_AB;
- 	}
+diff --git a/Documentation/devicetree/bindings/rng/mtk-rng.txt b/Documentation/devicetree/bindings/rng/mtk-rng.txt
+index 2bc89f133701..dfdcb5cd2ea8 100644
+--- a/Documentation/devicetree/bindings/rng/mtk-rng.txt
++++ b/Documentation/devicetree/bindings/rng/mtk-rng.txt
+@@ -6,6 +6,7 @@ Required properties:
+ 			"mediatek,mt7622-rng", 	"mediatek,mt7623-rng" : for MT7622
+ 			"mediatek,mt7629-rng",  "mediatek,mt7623-rng" : for MT7629
+ 			"mediatek,mt7623-rng" : for MT7623
++			"mediatek,mt8516-rng", "mediatek,mt7623-rng" : for MT8516
+ - clocks	    : list of clock specifiers, corresponding to
+ 		      entries in clock-names property;
+ - clock-names	    : Should contain "rng" entries;
 -- 
-2.20.1
-
-
+2.23.0.rc1
 
