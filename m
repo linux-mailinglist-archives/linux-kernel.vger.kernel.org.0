@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA94481BE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF1081BE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729585AbfHENR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:17:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40292 "EHLO mail.kernel.org"
+        id S1729097AbfHENEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:04:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729070AbfHENEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:04:34 -0400
+        id S1729053AbfHENEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:04:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5010020880;
-        Mon,  5 Aug 2019 13:04:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3FC02087B;
+        Mon,  5 Aug 2019 13:04:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010273;
-        bh=K186CMLLLr3fRwM23MxOmgDBaGSOo6sQZai733wpBDw=;
+        s=default; t=1565010276;
+        bh=3KBRVhRDiu83YjpGhGpXMuxxGlTDGVg54CdmRe86b0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hv3BcYB6+WR5KVApFhSIBA55Xo1dWHr9jwynjE3WXHUnZ5W6FTaWRilTQYXm26TbR
-         l5Jbi8LeomiWyG2uxKvNzCl7ErjRT3dqWk9HH8JQwo5wsryE2lTiSiOfGPkeVGHewI
-         A9+PVMdxvnvVeAAzaoQq9wmjj2c/CKMGJzIgImWY=
+        b=qqJZIMATUFyBhf7yDHucu30loioRGjQ1s3FobowuSdYF2dFeFSzBE5SgquZexQesv
+         MjOWXplPiZLBpOOii7JHO/1G7kRsonYzSxnqpoVdo/ISKYoEVNdCgsS/5ikpJCvkTx
+         s2CriieStcm9/G/cMGKEsL2wsMCCmo+UtrznnC7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4.4 05/22] dmaengine: rcar-dmac: Reject zero-length slave DMA requests
-Date:   Mon,  5 Aug 2019 15:02:42 +0200
-Message-Id: <20190805124919.905295750@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 06/22] fs/adfs: super: fix use-after-free bug
+Date:   Mon,  5 Aug 2019 15:02:43 +0200
+Message-Id: <20190805124920.027806904@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
 References: <20190805124918.070468681@linuxfoundation.org>
@@ -45,44 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 78efb76ab4dfb8f74f290ae743f34162cd627f19 ]
+[ Upstream commit 5808b14a1f52554de612fee85ef517199855e310 ]
 
-While the .device_prep_slave_sg() callback rejects empty scatterlists,
-it still accepts single-entry scatterlists with a zero-length segment.
-These may happen if a driver calls dmaengine_prep_slave_single() with a
-zero len parameter.  The corresponding DMA request will never complete,
-leading to messages like:
+Fix a use-after-free bug during filesystem initialisation, where we
+access the disc record (which is stored in a buffer) after we have
+released the buffer.
 
-    rcar-dmac e7300000.dma-controller: Channel Address Error happen
-
-and DMA timeouts.
-
-Although requesting a zero-length DMA request is a driver bug, rejecting
-it early eases debugging.  Note that the .device_prep_dma_memcpy()
-callback already rejects requests to copy zero bytes.
-
-Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Analyzed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/sh/rcar-dmac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/adfs/super.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 2b36d1c63aa5f..956189a1ba81c 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1030,7 +1030,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
- 	dma_addr_t dev_addr;
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index 4d4a0df8344fe..b00ae922ece27 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -368,6 +368,7 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	struct buffer_head *bh;
+ 	struct object_info root_obj;
+ 	unsigned char *b_data;
++	unsigned int blocksize;
+ 	struct adfs_sb_info *asb;
+ 	struct inode *root;
+ 	int ret = -EINVAL;
+@@ -419,8 +420,10 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto error_free_bh;
+ 	}
  
- 	/* Someone calling slave DMA on a generic channel? */
--	if (rchan->mid_rid < 0 || !sg_len) {
-+	if (rchan->mid_rid < 0 || !sg_len || !sg_dma_len(sgl)) {
- 		dev_warn(chan->device->dev,
- 			 "%s: bad parameter: len=%d, id=%d\n",
- 			 __func__, sg_len, rchan->mid_rid);
++	blocksize = 1 << dr->log2secsize;
+ 	brelse(bh);
+-	if (sb_set_blocksize(sb, 1 << dr->log2secsize)) {
++
++	if (sb_set_blocksize(sb, blocksize)) {
+ 		bh = sb_bread(sb, ADFS_DISCRECORD / sb->s_blocksize);
+ 		if (!bh) {
+ 			adfs_error(sb, "couldn't read superblock on "
 -- 
 2.20.1
 
