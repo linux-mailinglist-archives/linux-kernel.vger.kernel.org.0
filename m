@@ -2,149 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1C78149B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95AD78149D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfHEI77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 04:59:59 -0400
-Received: from mail-eopbgr1410124.outbound.protection.outlook.com ([40.107.141.124]:36579
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727855AbfHEI7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 04:59:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=amTK67qYb5kxcRha/PpXdTCCRWbSeBM57ZQ+8E9M5qRZdaRu3AIeVw52DTKzX9SdshhzJNFDBisfeyzXRLNFUF9fVjdeaqxdNm6AucDzZFAEzqKILA86yTiXmLJOVS3EbsBVTTaOOnDs+5Owvj+AFwZ2s4Cf7LuaG/nMT1C6XQQJt/PnvmSpSuAMH/edwS/Sb5T9/DDB0Zkk9Q3O0xbW6HZNQtuGVZcuX/2AyU+00JndPVNw7ajyv60J6aGHFOLp6/GfJd8QCcHsHbPwTqwIPkn0R9lJn6HwT0S7TEr7PiDZQPtoahL6NnRq5ZVfAB4yav+ao4/WgzcxXUPZLHFbYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zuIMtIkzJotMv6SkT0lzhrqP0UyTWDQ4cLNA5GMC6RE=;
- b=c7Ts6cBnTpAbi2VNtuvMSVRYJVnsfQ9e6z5RniloCTQCFKPS8ol3L4PXfODZd86D4HjssMlPdaCsa0V3/yEbe3S6VRoFtzNIe2VATtFdWiwk5xYgTIiDpwElO8Th6srmA/rcPnilukLJA7U+/7M71p+OWuPnEPMzHo/DAZpGOkKpLbtsOQZah1DxOOkHvDBq7lXgArqWC1zUp06Nu35vGpe72uD6f4Hqp8OEQpo7pGcP31OPH3FGQkyjkDy7eknC6aOaeSiliYmL/K1ffhXGgkH06eLuFVrUY7vltrlxR7D0AlNt9kagHCeNlJRu01EIle44B/9gIWAJVzWPZTY/9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=bp.renesas.com;dmarc=pass action=none
- header.from=bp.renesas.com;dkim=pass header.d=bp.renesas.com;arc=none
+        id S1727964AbfHEJAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:00:09 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40283 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727855AbfHEJAI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 05:00:08 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p184so39297147pfp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 02:00:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zuIMtIkzJotMv6SkT0lzhrqP0UyTWDQ4cLNA5GMC6RE=;
- b=IEWHez7Zs0b4VuVZzPptQ23idNuf1VKRiplTmXQ1cS6XYKioFOkJ2QFTNRXFBLB6F17MyReLzhmLyK0VYmeOwBZBDXvLelz32sEhaCbfTOyeTvDcWHm/XRLbwHxoFEFGKe10ExNYUv7YywjR7ZdNajm0+0Nlqpu6STyGXxxE0n4=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.13) by
- TY1PR01MB1673.jpnprd01.prod.outlook.com (52.133.162.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.16; Mon, 5 Aug 2019 08:59:52 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::d881:cb74:8277:5a16]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::d881:cb74:8277:5a16%7]) with mapi id 15.20.2136.010; Mon, 5 Aug 2019
- 08:59:52 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH/RFC 02/12] dt-bindings: display: renesas: lvds: Document
- renesas,swap-data
-Thread-Topic: [PATCH/RFC 02/12] dt-bindings: display: renesas: lvds: Document
- renesas,swap-data
-Thread-Index: AQHVSQTAkHqVuaZ+mkSDN4F3/wGVC6bnejAAgATJjGA=
-Date:   Mon, 5 Aug 2019 08:59:51 +0000
-Message-ID: <TY1PR01MB17706A4FF4C26CD4BDA1A5DAC0DA0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1564731249-22671-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1564731249-22671-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190802074428.GB5008@pendragon.ideasonboard.com>
-In-Reply-To: <20190802074428.GB5008@pendragon.ideasonboard.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 14b0c9d2-b9e3-4136-b886-08d71983472c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:TY1PR01MB1673;
-x-ms-traffictypediagnostic: TY1PR01MB1673:
-x-microsoft-antispam-prvs: <TY1PR01MB1673378B4DA39B2829B22749C0DA0@TY1PR01MB1673.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 01208B1E18
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(39860400002)(136003)(376002)(396003)(189003)(199004)(71190400001)(71200400001)(76176011)(102836004)(64756008)(316002)(66446008)(74316002)(54906003)(66066001)(486006)(53936002)(26005)(107886003)(33656002)(8936002)(7736002)(14454004)(6506007)(53546011)(4326008)(44832011)(5660300002)(25786009)(2906002)(305945005)(7416002)(86362001)(446003)(8676002)(478600001)(68736007)(55016002)(11346002)(229853002)(3846002)(6116002)(256004)(186003)(52536014)(6436002)(76116006)(66946007)(66556008)(66476007)(81166006)(6246003)(476003)(9686003)(6916009)(99286004)(81156014)(7696005)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1673;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: e8rTS7MiQ4DhwIfRBFRKENDqBqyl19otiiNI18Vku2wxbOP+TYMrvbCO7/AyimhDabZaVnj5k0LOFjfzTqcO7j7JWvFhgCWeti2VFkDAdqiq0w5n/c3t7VYL3LWYBoTiM2gYKrZuhPbieff8tG00+zll8dbunTxrwL1djU3TdEvqICnRm6mJ4xhz5qoHkbTLA6vbAlheAfsqYp8zRMJpwRFFOTFRWcob+r7BOMjDs3l7sM2nMRd7zNLX8mUJ0JcrzYFadbss6Dv56dkvECMhLaRU4tgCs7i0vnrEH2XJAc4k3DZR2DzfdMUsuuKKyCAoRLqRk0/KEvPDb/Ij8mF8AxLrNFqAGRW8wkPMqJRIXkF8mWgfbIgZf0rfLjyQtuLNuacUi/pB4fkcU7YXG046/FRb3bg01ccaR6B/frrNLBo=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14b0c9d2-b9e3-4136-b886-08d71983472c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2019 08:59:51.9089
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fabrizio.castro@bp.renesas.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1673
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=yrnQxlRs86i/s4KE8dmXp4rew3gb/2U7+nHFO3UAIAU=;
+        b=YTtXpqdDSYYeaNITy7XsD8iR7ZgskBmOA1WBxDvRBb3yVMeJiI0oGdriP33zo4GGeE
+         gBfJovanLHCJCybpRKO+Tvzh5Fo8z/3G3zOFyPT2bDHh/slnmqugxoubiYMjTXBPD3do
+         LOZVlaq99pbiGiw/ui0ndBi1Wd71GdkfKgsKqFdRvftrD/IWJ5j59cJXDieiBaRQJkSL
+         MPd0ZTre8SSheXHRVTAF0Z3TEbLabs3aVdon9C73YrkjEhvXOLxXWZrhzY0wotHVd9Mq
+         bc0sxirXX8K6xbYYrEHILTHYRuc7ixp8/TIOkrCNKwwDfKsFZj3gbCJP8eSb6XvgzTs7
+         aJrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=yrnQxlRs86i/s4KE8dmXp4rew3gb/2U7+nHFO3UAIAU=;
+        b=gdqZ9fB+/M7zTRF3jIWYL1gnhrc03jyCtdx7/Bc65JRno9IkGKy8/6oViT3DVuB56C
+         0vhrgmfq/m1SRdIrFOs8jfw4oRx//JlUAzknO/lA4J3a3KEAjdHsztxmm56hVlXYmHTS
+         tMrRF14cjvZ5dRqkQXwxkBmx8IPgHOImqy3tMd4BK0JRFaVRwrpowpqu9BGl7yFA3vp2
+         srLW8gxjYW1XDTy1zrhhtvM+noUxd7abpMy6dr9GNc+3JFhvvUznYCnqYhsAf5QNifrG
+         yX97/agKAtADN+XGqDBbmjrwhsFI2vLUYLv7rEfbXCYiSEFjJrWe2YdD0JxebR+yP0+v
+         LKnA==
+X-Gm-Message-State: APjAAAWCgnUqGUxKZnaSl2QQawjWyXL/ZxrtryalMgOzqfLCuCTxL7ge
+        qC5AFrZkqArDypRXTKAvWg==
+X-Google-Smtp-Source: APXvYqyA34k9Zp5VsqStjLYj3/HI2hkkXQqwAuHbB63n3I5E8GSIslztvvucJugEmaWWT5mRkt7uLQ==
+X-Received: by 2002:a62:e71a:: with SMTP id s26mr69685451pfh.89.1564995608247;
+        Mon, 05 Aug 2019 02:00:08 -0700 (PDT)
+Received: from mylaptop.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id v184sm82428375pfb.82.2019.08.05.02.00.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 02:00:07 -0700 (PDT)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, x86@kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Qian Cai <cai@lca.pw>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Drake <drake@endlessm.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org
+Subject: [PATCH 4/4] x86/smp: disallow MCE handler on rebooting AP
+Date:   Mon,  5 Aug 2019 16:58:59 +0800
+Message-Id: <1564995539-29609-5-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1564995539-29609-1-git-send-email-kernelfans@gmail.com>
+References: <1564995539-29609-1-git-send-email-kernelfans@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGF1cmVudCwNCg0KVGhhbmsgeW91IGZvciB5b3VyIGZlZWRiYWNrIQ0KDQo+IEZyb206IExh
-dXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4NCj4gU2Vu
-dDogMDIgQXVndXN0IDIwMTkgMDg6NDQNCj4gU3ViamVjdDogUmU6IFtQQVRDSC9SRkMgMDIvMTJd
-IGR0LWJpbmRpbmdzOiBkaXNwbGF5OiByZW5lc2FzOiBsdmRzOiBEb2N1bWVudCByZW5lc2FzLHN3
-YXAtZGF0YQ0KPiANCj4gSGkgRmFicml6aW8sDQo+IA0KPiBUaGFuayB5b3UgZm9yIHRoZSBwYXRj
-aC4NCj4gDQo+IE9uIEZyaSwgQXVnIDAyLCAyMDE5IGF0IDA4OjMzOjU5QU0gKzAxMDAsIEZhYnJp
-emlvIENhc3RybyB3cm90ZToNCj4gPiBSLUNhciBEMywgUi1DYXIgRTMsIGFuZCBSWi9HMkUgc3Vw
-cG9ydCBkdWFsLWxpbmsgbW9kZS4NCj4gPiBJbiBzdWNoIGEgbW9kZSwgdGhlIGZpcnN0IExWRFMg
-ZW5jb2RlciBlbWl0cyBldmVuIGRhdGEsIGFuZCB0aGUNCj4gPiBzZWNvbmQgTFZEUyBlbmNvZGVy
-IGVtaXRzIG9kZCBkYXRhLiBUaGlzIHBhdGNoIGRvY3VtZW50cyBwcm9wZXJ0eQ0KPiA+IHJlbmVz
-YXMsc3dhcC1kYXRhLCB1c2VkIHRvIHN3YXAgZXZlbiBhbmQgb2RkIGRhdGEgYXJvdW5kLg0KPiA+
-DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAu
-cmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9kaXNwbGF5L2JyaWRnZS9yZW5lc2FzLGx2ZHMudHh0IHwgNSArKysrKw0KPiA+ICAxIGZp
-bGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3JlbmVzYXMsbHZkcy50
-eHQNCj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9icmlkZ2Uv
-cmVuZXNhcyxsdmRzLnR4dA0KPiA+IGluZGV4IGRlY2U3OWUuLjg5ODAxNzkgMTAwNjQ0DQo+ID4g
-LS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3Jl
-bmVzYXMsbHZkcy50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9icmlkZ2UvcmVuZXNhcyxsdmRzLnR4dA0KPiA+IEBAIC01Miw2ICs1MiwxMSBA
-QCBPcHRpb25hbCBwcm9wZXJ0aWVzOg0KPiA+ICAgIG1hbmRhdG9yeSBmb3IgdGhlIGZpcnN0IExW
-RFMgZW5jb2RlciBvbiBSLUNhciBEMywgUi1DYXIgRTMsIGFuZCBSWi9HMkUgU29DcywNCj4gPiAg
-ICBhbmQgc2hhbGwgcG9pbnQgdG8gdGhlIHNlY29uZCBlbmNvZGVyIHRvIGJlIHVzZWQgYXMgYSBj
-b21wYW5pb24gaW4gZHVhbC1saW5rDQo+ID4gICAgbW9kZS4gSXQgc2hhbGwgbm90IGJlIHNldCBm
-b3IgYW55IG90aGVyIExWRFMgZW5jb2Rlci4NCj4gPiArLSByZW5lc2FzLHN3YXAtZGF0YSA6IHdo
-ZW4gaW4gZHVhbC1saW5rIG1vZGUsIHRoZSBmaXJzdCBMVkRTIGVuY29kZXIgbm9ybWFsbHkNCj4g
-PiArICBlbWl0cyBldmVuIGRhdGEsIGFuZCB0aGUgc2Vjb25kIExWRFMgZW5jb2RlciBlbWl0cyBv
-ZGQgZGF0YS4gV2hlbiBwcm9wZXJ0eQ0KPiA+ICsgIHJlbmVzYXMsc3dhcC1kYXRhIGlzIHNwZWNp
-ZmllZCwgdGhlIGRhdGEgZW1pdHRlZCBieSB0aGUgdHdvIGVuY29kZXJzIHdpbGwgYmUNCj4gPiAr
-ICBzd2FwcGVkIGFyb3VuZC4gVGhpcyBwcm9wZXJ0eSBjYW4gb25seSBiZSB1c2VkIGluIGNvbmp1
-bmN0aW9uIHdpdGggcHJvcGVydHkNCj4gPiArICByZW5lc2FzLGNvbXBhbmlvbi4NCj4gDQo+IEZy
-b20gYW4gTFZEUyBlbmNvZGVyIHBvaW50IG9mIHZpZXcgdGhpcyBpcyBtb3JlIGEgY29uZmlndXJh
-dGlvbiBvcHRpb24NCj4gdGhhbiBhIGRlc2NyaXB0aW9uIG9mIHRoZSBoYXJkd2FyZS4gV291bGRu
-J3QgaXQgYmUgYmV0dGVyIGZvciB0aGUgTFZEUw0KPiBzaW5rIHRvIHJlcG9ydCB3aGljaCBvZiB0
-aGUgb2RkIG9yIGV2ZW4gcGl4ZWxzIGl0IGV4cGVjdHMgb24gZWFjaCBvZiBpdHMNCj4gZW5kcG9p
-bnRzID8NCg0KWWVzLCB0aGF0IHdvdWxkIGJlIG15IHByZWZlcmVuY2UgdG9vLCBhbmQgaXQgd291
-bGQgYmUgYmV0dGVyLCBJIGFtIGp1c3Qgbm90IGVudGlyZWx5DQp3aGF0J3MgdGhlIGJlc3QgcGxh
-Y2UgZm9yIHRoaXMgaW5mb3JtYXRpb24gdGhvdWdoDQoNCj4gVGhlIExWRFMgZW5jb2RlciBkcml2
-ZXIgY291bGQgdGhlbiBxdWVyeSB0aGF0IGF0IHJ1bnRpbWUgYW5kDQo+IGNvbmZpZ3VyZSBpdHNl
-bGYgYWNjb3JkaW5nbHkuIElkZWFsbHkgdGhpcyBzaG91bGQgYmUgcXVlcmllZCB0aHJvdWdoIHRo
-ZQ0KPiBkcm1fYnJpZGdlX3RpbWluZ3Mgc3RydWN0dXJlIChvciB0aHJvdWdoIGEgc2ltaWxhciBt
-ZWFuKSwgbm90IHRocm91Z2gNCj4gRFQuIEFuIExWRFMgc2luayB0aGF0IGhhcyBhIGZpeGVkIG1h
-cHBpbmcgb2Ygb2RkL2V2ZW4gcGl4ZWxzIHRvDQo+IGVuZHBvaW50cyB3b3VsZG4ndCBuZWVkIHRo
-ZSBpbmZvcm1hdGlvbiB0byBiZSBzcGVjaWZpZWQgaW4gRFQgYXQgYWxsLg0KDQpJc24ndCBkcm1f
-YnJpZGdlX3RpbWluZ3Mgc3BlY2lmaWMgZm9yIGJyaWRnZXM/DQoNClRoYW5rcyENCkZhYg0KDQo+
-IA0KPiA+DQo+ID4NCj4gPiAgRXhhbXBsZToNCj4gDQo+IC0tDQo+IFJlZ2FyZHMsDQo+IA0KPiBM
-YXVyZW50IFBpbmNoYXJ0DQo=
+"kexec -l" sends the rest cpu to halt state with local apic disabled. But
+they can still respond to MCE.  Meanwhile the execution of MCE handler
+relies on the 1st kernel's page table and text, which may be cracked during
+the 2nd kernel bootup. Hence Before sending SIPI to AP in 2nd kernel, an
+MCE event makes AP take the risk of running in weird context.
+
+Heavily suppress it by disallowing MCE handler on rebooting AP.
+
+Note: after this patch, "kexec -l" still has a little window vulnerable to
+weird context, despite AP uses tlb cache and icache.  Consider the
+scenario: The 1st kernel code native_halt() in stop_this_cpu() is modified
+during the 2nd kernel bootup. Then AP is waken up by MCE after the
+modification, and will continue in a weired context. This needs extra
+effort.
+
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+To: x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Daniel Drake <drake@endlessm.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: kexec@lists.infradead.org
+---
+ arch/x86/kernel/smp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
+index 96421f9..55b0f11 100644
+--- a/arch/x86/kernel/smp.c
++++ b/arch/x86/kernel/smp.c
+@@ -157,11 +157,15 @@ void native_send_call_func_ipi(const struct cpumask *mask)
+ 
+ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+ {
++	struct desc_ptr null_ptr = { 0 };
++
+ 	/* We are registered on stopping cpu too, avoid spurious NMI */
+ 	if (raw_smp_processor_id() == atomic_read(&stopping_cpu))
+ 		return NMI_HANDLED;
+ 
+ 	cpu_emergency_vmxoff();
++	/* prevent from dispatching MCE handler */
++	load_idt(&null_ptr);
+ 	stop_this_cpu(NULL);
+ 
+ 	return NMI_HANDLED;
+@@ -173,8 +177,12 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+ 
+ asmlinkage __visible void smp_reboot_interrupt(void)
+ {
++	struct desc_ptr null_ptr = { 0 };
++
+ 	ipi_entering_ack_irq();
+ 	cpu_emergency_vmxoff();
++	/* prevent from dispatching MCE handler */
++	load_idt(&null_ptr);
+ 	stop_this_cpu(NULL);
+ 	irq_exit();
+ }
+-- 
+2.7.5
+
