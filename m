@@ -2,106 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A521582563
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 21:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED93E82565
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 21:15:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbfHETO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 15:14:29 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.210]:23797 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727830AbfHETO2 (ORCPT
+        id S1730417AbfHETPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 15:15:08 -0400
+Received: from smtprelay0164.hostedemail.com ([216.40.44.164]:41192 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727830AbfHETPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 15:14:28 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 55F6E400D9B90
-        for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2019 14:14:28 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id uiRAhtNhM2qH7uiRAhuOmW; Mon, 05 Aug 2019 14:14:28 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=dzFv/IwO8nS0LzTNEOrjXf+xKsPETwh6M5w7aEBoJKo=; b=CkqNqbpnX5kbciEOmfZEuJEDIu
-        5rBhPk5WDDEn7Wf6XcIVb250/7QVs3mt620PZ66j8+3MOZn3aUN2Vz5ztGMQ/Kzfj1dcR7+gkQrq1
-        nnptPu3LDK2/Pl/+kZxunxE7rPvclO1axBmRunNcsq0Rxn5HhaIfY04ivVXJ00b72SyjSPhkHpciQ
-        yHUEEdy2ahhmRyK2VE3d1A7Jz9PQ+ovpz6XQtsY9vHJknXd6+gOKoXIoqU7JFaQgiJfBsJq09x7fl
-        Rzi5u3Rzor1kVm7y9MGDiepmcUvOvnKccPPXJEjRiVTVoPaNZvl1XubYQUQ2FnBYxQ2mogBjQy60W
-        o2ovT6/w==;
-Received: from [187.192.11.120] (port=37378 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1huiR8-0037a8-QZ; Mon, 05 Aug 2019 14:14:26 -0500
-Date:   Mon, 5 Aug 2019 14:14:26 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] USB: gadget: udc: s3c2410_udc: Mark expected switch
- fall-throughs
-Message-ID: <20190805191426.GA12414@embeddedor>
+        Mon, 5 Aug 2019 15:15:07 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 005D552B7;
+        Mon,  5 Aug 2019 19:15:05 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:152:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:3138:3139:3140:3141:3142:3353:3622:3865:3867:3870:4321:4605:5007:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12296:12297:12438:12555:12740:12895:12986:13069:13311:13357:13894:14096:14097:14181:14659:14721:21080:21451:21627:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:30,LUA_SUMMARY:none
+X-HE-Tag: cub04_4957d22cc6e16
+X-Filterd-Recvd-Size: 2975
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  5 Aug 2019 19:15:03 +0000 (UTC)
+Message-ID: <0f56d1fe577707e7804386592e1a5579bfd3abbf.camel@perches.com>
+Subject: Re: [PATCH] MIPS: BCM63XX: Mark expected switch fall-through
+From:   Joe Perches <joe@perches.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 05 Aug 2019 12:15:01 -0700
+In-Reply-To: <20190805185533.GA10551@embeddedor>
+References: <20190805185533.GA10551@embeddedor>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1huiR8-0037a8-QZ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:37378
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark switch cases where we are expecting to fall through.
+On Mon, 2019-08-05 at 13:55 -0500, Gustavo A. R. Silva wrote:
+> Mark switch cases where we are expecting to fall through.
+> 
+> This patch fixes the following warning (Building: bcm63xx_defconfig mips):
+> 
+> arch/mips/pci/ops-bcm63xx.c: In function ‘bcm63xx_pcie_can_access’:
+> arch/mips/pci/ops-bcm63xx.c:474:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (PCI_SLOT(devfn) == 0)
+>       ^
+> arch/mips/pci/ops-bcm63xx.c:477:2: note: here
+>   default:
+>   ^~~~~~~
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  arch/mips/pci/ops-bcm63xx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/mips/pci/ops-bcm63xx.c b/arch/mips/pci/ops-bcm63xx.c
+> index d02eb9d16b55..925c72348fb6 100644
+> --- a/arch/mips/pci/ops-bcm63xx.c
+> +++ b/arch/mips/pci/ops-bcm63xx.c
+> @@ -474,6 +474,7 @@ static int bcm63xx_pcie_can_access(struct pci_bus *bus, int devfn)
+>  		if (PCI_SLOT(devfn) == 0)
+>  			return bcm_pcie_readl(PCIE_DLSTATUS_REG)
+>  					& DLSTATUS_PHYLINKUP;
+> +		/* else, fall through */
+>  	default:
+>  		return false;
+>  	}
 
-This patch fixes the following warning (Building: tct_hammer_defconfig arm):
-
-drivers/usb/gadget/udc/s3c2410_udc.c:314:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-drivers/usb/gadget/udc/s3c2410_udc.c:418:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Perhaps clearer as:
 ---
- drivers/usb/gadget/udc/s3c2410_udc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/pci/ops-bcm63xx.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/s3c2410_udc.c b/drivers/usb/gadget/udc/s3c2410_udc.c
-index af3e63316ace..f82208fbc249 100644
---- a/drivers/usb/gadget/udc/s3c2410_udc.c
-+++ b/drivers/usb/gadget/udc/s3c2410_udc.c
-@@ -312,6 +312,7 @@ static int s3c2410_udc_write_fifo(struct s3c2410_ep *ep,
- 	switch (idx) {
- 	default:
- 		idx = 0;
-+		/* fall through */
- 	case 0:
- 		fifo_reg = S3C2410_UDC_EP0_FIFO_REG;
- 		break;
-@@ -416,6 +417,7 @@ static int s3c2410_udc_read_fifo(struct s3c2410_ep *ep,
- 	switch (idx) {
- 	default:
- 		idx = 0;
-+		/* fall through */
- 	case 0:
- 		fifo_reg = S3C2410_UDC_EP0_FIFO_REG;
- 		break;
--- 
-2.22.0
+diff --git a/arch/mips/pci/ops-bcm63xx.c b/arch/mips/pci/ops-bcm63xx.c
+index d02eb9d16b55..a5e4b1905958 100644
+--- a/arch/mips/pci/ops-bcm63xx.c
++++ b/arch/mips/pci/ops-bcm63xx.c
+@@ -471,12 +471,11 @@ static int bcm63xx_pcie_can_access(struct pci_bus *bus, int devfn)
+ 	case PCIE_BUS_BRIDGE:
+ 		return PCI_SLOT(devfn) == 0;
+ 	case PCIE_BUS_DEVICE:
+-		if (PCI_SLOT(devfn) == 0)
+-			return bcm_pcie_readl(PCIE_DLSTATUS_REG)
+-					& DLSTATUS_PHYLINKUP;
+-	default:
+-		return false;
++		return PCI_SLOT(devfn) == 0 &&
++		       bcm_pcie_readl(PCIE_DLSTATUS_REG) & DLSTATUS_PHYLINKUP;
+ 	}
++
++	return false;
+ }
+ 
+ static int bcm63xx_pcie_read(struct pci_bus *bus, unsigned int devfn,
+
 
