@@ -2,177 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4A9C81171
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 07:23:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6579C81181
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 07:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbfHEFXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 01:23:18 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:20050 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727222AbfHEFWv (ORCPT
+        id S1727509AbfHEFYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 01:24:05 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41765 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfHEFYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 01:22:51 -0400
-X-UUID: bdbccfe973e34113a132421d215dd87c-20190805
-X-UUID: bdbccfe973e34113a132421d215dd87c-20190805
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <hsin-hsiung.wang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1095245785; Mon, 05 Aug 2019 13:22:43 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 5 Aug 2019 13:22:43 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 5 Aug 2019 13:22:43 +0800
-From:   Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <rfontana@redhat.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Ran Bi <ran.bi@mediatek.com>
-Subject: [PATCH v4 10/10] rtc: Add support for the MediaTek MT6358 RTC
-Date:   Mon, 5 Aug 2019 13:21:58 +0800
-Message-ID: <1564982518-32163-11-git-send-email-hsin-hsiung.wang@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1564982518-32163-1-git-send-email-hsin-hsiung.wang@mediatek.com>
-References: <1564982518-32163-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+        Mon, 5 Aug 2019 01:24:04 -0400
+Received: by mail-pl1-f194.google.com with SMTP id m9so35861391pls.8;
+        Sun, 04 Aug 2019 22:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=kwMEz+087NG71UJ43Y4PF8iaz73tFFj8XFrCYqheyzM=;
+        b=RYStpXRdJ6l1TB5wKrJU7HiL/1JFuert86TTPAt7bqfUAgmkKErLM2V7eOfh80Dt2X
+         z7zdYP5OzQEjRfg6GxLfMGJx5i8X3s+g//iYCtV2yZNKceD6Ya66xqmj8jEJZ0x4z3OQ
+         43TQ1PL+flTx9iYukVvXCXiibP5xo1OjP9SbWR1oZbkY1uY6zZGLDoEN0/r6wsIRVgzU
+         3Noiq/QHVUllGwiToLVLy27y4uG1aCixTU4rLvpGd8YxUaPuwP/ba/CLQxcjYW586fb6
+         1W/dT88fozfMlEJD/QgB/3tin2mbI5vBE/RSIhH9/hQtob0Oxs1EXz4vbgjetDZz0uCm
+         Yf/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=kwMEz+087NG71UJ43Y4PF8iaz73tFFj8XFrCYqheyzM=;
+        b=a3e0P6queC2BxB2HatvRW+Tl2BSUftyauGl3en0d9ygPijfEb4nyPRZBvDXHztzaFR
+         qW7ru7yIa27Aabyc8yy1KW6m4xU6mgczXNluP6QEeFUCHzZ/pLcjml3K3i1c1mYNFuzo
+         ofIWi91zFaV7yx2PRWR1Idafs/Dw8Q6Owp0KKwCHVo2IBO4jt6HRjYWhB1Cj4vSlzrWE
+         DGl639uXL9HWipk4XNb0DHoioyuIkEvA40gWmoUrdaQcYnMY8vuGAEgENes3Vu0M79pL
+         TXSFdp5gPGiZmCmJCc1p4Jxd3qkaQDp+qI1y6YP0BjFFTDAKyrby6CRzhaL0qWMgvFhu
+         A+Vw==
+X-Gm-Message-State: APjAAAW33hCF+FQq01ulgLEGErk1RFNU7hfMRsr9PBnXynN2UNbCtA5W
+        rJ96SZrOX648uSKa/ITlh1Q=
+X-Google-Smtp-Source: APXvYqwJG9ftnbw1vWkXErhnQDqqhwN5wPt0f+1hEmXWYKjYXk1pH+W1bk1sCUeNvKF1PgCaKoiyQg==
+X-Received: by 2002:a17:902:ba96:: with SMTP id k22mr146166694pls.44.1564982644123;
+        Sun, 04 Aug 2019 22:24:04 -0700 (PDT)
+Received: from localhost.localdomain ([163.152.162.125])
+        by smtp.gmail.com with ESMTPSA id o12sm12798313pjr.22.2019.08.04.22.24.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 04 Aug 2019 22:24:03 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 14:23:58 +0900
+From:   Suwan Kim <suwan.kim027@gmail.com>
+To:     shuah <shuah@kernel.org>
+Cc:     valentina.manea.m@gmail.com, gregkh@linuxfoundation.org,
+        stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] usbip: Skip DMA mapping and unmapping for urb at
+ vhci
+Message-ID: <20190805052358.GA8904@localhost.localdomain>
+References: <20190802173651.22247-1-suwan.kim027@gmail.com>
+ <20190802173651.22247-2-suwan.kim027@gmail.com>
+ <c23b3ac1-68d9-bc1e-610b-955988e11055@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c23b3ac1-68d9-bc1e-610b-955988e11055@kernel.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ran Bi <ran.bi@mediatek.com>
+On Fri, Aug 02, 2019 at 04:22:27PM -0600, shuah wrote:
+> On 8/2/19 11:36 AM, Suwan Kim wrote:
+> > vhci doesn’t do DMA for remote device. Actually, the real DMA
+> > operation is done by network card driver. vhci just passes virtual
+> > address of the buffer to the network stack, so vhci doesn’t use and
+> > need dma address of the buffer of the URB.
+> > 
+> > But HCD provides DMA mapping and unmapping function by default.
+> > Moreover, it causes unnecessary DMA mapping and unmapping which
+> > will be done again at the NIC driver and it wastes CPU cycles.
+> > So, implement map_urb_for_dma and unmap_urb_for_dma function for
+> > vhci in order to skip the DMA mapping and unmapping procedure.
+> > 
+> > When it comes to supporting SG for vhci, it is useful to use native
+> > SG list (urb->num_sgs) instead of mapped SG list because DMA mapping
+> > fnuction can adjust the number of SG list (urb->num_mapped_sgs).
+> > And vhci_map_urb_for_dma() prevents isoc pipe from using SG as
+> > hcd_map_urb_for_dma() does.
+> > 
+> > Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
+> > ---
+> >   drivers/usb/usbip/vhci_hcd.c | 19 +++++++++++++++++++
+> >   1 file changed, 19 insertions(+)
+> > 
+> > diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+> > index 000ab7225717..c62f7fa8118c 100644
+> > --- a/drivers/usb/usbip/vhci_hcd.c
+> > +++ b/drivers/usb/usbip/vhci_hcd.c
+> > @@ -1288,6 +1288,22 @@ static int vhci_free_streams(struct usb_hcd *hcd, struct usb_device *udev,
+> >   	return 0;
+> >   }
+> > +static int vhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
+> > +		gfp_t mem_flags)
+> > +{
+> > +	if (usb_endpoint_xfer_isoc(&urb->ep->desc) && urb->num_sgs) {
+> > +		WARN_ON(1);
+> 
+> Don't add WARN_ON. I cleaned them all up recently and don't want new
+> ones added.
 
-This add support for the MediaTek MT6358 RTC. Driver using
-compatible data to store different RTC_WRTGR address offset.
+Ok. I will remove it and resend v4.
 
-Review-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Signed-off-by: Ran Bi <ran.bi@mediatek.com>
----
- drivers/rtc/rtc-mt6397.c | 43 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 35 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index 828def7..e23c215 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -12,6 +12,7 @@
- #include <linux/irqdomain.h>
- #include <linux/platform_device.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/of_irq.h>
- #include <linux/io.h>
- #include <linux/mfd/mt6397/core.h>
-@@ -19,7 +20,8 @@
- #define RTC_BBPU		0x0000
- #define RTC_BBPU_CBUSY		BIT(6)
- 
--#define RTC_WRTGR		0x003c
-+#define RTC_WRTGR_MT6358	0x3a
-+#define RTC_WRTGR_MT6397	0x3c
- 
- #define RTC_IRQ_STA		0x0002
- #define RTC_IRQ_STA_AL		BIT(0)
-@@ -63,6 +65,10 @@
- #define RTC_NUM_YEARS		128
- #define RTC_MIN_YEAR_OFFSET	(RTC_MIN_YEAR - RTC_BASE_YEAR)
- 
-+struct mtk_rtc_compatible {
-+	u32			wrtgr_addr;
-+};
-+
- struct mt6397_rtc {
- 	struct device		*dev;
- 	struct rtc_device	*rtc_dev;
-@@ -70,7 +76,25 @@ struct mt6397_rtc {
- 	struct regmap		*regmap;
- 	int			irq;
- 	u32			addr_base;
-+	const struct mtk_rtc_compatible *dev_comp;
-+};
-+
-+static const struct mtk_rtc_compatible mt6358_rtc_compat = {
-+	.wrtgr_addr = RTC_WRTGR_MT6358,
-+};
-+
-+static const struct mtk_rtc_compatible mt6397_rtc_compat = {
-+	.wrtgr_addr = RTC_WRTGR_MT6397,
-+};
-+
-+static const struct of_device_id mt6397_rtc_of_match[] = {
-+	{ .compatible = "mediatek,mt6358-rtc",
-+		.data = (void *)&mt6358_rtc_compat, },
-+	{ .compatible = "mediatek,mt6397-rtc",
-+		.data = (void *)&mt6397_rtc_compat, },
-+	{}
- };
-+MODULE_DEVICE_TABLE(of, mt6397_rtc_of_match);
- 
- static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
- {
-@@ -78,7 +102,8 @@ static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
- 	int ret;
- 	u32 data;
- 
--	ret = regmap_write(rtc->regmap, rtc->addr_base + RTC_WRTGR, 1);
-+	ret = regmap_write(rtc->regmap,
-+			   rtc->addr_base + rtc->dev_comp->wrtgr_addr, 1);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -324,6 +349,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct mt6397_chip *mt6397_chip = dev_get_drvdata(pdev->dev.parent);
- 	struct mt6397_rtc *rtc;
-+	const struct of_device_id *of_id;
- 	int ret;
- 
- 	rtc = devm_kzalloc(&pdev->dev, sizeof(struct mt6397_rtc), GFP_KERNEL);
-@@ -333,6 +359,13 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	rtc->addr_base = res->start;
- 
-+	of_id = of_match_device(mt6397_rtc_of_match, &pdev->dev);
-+	if (!of_id) {
-+		dev_err(&pdev->dev, "Failed to probe of_node\n");
-+		return -EINVAL;
-+	}
-+	rtc->dev_comp = of_id->data;
-+
- 	rtc->irq = platform_get_irq(pdev, 0);
- 	if (rtc->irq < 0)
- 		return rtc->irq;
-@@ -408,12 +441,6 @@ static int mt6397_rtc_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(mt6397_pm_ops, mt6397_rtc_suspend,
- 			mt6397_rtc_resume);
- 
--static const struct of_device_id mt6397_rtc_of_match[] = {
--	{ .compatible = "mediatek,mt6397-rtc", },
--	{ }
--};
--MODULE_DEVICE_TABLE(of, mt6397_rtc_of_match);
--
- static struct platform_driver mtk_rtc_driver = {
- 	.driver = {
- 		.name = "mt6397-rtc",
--- 
-2.6.4
-
+Regards
+Suwan Kim
