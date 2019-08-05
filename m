@@ -2,90 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 632D081B92
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:15:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FFD581BC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730085AbfHENPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:15:41 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:33962 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729686AbfHENPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:15:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=mMVLKd7RxWHn6VLFRfZGxtHqq0KuNG0+8uSax8MKgBQ=; b=GuxWmFT6OVlx+jFTv+Z7Zd1Wgb
-        HphyPBudXIGS+EiQ8QoZ0QBY8tClZVVgGH5iPyjTABd+o77dK7kPqS96WGxmNbyS3buiX0OWBD12U
-        o8xM2c2KshtAzrMQ6a4sx0Tmjso0+eGJYJfo1uWDAsb/qyqgyryz6iyaVVQ0fXOUX5MM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hucpn-0006Tb-Fe; Mon, 05 Aug 2019 15:15:31 +0200
-Date:   Mon, 5 Aug 2019 15:15:31 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Tao Ren <taoren@fb.com>
-Cc:     Vladimir Oltean <olteanv@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>
-Subject: Re: [PATCH net-next v3] net: phy: broadcom: add 1000Base-X support
- for BCM54616S
-Message-ID: <20190805131531.GB24275@lunn.ch>
-References: <20190802215419.313512-1-taoren@fb.com>
- <CA+h21hrOEape89MTqCUyGFt=f6ba7Q-2KcOsN_Vw2Qv8iq86jw@mail.gmail.com>
- <53e18a01-3d08-3023-374f-2c712c4ee9ea@fb.com>
- <20190804145152.GA6800@lunn.ch>
- <2dd073b2-8495-593f-cd56-c39fd1c38a42@fb.com>
+        id S1729181AbfHENQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:16:55 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45756 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729539AbfHENQx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:16:53 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m23so79185009lje.12
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 06:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IkIX5ZdYnCvGX5CLwyhvH07IjTJLE7wT5hDwDOqSmi8=;
+        b=c+VetsYOrNiIQJJpliAISLKJ/GWL4edwcb+Q1umBrs5K2CqC7iONe7O0BHQ0sI8reL
+         LnGCQiXHBMPaTiI6j2WwOBYphz4V7sL0xjyN2hzEFoej/Flj0aQNzXhFzjC5tctPqTvn
+         TFC+MU3AEWVK5lOCmx9rh866Gw8QyWfsvptHWnkkvASk+WMUhM62ywtYy5dHDnGqw6G7
+         E4vcwFN0e3NPyGNZwl1SptWApGQ7mx5lY+/1c+MHFNilKm2m+QGtNhBgVfE0oRvEndwq
+         xaQt5htxa8rbVIsSKUOSmCyUtgAF2EbCHGkXoE6vlEvMLIjTOaz+1BdNLZd8XLZbELpu
+         m75w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IkIX5ZdYnCvGX5CLwyhvH07IjTJLE7wT5hDwDOqSmi8=;
+        b=tDM1kKOVoVU0dWew+KgQETHYgin2Jb5C0tPgf/cLvmAtLw3b2HBv9gJWMyGKu/F1bN
+         eD+MGinaWAmtvW+/3Z8k4uf0ZDeE6dA/cpA9TQa/8c42GNBZs3JV2wEAZzbAL+C4Qt1M
+         RdCUoum2A6wHdUeumcdGFpt8HK6gCDyCe5C2YKTFhVLxdyrIvkrvaNP+VMcAJKbNAGMK
+         hb/spFbxpvDuqvnuU7Pvx1REDmFBYnc5lRUzhYGgbgDRkJ1JmsDa8KgPr7XvqUN9l7vE
+         KEA9ADJrRaSGqdHTUaBeDWuBbEal0L+lIOc6N+K1aBcKYYWqDhjmOtOcpTPBkwtknFYa
+         ZlbQ==
+X-Gm-Message-State: APjAAAVmJfYpYKSRuZHshZ3C8hh1/vidl30bNmCV/0cAnZ/rie3bIYlR
+        ZcHsNzywDIDgS3V1z69zGyddghtoKj22CQc9sl5CfA==
+X-Google-Smtp-Source: APXvYqwymn69IcH0rOGNIrvvgwF0wZwLCmIPMON3Ogn2myxNValshmaRxcFgJDU7dUI26rvjavozqHXCbrfbpgc3rdM=
+X-Received: by 2002:a2e:80c8:: with SMTP id r8mr7612109ljg.168.1565011012008;
+ Mon, 05 Aug 2019 06:16:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2dd073b2-8495-593f-cd56-c39fd1c38a42@fb.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190726135954.11078-1-sudeep.holla@arm.com> <20190726135954.11078-3-sudeep.holla@arm.com>
+In-Reply-To: <20190726135954.11078-3-sudeep.holla@arm.com>
+From:   Etienne Carriere <etienne.carriere@linaro.org>
+Date:   Mon, 5 Aug 2019 15:16:41 +0200
+Message-ID: <CAN5uoS-dgtz55O+AAxEFkgtijpHj_-NSy7SkNRAkhEJN5v4PWA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] firmware: arm_scmi: Make use SCMI v2.0 fastchannel
+ for performance protocol
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>,
+        linux-kernel@vger.kernel.org,
+        Bo Zhang <bozhang.zhang@broadcom.com>,
+        Jim Quinlan <james.quinlan@broadcom.com>,
+        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
+        Gaku Inami <gaku.inami.xh@renesas.com>,
+        aidapala@qti.qualcomm.com, pajay@qti.qualcomm.com,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        wesleys@xilinx.com, Felix Burton <fburton@xilinx.com>,
+        Saeed Nowshadi <saeed.nowshadi@xilinx.com>,
+        Ionela Voinescu <Ionela.Voinescu@arm.com>,
+        Chris Redpath <Chris.Redpath@arm.com>,
+        Quentin Perret <Quentin.Perret@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 06:38:16AM +0000, Tao Ren wrote:
-> Hi Andrew,
-> 
-> On 8/4/19 7:51 AM, Andrew Lunn wrote:
-> >>> The patchset looks better now. But is it ok, I wonder, to keep
-> >>> PHY_BCM_FLAGS_MODE_1000BX in phydev->dev_flags, considering that
-> >>> phy_attach_direct is overwriting it?
-> >>
-> > 
-> >> I checked ftgmac100 driver (used on my machine) and it calls
-> >> phy_connect_direct which passes phydev->dev_flags when calling
-> >> phy_attach_direct: that explains why the flag is not cleared in my
-> >> case.
-> > 
-> > Yes, that is the way it is intended to be used. The MAC driver can
-> > pass flags to the PHY. It is a fragile API, since the MAC needs to
-> > know what PHY is being used, since the flags are driver specific.
-> > 
-> > One option would be to modify the assignment in phy_attach_direct() to
-> > OR in the flags passed to it with flags which are already in
-> > phydev->dev_flags.
-> 
+On Fri, 26 Jul 2019 at 16:00, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> SCMI v2.0 adds support for "FastChannel" which do not use a message
+> header as they are specialized for a single message.
+>
+> Only PERFORMANCE_LIMITS_{SET,GET} and PERFORMANCE_LEVEL_{SET,GET}
+> commands are supported over fastchannels. As they are optional, they
+> need to be discovered by PERFORMANCE_DESCRIBE_FASTCHANNEL command.
+> Further {LIMIT,LEVEL}_SET commands can have optional doorbell support.
+>
+> Add support for making use of these fastchannels.
+>
+> Cc: Ionela Voinescu <Ionela.Voinescu@arm.com>
+> Cc: Chris Redpath <Chris.Redpath@arm.com>
+> Cc: Quentin Perret <Quentin.Perret@arm.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  drivers/firmware/arm_scmi/perf.c | 104 +++++++++++++++++++++++++++++--
+>  1 file changed, 100 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+> index 6cce3e82e81e..b9144efbd6fb 100644
+> --- a/drivers/firmware/arm_scmi/perf.c
+> +++ b/drivers/firmware/arm_scmi/perf.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/bits.h>
+>  #include <linux/of.h>
+>  #include <linux/io.h>
+> +#include <linux/io-64-nonatomic-hi-lo.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_opp.h>
+>  #include <linux/sort.h>
+> @@ -293,7 +294,42 @@ scmi_perf_describe_levels_get(const struct scmi_handle *handle, u32 domain,
+>         return ret;
+>  }
+>
+> -static int scmi_perf_limits_set(const struct scmi_handle *handle, u32 domain,
+> +#define SCMI_PERF_FC_RING_DB(doorbell, w)              \
 
-> It sounds like a reasonable fix/enhancement to replace overriding
-> with OR, no matter which direction we are going to (either adding
-> 1000bx aneg in genphy or providing phy-specific aneg callback).
+Suggest to reformat into a macro style:
+    #define SCMI_PERF_FC_RING_DB(doorbell, w)              \
+        do { \
+                (...) \
+        } while (0)
 
-> Do you want me to send out the patch (I feel it's better to be in a
-> separate patch?) or someone else will take care of it?
+> +{                                                      \
+> +       u##w val = 0;                                   \
+> +       struct scmi_fc_db_info *db = doorbell;          \
+> +                                                       \
+> +       if ((db)->mask)                                 \
 
-Hi Tao
+remove parentheses. I would say, could simply remove `if (db->mask)` here.
 
-Please send a patch.
+> +               val = ioread##w(db->addr) & db->mask;   \
+> +       iowrite##w((u##w)db->set | val, db->addr);      \
+> +}
+> +
+> +static void scmi_perf_fc_ring_db(struct scmi_fc_db_info *db)
+> +{
+> +       if (!db || !db->addr)
+> +               return;
+> +
+> +       if (db->width == 1)
+> +               SCMI_PERF_FC_RING_DB(db, 8)
+> +       else if (db->width == 2)
+> +               SCMI_PERF_FC_RING_DB(db, 16)
+> +       else if (db->width == 4)
+> +               SCMI_PERF_FC_RING_DB(db, 32)
+> +       else /* db->width == 8 */
+> +#ifdef CONFIG_64BIT
+> +               SCMI_PERF_FC_RING_DB(db, 64)
+> +#else
+> +       {
+> +               u64 val = 0;
+> +
+> +               if (db->mask)
+> +                       val = ioread64_hi_lo(db->addr) & db->mask;
+> +               iowrite64_hi_lo(db->set, db->addr);
 
-Thanks
-       Andrew
+Is `value` missing here?
+Why not using SCMI_PERF_FC_RING_DB(db, 64) here?
+
+
+
+> +       }
+> +#endif
+> +}
+> +
+> +static int scmi_perf_mb_limits_set(const struct scmi_handle *handle, u32 domain,
+>                                    u32 max_perf, u32 min_perf)
+>  {
+>         int ret;
+> @@ -316,7 +352,23 @@ static int scmi_perf_limits_set(const struct scmi_handle *handle, u32 domain,
+>         return ret;
+>  }
+>
+> -static int scmi_perf_limits_get(const struct scmi_handle *handle, u32 domain,
+> +static int scmi_perf_limits_set(const struct scmi_handle *handle, u32 domain,
+> +                               u32 max_perf, u32 min_perf)
+> +{
+> +       struct scmi_perf_info *pi = handle->perf_priv;
+> +       struct perf_dom_info *dom = pi->dom_info + domain;
+> +
+> +       if (dom->fc_info && dom->fc_info->limit_set_addr) {
+> +               iowrite32(max_perf, dom->fc_info->limit_set_addr);
+> +               iowrite32(min_perf, dom->fc_info->limit_set_addr + 4);
+> +               scmi_perf_fc_ring_db(dom->fc_info->limit_set_db);
+> +               return 0;
+> +       }
+> +
+> +       return scmi_perf_mb_limits_set(handle, domain, max_perf, min_perf);
+> +}
+> +
+> +static int scmi_perf_mb_limits_get(const struct scmi_handle *handle, u32 domain,
+>                                    u32 *max_perf, u32 *min_perf)
+>  {
+>         int ret;
+> @@ -342,7 +394,22 @@ static int scmi_perf_limits_get(const struct scmi_handle *handle, u32 domain,
+>         return ret;
+>  }
+>
+> -static int scmi_perf_level_set(const struct scmi_handle *handle, u32 domain,
+> +static int scmi_perf_limits_get(const struct scmi_handle *handle, u32 domain,
+> +                               u32 *max_perf, u32 *min_perf)
+> +{
+> +       struct scmi_perf_info *pi = handle->perf_priv;
+> +       struct perf_dom_info *dom = pi->dom_info + domain;
+> +
+> +       if (dom->fc_info && dom->fc_info->limit_get_addr) {
+> +               *max_perf = ioread32(dom->fc_info->limit_get_addr);
+> +               *min_perf = ioread32(dom->fc_info->limit_get_addr + 4);
+> +               return 0;
+> +       }
+> +
+> +       return scmi_perf_mb_limits_get(handle, domain, max_perf, min_perf);
+> +}
+> +
+> +static int scmi_perf_mb_level_set(const struct scmi_handle *handle, u32 domain,
+>                                   u32 level, bool poll)
+>  {
+>         int ret;
+> @@ -365,7 +432,22 @@ static int scmi_perf_level_set(const struct scmi_handle *handle, u32 domain,
+>         return ret;
+>  }
+>
+> -static int scmi_perf_level_get(const struct scmi_handle *handle, u32 domain,
+> +static int scmi_perf_level_set(const struct scmi_handle *handle, u32 domain,
+> +                              u32 level, bool poll)
+> +{
+> +       struct scmi_perf_info *pi = handle->perf_priv;
+> +       struct perf_dom_info *dom = pi->dom_info + domain;
+> +
+> +       if (dom->fc_info && dom->fc_info->level_set_addr) {
+> +               iowrite32(level, dom->fc_info->level_set_addr);
+> +               scmi_perf_fc_ring_db(dom->fc_info->level_set_db);
+> +               return 0;
+> +       }
+> +
+> +       return scmi_perf_mb_level_set(handle, domain, level, poll);
+> +}
+> +
+> +static int scmi_perf_mb_level_get(const struct scmi_handle *handle, u32 domain,
+>                                   u32 *level, bool poll)
+>  {
+>         int ret;
+> @@ -387,6 +469,20 @@ static int scmi_perf_level_get(const struct scmi_handle *handle, u32 domain,
+>         return ret;
+>  }
+>
+> +static int scmi_perf_level_get(const struct scmi_handle *handle, u32 domain,
+> +                              u32 *level, bool poll)
+> +{
+> +       struct scmi_perf_info *pi = handle->perf_priv;
+> +       struct perf_dom_info *dom = pi->dom_info + domain;
+> +
+> +       if (dom->fc_info && dom->fc_info->level_get_addr) {
+> +               *level = ioread32(dom->fc_info->level_get_addr);
+> +               return 0;
+> +       }
+> +
+> +       return scmi_perf_mb_level_get(handle, domain, level, poll);
+> +}
+> +
+>  static bool scmi_perf_fc_size_is_valid(u32 msg, u32 size)
+>  {
+>         if ((msg == PERF_LEVEL_GET || msg == PERF_LEVEL_SET) && size == 4)
+> --
+> 2.17.1
+>
