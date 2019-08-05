@@ -2,113 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2810E8229A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 591E5822D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728838AbfHEQlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 12:41:02 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40564 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbfHEQlC (ORCPT
+        id S1730076AbfHEQqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 12:46:04 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:40092 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729302AbfHEQpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:41:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r1so85034968wrl.7;
-        Mon, 05 Aug 2019 09:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:references:user-agent:to:cc:subject:message-id:in-reply-to
-         :date:mime-version;
-        bh=ABajkI5eExlI/xSitmeiji8gDOSYLzGBroq8lVBwkdg=;
-        b=Jf1TsCUn3vg9vZIttQpRDxQyLLdSkih/m9y3kA3yWVwK1tHBcluvzb64DtQ25oH1/V
-         xc+QogvPb9pckGM5vfsy43/UEaWPZWupWkE5UPXHzZT5A7/7Ma3dw/KrHAyWf+SIQ5pr
-         Dcvq5iH0eSbCNiujtHHwUJZ240xv7Qi/eds7T8oztvpIBx2XrJ5va7rgiLI/SzDbk43Q
-         Z9ORvjpxuJo5BgjdcSStKB849ChK0G8vPO2yzLZGaqzz0g6WR36X48+GBvCQz9Tay6xs
-         czQE6+3WjSb7nz9cH1JuMb4iiT+97q5c2zuu/BUbeRroBVjCzNGInLsmtjQPkR05iWcK
-         8OZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:references:user-agent:to:cc:subject
-         :message-id:in-reply-to:date:mime-version;
-        bh=ABajkI5eExlI/xSitmeiji8gDOSYLzGBroq8lVBwkdg=;
-        b=ja333Nqtw20Mg9p87EzOhrEgYcG7GmjPnXLyAE4NJqb8hLRY9yagT4GFUZuohHJ2iR
-         SAmnNigQGyxIXTdBfVu1ZmiFSDyC6AneB1xemr2cNDqdrSWKVN7wIHvKnAQbW87i3zL5
-         2yhFktPRlmgHyb+QfCQ9uOSWZs4O/b6z1deXeokbgBny6NOEFGBO3n25sHdGA2wA1+KA
-         m4GALRztMhorwE0gqrRmO3FSmuWBup1q8j2x7eyTIqjnQOSEnKNiYUL7HQBeEJEQ4IAn
-         1Mr64JLB9LZNDW4q9FGYPZ3+PywIqfx2Q6j4YtdSh3rvHuSYYyy6/Fswk4l+xi6ykduS
-         NKhg==
-X-Gm-Message-State: APjAAAVKtD726JUIa1WAiplMkkuru1+L8SojAzp9AdVuxovPwFYEwhzT
-        ndKL1hSyrCfEkuxXvSgtEVL3KSef2ck=
-X-Google-Smtp-Source: APXvYqz/Y6nmSCAzfJUUyNSVsxAyHbqu5I0RQoLKZMj78OsAAfjqWRVGFPKFfORnGY8ls5vKuqHU6Q==
-X-Received: by 2002:adf:f050:: with SMTP id t16mr791943wro.99.1565023259727;
-        Mon, 05 Aug 2019 09:40:59 -0700 (PDT)
-Received: from ptitpuce ([2a01:e35:8b6a:1220:5461:8d4f:b809:4bf8])
-        by smtp.gmail.com with ESMTPSA id i12sm99839220wrx.61.2019.08.05.09.40.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 09:40:59 -0700 (PDT)
-From:   Christophe de Dinechin <christophe.de.dinechin@gmail.com>
-X-Google-Original-From: Christophe de Dinechin <christophe@dinechin.org>
-References: <20190802145017.42543-1-steven.price@arm.com> <20190802145017.42543-2-steven.price@arm.com>
-User-agent: mu4e 1.3.2; emacs 26.2
-To:     Steven Price <steven.price@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] KVM: arm64: Document PV-time interface
-Message-ID: <m1mugnmv0x.fsf@dinechin.org>
-In-reply-to: <20190802145017.42543-2-steven.price@arm.com>
-Date:   Mon, 05 Aug 2019 18:40:54 +0200
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 5 Aug 2019 12:45:31 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 67A76C015B;
+        Mon,  5 Aug 2019 16:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1565023530; bh=0LbPrLAJZPL+E0+EEkTDfdECwXLyTc0PWcn5jnubUI8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fwhulZuLa3ryglwiiwLjF4/2ithvclLv+FstYbrMDuZUUzbasLHK6bKffdBkzXJbw
+         Bze7ohv14AR+/LgKzBrDhlrZ922jio5ql9f+PUa5FEcwYYyeAXs+QkqwOQr3/UQUBb
+         hywH00ci3zmVycCrIu0L1pOeotaSjKBgV9l864aNVk2LgVEOzpRcrwGKi1EhLmzoUP
+         qure26YhNg7npw16CSBy72d8V4vyNnmbY9G/beRv3rnFEipdd05UGN+VH2rafPGzT+
+         WT9LOXYfKY/xU+TzcfDjPLJmNSAVOu/7dGib4K7dwl+sJoZTIaBIj94VkSxpryQzzU
+         TG0wIbOb+vBpA==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id CD08FA005D;
+        Mon,  5 Aug 2019 16:45:25 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 00/26] net: stmmac: Misc improvements for XGMAC
+Date:   Mon,  5 Aug 2019 18:44:27 +0200
+Message-Id: <cover.1565022597.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[ This series depend on 3caa61c20875 ("net: stmmac: Sync RX Buffer upon allocation")
+which is already in -net but not -next ]
 
-Steven Price writes:
+Misc improvements for -next which adds new features in XGMAC cores.
 
-> Introduce a paravirtualization interface for KVM/arm64 based on the
-> "Arm Paravirtualized Time for Arm-Base Systems" specification DEN 0057A.
->
-> This only adds the details about "Stolen Time" as the details of "Live
-> Physical Time" have not been fully agreed.
->
-[...]
+More info in commit logs.
 
-> +
-> +Stolen Time
-> +-----------
-> +
-> +The structure pointed to by the PV_TIME_ST hypercall is as follows:
-> +
-> +  Field       | Byte Length | Byte Offset | Description
-> +  ----------- | ----------- | ----------- | --------------------------
-> +  Revision    |      4      |      0      | Must be 0 for version 0.1
-> +  Attributes  |      4      |      4      | Must be 0
-> +  Stolen time |      8      |      8      | Stolen time in unsigned
-> +              |             |             | nanoseconds indicating how
-> +              |             |             | much time this VCPU thread
-> +              |             |             | was involuntarily not
-> +              |             |             | running on a physical CPU.
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
 
-I know very little about the topic, but I don't understand how the spec
-as proposed allows an accurate reading of the relation between physical
-time and stolen time simultaneously. In other words, could you draw
-Figure 1 of the spec from within the guest? Or is it a non-objective?
+Jose Abreu (26):
+  net: stmmac: xgmac: Fix XGMAC selftests
+  net: stmmac: xgmac: Implement MMC counters
+  net: stmmac: Fix issues when number of Queues >= 4
+  net: stmmac: xgmac: Implement set_mtl_tx_queue_weight()
+  net: stmmac: xgmac: Implement tx_queue_prio()
+  net: stmmac: Implement RSS and enable it in XGMAC core
+  net: stmmac: selftests: Add RSS test
+  net: stmmac: Implement VLAN Hash Filtering in XGMAC
+  net: stmmac: selftests: Add test for VLAN and Double VLAN Filtering
+  net: stmmac: Implement Safety Features in XGMAC core
+  net: stmmac: Add Flexible RX Parser support in XGMAC
+  net: stmmac: tc: Do not return a fragment entry
+  net: stmmac: selftests: Add a selftest for Flexible RX Parser
+  net: stmmac: Get correct timestamp values from XGMAC
+  net: stmmac: Prepare to add Split Header support
+  net: stmmac: xgmac: Correctly return that RX descriptor is not last
+    one
+  net: stmmac: Add Split Header support and enable it in XGMAC cores
+  net: stmmac: dwxgmac: Add Flexible PPS support
+  net: stmmac: Add ethtool register dump for XGMAC cores
+  net: stmmac: Add a counter for Split Header packets
+  net: stmmac: Add support for SA Insertion/Replacement in XGMAC cores
+  net: stmmac: selftests: Add tests for SA Insertion/Replacement
+  net: stmmac: xgmac: Add EEE support
+  net: stmmac: Add support for VLAN Insertion Offload
+  net: stmmac: selftests: Add selftest for VLAN TX Offload
+  net: stmmac: selftests: Return proper error code to userspace
 
-For example, if you read the stolen time before you read CNTVCT_EL0,
-isn't it possible for a lengthy event like a migration to occur between
-the two reads, causing the stolen time to be obsolete and off by seconds?
+ drivers/net/ethernet/stmicro/stmmac/common.h       |  16 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   4 +
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     | 135 +++-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    | 880 ++++++++++++++++++++-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_descs.c   | 118 ++-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  41 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c         |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  47 ++
+ drivers/net/ethernet/stmicro/stmmac/mmc.h          |   9 +
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c     | 192 +++++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  21 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   | 106 ++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 380 +++++++--
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 513 +++++++++++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    |   2 +-
+ include/linux/stmmac.h                             |   1 +
+ 16 files changed, 2361 insertions(+), 108 deletions(-)
 
---
-Cheers,
-Christophe de Dinechin (IRC c3d)
+-- 
+2.7.4
+
