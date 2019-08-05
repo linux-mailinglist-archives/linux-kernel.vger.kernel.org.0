@@ -2,83 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6C4E812CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:12:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C73812D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfHEHMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 03:12:18 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34700 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbfHEHMR (ORCPT
+        id S1727569AbfHEHO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 03:14:58 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39003 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727529AbfHEHO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 03:12:17 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w9so5974736wmd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 00:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RbR9NwuvYbRC7roIhZ22yTnxvDklbtSaOkHnRd59pwA=;
-        b=fkloISZ+Sy0hPMWNbFKzEh/r7BhtZqP4GA9lIr/AitoV+f7H+Fa7NB134TAcewDaga
-         io6DQRB5IDIoD4C8l3IdKPdVydc3xBbfQTQKNK4pvGQOtEOV7NPS9kLb/ycbLIYQ4ixj
-         S+BY0o8SGrF7PrawJsDGnZJA1XjoraSGN7GwBv63aKNlTAXgwRHD16mxFdujm2jDq5nE
-         pnxdBIoxB7WYlD0IEyZQsOy0CB7mD1+BhBc4wxNsSVMAYDlxkDIhcx21gpviKA6DUGzT
-         DGcGMFNArITF0bDZIC0/1AZ5lXMhi51gYZ8uNmpGsK/l2c/0V6EZBuSAK5qpuKlGM5Sl
-         4C7w==
+        Mon, 5 Aug 2019 03:14:58 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x4so30070095wrt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 00:14:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RbR9NwuvYbRC7roIhZ22yTnxvDklbtSaOkHnRd59pwA=;
-        b=aXNER62rzEDLLUgt2vJc7hPL5cwAODYlMjixlQCKft/+l5cWEUZ8bRMU24v/agQWNX
-         p/8fIWhmVb2f0UjNEg4FFX4sOq++PvOHQXXOpUf+rEQ4/NVOh6+R4WiU1iaYvG27j8s2
-         3Gn6H1lS4hj6cBDQDrFbAlEGAMuxf7IWLQfaiwHNondzhPo/uXoqN0wL/DPyx2c/4nL0
-         S7/r0pjAK3qko8wNDWBZhtS5YoG4NpEKZprM1bkVCNWLzBA18TsZKNz/nRHZuNcJq1qC
-         LDlB0iz9zZQeg/8If2MiOkwDQpUFpGG7f0l4eZidB86gEYo6go/jNfg+QB1QoTdOvB2L
-         dOEg==
-X-Gm-Message-State: APjAAAWu+d76pdiD7IUWnnYHHCbMQe6wuznY9pCAvYrDit+zD4Ky8Itm
-        lklRbHU96D8QRw0F9CBfzePFgjQV5N9Lmr+LsBK+LA==
-X-Google-Smtp-Source: APXvYqxEZZ7R692/L4v5lwezCh25EnrYJqzhpkuE8O4sIMjCiDsF/mYrMWwoKnFFt8t13omA8PT+Bmmhx3XjiZllRlI=
-X-Received: by 2002:a1c:cfc5:: with SMTP id f188mr15608477wmg.24.1564989135533;
- Mon, 05 Aug 2019 00:12:15 -0700 (PDT)
+        bh=AeNejt0zLzN492QJi1mkWun4jhRVeId9uvP6YFvkE6Y=;
+        b=A03eHU+EOAsZUSk+QjHXnMNBdv5LrvWG1nr8aj4UZxZBSMnubDNsrWtQNLrZVMk9sr
+         X1BVegxcs9VHyGe8BeJ+2M3tqUfeOiN9H1Xn8ftlwlFUF3sEokHv0+TtduLa4WhjbYb1
+         zdx+FyBF0v+yFyDyCkm674oVIyLhXfTLNKAcsu1O9SIdwkJQ7EpyJQlQBDOAehrW0bF+
+         OaRvb55yOtJ8hnf8kkAt9cm12TdS1nAtLTRcejRgufAcB8RNNNN2OufNt8sYC68cSShg
+         lt1f4PFlanFODX0vC91qSor641jaXLk6GiGC3QOP34RHN1KFeiS2jakGCtVUFSGgkeNp
+         9UQQ==
+X-Gm-Message-State: APjAAAW+GhHR2N8WtFq6gNbeExsp4m0Snf5wGgz+S2xULulFjVxG1ZHY
+        9NWPKROZ7q0AdwXBhc50V8QXAYOprBoVOinNBvQ=
+X-Google-Smtp-Source: APXvYqyJHbNNeU9LWJXXQV6T4TnyUcPVnQN15PKjItyX2mnuqMbukNeaNn3MFVC/NEqzIIcH18naTf92+jSdshgM/NI=
+X-Received: by 2002:a5d:630c:: with SMTP id i12mr20079707wru.312.1564989296014;
+ Mon, 05 Aug 2019 00:14:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190802074620.115029-1-anup.patel@wdc.com> <20190802074620.115029-11-anup.patel@wdc.com>
- <5b966171-4d11-237d-5a43-dc881efb7d0a@redhat.com>
-In-Reply-To: <5b966171-4d11-237d-5a43-dc881efb7d0a@redhat.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Mon, 5 Aug 2019 12:42:03 +0530
-Message-ID: <CAAhSdy0BVqagYTTnaG2hwsxxM51ZZ2QpJbZtQ21v__8UaXCOWA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 10/19] RISC-V: KVM: Handle WFI exits for VCPU
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <9ec2190f5be1c4e676a803901200364578662b6d.1564704625.git.fthain@telegraphics.com.au>
+ <fd5ccd89-987a-3d4b-5c49-9068abadf81d@linux-m68k.org>
+In-Reply-To: <fd5ccd89-987a-3d4b-5c49-9068abadf81d@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 5 Aug 2019 09:14:42 +0200
+Message-ID: <CAMuHMdW=cPipS6pmxAtU6r1MaVaPWfhGQ-AAe0E-TJGbXftHfA@mail.gmail.com>
+Subject: Re: [PATCH] m68k: Prevent some compiler warnings in coldfire builds
+To:     Greg Ungerer <gregungerer00@gmail.com>
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 2:33 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 02/08/19 09:47, Anup Patel wrote:
-> > +             if (!kvm_riscv_vcpu_has_interrupt(vcpu)) {
->
-> This can be kvm_arch_vcpu_runnable instead, since kvm_vcpu_block will
-> check it anyway before sleeping.
+Hi Greg,
 
-I think we can skip this check here because kvm_vcpu_block() is
-checking it anyway. Agree ??
+On Sat, Aug 3, 2019 at 1:36 AM Greg Ungerer <gregungerer00@gmail.com> wrote:
+> On 2/8/19 10:10 am, Finn Thain wrote:
+> > Since commit d3b41b6bb49e ("m68k: Dispatch nvram_ops calls to Atari or
+> > Mac functions"), Coldfire builds generate compiler warnings due to the
+> > unconditional inclusion of asm/atarihw.h and asm/macintosh.h.
+> >
+> > The inclusion of asm/atarihw.h causes warnings like this:
+> >
+> > In file included from ./arch/m68k/include/asm/atarihw.h:25:0,
+> >                   from arch/m68k/kernel/setup_mm.c:41,
+> >                   from arch/m68k/kernel/setup.c:3:
+> > ./arch/m68k/include/asm/raw_io.h:39:0: warning: "__raw_readb" redefined
+> >   #define __raw_readb in_8
+> >
+> > In file included from ./arch/m68k/include/asm/io.h:6:0,
+> >                   from arch/m68k/kernel/setup_mm.c:36,
+> >                   from arch/m68k/kernel/setup.c:3:
+> > ./arch/m68k/include/asm/io_no.h:16:0: note: this is the location of the previous definition
+> >   #define __raw_readb(addr) \
+> > ...
+> >
+> > This issue is resolved by dropping the asm/raw_io.h include. It turns out
+> > that asm/io_mm.h already includes that header file.
+> >
+> > Moving the relevant macro definitions helps to clarify this dependency
+> > and make it safe to include asm/atarihw.h.
+> >
+> > The other warnings look like this:
+> >
+> > In file included from arch/m68k/kernel/setup_mm.c:48:0,
+> >                   from arch/m68k/kernel/setup.c:3:
+> > ./arch/m68k/include/asm/macintosh.h:19:35: warning: 'struct irq_data' declared inside parameter list will not be visible outside of this definition or declaration
+> >   extern void mac_irq_enable(struct irq_data *data);
+> >                                     ^~~~~~~~
+> > ...
+> >
+> > This issue is resolved by adding the missing linux/irq.h include.
+> >
+> > Cc: Michael Schmitz <schmitzmic@gmail.com>
+> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
-Regards,
-Anup
+>
+> Looks good to me:
+>
+> Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+>
+> Geert: I can take this via the m68knommu tree if you like?
+> Or if you want to pick it up then no problem.
+
+If you have fixes for m68knommu for v5.3, feel free to queue it.
+Else I can queue it for v5.4.
+
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
