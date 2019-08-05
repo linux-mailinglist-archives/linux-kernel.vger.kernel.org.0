@@ -2,125 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 359088150A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:13:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D334814DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:12:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfHEJNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 05:13:25 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:62353 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728055AbfHEJMO (ORCPT
+        id S1728117AbfHEJMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:12:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34434 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728067AbfHEJMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 05:12:14 -0400
-X-UUID: e40aa37123ff4715962cb4b8709f0b49-20190805
-X-UUID: e40aa37123ff4715962cb4b8709f0b49-20190805
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1727178972; Mon, 05 Aug 2019 17:12:04 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 5 Aug 2019 17:12:06 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 5 Aug 2019 17:12:06 +0800
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Wendell Lin <wendell.lin@mediatek.com>,
-        Ivan Tseng <ivan.tseng@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH 05/11] pinctrl: mediatek: avoid virtual gpio trying to set reg
-Date:   Mon, 5 Aug 2019 17:11:54 +0800
-Message-ID: <1564996320-10897-6-git-send-email-mars.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
-References: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
+        Mon, 5 Aug 2019 05:12:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=urEmUUgdHQK/RXisjgziTewBbi9Y6Q1gTs0AWjfkJa4=; b=t/QmNF9K0u3YouJ4rprzdwLiu3
+        pq0Ju27OXGFCUDZNcHEg1LqwhycGIlPuO9U6/SIVaWFJ3jJJq32TokI9y+h6Y7nhet9HM9ZQF/6Bi
+        43+BNkAzi4O31w4OniYVzgQ+zBiJ5QxviAimO5OFhNLV5sHoBI2AyB2LMVuj7S0/TbTPB5tlQhODs
+        hPdLd+WCQj4Cckuo2FZHSP27KP/5vA+VqCt+emHHWH/89phj6Iu0X+UgrEdmFrZ+ZpB4dsa6VcnIm
+        GFA3VknvjrcVZbn0/OIVzey1wxfRVSmbi/SwzhAkTswnvvqZz9QHC67atngF7ukZiGzmNlg+BGbKK
+        TtYIr4tQ==;
+Received: from [195.167.85.94] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1huZ2I-0004x8-6E; Mon, 05 Aug 2019 09:12:11 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Takashi Iwai <tiwai@suse.de>, Robin Murphy <robin.murphy@arm.com>,
+        Michal Simek <monstr@monstr.eu>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/7] dma-mapping: add a dma_can_mmap helper
+Date:   Mon,  5 Aug 2019 12:11:55 +0300
+Message-Id: <20190805091159.7826-4-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190805091159.7826-1-hch@lst.de>
+References: <20190805091159.7826-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: E75AC4FAB53DC0AF429D6F290F51CB7C7CF6026E8BAF35E3D58736348825D0CF2000:8
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-for virtual gpios, they should not do reg setting and
-should behave as expected for eint function.
+Add a helper to check if DMA allocations for a specific device can be
+mapped to userspace using dma_mmap_*.
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |   20 ++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |    1 +
- drivers/pinctrl/mediatek/pinctrl-paris.c         |    3 +++
- 3 files changed, 24 insertions(+)
+ include/linux/dma-mapping.h |  5 +++++
+ kernel/dma/mapping.c        | 23 +++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 20e1c89..04948a6 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -226,6 +226,23 @@ static int mtk_xt_find_eint_num(struct mtk_pinctrl *hw, unsigned long eint_n)
- 	return EINT_NA;
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index f7d1eea32c78..17271857be5d 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -462,6 +462,7 @@ int dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt,
+ int dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
+ 		void *cpu_addr, dma_addr_t dma_addr, size_t size,
+ 		unsigned long attrs);
++bool dma_can_mmap(struct device *dev);
+ int dma_supported(struct device *dev, u64 mask);
+ int dma_set_mask(struct device *dev, u64 mask);
+ int dma_set_coherent_mask(struct device *dev, u64 mask);
+@@ -552,6 +553,10 @@ static inline int dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
+ {
+ 	return -ENXIO;
+ }
++static inline bool dma_can_mmap(struct device *dev)
++{
++	return false;
++}
+ static inline int dma_supported(struct device *dev, u64 mask)
+ {
+ 	return 0;
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index cdb157cd70e7..ab6aa355e1a0 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -203,6 +203,29 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+ #endif /* !CONFIG_ARCH_NO_COHERENT_DMA_MMAP */
  }
  
-+bool mtk_is_virt_gpio(struct mtk_pinctrl *hw, unsigned int gpio_n)
++/**
++ * dma_can_mmap - check if a given device supports dma_mmap_*
++ * @dev: device to check
++ *
++ * Returns %true if @dev supports dma_mmap_coherent() and dma_mmap_attrs() to
++ * map DMA allocations to userspace.
++ */
++bool dma_can_mmap(struct device *dev)
 +{
-+	const struct mtk_pin_desc *desc;
-+	bool virt_gpio = false;
++	const struct dma_map_ops *ops = get_dma_ops(dev);
 +
-+	if (gpio_n >= hw->soc->npins)
-+		return virt_gpio;
++	if (IS_ENABLED(CONFIG_ARCH_NO_COHERENT_DMA_MMAP))
++		return false;
 +
-+	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio_n];
++	if (dma_is_direct(ops)) {
++		return dev_is_dma_coherent(dev) ||
++			IS_ENABLED(CONFIG_ARCH_HAS_DMA_COHERENT_TO_PFN);
++	}
 +
-+	if (desc->funcs &&
-+	    desc->funcs[desc->eint.eint_m].name == 0)
-+		virt_gpio = true;
-+
-+	return virt_gpio;
++	return ops->mmap != NULL;
 +}
++EXPORT_SYMBOL_GPL(dma_can_mmap);
 +
- static int mtk_xt_get_gpio_n(void *data, unsigned long eint_n,
- 			     unsigned int *gpio_n,
- 			     struct gpio_chip **gpio_chip)
-@@ -278,6 +295,9 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
- 	if (err)
- 		return err;
- 
-+	if (mtk_is_virt_gpio(hw, gpio_n))
-+		return 0;
-+
- 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio_n];
- 
- 	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_MODE,
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index 1b7da42..cda1c7a0 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -299,4 +299,5 @@ int mtk_pinconf_adv_drive_set(struct mtk_pinctrl *hw,
- int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
- 			      const struct mtk_pin_desc *desc, u32 *val);
- 
-+bool mtk_is_virt_gpio(struct mtk_pinctrl *hw, unsigned int gpio_n);
- #endif /* __PINCTRL_MTK_COMMON_V2_H */
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 923264d..ef479ea 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -693,6 +693,9 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
- 	const struct mtk_pin_desc *desc;
- 	int value, err;
- 
-+	if (mtk_is_virt_gpio(hw, gpio))
-+		return 1;
-+
- 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
- 
- 	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &value);
+ /**
+  * dma_mmap_attrs - map a coherent DMA allocation into user space
+  * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
 -- 
-1.7.9.5
+2.20.1
 
