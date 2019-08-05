@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E05081C85
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:24:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F2B81C13
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731048AbfHENYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:24:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33108 "EHLO mail.kernel.org"
+        id S1730089AbfHENT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:19:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731039AbfHENYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:24:34 -0400
+        id S1730013AbfHENTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:19:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EB172173C;
-        Mon,  5 Aug 2019 13:24:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4962C20657;
+        Mon,  5 Aug 2019 13:19:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011473;
-        bh=cSXLFjvwyHw2gAGDjH+6VhM4Ml2vsJ43WmdVDFlFgTA=;
+        s=default; t=1565011194;
+        bh=DfTlh4hBVU3O1J3/0AvaO8iFXFFIPu/0VhA469P66pM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gVfeUnkHk0kt9LyC7ifSHazZQK9okQRRsUXjvLRi4dHKcP1sYqs7cXOD9sLY83fcT
-         B+04J9iiiOnUIUbQmWlJtKhwrAcobSIizMfUn3Pu+qi32OEKrGXYxsN8LftlYLcFUW
-         TtNWgKLkdHe1vMJMruW0jvw0P6slf3bVe8Nfi4UQ=
+        b=tjnkC5C1pCLOk6v47PD+0q+r3G5WYQihEvs/Yw+lvAoT9VpRD0EPzJSB3ecojkrup
+         jcl9rsYD0KRyhp04jIEB1nt9Fs5fTsEYskn1IZXJOv85l6qWdErZ0eDTvNCO36ztQ6
+         R7KIKm1UHJ7R5Gw+oetdwPnDlR7ZJX0ZMPSKSNpQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.2 101/131] mm: migrate: fix reference check race between __find_get_block() and migration
-Date:   Mon,  5 Aug 2019 15:03:08 +0200
-Message-Id: <20190805124958.718102251@linuxfoundation.org>
+        stable@vger.kernel.org, Sven Schnelle <svens@stackframe.org>,
+        Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.19 56/74] parisc: Fix build of compressed kernel even with debug enabled
+Date:   Mon,  5 Aug 2019 15:03:09 +0200
+Message-Id: <20190805124940.401662872@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
-References: <20190805124951.453337465@linuxfoundation.org>
+In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
+References: <20190805124935.819068648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,80 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Helge Deller <deller@gmx.de>
 
-commit ebdf4de5642fb6580b0763158b6b4b791c4d6a4d upstream.
+commit 3fe6c873af2f2247544debdbe51ec29f690a2ccf upstream.
 
-buffer_migrate_page_norefs() can race with bh users in the following
-way:
+With debug info enabled (CONFIG_DEBUG_INFO=y) the resulting vmlinux may get
+that huge that we need to increase the start addresss for the decompression
+text section otherwise one will face a linker error.
 
-CPU1                                    CPU2
-buffer_migrate_page_norefs()
-  buffer_migrate_lock_buffers()
-  checks bh refs
-  spin_unlock(&mapping->private_lock)
-                                        __find_get_block()
-                                          spin_lock(&mapping->private_lock)
-                                          grab bh ref
-                                          spin_unlock(&mapping->private_lock)
-  move page                               do bh work
-
-This can result in various issues like lost updates to buffers (i.e.
-metadata corruption) or use after free issues for the old page.
-
-This patch closes the race by holding mapping->private_lock while the
-mapping is being moved to a new page.  Ordinarily, a reference can be
-taken outside of the private_lock using the per-cpu BH LRU but the
-references are checked and the LRU invalidated if necessary.  The
-private_lock is held once the references are known so the buffer lookup
-slow path will spin on the private_lock.  Between the page lock and
-private_lock, it should be impossible for other references to be
-acquired and updates to happen during the migration.
-
-A user had reported data corruption issues on a distribution kernel with
-a similar page migration implementation as mainline.  The data
-corruption could not be reproduced with this patch applied.  A small
-number of migration-intensive tests were run and no performance problems
-were noted.
-
-[mgorman@techsingularity.net: Changelog, removed tracing]
-Link: http://lkml.kernel.org/r/20190718090238.GF24383@techsingularity.net
-Fixes: 89cb0888ca14 "mm: migrate: provide buffer_migrate_page_norefs()"
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-Cc: <stable@vger.kernel.org>	[5.0+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Sven Schnelle <svens@stackframe.org>
+Tested-by: Sven Schnelle <svens@stackframe.org>
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/migrate.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/parisc/boot/compressed/vmlinux.lds.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -771,12 +771,12 @@ recheck_buffers:
- 			}
- 			bh = bh->b_this_page;
- 		} while (bh != head);
--		spin_unlock(&mapping->private_lock);
- 		if (busy) {
- 			if (invalidated) {
- 				rc = -EAGAIN;
- 				goto unlock_buffers;
- 			}
-+			spin_unlock(&mapping->private_lock);
- 			invalidate_bh_lrus();
- 			invalidated = true;
- 			goto recheck_buffers;
-@@ -809,6 +809,8 @@ recheck_buffers:
+--- a/arch/parisc/boot/compressed/vmlinux.lds.S
++++ b/arch/parisc/boot/compressed/vmlinux.lds.S
+@@ -42,8 +42,8 @@ SECTIONS
+ #endif
+ 	_startcode_end = .;
  
- 	rc = MIGRATEPAGE_SUCCESS;
- unlock_buffers:
-+	if (check_refs)
-+		spin_unlock(&mapping->private_lock);
- 	bh = head;
- 	do {
- 		unlock_buffer(bh);
+-	/* bootloader code and data starts behind area of extracted kernel */
+-	. = (SZ_end - SZparisc_kernel_start + KERNEL_BINARY_TEXT_START);
++	/* bootloader code and data starts at least behind area of extracted kernel */
++	. = MAX(ABSOLUTE(.), (SZ_end - SZparisc_kernel_start + KERNEL_BINARY_TEXT_START));
+ 
+ 	/* align on next page boundary */
+ 	. = ALIGN(4096);
 
 
