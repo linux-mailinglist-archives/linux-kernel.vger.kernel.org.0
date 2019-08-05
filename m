@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C85C81AAD
+	by mail.lfdr.de (Postfix) with ESMTP id 9544681AAF
 	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:09:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbfHENIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:08:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46310 "EHLO mail.kernel.org"
+        id S1730018AbfHENIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:08:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729988AbfHENIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:08:17 -0400
+        id S1729511AbfHENIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:08:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 936C521872;
-        Mon,  5 Aug 2019 13:08:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33B4E21743;
+        Mon,  5 Aug 2019 13:08:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010497;
-        bh=YwiC+hXW1ijrw9UQ2aF7Quevho4xFUQsbUEAordRrL0=;
+        s=default; t=1565010499;
+        bh=A5ZW29GuUfPYErheh8nvrd4HYtrgpzaFd7HKDsLwvE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v5pHoQHkPUao1LzH8GzM6u61JuRqnMErVimUVn6xm6QyLBt8dbp+wUdHKUDcV+kj0
-         wSX4lcG2X32+FvJsbfDJtRaKn3swn253OTN4W/+qj+8B/vjvjeV/qjBRx+o+GGW5d4
-         M5isa2kJrLAR3fWVoVdL8l9WyClzNHg5j/X8lqmg=
+        b=LwlQ5Fvk16CvrxlSYCgoHSrqEMp6lnMTuh5UAJTGLvZeXLwQTBvp/0Egdo0jAYvCJ
+         wTsESNEi9+9gDbNVGGgvRMu8ea3vYUcfyFZeiUR1YVWwzh8hl5WLXWO/27qrUPALld
+         yt43CvfDCsBcF7Z4ZhF7NOYIApm7b2DTFkwYpQ6A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
+        Alex Vainman <alexv@mellanox.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 47/53] IB/mlx5: Move MRs to a kernel PD when freeing them to the MR cache
-Date:   Mon,  5 Aug 2019 15:03:12 +0200
-Message-Id: <20190805124933.152431582@linuxfoundation.org>
+Subject: [PATCH 4.14 48/53] IB/mlx5: Fix RSS Toeplitz setup to be aligned with the HW specification
+Date:   Mon,  5 Aug 2019 15:03:13 +0200
+Message-Id: <20190805124933.238863292@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
 References: <20190805124927.973499541@linuxfoundation.org>
@@ -47,45 +47,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yishai Hadas <yishaih@mellanox.com>
 
-commit 9ec4483a3f0f71a228a5933bc040441322bfb090 upstream.
+commit b7165bd0d6cbb93732559be6ea8774653b204480 upstream.
 
-Fix unreg_umr to move the MR to a kernel owned PD (i.e. the UMR PD) which
-can't be accessed by userspace.
+The specification for the Toeplitz function doesn't require to set the key
+explicitly to be symmetric. In case a symmetric functionality is required
+a symmetric key can be simply used.
 
-This ensures that nothing can continue to access the MR once it has been
-placed in the kernels cache for reuse.
+Wrongly forcing the algorithm to symmetric causes the wrong packet
+distribution and a performance degradation.
 
-MRs in the cache continue to have their HW state, including DMA tables,
-present. Even though the MR has been invalidated, changing the PD provides
-an additional layer of protection against use of the MR.
-
-Link: https://lore.kernel.org/r/20190723065733.4899-5-leon@kernel.org
-Cc: <stable@vger.kernel.org> # 3.10
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Link: https://lore.kernel.org/r/20190723065733.4899-7-leon@kernel.org
+Cc: <stable@vger.kernel.org> # 4.7
+Fixes: 28d6137008b2 ("IB/mlx5: Add RSS QP support")
 Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
-Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
+Reviewed-by: Alex Vainman <alexv@mellanox.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/mr.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx5/qp.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -1305,8 +1305,10 @@ static int unreg_umr(struct mlx5_ib_dev
- 	if (mdev->state == MLX5_DEVICE_STATE_INTERNAL_ERROR)
- 		return 0;
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -1425,7 +1425,6 @@ static int create_rss_raw_qp_tir(struct
+ 		}
  
--	umrwr.wr.send_flags = MLX5_IB_SEND_UMR_DISABLE_MR;
-+	umrwr.wr.send_flags = MLX5_IB_SEND_UMR_DISABLE_MR |
-+			      MLX5_IB_SEND_UMR_UPDATE_PD_ACCESS;
- 	umrwr.wr.opcode = MLX5_IB_WR_UMR;
-+	umrwr.pd = dev->umrc.pd;
- 	umrwr.mkey = mr->mmkey.key;
- 	umrwr.ignore_free_state = 1;
- 
+ 		MLX5_SET(tirc, tirc, rx_hash_fn, MLX5_RX_HASH_FN_TOEPLITZ);
+-		MLX5_SET(tirc, tirc, rx_hash_symmetric, 1);
+ 		memcpy(rss_key, ucmd.rx_hash_key, len);
+ 		break;
+ 	}
 
 
