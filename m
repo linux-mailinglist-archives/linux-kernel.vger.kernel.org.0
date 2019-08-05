@@ -2,115 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A212981F76
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 16:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E8BA81F7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 16:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbfHEOuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 10:50:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43938 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbfHEOuS (ORCPT
+        id S1729533AbfHEOu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 10:50:58 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60040 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728824AbfHEOu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 10:50:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2qYGdFyCH95p20i9diOVmgkNhS9ej7OzPV6au+bJxxs=; b=tU9LO1+KpYKVn3+h7O+gBv/p1
-        1L+WdLOavAK8sUHuXIUV4/ZpLc3Zpi+S3i+S3XlwpACB+e+oC/6tE5hK91x2zTZhQzc0E/HClYeOj
-        NRXjM6WrThdzYabhj6IsXtCSHK325voQkPRo+0OzYsBfWFJArc7U6DZJ6o31mOLPjMQYk=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hueJT-0000WM-Uw; Mon, 05 Aug 2019 14:50:16 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id D210F2742D06; Mon,  5 Aug 2019 15:50:14 +0100 (BST)
-Date:   Mon, 5 Aug 2019 15:50:14 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] SPI fixes for v5.3
-Message-ID: <20190805145014.GI6432@sirena.org.uk>
+        Mon, 5 Aug 2019 10:50:56 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x75EnCKA117512;
+        Mon, 5 Aug 2019 14:50:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=o4Sx2x0eXTgf73+qaizMv0IXsCIax7sEnso5HFnT7vM=;
+ b=HrG6ci9f4uSNhpivnGhN7aEX86wc/rvDklCeeFgyI6YTFBvbU+h/o1C41hsi+gu0Spqa
+ CrgrhhlEN8Pw3bWnsQtLSdIPK0JR24YDMNRXyakQQcgSW7KwEyPqXv49M4x4jTyE2Zen
+ I9alPxpPAq1dMwUUMXgV2UU3XAPcfNd1PwPxKFdhPX+yoI81jwwOTY2mwJuTxGOPhihi
+ E3mSfDNt7UAUhW82a4CUjTH5LPW/7UnvDQJXn7jFP84aa9CXW8mQ65vRT8EBEAJ+yLMg
+ qvsdhkJQ5WHQPIAqZTV5TJwnRBTQ/P3/K/Kaogns6luhuQEtpmvPI6QetOJNh3kps56V Hw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2u52wqyp9a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Aug 2019 14:50:48 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x75EmCQd121081;
+        Mon, 5 Aug 2019 14:50:47 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2u4ycu3t7e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Aug 2019 14:50:47 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x75EogFg003623;
+        Mon, 5 Aug 2019 14:50:43 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Aug 2019 07:50:42 -0700
+Date:   Mon, 5 Aug 2019 17:50:20 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Thiago Bonotto <thbonotto@gmail.com>
+Cc:     Karsten Keil <isdn@linux-pingi.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
+Subject: Re: [PATCH] staging: isdn: remove unnecessary parentheses
+Message-ID: <20190805145020.GE1974@kadam>
+References: <20190802202323.27117-1-thbonotto@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hABqaeELJqnDDeDE"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Cookie: Place stamp here.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190802202323.27117-1-thbonotto@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=787
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908050165
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=840 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908050165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This driver is obselete so we're just keeping it around for a couple
+kernel releases and then deleting it.  We're not taking cleanups for it.
 
---hABqaeELJqnDDeDE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+regards,
+dan carpenter
 
-The following changes since commit 8cc7720470a17558bd6f8d67df63361600e46c55:
-
-  spi: pxa2xx: Add support for Intel Elkhart Lake (2019-07-03 13:03:44 +0100)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v5.3-rc3
-
-for you to fetch changes up to a4127952859a869cf3fc5a49547dbe2ffa2eac89:
-
-  spi: pxa2xx: Add support for Intel Tiger Lake (2019-08-02 12:14:23 +0100)
-
-----------------------------------------------------------------
-spi: Fixes for v5.3
-
-A bunch of small, device specific things here plus a DT bindings fix for
-the new validatable YAML binding format.  The most notable thing is the
-fix for GPIO chip selects which fixes a corner case in updates of that
-code to modern APIs, unfortunately due to a historical mess the code
-around GPIO support is obscure, fragile and an ABI which makes and
-attempt to improve the situation painful.
-
-----------------------------------------------------------------
-Han Xu (1):
-      spi: spi-fsl-qspi: change i.MX7D RX FIFO size
-
-Jarkko Nikula (1):
-      spi: pxa2xx: Add support for Intel Tiger Lake
-
-Linus Walleij (1):
-      spi: gpio: Add SPI_MASTER_GPIO_SS flag
-
-Lubomir Rintel (1):
-      spi: pxa2xx: Balance runtime PM enable/disable on error
-
-Lukas Wunner (1):
-      spi: bcm2835: Fix 3-wire mode if DMA is enabled
-
-Rob Herring (1):
-      spi: dt-bindings: spi-controller: remove unnecessary 'maxItems: 1' from reg
-
- Documentation/devicetree/bindings/spi/spi-controller.yaml |  1 -
- drivers/spi/spi-bcm2835.c                                 |  3 ++-
- drivers/spi/spi-fsl-qspi.c                                |  2 +-
- drivers/spi/spi-gpio.c                                    |  6 ++++++
- drivers/spi/spi-pxa2xx.c                                  | 14 ++++++++++++--
- 5 files changed, 21 insertions(+), 5 deletions(-)
-
---hABqaeELJqnDDeDE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1IQiYACgkQJNaLcl1U
-h9DVrAf4rI7VruSCdKi9gWLD+MK79ppEONhiDo3KiVnkHghlOck5NtA88KzhQizW
-QF3hd29Y3hJil+r31iuPIqj9GdLKGMpFPrgovR184SrA7aUikm8niuuqh0RE0voX
-KKEAXz+AYpUxsBlLAu6pyF+5treKw+B/HmHXSaT/+Bv9TDrbrL1GcZKYLVm747ta
-BkFP6Sc/IJRgw8hq6TdRtshGoxlgT4rLaSxuMtkltbu1UoAA/qyq98rjmJvNfbSi
-b4Y0hmhY50wM9dN1F0Vj4PGmfGOTqM9YqubE6yLuWHS8dgXL/pLULjXqfxoYMjCE
-PQxWUtWfcE/GAHD/sMUs8IYK8L3Q
-=AiZ5
------END PGP SIGNATURE-----
-
---hABqaeELJqnDDeDE--
