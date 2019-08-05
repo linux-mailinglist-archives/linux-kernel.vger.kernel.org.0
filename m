@@ -2,156 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C1B080FA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 02:29:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EB2C80F9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 02:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbfHEA24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 20:28:56 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35932 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726844AbfHEA2z (ORCPT
+        id S1726845AbfHEA1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 20:27:48 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46223 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbfHEA1r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 20:28:55 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x750PN8L099080;
-        Mon, 5 Aug 2019 00:27:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc : subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=csR1CFI12mg4Wfl/I1DmedWmi55eZjSHDbam/aE57Lg=;
- b=UxnSselyJSkDrlgtrJqirrqIgp3f8N92FZdRzvuEzRyV0BK1GmSaf9C8PKnong3YQqHb
- MCpznjeWe33FH9kWSVMHzf3ueNmMrgta/dHNshxU+ezcH/SlcYl3T1BbtssK9RamgmgB
- uxHaAwYQYSv2zhs8xcIQpAvtnAqvLsICBKD/Oi73oWTTrzZCg0llYMmo1CN1xJK1/n6p
- FN3jH23l0bDAY+8rbi5+pi71wYYr59UK7ki0dfZmNagJqJGpCz4Dhc49Z+1r5jDxqopk
- IUz6WPSid5pJVTZGy3yYzlDcCEYZUIldAG3FEELFmfGykxTqdKwI/FpOYaMM05PGsiiD Lg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2u527pc6va-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Aug 2019 00:27:22 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x750Mxa2125660;
-        Mon, 5 Aug 2019 00:27:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 2u5232s8j6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 05 Aug 2019 00:27:22 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x750RLrL130645;
-        Mon, 5 Aug 2019 00:27:22 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2u5232s8hy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Aug 2019 00:27:21 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x750R78g009479;
-        Mon, 5 Aug 2019 00:27:08 GMT
-Received: from mbp2018.cdmnet.org (/82.27.120.181)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 04 Aug 2019 17:27:07 -0700
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
-        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Subject: Re: [PATCH v2 31/34] fs/nfs: convert put_page() to put_user_page*()
-To:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>
-References: <20190804224915.28669-1-jhubbard@nvidia.com>
- <20190804224915.28669-32-jhubbard@nvidia.com>
-From:   Calum Mackay <calum.mackay@oracle.com>
-Organization: Oracle
-Message-ID: <cf978e10-facc-ba5b-d7e4-d7fc2c3f7ebc@oracle.com>
-Date:   Mon, 5 Aug 2019 01:26:59 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:70.0)
- Gecko/20100101 Thunderbird/70.0a1
+        Sun, 4 Aug 2019 20:27:47 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z1so82595317wru.13
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2019 17:27:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=flOlt3yjpSud2yfClcBQJCakjyjj1uzUtPBOkv4zmakf7SyfxdzYznfT4o2iiol50y
+         tHfVnmRw/vaWwWBQD1a81Zp4WsWg/u6RK9fQMhgMATyp5avQkBWLQ8LdbZ61WxbrwTmO
+         yN6JYMoaf7UtSNc8A0y1L2RcCM8u2eQSIMCzS51Us97fq5eikVlsxX6YFx60LenZHc9M
+         BGEDERZupenoiRnG+qcvu1QRTEkWidSAAlB6oY+xssCFKfvGoO48XaoF8f5dC1lDOd83
+         yCvUetAL559XmHqNgGk587ikxfE8yhXosMYz7Hq0KOnypwMgRCRzDMHM/0bJfj9OyzUU
+         BxiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=uKLVEIdjaLm8mKMdNBFPZVM/sHcsjejJHWRYdfq79rUQMe/jqjVaK7BVAKKA++Hj8J
+         Sn9kjmtkPOoXXK6X4xdBYEUAoEaZwt/Tu44d2DRtaKqTLHpvjtBrX0579INrMxWgFzmN
+         h8xTjMzHKvjD0cGWTauddiIFh4+943YcLfzSTD3WmNcAz3fB4cP/yK2oGMeyXB3dmp0P
+         OnEufnyFGeAL/kNu0ZL5W3kPJ8COp3kE09ovqSsEl6cnGd5Oj+07l80xAL5atXN3PSRx
+         kzwNuxc7PEdnPEoWazqLZviSf9VWPfYggt8T7KWD1TWjbwQhOpWBVpN36JxhvjhE1xhQ
+         ZJkw==
+X-Gm-Message-State: APjAAAUZEgCA1n3j0vVFXAET0NL33KM06/p6pn5sKnp/ologk+ZkF/bh
+        3dt6vlYNeULr91fvR8DbOD/O7wWlTdkxKQCBn9M=
+X-Google-Smtp-Source: APXvYqwibU7GLX3LOyVjPNYYbOeHmAkhulyBOtYbLmqYbgnIFKYhNdzGGY7pp27iQqxL780d4BkBKf+JI7d4OwaDbtM=
+X-Received: by 2002:a5d:5450:: with SMTP id w16mr11442339wrv.128.1564964865769;
+ Sun, 04 Aug 2019 17:27:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190804224915.28669-32-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9339 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908050001
+Received: by 2002:a5d:5142:0:0:0:0:0 with HTTP; Sun, 4 Aug 2019 17:27:45 -0700 (PDT)
+Reply-To: ayishagddafio@mail.com
+From:   Aisha Gddafi <aishagddafi68@gmail.com>
+Date:   Sun, 4 Aug 2019 17:27:45 -0700
+Message-ID: <CAKJgomGD=pDyW80i1R-=wVphbrWdErsuvoA+1P89UHP43Pe9kQ@mail.gmail.com>
+Subject: Dear Friend (Assalamu Alaikum),
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/08/2019 11:49 pm, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> For pages that were retained via get_user_pages*(), release those pages
-> via the new put_user_page*() routines, instead of via put_page() or
-> release_pages().
-> 
-> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-> ("mm: introduce put_user_page*(), placeholder versions").
-> 
-> Cc: Calum Mackay <calum.mackay@oracle.com>
-> Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-> Cc: Anna Schumaker <anna.schumaker@netapp.com>
-> Cc: linux-nfs@vger.kernel.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->   fs/nfs/direct.c | 11 ++---------
->   1 file changed, 2 insertions(+), 9 deletions(-)
+-- 
+Dear Friend (Assalamu Alaikum),
 
-Reviewed-by: Calum Mackay <calum.mackay@oracle.com>
+I came across your e-mail contact prior a private search while in need of
+your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
+with three Children. I am the only biological Daughter of late Libyan
+President (Late Colonel Muammar Gaddafi).
 
+I have investment funds worth Twenty Seven Million Five Hundred Thousand
+United State Dollar ($27.500.000.00 ) and i need a trusted investment
+Manager/Partner because of my current refugee status, however, I am
+interested in you for investment project assistance in your country, may be
+from there, we can build business relationship in the nearest future.
 
-> diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-> index 0cb442406168..c0c1b9f2c069 100644
-> --- a/fs/nfs/direct.c
-> +++ b/fs/nfs/direct.c
-> @@ -276,13 +276,6 @@ ssize_t nfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->   	return nfs_file_direct_write(iocb, iter);
->   }
->   
-> -static void nfs_direct_release_pages(struct page **pages, unsigned int npages)
-> -{
-> -	unsigned int i;
-> -	for (i = 0; i < npages; i++)
-> -		put_page(pages[i]);
-> -}
-> -
->   void nfs_init_cinfo_from_dreq(struct nfs_commit_info *cinfo,
->   			      struct nfs_direct_req *dreq)
->   {
-> @@ -512,7 +505,7 @@ static ssize_t nfs_direct_read_schedule_iovec(struct nfs_direct_req *dreq,
->   			pos += req_len;
->   			dreq->bytes_left -= req_len;
->   		}
-> -		nfs_direct_release_pages(pagevec, npages);
-> +		put_user_pages(pagevec, npages);
->   		kvfree(pagevec);
->   		if (result < 0)
->   			break;
-> @@ -935,7 +928,7 @@ static ssize_t nfs_direct_write_schedule_iovec(struct nfs_direct_req *dreq,
->   			pos += req_len;
->   			dreq->bytes_left -= req_len;
->   		}
-> -		nfs_direct_release_pages(pagevec, npages);
-> +		put_user_pages(pagevec, npages);
->   		kvfree(pagevec);
->   		if (result < 0)
->   			break;
-> 
+I am willing to negotiate investment/business profit sharing ratio with you
+base on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply urgent
+to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated. write me at this email address(
+ayishagddafio@mail.com ) for further discussion.
+
+Best Regards
+Mrs Aisha Al-Qaddafi
+Reply to: ayishagddafio@mail.com
