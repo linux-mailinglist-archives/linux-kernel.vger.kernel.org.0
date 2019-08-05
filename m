@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7289581A51
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:05:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE3CB81A87
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbfHENE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:04:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40704 "EHLO mail.kernel.org"
+        id S1729690AbfHENGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729156AbfHENEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:04:52 -0400
+        id S1729660AbfHENGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7377F214C6;
-        Mon,  5 Aug 2019 13:04:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A4A32087B;
+        Mon,  5 Aug 2019 13:06:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010292;
-        bh=JKwcJRZkRAKgMmzGE5HGZFN8tWHhFzAl1WyKrGJDWGs=;
+        s=default; t=1565010404;
+        bh=MPicBAjW5B2tfCrFTUY6nNWTf+duO/ZDqZskNQoSqp4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MghlLT8cIfJtQknBzZgm+drv/0lLSgdBtoH4eh2K39mYQUXAEFnRfTSRwu+PMofvk
-         Uf1i6ctvv70gTdU/aOkDJgZA5U5ZnBJBcShdBMcNHeDET09TYFUx0zTRXD9ww9JdUD
-         VTm6XmAXcnwiJs2KuEaQ+CMPGg+sJ5IgCyXVTBUg=
+        b=ME8AUTKYzedLGImko87//f+KMrx/EznQ3XTMZThraIfKT2MZdAFSPWsZVXr1iLJ+I
+         zFWZVPBimFbEiQWh/63hR3cmqmaxUa/Hqgvow8XtCuGDL/gAxOf8Yfxgh14lpY8c2t
+         E3jjg+4vwoWkHuzX219dl9LOyHl01q8fXGn10pZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
         David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 10/42] btrfs: fix minimum number of chunk errors for DUP
+Subject: [PATCH 4.14 11/53] btrfs: fix minimum number of chunk errors for DUP
 Date:   Mon,  5 Aug 2019 15:02:36 +0200
-Message-Id: <20190805124926.055875161@linuxfoundation.org>
+Message-Id: <20190805124929.381997657@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
-References: <20190805124924.788666484@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -71,10 +71,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 94b61afe996c8..70aa22a8a9cce 100644
+index 85294fef10514..358e930df4acd 100644
 --- a/fs/btrfs/volumes.c
 +++ b/fs/btrfs/volumes.c
-@@ -5072,8 +5072,7 @@ static inline int btrfs_chunk_max_errors(struct map_lookup *map)
+@@ -5019,8 +5019,7 @@ static inline int btrfs_chunk_max_errors(struct map_lookup *map)
  
  	if (map->type & (BTRFS_BLOCK_GROUP_RAID1 |
  			 BTRFS_BLOCK_GROUP_RAID10 |
