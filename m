@@ -2,70 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A2F824F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 20:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 063F0824FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 20:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbfHEShA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 14:37:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729334AbfHESg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 14:36:59 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB7EF20679;
-        Mon,  5 Aug 2019 18:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565030219;
-        bh=nnWPhjdH3Y8W9jj1zLukhhmalyF/Qo4hWWnJ7K0di8E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pmu7A/LwmzSN6or76p+zMk9u3F5n1v2TZOJHXPwVJFdhI8GGrmyfPENu5ZSVjoj/4
-         9+7BhXA3l1Skc/XrKbFKQ91WLEQBSzYyuizahOSmufXBgveoAnSNXGtRZjzU4Sh4iG
-         mWFg7lalBAEzGgIHS7l1cBAXeZ6dUU/4i6to7KqI=
-Date:   Mon, 5 Aug 2019 14:36:57 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Haiyang Zhang <haiyangz@microsoft.com>
-Cc:     "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>, vkuznets <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: hv: Detect and fix Hyper-V PCI domain number
- collision
-Message-ID: <20190805183657.GD17747@sasha-vm>
-References: <1564771954-9181-1-git-send-email-haiyangz@microsoft.com>
+        id S1730198AbfHESjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 14:39:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56342 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbfHESjH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 14:39:07 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id E2FA8289EEF
+Message-ID: <cf60476860b1691ac15c17bedeee3cb908d17faf.camel@collabora.com>
+Subject: Re: [PATCH 7/9] media: hantro: Add core bits to support H264
+ decoding
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Tomasz Figa <tfiga@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>, kernel@collabora.com,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hertz Wong <hertz.wong@rock-chips.com>
+Date:   Mon, 05 Aug 2019 15:38:39 -0300
+In-Reply-To: <CAHD77HksotqFBTE84rRM=DuNFX=YJPs=YnsuFkaN-pWUNCtoxA@mail.gmail.com>
+References: <20190619121540.29320-1-boris.brezillon@collabora.com>
+         <20190619121540.29320-8-boris.brezillon@collabora.com>
+         <CAHD77HksotqFBTE84rRM=DuNFX=YJPs=YnsuFkaN-pWUNCtoxA@mail.gmail.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1564771954-9181-1-git-send-email-haiyangz@microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 06:52:56PM +0000, Haiyang Zhang wrote:
->Due to Azure host agent settings, the device instance ID's bytes 8 and 9
->are no longer unique. This causes some of the PCI devices not showing up
->in VMs with multiple passthrough devices, such as GPUs. So, as recommended
->by Azure host team, we now use the bytes 4 and 5 which usually provide
->unique numbers.
->
->In the rare cases of collision, we will detect and find another number
->that is not in use.
->Thanks to Michael Kelley <mikelley@microsoft.com> for proposing this idea.
->
->Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Hey Tomasz,
 
-Acked-by: Sasha Levin <sashal@kernel.org>
+On Thu, 2019-08-01 at 13:06 +0900, Tomasz Figa wrote:
+> Hi Boris,
+> 
+> On Wed, Jun 19, 2019 at 9:15 PM Boris Brezillon
+> <boris.brezillon@collabora.com> wrote:
+> [snip]
+> > @@ -533,10 +535,21 @@ hantro_queue_setup(struct vb2_queue *vq, unsigned int *num_buffers,
+> >                 return -EINVAL;
+> >         }
+> > 
+> > +       /* The H264 decoder needs extra size on the output buffer. */
+> > +       if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_H264_SLICE_RAW)
+> > +               extra_size0 = 128 * DIV_ROUND_UP(pixfmt->width, 16) *
+> > +                             DIV_ROUND_UP(pixfmt->height, 16);
+> > +
+> 
+> I wonder if this shouldn't be accounted for already in the sizeimage
+> returned by TRY_/S_FMT, so that the application can know the required
+> buffer size if it uses some external allocator and DMABUF memory type.
+> I know we had it like this in our downstream code, but it wasn't the
+> problem because we use minigbm, where we explicitly add the same
+> padding in the rockchip backend. Any thoughts?
+> 
 
-Bjorn, will you take it through the PCI tree or do you want me to take
-it through hyper-v?
+Nice catch. This should be fixed and accounted in TRY_FMT as you suggest.
 
---
 Thanks,
-Sasha
+Eze 
+
