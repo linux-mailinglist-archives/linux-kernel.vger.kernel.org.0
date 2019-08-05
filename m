@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F98681A3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B112181A89
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbfHENEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:04:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
+        id S1729123AbfHENG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728934AbfHENET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:04:19 -0400
+        id S1729706AbfHENGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4A552147A;
-        Mon,  5 Aug 2019 13:04:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 041FE2075B;
+        Mon,  5 Aug 2019 13:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010258;
-        bh=/cICx+80dZta7bh9CvT/1n+AsO2ktql8iA571OGiJ4c=;
+        s=default; t=1565010412;
+        bh=hycwXyAjIzzmKAHREUUugHq0647YvB+ksnQPYoyMh/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eyeEVnyiaMGd0LA8Vn6Sje2mDKEbXoPJEqUxLmnUaiQ0PnzO2wTfPFRuYUAVbCrx6
-         xzAKbOsx2OoPMLYHhBnu8X2DwcIrwhlFVy2hJtNeIcG6XRe9dnHSYQjjXGztCnLGuN
-         uS3b6oz0CEjvMfBwq+bM2fp+J3HWX+2Bi4/i1MmQ=
+        b=NiySC5Il/4DEUF5uYdkLhssjJZTGhGdZOfsnIMgNMeNevhglitR92DVMP38NI77bl
+         bA/ZK77Cjp9wmggqD6RUWUFF/nBmo5NYWHzzYGbHoReZ16VmRSY5BbDBmJzOWqh7FI
+         6bHhy8bqduSwswVsomshX8NTBuj2aftPezSRcX3E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 02/22] ARM: dts: rockchip: Mark that the rk3288 timer might stop in suspend
+Subject: [PATCH 4.14 14/53] ceph: return -ERANGE if virtual xattr value didnt fit in buffer
 Date:   Mon,  5 Aug 2019 15:02:39 +0200
-Message-Id: <20190805124919.374971262@linuxfoundation.org>
+Message-Id: <20190805124929.675491068@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
-References: <20190805124918.070468681@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8ef1ba39a9fa53d2205e633bc9b21840a275908e ]
+[ Upstream commit 3b421018f48c482bdc9650f894aa1747cf90e51d ]
 
-This is similar to commit e6186820a745 ("arm64: dts: rockchip: Arch
-counter doesn't tick in system suspend").  Specifically on the rk3288
-it can be seen that the timer stops ticking in suspend if we end up
-running through the "osc_disable" path in rk3288_slp_mode_set().  In
-that path the 24 MHz clock will turn off and the timer stops.
+The getxattr manpage states that we should return ERANGE if the
+destination buffer size is too small to hold the value.
+ceph_vxattrcb_layout does this internally, but we should be doing
+this for all vxattrs.
 
-To test this, I ran this on a Chrome OS filesystem:
-  before=$(date); \
-  suspend_stress_test -c1 --suspend_min=30 --suspend_max=31; \
-  echo ${before}; date
+Fix the only caller of getxattr_cb to check the returned size
+against the buffer length and return -ERANGE if it doesn't fit.
+Drop the same check in ceph_vxattrcb_layout and just rely on the
+caller to handle it.
 
-...and I found that unless I plug in a device that requests USB wakeup
-to be active that the two calls to "date" would show that fewer than
-30 seconds passed.
-
-NOTE: deep suspend (where the 24 MHz clock gets disabled) isn't
-supported yet on upstream Linux so this was tested on a downstream
-kernel.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Acked-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/rk3288.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ceph/xattr.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 04ea209f1737f..98abb053b7daf 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -205,6 +205,7 @@
- 			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
- 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		clock-frequency = <24000000>;
-+		arm,no-tick-in-suspend;
- 	};
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index e1c4e0b12b4cd..0376db8a74f85 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -75,7 +75,7 @@ static size_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
+ 	const char *ns_field = " pool_namespace=";
+ 	char buf[128];
+ 	size_t len, total_len = 0;
+-	int ret;
++	ssize_t ret;
  
- 	timer: timer@ff810000 {
+ 	pool_ns = ceph_try_get_string(ci->i_layout.pool_ns);
+ 
+@@ -99,11 +99,8 @@ static size_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
+ 	if (pool_ns)
+ 		total_len += strlen(ns_field) + pool_ns->len;
+ 
+-	if (!size) {
+-		ret = total_len;
+-	} else if (total_len > size) {
+-		ret = -ERANGE;
+-	} else {
++	ret = total_len;
++	if (size >= total_len) {
+ 		memcpy(val, buf, len);
+ 		ret = len;
+ 		if (pool_name) {
+@@ -761,8 +758,11 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+ 		if (err)
+ 			return err;
+ 		err = -ENODATA;
+-		if (!(vxattr->exists_cb && !vxattr->exists_cb(ci)))
++		if (!(vxattr->exists_cb && !vxattr->exists_cb(ci))) {
+ 			err = vxattr->getxattr_cb(ci, value, size);
++			if (size && size < err)
++				err = -ERANGE;
++		}
+ 		return err;
+ 	}
+ 
 -- 
 2.20.1
 
