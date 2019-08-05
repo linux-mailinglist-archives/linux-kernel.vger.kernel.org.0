@@ -2,65 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1905F8140B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 10:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C01D81410
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 10:21:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfHEIU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 04:20:27 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40056 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbfHEIU0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 04:20:26 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m8so44931507lji.7
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 01:20:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=PK19ZBciZouvMJRe4+iw8z9JI58DHPEU7r8KStdt74c=;
-        b=dhEZmTA5dmm0dZpU6i+uuLmnIFCF4NGl+cqWFKRQV0hqXZK6AcSusu4JhOwpuNiyyq
-         ToLAySJuCfamYPBmS/DsZHP16/xSCgSsMNeuWORC8gxJ0aIc/qZKh7fR6SqP1MIkSlIt
-         eCAY8uKjWd40gNC/pjsHDRBYOtWHvWoe/krYgtriosiCPDTWE7lg5V30+O0xKgPYx06O
-         1Irnq6EDlBIvxXx6CCfuuZJajKXYTmRvPd5ev8WyhyMq22SQnqFNhIFjis0vI78inNq6
-         2TxLA8qqZC0sQL2SRPNKrhxhfB1Bhlt5PHL24kUdOTFwKZgTGNupSne+lOPMLIkoutt+
-         XcWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=PK19ZBciZouvMJRe4+iw8z9JI58DHPEU7r8KStdt74c=;
-        b=CjIbH3cRLhQ3MVDoZDcrTNS+8U/56nU+sraaRtUFgzXteHchSclZadnGNc/GUGjqfJ
-         2kOeeTK6aw0rApD9tX36rpWWZxYiDJxto1g9Cq9gkt9KKzgGxQ+HsB4hErKLwEZAz74e
-         rUjYSsmPsXLyyNN+t40gD9Kkm1X3WHQt2mmNo6EnP7dzay7zNByEBFH1R83SLyejlBfA
-         ZhYeUuWQuJ35C7Lqde+/S6qhXk20ARL9xzefnI80MfcWu3NNZEKh5fVGxUi/jSesEdSm
-         SucssXtnG89JXSDE0/FqXdA6MgmtAyc6Ko5+sHVDrfi0rPn6wd21y+evX5wrH8a8LFAC
-         VHAA==
-X-Gm-Message-State: APjAAAUtGkNClRr4Us785X20nOinj3fPuLDCH7X5GPMMIctBbLPHtWGa
-        D9DAY1mWQLW3ppaqIK9SS33ZI7UGFq/McBCveg==
-X-Google-Smtp-Source: APXvYqxQQoCrDimngerY7T64JV2GiY43Ecr7Lg4BIJV2DvMBEGoHruqFU49q6aoVNV77G9EoXOPSE08jouqALwGN+FM=
-X-Received: by 2002:a2e:9b81:: with SMTP id z1mr78359951lji.101.1564993224939;
- Mon, 05 Aug 2019 01:20:24 -0700 (PDT)
+        id S1727807AbfHEIV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 04:21:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43530 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726394AbfHEIVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 04:21:55 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 41395309175E;
+        Mon,  5 Aug 2019 08:21:55 +0000 (UTC)
+Received: from [10.72.12.115] (ovpn-12-115.pek2.redhat.com [10.72.12.115])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 176741000321;
+        Mon,  5 Aug 2019 08:21:49 +0000 (UTC)
+Subject: Re: [PATCH V2 7/9] vhost: do not use RCU to synchronize MMU notifier
+ with worker
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20190731084655.7024-1-jasowang@redhat.com>
+ <20190731084655.7024-8-jasowang@redhat.com> <20190731123935.GC3946@ziepe.ca>
+ <7555c949-ae6f-f105-6e1d-df21ddae9e4e@redhat.com>
+ <20190731193057.GG3946@ziepe.ca>
+ <a3bde826-6329-68e4-2826-8a9de4c5bd1e@redhat.com>
+ <20190801141512.GB23899@ziepe.ca>
+ <42ead87b-1749-4c73-cbe4-29dbeb945041@redhat.com>
+ <20190802094331-mutt-send-email-mst@kernel.org>
+ <6c3a0a1c-ce87-907b-7bc8-ec41bf9056d8@redhat.com>
+ <20190805020752-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <817bad8f-6a7d-e192-3a3f-621de7b0300b@redhat.com>
+Date:   Mon, 5 Aug 2019 16:21:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:ab3:6e9a:0:0:0:0:0 with HTTP; Mon, 5 Aug 2019 01:20:23 -0700 (PDT)
-Reply-To: virginiecharl4222@gmail.com
-From:   "Mrs. Virginie Charlotte" <roseamadueke@gmail.com>
-Date:   Mon, 5 Aug 2019 09:20:23 +0100
-Message-ID: <CAGK8kqOAewXh2XXRdrZuVGKYgJMJiYbujSjmXoTBf7e7obXXuA@mail.gmail.com>
-Subject: Dear Beloved
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190805020752-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 05 Aug 2019 08:21:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend,
 
-Sorry to invade your privacy through this media. I have bad health
-condition and I'm just looking for someone I can trust to lead
-a charity work for me. If you are interested, come back to me as
-as soon as possible for further explanation.
+On 2019/8/5 下午2:28, Michael S. Tsirkin wrote:
+> On Mon, Aug 05, 2019 at 12:33:45PM +0800, Jason Wang wrote:
+>> On 2019/8/2 下午10:03, Michael S. Tsirkin wrote:
+>>> On Fri, Aug 02, 2019 at 05:40:07PM +0800, Jason Wang wrote:
+>>>> Btw, I come up another idea, that is to disable preemption when vhost thread
+>>>> need to access the memory. Then register preempt notifier and if vhost
+>>>> thread is preempted, we're sure no one will access the memory and can do the
+>>>> cleanup.
+>>> Great, more notifiers :(
+>>>
+>>> Maybe can live with
+>>> 1- disable preemption while using the cached pointer
+>>> 2- teach vhost to recover from memory access failures,
+>>>      by switching to regular from/to user path
+>>
+>> I don't get this, I believe we want to recover from regular from/to user
+>> path, isn't it?
+> That (disable copy to/from user completely) would be a nice to have
+> since it would reduce the attack surface of the driver, but e.g. your
+> code already doesn't do that.
+>
 
-Thanks for your collaboration
+Yes since it requires a lot of changes.
 
-Mrs. Virginie Charlotte
+
+>
+>>> So if you want to try that, fine since it's a step in
+>>> the right direction.
+>>>
+>>> But I think fundamentally it's not what we want to do long term.
+>>
+>> Yes.
+>>
+>>
+>>> It's always been a fundamental problem with this patch series that only
+>>> metadata is accessed through a direct pointer.
+>>>
+>>> The difference in ways you handle metadata and data is what is
+>>> now coming and messing everything up.
+>>
+>> I do propose soemthing like this in the past:
+>> https://www.spinics.net/lists/linux-virtualization/msg36824.html. But looks
+>> like you have some concern about its locality.
+> Right and it doesn't go away. You'll need to come up
+> with a test that messes it up and triggers a worst-case
+> scenario, so we can measure how bad is that worst-case.
+
+
+
+
+>
+>> But the problem still there, GUP can do page fault, so still need to
+>> synchronize it with MMU notifiers.
+> I think the idea was, if GUP would need a pagefault, don't
+> do a GUP and do to/from user instead.
+
+
+But this still need to be synchronized with MMU notifiers (or using 
+dedicated work for GUP).
+
+
+>   Hopefully that
+> will fault the page in and the next access will go through.
+>
+>> The solution might be something like
+>> moving GUP to a dedicated kind of vhost work.
+> Right, generally GUP.
+>
+>>> So if continuing the direct map approach,
+>>> what is needed is a cache of mapped VM memory, then on a cache miss
+>>> we'd queue work along the lines of 1-2 above.
+>>>
+>>> That's one direction to take. Another one is to give up on that and
+>>> write our own version of uaccess macros.  Add a "high security" flag to
+>>> the vhost module and if not active use these for userspace memory
+>>> access.
+>>
+>> Or using SET_BACKEND_FEATURES?
+> No, I don't think it's considered best practice to allow unpriveledged
+> userspace control over whether kernel enables security features.
+
+
+Get this.
+
+
+>
+>> But do you mean permanent GUP as I did in
+>> original RFC https://lkml.org/lkml/2018/12/13/218?
+>>
+>> Thanks
+> Permanent GUP breaks THP and NUMA.
+
+
+Yes.
+
+Thanks
+
+
+>
+>>>
