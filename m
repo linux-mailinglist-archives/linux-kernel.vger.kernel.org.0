@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CCD78131D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BE381321
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfHEH06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 03:26:58 -0400
-Received: from mail-pg1-f178.google.com ([209.85.215.178]:44157 "EHLO
-        mail-pg1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfHEH05 (ORCPT
+        id S1727668AbfHEH1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 03:27:07 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33225 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfHEH1G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 03:26:57 -0400
-Received: by mail-pg1-f178.google.com with SMTP id i18so39251082pgl.11;
-        Mon, 05 Aug 2019 00:26:57 -0700 (PDT)
+        Mon, 5 Aug 2019 03:27:06 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g2so39179284pfq.0;
+        Mon, 05 Aug 2019 00:27:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=EimvqE0jwyqP2WGVedMuh7qrn6YSjJuzP7Su4aO08UA=;
-        b=PxzyLfa7re80m4D/ZGKf2uK1mGVnjoa23fNDxiw41OD6EYPoVxEksmkmpjZXTZJr3d
-         f35V4qcpVFb1fWfZvDv+6oPRtrusv3q7rJtlen32b+gK3sn2PG3lwNUDPqGKyadLvvjV
-         zTavhVtYpLjrovjEYS+rromXBFnHjMigjkUQYyv7AtaiVmGJD0d011li/a1Ldvoy5Bd0
-         tLcxrBTk0RLH6q+Uro0RKlEQcY4L2Sg58j43ckvIRI45UW53CWldSZhbm4xo39YulDF4
-         1hiIhZgj3sQfyUMFguThXe0LxeL28bXfxyS+DxT446cTVLRIjm+syT0sq7bCT752RAIB
-         ZpDA==
+        bh=0kexfm7iH3i/VSJOwC3FuVy5N6LFfHFxQSV+3oxaWZQ=;
+        b=dJaEB+8qJn0QJtz/DJ3fkifzpjMhNhP7Ip6R3bWOUO5sV3RGwnD1HHdfHzlRGLPkZk
+         xfof7rzNGH3bt9HfHe4EDHfDhT7wLwDoUwaVzW5JwCKbjKpQu8X/sHqheIPhMcdPC4hY
+         2IgYzu3PmznaI1mecw3zg2x0M1sbXGXFPbyk9nxY2QqMz3OknkNaNGMTeK0rkd6dRgop
+         UF6FXd1AkZLw0aZ7xdUppCbhP9rL9QwgHKQH2W9HDMnvbuJzCt/2t5SbzSGqNUFb1kZn
+         kYk4GoLoCWK/PS0JN/JE1pIRvFSo+Np/FD4AdHM2uSLRtJk8Wps4WDwJq5LyYdZzMSF+
+         iUwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=EimvqE0jwyqP2WGVedMuh7qrn6YSjJuzP7Su4aO08UA=;
-        b=SC7f8faNYRSkTsFXtnLq3LkPGTeZmIxUfMLksWfpFSyL1pVnojLS0z99MVjNX+6JKs
-         o4fJoZXTn32yvwJY3TzdSbbhlenjV501d7Kd0ePQhDDCpMbQVxuGAxHkRXmixe0X2w3q
-         221iGNeUqzEuJ22DYmfDnOVMdciquiHTYOZi7KYSJ8MY+3mDORTKzojWTt7MZkgGLSsq
-         IpzBYzqTkfLAkeHZLbfZH9xTJNjXYDPF7mOlBd84ppOGYrLVJb+ZDxNyq9aAQpHn7fIr
-         jphpOkBXyDJ6d2NeJkP+jQ9WmK/wTqaue5u93O2qeMYXSdmzWjm/vKXnqbgXG5D9KvoE
-         VBxw==
-X-Gm-Message-State: APjAAAXoRjWkQCGOahRd+bU1p1f6cTz6fkmaYJX33sH9o6bGzJOLQRsJ
-        RiE6cZYdHOBwnHXcS6LYepWKzUg9yt9scg==
-X-Google-Smtp-Source: APXvYqyiGHjzQnzFsluj5XM90F8t6hyJvvi+Lq6zx2SX9OAWkCqaHYGp6mt9zRTsPtj1MgZ6nW2LUQ==
-X-Received: by 2002:a63:c006:: with SMTP id h6mr4759884pgg.290.1564990016921;
-        Mon, 05 Aug 2019 00:26:56 -0700 (PDT)
+        bh=0kexfm7iH3i/VSJOwC3FuVy5N6LFfHFxQSV+3oxaWZQ=;
+        b=nn5X+5c8WGOlLbZU9Jij/FakT0JgEDRkhRh2dBcXQzDsyoa61zU+Q5blaTWJgIqyY1
+         UAbg1S8cZUnqNzJToMc3K/iFvql8hy5fieR/8cxp5gmeUMJXZu26nY3u+Jn1X0M4kMSF
+         fh6nyNP2ssLHrQHac67Vxa37XhLfL5IioZv0wWq/zm93UD0+Yjl1X9pSGnQDmfMr04BF
+         inG+ZPaMInbQ1ouNTJP/K0m707lSH7Pqni3nopZlogztB6mqbmVXj4GE3TBCjWVcYKE3
+         LFcRz8DDbEEdlIsYGjukQZfca/8Ey/LLi0VPtNRM+3oU7AA3g2vN37zkjSgS2s0jRcm0
+         GKnw==
+X-Gm-Message-State: APjAAAXuHGssKrTVtQ3UdDDAnt+JkPAa+G2dnuwZ6zCo9uV0QYrOVr1U
+        TKW2URt7Tf7u3/ZKDWjVXF8=
+X-Google-Smtp-Source: APXvYqwr8wyNYy9oYI9NOwS4OQLaD5zm0ijr5UzV59jmk+rn8vspVToRE09Z07ImmiAnY7uL2haDqw==
+X-Received: by 2002:a63:1b56:: with SMTP id b22mr18210606pgm.265.1564990026218;
+        Mon, 05 Aug 2019 00:27:06 -0700 (PDT)
 Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id x25sm113662267pfa.90.2019.08.05.00.26.53
+        by smtp.gmail.com with ESMTPSA id e13sm102354383pff.45.2019.08.05.00.27.03
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 00:26:55 -0700 (PDT)
+        Mon, 05 Aug 2019 00:27:05 -0700 (PDT)
 From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Andy Whitcroft <apw@canonical.com>,
-        Joe Perches <joe@perches.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2] Documentation/checkpatch: Prefer str_has_prefix over strncmp
-Date:   Mon,  5 Aug 2019 15:26:45 +0800
-Message-Id: <20190805072645.32691-1-hslester96@gmail.com>
+Cc:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH 1/2] ia64: hp-sim: Replace strncmp with str_has_prefix
+Date:   Mon,  5 Aug 2019 15:26:59 +0800
+Message-Id: <20190805072659.32745-1-hslester96@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -62,61 +61,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "strncmp() on string prefix" to
-Documentation/process/deprecated.rst since using strncmp()
-to check whether a string starts with a prefix is error-prone.
-The safe replacement is str_has_prefix().
+strncmp(str, const, len) is error-prone since the len is
+easy to be wrong because of counting error or sizeof(const)
+without - 1.
 
-Also add check to the newly introduced deprecated_string_apis
-in checkpatch.pl.
-
-This patch depends on patch:
-"Documentation/checkpatch: Prefer stracpy/strscpy over
-strcpy/strlcpy/strncpy."
+Use the newly introduced str_has_prefix() to substitute
+it to make code better.
 
 Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
-Changes in v2:
-  - Use "strncmp() on string prefix" instead of
-    "strncmp()" to make it more precise.
-  - Remove "c:func" and use "strncmp" directly
-    in description.
+ arch/ia64/hp/sim/boot/bootloader.c | 2 +-
+ arch/ia64/hp/sim/simeth.c          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- Documentation/process/deprecated.rst | 8 ++++++++
- scripts/checkpatch.pl                | 1 +
- 2 files changed, 9 insertions(+)
-
-diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-index 56280e108d5a..96fa32aba189 100644
---- a/Documentation/process/deprecated.rst
-+++ b/Documentation/process/deprecated.rst
-@@ -109,6 +109,14 @@ the given limit of bytes to copy. This is inefficient and can lead to
- linear read overflows if a source string is not NUL-terminated. The
- safe replacement is stracpy() or strscpy().
+diff --git a/arch/ia64/hp/sim/boot/bootloader.c b/arch/ia64/hp/sim/boot/bootloader.c
+index 6d804608dc81..bcb7af27466c 100644
+--- a/arch/ia64/hp/sim/boot/bootloader.c
++++ b/arch/ia64/hp/sim/boot/bootloader.c
+@@ -112,7 +112,7 @@ start_bootloader (void)
+ 	ssc((long) &stat, 0, 0, 0, SSC_WAIT_COMPLETION);
  
-+strncmp() on string prefix
-+--------------------------
-+strncmp() is often used to test if a string starts with a prefix by
-+strncmp(str, prefix, length of prefix). This is error-prone because length
-+of prefix can have counting error if using a constant length, or use
-+sizeof(prefix) without - 1. Also, if the prefix is a pointer, sizeof(prefix)
-+leads to a wrong size. The safe replacement is str_has_prefix().
-+
- Variable Length Arrays (VLAs)
- -----------------------------
- Using stack VLAs produces much worse machine code than statically
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 0ae9ae01d855..38e82d2ac286 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -609,6 +609,7 @@ our %deprecated_string_apis = (
- 	"strcpy"		=> "stracpy or strscpy",
- 	"strlcpy"		=> "stracpy or strscpy",
- 	"strncpy"		=> "stracpy or strscpy - for non-NUL-terminated uses, strncpy dest should be __nonstring",
-+	"strncmp"		=> "str_has_prefix",
- );
+ 	elf = (struct elfhdr *) mem;
+-	if (elf->e_ident[0] == 0x7f && strncmp(elf->e_ident + 1, "ELF", 3) != 0) {
++	if (elf->e_ident[0] == 0x7f && !str_has_prefix(elf->e_ident + 1, "ELF", 3)) {
+ 		cons_write("not an ELF file\n");
+ 		return;
+ 	}
+diff --git a/arch/ia64/hp/sim/simeth.c b/arch/ia64/hp/sim/simeth.c
+index f39ef2b4ed72..9ad812cd8d0e 100644
+--- a/arch/ia64/hp/sim/simeth.c
++++ b/arch/ia64/hp/sim/simeth.c
+@@ -248,7 +248,7 @@ simeth_open(struct net_device *dev)
+ /* copied from lapbether.c */
+ static __inline__ int dev_is_ethdev(struct net_device *dev)
+ {
+-       return ( dev->type == ARPHRD_ETHER && strncmp(dev->name, "dummy", 5));
++       return (dev->type == ARPHRD_ETHER && !str_has_prefix(dev->name, "dummy"));
+ }
  
- #Create a search pattern for all these strings apis to speed up a loop below
+ 
 -- 
 2.20.1
 
