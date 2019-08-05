@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D47638196C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 14:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E755881969
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 14:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbfHEMiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 08:38:10 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:45670 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728058AbfHEMiI (ORCPT
+        id S1728820AbfHEMiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 08:38:14 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:39340 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727357AbfHEMiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Aug 2019 08:38:08 -0400
-Received: by mail-io1-f69.google.com with SMTP id e20so91480651ioe.12
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 05:38:08 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id y13so91981902iol.6
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 05:38:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=lUBKmETtf0Ze6PAhIT1SVwO5KKpxge00CVK1/gtGagY=;
-        b=MsAiB5wZadffxvtZQNnFN6BP2Y4lVwswnaWKXPgc4FpSW6c+St2jwXCGFANBDZVnfp
-         cx9yuu0c+IFpbciNc/6m5RcQd7PgbtWPX4rxTCEQz0TkcEz+2ticQ5bemRBaFMYd9lUO
-         0PVEiI4kru2UF2JNW565xjFrOj+7dZ+NqiPoWhJgXV2WGrmUbiiUVtcAgJo9Vvy96YxG
-         kvFbHb1lhszumUR0Q46YsluIQVmN7jmBDt2WtVJRBZnu6BB2Wm7ZFQZyGewpV1Qs7eJQ
-         1dlcvc1h+PO2ew9Tle939Ks+TshG7vyqJPoT58DriS4rcoHF3nZQZJVTVb5D+kNLFsHv
-         Uymw==
-X-Gm-Message-State: APjAAAW8RzpWMV3USMHeUaTzfJcyZyed06TI+V38hgpGcVOvwvOKeiBY
-        FZNz3yk4kcTXbpbpqz2KM6SxjVOniO6x13dCAnBbLsFQlFsf
-X-Google-Smtp-Source: APXvYqyO/N4F8W54SWvkyjNKd1YVHe7viWFIZ8pUrmpSo/Ozc2VC1FDyuLEXxT5AHQTXgONLLCl49FoTciOKuH3pwOXdEGlkoZeP
+        bh=nYCr6+NB+DhMclV9O8Cq6WZJ2tcvKnN0CPqIOJAMah0=;
+        b=iJsFo7YjR8+ZoddgwpgXmAyktmcwjIa9PBRmpzX+vMMcas0neJJE6r4+fLxAKR3Ggn
+         eA83DaMNCIqnkBsONBeUumwLfCjryyTy1FkRUufIX7KxWRj7qKdHmbJNNNeUu09PIMc6
+         CQXmMJewVXrZTkutMp2+eJdHATG4xI/HrMiP4ZqjjEqPxFrASB63aSQgQKZ2FVZpful4
+         b2hpsd+N5fhm0xWF8OEqYIjOE3SVofS3RqpXA4f1gAo1dIkJESk5PbMi0pASdv5+f/kA
+         bDkr8ilS432RLEBMC/cVwb1uo9nqJhs0JAfzHQkkoFS2ZVUFFIOyaR1c+54Rv1PC0Uox
+         yahA==
+X-Gm-Message-State: APjAAAVYB/mYW2rq+tLpDi0q0P2hb+i5CsPykShRITDKHeXojIkrknjN
+        3UNqgUtUmifi0gHMrqmlTv7J58bl27vQ3TgIDQNzuwW2043r
+X-Google-Smtp-Source: APXvYqxhP/Nk3/f7lDzKn5fuYde0q4RcKdvV+W6XuLX3sezEya/N+8ZuA3xdQfFYbN9TBcIYu+EHU38kkcUSvgcKnSQL3aAAIO6r
 MIME-Version: 1.0
-X-Received: by 2002:a5d:940b:: with SMTP id v11mr66472275ion.69.1565008687621;
+X-Received: by 2002:a5e:9314:: with SMTP id k20mr4529596iom.235.1565008687355;
  Mon, 05 Aug 2019 05:38:07 -0700 (PDT)
 Date:   Mon, 05 Aug 2019 05:38:07 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e5742c058f5dfaef@google.com>
-Subject: KASAN: slab-out-of-bounds Write in lg4ff_init
-From:   syzbot <syzbot+94e2b9e9c7d1dd332345@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000e15ee0058f5dfa81@google.com>
+Subject: WARNING in kernfs_new_node
+From:   syzbot <syzbot+499aea72daa2cea73cb7@syzkaller.appspotmail.com>
+To:     benh@kernel.crashing.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, rafael@kernel.org,
+        syzkaller-bugs@googlegroups.com, tj@kernel.org,
+        torvalds@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,179 +50,97 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=144c21dc600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-dashboard link: https://syzkaller.appspot.com/bug?extid=94e2b9e9c7d1dd332345
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169e8542600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ec8262600000
+HEAD commit:    1e78030e Merge tag 'mmc-v5.3-rc1' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12aab5cc600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e397351d2615e10
+dashboard link: https://syzkaller.appspot.com/bug?extid=499aea72daa2cea73cb7
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111d80fc600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d9060c600000
+
+The bug was bisected to:
+
+commit 726e41097920a73e4c7c33385dcc0debb1281e18
+Author: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date:   Tue Jul 10 00:29:10 2018 +0000
+
+     drivers: core: Remove glue dirs from sysfs earlier
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=138b41ec600000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=104b41ec600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=178b41ec600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+94e2b9e9c7d1dd332345@syzkaller.appspotmail.com
+Reported-by: syzbot+499aea72daa2cea73cb7@syzkaller.appspotmail.com
+Fixes: 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
 
-usb 1-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor,  
-different from the interface descriptor's value: 9
-usb 1-1: New USB device found, idVendor=046d, idProduct=c298, bcdDevice=  
-0.00
-usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 1-1: config 0 descriptor??
-logitech 0003:046D:C298.0001: unknown main item tag 0x0
-logitech 0003:046D:C298.0001: unknown main item tag 0x0
-logitech 0003:046D:C298.0001: hidraw0: USB HID v0.00 Device [HID 046d:c298]  
-on usb-dummy_hcd.0-1/input0
-==================================================================
-BUG: KASAN: slab-out-of-bounds in set_bit  
-include/asm-generic/bitops-instrumented.h:28 [inline]
-BUG: KASAN: slab-out-of-bounds in lg4ff_init+0x89c/0x1800  
-drivers/hid/hid-lg4ff.c:1331
-Write of size 8 at addr ffff8881d81fe9c0 by task kworker/1:2/83
-
-CPU: 1 PID: 83 Comm: kworker/1:2 Not tainted 5.3.0-rc2+ #25
+debugfs: Directory 'hci3' with parent 'bluetooth' already present!
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9903 at fs/kernfs/dir.c:493 kernfs_get  
+fs/kernfs/dir.c:493 [inline]
+WARNING: CPU: 0 PID: 9903 at fs/kernfs/dir.c:493  
+kernfs_new_node+0x155/0x180 fs/kernfs/dir.c:700
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 9903 Comm: syz-executor126 Not tainted 5.3.0-rc2+ #59
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:612
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x128/0x190 mm/kasan/generic.c:192
-  set_bit include/asm-generic/bitops-instrumented.h:28 [inline]
-  lg4ff_init+0x89c/0x1800 drivers/hid/hid-lg4ff.c:1331
-  lg_probe+0x3b3/0x890 drivers/hid/hid-lg.c:850
-  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
-  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Allocated by task 83:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:487 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
-  kmalloc include/linux/slab.h:552 [inline]
-  kzalloc include/linux/slab.h:748 [inline]
-  hidraw_connect+0x4b/0x3e0 drivers/hid/hidraw.c:513
-  hid_connect+0x5c7/0xbb0 drivers/hid/hid-core.c:1885
-  hid_hw_start drivers/hid/hid-core.c:1981 [inline]
-  hid_hw_start+0xa2/0x130 drivers/hid/hid-core.c:1972
-  lg_probe+0x2a4/0x890 drivers/hid/hid-lg.c:806
-  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
-  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Freed by task 12:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
-  slab_free_hook mm/slub.c:1423 [inline]
-  slab_free_freelist_hook mm/slub.c:1470 [inline]
-  slab_free mm/slub.c:3012 [inline]
-  kfree+0xe4/0x2f0 mm/slub.c:3953
-  blk_free_flush_queue+0x3f/0x4c block/blk-flush.c:500
-  blk_mq_hw_sysfs_release+0x98/0x160 block/blk-mq-sysfs.c:43
-  kobject_cleanup lib/kobject.c:693 [inline]
-  kobject_release lib/kobject.c:722 [inline]
-  kref_put include/linux/kref.h:65 [inline]
-  kobject_put+0x171/0x280 lib/kobject.c:739
-  blk_mq_release+0x258/0x3f0 block/blk-mq.c:2677
-  __blk_release_queue+0x1ba/0x320 block/blk-sysfs.c:900
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-The buggy address belongs to the object at ffff8881d81fe900
-  which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 0 bytes to the right of
-  192-byte region [ffff8881d81fe900, ffff8881d81fe9c0)
-The buggy address belongs to the page:
-page:ffffea0007607f80 refcount:1 mapcount:0 mapping:ffff8881da002a00  
-index:0x0
-flags: 0x200000000000200(slab)
-raw: 0200000000000200 ffffea000760f000 0000000400000004 ffff8881da002a00
-raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881d81fe880: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
-  ffff8881d81fe900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff8881d81fe980: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-                                            ^
-  ffff8881d81fea00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8881d81fea80: 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
+  panic+0x29b/0x7d9 kernel/panic.c:219
+  __warn+0x22f/0x230 kernel/panic.c:576
+  report_bug+0x190/0x290 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  do_error_trap+0xd7/0x440 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1026
+RIP: 0010:kernfs_get fs/kernfs/dir.c:493 [inline]
+RIP: 0010:kernfs_new_node+0x155/0x180 fs/kernfs/dir.c:700
+Code: d2 ff 4c 89 23 4c 89 f0 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d c3  
+e8 69 47 98 ff 48 c7 c7 6d b9 7a 88 31 c0 e8 9e a6 80 ff <0f> 0b eb 8e 44  
+89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 67 ff ff ff 4c
+RSP: 0018:ffff88808d96f6f0 EFLAGS: 00010246
+RAX: 0000000000000024 RBX: 0000000000000000 RCX: d31929014df6e300
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffff88808d96f728 R08: ffffffff816068e4 R09: fffffbfff11fbdfd
+R10: fffffbfff11fbdfd R11: 0000000000000000 R12: ffff88809377b620
+R13: ffff8880982858c0 R14: ffff888095d39460 R15: ffff88821b70d150
+  kernfs_create_dir_ns+0x44/0x130 fs/kernfs/dir.c:1022
+  sysfs_create_dir_ns+0x161/0x310 fs/sysfs/dir.c:59
+  create_dir lib/kobject.c:89 [inline]
+  kobject_add_internal+0x459/0xd50 lib/kobject.c:255
+  kobject_add_varg lib/kobject.c:390 [inline]
+  kobject_add+0x138/0x200 lib/kobject.c:442
+  device_add+0x508/0x1570 drivers/base/core.c:2065
+  hci_register_dev+0x331/0x720 net/bluetooth/hci_core.c:3307
+  __vhci_create_device drivers/bluetooth/hci_vhci.c:124 [inline]
+  vhci_create_device+0x2f3/0x530 drivers/bluetooth/hci_vhci.c:148
+  vhci_get_user drivers/bluetooth/hci_vhci.c:204 [inline]
+  vhci_write+0x3ac/0x440 drivers/bluetooth/hci_vhci.c:284
+  call_write_iter include/linux/fs.h:1870 [inline]
+  new_sync_write fs/read_write.c:483 [inline]
+  __vfs_write+0x617/0x7d0 fs/read_write.c:496
+  vfs_write+0x275/0x590 fs/read_write.c:558
+  ksys_write+0x16b/0x2a0 fs/read_write.c:611
+  __do_sys_write fs/read_write.c:623 [inline]
+  __se_sys_write fs/read_write.c:620 [inline]
+  __x64_sys_write+0x7b/0x90 fs/read_write.c:620
+  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441d39
+Code: e8 4c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 db 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd7e3026c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441d39
+RDX: 0000000000000002 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffdbb1414ac R09: 00007ffdbb1414ac
+R10: 00007ffdbb1414ac R11: 0000000000000246 R12: 0000000000014cb3
+R13: 0000000000402a30 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
@@ -232,5 +150,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
