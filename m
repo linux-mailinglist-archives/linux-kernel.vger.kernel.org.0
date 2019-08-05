@@ -2,83 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B48B81E0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55BB781E06
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfHENwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:52:07 -0400
-Received: from mga06.intel.com ([134.134.136.31]:18172 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728662AbfHENwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:52:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 06:51:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
-   d="scan'208";a="178854881"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga006.jf.intel.com with ESMTP; 05 Aug 2019 06:51:38 -0700
-Date:   Mon, 5 Aug 2019 07:49:07 -0600
-From:   Keith Busch <keith.busch@intel.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Paul Pawlowski <paul@mrarm.io>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Minwoo Im <minwoo.im.dev@gmail.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: Re: [PATCH v3] nvme-pci: Support shared tags across queues for Apple
- 2018 controllers
-Message-ID: <20190805134907.GC18647@localhost.localdomain>
-References: <b1f9bdf0294b8d87d292de3c7462c8e99551b02d.camel@kernel.crashing.org>
- <20190730153044.GA13948@localhost.localdomain>
- <2030a028664a9af9e96fffca3ab352faf1f739e5.camel@kernel.crashing.org>
- <6290507e1b2830b1729fc858cd5c20b85d092728.camel@kernel.crashing.org>
+        id S1730214AbfHENvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:51:18 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4176 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729625AbfHENvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:51:17 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 46D274C0241425031124;
+        Mon,  5 Aug 2019 21:51:14 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 5 Aug 2019
+ 21:51:07 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <j.vosburgh@gmail.com>, <vfalico@gmail.com>, <andy@greyhouse.net>,
+        <davem@davemloft.net>, <jiri@resnulli.us>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] bonding: Add vlan tx offload to hw_enc_features
+Date:   Mon, 5 Aug 2019 21:49:53 +0800
+Message-ID: <20190805134953.63596-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6290507e1b2830b1729fc858cd5c20b85d092728.camel@kernel.crashing.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 04:49:23PM +1000, Benjamin Herrenschmidt wrote:
-> On Tue, 2019-07-30 at 13:28 -0700, Benjamin Herrenschmidt wrote:
-> > > One problem is that we've an nvme parameter, io_queue_depth, that a user
-> > > could set to something less than 32, and then you won't be able to do
-> > > any IO. I'd recommend enforce the admin queue to QD1 for this device so
-> > > that you have more potential IO tags.
-> > 
-> > So I had a look and it's not that trivial. I would have to change
-> > a few things that use constants for the admin queue depth, such as
-> > the AEN tag etc...
-> > 
-> > For such a special case, I am tempted instead to do the much simpler:
-> > 
-> >         if (dev->ctrl.quirks & NVME_QUIRK_SHARED_TAGS) {
-> >                 if (dev->q_depth < (NVME_AQ_DEPTH + 2))
-> >                         dev->q_depth = NVME_AQ_DEPTH + 2;
-> >         }
-> > 
-> > In nvme_pci_enable() next to the existing q_depth hackery for other
-> > controllers.
-> > 
-> > Thoughts ?
-> 
-> Ping ? I had another look today and I don't feel like mucking around
-> with all the AQ size logic, AEN magic tag etc... just for that sake of
-> that Apple gunk. I'm happy to have it give up IO tags, it doesn't seem
-> to make much of a difference in practice anyway.
-> 
-> But if you feel strongly about it, then I'll implement the "proper" way
-> sometimes this week, adding a way to shrink the AQ down to something
-> like 3 (one admin request, one async event (AEN), and the empty slot)
-> by making a bunch of the constants involved variables instead.
+As commit 30d8177e8ac7 ("bonding: Always enable vlan tx offload")
+said, we should always enable bonding's vlan tx offload, pass the
+vlan packets to the slave devices with vlan tci, let them to handle
+vlan implementation.
 
-I don't feel too strongly about it. I think your patch is fine, so
+Now if encapsulation protocols like VXLAN is used, skb->encapsulation
+may be set, then the packet is passed to vlan devicec which based on
+bonding device. However in netif_skb_features(), the check of
+hw_enc_features:
 
-Acked-by: Keith Busch <keith.busch@intel.com>
+	 if (skb->encapsulation)
+                 features &= dev->hw_enc_features;
+
+clears NETIF_F_HW_VLAN_CTAG_TX/NETIF_F_HW_VLAN_STAG_TX. This results
+in same issue in commit 30d8177e8ac7 like this:
+
+vlan_dev_hard_start_xmit
+  -->dev_queue_xmit
+    -->validate_xmit_skb
+      -->netif_skb_features //NETIF_F_HW_VLAN_CTAG_TX is cleared
+      -->validate_xmit_vlan
+        -->__vlan_hwaccel_push_inside //skb->tci is cleared
+...
+ --> bond_start_xmit
+   --> bond_xmit_hash //BOND_XMIT_POLICY_ENCAP34
+     --> __skb_flow_dissect // nhoff point to IP header
+        -->  case htons(ETH_P_8021Q)
+             // skb_vlan_tag_present is false, so
+             vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan),
+             //vlan point to ip header wrongly
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/bonding/bond_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index 02fd782..931d9d9 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1126,6 +1126,8 @@ static void bond_compute_features(struct bonding *bond)
+ done:
+ 	bond_dev->vlan_features = vlan_features;
+ 	bond_dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL |
++				    NETIF_F_HW_VLAN_CTAG_TX |
++				    NETIF_F_HW_VLAN_STAG_TX |
+ 				    NETIF_F_GSO_UDP_L4;
+ 	bond_dev->mpls_features = mpls_features;
+ 	bond_dev->gso_max_segs = gso_max_segs;
+-- 
+2.7.4
+
+
