@@ -2,116 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C5C824F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 20:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29619824ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 20:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730233AbfHESh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 14:37:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33062 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727802AbfHESh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 14:37:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 04F0EACC4;
-        Mon,  5 Aug 2019 18:37:56 +0000 (UTC)
-Subject: Re: [PATCH 1/3] mm, reclaim: make should_continue_reclaim perform
- dryrun detection
-To:     Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190802223930.30971-1-mike.kravetz@oracle.com>
- <20190802223930.30971-2-mike.kravetz@oracle.com>
- <bb16d3f0-0984-be32-4346-358abad92c4c@suse.cz>
- <0d31cc14-13cd-13e0-cf2d-dd8a8d3049ff@suse.cz>
- <b4dbe25f-4499-af28-94bb-d12147505326@oracle.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <58ef5953-a18f-e8a8-7dc5-093dba11b18d@suse.cz>
-Date:   Mon, 5 Aug 2019 20:34:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730276AbfHESfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 14:35:25 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51636 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729334AbfHESfW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 14:35:22 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 207so75720176wma.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 11:35:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=LIQ+BTAfYOlvy4ObHsv0M1Pyx3cDYno+rPPuaXC9he0=;
+        b=ToBmiZLN8G6wG/0ZmXhdBJlFqG3+sKRKOE8Hf6FxGuLbGvhGEggYPt1TOOHLUlqhlh
+         TmDptKo24MMJYJayiX2Ckrtj5Sd9d9CjSl4B00Wq102v/ItE7D50ICPLtJzosCIXuRSG
+         Bbem8NAmuvLCSkhc6wuE1KG62695eIrGVz9RiCL1DzcDhhfc9V8Po7SyLFY4AvyxMpXR
+         ApLkYHMbasAcOUU5dZmMRCuQxZD0L0KNUxQlcfp9hP9NOtXfttprfKI8Hzn9b1+FLJqC
+         tAOjcaOHdJFlrgXkL1+Hf4s4t9qCmFcJkwBXViceRXjOYBHptfPsNvYpqBMWp52aNjuQ
+         EKZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=LIQ+BTAfYOlvy4ObHsv0M1Pyx3cDYno+rPPuaXC9he0=;
+        b=RNI+uRDEvi3BMGD4EJDX23sm+tspYFq2kI7Rf9nfsL+mRc2eGkXzos4xmmPYmZCuUd
+         eWs9dzeF3QDRMOnhunZrJavwJ81k8Wrc7k4CPE49zh1tLABVTuexMiUT1gTzEy2hvY+X
+         Pv2wg2ddWuYIdu6UpXfO+T1wZGlSjiiG8hNxCj83LJ7xJIxftqGiGVU9+UR609Px9HIc
+         U9XAOcC1NHDM972BZs3TW3nChMrdEc30Bc+sWfMzcku47NVEfLTTTGKAITieb6kTrpTP
+         W4vPX2hdL0xV7wuaHLRv7aartauI+4OpPpLb+mabyTCZgw9sdbgFN+nxn7TyVli9xSPH
+         EqwQ==
+X-Gm-Message-State: APjAAAV8TH9HIs0zZQYy1E9tAloUrOULStA5KxyDp7sGQYvAn20rW8cR
+        n/Rv9jjZCnWUJ39ff6kHzNlYbg==
+X-Google-Smtp-Source: APXvYqyQ3VexThjnsplma7MZFmT4vvpaUDOBKoX/36H+nBgw69e+lqWtToeT24+ydGZiDw54NFGH1A==
+X-Received: by 2002:a1c:968c:: with SMTP id y134mr18568665wmd.122.1565030119747;
+        Mon, 05 Aug 2019 11:35:19 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id z5sm61084189wmf.48.2019.08.05.11.35.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 11:35:18 -0700 (PDT)
+Message-ID: <5d4876e6.1c69fb81.23787.eab7@mx.google.com>
+Date:   Mon, 05 Aug 2019 11:35:18 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <b4dbe25f-4499-af28-94bb-d12147505326@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Kernel: v5.2.6-132-ga312bfbb74da
+X-Kernelci-Branch: linux-5.2.y
+X-Kernelci-Report-Type: boot
+In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
+References: <20190805124951.453337465@linuxfoundation.org>
+Subject: Re: [PATCH 5.2 000/131] 5.2.7-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/5/19 6:58 PM, Mike Kravetz wrote:
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
-> 
-> Would you like me to add this to the series, or do you want to send later?
+stable-rc/linux-5.2.y boot: 134 boots: 0 failed, 93 passed with 41 offline =
+(v5.2.6-132-ga312bfbb74da)
 
-Please add, thanks!
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-5.2.y/kernel/v5.2.6-132-ga312bfbb74da/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-5.2.y=
+/kernel/v5.2.6-132-ga312bfbb74da/
 
+Tree: stable-rc
+Branch: linux-5.2.y
+Git Describe: v5.2.6-132-ga312bfbb74da
+Git Commit: a312bfbb74da87b0c6822845b2cb9932d43c9208
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 77 unique boards, 28 SoC families, 17 builds out of 209
+
+Boot Regressions Detected:
+
+arm:
+
+    qcom_defconfig:
+        gcc-8:
+          qcom-apq8064-cm-qs600:
+              lab-baylibre-seattle: failing since 1 day (last pass: v5.2.4-=
+235-g44397d30b22d - first fail: v5.2.6)
+          qcom-apq8064-ifc6410:
+              lab-baylibre-seattle: failing since 1 day (last pass: v5.2.4-=
+235-g44397d30b22d - first fail: v5.2.6)
+
+    sunxi_defconfig:
+        gcc-8:
+          sun4i-a10-cubieboard:
+              lab-baylibre-seattle: failing since 1 day (last pass: v5.2.4-=
+235-g44397d30b22d - first fail: v5.2.6)
+          sun5i-r8-chip:
+              lab-baylibre-seattle: failing since 1 day (last pass: v5.2.4-=
+235-g44397d30b22d - first fail: v5.2.6)
+          sun7i-a20-bananapi:
+              lab-baylibre-seattle: failing since 1 day (last pass: v5.2.4-=
+235-g44397d30b22d - first fail: v5.2.6)
+
+Offline Platforms:
+
+riscv:
+
+    defconfig:
+        gcc-8
+            sifive_fu540: 1 offline lab
+
+arm64:
+
+    defconfig:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+            meson-axg-s400: 1 offline lab
+            meson-g12a-u200: 1 offline lab
+            meson-g12a-x96-max: 1 offline lab
+            meson-gxbb-odroidc2: 1 offline lab
+            meson-gxl-s905d-p230: 1 offline lab
+            meson-gxl-s905x-libretech-cc: 1 offline lab
+            meson-gxl-s905x-nexbox-a95x: 1 offline lab
+            meson-gxl-s905x-p212: 1 offline lab
+            meson-gxm-nexbox-a1: 1 offline lab
+            rk3399-firefly: 1 offline lab
+            sun50i-a64-pine64-plus: 1 offline lab
+
+mips:
+
+    pistachio_defconfig:
+        gcc-8
+            pistachio_marduk: 1 offline lab
+
+arm:
+
+    exynos_defconfig:
+        gcc-8
+            exynos5250-arndale: 1 offline lab
+            exynos5800-peach-pi: 1 offline lab
+
+    multi_v7_defconfig:
+        gcc-8
+            bcm4708-smartrg-sr400ac: 1 offline lab
+            bcm72521-bcm97252sffe: 1 offline lab
+            bcm7445-bcm97445c: 1 offline lab
+            exynos5800-peach-pi: 1 offline lab
+            imx6dl-wandboard_solo: 1 offline lab
+            imx6q-wandboard: 1 offline lab
+            imx7s-warp: 1 offline lab
+            meson8b-odroidc1: 1 offline lab
+            qcom-apq8064-cm-qs600: 1 offline lab
+            qcom-apq8064-ifc6410: 1 offline lab
+            stih410-b2120: 1 offline lab
+            sun4i-a10-cubieboard: 1 offline lab
+            sun5i-r8-chip: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+            vf610-colibri-eval-v3: 1 offline lab
+
+    qcom_defconfig:
+        gcc-8
+            qcom-apq8064-cm-qs600: 1 offline lab
+            qcom-apq8064-ifc6410: 1 offline lab
+
+    davinci_all_defconfig:
+        gcc-8
+            da850-evm: 1 offline lab
+            dm365evm,legacy: 1 offline lab
+
+    imx_v6_v7_defconfig:
+        gcc-8
+            imx6dl-wandboard_solo: 1 offline lab
+            imx7s-warp: 1 offline lab
+            vf610-colibri-eval-v3: 1 offline lab
+
+    sunxi_defconfig:
+        gcc-8
+            sun4i-a10-cubieboard: 1 offline lab
+            sun5i-r8-chip: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
