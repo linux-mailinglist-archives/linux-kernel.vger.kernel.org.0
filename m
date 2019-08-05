@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E42D81B02
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1830981BB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbfHENLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:11:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50342 "EHLO mail.kernel.org"
+        id S1729517AbfHENGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729841AbfHENLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:11:07 -0400
+        id S1729001AbfHENGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45AFB216F4;
-        Mon,  5 Aug 2019 13:11:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07528216F4;
+        Mon,  5 Aug 2019 13:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010666;
-        bh=4pL1hx2ppMTBaKCpsGaTGvaIoDclQ1WBXEy5XCKPB3Y=;
+        s=default; t=1565010366;
+        bh=FWoUa6QGEHljtX1mICapLiOgk3Kjd8lcwmBXppSTx8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VLFnHfDsHwnrnaI879Qcg6q6PKRRMnPdQxt/SyXMIbvYENO/fJxBj/O7pFhJyarBY
-         iJKZAsvDSuH9E4DlqKV+Z20BRVT0T/rChq/4UVfBQkeAqECV0hVlyPylELF3zPpqQn
-         2WE2ykxgDUVm9eNignUtXQ6xDOmI8YUPOw+TCxNs=
+        b=WEts65OxaCx15tHHFflkcPXVC6MN5oQ3h8m11szd/SZFOeUdfYQ6ngckztK3yxohZ
+         3jj0UFUc0rHtYaVBbpQsir9T7v5PA+cBudNhrBnImCzt5MXq1yutVpZEozJNnnS5ub
+         pYgF/liqW29tns4CQteFAmtnDvphoApyWiyRfi5s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.19 50/74] mtd: rawnand: micron: handle on-die "ECC-off" devices correctly
-Date:   Mon,  5 Aug 2019 15:03:03 +0200
-Message-Id: <20190805124939.943312281@linuxfoundation.org>
+        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.9 38/42] eeprom: at24: make spd world-readable again
+Date:   Mon,  5 Aug 2019 15:03:04 +0200
+Message-Id: <20190805124929.501553610@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Jean Delvare <jdelvare@suse.de>
 
-commit 8493b2a06fc5b77ef5c579dc32b12761f7b7a84c upstream.
+commit 25e5ef302c24a6fead369c0cfe88c073d7b97ca8 upstream.
 
-Some devices are not supposed to support on-die ECC but experience
-shows that internal ECC machinery can actually be enabled through the
-"SET FEATURE (EFh)" command, even if a read of the "READ ID Parameter
-Tables" returns that it is not.
+The integration of the at24 driver into the nvmem framework broke the
+world-readability of spd EEPROMs. Fix it.
 
-Currently, the driver checks the "READ ID Parameter" field directly
-after having enabled the feature. If the check fails it returns
-immediately but leaves the ECC on. When using buggy chips like
-MT29F2G08ABAGA and MT29F2G08ABBGA, all future read/program cycles will
-go through the on-die ECC, confusing the host controller which is
-supposed to be the one handling correction.
-
-To address this in a common way we need to turn off the on-die ECC
-directly after reading the "READ ID Parameter" and before checking the
-"ECC status".
-
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
 Cc: stable@vger.kernel.org
-Fixes: dbc44edbf833 ("mtd: rawnand: micron: Fix on-die ECC detection logic")
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Fixes: 57d155506dd5 ("eeprom: at24: extend driver to plug into the NVMEM framework")
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+[Bartosz: backported the patch to older branches]
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/raw/nand_micron.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/misc/eeprom/at24.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/raw/nand_micron.c
-+++ b/drivers/mtd/nand/raw/nand_micron.c
-@@ -400,6 +400,14 @@ static int micron_supports_on_die_ecc(st
- 	    (chip->id.data[4] & MICRON_ID_INTERNAL_ECC_MASK) != 0x2)
- 		return MICRON_ON_DIE_UNSUPPORTED;
- 
-+	/*
-+	 * It seems that there are devices which do not support ECC officially.
-+	 * At least the MT29F2G08ABAGA / MT29F2G08ABBGA devices supports
-+	 * enabling the ECC feature but don't reflect that to the READ_ID table.
-+	 * So we have to guarantee that we disable the ECC feature directly
-+	 * after we did the READ_ID table command. Later we can evaluate the
-+	 * ECC_ENABLE support.
-+	 */
- 	ret = micron_nand_on_die_ecc_setup(chip, true);
- 	if (ret)
- 		return MICRON_ON_DIE_UNSUPPORTED;
-@@ -408,13 +416,13 @@ static int micron_supports_on_die_ecc(st
- 	if (ret)
- 		return MICRON_ON_DIE_UNSUPPORTED;
- 
--	if (!(id[4] & MICRON_ID_ECC_ENABLED))
--		return MICRON_ON_DIE_UNSUPPORTED;
--
- 	ret = micron_nand_on_die_ecc_setup(chip, false);
- 	if (ret)
- 		return MICRON_ON_DIE_UNSUPPORTED;
- 
-+	if (!(id[4] & MICRON_ID_ECC_ENABLED))
-+		return MICRON_ON_DIE_UNSUPPORTED;
-+
- 	ret = nand_readid_op(chip, 0, id, sizeof(id));
- 	if (ret)
- 		return MICRON_ON_DIE_UNSUPPORTED;
+--- a/drivers/misc/eeprom/at24.c
++++ b/drivers/misc/eeprom/at24.c
+@@ -777,7 +777,7 @@ static int at24_probe(struct i2c_client
+ 	at24->nvmem_config.name = dev_name(&client->dev);
+ 	at24->nvmem_config.dev = &client->dev;
+ 	at24->nvmem_config.read_only = !writable;
+-	at24->nvmem_config.root_only = true;
++	at24->nvmem_config.root_only = !(chip.flags & AT24_FLAG_IRUGO);
+ 	at24->nvmem_config.owner = THIS_MODULE;
+ 	at24->nvmem_config.compat = true;
+ 	at24->nvmem_config.base_dev = &client->dev;
 
 
