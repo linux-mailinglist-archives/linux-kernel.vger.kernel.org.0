@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C54FD81C2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9447481C32
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730394AbfHENU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:20:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57068 "EHLO mail.kernel.org"
+        id S1730443AbfHENVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:21:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730356AbfHENUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:20:54 -0400
+        id S1730419AbfHENVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:21:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DD7220657;
-        Mon,  5 Aug 2019 13:20:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BE872067D;
+        Mon,  5 Aug 2019 13:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011253;
-        bh=M9kA6vywYhmV6AUU9MEyFZaf6DLYgVev0DEg/fwbbYU=;
+        s=default; t=1565011261;
+        bh=yi+x7RbmMs095tElme98utNqj5tUu/gIfIx36yBNeSY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kQ09bzU6hWoBfGmq+nQ4ROOIlNVkjLZuKH2NEIgoKAaMrG/0/+iaKnvHr64LGQdwr
-         P0p/Ks9V5z8i/Mf2/FceFvF8j+g/ANH2VSm8ITFSlfG1y1ovrygWX1BRj6zimdCZka
-         Ly53MBey+tC9+Zmw1qYWJgE2gErmho0/85kOqBEM=
+        b=hUbZQKvl8oEh11xWVX6ykPraa1AbUAR/mjhQL9bIL9AU3hGdR/8lE/kaXLm2SucSg
+         TP9AaPHjQu2vo7mMb60Bx/Ez0vafuFK7u4y10ojy4sxeyfzc2uZjbsnHoRslJS7XWH
+         cFxbZN3Tzr4YFKAUZQBnXJNu54uA/qDTZP1JSlao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org, Vicente Bergas <vicencb@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 023/131] fs/adfs: super: fix use-after-free bug
-Date:   Mon,  5 Aug 2019 15:01:50 +0200
-Message-Id: <20190805124952.992413920@linuxfoundation.org>
+Subject: [PATCH 5.2 025/131] arm64: dts: rockchip: Fix USB3 Type-C on rk3399-sapphire
+Date:   Mon,  5 Aug 2019 15:01:52 +0200
+Message-Id: <20190805124953.125844901@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
 References: <20190805124951.453337465@linuxfoundation.org>
@@ -44,43 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5808b14a1f52554de612fee85ef517199855e310 ]
+[ Upstream commit e1d9149e8389f1690cdd4e4056766dd26488a0fe ]
 
-Fix a use-after-free bug during filesystem initialisation, where we
-access the disc record (which is stored in a buffer) after we have
-released the buffer.
+Before this patch, the Type-C port on the Sapphire board is dead.
+If setting the 'regulator-always-on' property to 'vcc5v0_typec0'
+then the port works for about 4 seconds at start-up. This is a
+sample trace with a memory stick plugged in:
+1.- The memory stick LED lights on and kernel reports:
+[    4.782999] scsi 0:0:0:0: Direct-Access USB DISK PMAP PQ: 0 ANSI: 4
+[    5.904580] sd 0:0:0:0: [sdb] 3913344 512-byte logical blocks: (2.00 GB/1.87 GiB)
+[    5.906860] sd 0:0:0:0: [sdb] Write Protect is off
+[    5.908973] sd 0:0:0:0: [sdb] Mode Sense: 23 00 00 00
+[    5.909122] sd 0:0:0:0: [sdb] No Caching mode page found
+[    5.911214] sd 0:0:0:0: [sdb] Assuming drive cache: write through
+[    5.951585]  sdb: sdb1
+[    5.954816] sd 0:0:0:0: [sdb] Attached SCSI removable disk
+2.- 4 seconds later the memory stick LED lights off and kernel reports:
+[    9.082822] phy phy-ff770000.syscon:usb2-phy@e450.2: charger = USB_DCP_CHARGER
+3.- After a minute the kernel reports:
+[   71.666761] usb 5-1: USB disconnect, device number 2
+It has been checked that, although the LED is off, VBUS is present.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+If, instead, the dr_mode is changed to host and the phy-supply changed
+accordingly, then it works. It has only been tested in host mode.
+
+Signed-off-by: Vicente Bergas <vicencb@gmail.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/adfs/super.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-index ffb669f9bba78..ce0fbbe002bf3 100644
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -360,6 +360,7 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
- 	struct buffer_head *bh;
- 	struct object_info root_obj;
- 	unsigned char *b_data;
-+	unsigned int blocksize;
- 	struct adfs_sb_info *asb;
- 	struct inode *root;
- 	int ret = -EINVAL;
-@@ -411,8 +412,10 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto error_free_bh;
- 	}
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+index 04623e52ac5db..1bc1579674e57 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi
+@@ -565,12 +565,11 @@
+ 	status = "okay";
  
-+	blocksize = 1 << dr->log2secsize;
- 	brelse(bh);
--	if (sb_set_blocksize(sb, 1 << dr->log2secsize)) {
-+
-+	if (sb_set_blocksize(sb, blocksize)) {
- 		bh = sb_bread(sb, ADFS_DISCRECORD / sb->s_blocksize);
- 		if (!bh) {
- 			adfs_error(sb, "couldn't read superblock on "
+ 	u2phy0_otg: otg-port {
+-		phy-supply = <&vcc5v0_typec0>;
+ 		status = "okay";
+ 	};
+ 
+ 	u2phy0_host: host-port {
+-		phy-supply = <&vcc5v0_host>;
++		phy-supply = <&vcc5v0_typec0>;
+ 		status = "okay";
+ 	};
+ };
+@@ -620,7 +619,7 @@
+ 
+ &usbdrd_dwc3_0 {
+ 	status = "okay";
+-	dr_mode = "otg";
++	dr_mode = "host";
+ };
+ 
+ &usbdrd3_1 {
 -- 
 2.20.1
 
