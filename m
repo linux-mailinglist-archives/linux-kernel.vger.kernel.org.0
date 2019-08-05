@@ -2,209 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D5B681615
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC5EE81607
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbfHEJ5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 05:57:11 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:32866 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728231AbfHEJ5K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 05:57:10 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x758asfg025755;
-        Mon, 5 Aug 2019 11:57:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=wuSEYQ/MVeznlvXAHY047ivvLEOAFrfYgBPlSUOUncM=;
- b=ZRBcDBjIaGGzGjohNTqHqzM/OUpHtM0lRm08NzQKbw6+2MLPHNjhtXags1ddVKLqEL8+
- x40xlsCPSN1gU9Ew5+3NKTtdlYQ+iwmpb35YkRdgxWy8o5B8ijABbh3PwuET4RwumaPT
- RzDRVpZbJIS5K8ti/OFW1D3Bwwjw9u2MMgY493MMGDG9rtaVUGtU6bYE92IMCfP0kv1v
- YxAx48ki7Pa4r0PTNfv2QpQWoD2zz0qKoWHAvv7rHF+UR3BQLolmMlZZAQj5IhqqEFC4
- 7luvxL/9CkJ4yhmJva+y0XhhIdCBFoZUeI9x8ArtQlH9AGnF6fTjsXAebaFwia4zxrV2 IQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2u515mamub-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 05 Aug 2019 11:57:00 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C4F2C41;
-        Mon,  5 Aug 2019 09:56:59 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B65AD3023C2;
-        Mon,  5 Aug 2019 11:56:59 +0200 (CEST)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 5 Aug 2019
- 11:56:59 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 5 Aug 2019
- 11:56:59 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V4 1/3] mmc: mmci: add hardware busy timeout feature
-Date:   Mon, 5 Aug 2019 11:56:24 +0200
-Message-ID: <20190805095626.25998-2-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190805095626.25998-1-ludovic.Barre@st.com>
-References: <20190805095626.25998-1-ludovic.Barre@st.com>
+        id S1728224AbfHEJ4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:56:30 -0400
+Received: from mail-eopbgr30064.outbound.protection.outlook.com ([40.107.3.64]:55693
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727158AbfHEJ43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 05:56:29 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kH8k9twMi6+Oz14N9HstgRNhtqyTnMRp5FY5jSuKtkTJYxZ+qcHEAAamXsndgLGPgsystwR7BAoz9ZAr3UOyJ+BX8eaR1GEYLSzv7/NICZGVdx8o+e3fCaoO3xVgCPf/G9s5fEN24HhGi3RA4x5f0THUI+MEFdzgaPWN85lZUFMGuzKMOnu2EpnJp3iRmBHH3/ol1zoXrNu5URKrpVJder/QBiQCLQflQEjDAnQ8itofg87tzHvHPZyM6oZHUYg++rCdslz8rpnO/0nnLz96nj1BmrCauqNwo38KwUsXJ2Za5ijwi18wpP2TA+djMgJb60gr+wy+xYlCLKSbbUgnqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KYmHpOdBnxlo8kd7/TxtexcAA5eNVC3SBvfBgi9kQ5k=;
+ b=jlnendJmqSdTObL75mUYfkkdfzaMdrbAKSZHU9fh0dast9eXth47PUSjYmiDjMJ8PWB7pOim8DTk43H8Sc9KrR2KZDGsbGx7dYFi/nja3SMO8zNe8RKZCRPggooidTjErgXfAz0NteQGRkc0/HEdRw4cjD9X4Qxs097HIBuucEhGlU+FYLD/WmDdwN56kWVHnskn2JRSoVu/eb2Q0Fev/QKR/5l/PVqTBDgPah9TE8pk0z4NX8HdSwA7FvS8HLWDJ2nkf7loe+y2EaLv1ayvFXWA36chMkjjA1rSTA32gOXclHLMGQi8BJcdRRPmj2Yt3MndHwzg8oAFXHTg2E2UgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=arm.com;dmarc=pass action=none header.from=arm.com;dkim=pass
+ header.d=arm.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KYmHpOdBnxlo8kd7/TxtexcAA5eNVC3SBvfBgi9kQ5k=;
+ b=m1aXVE0BYUIRGBrzj2N8VQLQ9Vsaj7QK1e3Iaz8iuc97Go+I1pJZnaylNIXEzQs/OatxFDxhK1rwe7jm6vnJl5aF7Kelr8wPfc6QI9GAtoooTpqV9lj3vOUCO4YYkwDT2LbThx76pdMH7wK+V4Z56xFWmQarY1zomzLE00UjD5M=
+Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
+ VI1PR08MB3520.eurprd08.prod.outlook.com (20.177.61.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.16; Mon, 5 Aug 2019 09:56:26 +0000
+Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
+ ([fe80::c8dd:d1c6:5044:a888]) by VI1PR08MB4078.eurprd08.prod.outlook.com
+ ([fe80::c8dd:d1c6:5044:a888%3]) with mapi id 15.20.2115.005; Mon, 5 Aug 2019
+ 09:56:26 +0000
+From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
+To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+CC:     nd <nd@arm.com>, Mihail Atanassov <Mihail.Atanassov@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2.1] drm/komeda: Add support for 'memory-region' DT node
+ property
+Thread-Topic: [PATCH v2.1] drm/komeda: Add support for 'memory-region' DT node
+ property
+Thread-Index: AQHVS3QL8/BEL0aPM0GZk8WnOetY0A==
+Date:   Mon, 5 Aug 2019 09:56:25 +0000
+Message-ID: <20190805095408.21285-1-mihail.atanassov@arm.com>
+References: <20190802143951.4436-1-mihail.atanassov@arm.com>
+In-Reply-To: <20190802143951.4436-1-mihail.atanassov@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [217.140.106.52]
+x-clientproxiedby: LO2P265CA0355.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:d::31) To VI1PR08MB4078.eurprd08.prod.outlook.com
+ (2603:10a6:803:e5::28)
+x-mailer: git-send-email 2.22.0
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Mihail.Atanassov@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0bb7521e-47f2-4a8e-6565-08d7198b2dda
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB3520;
+x-ms-traffictypediagnostic: VI1PR08MB3520:
+x-microsoft-antispam-prvs: <VI1PR08MB35207BB248A0BC66CDB86E9D8FDA0@VI1PR08MB3520.eurprd08.prod.outlook.com>
+nodisclaimer: True
+x-ms-oob-tlc-oobclassifiers: OLM:243;
+x-forefront-prvs: 01208B1E18
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(39860400002)(136003)(376002)(346002)(199004)(189003)(50226002)(71200400001)(8936002)(53936002)(478600001)(316002)(3846002)(6116002)(54906003)(6436002)(6486002)(25786009)(186003)(14454004)(66066001)(6512007)(26005)(4326008)(36756003)(2501003)(66476007)(66946007)(66446008)(64756008)(66556008)(446003)(11346002)(2616005)(81166006)(99286004)(81156014)(6916009)(5660300002)(5640700003)(2906002)(256004)(44832011)(68736007)(486006)(1076003)(7736002)(52116002)(102836004)(86362001)(71190400001)(305945005)(2351001)(76176011)(6506007)(386003)(8676002)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3520;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: RhN4YHyJmkcq/NQ9RoQvwuAhdsoJhKLPDlsrcka//lqCXtzoqfJr3v/cxxkt1L2Z310MgOkvzXRXT4x0B0SqP2ll0/Y+VdP3EqtAZ5Fki1/inrbBbgrSMPrKww32XnmT96KdzfiBO4u7SMUXWTxT8+f762+0evNRcnmcZmLnhOs5dBCx9WqkVi8g+SrvyawHLrsei0x9hSa5kCBLC5k3zgTx/VVG2qj/56KajnodfEg9rbQqQPCrJsrNH1BMPXUYwew9IPDu63qFTmNPGbxEC0NZDWUpcBMV2gJS5J2w2g1Q5JRyjLThzYMXJ+VjYRUIoBPVbcodEIEWh8Sc9AJnjUeUikwxqCdo7UTz8WFHOXIcuBuLbIb1L1MEzFHFS+tM7TuVkjUr25svBCr26eJqTaaNrw5oAnbI7LbwnSUmiGc=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-05_04:,,
- signatures=0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bb7521e-47f2-4a8e-6565-08d7198b2dda
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2019 09:56:25.9448
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Mihail.Atanassov@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3520
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+The 'memory-region' property of the komeda display driver DT binding
+allows the use of a 'reserved-memory' node for buffer allocations. Add
+the requisite of_reserved_mem_device_{init,release} calls to actually
+make use of the memory if present.
 
-In some variants, the data timer starts and decrements
-when the DPSM enters in Wait_R or Busy state
-(while data transfer or MMC_RSP_BUSY), and generates a
-data timeout error if the counter reach 0.
+Changes since v1:
+ - Move handling inside komeda_parse_dt
 
--Define max_busy_timeout (in ms) according to clock.
--Set data timer register if the command has rsp_busy flag.
- If busy_timeout is not defined by framework, the busy
- length after Data Burst is defined as 1 second
- (refer: 4.6.2.2 Write of sd specification part1 v6-0).
--Add MCI_DATATIMEOUT error management in mmci_cmd_irq.
-
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
 ---
- drivers/mmc/host/mmci.c | 37 ++++++++++++++++++++++++++++++++-----
- drivers/mmc/host/mmci.h |  3 +++
- 2 files changed, 35 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 4c35e7609c89..e79c9148af84 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1078,6 +1078,7 @@ static void
- mmci_start_command(struct mmci_host *host, struct mmc_command *cmd, u32 c)
- {
- 	void __iomem *base = host->base;
-+	unsigned long long clks = 0;
- 
- 	dev_dbg(mmc_dev(host->mmc), "op %02x arg %08x flags %08x\n",
- 	    cmd->opcode, cmd->arg, cmd->flags);
-@@ -1100,6 +1101,19 @@ mmci_start_command(struct mmci_host *host, struct mmc_command *cmd, u32 c)
- 		else
- 			c |= host->variant->cmdreg_srsp;
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/=
+drm/arm/display/komeda/komeda_dev.c
+index 1ff7f4b2c620..0142ee991957 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+@@ -8,6 +8,7 @@
+ #include <linux/iommu.h>
+ #include <linux/of_device.h>
+ #include <linux/of_graph.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #ifdef CONFIG_DEBUG_FS
+@@ -146,6 +147,12 @@ static int komeda_parse_dt(struct device *dev, struct =
+komeda_dev *mdev)
+ 		return mdev->irq;
  	}
+=20
++	/* Get the optional framebuffer memory resource */
++	ret =3D of_reserved_mem_device_init(dev);
++	if (ret && ret !=3D -ENODEV)
++		return ret;
++	ret =3D 0;
 +
-+	if (host->variant->busy_timeout && !cmd->data) {
-+		if (cmd->flags & MMC_RSP_BUSY) {
-+			if (!cmd->busy_timeout)
-+				cmd->busy_timeout = 1000;
+ 	for_each_available_child_of_node(np, child) {
+ 		if (of_node_cmp(child->name, "pipeline") =3D=3D 0) {
+ 			ret =3D komeda_parse_pipe_dt(mdev, child);
+@@ -292,6 +299,8 @@ void komeda_dev_destroy(struct komeda_dev *mdev)
+=20
+ 	mdev->n_pipelines =3D 0;
+=20
++	of_reserved_mem_device_release(dev);
 +
-+			clks = (unsigned long long)cmd->busy_timeout;
-+			clks *=	host->cclk;
-+			do_div(clks, MSEC_PER_SEC);
-+		}
-+		writel_relaxed(clks, host->base + MMCIDATATIMER);
-+	}
-+
- 	if (/*interrupt*/0)
- 		c |= MCI_CPSM_INTERRUPT;
- 
-@@ -1206,6 +1220,7 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
- {
- 	void __iomem *base = host->base;
- 	bool sbc, busy_resp;
-+	u32 err_msk;
- 
- 	if (!cmd)
- 		return;
-@@ -1218,8 +1233,12 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
- 	 * handling. Note that we tag on any latent IRQs postponed
- 	 * due to waiting for busy status.
- 	 */
--	if (!((status|host->busy_status) &
--	      (MCI_CMDCRCFAIL|MCI_CMDTIMEOUT|MCI_CMDSENT|MCI_CMDRESPEND)))
-+	err_msk = MCI_CMDCRCFAIL | MCI_CMDTIMEOUT;
-+	if (host->variant->busy_timeout && busy_resp)
-+		err_msk |= MCI_DATATIMEOUT;
-+
-+	if (!((status | host->busy_status) &
-+	      (err_msk | MCI_CMDSENT | MCI_CMDRESPEND)))
- 		return;
- 
- 	/* Handle busy detection on DAT0 if the variant supports it. */
-@@ -1238,8 +1257,7 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
- 		 * while, to allow it to be set, but tests indicates that it
- 		 * isn't needed.
- 		 */
--		if (!host->busy_status &&
--		    !(status & (MCI_CMDCRCFAIL|MCI_CMDTIMEOUT)) &&
-+		if (!host->busy_status && !(status & err_msk) &&
- 		    (readl(base + MMCISTATUS) & host->variant->busy_detect_flag)) {
- 
- 			writel(readl(base + MMCIMASK0) |
-@@ -1293,6 +1311,9 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
- 		cmd->error = -ETIMEDOUT;
- 	} else if (status & MCI_CMDCRCFAIL && cmd->flags & MMC_RSP_CRC) {
- 		cmd->error = -EILSEQ;
-+	} else if (host->variant->busy_timeout && busy_resp &&
-+		   status & MCI_DATATIMEOUT) {
-+		cmd->error = -ETIMEDOUT;
- 	} else {
- 		cmd->resp[0] = readl(base + MMCIRESPONSE0);
- 		cmd->resp[1] = readl(base + MMCIRESPONSE1);
-@@ -1951,6 +1972,8 @@ static int mmci_probe(struct amba_device *dev,
- 	 * Enable busy detection.
- 	 */
- 	if (variant->busy_detect) {
-+		u32 max_busy_timeout = 0;
-+
- 		mmci_ops.card_busy = mmci_card_busy;
- 		/*
- 		 * Not all variants have a flag to enable busy detection
-@@ -1960,7 +1983,11 @@ static int mmci_probe(struct amba_device *dev,
- 			mmci_write_datactrlreg(host,
- 					       host->variant->busy_dpsm_flag);
- 		mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
--		mmc->max_busy_timeout = 0;
-+
-+		if (variant->busy_timeout)
-+			max_busy_timeout = ~0UL / (mmc->f_max / MSEC_PER_SEC);
-+
-+		mmc->max_busy_timeout = max_busy_timeout;
- 	}
- 
- 	/* Prepare a CMD12 - needed to clear the DPSM on some variants. */
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 4f071bd34e59..8f86130af566 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -290,6 +290,8 @@ struct mmci_host;
-  * @signal_direction: input/out direction of bus signals can be indicated
-  * @pwrreg_clkgate: MMCIPOWER register must be used to gate the clock
-  * @busy_detect: true if the variant supports busy detection on DAT0.
-+ * @busy_timeout: true if the variant starts data timer when the DPSM
-+ *		  enter in Wait_R or Busy state.
-  * @busy_dpsm_flag: bitmask enabling busy detection in the DPSM
-  * @busy_detect_flag: bitmask identifying the bit in the MMCISTATUS register
-  *		      indicating that the card is busy
-@@ -336,6 +338,7 @@ struct variant_data {
- 	u8			signal_direction:1;
- 	u8			pwrreg_clkgate:1;
- 	u8			busy_detect:1;
-+	u8			busy_timeout:1;
- 	u32			busy_dpsm_flag;
- 	u32			busy_detect_flag;
- 	u32			busy_detect_mask;
--- 
-2.17.1
+ 	if (funcs && funcs->cleanup)
+ 		funcs->cleanup(mdev);
+=20
+--=20
+2.22.0
 
