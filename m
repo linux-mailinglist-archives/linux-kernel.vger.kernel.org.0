@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E923482528
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 20:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6273C8252F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 20:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbfHES5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 14:57:34 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46934 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730386AbfHES5a (ORCPT
+        id S1730560AbfHES5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 14:57:37 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39255 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730509AbfHES5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 14:57:30 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w3so2989259pgt.13;
-        Mon, 05 Aug 2019 11:57:29 -0700 (PDT)
+        Mon, 5 Aug 2019 14:57:32 -0400
+Received: by mail-pf1-f193.google.com with SMTP id f17so36107375pfn.6;
+        Mon, 05 Aug 2019 11:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/WT066rnvh5uQXR2ltMlpOV9a5E867cJV8j39JLKtN0=;
-        b=exn7B7an67HxIvtTwadhTE1oFn0pygr97EM7i5e87Q++9RnUdbffJ3v+GZKRn6L63P
-         V6ESkgVq1UOFDik9frMxth8YFXJ59et50LsE3CR1VVJVGrYIuh9TjLKHacLNvor7YCoI
-         tXlCWY6a1KzUgADWmGWOeS3cULSrNJroJJN5yKNKiC3Oncafb0JEeTsfNmDVs8iGzw/L
-         4McybRKz0wDWn/efCibkC5bEoGALp6ifYmJYXOuc5ZT7x+FAbXb2x+YvWq9pZlNr/a/L
-         6XAVH3wTS6z8wkyWmP6GghNTHGyyR3xtSsKtuFxXqUiks/mcPhBLddTwH3gy8Lz5dgLj
-         h9hg==
+        bh=c/MIiHcQumuxQUNSzBjPEJpMDTyUHR0oWuuWeDFIn00=;
+        b=RSwemd5UOTfacTh1nvmDCQVCZF0ip5YiZM+cHvWAk1jilGBiDsCgOiEK2ABrFWUosz
+         cvveviTt12sH7vcIBUpuZ4BoQvSxvozBVqpwjBLyWCcctdLlbTP7t8HN3DEwJfyV0BIr
+         Uc8YuUkToEfPqAmYcuBAeeCGFasijL6JqtchJin/YMHubGxzFdf5M74+EEWFN8SBYjcu
+         N7NdMkUcH0MfYBZb1ZNDceiO9CBg4EdI+QvzkOu+SaEKAr8FHspm0pz+zlDkfFlnOegf
+         cddjsD+d4BXADGclBq6viE3SuxTWDp5DEeibaOVNjUcE6XmrxLy/bYSDaG2zGvMxhKTp
+         ahMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/WT066rnvh5uQXR2ltMlpOV9a5E867cJV8j39JLKtN0=;
-        b=Qyo4FkmhiFYuXAfZOYMqX59HgaQLBzcgwEJNvYw0hg50OA/u64si5GjmJ2DYkPekas
-         tUdQTgkbXzlY6PCeocTsvXmFPr4rZsLSKhd78GX3V+iYAaXBWMEv9n9UwaXZEqnx7sH9
-         1U08OE0L6KDhR1lyrxoCBW5CJYSm5mFA5iK6b3KMIGLSlxHMd8Vx1z803n+H58hhNJi8
-         vYMvo67VQe518YR/ycspM1fUJohBuPAtBShckFQGa907nV5OA33YV7FaOV/qDiokJxEd
-         dvnyyXLx9E35f4zUuku532izXom2hNVbh14xrilfUvPhmbc5IBktyoxbdKJXXwFhkFMn
-         1oAQ==
-X-Gm-Message-State: APjAAAXYZYUTevE3P7kedXCGzXCEEj50VI/C+RN3a4Trq+HWu4qodqBz
-        qVChGutihGLa0g43z38YRtCL+PfO
-X-Google-Smtp-Source: APXvYqyzE69WY5M2psyQWq/JVAfTpnE9tE2OyRbvrxZTFwrGJVeD84YSWNYWvnFg0Q9VnGE82lGxcQ==
-X-Received: by 2002:aa7:9dcd:: with SMTP id g13mr76106032pfq.204.1565031449284;
-        Mon, 05 Aug 2019 11:57:29 -0700 (PDT)
+        bh=c/MIiHcQumuxQUNSzBjPEJpMDTyUHR0oWuuWeDFIn00=;
+        b=lXGvYG+SFeGLcv4x1PHaxYG+cvSKEACz0LgwrgfvtU8rpDWw/HmlF8UZoPbgsMH4Vu
+         ap3j1y52veNPadVr7WRwT5vT5am3G4JO4oj6E3xIJk1g/zRZYbqUVL5xMa3MbfWfRQI2
+         RoFCZTHouB7JCv6F2h3r6falWHen41ceHGjsi/jGEWi6BImJLrNFu2vOMvqnYmAci5AI
+         N2qgjEZF8gCbnx8Y2MzAQREospRdTw5y/1Pbe93ucV9p+267qjRzZ+ZcLKyhV03KTijG
+         7M7ubZPZBWGhAfj1EBeKh44yxDoo77O7H05dXrSoFrxibKmwD2+x0IE9cY2Fpf5PSn5R
+         xXyw==
+X-Gm-Message-State: APjAAAVmhmRk06IoAJwbs/Vc4brp9XsFcWO8eF26tw0gjuEyr/gR+U1e
+        CNsL9X5/aIpkxttfm1L9sRoXwOsF
+X-Google-Smtp-Source: APXvYqw2NvQd07i/SzNRhmmzG0SS2sWKSda5f1g5/jwd0fZeKPkFnW7GQIRU/VANyGtDgO17Dt5tdw==
+X-Received: by 2002:a63:460d:: with SMTP id t13mr9857116pga.205.1565031450971;
+        Mon, 05 Aug 2019 11:57:30 -0700 (PDT)
 Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id k64sm16037959pgk.74.2019.08.05.11.57.28
+        by smtp.gmail.com with ESMTPSA id k64sm16037959pgk.74.2019.08.05.11.57.29
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 11:57:28 -0700 (PDT)
+        Mon, 05 Aug 2019 11:57:30 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-serial@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -55,9 +55,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/6] tty: serial: fsl_lpuart: Introduce lpuart32_configure()
-Date:   Mon,  5 Aug 2019 11:56:58 -0700
-Message-Id: <20190805185701.22863-4-andrew.smirnov@gmail.com>
+Subject: [PATCH v3 4/6] tty: serial: fsl_lpuart: Introduce lpuart*_setup_watermark_enable()
+Date:   Mon,  5 Aug 2019 11:56:59 -0700
+Message-Id: <20190805185701.22863-5-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190805185701.22863-1-andrew.smirnov@gmail.com>
 References: <20190805185701.22863-1-andrew.smirnov@gmail.com>
@@ -68,9 +68,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code doing final steps of TX/RX configuration in lpuart32_startup()
-and lpuart_resume() is identical, so move it into a standalone
-subroutine.
+Most users of lpuart*_setup_watermark() enable identical set of flags
+right after the call, so combine those two action into a subroutine
+and make use of it.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Stefan Agner <stefan@agner.ch>
@@ -83,82 +83,102 @@ Cc: linux-imx@nxp.com
 Cc: linux-serial@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/tty/serial/fsl_lpuart.c | 48 +++++++++++++++------------------
- 1 file changed, 21 insertions(+), 27 deletions(-)
+ drivers/tty/serial/fsl_lpuart.c | 50 ++++++++++++++++++---------------
+ 1 file changed, 28 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 4b59801a0a0c..1286daa1be79 100644
+index 1286daa1be79..fb9961edce3a 100644
 --- a/drivers/tty/serial/fsl_lpuart.c
 +++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1502,6 +1502,24 @@ static int lpuart_startup(struct uart_port *port)
- 	return 0;
+@@ -1403,6 +1403,17 @@ static void lpuart_setup_watermark(struct lpuart_port *sport)
+ 	writeb(cr2_saved, sport->port.membase + UARTCR2);
  }
  
-+static void lpuart32_configure(struct lpuart_port *sport)
++static void lpuart_setup_watermark_enable(struct lpuart_port *sport)
 +{
-+	unsigned long temp;
++	unsigned char cr2;
 +
-+	if (sport->lpuart_dma_rx_use) {
-+		/* RXWATER must be 0 */
-+		temp = lpuart32_read(&sport->port, UARTWATER);
-+		temp &= ~(UARTWATER_WATER_MASK << UARTWATER_RXWATER_OFF);
-+		lpuart32_write(&sport->port, temp, UARTWATER);
-+	}
++	lpuart_setup_watermark(sport);
++
++	cr2 = readb(sport->port.membase + UARTCR2);
++	cr2 |= UARTCR2_RIE | UARTCR2_TIE | UARTCR2_RE | UARTCR2_TE;
++	writeb(cr2, sport->port.membase + UARTCR2);
++}
++
+ static void lpuart32_setup_watermark(struct lpuart_port *sport)
+ {
+ 	unsigned long val, ctrl;
+@@ -1428,6 +1439,17 @@ static void lpuart32_setup_watermark(struct lpuart_port *sport)
+ 	lpuart32_write(&sport->port, ctrl_saved, UARTCTRL);
+ }
+ 
++static void lpuart32_setup_watermark_enable(struct lpuart_port *sport)
++{
++	u32 temp;
++
++	lpuart32_setup_watermark(sport);
++
 +	temp = lpuart32_read(&sport->port, UARTCTRL);
-+	if (!sport->lpuart_dma_rx_use)
-+		temp |= UARTCTRL_RIE;
-+	if (!sport->lpuart_dma_tx_use)
-+		temp |= UARTCTRL_TIE;
++	temp |= UARTCTRL_RE | UARTCTRL_TE | UARTCTRL_ILIE;
 +	lpuart32_write(&sport->port, temp, UARTCTRL);
 +}
 +
- static int lpuart32_startup(struct uart_port *port)
+ static void rx_dma_timer_init(struct lpuart_port *sport)
  {
- 	struct lpuart_port *sport = container_of(port, struct lpuart_port, port);
-@@ -1530,18 +1548,7 @@ static int lpuart32_startup(struct uart_port *port)
+ 	timer_setup(&sport->lpuart_timer, lpuart_timer_func, 0);
+@@ -1488,11 +1510,7 @@ static int lpuart_startup(struct uart_port *port)
+ 
+ 	spin_lock_irqsave(&sport->port.lock, flags);
+ 
+-	lpuart_setup_watermark(sport);
+-
+-	temp = readb(sport->port.membase + UARTCR2);
+-	temp |= UARTCR2_RIE | UARTCR2_TIE | UARTCR2_RE | UARTCR2_TE;
+-	writeb(temp, sport->port.membase + UARTCR2);
++	lpuart_setup_watermark_enable(sport);
+ 
  	lpuart_rx_dma_startup(sport);
  	lpuart_tx_dma_startup(sport);
+@@ -1538,11 +1556,7 @@ static int lpuart32_startup(struct uart_port *port)
  
--	if (sport->lpuart_dma_rx_use) {
--		/* RXWATER must be 0 */
--		temp = lpuart32_read(&sport->port, UARTWATER);
--		temp &= ~(UARTWATER_WATER_MASK << UARTWATER_RXWATER_OFF);
--		lpuart32_write(&sport->port, temp, UARTWATER);
--	}
+ 	spin_lock_irqsave(&sport->port.lock, flags);
+ 
+-	lpuart32_setup_watermark(sport);
+-
 -	temp = lpuart32_read(&sport->port, UARTCTRL);
--	if (!sport->lpuart_dma_rx_use)
--		temp |= UARTCTRL_RIE;
--	if (!sport->lpuart_dma_tx_use)
--		temp |= UARTCTRL_TIE;
+-	temp |= UARTCTRL_RE | UARTCTRL_TE | UARTCTRL_ILIE;
 -	lpuart32_write(&sport->port, temp, UARTCTRL);
-+	lpuart32_configure(sport);
++	lpuart32_setup_watermark_enable(sport);
  
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- 	return 0;
-@@ -2579,21 +2586,8 @@ static int lpuart_resume(struct device *dev)
  
- 	lpuart_tx_dma_startup(sport);
+ 	lpuart_rx_dma_startup(sport);
+@@ -2558,22 +2572,14 @@ static int lpuart_resume(struct device *dev)
+ {
+ 	struct lpuart_port *sport = dev_get_drvdata(dev);
+ 	bool irq_wake = irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq));
+-	unsigned long temp;
+ 
+ 	if (sport->port.suspended && !irq_wake)
+ 		lpuart_enable_clks(sport);
  
 -	if (lpuart_is_32(sport)) {
--		if (sport->lpuart_dma_rx_use) {
--			/* RXWATER must be 0 */
--			temp = lpuart32_read(&sport->port, UARTWATER);
--			temp &= ~(UARTWATER_WATER_MASK <<
--				  UARTWATER_RXWATER_OFF);
--			lpuart32_write(&sport->port, temp, UARTWATER);
--		}
+-		lpuart32_setup_watermark(sport);
 -		temp = lpuart32_read(&sport->port, UARTCTRL);
--		if (!sport->lpuart_dma_rx_use)
--			temp |= UARTCTRL_RIE;
--		if (!sport->lpuart_dma_tx_use)
--			temp |= UARTCTRL_TIE;
+-		temp |= UARTCTRL_RE | UARTCTRL_TE | UARTCTRL_ILIE;
 -		lpuart32_write(&sport->port, temp, UARTCTRL);
+-	} else {
+-		lpuart_setup_watermark(sport);
+-		temp = readb(sport->port.membase + UARTCR2);
+-		temp |= UARTCR2_RIE | UARTCR2_TIE | UARTCR2_RE | UARTCR2_TE;
+-		writeb(temp, sport->port.membase + UARTCR2);
 -	}
 +	if (lpuart_is_32(sport))
-+		lpuart32_configure(sport);
++		lpuart32_setup_watermark_enable(sport);
++	else
++		lpuart_setup_watermark_enable(sport);
  
- 	uart_resume_port(&lpuart_reg, &sport->port);
- 
+ 	if (sport->lpuart_dma_rx_use) {
+ 		if (irq_wake) {
 -- 
 2.21.0
 
