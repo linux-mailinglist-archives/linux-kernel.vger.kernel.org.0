@@ -2,80 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA53781083
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 05:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4A6B8108A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 05:26:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfHEDUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 23:20:30 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:55254 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726767AbfHEDUa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 23:20:30 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R691e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TYeMSSC_1564975223;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TYeMSSC_1564975223)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 05 Aug 2019 11:20:23 +0800
-Subject: Re: [PATCH 5/5] docs: zh_CN: howto.rst: fix a broken reference
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Harry Wei <harryxiyou@gmail.com>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        SeongJae Park <sj38.park@gmail.com>
-References: <5c44856436bbaeb4f2d4b750365b82de973ad054.1564169297.git.mchehab+samsung@kernel.org>
- <36ee207d43dd40be23639a3b00de4216a8465624.1564169297.git.mchehab+samsung@kernel.org>
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Message-ID: <2148e16c-335d-96ba-d132-bc4629dabc6a@linux.alibaba.com>
-Date:   Mon, 5 Aug 2019 11:20:23 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1727117AbfHED02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 23:26:28 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3754 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726767AbfHED01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Aug 2019 23:26:27 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0D4FB1DD753B7D944085;
+        Mon,  5 Aug 2019 11:26:25 +0800 (CST)
+Received: from [127.0.0.1] (10.184.12.158) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Mon, 5 Aug 2019
+ 11:26:17 +0800
+Subject: Re: [PATCH 1/9] KVM: arm64: Document PV-time interface
+To:     Steven Price <steven.price@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        <linux-doc@vger.kernel.org>, Russell King <linux@armlinux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Will Deacon <will@kernel.org>, <kvmarm@lists.cs.columbia.edu>
+References: <20190802145017.42543-1-steven.price@arm.com>
+ <20190802145017.42543-2-steven.price@arm.com>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <3bdd764a-b6f5-d17e-a703-d8eb13838efc@huawei.com>
+Date:   Mon, 5 Aug 2019 11:23:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-In-Reply-To: <36ee207d43dd40be23639a3b00de4216a8465624.1564169297.git.mchehab+samsung@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190802145017.42543-2-steven.price@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.12.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro,
+Hi Steven,
 
-Thanks for catching!
-this part need more info, like make latexdocs. So I update them and sent out a patch for this. Please feel free to pick up my patch in your series. :)
-
-Thanks!
-Alex
-
-在 2019/7/27 上午3:29, Mauro Carvalho Chehab 写道:
-> There's a broken reference there pointing to the long gone
-> DocBook dir.
+On 2019/8/2 22:50, Steven Price wrote:
+> Introduce a paravirtualization interface for KVM/arm64 based on the
+> "Arm Paravirtualized Time for Arm-Base Systems" specification DEN 0057A.
 > 
-> While I don't read chinese, Google translator translates it
-> to:
-> 	"The generated documentation will be placed in
-> 	 the Documentation/DocBook/ directory."
+> This only adds the details about "Stolen Time" as the details of "Live
+> Physical Time" have not been fully agreed.
 > 
-> Well, we know that the output will be Documentation/output
-> dir. So, let's fix this one.
+> User space can specify a reserved area of memory for the guest and
+> inform KVM to populate the memory with information on time that the host
+> kernel has stolen from the guest.
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> A hypercall interface is provided for the guest to interrogate the
+> hypervisor's support for this interface and the location of the shared
+> memory structures.
+> 
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  Documentation/translations/zh_CN/process/howto.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   Documentation/virtual/kvm/arm/pvtime.txt | 107 +++++++++++++++++++++++
+>   1 file changed, 107 insertions(+)
+>   create mode 100644 Documentation/virtual/kvm/arm/pvtime.txt
+                                     ^^^^^^^
+This directory has been renamed recently, see:
+
+https://patchwork.ozlabs.org/patch/1136104/
+
+
+Zenghui
+
 > 
-> diff --git a/Documentation/translations/zh_CN/process/howto.rst b/Documentation/translations/zh_CN/process/howto.rst
-> index 5b671178b17b..c4ff8356b88d 100644
-> --- a/Documentation/translations/zh_CN/process/howto.rst
-> +++ b/Documentation/translations/zh_CN/process/howto.rst
-> @@ -147,7 +147,7 @@ Linux内核代码中包含有大量的文档。这些文档对于学习如何与
->      关于补丁是什么以及如何将它打在不同内核开发分支上的好介绍
->  
->  内核还拥有大量从代码自动生成的文档。它包含内核内部API的全面介绍以及如何
-> -妥善处理加锁的规则。生成的文档会放在 Documentation/DocBook/目录下。在内
-> +妥善处理加锁的规则。生成的文档会放在 Documentation/output/目录下。在内
->  核源码的主目录中使用以下不同命令将会分别生成PDF、Postscript、HTML和手册
->  页等不同格式的文档::
->  
+> diff --git a/Documentation/virtual/kvm/arm/pvtime.txt b/Documentation/virtual/kvm/arm/pvtime.txt
+> new file mode 100644
+> index 000000000000..e6ae9799e1d5
+> --- /dev/null
+> +++ b/Documentation/virtual/kvm/arm/pvtime.txt
+> @@ -0,0 +1,107 @@
+> +Paravirtualized time support for arm64
+> +======================================
+> +
+> +Arm specification DEN0057/A defined a standard for paravirtualised time
+> +support for Aarch64 guests:
+> +
+> +https://developer.arm.com/docs/den0057/a
+> +
+> +KVM/Arm64 implements the stolen time part of this specification by providing
+> +some hypervisor service calls to support a paravirtualized guest obtaining a
+> +view of the amount of time stolen from its execution.
+> +
+> +Two new SMCCC compatible hypercalls are defined:
+> +
+> +PV_FEATURES 0xC5000020
+> +PV_TIME_ST  0xC5000022
+> +
+> +These are only available in the SMC64/HVC64 calling convention as
+> +paravirtualized time is not available to 32 bit Arm guests.
+> +
+> +PV_FEATURES
+> +    Function ID:  (uint32)  : 0xC5000020
+> +    PV_func_id:   (uint32)  : Either PV_TIME_LPT or PV_TIME_ST
+> +    Return value: (int32)   : NOT_SUPPORTED (-1) or SUCCESS (0) if the relevant
+> +                              PV-time feature is supported by the hypervisor.
+> +
+> +PV_TIME_ST
+> +    Function ID:  (uint32)  : 0xC5000022
+> +    Return value: (int64)   : IPA of the stolen time data structure for this
+> +                              (V)CPU. On failure:
+> +                              NOT_SUPPORTED (-1)
+> +
+> +Stolen Time
+> +-----------
+> +
+> +The structure pointed to by the PV_TIME_ST hypercall is as follows:
+> +
+> +  Field       | Byte Length | Byte Offset | Description
+> +  ----------- | ----------- | ----------- | --------------------------
+> +  Revision    |      4      |      0      | Must be 0 for version 0.1
+> +  Attributes  |      4      |      4      | Must be 0
+> +  Stolen time |      8      |      8      | Stolen time in unsigned
+> +              |             |             | nanoseconds indicating how
+> +              |             |             | much time this VCPU thread
+> +              |             |             | was involuntarily not
+> +              |             |             | running on a physical CPU.
+> +
+> +The structure will be updated by the hypervisor periodically as time is stolen
+> +from the VCPU. It will be present within a reserved region of the normal
+> +memory given to the guest. The guest should not attempt to write into this
+> +memory. There is a structure by VCPU of the guest.
+> +
+> +User space interface
+> +====================
+> +
+> +User space can request that KVM provide the paravirtualized time interface to
+> +a guest by creating a KVM_DEV_TYPE_ARM_PV_TIME device, for example:
+> +
+> +    struct kvm_create_device pvtime_device = {
+> +            .type = KVM_DEV_TYPE_ARM_PV_TIME,
+> +            .attr = 0,
+> +            .flags = 0,
+> +    };
+> +
+> +    pvtime_fd = ioctl(vm_fd, KVM_CREATE_DEVICE, &pvtime_device);
+> +
+> +The guest IPA of the structures must be given to KVM. This is the base address
+> +of an array of stolen time structures (one for each VCPU). For example:
+> +
+> +    struct kvm_device_attr st_base = {
+> +            .group = KVM_DEV_ARM_PV_TIME_PADDR,
+> +            .attr = KVM_DEV_ARM_PV_TIME_ST,
+> +            .addr = (u64)(unsigned long)&st_paddr
+> +    };
+> +
+> +    ioctl(pvtime_fd, KVM_SET_DEVICE_ATTR, &st_base);
+> +
+> +For migration (or save/restore) of a guest it is necessary to save the contents
+> +of the shared page(s) and later restore them. KVM_DEV_ARM_PV_TIME_STATE_SIZE
+> +provides the size of this data and KVM_DEV_ARM_PV_TIME_STATE allows the state
+> +to be read/written.
+> +
+> +It is also necessary for the physical address to be set identically when
+> +restoring.
+> +
+> +    void *save_state(int fd, u64 attr, u32 *size) {
+> +        struct kvm_device_attr get_size = {
+> +                .group = KVM_DEV_ARM_PV_TIME_STATE_SIZE,
+> +                .attr = attr,
+> +                .addr = (u64)(unsigned long)size
+> +        };
+> +
+> +        ioctl(fd, KVM_GET_DEVICE_ATTR, get_size);
+> +
+> +        void *buffer = malloc(*size);
+> +
+> +        struct kvm_device_attr get_state = {
+> +                .group = KVM_DEV_ARM_PV_TIME_STATE,
+> +                .attr = attr,
+> +                .addr = (u64)(unsigned long)size
+> +        };
+> +
+> +        ioctl(fd, KVM_GET_DEVICE_ATTR, buffer);
+> +    }
+> +
+> +    void *st_state = save_state(pvtime_fd, KVM_DEV_ARM_PV_TIME_ST, &st_size);
+> +
 > 
+
