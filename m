@@ -2,156 +2,347 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2D3781953
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 14:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E88E181962
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 14:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbfHEMbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 08:31:21 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:37484 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbfHEMbU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 08:31:20 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x75CV3jb045947;
-        Mon, 5 Aug 2019 07:31:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565008263;
-        bh=lWzTXhSrr0cAVNRCkLsMsMLThhETZUSnx3FezDaatlw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GhaIpYzXsLYKaVOrYN7dAF+9q5ShfJUjPlj4pOLVhZvnhWQkW4iol5jESWWhxgZFC
-         v3tjk72s+Xi0o0vDKye1BVlrsslYart7+o6Xg1Zwj5kxYZRiiRmF6NcLQdj8cOIdgs
-         yDob0Mvwd3HLqxQQugDPBbOPPyRM/6Vj7NxP7VEM=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x75CV2Q3039836
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Aug 2019 07:31:02 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 5 Aug
- 2019 07:31:02 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 5 Aug 2019 07:31:02 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x75CUx4v054735;
-        Mon, 5 Aug 2019 07:30:59 -0500
-Subject: Re: [PATCH v4 2/3] mtd: spi-nor: Move m25p80 code in spi-nor.c
-To:     <Tudor.Ambarus@microchip.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>
-CC:     <marek.vasut@gmail.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <tmaimon77@gmail.com>,
-        <bbrezillon@kernel.org>
-References: <20190801162229.28897-1-vigneshr@ti.com>
- <20190801162229.28897-3-vigneshr@ti.com>
- <852ffdd1-a546-03db-3b60-47d60bd8d7cf@microchip.com>
- <c4aa9ee0-9deb-9432-5ae6-0c807092ef35@ti.com>
- <50066b1c-6c4c-4aa7-c03d-1d2876afa2c2@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <cdc6268d-16c7-82ad-53e0-9ec9352d0400@ti.com>
-Date:   Mon, 5 Aug 2019 18:01:42 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728696AbfHEMfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 08:35:41 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4175 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726315AbfHEMfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 08:35:40 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9529CF5475D42B202018;
+        Mon,  5 Aug 2019 20:35:34 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 5 Aug 2019 20:35:27 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <helgaas@kernel.org>, <lukas@wunner.de>
+CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <wangxiongfeng2@huawei.com>
+Subject: [PATCH v2] pciehp: fix a race between pciehp and removing operations by sysfs
+Date:   Mon, 5 Aug 2019 20:32:58 +0800
+Message-ID: <1565008378-4733-1-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-In-Reply-To: <50066b1c-6c4c-4aa7-c03d-1d2876afa2c2@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When I unplug a pcie slot and remove the pcie device by 'sysfs' at the
+same time, I got the following calltrace.
 
+ INFO: task irq/746-pciehp:41551 blocked for more than 120 seconds.
+       Tainted: P        W  OE     4.19.25-vhulk1901.1.0.h111.aarch64 #1
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ irq/746-pciehp  D    0 41551      2 0x00000228
+ Call trace:
+  __switch_to+0x94/0xe8
+  __schedule+0x270/0x8b0
+  schedule+0x2c/0x88
+  schedule_preempt_disabled+0x14/0x20
+  __mutex_lock.isra.1+0x1fc/0x540
+  __mutex_lock_slowpath+0x24/0x30
+  mutex_lock+0x80/0xa8
+  pci_lock_rescan_remove+0x20/0x28
+  pciehp_configure_device+0x30/0x140
+  pciehp_handle_presence_or_link_change+0x35c/0x4b0
+  pciehp_ist+0x1cc/0x1d0
+  irq_thread_fn+0x30/0x80
+  irq_thread+0x128/0x200
+  kthread+0x134/0x138
+  ret_from_fork+0x10/0x18
+ INFO: task bash:6424 blocked for more than 120 seconds.
+       Tainted: P        W  OE     4.19.25-vhulk1901.1.0.h111.aarch64 #1
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ bash            D    0  6424   2231 0x00000200
+ Call trace:
+  __switch_to+0x94/0xe8
+  __schedule+0x270/0x8b0
+  schedule+0x2c/0x88
+  schedule_timeout+0x224/0x448
+  wait_for_common+0x198/0x2a0
+  wait_for_completion+0x28/0x38
+  kthread_stop+0x60/0x190
+  __free_irq+0x1c0/0x348
+  free_irq+0x40/0x88
+  pcie_shutdown_notification+0x54/0x80
+  pciehp_remove+0x30/0x50
+  pcie_port_remove_service+0x3c/0x58
+  device_release_driver_internal+0x1b4/0x250
+  device_release_driver+0x28/0x38
+  bus_remove_device+0xd4/0x160
+  device_del+0x128/0x348
+  device_unregister+0x24/0x78
+  remove_iter+0x48/0x58
+  device_for_each_child+0x6c/0xb8
+  pcie_port_device_remove+0x2c/0x48
+  pcie_portdrv_remove+0x5c/0x68
+  pci_device_remove+0x48/0xd8
+  device_release_driver_internal+0x1b4/0x250
+  device_release_driver+0x28/0x38
+  pci_stop_bus_device+0x84/0xb8
+  pci_stop_and_remove_bus_device_locked+0x24/0x40
+  remove_store+0xa4/0xb8
+  dev_attr_store+0x44/0x60
+  sysfs_kf_write+0x58/0x80
+  kernfs_fop_write+0xe8/0x1f0
+  __vfs_write+0x60/0x190
+  vfs_write+0xac/0x1c0
+  ksys_write+0x6c/0xd8
+  __arm64_sys_write+0x24/0x30
+  el0_svc_common+0xa0/0x180
+  el0_svc_handler+0x38/0x78
+  el0_svc+0x8/0xc
 
-On 05/08/19 5:21 PM, Tudor.Ambarus@microchip.com wrote:
-> 
-> 
-> On 08/05/2019 02:10 PM, Vignesh Raghavendra wrote:
->> External E-Mail
->>
->>
->>
->> On 05/08/19 3:55 PM, Tudor.Ambarus@microchip.com wrote:
->>>
->>>
->>> On 08/01/2019 07:22 PM, Vignesh Raghavendra wrote:
->>>
->>>> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
->>>> index e02376e1127b..866962c715b4 100644
->>>> --- a/drivers/mtd/spi-nor/spi-nor.c
->>>> +++ b/drivers/mtd/spi-nor/spi-nor.c
->>>> @@ -19,6 +19,7 @@
->>>
-> 
->>>>  
->>>> @@ -688,6 +1003,16 @@ static int spi_nor_erase_sector(struct spi_nor *nor, u32 addr)
->>>>  	if (nor->erase)
->>>>  		return nor->erase(nor, addr);
->>>>  
->>>> +	if (nor->spimem) {
->>>> +		struct spi_mem_op op =
->>>> +			SPI_MEM_OP(SPI_MEM_OP_CMD(nor->erase_opcode, 1),
->>>> +				   SPI_MEM_OP_ADDR(nor->addr_width, addr, 1),
->>>> +				   SPI_MEM_OP_NO_DUMMY,
->>>> +				   SPI_MEM_OP_NO_DATA);
->>>> +
->>>> +		return spi_mem_exec_op(nor->spimem, &op);
->>>> +	}
->>>> +
->>>
->>> this should be done below in the function, after masking the address.
->>
->> Nope. It would have been true if addr been sent as part of op.data.buf.out. 
->> But since addr is being send as part of op.addr.val, spi-mem.c takes care of this for spi_transfer(s)
->>
-> 
-> Is this valid also for the controllers that implement the ctlr->mem_ops?
+When we remove a slot by sysfs.
+'pci_stop_and_remove_bus_device_locked()' will be called. This function
+will get the global mutex lock 'pci_rescan_remove_lock', and remove the
+slot. If the irq thread 'pciehp_ist' is still running, we will wait
+until it exits.
 
-Nope, address conversion logic is not required if ctlr->mem_ops is
-implemented. spi-mem drivers should be able to handle address field as
-is and there is no need to be converted to SPI bus order.
+If a pciehp interrupt happens immediately after we remove the slot by
+sysfs, but before we free the pciehp irq in
+'pci_stop_and_remove_bus_device_locked()'. 'pciehp_ist' will hung
+because the global mutex lock 'pci_rescan_remove_lock' is held by the
+sysfs operation. But the sysfs operation is waiting for the pciehp irq
+thread 'pciehp_ist' ends. Then a hung task occurs.
 
-Regards
-Vignesh
+So this two kinds of operation, removing the slot triggered by pciehp
+interrupt and removing through 'sysfs', should not be excuted at the
+same time. This patch add a global variable to mark that one of these
+operations is under processing. When this variable is set,  if another
+operation is requested, it will be rejected.
 
-> 
->>>
->>> You add a double space after return in:
->>>> +	return  nor->read_reg(nor, SPINOR_OP_RDSR2, sr2, 1);
->>>
->>
->> Ah, Will fix
->>
->>> There are some checkpatch warnings that we can fix now.
->>>
->>
->> I did see warnings like:
->>>
->>> WARNING: line over 80 characters
->>> #1023: FILE: drivers/mtd/spi-nor/spi-nor.c:2554:
->>> +				   SPI_MEM_OP_DATA_IN(SPI_NOR_MAX_ID_LEN, id, 1));
->>
->> I think its okay to overshoot 80 char limit for better readability. 
-> 
-> ok
-> 
->> Let me know if you think otherwise> 
->>> ERROR: space required after that ',' (ctx:VxV)
->>> #1270: FILE: drivers/mtd/spi-nor/spi-nor.c:4846:
->>> +	{"mx25l25635e"},{"mx66l51235l"},
->>> 	               ^
->>
->> This and similar warnings can be fixed, but will throw off alignment wrt previous lines.
->> Therefore I let them be as is.
-> 
-> ok
-> 
-> Cheers,ta
-> 
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+---
+ drivers/pci/hotplug/pciehp.h      |  3 +++
+ drivers/pci/hotplug/pciehp_ctrl.c | 13 ++++++++++
+ drivers/pci/hotplug/pciehp_hpc.c  | 52 +++++++++++++++++++++++++++++++++++----
+ drivers/pci/pci-sysfs.c           |  7 ++++++
+ drivers/pci/remove.c              |  5 ++++
+ include/linux/pci.h               |  3 +++
+ 6 files changed, 78 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
+index 8c51a04..b8983c1 100644
+--- a/drivers/pci/hotplug/pciehp.h
++++ b/drivers/pci/hotplug/pciehp.h
+@@ -58,6 +58,8 @@
+  *	used for synchronous writes to the Slot Control register
+  * @pending_events: used by the IRQ handler to save events retrieved from the
+  *	Slot Status register for later consumption by the IRQ thread
++ * @delayed_events: when we delay an event handling because the slot is being
++ *	removed or rescanned, we use this member to pass the delayed event
+  * @notification_enabled: whether the IRQ was requested successfully
+  * @power_fault_detected: whether a power fault was detected by the hardware
+  *	that has not yet been cleared by the user
+@@ -91,6 +93,7 @@ struct controller {
+ 	wait_queue_head_t queue;
+ 
+ 	atomic_t pending_events;		/* event handling */
++	int delayed_events;
+ 	unsigned int notification_enabled:1;
+ 	unsigned int power_fault_detected;
+ 	struct task_struct *poll_thread;
+diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+index 631ced0..f8b1212 100644
+--- a/drivers/pci/hotplug/pciehp_ctrl.c
++++ b/drivers/pci/hotplug/pciehp_ctrl.c
+@@ -141,6 +141,7 @@ void pciehp_queue_pushbutton_work(struct work_struct *work)
+ {
+ 	struct controller *ctrl = container_of(work, struct controller,
+ 					       button_work.work);
++	int events = ctrl->delayed_events;
+ 
+ 	mutex_lock(&ctrl->state_lock);
+ 	switch (ctrl->state) {
+@@ -151,6 +152,12 @@ void pciehp_queue_pushbutton_work(struct work_struct *work)
+ 		pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
+ 		break;
+ 	default:
++		if (events) {
++			atomic_or(events, &ctrl->pending_events);
++			if (!pciehp_poll_mode)
++				irq_wake_thread(ctrl->pcie->irq, ctrl);
++		} else
++			slot_being_removed_rescanned = 0;
+ 		break;
+ 	}
+ 	mutex_unlock(&ctrl->state_lock);
+@@ -174,6 +181,7 @@ void pciehp_handle_button_press(struct controller *ctrl)
+ 		/* blink green LED and turn off amber */
+ 		pciehp_green_led_blink(ctrl);
+ 		pciehp_set_attention_status(ctrl, 0);
++		ctrl->delayed_events = 0;
+ 		schedule_delayed_work(&ctrl->button_work, 5 * HZ);
+ 		break;
+ 	case BLINKINGOFF_STATE:
+@@ -195,10 +203,12 @@ void pciehp_handle_button_press(struct controller *ctrl)
+ 		pciehp_set_attention_status(ctrl, 0);
+ 		ctrl_info(ctrl, "Slot(%s): Action canceled due to button press\n",
+ 			  slot_name(ctrl));
++		slot_being_removed_rescanned = 0;
+ 		break;
+ 	default:
+ 		ctrl_err(ctrl, "Slot(%s): Ignoring invalid state %#x\n",
+ 			 slot_name(ctrl), ctrl->state);
++		slot_being_removed_rescanned = 0;
+ 		break;
+ 	}
+ 	mutex_unlock(&ctrl->state_lock);
+@@ -217,6 +227,7 @@ void pciehp_handle_disable_request(struct controller *ctrl)
+ 	mutex_unlock(&ctrl->state_lock);
+ 
+ 	ctrl->request_result = pciehp_disable_slot(ctrl, SAFE_REMOVAL);
++	slot_being_removed_rescanned = 0;
+ }
+ 
+ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+@@ -254,6 +265,7 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+ 	link_active = pciehp_check_link_active(ctrl);
+ 	if (!present && !link_active) {
+ 		mutex_unlock(&ctrl->state_lock);
++		slot_being_removed_rescanned = 0;
+ 		return;
+ 	}
+ 
+@@ -276,6 +288,7 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+ 		mutex_unlock(&ctrl->state_lock);
+ 		break;
+ 	}
++	slot_being_removed_rescanned = 0;
+ }
+ 
+ static int __pciehp_enable_slot(struct controller *ctrl)
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index bd990e3..2db4731 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -631,7 +631,16 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
+ 	if (events & PCI_EXP_SLTSTA_ABP) {
+ 		ctrl_info(ctrl, "Slot(%s): Attention button pressed\n",
+ 			  slot_name(ctrl));
+-		pciehp_handle_button_press(ctrl);
++		if (!test_and_set_bit(0, &slot_being_removed_rescanned))
++			pciehp_handle_button_press(ctrl);
++		else {
++			if (ctrl->state == BLINKINGOFF_STATE ||
++			    ctrl->state == BLINKINGON_STATE)
++				pciehp_handle_button_press(ctrl);
++			else
++				ctrl_info(ctrl, "Slot(%s): Slot operation failed because a remove or rescan operation is under processing, please try later!\n",
++					  slot_name(ctrl));
++		}
+ 	}
+ 
+ 	/* Check Power Fault Detected */
+@@ -647,10 +656,43 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
+ 	 * or Data Link Layer State Changed events.
+ 	 */
+ 	down_read(&ctrl->reset_lock);
+-	if (events & DISABLE_SLOT)
+-		pciehp_handle_disable_request(ctrl);
+-	else if (events & (PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC))
+-		pciehp_handle_presence_or_link_change(ctrl, events);
++	if (events & DISABLE_SLOT) {
++		if (!test_and_set_bit(0, &slot_being_removed_rescanned))
++			pciehp_handle_disable_request(ctrl);
++		else {
++			if (ctrl->state == BLINKINGOFF_STATE ||
++			    ctrl->state == BLINKINGON_STATE)
++				pciehp_handle_disable_request(ctrl);
++			/*
++			 * If 'button_work.timer' is pending, delay the work
++			 * will cause BUG_ON() in add_timer().
++			 */
++			else if (!timer_pending(&ctrl->button_work.timer)) {
++
++				ctrl->delayed_events = DISABLE_SLOT;
++				schedule_delayed_work(&ctrl->button_work,
++						      3 * HZ);
++			}
++		}
++	} else if (events & (PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC)) {
++		if (!test_and_set_bit(0, &slot_being_removed_rescanned))
++			pciehp_handle_presence_or_link_change(ctrl, events);
++		else {
++			if (ctrl->state == BLINKINGOFF_STATE ||
++			    ctrl->state == BLINKINGON_STATE)
++				pciehp_handle_presence_or_link_change(ctrl,
++						events);
++			else if (!timer_pending(&ctrl->button_work.timer)) {
++				ctrl_info(ctrl, "Slot(%s): Surprise link down/up in remove or rescan process!\n",
++					  slot_name(ctrl));
++				ctrl->delayed_events = events &
++							(PCI_EXP_SLTSTA_PDC |
++							PCI_EXP_SLTSTA_DLLSC);
++				schedule_delayed_work(&ctrl->button_work,
++						      3 * HZ);
++			}
++		}
++	}
+ 	up_read(&ctrl->reset_lock);
+ 
+ 	pci_config_pm_runtime_put(pdev);
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 965c721..8ddfd0d 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -473,11 +473,18 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+ {
+ 	unsigned long val;
+ 
++	if (test_and_set_bit(0, &slot_being_removed_rescanned)) {
++		pr_info("Slot is being removed or rescanned, please try later!\n");
++		return -EINVAL;
++	}
++
+ 	if (kstrtoul(buf, 0, &val) < 0)
+ 		return -EINVAL;
+ 
+ 	if (val && device_remove_file_self(dev, attr))
+ 		pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
++
++	slot_being_removed_rescanned = 0;
+ 	return count;
+ }
+ static struct device_attribute dev_remove_attr = __ATTR_IGNORE_LOCKDEP(remove,
+diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
+index e9c6b12..6d15ad0 100644
+--- a/drivers/pci/remove.c
++++ b/drivers/pci/remove.c
+@@ -3,6 +3,11 @@
+ #include <linux/module.h>
+ #include "pci.h"
+ 
++/*
++ * When a slot is being removed/rescanned, this flag is set.
++ */
++unsigned long slot_being_removed_rescanned;
++
+ static void pci_free_resources(struct pci_dev *dev)
+ {
+ 	int i;
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 9e700d9..92575ee 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -952,6 +952,9 @@ enum pcie_bus_config_types {
+ /* Do NOT directly access these two variables, unless you are arch-specific PCI
+  * code, or PCI core code. */
+ extern struct list_head pci_root_buses;	/* List of all known PCI buses */
++
++extern unsigned long slot_being_removed_rescanned;
++
+ /* Some device drivers need know if PCI is initiated */
+ int no_pci_devices(void);
+ 
 -- 
-Regards
-Vignesh
+1.7.12.4
+
