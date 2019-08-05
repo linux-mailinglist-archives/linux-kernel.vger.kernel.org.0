@@ -2,151 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3C5826B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 23:18:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78D7E826C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 23:21:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730653AbfHEVSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 17:18:25 -0400
-Received: from mail-oi1-f178.google.com ([209.85.167.178]:43385 "EHLO
-        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729566AbfHEVSZ (ORCPT
+        id S1730762AbfHEVVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 17:21:41 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32928 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730055AbfHEVVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 17:18:25 -0400
-Received: by mail-oi1-f178.google.com with SMTP id w79so63475742oif.10
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 14:18:24 -0700 (PDT)
+        Mon, 5 Aug 2019 17:21:40 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n190so5242731pgn.0;
+        Mon, 05 Aug 2019 14:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Quv5LKbs49OA0A7kUkrESPHUpmixy0uCyhJoYZPtdP4=;
-        b=Ef/4gIpz8Estc4b2dD1u9XsH48FqtGNZcuSUKZu6Go6rAtTAAwWYccI8oKPC/WeJ9s
-         eysXbXa5OjK92WFBIdmQOFtQvHIJGzoKD57djmO5UaLJxjlxMp6Car2c12JLfpa34aZN
-         1Q6ieMCMAte89kX+rw6vzaT6YfO+GF9EZBdMse9zBu8zsuy5dU5aNtdjaZC6gbPBtE39
-         OrqyKgioDnWIl5vFaHtViPMuxeiJxdx5IYMb1sPP90jo1ue+CQsVIW2Q00EQppIKoa/I
-         9LJnItZ7EHKdOtSwtstrd/EJ35SOTuQ42F0ThDXr5eT4KHpYYhohWvO32EO2xXdtrMrq
-         y3lA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0OeBQSmDe1xB3j4rFO2BJAt14X15aBZMOVJCfaHc6LY=;
+        b=udJV5gKYkc67MZOEO3IGRVgW8n6V52TOvRmHEDWyme7dORPIgCmmqhH0J80IivOTKd
+         yYMTe21ojN4bSKOnAtli2KxUhxAlsSGM2zTXSr//TjRHeOnx6vaheXxV4T/F0cOg3GOu
+         Ni3sX0FkoAE3Sb0p4TenKRIaI3ByAyb4kpXO3cwwDvpA8nt5UnBWoyaLWu3g1BZOw4kJ
+         XGKcBL2PS0gPWQ3hLP0V4pDoOltHcAd0IPqoJtk0cJdFVLZNzaR+Knw8MsIILKpn/hCq
+         bXimrChiXBHpwucZLtnbis6QC9JuSjGhVZUPyI5IXQPfT2Cnaf730fDwr6BIjxT0ZF+/
+         phjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to
-         :user-agent;
-        bh=Quv5LKbs49OA0A7kUkrESPHUpmixy0uCyhJoYZPtdP4=;
-        b=gJdvHNcjmndd8B/1KQZWRtEmJUL5H35xhW9W/5HN73Tcy5rYnHsXOBZQ2W6FFUsItS
-         Hhl8qaSuk0zKdA2QyT75IirF+pEsGfzvW7BdIJX3rYa0S3gMvF1E0HW/JkHrwEH/sV0h
-         YerOBjSXP4Hb5sKiaPENFb2RRL/9XfLJJ4SSgqK1vGsA20g5NdHEGltKZJ010LF6VRbW
-         PYhHwpZUFoO1f368JvKzBj7ai2L5WuI38wXkNItSTO1wujbWhBM2VsMC2qwuUO0Axe5W
-         uXPlzDrbNrStvWJNvLEyfksE7auseitY9BD6S2WsJ2P1ZfxsXugkzPkzo1mZ45uBrCsD
-         ce+Q==
-X-Gm-Message-State: APjAAAWYWydkI10FhEAgqO0j0k9+W5Xgyd2b12DwGm6sI7UB/VVSVv6d
-        VxCri9F556/gUVEzK4Ahrw==
-X-Google-Smtp-Source: APXvYqx6jU8h4cOhrS0fGYgjYoVtMAHXM3guXHC1cBcm4h7gVHA3pxgSsuez4bR3WHgjD/Auu/IoRw==
-X-Received: by 2002:aca:bb45:: with SMTP id l66mr291841oif.108.1565039903877;
-        Mon, 05 Aug 2019 14:18:23 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.134.43])
-        by smtp.gmail.com with ESMTPSA id c21sm27381174oib.4.2019.08.05.14.18.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0OeBQSmDe1xB3j4rFO2BJAt14X15aBZMOVJCfaHc6LY=;
+        b=MsnC4aSJDDFWo/0fvmfYOqgVAT4U3JGkOsc5FfTRGUZ4hq3Cd7e+Y277fFXXkyvjyd
+         BzdHxGnmr+yNWHxYgg1W14I5vKy7WiOxanAGNty+MkMPG0QjcF1QelZgLDm62e16ri1Z
+         avpdbao3jYsDEizTbSNNqm9w/oSYABiEx6Y1U/qIkUh/4MvcZr24SOhftnfV2K1mnnXY
+         gKF2l0IOhudhES4vW+6eHp8ig0KVHU78OuFpje+kDLsjWyv6Gmzo3JzckcbJkwMj0lsL
+         LWpekoOHZ+uzndfcpdBkiNd3rwELV3G2TC/6WbwrRkjh0qKZyvnPPwrlWOcIZwuDNapA
+         x0YA==
+X-Gm-Message-State: APjAAAVuPT8/vtlc5lDdVjFoq9MPrjFcuo1zoXJgEC+zPdjBkx4LEYe/
+        xPy7xsT9QsJfgfvHyJUC2Vk=
+X-Google-Smtp-Source: APXvYqzYkbGeZQnOUdtCfiR5eVyf9faEZUVFiJdOsNaNr95dPgUihphNyzw+oDlds8tspfo+6KC2Pg==
+X-Received: by 2002:a63:f941:: with SMTP id q1mr139140666pgk.350.1565040099484;
+        Mon, 05 Aug 2019 14:21:39 -0700 (PDT)
+Received: from localhost ([100.118.89.196])
+        by smtp.gmail.com with ESMTPSA id r12sm66910903pgb.73.2019.08.05.14.21.38
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 14:18:23 -0700 (PDT)
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:395d:f792:3095:bcc7])
-        by serve.minyard.net (Postfix) with ESMTPSA id A12A81800D1;
-        Mon,  5 Aug 2019 21:18:22 +0000 (UTC)
-Date:   Mon, 5 Aug 2019 16:18:21 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] ipmi_si_intf: use usleep_range() instead of busy looping
-Message-ID: <20190805211821.GG5001@minyard.net>
-Reply-To: minyard@acm.org
-References: <20190709210643.GJ657710@devbig004.ftw2.facebook.com>
- <20190709214602.GD19430@minyard.net>
- <20190709220908.GL657710@devbig004.ftw2.facebook.com>
- <20190709230144.GE19430@minyard.net>
- <20190710142221.GO657710@devbig004.ftw2.facebook.com>
- <20190801174002.GC5001@minyard.net>
- <20190805181850.GI136335@devbig004.ftw2.facebook.com>
+        Mon, 05 Aug 2019 14:21:38 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Christoph Hellwig <hch@lst.de>, Rob Clark <robdclark@chromium.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] drm/msm: use drm_cache when available
+Date:   Mon,  5 Aug 2019 14:14:34 -0700
+Message-Id: <20190805211451.20176-2-robdclark@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190805211451.20176-1-robdclark@gmail.com>
+References: <20190805211451.20176-1-robdclark@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805181850.GI136335@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 11:18:50AM -0700, Tejun Heo wrote:
-> Hello, Corey.
-> 
-> On Thu, Aug 01, 2019 at 12:40:02PM -0500, Corey Minyard wrote:
-> > I spent some time looking at this.  Without the patch, I
-> > measured around 3.5ms to send/receive a get device ID message
-> > and uses 100% of the CPU on a core.
-> > 
-> > I measured your patch, it slowed it down to around 10.5ms
-> > per message, which is not good.  Though it did just use a
-> > few percent of the core.
-> > 
-> > I wrote some code to auto-adjust the timer.  It settled on
-> > a delay around 35us, which gave 4.7ms per message, which is
-> > probably acceptable, and used around 40% of the CPU.  If
-> > I use any timeout (even a 0-10us range) it won't go below
-> > 4ms per message.
-> 
-> Out of curiosity, what makes 4.7ms okay and 10.5ms not?  At least for
-> the use case we have in the fleet (sensor reading mostly), the less
-> disruptive the better as long as things don't timeout and fail.
+From: Rob Clark <robdclark@chromium.org>
 
-Well, when you are loading firmware and it takes 10 minutes at
-max speed, taking 20-30 minutes is a lot worse.  It's not reading
-sensors, which would be fine, it's tranferring large chunks of
-data.
+For a long time drm/msm had been abusing dma_map_* or dma_sync_* to
+clean pages for buffers with uncached/writecombine CPU mmap'ings.
 
-> 
-> > The process is running at nice 19 priority, so it won't
-> > have a significant effect on other processes from a priority
-> > point of view.  It may still be hitting the scheduler locks
-> > pretty hard, though.  But I played with things quite a bit
-> 
-> And power.  Imagine multi six digit number of machines burning a full
-> core just because of this busy loop to read temperature sensors some
-> msecs faster.
-> 
-> > and the behavior or the management controller is too
-> > erratic to set a really good timeout.  Maybe other ones
-> > are better, don't know.
-> > 
-> > One other option we have is that the driver has something
-> > called "maintenance mode".  If it detect that you have
-> > reset the management controller or are issuing firmware
-> > commands, it will modify timeout behavior.  It can also
-> > be activated manually.  I could also make it switch to
-> > just calling schedule instead of delaying when in that
-> > mode.
-> 
-> Yeah, whatever which makes the common-case behavior avoid busy looping
-> would work.
+But drm/msm is managing it's own iommu domains, and really doesn't want
+the additional functionality provided by various DMA API ops.
 
-Ok, it's queued in linux-next now (and has been for a few days).
-I'll get it into the next kernel release (and I just noticed
-a spelling error and fixed it).
+Let's just cut the abstraction and use drm_cache where possible.
 
--corey
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/msm_gem.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> 
-> > The right thing it do is complain bitterly to vendors who
-> > build hardware that has to be polled.  But besides that,
-> 
-> For sure, but there already are a lot of machines with this thing and
-> it'll take multiple years for them to retire so...
-> 
-> > I'm thinking the maintenance mode is the thing to do.
-> > It will also change behavior if you reset the management
-> > controller, but only for 30 seconds or so.  Does that
-> > work?
-> 
-> Yeah, sounds good to me.
-> 
-> Thnaks.
-> 
-> -- 
-> tejun
+diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+index 8cf6362e64bf..af19ef20d0d5 100644
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -9,6 +9,8 @@
+ #include <linux/dma-buf.h>
+ #include <linux/pfn_t.h>
+ 
++#include <drm/drm_cache.h>
++
+ #include "msm_drv.h"
+ #include "msm_fence.h"
+ #include "msm_gem.h"
+@@ -48,6 +50,7 @@ static bool use_pages(struct drm_gem_object *obj)
+ 
+ static void sync_for_device(struct msm_gem_object *msm_obj)
+ {
++#if !defined(HAS_DRM_CACHE)
+ 	struct device *dev = msm_obj->base.dev->dev;
+ 
+ 	if (get_dma_ops(dev)) {
+@@ -57,10 +60,14 @@ static void sync_for_device(struct msm_gem_object *msm_obj)
+ 		dma_map_sg(dev, msm_obj->sgt->sgl,
+ 			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
+ 	}
++#else
++	drm_clflush_sg(msm_obj->sgt);
++#endif
+ }
+ 
+ static void sync_for_cpu(struct msm_gem_object *msm_obj)
+ {
++#if !defined(HAS_DRM_CACHE)
+ 	struct device *dev = msm_obj->base.dev->dev;
+ 
+ 	if (get_dma_ops(dev)) {
+@@ -70,6 +77,7 @@ static void sync_for_cpu(struct msm_gem_object *msm_obj)
+ 		dma_unmap_sg(dev, msm_obj->sgt->sgl,
+ 			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
+ 	}
++#endif
+ }
+ 
+ /* allocate pages from VRAM carveout, used when no IOMMU: */
+-- 
+2.21.0
+
