@@ -2,40 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 404DE81CE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:27:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D76E181C10
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730934AbfHEN1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:27:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32956 "EHLO mail.kernel.org"
+        id S1729965AbfHENTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:19:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731001AbfHENY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:24:27 -0400
+        id S1729838AbfHENTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:19:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 787F2214C6;
-        Mon,  5 Aug 2019 13:24:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58A662147A;
+        Mon,  5 Aug 2019 13:19:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011466;
-        bh=COiR/sBkvowXV4Nyw0r0JT5XhVpATUrlVCDXRX0ia6E=;
+        s=default; t=1565011186;
+        bh=17d/w8H4pfT3UR1Cm/mPukUrGlkmJQSgqyJ4ttorKlk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tatl0CeQt7PxSxhTIHQVG53oKHFn9c25cdbwKnwn7t6kPcvUgKSCCFc1zSCbxDWH3
-         XHLVqA4SvG3lSEEeJZXfsATKFGp86zu6gJU0S0AlX/XaDrpWnN0bqdwdRHt2aSEzvC
-         fzJxHmabG/PAXscBPC/lEGhUBWFfFnX0xdRhDuCM=
+        b=iQvNU42+GaazK0JrtSn4N9jNgC5PG1IMe2mrQykV6KW3IbPm7IErNYvApa++NDzgQ
+         cGaKWaZ5cjjtobkA/ijn19GZ/AAhwPOt6VqSKHZ5jYzTnU9dUKb3tG1L6mUIrYnwrT
+         nebQzVcPjpIkwWqb7pOp3Ee/iZaRMe8PxK2zfi8s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+fee3a14d4cdf92646287@syzkaller.appspotmail.com,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 5.2 098/131] selinux: fix memory leak in policydb_init()
-Date:   Mon,  5 Aug 2019 15:03:05 +0200
-Message-Id: <20190805124958.523237547@linuxfoundation.org>
+        stable@vger.kernel.org, Yang Shi <yang.shi@linux.alibaba.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jan Hadrava <had@kam.mff.cuni.cz>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>, Hugh Dickins <hughd@google.com>,
+        Qian Cai <cai@lca.pw>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 53/74] mm: vmscan: check if mem cgroup is disabled or not before calling memcg slab shrinker
+Date:   Mon,  5 Aug 2019 15:03:06 +0200
+Message-Id: <20190805124940.171405840@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
-References: <20190805124951.453337465@linuxfoundation.org>
+In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
+References: <20190805124935.819068648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +53,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Yang Shi <yang.shi@linux.alibaba.com>
 
-commit 45385237f65aeee73641f1ef737d7273905a233f upstream.
+commit fa1e512fac717f34e7c12d7a384c46e90a647392 upstream.
 
-Since roles_init() adds some entries to the role hash table, we need to
-destroy also its keys/values on error, otherwise we get a memory leak in
-the error path.
+Shakeel Butt reported premature oom on kernel with
+"cgroup_disable=memory" since mem_cgroup_is_root() returns false even
+though memcg is actually NULL.  The drop_caches is also broken.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: syzbot+fee3a14d4cdf92646287@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+It is because commit aeed1d325d42 ("mm/vmscan.c: generalize
+shrink_slab() calls in shrink_node()") removed the !memcg check before
+!mem_cgroup_is_root().  And, surprisingly root memcg is allocated even
+though memory cgroup is disabled by kernel boot parameter.
+
+Add mem_cgroup_disabled() check to make reclaimer work as expected.
+
+Link: http://lkml.kernel.org/r/1563385526-20805-1-git-send-email-yang.shi@linux.alibaba.com
+Fixes: aeed1d325d42 ("mm/vmscan.c: generalize shrink_slab() calls in shrink_node()")
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Reported-by: Shakeel Butt <shakeelb@google.com>
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Jan Hadrava <had@kam.mff.cuni.cz>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: <stable@vger.kernel.org>	[4.19+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/ss/policydb.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ mm/vmscan.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -272,6 +272,8 @@ static int rangetr_cmp(struct hashtab *h
- 	return v;
- }
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -670,7 +670,14 @@ static unsigned long shrink_slab(gfp_t g
+ 	unsigned long ret, freed = 0;
+ 	struct shrinker *shrinker;
  
-+static int (*destroy_f[SYM_NUM]) (void *key, void *datum, void *datap);
-+
- /*
-  * Initialize a policy database structure.
-  */
-@@ -319,8 +321,10 @@ static int policydb_init(struct policydb
- out:
- 	hashtab_destroy(p->filename_trans);
- 	hashtab_destroy(p->range_tr);
--	for (i = 0; i < SYM_NUM; i++)
-+	for (i = 0; i < SYM_NUM; i++) {
-+		hashtab_map(p->symtab[i].table, destroy_f[i], NULL);
- 		hashtab_destroy(p->symtab[i].table);
-+	}
- 	return rc;
- }
+-	if (!mem_cgroup_is_root(memcg))
++	/*
++	 * The root memcg might be allocated even though memcg is disabled
++	 * via "cgroup_disable=memory" boot parameter.  This could make
++	 * mem_cgroup_is_root() return false, then just run memcg slab
++	 * shrink, but skip global shrink.  This may result in premature
++	 * oom.
++	 */
++	if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
+ 		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
  
+ 	if (!down_read_trylock(&shrinker_rwsem))
 
 
