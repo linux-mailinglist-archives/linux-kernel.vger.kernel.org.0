@@ -2,161 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5421581628
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C538F8162B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:59:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbfHEJ7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 05:59:12 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:43109 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfHEJ7L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 05:59:11 -0400
-Received: from 79.184.254.29.ipv4.supernova.orange.pl (79.184.254.29) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
- id a3463300b674835e; Mon, 5 Aug 2019 11:59:09 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Ran Wang <ran.wang_1@nxp.com>
-Cc:     Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pavel Machek <pavel@ucw.cz>, Li Biwen <biwen.li@nxp.com>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] PM: wakeup: Add routine to help fetch wakeup source object.
-Date:   Mon, 05 Aug 2019 11:59:09 +0200
-Message-ID: <4158639.B12JYek7R7@kreacher>
-In-Reply-To: <20190724074722.12270-1-ran.wang_1@nxp.com>
-References: <20190724074722.12270-1-ran.wang_1@nxp.com>
+        id S1728270AbfHEJ7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:59:20 -0400
+Received: from mga05.intel.com ([192.55.52.43]:54172 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727259AbfHEJ7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 05:59:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 02:59:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,349,1559545200"; 
+   d="scan'208";a="164608070"
+Received: from buildpc-hp-z230.iind.intel.com (HELO buildpc-HP-Z230) ([10.223.89.34])
+  by orsmga007.jf.intel.com with ESMTP; 05 Aug 2019 02:59:15 -0700
+Date:   Mon, 5 Aug 2019 15:31:07 +0530
+From:   Sanyog Kale <sanyog.r.kale@intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com
+Subject: Re: [RFC PATCH 24/40] soundwire: cadence_master: use BIOS defaults
+ for frame shape
+Message-ID: <20190805100107.GE22437@buildpc-HP-Z230>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-25-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725234032.21152-25-pierre-louis.bossart@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, July 24, 2019 9:47:20 AM CEST Ran Wang wrote:
-> Some user might want to go through all registered wakeup sources
-> and doing things accordingly. For example, SoC PM driver might need to
-> do HW programming to prevent powering down specific IP which wakeup
-> source depending on. So add this API to help walk through all registered
-> wakeup source objects on that list and return them one by one.
+On Thu, Jul 25, 2019 at 06:40:16PM -0500, Pierre-Louis Bossart wrote:
+> Remove hard-coding and use BIOS values. If they are wrong use default
+> 48x2 frame shape.
 > 
-> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 > ---
-> Change in v5:
-> 	- Update commit message, add decription of walk through all wakeup
-> 	source objects.
-> 	- Add SCU protection in function wakeup_source_get_next().
-> 	- Rename wakeup_source member 'attached_dev' to 'dev' and move it up
-> 	(before wakeirq).
+>  drivers/soundwire/cadence_master.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
 > 
-> Change in v4:
-> 	- None.
-> 
-> Change in v3:
-> 	- Adjust indentation of *attached_dev;.
-> 
-> Change in v2:
-> 	- None.
-> 
->  drivers/base/power/wakeup.c | 24 ++++++++++++++++++++++++
->  include/linux/pm_wakeup.h   |  3 +++
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> index ee31d4f..2fba891 100644
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -14,6 +14,7 @@
->  #include <linux/suspend.h>
->  #include <linux/seq_file.h>
->  #include <linux/debugfs.h>
-> +#include <linux/of_device.h>
->  #include <linux/pm_wakeirq.h>
->  #include <trace/events/power.h>
+> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+> index 442f78c00f09..d84344e29f71 100644
+> --- a/drivers/soundwire/cadence_master.c
+> +++ b/drivers/soundwire/cadence_master.c
+> @@ -175,7 +175,6 @@
+>  /* Driver defaults */
 >  
-> @@ -226,6 +227,28 @@ void wakeup_source_unregister(struct wakeup_source *ws)
->  	}
+>  #define CDNS_DEFAULT_CLK_DIVIDER		0
+> -#define CDNS_DEFAULT_FRAME_SHAPE		0x30
+>  #define CDNS_DEFAULT_SSP_INTERVAL		0x18
+>  #define CDNS_TX_TIMEOUT				2000
+>  
+> @@ -954,6 +953,20 @@ int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
 >  }
->  EXPORT_SYMBOL_GPL(wakeup_source_unregister);
-> +/**
-> + * wakeup_source_get_next - Get next wakeup source from the list
-> + * @ws: Previous wakeup source object, null means caller want first one.
-> + */
-> +struct wakeup_source *wakeup_source_get_next(struct wakeup_source *ws)
-> +{
-> +	struct list_head *ws_head = &wakeup_sources;
-> +	struct wakeup_source *next_ws = NULL;
-> +	int idx;
-> +
-> +	idx = srcu_read_lock(&wakeup_srcu);
-> +	if (ws)
-> +		next_ws = list_next_or_null_rcu(ws_head, &ws->entry,
-> +				struct wakeup_source, entry);
-> +	else
-> +		next_ws = list_entry_rcu(ws_head->next,
-> +				struct wakeup_source, entry);
-> +	srcu_read_unlock(&wakeup_srcu, idx);
-> +
-
-This is incorrect.
-
-The SRCU cannot be unlocked until the caller of this is done
-with the object returned by it, or that object can be freed
-while it is still being accessed.
-
-Besides, this patch conflicts with some general wakeup sources
-changes in the works, so it needs to be deferred and rebased on
-top of those changes.
-
-> +	return next_ws;
-> +}
-> +EXPORT_SYMBOL_GPL(wakeup_source_get_next);
+>  EXPORT_SYMBOL(sdw_cdns_pdi_init);
 >  
+> +static u32 cdns_set_default_frame_shape(int n_rows, int n_cols)
+> +{
+> +	u32 val;
+> +	int c;
+> +	int r;
+> +
+> +	r = sdw_find_row_index(n_rows);
+> +	c = sdw_find_col_index(n_cols);
+> +
+
+Now i get why you need above functions to be exported, please ignore my
+previous comment.
+
+> +	val = (r << 3) | c;
+> +
+> +	return val;
+> +}
+> +
 >  /**
->   * device_wakeup_attach - Attach a wakeup source object to a device object.
-> @@ -242,6 +265,7 @@ static int device_wakeup_attach(struct device *dev, struct wakeup_source *ws)
->  		return -EEXIST;
->  	}
->  	dev->power.wakeup = ws;
-> +	ws->dev = dev;
->  	if (dev->power.wakeirq)
->  		device_wakeup_attach_irq(dev, dev->power.wakeirq);
->  	spin_unlock_irq(&dev->power.lock);
-> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
-> index 9102760..fc23c1a 100644
-> --- a/include/linux/pm_wakeup.h
-> +++ b/include/linux/pm_wakeup.h
-> @@ -23,6 +23,7 @@ struct wake_irq;
->   * @name: Name of the wakeup source
->   * @entry: Wakeup source list entry
->   * @lock: Wakeup source lock
-> + * @dev: The device it attached to
->   * @wakeirq: Optional device specific wakeirq
->   * @timer: Wakeup timer list
->   * @timer_expires: Wakeup timer expiration
-> @@ -42,6 +43,7 @@ struct wakeup_source {
->  	const char 		*name;
->  	struct list_head	entry;
->  	spinlock_t		lock;
-> +	struct device		*dev;
->  	struct wake_irq		*wakeirq;
->  	struct timer_list	timer;
->  	unsigned long		timer_expires;
-> @@ -88,6 +90,7 @@ extern void wakeup_source_add(struct wakeup_source *ws);
->  extern void wakeup_source_remove(struct wakeup_source *ws);
->  extern struct wakeup_source *wakeup_source_register(const char *name);
->  extern void wakeup_source_unregister(struct wakeup_source *ws);
-> +extern struct wakeup_source *wakeup_source_get_next(struct wakeup_source *ws);
->  extern int device_wakeup_enable(struct device *dev);
->  extern int device_wakeup_disable(struct device *dev);
->  extern void device_set_wakeup_capable(struct device *dev, bool capable);
+>   * sdw_cdns_init() - Cadence initialization
+>   * @cdns: Cadence instance
+> @@ -977,7 +990,9 @@ int sdw_cdns_init(struct sdw_cdns *cdns)
+>  	cdns_writel(cdns, CDNS_MCP_CLK_CTRL0, val);
+>  
+>  	/* Set the default frame shape */
+> -	cdns_writel(cdns, CDNS_MCP_FRAME_SHAPE_INIT, CDNS_DEFAULT_FRAME_SHAPE);
+> +	val = cdns_set_default_frame_shape(prop->default_row,
+> +					   prop->default_col);
+> +	cdns_writel(cdns, CDNS_MCP_FRAME_SHAPE_INIT, val);
+>  
+>  	/* Set SSP interval to default value */
+>  	cdns_writel(cdns, CDNS_MCP_SSP_CTRL0, CDNS_DEFAULT_SSP_INTERVAL);
+> -- 
+> 2.20.1
 > 
 
-
-
-
+-- 
