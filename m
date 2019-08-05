@@ -2,64 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D96E581305
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCD78131D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbfHEHUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 03:20:36 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34074 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726394AbfHEHUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 03:20:35 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C9479E04882FA6FD9799;
-        Mon,  5 Aug 2019 15:20:31 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Mon, 5 Aug 2019
- 15:20:25 +0800
-From:   Lihong Kou <koulihong@huawei.com>
-To:     <yuchao0@huawei.com>, <jaegeuk@kernel.org>
-CC:     <fangwei1@huawei.com>, <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <koulihong@huawei.com>
-Subject: [f2fs-dev] [PATCH] fsck.f2fs: fix the bug in reserve_new_block
-Date:   Mon, 5 Aug 2019 15:26:21 +0800
-Message-ID: <1564989981-104324-1-git-send-email-koulihong@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727564AbfHEH06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 03:26:58 -0400
+Received: from mail-pg1-f178.google.com ([209.85.215.178]:44157 "EHLO
+        mail-pg1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfHEH05 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 03:26:57 -0400
+Received: by mail-pg1-f178.google.com with SMTP id i18so39251082pgl.11;
+        Mon, 05 Aug 2019 00:26:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EimvqE0jwyqP2WGVedMuh7qrn6YSjJuzP7Su4aO08UA=;
+        b=PxzyLfa7re80m4D/ZGKf2uK1mGVnjoa23fNDxiw41OD6EYPoVxEksmkmpjZXTZJr3d
+         f35V4qcpVFb1fWfZvDv+6oPRtrusv3q7rJtlen32b+gK3sn2PG3lwNUDPqGKyadLvvjV
+         zTavhVtYpLjrovjEYS+rromXBFnHjMigjkUQYyv7AtaiVmGJD0d011li/a1Ldvoy5Bd0
+         tLcxrBTk0RLH6q+Uro0RKlEQcY4L2Sg58j43ckvIRI45UW53CWldSZhbm4xo39YulDF4
+         1hiIhZgj3sQfyUMFguThXe0LxeL28bXfxyS+DxT446cTVLRIjm+syT0sq7bCT752RAIB
+         ZpDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EimvqE0jwyqP2WGVedMuh7qrn6YSjJuzP7Su4aO08UA=;
+        b=SC7f8faNYRSkTsFXtnLq3LkPGTeZmIxUfMLksWfpFSyL1pVnojLS0z99MVjNX+6JKs
+         o4fJoZXTn32yvwJY3TzdSbbhlenjV501d7Kd0ePQhDDCpMbQVxuGAxHkRXmixe0X2w3q
+         221iGNeUqzEuJ22DYmfDnOVMdciquiHTYOZi7KYSJ8MY+3mDORTKzojWTt7MZkgGLSsq
+         IpzBYzqTkfLAkeHZLbfZH9xTJNjXYDPF7mOlBd84ppOGYrLVJb+ZDxNyq9aAQpHn7fIr
+         jphpOkBXyDJ6d2NeJkP+jQ9WmK/wTqaue5u93O2qeMYXSdmzWjm/vKXnqbgXG5D9KvoE
+         VBxw==
+X-Gm-Message-State: APjAAAXoRjWkQCGOahRd+bU1p1f6cTz6fkmaYJX33sH9o6bGzJOLQRsJ
+        RiE6cZYdHOBwnHXcS6LYepWKzUg9yt9scg==
+X-Google-Smtp-Source: APXvYqyiGHjzQnzFsluj5XM90F8t6hyJvvi+Lq6zx2SX9OAWkCqaHYGp6mt9zRTsPtj1MgZ6nW2LUQ==
+X-Received: by 2002:a63:c006:: with SMTP id h6mr4759884pgg.290.1564990016921;
+        Mon, 05 Aug 2019 00:26:56 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id x25sm113662267pfa.90.2019.08.05.00.26.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 00:26:55 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v2] Documentation/checkpatch: Prefer str_has_prefix over strncmp
+Date:   Mon,  5 Aug 2019 15:26:45 +0800
+Message-Id: <20190805072645.32691-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if we new node block in fsck flow, we need to update
-the valid_node_cnt at the same time.
+Add "strncmp() on string prefix" to
+Documentation/process/deprecated.rst since using strncmp()
+to check whether a string starts with a prefix is error-prone.
+The safe replacement is str_has_prefix().
 
-Signed-off-by: Lihong Kou <koulihong@huawei.com>
+Also add check to the newly introduced deprecated_string_apis
+in checkpatch.pl.
+
+This patch depends on patch:
+"Documentation/checkpatch: Prefer stracpy/strscpy over
+strcpy/strlcpy/strncpy."
+
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- fsck/segment.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Changes in v2:
+  - Use "strncmp() on string prefix" instead of
+    "strncmp()" to make it more precise.
+  - Remove "c:func" and use "strncmp" directly
+    in description.
 
-diff --git a/fsck/segment.c b/fsck/segment.c
-index 98c836e..c16fb3a 100644
---- a/fsck/segment.c
-+++ b/fsck/segment.c
-@@ -51,8 +51,11 @@ void reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
+ Documentation/process/deprecated.rst | 8 ++++++++
+ scripts/checkpatch.pl                | 1 +
+ 2 files changed, 9 insertions(+)
+
+diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
+index 56280e108d5a..96fa32aba189 100644
+--- a/Documentation/process/deprecated.rst
++++ b/Documentation/process/deprecated.rst
+@@ -109,6 +109,14 @@ the given limit of bytes to copy. This is inefficient and can lead to
+ linear read overflows if a source string is not NUL-terminated. The
+ safe replacement is stracpy() or strscpy().
  
- 	if (old_blkaddr == NULL_ADDR) {
- 		sbi->total_valid_block_count++;
--		if (c.func == FSCK)
-+		if (c.func == FSCK) {
- 			fsck->chk.valid_blk_cnt++;
-+			if (IS_NODESEG(type))
-+				fsck->chk.valid_node_cnt++;
-+		}
- 	}
- 	se->dirty = 1;
++strncmp() on string prefix
++--------------------------
++strncmp() is often used to test if a string starts with a prefix by
++strncmp(str, prefix, length of prefix). This is error-prone because length
++of prefix can have counting error if using a constant length, or use
++sizeof(prefix) without - 1. Also, if the prefix is a pointer, sizeof(prefix)
++leads to a wrong size. The safe replacement is str_has_prefix().
++
+ Variable Length Arrays (VLAs)
+ -----------------------------
+ Using stack VLAs produces much worse machine code than statically
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 0ae9ae01d855..38e82d2ac286 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -609,6 +609,7 @@ our %deprecated_string_apis = (
+ 	"strcpy"		=> "stracpy or strscpy",
+ 	"strlcpy"		=> "stracpy or strscpy",
+ 	"strncpy"		=> "stracpy or strscpy - for non-NUL-terminated uses, strncpy dest should be __nonstring",
++	"strncmp"		=> "str_has_prefix",
+ );
  
+ #Create a search pattern for all these strings apis to speed up a loop below
 -- 
-2.7.4
+2.20.1
 
