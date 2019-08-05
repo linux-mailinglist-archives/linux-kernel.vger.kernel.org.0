@@ -2,90 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D113F81CA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE1481CAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbfHEN0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:26:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34434 "EHLO mail.kernel.org"
+        id S1731445AbfHEN0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:26:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731320AbfHENZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:25:52 -0400
+        id S1731395AbfHEN0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:26:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E67C20644;
-        Mon,  5 Aug 2019 13:25:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9E8220651;
+        Mon,  5 Aug 2019 13:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011551;
-        bh=F5nmWI4N3L3upEYEKPWEfR2p0H16olBUXqf9oPpehg4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=agS+SWwhHadZWRNEWN23iIOihG4/mqofXKFDdAvxHcPkjVVJrSGZHz7NKCHRxP9Hl
-         mmMxnFHOmqDdiKfaU2zxQvthemcHs+NCeuSxEGYKWKdDQ2xPwyIOt0HvuJQsBz9KWj
-         9N8hu4GenlocGb2NvOI14T9pHKX70Fimhq98NLuQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Xiaolin Zhang <xiaolin.zhang@intel.com>
-Subject: [PATCH 5.2 131/131] drm/i915/gvt: fix incorrect cache entry for guest page mapping
-Date:   Mon,  5 Aug 2019 15:03:38 +0200
-Message-Id: <20190805125000.899343807@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
-References: <20190805124951.453337465@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1565011575;
+        bh=kz4IhatFXf46gUFuUUXsCZznBc6ohCoNL4N8twIq4lI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jZFBe8/AkcnYLk4tfbGogE+A4zQ0BR0UMJUVmfqchUwAsDiE6efqFyuP3Ir8Qg1ig
+         gmJQojfPE/+PfpNaalnSGUO40Eb6vNrXCRcf6Av4J8cybgTrLUDoEmp+dimzgnfdis
+         DZc2AIoV0oFKPdKPMxAGGwdcthYKIp+dUcpU0jG4=
+Date:   Mon, 5 Aug 2019 15:06:21 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] USB: Disable USB2 LPM at shutdown
+Message-ID: <20190805130621.GA25026@kroah.com>
+References: <Pine.LNX.4.44L0.1906061013490.1641-100000@iolanthe.rowland.org>
+ <46147522-7BC2-4C30-B3E5-6568E9642982@canonical.com>
+ <27A5C1CC-E0A4-4CAF-B81E-90EE76C8A887@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <27A5C1CC-E0A4-4CAF-B81E-90EE76C8A887@canonical.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaolin Zhang <xiaolin.zhang@intel.com>
+On Mon, Aug 05, 2019 at 08:58:33PM +0800, Kai-Heng Feng wrote:
+> Hi Greg,
+> 
+> at 17:22, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+> 
+> > at 22:17, Alan Stern <stern@rowland.harvard.edu> wrote:
+> > > 
+> > > I agree with Kai-Heng, this seems like a fairly light-weight solution
+> > > to a reasonable problem.
+> > 
+> > Thanks for your review.
+> > 
+> > > As to the issue of how much it will slow down system shutdowns, I have
+> > > no idea.  Probably not very much, unless somebody has an unusually
+> > > large number of USB devices plugged in, but only testing can give a
+> > > real answer.
+> > 
+> > In addition to that, only USB2 devices that enable LPM will slow down
+> > shutdown process.
+> > Right now only internally connected USB2 devices enable LPM, so the
+> > numbers are even lower.
+> > 
+> > > I suppose we could add an HCD flag for host controllers which require
+> > > this workaround.  Either way, it's probably not a very big deal.
+> > 
+> > IMO this is not necessary. Only xHCI that reports hw_lpm_support will be
+> > affected. At least for PC, this only became true after Whiskey Lake.
+> > 
+> > Kai-Heng
+> > 
+> > > Alan Stern
+> 
+> This patch is included in Ubuntu’s kernel for a while now, and there’s no
+> regression report so far.
+> Please consider merge this patch.
 
-commit 7366aeb77cd840f3edea02c65065d40affaa7f45 upstream.
+I do not see a patch here at all, sorry.  Please resend it.
 
-GPU hang observed during the guest OCL conformance test which is caused
-by THP GTT feature used durning the test.
-
-It was observed the same GFN with different size (4K and 2M) requested
-from the guest in GVT. So during the guest page dma map stage, it is
-required to unmap first with orginal size and then remap again with
-requested size.
-
-Fixes: b901b252b6cf ("drm/i915/gvt: Add 2M huge gtt support")
-Cc: stable@vger.kernel.org
-Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Xiaolin Zhang <xiaolin.zhang@intel.com>
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/gpu/drm/i915/gvt/kvmgt.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -1911,6 +1911,18 @@ static int kvmgt_dma_map_guest_page(unsi
- 		ret = __gvt_cache_add(info->vgpu, gfn, *dma_addr, size);
- 		if (ret)
- 			goto err_unmap;
-+	} else if (entry->size != size) {
-+		/* the same gfn with different size: unmap and re-map */
-+		gvt_dma_unmap_page(vgpu, gfn, entry->dma_addr, entry->size);
-+		__gvt_cache_remove_entry(vgpu, entry);
-+
-+		ret = gvt_dma_map_page(vgpu, gfn, dma_addr, size);
-+		if (ret)
-+			goto err_unlock;
-+
-+		ret = __gvt_cache_add(info->vgpu, gfn, *dma_addr, size);
-+		if (ret)
-+			goto err_unmap;
- 	} else {
- 		kref_get(&entry->ref);
- 		*dma_addr = entry->dma_addr;
-
-
+greg k-h
