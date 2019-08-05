@@ -2,144 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16966818A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 13:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 022C9818A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 13:58:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbfHEL6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 07:58:34 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:35889 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728513AbfHEL6c (ORCPT
+        id S1728790AbfHEL6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 07:58:43 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45992 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728513AbfHEL6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 07:58:32 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id BD0F91E2C;
-        Mon,  5 Aug 2019 07:58:31 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 05 Aug 2019 07:58:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=CpP+jXyBTmqGd87EE+i6YMktL/+
-        9k4HJgd3+6RNm4e0=; b=YSU/9sxglEDrFB83JMjF5GYy1tJNN+/Hz/W4eHE00/3
-        BS634k/o0H3PihhmK1Zb32wPagLscjViaodRihFhCD4D1Xr/N7OuTcCbHdp+yp2b
-        hAxUeUDzLDmXF6HHzXkoD5FwVLNdoR9yahMQJK8k07kLoC38wxuUmJsIv3RETAn+
-        H9QPWEjzDXwKE3COFk/KG/iAldsp5igbzyKEg5WxbXcX8X5kFuvu/PL1xdmtAQVA
-        k6/bZwVVJezhner1ToP4BbOK8i5i1v19niZKf2QroMLgRxOyNX5VHVmN+VG4udYN
-        7snOYX6wZ0gPnEWBvZRAPYH8AoyXgXEdMrsCW5X4p7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=CpP+jX
-        yBTmqGd87EE+i6YMktL/+9k4HJgd3+6RNm4e0=; b=J/m9KWk/b9cprwIDZ0LVHU
-        NSpbZFZBe5Go/FrtVsGyrgXG4cyu/FpCCSn0H0cnNVddaTcdkJ5VHSHSj79LwoZI
-        QeRBGmt5qreO1w4HRZ2nIbCfdobl49bQU6qEPYCbFYf/otoStAv03MgCbIZq5mHu
-        hpFVmSMg9ic0ilmBUA4sh7VwrzNm+ZkLi9sOZaoNUcVPLCmnRYB6DQ6mOXaNXV3A
-        SVichjeuqWc/c9yS0TaGcnxpCMmJ0rhZjUxAdUFTPjxnG+eRpsZewbibfn3sqCU9
-        w/BHCyj93gOjODAS4jPgj4VMdzqA6jGvmjVkOn+7XYXDYuJslR7QzaQ0pKJ4xSfg
-        ==
-X-ME-Sender: <xms:5hlIXcqMVKi6zxTmzvvHuT1PJZQtmmC1XN_iAqPr-G63OXDCke2BOg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddruddtjedggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlh
-    drohhrghenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:5hlIXSMFXTiUORDQChenY9N-xpSnU5cxldhyvUmIPpbStCHRo9JFyw>
-    <xmx:5hlIXXry_Fd0KQl8H9WVBkIZjErtgxBhonRW_5eSpbJc85k93DemqQ>
-    <xmx:5hlIXTeo0I6vFJ6Ck8XI_Ghi8pANBVVwSRh-EE8pdL-O_Kz3V7axuQ>
-    <xmx:5xlIXaPeOx7_ugFSNGIfd6OSrqrUuuHKHqwJUnqN-H8Y3UCQ9ojxlw>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B723E80060;
-        Mon,  5 Aug 2019 07:58:29 -0400 (EDT)
-Date:   Mon, 5 Aug 2019 13:58:24 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org, Jann Horn <jannh@google.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        xen-devel@lists.xenproject.org, Oscar Salvador <osalvador@suse.de>,
+        Mon, 5 Aug 2019 07:58:39 -0400
+Received: by mail-qk1-f196.google.com with SMTP id s22so59866556qkj.12;
+        Mon, 05 Aug 2019 04:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=e8LeZYKHIbk2Da0fZqUR7a7Js8ma4FkwyhW8sZVdCZk=;
+        b=hngqHboWeegeHkoet35hMfGDZ/a/9CNOIPPlA7NKG//W57AWG953gR+21a8vIOnq2N
+         O0gY/5V/Q5CZoeXcwKWhnYHZmHPjIPfgIkS1CCntV3/YU320muttIZpPr7T73dzyk1eh
+         J8mE0rX4SOvyBpv2kyOrHfn251KwfVS42gfdsBq2ouwztwzMpiiUaEfyj5TeLH2fWGkN
+         5HoRjM9ml34Tua73Y6ycsRF6u7bIqTtdkUcIwAlHJz9fMvtiARFg4/EEIVv3xGLVOxGl
+         iVEyymREv3wB5kUc6CKPmRZoQQTpjQFt0L224wAgcxG3zATbmMyqyyyJRnhyA7k7657N
+         T2EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e8LeZYKHIbk2Da0fZqUR7a7Js8ma4FkwyhW8sZVdCZk=;
+        b=uXjnn4IiVe+iUNP5vHI3r8WNR1Su5qVKbU13/jLTMxrd2Ax3qukIREE1fgS0PEoxeD
+         0FKGDGpu81vIc0AphomoMZAkxZwfEu6jH0U8pH6QbypzKD/yutfglBtiEoJnihzmuqqg
+         cvcR1umJIKVnLXtaySjjCFF53DWxnzUoEJul/S7AiSCROR1pHNWYEEakyV7C2oKOWQbv
+         ZyHyNfXXh5vv/gYH6w5qoeifI1ZxZ1UqdQkN9bk0hAp7NCduWF2wD2CA4XuwSLxf3COt
+         Qmo1tQ3wjxoAkg/obWm7IutxdEE+tKujNoTLAqUyVmawjmoXRjSon48U7/2AY7YywmD/
+         +66Q==
+X-Gm-Message-State: APjAAAXSwGdcu3sKcWAMNXhYMo6tCxykn4KoKpwv40KeIMZS0Zj5Meik
+        IoJ7CcFcBRgwup6a6q20vQ6+DHRUp5c=
+X-Google-Smtp-Source: APXvYqyryDXftcMnqgW+D3kNypxJP/bHopPpzdZ1j1jlioL4L8ry7VpPYRyN6eeewLRhsKtQysUWHw==
+X-Received: by 2002:a05:620a:15a5:: with SMTP id f5mr100840063qkk.45.1565006317755;
+        Mon, 05 Aug 2019 04:58:37 -0700 (PDT)
+Received: from localhost (tripoint.kitware.com. [66.194.253.20])
+        by smtp.gmail.com with ESMTPSA id o10sm40861276qti.62.2019.08.05.04.58.37
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 04:58:37 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 07:58:37 -0400
+From:   Ben Boeckel <mathstuf@gmail.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Juergen Gross <jgross@suse.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH STABLE 4.9] x86, mm, gup: prevent get_page() race with
- munmap in paravirt guest
-Message-ID: <20190805115824.GC8189@kroah.com>
-References: <20190802160614.8089-1-vbabka@suse.cz>
+        Andy Lutomirski <luto@amacapital.net>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCHv2 57/59] x86/mktme: Document the MKTME Key Service API
+Message-ID: <20190805115837.GB31656@rotor>
+Reply-To: mathstuf@gmail.com
+References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
+ <20190731150813.26289-58-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190802160614.8089-1-vbabka@suse.cz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190731150813.26289-58-kirill.shutemov@linux.intel.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 06:06:14PM +0200, Vlastimil Babka wrote:
-> The x86 version of get_user_pages_fast() relies on disabled interrupts to
-> synchronize gup_pte_range() between gup_get_pte(ptep); and get_page() against
-> a parallel munmap. The munmap side nulls the pte, then flushes TLBs, then
-> releases the page. As TLB flush is done synchronously via IPI disabling
-> interrupts blocks the page release, and get_page(), which assumes existing
-> reference on page, is thus safe.
-> However when TLB flush is done by a hypercall, e.g. in a Xen PV guest, there is
-> no blocking thanks to disabled interrupts, and get_page() can succeed on a page
-> that was already freed or even reused.
-> 
-> We have recently seen this happen with our 4.4 and 4.12 based kernels, with
-> userspace (java) that exits a thread, where mm_release() performs a futex_wake()
-> on tsk->clear_child_tid, and another thread in parallel unmaps the page where
-> tsk->clear_child_tid points to. The spurious get_page() succeeds, but futex code
-> immediately releases the page again, while it's already on a freelist. Symptoms
-> include a bad page state warning, general protection faults acessing a poisoned
-> list prev/next pointer in the freelist, or free page pcplists of two cpus joined
-> together in a single list. Oscar has also reproduced this scenario, with a
-> patch inserting delays before the get_page() to make the race window larger.
-> 
-> Fix this by removing the dependency on TLB flush interrupts the same way as the
-> generic get_user_pages_fast() code by using page_cache_add_speculative() and
-> revalidating the PTE contents after pinning the page. Mainline is safe since
-> 4.13 where the x86 gup code was removed in favor of the common code. Accessing
-> the page table itself safely also relies on disabled interrupts and TLB flush
-> IPIs that don't happen with hypercalls, which was acknowledged in commit
-> 9e52fc2b50de ("x86/mm: Enable RCU based page table freeing
-> (CONFIG_HAVE_RCU_TABLE_FREE=y)"). That commit with follups should also be
-> backported for full safety, although our reproducer didn't hit a problem
-> without that backport.
-> 
-> Reproduced-by: Oscar Salvador <osalvador@suse.de>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> ---
-> 
-> Hi, I'm sending this stable-only patch for consideration because it's probably
-> unrealistic to backport the 4.13 switch to generic GUP. I can look at 4.4 and
-> 3.16 if accepted. The RCU page table freeing could be also considered.
-> Note the patch also includes page refcount protection. I found out that
-> 8fde12ca79af ("mm: prevent get_user_pages() from overflowing page refcount")
-> backport to 4.9 missed the arch-specific gup implementations:
-> https://lore.kernel.org/lkml/6650323f-dbc9-f069-000b-f6b0f941a065@suse.cz/
+On Wed, Jul 31, 2019 at 18:08:11 +0300, Kirill A. Shutemov wrote:
+> +	key = add_key("mktme", "name", "no-encrypt", strlen(options_CPU),
+> +		      KEY_SPEC_THREAD_KEYRING);
 
-This looks sane to me, thank you for the backport.  I've queued it up
-now, and if anyone has any objections, please let me know.
+Should this be `type=no-encrypt` here? Also, seems like copy/paste from
+the `type=cpu` case for the `strlen` call.
 
-thanks,
-
-greg k-h
+--Ben
