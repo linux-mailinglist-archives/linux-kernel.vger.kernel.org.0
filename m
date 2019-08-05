@@ -2,96 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB64815F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:54:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEFB681612
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbfHEJyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 05:54:33 -0400
-Received: from mga04.intel.com ([192.55.52.120]:20851 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727328AbfHEJyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 05:54:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 02:54:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,349,1559545200"; 
-   d="scan'208";a="349059850"
-Received: from buildpc-hp-z230.iind.intel.com (HELO buildpc-HP-Z230) ([10.223.89.34])
-  by orsmga005.jf.intel.com with ESMTP; 05 Aug 2019 02:54:28 -0700
-Date:   Mon, 5 Aug 2019 15:26:20 +0530
-From:   Sanyog Kale <sanyog.r.kale@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com
-Subject: Re: [RFC PATCH 23/40] soundwire: stream: fix disable sequence
-Message-ID: <20190805095620.GD22437@buildpc-HP-Z230>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-24-pierre-louis.bossart@linux.intel.com>
+        id S1728255AbfHEJ5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:57:10 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:26906 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727158AbfHEJ5J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 05:57:09 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x758adt9030839;
+        Mon, 5 Aug 2019 11:56:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=zJZbElTZ8XMjuV/mB4+St0kC8YSwld+3sVm7VXWPPao=;
+ b=E2A1quZkD9TpSlrqXOADLK8s3PoN6tFN6NOTwqqGx22ScNeuNMMy+vOhvRYwp0IkcleS
+ Yc8vUNOro5KMpLW2yihSHCLZvoJOMuot+wFk5mMjEYgvoAktypMsbBt2sQhva6Ox20WT
+ Zs026QYsv06i4RWKB+UHipEEOZYCOglmSqSqyeYLf8p+lLTyfLOkjnXSl5Oa7CHzOLYv
+ +POMeOtpUjmG2CezYnAZ565DkIQ2U6ZeJd4N6E+BkfDssaO2e39HB80hVg7kaOrTGE4/
+ 7/YXpANlmlsQqDNTbIIrbcmGMgB7Ha3/VStGbed7xwsfuYkcaO9Eg4aGMxd4/WgQsRPJ 5Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2u5sd1du6q-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 05 Aug 2019 11:56:59 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C0EB738;
+        Mon,  5 Aug 2019 09:56:58 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A684E3023DC;
+        Mon,  5 Aug 2019 11:56:58 +0200 (CEST)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 5 Aug 2019
+ 11:56:58 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 5 Aug 2019
+ 11:56:58 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V4 0/3] mmc: mmci: add busy detect for stm32 sdmmc variant
+Date:   Mon, 5 Aug 2019 11:56:23 +0200
+Message-ID: <20190805095626.25998-1-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725234032.21152-24-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-05_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 06:40:15PM -0500, Pierre-Louis Bossart wrote:
-> When we disable the stream and then call hw_free, two bank switches
-> will be handled and as a result we re-enable the stream on hw_free.
->
+From: Ludovic Barre <ludovic.barre@st.com>
 
-I didnt quite get why there will be two bank switches as part of disable flow
-which leads to enabling of stream?
+This patch series adds busy detect for stm32 sdmmc variant.
+Some adaptations are required:
+-On sdmmc the data timer is started on data transfert
+and busy state, so we must add hardware busy timeout support.
+-Add busy_complete callback at mmci_host_ops to allow to define
+a specific busy completion by variant.
+-Add sdmmc busy_complete calback.
 
-> Make sure the stream is disabled on both banks.
-> 
-> TODO: we need to completely revisit all this and make sure we have a
-> mirroring mechanism between current and alternate banks.
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/stream.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-> index 53f5e790fcd7..75b9ad1fb1a6 100644
-> --- a/drivers/soundwire/stream.c
-> +++ b/drivers/soundwire/stream.c
-> @@ -1637,7 +1637,24 @@ static int _sdw_disable_stream(struct sdw_stream_runtime *stream)
->  		}
->  	}
->  
-> -	return do_bank_switch(stream);
-> +	ret = do_bank_switch(stream);
-> +	if (ret < 0) {
-> +		dev_err(bus->dev, "Bank switch failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* make sure alternate bank (previous current) is also disabled */
-> +	list_for_each_entry(m_rt, &stream->master_list, stream_node) {
-> +		bus = m_rt->bus;
-> +		/* Disable port(s) */
-> +		ret = sdw_enable_disable_ports(m_rt, false);
-> +		if (ret < 0) {
-> +			dev_err(bus->dev, "Disable port(s) failed: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
->  }
->  
->  /**
-> -- 
-> 2.20.1
-> 
+V4:
+-Re-work with busy_complete callback
+-In series, move "mmc: mmci: add hardware busy timeout feature" in
+first to simplify busy_complete prototype with err_msk parameter.
+
+V3:
+-rebase on latest mmc next
+-replace re-read by status parameter. 
+
+V2:
+-mmci_cmd_irq cleanup in separate patch.
+-simplify the busy_detect_flag exclude
+-replace sdmmc specific comment in
+"mmc: mmci: avoid fake busy polling in mmci_irq"
+to focus on common behavior
+
+Ludovic Barre (3):
+  mmc: mmci: add hardware busy timeout feature
+  mmc: mmci: add busy_complete callback
+  mmc: mmci: sdmmc: add busy_complete callback
+
+ drivers/mmc/host/mmci.c             | 178 +++++++++++++++++-----------
+ drivers/mmc/host/mmci.h             |   7 +-
+ drivers/mmc/host/mmci_stm32_sdmmc.c |  38 ++++++
+ 3 files changed, 151 insertions(+), 72 deletions(-)
 
 -- 
+2.17.1
+
