@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBA0681DFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7A4481DFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730561AbfHENu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:50:59 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44548 "EHLO huawei.com"
+        id S1730606AbfHENvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:51:04 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44546 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729755AbfHENu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:50:28 -0400
+        id S1729747AbfHENu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:50:27 -0400
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1C38CF8B2C0E5EB75829;
+        by Forcepoint Email with ESMTP id 174B5C4A8622A0199C17;
         Mon,  5 Aug 2019 21:50:24 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
@@ -20,12 +20,11 @@ Received: from localhost.localdomain (10.67.212.75) by
 From:   John Garry <john.garry@huawei.com>
 To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>,
-        Xiang Chen <chenxiang66@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 11/15] scsi: hisi_sas: Drop free_irq() when devm_request_irq() failed
-Date:   Mon, 5 Aug 2019 21:48:08 +0800
-Message-ID: <1565012892-75940-12-git-send-email-john.garry@huawei.com>
+        <linux-scsi@vger.kernel.org>, Luo Jiaxing <luojiaxing@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH 12/15] scsi: hisi_sas: Modify return type of debugfs functions
+Date:   Mon, 5 Aug 2019 21:48:09 +0800
+Message-ID: <1565012892-75940-13-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1565012892-75940-1-git-send-email-john.garry@huawei.com>
 References: <1565012892-75940-1-git-send-email-john.garry@huawei.com>
@@ -38,157 +37,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+From: Luo Jiaxing <luojiaxing@huawei.com>
 
-It will free irq automatically if devm_request_irq() failed, so drop
-free_irq() if devm_request_irq() failed.
+For functions which always return 0, which is never checked, make to return
+void.
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 34 ++++++--------------------
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 21 +++-------------
- 2 files changed, 11 insertions(+), 44 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 51 ++++++++++-----------------
+ 1 file changed, 18 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 9955b4fbdd0d..a3f8c51b3500 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -3304,8 +3304,8 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index a2255701b50b..be15280343d1 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -2956,8 +2956,8 @@ static const struct file_operations hisi_sas_debugfs_port_fops = {
+ 	.owner = THIS_MODULE,
+ };
+ 
+-static int hisi_sas_show_row_64(struct seq_file *s, int index,
+-				int sz, __le64 *ptr)
++static void hisi_sas_show_row_64(struct seq_file *s, int index,
++				 int sz, __le64 *ptr)
  {
- 	struct platform_device *pdev = hisi_hba->platform_dev;
- 	struct device *dev = &pdev->dev;
--	int irq, rc, irq_map[128];
--	int i, phy_no, fatal_no, queue_no, k;
-+	int irq, rc = 0, irq_map[128];
-+	int i, phy_no, fatal_no, queue_no;
+ 	int i;
  
- 	for (i = 0; i < 128; i++)
- 		irq_map[i] = platform_get_irq(pdev, i);
-@@ -3318,7 +3318,7 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
- 			dev_err(dev, "irq init: could not request phy interrupt %d, rc=%d\n",
- 				irq, rc);
- 			rc = -ENOENT;
--			goto free_phy_int_irqs;
-+			goto err_out;
- 		}
+@@ -2970,12 +2970,10 @@ static int hisi_sas_show_row_64(struct seq_file *s, int index,
  	}
  
-@@ -3332,7 +3332,7 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
- 			dev_err(dev, "irq init: could not request sata interrupt %d, rc=%d\n",
- 				irq, rc);
- 			rc = -ENOENT;
--			goto free_sata_int_irqs;
-+			goto err_out;
- 		}
- 	}
- 
-@@ -3344,7 +3344,7 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
- 			dev_err(dev, "irq init: could not request fatal interrupt %d, rc=%d\n",
- 				irq, rc);
- 			rc = -ENOENT;
--			goto free_fatal_int_irqs;
-+			goto err_out;
- 		}
- 	}
- 
-@@ -3359,34 +3359,14 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
- 			dev_err(dev, "irq init: could not request cq interrupt %d, rc=%d\n",
- 				irq, rc);
- 			rc = -ENOENT;
--			goto free_cq_int_irqs;
-+			goto err_out;
- 		}
- 		tasklet_init(t, cq_tasklet_v2_hw, (unsigned long)cq);
- 	}
- 
- 	hisi_hba->cq_nvecs = hisi_hba->queue_count;
- 
+ 	seq_puts(s, "\n");
+-
 -	return 0;
--
--free_cq_int_irqs:
--	for (k = 0; k < queue_no; k++) {
--		struct hisi_sas_cq *cq = &hisi_hba->cq[k];
--
--		free_irq(irq_map[k + 96], cq);
--		tasklet_kill(&cq->tasklet);
--	}
--free_fatal_int_irqs:
--	for (k = 0; k < fatal_no; k++)
--		free_irq(irq_map[k + 81], hisi_hba);
--free_sata_int_irqs:
--	for (k = 0; k < phy_no; k++) {
--		struct hisi_sas_phy *phy = &hisi_hba->phy[k];
--
--		free_irq(irq_map[k + 72], phy);
--	}
--free_phy_int_irqs:
--	for (k = 0; k < i; k++)
--		free_irq(irq_map[k + 1], hisi_hba);
-+err_out:
- 	return rc;
  }
  
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 95a298d4e211..3cc53e5b92f2 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2351,8 +2351,7 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
+-static int hisi_sas_show_row_32(struct seq_file *s, int index,
+-				int sz, __le32 *ptr)
++static void hisi_sas_show_row_32(struct seq_file *s, int index,
++				 int sz, __le32 *ptr)
  {
- 	struct device *dev = hisi_hba->dev;
- 	struct pci_dev *pdev = hisi_hba->pci_dev;
--	int vectors, rc;
--	int i, k;
-+	int vectors, rc, i;
- 	int max_msi = HISI_SAS_MSI_COUNT_V3_HW, min_msi;
+ 	int i;
  
- 	if (auto_affine_msi_experimental) {
-@@ -2400,7 +2399,7 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
- 	if (rc) {
- 		dev_err(dev, "could not request chnl interrupt, rc=%d\n", rc);
- 		rc = -ENOENT;
--		goto free_phy_irq;
-+		goto free_irq_vectors;
+@@ -2987,11 +2985,9 @@ static int hisi_sas_show_row_32(struct seq_file *s, int index,
+ 			seq_puts(s, "\n\t");
  	}
+ 	seq_puts(s, "\n");
+-
+-	return 0;
+ }
  
- 	rc = devm_request_irq(dev, pci_irq_vector(pdev, 11),
-@@ -2409,7 +2408,7 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
- 	if (rc) {
- 		dev_err(dev, "could not request fatal interrupt, rc=%d\n", rc);
- 		rc = -ENOENT;
--		goto free_chnl_interrupt;
-+		goto free_irq_vectors;
+-static int hisi_sas_cq_show_slot(struct seq_file *s, int slot, void *cq_ptr)
++static void hisi_sas_cq_show_slot(struct seq_file *s, int slot, void *cq_ptr)
+ {
+ 	struct hisi_sas_cq *cq = cq_ptr;
+ 	struct hisi_hba *hisi_hba = cq->hisi_hba;
+@@ -2999,20 +2995,18 @@ static int hisi_sas_cq_show_slot(struct seq_file *s, int slot, void *cq_ptr)
+ 	__le32 *complete_hdr = complete_queue +
+ 			(hisi_hba->hw->complete_hdr_size * slot);
+ 
+-	return hisi_sas_show_row_32(s, slot,
+-				hisi_hba->hw->complete_hdr_size,
+-				complete_hdr);
++	hisi_sas_show_row_32(s, slot,
++			     hisi_hba->hw->complete_hdr_size,
++			     complete_hdr);
+ }
+ 
+ static int hisi_sas_debugfs_cq_show(struct seq_file *s, void *p)
+ {
+ 	struct hisi_sas_cq *cq = s->private;
+-	int slot, ret;
++	int slot;
+ 
+ 	for (slot = 0; slot < HISI_SAS_QUEUE_SLOTS; slot++) {
+-		ret = hisi_sas_cq_show_slot(s, slot, cq);
+-		if (ret)
+-			return ret;
++		hisi_sas_cq_show_slot(s, slot, cq);
  	}
+ 	return 0;
+ }
+@@ -3030,7 +3024,7 @@ static const struct file_operations hisi_sas_debugfs_cq_fops = {
+ 	.owner = THIS_MODULE,
+ };
  
- 	/* Init tasklets for cq only */
-@@ -2426,7 +2425,7 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
- 			dev_err(dev, "could not request cq%d interrupt, rc=%d\n",
- 				i, rc);
- 			rc = -ENOENT;
--			goto free_cq_irqs;
-+			goto free_irq_vectors;
- 		}
+-static int hisi_sas_dq_show_slot(struct seq_file *s, int slot, void *dq_ptr)
++static void hisi_sas_dq_show_slot(struct seq_file *s, int slot, void *dq_ptr)
+ {
+ 	struct hisi_sas_dq *dq = dq_ptr;
+ 	struct hisi_hba *hisi_hba = dq->hisi_hba;
+@@ -3038,18 +3032,15 @@ static int hisi_sas_dq_show_slot(struct seq_file *s, int slot, void *dq_ptr)
+ 	__le32 *cmd_hdr = cmd_queue +
+ 		sizeof(struct hisi_sas_cmd_hdr) * slot;
  
- 		tasklet_init(t, cq_tasklet_v3_hw, (unsigned long)cq);
-@@ -2434,18 +2433,6 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
+-	return hisi_sas_show_row_32(s, slot, sizeof(struct hisi_sas_cmd_hdr),
+-				    cmd_hdr);
++	hisi_sas_show_row_32(s, slot, sizeof(struct hisi_sas_cmd_hdr), cmd_hdr);
+ }
+ 
+ static int hisi_sas_debugfs_dq_show(struct seq_file *s, void *p)
+ {
+-	int slot, ret;
++	int slot;
+ 
+ 	for (slot = 0; slot < HISI_SAS_QUEUE_SLOTS; slot++) {
+-		ret = hisi_sas_dq_show_slot(s, slot, s->private);
+-		if (ret)
+-			return ret;
++		hisi_sas_dq_show_slot(s, slot, s->private);
+ 	}
+ 	return 0;
+ }
+@@ -3071,15 +3062,12 @@ static int hisi_sas_debugfs_iost_show(struct seq_file *s, void *p)
+ {
+ 	struct hisi_hba *hisi_hba = s->private;
+ 	struct hisi_sas_iost *debugfs_iost = hisi_hba->debugfs_iost;
+-	int i, ret, max_command_entries = HISI_SAS_MAX_COMMANDS;
++	int i, max_command_entries = HISI_SAS_MAX_COMMANDS;
+ 
+ 	for (i = 0; i < max_command_entries; i++, debugfs_iost++) {
+ 		__le64 *iost = &debugfs_iost->qw0;
+ 
+-		ret = hisi_sas_show_row_64(s, i, sizeof(*debugfs_iost),
+-					   iost);
+-		if (ret)
+-			return ret;
++		hisi_sas_show_row_64(s, i, sizeof(*debugfs_iost), iost);
+ 	}
  
  	return 0;
+@@ -3140,17 +3128,14 @@ static const struct file_operations hisi_sas_debugfs_iost_cache_fops = {
  
--free_cq_irqs:
--	for (k = 0; k < i; k++) {
--		struct hisi_sas_cq *cq = &hisi_hba->cq[k];
--		int nr = hisi_sas_intr_conv ? 16 : 16 + k;
--
--		free_irq(pci_irq_vector(pdev, nr), cq);
--	}
--	free_irq(pci_irq_vector(pdev, 11), hisi_hba);
--free_chnl_interrupt:
--	free_irq(pci_irq_vector(pdev, 2), hisi_hba);
--free_phy_irq:
--	free_irq(pci_irq_vector(pdev, 1), hisi_hba);
- free_irq_vectors:
- 	pci_free_irq_vectors(pdev);
- 	return rc;
+ static int hisi_sas_debugfs_itct_show(struct seq_file *s, void *p)
+ {
+-	int i, ret;
++	int i;
+ 	struct hisi_hba *hisi_hba = s->private;
+ 	struct hisi_sas_itct *debugfs_itct = hisi_hba->debugfs_itct;
+ 
+ 	for (i = 0; i < HISI_SAS_MAX_ITCT_ENTRIES; i++, debugfs_itct++) {
+ 		__le64 *itct = &debugfs_itct->qw0;
+ 
+-		ret = hisi_sas_show_row_64(s, i, sizeof(*debugfs_itct),
+-					   itct);
+-		if (ret)
+-			return ret;
++		hisi_sas_show_row_64(s, i, sizeof(*debugfs_itct), itct);
+ 	}
+ 
+ 	return 0;
 -- 
 2.17.1
 
