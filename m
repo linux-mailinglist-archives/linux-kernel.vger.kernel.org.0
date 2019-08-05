@@ -2,81 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB2C80F9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 02:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE5580FB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 02:32:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfHEA1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 4 Aug 2019 20:27:48 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46223 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfHEA1r (ORCPT
+        id S1726821AbfHEAcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 4 Aug 2019 20:32:14 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:46199 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726621AbfHEAcO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Aug 2019 20:27:47 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z1so82595317wru.13
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2019 17:27:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
-        b=flOlt3yjpSud2yfClcBQJCakjyjj1uzUtPBOkv4zmakf7SyfxdzYznfT4o2iiol50y
-         tHfVnmRw/vaWwWBQD1a81Zp4WsWg/u6RK9fQMhgMATyp5avQkBWLQ8LdbZ61WxbrwTmO
-         yN6JYMoaf7UtSNc8A0y1L2RcCM8u2eQSIMCzS51Us97fq5eikVlsxX6YFx60LenZHc9M
-         BGEDERZupenoiRnG+qcvu1QRTEkWidSAAlB6oY+xssCFKfvGoO48XaoF8f5dC1lDOd83
-         yCvUetAL559XmHqNgGk587ikxfE8yhXosMYz7Hq0KOnypwMgRCRzDMHM/0bJfj9OyzUU
-         BxiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
-        b=uKLVEIdjaLm8mKMdNBFPZVM/sHcsjejJHWRYdfq79rUQMe/jqjVaK7BVAKKA++Hj8J
-         Sn9kjmtkPOoXXK6X4xdBYEUAoEaZwt/Tu44d2DRtaKqTLHpvjtBrX0579INrMxWgFzmN
-         h8xTjMzHKvjD0cGWTauddiIFh4+943YcLfzSTD3WmNcAz3fB4cP/yK2oGMeyXB3dmp0P
-         OnEufnyFGeAL/kNu0ZL5W3kPJ8COp3kE09ovqSsEl6cnGd5Oj+07l80xAL5atXN3PSRx
-         kzwNuxc7PEdnPEoWazqLZviSf9VWPfYggt8T7KWD1TWjbwQhOpWBVpN36JxhvjhE1xhQ
-         ZJkw==
-X-Gm-Message-State: APjAAAUZEgCA1n3j0vVFXAET0NL33KM06/p6pn5sKnp/ologk+ZkF/bh
-        3dt6vlYNeULr91fvR8DbOD/O7wWlTdkxKQCBn9M=
-X-Google-Smtp-Source: APXvYqwibU7GLX3LOyVjPNYYbOeHmAkhulyBOtYbLmqYbgnIFKYhNdzGGY7pp27iQqxL780d4BkBKf+JI7d4OwaDbtM=
-X-Received: by 2002:a5d:5450:: with SMTP id w16mr11442339wrv.128.1564964865769;
- Sun, 04 Aug 2019 17:27:45 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a5d:5142:0:0:0:0:0 with HTTP; Sun, 4 Aug 2019 17:27:45 -0700 (PDT)
-Reply-To: ayishagddafio@mail.com
-From:   Aisha Gddafi <aishagddafi68@gmail.com>
-Date:   Sun, 4 Aug 2019 17:27:45 -0700
-Message-ID: <CAKJgomGD=pDyW80i1R-=wVphbrWdErsuvoA+1P89UHP43Pe9kQ@mail.gmail.com>
-Subject: Dear Friend (Assalamu Alaikum),
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 4 Aug 2019 20:32:14 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 911B6210AF;
+        Sun,  4 Aug 2019 20:32:12 -0400 (EDT)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Sun, 04 Aug 2019 20:32:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm3; bh=Prb7tn3TJaxCnpwPPyi4xsZf7IapyER
+        pEa2ECzebZJ8=; b=OC/bJtu6RxIN+aXu0LGViMDdm0L+VrwJ3Q9M2C+0PSyBSqM
+        lvq1PeCyWvBlPu0hpZFVoCAnO4dAao9GQtYHommXGw51thzV2lZvNOuXY1LPkFjT
+        hQt/2Lz6/x7t9zGe0oe80l5GasiLr6S6J0qF0KjePvv0pO2qvwY/kziSEhSzSeyr
+        QDRqiqGITr3cIn8JtDIZHOaYNqsw9SCbvpuZ9yYq6piUfkdijrSItZhf45WPF/rA
+        qkCWDYyUbcM7gFKS+laWsFAKPLD8vWYyYie7LPa3xPpZjrI9t9HGt65yGilZeXqm
+        fQsWLM9Iwr80WsaJLclD8Bpyqhb+6DJbtU+FLXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Prb7tn
+        3TJaxCnpwPPyi4xsZf7IapyERpEa2ECzebZJ8=; b=VR3W6WNB98Qi32CdFWRQ2z
+        GL4+WEI1xXnXG+TZNDL0Zv8Pel4UGnvs4CSmGEjU+tQ71Wa3LpLjNdaM7h3U7sfM
+        p8hvF1HP/AB5LMSwWyZfyo7aAiULkeXjw/CRYLXkllSIASlB4oc8fRTkQ65q4Zd8
+        xB660kM38NCjQFMyTEjZ8HSxB+0SpuEp7wvnio2DnItxVBXX+K6X+YDofazAEjd6
+        KyLMYkIgYeOHw7UHUvRjuuUwJQcKHuvQMVVwoPwbWFNwmQidbyOU0PqPwtoFUFDT
+        gIDMGnGFwRjeGX4aO/09Ll71KOAGNGj88vKBZefQb32zxOWJ4yDAbQ7sTxESwzlg
+        ==
+X-ME-Sender: <xms:CnlHXR1l0V9THU39Aap7oiHt8szc2igbuZPkdhxMsB_kV48QIxL9gg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddruddtiedgfeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:CnlHXUOAlGPqae4gC48F0Pt0yXZKToIbq-M1Bb9YA0UTYG5C8i7Ptg>
+    <xmx:CnlHXeBB8JbU__uOJwzDKnXEOrk36kZ05q1-RetV8TWpqQwiUDOYug>
+    <xmx:CnlHXTdAqWMW4DB9PQfLoKy3QyL3MHQDkxkZUV8dz2HbR2vmiUg6hA>
+    <xmx:DHlHXaY6LySV9ubuK-ADN-my4zPeO3kv0jgPF40e0yMFfHbC5RU9lA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 5A373E00A2; Sun,  4 Aug 2019 20:32:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.6-799-g925e343-fmstable-20190729v1
+Mime-Version: 1.0
+Message-Id: <593f30af-1065-4136-a420-3d0cf2a111f5@www.fastmail.com>
+In-Reply-To: <20190802083736.26783-1-Ben_Pai@wistron.com>
+References: <20190802083736.26783-1-Ben_Pai@wistron.com>
+Date:   Mon, 05 Aug 2019 10:02:33 +0930
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Ben Pai" <Ben_Pai@wistron.com>,
+        "Rob Herring" <robh+dt@kernel.org>, mark.rutland@arm.com,
+        "Joel Stanley" <joel@jms.id.au>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     wangat@tw.ibm.com
+Subject: Re: [PATCH v4 4/4] ARM: dts: aspeed: Add Mihawk BMC platform
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Dear Friend (Assalamu Alaikum),
 
-I came across your e-mail contact prior a private search while in need of
-your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
-with three Children. I am the only biological Daughter of late Libyan
-President (Late Colonel Muammar Gaddafi).
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand
-United State Dollar ($27.500.000.00 ) and i need a trusted investment
-Manager/Partner because of my current refugee status, however, I am
-interested in you for investment project assistance in your country, may be
-from there, we can build business relationship in the nearest future.
+On Fri, 2 Aug 2019, at 18:07, Ben Pai wrote:
+> The Mihawk BMC is an ASPEED ast2500 based BMC that is part of an
+> OpenPower Power9 server.
+> 
+> Signed-off-by: Ben Pai <Ben_Pai@wistron.com>
 
-I am willing to negotiate investment/business profit sharing ratio with you
-base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply urgent
-to enable me provide you more information about the investment funds.
-
-Your Urgent Reply Will Be Appreciated. write me at this email address(
-ayishagddafio@mail.com ) for further discussion.
-
-Best Regards
-Mrs Aisha Al-Qaddafi
-Reply to: ayishagddafio@mail.com
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
