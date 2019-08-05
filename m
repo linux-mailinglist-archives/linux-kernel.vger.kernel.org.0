@@ -2,133 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B47F581D46
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:31:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8973581D4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730723AbfHENau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:30:50 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:58279 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729291AbfHENar (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:30:47 -0400
-Received: from [167.98.27.226] (helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hud4W-0004bY-Ou; Mon, 05 Aug 2019 14:30:44 +0100
-Message-ID: <12c095e595836a7ff7f2c7b2a32cb5544dd29b55.camel@codethink.co.uk>
-Subject: Re: [Y2038] [PATCH 05/20] utimes: Clamp the timestamps before update
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        arnd@arndb.de
-Date:   Mon, 05 Aug 2019 14:30:43 +0100
-In-Reply-To: <20190730014924.2193-6-deepa.kernel@gmail.com>
-References: <20190730014924.2193-1-deepa.kernel@gmail.com>
-         <20190730014924.2193-6-deepa.kernel@gmail.com>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1730180AbfHENbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:31:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49548 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729755AbfHENbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:31:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AEAF1ACB4;
+        Mon,  5 Aug 2019 13:31:20 +0000 (UTC)
+Date:   Mon, 5 Aug 2019 15:31:19 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     "Artem S. Tashkinov" <aros@gmx.com>, linux-kernel@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
+ inability to gracefully handle low memory pressure
+Message-ID: <20190805133119.GO7597@dhcp22.suse.cz>
+References: <d9802b6a-949b-b327-c4a6-3dbca485ec20@gmx.com>
+ <ce102f29-3adc-d0fd-41ee-e32c1bcd7e8d@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce102f29-3adc-d0fd-41ee-e32c1bcd7e8d@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-07-29 at 18:49 -0700, Deepa Dinamani wrote:
-> POSIX is ambiguous on the behavior of timestamps for
-> futimens, utimensat and utimes. Whether to return an
-> error or silently clamp a timestamp beyond the range
-> supported by the underlying filesystems is not clear.
+On Mon 05-08-19 14:13:16, Vlastimil Babka wrote:
+> On 8/4/19 11:23 AM, Artem S. Tashkinov wrote:
+> > Hello,
+> > 
+> > There's this bug which has been bugging many people for many years
+> > already and which is reproducible in less than a few minutes under the
+> > latest and greatest kernel, 5.2.6. All the kernel parameters are set to
+> > defaults.
+> > 
+> > Steps to reproduce:
+> > 
+> > 1) Boot with mem=4G
+> > 2) Disable swap to make everything faster (sudo swapoff -a)
+> > 3) Launch a web browser, e.g. Chrome/Chromium or/and Firefox
+> > 4) Start opening tabs in either of them and watch your free RAM decrease
+> > 
+> > Once you hit a situation when opening a new tab requires more RAM than
+> > is currently available, the system will stall hard. You will barely  be
+> > able to move the mouse pointer. Your disk LED will be flashing
+> > incessantly (I'm not entirely sure why). You will not be able to run new
+> > applications or close currently running ones.
 > 
-> POSIX.1 section for futimens, utimensat and utimes says:
-> (http://pubs.opengroup.org/onlinepubs/9699919799/functions/futimens.html)
+> > This little crisis may continue for minutes or even longer. I think
+> > that's not how the system should behave in this situation. I believe
+> > something must be done about that to avoid this stall.
 > 
-> The file's relevant timestamp shall be set to the greatest
-> value supported by the file system that is not greater
-> than the specified time.
+> Yeah that's a known problem, made worse SSD's in fact, as they are able
+> to keep refaulting the last remaining file pages fast enough, so there
+> is still apparent progress in reclaim and OOM doesn't kick in.
 > 
-> If the tv_nsec field of a timespec structure has the special
-> value UTIME_NOW, the file's relevant timestamp shall be set
-> to the greatest value supported by the file system that is
-> not greater than the current time.
-> 
-> [EINVAL]
->     A new file timestamp would be a value whose tv_sec
->     component is not a value supported by the file system.
-> 
-> The patch chooses to clamp the timestamps according to the
-> filesystem timestamp ranges and does not return an error.
-> This is in line with the behavior of utime syscall also
-> since the POSIX page(http://pubs.opengroup.org/onlinepubs/009695399/functions/utime.html)
-> for utime does not mention returning an error or clamping like above.
-> 
-> Same for utimes http://pubs.opengroup.org/onlinepubs/009695399/functions/utimes.html
-> 
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> ---
->  fs/utimes.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/utimes.c b/fs/utimes.c
-> index 350c9c16ace1..4c1a2ce90bbc 100644
-> --- a/fs/utimes.c
-> +++ b/fs/utimes.c
-> @@ -21,6 +21,7 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
->  	int error;
->  	struct iattr newattrs;
->  	struct inode *inode = path->dentry->d_inode;
-> +	struct super_block *sb = inode->i_sb;
->  	struct inode *delegated_inode = NULL;
->  
->  	error = mnt_want_write(path->mnt);
-> @@ -36,16 +37,24 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
->  		if (times[0].tv_nsec == UTIME_OMIT)
->  			newattrs.ia_valid &= ~ATTR_ATIME;
->  		else if (times[0].tv_nsec != UTIME_NOW) {
-> -			newattrs.ia_atime.tv_sec = times[0].tv_sec;
-> -			newattrs.ia_atime.tv_nsec = times[0].tv_nsec;
-> +			newattrs.ia_atime.tv_sec =
-> +				clamp(times[0].tv_sec, sb->s_time_min, sb->s_time_max);
-> +			if (times[0].tv_sec == sb->s_time_max || times[0].tv_sec == sb->s_time_min)
+> At this point, the likely solution will be probably based on pressure
+> stall monitoring (PSI). I don't know how far we are from a built-in
+> monitor with reasonable defaults for a desktop workload, so CCing
+> relevant folks.
 
-This is testing the un-clamped value.
+Another potential approach would be to consider the refault information
+we have already for file backed pages. Once we start reclaiming only
+workingset pages then we should be trashing, right? It cannot be as
+precise as the cost model which can be defined around PSI but it might
+give us at least a fallback measure.
 
-> +				newattrs.ia_atime.tv_nsec = 0;
-> +			else
-> +				newattrs.ia_atime.tv_nsec = times[0].tv_nsec;
->  			newattrs.ia_valid |= ATTR_ATIME_SET;
->  		}
->  
->  		if (times[1].tv_nsec == UTIME_OMIT)
->  			newattrs.ia_valid &= ~ATTR_MTIME;
->  		else if (times[1].tv_nsec != UTIME_NOW) {
-> -			newattrs.ia_mtime.tv_sec = times[1].tv_sec;
-> -			newattrs.ia_mtime.tv_nsec = times[1].tv_nsec;
-> +			newattrs.ia_mtime.tv_sec =
-> +				clamp(times[1].tv_sec, sb->s_time_min, sb->s_time_max);
-> +			if (times[1].tv_sec >= sb->s_time_max || times[1].tv_sec == sb->s_time_min)
+This is a really just an idea for a primitive detection. Most likely
+incorrect one but it shows an idea at least. It is completely untested
+and might be completely broken so unless somebody is really brave and
+doesn't run anything that would be missed then I do not recommend to run
+it.
 
-Similarly here, for the minimum.
-
-I suggest testing for clamping like this:
-
-			if (newattrs.ia_atime.tv_sec != times[0].tv_sec)
-				...
-			if (newattrs.ia_mtime.tv_sec != times[1].tv_sec)
-				...
-
-Ben.
-
-> +				newattrs.ia_mtime.tv_nsec = 0;
-> +			else
-> +				newattrs.ia_mtime.tv_nsec = times[1].tv_nsec;
->  			newattrs.ia_valid |= ATTR_MTIME_SET;
->  		}
->  		/*
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 70394cabaf4e..7f30c78b4fbc 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -300,6 +300,7 @@ struct lruvec {
+ 	atomic_long_t			inactive_age;
+ 	/* Refaults at the time of last reclaim cycle */
+ 	unsigned long			refaults;
++	atomic_t			workingset_refaults;
+ #ifdef CONFIG_MEMCG
+ 	struct pglist_data *pgdat;
+ #endif
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 4bfb5c4ac108..4401753c3912 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -311,6 +311,15 @@ void *workingset_eviction(struct page *page);
+ void workingset_refault(struct page *page, void *shadow);
+ void workingset_activation(struct page *page);
+ 
++bool lruvec_trashing(struct lruvec *lruvec)
++{
++	/*
++	 * One quarter of the inactive list is constantly refaulting.
++	 * This suggests that we are trashing.
++	 */
++	return 4 * atomic_read(&lruvec->workingset_refaults) > lruvec_lru_size(lruvec, LRU_INACTIVE_FILE, MAX_NR_ZONES);
++}
++
+ /* Only track the nodes of mappings with shadow entries */
+ void workingset_update_node(struct xa_node *node);
+ #define mapping_set_update(xas, mapping) do {				\
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 7889f583ced9..d198594af0cd 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2381,6 +2381,11 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 						  denominator);
+ 			break;
+ 		case SCAN_FILE:
++			if (lruvec_trashing(lruvec)) {
++				size = 0;
++				scan = 0;
++				break;
++			}
+ 		case SCAN_ANON:
+ 			/* Scan one type exclusively */
+ 			if ((scan_balance == SCAN_FILE) != file) {
+diff --git a/mm/workingset.c b/mm/workingset.c
+index e0b4edcb88c8..ee4c45b27e34 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -309,17 +309,25 @@ void workingset_refault(struct page *page, void *shadow)
+ 	 * don't act on pages that couldn't stay resident even if all
+ 	 * the memory was available to the page cache.
+ 	 */
+-	if (refault_distance > active_file)
++	if (refault_distance > active_file) {
++		atomic_set(&lruvec->workingset_refaults, 0);
+ 		goto out;
++	}
+ 
+ 	SetPageActive(page);
+ 	atomic_long_inc(&lruvec->inactive_age);
+ 	inc_lruvec_state(lruvec, WORKINGSET_ACTIVATE);
++	atomic_inc(&lruvec->workingset_refaults);
+ 
+ 	/* Page was active prior to eviction */
+ 	if (workingset) {
+ 		SetPageWorkingset(page);
+ 		inc_lruvec_state(lruvec, WORKINGSET_RESTORE);
++		/*
++		 * Double the trashing numbers for the actual working set.
++		 * refaults
++		 */
++		atomic_inc(&lruvec->workingset_refaults);
+ 	}
+ out:
+ 	rcu_read_unlock();
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
-
+Michal Hocko
+SUSE Labs
