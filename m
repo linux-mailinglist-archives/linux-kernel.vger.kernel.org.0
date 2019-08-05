@@ -2,65 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E9CB82007
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 17:23:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAB3281FFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 17:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbfHEPXr convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 5 Aug 2019 11:23:47 -0400
-Received: from mx2.bombinhas.sc.gov.br ([186.225.253.22]:31790 "EHLO
-        relay.bombinhas.sc.gov.br" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729384AbfHEPXr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 11:23:47 -0400
-X-Greylist: delayed 9375 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Aug 2019 11:23:46 EDT
-Received: from relay.bombinhas.sc.gov.br (localhost.localdomain [127.0.0.1])
-        by relay.bombinhas.sc.gov.br (Proxmox) with ESMTP id 85399656267;
-        Mon,  5 Aug 2019 07:55:57 -0300 (-03)
-Received: from mail.bombinhas.sc.gov.br (unknown [192.168.11.192])
-        by relay.bombinhas.sc.gov.br (Proxmox) with ESMTP id 7B0516543D7;
-        Mon,  5 Aug 2019 07:30:43 -0300 (-03)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.bombinhas.sc.gov.br (Postfix) with ESMTP id 60D1F200AB2B3;
-        Mon,  5 Aug 2019 07:30:43 -0300 (-03)
-Received: from mail.bombinhas.sc.gov.br ([127.0.0.1])
-        by localhost (mail.bombinhas.sc.gov.br [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id mf331sWl4Pxy; Mon,  5 Aug 2019 07:30:43 -0300 (-03)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.bombinhas.sc.gov.br (Postfix) with ESMTP id 2B237200AB2B4;
-        Mon,  5 Aug 2019 07:30:43 -0300 (-03)
-X-Virus-Scanned: amavisd-new at bombinhas.sc.gov.br
-Received: from mail.bombinhas.sc.gov.br ([127.0.0.1])
-        by localhost (mail.bombinhas.sc.gov.br [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Ih-XqDQS7PJH; Mon,  5 Aug 2019 07:30:43 -0300 (-03)
-Received: from DESKTOP-19RAMPH.localdomain (unknown [87.101.93.3])
-        by mail.bombinhas.sc.gov.br (Postfix) with ESMTPSA id 7A442200AB2BD;
-        Mon,  5 Aug 2019 07:30:31 -0300 (-03)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1729708AbfHEPUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 11:20:39 -0400
+Received: from mga14.intel.com ([192.55.52.115]:36565 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728468AbfHEPUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 11:20:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 08:20:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
+   d="scan'208";a="164679880"
+Received: from nupurjai-mobl.amr.corp.intel.com (HELO [10.251.149.179]) ([10.251.149.179])
+  by orsmga007.jf.intel.com with ESMTP; 05 Aug 2019 08:20:25 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 02/40] soundwire: cadence_master: add
+ debugfs register dump
+To:     Sanyog Kale <sanyog.r.kale@intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-3-pierre-louis.bossart@linux.intel.com>
+ <20190805075509.GA22437@buildpc-HP-Z230>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <37002145-b8dc-ac30-d857-00b277ef4bac@linux.intel.com>
+Date:   Mon, 5 Aug 2019 10:20:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: DONATION OFFER
-To:     Recipients <info@gmail.com>
-From:   Mavis <info@gmail.com>
-Date:   Mon, 05 Aug 2019 03:30:19 -0700
-Reply-To: maviswan081@gmail.com
-Message-Id: <20190805103032.7A442200AB2BD@mail.bombinhas.sc.gov.br>
+In-Reply-To: <20190805075509.GA22437@buildpc-HP-Z230>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend,
 
-I'm Ms. Mavis Wanczyk, a citizen of Massachusetts, United States of America, the $ 758.7 million mega-winner of the Powerball jackpot. I donate to 5 random people little of my fortune to a number of charities and organizations. I volunteered to donate $ 5,800,000 to you as one of the selected 5 to review my winnings. For more information, visit my YouTube page below.
+>> +static ssize_t cdns_reg_read(struct file *file, char __user *user_buf,
+>> +			     size_t count, loff_t *ppos)
+>> +{
+>> +	struct sdw_cdns *cdns = file->private_data;
+>> +	char *buf;
+>> +	ssize_t ret;
+>> +	int i, j;
+>> +
+>> +	buf = kzalloc(RD_BUF, GFP_KERNEL);
+>> +	if (!buf)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
+>> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nMCP Registers\n");
+>> +	for (i = 0; i < 8; i++) /* 8 MCP registers */
+>> +		ret += cdns_sprintf(cdns, buf, ret, i * 4);
+>> +
+>> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+>> +			 "\nStatus & Intr Registers\n");
+>> +	for (i = 0; i < 13; i++) /* 13 Status & Intr registers */
+>> +		ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_STAT + i * 4);
+>> +
+>> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+>> +			 "\nSSP & Clk ctrl Registers\n");
+>> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL0);
+>> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL1);
+>> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL0);
+>> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL1);
+>> +
+>> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+>> +			 "\nDPn B0 Registers\n");
+>> +	for (i = 0; i < 7; i++) {
+>> +		ret += scnprintf(buf + ret, RD_BUF - ret,
+>> +				 "\nDP-%d\n", i);
+>> +		for (j = 0; j < 6; j++)
+>> +			ret += cdns_sprintf(cdns, buf, ret,
+>> +					CDNS_DPN_B0_CONFIG(i) + j * 4);
+>> +	}
+>> +
+>> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+>> +			 "\nDPn B1 Registers\n");
+>> +	for (i = 0; i < 7; i++) {
+>> +		ret += scnprintf(buf + ret, RD_BUF - ret,
+>> +				 "\nDP-%d\n", i);
+>> +
+>> +		for (j = 0; j < 6; j++)
+>> +			ret += cdns_sprintf(cdns, buf, ret,
+>> +					CDNS_DPN_B1_CONFIG(i) + j * 4);
+>> +	}
+>> +
+>> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+>> +			 "\nDPn Control Registers\n");
+>> +	for (i = 0; i < 7; i++)
+>> +		ret += cdns_sprintf(cdns, buf, ret,
+>> +				CDNS_PORTCTRL + i * CDNS_PORT_OFFSET);
+>> +
+>> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+>> +			 "\nPDIn Config Registers\n");
+>> +	for (i = 0; i < 7; i++)
+> 
+> please use macros for all the hardcodings.
 
-HERE: http://money.cnn.com/2017/08/23/News/Powerball-700-Million-Jackpot/Index.html
-
-This is your donation code: [MW530342019]
-
-Reply to this email with the DONOR CODE:
-maviswan081@gmail.com
-
-I hope to make you and your family happy.
-Greetings Mrs. Mavis Wanczyk
+yes, I completely changed that part in the upcoming update by using 
+register start/stop for all loops, it makes the code more consistent and 
+easier to change (SoundWire 1.2 registers will need to be added)
 
