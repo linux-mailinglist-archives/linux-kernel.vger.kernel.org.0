@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 336B181BA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B66581BDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbfHENGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:06:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43592 "EHLO mail.kernel.org"
+        id S1729223AbfHENFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:05:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbfHENGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:06:40 -0400
+        id S1729199AbfHENFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:05:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BD8E2087B;
-        Mon,  5 Aug 2019 13:06:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43EC82087B;
+        Mon,  5 Aug 2019 13:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010399;
-        bh=7BSbn3tM72/0DGPULT67fewpqTSUU33aag1yFIWmkl0=;
+        s=default; t=1565010299;
+        bh=s0M71e9t8BQi3mVk1o/b37D/2SaTNFQ47ibDCkdIHWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S2JZbArBeSVDGkardDut3sUHii/d5lrdmtMXEklavMQP0322xhAtR3P6dRcUqVLGw
-         c3ByOEtYuMvW7Q2fO1hVhjVyq4VJ41ygkWNn0xG84p8YsNivWqOzW8+MaXi5ux6rlc
-         aWkPHkUJ2BmTeSY4JNSU64ypOHDgGaNmJUtaN+Bc=
+        b=BPxuU8NFLTG11byLy9KOUV/gpvnObYVq2/z6vpFsDJTaIDZsAwc680qvINh2vJ3Q6
+         kfmOejHsDjJ8xLJz2kEawe93H42JFcJIDmXdx2meEIMa6Xd/5wwQiDm428Grvj6wuh
+         7DE0eLvlaq6yaLMcRMAmlHKUvRKcouPDpp5F+ZrA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 01/53] ARM: riscpc: fix DMA
-Date:   Mon,  5 Aug 2019 15:02:26 +0200
-Message-Id: <20190805124928.140314304@linuxfoundation.org>
+Subject: [PATCH 4.9 02/42] ARM: dts: rockchip: Make rk3288-veyron-minnie run at hs200
+Date:   Mon,  5 Aug 2019 15:02:28 +0200
+Message-Id: <20190805124925.088251923@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
-References: <20190805124927.973499541@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,46 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ffd9a1ba9fdb7f2bd1d1ad9b9243d34e96756ba2 ]
+[ Upstream commit 1c0479023412ab7834f2e98b796eb0d8c627cd62 ]
 
-DMA got broken a while back in two different ways:
-1) a change in the behaviour of disable_irq() to wait for the interrupt
-   to finish executing causes us to deadlock at the end of DMA.
-2) a change to avoid modifying the scatterlist left the first transfer
-   uninitialised.
+As some point hs200 was failing on rk3288-veyron-minnie.  See commit
+984926781122 ("ARM: dts: rockchip: temporarily remove emmc hs200 speed
+from rk3288 minnie").  Although I didn't track down exactly when it
+started working, it seems to work OK now, so let's turn it back on.
 
-DMA is only used with expansion cards, so has gone unnoticed.
+To test this, I booted from SD card and then used this script to
+stress the enumeration process after fixing a memory leak [1]:
+  cd /sys/bus/platform/drivers/dwmmc_rockchip
+  for i in $(seq 1 3000); do
+    echo "========================" $i
+    echo ff0f0000.dwmmc > unbind
+    sleep .5
+    echo ff0f0000.dwmmc > bind
+    while true; do
+      if [ -e /dev/mmcblk2 ]; then
+        break;
+      fi
+      sleep .1
+    done
+  done
 
-Fixes: fa4e99899932 ("[ARM] dma: RiscPC: don't modify DMA SG entries")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+It worked fine.
+
+[1] https://lkml.kernel.org/r/20190503233526.226272-1-dianders@chromium.org
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-rpc/dma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/rk3288-veyron-minnie.dts | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm/mach-rpc/dma.c b/arch/arm/mach-rpc/dma.c
-index fb48f3141fb4d..c4c96661eb89a 100644
---- a/arch/arm/mach-rpc/dma.c
-+++ b/arch/arm/mach-rpc/dma.c
-@@ -131,7 +131,7 @@ static irqreturn_t iomd_dma_handle(int irq, void *dev_id)
- 	} while (1);
+diff --git a/arch/arm/boot/dts/rk3288-veyron-minnie.dts b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
+index f72d616d1bf8d..9647d9b6b299c 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-minnie.dts
++++ b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
+@@ -125,10 +125,6 @@
+ 	power-supply = <&backlight_regulator>;
+ };
  
- 	idma->state = ~DMA_ST_AB;
--	disable_irq(irq);
-+	disable_irq_nosync(irq);
+-&emmc {
+-	/delete-property/mmc-hs200-1_8v;
+-};
+-
+ &gpio_keys {
+ 	pinctrl-0 = <&pwr_key_l &ap_lid_int_l &volum_down_l &volum_up_l>;
  
- 	return IRQ_HANDLED;
- }
-@@ -174,6 +174,9 @@ static void iomd_enable_dma(unsigned int chan, dma_t *dma)
- 				DMA_FROM_DEVICE : DMA_TO_DEVICE);
- 		}
- 
-+		idma->dma_addr = idma->dma.sg->dma_address;
-+		idma->dma_len = idma->dma.sg->length;
-+
- 		iomd_writeb(DMA_CR_C, dma_base + CR);
- 		idma->state = DMA_ST_AB;
- 	}
 -- 
 2.20.1
 
