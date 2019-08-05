@@ -2,77 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B469825F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 22:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3280E825F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 22:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbfHEUTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 16:19:22 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38502 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfHEUTW (ORCPT
+        id S1730701AbfHEUTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 16:19:35 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44932 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbfHEUTe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 16:19:22 -0400
-Received: by mail-pl1-f193.google.com with SMTP id az7so36863363plb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 13:19:21 -0700 (PDT)
+        Mon, 5 Aug 2019 16:19:34 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so40167088pfe.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 13:19:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=WWEuVYEQjIg+hnBwN/5LSPUc/3g6UGWUiRSIm25OgPM=;
-        b=Kpk/QTAlBBoflr9NNvQnMcao+cN8Kr6DqdN1KzmN15u29LUwJrL9tiTCfWNtjLtof4
-         OokYcaxAq5E8M8RlF43V0Scp7Fz7xMr/jlcO7hzKbpdd2ut3NPaEqOth6MKpgMUjBd5A
-         13XcEfFZ3zmIpQq9h2kwOLMxV5l+eLChJIw8Q=
+        bh=xBWCTm8N8Yifh09tk07A94FvqSIiabAj5rSoGm/YzsQ=;
+        b=Btnt57UOv0m4dreUiqg3uXNlFJzanFVmkNgSMvCd/nPOwjHC3MA9EoM96eyvJvQ2gD
+         34VAUWfxL8Z0fvuS31hZ6DkDC7UYRBxQYOLpwNmO+929aSYqR6NhWc5tGnmNnLFe/mpi
+         k8PkXLiQBjt6a2+B30AeD3uNEVw94lKLs3K7A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=WWEuVYEQjIg+hnBwN/5LSPUc/3g6UGWUiRSIm25OgPM=;
-        b=psCCGFmesQtJv2Zi3+pWyDr2zeqHLWnQ3yjqBvu/VsKutLX1O9vzDwvnxXI0dqjrEX
-         RUs4tUQrccD6hAKlg1kJNuzmx9d+v1KE8QRQayO6e38bFdXBj0coQ5VkgZlmgWjLjwGg
-         x130HnyTDaVaA3wPceOEoeJRGh6Zay9k5g/UwiXlFnmmDr86+Ikawm9qVKT4tLrHdW21
-         U96ZMNpuG8afM508/2a/G3jmH8GOIrbAXhZ59pZVF/8ygCxNurJWuYzOUhbBMBz9u8x6
-         fNrL9CWuLuxu+ke65aO4AN2a9ObXR7FJBIcvB4GWrdCJwoA6x8qZ5lrn3CoGhl+eaCvm
-         6Kow==
-X-Gm-Message-State: APjAAAXbtBQC+NPXYRFdBUhSmd44w54tQhL6j9kN6YYo8d2cHKmYi9OZ
-        CfKflDFMIxlOajNtY/qPBBZuKeobyaY=
-X-Google-Smtp-Source: APXvYqwFMiy3kA2sp8humX+12XWgx+xISrnymYTBHSBBwOQoGaLOZRnENT3caGcFyp0Mnu3YZ2XwHA==
-X-Received: by 2002:a17:902:44f:: with SMTP id 73mr147824631ple.192.1565036361643;
-        Mon, 05 Aug 2019 13:19:21 -0700 (PDT)
+        bh=xBWCTm8N8Yifh09tk07A94FvqSIiabAj5rSoGm/YzsQ=;
+        b=Z7vNd1ENfYg3HP5nQ5R9fgGLxj7me/yzn5OVsEMm/Vy4olrMoqAEOfPN1tcLITAPLA
+         w7gRN8f59jcuFFbULJcvjw2Kvrg71meCtA6KhQsi0fGuaR4k92jOvYckBk9V/mKbFynX
+         KUrZPnuoA57Qg6MNttYkBtJpC/6ua+blG/RDXGYEyr/6gCMScbsHLz+0Q0wghFKhvA3E
+         eBnSzMG27FUSI/hHW6ny2zS68DQDXr+l6NKJTXh5c8TKpCPjAUsBB9ipOt79k/zYtx7k
+         nebMIk2M44phnzJHFinfQhtPLCytdAGcUeCsAbuIopZL6G+fXWf0XRRQ4sVlJHhVxbtT
+         cf6w==
+X-Gm-Message-State: APjAAAXgb+DodGmkfi5gSy/lfl6L9u1nvHpj5plaAhBmb3kUA7AplCZd
+        qR7afXdbj4HlIRIRitFX4a6cBKVcDYs=
+X-Google-Smtp-Source: APXvYqxl+I5gFrxtAPAk5cKgR2CargOkThyRxpDJdSjuFS9CCBUUy11MK1VdGA6f2j7dv4MdyqSgMg==
+X-Received: by 2002:a17:90a:25c8:: with SMTP id k66mr20001819pje.129.1565036374349;
+        Mon, 05 Aug 2019 13:19:34 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 201sm102116909pfz.24.2019.08.05.13.19.20
+        by smtp.gmail.com with ESMTPSA id o9sm52295278pgv.19.2019.08.05.13.19.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Aug 2019 13:19:20 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 13:19:20 -0700
+        Mon, 05 Aug 2019 13:19:32 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 13:19:31 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/ptrace: Mark expected switch fall-through
-Message-ID: <201908051319.146A70C@keescook>
-References: <20190805195654.GA17831@embeddedor>
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.orgCc:linux-kernel"@vger.kernel.org
+Subject: Re: [PATCH] x86: mtrr: cyrix: Mark expected switch fall-through
+Message-ID: <201908051319.B3B8858@keescook>
+References: <20190805201712.GA19927@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190805195654.GA17831@embeddedor>
+In-Reply-To: <20190805201712.GA19927@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 02:56:54PM -0500, Gustavo A. R. Silva wrote:
+On Mon, Aug 05, 2019 at 03:17:12PM -0500, Gustavo A. R. Silva wrote:
 > Mark switch cases where we are expecting to fall through.
 > 
-> Fix the following warning (Building: allnoconfig i386):
+> Fix the following warning (Building: i386_defconfig i386):
 > 
-> arch/x86/kernel/ptrace.c:202:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (unlikely(value == 0))
->       ^
-> arch/x86/kernel/ptrace.c:206:2: note: here
->   default:
->   ^~~~~~~
+> arch/x86/kernel/cpu/mtrr/cyrix.c:99:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 > 
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
@@ -81,21 +75,21 @@ Reviewed-by: Kees Cook <keescook@chromium.org>
 -Kees
 
 > ---
->  arch/x86/kernel/ptrace.c | 1 +
+>  arch/x86/kernel/cpu/mtrr/cyrix.c | 1 +
 >  1 file changed, 1 insertion(+)
 > 
-> diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-> index 0fdbe89d0754..3c5bbe8e4120 100644
-> --- a/arch/x86/kernel/ptrace.c
-> +++ b/arch/x86/kernel/ptrace.c
-> @@ -201,6 +201,7 @@ static int set_segment_reg(struct task_struct *task,
->  	case offsetof(struct user_regs_struct, ss):
->  		if (unlikely(value == 0))
->  			return -EIO;
+> diff --git a/arch/x86/kernel/cpu/mtrr/cyrix.c b/arch/x86/kernel/cpu/mtrr/cyrix.c
+> index 4296c702a3f7..72182809b333 100644
+> --- a/arch/x86/kernel/cpu/mtrr/cyrix.c
+> +++ b/arch/x86/kernel/cpu/mtrr/cyrix.c
+> @@ -98,6 +98,7 @@ cyrix_get_free_region(unsigned long base, unsigned long size, int replace_reg)
+>  	case 7:
+>  		if (size < 0x40)
+>  			break;
 > +		/* Else, fall through */
->  
->  	default:
->  		*pt_regs_access(task_pt_regs(task), offset) = value;
+>  	case 6:
+>  	case 5:
+>  	case 4:
 > -- 
 > 2.22.0
 > 
