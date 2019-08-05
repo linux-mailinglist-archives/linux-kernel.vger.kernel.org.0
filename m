@@ -2,55 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D3BB81B48
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4A2A81B62
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbfHENN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:13:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51972 "EHLO mail.kernel.org"
+        id S1730123AbfHENOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:14:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:48486 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729407AbfHENNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:13:25 -0400
-Received: from [192.168.0.101] (unknown [180.111.32.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 391732075B;
-        Mon,  5 Aug 2019 13:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010805;
-        bh=LTRsxYOPK9boOsPL66WtkKRklA/LN8sc3TCoGIEsBok=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OYMIXGORSNofcJWEjw8n5bn8gs6jqLQUgv8dTd1fAOEv2EarcVp1404rX89V05U4Q
-         jHWeohZ6WZcGQlNFItbc8uID/XmqNnnLc9WenDUHKEe1xhd1hoXaE5fW8Uof75OlgI
-         1rCVUM4pyHsKfCxDil3CV+Vd94YPgx8q3bKGNvyo=
-Subject: Re: [f2fs-dev] [PATCH] f2fs: cleanup the code in build_sit_entries.
-To:     Lihong Kou <koulihong@huawei.com>, yuchao0@huawei.com,
-        jaegeuk@kernel.org
-Cc:     linux-kernel@vger.kernel.org, fangwei1@huawei.com,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <1565003632-124792-1-git-send-email-koulihong@huawei.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <632c947b-2c44-b48d-e80e-0f6c43ac2f6d@kernel.org>
-Date:   Mon, 5 Aug 2019 21:13:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729469AbfHENON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:14:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B021D337;
+        Mon,  5 Aug 2019 06:14:11 -0700 (PDT)
+Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA2003F706;
+        Mon,  5 Aug 2019 06:14:09 -0700 (PDT)
+Subject: Re: [PATCH 3/9] KVM: arm64: Implement PV_FEATURES call
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     kvm@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        linux-doc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
+        Julien Thierry <julien.thierry.kdev@gmail.com>
+References: <20190802145017.42543-1-steven.price@arm.com>
+ <20190802145017.42543-4-steven.price@arm.com> <20190803122124.7700f700@why>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <1e0a03b4-1fb6-cbe2-fb7a-8ed39341a187@arm.com>
+Date:   Mon, 5 Aug 2019 14:14:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1565003632-124792-1-git-send-email-koulihong@huawei.com>
+In-Reply-To: <20190803122124.7700f700@why>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-8-5 19:13, Lihong Kou wrote:
-> We do not need to set the SBI_NEED_FSCK flag in the error paths, if we
-> return error here, we will not update the checkpoint flag, so the code
-> is useless, just remove it.
+On 03/08/2019 12:21, Marc Zyngier wrote:
+> On Fri,  2 Aug 2019 15:50:11 +0100
+> Steven Price <steven.price@arm.com> wrote:
 > 
-> Signed-off-by: Lihong Kou <koulihong@huawei.com>
+>> This provides a mechanism for querying which paravirtualized features
+>> are available in this hypervisor.
+>>
+>> Also add the header file which defines the ABI for the paravirtualized
+>> clock features we're about to add.
+>>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>  arch/arm64/include/asm/pvclock-abi.h | 20 ++++++++++++++++++++
+>>  include/linux/arm-smccc.h            | 14 ++++++++++++++
+>>  virt/kvm/arm/hypercalls.c            |  9 +++++++++
+>>  3 files changed, 43 insertions(+)
+>>  create mode 100644 arch/arm64/include/asm/pvclock-abi.h
+>>
+>> diff --git a/arch/arm64/include/asm/pvclock-abi.h b/arch/arm64/include/asm/pvclock-abi.h
+>> new file mode 100644
+>> index 000000000000..1f7cdc102691
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/pvclock-abi.h
+>> @@ -0,0 +1,20 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/* Copyright (C) 2019 Arm Ltd. */
+>> +
+>> +#ifndef __ASM_PVCLOCK_ABI_H
+>> +#define __ASM_PVCLOCK_ABI_H
+>> +
+>> +/* The below structures and constants are defined in ARM DEN0057A */
+>> +
+>> +struct pvclock_vcpu_stolen_time_info {
+>> +	__le32 revision;
+>> +	__le32 attributes;
+>> +	__le64 stolen_time;
+>> +	/* Structure must be 64 byte aligned, pad to that size */
+>> +	u8 padding[48];
+>> +} __packed;
+>> +
+>> +#define PV_VM_TIME_NOT_SUPPORTED	-1
+> 
+> Isn't the intent for this to be the same value as
+> SMCCC_RET_NOT_SUPPORTED?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Yes it is, I guess there's not much point defining it again.
+
+>> +#define PV_VM_TIME_INVALID_PARAMETERS	-2
+> 
+> It overlaps with SMCCC_RET_NOT_REQUIRED. Is that a problem? Should we
+> consider a spec change for this?
+
+Actually INVALID_PARAMETERS is only for Live Physical Time, since we're
+not implementing it here, this can go as well.
 
 Thanks,
+
+Steve
