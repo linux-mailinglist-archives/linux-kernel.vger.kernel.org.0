@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A9E81C44
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D096C81C23
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730267AbfHENWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:22:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58224 "EHLO mail.kernel.org"
+        id S1730291AbfHENUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:20:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730592AbfHENV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:21:57 -0400
+        id S1728977AbfHENUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:20:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEA8620880;
-        Mon,  5 Aug 2019 13:21:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EC472075B;
+        Mon,  5 Aug 2019 13:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011316;
-        bh=i7gOVqMtjCBskIH84y4UQDJED3Qg6Jnw4PH2U/WCxUk=;
+        s=default; t=1565011232;
+        bh=Y8PBpS1nYNHZhQZB7D/E6RDyOcPvA3yZ0fBim/2aaEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IvPoyXb9YqhHVUS+10ed9At1ySfSBsWXnCtpujq6qHXuHTvbRl+tI0xttlVb8wXAO
-         +sHXE5gvknanYAAPixFbARpOzlebvIIu5VxdJ4BRCZkDcCxh1reXLRxbdqUKYVaD+A
-         BRaSc1gAqfL3S+OpwMcDeKSBslEtmP87oxxmfkPo=
+        b=NcKTNuiSTTwunkPWKTeWjMCXVxOtdxIazp2g6FqlOo2RCi/p3bAqVWUYTtz9c1LPa
+         rosTxl1YCHlTa5rPIXd4JxWRaJpTJHTpscUMLJz3JbBbwAeEimTaZdmDG9pG4GysI4
+         ElLRAbAuYrwgc/YKKnmrDoGDPrw9Sn4X5qR7FQuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org,
         Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 014/131] PCI: OF: Initialize dev->fwnode appropriately
-Date:   Mon,  5 Aug 2019 15:01:41 +0200
-Message-Id: <20190805124952.389932592@linuxfoundation.org>
+Subject: [PATCH 5.2 015/131] firmware/psci: psci_checker: Park kthreads before stopping them
+Date:   Mon,  5 Aug 2019 15:01:42 +0200
+Message-Id: <20190805124952.458284431@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
 References: <20190805124951.453337465@linuxfoundation.org>
@@ -45,59 +47,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 59b099a6c75e4ddceeaf9676422d8d91d0049755 ]
+[ Upstream commit 92e074acf6f7694e96204265eb18ac113f546e80 ]
 
-For PCI devices that have an OF node, set the fwnode as well. This way
-drivers that rely on fwnode don't need the special case described by
-commit f94277af03ea ("of/platform: Initialise dev->fwnode appropriately").
+Since commit 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme()
+completion issue"), kthreads that are bound to a CPU must be parked
+before being stopped. At the moment the PSCI checker calls
+kthread_stop() directly on the suspend kthread, which triggers the
+following warning:
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+[    6.068288] WARNING: CPU: 1 PID: 1 at kernel/kthread.c:398 __kthread_bind_mask+0x20/0x78
+               ...
+[    6.190151] Call trace:
+[    6.192566]  __kthread_bind_mask+0x20/0x78
+[    6.196615]  kthread_unpark+0x74/0x80
+[    6.200235]  kthread_stop+0x44/0x1d8
+[    6.203769]  psci_checker+0x3bc/0x484
+[    6.207389]  do_one_initcall+0x48/0x260
+[    6.211180]  kernel_init_freeable+0x2c8/0x368
+[    6.215488]  kernel_init+0x10/0x100
+[    6.218935]  ret_from_fork+0x10/0x1c
+[    6.222467] ---[ end trace e05e22863d043cd3 ]---
+
+kthread_unpark() tries to bind the thread to its CPU and aborts with a
+WARN() if the thread wasn't in TASK_PARKED state. Park the kthreads
+before stopping them.
+
+Fixes: 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
 Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/of.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/firmware/psci/psci_checker.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 73d5adec0a28d..bc7b27a28795d 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -22,12 +22,15 @@ void pci_set_of_node(struct pci_dev *dev)
- 		return;
- 	dev->dev.of_node = of_pci_find_child_device(dev->bus->dev.of_node,
- 						    dev->devfn);
-+	if (dev->dev.of_node)
-+		dev->dev.fwnode = &dev->dev.of_node->fwnode;
- }
- 
- void pci_release_of_node(struct pci_dev *dev)
- {
- 	of_node_put(dev->dev.of_node);
- 	dev->dev.of_node = NULL;
-+	dev->dev.fwnode = NULL;
- }
- 
- void pci_set_bus_of_node(struct pci_bus *bus)
-@@ -41,13 +44,18 @@ void pci_set_bus_of_node(struct pci_bus *bus)
- 		if (node && of_property_read_bool(node, "external-facing"))
- 			bus->self->untrusted = true;
+diff --git a/drivers/firmware/psci/psci_checker.c b/drivers/firmware/psci/psci_checker.c
+index 08c85099d4d0c..f3659443f8c2c 100644
+--- a/drivers/firmware/psci/psci_checker.c
++++ b/drivers/firmware/psci/psci_checker.c
+@@ -359,16 +359,16 @@ static int suspend_test_thread(void *arg)
+ 	for (;;) {
+ 		/* Needs to be set first to avoid missing a wakeup. */
+ 		set_current_state(TASK_INTERRUPTIBLE);
+-		if (kthread_should_stop()) {
+-			__set_current_state(TASK_RUNNING);
++		if (kthread_should_park())
+ 			break;
+-		}
+ 		schedule();
  	}
+ 
+ 	pr_info("CPU %d suspend test results: success %d, shallow states %d, errors %d\n",
+ 		cpu, nb_suspend, nb_shallow_sleep, nb_err);
+ 
++	kthread_parkme();
 +
- 	bus->dev.of_node = node;
-+
-+	if (bus->dev.of_node)
-+		bus->dev.fwnode = &bus->dev.of_node->fwnode;
+ 	return nb_err;
  }
  
- void pci_release_bus_of_node(struct pci_bus *bus)
- {
- 	of_node_put(bus->dev.of_node);
- 	bus->dev.of_node = NULL;
-+	bus->dev.fwnode = NULL;
- }
+@@ -433,8 +433,10 @@ static int suspend_tests(void)
  
- struct device_node * __weak pcibios_get_phb_of_node(struct pci_bus *bus)
+ 
+ 	/* Stop and destroy all threads, get return status. */
+-	for (i = 0; i < nb_threads; ++i)
++	for (i = 0; i < nb_threads; ++i) {
++		err += kthread_park(threads[i]);
+ 		err += kthread_stop(threads[i]);
++	}
+  out:
+ 	cpuidle_resume_and_unlock();
+ 	kfree(threads);
 -- 
 2.20.1
 
