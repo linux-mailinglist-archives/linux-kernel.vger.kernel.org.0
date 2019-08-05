@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2752581C8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A46B481C98
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731141AbfHENZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:25:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33486 "EHLO mail.kernel.org"
+        id S1731234AbfHENZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:25:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731121AbfHENZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:25:00 -0400
+        id S1730801AbfHENZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:25:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CC6B20880;
-        Mon,  5 Aug 2019 13:24:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEF5120644;
+        Mon,  5 Aug 2019 13:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011499;
-        bh=t3JAQbHCLtKUt/umNrekrtOnvNMzgyKVDWx4eUOBK/Y=;
+        s=default; t=1565011528;
+        bh=ue8M6fAPwJ2UPAAvXxZMUClM5SYWBiQ6eKDMyOYP5vc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZqK95qHQPVA5gwggIh5e66doghDt/2eQGS83ySGky1OR4jRqf6s+0o+Q/neqRUV1y
-         i3fBhRdYD7yOJmEebc493n49s9kqYvM8BLLMFrCMTIG6AKKdgAB8xWfQC359PoOaap
-         8qveIR+5Ka1WRkQuJMIQTdWsArbblpTLkJsJJ9WQ=
+        b=FayOv8xXTQQDXU2pf01zCj8e9Ka9cY5u7jbh9B86SeTRl3wc6P3owFoDZdc0MIfgA
+         77BtyiQ6H8HCvFYZB8eKeMsZBRQISOI6cPRXlwqast6ytnEz+PT5YGWpRpuiU4pOZt
+         seGtMpLuQfJ5lAN7jV/tTx6Y3zKbN+CDoG8saOgY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.2 104/131] mm/migrate.c: initialize pud_entry in migrate_vma()
-Date:   Mon,  5 Aug 2019 15:03:11 +0200
-Message-Id: <20190805124958.936782467@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.2 105/131] loop: Fix mount(2) failure due to race with LOOP_SET_FD
+Date:   Mon,  5 Aug 2019 15:03:12 +0200
+Message-Id: <20190805124959.005408571@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
 References: <20190805124951.453337465@linuxfoundation.org>
@@ -47,56 +44,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ralph Campbell <rcampbell@nvidia.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 7b358c6f12dc82364f6d317f8c8f1d794adbc3f5 upstream.
+commit 89e524c04fa966330e2e80ab2bc50b9944c5847a upstream.
 
-When CONFIG_MIGRATE_VMA_HELPER is enabled, migrate_vma() calls
-migrate_vma_collect() which initializes a struct mm_walk but didn't
-initialize mm_walk.pud_entry.  (Found by code inspection) Use a C
-structure initialization to make sure it is set to NULL.
+Commit 33ec3e53e7b1 ("loop: Don't change loop device under exclusive
+opener") made LOOP_SET_FD ioctl acquire exclusive block device reference
+while it updates loop device binding. However this can make perfectly
+valid mount(2) fail with EBUSY due to racing LOOP_SET_FD holding
+temporarily the exclusive bdev reference in cases like this:
 
-Link: http://lkml.kernel.org/r/20190719233225.12243-1-rcampbell@nvidia.com
-Fixes: 8763cb45ab967 ("mm/migrate: new memory migration helper for use with device memory")
-Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+for i in {a..z}{a..z}; do
+        dd if=/dev/zero of=$i.image bs=1k count=0 seek=1024
+        mkfs.ext2 $i.image
+        mkdir mnt$i
+done
+
+echo "Run"
+for i in {a..z}{a..z}; do
+        mount -o loop -t ext2 $i.image mnt$i &
+done
+
+Fix the problem by not getting full exclusive bdev reference in
+LOOP_SET_FD but instead just mark the bdev as being claimed while we
+update the binding information. This just blocks new exclusive openers
+instead of failing them with EBUSY thus fixing the problem.
+
+Fixes: 33ec3e53e7b1 ("loop: Don't change loop device under exclusive opener")
+Cc: stable@vger.kernel.org
+Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/migrate.c |   17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/block/loop.c |   16 +++++----
+ fs/block_dev.c       |   83 +++++++++++++++++++++++++++++++++++----------------
+ include/linux/fs.h   |    6 +++
+ 3 files changed, 73 insertions(+), 32 deletions(-)
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2347,16 +2347,13 @@ next:
- static void migrate_vma_collect(struct migrate_vma *migrate)
- {
- 	struct mmu_notifier_range range;
--	struct mm_walk mm_walk;
--
--	mm_walk.pmd_entry = migrate_vma_collect_pmd;
--	mm_walk.pte_entry = NULL;
--	mm_walk.pte_hole = migrate_vma_collect_hole;
--	mm_walk.hugetlb_entry = NULL;
--	mm_walk.test_walk = NULL;
--	mm_walk.vma = migrate->vma;
--	mm_walk.mm = migrate->vma->vm_mm;
--	mm_walk.private = migrate;
-+	struct mm_walk mm_walk = {
-+		.pmd_entry = migrate_vma_collect_pmd,
-+		.pte_hole = migrate_vma_collect_hole,
-+		.vma = migrate->vma,
-+		.mm = migrate->vma->vm_mm,
-+		.private = migrate,
-+	};
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -932,6 +932,7 @@ static int loop_set_fd(struct loop_devic
+ 	struct file	*file;
+ 	struct inode	*inode;
+ 	struct address_space *mapping;
++	struct block_device *claimed_bdev = NULL;
+ 	int		lo_flags = 0;
+ 	int		error;
+ 	loff_t		size;
+@@ -950,10 +951,11 @@ static int loop_set_fd(struct loop_devic
+ 	 * here to avoid changing device under exclusive owner.
+ 	 */
+ 	if (!(mode & FMODE_EXCL)) {
+-		bdgrab(bdev);
+-		error = blkdev_get(bdev, mode | FMODE_EXCL, loop_set_fd);
+-		if (error)
++		claimed_bdev = bd_start_claiming(bdev, loop_set_fd);
++		if (IS_ERR(claimed_bdev)) {
++			error = PTR_ERR(claimed_bdev);
+ 			goto out_putf;
++		}
+ 	}
  
- 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, NULL, mm_walk.mm,
- 				migrate->start,
+ 	error = mutex_lock_killable(&loop_ctl_mutex);
+@@ -1023,15 +1025,15 @@ static int loop_set_fd(struct loop_devic
+ 	mutex_unlock(&loop_ctl_mutex);
+ 	if (partscan)
+ 		loop_reread_partitions(lo, bdev);
+-	if (!(mode & FMODE_EXCL))
+-		blkdev_put(bdev, mode | FMODE_EXCL);
++	if (claimed_bdev)
++		bd_abort_claiming(bdev, claimed_bdev, loop_set_fd);
+ 	return 0;
+ 
+ out_unlock:
+ 	mutex_unlock(&loop_ctl_mutex);
+ out_bdev:
+-	if (!(mode & FMODE_EXCL))
+-		blkdev_put(bdev, mode | FMODE_EXCL);
++	if (claimed_bdev)
++		bd_abort_claiming(bdev, claimed_bdev, loop_set_fd);
+ out_putf:
+ 	fput(file);
+ out:
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1151,8 +1151,7 @@ static struct gendisk *bdev_get_gendisk(
+  * Pointer to the block device containing @bdev on success, ERR_PTR()
+  * value on failure.
+  */
+-static struct block_device *bd_start_claiming(struct block_device *bdev,
+-					      void *holder)
++struct block_device *bd_start_claiming(struct block_device *bdev, void *holder)
+ {
+ 	struct gendisk *disk;
+ 	struct block_device *whole;
+@@ -1199,6 +1198,62 @@ static struct block_device *bd_start_cla
+ 		return ERR_PTR(err);
+ 	}
+ }
++EXPORT_SYMBOL(bd_start_claiming);
++
++static void bd_clear_claiming(struct block_device *whole, void *holder)
++{
++	lockdep_assert_held(&bdev_lock);
++	/* tell others that we're done */
++	BUG_ON(whole->bd_claiming != holder);
++	whole->bd_claiming = NULL;
++	wake_up_bit(&whole->bd_claiming, 0);
++}
++
++/**
++ * bd_finish_claiming - finish claiming of a block device
++ * @bdev: block device of interest
++ * @whole: whole block device (returned from bd_start_claiming())
++ * @holder: holder that has claimed @bdev
++ *
++ * Finish exclusive open of a block device. Mark the device as exlusively
++ * open by the holder and wake up all waiters for exclusive open to finish.
++ */
++void bd_finish_claiming(struct block_device *bdev, struct block_device *whole,
++			void *holder)
++{
++	spin_lock(&bdev_lock);
++	BUG_ON(!bd_may_claim(bdev, whole, holder));
++	/*
++	 * Note that for a whole device bd_holders will be incremented twice,
++	 * and bd_holder will be set to bd_may_claim before being set to holder
++	 */
++	whole->bd_holders++;
++	whole->bd_holder = bd_may_claim;
++	bdev->bd_holders++;
++	bdev->bd_holder = holder;
++	bd_clear_claiming(whole, holder);
++	spin_unlock(&bdev_lock);
++}
++EXPORT_SYMBOL(bd_finish_claiming);
++
++/**
++ * bd_abort_claiming - abort claiming of a block device
++ * @bdev: block device of interest
++ * @whole: whole block device (returned from bd_start_claiming())
++ * @holder: holder that has claimed @bdev
++ *
++ * Abort claiming of a block device when the exclusive open failed. This can be
++ * also used when exclusive open is not actually desired and we just needed
++ * to block other exclusive openers for a while.
++ */
++void bd_abort_claiming(struct block_device *bdev, struct block_device *whole,
++		       void *holder)
++{
++	spin_lock(&bdev_lock);
++	bd_clear_claiming(whole, holder);
++	spin_unlock(&bdev_lock);
++}
++EXPORT_SYMBOL(bd_abort_claiming);
+ 
+ #ifdef CONFIG_SYSFS
+ struct bd_holder_disk {
+@@ -1668,29 +1723,7 @@ int blkdev_get(struct block_device *bdev
+ 
+ 		/* finish claiming */
+ 		mutex_lock(&bdev->bd_mutex);
+-		spin_lock(&bdev_lock);
+-
+-		if (!res) {
+-			BUG_ON(!bd_may_claim(bdev, whole, holder));
+-			/*
+-			 * Note that for a whole device bd_holders
+-			 * will be incremented twice, and bd_holder
+-			 * will be set to bd_may_claim before being
+-			 * set to holder
+-			 */
+-			whole->bd_holders++;
+-			whole->bd_holder = bd_may_claim;
+-			bdev->bd_holders++;
+-			bdev->bd_holder = holder;
+-		}
+-
+-		/* tell others that we're done */
+-		BUG_ON(whole->bd_claiming != holder);
+-		whole->bd_claiming = NULL;
+-		wake_up_bit(&whole->bd_claiming, 0);
+-
+-		spin_unlock(&bdev_lock);
+-
++		bd_finish_claiming(bdev, whole, holder);
+ 		/*
+ 		 * Block event polling for write claims if requested.  Any
+ 		 * write holder makes the write_holder state stick until
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2615,6 +2615,12 @@ extern struct block_device *blkdev_get_b
+ 					       void *holder);
+ extern struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode,
+ 					      void *holder);
++extern struct block_device *bd_start_claiming(struct block_device *bdev,
++					      void *holder);
++extern void bd_finish_claiming(struct block_device *bdev,
++			       struct block_device *whole, void *holder);
++extern void bd_abort_claiming(struct block_device *bdev,
++			      struct block_device *whole, void *holder);
+ extern void blkdev_put(struct block_device *bdev, fmode_t mode);
+ extern int __blkdev_reread_part(struct block_device *bdev);
+ extern int blkdev_reread_part(struct block_device *bdev);
 
 
