@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DA8F81CCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C574681C07
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730926AbfHEN1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:27:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33722 "EHLO mail.kernel.org"
+        id S1729507AbfHENTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:19:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730189AbfHENZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:25:13 -0400
+        id S1729672AbfHENTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:19:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 576FE20644;
-        Mon,  5 Aug 2019 13:25:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EFE9214C6;
+        Mon,  5 Aug 2019 13:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011512;
-        bh=xpJM/gqp3zYrSfs70sHH80p2hZCGqfxlZBzlDuDyikQ=;
+        s=default; t=1565011173;
+        bh=qFsiztdLDvQWTMxiXFUptRNbM9KiUDEKG8b6B96WFkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yKeqRwbqXoYBlzX7wfNiHiZkV52HFJFESa68nYxWSSXDFcIuUu/MlsR3JRHuRAc+6
-         D35tMl80icwIIfiiYXsSHiTvsMiXWQI8Jc2KxFVcaoxNvEGvvlxn3l8HZNKYWcBq0R
-         BeWzW3Dk4EGLhqwfQ8B2N7euLqHnCdHpzlZOopfM=
+        b=iUlxfz1wYKbh5GhTrmMoElkW26DbgRDsBXPugUxRdTvWjebHKDDdZR2E5VFcT5cmP
+         40LSpFUky62juNKB0mtK2VnJM5c4tTeVZdmUu80Cj1it+T+33EKm0flCua+T/gyn3e
+         H7etDVkYC9PGYHyow6RoiLN1WJyj2wB6W2XzLQt0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-block@vger.kernel.org,
-        Ratna Manoj Bolla <manoj.br@gmail.com>, nbd@other.debian.org,
-        David Woodhouse <dwmw@amazon.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Munehisa Kamata <kamatam@amazon.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.2 117/131] nbd: replace kill_bdev() with __invalidate_device() again
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.19 71/74] objtool: Support GCC 9 cold subfunction naming scheme
 Date:   Mon,  5 Aug 2019 15:03:24 +0200
-Message-Id: <20190805124959.791932900@linuxfoundation.org>
+Message-Id: <20190805124941.535629949@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
-References: <20190805124951.453337465@linuxfoundation.org>
+In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
+References: <20190805124935.819068648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,74 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Munehisa Kamata <kamatam@amazon.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 2b5c8f0063e4b263cf2de82029798183cf85c320 upstream.
+commit bcb6fb5da77c2a228adf07cc9cb1a0c2aa2001c6 upstream.
 
-Commit abbbdf12497d ("replace kill_bdev() with __invalidate_device()")
-once did this, but 29eaadc03649 ("nbd: stop using the bdev everywhere")
-resurrected kill_bdev() and it has been there since then. So buffer_head
-mappings still get killed on a server disconnection, and we can still
-hit the BUG_ON on a filesystem on the top of the nbd device.
+Starting with GCC 8, a lot of unlikely code was moved out of line to
+"cold" subfunctions in .text.unlikely.
 
-  EXT4-fs (nbd0): mounted filesystem with ordered data mode. Opts: (null)
-  block nbd0: Receive control failed (result -32)
-  block nbd0: shutting down sockets
-  print_req_error: I/O error, dev nbd0, sector 66264 flags 3000
-  EXT4-fs warning (device nbd0): htree_dirblock_to_tree:979: inode #2: lblock 0: comm ls: error -5 reading directory block
-  print_req_error: I/O error, dev nbd0, sector 2264 flags 3000
-  EXT4-fs error (device nbd0): __ext4_get_inode_loc:4690: inode #2: block 283: comm ls: unable to read itable block
-  EXT4-fs error (device nbd0) in ext4_reserve_inode_write:5894: IO failure
-  ------------[ cut here ]------------
-  kernel BUG at fs/buffer.c:3057!
-  invalid opcode: 0000 [#1] SMP PTI
-  CPU: 7 PID: 40045 Comm: jbd2/nbd0-8 Not tainted 5.1.0-rc3+ #4
-  Hardware name: Amazon EC2 m5.12xlarge/, BIOS 1.0 10/16/2017
-  RIP: 0010:submit_bh_wbc+0x18b/0x190
-  ...
-  Call Trace:
-   jbd2_write_superblock+0xf1/0x230 [jbd2]
-   ? account_entity_enqueue+0xc5/0xf0
-   jbd2_journal_update_sb_log_tail+0x94/0xe0 [jbd2]
-   jbd2_journal_commit_transaction+0x12f/0x1d20 [jbd2]
-   ? __switch_to_asm+0x40/0x70
-   ...
-   ? lock_timer_base+0x67/0x80
-   kjournald2+0x121/0x360 [jbd2]
-   ? remove_wait_queue+0x60/0x60
-   kthread+0xf8/0x130
-   ? commit_timeout+0x10/0x10 [jbd2]
-   ? kthread_bind+0x10/0x10
-   ret_from_fork+0x35/0x40
+For example, the unlikely bits of:
 
-With __invalidate_device(), I no longer hit the BUG_ON with sync or
-unmount on the disconnected device.
+  irq_do_set_affinity()
 
-Fixes: 29eaadc03649 ("nbd: stop using the bdev everywhere")
-Cc: linux-block@vger.kernel.org
-Cc: Ratna Manoj Bolla <manoj.br@gmail.com>
-Cc: nbd@other.debian.org
-Cc: stable@vger.kernel.org
-Cc: David Woodhouse <dwmw@amazon.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+are moved out to the following subfunction:
+
+  irq_do_set_affinity.cold.49()
+
+Starting with GCC 9, the numbered suffix has been removed.  So in the
+above example, the cold subfunction is instead:
+
+  irq_do_set_affinity.cold()
+
+Tweak the objtool subfunction detection logic so that it detects both
+GCC 8 and GCC 9 naming schemes.
+
+Reported-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/015e9544b1f188d36a7f02fa31e9e95629aa5f50.1541040800.git.jpoimboe@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/nbd.c |    2 +-
+ tools/objtool/elf.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1229,7 +1229,7 @@ static void nbd_clear_sock_ioctl(struct
- 				 struct block_device *bdev)
- {
- 	sock_shutdown(nbd);
--	kill_bdev(bdev);
-+	__invalidate_device(bdev, true);
- 	nbd_bdev_reset(bdev);
- 	if (test_and_clear_bit(NBD_HAS_CONFIG_REF,
- 			       &nbd->config->runtime_flags))
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -305,7 +305,7 @@ static int read_symbols(struct elf *elf)
+ 			if (sym->type != STT_FUNC)
+ 				continue;
+ 			sym->pfunc = sym->cfunc = sym;
+-			coldstr = strstr(sym->name, ".cold.");
++			coldstr = strstr(sym->name, ".cold");
+ 			if (!coldstr)
+ 				continue;
+ 
 
 
