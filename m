@@ -2,146 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64826826BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 23:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9040826C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 23:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730633AbfHEVVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 17:21:37 -0400
-Received: from mga12.intel.com ([192.55.52.136]:62828 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730055AbfHEVVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 17:21:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 14:21:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
-   d="scan'208";a="192503883"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Aug 2019 14:21:36 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/apic: Annotate global config variables as "read-only after init"
-Date:   Mon,  5 Aug 2019 14:21:34 -0700
-Message-Id: <20190805212134.12001-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
+        id S1730797AbfHEVXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 17:23:24 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44618 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729383AbfHEVXX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 17:23:23 -0400
+Received: by mail-pf1-f193.google.com with SMTP id t16so40244105pfe.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 14:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=HSmoEp/ziBaJEwse1a0IgnFQRWhZvjEvYtd+aetfTSk=;
+        b=RYsmyURowgYjpUDb5ZIOXfn0WP3QsStZ/1uQEgQmPgOol8mkIRe8+9P5OEafLEeiYt
+         Z6RBz65k5km+Lzt82HrTM1fGDCgHTGldzrZoKygIekf6Yksg94J+Ga8KNpYKt1xicvnp
+         CkFWTQm14jHJd+HaS7tw0u10ibpRAlUozKxFP8b7CrzyTiXmli2xxYEMY4sBKWM9isui
+         HpsZJNaaz4R58Z0sCNFfp47Ryqg7JlHH017DylL7Tteb9Mt2f7EUa/ZSD6jzc+Ie1Eyz
+         ysVTifrLVw0OlKVH0TEUUOkWPScsNBr5wiObjKfZLRIVtE80xRp/qWNYWNXwdyJj49vf
+         LCaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=HSmoEp/ziBaJEwse1a0IgnFQRWhZvjEvYtd+aetfTSk=;
+        b=bbwpxmRQb/z1x618HEK0/KpIIEJPAirqJuVPYbQdJze+ns3jZsMjcerCLX1ddpEYgG
+         8BVkXSgifYLcpAHaBXcKTIH6GseYhm68hDh47Fa4GgDkNKHRxwoRF6wSqqEZP1OHuDCX
+         L9xlanY8Urf+dasbmzuYGobaHbSGq7Eez1G1SCZ6pRWB/s+xPXbJypDh1tQmQKL26H/Z
+         hCNW3hHj/mO0VWJZM576rMqs2WpEjFK+q2KVtGUINP4bchsTojBic7taxMOWL1YkKfUg
+         ZL8xgVCD6DZK/zZxR8WtXQmzANlztF+JoDAZWI1SxV2WbT2l/WndIl7CHnZLPo+2wUCB
+         dFbA==
+X-Gm-Message-State: APjAAAWjcPiINmP93ACnYH1NHha+MDYbUKagZSLyjXssFr/xeKZ+UWR6
+        IVCIhH6BkWC1MLWNSQbF/tugVQ==
+X-Google-Smtp-Source: APXvYqzGhD1zDypW1mivoRqjSzY9R2U5h7sDfLfd2LohUb5Pzua5KyGy9CGK99REHRRiokWBGH7BwQ==
+X-Received: by 2002:a63:6106:: with SMTP id v6mr21815264pgb.36.1565040202848;
+        Mon, 05 Aug 2019 14:23:22 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:7483:80d6:7f67:2672])
+        by smtp.googlemail.com with ESMTPSA id m13sm28025691pgn.57.2019.08.05.14.23.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Aug 2019 14:23:21 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux.amoon@gmail.com, ottuzzi@gmail.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 0/2] ARM: dts: meson8b: persistent MAC address for Odroid-C1
+In-Reply-To: <20190727194647.15355-1-martin.blumenstingl@googlemail.com>
+References: <20190727194647.15355-1-martin.blumenstingl@googlemail.com>
+Date:   Mon, 05 Aug 2019 14:23:20 -0700
+Message-ID: <7hlfw7gvcn.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark the APIC's global config variables that are constant after boot as
-__ro_after_init to help document that the majority of the APIC config is
-not changed at runtime, and to harden the kernel a smidge.
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
+> This series makes Odroid-C1 use the MAC address which is programmed into
+> the eFuse.
 
-This applies on tip/x86/apic, which is currently:
+Queued for v5.4.
 
-  43931d350f30 ("x86/apic/x2apic: Implement IPI shorthands support")
+> build-time dependencies:
+> patches are based on top of "ARM: dts: meson8b: add VDDEE / mali-supply"
+> from [0]
+>
+> runtime dependencies (without these a random MAC address is assigned,
+> just like before these patches):
+> - "nvmem: meson-mx-efuse: allow reading data smaller than word_size"
+>   from [1]
+> - "net: stmmac: manage errors returned by of_get_mac_address()" from [2]
 
-Let me know if this patch should be based on a different tree.
+Looks like the nvmem patch isn't queued yet, but AFAICT queuing these
+will have no adverse affect.
 
- arch/x86/kernel/apic/apic.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 831274e3c09f..3a31875bd0a3 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -65,10 +65,10 @@ unsigned int num_processors;
- unsigned disabled_cpus;
- 
- /* Processor that is doing the boot up */
--unsigned int boot_cpu_physical_apicid = -1U;
-+unsigned int boot_cpu_physical_apicid __ro_after_init = -1U;
- EXPORT_SYMBOL_GPL(boot_cpu_physical_apicid);
- 
--u8 boot_cpu_apic_version;
-+u8 boot_cpu_apic_version __ro_after_init;
- 
- /*
-  * The highest APIC ID seen during enumeration.
-@@ -85,13 +85,13 @@ physid_mask_t phys_cpu_present_map;
-  * disable_cpu_apicid=<int>, mostly used for the kdump 2nd kernel to
-  * avoid undefined behaviour caused by sending INIT from AP to BSP.
-  */
--static unsigned int disabled_cpu_apicid __read_mostly = BAD_APICID;
-+static unsigned int disabled_cpu_apicid __ro_after_init = BAD_APICID;
- 
- /*
-  * This variable controls which CPUs receive external NMIs.  By default,
-  * external NMIs are delivered only to the BSP.
-  */
--static int apic_extnmi = APIC_EXTNMI_BSP;
-+static int apic_extnmi __ro_after_init = APIC_EXTNMI_BSP;
- 
- /*
-  * Map cpu index to physical APIC ID
-@@ -114,7 +114,7 @@ EXPORT_EARLY_PER_CPU_SYMBOL(x86_cpu_to_acpiid);
- DEFINE_EARLY_PER_CPU_READ_MOSTLY(int, x86_cpu_to_logical_apicid, BAD_APICID);
- 
- /* Local APIC was disabled by the BIOS and enabled by the kernel */
--static int enabled_via_apicbase;
-+static int enabled_via_apicbase __ro_after_init;
- 
- /*
-  * Handle interrupt mode configuration register (IMCR).
-@@ -172,23 +172,23 @@ static __init int setup_apicpmtimer(char *s)
- __setup("apicpmtimer", setup_apicpmtimer);
- #endif
- 
--unsigned long mp_lapic_addr;
--int disable_apic;
-+unsigned long mp_lapic_addr __ro_after_init;
-+int disable_apic __ro_after_init;
- /* Disable local APIC timer from the kernel commandline or via dmi quirk */
- static int disable_apic_timer __initdata;
- /* Local APIC timer works in C2 */
--int local_apic_timer_c2_ok;
-+int local_apic_timer_c2_ok __ro_after_init;
- EXPORT_SYMBOL_GPL(local_apic_timer_c2_ok);
- 
- /*
-  * Debug level, exported for io_apic.c
-  */
--int apic_verbosity;
-+int apic_verbosity __ro_after_init;
- 
--int pic_mode;
-+int pic_mode __ro_after_init;
- 
- /* Have we found an MP table */
--int smp_found_config;
-+int smp_found_config __ro_after_init;
- 
- static struct resource lapic_resource = {
- 	.name = "Local APIC",
-@@ -199,7 +199,7 @@ unsigned int lapic_timer_period = 0;
- 
- static void apic_pm_activate(void);
- 
--static unsigned long apic_phys;
-+static unsigned long apic_phys __ro_after_init;
- 
- /*
-  * Get the LAPIC version
-@@ -1278,7 +1278,7 @@ void __init sync_Arb_IDs(void)
- 			APIC_INT_LEVELTRIG | APIC_DM_INIT);
- }
- 
--enum apic_intr_mode_id apic_intr_mode;
-+enum apic_intr_mode_id apic_intr_mode __ro_after_init;
- 
- static int __init apic_intr_mode_select(void)
- {
--- 
-2.22.0
-
+Kevin
