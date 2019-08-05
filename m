@@ -2,77 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4097481C2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E079A81CB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730409AbfHENVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:21:00 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:34002 "EHLO vps0.lunn.ch"
+        id S1731090AbfHEN0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:26:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:48942 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730367AbfHENU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:20:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=6daK9OLtTHHmYFQn2clC+oFUHMXZEy7xd2EJnCzCpfk=; b=2Xqlu4JNgn9D9OND3DH1g0VDsc
-        2etmgO2ZFmrD7NXQqgtZ+pvFTXnEkT9iEwpvoIM6wdK7+AvMv5nhwfS78Ik5uWYTjN7YgzeosGDnk
-        GYwzWro6J8XCQMOt1FR1Ebq6bJIDeOqhzONyX0uDirp4RGjcDK7JH8cEhgiGjcLe48OY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hucur-0006ZZ-Um; Mon, 05 Aug 2019 15:20:45 +0200
-Date:   Mon, 5 Aug 2019 15:20:45 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Harini Katakam <harinik@xilinx.com>
-Cc:     Harini Katakam <harini.katakam@xilinx.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        David Miller <davem@davemloft.net>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] dt-bindings: net: macb: Add new property for PS
- SGMII only
-Message-ID: <20190805132045.GC24275@lunn.ch>
-References: <1564566033-676-1-git-send-email-harini.katakam@xilinx.com>
- <1564566033-676-2-git-send-email-harini.katakam@xilinx.com>
- <20190804145633.GB6800@lunn.ch>
- <CAFcVECL6cvCjeo+fn1NDyMDZyZXDrWyhD9djvcVXiLVLiLgGeA@mail.gmail.com>
+        id S1731391AbfHEN0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:26:11 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AE44337;
+        Mon,  5 Aug 2019 06:26:10 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97F263F706;
+        Mon,  5 Aug 2019 06:26:08 -0700 (PDT)
+Subject: Re: [PATCH 0/9] arm64: Stolen time support
+To:     Steven Price <steven.price@arm.com>
+Cc:     kvm@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        linux-doc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
+        Julien Thierry <julien.thierry.kdev@gmail.com>
+References: <20190802145017.42543-1-steven.price@arm.com>
+ <20190803190522.5fec8f7d@why> <6789f477-8ab5-cc54-1ad2-8627917b07c9@arm.com>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <e36e8baa-7c8b-ca95-95a7-7411599fa0b0@kernel.org>
+Date:   Mon, 5 Aug 2019 14:26:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFcVECL6cvCjeo+fn1NDyMDZyZXDrWyhD9djvcVXiLVLiLgGeA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <6789f477-8ab5-cc54-1ad2-8627917b07c9@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 11:45:05AM +0530, Harini Katakam wrote:
-> Hi Andrew,
+On 05/08/2019 14:06, Steven Price wrote:
+> On 03/08/2019 19:05, Marc Zyngier wrote:
+>> On Fri,  2 Aug 2019 15:50:08 +0100
+>> Steven Price <steven.price@arm.com> wrote:
+>>
+>> Hi Steven,
+>>
+>>> This series add support for paravirtualized time for arm64 guests and
+>>> KVM hosts following the specification in Arm's document DEN 0057A:
+>>>
+>>> https://developer.arm.com/docs/den0057/a
+>>>
+>>> It implements support for stolen time, allowing the guest to
+>>> identify time when it is forcibly not executing.
+>>>
+>>> It doesn't implement support for Live Physical Time (LPT) as there are
+>>> some concerns about the overheads and approach in the above
+>>> specification, and I expect an updated version of the specification to
+>>> be released soon with just the stolen time parts.
+>>
+>> Thanks for posting this.
+>>
+>> My current concern with this series is around the fact that we allocate
+>> memory from the kernel on behalf of the guest. It is the first example
+>> of such thing in the ARM port, and I can't really say I'm fond of it.
+>>
+>> x86 seems to get away with it by having the memory allocated from
+>> userspace, why I tend to like more. Yes, put_user is more
+>> expensive than a straight store, but this isn't done too often either.
+>>
+>> What is the rational for your current approach?
 > 
-> On Sun, Aug 4, 2019 at 8:26 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> >
-> > On Wed, Jul 31, 2019 at 03:10:32PM +0530, Harini Katakam wrote:
-> > > Add a new property to indicate when PS SGMII is used with NO
-> > > external PHY on board.
-> >
-> > Hi Harini
-> >
-> > What exactly is you use case? Are you connecting to a Ethernet switch?
-> > To an SFP cage with a copper module?
+> As I see it there are 3 approaches that can be taken here:
 > 
-> Yes, an SFP cage is the common HW target for this patch.
+> 1. Hypervisor allocates memory and adds it to the virtual machine. This
+> means that everything to do with the 'device' is encapsulated behind the
+> KVM_CREATE_DEVICE / KVM_[GS]ET_DEVICE_ATTR ioctls. But since we want the
+> stolen time structure to be fast it cannot be a trapping region and has
+> to be backed by real memory - in this case allocated by the host kernel.
+> 
+> 2. Host user space allocates memory. Similar to above, but this time
+> user space needs to manage the memory region as well as the usual
+> KVM_CREATE_DEVICE dance. I've no objection to this, but it means
+> kvmtool/QEMU needs to be much more aware of what is going on (e.g. how
+> to size the memory region).
+> 
+> 3. Guest kernel "donates" the memory to the hypervisor for the
+> structure. As far as I'm aware this is what x86 does. The problems I see
+> this approach are:
+> 
+>  a) kexec becomes much more tricky - there needs to be a disabling
+> mechanism for the guest to stop the hypervisor scribbling on memory
+> before starting the new kernel.
+> 
+>  b) If there is more than one entity that is interested in the
+> information (e.g. firmware and kernel) then this requires some form of
+> arbitration in the guest because the hypervisor doesn't want to have to
+> track an arbitrary number of regions to update.
+> 
+>  c) Performance can suffer if the host kernel doesn't have a suitably
+> aligned/sized area to use. As you say - put_user() is more expensive.
+> The structure is updated on every return to the VM.
+> 
+> 
+> Of course x86 does prove the third approach can work, but I'm not sure
+> which is actually better. Avoid the kexec cancellation requirements was
+> the main driver of the current approach. Although many of the
+> conversations about this were also tied up with Live Physical Time which
+> adds its own complications.
 
-Hi Harini
+My current train of thoughts is around (2):
 
-So you have a copper PHY in the SFP cage. It will talk SGMII
-signalling to your PS SGMII. When that signalling is complete i would
-expect the MAC to raise an interrupt, just as if the SGMII PHY was
-soldered on the board. So i don't see why you need this polling?
+- We don't need a new mechanism to track pages or deal with overlapping
+IPA ranges
+- We can get rid of the save/restore interface
 
-       Andrew
+The drawback is that the amount of memory required per vcpu becomes ABI.
+I don't think that's a huge deal, as the hypervisor has the same
+contract with the guest.
+
+We also take a small hit with put_user(), but this is only done as a
+consequence of vcpu_load() (and not on every entry as you suggest
+above). It'd be worth quantifying this overhead before making any
+decision one way or another.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead, it just smells funny...
