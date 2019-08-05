@@ -2,101 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 702BE813D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 10:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6A2E813CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 10:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbfHEICI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 04:02:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50466 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfHEICH (ORCPT
+        id S1727724AbfHEIBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 04:01:55 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41184 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfHEIBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 04:02:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=M7aCOncE9cdu2lm40wE0sX+3YWUOlwEH41YvffpGGBk=; b=U3AOvS84+K0PANpTElTG64i6jb
-        hWFT+tud1AOorcRkdR7h21ajTA52bvZ2O0FungAr+CBH5ceoQaQw6bHC7/CxRZbfcQUl4TGpMKmxj
-        3iYO8iluc4+/v+DCRgXlE4NcXpt86w0S6RuJiFN5kWslZjOoMl+iTo44Efqx5+jSecYA/H6Bj4u4A
-        JJ1WuHjA0WwPvD6Soh/DL3PMUE1aRlZwO0R2EZm/euaznjyWg3k8VXpVb5NIV44JBLMWSZKbBB4M5
-        Ei0P+F+QZIe8hlGdYmtC5JJHtHvhcuaTFqmMrVHFZMIhYfiL9HpxRkrNV+qAfIQw0U4rkAuaw4nM4
-        FltAaKnQ==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1huXwK-0003OX-Je; Mon, 05 Aug 2019 08:01:57 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org
-Cc:     Shawn Anastasio <shawn@anastas.io>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] MIPS: remove support for DMA_ATTR_WRITE_COMBINE
-Date:   Mon,  5 Aug 2019 11:01:45 +0300
-Message-Id: <20190805080145.5694-3-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190805080145.5694-1-hch@lst.de>
-References: <20190805080145.5694-1-hch@lst.de>
+        Mon, 5 Aug 2019 04:01:54 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7581as8080687;
+        Mon, 5 Aug 2019 03:01:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1564992096;
+        bh=7sv9PjcFwV9v+UJTNk3jI9UE2QxN5A6jgKLgQowNCpA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SiF6CtKiRta8wjwuDh6WKaoLpEknj8qZReXU80pe5XITEbLAgQB1fZ5DI1OOqCb8h
+         gQavyEiEzJ38lDba9+y0Q67tuDu0ZME1wMXXpCUzo3Dmq8VrcPhC+joI4mPtiNAjIO
+         VJZ5w29F/ZYK13NaeL1JEE9uHWFUD+DcQ5BZjsbQ=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7581ZWM112160
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Aug 2019 03:01:36 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 5 Aug
+ 2019 03:01:35 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 5 Aug 2019 03:01:35 -0500
+Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7581VBW040191;
+        Mon, 5 Aug 2019 03:01:31 -0500
+Subject: Re: [PATCH v2] scsi: ufs: Configure clock in .hce_enable_notify() in
+ Cadence UFS
+To:     Anil Varughese <aniljoy@cadence.com>, <alim.akhtar@samsung.com>,
+        <avri.altman@wdc.com>, <pedrom.sousa@synopsys.com>
+CC:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>, <hare@suse.de>,
+        <rafalc@cadence.com>, <mparab@cadence.com>, <jank@cadence.com>,
+        <pawell@cadence.com>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190802112112.18714-1-aniljoy@cadence.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <86985e8d-2aa8-5583-f899-925191f2041d@ti.com>
+Date:   Mon, 5 Aug 2019 13:32:14 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190802112112.18714-1-aniljoy@cadence.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mips uses the KSEG1 kernel memory segment do map dma coherent
-allocations for non-coherent devices as uncachable, and does not have
-any kind of special support for DMA_ATTR_WRITE_COMBINE in the allocation
-path.  Thus supporting DMA_ATTR_WRITE_COMBINE in dma_mmap_attrs will
-lead to multiple mappings with different caching attributes.
+Hi,
 
-Fixes: 8c172467be36 ("MIPS: Add implementation of dma_map_ops.mmap()")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/mips/Kconfig              | 1 -
- arch/mips/mm/dma-noncoherent.c | 8 --------
- 2 files changed, 9 deletions(-)
+On 02/08/19 4:51 PM, Anil Varughese wrote:
+> Configure CDNS_UFS_REG_HCLKDIV in .hce_enable_notify() instead of
+> .setup_clock() because if UFSHCD resets the controller ip because
+> of phy or device related errors then CDNS_UFS_REG_HCLKDIV is
+> reset to default value and .setup_clock() is not called later
+> in the sequence whereas .hce_enable_notify will be called everytime
+> controller is reenabled.
+> 
+> Signed-off-by: Anil Varughese <aniljoy@cadence.com>
+> ---
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index d50fafd7bf3a..86e6760ef0d0 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -1119,7 +1119,6 @@ config DMA_PERDEV_COHERENT
- 
- config DMA_NONCOHERENT
- 	bool
--	select ARCH_HAS_DMA_MMAP_PGPROT
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_HAS_UNCACHED_SEGMENT
- 	select NEED_DMA_MAP_STATE
-diff --git a/arch/mips/mm/dma-noncoherent.c b/arch/mips/mm/dma-noncoherent.c
-index ed56c6fa7be2..1d4d57dd9acf 100644
---- a/arch/mips/mm/dma-noncoherent.c
-+++ b/arch/mips/mm/dma-noncoherent.c
-@@ -65,14 +65,6 @@ long arch_dma_coherent_to_pfn(struct device *dev, void *cpu_addr,
- 	return page_to_pfn(virt_to_page(cached_kernel_address(cpu_addr)));
- }
- 
--pgprot_t arch_dma_mmap_pgprot(struct device *dev, pgprot_t prot,
--		unsigned long attrs)
--{
--	if (attrs & DMA_ATTR_WRITE_COMBINE)
--		return pgprot_writecombine(prot);
--	return pgprot_noncached(prot);
--}
--
- static inline void dma_sync_virt(void *addr, size_t size,
- 		enum dma_data_direction dir)
- {
+Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
+
+>  drivers/scsi/ufs/cdns-pltfrm.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
+> index 86dbb723f..993519080 100644
+> --- a/drivers/scsi/ufs/cdns-pltfrm.c
+> +++ b/drivers/scsi/ufs/cdns-pltfrm.c
+> @@ -62,17 +62,16 @@ static int cdns_ufs_set_hclkdiv(struct ufs_hba *hba)
+>  }
+>  
+>  /**
+> - * Sets clocks used by the controller
+> + * Called before and after HCE enable bit is set.
+>   * @hba: host controller instance
+> - * @on: if true, enable clocks, otherwise disable
+>   * @status: notify stage (pre, post change)
+>   *
+>   * Return zero for success and non-zero for failure
+>   */
+> -static int cdns_ufs_setup_clocks(struct ufs_hba *hba, bool on,
+> -				 enum ufs_notify_change_status status)
+> +static int cdns_ufs_hce_enable_notify(struct ufs_hba *hba,
+> +				      enum ufs_notify_change_status status)
+>  {
+> -	if ((!on) || (status == PRE_CHANGE))
+> +	if (status != PRE_CHANGE)
+>  		return 0;
+>  
+>  	return cdns_ufs_set_hclkdiv(hba);
+> @@ -114,13 +113,13 @@ static int cdns_ufs_m31_16nm_phy_initialization(struct ufs_hba *hba)
+>  
+>  static const struct ufs_hba_variant_ops cdns_ufs_pltfm_hba_vops = {
+>  	.name = "cdns-ufs-pltfm",
+> -	.setup_clocks = cdns_ufs_setup_clocks,
+> +	.hce_enable_notify = cdns_ufs_hce_enable_notify,
+>  };
+>  
+>  static const struct ufs_hba_variant_ops cdns_ufs_m31_16nm_pltfm_hba_vops = {
+>  	.name = "cdns-ufs-pltfm",
+>  	.init = cdns_ufs_init,
+> -	.setup_clocks = cdns_ufs_setup_clocks,
+> +	.hce_enable_notify = cdns_ufs_hce_enable_notify,
+>  	.phy_initialization = cdns_ufs_m31_16nm_phy_initialization,
+>  };
+>  
+> 
+
 -- 
-2.20.1
-
+Regards
+Vignesh
