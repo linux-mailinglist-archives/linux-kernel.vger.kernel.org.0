@@ -2,416 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3FE381505
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F12E4814E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:12:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbfHEJNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 05:13:17 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:14294 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728054AbfHEJMQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 05:12:16 -0400
-X-UUID: 320e597a903a454cb07d4981b6971616-20190805
-X-UUID: 320e597a903a454cb07d4981b6971616-20190805
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1390472719; Mon, 05 Aug 2019 17:12:05 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 5 Aug 2019 17:12:07 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 5 Aug 2019 17:12:07 +0800
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Wendell Lin <wendell.lin@mediatek.com>,
-        Ivan Tseng <ivan.tseng@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH 11/11] arm64: dts: add dts nodes for MT6779
-Date:   Mon, 5 Aug 2019 17:12:00 +0800
-Message-ID: <1564996320-10897-12-git-send-email-mars.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
-References: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
+        id S1728242AbfHEJMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:12:40 -0400
+Received: from mail-eopbgr1400090.outbound.protection.outlook.com ([40.107.140.90]:16462
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727888AbfHEJMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 05:12:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZfDmsr/iPpgFLySqMayGLheCEh2ZGiYKV/ETW9dS53njEiJpEBPEbZW+YGUv9LlImjJ2fb8U9AohoXRIE7Gu9GtWtjCrKvbYoPsivWluNOlW+gJvCnOyMGePDCPPcdieAzp7BA7hlrWkz/5CpVjsz786SVn5V4pZJHwdJC3O8AU7vtdEEG8DK8/Qc9xGZRS2PtZDA4439CI+113GOUWEAD+rXtKyRJGIl0NylShf/Ca6usL5FC76KiXEFFsgo3HeyHieJWSdymCh2A6SS4o/oVWtrz5xNAA/p/sFQzP+hHTudWE1dWUMj+Q1tmaSmKqSL9rhaaXW/02ms9C+ztt23w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eXMY/cyLRDAt63X6DluSEbn9RshI9znYximznJ0jP04=;
+ b=CkAteQGOGv5b60sVviZAXoh/VCggodjAqv2scaalMyR76fVwHvaK2GMG5hlNmcgf5YsTOOnqZpcfYSaFO1kfyMgYeDZ/8JtAxwtcJsugJIXWib249oWIdP6/stYoFnGq6ORJHXSnKsy3VVLlKuPTQRpEDEbNjfz0RKmFJwunvKyyTBEskjm8rq14SKlmSntceKgMTyKQ+6vjEg7Yjybgg3L6nS4tV050988hSZYatSqaLplX0j8avC/P8yOLD9I5v9o123BJJj7LzLUXKHyktSy9uyl5g1LILMkM4Z/QuA2pkCBnJFaBEgnQGEE6Ugvmv2NXD8mUtLuVfuSsWNS0dA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=bp.renesas.com;dmarc=pass action=none
+ header.from=bp.renesas.com;dkim=pass header.d=bp.renesas.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eXMY/cyLRDAt63X6DluSEbn9RshI9znYximznJ0jP04=;
+ b=pcpRNzN6GCip/1w5+laW02earGuqnGrr8u5xM88aT8cf7rglQqpwNaH7Xia3B0yqGvQfy6BCBjxPCd4wPB6QyAewrePT2Ejk+7IcJQ0v7gczX7RA39wWSsG5PCCP7UMGY6WfWtbIjnYXRjk2wnQZmkAWGrkG9e4Wp+dDz8Q1aLk=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.13) by
+ TY1PR01MB1817.jpnprd01.prod.outlook.com (52.133.162.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.16; Mon, 5 Aug 2019 09:12:34 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::d881:cb74:8277:5a16]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::d881:cb74:8277:5a16%7]) with mapi id 15.20.2136.010; Mon, 5 Aug 2019
+ 09:12:34 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH/RFC 07/12] drm: rcar-du: lvds: Add support for dual link
+ panels
+Thread-Topic: [PATCH/RFC 07/12] drm: rcar-du: lvds: Add support for dual link
+ panels
+Thread-Index: AQHVSQTQGxO+ExbJj06XbPWiwlaDqKbnhDUAgATD9OA=
+Date:   Mon, 5 Aug 2019 09:12:34 +0000
+Message-ID: <TY1PR01MB1770CA2012398B421E609D54C0DA0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1564731249-22671-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1564731249-22671-8-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20190802082020.GH5008@pendragon.ideasonboard.com>
+In-Reply-To: <20190802082020.GH5008@pendragon.ideasonboard.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1464ca88-4e1d-4fba-3bf7-08d719850dd2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:TY1PR01MB1817;
+x-ms-traffictypediagnostic: TY1PR01MB1817:
+x-microsoft-antispam-prvs: <TY1PR01MB1817677B30D47B35225B09F8C0DA0@TY1PR01MB1817.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 01208B1E18
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(39860400002)(376002)(346002)(136003)(396003)(189003)(199004)(102836004)(14454004)(256004)(66066001)(71190400001)(6506007)(99286004)(76176011)(53546011)(81166006)(52536014)(81156014)(68736007)(71200400001)(7416002)(66946007)(6116002)(305945005)(478600001)(7736002)(6436002)(64756008)(66556008)(66476007)(66446008)(86362001)(26005)(186003)(44832011)(486006)(74316002)(53936002)(3846002)(229853002)(6916009)(446003)(11346002)(33656002)(316002)(25786009)(4326008)(2906002)(5660300002)(9686003)(8936002)(8676002)(76116006)(55016002)(476003)(54906003)(6246003)(7696005)(107886003);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1817;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 1vZNtMAsqVxHFWfB1zjo/DBGtSgmEYdajb3ZA8YC5B27+u2m2V3bmnrSscUT0lfE0fXRPEfXcYhHqfz2ch3nYfTpvywN4F6ccMCl3fSavypMD9BtgAakhtCRajZ3iNpUlImbz57kRGW/OUDyCZzZzOm1Fcco8h6qHTQyZGdQzK0BBXav55j67BEG7R2LYW+rpDGhVC3bRJ5WzvtjvJtG3r59lyG2VyEDGLSmCU5Yrtbc+pq7K+MOkXXp51T0DPGcjn0B0kYWm6ApVO11gqgK5zp78RqgMr90ZtzTEsfs0j1s2/WwGYf7US8FFxBYYPrHgvM4DlgZfXtY45eLmt05O974rMvzYFAc/B291ZSfYxzAcp7GF9TCrfgmrYtj03sk8pFVSgAn9GSweBIld3IhryEo+1hTPRswlGSObf0frGM=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1464ca88-4e1d-4fba-3bf7-08d719850dd2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2019 09:12:34.7622
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fabrizio.castro@bp.renesas.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1817
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-this adds initial MT6779 dts settings fo board support,
-including cpu, gic, timer, ccf, pinctrl, uart...etc.
-
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/Makefile        |    1 +
- arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi |   99 +++++++++++
- arch/arm64/boot/dts/mediatek/mt6779.dts      |  229 ++++++++++++++++++++++++++
- 3 files changed, 329 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6779.dts
-
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index 458bbc4..53f1c61 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6779-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi b/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
-new file mode 100644
-index 0000000..aca1e2b
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
-@@ -0,0 +1,99 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2019 MediaTek Inc.
-+ * Author: Mars.C <mars.cheng@mediatek.com>
-+ *
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "mediatek,mt6779";
-+	interrupt-parent = <&sysirq>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x000>;
-+		};
-+	};
-+
-+	uart_clk: dummy26m {
-+		compatible = "fixed-clock";
-+		clock-frequency = <26000000>;
-+		#clock-cells = <0>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 13
-+			      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+			      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+			      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+			      (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	soc {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		compatible = "simple-bus";
-+		ranges;
-+
-+		gic: interrupt-controller@0c000000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			#redistributor-regions = <1>;
-+			interrupt-parent = <&gic>;
-+			interrupt-controller;
-+			reg = <0 0x0c000000 0 0x40000>, // distributor
-+			      <0 0x0c040000 0 0x200000>; // redistributor
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		sysirq: intpol-controller@0c53a650 {
-+			compatible = "mediatek,mt6779-sysirq",
-+				     "mediatek,mt6577-sysirq";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupt-parent = <&gic>;
-+			reg = <0 0x0c53a650 0 0x50>;
-+		};
-+
-+		uart0: serial@11002000 {
-+			compatible = "mediatek,mt6779-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11002000 0 0x400>;
-+			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&uart_clk>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@11003000 {
-+			compatible = "mediatek,mt6779-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11003000 0 0x400>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&uart_clk>;
-+			status = "disabled";
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt6779.dts b/arch/arm64/boot/dts/mediatek/mt6779.dts
-new file mode 100644
-index 0000000..daa25b7
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6779.dts
-@@ -0,0 +1,229 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2019 MediaTek Inc.
-+ * Author: Mars.C <mars.cheng@mediatek.com>
-+ *
-+ */
-+
-+#include <dt-bindings/clock/mt6779-clk.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "mediatek,mt6779";
-+	interrupt-parent = <&sysirq>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x000>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x100>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x200>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x300>;
-+		};
-+
-+		cpu4: cpu@4 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x400>;
-+		};
-+
-+		cpu5: cpu@5 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x500>;
-+		};
-+
-+		cpu6: cpu@6 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a75";
-+			enable-method = "psci";
-+			reg = <0x600>;
-+		};
-+
-+		cpu7: cpu@7 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a75";
-+			enable-method = "psci";
-+			reg = <0x700>;
-+		};
-+	};
-+
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	clk32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		clock-output-names = "clk32k";
-+	};
-+
-+	uart_clk: dummy26m {
-+		compatible = "fixed-clock";
-+		clock-frequency = <26000000>;
-+		#clock-cells = <0>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	soc {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		compatible = "simple-bus";
-+		ranges;
-+
-+		gic: interrupt-controller@0c000000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			#redistributor-regions = <1>;
-+			interrupt-parent = <&gic>;
-+			interrupt-controller;
-+			reg = <0 0x0c000000 0 0x40000>,  /* GICD */
-+			      <0 0x0c040000 0 0x200000>, /* GICR */
-+			      <0 0x0c400000 0 0x2000>,   /* GICC */
-+			      <0 0x0c410000 0 0x1000>,   /* GICH */
-+			      <0 0x0c420000 0 0x2000>;   /* GICV */
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		sysirq: intpol-controller@0c53a650 {
-+			compatible = "mediatek,mt6779-sysirq",
-+				     "mediatek,mt6577-sysirq";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupt-parent = <&gic>;
-+			reg = <0 0x0c53a650 0 0x50>;
-+		};
-+
-+		topckgen: clock-controller@10000000 {
-+			compatible = "mediatek,mt6779-topckgen", "syscon";
-+			reg = <0 0x10000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		infracfg_ao: clock-controller@10001000 {
-+			compatible = "mediatek,mt6779-infracfg_ao", "syscon";
-+			reg = <0 0x10001000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		apmixed: clock-controller@1000c000 {
-+			compatible = "mediatek,mt6779-apmixed", "syscon";
-+			reg = <0 0x1000c000 0 0xe00>;
-+			#clock-cells = <1>;
-+		};
-+
-+		uart0: serial@11002000 {
-+			compatible = "mediatek,mt6779-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11002000 0 0x400>;
-+			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&uart_clk>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@11003000 {
-+			compatible = "mediatek,mt6779-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11003000 0 0x400>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&uart_clk>;
-+			status = "disabled";
-+		};
-+
-+		audio: clock-controller@11210000 {
-+			compatible = "mediatek,mt6779-audio", "syscon";
-+			reg = <0 0x11210000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		mfgcfg: clock-controller@13fbf000 {
-+			compatible = "mediatek,mt6779-mfgcfg", "syscon";
-+			reg = <0 0x13fbf000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		mmsys: clock-controller@14000000 {
-+			compatible = "mediatek,mt6779-mmsys", "syscon";
-+			reg = <0 0x14000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		imgsys: clock-controller@15020000 {
-+			compatible = "mediatek,mt6779-imgsys", "syscon";
-+			reg = <0 0x15020000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		vdecsys: clock-controller@16000000 {
-+			compatible = "mediatek,mt6779-vdecsys", "syscon";
-+			reg = <0 0x16000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		vencsys: clock-controller@17000000 {
-+			compatible = "mediatek,mt6779-vencsys", "syscon";
-+			reg = <0 0x17000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		camsys: clock-controller@1a000000 {
-+			compatible = "mediatek,mt6779-camsys", "syscon";
-+			reg = <0 0x1a000000 0 0x10000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		ipesys: clock-controller@1b000000 {
-+			compatible = "mediatek,mt6779-ipesys", "syscon";
-+			reg = <0 0x1b000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+	};
-+};
--- 
-1.7.9.5
-
+SGkgTGF1cmVudCwNCg0KVGhhbmsgeW91IGZvciB5b3VyIGZlZWRiYWNrIQ0KDQo+IEZyb206IExh
+dXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4NCj4gU2Vu
+dDogMDIgQXVndXN0IDIwMTkgMDk6MjANCj4gU3ViamVjdDogUmU6IFtQQVRDSC9SRkMgMDcvMTJd
+IGRybTogcmNhci1kdTogbHZkczogQWRkIHN1cHBvcnQgZm9yIGR1YWwgbGluayBwYW5lbHMNCj4g
+DQo+IEhpIEZhYnJpemlvLA0KPiANCj4gVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guDQo+IA0KPiBP
+biBGcmksIEF1ZyAwMiwgMjAxOSBhdCAwODozNDowNEFNICswMTAwLCBGYWJyaXppbyBDYXN0cm8g
+d3JvdGU6DQo+ID4gSWYgdGhlIGRpc3BsYXkgY29tZXMgd2l0aCB0d28gcG9ydHMsIGFzc3VtZSBp
+dCBzdXBwb3J0cyBkdWFsDQo+ID4gbGluay4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEZhYnJp
+emlvIENhc3RybyA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+
+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2x2ZHMuYyB8IDMgKysrDQo+ID4gIDEgZmls
+ZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2dwdS9kcm0vcmNhci1kdS9yY2FyX2x2ZHMuYyBiL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3Jj
+YXJfbHZkcy5jDQo+ID4gaW5kZXggMmQ1NGFlNS4uOTdjNTFjMiAxMDA2NDQNCj4gPiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2x2ZHMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9yY2FyLWR1L3JjYXJfbHZkcy5jDQo+ID4gQEAgLTc1MSw2ICs3NTEsOSBAQCBzdGF0aWMg
+aW50IHJjYXJfbHZkc19wYXJzZV9kdChzdHJ1Y3QgcmNhcl9sdmRzICpsdmRzKQ0KPiA+ICAJCQly
+ZXQgPSAtRVBST0JFX0RFRkVSOw0KPiA+ICAJCQlnb3RvIGRvbmU7DQo+ID4gIAkJfQ0KPiA+ICsJ
+CWlmIChsdmRzLT5pbmZvLT5xdWlya3MgJiBSQ0FSX0xWRFNfUVVJUktfRFVBTF9MSU5LKQ0KPiA+
+ICsJCQlsdmRzLT5kdWFsX2xpbmsgPSBvZl9ncmFwaF9nZXRfZW5kcG9pbnRfY291bnQocmVtb3Rl
+KQ0KPiA+ICsJCQkJCT09IDI7DQo+IA0KPiBUaGlzIGlzIGEgYml0IG9mIGEgaGFjaywgYXMgSSB0
+aGluayB0aGUgaW5mb3JtYXRpb24gc2hvdWxkIGJlIHF1ZXJpZWQNCj4gZnJvbSB0aGUgcGFuZWws
+IGxpa2Ugd2UgZG8gZm9yIGJyaWRnZXMuIEknZCBzYXkgd2UgY2FuIGxpdmUgd2l0aCB0aGlzDQo+
+IGZvciBub3csIGJ1dCBhcyB0aGUgZGF0YSBzd2FwIGZsYWcgc2hvdWxkIGNvbWUgZnJvbSB0aGUg
+cGFuZWwgYXMgd2VsbCwNCj4gd2Ugd2lsbCBuZWVkIGluZnJhc3RydWN0dXJlIGZvciB0aGF0LCBh
+bmQgd2UgY2FuIGFzIHdlbGwgdGhyb3VnaCB0aGUNCj4gZHVhbCBsaW5rIGZsYWcgdGhlcmUgYXQg
+dGhlIHNhbWUgdGltZS4NCg0KSSB0b3RhbGx5IGFncmVlLCB0aGlzIGlzIGEgbmFzdHkgaGFjaywg
+bXkgc2VyaWVzIGlzIG1pc3NpbmcgdGhlIGluZnJhc3RydWN0dXJlDQpmb3IgZGVzY3JpYmluZyB0
+aGlzIGluZm9ybWF0aW9uDQoNCj4gDQo+IEkgdGhpbmsgd2Ugc2hvdWxkIHVzZSB0aGUgZHJtX2Jy
+aWRnZV90aW1pbmdzIHN0cnVjdHVyZSBmb3IgdGhpcyBwdXJwb3NlLA0KPiBhcyBpdCB3b3VsZCBt
+YWtlIGxpZmUgbW9yZSBkaWZmaWN1bHQgZm9yIHVzZXJzIG9mIGRybV9icmlkZ2UgYW5kDQo+IGRy
+bV9wYW5lbCB0byBoYXZlIHR3byBkaWZmZXJlbnQgc3RydWN0dXJlcyAoZXNwZWNpYWxseSB3aGVu
+IHdyYXBwaW5nIGENCj4gZHJtX3BhbmVsIHdpdGggZHJtX3BhbmVsX2JyaWRnZV9hZGQoKSkuIFRo
+ZSBzdHJ1Y3R1cmUgY291bGQgYmUgcmVuYW1lZA0KPiBpZiBkZXNpcmVkLg0KDQpJIGFtIG5vdCB0
+b28gc3VyZSB1c2luZyBkcm1fYnJpZGdlX3RpbWluZ3MgZm9yIHBhbmVscyB3b3VsZCBtYWtlIGV2
+ZXJ5Ym9keQ0KaGFwcHk/IElzIHRoZXJlIGFueSBhbHRlcm5hdGl2ZT8gUGVyaGFwcyB0aGlzIGNh
+bGxzIGZvciBhIG5ldyBzdHJ1Y3Qgd2UgY291bGQNCmVtYmVkIGluIGJvdGggZHJtX2JyaWRnZV90
+aW1pbmdzIGFuZCBzb21lIGRybV9wYW5lbF88d2hhdGV2ZXI+IGRhdGENCnN0cnVjdHVyZT8NCg0K
+VGhhbmtzLA0KRmFiDQogDQo+IA0KPiA+ICAJfQ0KPiA+DQo+ID4gIAlpZiAobHZkcy0+ZHVhbF9s
+aW5rKSB7DQo+IA0KPiAtLQ0KPiBSZWdhcmRzLA0KPiANCj4gTGF1cmVudCBQaW5jaGFydA0K
