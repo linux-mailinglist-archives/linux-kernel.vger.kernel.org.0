@@ -2,118 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 591E5822D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A5FA82309
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730076AbfHEQqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 12:46:04 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:40092 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729302AbfHEQpb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:45:31 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 67A76C015B;
-        Mon,  5 Aug 2019 16:45:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1565023530; bh=0LbPrLAJZPL+E0+EEkTDfdECwXLyTc0PWcn5jnubUI8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fwhulZuLa3ryglwiiwLjF4/2ithvclLv+FstYbrMDuZUUzbasLHK6bKffdBkzXJbw
-         Bze7ohv14AR+/LgKzBrDhlrZ922jio5ql9f+PUa5FEcwYYyeAXs+QkqwOQr3/UQUBb
-         hywH00ci3zmVycCrIu0L1pOeotaSjKBgV9l864aNVk2LgVEOzpRcrwGKi1EhLmzoUP
-         qure26YhNg7npw16CSBy72d8V4vyNnmbY9G/beRv3rnFEipdd05UGN+VH2rafPGzT+
-         WT9LOXYfKY/xU+TzcfDjPLJmNSAVOu/7dGib4K7dwl+sJoZTIaBIj94VkSxpryQzzU
-         TG0wIbOb+vBpA==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id CD08FA005D;
-        Mon,  5 Aug 2019 16:45:25 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 00/26] net: stmmac: Misc improvements for XGMAC
-Date:   Mon,  5 Aug 2019 18:44:27 +0200
-Message-Id: <cover.1565022597.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        id S1729989AbfHEQs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 12:48:28 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33116 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728800AbfHEQs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 12:48:27 -0400
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id D46F277450129614A781;
+        Mon,  5 Aug 2019 17:48:25 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.34) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 5 Aug 2019 17:48:18 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <jejb@linux.ibm.com>,
+        <zohar@linux.ibm.com>, <jgg@ziepe.ca>, <tyhicks@canonical.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <crazyt2019+lml@gmail.com>, <nayna@linux.vnet.ibm.com>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3] KEYS: trusted: allow module init if TPM is inactive or deactivated
+Date:   Mon, 5 Aug 2019 18:44:27 +0200
+Message-ID: <20190805164427.17408-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ This series depend on 3caa61c20875 ("net: stmmac: Sync RX Buffer upon allocation")
-which is already in -net but not -next ]
+Commit c78719203fc6 ("KEYS: trusted: allow trusted.ko to initialize w/o a
+TPM") allows the trusted module to be loaded even if a TPM is not found, to
+avoid module dependency problems.
 
-Misc improvements for -next which adds new features in XGMAC cores.
+However, trusted module initialization can still fail if the TPM is
+inactive or deactivated. tpm_get_random() returns an error.
 
-More info in commit logs.
+This patch removes the call to tpm_get_random() and instead extends the PCR
+specified by the user with zeros. The security of this alternative is
+equivalent to the previous one, as either option prevents with a PCR update
+unsealing and misuse of sealed data by a user space process.
 
+Even if a PCR is extended with zeros, instead of random data, it is still
+computationally infeasible to find a value as input for a new PCR extend
+operation, to obtain again the PCR value that would allow unsealing.
+
+Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
+ security/keys/trusted.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-Jose Abreu (26):
-  net: stmmac: xgmac: Fix XGMAC selftests
-  net: stmmac: xgmac: Implement MMC counters
-  net: stmmac: Fix issues when number of Queues >= 4
-  net: stmmac: xgmac: Implement set_mtl_tx_queue_weight()
-  net: stmmac: xgmac: Implement tx_queue_prio()
-  net: stmmac: Implement RSS and enable it in XGMAC core
-  net: stmmac: selftests: Add RSS test
-  net: stmmac: Implement VLAN Hash Filtering in XGMAC
-  net: stmmac: selftests: Add test for VLAN and Double VLAN Filtering
-  net: stmmac: Implement Safety Features in XGMAC core
-  net: stmmac: Add Flexible RX Parser support in XGMAC
-  net: stmmac: tc: Do not return a fragment entry
-  net: stmmac: selftests: Add a selftest for Flexible RX Parser
-  net: stmmac: Get correct timestamp values from XGMAC
-  net: stmmac: Prepare to add Split Header support
-  net: stmmac: xgmac: Correctly return that RX descriptor is not last
-    one
-  net: stmmac: Add Split Header support and enable it in XGMAC cores
-  net: stmmac: dwxgmac: Add Flexible PPS support
-  net: stmmac: Add ethtool register dump for XGMAC cores
-  net: stmmac: Add a counter for Split Header packets
-  net: stmmac: Add support for SA Insertion/Replacement in XGMAC cores
-  net: stmmac: selftests: Add tests for SA Insertion/Replacement
-  net: stmmac: xgmac: Add EEE support
-  net: stmmac: Add support for VLAN Insertion Offload
-  net: stmmac: selftests: Add selftest for VLAN TX Offload
-  net: stmmac: selftests: Return proper error code to userspace
-
- drivers/net/ethernet/stmicro/stmmac/common.h       |  16 +
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   4 +
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     | 135 +++-
- .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    | 880 ++++++++++++++++++++-
- .../net/ethernet/stmicro/stmmac/dwxgmac2_descs.c   | 118 ++-
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  41 +-
- drivers/net/ethernet/stmicro/stmmac/hwif.c         |   4 +-
- drivers/net/ethernet/stmicro/stmmac/hwif.h         |  47 ++
- drivers/net/ethernet/stmicro/stmmac/mmc.h          |   9 +
- drivers/net/ethernet/stmicro/stmmac/mmc_core.c     | 192 +++++
- drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  21 +
- .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   | 106 ++-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 380 +++++++--
- .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 513 +++++++++++-
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    |   2 +-
- include/linux/stmmac.h                             |   1 +
- 16 files changed, 2361 insertions(+), 108 deletions(-)
-
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index 9a94672e7adc..ade699131065 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -1228,24 +1228,11 @@ static int __init trusted_shash_alloc(void)
+ 
+ static int __init init_digests(void)
+ {
+-	u8 digest[TPM_MAX_DIGEST_SIZE];
+-	int ret;
+-	int i;
+-
+-	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
+-	if (ret < 0)
+-		return ret;
+-	if (ret < TPM_MAX_DIGEST_SIZE)
+-		return -EFAULT;
+-
+ 	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
+ 			  GFP_KERNEL);
+ 	if (!digests)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < chip->nr_allocated_banks; i++)
+-		memcpy(digests[i].digest, digest, TPM_MAX_DIGEST_SIZE);
+-
+ 	return 0;
+ }
+ 
 -- 
-2.7.4
+2.17.1
 
