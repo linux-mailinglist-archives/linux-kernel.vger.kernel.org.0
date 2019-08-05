@@ -2,123 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42EE482804
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 01:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B97782835
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 01:38:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731352AbfHEXfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 19:35:47 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36935 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731280AbfHEXfm (ORCPT
+        id S1731173AbfHEXhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 19:37:53 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:37093 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730733AbfHEXhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 19:35:42 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b3so37084980plr.4;
-        Mon, 05 Aug 2019 16:35:41 -0700 (PDT)
+        Mon, 5 Aug 2019 19:37:52 -0400
+Received: by mail-pg1-f201.google.com with SMTP id n9so50228295pgq.4
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 16:37:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2TmLGvTN3FaWVeRsZPV3e4KNsmV2AReP7cWUVSqpqFQ=;
-        b=YW2JbBhT1KOAfZKebBO9NM/G5Db95SUaRLnTey3pDLof4EeuR2oudZUxy8zi3ksHrp
-         n/rM4Ga7htyDE97Ns+wPj+3Z8PhgQ/mkooxrj+Oj+RLx4/nnq0bUD+aDUnVf1LBrq9xF
-         dY0j2ZVZAyPgtxwlAKR9qwP4wj/h48HGi4ffXdnH8gu8bIzxJ8uHY2W+u7NH0GnqxTD8
-         dRHgc922vuRBkdb5WRupFzWcgYSpGtu+hSoihVTRk9nHn6Zo5xvrqkBk6f2tAOvr6c0G
-         mFXWCA9xq+KMxQdYSaIZjMOJSVwdiGQuFvo1KeBfdkD79sC1CTS7ef5vvvfOPlyvigqS
-         IVNQ==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=fBjJNFjoK1CAcW2n/5qAZBcAEg4a650LiNHBPnT1bA8=;
+        b=teLFSQzdFhTree3GuH3s2GuOa3/Qab921rb+2lHcsNF3Q36mmpwBTCwosqfJMXKhRF
+         ehSuAk72xI064YEL3vjbaFafFs9TTuIwStWRcNBJl0PITAgIhImi5Hte9gT6Z6JVA5QU
+         GCdGwMMTfclbzqcWnR+tmYtxu2dBqp053GvGc2DHX76PMWaPsDX43n5BWxgfeHfjfv94
+         ajnNeldBRDSHzNLzKuChwzT2zFyoIXqBPYgaxOmmSipvwGNsEC2SFwQR61tHNK+/L4V8
+         8BQjqzD/GqzUxPY9AloyABiNCCpOUNuO+m0D/Wn+JpgVohng7LkFJGjmC6J3t3/kdtZU
+         UMQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2TmLGvTN3FaWVeRsZPV3e4KNsmV2AReP7cWUVSqpqFQ=;
-        b=teNXJwM2nAyOGhatMv1pZrNVWswP76C7iQvGHwog712DchYdMjhi7mDy1woI8d8v0H
-         hGNfk9jk/Y0H5uOOU4a22AzzrcvmjT3Uk9T3wJb3YWrUnQfdjsoX95am9prX9GnAvu0S
-         Guuj/G0GeCMhBi4SYXa6CVjKtgghq01ycTzwXrw4wMkPa7ZggL/IBYStVeFVNGCuwAal
-         wLrJ7SySRsI+Eyoqf7NtgY2Zd3/PzRuhTjyHTahMRuBOTFCTMTz1ulBYpNzyXGyzvTrQ
-         BIi/2PIE/wLw8q+G4G6kiz8MhP3QeUx/xO9Nld9zcb4tfwfybhDCsE++Sa1j/vxvNOGw
-         w7GQ==
-X-Gm-Message-State: APjAAAXVBfW3rDE/IdYLv5oRoJCcpWuiMWgvpmjtRiCCghMU0zEEWWI3
-        LkAV5k9nP74M2oom8XlzUKWt1vPf
-X-Google-Smtp-Source: APXvYqzJbrsuJ3HwTZ98E/Apw4jZA8VmFc9SY7qiYBjg/8j77ZDblKl2/AqIbDwaFPx6pAGuizw+Iw==
-X-Received: by 2002:a17:902:6a87:: with SMTP id n7mr251709plk.336.1565048141256;
-        Mon, 05 Aug 2019 16:35:41 -0700 (PDT)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id 30sm31296349pjk.17.2019.08.05.16.35.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 16:35:40 -0700 (PDT)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
-        / MXC ARM ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 22/22] media: imx: TODO: Remove issues regarding media link creation
-Date:   Mon,  5 Aug 2019 16:35:05 -0700
-Message-Id: <20190805233505.21167-23-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190805233505.21167-1-slongerbeam@gmail.com>
-References: <20190805233505.21167-1-slongerbeam@gmail.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=fBjJNFjoK1CAcW2n/5qAZBcAEg4a650LiNHBPnT1bA8=;
+        b=Bqu/ab8fbXVGwZjitbT3NJpWJebxCyWiiojxLbxvF0IoADk5M1T3pNWZi6nLaNUwCl
+         Amzov7qnxw6tNRgzT+oHaG0Ko3j3JCcOnqWoM4z//w3As6rF0fRvB+ttMc3QfhN8vtFA
+         DTH8umSAokdyp6lgArF362u8T97kDMMdWiLv60PpA9c+hCctsU2raG1ETo1oa+Ehi8nt
+         yeAxctQWrDvi0cg5tGHObxTXScVWFu6ffdmTUthsBieYLDe1cm4nZLSY5mzPq1uoxXAc
+         Cl8IaWstSWqSUZEI3xVTp5gs09Jrjb+EbpRoioJjro2AhxWVYNTkGRTUgy8+8LiexRk4
+         thpw==
+X-Gm-Message-State: APjAAAUyOfe+D5U+TVl3+6W5PKOFOesmTjA+7Li+fAX1ucByoWDJ+f5N
+        QpRNJEP0vAp3g+dpclHHwC6A2urZCg==
+X-Google-Smtp-Source: APXvYqzElEKumTXzdjS5AKxhg+INSn2hflNMrkQU+AM6dd6TOj81EETimI6pwSS2tR7xd/O69Zccw7xtJRQ=
+X-Received: by 2002:a63:6eca:: with SMTP id j193mr367802pgc.74.1565048271547;
+ Mon, 05 Aug 2019 16:37:51 -0700 (PDT)
+Date:   Mon,  5 Aug 2019 16:37:38 -0700
+Message-Id: <20190805233738.136357-1-yabinc@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+Subject: [PATCH] coresight: tmc-etr: Fix updating buffer in not-snapshot mode.
+From:   Yabin Cui <yabinc@google.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yabin Cui <yabinc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the TODO items regarding media link creation, these issues are
-resolved after exporting media link creation to individual entity bound
-callbacks and the use of media_create_fwnode_links(),
-media_create_fwnode_pad_links(), and media_entity_get_fwnode_pad().
+TMC etr always copies all available data to perf aux buffer, which
+may exceed the available space in perf aux buffer. It isn't suitable
+for not-snapshot mode, because:
+1) It may overwrite previously written data.
+2) It may make the perf_event_mmap_page->aux_head report having more
+or less data than the reality.
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Signed-off-by: Yabin Cui <yabinc@google.com>
 ---
- drivers/staging/media/imx/TODO | 29 -----------------------------
- 1 file changed, 29 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/media/imx/TODO b/drivers/staging/media/imx/TODO
-index 6f29b5ca5324..a371cdedcdb0 100644
---- a/drivers/staging/media/imx/TODO
-+++ b/drivers/staging/media/imx/TODO
-@@ -17,35 +17,6 @@
-   decided whether this feature is useful enough to make it generally
-   available by exporting to v4l2-core.
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index 17006705287a..697e68d492af 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -1410,9 +1410,10 @@ static void tmc_free_etr_buffer(void *config)
+  * tmc_etr_sync_perf_buffer: Copy the actual trace data from the hardware
+  * buffer to the perf ring buffer.
+  */
+-static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
++static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf,
++				     unsigned long to_copy)
+ {
+-	long bytes, to_copy;
++	long bytes;
+ 	long pg_idx, pg_offset, src_offset;
+ 	unsigned long head = etr_perf->head;
+ 	char **dst_pages, *src_buf;
+@@ -1423,7 +1424,6 @@ static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
+ 	pg_offset = head & (PAGE_SIZE - 1);
+ 	dst_pages = (char **)etr_perf->pages;
+ 	src_offset = etr_buf->offset;
+-	to_copy = etr_buf->len;
  
--- After all async subdevices have been bound, v4l2_fwnode_parse_link()
--  is used to form the media links between the devices discovered in
--  the OF graph.
--
--  While this approach allows support for arbitrary OF graphs, there
--  are some assumptions for this to work:
--
--  1. If a port owned by a device in the graph has endpoint nodes, the
--     port is treated as a media pad.
--
--     This presents problems for devices that don't make this port = pad
--     assumption. Examples are SMIAPP compatible cameras which define only
--     a single output port node, but which define multiple pads owned
--     by multiple subdevices (pixel-array, binner, scaler). Or video
--     decoders (entity function MEDIA_ENT_F_ATV_DECODER), which also define
--     only a single output port node, but define multiple pads for video,
--     VBI, and audio out.
--
--     A workaround at present is to set the port reg properties to
--     correspond to the media pad index that the port represents. A
--     possible long-term solution is to implement a subdev API that
--     maps a port id to a media pad index.
--
--  2. Every endpoint of a port owned by a device in the graph is treated
--     as a media link.
--
--     Which means a port must not contain mixed-use endpoints, they
--     must all refer to media links between V4L2 subdevices.
--
- - i.MX7: all of the above, since it uses the imx media core
+ 	while (to_copy > 0) {
+ 		/*
+@@ -1501,7 +1501,11 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
  
- - i.MX7: use Frame Interval Monitor
+ 	size = etr_buf->len;
+-	tmc_etr_sync_perf_buffer(etr_perf);
++	if (!etr_perf->snapshot && size > handle->size) {
++		size = handle->size;
++		lost = true;
++	}
++	tmc_etr_sync_perf_buffer(etr_perf, size);
+ 
+ 	/*
+ 	 * In snapshot mode we simply increment the head by the number of byte
 -- 
-2.17.1
+2.22.0.770.g0f2c4a37fd-goog
 
