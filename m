@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDA581A9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:08:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E0E581A69
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729318AbfHENHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:07:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45318 "EHLO mail.kernel.org"
+        id S1729399AbfHENFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:05:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729844AbfHENHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:07:39 -0400
+        id S1726779AbfHENFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:05:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB5862087B;
-        Mon,  5 Aug 2019 13:07:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18996206C1;
+        Mon,  5 Aug 2019 13:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010458;
-        bh=mKbuILyhU1KoG9uu22Dj1pFFcx92w0McbjcdyX37PqM=;
+        s=default; t=1565010343;
+        bh=j8uzukzOaljmQbwdKf6UHODmpG6duIbaQra2BZu+GU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zxRw7YpYFJKN0bCY1rl82C7iMPPsUoeuxPbIkOjhWE21NO3Lxo/CSVLzju1LCGAmW
-         vWOVe+QMwpIq3Tg0tSS4Ov61KMwAfnOoM+2E4FLuDJHyECeM+SoPxg+ur74MMi/pWN
-         VeH46pZiKER6IqggDiT48hEOX0LlSkyxOhpz3H98=
+        b=NvASxYQZpjy6woPz6y9Kt6E0OSA3eopBeIKYpRF5E+ciQaE3hNKXLutORcJ/+PQMy
+         7MJD/zD6T7K6nENqeP+JPcc+m4fuCBb6fIXq/z4zJsefIU8oF+Q2CXFXtfB//5XTr0
+         bNavNet8G9pD69SPovAJT8C0jkibygODMR8Tn+E4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 30/53] x86/paravirt: Fix callee-saved function ELF sizes
-Date:   Mon,  5 Aug 2019 15:02:55 +0200
-Message-Id: <20190805124931.410246891@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+fee3a14d4cdf92646287@syzkaller.appspotmail.com,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 4.9 30/42] selinux: fix memory leak in policydb_init()
+Date:   Mon,  5 Aug 2019 15:02:56 +0200
+Message-Id: <20190805124928.551046734@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
-References: <20190805124927.973499541@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 083db6764821996526970e42d09c1ab2f4155dd4 ]
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-The __raw_callee_save_*() functions have an ELF symbol size of zero,
-which confuses objtool and other tools.
+commit 45385237f65aeee73641f1ef737d7273905a233f upstream.
 
-Fixes a bunch of warnings like the following:
+Since roles_init() adds some entries to the role hash table, we need to
+destroy also its keys/values on error, otherwise we get a memory leak in
+the error path.
 
-  arch/x86/xen/mmu_pv.o: warning: objtool: __raw_callee_save_xen_pte_val() is missing an ELF size annotation
-  arch/x86/xen/mmu_pv.o: warning: objtool: __raw_callee_save_xen_pgd_val() is missing an ELF size annotation
-  arch/x86/xen/mmu_pv.o: warning: objtool: __raw_callee_save_xen_make_pte() is missing an ELF size annotation
-  arch/x86/xen/mmu_pv.o: warning: objtool: __raw_callee_save_xen_make_pgd() is missing an ELF size annotation
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot+fee3a14d4cdf92646287@syzkaller.appspotmail.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/afa6d49bb07497ca62e4fc3b27a2d0cece545b4e.1563413318.git.jpoimboe@redhat.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/paravirt.h | 1 +
- arch/x86/kernel/kvm.c           | 1 +
- 2 files changed, 2 insertions(+)
+ security/selinux/ss/policydb.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index c83a2f418cea0..4471f0da6ed76 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -758,6 +758,7 @@ static __always_inline bool pv_vcpu_is_preempted(long cpu)
- 	    PV_RESTORE_ALL_CALLER_REGS					\
- 	    FRAME_END							\
- 	    "ret;"							\
-+	    ".size " PV_THUNK_NAME(func) ", .-" PV_THUNK_NAME(func) ";"	\
- 	    ".popsection")
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -266,6 +266,8 @@ static int rangetr_cmp(struct hashtab *h
+ 	return v;
+ }
  
- /* Get a reference to a callee-save function */
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 652bdd867782c..5853eb50138e7 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -631,6 +631,7 @@ asm(
- "cmpb	$0, " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rax);"
- "setne	%al;"
- "ret;"
-+".size __raw_callee_save___kvm_vcpu_is_preempted, .-__raw_callee_save___kvm_vcpu_is_preempted;"
- ".popsection");
++static int (*destroy_f[SYM_NUM]) (void *key, void *datum, void *datap);
++
+ /*
+  * Initialize a policy database structure.
+  */
+@@ -313,8 +315,10 @@ static int policydb_init(struct policydb
+ out:
+ 	hashtab_destroy(p->filename_trans);
+ 	hashtab_destroy(p->range_tr);
+-	for (i = 0; i < SYM_NUM; i++)
++	for (i = 0; i < SYM_NUM; i++) {
++		hashtab_map(p->symtab[i].table, destroy_f[i], NULL);
+ 		hashtab_destroy(p->symtab[i].table);
++	}
+ 	return rc;
+ }
  
- #endif
--- 
-2.20.1
-
 
 
