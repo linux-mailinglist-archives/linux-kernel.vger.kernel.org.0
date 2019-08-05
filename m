@@ -2,339 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16C0B81B1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F1281B10
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:11:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbfHENLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:11:52 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46548 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730419AbfHENKz (ORCPT
+        id S1730030AbfHENLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:11:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54642 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729605AbfHENLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:10:55 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c3so16495544pfa.13
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 06:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iKjp1sxUDmAX2wgfYH2j9XCohNundn8m7dMqKgSLwMI=;
-        b=saBskzTkvd5+FOutbmH6Dqo7LDxB6j1lLBCs9c9SMjidr9mCGA3JZWUpgJ24D1jEWP
-         BYegX6h+4En4gHMNnjD2hkiM6LzR+gIgnvCH+Qv7kghjhnQ196JBcG8u6X82QA91+dxZ
-         AT0bQGPEEfkSIGpd4JlN2XA3pwAzzkgJGuH/g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iKjp1sxUDmAX2wgfYH2j9XCohNundn8m7dMqKgSLwMI=;
-        b=cWcRp2Tvjz7x0aIzQzXpSx8Z8qXUUTZ6ErQyzMMl/gK3WST8tspnQ9SRzL30AwPt1v
-         /RpG9++mOarBB+ZvUeddvCyDdOzF7aSL1OMu0ldOd5QItk0PdpqOwTMmjvou3KeYRJlG
-         CWTwQOs1sr7ATuBbolYZf7Cj8bcRcuU98xRpcfDton6FA8Hk5INfsu/hRZkCausNIPi5
-         zoL0A3wkRqOX6DXVNaiNq6pLe8aSCgGgbeSryMObjz5JXj182Qb1D+sOUQDdCYt8lR6x
-         h2USSAg+YRq1GUqFyZkgXZlUxq9DwXZFxhvLvouqBzQy8p2RfzJ8eYzabZITLJE8hxOE
-         31qw==
-X-Gm-Message-State: APjAAAUVwb63zgwBgCUMSYZSDWZ6qGhGErokzTcR0gDOxzhzKgww2QwG
-        BPx0UifhsEPdg1Uvo49qd/eKftrn
-X-Google-Smtp-Source: APXvYqz6u3cCDYJg+E3Gaw42gMUYLq5q2x4d2s7eKbbvOoyG04W78eoEyJ1/Ww27pKnvOKH8Zeg+QQ==
-X-Received: by 2002:a63:3006:: with SMTP id w6mr14611039pgw.440.1565010654596;
-        Mon, 05 Aug 2019 06:10:54 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id d129sm89649753pfc.168.2019.08.05.06.10.53
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 06:10:53 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 09:10:52 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, joaodias@google.com,
+        Mon, 5 Aug 2019 09:11:37 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x75D4ESW051140
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Aug 2019 09:11:36 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u6kyxbnuc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 09:11:36 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <prudo@linux.ibm.com>;
+        Mon, 5 Aug 2019 14:11:32 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Aug 2019 14:11:27 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x75DBPAY52166750
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 5 Aug 2019 13:11:25 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 270E742057;
+        Mon,  5 Aug 2019 13:11:25 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9623542049;
+        Mon,  5 Aug 2019 13:11:24 +0000 (GMT)
+Received: from laptop-ibm (unknown [9.152.212.171])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  5 Aug 2019 13:11:24 +0000 (GMT)
+Date:   Mon, 5 Aug 2019 15:11:23 +0200
+From:   Philipp Rudo <prudo@linux.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "James Morris" <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "David Howells" <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
         Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
-        Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        tkjos@google.com, Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
-Subject: Re: [PATCH v3 1/2] mm/page_idle: Add per-pid idle page tracking
- using virtual indexing
-Message-ID: <20190805131052.GA208558@google.com>
-References: <20190726152319.134152-1-joel@joelfernandes.org>
- <20190731085335.GD155569@google.com>
- <20190731171937.GA75376@google.com>
- <20190805075547.GA196934@google.com>
+        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v12 01/11] MODSIGN: Export module signature definitions
+In-Reply-To: <8736iw9y00.fsf@morokweng.localdomain>
+References: <20190628021934.4260-1-bauerman@linux.ibm.com>
+        <20190628021934.4260-2-bauerman@linux.ibm.com>
+        <20190701144752.GC25484@linux-8ccs>
+        <87lfxel2q6.fsf@morokweng.localdomain>
+        <20190704125427.31146026@laptop-ibm>
+        <874l41ocf5.fsf@morokweng.localdomain>
+        <20190705150000.372345b0@laptop-ibm>
+        <8736iw9y00.fsf@morokweng.localdomain>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805075547.GA196934@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19080513-4275-0000-0000-000003549A8C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19080513-4276-0000-0000-0000386593D2
+Message-Id: <20190805151123.12510d72@laptop-ibm>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-05_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=911 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908050146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 04:55:47PM +0900, Minchan Kim wrote:
-> Hi Joel,
+Hi Thiago,
 
-Hi Minchan,
-
-> On Wed, Jul 31, 2019 at 01:19:37PM -0400, Joel Fernandes wrote:
-> > > > -static struct page *page_idle_get_page(unsigned long pfn)
-> > > > +static struct page *page_idle_get_page(struct page *page_in)
-> > > 
-> > > Looks weird function name after you changed the argument.
-> > > Maybe "bool check_valid_page(struct page *page)"?
-> > 
-> > 
-> > I don't think so, this function does a get_page_unless_zero() on the page as well.
-> > 
-> > > >  {
-> > > >  	struct page *page;
-> > > >  	pg_data_t *pgdat;
-> > > >  
-> > > > -	if (!pfn_valid(pfn))
-> > > > -		return NULL;
-> > > > -
-> > > > -	page = pfn_to_page(pfn);
-> > > > +	page = page_in;
-> > > >  	if (!page || !PageLRU(page) ||
-> > > >  	    !get_page_unless_zero(page))
-> > > >  		return NULL;
-> > > > @@ -51,6 +49,18 @@ static struct page *page_idle_get_page(unsigned long pfn)
-> > > >  	return page;
-> > > >  }
-> > > >  
-> > > > +/*
-> > > > + * This function tries to get a user memory page by pfn as described above.
-> > > > + */
-> > > > +static struct page *page_idle_get_page_pfn(unsigned long pfn)
-> > > 
-> > > So we could use page_idle_get_page name here.
-> > 
-> > 
-> > Based on above comment, I prefer to keep same name. Do you agree?
+> > The patch looks good now.  
 > 
-> Yes, I agree. Just please add a comment about refcount in the description
-> on page_idle_get_page.
+> Thanks! Can I add your Reviewed-by?
 
-Ok.
+sorry, for the late answer, but I was on vacation the last two weeks. I hope
+it's not too late now.
 
-
-> > > > +	return page_idle_get_page(pfn_to_page(pfn));
-> > > > +}
-> > > > +
-> > > >  static bool page_idle_clear_pte_refs_one(struct page *page,
-> > > >  					struct vm_area_struct *vma,
-> > > >  					unsigned long addr, void *arg)
-> > > > @@ -118,6 +128,47 @@ static void page_idle_clear_pte_refs(struct page *page)
-> > > >  		unlock_page(page);
-> > > >  }
-> > > >  
-> > > > +/* Helper to get the start and end frame given a pos and count */
-> > > > +static int page_idle_get_frames(loff_t pos, size_t count, struct mm_struct *mm,
-> > > > +				unsigned long *start, unsigned long *end)
-> > > > +{
-> > > > +	unsigned long max_frame;
-> > > > +
-> > > > +	/* If an mm is not given, assume we want physical frames */
-> > > > +	max_frame = mm ? (mm->task_size >> PAGE_SHIFT) : max_pfn;
-> > > > +
-> > > > +	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	*start = pos * BITS_PER_BYTE;
-> > > > +	if (*start >= max_frame)
-> > > > +		return -ENXIO;
-> > > > +
-> > > > +	*end = *start + count * BITS_PER_BYTE;
-> > > > +	if (*end > max_frame)
-> > > > +		*end = max_frame;
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > > +static bool page_really_idle(struct page *page)
-> > > 
-> > > Just minor:
-> > > Instead of creating new API, could we combine page_is_idle with
-> > > introducing furthere argument pte_check?
-> > 
-> > 
-> > I cannot see in the code where pte_check will be false when this is called? I
-> > could rename the function to page_idle_check_ptes() if that's Ok with you.
-> 
-> What I don't like is _*really*_ part of the funcion name.
-> 
-> I see several page_is_idle calls in huge_memory.c, migration.c, swap.c.
-> They could just check only page flag so they could use "false" with pte_check.
-
-I will rename it to page_idle_check_ptes(). If you want pte_check argument,
-that can be a later patch if/when there are other users for it in other
-files. Hope that's reasonable.
-
-
-> > > > +ssize_t page_idle_proc_generic(struct file *file, char __user *ubuff,
-> > > > +			       size_t count, loff_t *pos,
-> > > > +			       struct task_struct *tsk, int write)
-> > > > +{
-> > > > +	int ret;
-> > > > +	char *buffer;
-> > > > +	u64 *out;
-> > > > +	unsigned long start_addr, end_addr, start_frame, end_frame;
-> > > > +	struct mm_struct *mm = file->private_data;
-> > > > +	struct mm_walk walk = { .pmd_entry = pte_page_idle_proc_range, };
-> > > > +	struct page_node *cur;
-> > > > +	struct page_idle_proc_priv priv;
-> > > > +	bool walk_error = false;
-> > > > +	LIST_HEAD(idle_page_list);
-> > > > +
-> > > > +	if (!mm || !mmget_not_zero(mm))
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	if (count > PAGE_SIZE)
-> > > > +		count = PAGE_SIZE;
-> > > > +
-> > > > +	buffer = kzalloc(PAGE_SIZE, GFP_KERNEL);
-> > > > +	if (!buffer) {
-> > > > +		ret = -ENOMEM;
-> > > > +		goto out_mmput;
-> > > > +	}
-> > > > +	out = (u64 *)buffer;
-> > > > +
-> > > > +	if (write && copy_from_user(buffer, ubuff, count)) {
-> > > > +		ret = -EFAULT;
-> > > > +		goto out;
-> > > > +	}
-> > > > +
-> > > > +	ret = page_idle_get_frames(*pos, count, mm, &start_frame, &end_frame);
-> > > > +	if (ret)
-> > > > +		goto out;
-> > > > +
-> > > > +	start_addr = (start_frame << PAGE_SHIFT);
-> > > > +	end_addr = (end_frame << PAGE_SHIFT);
-> > > > +	priv.buffer = buffer;
-> > > > +	priv.start_addr = start_addr;
-> > > > +	priv.write = write;
-> > > > +
-> > > > +	priv.idle_page_list = &idle_page_list;
-> > > > +	priv.cur_page_node = 0;
-> > > > +	priv.page_nodes = kzalloc(sizeof(struct page_node) *
-> > > > +				  (end_frame - start_frame), GFP_KERNEL);
-> > > > +	if (!priv.page_nodes) {
-> > > > +		ret = -ENOMEM;
-> > > > +		goto out;
-> > > > +	}
-> > > > +
-> > > > +	walk.private = &priv;
-> > > > +	walk.mm = mm;
-> > > > +
-> > > > +	down_read(&mm->mmap_sem);
-> > > > +
-> > > > +	/*
-> > > > +	 * idle_page_list is needed because walk_page_vma() holds ptlock which
-> > > > +	 * deadlocks with page_idle_clear_pte_refs(). So we have to collect all
-> > > > +	 * pages first, and then call page_idle_clear_pte_refs().
-> > > > +	 */
-> > > 
-> > > Thanks for the comment, I was curious why you want to have
-> > > idle_page_list and the reason is here.
-> > > 
-> > > How about making this /proc/<pid>/page_idle per-process granuariy,
-> > > unlike system level /sys/xxx/page_idle? What I meant is not to check
-> > > rmap to see any reference from random process but just check only
-> > > access from the target process. It would be more proper as /proc/
-> > > <pid>/ interface and good for per-process tracking as well as
-> > > fast.
-> > 
-> > 
-> > I prefer not to do this for the following reasons:
-> > (1) It makes a feature lost, now accesses to shared pages will not be
-> > accounted properly. 
-> 
-> Do you really want to check global attribute by per-process interface?
-
-Pages are inherrently not per-process, they are global. A page does not
-necessarily belong to a process. An anonymous page can be shared. We are
-operating on pages in the end of the day.
-
-I think you are confusing the per-process file interface with the core
-mechanism. The core mechanism always operations on physical PAGES.
-
-
-> That would be doable with existing idle page tracking feature and that's
-> the one of reasons page idle tracking was born(e.g. even, page cache
-> for non-mapped) unlike clear_refs.
-
-I think you are misunderstanding the patch, the patch does not want to change
-the core mechanism. That is a bit out of scope for the patch. Page
-idle-tracking at the core of it looks at PTE of all processes. We are just
-using the VFN (virtual frame) interface to skip the need for separate pagemap
-look up -- that's it.
-
-
-> Once we create a new interface by per-process, just checking the process
-> -granuariy access check sounds more reasonable to me.
-
-It sounds reasonable but there is no reason to not do the full and proper
-page tracking for now, including shared pages. Otherwise it makes it
-inconsistent with the existing mechanism and can confuse the user about what
-to expect (especially for shared pages).
-
-
-> With that, we could catch only idle pages of the target process even though
-> the page was touched by several other processes.
-> If the user want to know global level access point, they could use
-> exisint interface(If there is a concern(e.g., security) to use existing
-> idle page tracking, let's discuss it as other topic how we could make
-> existing feature more useful).
-> 
-> IOW, my point is that we already have global access check(1. from ptes
-> among several processes, 2. from page flag for non-mapped pages) feature
-> from from existing idle page tracking interface and now we are about to create
-> new interface for per-process wise so I wanted to create a particular
-> feature which cannot be covered by existing iterface.
-
-Yes, it sounds like you want to create a different feature. Then that can be
-a follow-up different patch, and that is out of scope for this patch.
-
-
-> > (2) It makes it inconsistent with other idle page tracking mechanism. I
-> 
-> That's the my comment to create different idle page tracking we couldn't
-> do with existing interface.
-
-Yes, sure. But that can be a different patch and we can weigh the benefits of
-it at that time. I don't want to introduce a new page tracking mechanism, I
-am just trying to reuse the existing one.
-
-
-> > prefer if post per-process. At the heart of it, the tracking is always at the
-> 
-> What does it mean "post per-process"?
-
-Sorry it was a typo, I meant "the core mechanism should not be a per-process
-one, but a global one". We are just changing the interface in this patch, we
-are not changing the existing core mechanism. That gives us all the benefits
-of the existing code such as non-interference with page reclaim code, without
-introducing any new bugs. By the way I did fix a bug in the existing original
-code as well!
-
-
-> > physical page level -- I feel that is how it should be. Other drawback, is
-> > also we have to document this subtlety.
-> 
-> Sorry, Could you elaborate it a bit?
-
-I meant, with a new mechanism as the one you are proposing, we have to
-document that now shared pages will not be tracked properly. That is a
-'subtle difference' and will have to be documented appropriated in the
-'internals' section of the idle page tracking document.
-
-thanks,
-
- - Joel
+Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
 
