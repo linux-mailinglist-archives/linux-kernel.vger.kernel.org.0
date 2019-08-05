@@ -2,112 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 256C182428
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 19:44:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D53C82430
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 19:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728898AbfHERoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 13:44:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43818 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726559AbfHERoA (ORCPT
+        id S1729631AbfHERp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 13:45:58 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:10286 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbfHERp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 13:44:00 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x75Hg2No029490
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Aug 2019 13:43:58 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u6rh2hfs8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 13:43:58 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 5 Aug 2019 18:43:58 +0100
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Aug 2019 18:43:53 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x75Hhqik13500934
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Aug 2019 17:43:52 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2AD80B2064;
-        Mon,  5 Aug 2019 17:43:52 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0CB3EB205F;
-        Mon,  5 Aug 2019 17:43:52 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Aug 2019 17:43:51 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 552DA16C9A4C; Mon,  5 Aug 2019 10:43:55 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 10:43:55 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Andrea Parri <parri.andrea@gmail.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Daniel Lustig <dlustig@nvidia.com>
-Subject: Re: [PATCH] MAINTAINERS: Update e-mail address for Andrea Parri
-Reply-To: paulmck@linux.ibm.com
-References: <20190805121517.4734-1-parri.andrea@gmail.com>
- <76010b66-a662-5b07-a21d-ed074d7d2194@gmail.com>
- <20190805151545.GA1615@aparri>
- <1565018618.3341.6.camel@HansenPartnership.com>
+        Mon, 5 Aug 2019 13:45:58 -0400
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
+  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="Tudor.Ambarus@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: pxXpMitIqQvyZRCSqKXNJbLbyDsrDI1rPnGeb0+mXNT+b0KepVncMDfsIsFpQ27hr2yu92/CON
+ DDUuV6h4Ce+TU1xyihlGRNhAfIKjV4v33jelMB+rvo4hxPBlkM3iXVAZHA3hhFI6uki1itSHfF
+ oySjhZBqv6WZTDgXfY3V4c2njelzP/lWMJq6Yi1cQ/s8xKejlehu0UGpPk9c6O9CzdituwF9gM
+ N8ri4M0c2HCRPDsjRo6zBAU73Du+NFXkHDuS+Ywgmg5UPZ2XKLPf5XdZ4rQe6RuMmyvq5qg24n
+ +Ec=
+X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
+   d="scan'208";a="41049603"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 05 Aug 2019 10:45:56 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 5 Aug 2019 10:45:55 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Mon, 5 Aug 2019 10:45:54 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ynayqu6pdcbNVzlAx0NSnNzRh4Fh3THn+vH9fzpLli3kJNnrxX7OhhrUL0Ee1sCZQ3HZmgbOJeRyitpDnq0KQo3+DnYM8rxFR7GiV9zdQqHfxErXICOaUVezB1zo5lDEkikUM2GKrnQVrTbxbyX9kzGhwd++OZqk8Tjj6hGRLKCFi3A2JnfGU/GK600Vvl4WiPMxMeo+EMacdqa2qVV50bUXJS0dAbQHmLx47/89jIP9WaghyHPVkUGwlfI1kgGFHpf40wbnoIQr/rClwPdk1iFHijmyDNbg0f9khKnvujpOBV5fd3/6s1aTuz170Jn7RQaqHdmLcKyAw8aJJuafYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9tSn9ArI6Oj9LWP0VR4kuqpS8nsN/9ABFgShx4107Pc=;
+ b=bQFgNxsv7VDu+cUE038Ob5tFgxzZBkLs14M0JNapI40YU4119KQd9onAqw6/0/HN0G2SvUzvr/4qmM7Mz5LiTEpAoVUDtGufiBb1OeUvc4Kqm7XAmmDvM2rkOLh6Oh386lPsm86uYVr/QVDM2hUK2UviPHydH9v3jqP3YbQE30e32Q+/CqdOADJaMPJN/QigcFviv9n4/2/aUo8KGQMhr0SugbX+lRwl1XWok2Zmf54EZ6SVQr+B68+gkqKacLJkF5Nb/8OdZKMn638RfwGVsEoGsLRCSsBXju0seEFA/uSVjq2jfXejmQ1BCO7h3QOUjewxTICjGSBiris4mwW5+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=microchip.com;dmarc=pass action=none
+ header.from=microchip.com;dkim=pass header.d=microchip.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9tSn9ArI6Oj9LWP0VR4kuqpS8nsN/9ABFgShx4107Pc=;
+ b=R4BmQ0ISIj1jQWO6Bs4O6YI7n340cY2Yj5+zfPOGEcExMXOppWuWnKcGX2BImsnyDFKyqCGxDEAVtRb5uzZxFABPOrHO09aCrxtJTn6FzJmz+qr9mNJYZx7zmJsBS35nyqnHPa50KfsPzJatnsOIUoGpHdniivocQI+EW+PfvEw=
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
+ MN2PR11MB4287.namprd11.prod.outlook.com (52.135.37.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.16; Mon, 5 Aug 2019 17:45:53 +0000
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5]) by MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5%7]) with mapi id 15.20.2136.018; Mon, 5 Aug 2019
+ 17:45:53 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <vigneshr@ti.com>, <miquel.raynal@bootlin.com>, <richard@nod.at>
+CC:     <marek.vasut@gmail.com>, <bbrezillon@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <tmaimon77@gmail.com>
+Subject: Re: [PATCH v4 3/3] mtd: spi-nor: Rework hwcaps selection for the
+ spi-mem case
+Thread-Topic: [PATCH v4 3/3] mtd: spi-nor: Rework hwcaps selection for the
+ spi-mem case
+Thread-Index: AQHVSIVT0p7xGp6VbkaLHo0K31VAGqbs2i0A
+Date:   Mon, 5 Aug 2019 17:45:53 +0000
+Message-ID: <ca327faa-d716-9ef3-f368-e496a40c6e2e@microchip.com>
+References: <20190801162229.28897-1-vigneshr@ti.com>
+ <20190801162229.28897-4-vigneshr@ti.com>
+In-Reply-To: <20190801162229.28897-4-vigneshr@ti.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR07CA0134.eurprd07.prod.outlook.com
+ (2603:10a6:802:16::21) To MN2PR11MB4448.namprd11.prod.outlook.com
+ (2603:10b6:208:193::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4f81827d-e20d-472c-cf9a-08d719ccc2c1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR11MB4287;
+x-ms-traffictypediagnostic: MN2PR11MB4287:
+x-microsoft-antispam-prvs: <MN2PR11MB4287802585D28472057477D4F0DA0@MN2PR11MB4287.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 01208B1E18
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(346002)(366004)(39860400002)(199004)(189003)(25786009)(5660300002)(446003)(66476007)(186003)(76176011)(53546011)(6506007)(386003)(102836004)(256004)(66066001)(52116002)(81156014)(81166006)(7736002)(64756008)(66446008)(305945005)(26005)(4744005)(11346002)(6246003)(476003)(14454004)(8936002)(99286004)(4326008)(68736007)(53936002)(486006)(8676002)(478600001)(3846002)(6512007)(2906002)(316002)(110136005)(229853002)(31696002)(6486002)(66556008)(6116002)(54906003)(6436002)(86362001)(71190400001)(71200400001)(36756003)(2616005)(31686004)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4287;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: uEBNluvNSbJTsv+ZeK4ciKY+7ZrhgEvJ+4Qs37FtlNBu6OSA+8h/h5U48Qx4RjIfhOGYmlhnCopNivIdaOp/HeOPzaL22W9vkTmW6CppCm8MhZj8kx4iS5RsHFp/0wxm6k/JO03UDmtFww6hKjTzTT9QPmvf6cHzThobV78FKixhwipfvlsSGl9avF0PCr3y7NeR5BTtHmzDZqq6smW4eHHDbgDCLG8wp2mTv/WPIY9xAntMbCXU+Z3CyJra9so94ujp/2Ot0kArmegQ5eAngWNoAaNQxm0x/FH/c41jZbRtqeVsBprwpQEH7WMoLGGli8Rv5c+xfyYjb27DYX5Pp3DWYkWVxYDm+epGzG161U3gPsSJfGFVZbB+sfyf3+dvABga4V1c0evPw5RqF5Cwcc232ghUNj61VKOCckD/G+E=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7F416EB51D6EB14591E18B60F949FBE2@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565018618.3341.6.camel@HansenPartnership.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19080517-0072-0000-0000-000004508466
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011555; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01242523; UDB=6.00655387; IPR=6.01023980;
- MB=3.00028053; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-05 17:43:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080517-0073-0000-0000-00004CC188B2
-Message-Id: <20190805174355.GJ28441@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-05_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908050187
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f81827d-e20d-472c-cf9a-08d719ccc2c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2019 17:45:53.0796
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tudor.ambarus@microchip.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4287
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 08:23:38AM -0700, James Bottomley wrote:
-> On Mon, 2019-08-05 at 17:15 +0200, Andrea Parri wrote:
-> > > Why don't you also add an entry in .mailmap as Will did in commit
-> > > c584b1202f2d ("MAINTAINERS: Update my email address to use
-> > > @kernel.org")?
-> > 
-> > I considered it but could not understand its purpose...  Maybe you
-> > can explain it to me?  ;-) (can resend with this change if
-> > needed/desired).
-> 
-> man git-shortlog gives you the gory detail, but its use is to "coalesce
-> together commits by the same person in the shortlog, where their name
-> and/or email address was spelled differently."  The usual way this
-> happens is that people have the name that appears in the From field
-> with and without initials.
-
-New one on me, thank you!  So I should have a line in .mailmap like this?
-
-Paul E. McKenney <paulmck@linux.vnet.ibm.com> <paul.mckenney@linaro.org> <paulmck@linux.ibm.com>
-
-							Thanx, Paul
-
+DQoNCk9uIDA4LzAxLzIwMTkgMDc6MjIgUE0sIFZpZ25lc2ggUmFnaGF2ZW5kcmEgd3JvdGU6DQo+
+ICtzdGF0aWMgaW50IHNwaV9ub3Jfc3BpbWVtX2NoZWNrX29wKHN0cnVjdCBzcGlfbm9yICpub3Is
+DQo+ICsJCQkJICAgc3RydWN0IHNwaV9tZW1fb3AgKm9wKQ0KPiArew0KPiArCS8qDQo+ICsJICog
+Rmlyc3QgdGVzdCB3aXRoIDQgYWRkcmVzcyBieXRlcy4gVGhlIG9wY29kZSBpdHNlbGYgbWlnaHQN
+Cj4gKwkgKiBiZSBhIDNCIGFkZHJlc3Npbmcgb3Bjb2RlIGJ1dCB3ZSBkb24ndCBjYXJlLCBiZWNh
+dXNlDQo+ICsJICogU1BJIGNvbnRyb2xsZXIgaW1wbGVtZW50YXRpb24gc2hvdWxkIG5vdCBjaGVj
+ayB0aGUgb3Bjb2RlLA0KPiArCSAqIGJ1dCBqdXN0IHRoZSBzZXF1ZW5jZS4NCj4gKwkgKi8NCj4g
+KwlvcC0+YWRkci5uYnl0ZXMgPSA0Ow0KPiArCWlmICghc3BpX21lbV9zdXBwb3J0c19vcChub3It
+PnNwaW1lbSwgb3ApKSB7DQo+ICsJCS8qIElmIGZsYXNoIHNpemUgPDE2TUIsIDMgYWRkcmVzcyBi
+eXRlcyBhcmUgc3VmZmljaWVudCAqLw0KPiArCQlpZiAobm9yLT5tdGQuc2l6ZSA8PSBTWl8xNk0p
+IHsNCj4gKwkJCW9wLT5hZGRyLm5ieXRlcyA9IDM7DQo+ICsJCQlpZiAoIXNwaV9tZW1fc3VwcG9y
+dHNfb3Aobm9yLT5zcGltZW0sIG9wKSkNCj4gKwkJCQlyZXR1cm4gLUVOT1RTVVBQOw0KPiArCQl9
+DQoNCnRoaXMgcmV0dXJucyBzdWNjZXNzIHdoZW46DQoJb3AtPmFkZHIubmJ5dGVzID09IDQgJiYg
+IXNwaV9tZW1fc3VwcG9ydHNfb3Aobm9yLT5zcGltZW0sIG9wKSAmJg0KCSEobm9yLT5tdGQuc2l6
+ZSA8PSBTWl8xNk0pKQ0KDQp3aGljaCBpcyB3cm9uZy4NCg0KVGhlIHBhdGNoIGxvb2tzIGdvb2Qg
+b3RoZXJ3aXNlIQ0KDQo+ICsJfQ0KPiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo=
