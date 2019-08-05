@@ -2,97 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C17E82637
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 22:44:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC9198263D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 22:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730656AbfHEUn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 16:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37780 "EHLO mail.kernel.org"
+        id S1730722AbfHEUoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 16:44:11 -0400
+Received: from mga01.intel.com ([192.55.52.88]:61059 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730516AbfHEUn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 16:43:57 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52B752186A;
-        Mon,  5 Aug 2019 20:43:56 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hujpj-0008SC-F0; Mon, 05 Aug 2019 16:43:55 -0400
-Message-Id: <20190805204355.344622683@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Mon, 05 Aug 2019 16:43:15 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Patrick McLean <chutzpah@gentoo.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: [PATCH 3/3] tools/lib/traceevent: Change users plugin directory
-References: <20190805204312.169565525@goodmis.org>
+        id S1730690AbfHEUoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 16:44:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 13:44:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
+   d="scan'208";a="373200445"
+Received: from alison-desk.jf.intel.com ([10.54.74.53])
+  by fmsmga005.fm.intel.com with ESMTP; 05 Aug 2019 13:44:06 -0700
+Date:   Mon, 5 Aug 2019 13:44:53 -0700
+From:   Alison Schofield <alison.schofield@intel.com>
+To:     Ben Boeckel <mathstuf@gmail.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>, linux-mm@kvack.org,
+        kvm@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCHv2 57/59] x86/mktme: Document the MKTME Key Service API
+Message-ID: <20190805204453.GB7592@alison-desk.jf.intel.com>
+References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
+ <20190731150813.26289-58-kirill.shutemov@linux.intel.com>
+ <20190805115837.GB31656@rotor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805115837.GB31656@rotor>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+On Mon, Aug 05, 2019 at 07:58:37AM -0400, Ben Boeckel wrote:
+> On Wed, Jul 31, 2019 at 18:08:11 +0300, Kirill A. Shutemov wrote:
+> > +	key = add_key("mktme", "name", "no-encrypt", strlen(options_CPU),
+> > +		      KEY_SPEC_THREAD_KEYRING);
+> 
+> Should this be `type=no-encrypt` here? Also, seems like copy/paste from
+> the `type=cpu` case for the `strlen` call.
+> 
+> --Ben
 
-To be compliant with XDG user directory layout,
-the user's plugin directory is changed from
-~/.traceevent/plugins to ~/.local/lib/traceevent/plugins/
+Yes. Fixed up as follows:
 
-Link: https://lore.kernel.org/linux-trace-devel/20190313144206.41e75cf8@patrickm/
-Link: http://lore.kernel.org/linux-trace-devel/20190801074959.22023-4-tz.stoyanov@gmail.com
+	Add a "no-encrypt' type key::
 
-Suggested-by: Patrick McLean <chutzpah@gentoo.org>
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- tools/lib/traceevent/Makefile       | 6 +++---
- tools/lib/traceevent/event-plugin.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+        char \*options_NOENCRYPT = "type=no-encrypt";
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index 3292c290654f..86ce17a1f7fb 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -62,15 +62,15 @@ set_plugin_dir := 1
- 
- # Set plugin_dir to preffered global plugin location
- # If we install under $HOME directory we go under
--# $(HOME)/.traceevent/plugins
-+# $(HOME)/.local/lib/traceevent/plugins
- #
- # We dont set PLUGIN_DIR in case we install under $HOME
- # directory, because by default the code looks under:
--# $(HOME)/.traceevent/plugins by default.
-+# $(HOME)/.local/lib/traceevent/plugins by default.
- #
- ifeq ($(plugin_dir),)
- ifeq ($(prefix),$(HOME))
--override plugin_dir = $(HOME)/.traceevent/plugins
-+override plugin_dir = $(HOME)/.local/lib/traceevent/plugins
- set_plugin_dir := 0
- else
- override plugin_dir = $(libdir)/traceevent/plugins
-diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
-index 8ca28de9337a..e1f7ddd5a6cf 100644
---- a/tools/lib/traceevent/event-plugin.c
-+++ b/tools/lib/traceevent/event-plugin.c
-@@ -18,7 +18,7 @@
- #include "event-utils.h"
- #include "trace-seq.h"
- 
--#define LOCAL_PLUGIN_DIR ".traceevent/plugins"
-+#define LOCAL_PLUGIN_DIR ".local/lib/traceevent/plugins/"
- 
- static struct registered_plugin_options {
- 	struct registered_plugin_options	*next;
--- 
-2.20.1
+        key = add_key("mktme", "name", options_NOENCRYPT,
+                      strlen(options_NOENCRYPT), KEY_SPEC_THREAD_KEYRING);
 
+Thanks for the review,
+Alison
 
