@@ -2,84 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76910810B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 06:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 308B3810AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 06:15:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfHEEOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 00:14:54 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51770 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbfHEEOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 00:14:51 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CBC3F1A0084;
-        Mon,  5 Aug 2019 06:14:49 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B71521A00A9;
-        Mon,  5 Aug 2019 06:14:38 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 923CE402DD;
-        Mon,  5 Aug 2019 12:14:25 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
-        lorenzo.pieralisi@arm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, zhiqiang.hou@nxp.com, roy.zang@nxp.com,
-        kstewart@linuxfoundation.org, pombredanne@nexb.com,
-        shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv2 3/3] PCI: layerscape: Add LS1028a support
-Date:   Mon,  5 Aug 2019 12:04:53 +0800
-Message-Id: <20190805040453.48009-3-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190805040453.48009-1-xiaowei.bao@nxp.com>
-References: <20190805040453.48009-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726055AbfHEEOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 00:14:47 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37414 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbfHEEOr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 00:14:47 -0400
+Received: by mail-pf1-f194.google.com with SMTP id 19so38910976pfa.4
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2019 21:14:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mva09u+yn1RWE+TO1luNzBDnrlH/Q/3QfIfoFJtdBKs=;
+        b=lUaKgKHU3tYV6FVsndghO1nh62VmLyjBz+gnRDFzMtyQSKeK4kyNlKt7pfyVZI5dP0
+         lCmU53u7ZoMWT0GjNCzqnOSqZsjasDVwlPCqu3E04EBsomGuC5AAi2qOnGX+T6kdDxni
+         dV6o/haUzLnNpKhvlZ15NuuJvVzUEFuORq2wb6M+ExKwYLtMUDhXsmnZ6PSmWyr8PWxE
+         V0kct3Svkq8vUoVZOO289g/Yw0Wqon93UAVktJZ1iuJxKV0PoU8euDaXateelJ7JSx9o
+         f40OBUyRw88R3NWa2O8csPHoyge5AVZZPF8py8aCAYxVK8+Dltiuo2QpqUbwAnXmRmta
+         HM1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mva09u+yn1RWE+TO1luNzBDnrlH/Q/3QfIfoFJtdBKs=;
+        b=WFh0WRKlDWzimve2a7CqH2ZobNQ8h9xschxkoEBnAk+XcEZr7vT9ESBD0OuWfrB9mM
+         9a33gP+GyxBhAEcB4ym6qX98U6+Byvt/DcbRPrWlm0p1ANBl/L9WfB87Dc+4rrkffZqX
+         Q3/mUUDotR3Mbm1tU9NMtTJK/4DbWLHuOcBEaozm0lMwnZpoJrGxqE9hE6Vc7aZEebuH
+         srJa9SzGfo4U34RDt/MwzFMU5bAYIN5QUSQrONbhU8R9MIuIqmDD6rqPAauMnPIWj4vf
+         ddEGi2/pBX2V5GsU2gXk+k3Ox+KYILF9eGx9A3hAZpOb/W7mbEPl6rwmvxAfi6L5GF4f
+         X3gg==
+X-Gm-Message-State: APjAAAVlSJUW857VtOh9A3UPFBFE7MkHiRa0odNryiped9RMhUeyY2YA
+        vX6xm/i/x1G5nhgJy6GqQUg=
+X-Google-Smtp-Source: APXvYqxu85q5rU7e/DgfZCTuChdmrDTsIJLsBcmb1yRybucaAu5vmnJlY6V1Pxkezx8ce2esQ0uBSg==
+X-Received: by 2002:a63:7e1d:: with SMTP id z29mr134680099pgc.346.1564978486557;
+        Sun, 04 Aug 2019 21:14:46 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id j1sm115888081pgl.12.2019.08.04.21.14.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 04 Aug 2019 21:14:44 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 13:14:40 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Henry Burns <henryburns@google.com>
+Cc:     Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jonathan Adams <jwadams@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm/zsmalloc.c: Migration can leave pages in ZS_EMPTY
+ indefinitely
+Message-ID: <20190805041440.GA178551@google.com>
+References: <20190802015332.229322-1-henryburns@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802015332.229322-1-henryburns@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the LS1028a PCIe controller.
+On Thu, Aug 01, 2019 at 06:53:31PM -0700, Henry Burns wrote:
+> In zs_page_migrate() we call putback_zspage() after we have finished
+> migrating all pages in this zspage. However, the return value is ignored.
+> If a zs_free() races in between zs_page_isolate() and zs_page_migrate(),
+> freeing the last object in the zspage, putback_zspage() will leave the page
+> in ZS_EMPTY for potentially an unbounded amount of time.
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
----
-v2:
- - no change.
+Nice catch.
 
- drivers/pci/controller/dwc/pci-layerscape.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> 
+> To fix this, we need to do the same thing as zs_page_putback() does:
+> schedule free_work to occur.  To avoid duplicated code, move the
+> sequence to a new putback_zspage_deferred() function which both
+> zs_page_migrate() and zs_page_putback() call.
+> 
+> Signed-off-by: Henry Burns <henryburns@google.com>
+Cc: <stable@vger.kernel.org>    [4.8+]
+Acked-by: Minchan Kim <minchan@kernel.org>
 
-diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
-index 3a5fa26..8c556e1 100644
---- a/drivers/pci/controller/dwc/pci-layerscape.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape.c
-@@ -236,6 +236,14 @@ static const struct ls_pcie_drvdata ls1043_drvdata = {
- 	.dw_pcie_ops = &dw_ls_pcie_ops,
- };
- 
-+static const struct ls_pcie_drvdata ls1028a_drvdata = {
-+	.lut_offset = 0x80000,
-+	.ltssm_shift = 0,
-+	.lut_dbg = 0x407fc,
-+	.ops = &ls_pcie_host_ops,
-+	.dw_pcie_ops = &dw_ls_pcie_ops,
-+};
-+
- static const struct ls_pcie_drvdata ls1046_drvdata = {
- 	.lut_offset = 0x80000,
- 	.ltssm_shift = 24,
-@@ -263,6 +271,7 @@ static const struct ls_pcie_drvdata ls2088_drvdata = {
- static const struct of_device_id ls_pcie_of_match[] = {
- 	{ .compatible = "fsl,ls1012a-pcie", .data = &ls1046_drvdata },
- 	{ .compatible = "fsl,ls1021a-pcie", .data = &ls1021_drvdata },
-+	{ .compatible = "fsl,ls1028a-pcie", .data = &ls1028a_drvdata },
- 	{ .compatible = "fsl,ls1043a-pcie", .data = &ls1043_drvdata },
- 	{ .compatible = "fsl,ls1046a-pcie", .data = &ls1046_drvdata },
- 	{ .compatible = "fsl,ls2080a-pcie", .data = &ls2080_drvdata },
--- 
-2.9.5
+Below a just trivial:
 
+> ---
+>  mm/zsmalloc.c | 30 ++++++++++++++++++++----------
+>  1 file changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> index 1cda3fe0c2d9..efa660a87787 100644
+> --- a/mm/zsmalloc.c
+> +++ b/mm/zsmalloc.c
+> @@ -1901,6 +1901,22 @@ static void dec_zspage_isolation(struct zspage *zspage)
+>  	zspage->isolated--;
+>  }
+>  
+> +static void putback_zspage_deferred(struct zs_pool *pool,
+> +				    struct size_class *class,
+> +				    struct zspage *zspage)
+> +{
+> +	enum fullness_group fg;
+> +
+> +	fg = putback_zspage(class, zspage);
+> +	/*
+> +	 * Due to page_lock, we cannot free zspage immediately
+> +	 * so let's defer.
+> +	 */
+
+Could you move this comment function's description since it becomes
+a function?
+
+Thanks.
