@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5294781ADA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:10:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 711A281A91
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfHENJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:09:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48534 "EHLO mail.kernel.org"
+        id S1729757AbfHENHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:07:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729035AbfHENJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:09:53 -0400
+        id S1728468AbfHENHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:07:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7226F2075B;
-        Mon,  5 Aug 2019 13:09:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D56AE2075B;
+        Mon,  5 Aug 2019 13:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010593;
-        bh=4Oveecdha/pb64ZWvVOdcWAJv5q/swTY08yW+2J80r8=;
+        s=default; t=1565010425;
+        bh=fEYuSV/F6Tk531Y+E5CEhoOWgFZOxHEEEMG54SyEPDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZYs4bL+2+rgbMn2Xh+tdSEMknodjPJCyhSqNh+q30gaAlbYCrm8q69q8Y6XEgIgSk
-         OaaPwtruWQw5iPe2HERaulGmqZltBIx8D/dCNPylPbY4S4wL1lX0VTU/Z1V/h0Qe5T
-         zoRCwpmHwxvjpJ5MvFoxl9dN1GIH21HOEmyIwb+U=
+        b=n97k+AiN6LIQR9Hb4CxGiTfrppl3uWhdO4FbdedTiFnzHD4YxLc4b86L+nDUrSLV6
+         ly6pw2jSYCgNGoSZrv3rd6LtOYoEpQoKe22+SMUZoMNrGkElS1JZYXu8Q5q4+3MjUW
+         eTdzxNStKKxhEOc8AzKkRM58kVoIgrkhjg8LFVzM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 30/74] lib/test_string.c: avoid masking memset16/32/64 failures
-Date:   Mon,  5 Aug 2019 15:02:43 +0200
-Message-Id: <20190805124938.186161074@linuxfoundation.org>
+Subject: [PATCH 4.14 19/53] be2net: Signal that the device cannot transmit during reconfiguration
+Date:   Mon,  5 Aug 2019 15:02:44 +0200
+Message-Id: <20190805124930.241063403@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 33d6e0ff68af74be0c846c8e042e84a9a1a0561e ]
+[ Upstream commit 7429c6c0d9cb086d8e79f0d2a48ae14851d2115e ]
 
-If a memsetXX implementation is completely broken and fails in the first
-iteration, when i, j, and k are all zero, the failure is masked as zero
-is returned.  Failing in the first iteration is perhaps the most likely
-failure, so this makes the tests pretty much useless.  Avoid the
-situation by always setting a random unused bit in the result on
-failure.
+While changing the number of interrupt channels, be2net stops adapter
+operation (including netif_tx_disable()) but it doesn't signal that it
+cannot transmit. This may lead dev_watchdog() to falsely trigger during
+that time.
 
-Link: http://lkml.kernel.org/r/20190506124634.6807-3-peda@axentia.se
-Fixes: 03270c13c5ff ("lib/string.c: add testcases for memset16/32/64")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Add the missing call to netif_carrier_off(), following the pattern used in
+many other drivers. netif_carrier_on() is already taken care of in
+be_open().
+
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/test_string.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/emulex/benet/be_main.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/lib/test_string.c b/lib/test_string.c
-index 0fcdb82dca866..98a787e7a1fd6 100644
---- a/lib/test_string.c
-+++ b/lib/test_string.c
-@@ -35,7 +35,7 @@ static __init int memset16_selftest(void)
- fail:
- 	kfree(p);
- 	if (i < 256)
--		return (i << 24) | (j << 16) | k;
-+		return (i << 24) | (j << 16) | k | 0x8000;
- 	return 0;
- }
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index 39f399741647f..cabeb1790db76 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -4600,8 +4600,12 @@ int be_update_queues(struct be_adapter *adapter)
+ 	struct net_device *netdev = adapter->netdev;
+ 	int status;
  
-@@ -71,7 +71,7 @@ static __init int memset32_selftest(void)
- fail:
- 	kfree(p);
- 	if (i < 256)
--		return (i << 24) | (j << 16) | k;
-+		return (i << 24) | (j << 16) | k | 0x8000;
- 	return 0;
- }
+-	if (netif_running(netdev))
++	if (netif_running(netdev)) {
++		/* device cannot transmit now, avoid dev_watchdog timeouts */
++		netif_carrier_off(netdev);
++
+ 		be_close(netdev);
++	}
  
-@@ -107,7 +107,7 @@ static __init int memset64_selftest(void)
- fail:
- 	kfree(p);
- 	if (i < 256)
--		return (i << 24) | (j << 16) | k;
-+		return (i << 24) | (j << 16) | k | 0x8000;
- 	return 0;
- }
+ 	be_cancel_worker(adapter);
  
 -- 
 2.20.1
