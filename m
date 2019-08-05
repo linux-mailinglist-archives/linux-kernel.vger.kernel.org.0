@@ -2,148 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F15081D00
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B42DA81D03
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:28:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730994AbfHEN2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:28:40 -0400
-Received: from foss.arm.com ([217.140.110.172]:49066 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730723AbfHEN2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:28:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 602A1337;
-        Mon,  5 Aug 2019 06:28:37 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 279043F706;
-        Mon,  5 Aug 2019 06:28:35 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 14:28:33 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Etienne Carriere <etienne.carriere@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>,
-        linux-kernel@vger.kernel.org,
-        Bo Zhang <bozhang.zhang@broadcom.com>,
-        Jim Quinlan <james.quinlan@broadcom.com>,
-        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
-        Gaku Inami <gaku.inami.xh@renesas.com>,
-        aidapala@qti.qualcomm.com, pajay@qti.qualcomm.com,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        wesleys@xilinx.com, Felix Burton <fburton@xilinx.com>,
-        Saeed Nowshadi <saeed.nowshadi@xilinx.com>,
-        Ionela Voinescu <Ionela.Voinescu@arm.com>,
-        Chris Redpath <Chris.Redpath@arm.com>,
-        Quentin Perret <Quentin.Perret@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 2/5] firmware: arm_scmi: Make use SCMI v2.0 fastchannel
- for performance protocol
-Message-ID: <20190805132833.GC627@e107155-lin>
-References: <20190726135954.11078-1-sudeep.holla@arm.com>
- <20190726135954.11078-3-sudeep.holla@arm.com>
- <CAN5uoS-dgtz55O+AAxEFkgtijpHj_-NSy7SkNRAkhEJN5v4PWA@mail.gmail.com>
+        id S1731035AbfHEN2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:28:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48026 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730124AbfHEN2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:28:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 804CCACB4;
+        Mon,  5 Aug 2019 13:28:50 +0000 (UTC)
+Subject: Re: [PATCH] fork: Improve error message for corrupted page tables
+To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20190730221820.7738-1-sai.praneeth.prakhya@intel.com>
+ <20190731152753.b17d9c4418f4bf6815a27ad8@linux-foundation.org>
+ <a05920e5994fb74af480255471a6c3f090f29b27.camel@intel.com>
+ <20190731212052.5c262ad084cbd6cf475df005@linux-foundation.org>
+ <FFF73D592F13FD46B8700F0A279B802F4F9D61B5@ORSMSX114.amr.corp.intel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <4236c0c5-9671-b9fe-b5eb-7d1908767905@suse.cz>
+Date:   Mon, 5 Aug 2019 15:28:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAN5uoS-dgtz55O+AAxEFkgtijpHj_-NSy7SkNRAkhEJN5v4PWA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F4F9D61B5@ORSMSX114.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 03:16:41PM +0200, Etienne Carriere wrote:
-> On Fri, 26 Jul 2019 at 16:00, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > SCMI v2.0 adds support for "FastChannel" which do not use a message
-> > header as they are specialized for a single message.
-> >
-> > Only PERFORMANCE_LIMITS_{SET,GET} and PERFORMANCE_LEVEL_{SET,GET}
-> > commands are supported over fastchannels. As they are optional, they
-> > need to be discovered by PERFORMANCE_DESCRIBE_FASTCHANNEL command.
-> > Further {LIMIT,LEVEL}_SET commands can have optional doorbell support.
-> >
-> > Add support for making use of these fastchannels.
-> >
-> > Cc: Ionela Voinescu <Ionela.Voinescu@arm.com>
-> > Cc: Chris Redpath <Chris.Redpath@arm.com>
-> > Cc: Quentin Perret <Quentin.Perret@arm.com>
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > ---
-> >  drivers/firmware/arm_scmi/perf.c | 104 +++++++++++++++++++++++++++++--
-> >  1 file changed, 100 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-> > index 6cce3e82e81e..b9144efbd6fb 100644
-> > --- a/drivers/firmware/arm_scmi/perf.c
-> > +++ b/drivers/firmware/arm_scmi/perf.c
-> > @@ -8,6 +8,7 @@
-> >  #include <linux/bits.h>
-> >  #include <linux/of.h>
-> >  #include <linux/io.h>
-> > +#include <linux/io-64-nonatomic-hi-lo.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_opp.h>
-> >  #include <linux/sort.h>
-> > @@ -293,7 +294,42 @@ scmi_perf_describe_levels_get(const struct scmi_handle *handle, u32 domain,
-> >         return ret;
-> >  }
-> >
-> > -static int scmi_perf_limits_set(const struct scmi_handle *handle, u32 domain,
-> > +#define SCMI_PERF_FC_RING_DB(doorbell, w)              \
->
-> Suggest to reformat into a macro style:
->     #define SCMI_PERF_FC_RING_DB(doorbell, w)              \
->         do { \
->                 (...) \
->         } while (0)
->
+On 8/2/19 8:46 AM, Prakhya, Sai Praneeth wrote:
+>>>>> +static const char * const resident_page_types[NR_MM_COUNTERS] = {
+>>>>> +	"MM_FILEPAGES",
+>>>>> +	"MM_ANONPAGES",
+>>>>> +	"MM_SWAPENTS",
+>>>>> +	"MM_SHMEMPAGES",
+>>>>> +};
+>>>>
+>>>> But please let's not put this in a header file.  We're asking the
+>>>> compiler to put a copy of all of this into every compilation unit
+>>>> which includes the header.  Presumably the compiler is smart enough
+>>>> not to do that, but it's not good practice.
+>>>
+>>> Thanks for the explanation. Makes sense to me.
+>>>
+>>> Just wanted to check before sending V2, Is it OK if I add this to
+>>> kernel/fork.c? or do you have something else in mind?
+>>
+>> I was thinking somewhere like mm/util.c so the array could be used by other
+>> code.  But it seems there is no such code.  Perhaps it's best to just leave fork.c as
+>> it is now.
+> 
+> Ok, so does that mean have the struct in header file itself?
 
-Sure I can try that.
+If the struct definition (including the string values) was in mm/util.c,
+there would have to be a declaration in a header. If it's in fork.c with
+the only users, there doesn't need to be separate declaration in a header.
 
-> > +{                                                      \
-> > +       u##w val = 0;                                   \
-> > +       struct scmi_fc_db_info *db = doorbell;          \
-> > +                                                       \
-> > +       if ((db)->mask)                                 \
->
-> remove parentheses. I would say, could simply remove `if (db->mask)` here.
+> Sorry! for too many questions. I wanted to check with you before changing 
+> because it's *the* fork.c file (I presume random changes will not be encouraged here)
+> 
+> I am not yet clear on what's the right thing to do here :(
+> So, could you please help me in deciding.
 
-Ah, missed to drop this one. We can avoid reading the value if mask = 0,
-so I prefer to keep it.
->
-> > +               val = ioread##w(db->addr) & db->mask;   \
-> > +       iowrite##w((u##w)db->set | val, db->addr);      \
-> > +}
-> > +
-> > +static void scmi_perf_fc_ring_db(struct scmi_fc_db_info *db)
-> > +{
-> > +       if (!db || !db->addr)
-> > +               return;
-> > +
-> > +       if (db->width == 1)
-> > +               SCMI_PERF_FC_RING_DB(db, 8)
-> > +       else if (db->width == 2)
-> > +               SCMI_PERF_FC_RING_DB(db, 16)
-> > +       else if (db->width == 4)
-> > +               SCMI_PERF_FC_RING_DB(db, 32)
-> > +       else /* db->width == 8 */
-> > +#ifdef CONFIG_64BIT
-> > +               SCMI_PERF_FC_RING_DB(db, 64)
-> > +#else
-> > +       {
-> > +               u64 val = 0;
-> > +
-> > +               if (db->mask)
-> > +                       val = ioread64_hi_lo(db->addr) & db->mask;
-> > +               iowrite64_hi_lo(db->set, db->addr);
->
-> Is `value` missing here?
-> Why not using SCMI_PERF_FC_RING_DB(db, 64) here?
->
+fork.c should be fine, IMHO
 
-I am still using it. Just if CONFIG_64BIT is enabled and  io{read,write}64
-are defined. ARM32/MIPS and other 32-bit platform build might fail
-otherwise. I don't want to restrict SCMI to 64-bit platforms only.
+> Regards,
+> Sai
+> 
 
---
-Regards,
-Sudeep
