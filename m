@@ -2,86 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDEDE81A29
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 236D681AC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:09:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbfHENCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:02:22 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39860 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfHENCW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:02:22 -0400
-Received: by mail-wm1-f67.google.com with SMTP id u25so62568256wmc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 06:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VD+kO2freT4druqcnh49hR6u8OkuGawcql9pBt221gM=;
-        b=mjk8vH9McUPXmutExi9LK5ex7zl16u6Y1A29MLJPWpdqRchOSAGR8yhmK2fOTAo0rR
-         0sDiFCY/K4jh+admqvlB/o99ab6xeNCWhc+kpHUH51vRLHk1iEDDajMTVrPVdzhGXOez
-         b+MOpvwyHe3E8z4ck7Lc0JsxTJblE1HTqoVBH2bnCZr3MsUkmySVvX+rpBLWbpbktUmu
-         hP/XHt8UiQrWbTdDNDhsijdtesI8b0m8A9EZshbEb+4cGVeTBIWdn2VjubV1sCDeTZXR
-         sMr8q3TOfj4wjtw/b/DQ2XLzpqs0aaxo9LDtJ1wfglDOLg/WFdPVPnB9ccDGeJ8Az1yz
-         MGtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VD+kO2freT4druqcnh49hR6u8OkuGawcql9pBt221gM=;
-        b=jyEyDC3Q8VbxvSkcu6N4i5heMkX5sPxUxgpYifidIeqNHGjAGP/yt2/A3DwSCjqq7F
-         C78n7eXTK/rvUbhtGKO0iVzjSEPRk+HNxc6u5FJ0aTwQm0WB0lFsTsUvVT2K8uSoehJZ
-         bfsnS1t2SoeGgdooCIAZmTO8L5nCkCrHKY4rxqpSqsRYGbiXQuZujNiL842naNi3l0ct
-         dq7/SbvoUblCJ6Z6PlnAvXImBa+WZvSTX4QYUFPTByfLGZtujS7jRvcyBOLQnKdY2q5P
-         c6HoTydN/Hya3LNvEgrFdT+2b2+gnOjKpouVb9ufbMrO8nPJ61VGkpFcHhbnhnYva66e
-         9mSA==
-X-Gm-Message-State: APjAAAUYNhJCVd8E/LUZuGIEIqw/BBl3Fckaw5v48EPhsuwbFjjlVweG
-        rdnMqpAZuH8rE68villnO3maUw==
-X-Google-Smtp-Source: APXvYqwxgFax/fM7iqjP2wFpKMs36pqx4aCRyV/P5qvPCozjg2IOFjiFHWnYt60j8Qx7Ktjguvx6VQ==
-X-Received: by 2002:a1c:4e14:: with SMTP id g20mr18419431wmh.3.1565010140443;
-        Mon, 05 Aug 2019 06:02:20 -0700 (PDT)
-Received: from radium.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id v23sm74950359wmj.32.2019.08.05.06.02.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 06:02:19 -0700 (PDT)
-From:   Fabien Parent <fparent@baylibre.com>
-To:     robh+dt@kernel.org, matthias.bgg@gmail.com
-Cc:     linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH] dt-bindings: rng: mtk-rng: Add documentation for MT8516
-Date:   Mon,  5 Aug 2019 15:02:15 +0200
-Message-Id: <20190805130215.20499-1-fparent@baylibre.com>
-X-Mailer: git-send-email 2.23.0.rc1
+        id S1730164AbfHENJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:09:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730143AbfHENJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:09:16 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5E7C2067D;
+        Mon,  5 Aug 2019 13:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565010556;
+        bh=c/LmIs2RYSMakoyt3J/AVEcaYfLNjf6OmkSX91G8HcE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GMJ/43EqV8OLFdcGv+gJ2cHBvR7AxPTfoX1nltzbmr2+lvTtVNDHb1MKUxe1EDsUX
+         BgHNrGCbt+l8jq0M3gZ+7JrCYmwjSg/zpY0l/B1ZvKnJxiJrTpPes4KU+QsOjFhoeg
+         GSYoiopFk3AhRf723UX/vSC24i/BHq8UdlPMXTg4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 03/74] ARM: dts: rockchip: Make rk3288-veyron-mickeys emmc work again
+Date:   Mon,  5 Aug 2019 15:02:16 +0200
+Message-Id: <20190805124936.105953796@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
+References: <20190805124935.819068648@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds the device-tree documentation for the RNG IP on the
-MediaTek MT8516 SoC.
+[ Upstream commit 99fa066710f75f18f4d9a5bc5f6a711968a581d5 ]
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
+When I try to boot rk3288-veyron-mickey I totally fail to make the
+eMMC work.  Specifically my logs (on Chrome OS 4.19):
+
+  mmc_host mmc1: card is non-removable.
+  mmc_host mmc1: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
+  mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ div = 0)
+  mmc1: switch to bus width 8 failed
+  mmc1: switch to bus width 4 failed
+  mmc1: new high speed MMC card at address 0001
+  mmcblk1: mmc1:0001 HAG2e 14.7 GiB
+  mmcblk1boot0: mmc1:0001 HAG2e partition 1 4.00 MiB
+  mmcblk1boot1: mmc1:0001 HAG2e partition 2 4.00 MiB
+  mmcblk1rpmb: mmc1:0001 HAG2e partition 3 4.00 MiB, chardev (243:0)
+  mmc_host mmc1: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
+  mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ div = 0)
+  mmc1: switch to bus width 8 failed
+  mmc1: switch to bus width 4 failed
+  mmc1: tried to HW reset card, got error -110
+  mmcblk1: error -110 requesting status
+  mmcblk1: recovery failed!
+  print_req_error: I/O error, dev mmcblk1, sector 0
+  ...
+
+When I remove the '/delete-property/mmc-hs200-1_8v' then everything is
+hunky dory.
+
+That line comes from the original submission of the mickey dts
+upstream, so presumably at the time the HS200 was failing and just
+enumerating things as a high speed device was fine.  ...or maybe it's
+just that some mickey devices work when enumerating at "high speed",
+just not mine?
+
+In any case, hs200 seems good now.  Let's turn it on.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/rng/mtk-rng.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/rk3288-veyron-mickey.dts | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/rng/mtk-rng.txt b/Documentation/devicetree/bindings/rng/mtk-rng.txt
-index 2bc89f133701..dfdcb5cd2ea8 100644
---- a/Documentation/devicetree/bindings/rng/mtk-rng.txt
-+++ b/Documentation/devicetree/bindings/rng/mtk-rng.txt
-@@ -6,6 +6,7 @@ Required properties:
- 			"mediatek,mt7622-rng", 	"mediatek,mt7623-rng" : for MT7622
- 			"mediatek,mt7629-rng",  "mediatek,mt7623-rng" : for MT7629
- 			"mediatek,mt7623-rng" : for MT7623
-+			"mediatek,mt8516-rng", "mediatek,mt7623-rng" : for MT8516
- - clocks	    : list of clock specifiers, corresponding to
- 		      entries in clock-names property;
- - clock-names	    : Should contain "rng" entries;
+diff --git a/arch/arm/boot/dts/rk3288-veyron-mickey.dts b/arch/arm/boot/dts/rk3288-veyron-mickey.dts
+index 1e0158acf895d..a593d0a998fc8 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-mickey.dts
++++ b/arch/arm/boot/dts/rk3288-veyron-mickey.dts
+@@ -124,10 +124,6 @@
+ 	};
+ };
+ 
+-&emmc {
+-	/delete-property/mmc-hs200-1_8v;
+-};
+-
+ &i2c2 {
+ 	status = "disabled";
+ };
 -- 
-2.23.0.rc1
+2.20.1
+
+
 
