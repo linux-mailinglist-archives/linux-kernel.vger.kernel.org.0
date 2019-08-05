@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 054F281AFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CF4981B6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:14:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbfHENK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:10:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50020 "EHLO mail.kernel.org"
+        id S1729934AbfHENIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:08:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730420AbfHENKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:10:53 -0400
+        id S1729921AbfHENIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:08:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0890B21874;
-        Mon,  5 Aug 2019 13:10:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D3F321738;
+        Mon,  5 Aug 2019 13:07:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010652;
-        bh=4uf/pER265RJHkRXVJyrW+7dtTx8C978xgkpJD07Zwc=;
+        s=default; t=1565010479;
+        bh=JHWoNxLRxvvvMpCyKs4R/Jde1pjue9xU/PxCK7tbiKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YkeQSpQmrT2sU3Ka+VsXA2y6FAuggzZOV4MfCPm5vCiBJjDMBgO1SNBFpUE8thoGe
-         acDfm8ohXWWaMCBLUgPcTvQ+5HNbtMR1Uf158dStmzN/k69zPT7AnmS+cmy9mQ1K+k
-         j688w3f1z+rm8biFvXsJwJYbSy1Oen0ulwZITY7M=
+        b=bgOhEsvfMibtmAqkovRcMErxMQ3k7rt0gVD5c1tK9K/nSHRbHCDrSVp+g7x9rZ+yB
+         dmgvASmsSrJUb7AZj8eF8ZmazwcdvVPlUdxYBNtJEI4y+2bX5TrFDCT0gSpX1IwpPx
+         4vQaIW7rwouzPjPx+5zdUH9bZQRxUZk8JHZhqbBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Block <bblock@linux.ibm.com>,
-        Jens Remus <jremus@linux.ibm.com>,
-        Steffen Maier <maier@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, JC Kuo <jckuo@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/74] scsi: zfcp: fix GCC compiler warning emitted with -Wmaybe-uninitialized
+Subject: [PATCH 4.14 09/53] clk: tegra210: fix PLLU and PLLU_OUT1
 Date:   Mon,  5 Aug 2019 15:02:34 +0200
-Message-Id: <20190805124937.489556604@linuxfoundation.org>
+Message-Id: <20190805124929.079048088@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,114 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 484647088826f2f651acbda6bcf9536b8a466703 ]
+[ Upstream commit 0d34dfbf3023cf119b83f6470692c0b10c832495 ]
 
-GCC v9 emits this warning:
-      CC      drivers/s390/scsi/zfcp_erp.o
-    drivers/s390/scsi/zfcp_erp.c: In function 'zfcp_erp_action_enqueue':
-    drivers/s390/scsi/zfcp_erp.c:217:26: warning: 'erp_action' may be used uninitialized in this function [-Wmaybe-uninitialized]
-      217 |  struct zfcp_erp_action *erp_action;
-          |                          ^~~~~~~~~~
+Full-speed and low-speed USB devices do not work with Tegra210
+platforms because of incorrect PLLU/PLLU_OUT1 clock settings.
 
-This is a possible false positive case, as also documented in the GCC
-documentations:
-    https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmaybe-uninitialized
+When full-speed device is connected:
+[   14.059886] usb 1-3: new full-speed USB device number 2 using tegra-xusb
+[   14.196295] usb 1-3: device descriptor read/64, error -71
+[   14.436311] usb 1-3: device descriptor read/64, error -71
+[   14.675749] usb 1-3: new full-speed USB device number 3 using tegra-xusb
+[   14.812335] usb 1-3: device descriptor read/64, error -71
+[   15.052316] usb 1-3: device descriptor read/64, error -71
+[   15.164799] usb usb1-port3: attempt power cycle
 
-The actual code-sequence is like this:
-    Various callers can invoke the function below with the argument "want"
-    being one of:
-    ZFCP_ERP_ACTION_REOPEN_ADAPTER,
-    ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
-    ZFCP_ERP_ACTION_REOPEN_PORT, or
-    ZFCP_ERP_ACTION_REOPEN_LUN.
+When low-speed device is connected:
+[   37.610949] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
+[   38.557376] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
+[   38.564977] usb usb1-port3: attempt power cycle
 
-    zfcp_erp_action_enqueue(want, ...)
-        ...
-        need = zfcp_erp_required_act(want, ...)
-            need = want
-            ...
-            maybe: need = ZFCP_ERP_ACTION_REOPEN_PORT
-            maybe: need = ZFCP_ERP_ACTION_REOPEN_ADAPTER
-            ...
-            return need
-        ...
-        zfcp_erp_setup_act(need, ...)
-            struct zfcp_erp_action *erp_action; // <== line 217
-            ...
-            switch(need) {
-            case ZFCP_ERP_ACTION_REOPEN_LUN:
-                    ...
-                    erp_action = &zfcp_sdev->erp_action;
-                    WARN_ON_ONCE(erp_action->port != port); // <== access
-                    ...
-                    break;
-            case ZFCP_ERP_ACTION_REOPEN_PORT:
-            case ZFCP_ERP_ACTION_REOPEN_PORT_FORCED:
-                    ...
-                    erp_action = &port->erp_action;
-                    WARN_ON_ONCE(erp_action->port != port); // <== access
-                    ...
-                    break;
-            case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
-                    ...
-                    erp_action = &adapter->erp_action;
-                    WARN_ON_ONCE(erp_action->port != NULL); // <== access
-                    ...
-                    break;
-            }
-            ...
-            WARN_ON_ONCE(erp_action->adapter != adapter); // <== access
+This commit fixes the issue by:
+ 1. initializing PLLU_OUT1 before initializing XUSB_FS_SRC clock
+    because PLLU_OUT1 is parent of XUSB_FS_SRC.
+ 2. changing PLLU post-divider to /2 (DIVP=1) according to Technical
+    Reference Manual.
 
-When zfcp_erp_setup_act() is called, 'need' will never be anything else
-than one of the 4 possible enumeration-names that are used in the
-switch-case, and 'erp_action' is initialized for every one of them, before
-it is used. Thus the warning is a false positive, as documented.
-
-We introduce the extra if{} in the beginning to create an extra code-flow,
-so the compiler can be convinced that the switch-case will never see any
-other value.
-
-BUG_ON()/BUG() is intentionally not used to not crash anything, should
-this ever happen anyway - right now it's impossible, as argued above; and
-it doesn't introduce a 'default:' switch-case to retain warnings should
-'enum zfcp_erp_act_type' ever be extended and no explicit case be
-introduced. See also v5.0 commit 399b6c8bc9f7 ("scsi: zfcp: drop old
-default switch case which might paper over missing case").
-
-Signed-off-by: Benjamin Block <bblock@linux.ibm.com>
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
-Reviewed-by: Steffen Maier <maier@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: e745f992cf4b ("clk: tegra: Rework pll_u")
+Signed-off-by: JC Kuo <jckuo@nvidia.com>
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/scsi/zfcp_erp.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/s390/scsi/zfcp_erp.c b/drivers/s390/scsi/zfcp_erp.c
-index ebdbc457003fe..332701db7379d 100644
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -11,6 +11,7 @@
- #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index b92867814e2d5..cb2be154db3bc 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2057,9 +2057,9 @@ static struct div_nmp pllu_nmp = {
+ };
  
- #include <linux/kthread.h>
-+#include <linux/bug.h>
- #include "zfcp_ext.h"
- #include "zfcp_reqlist.h"
+ static struct tegra_clk_pll_freq_table pll_u_freq_table[] = {
+-	{ 12000000, 480000000, 40, 1, 0, 0 },
+-	{ 13000000, 480000000, 36, 1, 0, 0 }, /* actual: 468.0 MHz */
+-	{ 38400000, 480000000, 25, 2, 0, 0 },
++	{ 12000000, 480000000, 40, 1, 1, 0 },
++	{ 13000000, 480000000, 36, 1, 1, 0 }, /* actual: 468.0 MHz */
++	{ 38400000, 480000000, 25, 2, 1, 0 },
+ 	{        0,         0,  0, 0, 0, 0 },
+ };
  
-@@ -238,6 +239,12 @@ static struct zfcp_erp_action *zfcp_erp_setup_act(int need, u32 act_status,
- 	struct zfcp_erp_action *erp_action;
- 	struct zfcp_scsi_dev *zfcp_sdev;
- 
-+	if (WARN_ON_ONCE(need != ZFCP_ERP_ACTION_REOPEN_LUN &&
-+			 need != ZFCP_ERP_ACTION_REOPEN_PORT &&
-+			 need != ZFCP_ERP_ACTION_REOPEN_PORT_FORCED &&
-+			 need != ZFCP_ERP_ACTION_REOPEN_ADAPTER))
-+		return NULL;
-+
- 	switch (need) {
- 	case ZFCP_ERP_ACTION_REOPEN_LUN:
- 		zfcp_sdev = sdev_to_zfcp(sdev);
+@@ -2983,6 +2983,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
+ 	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
+ 	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
++	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
+ 	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
+ 	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
+@@ -3008,7 +3009,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0 },
+ 	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
+ 	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
+ 	{ TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
 -- 
 2.20.1
 
