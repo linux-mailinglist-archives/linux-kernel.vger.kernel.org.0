@@ -2,112 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70FF081728
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1985F8172F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbfHEKgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 06:36:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41924 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727230AbfHEKgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:36:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CF319AB92;
-        Mon,  5 Aug 2019 10:36:07 +0000 (UTC)
-Date:   Mon, 5 Aug 2019 20:36:30 +1000
-From:   Aleksa Sarai <asarai@suse.de>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Containers <containers@lists.linux-foundation.org>,
+        id S1728387AbfHEKg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 06:36:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47774 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbfHEKg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 06:36:56 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C2F33084025;
+        Mon,  5 Aug 2019 10:36:55 +0000 (UTC)
+Received: from localhost (holly.tpb.lab.eng.brq.redhat.com [10.43.134.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9C22760603;
+        Mon,  5 Aug 2019 10:36:53 +0000 (UTC)
+Date:   Mon, 5 Aug 2019 12:36:52 +0200
+From:   Miroslav Lichvar <mlichvar@redhat.com>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     Hubert Feurstein <h.feurstein@gmail.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, netdev <netdev@vger.kernel.org>,
         lkml <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jordan Ogas <jogas@lanl.gov>, Al Viro <viro@ftp.linux.org.uk>
-Subject: Re: pivot_root(".", ".") and the fchdir() dance
-Message-ID: <20190805103630.tu4kytsbi5evfrhi@mikami>
-References: <CAKgNAki0bR5zZr+kp_xjq+bNUky6-F+s2ep+jnR0YrjHhNMB1g@mail.gmail.com>
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [RFC] net: dsa: mv88e6xxx: ptp: improve phc2sys precision for
+ mv88e6xxx switch in combination with imx6-fec
+Message-ID: <20190805103652.GA16411@localhost>
+References: <20190802163248.11152-1-h.feurstein@gmail.com>
+ <CA+h21hr835sdvtgVOA2M9SWeCXDOrDG1S3FnNgJd_9NP2X_TaQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6qypzrljzt2mkjjn"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKgNAki0bR5zZr+kp_xjq+bNUky6-F+s2ep+jnR0YrjHhNMB1g@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CA+h21hr835sdvtgVOA2M9SWeCXDOrDG1S3FnNgJd_9NP2X_TaQ@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 05 Aug 2019 10:36:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 05, 2019 at 12:54:49PM +0300, Vladimir Oltean wrote:
+> - Along the lines of the above, I wonder how badly would the
+> maintainers shout at the proposal of adding a struct
+> ptp_system_timestamp pointer and its associated lock in struct device.
+> That way at least you don't have to change the API, like you did with
+> mdiobus_write_nested_ptp. Relatively speaking, this is the least
+> amount of intrusion (although, again, far from beautiful).
 
---6qypzrljzt2mkjjn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That would make sense to me, if there are other drivers that could use
+it.
 
-On 2019-08-01, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
-> I'd like to add some documentation about the pivot_root(".", ".")
-> idea, but I have a doubt/question. In the lxc_pivot_root() code we
-> have these steps
->=20
->         oldroot =3D open("/", O_DIRECTORY | O_RDONLY | O_CLOEXEC);
->         newroot =3D open(rootfs, O_DIRECTORY | O_RDONLY | O_CLOEXEC);
->=20
->         fchdir(newroot);
->         pivot_root(".", ".");
->=20
->         fchdir(oldroot);      // ****
+> I also added Miroslav Lichvar, who originally created the
+> PTP_SYS_OFFSET_EXTENDED ioctl, maybe he can share some ideas on how it
+> is best served.
 
-This one is "required" because (as the pivot_root(2) man page states),
-it's technically not guaranteed by the kernel that the process's cwd
-will be the same after pivot_root(2):
+The idea behind that ioctl was to allow drivers to take the system
+timestamps as close to the reading of the HW clock as possible,
+excluding delays (and jitter) due to other operations that are
+necessary to get that timestamp. In the ethernet drivers that was a
+single PCI read. If in this case it's a "write" operation that
+triggers the reading of the HW clock, then I think the patch is
+using is the ptp_read_system_*ts() calls correctly.
 
-> pivot_root() may or may not change the current root and the current
-> working directory of any processes or threads which use the old root
-> directory.
+> > --- a/drivers/net/ethernet/freescale/fec_main.c
+> > +++ b/drivers/net/ethernet/freescale/fec_main.c
+> > @@ -1814,11 +1814,25 @@ static int fec_enet_mdio_write(struct mii_bus *bus, int mii_id, int regnum,
+> >
+> >         reinit_completion(&fep->mdio_done);
+> >
+> > -       /* start a write op */
+> > -       writel(FEC_MMFR_ST | FEC_MMFR_OP_WRITE |
+> > -               FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(regnum) |
+> > -               FEC_MMFR_TA | FEC_MMFR_DATA(value),
+> > -               fep->hwp + FEC_MII_DATA);
+> > +       if (bus->ptp_sts) {
+> > +               unsigned long flags = 0;
+> > +               local_irq_save(flags);
+> > +               __iowmb();
+> > +               /* >Take the timestamp *after* the memory barrier */
+> > +               ptp_read_system_prets(bus->ptp_sts);
+> > +               writel_relaxed(FEC_MMFR_ST | FEC_MMFR_OP_WRITE |
+> > +                       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(regnum) |
+> > +                       FEC_MMFR_TA | FEC_MMFR_DATA(value),
+> > +                       fep->hwp + FEC_MII_DATA);
+> > +               ptp_read_system_postts(bus->ptp_sts);
+> > +               local_irq_restore(flags);
+> > +       } else {
+> > +               /* start a write op */
+> > +               writel(FEC_MMFR_ST | FEC_MMFR_OP_WRITE |
+> > +                       FEC_MMFR_PA(mii_id) | FEC_MMFR_RA(regnum) |
+> > +                       FEC_MMFR_TA | FEC_MMFR_DATA(value),
+> > +                       fep->hwp + FEC_MII_DATA);
+> > +       }
 
-Now, if it turns out that we can rely on the current behaviour (and the
-man page you're improving is actually inaccurate on this point) then
-you're right that this fchdir(2) isn't required.
-
->         mount("", ".", "", MS_SLAVE | MS_REC, NULL);
->         umount2(".", MNT_DETACH);
-
->         fchdir(newroot);      // ****
-
-And this one is required because we are in @oldroot at this point, due
-to the first fchdir(2). If we don't have the first one, then switching
-=66rom "." to "/" in the mount/umount2 calls should fix the issue.
-
-We do something very similar to this in runc as well[1] (though, as the
-commit message says, I "borrowed" the idea from LXC).
-
-[1]: https://github.com/opencontainers/runc/commit/f8e6b5af5e120ab7599885bd=
-13a932d970ccc748
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---6qypzrljzt2mkjjn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAl1IBqsACgkQnhiqJn3b
-jbTjfw/+Pnh6zFLbDf4UKFZiPT2tLK91Q5TuWjlmjWxJxZMtGNxvDyQiyYXaNXn7
-rskiOzCFTl2i3N5BJZCuT3LPfT9+jdHQ1lYowlGZh0AVSQrWksAUsEEumyMFxqpo
-/ltTRWeQG51pqiqW+Nutd5VH3qsaHT2WfNYHnGSuzyHn+lykwgLymnE7MzjgGPZV
-vm9IGDEQmpHMZuc6cAxKzC74Fa98QDmKS0K0R32GaLFc7Y28HNnDq/fnNbzAkVYO
-OwGDY1p97vVk6Zc0MOQuyjAYng+lnaD+wp1uEYai8hpPud5AZ6WBxFke5l83TKjk
-lJgYx+CT+/inlUcRZ7X8/8MofET/P8K65fteEL+SvoSpBakVmztMVKIvasll+eja
-81rffEeIy+3X8pRhSSN8R3yFLk29uw+oQxj5FJlr6IGX0uiRnk1m93KuphlsBg4w
-jedZ9O+LE2DbjHT43Xz7u0oeeUYVF+Hs2aZXOXbxRGeJl1HiQYlJqW1mdWGwQKKf
-1r3zSxaTfXz8svNsHA0fRlZi7S5psoUMRdNEhsQGW/GKr3KTtojUvEqeGGKhW6H4
-KgJR6OHlmfRwwgCtiaLx09736H3/m/zG5gPsGTKZGP51LnQWYjpUaUMm+55tSUg9
-waJ52wsLxsmJiJ6zYGHzih7sK6LJZMT0ZvqWUXAO5DPK5P2UPqc=
-=Ti2z
------END PGP SIGNATURE-----
-
---6qypzrljzt2mkjjn--
+-- 
+Miroslav Lichvar
