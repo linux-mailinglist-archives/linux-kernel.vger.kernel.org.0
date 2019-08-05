@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F74281C91
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A30F681CCB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:27:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731187AbfHENZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:25:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33598 "EHLO mail.kernel.org"
+        id S1730451AbfHENZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:25:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730691AbfHENZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:25:08 -0400
+        id S1730841AbfHENZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:25:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B34A20644;
-        Mon,  5 Aug 2019 13:25:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B030820880;
+        Mon,  5 Aug 2019 13:25:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011507;
-        bh=RRV6MZPfpryWmJfI3TYE7p7hcAWQgxs1DRV86F8RDWo=;
+        s=default; t=1565011510;
+        bh=GNhqgG+H+h+1PissY8jYbYKYbFIfURpMKzetJOjLhs4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wHgBG+WTHBsNXmW2zo1rltcaCWCydgPn8/gog+4nm0TA5VaY6Dv/b+QqBT7gtpyuv
-         YEtnC7MDoLaMgWUVccb91SH/mQbosOefPqgoIwFq59hwlfs114WBGBsMMeXO36p/7s
-         xK3KBSrL8haM08D4CAKBiA5+WRvy7GE+pQmfultc=
+        b=2tkGSqighlNwWFejrS8zXLrYDHRNvpxbdgP0Q1J0K9hc00heEuIEFgg2Vcjx/Wqze
+         ZyK3038pWyU4MnO3YUWPeREOldBsZR1PsjW368MO6a/vfzFWSSeJCVo9kJJuZoQSz4
+         oNEVvjjfFmPNkDg4CHGXgbl81Y6+io0hikxw8M/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 5.2 115/131] clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource
-Date:   Mon,  5 Aug 2019 15:03:22 +0200
-Message-Id: <20190805124959.659590680@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.2 116/131] scsi: mpt3sas: Use 63-bit DMA addressing on SAS35 HBA
+Date:   Mon,  5 Aug 2019 15:03:23 +0200
+Message-Id: <20190805124959.723352420@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
 References: <20190805124951.453337465@linuxfoundation.org>
@@ -43,106 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Weiyi Lu <weiyi.lu@mediatek.com>
+From: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
 
-commit c93d059a80450af99dd6c0e8c36790579343675a upstream.
+commit df9a606184bfdb5ae3ca9d226184e9489f5c24f7 upstream.
 
-The 13MHz clock should be registered before clocksource driver is
-initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
+Although SAS3 & SAS3.5 IT HBA controllers support 64-bit DMA addressing, as
+per hardware design, if DMA-able range contains all 64-bits
+set (0xFFFFFFFF-FFFFFFFF) then it results in a firmware fault.
 
-Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+E.g. SGE's start address is 0xFFFFFFFF-FFFF000 and data length is 0x1000
+bytes. when HBA tries to DMA the data at 0xFFFFFFFF-FFFFFFFF location then
+HBA will fault the firmware.
+
+Driver will set 63-bit DMA mask to ensure the above address will not be
+used.
+
+Cc: <stable@vger.kernel.org> # 5.1.20+
+Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/mediatek/clk-mt8183.c |   46 ++++++++++++++++++++++++++++----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+ drivers/scsi/mpt3sas/mpt3sas_base.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -25,9 +25,11 @@ static const struct mtk_fixed_clk top_fi
- 	FIXED_CLK(CLK_TOP_UNIVP_192M, "univpll_192m", "univpll", 192000000),
- };
- 
-+static const struct mtk_fixed_factor top_early_divs[] = {
-+	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
-+};
-+
- static const struct mtk_fixed_factor top_divs[] = {
--	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1,
--		2),
- 	FACTOR(CLK_TOP_F26M_CK_D2, "csw_f26m_ck_d2", "clk26m", 1,
- 		2),
- 	FACTOR(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1,
-@@ -1167,37 +1169,57 @@ static int clk_mt8183_apmixed_probe(stru
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
- 
-+static struct clk_onecell_data *top_clk_data;
-+
-+static void clk_mt8183_top_init_early(struct device_node *node)
-+{
-+	int i;
-+
-+	top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-+
-+	for (i = 0; i < CLK_TOP_NR_CLK; i++)
-+		top_clk_data->clks[i] = ERR_PTR(-EPROBE_DEFER);
-+
-+	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
-+			top_clk_data);
-+
-+	of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
-+}
-+
-+CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
-+			clk_mt8183_top_init_early);
-+
- static int clk_mt8183_top_probe(struct platform_device *pdev)
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -2683,6 +2683,8 @@ _base_config_dma_addressing(struct MPT3S
  {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	void __iomem *base;
--	struct clk_onecell_data *clk_data;
- 	struct device_node *node = pdev->dev.of_node;
+ 	u64 required_mask, coherent_mask;
+ 	struct sysinfo s;
++	/* Set 63 bit DMA mask for all SAS3 and SAS35 controllers */
++	int dma_mask = (ioc->hba_mpi_version_belonged > MPI2_VERSION) ? 63 : 64;
  
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+ 	if (ioc->is_mcpu_endpoint)
+ 		goto try_32bit;
+@@ -2692,17 +2694,17 @@ _base_config_dma_addressing(struct MPT3S
+ 		goto try_32bit;
  
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
--
- 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
--		clk_data);
-+		top_clk_data);
-+
-+	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
-+		top_clk_data);
+ 	if (ioc->dma_mask)
+-		coherent_mask = DMA_BIT_MASK(64);
++		coherent_mask = DMA_BIT_MASK(dma_mask);
+ 	else
+ 		coherent_mask = DMA_BIT_MASK(32);
  
--	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
-+	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
+-	if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(64)) ||
++	if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(dma_mask)) ||
+ 	    dma_set_coherent_mask(&pdev->dev, coherent_mask))
+ 		goto try_32bit;
  
- 	mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes),
--		node, &mt8183_clk_lock, clk_data);
-+		node, &mt8183_clk_lock, top_clk_data);
+ 	ioc->base_add_sg_single = &_base_add_sg_single_64;
+ 	ioc->sge_size = sizeof(Mpi2SGESimple64_t);
+-	ioc->dma_mask = 64;
++	ioc->dma_mask = dma_mask;
+ 	goto out;
  
- 	mtk_clk_register_composites(top_aud_muxes, ARRAY_SIZE(top_aud_muxes),
--		base, &mt8183_clk_lock, clk_data);
-+		base, &mt8183_clk_lock, top_clk_data);
+  try_32bit:
+@@ -2724,7 +2726,7 @@ static int
+ _base_change_consistent_dma_mask(struct MPT3SAS_ADAPTER *ioc,
+ 				      struct pci_dev *pdev)
+ {
+-	if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64))) {
++	if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(ioc->dma_mask))) {
+ 		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32)))
+ 			return -ENODEV;
+ 	}
+@@ -4631,7 +4633,7 @@ _base_allocate_memory_pools(struct MPT3S
+ 		total_sz += sz;
+ 	} while (ioc->rdpq_array_enable && (++i < ioc->reply_queue_count));
  
- 	mtk_clk_register_composites(top_aud_divs, ARRAY_SIZE(top_aud_divs),
--		base, &mt8183_clk_lock, clk_data);
-+		base, &mt8183_clk_lock, top_clk_data);
- 
- 	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
--		clk_data);
-+		top_clk_data);
- 
--	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
- }
- 
- static int clk_mt8183_infra_probe(struct platform_device *pdev)
+-	if (ioc->dma_mask == 64) {
++	if (ioc->dma_mask > 32) {
+ 		if (_base_change_consistent_dma_mask(ioc, ioc->pdev) != 0) {
+ 			ioc_warn(ioc, "no suitable consistent DMA mask for %s\n",
+ 				 pci_name(ioc->pdev));
 
 
