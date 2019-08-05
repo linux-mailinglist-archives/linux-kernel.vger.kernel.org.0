@@ -2,103 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C248249A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 20:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 721F5824AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 20:09:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730279AbfHESFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 14:05:04 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41502 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728686AbfHESFD (ORCPT
+        id S1729984AbfHESJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 14:09:33 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44634 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727830AbfHESJd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 14:05:03 -0400
-Received: by mail-pf1-f194.google.com with SMTP id m30so40045819pff.8
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 11:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZSkdc0K+z32xxfAPnuWbM7lfH87BvTZ2fp0ZJPTc+Cw=;
-        b=cXmi7mI9gwJdyWlkxh4sZXDNnwqAOM396pNmF+W1i3XDqQTScm/cCqOx5XVa2iLejA
-         Okh9/6L40CfVbdqGr5Shz+jFD7Ag4pGdOQ5YZkQHcqPtoaotaiApMZfOYK3K3xpjM8y3
-         X6Ed5z/AL5ANJinBmBbc4ZVFVOwIdGw3rVliUR+sERk+XF4QoMsaevs2YWxvmew9VYWq
-         Z51shcbd7kkT6yVs5a0PR3kuVZrX6dYOWFQxYHglJWImyoqQ1pWdGm4f/BKeAB29XnvJ
-         sDNuequqjPbD5nlB8EN26VK5jKITS6IBWUfs5JnUXPcqfTFCav1mYpLcbnJVOAh5a2YH
-         Ztvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZSkdc0K+z32xxfAPnuWbM7lfH87BvTZ2fp0ZJPTc+Cw=;
-        b=dQhKd/og7MIHChJVTXQkj+LJOi7HAMTb7IN9sJCWOD2OBmP6PtjXosTlU2s2r0lya3
-         swSznZq07ku5OTVcWDbCyu3CZUBfyHCGjyUIbBzhPL0qi/A+088AFU2EZXzEednzULqr
-         v8QIVrF5yd0xgtt7IyPVUJBrDkxpjl4DQ6QQg56Mh2saSx8AE1HmEhT6GpoUrxILUn5Z
-         N+5heQaImqifMAImdhlwN+mBCFCQIKTdDf4cpwm0DUaCTR+QBoCuf+JanWbZjoyISYSl
-         MqxuUI82u63QqGU1b/h63ngZOn/jKltIDjdNFbe9qavlPme7ujDiXVbZkmau/fmSWWdy
-         X39g==
-X-Gm-Message-State: APjAAAWluNaq1dajWnNR3g3xcWDyrNsxXS9TMj2M/SPwUaE3xZnRV+7k
-        dPy8vS9h2eM+nPINSy8PRJcUvA==
-X-Google-Smtp-Source: APXvYqyqwv3DLgpNhtnK2vwj2OiJn5Vdw0hfYPmrR/vLdQkSLHUgx7cCtN15F4zNLbLljZ08yl4v8A==
-X-Received: by 2002:a63:6904:: with SMTP id e4mr76419969pgc.321.1565028302610;
-        Mon, 05 Aug 2019 11:05:02 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id j20sm80470011pfr.113.2019.08.05.11.05.01
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 11:05:01 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 11:06:33 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Govind Singh <govinds@codeaurora.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 0/3] ath10k: Clean up regulator and clock handling
-Message-ID: <20190805180633.GB23928@tuxbook-pro>
-References: <20190725174755.23432-1-bjorn.andersson@linaro.org>
- <196fa4aa63fd5135aead736396fe3f8c@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <196fa4aa63fd5135aead736396fe3f8c@codeaurora.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Mon, 5 Aug 2019 14:09:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 83E5B8EE1D4;
+        Mon,  5 Aug 2019 11:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1565028570;
+        bh=TeqIzmbi+PMBY1Q0mh6iJWLlzVgp3VODPSmCagIjMw8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=vK3ym3VKOS0Di2akSCuaLL3r6BbUJXZFvV+dY5vQZNW23eG9yQQRta4V37hctfXJ3
+         yhBRcpyFC1QZaURqdvufX17P6/Xnte1DYQ1iZq60SR3jPJ894GlB/E7weUTTT9a4bd
+         1DHfZ0b0elHq78wo9zGtqT6HisrJIrGVj73hw2A4=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id dMRTeZY_Q80E; Mon,  5 Aug 2019 11:09:30 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.71.147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 662EC8EE079;
+        Mon,  5 Aug 2019 11:09:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1565028569;
+        bh=TeqIzmbi+PMBY1Q0mh6iJWLlzVgp3VODPSmCagIjMw8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ZRWVV8UpYXAIQqlQFFN/gLhwVQXHsjQAtZISwXskPwEQLBMk50h2//zezUIr37EqP
+         EmaxA3hD8skwxhzDEl9oU898Qh65YGpCHHcca7UHBXd1F9Ie4fVgYixHdeEhl5hmbH
+         0kto3V6Q5r9zo4XDdAu2/eRN3Z6TtqKaML2Tcqjc=
+Message-ID: <1565028568.15050.7.camel@HansenPartnership.com>
+Subject: Re: [PATCH] MAINTAINERS: Update e-mail address for Andrea Parri
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     paulmck@linux.ibm.com
+Cc:     Andrea Parri <parri.andrea@gmail.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Daniel Lustig <dlustig@nvidia.com>
+Date:   Mon, 05 Aug 2019 11:09:28 -0700
+In-Reply-To: <20190805174355.GJ28441@linux.ibm.com>
+References: <20190805121517.4734-1-parri.andrea@gmail.com>
+         <76010b66-a662-5b07-a21d-ed074d7d2194@gmail.com>
+         <20190805151545.GA1615@aparri>
+         <1565018618.3341.6.camel@HansenPartnership.com>
+         <20190805174355.GJ28441@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 25 Jul 23:52 PDT 2019, Govind Singh wrote:
-
-> On 2019-07-25 23:17, Bjorn Andersson wrote:
-> > The first patch in this series removes the regulator_set_voltage() of a
-> > fixed
-> > voltate, as fixed regulator constraints should be specified on a board
-> > level
-> > and on certain boards - such as the Lenovo Yoga C630 - the voltage
-> > specified
-> > for the 3.3V regulator is outside the given range.
+On Mon, 2019-08-05 at 10:43 -0700, Paul E. McKenney wrote:
+> On Mon, Aug 05, 2019 at 08:23:38AM -0700, James Bottomley wrote:
+> > On Mon, 2019-08-05 at 17:15 +0200, Andrea Parri wrote:
+> > > > Why don't you also add an entry in .mailmap as Will did in
+> > > > commit
+> > > > c584b1202f2d ("MAINTAINERS: Update my email address to use
+> > > > @kernel.org")?
+> > > 
+> > > I considered it but could not understand its purpose...  Maybe
+> > > you can explain it to me?  ;-) (can resend with this change if
+> > > needed/desired).
 > > 
-> > The following two patches cleans up regulator and clock usage by using
-> > the bulk
-> > API provided by the two frameworks.
-> > 
-> > Bjorn Andersson (3):
-> >   ath10k: snoc: skip regulator operations
-> >   ath10k: Use standard regulator bulk API in snoc
-> >   ath10k: Use standard bulk clock API in snoc
-> > 
-> >  drivers/net/wireless/ath/ath10k/snoc.c | 324 ++++---------------------
-> >  drivers/net/wireless/ath/ath10k/snoc.h |  26 +-
-> >  2 files changed, 48 insertions(+), 302 deletions(-)
+> > man git-shortlog gives you the gory detail, but its use is to
+> > "coalesce together commits by the same person in the shortlog,
+> > where their name and/or email address was spelled
+> > differently."  The usual way this happens is that people have the
+> > name that appears in the From field with and without initials.
 > 
-> Tested on 845 MTP and QCS404 platform with normal sanity and driver recover
-> cases for proxy votes.
+> New one on me, thank you!  So I should have a line in .mailmap like
+> this?
 > 
-> Tested-by: Govind Singh <govinds@codeaurora.org>
-> Reviewed-by: Govind Singh <govinds@codeaurora.org>
-> 
+> Paul E. McKenney <paulmck@linux.vnet.ibm.com> <paul.mckenney@linaro.o
+> rg> <paulmck@linux.ibm.com>
 
-Thanks Govind!
+Well, you could, but there's no need.  As long as your email has 'Paul
+E. McKenney' as the text prefix, git-shortlog will do the correct
+aggregation without any need for a .mailmap entry.  However, if, say,
+your linaro email had been
 
-Regards,
-Bjorn
+Paul McKenney <paul.mckenney@linaro.com>
+
+Then you would need one because git-shortlog would think 'Paul
+McKenney' and 'Paul E. McKenney' were two different people.
+
+James
+
