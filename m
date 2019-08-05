@@ -2,162 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8023B825B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 21:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55BE8825B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 21:44:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730311AbfHETn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 15:43:29 -0400
-Received: from mail-ua1-f43.google.com ([209.85.222.43]:42333 "EHLO
-        mail-ua1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfHETn2 (ORCPT
+        id S1730547AbfHEToU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 15:44:20 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.147]:14673 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727830AbfHEToU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 15:43:28 -0400
-Received: by mail-ua1-f43.google.com with SMTP id a97so32686327uaa.9;
-        Mon, 05 Aug 2019 12:43:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hnBfgMUhbuoMvEHBnoJ2TOJt3vuQ5+Y92NYXZMdDU5A=;
-        b=nEufWhQjmeZu52XJi7Yp2c4mTZl91OVsFqy/+romTM7A5GQOscm2A3ZNNUsF1gtJB8
-         lzT4QTZa7kPOZQrxsJBzyW+LnR1+tEI1HcV0ldsmEotULguKk4CptC/gmRBMVxjbning
-         pUmwLVG0WqqlYA/SqR1DpRRSKd7Z97MeIDtD+d7+Q519QR5Llxi9u97aBgLsSb2XegU0
-         tJX5EX9k9lOxMnpXMaiEUHdDIcu9SdEJaX3bY53Y0WmrrYERL/IV11q5/7ZxIdEB56ny
-         XkE5ZBJLfxdThmE71tkf5dnkUnVdEfcCF1TXR5ZzwVHqiwcGPAi09tfOiltqX/ewniv7
-         RKUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hnBfgMUhbuoMvEHBnoJ2TOJt3vuQ5+Y92NYXZMdDU5A=;
-        b=KtzjbA3yF+If+tlN8XIHk0RFOGGz5T/jQAsJAUYX705c/MchJfP2GNiI8Af/a/RHES
-         Fi0KgSOVUkWSDnglb6XrYPkP1bmYgpKe4yE+IqiaePSmGqq9r+EZz065I9ug6JeT1ini
-         LVrWIVTZIlgZvY1rpsM8ykuUE4EYy3DN8a2B5sOTu/wSuk21noQvydxbqgY93OVjWSoH
-         fu49X7qV0GcJq93rd7mgkB/NR+4dsVdS2CzK8qD1QVI7Hytm1LS/wNdC/i88qJQlqgT7
-         xjZXFjIOovYs9I2gb4iQXW0s3jGPvQ4iPVFbWriQGPf31Y32s1GIpN82zZGCDyoAEwHL
-         uyAQ==
-X-Gm-Message-State: APjAAAUnfErF03hklGnF4Lceoj4dLrkXR2j5TFVarfgdthyJCO+OBNq+
-        29kPeI7dHEySox+XgZ5XYmLuK25L3nZp8agOPMQ=
-X-Google-Smtp-Source: APXvYqzxvGwZeh93FeELaUBChg0YC4mPQ/BKXCHfwDZZyQqVlaTwCX4n1E7Fl+rpmHrNi+eP4ueB0pCr+IDmhcjU3co=
-X-Received: by 2002:ab0:5922:: with SMTP id n31mr19694603uad.103.1565034207178;
- Mon, 05 Aug 2019 12:43:27 -0700 (PDT)
+        Mon, 5 Aug 2019 15:44:20 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id E5A8E400CD15C
+        for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2019 14:44:19 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uiu3htqlm2qH7uiu3huraq; Mon, 05 Aug 2019 14:44:19 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WZPbcno5kDstBvt8/14fBFARpkWyA04NEb7lNKhBwGo=; b=Od0w6vJjgFOjV4WuKR7HZjOgLO
+        8TuIhgXjPRkicKU9lFgd6WQoTHi0q+24vrDj3y7WjG44MKbrSfs85etsIW2TQfFbXKkaEfJahLpqD
+        +wuvNejPnQRI74S/vh3SPLono+L6uJlcJjnj9hrG4KlYgfob+REwCDSir0iOJ3ZlGNOoMPvilltbW
+        7eJN+GNnMsg2qWCjjM7aLSqx4oo7HKADwTl1u1DZvK++mXGRZznSMKWyAAO3/2i8HTVgzNcj4R+01
+        6N19tIierQic0sY61GLjt0lvYQZJdM01hR34NSZEd4GbE87k2WvhxuchvuktOzOaKPQQUAooxKGCz
+        /Rqx/3RA==;
+Received: from [187.192.11.120] (port=38214 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1huiu2-003O9k-Rw; Mon, 05 Aug 2019 14:44:18 -0500
+Date:   Mon, 5 Aug 2019 14:44:18 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] power: supply: ab8500_charger: Mark expected switch
+ fall-through
+Message-ID: <20190805194418.GA14438@embeddedor>
 MIME-Version: 1.0
-References: <CAOGqxeVeEq803rrtGrnubRA8cP3dRCXsU15ss3pS1q6ik+k8Bw@mail.gmail.com>
- <7610bbc9-83d8-ee98-1425-07bb65448541@intel.com> <CAOGqxeVR3XzAQ-yTH35hyT3KpL11nTwMY1Ca96ZW=K=PiWMnHA@mail.gmail.com>
- <23ce5519-cb4b-4d85-4bfc-3e438212ec7f@intel.com> <CAOGqxeVjj9Leok-Oph-kNA92fKhdBHzwJZ643uND8GV_8VaHCw@mail.gmail.com>
- <bacb9b93-e7fa-453e-2b4f-8056c9ab34b8@intel.com>
-In-Reply-To: <bacb9b93-e7fa-453e-2b4f-8056c9ab34b8@intel.com>
-From:   Alan Cooper <alcooperx@gmail.com>
-Date:   Mon, 5 Aug 2019 15:43:52 -0400
-Message-ID: <CAOGqxeUwXEYr493N-=jNBxHwDgWyAiKfER=mJbnEMMAL2EQF7g@mail.gmail.com>
-Subject: Re: Issue with sequence to switch to HS400
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1huiu2-003O9k-Rw
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:38214
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No problem.
+Mark switch cases where we are expecting to fall through.
 
-Thanks
-Al
+This patch fixes the following warning (Building: allmodconfig arm):
 
-On Tue, Jul 30, 2019 at 4:00 AM Adrian Hunter <adrian.hunter@intel.com> wro=
-te:
->
-> On 26/07/19 12:37 AM, Alan Cooper wrote:
-> > That's an even better solution and it gets my HS400 mode working.
-> > Will you add this change or should I?
->
-> You, if you wouldn't mind.
->
-> >
-> > Thanks
-> > Al
-> >
-> > On Thu, Jul 25, 2019 at 3:33 AM Adrian Hunter <adrian.hunter@intel.com>=
- wrote:
-> >>
-> >> On 23/07/19 3:34 PM, Alan Cooper wrote:
-> >>> On Tue, Jul 23, 2019 at 1:21 AM Adrian Hunter <adrian.hunter@intel.co=
-m> wrote:
-> >>>>
-> >>>> On 23/07/19 1:31 AM, Alan Cooper wrote:
-> >>>>> I'm having a problem with a new SD/MMC controller and PHY in our
-> >>>>> latest SoC's. The issue I'm seeing is that I can't switch into HS40=
-0
-> >>>>> mode. This looks like something the driver is doing that doesn't me=
-et
-> >>>>> the JEDEC spec. In the "HS400 timing mode selection" section of the
-> >>>>> JEDEC spec , in step 7 it states:
-> >>>>>
-> >>>>> 7) Set the =E2=80=9CTiming Interface=E2=80=9D parameter in the HS_T=
-IMING [185] field
-> >>>>> of the Extended CSD register to 0x1 to switch to High Speed mode an=
-d
-> >>>>> then set the clock frequency to a value not greater than 52 MHz.
-> >>>>>
-> >>>>> In the function mmc_select_hs400() in mmc.c, I see that a switch
-> >>>>> command is done to set the eMMC device to HS mode and then
-> >>>>> mmc_set_timing(card->host, MMC_TIMING_MMC_HS) is used to change the
-> >>>>> controller to HS mode. The problem is that the "SD Host Controller
-> >>>>> Standard Specification" states that "UHS Mode Select" field of the
-> >>>>> "Host Control 2 Register" controls the mode when the "1.8V Signalin=
-g
-> >>>>> Enable" bit in the same register is set, so mmc_set_timing() is
-> >>>>> actually leaving the controller in SDR12 mode and mmc_select_hs400(=
-)
-> >>>>> will then set the clock to 52MHz. This causes our PHY to detect an
-> >>>>> illegal combination and return an error.
-> >>>>>
-> >>>>> I think the easiest fix would be to change mmc_set_timing(card->hos=
-t,
-> >>>>> MMC_TIMING_MMC_HS) to mmc_set_timing(card->host,
-> >>>>> MMC_TIMING_UHS_SDR25). The other possibility would be to change
-> >>>>> mmc_set_timing to handle the "1.8V Signaling Enable" bit properly.
-> >>>>> I'll submit a patch based on the feedback I get.
-> >>>>
-> >>>> eMMC is governed by JEDEC specs not SD specs.
-> >>>
-> >>> My understanding is that JEDEC does not have a host controller spec s=
-o
-> >>> this driver uses the "SD Host Controller Standard Specification".
-> >>
-> >> There is no spec for using eMMC with SDHCI.
-> >>
-> >>>
-> >>>>
-> >>>> Please consider making a change in your driver instead.  For example=
-, hook
-> >>>> ->set_ios() and if 1.8V is enabled and timing is set to MMC_TIMING_M=
-MC_HS
-> >>>> then change it to MMC_TIMING_UHS_SDR25.
-> >>>
-> >>> That's an easy fix, but it still leaves all other drivers/systems
-> >>> temporarily using SDR12 at 52MHz during the switch to HS400.
-> >>
-> >> Yes, I changed my mind.  Does this work:
-> >>
-> >> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> >> index 59acf8e3331e..f9d241458dcd 100644
-> >> --- a/drivers/mmc/host/sdhci.c
-> >> +++ b/drivers/mmc/host/sdhci.c
-> >> @@ -1849,7 +1849,9 @@ void sdhci_set_uhs_signaling(struct sdhci_host *=
-host, unsigned timing)
-> >>                 ctrl_2 |=3D SDHCI_CTRL_UHS_SDR104;
-> >>         else if (timing =3D=3D MMC_TIMING_UHS_SDR12)
-> >>                 ctrl_2 |=3D SDHCI_CTRL_UHS_SDR12;
-> >> -       else if (timing =3D=3D MMC_TIMING_UHS_SDR25)
-> >> +       else if (timing =3D=3D MMC_TIMING_SD_HS ||
-> >> +                timing =3D=3D MMC_TIMING_MMC_HS ||
-> >> +                timing =3D=3D MMC_TIMING_UHS_SDR25)
-> >>                 ctrl_2 |=3D SDHCI_CTRL_UHS_SDR25;
-> >>         else if (timing =3D=3D MMC_TIMING_UHS_SDR50)
-> >>                 ctrl_2 |=3D SDHCI_CTRL_UHS_SDR50;
-> >
->
+drivers/power/supply/ab8500_charger.c:738:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/power/supply/ab8500_charger.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply/ab8500_charger.c
+index 30de448de802..1be75a2fed9b 100644
+--- a/drivers/power/supply/ab8500_charger.c
++++ b/drivers/power/supply/ab8500_charger.c
+@@ -742,6 +742,7 @@ static int ab8500_charger_max_usb_curr(struct ab8500_charger *di,
+ 						USB_CH_IP_CUR_LVL_1P5;
+ 			break;
+ 		}
++		/* else, fall through */
+ 	case USB_STAT_HM_IDGND:
+ 		dev_err(di->dev, "USB Type - Charging not allowed\n");
+ 		di->max_usb_in_curr.usb_type_max = USB_CH_IP_CUR_LVL_0P05;
+-- 
+2.22.0
+
