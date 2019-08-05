@@ -2,121 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A9C81829
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 13:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D3E8182E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 13:30:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbfHEL3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 07:29:49 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52626 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbfHEL3s (ORCPT
+        id S1728545AbfHELay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 07:30:54 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34889 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728086AbfHELay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 07:29:48 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x75BTKSW115484;
-        Mon, 5 Aug 2019 06:29:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565004560;
-        bh=wzH7hcXLRSIRnTJuQkwQcED4ubUkDKVStLmHk0wTm2k=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=NZvXalp1tJcUv51D21uZysaUCYnHegn7+Ojxec0KEL3DB+gCkivle4pJstRKG/AGU
-         s/0zQNgS317EQ45YTYIYEfR43K6S2x09KD5jiQ+BCC+p4i4F4CfmfiEourvfAzj3iA
-         +6QhoYX1VgQyQXb/5KDlLZEXUZy6/FO/9S4bFPuQ=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x75BTKMR011027
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Aug 2019 06:29:20 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 5 Aug
- 2019 06:29:19 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 5 Aug 2019 06:29:19 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x75BTGqI029588;
-        Mon, 5 Aug 2019 06:29:16 -0500
-Subject: Re: [PATCH 6/7] mtd: spi-nor: Rework the SPI NOR lock/unlock logic
-To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>,
-        <marek.vasut@gmail.com>
-CC:     <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <boris.brezillon@bootlin.com>
-References: <20190731090315.26798-1-tudor.ambarus@microchip.com>
- <20190731090315.26798-7-tudor.ambarus@microchip.com>
- <21112f0c-abf0-2b86-5847-2ad7676a29be@ti.com>
- <d02fc366-55b6-f698-2419-f277e88dfe02@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <2da7cf7f-db59-2d0f-e7cb-fcda974031ca@ti.com>
-Date:   Mon, 5 Aug 2019 16:59:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 5 Aug 2019 07:30:54 -0400
+Received: by mail-lf1-f68.google.com with SMTP id p197so57619165lfa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 04:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6Bc8NHf4XEA3AFrQS5wX1u0FN2ecF3L6OaM/trUcBDs=;
+        b=FX3aXIsu7CgrYcnB1VoyViq8b2RkKPSBAIqLvs2tcwg0AfgNecFb+qsD7mBzxsG/1Q
+         r9ax/oSQcplUMj5ecYxt/FNxrmeLoeBE9EHbHZOvU1OU2SNBYMr8W82psgUg6UF3eQVz
+         d4Pw6VqIDerqUm7ZxCTStppiEJZBBA8h/TRAoFmqEbxOqWgSnbQaQSXQB+6cZkF4rXZT
+         pkIVndfQTXaDrj2uwTKJ7/MiBMOzT5BGQp67k0Xv5knD3MyHfJBFKFvuf1gQEZSvzIZg
+         u+r5aQToWjdqzTc+mgqoq7R8R9O4A0eCSp+DCOW2R9ia332L3zXsxBAxP0SI0rHjQ5gz
+         EsdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6Bc8NHf4XEA3AFrQS5wX1u0FN2ecF3L6OaM/trUcBDs=;
+        b=SoHWF8VwE4sZb1fcXE56S9Caby7z6/c/dyChMQ8kqJpRMqZy6UdStEgKfq2xsrpwb/
+         GBs1UlaqSsIlSA1E92AT1qJy9S0jh8OF96EJB/iykyfr/eUL9pqqCFLStavP4upt+tgo
+         eEarFwaFjODggQ840ilXCe+9KevOunKCoDdbiENeYAZtL0yZXq6UBlYusite8VGSkhS4
+         ZTEl+rtymWjBhFarBH4mXClHnkeOCEPCs1mkuY0Qg+OsHATqrhg0V4gLSMauCpnopvyo
+         4pKdbteinPf1c7Lch2nZCHjUHcL76iItH28nWbuQioNfcsDmQgrRk9qKK27xtLM4R2ER
+         BLPQ==
+X-Gm-Message-State: APjAAAVKBjRNX60MrEGU8pTFoEo4ARcsRLRFerokA0nmavbEG47nxMck
+        QI6och/DRFTqx942TGNFUC4DrxbNgEWeAJsNiM+ZqA==
+X-Google-Smtp-Source: APXvYqxl7TKd1+ZelEywkZ7P3B2z2FodSFusAmjgisMekyhQnzsz8JfLhSQji4HesO4esu2pomVDaeO/JmjJ4q8gfno=
+X-Received: by 2002:a19:ed11:: with SMTP id y17mr2050295lfy.141.1565004652534;
+ Mon, 05 Aug 2019 04:30:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d02fc366-55b6-f698-2419-f277e88dfe02@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190731132917.17607-1-geert+renesas@glider.be> <20190731132917.17607-3-geert+renesas@glider.be>
+In-Reply-To: <20190731132917.17607-3-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 5 Aug 2019 13:30:40 +0200
+Message-ID: <CACRpkdap1KLy5ixCJdOA281m+MZLNuVMherFVCE3sLVzqAiRYw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: lantiq: Use kasprintf() instead of fixed
+ buffer formatting
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 31, 2019 at 3:29 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-On 05/08/19 1:30 PM, Tudor.Ambarus@microchip.com wrote:
->>
->> On 31-Jul-19 2:33 PM, Tudor.Ambarus@microchip.com wrote:
->>> From: Boris Brezillon <boris.brezillon@bootlin.com>
->>>
->>> Move the locking hooks in a separate struct so that we have just
->>> one field to update when we change the locking implementation.
->>>
->>> stm_locking_ops, the legacy locking operations, can be overwritten
->>> later on by implementing manufacturer specific default_init() hooks.
->>>
->>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->>> [tudor.ambarus@microchip.com: use ->default_init() hook]
->>> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
->>
->> [...]
-[...]
->>>  
->>> +/**
->>> + * struct spi_nor_locking_ops - SPI NOR locking methods
->>> + * @lock: lock a region of the SPI NOR
->>> + * @unlock: unlock a region of the SPI NOR
->>> + * @is_locked: check if a region of the SPI NOR is completely locked
->>> + */
->>> +struct spi_nor_locking_ops {
->>> +	int (*lock)(struct spi_nor *nor, loff_t ofs, uint64_t len);
->>> +	int (*unlock)(struct spi_nor *nor, loff_t ofs, uint64_t len);
->>> +	int (*is_locked)(struct spi_nor *nor, loff_t ofs, uint64_t len);
->>
->> checkpatch does not like uint64_t. Please changes these to size_t
-> 
-> This respects what struct mtd_info is expecting:
-> 
->         int (*_lock) (struct mtd_info *mtd, loff_t ofs, uint64_t len);
->         int (*_unlock) (struct mtd_info *mtd, loff_t ofs, uint64_t len);
->         int (*_is_locked) (struct mtd_info *mtd, loff_t ofs, uint64_t len);
-> 
-> I haven't seen the warnings, would you mind pasting them?
-> ./scripts/checkpatch.pl --strict 6-7-mtd-spi-nor-Rework-the-SPI-NOR-lock-unlock-logic.patch
-> total: 0 errors, 0 warnings, 0 checks, 102 lines checked
-> 
-> 6-7-mtd-spi-nor-Rework-the-SPI-NOR-lock-unlock-logic.patch has no obvious style problems and is ready for submission.
-> 
+> Improve readability and maintainability by replacing a hardcoded string
+> allocation and formatting by the use of the kasprintf() helper.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hmm, seems to be emitted only for certain type of declarations. Not sure 
-whats the pattern here. Warning is something like:
+Patch applied.
 
-CHECK: Prefer kernel type 'u64' over 'uint64_t'
-
-from: https://elixir.bootlin.com/linux/latest/source/scripts/checkpatch.pl#L5906
-
-
--- 
-Regards
-Vignesh
+Yours,
+Linus Walleij
