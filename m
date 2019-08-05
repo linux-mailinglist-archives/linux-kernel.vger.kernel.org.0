@@ -2,79 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 503BF812EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 881CB812C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:10:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbfHEHRi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 03:17:38 -0400
-Received: from hel-mailgw-01.vaisala.com ([193.143.230.17]:22329 "EHLO
-        hel-mailgw-01.vaisala.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfHEHRh (ORCPT
+        id S1727423AbfHEHKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 03:10:35 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42682 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbfHEHKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 03:17:37 -0400
-X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Aug 2019 03:17:36 EDT
-IronPort-SDR: AiVsvu83aTiditj6bcGQPuocqOVRL70JlYuCuYjJ858UNGxtou3LY7zkkGMN8jnPOOAeJThQjU
- YIRW2/bmY8XRUFu0dAeeHEG1MRG3i6Pa9zjINUVMJ6d/4u5FJHCjE5mZsvJVoLeLUnvm6Ck4Z2
- QhAM/NtQjsn2B8BT1G7FUaEXtLkTOcbl3Ntz/Mt7w5tu6rBe1BOHanV+KJUtU6VXmbddeO9aph
- jH7yXWOuZ0/Dl8HuGebBIO/upipgxj19ZEuGUxvEx95irLWsXAMKL+0s3J/o2rV8Ipir4rBiSo
- uLo=
-X-IronPort-AV: E=Sophos;i="5.64,349,1559509200"; 
-   d="scan'208";a="227589749"
-Subject: Re: [PATCH] power: reset: nvmem-reboot-mode: add CONFIG_OF dependency
-To:     Arnd Bergmann <arnd@arndb.de>, Sebastian Reichel <sre@kernel.org>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190708125247.3769080-1-arnd@arndb.de>
-From:   Nandor Han <nandor.han@vaisala.com>
-Message-ID: <6aa562a3-effe-12c2-25d8-47ecf583d724@vaisala.com>
-Date:   Mon, 5 Aug 2019 10:10:14 +0300
+        Mon, 5 Aug 2019 03:10:35 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x1so33329437wrr.9
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 00:10:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZevUiv8uwSdDDjAx9KzB+mkgl2A2MlBAMqJYEcYxJb4=;
+        b=VNkFjk2VA4yKzW2hyeg0goQYjSulpLwjv34xgLelHkORELoJMe0IcUALiS2QYAJajA
+         rhZhDuKTuBYv48wzkQ0tlXrNTwzQyul0i59ev5o38kKnVJXUCGNHr1V/J9DO/Akpu9b6
+         q3GqlS6vCVe7NHJfjf8gD0yJD3v3PUxTqDVvntUqMGQZAsmxGO3CgLUy3a/MDxrlmUyf
+         HOS+nNGcs5HZ7Qt47lSDpFo/MWW9Ilc6JaKzHbZn3uAJDb7N+ilpzrzbfJ7G+CGC9jgY
+         EmaaR4Hl0Qqw9f2sF0wKE5hR+K932FDFDudZIluk1d1jwJAWKPuoau/E41zdbgUOyg04
+         XNng==
+X-Gm-Message-State: APjAAAWp0tyGGXQBh39CqyNkNrEh3DaW4qcWzy5qVBkzmuFOx61x5emN
+        j6iMwuN0wWUIwuLvTCtyJwNVTSmtKs4=
+X-Google-Smtp-Source: APXvYqz4JZD0IeqwiFL5mBQ4rS9FPy4QrJF8r1CcIFwbr3gterh7TeHwGfJ0MlgqppwBX5w6DpgFdg==
+X-Received: by 2002:a05:6000:42:: with SMTP id k2mr38385884wrx.80.1564989033079;
+        Mon, 05 Aug 2019 00:10:33 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:4013:e920:9388:c3ff? ([2001:b07:6468:f312:4013:e920:9388:c3ff])
+        by smtp.gmail.com with ESMTPSA id t185sm74525739wma.11.2019.08.05.00.10.31
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 00:10:32 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 07/19] RISC-V: KVM: Implement
+ KVM_GET_ONE_REG/KVM_SET_ONE_REG ioctls
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190802074620.115029-1-anup.patel@wdc.com>
+ <20190802074620.115029-8-anup.patel@wdc.com>
+ <03f60f3a-bb50-9210-8352-da16cca322b9@redhat.com>
+ <CAAhSdy3hdWfUCUEK-idoTzgB2hKeAd3FzsHEH1DK_BTC_KGdJw@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <eb964565-10e1-bd44-c37c-774bf2f58049@redhat.com>
+Date:   Mon, 5 Aug 2019 09:10:31 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190708125247.3769080-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAAhSdy3hdWfUCUEK-idoTzgB2hKeAd3FzsHEH1DK_BTC_KGdJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-OriginalArrivalTime: 05 Aug 2019 07:10:20.0701 (UTC) FILETIME=[D7CE8CD0:01D54B5C]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/8/19 3:52 PM, Arnd Bergmann wrote:
-> Without CONFIG_OF, we get a build failure in the reboot-mode
-> implementation:
+On 05/08/19 08:55, Anup Patel wrote:
+> On Fri, Aug 2, 2019 at 2:33 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>>
+>> On 02/08/19 09:47, Anup Patel wrote:
+>>> +     if (reg_num == KVM_REG_RISCV_CSR_REG(sip))
+>>> +             kvm_riscv_vcpu_flush_interrupts(vcpu, false);
+>>
+>> Not updating the vsip CSR here can cause an interrupt to be lost, if the
+>> next call to kvm_riscv_vcpu_flush_interrupts finds a zero mask.
 > 
-> drivers/power/reset/reboot-mode.c: In function 'reboot_mode_register':
-> drivers/power/reset/reboot-mode.c:72:2: error: implicit declaration of function 'for_each_property_of_node'; did you mean 'for_each_child_of_node'? [-Werror=implicit-function-declaration]
->    for_each_property_of_node(np, prop) {
+> Thanks for catching this issue. I will address it in v3.
 > 
-> Add a Kconfig dependency like we have for the other users of
-> CONFIG_REBOOT_MODE.
-> 
-> Fixes: 7a78a7f7695b ("power: reset: nvmem-reboot-mode: use NVMEM as reboot mode write interface")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/power/reset/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index 8dfb105db391..a564237278ff 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -248,6 +248,7 @@ config POWER_RESET_SC27XX
->   
->   config NVMEM_REBOOT_MODE
->   	tristate "Generic NVMEM reboot mode driver"
-> +	depends on OF
->   	select REBOOT_MODE
->   	help
->   	  Say y here will enable reboot mode driver. This will
-> 
+> If we think more on similar lines then we also need to handle the case
+> where Guest VCPU had pending interrupts and we suddenly stopped it
+> for Guest migration. In this case, we would eventually use SET_ONE_REG
+> ioctl on destination Host which should set vsip_shadow instead of vsip so
+> that we force update HW after resuming Guest VCPU on destination host.
 
-Wouldn't this be more appropriate to add the "depends on OF" to "config 
-REBOOT_MODE" section, since this is an error to `reboot-mode.c` unit?
+I think it's simpler than that.
 
-Nandor
+vcpu->vsip_shadow is just the current value of CSR_VSIP so that you do
+not need to update it unconditionally on every vmentry.  That is,
+kvm_vcpu_arch_load should do
+
+	csr_write(CSR_VSIP, vcpu->arch.guest_csr.vsip);
+	vcpu->vsip_shadow = vcpu->arch.guest_csr.vsip;
+
+while every other write can go through kvm_riscv_update_vsip.  But
+vsip_shadow is completely disconnected from SET_ONE_REG; SET_ONE_REG can
+just write vcpu->arch.guest_csr.vsip and clear irqs_pending_mask, the
+next entry will write CSR_VSIP and vsip_shadow if needed.
+
+In fact, instead of placing it in kvm_vcpu, vsip_shadow could be a
+percpu variable; on hardware_enable you write 0 to both vsip_shadow and
+CSR_VSIP, and then kvm_arch_vcpu_load does not have to touch CSR_VSIP at
+all (only kvm_riscv_vcpu_flush_interrupts).  I think this makes the
+purpose of vsip_shadow even clearer, so I highly suggest doing that.
+
+>> You could add a new field vcpu->vsip_shadow that is updated every time
+>> CSR_VSIP is written (including kvm_arch_vcpu_load) with a function like
+>>
+>> void kvm_riscv_update_vsip(struct kvm_vcpu *vcpu)
+>> {
+>>         if (vcpu->vsip_shadow != vcpu->arch.guest_csr.vsip) {
+>>                 csr_write(CSR_VSIP, vcpu->arch.guest_csr.vsip);
+>>                 vcpu->vsip_shadow = vcpu->arch.guest_csr.vsip;
+>>         }
+>> }
+>>
+>> And just call this unconditionally from kvm_vcpu_ioctl_run.  The cost is
+>> just a memory load per VS-mode entry, it should hardly be measurable.
+> 
+> I think we can do this at start of kvm_riscv_vcpu_flush_interrupts() as well.
+
+Did you mean at the end?  (That is, after modifying
+vcpu->arch.guest_csr.vsip based on mask and val).  With the above switch
+to percpu, the only write of CSR_VSIP and vsip_shadow should be in
+kvm_riscv_vcpu_flush_interrupts, which in turn is only called from
+kvm_vcpu_ioctl_run.
+
+Thanks,
+
+Paolo
