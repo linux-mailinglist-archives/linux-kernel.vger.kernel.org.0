@@ -2,111 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83CAA81AB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF3481A75
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:06:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbfHENIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:08:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46722 "EHLO mail.kernel.org"
+        id S1729543AbfHENGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:48156 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729192AbfHENIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:08:35 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0FC32075B;
-        Mon,  5 Aug 2019 13:08:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010515;
-        bh=eeFIHSL2xp6/VvCSYq3PlJ1aasNV2jep2XmQvnOX6eg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZpZwwsnddCNKItpA1uJObdiOWhdTCmA4vEpe9iqk04N7QYsxyBTaWgrZSV2NwYrib
-         STd30WMLp3KQPaliA4t8F1uKedCx8CDxPNkaqCV1JL4xoyuVMxn8EczwvgdfzFVuDl
-         gP4o05/MjTQQ3wyzOJHU/vOG4sjOPCGZOTBEjYr4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, x86@kernel.org,
-        Borislav Petkov <bp@alien8.de>,
-        Duncan Roe <duncan_roe@optusnet.com.au>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 53/53] x86/vdso: Prevent segfaults due to hoisted vclock reads
-Date:   Mon,  5 Aug 2019 15:03:18 +0200
-Message-Id: <20190805124933.695368129@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
-References: <20190805124927.973499541@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729031AbfHENGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06BD41570;
+        Mon,  5 Aug 2019 06:06:09 -0700 (PDT)
+Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15F153F706;
+        Mon,  5 Aug 2019 06:06:06 -0700 (PDT)
+Subject: Re: [PATCH 0/9] arm64: Stolen time support
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     kvm@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        linux-doc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
+        Julien Thierry <julien.thierry.kdev@gmail.com>
+References: <20190802145017.42543-1-steven.price@arm.com>
+ <20190803190522.5fec8f7d@why>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <6789f477-8ab5-cc54-1ad2-8627917b07c9@arm.com>
+Date:   Mon, 5 Aug 2019 14:06:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190803190522.5fec8f7d@why>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+On 03/08/2019 19:05, Marc Zyngier wrote:
+> On Fri,  2 Aug 2019 15:50:08 +0100
+> Steven Price <steven.price@arm.com> wrote:
+> 
+> Hi Steven,
+> 
+>> This series add support for paravirtualized time for arm64 guests and
+>> KVM hosts following the specification in Arm's document DEN 0057A:
+>>
+>> https://developer.arm.com/docs/den0057/a
+>>
+>> It implements support for stolen time, allowing the guest to
+>> identify time when it is forcibly not executing.
+>>
+>> It doesn't implement support for Live Physical Time (LPT) as there are
+>> some concerns about the overheads and approach in the above
+>> specification, and I expect an updated version of the specification to
+>> be released soon with just the stolen time parts.
+> 
+> Thanks for posting this.
+> 
+> My current concern with this series is around the fact that we allocate
+> memory from the kernel on behalf of the guest. It is the first example
+> of such thing in the ARM port, and I can't really say I'm fond of it.
+> 
+> x86 seems to get away with it by having the memory allocated from
+> userspace, why I tend to like more. Yes, put_user is more
+> expensive than a straight store, but this isn't done too often either.
+> 
+> What is the rational for your current approach?
 
-commit ff17bbe0bb405ad8b36e55815d381841f9fdeebc upstream.
+As I see it there are 3 approaches that can be taken here:
 
-GCC 5.5.0 sometimes cleverly hoists reads of the pvclock and/or hvclock
-pages before the vclock mode checks.  This creates a path through
-vclock_gettime() in which no vclock is enabled at all (due to disabled
-TSC on old CPUs, for example) but the pvclock or hvclock page
-nevertheless read.  This will segfault on bare metal.
+1. Hypervisor allocates memory and adds it to the virtual machine. This
+means that everything to do with the 'device' is encapsulated behind the
+KVM_CREATE_DEVICE / KVM_[GS]ET_DEVICE_ATTR ioctls. But since we want the
+stolen time structure to be fast it cannot be a trapping region and has
+to be backed by real memory - in this case allocated by the host kernel.
 
-This fixes commit 459e3a21535a ("gcc-9: properly declare the
-{pv,hv}clock_page storage") in the sense that, before that commit, GCC
-didn't seem to generate the offending code.  There was nothing wrong
-with that commit per se, and -stable maintainers should backport this to
-all supported kernels regardless of whether the offending commit was
-present, since the same crash could just as easily be triggered by the
-phase of the moon.
+2. Host user space allocates memory. Similar to above, but this time
+user space needs to manage the memory region as well as the usual
+KVM_CREATE_DEVICE dance. I've no objection to this, but it means
+kvmtool/QEMU needs to be much more aware of what is going on (e.g. how
+to size the memory region).
 
-On GCC 9.1.1, this doesn't seem to affect the generated code at all, so
-I'm not too concerned about performance regressions from this fix.
+3. Guest kernel "donates" the memory to the hypervisor for the
+structure. As far as I'm aware this is what x86 does. The problems I see
+this approach are:
 
-Cc: stable@vger.kernel.org
-Cc: x86@kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Reported-by: Duncan Roe <duncan_roe@optusnet.com.au>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ a) kexec becomes much more tricky - there needs to be a disabling
+mechanism for the guest to stop the hypervisor scribbling on memory
+before starting the new kernel.
 
----
- arch/x86/entry/vdso/vclock_gettime.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ b) If there is more than one entity that is interested in the
+information (e.g. firmware and kernel) then this requires some form of
+arbitration in the guest because the hypervisor doesn't want to have to
+track an arbitrary number of regions to update.
 
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -191,13 +191,24 @@ notrace static inline u64 vgetsns(int *m
- 
- 	if (gtod->vclock_mode == VCLOCK_TSC)
- 		cycles = vread_tsc();
-+
-+	/*
-+	 * For any memory-mapped vclock type, we need to make sure that gcc
-+	 * doesn't cleverly hoist a load before the mode check.  Otherwise we
-+	 * might end up touching the memory-mapped page even if the vclock in
-+	 * question isn't enabled, which will segfault.  Hence the barriers.
-+	 */
- #ifdef CONFIG_PARAVIRT_CLOCK
--	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
-+	else if (gtod->vclock_mode == VCLOCK_PVCLOCK) {
-+		barrier();
- 		cycles = vread_pvclock(mode);
-+	}
- #endif
- #ifdef CONFIG_HYPERV_TSCPAGE
--	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
-+	else if (gtod->vclock_mode == VCLOCK_HVCLOCK) {
-+		barrier();
- 		cycles = vread_hvclock(mode);
-+	}
- #endif
- 	else
- 		return 0;
+ c) Performance can suffer if the host kernel doesn't have a suitably
+aligned/sized area to use. As you say - put_user() is more expensive.
+The structure is updated on every return to the VM.
 
 
+Of course x86 does prove the third approach can work, but I'm not sure
+which is actually better. Avoid the kexec cancellation requirements was
+the main driver of the current approach. Although many of the
+conversations about this were also tied up with Live Physical Time which
+adds its own complications.
+
+Steve
