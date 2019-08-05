@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC2A81B46
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D42F81B3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbfHENNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:13:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47640 "EHLO mail.kernel.org"
+        id S1730220AbfHENJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:09:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729407AbfHENJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:09:14 -0400
+        id S1730198AbfHENJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:09:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42D362067D;
-        Mon,  5 Aug 2019 13:09:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85AD62173B;
+        Mon,  5 Aug 2019 13:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010553;
-        bh=O+70/KXM6Un8qCtO310oCJhukJo4rQYOMa+IEdVzAaU=;
+        s=default; t=1565010572;
+        bh=kZYsUvZPEFAO+1Wqs/U1YjvMKOisBABTzQtkmJgkDWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GEkheRLwNHJZLZ/knmkOH9uuQVfewofcU+NeFCrbMohcoQ+EiXTpWVfasmlzQAWJS
-         GxqVT3/siM4b3IijJ68LUK2bBpC7mV4576eLUZ+mS3dB65bvk/mRlG3CKgeNERHxm6
-         zDWzuH1StN8T6FEeqNw2Ut8EW743cnvEvFsGRLYw=
+        b=Z7niredCQlyNL8355sByXX0MmQzd2AQbcpJENV9tLkjbHYXfyw/OqYrVFNz6ZWorK
+         FddFEiYGzdvsjLifyplPOp3H2WUU8NIDULcFP68kvGNwvjV1KwJM+uqaDc8yF/Xw2C
+         LvmUTnE0j4kkRM5uNvPRw94YPCRIoAHci1lR1k/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 02/74] ARM: dts: rockchip: Make rk3288-veyron-minnie run at hs200
-Date:   Mon,  5 Aug 2019 15:02:15 +0200
-Message-Id: <20190805124936.029458352@linuxfoundation.org>
+Subject: [PATCH 4.19 09/74] firmware/psci: psci_checker: Park kthreads before stopping them
+Date:   Mon,  5 Aug 2019 15:02:22 +0200
+Message-Id: <20190805124936.551733894@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
 References: <20190805124935.819068648@linuxfoundation.org>
@@ -44,55 +47,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1c0479023412ab7834f2e98b796eb0d8c627cd62 ]
+[ Upstream commit 92e074acf6f7694e96204265eb18ac113f546e80 ]
 
-As some point hs200 was failing on rk3288-veyron-minnie.  See commit
-984926781122 ("ARM: dts: rockchip: temporarily remove emmc hs200 speed
-from rk3288 minnie").  Although I didn't track down exactly when it
-started working, it seems to work OK now, so let's turn it back on.
+Since commit 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme()
+completion issue"), kthreads that are bound to a CPU must be parked
+before being stopped. At the moment the PSCI checker calls
+kthread_stop() directly on the suspend kthread, which triggers the
+following warning:
 
-To test this, I booted from SD card and then used this script to
-stress the enumeration process after fixing a memory leak [1]:
-  cd /sys/bus/platform/drivers/dwmmc_rockchip
-  for i in $(seq 1 3000); do
-    echo "========================" $i
-    echo ff0f0000.dwmmc > unbind
-    sleep .5
-    echo ff0f0000.dwmmc > bind
-    while true; do
-      if [ -e /dev/mmcblk2 ]; then
-        break;
-      fi
-      sleep .1
-    done
-  done
+[    6.068288] WARNING: CPU: 1 PID: 1 at kernel/kthread.c:398 __kthread_bind_mask+0x20/0x78
+               ...
+[    6.190151] Call trace:
+[    6.192566]  __kthread_bind_mask+0x20/0x78
+[    6.196615]  kthread_unpark+0x74/0x80
+[    6.200235]  kthread_stop+0x44/0x1d8
+[    6.203769]  psci_checker+0x3bc/0x484
+[    6.207389]  do_one_initcall+0x48/0x260
+[    6.211180]  kernel_init_freeable+0x2c8/0x368
+[    6.215488]  kernel_init+0x10/0x100
+[    6.218935]  ret_from_fork+0x10/0x1c
+[    6.222467] ---[ end trace e05e22863d043cd3 ]---
 
-It worked fine.
+kthread_unpark() tries to bind the thread to its CPU and aborts with a
+WARN() if the thread wasn't in TASK_PARKED state. Park the kthreads
+before stopping them.
 
-[1] https://lkml.kernel.org/r/20190503233526.226272-1-dianders@chromium.org
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/rk3288-veyron-minnie.dts | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/firmware/psci_checker.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk3288-veyron-minnie.dts b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-index f95d0c5fcf712..6e8946052c78b 100644
---- a/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-+++ b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-@@ -90,10 +90,6 @@
- 	pwm-off-delay-ms = <200>;
- };
+diff --git a/drivers/firmware/psci_checker.c b/drivers/firmware/psci_checker.c
+index 3469436579622..cbd53cb1b2d47 100644
+--- a/drivers/firmware/psci_checker.c
++++ b/drivers/firmware/psci_checker.c
+@@ -366,16 +366,16 @@ static int suspend_test_thread(void *arg)
+ 	for (;;) {
+ 		/* Needs to be set first to avoid missing a wakeup. */
+ 		set_current_state(TASK_INTERRUPTIBLE);
+-		if (kthread_should_stop()) {
+-			__set_current_state(TASK_RUNNING);
++		if (kthread_should_park())
+ 			break;
+-		}
+ 		schedule();
+ 	}
  
--&emmc {
--	/delete-property/mmc-hs200-1_8v;
--};
--
- &gpio_keys {
- 	pinctrl-0 = <&pwr_key_l &ap_lid_int_l &volum_down_l &volum_up_l>;
+ 	pr_info("CPU %d suspend test results: success %d, shallow states %d, errors %d\n",
+ 		cpu, nb_suspend, nb_shallow_sleep, nb_err);
  
++	kthread_parkme();
++
+ 	return nb_err;
+ }
+ 
+@@ -440,8 +440,10 @@ static int suspend_tests(void)
+ 
+ 
+ 	/* Stop and destroy all threads, get return status. */
+-	for (i = 0; i < nb_threads; ++i)
++	for (i = 0; i < nb_threads; ++i) {
++		err += kthread_park(threads[i]);
+ 		err += kthread_stop(threads[i]);
++	}
+  out:
+ 	cpuidle_resume_and_unlock();
+ 	kfree(threads);
 -- 
 2.20.1
 
