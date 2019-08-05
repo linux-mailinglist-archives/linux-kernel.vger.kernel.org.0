@@ -2,191 +2,504 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89FAC814F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1429B814F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbfHEJMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 05:12:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35224 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728162AbfHEJM1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728168AbfHEJM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 5 Aug 2019 05:12:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0Xl4nFtLEDd2YBesciw1Tr+1Rk8AZfxgf2PNKokKF2A=; b=T/va5UGrwtLoQMnDoM2NPT+5Da
-        WDpOVxCAUGw+CKlKpDUwOOYDoozVSNsU5CrsArcyWFDbNqds/nTWUgD6wqqzAjz2ICOmG5yS4pKzg
-        LY2LBo6WCMh6FK0wL2D0nmyowd0pkRk+7lgmaZ88Qj6ZmxgkrTOFw7Rx+3JpyodfObRPoVVfgXaEu
-        lW4ENpSu7Jd9fk4/7GgbDVXaX+QqB+ufBxGd4Bzb0SSEmXh/rcaOAouu7S9qLuLxbvTEsblE0N/5v
-        6F1W/W7L4EXsIwOUENUfV7XjRSOB5X/4d4mTYuWY8N0IdlSIBI+K/wwVO5oH12q4cSiJKpxDyy04q
-        4OtGUPkg==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1huZ2S-00054j-47; Mon, 05 Aug 2019 09:12:21 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Takashi Iwai <tiwai@suse.de>, Robin Murphy <robin.murphy@arm.com>,
-        Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 6/7] dma-mapping: remove ARCH_NO_COHERENT_DMA_MMAP
-Date:   Mon,  5 Aug 2019 12:11:58 +0300
-Message-Id: <20190805091159.7826-7-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190805091159.7826-1-hch@lst.de>
-References: <20190805091159.7826-1-hch@lst.de>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:62353 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728096AbfHEJMW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 05:12:22 -0400
+X-UUID: d49026eff6704fb498dde013f4181147-20190805
+X-UUID: d49026eff6704fb498dde013f4181147-20190805
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 1417653321; Mon, 05 Aug 2019 17:12:05 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 5 Aug 2019 17:12:06 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 5 Aug 2019 17:12:07 +0800
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>,
+        Wendell Lin <wendell.lin@mediatek.com>,
+        Ivan Tseng <ivan.tseng@mediatek.com>
+Subject: [PATCH 09/11] clk: mediatek: Add dt-bindings for MT6779 clocks
+Date:   Mon, 5 Aug 2019 17:11:58 +0800
+Message-ID: <1564996320-10897-10-git-send-email-mars.cheng@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
+References: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we never use a default ->mmap implementation, and non-coherent
-architectures can control the presence of ->mmap support by enabling
-ARCH_HAS_DMA_COHERENT_TO_PFN for the dma direct implementation there
-is no need for a global config option to control the availability
-of dma_common_mmap.
+From: Wendell Lin <wendell.lin@mediatek.com>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Add MT6779 clock dt-bindings, include topckgen, apmixedsys,
+infracfg, and subsystem clocks.
+
+Signed-off-by: Wendell Lin <wendell.lin@mediatek.com>
 ---
- arch/Kconfig            | 3 ---
- arch/c6x/Kconfig        | 1 -
- arch/m68k/Kconfig       | 1 -
- arch/microblaze/Kconfig | 1 -
- arch/parisc/Kconfig     | 1 -
- arch/sh/Kconfig         | 1 -
- arch/xtensa/Kconfig     | 1 -
- kernel/dma/mapping.c    | 7 -------
- 8 files changed, 16 deletions(-)
+ include/dt-bindings/clock/mt6779-clk.h |  436 ++++++++++++++++++++++++++++++++
+ 1 file changed, 436 insertions(+)
+ create mode 100644 include/dt-bindings/clock/mt6779-clk.h
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index a7b57dd42c26..ec2834206d08 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -790,9 +790,6 @@ config COMPAT_32BIT_TIME
- 	  This is relevant on all 32-bit architectures, and 64-bit architectures
- 	  as part of compat syscall handling.
- 
--config ARCH_NO_COHERENT_DMA_MMAP
--	bool
--
- config ARCH_NO_PREEMPT
- 	bool
- 
-diff --git a/arch/c6x/Kconfig b/arch/c6x/Kconfig
-index b4fb61c83494..e65e8d82442a 100644
---- a/arch/c6x/Kconfig
-+++ b/arch/c6x/Kconfig
-@@ -20,7 +20,6 @@ config C6X
- 	select OF_EARLY_FLATTREE
- 	select GENERIC_CLOCKEVENTS
- 	select MODULES_USE_ELF_RELA
--	select ARCH_NO_COHERENT_DMA_MMAP
- 	select MMU_GATHER_NO_RANGE if MMU
- 
- config MMU
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index c518d695c376..614b355ae338 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -8,7 +8,6 @@ config M68K
- 	select ARCH_HAS_DMA_PREP_COHERENT if HAS_DMA && MMU && !COLDFIRE
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if HAS_DMA
- 	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
--	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select ARCH_NO_PREEMPT if !COLDFIRE
- 	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
- 	select DMA_DIRECT_REMAP if HAS_DMA && MMU && !COLDFIRE
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index d411de05b628..632c9477a0f6 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -9,7 +9,6 @@ config MICROBLAZE
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
--	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select ARCH_WANT_IPC_PARSE_VERSION
- 	select BUILDTIME_EXTABLE_SORT
- 	select TIMER_OF
-diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-index 6d732e451071..e9dd88b7f81e 100644
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -52,7 +52,6 @@ config PARISC
- 	select GENERIC_SCHED_CLOCK
- 	select HAVE_UNSTABLE_SCHED_CLOCK if SMP
- 	select GENERIC_CLOCKEVENTS
--	select ARCH_NO_COHERENT_DMA_MMAP
- 	select CPU_NO_EFFICIENT_FFS
- 	select NEED_DMA_MAP_STATE
- 	select NEED_SG_DMA_LENGTH
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index 6b1b5941b618..f356ee674d89 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -5,7 +5,6 @@ config SUPERH
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
--	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select HAVE_PATA_PLATFORM
- 	select CLKDEV_LOOKUP
- 	select DMA_DECLARE_COHERENT
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index ebc135bda921..70653aed3005 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -5,7 +5,6 @@ config XTENSA
- 	select ARCH_HAS_BINFMT_FLAT if !MMU
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
--	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select ARCH_USE_QUEUED_RWLOCKS
- 	select ARCH_USE_QUEUED_SPINLOCKS
- 	select ARCH_WANT_FRAME_POINTERS
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index ab6aa355e1a0..47765c96fe09 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -169,7 +169,6 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- 		void *cpu_addr, dma_addr_t dma_addr, size_t size,
- 		unsigned long attrs)
- {
--#ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
- 	unsigned long user_count = vma_pages(vma);
- 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
- 	unsigned long off = vma->vm_pgoff;
-@@ -198,9 +197,6 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- 
- 	return remap_pfn_range(vma, vma->vm_start, pfn + vma->vm_pgoff,
- 			user_count << PAGE_SHIFT, vma->vm_page_prot);
--#else
--	return -ENXIO;
--#endif /* !CONFIG_ARCH_NO_COHERENT_DMA_MMAP */
- }
- 
- /**
-@@ -214,9 +210,6 @@ bool dma_can_mmap(struct device *dev)
- {
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 
--	if (IS_ENABLED(CONFIG_ARCH_NO_COHERENT_DMA_MMAP))
--		return false;
--
- 	if (dma_is_direct(ops)) {
- 		return dev_is_dma_coherent(dev) ||
- 			IS_ENABLED(CONFIG_ARCH_HAS_DMA_COHERENT_TO_PFN);
+diff --git a/include/dt-bindings/clock/mt6779-clk.h b/include/dt-bindings/clock/mt6779-clk.h
+new file mode 100644
+index 0000000..b083139
+--- /dev/null
++++ b/include/dt-bindings/clock/mt6779-clk.h
+@@ -0,0 +1,436 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2019 MediaTek Inc.
++ * Author: Wendell Lin <wendell.lin@mediatek.com>
++ */
++
++#ifndef _DT_BINDINGS_CLK_MT6779_H
++#define _DT_BINDINGS_CLK_MT6779_H
++
++/* TOPCKGEN */
++#define CLK_TOP_AXI			1
++#define CLK_TOP_MM			2
++#define CLK_TOP_CAM			3
++#define CLK_TOP_MFG			4
++#define CLK_TOP_CAMTG			5
++#define CLK_TOP_UART			6
++#define CLK_TOP_SPI			7
++#define CLK_TOP_MSDC50_0_HCLK		8
++#define CLK_TOP_MSDC50_0		9
++#define CLK_TOP_MSDC30_1		10
++#define CLK_TOP_MSDC30_2		11
++#define CLK_TOP_AUD			12
++#define CLK_TOP_AUD_INTBUS		13
++#define CLK_TOP_FPWRAP_ULPOSC		14
++#define CLK_TOP_SCP			15
++#define CLK_TOP_ATB			16
++#define CLK_TOP_SSPM			17
++#define CLK_TOP_DPI0			18
++#define CLK_TOP_SCAM			19
++#define CLK_TOP_AUD_1			20
++#define CLK_TOP_AUD_2			21
++#define CLK_TOP_DISP_PWM		22
++#define CLK_TOP_SSUSB_TOP_XHCI		23
++#define CLK_TOP_USB_TOP			24
++#define CLK_TOP_SPM			25
++#define CLK_TOP_I2C			26
++#define CLK_TOP_F52M_MFG		27
++#define CLK_TOP_SENINF			28
++#define CLK_TOP_DXCC			29
++#define CLK_TOP_CAMTG2			30
++#define CLK_TOP_AUD_ENG1		31
++#define CLK_TOP_AUD_ENG2		32
++#define CLK_TOP_FAES_UFSFDE		33
++#define CLK_TOP_FUFS			34
++#define CLK_TOP_IMG			35
++#define CLK_TOP_DSP			36
++#define CLK_TOP_DSP1			37
++#define CLK_TOP_DSP2			38
++#define CLK_TOP_IPU_IF			39
++#define CLK_TOP_CAMTG3			40
++#define CLK_TOP_CAMTG4			41
++#define CLK_TOP_PMICSPI			42
++#define CLK_TOP_MAINPLL_CK		43
++#define CLK_TOP_MAINPLL_D2		44
++#define CLK_TOP_MAINPLL_D3		45
++#define CLK_TOP_MAINPLL_D5		46
++#define CLK_TOP_MAINPLL_D7		47
++#define CLK_TOP_MAINPLL_D2_D2		48
++#define CLK_TOP_MAINPLL_D2_D4		49
++#define CLK_TOP_MAINPLL_D2_D8		50
++#define CLK_TOP_MAINPLL_D2_D16		51
++#define CLK_TOP_MAINPLL_D3_D2		52
++#define CLK_TOP_MAINPLL_D3_D4		53
++#define CLK_TOP_MAINPLL_D3_D8		54
++#define CLK_TOP_MAINPLL_D5_D2		55
++#define CLK_TOP_MAINPLL_D5_D4		56
++#define CLK_TOP_MAINPLL_D7_D2		57
++#define CLK_TOP_MAINPLL_D7_D4		58
++#define CLK_TOP_UNIVPLL_CK		59
++#define CLK_TOP_UNIVPLL_D2		60
++#define CLK_TOP_UNIVPLL_D3		61
++#define CLK_TOP_UNIVPLL_D5		62
++#define CLK_TOP_UNIVPLL_D7		63
++#define CLK_TOP_UNIVPLL_D2_D2		64
++#define CLK_TOP_UNIVPLL_D2_D4		65
++#define CLK_TOP_UNIVPLL_D2_D8		66
++#define CLK_TOP_UNIVPLL_D3_D2		67
++#define CLK_TOP_UNIVPLL_D3_D4		68
++#define CLK_TOP_UNIVPLL_D3_D8		69
++#define CLK_TOP_UNIVPLL_D5_D2		70
++#define CLK_TOP_UNIVPLL_D5_D4		71
++#define CLK_TOP_UNIVPLL_D5_D8		72
++#define CLK_TOP_APLL1_CK		73
++#define CLK_TOP_APLL1_D2		74
++#define CLK_TOP_APLL1_D4		75
++#define CLK_TOP_APLL1_D8		76
++#define CLK_TOP_APLL2_CK		77
++#define CLK_TOP_APLL2_D2		78
++#define CLK_TOP_APLL2_D4		79
++#define CLK_TOP_APLL2_D8		80
++#define CLK_TOP_TVDPLL_CK		81
++#define CLK_TOP_TVDPLL_D2		82
++#define CLK_TOP_TVDPLL_D4		83
++#define CLK_TOP_TVDPLL_D8		84
++#define CLK_TOP_TVDPLL_D16		85
++#define CLK_TOP_MSDCPLL_CK		86
++#define CLK_TOP_MSDCPLL_D2		87
++#define CLK_TOP_MSDCPLL_D4		88
++#define CLK_TOP_MSDCPLL_D8		89
++#define CLK_TOP_MSDCPLL_D16		90
++#define CLK_TOP_AD_OSC_CK		91
++#define CLK_TOP_OSC_D2			92
++#define CLK_TOP_OSC_D4			93
++#define CLK_TOP_OSC_D8			94
++#define CLK_TOP_OSC_D16			95
++#define CLK_TOP_F26M_CK_D2		96
++#define CLK_TOP_MFGPLL_CK		97
++#define CLK_TOP_UNIVP_192M_CK		98
++#define CLK_TOP_UNIVP_192M_D2		99
++#define CLK_TOP_UNIVP_192M_D4		100
++#define CLK_TOP_UNIVP_192M_D8		101
++#define CLK_TOP_UNIVP_192M_D16		102
++#define CLK_TOP_UNIVP_192M_D32		103
++#define CLK_TOP_MMPLL_CK		104
++#define CLK_TOP_MMPLL_D4		105
++#define CLK_TOP_MMPLL_D4_D2		106
++#define CLK_TOP_MMPLL_D4_D4		107
++#define CLK_TOP_MMPLL_D5		108
++#define CLK_TOP_MMPLL_D5_D2		109
++#define CLK_TOP_MMPLL_D5_D4		110
++#define CLK_TOP_MMPLL_D6		111
++#define CLK_TOP_MMPLL_D7		112
++#define CLK_TOP_CLK26M			113
++#define CLK_TOP_CLK13M			114
++#define CLK_TOP_ADSP			115
++#define CLK_TOP_DPMAIF			116
++#define CLK_TOP_VENC			117
++#define CLK_TOP_VDEC			118
++#define CLK_TOP_CAMTM			119
++#define CLK_TOP_PWM			120
++#define CLK_TOP_ADSPPLL_CK		121
++#define CLK_TOP_I2S0_M_SEL		122
++#define CLK_TOP_I2S1_M_SEL		123
++#define CLK_TOP_I2S2_M_SEL		124
++#define CLK_TOP_I2S3_M_SEL		125
++#define CLK_TOP_I2S4_M_SEL		126
++#define CLK_TOP_I2S5_M_SEL		127
++#define CLK_TOP_APLL12_DIV0		128
++#define CLK_TOP_APLL12_DIV1		129
++#define CLK_TOP_APLL12_DIV2		130
++#define CLK_TOP_APLL12_DIV3		131
++#define CLK_TOP_APLL12_DIV4		132
++#define CLK_TOP_APLL12_DIVB		133
++#define CLK_TOP_APLL12_DIV5		134
++#define CLK_TOP_IPE			135
++#define CLK_TOP_DPE			136
++#define CLK_TOP_CCU			137
++#define CLK_TOP_DSP3			138
++#define CLK_TOP_SENINF1			139
++#define CLK_TOP_SENINF2			140
++#define CLK_TOP_AUD_H			141
++#define CLK_TOP_CAMTG5			142
++#define CLK_TOP_TVDPLL_MAINPLL_D2_CK	143
++#define CLK_TOP_AD_OSC2_CK		144
++#define CLK_TOP_OSC2_D2			145
++#define CLK_TOP_OSC2_D3			146
++#define CLK_TOP_FMEM_466M_CK		147
++#define CLK_TOP_ADSPPLL_D4		148
++#define CLK_TOP_ADSPPLL_D5		149
++#define CLK_TOP_ADSPPLL_D6		150
++#define CLK_TOP_OSC_D10			151
++#define CLK_TOP_UNIVPLL_D3_D16		152
++#define CLK_TOP_NR_CLK			153
++
++/* APMIXED */
++#define CLK_APMIXED_ARMPLL_LL		1
++#define CLK_APMIXED_ARMPLL_BL		2
++#define CLK_APMIXED_ARMPLL_BB		3
++#define CLK_APMIXED_CCIPLL		4
++#define CLK_APMIXED_MAINPLL		5
++#define CLK_APMIXED_UNIV2PLL		6
++#define CLK_APMIXED_MSDCPLL		7
++#define CLK_APMIXED_ADSPPLL		8
++#define CLK_APMIXED_MMPLL		9
++#define CLK_APMIXED_MFGPLL		10
++#define CLK_APMIXED_TVDPLL		11
++#define CLK_APMIXED_APLL1		12
++#define CLK_APMIXED_APLL2		13
++#define CLK_APMIXED_SSUSB26M		14
++#define CLK_APMIXED_APPLL26M		15
++#define CLK_APMIXED_MIPIC0_26M		16
++#define CLK_APMIXED_MDPLLGP26M		17
++#define CLK_APMIXED_MM_F26M		18
++#define CLK_APMIXED_UFS26M		19
++#define CLK_APMIXED_MIPIC1_26M		20
++#define CLK_APMIXED_MEMPLL26M		21
++#define CLK_APMIXED_CLKSQ_LVPLL_26M	22
++#define CLK_APMIXED_MIPID0_26M		23
++#define CLK_APMIXED_MIPID1_26M		24
++#define CLK_APMIXED_NR_CLK		25
++
++/* CAMSYS */
++#define CLK_CAM_LARB10			1
++#define CLK_CAM_DFP_VAD			2
++#define CLK_CAM_LARB11			3
++#define CLK_CAM_LARB9			4
++#define CLK_CAM_CAM			5
++#define CLK_CAM_CAMTG			6
++#define CLK_CAM_SENINF			7
++#define CLK_CAM_CAMSV0			8
++#define CLK_CAM_CAMSV1			9
++#define CLK_CAM_CAMSV2			10
++#define CLK_CAM_CAMSV3			11
++#define CLK_CAM_CCU			12
++#define CLK_CAM_FAKE_ENG		13
++#define CLK_CAM_NR_CLK			14
++
++/* INFRA */
++#define CLK_INFRA_PMIC_TMR		1
++#define CLK_INFRA_PMIC_AP		2
++#define CLK_INFRA_PMIC_MD		3
++#define CLK_INFRA_PMIC_CONN		4
++#define CLK_INFRA_SCPSYS		5
++#define CLK_INFRA_SEJ			6
++#define CLK_INFRA_APXGPT		7
++#define CLK_INFRA_ICUSB			8
++#define CLK_INFRA_GCE			9
++#define CLK_INFRA_THERM			10
++#define CLK_INFRA_I2C0			11
++#define CLK_INFRA_I2C1			12
++#define CLK_INFRA_I2C2			13
++#define CLK_INFRA_I2C3			14
++#define CLK_INFRA_PWM_HCLK		15
++#define CLK_INFRA_PWM1			16
++#define CLK_INFRA_PWM2			17
++#define CLK_INFRA_PWM3			18
++#define CLK_INFRA_PWM4			19
++#define CLK_INFRA_PWM			20
++#define CLK_INFRA_UART0			21
++#define CLK_INFRA_UART1			22
++#define CLK_INFRA_UART2			23
++#define CLK_INFRA_UART3			24
++#define CLK_INFRA_GCE_26M		25
++#define CLK_INFRA_CQ_DMA_FPC		26
++#define CLK_INFRA_BTIF			27
++#define CLK_INFRA_SPI0			28
++#define CLK_INFRA_MSDC0			29
++#define CLK_INFRA_MSDC1			30
++#define CLK_INFRA_MSDC2			31
++#define CLK_INFRA_MSDC0_SCK		32
++#define CLK_INFRA_DVFSRC		33
++#define CLK_INFRA_GCPU			34
++#define CLK_INFRA_TRNG			35
++#define CLK_INFRA_AUXADC		36
++#define CLK_INFRA_CPUM			37
++#define CLK_INFRA_CCIF1_AP		38
++#define CLK_INFRA_CCIF1_MD		39
++#define CLK_INFRA_AUXADC_MD		40
++#define CLK_INFRA_MSDC1_SCK		41
++#define CLK_INFRA_MSDC2_SCK		42
++#define CLK_INFRA_AP_DMA		43
++#define CLK_INFRA_XIU			44
++#define CLK_INFRA_DEVICE_APC		45
++#define CLK_INFRA_CCIF_AP		46
++#define CLK_INFRA_DEBUGSYS		47
++#define CLK_INFRA_AUD			48
++#define CLK_INFRA_CCIF_MD		49
++#define CLK_INFRA_DXCC_SEC_CORE		50
++#define CLK_INFRA_DXCC_AO		51
++#define CLK_INFRA_DRAMC_F26M		52
++#define CLK_INFRA_IRTX			53
++#define CLK_INFRA_DISP_PWM		54
++#define CLK_INFRA_DPMAIF_CK		55
++#define CLK_INFRA_AUD_26M_BCLK		56
++#define CLK_INFRA_SPI1			57
++#define CLK_INFRA_I2C4			58
++#define CLK_INFRA_MODEM_TEMP_SHARE	59
++#define CLK_INFRA_SPI2			60
++#define CLK_INFRA_SPI3			61
++#define CLK_INFRA_UNIPRO_SCK		62
++#define CLK_INFRA_UNIPRO_TICK		63
++#define CLK_INFRA_UFS_MP_SAP_BCLK	64
++#define CLK_INFRA_MD32_BCLK		65
++#define CLK_INFRA_SSPM			66
++#define CLK_INFRA_UNIPRO_MBIST		67
++#define CLK_INFRA_SSPM_BUS_HCLK		68
++#define CLK_INFRA_I2C5			69
++#define CLK_INFRA_I2C5_ARBITER		70
++#define CLK_INFRA_I2C5_IMM		71
++#define CLK_INFRA_I2C1_ARBITER		72
++#define CLK_INFRA_I2C1_IMM		73
++#define CLK_INFRA_I2C2_ARBITER		74
++#define CLK_INFRA_I2C2_IMM		75
++#define CLK_INFRA_SPI4			76
++#define CLK_INFRA_SPI5			77
++#define CLK_INFRA_CQ_DMA		78
++#define CLK_INFRA_UFS			79
++#define CLK_INFRA_AES_UFSFDE		80
++#define CLK_INFRA_UFS_TICK		81
++#define CLK_INFRA_MSDC0_SELF		82
++#define CLK_INFRA_MSDC1_SELF		83
++#define CLK_INFRA_MSDC2_SELF		84
++#define CLK_INFRA_SSPM_26M_SELF		85
++#define CLK_INFRA_SSPM_32K_SELF		86
++#define CLK_INFRA_UFS_AXI		87
++#define CLK_INFRA_I2C6			88
++#define CLK_INFRA_AP_MSDC0		89
++#define CLK_INFRA_MD_MSDC0		90
++#define CLK_INFRA_USB			91
++#define CLK_INFRA_DEVMPU_BCLK		92
++#define CLK_INFRA_CCIF2_AP		93
++#define CLK_INFRA_CCIF2_MD		94
++#define CLK_INFRA_CCIF3_AP		95
++#define CLK_INFRA_CCIF3_MD		96
++#define CLK_INFRA_SEJ_F13M		97
++#define CLK_INFRA_AES_BCLK		98
++#define CLK_INFRA_I2C7			99
++#define CLK_INFRA_I2C8			100
++#define CLK_INFRA_FBIST2FPC		101
++#define CLK_INFRA_CCIF4_AP		102
++#define CLK_INFRA_CCIF4_MD		103
++#define CLK_INFRA_FADSP			104
++#define CLK_INFRA_SSUSB_XHCI		105
++#define CLK_INFRA_SPI6			106
++#define CLK_INFRA_SPI7			107
++#define CLK_INFRA_NR_CLK		108
++
++/* MFGCFG */
++#define CLK_MFGCFG_BG3D			1
++#define CLK_MFGCFG_NR_CLK		2
++
++/* IMG */
++#define CLK_IMG_WPE_A			1
++#define CLK_IMG_MFB			2
++#define CLK_IMG_DIP			3
++#define CLK_IMG_LARB6			4
++#define CLK_IMG_LARB5			5
++#define CLK_IMG_NR_CLK			6
++
++/* IPE */
++#define CLK_IPE_LARB7			1
++#define CLK_IPE_LARB8			2
++#define CLK_IPE_SMI_SUBCOM		3
++#define CLK_IPE_FD			4
++#define CLK_IPE_FE			5
++#define CLK_IPE_RSC			6
++#define CLK_IPE_DPE			7
++#define CLK_IPE_NR_CLK			8
++
++/* MM_CONFIG */
++#define CLK_MM_SMI_COMMON		1
++#define CLK_MM_SMI_LARB0		2
++#define CLK_MM_SMI_LARB1		3
++#define CLK_MM_GALS_COMM0		4
++#define CLK_MM_GALS_COMM1		5
++#define CLK_MM_GALS_CCU2MM		6
++#define CLK_MM_GALS_IPU12MM		7
++#define CLK_MM_GALS_IMG2MM		8
++#define CLK_MM_GALS_CAM2MM		9
++#define CLK_MM_GALS_IPU2MM		10
++#define CLK_MM_MDP_DL_TXCK		11
++#define CLK_MM_IPU_DL_TXCK		12
++#define CLK_MM_MDP_RDMA0		13
++#define CLK_MM_MDP_RDMA1		14
++#define CLK_MM_MDP_RSZ0			15
++#define CLK_MM_MDP_RSZ1			16
++#define CLK_MM_MDP_TDSHP		17
++#define CLK_MM_MDP_WROT0		18
++#define CLK_MM_FAKE_ENG			19
++#define CLK_MM_DISP_OVL0		20
++#define CLK_MM_DISP_OVL0_2L		21
++#define CLK_MM_DISP_OVL1_2L		22
++#define CLK_MM_DISP_RDMA0		23
++#define CLK_MM_DISP_RDMA1		24
++#define CLK_MM_DISP_WDMA0		25
++#define CLK_MM_DISP_COLOR0		26
++#define CLK_MM_DISP_CCORR0		27
++#define CLK_MM_DISP_AAL0		28
++#define CLK_MM_DISP_GAMMA0		29
++#define CLK_MM_DISP_DITHER0		30
++#define CLK_MM_DISP_SPLIT		31
++#define CLK_MM_DSI0_MM_CK		32
++#define CLK_MM_DSI0_IF_CK		33
++#define CLK_MM_DPI_MM_CK		34
++#define CLK_MM_DPI_IF_CK		35
++#define CLK_MM_FAKE_ENG2		36
++#define CLK_MM_MDP_DL_RX_CK		37
++#define CLK_MM_IPU_DL_RX_CK		38
++#define CLK_MM_26M			39
++#define CLK_MM_MM_R2Y			40
++#define CLK_MM_DISP_RSZ			41
++#define CLK_MM_MDP_WDMA0		42
++#define CLK_MM_MDP_AAL			43
++#define CLK_MM_MDP_HDR			44
++#define CLK_MM_DBI_MM_CK		45
++#define CLK_MM_DBI_IF_CK		46
++#define CLK_MM_MDP_WROT1		47
++#define CLK_MM_DISP_POSTMASK0		48
++#define CLK_MM_DISP_HRT_BW		49
++#define CLK_MM_DISP_OVL_FBDC		50
++#define CLK_MM_NR_CLK			51
++
++/* VDEC_GCON */
++#define CLK_VDEC_VDEC			1
++#define CLK_VDEC_LARB1			2
++#define CLK_VDEC_GCON_NR_CLK		3
++
++/* VENC_GCON */
++#define CLK_VENC_GCON_LARB		1
++#define CLK_VENC_GCON_VENC		2
++#define CLK_VENC_GCON_JPGENC		3
++#define CLK_VENC_GCON_GALS		4
++#define CLK_VENC_GCON_NR_CLK		5
++
++/* AUD */
++#define CLK_AUD_AFE			1
++#define CLK_AUD_22M			2
++#define CLK_AUD_24M			3
++#define CLK_AUD_APLL2_TUNER		4
++#define CLK_AUD_APLL_TUNER		5
++#define CLK_AUD_TDM			6
++#define CLK_AUD_ADC			7
++#define CLK_AUD_DAC			8
++#define CLK_AUD_DAC_PREDIS		9
++#define CLK_AUD_TML			10
++#define CLK_AUD_NLE			11
++#define CLK_AUD_I2S1_BCLK_SW		12
++#define CLK_AUD_I2S2_BCLK_SW		13
++#define CLK_AUD_I2S3_BCLK_SW		14
++#define CLK_AUD_I2S4_BCLK_SW		15
++#define CLK_AUD_I2S5_BCLK_SW		16
++#define CLK_AUD_CONN_I2S_ASRC		17
++#define CLK_AUD_GENERAL1_ASRC		18
++#define CLK_AUD_GENERAL2_ASRC		19
++#define CLK_AUD_DAC_HIRES		20
++#define CLK_AUD_PDN_ADDA6_ADC		21
++#define CLK_AUD_ADC_HIRES		22
++#define CLK_AUD_ADC_HIRES_TML		23
++#define CLK_AUD_ADDA6_ADC_HIRES		24
++#define CLK_AUD_3RD_DAC			25
++#define CLK_AUD_3RD_DAC_PREDIS		26
++#define CLK_AUD_3RD_DAC_TML		27
++#define CLK_AUD_3RD_DAC_HIRES		28
++#define CLK_AUD_NR_CLK			29
++
++#endif /* _DT_BINDINGS_CLK_MT6779_H */
 -- 
-2.20.1
+1.7.9.5
 
