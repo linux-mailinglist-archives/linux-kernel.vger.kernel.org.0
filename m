@@ -2,89 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A908281D4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C8F681D62
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbfHENcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:32:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726834AbfHENcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:32:15 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23F7A20644;
-        Mon,  5 Aug 2019 13:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011934;
-        bh=Pi1nPOcAzoKzmhilwJpY2NWR69GFPeOfUkKKuRKPdvU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=e3fijdzZP1l07SRJPZGDKsmIE7Q7W7MGtcbT1oxrQ1NkcOHurMHcxpkFkgFugcgBy
-         TfuRG+y41cSoQ4o8FKOjWaVGqiD7ebkqB/XgLG/Ncrvas2kNqhaOYk6b0z58TG2IK+
-         SROpwHWuRN2+V9Kvuiw2bdawFhP0rhin5sjBXt38=
-Date:   Mon, 5 Aug 2019 14:32:09 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Martin Kaiser <martin@kaiser.cx>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] dt-bindings: iio: potentiometer: add
- max5432.yaml binding
-Message-ID: <20190805143209.5307ad93@archlinux>
-In-Reply-To: <CAL_JsqK9iuxQEh3s2_AgQhSa19Coq7kSFB497KUMQnjQNU+ELw@mail.gmail.com>
-References: <20190721175915.27192-1-martin@kaiser.cx>
-        <20190731140706.2765-1-martin@kaiser.cx>
-        <20190731140706.2765-2-martin@kaiser.cx>
-        <CAL_JsqK9iuxQEh3s2_AgQhSa19Coq7kSFB497KUMQnjQNU+ELw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729293AbfHENjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:39:23 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40267 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfHENjW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:39:22 -0400
+Received: by mail-io1-f66.google.com with SMTP id h6so42136471iom.7;
+        Mon, 05 Aug 2019 06:39:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=FLq+GsK2RBOu2svVdDO4l5xiwRawI+I647gJYjWfm7E=;
+        b=KJq/JtygoaDwC4qXHEUx4uHJ4LiIZ4He9ZLfwnVLvyQCmvt3bZA3SRsfLRftxqtvFr
+         Yaw3JR4KkjPN5XmhhxeBc1CRfruClo0iotX9pEvMv5BpMDAVTE32u4d4kOf2gB1i1d9Y
+         zlNITSPcQ1klGLtWtThpr52wA4Sr5aqp3dbSIu+jCjEhQyajVLLuc+BdKgCGIT6SOaZf
+         XupKZypE1HcJjOKbTvUsokOy2LX62Ge2DrSzF7DA3ttmlqvwmIYeMk9If9jQyvCmEPle
+         4Ytk9zrn7CA9KzJBY6lM+6e2lPKOQuG63MZqU2MiD5VORTnNaC4tQ2vxE87jOv0Qbjwm
+         Xyrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=FLq+GsK2RBOu2svVdDO4l5xiwRawI+I647gJYjWfm7E=;
+        b=VaVzB0xj64872TAKVUGcSsJArwOygf87LnQcT4r1K1yD8PYlqHZViYWrdEEZoMwVIi
+         6YleXIS6C0YrCShI8zV5Sr54FvHbvMCvLZTN5p16D3Ev04aVN+wDb5eCzm7lVPYV7yl5
+         Szy5RnErnmoPXnKFx6c6NoG89aIwNE7luuoXzRO9W5shIByrDVXRixFJ+KcpbciDeogm
+         pgY3c1nz7TACZn/vJjq2g3qSCfvpKXxhYaiqlnf9dyr9k2rbt4uv2FB1Hge6i63Tf17h
+         yl2kaUgiO5Kxc/Zp12+lFcwtblVX8Sqh3S4NO0Tc0LX07CCpd65m8nulKQnMyY/RRxY4
+         CXyQ==
+X-Gm-Message-State: APjAAAXb/bfk20/V/cHublf3UeB7E+3rSxEblZdkmWfadG1alm3qBh94
+        RAGrTZC+6mWpY8ZPSBDezC6QT3gVNL0akvd4itl3CwWLCg0=
+X-Google-Smtp-Source: APXvYqwUB0JliaEvraelaWIKOhLmG6tm/hH6p5K7VUkG0ux1iC8pWz5nAVPBujCAZpeSSCdA02a33d85QL7ElUmyspg=
+X-Received: by 2002:a5d:8e16:: with SMTP id e22mr13411396iod.171.1565012361842;
+ Mon, 05 Aug 2019 06:39:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From:   Jaafar Ali <jaafarkhalaf@gmail.com>
+Date:   Mon, 5 Aug 2019 16:34:19 +0300
+Message-ID: <CAF-0O_6zDyWTFenFX49DVeSyB=p59BFVCc71oPVarOtDPh2LFg@mail.gmail.com>
+Subject: Odroid-XU$ sound issue after suspend-resume
+To:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Jul 2019 10:50:36 -0600
-Rob Herring <robh+dt@kernel.org> wrote:
+Dear All,
+Kernel 5.3-rc1
+OS: ubuntu 18.04
+Hardware: Odroid-XU4
+The sound of Odroid-XU4 after suspend/resume cycle is choppy and slow.
+I have found a workaround, the I2SMOD register value should be set to
+zero after resume to force using internal codec clock (cdclkcon bit =
+0),  also the rclk_srcrate which is obtained from the function
+clk_get_rate(rclksrc) inside hw_params function is not correct and
+must be divided by 2 to obtain proper value, i2s_resume function is
+modified to:
 
-> On Wed, Jul 31, 2019 at 8:07 AM Martin Kaiser <martin@kaiser.cx> wrote:
-> >
-> > Add a binding for the Maxim Integrated MAX5432-MAX5435 family of digital
-> > potentiometers.
-> >
-> > Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> > ---
-> > changes in v4
-> >  - fix the dt bindings
-> >    - replace ic20 with i2c
-> >    - document the reg property
-> >    - add additionalProperties and required
-> >
-> > changes in v3
-> >  - split dt bindings and driver code into separate patches
-> >  - use yaml format for dt bindings
-> >  - fix formatting of parameter lists
-> >
-> > changes in v2
-> >  - use MAX5432_ prefix for all defines
-> >  - fix indentation
-> >  - convert void * to unsigned long, not to u32
-> >    (warning from kbuild test robot)
-> >
-> >  .../bindings/iio/potentiometer/max5432.yaml        | 44 ++++++++++++++++++++++
-> >  1 file changed, 44 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/potentiometer/max5432.yaml  
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to play with it.
+static int i2s_resume(struct snd_soc_dai *dai)
+{
+        struct samsung_i2s_priv *priv = dev_get_drvdata(dai->dev);
+        priv->suspend_i2smod = 0;//workaround-1 ,
+        return pm_runtime_force_resume(dai->dev);
 
-Thanks,
+}
 
-Jonathan
+ inside hw_params function, the rclk_srcrate must be halved to solve
+unknown problem of clock shift, so before return from hw_params we
+must insert:
+if(mod == 0){
+priv->rclk_srcrate = priv->rclk_srcrate / 2; //workaround-2,
+}
+return 0;
+
+With these two workaround sound issue was solved, but I hope we can
+get concrete fix.
+
+Best Regards
 
 
+Jaafar
