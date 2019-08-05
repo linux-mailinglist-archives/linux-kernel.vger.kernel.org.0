@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5507581AFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A412581B44
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:13:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbfHENLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:11:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50212 "EHLO mail.kernel.org"
+        id S1730227AbfHENNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:13:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729395AbfHENLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:11:00 -0400
+        id S1729823AbfHENJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:09:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAB8C2067D;
-        Mon,  5 Aug 2019 13:10:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CD4820880;
+        Mon,  5 Aug 2019 13:09:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010660;
-        bh=4zEpKdz+rfZs1RYrhQvvy9qvGnk0zp3xePetVtTNG5U=;
+        s=default; t=1565010579;
+        bh=aqKz37Eakt9EarZGFpv5j17tzyz1TZjvto7irZCRzVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YYht+Yac55Qd/lUfVeMcsOvedHqD2fvfKsfH2Q6qqnPwiWZ67EaIrna/wGsokX8NX
-         vgjizeso9vlMjCb6xwmZhS/tPN0soQnRTZ0QfKziG5JN/jZTTyhbQhQwMWo/BDejQZ
-         6Di4PG5V3/OtodDk9SUtBlKB3hbFFL+5sZ+QFKTY=
+        b=FConHP3y72y99yO3kvjJbCNEE/L58/tu0vM3ycZ1jipPnaWO7Ut6ZLgIKuPgmwwEh
+         YbAdCl6eHlNxMiW4qkE0EGXz1MEsKyhqDoJ2m4uzJNfOm3uQO7rH7sE3uLXyxr1SFI
+         8/3jSvvQ11uVDEe17G2dM85Wpw4CMQCK30dYdqR0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 24/74] ACPI: fix false-positive -Wuninitialized warning
-Date:   Mon,  5 Aug 2019 15:02:37 +0200
-Message-Id: <20190805124937.719064769@linuxfoundation.org>
+Subject: [PATCH 4.19 25/74] be2net: Signal that the device cannot transmit during reconfiguration
+Date:   Mon,  5 Aug 2019 15:02:38 +0200
+Message-Id: <20190805124937.794723659@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
 References: <20190805124935.819068648@linuxfoundation.org>
@@ -46,56 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dfd6f9ad36368b8dbd5f5a2b2f0a4705ae69a323 ]
+[ Upstream commit 7429c6c0d9cb086d8e79f0d2a48ae14851d2115e ]
 
-clang gets confused by an uninitialized variable in what looks
-to it like a never executed code path:
+While changing the number of interrupt channels, be2net stops adapter
+operation (including netif_tx_disable()) but it doesn't signal that it
+cannot transmit. This may lead dev_watchdog() to falsely trigger during
+that time.
 
-arch/x86/kernel/acpi/boot.c:618:13: error: variable 'polarity' is uninitialized when used here [-Werror,-Wuninitialized]
-        polarity = polarity ? ACPI_ACTIVE_LOW : ACPI_ACTIVE_HIGH;
-                   ^~~~~~~~
-arch/x86/kernel/acpi/boot.c:606:32: note: initialize the variable 'polarity' to silence this warning
-        int rc, irq, trigger, polarity;
-                                      ^
-                                       = 0
-arch/x86/kernel/acpi/boot.c:617:12: error: variable 'trigger' is uninitialized when used here [-Werror,-Wuninitialized]
-        trigger = trigger ? ACPI_LEVEL_SENSITIVE : ACPI_EDGE_SENSITIVE;
-                  ^~~~~~~
-arch/x86/kernel/acpi/boot.c:606:22: note: initialize the variable 'trigger' to silence this warning
-        int rc, irq, trigger, polarity;
-                            ^
-                             = 0
+Add the missing call to netif_carrier_off(), following the pattern used in
+many other drivers. netif_carrier_on() is already taken care of in
+be_open().
 
-This is unfortunately a design decision in clang and won't be fixed.
-
-Changing the acpi_get_override_irq() macro to an inline function
-reliably avoids the issue.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/acpi.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/emulex/benet/be_main.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index de8d3d3fa6512..b4d23b3a2ef2d 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -326,7 +326,10 @@ void acpi_set_irq_model(enum acpi_irq_model_id model,
- #ifdef CONFIG_X86_IO_APIC
- extern int acpi_get_override_irq(u32 gsi, int *trigger, int *polarity);
- #else
--#define acpi_get_override_irq(gsi, trigger, polarity) (-1)
-+static inline int acpi_get_override_irq(u32 gsi, int *trigger, int *polarity)
-+{
-+	return -1;
-+}
- #endif
- /*
-  * This function undoes the effect of one call to acpi_register_gsi().
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index bff74752cef16..3fe6a28027fe1 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -4700,8 +4700,12 @@ int be_update_queues(struct be_adapter *adapter)
+ 	struct net_device *netdev = adapter->netdev;
+ 	int status;
+ 
+-	if (netif_running(netdev))
++	if (netif_running(netdev)) {
++		/* device cannot transmit now, avoid dev_watchdog timeouts */
++		netif_carrier_off(netdev);
++
+ 		be_close(netdev);
++	}
+ 
+ 	be_cancel_worker(adapter);
+ 
 -- 
 2.20.1
 
