@@ -2,46 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC7FD81AD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95FC881A8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbfHENJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:09:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48386 "EHLO mail.kernel.org"
+        id S1729745AbfHENHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:07:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728939AbfHENJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:09:48 -0400
+        id S1729719AbfHENG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 003ED2173B;
-        Mon,  5 Aug 2019 13:09:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24C932087B;
+        Mon,  5 Aug 2019 13:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010587;
-        bh=kvV0r//gvUIPqx4Nz+lzMPNO6IE/vf+7hzQ+QsDx9wo=;
+        s=default; t=1565010417;
+        bh=6cUTJ9hOG4hFlZQL4U7UUrVvT7iFDGHmlQIoMQtzX2E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dt3hzI+uyxN08twesehjJy8mGMvWU3nWwGbHWMhPTqO3BCE4bcDohMhBj7tut4EA0
-         paQ96lLNmqtfVYs5EGuSS46keEYEKrekiJdgPZbOL/isvbS9E/wgr219hnUdXJwWc1
-         Hg/IcJn60zPG9kdko+///xRRG8zQ59gmSiZJKLX0=
+        b=OvXTUJ+w3NlwnZR47TtDxSAg04QqqS+P5pUJZ1n/YbPK6upnQgfqNTsrKb41Qxd3B
+         MkFVoSdg9+R475Ww/ydw8LaRhMQPw9I6QUU8eoMB1yomvL0blsDF3/Lz1eQs6eTr7V
+         ZhT8olS9TNTZFuzDwSkj3fmvSbJN4Mn40we/lrw8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Yue Hu <huyue2@yulong.com>, Mike Rapoport <rppt@linux.ibm.com>,
-        Laura Abbott <labbott@redhat.com>, Peng Fan <peng.fan@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Benjamin Block <bblock@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
+        Steffen Maier <maier@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 28/74] mm/cma.c: fail if fixed declaration cant be honored
+Subject: [PATCH 4.14 16/53] scsi: zfcp: fix GCC compiler warning emitted with -Wmaybe-uninitialized
 Date:   Mon,  5 Aug 2019 15:02:41 +0200
-Message-Id: <20190805124938.021789371@linuxfoundation.org>
+Message-Id: <20190805124929.885292766@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,66 +46,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c633324e311243586675e732249339685e5d6faa ]
+[ Upstream commit 484647088826f2f651acbda6bcf9536b8a466703 ]
 
-The description of cma_declare_contiguous() indicates that if the
-'fixed' argument is true the reserved contiguous area must be exactly at
-the address of the 'base' argument.
+GCC v9 emits this warning:
+      CC      drivers/s390/scsi/zfcp_erp.o
+    drivers/s390/scsi/zfcp_erp.c: In function 'zfcp_erp_action_enqueue':
+    drivers/s390/scsi/zfcp_erp.c:217:26: warning: 'erp_action' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      217 |  struct zfcp_erp_action *erp_action;
+          |                          ^~~~~~~~~~
 
-However, the function currently allows the 'base', 'size', and 'limit'
-arguments to be silently adjusted to meet alignment constraints.  This
-commit enforces the documented behavior through explicit checks that
-return an error if the region does not fit within a specified region.
+This is a possible false positive case, as also documented in the GCC
+documentations:
+    https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmaybe-uninitialized
 
-Link: http://lkml.kernel.org/r/1561422051-16142-1-git-send-email-opendmb@gmail.com
-Fixes: 5ea3b1b2f8ad ("cma: add placement specifier for "cma=" kernel parameter")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Acked-by: Michal Nazarewicz <mina86@mina86.com>
-Cc: Yue Hu <huyue2@yulong.com>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+The actual code-sequence is like this:
+    Various callers can invoke the function below with the argument "want"
+    being one of:
+    ZFCP_ERP_ACTION_REOPEN_ADAPTER,
+    ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
+    ZFCP_ERP_ACTION_REOPEN_PORT, or
+    ZFCP_ERP_ACTION_REOPEN_LUN.
+
+    zfcp_erp_action_enqueue(want, ...)
+        ...
+        need = zfcp_erp_required_act(want, ...)
+            need = want
+            ...
+            maybe: need = ZFCP_ERP_ACTION_REOPEN_PORT
+            maybe: need = ZFCP_ERP_ACTION_REOPEN_ADAPTER
+            ...
+            return need
+        ...
+        zfcp_erp_setup_act(need, ...)
+            struct zfcp_erp_action *erp_action; // <== line 217
+            ...
+            switch(need) {
+            case ZFCP_ERP_ACTION_REOPEN_LUN:
+                    ...
+                    erp_action = &zfcp_sdev->erp_action;
+                    WARN_ON_ONCE(erp_action->port != port); // <== access
+                    ...
+                    break;
+            case ZFCP_ERP_ACTION_REOPEN_PORT:
+            case ZFCP_ERP_ACTION_REOPEN_PORT_FORCED:
+                    ...
+                    erp_action = &port->erp_action;
+                    WARN_ON_ONCE(erp_action->port != port); // <== access
+                    ...
+                    break;
+            case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
+                    ...
+                    erp_action = &adapter->erp_action;
+                    WARN_ON_ONCE(erp_action->port != NULL); // <== access
+                    ...
+                    break;
+            }
+            ...
+            WARN_ON_ONCE(erp_action->adapter != adapter); // <== access
+
+When zfcp_erp_setup_act() is called, 'need' will never be anything else
+than one of the 4 possible enumeration-names that are used in the
+switch-case, and 'erp_action' is initialized for every one of them, before
+it is used. Thus the warning is a false positive, as documented.
+
+We introduce the extra if{} in the beginning to create an extra code-flow,
+so the compiler can be convinced that the switch-case will never see any
+other value.
+
+BUG_ON()/BUG() is intentionally not used to not crash anything, should
+this ever happen anyway - right now it's impossible, as argued above; and
+it doesn't introduce a 'default:' switch-case to retain warnings should
+'enum zfcp_erp_act_type' ever be extended and no explicit case be
+introduced. See also v5.0 commit 399b6c8bc9f7 ("scsi: zfcp: drop old
+default switch case which might paper over missing case").
+
+Signed-off-by: Benjamin Block <bblock@linux.ibm.com>
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Reviewed-by: Steffen Maier <maier@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/cma.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/s390/scsi/zfcp_erp.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/mm/cma.c b/mm/cma.c
-index 476dfe13a701f..4c2864270a39b 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -282,6 +282,12 @@ int __init cma_declare_contiguous(phys_addr_t base,
- 	 */
- 	alignment = max(alignment,  (phys_addr_t)PAGE_SIZE <<
- 			  max_t(unsigned long, MAX_ORDER - 1, pageblock_order));
-+	if (fixed && base & (alignment - 1)) {
-+		ret = -EINVAL;
-+		pr_err("Region at %pa must be aligned to %pa bytes\n",
-+			&base, &alignment);
-+		goto err;
-+	}
- 	base = ALIGN(base, alignment);
- 	size = ALIGN(size, alignment);
- 	limit &= ~(alignment - 1);
-@@ -312,6 +318,13 @@ int __init cma_declare_contiguous(phys_addr_t base,
- 	if (limit == 0 || limit > memblock_end)
- 		limit = memblock_end;
+diff --git a/drivers/s390/scsi/zfcp_erp.c b/drivers/s390/scsi/zfcp_erp.c
+index 6d5065f679acf..64d70de98cdb6 100644
+--- a/drivers/s390/scsi/zfcp_erp.c
++++ b/drivers/s390/scsi/zfcp_erp.c
+@@ -11,6 +11,7 @@
+ #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
  
-+	if (base + size > limit) {
-+		ret = -EINVAL;
-+		pr_err("Size (%pa) of region at %pa exceeds limit (%pa)\n",
-+			&size, &base, &limit);
-+		goto err;
-+	}
+ #include <linux/kthread.h>
++#include <linux/bug.h>
+ #include "zfcp_ext.h"
+ #include "zfcp_reqlist.h"
+ 
+@@ -245,6 +246,12 @@ static struct zfcp_erp_action *zfcp_erp_setup_act(int need, u32 act_status,
+ 	struct zfcp_erp_action *erp_action;
+ 	struct zfcp_scsi_dev *zfcp_sdev;
+ 
++	if (WARN_ON_ONCE(need != ZFCP_ERP_ACTION_REOPEN_LUN &&
++			 need != ZFCP_ERP_ACTION_REOPEN_PORT &&
++			 need != ZFCP_ERP_ACTION_REOPEN_PORT_FORCED &&
++			 need != ZFCP_ERP_ACTION_REOPEN_ADAPTER))
++		return NULL;
 +
- 	/* Reserve memory */
- 	if (fixed) {
- 		if (memblock_is_region_reserved(base, size) ||
+ 	switch (need) {
+ 	case ZFCP_ERP_ACTION_REOPEN_LUN:
+ 		zfcp_sdev = sdev_to_zfcp(sdev);
 -- 
 2.20.1
 
