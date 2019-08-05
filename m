@@ -2,88 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F405E81BF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8683881BB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbfHENTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:19:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55234 "EHLO mail.kernel.org"
+        id S1729905AbfHENQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:16:38 -0400
+Received: from foss.arm.com ([217.140.110.172]:48146 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726779AbfHENTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:19:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8CBF2067D;
-        Mon,  5 Aug 2019 13:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011155;
-        bh=5Fvmeto4Q4TETBnbb6tYOnCTlGCuLXZav0d5e9FSikw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OkkyQQ8jR1O/Zwcy9B+3vhyvjawAwIxoMhewmFiuIlg8W7cAFOyAX6xIs+J7TmhqS
-         U3h8VL5B+gkNtxsgi+KFMwpGRIk+cB/wevUHQfde3fdkhVnLRVkGakLuci79sGcQi/
-         ofhBsL/HOOIA8HVJHRl0WkOwEYvv8M8dkyMIXhUY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.19 65/74] IB/mlx5: Fix clean_mr() to work in the expected order
-Date:   Mon,  5 Aug 2019 15:03:18 +0200
-Message-Id: <20190805124941.066916939@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729505AbfHENGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E280D337;
+        Mon,  5 Aug 2019 06:06:08 -0700 (PDT)
+Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4FEBA3F77D;
+        Mon,  5 Aug 2019 06:06:07 -0700 (PDT)
+Subject: Re: [PATCH 1/9] KVM: arm64: Document PV-time interface
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Cc:     kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+References: <20190802145017.42543-1-steven.price@arm.com>
+ <20190802145017.42543-2-steven.price@arm.com>
+ <3bdd764a-b6f5-d17e-a703-d8eb13838efc@huawei.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <fd8b0c8d-79d1-1501-cee0-d3f6bc1c3487@arm.com>
+Date:   Mon, 5 Aug 2019 14:06:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <3bdd764a-b6f5-d17e-a703-d8eb13838efc@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yishai Hadas <yishaih@mellanox.com>
+On 05/08/2019 04:23, Zenghui Yu wrote:
+> Hi Steven,
+> 
+> On 2019/8/2 22:50, Steven Price wrote:
+>> Introduce a paravirtualization interface for KVM/arm64 based on the
+>> "Arm Paravirtualized Time for Arm-Base Systems" specification DEN 0057A.
+>>
+>> This only adds the details about "Stolen Time" as the details of "Live
+>> Physical Time" have not been fully agreed.
+>>
+>> User space can specify a reserved area of memory for the guest and
+>> inform KVM to populate the memory with information on time that the host
+>> kernel has stolen from the guest.
+>>
+>> A hypercall interface is provided for the guest to interrogate the
+>> hypervisor's support for this interface and the location of the shared
+>> memory structures.
+>>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>   Documentation/virtual/kvm/arm/pvtime.txt | 107 +++++++++++++++++++++++
+>>   1 file changed, 107 insertions(+)
+>>   create mode 100644 Documentation/virtual/kvm/arm/pvtime.txt
+>                                     ^^^^^^^
+> This directory has been renamed recently, see:
+> 
+> https://patchwork.ozlabs.org/patch/1136104/
 
-commit b9332dad987018745a0c0bb718d12dacfa760489 upstream.
+Thanks for pointing that out - I'll move it in the next version.
 
-Any dma map underlying the MR should only be freed once the MR is fenced
-at the hardware.
-
-As of the above we first destroy the MKEY and just after that can safely
-call to dma_unmap_single().
-
-Link: https://lore.kernel.org/r/20190723065733.4899-6-leon@kernel.org
-Cc: <stable@vger.kernel.org> # 4.3
-Fixes: 8a187ee52b04 ("IB/mlx5: Support the new memory registration API")
-Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
-Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/infiniband/hw/mlx5/mr.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -1620,10 +1620,10 @@ static void clean_mr(struct mlx5_ib_dev
- 		mr->sig = NULL;
- 	}
- 
--	mlx5_free_priv_descs(mr);
--
--	if (!allocated_from_cache)
-+	if (!allocated_from_cache) {
- 		destroy_mkey(dev, mr);
-+		mlx5_free_priv_descs(mr);
-+	}
- }
- 
- static void dereg_mr(struct mlx5_ib_dev *dev, struct mlx5_ib_mr *mr)
-
-
+Steve
