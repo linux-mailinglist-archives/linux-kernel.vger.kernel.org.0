@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB1381DE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9C2C81E01
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:51:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729858AbfHENu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:50:27 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44500 "EHLO huawei.com"
+        id S1730647AbfHENvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:51:09 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44496 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728904AbfHENu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:50:26 -0400
+        id S1729627AbfHENu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:50:27 -0400
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id EB6D2E454038141DF8AB;
+        by Forcepoint Email with ESMTP id 003B8DA2237DC82E83EC;
         Mon,  5 Aug 2019 21:50:23 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
@@ -21,9 +21,9 @@ From:   John Garry <john.garry@huawei.com>
 To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         <linux-scsi@vger.kernel.org>, John Garry <john.garry@huawei.com>
-Subject: [PATCH 09/15] scsi: hisi_sas: Drop kmap_atomic() in SMP command completion
-Date:   Mon, 5 Aug 2019 21:48:06 +0800
-Message-ID: <1565012892-75940-10-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 10/15] scsi: hisi_sas: Drop SMP resp frame DMA mapping
+Date:   Mon, 5 Aug 2019 21:48:07 +0800
+Message-ID: <1565012892-75940-11-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1565012892-75940-1-git-send-email-john.garry@huawei.com>
 References: <1565012892-75940-1-git-send-email-john.garry@huawei.com>
@@ -36,87 +36,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call to kmap_atomic() in the SMP command completion code is
-unnecessary, since kmap() is only really concerned with highmem, which is
-not relevant on arm64. The controller only finds itself in arm64 systems.
+The SMP frame response is written to the command table and not the
+SMP response pointer from libsas, so don't bother DMA mapping (and
+unmapping) the SMP response from libsas.
 
+Suggested-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 4 +---
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 4 +---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 4 +---
- 3 files changed, 3 insertions(+), 9 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 28 +++++++-------------------
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |  4 +---
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |  4 +---
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |  4 +---
+ 4 files changed, 10 insertions(+), 30 deletions(-)
 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 39ae69e42d26..a2255701b50b 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -300,7 +300,7 @@ static void hisi_sas_task_prep_abort(struct hisi_hba *hisi_hba,
+ 
+ static void hisi_sas_dma_unmap(struct hisi_hba *hisi_hba,
+ 			       struct sas_task *task, int n_elem,
+-			       int n_elem_req, int n_elem_resp)
++			       int n_elem_req)
+ {
+ 	struct device *dev = hisi_hba->dev;
+ 
+@@ -314,16 +314,13 @@ static void hisi_sas_dma_unmap(struct hisi_hba *hisi_hba,
+ 			if (n_elem_req)
+ 				dma_unmap_sg(dev, &task->smp_task.smp_req,
+ 					     1, DMA_TO_DEVICE);
+-			if (n_elem_resp)
+-				dma_unmap_sg(dev, &task->smp_task.smp_resp,
+-					     1, DMA_FROM_DEVICE);
+ 		}
+ 	}
+ }
+ 
+ static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
+ 			    struct sas_task *task, int *n_elem,
+-			    int *n_elem_req, int *n_elem_resp)
++			    int *n_elem_req)
+ {
+ 	struct device *dev = hisi_hba->dev;
+ 	int rc;
+@@ -331,7 +328,7 @@ static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
+ 	if (sas_protocol_ata(task->task_proto)) {
+ 		*n_elem = task->num_scatter;
+ 	} else {
+-		unsigned int req_len, resp_len;
++		unsigned int req_len;
+ 
+ 		if (task->num_scatter) {
+ 			*n_elem = dma_map_sg(dev, task->scatter,
+@@ -352,17 +349,6 @@ static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
+ 				rc = -EINVAL;
+ 				goto err_out_dma_unmap;
+ 			}
+-			*n_elem_resp = dma_map_sg(dev, &task->smp_task.smp_resp,
+-						  1, DMA_FROM_DEVICE);
+-			if (!*n_elem_resp) {
+-				rc = -ENOMEM;
+-				goto err_out_dma_unmap;
+-			}
+-			resp_len = sg_dma_len(&task->smp_task.smp_resp);
+-			if (resp_len & 0x3) {
+-				rc = -EINVAL;
+-				goto err_out_dma_unmap;
+-			}
+ 		}
+ 	}
+ 
+@@ -377,7 +363,7 @@ static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
+ err_out_dma_unmap:
+ 	/* It would be better to call dma_unmap_sg() here, but it's messy */
+ 	hisi_sas_dma_unmap(hisi_hba, task, *n_elem,
+-			   *n_elem_req, *n_elem_resp);
++			   *n_elem_req);
+ prep_out:
+ 	return rc;
+ }
+@@ -449,7 +435,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ 	struct asd_sas_port *sas_port = device->port;
+ 	struct device *dev = hisi_hba->dev;
+ 	int dlvry_queue_slot, dlvry_queue, rc, slot_idx;
+-	int n_elem = 0, n_elem_dif = 0, n_elem_req = 0, n_elem_resp = 0;
++	int n_elem = 0, n_elem_dif = 0, n_elem_req = 0;
+ 	struct hisi_sas_dq *dq;
+ 	unsigned long flags;
+ 	int wr_q_index;
+@@ -485,7 +471,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ 	}
+ 
+ 	rc = hisi_sas_dma_map(hisi_hba, task, &n_elem,
+-			      &n_elem_req, &n_elem_resp);
++			      &n_elem_req);
+ 	if (rc < 0)
+ 		goto prep_out;
+ 
+@@ -580,7 +566,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ 		hisi_sas_dif_dma_unmap(hisi_hba, task, n_elem_dif);
+ err_out_dma_unmap:
+ 	hisi_sas_dma_unmap(hisi_hba, task, n_elem,
+-			   n_elem_req, n_elem_resp);
++			   n_elem_req);
+ prep_out:
+ 	dev_err(dev, "task prep: failed[%d]!\n", rc);
+ 	return rc;
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index b13cbc64d2a9..015bf00a20e6 100644
+index 015bf00a20e6..16974421cb31 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -1275,11 +1275,10 @@ static int slot_complete_v1_hw(struct hisi_hba *hisi_hba,
- 	}
- 	case SAS_PROTOCOL_SMP:
- 	{
--		void *to;
- 		struct scatterlist *sg_resp = &task->smp_task.smp_resp;
-+		void *to = page_address(sg_page(sg_resp));
+@@ -1280,14 +1280,12 @@ static int slot_complete_v1_hw(struct hisi_hba *hisi_hba,
  
  		ts->stat = SAM_STAT_GOOD;
--		to = kmap_atomic(sg_page(sg_resp));
  
- 		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
- 			     DMA_FROM_DEVICE);
-@@ -1289,7 +1288,6 @@ static int slot_complete_v1_hw(struct hisi_hba *hisi_hba,
+-		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
+-			     DMA_FROM_DEVICE);
+ 		dma_unmap_sg(dev, &task->smp_task.smp_req, 1,
+ 			     DMA_TO_DEVICE);
+ 		memcpy(to + sg_resp->offset,
  		       hisi_sas_status_buf_addr_mem(slot) +
  		       sizeof(struct hisi_sas_err_record),
- 		       sg_dma_len(sg_resp));
--		kunmap_atomic(to);
+-		       sg_dma_len(sg_resp));
++		       sg_resp->length);
  		break;
  	}
  	case SAS_PROTOCOL_SATA:
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index de33e31cd88a..c3cf3b77c655 100644
+index c3cf3b77c655..9955b4fbdd0d 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -2419,10 +2419,9 @@ slot_complete_v2_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
- 	case SAS_PROTOCOL_SMP:
- 	{
- 		struct scatterlist *sg_resp = &task->smp_task.smp_resp;
--		void *to;
-+		void *to = page_address(sg_page(sg_resp));
+@@ -2423,14 +2423,12 @@ slot_complete_v2_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
  
  		ts->stat = SAM_STAT_GOOD;
--		to = kmap_atomic(sg_page(sg_resp));
  
- 		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
- 			     DMA_FROM_DEVICE);
-@@ -2432,7 +2431,6 @@ slot_complete_v2_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
+-		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
+-			     DMA_FROM_DEVICE);
+ 		dma_unmap_sg(dev, &task->smp_task.smp_req, 1,
+ 			     DMA_TO_DEVICE);
+ 		memcpy(to + sg_resp->offset,
  		       hisi_sas_status_buf_addr_mem(slot) +
  		       sizeof(struct hisi_sas_err_record),
- 		       sg_dma_len(sg_resp));
--		kunmap_atomic(to);
+-		       sg_dma_len(sg_resp));
++		       sg_resp->length);
  		break;
  	}
  	case SAS_PROTOCOL_SATA:
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 072a39d5c4ad..fcb2ef5f24b9 100644
+index fcb2ef5f24b9..95a298d4e211 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2211,10 +2211,9 @@ slot_complete_v3_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
- 	}
- 	case SAS_PROTOCOL_SMP: {
- 		struct scatterlist *sg_resp = &task->smp_task.smp_resp;
--		void *to;
-+		void *to = page_address(sg_page(sg_resp));
+@@ -2215,14 +2215,12 @@ slot_complete_v3_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
  
  		ts->stat = SAM_STAT_GOOD;
--		to = kmap_atomic(sg_page(sg_resp));
  
- 		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
- 			     DMA_FROM_DEVICE);
-@@ -2224,7 +2223,6 @@ slot_complete_v3_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
+-		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
+-			     DMA_FROM_DEVICE);
+ 		dma_unmap_sg(dev, &task->smp_task.smp_req, 1,
+ 			     DMA_TO_DEVICE);
+ 		memcpy(to + sg_resp->offset,
  			hisi_sas_status_buf_addr_mem(slot) +
  		       sizeof(struct hisi_sas_err_record),
- 		       sg_dma_len(sg_resp));
--		kunmap_atomic(to);
+-		       sg_dma_len(sg_resp));
++		       sg_resp->length);
  		break;
  	}
  	case SAS_PROTOCOL_SATA:
