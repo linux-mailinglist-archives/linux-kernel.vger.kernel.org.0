@@ -2,164 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C74D781F92
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 16:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAAEC81F9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 16:55:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbfHEOy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 10:54:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728043AbfHEOy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 10:54:27 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3380E206C1;
-        Mon,  5 Aug 2019 14:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565016866;
-        bh=UzKav88A7iFYVtoLk8KJjYDlrDokACtTBAAskUdmfSM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=xPDGnsIPOTwzT3NsSDUSuQUKeNkeo4UjEbPSRmga9tvZXZE5SzNrG+LzxqkmIDmNv
-         oPJl2fK8wL27feQkv9PKQqWkxY6+3S33jNxaDDZXHej336DJW+39r2hC3ntCd/af1U
-         AjZ1ATmmkd1/B/q2FHVz0P9HNhb/RJX9QQy4heLA=
-Date:   Mon, 5 Aug 2019 15:54:20 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: light: si1145: Use device-managed APIs
-Message-ID: <20190805155403.3d45b0b5@archlinux>
-In-Reply-To: <20190729014301.13402-1-hslester96@gmail.com>
-References: <20190729014301.13402-1-hslester96@gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729518AbfHEOzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 10:55:31 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43702 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726508AbfHEOzb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 10:55:31 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x75Eqj3R050951;
+        Mon, 5 Aug 2019 10:54:49 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u6ne14fm6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 05 Aug 2019 10:54:49 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x75Es29c056802;
+        Mon, 5 Aug 2019 10:54:49 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u6ne14fkc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 05 Aug 2019 10:54:49 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x75EsSgv007066;
+        Mon, 5 Aug 2019 14:54:48 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma04dal.us.ibm.com with ESMTP id 2u51w6hfxq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 05 Aug 2019 14:54:48 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x75Esjgr41812444
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 5 Aug 2019 14:54:46 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D85F0B2064;
+        Mon,  5 Aug 2019 14:54:45 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9E52B2067;
+        Mon,  5 Aug 2019 14:54:45 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  5 Aug 2019 14:54:45 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C9BEC16C4079; Mon,  5 Aug 2019 07:54:48 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 07:54:48 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH RFC tip/core/rcu 14/14] rcu/nohz: Make multi_cpu_stop()
+ enable tick on all online CPUs
+Message-ID: <20190805145448.GI28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190802151435.GA1081@linux.ibm.com>
+ <20190802151501.13069-14-paulmck@linux.ibm.com>
+ <20190804144317.GF2349@hirez.programming.kicks-ass.net>
+ <20190804144835.GB2386@hirez.programming.kicks-ass.net>
+ <20190804184159.GC28441@linux.ibm.com>
+ <20190805080531.GH2349@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805080531.GH2349@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-05_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908050166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jul 2019 09:43:01 +0800
-Chuhong Yuan <hslester96@gmail.com> wrote:
-
-> Use device-managed APIs to simplify the code.
-> The remove functions are redundant now and can
-> be deleted.
+On Mon, Aug 05, 2019 at 10:05:31AM +0200, Peter Zijlstra wrote:
+> On Sun, Aug 04, 2019 at 11:41:59AM -0700, Paul E. McKenney wrote:
+> > On Sun, Aug 04, 2019 at 04:48:35PM +0200, Peter Zijlstra wrote:
+> > > On Sun, Aug 04, 2019 at 04:43:17PM +0200, Peter Zijlstra wrote:
+> > > > On Fri, Aug 02, 2019 at 08:15:01AM -0700, Paul E. McKenney wrote:
+> > > > > The multi_cpu_stop() function relies on the scheduler to gain control from
+> > > > > whatever is running on the various online CPUs, including any nohz_full
+> > > > > CPUs running long loops in kernel-mode code.  Lack of the scheduler-clock
+> > > > > interrupt on such CPUs can delay multi_cpu_stop() for several minutes
+> > > > > and can also result in RCU CPU stall warnings.  This commit therefore
+> > > > > causes multi_cpu_stop() to enable the scheduler-clock interrupt on all
+> > > > > online CPUs.
+> > > > 
+> > > > This sounds wrong; should we be fixing sched_can_stop_tick() instead to
+> > > > return false when the stop task is runnable?
+> > 
+> > Agreed.  However, it is proving surprisingly hard to come up with a
+> > code sequence that has the effect of rcu_nocb without nohz_full.
+> > And rcu_nocb works just fine.  With nohz_full also in place, I am
+> > decreasing the failure rate, but it still fails, perhaps a few times
+> > per hour of TREE04 rcutorture on an eight-CPU system.  (My 12-CPU
+> > system stubbornly refuses to fail.  Good thing I kept the eight-CPU
+> > system around, I guess.)
+> > 
+> > When I arrive at some sequence of actions that actually work reliably,
+> > then by all means let's put it somewhere in the NO_HZ_FULL machinery!
 > 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> I'm confused; what are you arguing? The patch as proposed is just wrong,
+> it needs to go.
 
-Nice little patch, thanks!
+Eventually, sure.  But one dragon at a time.  Right now that dragon is
+"what is required to get multi_cpu_stop() to work in a timely fashioon".
+The "where does that code really go" dragon comes later.
 
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
-> ---
-> Changes in v2:
->   - Split v1 into two patches.
->   - Use devm_iio_trigger_register in probe_trigger,
->     delete redundant remove_trigger.
->   - Return devm_iio_device_register directly as a
->     minor optimization.
+> > > And even without that; I don't understand how we're not instantly
+> > > preempted the moment we enqueue the stop task.
+> > 
+> > There is no preemption because CONFIG_PREEMPT=n for the scenarios still
 > 
->  drivers/iio/light/si1145.c | 42 +++++---------------------------------
->  1 file changed, 5 insertions(+), 37 deletions(-)
+> That doesn't make sense; even with CONFIG_PREEMPT=n we set
+> TIF_NEED_RESCHED. We'll just not react to it as promptly (only explicit
+> rescheduling points and return to userspace). Enabling the tick will not
+> make any difference what so ever.
 > 
-> diff --git a/drivers/iio/light/si1145.c b/drivers/iio/light/si1145.c
-> index 6579d2418814..982bba0c54e7 100644
-> --- a/drivers/iio/light/si1145.c
-> +++ b/drivers/iio/light/si1145.c
-> @@ -1261,7 +1261,7 @@ static int si1145_probe_trigger(struct iio_dev *indio_dev)
->  		return ret;
->  	}
->  
-> -	ret = iio_trigger_register(trig);
-> +	ret = devm_iio_trigger_register(&client->dev, trig);
->  	if (ret)
->  		return ret;
->  
-> @@ -1271,16 +1271,6 @@ static int si1145_probe_trigger(struct iio_dev *indio_dev)
->  	return 0;
->  }
->  
-> -static void si1145_remove_trigger(struct iio_dev *indio_dev)
-> -{
-> -	struct si1145_data *data = iio_priv(indio_dev);
-> -
-> -	if (data->trig) {
-> -		iio_trigger_unregister(data->trig);
-> -		data->trig = NULL;
-> -	}
-> -}
-> -
->  static int si1145_probe(struct i2c_client *client,
->  			const struct i2c_device_id *id)
->  {
-> @@ -1332,7 +1322,8 @@ static int si1145_probe(struct i2c_client *client,
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = iio_triggered_buffer_setup(indio_dev, NULL,
-> +	ret = devm_iio_triggered_buffer_setup(&client->dev,
-> +		indio_dev, NULL,
->  		si1145_trigger_handler, &si1145_buffer_setup_ops);
->  	if (ret < 0)
->  		return ret;
-> @@ -1340,23 +1331,12 @@ static int si1145_probe(struct i2c_client *client,
->  	if (client->irq) {
->  		ret = si1145_probe_trigger(indio_dev);
->  		if (ret < 0)
-> -			goto error_free_buffer;
-> +			return ret;
->  	} else {
->  		dev_info(&client->dev, "no irq, using polling\n");
->  	}
->  
-> -	ret = iio_device_register(indio_dev);
-> -	if (ret < 0)
-> -		goto error_free_trigger;
-> -
-> -	return 0;
-> -
-> -error_free_trigger:
-> -	si1145_remove_trigger(indio_dev);
-> -error_free_buffer:
-> -	iio_triggered_buffer_cleanup(indio_dev);
-> -
-> -	return ret;
-> +	return devm_iio_device_register(&client->dev, indio_dev);
->  }
->  
->  static const struct i2c_device_id si1145_ids[] = {
-> @@ -1371,23 +1351,11 @@ static const struct i2c_device_id si1145_ids[] = {
->  };
->  MODULE_DEVICE_TABLE(i2c, si1145_ids);
->  
-> -static int si1145_remove(struct i2c_client *client)
-> -{
-> -	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-> -
-> -	iio_device_unregister(indio_dev);
-> -	si1145_remove_trigger(indio_dev);
-> -	iio_triggered_buffer_cleanup(indio_dev);
-> -
-> -	return 0;
-> -}
-> -
->  static struct i2c_driver si1145_driver = {
->  	.driver = {
->  		.name   = "si1145",
->  	},
->  	.probe  = si1145_probe,
-> -	.remove = si1145_remove,
->  	.id_table = si1145_ids,
->  };
->  
+> Tick based preemption will not 'fix' the lack of wakeup preemption. If
+> the stop task wakeup didn't set TIF_NEED_RESCHED, the OTHER/CFS tick
+> will not either.
 
+Seems logical except for the fact that multi_cpu_stop() really is taking
+in excess of five minutes on a regular basis.
+
+> > having trouble.  Yes, there are cond_resched() calls, but they don't do
+> > anything unless the appropriate flags are set, which won't always happen
+> > without the tick, apparently.  Or without -something- that isn't always
+> > happening as it should.
+> 
+> Right; so clearly we're not understanding what's happening. That seems
+> like a requirement for actually doing a patch.
+
+Almost but not quite.  It is a requirement for a patch *that* *is*
+*supposed* *to* *be* *a* *fix*.  If you are trying to prohibit me from
+writing experimental patches, please feel free to take a long walk on
+a short pier.
+
+Understood???
+
+> > > Any enqueue, should go through check_preempt_curr() which will be an
+> > > instant resched_curr() when we just woke the stop class.
+> > 
+> > I did try hitting all of the CPUs with resched_cpu().  Ten times on each
+> > CPU with a ten-jiffy wait between each.  This might have decreased the
+> > probability of excessively long CPU-stopper waits by a factor of two or
+> > three, but it did not eliminate the excessively long waits.
+> > 
+> > What else should I try?
+> > 
+> > For example, are there any diagnostics I could collect, say from within
+> > the CPU stopper when things are taking too long?  I see CPU-stopper
+> > delays in excess of five -minutes-, so this is anything but subtle.
+> 
+> Catch the whole thing in a function trace?
+> 
+> The chain that should instantly set TIF_NEED_RESCHED:
+> 
+>   stop_machine()
+>     stop_machine_cpuslocked()
+>       stop_cpus()
+>         __stop_cpus()
+>           queue_stop_cpus_work()
+>             cpu_stop_queue_work()
+> 	      wake_up_q()
+> 	        wake_up_process()
+> 
+> 
+>   wake_up_process()
+>     try_to_wake_up()
+>       ttwu_queue()
+>         ttwu_queue_remote()
+> 	  <- scheduler_ipi()
+> 	    sched_ttwu_pending()
+> 	      ttwu_do_activate()
+> 
+>         ttwu_do_activate()
+> 	  activate_task()
+> 	  ttwu_do_wakeup()
+> 	    check_preempt_curr()
+> 	      resched_curr()
+> 
+> You could frob some tracing into __stop_cpus(), before
+> wait_for_completion(), at that point all the CPUs in @cpumask should
+> either be running the stop task or have TIF_NEED_RESCHED set.
+
+Thank you, this should be quite helpful.
+
+							Thanx, Paul
