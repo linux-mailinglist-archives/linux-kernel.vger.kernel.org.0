@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81A0E81A3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:04:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C482381A6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:05:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729006AbfHENEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:04:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39970 "EHLO mail.kernel.org"
+        id S1729411AbfHENFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:05:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728934AbfHENEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:04:21 -0400
+        id S1729400AbfHENFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:05:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 580EE2173C;
-        Mon,  5 Aug 2019 13:04:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4230F206C1;
+        Mon,  5 Aug 2019 13:05:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010260;
-        bh=j8uzukzOaljmQbwdKf6UHODmpG6duIbaQra2BZu+GU4=;
+        s=default; t=1565010348;
+        bh=Vc4MbkvPCY6ix1pL5p3SF2Nx1KQb2lWKpvH9nCpevqg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fhFTus651N5ZyhGpZe82kr4EauJBE0S/K+SH+MnkG2g8p4n87tObC4MeCFvekyoHy
-         wuqBghgaVwO68epN0It12pvI1sr3/a/sQHRr1YQeZLJbXfIby6CHnRBskr+Byw98Ez
-         Rm3XgkZ6PMouNat7aD/6RENPYXVwVBtgDOqkjIas=
+        b=yVDQJxK0lKgdHLowgtNa3V9grH7Kdt4H4IYjlieJP6g+cF+k/NHgFKGWUqOQeVI+9
+         c5uMbc42zGPdo1nNFDEVoZaosZSMqGaHKTNmbumqJLOhokj1aEWb5BfkGRR27kXIiZ
+         Jfz3a0VWNoSAwsiHTFk9H32EU6fZyMy7o4nvtfls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+fee3a14d4cdf92646287@syzkaller.appspotmail.com,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.4 20/22] selinux: fix memory leak in policydb_init()
-Date:   Mon,  5 Aug 2019 15:02:57 +0200
-Message-Id: <20190805124923.189417648@linuxfoundation.org>
+        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 4.9 32/42] drivers/perf: arm_pmu: Fix failure path in PM notifier
+Date:   Mon,  5 Aug 2019 15:02:58 +0200
+Message-Id: <20190805124928.764838956@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
-References: <20190805124918.070468681@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Will Deacon <will@kernel.org>
 
-commit 45385237f65aeee73641f1ef737d7273905a233f upstream.
+commit 0d7fd70f26039bd4b33444ca47f0e69ce3ae0354 upstream.
 
-Since roles_init() adds some entries to the role hash table, we need to
-destroy also its keys/values on error, otherwise we get a memory leak in
-the error path.
+Handling of the CPU_PM_ENTER_FAILED transition in the Arm PMU PM
+notifier code incorrectly skips restoration of the counters. Fix the
+logic so that CPU_PM_ENTER_FAILED follows the same path as CPU_PM_EXIT.
 
 Cc: <stable@vger.kernel.org>
-Reported-by: syzbot+fee3a14d4cdf92646287@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Fixes: da4e4f18afe0f372 ("drivers/perf: arm_pmu: implement CPU_PM notifier")
+Reported-by: Anders Roxell <anders.roxell@linaro.org>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/ss/policydb.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/perf/arm_pmu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -266,6 +266,8 @@ static int rangetr_cmp(struct hashtab *h
- 	return v;
- }
- 
-+static int (*destroy_f[SYM_NUM]) (void *key, void *datum, void *datap);
-+
- /*
-  * Initialize a policy database structure.
-  */
-@@ -313,8 +315,10 @@ static int policydb_init(struct policydb
- out:
- 	hashtab_destroy(p->filename_trans);
- 	hashtab_destroy(p->range_tr);
--	for (i = 0; i < SYM_NUM; i++)
-+	for (i = 0; i < SYM_NUM; i++) {
-+		hashtab_map(p->symtab[i].table, destroy_f[i], NULL);
- 		hashtab_destroy(p->symtab[i].table);
-+	}
- 	return rc;
- }
- 
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -804,8 +804,8 @@ static int cpu_pm_pmu_notify(struct noti
+ 		cpu_pm_pmu_setup(armpmu, cmd);
+ 		break;
+ 	case CPU_PM_EXIT:
+-		cpu_pm_pmu_setup(armpmu, cmd);
+ 	case CPU_PM_ENTER_FAILED:
++		cpu_pm_pmu_setup(armpmu, cmd);
+ 		armpmu->start(armpmu);
+ 		break;
+ 	default:
 
 
