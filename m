@@ -2,122 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 826EF81148
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 07:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC4FE8115A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 07:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfHEFNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 01:13:55 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:43390 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfHEFNz (ORCPT
+        id S1727254AbfHEFWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 01:22:49 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:20050 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725951AbfHEFWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 01:13:55 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x755DX7t000360;
-        Mon, 5 Aug 2019 00:13:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564982013;
-        bh=ewdIibSSQijgwi+dlHIsVHF2PIynzZcDv3GyCZ5qoao=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=KQCe62tXWVeGrSrKB9tF8y+nwKb2Sh5uurchqHfP8F1fhvgx+d8cxZ3C/x1g2gzah
-         kWUoh9JEucHPLlqgW/DWzGz7rGPZgbSlup4Q/HHYAMBF3fnKJDVCxndejSz8FioivS
-         XC6GeUq/5BAR/0Pk7Dxj1fIG2oFeVjvzZxFidgX8=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x755DXbQ036738
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Aug 2019 00:13:33 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 5 Aug
- 2019 00:13:32 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 5 Aug 2019 00:13:32 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x755DT5L104396;
-        Mon, 5 Aug 2019 00:13:30 -0500
-Subject: Re: [PATCH 6/6] mtd: spi-nor: Add the SPI_NOR_XSR_RDY flag
-To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>,
-        <marek.vasut@gmail.com>
-CC:     <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <boris.brezillon@bootlin.com>
-References: <20190731091145.27374-1-tudor.ambarus@microchip.com>
- <20190731091145.27374-7-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <93dc5a5d-3a72-c80e-0b0d-7fd758a1ea5e@ti.com>
-Date:   Mon, 5 Aug 2019 10:44:13 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 5 Aug 2019 01:22:48 -0400
+X-UUID: 09dfe8c671794e8bae7a74720beb44bf-20190805
+X-UUID: 09dfe8c671794e8bae7a74720beb44bf-20190805
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <hsin-hsiung.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 411993152; Mon, 05 Aug 2019 13:22:42 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 5 Aug 2019 13:22:41 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 5 Aug 2019 13:22:41 +0800
+From:   Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Richard Fontana <rfontana@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Subject: [PATCH v4 00/10] Add Support for MediaTek PMIC MT6358
+Date:   Mon, 5 Aug 2019 13:21:48 +0800
+Message-ID: <1564982518-32163-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190731091145.27374-7-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-TM-SNTS-SMTP: B7A1D82E4A122D7A7FC8BF3D5936A10879DD64CFF1D5E491B7B59F716D384DAF2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset including refactoring interrupt add support to MT6358 PMIC.
+MT6358 is the primary PMIC for MT8183 platform.
 
+changes since v3:
+- refine some coding style in the mt6358 interrupt setting for better
+  code quality.
+- refine some coding style in the mt6358 regulstor for better code
+  quality.
+- fix correct voltage register for vgpu.
+- remove useless define in mt6397-core.c.
+- add rtc node in 6358.dtsi.
 
-On 31/07/19 2:42 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Boris Brezillon <boris.brezillon@bootlin.com>
-> 
-> S3AN flashes use a specific opcode to read the status register.
-> We currently use the SPI_S3AN flag to decide whether this specific
-> SR read opcode should be used, but SPI_S3AN is about to disappear, so
-> let's add a new flag.
-> 
+Hsin-Hsiung Wang (8):
+  mfd: mt6397: clean up code
+  mfd: mt6397: extract irq related code from core driver
+  mfd: mt6397: modify suspend/resume behavior
+  dt-bindings: mfd: Add compatible for the MediaTek MT6358 PMIC
+  regulator: Add document for MT6358 regulator
+  mfd: Add support for the MediaTek MT6358 PMIC
+  regulator: mt6358: Add support for MT6358 regulator
+  arm64: dts: mt6358: add PMIC MT6358 related nodes
 
-I think you can drop SPI_S3AN right away either as separate patch in
-this series or as part of this patch itself.
+Ran Bi (2):
+  rtc: mt6397: fix alarm register overwrite
+  rtc: Add support for the MediaTek MT6358 RTC
 
-Regards
-Vignesh
-
-> Note that we use the same bit as SPI_S3AN implies SPI_NOR_XSR_RDY and
-> vice versa.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
->  drivers/mtd/spi-nor/spi-nor.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 5fea5d7ce2cb..01be6d49ce3b 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -213,6 +213,14 @@ struct flash_info {
->  					 * bit. Must be used with
->  					 * SPI_NOR_HAS_LOCK.
->  					 */
-> +#define SPI_NOR_XSR_RDY		BIT(10)	/*
-> +					 * S3AN flashes have specific opcode to
-> +					 * read the status register.
-> +					 * Flags SPI_NOR_XSR_RDY and SPI_S3AN
-> +					 * use the same bit as one implies the
-> +					 * other, but we will get rid of
-> +					 * SPI_S3AN soon.
-> +					 */
->  #define	SPI_S3AN		BIT(10)	/*
->  					 * Xilinx Spartan 3AN In-System Flash
->  					 * (MFR cannot be used for probing
-> @@ -4818,7 +4826,7 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
->  	 * spi_nor_wait_till_ready(). Xilinx S3AN share MFR
->  	 * with Atmel spi-nor
->  	 */
-> -	if (info->flags & SPI_S3AN)
-> +	if (info->flags & SPI_NOR_XSR_RDY)
->  		nor->flags |=  SNOR_F_READY_XSR_RDY;
->  
->  	/* Kept only for backward compatibility purpose. */
-> 
+ Documentation/devicetree/bindings/mfd/mt6397.txt   |  11 +-
+ .../bindings/regulator/mt6358-regulator.txt        | 358 +++++++++++++
+ arch/arm64/boot/dts/mediatek/mt6358.dtsi           | 362 +++++++++++++
+ drivers/mfd/Makefile                               |   4 +-
+ drivers/mfd/mt6358-irq.c                           | 229 ++++++++
+ drivers/mfd/mt6397-core.c                          | 281 +++-------
+ drivers/mfd/mt6397-irq.c                           | 214 ++++++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/mt6358-regulator.c               | 580 +++++++++++++++++++++
+ drivers/rtc/rtc-mt6397.c                           |  90 +++-
+ include/linux/mfd/mt6358/core.h                    | 158 ++++++
+ include/linux/mfd/mt6358/registers.h               | 282 ++++++++++
+ include/linux/mfd/mt6397/core.h                    |  15 +
+ include/linux/regulator/mt6358-regulator.h         |  56 ++
+ 15 files changed, 2428 insertions(+), 222 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mt6358-regulator.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6358.dtsi
+ create mode 100644 drivers/mfd/mt6358-irq.c
+ create mode 100644 drivers/mfd/mt6397-irq.c
+ create mode 100644 drivers/regulator/mt6358-regulator.c
+ create mode 100644 include/linux/mfd/mt6358/core.h
+ create mode 100644 include/linux/mfd/mt6358/registers.h
+ create mode 100644 include/linux/regulator/mt6358-regulator.h
 
 -- 
-Regards
-Vignesh
+2.6.4
+
