@@ -2,49 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A95C81A7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 592A681A93
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729105AbfHENGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:06:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43212 "EHLO mail.kernel.org"
+        id S1729771AbfHENHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:07:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729601AbfHENG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:06:27 -0400
+        id S1729769AbfHENHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:07:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27BE420657;
-        Mon,  5 Aug 2019 13:06:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB763217D9;
+        Mon,  5 Aug 2019 13:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010386;
-        bh=iROJ5hqAMhLnI/WyXcSfNfNavpiVroAGsu9DCAHdrRQ=;
+        s=default; t=1565010433;
+        bh=DisYABNDdL5F7NBGRgcPCFQDZVkr4bandtkDWDPTzeQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=crVvcp/ij3oRx0GR7S5HiVk7QMSIBHWpNeUC1tww0pDoOVfj8CSkLwnjPzDV1CCq8
-         boGEdhF//1EMmrHrQXcfamO5V/L7yH1ymNgevckDWN+f0eZL40BFWCJqewjKGAAEpc
-         J7QLKugIw8vjJrMc+cRLAT7VSjQX6H0sNYF9xpxI=
+        b=GAxJvMmZMgOqKHukdFEDSVcrHavn2p1reA9X0P2Gzb8kd4RTJjBwBBz0V5/fIc8ED
+         ZvffsHYaHtEBXkFUiqrNAsVxiByjBfFcv9BCKKDxN34Pdto//YixxLQTGcp+5kHsGl
+         laLkR3kagAcCAFBktbKvvsHnvXmlNdLt/JnQcCdI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        Fabian Frederick <fabf@skynet.be>,
-        Mikko Rapeli <mikko.rapeli@iki.fi>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Yann Droneaud <ydroneaud@opteya.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 19/42] coda: add error handling for fget
-Date:   Mon,  5 Aug 2019 15:02:45 +0200
-Message-Id: <20190805124927.162636799@linuxfoundation.org>
+Subject: [PATCH 4.14 21/53] x86: math-emu: Hide clang warnings for 16-bit overflow
+Date:   Mon,  5 Aug 2019 15:02:46 +0200
+Message-Id: <20190805124930.428360845@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
-References: <20190805124924.788666484@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,48 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 02551c23bcd85f0c68a8259c7b953d49d44f86af ]
+[ Upstream commit 29e7e9664aec17b94a9c8c5a75f8d216a206aa3a ]
 
-When fget fails, the lack of error-handling code may cause unexpected
-results.
+clang warns about a few parts of the math-emu implementation
+where a 16-bit integer becomes negative during assignment:
 
-This patch adds error-handling code after calling fget.
+arch/x86/math-emu/poly_tan.c:88:35: error: implicit conversion from 'int' to 'short' changes value from 49216 to -16320 [-Werror,-Wconstant-conversion]
+                                      (0x41 + EXTENDED_Ebias) | SIGN_Negative);
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+arch/x86/math-emu/fpu_emu.h:180:58: note: expanded from macro 'setexponent16'
+ #define setexponent16(x,y)  { (*(short *)&((x)->exp)) = (y); }
+                                                      ~  ^
+arch/x86/math-emu/reg_constant.c:37:32: error: implicit conversion from 'int' to 'short' changes value from 49085 to -16451 [-Werror,-Wconstant-conversion]
+FPU_REG const CONST_PI2extra = MAKE_REG(NEG, -66,
+                               ^~~~~~~~~~~~~~~~~~
+arch/x86/math-emu/reg_constant.c:21:25: note: expanded from macro 'MAKE_REG'
+                ((EXTENDED_Ebias+(e)) | ((SIGN_##s != 0)*0x8000)) }
+                 ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+arch/x86/math-emu/reg_constant.c:48:28: error: implicit conversion from 'int' to 'short' changes value from 65535 to -1 [-Werror,-Wconstant-conversion]
+FPU_REG const CONST_QNaN = MAKE_REG(NEG, EXP_OVER, 0x00000000, 0xC0000000);
+                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+arch/x86/math-emu/reg_constant.c:21:25: note: expanded from macro 'MAKE_REG'
+                ((EXTENDED_Ebias+(e)) | ((SIGN_##s != 0)*0x8000)) }
+                 ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Link: http://lkml.kernel.org/r/2514ec03df9c33b86e56748513267a80dd8004d9.1558117389.git.jaharkes@cs.cmu.edu
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Signed-off-by: Jan Harkes <jaharkes@cs.cmu.edu>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Colin Ian King <colin.king@canonical.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Fabian Frederick <fabf@skynet.be>
-Cc: Mikko Rapeli <mikko.rapeli@iki.fi>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Yann Droneaud <ydroneaud@opteya.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+The code is correct as is, so add a typecast to shut up the warnings.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190712090816.350668-1-arnd@arndb.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/coda/psdev.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/math-emu/fpu_emu.h      | 2 +-
+ arch/x86/math-emu/reg_constant.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
-index 822629126e89f..ff9b5cf8ff016 100644
---- a/fs/coda/psdev.c
-+++ b/fs/coda/psdev.c
-@@ -187,8 +187,11 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
- 	if (req->uc_opcode == CODA_OPEN_BY_FD) {
- 		struct coda_open_by_fd_out *outp =
- 			(struct coda_open_by_fd_out *)req->uc_data;
--		if (!outp->oh.result)
-+		if (!outp->oh.result) {
- 			outp->fh = fget(outp->fd);
-+			if (!outp->fh)
-+				return -EBADF;
-+		}
- 	}
+diff --git a/arch/x86/math-emu/fpu_emu.h b/arch/x86/math-emu/fpu_emu.h
+index a5a41ec580721..0c122226ca56f 100644
+--- a/arch/x86/math-emu/fpu_emu.h
++++ b/arch/x86/math-emu/fpu_emu.h
+@@ -177,7 +177,7 @@ static inline void reg_copy(FPU_REG const *x, FPU_REG *y)
+ #define setexponentpos(x,y) { (*(short *)&((x)->exp)) = \
+   ((y) + EXTENDED_Ebias) & 0x7fff; }
+ #define exponent16(x)         (*(short *)&((x)->exp))
+-#define setexponent16(x,y)  { (*(short *)&((x)->exp)) = (y); }
++#define setexponent16(x,y)  { (*(short *)&((x)->exp)) = (u16)(y); }
+ #define addexponent(x,y)    { (*(short *)&((x)->exp)) += (y); }
+ #define stdexp(x)           { (*(short *)&((x)->exp)) += EXTENDED_Ebias; }
  
-         wake_up(&req->uc_sleep);
+diff --git a/arch/x86/math-emu/reg_constant.c b/arch/x86/math-emu/reg_constant.c
+index 8dc9095bab224..742619e94bdf2 100644
+--- a/arch/x86/math-emu/reg_constant.c
++++ b/arch/x86/math-emu/reg_constant.c
+@@ -18,7 +18,7 @@
+ #include "control_w.h"
+ 
+ #define MAKE_REG(s, e, l, h) { l, h, \
+-		((EXTENDED_Ebias+(e)) | ((SIGN_##s != 0)*0x8000)) }
++		(u16)((EXTENDED_Ebias+(e)) | ((SIGN_##s != 0)*0x8000)) }
+ 
+ FPU_REG const CONST_1 = MAKE_REG(POS, 0, 0x00000000, 0x80000000);
+ #if 0
 -- 
 2.20.1
 
