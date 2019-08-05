@@ -2,44 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E755881969
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 14:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 120F781971
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 14:38:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbfHEMiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 08:38:14 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:39340 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbfHEMiI (ORCPT
+        id S1728849AbfHEMi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 08:38:26 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:44612 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728759AbfHEMiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 08:38:08 -0400
-Received: by mail-io1-f72.google.com with SMTP id y13so91981902iol.6
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 05:38:07 -0700 (PDT)
+        Mon, 5 Aug 2019 08:38:09 -0400
+Received: by mail-io1-f71.google.com with SMTP id s9so92077667iob.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 05:38:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=nYCr6+NB+DhMclV9O8Cq6WZJ2tcvKnN0CPqIOJAMah0=;
-        b=iJsFo7YjR8+ZoddgwpgXmAyktmcwjIa9PBRmpzX+vMMcas0neJJE6r4+fLxAKR3Ggn
-         eA83DaMNCIqnkBsONBeUumwLfCjryyTy1FkRUufIX7KxWRj7qKdHmbJNNNeUu09PIMc6
-         CQXmMJewVXrZTkutMp2+eJdHATG4xI/HrMiP4ZqjjEqPxFrASB63aSQgQKZ2FVZpful4
-         b2hpsd+N5fhm0xWF8OEqYIjOE3SVofS3RqpXA4f1gAo1dIkJESk5PbMi0pASdv5+f/kA
-         bDkr8ilS432RLEBMC/cVwb1uo9nqJhs0JAfzHQkkoFS2ZVUFFIOyaR1c+54Rv1PC0Uox
-         yahA==
-X-Gm-Message-State: APjAAAVYB/mYW2rq+tLpDi0q0P2hb+i5CsPykShRITDKHeXojIkrknjN
-        3UNqgUtUmifi0gHMrqmlTv7J58bl27vQ3TgIDQNzuwW2043r
-X-Google-Smtp-Source: APXvYqxhP/Nk3/f7lDzKn5fuYde0q4RcKdvV+W6XuLX3sezEya/N+8ZuA3xdQfFYbN9TBcIYu+EHU38kkcUSvgcKnSQL3aAAIO6r
+        bh=0SlIsA2694wt+MQ5zgGwgDx+HJC9onZmiZCosf0h45g=;
+        b=YU3vnozp29pdFyKQ5hKos5G3D00U2HLj3eYtpTIAEFQGJsneg5pdUV62FXMbCf/WJr
+         uinVEpGYTtGjqQE89acwkr4mym7duYPzEdklPKTyrH0bjv0jAJHGQvNuIp+5np8A3aBD
+         hiYiBJMgac4/p4OmBmjQlZnC62+fBJ21cNtQHAJB4Cd/5J4BS6t6GXsu3afFiKPSA5KR
+         nSxcgH5yrbb1NTL3JiSLvcFF3Q+ZT84sEdUWR1+ADgyrh/QBsAeeyhrQAl+8WJlvuh42
+         SsZcA6hFOaUjjXhoKBn4ezXx54BkuZlGiyEGZpKB+ciomI1tV6W36L3t5pIYl9Q3t8WO
+         7h3g==
+X-Gm-Message-State: APjAAAXtlXza2DTQ90L696EBvkkXS8UFprjkyT7N7Ru2F/Rpfxu1IMzk
+        GNIKypAYsZLOk0ZQcjoPC8Iu20IW/MEj43LwbPb1C3hk4XJM
+X-Google-Smtp-Source: APXvYqyl33KSmOqc0D/gaCB1vcetR2LjFAP3VYVdy4LJX4399FDTlJi85XLUKNOx6HsJaQg1toX7SXFnsmn8hwqbMaIt4hdcR0vj
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9314:: with SMTP id k20mr4529596iom.235.1565008687355;
- Mon, 05 Aug 2019 05:38:07 -0700 (PDT)
-Date:   Mon, 05 Aug 2019 05:38:07 -0700
+X-Received: by 2002:a6b:5a17:: with SMTP id o23mr32421740iob.41.1565008688166;
+ Mon, 05 Aug 2019 05:38:08 -0700 (PDT)
+Date:   Mon, 05 Aug 2019 05:38:08 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e15ee0058f5dfa81@google.com>
-Subject: WARNING in kernfs_new_node
-From:   syzbot <syzbot+499aea72daa2cea73cb7@syzkaller.appspotmail.com>
-To:     benh@kernel.crashing.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, rafael@kernel.org,
-        syzkaller-bugs@googlegroups.com, tj@kernel.org,
-        torvalds@linux-foundation.org
+Message-ID: <000000000000edc1d5058f5dfa5f@google.com>
+Subject: memory leak in ppp_write
+From:   syzbot <syzbot+d9c8bf24e56416d7ce2c@syzkaller.appspotmail.com>
+To:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+        davem@davemloft.net, kafai@fb.com, linux-kernel@vger.kernel.org,
+        linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
+        paulus@samba.org, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, yhs@fb.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,97 +51,48 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    1e78030e Merge tag 'mmc-v5.3-rc1' of git://git.kernel.org/..
+HEAD commit:    d8778f13 Merge tag 'xtensa-20190803' of git://github.com/j..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12aab5cc600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e397351d2615e10
-dashboard link: https://syzkaller.appspot.com/bug?extid=499aea72daa2cea73cb7
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111d80fc600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d9060c600000
-
-The bug was bisected to:
-
-commit 726e41097920a73e4c7c33385dcc0debb1281e18
-Author: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date:   Tue Jul 10 00:29:10 2018 +0000
-
-     drivers: core: Remove glue dirs from sysfs earlier
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=138b41ec600000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=104b41ec600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=178b41ec600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a953d6600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=30cef20daf3e9977
+dashboard link: https://syzkaller.appspot.com/bug?extid=d9c8bf24e56416d7ce2c
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16da002c600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+499aea72daa2cea73cb7@syzkaller.appspotmail.com
-Fixes: 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
+Reported-by: syzbot+d9c8bf24e56416d7ce2c@syzkaller.appspotmail.com
 
-debugfs: Directory 'hci3' with parent 'bluetooth' already present!
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 9903 at fs/kernfs/dir.c:493 kernfs_get  
-fs/kernfs/dir.c:493 [inline]
-WARNING: CPU: 0 PID: 9903 at fs/kernfs/dir.c:493  
-kernfs_new_node+0x155/0x180 fs/kernfs/dir.c:700
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 9903 Comm: syz-executor126 Not tainted 5.3.0-rc2+ #59
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
-  panic+0x29b/0x7d9 kernel/panic.c:219
-  __warn+0x22f/0x230 kernel/panic.c:576
-  report_bug+0x190/0x290 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  do_error_trap+0xd7/0x440 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1026
-RIP: 0010:kernfs_get fs/kernfs/dir.c:493 [inline]
-RIP: 0010:kernfs_new_node+0x155/0x180 fs/kernfs/dir.c:700
-Code: d2 ff 4c 89 23 4c 89 f0 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d c3  
-e8 69 47 98 ff 48 c7 c7 6d b9 7a 88 31 c0 e8 9e a6 80 ff <0f> 0b eb 8e 44  
-89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 67 ff ff ff 4c
-RSP: 0018:ffff88808d96f6f0 EFLAGS: 00010246
-RAX: 0000000000000024 RBX: 0000000000000000 RCX: d31929014df6e300
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffff88808d96f728 R08: ffffffff816068e4 R09: fffffbfff11fbdfd
-R10: fffffbfff11fbdfd R11: 0000000000000000 R12: ffff88809377b620
-R13: ffff8880982858c0 R14: ffff888095d39460 R15: ffff88821b70d150
-  kernfs_create_dir_ns+0x44/0x130 fs/kernfs/dir.c:1022
-  sysfs_create_dir_ns+0x161/0x310 fs/sysfs/dir.c:59
-  create_dir lib/kobject.c:89 [inline]
-  kobject_add_internal+0x459/0xd50 lib/kobject.c:255
-  kobject_add_varg lib/kobject.c:390 [inline]
-  kobject_add+0x138/0x200 lib/kobject.c:442
-  device_add+0x508/0x1570 drivers/base/core.c:2065
-  hci_register_dev+0x331/0x720 net/bluetooth/hci_core.c:3307
-  __vhci_create_device drivers/bluetooth/hci_vhci.c:124 [inline]
-  vhci_create_device+0x2f3/0x530 drivers/bluetooth/hci_vhci.c:148
-  vhci_get_user drivers/bluetooth/hci_vhci.c:204 [inline]
-  vhci_write+0x3ac/0x440 drivers/bluetooth/hci_vhci.c:284
-  call_write_iter include/linux/fs.h:1870 [inline]
-  new_sync_write fs/read_write.c:483 [inline]
-  __vfs_write+0x617/0x7d0 fs/read_write.c:496
-  vfs_write+0x275/0x590 fs/read_write.c:558
-  ksys_write+0x16b/0x2a0 fs/read_write.c:611
-  __do_sys_write fs/read_write.c:623 [inline]
-  __se_sys_write fs/read_write.c:620 [inline]
-  __x64_sys_write+0x7b/0x90 fs/read_write.c:620
-  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441d39
-Code: e8 4c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 db 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd7e3026c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441d39
-RDX: 0000000000000002 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffdbb1414ac R09: 00007ffdbb1414ac
-R10: 00007ffdbb1414ac R11: 0000000000000246 R12: 0000000000014cb3
-R13: 0000000000402a30 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+2019/08/04 10:45:32 executed programs: 5
+2019/08/04 10:45:38 executed programs: 7
+2019/08/04 10:45:44 executed programs: 9
+2019/08/04 10:45:51 executed programs: 11
+BUG: memory leak
+unreferenced object 0xffff88811b943200 (size 224):
+   comm "syz-executor.0", pid 7102, jiffies 4294951426 (age 8.020s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+   backtrace:
+     [<00000000612bb18c>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<00000000612bb18c>] slab_post_alloc_hook mm/slab.h:522 [inline]
+     [<00000000612bb18c>] slab_alloc_node mm/slab.c:3262 [inline]
+     [<00000000612bb18c>] kmem_cache_alloc_node+0x163/0x2f0 mm/slab.c:3574
+     [<00000000f510d7dd>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:197
+     [<0000000064f35f9b>] alloc_skb include/linux/skbuff.h:1055 [inline]
+     [<0000000064f35f9b>] ppp_write+0x48/0x120  
+drivers/net/ppp/ppp_generic.c:502
+     [<000000007d5732a9>] __vfs_write+0x43/0xa0 fs/read_write.c:494
+     [<00000000b490138e>] vfs_write fs/read_write.c:558 [inline]
+     [<00000000b490138e>] vfs_write+0xee/0x210 fs/read_write.c:542
+     [<00000000d20d33e5>] ksys_write+0x7c/0x130 fs/read_write.c:611
+     [<000000007b61e45c>] __do_sys_write fs/read_write.c:623 [inline]
+     [<000000007b61e45c>] __se_sys_write fs/read_write.c:620 [inline]
+     [<000000007b61e45c>] __x64_sys_write+0x1e/0x30 fs/read_write.c:620
+     [<0000000067600a9b>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:296
+     [<000000007e48b83c>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
 
 
 ---
@@ -150,6 +102,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
