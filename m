@@ -2,90 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56E8B812EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D604812EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 09:18:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfHEHR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 03:17:29 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:45090 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfHEHR3 (ORCPT
+        id S1726375AbfHEHS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 03:18:26 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38201 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726394AbfHEHS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 03:17:29 -0400
-Received: by mail-vs1-f68.google.com with SMTP id h28so55276064vsl.12
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 00:17:28 -0700 (PDT)
+        Mon, 5 Aug 2019 03:18:26 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g17so83253380wrr.5
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 00:18:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QEcUadHXWt33HMQdDgSeAKvTfA2rNyZ6IARX0W+jn4E=;
-        b=E3Jze4jbk8v4bCCKp+/huj4YLKUWLvrxZFVF/kCE12qIWkQjuraZpc0df1+VdCjt9I
-         6wuRaUt3gSQ8QUSKQB7mon5lEXHR7fuO9FSYIeZWGGf78+ykXSQrJt/MbP1DIto50SxF
-         +BfnuqlHdAyxnP7DqiXY3vIrTQ3ZNbdmf1R4Ep0kSsyLZB2SkriQrAAri/B2GVqU2OLB
-         I3UDHqwoQxh9ir5JiVLFgcPaJC0X0jKSg7WtPpXnOJpeDRPsDWhhXuIdJfZuvQm1fId/
-         x6A0rkmiHC5qgK1+uMyhAAGdThB5mnLCqERO7djadIXTtQ/oHSDXI/HOU/Th/GnmlrA9
-         zNVw==
+        bh=RUqYiFGRwqZz3baSi7DePLwfU/zHvDjxvxTGgWRnjy4=;
+        b=vaSHkIAHMZgvdsmo51ZYrbAryRPsAqLUFYv5jJavndTgROhdJ2YKtLsZZ7C5gyHtvW
+         d/v3QIkwaKBrAFuclzEsoay1vDYmjzsPaxL6kALb0MhKAhO2G5JvtGBdNRuHDOhawgi4
+         lXTjtmEwRoGoiHPDd7rP98028ijkU/rrmccPlI4+BJUogzjLpnIAfcM/RSF7a0W20G3a
+         +lYNkmcxP15Wv0MSZzqX1VmMeIw8oeevNB0gHTpWSvBKIISi5EBHG0ojEi+JIBbaGMD3
+         Jrc2jqiRbvWDhyZXhGGFBf5N5Ec8u2CeeK2HmFW6XmZ5yQoLYLGMohbmcA8s+tpwyTkC
+         naNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QEcUadHXWt33HMQdDgSeAKvTfA2rNyZ6IARX0W+jn4E=;
-        b=goCYWwsnE/23Sjt84mAgBUUzMPoncHnmiOORqta1sp1UbuCeAv2kkNlJT17h2tXrIA
-         BUdvK83J+O74ELGgJITYqOn4XGW6wRSrcp5PPUX69zOxwERAzEssrYSZ78sYFvxXnvOd
-         b+JNU9Uo4WaZMWr5HAsWYzsydK4kK55icBW6YS1Tl1XlXm+Qy+nFu+EoFbPpSyOA6y5d
-         uqUxhegrdZaeaoK/layT8P6FWUkOL4BLHXHtKTF6FAJly9i4gNrqfH4V4Iqk/p8a13P0
-         qX4gQqf3gp3IAUS+l5ujExbKeJCmvsLsGEYXnropu3mni0P6QxOji+lBJojwDktQO1bA
-         1hNw==
-X-Gm-Message-State: APjAAAWSkemR7k9NEK+5pttvPDZ7KR1/4MtxHeZncAfB+CiQfqSazSdt
-        xyJqW4ro6xx7hLrylooJWwcNOoDyqw1HxLoqIj64hg==
-X-Google-Smtp-Source: APXvYqwQut/wHazS7Y2F5Kb/YuEqVPhcSdRYnqFrxjYYdHA8Z7HkVqTC8twtGBaUyNA/ddSnssS/hwPRzHKFHQj/XYc=
-X-Received: by 2002:a67:f7cd:: with SMTP id a13mr30605473vsp.163.1564989448027;
- Mon, 05 Aug 2019 00:17:28 -0700 (PDT)
+        bh=RUqYiFGRwqZz3baSi7DePLwfU/zHvDjxvxTGgWRnjy4=;
+        b=STkNqlGyP5A7AYQY2zDWawcRtAEfiJ931Hg0Eegg1gq1+7BPRhoHI1hZZx8MtTklRy
+         e1Uxd6dDxZ+zmVMUClGAbBJnSAnmTLzrU2TAMntnpy+LHT/d6vsGXAEOWW7HXrmibBgr
+         LL9AgRWQMtOX8QIfJtzDhOChgo0eoqcdAXQeIRzlbEYodA17SmPdMTAHJu2LpthRuSCu
+         Fyiu8GSQMlX1HXHJITxApM50qgl5dx1vPNvYQLxa6fddT/QA2Bxo7W+JDRyFRxMUcirW
+         3cejSk0ditvFkxXRMHQX61U/8ajjF5qAZZ04KovOqkDroCKSeMboRzmHrsxFbpNGeOmb
+         d2bw==
+X-Gm-Message-State: APjAAAWvM7bEDlVy/l9toqIGRMYu7f2ENS/YM41kiJ75bulji9HehLXh
+        alrg5e/2iImbdqw7MNsFNTRuCA3g1jUhzEPJI54=
+X-Google-Smtp-Source: APXvYqw/FM+tBx9ajgV2UsWP4KPKi99Z0fzot3UMGZ6r5xVj6SOPqPddG0DiyAWPBjneacTNTdnwazaj1Hb9o9cCPqQ=
+X-Received: by 2002:a5d:4e50:: with SMTP id r16mr24977381wrt.227.1564989504211;
+ Mon, 05 Aug 2019 00:18:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190804070329.14503-1-ttayar@habana.ai>
-In-Reply-To: <20190804070329.14503-1-ttayar@habana.ai>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Mon, 5 Aug 2019 10:17:02 +0300
-Message-ID: <CAFCwf12WFRf-UorVkfKSwLthsW-_=Gc7vcvisVC6Wh017o+2Eg@mail.gmail.com>
-Subject: Re: [PATCH] habanalabs: Update DRAM consumption on context tear down
-To:     Tomer Tayar <ttayar@habana.ai>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190802074620.115029-1-anup.patel@wdc.com> <20190802074620.115029-11-anup.patel@wdc.com>
+ <5b966171-4d11-237d-5a43-dc881efb7d0a@redhat.com> <CAAhSdy0BVqagYTTnaG2hwsxxM51ZZ2QpJbZtQ21v__8UaXCOWA@mail.gmail.com>
+ <458f6b85-cdb2-5e6b-6730-4875f0e4cdba@redhat.com>
+In-Reply-To: <458f6b85-cdb2-5e6b-6730-4875f0e4cdba@redhat.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Mon, 5 Aug 2019 12:48:12 +0530
+Message-ID: <CAAhSdy02bZAbyK4TGzO0jYRCTCFwexzA_iu7GNRh-07NZ6fuFw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 10/19] RISC-V: KVM: Handle WFI exits for VCPU
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 4, 2019 at 10:03 AM Tomer Tayar <ttayar@habana.ai> wrote:
+On Mon, Aug 5, 2019 at 12:44 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> The patch adds a missing update of the DRAM memory consumption, when a
-> context is being torn down without an organized release of the allocated
-> memory.
+> On 05/08/19 09:12, Anup Patel wrote:
+> > On Fri, Aug 2, 2019 at 2:33 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+> >>
+> >> On 02/08/19 09:47, Anup Patel wrote:
+> >>> +             if (!kvm_riscv_vcpu_has_interrupt(vcpu)) {
+> >>
+> >> This can be kvm_arch_vcpu_runnable instead, since kvm_vcpu_block will
+> >> check it anyway before sleeping.
+> >
+> > I think we can skip this check here because kvm_vcpu_block() is
+> > checking it anyway. Agree ??
 >
-> Signed-off-by: Tomer Tayar <ttayar@habana.ai>
-> ---
->  drivers/misc/habanalabs/memory.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-> index 42d237cae1dc..365fb0cb8dff 100644
-> --- a/drivers/misc/habanalabs/memory.c
-> +++ b/drivers/misc/habanalabs/memory.c
-> @@ -1629,6 +1629,8 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
->                         dev_dbg(hdev->dev,
->                                 "page list 0x%p of asid %d is still alive\n",
->                                 phys_pg_list, ctx->asid);
-> +                       atomic64_sub(phys_pg_list->total_size,
-> +                                       &hdev->dram_used_mem);
->                         free_phys_pg_pack(hdev, phys_pg_list);
->                         idr_remove(&vm->phys_pg_pack_handles, i);
->                 }
-> --
-> 2.17.1
->
+> Yes, but it's quite a bit faster to do this outside the call.  There's a
+> bunch of setup before kvm_vcpu_block reaches that point, and it includes
+> mfences too once you add srcu_read_unlock/lock here.
 
-This patch is:
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Applied to -fixed.
-Thanks.
-Oded
+No problem, I will use kvm_arch_vcpu_runnable() here.
+
+Regards,
+Anup
