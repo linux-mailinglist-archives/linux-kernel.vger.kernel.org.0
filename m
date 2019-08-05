@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3242C819C5
+	by mail.lfdr.de (Postfix) with ESMTP id A0617819C6
 	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 14:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbfHEMnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 08:43:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45992 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728844AbfHEMnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 08:43:17 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8460D3697F;
-        Mon,  5 Aug 2019 12:43:17 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-81.ams2.redhat.com [10.36.116.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D7F060E1C;
-        Mon,  5 Aug 2019 12:43:17 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 4B6879D22; Mon,  5 Aug 2019 14:43:15 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     intel-gfx@lists.freedesktop.org, thomas@shipmail.org,
-        tzimmermann@suse.de, ckoenig.leichtzumerken@gmail.com,
-        bskeggs@redhat.com, daniel@ffwll.ch,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 18/18] drm/ttm: drop ttm_buffer_object->resv
-Date:   Mon,  5 Aug 2019 14:43:10 +0200
-Message-Id: <20190805124310.3275-19-kraxel@redhat.com>
-In-Reply-To: <20190805124310.3275-1-kraxel@redhat.com>
-References: <20190805124310.3275-1-kraxel@redhat.com>
+        id S1729004AbfHEMoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 08:44:00 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45964 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728965AbfHEMn4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 08:43:56 -0400
+Received: by mail-io1-f67.google.com with SMTP id g20so166969498ioc.12;
+        Mon, 05 Aug 2019 05:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BtM+NWj25oYvpSibgXFWcN7a4g9p0DLdhW/V4xt2eBU=;
+        b=ZhKaC5MruwlHhhxMdPFwBhdPOYfP4wRyyL5N9ujJ84SwNjtO73htrkFtOMztfiavLw
+         3mjniDoCJ3Bdo87uYPsyaTU8Vac2oGmkLqJQ/CYeXZqR3vFSExkCyiri3ODkTnfBhcV4
+         C7zWaU+uEvyzRO88l6CgCi/Yl8EFpBECsqiW+0n1EXu43WHzCFRCCdfAtPypn8PcHw77
+         VAR8QE8n+f8Bp/TmoDduiOZUWOXS8FME9HJgFscbc1zhEG9ESLdbyJtpPWJzSYOK839a
+         blC7htlqER39fmEduUJ5KTjvmZEO/NXXYrGht3l6l8ygJo+W7iWPDcJrCkDfe962tjVN
+         w5SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BtM+NWj25oYvpSibgXFWcN7a4g9p0DLdhW/V4xt2eBU=;
+        b=cQ+Sez/VbeUyz54rRqgy5wcfx2BwbofBYYfvEi4WO0GIh/gzd7svFiyJtaapz0Rkzk
+         2tvgf9yxfLnkgroyD61+MHwlgoU4jR+kf/I6ZAcupCJ/YFxAgXakJE73zUlSb8xZRh/u
+         ZBhWgvpi7a01wZgHiZ91ccIqUzgyOWlNCVdEFYipRT8KsiPJzfI2viYB/g5vQ/l2Tihd
+         C0XNwhvHI289REB/HFXCrsLuoHhQH9wvt3UoauGgPFR0k42OaO5qxaGFigLQSLv9/hWY
+         48PcAs5jw5kVhOf5AftU66qcLykKtS51oq/kdrUdTlc6vadeF6tJcbQdoej64CvLAnal
+         t4PQ==
+X-Gm-Message-State: APjAAAVh9yH0+PGL8i4K3Vu0hsy26Z0o9uzSIcGCpLzWScemc5rkCxZh
+        MBHhwIxX1Hypy4Qk3fgwhqKKdyPxCV4fLo5P3g4=
+X-Google-Smtp-Source: APXvYqwqQSPW397kqrW3kGv0GRCbHES+vT5UGpfo7ZHfq/1Bj6VjaFS3ZRkwHG0PLi1+eyqFIVooHFs/Ke2fu12pfIU=
+X-Received: by 2002:a5e:8c11:: with SMTP id n17mr69032096ioj.64.1565009035665;
+ Mon, 05 Aug 2019 05:43:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 05 Aug 2019 12:43:17 +0000 (UTC)
+References: <20190731195713.3150463-1-arnd@arndb.de> <20190731195713.3150463-5-arnd@arndb.de>
+ <20190801055840.GC24607@kroah.com>
+In-Reply-To: <20190801055840.GC24607@kroah.com>
+From:   Sylvain Lemieux <slemieux.tyco@gmail.com>
+Date:   Mon, 5 Aug 2019 08:43:44 -0400
+Message-ID: <CA+rxa6oU65QeEDaROdz1v=5R6m4YKTd7rRNEBx41d5uixyoz=g@mail.gmail.com>
+Subject: Re: [PATCH 04/14] serial: lpc32xx_hs: allow compile-testing
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, soc@kernel.org,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        linux-serial@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All users moved to ttm_buffer_object->base.resv
+Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
----
- include/drm/ttm/ttm_bo_api.h | 1 -
- drivers/gpu/drm/ttm/ttm_bo.c | 2 --
- 2 files changed, 3 deletions(-)
-
-diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
-index 7ffc50a3303d..65ef5376de59 100644
---- a/include/drm/ttm/ttm_bo_api.h
-+++ b/include/drm/ttm/ttm_bo_api.h
-@@ -230,7 +230,6 @@ struct ttm_buffer_object {
- 
- 	struct sg_table *sg;
- 
--	struct reservation_object *resv;
- 	struct mutex wu_mutex;
- };
- 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index 73d407494586..b2a3103fa0db 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -1332,11 +1332,9 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
- 	bo->acc_size = acc_size;
- 	bo->sg = sg;
- 	if (resv) {
--		bo->resv = resv;
- 		bo->base.resv = resv;
- 		reservation_object_assert_held(bo->base.resv);
- 	} else {
--		bo->resv = &bo->base._resv;
- 		bo->base.resv = &bo->base._resv;
- 	}
- 	if (!ttm_bo_uses_embedded_gem_object(bo)) {
--- 
-2.18.1
-
+On Thu, Aug 1, 2019 at 1:58 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Jul 31, 2019 at 09:56:46PM +0200, Arnd Bergmann wrote:
+> > The only thing that prevents building this driver on other
+> > platforms is the mach/hardware.h include, which is not actually
+> > used here at all, so remove the line and allow CONFIG_COMPILE_TEST.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  drivers/tty/serial/Kconfig      | 3 ++-
+> >  drivers/tty/serial/lpc32xx_hs.c | 2 --
+> >  2 files changed, 2 insertions(+), 3 deletions(-)
+>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
