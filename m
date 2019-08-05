@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2690781D79
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD4A81D6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbfHENlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:41:35 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46301 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729353AbfHENlM (ORCPT
+        id S1729656AbfHENlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:41:18 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56082 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729363AbfHENlN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:41:12 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z1so84466077wru.13
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 06:41:11 -0700 (PDT)
+        Mon, 5 Aug 2019 09:41:13 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a15so74795131wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 06:41:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UcxCUBbmcFwMvFJ+lzmbbweMssQIyjYeLgMmBVzMwco=;
-        b=Z4GCLa3Qh6Rov0aWhoMvXszTGWjElSstDzL3OKiiBUS0AOCza+chFFm6WBkjsSUjF2
-         m7xOnP1W7oEWspJ28voCXaybtNQT7tTsqqFEx7HvTKUAU3fYoR5vFmub4pqLSkJuo3oj
-         mBEKL2w8yl024pYq1sCrC4thtkyQj4cTSdS8GOVPllKzjIeuRMOggkUldGnwUXF6GpcE
-         iIi51y/TCARESONkSgnKt7lcAmDGBYh9N3T7XxaRVjeyf/XpaYzK2Aou97XfpPsfE5C8
-         7aMp3MHGEMwqTxBVSR/K8yqp3Iha6fOWk47mwTZNgm/mf5wWXhqrJXwWnoQZaOfGuF7o
-         qNMg==
+        bh=2grGK+7b0cBByVRRUu0+TFl4ki5jcSq2t6fD2bzIBcg=;
+        b=XY6BtsEB1h0Gtg+bL5p1xMMozbLebyArx8o4E98A64UfAQwGnp5hTTSwxO3wBSrqNs
+         sjtDhqO4sss6ywReivGGAP6VbBnP2qbrBZ5RDcxsWDX2P+Q9CaAIWgOrJZQHEH+twJPE
+         C/kxG+bLpg59JjLS7HcM/K2Pehm7/j8fiXU6UnxOoJr101ja8u28RuDLs8CT+zvN5Rvg
+         2Ns0saVhFskKwefkeTaCx8x6mDEL08r4MclXBIMcTbDgbjKDJp0E1Nz+mXzDNqVCTsRy
+         fUbTPcQbKGuYauyamy2q/FlnfnOy4z8lWR0PNpP7fonXJu8qTymVLyzDNFJJVjFG2kGu
+         yZyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UcxCUBbmcFwMvFJ+lzmbbweMssQIyjYeLgMmBVzMwco=;
-        b=TDjKQSdzXQy89QHVafZ+sgr7IMWvAc/xc4MjwQT+0//zbyT/s6xF4rYHN9mUbI8j/J
-         WZHpil8LzgDnWqHfQVaZc70k/1YqUO/EtZQQknvo3ZboMviigJ0OCsDQk2vVPHN+E0cd
-         8yDuTACFu+U45FR5p1DoTE00ljkLA+5DMs5VnTxpA059uak4gSrLSFxJTfYZreLuRnTp
-         p7gQRaDWE5+SvRNMmXdKpZ+c25Dg2rM3OO6QJJlDQ00lFWUbLaeGM3/6Op4ghKwWroQQ
-         5DEiMK/Lnb6ug/o1/YZopQqdATyJyq5mhH5lhHzM/CQGplR2p5xc7Bf88vp4kIxDoLwP
-         mWVw==
-X-Gm-Message-State: APjAAAXsT1lQ3Mf5k9eKOAacSCEDanHB/D6LLOUvwNY7f9HMJx6kSpc7
-        VBL4Z635A1HW12PkCScxcslE4Q==
-X-Google-Smtp-Source: APXvYqyIqNSpPNxgzAYWIGhNEn2TMUn6UT0Sy9FMytw7EErfFGJd/kNAO6/hg23/W2fym0jSst7kqw==
-X-Received: by 2002:adf:ef8d:: with SMTP id d13mr157062902wro.60.1565012470500;
-        Mon, 05 Aug 2019 06:41:10 -0700 (PDT)
+        bh=2grGK+7b0cBByVRRUu0+TFl4ki5jcSq2t6fD2bzIBcg=;
+        b=ZMu/g/4uZ2JYXJIfDViAxZb/BwUkW8niLhJwWH1zKsta+B20aQ2LIUyBHZrdm704/5
+         2jElQZrb18QBpKQqYaFWeDI3mJPs/bPVYEuCCKiclI5cpgL5lJNUNAvqsfqMZPCmR5ei
+         AUQwvryRoSTbiWEz5Ply8Mgold41lEY1yqNRNfewiEIUW3Jwx1w0H77cTxODVSqI3s4U
+         1aw0rUm60O+Q0QzoP5KZXmw0GHDdOBtvdrd23WDLdABQ/28Y3eeAbNM2c1oPeU6hMxiS
+         aTEtNZq/g0mROYUlby7HbVHtJ1L+k/Cn3pKe80Y1DnY34RnbKcmr5fR+ODEcRQA3dErC
+         rV6g==
+X-Gm-Message-State: APjAAAU7pi1IEmSECNEA8X7zJG8vPOwWiZ8xENAgB/4Tj+epCv/D6xuN
+        gF1lSaBnDJzzQJ1PXBsFTdVsfQ==
+X-Google-Smtp-Source: APXvYqxCpcovHfHjK57i7gHO5E0iPm5URGttLvaapaIyenpv0N3qiZvBMVpLedY5JPKCE562WeBNtg==
+X-Received: by 2002:a1c:a7c6:: with SMTP id q189mr19275733wme.146.1565012471772;
+        Mon, 05 Aug 2019 06:41:11 -0700 (PDT)
 Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id w7sm99040534wrn.11.2019.08.05.06.41.09
+        by smtp.googlemail.com with ESMTPSA id w7sm99040534wrn.11.2019.08.05.06.41.10
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
         Mon, 05 Aug 2019 06:41:10 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
@@ -53,9 +53,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Jonas Karlman <jonas@kwiboo.se>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH 4/8] drm/bridge: dw-hdmi-i2s: enable lpcm multi channels
-Date:   Mon,  5 Aug 2019 15:40:58 +0200
-Message-Id: <20190805134102.24173-5-jbrunet@baylibre.com>
+Subject: [PATCH 5/8] drm/bridge: dw-hdmi-i2s: set the channel allocation
+Date:   Mon,  5 Aug 2019 15:40:59 +0200
+Message-Id: <20190805134102.24173-6-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190805134102.24173-1-jbrunet@baylibre.com>
 References: <20190805134102.24173-1-jbrunet@baylibre.com>
@@ -67,38 +67,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Properly setup the channel count and layout in dw-hdmi i2s driver so
-we are not limited to 2 channels.
-
-Also correct the maximum channel reported by the DAI from 6 to 8 ch
+setup the channel allocation provided by the generic hdmi-codec driver
 
 Cc: Jonas Karlman <jonas@kwiboo.se>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-index 2b624cff541d..caf8aed78fea 100644
+index caf8aed78fea..0864dee8d180 100644
 --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
 +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-@@ -84,6 +84,7 @@ static int dw_hdmi_i2s_hw_params(struct device *dev, void *data,
- 	}
+@@ -85,6 +85,7 @@ static int dw_hdmi_i2s_hw_params(struct device *dev, void *data,
  
  	dw_hdmi_set_sample_rate(hdmi, hparms->sample_rate);
-+	dw_hdmi_set_channel_count(hdmi, hparms->channels);
+ 	dw_hdmi_set_channel_count(hdmi, hparms->channels);
++	dw_hdmi_set_channel_allocation(hdmi, hparms->cea.channel_allocation);
  
  	hdmi_write(audio, inputclkfs, HDMI_AUD_INPUTCLKFS);
  	hdmi_write(audio, conf0, HDMI_AUD_CONF0);
-@@ -139,7 +140,7 @@ static int snd_dw_hdmi_probe(struct platform_device *pdev)
- 
- 	pdata.ops		= &dw_hdmi_i2s_ops;
- 	pdata.i2s		= 1;
--	pdata.max_i2s_channels	= 6;
-+	pdata.max_i2s_channels	= 8;
- 	pdata.data		= audio;
- 
- 	memset(&pdevinfo, 0, sizeof(pdevinfo));
 -- 
 2.21.0
 
