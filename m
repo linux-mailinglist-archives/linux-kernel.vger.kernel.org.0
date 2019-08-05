@@ -2,88 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 837038188A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 13:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42B3281877
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 13:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbfHEL4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 07:56:39 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37508 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728681AbfHEL4h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 07:56:37 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so59051308wrr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 04:56:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TY4SwjXmEN9gc5bLylSn4Hg0/dB7NKueAsPGd6xGBoQ=;
-        b=QB/BSZwdzuDkotLcFHtMEhOnmdWeZoV95B8M+SQMDirOTrzFWg6e8TJYUAGZh62Nld
-         vG6BW3ehzIDr76Zq4QD7IXMA8PxsU81riK7ixXdm4ALLyZ8f5dnMPK9WQI7MnA3OOt+i
-         M8SqsWH9i9rwzBCA8PYp9bL90gRdsPlX8/RQd1JYk23rNG87BriVKUK97MoUDLd3eDz4
-         N4qshsk2Pr0C9gFLSJjY0Y9eg69UGZFgWd0l/dlqYvE1etBo21sZKE1LybCS/YVhdv2e
-         q0cJW0OVTQ7ra6t/2JUVUX9uzk4W9R3I5tEEijMMB0f2mOfqFaL/WUMs2CfZU5+BTTJk
-         XdFA==
-X-Gm-Message-State: APjAAAUhpLnzXfsxi9z/xHSY66R2/7ZvHO3sCrvOmpUpXqDAg7pLnToi
-        9jHYkNSuDxpiRn8mmSYYPdyvrJTxK3k=
-X-Google-Smtp-Source: APXvYqyiW6VU1XQOFEG2eUsh/f6zKNWC3klkjjD7J05dOiekrtpHuIxq6IVPBKdC0E3ZEqXFzkJjhg==
-X-Received: by 2002:a5d:4cc5:: with SMTP id c5mr107334032wrt.278.1565006195708;
-        Mon, 05 Aug 2019 04:56:35 -0700 (PDT)
-Received: from [192.168.178.40] ([151.21.165.91])
-        by smtp.gmail.com with ESMTPSA id v15sm77198646wrt.25.2019.08.05.04.56.34
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2019 04:56:35 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 07/19] RISC-V: KVM: Implement
- KVM_GET_ONE_REG/KVM_SET_ONE_REG ioctls
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Radim K <rkrcmar@redhat.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Anup Patel <anup@brainfault.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190802074620.115029-1-anup.patel@wdc.com>
- <20190802074620.115029-8-anup.patel@wdc.com>
- <edbed85f-f7ad-a240-1bef-75729b527a69@de.ibm.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <8563b869-1ab4-d0f1-afad-9cd864b6019a@redhat.com>
-Date:   Mon, 5 Aug 2019 13:56:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728654AbfHELxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 07:53:15 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3760 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728468AbfHELxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 07:53:15 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 73B2986D541AE633558B;
+        Mon,  5 Aug 2019 19:53:12 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 5 Aug 2019 19:53:05 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <davem@davemloft.net>, <socketcan@hartkopp.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <maowenan@huawei.com>
+Subject: [PATCH net-next v3] net: can: Fix compiling warnings for two functions
+Date:   Mon, 5 Aug 2019 19:57:44 +0800
+Message-ID: <20190805115744.112440-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <6fd68e9b-a8ae-4e5e-9b23-c099b5ca9aa4@web.de>
+References: <6fd68e9b-a8ae-4e5e-9b23-c099b5ca9aa4@web.de>
 MIME-Version: 1.0
-In-Reply-To: <edbed85f-f7ad-a240-1bef-75729b527a69@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/19 13:37, Christian Borntraeger wrote:
-> While have ONE_REG will certainly work, have you considered the sync_reg scheme
-> (registers as part of kvm_run structure)
-> This will speed up the exit to QEMU as you do not have to do multiple ioctls
-> (each imposing a systemcall overhead) for one exit. 
-> 
-> Ideally you should not exit too often into qemu, but for those cases sync_regs
-> is faster than ONE_REG.
+There are two warnings in net/can, fix them by setting bcm_sock_no_ioctlcmd
+and raw_sock_no_ioctlcmd as static.
 
-At least in theory, RISC-V should never have exits to QEMU that need
-accessing the registers.  (The same is true for x86; Google implemented
-sync_regs because they moved the instruction emulator to userspace in
-their fork).
+net/can/bcm.c:1683:5: warning: symbol 'bcm_sock_no_ioctlcmd' was not declared. Should it be static?
+net/can/raw.c:840:5: warning: symbol 'raw_sock_no_ioctlcmd' was not declared. Should it be static?
 
-Paolo
+Fixes: 473d924d7d46 ("can: fix ioctl function removal")
+
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+---
+ v1->v2: change patch description typo error, 'warings' to 'warnings'.
+ v2->v3: change subject of patch.
+ net/can/bcm.c | 2 +-
+ net/can/raw.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index bf1d0bbecec8..b8a32b4ac368 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -1680,7 +1680,7 @@ static int bcm_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	return size;
+ }
+ 
+-int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
++static int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+ 			 unsigned long arg)
+ {
+ 	/* no ioctls for socket layer -> hand it down to NIC layer */
+diff --git a/net/can/raw.c b/net/can/raw.c
+index da386f1fa815..a01848ff9b12 100644
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -837,7 +837,7 @@ static int raw_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	return size;
+ }
+ 
+-int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
++static int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+ 			 unsigned long arg)
+ {
+ 	/* no ioctls for socket layer -> hand it down to NIC layer */
+-- 
+2.20.1
 
