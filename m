@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 711A281A91
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CA881A49
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:04:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729757AbfHENHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:07:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44302 "EHLO mail.kernel.org"
+        id S1729110AbfHENEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:04:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728468AbfHENHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:07:06 -0400
+        id S1729094AbfHENEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:04:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D56AE2075B;
-        Mon,  5 Aug 2019 13:07:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EE27216B7;
+        Mon,  5 Aug 2019 13:04:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010425;
-        bh=fEYuSV/F6Tk531Y+E5CEhoOWgFZOxHEEEMG54SyEPDs=;
+        s=default; t=1565010278;
+        bh=BFW7DoRAYf7dgaHviXk1Nrn/iOolgbPP3aB044T6Itw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n97k+AiN6LIQR9Hb4CxGiTfrppl3uWhdO4FbdedTiFnzHD4YxLc4b86L+nDUrSLV6
-         ly6pw2jSYCgNGoSZrv3rd6LtOYoEpQoKe22+SMUZoMNrGkElS1JZYXu8Q5q4+3MjUW
-         eTdzxNStKKxhEOc8AzKkRM58kVoIgrkhjg8LFVzM=
+        b=2cwKgzTlq3xVoOOFA4FfTBtbxtxJRG6nI3WCek7Igoy7zcGs7JVXWLskEB7Kfe6uQ
+         MymXdj5GV9h+ew7hHufxOuVLci5gFdEQPnrc4Ghq1L1uOL+lDx0BIvemErdpqiMdOn
+         4ryHkrsBC9rkk6/99gjWBeLxQ695viKfAwrNHQdg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 19/53] be2net: Signal that the device cannot transmit during reconfiguration
+Subject: [PATCH 4.4 07/22] btrfs: fix minimum number of chunk errors for DUP
 Date:   Mon,  5 Aug 2019 15:02:44 +0200
-Message-Id: <20190805124930.241063403@linuxfoundation.org>
+Message-Id: <20190805124920.288101264@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
-References: <20190805124927.973499541@linuxfoundation.org>
+In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
+References: <20190805124918.070468681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7429c6c0d9cb086d8e79f0d2a48ae14851d2115e ]
+[ Upstream commit 0ee5f8ae082e1f675a2fb6db601c31ac9958a134 ]
 
-While changing the number of interrupt channels, be2net stops adapter
-operation (including netif_tx_disable()) but it doesn't signal that it
-cannot transmit. This may lead dev_watchdog() to falsely trigger during
-that time.
+The list of profiles in btrfs_chunk_max_errors lists DUP as a profile
+DUP able to tolerate 1 device missing. Though this profile is special
+with 2 copies, it still needs the device, unlike the others.
 
-Add the missing call to netif_carrier_off(), following the pattern used in
-many other drivers. netif_carrier_on() is already taken care of in
-be_open().
+Looking at the history of changes, thre's no clear reason why DUP is
+there, functions were refactored and blocks of code merged to one
+helper.
 
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+d20983b40e828 Btrfs: fix writing data into the seed filesystem
+  - factor code to a helper
+
+de11cc12df173 Btrfs: don't pre-allocate btrfs bio
+  - unrelated change, DUP still in the list with max errors 1
+
+a236aed14ccb0 Btrfs: Deal with failed writes in mirrored configurations
+  - introduced the max errors, leaves DUP and RAID1 in the same group
+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/emulex/benet/be_main.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/btrfs/volumes.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
-index 39f399741647f..cabeb1790db76 100644
---- a/drivers/net/ethernet/emulex/benet/be_main.c
-+++ b/drivers/net/ethernet/emulex/benet/be_main.c
-@@ -4600,8 +4600,12 @@ int be_update_queues(struct be_adapter *adapter)
- 	struct net_device *netdev = adapter->netdev;
- 	int status;
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 4eb7a6ba7e470..55ce6543050d9 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -4942,8 +4942,7 @@ static inline int btrfs_chunk_max_errors(struct map_lookup *map)
  
--	if (netif_running(netdev))
-+	if (netif_running(netdev)) {
-+		/* device cannot transmit now, avoid dev_watchdog timeouts */
-+		netif_carrier_off(netdev);
-+
- 		be_close(netdev);
-+	}
- 
- 	be_cancel_worker(adapter);
- 
+ 	if (map->type & (BTRFS_BLOCK_GROUP_RAID1 |
+ 			 BTRFS_BLOCK_GROUP_RAID10 |
+-			 BTRFS_BLOCK_GROUP_RAID5 |
+-			 BTRFS_BLOCK_GROUP_DUP)) {
++			 BTRFS_BLOCK_GROUP_RAID5)) {
+ 		max_errors = 1;
+ 	} else if (map->type & BTRFS_BLOCK_GROUP_RAID6) {
+ 		max_errors = 2;
 -- 
 2.20.1
 
