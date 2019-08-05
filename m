@@ -2,91 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 167A681675
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0876D8167D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbfHEKIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 06:08:16 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36363 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbfHEKIP (ORCPT
+        id S1728342AbfHEKIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 06:08:55 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53256 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbfHEKIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:08:15 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j17so3437427lfp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 03:08:14 -0700 (PDT)
+        Mon, 5 Aug 2019 06:08:53 -0400
+Received: by mail-wm1-f66.google.com with SMTP id x15so74150132wmj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 03:08:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VmJocWvsymOdQ7NU7/6yMlP4/6K5DwEx+usK89GVi9s=;
-        b=kyJZW7fZfdLgtDs2aKngH2TyuWTJjTeVTLZyRgxZRY9MQ56FWUw3A52lCdt4c4YJ+1
-         3TgWOde1fzdSqgTWIgbjzvsDeaFtKgXf6SuYKrrM9YK82qK7s6dWcsjao4CGSwv8Ahlt
-         Crwmv8+ySmVuExNcK9irfRd7xd4YEh9epWXPM2OVxpgaQ8bRFBbu/lNMcWXb245BCABI
-         /yNpf25WGiE15uDcA+a++0LXluCfysTo88g0q7Hcvunkj67HSTRYbpqtQilt8t8aWCuR
-         NoBItyc2gaayKuIzBJdFKFHEpFkdC+iXQWdc8it3UQcFXi36FqTMsdYN8t8x8xKnWrM8
-         44vw==
+        bh=sbNFx4il0vCPP+D1Yz8x0vBctgaZ7/n1Iil30rI0v3c=;
+        b=soqdUaOSralN5UpCSAB4aYas5NIxSdLzk1zgv+q/98sdZRE/Uio34RwJkvg1ux7XVs
+         5poCzxjYX/nORxXWgj3xE0G83Bz7cFBvE1iIpyBVDkt78RiH8zefcLYFlr0F5jMCd1Ys
+         zqaqJQGjdQgEXy5SvmyviyhLNfmFZ5R2Vus7q5cL4v/7rZmpzUkfesNqIBiKd+qA6ASm
+         uS8eIqrPz9w1mhrcpTaemqzJWqMdIJQjzP3GuXWRLxnteiDrRBlZKwwPZAquJJGv20z0
+         P9m/MxCTFRpkb64kjtVIL9zLa4hPiuJ+vlS9IEovo8tfKl8WuzZtEKHfGmN9d7eBZ9GS
+         hh8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VmJocWvsymOdQ7NU7/6yMlP4/6K5DwEx+usK89GVi9s=;
-        b=ATVM/z27YSsa2EASBRTLXLPNvcg501OiYk6SO3HwMOHTi7jung6vA+2nRdH83YVi51
-         yasXDSOAkXdKP50jWHq/Sn8WDL8s1fgQSYADPpzlhQazLguFGBFDbXZEMhC04ok/s93o
-         SpnVTDrxxnfTVBLuYrdTy3CG0fcfbb4m2h/Ahi3zHi9pyizoPOGFnvUzFHZ1oo2/zIKk
-         G8ZWTmQopvqAoP6M2lJaoFFsljwSi8/yFmIuqP9gV/SB4logN/UeKuPi+lbP5lx5jt82
-         4RyR2TzCVbr4fzIGpLDKRbqY3deHf6I3L7NIPQ1omzxTRSkFKYFSSjbbttm/DYhF+hdW
-         MRfw==
-X-Gm-Message-State: APjAAAV9HV3uj4M28odSb/xxN3h7j6iGyaWxnlA4z3zOW1MrIthUFFPu
-        oWqdWgKv9o8ICcJmhQOqZSOu7D9i4M+OkLjmNYDrdh8g
-X-Google-Smtp-Source: APXvYqxpqm0yndDdT3beIa5MGWi8lTPoZhzSa/lWFiqq6Dn3b88/pHlyJgXWVtBOlC/fjyLdOtrrqUOtG4JGHdovYiM=
-X-Received: by 2002:ac2:5c42:: with SMTP id s2mr60787048lfp.61.1564999694066;
- Mon, 05 Aug 2019 03:08:14 -0700 (PDT)
+        bh=sbNFx4il0vCPP+D1Yz8x0vBctgaZ7/n1Iil30rI0v3c=;
+        b=czC3SH5/I7pLu+0sMLf4UuoZ106+RA0So6r7oyIDNUQa0oioT4cFXo+i722IcWoOU6
+         bWLSi4KamY7NxYSq6tkhAq7+Mjh/h+we72Ip6nOUnerVprvgp1bvRF53Zn0xDnl5g45U
+         p7xWKbQvU6hkzoOGSzZMmuoDNfYYqtMnkfFRxUP4L3TXYd6/CmuBImuraEIf5mn5hJHZ
+         3d7A2hdJxa8GnpFWVTfIQ3HjKg3c27lw1ZsXgubL6sFJlKewBVhuoHqqcpYjgTG0TSgg
+         4h4Tb9KyLwaLcCduSMWokeDsMn0EXwpAJay84gaOWniq7jfERM2J5Bqu46zJ0lyUCBWV
+         WhxA==
+X-Gm-Message-State: APjAAAXZsCtZcku+di5FIXeMvceeaz6RrEPLM2gLj7lKpwE29J9fDZV4
+        ThjgJ744N3HL/y5AtBn+qzW1wJdhNOtckSx9gY+RNw==
+X-Google-Smtp-Source: APXvYqzl6kVeF2s9w7in3km5UbjnsJP2KDV81u1ARcFGpnOlD6I6q3QS6xKNc4B1wsWV/lZiflA7ohYpAdCiNvg9Bks=
+X-Received: by 2002:a1c:cfc5:: with SMTP id f188mr16598754wmg.24.1564999730931;
+ Mon, 05 Aug 2019 03:08:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <1563958245-6321-1-git-send-email-chunfeng.yun@mediatek.com> <1563958245-6321-4-git-send-email-chunfeng.yun@mediatek.com>
-In-Reply-To: <1563958245-6321-4-git-send-email-chunfeng.yun@mediatek.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 5 Aug 2019 12:08:02 +0200
-Message-ID: <CACRpkda5OUEfZRSMA-8H5jnhSan+VJ_3KB5CvOaRdZP1NeJQ+w@mail.gmail.com>
-Subject: Re: [PATCH v8 03/11] dt-bindings: usb: add binding for USB GPIO based
- connection detection driver
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>
+References: <20190802074620.115029-1-anup.patel@wdc.com> <20190802074620.115029-13-anup.patel@wdc.com>
+ <949b75ef-5ec6-cdfd-5d5d-5695f35bd20c@redhat.com>
+In-Reply-To: <949b75ef-5ec6-cdfd-5d5d-5695f35bd20c@redhat.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Mon, 5 Aug 2019 15:38:39 +0530
+Message-ID: <CAAhSdy33_2Qin5+VWp8AhG95DRu7+16fGgVC1Of=QOkNmCJjHg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 12/19] RISC-V: KVM: Implement stage2 page table programming
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 10:51 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
-
-> It's used to support dual role switch via GPIO when use Type-B
-> receptacle, typically the USB ID pin is connected to an input
-> GPIO, and also used to enable/disable device when the USB Vbus
-> pin is connected to an input GPIO.
+On Fri, Aug 2, 2019 at 2:44 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> ---
-> v8 changes:
+> On 02/08/19 09:48, Anup Patel wrote:
+> > +     hgatp |= (k->vmid.vmid << HGATP_VMID_SHIFT) & HGATP_VMID_MASK;
+>
+> This should use READ_ONCE.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Ahh, missed this one. I will update.
 
-Yours,
-Linus Walleij
+Regards,
+Anup
