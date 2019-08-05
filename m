@@ -2,28 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C2C81E01
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBA0681DFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730647AbfHENvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:51:09 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44496 "EHLO huawei.com"
+        id S1730561AbfHENu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:50:59 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44548 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729627AbfHENu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:50:27 -0400
+        id S1729755AbfHENu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:50:28 -0400
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 003B8DA2237DC82E83EC;
-        Mon,  5 Aug 2019 21:50:23 +0800 (CST)
+        by Forcepoint Email with ESMTP id 1C38CF8B2C0E5EB75829;
+        Mon,  5 Aug 2019 21:50:24 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
  14.3.439.0; Mon, 5 Aug 2019 21:50:14 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, John Garry <john.garry@huawei.com>
-Subject: [PATCH 10/15] scsi: hisi_sas: Drop SMP resp frame DMA mapping
-Date:   Mon, 5 Aug 2019 21:48:07 +0800
-Message-ID: <1565012892-75940-11-git-send-email-john.garry@huawei.com>
+        <linux-scsi@vger.kernel.org>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH 11/15] scsi: hisi_sas: Drop free_irq() when devm_request_irq() failed
+Date:   Mon, 5 Aug 2019 21:48:08 +0800
+Message-ID: <1565012892-75940-12-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1565012892-75940-1-git-send-email-john.garry@huawei.com>
 References: <1565012892-75940-1-git-send-email-john.garry@huawei.com>
@@ -36,173 +38,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SMP frame response is written to the command table and not the
-SMP response pointer from libsas, so don't bother DMA mapping (and
-unmapping) the SMP response from libsas.
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-Suggested-by: Xiang Chen <chenxiang66@hisilicon.com>
+It will free irq automatically if devm_request_irq() failed, so drop
+free_irq() if devm_request_irq() failed.
+
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 28 +++++++-------------------
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |  4 +---
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |  4 +---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |  4 +---
- 4 files changed, 10 insertions(+), 30 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 34 ++++++--------------------
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 21 +++-------------
+ 2 files changed, 11 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 39ae69e42d26..a2255701b50b 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -300,7 +300,7 @@ static void hisi_sas_task_prep_abort(struct hisi_hba *hisi_hba,
- 
- static void hisi_sas_dma_unmap(struct hisi_hba *hisi_hba,
- 			       struct sas_task *task, int n_elem,
--			       int n_elem_req, int n_elem_resp)
-+			       int n_elem_req)
- {
- 	struct device *dev = hisi_hba->dev;
- 
-@@ -314,16 +314,13 @@ static void hisi_sas_dma_unmap(struct hisi_hba *hisi_hba,
- 			if (n_elem_req)
- 				dma_unmap_sg(dev, &task->smp_task.smp_req,
- 					     1, DMA_TO_DEVICE);
--			if (n_elem_resp)
--				dma_unmap_sg(dev, &task->smp_task.smp_resp,
--					     1, DMA_FROM_DEVICE);
- 		}
- 	}
- }
- 
- static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
- 			    struct sas_task *task, int *n_elem,
--			    int *n_elem_req, int *n_elem_resp)
-+			    int *n_elem_req)
- {
- 	struct device *dev = hisi_hba->dev;
- 	int rc;
-@@ -331,7 +328,7 @@ static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
- 	if (sas_protocol_ata(task->task_proto)) {
- 		*n_elem = task->num_scatter;
- 	} else {
--		unsigned int req_len, resp_len;
-+		unsigned int req_len;
- 
- 		if (task->num_scatter) {
- 			*n_elem = dma_map_sg(dev, task->scatter,
-@@ -352,17 +349,6 @@ static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
- 				rc = -EINVAL;
- 				goto err_out_dma_unmap;
- 			}
--			*n_elem_resp = dma_map_sg(dev, &task->smp_task.smp_resp,
--						  1, DMA_FROM_DEVICE);
--			if (!*n_elem_resp) {
--				rc = -ENOMEM;
--				goto err_out_dma_unmap;
--			}
--			resp_len = sg_dma_len(&task->smp_task.smp_resp);
--			if (resp_len & 0x3) {
--				rc = -EINVAL;
--				goto err_out_dma_unmap;
--			}
- 		}
- 	}
- 
-@@ -377,7 +363,7 @@ static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
- err_out_dma_unmap:
- 	/* It would be better to call dma_unmap_sg() here, but it's messy */
- 	hisi_sas_dma_unmap(hisi_hba, task, *n_elem,
--			   *n_elem_req, *n_elem_resp);
-+			   *n_elem_req);
- prep_out:
- 	return rc;
- }
-@@ -449,7 +435,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 	struct asd_sas_port *sas_port = device->port;
- 	struct device *dev = hisi_hba->dev;
- 	int dlvry_queue_slot, dlvry_queue, rc, slot_idx;
--	int n_elem = 0, n_elem_dif = 0, n_elem_req = 0, n_elem_resp = 0;
-+	int n_elem = 0, n_elem_dif = 0, n_elem_req = 0;
- 	struct hisi_sas_dq *dq;
- 	unsigned long flags;
- 	int wr_q_index;
-@@ -485,7 +471,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 	}
- 
- 	rc = hisi_sas_dma_map(hisi_hba, task, &n_elem,
--			      &n_elem_req, &n_elem_resp);
-+			      &n_elem_req);
- 	if (rc < 0)
- 		goto prep_out;
- 
-@@ -580,7 +566,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 		hisi_sas_dif_dma_unmap(hisi_hba, task, n_elem_dif);
- err_out_dma_unmap:
- 	hisi_sas_dma_unmap(hisi_hba, task, n_elem,
--			   n_elem_req, n_elem_resp);
-+			   n_elem_req);
- prep_out:
- 	dev_err(dev, "task prep: failed[%d]!\n", rc);
- 	return rc;
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index 015bf00a20e6..16974421cb31 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -1280,14 +1280,12 @@ static int slot_complete_v1_hw(struct hisi_hba *hisi_hba,
- 
- 		ts->stat = SAM_STAT_GOOD;
- 
--		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
--			     DMA_FROM_DEVICE);
- 		dma_unmap_sg(dev, &task->smp_task.smp_req, 1,
- 			     DMA_TO_DEVICE);
- 		memcpy(to + sg_resp->offset,
- 		       hisi_sas_status_buf_addr_mem(slot) +
- 		       sizeof(struct hisi_sas_err_record),
--		       sg_dma_len(sg_resp));
-+		       sg_resp->length);
- 		break;
- 	}
- 	case SAS_PROTOCOL_SATA:
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index c3cf3b77c655..9955b4fbdd0d 100644
+index 9955b4fbdd0d..a3f8c51b3500 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -2423,14 +2423,12 @@ slot_complete_v2_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
+@@ -3304,8 +3304,8 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
+ {
+ 	struct platform_device *pdev = hisi_hba->platform_dev;
+ 	struct device *dev = &pdev->dev;
+-	int irq, rc, irq_map[128];
+-	int i, phy_no, fatal_no, queue_no, k;
++	int irq, rc = 0, irq_map[128];
++	int i, phy_no, fatal_no, queue_no;
  
- 		ts->stat = SAM_STAT_GOOD;
- 
--		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
--			     DMA_FROM_DEVICE);
- 		dma_unmap_sg(dev, &task->smp_task.smp_req, 1,
- 			     DMA_TO_DEVICE);
- 		memcpy(to + sg_resp->offset,
- 		       hisi_sas_status_buf_addr_mem(slot) +
- 		       sizeof(struct hisi_sas_err_record),
--		       sg_dma_len(sg_resp));
-+		       sg_resp->length);
- 		break;
+ 	for (i = 0; i < 128; i++)
+ 		irq_map[i] = platform_get_irq(pdev, i);
+@@ -3318,7 +3318,7 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
+ 			dev_err(dev, "irq init: could not request phy interrupt %d, rc=%d\n",
+ 				irq, rc);
+ 			rc = -ENOENT;
+-			goto free_phy_int_irqs;
++			goto err_out;
+ 		}
  	}
- 	case SAS_PROTOCOL_SATA:
+ 
+@@ -3332,7 +3332,7 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
+ 			dev_err(dev, "irq init: could not request sata interrupt %d, rc=%d\n",
+ 				irq, rc);
+ 			rc = -ENOENT;
+-			goto free_sata_int_irqs;
++			goto err_out;
+ 		}
+ 	}
+ 
+@@ -3344,7 +3344,7 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
+ 			dev_err(dev, "irq init: could not request fatal interrupt %d, rc=%d\n",
+ 				irq, rc);
+ 			rc = -ENOENT;
+-			goto free_fatal_int_irqs;
++			goto err_out;
+ 		}
+ 	}
+ 
+@@ -3359,34 +3359,14 @@ static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
+ 			dev_err(dev, "irq init: could not request cq interrupt %d, rc=%d\n",
+ 				irq, rc);
+ 			rc = -ENOENT;
+-			goto free_cq_int_irqs;
++			goto err_out;
+ 		}
+ 		tasklet_init(t, cq_tasklet_v2_hw, (unsigned long)cq);
+ 	}
+ 
+ 	hisi_hba->cq_nvecs = hisi_hba->queue_count;
+ 
+-	return 0;
+-
+-free_cq_int_irqs:
+-	for (k = 0; k < queue_no; k++) {
+-		struct hisi_sas_cq *cq = &hisi_hba->cq[k];
+-
+-		free_irq(irq_map[k + 96], cq);
+-		tasklet_kill(&cq->tasklet);
+-	}
+-free_fatal_int_irqs:
+-	for (k = 0; k < fatal_no; k++)
+-		free_irq(irq_map[k + 81], hisi_hba);
+-free_sata_int_irqs:
+-	for (k = 0; k < phy_no; k++) {
+-		struct hisi_sas_phy *phy = &hisi_hba->phy[k];
+-
+-		free_irq(irq_map[k + 72], phy);
+-	}
+-free_phy_int_irqs:
+-	for (k = 0; k < i; k++)
+-		free_irq(irq_map[k + 1], hisi_hba);
++err_out:
+ 	return rc;
+ }
+ 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index fcb2ef5f24b9..95a298d4e211 100644
+index 95a298d4e211..3cc53e5b92f2 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2215,14 +2215,12 @@ slot_complete_v3_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
+@@ -2351,8 +2351,7 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
+ {
+ 	struct device *dev = hisi_hba->dev;
+ 	struct pci_dev *pdev = hisi_hba->pci_dev;
+-	int vectors, rc;
+-	int i, k;
++	int vectors, rc, i;
+ 	int max_msi = HISI_SAS_MSI_COUNT_V3_HW, min_msi;
  
- 		ts->stat = SAM_STAT_GOOD;
- 
--		dma_unmap_sg(dev, &task->smp_task.smp_resp, 1,
--			     DMA_FROM_DEVICE);
- 		dma_unmap_sg(dev, &task->smp_task.smp_req, 1,
- 			     DMA_TO_DEVICE);
- 		memcpy(to + sg_resp->offset,
- 			hisi_sas_status_buf_addr_mem(slot) +
- 		       sizeof(struct hisi_sas_err_record),
--		       sg_dma_len(sg_resp));
-+		       sg_resp->length);
- 		break;
+ 	if (auto_affine_msi_experimental) {
+@@ -2400,7 +2399,7 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
+ 	if (rc) {
+ 		dev_err(dev, "could not request chnl interrupt, rc=%d\n", rc);
+ 		rc = -ENOENT;
+-		goto free_phy_irq;
++		goto free_irq_vectors;
  	}
- 	case SAS_PROTOCOL_SATA:
+ 
+ 	rc = devm_request_irq(dev, pci_irq_vector(pdev, 11),
+@@ -2409,7 +2408,7 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
+ 	if (rc) {
+ 		dev_err(dev, "could not request fatal interrupt, rc=%d\n", rc);
+ 		rc = -ENOENT;
+-		goto free_chnl_interrupt;
++		goto free_irq_vectors;
+ 	}
+ 
+ 	/* Init tasklets for cq only */
+@@ -2426,7 +2425,7 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
+ 			dev_err(dev, "could not request cq%d interrupt, rc=%d\n",
+ 				i, rc);
+ 			rc = -ENOENT;
+-			goto free_cq_irqs;
++			goto free_irq_vectors;
+ 		}
+ 
+ 		tasklet_init(t, cq_tasklet_v3_hw, (unsigned long)cq);
+@@ -2434,18 +2433,6 @@ static int interrupt_init_v3_hw(struct hisi_hba *hisi_hba)
+ 
+ 	return 0;
+ 
+-free_cq_irqs:
+-	for (k = 0; k < i; k++) {
+-		struct hisi_sas_cq *cq = &hisi_hba->cq[k];
+-		int nr = hisi_sas_intr_conv ? 16 : 16 + k;
+-
+-		free_irq(pci_irq_vector(pdev, nr), cq);
+-	}
+-	free_irq(pci_irq_vector(pdev, 11), hisi_hba);
+-free_chnl_interrupt:
+-	free_irq(pci_irq_vector(pdev, 2), hisi_hba);
+-free_phy_irq:
+-	free_irq(pci_irq_vector(pdev, 1), hisi_hba);
+ free_irq_vectors:
+ 	pci_free_irq_vectors(pdev);
+ 	return rc;
 -- 
 2.17.1
 
