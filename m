@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A4481DFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EE981DF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:50:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbfHENvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:51:04 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44546 "EHLO huawei.com"
+        id S1730420AbfHENuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:50:44 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44552 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729747AbfHENu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:50:27 -0400
+        id S1729854AbfHENu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:50:28 -0400
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 174B5C4A8622A0199C17;
+        by Forcepoint Email with ESMTP id 24FF616D94FDECA0FE1E;
         Mon,  5 Aug 2019 21:50:24 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 5 Aug 2019 21:50:14 +0800
+ 14.3.439.0; Mon, 5 Aug 2019 21:50:15 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, Luo Jiaxing <luojiaxing@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 12/15] scsi: hisi_sas: Modify return type of debugfs functions
-Date:   Mon, 5 Aug 2019 21:48:09 +0800
-Message-ID: <1565012892-75940-13-git-send-email-john.garry@huawei.com>
+        <linux-scsi@vger.kernel.org>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH 13/15] scsi: hisi_sas: Remove some unnecessary code
+Date:   Mon, 5 Aug 2019 21:48:10 +0800
+Message-ID: <1565012892-75940-14-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1565012892-75940-1-git-send-email-john.garry@huawei.com>
 References: <1565012892-75940-1-git-send-email-john.garry@huawei.com>
@@ -37,155 +38,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo Jiaxing <luojiaxing@huawei.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-For functions which always return 0, which is never checked, make to return
-void.
+Remove some unnecessary code, including:
+- Explicit zeroing of memory allocated for dmam_alloc_coherent()
+- Some duplicated code
+- Some redundant masking
 
-Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 51 ++++++++++-----------------
- 1 file changed, 18 insertions(+), 33 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 5 ++---
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 5 +----
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index a2255701b50b..be15280343d1 100644
+index be15280343d1..e1c52811f4c7 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -2956,8 +2956,8 @@ static const struct file_operations hisi_sas_debugfs_port_fops = {
- 	.owner = THIS_MODULE,
- };
+@@ -2358,7 +2358,7 @@ int hisi_sas_alloc(struct hisi_hba *hisi_hba)
  
--static int hisi_sas_show_row_64(struct seq_file *s, int index,
--				int sz, __le64 *ptr)
-+static void hisi_sas_show_row_64(struct seq_file *s, int index,
-+				 int sz, __le64 *ptr)
- {
- 	int i;
+ 	s = HISI_SAS_MAX_ITCT_ENTRIES * sizeof(struct hisi_sas_itct);
+ 	hisi_hba->itct = dmam_alloc_coherent(dev, s, &hisi_hba->itct_dma,
+-					     GFP_KERNEL | __GFP_ZERO);
++					     GFP_KERNEL);
+ 	if (!hisi_hba->itct)
+ 		goto err_out;
  
-@@ -2970,12 +2970,10 @@ static int hisi_sas_show_row_64(struct seq_file *s, int index,
- 	}
+@@ -2385,7 +2385,7 @@ int hisi_sas_alloc(struct hisi_hba *hisi_hba)
+ 		void *buf;
  
- 	seq_puts(s, "\n");
+ 		buf = dmam_alloc_coherent(dev, s, &buf_dma,
+-					  GFP_KERNEL | __GFP_ZERO);
++					  GFP_KERNEL);
+ 		if (!buf)
+ 			goto err_out;
+ 
+@@ -2434,7 +2434,6 @@ int hisi_sas_alloc(struct hisi_hba *hisi_hba)
+ 					GFP_KERNEL);
+ 	if (!hisi_hba->sata_breakpoint)
+ 		goto err_out;
+-	hisi_sas_init_mem(hisi_hba);
+ 
+ 	hisi_sas_slot_index_init(hisi_hba);
+ 	hisi_hba->last_slot_index = HISI_SAS_UNRESERVED_IPTT;
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index 3cc53e5b92f2..db8c7e4b1954 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -1914,7 +1914,7 @@ static void fatal_ecc_int_v3_hw(struct hisi_hba *hisi_hba)
+ 	u32 irq_value, irq_msk;
+ 
+ 	irq_msk = hisi_sas_read32(hisi_hba, SAS_ECC_INTR_MSK);
+-	hisi_sas_write32(hisi_hba, SAS_ECC_INTR_MSK, irq_msk | 0xffffffff);
++	hisi_sas_write32(hisi_hba, SAS_ECC_INTR_MSK, 0xffffffff);
+ 
+ 	irq_value = hisi_sas_read32(hisi_hba, SAS_ECC_INTR);
+ 	if (irq_value)
+@@ -3008,8 +3008,6 @@ hisi_sas_shost_alloc_pci(struct pci_dev *pdev)
+ 	else
+ 		hisi_hba->prot_mask = prot_mask;
+ 
+-	timer_setup(&hisi_hba->timer, NULL, 0);
 -
--	return 0;
- }
+ 	if (hisi_sas_get_fw_info(hisi_hba) < 0)
+ 		goto err_out;
  
--static int hisi_sas_show_row_32(struct seq_file *s, int index,
--				int sz, __le32 *ptr)
-+static void hisi_sas_show_row_32(struct seq_file *s, int index,
-+				 int sz, __le32 *ptr)
- {
- 	int i;
+@@ -3099,7 +3097,6 @@ hisi_sas_v3_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	sha->lldd_module = THIS_MODULE;
+ 	sha->sas_addr = &hisi_hba->sas_addr[0];
+ 	sha->num_phys = hisi_hba->n_phy;
+-	sha->core.shost = hisi_hba->shost;
  
-@@ -2987,11 +2985,9 @@ static int hisi_sas_show_row_32(struct seq_file *s, int index,
- 			seq_puts(s, "\n\t");
- 	}
- 	seq_puts(s, "\n");
--
--	return 0;
- }
- 
--static int hisi_sas_cq_show_slot(struct seq_file *s, int slot, void *cq_ptr)
-+static void hisi_sas_cq_show_slot(struct seq_file *s, int slot, void *cq_ptr)
- {
- 	struct hisi_sas_cq *cq = cq_ptr;
- 	struct hisi_hba *hisi_hba = cq->hisi_hba;
-@@ -2999,20 +2995,18 @@ static int hisi_sas_cq_show_slot(struct seq_file *s, int slot, void *cq_ptr)
- 	__le32 *complete_hdr = complete_queue +
- 			(hisi_hba->hw->complete_hdr_size * slot);
- 
--	return hisi_sas_show_row_32(s, slot,
--				hisi_hba->hw->complete_hdr_size,
--				complete_hdr);
-+	hisi_sas_show_row_32(s, slot,
-+			     hisi_hba->hw->complete_hdr_size,
-+			     complete_hdr);
- }
- 
- static int hisi_sas_debugfs_cq_show(struct seq_file *s, void *p)
- {
- 	struct hisi_sas_cq *cq = s->private;
--	int slot, ret;
-+	int slot;
- 
- 	for (slot = 0; slot < HISI_SAS_QUEUE_SLOTS; slot++) {
--		ret = hisi_sas_cq_show_slot(s, slot, cq);
--		if (ret)
--			return ret;
-+		hisi_sas_cq_show_slot(s, slot, cq);
- 	}
- 	return 0;
- }
-@@ -3030,7 +3024,7 @@ static const struct file_operations hisi_sas_debugfs_cq_fops = {
- 	.owner = THIS_MODULE,
- };
- 
--static int hisi_sas_dq_show_slot(struct seq_file *s, int slot, void *dq_ptr)
-+static void hisi_sas_dq_show_slot(struct seq_file *s, int slot, void *dq_ptr)
- {
- 	struct hisi_sas_dq *dq = dq_ptr;
- 	struct hisi_hba *hisi_hba = dq->hisi_hba;
-@@ -3038,18 +3032,15 @@ static int hisi_sas_dq_show_slot(struct seq_file *s, int slot, void *dq_ptr)
- 	__le32 *cmd_hdr = cmd_queue +
- 		sizeof(struct hisi_sas_cmd_hdr) * slot;
- 
--	return hisi_sas_show_row_32(s, slot, sizeof(struct hisi_sas_cmd_hdr),
--				    cmd_hdr);
-+	hisi_sas_show_row_32(s, slot, sizeof(struct hisi_sas_cmd_hdr), cmd_hdr);
- }
- 
- static int hisi_sas_debugfs_dq_show(struct seq_file *s, void *p)
- {
--	int slot, ret;
-+	int slot;
- 
- 	for (slot = 0; slot < HISI_SAS_QUEUE_SLOTS; slot++) {
--		ret = hisi_sas_dq_show_slot(s, slot, s->private);
--		if (ret)
--			return ret;
-+		hisi_sas_dq_show_slot(s, slot, s->private);
- 	}
- 	return 0;
- }
-@@ -3071,15 +3062,12 @@ static int hisi_sas_debugfs_iost_show(struct seq_file *s, void *p)
- {
- 	struct hisi_hba *hisi_hba = s->private;
- 	struct hisi_sas_iost *debugfs_iost = hisi_hba->debugfs_iost;
--	int i, ret, max_command_entries = HISI_SAS_MAX_COMMANDS;
-+	int i, max_command_entries = HISI_SAS_MAX_COMMANDS;
- 
- 	for (i = 0; i < max_command_entries; i++, debugfs_iost++) {
- 		__le64 *iost = &debugfs_iost->qw0;
- 
--		ret = hisi_sas_show_row_64(s, i, sizeof(*debugfs_iost),
--					   iost);
--		if (ret)
--			return ret;
-+		hisi_sas_show_row_64(s, i, sizeof(*debugfs_iost), iost);
- 	}
- 
- 	return 0;
-@@ -3140,17 +3128,14 @@ static const struct file_operations hisi_sas_debugfs_iost_cache_fops = {
- 
- static int hisi_sas_debugfs_itct_show(struct seq_file *s, void *p)
- {
--	int i, ret;
-+	int i;
- 	struct hisi_hba *hisi_hba = s->private;
- 	struct hisi_sas_itct *debugfs_itct = hisi_hba->debugfs_itct;
- 
- 	for (i = 0; i < HISI_SAS_MAX_ITCT_ENTRIES; i++, debugfs_itct++) {
- 		__le64 *itct = &debugfs_itct->qw0;
- 
--		ret = hisi_sas_show_row_64(s, i, sizeof(*debugfs_itct),
--					   itct);
--		if (ret)
--			return ret;
-+		hisi_sas_show_row_64(s, i, sizeof(*debugfs_itct), itct);
- 	}
- 
- 	return 0;
+ 	for (i = 0; i < hisi_hba->n_phy; i++) {
+ 		sha->sas_phy[i] = &hisi_hba->phy[i].sas_phy;
 -- 
 2.17.1
 
