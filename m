@@ -2,89 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32CF8233B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:54:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F11882344
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbfHEQyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 12:54:47 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43707 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbfHEQyq (ORCPT
+        id S1729950AbfHEQzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 12:55:21 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59582 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729152AbfHEQzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:54:46 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i189so39945331pfg.10
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 09:54:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/bwTUWzlU15HZ3M3k+xzvMhkRem/kSeFzTKEw/QWQzc=;
-        b=m1WiCliOfPATXps4NT1o26440TW93JM6y2lFBOkkl4UhZIoKRcjxYe4kOb96Wn9q6h
-         fU92SqEpY3M+gulqXCmLPdu25VQ+vkJE7VEF5ROpGC+I6ihwkw8VdifqIJstsIdfw+4y
-         F5XWa5mRp29t7u8AwCOBpgh3ewJl+iyP0XbLw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/bwTUWzlU15HZ3M3k+xzvMhkRem/kSeFzTKEw/QWQzc=;
-        b=dV+jU1PRm5MrmtaPdoNPkKWiIWsW6mGo95bJEFt9FJt50dPuu+cWLrdmbvAt+0013r
-         oSdXQNypWdLHUNwt6Wi/o1WiSNNYZUF1k4jHpthO1itcede/gIkMzDuG0ZaQC2Dddb5B
-         VbCOxvvrOk8W5Sr5QjB/UoD3EnVKya0qhxIxTSYGgbTTKVR/xMFp4g5E3BobdVtlsUn4
-         y89WsvI4tOmdhqdWjnWXubjFIHcJcG/jhd302BXCSD6ZQbCZZWGjOWb1pork6H5cVj8K
-         253jbIY6L+qkV7GWcdjzikUmxmuiVtcLnjlCYS3dhZ9mRQeLQWIyqFRXrh4RdUZXl8dg
-         eFPg==
-X-Gm-Message-State: APjAAAW9/4xhRDhtNxMy9M2xWIm2lqaff/6Lkaw5aQxtcGpwyzGoSnpV
-        nc3L9L4Ta3OVDJMOFAmGiiX7hA==
-X-Google-Smtp-Source: APXvYqw41x1+VlUG+f6ebMnURHbQ6wfQ/1Cp9FeJ/wPnnO1VWKcg8M+qfvWaeC6+kSoRPCXxLawOSw==
-X-Received: by 2002:aa7:82da:: with SMTP id f26mr74409261pfn.82.1565024086360;
-        Mon, 05 Aug 2019 09:54:46 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id p1sm90317138pff.74.2019.08.05.09.54.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Aug 2019 09:54:45 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 09:54:44 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Garnier <thgarnie@chromium.org>,
-        kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 01/11] x86/crypto: Adapt assembly for PIE support
-Message-ID: <201908050952.BC1F7C3@keescook>
-References: <20190730191303.206365-1-thgarnie@chromium.org>
- <20190730191303.206365-2-thgarnie@chromium.org>
- <20190805163202.GD18785@zn.tnic>
+        Mon, 5 Aug 2019 12:55:21 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x75GiGpV039612;
+        Mon, 5 Aug 2019 16:54:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=AiaTx4RKmFmDRhFvPbii96+I2RlIDqHm4KrNnvPT2u0=;
+ b=CSOoOFmzfLHDAKdLl74xlQAFf0qqaSWA0Jy+V82mmEXmE6i1X98vzhCO8kFn5IgwLuko
+ 3KqiIPAx8c5Ri17YNKlWNUKtja37et/tXJRXH3sTvMC0oIDWxlXWvBDiNCePg/k+H/y9
+ YMya9tabSBUyrVgtRwswkL1zFE402XivlgzI3AxiwEzHXT6AcEUBNCw4gwQLX8DMM3hn
+ ntGN2gO8CApvxyYzP5ovCBKpgfSLqhs/ldzrQiR8+k9m4LlvsNmQHJd0pvb3MYuOpgbJ
+ MtBmxe90hEUBgDUQoKTg5mxLWaGpypmAD23wcspqqzlODjj+7RtneACpVf6+ysxWEfoR bQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2u51ptrk2j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Aug 2019 16:54:53 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x75GkrJB140464;
+        Mon, 5 Aug 2019 16:54:52 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2u51kmnj6g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Aug 2019 16:54:52 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x75GskDR008576;
+        Mon, 5 Aug 2019 16:54:46 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Aug 2019 09:54:46 -0700
+Subject: Re: [PATCH 1/3] mm, reclaim: make should_continue_reclaim perform
+ dryrun detection
+To:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190802223930.30971-1-mike.kravetz@oracle.com>
+ <20190802223930.30971-2-mike.kravetz@oracle.com>
+ <bb16d3f0-0984-be32-4346-358abad92c4c@suse.cz>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <e2252a42-063a-8f34-c300-9250d783b2fb@oracle.com>
+Date:   Mon, 5 Aug 2019 09:54:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805163202.GD18785@zn.tnic>
+In-Reply-To: <bb16d3f0-0984-be32-4346-358abad92c4c@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=962
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908050184
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=987 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908050184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 06:32:02PM +0200, Borislav Petkov wrote:
-> On Tue, Jul 30, 2019 at 12:12:45PM -0700, Thomas Garnier wrote:
-> > Change the assembly code to use only relative references of symbols for the
-> > kernel to be PIE compatible.
-> > 
-> > Position Independent Executable (PIE) support will allow to extend the
-> > KASLR randomization range below 0xffffffff80000000.
+On 8/5/19 1:42 AM, Vlastimil Babka wrote:
+> On 8/3/19 12:39 AM, Mike Kravetz wrote:
+>> From: Hillf Danton <hdanton@sina.com>
+>>
+>> Address the issue of should_continue_reclaim continuing true too often
+>> for __GFP_RETRY_MAYFAIL attempts when !nr_reclaimed and nr_scanned.
+>> This could happen during hugetlb page allocation causing stalls for
+>> minutes or hours.
+>>
+>> We can stop reclaiming pages if compaction reports it can make a progress.
+>> A code reshuffle is needed to do that.
 > 
-> I believe in previous reviews I asked about why this sentence is being
-> replicated in every commit message and now it is still in every commit
-> message except in 2/11.
+>> And it has side-effects, however,
+>> with allocation latencies in other cases but that would come at the cost
+>> of potential premature reclaim which has consequences of itself.
 > 
-> Why do you need it everywhere and not once in the 0th mail?
+> Based on Mel's longer explanation, can we clarify the wording here? e.g.:
+> 
+> There might be side-effect for other high-order allocations that would
+> potentially benefit from more reclaim before compaction for them to be
+> faster and less likely to stall, but the consequences of
+> premature/over-reclaim are considered worse.
+> 
+>> We can also bail out of reclaiming pages if we know that there are not
+>> enough inactive lru pages left to satisfy the costly allocation.
+>>
+>> We can give up reclaiming pages too if we see dryrun occur, with the
+>> certainty of plenty of inactive pages. IOW with dryrun detected, we are
+>> sure we have reclaimed as many pages as we could.
+>>
+>> Cc: Mike Kravetz <mike.kravetz@oracle.com>
+>> Cc: Mel Gorman <mgorman@suse.de>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Signed-off-by: Hillf Danton <hdanton@sina.com>
+>> Tested-by: Mike Kravetz <mike.kravetz@oracle.com>
+>> Acked-by: Mel Gorman <mgorman@suse.de>
+> 
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> I will send some followup cleanup.
+> 
+> There should be also Mike's SOB?
 
-I think there was some long-ago feedback from someone (Ingo?) about
-giving context for the patch so looking at one individually would let
-someone know that it was part of a larger series. This is a distant
-memory, though. Do you think it should just be dropped in each patch?
+Will do.
+My apologies, the process of handling patches created by others is new
+to me.
 
+Also, will incorporate Mel's explanation.
 -- 
-Kees Cook
+Mike Kravetz
