@@ -2,109 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A14BE82559
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 21:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 412AE8255B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 21:12:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbfHETLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 15:11:40 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37261 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbfHETLk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 15:11:40 -0400
-Received: by mail-qt1-f194.google.com with SMTP id y26so82080010qto.4
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 12:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DsnWSlx3jr5q2iaVPxAiT1aeyVdRVmITveSmuVom2Ws=;
-        b=Vl9nO6hZJOwwx8665nep1hwtFLddiHom8hEdq8dA9UwSay1sULU8gBop6s4U4Z44yx
-         3P5s8qlKecgceBu9XI+Nrvfs5QUz1Jr9bPUzWCqGH5Zi6Wee/j1uh/MnJP50QJ5ispan
-         jBDOPifzBkxXut0xNCCADz98y1AvhJG503CrY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DsnWSlx3jr5q2iaVPxAiT1aeyVdRVmITveSmuVom2Ws=;
-        b=VocJixc5pGqtXoyZH+xrhrr+LY/SunncLxhaEYl4CfN7FfB3y0GiV38dabUfO5S2Zr
-         BATVICiyqYbrtCjsno9ejJXgxDzI6LwGe2fzsK2pzyttC7qHSo2wztHxKOula/pkUumv
-         eyJphx1xoFxsMEERiSZBrUVL4VOFcHElcnFKcZGSesAbiZBKgLkrxLDCAbKJpbpAAbyV
-         FyBXTYiolbaIhCsOdBz8xl3i0p7vDXKEKSt3M4Xdm7esW1HfBt8ctYh+HahCkgASpz/q
-         bLM6kO8M5ypXuucNufX7xyxATcFMttQN6+nVxChmoi9CDt98F3S+dryAUa15VJ//Btfu
-         sBOw==
-X-Gm-Message-State: APjAAAVBj6rUIEgyDX+1CBfFIaT+TVNfbMNoo1TefY0GJbVL0WblW6J1
-        0CSVjrJ9659non6FJni8dpw/sQ==
-X-Google-Smtp-Source: APXvYqw30JT8/RTjsZe877SpJeaDKhheXmOGH3/gttaX85QOt+7DJ+cSTgRw1JCnpwUSchuDYIWaYQ==
-X-Received: by 2002:a0c:87a1:: with SMTP id 30mr114158861qvj.167.1565032299025;
-        Mon, 05 Aug 2019 12:11:39 -0700 (PDT)
-Received: from chatter.i7.local (192-0-228-88.cpe.teksavvy.com. [192.0.228.88])
-        by smtp.gmail.com with ESMTPSA id l80sm16775532qke.24.2019.08.05.12.11.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 12:11:37 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 15:11:36 -0400
-From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Micah Morton <mortonm@chromium.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
-Message-ID: <20190805191136.GB4887@chatter.i7.local>
-References: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
- <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
- <CAJ-EccOqmmrf2KPb7Z7NU6bF_4W1XUawLLy=pLekCyFKqusjKQ@mail.gmail.com>
- <CAHk-=wgT7Z3kCbKS9Q1rdA=OVxPL32CdBovX=eHvD2PppWCHpQ@mail.gmail.com>
- <20190805142756.GA4887@chatter.i7.local>
- <CAHk-=wgdiiBVprEVoi8+mpicGnOVNZ4Lb9YUJVskOXahO50sXw@mail.gmail.com>
+        id S1730404AbfHETMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 15:12:09 -0400
+Received: from mga12.intel.com ([192.55.52.136]:53964 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728870AbfHETMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 15:12:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 12:12:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
+   d="scan'208";a="373177998"
+Received: from amerhebi-mobl1.amr.corp.intel.com (HELO [10.251.154.70]) ([10.251.154.70])
+  by fmsmga005.fm.intel.com with ESMTP; 05 Aug 2019 12:12:07 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 23/40] soundwire: stream: fix disable
+ sequence
+To:     Sanyog Kale <sanyog.r.kale@intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-24-pierre-louis.bossart@linux.intel.com>
+ <20190805095620.GD22437@buildpc-HP-Z230>
+ <12799e97-d6e3-5027-a409-0fe37dba86fd@linux.intel.com>
+ <20190805163233.GA24889@buildpc-HP-Z230>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <078f19d4-5a2f-91bf-43a3-7c92eacd8fc1@linux.intel.com>
+Date:   Mon, 5 Aug 2019 14:12:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190805163233.GA24889@buildpc-HP-Z230>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgdiiBVprEVoi8+mpicGnOVNZ4Lb9YUJVskOXahO50sXw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 11:20:59AM -0700, Linus Torvalds wrote:
->I don't know if it's worth changing the pr-tracker-bot rules. I *do*
->think that the whole unquoted
->
->   for you to fetch changes up to [hex string]
->
->is by far the strongest single signal for a pull request, but it's not
->clear that it's worth spending a lot of CPU time looking for that
->unless you have a strong signal in the subject line.
-
-The way we do it currently is by hooking into public-inbox where the 
-email subject is in the commit log. So for us to grab all new subjects 
-it's a single git call, whereas getting the message body requires a git 
-call per message. This is why we pre-filter by subject, as it's a cheap 
-way to avoid needing to issue hundreds of git calls looking for possible 
-matches in message bodies.
-
->So I consider this "solved", and maybe people should just realize that
->they won't get the automated responses unless they do everything just
->right.
-
-Would you consider recording the message-id of the pull request as part 
-of the commit message? This would be a sure way for us to be able to 
-catch all possible cases. In fact, this would allow me to throw out most 
-of the bot logic, as it would become unnecessary. E.g. the merge commit 
-would look like:
-
-Merge tag 'foo' of git://git.kernel.org/bar
-
-Pull foo features
-
- * foo
- * bar
- * baz
-
-Link: https://lore.kernel.org/r/<message-id>
 
 
-However, I suspect that getting message-ids for all your pull requests 
-would significantly complicate your workflow.
+On 8/5/19 11:32 AM, Sanyog Kale wrote:
+> On Mon, Aug 05, 2019 at 10:33:25AM -0500, Pierre-Louis Bossart wrote:
+>>
+>>
+>> On 8/5/19 4:56 AM, Sanyog Kale wrote:
+>>> On Thu, Jul 25, 2019 at 06:40:15PM -0500, Pierre-Louis Bossart wrote:
+>>>> When we disable the stream and then call hw_free, two bank switches
+>>>> will be handled and as a result we re-enable the stream on hw_free.
+>>>>
+>>>
+>>> I didnt quite get why there will be two bank switches as part of disable flow
+>>> which leads to enabling of stream?
+>>
+>> You have two bank switches, one to stop streaming and on in de-prepare. It's
+>> symmetrical with the start sequence, where we do a bank switch to prepare
+>> and another to enable.
+> 
+> Got it. I misunderstood it that two bank switches are performed as part of
+> disable_stream.
+> 
+>>
+>> Let's assume we are using bank0 when streaming.
+>>
+>> Before the first bank switch, the channel_enable is set to false in the
+>> alternate bank1. When the bank switch happens, bank1 become active and the
+>> streaming stops. But bank0 registers have not been modified so when we do
+>> the second bank switch in de-prepare we make bank0 active, and the ch_enable
+>> bits are still set so streaming will restart... When we stop streaming, we
+>> need to make sure the ch_enable bits are cleared in the two banks.
+> 
+> This is clear. Even though the channels remains enabled, i believe there
+> won't be any data pushed on lines as stream will be closed.
 
--K
+Actually the link remains active. We tested this by setting the PRBS 
+data mode and the Slave device detects when we artificially inject errors.
+
+There is however no data consumption on the DMA side of the Master IP 
+since the DMA is indeed stopped.
+
+> 
+> Regarding mirroring approach, I assume after bank switch we will take
+> snapshot of active bank and program same in inactive bank.
+
+That should be the approach yes.
+
+> 
+>>
+>>
+>>>
+>>>> Make sure the stream is disabled on both banks.
+>>>>
+>>>> TODO: we need to completely revisit all this and make sure we have a
+>>>> mirroring mechanism between current and alternate banks.
+>>>>
+>>>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>>>> ---
+>>>>    drivers/soundwire/stream.c | 19 ++++++++++++++++++-
+>>>>    1 file changed, 18 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+>>>> index 53f5e790fcd7..75b9ad1fb1a6 100644
+>>>> --- a/drivers/soundwire/stream.c
+>>>> +++ b/drivers/soundwire/stream.c
+>>>> @@ -1637,7 +1637,24 @@ static int _sdw_disable_stream(struct sdw_stream_runtime *stream)
+>>>>    		}
+>>>>    	}
+>>>> -	return do_bank_switch(stream);
+>>>> +	ret = do_bank_switch(stream);
+>>>> +	if (ret < 0) {
+>>>> +		dev_err(bus->dev, "Bank switch failed: %d\n", ret);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	/* make sure alternate bank (previous current) is also disabled */
+>>>> +	list_for_each_entry(m_rt, &stream->master_list, stream_node) {
+>>>> +		bus = m_rt->bus;
+>>>> +		/* Disable port(s) */
+>>>> +		ret = sdw_enable_disable_ports(m_rt, false);
+>>>> +		if (ret < 0) {
+>>>> +			dev_err(bus->dev, "Disable port(s) failed: %d\n", ret);
+>>>> +			return ret;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>>    }
+>>>>    /**
+>>>> -- 
+>>>> 2.20.1
+>>>>
+>>>
+> 
