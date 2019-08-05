@@ -2,39 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DE4381A33
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40EC681A95
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbfHEND5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:03:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39330 "EHLO mail.kernel.org"
+        id S1729783AbfHENHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:07:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726508AbfHEND4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:03:56 -0400
+        id S1729276AbfHENHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:07:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBCEF2075B;
-        Mon,  5 Aug 2019 13:03:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97A862173C;
+        Mon,  5 Aug 2019 13:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010235;
-        bh=s8KbTj/TJZ7RmdhXBn0lQn93yoncr6rK9wY2f6pQr2k=;
+        s=default; t=1565010438;
+        bh=//BB99UKNtfhyDoMiXPGM91rUqNBEQ05fWRSqYPhYuo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PFqb/y3v1f5Ns5lVvO/mZU32C7MLdxmPhG8yy878rc374R9wCmyp5CeU7TROMZ3XR
-         OXWnUPeUcAkyDuzEAEyCuD3Qp+YCisMOIERetc3YAuxk/Sdj/L8PDHbLlJqAdv+Z7h
-         ul7xd5a8ZDRNwlUQkh+uXY8+1gz8yuQ5OFDIl3xM=
+        b=iGPhqsLFjDW1051ZDshG72mVPRSE/fqqIxZWqh+h5exH1zOPgjEjNW26yEUKvddtV
+         QRI5xj0ljnmsu9FUUIFNgwJi5aJnLnpwLg7hZRjVMj9avAKPT4B9vWZzPBz374FT5S
+         i/5RwtpRJtBhQrml3lY271mygo6sQmWo6V7shKPs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Fabian Frederick <fabf@skynet.be>,
+        Mikko Rapeli <mikko.rapeli@iki.fi>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Yann Droneaud <ydroneaud@opteya.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 11/22] be2net: Signal that the device cannot transmit during reconfiguration
+Subject: [PATCH 4.14 23/53] coda: add error handling for fget
 Date:   Mon,  5 Aug 2019 15:02:48 +0200
-Message-Id: <20190805124921.118903949@linuxfoundation.org>
+Message-Id: <20190805124930.619920651@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
-References: <20190805124918.070468681@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +54,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7429c6c0d9cb086d8e79f0d2a48ae14851d2115e ]
+[ Upstream commit 02551c23bcd85f0c68a8259c7b953d49d44f86af ]
 
-While changing the number of interrupt channels, be2net stops adapter
-operation (including netif_tx_disable()) but it doesn't signal that it
-cannot transmit. This may lead dev_watchdog() to falsely trigger during
-that time.
+When fget fails, the lack of error-handling code may cause unexpected
+results.
 
-Add the missing call to netif_carrier_off(), following the pattern used in
-many other drivers. netif_carrier_on() is already taken care of in
-be_open().
+This patch adds error-handling code after calling fget.
 
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/2514ec03df9c33b86e56748513267a80dd8004d9.1558117389.git.jaharkes@cs.cmu.edu
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Signed-off-by: Jan Harkes <jaharkes@cs.cmu.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Fabian Frederick <fabf@skynet.be>
+Cc: Mikko Rapeli <mikko.rapeli@iki.fi>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Yann Droneaud <ydroneaud@opteya.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/emulex/benet/be_main.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/coda/psdev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
-index 26255862d1cfc..7524a33b7032c 100644
---- a/drivers/net/ethernet/emulex/benet/be_main.c
-+++ b/drivers/net/ethernet/emulex/benet/be_main.c
-@@ -4307,8 +4307,12 @@ int be_update_queues(struct be_adapter *adapter)
- 	struct net_device *netdev = adapter->netdev;
- 	int status;
+diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
+index f40e3953e7fe3..a6d9e841a375c 100644
+--- a/fs/coda/psdev.c
++++ b/fs/coda/psdev.c
+@@ -187,8 +187,11 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
+ 	if (req->uc_opcode == CODA_OPEN_BY_FD) {
+ 		struct coda_open_by_fd_out *outp =
+ 			(struct coda_open_by_fd_out *)req->uc_data;
+-		if (!outp->oh.result)
++		if (!outp->oh.result) {
+ 			outp->fh = fget(outp->fd);
++			if (!outp->fh)
++				return -EBADF;
++		}
+ 	}
  
--	if (netif_running(netdev))
-+	if (netif_running(netdev)) {
-+		/* device cannot transmit now, avoid dev_watchdog timeouts */
-+		netif_carrier_off(netdev);
-+
- 		be_close(netdev);
-+	}
- 
- 	be_cancel_worker(adapter);
- 
+         wake_up(&req->uc_sleep);
 -- 
 2.20.1
 
