@@ -2,97 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3280E825F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 22:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 442CB825FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 22:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730701AbfHEUTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 16:19:35 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44932 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfHEUTe (ORCPT
+        id S1730617AbfHEUU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 16:20:28 -0400
+Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:49968 "EHLO
+        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbfHEUU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 16:19:34 -0400
-Received: by mail-pf1-f194.google.com with SMTP id t16so40167088pfe.11
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 13:19:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xBWCTm8N8Yifh09tk07A94FvqSIiabAj5rSoGm/YzsQ=;
-        b=Btnt57UOv0m4dreUiqg3uXNlFJzanFVmkNgSMvCd/nPOwjHC3MA9EoM96eyvJvQ2gD
-         34VAUWfxL8Z0fvuS31hZ6DkDC7UYRBxQYOLpwNmO+929aSYqR6NhWc5tGnmNnLFe/mpi
-         k8PkXLiQBjt6a2+B30AeD3uNEVw94lKLs3K7A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xBWCTm8N8Yifh09tk07A94FvqSIiabAj5rSoGm/YzsQ=;
-        b=Z7vNd1ENfYg3HP5nQ5R9fgGLxj7me/yzn5OVsEMm/Vy4olrMoqAEOfPN1tcLITAPLA
-         w7gRN8f59jcuFFbULJcvjw2Kvrg71meCtA6KhQsi0fGuaR4k92jOvYckBk9V/mKbFynX
-         KUrZPnuoA57Qg6MNttYkBtJpC/6ua+blG/RDXGYEyr/6gCMScbsHLz+0Q0wghFKhvA3E
-         eBnSzMG27FUSI/hHW6ny2zS68DQDXr+l6NKJTXh5c8TKpCPjAUsBB9ipOt79k/zYtx7k
-         nebMIk2M44phnzJHFinfQhtPLCytdAGcUeCsAbuIopZL6G+fXWf0XRRQ4sVlJHhVxbtT
-         cf6w==
-X-Gm-Message-State: APjAAAXgb+DodGmkfi5gSy/lfl6L9u1nvHpj5plaAhBmb3kUA7AplCZd
-        qR7afXdbj4HlIRIRitFX4a6cBKVcDYs=
-X-Google-Smtp-Source: APXvYqxl+I5gFrxtAPAk5cKgR2CargOkThyRxpDJdSjuFS9CCBUUy11MK1VdGA6f2j7dv4MdyqSgMg==
-X-Received: by 2002:a17:90a:25c8:: with SMTP id k66mr20001819pje.129.1565036374349;
-        Mon, 05 Aug 2019 13:19:34 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o9sm52295278pgv.19.2019.08.05.13.19.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Aug 2019 13:19:32 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 13:19:31 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.orgCc:linux-kernel"@vger.kernel.org
-Subject: Re: [PATCH] x86: mtrr: cyrix: Mark expected switch fall-through
-Message-ID: <201908051319.B3B8858@keescook>
-References: <20190805201712.GA19927@embeddedor>
+        Mon, 5 Aug 2019 16:20:27 -0400
+X-Greylist: delayed 555 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Aug 2019 16:20:26 EDT
+Received: from toshiba (85-76-131-212-nat.elisa-mobile.fi [85.76.131.212])
+        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 8249C30071;
+        Mon,  5 Aug 2019 23:11:09 +0300 (EEST)
+Message-ID: <5D488D55.B84FC098@users.sourceforge.net>
+Date:   Mon, 05 Aug 2019 23:11:01 +0300
+From:   Jari Ruusu <jariruusu@users.sourceforge.net>
 MIME-Version: 1.0
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 4.9 00/42] 4.9.188-stable review
+References: <20190805124924.788666484@linuxfoundation.org>
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805201712.GA19927@embeddedor>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 03:17:12PM -0500, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
-> 
-> Fix the following warning (Building: i386_defconfig i386):
-> 
-> arch/x86/kernel/cpu/mtrr/cyrix.c:99:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.188 release.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Peter Zijlstra's "x86/atomic: Fix smp_mb__{before,after}_atomic()"
+upstream commit 69d927bba39517d0980462efc051875b7f4db185 seems to
+be missing/lost from 4.9 and older stable kernels.
 
--Kees
+That patch has 10 hunks, first one of those does not apply cleanly to
+4.9 kernel because it attempts to modify Documentation/atomic_t.txt
+file which does not exist in older kernels. Other 9 hunks apply with
+small offsets and fuzz, but modifications find their correct places anyway.
+Those other 9 hunks are the important ones, first hunk can be ignored.
 
-> ---
->  arch/x86/kernel/cpu/mtrr/cyrix.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/mtrr/cyrix.c b/arch/x86/kernel/cpu/mtrr/cyrix.c
-> index 4296c702a3f7..72182809b333 100644
-> --- a/arch/x86/kernel/cpu/mtrr/cyrix.c
-> +++ b/arch/x86/kernel/cpu/mtrr/cyrix.c
-> @@ -98,6 +98,7 @@ cyrix_get_free_region(unsigned long base, unsigned long size, int replace_reg)
->  	case 7:
->  		if (size < 0x40)
->  			break;
-> +		/* Else, fall through */
->  	case 6:
->  	case 5:
->  	case 4:
-> -- 
-> 2.22.0
-> 
+Greg,
+Please take Peter Zijlstra's original patch and "force" apply it like this
+to 4.9 kernels:
+
+  patch -p1 -f <ORIGINAL.patch
+
+and for 4.4 kernels like this:
+
+  cat ORIGINAL.patch | sed -e 's/__smp_mb__/smp_mb__/' | patch -p1 -f -l
 
 -- 
-Kees Cook
+Jari Ruusu  4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD  ACDF F073 3C80 8132 F189
