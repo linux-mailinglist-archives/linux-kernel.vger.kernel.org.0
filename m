@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF9C481A30
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F98681A3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:04:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbfHENDv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:03:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39234 "EHLO mail.kernel.org"
+        id S1728986AbfHENEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:04:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726508AbfHENDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:03:51 -0400
+        id S1728934AbfHENET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:04:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC54C206C1;
-        Mon,  5 Aug 2019 13:03:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4A552147A;
+        Mon,  5 Aug 2019 13:04:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010230;
-        bh=zmi6DxT3EhLOR5sEtz3wlVtU2AHbkSBARiH7Prqw1qY=;
+        s=default; t=1565010258;
+        bh=/cICx+80dZta7bh9CvT/1n+AsO2ktql8iA571OGiJ4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YF3rHnmthCmKUJspnEPG9x3VpFiQr8fDPdWdBEpIQ2hYrP6fgJIItvYYdyo2Xr3U6
-         AM+r+v/nXPXJEeVB4iu+xC8vXhpV8iTS+Oc1GxuGhZUBHZgFVICnhzD7dE9BULJlsA
-         BwBn1mz5KVn1LqPHN6mMzVQjmJ4lkIHcwbcCqmOQ=
+        b=eyeEVnyiaMGd0LA8Vn6Sje2mDKEbXoPJEqUxLmnUaiQ0PnzO2wTfPFRuYUAVbCrx6
+         xzAKbOsx2OoPMLYHhBnu8X2DwcIrwhlFVy2hJtNeIcG6XRe9dnHSYQjjXGztCnLGuN
+         uS3b6oz0CEjvMfBwq+bM2fp+J3HWX+2Bi4/i1MmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 01/22] ARM: riscpc: fix DMA
-Date:   Mon,  5 Aug 2019 15:02:38 +0200
-Message-Id: <20190805124919.055226395@linuxfoundation.org>
+Subject: [PATCH 4.4 02/22] ARM: dts: rockchip: Mark that the rk3288 timer might stop in suspend
+Date:   Mon,  5 Aug 2019 15:02:39 +0200
+Message-Id: <20190805124919.374971262@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
 References: <20190805124918.070468681@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,46 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ffd9a1ba9fdb7f2bd1d1ad9b9243d34e96756ba2 ]
+[ Upstream commit 8ef1ba39a9fa53d2205e633bc9b21840a275908e ]
 
-DMA got broken a while back in two different ways:
-1) a change in the behaviour of disable_irq() to wait for the interrupt
-   to finish executing causes us to deadlock at the end of DMA.
-2) a change to avoid modifying the scatterlist left the first transfer
-   uninitialised.
+This is similar to commit e6186820a745 ("arm64: dts: rockchip: Arch
+counter doesn't tick in system suspend").  Specifically on the rk3288
+it can be seen that the timer stops ticking in suspend if we end up
+running through the "osc_disable" path in rk3288_slp_mode_set().  In
+that path the 24 MHz clock will turn off and the timer stops.
 
-DMA is only used with expansion cards, so has gone unnoticed.
+To test this, I ran this on a Chrome OS filesystem:
+  before=$(date); \
+  suspend_stress_test -c1 --suspend_min=30 --suspend_max=31; \
+  echo ${before}; date
 
-Fixes: fa4e99899932 ("[ARM] dma: RiscPC: don't modify DMA SG entries")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+...and I found that unless I plug in a device that requests USB wakeup
+to be active that the two calls to "date" would show that fewer than
+30 seconds passed.
+
+NOTE: deep suspend (where the 24 MHz clock gets disabled) isn't
+supported yet on upstream Linux so this was tested on a downstream
+kernel.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-rpc/dma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/rk3288.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-rpc/dma.c b/arch/arm/mach-rpc/dma.c
-index 6d3517dc4772a..82aac38fa2cff 100644
---- a/arch/arm/mach-rpc/dma.c
-+++ b/arch/arm/mach-rpc/dma.c
-@@ -131,7 +131,7 @@ static irqreturn_t iomd_dma_handle(int irq, void *dev_id)
- 	} while (1);
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 04ea209f1737f..98abb053b7daf 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -205,6 +205,7 @@
+ 			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
+ 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		clock-frequency = <24000000>;
++		arm,no-tick-in-suspend;
+ 	};
  
- 	idma->state = ~DMA_ST_AB;
--	disable_irq(irq);
-+	disable_irq_nosync(irq);
- 
- 	return IRQ_HANDLED;
- }
-@@ -174,6 +174,9 @@ static void iomd_enable_dma(unsigned int chan, dma_t *dma)
- 				DMA_FROM_DEVICE : DMA_TO_DEVICE);
- 		}
- 
-+		idma->dma_addr = idma->dma.sg->dma_address;
-+		idma->dma_len = idma->dma.sg->length;
-+
- 		iomd_writeb(DMA_CR_C, dma_base + CR);
- 		idma->state = DMA_ST_AB;
- 	}
+ 	timer: timer@ff810000 {
 -- 
 2.20.1
 
