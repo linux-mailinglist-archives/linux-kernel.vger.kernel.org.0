@@ -2,49 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40EC681A95
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB72381A85
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbfHENHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:07:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44720 "EHLO mail.kernel.org"
+        id S1729653AbfHENGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729276AbfHENHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:07:18 -0400
+        id S1729055AbfHENGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97A862173C;
-        Mon,  5 Aug 2019 13:07:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0D162087B;
+        Mon,  5 Aug 2019 13:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010438;
-        bh=//BB99UKNtfhyDoMiXPGM91rUqNBEQ05fWRSqYPhYuo=;
+        s=default; t=1565010394;
+        bh=kb2qztZNXYuDAakz0fFwrKBOTaXYkdUowlL/hLTh4u4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iGPhqsLFjDW1051ZDshG72mVPRSE/fqqIxZWqh+h5exH1zOPgjEjNW26yEUKvddtV
-         QRI5xj0ljnmsu9FUUIFNgwJi5aJnLnpwLg7hZRjVMj9avAKPT4B9vWZzPBz374FT5S
-         i/5RwtpRJtBhQrml3lY271mygo6sQmWo6V7shKPs=
+        b=YJctzMC58rT/utME0ciEDw8ZASlraEAKk1vR9unHGUXeNv0sSlGrCB9b/PEbPdTpe
+         hWrUPC7Tmd2Uah4ETGyWH3FZMKRotMB4kY2iznrSYiBfT1zlu0SEqK/nFvs44HM1cE
+         3gUpnErC0AwpQdLKEum3Z/GhvdiM8pT6hDDdSo5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        Fabian Frederick <fabf@skynet.be>,
-        Mikko Rapeli <mikko.rapeli@iki.fi>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Yann Droneaud <ydroneaud@opteya.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        Ira Weiny <ira.weiny@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 23/53] coda: add error handling for fget
+Subject: [PATCH 4.9 22/42] drivers/rapidio/devices/rio_mport_cdev.c: NUL terminate some strings
 Date:   Mon,  5 Aug 2019 15:02:48 +0200
-Message-Id: <20190805124930.619920651@linuxfoundation.org>
+Message-Id: <20190805124927.547548168@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
-References: <20190805124927.973499541@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,48 +47,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 02551c23bcd85f0c68a8259c7b953d49d44f86af ]
+[ Upstream commit 156e0b1a8112b76e351684ac948c59757037ac36 ]
 
-When fget fails, the lack of error-handling code may cause unexpected
-results.
+The dev_info.name[] array has space for RIO_MAX_DEVNAME_SZ + 1
+characters.  But the problem here is that we don't ensure that the user
+put a NUL terminator on the end of the string.  It could lead to an out
+of bounds read.
 
-This patch adds error-handling code after calling fget.
-
-Link: http://lkml.kernel.org/r/2514ec03df9c33b86e56748513267a80dd8004d9.1558117389.git.jaharkes@cs.cmu.edu
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Signed-off-by: Jan Harkes <jaharkes@cs.cmu.edu>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Colin Ian King <colin.king@canonical.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Fabian Frederick <fabf@skynet.be>
-Cc: Mikko Rapeli <mikko.rapeli@iki.fi>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Yann Droneaud <ydroneaud@opteya.com>
+Link: http://lkml.kernel.org/r/20190529110601.GB19119@mwanda
+Fixes: e8de370188d0 ("rapidio: add mport char device driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Alexandre Bounine <alex.bou9@gmail.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/coda/psdev.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/rapidio/devices/rio_mport_cdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
-index f40e3953e7fe3..a6d9e841a375c 100644
---- a/fs/coda/psdev.c
-+++ b/fs/coda/psdev.c
-@@ -187,8 +187,11 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
- 	if (req->uc_opcode == CODA_OPEN_BY_FD) {
- 		struct coda_open_by_fd_out *outp =
- 			(struct coda_open_by_fd_out *)req->uc_data;
--		if (!outp->oh.result)
-+		if (!outp->oh.result) {
- 			outp->fh = fget(outp->fd);
-+			if (!outp->fh)
-+				return -EBADF;
-+		}
- 	}
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index f32fc704cb7ed..28c45db45abad 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -1743,6 +1743,7 @@ static int rio_mport_add_riodev(struct mport_cdev_priv *priv,
  
-         wake_up(&req->uc_sleep);
+ 	if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
+ 		return -EFAULT;
++	dev_info.name[sizeof(dev_info.name) - 1] = '\0';
+ 
+ 	rmcd_debug(RDEV, "name:%s ct:0x%x did:0x%x hc:0x%x", dev_info.name,
+ 		   dev_info.comptag, dev_info.destid, dev_info.hopcount);
+@@ -1874,6 +1875,7 @@ static int rio_mport_del_riodev(struct mport_cdev_priv *priv, void __user *arg)
+ 
+ 	if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
+ 		return -EFAULT;
++	dev_info.name[sizeof(dev_info.name) - 1] = '\0';
+ 
+ 	mport = priv->md->mport;
+ 
 -- 
 2.20.1
 
