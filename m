@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD53781BAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6902981B9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbfHENQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:16:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42704 "EHLO mail.kernel.org"
+        id S1728906AbfHENGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729524AbfHENGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:06:12 -0400
+        id S1729548AbfHENGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C83D206C1;
-        Mon,  5 Aug 2019 13:06:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 398F42075B;
+        Mon,  5 Aug 2019 13:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010371;
-        bh=+5Js5A2JtGGZrWLC2jdZDIp+gwKVT9ufZ+BqhvtRjBw=;
+        s=default; t=1565010376;
+        bh=IoNxLXBCMtqV0FlPq4a4PRsxe+vdwsmKIiPM2OI8hdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2FY2gHIbbnEI0ad7CiBWItPUQum5Be/301esA0/qJNe1ajKIUvG5vwr6w6G9qgb4J
-         qmQJ5rsmzPbHQr5zdaoQvQBNkRVwNOSefotpV7cl6un50yIXNvM6M4u+VtTcL1vwYA
-         CG2XRFTiOCGU17Wrl7IlFebv0g3PCOaKYywO4ru0=
+        b=mhIKBBJXer6Zwm3Kl3M3jBUAfSb/mHqoEPQ1hltTRIOpmXoPAfTqQ6ZxiSs2ox4Hs
+         nIv+6sv56FC5lEIlpyJJFRFTMJtdsbiURyJDBEjhPe1vChBGbemFqEaPVeBprbwMfe
+         VW/ixx9GsVDDeh5k4S/unq45psOenG471u27n61Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "stable@vger.kernel.org, Miguel Ojeda" 
-        <miguel.ojeda.sandonis@gmail.com>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: [PATCH 4.9 40/42] include/linux/module.h: copy __init/__exit attrs to init/cleanup_module
-Date:   Mon,  5 Aug 2019 15:03:06 +0200
-Message-Id: <20190805124929.717616311@linuxfoundation.org>
+        Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juergen Gross <jgross@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH 4.9 42/42] x86, mm, gup: prevent get_page() race with munmap in paravirt guest
+Date:   Mon,  5 Aug 2019 15:03:08 +0200
+Message-Id: <20190805124930.008720376@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
 References: <20190805124924.788666484@linuxfoundation.org>
@@ -47,81 +53,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit a6e60d84989fa0e91db7f236eda40453b0e44afa upstream.
+The x86 version of get_user_pages_fast() relies on disabled interrupts to
+synchronize gup_pte_range() between gup_get_pte(ptep); and get_page() against
+a parallel munmap. The munmap side nulls the pte, then flushes TLBs, then
+releases the page. As TLB flush is done synchronously via IPI disabling
+interrupts blocks the page release, and get_page(), which assumes existing
+reference on page, is thus safe.
+However when TLB flush is done by a hypercall, e.g. in a Xen PV guest, there is
+no blocking thanks to disabled interrupts, and get_page() can succeed on a page
+that was already freed or even reused.
 
-The upcoming GCC 9 release extends the -Wmissing-attributes warnings
-(enabled by -Wall) to C and aliases: it warns when particular function
-attributes are missing in the aliases but not in their target.
+We have recently seen this happen with our 4.4 and 4.12 based kernels, with
+userspace (java) that exits a thread, where mm_release() performs a futex_wake()
+on tsk->clear_child_tid, and another thread in parallel unmaps the page where
+tsk->clear_child_tid points to. The spurious get_page() succeeds, but futex code
+immediately releases the page again, while it's already on a freelist. Symptoms
+include a bad page state warning, general protection faults acessing a poisoned
+list prev/next pointer in the freelist, or free page pcplists of two cpus joined
+together in a single list. Oscar has also reproduced this scenario, with a
+patch inserting delays before the get_page() to make the race window larger.
 
-In particular, it triggers for all the init/cleanup_module
-aliases in the kernel (defined by the module_init/exit macros),
-ending up being very noisy.
+Fix this by removing the dependency on TLB flush interrupts the same way as the
+generic get_user_pages_fast() code by using page_cache_add_speculative() and
+revalidating the PTE contents after pinning the page. Mainline is safe since
+4.13 where the x86 gup code was removed in favor of the common code. Accessing
+the page table itself safely also relies on disabled interrupts and TLB flush
+IPIs that don't happen with hypercalls, which was acknowledged in commit
+9e52fc2b50de ("x86/mm: Enable RCU based page table freeing
+(CONFIG_HAVE_RCU_TABLE_FREE=y)"). That commit with follups should also be
+backported for full safety, although our reproducer didn't hit a problem
+without that backport.
 
-These aliases point to the __init/__exit functions of a module,
-which are defined as __cold (among other attributes). However,
-the aliases themselves do not have the __cold attribute.
-
-Since the compiler behaves differently when compiling a __cold
-function as well as when compiling paths leading to calls
-to __cold functions, the warning is trying to point out
-the possibly-forgotten attribute in the alias.
-
-In order to keep the warning enabled, we decided to silence
-this case. Ideally, we would mark the aliases directly
-as __init/__exit. However, there are currently around 132 modules
-in the kernel which are missing __init/__exit in their init/cleanup
-functions (either because they are missing, or for other reasons,
-e.g. the functions being called from somewhere else); and
-a section mismatch is a hard error.
-
-A conservative alternative was to mark the aliases as __cold only.
-However, since we would like to eventually enforce __init/__exit
-to be always marked,  we chose to use the new __copy function
-attribute (introduced by GCC 9 as well to deal with this).
-With it, we copy the attributes used by the target functions
-into the aliases. This way, functions that were not marked
-as __init/__exit won't have their aliases marked either,
-and therefore there won't be a section mismatch.
-
-Note that the warning would go away marking either the extern
-declaration, the definition, or both. However, we only mark
-the definition of the alias, since we do not want callers
-(which only see the declaration) to be compiled as if the function
-was __cold (and therefore the paths leading to those calls
-would be assumed to be unlikely).
-
-Link: https://lore.kernel.org/lkml/259986242.BvXPX32bHu@devpool35/
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/lkml/20190123173707.GA16603@gmail.com/
-Link: https://lore.kernel.org/lkml/20190206175627.GA20399@gmail.com/
-Suggested-by: Martin Sebor <msebor@gcc.gnu.org>
-Acked-by: Jessica Yu <jeyu@kernel.org>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Reproduced-by: Oscar Salvador <osalvador@suse.de>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
 
 ---
- include/linux/module.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/mm/gup.c |   32 ++++++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -129,13 +129,13 @@ extern void cleanup_module(void);
- #define module_init(initfn)					\
- 	static inline initcall_t __maybe_unused __inittest(void)		\
- 	{ return initfn; }					\
--	int init_module(void) __attribute__((alias(#initfn)));
-+	int init_module(void) __copy(initfn) __attribute__((alias(#initfn)));
+--- a/arch/x86/mm/gup.c
++++ b/arch/x86/mm/gup.c
+@@ -98,6 +98,20 @@ static inline int pte_allows_gup(unsigne
+ }
  
- /* This is only required if you want to be unloadable. */
- #define module_exit(exitfn)					\
- 	static inline exitcall_t __maybe_unused __exittest(void)		\
- 	{ return exitfn; }					\
--	void cleanup_module(void) __attribute__((alias(#exitfn)));
-+	void cleanup_module(void) __copy(exitfn) __attribute__((alias(#exitfn)));
+ /*
++ * Return the compund head page with ref appropriately incremented,
++ * or NULL if that failed.
++ */
++static inline struct page *try_get_compound_head(struct page *page, int refs)
++{
++	struct page *head = compound_head(page);
++	if (WARN_ON_ONCE(page_ref_count(head) < 0))
++		return NULL;
++	if (unlikely(!page_cache_add_speculative(head, refs)))
++		return NULL;
++	return head;
++}
++
++/*
+  * The performance critical leaf functions are made noinline otherwise gcc
+  * inlines everything into a single function which results in too much
+  * register pressure.
+@@ -112,7 +126,7 @@ static noinline int gup_pte_range(pmd_t
+ 	ptep = pte_offset_map(&pmd, addr);
+ 	do {
+ 		pte_t pte = gup_get_pte(ptep);
+-		struct page *page;
++		struct page *head, *page;
  
- #endif
- 
+ 		/* Similar to the PMD case, NUMA hinting must take slow path */
+ 		if (pte_protnone(pte)) {
+@@ -138,7 +152,21 @@ static noinline int gup_pte_range(pmd_t
+ 		}
+ 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+ 		page = pte_page(pte);
+-		get_page(page);
++
++		head = try_get_compound_head(page, 1);
++		if (!head) {
++			put_dev_pagemap(pgmap);
++			pte_unmap(ptep);
++			return 0;
++		}
++
++		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
++			put_page(head);
++			put_dev_pagemap(pgmap);
++			pte_unmap(ptep);
++			return 0;
++		}
++
+ 		put_dev_pagemap(pgmap);
+ 		SetPageReferenced(page);
+ 		pages[*nr] = page;
 
 
