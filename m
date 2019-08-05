@@ -2,96 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF099821BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05DBE821AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 18:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729789AbfHEQ1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 12:27:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60024 "EHLO mail.kernel.org"
+        id S1729234AbfHEQ1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 12:27:18 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35190 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728867AbfHEQ1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:27:30 -0400
-Received: from localhost.localdomain (unknown [194.230.155.124])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71BC0214C6;
-        Mon,  5 Aug 2019 16:27:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565022449;
-        bh=bIJkquuckN/cWKNKddZcFZPC0ZCpRqz2ZZh+yTuo/tI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qIgPrNEj+TK7Pbrh4jN8GIAWCfI3X27itlOhzxELCjqom84ddFpBKX1slaa7bI1IX
-         AAcXQHHdD2gvzuzjLQ9pjGWpFDIesJZ+rSPQd3cYLsKMzh1XNsEWONZKbAr1EWsm8i
-         cpZc4ufYFsUQlECy09mTWVYQjIUzQ9ri63AQM0lE=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>, notify@kernel.org
-Subject: [PATCH 4/4] pinctrl: samsung: Fix device node refcount leaks in init code
-Date:   Mon,  5 Aug 2019 18:27:10 +0200
-Message-Id: <20190805162710.7789-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190805162710.7789-1-krzk@kernel.org>
-References: <20190805162710.7789-1-krzk@kernel.org>
+        id S1726620AbfHEQ1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 12:27:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 09:27:17 -0700
+X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
+   d="scan'208";a="185363930"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 09:27:17 -0700
+Message-ID: <ed48ecdb833808bf6b08bc54fa98503cbad493f3.camel@linux.intel.com>
+Subject: Re: [PATCH v3 6/6] virtio-balloon: Add support for providing unused
+ page reports to host
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        kvm@vger.kernel.org, david@redhat.com, mst@redhat.com,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, willy@infradead.org,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com
+Date:   Mon, 05 Aug 2019 09:27:16 -0700
+In-Reply-To: <1cff09a4-d302-639c-ab08-9d82e5fc1383@redhat.com>
+References: <20190801222158.22190.96964.stgit@localhost.localdomain>
+         <20190801223829.22190.36831.stgit@localhost.localdomain>
+         <1cff09a4-d302-639c-ab08-9d82e5fc1383@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several functions use for_each_child_of_node() loop with a break to find
-a matching child node.  Although each iteration of
-for_each_child_of_node puts the previous node, but early exit from loop
-misses it.  This leads to leak of device node.
+On Mon, 2019-08-05 at 12:00 -0400, Nitesh Narayan Lal wrote:
+> On 8/1/19 6:38 PM, Alexander Duyck wrote:
+> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > 
+> > Add support for the page reporting feature provided by virtio-balloon.
+> > Reporting differs from the regular balloon functionality in that is is
+> > much less durable than a standard memory balloon. Instead of creating a
+> > list of pages that cannot be accessed the pages are only inaccessible
+> > while they are being indicated to the virtio interface. Once the
+> > interface has acknowledged them they are placed back into their respective
+> > free lists and are once again accessible by the guest system.
+> > 
+> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > ---
+> >  drivers/virtio/Kconfig              |    1 +
+> >  drivers/virtio/virtio_balloon.c     |   56 +++++++++++++++++++++++++++++++++++
+> >  include/uapi/linux/virtio_balloon.h |    1 +
+> >  3 files changed, 58 insertions(+)
+> > 
+> > diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+> > index 078615cf2afc..4b2dd8259ff5 100644
+> > --- a/drivers/virtio/Kconfig
+> > +++ b/drivers/virtio/Kconfig
+> > @@ -58,6 +58,7 @@ config VIRTIO_BALLOON
+> >  	tristate "Virtio balloon driver"
+> >  	depends on VIRTIO
+> >  	select MEMORY_BALLOON
+> > +	select PAGE_REPORTING
+> >  	---help---
+> >  	 This driver supports increasing and decreasing the amount
+> >  	 of memory within a KVM guest.
+> > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> > index 2c19457ab573..971fe924e34f 100644
+> > --- a/drivers/virtio/virtio_balloon.c
+> > +++ b/drivers/virtio/virtio_balloon.c
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/mount.h>
+> >  #include <linux/magic.h>
+> >  #include <linux/pseudo_fs.h>
+> > +#include <linux/page_reporting.h>
+> >  
+> >  /*
+> >   * Balloon device works in 4K page units.  So each page is pointed to by
+> > @@ -37,6 +38,9 @@
+> >  #define VIRTIO_BALLOON_FREE_PAGE_SIZE \
+> >  	(1 << (VIRTIO_BALLOON_FREE_PAGE_ORDER + PAGE_SHIFT))
+> >  
+> > +/*  limit on the number of pages that can be on the reporting vq */
+> > +#define VIRTIO_BALLOON_VRING_HINTS_MAX	16
+> > +
+> >  #ifdef CONFIG_BALLOON_COMPACTION
+> >  static struct vfsmount *balloon_mnt;
+> >  #endif
+> > @@ -46,6 +50,7 @@ enum virtio_balloon_vq {
+> >  	VIRTIO_BALLOON_VQ_DEFLATE,
+> >  	VIRTIO_BALLOON_VQ_STATS,
+> >  	VIRTIO_BALLOON_VQ_FREE_PAGE,
+> > +	VIRTIO_BALLOON_VQ_REPORTING,
+> >  	VIRTIO_BALLOON_VQ_MAX
+> >  };
+> >  
+> > @@ -113,6 +118,10 @@ struct virtio_balloon {
+> >  
+> >  	/* To register a shrinker to shrink memory upon memory pressure */
+> >  	struct shrinker shrinker;
+> > +
+> > +	/* Unused page reporting device */
+> > +	struct virtqueue *reporting_vq;
+> > +	struct page_reporting_dev_info ph_dev_info;
+> >  };
+> >  
+> >  static struct virtio_device_id id_table[] = {
+> > @@ -152,6 +161,23 @@ static void tell_host(struct virtio_balloon *vb, struct virtqueue *vq)
+> >  
+> >  }
+> >  
+> > +void virtballoon_unused_page_report(struct page_reporting_dev_info *ph_dev_info,
+> > +				    unsigned int nents)
+> > +{
+> > +	struct virtio_balloon *vb =
+> > +		container_of(ph_dev_info, struct virtio_balloon, ph_dev_info);
+> > +	struct virtqueue *vq = vb->reporting_vq;
+> > +	unsigned int unused;
+> > +
+> > +	/* We should always be able to add these buffers to an empty queue. */
+> > +	virtqueue_add_inbuf(vq, ph_dev_info->sg, nents, vb,
+> > +			    GFP_NOWAIT | __GFP_NOWARN);
+> 
+> I think you should handle allocation failure here. It is a possibility, isn't?
+> Maybe return an error or even disable page hinting/reporting?
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index de0477bb469d..f26574ef234a 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -272,6 +272,7 @@ static int samsung_dt_node_to_map(struct pinctrl_dev *pctldev,
- 						&reserved_maps, num_maps);
- 		if (ret < 0) {
- 			samsung_dt_free_map(pctldev, *map, *num_maps);
-+			of_node_put(np);
- 			return ret;
- 		}
- 	}
-@@ -785,8 +786,10 @@ static struct samsung_pmx_func *samsung_pinctrl_create_functions(
- 		if (!of_get_child_count(cfg_np)) {
- 			ret = samsung_pinctrl_create_function(dev, drvdata,
- 							cfg_np, func);
--			if (ret < 0)
-+			if (ret < 0) {
-+				of_node_put(cfg_np);
- 				return ERR_PTR(ret);
-+			}
- 			if (ret > 0) {
- 				++func;
- 				++func_cnt;
-@@ -797,8 +800,11 @@ static struct samsung_pmx_func *samsung_pinctrl_create_functions(
- 		for_each_child_of_node(cfg_np, func_np) {
- 			ret = samsung_pinctrl_create_function(dev, drvdata,
- 						func_np, func);
--			if (ret < 0)
-+			if (ret < 0) {
-+				of_node_put(func_np);
-+				of_node_put(cfg_np);
- 				return ERR_PTR(ret);
-+			}
- 			if (ret > 0) {
- 				++func;
- 				++func_cnt;
--- 
-2.17.1
+I don't think it is an issue I have to worry about. Specifically I am
+limiting the size of the scatterlist based on the size of the vq. As such
+I will never exceed the size and should be able to use it to store the
+scatterlist directly.
 
