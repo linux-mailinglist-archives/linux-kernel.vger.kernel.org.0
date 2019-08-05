@@ -2,86 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0305E81E5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 16:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0050081E9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 16:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbfHEOBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 10:01:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34452 "EHLO mx1.redhat.com"
+        id S1730218AbfHEOCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 10:02:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729248AbfHEOB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 10:01:27 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726620AbfHEOBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 10:01:25 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1E06030A00D6;
-        Mon,  5 Aug 2019 14:01:26 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-81.ams2.redhat.com [10.36.116.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 424522C8DC;
-        Mon,  5 Aug 2019 14:01:25 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 014119D21; Mon,  5 Aug 2019 16:01:24 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     daniel@ffwll.ch, intel-gfx@lists.freedesktop.org,
-        thomas@shipmail.org, bskeggs@redhat.com, tzimmermann@suse.de,
-        ckoenig.leichtzumerken@gmail.com,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 17/17] drm/ttm: drop ttm_buffer_object->resv
-Date:   Mon,  5 Aug 2019 16:01:19 +0200
-Message-Id: <20190805140119.7337-18-kraxel@redhat.com>
-In-Reply-To: <20190805140119.7337-1-kraxel@redhat.com>
-References: <20190805140119.7337-1-kraxel@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id C5C2B214C6;
+        Mon,  5 Aug 2019 14:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565013683;
+        bh=jjNyHTb7y2OQFlMNJASooyvqSUfY24hc6hv9fvauXAo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yZEAcRQk5+MQbNA8Iv+LnnLWLy3Ow0Bj9Xm45B2LMoDpvdrsNB1JAMRtAdgHpUUOM
+         TastMn6ZW6vaKBxTpUvQzXEF72Gnghhsvy5EmnwLOCJtgdYRRMnAM5jrc9cePl9cq4
+         /ZvswzjpGAJhhKQ2fvc3R0xtmDK4HFvL2Zl6OpQc=
+Date:   Mon, 5 Aug 2019 15:01:19 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/cache: fix -Woverride-init compiler warnings
+Message-ID: <20190805140118.fys437oor2b2rnq5@willie-the-truck>
+References: <1564759944-2197-1-git-send-email-cai@lca.pw>
+ <20190805095256.ocgdb2yfhnbdz6kw@willie-the-truck>
+ <771C4B4C-6D79-419D-9778-5DE1BFC67FBE@lca.pw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 05 Aug 2019 14:01:26 +0000 (UTC)
+In-Reply-To: <771C4B4C-6D79-419D-9778-5DE1BFC67FBE@lca.pw>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All users moved to ttm_buffer_object->base.resv
+On Mon, Aug 05, 2019 at 07:47:37AM -0400, Qian Cai wrote:
+> 
+> 
+> > On Aug 5, 2019, at 5:52 AM, Will Deacon <will@kernel.org> wrote:
+> > 
+> > On Fri, Aug 02, 2019 at 11:32:24AM -0400, Qian Cai wrote:
+> >> The commit 155433cb365e ("arm64: cache: Remove support for ASID-tagged
+> >> VIVT I-caches") introduced some compiation warnings from GCC,
+> >> 
+> >> arch/arm64/kernel/cpuinfo.c:38:26: warning: initialized field
+> >> overwritten [-Woverride-init]
+> >>  [ICACHE_POLICY_VIPT]  = "VIPT",
+> >>                          ^~~~~~
+> >> arch/arm64/kernel/cpuinfo.c:38:26: note: (near initialization for
+> >> 'icache_policy_str[2]')
+> >> arch/arm64/kernel/cpuinfo.c:39:26: warning: initialized field
+> >> overwritten [-Woverride-init]
+> >>  [ICACHE_POLICY_PIPT]  = "PIPT",
+> >>                          ^~~~~~
+> >> arch/arm64/kernel/cpuinfo.c:39:26: note: (near initialization for
+> >> 'icache_policy_str[3]')
+> >> arch/arm64/kernel/cpuinfo.c:40:27: warning: initialized field
+> >> overwritten [-Woverride-init]
+> >>  [ICACHE_POLICY_VPIPT]  = "VPIPT",
+> >>                           ^~~~~~~
+> >> arch/arm64/kernel/cpuinfo.c:40:27: note: (near initialization for
+> >> 'icache_policy_str[0]')
+> >> 
+> >> because it initializes icache_policy_str[0 ... 3] twice.
+> >> 
+> >> Fixes: 155433cb365e ("arm64: cache: Remove support for ASID-tagged VIVT I-caches")
+> >> Signed-off-by: Qian Cai <cai@lca.pw>
+> >> ---
+> >> arch/arm64/kernel/cpuinfo.c | 4 ++--
+> >> 1 file changed, 2 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+> >> index 876055e37352..193b38da8d96 100644
+> >> --- a/arch/arm64/kernel/cpuinfo.c
+> >> +++ b/arch/arm64/kernel/cpuinfo.c
+> >> @@ -34,10 +34,10 @@
+> >> static struct cpuinfo_arm64 boot_cpu_data;
+> >> 
+> >> static char *icache_policy_str[] = {
+> >> -	[0 ... ICACHE_POLICY_PIPT]	= "RESERVED/UNKNOWN",
+> >> +	[ICACHE_POLICY_VPIPT]		= "VPIPT",
+> >> +	[ICACHE_POLICY_VPIPT + 1]	= "RESERVED/UNKNOWN",
+> >> 	[ICACHE_POLICY_VIPT]		= "VIPT",
+> >> 	[ICACHE_POLICY_PIPT]		= "PIPT",
+> >> -	[ICACHE_POLICY_VPIPT]		= "VPIPT",
+> > 
+> > I really don't like this patch. Using "[0 ... MAXIDX] = <default>" is a
+> > useful idiom and I think the code is more error-prone the way you have
+> > restructured it.
+> > 
+> > Why are you passing -Woverride-init to the compiler anyway? There's only
+> > one Makefile that references that option, and it's specific to a pinctrl
+> > driver.
+> 
+> Those extra warnings can be enabled by “make W=1”. “-Woverride-init “ seems to be useful
+> to catch potential developer mistakes with unintented double-initializations. It is normal to
+> start to fix the most of false-positives first before globally enabling the flag by default just like
+> “-Wimplicit-fallthrough” mentioned in,
+> 
+> https://lwn.net/Articles/794944/
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
----
- include/drm/ttm/ttm_bo_api.h | 1 -
- drivers/gpu/drm/ttm/ttm_bo.c | 2 --
- 2 files changed, 3 deletions(-)
+I think this case is completely different to the implicit fallthrough stuff.
+The solution there was simply to add a comment without restructuring the
+surrounding code. What your patch does here is actively make the code harder
+to understand.
 
-diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
-index 7ffc50a3303d..65ef5376de59 100644
---- a/include/drm/ttm/ttm_bo_api.h
-+++ b/include/drm/ttm/ttm_bo_api.h
-@@ -230,7 +230,6 @@ struct ttm_buffer_object {
- 
- 	struct sg_table *sg;
- 
--	struct reservation_object *resv;
- 	struct mutex wu_mutex;
- };
- 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index 6b8e7851038d..10a861a1690c 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -1332,11 +1332,9 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
- 	bo->acc_size = acc_size;
- 	bo->sg = sg;
- 	if (resv) {
--		bo->resv = resv;
- 		bo->base.resv = resv;
- 		reservation_object_assert_held(bo->base.resv);
- 	} else {
--		bo->resv = &bo->base._resv;
- 		bo->base.resv = &bo->base._resv;
- 	}
- 	if (!ttm_bo_uses_embedded_gem_object(bo)) {
--- 
-2.18.1
+Initialising a static array with a non-zero pattern is a useful idiom and I
+don't think we should throw that away just to appease a silly compiler
+warning that appears only with non-default build options. Have a look at
+the way we use PERF_MAP_ALL_UNSUPPORTED in the Arm PMU code, for example.
 
+Will
