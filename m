@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B5981B0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A67981BF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730519AbfHENLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:11:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50672 "EHLO mail.kernel.org"
+        id S1729265AbfHENTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:19:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730493AbfHENLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:11:22 -0400
+        id S1726779AbfHENTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:19:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80D2F2075B;
-        Mon,  5 Aug 2019 13:11:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D78220657;
+        Mon,  5 Aug 2019 13:19:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010681;
-        bh=QysK84hquV/fn9GV/zWxjrS2fStoVIEKU6R3FzEDvEI=;
+        s=default; t=1565011152;
+        bh=XdjKbZkgYjgFjMwCW1T4R25cjpYGfCdVncRUR+7CAi0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tk6NXz6rPWfeuyEqdNNeEjvqlpFd8kHA+cnZFQaF1Y32T5mtkdBm52hveP4JduJCg
-         wOj+/2A/w3ZFEWV7WtqxBkmLLiIN+oop6BLBCBKZGc3YUVCEwH7vLpqgFPP/Zj6zD2
-         TY5Mlpsz+4hrkGe+BeiezJ0uBiHIReLi1f6VneJA=
+        b=tgZ4vTVgcDdTnonBfRkHZR1CMZ/737cQxNKy2XgDTvpqqKOPrukzdv+aEQg3qdlXa
+         HK0d0D4WAeJ2z1WdSgz4Vv4uvSYnRD1r4pa5JcEJMWyrBz0sVTwN3wR6SIcL1i8qxQ
+         RsrUofxKI7fYFLMAsOUXcWnaWzE8MPa1dBbMPRZ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Artemy Kovalyov <artemyko@mellanox.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.19 63/74] IB/mlx5: Use direct mkey destroy command upon UMR unreg failure
-Date:   Mon,  5 Aug 2019 15:03:16 +0200
-Message-Id: <20190805124940.921823433@linuxfoundation.org>
+Subject: [PATCH 4.19 64/74] IB/mlx5: Move MRs to a kernel PD when freeing them to the MR cache
+Date:   Mon,  5 Aug 2019 15:03:17 +0200
+Message-Id: <20190805124940.995117428@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
 References: <20190805124935.819068648@linuxfoundation.org>
@@ -47,23 +47,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yishai Hadas <yishaih@mellanox.com>
 
-commit afd1417404fba6dbfa6c0a8e5763bd348da682e4 upstream.
+commit 9ec4483a3f0f71a228a5933bc040441322bfb090 upstream.
 
-Use a direct firmware command to destroy the mkey in case the unreg UMR
-operation has failed.
+Fix unreg_umr to move the MR to a kernel owned PD (i.e. the UMR PD) which
+can't be accessed by userspace.
 
-This prevents a case that a mkey will leak out from the cache post a
-failure to be destroyed by a UMR WR.
+This ensures that nothing can continue to access the MR once it has been
+placed in the kernels cache for reuse.
 
-In case the MR cache limit didn't reach a call to add another entry to the
-cache instead of the destroyed one is issued.
+MRs in the cache continue to have their HW state, including DMA tables,
+present. Even though the MR has been invalidated, changing the PD provides
+an additional layer of protection against use of the MR.
 
-In addition, replaced a warn message to WARN_ON() as this flow is fatal
-and can't happen unless some bug around.
-
-Link: https://lore.kernel.org/r/20190723065733.4899-4-leon@kernel.org
-Cc: <stable@vger.kernel.org> # 4.10
-Fixes: 49780d42dfc9 ("IB/mlx5: Expose MR cache for mlx5_ib")
+Link: https://lore.kernel.org/r/20190723065733.4899-5-leon@kernel.org
+Cc: <stable@vger.kernel.org> # 3.10
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
 Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
 Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
@@ -72,32 +70,22 @@ Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/mr.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/infiniband/hw/mlx5/mr.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 --- a/drivers/infiniband/hw/mlx5/mr.c
 +++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -548,13 +548,16 @@ void mlx5_mr_cache_free(struct mlx5_ib_d
- 		return;
+@@ -1410,8 +1410,10 @@ static int unreg_umr(struct mlx5_ib_dev
+ 	if (mdev->state == MLX5_DEVICE_STATE_INTERNAL_ERROR)
+ 		return 0;
  
- 	c = order2idx(dev, mr->order);
--	if (c < 0 || c >= MAX_MR_CACHE_ENTRIES) {
--		mlx5_ib_warn(dev, "order %d, cache index %d\n", mr->order, c);
--		return;
--	}
-+	WARN_ON(c < 0 || c >= MAX_MR_CACHE_ENTRIES);
+-	umrwr.wr.send_flags = MLX5_IB_SEND_UMR_DISABLE_MR;
++	umrwr.wr.send_flags = MLX5_IB_SEND_UMR_DISABLE_MR |
++			      MLX5_IB_SEND_UMR_UPDATE_PD_ACCESS;
+ 	umrwr.wr.opcode = MLX5_IB_WR_UMR;
++	umrwr.pd = dev->umrc.pd;
+ 	umrwr.mkey = mr->mmkey.key;
+ 	umrwr.ignore_free_state = 1;
  
--	if (unreg_umr(dev, mr))
-+	if (unreg_umr(dev, mr)) {
-+		mr->allocated_from_cache = false;
-+		destroy_mkey(dev, mr);
-+		ent = &cache->ent[c];
-+		if (ent->cur < ent->limit)
-+			queue_work(cache->wq, &ent->work);
- 		return;
-+	}
- 
- 	ent = &cache->ent[c];
- 	spin_lock_irq(&ent->lock);
 
 
