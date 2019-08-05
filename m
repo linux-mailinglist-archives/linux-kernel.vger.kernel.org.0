@@ -2,67 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF9282640
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 22:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D73EA8263A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 22:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730738AbfHEUoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 16:44:44 -0400
-Received: from mafalde.ec2.webfactory.de ([176.34.178.125]:34981 "EHLO
-        mafalde.ec2.webfactory.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729383AbfHEUoo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 16:44:44 -0400
-X-Greylist: delayed 1161 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Aug 2019 16:44:43 EDT
-Received: from ip-10-102-44-222.eu-west-1.compute.internal ([10.102.44.222] helo=gemelli.ec2.webfactory.de)
-        by mafalde.ec2.webfactory.de with esmtpsa (TLS1.2:DHE_RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <info@jfemail.de>)
-        id 1hujXl-0000OV-3Z
-        for linux-kernel@vger.kernel.org; Mon, 05 Aug 2019 22:25:21 +0200
-Received: from localhost ([127.0.0.1] helo=www.jugendfuereuropa.de)
-        by gemelli.ec2.webfactory.de with esmtps (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.82)
-        (envelope-from <info@jfemail.de>)
-        id 1hujXk-0002HO-Pz
-        for linux-kernel@vger.kernel.org; Mon, 05 Aug 2019 22:25:20 +0200
-Date:   Mon, 5 Aug 2019 22:25:20 +0200
-To:     linux-kernel@vger.kernel.org
-From:   =?utf-8?Q?JUGEND_f=C3=BCr_Europa?= <info@jfemail.de>
-Subject: =?utf-8?Q?Bitte_best=C3=A4tigen_Sie_Ihr_Newsletterabonnement_bei_JUGEND_f?=
- =?utf-8?Q?=C3=BCr_Europa?=
-Message-ID: <J3Zerfp8fWCDe7DU6o3RUDLPfRuUAJvVIymdXNmKrjg@www.jugendfuereuropa.de>
-X-Mailer: PHPMailer 6.0.7 (https://github.com/PHPMailer/PHPMailer)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 10.102.44.222
-X-SA-Exim-Mail-From: info@jfemail.de
-X-SA-Exim-Scanned: No (on mafalde.ec2.webfactory.de); SAEximRunCond expanded to false
+        id S1730598AbfHEUn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 16:43:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727460AbfHEUn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 16:43:57 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E55F02086D;
+        Mon,  5 Aug 2019 20:43:55 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hujpi-0008Qh-Vf; Mon, 05 Aug 2019 16:43:55 -0400
+Message-Id: <20190805204312.169565525@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Mon, 05 Aug 2019 16:43:12 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Patrick McLean <chutzpah@gentoo.org>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Subject: [PATCH 0/3] tools lib traceevent: Fixing the API to be less policy driven
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo ✅ Vlagra Günstlg www.google.de/#btnI ✅ Vlagra Günstlg www.google.de/#btnI,
+Hi Arnaldo and Jiri,
 
-vielen Dank für Ihre Anmeldung für einen Newsletter von JUGEND für Europa.
-Um diese zu bestätigen, folgen Sie bitte folgendem Link:
+We are still working on getting libtraceevent ready to be a stand alone
+library. Part of that is to audit all the interfaces. We noticed
+that the most the tep_print_*() interfaces define policy and limit
+the way an application can display data. Instead of fixing this later
+and being stuck with a limiting API that we must maintain for backward
+compatibility, we removed and replaced most of it. perf was only affected
+by a single function that was removed. These functions are replaced
+by a more flexible one that allows the user to place what they want
+where they want it (timestamps, event info, latency format, COMM, PID, etc).
 
-https://www.jugendfuereuropa.de/ueber-jfe/profil/?directLogin=9fa067e45f667d7d0b6136a8f63f3e46
+The other noticeable perf change, is that we changed the location to
+where the plugins are loaded from:
 
-Wenn Sie Ihr Abonnement bearbeiten möchten, können Sie sich mit folgenden Angaben jederzeit wieder einloggen:
+ ${HOME}/.traceevent/plugins
 
-Benutzername: vryxewfs
-Passwort: 3pfnmng4
+to
 
-Diese Zugangsdaten gelten für die folgenden Websites:
+ ${HOME}/.local/lib/traceevent/plugins
 
-webforum-jugend.de
-jugendfuereuropa.de
-go4europe.de
-jugendpolitikineuropa.de
+As Patrick McLean (Gentoo package maintainer) informed us of the
+XGD layout.
 
-Mit freundlichen Grüßen
-Ihr JUGEND für Europa - Team
+Should we have something the warns people if they have plugins in
+the old directory. Should we move them on install? Currently, we
+just ignore them.
+
+Anyway, please add these patches to tip.
+
+Thanks!
+
+-- Steve
 
 
+Tzvetomir Stoyanov (3):
+      tools/lib/traceevent, tools/perf: Changes in tep_print_event_* APIs
+      tools/lib/traceevent: Remove tep_register_trace_clock()
+      tools/lib/traceevent: Change user's plugin directory
+
+----
+ tools/lib/traceevent/Makefile            |   6 +-
+ tools/lib/traceevent/event-parse-api.c   |  40 ----
+ tools/lib/traceevent/event-parse-local.h |   6 -
+ tools/lib/traceevent/event-parse.c       | 333 +++++++++++++++++--------------
+ tools/lib/traceevent/event-parse.h       |  30 +--
+ tools/lib/traceevent/event-plugin.c      |   2 +-
+ tools/perf/builtin-kmem.c                |   3 +-
+ tools/perf/util/sort.c                   |   3 +-
+ tools/perf/util/trace-event-parse.c      |   2 +-
+ 9 files changed, 207 insertions(+), 218 deletions(-)
