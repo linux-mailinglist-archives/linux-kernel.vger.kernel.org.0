@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC98081B76
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:15:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BBC681BDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:17:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbfHENHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:07:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45240 "EHLO mail.kernel.org"
+        id S1729759AbfHENRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:17:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729832AbfHENHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:07:36 -0400
+        id S1729171AbfHENFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:05:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 280672087B;
-        Mon,  5 Aug 2019 13:07:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE4382087B;
+        Mon,  5 Aug 2019 13:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010455;
-        bh=JfkJqyzjEFKl1mlpSKJzk2gE913rb/chJd8gXTPX3wA=;
+        s=default; t=1565010302;
+        bh=nqDz+DlZ9D5KXO9Jmlc8DEnZRgQF9YGqwGv/kIiF48U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iIosfvp0UWAmNBKWU5stPRai6usY5n2TkGGEZg+RugOvtMY6U4P3EjrlOUo+d8Zgc
-         ZpgRLUC+TTyuUoJhro6egszYEb7xwnEgv4ZZEaswmK2r3JmTNmutgymKbnUmrHTpcH
-         VMr8M5VpKRAszOva0mQbJItLS1shdz2rQ8SMEZ60=
+        b=OKxT7tdbFc2erV3kOnA+5jFyqBvMuKF7VOpWmIbWaRIfFCebOP/Wkkoby4awWOCYI
+         ucfxmXD3MjkEenSX3cXdfsEglFCqcPa0T/Xjz91W7aVhambiaSs/YQb5RhkuCqLg/t
+         4TQWlVtVKXYMJabMEGPrzw5ux/bU21gQOWrc71ms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
         Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 03/53] ARM: dts: rockchip: Make rk3288-veyron-mickeys emmc work again
-Date:   Mon,  5 Aug 2019 15:02:28 +0200
-Message-Id: <20190805124928.395739904@linuxfoundation.org>
+Subject: [PATCH 4.9 03/42] ARM: dts: rockchip: Make rk3288-veyron-mickeys emmc work again
+Date:   Mon,  5 Aug 2019 15:02:29 +0200
+Message-Id: <20190805124925.226838915@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
-References: <20190805124927.973499541@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -88,7 +88,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/rk3288-veyron-mickey.dts b/arch/arm/boot/dts/rk3288-veyron-mickey.dts
-index f0994f0e57745..d6ca67866bc00 100644
+index f36f6f4592257..365382ab9ebdb 100644
 --- a/arch/arm/boot/dts/rk3288-veyron-mickey.dts
 +++ b/arch/arm/boot/dts/rk3288-veyron-mickey.dts
 @@ -161,10 +161,6 @@
