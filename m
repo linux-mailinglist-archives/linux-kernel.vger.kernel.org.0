@@ -2,83 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4A38184F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 13:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B6581851
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 13:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbfHELk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 07:40:56 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:58483 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfHELkz (ORCPT
+        id S1728492AbfHELmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 07:42:53 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45133 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727357AbfHELmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 07:40:55 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id EE7D6100B029E;
-        Mon,  5 Aug 2019 13:40:53 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id A70823E553; Mon,  5 Aug 2019 13:40:53 +0200 (CEST)
-Date:   Mon, 5 Aug 2019 13:40:53 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pciehp: fix a race between pciehp and removing
- operations by sysfs
-Message-ID: <20190805114053.srbngho3wbziy2uy@wunner.de>
-References: <1519648875-38196-1-git-send-email-wangxiongfeng2@huawei.com>
- <20190802003618.GJ151852@google.com>
- <0c0512fd-e95a-74be-09c2-1576844d9c97@huawei.com>
+        Mon, 5 Aug 2019 07:42:53 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m23so78939389lje.12
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 04:42:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=8M9Ml7qV/woh9rya+uMMLdIxSZhFjx1K69ib4A5pMGg=;
+        b=JGbq1e6jFxtAjM1K9exSXDtlwlf8wHUmX9svOWqvn36CGoWFzS9qKQcbrC151Uq1h1
+         OFc6CtAVnMG0lQttW3nAdaONdh/NKqaLqpzmMBwv7Fa6o9KnoIuhynP+NpHKPZFy0PK6
+         ISgW5Etfn3+d1cjO40i3OE7GQG3/4O/X7Go3+p1f1JtV8o2VwbjjNbrxyxO8ruJ/UEO1
+         T/XUmG5+DVxK5ucsfXeHSEebEEAOOWQPB4JuiPCuLS8kLnUlSEX9lcjISK1Kzm7n+G7V
+         yw0TChKtHTYp/qL1w/+sST/fTgyG+FV0J4UHNY2gJSeT3yzakaqHE6KsSNtkXgxPFQZA
+         3nmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=8M9Ml7qV/woh9rya+uMMLdIxSZhFjx1K69ib4A5pMGg=;
+        b=CTpT2yNyWksTHO/uHit71ijRQ0hfMkMyGEi6wgtzS+efhs4CO5drqBC5BB3E6JJ/LW
+         L3IkqA65dHJnpcIDb0JBaDVxuScmkFwibB9QauGHBL/sruc7sJ6JlE4AskS8r3HKlSwJ
+         2dm961+6zKrY65NcVq3215NS1SVkW3m6r2PpLviHmBz2lstLxqDgrzI9yI5pj/+KY8W6
+         5CeEBpSrMNfpH4ZFyflJLy+zG9Ns4TkgpJJkuFcwuP7T2KEhK8ZeU9cl25zrQPhpbG45
+         lWwRJkPXMTe8VoRFfGI2hVkWi3ICI+uyEjGAavar9ZW9fjRZTgK1CpRQM1XiIxi2JpQ8
+         cGvA==
+X-Gm-Message-State: APjAAAVFWR+Ngxk3ND77/GmqmMqZhDgOtzt0quqzcNvIoDERz1Kfz3wR
+        Ovw8cf2pXOMHIC/rWeGtY0fDIJT86oTm2tnmzGY=
+X-Google-Smtp-Source: APXvYqxfu+Sua5PIV8gLYXNi3WMS/dv0QnddmC0kN3guRH7TTYcYsYq3Xe1gG7ET+tiU9LpLr3rXaXW2bsSyn7CBO1o=
+X-Received: by 2002:a2e:8183:: with SMTP id e3mr29190584ljg.97.1565005371629;
+ Mon, 05 Aug 2019 04:42:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c0512fd-e95a-74be-09c2-1576844d9c97@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:ac2:5108:0:0:0:0:0 with HTTP; Mon, 5 Aug 2019 04:42:50 -0700 (PDT)
+Reply-To: myriamdadomaryaman@gmail.com
+From:   mariama <myriamdadmeh9@gmail.com>
+Date:   Mon, 5 Aug 2019 11:42:50 +0000
+Message-ID: <CAHBBCi-V52NYrAa+e7nbKzg7aGJjdq_FZMamCrLQwMrrYQ17eQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 04:23:33PM +0800, Xiongfeng Wang wrote:
-> If I use a global flag to mark if any pci device is being rescaned or
-> removed, the problem is that we can't remove two devices belonging to
-> two root ports at the same time.
-> Since a root port produces a pci tree, so I was planning to make the
-> flag per root port slot. I mean add the flag in 'struct slot'.
->  But in some situation, the root port doesn't support hotplug and the
-> downport below the root port support hotplug. I am not sure if it's
-> better to add the flag in 'struct pci_dev' of the root port.
+-- 
+how are you doing today
+my name is Mariam 28 years old single.
+please.No Matter the Good and bad that we face.
+Everyday in our life there is still Space of love and trust in our
+Heart.that is the reason why am contacting you to help me to invest my
+fund in commercial business company in your country. i saw your
+profile as one of the kind that will be true and honest to me and I
+think that you will be very important someone..
 
-We're susceptible to deadlocks if at least two hotplug ports are removed
-simultaneously where one is a parent of the other.
-
-What you're witnessing is basically a variation of that problem wherein
-a hotplug port is removed while it is simultaneously removing its
-children.
-
-pci_lock_rescan_remove(), which was introduced by commit 9d16947b7583
-to fix races (which are real), at the same time caused these deadlocks.
-The lock is too coarse-grained and needs to be replaced with more
-fine-grained locking.
-
-Specifically, unbinding PCI devices from drivers on removal need not
-and should not happen under that lock.  That will fix all the deadlocks.
-
-I've submitted a patch last year to address one class of those deadlocks
-but withdrew it as I realized it's not a proper fix:
-
-https://patchwork.kernel.org/patch/10468065/
-
-What you can do is add a flag to struct pci_dev (or the priv_flags
-embedded therein) to indicate that a device is about to be removed.
-Set this flag on all children of the device being removed before
-acquiring pci_lock_rescan_remove() and avoid taking that lock in
-pciehp_unconfigure_device() if the flag is set on the hotplug port.
-
-But again, that approach is just a band-aid and the real fix is to
-unbind devices without holding the lock.
-
-Thanks,
-
-Lukas
+please write me back
+best regard
