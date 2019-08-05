@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D6481A5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4606C81A86
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbfHENFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:05:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41296 "EHLO mail.kernel.org"
+        id S1729678AbfHENGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729261AbfHENFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:05:16 -0400
+        id S1729660AbfHENGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD5E4206C1;
-        Mon,  5 Aug 2019 13:05:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FB1620657;
+        Mon,  5 Aug 2019 13:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010315;
-        bh=fampBdmvc6C9LDTjDlqixoNpsemgYuvhH//ZsTqdaO0=;
+        s=default; t=1565010402;
+        bh=4AzKqBZu7cr1F47PxigYcOorqxgFsTkLFRv9XdY+VcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iHTSgpIyygLDPt0da55WpjTXS6YPXPSu9BQ3yC1bX5VlwjABLFpK5eCPlPmHRwe1W
-         hatXpgTTJyMr/1FMtyjs22vjW5+/X1+J4K2+bYZvx4JBoSUxnV5+I2xYWyOWV0obhl
-         193u9x0z4t2dmBfn/myTpQjGeiiBkJaVb6XNJs94=
+        b=hRNK0Ju95DS6gA72veSYBtXAR6lf/iJkLV4LFvGFbTlgJE4NHFtAqH4bOo2LaCWbJ
+         oOH2O3G0kqqt7s17nsiUXudM1wrOxtzS8qb587IxRhFpsnnD9Km1Su7OsP6+1kJ+9q
+         0m8nMq3bnbZJRyFFYIpWq/JMhkC9MPDMsAQl+POA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4.9 08/42] dmaengine: rcar-dmac: Reject zero-length slave DMA requests
-Date:   Mon,  5 Aug 2019 15:02:34 +0200
-Message-Id: <20190805124925.840128759@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 10/53] fs/adfs: super: fix use-after-free bug
+Date:   Mon,  5 Aug 2019 15:02:35 +0200
+Message-Id: <20190805124929.214056879@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
-References: <20190805124924.788666484@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 78efb76ab4dfb8f74f290ae743f34162cd627f19 ]
+[ Upstream commit 5808b14a1f52554de612fee85ef517199855e310 ]
 
-While the .device_prep_slave_sg() callback rejects empty scatterlists,
-it still accepts single-entry scatterlists with a zero-length segment.
-These may happen if a driver calls dmaengine_prep_slave_single() with a
-zero len parameter.  The corresponding DMA request will never complete,
-leading to messages like:
+Fix a use-after-free bug during filesystem initialisation, where we
+access the disc record (which is stored in a buffer) after we have
+released the buffer.
 
-    rcar-dmac e7300000.dma-controller: Channel Address Error happen
-
-and DMA timeouts.
-
-Although requesting a zero-length DMA request is a driver bug, rejecting
-it early eases debugging.  Note that the .device_prep_dma_memcpy()
-callback already rejects requests to copy zero bytes.
-
-Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Analyzed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/sh/rcar-dmac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/adfs/super.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index f37a6ef4f5441..e4fe24be3d7a4 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1111,7 +1111,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
- 	struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index c9fdfb1129335..e42c300015090 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -368,6 +368,7 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	struct buffer_head *bh;
+ 	struct object_info root_obj;
+ 	unsigned char *b_data;
++	unsigned int blocksize;
+ 	struct adfs_sb_info *asb;
+ 	struct inode *root;
+ 	int ret = -EINVAL;
+@@ -419,8 +420,10 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto error_free_bh;
+ 	}
  
- 	/* Someone calling slave DMA on a generic channel? */
--	if (rchan->mid_rid < 0 || !sg_len) {
-+	if (rchan->mid_rid < 0 || !sg_len || !sg_dma_len(sgl)) {
- 		dev_warn(chan->device->dev,
- 			 "%s: bad parameter: len=%d, id=%d\n",
- 			 __func__, sg_len, rchan->mid_rid);
++	blocksize = 1 << dr->log2secsize;
+ 	brelse(bh);
+-	if (sb_set_blocksize(sb, 1 << dr->log2secsize)) {
++
++	if (sb_set_blocksize(sb, blocksize)) {
+ 		bh = sb_bread(sb, ADFS_DISCRECORD / sb->s_blocksize);
+ 		if (!bh) {
+ 			adfs_error(sb, "couldn't read superblock on "
 -- 
 2.20.1
 
