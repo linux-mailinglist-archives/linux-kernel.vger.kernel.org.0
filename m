@@ -2,117 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EF3481A75
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C415D81A7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbfHENGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:06:14 -0400
-Received: from foss.arm.com ([217.140.110.172]:48156 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729031AbfHENGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:06:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06BD41570;
-        Mon,  5 Aug 2019 06:06:09 -0700 (PDT)
-Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15F153F706;
-        Mon,  5 Aug 2019 06:06:06 -0700 (PDT)
-Subject: Re: [PATCH 0/9] arm64: Stolen time support
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        linux-doc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
-        Julien Thierry <julien.thierry.kdev@gmail.com>
-References: <20190802145017.42543-1-steven.price@arm.com>
- <20190803190522.5fec8f7d@why>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <6789f477-8ab5-cc54-1ad2-8627917b07c9@arm.com>
-Date:   Mon, 5 Aug 2019 14:06:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729624AbfHENGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49536 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729606AbfHENG2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PnII+YXE7n7J38rlpSa/Fb4dxY+fA4dMk1niF5pnxoU=; b=swAhoi1jdI8iP/Oz0IDvKEhcr
+        egaRPzrydwMFU5bxapj3A1IYPnT9RcdZHaHI3eSkyqE4HirxYPoZAMn3JMsITS7HYz/I+00QPf1/O
+        P8nfalkAweBEYlGPmKSqHa9G6ttCzWkuzfsc6VPcicG3bSQrmZVPHsGoLttrTM5Rqns8MlKjNxCxr
+        5pnmdYSpWW8/zA84zQ8f3kAb9zMA+FahL651cvYIXMp5FAV25MweH6aomduNFQRANnAdJChNQ6YRM
+        7QfyuKra1KlH5KLxp34UGPwafyoMCBXvpdy5hV2TlTa9Db4Kt2891TwjyWvKny22yiXDPFArgtkHE
+        Q1+JVTlvg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hucgw-0008N6-6w; Mon, 05 Aug 2019 13:06:22 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A1E4B202104DA; Mon,  5 Aug 2019 15:06:20 +0200 (CEST)
+Date:   Mon, 5 Aug 2019 15:06:20 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: schedutil: fix equation in comment
+Message-ID: <20190805130620.GL2349@hirez.programming.kicks-ass.net>
+References: <20190802104628.8410-1-qais.yousef@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190803190522.5fec8f7d@why>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802104628.8410-1-qais.yousef@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2019 19:05, Marc Zyngier wrote:
-> On Fri,  2 Aug 2019 15:50:08 +0100
-> Steven Price <steven.price@arm.com> wrote:
+On Fri, Aug 02, 2019 at 11:46:28AM +0100, Qais Yousef wrote:
+> scale_irq_capacity() call in schedutil_cpu_util() does
 > 
-> Hi Steven,
+> 	util *= (max - irq)
+> 	util /= max
 > 
->> This series add support for paravirtualized time for arm64 guests and
->> KVM hosts following the specification in Arm's document DEN 0057A:
->>
->> https://developer.arm.com/docs/den0057/a
->>
->> It implements support for stolen time, allowing the guest to
->> identify time when it is forcibly not executing.
->>
->> It doesn't implement support for Live Physical Time (LPT) as there are
->> some concerns about the overheads and approach in the above
->> specification, and I expect an updated version of the specification to
->> be released soon with just the stolen time parts.
+> But the comment says
 > 
-> Thanks for posting this.
+> 	util *= (1 - irq)
+> 	util /= max
 > 
-> My current concern with this series is around the fact that we allocate
-> memory from the kernel on behalf of the guest. It is the first example
-> of such thing in the ARM port, and I can't really say I'm fond of it.
+> Fix the comment to match what the scaling function does.
 > 
-> x86 seems to get away with it by having the memory allocated from
-> userspace, why I tend to like more. Yes, put_user is more
-> expensive than a straight store, but this isn't done too often either.
-> 
-> What is the rational for your current approach?
+> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
 
-As I see it there are 3 approaches that can be taken here:
-
-1. Hypervisor allocates memory and adds it to the virtual machine. This
-means that everything to do with the 'device' is encapsulated behind the
-KVM_CREATE_DEVICE / KVM_[GS]ET_DEVICE_ATTR ioctls. But since we want the
-stolen time structure to be fast it cannot be a trapping region and has
-to be backed by real memory - in this case allocated by the host kernel.
-
-2. Host user space allocates memory. Similar to above, but this time
-user space needs to manage the memory region as well as the usual
-KVM_CREATE_DEVICE dance. I've no objection to this, but it means
-kvmtool/QEMU needs to be much more aware of what is going on (e.g. how
-to size the memory region).
-
-3. Guest kernel "donates" the memory to the hypervisor for the
-structure. As far as I'm aware this is what x86 does. The problems I see
-this approach are:
-
- a) kexec becomes much more tricky - there needs to be a disabling
-mechanism for the guest to stop the hypervisor scribbling on memory
-before starting the new kernel.
-
- b) If there is more than one entity that is interested in the
-information (e.g. firmware and kernel) then this requires some form of
-arbitration in the guest because the hypervisor doesn't want to have to
-track an arbitrary number of regions to update.
-
- c) Performance can suffer if the host kernel doesn't have a suitably
-aligned/sized area to use. As you say - put_user() is more expensive.
-The structure is updated on every return to the VM.
-
-
-Of course x86 does prove the third approach can work, but I'm not sure
-which is actually better. Avoid the kexec cancellation requirements was
-the main driver of the current approach. Although many of the
-conversations about this were also tied up with Live Physical Time which
-adds its own complications.
-
-Steve
+Thanks!
