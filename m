@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E33B581AEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6053081BCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:17:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730029AbfHENKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:10:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49380 "EHLO mail.kernel.org"
+        id S1729907AbfHENRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:17:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729988AbfHENK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:10:27 -0400
+        id S1729375AbfHENFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:05:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03B872067D;
-        Mon,  5 Aug 2019 13:10:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ECE12087B;
+        Mon,  5 Aug 2019 13:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010626;
-        bh=rVdNOYNZGUrED489nDxiAoFBEAt2PWzy6ZMn4bS+Tng=;
+        s=default; t=1565010340;
+        bh=9GKALGfakBMmmFRWnJvklXWYZ/z02A+qOIf/kJJ53Cs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GKHOcU5uKZHOVEPDe6KtmFri55Ugh6ShcYfeX0rBw6qIkTME0CRCjOOXPVLRGGyN8
-         uiOLFeqfXtzKC6HHblrZN5t1VWWP4SELiBpKH94Xdlmzx8wCyuFfbLxmO6HC2pY9yG
-         65P/DhydnLFRYAskQRrSqGxLSmJu1wvSRbDPNBFk=
+        b=s2Q6a7lXjG+HOEBBniboTqtSPuIYzEC9z5NlqBQLZZ6/HrT9zr0AVC2lxKQ3lgqzM
+         XVfY703QhI0Q7S5tzv+9vbRZeK8Ks0y0UbGAGOB1NT86lCqNmlm5vHLI8Z6Ko0HkRN
+         pmfWo56rUiSorMPa60e3XmyR1EXoRHQ6z7mjdAt8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "M. Vefa Bicakci" <m.v.b@runbox.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.19 42/74] kconfig: Clear "written" flag to avoid data loss
+        stable@vger.kernel.org, Michael Wu <michael.wu@vatics.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.9 29/42] gpiolib: fix incorrect IRQ requesting of an active-low lineevent
 Date:   Mon,  5 Aug 2019 15:02:55 +0200
-Message-Id: <20190805124939.270100307@linuxfoundation.org>
+Message-Id: <20190805124928.441011112@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +43,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: M. Vefa Bicakci <m.v.b@runbox.com>
+From: Michael Wu <michael.wu@vatics.com>
 
-commit 0c5b6c28ed68becb692b43eae5e44d5aa7e160ce upstream.
+commit 223ecaf140b1dd1c1d2a1a1d96281efc5c906984 upstream.
 
-Prior to this commit, starting nconfig, xconfig or gconfig, and saving
-the .config file more than once caused data loss, where a .config file
-that contained only comments would be written to disk starting from the
-second save operation.
+When a pin is active-low, logical trigger edge should be inverted to match
+the same interrupt opportunity.
 
-This bug manifests itself because the SYMBOL_WRITTEN flag is never
-cleared after the first call to conf_write, and subsequent calls to
-conf_write then skip all of the configuration symbols due to the
-SYMBOL_WRITTEN flag being set.
+For example, a button pushed triggers falling edge in ACTIVE_HIGH case; in
+ACTIVE_LOW case, the button pushed triggers rising edge. For user space the
+IRQ requesting doesn't need to do any modification except to configuring
+GPIOHANDLE_REQUEST_ACTIVE_LOW.
 
-This commit resolves this issue by clearing the SYMBOL_WRITTEN flag
-from all symbols before conf_write returns.
+For example, we want to catch the event when the button is pushed. The
+button on the original board drives level to be low when it is pushed, and
+drives level to be high when it is released.
 
-Fixes: 8e2442a5f86e ("kconfig: fix missing choice values in auto.conf")
-Cc: linux-stable <stable@vger.kernel.org> # 4.19+
-Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+In user space we can do:
+
+	req.handleflags = GPIOHANDLE_REQUEST_INPUT;
+	req.eventflags = GPIOEVENT_REQUEST_FALLING_EDGE;
+
+	while (1) {
+		read(fd, &dat, sizeof(dat));
+		if (dat.id == GPIOEVENT_EVENT_FALLING_EDGE)
+			printf("button pushed\n");
+	}
+
+Run the same logic on another board which the polarity of the button is
+inverted; it drives level to be high when pushed, and level to be low when
+released. For this inversion we add flag GPIOHANDLE_REQUEST_ACTIVE_LOW:
+
+	req.handleflags = GPIOHANDLE_REQUEST_INPUT |
+		GPIOHANDLE_REQUEST_ACTIVE_LOW;
+	req.eventflags = GPIOEVENT_REQUEST_FALLING_EDGE;
+
+At the result, there are no any events caught when the button is pushed.
+By the way, button releasing will emit a "falling" event. The timing of
+"falling" catching is not expected.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael Wu <michael.wu@vatics.com>
+Tested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/kconfig/confdata.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpio/gpiolib.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -784,6 +784,7 @@ int conf_write(const char *name)
- 	const char *str;
- 	char dirname[PATH_MAX+1], tmpname[PATH_MAX+22], newname[PATH_MAX+8];
- 	char *env;
-+	int i;
- 
- 	dirname[0] = 0;
- 	if (name && name[0]) {
-@@ -860,6 +861,9 @@ next:
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -817,9 +817,11 @@ static int lineevent_create(struct gpio_
  	}
- 	fclose(out);
  
-+	for_all_symbols(i, sym)
-+		sym->flags &= ~SYMBOL_WRITTEN;
-+
- 	if (*tmpname) {
- 		strcat(dirname, basename);
- 		strcat(dirname, ".old");
+ 	if (eflags & GPIOEVENT_REQUEST_RISING_EDGE)
+-		irqflags |= IRQF_TRIGGER_RISING;
++		irqflags |= test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
++			IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
+ 	if (eflags & GPIOEVENT_REQUEST_FALLING_EDGE)
+-		irqflags |= IRQF_TRIGGER_FALLING;
++		irqflags |= test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
++			IRQF_TRIGGER_RISING : IRQF_TRIGGER_FALLING;
+ 	irqflags |= IRQF_ONESHOT;
+ 	irqflags |= IRQF_SHARED;
+ 
 
 
