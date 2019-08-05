@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7FC881AF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEB7A81B54
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729278AbfHENKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:10:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49808 "EHLO mail.kernel.org"
+        id S1729738AbfHENNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:13:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730384AbfHENKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:10:45 -0400
+        id S1729469AbfHENIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:08:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2369C2067D;
-        Mon,  5 Aug 2019 13:10:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C815721738;
+        Mon,  5 Aug 2019 13:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010644;
-        bh=Y9/KfZJ7BzQ/FNh0VbSKOYU/vLdjc7rLMhft54SUgeM=;
+        s=default; t=1565010520;
+        bh=7J2XoBzKP5scn2LlImnhb61wldOIirXPvxS9/4fXm5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lZXVP2X41znGQg4rl9shZavVUSXPF061A3cxDM1VpkTKis95s4pF3Af38R4xkKvMz
-         KVHuJ/b5aeRvAEUly/bpByW4MAKsI1l6y9pQAxX1vsGTqUEN0J/qfllsMKsWxFU9lk
-         KTllO7TSMamFncVzR/qB9/iUybJhnDx92/Soiy54=
+        b=VsSJ9DN+KK0TlAhLsFJw9KNM4+IzkFGVhX6XbsnflTpPetGipLsW4fGbOxPVeNwjl
+         UfcQygjVjSVWBE3qxjSvf/L7Htvi4Qx5C+1DbECwgQ3LcwL/Jz0vB3Zp1ep9lGtHFi
+         S+sRx0pLehiobWzSUz/pCvhiV//EVwmQhoPGJnwA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Wu <michael.wu@vatics.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.19 48/74] gpiolib: fix incorrect IRQ requesting of an active-low lineevent
-Date:   Mon,  5 Aug 2019 15:03:01 +0200
-Message-Id: <20190805124939.780763795@linuxfoundation.org>
+Subject: [PATCH 4.14 37/53] gpiolib: fix incorrect IRQ requesting of an active-low lineevent
+Date:   Mon,  5 Aug 2019 15:03:02 +0200
+Message-Id: <20190805124932.242656121@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
+In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
+References: <20190805124927.973499541@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -94,7 +94,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -946,9 +946,11 @@ static int lineevent_create(struct gpio_
+@@ -835,9 +835,11 @@ static int lineevent_create(struct gpio_
  	}
  
  	if (eflags & GPIOEVENT_REQUEST_RISING_EDGE)
