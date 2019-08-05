@@ -2,99 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF2438122C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 08:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECCCF8124B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 08:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfHEGWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 02:22:54 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38548 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbfHEGWv (ORCPT
+        id S1727411AbfHEG2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 02:28:24 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43027 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfHEG2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 02:22:51 -0400
-Received: by mail-ed1-f65.google.com with SMTP id r12so42778040edo.5;
-        Sun, 04 Aug 2019 23:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tGdeKkO6NF7wDJ7Q5bh/TgttU4eme3KB46fSMxOwVRA=;
-        b=M9YZ2YxqcdoIX7YXTDFw+22XCqU+0OIb5RpWCbwZW4THqevYUE3gzQ3/n9FCZs0Puj
-         8XYIDbH/DEDPGkjbGuKPUKD19eFwZRx3Ni890NOrXOe/NlO/Jby9xvzJers3NsVxnCI2
-         OcH6NoXkcntvuBZ8sn3drrNH/jS+JwcYehMb8OgUFStTQgwkU3ISGZT0TQvDMFr1hmgk
-         9UYFOVfu2hsVIQU2QLTrAPJbp0SKqhIsrGp9Qf9NDZsxI8TcFdP8DzStbDSqsQ/KDfN5
-         kzY8USuixdBFDnvS97LfvawcTXwFb5+6VobAHwLsTxPEhWREAPK35NLOOhknHbzUlDeO
-         JVRQ==
+        Mon, 5 Aug 2019 02:28:23 -0400
+Received: by mail-qt1-f195.google.com with SMTP id w17so35580877qto.10
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2019 23:28:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tGdeKkO6NF7wDJ7Q5bh/TgttU4eme3KB46fSMxOwVRA=;
-        b=lDODaL2y7DAZnf5DO0QEYL1tc2DldYPgUUTXAiVmSC5bjbF/KzT7Y73G5p5TFNxay1
-         IWZHOZEJtDJlmZR/WfxQLd5/R9KiB5QiktvN1i0Gx6oPww8v7KghaeztBgHVpOp2266z
-         FlvpHt05KxlKx2gRw3TdzHsAQPSAirEHFhOzpAB9hc/g+A+/OjxFRqwMKp/9kRAWZoBm
-         mcclRX4gl8tp+ZWN95J+mN5g/QFvCIe8qiGqiuYZ7hS+LbZb7Yc1eKVijIzHVkTF7zGw
-         0JJAm4rYRDPrJWYldstLpFZYJ55/lkTr73fv8Q5dM0I0fysR2um+mveZk9WmXYm/bR0J
-         0n6Q==
-X-Gm-Message-State: APjAAAWuH5oDMIdi4ePHMPaguvIeo3raKIB324pJ9aMTre+uZnP89iI4
-        3W/M1x/T8eBna8O6wq3jWTNCC5JhDrsUusNFXKI=
-X-Google-Smtp-Source: APXvYqzflf4qXhYsaRJU4r6IXLMuCAO7l8ggqaaQXaXViLftYO5nPqiMMBo7z3qWSwykuxGy5zY9MuxJGY+x7SYvG0U=
-X-Received: by 2002:a50:fb0a:: with SMTP id d10mr103635158edq.124.1564986169613;
- Sun, 04 Aug 2019 23:22:49 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=KWA/zRel4261JwzY6PT0mEAQMawH9MJ6QOovbW+PtWw=;
+        b=euzs0aiZBEeb8FqItsPDZudorgiz/fZNTRfvJ62JWK98x8eW5zO1MCo0n7KmDi+9St
+         ZSaZYGfoplEHbxmlRaO4/OMJybJtvanjt1vU+fQRP0qt6wjnQfZMDIkWpRWpwieTIE5J
+         M+S9QLQhnQJe3fYu3IUM7qBeIKehs8+xEX4p8nfGBLn2kfrZvHUSbI9DM5gsr4epnzbN
+         7cMOupLqleVwXF2jMysKKEJoy7zkQTbOYsvcQfhsxbq/pBDEzTkyBmys0uPJE19MILZ3
+         BosIoJY8Afp9k5l4wuPqzB6Yg3BvQ6NbuncqC3zjTbEJ4B2hnpKLJVOXiDQVDXhRsyeq
+         gr8g==
+X-Gm-Message-State: APjAAAULAjl5yqj6Rnsi9my7bazU6SE7D/PM85xxfZolUlpnBgy35A+Q
+        HPTpkRcQgO8+K6jb3/8fE7ocUw==
+X-Google-Smtp-Source: APXvYqxmlaPhRV6WcTX7MFxiXlbHz2huG6EImOc41/XnvtSvCJPv0MiUiy9pupzwZ++qXjlc9yUxxA==
+X-Received: by 2002:ad4:4a14:: with SMTP id m20mr5317024qvz.58.1564986502769;
+        Sun, 04 Aug 2019 23:28:22 -0700 (PDT)
+Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
+        by smtp.gmail.com with ESMTPSA id q56sm42239382qtq.64.2019.08.04.23.28.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 04 Aug 2019 23:28:21 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 02:28:16 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH V2 7/9] vhost: do not use RCU to synchronize MMU notifier
+ with worker
+Message-ID: <20190805020752-mutt-send-email-mst@kernel.org>
+References: <20190731084655.7024-1-jasowang@redhat.com>
+ <20190731084655.7024-8-jasowang@redhat.com>
+ <20190731123935.GC3946@ziepe.ca>
+ <7555c949-ae6f-f105-6e1d-df21ddae9e4e@redhat.com>
+ <20190731193057.GG3946@ziepe.ca>
+ <a3bde826-6329-68e4-2826-8a9de4c5bd1e@redhat.com>
+ <20190801141512.GB23899@ziepe.ca>
+ <42ead87b-1749-4c73-cbe4-29dbeb945041@redhat.com>
+ <20190802094331-mutt-send-email-mst@kernel.org>
+ <6c3a0a1c-ce87-907b-7bc8-ec41bf9056d8@redhat.com>
 MIME-Version: 1.0
-References: <20190730084047.26482-1-hslester96@gmail.com> <1564498597.4300.10.camel@linux.ibm.com>
-In-Reply-To: <1564498597.4300.10.camel@linux.ibm.com>
-From:   Chuhong Yuan <hslester96@gmail.com>
-Date:   Mon, 5 Aug 2019 14:22:38 +0800
-Message-ID: <CANhBUQ0KD9YqYWT-m7q-7FcqAwRstVPzh_s2rRmCCjwQYcivBQ@mail.gmail.com>
-Subject: Re: [PATCH] scsi: 3w-sas: Fix unterminated strncpy
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     Adam Radford <aradford@gmail.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6c3a0a1c-ce87-907b-7bc8-ec41bf9056d8@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 10:56 PM James Bottomley <jejb@linux.ibm.com> wrote:
->
-> On Tue, 2019-07-30 at 16:40 +0800, Chuhong Yuan wrote:
-> > strncpy(dest, src, strlen(src)) leads to unterminated
-> > dest, which is dangerous.
->
-> I don't buy that.  The structure is only used for the
-> TW_IOCTL_GET_COMPATIBILITY_INFO ioctl and all the fields for that are
-> fixed width and are copied over as such.
->
-> > Here driver_version's len is 32 and TW_DRIVER_VERSION
-> > is shorter than 32.
-> > Therefore strcpy is OK.
->
-> The best practice for copying a string to a fixed width destination
-> that does get printed within the kernel would be what the 3w-9xxx.c
-> does
->
->         strlcpy(tw_dev->tw_compat_info.driver_version, TW_DRIVER_VERSION,
->                 sizeof(tw_dev->tw_compat_info.driver_version));
->
+On Mon, Aug 05, 2019 at 12:33:45PM +0800, Jason Wang wrote:
+> 
+> On 2019/8/2 下午10:03, Michael S. Tsirkin wrote:
+> > On Fri, Aug 02, 2019 at 05:40:07PM +0800, Jason Wang wrote:
+> > > Btw, I come up another idea, that is to disable preemption when vhost thread
+> > > need to access the memory. Then register preempt notifier and if vhost
+> > > thread is preempted, we're sure no one will access the memory and can do the
+> > > cleanup.
+> > Great, more notifiers :(
+> > 
+> > Maybe can live with
+> > 1- disable preemption while using the cached pointer
+> > 2- teach vhost to recover from memory access failures,
+> >     by switching to regular from/to user path
+> 
+> 
+> I don't get this, I believe we want to recover from regular from/to user
+> path, isn't it?
 
-This is right, and strscpy() is better than strlcpy(). strlcpy() is deprecated
-now according to the documentation.
-I choose strcpy() since it has better performance and there is no worry of
-overflow here. And I find there are indeed some places using strcpy() to fix
-this problem, like add_man_viewer() in tools/perf/builtin-help.c.
+That (disable copy to/from user completely) would be a nice to have
+since it would reduce the attack surface of the driver, but e.g. your
+code already doesn't do that.
 
-> But as I said, it doesn't really matter for a fixed width field that's
-> never printed within the kernel.
->
 
-I think it is not good to leave a exploitable place here, and fixing it does not
-need much effort.
 
-Regards,
-Chuhong
+> 
+> > 
+> > So if you want to try that, fine since it's a step in
+> > the right direction.
+> > 
+> > But I think fundamentally it's not what we want to do long term.
+> 
+> 
+> Yes.
+> 
+> 
+> > 
+> > It's always been a fundamental problem with this patch series that only
+> > metadata is accessed through a direct pointer.
+> > 
+> > The difference in ways you handle metadata and data is what is
+> > now coming and messing everything up.
+> 
+> 
+> I do propose soemthing like this in the past:
+> https://www.spinics.net/lists/linux-virtualization/msg36824.html. But looks
+> like you have some concern about its locality.
 
-> James
->
+Right and it doesn't go away. You'll need to come up
+with a test that messes it up and triggers a worst-case
+scenario, so we can measure how bad is that worst-case.
+
+> But the problem still there, GUP can do page fault, so still need to
+> synchronize it with MMU notifiers.
+
+I think the idea was, if GUP would need a pagefault, don't
+do a GUP and do to/from user instead. Hopefully that
+will fault the page in and the next access will go through.
+
+> The solution might be something like
+> moving GUP to a dedicated kind of vhost work.
+
+Right, generally GUP.
+
+> 
+> > 
+> > So if continuing the direct map approach,
+> > what is needed is a cache of mapped VM memory, then on a cache miss
+> > we'd queue work along the lines of 1-2 above.
+> > 
+> > That's one direction to take. Another one is to give up on that and
+> > write our own version of uaccess macros.  Add a "high security" flag to
+> > the vhost module and if not active use these for userspace memory
+> > access.
+> 
+> 
+> Or using SET_BACKEND_FEATURES?
+
+No, I don't think it's considered best practice to allow unpriveledged
+userspace control over whether kernel enables security features.
+
+> But do you mean permanent GUP as I did in
+> original RFC https://lkml.org/lkml/2018/12/13/218?
+> 
+> Thanks
+
+Permanent GUP breaks THP and NUMA.
+
+> > 
+> > 
