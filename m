@@ -2,59 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AF2181758
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A50E81763
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 12:49:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbfHEKri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 06:47:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60911 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727739AbfHEKri (ORCPT
+        id S1728335AbfHEKtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 06:49:05 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36868 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727989AbfHEKtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 06:47:38 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1huaWa-0007er-NL; Mon, 05 Aug 2019 10:47:32 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][btrfs-next] btrfs: fix spelling mistake "aliged" -> "aligned"
-Date:   Mon,  5 Aug 2019 11:47:32 +0100
-Message-Id: <20190805104732.26738-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 5 Aug 2019 06:49:05 -0400
+Received: by mail-lj1-f193.google.com with SMTP id z28so24675926ljn.4
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 03:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zyWsXMkk6iYIEgII1oOJY8ugYk5vzPXYCtQlb3UFPac=;
+        b=p8YZD2U4JcoxOrifQes9j3JCaAfhm7o6USZZn0949Khu+OleChnYcRfI+39orr96Sv
+         pDMdXHaz6fS1XUsCCKp0w4RcDrzKXKl6EOZwrYgE5dQHWk9iigtwULLPoyoG2BMVu9vG
+         kvAuL51lL2OoTsLuVwBsGWfCtRbYG7VIc8NDjruo6AMYEtoZd+znBsmmHY2Ll8FcaqUQ
+         0OPryf7N8p0erCSYcfVN7ycuF+vhWFALeWbYx0ZZ70eUMFPI/W44qRIj3MyVuOLOpH79
+         r0lMZp7KsHkL2CF8P/dByC4r4M0tGxCRfH6gRf5mLdID+8voRToNX5qas9UKKdse0DK8
+         vVMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zyWsXMkk6iYIEgII1oOJY8ugYk5vzPXYCtQlb3UFPac=;
+        b=owTK+iTQL7/x29Tkh1j7gwIn0qbp4RZYc4I9jL93QM0W08JEJpbW34TGyZxDe2hPOi
+         sragvDhZPRSfwyKh7nuWpRSnBGHiKu8CcIV0H/45LRMdx1yj202t6J5Vu43bj2gVLzDa
+         qiqCbiJsQ2B4Ip2yZchiVWpI4OJjec/U88yvl58YFPdJtoUhWNr2AzJ0c5Vxw0+CVSXb
+         v8C1F40kRUjznwXnhP12kiqBN61QbFVJOKADe5KOXO8aFR5r2IxsQS+0kisSGuHiMubY
+         tOloW3YXVXKnNcY8VhX9SbG34HVfCYrSdlgX4E4JLtMx2JdBqT685J7zsOslLm8/YB/J
+         XeJw==
+X-Gm-Message-State: APjAAAXqK1SzuoMdOj2qNNwfJs7r0akr/5STfv78Y6/ViuuOO8PgZDvu
+        Y0Yea1sLbxsn3wpQNVCLWs6MAnfDjvcArSVxj9YJvw==
+X-Google-Smtp-Source: APXvYqwv1epfSf4ijzEUccvR56Qz9qbH+rnx/bhn0Kh+aaPW/inmXM+/zCQxf4A9MHgYUbFT258fn6fea66xtBqoGC4=
+X-Received: by 2002:a2e:781a:: with SMTP id t26mr29589680ljc.28.1565002143043;
+ Mon, 05 Aug 2019 03:49:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20190724081313.12934-1-andrew@aj.id.au> <20190724081313.12934-4-andrew@aj.id.au>
+In-Reply-To: <20190724081313.12934-4-andrew@aj.id.au>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 5 Aug 2019 12:48:51 +0200
+Message-ID: <CACRpkdZCJWeZO6CFvkq4uhnX+o_q_AfkDZ=a2kmUgbS3JtDqfA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: aspeed: Remove mention of deprecated compatibles
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Jul 24, 2019 at 10:13 AM Andrew Jeffery <andrew@aj.id.au> wrote:
 
-There is a spelling mistake in an extent_err error message. Fix it.
+> Guide readers away from using the aspeed,g[45].* compatible patterns.
+>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/btrfs/tree-checker.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied to the pinctrl tree.
 
-diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-index 375396781fba..3d69e0f6e894 100644
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -1043,7 +1043,7 @@ static int check_extent_item(struct extent_buffer *leaf,
- 		}
- 		if (!IS_ALIGNED(key->offset, fs_info->sectorsize)) {
- 			extent_err(leaf, slot,
--			"invalid extent length, have %llu expect aliged to %u",
-+			"invalid extent length, have %llu expect aligned to %u",
- 				   key->offset, fs_info->sectorsize);
- 			return -EUCLEAN;
- 		}
--- 
-2.20.1
-
+Yours,
+Linus Walleij
