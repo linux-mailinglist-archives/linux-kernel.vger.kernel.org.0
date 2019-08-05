@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C3581A47
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:04:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 085A981A77
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:06:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbfHENEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:04:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40238 "EHLO mail.kernel.org"
+        id S1729577AbfHENGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729053AbfHENEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:04:32 -0400
+        id S1729073AbfHENGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0921214C6;
-        Mon,  5 Aug 2019 13:04:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF840206C1;
+        Mon,  5 Aug 2019 13:06:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010271;
-        bh=kGX1jxzuDNRJqOod9t7QrMG4O+Bd/lEDlWmeu/BAsbA=;
+        s=default; t=1565010379;
+        bh=qATYd373WHoQvx1nv4OGTJ3AU14oMmdMwgqxo4er9L0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l7MmsMMQe14UJLfBK5IeGJNA/cqBr2X7wNHpLLOjsAu8qor6vbTjQvrqY87Six/IK
-         dzhStr47peCyEQIXPn+NUZSVXcW3JIrYJf3Oe6yRvgYnxxntkq74O0moPNMA9khjDZ
-         7k3NOpdJNM26W+ehsIVRhiHra8j0+FlHAafmtiPs=
+        b=ZyQPSFyyVwP27zdSRYHiaciyTUzwBac1gkjGXzLx9sa6iKAxcJzF0Q9qXfjz4BuGQ
+         0yS1BTPzUrGbTMVkjdDLvs0YKxDqAtpOi8fWJXpCYTsRdJVlpJZ/NP5TYNVIRXp5sU
+         VBlX3UoN6dnQVqZHdPc+bS6fQ9svd0EP1MhJvl/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Cvek <petrcvekcz@gmail.com>,
-        Paul Burton <paul.burton@mips.com>, hauke@hauke-m.de,
-        john@phrozen.org, linux-mips@vger.kernel.org,
-        openwrt-devel@lists.openwrt.org, pakahmar@hotmail.com,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 04/22] MIPS: lantiq: Fix bitfield masking
-Date:   Mon,  5 Aug 2019 15:02:41 +0200
-Message-Id: <20190805124919.695465347@linuxfoundation.org>
+Subject: [PATCH 4.9 16/42] x86/apic: Silence -Wtype-limits compiler warnings
+Date:   Mon,  5 Aug 2019 15:02:42 +0200
+Message-Id: <20190805124926.694565998@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
-References: <20190805124918.070468681@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ba1bc0fcdeaf3bf583c1517bd2e3e29cf223c969 ]
+[ Upstream commit ec6335586953b0df32f83ef696002063090c7aef ]
 
-The modification of EXIN register doesn't clean the bitfield before
-the writing of a new value. After a few modifications the bitfield would
-accumulate only '1's.
+There are many compiler warnings like this,
 
-Signed-off-by: Petr Cvek <petrcvekcz@gmail.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: hauke@hauke-m.de
-Cc: john@phrozen.org
-Cc: linux-mips@vger.kernel.org
-Cc: openwrt-devel@lists.openwrt.org
-Cc: pakahmar@hotmail.com
+In file included from ./arch/x86/include/asm/smp.h:13,
+                 from ./arch/x86/include/asm/mmzone_64.h:11,
+                 from ./arch/x86/include/asm/mmzone.h:5,
+                 from ./include/linux/mmzone.h:969,
+                 from ./include/linux/gfp.h:6,
+                 from ./include/linux/mm.h:10,
+                 from arch/x86/kernel/apic/io_apic.c:34:
+arch/x86/kernel/apic/io_apic.c: In function 'check_timer':
+./arch/x86/include/asm/apic.h:37:11: warning: comparison of unsigned
+expression >= 0 is always true [-Wtype-limits]
+   if ((v) <= apic_verbosity) \
+           ^~
+arch/x86/kernel/apic/io_apic.c:2160:2: note: in expansion of macro
+'apic_printk'
+  apic_printk(APIC_QUIET, KERN_INFO "..TIMER: vector=0x%02X "
+  ^~~~~~~~~~~
+./arch/x86/include/asm/apic.h:37:11: warning: comparison of unsigned
+expression >= 0 is always true [-Wtype-limits]
+   if ((v) <= apic_verbosity) \
+           ^~
+arch/x86/kernel/apic/io_apic.c:2207:4: note: in expansion of macro
+'apic_printk'
+    apic_printk(APIC_QUIET, KERN_ERR "..MP-BIOS bug: "
+    ^~~~~~~~~~~
+
+APIC_QUIET is 0, so silence them by making apic_verbosity type int.
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1562621805-24789-1-git-send-email-cai@lca.pw
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/lantiq/irq.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/apic.h | 2 +-
+ arch/x86/kernel/apic/apic.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/lantiq/irq.c b/arch/mips/lantiq/irq.c
-index 2e7f60c9fc5df..a7057a06c0961 100644
---- a/arch/mips/lantiq/irq.c
-+++ b/arch/mips/lantiq/irq.c
-@@ -160,8 +160,9 @@ static int ltq_eiu_settype(struct irq_data *d, unsigned int type)
- 			if (edge)
- 				irq_set_handler(d->hwirq, handle_edge_irq);
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index 2188b5af81676..f39fd349cef65 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -50,7 +50,7 @@ static inline void generic_apic_probe(void)
  
--			ltq_eiu_w32(ltq_eiu_r32(LTQ_EIU_EXIN_C) |
--				(val << (i * 4)), LTQ_EIU_EXIN_C);
-+			ltq_eiu_w32((ltq_eiu_r32(LTQ_EIU_EXIN_C) &
-+				    (~(7 << (i * 4)))) | (val << (i * 4)),
-+				    LTQ_EIU_EXIN_C);
- 		}
- 	}
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 
+-extern unsigned int apic_verbosity;
++extern int apic_verbosity;
+ extern int local_apic_timer_c2_ok;
+ 
+ extern int disable_apic;
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 4f2af1ee09cbe..cc9a6f680225e 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -183,7 +183,7 @@ int first_system_vector = FIRST_SYSTEM_VECTOR;
+ /*
+  * Debug level, exported for io_apic.c
+  */
+-unsigned int apic_verbosity;
++int apic_verbosity;
+ 
+ int pic_mode;
  
 -- 
 2.20.1
