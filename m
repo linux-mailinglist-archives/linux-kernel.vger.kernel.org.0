@@ -2,86 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BE1481CAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4097481C2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbfHEN0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:26:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34878 "EHLO mail.kernel.org"
+        id S1730409AbfHENVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:21:00 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:34002 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731395AbfHEN0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:26:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9E8220651;
-        Mon,  5 Aug 2019 13:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011575;
-        bh=kz4IhatFXf46gUFuUUXsCZznBc6ohCoNL4N8twIq4lI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jZFBe8/AkcnYLk4tfbGogE+A4zQ0BR0UMJUVmfqchUwAsDiE6efqFyuP3Ir8Qg1ig
-         gmJQojfPE/+PfpNaalnSGUO40Eb6vNrXCRcf6Av4J8cybgTrLUDoEmp+dimzgnfdis
-         DZc2AIoV0oFKPdKPMxAGGwdcthYKIp+dUcpU0jG4=
-Date:   Mon, 5 Aug 2019 15:06:21 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] USB: Disable USB2 LPM at shutdown
-Message-ID: <20190805130621.GA25026@kroah.com>
-References: <Pine.LNX.4.44L0.1906061013490.1641-100000@iolanthe.rowland.org>
- <46147522-7BC2-4C30-B3E5-6568E9642982@canonical.com>
- <27A5C1CC-E0A4-4CAF-B81E-90EE76C8A887@canonical.com>
+        id S1730367AbfHENU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:20:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=6daK9OLtTHHmYFQn2clC+oFUHMXZEy7xd2EJnCzCpfk=; b=2Xqlu4JNgn9D9OND3DH1g0VDsc
+        2etmgO2ZFmrD7NXQqgtZ+pvFTXnEkT9iEwpvoIM6wdK7+AvMv5nhwfS78Ik5uWYTjN7YgzeosGDnk
+        GYwzWro6J8XCQMOt1FR1Ebq6bJIDeOqhzONyX0uDirp4RGjcDK7JH8cEhgiGjcLe48OY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hucur-0006ZZ-Um; Mon, 05 Aug 2019 15:20:45 +0200
+Date:   Mon, 5 Aug 2019 15:20:45 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Harini Katakam <harinik@xilinx.com>
+Cc:     Harini Katakam <harini.katakam@xilinx.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        David Miller <davem@davemloft.net>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] dt-bindings: net: macb: Add new property for PS
+ SGMII only
+Message-ID: <20190805132045.GC24275@lunn.ch>
+References: <1564566033-676-1-git-send-email-harini.katakam@xilinx.com>
+ <1564566033-676-2-git-send-email-harini.katakam@xilinx.com>
+ <20190804145633.GB6800@lunn.ch>
+ <CAFcVECL6cvCjeo+fn1NDyMDZyZXDrWyhD9djvcVXiLVLiLgGeA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <27A5C1CC-E0A4-4CAF-B81E-90EE76C8A887@canonical.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAFcVECL6cvCjeo+fn1NDyMDZyZXDrWyhD9djvcVXiLVLiLgGeA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 08:58:33PM +0800, Kai-Heng Feng wrote:
-> Hi Greg,
+On Mon, Aug 05, 2019 at 11:45:05AM +0530, Harini Katakam wrote:
+> Hi Andrew,
 > 
-> at 17:22, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+> On Sun, Aug 4, 2019 at 8:26 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> >
+> > On Wed, Jul 31, 2019 at 03:10:32PM +0530, Harini Katakam wrote:
+> > > Add a new property to indicate when PS SGMII is used with NO
+> > > external PHY on board.
+> >
+> > Hi Harini
+> >
+> > What exactly is you use case? Are you connecting to a Ethernet switch?
+> > To an SFP cage with a copper module?
 > 
-> > at 22:17, Alan Stern <stern@rowland.harvard.edu> wrote:
-> > > 
-> > > I agree with Kai-Heng, this seems like a fairly light-weight solution
-> > > to a reasonable problem.
-> > 
-> > Thanks for your review.
-> > 
-> > > As to the issue of how much it will slow down system shutdowns, I have
-> > > no idea.  Probably not very much, unless somebody has an unusually
-> > > large number of USB devices plugged in, but only testing can give a
-> > > real answer.
-> > 
-> > In addition to that, only USB2 devices that enable LPM will slow down
-> > shutdown process.
-> > Right now only internally connected USB2 devices enable LPM, so the
-> > numbers are even lower.
-> > 
-> > > I suppose we could add an HCD flag for host controllers which require
-> > > this workaround.  Either way, it's probably not a very big deal.
-> > 
-> > IMO this is not necessary. Only xHCI that reports hw_lpm_support will be
-> > affected. At least for PC, this only became true after Whiskey Lake.
-> > 
-> > Kai-Heng
-> > 
-> > > Alan Stern
-> 
-> This patch is included in Ubuntu’s kernel for a while now, and there’s no
-> regression report so far.
-> Please consider merge this patch.
+> Yes, an SFP cage is the common HW target for this patch.
 
-I do not see a patch here at all, sorry.  Please resend it.
+Hi Harini
 
-greg k-h
+So you have a copper PHY in the SFP cage. It will talk SGMII
+signalling to your PS SGMII. When that signalling is complete i would
+expect the MAC to raise an interrupt, just as if the SGMII PHY was
+soldered on the board. So i don't see why you need this polling?
+
+       Andrew
