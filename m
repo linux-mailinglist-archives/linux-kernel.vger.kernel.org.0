@@ -2,102 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D69B5820DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 17:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 378E2820CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 17:54:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729337AbfHEPzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 11:55:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44505 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728028AbfHEPzO (ORCPT
+        id S1728939AbfHEPyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 11:54:04 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:51777 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbfHEPyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 11:55:14 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p17so84924543wrf.11
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 08:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pnsluh819l1ZStKbmfOcG3O4jnLq32HWa/lDwn+83Yg=;
-        b=nIKF7wwwI0QPjCu0IOvAfwL8Hr2Lr3IyHpP1+ypF27lI+2iwFL7eal+6vIO+rqw+Mt
-         LXAwxw+s2ChlfUXNMEXSxChFPEyBlt2mrI7syMIUMzAKRifN913by3ykVqN0/d6xl7XU
-         45yp5Dbam98j3f3E/3LUUY2skj+VRIR6Q8k8Rg31HD71xr5EqDX6gQ6cap/HUwc24hja
-         S7D4kueITTfZcQpcEVxOCeYR8beovQfohGrp1HjLWzMgb2ix1D3u4rlYkfqFYgbvAlqx
-         BgcR5X7htSE1LfbrPS4WmeTMbUqF3oBy6DHpwH+405NuzlAK/rx/oVE5GFOwT1brTawU
-         LZFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pnsluh819l1ZStKbmfOcG3O4jnLq32HWa/lDwn+83Yg=;
-        b=XXRxYuptmeKo3C0ge8mw8CM7vGQPAgo+E13gQa7FXWYsjgDKP8Ak9rQOSCMJSUhtVm
-         9puJpooWxc7L/Vc04luL3BdavGeSrXybBJd+C8IO5tYY3czWSi7Bm/JNJRPdtSKnLxtO
-         OLk2gzu+pWySFFDr7BTJvTGlvIHU22HMbx+Ng79XhdhNvtd0Xz6oZr6535lUVlLHZxaP
-         N8jbuE+tGbzj37i+lnFN7SlCzkL/oStsmEv5oMMwHdldCvxGjsM701AVJItt2ObDQfVg
-         1R/+6qrW75z5qgAzuveld10vfLxEOxcUrBGAYhRTu9y6Pvu/VhfmffwdF0P01ZT7MO5x
-         ulgw==
-X-Gm-Message-State: APjAAAUf9KtuZAaCue9A21p5SWbFq/UYu5yf6cq0Wei3crpDDs8TDWwH
-        Mu0uMlfiESYB+qR2xwMLA8VOEMIfZBKldxhl/yjrkQ==
-X-Google-Smtp-Source: APXvYqzYjhwZn5w5yyV/Vo+58zqgFvAH23OEi6QSh7dNxwvBI9af8UVivxjFT+LneGo0eAeVs1mIu/sfzpI/ECNUVHU=
-X-Received: by 2002:a5d:46cf:: with SMTP id g15mr26762663wrs.93.1565020512761;
- Mon, 05 Aug 2019 08:55:12 -0700 (PDT)
+        Mon, 5 Aug 2019 11:54:04 -0400
+Received: from uno.homenet.telecomitalia.it (host150-24-dynamic.51-79-r.retail.telecomitalia.it [79.51.24.150])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id B217B240009;
+        Mon,  5 Aug 2019 15:54:00 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Stefan Agner <stefan@agner.ch>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: adc: max9611: Fix temperature reading in probe
+Date:   Mon,  5 Aug 2019 17:55:15 +0200
+Message-Id: <20190805155515.22621-1-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190805083553.GA27708@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20190805083553.GA27708@dhcp-128-65.nay.redhat.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 5 Aug 2019 18:55:03 +0300
-Message-ID: <CAKv+Gu-my6EpLfxBnbMn21be62oHrF6PKFu2rt-4Pqk9wG9SXA@mail.gmail.com>
-Subject: Re: [PATCH] do not clean dummy variable in kexec path
-To:     Dave Young <dyoung@redhat.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 5 Aug 2019 at 11:36, Dave Young <dyoung@redhat.com> wrote:
->
-> kexec reboot fails randomly in UEFI based kvm guest.  The firmware
-> just reset while calling efi_delete_dummy_variable();  Unfortunately
-> I don't know how to debug the firmware, it is also possible a potential
-> problem on real hardware as well although nobody reproduced it.
->
-> The intention of efi_delete_dummy_variable is to trigger garbage collection
-> when entering virtual mode.  But SetVirtualAddressMap can only run once
-> for each physical reboot, thus kexec_enter_virtual_mode is not necessarily
-> a good place to clean dummy object.
->
+The max9611 driver reads the die temperature at probe time to validate
+the communication channel. Use the actual read value to perform the test
+instead of the read function return value, which was mistakenly used so
+far.
 
-I would argue that this means it is not a good place to *create* the
-dummy variable, and if we don't create it, we don't have to delete it
-either.
+The temperature reading test was only successful because the 0 return
+value is in the range of supported temperatures.
 
-> Drop efi_delete_dummy_variable so that kexec reboot can work.
->
+Fixes: 69780a3bbc0b ("iio: adc: Add Maxim max9611 ADC driver")
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/iio/adc/max9611.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Creating it and not deleting it is bad, so please try and see if we
-can omit the creation on this code path instead.
+diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
+index 917223d5ff5b..e9f6b1da1b94 100644
+--- a/drivers/iio/adc/max9611.c
++++ b/drivers/iio/adc/max9611.c
+@@ -480,7 +480,7 @@ static int max9611_init(struct max9611_dev *max9611)
+ 	if (ret)
+ 		return ret;
 
+-	regval = ret & MAX9611_TEMP_MASK;
++	regval &= MAX9611_TEMP_MASK;
 
-> Signed-off-by: Dave Young <dyoung@redhat.com>
-> ---
->  arch/x86/platform/efi/efi.c |    3 ---
->  1 file changed, 3 deletions(-)
->
-> --- linux-x86.orig/arch/x86/platform/efi/efi.c
-> +++ linux-x86/arch/x86/platform/efi/efi.c
-> @@ -894,9 +894,6 @@ static void __init kexec_enter_virtual_m
->
->         if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
->                 runtime_code_page_mkexec();
-> -
-> -       /* clean DUMMY object */
-> -       efi_delete_dummy_variable();
->  #endif
->  }
->
+ 	if ((regval > MAX9611_TEMP_MAX_POS &&
+ 	     regval < MAX9611_TEMP_MIN_NEG) ||
+--
+2.22.0
+
