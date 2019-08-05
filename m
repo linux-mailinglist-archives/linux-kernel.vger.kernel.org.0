@@ -2,49 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC5A81A3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A283B81A68
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbfHENEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:04:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39650 "EHLO mail.kernel.org"
+        id S1727989AbfHENFp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:05:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728887AbfHENEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:04:09 -0400
+        id S1729322AbfHENFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:05:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1920206C1;
-        Mon,  5 Aug 2019 13:04:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA117214C6;
+        Mon,  5 Aug 2019 13:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010248;
-        bh=njhFZQxy19PcglwTow94+N5gzFX0PX+0iAdPg690j6M=;
+        s=default; t=1565010338;
+        bh=Nmlb5wfC42tddgRjfyYBWRqNjGCK8Cczaz7880C1yDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Eltpd8iwmMiEEZJESmRm26F9ZRWIDYTdYG+bA19yhVkAH4a7LktES8TMzZ2byzrid
-         Tot12VKM7esUa/1IDWmnsCByx6MIlmlkl/QG721U2bUAmXFbJlZByBJ/eXOKru3dXS
-         aw60t2MO/jRTmC+bywI4kAV3W3FPqINwDNlv+GPY=
+        b=dJbaRMCB4VskP6eEgXVeCvepb37wgUQ1Hn7BEC7IobH4duiLBFc7TCDkpwTNrtAwJ
+         w9ApHYBc751EuNmVL5p6FXMAT+fWrrXdK1Y2THlePxKa3xUVSTqldQVJ1C8A0yCDDN
+         jxHBttmkcn4YthTqVXd+BmnyAAIcqcQuH7mHJbXA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Protsenko <semen.protsenko@linaro.org>,
-        Jan Harkes <jaharkes@cs.cmu.edu>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        Fabian Frederick <fabf@skynet.be>,
-        Mikko Rapeli <mikko.rapeli@iki.fi>,
-        Yann Droneaud <ydroneaud@opteya.com>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 16/22] coda: fix build using bare-metal toolchain
-Date:   Mon,  5 Aug 2019 15:02:53 +0200
-Message-Id: <20190805124922.302983828@linuxfoundation.org>
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Alim Akhtar <alim.akhtar@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.9 28/42] mmc: dw_mmc: Fix occasional hang after tuning on eMMC
+Date:   Mon,  5 Aug 2019 15:02:54 +0200
+Message-Id: <20190805124928.333036879@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
-References: <20190805124918.070468681@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,48 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b2a57e334086602be56b74958d9f29b955cd157f ]
+From: Douglas Anderson <dianders@chromium.org>
 
-The kernel is self-contained project and can be built with bare-metal
-toolchain.  But bare-metal toolchain doesn't define __linux__.  Because
-of this u_quad_t type is not defined when using bare-metal toolchain and
-codafs build fails.  This patch fixes it by defining u_quad_t type
-unconditionally.
+commit ba2d139b02ba684c6c101de42fed782d6cd2b997 upstream.
 
-Link: http://lkml.kernel.org/r/3cbb40b0a57b6f9923a9d67b53473c0b691a3eaa.1558117389.git.jaharkes@cs.cmu.edu
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: Jan Harkes <jaharkes@cs.cmu.edu>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Colin Ian King <colin.king@canonical.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Fabian Frederick <fabf@skynet.be>
-Cc: Mikko Rapeli <mikko.rapeli@iki.fi>
-Cc: Yann Droneaud <ydroneaud@opteya.com>
-Cc: Zhouyang Jia <jiazhouyang09@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+In commit 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after
+response errors.") we fixed a tuning-induced hang that I saw when
+stress testing tuning on certain SD cards.  I won't re-hash that whole
+commit, but the summary is that as a normal part of tuning you need to
+deal with transfer errors and there were cases where these transfer
+errors was putting my system into a bad state causing all future
+transfers to fail.  That commit fixed handling of the transfer errors
+for me.
+
+In downstream Chrome OS my fix landed and had the same behavior for
+all SD/MMC commands.  However, it looks like when the commit landed
+upstream we limited it to only SD tuning commands.  Presumably this
+was to try to get around problems that Alim Akhtar reported on exynos
+[1].
+
+Unfortunately while stress testing reboots (and suspend/resume) on
+some rk3288-based Chromebooks I found the same problem on the eMMC on
+some of my Chromebooks (the ones with Hynix eMMC).  Since the eMMC
+tuning command is different (MMC_SEND_TUNING_BLOCK_HS200
+vs. MMC_SEND_TUNING_BLOCK) we were basically getting back into the
+same situation.
+
+I'm hoping that whatever problems exynos was having in the past are
+somehow magically fixed now and we can make the behavior the same for
+all commands.
+
+[1] https://lkml.kernel.org/r/CAGOxZ53WfNbaMe0_AM0qBqU47kAfgmPBVZC8K8Y-_J3mDMqW4A@mail.gmail.com
+
+Fixes: 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after response errors.")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@gmail.com>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/linux/coda.h | 3 +--
+ drivers/mmc/host/dw_mmc.c |    3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/linux/coda.h b/include/linux/coda.h
-index d30209b9cef81..0ca0c83fdb1c4 100644
---- a/include/linux/coda.h
-+++ b/include/linux/coda.h
-@@ -58,8 +58,7 @@ Mellon the rights to redistribute these changes without encumbrance.
- #ifndef _CODA_HEADER_
- #define _CODA_HEADER_
- 
--#if defined(__linux__)
- typedef unsigned long long u_quad_t;
--#endif
-+
- #include <uapi/linux/coda.h>
- #endif 
--- 
-2.20.1
-
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1864,8 +1864,7 @@ static void dw_mci_tasklet_func(unsigned
+ 				 * delayed. Allowing the transfer to take place
+ 				 * avoids races and keeps things simple.
+ 				 */
+-				if ((err != -ETIMEDOUT) &&
+-				    (cmd->opcode == MMC_SEND_TUNING_BLOCK)) {
++				if (err != -ETIMEDOUT) {
+ 					state = STATE_SENDING_DATA;
+ 					continue;
+ 				}
 
 
