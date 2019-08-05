@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DF1081BE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9A1E81B9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbfHENEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:04:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40352 "EHLO mail.kernel.org"
+        id S1729602AbfHENG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:06:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729053AbfHENEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:04:37 -0400
+        id S1729578AbfHENGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:06:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3FC02087B;
-        Mon,  5 Aug 2019 13:04:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B82112087B;
+        Mon,  5 Aug 2019 13:06:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010276;
-        bh=3KBRVhRDiu83YjpGhGpXMuxxGlTDGVg54CdmRe86b0I=;
+        s=default; t=1565010384;
+        bh=SRAjma65TG17C7eyB/IrJVjf3RrrMf84CgdCeuT0FaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qqJZIMATUFyBhf7yDHucu30loioRGjQ1s3FobowuSdYF2dFeFSzBE5SgquZexQesv
-         MjOWXplPiZLBpOOii7JHO/1G7kRsonYzSxnqpoVdo/ISKYoEVNdCgsS/5ikpJCvkTx
-         s2CriieStcm9/G/cMGKEsL2wsMCCmo+UtrznnC7c=
+        b=E38U8WJYAJm9e3NUA8rq0T8HI+hZhMYM0a4h28IrHqo2OnIULGVEttUXhOXaLVoE+
+         5JaSutPQHiA5C0MT4oGHbCsn1GFjAfZla3irjcmxgXF6KoVZESPJfUkxdrQnsumel2
+         xdTtTe95HaN7KkaZCSFd6250PYHH4iixjyC8Oyyc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Yue Hu <huyue2@yulong.com>, Mike Rapoport <rppt@linux.ibm.com>,
+        Laura Abbott <labbott@redhat.com>, Peng Fan <peng.fan@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 06/22] fs/adfs: super: fix use-after-free bug
-Date:   Mon,  5 Aug 2019 15:02:43 +0200
-Message-Id: <20190805124920.027806904@linuxfoundation.org>
+Subject: [PATCH 4.9 18/42] mm/cma.c: fail if fixed declaration cant be honored
+Date:   Mon,  5 Aug 2019 15:02:44 +0200
+Message-Id: <20190805124926.997914558@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
-References: <20190805124918.070468681@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +51,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5808b14a1f52554de612fee85ef517199855e310 ]
+[ Upstream commit c633324e311243586675e732249339685e5d6faa ]
 
-Fix a use-after-free bug during filesystem initialisation, where we
-access the disc record (which is stored in a buffer) after we have
-released the buffer.
+The description of cma_declare_contiguous() indicates that if the
+'fixed' argument is true the reserved contiguous area must be exactly at
+the address of the 'base' argument.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+However, the function currently allows the 'base', 'size', and 'limit'
+arguments to be silently adjusted to meet alignment constraints.  This
+commit enforces the documented behavior through explicit checks that
+return an error if the region does not fit within a specified region.
+
+Link: http://lkml.kernel.org/r/1561422051-16142-1-git-send-email-opendmb@gmail.com
+Fixes: 5ea3b1b2f8ad ("cma: add placement specifier for "cma=" kernel parameter")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Acked-by: Michal Nazarewicz <mina86@mina86.com>
+Cc: Yue Hu <huyue2@yulong.com>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/adfs/super.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ mm/cma.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-index 4d4a0df8344fe..b00ae922ece27 100644
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -368,6 +368,7 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
- 	struct buffer_head *bh;
- 	struct object_info root_obj;
- 	unsigned char *b_data;
-+	unsigned int blocksize;
- 	struct adfs_sb_info *asb;
- 	struct inode *root;
- 	int ret = -EINVAL;
-@@ -419,8 +420,10 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto error_free_bh;
- 	}
+diff --git a/mm/cma.c b/mm/cma.c
+index 4ea0f32761c1a..7cb569a188c48 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -268,6 +268,12 @@ int __init cma_declare_contiguous(phys_addr_t base,
+ 	 */
+ 	alignment = max(alignment,  (phys_addr_t)PAGE_SIZE <<
+ 			  max_t(unsigned long, MAX_ORDER - 1, pageblock_order));
++	if (fixed && base & (alignment - 1)) {
++		ret = -EINVAL;
++		pr_err("Region at %pa must be aligned to %pa bytes\n",
++			&base, &alignment);
++		goto err;
++	}
+ 	base = ALIGN(base, alignment);
+ 	size = ALIGN(size, alignment);
+ 	limit &= ~(alignment - 1);
+@@ -298,6 +304,13 @@ int __init cma_declare_contiguous(phys_addr_t base,
+ 	if (limit == 0 || limit > memblock_end)
+ 		limit = memblock_end;
  
-+	blocksize = 1 << dr->log2secsize;
- 	brelse(bh);
--	if (sb_set_blocksize(sb, 1 << dr->log2secsize)) {
++	if (base + size > limit) {
++		ret = -EINVAL;
++		pr_err("Size (%pa) of region at %pa exceeds limit (%pa)\n",
++			&size, &base, &limit);
++		goto err;
++	}
 +
-+	if (sb_set_blocksize(sb, blocksize)) {
- 		bh = sb_bread(sb, ADFS_DISCRECORD / sb->s_blocksize);
- 		if (!bh) {
- 			adfs_error(sb, "couldn't read superblock on "
+ 	/* Reserve memory */
+ 	if (fixed) {
+ 		if (memblock_is_region_reserved(base, size) ||
 -- 
 2.20.1
 
