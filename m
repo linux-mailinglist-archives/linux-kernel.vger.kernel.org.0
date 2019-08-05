@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9331181AA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 738E381A5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729904AbfHENH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:07:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45612 "EHLO mail.kernel.org"
+        id S1729260AbfHENFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:05:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbfHENHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:07:52 -0400
+        id S1729246AbfHENFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:05:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B91492087B;
-        Mon,  5 Aug 2019 13:07:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 815CA206C1;
+        Mon,  5 Aug 2019 13:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010471;
-        bh=agc1PVtAORgXiE6ckLoFTP2zJuRjb4W6lkyVJlTVHyg=;
+        s=default; t=1565010310;
+        bh=TqnifPeWFcqsVHSip/uFpPPI4gb3Qj12me9k3CbRWJ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mg9g/rfUciPkQQi6ayY5sR0hSpZuN65oO6Ssw+Nou+8W4YZFzMRprrHmq4E7OUJ6e
-         GilfSh0CKdRnA+Mi5P+G5AhE97IVtg9aoeoU8U0MdQGekodNSminK0zrjiRiCQOY4e
-         +xf1V/IfgisNEHKL79BT2Bz7cVuEAgTREMrldcR8=
+        b=yXRHyBNoGijq3z0hcnZM9O6Soy7E6qSesEKduUCu25+PgPFnaGC5vGRy/QxOwKFn4
+         nQ0/6xprQc9zFrdT28lnUd8MdVvNIKxAqg5YSmnlN4noQ0qJALVerzgKoPuQTk+jtW
+         do7S3jLum9xGK0tcQwIjEePB3jTyq+0DQs3i7Jg4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,12 +32,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jessica Yu <jeyu@kernel.org>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 06/53] kernel/module.c: Only return -EEXIST for modules that have finished loading
-Date:   Mon,  5 Aug 2019 15:02:31 +0200
-Message-Id: <20190805124928.729264842@linuxfoundation.org>
+Subject: [PATCH 4.9 06/42] kernel/module.c: Only return -EEXIST for modules that have finished loading
+Date:   Mon,  5 Aug 2019 15:02:32 +0200
+Message-Id: <20190805124925.612535283@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
-References: <20190805124927.973499541@linuxfoundation.org>
+In-Reply-To: <20190805124924.788666484@linuxfoundation.org>
+References: <20190805124924.788666484@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -89,10 +89,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/module.c b/kernel/module.c
-index 94528b8910278..4b372c14d9a1f 100644
+index 2325c9821f2a1..fb9e07aec49e0 100644
 --- a/kernel/module.c
 +++ b/kernel/module.c
-@@ -3391,8 +3391,7 @@ static bool finished_loading(const char *name)
+@@ -3351,8 +3351,7 @@ static bool finished_loading(const char *name)
  	sched_annotate_sleep();
  	mutex_lock(&module_mutex);
  	mod = find_module_all(name, strlen(name), true);
@@ -102,7 +102,7 @@ index 94528b8910278..4b372c14d9a1f 100644
  	mutex_unlock(&module_mutex);
  
  	return ret;
-@@ -3560,8 +3559,7 @@ again:
+@@ -3515,8 +3514,7 @@ again:
  	mutex_lock(&module_mutex);
  	old = find_module_all(mod->name, strlen(mod->name), true);
  	if (old != NULL) {
