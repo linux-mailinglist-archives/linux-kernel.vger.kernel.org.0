@@ -2,88 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C77A581F53
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 16:40:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F6F81F59
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 16:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729752AbfHEOkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 10:40:49 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40441 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729133AbfHEOks (ORCPT
+        id S1729273AbfHEOlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 10:41:16 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57874 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbfHEOlQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 10:40:48 -0400
-Received: by mail-qk1-f196.google.com with SMTP id s145so60253023qke.7;
-        Mon, 05 Aug 2019 07:40:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oRGlfvIBEGnhMOSaUFrH+SBTE1znMskWY0KJq2yKr84=;
-        b=APuble2BpXARG4jU2DYGB4NSX8yam4ci9ypYe5T8eO3mED1q+6uNR/K1PVpes5zpfz
-         QCwOCOYGsyGKslsSgoSZ5LPoBDiW4WXm4lxNHFQAOYUE4rWyj/cJwu3Z6mYlkTSIKPRy
-         0upin2VVKOR7Ur6ZEdadeZQrc51LrVUti/zo2c+mbub84+rYiTUs4J9TbH2SZNYWiGVp
-         QzXsahOGGJKy2tdbHFrgoT90odsC12RSozVFL95Zqayano7/QvpcMRUWuodaILd4fsZ4
-         GwFQIMOnFQBk29uM82b5ozXjSiXrkABX8dnsqRQRjiv7I9faMLa0nHaa7ICFTCfBa7cj
-         IspQ==
-X-Gm-Message-State: APjAAAWGoHaLxCPVAGh2feIEfY39f/6tW3a42bC4R6fKCoKJJgvmN6Tk
-        XynbPE3EqxCPO1qgOrzqbfNQv9dXLYG+Se0VYpQ=
-X-Google-Smtp-Source: APXvYqwXqRGhG17IavERVcPoGwtZvnFSRNz3XsmJ1I/UDszwO/ygv4rz7O1F3vn/+nsBTx+KYhsS4l9y4SQRsLMtA4w=
-X-Received: by 2002:a37:5f45:: with SMTP id t66mr102886994qkb.286.1565016047182;
- Mon, 05 Aug 2019 07:40:47 -0700 (PDT)
+        Mon, 5 Aug 2019 10:41:16 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 1925F80258; Mon,  5 Aug 2019 16:41:01 +0200 (CEST)
+Date:   Mon, 5 Aug 2019 16:41:12 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 02/74] ARM: dts: rockchip: Make rk3288-veyron-minnie
+ run at hs200
+Message-ID: <20190805144112.GA24265@amd>
+References: <20190805124935.819068648@linuxfoundation.org>
+ <20190805124936.029458352@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-5-deepa.kernel@gmail.com>
- <eb2027cdccc0a0ff0a9d061fa8dd04a927c63819.camel@codethink.co.uk>
-In-Reply-To: <eb2027cdccc0a0ff0a9d061fa8dd04a927c63819.camel@codethink.co.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 5 Aug 2019 16:40:30 +0200
-Message-ID: <CAK8P3a0a0ZvwagKa00Q-SCK=6mMcD0dv=wzbOk8D7B9pj4eWrg@mail.gmail.com>
-Subject: Re: [Y2038] [PATCH 04/20] mount: Add mount warning for impending
- timestamp expiry
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Content-Disposition: inline
+In-Reply-To: <20190805124936.029458352@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 5, 2019 at 4:12 PM Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
->
-> On Mon, 2019-07-29 at 18:49 -0700, Deepa Dinamani wrote:
-> > The warning reuses the uptime max of 30 years used by the
-> > setitimeofday().
-> >
-> > Note that the warning is only added for new filesystem mounts
-> > through the mount syscall. Automounts do not have the same warning.
-> >
-> > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> > ---
-> >  fs/namespace.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index b26778bdc236..5314fac8035e 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -2739,6 +2739,17 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
-> >       error = do_add_mount(real_mount(mnt), mountpoint, mnt_flags);
-> >       if (error < 0)
-> >               mntput(mnt);
-> > +
-> > +     if (!error && sb->s_time_max &&
->
-> I don't know why you are testing sb->s_time_max here - it should always
-> be non-zero since alloc_super() sets it to TIME64_MAX.
 
-I think we support some writable file systems that have no timestamps
-at all, so both the minimum and maximum default to 0 (1970-01-01).
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For these, there is no point in printing a warning, they just work
-as designed, even though the maximum is expired.
+Hi!
 
-       Arnd
+> [ Upstream commit 1c0479023412ab7834f2e98b796eb0d8c627cd62 ]
+>=20
+> As some point hs200 was failing on rk3288-veyron-minnie.  See commit
+> 984926781122 ("ARM: dts: rockchip: temporarily remove emmc hs200 speed
+> from rk3288 minnie").  Although I didn't track down exactly when it
+> started working, it seems to work OK now, so let's turn it back on.
+>=20
+> To test this, I booted from SD card and then used this script to
+> stress the enumeration process after fixing a memory leak [1]:
+>   cd /sys/bus/platform/drivers/dwmmc_rockchip
+>   for i in $(seq 1 3000); do
+>     echo "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D" $i
+>     echo ff0f0000.dwmmc > unbind
+>     sleep .5
+>     echo ff0f0000.dwmmc > bind
+>     while true; do
+>       if [ -e /dev/mmcblk2 ]; then
+>         break;
+>       fi
+>       sleep .1
+>     done
+>   done
+>=20
+> It worked fine.
+
+This may not be suitable for stable. So... hs200 started working in
+mainline sometime. That does not mean it was fixed in all the various
+stable trees, too.
+
+How was this tested in respective -stable releases?
+
+> [1] https://lkml.kernel.org/r/20190503233526.226272-1-dianders@chromium.o=
+rg
+>=20
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1IQAgACgkQMOfwapXb+vK1+QCgiyrLP+CFhxZyPjkd07+ydxDL
+1JoAn32DOjyKCEJYQQw6DB1POy3fJyRj
+=+EKd
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
