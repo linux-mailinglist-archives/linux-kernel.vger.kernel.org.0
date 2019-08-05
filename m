@@ -2,155 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECCCF8124B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 08:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E7581236
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 08:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbfHEG2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 02:28:24 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43027 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfHEG2X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 02:28:23 -0400
-Received: by mail-qt1-f195.google.com with SMTP id w17so35580877qto.10
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2019 23:28:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=KWA/zRel4261JwzY6PT0mEAQMawH9MJ6QOovbW+PtWw=;
-        b=euzs0aiZBEeb8FqItsPDZudorgiz/fZNTRfvJ62JWK98x8eW5zO1MCo0n7KmDi+9St
-         ZSaZYGfoplEHbxmlRaO4/OMJybJtvanjt1vU+fQRP0qt6wjnQfZMDIkWpRWpwieTIE5J
-         M+S9QLQhnQJe3fYu3IUM7qBeIKehs8+xEX4p8nfGBLn2kfrZvHUSbI9DM5gsr4epnzbN
-         7cMOupLqleVwXF2jMysKKEJoy7zkQTbOYsvcQfhsxbq/pBDEzTkyBmys0uPJE19MILZ3
-         BosIoJY8Afp9k5l4wuPqzB6Yg3BvQ6NbuncqC3zjTbEJ4B2hnpKLJVOXiDQVDXhRsyeq
-         gr8g==
-X-Gm-Message-State: APjAAAULAjl5yqj6Rnsi9my7bazU6SE7D/PM85xxfZolUlpnBgy35A+Q
-        HPTpkRcQgO8+K6jb3/8fE7ocUw==
-X-Google-Smtp-Source: APXvYqxmlaPhRV6WcTX7MFxiXlbHz2huG6EImOc41/XnvtSvCJPv0MiUiy9pupzwZ++qXjlc9yUxxA==
-X-Received: by 2002:ad4:4a14:: with SMTP id m20mr5317024qvz.58.1564986502769;
-        Sun, 04 Aug 2019 23:28:22 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id q56sm42239382qtq.64.2019.08.04.23.28.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 04 Aug 2019 23:28:21 -0700 (PDT)
-Date:   Mon, 5 Aug 2019 02:28:16 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH V2 7/9] vhost: do not use RCU to synchronize MMU notifier
- with worker
-Message-ID: <20190805020752-mutt-send-email-mst@kernel.org>
-References: <20190731084655.7024-1-jasowang@redhat.com>
- <20190731084655.7024-8-jasowang@redhat.com>
- <20190731123935.GC3946@ziepe.ca>
- <7555c949-ae6f-f105-6e1d-df21ddae9e4e@redhat.com>
- <20190731193057.GG3946@ziepe.ca>
- <a3bde826-6329-68e4-2826-8a9de4c5bd1e@redhat.com>
- <20190801141512.GB23899@ziepe.ca>
- <42ead87b-1749-4c73-cbe4-29dbeb945041@redhat.com>
- <20190802094331-mutt-send-email-mst@kernel.org>
- <6c3a0a1c-ce87-907b-7bc8-ec41bf9056d8@redhat.com>
+        id S1727234AbfHEG0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 02:26:34 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42112 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725976AbfHEG0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 02:26:34 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1045643B73685290DE0C;
+        Mon,  5 Aug 2019 14:26:32 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 5 Aug 2019
+ 14:26:25 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
+        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>
+CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
+        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
+        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>,
+        <zhaohongjiang@huawei.com>, Jason Yan <yanaijie@huawei.com>
+Subject: [PATCH v4 00/10] implement KASLR for powerpc/fsl_booke/32
+Date:   Mon, 5 Aug 2019 14:43:25 +0800
+Message-ID: <20190805064335.19156-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6c3a0a1c-ce87-907b-7bc8-ec41bf9056d8@redhat.com>
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 12:33:45PM +0800, Jason Wang wrote:
-> 
-> On 2019/8/2 下午10:03, Michael S. Tsirkin wrote:
-> > On Fri, Aug 02, 2019 at 05:40:07PM +0800, Jason Wang wrote:
-> > > Btw, I come up another idea, that is to disable preemption when vhost thread
-> > > need to access the memory. Then register preempt notifier and if vhost
-> > > thread is preempted, we're sure no one will access the memory and can do the
-> > > cleanup.
-> > Great, more notifiers :(
-> > 
-> > Maybe can live with
-> > 1- disable preemption while using the cached pointer
-> > 2- teach vhost to recover from memory access failures,
-> >     by switching to regular from/to user path
-> 
-> 
-> I don't get this, I believe we want to recover from regular from/to user
-> path, isn't it?
+This series implements KASLR for powerpc/fsl_booke/32, as a security
+feature that deters exploit attempts relying on knowledge of the location
+of kernel internals.
 
-That (disable copy to/from user completely) would be a nice to have
-since it would reduce the attack surface of the driver, but e.g. your
-code already doesn't do that.
+Since CONFIG_RELOCATABLE has already supported, what we need to do is
+map or copy kernel to a proper place and relocate. Freescale Book-E
+parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
+entries are not suitable to map the kernel directly in a randomized
+region, so we chose to copy the kernel to a proper place and restart to
+relocate.
 
+Entropy is derived from the banner and timer base, which will change every
+build and boot. This not so much safe so additionally the bootloader may
+pass entropy via the /chosen/kaslr-seed node in device tree.
 
+We will use the first 512M of the low memory to randomize the kernel
+image. The memory will be split in 64M zones. We will use the lower 8
+bit of the entropy to decide the index of the 64M zone. Then we chose a
+16K aligned offset inside the 64M zone to put the kernel in.
 
-> 
-> > 
-> > So if you want to try that, fine since it's a step in
-> > the right direction.
-> > 
-> > But I think fundamentally it's not what we want to do long term.
-> 
-> 
-> Yes.
-> 
-> 
-> > 
-> > It's always been a fundamental problem with this patch series that only
-> > metadata is accessed through a direct pointer.
-> > 
-> > The difference in ways you handle metadata and data is what is
-> > now coming and messing everything up.
-> 
-> 
-> I do propose soemthing like this in the past:
-> https://www.spinics.net/lists/linux-virtualization/msg36824.html. But looks
-> like you have some concern about its locality.
+    KERNELBASE
 
-Right and it doesn't go away. You'll need to come up
-with a test that messes it up and triggers a worst-case
-scenario, so we can measure how bad is that worst-case.
+        |-->   64M   <--|
+        |               |
+        +---------------+    +----------------+---------------+
+        |               |....|    |kernel|    |               |
+        +---------------+    +----------------+---------------+
+        |                         |
+        |----->   offset    <-----|
 
-> But the problem still there, GUP can do page fault, so still need to
-> synchronize it with MMU notifiers.
+                              kimage_vaddr
 
-I think the idea was, if GUP would need a pagefault, don't
-do a GUP and do to/from user instead. Hopefully that
-will fault the page in and the next access will go through.
+We also check if we will overlap with some areas like the dtb area, the
+initrd area or the crashkernel area. If we cannot find a proper area,
+kaslr will be disabled and boot from the original kernel.
 
-> The solution might be something like
-> moving GUP to a dedicated kind of vhost work.
+Changes since v3:
+ - Add Reviewed-by and Tested-by tag from Diana
+ - Change the comment in fsl_booke_entry_mapping.S to be consistent
+   with the new code.
 
-Right, generally GUP.
+Changes since v2:
+ - Remove unnecessary #ifdef
+ - Use SZ_64M instead of0x4000000
+ - Call early_init_dt_scan_chosen() to init boot_command_line
+ - Rename kaslr_second_init() to kaslr_late_init()
 
-> 
-> > 
-> > So if continuing the direct map approach,
-> > what is needed is a cache of mapped VM memory, then on a cache miss
-> > we'd queue work along the lines of 1-2 above.
-> > 
-> > That's one direction to take. Another one is to give up on that and
-> > write our own version of uaccess macros.  Add a "high security" flag to
-> > the vhost module and if not active use these for userspace memory
-> > access.
-> 
-> 
-> Or using SET_BACKEND_FEATURES?
+Changes since v1:
+ - Remove some useless 'extern' keyword.
+ - Replace EXPORT_SYMBOL with EXPORT_SYMBOL_GPL
+ - Improve some assembly code
+ - Use memzero_explicit instead of memset
+ - Use boot_command_line and remove early_command_line
+ - Do not print kaslr offset if kaslr is disabled
 
-No, I don't think it's considered best practice to allow unpriveledged
-userspace control over whether kernel enables security features.
+Jason Yan (10):
+  powerpc: unify definition of M_IF_NEEDED
+  powerpc: move memstart_addr and kernstart_addr to init-common.c
+  powerpc: introduce kimage_vaddr to store the kernel base
+  powerpc/fsl_booke/32: introduce create_tlb_entry() helper
+  powerpc/fsl_booke/32: introduce reloc_kernel_entry() helper
+  powerpc/fsl_booke/32: implement KASLR infrastructure
+  powerpc/fsl_booke/32: randomize the kernel image offset
+  powerpc/fsl_booke/kaslr: clear the original kernel if randomized
+  powerpc/fsl_booke/kaslr: support nokaslr cmdline parameter
+  powerpc/fsl_booke/kaslr: dump out kernel offset information on panic
 
-> But do you mean permanent GUP as I did in
-> original RFC https://lkml.org/lkml/2018/12/13/218?
-> 
-> Thanks
+ arch/powerpc/Kconfig                          |  11 +
+ arch/powerpc/include/asm/nohash/mmu-book3e.h  |  10 +
+ arch/powerpc/include/asm/page.h               |   7 +
+ arch/powerpc/kernel/Makefile                  |   1 +
+ arch/powerpc/kernel/early_32.c                |   2 +-
+ arch/powerpc/kernel/exceptions-64e.S          |  10 -
+ arch/powerpc/kernel/fsl_booke_entry_mapping.S |  27 +-
+ arch/powerpc/kernel/head_fsl_booke.S          |  55 ++-
+ arch/powerpc/kernel/kaslr_booke.c             | 427 ++++++++++++++++++
+ arch/powerpc/kernel/machine_kexec.c           |   1 +
+ arch/powerpc/kernel/misc_64.S                 |   5 -
+ arch/powerpc/kernel/setup-common.c            |  19 +
+ arch/powerpc/mm/init-common.c                 |   7 +
+ arch/powerpc/mm/init_32.c                     |   5 -
+ arch/powerpc/mm/init_64.c                     |   5 -
+ arch/powerpc/mm/mmu_decl.h                    |  10 +
+ arch/powerpc/mm/nohash/fsl_booke.c            |   8 +-
+ 17 files changed, 560 insertions(+), 50 deletions(-)
+ create mode 100644 arch/powerpc/kernel/kaslr_booke.c
 
-Permanent GUP breaks THP and NUMA.
+-- 
+2.17.2
 
-> > 
-> > 
