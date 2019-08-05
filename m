@@ -2,248 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E238381BA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B33081B27
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:12:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbfHENQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:16:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:48182 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729521AbfHENGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:06:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C0D91597;
-        Mon,  5 Aug 2019 06:06:11 -0700 (PDT)
-Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEB373F706;
-        Mon,  5 Aug 2019 06:06:09 -0700 (PDT)
-Subject: Re: [PATCH 1/9] KVM: arm64: Document PV-time interface
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     peter.maydell@linaro.org, kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        linux-doc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
-        Julien Thierry <julien.thierry.kdev@gmail.com>
-References: <20190802145017.42543-1-steven.price@arm.com>
- <20190802145017.42543-2-steven.price@arm.com> <20190803121343.2f482200@why>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <9b2077d1-29f2-549a-fd61-f9c8d3730c9c@arm.com>
-Date:   Mon, 5 Aug 2019 14:06:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730041AbfHENKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:10:30 -0400
+Received: from mail-eopbgr150053.outbound.protection.outlook.com ([40.107.15.53]:54910
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730310AbfHENKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:10:22 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IwjbsxT4C+p5VWQXP5q+w7fCUYlnWUSM8gbxNTvLzkKg73QMQWX8qa8lG0vc9nqJGJ2SphJ1U7MuEIhwB/+0quEkPCj+hhUyLGbypgWTiqhRwfCa2Y4Fd6J6tJZ6PTG/OQH0BK8lh/A/RTqsXtCDEQ5t2+XuHmjqzcVQnCB/ET7r0EYKJlFbFlQ5sL3wToxPP5loTl2ePQrY7+YANNE3WiUeHiKjOPOH7W876Qn2991Ygk/q9JL0NEI9PkNueNl6jevUX6QI3zkRq9Y94IKlDzRcXLaRA8ISYD58tsm3ZA1j2EU5BSjPkldvSMvjFfz73CShSv2+7a/v3LABXbHxAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YCE9ySg0JEb1faX3GeVzHASlQlfnkWBqgZHYEiZe474=;
+ b=gy2BrgKtz2ZJlcpE0tTcK6BolsC2PUq/b8HTc4nrkcOf3DSZLgPXwQ22sXyb+y8cQLb0rnNjKRH7TFTO2Dc+FoV+Tbz5U4ps7YxiS2p1OdDFgkQqwk0dNkSy+HTKcfDhJMCzrCG8Hd40wZOogBQ28739AO29lWIomjFNFFmxigg7KY89m4vFAmMqi+zOyzzID+bZ6lG0/b9YYygG/r5XjL8sjLCrR5VZ73T60wS8oAIr89FkFmcAmysMz5VwTxHvx9JKapBv8UlQiZql0JtY8m50N6X1TUaJ40v6as5Mv44vDNHWskHhdGUJj2qLLl82P2EpH3+7U60nTMKOocFG4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=arm.com;dmarc=pass action=none header.from=arm.com;dkim=pass
+ header.d=arm.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YCE9ySg0JEb1faX3GeVzHASlQlfnkWBqgZHYEiZe474=;
+ b=khVS0YE0SwDYdp0sjWkqBCnEo61Zf33777fAjpDMVOaLDe+o7m9gIB62UEz7kiFg890JMqEoBQ1P0KEz3QwncXwnQXPrcvrhWmia7LyAv0x5nvsE4QNr/kJc7sBy3NsuVrqgFbF7qXa4uhPTx4k8Ezu2nQWK7Gh5z9htVGSw2rc=
+Received: from VI1PR08MB3696.eurprd08.prod.outlook.com (20.178.13.156) by
+ VI1PR08MB5360.eurprd08.prod.outlook.com (52.133.244.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.13; Mon, 5 Aug 2019 13:10:17 +0000
+Received: from VI1PR08MB3696.eurprd08.prod.outlook.com
+ ([fe80::6d04:e478:d795:5d80]) by VI1PR08MB3696.eurprd08.prod.outlook.com
+ ([fe80::6d04:e478:d795:5d80%4]) with mapi id 15.20.2136.018; Mon, 5 Aug 2019
+ 13:10:17 +0000
+From:   Brian Starkey <Brian.Starkey@arm.com>
+To:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "eric@anholt.net" <eric@anholt.net>,
+        "kieran.bingham+renesas@ideasonboard.com" 
+        <kieran.bingham+renesas@ideasonboard.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>, nd <nd@arm.com>
+Subject: Re: [PATCH v1 2/2] drm: Clear the fence pointer when writeback job
+ signaled
+Thread-Topic: [PATCH v1 2/2] drm: Clear the fence pointer when writeback job
+ signaled
+Thread-Index: AQHVR4/KbU4UCRFzvkaBT5qon3yv66bsjx6A
+Date:   Mon, 5 Aug 2019 13:10:17 +0000
+Message-ID: <20190805131014.u2kei5tvbkcf7aeo@DESKTOP-E1NTVVP.localdomain>
+References: <1564571048-15029-1-git-send-email-lowry.li@arm.com>
+ <1564571048-15029-3-git-send-email-lowry.li@arm.com>
+In-Reply-To: <1564571048-15029-3-git-send-email-lowry.li@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: NeoMutt/20180716-849-147d51-dirty
+x-originating-ip: [217.140.106.55]
+x-clientproxiedby: LO2P265CA0093.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8::33) To VI1PR08MB3696.eurprd08.prod.outlook.com
+ (2603:10a6:803:b6::28)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Starkey@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8e39071b-d675-4174-09da-08d719a642a0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB5360;
+x-ms-traffictypediagnostic: VI1PR08MB5360:
+x-microsoft-antispam-prvs: <VI1PR08MB53607FB3023F6B6F01AD85C9F0DA0@VI1PR08MB5360.eurprd08.prod.outlook.com>
+nodisclaimer: True
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 01208B1E18
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(39860400002)(366004)(136003)(376002)(189003)(199004)(102836004)(25786009)(4326008)(76176011)(6506007)(386003)(7416002)(53936002)(2906002)(6636002)(478600001)(3846002)(6116002)(6246003)(44832011)(1076003)(86362001)(446003)(6436002)(229853002)(256004)(11346002)(486006)(6862004)(316002)(6512007)(9686003)(58126008)(54906003)(14444005)(476003)(14454004)(6486002)(66946007)(5660300002)(71200400001)(71190400001)(68736007)(64756008)(66446008)(66476007)(66556008)(305945005)(8936002)(81166006)(81156014)(99286004)(8676002)(7736002)(66066001)(52116002)(26005)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB5360;H:VI1PR08MB3696.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 9qOBNaHn3scpbwUYXVz9M5T5ZINDlik9ZPhIOlX6I82R368LEMIAtIYov76xK9FlCrGXa2S0H+yuTR+UznaB8exemr73cDys8l5BWFeNrHwrlJoWKvKnF1UT83cyILHv1790cNjWj6Yo2Q+3wgC9XcjD+Gfnd2KHSgQ4ginRxMSgo6YFNAWMxnHkKsJW2wpprw3UYjkvfQmYxWUG403FOC0edDc5eXfyiQn53/kdGsoqWZFehZpPwQKT9A8TAx4jUXPaNSxuFSDOKgour+MfZB6TZrle+D4jcxie/QFwKpzshyXOl0PuSJwb12uLSKkcqrehzV1TFeWslrJD9K6oAIEp1Cw6VV115+lMZgYq1y4ICif74aIsC8TX1eIpM7SM8dHdkiZo719hvsg8L7Au5R4MJMxzw7R6CoSwj+P3H8U=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <AF3F22A2EB691C4CAE958A80FAC283BF@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20190803121343.2f482200@why>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e39071b-d675-4174-09da-08d719a642a0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2019 13:10:17.3412
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Brian.Starkey@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB5360
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2019 12:13, Marc Zyngier wrote:
-> On Fri,  2 Aug 2019 15:50:09 +0100
-> Steven Price <steven.price@arm.com> wrote:
-> 
-> [+Peter for the userspace aspect of things]
-> 
-> Hi Steve,
-> 
->> Introduce a paravirtualization interface for KVM/arm64 based on the
->> "Arm Paravirtualized Time for Arm-Base Systems" specification DEN 0057A.
->>
->> This only adds the details about "Stolen Time" as the details of "Live
->> Physical Time" have not been fully agreed.
->>
->> User space can specify a reserved area of memory for the guest and
->> inform KVM to populate the memory with information on time that the host
->> kernel has stolen from the guest.
->>
->> A hypercall interface is provided for the guest to interrogate the
->> hypervisor's support for this interface and the location of the shared
->> memory structures.
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->>  Documentation/virtual/kvm/arm/pvtime.txt | 107 +++++++++++++++++++++++
->>  1 file changed, 107 insertions(+)
->>  create mode 100644 Documentation/virtual/kvm/arm/pvtime.txt
->>
->> diff --git a/Documentation/virtual/kvm/arm/pvtime.txt b/Documentation/virtual/kvm/arm/pvtime.txt
->> new file mode 100644
->> index 000000000000..e6ae9799e1d5
->> --- /dev/null
->> +++ b/Documentation/virtual/kvm/arm/pvtime.txt
->> @@ -0,0 +1,107 @@
->> +Paravirtualized time support for arm64
->> +======================================
->> +
->> +Arm specification DEN0057/A defined a standard for paravirtualised time
->> +support for Aarch64 guests:
-> 
-> nit: AArch64
-> 
->> +
->> +https://developer.arm.com/docs/den0057/a
-> 
-> Between this file and the above document, which one is authoritative?
+Hi Lowry,
 
-The above document should be authoritative - although I'm still waiting
-for the final version to be published. I'm not expecting any changes to
-the stolen time part though.
+Based on Daniel's input, this patch looks fine:
 
->> +
->> +KVM/Arm64 implements the stolen time part of this specification by providing
-> 
-> nit: KVM/arm64
-> 
->> +some hypervisor service calls to support a paravirtualized guest obtaining a
->> +view of the amount of time stolen from its execution.
->> +
->> +Two new SMCCC compatible hypercalls are defined:
->> +
->> +PV_FEATURES 0xC5000020
->> +PV_TIME_ST  0xC5000022
->> +
->> +These are only available in the SMC64/HVC64 calling convention as
->> +paravirtualized time is not available to 32 bit Arm guests.
->> +
->> +PV_FEATURES
->> +    Function ID:  (uint32)  : 0xC5000020
->> +    PV_func_id:   (uint32)  : Either PV_TIME_LPT or PV_TIME_ST
->> +    Return value: (int32)   : NOT_SUPPORTED (-1) or SUCCESS (0) if the relevant
->> +                              PV-time feature is supported by the hypervisor.
-> 
-> How is PV_FEATURES discovered? Is the intention to make it a generic
-> ARM-wide PV discovery mechanism, not specific to PV time?
+Reviewed-by: Brian Starkey <brian.starkey@arm.com>
 
-SMCCC is mandated for PV time. So, assuming the hypervisor supports
-SMCCC, the "NOT_SUPPORTED" return is mandated by SMCCC if PV time isn't
-supported.
+I think there's some opportunity for improvement around
+prepare_signaling/complete_signaling, but that can be treated as
+separate from fixing this bug.
 
-However, we do also use the SMCCC_ARCH_FEATURES mechanism to check the
-existence of PV_FEATURES before use. I'll update the document to call
-this out.
+Thanks,
+-Brian
 
->> +
->> +PV_TIME_ST
->> +    Function ID:  (uint32)  : 0xC5000022
->> +    Return value: (int64)   : IPA of the stolen time data structure for this
->> +                              (V)CPU. On failure:
->> +                              NOT_SUPPORTED (-1)
->> +
-> 
-> Is the size implicit? What are the memory attributes? This either needs
-> documenting here, or point to the right bit to the spec.
-
-The size is implicit - it's a pointer to the below structure, so the
-guest can only rely on the first 16 bytes being valid. The memory
-attributes are described in the specification as:
-
-"The calling guest can map the IPA into normal memory with inner and
-outer write back caching attributes, in the inner sharable domain"
-
-I'll put those details in this document for completeness.
-
->> +Stolen Time
->> +-----------
->> +
->> +The structure pointed to by the PV_TIME_ST hypercall is as follows:
->> +
->> +  Field       | Byte Length | Byte Offset | Description
->> +  ----------- | ----------- | ----------- | --------------------------
->> +  Revision    |      4      |      0      | Must be 0 for version 0.1
->> +  Attributes  |      4      |      4      | Must be 0
->> +  Stolen time |      8      |      8      | Stolen time in unsigned
->> +              |             |             | nanoseconds indicating how
->> +              |             |             | much time this VCPU thread
->> +              |             |             | was involuntarily not
->> +              |             |             | running on a physical CPU.
->> +
->> +The structure will be updated by the hypervisor periodically as time is stolen
-> 
-> Is it really periodic? If so, when is the update frequency?
-
-Hmm, periodic might be the wrong term - there is no guaranteed frequency
-of update. The spec says:
-
-"The hypervisor must update this value prior to scheduling a virtual CPU"
-
-I guess that's probably the best description.
-
->> +from the VCPU. It will be present within a reserved region of the normal
->> +memory given to the guest. The guest should not attempt to write into this
->> +memory. There is a structure by VCPU of the guest.
-> 
-> What if the vcpu writes to it? Does it get a fault?
-
-From the perspective from the specification this is undefined. A fault
-would therefore be acceptable but isn't generated in the implementation
-defined here.
-
-> If there is a
-> structure per vcpu, what is the layout in memory? How does a vcpu find
-> its own data structure? Is that the address returned by PV_TIME_ST?
-
-A call to PV_TIME_ST returns the structure for the calling vCPU - I'll
-make that explicit. The layout is therefore defined by the hypervisor
-and cannot be relied on by the guest. As below this implementation uses
-a simple array of structures.
-
->> +
->> +User space interface
->> +====================
->> +
->> +User space can request that KVM provide the paravirtualized time interface to
->> +a guest by creating a KVM_DEV_TYPE_ARM_PV_TIME device, for example:
->> +
->> +    struct kvm_create_device pvtime_device = {
->> +            .type = KVM_DEV_TYPE_ARM_PV_TIME,
->> +            .attr = 0,
->> +            .flags = 0,
->> +    };
->> +
->> +    pvtime_fd = ioctl(vm_fd, KVM_CREATE_DEVICE, &pvtime_device);
->> +
->> +The guest IPA of the structures must be given to KVM. This is the base address
-> 
-> nit: s/guest //
-> 
->> +of an array of stolen time structures (one for each VCPU). For example:
->> +
->> +    struct kvm_device_attr st_base = {
->> +            .group = KVM_DEV_ARM_PV_TIME_PADDR,
->> +            .attr = KVM_DEV_ARM_PV_TIME_ST,
->> +            .addr = (u64)(unsigned long)&st_paddr
->> +    };
->> +
->> +    ioctl(pvtime_fd, KVM_SET_DEVICE_ATTR, &st_base);
-> 
-> So the allocation itself is performed by the kernel? What are the
-> ordering requirements between creating vcpus and the device? What are
-> the alignment requirements for the base address?
-
-The base address should be page aligned - I'll spell that out.
-
-There are currently no ordering requirements between creating vcpus and
-the device. However...
-
->> +
->> +For migration (or save/restore) of a guest it is necessary to save the contents
->> +of the shared page(s) and later restore them. KVM_DEV_ARM_PV_TIME_STATE_SIZE
->> +provides the size of this data and KVM_DEV_ARM_PV_TIME_STATE allows the state
->> +to be read/written.
-> 
-> Is the size variable depending on the number of vcpus?
-
-...yes - so restoring the state after migration must be done after
-creating the vcpus. I'll point out that the device should created after.
-
-Thanks for the review,
-
-Steve
+On Wed, Jul 31, 2019 at 11:04:45AM +0000, Lowry Li (Arm Technology China) w=
+rote:
+> During it signals the completion of a writeback job, after releasing
+> the out_fence, we'd clear the pointer.
+>=20
+> Check if fence left over in drm_writeback_cleanup_job(), release it.
+>=20
+> Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> ---
+>  drivers/gpu/drm/drm_writeback.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeb=
+ack.c
+> index ff138b6..43d9e3b 100644
+> --- a/drivers/gpu/drm/drm_writeback.c
+> +++ b/drivers/gpu/drm/drm_writeback.c
+> @@ -324,6 +324,9 @@ void drm_writeback_cleanup_job(struct drm_writeback_j=
+ob *job)
+>  	if (job->fb)
+>  		drm_framebuffer_put(job->fb);
+> =20
+> +	if (job->out_fence)
+> +		dma_fence_put(job->out_fence);
+> +
+>  	kfree(job);
+>  }
+>  EXPORT_SYMBOL(drm_writeback_cleanup_job);
+> @@ -366,25 +369,29 @@ static void cleanup_work(struct work_struct *work)
+>  {
+>  	unsigned long flags;
+>  	struct drm_writeback_job *job;
+> +	struct dma_fence *out_fence;
+> =20
+>  	spin_lock_irqsave(&wb_connector->job_lock, flags);
+>  	job =3D list_first_entry_or_null(&wb_connector->job_queue,
+>  				       struct drm_writeback_job,
+>  				       list_entry);
+> -	if (job) {
+> +	if (job)
+>  		list_del(&job->list_entry);
+> -		if (job->out_fence) {
+> -			if (status)
+> -				dma_fence_set_error(job->out_fence, status);
+> -			dma_fence_signal(job->out_fence);
+> -			dma_fence_put(job->out_fence);
+> -		}
+> -	}
+> +
+>  	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
+> =20
+>  	if (WARN_ON(!job))
+>  		return;
+> =20
+> +	out_fence =3D job->out_fence;
+> +	if (out_fence) {
+> +		if (status)
+> +			dma_fence_set_error(out_fence, status);
+> +		dma_fence_signal(out_fence);
+> +		dma_fence_put(out_fence);
+> +		job->out_fence =3D NULL;
+> +	}
+> +
+>  	INIT_WORK(&job->cleanup_work, cleanup_work);
+>  	queue_work(system_long_wq, &job->cleanup_work);
+>  }
+> --=20
+> 1.9.1
+>=20
