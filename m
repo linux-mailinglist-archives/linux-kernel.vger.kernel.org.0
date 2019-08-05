@@ -2,87 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B54681D41
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:31:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59CBA81D2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbfHENTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:19:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55692 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbfHENTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:19:37 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFF1F2147A;
-        Mon,  5 Aug 2019 13:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565011176;
-        bh=kET/XI/yGE7hnw4dQZUVxgjobkG7KvceWR0d2hddSUA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qKBwO2C53RjFII28Zm3kPJUxw4eUzj+wwTzlCLxFJ8SdE15u8Gyr8uAEjZvCicmMu
-         i0POSwb98YaGC5rFUilhSFBqaB+CeoVX+3qWJR/8aplhhXM30NvMEBzKEq301avBJD
-         K7SZrHMksMBXnoS6zbTaBtnJIH+y4P+1FnocmB98=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 72/74] gcc-9: properly declare the {pv,hv}clock_page storage
-Date:   Mon,  5 Aug 2019 15:03:25 +0200
-Message-Id: <20190805124941.618238077@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
-References: <20190805124935.819068648@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730889AbfHENaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:30:05 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38450 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729387AbfHENaB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:30:01 -0400
+Received: by mail-io1-f68.google.com with SMTP id j6so47449499ioa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 06:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=JCGCMRuAueUTv0H4YFnOWe59/CKHkWiBwTEIpXCGg5w=;
+        b=S3mGeX69UkYyGT9HkDl9XKvdtoSvx6n6JeQAj4bKeufge6k9PBhcnGUzdVs+gZGG68
+         kzPfUK/RAqJG1b/y3BoSwXN83I2b5ZH4DIt/4ZH9wln6WUhM/wXR436G3PJxbt/yFVGq
+         zaXOlxQgF1oveBPPY3QevB+4+C3EP9Us2FgPGibOmOertWpz0n4dNPjwGqJfY7gWOMMr
+         zGKzYFus5z46UadXoH3GhHtoUg9o+6jK7vywGGa2uo7J0IWKtwDhUvR513kKhPGwtCXU
+         PWUZEiKxO5/tHjLiWJ0GiyYhospePcq91k0QabFeYbiO2pGfadiCuWnEAq1suMgF3LkZ
+         CeqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=JCGCMRuAueUTv0H4YFnOWe59/CKHkWiBwTEIpXCGg5w=;
+        b=LPZ9MOx9Q9hlcheMyRaF06ai6L9mT/Nn7hLGKmbPvsIaOPv9ZooD7RoSYVnLzrFkOp
+         7QZWK2OxNr0OSuzjI7bdWzJ6M/XkQS3az4CYZNB0l5nbLk12GKtLsyL+pEKGXalXl4XD
+         3CJ3BXzQrAZW+pX0nqVOMS/eworcCBpzWNO7LwS0U2dW9eHJknhZChI3V0IzRqo7H2Ss
+         RNAjbHu8K3opAngCZeE/XjLPMnmBxyEUlf9Ls/B/9ItQTlpO4aag6CSl/E6DeybxQmVf
+         YURbyRILKr3zg0qwE8H62qMaGBoItztevSx+14Y+4etJ9QKgVej7bcw5b6gfACIDXeo9
+         j4eQ==
+X-Gm-Message-State: APjAAAVn4X/2AYjkyJDMFE9eeeQ/ZnoTRtpJVXBSElscEUdhYpEB6ZXO
+        qfFhwO8oSfS7F4scVm1N6BaSOI2uHQ84+YR6aJU=
+X-Google-Smtp-Source: APXvYqz448DWGr2lqIFnEWtt9dehARtkPVHiVhJ11C+nUJyfXPAIbzz87oW3HwqSm1xRicW/hoo2TbohyQGqSIbJqmQ=
+X-Received: by 2002:a6b:6107:: with SMTP id v7mr14771002iob.154.1565011800712;
+ Mon, 05 Aug 2019 06:30:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:1a42:0:0:0:0:0 with HTTP; Mon, 5 Aug 2019 06:30:00 -0700 (PDT)
+Reply-To: johnmakati1956@gmail.com
+From:   John Makati <onyiij98@gmail.com>
+Date:   Mon, 5 Aug 2019 14:30:00 +0100
+Message-ID: <CAJ_x+KKr3z_R5RQrA6+U9vyuc=TS2hFSgx6ZW_yNJdZ10VkGUQ@mail.gmail.com>
+Subject: Puno ti hvala
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+Dragi prijatelju,
 
-commit 459e3a21535ae3c7a9a123650e54f5c882b8fcbf upstream.
+U kratkom uvodu ja sam barrister John Makati, odvjetnik po struci i
+osobni odvjetnik in=C5=BEenjera. stranac koji je umro u mojoj zemlji s
+obitelji prije nekoliko godina, ostaviv=C5=A1i za sobom ogromnu svotu novca
+u banci u mojoj zemlji. Ja sam njegov odvjetnik i tra=C5=BEim njegovu
+rodbinu, potrebna mi je va=C5=A1a pomo=C4=87 da primim iznos od (6.000.000
+milijuna ameri=C4=8Dkih dolara). iz banke u mojoj zemlji. Re=C4=8Deni fond =
+je
+napustio moj pokojni klijent. Uprava banke izdala mi je nekoliko
+obavijesti i zadu=C5=BEila me da ostavim pokojnika Next Kina ili srodnika
+prije sljede=C4=87ih 21 radna dana, jer =C4=87e u protivnom fond biti
+zaplijenjen po isteku roka. Naravno da znam da mo=C5=BEda niste u vezi s
+mojim pokojnim klijentom, ali ne brinite o tome da je to moje polje i
+uvjeravam vas da je ova transakcija 100% bez rizika i dijeliti =C4=87e
+sredstva u jednake dijelove na uspje=C5=A1an kraj.
 
-The pvlock_page and hvclock_page variables are (as the name implies)
-addresses to pages, created by the linker script.
+Hvala na razumijevanju.
 
-But we declared them as just "extern u8" variables, which _works_, but
-now that gcc does some more bounds checking, it causes warnings like
-
-    warning: array subscript 1 is outside array bounds of ‘u8[1]’
-
-when we then access more than one byte from those variables.
-
-Fix this by simply making the declaration of the variables match
-reality, which makes the compiler happy too.
-
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/entry/vdso/vclock_gettime.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -29,12 +29,12 @@ extern int __vdso_gettimeofday(struct ti
- extern time_t __vdso_time(time_t *t);
- 
- #ifdef CONFIG_PARAVIRT_CLOCK
--extern u8 pvclock_page
-+extern u8 pvclock_page[PAGE_SIZE]
- 	__attribute__((visibility("hidden")));
- #endif
- 
- #ifdef CONFIG_HYPERV_TSCPAGE
--extern u8 hvclock_page
-+extern u8 hvclock_page[PAGE_SIZE]
- 	__attribute__((visibility("hidden")));
- #endif
- 
-
-
+Barrister - John Makati, Esq
