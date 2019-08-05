@@ -2,93 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A23082555
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 21:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE73B8255A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 21:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbfHETJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 15:09:57 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44726 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728831AbfHETJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 15:09:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 12:08:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
-   d="scan'208";a="373176650"
-Received: from amerhebi-mobl1.amr.corp.intel.com (HELO [10.251.154.70]) ([10.251.154.70])
-  by fmsmga005.fm.intel.com with ESMTP; 05 Aug 2019 12:08:28 -0700
-Subject: Re: [alsa-devel] [RFC PATCH 27/40] soundwire: Add Intel resource
- management algorithm
-To:     Sanyog Kale <sanyog.r.kale@intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-28-pierre-louis.bossart@linux.intel.com>
- <20190805165422.GB24889@buildpc-HP-Z230>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <89fe8170-c252-5bea-a565-631e5b682dbb@linux.intel.com>
-Date:   Mon, 5 Aug 2019 14:08:28 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730352AbfHETLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 15:11:54 -0400
+Received: from gateway23.websitewelcome.com ([192.185.48.104]:15205 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728870AbfHETLx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 15:11:53 -0400
+X-Greylist: delayed 1387 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Aug 2019 15:11:53 EDT
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 916C7A6C2
+        for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2019 13:48:45 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ui2GhrClw90onui2HhhSc1; Mon, 05 Aug 2019 13:48:45 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ZmIHx3XJdBaj7RV/vprnPWvpQjhw5au5H8dBkUDrmrs=; b=pEWHySVGZdwEQCJOFLM85qeI43
+        oVziUhmZKzQ7l8EwanqLkBnE9dI9SRdvXqVG57KsXoGW4VXuACI7MNjh8eOsIlpP+KZQBxq5BJ2uy
+        NiFTNGtExkxVOgaP/B29A7bFDsboYbrT64GubvieaUxil0LbDBTolT/aIJT3h5vjNi4SkB0ZjzQZ2
+        n+f5N9NEvypwPfkKJ30n3ijiYXv3hhdJcEQHvjVH8KEqOcUgTLg1Zd5oHhnT8QYuxrhtlY9G4CTbF
+        laka7sJP/Y+JJNVJJjZF3udsKIWoJgj5jrp665PYmEDnxAIxBUxwV8C86zdPduJ8c9uLkGf2xJIxR
+        RyZWXYCg==;
+Received: from [187.192.11.120] (port=37266 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hui2F-002sVJ-Lx; Mon, 05 Aug 2019 13:48:43 -0500
+Date:   Mon, 5 Aug 2019 13:48:42 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Cristian Birsan <cristian.birsan@microchip.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] usb: gadget: atmel_usba_udc: Mark expected switch
+ fall-through
+Message-ID: <20190805184842.GA8627@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190805165422.GB24889@buildpc-HP-Z230>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hui2F-002sVJ-Lx
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:37266
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mark switch cases where we are expecting to fall through.
 
->> +static int sdw_select_row_col(struct sdw_bus *bus, int clk_freq)
->> +{
->> +	struct sdw_master_prop *prop = &bus->prop;
->> +	int frame_int, frame_freq;
->> +	int r, c;
->> +
->> +	for (c = 0; c < SDW_FRAME_COLS; c++) {
->> +		for (r = 0; r < SDW_FRAME_ROWS; r++) {
->> +			if (sdw_rows[r] != prop->default_row ||
->> +			    sdw_cols[c] != prop->default_col)
->> +				continue;
-> 
-> Are we only supporting default rows and cols?
+This patch fixes the following warning (Building: at91_dt_defconfig arm):
 
-for now yes. Note that the default is defined by firmware and e.g. 
-different for ICL (50x4) and CML (125x2). The firmware itself also 
-provides a single clock value so we'd need to override the DSDT or force 
-the properties to be different to use multiple gears.
+drivers/usb/gadget/udc/atmel_usba_udc.c:329:13: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-This will probably change at some point when we have multiple device per 
-link. SoundWire 1.2 devices also provide a standard means to control the 
-clock, otherwise with SoundWire 1.1 the clock management requires quite 
-a bit of imp-def changes that we have not tested.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/usb/gadget/udc/atmel_usba_udc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->> +
->> +			frame_int = sdw_rows[r] * sdw_cols[c];
->> +			frame_freq = clk_freq / frame_int;
->> +
->> +			if ((clk_freq - (frame_freq * SDW_FRAME_CTRL_BITS)) <
->> +			    bus->params.bandwidth)
->> +				continue;
->> +
->> +			bus->params.row = sdw_rows[r];
->> +			bus->params.col = sdw_cols[c];
->> +			return 0;
->> +		}
->> +	}
->> +
->> +	return -EINVAL;
->> +}
->> +
->> -- 
->> 2.20.1
->>
-> 
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
+index 503d275bc4c4..86ffc8307864 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.c
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
+@@ -327,6 +327,7 @@ static int usba_config_fifo_table(struct usba_udc *udc)
+ 	switch (fifo_mode) {
+ 	default:
+ 		fifo_mode = 0;
++		/* fall through */
+ 	case 0:
+ 		udc->fifo_cfg = NULL;
+ 		n = 0;
+-- 
+2.22.0
+
