@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D669D81A9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81A0E81A3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 15:04:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729870AbfHENHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 09:07:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45440 "EHLO mail.kernel.org"
+        id S1729006AbfHENEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 09:04:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729857AbfHENHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 09:07:44 -0400
+        id S1728934AbfHENEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 09:04:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBA7621738;
-        Mon,  5 Aug 2019 13:07:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 580EE2173C;
+        Mon,  5 Aug 2019 13:04:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565010463;
-        bh=nZJMbnrCCwT2523WvJYqEWdpmkvWRx06TB6047Q7KPI=;
+        s=default; t=1565010260;
+        bh=j8uzukzOaljmQbwdKf6UHODmpG6duIbaQra2BZu+GU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o/eM/haeNjpMuMvS7C0bnIbQBYxPnV436sMUoujE4iJezXPdEgGmBw5DfO68tZMT4
-         C5KChOfemCPbveurHxsKVZMW5kPpLAKy18MsBX1iR8u8jLKRf3C3GzZUG8i48XH7Yb
-         syZJ+9P7HDuPl1Nm+qcIXQNZyfk9Ie7exKC2zKVo=
+        b=fhFTus651N5ZyhGpZe82kr4EauJBE0S/K+SH+MnkG2g8p4n87tObC4MeCFvekyoHy
+         wuqBghgaVwO68epN0It12pvI1sr3/a/sQHRr1YQeZLJbXfIby6CHnRBskr+Byw98Ez
+         Rm3XgkZ6PMouNat7aD/6RENPYXVwVBtgDOqkjIas=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yongxin Liu <yongxin.liu@windriver.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 32/53] drm/nouveau: fix memory leak in nouveau_conn_reset()
+        stable@vger.kernel.org,
+        syzbot+fee3a14d4cdf92646287@syzkaller.appspotmail.com,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 4.4 20/22] selinux: fix memory leak in policydb_init()
 Date:   Mon,  5 Aug 2019 15:02:57 +0200
-Message-Id: <20190805124931.699313190@linuxfoundation.org>
+Message-Id: <20190805124923.189417648@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190805124927.973499541@linuxfoundation.org>
-References: <20190805124927.973499541@linuxfoundation.org>
+In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
+References: <20190805124918.070468681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 09b90e2fe35faeace2488234e2a7728f2ea8ba26 ]
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-In nouveau_conn_reset(), if connector->state is true,
-__drm_atomic_helper_connector_destroy_state() will be called,
-but the memory pointed by asyc isn't freed. Memory leak happens
-in the following function __drm_atomic_helper_connector_reset(),
-where newly allocated asyc->state will be assigned to connector->state.
+commit 45385237f65aeee73641f1ef737d7273905a233f upstream.
 
-So using nouveau_conn_atomic_destroy_state() instead of
-__drm_atomic_helper_connector_destroy_state to free the "old" asyc.
+Since roles_init() adds some entries to the role hash table, we need to
+destroy also its keys/values on error, otherwise we get a memory leak in
+the error path.
 
-Here the is the log showing memory leak.
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot+fee3a14d4cdf92646287@syzkaller.appspotmail.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-unreferenced object 0xffff8c5480483c80 (size 192):
-  comm "kworker/0:2", pid 188, jiffies 4294695279 (age 53.179s)
-  hex dump (first 32 bytes):
-    00 f0 ba 7b 54 8c ff ff 00 00 00 00 00 00 00 00  ...{T...........
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<000000005005c0d0>] kmem_cache_alloc_trace+0x195/0x2c0
-    [<00000000a122baed>] nouveau_conn_reset+0x25/0xc0 [nouveau]
-    [<000000004fd189a2>] nouveau_connector_create+0x3a7/0x610 [nouveau]
-    [<00000000c73343a8>] nv50_display_create+0x343/0x980 [nouveau]
-    [<000000002e2b03c3>] nouveau_display_create+0x51f/0x660 [nouveau]
-    [<00000000c924699b>] nouveau_drm_device_init+0x182/0x7f0 [nouveau]
-    [<00000000cc029436>] nouveau_drm_probe+0x20c/0x2c0 [nouveau]
-    [<000000007e961c3e>] local_pci_probe+0x47/0xa0
-    [<00000000da14d569>] work_for_cpu_fn+0x1a/0x30
-    [<0000000028da4805>] process_one_work+0x27c/0x660
-    [<000000001d415b04>] worker_thread+0x22b/0x3f0
-    [<0000000003b69f1f>] kthread+0x12f/0x150
-    [<00000000c94c29b7>] ret_from_fork+0x3a/0x50
-
-Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/selinux/ss/policydb.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 2c6d196836886..4a7d50a96d36f 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -251,7 +251,7 @@ nouveau_conn_reset(struct drm_connector *connector)
- 		return;
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -266,6 +266,8 @@ static int rangetr_cmp(struct hashtab *h
+ 	return v;
+ }
  
- 	if (connector->state)
--		__drm_atomic_helper_connector_destroy_state(connector->state);
-+		nouveau_conn_atomic_destroy_state(connector, connector->state);
- 	__drm_atomic_helper_connector_reset(connector, &asyc->state);
- 	asyc->dither.mode = DITHERING_MODE_AUTO;
- 	asyc->dither.depth = DITHERING_DEPTH_AUTO;
--- 
-2.20.1
-
++static int (*destroy_f[SYM_NUM]) (void *key, void *datum, void *datap);
++
+ /*
+  * Initialize a policy database structure.
+  */
+@@ -313,8 +315,10 @@ static int policydb_init(struct policydb
+ out:
+ 	hashtab_destroy(p->filename_trans);
+ 	hashtab_destroy(p->range_tr);
+-	for (i = 0; i < SYM_NUM; i++)
++	for (i = 0; i < SYM_NUM; i++) {
++		hashtab_map(p->symtab[i].table, destroy_f[i], NULL);
+ 		hashtab_destroy(p->symtab[i].table);
++	}
+ 	return rc;
+ }
+ 
 
 
