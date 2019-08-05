@@ -2,125 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C46E8814CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05EC9814FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2019 11:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbfHEJLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 05:11:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727225AbfHEJLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 05:11:46 -0400
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA22421842;
-        Mon,  5 Aug 2019 09:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564996305;
-        bh=gnyC2hoSvEsXyEk+9SVSQxo8bU7dRT/umXsVQnWKG4A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nruL27Rg7q7HfEkQNzU7wJ2xV9lrNztfc282jziQkjXRJ9CNrcLDC/LI+hxtgOjOF
-         KDmh4tg6QH6idPdzDqZfUwEMmPHV+UTpmew2eKSIJHqIYGM6mUSsAb11Gjtxsf7TPF
-         NZNC1kKTfnhszQnie0vz/V0TEadyb0BAIytVD9rc=
-Received: by mail-lf1-f41.google.com with SMTP id h28so57284631lfj.5;
-        Mon, 05 Aug 2019 02:11:44 -0700 (PDT)
-X-Gm-Message-State: APjAAAWZZtOAL2sMfPqHBzgZe2QcY3NXzT/5Ga9sUyjtzUPFiqM2XpWh
-        ASqFL4SISX0Fuhw4QG0QYAXf3qmsuDms23dRx5g=
-X-Google-Smtp-Source: APXvYqwDlSml+qhxESCbGwIQMsZLOK8jHk11V3FXbMlZ3kbLC+2Wzk3e+sJqtEqsgY34UAHDeCL2JkUH8Mp8EQwF5DU=
-X-Received: by 2002:a19:48c5:: with SMTP id v188mr69385360lfa.69.1564996303019;
- Mon, 05 Aug 2019 02:11:43 -0700 (PDT)
+        id S1728321AbfHEJNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 05:13:10 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:62353 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728069AbfHEJMS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 05:12:18 -0400
+X-UUID: 8f66d207a15445bba07f1e2efbdbe3ba-20190805
+X-UUID: 8f66d207a15445bba07f1e2efbdbe3ba-20190805
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 1169585689; Mon, 05 Aug 2019 17:12:03 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 5 Aug 2019 17:12:05 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 5 Aug 2019 17:12:05 +0800
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>,
+        Wendell Lin <wendell.lin@mediatek.com>,
+        Ivan Tseng <ivan.tseng@mediatek.com>
+Subject: [PATCH 00/11] Add basic SoC Support for Mediatek MT6779 SoC
+Date:   Mon, 5 Aug 2019 17:11:49 +0800
+Message-ID: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-References: <20190729172007.3275-1-krzk@kernel.org> <20190729172007.3275-2-krzk@kernel.org>
- <20190803154724.GS8870@X250.getinternet.no>
-In-Reply-To: <20190803154724.GS8870@X250.getinternet.no>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 5 Aug 2019 11:11:31 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPc347ffPmwjtNWBwurEOip+0-8xoxoAJS6cw6JP4b4w-w@mail.gmail.com>
-Message-ID: <CAJKOXPc347ffPmwjtNWBwurEOip+0-8xoxoAJS6cw6JP4b4w-w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ARM: dts: imx6ul-kontron-n6310: Add Kontron
- i.MX6UL N6310 SoM and boards
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Schrempf Frieder <frieder.schrempf@kontron.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 4B7BB4B967302A6224F3882B8C334D65CEAC8A715A37D03142A05D2B0A9A4D852000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Aug 2019 at 17:47, Shawn Guo <shawnguo@kernel.org> wrote:
->
-> On Mon, Jul 29, 2019 at 07:20:07PM +0200, Krzysztof Kozlowski wrote:
-> > Add support for i.MX6UL modules from Kontron Electronics GmbH (before
-> > acquisition: Exceet Electronics) and evalkit boards based on it:
-> >
-> > 1. N6310 SOM: i.MX6 UL System-on-Module, a 25x25 mm solderable module
-> >    (LGA pads and pin castellations) with 256 MB RAM, 1 MB NOR-Flash,
-> >    256 MB NAND and other interfaces,
-> > 2. N6310 S: evalkit, w/wo eMMC, without display,
-> > 3. N6310 S 43: evalkit with 4.3" display,
-> > 4. N6310 S 50: evalkit with 5.0" display.
-> >
-> > This includes device nodes for unsupported displays (Admatec
-> > T043C004800272T2A and T070P133T0S301).
->
-> Do not include unsupported devices.
->
-> >
-> > The work is based on Exceet/Kontron source code (GPLv2) with numerous
-> > changes:
-> > 1. Reorganize files,
-> > 2. Rename Exceet -> Kontron,
-> > 3. Rename models/compatibles to match newest Kontron product naming,
-> > 4. Fix coding style errors and adjust to device tree coding guidelines,
-> > 5. Fix DTC warnings,
-> > 6. Extend compatibles so eval boards inherit the SoM compatible,
-> > 7. Use defines instead of GPIO and interrupt flag values,
-> > 8. Use proper vendor compatible for Macronix SPI NOR,
-> > 9. Sort nodes alphabetically.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >
-> > ---
-> >
-> > Changes since v2, after Fabio's review:
-> > 1. Add "imx6ul" compatible to board name (that's what I understood from
-> >    review),
-> > 2. Add vendor/device prefix to eeprom and document the compatible,
-> > 3. Use "admatecde" as vendor compatible to avoid confusion with Admatec
-> >    AG in Switzerland (also making LCD panels),
-> > 4. Use generic names for nodes,
-> > 5. Use IRQ_TYPE_LEVEL_LOW,
-> > 6. Move iomux to the end of files,
-> > 7. Remove regulators node (include regulators in top level),
-> > 8. Remove cpu clock-frequency,
-> > 9. Other minor fixes pointed by Fabio.
-> >
-> > Changes since v1, after Frieder's review:
-> > 1. Remove unneeded license notes,
-> > 2. Add Kontron copyright (2018),
-> > 3. Rename the files/models/compatibles to new naming - N6310,
-> > 4. Remove unneeded CPU operating points override,
-> > 5. Switch regulator nodes into simple children nodes without addresses
-> >    (so not simple bus),
-> > 6. Use proper vendor compatible for Macronix SPI NOR.
-> > ---
-> >  .../devicetree/bindings/arm/fsl.yaml          |   4 +
-> >  .../devicetree/bindings/eeprom/at25.txt       |   1 +
->
-> Please make them two separate patches.
+This patchset is based on v5.3-rc1. Basic SoC support for the new Mediatek
+SoC, MT6779, which targets for smartphone.
 
-You mean split at25 change to separate patch? or split both - at25 and
-fsl bindings - to separate patches?
+It provides ccf, pinctrl, uart, timer, gic...etc. We will also upstream
+other parts of this SoC very soon.
 
-Best regards,
-Krzysztof
+
+Mars Cheng (8):
+  dt-bindings: mediatek: add support for mt6779 reference board
+  dt-bindings: mtk-uart: add mt6779 uart bindings
+  dt-bindings: irq: mtk,sysirq: add support for mt6779
+  pinctrl: mediatek: update pinmux defintions for mt6779
+  pinctrl: mediatek: avoid virtual gpio trying to set reg
+  pinctrl: mediatek: add pinctrl support for MT6779 SoC
+  pinctrl: mediatek: add mt6779 eint support
+  arm64: dts: add dts nodes for MT6779
+
+mtk01761 (3):
+  dt-bindings: mediatek: bindings for MT6779 clk
+  clk: mediatek: Add dt-bindings for MT6779 clocks
+  clk: mediatek: Add MT6779 clock support
+
+ .../devicetree/bindings/arm/mediatek.yaml     |    4 +
+ .../arm/mediatek/mediatek,apmixedsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt |    1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt |    1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt |    1 +
+ .../arm/mediatek/mediatek,infracfg.txt        |    1 +
+ .../bindings/arm/mediatek/mediatek,ipesys.txt |   22 +
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt |    1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt  |    1 +
+ .../arm/mediatek/mediatek,topckgen.txt        |    1 +
+ .../arm/mediatek/mediatek,vdecsys.txt         |    1 +
+ .../arm/mediatek/mediatek,vencsys.txt         |    1 +
+ .../interrupt-controller/mediatek,sysirq.txt  |    1 +
+ .../devicetree/bindings/serial/mtk-uart.txt   |    1 +
+ arch/arm64/boot/dts/mediatek/Makefile         |    1 +
+ arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi  |   99 +
+ arch/arm64/boot/dts/mediatek/mt6779.dts       |  229 ++
+ drivers/clk/mediatek/Kconfig                  |   56 +
+ drivers/clk/mediatek/Makefile                 |    9 +
+ drivers/clk/mediatek/clk-mt6779-aud.c         |  125 +
+ drivers/clk/mediatek/clk-mt6779-cam.c         |   66 +
+ drivers/clk/mediatek/clk-mt6779-img.c         |   58 +
+ drivers/clk/mediatek/clk-mt6779-ipe.c         |   60 +
+ drivers/clk/mediatek/clk-mt6779-mfg.c         |   55 +
+ drivers/clk/mediatek/clk-mt6779-mm.c          |  113 +
+ drivers/clk/mediatek/clk-mt6779-vdec.c        |   68 +
+ drivers/clk/mediatek/clk-mt6779-venc.c        |   58 +
+ drivers/clk/mediatek/clk-mt6779.c             | 1553 ++++++++++++
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6779.c     |  783 +++++++
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |   20 +
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6779.h | 2085 +++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-paris.c      |    3 +
+ include/dt-bindings/clock/mt6779-clk.h        |  436 ++++
+ include/dt-bindings/pinctrl/mt6779-pinfunc.h  | 1242 ++++++++++
+ 37 files changed, 7166 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6779.dts
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-aud.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-ipe.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6779.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6779.h
+ create mode 100644 include/dt-bindings/clock/mt6779-clk.h
+ create mode 100644 include/dt-bindings/pinctrl/mt6779-pinfunc.h
