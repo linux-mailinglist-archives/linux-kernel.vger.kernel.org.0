@@ -2,129 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E3C83AC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 23:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A866383ADC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 23:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfHFVFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 17:05:38 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34025 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfHFVFi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:05:38 -0400
-Received: by mail-ot1-f67.google.com with SMTP id n5so96145690otk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 14:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bL9WIDO7sBDPuzb3CXk+Z4+KurUQJsfGVwyfuIglMnE=;
-        b=z2yxKPxyTcUc/O0JPDhYlubCTmWn88V/XHMgPAW10JVY9PDY328HIFjdo5D72jUH9f
-         NgLzeLRf01N3eu0r1mdcfI7/BvjmTgkY/TwdpldwvbZ6CYEkwmp0eYXtVjobhRaRQuLv
-         UKVBPLyKcHIhmZ3R5exIUzoaoQVCcIZsFwVAzTGEHH8mOBIpEeJV0N4FZvasdWo3/BMo
-         KGuoLOtTZHjpAh9PykT0gDKxN/TsFkitTz6RF0I1c9hGrl8ZOrgqZWNkXh78fIJeqajS
-         J0PWgZNpFBbIOgjBn3Sa58UezqTODB4r3nJN4DcwPF/L6QTs9YSzBz3/MuR4za3eFBwA
-         +vLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bL9WIDO7sBDPuzb3CXk+Z4+KurUQJsfGVwyfuIglMnE=;
-        b=to/n2Amvmt26+Un2hlnlhYNXl5MxaLcDLySmLhC1Rsy/vu7JxBNwPNaLK1q4KYcqYI
-         G6GVjFIDb1WTgAGO9BJLZLYRIqkYVfkKDWyaj6ZMEQfB1Ca/XOFQpRsHGcNmkO1Zgtn3
-         iMW80N8kgF7pPxkCasgh7gb7Ltj2C5roPYSK8901i6tKyrVbU8+7xvcpa7Qh3cybOg5T
-         Czm/O53IhPrNz0LbJEjFtNRD1Ek8n0MeRZMiik7hImhZLQt79lydnBlCkRjtT9g/imPL
-         Z0GQJag4lb0Ec2h6tmE6gJIw8i02HCa/G2W81ucE2PSYpmlqGxVWIqmyA9b+AFoF0PTR
-         E7nQ==
-X-Gm-Message-State: APjAAAU2g0Q1CdWCergKyjTPKY/f86OfU3xGT70sMuNY22/R3NTw+qEb
-        or8Z13ieQiPHRHxVvVpvuTdD/Kam3N4pkDt/lpHi2w==
-X-Google-Smtp-Source: APXvYqz/Ak9jnetJg9GXee4VtqrfI/7ybe9DtdbHdF+C7k/OSWwPkzRw1cnJyGFIKt8iguhq8EC0LfgFQg7v9HFSu0g=
-X-Received: by 2002:a9d:470d:: with SMTP id a13mr4639053otf.126.1565125537390;
- Tue, 06 Aug 2019 14:05:37 -0700 (PDT)
+        id S1726976AbfHFVMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 17:12:19 -0400
+Received: from mga04.intel.com ([192.55.52.120]:45403 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726869AbfHFVMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 17:12:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 14:12:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
+   d="scan'208";a="349548305"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by orsmga005.jf.intel.com with ESMTP; 06 Aug 2019 14:12:17 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     dave.hansen@intel.com, anshuman.khandual@arm.com, vbabka@suse.cz,
+        mhocko@suse.com,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH V3] fork: Improve error message for corrupted page tables
+Date:   Tue,  6 Aug 2019 14:09:07 -0700
+Message-Id: <da75b5153f617f4c5739c08ee6ebeb3d19db0fbc.1565123758.git.sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <1565112345-28754-1-git-send-email-jane.chu@oracle.com> <1565112345-28754-2-git-send-email-jane.chu@oracle.com>
-In-Reply-To: <1565112345-28754-2-git-send-email-jane.chu@oracle.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 6 Aug 2019 14:05:25 -0700
-Message-ID: <CAPcyv4jv1Dr=mDkYZ62B=nZux=bFWxYFu3u_N+8Pr0i0jyM2Lg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm/memory-failure.c clean up around tk pre-allocation
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jane, looks good. Checkpatch prompts me to point out a couple more fixups:
+When a user process exits, the kernel cleans up the mm_struct of the user
+process and during cleanup, check_mm() checks the page tables of the user
+process for corruption (E.g: unexpected page flags set/cleared). For
+corrupted page tables, the error message printed by check_mm() isn't very
+clear as it prints the loop index instead of page table type (E.g: Resident
+file mapping pages vs Resident shared memory pages). The loop index in
+check_mm() is used to index rss_stat[] which represents individual memory
+type stats. Hence, instead of printing index, print memory type, thereby
+improving error message.
 
-This patch is titled:
+Without patch:
+--------------
+[  204.836425] mm/pgtable-generic.c:29: bad p4d 0000000089eb4e92(800000025f941467)
+[  204.836544] BUG: Bad rss-counter state mm:00000000f75895ea idx:0 val:2
+[  204.836615] BUG: Bad rss-counter state mm:00000000f75895ea idx:1 val:5
+[  204.836685] BUG: non-zero pgtables_bytes on freeing mm: 20480
 
-    "mm/memory-failure.c clean up..."
+With patch:
+-----------
+[   69.815453] mm/pgtable-generic.c:29: bad p4d 0000000084653642(800000025ca37467)
+[   69.815872] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_FILEPAGES val:2
+[   69.815962] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_ANONPAGES val:5
+[   69.816050] BUG: non-zero pgtables_bytes on freeing mm: 20480
 
-...to match the second patch it should be:
+Also, change print function (from printk(KERN_ALERT, ..) to pr_alert()) so
+that it matches the other print statement.
 
-    "mm/memory-failure: clean up..."
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+---
 
-On Tue, Aug 6, 2019 at 10:26 AM Jane Chu <jane.chu@oracle.com> wrote:
->
-> add_to_kill() expects the first 'tk' to be pre-allocated, it makes
-> subsequent allocations on need basis, this makes the code a bit
-> difficult to read. Move all the allocation internal to add_to_kill()
-> and drop the **tk argument.
->
-> Signed-off-by: Jane Chu <jane.chu@oracle.com>
-> ---
->  mm/memory-failure.c | 40 +++++++++++++---------------------------
->  1 file changed, 13 insertions(+), 27 deletions(-)
->
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index d9cc660..51d5b20 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -304,25 +304,19 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
->  /*
->   * Schedule a process for later kill.
->   * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
-> - * TBD would GFP_NOIO be enough?
->   */
->  static void add_to_kill(struct task_struct *tsk, struct page *p,
->                        struct vm_area_struct *vma,
-> -                      struct list_head *to_kill,
-> -                      struct to_kill **tkc)
-> +                      struct list_head *to_kill)
->  {
->         struct to_kill *tk;
->
-> -       if (*tkc) {
-> -               tk = *tkc;
-> -               *tkc = NULL;
-> -       } else {
-> -               tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
-> -               if (!tk) {
-> -                       pr_err("Memory failure: Out of memory while machine check handling\n");
-> -                       return;
-> -               }
-> +       tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
-> +       if (!tk) {
-> +               pr_err("Memory failure: Out of memory while machine check handling\n");
-> +               return;
->         }
+Changes from V2 to V3:
+----------------------
+1. Add comment that suggests to update resident_page_types[] if there are any
+   changes to exisiting page types in <linux/mm_types_task.h>
+2. Add a build check to enforce resident_page_types[] is always in sync
+3. Use a macro to populate elements of resident_page_types[]
 
-checkpatch points out that this error message can be deleted.
-According to the commit that added this check (ebfdc40969f2
-"checkpatch: attempt to find unnecessary 'out of memory' messages")
-the kernel already prints a message and a backtrace on these events,
-so seems like a decent additional cleanup to fold.
+Changes from V1 to V2:
+----------------------
+1. Move struct definition from header file to fork.c file, so that it won't be
+   included in every compilation unit. As this struct is used *only* in fork.c,
+   include the definition in fork.c itself.
+2. Index the struct to match respective macros.
+3. Mention about print function change in commit message.
 
-With those fixups you can add:
+ include/linux/mm_types_task.h |  4 ++++
+ kernel/fork.c                 | 16 ++++++++++++++--
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
+index d7016dcb245e..c1bc6731125c 100644
+--- a/include/linux/mm_types_task.h
++++ b/include/linux/mm_types_task.h
+@@ -36,6 +36,10 @@ struct vmacache {
+ 	struct vm_area_struct *vmas[VMACACHE_SIZE];
+ };
+ 
++/*
++ * When updating this, please also update struct resident_page_types[] in
++ * kernel/fork.c
++ */
+ enum {
+ 	MM_FILEPAGES,	/* Resident file mapping pages */
+ 	MM_ANONPAGES,	/* Resident anonymous pages */
+diff --git a/kernel/fork.c b/kernel/fork.c
+index d8ae0f1b4148..7583e0fde0ed 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -125,6 +125,15 @@ int nr_threads;			/* The idle threads do not count.. */
+ 
+ static int max_threads;		/* tunable limit on nr_threads */
+ 
++#define NAMED_ARRAY_INDEX(x)	[x] = __stringify(x)
++
++static const char * const resident_page_types[] = {
++	NAMED_ARRAY_INDEX(MM_FILEPAGES),
++	NAMED_ARRAY_INDEX(MM_ANONPAGES),
++	NAMED_ARRAY_INDEX(MM_SWAPENTS),
++	NAMED_ARRAY_INDEX(MM_SHMEMPAGES),
++};
++
+ DEFINE_PER_CPU(unsigned long, process_counts) = 0;
+ 
+ __cacheline_aligned DEFINE_RWLOCK(tasklist_lock);  /* outer */
+@@ -645,12 +654,15 @@ static void check_mm(struct mm_struct *mm)
+ {
+ 	int i;
+ 
++	BUILD_BUG_ON_MSG(ARRAY_SIZE(resident_page_types) != NR_MM_COUNTERS,
++			 "Please make sure 'struct resident_page_types[]' is updated as well");
++
+ 	for (i = 0; i < NR_MM_COUNTERS; i++) {
+ 		long x = atomic_long_read(&mm->rss_stat.count[i]);
+ 
+ 		if (unlikely(x))
+-			printk(KERN_ALERT "BUG: Bad rss-counter state "
+-					  "mm:%p idx:%d val:%ld\n", mm, i, x);
++			pr_alert("BUG: Bad rss-counter state mm:%p type:%s val:%ld\n",
++				 mm, resident_page_types[i], x);
+ 	}
+ 
+ 	if (mm_pgtables_bytes(mm))
+-- 
+2.7.4
 
-...along with Naoya's ack.
-
-I would Cc: Andrew Morton on the v5 posting of these as he's the
-upstream path for changes to this file.
