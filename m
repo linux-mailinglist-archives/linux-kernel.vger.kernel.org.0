@@ -2,46 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C40833BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED0CF833C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732870AbfHFORa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 10:17:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55464 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728558AbfHFORa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 10:17:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hrnXr7yGnyArLiHfQ0lWFY8+UrvOf+p4SAkiuT8O4f8=; b=G+X2quMB8Z2eErXJFz4pRAT1y
-        lM/5+AV4U5RAUlKVfPe7vxvFDZbgGyc7DnMqdugkQZKK6H+9/Hq7pFAq8FWVgIeOvkmjQ7zMrsZHW
-        4MMV8Qb05NYgYWBBHRW3q8EKNRw8Kw9zva1N7DSdFN+r+50u5ittTCpfPduyTrjtjrtHn244DLLIP
-        SFhn60qZinbI+wSPKDtaSFcXB/Of9BU2UGoDyCv4m9PQ05sYxoqeS24oE86XPpl4ritIfhJUCdogg
-        KBFZ9ghwSHOenD9sdO2D+pk4Fj3jyKlNIQ4I8h79Z5hCXKa9rMJfb+O1CRFWmg62oOnnXG+CfvySo
-        9rcZ7qkPQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hv0HC-00084U-E0; Tue, 06 Aug 2019 14:17:22 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A9D49307145;
-        Tue,  6 Aug 2019 16:16:54 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 11467201B4BAA; Tue,  6 Aug 2019 16:17:20 +0200 (CEST)
-Date:   Tue, 6 Aug 2019 16:17:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
+        id S1732978AbfHFOR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 10:17:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54570 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728558AbfHFOR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 10:17:58 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E176830083ED;
+        Tue,  6 Aug 2019 14:17:56 +0000 (UTC)
+Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C2B55C541;
+        Tue,  6 Aug 2019 14:17:53 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 10:17:51 -0400
+From:   Phil Auld <pauld@redhat.com>
 To:     Aaron Lu <aaron.lu@linux.alibaba.com>
-Cc:     Aubrey Li <aubrey.intel@gmail.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
+Cc:     Julien Desfossez <jdesfossez@digitalocean.com>,
+        "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
         Subhra Mazumdar <subhra.mazumdar@oracle.com>,
         Vineeth Remanan Pillai <vpillai@digitalocean.com>,
         Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Tim Chen <tim.c.chen@linux.intel.com>,
         Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -50,73 +37,159 @@ Cc:     Aubrey Li <aubrey.intel@gmail.com>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
         Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Greg Kerr <kerrnel@google.com>,
         Valentin Schneider <valentin.schneider@arm.com>,
         Mel Gorman <mgorman@techsingularity.net>,
         Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 2/3] core vruntime comparison
-Message-ID: <20190806141720.GS2332@hirez.programming.kicks-ass.net>
-References: <20190606152637.GA5703@sinkpad>
- <20190612163345.GB26997@sinkpad>
- <635c01b0-d8f3-561b-5396-10c75ed03712@oracle.com>
- <20190613032246.GA17752@sinkpad>
- <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+Message-ID: <20190806141750.GA20858@pauld.bos.csb>
+References: <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
  <20190619183302.GA6775@sinkpad>
  <20190718100714.GA469@aaronlu>
  <CAERHkrtvLKxrpvfw04urAuougsYOWnNw4-H1vUDFx27Dvy0=Ww@mail.gmail.com>
  <20190725143003.GA992@aaronlu>
- <20190725143248.GC992@aaronlu>
+ <20190726152101.GA27884@sinkpad>
+ <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
+ <20190802153715.GA18075@sinkpad>
+ <20190805200914.GD20173@pauld.bos.csb>
+ <20190806135401.GB46757@aaronlu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190725143248.GC992@aaronlu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190806135401.GB46757@aaronlu>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 06 Aug 2019 14:17:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 10:32:49PM +0800, Aaron Lu wrote:
-> +bool cfs_prio_less(struct task_struct *a, struct task_struct *b)
-> +{
-> +	struct sched_entity *sea = &a->se;
-> +	struct sched_entity *seb = &b->se;
-> +	bool samecpu = task_cpu(a) == task_cpu(b);
-> +	struct task_struct *p;
-> +	s64 delta;
-> +
-> +	if (samecpu) {
-> +		/* vruntime is per cfs_rq */
-> +		while (!is_same_group(sea, seb)) {
-> +			int sea_depth = sea->depth;
-> +			int seb_depth = seb->depth;
-> +
-> +			if (sea_depth >= seb_depth)
-> +				sea = parent_entity(sea);
-> +			if (sea_depth <= seb_depth)
-> +				seb = parent_entity(seb);
-> +		}
-> +
-> +		delta = (s64)(sea->vruntime - seb->vruntime);
-> +		goto out;
-> +	}
-> +
-> +	/* crosscpu: compare root level se's vruntime to decide priority */
-> +	while (sea->parent)
-> +		sea = sea->parent;
-> +	while (seb->parent)
-> +		seb = seb->parent;
-> +	delta = (s64)(sea->vruntime - seb->vruntime);
-> +
-> +out:
-> +	p = delta > 0 ? b : a;
-> +	trace_printk("picked %s/%d %s: %Ld %Ld %Ld\n", p->comm, p->pid,
-> +			samecpu ? "samecpu" : "crosscpu",
-> +			sea->vruntime, seb->vruntime, delta);
-> +
-> +	return delta > 0;
->  }
+On Tue, Aug 06, 2019 at 09:54:01PM +0800 Aaron Lu wrote:
+> On Mon, Aug 05, 2019 at 04:09:15PM -0400, Phil Auld wrote:
+> > Hi,
+> > 
+> > On Fri, Aug 02, 2019 at 11:37:15AM -0400 Julien Desfossez wrote:
+> > > We tested both Aaron's and Tim's patches and here are our results.
+> > > 
+> > > Test setup:
+> > > - 2 1-thread sysbench, one running the cpu benchmark, the other one the
+> > >   mem benchmark
+> > > - both started at the same time
+> > > - both are pinned on the same core (2 hardware threads)
+> > > - 10 30-seconds runs
+> > > - test script: https://paste.debian.net/plainh/834cf45c
+> > > - only showing the CPU events/sec (higher is better)
+> > > - tested 4 tag configurations:
+> > >   - no tag
+> > >   - sysbench mem untagged, sysbench cpu tagged
+> > >   - sysbench mem tagged, sysbench cpu untagged
+> > >   - both tagged with a different tag
+> > > - "Alone" is the sysbench CPU running alone on the core, no tag
+> > > - "nosmt" is both sysbench pinned on the same hardware thread, no tag
+> > > - "Tim's full patchset + sched" is an experiment with Tim's patchset
+> > >   combined with Aaron's "hack patch" to get rid of the remaining deep
+> > >   idle cases
+> > > - In all test cases, both tasks can run simultaneously (which was not
+> > >   the case without those patches), but the standard deviation is a
+> > >   pretty good indicator of the fairness/consistency.
+> > > 
+> > > No tag
+> > > ------
+> > > Test                            Average     Stdev
+> > > Alone                           1306.90     0.94
+> > > nosmt                           649.95      1.44
+> > > Aaron's full patchset:          828.15      32.45
+> > > Aaron's first 2 patches:        832.12      36.53
+> > > Aaron's 3rd patch alone:        864.21      3.68
+> > > Tim's full patchset:            852.50      4.11
+> > > Tim's full patchset + sched:    852.59      8.25
+> > > 
+> > > Sysbench mem untagged, sysbench cpu tagged
+> > > ------------------------------------------
+> > > Test                            Average     Stdev
+> > > Alone                           1306.90     0.94
+> > > nosmt                           649.95      1.44
+> > > Aaron's full patchset:          586.06      1.77
+> > > Aaron's first 2 patches:        630.08      47.30
+> > > Aaron's 3rd patch alone:        1086.65     246.54
+> > > Tim's full patchset:            852.50      4.11
+> > > Tim's full patchset + sched:    390.49      15.76
+> > > 
+> > > Sysbench mem tagged, sysbench cpu untagged
+> > > ------------------------------------------
+> > > Test                            Average     Stdev
+> > > Alone                           1306.90     0.94
+> > > nosmt                           649.95      1.44
+> > > Aaron's full patchset:          583.77      3.52
+> > > Aaron's first 2 patches:        513.63      63.09
+> > > Aaron's 3rd patch alone:        1171.23     3.35
+> > > Tim's full patchset:            564.04      58.05
+> > > Tim's full patchset + sched:    1026.16     49.43
+> > > 
+> > > Both sysbench tagged
+> > > --------------------
+> > > Test                            Average     Stdev
+> > > Alone                           1306.90     0.94
+> > > nosmt                           649.95      1.44
+> > > Aaron's full patchset:          582.15      3.75
+> > > Aaron's first 2 patches:        561.07      91.61
+> > > Aaron's 3rd patch alone:        638.49      231.06
+> > > Tim's full patchset:            679.43      70.07
+> > > Tim's full patchset + sched:    664.34      210.14
+> > > 
+> > 
+> > Sorry if I'm missing something obvious here but with only 2 processes 
+> > of interest shouldn't one tagged and one untagged be about the same
+> > as both tagged?  
+> 
+> It should.
+> 
+> > In both cases the 2 sysbenches should not be running on the core at 
+> > the same time. 
+> 
+> Agree.
+> 
+> > There will be times when oher non-related threads could share the core
+> > with the untagged one. Is that enough to account for this difference?
+> 
+> What difference do you mean?
 
-Heh.. I suppose the good news is that Rik is trying very hard to kill
-the nested runqueues, which would make this _much_ easier again.
+
+I was looking at the above posted numbers. For example:
+
+> > > Sysbench mem untagged, sysbench cpu tagged
+> > > Aaron's 3rd patch alone:        1086.65     246.54
+
+> > > Sysbench mem tagged, sysbench cpu untagged
+> > > Aaron's 3rd patch alone:        1171.23     3.35
+
+> > > Both sysbench tagged
+> > > Aaron's 3rd patch alone:        638.49      231.06
+
+
+Admittedly, there's some high variance on some of those numbers. 
+
+
+Cheers,
+Phil
+
+> 
+> Thanks,
+> Aaron
+> 
+> > > So in terms of fairness, Aaron's full patchset is the most consistent, but only
+> > > Tim's patchset performs better than nosmt in some conditions.
+> > > 
+> > > Of course, this is one of the worst case scenario, as soon as we have
+> > > multithreaded applications on overcommitted systems, core scheduling performs
+> > > better than nosmt.
+> > > 
+> > > Thanks,
+> > > 
+> > > Julien
+> > 
+> > -- 
+
+-- 
