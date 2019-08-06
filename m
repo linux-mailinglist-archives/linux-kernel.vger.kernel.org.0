@@ -2,342 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A8382993
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 04:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B864082999
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 04:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731434AbfHFCWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 22:22:36 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3764 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729921AbfHFCWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 22:22:35 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 003FABA19E8410753350;
-        Tue,  6 Aug 2019 10:22:33 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 6 Aug 2019
- 10:22:32 +0800
-Subject: Re: [PATCH v3 RESEND] f2fs: introduce sb.required_features to store
- incompatible features
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Chao Yu <chao@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20190730231850.GA7097@jaegeuk-macbookpro.roam.corp.google.com>
- <c7232d80-a4d8-88ae-2eca-01290dd0e56a@huawei.com>
- <20190801042215.GC84433@jaegeuk-macbookpro.roam.corp.google.com>
- <345c55ea-01c2-a9d1-4367-716dbd08ae9d@huawei.com>
- <20190801223509.GB27597@jaegeuk-macbookpro.roam.corp.google.com>
- <8e906ddb-81d8-b63e-0c19-1ee9fc7f5cbf@huawei.com>
- <20190806003522.GA98101@jaegeuk-macbookpro.roam.corp.google.com>
- <e48514d5-0f3f-8dd7-06ab-b7faf71101ba@huawei.com>
- <20190806012407.GB1029@jaegeuk-macbookpro.roam.corp.google.com>
- <103d1df0-eb5b-4854-0959-a84785eb85a8@huawei.com>
- <20190806021144.GB7280@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <a155121f-2e1b-c3c5-17bb-b5ac3f4a7b1f@huawei.com>
-Date:   Tue, 6 Aug 2019 10:22:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1731463AbfHFCZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 22:25:19 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:61342 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729921AbfHFCZT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 22:25:19 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=shannon.zhao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TYmcN8B_1565058293;
+Received: from 30.43.122.7(mailfrom:shannon.zhao@linux.alibaba.com fp:SMTPD_---0TYmcN8B_1565058293)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 06 Aug 2019 10:24:54 +0800
+Subject: Re: [PATCH] PCI: Add ACS quirk for Cavium ThunderX 2 root port
+ devices
+To:     Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Shannon Zhao <shenglong.zsl@alibaba-inc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Guiping Duan <gduan@marvell.com>,
+        George Cherian <gcherian@marvell.com>,
+        Sunil Kovvuri Goutham <sgoutham@marvell.com>
+References: <1563541835-141011-1-git-send-email-shenglong.zsl@alibaba-inc.com>
+ <20190724185535.GD203187@google.com>
+ <20190725163453.GA28724@dc5-eodlnx05.marvell.com>
+From:   Shannon Zhao <shannon.zhao@linux.alibaba.com>
+Message-ID: <7405c4fd-a1f6-9e0b-2d9c-10d8c101bbef@linux.alibaba.com>
+Date:   Tue, 6 Aug 2019 10:24:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190806021144.GB7280@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20190725163453.GA28724@dc5-eodlnx05.marvell.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/6 10:11, Jaegeuk Kim wrote:
-> On 08/06, Chao Yu wrote:
->> On 2019/8/6 9:24, Jaegeuk Kim wrote:
->>> On 08/06, Chao Yu wrote:
->>>> On 2019/8/6 8:35, Jaegeuk Kim wrote:
->>>>> On 08/02, Chao Yu wrote:
->>>>>> On 2019/8/2 6:35, Jaegeuk Kim wrote:
->>>>>>> On 08/01, Chao Yu wrote:
->>>>>>>> On 2019/8/1 12:22, Jaegeuk Kim wrote:
->>>>>>>>> On 07/31, Chao Yu wrote:
->>>>>>>>>> On 2019/7/31 7:18, Jaegeuk Kim wrote:
->>>>>>>>>>> On 07/29, Chao Yu wrote:
->>>>>>>>>>>> From: Chao Yu <yuchao0@huawei.com>
->>>>>>>>>>>>
->>>>>>>>>>>> Later after this patch was merged, all new incompatible feature's
->>>>>>>>>>>> bit should be added into sb.required_features field, and define new
->>>>>>>>>>>> feature function with F2FS_INCOMPAT_FEATURE_FUNCS() macro.
->>>>>>>>>>>>
->>>>>>>>>>>> Then during mount, we will do sanity check with enabled features in
->>>>>>>>>>>> image, if there are features in sb.required_features that kernel can
->>>>>>>>>>>> not recognize, just fail the mount.
->>>>>>>>>>>>
->>>>>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>>>>>>>> ---
->>>>>>>>>>>> v3:
->>>>>>>>>>>> - change commit title.
->>>>>>>>>>>> - fix wrong macro name.
->>>>>>>>>>>>  fs/f2fs/f2fs.h          | 15 +++++++++++++++
->>>>>>>>>>>>  fs/f2fs/super.c         | 10 ++++++++++
->>>>>>>>>>>>  include/linux/f2fs_fs.h |  3 ++-
->>>>>>>>>>>>  3 files changed, 27 insertions(+), 1 deletion(-)
->>>>>>>>>>>>
->>>>>>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>>>>>>>> index a6eb828af57f..b8e17d4ddb8d 100644
->>>>>>>>>>>> --- a/fs/f2fs/f2fs.h
->>>>>>>>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>>>>>>>> @@ -163,6 +163,15 @@ struct f2fs_mount_info {
->>>>>>>>>>>>  #define F2FS_CLEAR_FEATURE(sbi, mask)					\
->>>>>>>>>>>>  	(sbi->raw_super->feature &= ~cpu_to_le32(mask))
->>>>>>>>>>>>  
->>>>>>>>>>>> +#define F2FS_INCOMPAT_FEATURES		0
->>>>>>>>>>>> +
->>>>>>>>>>>> +#define F2FS_HAS_INCOMPAT_FEATURE(sbi, mask)				\
->>>>>>>>>>>> +	((sbi->raw_super->required_features & cpu_to_le32(mask)) != 0)
->>>>>>>>>>>> +#define F2FS_SET_INCOMPAT_FEATURE(sbi, mask)				\
->>>>>>>>>>>> +	(sbi->raw_super->required_features |= cpu_to_le32(mask))
->>>>>>>>>>>> +#define F2FS_CLEAR_INCOMPAT_FEATURE(sbi, mask)				\
->>>>>>>>>>>> +	(sbi->raw_super->required_features &= ~cpu_to_le32(mask))
->>>>>>>>>>>> +
->>>>>>>>>>>>  /*
->>>>>>>>>>>>   * Default values for user and/or group using reserved blocks
->>>>>>>>>>>>   */
->>>>>>>>>>>> @@ -3585,6 +3594,12 @@ F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
->>>>>>>>>>>>  F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
->>>>>>>>>>>>  F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
->>>>>>>>>>>>  
->>>>>>>>>>>> +#define F2FS_INCOMPAT_FEATURE_FUNCS(name, flagname) \
->>>>>>>>>>>> +static inline int f2fs_sb_has_##name(struct f2fs_sb_info *sbi) \
->>>>>>>>>>>> +{ \
->>>>>>>>>>>> +	return F2FS_HAS_INCOMPAT_FEATURE(sbi, F2FS_FEATURE_##flagname); \
->>>>>>>>>>>> +}
->>>>>>>>>>>> +
->>>>>>>>>>>>  #ifdef CONFIG_BLK_DEV_ZONED
->>>>>>>>>>>>  static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
->>>>>>>>>>>>  				    block_t blkaddr)
->>>>>>>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>>>>>>>>> index 5540fee0fe3f..3701dcce90e6 100644
->>>>>>>>>>>> --- a/fs/f2fs/super.c
->>>>>>>>>>>> +++ b/fs/f2fs/super.c
->>>>>>>>>>>> @@ -2513,6 +2513,16 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->>>>>>>>>>>>  		return -EINVAL;
->>>>>>>>>>>>  	}
->>>>>>>>>>>>  
->>>>>>>>>>>> +	/* check whether current kernel supports all features on image */
->>>>>>>>>>>> +	if (le32_to_cpu(raw_super->required_features) &
->>>>>>>>>>>
->>>>>>>>>>> ...
->>>>>>>>>>> #define F2FS_FEATURE_VERITY	0x0400	/* reserved */
->>>>>>>>>>> ...
->>>>>>>>>>> #define F2FS_FEATURE_CASEFOLD	0x1000
->>>>>>>>>>> #define F2FS_FEATURE_SUPPORT	0x1BFF
->>>>>>>>>>>
->>>>>>>>>>> 	if (le32_to_cpu(raw_super->required_features) & ~F2FS_FEATURE_SUPPORT) {
->>>>>>>>>>> 		...
->>>>>>>>>>> 		return -EINVAL;
->>>>>>>>>>> 	}
->>>>>>>>>>
->>>>>>>>>> Um, I thought .required_features are used to store new feature flags from 0x0.
->>>>>>>>>>
->>>>>>>>>> All 'F2FS_FEATURE_SUPPORT' bits should be stored in sb.feature instead of
->>>>>>>>>> sb.required_features, I'm confused...
->>>>>>>>>
->>>>>>>>> I'm thinking,
->>>>>>>>>
->>>>>>>>> f2fs-tools     sb->required_features     f2fs    F2FS_FEATURE_SUPPORT
->>>>>>>>> v0             0                         v0      no_check -> ok
->>>>>>>>> v1             0x1BFF                    v0      no_check -> ok
->>>>>>>>> v0             0                         v1      0x1BFF -> ok
->>>>>>>>> v1             0x1BFF                    v1      0x1BFF -> ok
->>>>>>>>> v2             0x3BFF                    v1      0x1BFF -> fail
->>>>>>>>> v1             0x1BFF                    v2      0x3BFF -> ok
->>>>>>>>> v2             0x3BFF                    v2      0x3BFF -> ok
->>>>>>>>
->>>>>>>> I see, it's a bit waste for 0x1FFF low bits in sb->required_features. Why not
->>>>>>>> leaving 0x0FFF in sb->feature w/o sanity check. And make all new incompatible
->>>>>>>> features (including casefold) adding into sb->required_features.
->>>>>>>
->>>>>>> I don't think we can define like this, and we still have 32bits feature filed.
->>>>>>> This would give another confusion to understand. VERITY is reserved only now.
->>>>>>>
->>>>>>> #define F2FS_FEATURE_CASEFOLD		0x0001
->>>>>>
->>>>>> Oops, so you want to make .required_features being almost a mirror of .feature,
->>>>>> and do sanity check on it... I can see now. :P
->>>>>>
->>>>>> If so, why not just use .feature:
->>>>>
->>>>> Sometimes, we don't need to set the flag, but not required at some point.
->>>>> (e.g., verify)
->>>>
->>>> Sorry, I'm not sure whether I have understood your point... :(
->>>>
->>>> IIUC of your point, we have defined F2FS_FEATURE_SUPPORT (0x0BFF) which excludes
->>>> F2FS_FEATURE_VERITY (0x0400) feature bit, then once verity feature merged in
->>>> kernel, we can add it into F2FS_FEATURE_SUPPORT, any problem we may face here?
+
+
+On 2019/7/26 0:35, Jayachandran Chandrasekharan Nair wrote:
+> On Wed, Jul 24, 2019 at 01:55:35PM -0500, Bjorn Helgaas wrote:
+>> See
+>> https://lkml.kernel.org/r/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com
+>> for incidental hints (subject, commit log, commit reference).  Your
+>> patch basically extends that commit, so the subject should be very
+>> similar.
+>>
+>> On Fri, Jul 19, 2019 at 09:10:35PM +0800, Shannon Zhao wrote:
+>>> From: Shannon Zhao <shannon.zhao@linux.alibaba.com>
 >>>
->>> I was thinking the cases like "don't care features" made by mkfs. For example,
->>> mkfs can set F2FS_FEATURE_BLKZONED, which doesn't need f2fs being supported.
+>>> Like commit f2ddaf8(PCI: Apply Cavium ThunderX ACS quirk to more Root
+>>> Ports), it should apply ACS quirk to ThunderX 2 root port devices.
 >>
->> Yes, I can understand this.
+>> s/root port/Root Port/ to be consistent
 >>
->> So F2FS_FEATURE_SUPPORT can exclude them directly?
+>>> Signed-off-by: Shannon Zhao <shannon.zhao@linux.alibaba.com>
+>>
+>> I suppose this should have the same stable tag as f2ddaf8dfd4a ("PCI:
+>> Apply Cavium ThunderX ACS quirk to more Root Ports") itself?
+>>> ---
+>>>   drivers/pci/quirks.c | 4 +++-
+>>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>>> index 28c64f8..ea7848b 100644
+>>> --- a/drivers/pci/quirks.c
+>>> +++ b/drivers/pci/quirks.c
+>>> @@ -4224,10 +4224,12 @@ static bool pci_quirk_cavium_acs_match(struct pci_dev *dev)
+>>>   	 * family by 0xf800 mask (which represents 8 SoCs), while the lower
+>>>   	 * bits of device ID are used to indicate which subdevice is used
+>>>   	 * within the SoC.
+>>> +	 * Effectively selects the ThunderX 2 root ports whose device ID
+>>> +	 * is 0xaf84.
+>>>   	 */
+>>>   	return (pci_is_pcie(dev) &&
+>>>   		(pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) &&
+>>> -		((dev->device & 0xf800) == 0xa000));
+>>> +		((dev->device & 0xf800) == 0xa000 || dev->device == 0xaf84));
+>>
+>> I'm somewhat doubtful about this because previously we at least
+>> selected a whole class of ThunderX 1 devices:
+>>
+>>    ((dev->device & 0xf800) == 0xa000)
+>>
+>> while you're adding only a *single* ThunderX device.
+>>
+>> I don't want a constant trickle of adding new devices.  Can somebody
+>> from Cavium or Marvell provide a corresponding mask for ThunderX 2, or
+>> confirm that 0xaf84 is really the single device we expect to need
+>> here?
+>   
+> We are working on a patch to fix this quirk to handle more Marvell
+> (Cavium) PCI IDs. Ideally we should be handling ThunderX1, ThunderX2
+> and the Octeon-TX families here.
 > 
-> No, I'd like to control it via mkfs. Kernel always needs to say what they can
-> support, IIUC your point.
-
-Oh, it's different macros, we will define F2FS_INCOMPAT_FEATURE_SUPPORT 0x19B9,
-and F2FS_ALL_FEATURE_SUPPORT (0x0001 | 0x0002 ... ).
-
-In sanity check function, we only check .feature with
-F2FS_INCOMPAT_FEATURE_SUPPORT. And of course, meanwhile kernel will say it
-supports features in F2FS_ALL_FEATURE_SUPPORT.
+> Adding the folks working on this reduce the churn here, hopefully
+> we can get all of it sorted in one patch.
+>   
+That would be better. Please CC me when you send the patch out.
 
 Thanks,
-
-> 
->>
->> excluded:
->>
->> #define F2FS_FEATURE_BLKZONED		0x0002
->> #define F2FS_FEATURE_ATOMIC_WRITE	0x0004
->> #define F2FS_FEATURE_LOST_FOUND		0x0200
->>
->> included:
->>
->> #define F2FS_FEATURE_ENCRYPT		0x0001
->> #define F2FS_FEATURE_EXTRA_ATTR		0x0008
->> #define F2FS_FEATURE_PRJQUOTA		0x0010
->> #define F2FS_FEATURE_INODE_CHKSUM	0x0020
->> #define F2FS_FEATURE_FLEXIBLE_INLINE_XATTR	0x0040
->> #define F2FS_FEATURE_QUOTA_INO		0x0080
->> #define F2FS_FEATURE_INODE_CRTIME	0x0100
->> #define F2FS_FEATURE_SB_CHKSUM		0x0800
->> //#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
->> #define F2FS_FEATURE_CASEFOLD		0x1000
->>
->> #define F2FS_FEATURE_SUPPORT		0x19B9
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks
->>>>
->>>>>
->>>>>>
->>>>>> kernel	tool
->>>>>> v5.2 .. 1.12
->>>>>> #define	F2FS_FEATURE_SUPPORT		0x0BFF
->>>>>>
->>>>>> v5.3 .. 1.13
->>>>>> #define F2FS_FEATURE_CASEFOLD		0x1000
->>>>>> #define	F2FS_FEATURE_SUPPORT		0x1BFF
->>>>>>
->>>>>> v5.4 .. 1.14
->>>>>> #define F2FS_FEATURE_CASEFOLD		0x1000
->>>>>> #define F2FS_FEATURE_COMPRESS		0x2000
->>>>>> #define	F2FS_FEATURE_SUPPORT		0x3BFF
->>>>>>
->>>>>> f2fs-tools	sb->feature		f2fs	F2FS_FEATURE_SUPPORT
->>>>>>
->>>>>> [enable all features in tools]
->>>>>> v1.12		0x0BFF			v5.2	no_check -> ok
->>>>>> v1.12		0x0BFF			v5.3	0x1BFF -> ok
->>>>>> v1.12		0x0BFF			v5.4	0x3BFF -> ok
->>>>>>
->>>>>> v1.13		0x1BFF			v5.2	that's issue we need to fix
->>>>>> v1.13		0x1BFF			v5.3	0x1BFF -> ok
->>>>>> v1.13		0x1BFF			v5.4	0x3BFF -> ok
->>>>>>
->>>>>> v1.14		0x3BFF			v5.2	that's issue we need to fix
->>>>>> v1.14		0x3BFF			v5.3	0x1BFF -> fail
->>>>>> v1.14		0x3BFF			v5.4	0x3BFF -> ok
->>>>>>
->>>>>> Or am I missing something?
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Then that would be:
->>>>>>>>
->>>>>>>> kernel	tool
->>>>>>>> v5.2 .. 1.12
->>>>>>>> #define	F2FS_FEATURE_SUPPORT		0x0000
->>>>>>>>
->>>>>>>> v5.3 .. 1.13
->>>>>>>> #define F2FS_FEATURE_CASEFOLD		0x0001
->>>>>>>> #define	F2FS_FEATURE_SUPPORT		0x0001
->>>>>>>>
->>>>>>>> v5.4 .. 1.14
->>>>>>>> #define F2FS_FEATURE_CASEFOLD		0x0001
->>>>>>>> #define F2FS_FEATURE_COMPRESS		0x0002
->>>>>>>> #define	F2FS_FEATURE_SUPPORT		0x0003
->>>>>>>>
->>>>>>>> f2fs-tools	sb->required_features	f2fs	F2FS_FEATURE_SUPPORT
->>>>>>>>
->>>>>>>> v1.12		0x0000			v5.2	no_check -> ok
->>>>>>>> v1.12		0x0000			v5.3	0x0001 -> ok
->>>>>>>> v1.12		0x0000			v5.4	0x0003 -> ok
->>>>>>>>
->>>>>>>> v1.13		0x0001			v5.2	that's issue we need to fix
->>>>>>>> v1.13		0x0001			v5.3	0x0001 -> ok
->>>>>>>> v1.13		0x0001			v5.4	0x0003 -> ok
->>>>>>>>
->>>>>>>> v1.14		0x0003			v5.2	that's issue we need to fix
->>>>>>>> v1.14		0x0003			v5.3	0x0001 -> fail
->>>>>>>> v1.14		0x0003			v5.4	0x0003 -> ok
->>>>>>>>
->>>>>>>> And all compatible features can be added into sb->feature[_VERITY, ....].
->>>>>>>>
->>>>>>>> Would that okay to you?
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>>
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Thanks,
->>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>>> +			~F2FS_INCOMPAT_FEATURES) {
->>>>>>>>>>>> +		f2fs_info(sbi, "Unsupported feature: %x: supported: %x",
->>>>>>>>>>>> +			  le32_to_cpu(raw_super->required_features) ^
->>>>>>>>>>>> +			  F2FS_INCOMPAT_FEATURES,
->>>>>>>>>>>> +			  F2FS_INCOMPAT_FEATURES);
->>>>>>>>>>>> +		return -EINVAL;
->>>>>>>>>>>> +	}
->>>>>>>>>>>> +
->>>>>>>>>>>>  	/* Check checksum_offset and crc in superblock */
->>>>>>>>>>>>  	if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_SB_CHKSUM)) {
->>>>>>>>>>>>  		crc_offset = le32_to_cpu(raw_super->checksum_offset);
->>>>>>>>>>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->>>>>>>>>>>> index a2b36b2e286f..4141be3f219c 100644
->>>>>>>>>>>> --- a/include/linux/f2fs_fs.h
->>>>>>>>>>>> +++ b/include/linux/f2fs_fs.h
->>>>>>>>>>>> @@ -117,7 +117,8 @@ struct f2fs_super_block {
->>>>>>>>>>>>  	__u8 hot_ext_count;		/* # of hot file extension */
->>>>>>>>>>>>  	__le16	s_encoding;		/* Filename charset encoding */
->>>>>>>>>>>>  	__le16	s_encoding_flags;	/* Filename charset encoding flags */
->>>>>>>>>>>> -	__u8 reserved[306];		/* valid reserved region */
->>>>>>>>>>>> +	__le32 required_features;       /* incompatible features to old kernel */
->>>>>>>>>>>> +	__u8 reserved[302];		/* valid reserved region */
->>>>>>>>>>>>  	__le32 crc;			/* checksum of superblock */
->>>>>>>>>>>>  } __packed;
->>>>>>>>>>>>  
->>>>>>>>>>>> -- 
->>>>>>>>>>>> 2.22.0
->>>>>>>>>>> .
->>>>>>>>>>>
->>>>>>>>> .
->>>>>>>>>
->>>>>>> .
->>>>>>>
->>>>> .
->>>>>
->>> .
->>>
-> .
-> 
+Shannon
