@@ -2,96 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3931C829AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 04:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C44829A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 04:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731541AbfHFCcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 22:32:08 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4178 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731306AbfHFCcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 22:32:07 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5BC7D11547BD51E5C9F0;
-        Tue,  6 Aug 2019 10:32:05 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 6 Aug 2019 10:31:58 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>, <linux-mm@kvack.org>
-Subject: [PATCH] mm/mempolicy.c: Remove unnecessary nodemask check in kernel_migrate_pages()
-Date:   Tue, 6 Aug 2019 10:36:34 +0800
-Message-ID: <20190806023634.55356-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1731417AbfHFCbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 22:31:01 -0400
+Received: from twhmllg4.macronix.com ([211.75.127.132]:63478 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731181AbfHFCbB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 22:31:01 -0400
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG4.macronix.com with ESMTP id x762UI08046114;
+        Tue, 6 Aug 2019 10:30:18 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        lee.jones@linaro.org, sergei.shtylyov@cogentembedded.com,
+        Mason Yang <masonccyang@mxic.com.tw>, marek.vasut@gmail.com,
+        miquel.raynal@bootlin.com
+Subject: [PATCH v17 0/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI driver
+Date:   Tue,  6 Aug 2019 10:54:19 +0800
+Message-Id: <1565060061-11588-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG4.macronix.com x762UI08046114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1) task_nodes = cpuset_mems_allowed(current);
-   -> cpuset_mems_allowed() guaranteed to return some non-empty
-      subset of node_states[N_MEMORY].
+Hi Mark,
 
-2) nodes_and(*new, *new, task_nodes);
-   -> after nodes_and(), the 'new' should be empty or appropriate
-      nodemask(online node and with memory).
+v17 patch including:
+1) patch adding rpc_spi_hw_init() after reset_control_rest()
+2) v14 dt-binding file has reviewed by Rob Herring.
 
-After 1) and 2), we could remove unnecessary check whether the 'new'
-AND node_states[N_MEMORY] is empty.
+v16 patch including:
+1) fixed typo and spi-tx/rx-bus-width in DTS.
+2) v14 dt-binding file has reviewed by Rob Herring.
 
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: linux-mm@kvack.org
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
+v15 patch including:
+1) A typo in dt-bindings and add flash subnode description
+2) v14 dt-binding file has reviewed by Rob Herring.
 
-[QUESTION]
+v14 patch including:
+1) Patch RPC-IF back to SPI mode only instead of MFD & SPI 
+   by MFD maintainer, Lee Jones comments.
+2) Patch pm_runtime control in spi transfer.
 
-SYSCALL_DEFINE4(migrate_pages, pid_t, pid, unsigned long, maxnode,
-                const unsigned long __user *, old_nodes,
-                const unsigned long __user *, new_nodes)
-{
-        return kernel_migrate_pages(pid, maxnode, old_nodes, new_nodes);
-}
+v13 patch including:
+1) rename mfd to ddata for SPI driver.
+2) Patch RPC-IF devicetree for SPI and HyperFlash.
 
-The migrate_pages() takes pid argument, witch is the ID of the process
-whose pages are to be moved. should the cpuset_mems_allowed(current) be
-cpuset_mems_allowed(task)?
+v12 patch including:
+1) add back "wbuf" in dts example.
+2) RPC-IF replace rpc-if in dts.
 
- mm/mempolicy.c | 4 ----
- 1 file changed, 4 deletions(-)
+v11 patch including:
+1) Patch mfd include header file.
+2) mfd coding style.
+3) add back wbuf description in dts.
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index f48693f75b37..fceb44066184 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1467,10 +1467,6 @@ static int kernel_migrate_pages(pid_t pid, unsigned long maxnode,
- 	if (nodes_empty(*new))
- 		goto out_put;
- 
--	nodes_and(*new, *new, node_states[N_MEMORY]);
--	if (nodes_empty(*new))
--		goto out_put;
--
- 	err = security_task_movememory(task);
- 	if (err)
- 		goto out_put;
+v10 patch including:
+1) Address range for > 64M byte flash.
+2) Removed dirmap_write due to WBUF 256 bytes transfer issue.
+3) Dummy bytes setting according to spi-nor.c layer.
+
+v9 patch is for RPC MFD driver and RPC SPI driver.
+
+v8 patch including:
+1) Supported SoC-specific values in DTS.
+2) Rename device node name as flash.
+
+v7 patch is according to Geert and Sergei's comments:
+1) Add all R-Car Gen3 model in dts.
+2) patch rpc-if child node search.
+3) minror coding style.
+
+v6 patch is accroding to Geert, Marek and Sergei's comments:
+1) spi_controller for new code.
+2) "renesas,rcar-gen3-rpc" instead of "renesas,r8a77995-rpc."
+3) patch external address read mode w/o u64 readq().
+4) patch dts for write buffer & drop "renesas,rpc-mode".
+5) coding style and so on.
+
+v5 patch is accroding to Sergei's comments:
+1) Read 6 bytes ID from Sergei's patch.
+2) regmap_update_bits().
+3) C++ style comment.
+
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match().
+2) Drop unused RPC registers.
+3) Use ilog2() instead of fls().
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
+
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned().
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
+
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM.
+3) add RPC module software reset,
+4) add regmap.
+5) other coding style and so on.
+
+thanks for your review.
+
+best regards,
+Mason
+
+
+Mason Yang (2):
+  spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+  dt-bindings: spi: Document Renesas R-Car Gen3 RPC-IF controller
+    bindings
+
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  45 ++
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 756 +++++++++++++++++++++
+ 4 files changed, 808 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+
 -- 
-2.20.1
+1.9.1
 
