@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DA282967
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 03:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA6B78296B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 03:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731360AbfHFBsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 21:48:25 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55262 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbfHFBsZ (ORCPT
+        id S1731465AbfHFBsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 21:48:38 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33222 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731367AbfHFBs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 21:48:25 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761imIe082725;
-        Tue, 6 Aug 2019 01:48:05 GMT
+        Mon, 5 Aug 2019 21:48:26 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761jJ5f152854;
+        Tue, 6 Aug 2019 01:48:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=JhlDiE5CFQVneED4uISVxNEm3HniZ2YmW8rRwhJuusw=;
- b=EEAe5V4CpBzlaE/3etCFXwvH2cJ7B5qnyHYluAnrQ7kJmb8gAvpL3ppTRcqjKlF+qsaq
- PwRex9VoWFTmY6c56qrgt6kX2gp2AqkTGm933NlPudzeiPP3KpCMPxMGhZPQ2q+eEnJ8
- CVKopKHFzCoWUyOJHsWdJswsnWoCH2F48pYjhV+Bj5fVKODTlu6gC4xHzZe4C0wpf+Iw
- +ixGzU0Z+Y+JH6WqEOz757o5ZO6ruiEclW39KzXOqaZ3Zy+/SSx3ONaYjMjGMQzu6198
- 64H+016popLpUM6eVUf1vNaDQFvrdvDSG8ExpNo/wzHmkhf8HWBP7klSg5PYOQl3WVs3 pA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2u52wr2kpf-1
+ bh=fr5eyPRRWPi1rDqCT8/skQQ0aW1iOdHkBGzG8QNDcy4=;
+ b=D8oNjiVeBbBG2MWiIYLecowUjrtkG6Oal3VR7bQ6Tq4XmhC3HUSvX6hveVydUDg+uCSf
+ fKsU20yt/rHoLw6ROp/IekRVGI4s/cWGUmKBSV7E8/r7r/O2wc1tbqncE7nR6+Yu66hj
+ 1qJvG2d/5kbJSHgu3Un/N1D+KaOJXSGD1SzDh7SVXW6cfVCl6R6JAnJFoc4vKwwNQlqN
+ s9Hb0KVzO9OZdGzBATWoa1/t84ZevYXdnjOvmoB7ZbtVUdiJTy5OA7qOqvWX8RaT+UkC
+ 9v6Wrar1BRo08b+nRfu68R4Ga8X0BI0eFRjdsT+zcX2559xT3mapK8BHVejeI9Dkppus Ag== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2u527pjm9r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 06 Aug 2019 01:48:04 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761m4td012646;
-        Tue, 6 Aug 2019 01:48:04 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2u5233qgee-1
+        Tue, 06 Aug 2019 01:48:06 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761m4bW086383;
+        Tue, 6 Aug 2019 01:48:05 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2u51kn4a0w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 06 Aug 2019 01:48:03 +0000
+        Tue, 06 Aug 2019 01:48:05 +0000
 Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x761ls8K017861;
-        Tue, 6 Aug 2019 01:47:54 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x761ludm016081;
+        Tue, 6 Aug 2019 01:47:56 GMT
 Received: from monkey.oracle.com (/71.63.128.209)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Aug 2019 18:47:54 -0700
+        with ESMTP ; Mon, 05 Aug 2019 18:47:55 -0700
 From:   Mike Kravetz <mike.kravetz@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Hillf Danton <hdanton@sina.com>, Vlastimil Babka <vbabka@suse.cz>,
@@ -50,9 +50,9 @@ Cc:     Hillf Danton <hdanton@sina.com>, Vlastimil Babka <vbabka@suse.cz>,
         David Rientjes <rientjes@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v2 1/4] mm, reclaim: make should_continue_reclaim perform dryrun detection
-Date:   Mon,  5 Aug 2019 18:47:41 -0700
-Message-Id: <20190806014744.15446-2-mike.kravetz@oracle.com>
+Subject: [PATCH v2 2/4] mm, reclaim: cleanup should_continue_reclaim()
+Date:   Mon,  5 Aug 2019 18:47:42 -0700
+Message-Id: <20190806014744.15446-3-mike.kravetz@oracle.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806014744.15446-1-mike.kravetz@oracle.com>
 References: <20190806014744.15446-1-mike.kravetz@oracle.com>
@@ -74,88 +74,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hillf Danton <hdanton@sina.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-Address the issue of should_continue_reclaim returning true too often
-for __GFP_RETRY_MAYFAIL attempts when !nr_reclaimed and nr_scanned.
-This was observed during hugetlb page allocation causing stalls for
-minutes or hours.
+After commit "mm, reclaim: make should_continue_reclaim perform dryrun
+detection", closer look at the function shows, that nr_reclaimed == 0
+means the function will always return false. And since non-zero
+nr_reclaimed implies non_zero nr_scanned, testing nr_scanned serves no
+purpose, and so does the testing for __GFP_RETRY_MAYFAIL.
 
-We can stop reclaiming pages if compaction reports it can make a progress.
-There might be side-effects for other high-order allocations that would
-potentially benefit from reclaiming more before compaction so that they
-would be faster and less likely to stall.  However, the consequences of
-premature/over-reclaim are considered worse.
+This patch thus cleans up the function to test only !nr_reclaimed upfront,
+and remove the __GFP_RETRY_MAYFAIL test and nr_scanned parameter
+completely.  Comment is also updated, explaining that approximating "full
+LRU list has been scanned" with nr_scanned == 0 didn't really work.
 
-We can also bail out of reclaiming pages if we know that there are not
-enough inactive lru pages left to satisfy the costly allocation.
-
-We can give up reclaiming pages too if we see dryrun occur, with the
-certainty of plenty of inactive pages. IOW with dryrun detected, we are
-sure we have reclaimed as many pages as we could.
-
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Hillf Danton <hdanton@sina.com>
-Tested-by: Mike Kravetz <mike.kravetz@oracle.com>
-Acked-by: Mel Gorman <mgorman@suse.de>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
 Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
-v2 - Updated commit message and added SOB.
+Commit message reformatted to avoid line wrap.
 
- mm/vmscan.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ mm/vmscan.c | 43 ++++++++++++++-----------------------------
+ 1 file changed, 14 insertions(+), 29 deletions(-)
 
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 47aa2158cfac..a386c5351592 100644
+index a386c5351592..227d10cd704b 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -2738,18 +2738,6 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 			return false;
- 	}
+@@ -2704,7 +2704,6 @@ static bool in_reclaim_compaction(struct scan_control *sc)
+  */
+ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+ 					unsigned long nr_reclaimed,
+-					unsigned long nr_scanned,
+ 					struct scan_control *sc)
+ {
+ 	unsigned long pages_for_compaction;
+@@ -2715,28 +2714,18 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+ 	if (!in_reclaim_compaction(sc))
+ 		return false;
  
--	/*
--	 * If we have not reclaimed enough pages for compaction and the
--	 * inactive lists are large enough, continue reclaiming
--	 */
--	pages_for_compaction = compact_gap(sc->order);
--	inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
--	if (get_nr_swap_pages() > 0)
--		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
--	if (sc->nr_reclaimed < pages_for_compaction &&
--			inactive_lru_pages > pages_for_compaction)
--		return true;
--
+-	/* Consider stopping depending on scan and reclaim activity */
+-	if (sc->gfp_mask & __GFP_RETRY_MAYFAIL) {
+-		/*
+-		 * For __GFP_RETRY_MAYFAIL allocations, stop reclaiming if the
+-		 * full LRU list has been scanned and we are still failing
+-		 * to reclaim pages. This full LRU scan is potentially
+-		 * expensive but a __GFP_RETRY_MAYFAIL caller really wants to succeed
+-		 */
+-		if (!nr_reclaimed && !nr_scanned)
+-			return false;
+-	} else {
+-		/*
+-		 * For non-__GFP_RETRY_MAYFAIL allocations which can presumably
+-		 * fail without consequence, stop if we failed to reclaim
+-		 * any pages from the last SWAP_CLUSTER_MAX number of
+-		 * pages that were scanned. This will return to the
+-		 * caller faster at the risk reclaim/compaction and
+-		 * the resulting allocation attempt fails
+-		 */
+-		if (!nr_reclaimed)
+-			return false;
+-	}
++	/*
++	 * Stop if we failed to reclaim any pages from the last SWAP_CLUSTER_MAX
++	 * number of pages that were scanned. This will return to the caller
++	 * with the risk reclaim/compaction and the resulting allocation attempt
++	 * fails. In the past we have tried harder for __GFP_RETRY_MAYFAIL
++	 * allocations through requiring that the full LRU list has been scanned
++	 * first, by assuming that zero delta of sc->nr_scanned means full LRU
++	 * scan, but that approximation was wrong, and there were corner cases
++	 * where always a non-zero amount of pages were scanned.
++	 */
++	if (!nr_reclaimed)
++		return false;
+ 
  	/* If compaction would go ahead or the allocation would succeed, stop */
  	for (z = 0; z <= sc->reclaim_idx; z++) {
- 		struct zone *zone = &pgdat->node_zones[z];
-@@ -2765,7 +2753,21 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 			;
- 		}
- 	}
--	return true;
-+
-+	/*
-+	 * If we have not reclaimed enough pages for compaction and the
-+	 * inactive lists are large enough, continue reclaiming
-+	 */
-+	pages_for_compaction = compact_gap(sc->order);
-+	inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
-+	if (get_nr_swap_pages() > 0)
-+		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
-+
-+	return inactive_lru_pages > pages_for_compaction &&
-+		/*
-+		 * avoid dryrun with plenty of inactive pages
-+		 */
-+		nr_scanned && nr_reclaimed;
+@@ -2763,11 +2752,7 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+ 	if (get_nr_swap_pages() > 0)
+ 		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
+ 
+-	return inactive_lru_pages > pages_for_compaction &&
+-		/*
+-		 * avoid dryrun with plenty of inactive pages
+-		 */
+-		nr_scanned && nr_reclaimed;
++	return inactive_lru_pages > pages_for_compaction;
  }
  
  static bool pgdat_memcg_congested(pg_data_t *pgdat, struct mem_cgroup *memcg)
+@@ -2936,7 +2921,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 			wait_iff_congested(BLK_RW_ASYNC, HZ/10);
+ 
+ 	} while (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
+-					 sc->nr_scanned - nr_scanned, sc));
++					 sc));
+ 
+ 	/*
+ 	 * Kswapd gives up on balancing particular nodes after too
 -- 
 2.20.1
 
