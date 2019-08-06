@@ -2,161 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A5783098
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F16783094
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbfHFLZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 07:25:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50580 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfHFLZr (ORCPT
+        id S1732719AbfHFLVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 07:21:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54477 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbfHFLVK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:25:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 417736050D; Tue,  6 Aug 2019 11:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565090746;
-        bh=VZyDa5xwZ3D5C5Lz2pDRthJNOUDBPslSb+tqQto/oEY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=i9CocGo4xSmqpSfcHurgJee3GRDFWlV4LXFkXa4/MVY6EVTmVy3U1d+R3lOa39ggu
-         yECQcoetuG0IhmOsRX5EG4shDtf2Gf9dXd6R3R7iaftVraI3P1T/EifwQ65r9UQhbj
-         PhFjuMIKjLxk6xg1+7O89OvzWTIbOiDCInG2jdlU=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CDC326050D;
-        Tue,  6 Aug 2019 11:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565090745;
-        bh=VZyDa5xwZ3D5C5Lz2pDRthJNOUDBPslSb+tqQto/oEY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YZs1dOW4g/bDQTyeDU53v1yjf+3Jt1AXmgOWTHnMDs7NQzobFpdn/tW9JRqaFV8vp
-         5dOx08ffxeR3jTa9DvmfHCWsHRPXIEhiF6BhGj0Sfr6c7yFgezYBpS5/2X+A0ZHDjj
-         RpvZQdgaBRnji1ixO05bgdS1PyLNk6OQjuQjyAeE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CDC326050D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] f2fs: Fix indefinite loop in f2fs_gc()
-Date:   Tue,  6 Aug 2019 16:49:56 +0530
-Message-Id: <1565090396-7263-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 6 Aug 2019 07:21:10 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x76BKv4U2142329
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 6 Aug 2019 04:20:57 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x76BKv4U2142329
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565090457;
+        bh=5DHQQMlrThLSLa0IhoZQIL07mGa5rz1rbnFabqRBjzI=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=I/G32rLqqZXy4W/Ta7Rf08hvGnLActTBwcv5IPNYsr/pLPE/4GZHlnBOhs2S/zFqs
+         5TZAzf0Se6Zjav6pwgLazeGSznSZs6bZeYu+WA74MKn2IbSdZzXi8L1XwSXqsXtrgv
+         B5xbev7kbDFE3kjPYAcAaDrh2V6wrQVNItDICKMefbw9DLzITXVOyw20MJnGScUFfQ
+         d1vKachGnkUTnFnQwZ7Nlj/ybQHzaNWKBBdGhQJqQjeIMns2XYGZtk/QgYeXrKciCN
+         TvLpcCfLiu8q2zKP8d1189XHeK50yVIC8//jWw95Xr4Df9h+3zZ/wS8wIPEqclCv56
+         E84mcGutQpUZw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x76BKu7n2142326;
+        Tue, 6 Aug 2019 04:20:56 -0700
+Date:   Tue, 6 Aug 2019 04:20:56 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Suren Baghdasaryan <tipbot@zytor.com>
+Message-ID: <tip-04e048cf09d7b5fc995817cdc5ae1acd4482429c@git.kernel.org>
+Cc:     hpa@zytor.com, nnk@google.com, surenb@google.com,
+        peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org
+Reply-To: peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, surenb@google.com, nnk@google.com,
+          hpa@zytor.com
+In-Reply-To: <20190730013310.162367-1-surenb@google.com>
+References: <20190730013310.162367-1-surenb@google.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/urgent] sched/psi: Do not require setsched permission
+ from the trigger creator
+Git-Commit-ID: 04e048cf09d7b5fc995817cdc5ae1acd4482429c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Policy - Foreground GC, LFS and greedy GC mode.
+Commit-ID:  04e048cf09d7b5fc995817cdc5ae1acd4482429c
+Gitweb:     https://git.kernel.org/tip/04e048cf09d7b5fc995817cdc5ae1acd4482429c
+Author:     Suren Baghdasaryan <surenb@google.com>
+AuthorDate: Mon, 29 Jul 2019 18:33:10 -0700
+Committer:  Peter Zijlstra <peterz@infradead.org>
+CommitDate: Tue, 6 Aug 2019 12:49:18 +0200
 
-Under this policy, f2fs_gc() loops forever to GC as it doesn't have
-enough free segements to proceed and thus it keeps calling gc_more
-for the same victim segment.  This can happen if the selected victim
-segment could not be GC'd due to failed blkaddr validity check i.e.
-is_alive() returns false for the blocks set in current validity map.
+sched/psi: Do not require setsched permission from the trigger creator
 
-Fix this by keeping track of such invalid segments and skip those
-segments for selection in get_victim_by_default() to avoid endless
-GC loop under such error scenarios.
+When a process creates a new trigger by writing into /proc/pressure/*
+files, permissions to write such a file should be used to determine whether
+the process is allowed to do so or not. Current implementation would also
+require such a process to have setsched capability. Setting of psi trigger
+thread's scheduling policy is an implementation detail and should not be
+exposed to the user level. Remove the permission check by using _nocheck
+version of the function.
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Suggested-by: Nick Kralevich <nnk@google.com>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: lizefan@huawei.com
+Cc: mingo@redhat.com
+Cc: akpm@linux-foundation.org
+Cc: kernel-team@android.com
+Cc: dennisszhou@gmail.com
+Cc: dennis@kernel.org
+Cc: hannes@cmpxchg.org
+Cc: axboe@kernel.dk
+Link: https://lkml.kernel.org/r/20190730013310.162367-1-surenb@google.com
 ---
-v2: fix as per Chao's suggestion to handle this error case
+ kernel/sched/psi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- fs/f2fs/gc.c      | 15 ++++++++++++++-
- fs/f2fs/segment.c |  5 +++++
- fs/f2fs/segment.h |  3 +++
- 3 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 8974672..321a78a 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -382,6 +382,14 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 			nsearched++;
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 7fe2c5fd26b5..23fbbcc414d5 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -1061,7 +1061,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group,
+ 			mutex_unlock(&group->trigger_lock);
+ 			return ERR_CAST(kworker);
  		}
- 
-+		/*
-+		 * skip selecting the invalid segno (that is failed due to block
-+		 * validity check failed during GC) to avoid endless GC loop in
-+		 * such cases.
-+		 */
-+		if (test_bit(segno, sm->invalid_segmap))
-+			goto next;
-+
- 		secno = GET_SEC_FROM_SEG(sbi, segno);
- 
- 		if (sec_usage_check(sbi, secno))
-@@ -975,6 +983,7 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 	int off;
- 	int phase = 0;
- 	int submitted = 0;
-+	struct sit_info *sit_i = SIT_I(sbi);
- 
- 	start_addr = START_BLOCK(sbi, segno);
- 
-@@ -1008,8 +1017,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 		}
- 
- 		/* Get an inode by ino with checking validity */
--		if (!is_alive(sbi, entry, &dni, start_addr + off, &nofs))
-+		if (!is_alive(sbi, entry, &dni, start_addr + off, &nofs)) {
-+			if (!test_and_set_bit(segno, sit_i->invalid_segmap))
-+				f2fs_err(sbi, "invalid blkaddr %u in seg %u is found\n",
-+						start_addr + off, segno);
- 			continue;
-+		}
- 
- 		if (phase == 2) {
- 			f2fs_ra_node_page(sbi, dni.ino);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a661ac3..d45a1d3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -4017,6 +4017,10 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 		return -ENOMEM;
- #endif
- 
-+	sit_i->invalid_segmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
-+	if (!sit_i->invalid_segmap)
-+		return -ENOMEM;
-+
- 	/* init SIT information */
- 	sit_i->s_ops = &default_salloc_ops;
- 
-@@ -4518,6 +4522,7 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
- #ifdef CONFIG_F2FS_CHECK_FS
- 	kvfree(sit_i->sit_bitmap_mir);
- #endif
-+	kvfree(sit_i->invalid_segmap);
- 	kvfree(sit_i);
- }
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index b746028..bc5dbe8 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -246,6 +246,9 @@ struct sit_info {
- 	unsigned long long min_mtime;		/* min. modification time */
- 	unsigned long long max_mtime;		/* max. modification time */
- 
-+	/* list of segments to be ignored by GC in case of errors */
-+	unsigned long *invalid_segmap;
-+
- 	unsigned int last_victim[MAX_GC_POLICY]; /* last victim segment # */
- };
- 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+-		sched_setscheduler(kworker->task, SCHED_FIFO, &param);
++		sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
+ 		kthread_init_delayed_work(&group->poll_work,
+ 				psi_poll_work);
+ 		rcu_assign_pointer(group->poll_kworker, kworker);
