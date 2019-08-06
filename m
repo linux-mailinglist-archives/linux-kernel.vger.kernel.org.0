@@ -2,77 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E497782C1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:56:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 881B282C07
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:50:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731935AbfHFG4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 02:56:08 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59434 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731834AbfHFG4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 02:56:06 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6D7A6200074;
-        Tue,  6 Aug 2019 08:56:04 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D54F2200005;
-        Tue,  6 Aug 2019 08:55:55 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 509A9402DB;
-        Tue,  6 Aug 2019 14:55:45 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, peng.fan@nxp.com, leonard.crestez@nxp.com,
-        ping.bai@nxp.com, jun.li@nxp.com, chen.fang@nxp.com,
-        agx@sigxcpu.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] clk: imx8mq: Unregister clks when of_clk_add_provider failed
-Date:   Tue,  6 Aug 2019 14:46:14 +0800
-Message-Id: <20190806064614.20294-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190806064614.20294-1-Anson.Huang@nxp.com>
-References: <20190806064614.20294-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1731936AbfHFGtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 02:49:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44786 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731675AbfHFGte (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 02:49:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rm0+00l4g4M8Jlarfzp2TnutmOwlpDyDflb61FCcaPo=; b=fC6pguVAZjLWVOsBGk2/l01Tu
+        RnLqIFg8yf6SaSMKdg4uG55HM8B0OvLZBCvpRN7cmsGFWOdOCMGEFt9k3Fz6HY36/nULry5COEIFq
+        GpjzwCF7PlP5U7MtrvNlfoksXQXGvbnJ5UHRDQd5G1TvOk7DAW83a/ulQpwlKjv8rK6/2QlDjYqlw
+        2LhGom7pCsGIAZwoqnPR6jg5YJ4SFsLTyL8RHG41ui0ozUtu++TJ14eGmmL4wWewIY0vAafeKi9/l
+        1KRquVK/3j/7Gk7QzgAOtq5FWnKY3pIUbSuz7C9l8OMXQIsw6Uz/5U7fyQ5k5Wfdiy/v3xQgMIZtr
+        aBkJjcyzQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hutHp-000239-Da; Tue, 06 Aug 2019 06:49:33 +0000
+Date:   Mon, 5 Aug 2019 23:49:33 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     guoren@kernel.org
+Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-csky@vger.kernel.org,
+        feng_shizhu@dahuatech.com, zhang_jian5@dahuatech.com,
+        zheng_xingjian@dahuatech.com, zhu_peng@dahuatech.com,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: Re: [PATCH 3/4] csky/dma: Fixup cache_op failed when cross memory
+ ZONEs
+Message-ID: <20190806064933.GA2508@infradead.org>
+References: <1564488945-20149-1-git-send-email-guoren@kernel.org>
+ <1564488945-20149-3-git-send-email-guoren@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1564488945-20149-3-git-send-email-guoren@kernel.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On Tue, Jul 30, 2019 at 08:15:44PM +0800, guoren@kernel.org wrote:
+> diff --git a/arch/csky/mm/dma-mapping.c b/arch/csky/mm/dma-mapping.c
+> index 80783bb..3f1ff9d 100644
+> --- a/arch/csky/mm/dma-mapping.c
+> +++ b/arch/csky/mm/dma-mapping.c
+> @@ -18,71 +18,52 @@ static int __init atomic_pool_init(void)
+>  {
+>  	return dma_atomic_pool_init(GFP_KERNEL, pgprot_noncached(PAGE_KERNEL));
+>  }
+> -postcore_initcall(atomic_pool_init);
 
-When of_clk_add_provider failed, all clks should be unregistered.
+Please keep the postcore_initcall next to the function it calls.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx8mq.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 04302f2..81a0249 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -562,10 +562,18 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	clk_data.clk_num = ARRAY_SIZE(clks);
- 
- 	err = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
--	WARN_ON(err);
-+	if (err < 0) {
-+		dev_err(dev, "failed to register clks for i.MX8MQ\n");
-+		goto unregister_clks;
-+	}
- 
- 	imx_register_uart_clocks(uart_clks);
- 
-+	return 0;
-+
-+unregister_clks:
-+	imx_unregister_clocks(clks, ARRAY_SIZE(clks));
-+
- 	return err;
- }
- 
--- 
-2.7.4
-
+In this particular case I also plan to remove the function for 5.4 by
+moving it to the common dma code, so it is more important than just style.
