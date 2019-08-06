@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D75D182F4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A0B82F46
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:01:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732804AbfHFKCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:02:01 -0400
-Received: from foss.arm.com ([217.140.110.172]:59458 "EHLO foss.arm.com"
+        id S1732721AbfHFKBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:01:41 -0400
+Received: from foss.arm.com ([217.140.110.172]:59470 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732689AbfHFKBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:01:37 -0400
+        id S1732562AbfHFKBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:01:38 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8FF0337;
-        Tue,  6 Aug 2019 03:01:36 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 656751570;
+        Tue,  6 Aug 2019 03:01:38 -0700 (PDT)
 Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.197.61])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0A6F3F706;
-        Tue,  6 Aug 2019 03:01:35 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2A0333F706;
+        Tue,  6 Aug 2019 03:01:37 -0700 (PDT)
 From:   Marc Zyngier <maz@kernel.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -27,9 +27,9 @@ Cc:     John Garry <john.garry@huawei.com>,
         <shameerali.kolothum.thodi@huawei.com>,
         Lokesh Vutla <lokeshvutla@ti.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 06/12] irqchip/gic-v3: Dynamically allocate PPI NMI refcounts
-Date:   Tue,  6 Aug 2019 11:01:15 +0100
-Message-Id: <20190806100121.240767-7-maz@kernel.org>
+Subject: [PATCH v2 07/12] irqchip/gic-v3: Dynamically allocate PPI partition descriptors
+Date:   Tue,  6 Aug 2019 11:01:16 +0100
+Message-Id: <20190806100121.240767-8-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806100121.240767-1-maz@kernel.org>
 References: <20190806100121.240767-1-maz@kernel.org>
@@ -40,110 +40,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we're about to have a variable number of PPIs, let's make the
-allocation of the NMI refcounts dynamic. Also apply some minor
-cleanups (moving things around).
+Again, PPIs are becoming a variable set. Let's hack the PPI partition
+code to make the top-level array dynamically allocated.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3.c | 47 ++++++++++++++++++++++++++----------
- 1 file changed, 34 insertions(+), 13 deletions(-)
+ drivers/irqchip/irq-gic-v3.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index e03fb6d7c2ce..4253c7f67c86 100644
+index 4253c7f67c86..34f8a96bd747 100644
 --- a/drivers/irqchip/irq-gic-v3.c
 +++ b/drivers/irqchip/irq-gic-v3.c
-@@ -88,7 +88,7 @@ static DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
- static DEFINE_STATIC_KEY_FALSE(supports_pseudo_nmis);
+@@ -52,7 +52,7 @@ struct gic_chip_data {
+ 	u64			flags;
+ 	bool			has_rss;
+ 	unsigned int		ppi_nr;
+-	struct partition_desc	*ppi_descs[16];
++	struct partition_desc	**ppi_descs;
+ };
  
- /* ppi_nmi_refs[n] == number of cpus having ppi[n + 16] set as NMI */
--static refcount_t ppi_nmi_refs[16];
-+static refcount_t *ppi_nmi_refs;
+ static struct gic_chip_data gic_data __read_mostly;
+@@ -1354,7 +1354,8 @@ static int gic_irq_domain_select(struct irq_domain *d,
+ 	 * then we need to match the partition domain.
+ 	 */
+ 	if (fwspec->param_count >= 4 &&
+-	    fwspec->param[0] == 1 && fwspec->param[3] != 0)
++	    fwspec->param[0] == 1 && fwspec->param[3] != 0 &&
++	    gic_data.ppi_descs)
+ 		return d == partition_get_domain(gic_data.ppi_descs[fwspec->param[1]]);
  
- static struct gic_kvm_info gic_v3_kvm_info;
- static DEFINE_PER_CPU(bool, has_rss);
-@@ -409,6 +409,16 @@ static void gic_irq_set_prio(struct irq_data *d, u8 prio)
- 	writeb_relaxed(prio, base + offset + index);
- }
+ 	return d == gic_data.domain;
+@@ -1375,6 +1376,9 @@ static int partition_domain_translate(struct irq_domain *d,
+ 	struct device_node *np;
+ 	int ret;
  
-+static u32 gic_get_ppi_index(struct irq_data *d)
-+{
-+	switch (get_intid_range(d)) {
-+	case PPI_RANGE:
-+		return d->hwirq - 16;
-+	default:
-+		unreachable();
-+	}
-+}
++	if (!gic_data.ppi_descs)
++		return -ENOMEM;
 +
- static int gic_irq_nmi_setup(struct irq_data *d)
- {
- 	struct irq_desc *desc = irq_to_desc(d->irq);
-@@ -429,10 +439,12 @@ static int gic_irq_nmi_setup(struct irq_data *d)
+ 	np = of_find_node_by_phandle(fwspec->param[3]);
+ 	if (WARN_ON(!np))
  		return -EINVAL;
- 
- 	/* desc lock should already be held */
--	if (gic_irq(d) < 32) {
-+	if (gic_irq_in_rdist(d)) {
-+		u32 idx = gic_get_ppi_index(d);
-+
- 		/* Setting up PPI as NMI, only switch handler for first NMI */
--		if (!refcount_inc_not_zero(&ppi_nmi_refs[gic_irq(d) - 16])) {
--			refcount_set(&ppi_nmi_refs[gic_irq(d) - 16], 1);
-+		if (!refcount_inc_not_zero(&ppi_nmi_refs[idx])) {
-+			refcount_set(&ppi_nmi_refs[idx], 1);
- 			desc->handle_irq = handle_percpu_devid_fasteoi_nmi;
- 		}
- 	} else {
-@@ -464,9 +476,11 @@ static void gic_irq_nmi_teardown(struct irq_data *d)
+@@ -1531,6 +1535,10 @@ static void __init gic_populate_ppi_partitions(struct device_node *gic_node)
+ 	if (!parts_node)
  		return;
  
- 	/* desc lock should already be held */
--	if (gic_irq(d) < 32) {
-+	if (gic_irq_in_rdist(d)) {
-+		u32 idx = gic_get_ppi_index(d);
++	gic_data.ppi_descs = kcalloc(gic_data.ppi_nr, sizeof(*gic_data.ppi_descs), GFP_KERNEL);
++	if (!gic_data.ppi_descs)
++		return;
 +
- 		/* Tearing down NMI, only switch handler for last NMI */
--		if (refcount_dec_and_test(&ppi_nmi_refs[gic_irq(d) - 16]))
-+		if (refcount_dec_and_test(&ppi_nmi_refs[idx]))
- 			desc->handle_irq = handle_percpu_devid_irq;
- 	} else {
- 		desc->handle_irq = handle_fasteoi_irq;
-@@ -1394,7 +1408,19 @@ static void gic_enable_nmi_support(void)
- {
- 	int i;
+ 	nr_parts = of_get_child_count(parts_node);
  
--	for (i = 0; i < 16; i++)
-+	if (!gic_prio_masking_enabled())
-+		return;
-+
-+	if (gic_has_group0() && !gic_dist_security_disabled()) {
-+		pr_warn("SCR_EL3.FIQ is cleared, cannot enable use of pseudo-NMIs\n");
-+		return;
-+	}
-+
-+	ppi_nmi_refs = kcalloc(gic_data.ppi_nr, sizeof(*ppi_nmi_refs), GFP_KERNEL);
-+	if (!ppi_nmi_refs)
-+		return;
-+
-+	for (i = 0; i < gic_data.ppi_nr; i++)
- 		refcount_set(&ppi_nmi_refs[i], 0);
- 
- 	static_branch_enable(&supports_pseudo_nmis);
-@@ -1472,12 +1498,7 @@ static int __init gic_init_bases(void __iomem *dist_base,
- 			gicv2m_init(handle, gic_data.domain);
+ 	if (!nr_parts)
+@@ -1582,7 +1590,7 @@ static void __init gic_populate_ppi_partitions(struct device_node *gic_node)
+ 		part_idx++;
  	}
  
--	if (gic_prio_masking_enabled()) {
--		if (!gic_has_group0() || gic_dist_security_disabled())
--			gic_enable_nmi_support();
--		else
--			pr_warn("SCR_EL3.FIQ is cleared, cannot enable use of pseudo-NMIs\n");
--	}
-+	gic_enable_nmi_support();
- 
- 	return 0;
- 
+-	for (i = 0; i < 16; i++) {
++	for (i = 0; i < gic_data.ppi_nr; i++) {
+ 		unsigned int irq;
+ 		struct partition_desc *desc;
+ 		struct irq_fwspec ppi_fwspec = {
 -- 
 2.20.1
 
