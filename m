@@ -2,182 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E77083BDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 23:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AFBC83BCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 23:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728872AbfHFViR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 17:38:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbfHFViP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:38:15 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26D66218A4;
-        Tue,  6 Aug 2019 21:38:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565127494;
-        bh=hBlharvEjR1CAE4XGytQM/ZaRZ/yd+YI11AyHBJCrIU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kxslMfuBLQ64elUWfimm33RGRI1PTyY37FD/tshxC0gBNm5WzdK2xlvXoAa53SBub
-         Z1/O/55sG0ixi219MPpukYlAP3nH7+wcxqdVz1PkKV0XXbOnFW/Uu2rhyi3mQMABJB
-         95NACmQvtosVETSXbw4dftU6pQg9/CpMn5my6eQg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Jakub Jelinek <jakub@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        James Y Knight <jyknight@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arch@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 14/14] asm-generic: fix -Wtype-limits compiler warnings
-Date:   Tue,  6 Aug 2019 17:37:48 -0400
-Message-Id: <20190806213749.20689-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190806213749.20689-1-sashal@kernel.org>
-References: <20190806213749.20689-1-sashal@kernel.org>
+        id S1728149AbfHFViE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 17:38:04 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45167 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728802AbfHFViA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 17:38:00 -0400
+Received: by mail-ot1-f65.google.com with SMTP id x21so2980867otq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 14:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=lorWiddpxg2WMsy0/smy1K1C0pOfS2GdN2jnCeFogUs=;
+        b=Q0Zjd+TM00oZ630nvIWNZ+HRm51Wsx5YHS2eeY8dHTTrbbgj7LjxyTLFOfgusW38kG
+         wUssvWh5QtUnttZvlObrMx4ERY8wi8VJZsi/QRCWmLJ1w5S95mvpP8qXP1UYr1dH/ZmW
+         5KGIqlPD1hOdbJX4af/sLexZHpyTvOce84cZQ7GSnGYvxPmiIdZg6KNhOqdRIpLtn5io
+         rpUIoH4kb87hxR8tv8gevBuwFMYmJLwJC2E39hMHz//t+3AR412RMkSTzP3e8T/0wocs
+         a6iP2KtaSIRWpj0P/BDXMz2wcO4uxVeHP2eSBk45hWyLOcK3kjynpMKguic5NKjTjKxf
+         +ZFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=lorWiddpxg2WMsy0/smy1K1C0pOfS2GdN2jnCeFogUs=;
+        b=MbTA0kcCLYvop+U3fRisp7WntDHe4/teC0LepxfoMG6/HEFicoaQlSkBnwgDWJMqJs
+         vaY1kd80NHDZf+bdW4Mo4yadiQdlf0EvhPtyaVi1Lz89xyghbBUwl8vEIsnmB5j+jcza
+         9+QGmJAtNzmOObcCN5+P3zBbMPqNAGCy9u50rm93qaRFE0iXCAyqURnKT60+k+4cuwGt
+         Cms3ZhyvFc43XpQhq/vuaphf2TDFKx6iq94QGZ6Eh41LK+G7mNDdyMnSW7GUYYCpRkVi
+         vK+XZ/XaUqQbRGQSXYYHFF5a44JPWHG7W5IjHcrq2YPkjgwyTvWULJn3bLLZqkomuCcQ
+         +kIw==
+X-Gm-Message-State: APjAAAU//B6tn9U/OrADnACmBOAb8K6qXhwLo87EIYuxnWxWQnz1m0Xe
+        gRL1C5Px/O+56+e1UupnrtuxIw==
+X-Google-Smtp-Source: APXvYqwDSlDrT26BRCk2A5kNmd5K8poKBkr8uW3JWosK9nm0mwlDSBLckAmTzrf3lJWlTfKIVDn2LQ==
+X-Received: by 2002:a5d:8497:: with SMTP id t23mr5657932iom.298.1565127480073;
+        Tue, 06 Aug 2019 14:38:00 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id t19sm78314934iog.41.2019.08.06.14.37.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 14:37:59 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 14:37:58 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Atish Patra <atish.patra@wdc.com>
+cc:     linux-kernel@vger.kernel.org, Alan Kao <alankao@andestech.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup.patel@wdc.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        devicetree@vger.kernel.org, Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johan Hovold <johan@kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v4 1/4] RISC-V: Remove per cpu clocksource
+In-Reply-To: <20190803042723.7163-2-atish.patra@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1908061437000.13971@viisi.sifive.com>
+References: <20190803042723.7163-1-atish.patra@wdc.com> <20190803042723.7163-2-atish.patra@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+On Fri, 2 Aug 2019, Atish Patra wrote:
 
-[ Upstream commit cbedfe11347fe418621bd188d58a206beb676218 ]
+> There is only one clocksource in RISC-V. The boot cpu initializes
+> that clocksource. No need to keep a percpu data structure.
+> 
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
 
-Commit d66acc39c7ce ("bitops: Optimise get_order()") introduced a
-compilation warning because "rx_frag_size" is an "ushort" while
-PAGE_SHIFT here is 16.
+Thanks, queued for v5.3-rc4.
 
-The commit changed the get_order() to be a multi-line macro where
-compilers insist to check all statements in the macro even when
-__builtin_constant_p(rx_frag_size) will return false as "rx_frag_size"
-is a module parameter.
 
-In file included from ./arch/powerpc/include/asm/page_64.h:107,
-                 from ./arch/powerpc/include/asm/page.h:242,
-                 from ./arch/powerpc/include/asm/mmu.h:132,
-                 from ./arch/powerpc/include/asm/lppaca.h:47,
-                 from ./arch/powerpc/include/asm/paca.h:17,
-                 from ./arch/powerpc/include/asm/current.h:13,
-                 from ./include/linux/thread_info.h:21,
-                 from ./arch/powerpc/include/asm/processor.h:39,
-                 from ./include/linux/prefetch.h:15,
-                 from drivers/net/ethernet/emulex/benet/be_main.c:14:
-drivers/net/ethernet/emulex/benet/be_main.c: In function 'be_rx_cqs_create':
-./include/asm-generic/getorder.h:54:9: warning: comparison is always
-true due to limited range of data type [-Wtype-limits]
-   (((n) < (1UL << PAGE_SHIFT)) ? 0 :  \
-         ^
-drivers/net/ethernet/emulex/benet/be_main.c:3138:33: note: in expansion
-of macro 'get_order'
-  adapter->big_page_size = (1 << get_order(rx_frag_size)) * PAGE_SIZE;
-                                 ^~~~~~~~~
-
-Fix it by moving all of this multi-line macro into a proper function,
-and killing __get_order() off.
-
-[akpm@linux-foundation.org: remove __get_order() altogether]
-[cai@lca.pw: v2]
-  Link: http://lkml.kernel.org/r/1564000166-31428-1-git-send-email-cai@lca.pw
-Link: http://lkml.kernel.org/r/1563914986-26502-1-git-send-email-cai@lca.pw
-Fixes: d66acc39c7ce ("bitops: Optimise get_order()")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jakub Jelinek <jakub@redhat.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Bill Wendling <morbo@google.com>
-Cc: James Y Knight <jyknight@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/asm-generic/getorder.h | 50 ++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 30 deletions(-)
-
-diff --git a/include/asm-generic/getorder.h b/include/asm-generic/getorder.h
-index 65e4468ac53da..52fbf236a90ea 100644
---- a/include/asm-generic/getorder.h
-+++ b/include/asm-generic/getorder.h
-@@ -6,24 +6,6 @@
- #include <linux/compiler.h>
- #include <linux/log2.h>
- 
--/*
-- * Runtime evaluation of get_order()
-- */
--static inline __attribute_const__
--int __get_order(unsigned long size)
--{
--	int order;
--
--	size--;
--	size >>= PAGE_SHIFT;
--#if BITS_PER_LONG == 32
--	order = fls(size);
--#else
--	order = fls64(size);
--#endif
--	return order;
--}
--
- /**
-  * get_order - Determine the allocation order of a memory size
-  * @size: The size for which to get the order
-@@ -42,19 +24,27 @@ int __get_order(unsigned long size)
-  * to hold an object of the specified size.
-  *
-  * The result is undefined if the size is 0.
-- *
-- * This function may be used to initialise variables with compile time
-- * evaluations of constants.
-  */
--#define get_order(n)						\
--(								\
--	__builtin_constant_p(n) ? (				\
--		((n) == 0UL) ? BITS_PER_LONG - PAGE_SHIFT :	\
--		(((n) < (1UL << PAGE_SHIFT)) ? 0 :		\
--		 ilog2((n) - 1) - PAGE_SHIFT + 1)		\
--	) :							\
--	__get_order(n)						\
--)
-+static inline __attribute_const__ int get_order(unsigned long size)
-+{
-+	if (__builtin_constant_p(size)) {
-+		if (!size)
-+			return BITS_PER_LONG - PAGE_SHIFT;
-+
-+		if (size < (1UL << PAGE_SHIFT))
-+			return 0;
-+
-+		return ilog2((size) - 1) - PAGE_SHIFT + 1;
-+	}
-+
-+	size--;
-+	size >>= PAGE_SHIFT;
-+#if BITS_PER_LONG == 32
-+	return fls(size);
-+#else
-+	return fls64(size);
-+#endif
-+}
- 
- #endif	/* __ASSEMBLY__ */
- 
--- 
-2.20.1
-
+- Paul
