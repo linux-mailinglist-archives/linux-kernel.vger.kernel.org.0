@@ -2,149 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E604782F48
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 410F582F52
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732767AbfHFKBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:01:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:59538 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732726AbfHFKBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:01:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A07BB337;
-        Tue,  6 Aug 2019 03:01:45 -0700 (PDT)
-Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.197.61])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 680773F706;
-        Tue,  6 Aug 2019 03:01:44 -0700 (PDT)
-From:   Marc Zyngier <maz@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     John Garry <john.garry@huawei.com>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 12/12] irqchip/gic-v3: Add quirks for HIP06/07 invalid GICD_TYPER erratum 161010803
-Date:   Tue,  6 Aug 2019 11:01:21 +0100
-Message-Id: <20190806100121.240767-13-maz@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190806100121.240767-1-maz@kernel.org>
-References: <20190806100121.240767-1-maz@kernel.org>
+        id S1732829AbfHFKCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:02:18 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:54740 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732589AbfHFKCS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:02:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1565085737; x=1596621737;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=yxWzBfGsv2Z1rg7L0Jjnkc+Uvq7aPmSydjrmlj8tZSI=;
+  b=itZ5OnD9HpfcvhQXJzOeTqAJC5akptpmKNhARADGckdIpUqgMoR1kLKf
+   CpEn1V/hC/oxxXIYOMIRfeNNIYDXQHqHsyqNESOq11sKs6IMTU0c3c6/2
+   0EalxVfQXfPv6+OWY+jum2mzyJsF3ui74zgPcTdVF4CeM9YtYTJLurKu4
+   o=;
+X-IronPort-AV: E=Sophos;i="5.64,353,1559520000"; 
+   d="scan'208";a="691271420"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1a-807d4a99.us-east-1.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 06 Aug 2019 10:02:16 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-807d4a99.us-east-1.amazon.com (Postfix) with ESMTPS id 9670AA2BA4;
+        Tue,  6 Aug 2019 10:02:14 +0000 (UTC)
+Received: from EX13D05EUC002.ant.amazon.com (10.43.164.231) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 6 Aug 2019 10:02:13 +0000
+Received: from [10.125.238.43] (10.43.160.20) by EX13D05EUC002.ant.amazon.com
+ (10.43.164.231) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 6 Aug
+ 2019 10:02:08 +0000
+Subject: Re: [PATCH 2/2] arm64: dts: amazon: add Amazon Annapurna Labs Alpine
+ v3 support
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <barakw@amazon.com>, <dwmw@amazon.co.uk>, <benh@amazon.com>,
+        <jonnyc@amazon.com>, <talel@amazon.com>, <hhhawa@amazon.com>,
+        <hanochu@amazon.com>
+References: <20190728195135.12661-1-ronenk@amazon.com>
+ <20190728195135.12661-3-ronenk@amazon.com> <20190729101250.GA831@e107155-lin>
+From:   Krupnik <ronenk@amazon.com>
+Message-ID: <b1a4611f-2169-7657-bdc8-82f9525492ce@amazon.com>
+Date:   Tue, 6 Aug 2019 13:02:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190729101250.GA831@e107155-lin>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.43.160.20]
+X-ClientProxiedBy: EX13D03UWC004.ant.amazon.com (10.43.162.49) To
+ EX13D05EUC002.ant.amazon.com (10.43.164.231)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It looks like the HIP06/07 SoCs have extra bits in their GICD_TYPER
-registers, which confuse the GICv3.1 code (these systems appear to
-expose ESPIs while they actually don't).
 
-Detect these systems as early as possible and wipe the fields that
-should be RES0 in the register.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- Documentation/arm64/silicon-errata.rst |  2 +
- drivers/irqchip/irq-gic-v3.c           | 54 +++++++++++++++++++++-----
- 2 files changed, 46 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
-index 3e57d09246e6..17ea3fecddaa 100644
---- a/Documentation/arm64/silicon-errata.rst
-+++ b/Documentation/arm64/silicon-errata.rst
-@@ -115,6 +115,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | Hisilicon      | Hip0{6,7}       | #161010701      | N/A                         |
- +----------------+-----------------+-----------------+-----------------------------+
-+| Hisilicon      | Hip0{6,7}       | #161010803      | N/A                         |
-++----------------+-----------------+-----------------+-----------------------------+
- | Hisilicon      | Hip07           | #161600802      | HISILICON_ERRATUM_161600802 |
- +----------------+-----------------+-----------------+-----------------------------+
- | Hisilicon      | Hip08 SMMU PMCG | #162001800      | N/A                         |
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 334a10d9dbfb..bee141613b67 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1441,6 +1441,46 @@ static bool gic_enable_quirk_msm8996(void *data)
- 	return true;
- }
- 
-+static bool gic_enable_quirk_hip06_07(void *data)
-+{
-+	struct gic_chip_data *d = data;
-+
-+	/*
-+	 * HIP06 GICD_IIDR clashes with GIC-600 product number (despite
-+	 * not being an actual ARM implementation). The saving grace is
-+	 * that GIC-600 doesn't have ESPI, so nothing to do in that case.
-+	 * HIP07 doesn't even have a proper IIDR, and still pretends to
-+	 * have ESPI. In both cases, put them right.
-+	 */
-+	if (d->rdists.gicd_typer & GICD_TYPER_ESPI) {
-+		/* Zero both ESPI and the RES0 field next to it... */
-+		d->rdists.gicd_typer &= ~GENMASK(9, 8);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static const struct gic_quirk gic_quirks[] = {
-+	{
-+		.desc	= "GICv3: Qualcomm MSM8996 broken firmware",
-+		.compatible = "qcom,msm8996-gic-v3",
-+		.init	= gic_enable_quirk_msm8996,
-+	},
-+	{
-+		.desc	= "GICv3: HIP06 erratum 161010803",
-+		.iidr	= 0x0204043b,
-+		.init	= gic_enable_quirk_hip06_07,
-+	},
-+	{
-+		.desc	= "GICv3: HIP07 erratum 161010803",
-+		.iidr	= 0x00000000,
-+		.init	= gic_enable_quirk_hip06_07,
-+	},
-+	{
-+	}
-+};
-+
- static void gic_enable_nmi_support(void)
- {
- 	int i;
-@@ -1494,6 +1534,10 @@ static int __init gic_init_bases(void __iomem *dist_base,
- 	 */
- 	typer = readl_relaxed(gic_data.dist_base + GICD_TYPER);
- 	gic_data.rdists.gicd_typer = typer;
-+
-+	gic_enable_quirks(readl_relaxed(gic_data.dist_base + GICD_IIDR),
-+			  gic_quirks, &gic_data);
-+
- 	pr_info("%d SPIs implemented\n", GIC_LINE_NR - 32);
- 	pr_info("%d Extended SPIs implemented\n", GIC_ESPI_NR);
- 	gic_data.domain = irq_domain_create_tree(handle, &gic_irq_domain_ops,
-@@ -1676,16 +1720,6 @@ static void __init gic_of_setup_kvm_info(struct device_node *node)
- 	gic_set_kvm_info(&gic_v3_kvm_info);
- }
- 
--static const struct gic_quirk gic_quirks[] = {
--	{
--		.desc	= "GICv3: Qualcomm MSM8996 broken firmware",
--		.compatible = "qcom,msm8996-gic-v3",
--		.init	= gic_enable_quirk_msm8996,
--	},
--	{
--	}
--};
--
- static int __init gic_of_init(struct device_node *node, struct device_node *parent)
- {
- 	void __iomem *dist_base;
--- 
-2.20.1
-
+On 7/29/19 13:12, Sudeep Holla wrote:
+> On Sun, Jul 28, 2019 at 10:51:35PM +0300, Ronen Krupnik wrote:
+>> This patch adds the initial support for the Amazon Annapurna Labs Alpine v3
+>> Soc and Evaluation Platform (EVP).
+> [...]
+>
+>> +
+>> +		pmu {
+>> +			compatible = "arm,armv8-pmuv3";
+> Please use "arm,cortex-a72-pmu" as we know it's Cortex-A72 cores
+ack. will be part of v2
+>
+> --
+> Regards,
+> Sudeep
