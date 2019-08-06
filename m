@@ -2,99 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D562882F9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B5A82FA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732624AbfHFKPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:15:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:59898 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbfHFKPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:15:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F8A4337;
-        Tue,  6 Aug 2019 03:15:40 -0700 (PDT)
-Received: from [10.1.25.155] (summers-iphone.cambridge.arm.com [10.1.25.155])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25B1B3F694;
-        Tue,  6 Aug 2019 03:15:37 -0700 (PDT)
-Subject: Re: [PATCH v2 10/12] irqchip/gic-v3: Warn about inconsistent
- implementations of extended ranges
-To:     Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Lokesh Vutla <lokeshvutla@ti.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-kernel@vger.kernel.org,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20190806100121.240767-1-maz@kernel.org>
- <20190806100121.240767-11-maz@kernel.org>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <e5512fcc-e24e-c29a-8a57-011d194e3c41@arm.com>
-Date:   Tue, 6 Aug 2019 11:15:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1732561AbfHFKXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:23:54 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44087 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfHFKXy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:23:54 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k8so81764920edr.11;
+        Tue, 06 Aug 2019 03:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nHAZm0GZeVyi0k2jXAqZJ6+K/F+OXmkni52x4h/2WKU=;
+        b=W6yaIi5Eo9POup4WUZfRIHlyJ8IGxq+DvAHVwLOkie5rWs0Fk9vvDlFBrcwFpoK+VL
+         Tj0JydlTDm1RimAaQo0IBtt0NGVl1bzVHDI3DDYlzgCDaqlQoQAc43r3qj7Ivm8RcyhC
+         eJKN/HvOYiTmeFsPcLvX9daiIIXSgCUlLR/bJOUTieraPl+UPBZrrJQFtXaclzq/bra+
+         AF+Zksj+MchmgA6LNPHlmULwQwjjdyA4PjX01pHQg3/ZCrqEzkOKxlLBpKVN6jmSv01r
+         C80UUtClWdQqFzFISc93OQENgf7/tFHSDLNumfYDptwVttiXjO3XgQEc1Tc+85IfBkBA
+         9y8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nHAZm0GZeVyi0k2jXAqZJ6+K/F+OXmkni52x4h/2WKU=;
+        b=tdMKdsBAdbrtBhxYHaokf5Ibn8HPuH0qfkGNbT9ewlu3G53+zDCY7us5ksycetQ2h7
+         FwJDyc/3bYG7IxkiJz1H2jq4VaD5ifz+PK4x3PcJmgURTUAamDCVMppm5BTWasdnuFNI
+         FdaX/uicv9gbV3FqAk5Vontu7PjgXXrPEQKGz77dBRPW+YMANLuv6ffSxkAAyq98CQ1v
+         +hGjiNrdkkyUBD3vk6qqimDRME+4CyQAuj6gHpLIQcJgikQunC9ja1Wz07efWj+DIr/x
+         W5v/IYufaoqS+IP5nNJFJqLkwUwTBAIDDCKJrem5zWYBThyvXe8hLj3kcqnqGAv6Esjf
+         mGeg==
+X-Gm-Message-State: APjAAAXnHzPpDYVmlDzTcxBmn72mkgc1nizfYx7ehTUl3n9XDfEeYsA7
+        KfWiSDPa9ZRdjbGSZ7rTp3k=
+X-Google-Smtp-Source: APXvYqxNSOOeEKipsPzXzNB35eNLgJeH0dlFgOZerwtyAg1/J6mRzv95o7+dpOqMTQU7nPiqxQkS0w==
+X-Received: by 2002:a17:906:8386:: with SMTP id p6mr2356514ejx.139.1565087031956;
+        Tue, 06 Aug 2019 03:23:51 -0700 (PDT)
+Received: from continental ([187.112.244.117])
+        by smtp.gmail.com with ESMTPSA id jt17sm14779247ejb.90.2019.08.06.03.23.44
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 03:23:51 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 07:24:56 -0300
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Doug Gilbert <dgilbert@interlog.com>,
+        Kai =?iso-8859-1?Q?M=E4kisara?= <Kai.Makisara@kolumbus.fi>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        "open list:NVM EXPRESS DRIVER" <linux-nvme@lists.infradead.org>,
+        "open list:SCSI SUBSYSTEM" <linux-scsi@vger.kernel.org>,
+        "open list:SCSI TARGET SUBSYSTEM" <target-devel@vger.kernel.org>
+Subject: Re: [PATCH] block: Remove request_queue argument from
+ blk_execute_rq_nowait
+Message-ID: <20190806102456.GA29914@continental>
+References: <20190806011754.7722-1-marcos.souza.org@gmail.com>
+ <20190806051911.GA13409@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20190806100121.240767-11-maz@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806051911.GA13409@lst.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On 8/6/19 11:01 AM, Marc Zyngier wrote:
-> As is it usual for the GIC, it isn't disallowed to put together a system
-> that is majorly inconsistent, with a distributor supporting the
-> extended ranges while some of the CPUs don't.
+On Tue, Aug 06, 2019 at 07:19:11AM +0200, Christoph Hellwig wrote:
+> On Mon, Aug 05, 2019 at 10:17:51PM -0300, Marcos Paulo de Souza wrote:
+> > +void blk_execute_rq_nowait(struct gendisk *bd_disk, struct request *rq,
+> > +			int at_head, rq_end_io_fn *done)
 > 
-> Kindly tell the user that things are sailing isn't going to be smooth.
+> We store a ->rq_disk in struct request, so we should also not need
+> that.  And at_head should either become a bool, or be replaced with
+> a flags argument, ints used boolean are usually not a good idea.
+
+Makes sense.
+
 > 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/irqchip/irq-gic-v3.c       | 5 +++++
->  include/linux/irqchip/arm-gic-v3.h | 1 +
->  2 files changed, 6 insertions(+)
+> > @@ -81,7 +80,7 @@ void blk_execute_rq(struct request_queue *q, struct gendisk *bd_disk,
 > 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index f53e58d398ba..334a10d9dbfb 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -1014,6 +1014,11 @@ static void gic_cpu_init(void)
->  
->  	gic_enable_redist(true);
->  
-> +	WARN((gic_data.ppi_nr > 16 || GIC_ESPI_NR != 0) &&
-> +	     !(gic_read_ctlr() & ICC_CTLR_EL1_ExtRange),
-> +	     "Distributor has extended ranges, but CPU%d doesn't\n",
-> +	     smp_processor_id());
-> +
+> And all the same argument changes that apply to blk_execute_rq_nowait
+> apply to blk_execute_rq as well.
 
-Should such setup be tainted?
-
-Cheers
-Vladimir
-
->  	rbase = gic_data_rdist_sgi_base();
->  
->  	/* Configure SGIs/PPIs as non-secure Group-1 */
-> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-> index 9ec3349dee04..5cc10cf7cb3e 100644
-> --- a/include/linux/irqchip/arm-gic-v3.h
-> +++ b/include/linux/irqchip/arm-gic-v3.h
-> @@ -496,6 +496,7 @@
->  #define ICC_CTLR_EL1_A3V_SHIFT		15
->  #define ICC_CTLR_EL1_A3V_MASK		(0x1 << ICC_CTLR_EL1_A3V_SHIFT)
->  #define ICC_CTLR_EL1_RSS		(0x1 << 18)
-> +#define ICC_CTLR_EL1_ExtRange		(0x1 << 19)
->  #define ICC_PMR_EL1_SHIFT		0
->  #define ICC_PMR_EL1_MASK		(0xff << ICC_PMR_EL1_SHIFT)
->  #define ICC_BPR0_EL1_SHIFT		0
-> 
-
+Thanks for the suggestions, I will send a v2 soon.
