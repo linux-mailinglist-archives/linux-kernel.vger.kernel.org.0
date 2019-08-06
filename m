@@ -2,156 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ACC6836AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:27:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB210836C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387792AbfHFQ1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:27:20 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35961 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730265AbfHFQ1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:27:20 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g67so72990467wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 09:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ks68pV+pQcpLEmyiOxXRz96t/W4aSnKi5+iAyNyk/gE=;
-        b=kPF7hmafGtpnVgV3WJzmD140fPZ6avB9wiei7DSrdAx9HzVAwNo/YTaYwSr/+hs23M
-         2/QGGeppoE4nReQBnlBMru0ShdCxjI4+w6iCup4dH/BMo1y2+fDyYnZHO772HVj43dcV
-         75URyF088CdpW/HWe3m0arYmMvP7ap8wSOpisWI7s+rQSHKoahLZZ5rYSJ28x9GcP+F1
-         LfEiZR6X24HopMiCTspJO6/9yszxq5JS3Pw1Fpni0HhjelTngGgYqsdgmyv6F38Lv/6o
-         kZbWRjPGH1GGOBu5Xfm2cV0qt/eLd6QW0GovJOTqITzpsy5+ujIWWBn4E07BNlkArQqP
-         v02w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ks68pV+pQcpLEmyiOxXRz96t/W4aSnKi5+iAyNyk/gE=;
-        b=djg5trgcC4etA3zIFFT8iEIotQd/ICHS8JgQzsQ6bohc2x26WGwgx9BiaZymfzdLIA
-         QD86kpHs2XUYvqj6ZSwiNCDIkYkEQorgrvey63Dod64WbtTJQxApiYcl2oCQgzEF9qdL
-         okgkcKU/oiYvv7hxZlx/kwIBpVW0iMknVDqfVfD5nduQ7eMt/iTZVHUmumVtU/ujxbCQ
-         wWyp3NOr6ZVtAKXq5rGTN/dsvl7znqs4k6CTsa8yzx29nyMkFt3AgySAeXNJD2O80Emk
-         F/vOSCf9B1uJaeb3oUSAEPnkqX1p95IF1F+TPXcxrUGDk5Sm3w14/9gvugp3Dos/ztLH
-         3Odw==
-X-Gm-Message-State: APjAAAWneaA+Pwp49s+i1U8jg4MgHw2bGmGh3Aog7EQ/YB7vq1fTBQfb
-        Yb3QNWHCXIchsFFXqn1BzyPzRRKx+HHZueE3Tc4517gJXQU=
-X-Google-Smtp-Source: APXvYqxqH906LyRFrGKmI+Hu/5yd0tY4SJx3TP7vli5npqM8lWs74BhfL7iUa0EHu1RyEzfNfP//hvLYlxK55C3nLnU=
-X-Received: by 2002:a7b:c947:: with SMTP id i7mr5778477wml.77.1565108837080;
- Tue, 06 Aug 2019 09:27:17 -0700 (PDT)
+        id S2387954AbfHFQ3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:29:04 -0400
+Received: from mout.gmx.net ([212.227.17.21]:58567 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387909AbfHFQ3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 12:29:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1565108877;
+        bh=xGvBBhBv8mIQUww1OPe1/FCAqKvtmv/lhpMvp7Optzo=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=BSfD2+tA0aFUeRWZUCCocQ7jVyr4dAsFDcSNF064B7Iw+MZQxKnTCLGg5sxQ4LloC
+         QjZegJ6sNrw5PcK19M7/KIcsV2i2q/Dx1tuiQ5oQKm/JmC2GFkERV5QeLMhit7Nqwm
+         /DF5TEImzOdzQt0nQiTjiaFu4BEYB4qOR68brwpc=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([217.61.153.94]) by mail.gmx.com
+ (mrgmx103 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 0MgsVY-1hhvJc3Ibg-00M5Kb; Tue, 06 Aug 2019 18:27:56 +0200
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Allison Randal <allison@lohutok.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, Eddie Huang <eddie.huang@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Tianping . Fang" <tianping.fang@mediatek.com>
+Cc:     Frank Wunderlich <frank-w@public-files.de>
+Subject: [PATCH v4 00/10] implement poweroff for mt6323 / bpi-r2
+Date:   Tue,  6 Aug 2019 18:27:35 +0200
+Message-Id: <20190806162745.8414-1-frank-w@public-files.de>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <d9802b6a-949b-b327-c4a6-3dbca485ec20@gmx.com> <ce102f29-3adc-d0fd-41ee-e32c1bcd7e8d@suse.cz>
- <20190805193148.GB4128@cmpxchg.org> <CAJuCfpHhR+9ybt9ENzxMbdVUd_8rJN+zFbDm+5CeE2Desu82Gg@mail.gmail.com>
- <398f31f3-0353-da0c-fc54-643687bb4774@suse.cz> <20190806142728.GA12107@cmpxchg.org>
- <20190806143608.GE11812@dhcp22.suse.cz>
-In-Reply-To: <20190806143608.GE11812@dhcp22.suse.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 6 Aug 2019 09:27:05 -0700
-Message-ID: <CAJuCfpFmOzj-gU1NwoQFmS_pbDKKd2XN=CS1vUV4gKhYCJOUtw@mail.gmail.com>
-Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
- inability to gracefully handle low memory pressure
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Artem S. Tashkinov" <aros@gmx.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fDGgKZ6spNEPfINJWpjM4TL6DAKb4WwwHdcrKqACYngUW5cxd34
+ UZ0Ho8Wdo+kM1XFugD0+bBIsncohO47Y/sc/RusG2Zb7ILZYqlMpyXGwEgIhoisr16zD0un
+ YDZ+MewnWXpQezMt+h+8894slE/RbtsTaGLPHyMnNHkGqHrjfuww/avOiQJ2WeZ7o/KEC1I
+ zQAEPiRtVQ33nCYGGyFEA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gTunm3r6LcY=:+rmQ5RPc3CYtKjH56Fxl5y
+ vdyanBHcAMIOsE31w0gi6hFSfzJhhsOufq774CqVZBjjb/ijn4jYzA12RCL+zCl5P/5ysvUpH
+ UJ4/PISlMpUSzkVPnaZ4ikA21TgNkQvltXlJUh5AZBvcOYbpWU/U/KIZfDVZV7x2GSCzVB6Ov
+ 4Z9Ds35L9fOJ4DOB8HpCllPXK9Zwn3PVS0/O5FJULdJTBYvw4zKUMFb/aAQYPzNm6O1tAASLP
+ ZK5UW6wFuwisdCGk2aczDlK6PQSsVzvj+3IQsH8xtgpZKP6GGRSgyMDS0EkIJVk3wXOzTab1a
+ e6lfBJZgs2royFjjJk7mtoeUMMnXkXu5VaGVDbo9rJHA6PmNSBxpeIuTHxX1+wN94R0gFxrY4
+ 11tq/wO1MS5Fl0HrWMhzj9T7xsP7V0m/htbEb2Ckkd6y2zAhc5zDFDJvw+jJmxJeeM/LUEKFN
+ mIxjwe21KxXFdGLHvL0+Au9kqAns25TfeIZoSOALUeFtmfspB+gkSoyoZwlIIAROWs7ko5r3L
+ fGISutTiyK63UI0Mzx2JJoSZQeFl+3IjxhD9BEEv0D68NgcmQ+OorS+OpA5hMeSdDXXK9YgWE
+ eeiz1jCZ2L1q1WxxAQX+0ml95KUWAaOuw7a7Cu/By/qTFT/5XPvJinje9KvXs+LBSsWTmbaqn
+ Li2QFfIzL1NvY4LGMM91uer4Y5Af57CdBQAwu5uQvwAnwyPsuk0xmD/C9++rMqZawP5v0HUsl
+ SMNkbhrdHRNKQKAfP4EQ3UNNB/XVMaLNSehJLXUBwXYkD7jcr+udDBDjXqewNP2qlr4NxLJf1
+ ed+GSlbU6HjIJDM41eet0w7Zx5ckQ2Y+5nAyq+yvnsXDBdICORm5jFxS03CTJ7SGkLIxR7EHg
+ lQ27xFMC4eyzw/ssfpiYW1FKmWz8aq1/Ndr0Rka2p/ricCEaFb1EU9LAbmB8CoG47DLAq8dja
+ +udTuoRvPkWg/62YQtWhTYFx8Ev8lgPQnTVWL1vYKfFsEOnd1T1px4DRZtAogiSbrfJe8XRqf
+ DM+kLIMjACgDT5aiRCXGQjwckMtqCRPHkQ3l09EqUetTmAmR4yz3a/5zTWtQsKzr+UWzff34P
+ zJXVD4E/SzPHxUcl1t5Xmwhn6ANLJNRYAIFE25H4bt/+U5SxFTXk7lInkfB+/NSM5fP9K38pk
+ /6GDw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 7:36 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Tue 06-08-19 10:27:28, Johannes Weiner wrote:
-> > On Tue, Aug 06, 2019 at 11:36:48AM +0200, Vlastimil Babka wrote:
-> > > On 8/6/19 3:08 AM, Suren Baghdasaryan wrote:
-> > > >> @@ -1280,3 +1285,50 @@ static int __init psi_proc_init(void)
-> > > >>         return 0;
-> > > >>  }
-> > > >>  module_init(psi_proc_init);
-> > > >> +
-> > > >> +#define OOM_PRESSURE_LEVEL     80
-> > > >> +#define OOM_PRESSURE_PERIOD    (10 * NSEC_PER_SEC)
-> > > >
-> > > > 80% of the last 10 seconds spent in full stall would definitely be a
-> > > > problem. If the system was already low on memory (which it probably
-> > > > is, or we would not be reclaiming so hard and registering such a big
-> > > > stall) then oom-killer would probably kill something before 8 seconds
-> > > > are passed.
-> > >
-> > > If oom killer can act faster, than great! On small embedded systems you probably
-> > > don't enable PSI anyway?
+mainline-driver does not support mt6323
 
-We use PSI triggers with 1 sec tracking window. PSI averages are less
-useful on such systems because in 10 secs (which is the shortest PSI
-averaging window) memory conditions can change drastically.
+this series makes some cleanup to mt6397-rtc-driver, adds mt6323 and
+implement power-controller on it.
 
-> > > > If my line of thinking is correct, then do we really
-> > > > benefit from such additional protection mechanism? I might be wrong
-> > > > here because my experience is limited to embedded systems with
-> > > > relatively small amounts of memory.
-> > >
-> > > Well, Artem in his original mail describes a minutes long stall. Things are
-> > > really different on a fast desktop/laptop with SSD. I have experienced this as
-> > > well, ending up performing manual OOM by alt-sysrq-f (then I put more RAM than
-> > > 8GB in the laptop). IMHO the default limit should be set so that the user
-> > > doesn't do that manual OOM (or hard reboot) before the mechanism kicks in. 10
-> > > seconds should be fine.
-> >
-> > That's exactly what I have experienced in the past, and this was also
-> > the consistent story in the bug reports we have had.
-> >
-> > I suspect it requires a certain combination of RAM size, CPU speed,
-> > and IO capacity: the OOM killer kicks in when reclaim fails, which
-> > happens when all scanned LRU pages were locked and under IO. So IO
-> > needs to be slow enough, or RAM small enough, that the CPU can scan
-> > all LRU pages while they are temporarily unreclaimable (page lock).
-> >
-> > It may well be that on phones the RAM is small enough relative to CPU
-> > size.
-> >
-> > But on desktops/servers, we frequently see that there is a wider
-> > window of memory consumption in which reclaim efficiency doesn't drop
-> > low enough for the OOM killer to kick in. In the time it takes the CPU
-> > to scan through RAM, enough pages will have *just* finished reading
-> > for reclaim to free them again and continue to make "progress".
-> >
-> > We do know that the OOM killer might not kick in for at least 20-25
-> > minutes while the system is entirely unresponsive. People usually
-> > don't wait this long before forcibly rebooting. In a managed fleet,
-> > ssh heartbeat tests eventually fail and force a reboot.
+tested on bananapi-r2
 
-Got it. Thanks for the explanation.
+Original Patch from Josef Friedl
 
-> > I'm not sure 10s is the perfect value here, but I do think the kernel
-> > should try to get out of such a state, where interacting with the
-> > system is impossible, within a reasonable amount of time.
-> >
-> > It could be a little too short for non-interactive number-crunching
-> > systems...
->
-> Would it be possible to have a module with tunning knobs as parameters
-> and hook into the PSI infrastructure? People can play with the setting
-> to their need, we wouldn't really have think about the user visible API
-> for the tuning and this could be easily adopted as an opt-in mechanism
-> without a risk of regressions.
+changes since v3:
+	- moved SOB in 2/10 and 9/10
+	- moved part 5 to 6 to be near driver-change
+	- changehistory of patches below ---
 
-PSI averages stalls over 10, 60 and 300 seconds, so implementing 3
-corresponding thresholds would be easy. The patch Johannes posted can
-be extended to support 3 thresholds instead of 1. I can take a stab at
-it if Johannes is busy.
-If we want more flexibility we could use PSI triggers with
-configurable tracking window but that's more complex and probably not
-worth it.
+changes since v2:
+	- Splitted some parts and rebased on 5.3-rc2:
 
-> I would really love to see a simple threshing watchdog like the one you
-> have proposed earlier. It is self contained and easy to play with if the
-> parameters are not hardcoded.
->
-> --
-> Michal Hocko
-> SUSE Labs
+	v2.1 dt-bindings: add powercontroller =E2=80=93 try to make better subjec=
+t
+	v2.2 separate rtc-mt6397.txt (suggested by Alexandre Belloni)
+		add missing commit-message (suggested by Matthias Brugger)
+	v2.3 fix alloc after IRQ (suggested by Alexandre Belloni)
+		new compatible (splitting suggested by Alexandre Belloni)
+		needed due to different rtc-base/size see #7
+	v2.4 simplifications (Define-res-macros)
+		add mt6323 rtc+pwrc
+	v2.5 add poweroff-driver (no change)
+	v2.6 MAINTAINERS (no change)
+	v2.7 DTS-Changes (no change)
+
+
+Josef Friedl (10):
+  dt-bindings: add powercontroller
+  dt-bindings: add missing mt6397 rtc
+  rtc: mt6397: move some common definitions into rtc.h
+  rtc: mt6397: improvements of rtc driver
+  mfd: mt6323: some improvements of mt6397-core
+  rtc: mt6397: add compatible for mt6323
+  mfd: mt6323: add mt6323 rtc+pwrc
+  power: reset: add driver for mt6323 poweroff
+  MAINTAINERS: add Mediatek shutdown drivers
+  arm: dts: mt6323: add keys, power-controller, rtc and codec
+
+ .../devicetree/bindings/mfd/mt6397.txt        |  10 +-
+ .../bindings/power/reset/mt6323-poweroff.txt  |  20 ++++
+ .../devicetree/bindings/rtc/rtc-mt6397.txt    |  29 +++++
+ MAINTAINERS                                   |   7 ++
+ arch/arm/boot/dts/mt6323.dtsi                 |  27 +++++
+ drivers/mfd/mt6397-core.c                     |  40 +++++--
+ drivers/power/reset/Kconfig                   |  10 ++
+ drivers/power/reset/Makefile                  |   1 +
+ drivers/power/reset/mt6323-poweroff.c         |  97 ++++++++++++++++
+ drivers/rtc/rtc-mt6397.c                      | 107 ++++--------------
+ include/linux/mfd/mt6397/core.h               |   2 +
+ include/linux/mfd/mt6397/rtc.h                |  71 ++++++++++++
+ 12 files changed, 323 insertions(+), 98 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/reset/mt6323-p=
+oweroff.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
+ create mode 100644 drivers/power/reset/mt6323-poweroff.c
+ create mode 100644 include/linux/mfd/mt6397/rtc.h
+
+=2D-
+2.17.1
+
