@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E2C82968
+	by mail.lfdr.de (Postfix) with ESMTP id F30B98296A
 	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 03:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731388AbfHFBs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 21:48:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:41830 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731328AbfHFBs0 (ORCPT
+        id S1731449AbfHFBsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 21:48:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33300 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731308AbfHFBsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 21:48:26 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761iAp9078264;
-        Tue, 6 Aug 2019 01:48:04 GMT
+        Mon, 5 Aug 2019 21:48:30 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761i73Z151869;
+        Tue, 6 Aug 2019 01:48:05 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=WvV50/BsA1642B3kVRC1Mg6PgZqRAFj/+Pth1rANcxA=;
- b=r+8pq2FH8dpZq16OOdFBYhF3ZAl5enxyqlIZuDeucd7zEAYYbD98Gg6I8ZLzVsxriR4S
- wX4V+MeZ/v/Y62jbj0j2JBj2FKHTyLY6MAewgOybJO02N3xoJQuiu9qKI7nao42sIpMy
- FbvcSncFp1Cit1vGQoEKjASjMMuRoXTr+v6qqjFkXUwPueTZ/MteDWzYQSwd5EoWgH6V
- qNwZxuBTy7f+WIzk5vUKNt6hztBZw5Cyne7iKViGuOOuVjpHgCluoMbQDov4rr3fKPK5
- n2xrOCCfUl8y8L+C6VDusSQUxii0AKR5ulJ3XSIT4ZuXk9zkQJWlL2zpX3eRDSeFK5Zs nA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2u51ptts13-1
+ bh=NkfExKMcLKaKUZb76g5CsxS1F+1fcLfxs/msqSWpJyg=;
+ b=Ffw9c4N5uibqiguUP/+Kxijh2it7kC65bqaiLVF+uWAkM+cwU5wJ4EsIKqnXh6+wpYu2
+ Kx8+9zR8F4/87DVsm2/Tt/M00ITVQct/1bVvATEnZh58tDT9gCtnBUwxDEEEhBv8mK9j
+ LZWUgTr4agZ6G+Qgi7TywPysOh08PaowpFUPpv92PqocSw6ExE7oSQW9aTU4nkMT79uM
+ 8M/h2aAuOMu1CtGcUaRZW8C6j4MyXJj8fLDNFRceZXkF4B3VlPGUtRbCNpfMMrgDZTDi
+ x2VP7NCKE/XPFSHQwFyWPL4ZnJPx83LojZBM1mXFf7EKftIYAWf6mQaILaFQdnDjNE3/ Ng== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2u527pjm9n-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 06 Aug 2019 01:48:04 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761m4br162751;
+        Tue, 06 Aug 2019 01:48:05 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761m4fm032603;
         Tue, 6 Aug 2019 01:48:04 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2u4ycubsmd-1
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2u50ac9ax6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Tue, 06 Aug 2019 01:48:04 +0000
 Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x761lvhP025251;
-        Tue, 6 Aug 2019 01:47:57 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x761lxFd016089;
+        Tue, 6 Aug 2019 01:47:59 GMT
 Received: from monkey.oracle.com (/71.63.128.209)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Aug 2019 18:47:57 -0700
+        with ESMTP ; Mon, 05 Aug 2019 18:47:59 -0700
 From:   Mike Kravetz <mike.kravetz@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Hillf Danton <hdanton@sina.com>, Vlastimil Babka <vbabka@suse.cz>,
@@ -50,22 +50,22 @@ Cc:     Hillf Danton <hdanton@sina.com>, Vlastimil Babka <vbabka@suse.cz>,
         David Rientjes <rientjes@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v2 3/4] mm, compaction: raise compaction priority after it withdrawns
-Date:   Mon,  5 Aug 2019 18:47:43 -0700
-Message-Id: <20190806014744.15446-4-mike.kravetz@oracle.com>
+Subject: [PATCH v2 4/4] hugetlbfs: don't retry when pool page allocations start to fail
+Date:   Mon,  5 Aug 2019 18:47:44 -0700
+Message-Id: <20190806014744.15446-5-mike.kravetz@oracle.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806014744.15446-1-mike.kravetz@oracle.com>
 References: <20190806014744.15446-1-mike.kravetz@oracle.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1906280000 definitions=main-1908060020
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
  definitions=main-1908060019
@@ -74,120 +74,227 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vlastimil Babka <vbabka@suse.cz>
+When allocating hugetlbfs pool pages via /proc/sys/vm/nr_hugepages,
+the pages will be interleaved between all nodes of the system.  If
+nodes are not equal, it is quite possible for one node to fill up
+before the others.  When this happens, the code still attempts to
+allocate pages from the full node.  This results in calls to direct
+reclaim and compaction which slow things down considerably.
 
-Mike Kravetz reports that "hugetlb allocations could stall for minutes
-or hours when should_compact_retry() would return true more often then
-it should.  Specifically, this was in the case where compact_result was
-COMPACT_DEFERRED and COMPACT_PARTIAL_SKIPPED and no progress was being
-made."
+When allocating pool pages, note the state of the previous allocation
+for each node.  If previous allocation failed, do not use the
+aggressive retry algorithm on successive attempts.  The allocation
+will still succeed if there is memory available, but it will not try
+as hard to free up memory.
 
-The problem is that the compaction_withdrawn() test in
-should_compact_retry() includes compaction outcomes that are only possible
-on low compaction priority, and results in a retry without increasing the
-priority. This may result in furter reclaim, and more incomplete compaction
-attempts.
-
-With this patch, compaction priority is raised when possible, or
-should_compact_retry() returns false.
-
-The COMPACT_SKIPPED result doesn't really fit together with the other
-outcomes in compaction_withdrawn(), as that's a result caused by
-insufficient order-0 pages, not due to low compaction priority. With this
-patch, it is moved to a new compaction_needs_reclaim() function, and for
-that outcome we keep the current logic of retrying if it looks like reclaim
-will be able to help.
-
-Reported-by: Mike Kravetz <mike.kravetz@oracle.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Tested-by: Mike Kravetz <mike.kravetz@oracle.com>
 Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
-v2 - Commit message reformatted to avoid line wrap.  Added SOB.
+v2 - Removed __GFP_NORETRY from bit mask allocations and added more
+     comments.  OK to pass NULL to NODEMASK_FREE.
 
- include/linux/compaction.h | 22 +++++++++++++++++-----
- mm/page_alloc.c            | 16 ++++++++++++----
- 2 files changed, 29 insertions(+), 9 deletions(-)
+ mm/hugetlb.c | 89 ++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 79 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-index 9569e7c786d3..4b898cdbdf05 100644
---- a/include/linux/compaction.h
-+++ b/include/linux/compaction.h
-@@ -129,11 +129,8 @@ static inline bool compaction_failed(enum compact_result result)
- 	return false;
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ede7e7f5d1ab..2be0b055958a 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -1405,12 +1405,25 @@ pgoff_t __basepage_index(struct page *page)
  }
  
--/*
-- * Compaction  has backed off for some reason. It might be throttling or
-- * lock contention. Retrying is still worthwhile.
-- */
--static inline bool compaction_withdrawn(enum compact_result result)
-+/* Compaction needs reclaim to be performed first, so it can continue. */
-+static inline bool compaction_needs_reclaim(enum compact_result result)
+ static struct page *alloc_buddy_huge_page(struct hstate *h,
+-		gfp_t gfp_mask, int nid, nodemask_t *nmask)
++		gfp_t gfp_mask, int nid, nodemask_t *nmask,
++		nodemask_t *node_alloc_noretry)
  {
- 	/*
- 	 * Compaction backed off due to watermark checks for order-0
-@@ -142,6 +139,16 @@ static inline bool compaction_withdrawn(enum compact_result result)
- 	if (result == COMPACT_SKIPPED)
- 		return true;
+ 	int order = huge_page_order(h);
+ 	struct page *page;
++	bool alloc_try_hard = true;
  
-+	return false;
-+}
-+
-+/*
-+ * Compaction has backed off for some reason after doing some work or none
-+ * at all. It might be throttling or lock contention. Retrying might be still
-+ * worthwhile, but with a higher priority if allowed.
-+ */
-+static inline bool compaction_withdrawn(enum compact_result result)
-+{
- 	/*
- 	 * If compaction is deferred for high-order allocations, it is
- 	 * because sync compaction recently failed. If this is the case
-@@ -207,6 +214,11 @@ static inline bool compaction_failed(enum compact_result result)
- 	return false;
- }
- 
-+static inline bool compaction_needs_reclaim(enum compact_result result)
-+{
-+	return false;
-+}
-+
- static inline bool compaction_withdrawn(enum compact_result result)
- {
- 	return true;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d3bb601c461b..af29c05e23aa 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3965,15 +3965,23 @@ should_compact_retry(struct alloc_context *ac, int order, int alloc_flags,
- 	if (compaction_failed(compact_result))
- 		goto check_priority;
+-	gfp_mask |= __GFP_COMP|__GFP_RETRY_MAYFAIL|__GFP_NOWARN;
++	/*
++	 * By default we always try hard to allocate the page with
++	 * __GFP_RETRY_MAYFAIL flag.  However, if we are allocating pages in
++	 * a loop (to adjust global huge page counts) and previous allocation
++	 * failed, do not continue to try hard on the same node.  Use the
++	 * node_alloc_noretry bitmap to manage this state information.
++	 */
++	if (node_alloc_noretry && node_isset(nid, *node_alloc_noretry))
++		alloc_try_hard = false;
++	gfp_mask |= __GFP_COMP|__GFP_NOWARN;
++	if (alloc_try_hard)
++		gfp_mask |= __GFP_RETRY_MAYFAIL;
+ 	if (nid == NUMA_NO_NODE)
+ 		nid = numa_mem_id();
+ 	page = __alloc_pages_nodemask(gfp_mask, order, nid, nmask);
+@@ -1419,6 +1432,22 @@ static struct page *alloc_buddy_huge_page(struct hstate *h,
+ 	else
+ 		__count_vm_event(HTLB_BUDDY_PGALLOC_FAIL);
  
 +	/*
-+	 * compaction was skipped because there are not enough order-0 pages
-+	 * to work with, so we retry only if it looks like reclaim can help.
++	 * If we did not specify __GFP_RETRY_MAYFAIL, but still got a page this
++	 * indicates an overall state change.  Clear bit so that we resume
++	 * normal 'try hard' allocations.
 +	 */
-+	if (compaction_needs_reclaim(compact_result)) {
-+		ret = compaction_zonelist_suitable(ac, order, alloc_flags);
-+		goto out;
++	if (node_alloc_noretry && page && !alloc_try_hard)
++		node_clear(nid, *node_alloc_noretry);
++
++	/*
++	 * If we tried hard to get a page but failed, set bit so that
++	 * subsequent attempts will not try as hard until there is an
++	 * overall state change.
++	 */
++	if (node_alloc_noretry && !page && alloc_try_hard)
++		node_set(nid, *node_alloc_noretry);
++
+ 	return page;
+ }
+ 
+@@ -1427,7 +1456,8 @@ static struct page *alloc_buddy_huge_page(struct hstate *h,
+  * should use this function to get new hugetlb pages
+  */
+ static struct page *alloc_fresh_huge_page(struct hstate *h,
+-		gfp_t gfp_mask, int nid, nodemask_t *nmask)
++		gfp_t gfp_mask, int nid, nodemask_t *nmask,
++		nodemask_t *node_alloc_noretry)
+ {
+ 	struct page *page;
+ 
+@@ -1435,7 +1465,7 @@ static struct page *alloc_fresh_huge_page(struct hstate *h,
+ 		page = alloc_gigantic_page(h, gfp_mask, nid, nmask);
+ 	else
+ 		page = alloc_buddy_huge_page(h, gfp_mask,
+-				nid, nmask);
++				nid, nmask, node_alloc_noretry);
+ 	if (!page)
+ 		return NULL;
+ 
+@@ -1450,14 +1480,16 @@ static struct page *alloc_fresh_huge_page(struct hstate *h,
+  * Allocates a fresh page to the hugetlb allocator pool in the node interleaved
+  * manner.
+  */
+-static int alloc_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed)
++static int alloc_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed,
++				nodemask_t *node_alloc_noretry)
+ {
+ 	struct page *page;
+ 	int nr_nodes, node;
+ 	gfp_t gfp_mask = htlb_alloc_mask(h) | __GFP_THISNODE;
+ 
+ 	for_each_node_mask_to_alloc(h, nr_nodes, node, nodes_allowed) {
+-		page = alloc_fresh_huge_page(h, gfp_mask, node, nodes_allowed);
++		page = alloc_fresh_huge_page(h, gfp_mask, node, nodes_allowed,
++						node_alloc_noretry);
+ 		if (page)
+ 			break;
+ 	}
+@@ -1601,7 +1633,7 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
+ 		goto out_unlock;
+ 	spin_unlock(&hugetlb_lock);
+ 
+-	page = alloc_fresh_huge_page(h, gfp_mask, nid, nmask);
++	page = alloc_fresh_huge_page(h, gfp_mask, nid, nmask, NULL);
+ 	if (!page)
+ 		return NULL;
+ 
+@@ -1637,7 +1669,7 @@ struct page *alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+ 	if (hstate_is_gigantic(h))
+ 		return NULL;
+ 
+-	page = alloc_fresh_huge_page(h, gfp_mask, nid, nmask);
++	page = alloc_fresh_huge_page(h, gfp_mask, nid, nmask, NULL);
+ 	if (!page)
+ 		return NULL;
+ 
+@@ -2207,13 +2239,33 @@ static void __init gather_bootmem_prealloc(void)
+ static void __init hugetlb_hstate_alloc_pages(struct hstate *h)
+ {
+ 	unsigned long i;
++	nodemask_t *node_alloc_noretry;
++
++	if (!hstate_is_gigantic(h)) {
++		/*
++		 * Bit mask controlling how hard we retry per-node allocations.
++		 * Ignore errors as lower level routines can deal with
++		 * node_alloc_noretry == NULL.  If this kmalloc fails at boot
++		 * time, we are likely in bigger trouble.
++		 */
++		node_alloc_noretry = kmalloc(sizeof(*node_alloc_noretry),
++						GFP_KERNEL);
++	} else {
++		/* allocations done at boot time */
++		node_alloc_noretry = NULL;
 +	}
 +
- 	/*
- 	 * make sure the compaction wasn't deferred or didn't bail out early
- 	 * due to locks contention before we declare that we should give up.
--	 * But do not retry if the given zonelist is not suitable for
--	 * compaction.
-+	 * But the next retry should use a higher priority if allowed, so
-+	 * we don't just keep bailing out endlessly.
- 	 */
- 	if (compaction_withdrawn(compact_result)) {
--		ret = compaction_zonelist_suitable(ac, order, alloc_flags);
--		goto out;
-+		goto check_priority;
- 	}
++	/* bit mask controlling how hard we retry per-node allocations */
++	if (node_alloc_noretry)
++		nodes_clear(*node_alloc_noretry);
  
- 	/*
+ 	for (i = 0; i < h->max_huge_pages; ++i) {
+ 		if (hstate_is_gigantic(h)) {
+ 			if (!alloc_bootmem_huge_page(h))
+ 				break;
+ 		} else if (!alloc_pool_huge_page(h,
+-					 &node_states[N_MEMORY]))
++					 &node_states[N_MEMORY],
++					 node_alloc_noretry))
+ 			break;
+ 		cond_resched();
+ 	}
+@@ -2225,6 +2277,8 @@ static void __init hugetlb_hstate_alloc_pages(struct hstate *h)
+ 			h->max_huge_pages, buf, i);
+ 		h->max_huge_pages = i;
+ 	}
++
++	kfree(node_alloc_noretry);
+ }
+ 
+ static void __init hugetlb_init_hstates(void)
+@@ -2323,6 +2377,17 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
+ 			      nodemask_t *nodes_allowed)
+ {
+ 	unsigned long min_count, ret;
++	NODEMASK_ALLOC(nodemask_t, node_alloc_noretry, GFP_KERNEL);
++
++	/*
++	 * Bit mask controlling how hard we retry per-node allocations.
++	 * If we can not allocate the bit mask, do not attempt to allocate
++	 * the requested huge pages.
++	 */
++	if (node_alloc_noretry)
++		nodes_clear(*node_alloc_noretry);
++	else
++		return -ENOMEM;
+ 
+ 	spin_lock(&hugetlb_lock);
+ 
+@@ -2356,6 +2421,7 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
+ 	if (hstate_is_gigantic(h) && !IS_ENABLED(CONFIG_CONTIG_ALLOC)) {
+ 		if (count > persistent_huge_pages(h)) {
+ 			spin_unlock(&hugetlb_lock);
++			NODEMASK_FREE(node_alloc_noretry);
+ 			return -EINVAL;
+ 		}
+ 		/* Fall through to decrease pool */
+@@ -2388,7 +2454,8 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
+ 		/* yield cpu to avoid soft lockup */
+ 		cond_resched();
+ 
+-		ret = alloc_pool_huge_page(h, nodes_allowed);
++		ret = alloc_pool_huge_page(h, nodes_allowed,
++						node_alloc_noretry);
+ 		spin_lock(&hugetlb_lock);
+ 		if (!ret)
+ 			goto out;
+@@ -2429,6 +2496,8 @@ static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
+ 	h->max_huge_pages = persistent_huge_pages(h);
+ 	spin_unlock(&hugetlb_lock);
+ 
++	NODEMASK_FREE(node_alloc_noretry);
++
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
