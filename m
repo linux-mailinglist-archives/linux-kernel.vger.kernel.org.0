@@ -2,104 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC6FB83D25
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 00:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2675B83D28
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 00:05:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfHFWEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 18:04:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726716AbfHFWEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 18:04:50 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7657121880;
-        Tue,  6 Aug 2019 22:04:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565129089;
-        bh=AuqdTVytYqGwq/gm5yHhPwjwfhHe1pLTnzeuDh1BmAo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kUuYVb6xuyzs4OnPtaiKRTKPuzMpF5WG8+SnMfOoePE+aHCgTx55/ym/eXIQA3b9O
-         K9a5bvTZL1N9WU0Qm2HjEiV5SCCqiYirLBV4H3S0jvF5rohkl9F6dq7MFMnY/8hl+j
-         5PSu+wp/SJNVAA5v8ca3g746OP2auWkvQ39K2mIo=
-Date:   Tue, 6 Aug 2019 18:04:48 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 5.2 073/131] dma-direct: correct the physical addr in
- dma_direct_sync_sg_for_cpu/device
-Message-ID: <20190806220448.GN17747@sasha-vm>
-References: <20190805124951.453337465@linuxfoundation.org>
- <20190805124956.543654128@linuxfoundation.org>
- <20190806124143.GF17747@sasha-vm>
- <9dd82745-1673-afc3-5eb4-8b79ddb5824b@arm.com>
+        id S1727296AbfHFWFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 18:05:51 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52948 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfHFWFu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 18:05:50 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s3so79690279wms.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 15:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=D7kIZFgGybpcf1I/lUbPOT+bnIDjPdUpNNf2NGVocZo=;
+        b=F0Ff2uTwa31Ysn929Q7uzlxnogUkI+Bcnwayo/cc/LIGOsaIOOlAz7+Wdb7VJkG6Md
+         9m5KPfc04xft/5DxMlp/Ck+BPif+B/vzc/PpDntW/kB5iYyHDMSkLYofitvUt9JX+ASo
+         45JHolnWmY1CaGLCIk18wK3TkpAMpJv1xEGa0J7kSIq/BlA+tgfTiO2JXgMhFxcdfgIM
+         /9cb0eaGWIuWgZVevaHBsHlEZIqDuhZJV/yZUJsam/AQ94bLbMw88PvDE1x7WbInouGq
+         Hwnc/tfdixHMePg7Gk2rrzIHmRL1cWFt2r23/1XCmzM6xLht4/rC1WBdQVJNuS9NSbSr
+         4c3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=D7kIZFgGybpcf1I/lUbPOT+bnIDjPdUpNNf2NGVocZo=;
+        b=DqkfkTR4GlGt5pk4CUHtBc/OLABQaodV3Wg9Wi1Fdz50fCJ+xtsPI2VsF/8F/990lX
+         wWGs+T8KVvVRzDL7Wvdmj9ZdAnutMKxknI5LnT4mCy7vyfuWTcfMMObb2iCOhzGxsUQ8
+         M72Jl4tgmuURYrpN1YxOh/mBGrVdEMFe3z97iieSHgOh/Ki9q3KoW5I1jYZijzFAsytF
+         QwV30fU1YjyrYjAWKvj5LMycFHJuytusfSJ9DLR1q3zi7VTQ9laMbzC/knR7OOyXjcmA
+         N6kw2D2hvHP0QjN36zk7JmKuDH7gN0DI4ZltwXN/8qnWzEdgu5191qP/sqfs347WJLo+
+         bIFA==
+X-Gm-Message-State: APjAAAXr9XhQqgKAbHC/TBUEnSwLkQK+ev0T3RvDV8h+gL8bzYSZBEUs
+        a+jiYeeWF1lZcywlFlekiyotoQ==
+X-Google-Smtp-Source: APXvYqxOLRZTDczeSVrI3miadMJLEFaxVK0c2u1bVfx0uaVXU9QKEAFYtItXHnkQIlI/Sgy9gwK73g==
+X-Received: by 2002:a1c:751a:: with SMTP id o26mr6375286wmc.13.1565129149305;
+        Tue, 06 Aug 2019 15:05:49 -0700 (PDT)
+Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:e751:37a0:1e95:e65d])
+        by smtp.gmail.com with ESMTPSA id s3sm93652190wmh.27.2019.08.06.15.05.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 15:05:48 -0700 (PDT)
+From:   Alessio Balsini <balsini@android.com>
+To:     linux-block@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, axboe@kernel.dk, dvander@gmail.com,
+        elsk@google.com, gregkh@linuxfoundation.org,
+        kernel-team@android.com
+Subject: [PATCH] loop: Add LOOP_SET_DIRECT_IO in compat ioctl
+Date:   Tue,  6 Aug 2019 23:05:24 +0100
+Message-Id: <20190806220524.251404-1-balsini@android.com>
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9dd82745-1673-afc3-5eb4-8b79ddb5824b@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 01:57:56PM +0100, Robin Murphy wrote:
->On 06/08/2019 13:41, Sasha Levin wrote:
->>On Mon, Aug 05, 2019 at 03:02:40PM +0200, Greg Kroah-Hartman wrote:
->>>[ Upstream commit 449fa54d6815be8c2c1f68fa9dbbae9384a7c03e ]
->>>
->>>dma_map_sg() may use swiotlb buffer when the kernel command line includes
->>>"swiotlb=force" or the dma_addr is out of dev->dma_mask range.  After
->>>DMA complete the memory moving from device to memory, then user call
->>>dma_sync_sg_for_cpu() to sync with DMA buffer, and copy the original
->>>virtual buffer to other space.
->>>
->>>So dma_direct_sync_sg_for_cpu() should use swiotlb physical addr, not
->>>the original physical addr from sg_phys(sg).
->>>
->>>dma_direct_sync_sg_for_device() also has the same issue, correct it as
->>>well.
->>>
->>>Fixes: 55897af63091("dma-direct: merge swiotlb_dma_ops into the 
->>>dma_direct code")
->>>Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
->>>Reviewed-by: Robin Murphy <robin.murphy@arm.com>
->>>Signed-off-by: Christoph Hellwig <hch@lst.de>
->>>Signed-off-by: Sasha Levin <sashal@kernel.org>
->>
->>I'm going to drop this one. There's a fix to it upstream, but the fix
->>also seems to want 0036bc73ccbe ("drm/msm: stop abusing dma_map/unmap for
->>cache") which we're not taking, so I'm just going to drop this one as
->>well.
->
->Given that the two commits touch entirely separate files I'm not sure 
->what the imagined dependency could be :/
+Export LOOP_SET_DIRECT_IO as additional lo_compat_ioctl.
+The input argument for this ioctl is a single long, in the end converted
+to a 1-bit boolean. Compatibility is then preserved.
 
-From the commit message of 3de433c5b38a ("drm/msm: Use the correct
-dma_sync calls in msm_gem"):
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Alessio Balsini <balsini@android.com>
+---
+ drivers/block/loop.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-    Fixes the combination of two patches:
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 3036883fc9f8..a7461f482467 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1755,6 +1755,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
+ 	case LOOP_SET_FD:
+ 	case LOOP_CHANGE_FD:
+ 	case LOOP_SET_BLOCK_SIZE:
++	case LOOP_SET_DIRECT_IO:
+ 		err = lo_ioctl(bdev, mode, cmd, arg);
+ 		break;
+ 	default:
+-- 
+2.22.0.770.g0f2c4a37fd-goog
 
-    Fixes: 0036bc73ccbe (drm/msm: stop abusing dma_map/unmap for cache)
-    Fixes: 449fa54d6815 (dma-direct: correct the physical addr in dma_direct_sync_sg_for_cpu/device)
-
->0036bc73ccbe is indeed not a fix (frankly I'm not convinced it's even 
->a valid change at all) but even conceptually it bears no relation 
->whatsoever to the genuine bug fixed by 449fa54d6815.
-
-Given that Rob Clark asked me to drop 0036bc73ccbe not because it's
-irrelevant but because it's potentially dangerous, I did not feel
-confident enough ignoring the statement in the commit message and
-dropped this patch instead.
-
-If I'm  wrong here, I'd be happy to take these two patches if someone
-acks it.
-
---
-Thanks,
-Sasha
