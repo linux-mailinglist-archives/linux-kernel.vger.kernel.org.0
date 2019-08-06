@@ -2,62 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C7382D5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:04:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4775382D60
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732184AbfHFIDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 04:03:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46184 "EHLO mx1.suse.de"
+        id S1732216AbfHFIES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 04:04:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46518 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728975AbfHFIDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 04:03:44 -0400
+        id S1728843AbfHFIES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 04:04:18 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C56BAF5D;
-        Tue,  6 Aug 2019 08:03:43 +0000 (UTC)
-Subject: Re: [PATCH v2 4/4] hugetlbfs: don't retry when pool page allocations
- start to fail
-To:     Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
+        by mx1.suse.de (Postfix) with ESMTP id 3B33EAF1D;
+        Tue,  6 Aug 2019 08:04:17 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 10:04:15 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     kernel test robot <oliver.sang@intel.com>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Miguel de Dios <migueldedios@google.com>,
+        Wei Wang <wvw@google.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190806014744.15446-1-mike.kravetz@oracle.com>
- <20190806014744.15446-5-mike.kravetz@oracle.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <c13c0c78-55d1-b2e2-c24b-897ce2469410@suse.cz>
-Date:   Tue, 6 Aug 2019 10:03:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mel Gorman <mgorman@techsingularity.net>, lkp@01.org
+Subject: Re: [mm]  755d6edc1a:  will-it-scale.per_process_ops -4.1% regression
+Message-ID: <20190806080415.GG11812@dhcp22.suse.cz>
+References: <20190729071037.241581-1-minchan@kernel.org>
+ <20190806070547.GA10123@xsang-OptiPlex-9020>
 MIME-Version: 1.0
-In-Reply-To: <20190806014744.15446-5-mike.kravetz@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806070547.GA10123@xsang-OptiPlex-9020>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/6/19 3:47 AM, Mike Kravetz wrote:
-> When allocating hugetlbfs pool pages via /proc/sys/vm/nr_hugepages,
-> the pages will be interleaved between all nodes of the system.  If
-> nodes are not equal, it is quite possible for one node to fill up
-> before the others.  When this happens, the code still attempts to
-> allocate pages from the full node.  This results in calls to direct
-> reclaim and compaction which slow things down considerably.
+On Tue 06-08-19 15:05:47, kernel test robot wrote:
+> Greeting,
 > 
-> When allocating pool pages, note the state of the previous allocation
-> for each node.  If previous allocation failed, do not use the
-> aggressive retry algorithm on successive attempts.  The allocation
-> will still succeed if there is memory available, but it will not try
-> as hard to free up memory.
-> 
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+> FYI, we noticed a -4.1% regression of will-it-scale.per_process_ops due to commit:
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+I have to confess I cannot make much sense from numbers because they
+seem to be too volatile and the main contributor doesn't stand up for
+me. Anyway, regressions on microbenchmarks like this are not all that
+surprising when a locking is slightly changed and the critical section
+made shorter. I have seen that in the past already.
 
-Thanks.
+That being said I would still love to get to bottom of this bug rather
+than play with the lock duration by a magic. In other words
+http://lkml.kernel.org/r/20190730125751.GS9330@dhcp22.suse.cz
+-- 
+Michal Hocko
+SUSE Labs
