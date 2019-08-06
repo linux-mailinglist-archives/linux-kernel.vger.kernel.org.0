@@ -2,132 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56237838FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C2F83940
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 21:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfHFSvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 14:51:39 -0400
-Received: from mga11.intel.com ([192.55.52.93]:5993 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfHFSvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 14:51:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 11:51:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
-   d="scan'208";a="182053414"
-Received: from megha-z97x-ud7-th.sc.intel.com ([143.183.85.162])
-  by FMSMGA003.fm.intel.com with ESMTP; 06 Aug 2019 11:51:38 -0700
-Message-ID: <1565118769.2401.120.camel@intel.com>
-Subject: Re: [RFC V1 RESEND 0/6] Introduce dynamic allocation/freeing of
- MSI-X vectors
-From:   Megha Dey <megha.dey@intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, marc.zyngier@arm.com, ashok.raj@intel.com,
-        jacob.jun.pan@linux.intel.com
-Date:   Tue, 06 Aug 2019 12:12:49 -0700
-In-Reply-To: <20190802002442.GI151852@google.com>
-References: <1561162778-12669-1-git-send-email-megha.dey@linux.intel.com>
-         <20190802002442.GI151852@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726461AbfHFTAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 15:00:20 -0400
+Received: from smtp-out-02.aalto.fi ([130.233.228.121]:57279 "EHLO
+        smtp-out-02.aalto.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfHFTAU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 15:00:20 -0400
+X-Greylist: delayed 320 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 15:00:18 EDT
+Received: from smtp-out-02.aalto.fi (localhost.localdomain [127.0.0.1])
+        by localhost (Email Security Appliance) with SMTP id 811F12715D9_D49CB7BB;
+        Tue,  6 Aug 2019 18:48:27 +0000 (GMT)
+Received: from exng2.org.aalto.fi (exng2.org.aalto.fi [130.233.223.21])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "exng2.org.aalto.fi", Issuer "org.aalto.fi RootCA" (not verified))
+        by smtp-out-02.aalto.fi (Sophos Email Appliance) with ESMTPS id 5CFE12715C0_D49CB7BF;
+        Tue,  6 Aug 2019 18:48:27 +0000 (GMT)
+Received: from exng5.org.aalto.fi (130.233.223.24) by exng2.org.aalto.fi
+ (130.233.223.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 6 Aug
+ 2019 21:54:56 +0300
+Received: from exng5.org.aalto.fi ([fe80::c840:c193:838f:f99c]) by
+ exng5.org.aalto.fi ([fe80::c840:c193:838f:f99c%17]) with mapi id
+ 15.01.1713.006; Tue, 6 Aug 2019 21:54:56 +0300
+From:   Fihlman Emil <emil.fihlman@aalto.fi>
+To:     "yauheni.kaliuta@redhat.com" <yauheni.kaliuta@redhat.com>
+CC:     "e@kellett.im" <e@kellett.im>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] gcc-9: workaround array bounds warning on boot_params
+ cleaning
+Thread-Topic: [RFC PATCH] gcc-9: workaround array bounds warning on
+ boot_params cleaning
+Thread-Index: AQHVTIZ5ZwmQNTpoNka2oFBQBcpa5g==
+Date:   Tue, 6 Aug 2019 18:54:56 +0000
+Message-ID: <e72c48b3d10540a8b763f5ba862f2b8a@aalto.fi>
+Accept-Language: fi-FI, en-US
+Content-Language: fi-FI
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [130.233.0.5]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-SASI-RCODE: 200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aalto.fi; h=from:to:cc:subject:date:message-id:content-type:content-transfer-encoding:mime-version; s=its18; bh=DTcRCjzvwexjGwi0bfYpzBB/zMQQ341EDXvwkAQEMi8=; b=pU670Cb04MTtGIj9/Yl+GtcL2tys5tHq8OrfOve1JuTQerYbQsR8YrvVm4cLIcUvIiULoX41ocJsy7/Ehc6zsdMsH6A0ZS79gdrJ1LTELYcN/RYSOIErN50z7tat/gFtjvhnWTPfT/bHTQ1am1wOe7Rt92b43f83wj0+idir/ibySRIx3HkY5Kxsq2TwnW7f9s4NrwThgjtnILfTxE6ZhwywrMdZI7AiXIf2pEoCpVh/eOwLmNVVhitpQeWX9brYsYbva30rCdg+lqzppKJAWKFlMy3SCZ7xXZQYPe1vzuzSgXyxNWGM0D8NtKK6CzbHNiXab7Po9Yu0VmeTKBVVMA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-01 at 19:24 -0500, Bjorn Helgaas wrote:
-> Hi Megha,
-> 
-> On Fri, Jun 21, 2019 at 05:19:32PM -0700, Megha Dey wrote:
-> > 
-> > Currently, MSI-X vector enabling and allocation for a PCIe device
-> > is
-> > static i.e. a device driver gets only one chance to enable a
-> > specific
-> > number of MSI-X vectors, usually during device probe. Also, in many
-> > cases, drivers usually reserve more than required number of vectors
-> > anticipating their use, which unnecessarily blocks resources that
-> > could have been made available to other devices. Lastly, there is
-> > no
-> > way for drivers to reserve more vectors, if the MSI-x has already
-> > been
-> > enabled for that device.
-> >  
-> > Hence, a dynamic MSI-X kernel infrastructure can benefit drivers by
-> > deferring MSI-X allocation to post probe phase, where actual demand
-> > information is available.
-> >  
-> > This patchset enables the dynamic allocation/de-allocation of MSI-X
-> > vectors by introducing 2 new APIs:
-> > pci_alloc_irq_vectors_dyn() and pci_free_irq_vectors_grp():
-> > 
-> > We have had requests from some of the NIC/RDMA users who have lots
-> > of
-> > interrupt resources and would like to allocate them on demand,
-> > instead of using an all or none approach.
-> > 
-> > The APIs are fairly well tested (multiple
-> > allocations/deallocations),
-> > but we have no early adopters yet. Hence, sending this series as an
-> > RFC for review and comments.
-> > 
-> > The patches are based out of Linux 5.2-rc5.
-> > 
-> > Megha Dey (6):
-> >   PCI/MSI: New structures/macros for dynamic MSI-X allocation
-> >   PCI/MSI: Dynamic allocation of MSI-X vectors by group
-> >   x86: Introduce the dynamic teardown function
-> >   PCI/MSI: Introduce new structure to manage MSI-x entries
-> s/MSI-x/MSI-X/
-> If "entries" here means the same as "vectors" above, please use the
-> same word.
-> 
+It should also be possibly to simply cast to u64 and then to u8 * unless
+the compiler overzealously tracks out of bound accesses even when
+6.3.2.3 #5-6 explicitly allows pointer-integer-pointer conversions like
+this and removes previous guarantees. Ie.
 
-Hi Bjorn,
+memset((u8 *)((u64)(&(boot_params->ext_ramdisk_image))), 0, size)
 
-Well, here entries basically mean the msi_desc entries. I thought MSI
-vectors are used for each address/data pair, hence used the term
-entries. Will update it to vectors to ensure uniformity.
+I apologise for not having the in-reply-to header.
 
-> > 
-> >   PCI/MSI: Free MSI-X resources by group
-> Is "resources" the same as "vectors"?
-> 
-
-Yes, will update this in V2.
-
-> > 
-> >   Documentation: PCI/MSI: Document dynamic MSI-X infrastructure
-> When you post a v2 after addressing Thomas' comments, please make
-> these subject lines imperative sentences beginning with a descriptive
-> verb.  You can run "git log --oneline drivers/pci" to see the style.
-
-Sure, I will update the subject lines in V2.
-
-> If you're adding a specific interface or structure, mention it by
-> name
-> in the subject if it's practical.  The "x86" line needs a little more
-> context; I assume it should include "IRQ", "MSI-X", or something.
-> 
-
-True, will change this in V2.
-
-> > 
-> >  Documentation/PCI/MSI-HOWTO.txt |  38 +++++
-> >  arch/x86/include/asm/x86_init.h |   1 +
-> >  arch/x86/kernel/x86_init.c      |   6 +
-> >  drivers/pci/msi.c               | 363
-> > +++++++++++++++++++++++++++++++++++++---
-> >  drivers/pci/probe.c             |   9 +
-> >  include/linux/device.h          |   3 +
-> >  include/linux/msi.h             |  13 ++
-> >  include/linux/pci.h             |  61 +++++++
-> >  kernel/irq/msi.c                |  34 +++-
-> >  9 files changed, 497 insertions(+), 31 deletions(-)
-> > 
+Emil Fihlman
