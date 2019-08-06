@@ -2,73 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9C182B9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D5C82B8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731873AbfHFGZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 02:25:54 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:52348 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731842AbfHFGZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 02:25:53 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 647831A0073;
-        Tue,  6 Aug 2019 08:25:51 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1896A1A0107;
-        Tue,  6 Aug 2019 08:25:40 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C9F6B402DB;
-        Tue,  6 Aug 2019 14:25:26 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
-        lorenzo.pieralisi@arm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, zhiqiang.hou@nxp.com, roy.zang@nxp.com,
-        kstewart@linuxfoundation.org, pombredanne@nexb.com,
-        shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Subject: [PATCHv3 3/3] PCI: layerscape: Add LS1028a support
-Date:   Tue,  6 Aug 2019 14:15:53 +0800
-Message-Id: <20190806061553.19934-3-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190806061553.19934-1-xiaowei.bao@nxp.com>
-References: <20190806061553.19934-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1731808AbfHFGVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 02:21:03 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46508 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731641AbfHFGVB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 02:21:01 -0400
+Received: by mail-ed1-f68.google.com with SMTP id d4so81263461edr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 23:21:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0U+y13dMiHzwCn4V2Kd/3Vuhw7hdWOKVjn17zxDfeFA=;
+        b=adSYW4hdHxzk3GSWK3Ij8L4+k4NgUDIV4zWvlh1nwVgGmIU6lGEvW5wdRLLQpRogvw
+         HKVvV9GLLclBGPA6UMWcrOs5i5R209bQHjOlFvy/T6+IxtGr5qg3CFIUDowMBF0budEt
+         FrQqkgXpXz2B4Vc+FKKFq3QolQwSbSgdlopfI7g1kGjCE8wEgryOlkQkVL9Kex331v6+
+         RQDzhhYzlUDE3iyTTZTjG9XA48YG15/OUfaMWK6jJQMYE5Xzw95gG006eWy0sCIK4NXD
+         0P9QntTWm6Rfb5tr8VPj1o3TJR8xc7yQ/SdtNuYR26ikqQD7rzBJ2bvrEpVrx6Xixq7s
+         gHuA==
+X-Gm-Message-State: APjAAAUUhFnRDrUh8h0oni8AFKkOYb9ncsmfdKqXNF2KeyFeSsakq0sL
+        B1BdkdWWWixGCCU8BiN4sReY+589PGA=
+X-Google-Smtp-Source: APXvYqw6r6nNdlKfKLYqz7mmZtKzNLMzdEF60joiVbKXWRRr6vTFff4MuVnx5XZ52tQ5UpUPGs94vg==
+X-Received: by 2002:a17:906:32c2:: with SMTP id k2mr1595848ejk.147.1565072459227;
+        Mon, 05 Aug 2019 23:20:59 -0700 (PDT)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
+        by smtp.gmail.com with ESMTPSA id f24sm19738390edt.82.2019.08.05.23.20.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 23:20:58 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id g67so71064321wme.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 23:20:58 -0700 (PDT)
+X-Received: by 2002:a1c:c545:: with SMTP id v66mr2563319wmf.51.1565072458497;
+ Mon, 05 Aug 2019 23:20:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190730181557.90391-1-swboyd@chromium.org> <20190730181557.90391-3-swboyd@chromium.org>
+ <CAGb2v65njFXzLM_BvkDsZEzxEfkp_FFmFrS+1Ww9ZVen3iwy9g@mail.gmail.com> <5d489548.1c69fb81.44fd6.ab81@mx.google.com>
+In-Reply-To: <5d489548.1c69fb81.44fd6.ab81@mx.google.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 6 Aug 2019 14:20:44 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67JN_5chMA9ayqCuk-zP4x6qzs8MZCupqLsYRhrg4SfaQ@mail.gmail.com>
+Message-ID: <CAGb2v67JN_5chMA9ayqCuk-zP4x6qzs8MZCupqLsYRhrg4SfaQ@mail.gmail.com>
+Subject: Re: [PATCH v6 02/57] bus: sunxi-rsb: Remove dev_err() usage after platform_get_irq()
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the LS1028a PCIe controller.
+On Tue, Aug 6, 2019 at 4:44 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Chen-Yu Tsai (2019-08-04 20:35:05)
+> > On Wed, Jul 31, 2019 at 2:16 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> > >
+> > >
+> > > Please apply directly to subsystem trees
+> >
+> > I didn't follow this series. Is this for -fixes or -next?
+> >
+>
+> It's for -next. Sorry for not including a link to the patch that
+> introduces the platform_get_irq() changes. You can see it here:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/commit/?h=driver-core-next&id=7723f4c5ecdb8d832f049f8483beb0d1081cedf6
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
----
-v2:
- - no change.
-v3:
- - Reuse the ls2088 driver data structurt.
+Applied for 5.4.
 
- drivers/pci/controller/dwc/pci-layerscape.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
-index 3a5fa26..f24f79a 100644
---- a/drivers/pci/controller/dwc/pci-layerscape.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape.c
-@@ -263,6 +263,7 @@ static const struct ls_pcie_drvdata ls2088_drvdata = {
- static const struct of_device_id ls_pcie_of_match[] = {
- 	{ .compatible = "fsl,ls1012a-pcie", .data = &ls1046_drvdata },
- 	{ .compatible = "fsl,ls1021a-pcie", .data = &ls1021_drvdata },
-+	{ .compatible = "fsl,ls1028a-pcie", .data = &ls2088_drvdata },
- 	{ .compatible = "fsl,ls1043a-pcie", .data = &ls1043_drvdata },
- 	{ .compatible = "fsl,ls1046a-pcie", .data = &ls1046_drvdata },
- 	{ .compatible = "fsl,ls2080a-pcie", .data = &ls2080_drvdata },
--- 
-2.9.5
-
+Thanks.
