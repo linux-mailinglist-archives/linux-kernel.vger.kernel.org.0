@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AA0182A37
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 06:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E5C82A39
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 06:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbfHFEUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 00:20:35 -0400
-Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:58470 "EHLO
+        id S1730578AbfHFEVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 00:21:06 -0400
+Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:58750 "EHLO
         emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfHFEUe (ORCPT
+        with ESMTP id S1725747AbfHFEVF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 00:20:34 -0400
+        Tue, 6 Aug 2019 00:21:05 -0400
 Received: from toshiba (85-76-131-212-nat.elisa-mobile.fi [85.76.131.212])
-        by emh03.mail.saunalahti.fi (Postfix) with ESMTP id 076594000A;
-        Tue,  6 Aug 2019 07:20:30 +0300 (EEST)
-Message-ID: <5D490002.8C6EBB8B@users.sourceforge.net>
-Date:   Tue, 06 Aug 2019 07:20:18 +0300
+        by emh03.mail.saunalahti.fi (Postfix) with ESMTP id 0A83540021;
+        Tue,  6 Aug 2019 07:21:02 +0300 (EEST)
+Message-ID: <5D490021.F1CCC042@users.sourceforge.net>
+Date:   Tue, 06 Aug 2019 07:20:49 +0300
 From:   Jari Ruusu <jariruusu@users.sourceforge.net>
 MIME-Version: 1.0
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -43,7 +43,7 @@ Greg Kroah-Hartman wrote:
 > 
 > Can you send properly backported and tested patches?
 
-linux-4.9 backport of "x86/atomic: Fix smp_mb__{before,after}_atomic()".
+linux-4.4 backport of "x86/atomic: Fix smp_mb__{before,after}_atomic()".
 Tested.
 
 Signed-off-by: Jari Ruusu <jari.ruusu@gmail.com>
@@ -126,17 +126,16 @@ Signed-off-by: Jari Ruusu <jari.ruusu@gmail.com>
  /**
 --- a/arch/x86/include/asm/barrier.h
 +++ b/arch/x86/include/asm/barrier.h
-@@ -105,8 +105,8 @@
+@@ -116,7 +116,7 @@
  #endif
  
  /* Atomic operations are already serializing on x86 */
--#define __smp_mb__before_atomic()	barrier()
--#define __smp_mb__after_atomic()	barrier()
-+#define __smp_mb__before_atomic()	do { } while (0)
-+#define __smp_mb__after_atomic()	do { } while (0)
+-#define smp_mb__before_atomic()	barrier()
+-#define smp_mb__after_atomic()	barrier()
++#define smp_mb__before_atomic()	do { } while (0)
++#define smp_mb__after_atomic()	do { } while (0)
  
- #include <asm-generic/barrier.h>
- 
+ #endif /* _ASM_X86_BARRIER_H */
 
 -- 
 Jari Ruusu  4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD  ACDF F073 3C80 8132 F189
