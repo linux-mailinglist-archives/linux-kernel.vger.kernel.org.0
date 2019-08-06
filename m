@@ -2,94 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A7A83295
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E05F832A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731690AbfHFNT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:19:58 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43511 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfHFNT6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:19:58 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 4so30874835pld.10
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 06:19:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=techveda-org.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=IBYvx+JN3Tfby2a0Arr9iQ+FXDdmq2f9yE3G5sV6sLw=;
-        b=rk8JETipFCVycaKi9C2t1/NXX6S9JXK3Kci+dufck79btVc+OPSWTY8bo4+JdQvNzs
-         wc1xY+HSpCBWg/RHE54WVzhNLjtfMVV/9fWb6Gofl9zZ5Rnoc3ec5Tj1x3+tfXZYCIoJ
-         5q9fWxc/tE1GE2rHWpJU6uA4KWYY4+jqCFmbJ8WMZR6TpZluBcCuBL2AwVKzm2pejAX6
-         o91L5g3Peu2pH06dFOlmxN5mVeBDBMxITfy40Qz3cFDYUp8uWOWJ87OGWdQMf9Z2+q8e
-         yt2SVZpZGFSJfw7WqFr/mSqe7crd3spigbpomxSqXHHbMZTjByf2z957ggO8c0sVs7Ev
-         JC4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=IBYvx+JN3Tfby2a0Arr9iQ+FXDdmq2f9yE3G5sV6sLw=;
-        b=rbRVaFGPrs6jcZ2sApqQbstpZ/V9OrfcRo8ltAiqRANzE9Zp2n/FyUXA0+kS+TPjpe
-         J1OmFBEqQBAeI5uwZmcPE3OrI+gc5cvvuMQP2FqVwlBwWuTD2Qp/ogdATSxBAAjqyAPq
-         wsn5ry1WVmxLgd3NRfcjZQqMPdP87WvfgCM1l7S7S1kCiUlHcRfGyX/nMLMHQf30ETeg
-         s9SYUQwsu9AmH25+mpXD8QzW/eFNee6eHjBpgTnsIf0zPAfqlvoTZJrg/9kS+VrSxFug
-         zvFznMNXiXW79XeiwtLzNlc5/rAfzb7zOWOvuwUjRA3haDZx8uGhPjbf112Q/ipAhAji
-         XC8A==
-X-Gm-Message-State: APjAAAWZlhnBi6kK+jv0njBpBI5sMTc8gt9hFd7lQ1Atv6UROExbE0Hi
-        1MhK76sLDL0Eluegh09XkVhpsre9NfU=
-X-Google-Smtp-Source: APXvYqx17DAM1y2MpTGW4R9yvKYeLMnLAnm2Qpx44e6ubvVEIXtRpAvdyjcfrquxR5V+ZpCsaGThZw==
-X-Received: by 2002:a17:902:100a:: with SMTP id b10mr3120380pla.338.1565097597255;
-        Tue, 06 Aug 2019 06:19:57 -0700 (PDT)
-Received: from [192.168.1.3] ([49.204.224.178])
-        by smtp.gmail.com with ESMTPSA id n185sm75009415pga.16.2019.08.06.06.19.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 06:19:56 -0700 (PDT)
-From:   Suniel Mahesh <sunil.m@techveda.org>
-Subject: Machine specific static mappings iotable_init(), are they required ?
-To:     linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Cc:     thomas.petazzoni@free-electrons.com
-Message-ID: <a0d03054-b583-2d6b-aa32-e0f453767b88@techveda.org>
-Date:   Tue, 6 Aug 2019 18:49:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729735AbfHFNVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:21:45 -0400
+Received: from mga03.intel.com ([134.134.136.65]:32585 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726036AbfHFNVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 09:21:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 06:21:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
+   d="scan'208";a="325632007"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 06 Aug 2019 06:21:29 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 501E6146; Tue,  6 Aug 2019 16:21:28 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] tracing: Be more clever when dumping hex in __print_hex()
+Date:   Tue,  6 Aug 2019 16:21:27 +0300
+Message-Id: <20190806132127.43924-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hex dump as many as 16 bytes at once in trace_print_hex_seq()
+instead of byte-by-byte approach.
 
-I am trying to port a machine based on arm926 with MMU, having 64MB of RAM.  
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ kernel/trace/trace_output.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I am trying to understand the difference between: 
-
-machine specific static I/O mappings which are done via iotable_init()
-(done via callback .map_io in DT_MACHINE_START) and 
-dynamic I/O mappings done via ioremap()
-
-In the kernel docs/mailing list, I have encountered a statement which states:
-
-"with machine specific static I/O mappings which are done via iotable_init(), 
-registers can be mapped at the upper end of vmalloc area so that one can use as
-little of the VA space as possible so vmalloc and friends have a better chance of 
-getting memory"
-
-I am writing board initialization C file and got stuck at .map_io callback function,
-whether to define it or not. If yes, under what scenario should I do it
-
-now-a-days I think less boards are using iotable_init(). (is this defunct) ? 
-I might be wrong here
-
-Can't I use ioremap and do dynamic mappings when ever required via device tree ?
-If I do so will I encounter any problems with vmalloc area.
-
-
-Thanks & Regards
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index cab4a5398f1d..ef52807473b7 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -219,10 +219,10 @@ trace_print_hex_seq(struct trace_seq *p, const unsigned char *buf, int buf_len,
+ {
+ 	int i;
+ 	const char *ret = trace_seq_buffer_ptr(p);
++	const char *fmt = concatenate ? "%*phN" : "%*ph";
+ 
+-	for (i = 0; i < buf_len; i++)
+-		trace_seq_printf(p, "%s%2.2x", concatenate || i == 0 ? "" : " ",
+-				 buf[i]);
++	for (i = 0; i < buf_len; i += 16)
++		trace_seq_printf(p, fmt, min(buf_len % 16, 16), &buf[i]);
+ 	trace_seq_putc(p, 0);
+ 
+ 	return ret;
 -- 
-Suniel Mahesh
+2.20.1
+
