@@ -2,145 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 027A483597
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A2848359D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732446AbfHFPsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 11:48:14 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34365 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728189AbfHFPsO (ORCPT
+        id S1733044AbfHFPtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 11:49:01 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45380 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728189AbfHFPs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 11:48:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so35585955pgc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 08:48:14 -0700 (PDT)
+        Tue, 6 Aug 2019 11:48:59 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n1so2107547wrw.12
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 08:48:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3PRJIP91/AQ/oyHrXd4NPkQ8KybghYi4upuqcJUjSbQ=;
-        b=DHDWmi6dSuFjRnennVT95S4pXEJ37oOBjcfvuwJF56/1dOiRdLLJ+qxk198MtfGcAv
-         27dc158ZXVmSzEUSDiFJkkcdy9kW+jPXcaujqMWSpJs5pyYQGcMSSF+8sAIRFJE4oLip
-         AoqvDJ71rBS6FAf9wA+jadrC45BYOJUa/z1KA=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ptPXLxjVOz5ihhTCmiUb9SOxRUsWyiRA05QMfRaZBxE=;
+        b=w6bE8yyR4JBMEwgSHmi79Wk/S5gGY7QNyEgwpYESM1UsZeHe9oXGFXOjGBVtLpYPpY
+         75UNnjLCnIU71rz0/DzhDgVdx+jOY8vj9weixLvt1xGWN1nDZbqLUfzqlAFS6yzbcY0t
+         x0gHfMqDPQv8ft6XaBN4MD9fJYLf5ayeUrg0mxIpjqmIigCd6Dq/rKAW76guSobApOcM
+         PP7IelmEGrRww5xFAGwh3PP7oCVBakK7Oy4Uzcm/cRNOydWsdWZO71q8SGaimFOnx4mM
+         OsdKoaZmFbVGIDEfcOFt/AkyEAZ1Zvj8kgS5CXuiKQWdLd4+75EdEjuQY+ASe7/KJNK4
+         CLmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3PRJIP91/AQ/oyHrXd4NPkQ8KybghYi4upuqcJUjSbQ=;
-        b=tAHe0gtVcyf6aI74kgGU8Fp8DdwiN3w6gj15zCR3rWgeeg2PdaAS/P42lvaNOr78Wq
-         +RFek/Hp+6A96hns6+2cx2gkYkmLgfoLe5pCLB0bJtowK2HSi6udtuJzmVZJfigMo7n6
-         whDfsEgCM7EajPhMLyiwoHpmRvFYfyqy0PflwmncrQ5uQkPd/6di/HM7M0inruEqw0ff
-         8Qd9bXT9tRYjAcrQVGJr/Ehs8p5KpRLMyMUBcFylTd2dalj9yfetdNJJF+6LmAG2vqOQ
-         JSUxmlDfBDoLl1n0RvnLzBql81IW/cgEhW385rm1zxhyHG8Sde7rcapS1y9YktaHKR2U
-         2ezQ==
-X-Gm-Message-State: APjAAAVM0mS5BJh55bQr0fStdhon+/TV4cTkrdeKH/Jj6idu0Z74u3iW
-        Tgw9jE/oqu6DFPiUrUo8dqHmZw==
-X-Google-Smtp-Source: APXvYqwRBTUwdJjZqywEVj3R4ki4ntt43ZMkU8pP14OJ3NdosvZLrmuW9LtRkaKzaK3TaSfW6a4Iag==
-X-Received: by 2002:aa7:9293:: with SMTP id j19mr4520097pfa.90.1565106493576;
-        Tue, 06 Aug 2019 08:48:13 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id t96sm20287354pjb.1.2019.08.06.08.48.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 08:48:12 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 11:48:11 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Jiping Ma <jiping.ma2@windriver.com>, mingo@redhat.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ptPXLxjVOz5ihhTCmiUb9SOxRUsWyiRA05QMfRaZBxE=;
+        b=oxrKF7ZrG1a2vetvT8iCkje8TYruSQOdMSkYAbIu0CuD3Ye4n0d960DpescPjtZPW+
+         OWSr+lIrWkwOzjdGIrNQfpo08T9bJH3YKDjFlWYS6r7F8W39I8YlcKkoLMvQHBiWwwoT
+         SSInv+Gi/XVzNVNvt1mB/AQr2DJemhSidBSq4Q13nrkp/Q/aHstp8rMblFyNFOQpZEgg
+         T4Fi5ciWS0LrPsMKbHdpICzdI9yaQejexCnWmGmw6HG6aG8NDdb6oYW4oDXbsUMCANPg
+         zIm/RVrtVz+ypKou+c8aa9e8ZXzT/pflaMkHU7hzcwltCwt74ZXksjLZBKc8FgUKf5HI
+         Cv8Q==
+X-Gm-Message-State: APjAAAVaVi+f9r3Pi/UBAhQTegTXvN0bKIGL6N51gmglTW19yciNggiQ
+        EwWYBZHkL2jnoDcUVLF3Z0dR+NdkBAII0g==
+X-Google-Smtp-Source: APXvYqwLw8pawFldZrxXX9Gtm1nlbBcuyp5d8zHcvqzmVQsJ1G56os/jsJsXUzedykBZSHqd0ogd8w==
+X-Received: by 2002:adf:fdcc:: with SMTP id i12mr5656825wrs.88.1565106536555;
+        Tue, 06 Aug 2019 08:48:56 -0700 (PDT)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t185sm80363630wma.11.2019.08.06.08.48.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 08:48:55 -0700 (PDT)
+Subject: Re: [PATCH 6/6] arm64: dts: meson-g12b-khadas-vim3: add initial
+ device-tree
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        Christian Hewitt <christianshewitt@gmail.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] tracing: Function stack size and its name mismatch in
- arm64
-Message-ID: <20190806154811.GB39951@google.com>
-References: <20190802094103.163576-1-jiping.ma2@windriver.com>
- <20190802112259.0530a648@gandalf.local.home>
- <20190802120920.3b1f4351@gandalf.local.home>
- <20190802121124.6b41f26a@gandalf.local.home>
+References: <20190731124000.22072-1-narmstrong@baylibre.com>
+ <20190731124000.22072-7-narmstrong@baylibre.com>
+ <CAFBinCAD6F=bEE8Z2MvNZLJVKZ3siPqdJ36GuCYkp=DuY3AecQ@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <198d9d59-78bd-1092-69dd-9dde62915ac5@baylibre.com>
+Date:   Tue, 6 Aug 2019 17:48:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802121124.6b41f26a@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAFBinCAD6F=bEE8Z2MvNZLJVKZ3siPqdJ36GuCYkp=DuY3AecQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 12:11:24PM -0400, Steven Rostedt wrote:
-> On Fri, 2 Aug 2019 12:09:20 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On 03/08/2019 20:50, Martin Blumenstingl wrote:
+> On Wed, Jul 31, 2019 at 2:44 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+> [...]
+>> +       memory@0 {
+>> +               device_type = "memory";
+>> +               reg = <0x0 0x0 0x0 0x40000000>;
+> nit-pick: we typically use the memory size used in the board size with
+> the lowest amount of RAM - 2GiB in this case. so I would change it to
+> 0x80000000
+
+Right
+
 > 
-> > On Fri, 2 Aug 2019 11:22:59 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > I think you are not explaining the issue correctly. From looking at the
-> > > document, I think what you want to say is that the LR is saved *after*
-> > > the data for the function. Is that correct? If so, then yes, it would
-> > > cause the stack tracing algorithm to be incorrect.
-> > > 
-> > 
-> > [..]
-> > 
-> > > Can someone confirm that this is the real issue?
-> > 
-> > Does this patch fix your issue?
-> >
+> [...]
+>> +       leds {
+>> +               compatible = "gpio-leds";
+>> +
+>> +               white {
+>> +                       label = "vim3:white";
+> downstream sources use label="sys_led"
+> should we call it vim3:white:sys?
 > 
-> Bah, I hit "attach" instead of "insert" (I wondered why it didn't
-> insert). Here's the patch without the attachment.
-> 
-> -- Steve
-> 
-> diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
-> index 5ab5200b2bdc..13a4832cfb00 100644
-> --- a/arch/arm64/include/asm/ftrace.h
-> +++ b/arch/arm64/include/asm/ftrace.h
-> @@ -13,6 +13,7 @@
->  #define HAVE_FUNCTION_GRAPH_FP_TEST
->  #define MCOUNT_ADDR		((unsigned long)_mcount)
->  #define MCOUNT_INSN_SIZE	AARCH64_INSN_SIZE
-> +#define ARCH_RET_ADDR_AFTER_LOCAL_VARS 1
->  
->  #ifndef __ASSEMBLY__
->  #include <linux/compat.h>
-> diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-> index 5d16f73898db..050c6bd9beac 100644
-> --- a/kernel/trace/trace_stack.c
-> +++ b/kernel/trace/trace_stack.c
-> @@ -158,6 +158,18 @@ static void check_stack(unsigned long ip, unsigned long *stack)
->  			i++;
->  	}
->  
-> +#ifdef ARCH_RET_ADDR_AFTER_LOCAL_VARS
-> +	/*
-> +	 * Most archs store the return address before storing the
-> +	 * function's local variables. But some archs do this backwards.
-> +	 */
-> +	if (x > 1) {
-> +		memmove(&stack_trace_index[0], &stack_trace_index[1],
-> +			sizeof(stack_trace_index[0]) * (x - 1));
-> +		x--;
-> +	}
-> +#endif
-> +
->  	stack_trace_nr_entries = x;
->  
->  	if (task_stack_end_corrupted(current)) {
 
+OK, no problem
+Thanks for the review.
 
-I am not fully understanding the fix :(. If the positions of the data and
-FP/LR are swapped, then there should be a loop of some sort where the FP/LR
-are copied repeatedly to undo the mess we are discussing. But in this patch
-I see only one copy happening. May be I just don't understand this code well
-enough. Are there any more clues for helping understand the fix?
-
-Also, this stack trace loop (original code) is a bit hairy :) It appears
-there is a call to stack_trace_save() followed by another loop that goes
-through the returned entries from there and tries to generate a set of
-indexes. Isn't the real issue that the entries returned by stack_trace_save()
-are a out of whack? I am curious also if other users of stack_trace_save()
-will suffer from the same issue.
-
-thanks,
-
- - Joel
-
+Neil
