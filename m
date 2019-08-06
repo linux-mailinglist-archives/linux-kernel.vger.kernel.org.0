@@ -2,93 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC478358F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C25E483594
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732907AbfHFPqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 11:46:33 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:44598 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfHFPqd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 11:46:33 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 49FFE80475;
-        Tue,  6 Aug 2019 17:46:29 +0200 (CEST)
-Date:   Tue, 6 Aug 2019 17:46:27 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>, tzimmermann@suse.de,
-        Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH 1/3] drm: add gem ttm helpers
-Message-ID: <20190806154627.GA10478@ravnborg.org>
-References: <20190806133454.8254-1-kraxel@redhat.com>
- <20190806133454.8254-2-kraxel@redhat.com>
+        id S1733002AbfHFPrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 11:47:08 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:37596 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729161AbfHFPrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 11:47:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=tDkHFpyJMWg4Q2gavETNLZvz+JZOHVdkyGeG2qTN/Wc=; b=hEaWAU47mmu5QooLLHmVN7tdiw
+        CrrTPK3IXB8rPkzZLVoRUuqJqD1OOsbdcObJUTgVPE4vDlXE5CJrd3AGL4MqvzF9w8NS/n8PYXpv4
+        rVWRo5Fo7/4uuQdds/R02lU7PjiW8ljaC8eojAI7I3kuUG+RlCQ0/2nEobaSizTCA6b0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hv1fu-0005YJ-3h; Tue, 06 Aug 2019 17:46:58 +0200
+Date:   Tue, 6 Aug 2019 17:46:58 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc:     "davem@davemloft.net" <davem@davemloft.net>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+Subject: Re: [PATCH 15/16] net: phy: adin: add ethtool get_stats support
+Message-ID: <20190806154658.GC20422@lunn.ch>
+References: <20190805165453.3989-1-alexandru.ardelean@analog.com>
+ <20190805165453.3989-16-alexandru.ardelean@analog.com>
+ <20190805152832.GT24275@lunn.ch>
+ <ce952e3f8d927cdbccb268d708b4e47179d69b06.camel@analog.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190806133454.8254-2-kraxel@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=20KFwNOVAAAA:8
-        a=IZVlWtmyn-D7wekicaMA:9 a=CjuIK1q_8ugA:10
+In-Reply-To: <ce952e3f8d927cdbccb268d708b4e47179d69b06.camel@analog.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gerd.
-
-On Tue, Aug 06, 2019 at 03:34:52PM +0200, Gerd Hoffmann wrote:
-> Now with ttm_buffer_object being a subclass of drm_gem_object we can
-> easily lookup ttm_buffer_object for a given drm_gem_object, which in
-> turm allows to create common helper functions.  This patch starts off
-> with dump mmap helpers.
+On Tue, Aug 06, 2019 at 07:11:57AM +0000, Ardelean, Alexandru wrote:
+> On Mon, 2019-08-05 at 17:28 +0200, Andrew Lunn wrote:
+> > [External]
+> > 
+> > > +struct adin_hw_stat {
+> > > +	const char *string;
+> > > +static void adin_get_strings(struct phy_device *phydev, u8 *data)
+> > > +{
+> > > +	int i;
+> > > +
+> > > +	for (i = 0; i < ARRAY_SIZE(adin_hw_stats); i++) {
+> > > +		memcpy(data + i * ETH_GSTRING_LEN,
+> > > +		       adin_hw_stats[i].string, ETH_GSTRING_LEN);
+> > 
+> > You define string as a char *. So it will be only as long as it should
+> > be. However memcpy always copies ETH_GSTRING_LEN bytes, doing off the
+> > end of the string and into whatever follows.
+> > 
 > 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> hmm, will use strlcpy()
+> i blindedly copied memcpy() from some other driver
 
-One nit below.
+Hopefully that driver used const char string[ETH_GSTRING_LEN]. Then a
+memcpy is safe. If not, please let me know what driver you copied.
 
-> ---
->  include/drm/drm_gem_ttm_helper.h     | 27 +++++++++++++++
->  drivers/gpu/drm/drm_gem_ttm_helper.c | 52 ++++++++++++++++++++++++++++
->  drivers/gpu/drm/Kconfig              |  7 ++++
->  drivers/gpu/drm/Makefile             |  3 ++
->  4 files changed, 89 insertions(+)
->  create mode 100644 include/drm/drm_gem_ttm_helper.h
->  create mode 100644 drivers/gpu/drm/drm_gem_ttm_helper.c
-> 
-> diff --git a/include/drm/drm_gem_ttm_helper.h b/include/drm/drm_gem_ttm_helper.h
-> new file mode 100644
-> index 000000000000..2c6874190b17
-> --- /dev/null
-> +++ b/include/drm/drm_gem_ttm_helper.h
-> @@ -0,0 +1,27 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +
-> +#ifndef DRM_GEM_TTM_HELPER_H
-> +#define DRM_GEM_TTM_HELPER_H
-> +
-> +#include <drm/drm_gem.h>
-> +#include <drm/ttm/ttm_bo_api.h>
-> +#include <linux/kernel.h> /* for container_of() */
+> i'm afraid i don't understand about the snapshot feature you are mentioning;
+> i.e. i don't remember seeing it in other chips;
 
-The typical order of include files is:
+It is frequency done at the MAC layer for statistics. You tell the
+hardware to snapshot all the statistics. It atomically makes a copy of
+all the statistics into a set of registers. These values are then
+static, and consistent between counters. You can read them out knowing
+they are not going to change.
 
-#include <linux/*>
+> regarding the danger that stat->reg1 rolls over, i guess that is
+> possible, but it's a bit hard to guard against;
 
-#include <drm/*>
+The normal solution is the read the MSB, the LSB and then the MSB
+again. If the MSB value has changed between the two reads, you know a
+roll over has happened, and you need to do it all again.
 
-So space between each block of includes and sort within each block.
-
-The comment "/* for container_of() */" is not really useful for
-anyone.
-
-	Sam
+     Andrew
