@@ -2,204 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC758322B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEE5A83227
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732304AbfHFNF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:05:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55415 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732105AbfHFNFX (ORCPT
+        id S1730399AbfHFNFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:05:19 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51282 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731859AbfHFNFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:05:23 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x76D55T42187379
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 6 Aug 2019 06:05:06 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x76D55T42187379
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1565096706;
-        bh=jwysfKJpBfuuAv79uT+h0gRc9vi8QNkGFJjSmW9eNa4=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=WDUuOoFzrCIeWWJBIe/LaLhEeA/YtFWeXf99d+VFu634E3m36DK2NjmoTEm/9z9p6
-         K9HoQh9mhHyF/hGJ0Zzb1S/D72EYPTsxcdFAJd5xB6Zdb3IVUAk9bwqFlEfml/HFWr
-         jkN5BfJqwE54ZK762zjONkRKNWR96ST+uBBZMjH1wYmG6vO+lEVV5lGHw5/Z6SMwBZ
-         +I2pu8miJ/yIxdlLBCr312zqvNzBUKWO20yPU6QXTgPjSMrAgKlarcn9VPRnN6Vvb+
-         SciQYupDN9VtHOPrn2UWGPE+tm+P3nQ7PrQa0oxEViWvEo/tsA/Y2Esa22F+NxFGy+
-         SmHazPU+Lq7eQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x76D55T02187374;
-        Tue, 6 Aug 2019 06:05:05 -0700
-Date:   Tue, 6 Aug 2019 06:05:05 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Davidlohr Bueso <tipbot@zytor.com>
-Message-ID: <tip-fce45cd41101f1a9620267146b21f09b3454d8db@git.kernel.org>
-Cc:     hpa@zytor.com, dave@stgolabs.net, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, longman@redhat.com, tglx@linutronix.de,
-        peterz@infradead.org, dbueso@suse.de
-Reply-To: tglx@linutronix.de, dbueso@suse.de, peterz@infradead.org,
-          hpa@zytor.com, dave@stgolabs.net, linux-kernel@vger.kernel.org,
-          longman@redhat.com, mingo@kernel.org
-In-Reply-To: <20190729044735.9632-1-dave@stgolabs.net>
-References: <20190729044735.9632-1-dave@stgolabs.net>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/rwsem: Check for operations on an
- uninitialized rwsem
-Git-Commit-ID: fce45cd41101f1a9620267146b21f09b3454d8db
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        Tue, 6 Aug 2019 09:05:17 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 207so78147491wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 06:05:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=NiNSwC1w2DwV9CwHEjfRSuQJOciTaxfr2h0JNT+7juw=;
+        b=EHYBOLpk8xSLXE7FKn355BKQ13vlwR3ZCnaAz2IWUt2g774DsjpBHoAvqYsqxZVOj4
+         XnyXkJ/j3iP23NR0X3Ig5azD/6rscihQu1z4WOmce8usRaz08Bt5oK85tXW8De/oz3uE
+         ccZ0Nts615RF+Dvq4909tk5blSKQcmZ0uzvQx5j0vUPCoePCSuRx+ndSQwLFwBLu1rYq
+         GGyMuOLy3R4GFzLQ6XwVvAeOJylpXu1dAkcxzIaUpdb9KLRpsWf160lCqdc8o/rOGqlM
+         VxePBUUjgTgb1PaIEXmhhX0zRciOVg0R5nyHXACCFOJdkqJ089au+RQxnDteKiG9WzOB
+         v2uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=NiNSwC1w2DwV9CwHEjfRSuQJOciTaxfr2h0JNT+7juw=;
+        b=e0mOywHcG0kpWvcLcfGkm4JsrVr3Eh5L9pOSg/ObUwK0CCd0t3nDcF1YrjopBbOinb
+         f9/6VC7O6/ySWBYqyu8sv1s9LL8R11FkTTILXcKmBkx4aZvmuANJwUZvw3jSZxNarZLM
+         elTeErcQZFg08sO8EpEt+cr2bWC3MsN4Nk9LWxxZ1piPeYet9JaVPDrzkzYVSo2b+4Z8
+         2zRj4g91hwK/xhoQoW8/WaXm4ykgGSTlzcJ2LNFnqdEUfGNUWkl3IDwXQUtY4725+b8U
+         E7vsjhRV1Zu+cp1cioL2nZ3e3RsZAdibnbejwk1onsy9DrgwwXeDL2bTTU+W77YVKOpp
+         CGsw==
+X-Gm-Message-State: APjAAAXqlvaaSs8AaVS9iaNC1dXuGCAH89XXZ4nWUUKKb6bzgkXV3MzZ
+        sD2sjWCy8+uWxNUZC0mSFJb1ig==
+X-Google-Smtp-Source: APXvYqypJpfP+/e201HN/T1eYuG4Bi9Q5B29Pi4H41CfmpjOXTeOpKGfzyFQw5yv78N7W36Wh6yuoQ==
+X-Received: by 2002:a7b:c74a:: with SMTP id w10mr4635611wmk.99.1565096715772;
+        Tue, 06 Aug 2019 06:05:15 -0700 (PDT)
+Received: from glaroque-ThinkPad-T480.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id j33sm201888738wre.42.2019.08.06.06.05.14
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 06:05:15 -0700 (PDT)
+From:   Guillaume La Roque <glaroque@baylibre.com>
+To:     daniel.lezcano@linaro.org, khilman@baylibre.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 5/6] arm64: dts: amlogic: odroid-n2: add minimal thermal zone
+Date:   Tue,  6 Aug 2019 15:05:05 +0200
+Message-Id: <20190806130506.8753-6-glaroque@baylibre.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190806130506.8753-1-glaroque@baylibre.com>
+References: <20190806130506.8753-1-glaroque@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fce45cd41101f1a9620267146b21f09b3454d8db
-Gitweb:     https://git.kernel.org/tip/fce45cd41101f1a9620267146b21f09b3454d8db
-Author:     Davidlohr Bueso <dave@stgolabs.net>
-AuthorDate: Sun, 28 Jul 2019 21:47:35 -0700
-Committer:  Peter Zijlstra <peterz@infradead.org>
-CommitDate: Tue, 6 Aug 2019 12:49:15 +0200
+Add minimal thermal zone for two temperature sensor
+One is located close to the DDR and the other one is
+located close to the PLLs (between the CPU and GPU)
 
-locking/rwsem: Check for operations on an uninitialized rwsem
-
-Currently rwsems is the only locking primitive that lacks this
-debug feature. Add it under CONFIG_DEBUG_RWSEMS and do the magic
-checking in the locking fastpath (trylock) operation such that
-we cover all cases. The unlocking part is pretty straightforward.
-
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Waiman Long <longman@redhat.com>
-Cc: mingo@kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Link: https://lkml.kernel.org/r/20190729044735.9632-1-dave@stgolabs.net
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
 ---
- include/linux/rwsem.h  | 10 ++++++++++
- kernel/locking/rwsem.c | 22 ++++++++++++++++++----
- 2 files changed, 28 insertions(+), 4 deletions(-)
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 9d9c663987d8..00d6054687dd 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -45,6 +45,9 @@ struct rw_semaphore {
- #endif
- 	raw_spinlock_t wait_lock;
- 	struct list_head wait_list;
-+#ifdef CONFIG_DEBUG_RWSEMS
-+	void *magic;
-+#endif
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- 	struct lockdep_map	dep_map;
- #endif
-@@ -73,6 +76,12 @@ static inline int rwsem_is_locked(struct rw_semaphore *sem)
- # define __RWSEM_DEP_MAP_INIT(lockname)
- #endif
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+index 75ff8a7e373d..a7d73c0c8447 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/gpio/meson-g12a-gpio.h>
+ #include <dt-bindings/sound/meson-g12a-tohdmitx.h>
++#include <dt-bindings/thermal/thermal.h>
  
-+#ifdef CONFIG_DEBUG_RWSEMS
-+# define __DEBUG_RWSEM_INITIALIZER(lockname) , .magic = &lockname
-+#else
-+# define __DEBUG_RWSEM_INITIALIZER(lockname)
-+#endif
+ / {
+ 	compatible = "hardkernel,odroid-n2", "amlogic,g12b";
+@@ -20,6 +21,55 @@
+ 		ethernet0 = &ethmac;
+ 	};
+ 
++	thermal-zones {
++		cpu-thermal {
++			polling-delay = <1000>;
++			polling-delay-passive = <100>;
++			thermal-sensors = <&cpu_temp>;
 +
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- #define __RWSEM_OPT_INIT(lockname) , .osq = OSQ_LOCK_UNLOCKED
- #else
-@@ -85,6 +94,7 @@ static inline int rwsem_is_locked(struct rw_semaphore *sem)
- 	  .wait_list = LIST_HEAD_INIT((name).wait_list),	\
- 	  .wait_lock = __RAW_SPIN_LOCK_UNLOCKED(name.wait_lock)	\
- 	  __RWSEM_OPT_INIT(name)				\
-+	  __DEBUG_RWSEM_INITIALIZER(name)			\
- 	  __RWSEM_DEP_MAP_INIT(name) }
- 
- #define DECLARE_RWSEM(name) \
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 354238a08b7a..eef04551eae7 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -105,8 +105,9 @@
- #ifdef CONFIG_DEBUG_RWSEMS
- # define DEBUG_RWSEMS_WARN_ON(c, sem)	do {			\
- 	if (!debug_locks_silent &&				\
--	    WARN_ONCE(c, "DEBUG_RWSEMS_WARN_ON(%s): count = 0x%lx, owner = 0x%lx, curr 0x%lx, list %sempty\n",\
-+	    WARN_ONCE(c, "DEBUG_RWSEMS_WARN_ON(%s): count = 0x%lx, magic = 0x%lx, owner = 0x%lx, curr 0x%lx, list %sempty\n",\
- 		#c, atomic_long_read(&(sem)->count),		\
-+		(unsigned long) sem->magic,			\
- 		atomic_long_read(&(sem)->owner), (long)current,	\
- 		list_empty(&(sem)->wait_list) ? "" : "not "))	\
- 			debug_locks_off();			\
-@@ -329,6 +330,9 @@ void __init_rwsem(struct rw_semaphore *sem, const char *name,
- 	 */
- 	debug_check_no_locks_freed((void *)sem, sizeof(*sem));
- 	lockdep_init_map(&sem->dep_map, name, key, 0);
-+#endif
-+#ifdef CONFIG_DEBUG_RWSEMS
-+	sem->magic = sem;
- #endif
- 	atomic_long_set(&sem->count, RWSEM_UNLOCKED_VALUE);
- 	raw_spin_lock_init(&sem->wait_lock);
-@@ -1358,11 +1362,14 @@ static inline int __down_read_killable(struct rw_semaphore *sem)
- 
- static inline int __down_read_trylock(struct rw_semaphore *sem)
- {
-+	long tmp;
++			trips {
++				cpu_critical: cpu-critical {
++					temperature = <110000>; /* millicelsius */
++					hysteresis = <2000>; /* millicelsius */
++					type = "critical";
++				};
++			};
 +
-+	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
++			cooling-maps {
++				map {
++					trip = <&cpu_critical>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
 +
- 	/*
- 	 * Optimize for the case when the rwsem is not locked at all.
- 	 */
--	long tmp = RWSEM_UNLOCKED_VALUE;
--
-+	tmp = RWSEM_UNLOCKED_VALUE;
- 	do {
- 		if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
- 					tmp + RWSEM_READER_BIAS)) {
-@@ -1403,8 +1410,11 @@ static inline int __down_write_killable(struct rw_semaphore *sem)
- 
- static inline int __down_write_trylock(struct rw_semaphore *sem)
- {
--	long tmp = RWSEM_UNLOCKED_VALUE;
-+	long tmp;
- 
-+	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
++		ddr-thermal {
++			polling-delay = <1000>;
++			polling-delay-passive = <100>;
++			thermal-sensors = <&ddr_temp>;
 +
-+	tmp  = RWSEM_UNLOCKED_VALUE;
- 	if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
- 					    RWSEM_WRITER_LOCKED)) {
- 		rwsem_set_owner(sem);
-@@ -1420,7 +1430,9 @@ inline void __up_read(struct rw_semaphore *sem)
- {
- 	long tmp;
- 
-+	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
- 	DEBUG_RWSEMS_WARN_ON(!is_rwsem_reader_owned(sem), sem);
++			trips {
++				ddr_critical: ddr-critical {
++					temperature = <110000>; /* millicelsius */
++					hysteresis = <2000>; /* millicelsius */
++					type = "critical";
++				};
++			};
 +
- 	rwsem_clear_reader_owned(sem);
- 	tmp = atomic_long_add_return_release(-RWSEM_READER_BIAS, &sem->count);
- 	DEBUG_RWSEMS_WARN_ON(tmp < 0, sem);
-@@ -1438,12 +1450,14 @@ static inline void __up_write(struct rw_semaphore *sem)
- {
- 	long tmp;
- 
-+	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
- 	/*
- 	 * sem->owner may differ from current if the ownership is transferred
- 	 * to an anonymous writer by setting the RWSEM_NONSPINNABLE bits.
- 	 */
- 	DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) &&
- 			    !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE), sem);
++			cooling-maps {
++				map {
++					trip = <&ddr_critical>;
++					cooling-device = <&mali THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++	};
 +
- 	rwsem_clear_owner(sem);
- 	tmp = atomic_long_fetch_add_release(-RWSEM_WRITER_LOCKED, &sem->count);
- 	if (unlikely(tmp & RWSEM_FLAG_WAITERS))
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+@@ -288,6 +338,7 @@
+ 	operating-points-v2 = <&cpu_opp_table_0>;
+ 	clocks = <&clkc CLKID_CPU_CLK>;
+ 	clock-latency = <50000>;
++	#cooling-cells = <2>;
+ };
+ 
+ &cpu1 {
+@@ -295,6 +346,7 @@
+ 	operating-points-v2 = <&cpu_opp_table_0>;
+ 	clocks = <&clkc CLKID_CPU_CLK>;
+ 	clock-latency = <50000>;
++	#cooling-cells = <2>;
+ };
+ 
+ &cpu100 {
+@@ -302,6 +354,7 @@
+ 	operating-points-v2 = <&cpub_opp_table_1>;
+ 	clocks = <&clkc CLKID_CPUB_CLK>;
+ 	clock-latency = <50000>;
++	#cooling-cells = <2>;
+ };
+ 
+ &cpu101 {
+@@ -309,6 +362,7 @@
+ 	operating-points-v2 = <&cpub_opp_table_1>;
+ 	clocks = <&clkc CLKID_CPUB_CLK>;
+ 	clock-latency = <50000>;
++	#cooling-cells = <2>;
+ };
+ 
+ &cpu102 {
+@@ -316,6 +370,7 @@
+ 	operating-points-v2 = <&cpub_opp_table_1>;
+ 	clocks = <&clkc CLKID_CPUB_CLK>;
+ 	clock-latency = <50000>;
++	#cooling-cells = <2>;
+ };
+ 
+ &cpu103 {
+@@ -323,6 +378,7 @@
+ 	operating-points-v2 = <&cpub_opp_table_1>;
+ 	clocks = <&clkc CLKID_CPUB_CLK>;
+ 	clock-latency = <50000>;
++	#cooling-cells = <2>;
+ };
+ 
+ &ext_mdio {
+@@ -377,6 +433,10 @@
+ 	};
+ };
+ 
++&mali {
++	#cooling-cells = <2>;
++};
++
+ &hdmi_tx {
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmitx_hpd_pins>, <&hdmitx_ddc_pins>;
+-- 
+2.17.1
+
