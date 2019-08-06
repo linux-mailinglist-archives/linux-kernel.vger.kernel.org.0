@@ -2,72 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E660383A99
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 22:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4BED83A9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 22:48:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbfHFUry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 16:47:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42486 "EHLO mail.kernel.org"
+        id S1726690AbfHFUsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 16:48:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbfHFUry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 16:47:54 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1726009AbfHFUsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 16:48:04 -0400
+Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A072920818;
-        Tue,  6 Aug 2019 20:47:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FA8A20818;
+        Tue,  6 Aug 2019 20:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565124473;
-        bh=RakBuwBGrY+azH+7tmqZujcCvObRIfw33bNypTeqrrc=;
+        s=default; t=1565124483;
+        bh=RXIWyokVY5jFs2cNty8/qR9NmcWvvGUIU49LRtWPjsw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tqJcW5eHYR/2bmaQ42ysg0wI0NXpFe4nRE0VCwef+hXoZChcFrRKZ2zQw7SX7MSXC
-         dpBqHkzk5Z0cBKZHuy2RnqZW43nk8fuyULIHJaNo4sQGE0CvfGkXsFm7x1D4+h34an
-         DK9QMqzlFwLsC30ZwZhf/xv4TvUNkBNx2Zcg8NW4=
-Date:   Tue, 6 Aug 2019 16:47:52 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Steven Price <steven.price@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 4.19] Revert "initramfs: free initrd memory if opening
- /initrd.image fails"
-Message-ID: <20190806204752.GG17747@sasha-vm>
-References: <20190806175940.156412-1-swboyd@chromium.org>
+        b=I0nc9rOMh6f1LbzncBqUH6zKXv/iuHIJJLjKQhhSo1j0VDi7lWFLEz549NJin+0N4
+         xOPldoIj1nl1bXaR/UosgFuoHdgbVOu7L0dicdlruXAXjUVjeiLLS1i2/KpC3JlqwT
+         4JEYsa/N6iP8bWWh0To5Gqco57+uKpI42OIZWr7U=
+Date:   Tue, 6 Aug 2019 15:48:01 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Sebastian Ott <sebott@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        linux-pci@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/pci: PCI_IOV_RESOURCES loop refactoring in
+ zpci_map_resources
+Message-ID: <20190806204801.GV151852@google.com>
+References: <20190806160137.29275-1-efremov@linux.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190806175940.156412-1-swboyd@chromium.org>
+In-Reply-To: <20190806160137.29275-1-efremov@linux.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 10:59:40AM -0700, Stephen Boyd wrote:
->This reverts commit 25511676362d8f7d4b8805730a3d29484ceab1ec in the 4.19
->stable trees. From what I can tell this commit doesn't do anything to
->improve the situation, mostly just reordering code to call free_initrd()
->from one place instead of many. In doing that, it causes free_initrd()
->to be called even in the case when there isn't an initrd present. That
->leads to virtual memory bugs that manifest on arm64 devices.
->
->The fix has been merged upstream in commit 5d59aa8f9ce9 ("initramfs:
->don't free a non-existent initrd"), but backporting that here is more
->complicated because the patch is stacked upon this patch being reverted
->along with more patches that rewrites the logic in this area.
->
->Let's just revert the patch from the stable tree instead of trying to
->backport a collection of fixes to get the final fix from upstream.
+Thanks for the patch!
 
-The only dependency for taking the fix, 5d59aa8f9ce9, into 4.19 is
-23091e28735 ("initramfs: cleanup initrd freeing") which is not too
-scary.
+Sebastian may have silently fixed this, but for future reference,
 
-Is it the case that 25511676362d8 shouldn't have been backported to 4.19
-for some reason? If it fixes something on 4.19, I think it's better to
-take the dependency and the fix instead of reverting.
+  $ git log --oneline arch/s390/pci/pci.c
+  c7ff0e918a7c s390/pci: deal with devices that have no support for MIO instructions
+  dcd33b23c9f3 s390/pci: fix assignment of bus resources
+  56271303808f s390/pci: add parameter to disable usage of MIO instructions
+  71ba41c9b1d9 s390/pci: provide support for MIO instructions
+  81deca12c202 s390/pci: move io address mapping code to pci_insn.c
+  fbfe07d440f2 s390/pci: add parameter to force floating irqs
+  c840927cf5f2 s390/pci: move everything irq related to pci_irq.c
+  066ee72aecdc s390/pci: remove unused define
+  ...
 
---
-Thanks,
-Sasha
+shows that the typical style there is to start the subject with a verb
+so it's an imperative sentence.
+
+On Tue, Aug 06, 2019 at 07:01:37PM +0300, Denis Efremov wrote:
+> This patch alters the for loop iteration scheme in zpci_map_resources
+> to make it more usual. Thus, the patch generalizes the style for
+> PCI_IOV_RESOURCES iteration and improves readability.
+> 
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>  arch/s390/pci/pci.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
+> index b0e3b9a0e488..c7fea9bea8cb 100644
+> --- a/arch/s390/pci/pci.c
+> +++ b/arch/s390/pci/pci.c
+> @@ -431,13 +431,13 @@ static void zpci_map_resources(struct pci_dev *pdev)
+>  	}
+>  
+>  #ifdef CONFIG_PCI_IOV
+> -	i = PCI_IOV_RESOURCES;
+> +	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> +		int bar = i + PCI_IOV_RESOURCES;
+>  
+> -	for (; i < PCI_SRIOV_NUM_BARS + PCI_IOV_RESOURCES; i++) {
+> -		len = pci_resource_len(pdev, i);
+> +		len = pci_resource_len(pdev, bar);
+>  		if (!len)
+>  			continue;
+> -		pdev->resource[i].parent = &iov_res;
+> +		pdev->resource[bar].parent = &iov_res;
+>  	}
+>  #endif
+>  }
+> -- 
+> 2.21.0
+> 
