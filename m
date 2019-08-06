@@ -2,73 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4BA82F55
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:03:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49ED482F61
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732577AbfHFKDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:03:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41514 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728845AbfHFKDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:03:00 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2FE4230EA1B1;
-        Tue,  6 Aug 2019 10:03:00 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 16ECB60610;
-        Tue,  6 Aug 2019 10:02:57 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue,  6 Aug 2019 12:02:59 +0200 (CEST)
-Date:   Tue, 6 Aug 2019 12:02:57 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
-        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
-        william.kucharski@oracle.com, srikar@linux.vnet.ibm.com
-Subject: Re: [PATCH v4 1/2] khugepaged: enable collapse pmd for pte-mapped THP
-Message-ID: <20190806100256.GA21454@redhat.com>
-References: <20190802231817.548920-1-songliubraving@fb.com>
- <20190802231817.548920-2-songliubraving@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802231817.548920-2-songliubraving@fb.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 06 Aug 2019 10:03:00 +0000 (UTC)
+        id S1732608AbfHFKDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:03:46 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:35239 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732543AbfHFKDq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:03:46 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x76A3QP5032264;
+        Tue, 6 Aug 2019 19:03:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x76A3QP5032264
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565085806;
+        bh=9NrW6qBmvdU9uW3rAgNep8F0eSYArnBcMnQhTyTwaww=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MkzGE5LOFyAkFM/mazFokb44Dff7O4BkvljryLLL7l3iGqerSvHAkC2yBhCbFbXhx
+         iMOamayOTdszFXjVfyoF9WHSAHB1N9aTN/AB7BJRFAmcLveYUt7bv7Fh0erLeO8ajv
+         QJ+7E62gIf4ye3TKPDEkOMLjpOxq9uvfsUrXPm6wNuenjGpYSkLLrMkOIZcXRRJfpW
+         xTnPKmuUPOzwYSjCgMx3eGYjB3xGiFM4BPoWbLaN5gprcot7Q2EOF31j3VgXXWnAhA
+         vbJuWHkFw3P3xf7fD5Yg2dyRsz3SJblEnBERuFEWqnBi7RIf1pf1yQIfJ00DY8AE2K
+         dvzV4ebBlzk2Q==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Tom Stonecypher <thomas.edwardx.stonecypher@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH 1/3] kbuild: fix false-positive need-builtin
+Date:   Tue,  6 Aug 2019 19:03:21 +0900
+Message-Id: <20190806100323.22919-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02, Song Liu wrote:
->
-> +void collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr)
-> +{
-> +	unsigned long haddr = addr & HPAGE_PMD_MASK;
-> +	struct vm_area_struct *vma = find_vma(mm, haddr);
-> +	pmd_t *pmd = mm_find_pmd(mm, haddr);
-> +	struct page *hpage = NULL;
-> +	spinlock_t *ptl;
-> +	int count = 0;
-> +	pmd_t _pmd;
-> +	int i;
-> +
-> +	if (!vma || !vma->vm_file || !pmd ||
-> +	    vma->vm_start > haddr || vma->vm_end < haddr + HPAGE_PMD_SIZE)
-> +		return;
+The current implementation of need-builtin is false-positive,
+for example, in the following Makefile:
 
-I still can't understand why is it safe to blindly use mm_find_pmd().
+  obj-m := foo/
+  obj-y := foo/bar/
 
-Say, what pmd_offset(pud, address) will return to this function if
-pud_huge() == T? IIUC, this is possible if is_file_hugepages(vm_file).
-How the code below can use this result?
+..., where foo/built-in.a is not required.
 
-I think you need something like hugepage_vma_check() or even
-hugepage_vma_revalidate().
+Fixes: f7adc3124da0 ("kbuild: create built-in.o automatically if parent directory wants it")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Oleg.
+ scripts/Makefile.build | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 0d434d0afc0b..3fe0c73e002c 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -487,7 +487,8 @@ targets += $(call intermediate_targets, .asn1.o, .asn1.c .asn1.h) \
+ 
+ PHONY += $(subdir-ym)
+ $(subdir-ym):
+-	$(Q)$(MAKE) $(build)=$@ need-builtin=$(if $(findstring $@,$(subdir-obj-y)),1)
++	$(Q)$(MAKE) $(build)=$@ \
++	need-builtin=$(if $(filter $@/built-in.a, $(subdir-obj-y)),1)
+ 
+ # Add FORCE to the prequisites of a target to force it to be always rebuilt.
+ # ---------------------------------------------------------------------------
+-- 
+2.17.1
 
