@@ -2,139 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7FE82CC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E79A82CCE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732151AbfHFH3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:29:02 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51751 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731787AbfHFH3A (ORCPT
+        id S1732081AbfHFHaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:30:22 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43136 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731735AbfHFHaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:29:00 -0400
-X-UUID: 133475bd8ce243548306e51b43c35492-20190806
-X-UUID: 133475bd8ce243548306e51b43c35492-20190806
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <hsin-hsiung.wang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1328225322; Tue, 06 Aug 2019 15:28:50 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 6 Aug 2019 15:28:47 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 6 Aug 2019 15:28:47 +0800
-Message-ID: <1565076527.23984.5.camel@mtksdaap41>
-Subject: Re: [PATCH v4 07/10] regulator: mt6358: Add support for MT6358
- regulator
-From:   Hsin-hsiung Wang <hsin-hsiung.wang@mediatek.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        <linux-kernel@vger.kernel.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        "Allison Randal" <allison@lohutok.net>,
-        <linux-rtc@vger.kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 6 Aug 2019 15:28:47 +0800
-In-Reply-To: <20190805131030.GE6432@sirena.org.uk>
-References: <1564982518-32163-1-git-send-email-hsin-hsiung.wang@mediatek.com>
-         <1564982518-32163-8-git-send-email-hsin-hsiung.wang@mediatek.com>
-         <20190805131030.GE6432@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 6 Aug 2019 03:30:22 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w79so65222950oif.10;
+        Tue, 06 Aug 2019 00:30:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rt7p4w8GRASsTh4L8meL9OiYP/BUIZ+eM+Oj2ozLZX0=;
+        b=jNHIHAgNhRMrrc89l8FgqZBib4R88DxCJIa/S/gK0xb0C+QyYDxrNxsJ/aTo9zTQkX
+         FzQ9oXsxHVPjfNUQwrMDojCh7gIFqYh3V7XbmTExcVsERJHBGo2LeAscv6P1E8dgxaKo
+         DaXV3ImToOknn2cVFB09gANmXfL5s2ng69BNG0K40yD0K+z3xB7LrSPJvhxTXmWCfsg0
+         dkmc23aa1tOaaDY8AV2jTxral0OW/oeXVlMIEPHQ3vnNZeXUVF5RN57vrB0LBJ6NXIaK
+         dlUyIjHKnB1tMPlHPScrbFKqIWyRNFBc6k5WGrPaK19jTjYdXBP7ct+3YVMLCXgykZjf
+         stKg==
+X-Gm-Message-State: APjAAAXujK44SfLOxpJ4GLMS0OKls9Y+Xy8uCe4Ev61MQipwBfd6ZlYE
+        oCRIErLLB7IjbF/zbY9E43yvrJijXE+VN7himQg=
+X-Google-Smtp-Source: APXvYqxf2mIJF0r2WtOWgOXoNk4Ssm0txTKBpp4NeSTCt6wKFUnz/OViHpCBQnDGu1cEhPCsgOUabbz+AFvLaKfo1fs=
+X-Received: by 2002:aca:bd43:: with SMTP id n64mr1471003oif.148.1565076621538;
+ Tue, 06 Aug 2019 00:30:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+References: <20190710193918.31135-1-kieran.bingham+renesas@ideasonboard.com>
+ <0e1b6e0b-1c94-4b00-7fda-c2a303ee3816@redhat.com> <20190731194419.GB4084@kunai>
+ <CAK7LNAQ6siWHU+N2c+6gqh7hHEJ_aDrVoiWnrTq1jiXQWSYYBA@mail.gmail.com> <2567a74d-738e-6fed-d91c-cc70743e116d@redhat.com>
+In-Reply-To: <2567a74d-738e-6fed-d91c-cc70743e116d@redhat.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 6 Aug 2019 09:30:10 +0200
+Message-ID: <CAMuHMdX3QqXGt4=31ECZ7vryjsSA7NufuvA_XVLjS91_1q=uqw@mail.gmail.com>
+Subject: Re: [PATCH RFC] modpost: Support I2C Aliases from OF tables
+To:     Javier Martinez Canillas <javierm@redhat.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Tue, Aug 6, 2019 at 12:48 AM Javier Martinez Canillas
+<javierm@redhat.com> wrote:
+> On 8/1/19 4:17 AM, Masahiro Yamada wrote:
+> So I think that we should either:
+>
+> a) take Kieran's patch or b) remove the i2c_of_match_device_sysfs() fallback
+> for OF and require an I2C device table for sysfs instantiation and matching.
+>
+> > If a driver supports DT and devices are instantiated via DT,
+> > in which situation is this useful?
+>
+> Is useful if you don't have all the I2C devices described in the DT. For example
+> a daughterboard with an I2C device is connected to a board through an expansion
+> slot or an I2C device connected directly to I2C pins exposed in a machine.
+>
+> In these cases your I2C devices won't be static so users might want to use the
+> sysfs user-space interface to instantiate the I2C devices, i.e:
+>
+>  # echo eeprom 0x50 > /sys/bus/i2c/devices/i2c-3/new_device
+>
+> as explained in https://github.com/torvalds/linux/blob/master/Documentation/i2c/instantiating-devices#L207
 
-On Mon, 2019-08-05 at 14:10 +0100, Mark Brown wrote:
-> On Mon, Aug 05, 2019 at 01:21:55PM +0800, Hsin-Hsiung Wang wrote:
-> 
-> > +static const u32 vmch_voltages[] = {
-> > +	2900000, 3000000, 3300000,
-> > +};
-> 
-> > +static const u32 vemc_voltages[] = {
-> > +	2900000, 3000000, 3300000,
-> > +};
-> 
-> Several of these tables appear to be identical.
-> 
-I will use the same voltage table in the next patch.
+Does this actually work with DT names, too? E.g.
 
-> > +static inline unsigned int mt6358_map_mode(unsigned int mode)
-> > +{
-> > +	return mode == MT6358_BUCK_MODE_AUTO ?
-> > +		REGULATOR_MODE_NORMAL : REGULATOR_MODE_FAST;
-> > +}
-> 
-> There is no need for this to be an inline and please write normal
-> conditional statements to improve legibility.  There's other examples in
-> the driver.
-> 
-will fix it in the next patch.
+# echo atmel,24c02 > /sys/bus/i2c/devices/i2c-3/new_device
 
-> > +static int mt6358_get_buck_voltage_sel(struct regulator_dev *rdev)
-> > +{
-> > +	int ret, regval;
-> > +	struct mt6358_regulator_info *info = rdev_get_drvdata(rdev);
-> > +
-> > +	ret = regmap_read(rdev->regmap, info->da_vsel_reg, &regval);
-> > +	if (ret != 0) {
-> > +		dev_info(&rdev->dev,
-> > +			 "Failed to get mt6358 Buck %s vsel reg: %d\n",
-> > +			 info->desc.name, ret);
-> 
-> dev_err() for errors here and throughout the driver.
-> 
-will fix it in the next patch.
+Still leaves us with legacy names for backwards compatibility.
 
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret = (regval >> info->da_vsel_shift) & info->da_vsel_mask;
-> > +
-> > +	return ret;
-> > +}
-> 
-> This looks like a standard get_voltage_sel_regmap()?
-> 
-MT6358 has buck voltage status registers to show the actual output
-voltage and the registers are different from the voltage setting
-registers.
-We want to get the actual voltage output, so we use the da_vsel status
-registers here.
+Gr{oetje,eeting}s,
 
-> > +err_mode:
-> > +	if (ret != 0)
-> > +		return ret;
-> > +
-> > +	return 0;
-> 
-> Or just return ret unconditionally?
-will modify it to return ret unconditionally in the next patch.
+                        Geert
 
-Thanks a lot.
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
