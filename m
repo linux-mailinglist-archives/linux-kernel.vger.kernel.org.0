@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEE5A83227
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97AF083229
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbfHFNFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:05:19 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51282 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731859AbfHFNFR (ORCPT
+        id S1732213AbfHFNFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:05:25 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37742 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfHFNFS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:05:17 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 207so78147491wma.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 06:05:16 -0700 (PDT)
+        Tue, 6 Aug 2019 09:05:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n9so62762852wrr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 06:05:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NiNSwC1w2DwV9CwHEjfRSuQJOciTaxfr2h0JNT+7juw=;
-        b=EHYBOLpk8xSLXE7FKn355BKQ13vlwR3ZCnaAz2IWUt2g774DsjpBHoAvqYsqxZVOj4
-         XnyXkJ/j3iP23NR0X3Ig5azD/6rscihQu1z4WOmce8usRaz08Bt5oK85tXW8De/oz3uE
-         ccZ0Nts615RF+Dvq4909tk5blSKQcmZ0uzvQx5j0vUPCoePCSuRx+ndSQwLFwBLu1rYq
-         GGyMuOLy3R4GFzLQ6XwVvAeOJylpXu1dAkcxzIaUpdb9KLRpsWf160lCqdc8o/rOGqlM
-         VxePBUUjgTgb1PaIEXmhhX0zRciOVg0R5nyHXACCFOJdkqJ089au+RQxnDteKiG9WzOB
-         v2uQ==
+        bh=60yWYtJLk0Xp9SLelz+MaI60GmV6Utt18fBkUyG2qxM=;
+        b=1XsB9wyPJKfVdt0XFULvvBF/+L4sPvBzqlPsQ3/7818JIn78HG6OJumFYaHF72EZiQ
+         3r+tbI6kf2XmvaBnMq6a9/lZ/5papd0jJyFpoUtVL53nadn8VtpgPDafseSrDIuOt+UT
+         /EOZC41Tt9sDGPOxzi32bafjR1WXbVk/3gWg/V9UJ5Fpw2N7m9BdV4BU7JOCUi66GVAM
+         vOKee9IcLeW4v9gjgMpfseHvCaSfgaOf7oL/xhk/+EpuMxjYaBdClEpCYIIj567dUUTK
+         4YsjCLeXbhoLlybPpGffo8skD2wRjyHpahZ2KL35fD/n7RtMFVdx4ePceqC4B4/n3Ofy
+         U67w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=NiNSwC1w2DwV9CwHEjfRSuQJOciTaxfr2h0JNT+7juw=;
-        b=e0mOywHcG0kpWvcLcfGkm4JsrVr3Eh5L9pOSg/ObUwK0CCd0t3nDcF1YrjopBbOinb
-         f9/6VC7O6/ySWBYqyu8sv1s9LL8R11FkTTILXcKmBkx4aZvmuANJwUZvw3jSZxNarZLM
-         elTeErcQZFg08sO8EpEt+cr2bWC3MsN4Nk9LWxxZ1piPeYet9JaVPDrzkzYVSo2b+4Z8
-         2zRj4g91hwK/xhoQoW8/WaXm4ykgGSTlzcJ2LNFnqdEUfGNUWkl3IDwXQUtY4725+b8U
-         E7vsjhRV1Zu+cp1cioL2nZ3e3RsZAdibnbejwk1onsy9DrgwwXeDL2bTTU+W77YVKOpp
-         CGsw==
-X-Gm-Message-State: APjAAAXqlvaaSs8AaVS9iaNC1dXuGCAH89XXZ4nWUUKKb6bzgkXV3MzZ
-        sD2sjWCy8+uWxNUZC0mSFJb1ig==
-X-Google-Smtp-Source: APXvYqypJpfP+/e201HN/T1eYuG4Bi9Q5B29Pi4H41CfmpjOXTeOpKGfzyFQw5yv78N7W36Wh6yuoQ==
-X-Received: by 2002:a7b:c74a:: with SMTP id w10mr4635611wmk.99.1565096715772;
-        Tue, 06 Aug 2019 06:05:15 -0700 (PDT)
+        bh=60yWYtJLk0Xp9SLelz+MaI60GmV6Utt18fBkUyG2qxM=;
+        b=LiY2m68e1RjVflaiEgTzkAM7OJIHtW3CbGyGih8xdf9kgMX8JIqVVKqyB2j7/00SSA
+         toQ6wTVYqapLa2njvwU51YcbSkyUPttFAJ1N1jsdkcmGcqjSFmo11zBGgPPAPwGny3pJ
+         O6UnKeS/Qo9mxVjb3N0nOA11Y6sVuY0AmvPxkjYjMm7AccUHXfkI8/uRe6kwgkUcQELK
+         43uXlFKVbpEXoZvnm6bg5KCw//CKqw9ltfDAtLCcVD7dKZhkYKeiQiaT/vn32rdohPp4
+         RBzQmFWHEjnTwBRKo/3bDAGqS46hQb+1c5Hab2tNU5AV/qPie7LbJhaQxPzSSU2Akzhs
+         rxrQ==
+X-Gm-Message-State: APjAAAXVf9c79y0NyROC6Ke2lzJj/KrI0vAjHDg2DCQindQIZ7G1MfaZ
+        T0EC+ATbD2R0ZiBRHLi2t6lC7Q==
+X-Google-Smtp-Source: APXvYqxe8+FVvkyz0LH3/p+5jXQjRtCu1JfWNK+8gB5Jwg7o9KmjpX18AjkaFMctc3YE7l8bagEx+Q==
+X-Received: by 2002:adf:dcc6:: with SMTP id x6mr4927209wrm.322.1565096716745;
+        Tue, 06 Aug 2019 06:05:16 -0700 (PDT)
 Received: from glaroque-ThinkPad-T480.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id j33sm201888738wre.42.2019.08.06.06.05.14
+        by smtp.gmail.com with ESMTPSA id j33sm201888738wre.42.2019.08.06.06.05.15
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 06:05:15 -0700 (PDT)
+        Tue, 06 Aug 2019 06:05:16 -0700 (PDT)
 From:   Guillaume La Roque <glaroque@baylibre.com>
 To:     daniel.lezcano@linaro.org, khilman@baylibre.com
 Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 5/6] arm64: dts: amlogic: odroid-n2: add minimal thermal zone
-Date:   Tue,  6 Aug 2019 15:05:05 +0200
-Message-Id: <20190806130506.8753-6-glaroque@baylibre.com>
+Subject: [PATCH v3 6/6] MAINTAINERS: add entry for Amlogic Thermal driver
+Date:   Tue,  6 Aug 2019 15:05:06 +0200
+Message-Id: <20190806130506.8753-7-glaroque@baylibre.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190806130506.8753-1-glaroque@baylibre.com>
 References: <20190806130506.8753-1-glaroque@baylibre.com>
@@ -60,142 +60,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add minimal thermal zone for two temperature sensor
-One is located close to the DDR and the other one is
-located close to the PLLs (between the CPU and GPU)
+Add myself as maintainer for Amlogic Thermal driver.
 
 Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 60 +++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index 75ff8a7e373d..a7d73c0c8447 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -10,6 +10,7 @@
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/gpio/meson-g12a-gpio.h>
- #include <dt-bindings/sound/meson-g12a-tohdmitx.h>
-+#include <dt-bindings/thermal/thermal.h>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fb2b12f75c37..299f27d11058 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15910,6 +15910,15 @@ F:	Documentation/driver-api/thermal/cpu-cooling-api.rst
+ F:	drivers/thermal/cpu_cooling.c
+ F:	include/linux/cpu_cooling.h
  
- / {
- 	compatible = "hardkernel,odroid-n2", "amlogic,g12b";
-@@ -20,6 +21,55 @@
- 		ethernet0 = &ethmac;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <100>;
-+			thermal-sensors = <&cpu_temp>;
++THERMAL DRIVER FOR AMLOGIC SOCS
++M:	Guillaume La Roque <glaroque@baylibre.com>
++L:	linux-pm@vger.kernel.org
++L:	linux-amlogic@lists.infradead.org
++W:	http://linux-meson.com/
++S:	Supported
++F:	drivers/thermal/amlogic_thermal.c
++F:	Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
 +
-+			trips {
-+				cpu_critical: cpu-critical {
-+					temperature = <110000>; /* millicelsius */
-+					hysteresis = <2000>; /* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map {
-+					trip = <&cpu_critical>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+
-+		ddr-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <100>;
-+			thermal-sensors = <&ddr_temp>;
-+
-+			trips {
-+				ddr_critical: ddr-critical {
-+					temperature = <110000>; /* millicelsius */
-+					hysteresis = <2000>; /* millicelsius */
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map {
-+					trip = <&ddr_critical>;
-+					cooling-device = <&mali THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -288,6 +338,7 @@
- 	operating-points-v2 = <&cpu_opp_table_0>;
- 	clocks = <&clkc CLKID_CPU_CLK>;
- 	clock-latency = <50000>;
-+	#cooling-cells = <2>;
- };
- 
- &cpu1 {
-@@ -295,6 +346,7 @@
- 	operating-points-v2 = <&cpu_opp_table_0>;
- 	clocks = <&clkc CLKID_CPU_CLK>;
- 	clock-latency = <50000>;
-+	#cooling-cells = <2>;
- };
- 
- &cpu100 {
-@@ -302,6 +354,7 @@
- 	operating-points-v2 = <&cpub_opp_table_1>;
- 	clocks = <&clkc CLKID_CPUB_CLK>;
- 	clock-latency = <50000>;
-+	#cooling-cells = <2>;
- };
- 
- &cpu101 {
-@@ -309,6 +362,7 @@
- 	operating-points-v2 = <&cpub_opp_table_1>;
- 	clocks = <&clkc CLKID_CPUB_CLK>;
- 	clock-latency = <50000>;
-+	#cooling-cells = <2>;
- };
- 
- &cpu102 {
-@@ -316,6 +370,7 @@
- 	operating-points-v2 = <&cpub_opp_table_1>;
- 	clocks = <&clkc CLKID_CPUB_CLK>;
- 	clock-latency = <50000>;
-+	#cooling-cells = <2>;
- };
- 
- &cpu103 {
-@@ -323,6 +378,7 @@
- 	operating-points-v2 = <&cpub_opp_table_1>;
- 	clocks = <&clkc CLKID_CPUB_CLK>;
- 	clock-latency = <50000>;
-+	#cooling-cells = <2>;
- };
- 
- &ext_mdio {
-@@ -377,6 +433,10 @@
- 	};
- };
- 
-+&mali {
-+	#cooling-cells = <2>;
-+};
-+
- &hdmi_tx {
- 	status = "okay";
- 	pinctrl-0 = <&hdmitx_hpd_pins>, <&hdmitx_ddc_pins>;
+ THINKPAD ACPI EXTRAS DRIVER
+ M:	Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
+ L:	ibm-acpi-devel@lists.sourceforge.net
 -- 
 2.17.1
 
