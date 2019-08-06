@@ -2,102 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9332D82DC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3414682DBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732214AbfHFIcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 04:32:31 -0400
-Received: from gateway20.websitewelcome.com ([192.185.4.169]:32818 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726713AbfHFIcb (ORCPT
+        id S1732220AbfHFIal (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 04:30:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53480 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfHFIal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 04:32:31 -0400
-X-Greylist: delayed 1460 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 04:32:31 EDT
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 3E372400CCC9F
-        for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2019 02:04:19 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id uuVuhKzHT3Qi0uuVuh4Lqf; Tue, 06 Aug 2019 03:08:10 -0500
-X-Authority-Reason: nr=8
+        Tue, 6 Aug 2019 04:30:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tqouW1qc7UK4ejwDOesOIcmQuJMwuxvioRsJeeb5IM4=; b=jRJr7JqsYbSOKqd3gMKqlUEGdo
-        P3OgHdi2UEwTbXofL3M+SRi1gJ2Z4GjkdghudNwCHsdYrMJkwpFcWX+0UbTYUX+g2UZYBDHMss7RY
-        1v9RcUlL3gZI0JB/wonWbx1xTppZ7c0L5/luX6ETiDSh8PCNRtX/j04bfAx5Km1AjSASCjRQXvtKU
-        wUmmu0YtI2mqcVQPswZx5+FrCe2CAUgQxi9y8xu+4J2WGaeKjzKpsr+GbBhAf8ySTfcs8Xj5AyCSU
-        yabIKstVHzxCdxNqDLqDCNAXwfAO/3idG1hHr3reEdXk2bmjvHo+fU2n7tXGGVY68sT47qwcBqP1j
-        CCkwmx0Q==;
-Received: from [187.192.11.120] (port=43488 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1huuVt-000ibV-Rp; Tue, 06 Aug 2019 03:08:09 -0500
-Date:   Tue, 6 Aug 2019 03:08:08 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ata: rb532_cf: Fix unused variable warning in
- rb532_pata_driver_probe
-Message-ID: <20190806080808.GA30026@embeddedor>
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/s8wUNloiVZ/r39DkCHiVqmnKOfRol4hev9m4wU/nnw=; b=hgwNVBPR8xl0odZWuchrJVQcX
+        3su7RZX0frEguJeRnZ6+3h3hvReZRGEX8N700MrQbaje4yl7A0T40cVnOl7nP5xYmATfSy+tHccMP
+        PQIdIJ5WCCTkFOiGak6iDAaFKfqYG6qeDqggPdEnar6XDbJN31SXBieGI5mJT1qJB5BcIiMENIq6E
+        MOKBO2UxvOBl8YodIUuxMf/I3ANstalAfJHbXDUUCfC8VAc49vwsQarrFSdOH+SJ8MygukczTc/jN
+        Vv2nT3PfK5pkb5OItnNSg1qDrdoEWSW+Q8r6oHU7XbIKJEasF45ShptwDOBIGu79w1t1lViBAlHK6
+        lESRTSSdg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1huura-0004S5-1j; Tue, 06 Aug 2019 08:30:34 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3D150201D5B0F; Tue,  6 Aug 2019 10:30:32 +0200 (CEST)
+Date:   Tue, 6 Aug 2019 10:30:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Garnier <thgarnie@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 04/11] x86/entry/64: Adapt assembly for PIE support
+Message-ID: <20190806083032.GN2332@hirez.programming.kicks-ass.net>
+References: <20190730191303.206365-1-thgarnie@chromium.org>
+ <20190730191303.206365-5-thgarnie@chromium.org>
+ <20190805172854.GF18785@zn.tnic>
+ <CAJcbSZGedSfZZ5rveH2+_3q7pvmMyDGLxmZU41Nno=ZBX8kN=w@mail.gmail.com>
+ <20190806050851.GA25897@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1huuVt-000ibV-Rp
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:43488
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190806050851.GA25897@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following warning (Building: rb532_defconfig mips):
+On Tue, Aug 06, 2019 at 07:08:51AM +0200, Borislav Petkov wrote:
+> On Mon, Aug 05, 2019 at 10:50:30AM -0700, Thomas Garnier wrote:
+> > I saw that %rdx was used for temporary usage and restored before the
+> > end so I assumed that it was not an option.
+> 
+> PUSH_AND_CLEAR_REGS saves all regs earlier so I think you should be
+> able to use others. Like SAVE_AND_SWITCH_TO_KERNEL_CR3/RESTORE_CR3, for
+> example, uses %r15 and %r14.
 
-drivers/ata/pata_rb532_cf.c: In function ‘rb532_pata_driver_remove’:
-drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable ‘info’ [-Wunused-variable]
-  struct rb532_cf_info *info = ah->private_data;
-                        ^~~~
+AFAICT the CONFIG_DEBUG_ENTRY thing he's changing is before we setup
+pt_regs.
 
-Fixes: cd56f35e52d9 ("ata: rb532_cf: Convert to use GPIO descriptors")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/ata/pata_rb532_cf.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/ata/pata_rb532_cf.c b/drivers/ata/pata_rb532_cf.c
-index 7c37f2ff09e4..deae466395de 100644
---- a/drivers/ata/pata_rb532_cf.c
-+++ b/drivers/ata/pata_rb532_cf.c
-@@ -158,7 +158,6 @@ static int rb532_pata_driver_probe(struct platform_device *pdev)
- static int rb532_pata_driver_remove(struct platform_device *pdev)
- {
- 	struct ata_host *ah = platform_get_drvdata(pdev);
--	struct rb532_cf_info *info = ah->private_data;
- 
- 	ata_host_detach(ah);
- 
--- 
-2.22.0
-
+Also consider the UNWIND hint that's in there, it states we only have
+the IRET frame on stack, not a full regs set.
