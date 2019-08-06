@@ -2,148 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A9A83D99
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 01:03:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DBD383DB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 01:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfHFXDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 19:03:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbfHFXDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 19:03:09 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A33320717;
-        Tue,  6 Aug 2019 23:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565132587;
-        bh=qT4gAKs+8ApcJTe9M2dRBF2NOvklKVKeDkSelB5PNpE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nYhQksXMjFdjn7qsubpevTF4BxP7xsit/IdT2SfJ3mrS0Rx7B0zEjLoFZc8NJZXxT
-         jiawPejTfcVjvKx3FcMC6k2JIomNwGOL5/r2KBhYy/ve+cJBFcRC62rjV6qGuOk6dC
-         UUV7Z7MUl5e1flsun/zvccyVkG5K2bYpuLV3Qae0=
-Date:   Tue, 6 Aug 2019 16:03:06 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     axboe@kernel.dk, jack@suse.cz, hannes@cmpxchg.org,
-        mhocko@kernel.org, vdavydov.dev@gmail.com, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com, guro@fb.com
-Subject: Re: [PATCH 4/4] writeback, memcg: Implement foreign dirty flushing
-Message-Id: <20190806160306.5330bd4fdddf357db4b7086c@linux-foundation.org>
-In-Reply-To: <20190803140155.181190-5-tj@kernel.org>
-References: <20190803140155.181190-1-tj@kernel.org>
-        <20190803140155.181190-5-tj@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727545AbfHFXQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 19:16:38 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45414 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbfHFXQT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 19:16:19 -0400
+Received: by mail-qt1-f193.google.com with SMTP id x22so13035643qtp.12
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 16:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0FF0tXIe7rc2zq4BQfqO1Tr1iiwuQDZe0G+/mYZhPb4=;
+        b=B0RBkomh8xhiu/KwJPirnADpsgmm80iyA8oyAeS7tjmLyr6+OYlG3sTHcQnHxrHuyg
+         hrEV+59BPYDAolV+0C/Qm0JvE6OUmYPhPiU/hCiW2Im2VGOJ31mcwLL+A5qQ1rCZHNwb
+         x+I+HX18fZ8WcbYwPofPsca2cfe1Dd0aGLylzfF8mtyBVAM+qXmK/+UgNQi+0EQzC0Kz
+         oB9X6jiIokBPaNFinF6Ry/tAJjp1AH1v6xOfZIYHJxV9CiAgZfrkjAi5u5gvTirJtxfP
+         ZI1nGkw+lv9ZBWXCB3lQbrDgT2UX0s56E7c4eY7X9nbudd1m6cqGwR2I36Jj2ZjMphM1
+         s7aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0FF0tXIe7rc2zq4BQfqO1Tr1iiwuQDZe0G+/mYZhPb4=;
+        b=arc5Ok+WkN6lABTUlk160ekbeGEqChj3/lRy9kwXUtP3vEDTlt+u1WhovlTFdhCg4z
+         Vumuu5vva6GB6IYSvaPPfcxGtXyPKFdOZlFsCFnCyyEuINvOkVmd6otzWj64G2Pp+AaH
+         +RomqnwRhXB9v9Wfx2t7uMnopl1v8YdTFW4ftm8AWqCwv5cYKhS58tDXuSnC0cMX6GzL
+         WTcFfPIkuTvYQh5Ra9F15kjaxWIL1nMj6PyCErhx6c+qxb/F1i4qbjpYcGrlKhLjd12r
+         uxocRlee0e5ZMqzxqWqCM+HiGP+7YLJVgfF0os6vTvipvF6tA3A73ha/cdF+RFCVrLQo
+         ogNg==
+X-Gm-Message-State: APjAAAWQDTKV53I6YJVIjUOwe6IpGZEYPYMpWNWC/itVEfe66wNAzmVC
+        3G3unu65p7AJqYBScoIPwRTngQ==
+X-Google-Smtp-Source: APXvYqwaqbdf4QIvkKtMVoSEHzYJbTOhZ2bib6YyUfojcuKh8v466IsdF9eIG1S+OrEDo9cDhi4cNQ==
+X-Received: by 2002:aed:37e7:: with SMTP id j94mr5361848qtb.75.1565133378614;
+        Tue, 06 Aug 2019 16:16:18 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id o21sm10387881qtc.63.2019.08.06.16.16.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Aug 2019 16:16:17 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hv8gf-0006eA-Vd; Tue, 06 Aug 2019 20:16:13 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     linux-mm@kvack.org
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
+        Gavin Shan <shangw@linux.vnet.ibm.com>,
+        Andrea Righi <andrea@betterlinux.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH v3 hmm 00/11] Add mmu_notifier_get/put for managing mmu notifier registrations
+Date:   Tue,  6 Aug 2019 20:15:37 -0300
+Message-Id: <20190806231548.25242-1-jgg@ziepe.ca>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  3 Aug 2019 07:01:55 -0700 Tejun Heo <tj@kernel.org> wrote:
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-> There's an inherent mismatch between memcg and writeback.  The former
-> trackes ownership per-page while the latter per-inode.  This was a
-> deliberate design decision because honoring per-page ownership in the
-> writeback path is complicated, may lead to higher CPU and IO overheads
-> and deemed unnecessary given that write-sharing an inode across
-> different cgroups isn't a common use-case.
-> 
-> Combined with inode majority-writer ownership switching, this works
-> well enough in most cases but there are some pathological cases.  For
-> example, let's say there are two cgroups A and B which keep writing to
-> different but confined parts of the same inode.  B owns the inode and
-> A's memory is limited far below B's.  A's dirty ratio can rise enough
-> to trigger balance_dirty_pages() sleeps but B's can be low enough to
-> avoid triggering background writeback.  A will be slowed down without
-> a way to make writeback of the dirty pages happen.
-> 
-> This patch implements foreign dirty recording and foreign mechanism so
-> that when a memcg encounters a condition as above it can trigger
-> flushes on bdi_writebacks which can clean its pages.  Please see the
-> comment on top of mem_cgroup_track_foreign_dirty_slowpath() for
-> details.
-> 
-> ...
->
-> +void mem_cgroup_track_foreign_dirty_slowpath(struct page *page,
-> +					     struct bdi_writeback *wb)
-> +{
-> +	struct mem_cgroup *memcg = page->mem_cgroup;
-> +	struct memcg_cgwb_frn *frn;
-> +	u64 now = jiffies_64;
-> +	u64 oldest_at = now;
-> +	int oldest = -1;
-> +	int i;
-> +
-> +	/*
-> +	 * Pick the slot to use.  If there is already a slot for @wb, keep
-> +	 * using it.  If not replace the oldest one which isn't being
-> +	 * written out.
-> +	 */
-> +	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++) {
-> +		frn = &memcg->cgwb_frn[i];
-> +		if (frn->bdi_id == wb->bdi->id &&
-> +		    frn->memcg_id == wb->memcg_css->id)
-> +			break;
-> +		if (frn->at < oldest_at && atomic_read(&frn->done.cnt) == 1) {
-> +			oldest = i;
-> +			oldest_at = frn->at;
-> +		}
-> +	}
-> +
-> +	if (i < MEMCG_CGWB_FRN_CNT) {
-> +		unsigned long update_intv =
-> +			min_t(unsigned long, HZ,
-> +			      msecs_to_jiffies(dirty_expire_interval * 10) / 8);
+This series introduces a new registration flow for mmu_notifiers based on
+the idea that the user would like to get a single refcounted piece of
+memory for a mm, keyed to its use.
 
-An explanation of what's going on here would be helpful.
+For instance many users of mmu_notifiers use an interval tree or similar
+to dispatch notifications to some object. There are many objects but only
+one notifier subscription per mm holding the tree.
 
-Why "* 1.25" and not, umm "* 1.24"?
+Of the 12 places that call mmu_notifier_register:
+ - 7 are maintaining some kind of obvious mapping of mm_struct to
+   mmu_notifier registration, ie in some linked list or hash table. Of
+   the 7 this series converts 4 (gru, hmm, RDMA, radeon)
 
-> +		/*
-> +		 * Re-using an existing one.  Let's update timestamp lazily
-> +		 * to avoid making the cacheline hot.
-> +		 */
-> +		if (frn->at < now - update_intv)
-> +			frn->at = now;
-> +	} else if (oldest >= 0) {
-> +		/* replace the oldest free one */
-> +		frn = &memcg->cgwb_frn[oldest];
-> +		frn->bdi_id = wb->bdi->id;
-> +		frn->memcg_id = wb->memcg_css->id;
-> +		frn->at = now;
-> +	}
-> +}
-> +
-> +/*
-> + * Issue foreign writeback flushes for recorded foreign dirtying events
-> + * which haven't expired yet and aren't already being written out.
-> + */
-> +void mem_cgroup_flush_foreign(struct bdi_writeback *wb)
-> +{
-> +	struct mem_cgroup *memcg = mem_cgroup_from_css(wb->memcg_css);
-> +	unsigned long intv = msecs_to_jiffies(dirty_expire_interval * 10);
+ - 3 (hfi1, gntdev, vhost) are registering multiple notifiers, but each
+   one immediately does some VA range filtering, ie with an interval tree.
+   These would be better with a global subsystem-wide range filter and
+   could convert to this API.
 
-Ditto.
+ - 2 (kvm, amd_iommu) are deliberately using a single mm at a time, and
+   really can't use this API. One of the intel-svm's modes is also in this
+   list
 
-> +	u64 now = jiffies_64;
-> +	int i;
-> +
-> +	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++) {
-> +		struct memcg_cgwb_frn *frn = &memcg->cgwb_frn[i];
-> +
-> +		if (frn->at > now - intv && atomic_read(&frn->done.cnt) == 1) {
-> +			frn->at = 0;
-> +			cgroup_writeback_by_id(frn->bdi_id, frn->memcg_id,
-> +					       LONG_MAX, WB_REASON_FOREIGN_FLUSH,
-> +					       &frn->done);
-> +		}
-> +	}
-> +}
-> +
+The 3/7 unconverted drivers are:
+ - intel-svm
+   This driver tracks mm's in a global linked list 'global_svm_list'
+   and would benefit from this API.
+
+   Its flow is a bit complex, since it also wants a set of non-shared
+   notifiers.
+
+ - i915_gem_usrptr
+   This driver tracks mm's in a per-device hash
+   table (dev_priv->mm_structs), but only has an optional use of
+   mmu_notifiers.  Since it still seems to need the hash table it is
+   difficult to convert.
+
+ - amdkfd/kfd_process
+   This driver is using a global SRCU hash table to track mm's
+
+   The control flow here is very complicated and the driver is relying on
+   this hash table to be fast on the ioctl syscall path.
+
+   It would definitely benefit, but only if the ioctl path didn't need to
+   do the search so often.
+
+This series is already entangled with patches in the hmm & RDMA tree and
+will require some git topic branches for the RDMA ODP stuff. I intend for
+it to go through the hmm tree.
+
+There is a git version here:
+
+https://github.com/jgunthorpe/linux/commits/mmu_notifier
+
+Which has the required pre-patches for the RDMA ODP conversion that are
+still being reviewed.
+
+Jason Gunthorpe (11):
+  mm/mmu_notifiers: hoist do_mmu_notifier_register down_write to the
+    caller
+  mm/mmu_notifiers: do not speculatively allocate a mmu_notifier_mm
+  mm/mmu_notifiers: add a get/put scheme for the registration
+  misc/sgi-gru: use mmu_notifier_get/put for struct gru_mm_struct
+  hmm: use mmu_notifier_get/put for 'struct hmm'
+  RDMA/odp: use mmu_notifier_get/put for 'struct ib_ucontext_per_mm'
+  RDMA/odp: remove ib_ucontext from ib_umem
+  drm/radeon: use mmu_notifier_get/put for struct radeon_mn
+  drm/amdkfd: fix a use after free race with mmu_notifer unregister
+  drm/amdkfd: use mmu_notifier_put
+  mm/mmu_notifiers: remove unregister_no_release
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c  |   1 +
+ drivers/gpu/drm/amd/amdkfd/kfd_priv.h    |   3 -
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c |  88 ++++-----
+ drivers/gpu/drm/nouveau/nouveau_drm.c    |   3 +
+ drivers/gpu/drm/radeon/radeon.h          |   3 -
+ drivers/gpu/drm/radeon/radeon_device.c   |   2 -
+ drivers/gpu/drm/radeon/radeon_drv.c      |   2 +
+ drivers/gpu/drm/radeon/radeon_mn.c       | 157 ++++------------
+ drivers/infiniband/core/umem.c           |   4 +-
+ drivers/infiniband/core/umem_odp.c       | 183 ++++++------------
+ drivers/infiniband/core/uverbs_cmd.c     |   3 -
+ drivers/infiniband/core/uverbs_main.c    |   1 +
+ drivers/infiniband/hw/mlx5/main.c        |   5 -
+ drivers/misc/sgi-gru/grufile.c           |   1 +
+ drivers/misc/sgi-gru/grutables.h         |   2 -
+ drivers/misc/sgi-gru/grutlbpurge.c       |  84 +++------
+ include/linux/hmm.h                      |  12 +-
+ include/linux/mm_types.h                 |   6 -
+ include/linux/mmu_notifier.h             |  40 +++-
+ include/rdma/ib_umem.h                   |   2 +-
+ include/rdma/ib_umem_odp.h               |  10 +-
+ include/rdma/ib_verbs.h                  |   3 -
+ kernel/fork.c                            |   1 -
+ mm/hmm.c                                 | 121 +++---------
+ mm/mmu_notifier.c                        | 230 +++++++++++++++++------
+ 25 files changed, 408 insertions(+), 559 deletions(-)
+
+-- 
+2.22.0
 
