@@ -2,109 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6E79832B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAD18832B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:33:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbfHFNaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:30:35 -0400
-Received: from smtprelay04.ispgateway.de ([80.67.31.27]:28718 "EHLO
-        smtprelay04.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfHFNae (ORCPT
+        id S1730222AbfHFNdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:33:24 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41611 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbfHFNdY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:30:34 -0400
-X-Greylist: delayed 349 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 09:30:34 EDT
-Received: from [79.249.13.39] (helo=C02YV1XMLVDM.Speedport_W_724V_01011603_06_003)
-        by smtprelay04.ispgateway.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <marc@koderer.com>)
-        id 1huzRf-0007bB-Cx; Tue, 06 Aug 2019 15:24:07 +0200
-From:   Marc Koderer <marc@koderer.com>
-To:     tj@kernel.org, lizefan@huawei.com, hannes@cmpxchg.org
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marc Koderer <marc@koderer.com>
-Subject: [PATCH] Use kvmalloc in cgroups-v1
-Date:   Tue,  6 Aug 2019 15:24:12 +0200
-Message-Id: <20190806132412.92945-1-marc@koderer.com>
-X-Mailer: git-send-email 2.22.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Df-Sender: bWFyY0Brb2RlcmVyLmNvbQ==
+        Tue, 6 Aug 2019 09:33:24 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1huzaa-0007Nz-7T; Tue, 06 Aug 2019 15:33:20 +0200
+Message-ID: <1565098399.2359.0.camel@pengutronix.de>
+Subject: Re: [RESEND V2 1/2] dt-bindings: Document the DesignWare IP reset
+ bindings
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Luis Oliveira <Luis.Oliveira@synopsys.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Joao.Pinto@synopsys.com,
+        Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
+Date:   Tue, 06 Aug 2019 15:33:19 +0200
+In-Reply-To: <1563895048-30038-2-git-send-email-luis.oliveira@synopsys.com>
+References: <1563895048-30038-1-git-send-email-luis.oliveira@synopsys.com>
+         <1563895048-30038-2-git-send-email-luis.oliveira@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using its own logic for k-/vmalloc rely on
-kvmalloc which is actually doing quite the same.
+Hi Luis,
 
-Signed-off-by: Marc Koderer <marc@koderer.com>
----
- kernel/cgroup/cgroup-v1.c | 27 ++++-----------------------
- 1 file changed, 4 insertions(+), 23 deletions(-)
+On Tue, 2019-07-23 at 17:17 +0200, Luis Oliveira wrote:
+> This adds documentation of device tree bindings for the
+> DesignWare IP reset controller.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Signed-off-by: Luis Oliveira <luis.oliveira@synopsys.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 88006be40ea3..7f83f4121d8d 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -193,25 +193,6 @@ struct cgroup_pidlist {
- 	struct delayed_work destroy_dwork;
- };
- 
--/*
-- * The following two functions "fix" the issue where there are more pids
-- * than kmalloc will give memory for; in such cases, we use vmalloc/vfree.
-- * TODO: replace with a kernel-wide solution to this problem
-- */
--#define PIDLIST_TOO_LARGE(c) ((c) * sizeof(pid_t) > (PAGE_SIZE * 2))
--static void *pidlist_allocate(int count)
--{
--	if (PIDLIST_TOO_LARGE(count))
--		return vmalloc(array_size(count, sizeof(pid_t)));
--	else
--		return kmalloc_array(count, sizeof(pid_t), GFP_KERNEL);
--}
--
--static void pidlist_free(void *p)
--{
--	kvfree(p);
--}
--
- /*
-  * Used to destroy all pidlists lingering waiting for destroy timer.  None
-  * should be left afterwards.
-@@ -244,7 +225,7 @@ static void cgroup_pidlist_destroy_work_fn(struct work_struct *work)
- 	 */
- 	if (!delayed_work_pending(dwork)) {
- 		list_del(&l->links);
--		pidlist_free(l->list);
-+		kvfree(l->list);
- 		put_pid_ns(l->key.ns);
- 		tofree = l;
- 	}
-@@ -365,7 +346,7 @@ static int pidlist_array_load(struct cgroup *cgrp, enum cgroup_filetype type,
- 	 * show up until sometime later on.
- 	 */
- 	length = cgroup_task_count(cgrp);
--	array = pidlist_allocate(length);
-+	array = kvmalloc_array(length, sizeof(pid_t), GFP_KERNEL);
- 	if (!array)
- 		return -ENOMEM;
- 	/* now, populate the array */
-@@ -390,12 +371,12 @@ static int pidlist_array_load(struct cgroup *cgrp, enum cgroup_filetype type,
- 
- 	l = cgroup_pidlist_find_create(cgrp, type);
- 	if (!l) {
--		pidlist_free(array);
-+		kvfree(array);
- 		return -ENOMEM;
- 	}
- 
- 	/* store array, freeing old if necessary */
--	pidlist_free(l->list);
-+	kvfree(l->list);
- 	l->list = array;
- 	l->length = length;
- 	*lp = l;
--- 
-2.22.0
+Thank you, both applied to reset/next.
 
+regards
+Philipp
