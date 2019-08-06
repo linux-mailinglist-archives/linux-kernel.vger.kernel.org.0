@@ -2,108 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 268E282B7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:09:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA3682B7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:12:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731775AbfHFGJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 02:09:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60536 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731540AbfHFGJZ (ORCPT
+        id S1731797AbfHFGL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 02:11:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57880 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731708AbfHFGL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 02:09:25 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3A87B6074F; Tue,  6 Aug 2019 06:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565071764;
-        bh=wZcoG9zcx7oPu5yPKEHbjF3L04ndvtLGIQczn3qAEqo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QjX0MuLmufD/DJFzwmFbuvo3PpgoPujwR12W/px/t9AQdSXcZuVkYgH773b5Z/8Lt
-         kQGtCspneGFWvmzUVMQWUdC6zEDTvwlCbXmn2u6TUI5BxLqSco2Gp9rvUfV6ON4bAe
-         m5wsUi18XfApyOVOPumFKrc36lz6kNGUpx23oJcI=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.79.43.141] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 22DB66074F;
-        Tue,  6 Aug 2019 06:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565071763;
-        bh=wZcoG9zcx7oPu5yPKEHbjF3L04ndvtLGIQczn3qAEqo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=S5CI0Rb9KUYip0Lt36qMzQ2afynyi51AS+EvikUB6Xups9KekncIaYB+Q8xhqw0Bi
-         ATdVmMokFk/4fFVoQ1UVfD4N6SfHiI82ud4SQEa+lmq4WpyX3NT9tM89ruzeCcEWl8
-         xcw4KOLkq29F/kBOPdNdzFBWwvHfg5Q53q7S0yd0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22DB66074F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add SC7180 pinctrl
- binding
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jitendra Sharma <shajit@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-References: <20190801100717.23333-1-rnayak@codeaurora.org>
- <CACRpkdYLb-WWSEL8yG3yy8Qq7bOKP9JjUGV51mY6=aEwrQAJvg@mail.gmail.com>
- <CACRpkdaoOuyUmysb3OmErbLJ6zZuHGGt7RRzG9wULDkg=hLCAw@mail.gmail.com>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <d227c2b1-50df-b3e0-ea44-595c5e32fc61@codeaurora.org>
-Date:   Tue, 6 Aug 2019 11:39:19 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 6 Aug 2019 02:11:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aB60sYFkleC6hpDylnEldYGmLHnG+9pRYw06I4nxy6M=; b=ia9qAdq6lNwFYo7OVTZPsfhxv
+        vfOjSEbe9ZkOiaAOKXdKACSVtb7rMX+i3fcKh0974MqVDFqWUVvEtfnry2a+ezfxHcDX+r+jgSl50
+        4z8jVldTjbUVRJWVBZXrw753MjgEsLKG3pAdolC1PYVTAIiRMZaCUjvDi4ZbEkre5vaoTQXo1KETI
+        OlBxF2ExoFKfBRpc+TrCOYdxFhwlgpmKi5cuPacGG26m5p0pT+N+pjxlSVyd3pSxk1WRTuDcWdOw8
+        nXuhTXz7wF2qZXGAy1lH72pgTQdZ+NgIHLkPSCgb3p7NxvwYBxpElWC7GCA+TdWg9Dr2qPPVGqCcv
+        JHcSj4RBQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1husgp-0005nR-Nj; Tue, 06 Aug 2019 06:11:19 +0000
+Date:   Mon, 5 Aug 2019 23:11:19 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [patch V2 0/7] fs: Substitute bit-spinlocks for PREEMPT_RT and
+ debugging
+Message-ID: <20190806061119.GA17492@infradead.org>
+References: <20190801010126.245731659@linutronix.de>
+ <20190802075612.GA20962@infradead.org>
+ <alpine.DEB.2.21.1908021107090.2285@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdaoOuyUmysb3OmErbLJ6zZuHGGt7RRzG9wULDkg=hLCAw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1908021107090.2285@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 02, 2019 at 11:07:53AM +0200, Thomas Gleixner wrote:
+> Last time I did, there was resistance :)
 
+Do you have a pointer?  Note that in the buffer head case maybe
+a hash lock based on the page address is even better, as we only
+ever use the lock in the first buffer head of a page anyway..
 
-On 8/5/2019 5:05 PM, Linus Walleij wrote:
-> On Mon, Aug 5, 2019 at 1:34 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Thu, Aug 1, 2019 at 12:07 PM Rajendra Nayak <rnayak@codeaurora.org> wrote:
->>
->>> From: Jitendra Sharma <shajit@codeaurora.org>
->>>
->>> Add the binding for the TLMM pinctrl block found in the SC7180 platform
->>>
->>> Signed-off-by: Jitendra Sharma <shajit@codeaurora.org>
->>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>> [rnayak: Fix some copy-paste issues, sort and fix functions]
->>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->>
->> Patch applied with Bjorn's ACK.
+> What about the page lock?
 > 
-> Ooops there is v2 and even v3 coming, OK I wait for v3 and
-> backed this out.
+>   mm/slub.c:      bit_spin_lock(PG_locked, &page->flags);
 
-Hi Linus, I just posted the v3 out with all the ACKs added.
-They should be good to pick up now.
-thanks,
-Rajendra
-
-> 
-> Yours,
-> Linus Walleij
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+One caller ouf of a gazillion that spins on the page lock instead of
+sleepign on it like everyone else.  That should not have passed your
+smell test to start with :)
