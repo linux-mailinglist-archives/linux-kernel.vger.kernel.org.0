@@ -2,100 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE07836B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF818371C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387858AbfHFQ2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:28:16 -0400
-Received: from foss.arm.com ([217.140.110.172]:36370 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728927AbfHFQ2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:28:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C489344;
-        Tue,  6 Aug 2019 09:28:14 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A1443F575;
-        Tue,  6 Aug 2019 09:28:13 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 17:28:11 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Remi Pommarel <repk@triplefau.lt>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Ellie Reeves <ellierevves@gmail.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: aardvark: Fix PCI_EXP_RTCTL register
- configuration
-Message-ID: <20190806162811.GB15498@e121166-lin.cambridge.arm.com>
-References: <20190614101059.1664-1-repk@triplefau.lt>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614101059.1664-1-repk@triplefau.lt>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2387918AbfHFQjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:39:05 -0400
+Received: from mxwww.masterlogin.de ([95.129.51.220]:38574 "EHLO
+        mxwww.masterlogin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732809AbfHFQjE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 12:39:04 -0400
+Received: from mxout2.routing.net (unknown [192.168.10.82])
+        by new.mxwww.masterlogin.de (Postfix) with ESMTPS id D344996CD2;
+        Tue,  6 Aug 2019 16:30:34 +0000 (UTC)
+Received: from mxbox1.masterlogin.de (unknown [192.168.10.253])
+        by mxout2.routing.net (Postfix) with ESMTP id 0A2DC6203B;
+        Tue,  6 Aug 2019 16:30:35 +0000 (UTC)
+Received: from localhost.localdomain (fttx-pool-217.61.153.94.bambit.de [217.61.153.94])
+        by mxbox1.masterlogin.de (Postfix) with ESMTPSA id A2882403C7;
+        Tue,  6 Aug 2019 18:30:33 +0200 (CEST)
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Allison Randal <allison@lohutok.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, Eddie Huang <eddie.huang@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Tianping . Fang" <tianping.fang@mediatek.com>
+Cc:     Josef Friedl <josef.friedl@speed.at>,
+        Frank Wunderlich <frank-w@public-files.de>
+Subject: [PATCH v4 09/10] MAINTAINERS: add Mediatek shutdown drivers
+Date:   Tue,  6 Aug 2019 18:30:25 +0200
+Message-Id: <20190806163026.8530-1-frank-w@public-files.de>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 12:10:59PM +0200, Remi Pommarel wrote:
-> PCI_EXP_RTCTL is used to activate PME interrupt only, so writing into it
-> should not modify other interrupts' mask. The ISR mask polarity was also
-> inverted, when PCI_EXP_RTCTL_PMEIE is set PCIE_MSG_PM_PME_MASK mask bit
-> should actually be cleared.
-> 
-> Fixes: 8a3ebd8de328 ("PCI: aardvark: Implement emulated root PCI bridge config space")
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> ---
-> Changes since v1:
->  * Improve code readability
->  * Fix mask polarity
->  * PME_MASK shift was off by one
-> Changes since v2:
->  * Modify patch title
->  * Change Fixes tag to commit that actually introduces the bug
-> ---
->  drivers/pci/controller/pci-aardvark.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+From: Josef Friedl <josef.friedl@speed.at>
 
-Thomas, are you OK with this patch ?
+add Section in MAINTAINERS file for poweroff driver
 
-Thanks,
-Lorenzo
+Signed-off-by: Josef Friedl <josef.friedl@speed.at>
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+changes since v3: moved SOB
+changes since v2: none (=v2 part 6)
 
-> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> index 134e0306ff00..f6e55c4597b1 100644
-> --- a/drivers/pci/controller/pci-aardvark.c
-> +++ b/drivers/pci/controller/pci-aardvark.c
-> @@ -415,7 +415,7 @@ advk_pci_bridge_emul_pcie_conf_read(struct pci_bridge_emul *bridge,
->  
->  	case PCI_EXP_RTCTL: {
->  		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG);
-> -		*value = (val & PCIE_MSG_PM_PME_MASK) ? PCI_EXP_RTCTL_PMEIE : 0;
-> +		*value = (val & PCIE_MSG_PM_PME_MASK) ? 0 : PCI_EXP_RTCTL_PMEIE;
->  		return PCI_BRIDGE_EMUL_HANDLED;
->  	}
->  
-> @@ -451,10 +451,15 @@ advk_pci_bridge_emul_pcie_conf_write(struct pci_bridge_emul *bridge,
->  		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
->  		break;
->  
-> -	case PCI_EXP_RTCTL:
-> -		new = (new & PCI_EXP_RTCTL_PMEIE) << 3;
-> -		advk_writel(pcie, new, PCIE_ISR0_MASK_REG);
-> +	case PCI_EXP_RTCTL: {
-> +		/* Only mask/unmask PME interrupt */
-> +		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG) &
-> +			~PCIE_MSG_PM_PME_MASK;
-> +		if ((new & PCI_EXP_RTCTL_PMEIE) == 0)
-> +			val |= PCIE_MSG_PM_PME_MASK;
-> +		advk_writel(pcie, val, PCIE_ISR0_MASK_REG);
->  		break;
-> +	}
->  
->  	case PCI_EXP_RTSTA:
->  		new = (new & PCI_EXP_RTSTA_PME) >> 9;
-> -- 
-> 2.20.1
-> 
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6426db5198f0..4172a3177633 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10128,6 +10128,13 @@ S:	Maintained
+ F:	drivers/net/dsa/mt7530.*
+ F:	net/dsa/tag_mtk.c
+ 
++MEDIATEK BOARD LEVEL SHUTDOWN DRIVERS
++M:	Sean Wang <sean.wang@mediatek.com>
++L:	linux-pm@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
++F:	drivers/power/reset/mt6323-poweroff.c
++
+ MEDIATEK JPEG DRIVER
+ M:	Rick Chang <rick.chang@mediatek.com>
+ M:	Bin Liu <bin.liu@mediatek.com>
+-- 
+2.17.1
+
