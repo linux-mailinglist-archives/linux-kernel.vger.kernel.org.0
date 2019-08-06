@@ -2,90 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3062831CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 14:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF415831CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 14:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731880AbfHFMuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 08:50:54 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44933 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729898AbfHFMuw (ORCPT
+        id S1731522AbfHFMuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 08:50:46 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:32866 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730222AbfHFMup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 08:50:52 -0400
-Received: by mail-qk1-f196.google.com with SMTP id d79so62669606qke.11
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 05:50:52 -0700 (PDT)
+        Tue, 6 Aug 2019 08:50:45 -0400
+Received: by mail-wm1-f66.google.com with SMTP id h19so8887102wme.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 05:50:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/P5o7bDpjWmN9ZebSBZsGlXpEvCnGcCbzXRf1g4vqlg=;
-        b=skjdDU4dtUeHC+kMGTUC9fPCCNWSMbFGsd3aaAekUU7izdW2GKUeIP8Sc/7RaZ53a3
-         c4WVPqMdHWjNyyW0UWhDJ0fecC+2XNYt9iZkVBq18GzQt0yMKpbUgS8dvW6mSIgHnbdh
-         HgzihabMSOBMmrqfJECNcEsIof7X5520tUVHMvH5488p+gJmkSZPzVJSWkUv+6yiugI+
-         dgv3Rs+IDXTYKez5jrRsEDothYUJaypa/tg0TDtMtCXOlx6daS632GYFAcAEFt4W2kE2
-         cE7i2NUujJPjRXjOO6Plf8QlNLfVcl1X4iFP0PV0Dknt5Xu0vEfGta9zYRm29owweO/D
-         Lcbg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i8yW7mVu+nN03VbqETwhpsoLUtIU4YcLbfhs55o7BvE=;
+        b=RTZRwX5lhpwBk5ffpnQxAAYx7/cLanVfmlliMxc8iNALHbRdTPbkXa73FiQngVF4k2
+         gSR0nOfzERuCwqrzYPvSe6lQofqNqPqmAIDQYitxE/mLl6BCuiy1cQSaNQfPw+V/7ShZ
+         tnjlpMi5kgAstEAkSvRTFWs3Te4PCbUIiafni+sBHmgX7jOygkvQuhor9CBfI3jXaA+N
+         qYJFwoWghWxkSlGmDwY4Ooltorgm5bfc65AOpvepNg1wS1RCvbIZRmCj0LVKqLMy03cg
+         NPYjcOmyId0MlWnqhIp2J1V6qUTGUTpSHrJDxbxu4lRlPJ82xwQBpdT2BHMDT5IF/ItJ
+         fEOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/P5o7bDpjWmN9ZebSBZsGlXpEvCnGcCbzXRf1g4vqlg=;
-        b=HkX6CFh3Z3RNZR7427DHOHXUshktyWt2gMW3tfiH2Shth1WU1y9W8oKfUF+iRbx2t+
-         7vxQYoYjnXNsTbtIKZDxwdoCiX9v+rr0YzGDL+gFgcQ0DCUCrVEhJ1pSOO4xsXQq4ylt
-         gWpQuu/fI/Pq/wDsCmxGybetfnnq6KTKn1Qv4P+nGoxhviLkG7QvhgejK01cnl+guVIz
-         SRqKvWbtbCi5Ivgd9zwVC9hhxD6flTuzNCQ+Bt4MyRkq/K3LCR+pAsBWOpK+ViETvwQr
-         fHt8DRR9u2A7V/Ww4Mj3BtdLx5TZXp7wy85D4yTkbHc636FU3SHdl5pyh2dnUvYX4Mp1
-         zUKg==
-X-Gm-Message-State: APjAAAWzd+I1kZcoJ7Uzis9+eOnU0WAtmee+Ftauz1ptTidENNfW2qF2
-        DcFovGhOpsmBg7whAWSp8/IUMwVmsJKAKhXVhAs=
-X-Google-Smtp-Source: APXvYqwfWWN4YkKLQ+LRmVpH+VROfBQy2m9vp40Fsf+NNf7IJbqfFo2xpdZXFbe8bmZEplS9SM16o6+Vkfq7lHGwoQE=
-X-Received: by 2002:a37:9a0b:: with SMTP id c11mr3120476qke.204.1565095852172;
- Tue, 06 Aug 2019 05:50:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i8yW7mVu+nN03VbqETwhpsoLUtIU4YcLbfhs55o7BvE=;
+        b=SaH7+bxbOd4OLelqg+Gl4BSh3CYu4ynGeqstNUnYSRUuZG8Z8tCrVfjCgQ2gTItw3j
+         pl6x8s0iX7nvEnie9/g9U1B/qwG8W5t/QmBLO8w4SiSkJnLt2N2V2038/c+1TmyQvBdK
+         hyl0vB9KE63rT7dFIEXi0U1/pp1BAWUD4z0yVJd9SKoBDGy45fZvNIbUCpVWw8ONkU2w
+         tnN2IXqYKx+U3Wo/eraOBx0r8t6Ms8Qr5nlVPmRBdwuzXx0dUBWKRxcLVWb/g92ZW74V
+         LBtoiDc6z5wv16izAbv+UZvqdkEHXcIaiFZoda2VLV4G1zjLCgNKP2n+C+UqHOre8sia
+         dXXw==
+X-Gm-Message-State: APjAAAXm5nsQUxXsvKlyd75lEWnWovQruGs/cL9nlfMydsk9mWZGImZ0
+        H3NkwcpmHdo27ASJZi4r/2hRgw==
+X-Google-Smtp-Source: APXvYqyO9qfySQufHv8FTPVAmHGN0v/i1YcTHeQd2dt7QxoS3vNu24XyzJhi5stC39e658qAYY58Sg==
+X-Received: by 2002:a1c:3b02:: with SMTP id i2mr4611089wma.23.1565095843565;
+        Tue, 06 Aug 2019 05:50:43 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id e3sm109049221wrs.37.2019.08.06.05.50.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 05:50:43 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     robh+dt@kernel.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        martin.blumenstingl@googlemail.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] dt-bindings: net: meson-dwmac: convert to yaml
+Date:   Tue,  6 Aug 2019 14:50:39 +0200
+Message-Id: <20190806125041.16105-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190806030718.29048-1-luaraneda@gmail.com> <20190806030718.29048-3-luaraneda@gmail.com>
- <194fe121-151d-0b64-b83e-e4d82c02efa7@xilinx.com>
-In-Reply-To: <194fe121-151d-0b64-b83e-e4d82c02efa7@xilinx.com>
-From:   Luis Araneda <luaraneda@gmail.com>
-Date:   Tue, 6 Aug 2019 08:49:59 -0400
-Message-ID: <CAHbBuxpM8YKxADGJv2PAPbyS-2FZ6xiwohJwGJ1DMPuGnDV-Jg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: zynq: Use memcpy_toio instead of memcpy on smp bring-up
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+This patchsets converts the Amlogic Meson DWMAC glue bindings over to
+YAML schemas using the already converted dwmac bindings.
 
-On Tue, Aug 6, 2019 at 2:42 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> On 06. 08. 19 5:07, Luis Araneda wrote:
-> > This fixes a kernel panic (read overflow) on memcpy when
-> > FORTIFY_SOURCE is enabled.
-> >
-> > The computed size of memcpy args are:
-> > - p_size (dst): 4294967295 = (size_t) -1
-> > - q_size (src): 1
-> > - size (len): 8
-> >
-> > Additionally, the memory is marked as __iomem, so one of
-> > the memcpy_* functions should be used for read/write
-> >
-> > Signed-off-by: Luis Araneda <luaraneda@gmail.com>
-[...]
-> I would consider this one as stable material. Please also add there link
-> to the patch which this patch fixes.
+The first patch is needed because the Amlogic glue needs a supplementary
+reg cell to access the DWMAC glue registers.
 
-I'm dropping stable CC (for now), as I'm not sure I completely
-understood the process for inclusion in stable trees.
-Do I have to wait for the patch to be on Linus' tree before CCing stable?
+Neil Armstrong (2):
+  dt-bindings: net: snps,dwmac: update reg minItems maxItems
+  dt-bindings: net: meson-dwmac: convert to yaml
 
-As for the link which this patch fixes, you mean
-aa7eb2bb4e4a22e41bbe4612ff46e5885b13c33e (arm: zynq: Add smp support)?
-where you added SMP support for zynq.
+ .../bindings/net/amlogic,meson-dwmac.yaml     | 113 ++++++++++++++++++
+ .../devicetree/bindings/net/meson-dwmac.txt   |  71 -----------
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   8 +-
+ 3 files changed, 120 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+ delete mode 100644 Documentation/devicetree/bindings/net/meson-dwmac.txt
 
-Thanks,
-Luis Araneda.
+-- 
+2.22.0
+
