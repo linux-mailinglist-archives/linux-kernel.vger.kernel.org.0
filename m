@@ -2,355 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF2C8341C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D5783421
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733073AbfHFOke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 10:40:34 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45908 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729535AbfHFOkd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 10:40:33 -0400
-Received: by mail-pg1-f193.google.com with SMTP id o13so41691078pgp.12
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 07:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:from:cc:to:user-agent:date;
-        bh=1OEM8Kxh1iavtHrE6SU4/XrnKb20VgM9nqhlOhcLshg=;
-        b=d7YlRKZbryzBLzrclhSdKOl6s8nlSQjzREsidggOCDnui5QblKwUjfrA5gB8/OueL+
-         GFoIMJy1KeCbIAxO9oYx8/7WkYtzJvIUOUgxuF33fbWArb4ZSvPtDKSad/tmj6lxoD7z
-         Z4vIZl2I0yqwTQA7Tr+CeVaqEFpfx01vNb3hA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
-         :user-agent:date;
-        bh=1OEM8Kxh1iavtHrE6SU4/XrnKb20VgM9nqhlOhcLshg=;
-        b=TI36oQtyleVF2DNkvMZsOc7NztV2Kjxwq+HTOuqyyL5vBRZo5uv0LeVgl7tnZIijHC
-         4rB4WexPfVsIVKRffmGpvRiubzuzR1XrUflvS3S7KM+UOud7VNaUcAGM430xDdEUI6DX
-         vmT8slECijzr21R3K7cKhI/ViIsDNGt4uvB64Fq0R8vkbLhEzgJMKPb2X9BdEbeyTS2g
-         A4OpbKTqPfGsdogJPkS1FRbpBZDfad0Q5nUydUyOZz3E7HX/i3BE6FdA+qglCCxOt8pH
-         GQlN2jAiZY4HzIgEhzIxm1jUkww+IDbOaK11SVH61TFEoIbiBA4ZQGnxC/Uhzjgy/eAG
-         7Fhg==
-X-Gm-Message-State: APjAAAWsPWDs/TS2zRITzzTABiKlB+OTDIxU8UrcCKVxnAXJ+IcNWc1+
-        PZv2p1Y3VJgfV6pvb7bubLDpLA==
-X-Google-Smtp-Source: APXvYqyIdAcX9gEHIL92NTQ7Jcxp4UzryejnsH/gabMiD2oWCx9789AzjTxPqGhILNUBIkvH+fQVxQ==
-X-Received: by 2002:aa7:8711:: with SMTP id b17mr4073613pfo.234.1565102432451;
-        Tue, 06 Aug 2019 07:40:32 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 11sm87812562pfw.33.2019.08.06.07.40.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 07:40:31 -0700 (PDT)
-Message-ID: <5d49915f.1c69fb81.bd889.bc77@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1733089AbfHFOmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 10:42:09 -0400
+Received: from mga02.intel.com ([134.134.136.20]:4676 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731314AbfHFOmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 10:42:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 07:41:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
+   d="scan'208";a="373438238"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Aug 2019 07:41:14 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc:     Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: [PATCH v1] perf record: Add an option to take an AUX snapshot on exit
+Date:   Tue,  6 Aug 2019 17:41:01 +0300
+Message-Id: <20190806144101.62892-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <04c0f028-308d-2dae-5067-8c239acaa3bf@infineon.com>
-References: <20190716224518.62556-1-swboyd@chromium.org> <20190716224518.62556-7-swboyd@chromium.org> <04c0f028-308d-2dae-5067-8c239acaa3bf@infineon.com>
-Subject: Re: [PATCH v2 6/6] tpm: Add driver for cr50 on I2C
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Duncan Laurie <dlaurie@chromium.org>, linux-kernel@vger.kernel.org,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-To:     Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-User-Agent: alot/0.8.1
-Date:   Mon, 05 Aug 2019 16:52:55 -0700
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Alexander Steffen (2019-07-17 08:19:19)
-> On 17.07.2019 00:45, Stephen Boyd wrote:
-> > From: Duncan Laurie <dlaurie@chromium.org>
-> >=20
-> > Add TPM 2.0 compatible I2C interface for chips with cr50 firmware.
-> >=20
-> > The firmware running on the currently supported H1 MCU requires a
-> > special driver to handle its specific protocol, and this makes it
-> > unsuitable to use tpm_tis_core_* and instead it must implement the
-> > underlying TPM protocol similar to the other I2C TPM drivers.
-> >=20
-> > - All 4 byes of status register must be read/written at once.
-> > - FIFO and burst count is limited to 63 and must be drained by AP.
-> > - Provides an interrupt to indicate when read response data is ready
-> > and when the TPM is finished processing write data.
->=20
-> And why does this prevent using the existing tpm_tis_core=20
-> infrastructure? Taking the status register as an example, you could just =
+It is sometimes useful to generate a snapshot when perf record exits;
+I've been using a wrapper script around the workload that would do a
+killall -USR2 perf when the workload exits.
 
-> teach read_bytes to look at the requested address, and if it lies=20
-> between 0x18 and 0x1b read the whole status register and then return=20
-> only the subset that has been requested originally.
->=20
-> Both approaches might not be pretty, but I'd prefer having shared code=20
-> with explicit code paths for the differences instead of having two=20
-> copies of mostly the same algorithm where a simple diff will print out a =
+This patch makes it easier and also works when perf record is attached
+to a pre-existing task. A new snapshot option 'e' can be specified in
+-S to enable this behavior:
 
-> lot more than just the crucial differences.
+root@elsewhere:~# perf record -e intel_pt// -Se sleep 1
+[ perf record: Woken up 2 times to write data ]
+[ perf record: Captured and wrote 0.085 MB perf.data ]
 
-There are a few i2c tpm drivers in drivers/char/tpm/. I still haven't
-looked at the details but maybe this will work out. I'm planning to drop
-this patch from the series and revisit this after getting the SPI driver
-merged.
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ tools/perf/Documentation/perf-record.txt | 11 +++++---
+ tools/perf/builtin-record.c              | 34 +++++++++++++++++++++---
+ tools/perf/perf.h                        |  1 +
+ tools/perf/util/auxtrace.c               | 14 ++++++++--
+ tools/perf/util/auxtrace.h               |  2 +-
+ 5 files changed, 52 insertions(+), 10 deletions(-)
 
->=20
-> > This driver is based on the existing infineon I2C TPM driver, which
-> > most closely matches the cr50 i2c protocol behavior.  The driver is
-> > intentionally kept very similar in structure and style to the
-> > corresponding drivers in coreboot and depthcharge.
-> >=20
-> > Signed-off-by: Duncan Laurie <dlaurie@chromium.org>
-> > [swboyd@chromium.org: Depend on i2c even if it's a module, replace
-> > boilier plate with SPDX tag, drop asm/byteorder.h include, simplify
-> > return from probe]
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > ---
-> >   drivers/char/tpm/Kconfig    |  10 +
-> >   drivers/char/tpm/Makefile   |   1 +
-> >   drivers/char/tpm/cr50_i2c.c | 705 ++++++++++++++++++++++++++++++++++++
-> >   3 files changed, 716 insertions(+)
-> >   create mode 100644 drivers/char/tpm/cr50_i2c.c
-> >=20
-> > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> > index b7028bfa6f87..57a8c3540265 100644
-> > --- a/drivers/char/tpm/Kconfig
-> > +++ b/drivers/char/tpm/Kconfig
-> > @@ -119,6 +119,16 @@ config TCG_CR50
-> >       ---help---
-> >         Common routines shared by drivers for Cr50-based devices.
-> >  =20
-> > +config TCG_CR50_I2C
-> > +     tristate "Cr50 I2C Interface"
-> > +     depends on I2C
-> > +     select TCG_CR50
-> > +     ---help---
-> > +       If you have a H1 secure module running Cr50 firmware on I2C bus,
-> > +       say Yes and it will be accessible from within Linux. To compile
-> > +       this driver as a module, choose M here; the module will be call=
-ed
-> > +       cr50_i2c.
-> > +
-> >   config TCG_CR50_SPI
-> >       tristate "Cr50 SPI Interface"
-> >       depends on SPI
-> > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-> > index 4e89538c73c8..3ac3448c21fa 100644
-> > --- a/drivers/char/tpm/Makefile
-> > +++ b/drivers/char/tpm/Makefile
-> > @@ -29,6 +29,7 @@ obj-$(CONFIG_TCG_NSC) +=3D tpm_nsc.o
-> >   obj-$(CONFIG_TCG_ATMEL) +=3D tpm_atmel.o
-> >   obj-$(CONFIG_TCG_CR50) +=3D cr50.o
-> >   obj-$(CONFIG_TCG_CR50_SPI) +=3D cr50_spi.o
-> > +obj-$(CONFIG_TCG_CR50_I2C) +=3D cr50_i2c.o
-> >   obj-$(CONFIG_TCG_INFINEON) +=3D tpm_infineon.o
-> >   obj-$(CONFIG_TCG_IBMVTPM) +=3D tpm_ibmvtpm.o
-> >   obj-$(CONFIG_TCG_TIS_ST33ZP24) +=3D st33zp24/
-> > diff --git a/drivers/char/tpm/cr50_i2c.c b/drivers/char/tpm/cr50_i2c.c
-> > new file mode 100644
-> > index 000000000000..25934c038b9b
-> > --- /dev/null
-> > +++ b/drivers/char/tpm/cr50_i2c.c
-> > @@ -0,0 +1,705 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright 2016 Google Inc.
-> > + *
-> > + * Based on Linux Kernel TPM driver by
-> > + * Peter Huewe <peter.huewe@infineon.com>
-> > + * Copyright (C) 2011 Infineon Technologies
-> > + */
-> > +
-> > +/*
-> > + * cr50 is a firmware for H1 secure modules that requires special
-> > + * handling for the I2C interface.
-> > + *
-> > + * - Use an interrupt for transaction status instead of hardcoded dela=
-ys
-> > + * - Must use write+wait+read read protocol
-> > + * - All 4 bytes of status register must be read/written at once
-> > + * - Burst count max is 63 bytes, and burst count behaves
-> > + *   slightly differently than other I2C TPMs
-> > + * - When reading from FIFO the full burstcnt must be read
-> > + *   instead of just reading header and determining the remainder
-> > + */
-> > +
-> > +#include <linux/acpi.h>
-> > +#include <linux/completion.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/module.h>
-> > +#include <linux/pm.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/wait.h>
-> > +#include "cr50.h"
-> > +#include "tpm.h"
-> > +
-> > +#define CR50_MAX_BUFSIZE     63
-> > +#define CR50_TIMEOUT_SHORT_MS        2       /* Short timeout during t=
-ransactions */
-> > +#define CR50_TIMEOUT_NOIRQ_MS        20      /* Timeout for TPM ready =
-without IRQ */
-> > +#define CR50_I2C_DID_VID     0x00281ae0L
-> > +#define CR50_I2C_MAX_RETRIES 3       /* Max retries due to I2C errors =
-*/
-> > +#define CR50_I2C_RETRY_DELAY_LO      55      /* Min usecs between retr=
-ies on I2C */
-> > +#define CR50_I2C_RETRY_DELAY_HI      65      /* Max usecs between retr=
-ies on I2C */
-> > +
-> > +static unsigned short rng_quality =3D 1022;
-> > +
-> > +module_param(rng_quality, ushort, 0644);
-> > +MODULE_PARM_DESC(rng_quality,
-> > +              "Estimation of true entropy, in bits per 1024 bits.");
-> > +
-> > +struct priv_data {
-> > +     int irq;
-> > +     int locality;
-> > +     struct completion tpm_ready;
-> > +     u8 buf[CR50_MAX_BUFSIZE + sizeof(u8)];
-> > +};
-> > +
-> > +/*
-> > + * The cr50 interrupt handler just signals waiting threads that the
-> > + * interrupt was asserted.  It does not do any processing triggered
-> > + * by interrupts but is instead used to avoid fixed delays.
-> > + */
-> > +static irqreturn_t cr50_i2c_int_handler(int dummy, void *dev_id)
-> > +{
-> > +     struct tpm_chip *chip =3D dev_id;
-> > +     struct priv_data *priv =3D dev_get_drvdata(&chip->dev);
-> > +
-> > +     complete(&priv->tpm_ready);
-> > +
-> > +     return IRQ_HANDLED;
-> > +}
-> > +
-> > +/*
-> > + * Wait for completion interrupt if available, otherwise use a fixed
-> > + * delay for the TPM to be ready.
-> > + *
-> > + * Returns negative number for error, positive number for success.
-> > + */
-> > +static int cr50_i2c_wait_tpm_ready(struct tpm_chip *chip)
-> > +{
-> > +     struct priv_data *priv =3D dev_get_drvdata(&chip->dev);
-> > +     long rc;
-> > +
-> > +     /* Use a safe fixed delay if interrupt is not supported */
-> > +     if (priv->irq <=3D 0) {
-> > +             msleep(CR50_TIMEOUT_NOIRQ_MS);
-> > +             return 1;
-> > +     }
-> > +
-> > +     /* Wait for interrupt to indicate TPM is ready to respond */
-> > +     rc =3D wait_for_completion_timeout(&priv->tpm_ready,
-> > +             msecs_to_jiffies(chip->timeout_a));
-> > +
-> > +     if (rc =3D=3D 0)
-> > +             dev_warn(&chip->dev, "Timeout waiting for TPM ready\n");
-> > +
-> > +     return rc;
-> > +}
-> > +
-> > +static void cr50_i2c_enable_tpm_irq(struct tpm_chip *chip)
-> > +{
-> > +     struct priv_data *priv =3D dev_get_drvdata(&chip->dev);
-> > +
-> > +     if (priv->irq > 0) {
-> > +             reinit_completion(&priv->tpm_ready);
-> > +             enable_irq(priv->irq);
-> > +     }
-> > +}
-> > +
-> > +static void cr50_i2c_disable_tpm_irq(struct tpm_chip *chip)
-> > +{
-> > +     struct priv_data *priv =3D dev_get_drvdata(&chip->dev);
-> > +
-> > +     if (priv->irq > 0)
-> > +             disable_irq(priv->irq);
-> > +}
-> > +
-> > +/*
-> > + * cr50_i2c_transfer - transfer messages over i2c
-> > + *
-> > + * @adapter: i2c adapter
-> > + * @msgs: array of messages to transfer
-> > + * @num: number of messages in the array
-> > + *
-> > + * Call unlocked i2c transfer routine with the provided parameters and=
- retry
-> > + * in case of bus errors. Returns the number of transferred messages.
-> > + */
->=20
-> Documentation is nice, why is it only present for some of the functions? =
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index 15e0fa87241b..d5e58e0a2bca 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -422,9 +422,14 @@ CLOCK_BOOTTIME, CLOCK_REALTIME and CLOCK_TAI.
+ -S::
+ --snapshot::
+ Select AUX area tracing Snapshot Mode. This option is valid only with an
+-AUX area tracing event. Optionally the number of bytes to capture per
+-snapshot can be specified. In Snapshot Mode, trace data is captured only when
+-signal SIGUSR2 is received.
++AUX area tracing event. Optionally, certain snapshot capturing parameters
++can be specified in a string that follows this option:
++  'e': take one last snapshot on exit; guarantees that there is at least one
++       snapshot in the output file;
++  <size>: if the PMU supports this, specify the desired snapshot size.
++
++In Snapshot Mode trace data is captured only when signal SIGUSR2 is received
++and on exit if the above 'e' option is given.
+ 
+ --proc-map-timeout::
+ When processing pre-existing threads /proc/XXX/mmap, it may take a long time,
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index d31d7a5a1be3..e9a2525ecfcc 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -613,19 +613,35 @@ static int record__auxtrace_read_snapshot_all(struct record *rec)
+ 	return rc;
+ }
+ 
+-static void record__read_auxtrace_snapshot(struct record *rec)
++static void record__read_auxtrace_snapshot(struct record *rec, bool on_exit)
+ {
+ 	pr_debug("Recording AUX area tracing snapshot\n");
+ 	if (record__auxtrace_read_snapshot_all(rec) < 0) {
+ 		trigger_error(&auxtrace_snapshot_trigger);
+ 	} else {
+-		if (auxtrace_record__snapshot_finish(rec->itr))
++		if (auxtrace_record__snapshot_finish(rec->itr, on_exit))
+ 			trigger_error(&auxtrace_snapshot_trigger);
+ 		else
+ 			trigger_ready(&auxtrace_snapshot_trigger);
+ 	}
+ }
+ 
++static int record__auxtrace_snapshot_exit(struct record *rec)
++{
++	if (trigger_is_error(&auxtrace_snapshot_trigger))
++		return 0;
++
++	if (!auxtrace_record__snapshot_started &&
++	    auxtrace_record__snapshot_start(rec->itr))
++		return -1;
++
++	record__read_auxtrace_snapshot(rec, true);
++	if (trigger_is_error(&auxtrace_snapshot_trigger))
++		return -1;
++
++	return 0;
++}
++
+ static int record__auxtrace_init(struct record *rec)
+ {
+ 	int err;
+@@ -654,7 +670,7 @@ int record__auxtrace_mmap_read(struct record *rec __maybe_unused,
+ }
+ 
+ static inline
+-void record__read_auxtrace_snapshot(struct record *rec __maybe_unused)
++void record__read_auxtrace_snapshot(struct record *rec __maybe_unused, bool on_exit)
+ {
+ }
+ 
+@@ -664,6 +680,12 @@ int auxtrace_record__snapshot_start(struct auxtrace_record *itr __maybe_unused)
+ 	return 0;
+ }
+ 
++static inline
++int record__auxtrace_snapshot_exit(struct record *rec)
++{
++	return 0;
++}
++
+ static int record__auxtrace_init(struct record *rec __maybe_unused)
+ {
+ 	return 0;
+@@ -1536,7 +1558,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		if (auxtrace_record__snapshot_started) {
+ 			auxtrace_record__snapshot_started = 0;
+ 			if (!trigger_is_error(&auxtrace_snapshot_trigger))
+-				record__read_auxtrace_snapshot(rec);
++				record__read_auxtrace_snapshot(rec, false);
+ 			if (trigger_is_error(&auxtrace_snapshot_trigger)) {
+ 				pr_err("AUX area tracing snapshot failed\n");
+ 				err = -1;
+@@ -1609,9 +1631,13 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 			disabled = true;
+ 		}
+ 	}
++
+ 	trigger_off(&auxtrace_snapshot_trigger);
+ 	trigger_off(&switch_output_trigger);
+ 
++	if (opts->auxtrace_snapshot_on_exit)
++		record__auxtrace_snapshot_exit(rec);
++
+ 	if (forks && workload_exec_errno) {
+ 		char msg[STRERR_BUFSIZE];
+ 		const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 74d0124d38f3..dc0a7a237887 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -57,6 +57,7 @@ struct record_opts {
+ 	bool	     running_time;
+ 	bool	     full_auxtrace;
+ 	bool	     auxtrace_snapshot_mode;
++	bool	     auxtrace_snapshot_on_exit;
+ 	bool	     record_namespaces;
+ 	bool	     record_switch_events;
+ 	bool	     all_kernel;
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index 65728cdeefb6..72ce4c5e7c78 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -539,9 +539,9 @@ int auxtrace_record__snapshot_start(struct auxtrace_record *itr)
+ 	return 0;
+ }
+ 
+-int auxtrace_record__snapshot_finish(struct auxtrace_record *itr)
++int auxtrace_record__snapshot_finish(struct auxtrace_record *itr, bool on_exit)
+ {
+-	if (itr && itr->snapshot_finish)
++	if (!on_exit && itr && itr->snapshot_finish)
+ 		return itr->snapshot_finish(itr);
+ 	return 0;
+ }
+@@ -577,6 +577,16 @@ int auxtrace_parse_snapshot_options(struct auxtrace_record *itr,
+ 	if (!str)
+ 		return 0;
+ 
++	/* PMU-agnostic options */
++	switch (*str) {
++	case 'e':
++		opts->auxtrace_snapshot_on_exit = true;
++		str++;
++		break;
++	default:
++		break;
++	}
++
+ 	if (itr)
+ 		return itr->parse_snapshot_options(itr, opts, str);
+ 
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index 17eb04a1da4d..8ccabacd0b11 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -499,7 +499,7 @@ int auxtrace_record__info_fill(struct auxtrace_record *itr,
+ 			       size_t priv_size);
+ void auxtrace_record__free(struct auxtrace_record *itr);
+ int auxtrace_record__snapshot_start(struct auxtrace_record *itr);
+-int auxtrace_record__snapshot_finish(struct auxtrace_record *itr);
++int auxtrace_record__snapshot_finish(struct auxtrace_record *itr, bool on_exit);
+ int auxtrace_record__find_snapshot(struct auxtrace_record *itr, int idx,
+ 				   struct auxtrace_mmap *mm,
+ 				   unsigned char *data, u64 *head, u64 *old);
+-- 
+2.20.1
 
-> Also, the dev parameter is missing in the list of parameters above.
-
-Ok.
-
->=20
-> > +static int cr50_i2c_transfer(struct device *dev, struct i2c_adapter *a=
-dapter,
-> > +                          struct i2c_msg *msgs, int num)
-> > +{
-> > +     int rc, try;
-> > +
-> > +     for (try =3D 0; try < CR50_I2C_MAX_RETRIES; try++) {
-> > +             rc =3D __i2c_transfer(adapter, msgs, num);
-> > +             if (rc > 0)
-> > +                     break;
-> > +             if (try)
-> > +                     dev_warn(dev, "i2c transfer failed (attempt %d/%d=
-): %d\n",
-> > +                              try+1, CR50_I2C_MAX_RETRIES, rc);
->=20
-> Why does this not generate a message when the first attempt fails?
->=20
-
-Hmm looks like an off-by-one bug.=20
-
-> > +
-> > +enum tis_access {
-> > +     TPM_ACCESS_VALID =3D 0x80,
-> > +     TPM_ACCESS_ACTIVE_LOCALITY =3D 0x20,
-> > +     TPM_ACCESS_REQUEST_PENDING =3D 0x04,
-> > +     TPM_ACCESS_REQUEST_USE =3D 0x02,
-> > +};
-> > +
-> > +enum tis_status {
-> > +     TPM_STS_VALID =3D 0x80,
-> > +     TPM_STS_COMMAND_READY =3D 0x40,
-> > +     TPM_STS_GO =3D 0x20,
-> > +     TPM_STS_DATA_AVAIL =3D 0x10,
-> > +     TPM_STS_DATA_EXPECT =3D 0x08,
-> > +};
-> > +
-> > +enum tis_defaults {
-> > +     TIS_SHORT_TIMEOUT =3D 750,        /* ms */
-> > +     TIS_LONG_TIMEOUT =3D 2000,        /* 2 sec */
-> > +};
->=20
-> This is already defined in tpm_tis_core.h. Do you really need to=20
-> redefine it here?
-
-This whole chunk of code is copying from tpm_i2c_infineon.c and I'm not
-sure why that driver redefines things either. If i include
-tpm_tis_core.h then I need to undef the below defines so they can be
-redefined in this file.
-
->=20
-> > +
-> > +#define      TPM_ACCESS(l)                   (0x0000 | ((l) << 4))
-> > +#define      TPM_STS(l)                      (0x0001 | ((l) << 4))
-> > +#define      TPM_DATA_FIFO(l)                (0x0005 | ((l) << 4))
-> > +#define      TPM_DID_VID(l)                  (0x0006 | ((l) << 4))
-> > +
