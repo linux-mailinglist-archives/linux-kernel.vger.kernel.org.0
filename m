@@ -2,236 +2,295 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F8FD83AD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 23:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFF3B83ADF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 23:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfHFVL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 17:11:58 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:8430 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726016AbfHFVL4 (ORCPT
+        id S1726677AbfHFVNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 17:13:22 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:53942 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfHFVNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:11:56 -0400
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x76L3KS2009744
-        for <linux-kernel@vger.kernel.org>; Tue, 6 Aug 2019 14:11:55 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=lEF0V4Phl+j9sYT1rm6OdO3ffoseIIrncWv0OiSJSWQ=;
- b=DbsjqwOvZtZ/F4mzs5i3pR8K4MxD5DuKocLzexDyIQ+U0J8RzixRPt0WknYSy+215HRu
- m2/1P0cJlXiINCwSOsnNz4JzB4MMsyr915h+4By7Ydla3Mt/dihruEs0ZVd/ICsOCEvw
- 8iFv3DxcFFgitOUb496xOYIaEo+qle65y6c= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2u7deg8ytk-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 14:11:55 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Tue, 6 Aug 2019 14:11:54 -0700
-Received: by devvm24792.prn1.facebook.com (Postfix, from userid 150176)
-        id 37E5318C5042B; Tue,  6 Aug 2019 14:09:32 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Tao Ren <taoren@fb.com>
-Smtp-Origin-Hostname: devvm24792.prn1.facebook.com
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <openbmc@lists.ozlabs.org>
-CC:     Tao Ren <taoren@fb.com>
-Smtp-Origin-Cluster: prn1c35
-Subject: [PATCH net-next v4 2/2] net: phy: broadcom: add 1000Base-X support for BCM54616S
-Date:   Tue, 6 Aug 2019 14:09:31 -0700
-Message-ID: <20190806210931.3723590-1-taoren@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-06_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=430 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908060182
-X-FB-Internal: deliver
+        Tue, 6 Aug 2019 17:13:22 -0400
+Received: by mail-pl1-f201.google.com with SMTP id y22so49045328plr.20
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 14:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=a29LgJr2OVNgNdoTJtcopFf7qnnTbwaGIZqViSAu3/k=;
+        b=NLzdWuiCXL7c0/dtL69GVOr2Y63qNgQ+sCoXTw5/DacbxJ/IGbROhYZ3ObSBXAq6q8
+         2hxY7491HJ22D4YaH/n5icGPjX3DdFJTWgLw/FNkw7pWT7OS/UOYO0MqMxVk3kAS6Pcc
+         Co7bMNmQVZuGQybu72NrTWqVBs0gxUDzKXJiTzaGlhYIyYlddQxcsUJVQfDayFM1LyB/
+         QHCwpQ1l4aNaVooWK88K/I1UdYZKc12S2WN1d0SROT9ThZJ4bAe1fSmnxBdnCk+uFK0Z
+         mEulgzOHXV18SdoceNA8bCLf6ToNHdSLjiSko1wjx5A2EW6JnTcc/ihF1SMmPdPWBUQw
+         TQVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=a29LgJr2OVNgNdoTJtcopFf7qnnTbwaGIZqViSAu3/k=;
+        b=gDUm4LLosiI962okJ3zeAvhd4AKHZZvOfJq6HEkvcaE7IS616OdStXgjPbhEn8Pks8
+         O5aIPi4FBMm/LtxjqDNx6aA2npXsae6R+xGdRTE9SUICKCZTKHhFovRPMmR98Z+KQIUd
+         JUxixOknhisGO5SYtFf9ydM4RK5U72X/3yjPzhqprCM7kjIUbrCfnD6Lvu//Mu/nC3rM
+         Kyjce0QAWbg5pCsGHQgc1nExFtLDb5J7Vj9KCugEXBt7jmgBaKiAa2dSQcdcSc6W2Zec
+         63CzsDO8YpdnDWOrVkw3LiuqtFDOUvIcEB681g9k9ryJ3rQRF/GcF7Hr+1ksrTPl/wkX
+         tsAw==
+X-Gm-Message-State: APjAAAVzM0qWgFWAltw0mCW8hNU9KPiqkXrsDVQFwKW/ZpxmbBro1ARv
+        z9iLHUWCo1eCkXewVeYvAQbEDUWSZA==
+X-Google-Smtp-Source: APXvYqz7QBtDtaXLR5iNw8IILGOdYiseG9OIezrHeW8Ibpw3dPeu/OQrEHvPnp9cujI51MmNw1JvVKirlw==
+X-Received: by 2002:a65:5183:: with SMTP id h3mr4783468pgq.250.1565126000981;
+ Tue, 06 Aug 2019 14:13:20 -0700 (PDT)
+Date:   Tue,  6 Aug 2019 14:10:46 -0700
+Message-Id: <20190806211047.232709-1-nhuck@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+Subject: [RFC PATCH 1/2] Add clang-tidy and static analyzer support to makefile
+From:   Nathan Huckleberry <nhuck@google.com>
+To:     mark.rutland@arm.com
+Cc:     clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+        Nathan Huckleberry <nhuck@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BCM54616S PHY cannot work properly in RGMII->1000Base-KX mode (for
-example, on Facebook CMM BMC platform), mainly because genphy functions
-are designed for copper links, and 1000Base-X (clause 37) auto negotiation
-needs to be handled differently.
-
-This patch enables 1000Base-X support for BCM54616S by customizing 3
-driver callbacks:
-
-  - probe: probe callback detects PHY's operation mode based on
-    INTERF_SEL[1:0] pins and 1000X/100FX selection bit in SerDES 100-FX
-    Control register.
-
-  - config_aneg: bcm54616s_config_aneg_1000bx function is added for auto
-    negotiation in 1000Base-X mode.
-
-  - read_status: BCM54616S and BCM5482 PHY share the same read_status
-    callback which manually set link speed and duplex mode in 1000Base-X
-    mode.
-
-Signed-off-by: Tao Ren <taoren@fb.com>
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
 ---
- Changes in v4:
-  - add bcm54616s_config_aneg_1000bx() to deal with auto negotiation in
-    1000Base-X mode.
- Changes in v3:
-  - rename bcm5482_read_status to bcm54xx_read_status so the callback can
-    be shared by BCM5482 and BCM54616S.
- Changes in v2:
-  - Auto-detect PHY operation mode instead of passing DT node.
-  - move PHY mode auto-detect logic from config_init to probe callback.
-  - only set speed (not including duplex) in read_status callback.
-  - update patch description with more background to avoid confusion.
-  - patch #1 in the series ("net: phy: broadcom: set features explicitly
-    for BCM54616") is dropped: the fix should go to get_features callback
-    which may potentially depend on this patch.
+These patches add clang-tidy and the clang static-analyzer as make
+targets. The goal of these patches is to make static analysis tools
+usable and extendable by any developer or researcher who is familiar
+with basic c++.
 
- drivers/net/phy/broadcom.c | 62 ++++++++++++++++++++++++++++++++++----
- include/linux/brcmphy.h    | 10 ++++--
- 2 files changed, 64 insertions(+), 8 deletions(-)
+The current static analysis tools require intimate knowledge of the internal
+workings of the static analysis.  Clang-tidy and the clang static analyzers
+expose an easy to use api and allow users unfamiliar with clang to
+write new checks with relative ease.
 
-diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
-index 937d0059e8ac..bf61ed8451e5 100644
---- a/drivers/net/phy/broadcom.c
-+++ b/drivers/net/phy/broadcom.c
-@@ -383,9 +383,9 @@ static int bcm5482_config_init(struct phy_device *phydev)
- 		/*
- 		 * Select 1000BASE-X register set (primary SerDes)
- 		 */
--		reg = bcm_phy_read_shadow(phydev, BCM5482_SHD_MODE);
--		bcm_phy_write_shadow(phydev, BCM5482_SHD_MODE,
--				     reg | BCM5482_SHD_MODE_1000BX);
-+		reg = bcm_phy_read_shadow(phydev, BCM54XX_SHD_MODE);
-+		bcm_phy_write_shadow(phydev, BCM54XX_SHD_MODE,
-+				     reg | BCM54XX_SHD_MODE_1000BX);
+===Clang-tidy===
+
+Clang-tidy is an easily extendable 'linter' that runs on the AST.
+Clang-tidy checks are easy to write and understand. A check consists of
+two parts, a matcher and a checker. The matcher is created using a
+domain specific language that acts on the AST
+(https://clang.llvm.org/docs/LibASTMatchersReference.html).  When AST
+nodes are found by the matcher a callback is made to the checker. The
+checker can then execute additional checks and issue warnings.
+
+Here is an example clang-tidy check to report functions that have calls
+to local_irq_disable without calls to local_irq_enable and vice-versa.
+Functions flagged with __attribute((annotation("ignore_irq_balancing")))
+are ignored for analysis.
+
+The full patch can be found here (https://reviews.llvm.org/D65828)
+
+```
+void IrqUnbalancedCheck::registerMatchers(MatchFinder *Finder) {
+  // finds calls to "arch_local_irq_disable" in a function body
+  auto disable =
+              forEachDescendant(
+                  callExpr(
+                      hasDeclaration(
+                          namedDecl(
+                              hasName("arch_local_irq_disable")))).bind("disable"));
+
+  // finds calls to "arch_local_irq_enable" in a function body
+  auto enable =
+              forEachDescendant(
+                  callExpr(
+                      hasDeclaration(
+                          namedDecl(
+                              hasName("arch_local_irq_enable")))).bind("enable"));
+
+  // Looks for function body that has the following property:
+  // ((disable && !enable) || (enable && !disable))
+  auto matcher = functionDecl(
+      anyOf(allOf(disable, unless(enable)), allOf(enable, unless(disable))));
+
+  Finder->addMatcher(matcher.bind("func"), this);
+}
+
+std::string annotation = "ignore_irq_balancing";
+void IrqUnbalancedCheck::check(const MatchFinder::MatchResult &Result) {
+  const auto *MatchedDecl = Result.Nodes.getNodeAs<FunctionDecl>("func");
+  const auto *DisableCall = Result.Nodes.getNodeAs<CallExpr>("disable");
+  const auto *EnableCall = Result.Nodes.getNodeAs<CallExpr>("enable");
+
+  // If the function has __attribute((annotate("ignore_irq_balancing"))
+  for (const auto *Attr : MatchedDecl->attrs()) {
+    if (Attr->getKind() == clang::attr::Annotate) {
+      if(dyn_cast<AnnotateAttr>(Attr)->getAnnotation().str() == annotation) {
+        return;
+      }
+    }
+  }
+
+  if(EnableCall) {
+    diag(MatchedDecl->getLocation(), "call to 'enable_local_irq' without 'disable_local_irq' in %0 ")
+        << MatchedDecl;
+    diag(EnableCall->getBeginLoc(), "call to 'enable_local_irq'", DiagnosticIDs::Note)
+        << MatchedDecl;
+  }
+
+  if(DisableCall) {
+    diag(MatchedDecl->getLocation(), "call to 'disable_local_irq' without 'enable_local_irq' in %0 ")
+        << MatchedDecl;
+    diag(DisableCall->getBeginLoc(), "call to 'disable_local_irq'", DiagnosticIDs::Note)
+        << MatchedDecl;
+  }
+}
+```
+
+===Clang static analyzer===
+
+The clang static analyzer is a more powerful static analysis tool that
+uses symbolic execution to find bugs. Currently there is a check that
+looks for potential security bugs from invalid uses of kmalloc and
+kfree. There are several more general purpose checks that are useful for
+the kernel.
+
+The clang static analyzer is well documented and designed to be
+extensible.
+(https://clang-analyzer.llvm.org/checker_dev_manual.html)
+(https://github.com/haoNoQ/clang-analyzer-guide/releases/download/v0.1/clang-analyzer-guide-v0.1.pdf)
+
+
+Why add clang-tidy and the clang static analyzer when other static
+analyzers are already in the kernel?
+
+The main draw of the clang tools is how accessible they are. The clang
+documentation is very nice and these tools are built specifically to be
+easily extendable by any developer. They provide an accessible method of
+bug-finding and research to people who are not overly familiar with the
+kernel codebase.
+
+ Makefile                                      |  3 ++
+ scripts/clang-tools/Makefile.clang-tools      | 35 ++++++++++++++
+ .../{ => clang-tools}/gen_compile_commands.py |  0
+ scripts/clang-tools/parse_compile_commands.py | 47 +++++++++++++++++++
+ 4 files changed, 85 insertions(+)
+ create mode 100644 scripts/clang-tools/Makefile.clang-tools
+ rename scripts/{ => clang-tools}/gen_compile_commands.py (100%)
+ create mode 100755 scripts/clang-tools/parse_compile_commands.py
+
+diff --git a/Makefile b/Makefile
+index fabc127d127f..49f1d3fa48a8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -709,6 +709,7 @@ KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
  
- 		/*
- 		 * LED1=ACTIVITYLED, LED3=LINKSPD[2]
-@@ -409,7 +409,7 @@ static int bcm5482_config_init(struct phy_device *phydev)
- 	return err;
- }
+ include scripts/Makefile.kcov
+ include scripts/Makefile.gcc-plugins
++include scripts/clang-tools/Makefile.clang-tools
  
--static int bcm5482_read_status(struct phy_device *phydev)
-+static int bcm54xx_read_status(struct phy_device *phydev)
- {
- 	int err;
- 
-@@ -451,12 +451,60 @@ static int bcm5481_config_aneg(struct phy_device *phydev)
- 	return ret;
- }
- 
-+static int bcm54616s_probe(struct phy_device *phydev)
-+{
-+	int val, intf_sel;
+ ifdef CONFIG_READABLE_ASM
+ # Disable optimizations that make assembler listings hard to read.
+@@ -1470,6 +1471,8 @@ help:
+ 	@echo  '  headers_check   - Sanity check on exported headers'
+ 	@echo  '  headerdep       - Detect inclusion cycles in headers'
+ 	@echo  '  coccicheck      - Check with Coccinelle'
++	@echo  '  clang-analyzer  - Check with clang static analyzer'
++	@echo  '  clang-tidy      - Check with clang-tidy'
+ 	@echo  ''
+ 	@echo  'Kernel selftest:'
+ 	@echo  '  kselftest       - Build and run kernel selftest (run as root)'
+diff --git a/scripts/clang-tools/Makefile.clang-tools b/scripts/clang-tools/Makefile.clang-tools
+new file mode 100644
+index 000000000000..0adb6df20777
+--- /dev/null
++++ b/scripts/clang-tools/Makefile.clang-tools
+@@ -0,0 +1,35 @@
++# SPDX-License-Identifier: GPL-2.0
++PHONY += clang-tidy
++HAS_PARALLEL := $(shell (parallel --version 2> /dev/null) | grep 'GNU parallel' 2> /dev/null)
++clang-tidy:
++ifdef CONFIG_CC_IS_CLANG
++	$(PYTHON3) scripts/clang-tools/gen_compile_commands.py
++ifdef HAS_PARALLEL
++	#Xargs interleaves multiprocessed output. GNU Parallel does not.
++	scripts/clang-tools/parse_compile_commands.py compile_commands.json \
++		| parallel -k -j $(shell nproc) 'echo {} && clang-tidy -p . "-checks=-*,linuxkernel-*" {}'
++else
++	@echo "GNU parallel is not installed. Defaulting to non-parallelized runs"
++	scripts/clang-tools/parse_compile_commands.py compile_commands.json \
++		| xargs -L 1 -I@ sh -c "echo '@' && clang-tidy -p . '-checks=-*,linuxkernel-*' @"
++endif
++else
++	$(error Clang-tidy requires CC=clang)
++endif
 +
-+	val = bcm_phy_read_shadow(phydev, BCM54XX_SHD_MODE);
-+	if (val < 0)
-+		return val;
++PHONY += clang-analyzer
++clang-analyzer:
++ifdef CONFIG_CC_IS_CLANG
++	$(PYTHON3) scripts/clang-tools/gen_compile_commands.py
++ifdef HAS_PARALLEL
++	#Xargs interleaves multiprocessed output. GNU Parallel does not.
++	scripts/clang-tools/parse_compile_commands.py compile_commands.json \
++		| parallel -k -j $(shell nproc) 'echo {} && clang-tidy -p . "-checks=-*,clang-analyzer-*" {}'
++else
++	@echo "GNU parallel is not installed. Defaulting to non-parallelized runs"
++	scripts/clang-tools/parse_compile_commands.py compile_commands.json \
++		| xargs -L 1 -I@ sh -c "echo '@' && clang-tidy -p . '-checks=-*,clang-analyzer-*' @"
++endif
++else
++	$(error Clang-analyzer requires CC=clang)
++endif
+diff --git a/scripts/gen_compile_commands.py b/scripts/clang-tools/gen_compile_commands.py
+similarity index 100%
+rename from scripts/gen_compile_commands.py
+rename to scripts/clang-tools/gen_compile_commands.py
+diff --git a/scripts/clang-tools/parse_compile_commands.py b/scripts/clang-tools/parse_compile_commands.py
+new file mode 100755
+index 000000000000..d6bc1bf9951e
+--- /dev/null
++++ b/scripts/clang-tools/parse_compile_commands.py
+@@ -0,0 +1,47 @@
++#!/usr/bin/env python
++# SPDX-License-Identifier: GPL-2.0
++#
++# Copyright (C) Google LLC, 2019
++#
++# Author: Nathan Huckleberry <nhuck@google.com>
++#
++"""A helper routine for make clang-tidy to parse compile_commands.json."""
 +
-+	/* The PHY is strapped in RGMII to fiber mode when INTERF_SEL[1:0]
-+	 * is 01b.
-+	 */
-+	intf_sel = (val & BCM54XX_SHD_INTF_SEL_MASK) >> 1;
-+	if (intf_sel == 1) {
-+		val = bcm_phy_read_shadow(phydev, BCM54616S_SHD_100FX_CTRL);
-+		if (val < 0)
-+			return val;
++import argparse
++import json
++import logging
++import os
++import re
 +
-+		/* Bit 0 of the SerDes 100-FX Control register, when set
-+		 * to 1, sets the MII/RGMII -> 100BASE-FX configuration.
-+		 * When this bit is set to 0, it sets the GMII/RGMII ->
-+		 * 1000BASE-X configuration.
-+		 */
-+		if (!(val & BCM54616S_100FX_MODE))
-+			phydev->dev_flags |= PHY_BCM_FLAGS_MODE_1000BX;
-+	}
++def parse_arguments():
++  """Set up and parses command-line arguments.
++  Returns:
++    file_path: Path to compile_commands.json file
++  """
++  usage = """Parse a compilation database and return a list of files
++  included in the database"""
++  parser = argparse.ArgumentParser(description=usage)
 +
-+	return 0;
-+}
++  file_path_help = ('Path to the compilation database to parse')
++  parser.add_argument('file',  type=str, help=file_path_help)
 +
-+static int bcm54616s_config_aneg_1000bx(struct phy_device *phydev)
-+{
-+	int err;
-+	int adv = 0;
++  args = parser.parse_args()
 +
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-+			      phydev->supported))
-+		adv |= ADVERTISE_1000XFULL;
++  return args.file
 +
-+	err = phy_modify_changed(phydev, MII_ADVERTISE, 0, adv);
-+	if (err > 0)
-+		err = genphy_restart_aneg(phydev);
 +
-+	return err;
-+}
++def main():
++  filename = parse_arguments()
 +
- static int bcm54616s_config_aneg(struct phy_device *phydev)
- {
- 	int ret;
- 
- 	/* Aneg firsly. */
--	ret = genphy_config_aneg(phydev);
-+	if (phydev->dev_flags & PHY_BCM_FLAGS_MODE_1000BX)
-+		ret = bcm54616s_config_aneg_1000bx(phydev);
-+	else
-+		ret = genphy_config_aneg(phydev);
- 
- 	/* Then we can set up the delay. */
- 	bcm54xx_config_clock_delay(phydev);
-@@ -655,6 +703,8 @@ static struct phy_driver broadcom_drivers[] = {
- 	.config_aneg	= bcm54616s_config_aneg,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-+	.read_status	= bcm54xx_read_status,
-+	.probe		= bcm54616s_probe,
- }, {
- 	.phy_id		= PHY_ID_BCM5464,
- 	.phy_id_mask	= 0xfffffff0,
-@@ -689,7 +739,7 @@ static struct phy_driver broadcom_drivers[] = {
- 	.name		= "Broadcom BCM5482",
- 	/* PHY_GBIT_FEATURES */
- 	.config_init	= bcm5482_config_init,
--	.read_status	= bcm5482_read_status,
-+	.read_status	= bcm54xx_read_status,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
- }, {
-diff --git a/include/linux/brcmphy.h b/include/linux/brcmphy.h
-index 6db2d9a6e503..b475e7f20d28 100644
---- a/include/linux/brcmphy.h
-+++ b/include/linux/brcmphy.h
-@@ -200,9 +200,15 @@
- #define BCM5482_SHD_SSD		0x14	/* 10100: Secondary SerDes control */
- #define BCM5482_SHD_SSD_LEDM	0x0008	/* SSD LED Mode enable */
- #define BCM5482_SHD_SSD_EN	0x0001	/* SSD enable */
--#define BCM5482_SHD_MODE	0x1f	/* 11111: Mode Control Register */
--#define BCM5482_SHD_MODE_1000BX	0x0001	/* Enable 1000BASE-X registers */
- 
-+/* 10011: SerDes 100-FX Control Register */
-+#define BCM54616S_SHD_100FX_CTRL	0x13
-+#define	BCM54616S_100FX_MODE		BIT(0)	/* 100-FX SerDes Enable */
++  #Read JSON data into the datastore variable
++  if filename:
++    with open(filename, 'r') as f:
++      datastore = json.load(f)
 +
-+/* 11111: Mode Control Register */
-+#define BCM54XX_SHD_MODE		0x1f
-+#define BCM54XX_SHD_INTF_SEL_MASK	GENMASK(2, 1)	/* INTERF_SEL[1:0] */
-+#define BCM54XX_SHD_MODE_1000BX		BIT(0)	/* Enable 1000-X registers */
- 
- /*
-  * EXPANSION SHADOW ACCESS REGISTERS.  (PHY REG 0x15, 0x16, and 0x17)
++      #Use the new datastore datastructure
++      for entry in datastore:
++        print(entry['file'])
++
++
++if __name__ == '__main__':
++    main()
 -- 
-2.17.1
+2.22.0.709.g102302147b-goog
 
