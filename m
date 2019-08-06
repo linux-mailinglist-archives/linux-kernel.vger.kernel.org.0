@@ -2,85 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D826D82D7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E7DC82D4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:01:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732459AbfHFIGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 04:06:25 -0400
-Received: from mga03.intel.com ([134.134.136.65]:5872 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732429AbfHFIGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 04:06:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 01:01:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,352,1559545200"; 
-   d="scan'208";a="373337527"
-Received: from devel-ww.sh.intel.com ([10.239.48.128])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Aug 2019 01:01:07 -0700
-From:   Wei Wang <wei.w.wang@intel.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        ak@linux.intel.com, peterz@infradead.org, pbonzini@redhat.com
-Cc:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
-        like.xu@intel.com, wei.w.wang@intel.com, jannh@google.com,
-        arei.gonglei@huawei.com, jmattson@google.com
-Subject: [PATCH v8 14/14] KVM/x86: remove the common handling of the debugctl msr
-Date:   Tue,  6 Aug 2019 15:16:14 +0800
-Message-Id: <1565075774-26671-15-git-send-email-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1565075774-26671-1-git-send-email-wei.w.wang@intel.com>
-References: <1565075774-26671-1-git-send-email-wei.w.wang@intel.com>
+        id S1732209AbfHFIAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 04:00:35 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46488 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728975AbfHFIAe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 04:00:34 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w3so3944103pgt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 01:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aV69onuQcwDqEYz62/w3oHFd2R0PARV3h+ba+PwsLJU=;
+        b=TLB7WEzMV1FG9qsC+tFG0uVO2zJplwy4NMtcXZmIe83n8bPedvYIg0kRV+0BKaC2/W
+         qA1bhXaKHBsjod4hTqmfQwF/lUsR277uCh8BUc5BQAE/w4nKQrmd9u5fBIRR3tWkijJN
+         P5PrCFxtrlEUtjIManUEPXxHYB6fAs1VwWq1OkSVqmhXQKqSYhkRRd1j5LGp6QOrTvkB
+         sGzDPsINgXkaDyPTnVx/qVsPefVhLgtJSuNlRD6IbkGv6hdmE3xmprXG4kWR5dvjsvc6
+         Zcxp+1RmUOKxSrb97ji+pRTFedoopdRumI6BPcbOWQ/ZBZwy1O8iwqkQ+sCrr5SwppNd
+         dRDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aV69onuQcwDqEYz62/w3oHFd2R0PARV3h+ba+PwsLJU=;
+        b=RQXcyye7nR43N3syo1+9nuejIy/q/DLv5bs1HiXpiclmB8mHeLGiMPuBn8NdeCFj7j
+         ng1zFx5aFRaRKiUq5HAo6vztF3eC0ygZ0H2KBTnRx0QsztM9UMGK/EA0ZrcdUjzR2CdX
+         BPzimLJvdTCY2t/3jbgWRfT7Qp07GXeHnDd4yxV4fnx9kYRibyeaMD5yGbM9m5YWjnhw
+         YuQjDEo81xNU2hm8XtBnIFAAMeFj5IdC1AGIS2p7FKE/OZD95SRtn0XU0KjEJA2R2itp
+         fe0C6NTvfLrmq4q8I4LhWwLtvplPVrs0vu+xfJWUpIpnO7bqpETbroRUiag5QiigO0km
+         TBhw==
+X-Gm-Message-State: APjAAAUqh5Phv3Ro/0ctkADeu5e9HAkAaqtzpD4alUa0qs54Er8/4sJN
+        kMUiIyOc//6mpa9xwJ1Tig==
+X-Google-Smtp-Source: APXvYqzcRDSMRahvNSlA2NE7YehHcCK+DdqZfd9iDDVrttQjMFGM+2BAVpZ47/jY+R7q00gXTs3ESQ==
+X-Received: by 2002:a62:be04:: with SMTP id l4mr2260030pff.77.1565078433810;
+        Tue, 06 Aug 2019 01:00:33 -0700 (PDT)
+Received: from mylaptop.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id p7sm96840679pfp.131.2019.08.06.01.00.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 01:00:33 -0700 (PDT)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     linux-mm@kvack.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jan Kara <jack@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] mm/migrate: clean up useless code in migrate_vma_collect_pmd()
+Date:   Tue,  6 Aug 2019 16:00:09 +0800
+Message-Id: <1565078411-27082-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.5
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The debugctl msr is not completely identical on AMD and Intel CPUs, for
-example, FREEZE_LBRS_ON_PMI is supported by Intel CPUs only. Now, this
-msr is handled separatedly in svm.c and intel_pmu.c. So remove the
-common debugctl msr handling code in kvm_get/set_msr_common.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Jan Kara <jack@suse.cz>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
 ---
- arch/x86/kvm/x86.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ mm/migrate.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index efaf0e8..3839ebd 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2528,18 +2528,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 			return 1;
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 8992741..c2ec614 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -2230,7 +2230,6 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+ 		if (pte_none(pte)) {
+ 			mpfn = MIGRATE_PFN_MIGRATE;
+ 			migrate->cpages++;
+-			pfn = 0;
+ 			goto next;
  		}
- 		break;
--	case MSR_IA32_DEBUGCTLMSR:
--		if (!data) {
--			/* We support the non-activated case already */
--			break;
--		} else if (data & ~(DEBUGCTLMSR_LBR | DEBUGCTLMSR_BTF)) {
--			/* Values other than LBR and BTF are vendor-specific,
--			   thus reserved and should throw a #GP */
--			return 1;
--		}
--		vcpu_unimpl(vcpu, "%s: MSR_IA32_DEBUGCTLMSR 0x%llx, nop\n",
--			    __func__, data);
--		break;
- 	case 0x200 ... 0x2ff:
- 		return kvm_mtrr_set_msr(vcpu, msr, data);
- 	case MSR_IA32_APICBASE:
-@@ -2800,7 +2788,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	switch (msr_info->index) {
- 	case MSR_IA32_PLATFORM_ID:
- 	case MSR_IA32_EBL_CR_POWERON:
--	case MSR_IA32_DEBUGCTLMSR:
- 	case MSR_IA32_LASTBRANCHFROMIP:
- 	case MSR_IA32_LASTBRANCHTOIP:
- 	case MSR_IA32_LASTINTFROMIP:
+ 
+@@ -2255,7 +2254,6 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+ 			if (is_zero_pfn(pfn)) {
+ 				mpfn = MIGRATE_PFN_MIGRATE;
+ 				migrate->cpages++;
+-				pfn = 0;
+ 				goto next;
+ 			}
+ 			page = vm_normal_page(migrate->vma, addr, pte);
+@@ -2265,10 +2263,9 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+ 
+ 		/* FIXME support THP */
+ 		if (!page || !page->mapping || PageTransCompound(page)) {
+-			mpfn = pfn = 0;
++			mpfn = 0;
+ 			goto next;
+ 		}
+-		pfn = page_to_pfn(page);
+ 
+ 		/*
+ 		 * By getting a reference on the page we pin it and that blocks
 -- 
-2.7.4
+2.7.5
 
