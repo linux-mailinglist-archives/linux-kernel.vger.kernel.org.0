@@ -2,143 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C5E883289
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DED5483291
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732318AbfHFNSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:18:11 -0400
-Received: from mail-oi1-f200.google.com ([209.85.167.200]:46913 "EHLO
-        mail-oi1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731559AbfHFNSK (ORCPT
+        id S1731464AbfHFNTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:19:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52606 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfHFNTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:18:10 -0400
-Received: by mail-oi1-f200.google.com with SMTP id l15so34823281oic.13
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 06:18:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zIP/7/kBh5cwARWCpWI2PG/2mjoUMpPazLjAdGSlZso=;
-        b=H+AsS+Z/LVd8glOsDkCX5o4IA0qI8x4O1DjR2dRzlhyJkAKiliddRksF6kMGBCiOlJ
-         mJdfsptdaDiLTbytaiZVJnmR8Ub0luaWTjIzpAaZ8vRDoHykbN18zxMkHK5/AZFfaegc
-         gM7O/AaDOveql5qEFZRWoxqjgwOEfZxFhEiUxsS8OVQsmAVsxgDExTkL7B+Nt7Nxnom3
-         nXPcF+uXyP+6NyLHpKTRBFWvYdVRXGk8DWz4MJZ6f4N3UtYIa9OgltYq+5x2C9L5ALyT
-         K2pZykf4gCGJ99n8gLWyUGfbzFT5/7jq9Ye1VNkOKdH+jYCaWq0nhjSYdtKM/6kaKVSG
-         0KAw==
-X-Gm-Message-State: APjAAAUXx/zNbMtwfo9kdALqHCMT8/Z3Vtg8gouab785iMPo5rJ5yOet
-        ZROGQanshAIdzLk9ZcO/z6mvAHWRNVybOaP9hdMbmwgvVPp3
-X-Google-Smtp-Source: APXvYqzdLq3LQvJtdWMYJwfRGfH7c3xB94MmSJPy5e1Nxac/pFzKwoYo3Sii3ayuyfbdOkhU3K9E4vCM1d2Brcp7rFQd4JVHyuUR
+        Tue, 6 Aug 2019 09:19:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/YlBTsdKaLWiGTA3PgSDfUuNoWKMNUoS35CDFJHvndg=; b=wXJ0GPsyXW3kOHbFTuOfhIXfp
+        0tuUwVVQ+VRWj3g0WdMV33xltNLalzNIVhnDTNZDPy2Fe1tzCgG9SqLtQVatAaFR5x8CJSkD366pG
+        +5lBZ03HBwKvUTXDBjjdUqHE5Ld3Msmt8mKMtFauycD6ygiJnL6CchvyIAr1gSV+HvmYI=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1huzN8-0004aT-5B; Tue, 06 Aug 2019 13:19:26 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 274A02742B67; Tue,  6 Aug 2019 14:19:25 +0100 (BST)
+Date:   Tue, 6 Aug 2019 14:19:25 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Konstantin Ryabitsev <mricon@kernel.org>
+Subject: Re: [GIT PULL] regulator fixes for v5.3
+Message-ID: <20190806131925.GC4527@sirena.org.uk>
+References: <20190805143431.GH6432@sirena.org.uk>
+ <CAADWXX_DXyBx5soZdYMcGtVB-MFhCy0C590ez=OH09eA+c1Kvw@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:a703:: with SMTP id k3mr4112789jam.12.1565097488423;
- Tue, 06 Aug 2019 06:18:08 -0700 (PDT)
-Date:   Tue, 06 Aug 2019 06:18:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d6225c058f72a7df@google.com>
-Subject: KASAN: slab-out-of-bounds Read in usbhid_close
-From:   syzbot <syzbot+3268ee512f866a903602@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5G06lTa6Jq83wMTw"
+Content-Disposition: inline
+In-Reply-To: <CAADWXX_DXyBx5soZdYMcGtVB-MFhCy0C590ez=OH09eA+c1Kvw@mail.gmail.com>
+X-Cookie: All men have the right to wait in line.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+--5G06lTa6Jq83wMTw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=117a9f42600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-dashboard link: https://syzkaller.appspot.com/bug?extid=3268ee512f866a903602
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+On Mon, Aug 05, 2019 at 11:42:29AM -0700, Linus Torvalds wrote:
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Adding Konstantin.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3268ee512f866a903602@syzkaller.appspotmail.com
+>  these got marked as spam once again, because
+>=20
+>    dmarc=3Dfail (p=3DNONE sp=3DNONE dis=3DNONE) header.from=3Dkernel.org
+>=20
+> and I think it's because you have
+>=20
+>    DKIM-Signature: v=3D1; a=3Drsa-sha256; q=3Ddns/txt; c=3Drelaxed/relaxe=
+d;
+> d=3Dsirena.org.uk;
+>=20
+> but then you have
+>=20
+>    From: Mark Brown <broonie@kernel.org>
+>=20
+> so the DKIM signature is all correct, but it's correct for
+> sirena.org.uk, not for the sender information..
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in __lock_acquire+0x302a/0x3b50  
-kernel/locking/lockdep.c:3753
-Read of size 8 at addr ffff8881ceab68a0 by task syz-executor.0/3352
+Well, AFAICT this is your mail provider deciding to impose their own
+requirements on things.  (and for clarity it's only the From: that has
+kernel.org, the envelope sender has sirena.org.uk.)
 
-CPU: 1 PID: 3352 Comm: syz-executor.0 Not tainted 5.3.0-rc2+ #25
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:612
-  __lock_acquire+0x302a/0x3b50 kernel/locking/lockdep.c:3753
-  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
-  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
-  _raw_spin_lock_irq+0x2d/0x40 kernel/locking/spinlock.c:167
-  spin_lock_irq include/linux/spinlock.h:363 [inline]
-  usbhid_close+0x51/0x210 drivers/hid/usbhid/hid-core.c:740
-  hid_hw_close+0xa8/0xd0 drivers/hid/hid-core.c:2046
-  drop_ref.part.0+0x32/0xe0 drivers/hid/hidraw.c:337
-  drop_ref drivers/hid/hidraw.c:360 [inline]
-  hidraw_release+0x34f/0x440 drivers/hid/hidraw.c:356
-  __fput+0x2d7/0x840 fs/file_table.c:280
-  task_work_run+0x13f/0x1c0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x8ef/0x2c50 kernel/exit.c:878
-  do_group_exit+0x125/0x340 kernel/exit.c:982
-  get_signal+0x466/0x23d0 kernel/signal.c:2728
-  do_signal+0x88/0x14e0 arch/x86/kernel/signal.c:815
-  exit_to_usermode_loop+0x1a2/0x200 arch/x86/entry/common.c:159
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x45f/0x580 arch/x86/entry/common.c:299
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459829
-Code: Bad RIP value.
-RSP: 002b:00007f123439dcf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000075bf28 RCX: 0000000000459829
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000075bf28
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000075bf2c
-R13: 00007ffe9281699f R14: 00007f123439e9c0 R15: 000000000075bf2c
+The DKIM signature there says that the sirena.org.uk systems are
+asserting that they take responsibility for the headers they sign, this
+is true and says nothing about the content of those headers other than
+you can tell if they were modified since leaving sirena.org.uk.  The
+DMARC check is a separate one based on the domain reported in the
+address, kernel.org has one which explicitly advertises having no policy
+and only filtering 1% of outbound mail so shouldn't really mean anything
+for processing.  DMARC can flag that there has to be a DKIM signature
+=66rom the domain in the headers but kernel.org doesn't do that.
 
-Allocated by task 0:
-(stack is not available)
+We *do* have a SPF record for kernel.org which I think isn't helping
+since it flags all hosts as being SOFTFAIL (the last match is ~all)
+which is supposed to be something along the lines of accept but flag, I
+can see your provider deciding that spam is the appropriate tag there.
+As far as I can see that'd also flag mail sent by things like the
+patchwork tracker bot similarly (it sends from mail.kernel.org which
+isn't advertised as a sender).
 
-Freed by task 0:
-(stack is not available)
+I suspect Google will only be happy if I inject mail through them,
+possibly also if I filter kernel.org mail to redirect via kernel.org
+though that might still trip them up.
 
-The buggy address belongs to the object at ffff8881ceab6880
-  which belongs to the cache shmem_inode_cache of size 1168
-The buggy address is located 32 bytes inside of
-  1168-byte region [ffff8881ceab6880, ffff8881ceab6d10)
-The buggy address belongs to the page:
-page:ffffea00073aad00 refcount:1 mapcount:0 mapping:ffff8881da115180  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 dead000000000100 dead000000000122 ffff8881da115180
-raw: 0000000000000000 00000000800c000c 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+--5G06lTa6Jq83wMTw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Memory state around the buggy address:
-  ffff8881ceab6780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8881ceab6800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8881ceab6880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                ^
-  ffff8881ceab6900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8881ceab6980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1JflwACgkQJNaLcl1U
+h9BM4wf/Rx59c60W/6jq29u9EAPRAe3iUem2n9OYioKpZU+gVTmr08lf0m3nB6ih
+cTi5ehzBOSic1SyflKvj1tzT0DV971WRZvj2Z0mUppcNrv37ouUYxJf3qg8n5N+k
+qSS/1yHme62GA0nNvBa6vt/ZG8OwhAOB9T3fC5h5UlPx3ikh49TA3BAxjPcLHNmX
+VLCXVQrju0Tai8mCMpP9ugZnUXlG9Fmwu+ixw7c5kAkmAP3FjS/BsJAX5vCXlioe
+TvUIA0qEmezB1AeoVZiY6/f5L46Qucb82sQbjBzKOOxO+a/CAHOhPLWxQOVasnED
+2IJmcn574cSJqu9OAPEQipJ3787wQg==
+=l47q
+-----END PGP SIGNATURE-----
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--5G06lTa6Jq83wMTw--
