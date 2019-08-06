@@ -2,121 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3990834B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:07:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD16D834BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731390AbfHFPHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 11:07:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45360 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726713AbfHFPHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 11:07:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B3CBBAE65;
-        Tue,  6 Aug 2019 15:07:34 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 17:07:33 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Pankaj Suryawanshi <pankajssuryawanshi@gmail.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, pankaj.suryawanshi@einfochips.com
-Subject: Re: oom-killer
-Message-ID: <20190806150733.GH11812@dhcp22.suse.cz>
-References: <CACDBo54Jbueeq1XbtbrFOeOEyF-Q4ipZJab8mB7+0cyK1Foqyw@mail.gmail.com>
- <20190805112437.GF7597@dhcp22.suse.cz>
- <0821a17d-1703-1b82-d850-30455e19e0c1@suse.cz>
- <20190805120525.GL7597@dhcp22.suse.cz>
- <CACDBo562xHy6McF5KRq3yngKqAm4a15FFKgbWkCTGQZ0pnJWgw@mail.gmail.com>
- <20190805201650.GT7597@dhcp22.suse.cz>
- <CACDBo54kBy_YBcXBzs1dOxQRg+TKFQox_aqqtB2dvL+mmusDVg@mail.gmail.com>
+        id S1731913AbfHFPIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 11:08:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728189AbfHFPIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 11:08:41 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5977A216F4;
+        Tue,  6 Aug 2019 15:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565104120;
+        bh=VpWEkU6IuB9MKJEVKTtxrOVk3OpmDNPUntTQRVdPPjI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gBKJg6TxdC+vQExGKn64eE75JBTmBoihbkbw9SdnbrmNUVEnIOjtwjUK1H01EXo6M
+         Br04JxfAeakIv0j+fapypAxNhtF6XfDzUUS55gf2LFd0Y+SDq5sfAEzmps22/yacwg
+         Wbyy7JOUZwflGgSMqI8oU5Y8AQAKP81GbnpD13z8=
+Received: by mail-qk1-f178.google.com with SMTP id r21so63205510qke.2;
+        Tue, 06 Aug 2019 08:08:40 -0700 (PDT)
+X-Gm-Message-State: APjAAAVuXoJtWCEDH6TCsLFeXMZkbbKWLM1Znie8T6xASqnfX02n3Gfh
+        r/rWd6B0RO9HfDffmZ8eg/aYZmu8ZbAFRerXMA==
+X-Google-Smtp-Source: APXvYqyQV4wEEmZhSA+j8ENwA9FbtFTNYI7k0yHe988e2uBxbQ2pr9cpCaAhs+c/HhAj3FcSjiAMbKO0gd3bXaJy+Qk=
+X-Received: by 2002:a05:620a:1447:: with SMTP id i7mr3707706qkl.254.1565104119510;
+ Tue, 06 Aug 2019 08:08:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACDBo54kBy_YBcXBzs1dOxQRg+TKFQox_aqqtB2dvL+mmusDVg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190806124416.15561-1-narmstrong@baylibre.com> <20190806124416.15561-3-narmstrong@baylibre.com>
+In-Reply-To: <20190806124416.15561-3-narmstrong@baylibre.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 6 Aug 2019 09:08:27 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKS7KeUBhEn1kxT0HZddOZ6oDaZDStUppSdL2vXfAuccg@mail.gmail.com>
+Message-ID: <CAL_JsqKS7KeUBhEn1kxT0HZddOZ6oDaZDStUppSdL2vXfAuccg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: display: amlogic,meson-vpu: convert
+ to yaml
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     devicetree@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-amlogic@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 06-08-19 20:24:03, Pankaj Suryawanshi wrote:
-> On Tue, 6 Aug, 2019, 1:46 AM Michal Hocko, <mhocko@kernel.org> wrote:
-> >
-> > On Mon 05-08-19 21:04:53, Pankaj Suryawanshi wrote:
-> > > On Mon, Aug 5, 2019 at 5:35 PM Michal Hocko <mhocko@kernel.org> wrote:
-> > > >
-> > > > On Mon 05-08-19 13:56:20, Vlastimil Babka wrote:
-> > > > > On 8/5/19 1:24 PM, Michal Hocko wrote:
-> > > > > >> [  727.954355] CPU: 0 PID: 56 Comm: kworker/u8:2 Tainted: P           O  4.14.65 #606
-> > > > > > [...]
-> > > > > >> [  728.029390] [<c034a094>] (oom_kill_process) from [<c034af24>] (out_of_memory+0x140/0x368)
-> > > > > >> [  728.037569]  r10:00000001 r9:c12169bc r8:00000041 r7:c121e680 r6:c1216588 r5:dd347d7c > [  728.045392]  r4:d5737080
-> > > > > >> [  728.047929] [<c034ade4>] (out_of_memory) from [<c03519ac>]  (__alloc_pages_nodemask+0x1178/0x124c)
-> > > > > >> [  728.056798]  r7:c141e7d0 r6:c12166a4 r5:00000000 r4:00001155
-> > > > > >> [  728.062460] [<c0350834>] (__alloc_pages_nodemask) from [<c021e9d4>] (copy_process.part.5+0x114/0x1a28)
-> > > > > >> [  728.071764]  r10:00000000 r9:dd358000 r8:00000000 r7:c1447e08 r6:c1216588 r5:00808111
-> > > > > >> [  728.079587]  r4:d1063c00
-> > > > > >> [  728.082119] [<c021e8c0>] (copy_process.part.5) from [<c0220470>] (_do_fork+0xd0/0x464)
-> > > > > >> [  728.090034]  r10:00000000 r9:00000000 r8:dd008400 r7:00000000 r6:c1216588 r5:d2d58ac0
-> > > > > >> [  728.097857]  r4:00808111
-> > > > > >
-> > > > > > The call trace tells that this is a fork (of a usermodhlper but that is
-> > > > > > not all that important.
-> > > > > > [...]
-> > > > > >> [  728.260031] DMA free:17960kB min:16384kB low:25664kB high:29760kB active_anon:3556kB inactive_anon:0kB active_file:280kB inactive_file:28kB unevictable:0kB writepending:0kB present:458752kB managed:422896kB mlocked:0kB kernel_stack:6496kB pagetables:9904kB bounce:0kB free_pcp:348kB local_pcp:0kB free_cma:0kB
-> > > > > >> [  728.287402] lowmem_reserve[]: 0 0 579 579
-> > > > > >
-> > > > > > So this is the only usable zone and you are close to the min watermark
-> > > > > > which means that your system is under a serious memory pressure but not
-> > > > > > yet under OOM for order-0 request. The situation is not great though
-> > > > >
-> > > > > Looking at lowmem_reserve above, wonder if 579 applies here? What does
-> > > > > /proc/zoneinfo say?
-> > >
-> > >
-> > > What is  lowmem_reserve[]: 0 0 579 579 ?
-> >
-> > This controls how much of memory from a lower zone you might an
-> > allocation request for a higher zone consume. E.g. __GFP_HIGHMEM is
-> > allowed to use both lowmem and highmem zones. It is preferable to use
-> > highmem zone because other requests are not allowed to use it.
-> >
-> > Please see __zone_watermark_ok for more details.
-> >
-> >
-> > > > This is GFP_KERNEL request essentially so there shouldn't be any lowmem
-> > > > reserve here, no?
-> > >
-> > >
-> > > Why only low 1G is accessible by kernel in 32-bit system ?
-> 
-> 
-> 1G ivirtual or physical memory (I have 2GB of RAM) ?
+On Tue, Aug 6, 2019 at 6:44 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Now that we have the DT validation in place, let's convert the device tree
+> bindings for the Amlogic Display Controller over to YAML schemas.
+>
+> The original example has a leftover "dmc" memory cell, that has been
+> removed in the yaml rewrite.
+>
+> The port connection table has been dropped in favor of a description
+> of each port.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  .../bindings/display/amlogic,meson-vpu.txt    | 121 ---------------
+>  .../bindings/display/amlogic,meson-vpu.yaml   | 138 ++++++++++++++++++
+>  2 files changed, 138 insertions(+), 121 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/display/amlogic,meson-vpu.txt
+>  create mode 100644 Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
 
-virtual
+> +  power-domains:
+> +    description: phandle to the associated power domain
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/phandle
 
-> > https://www.kernel.org/doc/gorman/, https://lwn.net/Articles/75174/
-> > and many more articles. In very short, the 32b virtual address space
-> > is quite small and it has to cover both the users space and the
-> > kernel. That is why we do split it into 3G reserved for userspace and 1G
-> > for kernel. Kernel can only access its 1G portion directly everything
-> > else has to be mapped explicitly (e.g. while data is copied).
-> > Thanks Michal.
-> 
-> 
-> >
-> > > My system configuration is :-
-> > > 3G/1G - vmsplit
-> > > vmalloc = 480M (I think vmalloc size will set your highmem ?)
-> >
-> > No, vmalloc is part of the 1GB kernel adress space.
-> 
-> I read in one article , vmalloc end is fixed if you increase vmalloc
-> size it decrease highmem. ?
-> Total = lowmem + (vmalloc + high mem)
-
-As the kernel is using vmalloc area _directly_ then it has to be a part
-of the kernel address space - thus reducing the lowmem.
--- 
-Michal Hocko
-SUSE Labs
+You missed this one.
