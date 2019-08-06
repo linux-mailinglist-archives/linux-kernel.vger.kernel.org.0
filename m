@@ -2,232 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B83F583873
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93FBC8387A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732929AbfHFSMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 14:12:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46200 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728756AbfHFSMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 14:12:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A6E40AEF6;
-        Tue,  6 Aug 2019 18:12:17 +0000 (UTC)
-Message-ID: <12eb3aba207c552e5eb727535e7c4f08673c4c80.camel@suse.de>
-Subject: Re: [PATCH 3/8] of/fdt: add function to get the SoC wide DMA
- addressable memory size
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        wahrenst@gmx.net, Marc Zyngier <marc.zyngier@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        linux-mm@kvack.org, Frank Rowand <frowand.list@gmail.com>,
-        phill@raspberryi.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eric Anholt <eric@anholt.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>
-Date:   Tue, 06 Aug 2019 20:12:10 +0200
-In-Reply-To: <CAL_Jsq+LjsRmFg-xaLgpVx3miXN3hid3aD+mgTW__j0SbEFYjQ@mail.gmail.com>
-References: <20190731154752.16557-1-nsaenzjulienne@suse.de>
-         <20190731154752.16557-4-nsaenzjulienne@suse.de>
-         <CAL_JsqKF5nh3hcdLTG5+6RU3_TnFrNX08vD6qZ8wawoA3WSRpA@mail.gmail.com>
-         <2050374ac07e0330e505c4a1637256428adb10c4.camel@suse.de>
-         <CAL_Jsq+LjsRmFg-xaLgpVx3miXN3hid3aD+mgTW__j0SbEFYjQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-BWDWLSX5DbZPpBq0FAfV"
-User-Agent: Evolution 3.32.4 
+        id S1732862AbfHFSTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 14:19:31 -0400
+Received: from mga03.intel.com ([134.134.136.65]:60069 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726373AbfHFSTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 14:19:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 11:13:24 -0700
+X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
+   d="scan'208";a="325711406"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.91]) ([10.24.14.91])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 06 Aug 2019 11:13:24 -0700
+Subject: Re: [PATCH V2 01/10] x86/CPU: Expose if cache is inclusive of lower
+ level caches
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        kuo-lang.tseng@intel.com, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1564504901.git.reinette.chatre@intel.com>
+ <6c78593207224014d6a9d43698a3d1a0b3ccf2b6.1564504901.git.reinette.chatre@intel.com>
+ <20190802180352.GE30661@zn.tnic>
+ <e532ab90-196c-8b58-215a-f56f5e409512@intel.com>
+ <20190803094423.GA2100@zn.tnic>
+ <122b005a-46b1-2b1e-45a8-7f92a5dba2d9@intel.com>
+ <20190806155716.GE25897@zn.tnic>
+ <151002be-33e6-20d6-7699-bc9be7e51f33@intel.com>
+ <20190806173300.GF25897@zn.tnic>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <d0c04521-ec1a-3468-595c-6929f25f37ff@intel.com>
+Date:   Tue, 6 Aug 2019 11:13:22 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190806173300.GF25897@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Borislav,
 
---=-BWDWLSX5DbZPpBq0FAfV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 8/6/2019 10:33 AM, Borislav Petkov wrote:
+> On Tue, Aug 06, 2019 at 09:55:56AM -0700, Reinette Chatre wrote:
+>> I am a bit cautious about this. When I started this work I initially
+>> added a helper function to resctrl that calls CPUID to determine if the
+>> cache is inclusive. At that time I became aware of a discussion
+>> motivating against scattered CPUID calls and motivating for one instance
+>> of CPUID information:
+>> http://lkml.kernel.org/r/alpine.DEB.2.21.1906162141301.1760@nanos.tec.linutronix.de
+> 
+> Ah, there's that. That's still somewhat a work/discussion in progress
+> thing. Let me discuss it with tglx.
+> 
+>> To answer your question about checking any cache: this seems to be
+> 
+> I meant the CPUID on any CPU and thus any cache - i.e., all L3s on the
+> system should be inclusive and identical in that respect. Can't work
+> otherwise, I'd strongly presume.
 
-Hi Rob,
+This is my understanding, yes. While this patch supports knowing whether
+each L3 is inclusive or not, I expect this information to be the same
+for all L3 instances as will be supported by a single query in
+rdt_pseudo_lock_init(). This definitely is the case on the platforms we
+are enabling in this round.
 
-On Mon, 2019-08-05 at 13:23 -0600, Rob Herring wrote:
-> On Mon, Aug 5, 2019 at 10:03 AM Nicolas Saenz Julienne
-> <nsaenzjulienne@suse.de> wrote:
-> > Hi Rob,
-> > Thanks for the review!
-> >=20
-> > On Fri, 2019-08-02 at 11:17 -0600, Rob Herring wrote:
-> > > On Wed, Jul 31, 2019 at 9:48 AM Nicolas Saenz Julienne
-> > > <nsaenzjulienne@suse.de> wrote:
-> > > > Some SoCs might have multiple interconnects each with their own DMA
-> > > > addressing limitations. This function parses the 'dma-ranges' on ea=
-ch of
-> > > > them and tries to guess the maximum SoC wide DMA addressable memory
-> > > > size.
-> > > >=20
-> > > > This is specially useful for arch code in order to properly setup C=
-MA
-> > > > and memory zones.
-> > >=20
-> > > We already have a way to setup CMA in reserved-memory, so why is this
-> > > needed for that?
-> >=20
-> > Correct me if I'm wrong but I got the feeling you got the point of the =
-patch
-> > later on.
->=20
-> No, for CMA I don't. Can't we already pass a size and location for CMA
-> region under /reserved-memory. The only advantage here is perhaps the
-> CMA range could be anywhere in the DMA zone vs. a fixed location.
+>> different between L2 and L3. On the Atom systems where L2 pseudo-locking
+>> works well the L2 cache is not inclusive. We are also working on
+>> supporting cache pseudo-locking on L3 cache that is not inclusive.
+> 
+> Hmm, so why are you enforcing the inclusivity now:
+> 
+> +       if (p->r->cache_level == 3 &&
+> +           !get_cache_inclusive(plr->cpu, p->r->cache_level)) {
+> +               rdt_last_cmd_puts("L3 cache not inclusive\n");
+> 
+> but then will remove this requirement in the future? Why are we even
+> looking at cache inclusivity then and not make pseudo-locking work
+> regardless of that cache property?
 
-Now I get it, sorry I wasn't aware of that interface.
+Some platforms being enabled in this round have SKUs with inclusive
+cache and also SKUs with non-inclusive cache. The non-inclusive cache
+SKUs do not support cache pseudo-locking and cannot be made to support
+cache pseudo-locking with software changes. Needing to know if cache is
+inclusive or not will thus remain a requirement to distinguish between
+these different SKUs. Supporting cache pseudo-locking on platforms with
+non inclusive cache will require new hardware features.
+> Because if we're going to go and model this cache inclusivity property
+> properly in struct cpuinfo_x86 or struct cacheinfo or wherever, and do
+> that for all cache levels because apparently we're going to need that;
+> but then later it turns out we won't need it after all, why are we even
+> bothering?
+> 
+> Or am I missing some aspect?
 
-Still, I'm not convinced it matches RPi's use case as this would hard-code
-CMA's size. Most people won't care, but for the ones that do, it's nicer to
-change the value from the kernel command line than editing the dtb. I get t=
-hat
-if you need to, for example, reserve some memory for the video to work, it'=
-s
-silly not to hard-code it. Yet due to the board's nature and users base I s=
-ay
-it's important to favor flexibility. It would also break compatibility with
-earlier versions of the board and diverge from the downstream kernel behavi=
-our.
-Which is a bigger issue than it seems as most users don't always understand
-which kernel they are running and unknowingly copy configuration options fr=
-om
-forums.
-
-As I also need to know the DMA addressing limitations to properly configure
-memory zones and dma-direct. Setting up the proper CMA constraints during t=
-he
-arch's init will be trivial anyway.
-
-> > > IMO, I'd just do:
-> > >=20
-> > > if (of_fdt_machine_is_compatible(blob, "brcm,bcm2711"))
-> > >     dma_zone_size =3D XX;
-> > >=20
-> > > 2 lines of code is much easier to maintain than 10s of incomplete cod=
-e
-> > > and is clearer who needs this. Maybe if we have dozens of SoCs with
-> > > this problem we should start parsing dma-ranges.
-> >=20
-> > FYI that's what arm32 is doing at the moment and was my first instinct.=
- But
-> > it
-> > seems that arm64 has been able to survive so far without any machine
-> > specific
-> > code and I have the feeling Catalin and Will will not be happy about th=
-is
-> > solution. Am I wrong?
->=20
-> No doubt. I'm fine if the 2 lines live in drivers/of/.
->=20
-> Note that I'm trying to reduce the number of early_init_dt_scan_*
-> calls from arch code into the DT code so there's more commonality
-> across architectures in the early DT scans. So ideally, this can all
-> be handled under early_init_dt_scan() call.
-
-How does this look? (I'll split it in two patches and add a comment explain=
-ing
-why dt_dma_zone_size is needed)
-
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index f2444c61a136..1395be40b722 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -30,6 +30,8 @@
-=20
- #include "of_private.h"
-=20
-+u64 dt_dma_zone_size __ro_after_init;
-+
- /*
-  * of_fdt_limit_memory - limit the number of regions in the /memory node
-  * @limit: maximum entries
-@@ -802,6 +805,11 @@ const char * __init of_flat_dt_get_machine_name(void)
-        return name;
- }
-=20
-+static const int __init of_fdt_machine_is_compatible(char *name)
-+{
-+       return of_compat_cmp(of_flat_dt_get_machine_name(), name, strlen(na=
-me));
-+}
-+
- /**
-  * of_flat_dt_match_machine - Iterate match tables to find matching machin=
-e.
-  *
-@@ -1260,6 +1268,14 @@ void __init early_init_dt_scan_nodes(void)
-        of_scan_flat_dt(early_init_dt_scan_memory, NULL);
- }
-=20
-+void __init early_init_dt_get_dma_zone_size(void)
-+{
-+       dt_dma_zone_size =3D 0;
-+
-+       if (of_fdt_machine_is_compatible("brcm,bcm2711"))
-+               dt_dma_zone_size =3D 0x3c000000;
-+}
-+
- bool __init early_init_dt_scan(void *params)
- {
-        bool status;
-@@ -1269,6 +1285,7 @@ bool __init early_init_dt_scan(void *params)
-                return false;
-=20
-        early_init_dt_scan_nodes();
-+       early_init_dt_get_dma_zone_size();
-        return true;
- }
-diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
-index 2ad36b7bd4fa..b5a9f685de14 100644
---- a/include/linux/of_fdt.h
-+++ b/include/linux/of_fdt.h
-@@ -27,6 +27,8 @@ extern void *of_fdt_unflatten_tree(const unsigned long *b=
-lob,
-                                   struct device_node *dad,
-                                   struct device_node **mynodes);
-=20
-+extern u64 dt_dma_zone_size __ro_after_init;
-+
- /* TBD: Temporary export of fdt globals - remove when code fully merged */
- extern int __initdata dt_root_addr_cells;
- extern int __initdata dt_root_size_cells;
-
-=20
-Regards,
-Nicolas
+Reinette
 
 
 
---=-BWDWLSX5DbZPpBq0FAfV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl1JwvoACgkQlfZmHno8
-x/5f/QgAsruOFQ8PvpoSHvG6DlzmdqSfRJK2v/9MyF59tpuvGoJUQggc4SObGIz8
-/Nk2Md0j7gXdLjr+t1elpo6xBmJxLWhZPw7HfIx1ejSHv2QK+gJopm/BJ54gV8cl
-oUh+Ed8eD1FBlYszwI3YRaKY/HXcQaZn97el4/AaCbztxkkAg1xEH/1L6XPwf2FC
-j9/TMxpFyE6aWdQ5GtOzxL1RVmzOEYgpvsr+mKxOFHX9V5+8UXNnLDRDjR36Ms78
-NVgFECrTr4rxiU2UJalTgyyPtch73aj8xMNKwHkOyiagITz9PhesPdVYy9sLWTM+
-KTFFdX5XzhKpZAHyjtBWPWEKO34aqg==
-=JTdS
------END PGP SIGNATURE-----
-
---=-BWDWLSX5DbZPpBq0FAfV--
 
