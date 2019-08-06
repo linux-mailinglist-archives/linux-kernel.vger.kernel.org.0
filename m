@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1334983644
+	by mail.lfdr.de (Postfix) with ESMTP id 87A9F83645
 	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:06:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387749AbfHFQGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:06:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43824 "EHLO
+        id S2387766AbfHFQGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:06:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43846 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387741AbfHFQGd (ORCPT
+        with ESMTP id S2387741AbfHFQGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:06:33 -0400
+        Tue, 6 Aug 2019 12:06:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=4qKgBQZXWXwTBeUsDVCjJZkYmTExx287iM57Vyx6Y0w=; b=Bvgunk/17so9cVPFtrFvb/oAYe
-        utWSSLH8JHbMNSIEnE52z7hb3mMGYEuLsxBPJwPNcL85QDt9s3oMn/8gSdfDI94Vl68ZYF6E2HTmh
-        2CSuFc5mHOZpxHvRiBi4XMp/D2Nrz/C5Z8Sd+68h66wQQUEBe8/zuz5nTWImH5N9TH0oaGS0xmLSr
-        nQm2HdXrYj1F4tz1jpUu7FGHbc5wwvCOeuDFImiYrzCOcbAZwn5cH6Dcbl32haJzzjJbE8rUkWbeV
-        ySHWE4hYGGUpoGRQw0UfImuDAtA/m93vnOxClQ7CeTYmpjAOngizf1+aQKrmD52wW3gMGr5CLn1Md
-        UerXxonw==;
+        bh=AGGvPGg8AA1Gw6ylv1raBDjNXF6ccyWYsPpDnZmLmBg=; b=RzYHdp4mJtW15Li7cWdiL7Rv01
+        hFHEseFq+n0UFJMU+3w0w0dcwm6oTnyxs0LPJqTeUb/aik4SEyGDvWEb+rGvDp6r84fKCRpR8iku+
+        LvpAQVKD7G9QKkzdJ/DeuZbZbTKro358y+zjuzVRUmFj6CfDmyP5rU7cFg+Mei2TOZGLqki/rhkRI
+        +TaF7MWaORAz4mLE/jjH44uvJ1K8vxtIQOYU/+SL0CT+znouLR7X0cSZDFf8qWgYeOqRr0qwLahZj
+        AwGNkm8JajYbsE5/lptaYXs7oJbj9ULssrgVQGlVhokMiDkdGrjv85x55+c8YH7Bg4a1zNcPtjDA3
+        0XcoXJNg==;
 Received: from [195.167.85.94] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hv1yn-0000dn-PQ; Tue, 06 Aug 2019 16:06:30 +0000
+        id 1hv1yq-0000ee-I1; Tue, 06 Aug 2019 16:06:32 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -35,9 +35,9 @@ To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
 Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/15] mm: allow HMM_MIRROR on all architectures with MMU
-Date:   Tue,  6 Aug 2019 19:05:51 +0300
-Message-Id: <20190806160554.14046-14-hch@lst.de>
+Subject: [PATCH 14/15] mm: make HMM_MIRROR an implicit option
+Date:   Tue,  6 Aug 2019 19:05:52 +0300
+Message-Id: <20190806160554.14046-15-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806160554.14046-1-hch@lst.de>
 References: <20190806160554.14046-1-hch@lst.de>
@@ -49,29 +49,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There isn't really any architecture specific code in this page table
-walk implementation, so drop the dependencies.
+Make HMM_MIRROR an option that is selected by drivers wanting to use it
+instead of a user visible option as it is just a low-level
+implementation detail.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
- mm/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/Kconfig |  4 +++-
+ drivers/gpu/drm/nouveau/Kconfig    |  4 +++-
+ mm/Kconfig                         | 14 ++++++--------
+ 3 files changed, 12 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
+index f6e5c0282fc1..2e98c016cb47 100644
+--- a/drivers/gpu/drm/amd/amdgpu/Kconfig
++++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
+@@ -27,7 +27,9 @@ config DRM_AMDGPU_CIK
+ config DRM_AMDGPU_USERPTR
+ 	bool "Always enable userptr write support"
+ 	depends on DRM_AMDGPU
+-	depends on HMM_MIRROR
++	depends on MMU
++	select HMM_MIRROR
++	select MMU_NOTIFIER
+ 	help
+ 	  This option selects CONFIG_HMM and CONFIG_HMM_MIRROR if it
+ 	  isn't already selected to enabled full userptr support.
+diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
+index 96b9814e6d06..df4352c279ba 100644
+--- a/drivers/gpu/drm/nouveau/Kconfig
++++ b/drivers/gpu/drm/nouveau/Kconfig
+@@ -86,9 +86,11 @@ config DRM_NOUVEAU_SVM
+ 	bool "(EXPERIMENTAL) Enable SVM (Shared Virtual Memory) support"
+ 	depends on DEVICE_PRIVATE
+ 	depends on DRM_NOUVEAU
+-	depends on HMM_MIRROR
++	depends on MMU
+ 	depends on STAGING
++	select HMM_MIRROR
+ 	select MIGRATE_VMA_HELPER
++	select MMU_NOTIFIER
+ 	default n
+ 	help
+ 	  Say Y here if you want to enable experimental support for
 diff --git a/mm/Kconfig b/mm/Kconfig
-index 56cec636a1fc..b18782be969c 100644
+index b18782be969c..563436dc1f24 100644
 --- a/mm/Kconfig
 +++ b/mm/Kconfig
-@@ -677,8 +677,7 @@ config DEV_PAGEMAP_OPS
+@@ -675,16 +675,14 @@ config MIGRATE_VMA_HELPER
+ config DEV_PAGEMAP_OPS
+ 	bool
  
++#
++# Helpers to mirror range of the CPU page tables of a process into device page
++# tables.
++#
  config HMM_MIRROR
- 	bool "HMM mirror CPU page table into a device page table"
--	depends on (X86_64 || PPC64)
--	depends on MMU && 64BIT
-+	depends on MMU
- 	select MMU_NOTIFIER
- 	help
- 	  Select HMM_MIRROR if you want to mirror range of the CPU page table of a
+-	bool "HMM mirror CPU page table into a device page table"
++	bool
+ 	depends on MMU
+-	select MMU_NOTIFIER
+-	help
+-	  Select HMM_MIRROR if you want to mirror range of the CPU page table of a
+-	  process into a device page table. Here, mirror means "keep synchronized".
+-	  Prerequisites: the device must provide the ability to write-protect its
+-	  page tables (at PAGE_SIZE granularity), and must be able to recover from
+-	  the resulting potential page faults.
++	depends on MMU_NOTIFIER
+ 
+ config DEVICE_PRIVATE
+ 	bool "Unaddressable device memory (GPU memory, ...)"
 -- 
 2.20.1
 
