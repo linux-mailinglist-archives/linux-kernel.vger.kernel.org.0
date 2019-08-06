@@ -2,109 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D9A8358C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DA3183583
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:43:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732455AbfHFPpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 11:45:49 -0400
-Received: from mga11.intel.com ([192.55.52.93]:54421 "EHLO mga11.intel.com"
+        id S1732386AbfHFPnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 11:43:50 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:35336 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726373AbfHFPps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 11:45:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 08:45:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
-   d="scan'208";a="179187981"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga006.jf.intel.com with ESMTP; 06 Aug 2019 08:45:46 -0700
-Date:   Tue, 6 Aug 2019 09:43:17 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     syzbot <syzbot+f4316dab9d4518b755eb@syzkaller.appspotmail.com>
-Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING: refcount bug in blk_mq_free_request (2)
-Message-ID: <20190806154313.GC24030@localhost.localdomain>
-References: <000000000000d0df7f058f625d13@google.com>
+        id S1728558AbfHFPnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 11:43:50 -0400
+Received: from zn.tnic (p200300EC2F0DA00008E04FA4C58F7CE4.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:a000:8e0:4fa4:c58f:7ce4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 42CB21EC0C42;
+        Tue,  6 Aug 2019 17:43:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565106228;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=TDFDazt6//hwNfwRMzmVKFiu4ldxLz+yMwXDE8Lj5Eo=;
+        b=dt2cjv9ck6Riog7ad+ewdarAX2dM8UrmZhk8qdfxpW8EfZWGjwleuVrU4g1cmXqrcn8Kh+
+        TWcpA8A1qy+/qbzkXNRCP6wNTc/+TBGiGV3muxnmmGbdGi77lel3IPkl79O3Iqqfn0x3XN
+        2iqBRrkAzDyyrAqpiKzGnDMqxESTm0c=
+Date:   Tue, 6 Aug 2019 17:43:47 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Garnier <thgarnie@chromium.org>
+Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
+        keescook@chromium.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <namit@vmware.com>, Jann Horn <jannh@google.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Maran Wilson <maran.wilson@oracle.com>,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v9 00/11] x86: PIE support to extend KASLR randomization
+Message-ID: <20190806154347.GD25897@zn.tnic>
+References: <20190730191303.206365-1-thgarnie@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <000000000000d0df7f058f625d13@google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20190730191303.206365-1-thgarnie@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 10:52:07AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    e21a712a Linux 5.3-rc3
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10cf349a600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a4c9e9f08e9e8960
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f4316dab9d4518b755eb
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117a1906600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11aa11aa600000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+f4316dab9d4518b755eb@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> refcount_t: underflow; use-after-free.
-> WARNING: CPU: 1 PID: 16 at lib/refcount.c:190 refcount_sub_and_test_checked  
-> lib/refcount.c:190 [inline]
-> WARNING: CPU: 1 PID: 16 at lib/refcount.c:190  
-> refcount_sub_and_test_checked+0x1d0/0x200 lib/refcount.c:180
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 1 PID: 16 Comm: ksoftirqd/1 Not tainted 5.3.0-rc3 #98
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->   panic+0x2dc/0x755 kernel/panic.c:219
->   __warn.cold+0x20/0x4c kernel/panic.c:576
->   report_bug+0x263/0x2b0 lib/bug.c:186
->   fixup_bug arch/x86/kernel/traps.c:179 [inline]
->   fixup_bug arch/x86/kernel/traps.c:174 [inline]
->   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
->   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
->   invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1026
-> RIP: 0010:refcount_sub_and_test_checked lib/refcount.c:190 [inline]
-> RIP: 0010:refcount_sub_and_test_checked+0x1d0/0x200 lib/refcount.c:180
-> Code: 1d 7e b3 64 06 31 ff 89 de e8 9c a3 35 fe 84 db 75 94 e8 53 a2 35 fe  
-> 48 c7 c7 80 02 c6 87 c6 05 5e b3 64 06 01 e8 18 15 07 fe <0f> 0b e9 75 ff  
-> ff ff e8 34 a2 35 fe e9 6e ff ff ff 48 89 df e8 b7
-> RSP: 0018:ffff8880a990fbb0 EFLAGS: 00010286
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 0000000000000100 RSI: ffffffff815c3ba6 RDI: ffffed1015321f68
-> RBP: ffff8880a990fc48 R08: ffff8880a9900440 R09: ffffed1015d24101
-> R10: ffffed1015d24100 R11: ffff8880ae920807 R12: 00000000ffffffff
-> R13: 0000000000000001 R14: ffff8880a990fc20 R15: 0000000000000000
->   refcount_dec_and_test_checked+0x1b/0x20 lib/refcount.c:220
->   blk_mq_free_request+0x3b8/0x580 block/blk-mq.c:524
->   __blk_mq_end_request block/blk-mq.c:550 [inline]
->   blk_mq_end_request+0x456/0x560 block/blk-mq.c:559
->   nbd_complete_rq+0x42/0x50 drivers/block/nbd.c:322
->   blk_done_softirq+0x2fe/0x4d0 block/blk-softirq.c:37
->   __do_softirq+0x262/0x98c kernel/softirq.c:292
->   run_ksoftirqd kernel/softirq.c:603 [inline]
->   run_ksoftirqd+0x8e/0x110 kernel/softirq.c:595
->   smpboot_thread_fn+0x6a3/0xa40 kernel/smpboot.c:165
->   kthread+0x361/0x430 kernel/kthread.c:255
->   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
+On Tue, Jul 30, 2019 at 12:12:44PM -0700, Thomas Garnier wrote:
+> These patches make some of the changes necessary to build the kernel as
+> Position Independent Executable (PIE) on x86_64. Another patchset will
+> add the PIE option and larger architecture changes.
 
-It looks like ndb's timeout handler may complete the same request twice:
-first via ndb_config_put()->ndb_clear_sock(), then again explicitly
-through a direct call to blk_mq_complete_request().
+Yeah, about this: do we have a longer writeup about the actual benefits
+of all this and why we should take this all? After all, after looking
+at the first couple of asm patches, it is posing restrictions to how
+we deal with virtual addresses in asm (only RIP-relative addressing in
+64-bit mode, MOVs with 64-bit immediates, etc, for example) and I'm
+willing to bet money that some future unrelated change will break PIE
+sooner or later. And I'd like to have a better justification why we
+should enforce those new "rules" unconditionally.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
