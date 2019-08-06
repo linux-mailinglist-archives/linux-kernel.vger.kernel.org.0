@@ -2,77 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF36B83194
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 14:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 787B78319A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 14:43:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731658AbfHFMlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 08:41:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfHFMlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 08:41:45 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1730912AbfHFMnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 08:43:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35996 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbfHFMnn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 08:43:43 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AC16760590; Tue,  6 Aug 2019 12:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565095421;
+        bh=BCfOHP9HalrfoaTlPtuAMFW08YetxuZS+9N/gnYCrcM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=IelaEY+6xGLR5+MMKwJ9GMsg70XLbQd0SkIk5v0krnKOAed0SeOGLHpM9CLp5XGHy
+         jW+1pRD/WqDItPPj/wUvt6Z2vVZ8CjmrU44ReGopXDQriFdWaPVT0LzZxTvrAQJJKS
+         u/UVHe3dGBm2dVGqmiPP2e/wYDxksMhCxCWGejhk=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84A9120818;
-        Tue,  6 Aug 2019 12:41:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565095304;
-        bh=xNSlvXtmO8YI+JCDc0+g/z1qw41BP+LTgmlaJunBWPI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pb4DE6Yk5/x+GwL6UoJAwpE0fPujt/dU0EmepiQHPs8z8yjoKN9XeTDFVTvuUnaVj
-         94JfSTjz2ShLdTkptQEOLgXD8qopcptbejyWH8J62oE39KdnEW/tsOpvSLIg52EAGW
-         m2KWNBvJYHuR3ZexgA6cXgjTEOxWPOi69oKUU184=
-Date:   Tue, 6 Aug 2019 08:41:43 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 5.2 073/131] dma-direct: correct the physical addr in
- dma_direct_sync_sg_for_cpu/device
-Message-ID: <20190806124143.GF17747@sasha-vm>
-References: <20190805124951.453337465@linuxfoundation.org>
- <20190805124956.543654128@linuxfoundation.org>
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6275D6038E;
+        Tue,  6 Aug 2019 12:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565095421;
+        bh=BCfOHP9HalrfoaTlPtuAMFW08YetxuZS+9N/gnYCrcM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=DELvPZddHzuOW75TzKQ8L1rBkd2CJigWaTTdyz2vjfstbme25QsONOBFVbO2H9oJF
+         juCzegsAMysv8H0rCrtu2jyZ6ocAJR1mlteIilxgqivabmcpvzFXLG+yGXRF5nZLUs
+         dD0ZCk0MZo//WX1d3Qi2Al97Ex3VejH9sgsbn578=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6275D6038E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190805124956.543654128@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] Revert "mwifiex: fix system hang problem after resume"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190805171504.48122-1-briannorris@chromium.org>
+References: <20190805171504.48122-1-briannorris@chromium.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Amitkumar Karwar <akarwar@marvell.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190806124341.AC16760590@smtp.codeaurora.org>
+Date:   Tue,  6 Aug 2019 12:43:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 03:02:40PM +0200, Greg Kroah-Hartman wrote:
->[ Upstream commit 449fa54d6815be8c2c1f68fa9dbbae9384a7c03e ]
->
->dma_map_sg() may use swiotlb buffer when the kernel command line includes
->"swiotlb=force" or the dma_addr is out of dev->dma_mask range.  After
->DMA complete the memory moving from device to memory, then user call
->dma_sync_sg_for_cpu() to sync with DMA buffer, and copy the original
->virtual buffer to other space.
->
->So dma_direct_sync_sg_for_cpu() should use swiotlb physical addr, not
->the original physical addr from sg_phys(sg).
->
->dma_direct_sync_sg_for_device() also has the same issue, correct it as
->well.
->
->Fixes: 55897af63091("dma-direct: merge swiotlb_dma_ops into the dma_direct code")
->Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
->Reviewed-by: Robin Murphy <robin.murphy@arm.com>
->Signed-off-by: Christoph Hellwig <hch@lst.de>
->Signed-off-by: Sasha Levin <sashal@kernel.org>
+Brian Norris <briannorris@chromium.org> wrote:
 
-I'm going to drop this one. There's a fix to it upstream, but the fix
-also seems to want 0036bc73ccbe ("drm/msm: stop abusing dma_map/unmap for
-cache") which we're not taking, so I'm just going to drop this one as
-well.
+> This reverts commit 437322ea2a36d112e20aa7282c869bf924b3a836.
+> 
+> This above-mentioned "fix" does not actually do anything to prevent a
+> race condition. It simply papers over it so that the issue doesn't
+> appear.
+> 
+> If this is a real problem, it should be explained better than the above
+> commit does, and an alternative, non-racy solution should be found.
+> 
+> For further reason to revert this: there's no reason we can't try
+> resetting the card when it's *actually* stuck in host-sleep mode. So
+> instead, this is unnecessarily creating scenarios where we can't recover
+> Wifi (and in fact, I'm fielding reports of Chromebooks that can't
+> recover after the aforementioned commit).
+> 
+> Note that this was proposed in 2017 and Ack'ed then, but due to my
+> marking as RFC, it never went anywhere:
+> 
+> https://patchwork.kernel.org/patch/9657277/
+> [RFC] Revert "mwifiex: fix system hang problem after resume"
+> 
+> Cc: Amitkumar Karwar <akarwar@marvell.com>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Acked-by: Amitkumar Karwar <amitkarwar@gmail.com>
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
 
-If someone wants it in the stable trees, please send a tested backport.
+Patch applied to wireless-drivers-next.git, thanks.
 
---
-Thanks,
-Sasha
+654026df2635 Revert "mwifiex: fix system hang problem after resume"
+
+-- 
+https://patchwork.kernel.org/patch/11077645/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
