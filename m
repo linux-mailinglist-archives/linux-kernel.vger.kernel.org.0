@@ -2,126 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE80683102
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02CA083107
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbfHFLyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 07:54:50 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34175 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfHFLyu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:54:50 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n9so35255678pgc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 04:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=gZItrYoYJjlkO/ZSFT6aP95X89vdMB+Sl7boPAmKeP0=;
-        b=UCYBj3FQarjSM+e8s8LmJJQpUwL8r7yJiIHQ46oHczydYm/enMPksBrMubdGdT+BXO
-         GqdGKwsfNk4k+cQy9yh9ocJPOSV8yPaQOV5Sd9i8LBSgWEYVF/awi9ylyoxv9A5uzBx8
-         2hKV6mgRZp3HauZtZQfC1fjtzn3UwhSolRlY+QE+WMp8AZOEsI/5j+xmlfsbty2dsbxQ
-         XfDW5KksCsG1oE85bpN8HXIQm8Oykb/DVXkRMUwHlJsSPAH1PNSAiR/S/VRhYzkRCIOL
-         BAsfhVXr3YztzLXXnrHswqzLTC4ud8i1o8GbjCVrEVUHIMs6J3+DjlkC1Pee7pBPnVsT
-         Oyng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=gZItrYoYJjlkO/ZSFT6aP95X89vdMB+Sl7boPAmKeP0=;
-        b=qWlMG+yJTOBClwhKGJy9P4ELntHRsdtSAmTaJBgg6cKl/54Z7nDyAmHPlZI95LFC6O
-         0OVHxTFpbH++NGcTVPeLK+GOpECs9Sza/XVA0/iRlzt8UvRxeXDvZ8u/tF1rVJEozg8I
-         d3FZ+UW6dG6kLBsycy8KyINgwIR63Z/pLT9oCrBWPYDkqUkK3KLyQ9ztW7vOmyvwOGWK
-         Vs0r77yCeh+F1sfcEdI/r1gK4D0KGHjWbmUyOEKpQoEo6b3eoVEBxLYk4G9kAAC0qUjQ
-         492CUHdS5u7UVtr/jd4hEzepA/tA81k0FGeaTrhArs7Lo5mdjlySh2bFi0tSyOFDBm2w
-         Q3vA==
-X-Gm-Message-State: APjAAAX7fblhUcnVdlE+++AVH3mhDhu5IOVbPL2VpWAz+CaszeyFTW1O
-        L7QjAX8fnFQMUFy8aoXqj74=
-X-Google-Smtp-Source: APXvYqyyI1puDPB9eUlJf/dQb8d5nnW8Yqi7aE4yT07Et3OKYiX4QaKqSUyEhvsBfWV6RyRP429C9A==
-X-Received: by 2002:aa7:858b:: with SMTP id w11mr3167671pfn.68.1565092489772;
-        Tue, 06 Aug 2019 04:54:49 -0700 (PDT)
-Received: from IoT-COE ([2401:4900:2712:6d:44cc:cdec:b41d:4713])
-        by smtp.gmail.com with ESMTPSA id s24sm87562512pfh.133.2019.08.06.04.54.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Aug 2019 04:54:49 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 17:24:38 +0530
-From:   Merwin Trever Ferrao <merwintf@gmail.com>
-To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
-        dan.carpenter@oracle.com
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        merwintf@gmail.com
-Subject: [PATCH] Staging: rtl8188eu: core: rtw_security: fixed a coding style
- issue
-Message-ID: <20190806115438.GA24258@IoT-COE>
+        id S1730613AbfHFL5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 07:57:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33706 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726243AbfHFL5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 07:57:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CF36EAD95;
+        Tue,  6 Aug 2019 11:57:05 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 13:57:03 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806115703.GY11812@dhcp22.suse.cz>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+ <20190805170451.26009-3-joel@joelfernandes.org>
+ <20190806084203.GJ11812@dhcp22.suse.cz>
+ <20190806103627.GA218260@google.com>
+ <20190806104755.GR11812@dhcp22.suse.cz>
+ <20190806111446.GA117316@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190806111446.GA117316@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed WARNING: else is not generally useful after a break or return
----
- drivers/staging/rtl8188eu/core/rtw_security.c | 41 +++++++++----------
- 1 file changed, 20 insertions(+), 21 deletions(-)
+On Tue 06-08-19 07:14:46, Joel Fernandes wrote:
+> On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
+> > On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
+> > > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
+> > > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> > > > > This bit will be used by idle page tracking code to correctly identify
+> > > > > if a page that was swapped out was idle before it got swapped out.
+> > > > > Without this PTE bit, we lose information about if a page is idle or not
+> > > > > since the page frame gets unmapped.
+> > > > 
+> > > > And why do we need that? Why cannot we simply assume all swapped out
+> > > > pages to be idle? They were certainly idle enough to be reclaimed,
+> > > > right? Or what does idle actualy mean here?
+> > > 
+> > > Yes, but other than swapping, in Android a page can be forced to be swapped
+> > > out as well using the new hints that Minchan is adding?
+> > 
+> > Yes and that is effectivelly making them idle, no?
+> 
+> That depends on how you think of it.
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
-index 2f90f60f1681..435c0fbec54a 100644
---- a/drivers/staging/rtl8188eu/core/rtw_security.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_security.c
-@@ -87,29 +87,28 @@ static u8 crc32_reverseBit(u8 data)
- 
- static void crc32_init(void)
- {
--	if (bcrc32initialized == 1) {
-+	int i, j;
-+	u32 c;
-+	u8 *p = (u8 *)&c, *p1;
-+	u8 k;
-+
-+	if (bcrc32initialized == 1)
- 		return;
--	} else {
--		int i, j;
--		u32 c;
--		u8 *p = (u8 *)&c, *p1;
--		u8 k;
--
--		c = 0x12340000;
--
--		for (i = 0; i < 256; ++i) {
--			k = crc32_reverseBit((u8)i);
--			for (c = ((u32)k) << 24, j = 8; j > 0; --j)
--				c = c & 0x80000000 ? (c << 1) ^ CRC32_POLY : (c << 1);
--			p1 = (u8 *)&crc32_table[i];
--
--			p1[0] = crc32_reverseBit(p[3]);
--			p1[1] = crc32_reverseBit(p[2]);
--			p1[2] = crc32_reverseBit(p[1]);
--			p1[3] = crc32_reverseBit(p[0]);
--		}
--		bcrc32initialized = 1;
-+
-+	c = 0x12340000;
-+
-+	for (i = 0; i < 256; ++i) {
-+		k = crc32_reverseBit((u8)i);
-+		for (c = ((u32)k) << 24, j = 8; j > 0; --j)
-+			c = c & 0x80000000 ? (c << 1) ^ CRC32_POLY : (c << 1);
-+		p1 = (u8 *)&crc32_table[i];
-+
-+		p1[0] = crc32_reverseBit(p[3]);
-+		p1[1] = crc32_reverseBit(p[2]);
-+		p1[2] = crc32_reverseBit(p[1]);
-+		p1[3] = crc32_reverseBit(p[0]);
- 	}
-+	bcrc32initialized = 1;
- }
- 
- static __le32 getcrc32(u8 *buf, int len)
+I would much prefer to have it documented so that I do not have to guess ;)
+
+> If you are thinking of a monitoring
+> process like a heap profiler, then from the heap profiler's (that only cares
+> about the process it is monitoring) perspective it will look extremely odd if
+> pages that are recently accessed by the process appear to be idle which would
+> falsely look like those processes are leaking memory. The reality being,
+> Android forced those pages into swap because of other reasons. I would like
+> for the swapping mechanism, whether forced swapping or memory reclaim, not to
+> interfere with the idle detection.
+
+Hmm, but how are you going to handle situation when the page is unmapped
+and refaulted again (e.g. a normal reclaim of a pagecache)? You are
+losing that information same was as in the swapout case, no? Or am I
+missing something?
+
+> This is just an effort to make the idle tracking a little bit better. We
+> would like to not lose the 'accessed' information of the pages.
+> 
+> Initially, I had proposed what you are suggesting as well however the above
+> reasons made me to do it like this. Also Minchan and Konstantin suggested
+> this, so there are more people interested in the swap idle bit. Minchan, can
+> you provide more thoughts here? (He is on 2-week vacation from today so
+> hopefully replies before he vanishes ;-)).
+
+We can move on with the rest of the series in the mean time but I would
+like to see a proper justification for the swap entries and why they
+should be handled special.
+
+> Also assuming all swap pages as idle has other "semantic" issues. It is quite
+> odd if a swapped page is automatically marked as idle without userspace
+> telling it to. Consider the following set of events: 1. Userspace marks only
+> a certain memory region as idle. 2. Userspace reads back the bits
+> corresponding to a bigger region. Part of this bigger region is swapped.
+> Userspace expects all of the pages it did not mark, to have idle bit set to
+> '0' because it never marked them as idle. However if it is now surprised by
+> what it read back (not all '0' read back). Since a page is swapped, it will
+> be now marked "automatically" as idle as per your proposal, even if userspace
+> never marked it explicity before. This would be quite confusing/ambiguous.
+
+OK, I see. I guess the primary question I have is how do you distinguish
+Idle page which got unmapped and faulted in again from swapped out page
+and refaulted - including the time the pte is not present.
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
