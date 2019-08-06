@@ -2,133 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8035828E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 02:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7D7B828F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 02:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731495AbfHFA4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 20:56:00 -0400
-Received: from mga07.intel.com ([134.134.136.100]:35804 "EHLO mga07.intel.com"
+        id S1731550AbfHFA4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 20:56:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731476AbfHFAzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 20:55:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 17:55:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
-   d="scan'208";a="198153249"
-Received: from sahluwal-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.252.202.215])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Aug 2019 17:55:53 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, Blauciak@vger.kernel.org,
-        Slawomir <slawomir.blauciak@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH 17/17] soundwire: intel: move shutdown() callback and don't export symbol
-Date:   Mon,  5 Aug 2019 19:55:22 -0500
-Message-Id: <20190806005522.22642-18-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190806005522.22642-1-pierre-louis.bossart@linux.intel.com>
-References: <20190806005522.22642-1-pierre-louis.bossart@linux.intel.com>
+        id S1730875AbfHFA4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 20:56:52 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C83B206A2;
+        Tue,  6 Aug 2019 00:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565053011;
+        bh=fi8n2CS1oBaWblZvKO/2+cHFuTlmqtkR0Ts9Ll4jeqg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hYU+n7xIS2/i48J/mCpBse0Qv6E1VowjcZsESrmHgEOcyYfZKxZMwj6XEgtW8vg6v
+         GNcQbfO5Ti3DI/uZFafCjsJZ6OL8FZ1onGb8sElF4gEZZIwYRF9WnNn64uT4dOWuE+
+         7HqohoP5y4hXVXUJRkfBhLS1bFs8zW5dgx7SMgmY=
+Subject: Re: [PATCH 4.19 00/74] 4.19.65-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190805124935.819068648@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <743d861b-be73-bf87-65e2-b57c229e72e2@kernel.org>
+Date:   Mon, 5 Aug 2019 18:56:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190805124935.819068648@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All DAI callbacks are in intel.c except for shutdown. Move and remove
-export symbol
+On 8/5/19 7:02 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.65 release.
+> There are 74 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 07 Aug 2019 12:47:58 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.65-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/soundwire/cadence_master.c | 14 --------------
- drivers/soundwire/cadence_master.h |  2 --
- drivers/soundwire/intel.c          | 17 +++++++++++++++--
- 3 files changed, 15 insertions(+), 18 deletions(-)
+Compiled and booted on my test system. No dmesg regressions.
 
-diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index 4ab3174cbb04..c5891c8a824e 100644
---- a/drivers/soundwire/cadence_master.c
-+++ b/drivers/soundwire/cadence_master.c
-@@ -1316,19 +1316,5 @@ int sdw_cdns_alloc_stream(struct sdw_cdns *cdns,
- }
- EXPORT_SYMBOL(sdw_cdns_alloc_stream);
- 
--void sdw_cdns_shutdown(struct snd_pcm_substream *substream,
--		       struct snd_soc_dai *dai)
--{
--	struct sdw_cdns_dma_data *dma;
--
--	dma = snd_soc_dai_get_dma_data(dai, substream);
--	if (!dma)
--		return;
--
--	snd_soc_dai_set_dma_data(dai, substream, NULL);
--	kfree(dma);
--}
--EXPORT_SYMBOL(sdw_cdns_shutdown);
--
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_DESCRIPTION("Cadence Soundwire Library");
-diff --git a/drivers/soundwire/cadence_master.h b/drivers/soundwire/cadence_master.h
-index c0bf6ff00a44..d1022125f182 100644
---- a/drivers/soundwire/cadence_master.h
-+++ b/drivers/soundwire/cadence_master.h
-@@ -174,8 +174,6 @@ int sdw_cdns_alloc_stream(struct sdw_cdns *cdns,
- void sdw_cdns_config_stream(struct sdw_cdns *cdns, struct sdw_cdns_port *port,
- 			    u32 ch, u32 dir, struct sdw_cdns_pdi *pdi);
- 
--void sdw_cdns_shutdown(struct snd_pcm_substream *substream,
--		       struct snd_soc_dai *dai);
- int sdw_cdns_pcm_set_stream(struct snd_soc_dai *dai,
- 			    void *stream, int direction);
- int sdw_cdns_pdm_set_stream(struct snd_soc_dai *dai,
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index e702187c0609..fe5f21edccfc 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -764,6 +764,19 @@ intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
- 	return ret;
- }
- 
-+static void intel_shutdown(struct snd_pcm_substream *substream,
-+			   struct snd_soc_dai *dai)
-+{
-+	struct sdw_cdns_dma_data *dma;
-+
-+	dma = snd_soc_dai_get_dma_data(dai, substream);
-+	if (!dma)
-+		return;
-+
-+	snd_soc_dai_set_dma_data(dai, substream, NULL);
-+	kfree(dma);
-+}
-+
- static int intel_pcm_set_sdw_stream(struct snd_soc_dai *dai,
- 				    void *stream, int direction)
- {
-@@ -779,14 +792,14 @@ static int intel_pdm_set_sdw_stream(struct snd_soc_dai *dai,
- static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
- 	.hw_params = intel_hw_params,
- 	.hw_free = intel_hw_free,
--	.shutdown = sdw_cdns_shutdown,
-+	.shutdown = intel_shutdown,
- 	.set_sdw_stream = intel_pcm_set_sdw_stream,
- };
- 
- static const struct snd_soc_dai_ops intel_pdm_dai_ops = {
- 	.hw_params = intel_hw_params,
- 	.hw_free = intel_hw_free,
--	.shutdown = sdw_cdns_shutdown,
-+	.shutdown = intel_shutdown,
- 	.set_sdw_stream = intel_pdm_set_sdw_stream,
- };
- 
--- 
-2.20.1
+thanks,
+-- Shuah
 
