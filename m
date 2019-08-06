@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4898828E9
+	by mail.lfdr.de (Postfix) with ESMTP id 5C611828E8
 	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 02:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731534AbfHFA4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 20:56:19 -0400
+        id S1731520AbfHFA4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 20:56:14 -0400
 Received: from mga07.intel.com ([134.134.136.100]:35775 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731351AbfHFAzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 20:55:44 -0400
+        id S1731367AbfHFAzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 20:55:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 17:55:44 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 17:55:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
-   d="scan'208";a="198153193"
+   d="scan'208";a="198153204"
 Received: from sahluwal-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.252.202.215])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Aug 2019 17:55:42 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 05 Aug 2019 17:55:44 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -28,9 +28,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Slawomir <slawomir.blauciak@intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH 10/17] soundwire: add new mclk_freq field for properties
-Date:   Mon,  5 Aug 2019 19:55:15 -0500
-Message-Id: <20190806005522.22642-11-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH 11/17] soundwire: intel: read mclk_freq property from firmware
+Date:   Mon,  5 Aug 2019 19:55:16 -0500
+Message-Id: <20190806005522.22642-12-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806005522.22642-1-pierre-louis.bossart@linux.intel.com>
 References: <20190806005522.22642-1-pierre-louis.bossart@linux.intel.com>
@@ -41,34 +41,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To help pass platform-specific values, add a new field that can either
-be set by the Master driver or read from firmware (BIOS/DT).
+The BIOS provides an Intel-specific property, let's use it to avoid
+hard-coded clock dividers.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- include/linux/soundwire/sdw.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soundwire/intel.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index 31d1e8acf25b..b6acc436ac80 100644
---- a/include/linux/soundwire/sdw.h
-+++ b/include/linux/soundwire/sdw.h
-@@ -379,6 +379,7 @@ struct sdw_slave_prop {
-  * @dynamic_frame: Dynamic frame shape supported
-  * @err_threshold: Number of times that software may retry sending a single
-  * command
-+ * @mclk_freq: clock reference passed to SoundWire Master, in Hz.
-  */
- struct sdw_master_prop {
- 	u32 revision;
-@@ -393,6 +394,7 @@ struct sdw_master_prop {
- 	u32 default_col;
- 	bool dynamic_frame;
- 	u32 err_threshold;
-+	u32 mclk_freq;
- };
+diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+index fe3266bc1d12..3f876642cb7f 100644
+--- a/drivers/soundwire/intel.c
++++ b/drivers/soundwire/intel.c
+@@ -909,11 +909,37 @@ static int intel_register_dai(struct sdw_intel *sdw)
+ 					  dais, num_dai);
+ }
  
- int sdw_master_read_prop(struct sdw_bus *bus);
++static int sdw_master_read_intel_prop(struct sdw_bus *bus)
++{
++	struct sdw_master_prop *prop = &bus->prop;
++	struct fwnode_handle *link;
++	char name[32];
++	int nval, i;
++
++	/* Find master handle */
++	snprintf(name, sizeof(name),
++		 "mipi-sdw-link-%d-subproperties", bus->link_id);
++
++	link = device_get_named_child_node(bus->dev, name);
++	if (!link) {
++		dev_err(bus->dev, "Master node %s not found\n", name);
++		return -EIO;
++	}
++
++	fwnode_property_read_u32(link,
++				 "intel-sdw-ip-clock",
++				 &prop->mclk_freq);
++	return 0;
++}
++
+ static int intel_prop_read(struct sdw_bus *bus)
+ {
+ 	/* Initialize with default handler to read all DisCo properties */
+ 	sdw_master_read_prop(bus);
+ 
++	/* read Intel-specific properties */
++	sdw_master_read_intel_prop(bus);
++
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
