@@ -2,99 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A83DD83001
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B0B18300A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:50:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732669AbfHFKso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:48:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:60124 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728845AbfHFKso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:48:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C036337;
-        Tue,  6 Aug 2019 03:48:43 -0700 (PDT)
-Received: from DESKTOP-E1NTVVP.cambridge.arm.com (unknown [10.1.25.192])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 427DB3F694;
-        Tue,  6 Aug 2019 03:48:42 -0700 (PDT)
-From:   Brian Starkey <brian.starkey@arm.com>
-To:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>, nd@arm.com,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] drm/crc-debugfs: Add notes about CRC<->commit interactions
-Date:   Tue,  6 Aug 2019 11:48:35 +0100
-Message-Id: <20190806104835.26075-1-brian.starkey@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190806091233.GX7444@phenom.ffwll.local>
-References: <20190806091233.GX7444@phenom.ffwll.local>
+        id S1732472AbfHFKuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:50:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43022 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730868AbfHFKuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:50:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D2D8FAFCC;
+        Tue,  6 Aug 2019 10:50:05 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 12:50:04 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Masoud Sharbiani <msharbiani@apple.com>,
+        Greg KH <gregkh@linuxfoundation.org>, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Possible mem cgroup bug in kernels between 4.18.0 and 5.3-rc1.
+Message-ID: <20190806105004.GS11812@dhcp22.suse.cz>
+References: <20190802191430.GO6461@dhcp22.suse.cz>
+ <A06C5313-B021-4ADA-9897-CE260A9011CC@apple.com>
+ <f7733773-35bc-a1f6-652f-bca01ea90078@I-love.SAKURA.ne.jp>
+ <d7efccf4-7f07-10da-077d-a58dafbf627e@I-love.SAKURA.ne.jp>
+ <20190805084228.GB7597@dhcp22.suse.cz>
+ <7e3c0399-c091-59cd-dbe6-ff53c7c8adc9@i-love.sakura.ne.jp>
+ <20190805114434.GK7597@dhcp22.suse.cz>
+ <0b817204-29f4-adfb-9b78-4fec5fa8f680@i-love.sakura.ne.jp>
+ <20190805142622.GR7597@dhcp22.suse.cz>
+ <56d98a71-b77e-0ad7-91ad-62633929c736@i-love.sakura.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56d98a71-b77e-0ad7-91ad-62633929c736@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CRC generation can be impacted by commits coming from userspace, and
-enabling CRC generation may itself trigger a commit. Add notes about
-this to the kerneldoc.
+On Tue 06-08-19 19:26:12, Tetsuo Handa wrote:
+> On 2019/08/05 23:26, Michal Hocko wrote:
+> > On Mon 05-08-19 23:00:12, Tetsuo Handa wrote:
+> >> On 2019/08/05 20:44, Michal Hocko wrote:
+> >>>> Allowing forced charge due to being unable to invoke memcg OOM killer
+> >>>> will lead to global OOM situation, and just returning -ENOMEM will not
+> >>>> solve memcg OOM situation.
+> >>>
+> >>> Returning -ENOMEM would effectivelly lead to triggering the oom killer
+> >>> from the page fault bail out path. So effectively get us back to before
+> >>> 29ef680ae7c21110. But it is true that this is riskier from the
+> >>> observability POV when a) the OOM path wouldn't point to the culprit and
+> >>> b) it would leak ENOMEM from g-u-p path.
+> >>>
+> >>
+> >> Excuse me? But according to my experiment, below code showed flood of
+> >> "Returning -ENOMEM" message instead of invoking the OOM killer.
+> >> I didn't find it gets us back to before 29ef680ae7c21110...
+> > 
+> > You would need to declare OOM_ASYNC to return ENOMEM properly from the
+> > charge (which is effectivelly a revert of 29ef680ae7c21110 for NOFS
+> > allocations). Something like the following
+> > 
+> 
+> OK. We need to set current->memcg_* before declaring something other than
+> OOM_SUCCESS and OOM_FAILED... Well, it seems that returning -ENOMEM after
+> setting current->memcg_* works as expected. What's wrong with your approach?
 
-Signed-off-by: Brian Starkey <brian.starkey@arm.com>
----
- drivers/gpu/drm/drm_debugfs_crc.c | 17 +++++++++++++----
- include/drm/drm_crtc.h            |  4 ++++
- 2 files changed, 17 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_debugfs_crc.c b/drivers/gpu/drm/drm_debugfs_crc.c
-index 7ca486d750e9..77159b6e77c3 100644
---- a/drivers/gpu/drm/drm_debugfs_crc.c
-+++ b/drivers/gpu/drm/drm_debugfs_crc.c
-@@ -65,10 +65,19 @@
-  * it submits. In this general case, the maximum userspace can do is to compare
-  * the reported CRCs of frames that should have the same contents.
-  *
-- * On the driver side the implementation effort is minimal, drivers only need to
-- * implement &drm_crtc_funcs.set_crc_source. The debugfs files are automatically
-- * set up if that vfunc is set. CRC samples need to be captured in the driver by
-- * calling drm_crtc_add_crc_entry().
-+ * On the driver side the implementation effort is minimal, drivers only need
-+ * to implement &drm_crtc_funcs.set_crc_source. The debugfs files are
-+ * automatically set up if that vfunc is set. CRC samples need to be captured
-+ * in the driver by calling drm_crtc_add_crc_entry(). Depending on the driver
-+ * and HW requirements, &drm_crtc_funcs.set_crc_source may result in a commit
-+ * (even a full modeset).
-+ *
-+ * CRC results must be reliable across non-full-modeset atomic commits, so if a
-+ * commit via DRM_IOCTL_MODE_ATOMIC would disable or otherwise interfere with
-+ * CRC generation, then the driver must mark that commit as a full modeset
-+ * (drm_atomic_crtc_needs_modeset() should return true). As a result, to ensure
-+ * consistent results, generic userspace must re-setup CRC generation after a
-+ * legacy SETCRTC or an atomic commit with DRM_MODE_ATOMIC_ALLOW_MODESET.
-  */
- 
- static int crc_control_show(struct seq_file *m, void *data)
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-index 128d8b210621..7d14c11bdc0a 100644
---- a/include/drm/drm_crtc.h
-+++ b/include/drm/drm_crtc.h
-@@ -756,6 +756,9 @@ struct drm_crtc_funcs {
- 	 * provided from the configured source. Drivers must accept an "auto"
- 	 * source name that will select a default source for this CRTC.
- 	 *
-+	 * This may trigger an atomic modeset commit if necessary, to enable CRC
-+	 * generation.
-+	 *
- 	 * Note that "auto" can depend upon the current modeset configuration,
- 	 * e.g. it could pick an encoder or output specific CRC sampling point.
- 	 *
-@@ -767,6 +770,7 @@ struct drm_crtc_funcs {
- 	 * 0 on success or a negative error code on failure.
- 	 */
- 	int (*set_crc_source)(struct drm_crtc *crtc, const char *source);
-+
- 	/**
- 	 * @verify_crc_source:
- 	 *
+As I've said, and hoped you could pick up parts for your changelog for
+the ENOMEM part, a) oom path is lost b) some paths will leak ENOMEM e.g.
+g-u-p. So your patch to trigger the oom even for NOFS is a better
+alternative I just found your ENOMEM note misleading and something that
+could improve.
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
