@@ -2,68 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A63582F66
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E2282F6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732687AbfHFKDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:03:53 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45695 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732584AbfHFKDx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:03:53 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n1so986127wrw.12
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 03:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yRfiZQS/MLeED/+UleHvJbVSuxRbNh/I4+CcWmfu7n8=;
-        b=Vd8lWUxERdFr52N+7CmJG7ZCxbUmKHsZXQh/8skgu8vMxG9PVFSXBzzcln5FO6DyvW
-         mtkMK5yR8FvjgO4K37wqDtozL3n0WKWD/gXnWUPDJt/4RKXBvdnwwQw/sftROFIc5LLy
-         vaSyVQ+9t66RxvOMcyqaqAwgeFLjHc75DlnMNP4fdX56X+FlOO6hWY8a8h66+UVEJL+5
-         nqHj17rHatoPqHzs0Y76G2CZo6IoL3bT3NcQi3UcdBTpGDFgWPOd6jMu02TOKFGvrPbu
-         hzf23irMD2GsWBeFePeEoCR/KE+J6aPg4akZOsMjLSKfY2bYvnIdwyTkYeYi7nKkYHvD
-         +uig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yRfiZQS/MLeED/+UleHvJbVSuxRbNh/I4+CcWmfu7n8=;
-        b=JEM2+rMece6zHgpkrkNKl1MduoM5P2IzfNDQfkairHfflv1cI/5qWkCUjeW7FSKdbO
-         ctyw9l4JDqbQb0GY6MAArRv1B5vc2avx6OKp/dvrhfSFPUO1+8Hv+3MK9mdQQFUr/0aI
-         jO1EpAsFevT+0+U/xW6drBhGB/6hata15P66Q3ZS584C5FbJbR7R49JsSr2L2ZY0+4Sk
-         i+tOYZwgMbR4pBQ78ehBCaoxhIfo+txE8nyedV/iNsR0iijBzgKXvRtfdqfBbAv03mLZ
-         2l9S2d9cBq23p2ylfSI//CekU+TmmieCCD7vqZqZUuXrNEViV9RruTJ0BXkHjMTdUyYM
-         DBig==
-X-Gm-Message-State: APjAAAV/uqjIglIpY5d4by5d/oiyDjSz8M/zWnctQsL2iUkqNw9uZ3HH
-        oZgcpcFX942G9werAvSb4UHZvw==
-X-Google-Smtp-Source: APXvYqzagEuL70h0nJNiwsRJzSzRRsUyeFmpldhU1sRM+F+c6A1G1ix0bnDeLmhOnsF1ZMs7mjqZ9Q==
-X-Received: by 2002:adf:efc5:: with SMTP id i5mr3830434wrp.158.1565085830815;
-        Tue, 06 Aug 2019 03:03:50 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id n9sm134635207wrp.54.2019.08.06.03.03.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 03:03:50 -0700 (PDT)
-Subject: Re: [PATCH 1/1] nvmem: sunxi_sid: fix A64 SID controller support
-To:     Stefan Mavrodiev <stefan@olimex.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     linux-sunxi@googlegroups.com
-References: <20190731071447.9019-1-stefan@olimex.com>
- <20190731071447.9019-2-stefan@olimex.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <9b26646f-f8db-cf8d-6f47-f2fbb0ac41a8@linaro.org>
-Date:   Tue, 6 Aug 2019 11:03:49 +0100
+        id S1732755AbfHFKEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:04:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57554 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732583AbfHFKEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:04:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3D61B008;
+        Tue,  6 Aug 2019 10:04:10 +0000 (UTC)
+Subject: Re: oom-killer
+To:     Pankaj Suryawanshi <pankajssuryawanshi@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        pankaj.suryawanshi@einfochips.com
+References: <CACDBo54Jbueeq1XbtbrFOeOEyF-Q4ipZJab8mB7+0cyK1Foqyw@mail.gmail.com>
+ <20190805112437.GF7597@dhcp22.suse.cz>
+ <0821a17d-1703-1b82-d850-30455e19e0c1@suse.cz>
+ <20190805120525.GL7597@dhcp22.suse.cz>
+ <CACDBo562xHy6McF5KRq3yngKqAm4a15FFKgbWkCTGQZ0pnJWgw@mail.gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <df820f66-cf82-b43f-97b6-c92a116fa1a6@suse.cz>
+Date:   Tue, 6 Aug 2019 12:04:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190731071447.9019-2-stefan@olimex.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CACDBo562xHy6McF5KRq3yngKqAm4a15FFKgbWkCTGQZ0pnJWgw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,16 +40,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 31/07/2019 08:14, Stefan Mavrodiev wrote:
-> Like in H3, A64 SID controller doesn't return correct data
-> when using direct access. It appears that on A64, SID needs
-> 8 bytes of word_size.
+On 8/5/19 5:34 PM, Pankaj Suryawanshi wrote:
+> On Mon, Aug 5, 2019 at 5:35 PM Michal Hocko <mhocko@kernel.org> wrote:
+>>
+>> On Mon 05-08-19 13:56:20, Vlastimil Babka wrote:
+>> > On 8/5/19 1:24 PM, Michal Hocko wrote:
+>> > >> [  727.954355] CPU: 0 PID: 56 Comm: kworker/u8:2 Tainted: P           O  4.14.65 #606
+>> > > [...]
+>> > >> [  728.029390] [<c034a094>] (oom_kill_process) from [<c034af24>] (out_of_memory+0x140/0x368)
+>> > >> [  728.037569]  r10:00000001 r9:c12169bc r8:00000041 r7:c121e680 r6:c1216588 r5:dd347d7c > [  728.045392]  r4:d5737080
+>> > >> [  728.047929] [<c034ade4>] (out_of_memory) from [<c03519ac>]  (__alloc_pages_nodemask+0x1178/0x124c)
+>> > >> [  728.056798]  r7:c141e7d0 r6:c12166a4 r5:00000000 r4:00001155
+>> > >> [  728.062460] [<c0350834>] (__alloc_pages_nodemask) from [<c021e9d4>] (copy_process.part.5+0x114/0x1a28)
+>> > >> [  728.071764]  r10:00000000 r9:dd358000 r8:00000000 r7:c1447e08 r6:c1216588 r5:00808111
+>> > >> [  728.079587]  r4:d1063c00
+>> > >> [  728.082119] [<c021e8c0>] (copy_process.part.5) from [<c0220470>] (_do_fork+0xd0/0x464)
+>> > >> [  728.090034]  r10:00000000 r9:00000000 r8:dd008400 r7:00000000 r6:c1216588 r5:d2d58ac0
+>> > >> [  728.097857]  r4:00808111
+>> > >
+>> > > The call trace tells that this is a fork (of a usermodhlper but that is
+>> > > not all that important.
+>> > > [...]
+>> > >> [  728.260031] DMA free:17960kB min:16384kB low:25664kB high:29760kB active_anon:3556kB inactive_anon:0kB active_file:280kB inactive_file:28kB unevictable:0kB writepending:0kB present:458752kB managed:422896kB mlocked:0kB kernel_stack:6496kB pagetables:9904kB bounce:0kB free_pcp:348kB local_pcp:0kB free_cma:0kB
+>> > >> [  728.287402] lowmem_reserve[]: 0 0 579 579
+>> > >
+>> > > So this is the only usable zone and you are close to the min watermark
+>> > > which means that your system is under a serious memory pressure but not
+>> > > yet under OOM for order-0 request. The situation is not great though
+>> >
+>> > Looking at lowmem_reserve above, wonder if 579 applies here? What does
+>> > /proc/zoneinfo say?
 > 
-> Workaround is to enable read by registers.
 > 
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> What is  lowmem_reserve[]: 0 0 579 579 ?
+> 
+> $cat /proc/sys/vm/lowmem_reserve_ratio
+> 256     32      32
+> 
+> $cat /proc/sys/vm/min_free_kbytes
+> 16384
+> 
+> here is cat /proc/zoneinfo (in normal situation not when oom)
 
-Applied Thanks,
-srini
+Thanks, that shows the lowmem reserve was indeed 0 for the GFP_KERNEL allocation
+checking watermarks in the DMA zone. The zone was probably genuinely below min
+watermark when the check happened, and things changed while the allocation
+failure was printing memory info.
