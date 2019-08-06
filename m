@@ -2,222 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A3382CB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FD5E82CBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:30:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731996AbfHFH0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:26:37 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44387 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731557AbfHFH0g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:26:36 -0400
-Received: by mail-lf1-f68.google.com with SMTP id v16so6333968lfg.11
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 00:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RwJqQDsRZ9AaLr/ekC9Gdx1vhurMfbMK5qMIFyjdmMY=;
-        b=HkHWeHbeFUjBWyDvZUKxfFH/WkeH9dkUS16Y5GRnBi91t54nMbVt/XorG/JXWA5jZJ
-         wv+hU6jBYyJN9xQ7qSqsopUw/vFHMrdRD1cLx4l91coySp/zMd/MnmN0UmtLRKykM0rF
-         YdIWhEyurVbfV+9tIpH9dpxK22vM77eZZuLl5biNjJKFM+VBPfS0/l3m6C0X6+1lLl1q
-         F+tHsOeqwfnFw3jv2GJ7FzfTfrIEcaNA4yEclC038TBckWjvRjK0bV2wdjey/rtobNnv
-         TmGR7hZ3tngqlGETH0zEKPgyNOJmDaUbn1CIdFR5E/QZMXgF/kaZ4CX78i0t40y3ak3B
-         KAcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RwJqQDsRZ9AaLr/ekC9Gdx1vhurMfbMK5qMIFyjdmMY=;
-        b=PgQhOEsx3w/SjrqvWuFaC95wwlPZzgfpkvFovIjRbnbjSMyrTnByRk62hd+vZjdDGR
-         JzeNj4r9JTHWKrTPgWS6uzP9QQEXr1wPZeMULAKpIH4fAGeZpSUEoOFrdTarToPYLccg
-         S71m9zkh+Et/AsHzv28L67+X+j4HKz0wibwYFNT2lwBS7RQQRu63vc9/050x7piAaobn
-         EhaVdHXbyYZJREOz7v2YwbZAwwfdw9IJhJ6H1F+BHrC9pRZJ3rVzaQN4xT+blMxK8o/V
-         mocS9F7NP7YL3vMP63PpVV9soRQzC7ZSU5Y3TndmBf65H/u2qIcXaWV7MKT0mdMi/6H6
-         u6aw==
-X-Gm-Message-State: APjAAAVGkhECaBetvUFhoqUeqho4KeqtELKRND9CgPG/jyS7LCWQR1zo
-        V58vWBvPC7LYsaRhTQngsBrzKuIH/bSTYhLJ2dFZOQ==
-X-Google-Smtp-Source: APXvYqxNSUUlWAzx8oictpwRYd8Zg+c7SEIFsrenLoLlTH9vDkh63cTnmW1jbAgbNgPTEOHbkG3/J8Cj5I115SVc55U=
-X-Received: by 2002:a19:5f0f:: with SMTP id t15mr1409306lfb.67.1565076394740;
- Tue, 06 Aug 2019 00:26:34 -0700 (PDT)
+        id S1732065AbfHFH25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:28:57 -0400
+Received: from mga02.intel.com ([134.134.136.20]:31201 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731557AbfHFH25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 03:28:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 00:24:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,352,1559545200"; 
+   d="scan'208";a="325555334"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 06 Aug 2019 00:24:38 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        kan.liang@linux.intel.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH v5 0/7] perf, intel: Add support for PEBS output to Intel PT
+Date:   Tue,  6 Aug 2019 10:24:26 +0300
+Message-Id: <20190806072433.26820-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190805124918.070468681@linuxfoundation.org>
-In-Reply-To: <20190805124918.070468681@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 6 Aug 2019 12:56:23 +0530
-Message-ID: <CA+G9fYvhTQfV=gOVeqtNax9sgmRVUexWAwkBcorEG3PqShGXsw@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/22] 4.4.188-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 5 Aug 2019 at 18:34, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.4.188 release.
-> There are 22 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed 07 Aug 2019 12:47:58 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.188-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Hi Peter,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Sixth attempt at the PEBS-via-PT feature. The previous ones were [1], [2],
+[3], [4], [5]. This one addresses the most recent review comments, mainly
+renaming the new attribute bit and everything related to 'aux_output'.
+Tooling also changed to use /aux-output/ config term.
 
-Summary
-------------------------------------------------------------------------
+The PEBS feature: output to Intel PT stream instead of the DS area. It's
+theoretically useful in virtualized environments, where DS area can't be
+used. It's also good for those who are interested in instruction trace for
+context of the PEBS events. As PEBS goes, it can provide LBR context with
+all the branch-related information that PT doesn't provide at the moment.
 
-kernel: 4.4.188-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: 462a4b2bd3bfaa6e11d1e8180bc95324efc96390
-git describe: v4.4.187-23-g462a4b2bd3bf
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.187-23-g462a4b2bd3bf
+PEBS records are packetized in the PT stream, so instead of extracting
+them in the PMI, we leave it to the perf tool, because real time PT
+decoding is not practical.
 
+[1] https://marc.info/?l=linux-kernel&m=155679423430002
+[2] https://marc.info/?l=linux-kernel&m=156225605132606
+[3] https://marc.info/?l=linux-kernel&m=156458152126310
+[4] https://marc.info/?l=linux-kernel&m=156458348626999
+[5] https://marc.info/?l=linux-kernel&m=156498939722450
 
-No regressions (compared to build v4.4.187)
+Adrian Hunter (5):
+  perf tools: Add aux_output attribute flag
+  perf tools: Add itrace option 'o' to synthesize aux-output events
+  perf intel-pt: Process options for PEBS event synthesis
+  perf tools: Add aux-output config term
+  perf intel-pt: Add brief documentation for PEBS via Intel PT
 
+Alexander Shishkin (2):
+  perf: Allow normal events to output AUX data
+  perf/x86/intel: Support PEBS output to PT
 
-No fixes (compared to build v4.4.187)
+ arch/x86/events/core.c                   | 34 +++++++++
+ arch/x86/events/intel/core.c             | 18 +++++
+ arch/x86/events/intel/ds.c               | 51 ++++++++++++-
+ arch/x86/events/intel/pt.c               |  5 ++
+ arch/x86/events/perf_event.h             | 17 +++++
+ arch/x86/include/asm/intel_pt.h          |  2 +
+ arch/x86/include/asm/msr-index.h         |  4 +
+ include/linux/perf_event.h               | 14 ++++
+ include/uapi/linux/perf_event.h          |  3 +-
+ kernel/events/core.c                     | 93 ++++++++++++++++++++++++
+ tools/include/uapi/linux/perf_event.h    |  3 +-
+ tools/perf/Documentation/intel-pt.txt    | 15 ++++
+ tools/perf/Documentation/itrace.txt      |  2 +
+ tools/perf/Documentation/perf-record.txt |  2 +
+ tools/perf/arch/x86/util/intel-pt.c      | 23 ++++++
+ tools/perf/util/auxtrace.c               |  4 +
+ tools/perf/util/auxtrace.h               |  3 +
+ tools/perf/util/evsel.c                  |  4 +
+ tools/perf/util/evsel.h                  |  2 +
+ tools/perf/util/intel-pt.c               | 18 +++++
+ tools/perf/util/parse-events.c           |  8 ++
+ tools/perf/util/parse-events.h           |  1 +
+ tools/perf/util/parse-events.l           |  1 +
+ 23 files changed, 324 insertions(+), 3 deletions(-)
 
-Ran 20069 total tests in the following environments and test suites.
+-- 
+2.20.1
 
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* prep-tmp-disk
-* spectre-meltdown-checker-test
-* kvm-unit-tests
-* v4l2-compliance
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.188-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.188-rc1-hikey-20190805-520
-git commit: c9b6c3a54493f03773243bfd3c3ffbc88982ec27
-git describe: 4.4.188-rc1-hikey-20190805-520
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.188-rc1-hikey-20190805-520
-
-
-No regressions (compared to build 4.4.187-rc2-hikey-20190802-517)
-
-
-No fixes (compared to build 4.4.187-rc2-hikey-20190802-517)
-
-Ran 1550 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
