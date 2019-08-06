@@ -2,75 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B2FA82C76
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD20882C7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732120AbfHFHSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:18:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48042 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731807AbfHFHSu (ORCPT
+        id S1732133AbfHFHT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:19:56 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:50064 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731807AbfHFHTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:18:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oLYhz3paV5MkuuulGm1xoGGN9XCcqSM1IHMqI7nhK4c=; b=l2v8MJqVGbUTCnoAcTYdcSsg8
-        iL4Rx1SvnIoyPj5tt0HHf2cGKEJEkSm2rPtqB3xwN3Pi0u3erVD2zycQncT3dEsVKu+lsmeXyknPF
-        UV4VfWvZyUVw39nEj+W9aDTztjYs6KEfbiqGwNMmEhZF26G+QJhwWLkpHsvsHCT+qKBSSbwZ4Y9Vy
-        Jq96s5cX6W4sylbDHqYgV+xjml/O8mznc/eik84kRokkVbMGfNZExX6Eq1HoKQbi9X9+E0nFwzZR9
-        Xtj+W26r7wyCqZZIyKwcM3fcplXLsqKb+/qUIsZtSHth9j1w179c+vZZmGAS55++rGJKP3waA8TV2
-        oovG3jW1w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hutk6-0002dB-5e; Tue, 06 Aug 2019 07:18:46 +0000
-Date:   Tue, 6 Aug 2019 00:18:46 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Guo Ren <guoren@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-csky@vger.kernel.org, feng_shizhu@dahuatech.com,
-        zhang_jian5@dahuatech.com, zheng_xingjian@dahuatech.com,
-        zhu_peng@dahuatech.com, Guo Ren <ren_guo@c-sky.com>
-Subject: Re: [PATCH 3/4] csky/dma: Fixup cache_op failed when cross memory
- ZONEs
-Message-ID: <20190806071846.GA10032@infradead.org>
-References: <1564488945-20149-1-git-send-email-guoren@kernel.org>
- <1564488945-20149-3-git-send-email-guoren@kernel.org>
- <20190806064933.GA2508@infradead.org>
- <CAJF2gTR1vCz504X20rBnQkAXGhJ-QbL4pORxnJTRVJqXx2t4uQ@mail.gmail.com>
+        Tue, 6 Aug 2019 03:19:55 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 5210B2E129D;
+        Tue,  6 Aug 2019 10:19:52 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id kYXKZpPAQ1-JqZiG3nU;
+        Tue, 06 Aug 2019 10:19:52 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1565075992; bh=N6mFKzcJuhbgMksEZaXjMK9Sa+aXVEkZHt/RWDgwRic=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=qj1+3eKYycJsRWYRyESXh/le9T+uXhFB29JZh8tHuGVXVY4TzJH31MfvV4dDd3p3D
+         5j+amf4w55mGNYaE/HxSlnsaBt7smrFwVUAi4JQnakvs/XAP5VyloJFo3MqiiLQ9zS
+         ItceemZk1AVrWepJltjbLkwA8naBgpG1rtuSRmSk=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:81f7:1ca8:6615:d682])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id J4Zd7BQsFS-JpkCvNW7;
+        Tue, 06 Aug 2019 10:19:52 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH RFC] mm/memcontrol: reclaim severe usage over high limit
+ in get_user_pages loop
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+References: <156431697805.3170.6377599347542228221.stgit@buzz>
+ <20190729154952.GC21958@cmpxchg.org> <20190729185509.GI9330@dhcp22.suse.cz>
+ <20190802094028.GG6461@dhcp22.suse.cz>
+ <105a2f1f-de5c-7bac-3aa5-87bd1dbcaed9@yandex-team.ru>
+ <20190802114438.GH6461@dhcp22.suse.cz>
+ <20190806070728.GB11812@dhcp22.suse.cz>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <c6b2c864-985a-2565-95e7-3af9e3e015f8@yandex-team.ru>
+Date:   Tue, 6 Aug 2019 10:19:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJF2gTR1vCz504X20rBnQkAXGhJ-QbL4pORxnJTRVJqXx2t4uQ@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190806070728.GB11812@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 03:11:13PM +0800, Guo Ren wrote:
-> On Tue, Aug 6, 2019 at 2:49 PM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > On Tue, Jul 30, 2019 at 08:15:44PM +0800, guoren@kernel.org wrote:
-> > > diff --git a/arch/csky/mm/dma-mapping.c b/arch/csky/mm/dma-mapping.c
-> > > index 80783bb..3f1ff9d 100644
-> > > --- a/arch/csky/mm/dma-mapping.c
-> > > +++ b/arch/csky/mm/dma-mapping.c
-> > > @@ -18,71 +18,52 @@ static int __init atomic_pool_init(void)
-> > >  {
-> > >       return dma_atomic_pool_init(GFP_KERNEL, pgprot_noncached(PAGE_KERNEL));
-> > >  }
-> > > -postcore_initcall(atomic_pool_init);
-> >
-> > Please keep the postcore_initcall next to the function it calls.
-> Ok. Change arch_initcall back to postcore_initcall. :)
+On 8/6/19 10:07 AM, Michal Hocko wrote:
+> On Fri 02-08-19 13:44:38, Michal Hocko wrote:
+> [...]
+>>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>>> index ba9138a4a1de..53a35c526e43 100644
+>>>> --- a/mm/memcontrol.c
+>>>> +++ b/mm/memcontrol.c
+>>>> @@ -2429,8 +2429,12 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>>>>    				schedule_work(&memcg->high_work);
+>>>>    				break;
+>>>>    			}
+>>>> -			current->memcg_nr_pages_over_high += batch;
+>>>> -			set_notify_resume(current);
+>>>> +			if (gfpflags_allow_blocking(gfp_mask)) {
+>>>> +				reclaim_high(memcg, nr_pages, GFP_KERNEL);
+>>
+>> ups, this should be s@GFP_KERNEL@gfp_mask@
+>>
+>>>> +			} else {
+>>>> +				current->memcg_nr_pages_over_high += batch;
+>>>> +				set_notify_resume(current);
+>>>> +			}
+>>>>    			break;
+>>>>    		}
+>>>>    	} while ((memcg = parent_mem_cgroup(memcg)));
+>>>>
+> 
+> Should I send an official patch for this?
+> 
 
-Well, if you have a good reason to change it please keep the type
-init level change, but put it in a separate patch.  But most importantly
-don't move the place where is called around.
+I prefer to keep it as is while we have no better solution.
