@@ -2,165 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A90383391
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98EFB833A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:10:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732867AbfHFOHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 10:07:45 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:55572 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfHFOHp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 10:07:45 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x76E7hXW127613;
-        Tue, 6 Aug 2019 09:07:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565100463;
-        bh=9YtLjEZEadsz4KozTsMZV1AwvV6y2GZFO/F76/NxOT0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=xfVML/Paw5tmeELiNpO0KHNOaVe9i8KBpyIcgVeISCQbqllotcfyRcgymsa2szCxW
-         K9ath2sKcY4lG12mB/LmK/zGF+FWWJzZSchVBNTvktqfbewyEZuJ7z8rwTsB4ag1Ya
-         x774B5HBpIuIBy0TVdOokSb7Eo95sgERErOuKAOw=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x76E7hvw077090
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Aug 2019 09:07:43 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 6 Aug
- 2019 09:07:42 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 6 Aug 2019 09:07:43 -0500
-Received: from [137.167.41.248] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x76E7frI020451;
-        Tue, 6 Aug 2019 09:07:41 -0500
-Subject: Re: [PATCH] phy: ti: am654-serdes: fix an use-after-free in
- serdes_am654_clk_register()
-To:     Wen Yang <wen.yang99@zte.com.cn>, <linux-kernel@vger.kernel.org>
-CC:     <xue.zhihong@zte.com.cn>, <wang.yi59@zte.com.cn>,
-        <cheng.shengyu@zte.com.cn>, Kishon Vijay Abraham I <kishon@ti.com>
-References: <1562566745-7447-1-git-send-email-wen.yang99@zte.com.cn>
- <1562566745-7447-4-git-send-email-wen.yang99@zte.com.cn>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <2eec3583-4f89-189c-4a08-57b5acc2272b@ti.com>
-Date:   Tue, 6 Aug 2019 17:07:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732849AbfHFOKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 10:10:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52522 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728259AbfHFOKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 10:10:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 01A6BAD43;
+        Tue,  6 Aug 2019 14:10:01 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 16:09:59 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806140959.GD11812@dhcp22.suse.cz>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+ <20190805170451.26009-3-joel@joelfernandes.org>
+ <20190806084203.GJ11812@dhcp22.suse.cz>
+ <20190806103627.GA218260@google.com>
+ <20190806104755.GR11812@dhcp22.suse.cz>
+ <20190806111446.GA117316@google.com>
+ <20190806115703.GY11812@dhcp22.suse.cz>
+ <20190806134321.GA15167@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1562566745-7447-4-git-send-email-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806134321.GA15167@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/07/2019 09:19, Wen Yang wrote:
-> The regmap_node variable is still being used in the syscon_node_to_regmap()
-> call after the of_node_put() call, which may result in use-after-free.
+On Tue 06-08-19 09:43:21, Joel Fernandes wrote:
+> On Tue, Aug 06, 2019 at 01:57:03PM +0200, Michal Hocko wrote:
+> > On Tue 06-08-19 07:14:46, Joel Fernandes wrote:
+> > > On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
+> > > > On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
+> > > > > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
+> > > > > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> > > > > > > This bit will be used by idle page tracking code to correctly identify
+> > > > > > > if a page that was swapped out was idle before it got swapped out.
+> > > > > > > Without this PTE bit, we lose information about if a page is idle or not
+> > > > > > > since the page frame gets unmapped.
+> > > > > > 
+> > > > > > And why do we need that? Why cannot we simply assume all swapped out
+> > > > > > pages to be idle? They were certainly idle enough to be reclaimed,
+> > > > > > right? Or what does idle actualy mean here?
+> > > > > 
+> > > > > Yes, but other than swapping, in Android a page can be forced to be swapped
+> > > > > out as well using the new hints that Minchan is adding?
+> > > > 
+> > > > Yes and that is effectivelly making them idle, no?
+> > > 
+> > > That depends on how you think of it.
+> > 
+> > I would much prefer to have it documented so that I do not have to guess ;)
 > 
-> Fixes: 71e2f5c5c224 ("phy: ti: Add a new SERDES driver for TI's AM654x SoC")
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Roger Quadros <rogerq@ti.com>
-> Cc: linux-kernel@vger.kernel.org
-
-Reviewed-by: Roger Quadros <rogerq@ti.com>
-
-> ---
->  drivers/phy/ti/phy-am654-serdes.c | 33 ++++++++++++++++++++++-----------
->  1 file changed, 22 insertions(+), 11 deletions(-)
+> Sure :)
 > 
-> diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
-> index f8edd08..f14f1f0 100644
-> --- a/drivers/phy/ti/phy-am654-serdes.c
-> +++ b/drivers/phy/ti/phy-am654-serdes.c
-> @@ -405,6 +405,7 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
->  	const __be32 *addr;
->  	unsigned int reg;
->  	struct clk *clk;
-> +	int ret = 0;
->  
->  	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
->  	if (!mux)
-> @@ -413,34 +414,40 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
->  	init = &mux->clk_data;
->  
->  	regmap_node = of_parse_phandle(node, "ti,serdes-clk", 0);
-> -	of_node_put(regmap_node);
->  	if (!regmap_node) {
->  		dev_err(dev, "Fail to get serdes-clk node\n");
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto out_put_node;
->  	}
->  
->  	regmap = syscon_node_to_regmap(regmap_node->parent);
->  	if (IS_ERR(regmap)) {
->  		dev_err(dev, "Fail to get Syscon regmap\n");
-> -		return PTR_ERR(regmap);
-> +		ret = PTR_ERR(regmap);
-> +		goto out_put_node;
->  	}
->  
->  	num_parents = of_clk_get_parent_count(node);
->  	if (num_parents < 2) {
->  		dev_err(dev, "SERDES clock must have parents\n");
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto out_put_node;
->  	}
->  
->  	parent_names = devm_kzalloc(dev, (sizeof(char *) * num_parents),
->  				    GFP_KERNEL);
-> -	if (!parent_names)
-> -		return -ENOMEM;
-> +	if (!parent_names) {
-> +		ret = -ENOMEM;
-> +		goto out_put_node;
-> +	}
->  
->  	of_clk_parent_fill(node, parent_names, num_parents);
->  
->  	addr = of_get_address(regmap_node, 0, NULL, NULL);
-> -	if (!addr)
-> -		return -EINVAL;
-> +	if (!addr) {
-> +		ret = -EINVAL;
-> +		goto out_put_node;
-> +	}
->  
->  	reg = be32_to_cpu(*addr);
->  
-> @@ -456,12 +463,16 @@ static int serdes_am654_clk_register(struct serdes_am654 *am654_phy,
->  	mux->hw.init = init;
->  
->  	clk = devm_clk_register(dev, &mux->hw);
-> -	if (IS_ERR(clk))
-> -		return PTR_ERR(clk);
-> +	if (IS_ERR(clk)) {
-> +		ret = PTR_ERR(clk);
-> +		goto out_put_node;
-> +	}
->  
->  	am654_phy->clks[clock_num] = clk;
->  
-> -	return 0;
-> +out_put_node:
-> +	of_node_put(regmap_node);
-> +	return ret;
->  }
->  
->  static const struct of_device_id serdes_am654_id_table[] = {
+> > > If you are thinking of a monitoring
+> > > process like a heap profiler, then from the heap profiler's (that only cares
+> > > about the process it is monitoring) perspective it will look extremely odd if
+> > > pages that are recently accessed by the process appear to be idle which would
+> > > falsely look like those processes are leaking memory. The reality being,
+> > > Android forced those pages into swap because of other reasons. I would like
+> > > for the swapping mechanism, whether forced swapping or memory reclaim, not to
+> > > interfere with the idle detection.
+> > 
+> > Hmm, but how are you going to handle situation when the page is unmapped
+> > and refaulted again (e.g. a normal reclaim of a pagecache)? You are
+> > losing that information same was as in the swapout case, no? Or am I
+> > missing something?
 > 
+> Yes you are right, it would have the same issue, thanks for bringing it up.
+> Should we rename this bit to PTE_IDLE and do the same thing that we are doing
+> for swap?
 
+What if we decide to tear the page table down as well? E.g. because we
+can reclaim file backed mappings and free some memory used for page
+tables. We do not do that right now but I can see that really large
+mappings might push us that direction. Sure this is mostly a theoretical
+concern but I am wondering whether promissing to keep the idle bit over
+unmapping is not too much.
+
+I am not sure how to deal with this myself, TBH. In any case the current
+semantic - via pfn - will lose the idle bit already so can we mimic it
+as well? We only have 1 bit for each address which makes it challenging.
+The easiest way would be to declare that the idle bit might disappear on
+activating or reclaiming the page. How well that suits different
+usecases is a different question. I would be interested in hearing from
+other people about this of course.
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Michal Hocko
+SUSE Labs
