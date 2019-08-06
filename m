@@ -2,72 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 382A782C74
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:18:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3A1B82C78
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:19:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbfHFHSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:18:49 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44034 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731807AbfHFHSt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:18:49 -0400
-Received: by mail-oi1-f193.google.com with SMTP id e189so64979738oib.11
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 00:18:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RCMaRU9I37uLcxKjbqn1cVlK7lGMUQpE7VaAEHhYNjY=;
-        b=i7qblEpR4iFg4fIhtT/W0nXMjsvn80t7KwQB18fIn4tLz5IekpWhsgbsZmdCRskthe
-         qOL5R9SiK+UlOUlVW5+XZ59bKhjsfFcQdl0D+mzuaiHBDu4Zin5V638z6X1AQDwycnLP
-         CiaK+Qp4DK1ofZRywrTH8EwnotdRwjGKcOsD5gViZbZA+K8jvhWuKcq/pK7RB+KrmVJN
-         gjeZDKQ6wvTlu/F32fytfiNtke5qTr7r/6VzSotU+BmPaz67wkzGuzBF5aftvpksHq8P
-         2HkLuXXMLrl9ah7PYmTy6m8LzNrxKG/CDSJeyLUqGmMptxI56h9kghpMsE3Kuz3FMKfr
-         qg/g==
-X-Gm-Message-State: APjAAAXW2ozz2W69HUOzFsfBVvKj+YotlNdhjXdtc6a+I5kpzoIKR4Pm
-        iMp/jGYWso0ssxtWQ+Cu3UVVf1Vt6D8k4u83hAY=
-X-Google-Smtp-Source: APXvYqwjYCurnRuh/bt7im8dfb27uOpzcrL2Zjt0ZknjXuj/KW6oVlfIvMu0nIWeSxk0tmwM7x3rQ9p+mPw0zuqGjsI=
-X-Received: by 2002:aca:c4d5:: with SMTP id u204mr720107oif.131.1565075928299;
- Tue, 06 Aug 2019 00:18:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190806071445.13705-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190806071445.13705-1-yamada.masahiro@socionext.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 6 Aug 2019 09:18:37 +0200
-Message-ID: <CAMuHMdWa=WYUjo-N-ZOmDaR-OMOypTtupTpHT0-B00AN39_YPQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] auxdisplay: charlcd: move charlcd.h to drivers/auxdisplay
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Willy Tarreau <willy@haproxy.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1732130AbfHFHTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:19:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731807AbfHFHTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 03:19:10 -0400
+Received: from guoren-Inspiron-7460.lan (unknown [223.93.147.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B62B42070C;
+        Tue,  6 Aug 2019 07:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565075949;
+        bh=swLdWN/c3YNiNoEDBUnhTuMLT4pIrTC41Pfwb24gXQ8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SA9MUzOU7xfygcVSI9BbYgctl/RUzZ359BexoHuidG2VXASkHNfMQbp9N4xUg6mJq
+         27ldNV7Dis1ZIrB5bbzjVliUSbgvsoeKgwDSiTUVBI7tUj71rnr8TRnt3h/CuHIzog
+         JDzI7VXUOtSeO04GKYVprwYmS7Oo6jWaYe7VYttM=
+From:   guoren@kernel.org
+To:     arnd@arndb.de
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-csky@vger.kernel.org, feng_shizhu@dahuatech.com,
+        zhang_jian5@dahuatech.com, zheng_xingjian@dahuatech.com,
+        zhu_peng@dahuatech.com, Guo Ren <ren_guo@c-sky.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH V2 2/3] csky/dma: Fixup cache_op failed when cross memory ZONEs
+Date:   Tue,  6 Aug 2019 15:18:41 +0800
+Message-Id: <1565075921-25734-1-git-send-email-guoren@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 9:16 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> This header is included in drivers/auxdisplay/. Make it a local header.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Guo Ren <ren_guo@c-sky.com>
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+If the paddr and size are cross between NORMAL_ZONE and HIGHMEM_ZONE
+memory range, cache_op will panic in do_page_fault with bad_area.
 
-Gr{oetje,eeting}s,
+Optimize the code to support the range which cross memory ZONEs.
 
-                        Geert
+Changes for V2:
+ - Revert back to postcore_initcall
 
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/csky/mm/dma-mapping.c | 71 +++++++++++++++++-----------------------------
+ 1 file changed, 26 insertions(+), 45 deletions(-)
+
+diff --git a/arch/csky/mm/dma-mapping.c b/arch/csky/mm/dma-mapping.c
+index 80783bb..65f531d 100644
+--- a/arch/csky/mm/dma-mapping.c
++++ b/arch/csky/mm/dma-mapping.c
+@@ -20,69 +20,50 @@ static int __init atomic_pool_init(void)
+ }
+ postcore_initcall(atomic_pool_init);
+ 
+-void arch_dma_prep_coherent(struct page *page, size_t size)
+-{
+-	if (PageHighMem(page)) {
+-		unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-
+-		do {
+-			void *ptr = kmap_atomic(page);
+-			size_t _size = (size < PAGE_SIZE) ? size : PAGE_SIZE;
+-
+-			memset(ptr, 0, _size);
+-			dma_wbinv_range((unsigned long)ptr,
+-					(unsigned long)ptr + _size);
+-
+-			kunmap_atomic(ptr);
+-
+-			page++;
+-			size -= PAGE_SIZE;
+-			count--;
+-		} while (count);
+-	} else {
+-		void *ptr = page_address(page);
+-
+-		memset(ptr, 0, size);
+-		dma_wbinv_range((unsigned long)ptr, (unsigned long)ptr + size);
+-	}
+-}
+-
+ static inline void cache_op(phys_addr_t paddr, size_t size,
+ 			    void (*fn)(unsigned long start, unsigned long end))
+ {
+-	struct page *page = pfn_to_page(paddr >> PAGE_SHIFT);
+-	unsigned int offset = paddr & ~PAGE_MASK;
+-	size_t left = size;
+-	unsigned long start;
++	struct page *page    = phys_to_page(paddr);
++	void *start          = __va(page_to_phys(page));
++	unsigned long offset = offset_in_page(paddr);
++	size_t left          = size;
+ 
+ 	do {
+ 		size_t len = left;
+ 
++		if (offset + len > PAGE_SIZE)
++			len = PAGE_SIZE - offset;
++
+ 		if (PageHighMem(page)) {
+-			void *addr;
++			start = kmap_atomic(page);
+ 
+-			if (offset + len > PAGE_SIZE) {
+-				if (offset >= PAGE_SIZE) {
+-					page += offset >> PAGE_SHIFT;
+-					offset &= ~PAGE_MASK;
+-				}
+-				len = PAGE_SIZE - offset;
+-			}
++			fn((unsigned long)start + offset,
++					(unsigned long)start + offset + len);
+ 
+-			addr = kmap_atomic(page);
+-			start = (unsigned long)(addr + offset);
+-			fn(start, start + len);
+-			kunmap_atomic(addr);
++			kunmap_atomic(start);
+ 		} else {
+-			start = (unsigned long)phys_to_virt(paddr);
+-			fn(start, start + size);
++			fn((unsigned long)start + offset,
++					(unsigned long)start + offset + len);
+ 		}
+ 		offset = 0;
++
+ 		page++;
++		start += PAGE_SIZE;
+ 		left -= len;
+ 	} while (left);
+ }
+ 
++static void dma_wbinv_set_zero_range(unsigned long start, unsigned long end)
++{
++	memset((void *)start, 0, end - start);
++	dma_wbinv_range(start, end);
++}
++
++void arch_dma_prep_coherent(struct page *page, size_t size)
++{
++	cache_op(page_to_phys(page), size, dma_wbinv_set_zero_range);
++}
++
+ void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+ 			      size_t size, enum dma_data_direction dir)
+ {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
