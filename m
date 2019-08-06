@@ -2,136 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62BF282DB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9332D82DC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:33:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732294AbfHFI3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 04:29:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55794 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728056AbfHFI3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 04:29:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9C99FAF1D;
-        Tue,  6 Aug 2019 08:29:10 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 10:29:07 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     syzbot <syzbot+8e6326965378936537c3@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, chris@chrisdown.name, chris@zankel.net,
-        dancol@google.com, dave.hansen@intel.com, hannes@cmpxchg.org,
-        hdanton@sina.com, james.bottomley@hansenpartnership.com,
-        kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
-        laoar.shao@gmail.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mgorman@techsingularity.net,
-        oleksandr@redhat.com, ralf@linux-mips.org, rth@twiddle.net,
-        sfr@canb.auug.org.au, shakeelb@google.com, sonnyrao@google.com,
-        surenb@google.com, syzkaller-bugs@googlegroups.com,
-        timmurray@google.com, yang.shi@linux.alibaba.com
-Subject: Re: kernel BUG at mm/vmscan.c:LINE! (2)
-Message-ID: <20190806082907.GI11812@dhcp22.suse.cz>
-References: <000000000000a9694d058f261963@google.com>
- <20190802200643.GA181880@google.com>
+        id S1732214AbfHFIcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 04:32:31 -0400
+Received: from gateway20.websitewelcome.com ([192.185.4.169]:32818 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726713AbfHFIcb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 04:32:31 -0400
+X-Greylist: delayed 1460 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 04:32:31 EDT
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 3E372400CCC9F
+        for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2019 02:04:19 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uuVuhKzHT3Qi0uuVuh4Lqf; Tue, 06 Aug 2019 03:08:10 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=tqouW1qc7UK4ejwDOesOIcmQuJMwuxvioRsJeeb5IM4=; b=jRJr7JqsYbSOKqd3gMKqlUEGdo
+        P3OgHdi2UEwTbXofL3M+SRi1gJ2Z4GjkdghudNwCHsdYrMJkwpFcWX+0UbTYUX+g2UZYBDHMss7RY
+        1v9RcUlL3gZI0JB/wonWbx1xTppZ7c0L5/luX6ETiDSh8PCNRtX/j04bfAx5Km1AjSASCjRQXvtKU
+        wUmmu0YtI2mqcVQPswZx5+FrCe2CAUgQxi9y8xu+4J2WGaeKjzKpsr+GbBhAf8ySTfcs8Xj5AyCSU
+        yabIKstVHzxCdxNqDLqDCNAXwfAO/3idG1hHr3reEdXk2bmjvHo+fU2n7tXGGVY68sT47qwcBqP1j
+        CCkwmx0Q==;
+Received: from [187.192.11.120] (port=43488 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1huuVt-000ibV-Rp; Tue, 06 Aug 2019 03:08:09 -0500
+Date:   Tue, 6 Aug 2019 03:08:08 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ata: rb532_cf: Fix unused variable warning in
+ rb532_pata_driver_probe
+Message-ID: <20190806080808.GA30026@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190802200643.GA181880@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1huuVt-000ibV-Rp
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:43488
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 03-08-19 05:06:43, Minchan Kim wrote:
-> On Fri, Aug 02, 2019 at 10:58:05AM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    0d8b3265 Add linux-next specific files for 20190729
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1663c7d0600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=ae96f3b8a7e885f7
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=8e6326965378936537c3
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133c437c600000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15645854600000
-> > 
-> > The bug was bisected to:
-> > 
-> > commit 06a833a1167e9cbb43a9a4317ec24585c6ec85cb
-> > Author: Minchan Kim <minchan@kernel.org>
-> > Date:   Sat Jul 27 05:12:38 2019 +0000
-> > 
-> >     mm: introduce MADV_PAGEOUT
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1545f764600000
-> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=1745f764600000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1345f764600000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+8e6326965378936537c3@syzkaller.appspotmail.com
-> > Fixes: 06a833a1167e ("mm: introduce MADV_PAGEOUT")
-> > 
-> > raw: 01fffc0000090025 dead000000000100 dead000000000122 ffff88809c49f741
-> > raw: 0000000000020000 0000000000000000 00000002ffffffff ffff88821b6eaac0
-> > page dumped because: VM_BUG_ON_PAGE(PageActive(page))
-> > page->mem_cgroup:ffff88821b6eaac0
-> > ------------[ cut here ]------------
-> > kernel BUG at mm/vmscan.c:1156!
-> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> > CPU: 1 PID: 9846 Comm: syz-executor110 Not tainted 5.3.0-rc2-next-20190729
-> > #54
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > RIP: 0010:shrink_page_list+0x2872/0x5430 mm/vmscan.c:1156
-> 
-> My old version had PG_active flag clear but it seems to lose it with revising
-> patchsets. Thanks, Sizbot!
-> 
-> >From 66d64988619ef7e86b0002b2fc20fdf5b84ad49c Mon Sep 17 00:00:00 2001
-> From: Minchan Kim <minchan@kernel.org>
-> Date: Sat, 3 Aug 2019 04:54:02 +0900
-> Subject: [PATCH] mm: Clear PG_active on MADV_PAGEOUT
-> 
-> shrink_page_list expects every pages as argument should be no active
-> LRU pages so we need to clear PG_active.
+Fix the following warning (Building: rb532_defconfig mips):
 
-Ups, missed that during review.
+drivers/ata/pata_rb532_cf.c: In function ‘rb532_pata_driver_remove’:
+drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable ‘info’ [-Wunused-variable]
+  struct rb532_cf_info *info = ah->private_data;
+                        ^~~~
 
-> 
-> Reported-by: syzbot+8e6326965378936537c3@syzkaller.appspotmail.com
-> Fixes: 06a833a1167e ("mm: introduce MADV_PAGEOUT")
+Fixes: cd56f35e52d9 ("ata: rb532_cf: Convert to use GPIO descriptors")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/ata/pata_rb532_cf.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-This is not a valid sha1 because it likely comes from linux-next. I
-guess Andrew will squash it into mm-introduce-madv_pageout.patch
-
-Just for the record
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-And thanks for syzkaller to exercise the new interface so quickly!
-
-> Signed-off-by: Minchan Kim <minchan@kernel.org>
-> ---
->  mm/vmscan.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 47aa2158cfac2..e2a8d3f5bbe48 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -2181,6 +2181,7 @@ unsigned long reclaim_pages(struct list_head *page_list)
->  		}
->  
->  		if (nid == page_to_nid(page)) {
-> +			ClearPageActive(page);
->  			list_move(&page->lru, &node_page_list);
->  			continue;
->  		}
-> -- 
-> 2.22.0.770.g0f2c4a37fd-goog
-
+diff --git a/drivers/ata/pata_rb532_cf.c b/drivers/ata/pata_rb532_cf.c
+index 7c37f2ff09e4..deae466395de 100644
+--- a/drivers/ata/pata_rb532_cf.c
++++ b/drivers/ata/pata_rb532_cf.c
+@@ -158,7 +158,6 @@ static int rb532_pata_driver_probe(struct platform_device *pdev)
+ static int rb532_pata_driver_remove(struct platform_device *pdev)
+ {
+ 	struct ata_host *ah = platform_get_drvdata(pdev);
+-	struct rb532_cf_info *info = ah->private_data;
+ 
+ 	ata_host_detach(ah);
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.22.0
+
