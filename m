@@ -2,63 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E3182F5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A63582F66
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:03:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732573AbfHFKDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:03:43 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53691 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732543AbfHFKDm (ORCPT
+        id S1732687AbfHFKDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:03:53 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45695 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732584AbfHFKDx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:03:42 -0400
-Received: by mail-wm1-f65.google.com with SMTP id x15so77582657wmj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 03:03:41 -0700 (PDT)
+        Tue, 6 Aug 2019 06:03:53 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n1so986127wrw.12
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 03:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TwOhMGhMANMXvAFZPihyePA9NbKtnOP/KgFKclRHF+k=;
-        b=BK7oLng4JJpIrJecvlzh3peO1eFaLtaQYBzGrT0Z6HrqZk0GiczmRg8lC+Kagnlwkk
-         YYCcEqIeJYGpnsLnS83L1/Z3M1C7BsV9/eDAY14XoGJ9o61YKfMEA6bzHxCloqZEbj2K
-         P8Y+ylJ0jAQy7JiP/LFSfjH3ERxZZfl+7Lwew36294Wy8aMg6ib0NyywtP4gHSs8LsOs
-         ItNGmaQHIcOmBwvUDry5Hdctrk6RyoN9fWEYwzaY6qHEwKc7Tu824SqN8a5VaBHCbssk
-         JPMd+2/zJWhft4iSdD9k0ZDTZh4GtHdz+s60ShlwBCGCBXw7ra99lQ2B3YfomOQl253n
-         JUKQ==
+        bh=yRfiZQS/MLeED/+UleHvJbVSuxRbNh/I4+CcWmfu7n8=;
+        b=Vd8lWUxERdFr52N+7CmJG7ZCxbUmKHsZXQh/8skgu8vMxG9PVFSXBzzcln5FO6DyvW
+         mtkMK5yR8FvjgO4K37wqDtozL3n0WKWD/gXnWUPDJt/4RKXBvdnwwQw/sftROFIc5LLy
+         vaSyVQ+9t66RxvOMcyqaqAwgeFLjHc75DlnMNP4fdX56X+FlOO6hWY8a8h66+UVEJL+5
+         nqHj17rHatoPqHzs0Y76G2CZo6IoL3bT3NcQi3UcdBTpGDFgWPOd6jMu02TOKFGvrPbu
+         hzf23irMD2GsWBeFePeEoCR/KE+J6aPg4akZOsMjLSKfY2bYvnIdwyTkYeYi7nKkYHvD
+         +uig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=TwOhMGhMANMXvAFZPihyePA9NbKtnOP/KgFKclRHF+k=;
-        b=LcXEVs6qguwdMRiC//4WfzHRHCUObs5oL7j2LVQDWAoBCnA8uyncdePk8DN/4iY/Yn
-         +rcuFTjtuj6vPkOefKqdcsPHVNuqU2zBYQYdu2oknMk6q721Ex1BuomCJXuKrJUUQ8dA
-         luslRSRxW3ntfBH3+vrqVNKalLbOjXKZD7zg6Zc5jB0xIcVZAXIVXoxidEpeS9W9SKYr
-         4h9NemJVu2b0heyQJbj5nTLsi8QDrxUtBcgw/YhiSqzVb2epvsKBnmCeiOmL02p1gsnw
-         n1VllYBe0heP9LHOaC1CwY0TQTjK4Be0k5jD+24tqk8SibuZ4/qpI+y4ZJIVl1BPTlX2
-         NHlw==
-X-Gm-Message-State: APjAAAULDLwNEoXFb3we8zv0at8L6YXosQQxaFpUVlL3stVkV51gjxXi
-        n9p24744/d+YJsc3NDMpuF6P4YAPmgI=
-X-Google-Smtp-Source: APXvYqzB5aML87ltd0qmY/t6gnJ7NTu3qhxLEDRLnwurrlBIZmzqUYS5d/zxdu59Xvw/ARwQNjzltA==
-X-Received: by 2002:a1c:343:: with SMTP id 64mr4020385wmd.116.1565085820389;
-        Tue, 06 Aug 2019 03:03:40 -0700 (PDT)
+        bh=yRfiZQS/MLeED/+UleHvJbVSuxRbNh/I4+CcWmfu7n8=;
+        b=JEM2+rMece6zHgpkrkNKl1MduoM5P2IzfNDQfkairHfflv1cI/5qWkCUjeW7FSKdbO
+         ctyw9l4JDqbQb0GY6MAArRv1B5vc2avx6OKp/dvrhfSFPUO1+8Hv+3MK9mdQQFUr/0aI
+         jO1EpAsFevT+0+U/xW6drBhGB/6hata15P66Q3ZS584C5FbJbR7R49JsSr2L2ZY0+4Sk
+         i+tOYZwgMbR4pBQ78ehBCaoxhIfo+txE8nyedV/iNsR0iijBzgKXvRtfdqfBbAv03mLZ
+         2l9S2d9cBq23p2ylfSI//CekU+TmmieCCD7vqZqZUuXrNEViV9RruTJ0BXkHjMTdUyYM
+         DBig==
+X-Gm-Message-State: APjAAAV/uqjIglIpY5d4by5d/oiyDjSz8M/zWnctQsL2iUkqNw9uZ3HH
+        oZgcpcFX942G9werAvSb4UHZvw==
+X-Google-Smtp-Source: APXvYqzagEuL70h0nJNiwsRJzSzRRsUyeFmpldhU1sRM+F+c6A1G1ix0bnDeLmhOnsF1ZMs7mjqZ9Q==
+X-Received: by 2002:adf:efc5:: with SMTP id i5mr3830434wrp.158.1565085830815;
+        Tue, 06 Aug 2019 03:03:50 -0700 (PDT)
 Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id a67sm109887567wmh.40.2019.08.06.03.03.39
+        by smtp.googlemail.com with ESMTPSA id n9sm134635207wrp.54.2019.08.06.03.03.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 03:03:39 -0700 (PDT)
-Subject: Re: [PATCH v2] nvmem: meson-mx-efuse: allow reading data smaller than
- word_size
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190727193414.11371-1-martin.blumenstingl@googlemail.com>
+        Tue, 06 Aug 2019 03:03:50 -0700 (PDT)
+Subject: Re: [PATCH 1/1] nvmem: sunxi_sid: fix A64 SID controller support
+To:     Stefan Mavrodiev <stefan@olimex.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     linux-sunxi@googlegroups.com
+References: <20190731071447.9019-1-stefan@olimex.com>
+ <20190731071447.9019-2-stefan@olimex.com>
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <375179fb-7cb6-0ec0-0c1a-b894c5198e15@linaro.org>
-Date:   Tue, 6 Aug 2019 11:03:39 +0100
+Message-ID: <9b26646f-f8db-cf8d-6f47-f2fbb0ac41a8@linaro.org>
+Date:   Tue, 6 Aug 2019 11:03:49 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190727193414.11371-1-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20190731071447.9019-2-stefan@olimex.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,18 +73,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 27/07/2019 20:34, Martin Blumenstingl wrote:
-> Some Amlogic boards store the Ethernet MAC address inside the eFuse. The
-> Ethernet MAC address uses 6 bytes. The existing logic in
-> meson_mx_efuse_read() would write beyond the end of the data buffer when
-> trying to read data with a size that is not aligned to word_size (4
-> bytes on Meson8, Meson8b and Meson8m2).
+On 31/07/2019 08:14, Stefan Mavrodiev wrote:
+> Like in H3, A64 SID controller doesn't return correct data
+> when using direct access. It appears that on A64, SID needs
+> 8 bytes of word_size.
 > 
-> Calculate the remaining data to copy inside meson_mx_efuse_read() so
-> reading 6 bytes doesn't write beyond the end of the data buffer.
+> Workaround is to enable read by registers.
 > 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
 
 Applied Thanks,
-Srini
+srini
