@@ -2,152 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 878C08338C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E46A833A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:10:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732779AbfHFOHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 10:07:03 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3767 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728836AbfHFOHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 10:07:03 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E96F6A1A2E2A146353F6;
-        Tue,  6 Aug 2019 22:06:59 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 6 Aug 2019
- 22:06:52 +0800
-From:   Cheng Jian <cj.chengjian@huawei.com>
-To:     <mingo@redhat.com>, <peterz@infradead.org>, <xiexiuqi@huawei.com>,
-        <huawei.libin@huawei.com>, <cj.chengjian@huawei.com>,
-        <bobo.shaobowang@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH] sched/core: decrease rq->nr_uninterruptible before set_task_cpu
-Date:   Tue, 6 Aug 2019 22:12:50 +0800
-Message-ID: <1565100770-110193-1-git-send-email-cj.chengjian@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1732865AbfHFOKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 10:10:41 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35548 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728259AbfHFOKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 10:10:40 -0400
+Received: by mail-wm1-f68.google.com with SMTP id l2so76577518wmg.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 07:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cARuDPvllFn1lWUM9aELb0vIdKd2MGWlXsw/sP4g2S0=;
+        b=lVmlFjkWa5PZBY76E9+D+WKr0leENjWuTmvkyl7GSqREHpHwKPxJ+BGSsDpp06DwFc
+         X3l0XKa6cnKN7eHCORXzaczS4KqhWAN3LU8uTKSuJm8e+n8FjnYs9jOpMyfmxI+HMSa4
+         QZDYyc3MkJSTMsVBCDlYB7jk6nLO6ixJHUn2QpEoeV2p3fXb/UWwMJA/v8ZcsFe7YLO8
+         kLpyu4TUIXlE1mI7RX2Zd+UPoDt+pG5UnzoH1tnbefHgudRQKsxn9aWnCeLfA9yLIWvV
+         yk664BqZ6ZuLTyeRpjd5nHQs365INAPIdr2ZKDFwy0Sy7ZDzmEvflevNFlPO4DJHcH4d
+         xasg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cARuDPvllFn1lWUM9aELb0vIdKd2MGWlXsw/sP4g2S0=;
+        b=ON/RqJJkmOVh/haFo68QQ1PGPMlg2lOdRniRxPVr/APxruK9XpGrbhkE7ExKLnV6ej
+         h+WRvrMeMrxvbOGv1oaESgEASrO3Y7cf9z5N1xdopZs5drp/Yel/PFAwJqgzkW9m+kDk
+         hMIk2XDLm34CqAlRx+Dk2reNgkt/DVy/Ivhb3KdeBN75zhP0Anl8FYRbdRR4zoTOSxd8
+         QZDe0bjQ6pJkLC0m5+uMczvXqfwnFBs6qyPuwPgkiNVRbpuARb/Uz8iSRTV5+qtT+NLg
+         a6hNX+cEtXW9HPykg35ofjAniE2rS8R5HgO097SMbF9mgQZwPH+iNlPVMMbE8xtGIoTc
+         JUAw==
+X-Gm-Message-State: APjAAAVJloroMxqJbO/qVntwQ43gZfLR6OqfCl2LAdR+4Rl0Z62kvGPX
+        BwCGKou0oGL9k1maRC6G9PdW/8B6EUxEOGYXzMQ=
+X-Google-Smtp-Source: APXvYqwMEPB4UjTcplXgUvnLsC7BrhZCQUuZrPENBgkdggX2EZaIxt+4UShPR6rDLuSDrzBQ6dvA+NtmFBD+leSooPA=
+X-Received: by 2002:a1c:9e90:: with SMTP id h138mr5312157wme.67.1565100637820;
+ Tue, 06 Aug 2019 07:10:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+References: <20190804203713.13724-1-natechancellor@gmail.com> <MN2PR12MB3344B936DC2DBD85443C6AC7E4DA0@MN2PR12MB3344.namprd12.prod.outlook.com>
+In-Reply-To: <MN2PR12MB3344B936DC2DBD85443C6AC7E4DA0@MN2PR12MB3344.namprd12.prod.outlook.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 6 Aug 2019 10:10:25 -0400
+Message-ID: <CADnq5_OWUn3Y2RA68pT-Sw1yRKSY0Eqtz=TAoPOXZ5V-KY5EWA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/powerplay: Zero initialize some variables
+To:     "Quan, Evan" <Evan.Quan@amd.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        "clang-built-linux@googlegroups.com" 
+        <clang-built-linux@googlegroups.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Migration may occur when wake up a process, so we must update
-the rq->nr_uninterruptible before set_task_cpu, otherwise we
-will decrease the nr_interuptible of the incorrect rq. Over
-time, it cause some rq accounting according to be too large,
-but others are negative.
+Applied.  Thanks!
 
-Also change the type of rq->nr_uninterruptible to atomic_t.
+Alex
 
-Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
----
- kernel/sched/core.c    | 14 +++++++++-----
- kernel/sched/debug.c   |  2 +-
- kernel/sched/loadavg.c |  2 +-
- kernel/sched/sched.h   |  2 +-
- 4 files changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 2b037f1..4d3bbc1 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1198,7 +1198,7 @@ static inline void dequeue_task(struct rq *rq, struct task_struct *p, int flags)
- void activate_task(struct rq *rq, struct task_struct *p, int flags)
- {
- 	if (task_contributes_to_load(p))
--		rq->nr_uninterruptible--;
-+		atomic_dec(&rq->nr_uninterruptible);
- 
- 	enqueue_task(rq, p, flags);
- 
-@@ -1210,7 +1210,7 @@ void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
- 	p->on_rq = (flags & DEQUEUE_SLEEP) ? 0 : TASK_ON_RQ_MIGRATING;
- 
- 	if (task_contributes_to_load(p))
--		rq->nr_uninterruptible++;
-+		atomic_inc(&rq->nr_uninterruptible);
- 
- 	dequeue_task(rq, p, flags);
- }
-@@ -2135,9 +2135,6 @@ ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
- 	lockdep_assert_held(&rq->lock);
- 
- #ifdef CONFIG_SMP
--	if (p->sched_contributes_to_load)
--		rq->nr_uninterruptible--;
--
- 	if (wake_flags & WF_MIGRATED)
- 		en_flags |= ENQUEUE_MIGRATED;
- #endif
-@@ -2500,11 +2497,15 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
- 	p->sched_contributes_to_load = !!task_contributes_to_load(p);
- 	p->state = TASK_WAKING;
- 
-+	/* update the rq accounting according before set_task_cpu */
- 	if (p->in_iowait) {
- 		delayacct_blkio_end(p);
- 		atomic_dec(&task_rq(p)->nr_iowait);
- 	}
- 
-+	if (p->sched_contributes_to_load)
-+		atomic_dec(&task_rq(p)->nr_uninterruptible);
-+
- 	cpu = select_task_rq(p, p->wake_cpu, SD_BALANCE_WAKE, wake_flags);
- 	if (task_cpu(p) != cpu) {
- 		wake_flags |= WF_MIGRATED;
-@@ -2519,6 +2520,9 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
- 		atomic_dec(&task_rq(p)->nr_iowait);
- 	}
- 
-+	if (p->sched_contributes_to_load)
-+		atomic_dec(&task_rq(p)->nr_uninterruptible);
-+
- #endif /* CONFIG_SMP */
- 
- 	ttwu_queue(p, cpu, wake_flags);
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index f7e4579..fa2c1bc 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -641,7 +641,7 @@ do {									\
- 	P(nr_running);
- 	P(nr_switches);
- 	P(nr_load_updates);
--	P(nr_uninterruptible);
-+	SEQ_printf(m, "  .%-30s: %d\n", "nr_uninterruptible", atomic_read(&rq->nr_uninterruptible));
- 	PN(next_balance);
- 	SEQ_printf(m, "  .%-30s: %ld\n", "curr->pid", (long)(task_pid_nr(rq->curr)));
- 	PN(clock);
-diff --git a/kernel/sched/loadavg.c b/kernel/sched/loadavg.c
-index 28a5165..cae7643 100644
---- a/kernel/sched/loadavg.c
-+++ b/kernel/sched/loadavg.c
-@@ -81,7 +81,7 @@ long calc_load_fold_active(struct rq *this_rq, long adjust)
- 	long nr_active, delta = 0;
- 
- 	nr_active = this_rq->nr_running - adjust;
--	nr_active += (long)this_rq->nr_uninterruptible;
-+	nr_active += (long)atomic_read(&this_rq->nr_uninterruptible);
- 
- 	if (nr_active != this_rq->calc_load_active) {
- 		delta = nr_active - this_rq->calc_load_active;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 802b1f3..8429281 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -890,7 +890,7 @@ struct rq {
- 	 * one CPU and if it got migrated afterwards it may decrease
- 	 * it on another CPU. Always updated under the runqueue lock:
- 	 */
--	unsigned long		nr_uninterruptible;
-+	atomic_t		nr_uninterruptible;
- 
- 	struct task_struct	*curr;
- 	struct task_struct	*idle;
--- 
-2.7.4
-
+On Sun, Aug 4, 2019 at 9:21 PM Quan, Evan <Evan.Quan@amd.com> wrote:
+>
+> Thanks Nathan. The patch is reviewed-by: Evan Quan <evan.quan@amd.com>
+>
+> > -----Original Message-----
+> > From: Nathan Chancellor <natechancellor@gmail.com>
+> > Sent: Monday, August 05, 2019 4:37 AM
+> > To: Quan, Evan <Evan.Quan@amd.com>; Deucher, Alexander
+> > <Alexander.Deucher@amd.com>; Koenig, Christian
+> > <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
+> > <David1.Zhou@amd.com>
+> > Cc: amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux-
+> > kernel@vger.kernel.org; clang-built-linux@googlegroups.com; Nathan
+> > Chancellor <natechancellor@gmail.com>
+> > Subject: [PATCH] drm/amd/powerplay: Zero initialize some variables
+> >
+> > Clang warns (only Navi warning shown but Arcturus warns as well):
+> >
+> > drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:1534:4: warning:
+> > variable 'asic_default_power_limit' is used uninitialized whenever '?:'
+> > condition is false [-Wsometimes-uninitialized]
+> >                         smu_read_smc_arg(smu, &asic_default_power_limit);
+> >                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/amd/amdgpu/../powerplay/inc/amdgpu_smu.h:588:3:
+> > note:
+> > expanded from macro 'smu_read_smc_arg'
+> >         ((smu)->funcs->read_smc_arg? (smu)->funcs->read_smc_arg((smu),
+> > (arg)) : 0)
+> >          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:1550:30: note:
+> > uninitialized use occurs here
+> >                 smu->default_power_limit = asic_default_power_limit;
+> >                                            ^~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:1534:4: note:
+> > remove the '?:' if its condition is always true
+> >                         smu_read_smc_arg(smu, &asic_default_power_limit);
+> >                         ^
+> > drivers/gpu/drm/amd/amdgpu/../powerplay/inc/amdgpu_smu.h:588:3:
+> > note:
+> > expanded from macro 'smu_read_smc_arg'
+> >         ((smu)->funcs->read_smc_arg? (smu)->funcs->read_smc_arg((smu),
+> > (arg)) : 0)
+> >          ^
+> > drivers/gpu/drm/amd/amdgpu/../powerplay/navi10_ppt.c:1517:35: note:
+> > initialize the variable 'asic_default_power_limit' to silence this warning
+> >         uint32_t asic_default_power_limit;
+> >                                          ^
+> >                                           = 0
+> > 1 warning generated.
+> >
+> > As the code is currently written, if read_smc_arg were ever NULL, arg would
+> > fail to be initialized but the code would continue executing as normal
+> > because the return value would just be zero.
+> >
+> > There are a few different possible solutions to resolve this class of warnings
+> > which have appeared in these drivers before:
+> >
+> > 1. Assume the function pointer will never be NULL and eliminate the
+> >    wrapper macros.
+> >
+> > 2. Have the wrapper macros initialize arg when the function pointer is
+> >    NULL.
+> >
+> > 3. Have the wrapper macros return an error code instead of 0 when the
+> >    function pointer is NULL so that the callsites can properly bail out
+> >    before arg can be used.
+> >
+> > 4. Initialize arg at the top of its function.
+> >
+> > Number four is the path of least resistance right now as every other change
+> > will be driver wide so do that here. I only make the comment now as food for
+> > thought.
+> >
+> > Fixes: b4af964e75c4 ("drm/amd/powerplay: make power limit retrieval as
+> > asic specific")
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/627
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  drivers/gpu/drm/amd/powerplay/arcturus_ppt.c | 2 +-
+> >  drivers/gpu/drm/amd/powerplay/navi10_ppt.c   | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+> > b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+> > index 215f7173fca8..b92eded7374f 100644
+> > --- a/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+> > +++ b/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c
+> > @@ -1326,7 +1326,7 @@ static int arcturus_get_power_limit(struct
+> > smu_context *smu,
+> >                                    bool asic_default)
+> >  {
+> >       PPTable_t *pptable = smu->smu_table.driver_pptable;
+> > -     uint32_t asic_default_power_limit;
+> > +     uint32_t asic_default_power_limit = 0;
+> >       int ret = 0;
+> >       int power_src;
+> >
+> > diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> > b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> > index 106352a4fb82..d844bc8411aa 100644
+> > --- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> > +++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> > @@ -1514,7 +1514,7 @@ static int navi10_get_power_limit(struct
+> > smu_context *smu,
+> >                                    bool asic_default)
+> >  {
+> >       PPTable_t *pptable = smu->smu_table.driver_pptable;
+> > -     uint32_t asic_default_power_limit;
+> > +     uint32_t asic_default_power_limit = 0;
+> >       int ret = 0;
+> >       int power_src;
+> >
+> > --
+> > 2.23.0.rc1
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
