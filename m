@@ -2,87 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F8FA82B41
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 07:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E178282B4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 07:53:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731719AbfHFFtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 01:49:35 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42837 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfHFFtf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 01:49:35 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so40854443pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 22:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uvYE7nrJnBQlmcbxz3H63UPfE8YRBopt5KIB26DSah4=;
-        b=NdeC0FJH9+Hlx0praiF0UKs2uENSLKhRuLYYPX5PWUvTVIB3Kt9PHiuuJbUB9agSfS
-         BE1i+l1rxxWnrkOR6KarFJVJnta5e6gU0nStxUDXtmZmbwLgCH6adUL+JQ8alHYc13Dq
-         IdDs0knZ5ETE6HwNep8raP4YAakd+Ux7SSpT65lyVmgsBvOKDxF6PLbc2t4qnG7pFx/k
-         mvRWC94RieljBIKN8ejTcNfhdoHO1NTsu+lXwK5QtsLD7hvmC1zjd6Wls+NAg/fl/Nhj
-         T6z9FvjfZEg2wj4Jg63I0cmGGZlaQNWJ/LJqVcq+wRlHr4rMSfWk805XiXT9E6dP7ZSh
-         4Pcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=uvYE7nrJnBQlmcbxz3H63UPfE8YRBopt5KIB26DSah4=;
-        b=N1bz7BxZYK43McUdh2PY30s50TzNKg+rUzS+tXMgW1Qu8TI+bEzs/A4zOTUTHtAZXL
-         2x2MxHlENixsOQa98rwY3gJW4IKgqNEwbuJ6qs5cqzuzGIi+kp8r6uXQi9vwsg15ibRB
-         eKZGo1YmZV6/lsNkPRtFPmTjZ6O23McDiJQL4sHbb0yNflXIHsmEAWuJORcplQ1tJvkJ
-         0/j7w5e3imBVjHCneGc578ALJ5NPXus5RMF4ap3l/1KKOeLQlqyRbPFlFRCR6sN9pfbI
-         aIsqmGt9UWCiBAY3SDUuY8fZkibQeAJhGeDulA1edmyVEUjy74Ha95Va6Q9qupJRDq2i
-         MBnQ==
-X-Gm-Message-State: APjAAAU+zlb8ICit/tV4irIV9Wm+j/3X0b/3ljZ8kFqVL4BWeKK04TV+
-        FqAIETo3S89kKdpjDoc5yMs=
-X-Google-Smtp-Source: APXvYqwP9PSzizaUfPFnptDdZml03za3TGNcWXCtkReNEzyNCPM6ATqKcupvDjBhdpOmHah/zcefag==
-X-Received: by 2002:a17:90a:384d:: with SMTP id l13mr1425752pjf.86.1565070574630;
-        Mon, 05 Aug 2019 22:49:34 -0700 (PDT)
-Received: from [192.168.1.2] ([171.61.30.136])
-        by smtp.gmail.com with ESMTPSA id x14sm106764131pfq.158.2019.08.05.22.49.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2019 22:49:33 -0700 (PDT)
-Subject: Re: [PATCH] ARC: unwind: Mark expected switch fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190805193232.GA12826@embeddedor>
-From:   Vineet Gupta <vineetg76@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; prefer-encrypt=mutual; keydata=
- mQINBFEffBMBEADIXSn0fEQcM8GPYFZyvBrY8456hGplRnLLFimPi/BBGFA24IR+B/Vh/EFk
- B5LAyKuPEEbR3WSVB1x7TovwEErPWKmhHFbyugdCKDv7qWVj7pOB+vqycTG3i16eixB69row
- lDkZ2RQyy1i/wOtHt8Kr69V9aMOIVIlBNjx5vNOjxfOLux3C0SRl1veA8sdkoSACY3McOqJ8
- zR8q1mZDRHCfz+aNxgmVIVFN2JY29zBNOeCzNL1b6ndjU73whH/1hd9YMx2Sp149T8MBpkuQ
- cFYUPYm8Mn0dQ5PHAide+D3iKCHMupX0ux1Y6g7Ym9jhVtxq3OdUI5I5vsED7NgV9c8++baM
- 7j7ext5v0l8UeulHfj4LglTaJIvwbUrCGgtyS9haKlUHbmey/af1j0sTrGxZs1ky1cTX7yeF
- nSYs12GRiVZkh/Pf3nRLkjV+kH++ZtR1GZLqwamiYZhAHjo1Vzyl50JT9EuX07/XTyq/Bx6E
- dcJWr79ZphJ+mR2HrMdvZo3VSpXEgjROpYlD4GKUApFxW6RrZkvMzuR2bqi48FThXKhFXJBd
- JiTfiO8tpXaHg/yh/V9vNQqdu7KmZIuZ0EdeZHoXe+8lxoNyQPcPSj7LcmE6gONJR8ZqAzyk
- F5voeRIy005ZmJJ3VOH3Gw6Gz49LVy7Kz72yo1IPHZJNpSV5xwARAQABtCpWaW5lZXQgR3Vw
- dGEgKGFsaWFzKSA8dmd1cHRhQHN5bm9wc3lzLmNvbT6JAj4EEwECACgCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheABQJbBYpwBQkLx0HcAAoJEGnX8d3iisJeChAQAMR2UVbJyydOv3aV
- jmqP47gVFq4Qml1weP5z6czl1I8n37bIhdW0/lV2Zll+yU1YGpMgdDTHiDqnGWi4pJeu4+c5
- xsI/VqkH6WWXpfruhDsbJ3IJQ46//jb79ogjm6VVeGlOOYxx/G/RUUXZ12+CMPQo7Bv+Jb+t
- NJnYXYMND2Dlr2TiRahFeeQo8uFbeEdJGDsSIbkOV0jzrYUAPeBwdN8N0eOB19KUgPqPAC4W
- HCg2LJ/o6/BImN7bhEFDFu7gTT0nqFVZNXlOw4UcGGpM3dq/qu8ZgRE0turY9SsjKsJYKvg4
- djAaOh7H9NJK72JOjUhXY/sMBwW5vnNwFyXCB5t4ZcNxStoxrMtyf35synJVinFy6wCzH3eJ
- XYNfFsv4gjF3l9VYmGEJeI8JG/ljYQVjsQxcrU1lf8lfARuNkleUL8Y3rtxn6eZVtAlJE8q2
- hBgu/RUj79BKnWEPFmxfKsaj8of+5wubTkP0I5tXh0akKZlVwQ3lbDdHxznejcVCwyjXBSny
- d0+qKIXX1eMh0/5sDYM06/B34rQyq9HZVVPRHdvsfwCU0s3G+5Fai02mK68okr8TECOzqZtG
- cuQmkAeegdY70Bpzfbwxo45WWQq8dSRURA7KDeY5LutMphQPIP2syqgIaiEatHgwetyVCOt6
- tf3ClCidHNaGky9KcNSQ
-Message-ID: <8516c7c5-bd70-38a9-0583-225689e9e1aa@gmail.com>
-Date:   Tue, 6 Aug 2019 11:19:30 +0530
+        id S1731740AbfHFFxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 01:53:19 -0400
+Received: from mga01.intel.com ([192.55.52.88]:31466 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725798AbfHFFxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 01:53:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 22:53:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,352,1559545200"; 
+   d="scan'208";a="349320281"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by orsmga005.jf.intel.com with ESMTP; 05 Aug 2019 22:53:15 -0700
+Subject: Re: [RFC PATCH 1/2] mmc: sdhci: Manually check card status after
+ reset
+To:     Raul Rangel <rrangel@chromium.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        hongjiefang <hongjiefang@asrmicro.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Avri Altman <avri.altman@wdc.com>
+References: <20190501175457.195855-1-rrangel@chromium.org>
+ <CAPDyKFpL1nHt1E1zgS-iDZf_KDWk2CN32Lvr+5Nmo8CtB2VCWg@mail.gmail.com>
+ <20190607160553.GA185100@google.com>
+ <CAPDyKFout6AY2Q92pYQ-KPH0NENq1-SkYivkDxjjb=uB=tKXuQ@mail.gmail.com>
+ <20190610163252.GA227032@google.com>
+ <fcdf6cc4-2729-abe2-85c8-b0d04901c5ae@intel.com>
+ <20190619145625.GA50985@google.com> <20190801151624.GA155392@google.com>
+ <a9a8d3f5-d600-7c8d-8734-cf6a017849c5@intel.com>
+ <20190805164917.GA93879@google.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <408c03b6-720f-1211-6855-2c128a3d269d@intel.com>
+Date:   Tue, 6 Aug 2019 08:51:52 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190805193232.GA12826@embeddedor>
+In-Reply-To: <20190805164917.GA93879@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -91,16 +57,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/6/19 1:02 AM, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
+On 5/08/19 7:49 PM, Raul Rangel wrote:
+> On Fri, Aug 02, 2019 at 07:58:20AM +0300, Adrian Hunter wrote:
+>>
+>> You seem not to have answered to my suggestion for a change to sdhci_reinit() here:
+>>
+>> 	https://lore.kernel.org/lkml/fcdf6cc4-2729-abe2-85c8-b0d04901c5ae@intel.com/
+>>
+> I thought I answered it here: https://lore.kernel.org/lkml/20190619145625.GA50985@google.com/#t
 > 
-> This patch fixes the following warnings (Building: haps_hs_defconfig arc):
-> 
-> arch/arc/kernel/unwind.c:827:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arc/kernel/unwind.c:836:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Did I miss something?
 
-Thx for the patch, applied to arc for-curr.
+I didn't get that mail for some reason, sorry.
 
--Vineet
+Please send out my patch and your second with my ack.
