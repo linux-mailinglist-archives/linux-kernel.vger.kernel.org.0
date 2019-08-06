@@ -2,95 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC59F829E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51C91829EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:13:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731502AbfHFDIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 23:08:15 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:43829 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731487AbfHFDIL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 23:08:11 -0400
-Received: by mail-ua1-f67.google.com with SMTP id o2so33107376uae.10;
-        Mon, 05 Aug 2019 20:08:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Bs0lmDNxa1aAKQKN0MVTNnd8nYHoFzSTA2dziDK99ZE=;
-        b=uvjciLg/2rMNF9ijkXRPobQpKgmfo/ydHMGgu4GxJKxFzJBwyrpN+RChv7QwZtutE8
-         m5utMFeOfsgoMxA4fQI4Fnr/Cl3KkzU3WWz5UOFWPtZ+UkUM3yib9prf5EOBprUE5Y8M
-         ixjEoe47akhAGY8Smy6lnzseKdVIyykZS4daWDvbtGw8f8sR8Vl6jJLwFq3EgRA0Is0d
-         g0Qp0u8cY2uoPlS+Nd22AG3WdJKVq9JZEfWDYnMpo9y2RquGYd8/Db16dc+7QOr2v0Ec
-         JcU/CWRn38fT7dHWq3K24h/KCRHLKwbQtmMCNwAe6fj5TKgEJz8cI7/elvVnMwLRugqX
-         KosQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Bs0lmDNxa1aAKQKN0MVTNnd8nYHoFzSTA2dziDK99ZE=;
-        b=K+mPNHcU6s5NDcjpG5VLzgCz4N5cp4pGVsoFAZ8I4q9zumJjkrSy18QtuIT4kCMGt+
-         fzL0S850WS3SxPhlGD48UrjpJt1fXYvYJIHuZbo6jE9Hjh1ArpuaRW2ZY3zhpyO+6YF4
-         tg72e3BrgIAPUKvNx0Vt9WrtgGNk8/+jlrLZLmiiX+mW/NMiOxW640/Cy30bFocaEnMM
-         1erZ6AAe0Rl7u0Q/ZnD5PlQYK+POd+w83Qpj1ywY99yeO6fdPepMtmeucEwgcZdEK5H1
-         jcwfVho536TOWc9XlpxZjTyHYSKm/Z4pacveE4qyS/4s+JzhHfsp61au/hzafNk60wyH
-         cPWg==
-X-Gm-Message-State: APjAAAUSAzdgZXtu4ESPQNQLrc9ILtHusqthg68S3a/JRti08cHnBU+V
-        5+689NWE3HcKhagPvNJwD+JysX0mX3E=
-X-Google-Smtp-Source: APXvYqz1jj9chZIr0Yf4E395LCJUYFXV1bMRm3+VXYW8Siypet9RS1vk/lBrCB7r6RHni4579BUOnA==
-X-Received: by 2002:ab0:a1:: with SMTP id 30mr779825uaj.29.1565060890557;
-        Mon, 05 Aug 2019 20:08:10 -0700 (PDT)
-Received: from asus-S451LA.lan ([190.22.46.249])
-        by smtp.gmail.com with ESMTPSA id v190sm22683156vkd.37.2019.08.05.20.08.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 20:08:10 -0700 (PDT)
-From:   Luis Araneda <luaraneda@gmail.com>
-To:     linux@armlinux.org.uk, michal.simek@xilinx.com
-Cc:     stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Luis Araneda <luaraneda@gmail.com>
-Subject: [PATCH 2/2] ARM: zynq: Use memcpy_toio instead of memcpy on smp bring-up
-Date:   Mon,  5 Aug 2019 23:07:18 -0400
-Message-Id: <20190806030718.29048-3-luaraneda@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190806030718.29048-1-luaraneda@gmail.com>
-References: <20190806030718.29048-1-luaraneda@gmail.com>
+        id S1730907AbfHFDNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 23:13:10 -0400
+Received: from mga05.intel.com ([192.55.52.43]:62755 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729334AbfHFDNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 23:13:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 20:13:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,352,1559545200"; 
+   d="scan'208";a="202666879"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by fmsmga002.fm.intel.com with ESMTP; 05 Aug 2019 20:13:09 -0700
+Message-ID: <1c6a18dd63e6005045034ccc7b04390ab3c605e5.camel@intel.com>
+Subject: Re: [PATCH] fork: Improve error message for corrupted page tables
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Mon, 05 Aug 2019 20:09:59 -0700
+In-Reply-To: <4236c0c5-9671-b9fe-b5eb-7d1908767905@suse.cz>
+References: <20190730221820.7738-1-sai.praneeth.prakhya@intel.com>
+         <20190731152753.b17d9c4418f4bf6815a27ad8@linux-foundation.org>
+         <a05920e5994fb74af480255471a6c3f090f29b27.camel@intel.com>
+         <20190731212052.5c262ad084cbd6cf475df005@linux-foundation.org>
+         <FFF73D592F13FD46B8700F0A279B802F4F9D61B5@ORSMSX114.amr.corp.intel.com>
+         <4236c0c5-9671-b9fe-b5eb-7d1908767905@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes a kernel panic (read overflow) on memcpy when
-FORTIFY_SOURCE is enabled.
+On Mon, 2019-08-05 at 15:28 +0200, Vlastimil Babka wrote:
+> On 8/2/19 8:46 AM, Prakhya, Sai Praneeth wrote:
+> > > > > > +static const char * const resident_page_types[NR_MM_COUNTERS] = {
+> > > > > > +	"MM_FILEPAGES",
+> > > > > > +	"MM_ANONPAGES",
+> > > > > > +	"MM_SWAPENTS",
+> > > > > > +	"MM_SHMEMPAGES",
+> > > > > > +};
+> > > > > 
+> > > > > But please let's not put this in a header file.  We're asking the
+> > > > > compiler to put a copy of all of this into every compilation unit
+> > > > > which includes the header.  Presumably the compiler is smart enough
+> > > > > not to do that, but it's not good practice.
+> > > > 
+> > > > Thanks for the explanation. Makes sense to me.
+> > > > 
+> > > > Just wanted to check before sending V2, Is it OK if I add this to
+> > > > kernel/fork.c? or do you have something else in mind?
+> > > 
+> > > I was thinking somewhere like mm/util.c so the array could be used by
+> > > other
+> > > code.  But it seems there is no such code.  Perhaps it's best to just
+> > > leave fork.c as
+> > > it is now.
+> > 
+> > Ok, so does that mean have the struct in header file itself?
+> 
+> If the struct definition (including the string values) was in mm/util.c,
+> there would have to be a declaration in a header. If it's in fork.c with
+> the only users, there doesn't need to be separate declaration in a header.
 
-The computed size of memcpy args are:
-- p_size (dst): 4294967295 = (size_t) -1
-- q_size (src): 1
-- size (len): 8
+Makes sense.
 
-Additionally, the memory is marked as __iomem, so one of
-the memcpy_* functions should be used for read/write
+> 
+> > Sorry! for too many questions. I wanted to check with you before changing 
+> > because it's *the* fork.c file (I presume random changes will not be
+> > encouraged here)
+> > 
+> > I am not yet clear on what's the right thing to do here :(
+> > So, could you please help me in deciding.
+> 
+> fork.c should be fine, IMHO
 
-Signed-off-by: Luis Araneda <luaraneda@gmail.com>
----
- arch/arm/mach-zynq/platsmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I was leaning to add struct definition in fork.c as well but just wanted to
+check with Andrew before posting V2.
 
-diff --git a/arch/arm/mach-zynq/platsmp.c b/arch/arm/mach-zynq/platsmp.c
-index 38728badabd4..a10085be9073 100644
---- a/arch/arm/mach-zynq/platsmp.c
-+++ b/arch/arm/mach-zynq/platsmp.c
-@@ -57,7 +57,7 @@ int zynq_cpun_start(u32 address, int cpu)
- 			* 0x4: Jump by mov instruction
- 			* 0x8: Jumping address
- 			*/
--			memcpy((__force void *)zero, &zynq_secondary_trampoline,
-+			memcpy_toio(zero, &zynq_secondary_trampoline,
- 							trampoline_size);
- 			writel(address, zero + trampoline_size);
- 
--- 
-2.22.0
+Thanks for the reply though :)
+
+Regards,
+Sai
 
