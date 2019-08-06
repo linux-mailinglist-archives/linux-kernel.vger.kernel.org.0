@@ -2,182 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62FB78373D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB76483741
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733071AbfHFQph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:45:37 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:37022 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732117AbfHFQph (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:45:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=L8Qsi9HRlyoVoGH2S+hSRi65LltiNgW4vXbUSsBYNjo=; b=AY0UMJb+iW++EBhB14ReL07/6
-        b0pFwP1ANs8Ey7rLTMwawQUMPdUAgfQRQVnZ/OR7JKCYpuel75mq1XkvJI3943Z3MQqQqQhkmdhxO
-        gMiRvM5UopNJOrzm9fVvISbh1BDxrhypglyOjuUgab1W+soP+Y92sFkPmzHVACpr+/u106dEpfBCi
-        WoNn1LreZ4+hkZCRMYbGZ1hOFo9APnQctrKosgfefHdeyXB6/JMXLVG9ifNeovhlGxV0lw0W8ajJ3
-        1igtLNju1aD0Nr45s4CdgQBE/9z4vnCe4JZPjGxIYq1S39XMDc/p6GxbFVUBCrhp5yKR6Z534S6qB
-        7mcKWkceQ==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:49226)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1hv2aC-0000SB-Ab; Tue, 06 Aug 2019 17:45:08 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1hv2a7-0000fh-Ka; Tue, 06 Aug 2019 17:45:03 +0100
-Date:   Tue, 6 Aug 2019 17:45:03 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Will Deacon <will@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        Shawn Anastasio <shawn@anastas.io>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-mapping: fix page attributes for dma_mmap_*
-Message-ID: <20190806164503.GD1330@shell.armlinux.org.uk>
-References: <20190801142118.21225-1-hch@lst.de>
- <20190801142118.21225-2-hch@lst.de>
- <20190801162305.3m32chycsdjmdejk@willie-the-truck>
- <20190801163457.GB26588@lst.de>
- <20190801164411.kmsl4japtfkgvzxe@willie-the-truck>
- <20190802081441.GA9725@lst.de>
- <20190802103803.3qrbhqwxlasojsco@willie-the-truck>
- <20190803064812.GA29746@lst.de>
- <20190806160854.htk67msiyadlrl4m@willie-the-truck>
+        id S2387906AbfHFQpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:45:44 -0400
+Received: from mail-eopbgr680084.outbound.protection.outlook.com ([40.107.68.84]:65444
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732117AbfHFQpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 12:45:42 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kVVHqLfQabHkOXXkqCHp+HpyPUD2M87Rq0BYj00nH+XmU0IEJ17F48+LPaPFTmcqIWcDJ+gQjMtZXbbWhdb0J6KhU8hDSwK/85WHdk08Z7NLEOcUtg7KqJfAU5Dj/sUt9PqNqE7K1F/mWt0ULvXPgKyiwbooYzyFbieC/vGspIu433Rfj5d0+rZwWswjodUTvGNgikE1JWpIPO7jKGOOPqEcilIPiFvcgOxtio/09cY7a1X6x16u0+yPEIerBwsR2+wVpcqQJCyoomaU8BdfUZa7/Mew3njnn71c13GuZpB4RhnI/2AvJX0eJJ+DaO4iNnB/osWJQ0LokZj1fg+5vA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kFrExHUib0n3CbzGX0ZBk9vx0kFrKBpil1M3jXioBAs=;
+ b=ntqEFhlqqf5SMa7QLzu7HzDPBbQ7Mw34tb/OqYhI6yv3HAE3o85F/NKmUcoZwtttrL6GU805j91E6qmrcmkI9qrlSUNFLH857y3Yd5ZMROfQC0d0H2InsCknYAuKSQOtkJ5Ss4i7lU8dAW4bMWSR0tnnIOyV582yi9bV7L784uKtk8XheMjz1QtVt7BN3fpeVIFn3KcCFtXPYv5hLd1fa+RkOXdmTeRK4re8mjx1qbfocfI/DENMAQS0Dc2dEXoWBXZIkGREFBm4BBlYMqsePdDgMU8JR7rgnpfIz+x2WcdH37VE5VEjOYQVr6wYhTzZxan9iFNWkE4L6pqSbZR0gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=amd.com;dmarc=pass action=none header.from=amd.com;dkim=pass
+ header.d=amd.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kFrExHUib0n3CbzGX0ZBk9vx0kFrKBpil1M3jXioBAs=;
+ b=V43asT2lLrDqDgEZvrXuapwuJNBYwYBY2rMexQ7ME+22Y1GJoSDyN1l/KCePWEOBVTc9lrbILPQxrNAmLTxbRVb9fF45z7dpLr/JKATKbjYcEyt3/WLuCQG8SMIpBNNjCOSTD7gT5xFMzcT6sFWRZ8XgfJ/aUFgUy6QyCCiHbnU=
+Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
+ DM5PR12MB2503.namprd12.prod.outlook.com (52.132.141.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.17; Tue, 6 Aug 2019 16:45:19 +0000
+Received: from DM5PR12MB1449.namprd12.prod.outlook.com
+ ([fe80::f9ec:92b6:9a0f:30ca]) by DM5PR12MB1449.namprd12.prod.outlook.com
+ ([fe80::f9ec:92b6:9a0f:30ca%6]) with mapi id 15.20.2136.018; Tue, 6 Aug 2019
+ 16:45:19 +0000
+From:   Gary R Hook <ghook@amd.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "Hook, Gary" <Gary.Hook@amd.com>
+CC:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/2] crypto: ccp - Remove unnecessary linux/pci.h include
+Thread-Topic: [PATCH 2/2] crypto: ccp - Remove unnecessary linux/pci.h include
+Thread-Index: AQHVSYjnhpx45qjCKUOYm/K/QdJelqbuWZWA
+Date:   Tue, 6 Aug 2019 16:45:19 +0000
+Message-ID: <6c1c492c-3f06-c2ee-78b8-3506250512e7@amd.com>
+References: <20190802232013.15957-1-helgaas@kernel.org>
+ <20190802232013.15957-3-helgaas@kernel.org>
+In-Reply-To: <20190802232013.15957-3-helgaas@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR06CA0018.namprd06.prod.outlook.com
+ (2603:10b6:805:8e::31) To DM5PR12MB1449.namprd12.prod.outlook.com
+ (2603:10b6:4:10::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Gary.Hook@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ab5b766e-9dbc-4b44-3a89-08d71a8d7797
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB2503;
+x-ms-traffictypediagnostic: DM5PR12MB2503:
+x-microsoft-antispam-prvs: <DM5PR12MB25037A68EFC94E4A5E07BF91FDD50@DM5PR12MB2503.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:56;
+x-forefront-prvs: 0121F24F22
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(366004)(136003)(346002)(39860400002)(199004)(189003)(31686004)(6246003)(305945005)(476003)(7736002)(25786009)(229853002)(6636002)(11346002)(36756003)(8936002)(186003)(26005)(8676002)(4326008)(486006)(3846002)(6512007)(6116002)(2616005)(6486002)(66066001)(81166006)(81156014)(53936002)(6436002)(2906002)(68736007)(446003)(478600001)(54906003)(71190400001)(64756008)(110136005)(71200400001)(66446008)(6506007)(66556008)(66476007)(316002)(102836004)(76176011)(256004)(99286004)(31696002)(5660300002)(52116002)(386003)(53546011)(14454004)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2503;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IoqnzI2ElguKZLqXaQSk9ATpMDlLjAJFfbZpA6D4A/vy+J1avrknPqBH50s5RL96gUqq9UxizT643000MzAs7iEnxVQpXL3hgIOaiZqUWLX1cqU2m2SRd14JDFBvYUOPOwXlmyaNzYXJ4lZyuCOFZAHbf/zMsKgvXcEIcxZ3JzBoI8B8vh2SvyA4jX9LvPD9FiG9xCYonq79/NwMi+uFO1Co3MwMdcPx77QBCdmittx8RrhD7HUsmR4DDPT4Lx1nberca8IAPGVVxZ0VoED44XnVmz32aQyVG7hkCYBP6u4mklIhRlvZgJghowgGyV52KmhUNTqrm/CQG+fDMM76apjUMf+9waJo96wBJQQZ/RjovTQ7dSRZPi63+UbGpiangZAB6jhLouYGgbM3FlrgN+6v52k3v32ubsTcQoEaprQ=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D5EC6B7AFA06E64DB07650397BF5D82B@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190806160854.htk67msiyadlrl4m@willie-the-truck>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab5b766e-9dbc-4b44-3a89-08d71a8d7797
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2019 16:45:19.7664
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ghook@amd.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2503
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 05:08:54PM +0100, Will Deacon wrote:
-> On Sat, Aug 03, 2019 at 08:48:12AM +0200, Christoph Hellwig wrote:
-> > On Fri, Aug 02, 2019 at 11:38:03AM +0100, Will Deacon wrote:
-> > > 
-> > > So this boils down to a terminology mismatch. The Arm architecture doesn't have
-> > > anything called "write combine", so in Linux we instead provide what the Arm
-> > > architecture calls "Normal non-cacheable" memory for pgprot_writecombine().
-> > > Amongst other things, this memory type permits speculation, unaligned accesses
-> > > and merging of writes. I found something in the architecture spec about
-> > > non-cachable memory, but it's written in Armglish[1].
-> > > 
-> > > pgprot_noncached(), on the other hand, provides what the architecture calls
-> > > Strongly Ordered or Device-nGnRnE memory. This is intended for mapping MMIO
-> > > (i.e. PCI config space) and therefore forbids speculation, preserves access
-> > > size, requires strict alignment and also forces write responses to come from
-> > > the endpoint.
-> > > 
-> > > I think the naming mismatch is historical, but on arm64 we wanted to use the
-> > > same names as arm32 so that any drivers using these things directly would get
-> > > the same behaviour.
-> > 
-> > That all makes sense, but it totally needs a comment.  I'll try to draft
-> > one based on this.  I've also looked at the arm32 code a bit more, and
-> > it seems arm always (?) supported Normal non-cacheable attribute, but
-> > Linux only optionally uses it for arm v6+ because of fears of drivers
-> > missing barriers.
-> 
-> I think it was also to do with aliasing, but I don't recall all of the
-> details.
-
-ARMv6+ is where the architecture significantly changed to introduce
-the idea of [Normal, Device, Strongly Ordered] where Normal has the
-cache attributes.
-
-Before that, we had just "uncached/unbuffered, uncached/buffered,
-cached/unbuffered, cached/buffered" modes.
-
-The write buffer (enabled by buffered modes) has no architected
-guarantees about how long writes will sit in it, and there is only
-the "drain write buffer" instruction to push writes out.
-
-Up to and including ARMv5, we took the easy approach of just using
-the "uncached/unbuffered" mode since that is (a) the safest, and (b)
-avoids write buffers that alias when there are multiple different
-mappings.
-
-We could have used a different approach, making all IO writes contain
-a "drain write buffer" instruction, and map DMA memory as "buffered",
-but as there were no Linux barriers defined to order memory accesses
-to DMA memory (so, for example, ring buffers can be updated in the
-correct order) back in those days, using the uncached/unbuffered mode
-was the sanest and most reliable solution.
-
-> 
-> > The other really weird things is that in arm32
-> > pgprot_dmacoherent incudes the L_PTE_XN bit, which from my understanding
-> > is the no-execture bit, but pgprot_writecombine does not.  This seems to
-> > not very unintentional.  So minus that the whole DMA_ATTR_WRITE_COMBІNE
-> > seems to be about flagging old arm specific drivers as having the proper
-> > barriers in places and otherwise is a no-op.
-> 
-> I think it only matters for Armv7 CPUs, but yes, we should probably be
-> setting L_PTE_XN for both of these memory types.
-
-Conventionally, pgprot_writecombine() has only been used to change
-the memory type and not the permissions.  Since writecombine memory
-is still capable of being executed, I don't see any reason to set XN
-for it.
-
-If the user wishes to mmap() using PROT_READ|PROT_EXEC, then is there
-really a reason for writecombine to set XN overriding the user?
-
-That said, pgprot_writecombine() is mostly used for framebuffers, which
-arguably shouldn't be executable anyway - but who'd want to mmap() the
-framebuffer with PROT_EXEC?
-
-> 
-> > Here is my tentative plan:
-> > 
-> >  - respin this patch with a small fix to handle the
-> >    DMA_ATTR_NON_CONSISTENT (as in ignore it unless actually supported),
-> >    but keep the name as-is to avoid churn.  This should allow 5.3
-> >    inclusion and backports
-> >  - remove DMA_ATTR_WRITE_COMBINE support from mips, probably also 5.3
-> >    material.
-> >  - move all architectures but arm over to just define
-> >    pgprot_dmacoherent, including a comment with the above explanation
-> >    for arm64.
-> 
-> That would be great, thanks.
-> 
-> >  - make DMA_ATTR_WRITE_COMBINE a no-op and schedule it for removal,
-> >    thus removing the last instances of arch_dma_mmap_pgprot
-> 
-> All sounds good to me, although I suppose 32-bit Arm platforms without
-> CONFIG_ARM_DMA_MEM_BUFFERABLE may run into issues if DMA_ATTR_WRITE_COMBINE
-> disappears. Only one way to find out...
-
-Looking at the results of grep, I think only OMAP2+ and Exynos may be
-affected.
-
-However, removing writecombine support from the DMA API is going to
-have a huge impact for framebuffers on earlier ARMs - that's where we
-do expect framebuffers to be mapped "uncached/buffered" for performance
-reasons and not "uncached/unbuffered".  It's quite literally the
-difference between console scrolling being usable and totally unusable.
-
-Given what I've said above, switching to using buffered mode for normal
-DMA mappings is data-corrupting risky - as in your filesystem could get
-fried.  I don't think we should play fast and loose with people's data
-by randomly changing that "because we'd like to", and I don't see that
-screwing the console is really an option either.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+T24gOC8yLzE5IDY6MjAgUE0sIEJqb3JuIEhlbGdhYXMgd3JvdGU6DQo+IEZyb206IEJqb3JuIEhl
+bGdhYXMgPGJoZWxnYWFzQGdvb2dsZS5jb20+DQo+IA0KPiBSZW1vdmUgdW51c2VkIGluY2x1ZGVz
+IG9mIGxpbnV4L3BjaS5oLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQmpvcm4gSGVsZ2FhcyA8Ymhl
+bGdhYXNAZ29vZ2xlLmNvbT4NCg0KQWNrZWQtYnk6IEdhcnkgUiBIb29rIDxnYXJ5Lmhvb2tAYW1k
+LmNvbT4NCg0KPiAtLS0NCj4gICBkcml2ZXJzL2NyeXB0by9jY3AvY2NwLWNyeXB0by5oIHwgMSAt
+DQo+ICAgZHJpdmVycy9jcnlwdG8vY2NwL2NjcC1kZXYtdjMuYyB8IDEgLQ0KPiAgIGRyaXZlcnMv
+Y3J5cHRvL2NjcC9jY3AtZGV2LXY1LmMgfCAxIC0NCj4gICBkcml2ZXJzL2NyeXB0by9jY3AvY2Nw
+LWRldi5oICAgIHwgMSAtDQo+ICAgZHJpdmVycy9jcnlwdG8vY2NwL2NjcC1vcHMuYyAgICB8IDEg
+LQ0KPiAgIGRyaXZlcnMvY3J5cHRvL2NjcC9wc3AtZGV2LmggICAgfCAxIC0NCj4gICBkcml2ZXJz
+L2NyeXB0by9jY3Avc3AtZGV2LmggICAgIHwgMSAtDQo+ICAgNyBmaWxlcyBjaGFuZ2VkLCA3IGRl
+bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3J5cHRvL2NjcC9jY3AtY3J5
+cHRvLmggYi9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLWNyeXB0by5oDQo+IGluZGV4IDYyMmIzNGMx
+NzY0My4uOTAzZTc0ZTdhZDFiIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2NyeXB0by9jY3AvY2Nw
+LWNyeXB0by5oDQo+ICsrKyBiL2RyaXZlcnMvY3J5cHRvL2NjcC9jY3AtY3J5cHRvLmgNCj4gQEAg
+LTEyLDcgKzEyLDYgQEANCj4gICANCj4gICAjaW5jbHVkZSA8bGludXgvbGlzdC5oPg0KPiAgICNp
+bmNsdWRlIDxsaW51eC93YWl0Lmg+DQo+IC0jaW5jbHVkZSA8bGludXgvcGNpLmg+DQo+ICAgI2lu
+Y2x1ZGUgPGxpbnV4L2NjcC5oPg0KPiAgICNpbmNsdWRlIDxjcnlwdG8vYWxnYXBpLmg+DQo+ICAg
+I2luY2x1ZGUgPGNyeXB0by9hZXMuaD4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3J5cHRvL2Nj
+cC9jY3AtZGV2LXYzLmMgYi9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLWRldi12My5jDQo+IGluZGV4
+IDJiN2Q0N2VkNWM3NC4uMDk5MjRmMmMyNjRmIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2NyeXB0
+by9jY3AvY2NwLWRldi12My5jDQo+ICsrKyBiL2RyaXZlcnMvY3J5cHRvL2NjcC9jY3AtZGV2LXYz
+LmMNCj4gQEAgLTEwLDcgKzEwLDYgQEANCj4gICANCj4gICAjaW5jbHVkZSA8bGludXgvbW9kdWxl
+Lmg+DQo+ICAgI2luY2x1ZGUgPGxpbnV4L2tlcm5lbC5oPg0KPiAtI2luY2x1ZGUgPGxpbnV4L3Bj
+aS5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9rdGhyZWFkLmg+DQo+ICAgI2luY2x1ZGUgPGxpbnV4
+L2ludGVycnVwdC5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9jY3AuaD4NCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvY3J5cHRvL2NjcC9jY3AtZGV2LXY1LmMgYi9kcml2ZXJzL2NyeXB0by9jY3AvY2Nw
+LWRldi12NS5jDQo+IGluZGV4IDIxN2U0MWJiYWRhZi4uMGI2ZWYzMzRmOWI3IDEwMDY0NA0KPiAt
+LS0gYS9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLWRldi12NS5jDQo+ICsrKyBiL2RyaXZlcnMvY3J5
+cHRvL2NjcC9jY3AtZGV2LXY1LmMNCj4gQEAgLTksNyArOSw2IEBADQo+ICAgDQo+ICAgI2luY2x1
+ZGUgPGxpbnV4L21vZHVsZS5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4NCj4gLSNp
+bmNsdWRlIDxsaW51eC9wY2kuaD4NCj4gICAjaW5jbHVkZSA8bGludXgva3RocmVhZC5oPg0KPiAg
+ICNpbmNsdWRlIDxsaW51eC9kZWJ1Z2ZzLmg+DQo+ICAgI2luY2x1ZGUgPGxpbnV4L2RtYS1tYXBw
+aW5nLmg+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLWRldi5oIGIvZHJp
+dmVycy9jcnlwdG8vY2NwL2NjcC1kZXYuaA0KPiBpbmRleCA4OWFlZTA5MDBhMDYuLjU3NzQ5YzVh
+NTM3MyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jcnlwdG8vY2NwL2NjcC1kZXYuaA0KPiArKysg
+Yi9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLWRldi5oDQo+IEBAIC0xMiw3ICsxMiw2IEBADQo+ICAg
+I2RlZmluZSBfX0NDUF9ERVZfSF9fDQo+ICAgDQo+ICAgI2luY2x1ZGUgPGxpbnV4L2RldmljZS5o
+Pg0KPiAtI2luY2x1ZGUgPGxpbnV4L3BjaS5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9zcGlubG9j
+ay5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9tdXRleC5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9s
+aXN0Lmg+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLW9wcy5jIGIvZHJp
+dmVycy9jcnlwdG8vY2NwL2NjcC1vcHMuYw0KPiBpbmRleCBjNjllZDRiYWUyZWIuLmI1NjVjMDhi
+YmUyOCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jcnlwdG8vY2NwL2NjcC1vcHMuYw0KPiArKysg
+Yi9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLW9wcy5jDQo+IEBAIC0xMCw3ICsxMCw2IEBADQo+ICAg
+DQo+ICAgI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9rZXJu
+ZWwuaD4NCj4gLSNpbmNsdWRlIDxsaW51eC9wY2kuaD4NCj4gICAjaW5jbHVkZSA8bGludXgvaW50
+ZXJydXB0Lmg+DQo+ICAgI2luY2x1ZGUgPGNyeXB0by9zY2F0dGVyd2Fsay5oPg0KPiAgICNpbmNs
+dWRlIDxjcnlwdG8vZGVzLmg+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NyeXB0by9jY3AvcHNw
+LWRldi5oIGIvZHJpdmVycy9jcnlwdG8vY2NwL3BzcC1kZXYuaA0KPiBpbmRleCBjNWUwNmM5MmQ0
+MGUuLjgyYTA4NGYwMjk5MCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jcnlwdG8vY2NwL3BzcC1k
+ZXYuaA0KPiArKysgYi9kcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRldi5oDQo+IEBAIC0xMSw3ICsx
+MSw2IEBADQo+ICAgI2RlZmluZSBfX1BTUF9ERVZfSF9fDQo+ICAgDQo+ICAgI2luY2x1ZGUgPGxp
+bnV4L2RldmljZS5oPg0KPiAtI2luY2x1ZGUgPGxpbnV4L3BjaS5oPg0KPiAgICNpbmNsdWRlIDxs
+aW51eC9zcGlubG9jay5oPg0KPiAgICNpbmNsdWRlIDxsaW51eC9tdXRleC5oPg0KPiAgICNpbmNs
+dWRlIDxsaW51eC9saXN0Lmg+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NyeXB0by9jY3Avc3At
+ZGV2LmggYi9kcml2ZXJzL2NyeXB0by9jY3Avc3AtZGV2LmgNCj4gaW5kZXggOGFiZTllYTdlNzZm
+Li41M2MxMjU2MmQzMWUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY3J5cHRvL2NjcC9zcC1kZXYu
+aA0KPiArKysgYi9kcml2ZXJzL2NyeXB0by9jY3Avc3AtZGV2LmgNCj4gQEAgLTEzLDcgKzEzLDYg
+QEANCj4gICAjZGVmaW5lIF9fU1BfREVWX0hfXw0KPiAgIA0KPiAgICNpbmNsdWRlIDxsaW51eC9k
+ZXZpY2UuaD4NCj4gLSNpbmNsdWRlIDxsaW51eC9wY2kuaD4NCj4gICAjaW5jbHVkZSA8bGludXgv
+c3BpbmxvY2suaD4NCj4gICAjaW5jbHVkZSA8bGludXgvbXV0ZXguaD4NCj4gICAjaW5jbHVkZSA8
+bGludXgvbGlzdC5oPg0KPiANCg0K
