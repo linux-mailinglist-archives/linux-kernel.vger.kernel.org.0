@@ -2,235 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E00938307F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C555A8308F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732856AbfHFLTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 07:19:08 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:57490 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732800AbfHFLTE (ORCPT
+        id S1732898AbfHFLT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 07:19:28 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44200 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732883AbfHFLTY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:19:04 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x76BJ2iW023734, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x76BJ2iW023734
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 6 Aug 2019 19:19:02 +0800
-Received: from fc30.localdomain (172.21.177.138) by RTITCASV01.realtek.com.tw
- (172.21.6.18) with Microsoft SMTP Server id 14.3.439.0; Tue, 6 Aug 2019
- 19:19:00 +0800
-From:   Hayes Wang <hayeswang@realtek.com>
-To:     <netdev@vger.kernel.org>
-CC:     <nic_swsd@realtek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, Hayes Wang <hayeswang@realtek.com>
-Subject: [PATCH net-next 5/5] r8152: change rx_frag_head_sz and rx_max_agg_num dynamically
-Date:   Tue, 6 Aug 2019 19:18:04 +0800
-Message-ID: <1394712342-15778-294-albertk@realtek.com>
-X-Mailer: Microsoft Office Outlook 11
-In-Reply-To: <1394712342-15778-289-albertk@realtek.com>
-References: <1394712342-15778-289-albertk@realtek.com>
+        Tue, 6 Aug 2019 07:19:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so41311283pfe.11
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 04:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jNBh4Uwy6QLd0fk5I8Y9B9xP/9fw2xkjlyVlCT+yndM=;
+        b=hT7m/kPEBbfuocAKw5Xl9iF6rszGIOiOU1pdk9Yl9uQaoSvBKVDI9XOMkrfdb7LwCJ
+         TwHeWzeGX8FvyMCo3V+QlzvodG0odf5bOEzj1zCP1QE3OBESAFt9TvXGZ4VZEvsAcJtG
+         tqZe0a8M+Hv2lAOkMv1yerWslMxtF2wkEcWqQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jNBh4Uwy6QLd0fk5I8Y9B9xP/9fw2xkjlyVlCT+yndM=;
+        b=aZrfRAPUoOOIQ97EeiMGGbJCtwI2tsxhl2754Jg5yH2KF3wWSdY5/8M+KwxzAN8N62
+         LCFNoE6IsKrhWFzW9qvPKErk+3AJimQi2txk5AV6pdCwjLsnKHfoeuzmFOM43UdlTXDn
+         g9Q98rnyQTitotviYlmid6FUK7dOYwPUYMFCmr+2eQYju3MEm2dI1wi5tw5eXqGSG179
+         9iDVmubTnGEVwfqXfMVotim2QqKUBr/mjtCkmb+0p4ZvtUaRZ+8bmv4i6TToFx4XI/Li
+         QnGEEznGCaPwITggt6bSAkEqHwt0FiGdQzO7C5t/czcbwMDv+JpoCCIBN6Sh2cYW5UK9
+         CrGA==
+X-Gm-Message-State: APjAAAX+ta29LjiMFDm97RmZNuz4qTuA1ifWt/9anXIDKmXhUb07InQd
+        MUngJBwN2n3RUA4VKE8a555Ozw==
+X-Google-Smtp-Source: APXvYqywqnwTAaGR6Bs8KS7aVh05Rc6pWzLeu7k4oiw+pFIGujdN2uTYttGBWidHSRA8eyinnS/N7A==
+X-Received: by 2002:a17:90a:c20e:: with SMTP id e14mr2839075pjt.0.1565090363666;
+        Tue, 06 Aug 2019 04:19:23 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id w16sm109123479pfj.85.2019.08.06.04.19.22
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 04:19:22 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 07:19:21 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 4/5] page_idle: Drain all LRU pagevec before idle
+ tracking
+Message-ID: <20190806111921.GB117316@google.com>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+ <20190805170451.26009-4-joel@joelfernandes.org>
+ <20190806084357.GK11812@dhcp22.suse.cz>
+ <20190806104554.GB218260@google.com>
+ <20190806105149.GT11812@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [172.21.177.138]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806105149.GT11812@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let rx_frag_head_sz and rx_max_agg_num could be modified dynamically
-through the sysfs.
+On Tue, Aug 06, 2019 at 12:51:49PM +0200, Michal Hocko wrote:
+> On Tue 06-08-19 06:45:54, Joel Fernandes wrote:
+> > On Tue, Aug 06, 2019 at 10:43:57AM +0200, Michal Hocko wrote:
+> > > On Mon 05-08-19 13:04:50, Joel Fernandes (Google) wrote:
+> > > > During idle tracking, we see that sometimes faulted anon pages are in
+> > > > pagevec but are not drained to LRU. Idle tracking considers pages only
+> > > > on LRU. Drain all CPU's LRU before starting idle tracking.
+> > > 
+> > > Please expand on why does this matter enough to introduce a potentially
+> > > expensinve draining which has to schedule a work on each CPU and wait
+> > > for them to finish.
+> > 
+> > Sure, I can expand. I am able to find multiple issues involving this. One
+> > issue looks like idle tracking is completely broken. It shows up in my
+> > testing as if a page that is marked as idle is always "accessed" -- because
+> > it was never marked as idle (due to not draining of pagevec).
+> > 
+> > The other issue shows up as a failure in my "swap test", with the following
+> > sequence:
+> > 1. Allocate some pages
+> > 2. Write to them
+> > 3. Mark them as idle                                    <--- fails
+> > 4. Introduce some memory pressure to induce swapping.
+> > 5. Check the swap bit I introduced in this series.      <--- fails to set idle
+> >                                                              bit in swap PTE.
+> > 
+> > Draining the pagevec in advance fixes both of these issues.
+> 
+> This belongs to the changelog.
 
-Signed-off-by: Hayes Wang <hayeswang@realtek.com>
----
- drivers/net/usb/r8152.c | 119 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 115 insertions(+), 4 deletions(-)
+Sure, will add.
 
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 1615900c8592..0b4d439f603a 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -26,7 +26,7 @@
- #include <linux/acpi.h>
- 
- /* Information for net-next */
--#define NETNEXT_VERSION		"09"
-+#define NETNEXT_VERSION		"10"
- 
- /* Information for net */
- #define NET_VERSION		"10"
-@@ -756,6 +756,9 @@ struct r8152 {
- 	u32 tx_qlen;
- 	u32 coalesce;
- 	u32 rx_buf_sz;
-+	u32 rx_frag_head_sz;
-+	u32 rx_max_agg_num;
-+
- 	u16 ocp_base;
- 	u16 speed;
- 	u8 *intr_buff;
-@@ -1992,7 +1995,7 @@ static struct rx_agg *rtl_get_free_rx(struct r8152 *tp, gfp_t mflags)
- 
- 	spin_unlock_irqrestore(&tp->rx_lock, flags);
- 
--	if (!agg_free && atomic_read(&tp->rx_count) < RTL8152_MAX_RX_AGG)
-+	if (!agg_free && atomic_read(&tp->rx_count) < tp->rx_max_agg_num)
- 		agg_free = alloc_rx_agg(tp, mflags);
- 
- 	return agg_free;
-@@ -2072,10 +2075,10 @@ static int rx_bottom(struct r8152 *tp, int budget)
- 			pkt_len -= ETH_FCS_LEN;
- 			rx_data += sizeof(struct rx_desc);
- 
--			if (!agg_next || RTL8152_RXFG_HEADSZ > pkt_len)
-+			if (!agg_next || tp->rx_frag_head_sz > pkt_len)
- 				rx_frag_head_sz = pkt_len;
- 			else
--				rx_frag_head_sz = RTL8152_RXFG_HEADSZ;
-+				rx_frag_head_sz = tp->rx_frag_head_sz;
- 
- 			skb = napi_alloc_skb(napi, rx_frag_head_sz);
- 			if (!skb) {
-@@ -5383,6 +5386,101 @@ static u8 rtl_get_version(struct usb_interface *intf)
- 	return version;
- }
- 
-+static ssize_t rx_frag_head_sz_show(struct device *dev,
-+				    struct device_attribute *attr, char *buf)
-+{
-+	struct usb_interface *intf = to_usb_interface(dev);
-+	struct r8152 *tp = usb_get_intfdata(intf);
-+
-+	sprintf(buf, "%u\n", tp->rx_frag_head_sz);
-+
-+	return strlen(buf);
-+}
-+
-+static ssize_t rx_frag_head_sz_store(struct device *dev,
-+				     struct device_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	struct usb_interface *intf;
-+	u32 rx_frag_head_sz;
-+	struct r8152 *tp;
-+
-+	intf = to_usb_interface(dev);
-+	tp = usb_get_intfdata(intf);
-+
-+	if (sscanf(buf, "%u\n", &rx_frag_head_sz) != 1)
-+		return -EINVAL;
-+
-+	if (rx_frag_head_sz < ETH_ZLEN)
-+		return -EINVAL;
-+
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return -ENODEV;
-+
-+	if (tp->rx_frag_head_sz != rx_frag_head_sz) {
-+		napi_disable(&tp->napi);
-+		tp->rx_frag_head_sz = rx_frag_head_sz;
-+		napi_enable(&tp->napi);
-+	}
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(rx_frag_head_sz);
-+
-+static ssize_t rx_max_agg_num_show(struct device *dev,
-+				   struct device_attribute *attr, char *buf)
-+{
-+	struct usb_interface *intf = to_usb_interface(dev);
-+	struct r8152 *tp = usb_get_intfdata(intf);
-+
-+	sprintf(buf, "%u\n", tp->rx_max_agg_num);
-+
-+	return strlen(buf);
-+}
-+
-+static ssize_t rx_max_agg_num_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	struct usb_interface *intf;
-+	u32 rx_max_agg_num;
-+	struct r8152 *tp;
-+
-+	intf = to_usb_interface(dev);
-+	tp = usb_get_intfdata(intf);
-+
-+	if (sscanf(buf, "%u\n", &rx_max_agg_num) != 1)
-+		return -EINVAL;
-+
-+	if (rx_max_agg_num < (RTL8152_MAX_RX * 2))
-+		return -EINVAL;
-+
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return -ENODEV;
-+
-+	if (tp->rx_max_agg_num != rx_max_agg_num) {
-+		napi_disable(&tp->napi);
-+		tp->rx_max_agg_num = rx_max_agg_num;
-+		napi_enable(&tp->napi);
-+	}
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(rx_max_agg_num);
-+
-+static struct attribute *rtk_adv_attrs[] = {
-+	&dev_attr_rx_frag_head_sz.attr,
-+	&dev_attr_rx_max_agg_num.attr,
-+	NULL
-+};
-+
-+static struct attribute_group rtk_adv_grp = {
-+	.name = "rtl_adv",
-+	.attrs = rtk_adv_attrs,
-+};
-+
- static int rtl8152_probe(struct usb_interface *intf,
- 			 const struct usb_device_id *id)
- {
-@@ -5487,6 +5585,9 @@ static int rtl8152_probe(struct usb_interface *intf,
- 	tp->speed = tp->mii.supports_gmii ? SPEED_1000 : SPEED_100;
- 	tp->duplex = DUPLEX_FULL;
- 
-+	tp->rx_frag_head_sz = RTL8152_RXFG_HEADSZ;
-+	tp->rx_max_agg_num = RTL8152_MAX_RX_AGG;
-+
- 	intf->needs_remote_wakeup = 1;
- 
- 	tp->rtl_ops.init(tp);
-@@ -5513,8 +5614,16 @@ static int rtl8152_probe(struct usb_interface *intf,
- 
- 	netif_info(tp, probe, netdev, "%s\n", DRIVER_VERSION);
- 
-+	ret = sysfs_create_group(&intf->dev.kobj, &rtk_adv_grp);
-+	if (ret < 0) {
-+		netif_err(tp, probe, netdev, "creat rtk_adv_grp fail\n");
-+		goto out2;
-+	}
-+
- 	return 0;
- 
-+out2:
-+	unregister_netdev(netdev);
- out1:
- 	netif_napi_del(&tp->napi);
- 	usb_set_intfdata(intf, NULL);
-@@ -5527,6 +5636,8 @@ static void rtl8152_disconnect(struct usb_interface *intf)
- {
- 	struct r8152 *tp = usb_get_intfdata(intf);
- 
-+	sysfs_remove_group(&intf->dev.kobj, &rtk_adv_grp);
-+
- 	usb_set_intfdata(intf, NULL);
- 	if (tp) {
- 		rtl_set_unplug(tp);
--- 
-2.21.0
+
+> > This operation even if expensive is only done once during the access of the
+> > page_idle file. Did you have a better fix in mind?
+> 
+> Can we set the idle bit also for non-lru pages as long as they are
+> reachable via pte?
+
+Not at the moment with the current page idle tracking code. PageLRU(page)
+flag is checked in page_idle_get_page().
+
+Even if we could set it for non-LRU, the idle bit (page flag) would not be
+cleared if page is not on LRU because page-reclaim code (page_referenced() I
+believe) would not clear it. This whole mechanism depends on page-reclaim. Or
+did I miss your point?
+
+
+thanks,
+
+ - Joel
 
