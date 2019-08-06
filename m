@@ -2,138 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B8F82E6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 11:11:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2F6D82E7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 11:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731835AbfHFJLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 05:11:22 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:52732 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfHFJLU (ORCPT
+        id S1732521AbfHFJMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 05:12:38 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34383 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732427AbfHFJMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 05:11:20 -0400
-Received: from [167.98.27.226] (helo=ct-lt-765.unassigned)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1huvUu-0005Yf-UL; Tue, 06 Aug 2019 10:11:13 +0100
-Received: from ikerpalomar by ct-lt-765.unassigned with local (Exim 4.89)
-        (envelope-from <ikerpalomar@ct-lt-765.unassigned>)
-        id 1huvUu-0003Tl-B2; Tue, 06 Aug 2019 10:11:12 +0100
-From:   Iker Perez <iker.perez@codethink.co.uk>
-To:     linux-hwmon@vger.kernel.org, linux@roeck-us.net
-Cc:     jdelvare@suse.com, linux-kernel@vger.kernel.org,
-        Iker Perez del Palomar Sustatxa 
-        <iker.perez@codethink.co.uk>
-Subject: [PATCH 4/4] hwmon: (lm75) Modularize lm75_write and make hwmon_chip writable
-Date:   Tue,  6 Aug 2019 10:11:07 +0100
-Message-Id: <20190806091107.13322-5-iker.perez@codethink.co.uk>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190806091107.13322-1-iker.perez@codethink.co.uk>
-References: <20190806091107.13322-1-iker.perez@codethink.co.uk>
+        Tue, 6 Aug 2019 05:12:37 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s49so46828050edb.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 02:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gweiDhMg6x5h0CBZ9jEDz6URqbWss8jEmW6jlx4p8f0=;
+        b=GCxLTieL7d6KfUVsHIEdGc0As9m3p3dsxF9Gcd9022xSDJawvrogHQPmLC8Wdjw3Mq
+         5CYeO1EPD2O2hjacMZYPrdmy6Ha5m++jwq6Lk8tGxd5pRwfNkjQ4cjhy95koffSlaHNI
+         V6PyMvygx/X8N2QhwWZduT1vU6MomGLNCQo0Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=gweiDhMg6x5h0CBZ9jEDz6URqbWss8jEmW6jlx4p8f0=;
+        b=Rn1gZM5n51dMauqYulHsSA7TPK9iLBTo6lmnw4La79s0MhKL0ZnGDcXPIoMuKut+kC
+         IHsiYtQleGKuzf9mt68GF2el50YZtP4cVjsPNmUH56o+ZDwmJmAyRv5QKlqPbRJS2h4r
+         ElgXcUh9DpaoAfnxH2bReoyGAnqSZvs5vyZjI14NARzlROfFVHIz2rcrVgL6PEaw65TI
+         GfBATApNfhKQYdnS3QIPapUzu+iuKjhHgr6ypxk3mB6vZ08IeXlZ2qwWEe2b6cYlcF6o
+         cKD15eSUGrZyO4+sEyR9r+8fi6HQoyMGiiXd7RlcU457w6PGqCs6ZrX5t1PW+eal9O6p
+         iU+A==
+X-Gm-Message-State: APjAAAUsHpox7mCDTX+VDDldlWsYSy9vPGX0NURSagVeiZiIs2qbdBgr
+        kVBknoDVlcKhT3XkSZjhFNkllA==
+X-Google-Smtp-Source: APXvYqzTkx3LOwAEvQrFcZg1vYWUztsJ2Sfgpt18YDAtvphTslGMzOOb94QCCcg0ktrAbmscCK/Kgw==
+X-Received: by 2002:a17:906:a3cb:: with SMTP id ca11mr2167641ejb.79.1565082756015;
+        Tue, 06 Aug 2019 02:12:36 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id k5sm14343811eja.41.2019.08.06.02.12.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 02:12:35 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 11:12:33 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Brian Starkey <Brian.Starkey@arm.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        nd <nd@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/crc-debugfs: Add notes about CRC<->commit
+ interactions
+Message-ID: <20190806091233.GX7444@phenom.ffwll.local>
+Mail-Followup-To: Brian Starkey <Brian.Starkey@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        nd <nd@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190802140910.GN7444@phenom.ffwll.local>
+ <20190805151143.12317-1-brian.starkey@arm.com>
+ <20190805162417.GS7444@phenom.ffwll.local>
+ <20190805165414.nzlru7iiqiaepuuu@DESKTOP-E1NTVVP.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805165414.nzlru7iiqiaepuuu@DESKTOP-E1NTVVP.localdomain>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
+On Mon, Aug 05, 2019 at 04:54:15PM +0000, Brian Starkey wrote:
+> On Mon, Aug 05, 2019 at 06:24:17PM +0200, Daniel Vetter wrote:
+> > On Mon, Aug 05, 2019 at 04:11:43PM +0100, Brian Starkey wrote:
+> > > CRC generation can be impacted by commits coming from userspace, and
+> > > enabling CRC generation may itself trigger a commit. Add notes about
+> > > this to the kerneldoc.
+> > >
+> > > Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+> > > ---
+> > >
+> > > I might have got the wrong end of the stick, but this is what I
+> > > understood from what you said.
+> > >
+> > > Cheers,
+> > > -Brian
+> > >
+> > >  drivers/gpu/drm/drm_debugfs_crc.c | 15 +++++++++++----
+> > >  include/drm/drm_crtc.h            |  3 +++
+> > >  2 files changed, 14 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_debugfs_crc.c b/drivers/gpu/drm/drm_debugfs_crc.c
+> > > index 7ca486d750e9..1dff956bcc74 100644
+> > > --- a/drivers/gpu/drm/drm_debugfs_crc.c
+> > > +++ b/drivers/gpu/drm/drm_debugfs_crc.c
+> > > @@ -65,10 +65,17 @@
+> > >   * it submits. In this general case, the maximum userspace can do is to compare
+> > >   * the reported CRCs of frames that should have the same contents.
+> > >   *
+> > > - * On the driver side the implementation effort is minimal, drivers only need to
+> > > - * implement &drm_crtc_funcs.set_crc_source. The debugfs files are automatically
+> > > - * set up if that vfunc is set. CRC samples need to be captured in the driver by
+> > > - * calling drm_crtc_add_crc_entry().
+> > > + * On the driver side the implementation effort is minimal, drivers only need
+> > > + * to implement &drm_crtc_funcs.set_crc_source. The debugfs files are
+> > > + * automatically set up if that vfunc is set. CRC samples need to be captured
+> > > + * in the driver by calling drm_crtc_add_crc_entry(). Depending on the driver
+> > > + * and HW requirements, &drm_crtc_funcs.set_crc_source may result in a commit
+> > > + * (even a full modeset).
+> > > + *
+> > > + * It's also possible that a "normal" commit via DRM_IOCTL_MODE_ATOMIC or the
+> > > + * legacy paths may interfere with CRC generation. So, in the general case,
+> > > + * userspace can't rely on the values in crtc-N/crc/data being valid
+> > > + * across a commit.
+> >
+> > It's not just the values, but the generation itself might get disabled
+> > (e.g. on i915 if you select "auto" on some chips you get the DP port
+> > sampling point, but for HDMI mode you get a different sampling ploint, and
+> > if you get the wrong one there won't be any crc for you). Also it's not
+> > just any atomic commit, only the ones with ALLOW_MODESET.
+> 
+> Is the meaning of ALLOW_MODESET actually defined somewhere then? I
+> thought it was broadly speaking "anything that would cause a flicker
+> on the output" - but that needn't be the same set of things that break
+> CRC generation.
 
-* Create two separate functions to write into hwmon_temp and hwmon_chip.
-* Call the functions from lm75_write.
-* Make hwm_chip writable if the chip supports more than one sample time.
+It's the inverse, I think we should require that crc keeps working for
+non-ALLOW_MODESET. Otherwise crc are essentially useless for validating
+stuff. And yeah allow_modeset is "could flicker and/or take enormous
+amounts of time".
+-Daniel
 
-Signed-off-by: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
----
- drivers/hwmon/lm75.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 47 insertions(+), 5 deletions(-)
+> > Maybe something like the below text:
+> >
+> > "Please note that an atomic modeset commit with the
+> > DRM_MODE_ATOMIC_ALLOW_MODESET, or a call to the legacy SETCRTR ioctl
+> > (which amounts to the same), can destry the CRC setup due to hardware
+> > requirements. This results in inconsistent CRC values or not even any CRC
+> > values generated. Generic userspace therefore needs to re-setup the CRC
+> > after each such modeset."
+> >
+> > >
+> > >  static int crc_control_show(struct seq_file *m, void *data)
+> > > diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> > > index 128d8b210621..0f7ea094a900 100644
+> > > --- a/include/drm/drm_crtc.h
+> > > +++ b/include/drm/drm_crtc.h
+> > > @@ -756,6 +756,8 @@ struct drm_crtc_funcs {
+> > >   * provided from the configured source. Drivers must accept an "auto"
+> > >   * source name that will select a default source for this CRTC.
+> > >   *
+> > > + * This may trigger a commit if necessary, to enable CRC generation.
+> >
+> > I'd clarify this as "atomic modeset commit" just to be sure.
+> 
+> Ack.
+> 
+> Thanks,
+> -Brian
+> 
+> >
+> > With these two comments addressed somehow:
+> >
+> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> >
+> >
+> > > + *
+> > >   * Note that "auto" can depend upon the current modeset configuration,
+> > >   * e.g. it could pick an encoder or output specific CRC sampling point.
+> > >   *
+> > > @@ -767,6 +769,7 @@ struct drm_crtc_funcs {
+> > >   * 0 on success or a negative error code on failure.
+> > >   */
+> > >  int (*set_crc_source)(struct drm_crtc *crtc, const char *source);
+> > > +
+> > >  /**
+> > >   * @verify_crc_source:
+> > >   *
+> > > --
+> > > 2.17.1
+> > >
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
+> IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
 
-diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
-index a8d0a6fb9762..7b757ec146e9 100644
---- a/drivers/hwmon/lm75.c
-+++ b/drivers/hwmon/lm75.c
-@@ -16,6 +16,7 @@
- #include <linux/of_device.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
-+#include <linux/util_macros.h>
- #include "lm75.h"
- 
- /*
-@@ -308,16 +309,12 @@ static int lm75_read(struct device *dev, enum hwmon_sensor_types type,
- 	return 0;
- }
- 
--static int lm75_write(struct device *dev, enum hwmon_sensor_types type,
--		      u32 attr, int channel, long temp)
-+static int lm75_write_temp(struct device *dev, u32 attr, long temp)
- {
- 	struct lm75_data *data = dev_get_drvdata(dev);
- 	u8 resolution;
- 	int reg;
- 
--	if (type != hwmon_temp)
--		return -EINVAL;
--
- 	switch (attr) {
- 	case hwmon_temp_max:
- 		reg = LM75_REG_MAX;
-@@ -345,13 +342,58 @@ static int lm75_write(struct device *dev, enum hwmon_sensor_types type,
- 	return regmap_write(data->regmap, reg, temp);
- }
- 
-+static int lm75_write_chip(struct device *dev, u32 attr, long val)
-+{
-+	struct lm75_data *data = dev_get_drvdata(dev);
-+	u8 index;
-+	s32 err;
-+
-+	switch (attr) {
-+	case hwmon_chip_update_interval:
-+		index = find_closest(val, data->params->sample_times,
-+				     (int)data->params->num_sample_times);
-+
-+		err = lm75_write_config(data,
-+					data->params->sample_set_masks[index],
-+					data->params->sample_clr_mask);
-+		if (err)
-+			return err;
-+		data->sample_time = data->params->sample_times[index];
-+
-+		if (data->params->resolutions)
-+			data->resolution = data->params->resolutions[index];
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+static int lm75_write(struct device *dev, enum hwmon_sensor_types type,
-+		      u32 attr, int channel, long val)
-+{
-+	switch (type) {
-+	case hwmon_chip:
-+		return lm75_write_chip(dev, attr, val);
-+	case hwmon_temp:
-+		return lm75_write_temp(dev, attr, val);
-+	default:
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- static umode_t lm75_is_visible(const void *data, enum hwmon_sensor_types type,
- 			       u32 attr, int channel)
- {
-+	const struct lm75_data *config_data = data;
-+
- 	switch (type) {
- 	case hwmon_chip:
- 		switch (attr) {
- 		case hwmon_chip_update_interval:
-+			if (config_data->params->num_sample_times > 1)
-+				return 0644;
- 			return 0444;
- 		}
- 		break;
 -- 
-2.11.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
