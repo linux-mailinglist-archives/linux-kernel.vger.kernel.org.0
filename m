@@ -2,192 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB304834D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54F63834D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:14:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733117AbfHFPNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 11:13:31 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:43372 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727540AbfHFPNa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 11:13:30 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x76F4FnU010382;
-        Tue, 6 Aug 2019 10:13:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=PODMain02222019;
- bh=2LlrLLwi2bsrqq/0nc1ZAvfNbkci6KMEIdK5pzq3748=;
- b=F7qk8+SDXMxvyT0g/meZcG/NZwHek7NZiTS3RgmY6aiFXjJWA6pKcxeij6sHzZHcaczh
- 8a6TjWfAGPHBoA8plgdNpIxIcEgFRcuResdv14K9m6aEtBON/QJQq2JWYdimQ/R8owhp
- w8TrhBqZdGaqbJ2HKcWAOvLkcIqtfXnLpqN1fe3Ezav24M2yjHmNIfpC7lRYhlrnno0+
- q1VxhI4xNMHZOvrXNVN9pnr89Y82JLs/474j39McKmBWZ1MhNQJp/VKjXxUVzs0WIEvi
- XJ7pbRj5jpqT852gPXe4bPT2yhdsiSLDcMkQQMilDdsW9PnoOtMXiFUQX9xyKFk4yv1Y Ew== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([87.246.76.36])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2u57p4m6wt-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 06 Aug 2019 10:13:25 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 6 Aug
- 2019 16:13:21 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Tue, 6 Aug 2019 16:13:21 +0100
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 7A8702C5;
-        Tue,  6 Aug 2019 16:13:21 +0100 (BST)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH 2/2] mfd: madera: Add support for requesting the supply clocks
-Date:   Tue, 6 Aug 2019 16:13:21 +0100
-Message-ID: <20190806151321.31137-2-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190806151321.31137-1-ckeepax@opensource.cirrus.com>
-References: <20190806151321.31137-1-ckeepax@opensource.cirrus.com>
+        id S1733155AbfHFPN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 11:13:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726877AbfHFPN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 11:13:57 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FBDF216B7;
+        Tue,  6 Aug 2019 15:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565104436;
+        bh=o7Iw858NsCabZtAX4JUiHaN3QVGg5unNWOAa7BMBif8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=XwSgNMoRE+No0JgezETKcY/oiHEQlOX5Nyc9inInecAShqM3EckNxxCK9abnU91kx
+         6PBmidIqcQAdYZUCRULxkmFQETfzQdm+fPKp67XkG6NT71hmKmZoZUG8RoJ3dCisvc
+         fjRRH10Bfw2uHkQTFNqxP0SaNltPwUTPO+tE4wcA=
+Subject: Re: [PATCH v4 2/2] usbip: Implement SG support to vhci-hcd and stub
+ driver
+To:     Suwan Kim <suwan.kim027@gmail.com>, valentina.manea.m@gmail.com,
+        gregkh@linuxfoundation.org, stern@rowland.harvard.edu
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <20190806123154.23798-1-suwan.kim027@gmail.com>
+ <20190806123154.23798-3-suwan.kim027@gmail.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <eeb617a1-e0e0-f27e-f8c7-e0180bb6e911@kernel.org>
+Date:   Tue, 6 Aug 2019 09:13:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=883 priorityscore=1501
- spamscore=0 phishscore=0 impostorscore=0 mlxscore=0 suspectscore=1
- adultscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
- definitions=main-1908060149
+In-Reply-To: <20190806123154.23798-3-suwan.kim027@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the ability to get the clock for each clock input pin of the chip
-and enable MCLK2 since that is expected to be a permanently enabled
-32kHz clock.
+On 8/6/19 6:31 AM, Suwan Kim wrote:
+> There are bugs on vhci with usb 3.0 storage device. In USB, each SG
+> list entry buffer should be divisible by the bulk max packet size.
+> But with native SG support, this problem doesn't matter because the
+> SG buffer is treated as contiguous buffer. But without native SG
+> support, USB storage driver breaks SG list into several URBs and the
+> error occurs because of a buffer size of URB that cannot be divided
+> by the bulk max packet size. The error situation is as follows.
+> 
+> When USB Storage driver requests 31.5 KB data and has SG list which
+> has 3584 bytes buffer followed by 7 4096 bytes buffer for some
+> reason. USB Storage driver splits this SG list into several URBs
+> because VHCI doesn't support SG and sends them separately. So the
+> first URB buffer size is 3584 bytes. When receiving data from device,
+> USB 3.0 device sends data packet of 1024 bytes size because the max
+> packet size of BULK pipe is 1024 bytes. So device sends 4096 bytes.
+> But the first URB buffer has only 3584 bytes buffer size. So host
+> controller terminates the transfer even though there is more data to
+> receive. So, vhci needs to support SG transfer to prevent this error.
+> 
+> In this patch, vhci supports SG regardless of whether the server's
+> host controller supports SG or not, because stub driver splits SG
+> list into several URBs if the server's host controller doesn't
+> support SG.
+> 
+> To support SG, vhci_map_urb_for_dma() sets URB_DMA_MAP_SG flag in
+> urb->transfer_flags if URB has SG list and this flag will tell stub
+> driver to use SG list.
+> 
+> vhci sends each SG list entry to stub driver. Then, stub driver sees
+> the total length of the buffer and allocates SG table and pages
+> according to the total buffer length calling sgl_alloc(). After stub
+> driver receives completed URB, it again sends each SG list entry to
+> vhci.
+> 
+> If the server's host controller doesn't support SG, stub driver
+> breaks a single SG request into several URBs and submits them to
+> the server's host controller. When all the split URBs are completed,
+> stub driver reassembles the URBs into a single return command and
+> sends it to vhci.
+> 
+> Moreover, in the situation where vhci supports SG, but stub driver
+> does not, or vice versa, usbip works normally. Because there is no
+> protocol modification, there is no problem in communication between
+> server and client even if the one has a kernel without SG support.
+> 
+> In the case of vhci supports SG and stub driver doesn't, because
+> vhci sends only the total length of the buffer to stub driver as
+> it did before the patch applied, stub driver only needs to allocate
+> the required length of buffers regardless of whether vhci supports
+> SG or not.
+> 
+> If stub driver needs to send data buffer to vhci because of IN pipe,
+> stub driver also sends only total length of buffer as metadata and
+> then sends real data as vhci does. Then vhci receive data from stub
+> driver and store it to the corresponding buffer of SG list entry.
+> 
+> In the case of stub driver that supports SG, buffer is allocated by
+> sgl_alloc(). However, stub driver that does not support SG allocates
+> buffer using only kmalloc(). Therefore, if vhci supports SG and stub
+> driver doesn't, stub driver has to allocate buffer with kmalloc() as
+> much as the total length of SG buffer which is quite huge when vhci
+> sends SG request, so it has big overhead in buffer allocation.
+> 
+> And for the case of stub driver supports SG and vhci doesn't, since
+> the USB storage driver checks that vhci doesn't support SG and sends
+> the request to stub driver by splitting the SG list into multiple
+> URBs, stub driver allocates a buffer with kmalloc() as it did before
+> this patch.
+> 
+> VUDC also works well with this patch. Tests are done with two USB
+> gadget created by CONFIGFS USB gadget. Both use the BULK pipe.
+> 
+>          1. Serial gadget
+>          2. Mass storage gadget
+> 
+>   * Serial gadget test
+> 
+> Serial gadget on the host sends and receives data using cat command
+> on the /dev/ttyGS<N>. The client uses minicom to communicate with
+> the serial gadget.
+> 
+>   * Mass storage gadget test
+> 
+> After connecting the gadget with vhci, use "dd" to test read and
+> write operation on the client side.
+> 
+> Read  - dd if=/dev/sd<N> iflag=direct of=/dev/null bs=1G count=1
+> Write - dd if=<my file path> iflag=direct of=/dev/sd<N> bs=1G count=1
+> 
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/mfd/madera-core.c       | 24 +++++++++++++++++++++++-
- include/linux/mfd/madera/core.h | 11 +++++++++++
- 2 files changed, 34 insertions(+), 1 deletion(-)
+Thanks for the test results.
 
-diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-index 29540cbf75934..8d7ab1c7bf9f7 100644
---- a/drivers/mfd/madera-core.c
-+++ b/drivers/mfd/madera-core.c
-@@ -428,6 +428,7 @@ static void madera_set_micbias_info(struct madera *madera)
- 
- int madera_dev_init(struct madera *madera)
- {
-+	static const char * const mclk_name[] = { "mclk1", "mclk2", "mclk3" };
- 	struct device *dev = madera->dev;
- 	unsigned int hwid;
- 	int (*patch_fn)(struct madera *) = NULL;
-@@ -450,6 +451,17 @@ int madera_dev_init(struct madera *madera)
- 		       sizeof(madera->pdata));
- 	}
- 
-+	BUILD_BUG_ON(ARRAY_SIZE(madera->mclk) != ARRAY_SIZE(mclk_name));
-+	for (i = 0; i < ARRAY_SIZE(madera->mclk); i++) {
-+		madera->mclk[i] = devm_clk_get_optional(madera->dev,
-+							mclk_name[i]);
-+		if (IS_ERR(madera->mclk[i])) {
-+			dev_warn(madera->dev, "Failed to get %s: %ld\n",
-+				 mclk_name[i], PTR_ERR(madera->mclk[i]));
-+			madera->mclk[i] = NULL;
-+		}
-+	}
-+
- 	ret = madera_get_reset_gpio(madera);
- 	if (ret)
- 		return ret;
-@@ -660,13 +672,19 @@ int madera_dev_init(struct madera *madera)
- 	}
- 
- 	/* Init 32k clock sourced from MCLK2 */
-+	ret = clk_prepare_enable(madera->mclk[MADERA_MCLK2]);
-+	if (ret != 0) {
-+		dev_err(madera->dev, "Failed to enable 32k clock: %d\n", ret);
-+		goto err_reset;
-+	}
-+
- 	ret = regmap_update_bits(madera->regmap,
- 			MADERA_CLOCK_32K_1,
- 			MADERA_CLK_32K_ENA_MASK | MADERA_CLK_32K_SRC_MASK,
- 			MADERA_CLK_32K_ENA | MADERA_32KZ_MCLK2);
- 	if (ret) {
- 		dev_err(madera->dev, "Failed to init 32k clock: %d\n", ret);
--		goto err_reset;
-+		goto err_clock;
- 	}
- 
- 	pm_runtime_set_active(madera->dev);
-@@ -687,6 +705,8 @@ int madera_dev_init(struct madera *madera)
- 
- err_pm_runtime:
- 	pm_runtime_disable(madera->dev);
-+err_clock:
-+	clk_disable_unprepare(madera->mclk[MADERA_MCLK2]);
- err_reset:
- 	madera_enable_hard_reset(madera);
- 	regulator_disable(madera->dcvdd);
-@@ -713,6 +733,8 @@ int madera_dev_exit(struct madera *madera)
- 	 */
- 	pm_runtime_disable(madera->dev);
- 
-+	clk_disable_unprepare(madera->mclk[MADERA_MCLK2]);
-+
- 	regulator_disable(madera->dcvdd);
- 	regulator_put(madera->dcvdd);
- 
-diff --git a/include/linux/mfd/madera/core.h b/include/linux/mfd/madera/core.h
-index 7ffa696cce7ca..2b6c83fe221dc 100644
---- a/include/linux/mfd/madera/core.h
-+++ b/include/linux/mfd/madera/core.h
-@@ -8,6 +8,7 @@
- #ifndef MADERA_CORE_H
- #define MADERA_CORE_H
- 
-+#include <linux/clk.h>
- #include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/mfd/madera/pdata.h>
-@@ -29,6 +30,13 @@ enum madera_type {
- 	CS42L92 = 9,
- };
- 
-+enum {
-+	MADERA_MCLK1,
-+	MADERA_MCLK2,
-+	MADERA_MCLK3,
-+	MADERA_NUM_MCLK
-+};
-+
- #define MADERA_MAX_CORE_SUPPLIES	2
- #define MADERA_MAX_GPIOS		40
- 
-@@ -155,6 +163,7 @@ struct snd_soc_dapm_context;
-  * @irq_dev:		the irqchip child driver device
-  * @irq_data:		pointer to irqchip data for the child irqchip driver
-  * @irq:		host irq number from SPI or I2C configuration
-+ * @mclk:		pointers to clock supplies
-  * @out_clamp:		indicates output clamp state for each analogue output
-  * @out_shorted:	indicates short circuit state for each analogue output
-  * @hp_ena:		bitflags of enable state for the headphone outputs
-@@ -184,6 +193,8 @@ struct madera {
- 	struct regmap_irq_chip_data *irq_data;
- 	int irq;
- 
-+	struct clk *mclk[MADERA_NUM_MCLK];
-+
- 	unsigned int num_micbias;
- 	unsigned int num_childbias[MADERA_MAX_MICBIAS];
- 
--- 
-2.11.0
+Were you able to test with USB lowspeed devices?
 
+thanks,
+-- Shuah
