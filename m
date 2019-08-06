@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E3F83DA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 01:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5671A83DAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 01:16:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfHFXQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 19:16:16 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44829 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfHFXQP (ORCPT
+        id S1727465AbfHFXQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 19:16:26 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41906 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726461AbfHFXQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 19:16:15 -0400
-Received: by mail-qk1-f195.google.com with SMTP id d79so64291408qke.11
+        Tue, 6 Aug 2019 19:16:16 -0400
+Received: by mail-qt1-f194.google.com with SMTP id d17so7513851qtj.8
         for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 16:16:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ziepe.ca; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=evI7jo74G4Gx7Gga7ZV8g3f7D3AhHv7OMI4oYy7KjpQ=;
-        b=MzTXpv/RThZvTM0oekrE0HbJIq9MDfLDK/pFUY/Kg6pyTj13D+sPiKCI/dSGwPAxpY
-         66cmu6NttsKhYSMYlnguyr7uhmgAbn3zoEecwJHbFK40+26VHkYuF99AdRjGXrECGqPh
-         vtfbOQsp5XxERMNpAIlGBC0fNvBHCI4Xe9NbY9LiKeaS2gZSeE7ortCdr7AwymC1bQMf
-         tH8isbUtYa12pesEmXPJTyySS7DaU/IrFA7s+yY18pgcvmsoF40zJdJl86bWxSpitktu
-         59wGxHKZqUMMqNyx4DORY6ozb2JQGWE2AME4lSBAP89G+fxJ+NZfrKn08DfZpc+bITKO
-         VTAg==
+        bh=qo3M/m6bAMWNKeEf1KSsSvYS6KA/79bnXZ/MG9HQ7+c=;
+        b=WIvITimiWkKwXR9MAnwvbjPd/jMGoFdgSbKJFYsFUTclr60pQsMdghZmIOiCh5YXC0
+         UttFPobZS06cPlOZT0PF7D3HVksfWxSV4t/CAk8TXFyUTmugFgIF0+8oo8kipepx+JH2
+         FaOArh02dXo+Kn1J1o19Ll/t6xFzUWU5L8C0euhgPJsWnHYPCsSB+yc+FHlEmVCAuX1U
+         +F5OWyMlJ9C8l6nJvwq0WdkKMN98R7WVkx30edRvtFR93R5JGnJIrzkZgNRu9P36xdgz
+         ULUtU6UxEUUqnG9agwf1nN+Htatwu+jA9bbrHaEueg4ngKDbsCMWsyahgp9VLjoDhgxe
+         +acQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=evI7jo74G4Gx7Gga7ZV8g3f7D3AhHv7OMI4oYy7KjpQ=;
-        b=am/Aijh9hqEBtKvcZRhFw/Vv55yBZGWa1SaJ0C8tsKzuKKzSGRAR8i0UN0/ae3RzvK
-         VTn9LWiRRLH5T0iNqTW/rZdiXMM9LDF+A86b91oXzwnJYHfx9tII6L72iqoH/jMc3czi
-         RlG2U2cjgzyK75oayhp2V2of4JYi3N0dP2uYJ2J+n8hUCsgrjMsmR8Q7MOI56gOgzyer
-         HcAURGLyHj+i5RIAsFKK6nERz3XxVnugpKKpRXFjajiADTpJ9RrcRYHhKW3pTyvYnNSn
-         72THE32n7mFMnVBr8fGKRPmHx+nDrKrjtBdNLWQezEiR/sK8twRkSYnl/aJvSjKEdsgG
-         wpbg==
-X-Gm-Message-State: APjAAAUGfZC9BEtRnh25TuUgP/dkrRn+7Oe4ldnKG0H1UShzAI3q6yEm
-        n0A/jbpXBfgE37QpWUghwsHx+A==
-X-Google-Smtp-Source: APXvYqylqTmNzPQYqTYhRiwrI4AtCqibIZpw6EBPoIBj42tnctW/9AiKc7I50IcPqwnV2QCyiSKRxQ==
-X-Received: by 2002:a37:660d:: with SMTP id a13mr5780388qkc.36.1565133374824;
-        Tue, 06 Aug 2019 16:16:14 -0700 (PDT)
+        bh=qo3M/m6bAMWNKeEf1KSsSvYS6KA/79bnXZ/MG9HQ7+c=;
+        b=lltsyWvC/Xm/xX5oEqXvsSEuIWhHUDeXigXHx7x5BepvFk8GKDPClEZiAM3Bq4tHQr
+         cWTiNMEUxPJGCq9WhniTNjb5VXGbnUolvuzsiIc3SRLjxhTWUCH9Vu03Wvj6YiXJsOfy
+         WR4v1JMzUb3u4OBkZh7I1kbJ2SDn4bE0uvLxyfBA0MENNJVGuhjYWIKvHYCDj+DoEUgo
+         HmZLthZJwUT5lrHXfRe8WQhKkBlIbPoljgsUhBOkGrH1Pdz/w9A7XCT1apI/8t7ineaF
+         zB5gJE1JqCLo4yTaFxruw9fy3Qo0JEDfyYJMkImwDiM6Kt403W0SZ5q+TI5wEyMipiYO
+         8DqQ==
+X-Gm-Message-State: APjAAAU6ktSidLXUv/E1oelULjPdA75THFqstbUk96gh31hl/VDgzpgp
+        v1D+8sKH8/3LZgOP8tgAxwvLcA==
+X-Google-Smtp-Source: APXvYqwzSzqBhit7womFZned74qAW6JuvC+DaQssS9gJgppa+iNTQrGgfDRkcUg2AKLeoxFn+koswg==
+X-Received: by 2002:a0c:ad6f:: with SMTP id v44mr5590212qvc.40.1565133375491;
+        Tue, 06 Aug 2019 16:16:15 -0700 (PDT)
 Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id f22sm35086171qkk.45.2019.08.06.16.16.14
+        by smtp.gmail.com with ESMTPSA id l5sm38853627qte.9.2019.08.06.16.16.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 06 Aug 2019 16:16:14 -0700 (PDT)
 Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
         (envelope-from <jgg@ziepe.ca>)
-        id 1hv8gg-0006eG-0j; Tue, 06 Aug 2019 20:16:14 -0300
+        id 1hv8gg-0006eL-1z; Tue, 06 Aug 2019 20:16:14 -0300
 From:   Jason Gunthorpe <jgg@ziepe.ca>
 To:     linux-mm@kvack.org
 Cc:     Andrea Arcangeli <aarcange@redhat.com>,
@@ -65,11 +65,10 @@ Cc:     Andrea Arcangeli <aarcange@redhat.com>,
         iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
         Gavin Shan <shangw@linux.vnet.ibm.com>,
         Andrea Righi <andrea@betterlinux.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v3 hmm 01/11] mm/mmu_notifiers: hoist do_mmu_notifier_register down_write to the caller
-Date:   Tue,  6 Aug 2019 20:15:38 -0300
-Message-Id: <20190806231548.25242-2-jgg@ziepe.ca>
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH v3 hmm 02/11] mm/mmu_notifiers: do not speculatively allocate a mmu_notifier_mm
+Date:   Tue,  6 Aug 2019 20:15:39 -0300
+Message-Id: <20190806231548.25242-3-jgg@ziepe.ca>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190806231548.25242-1-jgg@ziepe.ca>
 References: <20190806231548.25242-1-jgg@ziepe.ca>
@@ -82,94 +81,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jason Gunthorpe <jgg@mellanox.com>
 
-This simplifies the code to not have so many one line functions and extra
-logic. __mmu_notifier_register() simply becomes the entry point to
-register the notifier, and the other one calls it under lock.
+A prior commit e0f3c3f78da2 ("mm/mmu_notifier: init notifier if necessary")
+made an attempt at doing this, but had to be reverted as calling
+the GFP_KERNEL allocator under the i_mmap_mutex causes deadlock, see
+commit 35cfa2b0b491 ("mm/mmu_notifier: allocate mmu_notifier in advance").
 
-Also add a lockdep_assert to check that the callers are holding the lock
-as expected.
+However, we can avoid that problem by doing the allocation only under
+the mmap_sem, which is already happening.
 
-Suggested-by: Christoph Hellwig <hch@infradead.org>
+Since all writers to mm->mmu_notifier_mm hold the write side of the
+mmap_sem reading it under that sem is deterministic and we can use that to
+decide if the allocation path is required, without speculation.
+
+The actual update to mmu_notifier_mm must still be done under the
+mm_take_all_locks() to ensure read-side coherency.
+
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
- mm/mmu_notifier.c | 35 ++++++++++++++---------------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
+ mm/mmu_notifier.c | 34 ++++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
 diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index b5670620aea0fc..218a6f108bc2d0 100644
+index 218a6f108bc2d0..696810f632ade1 100644
 --- a/mm/mmu_notifier.c
 +++ b/mm/mmu_notifier.c
-@@ -236,22 +236,22 @@ void __mmu_notifier_invalidate_range(struct mm_struct *mm,
- }
- EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range);
- 
--static int do_mmu_notifier_register(struct mmu_notifier *mn,
--				    struct mm_struct *mm,
--				    int take_mmap_sem)
-+/*
-+ * Same as mmu_notifier_register but here the caller must hold the
-+ * mmap_sem in write mode.
-+ */
-+int __mmu_notifier_register(struct mmu_notifier *mn, struct mm_struct *mm)
+@@ -242,27 +242,32 @@ EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range);
+  */
+ int __mmu_notifier_register(struct mmu_notifier *mn, struct mm_struct *mm)
  {
- 	struct mmu_notifier_mm *mmu_notifier_mm;
+-	struct mmu_notifier_mm *mmu_notifier_mm;
++	struct mmu_notifier_mm *mmu_notifier_mm = NULL;
  	int ret;
  
-+	lockdep_assert_held_write(&mm->mmap_sem);
+ 	lockdep_assert_held_write(&mm->mmap_sem);
  	BUG_ON(atomic_read(&mm->mm_users) <= 0);
  
--	ret = -ENOMEM;
- 	mmu_notifier_mm = kmalloc(sizeof(struct mmu_notifier_mm), GFP_KERNEL);
- 	if (unlikely(!mmu_notifier_mm))
--		goto out;
-+		return -ENOMEM;
+-	mmu_notifier_mm = kmalloc(sizeof(struct mmu_notifier_mm), GFP_KERNEL);
+-	if (unlikely(!mmu_notifier_mm))
+-		return -ENOMEM;
++	if (!mm->mmu_notifier_mm) {
++		/*
++		 * kmalloc cannot be called under mm_take_all_locks(), but we
++		 * know that mm->mmu_notifier_mm can't change while we hold
++		 * the write side of the mmap_sem.
++		 */
++		mmu_notifier_mm =
++			kmalloc(sizeof(struct mmu_notifier_mm), GFP_KERNEL);
++		if (!mmu_notifier_mm)
++			return -ENOMEM;
++
++		INIT_HLIST_HEAD(&mmu_notifier_mm->list);
++		spin_lock_init(&mmu_notifier_mm->lock);
++	}
  
--	if (take_mmap_sem)
--		down_write(&mm->mmap_sem);
  	ret = mm_take_all_locks(mm);
  	if (unlikely(ret))
  		goto out_clean;
-@@ -279,13 +279,11 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
+ 
+-	if (!mm_has_notifiers(mm)) {
+-		INIT_HLIST_HEAD(&mmu_notifier_mm->list);
+-		spin_lock_init(&mmu_notifier_mm->lock);
+-
+-		mm->mmu_notifier_mm = mmu_notifier_mm;
+-		mmu_notifier_mm = NULL;
+-	}
++	/* Pairs with the mmdrop in mmu_notifier_unregister_* */
+ 	mmgrab(mm);
+ 
+ 	/*
+@@ -273,14 +278,19 @@ int __mmu_notifier_register(struct mmu_notifier *mn, struct mm_struct *mm)
+ 	 * We can't race against any other mmu notifier method either
+ 	 * thanks to mm_take_all_locks().
+ 	 */
++	if (mmu_notifier_mm)
++		mm->mmu_notifier_mm = mmu_notifier_mm;
++
+ 	spin_lock(&mm->mmu_notifier_mm->lock);
+ 	hlist_add_head_rcu(&mn->hlist, &mm->mmu_notifier_mm->list);
+ 	spin_unlock(&mm->mmu_notifier_mm->lock);
  
  	mm_drop_all_locks(mm);
++	BUG_ON(atomic_read(&mm->mm_users) <= 0);
++	return 0;
++
  out_clean:
--	if (take_mmap_sem)
--		up_write(&mm->mmap_sem);
  	kfree(mmu_notifier_mm);
--out:
- 	BUG_ON(atomic_read(&mm->mm_users) <= 0);
+-	BUG_ON(atomic_read(&mm->mm_users) <= 0);
  	return ret;
  }
-+EXPORT_SYMBOL_GPL(__mmu_notifier_register);
- 
- /*
-  * Must not hold mmap_sem nor any other VM related lock when calling
-@@ -302,19 +300,14 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
-  */
- int mmu_notifier_register(struct mmu_notifier *mn, struct mm_struct *mm)
- {
--	return do_mmu_notifier_register(mn, mm, 1);
--}
--EXPORT_SYMBOL_GPL(mmu_notifier_register);
-+	int ret;
- 
--/*
-- * Same as mmu_notifier_register but here the caller must hold the
-- * mmap_sem in write mode.
-- */
--int __mmu_notifier_register(struct mmu_notifier *mn, struct mm_struct *mm)
--{
--	return do_mmu_notifier_register(mn, mm, 0);
-+	down_write(&mm->mmap_sem);
-+	ret = __mmu_notifier_register(mn, mm);
-+	up_write(&mm->mmap_sem);
-+	return ret;
- }
--EXPORT_SYMBOL_GPL(__mmu_notifier_register);
-+EXPORT_SYMBOL_GPL(mmu_notifier_register);
- 
- /* this is called after the last mmu_notifier_unregister() returned */
- void __mmu_notifier_mm_destroy(struct mm_struct *mm)
+ EXPORT_SYMBOL_GPL(__mmu_notifier_register);
 -- 
 2.22.0
 
