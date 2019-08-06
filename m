@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA6B78296B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 03:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E2C82968
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 03:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbfHFBsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 21:48:38 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33222 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731367AbfHFBs0 (ORCPT
+        id S1731388AbfHFBs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 21:48:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41830 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731328AbfHFBs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Aug 2019 21:48:26 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761jJ5f152854;
-        Tue, 6 Aug 2019 01:48:06 GMT
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761iAp9078264;
+        Tue, 6 Aug 2019 01:48:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=fr5eyPRRWPi1rDqCT8/skQQ0aW1iOdHkBGzG8QNDcy4=;
- b=D8oNjiVeBbBG2MWiIYLecowUjrtkG6Oal3VR7bQ6Tq4XmhC3HUSvX6hveVydUDg+uCSf
- fKsU20yt/rHoLw6ROp/IekRVGI4s/cWGUmKBSV7E8/r7r/O2wc1tbqncE7nR6+Yu66hj
- 1qJvG2d/5kbJSHgu3Un/N1D+KaOJXSGD1SzDh7SVXW6cfVCl6R6JAnJFoc4vKwwNQlqN
- s9Hb0KVzO9OZdGzBATWoa1/t84ZevYXdnjOvmoB7ZbtVUdiJTy5OA7qOqvWX8RaT+UkC
- 9v6Wrar1BRo08b+nRfu68R4Ga8X0BI0eFRjdsT+zcX2559xT3mapK8BHVejeI9Dkppus Ag== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2u527pjm9r-1
+ bh=WvV50/BsA1642B3kVRC1Mg6PgZqRAFj/+Pth1rANcxA=;
+ b=r+8pq2FH8dpZq16OOdFBYhF3ZAl5enxyqlIZuDeucd7zEAYYbD98Gg6I8ZLzVsxriR4S
+ wX4V+MeZ/v/Y62jbj0j2JBj2FKHTyLY6MAewgOybJO02N3xoJQuiu9qKI7nao42sIpMy
+ FbvcSncFp1Cit1vGQoEKjASjMMuRoXTr+v6qqjFkXUwPueTZ/MteDWzYQSwd5EoWgH6V
+ qNwZxuBTy7f+WIzk5vUKNt6hztBZw5Cyne7iKViGuOOuVjpHgCluoMbQDov4rr3fKPK5
+ n2xrOCCfUl8y8L+C6VDusSQUxii0AKR5ulJ3XSIT4ZuXk9zkQJWlL2zpX3eRDSeFK5Zs nA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2u51ptts13-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 06 Aug 2019 01:48:06 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761m4bW086383;
-        Tue, 6 Aug 2019 01:48:05 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2u51kn4a0w-1
+        Tue, 06 Aug 2019 01:48:04 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761m4br162751;
+        Tue, 6 Aug 2019 01:48:04 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2u4ycubsmd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 06 Aug 2019 01:48:05 +0000
+        Tue, 06 Aug 2019 01:48:04 +0000
 Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x761ludm016081;
-        Tue, 6 Aug 2019 01:47:56 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x761lvhP025251;
+        Tue, 6 Aug 2019 01:47:57 GMT
 Received: from monkey.oracle.com (/71.63.128.209)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Aug 2019 18:47:55 -0700
+        with ESMTP ; Mon, 05 Aug 2019 18:47:57 -0700
 From:   Mike Kravetz <mike.kravetz@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Hillf Danton <hdanton@sina.com>, Vlastimil Babka <vbabka@suse.cz>,
@@ -50,9 +50,9 @@ Cc:     Hillf Danton <hdanton@sina.com>, Vlastimil Babka <vbabka@suse.cz>,
         David Rientjes <rientjes@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v2 2/4] mm, reclaim: cleanup should_continue_reclaim()
-Date:   Mon,  5 Aug 2019 18:47:42 -0700
-Message-Id: <20190806014744.15446-3-mike.kravetz@oracle.com>
+Subject: [PATCH v2 3/4] mm, compaction: raise compaction priority after it withdrawns
+Date:   Mon,  5 Aug 2019 18:47:43 -0700
+Message-Id: <20190806014744.15446-4-mike.kravetz@oracle.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806014744.15446-1-mike.kravetz@oracle.com>
 References: <20190806014744.15446-1-mike.kravetz@oracle.com>
@@ -76,101 +76,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vlastimil Babka <vbabka@suse.cz>
 
-After commit "mm, reclaim: make should_continue_reclaim perform dryrun
-detection", closer look at the function shows, that nr_reclaimed == 0
-means the function will always return false. And since non-zero
-nr_reclaimed implies non_zero nr_scanned, testing nr_scanned serves no
-purpose, and so does the testing for __GFP_RETRY_MAYFAIL.
+Mike Kravetz reports that "hugetlb allocations could stall for minutes
+or hours when should_compact_retry() would return true more often then
+it should.  Specifically, this was in the case where compact_result was
+COMPACT_DEFERRED and COMPACT_PARTIAL_SKIPPED and no progress was being
+made."
 
-This patch thus cleans up the function to test only !nr_reclaimed upfront,
-and remove the __GFP_RETRY_MAYFAIL test and nr_scanned parameter
-completely.  Comment is also updated, explaining that approximating "full
-LRU list has been scanned" with nr_scanned == 0 didn't really work.
+The problem is that the compaction_withdrawn() test in
+should_compact_retry() includes compaction outcomes that are only possible
+on low compaction priority, and results in a retry without increasing the
+priority. This may result in furter reclaim, and more incomplete compaction
+attempts.
 
+With this patch, compaction priority is raised when possible, or
+should_compact_retry() returns false.
+
+The COMPACT_SKIPPED result doesn't really fit together with the other
+outcomes in compaction_withdrawn(), as that's a result caused by
+insufficient order-0 pages, not due to low compaction priority. With this
+patch, it is moved to a new compaction_needs_reclaim() function, and for
+that outcome we keep the current logic of retrying if it looks like reclaim
+will be able to help.
+
+Reported-by: Mike Kravetz <mike.kravetz@oracle.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+Tested-by: Mike Kravetz <mike.kravetz@oracle.com>
 Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
-Commit message reformatted to avoid line wrap.
+v2 - Commit message reformatted to avoid line wrap.  Added SOB.
 
- mm/vmscan.c | 43 ++++++++++++++-----------------------------
- 1 file changed, 14 insertions(+), 29 deletions(-)
+ include/linux/compaction.h | 22 +++++++++++++++++-----
+ mm/page_alloc.c            | 16 ++++++++++++----
+ 2 files changed, 29 insertions(+), 9 deletions(-)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a386c5351592..227d10cd704b 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2704,7 +2704,6 @@ static bool in_reclaim_compaction(struct scan_control *sc)
-  */
- static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 					unsigned long nr_reclaimed,
--					unsigned long nr_scanned,
- 					struct scan_control *sc)
- {
- 	unsigned long pages_for_compaction;
-@@ -2715,28 +2714,18 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 	if (!in_reclaim_compaction(sc))
- 		return false;
- 
--	/* Consider stopping depending on scan and reclaim activity */
--	if (sc->gfp_mask & __GFP_RETRY_MAYFAIL) {
--		/*
--		 * For __GFP_RETRY_MAYFAIL allocations, stop reclaiming if the
--		 * full LRU list has been scanned and we are still failing
--		 * to reclaim pages. This full LRU scan is potentially
--		 * expensive but a __GFP_RETRY_MAYFAIL caller really wants to succeed
--		 */
--		if (!nr_reclaimed && !nr_scanned)
--			return false;
--	} else {
--		/*
--		 * For non-__GFP_RETRY_MAYFAIL allocations which can presumably
--		 * fail without consequence, stop if we failed to reclaim
--		 * any pages from the last SWAP_CLUSTER_MAX number of
--		 * pages that were scanned. This will return to the
--		 * caller faster at the risk reclaim/compaction and
--		 * the resulting allocation attempt fails
--		 */
--		if (!nr_reclaimed)
--			return false;
--	}
-+	/*
-+	 * Stop if we failed to reclaim any pages from the last SWAP_CLUSTER_MAX
-+	 * number of pages that were scanned. This will return to the caller
-+	 * with the risk reclaim/compaction and the resulting allocation attempt
-+	 * fails. In the past we have tried harder for __GFP_RETRY_MAYFAIL
-+	 * allocations through requiring that the full LRU list has been scanned
-+	 * first, by assuming that zero delta of sc->nr_scanned means full LRU
-+	 * scan, but that approximation was wrong, and there were corner cases
-+	 * where always a non-zero amount of pages were scanned.
-+	 */
-+	if (!nr_reclaimed)
-+		return false;
- 
- 	/* If compaction would go ahead or the allocation would succeed, stop */
- 	for (z = 0; z <= sc->reclaim_idx; z++) {
-@@ -2763,11 +2752,7 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 	if (get_nr_swap_pages() > 0)
- 		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
- 
--	return inactive_lru_pages > pages_for_compaction &&
--		/*
--		 * avoid dryrun with plenty of inactive pages
--		 */
--		nr_scanned && nr_reclaimed;
-+	return inactive_lru_pages > pages_for_compaction;
+diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+index 9569e7c786d3..4b898cdbdf05 100644
+--- a/include/linux/compaction.h
++++ b/include/linux/compaction.h
+@@ -129,11 +129,8 @@ static inline bool compaction_failed(enum compact_result result)
+ 	return false;
  }
  
- static bool pgdat_memcg_congested(pg_data_t *pgdat, struct mem_cgroup *memcg)
-@@ -2936,7 +2921,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 			wait_iff_congested(BLK_RW_ASYNC, HZ/10);
+-/*
+- * Compaction  has backed off for some reason. It might be throttling or
+- * lock contention. Retrying is still worthwhile.
+- */
+-static inline bool compaction_withdrawn(enum compact_result result)
++/* Compaction needs reclaim to be performed first, so it can continue. */
++static inline bool compaction_needs_reclaim(enum compact_result result)
+ {
+ 	/*
+ 	 * Compaction backed off due to watermark checks for order-0
+@@ -142,6 +139,16 @@ static inline bool compaction_withdrawn(enum compact_result result)
+ 	if (result == COMPACT_SKIPPED)
+ 		return true;
  
- 	} while (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
--					 sc->nr_scanned - nr_scanned, sc));
-+					 sc));
++	return false;
++}
++
++/*
++ * Compaction has backed off for some reason after doing some work or none
++ * at all. It might be throttling or lock contention. Retrying might be still
++ * worthwhile, but with a higher priority if allowed.
++ */
++static inline bool compaction_withdrawn(enum compact_result result)
++{
+ 	/*
+ 	 * If compaction is deferred for high-order allocations, it is
+ 	 * because sync compaction recently failed. If this is the case
+@@ -207,6 +214,11 @@ static inline bool compaction_failed(enum compact_result result)
+ 	return false;
+ }
+ 
++static inline bool compaction_needs_reclaim(enum compact_result result)
++{
++	return false;
++}
++
+ static inline bool compaction_withdrawn(enum compact_result result)
+ {
+ 	return true;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d3bb601c461b..af29c05e23aa 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3965,15 +3965,23 @@ should_compact_retry(struct alloc_context *ac, int order, int alloc_flags,
+ 	if (compaction_failed(compact_result))
+ 		goto check_priority;
+ 
++	/*
++	 * compaction was skipped because there are not enough order-0 pages
++	 * to work with, so we retry only if it looks like reclaim can help.
++	 */
++	if (compaction_needs_reclaim(compact_result)) {
++		ret = compaction_zonelist_suitable(ac, order, alloc_flags);
++		goto out;
++	}
++
+ 	/*
+ 	 * make sure the compaction wasn't deferred or didn't bail out early
+ 	 * due to locks contention before we declare that we should give up.
+-	 * But do not retry if the given zonelist is not suitable for
+-	 * compaction.
++	 * But the next retry should use a higher priority if allowed, so
++	 * we don't just keep bailing out endlessly.
+ 	 */
+ 	if (compaction_withdrawn(compact_result)) {
+-		ret = compaction_zonelist_suitable(ac, order, alloc_flags);
+-		goto out;
++		goto check_priority;
+ 	}
  
  	/*
- 	 * Kswapd gives up on balancing particular nodes after too
 -- 
 2.20.1
 
