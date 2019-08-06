@@ -2,82 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3455835AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EDC3835B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733208AbfHFPuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 11:50:23 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46669 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbfHFPuX (ORCPT
+        id S1733266AbfHFPvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 11:51:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58694 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732048AbfHFPvb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 11:50:23 -0400
-Received: by mail-pl1-f194.google.com with SMTP id c2so38010644plz.13;
-        Tue, 06 Aug 2019 08:50:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=u6dMmkj149gP9miv8zHDNNMFxn9m6BrDvxKXAqMzwEI=;
-        b=jhpBffvhPSCf3In/Wz50tsgAGUBC3BQ0Qlf7ouWoE5TXvjnd0Usp2S+XZQt0QZ/i22
-         mAMLBxJs8Xv2L4vCPggXPK9U2DcY/ge+OzlOyxOlHLKzToI8sk9A02IHZHZaehVKqhk/
-         1o52A6FYUnE0B9FMis8k62hNWY1b8IQzR/4zit67MLekuh+CPQX/J5Z4K4WX1MW2jHlt
-         RUEz7y6PmUFwCkhRzj5lr/FeotQ3GRrfGFPFXaFk7jE6fTV0jpvOob1wsCVDI5eKr9an
-         NcRp8Q+jJXpsaOEK+nRPCLdhByatAks64YCeXy/dbh9Lipw1fVL+rWM1czjUwXv5HxbE
-         RUrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u6dMmkj149gP9miv8zHDNNMFxn9m6BrDvxKXAqMzwEI=;
-        b=Yt0tSWkvakZBgpWxVvQtBChiQ5Med9yyfb2kGRg4JscRQWcyLDJzbBQQMpRtnS3yef
-         Dd3BvbXgCZek3zThLUU0L2pB65mPeWHshhS34gNAZH6fP7Ys3UZ4Oh4GDQ+0kvHil9El
-         t2pSh/590rHTPL9dYTzZFBSPbEK5+PlrrgRx90+EFdD5Th89kdSSjBDLZyp8rrkTSv9m
-         SB2+tqeA/3Ls3WNpxA1F8thknj05yPxdZYtkPo7049NeAz66Xrd/ihJRk7EA0/mubb8T
-         rezJr21BxxG3pNRGXTE04EubBmvE/YJHgX09WP9ycKMRIzNaeMgTP22VlkWga3nitZrL
-         EKjQ==
-X-Gm-Message-State: APjAAAXaIN62hg0frW55NoYBqCUsdipWGref5qFoUGmbDHMzHdgE3xHe
-        f/I+Uurk1AL3cx9qTylSNW8=
-X-Google-Smtp-Source: APXvYqwXTfTWcMTHnb8iFDeDq6YX5vcra5uOdK9UmjmFGKkzVuPr4IzB9htp53hUE6hZf+lvY+DdnQ==
-X-Received: by 2002:a17:902:2ec5:: with SMTP id r63mr3800478plb.21.1565106622445;
-        Tue, 06 Aug 2019 08:50:22 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 67sm65790348pfd.177.2019.08.06.08.50.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 08:50:21 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 08:50:20 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.2 000/131] 5.2.7-stable review
-Message-ID: <20190806155020.GE12156@roeck-us.net>
-References: <20190805124951.453337465@linuxfoundation.org>
+        Tue, 6 Aug 2019 11:51:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SncjWrmoRC5b495lasgofj0Rqb2mQTyyh5dUq+5um6c=; b=omsCdPaWcnXHcWz6QUOPsZ1pH
+        m4nhZmOCV5hlYYIM86PIwoYv97n1noOSx61nqdD5Rvo9OhGQQJ+ZPRQzx7OSmkV0g38j23wJVV0Wu
+        OA6nibDOjqa3aQAvytDJ1hR4rA9LfBGjXdSQASh7g9TEaQ8ZQXZk5SLvA35tGtSk8QSRL8vagnuRA
+        grsvsDLfqhl+NiT+Dqly9Tn8qDyLmrA6YcWPBssLEypNK8woJHz1tPHv/fxvUgbTsilr6PrnL7CMY
+        86FQfGDuo3nB2UVQvSwY6mHsHIHy7t5NB7g5s7yo2yQLb4vLc/RxZQGZgFdwDXYBYoVrN3i/SKjrc
+        dsPnU77wA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hv1ji-0001tD-Q5; Tue, 06 Aug 2019 15:50:54 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 55E2F3077A6;
+        Tue,  6 Aug 2019 17:50:09 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B8089201B3F8E; Tue,  6 Aug 2019 17:50:34 +0200 (CEST)
+Date:   Tue, 6 Aug 2019 17:50:34 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Garnier <thgarnie@chromium.org>,
+        kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
+        keescook@chromium.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Nadav Amit <namit@vmware.com>, Jann Horn <jannh@google.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Maran Wilson <maran.wilson@oracle.com>,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v9 00/11] x86: PIE support to extend KASLR randomization
+Message-ID: <20190806155034.GP2349@hirez.programming.kicks-ass.net>
+References: <20190730191303.206365-1-thgarnie@chromium.org>
+ <20190806154347.GD25897@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190805124951.453337465@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190806154347.GD25897@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 03:01:27PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.7 release.
-> There are 131 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Aug 06, 2019 at 05:43:47PM +0200, Borislav Petkov wrote:
+> On Tue, Jul 30, 2019 at 12:12:44PM -0700, Thomas Garnier wrote:
+> > These patches make some of the changes necessary to build the kernel as
+> > Position Independent Executable (PIE) on x86_64. Another patchset will
+> > add the PIE option and larger architecture changes.
 > 
-> Responses should be made by Wed 07 Aug 2019 12:47:58 PM UTC.
-> Anything received after that time might be too late.
-> 
+> Yeah, about this: do we have a longer writeup about the actual benefits
+> of all this and why we should take this all? After all, after looking
+> at the first couple of asm patches, it is posing restrictions to how
+> we deal with virtual addresses in asm (only RIP-relative addressing in
+> 64-bit mode, MOVs with 64-bit immediates, etc, for example) and I'm
+> willing to bet money that some future unrelated change will break PIE
+> sooner or later.
 
-Build results:
-	total: 159 pass: 159 fail: 0
-Qemu test results:
-	total: 364 pass: 364 fail: 0
+Possibly objtool can help here; it should be possible to teach it about
+these rules, and then it will yell when violated. That should avoid
+regressions.
 
-Guenter
