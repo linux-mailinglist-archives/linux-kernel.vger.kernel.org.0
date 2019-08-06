@@ -2,75 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1B5683320
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:43:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53B7583337
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:45:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732902AbfHFNnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:43:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732846AbfHFNn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:43:26 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 751E12173C;
-        Tue,  6 Aug 2019 13:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565099005;
-        bh=ZQXs04u0CjVQyGUn/plxBUN0R2FVhChaLwJZcSleMm8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TxGzVk3SA+DcRfZ/4yKiOGawEbNJua94mhRO8/gJ/IXsSRSpKVzu5PEvgQ+7HfQG5
-         71ech1YIlhuiZo8haFAYJrO+96e0AzRrg46jNb8wWCzfu7f5BYhUOWaszf0Wqfqgiy
-         UyRxnT43UtcvsUwglbZSwOJk37ujClJGpzvtjNk8=
-Date:   Tue, 6 Aug 2019 15:43:22 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
-        jarkko.sakkinen@linux.intel.com, arnd@arndb.de,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        casey@schaufler-ca.com, ard.biesheuvel@linaro.org,
-        daniel.thompson@linaro.org, linux-kernel@vger.kernel.org,
-        tee-dev@lists.linaro.org
-Subject: Re: [RFC/RFT v3 2/3] KEYS: trusted: move tpm2 trusted keys code
-Message-ID: <20190806134322.GA10783@kroah.com>
-References: <1565098640-12536-1-git-send-email-sumit.garg@linaro.org>
- <1565098640-12536-3-git-send-email-sumit.garg@linaro.org>
+        id S1731678AbfHFNpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:45:20 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36539 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728560AbfHFNpU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 09:45:20 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r7so41547241pfl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 06:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oQh9z74ag+GmRjLxDeaQAgLw1V8J9pK1FZmm6doK+q0=;
+        b=tiSelzTk8mWTlpoVBYaXILHfHlswQ+XRiZj0Grsrvlq2dZ9vBXV6QYwMDfzYVxWxdX
+         T/sAQpQ6cK5tDefmfWEBYxAC/XqM2IHN8J6B3osQqPeIsIOSf1w0RDjhyB56jsKtkfoZ
+         Fdtm+r1y+/dlnUJI2I55JepBmMRpkBWhpSu2oyibbNLC88OAlXtrwqZMDwzlVnWxkQRa
+         V0AJnSAoOhb2vsOYj5ZpBaeMt0OfK8rJ2ohVGatcnnFvSHs+bpYWCHrtDGpBiAaMQ3+Q
+         dTjxOBFj8mJxSbAUSTePGKwVfocf9LonuuN0vZI0+HgsW1qTC4jBA7NDLadzOF74BHdF
+         g7aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oQh9z74ag+GmRjLxDeaQAgLw1V8J9pK1FZmm6doK+q0=;
+        b=qqkPGOccyl2wIbslJcQbMBVGS/fSCb4ZTZjDa8RRMQBuOpw8max4fb0DJTvIgMlBuL
+         b/fLrJmwnOSRniHpEnqjyKLasjaBNVuDvi/3YLYScfav7CnhwER1I2zoJomuJlQHfGNg
+         Kj5XF0fN87SjWMU8qcOqiZOpQQnAlRVoJGZtkiF/tXmeNj8+Y4SDhR7SLhGbYkMrhpTl
+         uVJ6xDgIBWdi2rjR7HuauCQr3XIqNwoVu+L9xfhP3UJCsdjmL5Hvg3MK9tkIjh/9gq5l
+         g2cHU4QlPxGnDue/xOOBNl1IBzlw68+vieaFpjllzIRun8hXnnhIufaNCvjqu2JgrF7h
+         DXdA==
+X-Gm-Message-State: APjAAAUOSILb4CUx00tXzon/IZYH+dh6YysI49NZ2VD/Nr/1TPY4/anv
+        GHr0eWf7s3EYI3hUfoe6fR657YFm8mrQ4w==
+X-Google-Smtp-Source: APXvYqzq54EhLaujd1/sIZml45bFnQlidzBA9hT0AAdIzhGvcT8uYyfa+uY4esbkhztXp9A71Qs9fQ==
+X-Received: by 2002:a17:90a:cf0d:: with SMTP id h13mr3284927pju.63.1565099119117;
+        Tue, 06 Aug 2019 06:45:19 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:83a1:5cfb:b4eb:1062:5bea? ([2605:e000:100e:83a1:5cfb:b4eb:1062:5bea])
+        by smtp.gmail.com with ESMTPSA id a3sm22023266pje.3.2019.08.06.06.45.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 06:45:18 -0700 (PDT)
+Subject: Re: [PATCH] ata: rb532_cf: Fix unused variable warning in
+ rb532_pata_driver_probe
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190806080808.GA30026@embeddedor>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a80a74ae-ab49-7f58-a4f3-8bd3b3012716@kernel.dk>
+Date:   Tue, 6 Aug 2019 06:45:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565098640-12536-3-git-send-email-sumit.garg@linaro.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190806080808.GA30026@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 07:07:19PM +0530, Sumit Garg wrote:
-> Move TPM2 trusted keys code to trusted keys subsystem.
+On 8/6/19 1:08 AM, Gustavo A. R. Silva wrote:
+> Fix the following warning (Building: rb532_defconfig mips):
 > 
-> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> ---
->  drivers/char/tpm/tpm-interface.c          |  56 -----
->  drivers/char/tpm/tpm.h                    | 224 ------------------
->  drivers/char/tpm/tpm2-cmd.c               | 307 ------------------------
->  include/keys/trusted_tpm.h                |  23 +-
->  include/linux/tpm.h                       | 264 +++++++++++++++++++--
->  security/keys/trusted-keys/Makefile       |   3 +-
->  security/keys/trusted-keys/trusted-tpm.c  |  16 +-
->  security/keys/trusted-keys/trusted-tpm2.c | 378 ++++++++++++++++++++++++++++++
->  8 files changed, 652 insertions(+), 619 deletions(-)
->  create mode 100644 security/keys/trusted-keys/trusted-tpm2.c
+> drivers/ata/pata_rb532_cf.c: In function ‘rb532_pata_driver_remove’:
+> drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable ‘info’ [-Wunused-variable]
+>    struct rb532_cf_info *info = ah->private_data;
+>                          ^~~~
 
-'git format-patch -M' will create a patch that shows the rename, and
-then any tiny differences that happened after that.  A patch like this
-is hard to see what changed in the move.
+Applied, thanks.
 
-thanks,
+-- 
+Jens Axboe
 
-greg k-h
