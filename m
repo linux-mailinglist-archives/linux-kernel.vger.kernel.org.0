@@ -2,187 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1818C83725
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:40:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9980B83737
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbfHFQkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:40:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:36726 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732729AbfHFQkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:40:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9AD5344;
-        Tue,  6 Aug 2019 09:40:23 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8522B3F575;
-        Tue,  6 Aug 2019 09:40:22 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 17:40:20 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     linux-pm@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LAKML <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 5/6] ARM: psci: cpuidle: Enable PSCI CPUidle driver
-Message-ID: <20190806164020.GD15498@e121166-lin.cambridge.arm.com>
-References: <20190722153745.32446-1-lorenzo.pieralisi@arm.com>
- <20190722153745.32446-6-lorenzo.pieralisi@arm.com>
- <20190806161624.GE16546@e107155-lin>
+        id S2387945AbfHFQmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:42:23 -0400
+Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:38011 "EHLO
+        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387860AbfHFQmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 12:42:21 -0400
+Received: from smtp8.infomaniak.ch (smtp8.infomaniak.ch [83.166.132.38])
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x76GesNS032199
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 6 Aug 2019 18:40:54 +0200
+Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp8.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x76GemgJ022929
+        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
+        Tue, 6 Aug 2019 18:40:48 +0200
+Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+To:     Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <20181212081712.32347-2-mic@digikod.net>
+ <20181212144306.GA19945@quack2.suse.cz>
+ <CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Openpgp: preference=signencrypt
+Message-ID: <0a16e842-d636-60ac-427a-3500224f4f8d@digikod.net>
+Date:   Tue, 6 Aug 2019 18:40:48 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806161624.GE16546@e107155-lin>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 05:16:24PM +0100, Sudeep Holla wrote:
-> On Mon, Jul 22, 2019 at 04:37:44PM +0100, Lorenzo Pieralisi wrote:
-> > Allow selection of the PSCI CPUidle in the kernel by adding
-> > the required Kconfig options.
-> > 
-> > Remove PSCI callbacks from ARM/ARM64 generic CPU ops
-> > to prevent the PSCI idle driver from clashing with the generic
-> > ARM CPUidle driver initialization, that relies on CPU ops
-> > to initialize and enter idle states.
-> > 
-> > Update the affected defconfig files to guarantee seamingless
-> > transition from the generic ARM CPUidle to the PSCI CPUidle
-> > driver on arch/platforms using it.
-> > 
-> > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > Cc: Sudeep Holla <sudeep.holla@arm.com>
-> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > ---
-> >  arch/arm/configs/imx_v6_v7_defconfig | 1 +
-> >  arch/arm64/configs/defconfig         | 1 +
+
+On 05/08/2019 01:55, Andy Lutomirski wrote:
+> On Wed, Dec 12, 2018 at 6:43 AM Jan Kara <jack@suse.cz> wrote:
+>>
+>> On Wed 12-12-18 09:17:08, Mickaël Salaün wrote:
+>>> When the O_MAYEXEC flag is passed, sys_open() may be subject to
+>>> additional restrictions depending on a security policy implemented by an
+>>> LSM through the inode_permission hook.
+>>>
+>>> The underlying idea is to be able to restrict scripts interpretation
+>>> according to a policy defined by the system administrator.  For this to
+>>> be possible, script interpreters must use the O_MAYEXEC flag
+>>> appropriately.  To be fully effective, these interpreters also need to
+>>> handle the other ways to execute code (for which the kernel can't help):
+>>> command line parameters (e.g., option -e for Perl), module loading
+>>> (e.g., option -m for Python), stdin, file sourcing, environment
+>>> variables, configuration files...  According to the threat model, it may
+>>> be acceptable to allow some script interpreters (e.g. Bash) to interpret
+>>> commands from stdin, may it be a TTY or a pipe, because it may not be
+>>> enough to (directly) perform syscalls.
+>>>
+>>> A simple security policy implementation is available in a following
+>>> patch for Yama.
+>>>
+>>> This is an updated subset of the patch initially written by Vincent
+>>> Strubel for CLIP OS:
+>>> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+>>> This patch has been used for more than 10 years with customized script
+>>> interpreters.  Some examples can be found here:
+>>> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+>>>
+>>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>>> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+>>> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+>>> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+>>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+>>
+>> ...
+>>
+>>> diff --git a/fs/open.c b/fs/open.c
+>>> index 0285ce7dbd51..75479b79a58f 100644
+>>> --- a/fs/open.c
+>>> +++ b/fs/open.c
+>>> @@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
+>>>       if (flags & O_APPEND)
+>>>               acc_mode |= MAY_APPEND;
+>>>
+>>> +     /* Check execution permissions on open. */
+>>> +     if (flags & O_MAYEXEC)
+>>> +             acc_mode |= MAY_OPENEXEC;
+>>> +
+>>>       op->acc_mode = acc_mode;
+>>>
+>>>       op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
+>>
+>> I don't feel experienced enough in security to tell whether we want this
+>> functionality or not. But if we do this, shouldn't we also set FMODE_EXEC
+>> on the resulting struct file? That way also security_file_open() can be
+>> used to arbitrate such executable opens and in particular
+>> fanotify permission event FAN_OPEN_EXEC will get properly generated which I
+>> guess is desirable (support for it is sitting in my tree waiting for the
+>> merge window) - adding some audit people involved in FAN_OPEN_EXEC to
+>> CC. Just an idea...
+>>
 > 
-> Better to keep above you as separate patch, though it may cause
-> minor issues from bisectibility. It may be needed anyway for merging.
+> I would really like to land this patch.  I'm fiddling with making
+> bpffs handle permissions intelligently, and the lack of a way to say
+> "hey, I want to open this bpf program so that I can run it" is
+> annoying.
 
-That's a good point, I will split these bits in a separate patch.
-
-> >  arch/arm64/kernel/cpuidle.c          | 7 ++++---
-> >  arch/arm64/kernel/psci.c             | 4 ----
-> >  drivers/cpuidle/Kconfig.arm          | 8 ++++++--
-> >  drivers/firmware/psci/psci.c         | 9 ---------
-> >  6 files changed, 12 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-> > index a53b29251ed4..4174fd1b79e7 100644
-> > --- a/arch/arm/configs/imx_v6_v7_defconfig
-> > +++ b/arch/arm/configs/imx_v6_v7_defconfig
-> > @@ -60,6 +60,7 @@ CONFIG_ARM_IMX6Q_CPUFREQ=y
-> >  CONFIG_ARM_IMX_CPUFREQ_DT=y
-> >  CONFIG_CPU_IDLE=y
-> >  CONFIG_ARM_CPUIDLE=y
-> > +CONFIG_ARM_PSCI_CPUIDLE=y
-> >  CONFIG_VFP=y
-> >  CONFIG_NEON=y
-> >  CONFIG_PM_DEBUG=y
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> > index 0e58ef02880c..c0a7cfe3aebd 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -72,6 +72,7 @@ CONFIG_RANDOMIZE_BASE=y
-> >  CONFIG_HIBERNATION=y
-> >  CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
-> >  CONFIG_ARM_CPUIDLE=y
-> > +CONFIG_ARM_PSCI_CPUIDLE=y
-> >  CONFIG_CPU_FREQ=y
-> >  CONFIG_CPU_FREQ_STAT=y
-> >  CONFIG_CPU_FREQ_GOV_POWERSAVE=m
-> > diff --git a/arch/arm64/kernel/cpuidle.c b/arch/arm64/kernel/cpuidle.c
-> > index d1048173fd8a..4bcd1bca0dfc 100644
-> > --- a/arch/arm64/kernel/cpuidle.c
-> > +++ b/arch/arm64/kernel/cpuidle.c
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/cpu_pm.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_device.h>
-> > +#include <linux/psci.h>
-> >  
-> >  #include <asm/cpuidle.h>
-> >  #include <asm/cpu_ops.h>
-> > @@ -48,15 +49,15 @@ int arm_cpuidle_suspend(int index)
-> >  
-> >  int acpi_processor_ffh_lpi_probe(unsigned int cpu)
-> >  {
-> > -	return arm_cpuidle_init(cpu);
-> > +	return psci_acpi_cpu_init_idle(cpu);
-> 
-> This will break build as psci_acpi_cpu_init_idle is introduced in next patch.
-> You can simply move it to next patch I assume.
-
-Yes, it is a bisectability issue, I fixed it already but thanks
-for spotting it anyway.
-
-> >  }
-> >  
-> >  int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi)
-> >  {
-> >  	if (ARM64_LPI_IS_RETENTION_STATE(lpi->arch_flags))
-> > -		return CPU_PM_CPU_IDLE_ENTER_RETENTION(arm_cpuidle_suspend,
-> > +		return CPU_PM_CPU_IDLE_ENTER_RETENTION(psci_cpu_suspend_enter,
-> >  						lpi->index);
-> >  	else
-> > -		return CPU_PM_CPU_IDLE_ENTER(arm_cpuidle_suspend, lpi->index);
-> > +		return CPU_PM_CPU_IDLE_ENTER(psci_cpu_suspend_enter, lpi->index);
-> >  }
-> >  #endif
-> > diff --git a/arch/arm64/kernel/psci.c b/arch/arm64/kernel/psci.c
-> > index 85ee7d07889e..a543ab7e007c 100644
-> > --- a/arch/arm64/kernel/psci.c
-> > +++ b/arch/arm64/kernel/psci.c
-> > @@ -105,10 +105,6 @@ static int cpu_psci_cpu_kill(unsigned int cpu)
-> >  
-> >  const struct cpu_operations cpu_psci_ops = {
-> >  	.name		= "psci",
-> > -#ifdef CONFIG_CPU_IDLE
-> > -	.cpu_init_idle	= psci_cpu_init_idle,
-> > -	.cpu_suspend	= psci_cpu_suspend_enter,
-> > -#endif
-> >  	.cpu_init	= cpu_psci_cpu_init,
-> >  	.cpu_prepare	= cpu_psci_cpu_prepare,
-> >  	.cpu_boot	= cpu_psci_cpu_boot,
-> > diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
-> > index 929b57424ea4..b9c56c60ab98 100644
-> > --- a/drivers/cpuidle/Kconfig.arm
-> > +++ b/drivers/cpuidle/Kconfig.arm
-> > @@ -14,8 +14,12 @@ config ARM_CPUIDLE
-> >            provided by architecture code.
-> >  
-> >  config ARM_PSCI_CPUIDLE
-> > -	bool
-> > -
-> > +	bool "PSCI CPU idle Driver"
-> 
-> As mentioned in previous patch, do you see issues having just above
-> change in this patch and the below ones moved to the previous.
-
-No you are right, I will make this change.
-
-> > +	depends on ARM_PSCI_FW
-> > +	select DT_IDLE_STATES
-> > +	select CPU_IDLE_MULTIPLE_DRIVERS
-> > +	help
-> > +	  Select this to enable PSCI firmware based CPUidle driver for ARM.
-> 
-> You need extra blank line here.
-
-OK.
-
-Thanks,
-Lorenzo
+Are you OK with this series? What about Aleksa's work on openat2(), and
+Sean's work on SGX/noexec? Is it time to send a new patch series (with a
+dedicated LSM instead of Yama)?
