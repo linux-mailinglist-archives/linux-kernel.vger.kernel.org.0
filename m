@@ -2,78 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38D5C82B8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4754582B8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731808AbfHFGVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 02:21:03 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46508 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731641AbfHFGVB (ORCPT
+        id S1731781AbfHFGU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 02:20:58 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34260 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731557AbfHFGU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 02:21:01 -0400
-Received: by mail-ed1-f68.google.com with SMTP id d4so81263461edr.13
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 23:21:00 -0700 (PDT)
+        Tue, 6 Aug 2019 02:20:58 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 31so86646980wrm.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 23:20:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0U+y13dMiHzwCn4V2Kd/3Vuhw7hdWOKVjn17zxDfeFA=;
-        b=adSYW4hdHxzk3GSWK3Ij8L4+k4NgUDIV4zWvlh1nwVgGmIU6lGEvW5wdRLLQpRogvw
-         HKVvV9GLLclBGPA6UMWcrOs5i5R209bQHjOlFvy/T6+IxtGr5qg3CFIUDowMBF0budEt
-         FrQqkgXpXz2B4Vc+FKKFq3QolQwSbSgdlopfI7g1kGjCE8wEgryOlkQkVL9Kex331v6+
-         RQDzhhYzlUDE3iyTTZTjG9XA48YG15/OUfaMWK6jJQMYE5Xzw95gG006eWy0sCIK4NXD
-         0P9QntTWm6Rfb5tr8VPj1o3TJR8xc7yQ/SdtNuYR26ikqQD7rzBJ2bvrEpVrx6Xixq7s
-         gHuA==
-X-Gm-Message-State: APjAAAUUhFnRDrUh8h0oni8AFKkOYb9ncsmfdKqXNF2KeyFeSsakq0sL
-        B1BdkdWWWixGCCU8BiN4sReY+589PGA=
-X-Google-Smtp-Source: APXvYqw6r6nNdlKfKLYqz7mmZtKzNLMzdEF60joiVbKXWRRr6vTFff4MuVnx5XZ52tQ5UpUPGs94vg==
-X-Received: by 2002:a17:906:32c2:: with SMTP id k2mr1595848ejk.147.1565072459227;
-        Mon, 05 Aug 2019 23:20:59 -0700 (PDT)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
-        by smtp.gmail.com with ESMTPSA id f24sm19738390edt.82.2019.08.05.23.20.58
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aMztFRMwS894XHsmEs01R20QPKJnerKfJ/mqwGoosCA=;
+        b=bbKpmTFtZ7dTRaAtPDiBBD7DbS2M4Ai1xgAtNDbEsrWbuG9oNvgvI70Zt3t6GahAyF
+         Y4YEKwlTXOPGnZr8+Z1ZIgdrmDV2/TFAOTX0d4hOXZcsmyOJrnd5Hkr+RzGAH/WJgyrr
+         RDh2orxYSt5kJl/dsFBUedSX8ZZOAmB4KuvqsBuj5vrIg6p5bIu1p04dUFdJxoTm/aDl
+         eHcAHuWtFdtdQUXubtSpy4SlFsck03ETXF4ATc3a54J7ZmXCnzax1K9EteetJ2tWEYbw
+         Rrcb6bao/dqDdWsM5S12swWrha2W6bGQ2+DVaN9y61+YgzJyR8Jq8rbnraWJlePvhtHF
+         lv5Q==
+X-Gm-Message-State: APjAAAWvFknsnLYcLgaOXEF/JtENfizEFlo4EDYx7okJsaj1xruXDHEG
+        FXMYwXx4xd3dlGEcvkOfmjCnxQ==
+X-Google-Smtp-Source: APXvYqylbgUdbdCCip+TqSzuS3nN/TZgFkjI643QFSasgjW2I/qMUGjPcLCRAwvxZhdJxcEgwJic+A==
+X-Received: by 2002:a5d:4949:: with SMTP id r9mr2276210wrs.289.1565072456384;
+        Mon, 05 Aug 2019 23:20:56 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:dc26:ed70:9e4c:3810? ([2001:b07:6468:f312:dc26:ed70:9e4c:3810])
+        by smtp.gmail.com with ESMTPSA id t63sm84881683wmt.6.2019.08.05.23.20.55
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2019 23:20:58 -0700 (PDT)
-Received: by mail-wm1-f51.google.com with SMTP id g67so71064321wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 23:20:58 -0700 (PDT)
-X-Received: by 2002:a1c:c545:: with SMTP id v66mr2563319wmf.51.1565072458497;
- Mon, 05 Aug 2019 23:20:58 -0700 (PDT)
+        Mon, 05 Aug 2019 23:20:55 -0700 (PDT)
+Subject: Re: [PATCH v4 1/6] KVM: Fix leak vCPU's VMCS value into other pCPU
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        "# v3 . 10+" <stable@vger.kernel.org>
+References: <1564970604-10044-1-git-send-email-wanpengli@tencent.com>
+ <9acbc733-442f-0f65-9b56-ff800a3fa0f5@redhat.com>
+ <CANRm+CwH54S555nw-Zik-3NFDH9yqe+SOZrGc3mPoAU_qGxP-A@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <e7b84893-42bf-e80e-61c9-ef5d1b200064@redhat.com>
+Date:   Tue, 6 Aug 2019 08:20:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190730181557.90391-1-swboyd@chromium.org> <20190730181557.90391-3-swboyd@chromium.org>
- <CAGb2v65njFXzLM_BvkDsZEzxEfkp_FFmFrS+1Ww9ZVen3iwy9g@mail.gmail.com> <5d489548.1c69fb81.44fd6.ab81@mx.google.com>
-In-Reply-To: <5d489548.1c69fb81.44fd6.ab81@mx.google.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 6 Aug 2019 14:20:44 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67JN_5chMA9ayqCuk-zP4x6qzs8MZCupqLsYRhrg4SfaQ@mail.gmail.com>
-Message-ID: <CAGb2v67JN_5chMA9ayqCuk-zP4x6qzs8MZCupqLsYRhrg4SfaQ@mail.gmail.com>
-Subject: Re: [PATCH v6 02/57] bus: sunxi-rsb: Remove dev_err() usage after platform_get_irq()
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANRm+CwH54S555nw-Zik-3NFDH9yqe+SOZrGc3mPoAU_qGxP-A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 4:44 AM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Chen-Yu Tsai (2019-08-04 20:35:05)
-> > On Wed, Jul 31, 2019 at 2:16 AM Stephen Boyd <swboyd@chromium.org> wrote:
-> > >
-> > >
-> > > Please apply directly to subsystem trees
-> >
-> > I didn't follow this series. Is this for -fixes or -next?
-> >
->
-> It's for -next. Sorry for not including a link to the patch that
-> introduces the platform_get_irq() changes. You can see it here:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/commit/?h=driver-core-next&id=7723f4c5ecdb8d832f049f8483beb0d1081cedf6
+On 06/08/19 02:35, Wanpeng Li wrote:
+> Thank you, Paolo! Btw, how about other 5 patches?
 
-Applied for 5.4.
+Queued everything else too.
 
-Thanks.
+Paolo
+
+> Regards,
+> Wanpeng Li
+
