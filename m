@@ -2,132 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B834D832FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B53783316
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:43:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbfHFNlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:41:36 -0400
-Received: from mail-eopbgr140053.outbound.protection.outlook.com ([40.107.14.53]:10211
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726092AbfHFNlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:41:36 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oeFRc8pbb6wrxESlytG2MIthVZNF9tb/KB/CjwFQI9bm1ObsmesQpJSVGcAlHP+SXHSbZjebgvqtdEae8xTVhgtxDZIJ4WdWwzW0F4OSK6V4wOPlou7ZjbVVNeh05ExIPdPmdbI/xxr3Fkh0AkVYKX2YkmI76H5srI3R0OBzySN09B5csEVROZhKKqqctr/PduBQ3XoC70meMapVHlgTH2HRYB77JkdWVyPEyGdR9UZrd3CBNJ1lXY9qqB1yLnxmNfiRbF0Dn18V8lbnTL8c+jUKiPPN9wzFWOBvGaJM2TlU3NLlydnmTglm3Ux5ZQgNl67Tolh5QcyxHGOlMqNhYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hf90RamkDUOldTROmtPkbhDEjn+D2DFBKQ7JHdsKDoc=;
- b=NEz4ZsfQmwt5j3DEwPLe9KX9xi7cXm6VZ0hJrps+OGgEzs3GKFtJtzhII0JZrw+uAmj1wciaHxBGG0RlC/7vNwsVogveusrjHVvZNrom7BBF5dxSk6GOakMSCl7L6/N/kQyu1p7NME+sScBGlpNTaJyYqy+1+k9c1Z6sNXae8lcdlVJfOH/2glW6pPNs2g+2qf4qmeNI2nqjq7PpjvhFqt/kugPQ2EEkHoAJmlsvhWwt2uSZuGf7SyJFjaawAyfa9U1P6fq4nU5axHTPsVqWiZ2F4pAGL3SUBqGhj50cv0d7sd4Y0lDsgEp9fXd5rfmYErnNX4FROUhLSBj5vglNFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hf90RamkDUOldTROmtPkbhDEjn+D2DFBKQ7JHdsKDoc=;
- b=cD5Y7RpddeY8FYRdXmSooheWcRE5SIBIuPAnnoWpYQDykAIGle9Rt/AfZrgtLIFZ3l3m2A3MyKsee7FnRvCHxvrwD10XKBGsPp6oyGw8Y2O+Geoz71X0YRZsvj3xXuSVebAZm11IUcocstm/arYkSc+vT0+EZiJ9du5s9rZrfEc=
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
- VI1PR04MB5630.eurprd04.prod.outlook.com (20.178.125.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.14; Tue, 6 Aug 2019 13:41:32 +0000
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::41:43ca:bf4c:7b99]) by VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::41:43ca:bf4c:7b99%3]) with mapi id 15.20.2136.018; Tue, 6 Aug 2019
- 13:41:32 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     =?iso-8859-2?Q?Artur_=A6wigo=F1?= <a.swigon@partner.samsung.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "cw00.choi@samsung.com" <cw00.choi@samsung.com>,
-        "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>,
-        "inki.dae@samsung.com" <inki.dae@samsung.com>,
-        "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>,
-        "georgi.djakov@linaro.org" <georgi.djakov@linaro.org>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>
-Subject: Re: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
- functionality to exynos-bus
-Thread-Topic: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
- functionality to exynos-bus
-Thread-Index: AQHVQVEYOnL6Nj5GnEmKqTrzyDUrnA==
-Date:   Tue, 6 Aug 2019 13:41:31 +0000
-Message-ID: <VI1PR04MB5055BED59960B4F4147479AEEED50@VI1PR04MB5055.eurprd04.prod.outlook.com>
-References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
- <CGME20190723122028eucas1p2eb75f35b810e71d6c590370aaff0997b@eucas1p2.samsung.com>
- <20190723122016.30279-10-a.swigon@partner.samsung.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 490e8f33-3627-4316-34e6-08d71a73cab3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5630;
-x-ms-traffictypediagnostic: VI1PR04MB5630:
-x-microsoft-antispam-prvs: <VI1PR04MB563066A91E2B0B54C1995EBCEED50@VI1PR04MB5630.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0121F24F22
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(4636009)(366004)(346002)(136003)(376002)(396003)(39860400002)(189003)(199004)(53546011)(9686003)(55016002)(6246003)(99286004)(76176011)(7736002)(229853002)(446003)(478600001)(102836004)(7416002)(5660300002)(256004)(14444005)(53936002)(2906002)(54906003)(4326008)(86362001)(71190400001)(476003)(6506007)(68736007)(8936002)(26005)(66556008)(66476007)(66446008)(74316002)(52536014)(81156014)(81166006)(91956017)(6436002)(8676002)(66946007)(486006)(44832011)(64756008)(110136005)(25786009)(71200400001)(14454004)(305945005)(66574012)(316002)(186003)(66066001)(76116006)(33656002)(3846002)(6116002)(7696005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5630;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: h9q5IIVjAVOY3hzHPZmt9AdcmIRHfFQCRzPOdR4w65PBZI7g0rOAon5Jkdk7+NtEF1AE/tfgE7S+HynoZg2/bB2u42u2OYYUne4Htqhr9QVmkLixOt7XO/fVqb9ZYDSDnXh4j+m0gCd7pJPtosUnp4ABb4ImspLc6HeJ2MWRoPHJhCveIkBNPsF/Ukei1ZyFlqOzGHDaRp2uGKbyHY84JAoNr+KZbBOPkkuehV9gS3JIXgQu+xtc/QITEC3PZd61llFdRYIVOZwERhEMucH2Zle2Owk02Y52rR1r+oj4SLXv+rpvplMlSYrAPE76mcgexDUdyT1nSOQaIQd/hGTQJv6hnNI91kVx6ukdvXDW9Px2FLdgKRjKTTgztWoXR/LlcpvkJcVCJJqN4P/8Fj5nIXGFzt7Zb0f4e+plVfRt+KU=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 490e8f33-3627-4316-34e6-08d71a73cab3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2019 13:41:31.9578
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5630
+        id S1732372AbfHFNm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:42:57 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:59074 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726036AbfHFNm4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 09:42:56 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 31394C21AE;
+        Tue,  6 Aug 2019 13:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1565098976; bh=g3fYN+8z/UxI7FeCuuLDjSYU9su9owSrWnBkpruQfVk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UF/s6Itmeojm8oETQnPHErGmMkvlb08dC+w1dnzGHFrL/riVd8JM6sKyJ3g8DGsVz
+         CJkwybaxciRPAd1jUVTY4bt/wdNX8b6J2SzPfTh0Oo0EsxOhaqMs6ufEQFg6a1j4xl
+         ZwWfbSebC8r1RcS6z906yKPdQehIG6j+3AVfi//hEbTUiNY6kOhSldocrHUCHU/+sJ
+         HXApwwNQCP+Y2RQE0Sfbt08ciP1s/x+QCv2AvFyODtsmYC4/WbmoRLHWXLrXZAFQHs
+         BVNyqzZ6kjSPtvJp/zX7bsVIpjPWhxCf/QxP0ItHfE+8XuO2PvQQ+aZC2kOyzrCeYP
+         TxJIOoHwCn6Qg==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id ADC9EA0057;
+        Tue,  6 Aug 2019 13:42:53 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 00/10] net: stmmac: Improvements for -next
+Date:   Tue,  6 Aug 2019 15:42:41 +0200
+Message-Id: <cover.1565098881.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.07.2019 15:21, Artur =A6wigo=F1 wrote:=0A=
-=0A=
-> +static int exynos_bus_icc_aggregate(struct icc_node *node, u32 avg_bw,=
-=0A=
-> +				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)=0A=
-> +{=0A=
-> +	*agg_peak =3D *agg_avg =3D peak_bw;=0A=
-> +=0A=
-> +	return 0;=0A=
-> +}=0A=
-=0A=
-The only current provider aggregates "avg" with "sum" and "peak" with =0A=
-"max", any particular reason to do something different? This function =0A=
-doesn't even really do aggregation, if there is a second request for "0" =
-=0A=
-then the first request is lost.=0A=
-=0A=
-I didn't find any docs but my interpretation of avg/peak is that "avg" =0A=
-is for constant traffic like a display or VPU pushing pixels and "peak" =0A=
-is for variable traffic like networking. I assume devices which make =0A=
-"peak" requests are aggregated with max because they're not expected to =0A=
-all max-out together.=0A=
-=0A=
-In PATCH 11 you're making a bandwidth request based on resolution, that =0A=
-traffic is constant and guaranteed to happend while the display is on so =
-=0A=
-it would make sense to request it as an "avg" and aggregate it with "sum".=
-=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+Couple of improvements for -next tree. More info in commit logs.
+
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (10):
+  net: stmmac: xgmac: Implement MMC counters
+  net: stmmac: xgmac: Implement set_mtl_tx_queue_weight()
+  net: stmmac: xgmac: Implement tx_queue_prio()
+  net: stmmac: Implement RSS and enable it in XGMAC core
+  net: stmmac: selftests: Add RSS test
+  net: stmmac: Implement VLAN Hash Filtering in XGMAC
+  net: stmmac: selftests: Add test for VLAN and Double VLAN Filtering
+  net: stmmac: Implement Safety Features in XGMAC core
+  net: stmmac: Add Flexible RX Parser support in XGMAC
+  net: stmmac: selftests: Add a selftest for Flexible RX Parser
+
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   6 +
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |  76 ++-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    | 605 ++++++++++++++++++++-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_descs.c   |  29 +
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  10 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.c         |   4 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  17 +
+ drivers/net/ethernet/stmicro/stmmac/mmc.h          |   9 +
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c     | 192 +++++++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  11 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  81 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 120 +++-
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 322 ++++++++++-
+ include/linux/stmmac.h                             |   1 +
+ 14 files changed, 1474 insertions(+), 9 deletions(-)
+
+-- 
+2.7.4
+
