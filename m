@@ -2,146 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9980B83737
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:42:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F082383728
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387945AbfHFQmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:42:23 -0400
-Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:38011 "EHLO
-        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387860AbfHFQmV (ORCPT
+        id S1733022AbfHFQkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:40:53 -0400
+Received: from skedge04.snt-world.com ([91.208.41.69]:51410 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732729AbfHFQkw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:42:21 -0400
-Received: from smtp8.infomaniak.ch (smtp8.infomaniak.ch [83.166.132.38])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x76GesNS032199
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 6 Aug 2019 18:40:54 +0200
-Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp8.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x76GemgJ022929
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Tue, 6 Aug 2019 18:40:48 +0200
-Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-To:     Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181212081712.32347-2-mic@digikod.net>
- <20181212144306.GA19945@quack2.suse.cz>
- <CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Openpgp: preference=signencrypt
-Message-ID: <0a16e842-d636-60ac-427a-3500224f4f8d@digikod.net>
-Date:   Tue, 6 Aug 2019 18:40:48 +0200
-User-Agent: 
-MIME-Version: 1.0
-In-Reply-To: <CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 6 Aug 2019 12:40:52 -0400
+Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id CAAD367A883;
+        Tue,  6 Aug 2019 18:40:49 +0200 (CEST)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
+ (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 6 Aug 2019
+ 18:40:49 +0200
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1713.004; Tue, 6 Aug 2019 18:40:49 +0200
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     John Garry <john.garry@huawei.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "vigneshr@ti.com" <vigneshr@ti.com>
+Subject: Re: [PATCH] docs: mtd: Update spi nor reference driver
+Thread-Topic: [PATCH] docs: mtd: Update spi nor reference driver
+Thread-Index: AQHVTHFK/VQj/Xg/00CSD7MmPvBJMabuL3MAgAABiQA=
+Date:   Tue, 6 Aug 2019 16:40:49 +0000
+Message-ID: <9b074db7-b95d-a081-2fba-7b2b82997332@kontron.de>
+References: <1565107583-68506-1-git-send-email-john.garry@huawei.com>
+ <6c4bb892-6cf5-af46-3ace-b333fd47ef14@huawei.com>
+In-Reply-To: <6c4bb892-6cf5-af46-3ace-b333fd47ef14@huawei.com>
+Accept-Language: de-DE, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.193]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <632CB3CC467B7C46ABA2F0EDB4C1B97E@snt-world.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: CAAD367A883.A1723
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: broonie@kernel.org, corbet@lwn.net,
+        john.garry@huawei.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        marek.vasut@gmail.com, mchehab+samsung@kernel.org,
+        miquel.raynal@bootlin.com, richard@nod.at,
+        tudor.ambarus@microchip.com, vigneshr@ti.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 05/08/2019 01:55, Andy Lutomirski wrote:
-> On Wed, Dec 12, 2018 at 6:43 AM Jan Kara <jack@suse.cz> wrote:
->>
->> On Wed 12-12-18 09:17:08, Mickaël Salaün wrote:
->>> When the O_MAYEXEC flag is passed, sys_open() may be subject to
->>> additional restrictions depending on a security policy implemented by an
->>> LSM through the inode_permission hook.
->>>
->>> The underlying idea is to be able to restrict scripts interpretation
->>> according to a policy defined by the system administrator.  For this to
->>> be possible, script interpreters must use the O_MAYEXEC flag
->>> appropriately.  To be fully effective, these interpreters also need to
->>> handle the other ways to execute code (for which the kernel can't help):
->>> command line parameters (e.g., option -e for Perl), module loading
->>> (e.g., option -m for Python), stdin, file sourcing, environment
->>> variables, configuration files...  According to the threat model, it may
->>> be acceptable to allow some script interpreters (e.g. Bash) to interpret
->>> commands from stdin, may it be a TTY or a pipe, because it may not be
->>> enough to (directly) perform syscalls.
->>>
->>> A simple security policy implementation is available in a following
->>> patch for Yama.
->>>
->>> This is an updated subset of the patch initially written by Vincent
->>> Strubel for CLIP OS:
->>> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
->>> This patch has been used for more than 10 years with customized script
->>> interpreters.  Some examples can be found here:
->>> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
->>>
->>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->>> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
->>> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
->>> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
->>> Cc: Al Viro <viro@zeniv.linux.org.uk>
->>> Cc: Kees Cook <keescook@chromium.org>
->>> Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
->>
->> ...
->>
->>> diff --git a/fs/open.c b/fs/open.c
->>> index 0285ce7dbd51..75479b79a58f 100644
->>> --- a/fs/open.c
->>> +++ b/fs/open.c
->>> @@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
->>>       if (flags & O_APPEND)
->>>               acc_mode |= MAY_APPEND;
->>>
->>> +     /* Check execution permissions on open. */
->>> +     if (flags & O_MAYEXEC)
->>> +             acc_mode |= MAY_OPENEXEC;
->>> +
->>>       op->acc_mode = acc_mode;
->>>
->>>       op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
->>
->> I don't feel experienced enough in security to tell whether we want this
->> functionality or not. But if we do this, shouldn't we also set FMODE_EXEC
->> on the resulting struct file? That way also security_file_open() can be
->> used to arbitrate such executable opens and in particular
->> fanotify permission event FAN_OPEN_EXEC will get properly generated which I
->> guess is desirable (support for it is sitting in my tree waiting for the
->> merge window) - adding some audit people involved in FAN_OPEN_EXEC to
->> CC. Just an idea...
->>
-> 
-> I would really like to land this patch.  I'm fiddling with making
-> bpffs handle permissions intelligently, and the lack of a way to say
-> "hey, I want to open this bpf program so that I can run it" is
-> annoying.
-
-Are you OK with this series? What about Aleksa's work on openat2(), and
-Sean's work on SGX/noexec? Is it time to send a new patch series (with a
-dedicated LSM instead of Yama)?
+Q2M6ICtNVEQvU1BJLU5PUi9TUEkgbWFpbnRhaW5lcnMNCg0KSGkgSm9obiwNCg0KT24gMDYuMDgu
+MTkgMTg6MzUsIEpvaG4gR2Fycnkgd3JvdGU6DQo+IE9uIDA2LzA4LzIwMTkgMTc6MDYsIEpvaG4g
+R2Fycnkgd3JvdGU6DQo+PiBUaGUgcmVmZXJlbmNlIGRyaXZlciBubyBsb25nZXIgZXhpc3RzIHNp
+bmNlIGNvbW1pdCA1MGYxMjQyYzY3NDIgKCJtdGQ6DQo+PiBmc2wtcXVhZHNwaTogUmVtb3ZlIHRo
+ZSBkcml2ZXIgYXMgaXQgd2FzIHJlcGxhY2VkIGJ5IHNwaS1mc2wtcXNwaS5jIikuDQo+Pg0KPj4g
+VXBkYXRlIHJlZmVyZW5jZSB0byBzcGktZnNsLXFzcGkuYyBkcml2ZXIuDQo+Pg0KPj4gU2lnbmVk
+LW9mZi1ieTogSm9obiBHYXJyeSA8am9obi5nYXJyeUBodWF3ZWkuY29tPg0KPj4NCj4+IGRpZmYg
+LS1naXQgYS9Eb2N1bWVudGF0aW9uL2RyaXZlci1hcGkvbXRkL3NwaS1ub3IucnN0IA0KPj4gYi9E
+b2N1bWVudGF0aW9uL2RyaXZlci1hcGkvbXRkL3NwaS1ub3IucnN0DQo+PiBpbmRleCBmNTMzM2Uz
+YmY0ODYuLjFmMDQzNzY3Njc2MiAxMDA2NDQNCj4+IC0tLSBhL0RvY3VtZW50YXRpb24vZHJpdmVy
+LWFwaS9tdGQvc3BpLW5vci5yc3QNCj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZHJpdmVyLWFwaS9t
+dGQvc3BpLW5vci5yc3QNCj4gDQo+IEluIGZhY3QgdGhpcyBkb2N1bWVudCBoYXMgbWFueSByZWZl
+cmVuY2VzIHRvIEZyZWVzY2FsZSBRdWFkU1BJIC0gY291bGQgDQo+IHNvbWVvbmUga2luZGx5IHJl
+dmlldyB0aGlzIGNvbXBsZXRlIGRvY3VtZW50IGZvciB1cC10by1kYXRlIGFjY3VyYWN5Pw0KDQpU
+aGUgbmV3IGRyaXZlciBzcGktZnNsLXFzcGkuYyBpcyBub3QgYSBTUEkgTk9SIGNvbnRyb2xsZXIg
+ZHJpdmVyIA0KYW55bW9yZS4gSXQgaXMgbm93IGEgU1BJIGNvbnRyb2xsZXIgZHJpdmVyIHRoYXQg
+dXNlcyB0aGUgU1BJIE1FTSBBUEksIHNvIA0KcmVmZXJlbmNpbmcgaXQgaGVyZSBpcyBvYnNvbGV0
+ZS4NCg0KQWN0dWFsbHkgaXQgc2VlbXMgbGlrZSB0aGUgd2hvbGUgZmlsZSBpcyBvYnNvbGV0ZSBh
+bmQgbmVlZHMgdG8gYmUgDQpyZW1vdmVkIG9yIHJlcGxhY2VkIGJ5IHByb3BlciBkb2N1bWVudGF0
+aW9uIG9mIHRoZSBTUEkgTUVNIEFQSS4NCg0KQE1haW50YWluZXJzOg0KTWF5YmUgdGhlIGRvY3Mg
+dW5kZXIgRG9jdW1lbnRhdGlvbi9kcml2ZXItYXBpL210ZCBzaG91bGQgYmUgb2ZmaWNpYWxseSAN
+Cm1haW50YWluZWQgYnkgdGhlIE1URCBzdWJzeXN0ZW0gKGFuZCBhZGRlZCB0byBNQUlOVEFJTkVS
+UykuIEFuZCBpZiB0aGVyZSANCndpbGwgYmUgc29tZSBkcml2ZXIgQVBJIGRvY3MgZm9yIFNQSSBN
+RU0gaXQgc2hvdWxkIHByb2JhYmx5IGxpdmUgaW4gDQpEb2N1bWVudGF0aW9uL2RyaXZlci1hcGkv
+c3BpIGluc3RlYWQgb2YgRG9jdW1lbnRhdGlvbi9kcml2ZXItYXBpL210ZCwgYXMgDQpzcGktbWVt
+LmMgaXRzZWxmIGlzIGluIGRyaXZlcnMvc3BpLg0KDQpSZWdhcmRzLA0KRnJpZWRlcg0KDQo+IA0K
+PiBUaGFua3MsDQo+IEpvaG4NCj4gDQo+PiBAQCAtNTksNyArNTksNyBAQCBQYXJ0IElJSSAtIEhv
+dyBjYW4gZHJpdmVycyB1c2UgdGhlIGZyYW1ld29yaz8NCj4+DQo+PiDCoFRoZSBtYWluIEFQSSBp
+cyBzcGlfbm9yX3NjYW4oKS4gQmVmb3JlIHlvdSBjYWxsIHRoZSBob29rLCBhIGRyaXZlciANCj4+
+IHNob3VsZA0KPj4gwqBpbml0aWFsaXplIHRoZSBuZWNlc3NhcnkgZmllbGRzIGZvciBzcGlfbm9y
+e30uIFBsZWFzZSBzZWUNCj4+IC1kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyBmb3IgZGV0
+YWlsLiBQbGVhc2UgYWxzbyByZWZlciB0byANCj4+IGZzbC1xdWFkc3BpLmMNCj4+ICtkcml2ZXJz
+L210ZC9zcGktbm9yL3NwaS1ub3IuYyBmb3IgZGV0YWlsLiBQbGVhc2UgYWxzbyByZWZlciB0byAN
+Cj4+IHNwaS1mc2wtcXNwaS5jDQo+PiDCoHdoZW4geW91IHdhbnQgdG8gd3JpdGUgYSBuZXcgZHJp
+dmVyIGZvciBhIFNQSSBOT1IgY29udHJvbGxlci4NCj4+IMKgQW5vdGhlciBBUEkgaXMgc3BpX25v
+cl9yZXN0b3JlKCksIHRoaXMgaXMgdXNlZCB0byByZXN0b3JlIHRoZSBzdGF0dXMgDQo+PiBvZiBT
+UEkNCj4+IMKgZmxhc2ggY2hpcCBzdWNoIGFzIGFkZHJlc3NpbmcgbW9kZS4gQ2FsbCBpdCB3aGVu
+ZXZlciBkZXRhY2ggdGhlIA0KPj4gZHJpdmVyIGZyb20NCj4+DQo+IA0KPiANCj4gDQo+IF9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPiBMaW51
+eCBNVEQgZGlzY3Vzc2lvbiBtYWlsaW5nIGxpc3QNCj4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1tdGQv
