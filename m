@@ -2,100 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A9AB82F97
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52F4982F9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732562AbfHFKOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:14:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58476 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfHFKOX (ORCPT
+        id S1732518AbfHFKSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:18:34 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:47009 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfHFKSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:14:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uHZbFTsY0c3kgdrq0q0UJJfi04d30RhjWxh9oOUKzVE=; b=Sh0dIWQzNVVq8/2vE6O2m7z8Q
-        mXehP9I2tAOZd0yOYYy8QHnEBEJ8aGpbUIneAZmoAMHxofw+XGeEr8IW3NdYUcwGtymareWcf6maI
-        oLwfkCe2Zoy91ToYT7sHmJ3XoS1yFO7oW8oKlnxVzmNV8OFT9XDyOkNsLwgO0ZNuGFFft/bf8DGT6
-        SshBy5qWWkWbUp/nKdRn8Yfq++YBiAevYwpkPWkvBnB9Gx1WlyIiYoEX+mqECwVCk4HSLY7k/yI4Y
-        og9oOU7V3OQGLVIfjC8Xpf24oEGRK2c5dmiW1adNd/9wjuyv9obvkEay8fl/VIUmRXnJ697dzQ2Kt
-        KU6/e051g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1huwTC-0001aQ-SJ; Tue, 06 Aug 2019 10:14:05 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2988D3067E2;
-        Tue,  6 Aug 2019 12:13:02 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6A0D5201BC8AC; Tue,  6 Aug 2019 12:13:27 +0200 (CEST)
-Date:   Tue, 6 Aug 2019 12:13:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, dvhart@infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Zebediah Figura <z.figura12@gmail.com>,
-        Steven Noonan <steven@valvesoftware.com>,
-        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
-        viro@zeniv.linux.org.uk, jannh@google.com
-Subject: Re: [PATCH RFC 2/2] futex: Implement mechanism to wait on any of
- several futexes
-Message-ID: <20190806101327.GO2332@hirez.programming.kicks-ass.net>
-References: <20190730220602.28781-1-krisman@collabora.com>
- <20190730220602.28781-2-krisman@collabora.com>
- <20190731120600.GT31381@hirez.programming.kicks-ass.net>
- <85imra6c81.fsf@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <85imra6c81.fsf@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 6 Aug 2019 06:18:33 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c2so37659336plz.13
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 03:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=B2Az8FZ7ku0X2inJnd7funCGhhLUuh16TDsRGjU7wPY=;
+        b=YLSHDIxEYeh158kEGbiXMI86GIByE6ZBeC0wvOq22XFHllvFtRDEVX/D4B2rCKIkpU
+         B95CBSqrEOjKGdoZI6typuPUN1FG/78x+D6pL8LNHFsHe0YSQYZwO+nNZiMOca5i3WsF
+         HH1Csge+AVd6PV0yT31mCQliC59Y77ttlGxFU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=B2Az8FZ7ku0X2inJnd7funCGhhLUuh16TDsRGjU7wPY=;
+        b=gbq0jjWeWjW015xJBbWaC6GQcn3b93abRo6Fm1A2XvIJsWNnzj/lxWfkUWrvhr6wvq
+         9jaukn9EL/n2Cs8cgt1Nzt3eXL3zYC+eYhjkqKEa2GLytwUqma0el14PC3c1JGW4s3im
+         ZfrWdoJg4EKL08gdayq3yfs4EUDfJFA87vnOovKWasQ1QVvZw39W7565RIwizbDsMb0c
+         LCIyUAC08/6arOxLDCC3JmVatNugFRnAKNJ5S5elb2ndCOoxZeoGt94Yod/ym4MUkJ6+
+         /QjO/uyIvVZKnP9yQEZBLI4qu7I46kDkxhRWApCWZS2+Xygr8xSF6IwkIK4SgBPmSL4W
+         dWHQ==
+X-Gm-Message-State: APjAAAWFK7lwHeraBnmboW2m0GszYAVXNPcEK6vrdg3vRLHPnQrAqlT5
+        cZKMGQwkjfjO4TvF+V2P7TQGtA==
+X-Google-Smtp-Source: APXvYqxyS1wEbeR/Ana/G2s2t8MN3btZM/Gabob2KwSWhuZCr75sQgO/4yYcxz0amLEeqYPRTivpyQ==
+X-Received: by 2002:a17:902:12d:: with SMTP id 42mr2319319plb.187.1565086712671;
+        Tue, 06 Aug 2019 03:18:32 -0700 (PDT)
+Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id y23sm90516588pfo.106.2019.08.06.03.18.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 06 Aug 2019 03:18:31 -0700 (PDT)
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+To:     Kamal Dasu <kdasu.kdev@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Subject: [PATCH v1 1/1] spi: bcm-qspi: Make BSPI default mode
+Date:   Tue,  6 Aug 2019 15:44:34 +0530
+Message-Id: <1565086474-4461-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 02:26:38AM -0400, Gabriel Krisman Bertazi wrote:
-> Peter Zijlstra <peterz@infradead.org> writes:
-> 
-> >
-> >> +static int futex_wait_multiple(u32 __user *uaddr, unsigned int flags,
-> >> +			       u32 count, ktime_t *abs_time)
-> >> +{
-> >> +	struct futex_wait_block *wb;
-> >> +	struct restart_block *restart;
-> >> +	int ret;
-> >> +
-> >> +	if (!count)
-> >> +		return -EINVAL;
-> >> +
-> >> +	wb = kcalloc(count, sizeof(struct futex_wait_block), GFP_KERNEL);
-> >> +	if (!wb)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	if (copy_from_user(wb, uaddr,
-> >> +			   count * sizeof(struct futex_wait_block))) {
-> >> +		ret = -EFAULT;
-> >> +		goto out;
-> >> +	}
-> >
-> > I'm thinking we can do away with this giant copy and do it one at a time
-> > from the other function, just extend the storage allocated there to
-> > store whatever values are still required later.
+Switch back to BSPI mode after MSPI operations (write and erase)
+are completed. This change will keep qpsi in BSPI mode by default.
 
-> I'm not sure I get the suggestion here.  If I understand the code
-> correctly, once we do it one at a time, we need to queue_me() each futex
-> and then drop the hb lock, before going to the next one. 
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+---
+ drivers/spi/spi-bcm-qspi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-So the idea is to reduce to a single allocation; like Thomas also said.
-And afaict, we've not yet taken any locks the first time we iterate --
-that only does get_futex_key(), the whole __futex_wait_setup() and
-queue_me(), comes later, in the second iteration.
-
-
+diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
+index 902bdbf..46a811a 100644
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -897,6 +897,7 @@ static int bcm_qspi_transfer_one(struct spi_master *master,
+ 
+ 		read_from_hw(qspi, slots);
+ 	}
++	bcm_qspi_enable_bspi(qspi);
+ 
+ 	return 0;
+ }
+-- 
+1.9.1
 
