@@ -2,72 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6658364D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42B2E83655
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387592AbfHFQHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:07:51 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33734 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732203AbfHFQHv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:07:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xJiC/e5rABJrgTD/jh7whQZBj6kjpIJYJ/CLvK+I8Ng=; b=tWxzEwHDoptM9ocqJyQULAScI
-        ooBZreellhhtJDQ2OdNMLCeWg2TQcl7WpxCUeWDms6dw9xlyQw/LMgcJXsk69izwshgHTgE0E07rk
-        SxZdJOfgtEwsu4DDHwBFqD9M4i0XsPeEeSVBwgVoqFRpw8zWeman9hJ6QKhWfgWPetJXk04yawYxE
-        DK48SrJbZ7mIoIpqkz10a9CJbKS/03D8PTry+HqMSJntNdDlLvzdQAXFcVY202G6QoXV93WZe6kuI
-        xKbX/1H0mcA+N0NXBOt8fg5B6jFR+z/gERYiZ8d/4dUYfboAz3UbnRofm3F/4u9DT1dd0vSntXdPe
-        dPkJupBsg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hv201-0004bQ-VC; Tue, 06 Aug 2019 16:07:46 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S2387663AbfHFQJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:09:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732203AbfHFQJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 12:09:00 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9F2983077ED;
-        Tue,  6 Aug 2019 18:07:18 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CFFFD201B39AC; Tue,  6 Aug 2019 18:07:43 +0200 (CEST)
-Date:   Tue, 6 Aug 2019 18:07:43 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, pauld@redhat.com,
-        valentin.schneider@arm.com, srikar@linux.vnet.ibm.com,
-        quentin.perret@arm.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com
-Subject: Re: [PATCH v2 6/8] sched/fair: use load instead of runnable load
-Message-ID: <20190806160743.GW2332@hirez.programming.kicks-ass.net>
-References: <1564670424-26023-1-git-send-email-vincent.guittot@linaro.org>
- <1564670424-26023-7-git-send-email-vincent.guittot@linaro.org>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 981C320679;
+        Tue,  6 Aug 2019 16:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565107739;
+        bh=v0k57mTDkfDZaJNeGslFkP/p8/lZF5e0EN6d5zbeXJQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QwYLVlSCvE5RkEzMUkxya/17HqX4ysozqlmTdPTPO5zBru0s7lkz8yZHQi0kE7QPa
+         J3nsmuubbBmALdIHYivFeIBCfxouhnJ+9TQ0HskYPSpEl7ePJW8QWsSwlXZEvwICkA
+         ksIz9c1GMc0XmZhCNFQc096KaCxj+m1SMXGhPUZc=
+Date:   Tue, 6 Aug 2019 17:08:54 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Shawn Anastasio <shawn@anastas.io>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-mapping: fix page attributes for dma_mmap_*
+Message-ID: <20190806160854.htk67msiyadlrl4m@willie-the-truck>
+References: <20190801142118.21225-1-hch@lst.de>
+ <20190801142118.21225-2-hch@lst.de>
+ <20190801162305.3m32chycsdjmdejk@willie-the-truck>
+ <20190801163457.GB26588@lst.de>
+ <20190801164411.kmsl4japtfkgvzxe@willie-the-truck>
+ <20190802081441.GA9725@lst.de>
+ <20190802103803.3qrbhqwxlasojsco@willie-the-truck>
+ <20190803064812.GA29746@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1564670424-26023-7-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190803064812.GA29746@lst.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 04:40:22PM +0200, Vincent Guittot wrote:
-> runnable load has been introduced to take into account the case
-> where blocked load biases the load balance decision which was selecting
-> underutilized group with huge blocked load whereas other groups were
-> overloaded.
+On Sat, Aug 03, 2019 at 08:48:12AM +0200, Christoph Hellwig wrote:
+> On Fri, Aug 02, 2019 at 11:38:03AM +0100, Will Deacon wrote:
+> > 
+> > So this boils down to a terminology mismatch. The Arm architecture doesn't have
+> > anything called "write combine", so in Linux we instead provide what the Arm
+> > architecture calls "Normal non-cacheable" memory for pgprot_writecombine().
+> > Amongst other things, this memory type permits speculation, unaligned accesses
+> > and merging of writes. I found something in the architecture spec about
+> > non-cachable memory, but it's written in Armglish[1].
+> > 
+> > pgprot_noncached(), on the other hand, provides what the architecture calls
+> > Strongly Ordered or Device-nGnRnE memory. This is intended for mapping MMIO
+> > (i.e. PCI config space) and therefore forbids speculation, preserves access
+> > size, requires strict alignment and also forces write responses to come from
+> > the endpoint.
+> > 
+> > I think the naming mismatch is historical, but on arm64 we wanted to use the
+> > same names as arm32 so that any drivers using these things directly would get
+> > the same behaviour.
 > 
-> The load is now only used when groups are overloaded. In this case,
-> it's worth being conservative and taking into account the sleeping
-> tasks that might wakeup on the cpu.
+> That all makes sense, but it totally needs a comment.  I'll try to draft
+> one based on this.  I've also looked at the arm32 code a bit more, and
+> it seems arm always (?) supported Normal non-cacheable attribute, but
+> Linux only optionally uses it for arm v6+ because of fears of drivers
+> missing barriers.
 
-This one scares me a little. I have the feeling I'm missing/forgetting
-something.
+I think it was also to do with aliasing, but I don't recall all of the
+details.
 
-Also; while the regular load-balance (find-busiest) stuff is now all
-aware of idle, this change also impacts wake_affine and find_idlest, and
-they've not changed.
+> The other really weird things is that in arm32
+> pgprot_dmacoherent incudes the L_PTE_XN bit, which from my understanding
+> is the no-execture bit, but pgprot_writecombine does not.  This seems to
+> not very unintentional.  So minus that the whole DMA_ATTR_WRITE_COMBІNE
+> seems to be about flagging old arm specific drivers as having the proper
+> barriers in places and otherwise is a no-op.
+
+I think it only matters for Armv7 CPUs, but yes, we should probably be
+setting L_PTE_XN for both of these memory types.
+
+> Here is my tentative plan:
+> 
+>  - respin this patch with a small fix to handle the
+>    DMA_ATTR_NON_CONSISTENT (as in ignore it unless actually supported),
+>    but keep the name as-is to avoid churn.  This should allow 5.3
+>    inclusion and backports
+>  - remove DMA_ATTR_WRITE_COMBINE support from mips, probably also 5.3
+>    material.
+>  - move all architectures but arm over to just define
+>    pgprot_dmacoherent, including a comment with the above explanation
+>    for arm64.
+
+That would be great, thanks.
+
+>  - make DMA_ATTR_WRITE_COMBINE a no-op and schedule it for removal,
+>    thus removing the last instances of arch_dma_mmap_pgprot
+
+All sounds good to me, although I suppose 32-bit Arm platforms without
+CONFIG_ARM_DMA_MEM_BUFFERABLE may run into issues if DMA_ATTR_WRITE_COMBINE
+disappears. Only one way to find out...
+
+Will
