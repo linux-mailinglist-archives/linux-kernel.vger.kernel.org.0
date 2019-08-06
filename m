@@ -2,92 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8702830D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D481830DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732810AbfHFLjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 07:39:23 -0400
-Received: from mga05.intel.com ([192.55.52.43]:34843 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726783AbfHFLjW (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:39:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 04:39:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
-   d="scan'208";a="198287394"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.212.182]) ([10.254.212.182])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Aug 2019 04:39:20 -0700
-Subject: Re: [PATCH v2] perf diff: Report noisy for cycles diff
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <20190724221432.26297-1-yao.jin@linux.intel.com>
- <20190806083413.GG7695@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <085edaa4-e8f2-f501-5ffc-4d07b4ea85ad@linux.intel.com>
-Date:   Tue, 6 Aug 2019 19:39:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730803AbfHFLln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 07:41:43 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:51559 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726713AbfHFLln (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 07:41:43 -0400
+X-UUID: 9ef266cfa1bb42fbbaeb731b843d0390-20190806
+X-UUID: 9ef266cfa1bb42fbbaeb731b843d0390-20190806
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <ran.bi@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 415061747; Tue, 06 Aug 2019 19:41:32 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs08n1.mediatek.inc
+ (172.21.101.55) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 6 Aug
+ 2019 19:41:34 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 6 Aug 2019 19:41:32 +0800
+Message-ID: <1565091692.24748.3.camel@mhfsdcap03>
+Subject: Re: [PATCH v4 10/10] rtc: Add support for the MediaTek MT6358 RTC
+From:   Ran Bi <ran.bi@mediatek.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        "Alessandro Zummo" <a.zummo@towertech.it>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Richard Fontana" <rfontana@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date:   Tue, 6 Aug 2019 19:41:32 +0800
+In-Reply-To: <20190805072338.GB3600@piout.net>
+References: <1564982518-32163-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <1564982518-32163-11-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <20190805072338.GB3600@piout.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20190806083413.GG7695@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Belloni,
 
+On Mon, 2019-08-05 at 09:23 +0200, Alexandre Belloni wrote:
+> Hi,
+> 
+> The subject should be:
+> 
+> "rtc: mt6397: Add support for the MediaTek MT6358 RTC"
 
-On 8/6/2019 4:34 PM, Jiri Olsa wrote:
-> On Thu, Jul 25, 2019 at 06:14:32AM +0800, Jin Yao wrote:
+Will be changed at next patch.
+
+> > +struct mtk_rtc_compatible {
 > 
-> SNIP
+> I would name that struct mtk_rtc_data
 > 
->> +}
->> +
->>   double avg_stats(struct stats *stats)
->>   {
->>   	return stats->mean;
->> diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
->> index 95b4de7a9d51..3448d319a220 100644
->> --- a/tools/perf/util/stat.h
->> +++ b/tools/perf/util/stat.h
->> @@ -8,14 +8,18 @@
->>   #include <sys/time.h>
->>   #include <sys/resource.h>
->>   #include <sys/wait.h>
->> +#include <stdio.h>
->>   #include "xyarray.h"
->>   #include "rblist.h"
->>   #include "perf.h"
->>   #include "event.h"
->>   
->> +#define NUM_SPARK_VALS	8 /* support spark line on first N items */
->> +
->>   struct stats {
->>   	double n, mean, M2;
->>   	u64 max, min;
->> +	unsigned long svals[NUM_SPARK_VALS];
->>   };
+> > +	u32			wrtgr_addr;
 > 
-> please do it without changing the 'struct stats', it's all
-> over the place and diff would be the only user
-> 
-> thanks
-> jirka
+> and this member should be wrtgr_offset or simply wrtgr.
 > 
 
-OK, I see. I will save the svals[] in other struct.
+Will be changed at next patch.
 
-Thanks
-Jin Yao
+> >  
+> > +	of_id = of_match_device(mt6397_rtc_of_match, &pdev->dev);
+> > +	if (!of_id) {
+> > +		dev_err(&pdev->dev, "Failed to probe of_node\n");
+> > +		return -EINVAL;
+> 
+> This will never happen because probe would not be called if there is no
+> match. You could also use of_device_get_match_data to avoid having to
+> move the of_device_id table.
+> 
+
+Will use of_device_get_match_data() function instead of
+of_match_device() function.
 
 
 
