@@ -2,88 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1CBE839CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 21:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F462839C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 21:40:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbfHFTrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 15:47:19 -0400
-Received: from alpha.anastas.io ([104.248.188.109]:34451 "EHLO
-        alpha.anastas.io" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfHFTrT (ORCPT
+        id S1726133AbfHFTkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 15:40:45 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36183 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfHFTkp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 15:47:19 -0400
-X-Greylist: delayed 486 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 15:47:19 EDT
-Received: from authenticated-user (alpha.anastas.io [104.248.188.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by alpha.anastas.io (Postfix) with ESMTPSA id 2FB9F7F91A;
-        Tue,  6 Aug 2019 14:39:08 -0500 (CDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=anastas.io; s=mail;
-        t=1565120352; bh=HXAHKgiQsfJr2nTxca5W5Al0GVPsqRNPo3FiFtTBIoc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=VF/YxkoGj8ca1JQcWi5sYSQVWRKBYyZtR9HUzDE+ew2GrVyUCIeEXZFt6rVd6W6wg
-         vtSTCcBTAjJH0ZszPuJKYt0eFgEDwICoBRPS0wGBydBz0++9N23+H7Ed3B5qGV1VMC
-         LvZrV59lni9MLs/JcvnzGbRKNJzNv+d8Qk4W2RBQao6w281+TddI5F/TzpRT8SkiIO
-         nhUyXU745H9K0uufXJpjZAa7VpAkGr/JSB0EdEr/q/xdFRPa19oitpAqc+ktLxg9Is
-         kcvPFe0HGSSTtWUCJqLE5dUJRbo5Vz5U2m6kzrfDAVngIfOzeFSuQSEh/otww7M/bt
-         SjEGu4AGs8jvg==
-Subject: Re: [PATCH 1/2] dma-mapping: fix page attributes for dma_mmap_*
-To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Gavin Li <git@thegavinli.com>
-References: <20190805080145.5694-1-hch@lst.de>
- <20190805080145.5694-2-hch@lst.de>
-From:   Shawn Anastasio <shawn@anastas.io>
-Message-ID: <7df95ffb-6df3-b118-284c-ee32cad81199@anastas.io>
-Date:   Tue, 6 Aug 2019 21:39:06 +0200
+        Tue, 6 Aug 2019 15:40:45 -0400
+Received: by mail-qt1-f195.google.com with SMTP id z4so85879649qtc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 12:40:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=Y7UpGezK0Ud1sFcHnTxPRnpHSsAKoECEyD/JfXJH5eE=;
+        b=I5CqAKAJvqBMZ7cVCkQIZzJxWZqDXUmJ4fuZDVxnWO0sObj/kWqJbEiCN/DzeHzivD
+         8qIms80lB/zz/ShDMd1VDvdRN5EHjP6LkKuODP2W1iTPeIp7KvpeOh3En1pcYoAc3Skb
+         b/zSpO5QpmAhh+C24sIQTl8wTjGjmmr2hy0pKlto1ERsY3Q+W6NriEtj+HuB9Y6nMnW7
+         JqSd1u8UcvNaomN3QglbfI8msemVHGvNViZ3+xfWbF5a4Qdup9cHeqGz4eEbTGK4PHmu
+         4XeeL8psXWyoNs2BhXqpxpv7h2YNndQJsFnQrVsxQfthViC+T/3V6S83+MCSBw1y3pgZ
+         1J6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=Y7UpGezK0Ud1sFcHnTxPRnpHSsAKoECEyD/JfXJH5eE=;
+        b=XEdSapeLh1tJJpDmXTyEjyTTDS2yX21ao2eJ+LmggyYzzRCfEGmrkcRS4lUd3N2L66
+         //I586DO/jxW9BqDPfwjra587RlZqdpq2CT4KhGxBLJgNfpaN+tH9KUWk51GL3R+PyQh
+         Q/ZC4hU7cbMs3dc0EOiVDOg0ZJje0rPUfV+0mPALdPXq5ke6T3VKpapifaMTNG2mxtIs
+         0V1mOMjROfRU3y26STl9JvvzNy53jG4SBAelrk/I1XgQkr7V7+p4taUdQPJKolC+YjIb
+         dkGR8H7CJOS8vqGM/AXzRlbG0J9G3CoDEI3Qzpq4Jx4yJD54TcRC9oJQ5uIMhoydgUnt
+         GonA==
+X-Gm-Message-State: APjAAAXnHqeu+ggBgPKcWZn0dCwfYV9bAnDmVnfAhqyhAVBOLyG49it4
+        EisUf+wdhsgcobTBQjF+QZ69WQ==
+X-Google-Smtp-Source: APXvYqxi59nkItJAOGN4OwKGOH4912Tt8J12kJYya2XOtlNL8EkJaIagn0XHoE9jbWY9aKFh4K3utQ==
+X-Received: by 2002:aed:3091:: with SMTP id 17mr1193900qtf.290.1565120444179;
+        Tue, 06 Aug 2019 12:40:44 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id y9sm37534001qki.116.2019.08.06.12.40.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 12:40:43 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 12:40:17 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Jose Abreu <Jose.Abreu@synopsys.com>
+Cc:     netdev@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 00/10] net: stmmac: Improvements for -next
+Message-ID: <20190806124017.77e0f63c@cakuba.netronome.com>
+In-Reply-To: <cover.1565098881.git.joabreu@synopsys.com>
+References: <cover.1565098881.git.joabreu@synopsys.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-In-Reply-To: <20190805080145.5694-2-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/5/19 10:01 AM, Christoph Hellwig wrote:
-> diff --git a/include/linux/dma-noncoherent.h b/include/linux/dma-noncoherent.h
-> index 3813211a9aad..9ae5cee543c4 100644
-> --- a/include/linux/dma-noncoherent.h
-> +++ b/include/linux/dma-noncoherent.h
-> @@ -42,13 +42,8 @@ void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
->   		dma_addr_t dma_addr, unsigned long attrs);
->   long arch_dma_coherent_to_pfn(struct device *dev, void *cpu_addr,
->   		dma_addr_t dma_addr);
-> -
-> -#ifdef CONFIG_ARCH_HAS_DMA_MMAP_PGPROT
->   pgprot_t arch_dma_mmap_pgprot(struct device *dev, pgprot_t prot,
->   		unsigned long attrs);
-> -#else
-> -# define arch_dma_mmap_pgprot(dev, prot, attrs)	pgprot_noncached(prot)
-> -#endif
+On Tue,  6 Aug 2019 15:42:41 +0200, Jose Abreu wrote:
+> Couple of improvements for -next tree. More info in commit logs.
 
-Nit, but maybe the prototype should still be ifdef'd here? It at least
-could prevent a reader from incorrectly thinking that the function is
-always present.
-
-Also, like Will mentioned earlier, the function name isn't entirely
-accurate anymore. I second the suggestion of using something like
-arch_dma_noncoherent_pgprot(). As for your idea of defining
-pgprot_dmacoherent for all architectures as
-
-#ifndef pgprot_dmacoherent
-#define pgprot_dmacoherent pgprot_noncached
-#endif
-
-I think that the name here is kind of misleading too, since this
-definition will only be used when there is no support for proper
-DMA coherency.
-
+Code looks good to me now, thanks!
