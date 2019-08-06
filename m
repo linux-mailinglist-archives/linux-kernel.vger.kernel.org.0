@@ -2,132 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87DAE8368C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD69A8365C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:10:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387842AbfHFQPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:15:10 -0400
-Received: from mga03.intel.com ([134.134.136.65]:48602 "EHLO mga03.intel.com"
+        id S2387586AbfHFQKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:10:18 -0400
+Received: from mga05.intel.com ([192.55.52.43]:58388 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387493AbfHFQPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:15:09 -0400
+        id S1732203AbfHFQKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 12:10:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 09:06:22 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 09:10:17 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
-   d="scan'208";a="174218905"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.252.15.113]) ([10.252.15.113])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Aug 2019 09:06:16 -0700
-Subject: Re: [alsa-devel] [PATCH 06/17] soundwire: cadence_master: use
- firmware defaults for frame shape
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, Blauciak@vger.kernel.org,
-        tiwai@suse.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        Slawomir <slawomir.blauciak@intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190806005522.22642-1-pierre-louis.bossart@linux.intel.com>
- <20190806005522.22642-7-pierre-louis.bossart@linux.intel.com>
- <03b6091b-af41-ac54-43c7-196a3583a731@intel.com>
- <024b4fb4-bdfa-a6dc-48bb-c070f2ed36b2@linux.intel.com>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <2445b5dc-246c-9c3b-b26e-784032feccf9@intel.com>
-Date:   Tue, 6 Aug 2019 18:06:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <024b4fb4-bdfa-a6dc-48bb-c070f2ed36b2@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+   d="scan'208";a="198355562"
+Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
+  by fmsmga004.fm.intel.com with ESMTP; 06 Aug 2019 09:10:16 -0700
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.96]) by
+ ORSMSX101.amr.corp.intel.com ([169.254.8.157]) with mapi id 14.03.0439.000;
+ Tue, 6 Aug 2019 09:10:16 -0700
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC:     "Hansen, Dave" <dave.hansen@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: RE: [PATCH V2] fork: Improve error message for corrupted page tables
+Thread-Topic: [PATCH V2] fork: Improve error message for corrupted page
+ tables
+Thread-Index: AQHVTARBoUI2WxhjVEayaDrB3An0D6buNXYAgAAUpHA=
+Date:   Tue, 6 Aug 2019 16:10:16 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F4FA16EF9@ORSMSX114.amr.corp.intel.com>
+References: <3ef8a340deb1c87b725d44edb163073e2b6eca5a.1565059496.git.sai.praneeth.prakhya@intel.com>
+ <5ba88460-cf01-3d53-6d13-45e650b4eacd@suse.cz>
+In-Reply-To: <5ba88460-cf01-3d53-6d13-45e650b4eacd@suse.cz>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjY0MjgyNjMtNzcwZC00Yzk1LWE0NzEtNDY0NWU5ZTcxYzg2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaUJ5clZZdENIcktBbmpycTA5TER2Vlk2QVJPZlVEUElwXC93MzZIOVwvTG5Tb1VcL3l4MEw3XC9YUXVVUzlvcDhUbVwvIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: request-justification,no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-06 17:36, Pierre-Louis Bossart wrote:
-> 
-> 
-> On 8/6/19 10:27 AM, Cezary Rojewski wrote:
->> On 2019-08-06 02:55, Pierre-Louis Bossart wrote:
->>> diff --git a/drivers/soundwire/cadence_master.c 
->>> b/drivers/soundwire/cadence_master.c
->>> index 5d9729b4d634..89c55e4bb72c 100644
->>> --- a/drivers/soundwire/cadence_master.c
->>> +++ b/drivers/soundwire/cadence_master.c
->>> @@ -48,6 +48,8 @@
->>>   #define CDNS_MCP_SSPSTAT            0xC
->>>   #define CDNS_MCP_FRAME_SHAPE            0x10
->>>   #define CDNS_MCP_FRAME_SHAPE_INIT        0x14
->>> +#define CDNS_MCP_FRAME_SHAPE_COL_MASK        GENMASK(2, 0)
->>> +#define CDNS_MCP_FRAME_SHAPE_ROW_OFFSET        3
->>>   #define CDNS_MCP_CONFIG_UPDATE            0x18
->>>   #define CDNS_MCP_CONFIG_UPDATE_BIT        BIT(0)
->>> @@ -175,7 +177,6 @@
->>>   /* Driver defaults */
->>>   #define CDNS_DEFAULT_CLK_DIVIDER        0
->>> -#define CDNS_DEFAULT_FRAME_SHAPE        0x30
->>>   #define CDNS_DEFAULT_SSP_INTERVAL        0x18
->>>   #define CDNS_TX_TIMEOUT                2000
->>> @@ -901,6 +902,20 @@ int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
->>>   }
->>>   EXPORT_SYMBOL(sdw_cdns_pdi_init);
->>> +static u32 cdns_set_initial_frame_shape(int n_rows, int n_cols)
->>> +{
->>> +    u32 val;
->>> +    int c;
->>> +    int r;
->>> +
->>> +    r = sdw_find_row_index(n_rows);
->>> +    c = sdw_find_col_index(n_cols) & CDNS_MCP_FRAME_SHAPE_COL_MASK;
->>> +
->>> +    val = (r << CDNS_MCP_FRAME_SHAPE_ROW_OFFSET) | c;
->>> +
->>> +    return val;
->>> +}
->>> +
->>
->> Guess this have been said already, but this function could be 
->> simplified - unless you really want to keep explicit variable 
->> declaration. Both "c" and "r" declarations could be merged into single 
->> line while "val" is not needed at all.
->>
->> One more thing - is AND bitwise op really needed for cols explicitly? 
->> We know all col values upfront - these are static and declared in 
->> global table nearby. Static declaration takes care of "initial 
->> range-check". Is another one necessary?
->>
->> Moreover, this is a _get_ and certainly not a _set_ type of function. 
->> I'd even consider renaming it to: "cdns_get_frame_shape" as this is 
->> neither a _set_ nor an explicit initial frame shape setter.
->>
->> It might be even helpful to split two usages:
->>
->> #define sdw_frame_shape(col_idx, row_idx) \
->>      ((row_idx << CDNS_MCP_FRAME_SHAPE_ROW_OFFSET) | col_idx)
->>
->> u32 cdns_get_frame_shape(u16 rows, u16 cols)
->> {
->>      u16 c, r;
->>
->>      r = sdw_find_row_index(rows);
->>      c = sdw_find_col_index(cols);
->>
->>      return sdw_frame_shape(c, r);
->> }
->>
->> The above may even be simplified into one-liner.
-> 
-> This is a function used once on startup, there is no real need to 
-> simplify further. The separate variables help add debug traces as needed 
-> and keep the code readable while showing how the values are encoded into 
-> a register.
-
-Eh, I've thought it's gonna be exposed to userspace (via uapi) so it can 
-be fetched by tests or tools.
-
-In such case - if there is a single usage only - guess function is fine 
-as is.
+PiA+IFdpdGggcGF0Y2g6DQo+ID4gLS0tLS0tLS0tLS0NCj4gPiBbICAgNjkuODE1NDUzXSBtbS9w
+Z3RhYmxlLWdlbmVyaWMuYzoyOTogYmFkIHA0ZA0KPiAwMDAwMDAwMDg0NjUzNjQyKDgwMDAwMDAy
+NWNhMzc0NjcpDQo+ID4gWyAgIDY5LjgxNTg3Ml0gQlVHOiBCYWQgcnNzLWNvdW50ZXIgc3RhdGUg
+bW06MDAwMDAwMDAwMTRhNmMwMw0KPiB0eXBlOk1NX0ZJTEVQQUdFUyB2YWw6Mg0KPiA+IFsgICA2
+OS44MTU5NjJdIEJVRzogQmFkIHJzcy1jb3VudGVyIHN0YXRlIG1tOjAwMDAwMDAwMDE0YTZjMDMN
+Cj4gdHlwZTpNTV9BTk9OUEFHRVMgdmFsOjUNCj4gPiBbICAgNjkuODE2MDUwXSBCVUc6IG5vbi16
+ZXJvIHBndGFibGVzX2J5dGVzIG9uIGZyZWVpbmcgbW06IDIwNDgwDQo+ID4NCj4gPiBBbHNvLCBj
+aGFuZ2UgcHJpbnQgZnVuY3Rpb24gKGZyb20gcHJpbnRrKEtFUk5fQUxFUlQsIC4uKSB0bw0KPiA+
+IHByX2FsZXJ0KCkpIHNvIHRoYXQgaXQgbWF0Y2hlcyB0aGUgb3RoZXIgcHJpbnQgc3RhdGVtZW50
+Lg0KPiA+DQo+ID4gQ2M6IEluZ28gTW9sbmFyIDxtaW5nb0BrZXJuZWwub3JnPg0KPiA+IENjOiBW
+bGFzdGltaWwgQmFia2EgPHZiYWJrYUBzdXNlLmN6Pg0KPiA+IENjOiBQZXRlciBaaWpsc3RyYSA8
+cGV0ZXJ6QGluZnJhZGVhZC5vcmc+DQo+ID4gQ2M6IEFuZHJldyBNb3J0b24gPGFrcG1AbGludXgt
+Zm91bmRhdGlvbi5vcmc+DQo+ID4gQ2M6IEFuc2h1bWFuIEtoYW5kdWFsIDxhbnNodW1hbi5raGFu
+ZHVhbEBhcm0uY29tPg0KPiA+IEFja2VkLWJ5OiBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AaW50
+ZWwuY29tPg0KPiA+IFN1Z2dlc3RlZC1ieTogRGF2ZSBIYW5zZW4gPGRhdmUuaGFuc2VuQGludGVs
+LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTYWkgUHJhbmVldGggUHJha2h5YSA8c2FpLnByYW5l
+ZXRoLnByYWtoeWFAaW50ZWwuY29tPg0KPiANCj4gQWNrZWQtYnk6IFZsYXN0aW1pbCBCYWJrYSA8
+dmJhYmthQHN1c2UuY3o+DQo+IA0KPiBJIHdvdWxkIGFsc28gYWRkIHNvbWV0aGluZyBsaWtlIHRo
+aXMgdG8gcmVkdWNlIHJpc2sgb2YgYnJlYWtpbmcgaXQgaW4gdGhlDQo+IGZ1dHVyZToNCg0KU3Vy
+ZSEgU291bmRzIGdvb2QgdG8gbWUuIFdpbGwgYWRkIGl0IHRvIFYzLg0KDQpSZWdhcmRzLA0KU2Fp
+DQo=
