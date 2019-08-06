@@ -2,81 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC3A182C3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B61AF82C48
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:06:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731982AbfHFHEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:04:49 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:36746 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731711AbfHFHEs (ORCPT
+        id S1732054AbfHFHGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:06:01 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:41277 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731834AbfHFHF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:04:48 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0TYo6kt7_1565075082;
-Received: from 10.15.232.115(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0TYo6kt7_1565075082)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 06 Aug 2019 15:04:43 +0800
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-To:     Aubrey Li <aubrey.intel@gmail.com>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <20190613032246.GA17752@sinkpad>
- <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
- <20190619183302.GA6775@sinkpad> <20190718100714.GA469@aaronlu>
- <CAERHkrtvLKxrpvfw04urAuougsYOWnNw4-H1vUDFx27Dvy0=Ww@mail.gmail.com>
- <20190725143003.GA992@aaronlu> <20190726152101.GA27884@sinkpad>
- <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
- <20190802153715.GA18075@sinkpad>
- <f4778816-69e5-146c-2a30-ec42e7f1677f@linux.intel.com>
- <20190806032418.GA54717@aaronlu>
- <CAERHkrtJ3f1ggfG7Qo-KnznGo66p0Y3E0sAfb3ki6U=ADT6__g@mail.gmail.com>
-From:   Aaron Lu <aaron.lu@linux.alibaba.com>
-Message-ID: <54fa27ff-69a7-b2ac-6152-6915f78a57f9@linux.alibaba.com>
-Date:   Tue, 6 Aug 2019 15:04:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 6 Aug 2019 03:05:57 -0400
+Received: by mail-vs1-f65.google.com with SMTP id 2so57599040vso.8
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 00:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nvNLdWRzNCcP/1tMguZTrB/Ret9xhkOHTVDfmzeadKU=;
+        b=cBNuGU4Dr8PNxOG4ZXsD1SeAcDdS2PkACRvfDIJni+NMYiI6xg8Z3QBrHu8RM3OnDB
+         8wnSQRm1UoqZt/3vMiKQ90iQxecWGqvo0J+py/fnUuxiWlqxMkXHQhOG0x85badHtAHY
+         ZreuyxdeX5OU0y20ts8cmzeJZgM3pv7EjchVA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nvNLdWRzNCcP/1tMguZTrB/Ret9xhkOHTVDfmzeadKU=;
+        b=nMhhBHdCHZapuV8ZaVkk4c5DerCRTh4TwGb1NrnjiKdAtiHCVd7HysmFXGcSQQj8YH
+         77rZWwSlilXv+J8invCNCtW69eIj1fiuQlG4jt831NSHhfFBowbCSfoM2Armj57s8Hhl
+         YqmKPJi0hZ9FcAIwHwxkNrLsUuGTd4jgdJjEpfCq1nk00r/I4n2MqNDFhfaT6SaryG3x
+         8I/aQgRc8sUcF0Rp7R1mGpBUTwT8BAJGA3l70dtcaTGAxRWPlQN9xuucSN8WSa/cTueN
+         PaXjUPgX6QiaR5RoHuECgTe4hcbpT7kL1kiYlIrH+1Ptlr1dxBTeQ1pLcO5MB+0iO4ox
+         nUWg==
+X-Gm-Message-State: APjAAAWsVxaVLojN4+jQBZKwNZhNt5sNcDQXVCqX+i2OYaDM3hfcR9AR
+        KPIgJgji7LaHDfvmYOFyQEZI9VdV049hsyn+oMfMrg==
+X-Google-Smtp-Source: APXvYqwYKN6dkaPv4TtdWshELFYcyApVXP7DfanyMLNrK7YPEHywULSCcTgrkVrXVdFSaMz6ImBxPm40vHRDi0p9GHg=
+X-Received: by 2002:a67:f355:: with SMTP id p21mr1369725vsm.204.1565075156521;
+ Tue, 06 Aug 2019 00:05:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAERHkrtJ3f1ggfG7Qo-KnznGo66p0Y3E0sAfb3ki6U=ADT6__g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1564151143-22889-1-git-send-email-cai@lca.pw>
+In-Reply-To: <1564151143-22889-1-git-send-email-cai@lca.pw>
+From:   Sumit Saxena <sumit.saxena@broadcom.com>
+Date:   Tue, 6 Aug 2019 12:35:45 +0530
+Message-ID: <CAL2rwxpSNMDUD3gRwXmuMZ2ZMjAOdg=ebprhB2v3n8f+Z4AcxA@mail.gmail.com>
+Subject: Re: [PATCH] scsi/megaraid_sas: fix a compilation warning
+To:     Qian Cai <cai@lca.pw>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/6 14:56, Aubrey Li wrote:
-> On Tue, Aug 6, 2019 at 11:24 AM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
->> I've been thinking if we should consider core wide tenent fairness?
->>
->> Let's say there are 3 tasks on 2 threads' rq of the same core, 2 tasks
->> (e.g. A1, A2) belong to tenent A and the 3rd B1 belong to another tenent
->> B. Assume A1 and B1 are queued on the same thread and A2 on the other
->> thread, when we decide priority for A1 and B1, shall we also consider
->> A2's vruntime? i.e. shall we consider A1 and A2 as a whole since they
->> belong to the same tenent? I tend to think we should make fairness per
->> core per tenent, instead of per thread(cpu) per task(sched entity). What
->> do you guys think?
->>
-> 
-> I also think a way to make fairness per cookie per core, is this what you
-> want to propose?
-
-Yes, that's what I meant.
+On Fri, Jul 26, 2019 at 7:55 PM Qian Cai <cai@lca.pw> wrote:
+>
+> The commit de516379e85f ("scsi: megaraid_sas: changes to function
+> prototypes") introduced a comilation warning due to it changed the
+> function prototype of read_fw_status_reg() to take an instance pointer
+> instead, but forgot to remove an unused variable.
+>
+> drivers/scsi/megaraid/megaraid_sas_fusion.c: In function
+> 'megasas_fusion_update_can_queue':
+> drivers/scsi/megaraid/megaraid_sas_fusion.c:326:39: warning: variable
+> 'reg_set' set but not used [-Wunused-but-set-variable]
+>   struct megasas_register_set __iomem *reg_set;
+>                                        ^~~~~~~
+> Fixes: de516379e85f ("scsi: megaraid_sas: changes to function prototypes")
+> Signed-off-by: Qian Cai <cai@lca.pw>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+> ---
+>  drivers/scsi/megaraid/megaraid_sas_fusion.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+> index a32b3f0fcd15..e8092d59d575 100644
+> --- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
+> +++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+> @@ -323,9 +323,6 @@ inline void megasas_return_cmd_fusion(struct megasas_instance *instance,
+>  {
+>         u16 cur_max_fw_cmds = 0;
+>         u16 ldio_threshold = 0;
+> -       struct megasas_register_set __iomem *reg_set;
+> -
+> -       reg_set = instance->reg_set;
+>
+>         /* ventura FW does not fill outbound_scratch_pad_2 with queue depth */
+>         if (instance->adapter_type < VENTURA_SERIES)
+> --
+> 1.8.3.1
+>
