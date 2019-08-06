@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E5B982E77
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 11:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7232F82E75
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 11:11:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732507AbfHFJLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 05:11:43 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:52781 "EHLO
+        id S1732490AbfHFJLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 05:11:36 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:52762 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731735AbfHFJLn (ORCPT
+        with ESMTP id S1731735AbfHFJLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 05:11:43 -0400
+        Tue, 6 Aug 2019 05:11:35 -0400
 Received: from [167.98.27.226] (helo=ct-lt-765.unassigned)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1huvUu-0005Yj-W8; Tue, 06 Aug 2019 10:11:13 +0100
+        id 1huvUu-0005Yh-SW; Tue, 06 Aug 2019 10:11:13 +0100
 Received: from ikerpalomar by ct-lt-765.unassigned with local (Exim 4.89)
         (envelope-from <ikerpalomar@ct-lt-765.unassigned>)
-        id 1huvUu-0003Th-9e; Tue, 06 Aug 2019 10:11:12 +0100
+        id 1huvUu-0003Tj-AP; Tue, 06 Aug 2019 10:11:12 +0100
 From:   Iker Perez <iker.perez@codethink.co.uk>
 To:     linux-hwmon@vger.kernel.org, linux@roeck-us.net
 Cc:     jdelvare@suse.com, linux-kernel@vger.kernel.org,
         Iker Perez del Palomar Sustatxa 
         <iker.perez@codethink.co.uk>
-Subject: [PATCH 2/4] hwmon: (lm75) Create function from code to write into registers
-Date:   Tue,  6 Aug 2019 10:11:05 +0100
-Message-Id: <20190806091107.13322-3-iker.perez@codethink.co.uk>
+Subject: [PATCH 3/4] hwmon: (lm75) Add new fields into lm75_params_
+Date:   Tue,  6 Aug 2019 10:11:06 +0100
+Message-Id: <20190806091107.13322-4-iker.perez@codethink.co.uk>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190806091107.13322-1-iker.perez@codethink.co.uk>
 References: <20190806091107.13322-1-iker.perez@codethink.co.uk>
@@ -36,79 +36,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
 
-Wrap the existing code to write configurations into registers in
-a function.
+The new fields are included to prepare the driver for next patch. The
+fields are:
 
-Added error handling to the function.
+* *resolutions: Stores all the supported resolutions by the device.
+* num_sample_times: Stores the number of possible sample times.
+* *sample_times: Stores all the possible sample times to be set.
+* sample_set_masks: The set_masks for the possible sample times
+* sample_clr_mask: Clear mask to set the default sample time.
 
 Signed-off-by: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
 ---
- drivers/hwmon/lm75.c | 34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
+ drivers/hwmon/lm75.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
-index 1c012301b6ca..477ac0732ddf 100644
+index 477ac0732ddf..a8d0a6fb9762 100644
 --- a/drivers/hwmon/lm75.c
 +++ b/drivers/hwmon/lm75.c
-@@ -228,6 +228,27 @@ static inline long lm75_reg_to_mc(s16 temp, u8 resolution)
- 	return ((temp >> (16 - resolution)) * 1000) >> (resolution - 8);
- }
+@@ -58,15 +58,24 @@ enum lm75_type {		/* keep sorted in alphabetical order */
+  *			the chip.
+  * @resolution:		Number of bits to represent the temperatue value.
+  * @resolution_limits:	Resolution range.
++ * @num_sample_times:	Number of possible sample times to be set.
+  * default_sample_time:	Sample time to be set by default.
++ * @sample_times:	All the possible sample times to be set.
++ * @sample_set_masks:	All the set_masks for the possible sample times.
++ * @sample_clr_mask:	Clear mask to set the default sample time.
+  */
  
-+static int lm75_write_config(struct lm75_data *data, u8 set_mask,
-+			     u8 clr_mask)
-+{
-+	u8 value;
-+
-+	clr_mask |= LM75_SHUTDOWN;
-+	value = data->current_conf & ~clr_mask;
-+	value |= set_mask;
-+
-+	if (data->current_conf != value) {
-+		s32 err;
-+
-+		err = i2c_smbus_write_byte_data(data->client, LM75_REG_CONF,
-+						value);
-+		if (err)
-+			return err;
-+		data->current_conf = value;
-+	}
-+	return 0;
-+}
-+
- static int lm75_read(struct device *dev, enum hwmon_sensor_types type,
- 		     u32 attr, int channel, long *val)
- {
-@@ -389,7 +410,6 @@ lm75_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	struct device *hwmon_dev;
- 	struct lm75_data *data;
- 	int status, err;
--	int new;
- 	enum lm75_type kind;
+ struct lm75_params {
+-	u8		set_mask;
+-	u8		clr_mask;
+-	u8		default_resolution;
+-	u8		resolution_limits;
+-	unsigned int	default_sample_time;
++	u8			set_mask;
++	u8			clr_mask;
++	u8			default_resolution;
++	u8			resolution_limits;
++	const u8		*resolutions;
++	unsigned int		default_sample_time;
++	u8			num_sample_times;
++	const unsigned int	*sample_times;
++	const u8		*sample_set_masks;
++	u8			sample_clr_mask;
+ };
  
- 	if (client->dev.of_node)
-@@ -429,16 +449,16 @@ lm75_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		return status;
- 	}
- 	data->orig_conf = status;
--	new = status & ~(data->params->clr_mask | LM75_SHUTDOWN);
--	new |= data->params->set_mask;
--	if (status != new)
--		i2c_smbus_write_byte_data(client, LM75_REG_CONF, new);
-+	data->current_conf = status;
- 
--	err = devm_add_action_or_reset(dev, lm75_remove, data);
-+	err = lm75_write_config(data, data->params->set_mask,
-+				data->params->clr_mask);
- 	if (err)
- 		return err;
- 
--	dev_dbg(dev, "Config %02x\n", new);
-+	err = devm_add_action_or_reset(dev, lm75_remove, data);
-+	if (err)
-+		return err;
- 
- 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name,
- 							 data, &lm75_chip_info,
+ /* Addresses scanned */
+@@ -214,7 +223,14 @@ static const struct lm75_params device_params[] = {
+ 	[tmp75b] = { /* not one-shot mode, Conversion rate 37Hz */
+ 		.clr_mask = 1 << 7 | 3 << 5,
+ 		.default_resolution = 12,
++		.sample_set_masks = (u8 []){ 0 << 5, 1 << 5, 2 << 5,
++			3 << 5 },
++		.sample_clr_mask = 3 << 5,
+ 		.default_sample_time = MSEC_PER_SEC / 37,
++		.sample_times = (unsigned int []){ MSEC_PER_SEC / 37,
++			MSEC_PER_SEC / 18,
++			MSEC_PER_SEC / 9, MSEC_PER_SEC / 4 },
++		.num_sample_times = 4,
+ 	},
+ 	[tmp75c] = {
+ 		.clr_mask = 1 << 5,	/*not one-shot mode*/
 -- 
 2.11.0
 
