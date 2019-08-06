@@ -2,161 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B3C8303E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:07:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02FDB83048
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731169AbfHFLHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 07:07:19 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59130 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728845AbfHFLHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:07:19 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5EE1996E0A4ABC13A6C9;
-        Tue,  6 Aug 2019 19:07:16 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 6 Aug 2019
- 19:07:06 +0800
-Subject: Re: [PATCH v2 12/12] irqchip/gic-v3: Add quirks for HIP06/07 invalid
- GICD_TYPER erratum 161010803
-To:     Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Jason Cooper" <jason@lakedaemon.net>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190806100121.240767-1-maz@kernel.org>
- <20190806100121.240767-13-maz@kernel.org>
-CC:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-        "Lokesh Vutla" <lokeshvutla@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <5f8808f9-ca91-db68-042f-97dfcbe75508@huawei.com>
-Date:   Tue, 6 Aug 2019 12:07:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1732645AbfHFLIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 07:08:38 -0400
+Received: from mga05.intel.com ([192.55.52.43]:32559 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728845AbfHFLIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 07:08:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 04:08:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
+   d="scan'208";a="349394291"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by orsmga005.jf.intel.com with ESMTP; 06 Aug 2019 04:08:34 -0700
+Subject: Re: [PATCH V4 1/2] mmc: sdhci: Fix O2 Host data read/write DLL Lock
+ Phase shift issue
+To:     "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "Louis Lu (TP)" <louis.lu@bayhubtech.com>,
+        "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
+        "Max Huang (SC)" <max.huang@bayhubtech.com>
+References: <1564767547-4515-1-git-send-email-shirley.her@bayhubtech.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <34425078-f5fa-5f7d-1a80-c27346bb87d9@intel.com>
+Date:   Tue, 6 Aug 2019 14:07:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190806100121.240767-13-maz@kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <1564767547-4515-1-git-send-email-shirley.her@bayhubtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2019 11:01, Marc Zyngier wrote:
-> It looks like the HIP06/07 SoCs have extra bits in their GICD_TYPER
-> registers, which confuse the GICv3.1 code (these systems appear to
-> expose ESPIs while they actually don't).
->
-> Detect these systems as early as possible and wipe the fields that
-> should be RES0 in the register.
->
-
-thanks,
-
-Tested-by: John Garry <john.garry@huawei.com>
-
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+On 2/08/19 8:39 PM, Shirley Her (SC) wrote:
+> Fix data read/write error in HS200 mode due to chip DLL lock phase shift
+> 
+> Signed-off-by:Shirley Her<shirley.her@bayhubtech.com>
 > ---
->  Documentation/arm64/silicon-errata.rst |  2 +
->  drivers/irqchip/irq-gic-v3.c           | 54 +++++++++++++++++++++-----
->  2 files changed, 46 insertions(+), 10 deletions(-)
->
-> diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
-> index 3e57d09246e6..17ea3fecddaa 100644
-> --- a/Documentation/arm64/silicon-errata.rst
-> +++ b/Documentation/arm64/silicon-errata.rst
-> @@ -115,6 +115,8 @@ stable kernels.
->  +----------------+-----------------+-----------------+-----------------------------+
->  | Hisilicon      | Hip0{6,7}       | #161010701      | N/A                         |
->  +----------------+-----------------+-----------------+-----------------------------+
-> +| Hisilicon      | Hip0{6,7}       | #161010803      | N/A                         |
-> ++----------------+-----------------+-----------------+-----------------------------+
->  | Hisilicon      | Hip07           | #161600802      | HISILICON_ERRATUM_161600802 |
->  +----------------+-----------------+-----------------+-----------------------------+
->  | Hisilicon      | Hip08 SMMU PMCG | #162001800      | N/A                         |
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 334a10d9dbfb..bee141613b67 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -1441,6 +1441,46 @@ static bool gic_enable_quirk_msm8996(void *data)
->  	return true;
->  }
->
-> +static bool gic_enable_quirk_hip06_07(void *data)
-> +{
-> +	struct gic_chip_data *d = data;
-> +
-> +	/*
-> +	 * HIP06 GICD_IIDR clashes with GIC-600 product number (despite
-> +	 * not being an actual ARM implementation). The saving grace is
-> +	 * that GIC-600 doesn't have ESPI, so nothing to do in that case.
-> +	 * HIP07 doesn't even have a proper IIDR, and still pretends to
-> +	 * have ESPI. In both cases, put them right.
-> +	 */
-> +	if (d->rdists.gicd_typer & GICD_TYPER_ESPI) {
-> +		/* Zero both ESPI and the RES0 field next to it... */
-> +		d->rdists.gicd_typer &= ~GENMASK(9, 8);
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static const struct gic_quirk gic_quirks[] = {
-> +	{
-> +		.desc	= "GICv3: Qualcomm MSM8996 broken firmware",
-> +		.compatible = "qcom,msm8996-gic-v3",
-> +		.init	= gic_enable_quirk_msm8996,
-> +	},
-> +	{
-> +		.desc	= "GICv3: HIP06 erratum 161010803",
-> +		.iidr	= 0x0204043b,
-> +		.init	= gic_enable_quirk_hip06_07,
-> +	},
-> +	{
-> +		.desc	= "GICv3: HIP07 erratum 161010803",
-> +		.iidr	= 0x00000000,
-> +		.init	= gic_enable_quirk_hip06_07,
-> +	},
-> +	{
-> +	}
-> +};
-> +
->  static void gic_enable_nmi_support(void)
->  {
->  	int i;
-> @@ -1494,6 +1534,10 @@ static int __init gic_init_bases(void __iomem *dist_base,
->  	 */
->  	typer = readl_relaxed(gic_data.dist_base + GICD_TYPER);
->  	gic_data.rdists.gicd_typer = typer;
-> +
-> +	gic_enable_quirks(readl_relaxed(gic_data.dist_base + GICD_IIDR),
-> +			  gic_quirks, &gic_data);
-> +
->  	pr_info("%d SPIs implemented\n", GIC_LINE_NR - 32);
->  	pr_info("%d Extended SPIs implemented\n", GIC_ESPI_NR);
->  	gic_data.domain = irq_domain_create_tree(handle, &gic_irq_domain_ops,
-> @@ -1676,16 +1720,6 @@ static void __init gic_of_setup_kvm_info(struct device_node *node)
->  	gic_set_kvm_info(&gic_v3_kvm_info);
->  }
->
-> -static const struct gic_quirk gic_quirks[] = {
-> -	{
-> -		.desc	= "GICv3: Qualcomm MSM8996 broken firmware",
-> -		.compatible = "qcom,msm8996-gic-v3",
-> -		.init	= gic_enable_quirk_msm8996,
-> -	},
-> -	{
-> -	}
-> -};
-> -
->  static int __init gic_of_init(struct device_node *node, struct device_node *parent)
->  {
->  	void __iomem *dist_base;
->
+> change in V4:
+>  1. add a bug fix in V3
+> 
+> change in V3:
+>  1. add more explanation in dll_recovery and execute_tuning function
+>  2. move dll_adjust_count to O2_host struct
+>  3. fix some coding style error
+>  4. renaming O2_PLL_WDT_CONTROL1 TO O2_PLL_DLL_WDT_CONTROL1
+> 
+> change in V2:
+>  1. use usleep_range instead of udelay
+>  2. move dll_adjust_count to sdhci-pci-o2micro.c
+> 
+> chagne in V1:
+>  1. add error recovery function to relock DLL with correct phase
+>  2. retuning HS200 after DLL locked
+> ---
+>  drivers/mmc/host/sdhci-pci-o2micro.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+> index 9dc4548..186a33d 100644
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+> @@ -51,7 +51,7 @@
+>  #define O2_SD_VENDOR_SETTING2	0x1C8
+>  #define O2_SD_HW_TUNING_DISABLE	BIT(4)
+>  
+> -#define O2_PLL_WDT_CONTROL1	0x1CC
+> +#define O2_PLL_DLL_WDT_CONTROL1	0x1CC
 
+Please also change the other places that O2_PLL_WDT_CONTROL1 appears, so
+that the code compiles.
+
+>  #define  O2_PLL_FORCE_ACTIVE	BIT(18)
+>  #define  O2_PLL_LOCK_STATUS	BIT(14)
+>  #define  O2_PLL_SOFT_RESET	BIT(12)
+> 
 
