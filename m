@@ -2,135 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8670D837AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 19:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 512B4837B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 19:12:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732048AbfHFRLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 13:11:23 -0400
-Received: from mail-eopbgr70089.outbound.protection.outlook.com ([40.107.7.89]:5470
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726783AbfHFRLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 13:11:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Vxm5RE49shRV2hTcUfrFMQoRotGSb6PkbQT1WNJMZAd9po1Gp8MmWxb2/eVHVpfpy4Eqk+IH9ym4KNmWK+xABzpEngtwUm3v8cUTTYxUHBEHUckxFJ/go1Y1ZWicHy10YiR+dB45y1SnscaXvYSuBH6yCeYhtf3GGC88N/14m/9uWq6IK9M1Pc4zklfBjZFaCpCmYfdhulNu61U4Bkb0kSs49CFvwZGT1GzLINp9f2tQvvNfLp1urj8uE7uRsCtYkJSxt9LicmT7ZxwP7D1RVcrQseECMsjQNYK3Ym3l6TqtxBDDhAnfFMoNQdnlUokZHCxXOuMCBsxJNxmqfCoLAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YHe2KIGn3QBQdyBwIdd9a0pE6v/FfkYw/l0ipDDlpnQ=;
- b=IaYk/Ll+4Xi9OD7JXJ1eAWP9C0r8kZ8d6j11WYXi3TtUz2rw+56W6JikhuPOsN3bt6fe9kMi5qzgZbB254H5WRtdIqfpjjtYyzTndwZHaQHBEK2KlYjJH9r6s3Vi7hpinZVA3xxhrLf2eriYjKydc1ia3HOJu+YB6WJkRd15b95r2YvxuHPL8uSEyCsbEVG0uXWOmY1Vrf5ThXxo6SvvdI9M0Sc38IIeoFOvGXQ21rQoDC94+EdJcNqg1zqS/eN+QZDMGM0i0c57zkYJRqmfTQ40QMpEqWJN/7SAdQZr9HO+gB0mp5Jr4wAIlQCIa8HMqgsJwrtxUGTV3berCrQoWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YHe2KIGn3QBQdyBwIdd9a0pE6v/FfkYw/l0ipDDlpnQ=;
- b=sMWtBIw4VlMf/+movomvq7ogx5MFv3Sb6MXtGtFgPpPWS3cfYOY7yy5V2qXWcs+aadz7ngzk8JGGOvqZ529bBKOGm1b/gEuDGGbW2RJV6mwg4bHgHdKkxHG7lidZw4WQVPd1vjJAq3gvn0eYndLqtM1Bjy83lbrszl9Ez23Ps2Q=
-Received: from HE1PR0402MB2857.eurprd04.prod.outlook.com (10.175.29.135) by
- HE1PR0402MB3578.eurprd04.prod.outlook.com (10.167.126.140) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.17; Tue, 6 Aug 2019 17:11:17 +0000
-Received: from HE1PR0402MB2857.eurprd04.prod.outlook.com
- ([fe80::1ced:9626:a551:ec5f]) by HE1PR0402MB2857.eurprd04.prod.outlook.com
- ([fe80::1ced:9626:a551:ec5f%11]) with mapi id 15.20.2136.018; Tue, 6 Aug 2019
- 17:11:17 +0000
-From:   Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "jslaby@suse.com" <jslaby@suse.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Cosmin Stefan Stoica <cosmin.stoica@nxp.com>,
-        Larisa Ileana Grigore <larisa.grigore@nxp.com>
-Subject: Re: [PATCH 5/6] tty: serial: Add linflexuart driver for S32V234
-Thread-Topic: [PATCH 5/6] tty: serial: Add linflexuart driver for S32V234
-Thread-Index: AQHVTHn1y10az0N8mUWM4VNvSHKzDA==
-Date:   Tue, 6 Aug 2019 17:11:17 +0000
-Message-ID: <HE1PR0402MB28579034C09EB49A76A4F8E7DFD50@HE1PR0402MB2857.eurprd04.prod.outlook.com>
-References: <20190802194702.30249-1-stefan-gabriel.mirea@nxp.com>
- <20190802194702.30249-6-stefan-gabriel.mirea@nxp.com>
- <20190805153114.GA16836@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=stefan-gabriel.mirea@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 703609ad-10c5-439b-4f88-08d71a911843
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:HE1PR0402MB3578;
-x-ms-traffictypediagnostic: HE1PR0402MB3578:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <HE1PR0402MB357893B470A4A40CA87426C0DFD50@HE1PR0402MB3578.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0121F24F22
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(396003)(346002)(39860400002)(136003)(189003)(199004)(2351001)(99286004)(6436002)(91956017)(6306002)(2501003)(33656002)(55016002)(5640700003)(8676002)(66556008)(64756008)(9686003)(66446008)(66476007)(229853002)(66946007)(4326008)(5660300002)(53936002)(1730700003)(81156014)(81166006)(478600001)(14444005)(6916009)(52536014)(256004)(8936002)(76116006)(966005)(6246003)(71200400001)(7416002)(25786009)(71190400001)(3846002)(6116002)(7736002)(486006)(7696005)(316002)(186003)(26005)(14454004)(74316002)(86362001)(446003)(476003)(305945005)(68736007)(53546011)(6506007)(54906003)(66066001)(2906002)(102836004)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0402MB3578;H:HE1PR0402MB2857.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 3vvQvASBOmKksFhtBOAUw/ZnPoA734mnfKfv3o0JIuvo+qT/vAbO8iHS8lxFAXQagLuwqvE7BFGKIr3bG8kLPCX5wT6tDEzWCTSrZvwV17hFSUTqFF7slT/9Ul4sf2Tv+Y6sqFhtRVfC+mya9ON2w2ePK9lwwdu3CynO+lEKXLYwxMg7bcATaY2Kbo2UnhbVzIf7bvFGr33KrUJcADmPIFCNTmQ21Jc/uI9JKThneuEkDl+VSBLixsKSUVCTjtTHWYBXfc7QNR0H82cnFLAQfouDbFhwgVzIpttWlMA8VAMI5ABh+opDjoLI3zcqiOGArj4og71LYXDw7hyU4RWgm9t78MSL4z5dfha9y42xJZV7eh5diA3/MM4iJRpWOhNVv7tuxNOGC95mt13/QU4kYsBQYhM7gITZ8rtfZx00VbM=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1732690AbfHFRMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 13:12:32 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38719 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728189AbfHFRMb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 13:12:31 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g17so88647122wrr.5
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 10:12:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5pt7GwViJVcu98WqISKhm+O7h6/+k0pCneC7dXHoksE=;
+        b=eTsJQuTxednVUcxa7b0FpMbtBdOYOhO9LIVud9iig9imJcCOtluHQzgEMZzZgUEI6N
+         xwKmJJQk/mZIjpzXOiHq0TkDCLPhn5Ts6iV1fNQ8ZeBC06MdLKhUnjUTlw1gsRQrIVMN
+         61zowasVLBSooSjwUwcyrByQNNEXMjyPWBQTVP3rRPp4EDOW3+RpvObq69Uf3BFQd8Bw
+         H6VqPP+msUlEN4qbVwSQA/K29PT0wqiVWbCjfokx5+5jb7B9wZtbANtZ2VrHODXZTq+O
+         Ojnocoib8Fegm0muJo+GVVeJuTUqILLxd2sH6c0Ow+8wogl8idI/cuZxP/l3dGToF9Ct
+         SaFg==
+X-Gm-Message-State: APjAAAUBRLmS3Bf0G0qopkNG3z/ghJSgI9KTtW9KRIHR/DRIpr9UpTib
+        DAq5ORjxHbEWdLYzCVaeJ/DJ5A==
+X-Google-Smtp-Source: APXvYqxOGXgEKNZko/bV9lJddN4v/8LxkkiWU8g3sydYTTg4GPL16jPiAXu91VDfodAuZCHJsk4PfQ==
+X-Received: by 2002:a5d:6287:: with SMTP id k7mr5550570wru.108.1565111549697;
+        Tue, 06 Aug 2019 10:12:29 -0700 (PDT)
+Received: from [192.168.0.24] ([181.120.177.224])
+        by smtp.gmail.com with ESMTPSA id h16sm103858378wrv.88.2019.08.06.10.12.24
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 10:12:29 -0700 (PDT)
+Subject: Re: [PATCH RFC] modpost: Support I2C Aliases from OF tables
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+References: <20190710193918.31135-1-kieran.bingham+renesas@ideasonboard.com>
+ <0e1b6e0b-1c94-4b00-7fda-c2a303ee3816@redhat.com>
+ <20190731194419.GB4084@kunai>
+ <f4a78e93-6aaa-bc72-cf94-06fc2574451c@redhat.com>
+ <CAMuHMdUA-hjVqSP_c0cB=76cfrucF6xxRi3ymVoEsJ2hbkfT=A@mail.gmail.com>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <51451f89-9193-2be6-e724-e9ca44a25f52@redhat.com>
+Date:   Tue, 6 Aug 2019 19:12:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 703609ad-10c5-439b-4f88-08d71a911843
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2019 17:11:17.4749
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: stefan-gabriel.mirea@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0402MB3578
+In-Reply-To: <CAMuHMdUA-hjVqSP_c0cB=76cfrucF6xxRi3ymVoEsJ2hbkfT=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/5/2019 6:31 PM, gregkh@linuxfoundation.org wrote:=0A=
-> On Fri, Aug 02, 2019 at 07:47:23PM +0000, Stefan-gabriel Mirea wrote:=0A=
->>=0A=
->> +/* Freescale Linflex UART */=0A=
->> +#define PORT_LINFLEXUART     121=0A=
-> =0A=
-> Do you really need this modified?=0A=
-=0A=
-Hello Greg,=0A=
-=0A=
-This macro is meant to be assigned to port->type in the config_port=0A=
-method from uart_ops, in order for verify_port to know if the received=0A=
-serial_struct structure was really targeted for a LINFlex port. It=0A=
-needs to be defined outside, to avoid "collisions" with other drivers.=0A=
-=0A=
-As far as I see, uart_set_info() will actually fail at the=0A=
-"baud_base < 9600" check[1], right after calling verify_port(), when=0A=
-performing an ioctl() on "/dev/console" with TIOCSSERIAL using a=0A=
-serial_struct obtained with TIOCGSERIAL. This happens because this=0A=
-reduced version of the LINFlex UART driver will not touch the uartclk=0A=
-field of the uart_port (as there is currently no clock support).=0A=
-Therefore, the linflex_config/verify_port() functions, along with the=0A=
-PORT_LINFLEXUART macro, may be indeed unnecessary at this point (and=0A=
-should be added later). Is this what you mean?=0A=
-=0A=
-Other than that, I do not see anything wrong with the addition of a=0A=
-define in serial_core.h for this purpose (which is also what most of the=0A=
-serial drivers do, including amba-pl011.c, mentioned in=0A=
-Documentation/driver-api/serial/driver.rst as providing the reference=0A=
-implementation), so please be more specific.=0A=
-=0A=
-Regards,=0A=
-Stefan=0A=
-=0A=
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/tty/serial/serial_core.c?h=3Dv5.3-rc1#n872=0A=
+Hello Geert,
+
+On 8/6/19 9:22 AM, Geert Uytterhoeven wrote:
+> Hi Javier,
+> 
+> On Tue, Aug 6, 2019 at 12:25 AM Javier Martinez Canillas
+> <javierm@redhat.com> wrote:
+>> On 7/31/19 9:44 PM, Wolfram Sang wrote:
+>>> Hi Javier,
+>>>> The other option is to remove i2c_of_match_device() and don't make OF match
+>>>> to fallback to i2c_of_match_device_sysfs(). This is what happens in the ACPI
+>>>> case, since i2c_device_match() just calls acpi_driver_match_device() directly
+>>>> and doesn't have a wrapper function that fallbacks to sysfs matching.
+>>>>
+>>>> In this case an I2C device ID table would be required if the devices have to
+>>>> be instantiated through sysfs. That way the I2C table would be used both for
+>>>> auto-loading and also to match the device when it doesn't have an of_node.
+>>>
+>>> That would probably mean that only a minority of drivers will not add an I2C
+>>> device ID table because it is easy to add an you get the sysfs feature?
+>>>
+>>
+>> I believe so yes.
+> 
+>> As Masahiro-san mentioned, this approach will still require to add a new macro
+>> MODULE_DEVICE_TABLE(i2c_of, bar_of_match) so the OF device table is used twice.
+>>
+>> One to expose the "of:N*T*Cfoo,bar" and another one to expose it as "i2c:bar".
+>>
+>> I expect that many developers would miss adding this macro for new drivers that
+>> are DT-only and so sysfs instantiation would not work there. So whatever is the
+>> approach taken we should clearly document all this so drivers authors are aware.
+> 
+> You could add a new I2C_MODULE_DEVICE_TABLE() that adds both, right?
+> Makes it a little bit easier to check/enforce this.
+>
+
+Right, we could add a macro for that. Although it should probably be called
+I2C_OF_MODULE_DEVICE_TABLE() or something like that since is specific to OF.
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
