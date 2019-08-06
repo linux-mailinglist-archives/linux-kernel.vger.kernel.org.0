@@ -2,92 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02FDB83048
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA02083043
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:10:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732645AbfHFLIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 07:08:38 -0400
-Received: from mga05.intel.com ([192.55.52.43]:32559 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728845AbfHFLIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:08:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 04:08:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
-   d="scan'208";a="349394291"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
-  by orsmga005.jf.intel.com with ESMTP; 06 Aug 2019 04:08:34 -0700
-Subject: Re: [PATCH V4 1/2] mmc: sdhci: Fix O2 Host data read/write DLL Lock
- Phase shift issue
-To:     "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "Louis Lu (TP)" <louis.lu@bayhubtech.com>,
-        "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
-        "Max Huang (SC)" <max.huang@bayhubtech.com>
-References: <1564767547-4515-1-git-send-email-shirley.her@bayhubtech.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <34425078-f5fa-5f7d-1a80-c27346bb87d9@intel.com>
-Date:   Tue, 6 Aug 2019 14:07:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731426AbfHFLHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 07:07:48 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37839 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728845AbfHFLHs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 07:07:48 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 19so41316496pfa.4;
+        Tue, 06 Aug 2019 04:07:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tBmS1JSg6R7dIdS7tcKHXNzn/jUBrwmVmbb/LUzYkA4=;
+        b=FKiohG4pWZeA/Wi7DBC/9npqkDrHpyRoEZz0rJr3UUucKs69b2m0OSmC0nKoqoEBW7
+         5a5fisl81W7ayWltjhWVDhYcauX5oI8qjT4HtPAD8MYvTTn2BUR7Z+/ra9jmsBm5ygxl
+         coLvx5hCepcasDv3Ne7A33Zn9x+18/WPTkwpxyTWKXEQavMv1FfQZWEk9n3vFCWxJKBz
+         8xgjqJToD3aUbClZjNybApCSYfWR+J9s7Cr5z2gCs2zn7kfaA/XDfENps51XKzcC7h+v
+         MMuNw3N9Qr5VXXVcVPES+JzklSH8uO3a+z/VBP70OotlcR+ykPpu1CCL5PGcPfSbf/4h
+         l5DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tBmS1JSg6R7dIdS7tcKHXNzn/jUBrwmVmbb/LUzYkA4=;
+        b=n46lLmHUD02u+QOH8gDUai8ueLbAFlpSYO8K/nCKYO3wW/pzFwpn7wHPeE03XzaY1A
+         y3LxlscdgWZeYcl9V1NZa1R+BX33QRHMRdNa/5TasbN3dKiOpeefEjHtsGsHidi/u+sP
+         Q4B64GeQzjdh7+8D4gzCvqk/eGcYKRxQta3U99wbp3pipxF9rQGoqpCYxguqBBvAgLpt
+         9xBb0/x+mFT2NeR7bLhHpCKdA71crke1AGlY1h0Labj0lJClFn8+H4SkXywmG/YBeIZr
+         Gr+/B1Dac75riAfylY+PdRBOEqycsJDqyJC3IGLSvWM58msxjGTbBTJ+6+DP2LN9Fwim
+         qMwQ==
+X-Gm-Message-State: APjAAAVehhtL+8+HYdXUWxAQjhF7lJWprQ+P1magMdYfeovNdIttr39w
+        h5ZitJkQK/qwjhRT3Zcwfwo=
+X-Google-Smtp-Source: APXvYqyN06dee+YCHt2A2RzCyf1hHdHxVyVKw3mol+ZH/H3Wfu7dAX7tuJm7I+hqEodTVg3369khvw==
+X-Received: by 2002:a62:3895:: with SMTP id f143mr3075201pfa.116.1565089667635;
+        Tue, 06 Aug 2019 04:07:47 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id h129sm82492287pfb.110.2019.08.06.04.07.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 04:07:46 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 20:07:37 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
+        paulmck@linux.ibm.com, Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806110737.GB32615@google.com>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+ <20190805170451.26009-3-joel@joelfernandes.org>
+ <20190806084203.GJ11812@dhcp22.suse.cz>
+ <20190806103627.GA218260@google.com>
+ <20190806104755.GR11812@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <1564767547-4515-1-git-send-email-shirley.her@bayhubtech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806104755.GR11812@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/08/19 8:39 PM, Shirley Her (SC) wrote:
-> Fix data read/write error in HS200 mode due to chip DLL lock phase shift
+On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
+> On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
+> > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
+> > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> > > > This bit will be used by idle page tracking code to correctly identify
+> > > > if a page that was swapped out was idle before it got swapped out.
+> > > > Without this PTE bit, we lose information about if a page is idle or not
+> > > > since the page frame gets unmapped.
+> > > 
+> > > And why do we need that? Why cannot we simply assume all swapped out
+> > > pages to be idle? They were certainly idle enough to be reclaimed,
+> > > right? Or what does idle actualy mean here?
+> > 
+> > Yes, but other than swapping, in Android a page can be forced to be swapped
+> > out as well using the new hints that Minchan is adding?
 > 
-> Signed-off-by:Shirley Her<shirley.her@bayhubtech.com>
-> ---
-> change in V4:
->  1. add a bug fix in V3
-> 
-> change in V3:
->  1. add more explanation in dll_recovery and execute_tuning function
->  2. move dll_adjust_count to O2_host struct
->  3. fix some coding style error
->  4. renaming O2_PLL_WDT_CONTROL1 TO O2_PLL_DLL_WDT_CONTROL1
-> 
-> change in V2:
->  1. use usleep_range instead of udelay
->  2. move dll_adjust_count to sdhci-pci-o2micro.c
-> 
-> chagne in V1:
->  1. add error recovery function to relock DLL with correct phase
->  2. retuning HS200 after DLL locked
-> ---
->  drivers/mmc/host/sdhci-pci-o2micro.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index 9dc4548..186a33d 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -51,7 +51,7 @@
->  #define O2_SD_VENDOR_SETTING2	0x1C8
->  #define O2_SD_HW_TUNING_DISABLE	BIT(4)
->  
-> -#define O2_PLL_WDT_CONTROL1	0x1CC
-> +#define O2_PLL_DLL_WDT_CONTROL1	0x1CC
+> Yes and that is effectivelly making them idle, no?
 
-Please also change the other places that O2_PLL_WDT_CONTROL1 appears, so
-that the code compiles.
-
->  #define  O2_PLL_FORCE_ACTIVE	BIT(18)
->  #define  O2_PLL_LOCK_STATUS	BIT(14)
->  #define  O2_PLL_SOFT_RESET	BIT(12)
-> 
-
+1. mark page-A idle which was present at that time.
+2. run workload
+3. page-A is touched several times
+4. *sudden* memory pressure happen so finally page A is finally swapped out
+5. now see the page A idle - but it's incorrect.
