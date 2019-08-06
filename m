@@ -2,173 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D138838F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EB5C838F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:51:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbfHFSss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 14:48:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:55688 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfHFSsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 14:48:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 11:48:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
-   d="scan'208";a="165069094"
-Received: from megha-z97x-ud7-th.sc.intel.com ([143.183.85.162])
-  by orsmga007.jf.intel.com with ESMTP; 06 Aug 2019 11:48:46 -0700
-Message-ID: <1565118597.2401.116.camel@intel.com>
-Subject: Re: [RFC V1 RESEND 5/6] PCI/MSI: Free MSI-X resources by group
-From:   Megha Dey <megha.dey@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        ashok.raj@intel.com, jacob.jun.pan@linux.intel.com,
-        megha.dey@linux.intel.com
-Date:   Tue, 06 Aug 2019 12:09:57 -0700
-In-Reply-To: <alpine.DEB.2.21.1906291002190.1802@nanos.tec.linutronix.de>
-References: <1561162778-12669-1-git-send-email-megha.dey@linux.intel.com>
-         <1561162778-12669-6-git-send-email-megha.dey@linux.intel.com>
-         <alpine.DEB.2.21.1906291002190.1802@nanos.tec.linutronix.de>
+        id S1726145AbfHFSvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 14:51:03 -0400
+Received: from mail-lf1-f47.google.com ([209.85.167.47]:42380 "EHLO
+        mail-lf1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfHFSvD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 14:51:03 -0400
+Received: by mail-lf1-f47.google.com with SMTP id s19so62028801lfb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 11:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YFrdn8TjmQNSnIaAcCuqbEzq3mrXCDg59WKear6Xdpg=;
+        b=MlysRV02mcMixM5P973XDGPSxckBz4Nea7C3SNGSHcfQXpMYCeOaEo4xQvZFVIgIBy
+         AFFjp9IQ8QdVB/2B+8z1j1rT4dC0Ak27vpobppoYytcpWfuMnn4/z0OVQMXSAxk5j/X4
+         5pVDLEKsr8UIaKS0UpizhCPTazxnvNME05Bg0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YFrdn8TjmQNSnIaAcCuqbEzq3mrXCDg59WKear6Xdpg=;
+        b=CPIDck8RaU7g1iIe2lu38mmJEVsZUQP2koSa5VO0oIMmP/8t8Ny3MwssxXpTEdBD7o
+         PZK1ZOyono+BGqTijxUX2ExzWsn0WtQbRUFJ8uQl55SXAmaUSHsSVVKVok5OItei/zQ4
+         EmV0/wn0xgjQNrYKF67LUtwuROh6WL1JIpoYomY4VuQE6mmlqD8x2pP2Cw93m8ob9iZV
+         8L23Cmc/eVMeuloAFZrGoDIWCsco5yZxW6nrn/7ldijNOsdGjW0n0C3IFU67RXrpQyrS
+         rf2CBhBPC3eyLHXvtbK3V3D/tssdDS/+c8knQMRHloGg0t7DgwRyumvnmLy08tU7KqUp
+         9umg==
+X-Gm-Message-State: APjAAAULCG97EPxTkP5pSzBYrg4Cv7BZaHngiWPF49aMs9//dq/D1deH
+        YA2E2I5vWFMbtVRFcup1CZpHwF6Vph4=
+X-Google-Smtp-Source: APXvYqxJjd6U9nt8sLXhA5ieCKFs6yAlcUtosHkCB4eBu/WZP9RowqNodXLXSsI19cimtZeBrFJSBg==
+X-Received: by 2002:a19:5e10:: with SMTP id s16mr3374091lfb.13.1565117459797;
+        Tue, 06 Aug 2019 11:50:59 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id s24sm17980378lje.58.2019.08.06.11.50.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 11:50:58 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id c9so61958997lfh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 11:50:58 -0700 (PDT)
+X-Received: by 2002:a19:c20b:: with SMTP id l11mr3479307lfc.106.1565117458380;
+ Tue, 06 Aug 2019 11:50:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAPM=9tzJQ+26n_Df1eBPG1A=tXf4xNuVEjbG3aZj-aqYQ9nnAg@mail.gmail.com>
+ <CAPM=9twvwhm318btWy_WkQxOcpRCzjpok52R8zPQxQrnQ8QzwQ@mail.gmail.com>
+ <CAHk-=wjC3VX5hSeGRA1SCLjT+hewPbbG4vSJPFK7iy26z4QAyw@mail.gmail.com>
+ <CAHk-=wiD6a189CXj-ugRzCxA9r1+siSCA0eP_eoZ_bk_bLTRMw@mail.gmail.com>
+ <48890b55-afc5-ced8-5913-5a755ce6c1ab@shipmail.org> <CAHk-=whwcMLwcQZTmWgCnSn=LHpQG+EBbWevJEj5YTKMiE_-oQ@mail.gmail.com>
+ <CAHk-=wghASUU7QmoibQK7XS09na7rDRrjSrWPwkGz=qLnGp_Xw@mail.gmail.com> <20190806073831.GA26668@infradead.org>
+In-Reply-To: <20190806073831.GA26668@infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 6 Aug 2019 11:50:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi7L0MDG7DY39Hx6v8jUMSq3ZCE3QTnKKirba_8KAFNyw@mail.gmail.com>
+Message-ID: <CAHk-=wi7L0MDG7DY39Hx6v8jUMSq3ZCE3QTnKKirba_8KAFNyw@mail.gmail.com>
+Subject: Re: drm pull for v5.3-rc1
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m_=28VMware=29?= 
+        <thomas@shipmail.org>, Dave Airlie <airlied@gmail.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Price <steven.price@arm.com>,
+        Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-06-29 at 10:08 +0200, Thomas Gleixner wrote:
-> Megha,
-> 
-> On Fri, 21 Jun 2019, Megha Dey wrote:
-> > 
-> > +static int free_msi_irqs_grp(struct pci_dev *dev, int group_id)
-> > +{
-> > 
-> > +
-> > +	for_each_pci_msi_entry(entry, dev) {
-> > +		if (entry->group_id == group_id && entry->irq)
-> > +			for (i = 0; i < entry->nvec_used; i++)
-> > +				BUG_ON(irq_has_action(entry->irq +
-> > i));
-> BUG_ON is wrong here. This can and must be handled gracefully.
-> 
+On Tue, Aug 6, 2019 at 12:38 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> Seems like no one took this up.  Below is a version which I think is
+> slightly better by also moving the mm_walk structure initialization
+> into the helpers, with an outcome of just a handful of added lines.
 
-Hmm, I reused this code from the 'free_msi_irqs' function. I am not
-sure why it is wrong to use BUG_ON here but ok to use it there, please
-let me know.
+Ack. Agreed, I think that's a nicer interface.
 
-> > 
-> > +	}
-> > +
-> > +	pci_msi_teardown_msi_irqs_grp(dev, group_id);
-> > +
-> > +	list_for_each_entry_safe(entry, tmp, msi_list, list) {
-> > +		if (entry->group_id == group_id) {
-> > +			clear_bit(entry->msi_attrib.entry_nr, dev-
-> > >entry);
-> > +			list_del(&entry->list);
-> > +			free_msi_entry(entry);
-> > +		}
-> > +	}
-> > +
-> > +	list_for_each_entry_safe(msix_sysfs_entry, tmp_msix,
-> > pci_msix, list) {
-> > +		if (msix_sysfs_entry->group_id == group_id) {
-> Again. Proper group management makes all of that just straight
-> forward and
-> not yet another special case.
-> 
+In fact, I do note that a lot of the users don't actually use the
+"void *private" argument at all - they just want the walker - and just
+pass in a NULL private pointer. So we have things like this:
 
-Yeah, the new proposal of having a group_list would get rid of this.
+> +       if (walk_page_range(&init_mm, va, va + size, &set_nocache_walk_ops,
+> +                       NULL)) {
 
-> > 
-> > +			msi_attrs = msix_sysfs_entry-
-> > >msi_irq_group->attrs;
-> >  
-> > +static void pci_msix_shutdown_grp(struct pci_dev *dev, int
-> > group_id)
-> > +{
-> > +	struct msi_desc *entry;
-> > +	int grp_present = 0;
-> > +
-> > +	if (pci_dev_is_disconnected(dev)) {
-> > +		dev->msix_enabled = 0;
-> Huch? What's that? I can't figure out why this is needed and of
-> course it
-> completely lacks a comment explaining this. 
-> 
+and in a perfect world we'd have arguments with default values so that
+we could skip those entirely for when people just don't need it.
 
-Again, I have reused this code from the pci_msix_shutdown() function.
-So for the group case, this is not required?
+I'm not a huge fan of C++ because of a lot of the complexity (and some
+really bad decisions), but many of the _syntactic_ things in C++ would
+be nice to use. This one doesn't seem to be one that the gcc people
+have picked up as an extension ;(
 
-> > 
-> > +		return;
-> > +	}
-> > +
-> > +	/* Return the device with MSI-X masked as initial states
-> > */
-> > +	for_each_pci_msi_entry(entry, dev) {
-> > +		if (entry->group_id == group_id) {
-> > +			/* Keep cached states to be restored */
-> > +			__pci_msix_desc_mask_irq(entry, 1);
-> > +			grp_present = 1;
-> > +		}
-> > +	}
-> > +
-> > +	if (!grp_present) {
-> > +		pci_err(dev, "Group to be disabled not
-> > present\n");
-> > +		return;
-> So you print an error and silently return
-> 
+Yes, yes, we could do it with a macro, I guess.
 
-This is a void function, hence no error value can be returned. What do
-you think is the right thing to do if someone wants to delete a group
-which is not present?
+   #define walk_page_range(mm, start,end, ops, ...) \
+       __walk_page_range(mm, start, end, (NULL , ## __VA_ARGS__))
 
-> > 
-> > +	}
-> > +}
-> > +
-> > +int pci_disable_msix_grp(struct pci_dev *dev, int group_id)
-> > +{
-> > +	int num_vecs;
-> > +
-> > +	if (!pci_msi_enable || !dev)
-> > +		return -EINVAL;
-> > +
-> > +	pci_msix_shutdown_grp(dev, group_id);
-> > +	num_vecs = free_msi_irqs_grp(dev, group_id);
-> just to call in another function which has to do the same group_id
-> lookup
-> muck again.
+but I'm not sure it's worthwhile.
 
-Even with the new proposal, we are to have 2 sets of functions: one to
-delete all the msic_desc entries associated with the device, and the
-other to delete those only belonging a 'user specified' group. So we do
-need to pass a group_id to these functions right? Yes, internally the
-deletion would be straightforward with the new approach.
-
-> 
-> > 
-> > +
-> > +	return num_vecs;
-> > +}
-> > +EXPORT_SYMBOL(pci_disable_msix_grp);
-> Why is this exposed ?
-> 
-
-As before, I just followed what pci_disable_msix() did <sigh>. Looks
-like pci_disable_msix is called from a variety of drivers, thus it is
-exposed. Currently, no one will use the pci_disable_msix_grp()
-externally, thus it need not be exposed for now.
-
-> Thanks,
-> 
-> 	tglx
+                  Linus
