@@ -2,104 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 533DD829F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF3E4829FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731526AbfHFDTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 23:19:38 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34026 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729170AbfHFDTi (ORCPT
+        id S1731405AbfHFDYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 23:24:30 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:54661 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729383AbfHFDY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 23:19:38 -0400
-Received: by mail-wm1-f66.google.com with SMTP id w9so7929147wmd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 20:19:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dr2+cEWOTjWIrHgq1rAPpBc6r9tZtYF1YbUnLR69BFg=;
-        b=xQaMHCEu94MSWV0KnK1zA0WkUuR9+C2JoA7OyFGL1bMhbTfgWoKYiPiBLsiLmW+h+x
-         MQ3B6t0N0TyWSy9h9rZc8F+4VTFAIH8Iedrf8KilAY2c5AOdX2tC2CndcOeVjxSy2GHO
-         GI93PGu9zITG/U5rrHWGkkA5Ju5ktIJiHKkSvIGs+vOJ9Kez1Xb0dI8QvVhhWkfzaKsV
-         tMP55LDR3YYdlt9K21sGMwHzYF9O1rH+IegheKtwbw9tlS2hUgPhoge/HJIJWt3xMgRz
-         uA7D4HcLjXGGPwdp50RKYHh/RJ0kRwQ0JvqWO80/m5fi1DQlNlA09FUD+/020u8Gvf4D
-         8o6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dr2+cEWOTjWIrHgq1rAPpBc6r9tZtYF1YbUnLR69BFg=;
-        b=gd5s/zkNj3YzeDdWdU+tTcQR+DmXmsj+9JdvB0gD5IAqQOEwoqXGzzAo3PXABjwYeq
-         teG0iHCq6iajbonOtcM59Y4UXuja+3G3e/YaJkbQYjfwFiZ/VJuq/uiXJZqz7AABKiTq
-         StP1UoursbpYR8gtdloMz2uxgdOVC/CLS++ZpIjN0Vc6+nZib7B3G8OAZjtvWUOTMnUe
-         X6S2A8aEgOlJ/cOwOi0BPBB/dbHz3mv2SEaMFuiPIRKR+OLQlflf/VXiF88hB0mcEiK9
-         Dx8NlHaOgew0q7j7qh5ApGctfBjR6/9aRVMGMwJwK74a9SFpVAATdiZVUBrCv0w0Q0xS
-         oM3g==
-X-Gm-Message-State: APjAAAXso7VVs0f0hkbU5/Y+VobNgTFJ+ZiX7f8zH2lxSNielNEqrRnw
-        nn9nL2tjw1NqQGbaPUluPstcVu634sYrrc9bjqeFPQ==
-X-Google-Smtp-Source: APXvYqwH6qC9nSAJAWBGGxZ0uXvKgHP/raIkzQCYLK0pRSGDcTtZMMyScdsr3bxWn1y3xiVpXqFzA7f5nHQEnBJZ3yw=
-X-Received: by 2002:a05:600c:254b:: with SMTP id e11mr1313747wma.171.1565061575887;
- Mon, 05 Aug 2019 20:19:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190805134201.2814-1-anup.patel@wdc.com> <20190805134201.2814-12-anup.patel@wdc.com>
- <21bdde39-8d33-6aae-e729-476ce11406a3@redhat.com>
-In-Reply-To: <21bdde39-8d33-6aae-e729-476ce11406a3@redhat.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 6 Aug 2019 08:49:24 +0530
-Message-ID: <CAAhSdy03G-8S0y7kg96PzC-4npdEFv+WCCuBvoCbEt9244kDOg@mail.gmail.com>
-Subject: Re: [PATCH v3 11/19] RISC-V: KVM: Implement VMID allocator
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mon, 5 Aug 2019 23:24:29 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0TYnWuqk_1565061858;
+Received: from aaronlu(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0TYnWuqk_1565061858)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 06 Aug 2019 11:24:24 +0800
+Date:   Tue, 6 Aug 2019 11:24:18 +0800
+From:   Aaron Lu <aaron.lu@linux.alibaba.com>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Julien Desfossez <jdesfossez@digitalocean.com>,
+        "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+Message-ID: <20190806032418.GA54717@aaronlu>
+References: <20190613032246.GA17752@sinkpad>
+ <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
+ <20190619183302.GA6775@sinkpad>
+ <20190718100714.GA469@aaronlu>
+ <CAERHkrtvLKxrpvfw04urAuougsYOWnNw4-H1vUDFx27Dvy0=Ww@mail.gmail.com>
+ <20190725143003.GA992@aaronlu>
+ <20190726152101.GA27884@sinkpad>
+ <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
+ <20190802153715.GA18075@sinkpad>
+ <f4778816-69e5-146c-2a30-ec42e7f1677f@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4778816-69e5-146c-2a30-ec42e7f1677f@linux.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 5, 2019 at 9:33 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 05/08/19 15:43, Anup Patel wrote:
-> > +     spin_lock(&vmid_lock);
-> > +
-> > +     /*
-> > +      * We need to re-check the vmid_version here to ensure that if
-> > +      * another vcpu already allocated a valid vmid for this vm.
-> > +      */
-> > +     if (!kvm_riscv_stage2_vmid_ver_changed(vmid)) {
-> > +             spin_unlock(&vmid_lock);
-> > +             return;
-> > +     }
-> > +
-> > +     /* First user of a new VMID version? */
-> > +     if (unlikely(vmid_next == 0)) {
-> > +             WRITE_ONCE(vmid_version, READ_ONCE(vmid_version) + 1);
-> > +             vmid_next = 1;
-> > +
-> > +             /*
-> > +              * On SMP, we know no other CPUs can use this CPU's or
-> > +              * each other's VMID after forced exit returns since the
-> > +              * vmid_lock blocks them from re-entry to the guest.
-> > +              */
-> > +             spin_unlock(&vmid_lock);
-> > +             kvm_flush_remote_tlbs(vcpu->kvm);
-> > +             spin_lock(&vmid_lock);
->
-> This comment is not true anymore, so this "if" should become a "while".
+On Mon, Aug 05, 2019 at 08:55:28AM -0700, Tim Chen wrote:
+> On 8/2/19 8:37 AM, Julien Desfossez wrote:
+> > We tested both Aaron's and Tim's patches and here are our results.
+> > 
+> > Test setup:
+> > - 2 1-thread sysbench, one running the cpu benchmark, the other one the
+> >   mem benchmark
+> > - both started at the same time
+> > - both are pinned on the same core (2 hardware threads)
+> > - 10 30-seconds runs
+> > - test script: https://paste.debian.net/plainh/834cf45c
+> > - only showing the CPU events/sec (higher is better)
+> > - tested 4 tag configurations:
+> >   - no tag
+> >   - sysbench mem untagged, sysbench cpu tagged
+> >   - sysbench mem tagged, sysbench cpu untagged
+> >   - both tagged with a different tag
+> > - "Alone" is the sysbench CPU running alone on the core, no tag
+> > - "nosmt" is both sysbench pinned on the same hardware thread, no tag
+> > - "Tim's full patchset + sched" is an experiment with Tim's patchset
+> >   combined with Aaron's "hack patch" to get rid of the remaining deep
+> >   idle cases
+> > - In all test cases, both tasks can run simultaneously (which was not
+> >   the case without those patches), but the standard deviation is a
+> >   pretty good indicator of the fairness/consistency.
+> 
+> Thanks for testing the patches and giving such detailed data.
 
-Sure, I will update in v4.
+Thanks Julien.
 
-Regards,
-Anup
+> I came to realize that for my scheme, the accumulated deficit of forced idle could be wiped
+> out in one execution of a task on the forced idle cpu, with the update of the min_vruntime,
+> even if the execution time could be far less than the accumulated deficit.
+> That's probably one reason my scheme didn't achieve fairness.
+
+I've been thinking if we should consider core wide tenent fairness?
+
+Let's say there are 3 tasks on 2 threads' rq of the same core, 2 tasks
+(e.g. A1, A2) belong to tenent A and the 3rd B1 belong to another tenent
+B. Assume A1 and B1 are queued on the same thread and A2 on the other
+thread, when we decide priority for A1 and B1, shall we also consider
+A2's vruntime? i.e. shall we consider A1 and A2 as a whole since they
+belong to the same tenent? I tend to think we should make fairness per
+core per tenent, instead of per thread(cpu) per task(sched entity). What
+do you guys think?
+
+Implemention of the idea is a mess to me, as I feel I'm duplicating the
+existing per cpu per sched_entity enqueue/update vruntime/dequeue logic
+for the per core per tenent stuff.
