@@ -2,77 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 711F882CC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:30:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7FE82CC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732192AbfHFH3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:29:14 -0400
-Received: from mga02.intel.com ([134.134.136.20]:31208 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732115AbfHFH3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:29:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 00:24:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,352,1559545200"; 
-   d="scan'208";a="325555437"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 06 Aug 2019 00:24:54 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        kan.liang@linux.intel.com, Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH v5 7/7] perf intel-pt: Add brief documentation for PEBS via Intel PT
-Date:   Tue,  6 Aug 2019 10:24:33 +0300
-Message-Id: <20190806072433.26820-8-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190806072433.26820-1-alexander.shishkin@linux.intel.com>
-References: <20190806072433.26820-1-alexander.shishkin@linux.intel.com>
+        id S1732151AbfHFH3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:29:02 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:51751 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731787AbfHFH3A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 03:29:00 -0400
+X-UUID: 133475bd8ce243548306e51b43c35492-20190806
+X-UUID: 133475bd8ce243548306e51b43c35492-20190806
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <hsin-hsiung.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 1328225322; Tue, 06 Aug 2019 15:28:50 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 6 Aug 2019 15:28:47 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 6 Aug 2019 15:28:47 +0800
+Message-ID: <1565076527.23984.5.camel@mtksdaap41>
+Subject: Re: [PATCH v4 07/10] regulator: mt6358: Add support for MT6358
+ regulator
+From:   Hsin-hsiung Wang <hsin-hsiung.wang@mediatek.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        "Allison Randal" <allison@lohutok.net>,
+        <linux-rtc@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 6 Aug 2019 15:28:47 +0800
+In-Reply-To: <20190805131030.GE6432@sirena.org.uk>
+References: <1564982518-32163-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <1564982518-32163-8-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <20190805131030.GE6432@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+Hi Mark,
 
-Document how to select PEBS via Intel PT and how to display synthesized
-PEBS samples.
+On Mon, 2019-08-05 at 14:10 +0100, Mark Brown wrote:
+> On Mon, Aug 05, 2019 at 01:21:55PM +0800, Hsin-Hsiung Wang wrote:
+> 
+> > +static const u32 vmch_voltages[] = {
+> > +	2900000, 3000000, 3300000,
+> > +};
+> 
+> > +static const u32 vemc_voltages[] = {
+> > +	2900000, 3000000, 3300000,
+> > +};
+> 
+> Several of these tables appear to be identical.
+> 
+I will use the same voltage table in the next patch.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
----
- tools/perf/Documentation/intel-pt.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> > +static inline unsigned int mt6358_map_mode(unsigned int mode)
+> > +{
+> > +	return mode == MT6358_BUCK_MODE_AUTO ?
+> > +		REGULATOR_MODE_NORMAL : REGULATOR_MODE_FAST;
+> > +}
+> 
+> There is no need for this to be an inline and please write normal
+> conditional statements to improve legibility.  There's other examples in
+> the driver.
+> 
+will fix it in the next patch.
 
-diff --git a/tools/perf/Documentation/intel-pt.txt b/tools/perf/Documentation/intel-pt.txt
-index 50c5b60101bd..8dc513b6607b 100644
---- a/tools/perf/Documentation/intel-pt.txt
-+++ b/tools/perf/Documentation/intel-pt.txt
-@@ -919,3 +919,18 @@ amended to take the number of elements as a parameter.
- 
- Note there is currently no advantage to using Intel PT instead of LBR, but
- that may change in the future if greater use is made of the data.
-+
-+
-+PEBS via Intel PT
-+=================
-+
-+Some hardware has the feature to redirect PEBS records to the Intel PT trace.
-+Recording is selected by using the aux-output config term e.g.
-+
-+	perf record  -c 10000 -e cycles/aux-output/ppp -e intel_pt/branch=0/ uname
-+
-+Note that currently, software only supports redirecting at most one PEBS event.
-+
-+To display PEBS events from the Intel PT trace, use the itrace 'o' option e.g.
-+
-+	perf script --itrace=oe
--- 
-2.20.1
+> > +static int mt6358_get_buck_voltage_sel(struct regulator_dev *rdev)
+> > +{
+> > +	int ret, regval;
+> > +	struct mt6358_regulator_info *info = rdev_get_drvdata(rdev);
+> > +
+> > +	ret = regmap_read(rdev->regmap, info->da_vsel_reg, &regval);
+> > +	if (ret != 0) {
+> > +		dev_info(&rdev->dev,
+> > +			 "Failed to get mt6358 Buck %s vsel reg: %d\n",
+> > +			 info->desc.name, ret);
+> 
+> dev_err() for errors here and throughout the driver.
+> 
+will fix it in the next patch.
+
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = (regval >> info->da_vsel_shift) & info->da_vsel_mask;
+> > +
+> > +	return ret;
+> > +}
+> 
+> This looks like a standard get_voltage_sel_regmap()?
+> 
+MT6358 has buck voltage status registers to show the actual output
+voltage and the registers are different from the voltage setting
+registers.
+We want to get the actual voltage output, so we use the da_vsel status
+registers here.
+
+> > +err_mode:
+> > +	if (ret != 0)
+> > +		return ret;
+> > +
+> > +	return 0;
+> 
+> Or just return ret unconditionally?
+will modify it to return ret unconditionally in the next patch.
+
+Thanks a lot.
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+
 
