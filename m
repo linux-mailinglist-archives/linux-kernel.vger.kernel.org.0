@@ -2,121 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E05829EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67095829E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbfHFDIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 23:08:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:6367 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730036AbfHFDIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 23:08:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 20:08:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,352,1559545200"; 
-   d="scan'208";a="168166998"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
-  by orsmga008.jf.intel.com with ESMTP; 05 Aug 2019 20:08:40 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     dave.hansen@intel.com,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: [PATCH V2] fork: Improve error message for corrupted page tables
-Date:   Mon,  5 Aug 2019 20:05:27 -0700
-Message-Id: <3ef8a340deb1c87b725d44edb163073e2b6eca5a.1565059496.git.sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.19.1
+        id S1731438AbfHFDGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 23:06:21 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38685 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729334AbfHFDGV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 23:06:21 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y15so40676335pfn.5
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 20:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=FlvubqIedgeUlDz/PPiAaJ/H2Njn7iS17Qlm1S+ibcs=;
+        b=ynfiagkhgmGZERUei2yzw6PnvDoOnOGKaEU+BMUJIRoWffXtOXvM7JmpSEltHxNXMA
+         oYyljM/tmGwXdC30QlWHHWbcRrYE9qBwLWv7umSLx8+B/ECw6vRLRLIHMOgbn3pi46mt
+         4A3L0A+DOhRb2pQbdkqq3jFUo0M2J6N8Rn5GpoEo7cWttiHS18T3tj0og3hmA6lPjzMr
+         1H5xB2mVcdaFWSbiEBswqQ5jiRkhy1nkaEyR5ccR3jTCnjHxI4JKgfSa15Gn6ncXadnj
+         trmN9tyDkV9ItvX2nZJGnL59ViA4Sqj8UWgo6MZ7JXNTK5w2kx2RIoBKs7hBnfU4I30G
+         /Vfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=FlvubqIedgeUlDz/PPiAaJ/H2Njn7iS17Qlm1S+ibcs=;
+        b=Bo3xYRgDo8LfGtpHS7LMiw/kPfD5s5dYEJjDD+Gyf2iRLY8LUZozYl5rRTD0iV1esv
+         d4tY7MJ5YK6Mqx9s3J+8u43R/Q2EWcBEzijTdENjG45nwGq72VgcuhxgMpRiqnAM28TM
+         uuSWtq5LZ3RBdrQwTMByq7wIFio5yeCk/RrEgdJvIma7FPzfZeLh0f5Z9bQAvb7mTCtW
+         RV4+G+eXWZ+veNUqRzVrcm24BRpEBsEnj5cBlHwkeh+/nSImLRM6zyVczwT0JxQfQsG2
+         4DTILajqo8MDp3O6Of/c0WCW/SnyWZ6yhAuLTukHbA6wNNkruDdw8J/2QXPLuMlyM3JO
+         nHBw==
+X-Gm-Message-State: APjAAAUW9vhlx36HQAryE5YyT6azxwAd0vGvzCRdUW/LCcny0F6meTci
+        St+EfdBC2WvWZc4EYCrmPgzoyg==
+X-Google-Smtp-Source: APXvYqyC0NiG+dH81MgzylsXKTEOMaOlrWGlwxH0Q+mcPaNttiuDNofMxMSQSM8JshjuU5dIMYQZPA==
+X-Received: by 2002:a17:90a:b312:: with SMTP id d18mr822646pjr.35.1565060780443;
+        Mon, 05 Aug 2019 20:06:20 -0700 (PDT)
+Received: from cakuba.netronome.com (c-71-204-185-212.hsd1.ca.comcast.net. [71.204.185.212])
+        by smtp.gmail.com with ESMTPSA id v14sm91912574pfm.164.2019.08.05.20.06.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 05 Aug 2019 20:06:20 -0700 (PDT)
+Date:   Mon, 5 Aug 2019 20:05:55 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Cc:     <davem@davemloft.net>, <yisen.zhuang@huawei.com>,
+        <salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <leeyou.li@huawei.com>,
+        <xiaowei774@huawei.com>, <nixiaoming@huawei.com>
+Subject: Re: [PATCH v1 1/3] net: hisilicon: make hip04_tx_reclaim
+ non-reentrant
+Message-ID: <20190805200555.5a171567@cakuba.netronome.com>
+In-Reply-To: <c150d41b-6f0e-ad49-e8c2-00896fc9cbe4@huawei.com>
+References: <1564835501-90257-1-git-send-email-xiaojiangfeng@huawei.com>
+        <1564835501-90257-2-git-send-email-xiaojiangfeng@huawei.com>
+        <20190805174618.2b3b551a@cakuba.netronome.com>
+        <c150d41b-6f0e-ad49-e8c2-00896fc9cbe4@huawei.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a user process exits, the kernel cleans up the mm_struct of the user
-process and during cleanup, check_mm() checks the page tables of the user
-process for corruption (E.g: unexpected page flags set/cleared). For
-corrupted page tables, the error message printed by check_mm() isn't very
-clear as it prints the loop index instead of page table type (E.g: Resident
-file mapping pages vs Resident shared memory pages). The loop index in
-check_mm() is used to index rss_stat[] which represents individual memory
-type stats. Hence, instead of printing index, print memory type, thereby
-improving error message.
+On Tue, 6 Aug 2019 10:00:52 +0800, Jiangfeng Xiao wrote:
+> If hip04_tx_reclaim is interrupted while it is running, and then
+> __irq_svc->gic_handle_irq->hip04_mac_interrupt->__napi_schedule->hip04_rx_poll->hip04_tx_reclaim
 
-Without patch:
---------------
-[  204.836425] mm/pgtable-generic.c:29: bad p4d 0000000089eb4e92(800000025f941467)
-[  204.836544] BUG: Bad rss-counter state mm:00000000f75895ea idx:0 val:2
-[  204.836615] BUG: Bad rss-counter state mm:00000000f75895ea idx:1 val:5
-[  204.836685] BUG: non-zero pgtables_bytes on freeing mm: 20480
+Ah right, obviously you can't do stuff after napi_complete_done(), 
+that makes sense.
 
-With patch:
------------
-[   69.815453] mm/pgtable-generic.c:29: bad p4d 0000000084653642(800000025ca37467)
-[   69.815872] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_FILEPAGES val:2
-[   69.815962] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_ANONPAGES val:5
-[   69.816050] BUG: non-zero pgtables_bytes on freeing mm: 20480
-
-Also, change print function (from printk(KERN_ALERT, ..) to pr_alert()) so
-that it matches the other print statement.
-
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
----
-
-Changes from V1 to V2:
-----------------------
-1. Move struct definition from header file to fork.c file, so that it won't be
-   included in every compilation unit. As this struct is used *only* in fork.c,
-   include the definition in fork.c itself.
-2. Index the struct to match respective macros.
-3. Mention about print function change in commit message.
-
- kernel/fork.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/fork.c b/kernel/fork.c
-index d8ae0f1b4148..f34f441c50c0 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -125,6 +125,13 @@ int nr_threads;			/* The idle threads do not count.. */
- 
- static int max_threads;		/* tunable limit on nr_threads */
- 
-+static const char * const resident_page_types[NR_MM_COUNTERS] = {
-+	[MM_FILEPAGES]		= "MM_FILEPAGES",
-+	[MM_ANONPAGES]		= "MM_ANONPAGES",
-+	[MM_SWAPENTS]		= "MM_SWAPENTS",
-+	[MM_SHMEMPAGES]		= "MM_SHMEMPAGES",
-+};
-+
- DEFINE_PER_CPU(unsigned long, process_counts) = 0;
- 
- __cacheline_aligned DEFINE_RWLOCK(tasklist_lock);  /* outer */
-@@ -649,8 +656,8 @@ static void check_mm(struct mm_struct *mm)
- 		long x = atomic_long_read(&mm->rss_stat.count[i]);
- 
- 		if (unlikely(x))
--			printk(KERN_ALERT "BUG: Bad rss-counter state "
--					  "mm:%p idx:%d val:%ld\n", mm, i, x);
-+			pr_alert("BUG: Bad rss-counter state mm:%p type:%s val:%ld\n",
-+				 mm, resident_page_types[i], x);
- 	}
- 
- 	if (mm_pgtables_bytes(mm))
--- 
-2.7.4
-
+Series looks reasonable.
