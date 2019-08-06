@@ -2,95 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE16E82964
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 03:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A3F82969
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 03:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731310AbfHFBrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 21:47:08 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40992 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728870AbfHFBrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 21:47:08 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4B115AA66B9263ACAED0;
-        Tue,  6 Aug 2019 09:47:06 +0800 (CST)
-Received: from [127.0.0.1] (10.63.139.185) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 6 Aug 2019
- 09:47:00 +0800
-Subject: Re: [PATCH resend v2] lib: scatterlist: Fix to support no mapped sg
-To:     <robert.jarzmik@free.fr>, <axboe@fb.com>, <axboe@kernel.dk>,
-        <gregkh@linuxfoundation.org>
-References: <1563940463-95597-1-git-send-email-wangzhou1@hisilicon.com>
- <5D3E4F91.4020605@hisilicon.com>
-CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
-From:   Zhou Wang <wangzhou1@hisilicon.com>
-Message-ID: <5D48DC13.1020802@hisilicon.com>
-Date:   Tue, 6 Aug 2019 09:46:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1731427AbfHFBs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 21:48:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33240 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731308AbfHFBs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 21:48:26 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761j1x2152776;
+        Tue, 6 Aug 2019 01:48:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2018-07-02; bh=PksSkVmoG9RKY5k8FKRMXWO1ygGnlV7x3HQDnLYr2FU=;
+ b=CFQd/O0TdL+fJb035wg6lmymH5MX9AHuF4oVojbk+VxMLMspY/DNPeS9dkdWIQ4FJqc2
+ eCIYep9sP3irX1q6LyutjUmOFekjEnPB80LwBIDMPeefJ9SPm4oIPJiHt4T5KsL0T5YQ
+ est/H9CCbwCFcXnYR+JmPegsB8Q4rMxeEOjy+VnBFMoym8uJHqy5zbE4bS7mAcxJ42RX
+ 2VDgUaT7acIwZrctN2S+CbvI5qMeXM/qXeeNR3skj6Nh8gMMrCDbccP4G2rmcZvCUvBb
+ vbR6v0Y6f9mWr3NW9Md414D/WMd98TmdLlNbD0MXm4pNy4wEyWu/B3REyaYowbvQWpnT /Q== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2u527pjm9k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 06 Aug 2019 01:48:04 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x761m4Tu012645;
+        Tue, 6 Aug 2019 01:48:04 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2u5233qged-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 06 Aug 2019 01:48:03 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x761lpsf017771;
+        Tue, 6 Aug 2019 01:47:52 GMT
+Received: from monkey.oracle.com (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Aug 2019 18:47:51 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Hillf Danton <hdanton@sina.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH v2 0/4] address hugetlb page allocation stalls
+Date:   Mon,  5 Aug 2019 18:47:40 -0700
+Message-Id: <20190806014744.15446-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <5D3E4F91.4020605@hisilicon.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.63.139.185]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908060020
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908060019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/7/29 9:44, Zhou Wang wrote:
-> On 2019/7/24 11:54, Zhou Wang wrote:
->> In function sg_split, the second sg_calculate_split will return -EINVAL
->> when in_mapped_nents is 0.
->>
->> Indeed there is no need to do second sg_calculate_split and sg_split_mapped
->> when in_mapped_nents is 0, as in_mapped_nents indicates no mapped entry in
->> original sgl.
->>
->> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
->> Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
->> ---
->> v2: Just add Acked-by from Robert.
->>
->>  lib/sg_split.c | 12 +++++++-----
->>  1 file changed, 7 insertions(+), 5 deletions(-)
->>
->> diff --git a/lib/sg_split.c b/lib/sg_split.c
->> index 9982c63..60a0bab 100644
->> --- a/lib/sg_split.c
->> +++ b/lib/sg_split.c
->> @@ -176,11 +176,13 @@ int sg_split(struct scatterlist *in, const int in_mapped_nents,
->>  	 * The order of these 3 calls is important and should be kept.
->>  	 */
->>  	sg_split_phys(splitters, nb_splits);
->> -	ret = sg_calculate_split(in, in_mapped_nents, nb_splits, skip,
->> -				 split_sizes, splitters, true);
->> -	if (ret < 0)
->> -		goto err;
->> -	sg_split_mapped(splitters, nb_splits);
->> +	if (in_mapped_nents) {
->> +		ret = sg_calculate_split(in, in_mapped_nents, nb_splits, skip,
->> +					 split_sizes, splitters, true);
->> +		if (ret < 0)
->> +			goto err;
->> +		sg_split_mapped(splitters, nb_splits);
->> +	}
->>  
->>  	for (i = 0; i < nb_splits; i++) {
->>  		out[i] = splitters[i].out_sg;
->>
-> 
-> Hi Jens,
-> 
-> I saw you are the committer of sg_splite.c, could you help to take this patch?
-> 
-> Many thanks,
-> Zhou
->
+Allocation of hugetlb pages via sysctl or procfs can stall for minutes
+or hours.  A simple example on a two node system with 8GB of memory is
+as follows:
 
-Anyone can help to take this fix?
+echo 4096 > /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
+echo 4096 > /proc/sys/vm/nr_hugepages
 
-Best,
-Zhou
+Obviously, both allocation attempts will fall short of their 8GB goal.
+However, one or both of these commands may stall and not be interruptible.
+The issues were initially discussed in mail thread [1] and RFC code at [2].
+
+This series addresses the issues causing the stalls.  There are two distinct
+fixes, a cleanup, and an optimization.  The reclaim patch by Hillf and
+compaction patch by Vlasitmil address corner cases in their respective areas.
+hugetlb page allocation could stall due to either of these issues.  Vlasitmil
+added a cleanup patch after Hillf's modifications.  The hugetlb patch by
+Mike is an optimization suggested during the debug and development process.
+
+v2 changes/modifications are mentioned in each of the patches.
+
+[1] http://lkml.kernel.org/r/d38a095e-dc39-7e82-bb76-2c9247929f07@oracle.com
+[2] http://lkml.kernel.org/r/20190724175014.9935-1-mike.kravetz@oracle.com
+
+Hillf Danton (1):
+  mm, reclaim: make should_continue_reclaim perform dryrun detection
+
+Mike Kravetz (1):
+  hugetlbfs: don't retry when pool page allocations start to fail
+
+Vlastimil Babka (2):
+  mm, reclaim: cleanup should_continue_reclaim()
+  mm, compaction: raise compaction priority after it withdrawns
+
+ include/linux/compaction.h | 22 +++++++---
+ mm/hugetlb.c               | 89 +++++++++++++++++++++++++++++++++-----
+ mm/page_alloc.c            | 16 +++++--
+ mm/vmscan.c                | 57 ++++++++++--------------
+ 4 files changed, 130 insertions(+), 54 deletions(-)
+
+-- 
+2.20.1
 
