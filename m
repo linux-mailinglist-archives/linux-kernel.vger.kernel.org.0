@@ -2,129 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 597AD829E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E05829EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:08:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731328AbfHFDFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 23:05:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51074 "EHLO mail.kernel.org"
+        id S1731527AbfHFDIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 23:08:41 -0400
+Received: from mga02.intel.com ([134.134.136.20]:6367 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729334AbfHFDFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 23:05:18 -0400
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0926F20717;
-        Tue,  6 Aug 2019 03:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565060717;
-        bh=v8QxH42cmRdLjjjgcgYR8oGtYuPx+d7WmvMLNipbegc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gfcNMDs+AkItbvEcvhBqViIkZCosaZYHBqLsVxHhnYcT146Kx2XVRrTPBk1KsdTpU
-         IPCRqEV115D+3VPnxAiYymcBmQwG0OiJmjt4vTbdsKlYeaI14ElfL62mswclyHhyob
-         JOMTpgqLBYuEletbN+zcP/+1VeFKtlPsVVW4hNlo=
-Date:   Mon, 5 Aug 2019 20:05:16 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Subject: Re: [PATCH] Revert "f2fs: avoid out-of-range memory access"
-Message-ID: <20190806030516.GA11817@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190802101548.96543-1-yuchao0@huawei.com>
- <20190806004215.GC98101@jaegeuk-macbookpro.roam.corp.google.com>
- <dd284020-77b0-1627-2fc2-bc51745adfd3@huawei.com>
- <20190806012839.GD1029@jaegeuk-macbookpro.roam.corp.google.com>
- <5c449273-5cf7-bcc6-a396-584b933833c1@huawei.com>
+        id S1730036AbfHFDIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 23:08:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 20:08:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,352,1559545200"; 
+   d="scan'208";a="168166998"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by orsmga008.jf.intel.com with ESMTP; 05 Aug 2019 20:08:40 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     dave.hansen@intel.com,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: [PATCH V2] fork: Improve error message for corrupted page tables
+Date:   Mon,  5 Aug 2019 20:05:27 -0700
+Message-Id: <3ef8a340deb1c87b725d44edb163073e2b6eca5a.1565059496.git.sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c449273-5cf7-bcc6-a396-584b933833c1@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06, Chao Yu wrote:
-> On 2019/8/6 9:28, Jaegeuk Kim wrote:
-> > On 08/06, Chao Yu wrote:
-> >> On 2019/8/6 8:42, Jaegeuk Kim wrote:
-> >>> On 08/02, Chao Yu wrote:
-> >>>> As Pavel Machek reported:
-> >>>>
-> >>>> "We normally use -EUCLEAN to signal filesystem corruption. Plus, it is
-> >>>> good idea to report it to the syslog and mark filesystem as "needing
-> >>>> fsck" if filesystem can do that."
-> >>>>
-> >>>> Still we need improve the original patch with:
-> >>>> - use unlikely keyword
-> >>>> - add message print
-> >>>> - return EUCLEAN
-> >>>>
-> >>>> However, after rethink this patch, I don't think we should add such
-> >>>> condition check here as below reasons:
-> >>>> - We have already checked the field in f2fs_sanity_check_ckpt(),
-> >>>> - If there is fs corrupt or security vulnerability, there is nothing
-> >>>> to guarantee the field is integrated after the check, unless we do
-> >>>> the check before each of its use, however no filesystem does that.
-> >>>> - We only have similar check for bitmap, which was added due to there
-> >>>> is bitmap corruption happened on f2fs' runtime in product.
-> >>>> - There are so many key fields in SB/CP/NAT did have such check
-> >>>> after f2fs_sanity_check_{sb,cp,..}.
-> >>>>
-> >>>> So I propose to revert this unneeded check.
-> >>>
-> >>> IIRC, this came from security vulnerability report which can access
-> >>
-> >> I don't think that's correct report, since we have checked validation of that
-> >> field during mount, if it can be ruined after that, any variables can't be trusted.
-> > 
-> > I assumed this was reproduced with a fuzzed image.
-> 
-> I expect f2fs_sanity_check_ckpt() should reject mounting such fuzzed image.
+When a user process exits, the kernel cleans up the mm_struct of the user
+process and during cleanup, check_mm() checks the page tables of the user
+process for corruption (E.g: unexpected page flags set/cleared). For
+corrupted page tables, the error message printed by check_mm() isn't very
+clear as it prints the loop index instead of page table type (E.g: Resident
+file mapping pages vs Resident shared memory pages). The loop index in
+check_mm() is used to index rss_stat[] which represents individual memory
+type stats. Hence, instead of printing index, print memory type, thereby
+improving error message.
 
-It seems I should have reviewed this more carefully. Checking the security
-concern one more time.
+Without patch:
+--------------
+[  204.836425] mm/pgtable-generic.c:29: bad p4d 0000000089eb4e92(800000025f941467)
+[  204.836544] BUG: Bad rss-counter state mm:00000000f75895ea idx:0 val:2
+[  204.836615] BUG: Bad rss-counter state mm:00000000f75895ea idx:1 val:5
+[  204.836685] BUG: non-zero pgtables_bytes on freeing mm: 20480
 
-> 
-> > I'll check it with Ocean.
-> > 
-> >>
-> >> Now we just check bitmaps at real-time, because we have encountered such bitmap
-> >> corruption in product.
-> >>
-> >> Thanks,
-> >>
-> >>> out-of-boundary memory region. Could you write another patch to address the
-> >>> above issues?
-> >>>
-> >>>>
-> >>>> This reverts commit 56f3ce675103e3fb9e631cfb4131fc768bc23e9a.
-> >>>>
-> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>>  fs/f2fs/segment.c | 5 -----
-> >>>>  1 file changed, 5 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>> index 9693fa4c8971..2eff9c008ae0 100644
-> >>>> --- a/fs/f2fs/segment.c
-> >>>> +++ b/fs/f2fs/segment.c
-> >>>> @@ -3492,11 +3492,6 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
-> >>>>  		seg_i = CURSEG_I(sbi, i);
-> >>>>  		segno = le32_to_cpu(ckpt->cur_data_segno[i]);
-> >>>>  		blk_off = le16_to_cpu(ckpt->cur_data_blkoff[i]);
-> >>>> -		if (blk_off > ENTRIES_IN_SUM) {
-> >>>> -			f2fs_bug_on(sbi, 1);
-> >>>> -			f2fs_put_page(page, 1);
-> >>>> -			return -EFAULT;
-> >>>> -		}
-> >>>>  		seg_i->next_segno = segno;
-> >>>>  		reset_curseg(sbi, i, 0);
-> >>>>  		seg_i->alloc_type = ckpt->alloc_type[i];
-> >>>> -- 
-> >>>> 2.18.0.rc1
-> >>> .
-> >>>
-> > .
-> > 
+With patch:
+-----------
+[   69.815453] mm/pgtable-generic.c:29: bad p4d 0000000084653642(800000025ca37467)
+[   69.815872] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_FILEPAGES val:2
+[   69.815962] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_ANONPAGES val:5
+[   69.816050] BUG: non-zero pgtables_bytes on freeing mm: 20480
+
+Also, change print function (from printk(KERN_ALERT, ..) to pr_alert()) so
+that it matches the other print statement.
+
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+---
+
+Changes from V1 to V2:
+----------------------
+1. Move struct definition from header file to fork.c file, so that it won't be
+   included in every compilation unit. As this struct is used *only* in fork.c,
+   include the definition in fork.c itself.
+2. Index the struct to match respective macros.
+3. Mention about print function change in commit message.
+
+ kernel/fork.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index d8ae0f1b4148..f34f441c50c0 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -125,6 +125,13 @@ int nr_threads;			/* The idle threads do not count.. */
+ 
+ static int max_threads;		/* tunable limit on nr_threads */
+ 
++static const char * const resident_page_types[NR_MM_COUNTERS] = {
++	[MM_FILEPAGES]		= "MM_FILEPAGES",
++	[MM_ANONPAGES]		= "MM_ANONPAGES",
++	[MM_SWAPENTS]		= "MM_SWAPENTS",
++	[MM_SHMEMPAGES]		= "MM_SHMEMPAGES",
++};
++
+ DEFINE_PER_CPU(unsigned long, process_counts) = 0;
+ 
+ __cacheline_aligned DEFINE_RWLOCK(tasklist_lock);  /* outer */
+@@ -649,8 +656,8 @@ static void check_mm(struct mm_struct *mm)
+ 		long x = atomic_long_read(&mm->rss_stat.count[i]);
+ 
+ 		if (unlikely(x))
+-			printk(KERN_ALERT "BUG: Bad rss-counter state "
+-					  "mm:%p idx:%d val:%ld\n", mm, i, x);
++			pr_alert("BUG: Bad rss-counter state mm:%p type:%s val:%ld\n",
++				 mm, resident_page_types[i], x);
+ 	}
+ 
+ 	if (mm_pgtables_bytes(mm))
+-- 
+2.7.4
+
