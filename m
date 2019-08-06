@@ -2,179 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4D3082B62
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D9E82B6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 08:04:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731817AbfHFGCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 02:02:03 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55121 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731775AbfHFGCB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 02:02:01 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p74so76835795wme.4
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 23:02:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Tkvvx2iRnaycAi/FkGoOmS/ThrIymYj/5i78t7ct+Z8=;
-        b=D2y0vjT37qamErobuPF4fy5z3e9iqeYXoJrphaahSQ54krsQxZI+aRm+d+X+uGWBXH
-         josxH/Cm6Ny9REEt5bAzYGE3BC66GHB26SG/7pV4yP8cz/T8y0dUdBpqXYSHSU7pOKkO
-         BQcXHklNngq2BOmpgFiD9JqxMCNXziICGZUUG9P02ij5Y1jBIU2LrqIL1RhZ9Q6xEwI4
-         JWLBCDcVH9/EcUTWy7n0NfX8yGoVo7HxT8YCv3MiD0GCnVahNei+mYAh3y336EZ2v+R7
-         3BIJxSnee8fk+x5kTJ+yyhzJfMVsOz9Vvsr67AU5OXrtE6omb9UMRb8v48R4tPyKpq1n
-         jRew==
-X-Gm-Message-State: APjAAAUCBdFb8GylkFJk+4l3IHiwwcjojnp7Dc9mYydry9HCujMakHnH
-        R9G1JA9pLmP3AlMRA0c831yMuw==
-X-Google-Smtp-Source: APXvYqxc5AfCgo4BlXYzJWn0+nyE9MnXkXVpOxzPDyyh7/hDJRDChmIFsHVwdimzqHhqfNjj5xb73w==
-X-Received: by 2002:a05:600c:224d:: with SMTP id a13mr2343169wmm.62.1565071319471;
-        Mon, 05 Aug 2019 23:01:59 -0700 (PDT)
-Received: from vitty.brq.redhat.com (ip-89-176-127-93.net.upcbroadband.cz. [89.176.127.93])
-        by smtp.gmail.com with ESMTPSA id r5sm94216756wmh.35.2019.08.05.23.01.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 23:01:58 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH v2 5/5] x86: KVM: svm: remove hardcoded instruction length from intercepts
-Date:   Tue,  6 Aug 2019 08:01:50 +0200
-Message-Id: <20190806060150.32360-6-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190806060150.32360-1-vkuznets@redhat.com>
-References: <20190806060150.32360-1-vkuznets@redhat.com>
+        id S1731793AbfHFGEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 02:04:36 -0400
+Received: from mail-eopbgr150059.outbound.protection.outlook.com ([40.107.15.59]:52547
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731557AbfHFGEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 02:04:35 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RZEKZpLRDCHaf13I2N1hmyZQutVPjdswmBamX8Ct/Y6c4/5JHqRAdZgkQuPuxrAJTmfs62pEhuK8148RBMHgbV8Tjp6VtObmP8/TjwQIb7284WjfBXNU6aIZvsK9+WSIems0CTvCGYuJlGUVZAhurYkE765y9rTr2tEsHatZ0D8VBJnScZSw0tBtInpJR33dciZ88cX98gOBTThP9BtUHrfjaSTtHCyIXlrQvIUSiHRsB1/jCn2tCAA50XBzW/tYKZIy/AQHIYbtEYqbaaEQv5VkOAn/UOBoxkTHxoaRjR/kmepHfDIhtqyUM0krf7+PK+fNcJ3B76Sm0/2Bzdi8DQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OcR+wvYqi7wJDAkHQtna5mtBINHjjR+wcb7pKqHsOEE=;
+ b=kh8+8BGzXdmZXCtX8zy6btjNrubhhMLKQkNgKtxzMvfpuGrBpex9AslGmLGy/KqokZbpEWrBQOrgicGzGYDcN4fkN6tzFSEkImbseDGcUZl7QqYaXSfHuY5/8qp0cnU6ocMeTy8IEIAPWMhp0KtdBvajjkjcUsx+DVC9QTU2kvZfxOwa9j00pkxZoZFVyWYYmVjLGBKKZKL1YxgBKgtHKBaFO2QrnhiamqxsZF4NEBErHkkos7d3ySd2Rjjug/3WFHj9ScCE213abMVuwjh93UOeQ8dX2YL33OAPnHHD0ljvDK/EFjI/NvWAyCa9FSQIaYdXM/fk1/jBXB02gH9XSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OcR+wvYqi7wJDAkHQtna5mtBINHjjR+wcb7pKqHsOEE=;
+ b=U9QwyRGITwjNZroc1VnWwZA/pBWa74YwUakb85o4jTUf7/tElZPZJTh9UuV2e6eV7dR6q1DcOF99M8e6wg7vPwYBBYjWEm8UM9sIHM7fw5aPTHWiynFXfaDOwru9XR0eBwkG/7PO0wyGQeXBKHdMgqRb/X9W+xhTxeO1fplEu+c=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3642.eurprd04.prod.outlook.com (52.134.65.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.13; Tue, 6 Aug 2019 06:04:32 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::7cdf:bddc:212c:f77e]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::7cdf:bddc:212c:f77e%4]) with mapi id 15.20.2136.018; Tue, 6 Aug 2019
+ 06:04:32 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Marco Felsch <m.felsch@pengutronix.de>
+CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V3] soc: imx-scu: Add SoC UID(unique identifier) support
+Thread-Topic: [PATCH V3] soc: imx-scu: Add SoC UID(unique identifier) support
+Thread-Index: AQHVMKtuuPFHSCY26k2sG80ZDaRX1qbQInuAgB21jFA=
+Date:   Tue, 6 Aug 2019 06:04:32 +0000
+Message-ID: <DB3PR0402MB39163E3E626256B22634EFE7F5D50@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <20190702074545.48267-1-Anson.Huang@nxp.com>
+ <20190718082216.GO3738@dragon>
+In-Reply-To: <20190718082216.GO3738@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1a91fddb-f051-4c64-cfd0-08d71a33f382
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DB3PR0402MB3642;
+x-ms-traffictypediagnostic: DB3PR0402MB3642:
+x-microsoft-antispam-prvs: <DB3PR0402MB36428C9AE2B3F92222B9AC30F5D50@DB3PR0402MB3642.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 0121F24F22
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(346002)(396003)(366004)(39860400002)(199004)(189003)(64756008)(66446008)(54906003)(71190400001)(71200400001)(44832011)(486006)(7696005)(476003)(74316002)(11346002)(446003)(68736007)(86362001)(14454004)(4326008)(478600001)(25786009)(316002)(6246003)(6436002)(76116006)(33656002)(305945005)(7736002)(26005)(3846002)(5660300002)(110136005)(55016002)(186003)(9686003)(6116002)(66946007)(66556008)(76176011)(229853002)(2906002)(66066001)(99286004)(53936002)(102836004)(52536014)(66476007)(8676002)(81156014)(81166006)(6506007)(256004)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3642;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: wcje9bPQj/eStg5kncDu4omLAhuMsNG/5S+SVn+pkUYyVLml8jaEhRDKHA3tPj45soBBhUmmeLTLaVL/r+/7ljfV4nYgUR/xowO/WqJjmHNyp2ZBMOrxno4RMdgkI2Ij2qC53dBC3SAzmZq/ARiFnR8WouN8vbQ7ZgGMyOff0eGfIPXxqgI1ouAmIQbl6tG3dA77jYNUitRkS3T9+meIeLEvJdSTS+Jm6vsihcu3u3tRWYHzGG+zSPIe3+QYS6W0+uVeTvdCxojah3bpG0T+7u3cRpoeEwrHH2VzgwpW41BeRqBTL9HK9RkzlsdtCEWz93CuMpKsNV87ge+kmSbcXh9UE1ZkxlkLGqQ2nIcJ1yQNVrc8X1FTYQHnHZGLdeVl4LH8XCdCaPlGVAF6HClvv3n+/IFKK2onwLVTW0OguO0=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a91fddb-f051-4c64-cfd0-08d71a33f382
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2019 06:04:32.5786
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3642
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various intercepts hard-code the respective instruction lengths to optimize
-skip_emulated_instruction(): when next_rip is pre-set we skip
-kvm_emulate_instruction(vcpu, EMULTYPE_SKIP). The optimization is, however,
-incorrect: different (redundant) prefixes could be used to enlarge the
-instruction. We can't really avoid decoding.
-
-svm->next_rip is not used when CPU supports 'nrips' (X86_FEATURE_NRIPS)
-feature: next RIP is provided in VMCB. The feature is not really new
-(Opteron G3s had it already) and the change should have zero affect.
-
-Remove manual svm->next_rip setting with hard-coded instruction lengths.
-The only case where we now use svm->next_rip is EXIT_IOIO: the instruction
-length is provided to us by hardware.
-
-Reported-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/svm.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 793a60461abe..dce215250d1f 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -2905,13 +2905,11 @@ static int nop_on_interception(struct vcpu_svm *svm)
- 
- static int halt_interception(struct vcpu_svm *svm)
- {
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 1;
- 	return kvm_emulate_halt(&svm->vcpu);
- }
- 
- static int vmmcall_interception(struct vcpu_svm *svm)
- {
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	return kvm_emulate_hypercall(&svm->vcpu);
- }
- 
-@@ -3699,7 +3697,6 @@ static int vmload_interception(struct vcpu_svm *svm)
- 
- 	nested_vmcb = map.hva;
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	nested_svm_vmloadsave(nested_vmcb, svm->vmcb);
-@@ -3726,7 +3723,6 @@ static int vmsave_interception(struct vcpu_svm *svm)
- 
- 	nested_vmcb = map.hva;
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	nested_svm_vmloadsave(svm->vmcb, nested_vmcb);
-@@ -3740,8 +3736,8 @@ static int vmrun_interception(struct vcpu_svm *svm)
- 	if (nested_svm_check_permissions(svm))
- 		return 1;
- 
--	/* Save rip after vmrun instruction */
--	kvm_rip_write(&svm->vcpu, kvm_rip_read(&svm->vcpu) + 3);
-+	if (!kvm_skip_emulated_instruction(&svm->vcpu))
-+		return 1;
- 
- 	if (!nested_svm_vmrun(svm))
- 		return 1;
-@@ -3777,7 +3773,6 @@ static int stgi_interception(struct vcpu_svm *svm)
- 	if (vgif_enabled(svm))
- 		clr_intercept(svm, INTERCEPT_STGI);
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 	kvm_make_request(KVM_REQ_EVENT, &svm->vcpu);
- 
-@@ -3793,7 +3788,6 @@ static int clgi_interception(struct vcpu_svm *svm)
- 	if (nested_svm_check_permissions(svm))
- 		return 1;
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	disable_gif(svm);
-@@ -3818,7 +3812,6 @@ static int invlpga_interception(struct vcpu_svm *svm)
- 	/* Let's treat INVLPGA the same as INVLPG (can be optimized!) */
- 	kvm_mmu_invlpg(vcpu, kvm_rax_read(&svm->vcpu));
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	return kvm_skip_emulated_instruction(&svm->vcpu);
- }
- 
-@@ -3841,7 +3834,6 @@ static int xsetbv_interception(struct vcpu_svm *svm)
- 	u32 index = kvm_rcx_read(&svm->vcpu);
- 
- 	if (kvm_set_xcr(&svm->vcpu, index, new_bv) == 0) {
--		svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 		return kvm_skip_emulated_instruction(&svm->vcpu);
- 	}
- 
-@@ -3918,7 +3910,6 @@ static int task_switch_interception(struct vcpu_svm *svm)
- 
- static int cpuid_interception(struct vcpu_svm *svm)
- {
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 2;
- 	return kvm_emulate_cpuid(&svm->vcpu);
- }
- 
-@@ -4248,7 +4239,6 @@ static int rdmsr_interception(struct vcpu_svm *svm)
- 
- 		kvm_rax_write(&svm->vcpu, msr_info.data & 0xffffffff);
- 		kvm_rdx_write(&svm->vcpu, msr_info.data >> 32);
--		svm->next_rip = kvm_rip_read(&svm->vcpu) + 2;
- 		return kvm_skip_emulated_instruction(&svm->vcpu);
- 	}
- }
-@@ -4454,7 +4444,6 @@ static int wrmsr_interception(struct vcpu_svm *svm)
- 		return 1;
- 	} else {
- 		trace_kvm_msr_write(ecx, data);
--		svm->next_rip = kvm_rip_read(&svm->vcpu) + 2;
- 		return kvm_skip_emulated_instruction(&svm->vcpu);
- 	}
- }
--- 
-2.20.1
-
+SGksIE1hcmNvDQoJQXJlIHlvdSBPSyB3aXRoIHRoaXMgcGF0Y2g/DQoNClRoYW5rcywNCkFuc29u
+Lg0KDQo+IE9uIFR1ZSwgSnVsIDAyLCAyMDE5IGF0IDAzOjQ1OjQ1UE0gKzA4MDAsIEFuc29uLkh1
+YW5nQG54cC5jb20gd3JvdGU6DQo+ID4gRnJvbTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54
+cC5jb20+DQo+ID4NCj4gPiBBZGQgaS5NWCBTQ1UgU29DJ3MgVUlEKHVuaXF1ZSBpZGVudGlmaWVy
+KSBzdXBwb3J0LCB1c2VyIGNhbiByZWFkIGl0DQo+ID4gZnJvbSBzeXNmczoNCj4gPg0KPiA+IHJv
+b3RAaW14OHF4cG1lazp+IyBjYXQgL3N5cy9kZXZpY2VzL3NvYzAvc29jX3VpZA0KPiA+IDdCNjQy
+ODBCNTdBQzE4OTgNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5I
+dWFuZ0BueHAuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBEYW5pZWwgQmFsdXRhIDxkYW5pZWwuYmFs
+dXRhQG54cC5jb20+DQo+IA0KPiBATWFyY28sIGFyZSB5b3UgaGFwcHkgd2l0aCBpdD8NCj4gDQo+
+IFNoYXduDQo+IA0KPiA+IC0tLQ0KPiA+IENoYW5nZSBzaW5jZSBWMjoNCj4gPiAJLSBUaGUgU0NV
+IEZXIEFQSSBmb3IgZ2V0dGluZyBVSUQgZG9lcyBOT1QgaGF2ZSByZXNwb25zZSwgc28gd2UNCj4g
+c2hvdWxkIHNldA0KPiA+IAkgIGlteF9zY3VfY2FsbF9ycGMoKSdzIDNyZCBwYXJhbWV0ZXIgYXMg
+ZmFsc2UgYW5kIHN0aWxsIGNhbiBjaGVjayB0aGUNCj4gcmV0dXJuZWQNCj4gPiAJICB2YWx1ZSwg
+YW5kIGNvbW1lbnQgaXMgbm8gbmVlZGVkIGFueSBtb3JlLg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJz
+L3NvYy9pbXgvc29jLWlteC1zY3UuYyB8IDM5DQo+ID4gKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspDQo+
+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvaW14L3NvYy1pbXgtc2N1LmMNCj4gPiBi
+L2RyaXZlcnMvc29jL2lteC9zb2MtaW14LXNjdS5jIGluZGV4IDY3NmY2MTIuLjUwODMxZWIgMTAw
+NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9zb2MvaW14L3NvYy1pbXgtc2N1LmMNCj4gPiArKysgYi9k
+cml2ZXJzL3NvYy9pbXgvc29jLWlteC1zY3UuYw0KPiA+IEBAIC0yNyw2ICsyNyw0MCBAQCBzdHJ1
+Y3QgaW14X3NjX21zZ19taXNjX2dldF9zb2NfaWQgew0KPiA+ICAJfSBkYXRhOw0KPiA+ICB9IF9f
+cGFja2VkOw0KPiA+DQo+ID4gK3N0cnVjdCBpbXhfc2NfbXNnX21pc2NfZ2V0X3NvY191aWQgew0K
+PiA+ICsJc3RydWN0IGlteF9zY19ycGNfbXNnIGhkcjsNCj4gPiArCXUzMiB1aWRfbG93Ow0KPiA+
+ICsJdTMyIHVpZF9oaWdoOw0KPiA+ICt9IF9fcGFja2VkOw0KPiA+ICsNCj4gPiArc3RhdGljIHNz
+aXplX3Qgc29jX3VpZF9zaG93KHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiArCQkJICAgIHN0cnVj
+dCBkZXZpY2VfYXR0cmlidXRlICphdHRyLCBjaGFyICpidWYpIHsNCj4gPiArCXN0cnVjdCBpbXhf
+c2NfbXNnX21pc2NfZ2V0X3NvY191aWQgbXNnOw0KPiA+ICsJc3RydWN0IGlteF9zY19ycGNfbXNn
+ICpoZHIgPSAmbXNnLmhkcjsNCj4gPiArCXU2NCBzb2NfdWlkOw0KPiA+ICsJaW50IHJldDsNCj4g
+PiArDQo+ID4gKwloZHItPnZlciA9IElNWF9TQ19SUENfVkVSU0lPTjsNCj4gPiArCWhkci0+c3Zj
+ID0gSU1YX1NDX1JQQ19TVkNfTUlTQzsNCj4gPiArCWhkci0+ZnVuYyA9IElNWF9TQ19NSVNDX0ZV
+TkNfVU5JUVVFX0lEOw0KPiA+ICsJaGRyLT5zaXplID0gMTsNCj4gPiArDQo+ID4gKwlyZXQgPSBp
+bXhfc2N1X2NhbGxfcnBjKHNvY19pcGNfaGFuZGxlLCAmbXNnLCBmYWxzZSk7DQo+ID4gKwlpZiAo
+cmV0KSB7DQo+ID4gKwkJcHJfZXJyKCIlczogZ2V0IHNvYyB1aWQgZmFpbGVkLCByZXQgJWRcbiIs
+IF9fZnVuY19fLCByZXQpOw0KPiA+ICsJCXJldHVybiByZXQ7DQo+ID4gKwl9DQo+ID4gKw0KPiA+
+ICsJc29jX3VpZCA9IG1zZy51aWRfaGlnaDsNCj4gPiArCXNvY191aWQgPDw9IDMyOw0KPiA+ICsJ
+c29jX3VpZCB8PSBtc2cudWlkX2xvdzsNCj4gPiArDQo+ID4gKwlyZXR1cm4gc3ByaW50ZihidWYs
+ICIlMDE2bGxYXG4iLCBzb2NfdWlkKTsgfQ0KPiA+ICsNCj4gPiArc3RhdGljIERFVklDRV9BVFRS
+X1JPKHNvY191aWQpOw0KPiA+ICsNCj4gPiAgc3RhdGljIGludCBpbXhfc2N1X3NvY19pZCh2b2lk
+KQ0KPiA+ICB7DQo+ID4gIAlzdHJ1Y3QgaW14X3NjX21zZ19taXNjX2dldF9zb2NfaWQgbXNnOyBA
+QCAtMTAyLDYgKzEzNiwxMSBAQA0KPiBzdGF0aWMNCj4gPiBpbnQgaW14X3NjdV9zb2NfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPiAgCQlnb3RvIGZyZWVfcmV2aXNpb247
+DQo+ID4gIAl9DQo+ID4NCj4gPiArCXJldCA9IGRldmljZV9jcmVhdGVfZmlsZShzb2NfZGV2aWNl
+X3RvX2RldmljZShzb2NfZGV2KSwNCj4gPiArCQkJCSAmZGV2X2F0dHJfc29jX3VpZCk7DQo+ID4g
+KwlpZiAocmV0KQ0KPiA+ICsJCWdvdG8gZnJlZV9yZXZpc2lvbjsNCj4gPiArDQo+ID4gIAlyZXR1
+cm4gMDsNCj4gPg0KPiA+ICBmcmVlX3JldmlzaW9uOg0KPiA+IC0tDQo+ID4gMi43LjQNCj4gPg0K
