@@ -2,97 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF94983878
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:16:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D578387F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732873AbfHFSQD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 6 Aug 2019 14:16:03 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:41897 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfHFSQC (ORCPT
+        id S1733030AbfHFST7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 14:19:59 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47088 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732949AbfHFST7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 14:16:02 -0400
-Received: by mail-yb1-f195.google.com with SMTP id x188so8802492yba.8;
-        Tue, 06 Aug 2019 11:16:02 -0700 (PDT)
+        Tue, 6 Aug 2019 14:19:59 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w3so4809640pgt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 11:19:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YagwnSKjQ9AFWb+JwZGJEtizWqnGfGkBH4aRSOhIlmw=;
+        b=KoIGmartaNCDHdqRUk7Y5Z8Djc1SV/l1OncetDnEvj8Y7O4V4mxOvdEOuedUC+SE8C
+         L3V76Jc0LaKIpmR/+PRqkdcexS0s9/ippez+JIzrD2uaZ8vEiSRslr3cgd+VIuiM52QX
+         UKkayxiP3Niz/PnebgM5RJf5bijdRk/QHRPcI2umtokyw+lgh8mUQmZutLc2UavKlAMl
+         9DsNUqOCqaJfuNzRa8ybgIg7EngFO9wrtSBuGkOeRiXT33yHIRmdcWOB8NajmQgx6uwm
+         EXukoSfpWUj+TmypMGa/lcJH6n5cSEuFwHzMmlTs8RPT39FlDbg/1jHQX/8jCX+N8vYb
+         cvfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uRafBTDMBjTvHKV2v0W2ocmyW8oxhcyjl8OuCW8KKpk=;
-        b=V6766grtOTciLDI60ThaFYVhEvL9guKmIvzYoVESyUSBEvAZQ85PasiJ7sXBa7givy
-         WUvcEaWOeAxBGhMhSKqP70MZS1n8uXBa06JSQZVZyJEM7NfyxzR/DfHx/MPVvZnYbeFH
-         HabZZGSGnFIFGFl3WwVXxJmPg3MSoxcgcEK/kcPrakLa0+bwXL4VdjQHBt//FLLB776D
-         quCt8xrR+DDUY+CUFqzHo21LtjV3DeRu0EXKaCq1Z+feB9EDUy+iF5np0S42VSYM7ynP
-         hfOgGe8aghCLisBI5P+AfuWUlNf63cSzJaBdjF8OqIvq9frmer/W6MZRYDakM7QnYn5x
-         NKeA==
-X-Gm-Message-State: APjAAAUHoud7YysAyMWt9u0c6j8R+Sgl6yFcOqiypmPBh+Y91bWvu1p5
-        2/hMKBPk7k3/dOpaTehz2J9CyXIMbLcZxeNvutw=
-X-Google-Smtp-Source: APXvYqz0ie1VExybZGhZgDfu505MGE+a+39mqnOYkI3V/mDbdlmTbKQDByXcVDmU1YGQZWUYuxZ/qsZyNwMnHAZjYVg=
-X-Received: by 2002:a25:aa85:: with SMTP id t5mr3779024ybi.376.1565115362068;
- Tue, 06 Aug 2019 11:16:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YagwnSKjQ9AFWb+JwZGJEtizWqnGfGkBH4aRSOhIlmw=;
+        b=Ti5tCt/tQ3QNGSytNKsNfZzfNFr/FV3UQHdV3Ptg+0RTaZUzBFjmqjm3P5y9h6bjFs
+         rOOVZp9qToFw7tjjy8t8yhzzkYdUoLmfRJQmjVxY6j8Z80wPcYqBfTjqCFaX05CYpdc4
+         NI586G+7y5Fxd8P0OZZAoYWvW4fWiaicHDC+1K5QNLZ2VF1wbs8ZSxs7RTIAB/aM+aRY
+         462TKjVM694doqLmKVr85tnG8lsgKG2N1K+/X7LSGCz1BLnMs562sbDnywMjs12dLVmr
+         fuu2H3M90use6rr9I8cvQ1ErrpkhUn4yz16ojcoIdc8ZDWbvO5zj5EdJpUx3N995j75f
+         DGUg==
+X-Gm-Message-State: APjAAAUHLD0rx9AlRWXyJbugqtZUjzzTybJ5TagPl03Na3D9mRWuRNJs
+        t8Ybgg8m7SkrApoDAZS5FTizWA==
+X-Google-Smtp-Source: APXvYqxvajvknV5Crc2GPBDACD5q5nc5DS/TZ3iQqT5dzZ4pFCLgRCC1lLvaVW/QfeBBtQ2Q4V9PrA==
+X-Received: by 2002:a17:90a:d3d4:: with SMTP id d20mr4673518pjw.28.1565115598199;
+        Tue, 06 Aug 2019 11:19:58 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 33sm101572057pgy.22.2019.08.06.11.19.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 11:19:57 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 11:21:28 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Fabien DESSENNE <fabien.dessenne@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: Re: [PATCH 0/6] hwspinlock: allow sharing of hwspinlocks
+Message-ID: <20190806182128.GD26807@tuxbook-pro>
+References: <1552492237-28810-1-git-send-email-fabien.dessenne@st.com>
+ <20190801191403.GA7234@tuxbook-pro>
+ <1a057176-81ab-e302-4375-2717ceef6924@st.com>
+ <20190805174659.GA23928@tuxbook-pro>
+ <dcd1aeea-cffe-d5fb-af5a-e52efcc2e046@ti.com>
 MIME-Version: 1.0
-References: <1565001715-22966-1-git-send-email-linux@roeck-us.net>
-In-Reply-To: <1565001715-22966-1-git-send-email-linux@roeck-us.net>
-From:   =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
-Date:   Tue, 6 Aug 2019 20:15:51 +0200
-Message-ID: <CAAdtpL634spP0friWLstK9Ehy5BaHxS3u+GhrEGKsF-1_uCENQ@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: OCTEON: octeon-usb: Mark expected switch fall-through
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dcd1aeea-cffe-d5fb-af5a-e52efcc2e046@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 5, 2019 at 12:42 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Since commit a035d552a93b ("Makefile: Globally enable fall-through
-> warning"), cavium_octeon_defconfig builds fail with
->
-> In file included from
-> arch/mips/cavium-octeon/octeon-usb.c:12:
-> arch/mips/cavium-octeon/octeon-usb.c: In function 'dwc3_octeon_clocks_start':
-> include/linux/device.h:1499:2: error: this statement may fall through
->   _dev_err(dev, dev_fmt(fmt), ##__VA_ARGS__)
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> arch/mips/cavium-octeon/octeon-usb.c:399:3: note:
->                         in expansion of macro 'dev_err'
->   dev_err(dev, "Invalid ref_clk %u, using 100000000 instead\n",
->   ^~~~~~~
-> arch/mips/cavium-octeon/octeon-usb.c:401:2: note: here
->   case 100000000:
->   ^~~~~~~
->
-> Mark the switch case to expect fall through.
->
-> Cc: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+On Tue 06 Aug 10:38 PDT 2019, Suman Anna wrote:
 
-Reviewed-by: Philippe Mathieu-Daud√© <f4bug@amsat.org>
+> Hi Fabien,
+> 
+> On 8/5/19 12:46 PM, Bjorn Andersson wrote:
+> > On Mon 05 Aug 01:48 PDT 2019, Fabien DESSENNE wrote:
+> > 
+> >>
+> >> On 01/08/2019 9:14 PM, Bjorn Andersson wrote:
+> >>> On Wed 13 Mar 08:50 PDT 2019, Fabien Dessenne wrote:
+[..]
+> >> B/ This would introduce some inconsistency between the two 'request' API
+> >> which are hwspin_lock_request() and hwspin_lock_request_specific().
+> >> hwspin_lock_request() looks for an unused lock, so requests for an exclusive
+> >> usage. On the other side, request_specific() would request shared locks.
+> >> Worst the following sequence can transform an exclusive usage into a shared
+> >>
+> > 
+> > There is already an inconsistency in between these; as with above any
+> > system that uses both request() and request_specific() will be suffering
+> > from intermittent failures due to probe ordering.
+> > 
+> >> one:
+> >>  † -hwspin_lock_request() -> returns Id#0 (exclusive)
+> >>  † -hwspin_lock_request() -> returns Id#1 (exclusive)
+> >>  † -hwspin_lock_request_specific(0) -> returns Id#0 and makes Id#0 shared
+> >> Honestly I am not sure that this is a real issue, but it's better to have it
+> >> in mind before we take ay decision
+> 
+> Wouldn't it be actually simpler to just introduce a new specific API
+> variant for this, similar to the reset core for example (it uses a
+> separate exclusive API), without having to modify the bindings at all.
+> It is just a case of your driver using the right API, and the core can
+> be modified to use the additional tag semantics based on the API. It
+> should avoid any confusion with say using a different second cell value
+> for the same lock in two different nodes.
+> 
 
-> ---
->  arch/mips/cavium-octeon/octeon-usb.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/mips/cavium-octeon/octeon-usb.c b/arch/mips/cavium-octeon/octeon-usb.c
-> index 1f730ded5224..8a16ab37aa11 100644
-> --- a/arch/mips/cavium-octeon/octeon-usb.c
-> +++ b/arch/mips/cavium-octeon/octeon-usb.c
-> @@ -398,6 +398,7 @@ static int dwc3_octeon_clocks_start(struct device *dev, u64 base)
->         default:
->                 dev_err(dev, "Invalid ref_clk %u, using 100000000 instead\n",
->                         clock_rate);
-> +               /* Fall through */
->         case 100000000:
->                 mpll_mul = 0x19;
->                 if (ref_clk_sel < 2)
-> --
-> 2.7.4
->
+But this implies that there is an actual need to hold these locks
+exclusively. Given that they are (except for the raw case) all wrapped
+by Linux locking primitives there shouldn't be a problem sharing a lock
+(except possibly for the raw case).
+
+
+I agree that we shouldn't specify this property in DT - if anything it
+should be a variant of the API.
+
+> If you are sharing a hwlock on the Linux side, surely your driver should
+> be aware that it is a shared lock. The tag can be set during the first
+> request API, and you look through both tags when giving out a handle.
+> 
+
+Why would the driver need to know about it?
+
+> Obviously, the hwspin_lock_request() API usage semantics always had the
+> implied additional need for communicating the lock id to the other peer
+> entity, so a realistic usage is most always the specific API variant. I
+> doubt this API would be of much use for the shared driver usage. This
+> also implies that the client user does not care about specifying a lock
+> in DT.
+> 
+
+Afaict if the lock are shared then there shouldn't be a problem with
+some clients using the request API and others request_specific(). As any
+collisions would simply mean that there are more contention on the lock.
+
+With the current exclusive model that is not possible and the success of
+the request_specific will depend on probe order.
+
+But perhaps it should be explicitly prohibited to use both APIs on the
+same hwspinlock instance?
+
+Regards,
+Bjorn
