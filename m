@@ -2,207 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B984E83317
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 648A38332A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732824AbfHFNnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:43:17 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:59162 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731894AbfHFNm5 (ORCPT
+        id S1732925AbfHFNnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:43:41 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:32927 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732833AbfHFNnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:42:57 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id BE706C21CC;
-        Tue,  6 Aug 2019 13:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1565098977; bh=18B/BrYz2sxVzKeQcjktizOD0pcEwHNkm/ulnP89N5A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=ggMGdYW7W/TdZKv7lXxaEWfjmo/y1eQGWGZl5pw5rKnHNzvSgAkLa7aV9H48M6Dfj
-         lKIX0EVMX4yUCAlBh7jwyxmOHlC634Z1VtYftkc29s7Bvpn8RNtQQF6HxESPKLni5s
-         ZW+qzxtYrJgxeQyV5hEDPrBwz9A0TVku2Tc3JNd+pR4jHyIFiQOf0ATNnGgWBy8nnQ
-         +bbxovWKCm8KTIjK1oo+9B7VNop5V6qRUv0m+j23C5EQc0Ab+ABXFaBzCGwg30rmKV
-         heps87PchFFwmNn9ZaIp5NawFjLUHTkUmU6oy+qcI0EjdAeMxiRk7eCcpgswvmhRMn
-         ewiG+JvHfyZqA==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 7B0AFA007A;
-        Tue,  6 Aug 2019 13:42:55 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 10/10] net: stmmac: selftests: Add a selftest for Flexible RX Parser
-Date:   Tue,  6 Aug 2019 15:42:51 +0200
-Message-Id: <486b11dcec03cb5a7d0dc166bf57c09627e53a8b.1565098881.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1565098881.git.joabreu@synopsys.com>
-References: <cover.1565098881.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1565098881.git.joabreu@synopsys.com>
-References: <cover.1565098881.git.joabreu@synopsys.com>
+        Tue, 6 Aug 2019 09:43:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n190so815193pgn.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 06:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IvbA0Qi9ZdVQqNSbxozysL3Fqa9OBFyiiqy53wDpULw=;
+        b=UuDLXvSXeYwo63iVf+Lu0ahwvUcYOzu27p9dcgydbmlpy6nzua+tt9PNukjSS6Be4q
+         vRcxA4E5INCnPKwSUPg3krigp8ll/UXfu4lFBciOfQ91x+tJtxsbDAGtnGkpWU6B/HJH
+         mkzPwEGTE+qSwX2QK3R1MvFtovwBfdLF5sBXA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IvbA0Qi9ZdVQqNSbxozysL3Fqa9OBFyiiqy53wDpULw=;
+        b=E8/br378G9CfHtAwVTwhEIRFSY0RI3xu9uLnj1D8Dw/Y81/4JvS3waujjkBxHuSenS
+         vu1hT8l4VM5r0NlImOZw4jN6AJfiOEwgGv73VxPNKZU0QU0QQG5SmvcEExG+RimgdQTa
+         OlUtlMPqXKaAH7XT4xxljewHLHRG7aE2/VuKlIDavqfI2hKi3rRxTrotVIc9JEE74O1P
+         KMBORnIFZ0EUkilWCxE3Dguutdkb4DXZZbOhc/Qayc/gGvDMog77/mYqEfuWI8spXi8D
+         9M+S5syQflpyp7uA5kE1ZR06tLs0/QCjuH4sYEj1PnTuO0Qan4hj+ApcDXp9HBoF5mz3
+         YvUw==
+X-Gm-Message-State: APjAAAXpviBEsUWoVs321yyiyGDBs5o9on7BOOm2bkZWqQnzcBxpcZk2
+        TQs5EzocTmkeFKbYbeaqtiCKHw==
+X-Google-Smtp-Source: APXvYqw8mKqZ/XeNBFb/10DncPVZsFq6EPDftOF3wo4TDqzt8e9GiUU74z85gx7FrtAqaFlq2j2rPw==
+X-Received: by 2002:a62:6454:: with SMTP id y81mr3622264pfb.13.1565099003926;
+        Tue, 06 Aug 2019 06:43:23 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id b37sm44764722pjc.15.2019.08.06.06.43.22
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 06:43:23 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 09:43:21 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806134321.GA15167@google.com>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+ <20190805170451.26009-3-joel@joelfernandes.org>
+ <20190806084203.GJ11812@dhcp22.suse.cz>
+ <20190806103627.GA218260@google.com>
+ <20190806104755.GR11812@dhcp22.suse.cz>
+ <20190806111446.GA117316@google.com>
+ <20190806115703.GY11812@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806115703.GY11812@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a selftest for the Flexible RX Parser feature.
+On Tue, Aug 06, 2019 at 01:57:03PM +0200, Michal Hocko wrote:
+> On Tue 06-08-19 07:14:46, Joel Fernandes wrote:
+> > On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
+> > > On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
+> > > > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
+> > > > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> > > > > > This bit will be used by idle page tracking code to correctly identify
+> > > > > > if a page that was swapped out was idle before it got swapped out.
+> > > > > > Without this PTE bit, we lose information about if a page is idle or not
+> > > > > > since the page frame gets unmapped.
+> > > > > 
+> > > > > And why do we need that? Why cannot we simply assume all swapped out
+> > > > > pages to be idle? They were certainly idle enough to be reclaimed,
+> > > > > right? Or what does idle actualy mean here?
+> > > > 
+> > > > Yes, but other than swapping, in Android a page can be forced to be swapped
+> > > > out as well using the new hints that Minchan is adding?
+> > > 
+> > > Yes and that is effectivelly making them idle, no?
+> > 
+> > That depends on how you think of it.
+> 
+> I would much prefer to have it documented so that I do not have to guess ;)
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Sure :)
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 98 +++++++++++++++++++++-
- 1 file changed, 97 insertions(+), 1 deletion(-)
+> > If you are thinking of a monitoring
+> > process like a heap profiler, then from the heap profiler's (that only cares
+> > about the process it is monitoring) perspective it will look extremely odd if
+> > pages that are recently accessed by the process appear to be idle which would
+> > falsely look like those processes are leaking memory. The reality being,
+> > Android forced those pages into swap because of other reasons. I would like
+> > for the swapping mechanism, whether forced swapping or memory reclaim, not to
+> > interfere with the idle detection.
+> 
+> Hmm, but how are you going to handle situation when the page is unmapped
+> and refaulted again (e.g. a normal reclaim of a pagecache)? You are
+> losing that information same was as in the swapout case, no? Or am I
+> missing something?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-index 6b08bb15af15..abab84f2ef8b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-@@ -11,8 +11,10 @@
- #include <linux/ip.h>
- #include <linux/phy.h>
- #include <linux/udp.h>
-+#include <net/pkt_cls.h>
- #include <net/tcp.h>
- #include <net/udp.h>
-+#include <net/tc_act/tc_gact.h>
- #include "stmmac.h"
- 
- struct stmmachdr {
-@@ -229,7 +231,7 @@ static int stmmac_test_loopback_validate(struct sk_buff *skb,
- 			goto out;
- 	}
- 	if (tpriv->packet->src) {
--		if (!ether_addr_equal(ehdr->h_source, orig_ndev->dev_addr))
-+		if (!ether_addr_equal(ehdr->h_source, tpriv->packet->src))
- 			goto out;
- 	}
- 
-@@ -912,6 +914,96 @@ static int stmmac_test_dvlanfilt(struct stmmac_priv *priv)
- 	return ret;
- }
- 
-+#ifdef CONFIG_NET_CLS_ACT
-+static int stmmac_test_rxp(struct stmmac_priv *priv)
-+{
-+	unsigned char addr[ETH_ALEN] = {0xde, 0xad, 0xbe, 0xef, 0x00, 0x00};
-+	struct tc_cls_u32_offload cls_u32 = { };
-+	struct stmmac_packet_attrs attr = { };
-+	struct tc_action **actions, *act;
-+	struct tc_u32_sel *sel;
-+	struct tcf_exts *exts;
-+	int ret, i, nk = 1;
-+
-+	if (!tc_can_offload(priv->dev))
-+		return -EOPNOTSUPP;
-+	if (!priv->dma_cap.frpsel)
-+		return -EOPNOTSUPP;
-+
-+	sel = kzalloc(sizeof(*sel) + nk * sizeof(struct tc_u32_key), GFP_KERNEL);
-+	if (!sel)
-+		return -ENOMEM;
-+
-+	exts = kzalloc(sizeof(*exts), GFP_KERNEL);
-+	if (!exts) {
-+		ret = -ENOMEM;
-+		goto cleanup_sel;
-+	}
-+
-+	actions = kzalloc(nk * sizeof(*actions), GFP_KERNEL);
-+	if (!actions) {
-+		ret = -ENOMEM;
-+		goto cleanup_exts;
-+	}
-+
-+	act = kzalloc(nk * sizeof(*act), GFP_KERNEL);
-+	if (!act) {
-+		ret = -ENOMEM;
-+		goto cleanup_actions;
-+	}
-+
-+	cls_u32.command = TC_CLSU32_NEW_KNODE;
-+	cls_u32.common.chain_index = 0;
-+	cls_u32.common.protocol = htons(ETH_P_ALL);
-+	cls_u32.knode.exts = exts;
-+	cls_u32.knode.sel = sel;
-+	cls_u32.knode.handle = 0x123;
-+
-+	exts->nr_actions = nk;
-+	exts->actions = actions;
-+	for (i = 0; i < nk; i++) {
-+		struct tcf_gact *gact = to_gact(&act[i]);
-+
-+		actions[i] = &act[i];
-+		gact->tcf_action = TC_ACT_SHOT;
-+	}
-+
-+	sel->nkeys = nk;
-+	sel->offshift = 0;
-+	sel->keys[0].off = 6;
-+	sel->keys[0].val = htonl(0xdeadbeef);
-+	sel->keys[0].mask = ~0x0;
-+
-+	ret = stmmac_tc_setup_cls_u32(priv, priv, &cls_u32);
-+	if (ret)
-+		goto cleanup_act;
-+
-+	attr.dst = priv->dev->dev_addr;
-+	attr.src = addr;
-+
-+	ret = __stmmac_test_loopback(priv, &attr);
-+	ret = !ret; /* Shall NOT receive packet */
-+
-+	cls_u32.command = TC_CLSU32_DELETE_KNODE;
-+	stmmac_tc_setup_cls_u32(priv, priv, &cls_u32);
-+
-+cleanup_act:
-+	kfree(act);
-+cleanup_actions:
-+	kfree(actions);
-+cleanup_exts:
-+	kfree(exts);
-+cleanup_sel:
-+	kfree(sel);
-+	return ret;
-+}
-+#else
-+static int stmmac_test_rxp(struct stmmac_priv *priv)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+
- #define STMMAC_LOOPBACK_NONE	0
- #define STMMAC_LOOPBACK_MAC	1
- #define STMMAC_LOOPBACK_PHY	2
-@@ -969,6 +1061,10 @@ static const struct stmmac_test {
- 		.name = "Double VLAN Filtering",
- 		.lb = STMMAC_LOOPBACK_PHY,
- 		.fn = stmmac_test_dvlanfilt,
-+	}, {
-+		.name = "Flexible RX Parser   ",
-+		.lb = STMMAC_LOOPBACK_PHY,
-+		.fn = stmmac_test_rxp,
- 	},
- };
- 
--- 
-2.7.4
+Yes you are right, it would have the same issue, thanks for bringing it up.
+Should we rename this bit to PTE_IDLE and do the same thing that we are doing
+for swap?
+
+i.e. if (page_idle(page)) and page is a file page, then we write state
+into the PTE of the page. Later on refault, the PTE bit would automatically
+get cleared (just like it does on swap-in). But before refault, the idle
+tracking code sees the page as still marked idle. Do you see any issue with that?
+
+
+> > This is just an effort to make the idle tracking a little bit better. We
+> > would like to not lose the 'accessed' information of the pages.
+> > 
+> > Initially, I had proposed what you are suggesting as well however the above
+> > reasons made me to do it like this. Also Minchan and Konstantin suggested
+> > this, so there are more people interested in the swap idle bit. Minchan, can
+> > you provide more thoughts here? (He is on 2-week vacation from today so
+> > hopefully replies before he vanishes ;-)).
+> 
+> We can move on with the rest of the series in the mean time but I would
+> like to see a proper justification for the swap entries and why they
+> should be handled special.
+
+Ok, I will improve the changelog.
+
+
+> > Also assuming all swap pages as idle has other "semantic" issues. It is quite
+> > odd if a swapped page is automatically marked as idle without userspace
+> > telling it to. Consider the following set of events: 1. Userspace marks only
+> > a certain memory region as idle. 2. Userspace reads back the bits
+> > corresponding to a bigger region. Part of this bigger region is swapped.
+> > Userspace expects all of the pages it did not mark, to have idle bit set to
+> > '0' because it never marked them as idle. However if it is now surprised by
+> > what it read back (not all '0' read back). Since a page is swapped, it will
+> > be now marked "automatically" as idle as per your proposal, even if userspace
+> > never marked it explicity before. This would be quite confusing/ambiguous.
+> 
+> OK, I see. I guess the primary question I have is how do you distinguish
+> Idle page which got unmapped and faulted in again from swapped out page
+> and refaulted - including the time the pte is not present.
+
+Ok, lets discuss more.
+
+thanks Michal!
+
+ - Joel
 
