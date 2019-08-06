@@ -2,70 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D95F829C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 04:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77FAA829D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 04:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731456AbfHFCoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 22:44:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:29846 "EHLO mx1.redhat.com"
+        id S1731503AbfHFC7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 22:59:08 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:33618 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729334AbfHFCoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 22:44:20 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 006523001AA4;
-        Tue,  6 Aug 2019 02:44:20 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-88.pek2.redhat.com [10.72.12.88])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6C5DC19C5B;
-        Tue,  6 Aug 2019 02:44:17 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 10:44:13 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kexec@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        bhsharma@redhat.com
-Subject: Re: [PATCH] do not clean dummy variable in kexec path
-Message-ID: <20190806024413.GB6956@dhcp-128-65.nay.redhat.com>
-References: <20190805083553.GA27708@dhcp-128-65.nay.redhat.com>
- <CACdnJusRUnhmOLdowqbGoM9Z-tWsKrhZ8sFfQUUmjyKmRVN+vw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACdnJusRUnhmOLdowqbGoM9Z-tWsKrhZ8sFfQUUmjyKmRVN+vw@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 06 Aug 2019 02:44:20 +0000 (UTC)
+        id S1729170AbfHFC7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Aug 2019 22:59:07 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7DECF1A009A;
+        Tue,  6 Aug 2019 04:59:06 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B0CA41A0043;
+        Tue,  6 Aug 2019 04:59:00 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5FC6E402B5;
+        Tue,  6 Aug 2019 10:58:53 +0800 (SGT)
+From:   Hui Song <hui.song_1@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Song Hui <hui.song_1@nxp.com>
+Subject: [PATCH v2] gpio: mpc8xxx: Add new platforms GPIO DT node description
+Date:   Tue,  6 Aug 2019 10:49:23 +0800
+Message-Id: <20190806024923.34355-1-hui.song_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/19 at 10:09am, Matthew Garrett wrote:
-> On Mon, Aug 5, 2019 at 1:36 AM Dave Young <dyoung@redhat.com> wrote:
-> >
-> > kexec reboot fails randomly in UEFI based kvm guest.  The firmware
-> > just reset while calling efi_delete_dummy_variable();  Unfortunately
-> > I don't know how to debug the firmware, it is also possible a potential
-> > problem on real hardware as well although nobody reproduced it.
-> >
-> > The intention of efi_delete_dummy_variable is to trigger garbage collection
-> > when entering virtual mode.  But SetVirtualAddressMap can only run once
-> > for each physical reboot, thus kexec_enter_virtual_mode is not necessarily
-> > a good place to clean dummy object.
-> 
-> I agree that this isn't necessarily the best place to do this in the
-> kexec case, but given we control the firmware, figuring out what's
-> actually breaking seems like a good plan.
+From: Song Hui <hui.song_1@nxp.com>
 
-I'm more than glad to get the root cause, if you can help on debugging I
-would like to share the efi var file etc.
+Update the NXP GPIO node dt-binding file for QorIQ and
+Layerscape platforms, and add one more example with
+ls1028a GPIO node.
 
-But it is indeed a problem cause weird reset on end user part, but even if we can
-not find the root cause (in firmware..)  I think we still need avoid it
-with such workaround.
+Signed-off-by: Song Hui <hui.song_1@nxp.com>
+---
+ Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Thanks
-Dave
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+index 69d4616..2df5fc0 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+@@ -37,3 +37,17 @@ gpio0: gpio@2300000 {
+ 	interrupt-controller;
+ 	#interrupt-cells = <2>;
+ };
++
++
++Example of gpio-controller node for a ls1028a SoC:
++
++gpio1: gpio@2300000 {
++	compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
++	reg = <0x0 0x2300000 0x0 0x10000>;
++	interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++	little-endian;
++};
+-- 
+2.9.5
+
