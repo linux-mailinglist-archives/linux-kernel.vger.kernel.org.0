@@ -2,105 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E6C083AD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 23:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FAC283AE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 23:15:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbfHFVMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 17:12:09 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46757 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726851AbfHFVMI (ORCPT
+        id S1726823AbfHFVPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 17:15:08 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:49932 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfHFVPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:12:08 -0400
-Received: by mail-ot1-f66.google.com with SMTP id z23so67778666ote.13
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 14:12:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SxfvXS8dkeLPpXkICvCXwX+4rlE1NK6AW+Bou/1xFzU=;
-        b=yPVtcuImiPOLRP461tix/AcQLCmPpM2hT6wfZ3z3u8rK+/Z4Wcy9TZYR1+pBKb1sEv
-         8s5ZXsKoBm0t/6DdFcCMSQQnCtMuYyJQRjyChWPlRiCLIdVoUKmVW20uRNmVEQwz55Q0
-         bE/hu0rH2S8PkC3OoCF8CUVDVOjsDrmQt5AwkwC3N5pRqe3g/DntzunlOcmsfFn2MCbD
-         i/D13Z/hbxjfwNu62slNJ6Upz8aIY9OSQn0Oh9mvcGHdw8JdOq4oK7LKRHM//+sN1MJN
-         6p+ftsIHRD7HxlD2OO+al3P77mmVq899M63tNAeQ9Mm+CdQEQz3bbwdYoFTGtLZ1zNlr
-         Fcgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SxfvXS8dkeLPpXkICvCXwX+4rlE1NK6AW+Bou/1xFzU=;
-        b=jVGdOm3GuWCvvuJns6uB9LA1I69VdxpJ0zy/E9FuAT50DY8bDyV029aVRu2Tain2J5
-         OKxjDKOwBPy/FZ/ohT4py2YFVykQ60cZNobz/TYeNSOjYR233k6Yua5iQ4NwAycBfmUD
-         4/epbtp5JaxWJfmxBDer89O4f2Ylrir94Afl7Ng7V0JTzfwR6TZiLpxvLY8cEuEJUo6e
-         C5VOO7fAzAC5BDkL2YOvIVnFU2nb18oVK6FY2Po+TYnI72hh/N0OjJ1eRoQYf9c8pb9F
-         O4mYA/F27bk7VlkMxyfFDjeMmIPExlixnLosl4UwgZwzy1Du3nm6xqJaW74O6lhNBywo
-         tAtQ==
-X-Gm-Message-State: APjAAAWvVd3+5lqIvhjIM+ulZabhtlLwWn+67rkDLB0Xr8LFLBK+EU9T
-        hD3LLf7VywN1nNmAzpTGgLWG5Lfvq8Rv+VGAhNwkur/6
-X-Google-Smtp-Source: APXvYqw9o9Yb/ND1MDNnGatZSfaVVbG1TKnSQ9e0LNGeNp1/ZpabJ2T1j/9smMMqoDrW/seGup0iO9zq36rzrSQKj2U=
-X-Received: by 2002:a9d:7a8b:: with SMTP id l11mr4580336otn.247.1565125927538;
- Tue, 06 Aug 2019 14:12:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <1565112345-28754-1-git-send-email-jane.chu@oracle.com> <1565112345-28754-3-git-send-email-jane.chu@oracle.com>
-In-Reply-To: <1565112345-28754-3-git-send-email-jane.chu@oracle.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 6 Aug 2019 14:11:56 -0700
-Message-ID: <CAPcyv4jgtYMKgEB4jnQ0g4fQPO39BCOmQM8Zo231=_D7L6wH=A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] mm/memory-failure: Poison read receives SIGKILL
- instead of SIGBUS if mmaped more than once
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Aug 2019 17:15:08 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6206812B02594;
+        Tue,  6 Aug 2019 14:15:07 -0700 (PDT)
+Date:   Tue, 06 Aug 2019 14:15:06 -0700 (PDT)
+Message-Id: <20190806.141506.1823070920831784903.davem@davemloft.net>
+To:     xiaojiangfeng@huawei.com
+Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        leeyou.li@huawei.com, xiaowei774@huawei.com, nixiaoming@huawei.com
+Subject: Re: [PATCH v1 0/3] net: hisilicon: Fix a few problems with
+ hip04_eth
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1564835501-90257-1-git-send-email-xiaojiangfeng@huawei.com>
+References: <1564835501-90257-1-git-send-email-xiaojiangfeng@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 06 Aug 2019 14:15:07 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 10:28 AM Jane Chu <jane.chu@oracle.com> wrote:
->
-> Mmap /dev/dax more than once, then read the poison location using address
-> from one of the mappings. The other mappings due to not having the page
-> mapped in will cause SIGKILLs delivered to the process. SIGKILL succeeds
-> over SIGBUS, so user process looses the opportunity to handle the UE.
->
-> Although one may add MAP_POPULATE to mmap(2) to work around the issue,
-> MAP_POPULATE makes mapping 128GB of pmem several magnitudes slower, so
-> isn't always an option.
->
-> Details -
->
-> ndctl inject-error --block=10 --count=1 namespace6.0
->
-> ./read_poison -x dax6.0 -o 5120 -m 2
-> mmaped address 0x7f5bb6600000
-> mmaped address 0x7f3cf3600000
-> doing local read at address 0x7f3cf3601400
-> Killed
->
-> Console messages in instrumented kernel -
->
-> mce: Uncorrected hardware memory error in user-access at edbe201400
-> Memory failure: tk->addr = 7f5bb6601000
-> Memory failure: address edbe201: call dev_pagemap_mapping_shift
-> dev_pagemap_mapping_shift: page edbe201: no PUD
-> Memory failure: tk->size_shift == 0
-> Memory failure: Unable to find user space address edbe201 in read_poison
-> Memory failure: tk->addr = 7f3cf3601000
-> Memory failure: address edbe201: call dev_pagemap_mapping_shift
-> Memory failure: tk->size_shift = 21
-> Memory failure: 0xedbe201: forcibly killing read_poison:22434 because of failure to unmap corrupted page
->   => to deliver SIGKILL
-> Memory failure: 0xedbe201: Killing read_poison:22434 due to hardware memory corruption
->   => to deliver SIGBUS
->
-> Signed-off-by: Jane Chu <jane.chu@oracle.com>
-> Suggested-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Date: Sat, 3 Aug 2019 20:31:38 +0800
 
-Looks good, ignore the checkpatch warning about too long subject line,
-looks appropriate to me:
+> During the use of the hip04_eth driver,
+> several problems were found,
+> which solved the hip04_tx_reclaim reentry problem,
+> fixed the problem that hip04_mac_start_xmit never
+> returns NETDEV_TX_BUSY
+> and the dma_map_single failed on the arm64 platform.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Series applied.
