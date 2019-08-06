@@ -2,71 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB74A82B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 07:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 988B682B1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 07:39:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731679AbfHFFel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 01:34:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45248 "EHLO mail.kernel.org"
+        id S1731615AbfHFFje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 01:39:34 -0400
+Received: from mga09.intel.com ([134.134.136.24]:9169 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfHFFek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 01:34:40 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E31820665;
-        Tue,  6 Aug 2019 05:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565069679;
-        bh=l8IZdlPttsnsqFsNXrdJw8WPUqKCI0w3FvnJ8v0WgUg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TaRKP7RSUz17bpNvQJDe4W1T+7o4TCdNsK7sCq+XdxFzwtxzwnyzkj1a/AdobH52b
-         mjckSh3PB4rkLKXKfYaYJoonJndr6nwmD0t3iX1jM/r8YuHcoj+THvaInhS6tFmt1w
-         NgC1yP+NiW+eGw/QasMjQABxonxcq8TaDMygPzPQ=
-Date:   Tue, 6 Aug 2019 07:34:37 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     shuah <shuah@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.2 000/131] 5.2.7-stable review
-Message-ID: <20190806053437.GA14052@kroah.com>
-References: <20190805124951.453337465@linuxfoundation.org>
- <f2ee51eb-d1e2-1a19-d1a2-dfa181530e03@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f2ee51eb-d1e2-1a19-d1a2-dfa181530e03@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1725798AbfHFFje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 01:39:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 22:39:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,352,1559545200"; 
+   d="scan'208";a="164878104"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga007.jf.intel.com with ESMTP; 05 Aug 2019 22:39:32 -0700
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH] fs/userfaultfd.c: simplify the calculation of new_flags
+Date:   Tue,  6 Aug 2019 13:38:59 +0800
+Message-Id: <20190806053859.2374-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 06:51:51PM -0600, shuah wrote:
-> On 8/5/19 7:01 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.2.7 release.
-> > There are 131 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed 07 Aug 2019 12:47:58 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.7-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Compiled and booted on my test system. No dmesg regressions.
+Finally new_flags equals old vm_flags *OR* vm_flags.
 
-Thanks for testing all of these and letting me know.
+It is not necessary to mask them first.
 
-greg k-h
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+---
+ fs/userfaultfd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index ccbdbd62f0d8..653d8f7c453c 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1457,7 +1457,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+ 			start = vma->vm_start;
+ 		vma_end = min(end, vma->vm_end);
+ 
+-		new_flags = (vma->vm_flags & ~vm_flags) | vm_flags;
++		new_flags = vma->vm_flags | vm_flags;
+ 		prev = vma_merge(mm, prev, start, vma_end, new_flags,
+ 				 vma->anon_vma, vma->vm_file, vma->vm_pgoff,
+ 				 vma_policy(vma),
+-- 
+2.17.1
+
