@@ -2,117 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42B2E83655
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:09:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87DAE8368C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:15:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387663AbfHFQJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:09:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48756 "EHLO mail.kernel.org"
+        id S2387842AbfHFQPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:15:10 -0400
+Received: from mga03.intel.com ([134.134.136.65]:48602 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732203AbfHFQJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:09:00 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 981C320679;
-        Tue,  6 Aug 2019 16:08:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565107739;
-        bh=v0k57mTDkfDZaJNeGslFkP/p8/lZF5e0EN6d5zbeXJQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QwYLVlSCvE5RkEzMUkxya/17HqX4ysozqlmTdPTPO5zBru0s7lkz8yZHQi0kE7QPa
-         J3nsmuubbBmALdIHYivFeIBCfxouhnJ+9TQ0HskYPSpEl7ePJW8QWsSwlXZEvwICkA
-         ksIz9c1GMc0XmZhCNFQc096KaCxj+m1SMXGhPUZc=
-Date:   Tue, 6 Aug 2019 17:08:54 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Shawn Anastasio <shawn@anastas.io>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-mapping: fix page attributes for dma_mmap_*
-Message-ID: <20190806160854.htk67msiyadlrl4m@willie-the-truck>
-References: <20190801142118.21225-1-hch@lst.de>
- <20190801142118.21225-2-hch@lst.de>
- <20190801162305.3m32chycsdjmdejk@willie-the-truck>
- <20190801163457.GB26588@lst.de>
- <20190801164411.kmsl4japtfkgvzxe@willie-the-truck>
- <20190802081441.GA9725@lst.de>
- <20190802103803.3qrbhqwxlasojsco@willie-the-truck>
- <20190803064812.GA29746@lst.de>
+        id S2387493AbfHFQPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 12:15:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 09:06:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
+   d="scan'208";a="174218905"
+Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.252.15.113]) ([10.252.15.113])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Aug 2019 09:06:16 -0700
+Subject: Re: [alsa-devel] [PATCH 06/17] soundwire: cadence_master: use
+ firmware defaults for frame shape
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, Blauciak@vger.kernel.org,
+        tiwai@suse.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        Slawomir <slawomir.blauciak@intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190806005522.22642-1-pierre-louis.bossart@linux.intel.com>
+ <20190806005522.22642-7-pierre-louis.bossart@linux.intel.com>
+ <03b6091b-af41-ac54-43c7-196a3583a731@intel.com>
+ <024b4fb4-bdfa-a6dc-48bb-c070f2ed36b2@linux.intel.com>
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+Message-ID: <2445b5dc-246c-9c3b-b26e-784032feccf9@intel.com>
+Date:   Tue, 6 Aug 2019 18:06:15 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <024b4fb4-bdfa-a6dc-48bb-c070f2ed36b2@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190803064812.GA29746@lst.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 03, 2019 at 08:48:12AM +0200, Christoph Hellwig wrote:
-> On Fri, Aug 02, 2019 at 11:38:03AM +0100, Will Deacon wrote:
-> > 
-> > So this boils down to a terminology mismatch. The Arm architecture doesn't have
-> > anything called "write combine", so in Linux we instead provide what the Arm
-> > architecture calls "Normal non-cacheable" memory for pgprot_writecombine().
-> > Amongst other things, this memory type permits speculation, unaligned accesses
-> > and merging of writes. I found something in the architecture spec about
-> > non-cachable memory, but it's written in Armglish[1].
-> > 
-> > pgprot_noncached(), on the other hand, provides what the architecture calls
-> > Strongly Ordered or Device-nGnRnE memory. This is intended for mapping MMIO
-> > (i.e. PCI config space) and therefore forbids speculation, preserves access
-> > size, requires strict alignment and also forces write responses to come from
-> > the endpoint.
-> > 
-> > I think the naming mismatch is historical, but on arm64 we wanted to use the
-> > same names as arm32 so that any drivers using these things directly would get
-> > the same behaviour.
+On 2019-08-06 17:36, Pierre-Louis Bossart wrote:
 > 
-> That all makes sense, but it totally needs a comment.  I'll try to draft
-> one based on this.  I've also looked at the arm32 code a bit more, and
-> it seems arm always (?) supported Normal non-cacheable attribute, but
-> Linux only optionally uses it for arm v6+ because of fears of drivers
-> missing barriers.
-
-I think it was also to do with aliasing, but I don't recall all of the
-details.
-
-> The other really weird things is that in arm32
-> pgprot_dmacoherent incudes the L_PTE_XN bit, which from my understanding
-> is the no-execture bit, but pgprot_writecombine does not.  This seems to
-> not very unintentional.  So minus that the whole DMA_ATTR_WRITE_COMBІNE
-> seems to be about flagging old arm specific drivers as having the proper
-> barriers in places and otherwise is a no-op.
-
-I think it only matters for Armv7 CPUs, but yes, we should probably be
-setting L_PTE_XN for both of these memory types.
-
-> Here is my tentative plan:
 > 
->  - respin this patch with a small fix to handle the
->    DMA_ATTR_NON_CONSISTENT (as in ignore it unless actually supported),
->    but keep the name as-is to avoid churn.  This should allow 5.3
->    inclusion and backports
->  - remove DMA_ATTR_WRITE_COMBINE support from mips, probably also 5.3
->    material.
->  - move all architectures but arm over to just define
->    pgprot_dmacoherent, including a comment with the above explanation
->    for arm64.
+> On 8/6/19 10:27 AM, Cezary Rojewski wrote:
+>> On 2019-08-06 02:55, Pierre-Louis Bossart wrote:
+>>> diff --git a/drivers/soundwire/cadence_master.c 
+>>> b/drivers/soundwire/cadence_master.c
+>>> index 5d9729b4d634..89c55e4bb72c 100644
+>>> --- a/drivers/soundwire/cadence_master.c
+>>> +++ b/drivers/soundwire/cadence_master.c
+>>> @@ -48,6 +48,8 @@
+>>>   #define CDNS_MCP_SSPSTAT            0xC
+>>>   #define CDNS_MCP_FRAME_SHAPE            0x10
+>>>   #define CDNS_MCP_FRAME_SHAPE_INIT        0x14
+>>> +#define CDNS_MCP_FRAME_SHAPE_COL_MASK        GENMASK(2, 0)
+>>> +#define CDNS_MCP_FRAME_SHAPE_ROW_OFFSET        3
+>>>   #define CDNS_MCP_CONFIG_UPDATE            0x18
+>>>   #define CDNS_MCP_CONFIG_UPDATE_BIT        BIT(0)
+>>> @@ -175,7 +177,6 @@
+>>>   /* Driver defaults */
+>>>   #define CDNS_DEFAULT_CLK_DIVIDER        0
+>>> -#define CDNS_DEFAULT_FRAME_SHAPE        0x30
+>>>   #define CDNS_DEFAULT_SSP_INTERVAL        0x18
+>>>   #define CDNS_TX_TIMEOUT                2000
+>>> @@ -901,6 +902,20 @@ int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
+>>>   }
+>>>   EXPORT_SYMBOL(sdw_cdns_pdi_init);
+>>> +static u32 cdns_set_initial_frame_shape(int n_rows, int n_cols)
+>>> +{
+>>> +    u32 val;
+>>> +    int c;
+>>> +    int r;
+>>> +
+>>> +    r = sdw_find_row_index(n_rows);
+>>> +    c = sdw_find_col_index(n_cols) & CDNS_MCP_FRAME_SHAPE_COL_MASK;
+>>> +
+>>> +    val = (r << CDNS_MCP_FRAME_SHAPE_ROW_OFFSET) | c;
+>>> +
+>>> +    return val;
+>>> +}
+>>> +
+>>
+>> Guess this have been said already, but this function could be 
+>> simplified - unless you really want to keep explicit variable 
+>> declaration. Both "c" and "r" declarations could be merged into single 
+>> line while "val" is not needed at all.
+>>
+>> One more thing - is AND bitwise op really needed for cols explicitly? 
+>> We know all col values upfront - these are static and declared in 
+>> global table nearby. Static declaration takes care of "initial 
+>> range-check". Is another one necessary?
+>>
+>> Moreover, this is a _get_ and certainly not a _set_ type of function. 
+>> I'd even consider renaming it to: "cdns_get_frame_shape" as this is 
+>> neither a _set_ nor an explicit initial frame shape setter.
+>>
+>> It might be even helpful to split two usages:
+>>
+>> #define sdw_frame_shape(col_idx, row_idx) \
+>>      ((row_idx << CDNS_MCP_FRAME_SHAPE_ROW_OFFSET) | col_idx)
+>>
+>> u32 cdns_get_frame_shape(u16 rows, u16 cols)
+>> {
+>>      u16 c, r;
+>>
+>>      r = sdw_find_row_index(rows);
+>>      c = sdw_find_col_index(cols);
+>>
+>>      return sdw_frame_shape(c, r);
+>> }
+>>
+>> The above may even be simplified into one-liner.
+> 
+> This is a function used once on startup, there is no real need to 
+> simplify further. The separate variables help add debug traces as needed 
+> and keep the code readable while showing how the values are encoded into 
+> a register.
 
-That would be great, thanks.
+Eh, I've thought it's gonna be exposed to userspace (via uapi) so it can 
+be fetched by tests or tools.
 
->  - make DMA_ATTR_WRITE_COMBINE a no-op and schedule it for removal,
->    thus removing the last instances of arch_dma_mmap_pgprot
-
-All sounds good to me, although I suppose 32-bit Arm platforms without
-CONFIG_ARM_DMA_MEM_BUFFERABLE may run into issues if DMA_ATTR_WRITE_COMBINE
-disappears. Only one way to find out...
-
-Will
+In such case - if there is a single usage only - guess function is fine 
+as is.
