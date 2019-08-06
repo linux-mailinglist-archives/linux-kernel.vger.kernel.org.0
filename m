@@ -2,73 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F9C8838A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A76BC838A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:34:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732239AbfHFScu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 14:32:50 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60212 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728041AbfHFSct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 14:32:49 -0400
-Received: from zn.tnic (p200300EC2F1369001D2C1334F0CDB20E.dip0.t-ipconnect.de [IPv6:2003:ec:2f13:6900:1d2c:1334:f0cd:b20e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DF6541EC0503;
-        Tue,  6 Aug 2019 20:32:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565116368;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=/l9VW0w4uCu16D3f5mJOrOKOlGq/I6xHwmMbd4lMFWY=;
-        b=E6PqIWDxKsMdip2+UpzkKRhk0TairgFhYExErCT9qvrOrQsJmKnrQCMeS9/1ZNqmdHTSxQ
-        PlPbpWeag0ZjofSNuhZqgrV39jMpENR5p2hxcQFnPS05ppqikHEC+lbNLIBQpQ5g2W79OS
-        8qP5T3jE8skvcVkF05PMF63U+FQ2fx0=
-Date:   Tue, 6 Aug 2019 20:33:33 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        kuo-lang.tseng@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 01/10] x86/CPU: Expose if cache is inclusive of lower
- level caches
-Message-ID: <20190806183333.GA4698@zn.tnic>
-References: <cover.1564504901.git.reinette.chatre@intel.com>
- <6c78593207224014d6a9d43698a3d1a0b3ccf2b6.1564504901.git.reinette.chatre@intel.com>
- <20190802180352.GE30661@zn.tnic>
- <e532ab90-196c-8b58-215a-f56f5e409512@intel.com>
- <20190803094423.GA2100@zn.tnic>
- <122b005a-46b1-2b1e-45a8-7f92a5dba2d9@intel.com>
- <20190806155716.GE25897@zn.tnic>
- <151002be-33e6-20d6-7699-bc9be7e51f33@intel.com>
- <20190806173300.GF25897@zn.tnic>
- <d0c04521-ec1a-3468-595c-6929f25f37ff@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d0c04521-ec1a-3468-595c-6929f25f37ff@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1733153AbfHFSei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 14:34:38 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:47784 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728879AbfHFSeh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 14:34:37 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 03E6B152488D1;
+        Tue,  6 Aug 2019 11:34:36 -0700 (PDT)
+Date:   Tue, 06 Aug 2019 11:34:36 -0700 (PDT)
+Message-Id: <20190806.113436.87450273064586797.davem@davemloft.net>
+To:     christophe.jaillet@wanadoo.fr
+Cc:     vishal@chelsio.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] net: cxgb3_main: Fix a resource leak in a error path
+ in 'init_one()'
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190806085512.11729-1-christophe.jaillet@wanadoo.fr>
+References: <20190806085512.11729-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 06 Aug 2019 11:34:37 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 11:13:22AM -0700, Reinette Chatre wrote:
-> Some platforms being enabled in this round have SKUs with inclusive
-> cache and also SKUs with non-inclusive cache. The non-inclusive cache
-> SKUs do not support cache pseudo-locking and cannot be made to support
-> cache pseudo-locking with software changes. Needing to know if cache is
-> inclusive or not will thus remain a requirement to distinguish between
-> these different SKUs. Supporting cache pseudo-locking on platforms with
-> non inclusive cache will require new hardware features.
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue,  6 Aug 2019 10:55:12 +0200
 
-Is there another way/CPUID bit or whatever to tell us whether the
-platform supports cache pseudo-locking or is the cache inclusivity the
-only one?
+> A call to 'kfree_skb()' is missing in the error handling path of
+> 'init_one()'.
+> This is already present in 'remove_one()' but is missing here.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Looks good, applied, thanks.
