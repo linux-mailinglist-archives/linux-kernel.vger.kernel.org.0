@@ -2,42 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B70CE82C50
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8260882C52
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732089AbfHFHHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:07:06 -0400
-Received: from verein.lst.de ([213.95.11.211]:53905 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731834AbfHFHHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:07:06 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 83CB868B02; Tue,  6 Aug 2019 09:07:03 +0200 (CEST)
-Date:   Tue, 6 Aug 2019 09:07:03 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Hans Holmberg <hans@owltronix.com>
-Cc:     Matias Bjorling <mb@lightnvm.io>, Christoph Hellwig <hch@lst.de>,
-        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] block: stop exporting bio_map_kern
-Message-ID: <20190806070703.GD15546@lst.de>
-References: <1564566096-28756-1-git-send-email-hans@owltronix.com> <1564566096-28756-5-git-send-email-hans@owltronix.com>
+        id S1732091AbfHFHHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:07:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54586 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731734AbfHFHHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 03:07:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A6827ADD9;
+        Tue,  6 Aug 2019 07:07:29 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 09:07:28 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH RFC] mm/memcontrol: reclaim severe usage over high limit
+ in get_user_pages loop
+Message-ID: <20190806070728.GB11812@dhcp22.suse.cz>
+References: <156431697805.3170.6377599347542228221.stgit@buzz>
+ <20190729154952.GC21958@cmpxchg.org>
+ <20190729185509.GI9330@dhcp22.suse.cz>
+ <20190802094028.GG6461@dhcp22.suse.cz>
+ <105a2f1f-de5c-7bac-3aa5-87bd1dbcaed9@yandex-team.ru>
+ <20190802114438.GH6461@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1564566096-28756-5-git-send-email-hans@owltronix.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190802114438.GH6461@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 11:41:36AM +0200, Hans Holmberg wrote:
-> Now that there no module users left of bio_map_kern, stop
-> exporting the symbol.
+On Fri 02-08-19 13:44:38, Michal Hocko wrote:
+[...]
+> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > index ba9138a4a1de..53a35c526e43 100644
+> > > --- a/mm/memcontrol.c
+> > > +++ b/mm/memcontrol.c
+> > > @@ -2429,8 +2429,12 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+> > >   				schedule_work(&memcg->high_work);
+> > >   				break;
+> > >   			}
+> > > -			current->memcg_nr_pages_over_high += batch;
+> > > -			set_notify_resume(current);
+> > > +			if (gfpflags_allow_blocking(gfp_mask)) {
+> > > +				reclaim_high(memcg, nr_pages, GFP_KERNEL);
 > 
-> Signed-off-by: Hans Holmberg <hans@owltronix.com>
+> ups, this should be s@GFP_KERNEL@gfp_mask@
+> 
+> > > +			} else {
+> > > +				current->memcg_nr_pages_over_high += batch;
+> > > +				set_notify_resume(current);
+> > > +			}
+> > >   			break;
+> > >   		}
+> > >   	} while ((memcg = parent_mem_cgroup(memcg)));
+> > > 
 
-Looks good:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Should I send an official patch for this?
+-- 
+Michal Hocko
+SUSE Labs
