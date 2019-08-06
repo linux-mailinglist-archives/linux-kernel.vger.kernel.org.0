@@ -2,93 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFB598338D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 035DE83394
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:08:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732852AbfHFOHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 10:07:04 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46399 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbfHFOHD (ORCPT
+        id S1732889AbfHFOIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 10:08:02 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41569 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728259AbfHFOIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 10:07:03 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1hv07A-00031G-2a; Tue, 06 Aug 2019 16:07:00 +0200
-Message-ID: <1565100418.2323.32.camel@pengutronix.de>
-Subject: Re: Regression due to d98849aff879 (dma-direct: handle
- DMA_ATTR_NO_KERNEL_MAPPING in common code)
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Christoph Hellwig <hch@lst.de>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Date:   Tue, 06 Aug 2019 16:06:58 +0200
-In-Reply-To: <20190806140408.GA22902@lst.de>
-References: <1565082809.2323.24.camel@pengutronix.de>
-         <20190806113318.GA20215@lst.de>
-         <41cc93b1-62b5-7fb6-060d-01982e68503b@amd.com>
-         <20190806140408.GA22902@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u2 
-Mime-Version: 1.0
+        Tue, 6 Aug 2019 10:08:02 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c2so84828204wrm.8;
+        Tue, 06 Aug 2019 07:08:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3I/0mLICIdXJjIirYonvMMd0Ui1WokJ1/uiCix86QbE=;
+        b=UgxEUALeAbtzBD8c4wZt6Vyw0D4sysSB7a8gjR5G8QsHXR+/zSJaiKtFCFIwPkEKDq
+         7gk4E8T8oNy5/VsmBDqYYFO9rdUbNDuukukBPW6bQNksJ0V5+/B9T6nNMVuUffVKyWbc
+         o9UwpLoARljKU09H2ip+L0n/MqVfJiXhtc5RmqjH+InVSn5AIgMLRa2yWJIBFHwBOZLy
+         jltGD61oItO5wexnKCR92hUJLUySrMMF3UXdoyV0ONY9GRf1b9k//9EbwH/75FM7b503
+         3RdnQG7xb9gHyQ6rQftmen/1sL6dcEvbIFOlGinUu2MuE9czxwdNcYGK6mLUEnIDI8TR
+         qjVg==
+X-Gm-Message-State: APjAAAXsh39A2bRKTkAoDhOtJ7yQxmN3PrZAYwEEtuq2AHFzarwc7fiw
+        gxYNJ9FHu3w2PHye8AUj5CM=
+X-Google-Smtp-Source: APXvYqy/o0BoWizFr6r9rCsfifC7aLByMMjAJ7paSO9dvT3pmex0RYbEi3b9VCHTyd65T6y5g37O2w==
+X-Received: by 2002:adf:cf02:: with SMTP id o2mr5103951wrj.352.1565100480114;
+        Tue, 06 Aug 2019 07:08:00 -0700 (PDT)
+Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
+        by smtp.googlemail.com with ESMTPSA id f204sm146742145wme.18.2019.08.06.07.07.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 07:07:59 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Denis Efremov <efremov@linux.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: use PCI_SRIOV_NUM_BARS in loops instead of PCI_IOV_RESOURCE_END
+Date:   Tue,  6 Aug 2019 17:07:15 +0300
+Message-Id: <20190806140715.19847-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, den 06.08.2019, 16:04 +0200 schrieb Christoph Hellwig:
-> Ok, does this work?
-> 
-> --
-> From 34d35f335a98f515f2516b515051e12eae744c8d Mon Sep 17 00:00:00 2001
-> > From: Christoph Hellwig <hch@lst.de>
-> Date: Tue, 6 Aug 2019 14:33:23 +0300
-> Subject: dma-direct: fix DMA_ATTR_NO_KERNEL_MAPPING
-> 
-> The new DMA_ATTR_NO_KERNEL_MAPPING needs to actually assign
-> a dma_addr to work.  Also skip it if the architecture needs
-> forced decryption handling, as that needs a kernel virtual
-> address.
-> 
-> Fixes: d98849aff879 (dma-direct: handle DMA_ATTR_NO_KERNEL_MAPPING in common code)
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  kernel/dma/direct.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 59bdceea3737..b01064d884f2 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -130,11 +130,13 @@ void *dma_direct_alloc_pages(struct device *dev, size_t size,
-> >  	if (!page)
-> >  		return NULL;
->  
-> > -	if (attrs & DMA_ATTR_NO_KERNEL_MAPPING) {
-> > +	if ((attrs & DMA_ATTR_NO_KERNEL_MAPPING) &&
-> +	    !force_dma_unencrypted(dev)) {
+It's a general pattern to write loops with 'i < PCI_SRIOV_NUM_BARS'
+condition. This patch fixes remaining loops which violates this implicit
+agreement.
 
-dma_direct_free_pages() then needs the same check, as otherwise the cpu
-address is treated as a cookie instead of a real address and the
-encryption needs to be re-enabled.
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ drivers/pci/iov.c       | 4 ++--
+ drivers/pci/setup-bus.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Regards,
-Lucas
+diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+index 525fd3f272b3..9b48818ced01 100644
+--- a/drivers/pci/iov.c
++++ b/drivers/pci/iov.c
+@@ -557,8 +557,8 @@ static void sriov_restore_state(struct pci_dev *dev)
+ 	ctrl |= iov->ctrl & PCI_SRIOV_CTRL_ARI;
+ 	pci_write_config_word(dev, iov->pos + PCI_SRIOV_CTRL, ctrl);
+ 
+-	for (i = PCI_IOV_RESOURCES; i <= PCI_IOV_RESOURCE_END; i++)
+-		pci_update_resource(dev, i);
++	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++)
++		pci_update_resource(dev, i + PCI_IOV_RESOURCES);
+ 
+ 	pci_write_config_dword(dev, iov->pos + PCI_SRIOV_SYS_PGSIZE, iov->pgsz);
+ 	pci_iov_set_numvfs(dev, iov->num_VFs);
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 79b1fa6519be..e7dbe21705ba 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1662,8 +1662,8 @@ static int iov_resources_unassigned(struct pci_dev *dev, void *data)
+ 	int i;
+ 	bool *unassigned = data;
+ 
+-	for (i = PCI_IOV_RESOURCES; i <= PCI_IOV_RESOURCE_END; i++) {
+-		struct resource *r = &dev->resource[i];
++	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++) {
++		struct resource *r = &dev->resource[i + PCI_IOV_RESOURCES];
+ 		struct pci_bus_region region;
+ 
+ 		/* Not assigned or rejected by kernel? */
+-- 
+2.21.0
 
->  		/* remove any dirty cache lines on the kernel alias */
-> >  		if (!PageHighMem(page))
-> >  			arch_dma_prep_coherent(page, size);
-> >  		/* return the page pointer as the opaque cookie */
-> > +		*dma_handle = phys_to_dma(dev, page_to_phys(page));
-> >  		return page;
-> >  	}
->  
