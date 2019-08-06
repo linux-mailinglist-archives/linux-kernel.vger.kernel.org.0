@@ -2,88 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B59831C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 14:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3062831CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 14:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731190AbfHFMtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 08:49:08 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44362 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbfHFMtH (ORCPT
+        id S1731880AbfHFMuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 08:50:54 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44933 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729898AbfHFMuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 08:49:07 -0400
-Received: by mail-lf1-f67.google.com with SMTP id v16so7146539lfg.11
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 05:49:06 -0700 (PDT)
+        Tue, 6 Aug 2019 08:50:52 -0400
+Received: by mail-qk1-f196.google.com with SMTP id d79so62669606qke.11
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 05:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dE5JuDdEA/pQScNByPn3VC+2psga/+uhIp5+6Lpb/IU=;
-        b=CfdkpelcPzvwnG1MdqcjcMyI02MUVnNU6luZnIfMDPb2TDvDh/PMhfidkJDiDm5vjw
-         TSvW1XIVaisosJn9owSOQNrRfN01cs41uzJMTlM1VsZX0cW6SBzNzVZKo2WGsc7xHA/y
-         52dUv8uwgMs+ujW6Xv1T48Zb1XvjfjCWbXCG46cuulJ68eqIsTcpjWkGSqGqJIk/zhKt
-         FmDBpMi8Fdr7o1vGrpM/XkRced54b6WwHbfhJBaJgtO7Nxsv4XjRHbsliAGTfPn5nSRH
-         4P0r6a4S4hwn0ipXQEhPdnBvxTjgs3aWXnX3Ob+3gbZvc/hC66HkM8kC7oWs5VCWX1de
-         wM1w==
+        bh=/P5o7bDpjWmN9ZebSBZsGlXpEvCnGcCbzXRf1g4vqlg=;
+        b=skjdDU4dtUeHC+kMGTUC9fPCCNWSMbFGsd3aaAekUU7izdW2GKUeIP8Sc/7RaZ53a3
+         c4WVPqMdHWjNyyW0UWhDJ0fecC+2XNYt9iZkVBq18GzQt0yMKpbUgS8dvW6mSIgHnbdh
+         HgzihabMSOBMmrqfJECNcEsIof7X5520tUVHMvH5488p+gJmkSZPzVJSWkUv+6yiugI+
+         dgv3Rs+IDXTYKez5jrRsEDothYUJaypa/tg0TDtMtCXOlx6daS632GYFAcAEFt4W2kE2
+         cE7i2NUujJPjRXjOO6Plf8QlNLfVcl1X4iFP0PV0Dknt5Xu0vEfGta9zYRm29owweO/D
+         Lcbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dE5JuDdEA/pQScNByPn3VC+2psga/+uhIp5+6Lpb/IU=;
-        b=oLpaL9SVe0d5E2YXKa1HBwY/PZq0etBj2u5lYjJLw+3d/h0h1YHZeL/FY6zlvqwhze
-         PKtLE+mJ5Bxa+lDcLgC1TT4ZCUYr8MMqlRMSsSCn6oMPQrxOl7kGGmQIIoYWCYlpOiKX
-         B2o9DJHL/cjxESqMa82lx4tQeIoWUIlgsbxeNVnH8Alm0d8JITIOQrsAocfpheh93ren
-         5r1q5FIJnsLe1ZTarC2DDMAHDAsDVvJd4nKI2wIfs5sg/pNO7rTG7NezQGNpujUkf8HY
-         Aam5mOqZTSLTS89B/ePiMjTvSdgsMZjiHDS/EQwIgTtYTokP9GHpo942pv1+7m7m7QJ9
-         8PBQ==
-X-Gm-Message-State: APjAAAVyfazmCU4gw3vlDsQiEFxw2z22q4TifpjuqmS1rQJf9qElASzI
-        WOLc/Y96HoXXzwCO73uG11vjK1JO3Eje+gsgy+lwdA==
-X-Google-Smtp-Source: APXvYqw0Wl1Q08gOWskV45KZ1hlu4YydCL1Uqb2v8Dojvc+PSoMPhvxKIqVPTrhNLCBWwALS8FyzMEW+/49Nw/ggfeM=
-X-Received: by 2002:ac2:5dd6:: with SMTP id x22mr2349039lfq.92.1565095745984;
- Tue, 06 Aug 2019 05:49:05 -0700 (PDT)
+        bh=/P5o7bDpjWmN9ZebSBZsGlXpEvCnGcCbzXRf1g4vqlg=;
+        b=HkX6CFh3Z3RNZR7427DHOHXUshktyWt2gMW3tfiH2Shth1WU1y9W8oKfUF+iRbx2t+
+         7vxQYoYjnXNsTbtIKZDxwdoCiX9v+rr0YzGDL+gFgcQ0DCUCrVEhJ1pSOO4xsXQq4ylt
+         gWpQuu/fI/Pq/wDsCmxGybetfnnq6KTKn1Qv4P+nGoxhviLkG7QvhgejK01cnl+guVIz
+         SRqKvWbtbCi5Ivgd9zwVC9hhxD6flTuzNCQ+Bt4MyRkq/K3LCR+pAsBWOpK+ViETvwQr
+         fHt8DRR9u2A7V/Ww4Mj3BtdLx5TZXp7wy85D4yTkbHc636FU3SHdl5pyh2dnUvYX4Mp1
+         zUKg==
+X-Gm-Message-State: APjAAAWzd+I1kZcoJ7Uzis9+eOnU0WAtmee+Ftauz1ptTidENNfW2qF2
+        DcFovGhOpsmBg7whAWSp8/IUMwVmsJKAKhXVhAs=
+X-Google-Smtp-Source: APXvYqwfWWN4YkKLQ+LRmVpH+VROfBQy2m9vp40Fsf+NNf7IJbqfFo2xpdZXFbe8bmZEplS9SM16o6+Vkfq7lHGwoQE=
+X-Received: by 2002:a37:9a0b:: with SMTP id c11mr3120476qke.204.1565095852172;
+ Tue, 06 Aug 2019 05:50:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190806024923.34355-1-hui.song_1@nxp.com>
-In-Reply-To: <20190806024923.34355-1-hui.song_1@nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 6 Aug 2019 14:48:54 +0200
-Message-ID: <CACRpkdZ7hW+hSC41JqjqfLrwWvRY80+_8sXC89OhN7SwVtU7MA@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: mpc8xxx: Add new platforms GPIO DT node description
-To:     Hui Song <hui.song_1@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20190806030718.29048-1-luaraneda@gmail.com> <20190806030718.29048-3-luaraneda@gmail.com>
+ <194fe121-151d-0b64-b83e-e4d82c02efa7@xilinx.com>
+In-Reply-To: <194fe121-151d-0b64-b83e-e4d82c02efa7@xilinx.com>
+From:   Luis Araneda <luaraneda@gmail.com>
+Date:   Tue, 6 Aug 2019 08:49:59 -0400
+Message-ID: <CAHbBuxpM8YKxADGJv2PAPbyS-2FZ6xiwohJwGJ1DMPuGnDV-Jg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: zynq: Use memcpy_toio instead of memcpy on smp bring-up
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hui,
+Hi Michal,
 
-On Tue, Aug 6, 2019 at 4:59 AM Hui Song <hui.song_1@nxp.com> wrote:
+On Tue, Aug 6, 2019 at 2:42 AM Michal Simek <michal.simek@xilinx.com> wrote:
+> On 06. 08. 19 5:07, Luis Araneda wrote:
+> > This fixes a kernel panic (read overflow) on memcpy when
+> > FORTIFY_SOURCE is enabled.
+> >
+> > The computed size of memcpy args are:
+> > - p_size (dst): 4294967295 = (size_t) -1
+> > - q_size (src): 1
+> > - size (len): 8
+> >
+> > Additionally, the memory is marked as __iomem, so one of
+> > the memcpy_* functions should be used for read/write
+> >
+> > Signed-off-by: Luis Araneda <luaraneda@gmail.com>
+[...]
+> I would consider this one as stable material. Please also add there link
+> to the patch which this patch fixes.
 
-> From: Song Hui <hui.song_1@nxp.com>
->
-> Update the NXP GPIO node dt-binding file for QorIQ and
-> Layerscape platforms, and add one more example with
-> ls1028a GPIO node.
->
-> Signed-off-by: Song Hui <hui.song_1@nxp.com>
-(...)
-> +Example of gpio-controller node for a ls1028a SoC:
-> +
-> +gpio1: gpio@2300000 {
-> +       compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
+I'm dropping stable CC (for now), as I'm not sure I completely
+understood the process for inclusion in stable trees.
+Do I have to wait for the patch to be on Linus' tree before CCing stable?
 
-What you need to do is to add "fsl,ls1028a-gpio" to the list
-of compatible values at the top of the file "Required properties".
-Please send a v2 with this fixed.
+As for the link which this patch fixes, you mean
+aa7eb2bb4e4a22e41bbe4612ff46e5885b13c33e (arm: zynq: Add smp support)?
+where you added SMP support for zynq.
 
-Yours,
-Linus Walleij
+Thanks,
+Luis Araneda.
