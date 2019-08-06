@@ -2,115 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C6882DB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 953DA82DB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732181AbfHFI2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 04:28:23 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42351 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfHFI2W (ORCPT
+        id S1732273AbfHFI3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 04:29:13 -0400
+Received: from gateway36.websitewelcome.com ([192.185.195.25]:30405 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726713AbfHFI3I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 04:28:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id x1so37066284wrr.9
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 01:28:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=DVFYv472sz+yHZKlPnNeqX3YVoj+1DLyrPSYY32g1tE=;
-        b=aU+lXWEv+aOZX4F54PjmzIgEBPB/5g4gVzTLgVwe3Bp34WRGMKwo1gwqyZI3EqndvQ
-         66/UK0P6Dq4l56pAOqlTP98HZCwlFEd4r86u5zQ8jH05RniLtwMIIjeKX1QWZ+nrSslx
-         yC4pHdFRv8CNIjqY8xXlS67znB9nh+bEO5mag1bOurVgi2kKUtOkEi6VDB11E3DaK1hi
-         Vq6ok8XxOB0vlzLqvwVpOCM97SY1RXpTPoJ1z3nDyYg2I5+jWRXUPnYD1eneknocO3qI
-         5O2OHzXRsEeSr9UVdGPwR4s2w6Y1UTr+UJtBhU4OhTePuKxapn4IZGNNVblETx64h74f
-         UFuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=DVFYv472sz+yHZKlPnNeqX3YVoj+1DLyrPSYY32g1tE=;
-        b=KvU9piKDKdJZjKzU29pN0NkjvbvSntzb93BYGg23Z6+6YynzxzuJE4yvcAcCaubnWS
-         OJEBGA3SiGDhvObh0kr+m8Zn45ee/QtCSE1MV3pgTWzjCoqHFwhYPIqdHbavWqNAoeqQ
-         /ZI8iHIwuYgHzysQcP+qFr2wF54RuQiPXJtbEybGRymonLvW/sXj+JRXtHrwZY74D/It
-         5x3b1UgvHUhwi4X8YcwtL35VR97rkF8Gn/JnTQYCTHEnjYWi6lYSZEA12RditVh6udB6
-         x78dTOyG7/9Fz+LM/ITp9zyrUYiI6qmW3tVQN1SaKUlN7h7yMUsQrnnNIlWwUERxRORc
-         3olA==
-X-Gm-Message-State: APjAAAXVeeRczLTYz9Jv1PUKHQwKf/HPycwT/F48ZY6dixZ8rCWAykXg
-        3eDCMJQFS8T5fuN8GgoVvbhEnA==
-X-Google-Smtp-Source: APXvYqzOLXGaercRAbrASDcbtLCTcSm2SMt3N5yX52X0q7EIRcAvf1mi5IUz8Fk3qAs/wmcB+8dmQg==
-X-Received: by 2002:adf:b64e:: with SMTP id i14mr3279108wre.248.1565080100382;
-        Tue, 06 Aug 2019 01:28:20 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f7sm87293405wrv.38.2019.08.06.01.28.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 01:28:19 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v2 1/4] clk: core: introduce clk_hw_set_parent()
-In-Reply-To: <20190731084019.8451-2-narmstrong@baylibre.com>
-References: <20190731084019.8451-1-narmstrong@baylibre.com> <20190731084019.8451-2-narmstrong@baylibre.com>
-Date:   Tue, 06 Aug 2019 10:28:19 +0200
-Message-ID: <1j36iewvdo.fsf@starbuckisacylon.baylibre.com>
+        Tue, 6 Aug 2019 04:29:08 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 115B4400C7A51
+        for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2019 02:53:40 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uuqBh1jbk2qH7uuqBh2e7S; Tue, 06 Aug 2019 03:29:07 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WVAi0vZcLPXALGm+zh7ti9JDHwAnJCM0op5bLb/Mk3w=; b=VSLzJXXT7nHuLGrQFBFMGdZgZ3
+        xcmZmZegT8ArbZCoOmm8NDGWYi27CDkR2icGD+btZlUoFGtTwFvUX1YTfnPjHkj7QDlbTRN6LQzIK
+        wxmb4DRV0M2rXmLDSpAbkTsL5wCioyrbqeJrBkF0HYNeyxZbqc8wet05waMxiHzkz7XcCKnoTDeuQ
+        19rAesSQ7qHGIOc9ivqKc5YJFzJ1JUEmy9GTEVxVwXPRR3K5Il/vLm24Nhdz82ruP3RrvgmxxkVqG
+        VshRsgW1jXGJNBbGaPPOruhIIKATwSlxrh3vcXio44JisZmK5xJwLtVqoOMNltXXCFViF6HHcCpoC
+        txBRGWvw==;
+Received: from [187.192.11.120] (port=44456 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1huuq9-000v9N-Fr; Tue, 06 Aug 2019 03:29:05 -0500
+Date:   Tue, 6 Aug 2019 03:29:02 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] scsi: fas216: Mark expected switch fall-throughs
+Message-ID: <20190806082902.GA11122@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1huuq9-000v9N-Fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:44456
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 31 Jul 2019 at 10:40, Neil Armstrong <narmstrong@baylibre.com> wrote:
+Mark switch cases where we are expecting to fall through.
 
-> Introduce the clk_hw_set_parent() provider call to change parent of
-> a clock by using the clk_hw pointers.
->
-> This eases the clock reparenting from clock rate notifiers and
-> implementing DVFS with simpler code avoiding the boilerplates
-> functions as __clk_lookup(clk_hw_get_name()) then clk_set_parent().
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Fix the following warnings (Building: rpc_defconfig arm):
 
-Looks ok to me but we will obviously need Stephen's ack to apply it
+drivers/scsi/arm/fas216.c: In function ‘fas216_disconnect_intr’:
+drivers/scsi/arm/fas216.c:913:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (fas216_get_last_msg(info, info->scsi.msgin_fifo) == ABORT) {
+      ^
+drivers/scsi/arm/fas216.c:919:2: note: here
+  default:    /* huh?     */
+  ^~~~~~~
+drivers/scsi/arm/fas216.c: In function ‘fas216_kick’:
+drivers/scsi/arm/fas216.c:1959:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   fas216_allocate_tag(info, SCpnt);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/arm/fas216.c:1960:2: note: here
+  case TYPE_OTHER:
+  ^~~~
+drivers/scsi/arm/fas216.c: In function ‘fas216_busservice_intr’:
+drivers/scsi/arm/fas216.c:1413:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   fas216_stoptransfer(info);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/arm/fas216.c:1414:2: note: here
+  case STATE(STAT_STATUS, PHASE_SELSTEPS):/* Sel w/ steps -> Status       */
+  ^~~~
+drivers/scsi/arm/fas216.c:1424:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   fas216_stoptransfer(info);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/arm/fas216.c:1425:2: note: here
+  case STATE(STAT_MESGIN, PHASE_COMMAND): /* Command -> Message In */
+  ^~~~
+drivers/scsi/arm/fas216.c: In function ‘fas216_funcdone_intr’:
+drivers/scsi/arm/fas216.c:1573:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if ((stat & STAT_BUSMASK) == STAT_MESGIN) {
+      ^
+drivers/scsi/arm/fas216.c:1579:2: note: here
+  default:
+  ^~~~~~~
+drivers/scsi/arm/fas216.c: In function ‘fas216_handlesync’:
+drivers/scsi/arm/fas216.c:605:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   info->scsi.phase = PHASE_MSGOUT_EXPECT;
+   ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/arm/fas216.c:607:2: note: here
+  case async:
+  ^~~~
 
-> ---
->  drivers/clk/clk.c            | 6 ++++++
->  include/linux/clk-provider.h | 1 +
->  2 files changed, 7 insertions(+)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c0990703ce54..c11b1781d24a 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2487,6 +2487,12 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
->  	return ret;
->  }
->  
-> +int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *parent)
-> +{
-> +	return clk_core_set_parent_nolock(hw->core, parent->core);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_hw_set_parent);
-> +
->  /**
->   * clk_set_parent - switch the parent of a mux clk
->   * @clk: the mux clk whose input we are switching
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 2ae7604783dd..dce5521a9bf6 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -817,6 +817,7 @@ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
->  struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
->  struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
->  					  unsigned int index);
-> +int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
->  unsigned int __clk_get_enable_count(struct clk *clk);
->  unsigned long clk_hw_get_rate(const struct clk_hw *hw);
->  unsigned long __clk_get_flags(struct clk *clk);
-> -- 
-> 2.22.0
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/scsi/arm/fas216.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/scsi/arm/fas216.c b/drivers/scsi/arm/fas216.c
+index aea4fd73c862..6c68c2303638 100644
+--- a/drivers/scsi/arm/fas216.c
++++ b/drivers/scsi/arm/fas216.c
+@@ -603,6 +603,7 @@ static void fas216_handlesync(FAS216_Info *info, char *msg)
+ 		msgqueue_flush(&info->scsi.msgs);
+ 		msgqueue_addmsg(&info->scsi.msgs, 1, MESSAGE_REJECT);
+ 		info->scsi.phase = PHASE_MSGOUT_EXPECT;
++		/* fall through */
+ 
+ 	case async:
+ 		dev->period = info->ifcfg.asyncperiod / 4;
+@@ -915,6 +916,7 @@ static void fas216_disconnect_intr(FAS216_Info *info)
+ 			fas216_done(info, DID_ABORT);
+ 			break;
+ 		}
++		/* else, fall through */
+ 
+ 	default:				/* huh?					*/
+ 		printk(KERN_ERR "scsi%d.%c: unexpected disconnect in phase %s\n",
+@@ -1411,6 +1413,8 @@ static void fas216_busservice_intr(FAS216_Info *info, unsigned int stat, unsigne
+ 	case STATE(STAT_STATUS, PHASE_DATAOUT): /* Data Out     -> Status       */
+ 	case STATE(STAT_STATUS, PHASE_DATAIN):  /* Data In      -> Status       */
+ 		fas216_stoptransfer(info);
++		/* fall through */
++
+ 	case STATE(STAT_STATUS, PHASE_SELSTEPS):/* Sel w/ steps -> Status       */
+ 	case STATE(STAT_STATUS, PHASE_MSGOUT):  /* Message Out  -> Status       */
+ 	case STATE(STAT_STATUS, PHASE_COMMAND): /* Command      -> Status       */
+@@ -1422,6 +1426,8 @@ static void fas216_busservice_intr(FAS216_Info *info, unsigned int stat, unsigne
+ 	case STATE(STAT_MESGIN, PHASE_DATAOUT): /* Data Out     -> Message In   */
+ 	case STATE(STAT_MESGIN, PHASE_DATAIN):  /* Data In      -> Message In   */
+ 		fas216_stoptransfer(info);
++		/* fall through */
++
+ 	case STATE(STAT_MESGIN, PHASE_COMMAND):	/* Command	-> Message In	*/
+ 	case STATE(STAT_MESGIN, PHASE_SELSTEPS):/* Sel w/ steps -> Message In   */
+ 	case STATE(STAT_MESGIN, PHASE_MSGOUT):  /* Message Out  -> Message In   */
+@@ -1575,6 +1581,7 @@ static void fas216_funcdone_intr(FAS216_Info *info, unsigned int stat, unsigned
+ 			fas216_message(info);
+ 			break;
+ 		}
++		/* else, fall through */
+ 
+ 	default:
+ 		fas216_log(info, 0, "internal phase %s for function done?"
+@@ -1957,6 +1964,7 @@ static void fas216_kick(FAS216_Info *info)
+ 	switch (where_from) {
+ 	case TYPE_QUEUE:
+ 		fas216_allocate_tag(info, SCpnt);
++		/* fall through */
+ 	case TYPE_OTHER:
+ 		fas216_start_command(info, SCpnt);
+ 		break;
+-- 
+2.22.0
+
