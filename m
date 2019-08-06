@@ -2,111 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B3D883284
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7742F8328D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 15:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732277AbfHFNRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 09:17:37 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36790 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728560AbfHFNRh (ORCPT
+        id S1732409AbfHFNSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 09:18:18 -0400
+Received: from mail-oi1-f199.google.com ([209.85.167.199]:52704 "EHLO
+        mail-oi1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731532AbfHFNSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 09:17:37 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x76DGxNM076457;
-        Tue, 6 Aug 2019 13:17:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=TTm/Rs97Etdd6MROEpIhsbZ7ANTdzBesDsj3GyHxpWY=;
- b=HOlMSOQ8Do+NBYhXChz53YQveZz/PTPHee4kkZ/0OEPgSkooxukpjlONSHOGMSeZIMLi
- ubSwAh7iKsHYfTAGJBfMPsh6F0+Ccr3mklXK5N0pq6MPexE73opLjlmYb7VRrz6kYcqj
- vTLxh9XHN/uNWUcIfPs6JTWy2Y5zc61Blal9Np4w6udS+cG5DDE1YhshSfqleHL4R0Ye
- TcYHCb4qp2kW9ene0z/ACUVxkHxlRJVH31hzP6kBq+HP3fQnF0FoPxq06SaNicYlkhyg
- VnS4ugsY2jtAGibB0myMAfli+jtC9vCpLA3/W+djntGnokL7Eei8FdO7fp35ffxsFBp/ CA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2u52wr61wf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 06 Aug 2019 13:17:32 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x76DFAWU161142;
-        Tue, 6 Aug 2019 13:17:31 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2u763gr0yn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 06 Aug 2019 13:17:31 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x76DHT3Z024412;
-        Tue, 6 Aug 2019 13:17:30 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 06 Aug 2019 06:17:29 -0700
-Date:   Tue, 6 Aug 2019 16:17:21 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Karan Tilak Kumar <kartilak@cisco.com>,
-        Sesidhar Baddela <sebaddel@cisco.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: snic: remove redundant assignment to variable ret
-Message-ID: <20190806131721.GI1974@kadam>
-References: <20190731224950.16818-1-colin.king@canonical.com>
+        Tue, 6 Aug 2019 09:18:10 -0400
+Received: by mail-oi1-f199.google.com with SMTP id y1so34823474oih.19
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 06:18:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=CXzF0+8nk83L5+c/SAzPo5vMbjmAIMyV5WPska+YU0s=;
+        b=O/PKkoPLrQ8tsJ/kbFjZsVIQ4GCVXHfpYGm9FQ2JOWvmzQjjcVuiZdvKXZJFoWFHF6
+         LG6cF2E3ov+nle45umK33/GHFna+9SYnDUi7AOn4yh68CK7QklBKGzFzbG7zGYkNnw8y
+         FI0lo1/K1w1e/EPnqBCuC2Zg8mc/1WEuvrBZxCEN9g86m21S1UvQcwK9Xy8ebQz9oz76
+         4azFbeMc68zp/69CqGJmaa8OtpNxmD7dpHXCJZFhU7TdTSHlKE4T9g9uBrhTSA91M1JA
+         CNGN9jVxhX63pFyols7Y4Omi7Hw+3A1T+3qGp590fRC6zp/90eMSO/uUuaAwqnyQFpJH
+         kG5Q==
+X-Gm-Message-State: APjAAAXOL56I7pY/qr7RsLm/f+1n1EMbra+bpueBJojZyC2oH4d75I4y
+        E8S4SLciI5+iPRNn/hf4/jFIJHSRAvbwY2WW7PfzOi/HrmCW
+X-Google-Smtp-Source: APXvYqxORkL5KWGLqKGvGqAdIzkN6qJgbXTLVJiBooQkPBHI8Se6tJ8FdhPcUZ/UJkb73IVeLA182OD6OQf7elLZSNB6/9dlN2KW
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731224950.16818-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908060133
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9340 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908060134
+X-Received: by 2002:a5d:8195:: with SMTP id u21mr3664571ion.260.1565097488698;
+ Tue, 06 Aug 2019 06:18:08 -0700 (PDT)
+Date:   Tue, 06 Aug 2019 06:18:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000da58ed058f72a7f1@google.com>
+Subject: KASAN: use-after-free Read in hiddev_ioctl
+From:   syzbot <syzbot+5e9ed50a49eb77802d0e@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        jikos@kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 11:49:50PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable ret is being assigned with a value that is never read as
-> there is return statement immediately afterwards.  The assignment
-> is redundant and hence can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/scsi/snic/snic_disc.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/snic/snic_disc.c b/drivers/scsi/snic/snic_disc.c
-> index e9ccfb97773f..d89c75991323 100644
-> --- a/drivers/scsi/snic/snic_disc.c
-> +++ b/drivers/scsi/snic/snic_disc.c
-> @@ -261,8 +261,6 @@ snic_tgt_create(struct snic *snic, struct snic_tgt_id *tgtid)
->  	tgt = kzalloc(sizeof(*tgt), GFP_KERNEL);
->  	if (!tgt) {
->  		SNIC_HOST_ERR(snic->shost, "Failure to allocate snic_tgt.\n");
-> -		ret = -ENOMEM;
-> -
->  		return tgt;
+Hello,
 
-Not related to this patch, but it would be nicer to return NULL instead
-of tgt.  It's the same but the literal is nicer.  No need for the error
-message after a kmalloc failure either.
+syzbot found the following crash on:
 
-	tgt = kzalloc(sizeof(*tgt), GFP_KERNEL);
-	if (!tgt)
-		return NULL;
+HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=1732258a600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
+dashboard link: https://syzkaller.appspot.com/bug?extid=5e9ed50a49eb77802d0e
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-regards,
-dan carpenter
+Unfortunately, I don't have any reproducer for this crash yet.
 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5e9ed50a49eb77802d0e@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in __mutex_lock_common  
+kernel/locking/mutex.c:912 [inline]
+BUG: KASAN: use-after-free in __mutex_lock+0xf23/0x1360  
+kernel/locking/mutex.c:1077
+Read of size 8 at addr ffff8881cf955468 by task syz-executor.1/19529
+
+CPU: 0 PID: 19529 Comm: syz-executor.1 Not tainted 5.3.0-rc2+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description+0x6a/0x32c mm/kasan/report.c:351
+  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
+  kasan_report+0xe/0x12 mm/kasan/common.c:612
+  __mutex_lock_common kernel/locking/mutex.c:912 [inline]
+  __mutex_lock+0xf23/0x1360 kernel/locking/mutex.c:1077
+  hiddev_ioctl+0xea/0x1550 drivers/hid/usbhid/hiddev.c:607
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
+  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459829
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f0ec5dd7c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
+RDX: 0000000020000380 RSI: 0000000081044804 RDI: 0000000000000005
+RBP: 000000000075c070 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0ec5dd86d4
+R13: 00000000004c2249 R14: 00000000004d55f8 R15: 00000000ffffffff
+
+Allocated by task 2777:
+  save_stack+0x1b/0x80 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:487 [inline]
+  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
+  kmalloc include/linux/slab.h:552 [inline]
+  kzalloc include/linux/slab.h:748 [inline]
+  hiddev_connect+0x242/0x5b0 drivers/hid/usbhid/hiddev.c:900
+  hid_connect+0x239/0xbb0 drivers/hid/hid-core.c:1882
+  hid_hw_start drivers/hid/hid-core.c:1981 [inline]
+  hid_hw_start+0xa2/0x130 drivers/hid/hid-core.c:1972
+  appleir_probe+0x13e/0x1a0 drivers/hid/hid-appleir.c:308
+  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
+  really_probe+0x281/0x650 drivers/base/dd.c:548
+  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:882
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2114
+  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
+  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
+  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+  really_probe+0x281/0x650 drivers/base/dd.c:548
+  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:882
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2114
+  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x650 drivers/base/dd.c:548
+  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:882
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2114
+  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+  process_scheduled_works kernel/workqueue.c:2331 [inline]
+  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
+  kthread+0x318/0x420 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Freed by task 2777:
+  save_stack+0x1b/0x80 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
+  slab_free_hook mm/slub.c:1423 [inline]
+  slab_free_freelist_hook mm/slub.c:1470 [inline]
+  slab_free mm/slub.c:3012 [inline]
+  kfree+0xe4/0x2f0 mm/slub.c:3953
+  hiddev_connect.cold+0x45/0x5c drivers/hid/usbhid/hiddev.c:914
+  hid_connect+0x239/0xbb0 drivers/hid/hid-core.c:1882
+  hid_hw_start drivers/hid/hid-core.c:1981 [inline]
+  hid_hw_start+0xa2/0x130 drivers/hid/hid-core.c:1972
+  appleir_probe+0x13e/0x1a0 drivers/hid/hid-appleir.c:308
+  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
+  really_probe+0x281/0x650 drivers/base/dd.c:548
+  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:882
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2114
+  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
+  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
+  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+  really_probe+0x281/0x650 drivers/base/dd.c:548
+  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:882
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2114
+  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x650 drivers/base/dd.c:548
+  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:882
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2114
+  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+  process_scheduled_works kernel/workqueue.c:2331 [inline]
+  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
+  kthread+0x318/0x420 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff8881cf955400
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 104 bytes inside of
+  512-byte region [ffff8881cf955400, ffff8881cf955600)
+The buggy address belongs to the page:
+page:ffffea00073e5500 refcount:1 mapcount:0 mapping:ffff8881da002500  
+index:0x0 compound_mapcount: 0
+flags: 0x200000000010200(slab|head)
+raw: 0200000000010200 ffffea0007659680 0000000600000003 ffff8881da002500
+raw: 0000000000000000 00000000000c000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881cf955300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881cf955380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8881cf955400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                           ^
+  ffff8881cf955480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881cf955500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
