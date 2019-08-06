@@ -2,116 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C666483934
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:59:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56237838FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 20:51:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbfHFS7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 14:59:12 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41783 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfHFS7M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 14:59:12 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c2so85702184wrm.8
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 11:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KdYR5EY08dTrABja8SUaSb/bjYgZpuHfqWAB/BpsnN0=;
-        b=KzkDXYOptvkwojTFBCmVBlV+3tIliyzrdwY+53s8Esprf/Qgz2f1eCQC0QZw//ozZE
-         RcNDjvbJB0Cq3mVPeQ15pOOzXvlweppXj6YAayOw27YWsleceaonHnL4Nzg52TLIthMV
-         rYjlL0699xdOcqu7sevttzOxuBg4lN0lkzV2K+uunyzS+RpjhuoPhqdSTlnWnb+T7JCY
-         HjZ7JWiEwVAUgYx71nCzkRtYctAe5o7uJNxjGtB37j8Kd+2mGvXbEYuFLbnlo+SIJTJp
-         +5YjsJV6IoI9YUlqfsHsDvbDUa1C/1KA3eKWNZE2oqsn4qlL+cyH/WoPyn6i66w9Lttj
-         o0FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KdYR5EY08dTrABja8SUaSb/bjYgZpuHfqWAB/BpsnN0=;
-        b=Hsl2FePBd8msHu2k3lddBnTGuZtrOAm4W42nCP3HIRcSDruCKwE9E4gNWZImDin/Vx
-         xsevUNkC1fwoU9j2tklKC6gg07jVbbh0kUnd21zTn1cxdP/fDw475xbBA45Max09+YGI
-         jkIJ5sTqbbqcoS9XwZzKeMI2+7jW4TlfIlnmseaqwz2LDVuRxNqmrXzSUc9Qd/TdKyyn
-         BpqJ+dj35oj0/k2fS9XQykuEj/8gocPodAdeC+tI7bTPuFLXrzK7Oe/N/7vMst6azW/c
-         dxToEK84l2vxTtYSs8nw86Pr45foYt22ma/u8iqoCbjfLYcu+mfl6m3XEnGGNhjDtYzR
-         1/EQ==
-X-Gm-Message-State: APjAAAVQr0Ffb3DbJWa4CSFOhFnhBPLurpvM35R7Q03eCOe33M1liYU6
-        Sq6dn8EgYOadsZrB9DqMOJkuXWaPvtpY5QOMu60=
-X-Google-Smtp-Source: APXvYqyvIOyL3ta7PNqlaft8AIjrG08VwxtlFNFvdOLUq+AjfF7aZKuWk+kMq57BwYyz3aJneYaERa/Thq7ouYxDQUo=
-X-Received: by 2002:adf:dfc5:: with SMTP id q5mr6393234wrn.142.1565117950081;
- Tue, 06 Aug 2019 11:59:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190806160554.14046-1-hch@lst.de> <20190806160554.14046-16-hch@lst.de>
- <20190806174437.GK11627@ziepe.ca> <587b1c3c-83c4-7de9-242f-6516528049f4@amd.com>
-In-Reply-To: <587b1c3c-83c4-7de9-242f-6516528049f4@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 6 Aug 2019 14:58:58 -0400
-Message-ID: <CADnq5_Puv-N=FVpNXhv7gOWZ8=tgBD2VjrKpVzEE0imWqJdD1A@mail.gmail.com>
-Subject: Re: [PATCH 15/15] amdgpu: remove CONFIG_DRM_AMDGPU_USERPTR
-To:     "Kuehling, Felix" <Felix.Kuehling@amd.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
+        id S1726485AbfHFSvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 14:51:39 -0400
+Received: from mga11.intel.com ([192.55.52.93]:5993 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbfHFSvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 14:51:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 11:51:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
+   d="scan'208";a="182053414"
+Received: from megha-z97x-ud7-th.sc.intel.com ([143.183.85.162])
+  by FMSMGA003.fm.intel.com with ESMTP; 06 Aug 2019 11:51:38 -0700
+Message-ID: <1565118769.2401.120.camel@intel.com>
+Subject: Re: [RFC V1 RESEND 0/6] Introduce dynamic allocation/freeing of
+ MSI-X vectors
+From:   Megha Dey <megha.dey@intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, marc.zyngier@arm.com, ashok.raj@intel.com,
+        jacob.jun.pan@linux.intel.com
+Date:   Tue, 06 Aug 2019 12:12:49 -0700
+In-Reply-To: <20190802002442.GI151852@google.com>
+References: <1561162778-12669-1-git-send-email-megha.dey@linux.intel.com>
+         <20190802002442.GI151852@google.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 1:51 PM Kuehling, Felix <Felix.Kuehling@amd.com> wrote:
->
-> On 2019-08-06 13:44, Jason Gunthorpe wrote:
-> > On Tue, Aug 06, 2019 at 07:05:53PM +0300, Christoph Hellwig wrote:
-> >> The option is just used to select HMM mirror support and has a very
-> >> confusing help text.  Just pull in the HMM mirror code by default
-> >> instead.
-> >>
-> >> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> >> ---
-> >>   drivers/gpu/drm/Kconfig                 |  2 ++
-> >>   drivers/gpu/drm/amd/amdgpu/Kconfig      | 10 ----------
-> >>   drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c |  6 ------
-> >>   drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h | 12 ------------
-> >>   4 files changed, 2 insertions(+), 28 deletions(-)
-> > Felix, was this an effort to avoid the arch restriction on hmm or
-> > something? Also can't see why this was like this.
->
-> This option predates KFD's support of userptrs, which in turn predates
-> HMM. Radeon has the same kind of option, though it doesn't affect HMM in
-> that case.
->
-> Alex, Christian, can you think of a good reason to maintain userptr
-> support as an option in amdgpu? I suspect it was originally meant as a
-> way to allow kernels with amdgpu without MMU notifiers. Now it would
-> allow a kernel with amdgpu without HMM or MMU notifiers. I don't know if
-> this is a useful thing to have.
+On Thu, 2019-08-01 at 19:24 -0500, Bjorn Helgaas wrote:
+> Hi Megha,
+> 
+> On Fri, Jun 21, 2019 at 05:19:32PM -0700, Megha Dey wrote:
+> > 
+> > Currently, MSI-X vector enabling and allocation for a PCIe device
+> > is
+> > static i.e. a device driver gets only one chance to enable a
+> > specific
+> > number of MSI-X vectors, usually during device probe. Also, in many
+> > cases, drivers usually reserve more than required number of vectors
+> > anticipating their use, which unnecessarily blocks resources that
+> > could have been made available to other devices. Lastly, there is
+> > no
+> > way for drivers to reserve more vectors, if the MSI-x has already
+> > been
+> > enabled for that device.
+> >  
+> > Hence, a dynamic MSI-X kernel infrastructure can benefit drivers by
+> > deferring MSI-X allocation to post probe phase, where actual demand
+> > information is available.
+> >  
+> > This patchset enables the dynamic allocation/de-allocation of MSI-X
+> > vectors by introducing 2 new APIs:
+> > pci_alloc_irq_vectors_dyn() and pci_free_irq_vectors_grp():
+> > 
+> > We have had requests from some of the NIC/RDMA users who have lots
+> > of
+> > interrupt resources and would like to allocate them on demand,
+> > instead of using an all or none approach.
+> > 
+> > The APIs are fairly well tested (multiple
+> > allocations/deallocations),
+> > but we have no early adopters yet. Hence, sending this series as an
+> > RFC for review and comments.
+> > 
+> > The patches are based out of Linux 5.2-rc5.
+> > 
+> > Megha Dey (6):
+> >   PCI/MSI: New structures/macros for dynamic MSI-X allocation
+> >   PCI/MSI: Dynamic allocation of MSI-X vectors by group
+> >   x86: Introduce the dynamic teardown function
+> >   PCI/MSI: Introduce new structure to manage MSI-x entries
+> s/MSI-x/MSI-X/
+> If "entries" here means the same as "vectors" above, please use the
+> same word.
+> 
 
-Right.  There were people that didn't have MMU notifiers that wanted
-support for the GPU.  For a lot of older APIs, a lack of userptr
-support was not a big deal (it just disabled some optimizations and
-API extensions), but as it becomes more relevant it may make sense to
-just make it a requirement.
+Hi Bjorn,
 
-Alex
+Well, here entries basically mean the msi_desc entries. I thought MSI
+vectors are used for each address/data pair, hence used the term
+entries. Will update it to vectors to ensure uniformity.
 
->
-> Regards,
->    Felix
->
-> >
-> > Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-> >
-> > Jason
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+> > 
+> >   PCI/MSI: Free MSI-X resources by group
+> Is "resources" the same as "vectors"?
+> 
+
+Yes, will update this in V2.
+
+> > 
+> >   Documentation: PCI/MSI: Document dynamic MSI-X infrastructure
+> When you post a v2 after addressing Thomas' comments, please make
+> these subject lines imperative sentences beginning with a descriptive
+> verb.  You can run "git log --oneline drivers/pci" to see the style.
+
+Sure, I will update the subject lines in V2.
+
+> If you're adding a specific interface or structure, mention it by
+> name
+> in the subject if it's practical.  The "x86" line needs a little more
+> context; I assume it should include "IRQ", "MSI-X", or something.
+> 
+
+True, will change this in V2.
+
+> > 
+> >  Documentation/PCI/MSI-HOWTO.txt |  38 +++++
+> >  arch/x86/include/asm/x86_init.h |   1 +
+> >  arch/x86/kernel/x86_init.c      |   6 +
+> >  drivers/pci/msi.c               | 363
+> > +++++++++++++++++++++++++++++++++++++---
+> >  drivers/pci/probe.c             |   9 +
+> >  include/linux/device.h          |   3 +
+> >  include/linux/msi.h             |  13 ++
+> >  include/linux/pci.h             |  61 +++++++
+> >  kernel/irq/msi.c                |  34 +++-
+> >  9 files changed, 497 insertions(+), 31 deletions(-)
+> > 
