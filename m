@@ -2,86 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBEB782FFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A83DD83001
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 12:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732715AbfHFKr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 06:47:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42398 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728845AbfHFKr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 06:47:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 73D9CAFCC;
-        Tue,  6 Aug 2019 10:47:57 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 12:47:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
-        namhyung@google.com, paulmck@linux.ibm.com,
-        Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
-Message-ID: <20190806104755.GR11812@dhcp22.suse.cz>
-References: <20190805170451.26009-1-joel@joelfernandes.org>
- <20190805170451.26009-3-joel@joelfernandes.org>
- <20190806084203.GJ11812@dhcp22.suse.cz>
- <20190806103627.GA218260@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806103627.GA218260@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1732669AbfHFKso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 06:48:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:60124 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728845AbfHFKso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:48:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C036337;
+        Tue,  6 Aug 2019 03:48:43 -0700 (PDT)
+Received: from DESKTOP-E1NTVVP.cambridge.arm.com (unknown [10.1.25.192])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 427DB3F694;
+        Tue,  6 Aug 2019 03:48:42 -0700 (PDT)
+From:   Brian Starkey <brian.starkey@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>, nd@arm.com,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] drm/crc-debugfs: Add notes about CRC<->commit interactions
+Date:   Tue,  6 Aug 2019 11:48:35 +0100
+Message-Id: <20190806104835.26075-1-brian.starkey@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190806091233.GX7444@phenom.ffwll.local>
+References: <20190806091233.GX7444@phenom.ffwll.local>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
-> On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
-> > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
-> > > This bit will be used by idle page tracking code to correctly identify
-> > > if a page that was swapped out was idle before it got swapped out.
-> > > Without this PTE bit, we lose information about if a page is idle or not
-> > > since the page frame gets unmapped.
-> > 
-> > And why do we need that? Why cannot we simply assume all swapped out
-> > pages to be idle? They were certainly idle enough to be reclaimed,
-> > right? Or what does idle actualy mean here?
-> 
-> Yes, but other than swapping, in Android a page can be forced to be swapped
-> out as well using the new hints that Minchan is adding?
+CRC generation can be impacted by commits coming from userspace, and
+enabling CRC generation may itself trigger a commit. Add notes about
+this to the kerneldoc.
 
-Yes and that is effectivelly making them idle, no?
+Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+---
+ drivers/gpu/drm/drm_debugfs_crc.c | 17 +++++++++++++----
+ include/drm/drm_crtc.h            |  4 ++++
+ 2 files changed, 17 insertions(+), 4 deletions(-)
 
-> Also, even if they were idle enough to be swapped, there is a chance that they
-> were marked as idle and *accessed* before the swapping. Due to swapping, the
-> "page was accessed since we last marked it as idle" information is lost. I am
-> able to verify this.
-> 
-> Idle in this context means the same thing as in page idle tracking terms, the
-> page was not accessed by userspace since we last marked it as idle (using
-> /proc/<pid>/page_idle).
-
-Please describe a usecase and why that information might be useful.
-
+diff --git a/drivers/gpu/drm/drm_debugfs_crc.c b/drivers/gpu/drm/drm_debugfs_crc.c
+index 7ca486d750e9..77159b6e77c3 100644
+--- a/drivers/gpu/drm/drm_debugfs_crc.c
++++ b/drivers/gpu/drm/drm_debugfs_crc.c
+@@ -65,10 +65,19 @@
+  * it submits. In this general case, the maximum userspace can do is to compare
+  * the reported CRCs of frames that should have the same contents.
+  *
+- * On the driver side the implementation effort is minimal, drivers only need to
+- * implement &drm_crtc_funcs.set_crc_source. The debugfs files are automatically
+- * set up if that vfunc is set. CRC samples need to be captured in the driver by
+- * calling drm_crtc_add_crc_entry().
++ * On the driver side the implementation effort is minimal, drivers only need
++ * to implement &drm_crtc_funcs.set_crc_source. The debugfs files are
++ * automatically set up if that vfunc is set. CRC samples need to be captured
++ * in the driver by calling drm_crtc_add_crc_entry(). Depending on the driver
++ * and HW requirements, &drm_crtc_funcs.set_crc_source may result in a commit
++ * (even a full modeset).
++ *
++ * CRC results must be reliable across non-full-modeset atomic commits, so if a
++ * commit via DRM_IOCTL_MODE_ATOMIC would disable or otherwise interfere with
++ * CRC generation, then the driver must mark that commit as a full modeset
++ * (drm_atomic_crtc_needs_modeset() should return true). As a result, to ensure
++ * consistent results, generic userspace must re-setup CRC generation after a
++ * legacy SETCRTC or an atomic commit with DRM_MODE_ATOMIC_ALLOW_MODESET.
+  */
+ 
+ static int crc_control_show(struct seq_file *m, void *data)
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index 128d8b210621..7d14c11bdc0a 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -756,6 +756,9 @@ struct drm_crtc_funcs {
+ 	 * provided from the configured source. Drivers must accept an "auto"
+ 	 * source name that will select a default source for this CRTC.
+ 	 *
++	 * This may trigger an atomic modeset commit if necessary, to enable CRC
++	 * generation.
++	 *
+ 	 * Note that "auto" can depend upon the current modeset configuration,
+ 	 * e.g. it could pick an encoder or output specific CRC sampling point.
+ 	 *
+@@ -767,6 +770,7 @@ struct drm_crtc_funcs {
+ 	 * 0 on success or a negative error code on failure.
+ 	 */
+ 	int (*set_crc_source)(struct drm_crtc *crtc, const char *source);
++
+ 	/**
+ 	 * @verify_crc_source:
+ 	 *
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
