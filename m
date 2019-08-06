@@ -2,137 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D700283093
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7A5783098
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbfHFLT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 07:19:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55647 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfHFLT5 (ORCPT
+        id S1731392AbfHFLZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 07:25:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50580 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbfHFLZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:19:57 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x76BJLHk2142127
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 6 Aug 2019 04:19:21 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x76BJLHk2142127
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1565090363;
-        bh=HLAXuMY+kBpz9A22miFP8B5VmGp1wETWEEUWh5quAYo=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=j6er723ZjuBGiD/g1FAUnt5rE2bUvywBvwwPUpw4a+6ySA6DXLJcbmU9AFCJCjZGW
-         rMn/qP+73topYWW8FQiMMqnr+6JFfpTNkL2aaWgjf1uRWuucex8sLk2Y2z3AVTiuh8
-         ds8+HTX33IpU3Vz1dHi02HNQdgHxy8e3DQgdh0saEa0/3xI4Lns7YqIoasYdty+9uv
-         5DVudD3KbqholdWcozteo7YHUmfh2Abm/BQTnqGvs7sq8bwoeyWGNy5FGguVIAtmOm
-         pQ+/kLeW40UxArmVJvWU36jVTR+4kurP2V5tuyMGQshZa5D0yWEqA8NXZpii/+iUNe
-         EgSrcKklzrWkQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x76BJKFA2142116;
-        Tue, 6 Aug 2019 04:19:20 -0700
-Date:   Tue, 6 Aug 2019 04:19:20 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Dietmar Eggemann <tipbot@zytor.com>
-Message-ID: <tip-f4904815f97a934258445a8f763f6b6c48f007e7@git.kernel.org>
-Cc:     hpa@zytor.com, luca.abeni@santannapisa.it,
-        valentin.schneider@arm.com, tglx@linutronix.de,
-        dietmar.eggemann@arm.com, qais.yousef@arm.com,
-        juri.lelli@redhat.com, bristot@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org
-Reply-To: dietmar.eggemann@arm.com, tglx@linutronix.de,
-          qais.yousef@arm.com, luca.abeni@santannapisa.it, hpa@zytor.com,
-          valentin.schneider@arm.com, peterz@infradead.org,
-          mingo@kernel.org, bristot@redhat.com, juri.lelli@redhat.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190802145945.18702-2-dietmar.eggemann@arm.com>
-References: <20190802145945.18702-2-dietmar.eggemann@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/deadline: Fix double accounting of
- rq/running bw in push & pull
-Git-Commit-ID: f4904815f97a934258445a8f763f6b6c48f007e7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        Tue, 6 Aug 2019 07:25:47 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 417736050D; Tue,  6 Aug 2019 11:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565090746;
+        bh=VZyDa5xwZ3D5C5Lz2pDRthJNOUDBPslSb+tqQto/oEY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=i9CocGo4xSmqpSfcHurgJee3GRDFWlV4LXFkXa4/MVY6EVTmVy3U1d+R3lOa39ggu
+         yECQcoetuG0IhmOsRX5EG4shDtf2Gf9dXd6R3R7iaftVraI3P1T/EifwQ65r9UQhbj
+         PhFjuMIKjLxk6xg1+7O89OvzWTIbOiDCInG2jdlU=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CDC326050D;
+        Tue,  6 Aug 2019 11:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565090745;
+        bh=VZyDa5xwZ3D5C5Lz2pDRthJNOUDBPslSb+tqQto/oEY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YZs1dOW4g/bDQTyeDU53v1yjf+3Jt1AXmgOWTHnMDs7NQzobFpdn/tW9JRqaFV8vp
+         5dOx08ffxeR3jTa9DvmfHCWsHRPXIEhiF6BhGj0Sfr6c7yFgezYBpS5/2X+A0ZHDjj
+         RpvZQdgaBRnji1ixO05bgdS1PyLNk6OQjuQjyAeE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CDC326050D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Sahitya Tummala <stummala@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] f2fs: Fix indefinite loop in f2fs_gc()
+Date:   Tue,  6 Aug 2019 16:49:56 +0530
+Message-Id: <1565090396-7263-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f4904815f97a934258445a8f763f6b6c48f007e7
-Gitweb:     https://git.kernel.org/tip/f4904815f97a934258445a8f763f6b6c48f007e7
-Author:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-AuthorDate: Fri, 2 Aug 2019 15:59:43 +0100
-Committer:  Peter Zijlstra <peterz@infradead.org>
-CommitDate: Tue, 6 Aug 2019 12:49:18 +0200
+Policy - Foreground GC, LFS and greedy GC mode.
 
-sched/deadline: Fix double accounting of rq/running bw in push & pull
+Under this policy, f2fs_gc() loops forever to GC as it doesn't have
+enough free segements to proceed and thus it keeps calling gc_more
+for the same victim segment.  This can happen if the selected victim
+segment could not be GC'd due to failed blkaddr validity check i.e.
+is_alive() returns false for the blocks set in current validity map.
 
-{push,pull}_dl_task() always calls {de,}activate_task() with .flags=0
-which sets p->on_rq=TASK_ON_RQ_MIGRATING.
+Fix this by keeping track of such invalid segments and skip those
+segments for selection in get_victim_by_default() to avoid endless
+GC loop under such error scenarios.
 
-{push,pull}_dl_task()->{de,}activate_task()->{de,en}queue_task()->
-{de,en}queue_task_dl() calls {sub,add}_{running,rq}_bw() since
-p->on_rq==TASK_ON_RQ_MIGRATING.
-So {sub,add}_{running,rq}_bw() in {push,pull}_dl_task() is
-double-accounting for that task.
-
-Fix it by removing rq/running bw accounting in [push/pull]_dl_task().
-
-Fixes: 7dd778841164 ("sched/core: Unify p->on_rq updates")
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
-Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Qais Yousef <qais.yousef@arm.com>
-Link: https://lkml.kernel.org/r/20190802145945.18702-2-dietmar.eggemann@arm.com
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 ---
- kernel/sched/deadline.c | 8 --------
- 1 file changed, 8 deletions(-)
+v2: fix as per Chao's suggestion to handle this error case
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index ef5b9f6b1d42..46122edd8552 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2088,17 +2088,13 @@ retry:
- 	}
+ fs/f2fs/gc.c      | 15 ++++++++++++++-
+ fs/f2fs/segment.c |  5 +++++
+ fs/f2fs/segment.h |  3 +++
+ 3 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 8974672..321a78a 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -382,6 +382,14 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 			nsearched++;
+ 		}
  
- 	deactivate_task(rq, next_task, 0);
--	sub_running_bw(&next_task->dl, &rq->dl);
--	sub_rq_bw(&next_task->dl, &rq->dl);
- 	set_task_cpu(next_task, later_rq->cpu);
--	add_rq_bw(&next_task->dl, &later_rq->dl);
++		/*
++		 * skip selecting the invalid segno (that is failed due to block
++		 * validity check failed during GC) to avoid endless GC loop in
++		 * such cases.
++		 */
++		if (test_bit(segno, sm->invalid_segmap))
++			goto next;
++
+ 		secno = GET_SEC_FROM_SEG(sbi, segno);
  
- 	/*
- 	 * Update the later_rq clock here, because the clock is used
- 	 * by the cpufreq_update_util() inside __add_running_bw().
- 	 */
- 	update_rq_clock(later_rq);
--	add_running_bw(&next_task->dl, &later_rq->dl);
- 	activate_task(later_rq, next_task, ENQUEUE_NOCLOCK);
- 	ret = 1;
+ 		if (sec_usage_check(sbi, secno))
+@@ -975,6 +983,7 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	int off;
+ 	int phase = 0;
+ 	int submitted = 0;
++	struct sit_info *sit_i = SIT_I(sbi);
  
-@@ -2186,11 +2182,7 @@ static void pull_dl_task(struct rq *this_rq)
- 			resched = true;
+ 	start_addr = START_BLOCK(sbi, segno);
  
- 			deactivate_task(src_rq, p, 0);
--			sub_running_bw(&p->dl, &src_rq->dl);
--			sub_rq_bw(&p->dl, &src_rq->dl);
- 			set_task_cpu(p, this_cpu);
--			add_rq_bw(&p->dl, &this_rq->dl);
--			add_running_bw(&p->dl, &this_rq->dl);
- 			activate_task(this_rq, p, 0);
- 			dmin = p->dl.deadline;
+@@ -1008,8 +1017,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 		}
  
+ 		/* Get an inode by ino with checking validity */
+-		if (!is_alive(sbi, entry, &dni, start_addr + off, &nofs))
++		if (!is_alive(sbi, entry, &dni, start_addr + off, &nofs)) {
++			if (!test_and_set_bit(segno, sit_i->invalid_segmap))
++				f2fs_err(sbi, "invalid blkaddr %u in seg %u is found\n",
++						start_addr + off, segno);
+ 			continue;
++		}
+ 
+ 		if (phase == 2) {
+ 			f2fs_ra_node_page(sbi, dni.ino);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a661ac3..d45a1d3 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4017,6 +4017,10 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+ 		return -ENOMEM;
+ #endif
+ 
++	sit_i->invalid_segmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
++	if (!sit_i->invalid_segmap)
++		return -ENOMEM;
++
+ 	/* init SIT information */
+ 	sit_i->s_ops = &default_salloc_ops;
+ 
+@@ -4518,6 +4522,7 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+ #ifdef CONFIG_F2FS_CHECK_FS
+ 	kvfree(sit_i->sit_bitmap_mir);
+ #endif
++	kvfree(sit_i->invalid_segmap);
+ 	kvfree(sit_i);
+ }
+ 
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index b746028..bc5dbe8 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -246,6 +246,9 @@ struct sit_info {
+ 	unsigned long long min_mtime;		/* min. modification time */
+ 	unsigned long long max_mtime;		/* max. modification time */
+ 
++	/* list of segments to be ignored by GC in case of errors */
++	unsigned long *invalid_segmap;
++
+ 	unsigned int last_victim[MAX_GC_POLICY]; /* last victim segment # */
+ };
+ 
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+
