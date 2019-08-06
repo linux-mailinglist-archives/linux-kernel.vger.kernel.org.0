@@ -2,108 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E950982DC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3855182DC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 10:34:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732271AbfHFIbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 04:31:46 -0400
-Received: from foss.arm.com ([217.140.110.172]:58618 "EHLO foss.arm.com"
+        id S1732248AbfHFIeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 04:34:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33944 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbfHFIbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 04:31:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D59F337;
-        Tue,  6 Aug 2019 01:31:45 -0700 (PDT)
-Received: from [10.163.1.69] (unknown [10.163.1.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B3763F706;
-        Tue,  6 Aug 2019 01:31:42 -0700 (PDT)
-Subject: Re: [PATCH V2] fork: Improve error message for corrupted page tables
-To:     Vlastimil Babka <vbabka@suse.cz>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     dave.hansen@intel.com, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <3ef8a340deb1c87b725d44edb163073e2b6eca5a.1565059496.git.sai.praneeth.prakhya@intel.com>
- <5ba88460-cf01-3d53-6d13-45e650b4eacd@suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <926d50ce-4742-0ae7-474c-ef561fe23cdd@arm.com>
-Date:   Tue, 6 Aug 2019 14:02:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728056AbfHFIeQ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 04:34:16 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 07886859FF;
+        Tue,  6 Aug 2019 08:34:16 +0000 (UTC)
+Received: from krava (unknown [10.43.17.81])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0B4BA5C1D4;
+        Tue,  6 Aug 2019 08:34:13 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 10:34:13 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v2] perf diff: Report noisy for cycles diff
+Message-ID: <20190806083413.GG7695@krava>
+References: <20190724221432.26297-1-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <5ba88460-cf01-3d53-6d13-45e650b4eacd@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724221432.26297-1-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 06 Aug 2019 08:34:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 25, 2019 at 06:14:32AM +0800, Jin Yao wrote:
 
+SNIP
 
-On 08/06/2019 01:23 PM, Vlastimil Babka wrote:
-> 
-> On 8/6/19 5:05 AM, Sai Praneeth Prakhya wrote:
->> When a user process exits, the kernel cleans up the mm_struct of the user
->> process and during cleanup, check_mm() checks the page tables of the user
->> process for corruption (E.g: unexpected page flags set/cleared). For
->> corrupted page tables, the error message printed by check_mm() isn't very
->> clear as it prints the loop index instead of page table type (E.g: Resident
->> file mapping pages vs Resident shared memory pages). The loop index in
->> check_mm() is used to index rss_stat[] which represents individual memory
->> type stats. Hence, instead of printing index, print memory type, thereby
->> improving error message.
->>
->> Without patch:
->> --------------
->> [  204.836425] mm/pgtable-generic.c:29: bad p4d 0000000089eb4e92(800000025f941467)
->> [  204.836544] BUG: Bad rss-counter state mm:00000000f75895ea idx:0 val:2
->> [  204.836615] BUG: Bad rss-counter state mm:00000000f75895ea idx:1 val:5
->> [  204.836685] BUG: non-zero pgtables_bytes on freeing mm: 20480
->>
->> With patch:
->> -----------
->> [   69.815453] mm/pgtable-generic.c:29: bad p4d 0000000084653642(800000025ca37467)
->> [   69.815872] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_FILEPAGES val:2
->> [   69.815962] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_ANONPAGES val:5
->> [   69.816050] BUG: non-zero pgtables_bytes on freeing mm: 20480
->>
->> Also, change print function (from printk(KERN_ALERT, ..) to pr_alert()) so
->> that it matches the other print statement.
->>
->> Cc: Ingo Molnar <mingo@kernel.org>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
->> Acked-by: Dave Hansen <dave.hansen@intel.com>
->> Suggested-by: Dave Hansen <dave.hansen@intel.com>
->> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> I would also add something like this to reduce risk of breaking it in the
-> future:
-> 
-> ----8<----
-> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
-> index d7016dcb245e..a6f83cbe4603 100644
-> --- a/include/linux/mm_types_task.h
-> +++ b/include/linux/mm_types_task.h
-> @@ -36,6 +36,9 @@ struct vmacache {
->  	struct vm_area_struct *vmas[VMACACHE_SIZE];
->  };
+> +}
+> +
+>  double avg_stats(struct stats *stats)
+>  {
+>  	return stats->mean;
+> diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+> index 95b4de7a9d51..3448d319a220 100644
+> --- a/tools/perf/util/stat.h
+> +++ b/tools/perf/util/stat.h
+> @@ -8,14 +8,18 @@
+>  #include <sys/time.h>
+>  #include <sys/resource.h>
+>  #include <sys/wait.h>
+> +#include <stdio.h>
+>  #include "xyarray.h"
+>  #include "rblist.h"
+>  #include "perf.h"
+>  #include "event.h"
 >  
-> +/*
-> + * When touching this, update also resident_page_types in kernel/fork.c
-> + */
->  enum {
->  	MM_FILEPAGES,	/* Resident file mapping pages */
->  	MM_ANONPAGES,	/* Resident anonymous pages */
-> 
+> +#define NUM_SPARK_VALS	8 /* support spark line on first N items */
+> +
+>  struct stats {
+>  	double n, mean, M2;
+>  	u64 max, min;
+> +	unsigned long svals[NUM_SPARK_VALS];
+>  };
 
-Agreed and with that
+please do it without changing the 'struct stats', it's all
+over the place and diff would be the only user
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+thanks
+jirka
