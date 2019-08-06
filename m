@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5649D83640
+	by mail.lfdr.de (Postfix) with ESMTP id BF8EE83641
 	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387698AbfHFQGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:06:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43740 "EHLO
+        id S2387712AbfHFQG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:06:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43764 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387670AbfHFQGX (ORCPT
+        with ESMTP id S1726877AbfHFQG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:06:23 -0400
+        Tue, 6 Aug 2019 12:06:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hA5e1EMCJqgYejGyHIpPpeJ8rKRPHls2nPKmf9TbEpQ=; b=LJcJrwq5ZQewZswvYmY5mRyZpk
-        1/AAsPIRIW9UA0cst7PGgdo7pRhh4ePjyxEFTqCdsjh7EUORxH2CndglB5DcSZf9X3N8Sn6sKAltb
-        WWBPJiV/lfl2ul+hsqSrk3D/C5ivDdgjfKPGZTXQhSeNBkogGgnyFlzPfkD559I+eEh9rfGeY2c5w
-        FXeB6uScMW1EUmmFK+YdXOfdvFKqwMpCyBF9uzdonrdefrto7s1GONe11pm+yR0lE/qvtGNXNdtUe
-        37jSnqybZHehtfCReL3qhmxac2PdimKbmfpWhqJn7mnocY10bShkJ+bK3Y3BkCgnsn/hpbFZ7MPsn
-        8usxetzw==;
+        bh=Ip6Tv7CH1RUCf1zdL/7YnuvbR835Efr9iJJdAFn2xCE=; b=l2Q5OzCqYI6K/lwIUdGM/lRV7A
+        orDsZpzbT6FSVlceE/hay+znMxbpWMtaDTBHblMXvxERMhczytc2vd81s6BqxCZFw2V+kIC1ehQpp
+        k+Rn3H0gbs9x8Wd69M+u5RHtmAxHu33R+eq8t9FPKY41OyzLqR46OnL/3/uJyFvCu0wrsi53OR/mu
+        7/mdjcwkmKnzaKrkH5ypk1OTp+rOzbLBQZmdtU0MQuKonn5rYEozOJUnEkPDgPRfYRrrv/ltW03W1
+        B3GGyVUnYhFnzA1DZM9OJMMvOYQnSvrnyNNF7TcG618gJsqAjt8SdYkE4ny8fMR5VMnJN6+ThYxIg
+        Uq/3HCWw==;
 Received: from [195.167.85.94] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hv1yd-0000b0-BS; Tue, 06 Aug 2019 16:06:19 +0000
+        id 1hv1yf-0000bo-Tk; Tue, 06 Aug 2019 16:06:22 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -35,9 +35,9 @@ To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
 Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/15] mm: don't abuse pte_index() in hmm_vma_handle_pmd
-Date:   Tue,  6 Aug 2019 19:05:47 +0300
-Message-Id: <20190806160554.14046-10-hch@lst.de>
+Subject: [PATCH 10/15] mm: only define hmm_vma_walk_pud if needed
+Date:   Tue,  6 Aug 2019 19:05:48 +0300
+Message-Id: <20190806160554.14046-11-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806160554.14046-1-hch@lst.de>
 References: <20190806160554.14046-1-hch@lst.de>
@@ -49,28 +49,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pte_index is an internal arch helper in various architectures,
-without consistent semantics.  Open code that calculation of a PMD
-index based on the virtual address instead.
+We only need the special pud_entry walker if PUD-sized hugepages and
+pte mappings are supported, else the common pagewalk code will take
+care of the iteration.  Not implementing this callback reduced the
+amount of code compiled for non-x86 platforms, and also fixes compile
+failures with other architectures when helpers like pud_pfn are not
+implemented.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
- mm/hmm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/hmm.c | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
 diff --git a/mm/hmm.c b/mm/hmm.c
-index 03d37e102e3b..2083e4db46f5 100644
+index 2083e4db46f5..5e7afe685213 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -486,7 +486,7 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
- 	if (pmd_protnone(pmd) || fault || write_fault)
- 		return hmm_vma_walk_hole_(addr, end, fault, write_fault, walk);
+@@ -455,15 +455,6 @@ static inline uint64_t pmd_to_hmm_pfn_flags(struct hmm_range *range, pmd_t pmd)
+ 				range->flags[HMM_PFN_VALID];
+ }
  
--	pfn = pmd_pfn(pmd) + pte_index(addr);
-+	pfn = pmd_pfn(pmd) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
- 	for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++) {
- 		if (pmd_devmap(pmd)) {
- 			pgmap = get_dev_pagemap(pfn, pgmap);
+-static inline uint64_t pud_to_hmm_pfn_flags(struct hmm_range *range, pud_t pud)
+-{
+-	if (!pud_present(pud))
+-		return 0;
+-	return pud_write(pud) ? range->flags[HMM_PFN_VALID] |
+-				range->flags[HMM_PFN_WRITE] :
+-				range->flags[HMM_PFN_VALID];
+-}
+-
+ static int hmm_vma_handle_pmd(struct mm_walk *walk,
+ 			      unsigned long addr,
+ 			      unsigned long end,
+@@ -700,10 +691,19 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 	return 0;
+ }
+ 
+-static int hmm_vma_walk_pud(pud_t *pudp,
+-			    unsigned long start,
+-			    unsigned long end,
+-			    struct mm_walk *walk)
++#if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && \
++    defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
++static inline uint64_t pud_to_hmm_pfn_flags(struct hmm_range *range, pud_t pud)
++{
++	if (!pud_present(pud))
++		return 0;
++	return pud_write(pud) ? range->flags[HMM_PFN_VALID] |
++				range->flags[HMM_PFN_WRITE] :
++				range->flags[HMM_PFN_VALID];
++}
++
++static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
++		struct mm_walk *walk)
+ {
+ 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+ 	struct hmm_range *range = hmm_vma_walk->range;
+@@ -765,6 +765,9 @@ static int hmm_vma_walk_pud(pud_t *pudp,
+ 
+ 	return 0;
+ }
++#else
++#define hmm_vma_walk_pud	NULL
++#endif
+ 
+ static int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
+ 				      unsigned long start, unsigned long end,
 -- 
 2.20.1
 
