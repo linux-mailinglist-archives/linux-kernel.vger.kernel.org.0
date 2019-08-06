@@ -2,112 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A497D8371D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1FB9836FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387937AbfHFQjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:39:07 -0400
-Received: from mxwww.masterlogin.de ([95.129.51.220]:38588 "EHLO
-        mxwww.masterlogin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732743AbfHFQjE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:39:04 -0400
-X-Greylist: delayed 505 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 12:39:03 EDT
-Received: from mxout1.routing.net (unknown [192.168.10.81])
-        by new.mxwww.masterlogin.de (Postfix) with ESMTPS id E164A96CDE;
-        Tue,  6 Aug 2019 16:30:38 +0000 (UTC)
-Received: from mxbox1.masterlogin.de (unknown [192.168.10.253])
-        by mxout1.routing.net (Postfix) with ESMTP id 1E41143C54;
-        Tue,  6 Aug 2019 16:30:39 +0000 (UTC)
-Received: from localhost.localdomain (fttx-pool-217.61.153.94.bambit.de [217.61.153.94])
-        by mxbox1.masterlogin.de (Postfix) with ESMTPSA id DF773403C7;
-        Tue,  6 Aug 2019 18:30:37 +0200 (CEST)
-From:   Frank Wunderlich <frank-w@public-files.de>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Allison Randal <allison@lohutok.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Eddie Huang <eddie.huang@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Tianping . Fang" <tianping.fang@mediatek.com>
-Cc:     Josef Friedl <josef.friedl@speed.at>,
-        Frank Wunderlich <frank-w@public-files.de>
-Subject: [PATCH v4 10/10] arm: dts: mt6323: add keys, power-controller, rtc and codec
-Date:   Tue,  6 Aug 2019 18:30:26 +0200
-Message-Id: <20190806163026.8530-2-frank-w@public-files.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190806163026.8530-1-frank-w@public-files.de>
-References: <20190806163026.8530-1-frank-w@public-files.de>
+        id S2387853AbfHFQal (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:30:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37122 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730265AbfHFQal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 12:30:41 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B366A3098575;
+        Tue,  6 Aug 2019 16:30:37 +0000 (UTC)
+Received: from astarta.redhat.com (ovpn-117-61.ams2.redhat.com [10.36.117.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2D3960C83;
+        Tue,  6 Aug 2019 16:30:36 +0000 (UTC)
+From:   Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ed Kellett <e@kellett.im>
+Subject: [RFC PATCH] gcc-9: workaround array bounds warning on boot_params cleaning
+Date:   Tue,  6 Aug 2019 19:30:34 +0300
+Message-Id: <20190806163034.6105-1-yauheni.kaliuta@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 06 Aug 2019 16:30:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Friedl <josef.friedl@speed.at>
+The code is supposed to clear several fields in the structure with
+memset() and it produces the warning:
 
-support poweroff and power-related keys on bpi-r2
+In file included from arch/x86/kernel/head64.c:17:
+In function ‘memset’,
+    inlined from ‘sanitize_boot_params’ at ./arch/x86/include/asm/bootparam_utils.h:40:3,
+    inlined from ‘copy_bootdata’ at arch/x86/kernel/head64.c:391:2:
+./include/linux/string.h:344:9: warning: ‘__builtin_memset’ offset [197, 448] from the object at ‘boot_params’ is out of the bounds of referenced subobject ‘ext_ramdisk_image’ with type ‘unsigned int’ at offset 192 [-Warray-bounds]
+  344 |  return __builtin_memset(p, c, size);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Suggested-by: Frank Wunderlich <frank-w@public-files.de>
-Signed-off-by: Josef Friedl <josef.friedl@speed.at>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+since gcc is aware of the field sizes of the structure.
+
+Blind gcc treating the structure as a byte array and calculate
+positions with offsetof().
+
+Suggested-by: Ed Kellett <e@kellett.im>
+Signed-off-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
 ---
-changes since v3: none
-changes since v2: none (=v2 part 7)
+ arch/x86/include/asm/bootparam_utils.h | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
- arch/arm/boot/dts/mt6323.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/arch/arm/boot/dts/mt6323.dtsi b/arch/arm/boot/dts/mt6323.dtsi
-index ba397407c1dd..7fda40ab5fe8 100644
---- a/arch/arm/boot/dts/mt6323.dtsi
-+++ b/arch/arm/boot/dts/mt6323.dtsi
-@@ -238,5 +238,32 @@
- 				regulator-enable-ramp-delay = <216>;
- 			};
- 		};
-+
-+		mt6323keys: mt6323keys {
-+			compatible = "mediatek,mt6323-keys";
-+			mediatek,long-press-mode = <1>;
-+			power-off-time-sec = <0>;
-+
-+			power {
-+				linux,keycodes = <116>;
-+				wakeup-source;
-+			};
-+
-+			home {
-+				linux,keycodes = <114>;
-+			};
-+		};
-+
-+		codec: mt6397codec {
-+			compatible = "mediatek,mt6397-codec";
-+		};
-+
-+		power-controller {
-+			compatible = "mediatek,mt6323-pwrc";
-+		};
-+
-+		rtc {
-+			compatible = "mediatek,mt6323-rtc";
-+		};
- 	};
- };
+diff --git a/arch/x86/include/asm/bootparam_utils.h b/arch/x86/include/asm/bootparam_utils.h
+index 101eb944f13c..16e567a08b54 100644
+--- a/arch/x86/include/asm/bootparam_utils.h
++++ b/arch/x86/include/asm/bootparam_utils.h
+@@ -37,12 +37,14 @@ static void sanitize_boot_params(struct boot_params *boot_params)
+ 	if (boot_params->sentinel) {
+ 		/* fields in boot_params are left uninitialized, clear them */
+ 		boot_params->acpi_rsdp_addr = 0;
+-		memset(&boot_params->ext_ramdisk_image, 0,
+-		       (char *)&boot_params->efi_info -
+-			(char *)&boot_params->ext_ramdisk_image);
+-		memset(&boot_params->kbd_status, 0,
+-		       (char *)&boot_params->hdr -
+-		       (char *)&boot_params->kbd_status);
++		memset((u8 *)boot_params + offsetof(struct boot_params, ext_ramdisk_image),
++		       0,
++		       offsetof(struct boot_params,  efi_info) -
++			offsetof(struct boot_params, ext_ramdisk_image));
++		memset((u8 *)boot_params + offsetof(struct boot_params, _pad7[0]),
++		       0,
++		       offsetof(struct boot_params, edd_mbr_sig_buffer[0]) -
++			offsetof(struct boot_params, _pad7[0]));
+ 		memset(&boot_params->_pad7[0], 0,
+ 		       (char *)&boot_params->edd_mbr_sig_buffer[0] -
+ 			(char *)&boot_params->_pad7[0]);
 -- 
-2.17.1
+2.22.0
 
