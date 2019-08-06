@@ -2,105 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5729C83602
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEEE88360D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 17:59:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387557AbfHFP55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 11:57:57 -0400
-Received: from vps.xff.cz ([195.181.215.36]:55450 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387527AbfHFP5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 11:57:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1565107072; bh=hF73OcLMSBQTt85tuavHzM/b80WjbO/5pa+6hf7Ij0Q=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=L32f2mT8XPQVCjlNq+xzSMAm+p1moJpligfxrFrnmeGmNpQDjL751AvS62z1xm8iX
-         PpnbV0LiMXIP2NkYYb7qaGz8kr4Fy2DtLlFbT5Q35ejNCy3rNU+c4BL4oc8MAEEIr0
-         5Kv974GSt2ff+5OPqmAtHCq4WIwHHXRF7Uv4CR/s=
-From:   megous@megous.com
-To:     linux-sunxi@googlegroups.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc:     Ondrej Jirman <megous@megous.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 4/4] arm64: dts: allwinner: orange-pi-3: Enable HDMI output
-Date:   Tue,  6 Aug 2019 17:57:43 +0200
-Message-Id: <20190806155744.10263-5-megous@megous.com>
-In-Reply-To: <20190806155744.10263-1-megous@megous.com>
-References: <20190806155744.10263-1-megous@megous.com>
+        id S1732483AbfHFP7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 11:59:43 -0400
+Received: from mail-eopbgr700087.outbound.protection.outlook.com ([40.107.70.87]:12545
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730028AbfHFP7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 11:59:43 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ia19oBkJWIUYPsZNN3LEEJo8ihhEIUVRbEls+zLzelj+v64hexByvd2HwVwIDmy6oMkfEZSQsW9Xm8Rkz1UT+M5a/plGwRBvmDgyE0gWmNLvv3P2g171sQWoWiIg33Yjr2UnNy50ThsRhYzxLLY45th/EOrCX+urfM6KTauc7lg/4mpJ2ZS5Qi4ZHSf+RbqiBe6MECcPEYyMwwOdC9TvQjmvwSxdFITq+N+8RkS5UgQVw4G7GY5ZOF4wjrv3SLh5+0WgPQ1gL7VQz1tq1NMTLpqc7TITVvtdZvfq9z1SrLddzn5cCe1OyI6Q0MxZA4qceizzpP9kVB+kb9kpOBLFmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s50ipMqJ9TIIGsNTYt3I+M9552nfib8XJO14l4pLCnM=;
+ b=m1w5fdMm3RFLcA0L5xHFv22FX21/QaRHmoJEnxj/+tzIM0d+H0pWBjCwwkK6rcA7kD5tpQ7aAMDqS52Yhj2HUCJykEvokKJdx8It9zMSEpOtpLqF7RR/OUbrSTX9oHLD0J+wY9dHGQJhaLwUIWx6lwMfOEYNp989BMb1DZlrMFSDLQDkuawvYwjsrEEEiI4iGA/xNRKBsOztKlNr77QQz7dvjx18jD93wSzGGzwbxXONFa7u+doCO+wCN+Igpbw/5iknu+v48gWLO3aJ09u5A0gGgGWG5clQSfwnSB7AtthUOaCl2Tvc3Ok6v8OoP7LafDopOuRDi08hVBB4uwgcZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=amd.com;dmarc=pass action=none header.from=amd.com;dkim=pass
+ header.d=amd.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s50ipMqJ9TIIGsNTYt3I+M9552nfib8XJO14l4pLCnM=;
+ b=hQds1suO5xt6bRg/MX/6/EiYSC/+URFz1LMDLh+0tY9n3SCpapCvZLAFQcuyJHAUdNargzxTaGRZeqsdLYz20KnnbtHjYVMw2eZAnIaWlb9ePABLSI2y4zqBAORi5a6PjFb+HzRRl7T+rT61VlZaLG/Koc1BP1CdrW5sJl1LJ4c=
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.104.150) by
+ DM6PR12MB3372.namprd12.prod.outlook.com (20.178.198.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.16; Tue, 6 Aug 2019 15:59:40 +0000
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::9c3d:8593:906c:e4f7]) by DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::9c3d:8593:906c:e4f7%6]) with mapi id 15.20.2136.018; Tue, 6 Aug 2019
+ 15:59:40 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     Lucas Stach <l.stach@pengutronix.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: Regression due to d98849aff879 (dma-direct: handle
+ DMA_ATTR_NO_KERNEL_MAPPING in common code)
+Thread-Topic: Regression due to d98849aff879 (dma-direct: handle
+ DMA_ATTR_NO_KERNEL_MAPPING in common code)
+Thread-Index: AQHVTDc5jxhkF6eBGE2vQ7mpw/Pby6bt/Q4AgAAjGICAAAcMAIAAAMsAgAADTYCAABhgAIAAA80A
+Date:   Tue, 6 Aug 2019 15:59:40 +0000
+Message-ID: <5bd42e33-8077-ea23-a9f3-c575db4edada@amd.com>
+References: <1565082809.2323.24.camel@pengutronix.de>
+ <20190806113318.GA20215@lst.de>
+ <41cc93b1-62b5-7fb6-060d-01982e68503b@amd.com>
+ <20190806140408.GA22902@lst.de> <1565100418.2323.32.camel@pengutronix.de>
+ <78833204-cd30-1a4b-54e3-1580018c6d57@amd.com>
+ <20190806154602.GB25050@lst.de>
+In-Reply-To: <20190806154602.GB25050@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0701CA0014.namprd07.prod.outlook.com
+ (2603:10b6:803:28::24) To DM6PR12MB3163.namprd12.prod.outlook.com
+ (2603:10b6:5:182::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1e06a7f0-e288-4379-79f2-08d71a8716cb
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB3372;
+x-ms-traffictypediagnostic: DM6PR12MB3372:
+x-microsoft-antispam-prvs: <DM6PR12MB3372829B3FD37BDAD14D8497ECD50@DM6PR12MB3372.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0121F24F22
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(396003)(366004)(136003)(199004)(189003)(31696002)(14454004)(81156014)(6916009)(81166006)(6116002)(478600001)(36756003)(446003)(86362001)(68736007)(8676002)(6246003)(52116002)(8936002)(25786009)(99286004)(4326008)(305945005)(53936002)(7736002)(66946007)(316002)(53546011)(66476007)(66556008)(64756008)(66446008)(386003)(229853002)(2906002)(6506007)(71200400001)(486006)(76176011)(6512007)(6436002)(186003)(71190400001)(476003)(66066001)(102836004)(26005)(256004)(11346002)(5660300002)(6486002)(54906003)(3846002)(2616005)(4744005)(31686004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3372;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: JayTaF7e7m7lsodtjsJdJjNNKNVD6QASYyCaY288FicUNHSsn3eHqfEA7xoGHX93Wy7nhHjezfuhqRKwKy8DxeE8q+keKVrfVi1fE5fvzQiDrmdt91qQDrUkvjbuCG479oDmuz+46T/Q36BFrVn6ovo6VyEsUxPaimEetd23ohc7DtD7vo/EbvB1kG9anXWfs1DBm2o4y1dilehoxaSaEVDiH5VAP0/1lgcU6zWShaajyP3NZ5PDq3uaOp2bubLK1jP/1JiCBQyEFce6OCFdWoDinmF/5Aw0IaeIiRYmOhmToVFo65LbS+pTtXUIxJUSWE/T5Uch93NzfjmQYduSENloabSY2xzz6m8w4f3F84AGmYgvnkvn1gmW9qCUoGO4qAh0m4tmYmIWNbpg8GT0gIg6CpKefQ+up8CS2XCxYOg=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8BEB945DE66C6D41B88ACA6F1C9FCD23@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e06a7f0-e288-4379-79f2-08d71a8716cb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2019 15:59:40.3964
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tlendack@amd.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3372
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Jirman <megous@megous.com>
-
-Orange Pi 3 has a DDC_CEC_EN signal connected to PH2, that enables the DDC
-I2C bus voltage shifter. Before EDID can be read, we need to pull PH2 high.
-This is realized by the ddc-en-gpios property.
-
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-index 2c6807b74ff6..01bb1bafe284 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-@@ -22,6 +22,18 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		ddc-en-gpios = <&pio 7 2 GPIO_ACTIVE_HIGH>; /* PH2 */
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -72,6 +84,10 @@
- 	cpu-supply = <&reg_dcdca>;
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -91,6 +107,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
--- 
-2.22.0
-
+T24gOC82LzE5IDEwOjQ2IEFNLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90ZToNCj4gT24gVHVlLCBB
+dWcgMDYsIDIwMTkgYXQgMDI6MTg6NDlQTSArMDAwMCwgTGVuZGFja3ksIFRob21hcyB3cm90ZToN
+Cj4+IEkgdGhpbmsgeW91IG5lZWQgdG8ga2VlcCBldmVyeXRoaW5nIGluc2lkZSB0aGUgb3JpZ2lu
+YWwgaWYgc3RhdGVtZW50IHNpbmNlDQo+PiB0aGUgY2FsbGVyIGlzIGV4cGVjdGluZyBhIHBhZ2Ug
+cG9pbnRlciB0byBiZSByZXR1cm5lZCBpbiB0aGlzIGNhc2UgYW5kIG5vdA0KPj4gdGhlIHBhZ2Vf
+YWRkcmVzcygpIHdoaWNoIGlzIHJldHVybmVkIHdoZW4gdGhlIERNQV9BVFRSX05PX0tFUk5FTF9N
+QVBQSU5HDQo+PiBpcyBub3QgcHJlc2VudC4NCj4gDQo+IERNQV9BVFRSX05PX0tFUk5FTF9NQVBQ
+SU5HIGlzIGRlZmluZWQgdG8gcmV0dXJuIGFuIG9wYXF1ZSBjb29raWUsDQo+IHdoaWNoIGp1c3Qg
+aGFwcGVucyB0byBiZSBhIHBhZ2UgcG9pbnRlci4gIFNvIGlmIHdlIGZpeCB1cCB0aGUgZnJlZSBz
+aWRlDQo+IGFzIHBvaW50ZWQgb3V0IGJ5IEx1Y2FzIHdlIHNob3VsZCBiZSBmaW5lLg0KDQpBcyBs
+b25nIGFzIHR3byBkaWZmZXJlbnQgY29va2llIHR5cGVzIChwYWdlIHBvaW50ZXIgZm9yIGVuY3J5
+cHRlZCBETUENCmFuZCB2aXJ0dWFsIGFkZHJlc3MgcmV0dXJuZWQgZnJvbSBwYWdlX2FkZHJlc3Mo
+KSBmb3IgdW5lbmNyeXB0ZWQgRE1BKQ0KaXMgb2suIEknbSBqdXN0IG5vdCBmYW1pbGlhciB3aXRo
+IGhvdyB0aGUgY29va2llIGlzIHVzZWQgaW4gYW55IG90aGVyDQpmdW5jdGlvbnMsIGlmIGF0IGFs
+bC4NCg0KVGhhbmtzLA0KVG9tDQoNCj4gDQo=
