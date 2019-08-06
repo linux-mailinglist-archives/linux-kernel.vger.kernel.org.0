@@ -2,116 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B140383097
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 249668309C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 13:26:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbfHFLZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 07:25:43 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:43241 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfHFLZm (ORCPT
+        id S1732741AbfHFL0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 07:26:09 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38100 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbfHFL0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 07:25:42 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M8k65-1hz6Jj49jd-004lXd; Tue, 06 Aug 2019 13:25:11 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Guenter Roeck <linux@roeck-us.net>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mips: fix vdso32 build, again
-Date:   Tue,  6 Aug 2019 13:24:50 +0200
-Message-Id: <20190806112509.3244608-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 6 Aug 2019 07:26:09 -0400
+Received: by mail-pl1-f194.google.com with SMTP id az7so37726463plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 04:26:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eQDxozI2qjukpUkcofnkYlDLvFKSd1P/XqoYuWp8Iko=;
+        b=KdWHadNeW6pa2dnhFD6vGAJeFuZ4bU94l8h5hGmJoB6iVklb97AFdq2hkigQMM5/UW
+         duwzf5xlAas4hj7F57fOHGW4Fbh0eAqKIwiEUMntWH0rzszBSsXQxg7vmdW0vXnYKvIV
+         u177tjd2FQ7ASDBdqt2QwZ/5p/Ocdpipr0UPw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eQDxozI2qjukpUkcofnkYlDLvFKSd1P/XqoYuWp8Iko=;
+        b=iR1F76b7NfaVtIKttegJ2xvOaosUa8GQzn6YkwJbkQSWNAja3b4MN5/DFsAP1EP4lN
+         WzkqFdEA0ut5OT41agDM1wdAn/DKi/GQU80HlFYbEkyOB2p+eI/MSZQqNlpOkE8fapLD
+         8piANTIWTFlDpvn37pfB4nY1NOOxOK/Qe5xocQtURgAqN1aoi+8X/KHG76zZtG0Q3eEI
+         y/qNVVpV7qIQ/ZUYg6H79VxVMXCE/wKZFFzlxDaPYET/ZGkk7S1H2U2k4DwvByCUni1F
+         VgGSfjWqj59zej32sbEIB8lb41DEVOtq0HyAb5XDFKV/QM8EeKfc6XYie5KYQZwEGbmn
+         0Lvw==
+X-Gm-Message-State: APjAAAVSy138xI29E7t23MBehtuD9su5/RLYAFj+4CMO+GTLRNLSLytV
+        m2fjamT9v8oks8HUffpVAufspw==
+X-Google-Smtp-Source: APXvYqyhzcoKkLyUNInxKHTRQ0D58ehVR/MM5voEdZBk61kMSmPqKu2JfV8+IDkI8ipd4TE0B17EDQ==
+X-Received: by 2002:a17:902:a413:: with SMTP id p19mr2767311plq.134.1565090768446;
+        Tue, 06 Aug 2019 04:26:08 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id h14sm113010833pfq.22.2019.08.06.04.26.07
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 04:26:07 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 07:26:06 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
+        paulmck@linux.ibm.com, Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
+Message-ID: <20190806112606.GC117316@google.com>
+References: <20190805170451.26009-1-joel@joelfernandes.org>
+ <20190805170451.26009-3-joel@joelfernandes.org>
+ <20190806084203.GJ11812@dhcp22.suse.cz>
+ <20190806103627.GA218260@google.com>
+ <20190806104755.GR11812@dhcp22.suse.cz>
+ <20190806110737.GB32615@google.com>
+ <20190806111452.GW11812@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:tO/9/ogRr4bq49wvtFsjMqiEM/g67IcuFQnQPhgC0dvaFZES6do
- OlodkhyJzcaUlj8yPvV6FTl8C2G92YAL1i1PlwpwX2J6QwOiVKeGnGjHTCxRbFu30QNIbAT
- 2YNZAMFaWPnxbKEM/6tW1ObaR95gkjbi70KKIAda6F3xe/4ER1qdiETHtg0gEZOd4TlmNRC
- rgTB5ChE+OglZto5/nuWQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NZiPuG2SpzM=:kx7Kz5EW9wktHhBlvjg5oO
- KbOlkmhGRCPmWY46mGnIpEqazZADvwPUwH+atGnrT95d5PIJFXHVLXreejD6+dFc5nm2Ru7qu
- u8fKKpKzGQrv479Sj6JABiogwuOgKIUzHQd+hlFv2+rJNEo1xdxWsHrS0zjt1e1r/eHPto4fc
- pxIyn+/7qUssiJa9emL7400pkywPlh46nASgze+QxHaW3yU63BAV+kjiWJ1adK4Jg/Z4gQ5UU
- r7Lw4HfJ23bRWmkHrD6FV+ffGhHYRf5RWlV98oWUjNvKr4HcOa/RKUkrvDiOrNKIJs8vdq6f4
- 7uDskf7o5tT62etkkklDSfeHgPkbZ1UJYhHyUe4E7kJNYRR9HCMmOTLTOMBiLALxE5Yy9mp6W
- 415dCzRwRjMf1poCdb/lx481E7jKEEqoVERXfkuUsriu2y5z5nCnRqifKp0z80pMqgCkLfwcl
- XXs5pRCVZicyUopNgfkw7X6MY8EpeYIThU8TTWtnjJfSHpTehxn7rvE9BHkWl28REU5KKxD7P
- F5LxdVG/e2D7D/YiP5YaPfbGce0oE95GJcjO7NGrM/o1PigZVUtZ7LhcT1F0UmGtb8EQBKUS1
- c26hgRYddkHRhyfajRqe4nvzc0f26/Pkt6ntJcWziKwU9SUFDXY19flWwa9v6Bn39IO2NbJ/m
- F3Vph5R8IpIk5sLRnSRrudGWiD6GditAx4aHqD3NZKGbTkDx+6xzMDkHXJaeKHjaYbXgonMDA
- r8TAdcOTIxUcXqVOjQyKmbIkaX8g8r99UVnYTg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806111452.GW11812@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generic vdso support adds the same #if hack in two places,
-asm/vdso/vdso.h and config-n32-o32-env.c, but only the second
-is actually used. The result lacks the BUILD_VDSO32_64 macro,
-and that triggers a build error:
+On Tue, Aug 06, 2019 at 01:14:52PM +0200, Michal Hocko wrote:
+> On Tue 06-08-19 20:07:37, Minchan Kim wrote:
+> > On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
+> > > On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
+> > > > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
+> > > > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
+> > > > > > This bit will be used by idle page tracking code to correctly identify
+> > > > > > if a page that was swapped out was idle before it got swapped out.
+> > > > > > Without this PTE bit, we lose information about if a page is idle or not
+> > > > > > since the page frame gets unmapped.
+> > > > > 
+> > > > > And why do we need that? Why cannot we simply assume all swapped out
+> > > > > pages to be idle? They were certainly idle enough to be reclaimed,
+> > > > > right? Or what does idle actualy mean here?
+> > > > 
+> > > > Yes, but other than swapping, in Android a page can be forced to be swapped
+> > > > out as well using the new hints that Minchan is adding?
+> > > 
+> > > Yes and that is effectivelly making them idle, no?
+> > 
+> > 1. mark page-A idle which was present at that time.
+> > 2. run workload
+> > 3. page-A is touched several times
+> > 4. *sudden* memory pressure happen so finally page A is finally swapped out
+> > 5. now see the page A idle - but it's incorrect.
+> 
+> Could you expand on what you mean by idle exactly? Why pageout doesn't
+> really qualify as "mark-idle and reclaim"? Also could you describe a
+> usecase where the swapout distinction really matters and it would lead
+> to incorrect behavior?
 
-./include/linux/page-flags-layout.h:95:2: error: #error "Not enough bits in page flags"
+Michal,
+Did you read this post ? :
+https://lore.kernel.org/lkml/20190806104715.GC218260@google.com/T/#m4ece68ceaf6e54d4d29e974f5f4c1080e733f6c1
 
-Move the macro into the other place, and remove the duplicated
-bits.
+Just wanted to be sure you did not miss it.
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Fixes: ee38d94a0ad8 ("page flags: prioritize kasan bits over last-cpuid")
-Fixes: 24640f233b46 ("mips: Add support for generic vDSO")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Please fold into the vdso patch
----
- arch/mips/include/asm/vdso/vdso.h   | 11 -----------
- arch/mips/vdso/config-n32-o32-env.c |  1 +
- 2 files changed, 1 insertion(+), 11 deletions(-)
+thanks,
 
-diff --git a/arch/mips/include/asm/vdso/vdso.h b/arch/mips/include/asm/vdso/vdso.h
-index 3b96db735f7f..737ddfc3411c 100644
---- a/arch/mips/include/asm/vdso/vdso.h
-+++ b/arch/mips/include/asm/vdso/vdso.h
-@@ -6,17 +6,6 @@
- 
- #include <asm/sgidefs.h>
- 
--#if _MIPS_SIM != _MIPS_SIM_ABI64 && defined(CONFIG_64BIT)
--
--/* Building 32-bit VDSO for the 64-bit kernel. Fake a 32-bit Kconfig. */
--#define BUILD_VDSO32_64
--#undef CONFIG_64BIT
--#define CONFIG_32BIT 1
--#ifndef __ASSEMBLY__
--#include <asm-generic/atomic64.h>
--#endif
--#endif
--
- #ifndef __ASSEMBLY__
- 
- #include <asm/asm.h>
-diff --git a/arch/mips/vdso/config-n32-o32-env.c b/arch/mips/vdso/config-n32-o32-env.c
-index da4994b2b3e5..7f8d957abd4a 100644
---- a/arch/mips/vdso/config-n32-o32-env.c
-+++ b/arch/mips/vdso/config-n32-o32-env.c
-@@ -12,6 +12,7 @@
- 
- #define CONFIG_32BIT 1
- #define CONFIG_GENERIC_ATOMIC64 1
-+#define BUILD_VDSO32_64
- 
- #endif
- 
--- 
-2.20.0
+ - Joel
 
