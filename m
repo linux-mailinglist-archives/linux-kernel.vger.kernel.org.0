@@ -2,147 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53028829D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 04:59:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E026E829E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 05:05:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731455AbfHFC7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 5 Aug 2019 22:59:01 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40526 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbfHFC7B (ORCPT
+        id S1730915AbfHFDFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 5 Aug 2019 23:05:18 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44975 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728892AbfHFDFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Aug 2019 22:59:01 -0400
-Received: by mail-pl1-f193.google.com with SMTP id a93so37164499pla.7;
-        Mon, 05 Aug 2019 19:59:00 -0700 (PDT)
+        Mon, 5 Aug 2019 23:05:17 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 44so52090472qtg.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2019 20:05:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=lca.pw; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=a4Ub+sv1k1e8nsgh66la+6tG6yPygg10HKO3z6Kulf8=;
-        b=WHN5rfgBqk16eNjZkhFHQ7ySxBkrv4oo0C1U4UR12Z3MJG3WVsRY856VOKl72aygO8
-         Hu4ZjRWlzceL40MjxAYvPFswixkpGlWILzBT6HTOxAewfYVYsGNNInhK0nWGjs2NdzQH
-         SC8xAdlm8qNTkGSsobxV5PzkxEH5GHOBMYHI9Cit3nbiEKrCaPStlT4pOXD6ahUTWs06
-         Wr0vIFd27Q6lQdTGRdS7ko5y8Au5L+HRX6WyQoZVHVZgIadFJ9gD2hVIL++8E3AAZN9n
-         hK7O8RgnTM1pAHb95pomOr8lGCySOCCmXdWIxUKmPlbZy6wVZlRqitsCIWF7M3ZZPvXP
-         9QJg==
+        bh=PyvuAycN0W7JrDx3dUfXKO7/FDDYlxGkKJhnNFbl+Qo=;
+        b=haLVWJVZHX58MY+5/AxQGIuz/IAD+SOxcyhpUofD684Gyjqc+/Zk+t4Vz9XImOm7Qf
+         nwAXh/JpsapL6n55M0UPxAjiS+Zar79YScfY+eGLRiRAzNUB+EkjIPlC4d/gfLLP7Pyr
+         OldecaVOr2KbtJWvGOLoxk1CfEUWb+0Aj7KvTH+AuWcNkCPq8wZKeXnkbQKkTmCbmwjC
+         YA3I3gedGvZjINpM7OqFTbn/FmWHBY2VwuxQ634E9FnI7xOVl7f+7j8QBMyFywIfqpju
+         ppLvfIy3HTrL1NVP43XfLMqmOkIWf0jZUV1mNbiT1fygm/PKqF6UBpEwnq3p802grxZW
+         grBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=a4Ub+sv1k1e8nsgh66la+6tG6yPygg10HKO3z6Kulf8=;
-        b=O1TbSGEEmv6wCnWWc1mks4vFXRH5y2UV0Wh2EqOGZo+B/fHEHavWkTnQwxeUMzaDzq
-         0Jiegjbgpigsad2cGYRY6eUPZzbQFBA+pFtKLYJaulDVFjEet4J4GF9/fMFq2eRdfLkc
-         1zmjaMAYUilnoEGWAq4k63VIlxWdmP+MBsq0UuYnXtJHUY5BJLuOXlkvybtptbqQz7Qp
-         G0G1g2jUnZEcBcBDKpkLfLtPzmLNUNT4E5PuKQJo2vnYsOE+OmDA/DWsE5Vx0XY7gXa5
-         izYprAMp0GJ1OxaJe8QV8c7rHLVjcKdRhYur6CKEELMoi3HUtWsyIVf3FsPqZtAUlNKT
-         wjdw==
-X-Gm-Message-State: APjAAAUfmaReDwsTsZ48oiXLaz0IwGMh8l0XAIcHpKzJ4ohw5j8P2kuv
-        kUbzCBhIPR3x++8+vV2Lu5E=
-X-Google-Smtp-Source: APXvYqzZf8fM+1aEIUQxGGaPBdMFTxp6ZvswfiPWM17x6tGZzrhVFt+qMfFX9pAqis1lkaWrRiaxPw==
-X-Received: by 2002:a17:902:1e9:: with SMTP id b96mr843699plb.277.1565060340386;
-        Mon, 05 Aug 2019 19:59:00 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id l189sm103166522pfl.7.2019.08.05.19.58.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 05 Aug 2019 19:58:59 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Vishal Kulkarni <vishal@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH 2/2] cxgb4: smt: Use normal int for refcount
-Date:   Tue,  6 Aug 2019 10:58:54 +0800
-Message-Id: <20190806025854.17076-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        bh=PyvuAycN0W7JrDx3dUfXKO7/FDDYlxGkKJhnNFbl+Qo=;
+        b=U71i5InFhYdCFMGOzAFRNP0Mg6W1YFoBHv2cbOekdpT+RidIzFIZ414ttwSu2rPbwB
+         RtQMuIPSeiUJMcsjdg+Mt9zem8CxylAFeHsw+3jeylSyhZ/UXjEL2h/rw30CY0XTp2mE
+         nEcMDaf3HqL2smzwiRIxsail1iqQnfvMMIZ3VctxUnjHrWWIVGRgwDkYPAqbrFtDTDJJ
+         C4lYaRIVuxSisxt7R3WatnbsldTeBE05XFuMDCSVHfmZQdkgGo9r3Qmkx456c8EUxv/p
+         RVkNiUemOXZ58UXYcTjZe6rYDXy+aDJqknXdxTF9FozQtF5FfDcVaDrCy96mNDehOfZM
+         h3TA==
+X-Gm-Message-State: APjAAAWTvj8KlWC0BBPixkoshD1EdQwR4MJEKtN0YAZ5w3l5j1wGJDk8
+        BD1axUngmhuJGjl/5fPlyxM+2w==
+X-Google-Smtp-Source: APXvYqyQHY2lzxrxYaWxWvSLlKXKRgWIivDNAfo/0lKfpW9wImOssr3JY3nj/MOZ1d63fldC9mJqbA==
+X-Received: by 2002:aed:39e7:: with SMTP id m94mr1223027qte.0.1565060716457;
+        Mon, 05 Aug 2019 20:05:16 -0700 (PDT)
+Received: from ovpn-120-115.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u4sm37185800qkb.16.2019.08.05.20.05.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 05 Aug 2019 20:05:15 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     will@kernel.org, catalin.marinas@arm.com
+Cc:     rrichter@cavium.com, robin.murphy@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH v3] arm64/prefetch: fix a -Wtype-limits warning
+Date:   Mon,  5 Aug 2019 23:05:03 -0400
+Message-Id: <20190806030503.1178-1-cai@lca.pw>
+X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All refcount operations are protected by spinlocks now.
-Then the atomic counter can be replaced by a normal int.
+The commit d5370f754875 ("arm64: prefetch: add alternative pattern for
+CPUs without a prefetcher") introduced MIDR_IS_CPU_MODEL_RANGE() to be
+used in has_no_hw_prefetch() with rv_min=0 which generates a compilation
+warning from GCC,
 
-This patch depends on PATCH 1/2.
+In file included from ./arch/arm64/include/asm/cache.h:8,
+               from ./include/linux/cache.h:6,
+               from ./include/linux/printk.h:9,
+               from ./include/linux/kernel.h:15,
+               from ./include/linux/cpumask.h:10,
+               from arch/arm64/kernel/cpufeature.c:11:
+arch/arm64/kernel/cpufeature.c: In function 'has_no_hw_prefetch':
+./arch/arm64/include/asm/cputype.h:59:26: warning: comparison of
+unsigned expression >= 0 is always true [-Wtype-limits]
+_model == (model) && rv >= (rv_min) && rv <= (rv_max);  \
+                        ^~
+arch/arm64/kernel/cpufeature.c:889:9: note: in expansion of macro
+'MIDR_IS_CPU_MODEL_RANGE'
+return MIDR_IS_CPU_MODEL_RANGE(midr, MIDR_THUNDERX,
+       ^~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Fix it by converting MIDR_IS_CPU_MODEL_RANGE to a static inline
+function.
+
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- drivers/net/ethernet/chelsio/cxgb4/smt.c | 14 +++++++-------
- drivers/net/ethernet/chelsio/cxgb4/smt.h |  2 +-
- 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/smt.c b/drivers/net/ethernet/chelsio/cxgb4/smt.c
-index d6e84c8b5554..01c65d13fc0e 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/smt.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/smt.c
-@@ -57,7 +57,7 @@ struct smt_data *t4_init_smt(void)
- 		s->smtab[i].state = SMT_STATE_UNUSED;
- 		memset(&s->smtab[i].src_mac, 0, ETH_ALEN);
- 		spin_lock_init(&s->smtab[i].lock);
--		atomic_set(&s->smtab[i].refcnt, 0);
-+		s->smtab[i].refcnt = 0;
- 	}
- 	return s;
- }
-@@ -68,7 +68,7 @@ static struct smt_entry *find_or_alloc_smte(struct smt_data *s, u8 *smac)
- 	struct smt_entry *e, *end;
+v3: Convert MIDR_IS_CPU_MODEL_RANGE to a static inline function.
+v2: Use "s32" for "rv", so "variant 0/revision 0" can be covered.
+
+ arch/arm64/include/asm/cputype.h | 21 +++++++++++----------
+ arch/arm64/kernel/cpufeature.c   |  2 +-
+ 2 files changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index e7d46631cc42..b1454d117cd2 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -51,14 +51,6 @@
+ #define MIDR_CPU_MODEL_MASK (MIDR_IMPLEMENTOR_MASK | MIDR_PARTNUM_MASK | \
+ 			     MIDR_ARCHITECTURE_MASK)
  
- 	for (e = &s->smtab[0], end = &s->smtab[s->smt_size]; e != end; ++e) {
--		if (atomic_read(&e->refcnt) == 0) {
-+		if (e->refcnt == 0) {
- 			if (!first_free)
- 				first_free = e;
- 		} else {
-@@ -97,7 +97,7 @@ static struct smt_entry *find_or_alloc_smte(struct smt_data *s, u8 *smac)
+-#define MIDR_IS_CPU_MODEL_RANGE(midr, model, rv_min, rv_max)		\
+-({									\
+-	u32 _model = (midr) & MIDR_CPU_MODEL_MASK;			\
+-	u32 rv = (midr) & (MIDR_REVISION_MASK | MIDR_VARIANT_MASK);	\
+-									\
+-	_model == (model) && rv >= (rv_min) && rv <= (rv_max);		\
+- })
+-
+ #define ARM_CPU_IMP_ARM			0x41
+ #define ARM_CPU_IMP_APM			0x50
+ #define ARM_CPU_IMP_CAVIUM		0x43
+@@ -159,10 +151,19 @@ struct midr_range {
+ #define MIDR_REV(m, v, r) MIDR_RANGE(m, v, r, v, r)
+ #define MIDR_ALL_VERSIONS(m) MIDR_RANGE(m, 0, 0, 0xf, 0xf)
  
- static void t4_smte_free(struct smt_entry *e)
++static inline bool midr_is_cpu_model_range(u32 midr, u32 model, u32 rv_min,
++					   u32 rv_max)
++{
++	u32 _model = midr & MIDR_CPU_MODEL_MASK;
++	u32 rv = midr & (MIDR_REVISION_MASK | MIDR_VARIANT_MASK);
++
++	return _model == model && rv >= rv_min && rv <= rv_max;
++}
++
+ static inline bool is_midr_in_range(u32 midr, struct midr_range const *range)
  {
--	if (atomic_read(&e->refcnt) == 0) {  /* hasn't been recycled */
-+	if (e->refcnt == 0) {  /* hasn't been recycled */
- 		e->state = SMT_STATE_UNUSED;
- 	}
+-	return MIDR_IS_CPU_MODEL_RANGE(midr, range->model,
+-				 range->rv_min, range->rv_max);
++	return midr_is_cpu_model_range(midr, range->model,
++				       range->rv_min, range->rv_max);
  }
-@@ -110,7 +110,7 @@ static void t4_smte_free(struct smt_entry *e)
- void cxgb4_smt_release(struct smt_entry *e)
- {
- 	spin_lock_bh(&e->lock);
--	if (atomic_dec_and_test(&e->refcnt))
-+	if ((--e->refcnt) == 0)
- 		t4_smte_free(e);
- 	spin_unlock_bh(&e->lock);
- }
-@@ -215,14 +215,14 @@ static struct smt_entry *t4_smt_alloc_switching(struct adapter *adap, u16 pfvf,
- 	e = find_or_alloc_smte(s, smac);
- 	if (e) {
- 		spin_lock(&e->lock);
--		if (!atomic_read(&e->refcnt)) {
--			atomic_set(&e->refcnt, 1);
-+		if (!e->refcnt) {
-+			e->refcnt = 1;
- 			e->state = SMT_STATE_SWITCHING;
- 			e->pfvf = pfvf;
- 			memcpy(e->src_mac, smac, ETH_ALEN);
- 			write_smt_entry(adap, e);
- 		} else {
--			atomic_inc(&e->refcnt);
-+			++e->refcnt;
- 		}
- 		spin_unlock(&e->lock);
- 	}
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/smt.h b/drivers/net/ethernet/chelsio/cxgb4/smt.h
-index d6c2cc271398..1268d6e93a47 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/smt.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/smt.h
-@@ -59,7 +59,7 @@ struct smt_entry {
- 	u16 idx;
- 	u16 pfvf;
- 	u8 src_mac[ETH_ALEN];
--	atomic_t refcnt;
-+	int refcnt;
- 	spinlock_t lock;	/* protect smt entry add,removal */
- };
  
+ static inline bool
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index d19d14ba9ae4..95201e5ff5e1 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -886,7 +886,7 @@ static bool has_no_hw_prefetch(const struct arm64_cpu_capabilities *entry, int _
+ 	u32 midr = read_cpuid_id();
+ 
+ 	/* Cavium ThunderX pass 1.x and 2.x */
+-	return MIDR_IS_CPU_MODEL_RANGE(midr, MIDR_THUNDERX,
++	return midr_is_cpu_model_range(midr, MIDR_THUNDERX,
+ 		MIDR_CPU_VAR_REV(0, 0),
+ 		MIDR_CPU_VAR_REV(1, MIDR_REVISION_MASK));
+ }
 -- 
-2.20.1
+2.20.1 (Apple Git-117)
 
