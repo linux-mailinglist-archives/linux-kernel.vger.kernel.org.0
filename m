@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF8EE83641
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34C4C83642
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:06:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387712AbfHFQG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:06:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43764 "EHLO
+        id S2387727AbfHFQGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:06:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43782 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfHFQG1 (ORCPT
+        with ESMTP id S2387710AbfHFQG2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:06:27 -0400
+        Tue, 6 Aug 2019 12:06:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Ip6Tv7CH1RUCf1zdL/7YnuvbR835Efr9iJJdAFn2xCE=; b=l2Q5OzCqYI6K/lwIUdGM/lRV7A
-        orDsZpzbT6FSVlceE/hay+znMxbpWMtaDTBHblMXvxERMhczytc2vd81s6BqxCZFw2V+kIC1ehQpp
-        k+Rn3H0gbs9x8Wd69M+u5RHtmAxHu33R+eq8t9FPKY41OyzLqR46OnL/3/uJyFvCu0wrsi53OR/mu
-        7/mdjcwkmKnzaKrkH5ypk1OTp+rOzbLBQZmdtU0MQuKonn5rYEozOJUnEkPDgPRfYRrrv/ltW03W1
-        B3GGyVUnYhFnzA1DZM9OJMMvOYQnSvrnyNNF7TcG618gJsqAjt8SdYkE4ny8fMR5VMnJN6+ThYxIg
-        Uq/3HCWw==;
+        bh=e9aFg9y3NWAnc2PsHRJxtyHwhE0a0AbbxTY4a2BFPAw=; b=TdJihcN0imUrB+DXTgmH0YwTUb
+        lhLq60JHilI/KNarxExvblJfGtJD/KeWw1YixvJmmQjZxBo3be+cmgsarEog2qaCkGzoYPJY6s8qs
+        zDZh/xO+rJ1KZCNRLgq3pmAluvXZ31iOXadZOdkkZWIPMLgaTQONiL10gRria1wqAe3NyDFV1xDmY
+        lHYDcFCpFmiKOrErT1VtfkzdIfcB6wRbYd0gXaFxWTUZ19blXt2ymzvsasYfbVxQsnFGJeH5AWd0S
+        OPiYzPzKK5xu5e0oJQoArM98BctBcV8Y0EJN1AwB6LCKDlcmolgWN0XhXCXtGgkezGIKL8Zu2VFTc
+        qp692nQg==;
 Received: from [195.167.85.94] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hv1yf-0000bo-Tk; Tue, 06 Aug 2019 16:06:22 +0000
+        id 1hv1yi-0000cX-Ex; Tue, 06 Aug 2019 16:06:24 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -35,9 +35,9 @@ To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
 Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/15] mm: only define hmm_vma_walk_pud if needed
-Date:   Tue,  6 Aug 2019 19:05:48 +0300
-Message-Id: <20190806160554.14046-11-hch@lst.de>
+Subject: [PATCH 11/15] mm: cleanup the hmm_vma_handle_pmd stub
+Date:   Tue,  6 Aug 2019 19:05:49 +0300
+Message-Id: <20190806160554.14046-12-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806160554.14046-1-hch@lst.de>
 References: <20190806160554.14046-1-hch@lst.de>
@@ -49,73 +49,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We only need the special pud_entry walker if PUD-sized hugepages and
-pte mappings are supported, else the common pagewalk code will take
-care of the iteration.  Not implementing this callback reduced the
-amount of code compiled for non-x86 platforms, and also fixes compile
-failures with other architectures when helpers like pud_pfn are not
-implemented.
+Stub out the whole function when CONFIG_TRANSPARENT_HUGEPAGE is not set
+to make the function easier to read.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
- mm/hmm.c | 29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ mm/hmm.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
 diff --git a/mm/hmm.c b/mm/hmm.c
-index 2083e4db46f5..5e7afe685213 100644
+index 5e7afe685213..4aa7135f1094 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -455,15 +455,6 @@ static inline uint64_t pmd_to_hmm_pfn_flags(struct hmm_range *range, pmd_t pmd)
+@@ -455,13 +455,10 @@ static inline uint64_t pmd_to_hmm_pfn_flags(struct hmm_range *range, pmd_t pmd)
  				range->flags[HMM_PFN_VALID];
  }
  
--static inline uint64_t pud_to_hmm_pfn_flags(struct hmm_range *range, pud_t pud)
+-static int hmm_vma_handle_pmd(struct mm_walk *walk,
+-			      unsigned long addr,
+-			      unsigned long end,
+-			      uint64_t *pfns,
+-			      pmd_t pmd)
 -{
--	if (!pud_present(pud))
--		return 0;
--	return pud_write(pud) ? range->flags[HMM_PFN_VALID] |
--				range->flags[HMM_PFN_WRITE] :
--				range->flags[HMM_PFN_VALID];
--}
--
- static int hmm_vma_handle_pmd(struct mm_walk *walk,
- 			      unsigned long addr,
- 			      unsigned long end,
-@@ -700,10 +691,19 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 	return 0;
- }
- 
--static int hmm_vma_walk_pud(pud_t *pudp,
--			    unsigned long start,
--			    unsigned long end,
--			    struct mm_walk *walk)
-+#if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && \
-+    defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
-+static inline uint64_t pud_to_hmm_pfn_flags(struct hmm_range *range, pud_t pud)
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++static int hmm_vma_handle_pmd(struct mm_walk *walk, unsigned long addr,
++		unsigned long end, uint64_t *pfns, pmd_t pmd)
 +{
-+	if (!pud_present(pud))
-+		return 0;
-+	return pud_write(pud) ? range->flags[HMM_PFN_VALID] |
-+				range->flags[HMM_PFN_WRITE] :
-+				range->flags[HMM_PFN_VALID];
-+}
-+
-+static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
-+		struct mm_walk *walk)
- {
  	struct hmm_vma_walk *hmm_vma_walk = walk->private;
  	struct hmm_range *range = hmm_vma_walk->range;
-@@ -765,6 +765,9 @@ static int hmm_vma_walk_pud(pud_t *pudp,
- 
+ 	struct dev_pagemap *pgmap = NULL;
+@@ -490,11 +487,12 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
+ 		put_dev_pagemap(pgmap);
+ 	hmm_vma_walk->last = end;
  	return 0;
+-#else
+-	/* If THP is not enabled then we should never reach this code ! */
+-	return -EINVAL;
+-#endif
  }
-+#else
-+#define hmm_vma_walk_pud	NULL
-+#endif
++#else /* CONFIG_TRANSPARENT_HUGEPAGE */
++/* stub to allow the code below to compile */
++int hmm_vma_handle_pmd(struct mm_walk *walk, unsigned long addr,
++		unsigned long end, uint64_t *pfns, pmd_t pmd);
++#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
  
- static int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
- 				      unsigned long start, unsigned long end,
+ static inline uint64_t pte_to_hmm_pfn_flags(struct hmm_range *range, pte_t pte)
+ {
 -- 
 2.20.1
 
