@@ -2,142 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8F6182ECD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 11:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA76382ED3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 11:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732523AbfHFJiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 05:38:21 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34295 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfHFJiV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 05:38:21 -0400
-Received: by mail-ed1-f68.google.com with SMTP id s49so46892739edb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 02:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lXyS+3a5qcDEyEF5LisBaQWkib6lVU2+K34nQBXYqTA=;
-        b=VvVVfZAImggq+hv+uSLRfZNheEhVjvL+W5UVpgopska+tQ8Ns32KSgvyatrllNVad8
-         8GXMBagHGD5RYCv4YfaSEOmkLu2BiH8CqUfZr0AvoqzTNY8/+hR40D4CrQXnT4khXUlf
-         mxChHJ1ZYcKjNhkwkqyFKIV2AgxEs20G4jtB4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=lXyS+3a5qcDEyEF5LisBaQWkib6lVU2+K34nQBXYqTA=;
-        b=f/MbZBNlJ6wfc/iEI+b+h4DEpWfUlDs/XPZg4E3bxTv1tIvTs9EUPwVMSiNVAv1kcT
-         QKsy4FO02IoFw2JNCphkTEoDCx70Yelq5ZMwgemNcDOySHAy3dE/2DuGTqzxy1lVoKIH
-         vBW9BPX8xc4BlJMxqLBc/hl7c5l/V4bZPCRKy3CXQ7wbbmdKRd3gY2YuOFx4GqK4uz10
-         AIHzjk61JGnQUVs07Q3xw2cWG+zkI3siQCqvufB9SQYYrXSWC6lfrxlqBb9TjdYuHMhI
-         L7+mexKAu6ofEIvDk0y4N4ltF80rm15NrWiOb8M0SIevrMRjwhGG9sDYmtHd0XwdjcE8
-         Z8Aw==
-X-Gm-Message-State: APjAAAUP9ndJQzpg5oAEsT1cjcp2qX5WtMlt9PCqnF7U+NQNTvHbXpRh
-        Q2RhBDlhsjtcbSbYyf75dejBag==
-X-Google-Smtp-Source: APXvYqzqH6/bXZ26nVBNYTN2PzoLaN+S9OSr40dprY04zqgu8B5JxMBvPeFFL2JFhDIKf3hdZUQCxA==
-X-Received: by 2002:a50:d79b:: with SMTP id w27mr2729896edi.126.1565084299696;
-        Tue, 06 Aug 2019 02:38:19 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id cw14sm14578958ejb.91.2019.08.06.02.38.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 02:38:18 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 11:38:16 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm: add cache support for arm64
-Message-ID: <20190806093816.GY7444@phenom.ffwll.local>
-Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
-        Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190805211451.20176-1-robdclark@gmail.com>
- <20190806084821.GA17129@lst.de>
+        id S1732497AbfHFJji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 05:39:38 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:46694 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726713AbfHFJjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 05:39:37 -0400
+Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x769cg5a005841
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 6 Aug 2019 02:38:52 -0700
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.468.0; Tue, 6 Aug 2019 02:38:31 -0700
+From:   <zhe.he@windriver.com>
+To:     <bfields@fieldses.org>, <chuck.lever@oracle.com>,
+        <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhe.he@windriver.com>
+Subject: [PATCH] nfsd4: Fix kernel crash when reading proc file reply_cache_stats
+Date:   Tue, 6 Aug 2019 17:38:29 +0800
+Message-ID: <1565084309-247821-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806084821.GA17129@lst.de>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 10:48:21AM +0200, Christoph Hellwig wrote:
-> This goes in the wrong direction.  drm_cflush_* are a bad API we need to
-> get rid of, not add use of it.  The reason for that is two-fold:
-> 
->  a) it doesn't address how cache maintaince actually works in most
->     platforms.  When talking about a cache we three fundamental operations:
-> 
-> 	1) write back - this writes the content of the cache back to the
-> 	   backing memory
-> 	2) invalidate - this remove the content of the cache
-> 	3) write back + invalidate - do both of the above
-> 
->  b) which of the above operation you use when depends on a couple of
->     factors of what you want to do with the range you do the cache
->     maintainance operations
-> 
-> Take a look at the comment in arch/arc/mm/dma.c around line 30 that
-> explains how this applies to buffer ownership management.  Note that
-> "for device" applies to "for userspace" in the same way, just that
-> userspace then also needs to follow this protocol.  So the whole idea
-> that random driver code calls random low-level cache maintainance
-> operations (and use the non-specific term flush to make it all more
-> confusing) is a bad idea.  Fortunately enough we have really good
-> arch helpers for all non-coherent architectures (this excludes the
-> magic i915 won't be covered by that, but that is a separate issue
-> to be addressed later, and the fact that while arm32 did grew them
-> very recently and doesn't expose them for all configs, which is easily
-> fixable if needed) with arch_sync_dma_for_device and
-> arch_sync_dma_for_cpu.  So what we need is to figure out where we
-> have valid cases for buffer ownership transfer outside the DMA
-> API, and build proper wrappers around the above function for that.
-> My guess is it should probably be build to go with the iommu API
-> as that is the only other way to map memory for DMA access, but
-> if you have a better idea I'd be open to discussion.
+From: He Zhe <zhe.he@windriver.com>
 
-I just read through all the arch_sync_dma_for_device/cpu functions and
-none seem to use the struct *dev argument. Iirc you've said that's on the
-way out?
+reply_cache_stats uses wrong parameter as seq file private structure and
+thus causes the following kernel crash when users read
+/proc/fs/nfsd/reply_cache_stats
 
-That dev parameter is another holdup for the places where we do not yet
-know what the new device will be (e.g. generic dma-buf exporters like
-vgem). And sprinkling a fake dev or passing NULL is a bit silly.
+m=00000000a2ec03f7 v=00000000f5777155
+BUG: kernel NULL pointer dereference, address: 00000000000001f9
+PGD 0 P4D 0
+Oops: 0000 [#3] SMP PTI
+CPU: 6 PID: 1502 Comm: cat Tainted: G      D           5.3.0-rc3+ #1
+Hardware name: Intel Corporation Broadwell Client platform/Basking Ridge, BIOS BDW-E2R1.86C.0118.R01.1503110618 03/11/2015
+RIP: 0010:nfsd_reply_cache_stats_show+0x3b/0x2d0
+Code: 41 54 49 89 f4 48 89 fe 48 c7 c7 b3 10 33 88 53 bb e8 03 00 00 e8 88 82 d1 ff bf 58 89 41 00 e8 eb c5 85 00 48 83 eb 01 75 f0 <41> 8b 94 24 f8 01 00 00 48 c7 c6 be 10 33 88 4c 89 ef bb e8 03 00
+RSP: 0018:ffffaa520106fe08 EFLAGS: 00010246
+RAX: 000000cfe1a77123 RBX: 0000000000000000 RCX: 0000000000291b46
+RDX: 000000cf00000000 RSI: 0000000000000006 RDI: 0000000000291b28
+RBP: ffffaa520106fe20 R08: 0000000000000006 R09: 000000cfe17e55dd
+R10: ffffa424e47c0000 R11: 000000000000030b R12: 0000000000000001
+R13: ffffa424e5697000 R14: 0000000000000001 R15: ffffa424e5697000
+FS:  00007f805735f580(0000) GS:ffffa424f8f80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000000001f9 CR3: 00000000655ce005 CR4: 00000000003606e0
+Call Trace:
+ seq_read+0x194/0x3e0
+ __vfs_read+0x1b/0x40
+ vfs_read+0x95/0x140
+ ksys_read+0x61/0xe0
+ __x64_sys_read+0x1a/0x20
+ do_syscall_64+0x4d/0x120
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f805728b861
+Code: fe ff ff 50 48 8d 3d 86 b4 09 00 e8 79 e0 01 00 66 0f 1f 84 00 00 00 00 00 48 8d 05 d9 19 0d 00 8b 00 85 c0 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 c3 66 0f 1f 44 00 00 48 83 ec 28 48 89 54
+RSP: 002b:00007ffea1ce3c38 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f805728b861
+RDX: 0000000000020000 RSI: 00007f8057183000 RDI: 0000000000000003
+RBP: 00007f8057183000 R08: 00007f8057182010 R09: 0000000000000000
+R10: 0000000000000022 R11: 0000000000000246 R12: 0000559a60e8ff10
+R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
+Modules linked in:
+CR2: 00000000000001f9
+---[ end trace 01613595153f0cba ]---
+RIP: 0010:nfsd_reply_cache_stats_show+0x3b/0x2d0
+Code: 41 54 49 89 f4 48 89 fe 48 c7 c7 b3 10 33 88 53 bb e8 03 00 00 e8 88 82 d1 ff bf 58 89 41 00 e8 eb c5 85 00 48 83 eb 01 75 f0 <41> 8b 94 24 f8 01 00 00 48 c7 c6 be 10 33 88 4c 89 ef bb e8 03 00
+RSP: 0018:ffffaa52004b3e08 EFLAGS: 00010246
+RAX: 0000002bab45a7c6 RBX: 0000000000000000 RCX: 0000000000291b4c
+RDX: 0000002b00000000 RSI: 0000000000000004 RDI: 0000000000291b28
+RBP: ffffaa52004b3e20 R08: 0000000000000004 R09: 0000002bab1c8c7a
+R10: ffffa424e5500000 R11: 00000000000002a9 R12: 0000000000000001
+R13: ffffa424e4475000 R14: 0000000000000001 R15: ffffa424e4475000
+FS:  00007f805735f580(0000) GS:ffffa424f8f80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000000001f9 CR3: 00000000655ce005 CR4: 00000000003606e0
+Killed
 
-Add a HAVE_ARCH_SYNC_DMA and the above refactor (assuming it's ok to roll
-out everywhere) and we should indeed be able to use this. We still need to
-have all the others for x86 and all that. Plus I guess we should roll out
-the split into invalidate and flush.
+Fixes: 3ba75830ce17 ("nfsd4: drc containerization")
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+ fs/nfsd/nfscache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The other bit is phys vs. virt addr confusion, but looks like standard if
-phys_addr and you kmap underneath (except from drm_clflush_virt_range,
-only used by i915).
--Daniel
+diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
+index 26ad75a..96352ab 100644
+--- a/fs/nfsd/nfscache.c
++++ b/fs/nfsd/nfscache.c
+@@ -571,7 +571,7 @@ nfsd_cache_append(struct svc_rqst *rqstp, struct kvec *data)
+  */
+ static int nfsd_reply_cache_stats_show(struct seq_file *m, void *v)
+ {
+-	struct nfsd_net *nn = v;
++	struct nfsd_net *nn = m->private;
+ 
+ 	seq_printf(m, "max entries:           %u\n", nn->max_drc_entries);
+ 	seq_printf(m, "num entries:           %u\n",
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.7.4
+
