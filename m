@@ -2,125 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC28D82CCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 019DC82CD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:32:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732232AbfHFH34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:29:56 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:42819 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731807AbfHFH34 (ORCPT
+        id S1732057AbfHFHcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:32:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50466 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731576AbfHFHcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:29:56 -0400
-Received: from uno.localdomain (mob-109-112-31-244.net.vodafone.it [109.112.31.244])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 79D0420000F;
-        Tue,  6 Aug 2019 07:29:51 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 09:31:14 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Stefan Agner <stefan@agner.ch>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: max9611: Fix temperature reading in probe
-Message-ID: <20190806073114.4mujzdvbrgxivizs@uno.localdomain>
-References: <20190805155515.22621-1-jacopo+renesas@jmondi.org>
- <20190805181244.663585ac@archlinux>
+        Tue, 6 Aug 2019 03:32:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oTs2cY0AP7Gt6Axj3jnR38Lz4Y8u331s1JOYlARdadg=; b=Eu966wVxtPDyAfxY4T5b9Mvp/
+        HDR0erbGAZXz2AqGAeOdEK/K2XQOlQyLFVaKfbHmskzMRogWsRVFf0LnYCUZq9AyhET+H+vM1RZHr
+        vCIiWCAJvnK6MTZkjamjsUOj585w67g30jU0Fwujx4PC8+7jHBrOW8snLwJTpHWqf6Cz2oB2pmaSV
+        DX1j6EYOG6XABnCRU/Kfrtx9XGQW6pUOuOCOGY/1B7Aih8on8ATF7J5BeSOzis45yUKB+8NzOAT7r
+        PS2vzt0MgWhrIfmutdWvIPkCihF4U8wHpmdjG+LLRa31zeTy96L3iN6r75nZ7ec6uQzrCErOoz8KS
+        v3FL8ONsQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hutww-0006vs-OK; Tue, 06 Aug 2019 07:32:02 +0000
+Date:   Tue, 6 Aug 2019 00:32:02 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Auger <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        dwmw2@infradead.org, shameerali.kolothum.thodi@huawei.com,
+        alex.williamson@redhat.com, robin.murphy@arm.com, hch@infradead.org
+Subject: Re: [PATCH v2] iommu: revisit iommu_insert_resv_region()
+ implementation
+Message-ID: <20190806073202.GA26575@infradead.org>
+References: <20190801155946.20645-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hmkibl6tqohgtmac"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190805181244.663585ac@archlinux>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190801155946.20645-1-eric.auger@redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+A couple nitpicks below:
 
---hmkibl6tqohgtmac
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+On Thu, Aug 01, 2019 at 05:59:46PM +0200, Eric Auger wrote:
+> - * The new element is sorted by address with respect to the other
+> - * regions of the same type. In case it overlaps with another
+> - * region of the same type, regions are merged. In case it
+> - * overlaps with another region of different type, regions are
+> - * not merged.
+> + * Elements are sorted by start address and overlapping segments
+> + * of the same type are merged.
+>   */
+> +int iommu_insert_resv_region(struct iommu_resv_region *new,
+> +			     struct list_head *regions)
+>  {
+> +	struct iommu_resv_region *iter, *tmp, *nr, *top;
+> +	struct list_head stack;
+> +	bool added = false;
+>  
+> +	INIT_LIST_HEAD(&stack);
 
-Hi Jonathan,
+Nit: you could just use
 
-On Mon, Aug 05, 2019 at 06:12:44PM +0100, Jonathan Cameron wrote:
-> On Mon,  5 Aug 2019 17:55:15 +0200
-> Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->
-> > The max9611 driver reads the die temperature at probe time to validate
-> > the communication channel. Use the actual read value to perform the test
-> > instead of the read function return value, which was mistakenly used so
-> > far.
-> >
-> > The temperature reading test was only successful because the 0 return
-> > value is in the range of supported temperatures.
-> >
-> > Fixes: 69780a3bbc0b ("iio: adc: Add Maxim max9611 ADC driver")
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->
-> Applied to the fixes-togreg branch of iio.git and marked for
-> stable.  That'll be a bit fiddly given other changes around this
-> so we may need to do backports.
->
+	LIST_HEAD(&stack);
 
-Indeed, I should have mentioned this patch depends on Joe's
-ae8cc91a7d85 ("iio: adc: max9611: Fix misuse of GENMASK macro")
-which is now in linux-next, otherwise it might atually trigger errors
-due to the wrong mask value.
+to declare and initialize the variable in a single line.
 
-I wonder if there's a way to keep track of these dependencies for the
-sake of backporting, or it's an operation that has to be carried out
-manually...
+> +	nr = iommu_alloc_resv_region(new->start, new->length,
+> +				     new->prot, new->type);
+> +	if (!nr)
+>  		return -ENOMEM;
+>  
+> +	/* First add the new elt based on start address sorting */
 
-Thanks
-   j
+/elt/element/ ?
 
->
-> > ---
-> >  drivers/iio/adc/max9611.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-> > index 917223d5ff5b..e9f6b1da1b94 100644
-> > --- a/drivers/iio/adc/max9611.c
-> > +++ b/drivers/iio/adc/max9611.c
-> > @@ -480,7 +480,7 @@ static int max9611_init(struct max9611_dev *max9611)
-> >  	if (ret)
-> >  		return ret;
-> >
-> > -	regval = ret & MAX9611_TEMP_MASK;
-> > +	regval &= MAX9611_TEMP_MASK;
-> >
-> >  	if ((regval > MAX9611_TEMP_MAX_POS &&
-> >  	     regval < MAX9611_TEMP_MIN_NEG) ||
-> > --
-> > 2.22.0
-> >
->
+> +	list_for_each_entry(iter, regions, list) {
+> +		if (nr->start < iter->start) {
+> +			list_add_tail(&nr->list, &iter->list);
+> +			added = true;
+> +			break;
+> +		} else if (nr->start == iter->start && nr->type <= iter->type) {
+> +			list_add_tail(&nr->list, &iter->list);
+> +			added = true;
+> +			break;
+> +		}
 
---hmkibl6tqohgtmac
-Content-Type: application/pgp-signature; name="signature.asc"
+Nit:  no need for an else after a a break.  But then again  both
+branches look identical, so why don't you just merge them:
 
------BEGIN PGP SIGNATURE-----
+		if (nr->start < iter->start ||
+		    (nr->start == iter->start && nr->type <= iter->type)) {
+			list_add_tail(&nr->list, &iter->list);
+			added = true;
+			break;
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1JLMIACgkQcjQGjxah
-Vjx4OBAAxQU3tgkW1phGiUlCylmAblCdAtYezFCdcbL28QA5ui5zPocDUerLjRar
-06uAx/kjK5oxH9rDMWh5OgwznfUkenGpNeo3n6/n7CVq6yUW4oTzb802/5EgqOfP
-4P7iKVRbEwOj3DJgcS/l+GCqkZfDj+IncK5C4up2c0NYvTr4kIDOHFCr84qI4Doe
-6O7DDmNZsA1GHTc/KbMBuo0AekVF7SdXgzSHm+EN41SOPK93YtvS7d9z7ethOvYr
-cHrdtWveTOK+HNTO0fWILq0wdKC+n0FXSnGBVdWDPRBJCzYyUIvP9m4NTDETe9fE
-PQH84hC052OmoUxwQmnLh8FB15d4VfOfP/QuykvaVuao3JoQyI4EeVzEgiGV1Eg6
-nhkr/QsEMmxgAzDGVZ39eSXJWZos4lueWnQ5ohzTs5SjeYQnFsPMEnsNoGfX15wL
-z3Z2hZh9Ra8fs3cDeijbwbyljffVEA+ZnFXPItjlZaNeMTKXM66qSy0vKENteRJi
-JJPNAO+3/MDDWFweAUFXimd8htUSAHWEuRRG2EE5sweBam4V/AnkC3AdZsVXBMeg
-QtuS4/VfkZXS1UL8FOGyWU9xQ+daMc2vMDWeA/+EwEes8s1uMzP6aAQ1h6y/W46s
-g6+sxY53Yp+RzsNKoi8OCiQpF7lkESc9XxUKuKV0jhrhT6oQLZE=
-=oFtH
------END PGP SIGNATURE-----
+	}
 
---hmkibl6tqohgtmac--
+> +	if (!added)
+> +		list_add_tail(&nr->list, regions);
+
+Probably down to preference, but I'd just use a goto to jump past the
+list_add and save the added variable.
+
+> +	/* Merge overlapping segments of type nr->type, if any */
+> +	list_for_each_entry_safe(iter, tmp, regions, list) {
+> +		phys_addr_t top_end, iter_end = iter->start + iter->length - 1;
+> +		bool found = false;
+> +
+> +		/* no merge needed on elements of different types than @nr */
+> +		if (iter->type != nr->type) {
+> +			list_move_tail(&iter->list, &stack);
+> +			continue;
+> +		}
+> +
+> +		/* look for the last stack element of same type as @iter */
+> +		list_for_each_entry_reverse(top, &stack, list)
+> +			if (top->type == iter->type) {
+> +				found = true;
+> +				break;
+> +			}
+> +		if (!found) {
+
+Same here.
+
+> +			list_move_tail(&iter->list, &stack);
+> +			continue;
+> +		}
+> +
+> +		top_end = top->start + top->length - 1;
+> +
+> +		if (iter->start > top_end + 1) {
+> +			list_move_tail(&iter->list, &stack);
+> +		} else {
+> +			top->length = max(top_end, iter_end) - top->start + 1;
+> +			list_del(&iter->list);
+> +			kfree(iter);
+> +		}
+
+I wonder if the body of the outer list_for_each_entry_safe loop would
+be a bit nicer in a helper, but again that is probably just down to
+personal preference.
