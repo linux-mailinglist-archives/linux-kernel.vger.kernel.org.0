@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A6983637
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:06:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5649D83640
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 18:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387667AbfHFQGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 12:06:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43716 "EHLO
+        id S2387698AbfHFQGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 12:06:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43740 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387570AbfHFQGU (ORCPT
+        with ESMTP id S2387670AbfHFQGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 12:06:20 -0400
+        Tue, 6 Aug 2019 12:06:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=CFSretyqs/RdirX2o42+13inYYFm9UN8GL7VmbVQVoQ=; b=tzhuPYOZCfgFbsA9DJibfh/0Jh
-        woYpb6mEK7ChEy3EQSIGvnXDPse4koxKMp2IVNjgzLQ6T38WsL385CiPX1vHD2Jucbed+H/5Pu4lp
-        H/90sdP/K9vSYZY7RNildl5jevquWCkAzhbCbvPIWLnT8ZyEjqMSz1km+VUCFKhynvVxvf7KPyJzg
-        9mcmtQVc/phVgwX4EZ1FmOwnOHVrXcWWe9j1QCmpobC8EUhF4daYBvAmBpQimWumDoicwaVczgeco
-        1Y8lm/34Pe/d56aQqfFjYbBd3j92PHqKQzIpa9qOWRMFQHFJdLuWEV9jOHRkdM2ZEkyYHq03VPBtC
-        QFOhtlvA==;
+        bh=hA5e1EMCJqgYejGyHIpPpeJ8rKRPHls2nPKmf9TbEpQ=; b=LJcJrwq5ZQewZswvYmY5mRyZpk
+        1/AAsPIRIW9UA0cst7PGgdo7pRhh4ePjyxEFTqCdsjh7EUORxH2CndglB5DcSZf9X3N8Sn6sKAltb
+        WWBPJiV/lfl2ul+hsqSrk3D/C5ivDdgjfKPGZTXQhSeNBkogGgnyFlzPfkD559I+eEh9rfGeY2c5w
+        FXeB6uScMW1EUmmFK+YdXOfdvFKqwMpCyBF9uzdonrdefrto7s1GONe11pm+yR0lE/qvtGNXNdtUe
+        37jSnqybZHehtfCReL3qhmxac2PdimKbmfpWhqJn7mnocY10bShkJ+bK3Y3BkCgnsn/hpbFZ7MPsn
+        8usxetzw==;
 Received: from [195.167.85.94] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hv1ya-0000aD-R6; Tue, 06 Aug 2019 16:06:17 +0000
+        id 1hv1yd-0000b0-BS; Tue, 06 Aug 2019 16:06:19 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -35,9 +35,9 @@ To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
 Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/15] mm: remove the mask variable in hmm_vma_walk_hugetlb_entry
-Date:   Tue,  6 Aug 2019 19:05:46 +0300
-Message-Id: <20190806160554.14046-9-hch@lst.de>
+Subject: [PATCH 09/15] mm: don't abuse pte_index() in hmm_vma_handle_pmd
+Date:   Tue,  6 Aug 2019 19:05:47 +0300
+Message-Id: <20190806160554.14046-10-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190806160554.14046-1-hch@lst.de>
 References: <20190806160554.14046-1-hch@lst.de>
@@ -49,47 +49,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pagewalk code already passes the value as the hmask parameter.
+pte_index is an internal arch helper in various architectures,
+without consistent semantics.  Open code that calculation of a PMD
+index based on the virtual address instead.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/hmm.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ mm/hmm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/mm/hmm.c b/mm/hmm.c
-index f26d6abc4ed2..03d37e102e3b 100644
+index 03d37e102e3b..2083e4db46f5 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -771,19 +771,16 @@ static int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
- 				      struct mm_walk *walk)
- {
- #ifdef CONFIG_HUGETLB_PAGE
--	unsigned long addr = start, i, pfn, mask;
-+	unsigned long addr = start, i, pfn;
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
- 	struct hmm_range *range = hmm_vma_walk->range;
- 	struct vm_area_struct *vma = walk->vma;
--	struct hstate *h = hstate_vma(vma);
- 	uint64_t orig_pfn, cpu_flags;
- 	bool fault, write_fault;
- 	spinlock_t *ptl;
- 	pte_t entry;
- 	int ret = 0;
+@@ -486,7 +486,7 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
+ 	if (pmd_protnone(pmd) || fault || write_fault)
+ 		return hmm_vma_walk_hole_(addr, end, fault, write_fault, walk);
  
--	mask = huge_page_size(h) - 1;
--
- 	ptl = huge_pte_lock(hstate_vma(vma), walk->mm, pte);
- 	entry = huge_ptep_get(pte);
- 
-@@ -799,7 +796,7 @@ static int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
- 		goto unlock;
- 	}
- 
--	pfn = pte_pfn(entry) + ((start & mask) >> PAGE_SHIFT);
-+	pfn = pte_pfn(entry) + ((start & ~hmask) >> PAGE_SHIFT);
- 	for (; addr < end; addr += PAGE_SIZE, i++, pfn++)
- 		range->pfns[i] = hmm_device_entry_from_pfn(range, pfn) |
- 				 cpu_flags;
+-	pfn = pmd_pfn(pmd) + pte_index(addr);
++	pfn = pmd_pfn(pmd) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+ 	for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++) {
+ 		if (pmd_devmap(pmd)) {
+ 			pgmap = get_dev_pagemap(pfn, pgmap);
 -- 
 2.20.1
 
