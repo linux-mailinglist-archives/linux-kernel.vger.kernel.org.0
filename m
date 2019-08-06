@@ -2,121 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98EFB833A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 878C08338C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 16:07:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732849AbfHFOKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 10:10:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52522 "EHLO mx1.suse.de"
+        id S1732779AbfHFOHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 10:07:03 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3767 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728259AbfHFOKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 10:10:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 01A6BAD43;
-        Tue,  6 Aug 2019 14:10:01 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 16:09:59 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
-        namhyung@google.com, paulmck@linux.ibm.com,
-        Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 3/5] [RFC] arm64: Add support for idle bit in swap PTE
-Message-ID: <20190806140959.GD11812@dhcp22.suse.cz>
-References: <20190805170451.26009-1-joel@joelfernandes.org>
- <20190805170451.26009-3-joel@joelfernandes.org>
- <20190806084203.GJ11812@dhcp22.suse.cz>
- <20190806103627.GA218260@google.com>
- <20190806104755.GR11812@dhcp22.suse.cz>
- <20190806111446.GA117316@google.com>
- <20190806115703.GY11812@dhcp22.suse.cz>
- <20190806134321.GA15167@google.com>
+        id S1728836AbfHFOHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 10:07:03 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E96F6A1A2E2A146353F6;
+        Tue,  6 Aug 2019 22:06:59 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 6 Aug 2019
+ 22:06:52 +0800
+From:   Cheng Jian <cj.chengjian@huawei.com>
+To:     <mingo@redhat.com>, <peterz@infradead.org>, <xiexiuqi@huawei.com>,
+        <huawei.libin@huawei.com>, <cj.chengjian@huawei.com>,
+        <bobo.shaobowang@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [PATCH] sched/core: decrease rq->nr_uninterruptible before set_task_cpu
+Date:   Tue, 6 Aug 2019 22:12:50 +0800
+Message-ID: <1565100770-110193-1-git-send-email-cj.chengjian@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806134321.GA15167@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 06-08-19 09:43:21, Joel Fernandes wrote:
-> On Tue, Aug 06, 2019 at 01:57:03PM +0200, Michal Hocko wrote:
-> > On Tue 06-08-19 07:14:46, Joel Fernandes wrote:
-> > > On Tue, Aug 06, 2019 at 12:47:55PM +0200, Michal Hocko wrote:
-> > > > On Tue 06-08-19 06:36:27, Joel Fernandes wrote:
-> > > > > On Tue, Aug 06, 2019 at 10:42:03AM +0200, Michal Hocko wrote:
-> > > > > > On Mon 05-08-19 13:04:49, Joel Fernandes (Google) wrote:
-> > > > > > > This bit will be used by idle page tracking code to correctly identify
-> > > > > > > if a page that was swapped out was idle before it got swapped out.
-> > > > > > > Without this PTE bit, we lose information about if a page is idle or not
-> > > > > > > since the page frame gets unmapped.
-> > > > > > 
-> > > > > > And why do we need that? Why cannot we simply assume all swapped out
-> > > > > > pages to be idle? They were certainly idle enough to be reclaimed,
-> > > > > > right? Or what does idle actualy mean here?
-> > > > > 
-> > > > > Yes, but other than swapping, in Android a page can be forced to be swapped
-> > > > > out as well using the new hints that Minchan is adding?
-> > > > 
-> > > > Yes and that is effectivelly making them idle, no?
-> > > 
-> > > That depends on how you think of it.
-> > 
-> > I would much prefer to have it documented so that I do not have to guess ;)
-> 
-> Sure :)
-> 
-> > > If you are thinking of a monitoring
-> > > process like a heap profiler, then from the heap profiler's (that only cares
-> > > about the process it is monitoring) perspective it will look extremely odd if
-> > > pages that are recently accessed by the process appear to be idle which would
-> > > falsely look like those processes are leaking memory. The reality being,
-> > > Android forced those pages into swap because of other reasons. I would like
-> > > for the swapping mechanism, whether forced swapping or memory reclaim, not to
-> > > interfere with the idle detection.
-> > 
-> > Hmm, but how are you going to handle situation when the page is unmapped
-> > and refaulted again (e.g. a normal reclaim of a pagecache)? You are
-> > losing that information same was as in the swapout case, no? Or am I
-> > missing something?
-> 
-> Yes you are right, it would have the same issue, thanks for bringing it up.
-> Should we rename this bit to PTE_IDLE and do the same thing that we are doing
-> for swap?
+Migration may occur when wake up a process, so we must update
+the rq->nr_uninterruptible before set_task_cpu, otherwise we
+will decrease the nr_interuptible of the incorrect rq. Over
+time, it cause some rq accounting according to be too large,
+but others are negative.
 
-What if we decide to tear the page table down as well? E.g. because we
-can reclaim file backed mappings and free some memory used for page
-tables. We do not do that right now but I can see that really large
-mappings might push us that direction. Sure this is mostly a theoretical
-concern but I am wondering whether promissing to keep the idle bit over
-unmapping is not too much.
+Also change the type of rq->nr_uninterruptible to atomic_t.
 
-I am not sure how to deal with this myself, TBH. In any case the current
-semantic - via pfn - will lose the idle bit already so can we mimic it
-as well? We only have 1 bit for each address which makes it challenging.
-The easiest way would be to declare that the idle bit might disappear on
-activating or reclaiming the page. How well that suits different
-usecases is a different question. I would be interested in hearing from
-other people about this of course.
+Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
+---
+ kernel/sched/core.c    | 14 +++++++++-----
+ kernel/sched/debug.c   |  2 +-
+ kernel/sched/loadavg.c |  2 +-
+ kernel/sched/sched.h   |  2 +-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 2b037f1..4d3bbc1 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1198,7 +1198,7 @@ static inline void dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+ void activate_task(struct rq *rq, struct task_struct *p, int flags)
+ {
+ 	if (task_contributes_to_load(p))
+-		rq->nr_uninterruptible--;
++		atomic_dec(&rq->nr_uninterruptible);
+ 
+ 	enqueue_task(rq, p, flags);
+ 
+@@ -1210,7 +1210,7 @@ void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
+ 	p->on_rq = (flags & DEQUEUE_SLEEP) ? 0 : TASK_ON_RQ_MIGRATING;
+ 
+ 	if (task_contributes_to_load(p))
+-		rq->nr_uninterruptible++;
++		atomic_inc(&rq->nr_uninterruptible);
+ 
+ 	dequeue_task(rq, p, flags);
+ }
+@@ -2135,9 +2135,6 @@ ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
+ 	lockdep_assert_held(&rq->lock);
+ 
+ #ifdef CONFIG_SMP
+-	if (p->sched_contributes_to_load)
+-		rq->nr_uninterruptible--;
+-
+ 	if (wake_flags & WF_MIGRATED)
+ 		en_flags |= ENQUEUE_MIGRATED;
+ #endif
+@@ -2500,11 +2497,15 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	p->sched_contributes_to_load = !!task_contributes_to_load(p);
+ 	p->state = TASK_WAKING;
+ 
++	/* update the rq accounting according before set_task_cpu */
+ 	if (p->in_iowait) {
+ 		delayacct_blkio_end(p);
+ 		atomic_dec(&task_rq(p)->nr_iowait);
+ 	}
+ 
++	if (p->sched_contributes_to_load)
++		atomic_dec(&task_rq(p)->nr_uninterruptible);
++
+ 	cpu = select_task_rq(p, p->wake_cpu, SD_BALANCE_WAKE, wake_flags);
+ 	if (task_cpu(p) != cpu) {
+ 		wake_flags |= WF_MIGRATED;
+@@ -2519,6 +2520,9 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 		atomic_dec(&task_rq(p)->nr_iowait);
+ 	}
+ 
++	if (p->sched_contributes_to_load)
++		atomic_dec(&task_rq(p)->nr_uninterruptible);
++
+ #endif /* CONFIG_SMP */
+ 
+ 	ttwu_queue(p, cpu, wake_flags);
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index f7e4579..fa2c1bc 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -641,7 +641,7 @@ do {									\
+ 	P(nr_running);
+ 	P(nr_switches);
+ 	P(nr_load_updates);
+-	P(nr_uninterruptible);
++	SEQ_printf(m, "  .%-30s: %d\n", "nr_uninterruptible", atomic_read(&rq->nr_uninterruptible));
+ 	PN(next_balance);
+ 	SEQ_printf(m, "  .%-30s: %ld\n", "curr->pid", (long)(task_pid_nr(rq->curr)));
+ 	PN(clock);
+diff --git a/kernel/sched/loadavg.c b/kernel/sched/loadavg.c
+index 28a5165..cae7643 100644
+--- a/kernel/sched/loadavg.c
++++ b/kernel/sched/loadavg.c
+@@ -81,7 +81,7 @@ long calc_load_fold_active(struct rq *this_rq, long adjust)
+ 	long nr_active, delta = 0;
+ 
+ 	nr_active = this_rq->nr_running - adjust;
+-	nr_active += (long)this_rq->nr_uninterruptible;
++	nr_active += (long)atomic_read(&this_rq->nr_uninterruptible);
+ 
+ 	if (nr_active != this_rq->calc_load_active) {
+ 		delta = nr_active - this_rq->calc_load_active;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 802b1f3..8429281 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -890,7 +890,7 @@ struct rq {
+ 	 * one CPU and if it got migrated afterwards it may decrease
+ 	 * it on another CPU. Always updated under the runqueue lock:
+ 	 */
+-	unsigned long		nr_uninterruptible;
++	atomic_t		nr_uninterruptible;
+ 
+ 	struct task_struct	*curr;
+ 	struct task_struct	*idle;
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
