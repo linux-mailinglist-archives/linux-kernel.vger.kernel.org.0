@@ -2,58 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70B3282ABC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 07:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6FF182AC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 07:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731575AbfHFFMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 01:12:47 -0400
-Received: from verein.lst.de ([213.95.11.211]:53003 "EHLO verein.lst.de"
+        id S1731066AbfHFFQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 01:16:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfHFFMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 01:12:46 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8410D68B05; Tue,  6 Aug 2019 07:12:42 +0200 (CEST)
-Date:   Tue, 6 Aug 2019 07:12:42 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Gavin Li <gavinli@thegavinli.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Shawn Anastasio <shawn@anastas.io>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Gavin Li <git@thegavinli.com>
-Subject: Re: [PATCH 1/2] dma-mapping: fix page attributes for dma_mmap_*
-Message-ID: <20190806051242.GA13269@lst.de>
-References: <20190805080145.5694-1-hch@lst.de> <20190805080145.5694-2-hch@lst.de> <CAP_+7SzPdNCMKuuXMjHjpCzxsey2YWR_e6mTAWtNSZ6kKBvKFw@mail.gmail.com> <CA+GxvY5C_rrukCzC5K-h72bePyW8PS_Rfj3uxh-K6UrcAextUQ@mail.gmail.com>
+        id S1725798AbfHFFQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 01:16:39 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F05242147A;
+        Tue,  6 Aug 2019 05:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565068598;
+        bh=o/TrSHzdSPhTYDkhxb6OehuJTgPmBqEkHNHSSX5LqfM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qbdhTgRCp30p+7KwqPCnPTzvuDcBDxBPUkkoHcvcWmkSvv4FwzNk4RWGgbAzrUz8r
+         RWAHd3mQgY3zOR93MJ8d8wnNvzkauY0IDJXbn2UGT4WmLhFlbbGaIVdUEBqBtDlBop
+         l3gXUIobNA1Xu/r3o4n9KGa6mluy0/BNjqoTmtLA=
+Date:   Tue, 6 Aug 2019 07:16:35 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jari Ruusu <jariruusu@users.sourceforge.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 4.9 00/42] 4.9.188-stable review
+Message-ID: <20190806051635.GA8525@kroah.com>
+References: <20190805124924.788666484@linuxfoundation.org>
+ <5D488D55.B84FC098@users.sourceforge.net>
+ <20190805201847.GA31714@kroah.com>
+ <5D490021.F1CCC042@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+GxvY5C_rrukCzC5K-h72bePyW8PS_Rfj3uxh-K6UrcAextUQ@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <5D490021.F1CCC042@users.sourceforge.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 07:55:44PM -0700, Gavin Li wrote:
-> >         /* create a coherent mapping */
-> >         ret = dma_common_contiguous_remap(page, size, VM_USERMAP,
-> > -                       arch_dma_mmap_pgprot(dev, PAGE_KERNEL, attrs),
-> > +                       dma_pgprot(dev, PAGE_KERNEL, attrs),
-> >                         __builtin_return_address(0));
-> >         if (!ret) {
-> >                 __dma_direct_free_pages(dev, size, page);
+On Tue, Aug 06, 2019 at 07:20:49AM +0300, Jari Ruusu wrote:
+> Greg Kroah-Hartman wrote:
+> > On Mon, Aug 05, 2019 at 11:11:01PM +0300, Jari Ruusu wrote:
+> > > Peter Zijlstra's "x86/atomic: Fix smp_mb__{before,after}_atomic()"
+> > > upstream commit 69d927bba39517d0980462efc051875b7f4db185 seems to
+> > > be missing/lost from 4.9 and older stable kernels.
+> > 
+> > Can you send properly backported and tested patches?
 > 
-> Is dma_common_contiguous_remap() still necessary in the
-> DMA_ATTR_NON_CONSISTENT case? I would presume it would be fine to just
-> return a linearly mapped address in that case.
+> linux-4.4 backport of "x86/atomic: Fix smp_mb__{before,after}_atomic()".
+> Tested.
+> 
+> Signed-off-by: Jari Ruusu <jari.ruusu@gmail.com>
 
-It would not be required for a real DMA_ATTR_NON_CONSISTENT
-implementation.  But only parisc and mips actually properly implement
-DMA_ATTR_NON_CONSISTENT, everyone ignores it.  Given that the API is
-a little ill defined and I have a better replacement in the pipeline
-I don't want to start implementing it for other architectures now.
+Thanks for these, I'll review them after the next releases happen in a
+day or so.
+
+thanks,
+
+greg k-h
