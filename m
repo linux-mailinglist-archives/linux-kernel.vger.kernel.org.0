@@ -2,148 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74BB782CD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:31:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC28D82CCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2019 09:30:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732238AbfHFHaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 03:30:25 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1806 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732041AbfHFHaZ (ORCPT
+        id S1732232AbfHFH34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 03:29:56 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:42819 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731807AbfHFH34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 03:30:25 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d492c910001>; Tue, 06 Aug 2019 00:30:25 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 06 Aug 2019 00:30:24 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 06 Aug 2019 00:30:24 -0700
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 6 Aug
- 2019 07:30:23 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id 71AB84286D; Tue,  6 Aug 2019 10:30:21 +0300 (EEST)
-Date:   Tue, 6 Aug 2019 10:30:21 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Mark Brown" <broonie@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] soc/tegra: regulators: Add regulators coupler for
- Tegra30
-Message-ID: <20190806073021.GF3883@pdeschrijver-desktop.Nvidia.com>
-References: <20190725151832.9802-1-digetx@gmail.com>
- <20190725151832.9802-4-digetx@gmail.com>
- <20190802140512.GD3883@pdeschrijver-desktop.Nvidia.com>
- <c537fbea-5884-03db-305f-6ab3d553f7ab@gmail.com>
- <20190805083325.GE3883@pdeschrijver-desktop.Nvidia.com>
- <1a9464b3-6e0e-00ff-64d8-b3abf7982dfb@gmail.com>
+        Tue, 6 Aug 2019 03:29:56 -0400
+Received: from uno.localdomain (mob-109-112-31-244.net.vodafone.it [109.112.31.244])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 79D0420000F;
+        Tue,  6 Aug 2019 07:29:51 +0000 (UTC)
+Date:   Tue, 6 Aug 2019 09:31:14 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Stefan Agner <stefan@agner.ch>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: max9611: Fix temperature reading in probe
+Message-ID: <20190806073114.4mujzdvbrgxivizs@uno.localdomain>
+References: <20190805155515.22621-1-jacopo+renesas@jmondi.org>
+ <20190805181244.663585ac@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hmkibl6tqohgtmac"
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1a9464b3-6e0e-00ff-64d8-b3abf7982dfb@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565076625; bh=orc8XJzHRB34A21SAzqHogdB2d1yl9L59WLJTI8JrPU=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:
-         Content-Transfer-Encoding:In-Reply-To:X-NVConfidentiality:
-         User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=F0u4K6B6ojpwlnFlDZ/aCr2FUj+rU7b7EmWKlyAae0Znbik25zVThcI8xZvJGTKf/
-         C9Xbc9qVrXHTP3Bn19SCOytQyCr0jNT+7Jy/0I9VEQ3VqepaZdbUAWUuIUfGYfYfgX
-         TqRHz0ZlzNe6TqYTXUP6TH8Qazp1HqPkc6Ttcg2bMSXDtDJNCvi3K0pISeh09P3x84
-         /MBgbOydGAWXY/Q7jiloEwqHkUrI1uEy9X7qgjdKlb2Ms0zjaA1d3G0QoQVckfY2ki
-         hrGxrxXzKQ1yRGXsA9W17ybX5KYcN7NjIqwlts+Zvs3ZXzwixLeXEtvhbBR7wpXpZm
-         Wpq4X7ZIk8scw==
+In-Reply-To: <20190805181244.663585ac@archlinux>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 02:03:29PM +0300, Dmitry Osipenko wrote:
-> 05.08.2019 11:33, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, Aug 02, 2019 at 05:39:23PM +0300, Dmitry Osipenko wrote:
-> >> 02.08.2019 17:05, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> On Thu, Jul 25, 2019 at 06:18:32PM +0300, Dmitry Osipenko wrote:
-> >>>> Add regulators coupler for Tegra30 SoCs that performs voltage balanc=
-ing
-> >>>> of a coupled regulators and thus provides voltage scaling functional=
-ity.
-> >>>>
-> >>>> There are 2 coupled regulators on all Tegra30 SoCs: CORE and CPU. Th=
-e
-> >>>> coupled regulator voltages shall be in a range of 300mV from each ot=
-her
-> >>>> and CORE voltage shall be higher than the CPU by N mV, where N depen=
-ds
-> >>>> on the CPU voltage.
-> >>>>
-> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >>>> ---
-> >>>>  drivers/soc/tegra/Kconfig              |   4 +
-> >>>>  drivers/soc/tegra/Makefile             |   1 +
-> >>>>  drivers/soc/tegra/regulators-tegra30.c | 316 ++++++++++++++++++++++=
-+++
-> >>>>  3 files changed, 321 insertions(+)
-> >>>>  create mode 100644 drivers/soc/tegra/regulators-tegra30.c
-> >>>>
-> >>> ...
-> >>>
-> >>>> +
-> >>>> +static int tegra30_core_cpu_limit(int cpu_uV)
-> >>>> +{
-> >>>> +	if (cpu_uV < 800000)
-> >>>> +		return 950000;
-> >>>> +
-> >>>> +	if (cpu_uV < 900000)
-> >>>> +		return 1000000;
-> >>>> +
-> >>>> +	if (cpu_uV < 1000000)
-> >>>> +		return 1100000;
-> >>>> +
-> >>>> +	if (cpu_uV < 1100000)
-> >>>> +		return 1200000;
-> >>>> +
-> >>>> +	if (cpu_uV < 1250000) {
-> >>>> +		switch (tegra_sku_info.cpu_speedo_id) {
-> >>>> +		case 0 ... 1:
-> >>> Aren't we supposed to add /* fall through */ here now?
-> >>
-> >> There is no compiler warning if there is nothing in-between of the
-> >> case-switches, so annotation isn't really necessary here. Of course it
-> >> is possible to add an explicit annotation just to make clear the
-> >> fall-through intention.
-> >>
-> >=20
-> > Ah. Ok. Whatever you want then :)
->=20
-> I'll add the comments if there will be a need to re-spin this series.
->=20
-> >>>> +		case 4:
-> >>>> +		case 7 ... 8:
-> >>>> +			return 1200000;
-> >>>> +
-> >>>> +		default:
-> >>>> +			return 1300000;
-> >>>> +		}
-> >>>> +	}
-> >>>> +
-> >>>
-> >>> Other than that, this looks ok to me.
-> >>
-> >> Awesome, thank you very much! Explicit ACK will be appreciated as well=
-.
-> >=20
-> > Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-All of them.
+--hmkibl6tqohgtmac
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Peter.
+Hi Jonathan,
+
+On Mon, Aug 05, 2019 at 06:12:44PM +0100, Jonathan Cameron wrote:
+> On Mon,  5 Aug 2019 17:55:15 +0200
+> Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>
+> > The max9611 driver reads the die temperature at probe time to validate
+> > the communication channel. Use the actual read value to perform the test
+> > instead of the read function return value, which was mistakenly used so
+> > far.
+> >
+> > The temperature reading test was only successful because the 0 return
+> > value is in the range of supported temperatures.
+> >
+> > Fixes: 69780a3bbc0b ("iio: adc: Add Maxim max9611 ADC driver")
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>
+> Applied to the fixes-togreg branch of iio.git and marked for
+> stable.  That'll be a bit fiddly given other changes around this
+> so we may need to do backports.
+>
+
+Indeed, I should have mentioned this patch depends on Joe's
+ae8cc91a7d85 ("iio: adc: max9611: Fix misuse of GENMASK macro")
+which is now in linux-next, otherwise it might atually trigger errors
+due to the wrong mask value.
+
+I wonder if there's a way to keep track of these dependencies for the
+sake of backporting, or it's an operation that has to be carried out
+manually...
+
+Thanks
+   j
+
+>
+> > ---
+> >  drivers/iio/adc/max9611.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
+> > index 917223d5ff5b..e9f6b1da1b94 100644
+> > --- a/drivers/iio/adc/max9611.c
+> > +++ b/drivers/iio/adc/max9611.c
+> > @@ -480,7 +480,7 @@ static int max9611_init(struct max9611_dev *max9611)
+> >  	if (ret)
+> >  		return ret;
+> >
+> > -	regval = ret & MAX9611_TEMP_MASK;
+> > +	regval &= MAX9611_TEMP_MASK;
+> >
+> >  	if ((regval > MAX9611_TEMP_MAX_POS &&
+> >  	     regval < MAX9611_TEMP_MIN_NEG) ||
+> > --
+> > 2.22.0
+> >
+>
+
+--hmkibl6tqohgtmac
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1JLMIACgkQcjQGjxah
+Vjx4OBAAxQU3tgkW1phGiUlCylmAblCdAtYezFCdcbL28QA5ui5zPocDUerLjRar
+06uAx/kjK5oxH9rDMWh5OgwznfUkenGpNeo3n6/n7CVq6yUW4oTzb802/5EgqOfP
+4P7iKVRbEwOj3DJgcS/l+GCqkZfDj+IncK5C4up2c0NYvTr4kIDOHFCr84qI4Doe
+6O7DDmNZsA1GHTc/KbMBuo0AekVF7SdXgzSHm+EN41SOPK93YtvS7d9z7ethOvYr
+cHrdtWveTOK+HNTO0fWILq0wdKC+n0FXSnGBVdWDPRBJCzYyUIvP9m4NTDETe9fE
+PQH84hC052OmoUxwQmnLh8FB15d4VfOfP/QuykvaVuao3JoQyI4EeVzEgiGV1Eg6
+nhkr/QsEMmxgAzDGVZ39eSXJWZos4lueWnQ5ohzTs5SjeYQnFsPMEnsNoGfX15wL
+z3Z2hZh9Ra8fs3cDeijbwbyljffVEA+ZnFXPItjlZaNeMTKXM66qSy0vKENteRJi
+JJPNAO+3/MDDWFweAUFXimd8htUSAHWEuRRG2EE5sweBam4V/AnkC3AdZsVXBMeg
+QtuS4/VfkZXS1UL8FOGyWU9xQ+daMc2vMDWeA/+EwEes8s1uMzP6aAQ1h6y/W46s
+g6+sxY53Yp+RzsNKoi8OCiQpF7lkESc9XxUKuKV0jhrhT6oQLZE=
+=oFtH
+-----END PGP SIGNATURE-----
+
+--hmkibl6tqohgtmac--
