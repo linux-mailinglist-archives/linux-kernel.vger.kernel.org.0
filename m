@@ -2,210 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBDE84D52
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE41D84D5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388473AbfHGNdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:33:12 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41521 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388311AbfHGNdH (ORCPT
+        id S2388744AbfHGNdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:33:42 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35546 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388309AbfHGNdk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:33:07 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o101so104293174ota.8
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 06:33:07 -0700 (PDT)
+        Wed, 7 Aug 2019 09:33:40 -0400
+Received: by mail-qt1-f194.google.com with SMTP id d23so88336715qto.2;
+        Wed, 07 Aug 2019 06:33:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ynVT6HH5zUX5p1zeewKVIpW/Y0kiupVXnDkrycnDKgY=;
-        b=QVPJtLhYg3OCnNqtJLM3jK0IBzwW1y/cY3OvHKNcgz4fgZXnKy6/vcL0R/2fxRpaEG
-         qYqLGmtZdFPtEyPLd8AV3zqczzasULKC0RncA7D0U3SahIteZsP8pi8lJru/4P6FHOC2
-         XE9DC9RjBvR41R8uaOjpfDtPvkdKGDloA/SHI=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=A4Sq4ocEVYTK0XD+qtBWIKZxIW66i4fTHcbBJmHYjU4=;
+        b=DxQJfMqenZVrlyG1M+L7UTpqQY2NMpc4bz5XJnKAqHVzsbHrB9hnT3fk/I9lLddhlU
+         Los92TqXW43XQhNt6Rg3RiWJ6Iu24iM/I39Mphoo5I+M2ZltuJHUvRTZOYJmcVXPyCSk
+         uy6wSB4T5YOP8QoIjqMfioNHn2O1k4UeRjEYUnltdsxogP2CwNC/Pv7v6DBH+w6Tvg8B
+         lpss86hmVmUpGXPysro5tuxtR3EWjlwv2nE1V2tw8I1FknED3hbsTmU9T0RqP36rZYw7
+         FD+LUuLx18VCrPA58pTrzt2fFjV9IQTD8PiB+zaZvZeuUttIw9ed7I90lsI5XcrOIDDI
+         9Tiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ynVT6HH5zUX5p1zeewKVIpW/Y0kiupVXnDkrycnDKgY=;
-        b=dbdfTBIo1fCDulDNPsivKCYFTV+QriIT3vnK15ikOv0PtX4K70NoKD3SOw76QKhDrz
-         IlvSP2Qm+ZYR7u7hBOJ6zafAAmJNA/tcvrCFvPiYD+JvlzUpEXdkAS1oM1GWN71EvE2P
-         7AjZcXt+lO+//K2V2zVMpgx0w9W17LTXCMoUelZW6FZapjuG291GF3MY/GzSnsnRShNy
-         aPRY5T+aA6NL+qT12KlfRIzeopO4DMkSqK607agO5jqaABoWPMeC7ILmg7htsO8RSEZ2
-         o2qbs+CdEJHnpkp2+uwToX01PyZPdVh5zd4RoPnk8riQF3BEEt9iI777/RlcZBt01gDA
-         59Yw==
-X-Gm-Message-State: APjAAAUC3NDDb6FGu2HZ5uHtk73EL9+9IF7LuNCkP72CVUzD5s58F2Fq
-        3xNV9OTqwciie2uLfaEYh9el5w==
-X-Google-Smtp-Source: APXvYqw3IGKI5jXQ/bmS7PW8tj0p5StbzXxMdUNfDkaYrrmWB4R4OGOyJPhgIWIhrpHiaE5G1zp52A==
-X-Received: by 2002:a02:b78a:: with SMTP id f10mr10313615jam.5.1565184786559;
-        Wed, 07 Aug 2019 06:33:06 -0700 (PDT)
-Received: from iscandar.digidescorp.com ([50.73.98.161])
-        by smtp.googlemail.com with ESMTPSA id n2sm94465534ioa.27.2019.08.07.06.33.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 07 Aug 2019 06:33:06 -0700 (PDT)
-From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
-X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Steve Magnani <steve@digidescorp.com>
-Subject: [PATCH] udf: reduce leakage of blocks related to named streams
-Date:   Wed,  7 Aug 2019 08:32:58 -0500
-Message-Id: <20190807133258.12432-1-steve@digidescorp.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=A4Sq4ocEVYTK0XD+qtBWIKZxIW66i4fTHcbBJmHYjU4=;
+        b=liOcY7S6i1g9YnbdtCaQXuzEmxx8rATS90noykBHBMbn72BWHt9g5wvr2oSi+kF2nV
+         VVC8Q7Mt77dFqBZ0NpiQI1Yp2eabHG1FkEkbsgWDZNrMMB0yFr6okyZtTikipC5SkeGe
+         2ccAQTYEIhwbvBwpIvXIL6E15vl+B35yR3vKmUp+0KyjS2gF/EOYeVhntr1suo/lkeIH
+         jONYvCggW0SVWdCoPbgdEzLTF3DvQw6fSICfzZpHsraFhFSgiPBWJV4UWmlKAq3qFBS1
+         RA0tb5PJw2YtE6DDdneinccFeleoU6uUtUxKAgEvwGPiFu9sYE8JZAk3sR1h9IBuYRXS
+         FvxA==
+X-Gm-Message-State: APjAAAW/rlI6EuHUy/7/X8u2VQKZ6I4f0T7t/RKbCOj2l3A1U3IsZfMJ
+        Bz9ap6p4GXiueI418YH/ixd25xGueOQGyWih8pw=
+X-Google-Smtp-Source: APXvYqzUd46nWSwmFEX3el+JBhCf3t5gbEPh8XiNrCaSQ4+xLt4n0K/Q5Z/4tyFbFxjA9E73lTeIH9dea/vLxMYD688=
+X-Received: by 2002:ac8:5048:: with SMTP id h8mr8066056qtm.190.1565184819230;
+ Wed, 07 Aug 2019 06:33:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190719135352.GF4240@sasha-vm> <20190807114649.fjfaj4oytcxaua7o@linutronix.de>
+ <CADLLry6a9a0TKOEEPxOW_DS+XXwk5qUuaH+W9cmbLwvudXAV8A@mail.gmail.com> <alpine.DEB.2.21.1908071452350.24014@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1908071452350.24014@nanos.tec.linutronix.de>
+From:   Austin Kim <austindh.kim@gmail.com>
+Date:   Wed, 7 Aug 2019 22:33:31 +0900
+Message-ID: <CADLLry5bKjVB5BM7HVF8wOPXkQWpQ-6xM=F78MDRHhpCxE=uBw@mail.gmail.com>
+Subject: Re: NULL ptr deref in wq_worker_sleeping on 4.19
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>, peterz@infradead.org,
+        mingo@kernel.org, tj@kernel.org, jiangshanlai@gmail.com,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        =?UTF-8?B?I+yEnO2YleynhA==?= <mike.seo@lge.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Magnani <steve@digidescorp.com>
+Is it possible for you to generate kernel patch only with **kernel
+log** for 'use-after-free' case?
+With kernel log, we only have limited information, so it is hard to
+debug 'use-after-free' case with this signature.
 
-Windows is capable of creating UDF files having named streams.
-One example is the "Zone.Identifier" stream attached automatically
-to files downloaded from a network. See:
-  https://msdn.microsoft.com/en-us/library/dn392609.aspx
+For this matter, kernel should be compiled with below config.
+CONFIG_SLUB_DEBUG=3Dy
+CONFIG_SLUB_DEBUG_ON=3Dy
 
-Modification of a file having one or more named streams in Linux causes
-the stream directory to become detached from the file, essentially leaking
-all blocks pertaining to the file's streams. Worse, an attempt to delete
-the file causes its directory entry (FID) to be deleted, but because the
-driver believes that a hard link to the file remains, the Extended File
-Entry (EFE) and all extents of the file itself remain allocated. Since
-there is no hard link, after the FID has been deleted all of these blocks
-are unreachable (leaked).
-
-A complete solution to this problem involves walking the File Identifiers
-in the file's stream directory and freeing all extents allocated to each
-named stream (each of which involves a walk of arbitrary length). As the
-complete solution is quite complex, for now just settle for retaining the
-stream directory attachment during file modification, and being able to
-reclaim the blocks of the file, its Extended File Entry, and its Stream
-Directory EFE during file deletion.
-
-The UDF structures used by Windows to attach a simple Zone.Identifier
-named stream to a file are:
-* A stream directory EFE containing an "in ICB" Zone.Identifier FID,
-  which references
-* An EFE with "in ICB" stream data
-
-For this case, this partial solution reduces the number of blocks leaked
-during file deletion to just one (the EFE containing the stream data).
-
-Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
-
---- a/fs/udf/udf_i.h	2019-07-26 11:35:28.257563879 -0500
-+++ b/fs/udf/udf_i.h	2019-08-06 14:35:55.579654263 -0500
-@@ -42,12 +42,15 @@ struct udf_inode_info {
- 	unsigned		i_efe : 1;	/* extendedFileEntry */
- 	unsigned		i_use : 1;	/* unallocSpaceEntry */
- 	unsigned		i_strat4096 : 1;
--	unsigned		reserved : 26;
-+	unsigned		i_streamdir : 1;
-+	unsigned		reserved : 25;
- 	union {
- 		struct short_ad	*i_sad;
- 		struct long_ad		*i_lad;
- 		__u8		*i_data;
- 	} i_ext;
-+	struct kernel_lb_addr		i_locStreamdir;
-+	__u64			i_lenStreams;
- 	struct rw_semaphore	i_data_sem;
- 	struct udf_ext_cache cached_extent;
- 	/* Spinlock for protecting extent cache */
---- a/fs/udf/super.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/super.c	2019-08-06 15:04:30.851086957 -0500
-@@ -151,9 +151,13 @@ static struct inode *udf_alloc_inode(str
- 
- 	ei->i_unique = 0;
- 	ei->i_lenExtents = 0;
-+	ei->i_lenStreams = 0;
- 	ei->i_next_alloc_block = 0;
- 	ei->i_next_alloc_goal = 0;
- 	ei->i_strat4096 = 0;
-+	ei->i_streamdir = 0;
-+	ei->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-+	ei->i_locStreamdir.partitionReferenceNum = 0xFFFF;
- 	init_rwsem(&ei->i_data_sem);
- 	ei->cached_extent.lstart = -1;
- 	spin_lock_init(&ei->i_extent_cache_lock);
---- a/fs/udf/inode.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/inode.c	2019-08-06 15:04:30.851086957 -0500
-@@ -132,7 +132,7 @@ void udf_evict_inode(struct inode *inode
- 	struct udf_inode_info *iinfo = UDF_I(inode);
- 	int want_delete = 0;
- 
--	if (!inode->i_nlink && !is_bad_inode(inode)) {
-+	if ((inode->i_nlink == iinfo->i_streamdir) && !is_bad_inode(inode)) {
- 		want_delete = 1;
- 		udf_setsize(inode, 0);
- 		udf_update_inode(inode, IS_SYNC(inode));
-@@ -1485,6 +1485,10 @@ reread:
- 		iinfo->i_lenEAttr = le32_to_cpu(fe->lengthExtendedAttr);
- 		iinfo->i_lenAlloc = le32_to_cpu(fe->lengthAllocDescs);
- 		iinfo->i_checkpoint = le32_to_cpu(fe->checkpoint);
-+		iinfo->i_streamdir = 0;
-+		iinfo->i_lenStreams = 0;
-+		iinfo->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-+		iinfo->i_locStreamdir.partitionReferenceNum = 0xFFFF;
- 	} else {
- 		inode->i_blocks = le64_to_cpu(efe->logicalBlocksRecorded) <<
- 		    (inode->i_sb->s_blocksize_bits - 9);
-@@ -1498,6 +1502,16 @@ reread:
- 		iinfo->i_lenEAttr = le32_to_cpu(efe->lengthExtendedAttr);
- 		iinfo->i_lenAlloc = le32_to_cpu(efe->lengthAllocDescs);
- 		iinfo->i_checkpoint = le32_to_cpu(efe->checkpoint);
-+
-+		/* Named streams */
-+		iinfo->i_streamdir = (efe->streamDirectoryICB.extLength != 0);
-+		iinfo->i_locStreamdir =
-+			lelb_to_cpu(efe->streamDirectoryICB.extLocation);
-+		iinfo->i_lenStreams = le64_to_cpu(efe->objectSize);
-+		if (iinfo->i_lenStreams >= inode->i_size)
-+			iinfo->i_lenStreams -= inode->i_size;
-+		else
-+			iinfo->i_lenStreams = 0;
- 	}
- 	inode->i_generation = iinfo->i_unique;
- 
-@@ -1760,9 +1774,19 @@ static int udf_update_inode(struct inode
- 		       iinfo->i_ext.i_data,
- 		       inode->i_sb->s_blocksize -
- 					sizeof(struct extendedFileEntry));
--		efe->objectSize = cpu_to_le64(inode->i_size);
-+		efe->objectSize =
-+			cpu_to_le64(inode->i_size + iinfo->i_lenStreams);
- 		efe->logicalBlocksRecorded = cpu_to_le64(lb_recorded);
- 
-+		if (iinfo->i_streamdir) {
-+			struct long_ad *icb_lad = &efe->streamDirectoryICB;
-+
-+			icb_lad->extLocation =
-+				cpu_to_lelb(iinfo->i_locStreamdir);
-+			icb_lad->extLength =
-+				cpu_to_le32(inode->i_sb->s_blocksize);
-+		}
-+
- 		udf_adjust_time(iinfo, inode->i_atime);
- 		udf_adjust_time(iinfo, inode->i_mtime);
- 		udf_adjust_time(iinfo, inode->i_ctime);
---- a/fs/udf/ialloc.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/ialloc.c	2019-08-06 15:04:30.851086957 -0500
-@@ -31,6 +31,7 @@ void udf_free_inode(struct inode *inode)
- 	struct super_block *sb = inode->i_sb;
- 	struct udf_sb_info *sbi = UDF_SB(sb);
- 	struct logicalVolIntegrityDescImpUse *lvidiu = udf_sb_lvidiu(sb);
-+	struct udf_inode_info *iinfo = UDF_I(inode);
- 
- 	if (lvidiu) {
- 		mutex_lock(&sbi->s_alloc_mutex);
-@@ -42,7 +43,13 @@ void udf_free_inode(struct inode *inode)
- 		mutex_unlock(&sbi->s_alloc_mutex);
- 	}
- 
--	udf_free_blocks(sb, NULL, &UDF_I(inode)->i_location, 0, 1);
-+	udf_free_blocks(sb, NULL, &iinfo->i_location, 0, 1);
-+	if (iinfo->i_streamdir) {
-+		udf_free_blocks(sb, NULL, &iinfo->i_locStreamdir, 0, 1);
-+		udf_warn(inode->i_sb,
-+			 "Leaking unsupported stream blocks for inode %lu\n",
-+			 inode->i_ino);
-+	}
- }
- 
- struct inode *udf_new_inode(struct inode *dir, umode_t mode)
+2019=EB=85=84 8=EC=9B=94 7=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 9:56, Th=
+omas Gleixner <tglx@linutronix.de>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> On Wed, 7 Aug 2019, Austin Kim wrote:
+>
+>   A: Because it messes up the order in which people normally read text.
+>   Q: Why is top-posting such a bad thing?
+>   A: Top-posting.
+>   Q: What is the most annoying thing in e-mail?
+>
+>   A: No.
+>   Q: Should I include quotations after my reply?
+>
+>   http://daringfireball.net/2007/07/on_top
+>
+> > I wonder what kinds of workqueue is used in case of this panic.
+> >
+> > If system workqueue(system_wq) is used for this case, it would be a
+> > help to replace it with high priority workqueue(system_highpri_wq). If
+> > panic disappers with high priority workqueue(system_highpri_wq), we
+> > would think about another scenario.
+>
+> How would that help? As Sebastian explained, something overwrote memory o=
+r
+> it is a Use After Free. How would a high priority workqueue 'fix' that?
+>
+> You need to find the root cause, which is either memory corruption or a u=
+se
+> after free.
+>
+> Thanks,
+>
+>         tglx
