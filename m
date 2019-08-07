@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BAE584D24
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D5984D29
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388493AbfHGNbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:31:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60596 "EHLO
+        id S2388541AbfHGNbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:31:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60608 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388450AbfHGNb3 (ORCPT
+        with ESMTP id S2388486AbfHGNbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:31:29 -0400
+        Wed, 7 Aug 2019 09:31:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kretIwKkWxye/psg+87LaplK6rnUq+TvEVUnHaHn8vY=; b=tTdwHlDoYsf+gZct1YtEdRsV06
-        wM6KafdPKrn9Ykk+qfbtyLl23lB6HCPCKtAVSEEAkMUmeYwHpiQ1hfXCwt0ymyf4a2WxJu0pubLDt
-        MgYHtECpW3hNHfuIxZdlsF6SLz5tBEBKh3IjQS5NoACGHHU3k8lhZ8VaS0r2TQHIThGPDQq9RogTQ
-        jqcpBYrbdWpum6GjncHmnKpCxYra/zx/nX5CSb65W/9uGMayq4dtikm0ZYZFk82qNssmcEj0zLhFC
-        KsY5ul9nhPXlJKheLY+Gyls7qJxes4GlI6ByBc21WEubrbV5RA3U0cAYgmEpOZ59Te6oVjWdfJqqz
-        4iCdXYpw==;
+        bh=URr23O+sE34tA6sqCT0tgNJQshCDWMKEuncRKh9WKPY=; b=MNFKeM711p54uteggUKpLg1pWi
+        R1gneE4fGrluSEnZpPwduTMdmyK5GPaAH+tiSGzC5U7yDVBEx65rZvazzcmQmfc3PMyw8v/0m3/oN
+        EgORCXaI8pkdALWoNPr5d/7VyCyltJEy1k7OtPXwtITeJPCPn56IxYQdKpnWK/NFPEajlQywF8sYE
+        8DNj18B6Y1Woaxu+q2ddiKD0UrVdhVsIOd8hW0IcorVQoLEDk//rcK/VM/adVF18oxAB4NlEc6hvY
+        QKCbhx4C+7HPMF25HRe2uUFNvTO0CrAIBOAMnE51VzG48u8z6JbxQ0A1SPzfrcP5OVa7bIJqzo1i6
+        yX556EXQ==;
 Received: from [195.167.85.94] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvM2J-00086w-3n; Wed, 07 Aug 2019 13:31:27 +0000
+        id 1hvM2L-00087S-K2; Wed, 07 Aug 2019 13:31:30 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/29] qla1280: remove SGI SN2 support
-Date:   Wed,  7 Aug 2019 16:30:31 +0300
-Message-Id: <20190807133049.20893-12-hch@lst.de>
+Subject: [PATCH 12/29] qla2xxx: remove SGI SN2 support
+Date:   Wed,  7 Aug 2019 16:30:32 +0300
+Message-Id: <20190807133049.20893-13-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190807133049.20893-1-hch@lst.de>
 References: <20190807133049.20893-1-hch@lst.de>
@@ -51,107 +51,34 @@ specific to it from this driver.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/scsi/qla1280.c | 37 -------------------------------------
- drivers/scsi/qla1280.h |  3 ---
- 2 files changed, 40 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/drivers/scsi/qla1280.c b/drivers/scsi/qla1280.c
-index e5760c4a27f0..832af4213046 100644
---- a/drivers/scsi/qla1280.c
-+++ b/drivers/scsi/qla1280.c
-@@ -357,10 +357,6 @@
- #include <scsi/scsi_host.h>
- #include <scsi/scsi_tcq.h>
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index da83034d4759..d4c3baec9172 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -4575,20 +4575,6 @@ qla2x00_nvram_config(scsi_qla_host_t *vha)
+ 		rval = 1;
+ 	}
  
 -#if defined(CONFIG_IA64_GENERIC) || defined(CONFIG_IA64_SGI_SN2)
--#include <asm/sn/io.h>
--#endif
--
- 
- /*
-  * Compile time Options:
-@@ -380,11 +376,6 @@
- 
- #define NVRAM_DELAY()			udelay(500)	/* 2 microseconds */
- 
--#if defined(__ia64__) && !defined(ia64_platform_is)
--#define ia64_platform_is(foo)		(!strcmp(x, platform_name))
--#endif
--
--
- #define IS_ISP1040(ha) (ha->pdev->device == PCI_DEVICE_ID_QLOGIC_ISP1020)
- #define IS_ISP1x40(ha) (ha->pdev->device == PCI_DEVICE_ID_QLOGIC_ISP1020 || \
- 			ha->pdev->device == PCI_DEVICE_ID_QLOGIC_ISP1240)
-@@ -1427,15 +1418,6 @@ qla1280_initialize_adapter(struct scsi_qla_host *ha)
- 	ha->flags.reset_active = 0;
- 	ha->flags.abort_isp_active = 0;
- 
--#if defined(CONFIG_IA64_GENERIC) || defined(CONFIG_IA64_SGI_SN2)
+-	/*
+-	 * The SN2 does not provide BIOS emulation which means you can't change
+-	 * potentially bogus BIOS settings. Force the use of default settings
+-	 * for link rate and frame size.  Hope that the rest of the settings
+-	 * are valid.
+-	 */
 -	if (ia64_platform_is("sn2")) {
--		printk(KERN_INFO "scsi(%li): Enabling SN2 PCI DMA "
--		       "dual channel lockup workaround\n", ha->host_no);
--		ha->flags.use_pci_vchannel = 1;
--		driver_setup.no_nvram = 1;
+-		nv->frame_payload_size = 2048;
+-		if (IS_QLA23XX(ha))
+-			nv->special_options[1] = BIT_7;
 -	}
 -#endif
 -
- 	/* TODO: implement support for the 1040 nvram format */
- 	if (IS_ISP1040(ha))
- 		driver_setup.no_nvram = 1;
-@@ -2251,13 +2233,6 @@ qla1280_nvram_config(struct scsi_qla_host *ha)
- 	mb[1] = nv->firmware_feature.f.enable_fast_posting;
- 	mb[1] |= nv->firmware_feature.f.report_lvd_bus_transition << 1;
- 	mb[1] |= nv->firmware_feature.f.disable_synchronous_backoff << 5;
--#if defined(CONFIG_IA64_GENERIC) || defined (CONFIG_IA64_SGI_SN2)
--	if (ia64_platform_is("sn2")) {
--		printk(KERN_INFO "scsi(%li): Enabling SN2 PCI DMA "
--		       "workaround\n", ha->host_no);
--		mb[1] |= nv->firmware_feature.f.unused_9 << 9; /* XXX */
--	}
--#endif
- 	status |= qla1280_mailbox_command(ha, BIT_1 | BIT_0, mb);
+ 	/* Reset Initialization control block */
+ 	memset(icb, 0, ha->init_cb_size);
  
- 	/* Retry count and delay. */
-@@ -2888,12 +2863,6 @@ qla1280_64bit_start_scsi(struct scsi_qla_host *ha, struct srb * sp)
- 				break;
- 
- 			dma_handle = sg_dma_address(s);
--#if defined(CONFIG_IA64_GENERIC) || defined(CONFIG_IA64_SGI_SN2)
--			if (ha->flags.use_pci_vchannel)
--				sn_pci_set_vchan(ha->pdev,
--						 (unsigned long *)&dma_handle,
--						 SCSI_BUS_32(cmd));
--#endif
- 			*dword_ptr++ =
- 				cpu_to_le32(lower_32_bits(dma_handle));
- 			*dword_ptr++ =
-@@ -2950,12 +2919,6 @@ qla1280_64bit_start_scsi(struct scsi_qla_host *ha, struct srb * sp)
- 				if (cnt == 5)
- 					break;
- 				dma_handle = sg_dma_address(s);
--#if defined(CONFIG_IA64_GENERIC) || defined(CONFIG_IA64_SGI_SN2)
--				if (ha->flags.use_pci_vchannel)
--					sn_pci_set_vchan(ha->pdev,
--							 (unsigned long *)&dma_handle,
--							 SCSI_BUS_32(cmd));
--#endif
- 				*dword_ptr++ =
- 					cpu_to_le32(lower_32_bits(dma_handle));
- 				*dword_ptr++ =
-diff --git a/drivers/scsi/qla1280.h b/drivers/scsi/qla1280.h
-index b496206362a9..a1a8aefc7cc3 100644
---- a/drivers/scsi/qla1280.h
-+++ b/drivers/scsi/qla1280.h
-@@ -1055,9 +1055,6 @@ struct scsi_qla_host {
- 		uint32_t reset_active:1;		/* 3 */
- 		uint32_t abort_isp_active:1;		/* 4 */
- 		uint32_t disable_risc_code_load:1;	/* 5 */
--#ifdef __ia64__
--		uint32_t use_pci_vchannel:1;
--#endif
- 	} flags;
- 
- 	struct nvram nvram;
 -- 
 2.20.1
 
