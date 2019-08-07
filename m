@@ -2,218 +2,270 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 297938527F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4CA85296
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 20:03:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389092AbfHGR5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 13:57:19 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55238 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387952AbfHGR5T (ORCPT
+        id S2389099AbfHGSCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 14:02:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34782 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388163AbfHGSCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 13:57:19 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: koike)
-        with ESMTPSA id 9580428C73D
-Subject: Re: [PATCH v8 00/14] Rockchip ISP1 Driver
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
-        jacob2.chen@rock-chips.com, jeffy.chen@rock-chips.com,
-        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, kernel@collabora.com,
-        ezequiel@collabora.com, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com
-References: <20190730184256.30338-1-helen.koike@collabora.com>
- <20190807153759.GP21370@paasikivi.fi.intel.com>
-From:   Helen Koike <helen.koike@collabora.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=helen.koike@collabora.com; keydata=
- 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
-Message-ID: <6a65a050-6c97-a2d2-2bf2-85d5071dfe7f@collabora.com>
-Date:   Wed, 7 Aug 2019 14:57:02 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 7 Aug 2019 14:02:39 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x77Huxn1093733;
+        Wed, 7 Aug 2019 13:56:59 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u83g7g026-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 13:56:59 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x77HuxB8093674;
+        Wed, 7 Aug 2019 13:56:59 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u83g7g01d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 13:56:59 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x77HnsSg024862;
+        Wed, 7 Aug 2019 17:56:57 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma03wdc.us.ibm.com with ESMTP id 2u51w63uen-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 17:56:57 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x77Huvrn51511580
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Aug 2019 17:56:57 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F56DB2081;
+        Wed,  7 Aug 2019 17:56:57 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 208F0B2079;
+        Wed,  7 Aug 2019 17:56:57 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  7 Aug 2019 17:56:57 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C856516C5DA7; Wed,  7 Aug 2019 10:56:57 -0700 (PDT)
+Date:   Wed, 7 Aug 2019 10:56:57 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, max.byungchul.park@gmail.com,
+        byungchul.park@lge.com, Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
+        kernel-team@lge.com, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Rao Shoaib <rao.shoaib@oracle.com>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC v1 2/2] rcuperf: Add kfree_rcu performance Tests
+Message-ID: <20190807175657.GF28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190806212041.118146-1-joel@joelfernandes.org>
+ <20190806212041.118146-2-joel@joelfernandes.org>
+ <20190807002915.GV28441@linux.ibm.com>
+ <20190807102213.GD169551@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190807153759.GP21370@paasikivi.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807102213.GD169551@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-07_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908070168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/7/19 12:37 PM, Sakari Ailus wrote:
-> On Tue, Jul 30, 2019 at 03:42:42PM -0300, Helen Koike wrote:
->> Hello,
->>
->> I'm re-sending a new version of ISP(Camera) v4l2 driver for rockchip
->> rk3399 SoC.
->>
->> I didn't change much from the last version, just applying the
->> suggestions made in the previous one.
->>
->> This patchset is also available at:
->> https://gitlab.collabora.com/koike/linux/tree/rockchip/isp/v8
->>
->> Libcamera patched to work with this version:
->> https://gitlab.collabora.com/koike/libcamera
->> (also sent to the mailing list)
->>
->> I tested on the rockpi 4 with a rpi v1.3 sensor and also with the
->> Scarlet Chromebook.
+On Wed, Aug 07, 2019 at 06:22:13AM -0400, Joel Fernandes wrote:
+> On Tue, Aug 06, 2019 at 05:29:15PM -0700, Paul E. McKenney wrote:
+> > On Tue, Aug 06, 2019 at 05:20:41PM -0400, Joel Fernandes (Google) wrote:
+> > > This test runs kfree_rcu in a loop to measure performance of the new
+> > > kfree_rcu, with and without patch.
+> > > 
+> > > To see improvement, run with boot parameters:
+> > > rcuperf.kfree_loops=2000 rcuperf.kfree_alloc_num=100 rcuperf.perf_type=kfree
+> > > 
+> > > Without patch, test runs in 6.9 seconds.
+> > > With patch, test runs in 6.1 seconds (+13% improvement)
+> > > 
+> > > If it is desired to run the test but with the traditional (non-batched)
+> > > kfree_rcu, for example to compare results, then you could pass along the
+> > > rcuperf.kfree_no_batch=1 boot parameter.
+> > 
+> > You lost me on this one.  You ran two runs, with rcuperf.kfree_no_batch=1
+> > and without?  Or you ran this patch both with and without the earlier
+> > patch, and could have run with the patch and rcuperf.kfree_no_batch=1?
 > 
-> Could you also post media-ctl -p printout e.g. as a reply to the cover
-> letter?
+> I always run the rcutorture test with patch because the patch doesn't really
+> do anything if rcuperf.kfree_no_batch=0. This parameter is added so that in
+> the future folks can compare effect of non-batching with that of the
+> batching. However, I can also remove the patch itself and run this test
+> again.
 > 
-> Thanks.
+> > If the latter, it would be good to try all three.
 > 
+> Ok, sure.
 
-Yes, I had posted in v7 and I forgot to add it in subsequent cover letters:
+Very good!  And please make the commit log more clear.  ;-)
 
-media-ctl --print-dot -> file available at: http://ix.io/1NIH
+> [snip] 
+> > > ---
+> > >  kernel/rcu/rcuperf.c | 169 ++++++++++++++++++++++++++++++++++++++++++-
+> > >  1 file changed, 168 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+> > > index 7a6890b23c5f..34658760da5e 100644
+> > > --- a/kernel/rcu/rcuperf.c
+> > > +++ b/kernel/rcu/rcuperf.c
+> > > @@ -89,7 +89,7 @@ torture_param(int, writer_holdoff, 0, "Holdoff (us) between GPs, zero to disable
+> > >  
+> > >  static char *perf_type = "rcu";
+> > >  module_param(perf_type, charp, 0444);
+> > > -MODULE_PARM_DESC(perf_type, "Type of RCU to performance-test (rcu, rcu_bh, ...)");
+> > > +MODULE_PARM_DESC(perf_type, "Type of RCU to performance-test (rcu, rcu_bh, kfree,...)");
+> > >  
+> > >  static int nrealreaders;
+> > >  static int nrealwriters;
+> > > @@ -592,6 +592,170 @@ rcu_perf_shutdown(void *arg)
+> > >  	return -EINVAL;
+> > >  }
+> > >  
+> > > +/*
+> > > + * kfree_rcu performance tests: Start a kfree_rcu loop on all CPUs for number
+> > > + * of iterations and measure total time for all iterations to complete.
+> > > + */
+> > > +
+> > > +torture_param(int, kfree_nthreads, -1, "Number of RCU reader threads");
+> > > +torture_param(int, kfree_alloc_num, 8000, "Number of allocations and frees done by a thread");
+> > > +torture_param(int, kfree_alloc_size, 16,  "Size of each allocation");
+> > 
+> > Is this used?  How does it relate to KFREE_OBJ_BYTES?
+> 
+> You're right, I had added this before but it is unused now. Sorry about that,
+> I will remove it.
+> 
+> > > +torture_param(int, kfree_loops, 10, "Size of each allocation");
+> > 
+> > I suspect that this kfree_loops string is out of date.
+> 
+> Yes, complete screw up, will update it.
+> 
+> > > +torture_param(int, kfree_no_batch, 0, "Use the non-batching (slower) version of kfree_rcu");
+> > 
+> > All of these need to be added to kernel-parameters.txt.  Along with
+> > any added by the earlier patch, for that matter.
+> 
+> Sure, should I split that into a separate patch?
 
-root@rockpi:~# media-ctl -p
-Media controller API version 5.3.0
+Your choice.
 
-Media device information
-------------------------
-driver          rkisp1
-model           rkisp1
-serial
-bus info        platform: rkisp1
-hw revision     0x0
-driver version  5.3.0
+> > > +static struct task_struct **kfree_reader_tasks;
+> > > +static int kfree_nrealthreads;
+> > > +static atomic_t n_kfree_perf_thread_started;
+> > > +static atomic_t n_kfree_perf_thread_ended;
+> > > +
+> > > +#define KFREE_OBJ_BYTES 8
+> > > +
+> > > +struct kfree_obj {
+> > > +	char kfree_obj[KFREE_OBJ_BYTES];
+> > > +	struct rcu_head rh;
+> > > +};
+> > > +
+> > > +void kfree_call_rcu_nobatch(struct rcu_head *head, rcu_callback_t func);
+> > > +
+> > > +static int
+> > > +kfree_perf_thread(void *arg)
+> > > +{
+> > > +	int i, l = 0;
+> > 
+> > It is really easy to confuse "l" and "1" in some fonts, so please use
+> > a different name.  (From the "showing my age" department:  On typical
+> > 1970s typewriters, there was no numeral "1" -- you typed the letter
+> > "l" instead, thus anticipating at least the first digit of "1337".)
+> 
+> :-D Ok, I will improve the names.
+> 
+> > > +	long me = (long)arg;
+> > > +	struct kfree_obj **alloc_ptrs;
+> > > +	u64 start_time, end_time;
+> > > +
+> > > +	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
+> > > +	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
+> > > +	set_user_nice(current, MAX_NICE);
+> > > +	atomic_inc(&n_kfree_perf_thread_started);
+> > > +
+> > > +	alloc_ptrs = (struct kfree_obj **)kmalloc(sizeof(struct kfree_obj *) * kfree_alloc_num,
+> > > +						  GFP_KERNEL);
+> > > +	if (!alloc_ptrs)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	start_time = ktime_get_mono_fast_ns();
+> > 
+> > Don't you want to announce that you started here rather than above in
+> > order to avoid (admittedly slight) measurement inaccuracies?
+> 
+> I did not follow, are you referring to the measurement inaccuracy related to
+> the "kfree_perf_thread task started" string print?  Or, are you saying that
+> ktime_get_mono_fast_ns() has to start earlier than over here?
 
-Device topology
-- entity 1: rkisp1-isp-subdev (4 pads, 5 links)
-            type V4L2 subdev subtype Unknown flags 0
-            device node name /dev/v4l-subdev0
-        pad0: Sink
-                [fmt:SBGGR10_1X10/800x600 field:none
-                 crop.bounds:(0,0)/800x600
-                 crop:(0,0)/800x600]
-                <- "ov5647 4-0036":0 [ENABLED]
-        pad1: Sink
-                [fmt:FIXED/800x600 field:none]
-                <- "rkisp1-input-params":0 [ENABLED]
-        pad2: Source
-                [fmt:YUYV8_2X8/800x600 field:none
-                 crop.bounds:(0,0)/800x600
-                 crop:(0,0)/800x600]
-                -> "rkisp1_selfpath":0 [ENABLED]
-                -> "rkisp1_mainpath":0 [ENABLED]
-        pad3: Source
-                [fmt:FIXED/800x600 field:none]
-                -> "rkisp1-statistics":0 [ENABLED]
+I am referring to the atomic_inc().
 
-- entity 6: rkisp1_mainpath (1 pad, 1 link)
-            type Node subtype V4L flags 0
-            device node name /dev/video0
-        pad0: Sink
-                <- "rkisp1-isp-subdev":2 [ENABLED]
+> > > +	do {
+> > > +		for (i = 0; i < kfree_alloc_num; i++) {
+> > > +			alloc_ptrs[i] = kmalloc(sizeof(struct kfree_obj), GFP_KERNEL);
+> > > +			if (!alloc_ptrs[i])
+> > > +				return -ENOMEM;
+> > > +		}
+> > > +
+> > > +		for (i = 0; i < kfree_alloc_num; i++) {
+> > > +			if (!kfree_no_batch) {
+> > > +				kfree_rcu(alloc_ptrs[i], rh);
+> > > +			} else {
+> > > +				rcu_callback_t cb;
+> > > +
+> > > +				cb = (rcu_callback_t)(unsigned long)offsetof(struct kfree_obj, rh);
+> > > +				kfree_call_rcu_nobatch(&(alloc_ptrs[i]->rh), cb);
+> > > +			}
+> > > +		}
+> > > +
+> > > +		schedule_timeout_uninterruptible(2);
+> > 
+> > Why the two-jiffy wait in the middle of a timed test?  Yes, you need
+> > a cond_resched() and maybe more here, but a two-jiffy wait?  I don't
+> > see how this has any chance of getting valid measurements.
+> > 
+> > What am I missing here?
+> 
+> I am getting pretty reliable and repeatable results with this test.
 
-- entity 10: rkisp1_selfpath (1 pad, 1 link)
-             type Node subtype V4L flags 0
-             device node name /dev/video1
-        pad0: Sink
-                <- "rkisp1-isp-subdev":2 [ENABLED]
+That is a good thing, but you might not be measuring what you think you
+are measuring.
 
-- entity 14: rkisp1-statistics (1 pad, 1 link)
-             type Node subtype V4L flags 0
-             device node name /dev/video2
-        pad0: Sink
-                <- "rkisp1-isp-subdev":3 [ENABLED]
+>                                                                     The sleep
+> was mostly just to give the system a chance to scheduler other tasks. I can
+> remove the schedule and also try with just cond_resched().
 
-- entity 18: rkisp1-input-params (1 pad, 1 link)
-             type Node subtype V4L flags 0
-             device node name /dev/video3
-        pad0: Source
-                -> "rkisp1-isp-subdev":1 [ENABLED]
+Please do!  This can be a bit fiddly, but there is example code in
+current rcutorture on -rcu.
 
-- entity 22: ov5647 4-0036 (1 pad, 1 link)
-             type V4L2 subdev subtype Sensor flags 0
-             device node name /dev/v4l-subdev1
-        pad0: Source
-                [fmt:SBGGR8_1X8/1280x960 field:none]
-                -> "rkisp1-isp-subdev":0 [ENABLED]
+> The other reason for the schedule call was also to give the test a longer
+> running time and help with easier measurement as a result, since the test
+> would run otherwise for a very shortwhile. Agreed there might be a better way
+> to handle this issue.
 
+Easy!  Do more kmalloc()/kfree_rcu() pairs!  ;-)
 
-Thanks
-Helen
+> (I will reply to the rest of the comments below in a bit, I am going to a
+> hospital now to visit a sick relative and will be back a bit later.)
+
+Ouch!!!  I hope that goes as well as it possibly can!  And please don't
+neglect your relative on RCU's account!!!
+
+							Thanx, Paul
