@@ -2,77 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40DB683EBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 03:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F71483EBF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 03:25:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfHGBYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 21:24:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45000 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727653AbfHGBYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 21:24:19 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 339C921738;
-        Wed,  7 Aug 2019 01:24:17 +0000 (UTC)
-Date:   Tue, 6 Aug 2019 21:24:15 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com
-Subject: Re: [PATCH RFC tip/core/rcu 02/14] rcu/nocb: Add bypass callback
- queueing
-Message-ID: <20190806212415.012a105d@oasis.local.home>
-In-Reply-To: <20190807011707.GZ28441@linux.ibm.com>
-References: <20190802151435.GA1081@linux.ibm.com>
-        <20190802151501.13069-2-paulmck@linux.ibm.com>
-        <20190807000313.GA161170@google.com>
-        <20190807003501.GX28441@linux.ibm.com>
-        <20190806204055.088ba246@gandalf.local.home>
-        <20190807011707.GZ28441@linux.ibm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727860AbfHGBZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 21:25:02 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35514 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727710AbfHGBZB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 21:25:01 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w24so38580450plp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 18:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7FaHyZF1ytvXmMKwCY/+k3LPm48Hqmka/roO7lTdlfk=;
+        b=W2pIBOZDMlqjCRetFToDIC8mCbZmZSEt/H5K/cFfP2QAj+Od/VAzU39DoUW/gu4mRh
+         MfcvcIf34TrCsKQa7YjVxazj1Gzvnrik2WCVQMCQSskglgalm6XupTZwluycEDv051xH
+         5pLALLcxXXgkIRz+3YC2zEOpiTXCb673jQ8IH0Jqm+c8V+QSLglNvsOy8hHF3pkIA5sU
+         UbzUvQ3WZ/HOVdbU2uja1ewMrNfFZ6YpPor+o0W1FHaHKvEjpVEyi2cGz9Otoml6Tc3o
+         719QBFWIWECKfiXvXn9LleI4h+7q3D19Px1wbOHB+yTc/wHKeUVSf+xct0s9Rbdu4mNs
+         KDvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7FaHyZF1ytvXmMKwCY/+k3LPm48Hqmka/roO7lTdlfk=;
+        b=aeMClVdPRF4z8LjcS94n/EbLhFqGGH0UJ097hUvtMJSFPtUM2KZSbIvS65WYORJVA2
+         GdsNWobP4SL0xMF996YpcXlwFf6qHxBAs8HvLFpaXRq8KKXCnGKWh7+hNmqnCqK3Nc4M
+         vcFo6c7NjzcwKXNKsh+jtONb3Kpd+0HqQY1mYlhm0B2VfEgRcM7cy6d+NnLLI4U7sfy+
+         g68Cs06xGTMvjv+CTrBitPiFDyGJHMBGkrmPh1Hnrnh3fbwt2LNqExoMag2lQ07TrFOJ
+         A/k5hAZzhGkGxkDyhnlZqHtY14Whl7cde1d8X/NQ89mM4C1+kQwXq+oDuUFkvqxYDkof
+         7Z3w==
+X-Gm-Message-State: APjAAAXdCK1E/9F5Xl3hWhbUVoKUsDSqGddNqNC1X8vHSaF2a/wbuIzk
+        Z+teGkf55+EcWf9cQhSJlObAkw==
+X-Google-Smtp-Source: APXvYqz70zFAXr+KOybPQi1XC/A2h56130aPIZLAlrxB52DWP6wUc26wvAp+g/3nUGcOS2EQSNdAxQ==
+X-Received: by 2002:a17:902:b497:: with SMTP id y23mr5916521plr.68.1565141100693;
+        Tue, 06 Aug 2019 18:25:00 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id a12sm16687179pgv.48.2019.08.06.18.24.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 18:25:00 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: [PATCH] soc: qcom: socinfo: Annotate switch cases with fall through
+Date:   Tue,  6 Aug 2019 18:24:57 -0700
+Message-Id: <20190807012457.16820-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20190807100803.63007737@canb.auug.org.au>
+References: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Aug 2019 18:17:07 -0700
-"Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
+Introduce fall through annotations in the switch statements of
+socinfo_debugfs_init() to silence compiler warnings.
 
-> On Tue, Aug 06, 2019 at 08:40:55PM -0400, Steven Rostedt wrote:
-> > On Tue, 6 Aug 2019 17:35:01 -0700
-> > "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
-> >   
-> > > > > +	// Don't use ->nocb_bypass during early boot.    
-> > > > 
-> > > > Very minor nit: comment style should be /* */    
-> > > 
-> > > I thought that Linus said that "//" was now OK.  Am I confused?  
-> > 
-> > Have a link?  
-> 
-> https://lkml.org/lkml/2016/7/8/625
-> 
+Fixes: 9c84c1e78634 ("soc: qcom: socinfo: Expose custom attributes")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/soc/qcom/socinfo.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
+diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+index 855353bed19e..f0ca9d7c7966 100644
+--- a/drivers/soc/qcom/socinfo.c
++++ b/drivers/soc/qcom/socinfo.c
+@@ -323,17 +323,23 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+ 		debugfs_create_x32("raw_device_number", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.raw_device_num);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 11):
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 10):
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 9):
+ 		qcom_socinfo->info.foundry_id = __le32_to_cpu(info->foundry_id);
+ 
+ 		debugfs_create_u32("foundry_id", 0400, qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.foundry_id);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 8):
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 7):
+ 		DEBUGFS_ADD(info, pmic_model);
+ 		DEBUGFS_ADD(info, pmic_die_rev);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 6):
+ 		qcom_socinfo->info.hw_plat_subtype =
+ 			__le32_to_cpu(info->hw_plat_subtype);
+@@ -341,6 +347,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+ 		debugfs_create_u32("hardware_platform_subtype", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.hw_plat_subtype);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 5):
+ 		qcom_socinfo->info.accessory_chip =
+ 			__le32_to_cpu(info->accessory_chip);
+@@ -348,23 +355,27 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+ 		debugfs_create_u32("accessory_chip", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.accessory_chip);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 4):
+ 		qcom_socinfo->info.plat_ver = __le32_to_cpu(info->plat_ver);
+ 
+ 		debugfs_create_u32("platform_version", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.plat_ver);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 3):
+ 		qcom_socinfo->info.hw_plat = __le32_to_cpu(info->hw_plat);
+ 
+ 		debugfs_create_u32("hardware_platform", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.hw_plat);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 2):
+ 		qcom_socinfo->info.raw_ver  = __le32_to_cpu(info->raw_ver);
+ 
+ 		debugfs_create_u32("raw_version", 0400, qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.raw_ver);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 1):
+ 		DEBUGFS_ADD(info, build_id);
+ 		break;
+-- 
+2.18.0
 
-  The (c) form is particularly good for things like enum or structure
-  member comments at the end of code, where you might want to align
-  things up, but the ending comment marker ends up being visually pretty
-  distracting (and lining _that_ up is too much make-believe work).
-
-
-I think it's still for special occasions, and the above example doesn't
-look like one of them ;-)
-
-I basically avoid the '//' comment, as it just adds inconstancy.
-
--- Steve
