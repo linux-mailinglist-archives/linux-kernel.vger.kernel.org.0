@@ -2,104 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31A0A83E60
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 02:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B7C983E5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 02:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbfHGAcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 20:32:07 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34353 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbfHGAcG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 20:32:06 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 31so89615216wrm.1;
-        Tue, 06 Aug 2019 17:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GGs8MT6FGlCkbNNH7TTlHmnRq/ZZmT2kM4HCkC2iAKw=;
-        b=az+UmsXmDuq0cUhWJaho5IgfxSfXKToHUabQ1qKX5d/vT3zH87nkJ2i5gDs/K+jCy1
-         DQefVcwEeK7GXtQWtwnU8isjUoMThDEhn5YvyURbVwRC1ppp23CPg+idSb4c2+qqZABJ
-         vI5QmFWHBrhwxE1ebD2Ahhi/8ItA4cw8m7cWaYspTCRxUwI8yEbX6XN7SFoQFZz+Pv+2
-         +owVGTu2fr3Rt4XaTdrV9JScsafyA9POwGXWsmRNVDCqDiNsSLuDlc/zPwusE/2JERCZ
-         9oWK3+0Aoz1yhxW5n58r5gNe3ZPPJfE8XXIAwnRzZjNnwy4nAg8osT246qbwoYnNP3Z9
-         yKNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GGs8MT6FGlCkbNNH7TTlHmnRq/ZZmT2kM4HCkC2iAKw=;
-        b=hRwF8Bmw7WDcf2ZKwKmZXQuJqEAHhza3jZZK7mRymz3z/8wTZaaEA+iY53SKTn7VU2
-         MQIKBdXaCVCUOiOSUMqQXsvpPWYPg8Ls7PbLu3QQMBvIiwFhsBFyk6ho8DDkUQ0xEaBB
-         nRE4Ts4ek8ufyMiUNvdUKZM+MrkwjdLYDKBJcEuYMXt5IU5KMdXGoAqT0SR6wDmdHGCv
-         c8XTw66NooRA4mj4+uqyXZClTOxzXxT5JZC+klWlOrKD4gdYq7NHWQA5bITVxhIcoEuE
-         UA6k6K8PRB0rlh69GVO8erPQi96jL3P4r2VUbj6Rr2CMg7h8OkHv6IkiHqoXJlXKp2vB
-         1mAQ==
-X-Gm-Message-State: APjAAAXxHsxQv96MLj843IwQ2dU0QWqPcEOF20mUV9TW0G0RMQvDkX1+
-        bmo//fUkrgNCa3qq+B7yY9k=
-X-Google-Smtp-Source: APXvYqynFI9yVSwY6UqnrCwxba4J2DyfeETuCPqf8QdPoeXnlnppBxsfHbIvGeLFeGUQTKIz3twsdA==
-X-Received: by 2002:adf:f646:: with SMTP id x6mr7256533wrp.18.1565137923815;
-        Tue, 06 Aug 2019 17:32:03 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id 91sm183684963wrp.3.2019.08.06.17.32.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 17:32:03 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pinctrl: aspeed: g6: Remove const specifier from aspeed_g6_sig_expr_set's ctx parameter
-Date:   Tue,  6 Aug 2019 17:30:37 -0700
-Message-Id: <20190807003037.48457-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.23.0.rc1
+        id S1727556AbfHGAb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 20:31:29 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:50098 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726381AbfHGAb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 20:31:29 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hv9rD-0003gV-OL; Tue, 06 Aug 2019 18:31:12 -0600
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Jens Axboe <axboe@fb.com>, Keith Busch <kbusch@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Eric Pilmore <epilmore@gigaio.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20190730163545.4915-1-logang@deltatee.com>
+ <20190806234439.GW151852@google.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <e31f13f8-5afd-6f38-a206-163e9f77c91a@deltatee.com>
+Date:   Tue, 6 Aug 2019 18:31:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190806234439.GW151852@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: hch@lst.de, epilmore@gigaio.com, dan.j.williams@intel.com, sbates@raithlin.com, jgg@mellanox.com, kbusch@kernel.org, axboe@fb.com, Christian.Koenig@amd.com, sagi@grimberg.me, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v2 00/14] PCI/P2PDMA: Support transactions that hit the
+ host bridge
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clang errors:
 
-drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c:2325:9: error: incompatible
-pointer types initializing 'int (*)(struct aspeed_pinmux_data *, const
-struct aspeed_sig_expr *, bool)' with an expression of type 'int (const
-struct aspeed_pinmux_data *, const struct aspeed_sig_expr *, bool)'
-[-Werror,-Wincompatible-pointer-types]
-        .set = aspeed_g6_sig_expr_set,
-               ^~~~~~~~~~~~~~~~~~~~~~
-1 error generated.
 
-Commit 674fa8daa8c9 ("pinctrl: aspeed-g5: Delay acquisition of regmaps")
-changed the set function pointer declaration and the g6 one wasn't
-updated (I assume because it wasn't merged yet).
+On 2019-08-06 5:44 p.m., Bjorn Helgaas wrote:
+> On Tue, Jul 30, 2019 at 10:35:31AM -0600, Logan Gunthorpe wrote:
+>> Here's v2 of the patchset. It doesn't sound like there's anything
+>> terribly controversial here so this version is mostly just some
+>> cleanup changes for clarity.
+>>
+>> Changes in v2:
+>>  * Rebase on v5.3-rc2 (No changes)
+>>  * Re-introduce the private pagemap structure and move the p2p-specific
+>>    elements out of the commond dev_pagemap (per Christoph)
+>>  * Use flags instead of bool in the whitelist (per Jason)
+>>  * Only store the mapping type in the xarray (instead of the distance
+>>    with flags) such that a function can return the mapping method
+>>    with a switch statement to decide how to map. (per Christoph)
+>>  * Drop find_parent_pci_dev() on the fast path and rely on the fact
+>>    that the struct device passed to the mapping functions *must* be
+>>    a PCI device and convert it directly. (per suggestions from
+>>    Christoph and Jason)
+>>  * Collected Christian's Reviewed-by's
+>> --
+>>
+>> As discussed on the list previously, in order to fully support the
+>> whitelist Christian added with the IOMMU, we must ensure that we
+>> map any buffer going through the IOMMU with an aprropriate dma_map
+>> call. This patchset accomplishes this by cleaning up the output of
+>> upstream_bridge_distance() to better indicate the mapping requirements,
+>> caching these requirements in an xarray, then looking them up at map
+>> time and applying the appropriate mapping method.
+>>
+>> After this patchset, it's possible to use the NVMe-of P2P support to
+>> transfer between devices without a switch on the whitelisted root
+>> complexes. A couple Intel device I have tested this on have also
+>> been added to the white list.
+>>
+>> Most of the changes are contained within the p2pdma.c, but there are
+>> a few minor touches to other subsystems, mostly to add support
+>> to call an unmap function.
+>>
+>> The final patch in this series demonstrates a possible
+>> pci_p2pdma_map_resource() function that I expect Christian will need
+>> but does not have any users at this time so I don't intend for it to be
+>> considered for merging.
+> 
+> I don't see pci_p2pdma_map_resource() in any of these patches.
 
-Fixes: 2eda1cdec49f ("pinctrl: aspeed: Add AST2600 pinmux support")
-Link: https://github.com/ClangBuiltLinux/linux/issues/632
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oh, sorry, I removed that in v2 seeing there was some confusion over it.
+I guess I forgot to remove the reference in the cover letter.
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-index 6012d7d4a22a..648ddb7f038a 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-@@ -2267,7 +2267,7 @@ static const struct aspeed_pin_function aspeed_g6_functions[] = {
-  * Return: 0 if the expression is configured as requested and a negative error
-  * code otherwise
-  */
--static int aspeed_g6_sig_expr_set(const struct aspeed_pinmux_data *ctx,
-+static int aspeed_g6_sig_expr_set(struct aspeed_pinmux_data *ctx,
- 				  const struct aspeed_sig_expr *expr,
- 				  bool enable)
- {
--- 
-2.23.0.rc1
+> I tentatively applied these to pci/p2pdma with minor typographical
+> updates (below), but I'll update the branch if necessary.
+
+Great, thanks! The typographical changes look good.
+
+I already have one very minor change queued up for these. Should I just
+send you a small patch against your branch for you to squash?
+
+Logan
 
