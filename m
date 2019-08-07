@@ -2,255 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA4B84CBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D4D84CB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388229AbfHGNTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:19:38 -0400
-Received: from mga02.intel.com ([134.134.136.20]:2534 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387970AbfHGNTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:19:38 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 06:19:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
-   d="scan'208";a="165318374"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by orsmga007.jf.intel.com with ESMTP; 07 Aug 2019 06:19:07 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1hvLqL-0002ZV-Fa; Wed, 07 Aug 2019 16:19:05 +0300
-Date:   Wed, 7 Aug 2019 16:19:05 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        jslaby@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        qi-ming.wu@intel.com, cheol.yong.kim@intel.com,
-        rahul.tanwar@intel.com
-Subject: Re: [PATCH 1/5] serial: lantiq: Add SMP support
-Message-ID: <20190807131905.GW30120@smile.fi.intel.com>
-References: <cover.1565160764.git.rahul.tanwar@linux.intel.com>
- <7912786cccad60c72b20ea724af1def505ab22aa.1565160764.git.rahul.tanwar@linux.intel.com>
+        id S2388168AbfHGNTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:19:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43121 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387970AbfHGNTS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:19:18 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x77DJBf72695406
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 7 Aug 2019 06:19:11 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x77DJBf72695406
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565183952;
+        bh=MnPPyHF/3DqdV3ltYydc8rzca+L7XLy3cRk7ClNghso=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=RkOGCASfqMd0l1Fi/Z/ojE/MbkM9vDdcu4/U7qhKNrUPtIytylR8uK0Yy8Yx6NW+I
+         alDS3PRZmz0Wb59H84znfKjbjnC1tp9RZpFSXsNKFnHua0jFewZBozOEicfXyNp5dh
+         1VTgXjHQoI3wTm2gzcehL12hUOs1czXC/zw1GpX7x++Fmn3DRkqcnWHpOVnN4YxZnt
+         kgikS5Sx2OzPJ1N1vU7nCtUEwZvPryu0Be9miGRffrknSvmrWvKQew80B+QRe9zHgH
+         hs/Ndmh4yUw+DTQ3Mk4yWLeJOdhdzSeoLoXLOd42OUy59C/RrhHYAhnqpW6xqXsza2
+         dwyc0mQzTOXRQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x77DJAs62695403;
+        Wed, 7 Aug 2019 06:19:10 -0700
+Date:   Wed, 7 Aug 2019 06:19:10 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for John Hubbard <tipbot@zytor.com>
+Message-ID: <tip-610666f0581557944c3abec93a7c125b8303442c@git.kernel.org>
+Cc:     mingo@kernel.org, jhubbard@nvidia.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          jhubbard@nvidia.com, mingo@kernel.org
+In-Reply-To: <20190731054627.5627-2-jhubbard@nvidia.com>
+References: <20190731054627.5627-2-jhubbard@nvidia.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/boot] x86/boot: Save fields explicitly, zero out
+ everything else
+Git-Commit-ID: 610666f0581557944c3abec93a7c125b8303442c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <7912786cccad60c72b20ea724af1def505ab22aa.1565160764.git.rahul.tanwar@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 05:21:31PM +0800, Rahul Tanwar wrote:
-> The existing driver can only support single core SoC. But new multicore
-> platforms which reuse the same driver/IP need SMP support. This patch adds
-> multicore support in the driver.
+Commit-ID:  610666f0581557944c3abec93a7c125b8303442c
+Gitweb:     https://git.kernel.org/tip/610666f0581557944c3abec93a7c125b8303442c
+Author:     John Hubbard <jhubbard@nvidia.com>
+AuthorDate: Tue, 30 Jul 2019 22:46:27 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 7 Aug 2019 15:16:04 +0200
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+x86/boot: Save fields explicitly, zero out everything else
 
-> 
-> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-> ---
->  drivers/tty/serial/lantiq.c | 47 ++++++++++++++++++++++++++++++---------------
->  1 file changed, 32 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-> index 9de9f0f239a1..42e27b48e9cc 100644
-> --- a/drivers/tty/serial/lantiq.c
-> +++ b/drivers/tty/serial/lantiq.c
-> @@ -99,7 +99,6 @@
->  static void lqasc_tx_chars(struct uart_port *port);
->  static struct ltq_uart_port *lqasc_port[MAXPORTS];
->  static struct uart_driver lqasc_reg;
-> -static DEFINE_SPINLOCK(ltq_asc_lock);
->  
->  struct ltq_uart_port {
->  	struct uart_port	port;
-> @@ -110,6 +109,7 @@ struct ltq_uart_port {
->  	unsigned int		tx_irq;
->  	unsigned int		rx_irq;
->  	unsigned int		err_irq;
-> +	spinlock_t		lock; /* exclusive access for multi core */
->  };
->  
->  static inline void asc_update_bits(u32 clear, u32 set, void __iomem *reg)
-> @@ -135,9 +135,11 @@ static void
->  lqasc_start_tx(struct uart_port *port)
->  {
->  	unsigned long flags;
-> -	spin_lock_irqsave(&ltq_asc_lock, flags);
-> +	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
-> +
-> +	spin_lock_irqsave(&ltq_port->lock, flags);
->  	lqasc_tx_chars(port);
-> -	spin_unlock_irqrestore(&ltq_asc_lock, flags);
-> +	spin_unlock_irqrestore(&ltq_port->lock, flags);
->  	return;
->  }
->  
-> @@ -245,9 +247,11 @@ lqasc_tx_int(int irq, void *_port)
->  {
->  	unsigned long flags;
->  	struct uart_port *port = (struct uart_port *)_port;
-> -	spin_lock_irqsave(&ltq_asc_lock, flags);
-> +	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
-> +
-> +	spin_lock_irqsave(&ltq_port->lock, flags);
->  	__raw_writel(ASC_IRNCR_TIR, port->membase + LTQ_ASC_IRNCR);
-> -	spin_unlock_irqrestore(&ltq_asc_lock, flags);
-> +	spin_unlock_irqrestore(&ltq_port->lock, flags);
->  	lqasc_start_tx(port);
->  	return IRQ_HANDLED;
->  }
-> @@ -257,11 +261,13 @@ lqasc_err_int(int irq, void *_port)
->  {
->  	unsigned long flags;
->  	struct uart_port *port = (struct uart_port *)_port;
-> -	spin_lock_irqsave(&ltq_asc_lock, flags);
-> +	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
-> +
-> +	spin_lock_irqsave(&ltq_port->lock, flags);
->  	/* clear any pending interrupts */
->  	asc_update_bits(0, ASCWHBSTATE_CLRPE | ASCWHBSTATE_CLRFE |
->  		ASCWHBSTATE_CLRROE, port->membase + LTQ_ASC_WHBSTATE);
-> -	spin_unlock_irqrestore(&ltq_asc_lock, flags);
-> +	spin_unlock_irqrestore(&ltq_port->lock, flags);
->  	return IRQ_HANDLED;
->  }
->  
-> @@ -270,10 +276,12 @@ lqasc_rx_int(int irq, void *_port)
->  {
->  	unsigned long flags;
->  	struct uart_port *port = (struct uart_port *)_port;
-> -	spin_lock_irqsave(&ltq_asc_lock, flags);
-> +	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
-> +
-> +	spin_lock_irqsave(&ltq_port->lock, flags);
->  	__raw_writel(ASC_IRNCR_RIR, port->membase + LTQ_ASC_IRNCR);
->  	lqasc_rx_chars(port);
-> -	spin_unlock_irqrestore(&ltq_asc_lock, flags);
-> +	spin_unlock_irqrestore(&ltq_port->lock, flags);
->  	return IRQ_HANDLED;
->  }
->  
-> @@ -307,11 +315,13 @@ lqasc_startup(struct uart_port *port)
->  {
->  	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
->  	int retval;
-> +	unsigned long flags;
->  
->  	if (!IS_ERR(ltq_port->clk))
->  		clk_prepare_enable(ltq_port->clk);
->  	port->uartclk = clk_get_rate(ltq_port->freqclk);
->  
-> +	spin_lock_irqsave(&ltq_port->lock, flags);
->  	asc_update_bits(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
->  		port->membase + LTQ_ASC_CLC);
->  
-> @@ -331,6 +341,8 @@ lqasc_startup(struct uart_port *port)
->  	asc_update_bits(0, ASCCON_M_8ASYNC | ASCCON_FEN | ASCCON_TOEN |
->  		ASCCON_ROEN, port->membase + LTQ_ASC_CON);
->  
-> +	spin_unlock_irqrestore(&ltq_port->lock, flags);
-> +
->  	retval = request_irq(ltq_port->tx_irq, lqasc_tx_int,
->  		0, "asc_tx", port);
->  	if (retval) {
-> @@ -367,15 +379,19 @@ static void
->  lqasc_shutdown(struct uart_port *port)
->  {
->  	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
-> +	unsigned long flags;
-> +
->  	free_irq(ltq_port->tx_irq, port);
->  	free_irq(ltq_port->rx_irq, port);
->  	free_irq(ltq_port->err_irq, port);
->  
-> +	spin_lock_irqsave(&ltq_port->lock, flags);
->  	__raw_writel(0, port->membase + LTQ_ASC_CON);
->  	asc_update_bits(ASCRXFCON_RXFEN, ASCRXFCON_RXFFLU,
->  		port->membase + LTQ_ASC_RXFCON);
->  	asc_update_bits(ASCTXFCON_TXFEN, ASCTXFCON_TXFFLU,
->  		port->membase + LTQ_ASC_TXFCON);
-> +	spin_unlock_irqrestore(&ltq_port->lock, flags);
->  	if (!IS_ERR(ltq_port->clk))
->  		clk_disable_unprepare(ltq_port->clk);
->  }
-> @@ -390,6 +406,7 @@ lqasc_set_termios(struct uart_port *port,
->  	unsigned int baud;
->  	unsigned int con = 0;
->  	unsigned long flags;
-> +	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
->  
->  	cflag = new->c_cflag;
->  	iflag = new->c_iflag;
-> @@ -443,7 +460,7 @@ lqasc_set_termios(struct uart_port *port,
->  	/* set error signals  - framing, parity  and overrun, enable receiver */
->  	con |= ASCCON_FEN | ASCCON_TOEN | ASCCON_ROEN;
->  
-> -	spin_lock_irqsave(&ltq_asc_lock, flags);
-> +	spin_lock_irqsave(&ltq_port->lock, flags);
->  
->  	/* set up CON */
->  	asc_update_bits(0, con, port->membase + LTQ_ASC_CON);
-> @@ -471,7 +488,7 @@ lqasc_set_termios(struct uart_port *port,
->  	/* enable rx */
->  	__raw_writel(ASCWHBSTATE_SETREN, port->membase + LTQ_ASC_WHBSTATE);
->  
-> -	spin_unlock_irqrestore(&ltq_asc_lock, flags);
-> +	spin_unlock_irqrestore(&ltq_port->lock, flags);
->  
->  	/* Don't rewrite B0 */
->  	if (tty_termios_baud_rate(new))
-> @@ -589,17 +606,14 @@ lqasc_console_putchar(struct uart_port *port, int ch)
->  static void lqasc_serial_port_write(struct uart_port *port, const char *s,
->  				    u_int count)
->  {
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&ltq_asc_lock, flags);
->  	uart_console_write(port, s, count, lqasc_console_putchar);
-> -	spin_unlock_irqrestore(&ltq_asc_lock, flags);
->  }
->  
->  static void
->  lqasc_console_write(struct console *co, const char *s, u_int count)
->  {
->  	struct ltq_uart_port *ltq_port;
-> +	unsigned long flags;
->  
->  	if (co->index >= MAXPORTS)
->  		return;
-> @@ -608,7 +622,9 @@ lqasc_console_write(struct console *co, const char *s, u_int count)
->  	if (!ltq_port)
->  		return;
->  
-> +	spin_lock_irqsave(&ltq_port->lock, flags);
->  	lqasc_serial_port_write(&ltq_port->port, s, count);
-> +	spin_unlock_irqrestore(&ltq_port->lock, flags);
->  }
->  
->  static int __init
-> @@ -766,6 +782,7 @@ lqasc_probe(struct platform_device *pdev)
->  	ltq_port->rx_irq = irqres[1].start;
->  	ltq_port->err_irq = irqres[2].start;
->  
-> +	spin_lock_init(&ltq_port->lock);
->  	lqasc_port[line] = ltq_port;
->  	platform_set_drvdata(pdev, ltq_port);
->  
-> -- 
-> 2.11.0
-> 
+Recent gcc compilers (gcc 9.1) generate warnings about an
+out of bounds memset, if you trying memset across several fields
+of a struct. This generated a couple of warnings on x86_64 builds.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Fix this by explicitly saving the fields in struct boot_params
+that are intended to be preserved, and zeroing all the rest.
 
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190731054627.5627-2-jhubbard@nvidia.com
 
+---
+ arch/x86/include/asm/bootparam_utils.h | 63 ++++++++++++++++++++++++++--------
+ 1 file changed, 48 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/include/asm/bootparam_utils.h b/arch/x86/include/asm/bootparam_utils.h
+index 101eb944f13c..f5e90a849bca 100644
+--- a/arch/x86/include/asm/bootparam_utils.h
++++ b/arch/x86/include/asm/bootparam_utils.h
+@@ -18,6 +18,20 @@
+  * Note: efi_info is commonly left uninitialized, but that field has a
+  * private magic, so it is better to leave it unchanged.
+  */
++
++#define sizeof_mbr(type, member) ({ sizeof(((type *)0)->member); })
++
++#define BOOT_PARAM_PRESERVE(struct_member)				\
++	{								\
++		.start = offsetof(struct boot_params, struct_member),	\
++		.len   = sizeof_mbr(struct boot_params, struct_member),	\
++	}
++
++struct boot_params_to_save {
++	unsigned int start;
++	unsigned int len;
++};
++
+ static void sanitize_boot_params(struct boot_params *boot_params)
+ {
+ 	/* 
+@@ -35,21 +49,40 @@ static void sanitize_boot_params(struct boot_params *boot_params)
+ 	 * problems again.
+ 	 */
+ 	if (boot_params->sentinel) {
+-		/* fields in boot_params are left uninitialized, clear them */
+-		boot_params->acpi_rsdp_addr = 0;
+-		memset(&boot_params->ext_ramdisk_image, 0,
+-		       (char *)&boot_params->efi_info -
+-			(char *)&boot_params->ext_ramdisk_image);
+-		memset(&boot_params->kbd_status, 0,
+-		       (char *)&boot_params->hdr -
+-		       (char *)&boot_params->kbd_status);
+-		memset(&boot_params->_pad7[0], 0,
+-		       (char *)&boot_params->edd_mbr_sig_buffer[0] -
+-			(char *)&boot_params->_pad7[0]);
+-		memset(&boot_params->_pad8[0], 0,
+-		       (char *)&boot_params->eddbuf[0] -
+-			(char *)&boot_params->_pad8[0]);
+-		memset(&boot_params->_pad9[0], 0, sizeof(boot_params->_pad9));
++		static struct boot_params scratch;
++		char *bp_base = (char *)boot_params;
++		char *save_base = (char *)&scratch;
++		int i;
++
++		const struct boot_params_to_save to_save[] = {
++			BOOT_PARAM_PRESERVE(screen_info),
++			BOOT_PARAM_PRESERVE(apm_bios_info),
++			BOOT_PARAM_PRESERVE(tboot_addr),
++			BOOT_PARAM_PRESERVE(ist_info),
++			BOOT_PARAM_PRESERVE(acpi_rsdp_addr),
++			BOOT_PARAM_PRESERVE(hd0_info),
++			BOOT_PARAM_PRESERVE(hd1_info),
++			BOOT_PARAM_PRESERVE(sys_desc_table),
++			BOOT_PARAM_PRESERVE(olpc_ofw_header),
++			BOOT_PARAM_PRESERVE(efi_info),
++			BOOT_PARAM_PRESERVE(alt_mem_k),
++			BOOT_PARAM_PRESERVE(scratch),
++			BOOT_PARAM_PRESERVE(e820_entries),
++			BOOT_PARAM_PRESERVE(eddbuf_entries),
++			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
++			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
++			BOOT_PARAM_PRESERVE(e820_table),
++			BOOT_PARAM_PRESERVE(eddbuf),
++		};
++
++		memset(&scratch, 0, sizeof(scratch));
++
++		for (i = 0; i < ARRAY_SIZE(to_save); i++) {
++			memcpy(save_base + to_save[i].start,
++			       bp_base + to_save[i].start, to_save[i].len);
++		}
++
++		memcpy(boot_params, save_base, sizeof(*boot_params));
+ 	}
+ }
+ 
