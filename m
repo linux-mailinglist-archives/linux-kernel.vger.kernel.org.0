@@ -2,85 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83A5C84CC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:21:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E8984CD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:23:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388286AbfHGNVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:21:02 -0400
-Received: from mga06.intel.com ([134.134.136.31]:20092 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388079AbfHGNVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:21:02 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 06:21:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
-   d="scan'208";a="374406771"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Aug 2019 06:20:58 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1hvLs8-0002b6-FI; Wed, 07 Aug 2019 16:20:56 +0300
-Date:   Wed, 7 Aug 2019 16:20:56 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        jslaby@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        qi-ming.wu@intel.com, cheol.yong.kim@intel.com,
-        rahul.tanwar@intel.com
-Subject: Re: [PATCH 2/5] serial: lantiq: Use proper DT compatible string
-Message-ID: <20190807132056.GX30120@smile.fi.intel.com>
-References: <cover.1565160764.git.rahul.tanwar@linux.intel.com>
- <12c3029f406ca1fedf14154154f7082e358f0473.1565160764.git.rahul.tanwar@linux.intel.com>
+        id S2388326AbfHGNVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:21:48 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52751 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388059AbfHGNVq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:21:46 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost.localdomain)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <r.czerwinski@pengutronix.de>)
+        id 1hvLsm-0002TB-34; Wed, 07 Aug 2019 15:21:36 +0200
+Message-ID: <5707aee16681065a975ed42a06069674c3127edb.camel@pengutronix.de>
+Subject: Re: [Tee-dev] [PATCH v8 0/2] fTPM: firmware TPM running in TEE
+From:   Rouven Czerwinski <r.czerwinski@pengutronix.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@microsoft.com, linux-doc@vger.kernel.org,
+        corbet@lwn.net, linux-kernel@vger.kernel.org,
+        thiruan@microsoft.com, tee-dev@lists.linaro.org, jgg@ziepe.ca,
+        ilias.apalodimas@linaro.org, rdunlap@infradead.org,
+        linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
+        bryankel@microsoft.com
+Date:   Wed, 07 Aug 2019 15:21:33 +0200
+In-Reply-To: <20190711200858.xydm3wujikufxjcw@linux.intel.com>
+References: <20190705204746.27543-1-sashal@kernel.org>
+         <20190711200858.xydm3wujikufxjcw@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12c3029f406ca1fedf14154154f7082e358f0473.1565160764.git.rahul.tanwar@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: r.czerwinski@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 05:21:32PM +0800, Rahul Tanwar wrote:
-> The patch adds change to use explicit string instead of a macro for
-> DT compatible string.
+Hi,
 
-For consistency you may need to convert OF_EARLYCON_DECLARE() as well.
+I spent some time with the fTPM module and TA on a Nitrogen6X with the
+latest OP-TEE master. After stumbling through the "tee_supplicant no
+persistent storage" problem, my module now issues the following error
+message on module load:
 
-Perhaps commit message should explain the rationale, i.e. the following patches
-will add another compatible string and thus it makes sense to have them
-explicitly mentioned.
+[   34.633252] tpm tpm0: ftpm_tee_tpm_op_send: SUBMIT_COMMAND invoke error: 0xffff0006
+[   34.641035] tpm tpm0: tpm_try_transmit: send(): error -65530
+[   34.647008] tpm tpm0: ftpm_tee_tpm_op_send: SUBMIT_COMMAND invoke error: 0xffff0006
+[   34.654788] tpm tpm0: tpm_try_transmit: send(): error -65530
+[   34.660480] ftpm-tee ftpm: ftpm_tee_probe: tpm_chip_register failed with rc=-65530
+[   34.678087] ftpm-tee: probe of ftpm failed with error -65530
 
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-> ---
->  drivers/tty/serial/lantiq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-> index 42e27b48e9cc..1116261c973e 100644
-> --- a/drivers/tty/serial/lantiq.c
-> +++ b/drivers/tty/serial/lantiq.c
-> @@ -792,7 +792,7 @@ lqasc_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id ltq_asc_match[] = {
-> -	{ .compatible = DRVNAME },
-> +	{ .compatible = "lantiq,asc" },
->  	{},
->  };
->  
-> -- 
-> 2.11.0
-> 
+To me the TEE_ERROR_BAD_PARAMETERS indicates some ABI issue between the
+TA and the kernel module. Note that I built the TA from 
+https://github.com/microsoft/MSRSec.git with commit
+6bb57db632c424f87cbaf7ec6f9c89be7682b3c0. Maybe this is not the correct
+version, I had some problems building the module from the repository
+mentioned in the Patches
 
+Regards,
+Rouven Czerwinski
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Pengutronix e.K.                           |            		 |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
