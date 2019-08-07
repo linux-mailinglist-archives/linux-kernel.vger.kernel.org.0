@@ -2,207 +2,342 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E353883E4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 02:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A21E83E51
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 02:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbfHGA1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 20:27:33 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52123 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfHGA1d (ORCPT
+        id S1727954AbfHGA3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 20:29:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:3254 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727881AbfHGA3w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 20:27:33 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 207so79960150wma.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 17:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cDIr3JODYU7FS0xjE/N2Ulu9ZMmr6z8UFiq2vRQunkU=;
-        b=aRgkvqOZypFL1/+cRARkYeVzqMhWIzxt01DgyFAQb995klAsM66uzb5etRCvcV8RAa
-         YcLX99lx7OWiF7ZiiZXRAQijNuxGijp4f0Mx2yCgx0WYIdnE1rOVZqR0UL66u/mJ85LH
-         vj3/1wmGb5dYM+72+JvRgod6AnaecJnTOZ5/VBivyjVpPRQmlLF91JHR4djNZLXeQ6rv
-         f4q6T28H9Rv38HUhqXiQ3dMzIZi0SkF1ewfwxxAyopJ9eKDlezX8Jn69s6ysE7DSvNeL
-         vu0NftliOnuX8yzPWg3i1SDvHhiF3zicfRkQdRuo4IP+itZYz8SbQo99ZvVY7sSzlKJ2
-         9iCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cDIr3JODYU7FS0xjE/N2Ulu9ZMmr6z8UFiq2vRQunkU=;
-        b=IIWmmeZ5Z/xrFGy575zuOWnzz5d9OffLD8NlC1OHjeSF9jOWgmpChgkgXLEs7pdyeg
-         /tVBBCPTmfuPuW0bo5w2N1SXoyTlTgAlG24exoW7HDUWoRokdFwY09irCZOrupR7v+0B
-         eUzhqBxAQfMR/VGWUecFWPoDaWn+7W0duWNETB758KjRAEGc/djCtgDvYSFczHp7i9rM
-         +BdIz9+lYzBQFt34Z8i486P2KcTiMW1jO2rfV9Qz6+9CAIA/WECcnOQ9vY7ZX35a7djp
-         hBTsXJ4yk8iHtkDbFz6usqJwYV0FYfC3rmdVBgnIhiOeBf4YOtpUbLBmUOyXZmrQbEDU
-         tx7Q==
-X-Gm-Message-State: APjAAAV6k15F64za650KTcAFRcr6/RcZeQZrAfl+J3UvRXkbbCbxhZEt
-        1M3KB22LXc1ruDbhKh0YX9jXHlXkcBzmTw5hKNUtFiaQnFWQ6mZ8mtBvuTu6fhngv82L0kdgLdO
-        czHJk3rAOQJ51MuZtBC9W+tikW8YfoEdrfU+LpWpc36mRwMFlKmh4ymC0JbjEP6OAqxnTlixaUX
-        X10q/OSSVoClW8/Hq6VJXGFciGTY5KZDHvNg==
-X-Google-Smtp-Source: APXvYqzoEPr4la8SIJDIRJK5slHoshwb6Ys904nvCBSvuJG6JnLwyA5lE7lMsxWDNwQcy2ehturhOg==
-X-Received: by 2002:a1c:f115:: with SMTP id p21mr6281128wmh.134.1565137650594;
-        Tue, 06 Aug 2019 17:27:30 -0700 (PDT)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id y6sm121847291wmd.16.2019.08.06.17.27.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 17:27:29 -0700 (PDT)
-From:   Dmitry Safonov <dima@arista.com>
-To:     dima@arista.com
-Cc:     0x7f454c46@gmail.com, adrian@lisas.de, arnd@arndb.de,
-        avagin@gmail.com, avagin@openvz.org, christian.brauner@ubuntu.com,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        ebiederm@xmission.com, gorcunov@openvz.org, hpa@zytor.com,
-        jannh@google.com, jdike@addtoit.com, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com,
-        oleg@redhat.com, shuah@kernel.org, tglx@linutronix.de,
-        vincenzo.frascino@arm.com, x86@kernel.org, xemul@virtuozzo.com
-Subject: [PATCHv6 25/37] x86/vdso: Switch image on setns()/clone()
-Date:   Wed,  7 Aug 2019 01:27:28 +0100
-Message-Id: <20190807002728.19743-1-dima@arista.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729215758.28405-26-dima@arista.com>
-References: <20190729215758.28405-26-dima@arista.com>
+        Tue, 6 Aug 2019 20:29:52 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x770QxtA110302;
+        Tue, 6 Aug 2019 20:29:16 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7jasb5mf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Aug 2019 20:29:15 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x770RpDQ112247;
+        Tue, 6 Aug 2019 20:29:15 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7jasb5ma-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Aug 2019 20:29:15 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x770Oppt020124;
+        Wed, 7 Aug 2019 00:29:14 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma03wdc.us.ibm.com with ESMTP id 2u51w634aw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 00:29:14 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x770TEbw51511674
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Aug 2019 00:29:14 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 530C1B2064;
+        Wed,  7 Aug 2019 00:29:14 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2476AB2067;
+        Wed,  7 Aug 2019 00:29:14 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  7 Aug 2019 00:29:14 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2A21B16C17E8; Tue,  6 Aug 2019 17:29:15 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 17:29:15 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, max.byungchul.park@gmail.com,
+        byungchul.park@lge.com, Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
+        kernel-team@lge.com, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Rao Shoaib <rao.shoaib@oracle.com>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC v1 2/2] rcuperf: Add kfree_rcu performance Tests
+Message-ID: <20190807002915.GV28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190806212041.118146-1-joel@joelfernandes.org>
+ <20190806212041.118146-2-joel@joelfernandes.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CLOUD-SEC-AV-Info: arista,google_mail,monitor
-X-CLOUD-SEC-AV-Sent: true
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190806212041.118146-2-joel@joelfernandes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-06_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908070001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As it has been discussed on timens RFC, adding a new conditional branch
-`if (inside_time_ns)` on VDSO for all processes is undesirable.
-It will add a penalty for everybody as branch predictor may mispredict
-the jump. Also there are instruction cache lines wasted on cmp/jmp.
+On Tue, Aug 06, 2019 at 05:20:41PM -0400, Joel Fernandes (Google) wrote:
+> This test runs kfree_rcu in a loop to measure performance of the new
+> kfree_rcu, with and without patch.
+> 
+> To see improvement, run with boot parameters:
+> rcuperf.kfree_loops=2000 rcuperf.kfree_alloc_num=100 rcuperf.perf_type=kfree
+> 
+> Without patch, test runs in 6.9 seconds.
+> With patch, test runs in 6.1 seconds (+13% improvement)
+> 
+> If it is desired to run the test but with the traditional (non-batched)
+> kfree_rcu, for example to compare results, then you could pass along the
+> rcuperf.kfree_no_batch=1 boot parameter.
 
-Those effects of introducing time namespace are very much unwanted
-having in mind how much work have been spent on micro-optimisation
-vdso code.
+You lost me on this one.  You ran two runs, with rcuperf.kfree_no_batch=1
+and without?  Or you ran this patch both with and without the earlier
+patch, and could have run with the patch and rcuperf.kfree_no_batch=1?
 
-Addressing those problems, there are two versions of VDSO's .so:
-for host tasks (without any penalty) and for processes inside of time
-namespace with clk_to_ns() that subtracts offsets from host's time.
+If the latter, it would be good to try all three.
 
-Whenever a user does setns() or unshare(CLONE_TIMENS) followed
-by clone(), change VDSO image in mm and zap VVAR/VDSO page tables.
-They will be re-faulted with corresponding image and VVAR offsets.
+> Cc: max.byungchul.park@gmail.com
+> Cc: byungchul.park@lge.com
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-Co-developed-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
-v5..v6 Change:
-  Rebased over current_is_single_threaded() change in the first patch.
+More comments below.
 
- arch/x86/entry/vdso/vma.c   | 23 +++++++++++++++++++++++
- arch/x86/include/asm/vdso.h |  1 +
- kernel/time_namespace.c     | 11 +++++++++++
- 3 files changed, 35 insertions(+)
+							Thanx, Paul
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 8a8211fd4cfc..91cf5a5c8c9e 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -25,6 +25,7 @@
- #include <asm/cpufeature.h>
- #include <clocksource/hyperv_timer.h>
- #include <asm/page.h>
-+#include <asm/tlb.h>
- 
- #if defined(CONFIG_X86_64)
- unsigned int __read_mostly vdso64_enabled = 1;
-@@ -266,6 +267,28 @@ static const struct vm_special_mapping vvar_mapping = {
- 	.mremap = vvar_mremap,
- };
- 
-+#ifdef CONFIG_TIME_NS
-+int vdso_join_timens(struct task_struct *task)
-+{
-+	struct mm_struct *mm = task->mm;
-+	struct vm_area_struct *vma;
-+
-+	if (down_write_killable(&mm->mmap_sem))
-+		return -EINTR;
-+
-+	for (vma = mm->mmap; vma; vma = vma->vm_next) {
-+		unsigned long size = vma->vm_end - vma->vm_start;
-+
-+		if (vma_is_special_mapping(vma, &vvar_mapping) ||
-+		    vma_is_special_mapping(vma, &vdso_mapping))
-+			zap_page_range(vma, vma->vm_start, size);
-+	}
-+
-+	up_write(&mm->mmap_sem);
-+	return 0;
-+}
-+#endif
-+
- /*
-  * Add vdso and vvar mappings to current process.
-  * @image          - blob to map
-diff --git a/arch/x86/include/asm/vdso.h b/arch/x86/include/asm/vdso.h
-index 03f468c63a24..ccf89dedd04f 100644
---- a/arch/x86/include/asm/vdso.h
-+++ b/arch/x86/include/asm/vdso.h
-@@ -45,6 +45,7 @@ extern struct vdso_image vdso_image_32;
- extern void __init init_vdso_image(struct vdso_image *image);
- 
- extern int map_vdso_once(const struct vdso_image *image, unsigned long addr);
-+extern int vdso_join_timens(struct task_struct *task);
- 
- #endif /* __ASSEMBLER__ */
- 
-diff --git a/kernel/time_namespace.c b/kernel/time_namespace.c
-index cdfa1b75bd0d..2e7e0af44f04 100644
---- a/kernel/time_namespace.c
-+++ b/kernel/time_namespace.c
-@@ -15,6 +15,7 @@
- #include <linux/cred.h>
- #include <linux/err.h>
- #include <linux/mm.h>
-+#include <asm/vdso.h>
- 
- ktime_t do_timens_ktime_to_host(clockid_t clockid, ktime_t tim,
- 				struct timens_offsets *ns_offsets)
-@@ -199,6 +200,7 @@ static void timens_put(struct ns_common *ns)
- static int timens_install(struct nsproxy *nsproxy, struct ns_common *new)
- {
- 	struct time_namespace *ns = to_time_ns(new);
-+	int ret;
- 
- 	if (!current_is_single_threaded())
- 		return -EUSERS;
-@@ -207,6 +209,10 @@ static int timens_install(struct nsproxy *nsproxy, struct ns_common *new)
- 	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
- 		return -EPERM;
- 
-+	ret = vdso_join_timens(current);
-+	if (ret)
-+		return ret;
-+
- 	get_time_ns(ns);
- 	get_time_ns(ns);
- 	put_time_ns(nsproxy->time_ns);
-@@ -221,10 +227,15 @@ int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
- {
- 	struct ns_common *nsc = &nsproxy->time_ns_for_children->ns;
- 	struct time_namespace *ns = to_time_ns(nsc);
-+	int ret;
- 
- 	if (nsproxy->time_ns == nsproxy->time_ns_for_children)
- 		return 0;
- 
-+	ret = vdso_join_timens(tsk);
-+	if (ret)
-+		return ret;
-+
- 	get_time_ns(ns);
- 	put_time_ns(nsproxy->time_ns);
- 	nsproxy->time_ns = ns;
--- 
-2.22.0
+> ---
+>  kernel/rcu/rcuperf.c | 169 ++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 168 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+> index 7a6890b23c5f..34658760da5e 100644
+> --- a/kernel/rcu/rcuperf.c
+> +++ b/kernel/rcu/rcuperf.c
+> @@ -89,7 +89,7 @@ torture_param(int, writer_holdoff, 0, "Holdoff (us) between GPs, zero to disable
+>  
+>  static char *perf_type = "rcu";
+>  module_param(perf_type, charp, 0444);
+> -MODULE_PARM_DESC(perf_type, "Type of RCU to performance-test (rcu, rcu_bh, ...)");
+> +MODULE_PARM_DESC(perf_type, "Type of RCU to performance-test (rcu, rcu_bh, kfree,...)");
+>  
+>  static int nrealreaders;
+>  static int nrealwriters;
+> @@ -592,6 +592,170 @@ rcu_perf_shutdown(void *arg)
+>  	return -EINVAL;
+>  }
+>  
+> +/*
+> + * kfree_rcu performance tests: Start a kfree_rcu loop on all CPUs for number
+> + * of iterations and measure total time for all iterations to complete.
+> + */
+> +
+> +torture_param(int, kfree_nthreads, -1, "Number of RCU reader threads");
+> +torture_param(int, kfree_alloc_num, 8000, "Number of allocations and frees done by a thread");
+> +torture_param(int, kfree_alloc_size, 16,  "Size of each allocation");
 
+Is this used?  How does it relate to KFREE_OBJ_BYTES?
+
+> +torture_param(int, kfree_loops, 10, "Size of each allocation");
+
+I suspect that this kfree_loops string is out of date.
+
+> +torture_param(int, kfree_no_batch, 0, "Use the non-batching (slower) version of kfree_rcu");
+
+All of these need to be added to kernel-parameters.txt.  Along with
+any added by the earlier patch, for that matter.
+
+> +static struct task_struct **kfree_reader_tasks;
+> +static int kfree_nrealthreads;
+> +static atomic_t n_kfree_perf_thread_started;
+> +static atomic_t n_kfree_perf_thread_ended;
+> +
+> +#define KFREE_OBJ_BYTES 8
+> +
+> +struct kfree_obj {
+> +	char kfree_obj[KFREE_OBJ_BYTES];
+> +	struct rcu_head rh;
+> +};
+> +
+> +void kfree_call_rcu_nobatch(struct rcu_head *head, rcu_callback_t func);
+> +
+> +static int
+> +kfree_perf_thread(void *arg)
+> +{
+> +	int i, l = 0;
+
+It is really easy to confuse "l" and "1" in some fonts, so please use
+a different name.  (From the "showing my age" department:  On typical
+1970s typewriters, there was no numeral "1" -- you typed the letter
+"l" instead, thus anticipating at least the first digit of "1337".)
+
+> +	long me = (long)arg;
+> +	struct kfree_obj **alloc_ptrs;
+> +	u64 start_time, end_time;
+> +
+> +	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
+> +	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
+> +	set_user_nice(current, MAX_NICE);
+> +	atomic_inc(&n_kfree_perf_thread_started);
+> +
+> +	alloc_ptrs = (struct kfree_obj **)kmalloc(sizeof(struct kfree_obj *) * kfree_alloc_num,
+> +						  GFP_KERNEL);
+> +	if (!alloc_ptrs)
+> +		return -ENOMEM;
+> +
+> +	start_time = ktime_get_mono_fast_ns();
+
+Don't you want to announce that you started here rather than above in
+order to avoid (admittedly slight) measurement inaccuracies?
+
+> +	do {
+> +		for (i = 0; i < kfree_alloc_num; i++) {
+> +			alloc_ptrs[i] = kmalloc(sizeof(struct kfree_obj), GFP_KERNEL);
+> +			if (!alloc_ptrs[i])
+> +				return -ENOMEM;
+> +		}
+> +
+> +		for (i = 0; i < kfree_alloc_num; i++) {
+> +			if (!kfree_no_batch) {
+> +				kfree_rcu(alloc_ptrs[i], rh);
+> +			} else {
+> +				rcu_callback_t cb;
+> +
+> +				cb = (rcu_callback_t)(unsigned long)offsetof(struct kfree_obj, rh);
+> +				kfree_call_rcu_nobatch(&(alloc_ptrs[i]->rh), cb);
+> +			}
+> +		}
+> +
+> +		schedule_timeout_uninterruptible(2);
+
+Why the two-jiffy wait in the middle of a timed test?  Yes, you need
+a cond_resched() and maybe more here, but a two-jiffy wait?  I don't
+see how this has any chance of getting valid measurements.
+
+What am I missing here?
+
+> +	} while (!torture_must_stop() && ++l < kfree_loops);
+> +
+> +	kfree(alloc_ptrs);
+> +
+> +	if (atomic_inc_return(&n_kfree_perf_thread_ended) >= kfree_nrealthreads) {
+> +		end_time = ktime_get_mono_fast_ns();
+
+Don't we want to capture the end time before the kfree()?
+
+> +		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d\n",
+> +		       (unsigned long long)(end_time - start_time), kfree_loops);
+> +		if (shutdown) {
+> +			smp_mb(); /* Assign before wake. */
+> +			wake_up(&shutdown_wq);
+> +		}
+> +	}
+> +
+> +	torture_kthread_stopping("kfree_perf_thread");
+> +	return 0;
+> +}
+> +
+> +static void
+> +kfree_perf_cleanup(void)
+> +{
+> +	int i;
+> +
+> +	if (torture_cleanup_begin())
+> +		return;
+> +
+> +	if (kfree_reader_tasks) {
+> +		for (i = 0; i < kfree_nrealthreads; i++)
+> +			torture_stop_kthread(kfree_perf_thread,
+> +					     kfree_reader_tasks[i]);
+> +		kfree(kfree_reader_tasks);
+> +	}
+> +
+> +	torture_cleanup_end();
+> +}
+> +
+> +/*
+> + * shutdown kthread.  Just waits to be awakened, then shuts down system.
+> + */
+> +static int
+> +kfree_perf_shutdown(void *arg)
+> +{
+> +	do {
+> +		wait_event(shutdown_wq,
+> +			   atomic_read(&n_kfree_perf_thread_ended) >=
+> +			   kfree_nrealthreads);
+> +	} while (atomic_read(&n_kfree_perf_thread_ended) < kfree_nrealthreads);
+> +
+> +	smp_mb(); /* Wake before output. */
+> +
+> +	kfree_perf_cleanup();
+> +	kernel_power_off();
+> +	return -EINVAL;
+> +}
+
+Is there some way to avoid (almost) duplicating rcu_perf_shutdown()?
+
+> +static int __init
+> +kfree_perf_init(void)
+> +{
+> +	long i;
+> +	int firsterr = 0;
+> +
+> +	if (!torture_init_begin("kfree_perf", verbose))
+> +		return -EBUSY;
+> +
+> +	kfree_nrealthreads = compute_real(kfree_nthreads);
+> +	/* Start up the kthreads. */
+> +	if (shutdown) {
+> +		init_waitqueue_head(&shutdown_wq);
+> +		firsterr = torture_create_kthread(kfree_perf_shutdown, NULL,
+> +						  shutdown_task);
+> +		if (firsterr)
+> +			goto unwind;
+> +		schedule_timeout_uninterruptible(1);
+> +	}
+> +
+> +	kfree_reader_tasks = kcalloc(kfree_nrealthreads, sizeof(kfree_reader_tasks[0]),
+> +			       GFP_KERNEL);
+> +	if (kfree_reader_tasks == NULL) {
+> +		firsterr = -ENOMEM;
+> +		goto unwind;
+> +	}
+> +
+> +	for (i = 0; i < kfree_nrealthreads; i++) {
+> +		firsterr = torture_create_kthread(kfree_perf_thread, (void *)i,
+> +						  kfree_reader_tasks[i]);
+> +		if (firsterr)
+> +			goto unwind;
+> +	}
+> +
+> +	while (atomic_read(&n_kfree_perf_thread_started) < kfree_nrealthreads)
+> +		schedule_timeout_uninterruptible(1);
+> +
+> +	torture_init_end();
+> +	return 0;
+> +
+> +unwind:
+> +	torture_init_end();
+> +	kfree_perf_cleanup();
+> +	return firsterr;
+> +}
+> +
+>  static int __init
+>  rcu_perf_init(void)
+>  {
+> @@ -601,6 +765,9 @@ rcu_perf_init(void)
+>  		&rcu_ops, &srcu_ops, &srcud_ops, &tasks_ops,
+>  	};
+>  
+> +	if (strcmp(perf_type, "kfree") == 0)
+> +		return kfree_perf_init();
+> +
+>  	if (!torture_init_begin(perf_type, verbose))
+>  		return -EBUSY;
+>  
+> -- 
+> 2.22.0.770.g0f2c4a37fd-goog
+> 
