@@ -2,71 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 496E685025
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD53D8502C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:43:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388733AbfHGPmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:42:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:50498 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387827AbfHGPmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 11:42:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 769C8344;
-        Wed,  7 Aug 2019 08:42:23 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72BB53F706;
-        Wed,  7 Aug 2019 08:42:21 -0700 (PDT)
-Date:   Wed, 7 Aug 2019 16:42:20 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     edubezval@gmail.com, rui.zhang@intel.com, javi.merino@kernel.org,
-        viresh.kumar@linaro.org, amit.kachhap@gmail.com, rjw@rjwysocki.net,
-        catalin.marinas@arm.com, will@kernel.org,
-        daniel.lezcano@linaro.org, lkp@intel.com
-Cc:     dietmar.eggemann@arm.com, ionela.voinescu@arm.com,
-        mka@chromium.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 3/3] thermal: cpu_cooling: Migrate to using the EM
- framework
-Message-ID: <20190807154217.a4rxvj4uerptq52r@queper01-lin>
-References: <20190801124643.17112-1-quentin.perret@arm.com>
- <20190801124643.17112-4-quentin.perret@arm.com>
+        id S2388753AbfHGPnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 11:43:43 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:40326 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387827AbfHGPnn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 11:43:43 -0400
+Received: by mail-vs1-f66.google.com with SMTP id a186so3986480vsd.7
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 08:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=uzkBPRXvCt/DLxmv4J4lMqCgFgNyDxmGoOdWkPBD3nk=;
+        b=ZcgEnXLPCFXirNNHPqkRfeN91xpXEhvvMIrfO+UqlG6D1AcQ6gNe2ABgruVk7Yx2Jt
+         v4HPdeiuDzudr94JYr5RQL7hge0DHV7QogPGBb289kmcJytRi4qWvQE6OoEAgvOUutty
+         AhASQCBUYrEdvD+bRe2YruSFQsRajwhy1Kxu7Mguo/Ke74PVLCT38HOilezk7iBDdUnk
+         JniuYlWxTP89hmLjCDzHKAFNzmjzy+W0nfvHgQ7zCEwgOfeyzE64FXoueirX8tMh/QyR
+         GNQTS6NyjeotfRgbg1sqp3Wk1oGAgnUDGO8vl9pN41USM82BAE9rjINTYWrCbcM/wW7D
+         /xxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=uzkBPRXvCt/DLxmv4J4lMqCgFgNyDxmGoOdWkPBD3nk=;
+        b=f/ks2ZLhPdmVphMBVqPHYcDoXC33JiydXZyCIATuBaJhcGEq4h6in6UdKlZFL00KFs
+         nqwvZ84MBiCtq3LP9gA71fOoj6F1h1YLvbtpIhWGO2iwfmFbPHWiTkdJViWUYY1J7KFw
+         ivS1b0Tdu99fzuVvRSBVDGxEBS1UfMq+peWLnljfZs2yMEcuHspSGOGBU/5ye0u5LNwc
+         gdPHYQisOttBt6j0zyCUDuLKSd2Bmdgk61o4EnssbVFrjjZlAcYSZspjsYQ56j0aILzQ
+         Ew2g66vrBBYaEhD/rhE2Fg8LBF8UQrzJNJu3PX3ab1XpjsYYomCdM8cNnN3uN2izFAJt
+         rZ+g==
+X-Gm-Message-State: APjAAAUnR1cCo5sv0bt0QTAFIpTqbTxRAMFFojM3PhcyEG0g4frXhZn8
+        DaUIpTxOWVuQybzOp5bNxLJbZa8/yespaZumh1I=
+X-Google-Smtp-Source: APXvYqw3fegedI507VFG286aIA8EGGSqu9dfp6+WDM2HTwE0SxeeINsANrN95VPuc/qAxD3ZdASmByzG7Ey8WEQ7tTc=
+X-Received: by 2002:a67:8e0a:: with SMTP id q10mr6357008vsd.215.1565192622437;
+ Wed, 07 Aug 2019 08:43:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801124643.17112-4-quentin.perret@arm.com>
-User-Agent: NeoMutt/20171215
+Received: by 2002:ab0:2c13:0:0:0:0:0 with HTTP; Wed, 7 Aug 2019 08:43:42 -0700 (PDT)
+From:   Kelani Alfasasi <alfasasikelani1@gmail.com>
+Date:   Wed, 7 Aug 2019 16:43:42 +0100
+Message-ID: <CAC22KihEAZsmuFZ=X1h=+NqWEq0kb89kfLrOHgyo3H-KW0gC+A@mail.gmail.com>
+Subject: hope
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Good day , i write to inform you as auditor onbehalf of ORABANK.
 
-On Thursday 01 Aug 2019 at 13:46:43 (+0100), Quentin Perret wrote:
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 9966364a6deb..340853a3ca48 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -144,6 +144,7 @@ config THERMAL_GOV_USER_SPACE
->  
->  config THERMAL_GOV_POWER_ALLOCATOR
->  	bool "Power allocator thermal governor"
-> +	depends on ENERGY_MODEL
->  	help
->  	  Enable this to manage platform thermals by dynamically
->  	  allocating and limiting power to devices.
+Transaction number 000399577OBK have been approved for release
+through VISA ELECTRON ATM Card.
 
-FYI, the kbuild bot just reported a randconfig build issue with this.
-THERMAL_DEFAULT_GOV_POWER_ALLOCATOR 'select' THERMAL_GOV_POWER_ALLOCATOR
-unconditionally. And I just learned 'select' will force the option ON
-and totally ignore its dependencies. That is, we can end up with IPA
-force-compiled in, and no PM_EM, which is broken.
+Note that you are required to reconfirm your complete mailing address
+for delivery.
 
-So I guess the simplest fix is to do 'select ENERGY_MODEL' in this
-patch, instead of depending on it.
+Reconfirm code 000399577OBK to the Director Mr. Patrick Masrellet on ( (
+atm.orabank@iname.com )) for further action.
 
-I'll send a v7 with this fixed shortly.
-
-Thanks,
-Quentin
+Regards.
+Kelani Alfasasi( Esq)
