@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3B9843F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 07:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F35843ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 07:40:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbfHGFkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 01:40:11 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37740 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbfHGFjw (ORCPT
+        id S1727319AbfHGFj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 01:39:57 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43393 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbfHGFjz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 01:39:52 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b3so38973107plr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 22:39:52 -0700 (PDT)
+        Wed, 7 Aug 2019 01:39:55 -0400
+Received: by mail-pl1-f193.google.com with SMTP id 4so31939846pld.10
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 22:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LuR1ky4R+W8DnJlClr7ItKCcIJSpq5BHTgJG+rP0wz4=;
-        b=BN1iYmX3VS7iNjW36GRLTazm6lrD0RRsFwt3TRZMMqbhiC7X6+9Uzi4RYwPKB60hQn
-         4nS2QQ4CVKBocbEcvJEM7OOGQcV7THez5IHf0FQiGx7UInJSEoH3dELsSjvHwx0Jg2JJ
-         eJgm6W9JJfX0M5zOEKyX3dQj5qdXRl6ruoNTm2zdwPcLNEq4xOoe7o3FKadQa8TJZRHv
-         dFFgTWSlwiRuxq20DKWLdBaPUkkHgfoyJrhSienE5+enZLqZzBFOdQGx/z7+54x9dfFP
-         llaWNYh0YsFjxuK9DISr6aso0211Ps+SesAbVPKLemIq78WkV4K1X++La0IY9sSuR84O
-         QkSA==
+        bh=hV2OpNDlf9B8X2Y4BzyxalclcI5O3SjBzPMCmfPooZQ=;
+        b=cIXhIatsOcPuqn1+MgSm/QQB00cmGPVG8EbiRAPHUblko3fhn/9Pkpx/65QgW82eNH
+         M0NEPAUTZxkplleu9px9+XRjuwTitLxz1ocIySnkyfqIvPgUWfLOZP4JvFXaeDAGHuZf
+         gfb+cgF+zUNZJoCL70yvlLUa1ZzUuJXe6Wkujgon5BgiOZruSI4mqq+7l2Az18BLZMJa
+         hIgU/T237Nrn1TzV5hATl8jhLt3m7srfJmdcAEm+yU+ToxZ8gJi1xu1FnqOX2Dhnktp+
+         6+Crb6NnrQKI5jNDt6RGfuKMOiXcj/jhR316UzF1+SlE5hhasDGbjw0nzwq6pkPCkU0g
+         oWaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LuR1ky4R+W8DnJlClr7ItKCcIJSpq5BHTgJG+rP0wz4=;
-        b=FrAD//5QWnP9CLYVuR7SmLOi+KuBYGZObGj+5oxFMOIIB8/4y0B8TBjco85lbq1jPz
-         Zn+b8U5Xii3+KL9Pn9c8pCBInOFUIHigTc/X6dP4pSNmUzFG6bgS74PUMCOY9sLBNLos
-         4Tpc37Kyxn0KuK1TM9ESvIFYC8weu7CYd0dV8oZOYKG1eAcTRFp/zrpUfZgtgZS44OwO
-         sMJivG2hDUCm4ThLJGp+pnNCj+xkYaM5TIFsj1hXgDAq1YQG3I4p2eGs7nwQhmCVBs29
-         1PrYM0AhO3qj+lrwUDwdVkgvaHx0RX0qPckcRzUaZz1x5c2Mvk1wWyzWH66pci50obes
-         7zxQ==
-X-Gm-Message-State: APjAAAXFkuYVm8TtAR7qQd/Kd6lDa+OLNnBfSTqRduj2niGz4FTj8cuj
-        41cHNXn0hQJhnpjWovl8YkScGQ==
-X-Google-Smtp-Source: APXvYqwteeE9q8f83hjRPGYATCdDy8cEXcbkYjbkT24pE6lGFv27jx/C08Js6EVAX5W6MsCH9hmiMA==
-X-Received: by 2002:a17:902:7612:: with SMTP id k18mr6498473pll.48.1565156391829;
-        Tue, 06 Aug 2019 22:39:51 -0700 (PDT)
+        bh=hV2OpNDlf9B8X2Y4BzyxalclcI5O3SjBzPMCmfPooZQ=;
+        b=eBbkhKjtLuN+tUZdIbsZlKp5THVMvPX18efdTMSeGA9jh2RqjD7AR7q1nmQb4X5TIV
+         dGQMLer0mva0bePmOrmtuw5hW90yvzUJDtmYr3uNHsmRMtJuSR/5pdRJx4HY+6Gt0iJJ
+         EHzRst4bhMx/iC5Vv0q6sr94RiJbrtNBYwysPb5o2b/BPeEk/I34WirHKcRq8+p+jp3R
+         NL5+zKAlnmmSPqQUT/ap8QcLUdXqTsbw/fQvNeq+VXGptCVH+nO99iSp9Xg9AgRJBceM
+         g86n6vLZMDcB1LUvn7veHOaRQX0uuQavt8dWzbAB1qbb1YQmXmWmMEQAbvSQAofiqD1F
+         IpJw==
+X-Gm-Message-State: APjAAAXAlSSjKfn3taHgjkyhxSBQASnVbHs1NwZkswDJcamKYHngYJ5N
+        jH3Yb2dGsrxpDvruXacd2jVlGhKi5IA=
+X-Google-Smtp-Source: APXvYqxVdFtsesLs97Pm6ige+MLx7B4T80576E9cEvBvip+y9DeCaBSXv/ssBsoin6c7szx10I2wuQ==
+X-Received: by 2002:a62:2ccc:: with SMTP id s195mr7503689pfs.256.1565156394058;
+        Tue, 06 Aug 2019 22:39:54 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u7sm86070777pfm.96.2019.08.06.22.39.50
+        by smtp.gmail.com with ESMTPSA id u7sm86070777pfm.96.2019.08.06.22.39.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2019 22:39:51 -0700 (PDT)
+        Tue, 06 Aug 2019 22:39:53 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Sibi Sankar <sibis@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
-Subject: [PATCH 5/9] arm64: dts: qcom: qcs404: Add IMEM and PIL info region
-Date:   Tue,  6 Aug 2019 22:39:38 -0700
-Message-Id: <20190807053942.9836-6-bjorn.andersson@linaro.org>
+Subject: [PATCH 7/9] remoteproc: Introduce "panic" callback in ops
+Date:   Tue,  6 Aug 2019 22:39:40 -0700
+Message-Id: <20190807053942.9836-8-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190807053942.9836-1-bjorn.andersson@linaro.org>
 References: <20190807053942.9836-1-bjorn.andersson@linaro.org>
@@ -61,36 +61,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a simple-mfd representing IMEM on QCS404 and define the PIL
-relocation info region, so that post mortem tools will be able to locate
-the loaded remoteprocs.
+Introduce a "panic" function in the remoteproc ops table, to allow
+remoteproc instances to perform operations needed in order to aid in
+post mortem system debugging, such as flushing caches etc, when the
+kernel panics.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 16 ++++++++++++++++
+ include/linux/remoteproc.h           |  3 +++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 3d0789775009..1604a9697832 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -845,6 +845,16 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 3c5fbbbfb0f1..cc47797c6496 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1833,6 +1833,16 @@ void rproc_shutdown(struct rproc *rproc)
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
  
-+		imem@8600000 {
-+			compatible = "syscon", "simple-mfd";
-+			reg = <0x08600000 0x1000>;
++static int rproc_panic_handler(struct notifier_block *nb, unsigned long event,
++			       void *ptr)
++{
++	struct rproc *rproc = container_of(nb, struct rproc, panic_nb);
 +
-+			pil-reloc {
-+				compatible ="qcom,pil-reloc-info";
-+				offset = <0x94c>;
-+			};
-+		};
++	rproc->ops->panic(rproc);
 +
- 		intc: interrupt-controller@b000000 {
- 			compatible = "qcom,msm-qgic2";
- 			interrupt-controller;
++	return NOTIFY_DONE;
++}
++
+ /**
+  * rproc_get_by_phandle() - find a remote processor by phandle
+  * @phandle: phandle to the rproc
+@@ -2058,6 +2068,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+ 	}
+ 
++	/* Register panic notifier for remoteprocs with "panic" callback */
++	if (rproc->ops->panic) {
++		rproc->panic_nb.notifier_call = rproc_panic_handler;
++		atomic_notifier_chain_register(&panic_notifier_list, &rproc->panic_nb);
++	}
++
+ 	mutex_init(&rproc->lock);
+ 
+ 	idr_init(&rproc->notifyids);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 16ad66683ad0..33553f6d8ff0 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -383,6 +383,7 @@ struct rproc_ops {
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
++	void (*panic)(struct rproc *rproc);
+ };
+ 
+ /**
+@@ -481,6 +482,7 @@ struct rproc_dump_segment {
+  * @auto_boot: flag to indicate if remote processor should be auto-started
+  * @dump_segments: list of segments in the firmware
+  * @nb_vdev: number of vdev currently handled by rproc
++ * @panic_nb: notifier_block for remoteproc's panic handler
+  */
+ struct rproc {
+ 	struct list_head node;
+@@ -514,6 +516,7 @@ struct rproc {
+ 	bool auto_boot;
+ 	struct list_head dump_segments;
+ 	int nb_vdev;
++	struct notifier_block panic_nb;
+ };
+ 
+ /**
 -- 
 2.18.0
 
