@@ -2,88 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4937B84F8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CB3D84F89
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:13:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbfHGPLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:11:08 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:64822 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbfHGPLF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387830AbfHGPLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 7 Aug 2019 11:11:05 -0400
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x77FAuHI009710;
-        Thu, 8 Aug 2019 00:10:56 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x77FAuHI009710
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1565190657;
-        bh=67qqjSQgaI5xapbBsTJPeFasC6ZyVPxUa8DEePOjEzs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vekRQSa3P0aA2Lt0Y0CKv6+bwcFu7HwdM7HAyDpK3IYWEDQ8AoR5NV/p+P8Mnj6eZ
-         3W3vwlr2tmsU3NZI5lsj31pBxVswcQCfN3ZI4c9HvIw19y1L3mCkqmpmcfD6QebdsU
-         DmNPs4p2U4wlZ547Qmm4e3gKPqqNo9MF4ZwR/40z0gmHBJspvOwLdU5POB+c+bAuWL
-         4e26gXJQjxeiONu2Qsg36sCMuc71Vxfy+mKp1ByU/rcllOzjJmgAR1LfWErvlfoux/
-         MwEVkY8JRlBa9mHu3XNnkOIoSoCxVi9PDE0qaRPhzIOJv9+nISwPJ4Vcoy/ZfHRM30
-         8eW0lLDY5MSOA==
-X-Nifty-SrcIP: [209.85.222.48]
-Received: by mail-ua1-f48.google.com with SMTP id v18so35142837uad.12;
-        Wed, 07 Aug 2019 08:10:56 -0700 (PDT)
-X-Gm-Message-State: APjAAAUgJLHx5SalSfri1/y+FJZhU4ptYRp06oc6CaTDUIRHR69gQJU1
-        D0VvCSt1Vud7xLBNhQBDzjhoOgt7z/r6Rcfqu84=
-X-Google-Smtp-Source: APXvYqxfQikh8Yu523ElqIvo8PJliB1J4wMrJ7x9x1KrVPC7PkEBOS+h5axLa83TRK219YZDEbKZ4bEGImsqE5VzUSs=
-X-Received: by 2002:a9f:25e9:: with SMTP id 96mr6290071uaf.95.1565190655454;
- Wed, 07 Aug 2019 08:10:55 -0700 (PDT)
+Received: from bombadil.infradead.org ([198.137.202.133]:33598 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbfHGPLE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 11:11:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qNky4UNJfhbaacqAKPCp1Cl/iNKLfOo72Ypj0bndXBI=; b=WY6tCtRotzKTFTGqidAnSGXlR
+        213xSXqebqIXDv0n3X6EupaDMeXze0yMpcbn6ON+Z2ieSbg6eAiELkkVrjVPeIEgbJyguwULVr6Ks
+        qbkWwxLEuUIigtlIuNxZDfZsl+Sn9NJu8C1bYGcKfJknsrJ9f5tk6CC9srZAM62OuD0VSwrSqYfRh
+        WnLi+sjttk850La810W1krlCZ8m7OYPXWFAud3XSRJDveTkYep5BXDDbTk06DA3yxC4clJZHlkxJz
+        dRxo67TYYEjsls/wHXjBZWRTIsY21t1p6IIsmqIDwPmxtARnYw1F4cy+agJIz5UtcIToY0SB91q3n
+        kByFPx/Qg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hvNag-0004IV-RD; Wed, 07 Aug 2019 15:11:02 +0000
+Subject: Re: linux-next: Tree for Aug 7 (mm/khugepaged.c)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Song Liu <songliubraving@fb.com>
+References: <20190807183606.372ca1a4@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c18b2828-cdf3-5248-609f-d89a24f558d1@infradead.org>
+Date:   Wed, 7 Aug 2019 08:11:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190731061358.30117-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190731061358.30117-1-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 8 Aug 2019 00:10:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQPezQovn6Lnw1Zgz7Y2xz7_XXaccyZ-79zSYXAVSE6jQ@mail.gmail.com>
-Message-ID: <CAK7LNAQPezQovn6Lnw1Zgz7Y2xz7_XXaccyZ-79zSYXAVSE6jQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: add [M] marker for build log of *.mod.o
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190807183606.372ca1a4@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 3:14 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> This builds module objects, so [M] makes sense.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 8/7/19 1:36 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190806:
+> 
 
-Applied to linux-kbuild.
+on i386:
 
+when CONFIG_SHMEM is not set/enabled:
 
-> ---
->
->  scripts/Makefile.modpost | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
-> index 6e328190d609..6c237af41417 100644
-> --- a/scripts/Makefile.modpost
-> +++ b/scripts/Makefile.modpost
-> @@ -112,7 +112,7 @@ $(modules:.ko=.mod.c): modules-modpost ;
->  # modname is set to make c_flags define KBUILD_MODNAME
->  modname = $(notdir $(@:.mod.o=))
->
-> -quiet_cmd_cc_o_c = CC      $@
-> +quiet_cmd_cc_o_c = CC [M]  $@
->        cmd_cc_o_c = $(CC) $(c_flags) $(KBUILD_CFLAGS_MODULE) $(CFLAGS_MODULE) \
->                    -c -o $@ $<
->
-> --
-> 2.17.1
->
+../mm/khugepaged.c: In function ‘khugepaged_scan_mm_slot’:
+../mm/khugepaged.c:1874:2: error: implicit declaration of function ‘khugepaged_collapse_pte_mapped_thps’; did you mean ‘collapse_pte_mapped_thp’? [-Werror=implicit-function-declaration]
+  khugepaged_collapse_pte_mapped_thps(mm_slot);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 -- 
-Best Regards
-Masahiro Yamada
+~Randy
