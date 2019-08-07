@@ -2,203 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A5E84EE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:38:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC4684EF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388137AbfHGOia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 10:38:30 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41356 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387987AbfHGOia (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 10:38:30 -0400
-Received: by mail-pl1-f196.google.com with SMTP id m9so40984592pls.8
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 07:38:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KMsjImvk15rGU5K4/oqAPhe2wws+c5HRyaASvfXzRqo=;
-        b=dmwdpEnQk09MKsR9mnrVQPNSW7+jNvOzyv3yN5luKEGQ4FUz7+8j8NsrN/WUCLp3IY
-         9TWqAPWvuBJWBBEyA/0hzI/qOQ5e9rU8ULd0Tmz8jBvKTOhgcmoR6C76+i5ItnmQoTFQ
-         c99OxI4fjjF9sazaslLwfGEgaRk68KFRinUA6BseVnzGihLDn2sJfGi3rEEoWQos0LVZ
-         cCvIpNdYuIVQ8uQ+vt9LYzKNKUmDGyDFZ4RZdhDL60Ghnz7Xw5ojrdDHT/ofaSH8Pbbm
-         Q4ryYzAbvqzaY9SwnEu3yPmyel9uFN5ozJ/u953ntjXyz6A56pntrVLhKErExwJKmIWY
-         dXUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KMsjImvk15rGU5K4/oqAPhe2wws+c5HRyaASvfXzRqo=;
-        b=XYUDMbwz4CWp0Hjj4w5MfVMFdV7HBw9q6htYQ5DRm4jygNNTzafMjiMV4M1ye00wR3
-         O2Zu7A5rJQgJWTXHOgYumCz/Rxlna4FhKDmPjN+v8jTktCqkBVaYMdoAXr+LAPF70Hiu
-         NYeZYsHL+DJWCR3e/AlokXyLrPOH7/aqe9jQC/T5VtnRS3/ffDq4ngvZfOWzf1VOos4p
-         0WCHMNCPWrg1T/lM9AQ2DdiuaUyyTsseFCiT6l86CsgHugIqMun/+/EE7TWJq+SqhvTw
-         DTp1xOCB5mTNRnxDxvKfow6H5PCtupnJs5bkdw6pINlr13Ly//Q/TyvjG3TyiWy+LFD+
-         OrSw==
-X-Gm-Message-State: APjAAAVFOYIWTkDFP6keEINZ6FWRsnBxczME4ULqpKKDdWsKh48WEo55
-        Q05dC1+1dfNB+3MaI25I5oRWpQDAWETk1LX/8H2vzw==
-X-Google-Smtp-Source: APXvYqxoraqX8e0vrNgin5hDiKl0we0jI5cMqwxUZV0VBfxRLdQcaNKpbrik0blFlvyOD13BolkVlp+TzI9Q5JeAm7Q=
-X-Received: by 2002:a17:902:6a87:: with SMTP id n7mr8311508plk.336.1565188708900;
- Wed, 07 Aug 2019 07:38:28 -0700 (PDT)
+        id S1730102AbfHGOkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 10:40:04 -0400
+Received: from mga04.intel.com ([192.55.52.120]:56257 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729516AbfHGOkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 10:40:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 07:40:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
+   d="scan'208";a="165338496"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga007.jf.intel.com with ESMTP; 07 Aug 2019 07:40:01 -0700
+Date:   Wed, 7 Aug 2019 08:37:34 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajat Jain <rajatja@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH] nvme-pci: Do not prevent PCI bus-level PM from being used
+Message-ID: <20190807143733.GA25621@localhost.localdomain>
+References: <47415939.KV5G6iaeJG@kreacher>
+ <20190730144134.GA12844@localhost.localdomain>
+ <100ba4aff1c6434a81e47774ab4acddc@AUSX13MPC105.AMER.DELL.COM>
+ <8246360B-F7D9-42EB-94FC-82995A769E28@canonical.com>
+ <20190730191934.GD13948@localhost.localdomain>
+ <7d3e0b8ba1444194a153c93faa1cabb3@AUSX13MPC105.AMER.DELL.COM>
+ <20190730213114.GK13948@localhost.localdomain>
+ <CAJZ5v0gxfeMN8eCNRjcXmUOkReVsdozb3EccaYMpnmSHu3771g@mail.gmail.com>
+ <20190731221956.GB15795@localhost.localdomain>
+ <1893355.EP2830DdO9@kreacher>
 MIME-Version: 1.0
-References: <CAAeHK+zLrYaE+Kt6AULPjKhBNknxPBWncfkTDmm3eFoLSpsffw@mail.gmail.com>
- <Pine.LNX.4.44L0.1908071000560.1514-100000@iolanthe.rowland.org>
- <CAAeHK+yAY_ov4yH7n-R8ppnxc1ux33A-SEdxx18ywU1SyLGwug@mail.gmail.com> <CAAeHK+xV3SgXvu7RsGLVtPH7scV9GZ0uwPzTu8N2bw1kt9i7aw@mail.gmail.com>
-In-Reply-To: <CAAeHK+xV3SgXvu7RsGLVtPH7scV9GZ0uwPzTu8N2bw1kt9i7aw@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Wed, 7 Aug 2019 16:38:17 +0200
-Message-ID: <CAAeHK+z7EiEaQ8VNfTTByyV9TnOvxc9NvxYg6NQu9B2c7FR3sA@mail.gmail.com>
-Subject: Re: possible deadlock in open_rio
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     syzbot <syzbot+7bbcbe9c9ff0cd49592a@syzkaller.appspotmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Cesar Miquel <miquel@df.uba.ar>,
-        rio500-users@lists.sourceforge.net,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1893355.EP2830DdO9@kreacher>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 7, 2019 at 4:34 PM Andrey Konovalov <andreyknvl@google.com> wrote:
->
-> On Wed, Aug 7, 2019 at 4:24 PM Andrey Konovalov <andreyknvl@google.com> wrote:
-> >
-> > On Wed, Aug 7, 2019 at 4:01 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > >
-> > > On Wed, 7 Aug 2019, Andrey Konovalov wrote:
-> > >
-> > > > On Tue, Aug 6, 2019 at 9:13 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > > > >
-> > > > > On Thu, 1 Aug 2019, syzbot wrote:
-> > > > >
-> > > > > > Hello,
-> > > > > >
-> > > > > > syzbot found the following crash on:
-> > > > > >
-> > > > > > HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
-> > > > > > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=136b6aec600000
-> > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
-> > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=7bbcbe9c9ff0cd49592a
-> > > > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > > > >
-> > > > > > Unfortunately, I don't have any reproducer for this crash yet.
-> > > > > >
-> > > > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > > > > Reported-by: syzbot+7bbcbe9c9ff0cd49592a@syzkaller.appspotmail.com
-> > > > > >
-> > > > > > ======================================================
-> > > > > > WARNING: possible circular locking dependency detected
-> > > > > > 5.3.0-rc2+ #23 Not tainted
-> > > > > > ------------------------------------------------------
-> > > > >
-> > > > > Andrey:
-> > > > >
-> > > > > This should be completely reproducible, since it's a simple ABBA
-> > > > > locking violation.  Maybe just introducing a time delay (to avoid races
-> > > > > and give the open() call time to run) between the gadget creation and
-> > > > > gadget removal would be enough to do it.
-> > > >
-> > > > I've tried some simple approaches to reproducing this, but failed.
-> > > > Should this require two rio500 devices to trigger?
-> > >
-> > > No, one device should be enough.  Just plug it in and then try to open
-> > > the character device file.
-> >
-> > OK, I've reproduced it, so I can test a patch manually. The reason
-> > syzbot couldn't do that, is because it doesn't open character devices.
-> > Right now the USB fuzzing instance only opens /dev/input*,
-> > /dev/hidraw* and /dev/usb/hiddev* (only the devices that are created
-> > by USB HID devices as I've been working on adding USB HID targeted
-> > fuzzing support lately).
-> >
-> > I guess we should open /dev/chr/* as well. The problem is that there
-> > 300+ devices there even without connecting USB devices and opening
-> > them blindly probably won't work. Is there a way to know which
-> > character devices are created by USB devices? Maybe they are exposed
-> > over /sys/bus/usb or via some other way?
->
-> Ah, OK, I see that it's also exposed as /dev/rio500 for this
-> particular driver. This doesn't really help, as these names will
-> differ for different drivers, and this will require custom syzkaller
-> descriptions for each driver. I'm planning to add them for some
-> widely-used (i.e. enabled on Android) drivers at some point, but it's
-> too much work to do it for all the drivers enabled on e.g. Ubuntu.
+On Wed, Aug 07, 2019 at 02:53:44AM -0700, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> One of the modifications made by commit d916b1be94b6 ("nvme-pci: use
+> host managed power state for suspend") was adding a pci_save_state()
+> call to nvme_suspend() in order to prevent the PCI bus-level PM from
+> being applied to the suspended NVMe devices, but if ASPM is not
+> enabled for the target NVMe device, that causes its PCIe link to stay
+> up and the platform may not be able to get into its optimum low-power
+> state because of that.
+> 
+> For example, if ASPM is disabled for the NVMe drive (PC401 NVMe SK
+> hynix 256GB) in my Dell XPS13 9380, leaving it in D0 during
+> suspend-to-idle prevents the SoC from reaching package idle states
+> deeper than PC3, which is way insufficient for system suspend.
+> 
+> To address this shortcoming, make nvme_suspend() check if ASPM is
+> enabled for the target device and fall back to full device shutdown
+> and PCI bus-level PM if that is not the case.
+> 
+> Fixes: d916b1be94b6 ("nvme-pci: use host managed power state for suspend")
+> Link: https://lore.kernel.org/linux-pm/2763495.NmdaWeg79L@kreacher/T/#t
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-BTW, the deadlock report is actually followed by another one, which
-looks like a different bug:
+Thanks for tracking down the cause. Sounds like your earlier assumption
+on ASPM's involvement was spot on.
 
-usercopy: Kernel memory exposure attempt detected from wrapped address
-(offset 0, size 184466!
-------------[ cut here ]------------
-kernel BUG at mm/usercopy.c:98!
-invalid opcode: 0000 [#1] SMP KASAN
-CPU: 1 PID: 2287 Comm: cat Not tainted 5.3.0-rc2+ #126
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-RIP: 0010:usercopy_abort+0xb9/0xbb mm/usercopy.c:86
-Code: e8 b1 f5 d6 ff 49 89 d9 4d 89 e8 4c 89 e1 41 56 48 89 ee 48 c7
-c7 20 f4 cd 85 ff 74 24 1
-RSP: 0018:ffff88806655fc60 EFLAGS: 00010282
-RAX: 000000000000006d RBX: ffffffff85cdf140 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8128a0fd RDI: ffffed100ccabf7e
-RBP: ffffffff85cdf300 R08: 000000000000006d R09: ffffed100d965d60
-R10: ffffed100d965d5f R11: ffff88806cb2eaff R12: ffffffff85cdf4a0
-R13: ffffffff85cdf140 R14: ffff887feae14e00 R15: ffffffff85cdf140
-FS:  00007f4ab703f700(0000) GS:ffff88806cb00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000008cd068 CR3: 0000000065ffa000 CR4: 00000000000006e0
-Call Trace:
- check_bogus_address mm/usercopy.c:151
- __check_object_size mm/usercopy.c:260
- __check_object_size.cold+0xb2/0xba mm/usercopy.c:250
- check_object_size ./include/linux/thread_info.h:119
- check_copy_size ./include/linux/thread_info.h:150
- copy_to_user ./include/linux/uaccess.h:151
- read_rio+0x223/0x480 drivers/usb/misc/rio500.c:423
- __vfs_read+0x76/0x100 fs/read_write.c:425
- vfs_read+0x1ea/0x430 fs/read_write.c:461
- ksys_read+0x127/0x250 fs/read_write.c:587
- do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
- entry_SYSCALL_64_after_hwframe+0x49/0xbe arch/x86/entry/entry_64.S:175
-RIP: 0033:0x7f4ab6b6d310
-Code: 73 01 c3 48 8b 0d 28 4b 2b 00 31 d2 48 29 c2 64 89 11 48 83 c8
-ff eb ea 90 90 83 3d e5 4
-RSP: 002b:00007fff2ba3e448 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0000000000008000 RCX: 00007f4ab6b6d310
-RDX: 0000000000008000 RSI: 00000000008c5000 RDI: 0000000000000003
-RBP: 0000000000008000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000008c5000
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000008000
-Modules linked in:
----[ end trace 01dee08b337d41c2 ]---
-RIP: 0010:usercopy_abort+0xb9/0xbb mm/usercopy.c:86
-Code: e8 b1 f5 d6 ff 49 89 d9 4d 89 e8 4c 89 e1 41 56 48 89 ee 48 c7
-c7 20 f4 cd 85 ff 74 24 1
-RSP: 0018:ffff88806655fc60 EFLAGS: 00010282
-RAX: 000000000000006d RBX: ffffffff85cdf140 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8128a0fd RDI: ffffed100ccabf7e
-RBP: ffffffff85cdf300 R08: 000000000000006d R09: ffffed100d965d60
-R10: ffffed100d965d5f R11: ffff88806cb2eaff R12: ffffffff85cdf4a0
-R13: ffffffff85cdf140 R14: ffff887feae14e00 R15: ffffffff85cdf140
-FS:  00007f4ab703f700(0000) GS:ffff88806cb00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000008cd068 CR3: 0000000065ffa000 CR4: 00000000000006e0
-usb 1-1: USB disconnect, device number 3
+> +/*
+> + * pcie_aspm_enabled - Return the mask of enabled ASPM link states.
+> + * @pci_device: Target device.
+> + */
+> +u32 pcie_aspm_enabled(struct pci_dev *pci_device)
+> +{
+> +	struct pci_dev *bridge = pci_device->bus->self;
 
->
-> >
-> > >
-> > > Alan Stern
-> > >
-> > > > > Is there any way you can test this?
-> > > >
-> > > > Not yet.
-> > > >
-> > > > >
-> > > > > Alan Stern
-> > >
+You may want use pci_upstream_bridge() instead, just in case someone
+calls this on a virtual function's pci_dev.
+
+> +	u32 aspm_enabled;
+> +
+> +	mutex_lock(&aspm_lock);
+> +	aspm_enabled = bridge->link_state ? bridge->link_state->aspm_enabled : 0;
+> +	mutex_unlock(&aspm_lock);
+> +
+> +	return aspm_enabled;
+> +}
