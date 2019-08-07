@@ -2,107 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A024844CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB77C844A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfHGGuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 02:50:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40112 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbfHGGuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 02:50:03 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2729730DDBD8;
-        Wed,  7 Aug 2019 06:50:03 +0000 (UTC)
-Received: from [10.72.12.139] (ovpn-12-139.pek2.redhat.com [10.72.12.139])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BBF825263;
-        Wed,  7 Aug 2019 06:49:58 +0000 (UTC)
-Subject: Re: [PATCH V2 7/9] vhost: do not use RCU to synchronize MMU notifier
- with worker
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20190731084655.7024-1-jasowang@redhat.com>
- <20190731084655.7024-8-jasowang@redhat.com> <20190731123935.GC3946@ziepe.ca>
- <7555c949-ae6f-f105-6e1d-df21ddae9e4e@redhat.com>
- <20190731193057.GG3946@ziepe.ca>
- <a3bde826-6329-68e4-2826-8a9de4c5bd1e@redhat.com>
- <20190801141512.GB23899@ziepe.ca>
- <42ead87b-1749-4c73-cbe4-29dbeb945041@redhat.com>
- <20190802124613.GA11245@ziepe.ca>
- <11b2a930-eae4-522c-4132-3f8a2da05666@redhat.com>
- <20190806120416.GB11627@ziepe.ca>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <4b448aa5-2c92-a6ca-67d6-d30fad67254c@redhat.com>
-Date:   Wed, 7 Aug 2019 14:49:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727493AbfHGGkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 02:40:10 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47076 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727306AbfHGGkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 02:40:07 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CC450254C40975EF07CE;
+        Wed,  7 Aug 2019 14:40:02 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 7 Aug 2019
+ 14:39:55 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
+        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>
+CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
+        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
+        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>,
+        <zhaohongjiang@huawei.com>, Jason Yan <yanaijie@huawei.com>
+Subject: [PATCH v5 00/10] implement KASLR for powerpc/fsl_booke/32
+Date:   Wed, 7 Aug 2019 14:56:56 +0800
+Message-ID: <20190807065706.11411-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-In-Reply-To: <20190806120416.GB11627@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 07 Aug 2019 06:50:03 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series implements KASLR for powerpc/fsl_booke/32, as a security
+feature that deters exploit attempts relying on knowledge of the location
+of kernel internals.
 
-On 2019/8/6 下午8:04, Jason Gunthorpe wrote:
-> On Mon, Aug 05, 2019 at 12:20:45PM +0800, Jason Wang wrote:
->> On 2019/8/2 下午8:46, Jason Gunthorpe wrote:
->>> On Fri, Aug 02, 2019 at 05:40:07PM +0800, Jason Wang wrote:
->>>>> This must be a proper barrier, like a spinlock, mutex, or
->>>>> synchronize_rcu.
->>>> I start with synchronize_rcu() but both you and Michael raise some
->>>> concern.
->>> I've also idly wondered if calling synchronize_rcu() under the various
->>> mm locks is a deadlock situation.
->>
->> Maybe, that's why I suggest to use vhost_work_flush() which is much
->> lightweight can can achieve the same function. It can guarantee all previous
->> work has been processed after vhost_work_flush() return.
-> If things are already running in a work, then yes, you can piggyback
-> on the existing spinlocks inside the workqueue and be Ok
->
-> However, if that work is doing any copy_from_user, then the flush
-> becomes dependent on swap and it won't work again...
+Since CONFIG_RELOCATABLE has already supported, what we need to do is
+map or copy kernel to a proper place and relocate. Freescale Book-E
+parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
+entries are not suitable to map the kernel directly in a randomized
+region, so we chose to copy the kernel to a proper place and restart to
+relocate.
 
+Entropy is derived from the banner and timer base, which will change every
+build and boot. This not so much safe so additionally the bootloader may
+pass entropy via the /chosen/kaslr-seed node in device tree.
 
-Yes it do copy_from_user(), so we can't do this.
+We will use the first 512M of the low memory to randomize the kernel
+image. The memory will be split in 64M zones. We will use the lower 8
+bit of the entropy to decide the index of the 64M zone. Then we chose a
+16K aligned offset inside the 64M zone to put the kernel in.
 
+    KERNELBASE
 
->
->>>> 1) spinlock: add lots of overhead on datapath, this leads 0 performance
->>>> improvement.
->>> I think the topic here is correctness not performance improvement>
->   
->> But the whole series is to speed up vhost.
-> So? Starting with a whole bunch of crazy, possibly broken, locking and
-> claiming a performance win is not reasonable.
+        |-->   64M   <--|
+        |               |
+        +---------------+    +----------------+---------------+
+        |               |....|    |kernel|    |               |
+        +---------------+    +----------------+---------------+
+        |                         |
+        |----->   offset    <-----|
 
+                              kimage_vaddr
 
-Yes, I admit this patch is tricky, I'm not going to push this. Will post 
-a V3.
+We also check if we will overlap with some areas like the dtb area, the
+initrd area or the crashkernel area. If we cannot find a proper area,
+kaslr will be disabled and boot from the original kernel.
 
+Changes since v4:
+ - Add Reviewed-by tag from Christophe
+ - Remove an unnecessary cast
+ - Remove unnecessary parenthesis
+ - Fix checkpatch warning
 
->
->> Spinlock is correct but make the whole series meaningless consider it won't
->> bring any performance improvement.
-> You can't invent a faster spinlock by opencoding some wild
-> scheme. There is nothing special about the usage here, it needs a
-> blocking lock, plain and simple.
->
-> Jason
+Changes since v3:
+ - Add Reviewed-by and Tested-by tag from Diana
+ - Change the comment in fsl_booke_entry_mapping.S to be consistent
+   with the new code.
 
+Changes since v2:
+ - Remove unnecessary #ifdef
+ - Use SZ_64M instead of0x4000000
+ - Call early_init_dt_scan_chosen() to init boot_command_line
+ - Rename kaslr_second_init() to kaslr_late_init()
 
-Will post V3. Let's see if you are happy with that version.
+Changes since v1:
+ - Remove some useless 'extern' keyword.
+ - Replace EXPORT_SYMBOL with EXPORT_SYMBOL_GPL
+ - Improve some assembly code
+ - Use memzero_explicit instead of memset
+ - Use boot_command_line and remove early_command_line
+ - Do not print kaslr offset if kaslr is disabled
 
-Thanks
+Jason Yan (10):
+  powerpc: unify definition of M_IF_NEEDED
+  powerpc: move memstart_addr and kernstart_addr to init-common.c
+  powerpc: introduce kimage_vaddr to store the kernel base
+  powerpc/fsl_booke/32: introduce create_tlb_entry() helper
+  powerpc/fsl_booke/32: introduce reloc_kernel_entry() helper
+  powerpc/fsl_booke/32: implement KASLR infrastructure
+  powerpc/fsl_booke/32: randomize the kernel image offset
+  powerpc/fsl_booke/kaslr: clear the original kernel if randomized
+  powerpc/fsl_booke/kaslr: support nokaslr cmdline parameter
+  powerpc/fsl_booke/kaslr: dump out kernel offset information on panic
 
+ arch/powerpc/Kconfig                          |  11 +
+ arch/powerpc/include/asm/nohash/mmu-book3e.h  |  10 +
+ arch/powerpc/include/asm/page.h               |   7 +
+ arch/powerpc/kernel/Makefile                  |   1 +
+ arch/powerpc/kernel/early_32.c                |   2 +-
+ arch/powerpc/kernel/exceptions-64e.S          |  10 -
+ arch/powerpc/kernel/fsl_booke_entry_mapping.S |  27 +-
+ arch/powerpc/kernel/head_fsl_booke.S          |  55 ++-
+ arch/powerpc/kernel/kaslr_booke.c             | 427 ++++++++++++++++++
+ arch/powerpc/kernel/machine_kexec.c           |   1 +
+ arch/powerpc/kernel/misc_64.S                 |   5 -
+ arch/powerpc/kernel/setup-common.c            |  19 +
+ arch/powerpc/mm/init-common.c                 |   7 +
+ arch/powerpc/mm/init_32.c                     |   5 -
+ arch/powerpc/mm/init_64.c                     |   5 -
+ arch/powerpc/mm/mmu_decl.h                    |  10 +
+ arch/powerpc/mm/nohash/fsl_booke.c            |   8 +-
+ 17 files changed, 560 insertions(+), 50 deletions(-)
+ create mode 100644 arch/powerpc/kernel/kaslr_booke.c
+
+-- 
+2.17.2
 
