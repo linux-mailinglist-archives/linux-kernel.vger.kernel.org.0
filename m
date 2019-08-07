@@ -2,201 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C44784E29
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC06984E3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbfHGOGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 10:06:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbfHGOGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 10:06:31 -0400
-Received: from [192.168.0.101] (unknown [180.111.32.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DFC22086D;
-        Wed,  7 Aug 2019 14:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565186790;
-        bh=w7C0l0lFsyuhZH6E3/g9IKVSeZ+Jcfin9tOPX7+Sm98=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=e8YXrdMMRS6XjYVj7XpJBuc+m7WZn9aZJJe10v7wKy903YW75EKHRoyqGipyVl8Zm
-         ODQVy1+Yy/4Ne8SoWKglzUtXUCpqTLOFaRiAxPBzaaeoR9RAzutsTGTDEWbHqTYV6t
-         Bqcq7BJAn7UQKGrcOQ1finM/JT4NL9yvaKzgYoh4=
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: Fix indefinite loop in f2fs_gc()
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org
-References: <1565185232-11506-1-git-send-email-stummala@codeaurora.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <2b8f7a88-5204-a4ea-9f80-1056abb30d98@kernel.org>
-Date:   Wed, 7 Aug 2019 22:06:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2387484AbfHGOH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 10:07:28 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46775 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387957AbfHGOHY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 10:07:24 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c2so40973375plz.13
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 07:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L/4uctSN16w5FDnlADERKiGVsjicCimkmW4qcNy8xbg=;
+        b=AfHpXxiEPip+Rtb5t/FLGlTsLhvQAqJLJmrat97joDcfH+cATHii2A99mfLWhZWY6S
+         2LQwLyV+PSua04urGwtjBFK1evfU3Y2FWqdrqXxJzbJNldkB3/Ww+xYGpw+k/XrzN/aE
+         gSVLSu7wXlNkuKTtSUfsVZW7NYdF6U/nQlPmfNLjz98gTRN2YvPKEI7oDNfJDC6Sn7o0
+         Gm57lNtX498istNd82QWk3L10iSma1P0FJYpGcO15ekJ5uxhIJ8e6OcE/Keudm+67+ym
+         HpAkBi+pxTm4Nsoy9dBlUf1BYcL6cTa6RI+I7C3HM8BaGakCmUP/wEFWNCofBTeB8plV
+         EtMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L/4uctSN16w5FDnlADERKiGVsjicCimkmW4qcNy8xbg=;
+        b=t/nog7unARjSi6b7ZD87mjqEZRyb+/aBi3h7M/9hfyEr59rRbuHUIgaX/zx7RSFMnh
+         ujWYT0knsvlnS87nsNwuRNW9tpF1IEEEl5qL7XiS4ZbJMm5iW3i88yYI/gfq/yRzBzGV
+         3iSSXBQB41UVv48Z0rjmTVIQYAq0D0sKgkgSXbqDAWotxdhLiHo5vD1e+qqhaDme94X5
+         xcCTm6vTIdwsNJmvjY1SyHy05YIFIpzrb1sesGk+yJ2WO5qvFyYeD6t/Ypt3UWkJfbyx
+         KlcndCBAQlu15x7tGW06tnY7fgSWSVxH4nPcyhT9zQnb3Gcx5/KweaN3b6tUXPdezfTv
+         wMgQ==
+X-Gm-Message-State: APjAAAXrA9skZ2LM7OaqDUF3C1GVdTo6j+XCTHVpEOnSUNkUPi2daOs6
+        11WUPc6B5fTgNTXKh0Z8YL1uVvlpcjWIHwF0MYf9cQ==
+X-Google-Smtp-Source: APXvYqy3F+/wIlgU3h+8CDWNKewl1Ci0/BoPT91G/t/z/eG5zxmKdluF99yVq1pwZEMyKpEzO3y5b6OMeUpp2z7iSIA=
+X-Received: by 2002:a17:902:ab96:: with SMTP id f22mr1612218plr.147.1565186843588;
+ Wed, 07 Aug 2019 07:07:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1565185232-11506-1-git-send-email-stummala@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <00000000000075a7a6058653d977@google.com>
+In-Reply-To: <00000000000075a7a6058653d977@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 7 Aug 2019 16:07:12 +0200
+Message-ID: <CAAeHK+zW61WK67wcwhXVCuU0dx_PicpiXmbDCPtJzX-viQ2R0A@mail.gmail.com>
+Subject: Re: WARNING in zd_mac_clear
+To:     syzbot <syzbot+74c65761783d66a9c97c@syzkaller.appspotmail.com>,
+        USB list <linux-usb@vger.kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Daniel Drake <dsd@gentoo.org>,
+        Ulrich Kunitz <kune@deine-taler.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Oliver Neukum <oneukum@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-8-7 21:40, Sahitya Tummala wrote:
-> Policy - Foreground GC, LFS and greedy GC mode.
-> 
-> Under this policy, f2fs_gc() loops forever to GC as it doesn't have
-> enough free segements to proceed and thus it keeps calling gc_more
-> for the same victim segment.  This can happen if the selected victim
-> segment could not be GC'd due to failed blkaddr validity check i.e.
-> is_alive() returns false for the blocks set in current validity map.
-> 
-> Fix this by keeping track of such invalid segments and skip those
-> segments for selection in get_victim_by_default() to avoid endless
-> GC loop under such error scenarios. Currently, add this logic under
-> CONFIG_F2FS_CHECK_FS to be able to root cause the issue in debug
-> version.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+On Fri, Apr 12, 2019 at 1:46 PM syzbot
+<syzbot+74c65761783d66a9c97c@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    9a33b369 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan/tree/usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=101a06dd200000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=23e37f59d94ddd15
+> dashboard link: https://syzkaller.appspot.com/bug?extid=74c65761783d66a9c97c
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1170c22d200000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1496adbb200000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+74c65761783d66a9c97c@syzkaller.appspotmail.com
+>
+> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> usb 1-1: config 0 descriptor??
+> usb 1-1: reset low-speed USB device number 2 using dummy_hcd
+> usb 1-1: read over firmware interface failed: -71
+> usb 1-1: reset low-speed USB device number 2 using dummy_hcd
+> WARNING: CPU: 1 PID: 21 at drivers/net/wireless/zydas/zd1211rw/zd_mac.c:238
+> zd_mac_clear+0xb0/0xe0 drivers/net/wireless/zydas/zd1211rw/zd_mac.c:238
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.1.0-rc4-319354-g9a33b36 #3
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0xe8/0x16e lib/dump_stack.c:113
+>   panic+0x29d/0x5f2 kernel/panic.c:214
+>   __warn.cold+0x20/0x48 kernel/panic.c:571
+>   report_bug+0x262/0x2a0 lib/bug.c:186
+>   fixup_bug arch/x86/kernel/traps.c:179 [inline]
+>   fixup_bug arch/x86/kernel/traps.c:174 [inline]
+>   do_error_trap+0x130/0x1f0 arch/x86/kernel/traps.c:272
+>   do_invalid_op+0x37/0x40 arch/x86/kernel/traps.c:291
+>   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+> RIP: 0010:zd_mac_clear+0xb0/0xe0
+> drivers/net/wireless/zydas/zd1211rw/zd_mac.c:238
+> Code: e8 85 d0 60 f8 48 8d bb f8 2b 00 00 be ff ff ff ff e8 54 5a 46 f8 31
+> ff 89 c3 89 c6 e8 d9 d1 60 f8 85 db 75 d4 e8 60 d0 60 f8 <0f> 0b 5b 5d e9
+> 57 d0 60 f8 48 c7 c7 58 05 cb 93 e8 fb e0 97 f8 eb
+> RSP: 0018:ffff8880a85c7310 EFLAGS: 00010293
+> RAX: ffff8880a84de200 RBX: 0000000000000000 RCX: ffffffff8910f507
+> RDX: 0000000000000000 RSI: ffffffff8910f510 RDI: 0000000000000005
+> RBP: 0000000000000001 R08: ffff8880a84de200 R09: ffffed1012f83a0b
+> R10: ffffed1012f83a0a R11: ffff888097c1d057 R12: 00000000ffffffb9
+> R13: ffff888097c18b20 R14: ffff888099456630 R15: ffffffff8f979398
+>   probe+0x259/0x590 drivers/net/wireless/zydas/zd1211rw/zd_usb.c:1421
+>   usb_probe_interface+0x31d/0x820 drivers/usb/core/driver.c:361
+>   really_probe+0x2da/0xb10 drivers/base/dd.c:509
+>   driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
+>   __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
+>   bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x223/0x3a0 drivers/base/dd.c:844
+>   bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
+>   device_add+0xad2/0x16e0 drivers/base/core.c:2106
+>   usb_set_configuration+0xdf7/0x1740 drivers/usb/core/message.c:2021
+>   generic_probe+0xa2/0xda drivers/usb/core/generic.c:210
+>   usb_probe_device+0xc0/0x150 drivers/usb/core/driver.c:266
+>   really_probe+0x2da/0xb10 drivers/base/dd.c:509
+>   driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
+>   __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
+>   bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x223/0x3a0 drivers/base/dd.c:844
+>   bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
+>   device_add+0xad2/0x16e0 drivers/base/core.c:2106
+>   usb_new_device.cold+0x537/0xccf drivers/usb/core/hub.c:2534
+>   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+>   port_event drivers/usb/core/hub.c:5350 [inline]
+>   hub_event+0x138e/0x3b00 drivers/usb/core/hub.c:5432
+>   process_one_work+0x90f/0x1580 kernel/workqueue.c:2269
+>   worker_thread+0x9b/0xe20 kernel/workqueue.c:2415
+>   kthread+0x313/0x420 kernel/kthread.c:253
+>   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+
+This USB bug is the second most frequently triggered one with over 10k
+kernel crashes.
+
+>
+>
 > ---
-> v4: Cover all logic with CONFIG_F2FS_CHECK_FS
-> 
->  fs/f2fs/gc.c      | 31 +++++++++++++++++++++++++++++--
->  fs/f2fs/segment.c | 14 +++++++++++++-
->  fs/f2fs/segment.h |  3 +++
->  3 files changed, 45 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 8974672..cbcacbd 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -382,6 +382,16 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->  			nsearched++;
->  		}
->  
-> +#ifdef CONFIG_F2FS_CHECK_FS
-> +		/*
-> +		 * skip selecting the invalid segno (that is failed due to block
-> +		 * validity check failure during GC) to avoid endless GC loop in
-> +		 * such cases.
-> +		 */
-> +		if (test_bit(segno, sm->invalid_segmap))
-> +			goto next;
-> +#endif
-> +
->  		secno = GET_SEC_FROM_SEG(sbi, segno);
->  
->  		if (sec_usage_check(sbi, secno))
-> @@ -602,8 +612,15 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  {
->  	struct page *node_page;
->  	nid_t nid;
-> -	unsigned int ofs_in_node;
-> +	unsigned int ofs_in_node, segno;
->  	block_t source_blkaddr;
-> +	unsigned long offset;
-> +#ifdef CONFIG_F2FS_CHECK_FS
-> +	struct sit_info *sit_i = SIT_I(sbi);
-> +#endif
-> +
-> +	segno = GET_SEGNO(sbi, blkaddr);
-> +	offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
->  
->  	nid = le32_to_cpu(sum->nid);
->  	ofs_in_node = le16_to_cpu(sum->ofs_in_node);
-> @@ -627,8 +644,18 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  	source_blkaddr = datablock_addr(NULL, node_page, ofs_in_node);
->  	f2fs_put_page(node_page, 1);
->  
-> -	if (source_blkaddr != blkaddr)
-> +	if (source_blkaddr != blkaddr) {
-> +#ifdef CONFIG_F2FS_CHECK_FS
-
-		unsigned int segno = GET_SEGNO(sbi, blkaddr);
-		unsigned int offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
-
-Should be local, otherwise it looks good to me, I think Jaegeuk can help to fix
-this while merging.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-> +		if (unlikely(check_valid_map(sbi, segno, offset))) {
-> +			if (!test_and_set_bit(segno, sit_i->invalid_segmap)) {
-> +				f2fs_err(sbi, "mismatched blkaddr %u (source_blkaddr %u) in seg %u\n",
-> +						blkaddr, source_blkaddr, segno);
-> +				f2fs_bug_on(sbi, 1);
-> +			}
-> +		}
-> +#endif
->  		return false;
-> +	}
->  	return true;
->  }
->  
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index a661ac3..ee795b1 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -806,6 +806,9 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
->  		enum dirty_type dirty_type)
->  {
->  	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-> +#ifdef CONFIG_F2FS_CHECK_FS
-> +	struct sit_info *sit_i = SIT_I(sbi);
-> +#endif
->  
->  	if (test_and_clear_bit(segno, dirty_i->dirty_segmap[dirty_type]))
->  		dirty_i->nr_dirty[dirty_type]--;
-> @@ -817,9 +820,13 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
->  		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
->  			dirty_i->nr_dirty[t]--;
->  
-> -		if (get_valid_blocks(sbi, segno, true) == 0)
-> +		if (get_valid_blocks(sbi, segno, true) == 0) {
->  			clear_bit(GET_SEC_FROM_SEG(sbi, segno),
->  						dirty_i->victim_secmap);
-> +#ifdef CONFIG_F2FS_CHECK_FS
-> +			clear_bit(segno, sit_i->invalid_segmap);
-> +#endif
-> +		}
->  	}
->  }
->  
-> @@ -4015,6 +4022,10 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
->  	sit_i->sit_bitmap_mir = kmemdup(src_bitmap, bitmap_size, GFP_KERNEL);
->  	if (!sit_i->sit_bitmap_mir)
->  		return -ENOMEM;
-> +
-> +	sit_i->invalid_segmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
-> +	if (!sit_i->invalid_segmap)
-> +		return -ENOMEM;
->  #endif
->  
->  	/* init SIT information */
-> @@ -4517,6 +4528,7 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
->  	kvfree(sit_i->sit_bitmap);
->  #ifdef CONFIG_F2FS_CHECK_FS
->  	kvfree(sit_i->sit_bitmap_mir);
-> +	kvfree(sit_i->invalid_segmap);
->  #endif
->  	kvfree(sit_i);
->  }
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index b746028..9370d53 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -229,6 +229,9 @@ struct sit_info {
->  	char *sit_bitmap;		/* SIT bitmap pointer */
->  #ifdef CONFIG_F2FS_CHECK_FS
->  	char *sit_bitmap_mir;		/* SIT bitmap mirror */
-> +
-> +	/* bitmap of segments to be ignored by GC in case of errors */
-> +	unsigned long *invalid_segmap;
->  #endif
->  	unsigned int bitmap_size;	/* SIT bitmap size */
->  
-> 
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
