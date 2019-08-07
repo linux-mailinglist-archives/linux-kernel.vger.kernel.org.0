@@ -2,65 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E25F8441C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:02:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A3F984429
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:03:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfHGGCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 02:02:30 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47741 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbfHGGC3 (ORCPT
+        id S1727108AbfHGGDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 02:03:23 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:53955 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726872AbfHGGDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 02:02:29 -0400
-Received: from p200300ddd742df588d2c07822b9f4274.dip0.t-ipconnect.de ([2003:dd:d742:df58:8d2c:782:2b9f:4274])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hvF1Q-0006cX-Ss; Wed, 07 Aug 2019 08:02:04 +0200
-Date:   Wed, 7 Aug 2019 08:01:52 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dmitry Safonov <dima@arista.com>
-cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCHv5 04/37] posix-clocks: Rename *_clock_get() functions
- into *_clock_get_timespec()
-In-Reply-To: <20190729215758.28405-5-dima@arista.com>
-Message-ID: <alpine.DEB.2.21.1908070800180.24014@nanos.tec.linutronix.de>
-References: <20190729215758.28405-1-dima@arista.com> <20190729215758.28405-5-dima@arista.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 7 Aug 2019 02:03:20 -0400
+X-UUID: e0a996c9a3a44907ba62ee4ddd8ead28-20190807
+X-UUID: e0a996c9a3a44907ba62ee4ddd8ead28-20190807
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1543499440; Wed, 07 Aug 2019 14:03:06 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 7 Aug
+ 2019 14:03:02 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
+ MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Wed, 7 Aug 2019 14:03:01 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Jitao Shi <jitao.shi@mediatek.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
+        <ck.hu@mediatek.com>, <stonea168@163.com>
+Subject: [PATCH v5 0/4] add mt8183 dpi driver
+Date:   Wed, 7 Aug 2019 14:02:53 +0800
+Message-ID: <20190807060257.57007-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-TM-SNTS-SMTP: DCB0DFC6858284B6DFB1DC1FB7C2F36A5001F83DF042B729EFA399187E50DB232000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jul 2019, Dmitry Safonov wrote:
->  static const struct k_clock clock_monotonic = {
->  	.clock_getres		= posix_get_hrtimer_res,
-> -	.clock_get_timespec	= posix_ktime_get_ts,
-> +	.clock_get_timespec	= posix_get_timespec,
+Changes since v4:
+ - move pin mode control and dual edge control to deveice tree.
+ - update dt-bindings document for pin mode swap and dual edge control.
 
- posix_get_monotonic_timespec
+Changes since v3:
+ - add dpi pin mode control when dpi on or off.
+ - update dpi dual edge comment.
 
-Please.
+Changes since v2:
+ - update dt-bindings document for mt8183 dpi.
+ - separate dual edge modfication as independent patch.
+
+Jitao Shi (4):
+  dt-bindings: display: mediatek: update dpi  supported chips
+  drm/mediatek: dpi dual edge support
+  drm/mediatek: add mt8183 dpi clock factor
+  drm/mediatek: control dpi pins dpi or gpio mode in on or off
+
+ .../display/mediatek/mediatek,dpi.txt         | 11 +++
+ drivers/gpu/drm/mediatek/mtk_dpi.c            | 71 ++++++++++++++++++-
+ 2 files changed, 80 insertions(+), 2 deletions(-)
+
+-- 
+2.21.0
 
