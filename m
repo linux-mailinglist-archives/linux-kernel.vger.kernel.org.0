@@ -2,207 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D4A584D41
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E4F584D65
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388674AbfHGNcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:32:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60824 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388624AbfHGNcU (ORCPT
+        id S2388759AbfHGNdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:33:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35302 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388321AbfHGNa5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:32:20 -0400
+        Wed, 7 Aug 2019 09:30:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=68Yhf2iDyVKzYLQ2UV2u0cZ6dqKHM7rKNUQXbO+5I0I=; b=dXFWXOFYR808khgteyw+aEjGBO
-        /LIixTa5asafxBMyqX2NOdWDYDIzMRcTx2W0mZuWKDu9rIH0cSd5+ZY7UaYOiQex4BqpJ2Ei4l00P
-        HO6r/cYCvU8ZOOBdULk9DXu9jJF3LRuCwBaZP3E11lKvvQtR21OWweIUycCtRFwAnI6Y2foweRByr
-        gi4/ZN4sxp3ZBuW5oAFJiMJ4809KJx1MKCBWQziswKmZByxg/xNv5uyf05YPRXAkesvyVHirwhKn9
-        wvgFppgJPtCYX3xV5f4elpSuBQynANmORMtw/DNXoVrFXktp4f6hhBioQqTb7f3ZcoIvtg2CPUsPK
-        ttz4fjaA==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvM38-0008G5-NS; Wed, 07 Aug 2019 13:32:19 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 28/29] ia64: remove CONFIG_ACPI_NUMA ifdefs
-Date:   Wed,  7 Aug 2019 16:30:48 +0300
-Message-Id: <20190807133049.20893-29-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190807133049.20893-1-hch@lst.de>
-References: <20190807133049.20893-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=Wu9sugkEEsUhkvknH7uSAfy3bNShHg3ioU3CI9Flyl8=; b=BC7xKV3U+6Ft
+        8BnglARL2Q/kiNkhN1uXN+DhE4MbYbxc+bGhxKitX+7dUE4E883tV8+/D4xtUb8Td0dln40xHe/d3
+        f1AAM2xXAjLdRclxgLv6tikogMx5539KAH2Ju8d1QppL/AS8jnTdvRp0fu26xdlEQaDC4ys0Ne91L
+        J2jNY=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1hvM1h-0007fl-V5; Wed, 07 Aug 2019 13:30:50 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 4088D2742B9E; Wed,  7 Aug 2019 14:30:49 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     alsa-devel@alsa-project.org, angus@akkea.ca, broonie@kernel.org,
+        devicetree@vger.kernel.org, festevam@gmail.com,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, l.stach@pengutronix.de,
+        Mark Brown <broonie@kernel.org>, mihai.serban@gmail.com,
+        nicoleotsuka@gmail.com, Nicolin Chen <nicoleotsuka@gmail.com>,
+        robh@kernel.org, shengjiu.wang@nxp.com, timur@kernel.org,
+        tiwai@suse.com
+Subject: Applied "ASoC: dt-bindings: Introduce compatible strings for 7ULP and 8MQ" to the asoc tree
+In-Reply-To: <20190806151214.6783-6-daniel.baluta@nxp.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190807133049.4088D2742B9E@ypsilon.sirena.org.uk>
+Date:   Wed,  7 Aug 2019 14:30:49 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_ACPI_NUMA is now unconditionally selected on ia64, so remove the
-ifdefs.
+The patch
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+   ASoC: dt-bindings: Introduce compatible strings for 7ULP and 8MQ
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 371be51a925a619f1fb149b8d7707e353d9c9f86 Mon Sep 17 00:00:00 2001
+From: Daniel Baluta <daniel.baluta@nxp.com>
+Date: Tue, 6 Aug 2019 18:12:14 +0300
+Subject: [PATCH] ASoC: dt-bindings: Introduce compatible strings for 7ULP and
+ 8MQ
+
+For i.MX7ULP and i.MX8MQ register map is changed. Add two new compatbile
+strings to differentiate this.
+
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Link: https://lore.kernel.org/r/20190806151214.6783-6-daniel.baluta@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/ia64/include/asm/acpi.h |  5 -----
- arch/ia64/kernel/acpi.c      | 17 -----------------
- arch/ia64/kernel/setup.c     |  2 --
- 3 files changed, 24 deletions(-)
+ Documentation/devicetree/bindings/sound/fsl-sai.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/ia64/include/asm/acpi.h b/arch/ia64/include/asm/acpi.h
-index f886d4dc9d55..9598f998a94f 100644
---- a/arch/ia64/include/asm/acpi.h
-+++ b/arch/ia64/include/asm/acpi.h
-@@ -55,7 +55,6 @@ extern int additional_cpus;
- #define additional_cpus 0
- #endif
+diff --git a/Documentation/devicetree/bindings/sound/fsl-sai.txt b/Documentation/devicetree/bindings/sound/fsl-sai.txt
+index 2e726b983845..e61c0dc1fc0b 100644
+--- a/Documentation/devicetree/bindings/sound/fsl-sai.txt
++++ b/Documentation/devicetree/bindings/sound/fsl-sai.txt
+@@ -8,7 +8,8 @@ codec/DSP interfaces.
+ Required properties:
  
--#ifdef CONFIG_ACPI_NUMA
- #if MAX_NUMNODES > 256
- #define MAX_PXM_DOMAINS MAX_NUMNODES
- #else
-@@ -63,7 +62,6 @@ extern int additional_cpus;
- #endif
- extern int pxm_to_nid_map[MAX_PXM_DOMAINS];
- extern int __initdata nid_to_pxm_map[MAX_NUMNODES];
--#endif
+   - compatible		: Compatible list, contains "fsl,vf610-sai",
+-			  "fsl,imx6sx-sai" or "fsl,imx6ul-sai"
++			  "fsl,imx6sx-sai", "fsl,imx6ul-sai",
++			  "fsl,imx7ulp-sai" or "fsl,imx8mq-sai".
  
- static inline bool arch_has_acpi_pdc(void) { return true; }
- static inline void arch_acpi_set_pdc_bits(u32 *buf)
-@@ -73,7 +71,6 @@ static inline void arch_acpi_set_pdc_bits(u32 *buf)
+   - reg			: Offset and length of the register set for the device.
  
- #define acpi_unlazy_tlb(x)
- 
--#ifdef CONFIG_ACPI_NUMA
- extern cpumask_t early_cpu_possible_map;
- #define for_each_possible_early_cpu(cpu)  \
- 	for_each_cpu((cpu), &early_cpu_possible_map)
-@@ -102,8 +99,6 @@ static inline void per_cpu_scan_finalize(int min_cpus, int reserve_cpus)
- 
- extern void acpi_numa_fixup(void);
- 
--#endif /* CONFIG_ACPI_NUMA */
--
- #endif /*__KERNEL__*/
- 
- #endif /*_ASM_ACPI_H*/
-diff --git a/arch/ia64/kernel/acpi.c b/arch/ia64/kernel/acpi.c
-index 70d1587ddcd4..f681e8068c8d 100644
---- a/arch/ia64/kernel/acpi.c
-+++ b/arch/ia64/kernel/acpi.c
-@@ -316,8 +316,6 @@ static int __init acpi_parse_madt(struct acpi_table_header *table)
- 	return 0;
- }
- 
--#ifdef CONFIG_ACPI_NUMA
--
- #undef SLIT_DEBUG
- 
- #define PXM_FLAG_LEN ((MAX_PXM_DOMAINS + 1)/32)
-@@ -517,7 +515,6 @@ void __init acpi_numa_fixup(void)
- 	}
- #endif
- }
--#endif				/* CONFIG_ACPI_NUMA */
- 
- /*
-  * success: return IRQ number (>=0)
-@@ -668,7 +665,6 @@ int __init acpi_boot_init(void)
- 	if (acpi_table_parse(ACPI_SIG_FADT, acpi_parse_fadt))
- 		printk(KERN_ERR PREFIX "Can't find FADT\n");
- 
--#ifdef CONFIG_ACPI_NUMA
- #ifdef CONFIG_SMP
- 	if (srat_num_cpus == 0) {
- 		int cpu, i = 1;
-@@ -680,7 +676,6 @@ int __init acpi_boot_init(void)
- 	}
- #endif
- 	build_cpu_to_node_map();
--#endif
- 	return 0;
- }
- 
-@@ -713,7 +708,6 @@ int acpi_isa_irq_to_gsi(unsigned isa_irq, u32 *gsi)
- #ifdef CONFIG_ACPI_HOTPLUG_CPU
- int acpi_map_cpu2node(acpi_handle handle, int cpu, int physid)
- {
--#ifdef CONFIG_ACPI_NUMA
- 	/*
- 	 * We don't have cpu-only-node hotadd. But if the system equips
- 	 * SRAT table, pxm is already found and node is ready.
-@@ -723,7 +717,6 @@ int acpi_map_cpu2node(acpi_handle handle, int cpu, int physid)
- 	 */
- 	node_cpuid[cpu].phys_id = physid;
- 	node_cpuid[cpu].nid = acpi_get_node(handle);
--#endif
- 	return 0;
- }
- 
-@@ -813,17 +806,11 @@ int acpi_unmap_cpu(int cpu)
- {
- 	ia64_cpu_to_sapicid[cpu] = -1;
- 	set_cpu_present(cpu, false);
--
--#ifdef CONFIG_ACPI_NUMA
--	/* NUMA specific cleanup's */
--#endif
--
- 	return (0);
- }
- EXPORT_SYMBOL(acpi_unmap_cpu);
- #endif				/* CONFIG_ACPI_HOTPLUG_CPU */
- 
--#ifdef CONFIG_ACPI_NUMA
- static acpi_status acpi_map_iosapic(acpi_handle handle, u32 depth,
- 				    void *context, void **ret)
- {
-@@ -877,7 +864,6 @@ acpi_map_iosapics (void)
- }
- 
- fs_initcall(acpi_map_iosapics);
--#endif				/* CONFIG_ACPI_NUMA */
- 
- int __ref acpi_register_ioapic(acpi_handle handle, u64 phys_addr, u32 gsi_base)
- {
-@@ -886,10 +872,7 @@ int __ref acpi_register_ioapic(acpi_handle handle, u64 phys_addr, u32 gsi_base)
- 	if ((err = iosapic_init(phys_addr, gsi_base)))
- 		return err;
- 
--#ifdef CONFIG_ACPI_NUMA
- 	acpi_map_iosapic(handle, 0, NULL, NULL);
--#endif				/* CONFIG_ACPI_NUMA */
--
- 	return 0;
- }
- 
-diff --git a/arch/ia64/kernel/setup.c b/arch/ia64/kernel/setup.c
-index 18de565d5825..6dbb58bb4c8c 100644
---- a/arch/ia64/kernel/setup.c
-+++ b/arch/ia64/kernel/setup.c
-@@ -569,7 +569,6 @@ setup_arch (char **cmdline_p)
- 	/* Initialize the ACPI boot-time table parser */
- 	acpi_table_init();
- 	early_acpi_boot_init();
--#ifdef CONFIG_ACPI_NUMA
- 	acpi_numa_init();
- 	acpi_numa_fixup();
- #ifdef CONFIG_ACPI_HOTPLUG_CPU
-@@ -578,7 +577,6 @@ setup_arch (char **cmdline_p)
- 	per_cpu_scan_finalize((cpumask_weight(&early_cpu_possible_map) == 0 ?
- 		32 : cpumask_weight(&early_cpu_possible_map)),
- 		additional_cpus > 0 ? additional_cpus : 0);
--#endif /* CONFIG_ACPI_NUMA */
- 
- #ifdef CONFIG_SMP
- 	smp_build_cpu_map();
 -- 
 2.20.1
 
