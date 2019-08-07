@@ -2,115 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 475E085045
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:50:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5986C85050
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388807AbfHGPuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:50:07 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.200]:44834 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388758AbfHGPuH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 11:50:07 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 4AFBF186DFF
-        for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2019 10:50:06 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id vOCUhv1D8iQervOCUhIPnL; Wed, 07 Aug 2019 10:50:06 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tGMQ51Rv13b6vHV2oX8Kb0ED7YORM826dwEjbUekOns=; b=LNwTSjV8My84CdgkaXczARzvrX
-        UHAo3XaZryYeWhTPD7qQLqrPm/zUzk5NJ8hESaNYsGKe9v8Non74I1z9UW9YBBmVe9/swYSBzeUzt
-        NtWiiAVMXZiwTR6aGfeFgQmp07LMpibLgqHIgTOwghKDLZzabbqhR9J+dtN+MnvDu86vDqPzh2u8i
-        WB/5imINiv3daPFrCToZcg3TPtRj6FZUtVKB2tNDzIKLAiZrlO0oOlCOPkFIL2TsQ5fUczGeJGT0s
-        CAdWltZNS7YRL026+eRGnVGFTewIQ2hw1fbctkZgAcm/kzt4CdAhYZqZvJ8BiatnLuKLXJQjKL2dS
-        80bBHKvg==;
-Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:45282 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hvOCT-000Og7-9Q; Wed, 07 Aug 2019 10:50:05 -0500
-Date:   Wed, 7 Aug 2019 10:50:02 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/nouveau/nvif/mmu: Use struct_size() helper
-Message-ID: <20190807155002.GA25502@embeddedor>
+        id S2388831AbfHGPwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 11:52:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42126 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388779AbfHGPwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 11:52:40 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6421F21E73;
+        Wed,  7 Aug 2019 15:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565193160;
+        bh=t56h21KNASqJFrwBf8iDFQutW8Xbq368HNoCUfPaANw=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=LkdVjXB2jDNMFwA/lkPddhSh8C/yg3ibIcujkqsbH+3FJ86d7KtaM0IPpKnaVIJBR
+         1zhaF4EPIFntFV2NxHJs7RpQ+JDSyu84jla6yPYqKWMlU0EuqJxCVGt61UkOXrCjqE
+         Y/U+EdOLVJ3DYcFE5Vf5cX878Vt9s5GCziIkRlfY=
+Subject: Re: [PATCH v2] selftests: kvm: Adding config fragments
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, drjones@redhat.com,
+        sean.j.christopherson@intel.com, linux-kselftest@vger.kernel.org,
+        kvm@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190807135814.12906-1-naresh.kamboju@linaro.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <b6b4f179-1fef-65db-8125-fa60e3627656@kernel.org>
+Date:   Wed, 7 Aug 2019 09:52:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.252.62
-X-Source-L: No
-X-Exim-ID: 1hvOCT-000Og7-9Q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:45282
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190807135814.12906-1-naresh.kamboju@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Hi Naresh,
 
-struct nvif_mmu_kind_v0 {
-	...
-        __u8  data[];
-};
+On 8/7/19 7:58 AM, Naresh Kamboju wrote:
+> selftests kvm test cases need pre-required kernel configs for the test
+> to get pass.
+> 
 
+Can you elaborate and add more information on which tests fail without
+these configs. I am all for adding configs, however I would like to
+see more information explaining which tests don't pass without this
+change.
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes.
+> Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> ---
+>   tools/testing/selftests/kvm/config | 3 +++
+>   1 file changed, 3 insertions(+)
+>   create mode 100644 tools/testing/selftests/kvm/config
+> 
+> diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
+> new file mode 100644
+> index 000000000000..63ed533f73d6
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/config
+> @@ -0,0 +1,3 @@
+> +CONFIG_KVM=y
+> +CONFIG_KVM_INTEL=y
+> +CONFIG_KVM_AMD=y
+> 
 
-So, replace the following form:
+That being said, it is up to Paolo to decide a call on this patch.
 
-sizeof(*kind) + sizeof(*kind->data) * mmu->kind_nr
-
-with:
-
-struct_size(kind, data, mmu->kind_nr)
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/nouveau/nvif/mmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nvif/mmu.c b/drivers/gpu/drm/nouveau/nvif/mmu.c
-index ae08a1ca8044..5641bda2046d 100644
---- a/drivers/gpu/drm/nouveau/nvif/mmu.c
-+++ b/drivers/gpu/drm/nouveau/nvif/mmu.c
-@@ -110,7 +110,7 @@ nvif_mmu_init(struct nvif_object *parent, s32 oclass, struct nvif_mmu *mmu)
- 
- 	if (mmu->kind_nr) {
- 		struct nvif_mmu_kind_v0 *kind;
--		u32 argc = sizeof(*kind) + sizeof(*kind->data) * mmu->kind_nr;
-+		size_t argc = struct_size(kind, data, mmu->kind_nr);
- 
- 		if (ret = -ENOMEM, !(kind = kmalloc(argc, GFP_KERNEL)))
- 			goto done;
--- 
-2.22.0
+thanks,
+-- Shuah
 
