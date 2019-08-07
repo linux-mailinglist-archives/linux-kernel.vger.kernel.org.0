@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CFF85241
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 250C485240
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389225AbfHGRlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 13:41:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:52528 "EHLO foss.arm.com"
+        id S2389235AbfHGRlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 13:41:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:52538 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388369AbfHGRlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 13:41:15 -0400
+        id S2389216AbfHGRlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 13:41:18 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC26115A2;
-        Wed,  7 Aug 2019 10:41:14 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC32228;
+        Wed,  7 Aug 2019 10:41:16 -0700 (PDT)
 Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1BC853F575;
-        Wed,  7 Aug 2019 10:41:14 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 025043F575;
+        Wed,  7 Aug 2019 10:41:15 -0700 (PDT)
 From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org
-Subject: [PATCH 2/3] sched/fair: Prevent active LB from preempting higher sched classes
-Date:   Wed,  7 Aug 2019 18:40:25 +0100
-Message-Id: <20190807174026.31242-3-valentin.schneider@arm.com>
+Subject: [PATCH 3/3] sched/fair: Check for CFS tasks in active_load_balance_cpu_stop()
+Date:   Wed,  7 Aug 2019 18:40:26 +0100
+Message-Id: <20190807174026.31242-4-valentin.schneider@arm.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190807174026.31242-1-valentin.schneider@arm.com>
 References: <20190807174026.31242-1-valentin.schneider@arm.com>
@@ -33,44 +33,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CFS load balancer can cause the cpu_stopper to run a function to
-try and steal a rq's currently running task. However, it so happens
-that while only CFS tasks will ever be migrated by that function, we
-can end up preempting higher sched class tasks, since it is executed
-by the cpu_stopper.
+We should really only be looking for CFS tasks, since that's all
+detach_one_task() can ever pull.
 
-I don't expect this to be exceedingly common: we still need to have
-had a busiest group in the first place, which needs
-
-  busiest->sum_nr_running != 0
-
-which is a cfs.h_nr_running sum, so we should have something to pull,
-but if we fail to pull anything and the remote rq is executing
-an RT/DL task we can hit this.
-
-Add an extra check to not trigger the cpu_stopper if the remote
-rq's running task isn't CFS.
+Replace the rq.nr_running check with a rq.cfs.h_nr_running one to do
+just that.
 
 Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- kernel/sched/fair.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/sched/fair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b56b8edee3d3..79bd6ead589c 100644
+index 79bd6ead589c..099aad1930bb 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8834,6 +8834,10 @@ static inline enum alb_status active_load_balance(struct lb_env *env)
+@@ -9206,8 +9206,8 @@ static int active_load_balance_cpu_stop(void *data)
+ 		     !busiest_rq->active_balance))
+ 		goto out_unlock;
  
- 	raw_spin_lock_irqsave(&busiest->lock, flags);
+-	/* Is there any task to move? */
+-	if (busiest_rq->nr_running <= 1)
++	/* Is there any CFS task to move? */
++	if (busiest_rq->cfs.h_nr_running < 1)
+ 		goto out_unlock;
  
-+	/* Make sure we're not about to stop a task from a higher sched class */
-+	if (busiest->curr->sched_class != &fair_sched_class)
-+		goto unlock;
-+
  	/*
- 	 * Don't kick the active_load_balance_cpu_stop, if the curr task on
- 	 * busiest CPU can't be moved to dst_cpu:
 --
 2.22.0
 
