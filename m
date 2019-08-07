@@ -2,124 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 240BF847D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 10:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0264D847E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 10:47:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387700AbfHGIqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 04:46:37 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:53141 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387452AbfHGIqh (ORCPT
+        id S2387749AbfHGIqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 04:46:51 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:40790 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387711AbfHGIqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 04:46:37 -0400
-Received: from [IPv6:2001:983:e9a7:1:9c05:4bbc:890e:7747] ([IPv6:2001:983:e9a7:1:9c05:4bbc:890e:7747])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id vHabhjtKZAffAvHach7Mxn; Wed, 07 Aug 2019 10:46:34 +0200
-Subject: Re: next-20190806: arm64: adv7511 3-0039: failed to find dsi host
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>, mchehab@kernel.org,
-        robh+dt@kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-media@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, agross@kernel.org,
-        david.brown@linaro.org, lkft-triage@lists.linaro.org,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <CA+G9fYus+cW4775Y2_Xqpc+G6YP_KfjGeCMzoSQq6o2yVY8Q3w@mail.gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <a9f7c007-8639-0202-c35d-219d371a1842@xs4all.nl>
-Date:   Wed, 7 Aug 2019 10:46:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CA+G9fYus+cW4775Y2_Xqpc+G6YP_KfjGeCMzoSQq6o2yVY8Q3w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfApS0b/lMPm7rop7sg4zrGCd+8i5M4UPTpKak97B2soWM1lDxIqMEISdnpCsJMglPti5bkjxmU2Axw9lKEqQw4HCmMOx113b51Z7Ji58DjsbuiIF5JAp
- 2hpTdBYYwQ90Rrq3A8U2qoCTM6Z/JttrqM5JxCTBNphIfY/AuA7m0KHVCvE1pI1IThCds62OiVpyDbYYyzKvnIs52V68cd1UB0l9j4cC+XqxAeAYZmG1mK7w
- xaad+EklKa6qrQnuLMDsiMmDGrhJg+DDCeSMfzRXxZw4ebYXnUtwlo3aYNb5CQR41tCTT/ESrJt/IPPxWzyET4o3F4/YppkFLZgfoIfB5Y3ZQ7IpElrhZz4r
- hV57N0/Yuuoq0T9x7kA9dTXm+F3NWk3J5WKmiB365qLjkOgSI63bfUxmkWT7m+jgjqVzq/TGfjOwkqqmmPirOtmj69K2yV/grgKxrXhMroiuaJ6glk2kq2e+
- BLuAfNaMYLMy6RNaPAwL6o6xAQg0mXGKT+wSjoXbDC1yeypR0ZeSIBVS1myDswQDidoHIohjuLYJN8a7QRZ7dz1F7/rPyRKUZquqdWxLOIlTNnedR96BVikJ
- /APKCq63uC5PmQQtGFwLXihb7WzA7QXNLVXwxAoWFoWdS2ygZkf0LLnZA8ngSsCuDBI/oZMdrqaX8YUMpDr0WRRCF+7SlvbH+O6oUDgqh3ZABG2uX1I1Dq2n
- 2xbI43RkHTE=
+        Wed, 7 Aug 2019 04:46:46 -0400
+Received: from ramsan ([84.194.98.4])
+        by albert.telenet-ops.be with bizsmtp
+        id m8mg2000205gfCL068mgMM; Wed, 07 Aug 2019 10:46:43 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hvHai-0002dt-0E; Wed, 07 Aug 2019 10:46:40 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hvHah-0006Im-UU; Wed, 07 Aug 2019 10:46:39 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 2/3] clocksource/drivers/renesas-ostm: Fix probe error path
+Date:   Wed,  7 Aug 2019 10:46:34 +0200
+Message-Id: <20190807084635.24173-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190807084635.24173-1-geert+renesas@glider.be>
+References: <20190807084635.24173-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding dri-devel since this appears to be drm specific and not media
-related.
+Fix various issues in the error path of ostm_init():
+  1. Drop error message printing on of_iomap() failure, as the memory
+     allocation core already takes of that,
+  2. Handle irq_of_parse_and_map() failures correctly: it returns
+     unsigned int, hence make irq unsigned int, and zero is an error,
+  3. Propagate/return appropriate error codes instead of -EFAULT.
+  4. Add a missing clk_put(),
+  5. Split the single cleanup block in separate phases, to avoid
+     clk_put() calling WARN() when passed an error pointer.
 
-Regards,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - New.
+---
+ drivers/clocksource/renesas-ostm.c | 54 ++++++++++++++++--------------
+ 1 file changed, 29 insertions(+), 25 deletions(-)
 
-	Hans
-
-On 8/7/19 10:17 AM, Naresh Kamboju wrote:
-> arm64 devices dragonboard 410c (QC410E) and hi6220-hikey running Linux
-> next-20190806 loading modules causing floods of kernel messages.
-> 
-> We have enabled few extra kernel configs for testing.
-> CONFIG_DRM_I2C_ADV7511=m
-> CONFIG_DRM_I2C_ADV7511_CEC=y
-> ...
-> 
-> Please find below boot log and config file link.
-> 
-> [    0.000000] Linux version 5.3.0-rc3-next-20190806 (oe-user@oe-host)
-> (gcc version 7.3.0 (GCC)) #1 SMP PREEMPT Tue Aug 6 05:49:36 UTC 2019
-> [    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
-> ....
-> [   10.051193] adv7511 3-0039: 3-0039 supply dvdd not found, using
-> dummy regulator
-> [   10.051633] adv7511 3-0039: 3-0039 supply pvdd not found, using
-> dummy regulator
-> [   10.076257] adreno 1c00000.gpu: Adding to iommu group 0
-> [   10.090929] adv7511 3-0039: 3-0039 supply a2vdd not found, using
-> dummy regulator
-> [   10.101703] msm_mdp 1a01000.mdp: Adding to iommu group 1
-> [   10.102563] msm_mdp 1a01000.mdp: No interconnect support may cause
-> display underflows!
-> [   10.139492] adv7511 3-0039: failed to find dsi host
-> ...
-> [   33.065744] adv7511 3-0039: failed to find dsi host
-> [   33.076721] msm 1a00000.mdss: 1a00000.mdss supply vdd not found,
-> using dummy regulator
-> [   33.078344] msm_mdp 1a01000.mdp: [drm:mdp5_bind [msm]] MDP5 version v1.6
-> [   33.083862] msm 1a00000.mdss: bound 1a01000.mdp (ops mdp5_ops [msm])
-> [   33.090892] msm_dsi 1a98000.dsi: 1a98000.dsi supply gdsc not found,
-> using dummy regulator
-> [   33.097756] msm_dsi 1a98000.dsi: 1a98000.dsi supply gdsc not found,
-> using dummy regulator
-> [   33.106606] msm_dsi_manager_register: failed to register mipi dsi
-> host for DSI 0
-> [   33.114579] msm 1a00000.mdss: failed to bind 1a98000.dsi (ops
-> dsi_ops [msm]): -517
-> [   33.121263] msm 1a00000.mdss: master bind failed: -517
-> [   33.135547] adv7511 3-0039: 3-0039 supply dvdd not found, using
-> dummy regulator
-> [   33.139360] adv7511 3-0039: 3-0039 supply pvdd not found, using
-> dummy regulator
-> [   33.143646] adv7511 3-0039: 3-0039 supply a2vdd not found, using
-> dummy regulator
-> 
-> Full test log
-> https://lkft.validation.linaro.org/scheduler/job/860208#L956
-> 
-> metadata:
->   git branch: master
->   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   git commit: 958eb4327c1761c609bde8e9f7c04e9d1c6fbb96
->   git describe: next-20190806
->   make_kernelversion: 5.3.0-rc3
->   kernel-config:
-> http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579/config
->   kernel-defconfig:
-> http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579/defconfig
->   build-location:
-> http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/dragonboard-410c/lkft/linux-next/579
-> 
-> Best regards
-> Naresh Kamboju
-> 
+diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
+index 37c39b901bb12b38..1e22e54d7b0df40d 100644
+--- a/drivers/clocksource/renesas-ostm.c
++++ b/drivers/clocksource/renesas-ostm.c
+@@ -155,7 +155,7 @@ static irqreturn_t ostm_timer_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int __init ostm_init_clkevt(struct ostm_device *ostm, int irq,
++static int __init ostm_init_clkevt(struct ostm_device *ostm, unsigned int irq,
+ 			unsigned long rate)
+ {
+ 	struct clock_event_device *ced = &ostm->ced;
+@@ -185,11 +185,11 @@ static int __init ostm_init_clkevt(struct ostm_device *ostm, int irq,
+ 
+ static int __init ostm_init(struct device_node *np)
+ {
+-	struct ostm_device *ostm;
+-	int ret = -EFAULT;
+ 	struct clk *ostm_clk = NULL;
+-	int irq;
++	struct ostm_device *ostm;
+ 	unsigned long rate;
++	unsigned int irq;
++	int ret;
+ 
+ 	ostm = kzalloc(sizeof(*ostm), GFP_KERNEL);
+ 	if (!ostm)
+@@ -197,27 +197,29 @@ static int __init ostm_init(struct device_node *np)
+ 
+ 	ostm->base = of_iomap(np, 0);
+ 	if (!ostm->base) {
+-		pr_err("ostm: failed to remap I/O memory\n");
+-		goto err;
++		ret = -ENOMEM;
++		goto err_free;
+ 	}
+ 
+ 	irq = irq_of_parse_and_map(np, 0);
+-	if (irq < 0) {
++	if (!irq) {
+ 		pr_err("ostm: Failed to get irq\n");
+-		goto err;
++		ret = -EINVAL;
++		goto err_unmap;
+ 	}
+ 
+ 	ostm_clk = of_clk_get(np, 0);
+ 	if (IS_ERR(ostm_clk)) {
+ 		pr_err("ostm: Failed to get clock\n");
+ 		ostm_clk = NULL;
+-		goto err;
++		ret = PTR_ERR(ostm_clk);
++		goto err_unmap;
+ 	}
+ 
+ 	ret = clk_prepare_enable(ostm_clk);
+ 	if (ret) {
+ 		pr_err("ostm: Failed to enable clock\n");
+-		goto err;
++		goto err_clk_put;
+ 	}
+ 
+ 	rate = clk_get_rate(ostm_clk);
+@@ -229,28 +231,30 @@ static int __init ostm_init(struct device_node *np)
+ 	 */
+ 	if (!system_clock) {
+ 		ret = ostm_init_clksrc(ostm, rate);
++		if (ret)
++			goto err_clk_disable;
+ 
+-		if (!ret) {
+-			ostm_init_sched_clock(ostm, rate);
+-			pr_info("ostm: used for clocksource\n");
+-		}
+-
++		ostm_init_sched_clock(ostm, rate);
++		pr_info("ostm: used for clocksource\n");
+ 	} else {
+ 		ret = ostm_init_clkevt(ostm, irq, rate);
++		if (ret)
++			goto err_clk_disable;
+ 
+-		if (!ret)
+-			pr_info("ostm: used for clock events\n");
+-	}
+-
+-err:
+-	if (ret) {
+-		clk_disable_unprepare(ostm_clk);
+-		iounmap(ostm->base);
+-		kfree(ostm);
+-		return ret;
++		pr_info("ostm: used for clock events\n");
+ 	}
+ 
+ 	return 0;
++
++err_clk_disable:
++	clk_disable_unprepare(ostm_clk);
++err_clk_put:
++	clk_put(ostm_clk);
++err_unmap:
++	iounmap(ostm->base);
++err_free:
++	kfree(ostm);
++	return ret;
+ }
+ 
+ TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
+-- 
+2.17.1
 
