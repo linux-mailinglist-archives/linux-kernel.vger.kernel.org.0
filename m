@@ -2,114 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 518738503F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CADBF85049
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:51:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388785AbfHGPsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:48:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48516 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388769AbfHGPsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 11:48:32 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D8177EC529;
-        Wed,  7 Aug 2019 15:48:31 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DAE0960BE1;
-        Wed,  7 Aug 2019 15:48:29 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed,  7 Aug 2019 17:48:31 +0200 (CEST)
-Date:   Wed, 7 Aug 2019 17:48:29 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelianov <xemul@virtuozzo.com>,
-        Jann Horn <jannh@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-Subject: Re: [PATCH v3 1/2] fork: extend clone3() to support CLONE_SET_TID
-Message-ID: <20190807154828.GD24112@redhat.com>
-References: <20190806191551.22192-1-areber@redhat.com>
+        id S2388818AbfHGPvh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 11:51:37 -0400
+Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:40783 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388779AbfHGPvg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 11:51:36 -0400
+Received: from localhost.localdomain ([86.218.179.140])
+        by mwinf5d35 with ME
+        id mFrR20003328hQe03FrRek; Wed, 07 Aug 2019 17:51:33 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 07 Aug 2019 17:51:33 +0200
+X-ME-IP: 86.218.179.140
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     atul.gupta@chelsio.com, herbert@gondor.apana.org.au,
+        zhongjiang@huawei.com, ganeshgr@chelsio.com, davem@davemloft.net,
+        tglx@linutronix.de, bigeasy@linutronix.de
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] crypto: chtls - use 'skb_put_zero()' instead of re-implementing it
+Date:   Wed,  7 Aug 2019 17:40:14 +0200
+Message-Id: <20190807154014.22548-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806191551.22192-1-areber@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 07 Aug 2019 15:48:32 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06, Adrian Reber wrote:
->
-> @@ -2530,12 +2530,14 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
->  					      struct clone_args __user *uargs,
->  					      size_t size)
->  {
-> +	struct pid_namespace *pid_ns = task_active_pid_ns(current);
->  	struct clone_args args;
->  
->  	if (unlikely(size > PAGE_SIZE))
->  		return -E2BIG;
->  
-> -	if (unlikely(size < sizeof(struct clone_args)))
-> +	/* The struct needs to be at least the size of the original struct. */
-> +	if (size < (sizeof(struct clone_args) - sizeof(__aligned_u64)))
->  		return -EINVAL;
+'skb_put()+memset()' is equivalent to 'skb_put_zero()'
+Use the latter because it is less verbose and it hides the internals of the
+sk_buff structure.
 
-slightly off-topic, but with or without this patch I do not understand
--EINVAL. Can't we replace this check with
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/crypto/chelsio/chtls/chtls_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-	if (size < sizeof(struct clone_args))
-		memset((void*)&args + size, sizeof(struct clone_args) - size, 0);
-
-?
-
-this way we can new members at the end of clone_args and this matches
-the "if (size > sizeof(struct clone_args))" block below which promises
-that whatever we add into clone_args a zero value should work.
-
-
-And if we do this
-
-> +	if (size == sizeof(struct clone_args)) {
-> +		/* Only check permissions if set_tid is actually set. */
-> +		if (args.set_tid &&
-> +			!ns_capable(pid_ns->user_ns, CAP_SYS_ADMIN))
-> +			return -EPERM;
-> +		kargs->set_tid = args.set_tid;
-> +	}
-
-we can move this check into clone3_args_valid() or even copy_process()
-
-	if (kargs->set_tid) {
-		if (!ns_capable(...))
-			return -EPERM;
-	}
-
-
-Either way,
-
-> @@ -2585,6 +2595,10 @@ static bool clone3_args_valid(const struct kernel_clone_args *kargs)
->  	if (kargs->flags & ~CLONE_LEGACY_FLAGS)
->  		return false;
->
-> +	/* Fail if set_tid is invalid */
-> +	if (kargs->set_tid < 0)
-> +		return false;
-
-I think it would be more clean to do this along with ns_capable() check,
-or along with the "set_tid >= pid_max" check in alloc_pid().
-
-I won't insist, but I do not really like the fact we check set_tid 3 times
-in copy_clone_args_from_user(), clone3_args_valid(), and alloc_pid().
-
-Oleg.
+diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
+index 635bb4b447fb..830b238da77e 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_main.c
++++ b/drivers/crypto/chelsio/chtls/chtls_main.c
+@@ -218,9 +218,8 @@ static int chtls_get_skb(struct chtls_dev *cdev)
+ 	if (!cdev->askb)
+ 		return -ENOMEM;
+ 
+-	skb_put(cdev->askb, sizeof(struct tcphdr));
++	skb_put_zero(cdev->askb, sizeof(struct tcphdr));
+ 	skb_reset_transport_header(cdev->askb);
+-	memset(cdev->askb->data, 0, cdev->askb->len);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
 
