@@ -2,144 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3205847F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 10:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B1A84818
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 10:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387816AbfHGIq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 04:46:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55384 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387743AbfHGIqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 04:46:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8E81EAD29;
-        Wed,  7 Aug 2019 08:46:50 +0000 (UTC)
-Date:   Wed, 7 Aug 2019 10:46:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>, john.hubbard@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
-        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
-Message-ID: <20190807084649.GQ11812@dhcp22.suse.cz>
-References: <20190802022005.5117-1-jhubbard@nvidia.com>
- <20190802091244.GD6461@dhcp22.suse.cz>
- <20190802124146.GL25064@quack2.suse.cz>
- <20190802142443.GB5597@bombadil.infradead.org>
- <20190802145227.GQ25064@quack2.suse.cz>
- <076e7826-67a5-4829-aae2-2b90f302cebd@nvidia.com>
- <20190807083726.GA14658@quack2.suse.cz>
+        id S2387744AbfHGItK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 04:49:10 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38162 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387649AbfHGItK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 04:49:10 -0400
+Received: by mail-ot1-f65.google.com with SMTP id d17so101357936oth.5
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 01:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T81jo3bu6m4G57eeMXxphqH+l+0vNlO7yTI3xodpqPI=;
+        b=VzZ/k+WNyCuM2f1dJQ03+NI1UkAik3fFROb31bJVDnPPAZOSPcylhaCzalryzu9DPv
+         YhKdlzglWiTsBwJ7cvfxH6+Mj/PGuIF+CuWeFKJxRfFHVq1h6EY5vqis+niVIuRIS5mk
+         190cRetnRdel+ZI8AXXYLVx8KIwjJUrhBPvUk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T81jo3bu6m4G57eeMXxphqH+l+0vNlO7yTI3xodpqPI=;
+        b=NrTXdoT4x92/ZxhxcY7uFM2tlq+yReWP5WLi+4SR1vtaaLAkOhylLhywXJMeEqEmnS
+         Yg6p0uKQkOh2C7VqCCXM74AjmPro9nfiGOqQDmd6yY+S/zLshCwDyxLG8yv4dCt6NFzu
+         9m25f7v5cvO1IOO/XhCuyojx7n8X02GPKt/MC6qY4Mw/SaaJisUMU2DzFyEmiaS4PX1z
+         g4jGOdB5r0X9FGGLNZQ/qA9YcNpXUwjQV76ll9xcXWVWKPOzS2PNtfJa+Z99UYsZu5Gp
+         T52ez9mHTSkKNRjGNWOclGANzcA7zxqew52gSwrPuLxtKCHE5iRXhnGTPN4xfFhsgWnu
+         u7yg==
+X-Gm-Message-State: APjAAAX4D3Twa1xwxuByr3re+p1sX+V4xbAZ4NLLRXkTRN6JZHpmjusa
+        6K0jz+xnTRgWBFuu45yf/2j0ntEGrv2bQHxuPagU3g==
+X-Google-Smtp-Source: APXvYqwVAPf2IGHO0oTry32QAj0SqfjmXrfGG+CXng41fJ63s62HG8IRd79JpZudl3h1OzpVmIpGS4CtyXSlXyxSzKs=
+X-Received: by 2002:aca:b104:: with SMTP id a4mr5382980oif.14.1565167748729;
+ Wed, 07 Aug 2019 01:49:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807083726.GA14658@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190805211451.20176-1-robdclark@gmail.com> <20190806084821.GA17129@lst.de>
+ <CAJs_Fx6eh1w7c=crMoD5XyEOMzP6orLhqUewErE51cPGYmObBQ@mail.gmail.com>
+ <20190806155044.GC25050@lst.de> <CAJs_Fx6uztwDy2PqRy3Tc9p12k8r_ovS2tAcsMV6HqnAp=Ggug@mail.gmail.com>
+ <20190807062545.GF6627@lst.de>
+In-Reply-To: <20190807062545.GF6627@lst.de>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 7 Aug 2019 10:48:56 +0200
+Message-ID: <CAKMK7uH1O3q8VUftikipGH6ACPoT-8tbV1Zwo-8WL=wUHiqsoQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm: add cache support for arm64
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07-08-19 10:37:26, Jan Kara wrote:
-> On Fri 02-08-19 12:14:09, John Hubbard wrote:
-> > On 8/2/19 7:52 AM, Jan Kara wrote:
-> > > On Fri 02-08-19 07:24:43, Matthew Wilcox wrote:
-> > > > On Fri, Aug 02, 2019 at 02:41:46PM +0200, Jan Kara wrote:
-> > > > > On Fri 02-08-19 11:12:44, Michal Hocko wrote:
-> > > > > > On Thu 01-08-19 19:19:31, john.hubbard@gmail.com wrote:
-> > > > > > [...]
-> > > > > > > 2) Convert all of the call sites for get_user_pages*(), to
-> > > > > > > invoke put_user_page*(), instead of put_page(). This involves dozens of
-> > > > > > > call sites, and will take some time.
-> > > > > > 
-> > > > > > How do we make sure this is the case and it will remain the case in the
-> > > > > > future? There must be some automagic to enforce/check that. It is simply
-> > > > > > not manageable to do it every now and then because then 3) will simply
-> > > > > > be never safe.
-> > > > > > 
-> > > > > > Have you considered coccinele or some other scripted way to do the
-> > > > > > transition? I have no idea how to deal with future changes that would
-> > > > > > break the balance though.
-> > 
-> > Hi Michal,
-> > 
-> > Yes, I've thought about it, and coccinelle falls a bit short (it's not smart
-> > enough to know which put_page()'s to convert). However, there is a debug
-> > option planned: a yet-to-be-posted commit [1] uses struct page extensions
-> > (obviously protected by CONFIG_DEBUG_GET_USER_PAGES_REFERENCES) to add
-> > a redundant counter. That allows:
-> > 
-> > void __put_page(struct page *page)
-> > {
-> > 	...
-> > 	/* Someone called put_page() instead of put_user_page() */
-> > 	WARN_ON_ONCE(atomic_read(&page_ext->pin_count) > 0);
-> > 
-> > > > > 
-> > > > > Yeah, that's why I've been suggesting at LSF/MM that we may need to create
-> > > > > a gup wrapper - say vaddr_pin_pages() - and track which sites dropping
-> > > > > references got converted by using this wrapper instead of gup. The
-> > > > > counterpart would then be more logically named as unpin_page() or whatever
-> > > > > instead of put_user_page().  Sure this is not completely foolproof (you can
-> > > > > create new callsite using vaddr_pin_pages() and then just drop refs using
-> > > > > put_page()) but I suppose it would be a high enough barrier for missed
-> > > > > conversions... Thoughts?
-> > 
-> > The debug option above is still a bit simplistic in its implementation
-> > (and maybe not taking full advantage of the data it has), but I think
-> > it's preferable, because it monitors the "core" and WARNs.
-> > 
-> > Instead of the wrapper, I'm thinking: documentation and the passage of
-> > time, plus the debug option (perhaps enhanced--probably once I post it
-> > someone will notice opportunities), yes?
-> 
-> So I think your debug option and my suggested renaming serve a bit
-> different purposes (and thus both make sense). If you do the renaming, you
-> can just grep to see unconverted sites. Also when someone merges new GUP
-> user (unaware of the new rules) while you switch GUP to use pins instead of
-> ordinary references, you'll get compilation error in case of renaming
-> instead of hard to debug refcount leak without the renaming. And such
-> conflict is almost bound to happen given the size of GUP patch set... Also
-> the renaming serves against the "coding inertia" - i.e., GUP is around for
-> ages so people just use it without checking any documentation or comments.
-> After switching how GUP works, what used to be correct isn't anymore so
-> renaming the function serves as a warning that something has really
-> changed.
+On Wed, Aug 7, 2019 at 8:25 AM Christoph Hellwig <hch@lst.de> wrote:
+> On Tue, Aug 06, 2019 at 09:23:51AM -0700, Rob Clark wrote:
+> > On Tue, Aug 6, 2019 at 8:50 AM Christoph Hellwig <hch@lst.de> wrote:
+> > >
+> > > On Tue, Aug 06, 2019 at 07:11:41AM -0700, Rob Clark wrote:
+> > > > Agreed that drm_cflush_* isn't a great API.  In this particular case
+> > > > (IIUC), I need wb+inv so that there aren't dirty cache lines that drop
+> > > > out to memory later, and so that I don't get a cache hit on
+> > > > uncached/wc mmap'ing.
+> > >
+> > > So what is the use case here?  Allocate pages using the page allocator
+> > > (or CMA for that matter), and then mmaping them to userspace and never
+> > > touching them again from the kernel?
+> >
+> > Currently, it is pages coming from tmpfs.  Ideally we want pages that
+> > are swappable when unpinned.
+>
+> tmpfs is basically a (complicated) frontend for alloc pages as far
+> as page allocation is concerned.
+>
+> > CPU mappings are *mostly* just mapping to userspace.  There are a few
+> > exceptions that are vmap'd (fbcon, and ringbuffer).
+>
+> And those use the same backend?
+>
+> > (Eventually I'd like to support pages passed in from userspace.. but
+> > that is down the road.)
+>
+> Eww.  Please talk to the iommu list before starting on that.
+>
+> > > > Tying it in w/ iommu seems a bit weird to me.. but maybe that is just
+> > > > me, I'm certainly willing to consider proposals or to try things and
+> > > > see how they work out.
+> > >
+> > > This was just my through as the fit seems easy.  But maybe you'll
+> > > need to explain your use case(s) a bit more so that we can figure out
+> > > what a good high level API is.
+> >
+> > Tying it to iommu_map/unmap would be awkward, as we could need to
+> > setup cpu mmap before it ends up mapped to iommu.  And the plan to
+> > support per-process pagetables involved creating an iommu_domain per
+> > userspace gl context.. some buffers would end up mapped into multiple
+> > contexts/iommu_domains.
+> >
+> > If the cache operation was detached from iommu_map/unmap, then it
+> > would seem weird to be part of the iommu API.
+> >
+> > I guess I'm not entirely sure what you had in mind, but this is why
+> > iommu seemed to me like a bad fit.
+>
+> So back to the question, I'd like to understand your use case (and
+> maybe hear from the other drm folks if that is common):
 
-Fully agreed!
+Filling in a bunch more of the use-cases we have in drm. Don't need to
+solve them all right away ofc, but whatever direction we're aiming for
+should keep these in mind I think.
 
-> Your refcount debug patches are good to catch bugs in the conversions done
-> but that requires you to be able to excercise the code path in the first
-> place which may require particular HW or so, and you also have to enable
-> the debug option which means you already aim at verifying the GUP
-> references are treated properly.
-> 
-> 								Honza
-> 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+>  - you allocate pages from shmem (why shmem, btw?  if this is done by
+>    other drm drivers how do they guarantee addressability without an
+>    iommu?)
 
--- 
-Michal Hocko
-SUSE Labs
+We use shmem to get at swappable pages. We generally just assume that
+the gpu can get at those pages, but things fall apart in fun ways:
+- some setups somehow inject bounce buffers. Some drivers just give
+up, others try to allocate a pool of pages with dma_alloc_coherent.
+- some devices are misdesigned and can't access as much as the cpu. We
+allocate using GFP_DMA32 to fix that.
+
+Also modern gpu apis pretty much assume you can malloc() and then use
+that directly with the gpu.
+
+>  - then the memory is either mapped to userspace or vmapped (or even
+>    both, althrough the lack of aliasing you mentioned would speak
+>    against it) as writecombine (aka arm v6+ normal uncached).  Does
+>    the mapping live on until the memory is freed?
+
+Generally we cache mappings forever. Some exceptions for 32bit
+userspace excluded, where people expect to be able to use more than
+4GB of textures somehow, so we have to recycle old mappings. Obviously
+applies less to gpus on socs.
+
+Also, at least i915 also has writeback userspace mmaps, and userspace
+doing the cflushing. Also not sure I ever mentioned this, but at least
+i915 userspace controls the coherency mode of the device dma directly,
+on a per-op granularity. For buffers shared with other processes it
+defers to the gpu pagetables, which the kernel controls.
+
+>  - as you mention swapping - how do you guarantee there are no
+>    aliases in the kernel direct mapping after the page has been swapped
+>    in?
+
+No idea personally, since we can ignore this on x86. I think atm
+there's not a huge overlap of gpu drivers doing swapping and running
+on something like arm where incompatible aliased mappings are bad.
+
+>  - then the memory is potentially mapped to the iommu.  Is it using
+>    a long-living mapping, or does get unmapped/remapped repeatedly?
+
+Again, generally cached for as long as possible, until we run out of
+space/memory somewhere.
+-Daniel
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
