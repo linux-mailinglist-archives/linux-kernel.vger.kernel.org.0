@@ -2,81 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF3A84D96
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F3B084DAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:39:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388441AbfHGNiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:38:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42824 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388240AbfHGNiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:38:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D56D9AEF3;
-        Wed,  7 Aug 2019 13:38:53 +0000 (UTC)
-Message-ID: <1565185131.15973.1.camel@suse.com>
-Subject: Re: KASAN: use-after-free Read in device_release_driver_internal
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        syzbot <syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>
-Date:   Wed, 07 Aug 2019 15:38:51 +0200
-In-Reply-To: <CAAeHK+wyvJbi08ruuOn1qF0O1Jubz_BhZz5wXdNg4Vy5XeyQmw@mail.gmail.com>
-References: <Pine.LNX.4.44L0.1908011359580.1305-100000@iolanthe.rowland.org>
-         <1565095011.8136.20.camel@suse.com>
-         <CAAeHK+wyvJbi08ruuOn1qF0O1Jubz_BhZz5wXdNg4Vy5XeyQmw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S2388605AbfHGNjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:39:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:48710 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388357AbfHGNjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:39:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 024B528;
+        Wed,  7 Aug 2019 06:39:16 -0700 (PDT)
+Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 63FC23F706;
+        Wed,  7 Aug 2019 06:39:14 -0700 (PDT)
+Subject: Re: [PATCH 6/9] KVM: arm64: Provide a PV_TIME device to user space
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+References: <20190802145017.42543-1-steven.price@arm.com>
+ <20190802145017.42543-7-steven.price@arm.com> <20190803135113.6cdf500c@why>
+ <20190803183335.149e0113@why>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <5aa54066-b9f6-22d1-fa2b-ce5cbf244ab5@arm.com>
+Date:   Wed, 7 Aug 2019 14:39:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190803183335.149e0113@why>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, den 06.08.2019, 14:50 +0200 schrieb Andrey Konovalov:
-> On Tue, Aug 6, 2019 at 2:36 PM Oliver Neukum <oneukum@suse.com> wrote:
-> > 
-> > Am Donnerstag, den 01.08.2019, 14:47 -0400 schrieb Alan Stern:
-> > > 
-> > > I think this must be caused by an unbalanced refcount.  That is,
-> > > something must drop one more reference to the device than it takes.
-> > > That would explain why the invalid access occurs inside a single
-> > > bus_remove_device() call, between the klist_del() and
-> > > device_release_driver().
-> > > 
-> > > The kernel log indicates that the device was probed by rndis_wlan,
-> > > rndis_host, and cdc_acm, all of which got errors because of the
-> > > device's bogus descriptors.  Probably one of them is messing up the
-> > > refcount.
-> > 
-> > Hi,
-> > 
-> > you made me look at cdc-acm. I suspect
-> > 
-> > cae2bc768d176bfbdad7035bbcc3cdc973eb7984 ("usb: cdc-acm: Decrement tty port's refcount if probe() fail")
-> > 
-> > is buggy decrementing the refcount on the interface in destroy()
-> > even before the refcount is increased.
-> > 
-> > Unfortunately I cannot tell from the bug report how many and which
-> > interfaces the emulated test device has. Hence it is unclear to me,
-> > when exactly probe() would fail cdc-acm.
-> > 
-> > If you agree. I am attaching a putative fix.
+On 03/08/2019 18:34, Marc Zyngier wrote:
+> On Sat, 3 Aug 2019 13:51:13 +0100
+> Marc Zyngier <maz@kernel.org> wrote:
 > 
-> Let's see if it fixes the issue.
+> [forgot that one]
 > 
-> #syz fix: https://github.com/google/kasan.git 6a3599ce
+>> On Fri,  2 Aug 2019 15:50:14 +0100
+>> Steven Price <steven.price@arm.com> wrote:
+> 
+> [...]
+> 
+>>> +static int __init kvm_pvtime_init(void)
+>>> +{
+>>> +	kvm_register_device_ops(&pvtime_ops, KVM_DEV_TYPE_ARM_PV_TIME);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +late_initcall(kvm_pvtime_init);
+> 
+> Why is it an initcall? So far, the only initcall we've used is the one
+> that initializes KVM itself. Can't we just the device_ops just like we
+> do for the vgic?
 
-Hi,
+So would you prefer a direct call from init_subsystems() in
+virt/kvm/arm/arm.c?
 
-did this ever produce a result? I saw none.
+The benefit of initcall is just that it keeps the code self-contained.
+In init_subsystems() I'd either need a #ifdef CONFIG_ARM64 or a dummy
+function for arm.
 
-	Regards
-		Oliver
-
+Steve
