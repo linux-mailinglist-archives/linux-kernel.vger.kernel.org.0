@@ -2,76 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AA0384F8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9BF484F90
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:13:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388106AbfHGPLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:11:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:49984 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727213AbfHGPLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 11:11:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF218344;
-        Wed,  7 Aug 2019 08:11:29 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFA9E3F706;
-        Wed,  7 Aug 2019 08:11:28 -0700 (PDT)
-Subject: Re: [PATCH] arm64: KVM: hyp: debug-sr: Mark expected switch
- fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org
-References: <20190807141857.GA4198@embeddedor>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <b0b04024-9568-7b51-1bef-7030dd66f727@kernel.org>
-Date:   Wed, 7 Aug 2019 16:11:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730195AbfHGPNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 11:13:06 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:17775 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbfHGPNF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 11:13:05 -0400
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x77FCnrq010499;
+        Thu, 8 Aug 2019 00:12:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x77FCnrq010499
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565190770;
+        bh=XMNA60wRAOzSL1uB07FT9Mk5JB9lAGHaUwpsWNnQtEA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=G94bXiS82+L4z619k2H6+p8sx6dXwiPhKN0AiTNVX41HeFvgFRTla/SrlegWf69nB
+         lbfi8xY50vucLOObFV31c9uTlEqjohIaC/8BITQ8B53u4WicL9Q9/VtVmH2gHU2nup
+         dOtQd0X/RQRq0PIbzdJ/ONs8IvM3HiXHM8z/gmEW9qelWhyPQ9jRZ3Gx/ko2aIhsfj
+         OAfezTFbSZPU7/CqZlZN3bDNhrimFf0uxHE6P/0jMihdBjKAYuSYBHfx18c934FZD1
+         sPpv3+PkqBkyg/5rxxYU+tW80WTcJ8jRvdYdURgiaCLVDA4Pxy9/I1HRmEDywQQdjj
+         uHGrJJd3nL6XQ==
+X-Nifty-SrcIP: [209.85.222.54]
+Received: by mail-ua1-f54.google.com with SMTP id g11so8330440uak.0;
+        Wed, 07 Aug 2019 08:12:50 -0700 (PDT)
+X-Gm-Message-State: APjAAAVCCrBgx8UwGGI6j2jw+x0lWUDbK0NQFWvxbjxCvtdWUJ0fdIre
+        RIoflfTH8sTsQ90AJnbBSF7sdz2c18DlaccbD0Y=
+X-Google-Smtp-Source: APXvYqxFamI8oMtXQhiaXeYmfMDFOMb3+xZSQ+j/gvZNSHS0gXKkYxm5dg+rdli0FnwavvbtiJ46H8U4OuCWsJ7u/is=
+X-Received: by 2002:ab0:234e:: with SMTP id h14mr5964979uao.25.1565190768849;
+ Wed, 07 Aug 2019 08:12:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190807141857.GA4198@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190714152817.24693-1-efremov@linux.com> <20190801060657.5932-1-efremov@linux.com>
+In-Reply-To: <20190801060657.5932-1-efremov@linux.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 8 Aug 2019 00:12:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASdhyhhqyf1wcga7UDYoo=2t-0ZaqTmQdcsFOfAR580sw@mail.gmail.com>
+Message-ID: <CAK7LNASdhyhhqyf1wcga7UDYoo=2t-0ZaqTmQdcsFOfAR580sw@mail.gmail.com>
+Subject: Re: [PATCH v5] modpost: check for static EXPORT_SYMBOL* functions
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/2019 15:18, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings (Building: allmodconfig arm64):
-> 
-> arch/arm64/kvm/hyp/debug-sr.c:20:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:21:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:22:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:23:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:24:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:25:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:26:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:27:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:28:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:29:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:30:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:31:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:32:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:33:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> arch/arm64/kvm/hyp/debug-sr.c:34:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Thu, Aug 1, 2019 at 3:07 PM Denis Efremov <efremov@linux.com> wrote:
+>
+> This patch adds a check to warn about static EXPORT_SYMBOL* functions
+> during the modpost. In most of the cases, a static symbol marked for
+> exporting is an odd combination that should be fixed either by deleting
+> the exporting mark or by removing the static attribute and adding the
+> appropriate declaration to headers.
+>
+> This check could help to detect the following problems:
+> 1. 550113d4e9f5 ("i2c: add newly exported functions to the header, too")
+> 2. 54638c6eaf44 ("net: phy: make exported variables non-static")
+> 3. 98ef2046f28b ("mm: remove the exporting of totalram_pages")
+> 4. 73df167c819e ("s390/zcrypt: remove the exporting of ap_query_configuration")
+> 5. a57caf8c527f ("sunrpc/cache: remove the exporting of cache_seq_next")
+> 6. e4e4730698c9 ("crypto: skcipher - remove the exporting of skcipher_walk_next")
+> 7. 14b4c48bb1ce ("gve: Remove the exporting of gve_probe")
+> 8. 9b79ee9773a8 ("scsi: libsas: remove the exporting of sas_wait_eh")
+> 9. ...
+>
+> The build time impact is very limited and is almost at the unnoticeable
+> level (< 1 sec).
+>
+> Acked-by: Emil Velikov <emil.l.velikov@gmail.com>
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
 
-Already fixed (together with all the other KVM/arm warnings/bugs), and
-pull request sent to Paolo.
+Applied to linux-kbuild. Thanks.
 
-Thanks,
 
-	M.
+
+
 -- 
-Jazz is not dead, it just smells funny...
+Best Regards
+Masahiro Yamada
