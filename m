@@ -2,50 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74A1D842EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 05:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA911842F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 05:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbfHGDg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 23:36:56 -0400
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:61106 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727359AbfHGDgy (ORCPT
+        id S2387394AbfHGDhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 23:37:51 -0400
+Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:58876 "EHLO
+        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726612AbfHGDhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 23:36:54 -0400
-Received: from pps.filterd (m0050096.ppops.net [127.0.0.1])
-        by m0050096.ppops.net-00190b01. (8.16.0.42/8.16.0.42) with SMTP id x773VZ0V008716;
-        Wed, 7 Aug 2019 04:36:33 +0100
+        Tue, 6 Aug 2019 23:37:50 -0400
+Received: from pps.filterd (m0050095.ppops.net [127.0.0.1])
+        by m0050095.ppops.net-00190b01. (8.16.0.42/8.16.0.42) with SMTP id x773VawP026128;
+        Wed, 7 Aug 2019 04:36:27 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=jan2016.eng;
- bh=vffPYkazUX63OOelAC2TpHBENEYOaE8kM+STi98FHrY=;
- b=MbHh8OQZ7vnU2WY4jQW2VAFrFXutzTL7KDzMIVZSDcIl9ooCTNxYs3DjvZ/Bgu0WM2Z6
- 3eU/pJUMLfCR8IIbSN9NCKrRlNXR1PL1BJNbtHCnoSebIJI8nJ157Psbzwyjt4C2ZLoT
- c6PnuUJOjwvhW10mUEsM9kEYZF+5QTwBJp6ELlG1gg6wOgYVc+wC+qLmwHC074lE7xKV
- sl/Joan0WwfusMkUnT8lYEw2Fdz0zTNSirFSZUP/G5wEBsFiG0GBqge0lbv8ITbr0/PW
- OaEDcr4gxR/EIY8o7IXM87ITvVK5Ff2SzZGAyQ9oBUjNtg9jOWkkKALCuEdESbMuvwPt JA== 
-Received: from prod-mail-ppoint5 (prod-mail-ppoint5.akamai.com [184.51.33.60] (may be forged))
-        by m0050096.ppops.net-00190b01. with ESMTP id 2u52p8ftgh-1
+ bh=Vagb6QmnbXVI1op31baqpLQ8s4lzl7qHp9Urb7sEl8U=;
+ b=XQGDawLQuneZD9fKvm9glLCNSAIvcs6qU2P41ybYatJDT1teQBXh3syLEA9wVsT30T/W
+ CJkgD+bVODtexnyHdxPK+bzLL9lXOq+uC7XFUgejUqURxsQ8soZJWy5kPZyKlTkdXl+j
+ 6LvvTlB4yMu4gyZPsUAcG8LGVlk7uEFFmOKrdzG0xsnZ8hYpM88dbl9E+vtUxEyXTRKm
+ LLIfW3qPxXxRug9HrRBNH8dXnm9/spoVz1Ud8InGVwxe55ZQNeV2uNmmi6LZb2mjiQpZ
+ J+DDEcjEimDfc8XBWM2R5BbEjwiuBwM1yFqyR5R+sqZjtkQdZ2XVyGM4n/67Q4v2sKra wQ== 
+Received: from prod-mail-ppoint2 (prod-mail-ppoint2.akamai.com [184.51.33.19] (may be forged))
+        by m0050095.ppops.net-00190b01. with ESMTP id 2u51t4hfbt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Aug 2019 04:36:33 +0100
-Received: from pps.filterd (prod-mail-ppoint5.akamai.com [127.0.0.1])
-        by prod-mail-ppoint5.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x773WhWs032205;
-        Tue, 6 Aug 2019 20:36:32 -0700
-Received: from email.msg.corp.akamai.com ([172.27.123.57])
-        by prod-mail-ppoint5.akamai.com with ESMTP id 2u5888ebjv-1
+        Wed, 07 Aug 2019 04:36:27 +0100
+Received: from pps.filterd (prod-mail-ppoint2.akamai.com [127.0.0.1])
+        by prod-mail-ppoint2.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x773WPds002641;
+        Tue, 6 Aug 2019 23:36:26 -0400
+Received: from email.msg.corp.akamai.com ([172.27.123.32])
+        by prod-mail-ppoint2.akamai.com with ESMTP id 2u55kw9jj3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 06 Aug 2019 20:36:32 -0700
-Received: from USMA1EX-DAG1MB5.msg.corp.akamai.com (172.27.123.105) by
- usma1ex-dag3mb4.msg.corp.akamai.com (172.27.123.56) with Microsoft SMTP
- Server (TLS) id 15.0.1473.3; Tue, 6 Aug 2019 23:36:31 -0400
-Received: from usma1ex-cas5.msg.corp.akamai.com (172.27.123.53) by
- usma1ex-dag1mb5.msg.corp.akamai.com (172.27.123.105) with Microsoft SMTP
- Server (TLS) id 15.0.1473.3; Tue, 6 Aug 2019 23:36:31 -0400
+        Tue, 06 Aug 2019 23:36:25 -0400
+Received: from USMA1EX-CAS3.msg.corp.akamai.com (172.27.123.32) by
+ usma1ex-dag1mb1.msg.corp.akamai.com (172.27.123.101) with Microsoft SMTP
+ Server (TLS) id 15.0.1473.3; Tue, 6 Aug 2019 23:36:25 -0400
 Received: from igorcastle.kendall.corp.akamai.com (172.29.170.135) by
- usma1ex-cas5.msg.corp.akamai.com (172.27.123.53) with Microsoft SMTP Server
- id 15.0.1473.3 via Frontend Transport; Tue, 6 Aug 2019 20:36:25 -0700
+ USMA1EX-CAS3.msg.corp.akamai.com (172.27.123.32) with Microsoft SMTP Server
+ id 15.0.1473.3 via Frontend Transport; Tue, 6 Aug 2019 23:36:25 -0400
 Received: by igorcastle.kendall.corp.akamai.com (Postfix, from userid 29659)
-        id 0E51561D78; Tue,  6 Aug 2019 23:36:23 -0400 (EDT)
+        id 0F0E461DB6; Tue,  6 Aug 2019 23:36:23 -0400 (EDT)
 From:   Igor Lubashev <ilubashe@akamai.com>
 To:     <linux-kernel@vger.kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -60,9 +57,9 @@ CC:     Peter Zijlstra <peterz@infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
         James Morris <jmorris@namei.org>,
         Igor Lubashev <ilubashe@akamai.com>
-Subject: [PATCH v2 3/4] perf: Use CAP_SYSLOG with kptr_restrict checks
-Date:   Tue, 6 Aug 2019 23:35:56 -0400
-Message-ID: <f739900dede057b83a6e6ac5dee5fffb67f16e97.1565146171.git.ilubashe@akamai.com>
+Subject: [PATCH v2 4/4] perf: Use CAP_SYS_ADMIN instead of euid==0 with ftrace
+Date:   Tue, 6 Aug 2019 23:35:57 -0400
+Message-ID: <eb995d4d73fb58e6a1c1560803beec048cafb4d7.1565146171.git.ilubashe@akamai.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1565146171.git.ilubashe@akamai.com>
 References: <cover.1565146171.git.ilubashe@akamai.com>
@@ -76,9 +73,9 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  engine=8.0.1-1906280000 definitions=main-1908070034
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
  definitions=2019-08-07_01:2019-08-05,2019-08-07 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 priorityscore=1501
- adultscore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 clxscore=1015 phishscore=0 suspectscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 priorityscore=1501
+ mlxscore=0 mlxlogscore=999 spamscore=0 clxscore=1015 adultscore=0
+ phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0 impostorscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
  definitions=main-1908070034
 Sender: linux-kernel-owner@vger.kernel.org
@@ -86,65 +83,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel is using CAP_SYSLOG capability instead of uid==0 and euid==0 when
-checking kptr_restrict. Make perf do the same.
-
-Also, the kernel is a more restrictive than "no restrictions" in case of
-kptr_restrict==0, so add the same logic to perf.
+Kernel requires CAP_SYS_ADMIN instead of euid==0 to mount debugfs for ftrace.
+Make perf do the same.
 
 Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
 ---
- tools/perf/util/symbol.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ tools/perf/builtin-ftrace.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 173f3378aaa0..046271103499 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -4,6 +4,7 @@
- #include <stdlib.h>
- #include <stdio.h>
- #include <string.h>
+diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+index ae1466aa3b26..d09eac8a6d57 100644
+--- a/tools/perf/builtin-ftrace.c
++++ b/tools/perf/builtin-ftrace.c
+@@ -13,6 +13,7 @@
+ #include <signal.h>
+ #include <fcntl.h>
+ #include <poll.h>
 +#include <linux/capability.h>
- #include <linux/kernel.h>
- #include <linux/mman.h>
- #include <linux/time64.h>
-@@ -15,8 +16,10 @@
- #include <inttypes.h>
- #include "annotate.h"
- #include "build-id.h"
-+#include "cap.h"
- #include "util.h"
+ 
  #include "debug.h"
-+#include "event.h"
- #include "machine.h"
- #include "map.h"
- #include "symbol.h"
-@@ -890,7 +893,11 @@ bool symbol__restricted_filename(const char *filename,
- {
- 	bool restricted = false;
+ #include <subcmd/parse-options.h>
+@@ -21,6 +22,7 @@
+ #include "target.h"
+ #include "cpumap.h"
+ #include "thread_map.h"
++#include "util/cap.h"
+ #include "util/config.h"
  
--	if (symbol_conf.kptr_restrict) {
-+	/* Per kernel/kallsyms.c:
-+	 * we also restrict when perf_event_paranoid > 1 w/o CAP_SYSLOG
-+	 */
-+	if (symbol_conf.kptr_restrict ||
-+	    (perf_event_paranoid() > 1 && !perf_cap__capable(CAP_SYSLOG))) {
- 		char *r = realpath(filename, NULL);
  
- 		if (r != NULL) {
-@@ -2190,9 +2197,9 @@ static bool symbol__read_kptr_restrict(void)
- 		char line[8];
+@@ -281,7 +283,7 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
+ 		.events = POLLIN,
+ 	};
  
- 		if (fgets(line, sizeof(line), fp) != NULL)
--			value = ((geteuid() != 0) || (getuid() != 0)) ?
--					(atoi(line) != 0) :
--					(atoi(line) == 2);
-+			value = perf_cap__capable(CAP_SYSLOG) ?
-+					(atoi(line) >= 2) :
-+					(atoi(line) != 0);
- 
- 		fclose(fp);
+-	if (geteuid() != 0) {
++	if (!perf_cap__capable(CAP_SYS_ADMIN)) {
+ 		pr_err("ftrace only works for root!\n");
+ 		return -1;
  	}
 -- 
 2.7.4
