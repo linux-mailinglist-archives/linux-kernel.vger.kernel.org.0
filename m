@@ -2,193 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333E484833
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 10:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9498084832
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 10:52:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbfHGIw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 04:52:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34568 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfHGIwZ (ORCPT
+        id S1728913AbfHGIwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 04:52:25 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40453 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbfHGIwZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Aug 2019 04:52:25 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EB88B6058E; Wed,  7 Aug 2019 08:52:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565167944;
-        bh=JaEajRU+IxjI/7TzRSEFLT1wAK8wQcmKonkieOXdyf0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=efSOo94gALen372yW6OEvDuQpkfvM1gtCWwm6W8Wh4yYo5YtRjnrY+oSBZDQUckHq
-         PYZazUZqqu3rIWrAGtMgdgBDdyZgvYS5c8TWHOEvRwhPhPKcXf3hrewkwpE4Pd8nBl
-         3hxg/yVYsAVB1w8ZkP6/daZl4Foo/H6xQ3GxWRMs=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4EEDB6058E;
-        Wed,  7 Aug 2019 08:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565167940;
-        bh=JaEajRU+IxjI/7TzRSEFLT1wAK8wQcmKonkieOXdyf0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=N8UzHViwD8VdUBwbH3A5B0CsirmWA1kNMdAVodKtfkYs2xd9v/23M7gnULVsk8OVH
-         wKG6F0il+kZmnfudRCe9e3AUXu3hHvWKp/6oBA1IgzE2wA8fnBmQzeVuSU0TTE/Ebo
-         hMS/JMlDDaigNjHbhWZzkBhSRiAFQJCi0qAHwg5s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EEDB6058E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] f2fs: Fix indefinite loop in f2fs_gc()
-Date:   Wed,  7 Aug 2019 14:22:07 +0530
-Message-Id: <1565167927-23305-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+Received: by mail-wm1-f68.google.com with SMTP id v19so79161174wmj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 01:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=WZhZ/Mz+hS9BkCT+OjM+njIOBnNzukH3KufvaiYnvw8=;
+        b=H3swZwOcXQx7tB7XCeGdoZ8t3UwIPZE3LvtFVRMCOKaFZz/AHSm0b3w/e23HSot3oy
+         H5BCNioOVFRBIDfWrn9KfvPQy0T1RkoglWhkPzqGXDjf0qdYJRxN7bzjJCwXd6Zc3WvD
+         k7Y6E1asqe8h83O1b8EDg8c5x87be1YC05I6mD/3UM+H2mcEgs+/Rc+Q0i64zC57uDNj
+         OKzL1StpPB9zvh4NtfOA3FThCS7SW1sFH1BRvnViFEJIXpdt/y/NZriwU52MFj4I5UZv
+         AdGrkK4bboWf5GEX7gqjH36lNnGlCjp3Nbzs1jemjNlSA3fdo1++F5EnQa/Lm+RgMy5e
+         50mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WZhZ/Mz+hS9BkCT+OjM+njIOBnNzukH3KufvaiYnvw8=;
+        b=SbDQyNc2WxxamxGxkZVELrfpQTYX8Ft3tiyYMYfGGnEjeENVxnP0RiRDQpyjvWZDL+
+         wbEUVKn/aFLM6nJql4HXOM/6Z5uX5xAbebNbx8IZBbIOFRaqN4+nja0EBhohJ7aCEmZY
+         7rKYmza5WYl9aP2gsi7HR7inX26jWYi3Pd37p5g+3hzYaTCW/ncO59wiZHcz8vZZ9o4W
+         rHvTCxKyifMOInFF99uLt5UOw9GjDrmM1Sju331ZAOmSdym2NImj0RiFyIJ2C7SIJw+G
+         JOXIflSMJ2Fny7jZoM9F4hS9VDDlSWlwPd0DNqpMoJefPFAJgpl8YkHqkrM1h4zvZgD/
+         DMeA==
+X-Gm-Message-State: APjAAAUblOXbrpJUpAIATNTV3JfxoI7qtVkWuWF/KJ1ak9H4dzHlapEW
+        3HHTwVE3R598oM0iSb/MkGdFWtaXEcM=
+X-Google-Smtp-Source: APXvYqwoUyDAD79G7N+ff80C+yNvtsF1NA93EGrsdopOkcuZE11V1IydzzP6dblibAVWwFHu6h9ung==
+X-Received: by 2002:a7b:cd8e:: with SMTP id y14mr9405494wmj.155.1565167942064;
+        Wed, 07 Aug 2019 01:52:22 -0700 (PDT)
+Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id x24sm88519035wmh.5.2019.08.07.01.52.20
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 07 Aug 2019 01:52:21 -0700 (PDT)
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, Ben Segal <bpsegal20@gmail.com>
+Subject: [PATCH 1/2] habanalabs: fix endianness handling for packets from user
+Date:   Wed,  7 Aug 2019 11:52:16 +0300
+Message-Id: <20190807085217.28488-1-oded.gabbay@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Policy - Foreground GC, LFS and greedy GC mode.
+From: Ben Segal <bpsegal20@gmail.com>
 
-Under this policy, f2fs_gc() loops forever to GC as it doesn't have
-enough free segements to proceed and thus it keeps calling gc_more
-for the same victim segment.  This can happen if the selected victim
-segment could not be GC'd due to failed blkaddr validity check i.e.
-is_alive() returns false for the blocks set in current validity map.
+Packets that arrive from the user and need to be parsed by the driver are
+assumed to be in LE format.
 
-Fix this by keeping track of such invalid segments and skip those
-segments for selection in get_victim_by_default() to avoid endless
-GC loop under such error scenarios.
+This patch fix all the places where the code handles these packets and use
+the correct endianness macros to handle them, as the driver handles the
+packets in CPU format (LE or BE depending on the arch).
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Ben Segal <bpsegal20@gmail.com>
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
-v3: address Chao's comments and also add logic to clear invalid_segmap
+ drivers/misc/habanalabs/goya/goya.c           | 32 +++++++++++--------
+ .../habanalabs/include/goya/goya_packets.h    | 13 ++++++++
+ 2 files changed, 32 insertions(+), 13 deletions(-)
 
- fs/f2fs/gc.c      | 25 +++++++++++++++++++++++--
- fs/f2fs/segment.c | 10 +++++++++-
- fs/f2fs/segment.h |  3 +++
- 3 files changed, 35 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 8974672..f7b9602 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -382,6 +382,14 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 			nsearched++;
- 		}
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index a0e181714891..e8b1142910e0 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -3428,12 +3428,13 @@ static int goya_validate_cb(struct hl_device *hdev,
+ 	while (cb_parsed_length < parser->user_cb_size) {
+ 		enum packet_id pkt_id;
+ 		u16 pkt_size;
+-		void *user_pkt;
++		struct goya_packet *user_pkt;
  
-+		/*
-+		 * skip selecting the invalid segno (that is failed due to block
-+		 * validity check failure during GC) to avoid endless GC loop in
-+		 * such cases.
-+		 */
-+		if (test_bit(segno, sm->invalid_segmap))
-+			goto next;
+-		user_pkt = (void *) (uintptr_t)
++		user_pkt = (struct goya_packet *) (uintptr_t)
+ 			(parser->user_cb->kernel_address + cb_parsed_length);
+ 
+-		pkt_id = (enum packet_id) (((*(u64 *) user_pkt) &
++		pkt_id = (enum packet_id) (
++				(le64_to_cpu(user_pkt->header) &
+ 				PACKET_HEADER_PACKET_ID_MASK) >>
+ 					PACKET_HEADER_PACKET_ID_SHIFT);
+ 
+@@ -3453,7 +3454,8 @@ static int goya_validate_cb(struct hl_device *hdev,
+ 			 * need to validate here as well because patch_cb() is
+ 			 * not called in MMU path while this function is called
+ 			 */
+-			rc = goya_validate_wreg32(hdev, parser, user_pkt);
++			rc = goya_validate_wreg32(hdev,
++				parser, (struct packet_wreg32 *) user_pkt);
+ 			break;
+ 
+ 		case PACKET_WREG_BULK:
+@@ -3481,10 +3483,10 @@ static int goya_validate_cb(struct hl_device *hdev,
+ 		case PACKET_LIN_DMA:
+ 			if (is_mmu)
+ 				rc = goya_validate_dma_pkt_mmu(hdev, parser,
+-						user_pkt);
++					(struct packet_lin_dma *) user_pkt);
+ 			else
+ 				rc = goya_validate_dma_pkt_no_mmu(hdev, parser,
+-						user_pkt);
++					(struct packet_lin_dma *) user_pkt);
+ 			break;
+ 
+ 		case PACKET_MSG_LONG:
+@@ -3657,15 +3659,16 @@ static int goya_patch_cb(struct hl_device *hdev,
+ 		enum packet_id pkt_id;
+ 		u16 pkt_size;
+ 		u32 new_pkt_size = 0;
+-		void *user_pkt, *kernel_pkt;
++		struct goya_packet *user_pkt, *kernel_pkt;
+ 
+-		user_pkt = (void *) (uintptr_t)
++		user_pkt = (struct goya_packet *) (uintptr_t)
+ 			(parser->user_cb->kernel_address + cb_parsed_length);
+-		kernel_pkt = (void *) (uintptr_t)
++		kernel_pkt = (struct goya_packet *) (uintptr_t)
+ 			(parser->patched_cb->kernel_address +
+ 					cb_patched_cur_length);
+ 
+-		pkt_id = (enum packet_id) (((*(u64 *) user_pkt) &
++		pkt_id = (enum packet_id) (
++				(le64_to_cpu(user_pkt->header) &
+ 				PACKET_HEADER_PACKET_ID_MASK) >>
+ 					PACKET_HEADER_PACKET_ID_SHIFT);
+ 
+@@ -3680,15 +3683,18 @@ static int goya_patch_cb(struct hl_device *hdev,
+ 
+ 		switch (pkt_id) {
+ 		case PACKET_LIN_DMA:
+-			rc = goya_patch_dma_packet(hdev, parser, user_pkt,
+-						kernel_pkt, &new_pkt_size);
++			rc = goya_patch_dma_packet(hdev, parser,
++					(struct packet_lin_dma *) user_pkt,
++					(struct packet_lin_dma *) kernel_pkt,
++					&new_pkt_size);
+ 			cb_patched_cur_length += new_pkt_size;
+ 			break;
+ 
+ 		case PACKET_WREG_32:
+ 			memcpy(kernel_pkt, user_pkt, pkt_size);
+ 			cb_patched_cur_length += pkt_size;
+-			rc = goya_validate_wreg32(hdev, parser, kernel_pkt);
++			rc = goya_validate_wreg32(hdev, parser,
++					(struct packet_wreg32 *) kernel_pkt);
+ 			break;
+ 
+ 		case PACKET_WREG_BULK:
+diff --git a/drivers/misc/habanalabs/include/goya/goya_packets.h b/drivers/misc/habanalabs/include/goya/goya_packets.h
+index a14407b975e4..ef54bad20509 100644
+--- a/drivers/misc/habanalabs/include/goya/goya_packets.h
++++ b/drivers/misc/habanalabs/include/goya/goya_packets.h
+@@ -52,6 +52,19 @@ enum goya_dma_direction {
+ #define GOYA_PKT_CTL_MB_SHIFT		31
+ #define GOYA_PKT_CTL_MB_MASK		0x80000000
+ 
++/* All packets have, at least, an 8-byte header, which contains
++ * the packet type. The kernel driver uses the packet header for packet
++ * validation and to perform any necessary required preparation before
++ * sending them off to the hardware.
++ */
++struct goya_packet {
++	__le64 header;
++	/* The rest of the packet data follows. Use the corresponding
++	 * packet_XXX struct to deference the data, based on packet type
++	 */
++	u8 contents[0];
++};
 +
- 		secno = GET_SEC_FROM_SEG(sbi, segno);
- 
- 		if (sec_usage_check(sbi, secno))
-@@ -602,8 +610,13 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- {
- 	struct page *node_page;
- 	nid_t nid;
--	unsigned int ofs_in_node;
-+	unsigned int ofs_in_node, segno;
- 	block_t source_blkaddr;
-+	unsigned long offset;
-+	struct sit_info *sit_i = SIT_I(sbi);
-+
-+	segno = GET_SEGNO(sbi, blkaddr);
-+	offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
- 
- 	nid = le32_to_cpu(sum->nid);
- 	ofs_in_node = le16_to_cpu(sum->ofs_in_node);
-@@ -627,8 +640,16 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 	source_blkaddr = datablock_addr(NULL, node_page, ofs_in_node);
- 	f2fs_put_page(node_page, 1);
- 
--	if (source_blkaddr != blkaddr)
-+	if (source_blkaddr != blkaddr) {
-+		if (unlikely(check_valid_map(sbi, segno, offset))) {
-+			if (!test_and_set_bit(segno, sit_i->invalid_segmap)) {
-+				f2fs_err(sbi, "mismatched blkaddr %u (source_blkaddr %u) in seg %u\n",
-+						blkaddr, source_blkaddr, segno);
-+				f2fs_bug_on(sbi, 1);
-+			}
-+		}
- 		return false;
-+	}
- 	return true;
- }
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a661ac3..c3ba9e7 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -806,6 +806,7 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
- 		enum dirty_type dirty_type)
- {
- 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-+	struct sit_info *sit_i = SIT_I(sbi);
- 
- 	if (test_and_clear_bit(segno, dirty_i->dirty_segmap[dirty_type]))
- 		dirty_i->nr_dirty[dirty_type]--;
-@@ -817,9 +818,11 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
- 		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
- 			dirty_i->nr_dirty[t]--;
- 
--		if (get_valid_blocks(sbi, segno, true) == 0)
-+		if (get_valid_blocks(sbi, segno, true) == 0) {
- 			clear_bit(GET_SEC_FROM_SEG(sbi, segno),
- 						dirty_i->victim_secmap);
-+			clear_bit(segno, sit_i->invalid_segmap);
-+		}
- 	}
- }
- 
-@@ -4017,6 +4020,10 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 		return -ENOMEM;
- #endif
- 
-+	sit_i->invalid_segmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
-+	if (!sit_i->invalid_segmap)
-+		return -ENOMEM;
-+
- 	/* init SIT information */
- 	sit_i->s_ops = &default_salloc_ops;
- 
-@@ -4518,6 +4525,7 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
- #ifdef CONFIG_F2FS_CHECK_FS
- 	kvfree(sit_i->sit_bitmap_mir);
- #endif
-+	kvfree(sit_i->invalid_segmap);
- 	kvfree(sit_i);
- }
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index b746028..3918155c 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -246,6 +246,9 @@ struct sit_info {
- 	unsigned long long min_mtime;		/* min. modification time */
- 	unsigned long long max_mtime;		/* max. modification time */
- 
-+	/* bitmap of segments to be ignored by GC in case of errors */
-+	unsigned long *invalid_segmap;
-+
- 	unsigned int last_victim[MAX_GC_POLICY]; /* last victim segment # */
- };
- 
+ struct packet_nop {
+ 	__le32 reserved;
+ 	__le32 ctl;
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.1
 
