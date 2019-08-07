@@ -2,202 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22EC78460E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51F7D8463E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:49:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387477AbfHGHeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 03:34:37 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36723 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387404AbfHGHeg (ORCPT
+        id S2387502AbfHGHtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 03:49:50 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:39580 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387476AbfHGHtu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 03:34:36 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g67so74802827wme.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 00:34:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from:cc;
-        bh=FZrUQH33y44Ytw4iJLLaq3ZcMTl1mI3uSlJR/j+IYIA=;
-        b=sm33IYA6YCZXfStWQ2VxSkjKlqC6Pc49HxVe5SFTOVZhHqE4v/mQWVzH8A8t9QXGf1
-         MZio94ryosMuUEyzoLF9A/9ZbHvZMRkXvwuoMEhDSTLqABdT45gyFfcm+vi/XY0NWzfX
-         THUmMpBdZkqb55o9sEHSpbShnr+XMEUziry7S1aUi3q4APB+e2DcQ7A37XAaHeqpFkmP
-         WDt9acG91X+y2w2BX9IhvXr1WtCR5ZYdoHgCDfYP3h1Tr5urOXUUtTzJiTdsEh4jFL1K
-         zwxf1jq0f7jJhGDCZvh8f4M9acWpPg6VvRMAhd2q6wUsl+JwQufNZP47i9mjvwB/P5Fz
-         tbZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from:cc;
-        bh=FZrUQH33y44Ytw4iJLLaq3ZcMTl1mI3uSlJR/j+IYIA=;
-        b=nKYpC57Y4nb4KErlalLaJkDDOJgnHK8OEMSJ95LcfHhEACmEAxkMQgqQ6M0cnZB4gO
-         0h/5AQBvdpmrPTWXr07JA7PBs/jhlfLwiCoKqH562AYoXwBzMAJPfRhEg8jC20Dxun2z
-         ZDju43YfvWAoYoHJbOUGOrmtma0es5HrBIEauAt4zABvGZ2mjxAQ2xGSIFKjVMawPtE3
-         3cdTGJNF1QNi28du0vdofPuuB2hCZjEh1w9nLECKb+7Rnhyyu8yKlk9hz84zaiv7SVUu
-         Jef6j3PwO3kWWXJuBSNoLzl/8LvyQOTBw5V2Os4Fr12Vgv7rED5NN8t6ZJy+AJ9Wtavs
-         aTEQ==
-X-Gm-Message-State: APjAAAXw/TW+L1LHZty6RnIEZzT/RYv1CjMzUpfF19ienwCwlbhSjRS7
-        KzC90ZG5Nq79LmsSNyq44HfaYg==
-X-Google-Smtp-Source: APXvYqzDJy8goZnkK981FtKvLP4ltt5j12SyCQo15xhOCqUOj4ur0/SSjmlX9lG53vtJrI5qznaTjA==
-X-Received: by 2002:a05:600c:114f:: with SMTP id z15mr8983631wmz.131.1565163272906;
-        Wed, 07 Aug 2019 00:34:32 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id y2sm79688035wrl.4.2019.08.07.00.34.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 00:34:32 -0700 (PDT)
-Message-ID: <5d4a7f08.1c69fb81.5cc82.1018@mx.google.com>
-Date:   Wed, 07 Aug 2019 00:34:32 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 7 Aug 2019 03:49:50 -0400
+X-Greylist: delayed 1762 seconds by postgrey-1.27 at vger.kernel.org; Wed, 07 Aug 2019 03:49:50 EDT
+Received: from ATCSQR.andestech.com (localhost [127.0.0.2] (may be forged))
+        by ATCSQR.andestech.com with ESMTP id x7779Q7h027175
+        for <linux-kernel@vger.kernel.org>; Wed, 7 Aug 2019 15:09:26 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x7778Nlw027022;
+        Wed, 7 Aug 2019 15:08:23 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 7 Aug 2019
+ 15:19:21 +0800
+From:   Nick Hu <nickhu@andestech.com>
+To:     <alankao@andestech.com>, <paul.walmsley@sifive.com>,
+        <palmer@sifive.com>, <aou@eecs.berkeley.edu>, <green.hu@gmail.com>,
+        <deanbo422@gmail.com>, <tglx@linutronix.de>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <aryabinin@virtuozzo.com>, <glider@google.com>,
+        <dvyukov@google.com>, <Anup.Patel@wdc.com>,
+        <gregkh@linuxfoundation.org>, <alexios.zavras@intel.com>,
+        <atish.patra@wdc.com>, <zong@andestech.com>,
+        <kasan-dev@googlegroups.com>
+CC:     Nick Hu <nickhu@andestech.com>
+Subject: [PATCH 0/2] KASAN support for RISC-V
+Date:   Wed, 7 Aug 2019 15:19:13 +0800
+Message-ID: <cover.1565161957.git.nickhu@andestech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: net-next
-X-Kernelci-Kernel: v5.3-rc1-460-g05bb520376af
-X-Kernelci-Lab-Name: lab-baylibre
-X-Kernelci-Branch: master
-X-Kernelci-Report-Type: bisect
-Subject: net-next/master boot bisection: v5.3-rc1-460-g05bb520376af on
- meson-gxm-khadas-vim2
-To:     Andrew Bowers <andrewx.bowers@intel.com>,
-        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
-        mgalka@collabora.com, Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
-        enric.balletbo@collabora.com,
-        Jacob Keller <jacob.e.keller@intel.com>
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x7778Nlw027022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-* This automated bisection report was sent to you on the basis  *
-* that you may be involved with the breaking commit it has      *
-* found.  No manual investigation has been done to verify it,   *
-* and the root cause of the problem may be somewhere else.      *
-*                                                               *
-* If you do send a fix, please include this trailer:            *
-*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-*                                                               *
-* Hope this helps!                                              *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+KASAN is an important runtime memory debugging feature
+in linux kernel which can detect use-after-free and out-of-
+bounds problems.
 
-net-next/master boot bisection: v5.3-rc1-460-g05bb520376af on meson-gxm-kha=
-das-vim2
+There are two patches in this letter:
+1. Porting the memmove string operation.
+2. Porting the feature KASAN.
 
-Summary:
-  Start:      05bb520376af Merge branch '40GbE' of git://git.kernel.org/pub=
-/scm/linux/kernel/git/jkirsher/next-queue
-  Details:    https://kernelci.org/boot/id/5d4a3a6759b51422d431b28d
-  Plain log:  https://storage.kernelci.org//net-next/master/v5.3-rc1-460-g0=
-5bb520376af/arm64/defconfig/gcc-8/lab-baylibre/boot-meson-gxm-khadas-vim2.t=
-xt
-  HTML log:   https://storage.kernelci.org//net-next/master/v5.3-rc1-460-g0=
-5bb520376af/arm64/defconfig/gcc-8/lab-baylibre/boot-meson-gxm-khadas-vim2.h=
-tml
-  Result:     b27223591606 i40e: verify string count matches even on early =
-return
+Nick Hu (2):
+  riscv: Add memmove string operation.
+  riscv: Add KASAN support
 
-Checks:
-  revert:     PASS
-  verify:     PASS
+ arch/riscv/Kconfig                  |    2 +
+ arch/riscv/include/asm/kasan.h      |   26 +++++++++
+ arch/riscv/include/asm/pgtable-64.h |    5 ++
+ arch/riscv/include/asm/string.h     |   10 ++++
+ arch/riscv/kernel/head.S            |    3 +
+ arch/riscv/kernel/riscv_ksyms.c     |    4 ++
+ arch/riscv/kernel/setup.c           |    9 +++
+ arch/riscv/kernel/vmlinux.lds.S     |    1 +
+ arch/riscv/lib/Makefile             |    1 +
+ arch/riscv/lib/memcpy.S             |    5 +-
+ arch/riscv/lib/memmove.S            |   64 ++++++++++++++++++++++
+ arch/riscv/lib/memset.S             |    5 +-
+ arch/riscv/mm/Makefile              |    6 ++
+ arch/riscv/mm/kasan_init.c          |  102 +++++++++++++++++++++++++++++++++++
+ 14 files changed, 239 insertions(+), 4 deletions(-)
+ create mode 100644 arch/riscv/include/asm/kasan.h
+ create mode 100644 arch/riscv/lib/memmove.S
+ create mode 100644 arch/riscv/mm/kasan_init.c
 
-Parameters:
-  Tree:       net-next
-  URL:        git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.=
-git
-  Branch:     master
-  Target:     meson-gxm-khadas-vim2
-  CPU arch:   arm64
-  Lab:        lab-baylibre
-  Compiler:   gcc-8
-  Config:     defconfig
-  Test suite: boot
-
-Breaking commit found:
-
----------------------------------------------------------------------------=
-----
-commit b27223591606f59c1f7c042b8e3dc74affadf492
-Author: Jacob Keller <jacob.e.keller@intel.com>
-Date:   Tue Jul 2 08:22:58 2019 -0400
-
-    i40e: verify string count matches even on early return
-    =
-
-    Similar to i40e_get_ethtool_stats, add a goto to verify that the data
-    pointer for the strings lines up with the expected stats count. This
-    helps ensure that bugs are not introduced when adding stats.
-    =
-
-    Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-    Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-    Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/e=
-thernet/intel/i40e/i40e_ethtool.c
-index ceca57a261dc..01e4615b1b4b 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-@@ -2342,7 +2342,7 @@ static void i40e_get_stat_strings(struct net_device *=
-netdev, u8 *data)
- 	}
- =
-
- 	if (vsi !=3D pf->vsi[pf->lan_vsi] || pf->hw.partition_id !=3D 1)
--		return;
-+		goto check_data_pointer;
- =
-
- 	i40e_add_stat_strings(&data, i40e_gstrings_veb_stats);
- =
-
-@@ -2354,6 +2354,7 @@ static void i40e_get_stat_strings(struct net_device *=
-netdev, u8 *data)
- 	for (i =3D 0; i < I40E_MAX_USER_PRIORITY; i++)
- 		i40e_add_stat_strings(&data, i40e_gstrings_pfc_stats, i);
- =
-
-+check_data_pointer:
- 	WARN_ONCE(data - p !=3D i40e_get_stats_count(netdev) * ETH_GSTRING_LEN,
- 		  "stat strings count mismatch!");
- }
----------------------------------------------------------------------------=
-----
-
-
-Git bisection log:
-
----------------------------------------------------------------------------=
-----
-git bisect start
-# good: [9e8fb25254f76cb483303d8e9a97ed80a65418fe] Merge branch 'net-l3-l4-=
-functional-tests'
-git bisect good 9e8fb25254f76cb483303d8e9a97ed80a65418fe
-# bad: [05bb520376af2c5146d3c44832c22ec3bb54d778] Merge branch '40GbE' of g=
-it://git.kernel.org/pub/scm/linux/kernel/git/jkirsher/next-queue
-git bisect bad 05bb520376af2c5146d3c44832c22ec3bb54d778
-# good: [c4ed52538cd012bd9dfe97beda6802454d367e70] Merge branch 'drop_monit=
-or-Various-improvements-and-cleanups'
-git bisect good c4ed52538cd012bd9dfe97beda6802454d367e70
-# good: [fb1b775a247ee8d846152841f780eba6cb71bcfc] net: sched: add skbedit =
-of ptype action to hardware IR
-git bisect good fb1b775a247ee8d846152841f780eba6cb71bcfc
-# good: [ef68de56c7ad6f708bee8db5e08b83013083e757] Merge branch 'Support-tu=
-nnels-over-VLAN-in-NFP'
-git bisect good ef68de56c7ad6f708bee8db5e08b83013083e757
-# good: [0969402fd5dd57268bb7547d7e5ece8fcd81157d] i40e: Update visual effe=
-ct for advertised FEC mode.
-git bisect good 0969402fd5dd57268bb7547d7e5ece8fcd81157d
-# bad: [b27223591606f59c1f7c042b8e3dc74affadf492] i40e: verify string count=
- matches even on early return
-git bisect bad b27223591606f59c1f7c042b8e3dc74affadf492
-# good: [b603f9dc20afed5e4666642c8713cafb94a23058] i40e: Log info when PF i=
-s entering and leaving Allmulti mode.
-git bisect good b603f9dc20afed5e4666642c8713cafb94a23058
-# first bad commit: [b27223591606f59c1f7c042b8e3dc74affadf492] i40e: verify=
- string count matches even on early return
----------------------------------------------------------------------------=
-----
