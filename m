@@ -2,104 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CECF842B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F3AC842C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 05:04:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbfHGC6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 22:58:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50088 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfHGC6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:58:17 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDF1E216F4;
-        Wed,  7 Aug 2019 02:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565146696;
-        bh=OPOWWv3mB9DdFvmoTfWyNb6+ibWx2Cp4rvzwe+QrP9Q=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=dAMu82L1H4gYf7vcB3Oepw/fLNMFjH/D8hsdYAwj07TBSuID1R+955J5MHqmTlh9Q
-         I2zKNtguWEetSnJxJNuI5INcBJ23ypyNW0Ash7Cfi2QbfmLBi1B1Ylvb0NV1I/DY8u
-         DlIuhqxyixoi2IHKGM01Sj7kNZQ0H8fdJHV5B0LM=
-Date:   Tue, 6 Aug 2019 19:58:14 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] KEYS: Replace uid/gid/perm permissions checking with
- an ACL
-Message-ID: <20190807025814.GA1167@sol.localdomain>
-Mail-Followup-To: David Howells <dhowells@redhat.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <155862710003.24863.11807972177275927370.stgit@warthog.procyon.org.uk>
- <155862710731.24863.14013725058582750710.stgit@warthog.procyon.org.uk>
- <20190710011559.GA7973@sol.localdomain>
- <20190730034956.GB1966@sol.localdomain>
- <20190731011614.GA687@sol.localdomain>
+        id S1727985AbfHGDEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 23:04:51 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52780 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726334AbfHGDEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 23:04:50 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 15F5F136A16E935206AE;
+        Wed,  7 Aug 2019 10:48:46 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 7 Aug 2019
+ 10:48:38 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <j.vosburgh@gmail.com>, <vfalico@gmail.com>, <andy@greyhouse.net>,
+        <davem@davemloft.net>, <jiri@resnulli.us>,
+        <jay.vosburgh@canonical.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] team: Add vlan tx offload to hw_enc_features
+Date:   Wed, 7 Aug 2019 10:38:08 +0800
+Message-ID: <20190807023808.51976-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731011614.GA687@sol.localdomain>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 06:16:14PM -0700, Eric Biggers wrote:
-> On Mon, Jul 29, 2019 at 08:49:56PM -0700, Eric Biggers wrote:
-> > Hi David,
-> > 
-> > On Tue, Jul 09, 2019 at 06:16:01PM -0700, Eric Biggers wrote:
-> > > On Thu, May 23, 2019 at 04:58:27PM +0100, David Howells wrote:
-> > > > Replace the uid/gid/perm permissions checking on a key with an ACL to allow
-> > > > the SETATTR and SEARCH permissions to be split.  This will also allow a
-> > > > greater range of subjects to represented.
-> > > > 
-> > > 
-> > > This patch broke 'keyctl new_session', and hence broke all the fscrypt tests:
-> > > 
-> > > $ keyctl new_session
-> > > keyctl_session_to_parent: Permission denied
-> > > 
-> > > Output of 'keyctl show' is
-> > > 
-> > > $ keyctl show
-> > > Session Keyring
-> > >  605894913 --alswrv      0     0  keyring: _ses
-> > >  189223103 ----s-rv      0     0   \_ user: invocation_id
-> > > 
-> > > - Eric
-> > 
-> > This bug is still present in next-20190729.
-> > 
-> > - Eric
-> 
-> This fixes it:
-> 
-> diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-> index aa3bfcadbc660..519c94f1cc3c2 100644
-> --- a/security/keys/process_keys.c
-> +++ b/security/keys/process_keys.c
-> @@ -58,7 +58,7 @@ static struct key_acl session_keyring_acl = {
->  	.possessor_viewable = true,
->  	.nr_ace	= 2,
->  	.aces = {
-> -		KEY_POSSESSOR_ACE(KEY_ACE__PERMS & ~KEY_ACE_JOIN),
-> +		KEY_POSSESSOR_ACE(KEY_ACE__PERMS),
->  		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ),
->  	}
->  };
-> 
-> 
-> The old permissions were KEY_POS_ALL | KEY_USR_VIEW | KEY_USR_READ, so
-> I'm not sure why JOIN permission was removed?
-> 
-> - Eric
+We should also enable bonding's vlan tx offload in hw_enc_features,
+pass the vlan packets to the slave devices with vlan tci, let them
+to handle vlan tunneling offload implementation.
 
-Ping.  This is still broken in linux-next.
+Fixes: 3268e5cb494d ("team: Advertise tunneling offload features")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/team/team.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-- Eric
+diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
+index abfa0da..e8089de 100644
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -1004,6 +1004,8 @@ static void __team_compute_features(struct team *team)
+ 
+ 	team->dev->vlan_features = vlan_features;
+ 	team->dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL |
++				     NETIF_F_HW_VLAN_CTAG_TX |
++				     NETIF_F_HW_VLAN_STAG_TX |
+ 				     NETIF_F_GSO_UDP_L4;
+ 	team->dev->hard_header_len = max_hard_header_len;
+ 
+-- 
+2.7.4
+
+
