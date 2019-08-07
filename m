@@ -2,103 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53E6B84B3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 14:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6204784BD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 14:42:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729843AbfHGMJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 08:09:49 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:16894 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbfHGMJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 08:09:49 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 4B090A10DC;
-        Wed,  7 Aug 2019 14:09:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:message-id:date:date:subject:subject
-        :from:from:received; s=mail20150812; t=1565179767; bh=rHCAZ074Uy
-        ZIuo+YOhlm7YH0Of6VHZ3w7JPuviszgG8=; b=msNk2qv0fNTuD4PX61ubg1jISG
-        qPJuJnrAKNt1IE/LEXBHmFsZHl9nSzfecmvWL692Td9+Ym9o4nclypzUpNDlSJJx
-        9pk+b6X+fvMYdr8bBDy4/rmb2BCIctwTxg6XR5rU4dJz4sZJ5efpuMSWkLCarzwf
-        WfYJKufSjPk8tc5W1NUboQaH1zchV8qws7kVQJBXkOUYqtHBe/IxFvnoIyXoeS6t
-        XBDp5Ih5DlSFpy5jcrYaI9CQCAIakf5v3ePIsdx2AEwx25GRCsLy9WlxBpF0qXqH
-        sGofhS16+sRtEcENUfy+U5YLKyubWwTi7rbo2bDDwlrLcPCB/TWYHwqT8o3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1565179786; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nIi2+dVFgNEqDAbNVFX5OQFfz6csuB3+TfgG3t4PX58=;
-        b=psdQRXuMdCNnuvjhag32JrP02RtOG2WT11a9nkp7lvgI3sQWpETzWnmuUSD/GD5wiL2fx1
-        5C/4IA3gMLqfG9i99VUFTqmb6IW7MvfmC1mftvJOAVBvjHVkHBejPAFNfhWshXYqA522xc
-        h2zoq+fpJRtpOS5YT8uBXMYyAxxlMzi3zIuPrXwdctiLkORXTqPSYpwR/j39Y6c98/Soj0
-        f1wE6LqI0/GPwyPh78LeQvv9GrixT5R8Q2yXz9FlEo/IxRkk/m72kAPVYxd3/6O7xALBO0
-        UUu5/+s+qPty7x8eizF+40ZarDlU7VeQnBjl/rT2Hs+J5SFA3QH/Fjiiwm3fmA==
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id PIIso7cOiSde; Wed,  7 Aug 2019 14:09:27 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@mailbox.org>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, Jean Delvare <jdelvare@suse.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Juergen Fitschen <jfi@ssv-embedded.de>,
-        Ajay Gupta <ajayg@nvidia.com>,
-        Shreesha Rajashekar <shreesha.rajashekar@broadcom.com>,
-        Vignesh R <vigneshr@ti.com>, Elie Morisse <syniurge@gmail.com>,
-        Stefan Roese <sr@denx.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: imx: Allow the driver to be built for ARM64 SoCs such as i.MX8M
-Date:   Wed, 07 Aug 2019 14:09:24 +0200
-Message-ID: <2445092.UF1PKDTzN1@ws-140106>
-In-Reply-To: <20190807114332.13312-1-frieder.schrempf@kontron.de>
-References: <20190807114332.13312-1-frieder.schrempf@kontron.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S2387676AbfHGMmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 08:42:45 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33454 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729722AbfHGMmo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 08:42:44 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n9so91348160wru.0;
+        Wed, 07 Aug 2019 05:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=f84KIsdaJQ9CPJzDHYp5jwwgYBPwNj7/ee/65YueU+Y=;
+        b=sabiP0yeVf1UJuKhrWV76NTcVIeg3G1hy4lcORSSNvAo5IcbwP4+v1xx0AljGv5QFu
+         whPlMulkqpBJPb4k0W/KkuNms8MYqgDk10yj50rwHjBBZbYrEnhbYCOChvduxiZrZfAs
+         ER4oNFJanjAiNilmJGIW8/YCKQe8dOO3LNjGYauz2/pZAnE6eLfTsoiB316JalKVcXgj
+         yD66Kc1MeWa3JoPNP1izcj8/JpI4dDDjkDyKiW7FIECG7ud2a+tNprH8aG/RtypGZIPj
+         LA4hVsROnNzcqWzbOKJXm2AoA5Q+7s/lrzJmqiJizh6JKiusIe+hmqp79lazlFC3f2zb
+         SakQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=f84KIsdaJQ9CPJzDHYp5jwwgYBPwNj7/ee/65YueU+Y=;
+        b=fHOR4XT9uTO9h0aet6SKg9VPohYpOEGdKo/OYLlkp2H9mlL685R6dRbKZhvIsWXUcF
+         /DTwYbCFgMIFCY/mMmeE6ji4f2ce9wnTE2Nvdw3HpJ+Z5UFwte9abHGXBM4HcM1kXV+P
+         ww496IwjccTAfhGu0ppvEfpSJ3fyhGhGv7yrUlUYMMt9l3C18/bvp46C+GP4k4gpFewd
+         /Kt7+6vjU3yHIvfQzP6y3ZBv3Gp3XFOPUZZ1XwIz16FIheD3Ai7pLRvXKaIerXxiI48n
+         pDnLtPloxImq42+HIx0tCswE5KkTVB544fGQxds9M+AmyVwFzWt9+YER7ywOkHdFQvQW
+         MIZg==
+X-Gm-Message-State: APjAAAUqLtBJah7mCoFJhCuzXlakUGC2kVNBtgtxxAIzJOn2MLDofg67
+        7LjWV0K0OVcziMtiEVe0xJo=
+X-Google-Smtp-Source: APXvYqz9dC7RKAOlqFDZMeGfKlNjJXmRRsx9AY9x/8J/G5S482nwbvIwwIGYOYLQ0ZUUl6azgsxVog==
+X-Received: by 2002:a5d:5507:: with SMTP id b7mr10649444wrv.35.1565181762489;
+        Wed, 07 Aug 2019 05:42:42 -0700 (PDT)
+Received: from localhost ([193.47.161.132])
+        by smtp.gmail.com with ESMTPSA id q20sm9490692wrc.79.2019.08.07.05.42.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Aug 2019 05:42:41 -0700 (PDT)
+From:   Oliver Graute <oliver.graute@gmail.com>
+To:     aisheng.dong@nxp.com
+Cc:     oliver.graute@kococonnector.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCHv1] arm64: dts: imx8qm: add compatible string for usdhc3
+Date:   Wed,  7 Aug 2019 14:09:25 +0200
+Message-Id: <20190807120932.29850-1-oliver.graute@kococonnector.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, August 7, 2019, 1:44:06 PM CEST Schrempf Frieder wrote:
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
-> 
-> The imx I2C controller is used in some ARM64 SoCs such as i.MX8M.
-> To make use of it, append ARM64 to the list of dependencies.
-> 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> ---
->  drivers/i2c/busses/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 09367fc014c3..46b653621513 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -664,7 +664,7 @@ config I2C_IMG
->  
->  config I2C_IMX
->  	tristate "IMX I2C interface"
-> -	depends on ARCH_MXC || ARCH_LAYERSCAPE || COLDFIRE
-> +	depends on ARCH_MXC || ARCH_LAYERSCAPE || COLDFIRE || ARM64
+add compatible string for usdhc3
+---
+This Patch is on top of 10/15 of this series:
 
-I don't think this should be necessary at all as ARCH_MXC is also available for arm64, see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/Kconfig.platforms#n167
-I rather wonder why ARCH_MXC is not set. Same for fec.
+https://patchwork.kernel.org/patch/11046343/
 
->  	help
->  	  Say Y here if you want to use the IIC bus controller on
->  	  the Freescale i.MX/MXC, Layerscape or ColdFire processors.
-> 
+[v2,10/15] arm64: dts: imx8qm: add conn ss support
 
+---
+ arch/arm64/boot/dts/freescale/imx8qm-ss-conn.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-conn.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-conn.dtsi
+index 00ae820d5175..8c33edf0744f 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qm-ss-conn.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-conn.dtsi
+@@ -19,3 +19,7 @@
+ &usdhc2 {
+ 	compatible = "fsl,imx8qm-usdhc", "fsl,imx7d-usdhc";
+ };
++
++&usdhc3 {
++	compatible = "fsl,imx8qm-usdhc", "fsl,imx7d-usdhc";
++};
+-- 
+2.17.1
 
