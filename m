@@ -2,249 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7212851A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 763D7851B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389141AbfHGRFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 13:05:09 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40626 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389121AbfHGRFE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 13:05:04 -0400
-Received: by mail-pl1-f193.google.com with SMTP id a93so41660778pla.7
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 10:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=F05sSw+VU0rzfotLUa63CaEZrG4zRotAGf06tMo1VOA=;
-        b=CILuo5aN5ze70zh0vx+6Fq1nBx4l3fKH9UuBHDcGkUCVbReGgGxbo+EdkpPGO6j3ZQ
-         ta4pS+7RkafrHrIfo3FGKp8czso9b5x96PJDnJXJytYIl0OqGJ9B4c2izWWLgDlVS3xM
-         kyp/ofSmi0YIGpTra9+lklFtYk0129Y3msfvo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=F05sSw+VU0rzfotLUa63CaEZrG4zRotAGf06tMo1VOA=;
-        b=WUSkRh9Env2Bnr3dDbJH4bOktq4SHFBxsv/BJ4bPsMqQEISaprYxDOn8WntZTlnLNr
-         7QoWkTt7oicM18UsuLNggydG6xAOi2JtbO5n0Usd4X+7J0mDWvDMYIha7LYDmeb0QXn6
-         7djOrn+Enn5Gce6UbHeWIz8QnBS8HO+C8E0VfmZvTOiV+LejzxP2+vVcZUfFrnlT5pV9
-         xD6fdBZbI3/3l/vKn+mYuUJU3RnEsM2R4WreaVT2lOQ4aK7+wFUIjlDj/o3M6fO68I8p
-         pAW9uO+JuT/Otzqm39+PVatX/3Nh139S/+bnBZPl/cjc8yTu/QU+m5V5jVJ8kw73gxq1
-         1h+w==
-X-Gm-Message-State: APjAAAW2CIUkVk9voJ0eu+7EQ/NHjd2EvSJnoMZ+JC4YH5BPTEa1axFV
-        hFqGMcv5J4PI5bi/tpZ23zwf/A==
-X-Google-Smtp-Source: APXvYqwgcc3C5NzP6jD3BBlTrI++ipIvh7bo9B/KWKG1JIar6fhOBH/BZgx5rti7q7QBIS6lVXbmaw==
-X-Received: by 2002:aa7:843c:: with SMTP id q28mr10527500pfn.152.1565197503725;
-        Wed, 07 Aug 2019 10:05:03 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id m101sm834281pjb.7.2019.08.07.10.05.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 10:05:03 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v5 4/4] net: phy: realtek: Add LED configuration support for RTL8211E
-Date:   Wed,  7 Aug 2019 10:04:49 -0700
-Message-Id: <20190807170449.205378-5-mka@chromium.org>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-In-Reply-To: <20190807170449.205378-1-mka@chromium.org>
-References: <20190807170449.205378-1-mka@chromium.org>
+        id S2388970AbfHGRG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 13:06:28 -0400
+Received: from mail-eopbgr140088.outbound.protection.outlook.com ([40.107.14.88]:7041
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729278AbfHGRG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 13:06:27 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C+4RWqS9mWQuYvxoKFrA8TwRtuaMNbIqdlzDENJyiykRsHSlWH2Z9EpOF7qxyCDW2kdANhAiwLlpOmVnX6S5ANdIwbMeKV5RQ/G5MkZzUFrjkavVpF1pTP4Qu36ZGurpy31pvICfDg4meUezibi3Hc0nN8S1KSX4nKZI8rqK5WuHhbVjB8Iwn7GXY0dhYdaTHk2WAeanTS5453Y4ukUvMM5ub89YWMgWf9ByJ6gPXcncJXJsAU5uUuZsYNzyue0gJI1G3/xLkuxiQCa3167y1UIMmFYPxfhmw/q5qYIUDit9uLOBgXd+HdTe14bxmPYF5l9JAcUNq6XuJkyhTUzBFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xXgom3m4usbskkXUBX4HQzilg0P2eehK84yCaDE9nHg=;
+ b=MuECgnTNj61UdBvbejGDeufRc1XU012VqVjxvP54Vkb7QtVNz3OkX+no+aYjxE7RAtmZkui+d9xpp0fKo7/MR+WPZxvRc69vPNR2qxWSkO8CFvCQSkBFGQbeTdlTblgxL72YasyL8Qq8vfsFtMnzKigTuk+hJr7WcfdrtzEXZAWjQdcGPETNLjjPPpucVBdf3Fc+XYMQURSUIlf3k46krqAbB3abkKiyTfqT5QMuQibCnchADXwo5dy+SWIqpsTCGAIokUVXha9oeIDS2MD7HEhB+XMIvfxcK40PTKYUC4Tvzw3JChsavNCLTktsFq6EkyzrAwHM8H2qtma3m8TWSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xXgom3m4usbskkXUBX4HQzilg0P2eehK84yCaDE9nHg=;
+ b=ZO4Uohw+YqIxJAbreLNtk5Bf02nHXO8/ScodvSMyZXjihi1p0/ABCNZNZmNSk/EM6x+90cgArtxO4BYsX0fU/ZZPcFz/VgHIT29rc7xP/OrZVSj4VCMWdAUWT5tEjy8ckqvcLsi/5iCBe+QM7nmF3DaMDvrs+VZLMJa3VwU7/to=
+Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com (10.175.20.18) by
+ VI1PR0402MB3774.eurprd04.prod.outlook.com (52.134.15.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.17; Wed, 7 Aug 2019 17:05:44 +0000
+Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com
+ ([fe80::7de6:ea4b:9b5d:d023]) by VI1PR0402MB2863.eurprd04.prod.outlook.com
+ ([fe80::7de6:ea4b:9b5d:d023%7]) with mapi id 15.20.2157.015; Wed, 7 Aug 2019
+ 17:05:44 +0000
+From:   Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Cosmin Stefan Stoica <cosmin.stoica@nxp.com>,
+        Larisa Ileana Grigore <larisa.grigore@nxp.com>
+Subject: Re: [PATCH 5/6] tty: serial: Add linflexuart driver for S32V234
+Thread-Topic: [PATCH 5/6] tty: serial: Add linflexuart driver for S32V234
+Thread-Index: AQHVTUJZuWgkceiY7EG3+fZ0PXp0Og==
+Date:   Wed, 7 Aug 2019 17:05:43 +0000
+Message-ID: <VI1PR0402MB2863C28FAB5DA6356280432BDFD40@VI1PR0402MB2863.eurprd04.prod.outlook.com>
+References: <20190802194702.30249-1-stefan-gabriel.mirea@nxp.com>
+ <20190802194702.30249-6-stefan-gabriel.mirea@nxp.com>
+ <20190805153114.GA16836@kroah.com>
+ <HE1PR0402MB28579034C09EB49A76A4F8E7DFD50@HE1PR0402MB2857.eurprd04.prod.outlook.com>
+ <20190806184042.GA26041@kroah.com>
+ <VI1PR0402MB2863C4406C06B0BDA3581822DFD40@VI1PR0402MB2863.eurprd04.prod.outlook.com>
+ <20190807165646.GA6584@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=stefan-gabriel.mirea@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c91bf569-509d-400c-82ed-08d71b597bde
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3774;
+x-ms-traffictypediagnostic: VI1PR0402MB3774:
+x-microsoft-antispam-prvs: <VI1PR0402MB3774540372699E7CBE161B28DFD40@VI1PR0402MB3774.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 01221E3973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(39860400002)(346002)(366004)(136003)(199004)(189003)(51744003)(71200400001)(66556008)(66946007)(64756008)(446003)(102836004)(53546011)(66476007)(6506007)(229853002)(186003)(66446008)(6916009)(5640700003)(53936002)(68736007)(2501003)(55016002)(4326008)(99286004)(71190400001)(3846002)(86362001)(74316002)(6116002)(66066001)(1730700003)(8676002)(8936002)(76116006)(9686003)(25786009)(91956017)(7736002)(7416002)(476003)(5660300002)(7696005)(478600001)(316002)(76176011)(26005)(6246003)(54906003)(81166006)(52536014)(2906002)(305945005)(33656002)(6436002)(14454004)(81156014)(2351001)(486006)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3774;H:VI1PR0402MB2863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: CZi9f2mPsDSmKGfJ1WOPqmo3/Yf5Pk4oWs0Zcr1+djpEJdn2QHUSOPHqSQTp/5Em33c7RJe2zW+564r8lxy+8LN2qkFXi1sJ1/OCDG4mFYFVSoyH/dIaFnQqF/a3tyL/kJvuQf6+1Tx6sp/YMSW5qze7W3fsP9J3MohHwwHOgzUGQqIfRZ4akY5SgM9rMU6HSHPo8z8q3Igi6VAFWYc54scfGVcR8FTrGmN4lNDhMaWn9TktMXE+OBIZgDr3ehCInQJDExn3MDoIZalRL51DH8w92c4iRFw97dH28829MGw+oKrOaghVjxx5Mc+IWf7o6/ti69dJGUx+0Di3IIR6UQrapRfDqUcE5XIrn9VHfs/rhjy5uAWzYf+5urNY7OyUMFS0McvOZrDDik54OyQNrn1kJdSOzYz5Ry5xXD4gMAg=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c91bf569-509d-400c-82ed-08d71b597bde
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 17:05:43.8454
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EqXslEB28TsGX4osT9gFlsJoBtjvEcCRemOuKUHSQ9QXrBzCt6xmpvC+RTXp/5G19p09hUCJWM6cYT0+fNt0HwV6xRx0B3wLp3uJc8ilLK0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3774
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a .config_led hook which is called by the PHY core when
-configuration data for a PHY LED is available. Each LED can be
-configured to be solid 'off, solid 'on' for certain (or all)
-link speeds or to blink on RX/TX activity.
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Changes in v5:
-- use 'config_leds' driver callback instead of requesting the DT
-  configuration
-- added support for trigger 'none'
-- always disable EEE LED mode when a LED is configured. We have no
-  device data struct to keep track of its state, the number of LEDs
-  is limited, so the overhead of disabling it multiple times (once for
-  each LED that is configured) during initialization is negligible
-- print warning when disabling EEE LED mode fails
-- updated commit message (previous subject was 'net: phy: realtek:
-  configure RTL8211E LEDs')
-
-Changes in v4:
-- use the generic PHY LED binding
-- keep default/current configuration if none is specified
-- added rtl8211e_disable_eee_led_mode()
-  - was previously in separate patch, however since we always want to
-    disable EEE LED mode when a LED configuration is specified it makes
-    sense to just add the function here.
-- don't call phy_restore_page() in rtl8211e_config_leds() if
-  selection of the extended page failed.
-- use phydev_warn() instead of phydev_err() if LED configuration
-  fails since we don't bail out
-- use hex number to specify page for consistency
-- add hex number to comment about ext page 44 to facilitate searching
-
-Changes in v3:
-- sanity check led-modes values
-- set LACR bits in a more readable way
-- use phydev_err() instead of dev_err()
-- log an error if LED configuration fails
-
-Changes in v2:
-- patch added to the series
----
- drivers/net/phy/realtek.c | 101 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 100 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-index a5b3708dc4d8..5064ad732443 100644
---- a/drivers/net/phy/realtek.c
-+++ b/drivers/net/phy/realtek.c
-@@ -9,8 +9,9 @@
-  * Copyright (c) 2004 Freescale Semiconductor, Inc.
-  */
- #include <linux/bitops.h>
--#include <linux/phy.h>
-+#include <linux/bits.h>
- #include <linux/module.h>
-+#include <linux/phy.h>
- 
- #define RTL821x_PHYSR				0x11
- #define RTL821x_PHYSR_DUPLEX			BIT(13)
-@@ -26,6 +27,18 @@
- #define RTL821x_EXT_PAGE_SELECT			0x1e
- #define RTL821x_PAGE_SELECT			0x1f
- 
-+/* RTL8211E page 5 */
-+#define RTL8211E_EEE_LED_MODE1			0x05
-+#define RTL8211E_EEE_LED_MODE2			0x06
-+
-+/* RTL8211E extension page 44 (0x2c) */
-+#define RTL8211E_LACR				0x1a
-+#define RLT8211E_LACR_LEDACTCTRL_SHIFT		4
-+#define RTL8211E_LCR				0x1c
-+
-+#define LACR_MASK(led)				BIT(4 + led)
-+#define LCR_MASK(led)				GENMASK((led * 4) + 2, led * 4)
-+
- #define RTL8211F_INSR				0x1d
- 
- #define RTL8211F_TX_DELAY			BIT(8)
-@@ -83,6 +96,91 @@ static int rtl8211x_modify_ext_paged(struct phy_device *phydev, int page,
- 	return phy_restore_page(phydev, oldpage, ret);
- }
- 
-+static void rtl8211e_disable_eee_led_mode(struct phy_device *phydev)
-+{
-+	int oldpage;
-+	int err = 0;
-+
-+	oldpage = phy_select_page(phydev, 5);
-+	if (oldpage < 0)
-+		goto out;
-+
-+	/* write magic values to disable EEE LED mode */
-+	err = __phy_write(phydev, RTL8211E_EEE_LED_MODE1, 0x8b82);
-+	if (err)
-+		goto out;
-+
-+	err = __phy_write(phydev, RTL8211E_EEE_LED_MODE2, 0x052b);
-+
-+out:
-+	if (err)
-+		phydev_warn(phydev, "failed to disable EEE LED mode: %d\n", err);
-+
-+	phy_restore_page(phydev, oldpage, err);
-+}
-+
-+static int rtl8211e_config_led(struct phy_device *phydev, int led,
-+			       struct phy_led_config *cfg)
-+{
-+	u16 lacr_bits = 0, lcr_bits = 0;
-+	int oldpage, ret;
-+
-+	switch (cfg->trigger.t) {
-+	case PHY_LED_TRIGGER_LINK:
-+		lcr_bits = 7 << (led * 4);
-+		break;
-+
-+	case PHY_LED_TRIGGER_LINK_10M:
-+		lcr_bits = 1 << (led * 4);
-+		break;
-+
-+	case PHY_LED_TRIGGER_LINK_100M:
-+		lcr_bits = 2 << (led * 4);
-+		break;
-+
-+	case PHY_LED_TRIGGER_LINK_1G:
-+		lcr_bits |= 4 << (led * 4);
-+		break;
-+
-+	case PHY_LED_TRIGGER_NONE:
-+		break;
-+
-+	default:
-+		phydev_warn(phydev,
-+			    "unknown trigger for LED%d: %d\n",
-+			    led, cfg->trigger.t);
-+		return -EINVAL;
-+	}
-+
-+	if (cfg->trigger.activity)
-+		lacr_bits = BIT(RLT8211E_LACR_LEDACTCTRL_SHIFT + led);
-+
-+	rtl8211e_disable_eee_led_mode(phydev);
-+
-+	oldpage = rtl8211x_select_ext_page(phydev, 0x2c);
-+	if (oldpage < 0) {
-+		phydev_err(phydev, "failed to select extended page: %d\n", oldpage);
-+		return oldpage;
-+	}
-+
-+	ret = __phy_modify(phydev, RTL8211E_LACR,
-+			   LACR_MASK(led), lacr_bits);
-+	if (ret) {
-+		phydev_err(phydev, "failed to write LACR reg: %d\n",
-+			   ret);
-+		goto err;
-+	}
-+
-+	ret = __phy_modify(phydev, RTL8211E_LCR,
-+			   LCR_MASK(led), lcr_bits);
-+	if (ret)
-+		phydev_err(phydev, "failed to write LCR reg: %d\n",
-+			   ret);
-+
-+err:
-+	return phy_restore_page(phydev, oldpage, ret);
-+}
-+
- static int rtl8201_ack_interrupt(struct phy_device *phydev)
- {
- 	int err;
-@@ -330,6 +428,7 @@ static struct phy_driver realtek_drvs[] = {
- 		.config_init	= &rtl8211e_config_init,
- 		.ack_interrupt	= &rtl821x_ack_interrupt,
- 		.config_intr	= &rtl8211e_config_intr,
-+		.config_led	= &rtl8211e_config_led,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
- 		.read_page	= rtl821x_read_page,
--- 
-2.22.0.770.g0f2c4a37fd-goog
-
+On 8/7/2019 7:56 PM, gregkh@linuxfoundation.org wrote:=0A=
+> On Wed, Aug 07, 2019 at 04:42:17PM +0000, Stefan-gabriel Mirea wrote:=0A=
+>> On 8/6/2019 9:40 PM, gregkh@linuxfoundation.org wrote:=0A=
+>>> On Tue, Aug 06, 2019 at 05:11:17PM +0000, Stefan-gabriel Mirea wrote:=
+=0A=
+=0A=
+<snip>=0A=
+=0A=
+>>>> Other than that, I do not see anything wrong with the addition of a=0A=
+>>>> define in serial_core.h for this purpose (which is also what most of t=
+he=0A=
+>>>> serial drivers do, including amba-pl011.c, mentioned in=0A=
+>>>> Documentation/driver-api/serial/driver.rst as providing the reference=
+=0A=
+>>>> implementation), so please be more specific.=0A=
+>>>=0A=
+>>> I am getting tired of dealing with merge issues with that list, and no=
+=0A=
+>>> one seems to be able to find where they are really needed for userspace=
+,=0A=
+>>> especially for new devices.  What happens if you do not have use it?=0A=
+>>=0A=
+>> I see. If I drop its usage completely and leave 'type' from the=0A=
+>> uart_port as 0, uart_port_startup() will fail when finding that=0A=
+>> uport->type =3D=3D PORT_UNKNOWN at [1] (there may be other effects as we=
+ll,=0A=
+>> e.g. due to the check in uart_configure_port[2]).=0A=
+>>=0A=
+>> So I suppose that I need to define some nonzero 'PORT_KNOWN' macro in=0A=
+>> the driver and use that one internally for 'type'. Is my understanding=
+=0A=
+>> correct? Will there be any problems if I define it to a positive integer=
+=0A=
+>> which is already assigned to another driver, according to serial_core.h?=
+=0A=
+> =0A=
+> Ugh, ok, that's messy, nevermind.  Keep the #define in there, I will try=
+=0A=
+> to figure out how to move all of these at once sometime in the future...=
+=0A=
+> =0A=
+> sorry for the noise.=0A=
+=0A=
+No problem, thank you for your time.=0A=
+=0A=
+Regards,=0A=
+Stefan=0A=
