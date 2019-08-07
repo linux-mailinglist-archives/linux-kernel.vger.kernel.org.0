@@ -2,67 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06B7C85244
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC2F85247
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:42:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389248AbfHGRlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 13:41:23 -0400
-Received: from foss.arm.com ([217.140.110.172]:52550 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389212AbfHGRlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 13:41:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D66A51570;
-        Wed,  7 Aug 2019 10:41:20 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8423D3F575;
-        Wed,  7 Aug 2019 10:41:18 -0700 (PDT)
-Date:   Wed, 7 Aug 2019 18:41:12 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org,
-        Bo Zhang <bozhang.zhang@broadcom.com>,
-        Jim Quinlan <james.quinlan@broadcom.com>,
-        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
-        Gaku Inami <gaku.inami.xh@renesas.com>,
-        aidapala@qti.qualcomm.com, pajay@qti.qualcomm.com,
-        Etienne Carriere <etienne.carriere@linaro.org>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        wesleys@xilinx.com, Felix Burton <fburton@xilinx.com>,
-        Saeed Nowshadi <saeed.nowshadi@xilinx.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] dt-bindings: arm: Extend SCMI to support new
- reset protocol
-Message-ID: <20190807174112.GA30884@e107155-lin>
-References: <20190806170208.6787-1-sudeep.holla@arm.com>
- <20190806170208.6787-4-sudeep.holla@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806170208.6787-4-sudeep.holla@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2389253AbfHGRmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 13:42:32 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36702 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388363AbfHGRmc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 13:42:32 -0400
+Received: by mail-pl1-f194.google.com with SMTP id k8so41877311plt.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 10:42:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=/uiebD3btGZbv4vhWYrLmVJnJacov4IOPhmk60kkajg=;
+        b=HNcBAXnJzE6uUB8tIAUYgqvuEp7OTTfPSHB8SoTsSj6TdMtwzvLu6bF8L1r/I1gEhw
+         PWb2b7yxTVPfJVq+rS+uQK5zsO9WyKeBxjQdTp9SwMZwnR5yGKd/r/RnMiEPaGGFC+b6
+         WQizhkiuM9fEcEe13nigY5hBl9/ThWE3hi41FeycrwJya/FujyAUKhkIdjFb8uDrCsmO
+         6lo+s0+P+6dqdS3xRO8/cVA4Mina6J6ULuE869rGnqjw1aMnjGB8B+6g4PyiE6GXuAaC
+         Cn7o4VVpZAEGqmxHdE+XP4qHy+qrwEktYkEbxgFwb3y7HBV0nKIdYpRMpZzB+OGrq/oD
+         M+Xg==
+X-Gm-Message-State: APjAAAViB37ApGBWruUSZrjJ9bINiRvBW8OlCzcWuow6REdUjb/GFtD0
+        EwyG41o9ugcSpAk11YS4PG26czuhRQmtvw==
+X-Google-Smtp-Source: APXvYqw1JEMLevhf1LxZ3JskWiL2HpnAPmkA0NRBmwn1FJZT+5YEh83ZyPicXC8jCeVqb1RmwoO2Tw==
+X-Received: by 2002:a17:90a:2190:: with SMTP id q16mr989287pjc.23.1565199750802;
+        Wed, 07 Aug 2019 10:42:30 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id p187sm146508645pfg.89.2019.08.07.10.42.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 07 Aug 2019 10:42:30 -0700 (PDT)
+Date:   Wed, 07 Aug 2019 10:42:30 -0700 (PDT)
+X-Google-Original-Date: Wed, 07 Aug 2019 10:42:28 PDT (-0700)
+Subject:     Re: [PATCH v3 3/5] RISC-V: Fix unsupported isa string info.
+In-Reply-To: <a2795337bd86ff22ae9618d7ccae22e7482be332.camel@wdc.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>, info@metux.net,
+        allison@lohutok.net, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        Anup Patel <Anup.Patel@wdc.com>, mark.rutland@arm.com,
+        johan@kernel.org, robh+dt@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, tiny.windzz@gmail.com,
+        gary@garyguo.net, linux-riscv@lists.infradead.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Atish Patra <Atish.Patra@wdc.com>
+Message-ID: <mhng-5befbd83-7239-4ee0-8c03-06e377e53f72@palmer-si-x1e>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Wed, 07 Aug 2019 10:31:51 PDT (-0700), Atish Patra wrote:
+> On Tue, 2019-08-06 at 18:26 -0700, Paul Walmsley wrote:
+>> On Wed, 7 Aug 2019, Atish Patra wrote:
+>> 
+>> > On Tue, 2019-08-06 at 16:27 -0700, Paul Walmsley wrote:
+>> > 
+>> > > Seems like the "su" should be dropped from mandatory_ext.  What
+>> > > do you 
+>> > > think?
+>> > > 
+>> > 
+>> > Yup. As DT binding only mention imafdc, mandatory extensions should
+>> > contain only that and just consider "su" extensions are considered
+>> > as
+>> > implicit as we are running Linux. 
+>> 
+>> Discussing this with Andrew and Palmer, it looks like "su" is
+>> currently 
+>> non-compliant.  Section 22.6 of the user-level specification states
+>> that 
+>> the "s" character indicates that a longer standard supervisor
+>> extension 
+>> name will follow.  So far I don't think any of these have been
+>> defined.
+>> 
+>> > Do you think QEMU DT should be updated to reflect that ?
+>> 
+>> Yes.
+>> 
+>> > > There's no Kconfig option by this name, and we're requiring
+>> > > compressed 
+>> > 
+>> > Sorry. This was a typo. It should have been CONFIG_RISCV_ISA_C.
+>> > 
+>> > > instruction support as part of the RISC-V Linux baseline.  Could
+>> > > you 
+>> > > share the rationale behind this?
+>> > 
+>> > I think I added this check at the config file. Looking at the
+>> > Kconfig,
+>> > RISCV_ISA_C is always enabled. So we can drop this.
+>> 
+>> OK great.  Do you want to resend an updated patch, or would you like
+>> me to 
+>> fix it up here?
+>> 
+> 
+> I am sending the patch right now. We can remove the 'S' mode check as
+> palmer have already sent the QEMU patch as well, .
 
-On Tue, Aug 06, 2019 at 06:02:06PM +0100, Sudeep Holla wrote:
-> SCMIv2.0 adds a new Reset Management Protocol to manage various reset
-> states a given device or domain can enter. Extend the existing SCMI
-> bindings to add reset protocol support by re-using the reset bindings
-> for bothe reset providers and consumers.
->
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Rob Herring <robh+dt@kernel.org>
+Looks like I missed the boat for 4.1, though.
 
-Sorry for the nag, can you review the binding so that I can plan
-to get this merged for v5.4
-
---
-Regards,
-Sudeep
+> 
+> Regards,
+> Atish
+>> I'll also send a patch to drop CONFIG_RISCV_ISA_C.
+>> 
+>> 
+>> - Paul
+> 
