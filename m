@@ -2,79 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F8D84BE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 14:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D5C684BEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 14:46:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387873AbfHGMoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 08:44:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48656 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387777AbfHGMoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 08:44:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B5E05AC64;
-        Wed,  7 Aug 2019 12:44:05 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 617BDDA7D7; Wed,  7 Aug 2019 14:44:37 +0200 (CEST)
-Date:   Wed, 7 Aug 2019 14:44:37 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     dsterba@suse.cz, Sasha Levin <sashal@kernel.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        David Sterba <dsterba@suse.com>,
-        Filipe Manana <fdmanana@suse.com>, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 12/32] Btrfs: fix deadlock between fiemap
- and transaction commits
-Message-ID: <20190807124437.GT28208@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Greg KH <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Filipe Manana <fdmanana@suse.com>, linux-btrfs@vger.kernel.org
-References: <20190806213522.19859-1-sashal@kernel.org>
- <20190806213522.19859-12-sashal@kernel.org>
- <20190807094759.GQ28208@suse.cz>
- <20190807105126.GA14880@kroah.com>
+        id S2387826AbfHGMqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 08:46:36 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35744 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729516AbfHGMqg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 08:46:36 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x77CkX7f098472;
+        Wed, 7 Aug 2019 07:46:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565181993;
+        bh=T2NLXl4CslQEUO/eANLbzUL5EXeCfl0xC5KDxql7wMY=;
+        h=From:To:CC:Subject:Date;
+        b=buNB37VrWtcIdmnB9+r6xtWQS/Fc3fxbPDZDOv2E9VVp1LBhmO+azskp0gi9hpm00
+         33XTIixumoTuBVQuT3wzCAQPoAluNI50FpKcwpyFGzfPPgdIVB1XpdOhuV+V1ZVMep
+         i3l63jTREMMQHqqLDuSXGjdDmn+G8OQTTd4XArGY=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x77CkXX0018205
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Aug 2019 07:46:33 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 7 Aug
+ 2019 07:46:33 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 7 Aug 2019 07:46:33 -0500
+Received: from gomoku.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x77CkVoH016945;
+        Wed, 7 Aug 2019 07:46:31 -0500
+From:   Tero Kristo <t-kristo@ti.com>
+To:     <linux-omap@vger.kernel.org>, <tony@atomide.com>, <s-anna@ti.com>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] bus: ti-sysc: fixes for reset handling
+Date:   Wed, 7 Aug 2019 15:46:02 +0300
+Message-ID: <1565181965-21039-1-git-send-email-t-kristo@ti.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807105126.GA14880@kroah.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 12:51:26PM +0200, Greg KH wrote:
-> On Wed, Aug 07, 2019 at 11:47:59AM +0200, David Sterba wrote:
-> > On Tue, Aug 06, 2019 at 05:35:00PM -0400, Sasha Levin wrote:
-> > > From: Filipe Manana <fdmanana@suse.com>
-> > > 
-> > > [ Upstream commit a6d155d2e363f26290ffd50591169cb96c2a609e ]
-> > > 
-> > > Fixes: 03628cdbc64db6 ("Btrfs: do not start a transaction during fiemap")
-> > 
-> > The commit is a regression fix during the 5.2 cycle, how it could end up
-> > in a 4.19 stable candidate?
-> > 
-> > $ git describe  03628cdbc64db6
-> > v5.1-rc7-201-g03628cdbc64d
-> > 
-> > $ git describe --contains 03628cdbc64db6
-> > v5.2-rc1~163^2~26
-> > 
-> > And it does not belong to 5.2 either, git cherry-pick on top of 5.2
-> > fails.
-> > 
-> > I think such sanity check can be done automatically so the patches don't
-> > accidentally land in trees where don't belong.
-> 
-> 
-> Commit 03628cdbc64d ("Btrfs: do not start a transaction during fiemap")
-> was tagged for the stable trees, and ended up in the following releases:
-> 	4.14.121 4.19.45 5.0.18 5.1.4 5.2
-> so yes, it does need to go back to all of those locations if this patch
-> really does fix the issue there.
+Hi,
 
-You're right, I did not notice the CC tag when examining the patches.
+Here are a few patches to fix reset handling for ti-sysc bus driver.
+Without these, the iommu won't be working properly at least.
+
+-Tero
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
