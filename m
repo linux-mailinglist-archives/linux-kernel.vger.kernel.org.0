@@ -2,84 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9340584567
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 274DE84573
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:12:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfHGHKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 03:10:39 -0400
-Received: from ajax.cs.uga.edu ([128.192.4.6]:45264 "EHLO ajax.cs.uga.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727914AbfHGHKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 03:10:39 -0400
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-        (authenticated bits=0)
-        by ajax.cs.uga.edu (8.14.4/8.14.4) with ESMTP id x777AajM061015
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Wed, 7 Aug 2019 03:10:37 -0400
-Received: by mail-lj1-f179.google.com with SMTP id t28so84456541lje.9
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 00:10:37 -0700 (PDT)
-X-Gm-Message-State: APjAAAVXiswFLtgrBOM7Cr9rOrI/6JBvC8YDNlN5tAGH0wbv+se3XcRS
-        nZNHktfKJeOMjitHOPLolfOZx/UbCtnBnpcGUgk=
-X-Google-Smtp-Source: APXvYqwTvZanyI0YZ9uQfaH1U+yBWhv+RJAwn5jJTqCGs8BDn7kVZC6l4H9aknl4nymRLzxWK49L4da/xdA1y1Rxk4s=
-X-Received: by 2002:a2e:8892:: with SMTP id k18mr4034234lji.239.1565161835957;
- Wed, 07 Aug 2019 00:10:35 -0700 (PDT)
+        id S1727923AbfHGHMi convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 7 Aug 2019 03:12:38 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:44791 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbfHGHMi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 03:12:38 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x777CY7e001852, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x777CY7e001852
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 7 Aug 2019 15:12:34 +0800
+Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
+ RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0439.000; Wed, 7 Aug
+ 2019 15:12:33 +0800
+From:   Hayes Wang <hayeswang@realtek.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        nic_swsd <nic_swsd@realtek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Subject: RE: [PATCH net-next 5/5] r8152: change rx_frag_head_sz and rx_max_agg_num dynamically
+Thread-Topic: [PATCH net-next 5/5] r8152: change rx_frag_head_sz and
+ rx_max_agg_num dynamically
+Thread-Index: AQHVTEjAduvqUw50CkySh6Q/0oky4abuKLuAgAEYyLA=
+Date:   Wed, 7 Aug 2019 07:12:32 +0000
+Message-ID: <0835B3720019904CB8F7AA43166CEEB2F18D06C5@RTITMBSVM03.realtek.com.tw>
+References: <1394712342-15778-289-albertk@realtek.com>
+        <1394712342-15778-294-albertk@realtek.com>
+ <20190806151007.75a8dd2c@cakuba.netronome.com>
+In-Reply-To: <20190806151007.75a8dd2c@cakuba.netronome.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.177.214]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-Date:   Wed, 7 Aug 2019 03:09:59 -0400
-X-Gmail-Original-Message-ID: <CAAa=b7dkPm4JqF4_cPwJo_6_aoobr6OyezCb2A9-aAFHNWffeQ@mail.gmail.com>
-Message-ID: <CAAa=b7dkPm4JqF4_cPwJo_6_aoobr6OyezCb2A9-aAFHNWffeQ@mail.gmail.com>
-Subject: [PATCH v2] ALSA: pcm: fix multiple memory leak bugs
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In hiface_pcm_init(), 'rt' is firstly allocated through kzalloc(). Later
-on, hiface_pcm_init_urb() is invoked to initialize 'rt->out_urbs[i]'. In
-hiface_pcm_init_urb(), 'rt->out_urbs[i].buffer' is allocated through
-kzalloc().  However, if hiface_pcm_init_urb() fails, both 'rt' and
-'rt->out_urbs[i].buffer' are not deallocated, leading to memory leak bugs.
-Also, 'rt->out_urbs[i].buffer' is not deallocated if snd_pcm_new() fails.
+Jakub Kicinski [mailto:jakub.kicinski@netronome.com]
+> Sent: Wednesday, August 07, 2019 6:10 AM
+[...]
+> Please don't expose those via sysfs. Ethtool's copybreak and descriptor
+> count should be applicable here, I think.
 
-To fix the above issues, free 'rt' and 'rt->out_urbs[i].buffer'.
+Excuse me.
+I find struct ethtool_tunable for ETHTOOL_RX_COPYBREAK.
+How about the descriptor count?
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
----
- sound/usb/hiface/pcm.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/sound/usb/hiface/pcm.c b/sound/usb/hiface/pcm.c
-index 14fc1e1..9b132aa 100644
---- a/sound/usb/hiface/pcm.c
-+++ b/sound/usb/hiface/pcm.c
-@@ -599,12 +599,18 @@ int hiface_pcm_init(struct hiface_chip *chip, u8
-extra_freq)
-        for (i = 0; i < PCM_N_URBS; i++) {
-                ret = hiface_pcm_init_urb(&rt->out_urbs[i], chip, OUT_EP,
-                                    hiface_pcm_out_urb_handler);
--               if (ret < 0)
-+               if (ret < 0) {
-+                       for (; i >= 0; i--)
-+                               kfree(rt->out_urbs[i].buffer);
-+                       kfree(rt);
-                        return ret;
-+               }
-        }
+Best Regards,
+Hayes
 
-        ret = snd_pcm_new(chip->card, "USB-SPDIF Audio", 0, 1, 0, &pcm);
-        if (ret < 0) {
-+               for (i = 0; i < PCM_N_URBS; i++)
-+                       kfree(rt->out_urbs[i].buffer);
-                kfree(rt);
-                dev_err(&chip->dev->dev, "Cannot create pcm instance\n");
-                return ret;
--- 
-2.7.4
+
