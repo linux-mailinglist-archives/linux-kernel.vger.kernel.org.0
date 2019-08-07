@@ -2,91 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B3D8425A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 408F38425D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbfHGCSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 22:18:42 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45357 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729411AbfHGCSm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:18:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r1so42548951pfq.12
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 19:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UHZy5nJsksJEcPtr5L7F2iEN0udwduLxq7fwXL+vH/4=;
-        b=e5KWOZoHXgR5rR84Aj4RJbMiTvbOaTgc1/UvC8lGLTUL4a6BSCoyDyHpbwaHLEd4RG
-         2jVQpJknJvKXhZ0ewXvPbFeDFCuhqygS8POMPEef1ofE2+vD19OFdRbdvgWWV0rBv6iL
-         v+9lolTyzc+QoeNlxBgIBl4glae31ADxENbiKJZDK3vwrPLUVpE+xlL7CW+epI0/AWFU
-         OMxJF63YvR0rvsMDCjLv9bLyuxLm8NXDjGhq1BK4Fid2voEEzhHOXdFrEwjIfN1PYc4d
-         M3wix0cPmR4j2hjf144PArB+uornjOPJyaBlJw1LmZ9JY9btUUsHHAAezdoZdV7FWox1
-         AjdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UHZy5nJsksJEcPtr5L7F2iEN0udwduLxq7fwXL+vH/4=;
-        b=CxoE123ILcUXXXpgGY34XbAauISEkSwtl+4YG0vbMPqP69a2Mth/itAiHQGT06R49Y
-         Bc/TAlF2NIg0yrDzh/b5Dvbh/86hzLaeQe5o+7K81JOPnj6dX2jep60WwmFhBxTh+Us/
-         NRfnai9RD4ehQJtBIRdV8gUET/2YWmBHJpnoYJ0BCIR08sb8jtMbu17M3tnWAM4JKIe+
-         8lZyc7GdwkjIXm5hTh1rVWnd0fHeQngYKzb7fuwrJz2DIp+Ju3ujBhEWqPrFeZ7AEqUw
-         Fnzast8no8eJFtE83FyxoAuSUDC12cOPtBsuz2omu0wmKOUW7pkIXQpBxqCj1NXU9feM
-         ueYg==
-X-Gm-Message-State: APjAAAUcjZDL5Vml5Y5siJcMSyaLYbjfBl00hmf+FFKI2N6+a8ls/oz3
-        niLi3PhWHEHWiFsJpUb9AcAWoQ==
-X-Google-Smtp-Source: APXvYqz/rfhUPSQwiLYSlyou57kBJEt+Y1RYLdnML5Bhn+AFjOeIW4sZ66YFBsRKbaDFflmwd4879Q==
-X-Received: by 2002:a17:90a:c20e:: with SMTP id e14mr6436454pjt.0.1565144321621;
-        Tue, 06 Aug 2019 19:18:41 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 65sm97278838pgf.30.2019.08.06.19.18.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 19:18:40 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 19:18:38 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: [PATCH] soc: qcom: socinfo: Annotate switch cases with fall
- through
-Message-ID: <20190807021838.GI30636@minitux>
-References: <20190807100803.63007737@canb.auug.org.au>
- <20190807012457.16820-1-bjorn.andersson@linaro.org>
- <20190807115043.2ff429c1@canb.auug.org.au>
+        id S1729615AbfHGCUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 22:20:19 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51352 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728994AbfHGCUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 22:20:19 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DC2CF9F66E5EC9A6F118;
+        Wed,  7 Aug 2019 10:04:06 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 7 Aug 2019
+ 10:04:04 +0800
+Subject: Re: [PATCH v2] f2fs: Fix indefinite loop in f2fs_gc()
+To:     Sahitya Tummala <stummala@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <linux-kernel@vger.kernel.org>
+References: <1565090396-7263-1-git-send-email-stummala@codeaurora.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <8766875c-1e35-22dc-48d2-45b6776e4f38@huawei.com>
+Date:   Wed, 7 Aug 2019 10:04:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807115043.2ff429c1@canb.auug.org.au>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <1565090396-7263-1-git-send-email-stummala@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 06 Aug 18:50 PDT 2019, Stephen Rothwell wrote:
+Hi Sahitya,
 
-> Hi Bjorn,
+On 2019/8/6 19:19, Sahitya Tummala wrote:
+> Policy - Foreground GC, LFS and greedy GC mode.
 > 
-> On Tue,  6 Aug 2019 18:24:57 -0700 Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
-> >
-> >  				   qcom_socinfo->dbg_root,
-> >  				   &qcom_socinfo->info.raw_device_num);
-> > +		/* Fall through */
-> >  	case SOCINFO_VERSION(0, 11):
-> > +		/* Fall through */
-> >  	case SOCINFO_VERSION(0, 10):
-> > +		/* Fall through */
-> >  	case SOCINFO_VERSION(0, 9):
+> Under this policy, f2fs_gc() loops forever to GC as it doesn't have
+> enough free segements to proceed and thus it keeps calling gc_more
+> for the same victim segment.  This can happen if the selected victim
+> segment could not be GC'd due to failed blkaddr validity check i.e.
+> is_alive() returns false for the blocks set in current validity map.
 > 
-> I don't think you need the comment between consecutive "case"s - just
-> where there is actual code.
+> Fix this by keeping track of such invalid segments and skip those
+> segments for selection in get_victim_by_default() to avoid endless
+> GC loop under such error scenarios.
 > 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> ---
+> v2: fix as per Chao's suggestion to handle this error case
+> 
+>  fs/f2fs/gc.c      | 15 ++++++++++++++-
+>  fs/f2fs/segment.c |  5 +++++
+>  fs/f2fs/segment.h |  3 +++
+>  3 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 8974672..321a78a 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -382,6 +382,14 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  			nsearched++;
+>  		}
+>  
+> +		/*
+> +		 * skip selecting the invalid segno (that is failed due to block
+> +		 * validity check failed during GC) to avoid endless GC loop in
+> +		 * such cases.
+> +		 */
+> +		if (test_bit(segno, sm->invalid_segmap))
+> +			goto next;
+> +
+>  		secno = GET_SEC_FROM_SEG(sbi, segno);
+>  
+>  		if (sec_usage_check(sbi, secno))
+> @@ -975,6 +983,7 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>  	int off;
+>  	int phase = 0;
+>  	int submitted = 0;
+> +	struct sit_info *sit_i = SIT_I(sbi);
+>  
+>  	start_addr = START_BLOCK(sbi, segno);
+>  
+> @@ -1008,8 +1017,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>  		}
+>  
+>  		/* Get an inode by ino with checking validity */
+> -		if (!is_alive(sbi, entry, &dni, start_addr + off, &nofs))
+> +		if (!is_alive(sbi, entry, &dni, start_addr + off, &nofs)) {
+> +			if (!test_and_set_bit(segno, sit_i->invalid_segmap))
+> +				f2fs_err(sbi, "invalid blkaddr %u in seg %u is found\n",
+> +						start_addr + off, segno);
 
-You're right, will respin the patch.
+Oh, there is some normal cases in is_alive(), such as f2fs_get_node_page() or
+f2fs_get_node_info() failure due to no memory, we should bypass such cases. I
+guess something like this:
+
+if (source_blkaddr != blkaddr) {
+	if (unlikely(check_valid_map(sbi, segno, off))) {
+		if (!test_and_set_bit(segno, sit_i->invalid_segmap)) {
+			f2fs_err(sbi, "invalid blkaddr %u in seg %u is found\n",
+				start_addr + off, segno);
+			set_sbi_flag(sbi, SBI_NEED_FSCK);
+		}
+	}
+	return false;
+}
+
+I think this will be safe to call check_valid_map(), because there should be no
+race in between is_alive() and update_sit_entry() from all paths due to node
+page lock dependence.
+
+One more concern is should we use this under CONFIG_F2FS_CHECK_FS? If there is
+actually such a bug can cause data inconsistency, we'd better find the root
+cause in debug version.
 
 Thanks,
-Bjorn
+
+>  			continue;
+> +		}
+>  
+>  		if (phase == 2) {
+>  			f2fs_ra_node_page(sbi, dni.ino);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index a661ac3..d45a1d3 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -4017,6 +4017,10 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+>  		return -ENOMEM;
+>  #endif
+>  
+> +	sit_i->invalid_segmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
+> +	if (!sit_i->invalid_segmap)
+> +		return -ENOMEM;
+> +
+>  	/* init SIT information */
+>  	sit_i->s_ops = &default_salloc_ops;
+>  
+> @@ -4518,6 +4522,7 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+>  #ifdef CONFIG_F2FS_CHECK_FS
+>  	kvfree(sit_i->sit_bitmap_mir);
+>  #endif
+> +	kvfree(sit_i->invalid_segmap);
+>  	kvfree(sit_i);
+>  }
+>  
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index b746028..bc5dbe8 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -246,6 +246,9 @@ struct sit_info {
+>  	unsigned long long min_mtime;		/* min. modification time */
+>  	unsigned long long max_mtime;		/* max. modification time */
+>  
+> +	/* list of segments to be ignored by GC in case of errors */
+> +	unsigned long *invalid_segmap;
+> +
+>  	unsigned int last_victim[MAX_GC_POLICY]; /* last victim segment # */
+>  };
+>  
+> 
