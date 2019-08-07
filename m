@@ -2,165 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24E9A85210
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D090085217
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:30:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389029AbfHGR3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 13:29:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388701AbfHGR3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 13:29:10 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48C7322305;
-        Wed,  7 Aug 2019 17:29:08 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hvPkJ-0007zy-De; Wed, 07 Aug 2019 13:29:07 -0400
-Message-Id: <20190807172907.310138647@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 07 Aug 2019 13:28:28 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Jiping Ma <jiping.ma2@windriver.com>, mingo@redhat.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2 v2] tracing: Document the stack trace algorithm in the comments
-References: <20190807172826.352574408@goodmis.org>
+        id S2389127AbfHGRaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 13:30:16 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40658 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389025AbfHGRaP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 13:30:15 -0400
+Received: by mail-ot1-f65.google.com with SMTP id l15so50220558oth.7
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 10:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GvSVwyjYkUWZmzb2UwP5yi6JZ1ykYGY6rFaP7/aYTLo=;
+        b=FffiqU5+eIuv8kGlzf37a45hctKBFrPl36bD6mU5CnzC9YL5qpM893c3kSRhakuQZQ
+         X4takvwHuxy5NPQWSrC6jaQkzchWaUx1B2uc3JsY5zG+8FLgsHbhVsLvlRlGDAQ4kKoH
+         5jmnc8EUa0XC26IRhxOfNVAFjlUJkw0FvWnMQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GvSVwyjYkUWZmzb2UwP5yi6JZ1ykYGY6rFaP7/aYTLo=;
+        b=ufmMEPdkhkwlTQqXnOHhB3LpsnNDp42MsZo2UTZwiirB9pWCbmbrdxODhdzTtuFEss
+         NmhXISdIBaD0SkCkacY6OK8UiJZB8mkCVwx/q7XOG9NA6XsulfoRSNu3T0rs4DGqh3l4
+         CAF8F3lbgvtmuDYd+tuCnrCH2nzeaw3mAn8nEChG+tYBYYEHVzo+H7YTxTFCuQnz2x+h
+         U4gu3pOOpaeYIqpNEsKJiFThLoUWSABYI3D/nuHxZPSfSHjU+nm88GOhS40IP6tc4qoZ
+         xe4D6mZIrfd4PsAjq1T2PfMLGbsn0kWyKDTUn20GUoyeG88T67fsiQ4aUj/4rPNUVIl/
+         YX1A==
+X-Gm-Message-State: APjAAAWs9s3TPhWGLENvPVZMIepHyTMBuv5jP3qBNTwflPoZbWzwUoU+
+        CbkE1QG1oSNr1X5ePWdztHSp45qIFpJyckpDfhnzJw==
+X-Google-Smtp-Source: APXvYqw7RRBjKPo7ZfZEtmV59ny/ac5jMKhz6wAq19P1RhtP8uwSeSEl2cXGsfsujsBrMkrSAoT5zOfXD+sPwaeHIv8=
+X-Received: by 2002:a6b:90c1:: with SMTP id s184mr10120928iod.244.1565199015080;
+ Wed, 07 Aug 2019 10:30:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+References: <20190805211451.20176-1-robdclark@gmail.com> <20190806084821.GA17129@lst.de>
+ <CAJs_Fx6eh1w7c=crMoD5XyEOMzP6orLhqUewErE51cPGYmObBQ@mail.gmail.com>
+ <20190806143457.GF475@lakrids.cambridge.arm.com> <CAJs_Fx4h6SWGmDTLBnV4nmWUFAs_Ge1inxd-dW9aDKgKqmc1eQ@mail.gmail.com>
+ <20190807123807.GD54191@lakrids.cambridge.arm.com> <CAJs_Fx5xU2-dn3iOVqWTzAjpTaQ8BBNP_Gn_iMc-eJpOX+iXoQ@mail.gmail.com>
+ <20190807164958.GA44765@lakrids.cambridge.arm.com>
+In-Reply-To: <20190807164958.GA44765@lakrids.cambridge.arm.com>
+From:   Rob Clark <robdclark@chromium.org>
+Date:   Wed, 7 Aug 2019 10:30:04 -0700
+Message-ID: <CAJs_Fx71T=kJEgt28TWqzw+jOahSbLQynCg83+szQW7op4xBkQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm: add cache support for arm64
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Wed, Aug 7, 2019 at 9:50 AM Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> On Wed, Aug 07, 2019 at 09:15:54AM -0700, Rob Clark wrote:
+> > On Wed, Aug 7, 2019 at 5:38 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> > >
+> > > On Tue, Aug 06, 2019 at 09:31:55AM -0700, Rob Clark wrote:
+> > > > On Tue, Aug 6, 2019 at 7:35 AM Mark Rutland <mark.rutland@arm.com> wrote:
+> > > > >
+> > > > > On Tue, Aug 06, 2019 at 07:11:41AM -0700, Rob Clark wrote:
+> > > > > > On Tue, Aug 6, 2019 at 1:48 AM Christoph Hellwig <hch@lst.de> wrote:
+> > > > > > >
+> > > > > > > This goes in the wrong direction.  drm_cflush_* are a bad API we need to
+> > > > > > > get rid of, not add use of it.  The reason for that is two-fold:
+> > > > > > >
+> > > > > > >  a) it doesn't address how cache maintaince actually works in most
+> > > > > > >     platforms.  When talking about a cache we three fundamental operations:
+> > > > > > >
+> > > > > > >         1) write back - this writes the content of the cache back to the
+> > > > > > >            backing memory
+> > > > > > >         2) invalidate - this remove the content of the cache
+> > > > > > >         3) write back + invalidate - do both of the above
+> > > > > >
+> > > > > > Agreed that drm_cflush_* isn't a great API.  In this particular case
+> > > > > > (IIUC), I need wb+inv so that there aren't dirty cache lines that drop
+> > > > > > out to memory later, and so that I don't get a cache hit on
+> > > > > > uncached/wc mmap'ing.
+> > > > >
+> > > > > Is there a cacheable alias lying around (e.g. the linear map), or are
+> > > > > these addresses only mapped uncached/wc?
+> > > > >
+> > > > > If there's a cacheable alias, performing an invalidate isn't sufficient,
+> > > > > since a CPU can allocate a new (clean) entry at any point in time (e.g.
+> > > > > as a result of prefetching or arbitrary speculation).
+> > > >
+> > > > I *believe* that there are not alias mappings (that I don't control
+> > > > myself) for pages coming from
+> > > > shmem_file_setup()/shmem_read_mapping_page()..
+> > >
+> > > AFAICT, that's regular anonymous memory, so there will be a cacheable
+> > > alias in the linear/direct map.
+> >
+> > tbh, I'm not 100% sure whether there is a cacheable alias, or whether
+> > any potential linear map is torn down.
+>
+> I'm fairly confident that the linear/direct map cacheable alias is not
+> torn down when pages are allocated. The gneeric page allocation code
+> doesn't do so, and I see nothing the shmem code to do so.
+>
+> For arm64, we can tear down portions of the linear map, but that has to
+> be done explicitly, and this is only possible when using rodata_full. If
+> not using rodata_full, it is not possible to dynamically tear down the
+> cacheable alias.
 
-As the max stack tracer algorithm is not that easy to understand from the
-code, add comments that explain the algorithm and mentions how
-ARCH_RET_ADDR_AFTER_LOCAL_VARS affects it.
+So, we do end up using GFP_HIGHUSER, which appears to get passed thru
+when shmem gets to the point of actually allocating pages.. not sure
+if that just ends up being a hint, or if it guarantees that we don't
+get something in the linear map.
 
-Link: http://lkml.kernel.org/r/20190806123455.487ac02b@gandalf.local.home
+(Bear with me while I "page" this all back in.. last time I dug thru
+the shmem code was probably pre-armv8, or at least before I had any
+armv8 hw)
 
-Suggested-by: Joel Fernandes <joel@joelfernandes.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_stack.c | 98 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
-
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 40e4a88eea8f..f94a2fc567de 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -53,6 +53,104 @@ static void print_max_stack(void)
- 	}
- }
- 
-+/*
-+ * The stack tracer looks for a maximum stack at each call from a function. It
-+ * registers a callback from ftrace, and in that callback it examines the stack
-+ * size. It determines the stack size from the variable passed in, which is the
-+ * address of a local variable in the stack_trace_call() callback function.
-+ * The stack size is calculated by the address of the local variable to the top
-+ * of the current stack. If that size is smaller than the currently saved max
-+ * stack size, nothing more is done.
-+ *
-+ * If the size of the stack is greater than the maximum recorded size, then the
-+ * following algorithm takes place.
-+ *
-+ * For architectures (like x86) that store the function's return address before
-+ * saving the function's local variables, the stack will look something like
-+ * this:
-+ *
-+ *   [ top of stack ]
-+ *    0: sys call entry frame
-+ *   10: return addr to entry code
-+ *   11: start of sys_foo frame
-+ *   20: return addr to sys_foo
-+ *   21: start of kernel_func_bar frame
-+ *   30: return addr to kernel_func_bar
-+ *   31: [ do trace stack here ]
-+ *
-+ * The save_stack_trace() is called returning all the functions it finds in the
-+ * current stack. Which would be (from the bottom of the stack to the top):
-+ *
-+ *   return addr to kernel_func_bar
-+ *   return addr to sys_foo
-+ *   return addr to entry code
-+ *
-+ * Now to figure out how much each of these functions' local variable size is,
-+ * a search of the stack is made to find these values. When a match is made, it
-+ * is added to the stack_dump_trace[] array. The offset into the stack is saved
-+ * in the stack_trace_index[] array. The above example would show:
-+ *
-+ *        stack_dump_trace[]        |   stack_trace_index[]
-+ *        ------------------        +   -------------------
-+ *  return addr to kernel_func_bar  |          30
-+ *  return addr to sys_foo          |          20
-+ *  return addr to entry            |          10
-+ *
-+ * The print_max_stack() function above, uses these values to print the size of
-+ * each function's portion of the stack.
-+ *
-+ *  for (i = 0; i < nr_entries; i++) {
-+ *     size = i == nr_entries - 1 ? stack_trace_index[i] :
-+ *                    stack_trace_index[i] - stack_trace_index[i+1]
-+ *     print "%d %d %d %s\n", i, stack_trace_index[i], size, stack_dump_trace[i]);
-+ *  }
-+ *
-+ * The above shows
-+ *
-+ *     depth size  location
-+ *     ----- ----  --------
-+ *  0    30   10   kernel_func_bar
-+ *  1    20   10   sys_foo
-+ *  2    10   10   entry code
-+ *
-+ * Now for architectures that might save the return address after the functions
-+ * local variables (saving the link register before calling nested functions),
-+ * this will cause the stack to look a little different:
-+ *
-+ * [ top of stack ]
-+ *  0: sys call entry frame
-+ * 10: start of sys_foo_frame
-+ * 19: return addr to entry code << lr saved before calling kernel_func_bar
-+ * 20: start of kernel_func_bar frame
-+ * 29: return addr to sys_foo_frame << lr saved before calling next function
-+ * 30: [ do trace stack here ]
-+ *
-+ * Although the functions returned by save_stack_trace() may be the same, the
-+ * placement in the stack will be different. Using the same algorithm as above
-+ * would yield:
-+ *
-+ *        stack_dump_trace[]        |   stack_trace_index[]
-+ *        ------------------        +   -------------------
-+ *  return addr to kernel_func_bar  |          30
-+ *  return addr to sys_foo          |          29
-+ *  return addr to entry            |          19
-+ *
-+ * Where the mapping is off by one:
-+ *
-+ *   kernel_func_bar stack frame size is 29 - 19 not 30 - 29!
-+ *
-+ * To fix this, if the architecture sets ARCH_RET_ADDR_AFTER_LOCAL_VARS the
-+ * values in stack_trace_index[] are shifted by one to and the number of
-+ * stack trace entries is decremented by one.
-+ *
-+ *        stack_dump_trace[]        |   stack_trace_index[]
-+ *        ------------------        +   -------------------
-+ *  return addr to kernel_func_bar  |          29
-+ *  return addr to sys_foo          |          19
-+ *
-+ * Although the entry function is not displayed, the first function (sys_foo)
-+ * will still include the stack size of it.
-+ */
- static void check_stack(unsigned long ip, unsigned long *stack)
- {
- 	unsigned long this_size, flags; unsigned long *p, *top, *start;
--- 
-2.20.1
-
-
+BR,
+-R
