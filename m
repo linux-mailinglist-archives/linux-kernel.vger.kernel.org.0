@@ -2,249 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD9C84D94
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ABB684D9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388417AbfHGNin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:38:43 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42924 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388240AbfHGNim (ORCPT
+        id S2388449AbfHGNjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:39:00 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36456 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388338AbfHGNjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:38:42 -0400
-Received: by mail-ed1-f68.google.com with SMTP id v15so86303715eds.9
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 06:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yX9lEy1eIykEiCGi0dNbf5cBImnr6fHn7uE5y9QaXtA=;
-        b=JDWBeuiQgQUJwUvfYvsB7+KP/t2cGBTp9ViMOgIN2F4oVmgaH/syhCZp6qVdbZ5SmU
-         7YFOai3LfF4DqkvVP4RfB15O2vEINB4a2Sxmorr+4Ts9PbdLjEni8LGkxuEfqIiZaGe4
-         eAFt+9Rc+G5o7j6MG634S2wXOM4B9hmGcgu1U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yX9lEy1eIykEiCGi0dNbf5cBImnr6fHn7uE5y9QaXtA=;
-        b=c2HVp6RFMeeE7mDfHQYnoM6k0CTs4Pc6iHc3jeoYeLOavl5us9RiY/YUX4Kw1pEHSY
-         cTGr75wH2U+xjIVzoeFQ2E5CAGxY1JameR4GM7+2FDjVEgexteFHVrZ/Mi/dyxItRQV0
-         dT40yX1KO7DbeEgx7VPuSbce0kaOOg6CpfyQ8t2qYbuCyqsqta8qGz5Mr2cZISprLMbj
-         7jLg4Vwkjd2vVUAGKwCYr0hqT6/z+GwpTk+KJjGA4sJLLtplrSdXUpinYw+fQVv1jYAA
-         kJHJL0JdJNYxkU7X/I9TkSBwM5F5+rbdejWCZ9QwXtiazsn+OGBjQdEkxTxIXGZXi3La
-         cJMg==
-X-Gm-Message-State: APjAAAXmsgc0Tx4DylxTX2LSu2GvRPEKI57GfGoPf8yXZCCj2TiMX/wD
-        HkLIpLFhurU3Pe8rHcrNgCy7JADRjqT7gw==
-X-Google-Smtp-Source: APXvYqwgRaWsQDAVgrq81OTKEkEoliDhBYn+ZFGl7tN3nxZgRmcey7xCFWqHACfG+7YPIHB+VXY06g==
-X-Received: by 2002:aa7:d5cf:: with SMTP id d15mr9803633eds.67.1565185120319;
-        Wed, 07 Aug 2019 06:38:40 -0700 (PDT)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
-        by smtp.gmail.com with ESMTPSA id d4sm20809563edb.4.2019.08.07.06.38.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 06:38:37 -0700 (PDT)
-Received: by mail-wm1-f46.google.com with SMTP id p74so79609wme.4
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 06:38:37 -0700 (PDT)
-X-Received: by 2002:a1c:407:: with SMTP id 7mr6104wme.113.1565185117043; Wed,
- 07 Aug 2019 06:38:37 -0700 (PDT)
+        Wed, 7 Aug 2019 09:39:00 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190807133857euoutp02ed7b1f47cf247230845af586ed381409~4p5ccg4ds1779217792euoutp02O
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2019 13:38:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190807133857euoutp02ed7b1f47cf247230845af586ed381409~4p5ccg4ds1779217792euoutp02O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1565185138;
+        bh=EmslgonStTRrL/u4P7UDkmcHxhjWmImBf/o0FvYqLms=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=WQ2DUC/32VSo1KwDGi1q+kQuFkP+bYlB5kgPDRFUjpBbjF3GOaHbd3Y8M3hnKffoS
+         hITqhtIq1lSh3ewezziW+aL1rB7g0vM6VE240GvDTd7V5ytK4mbl8k1J00PkvI/qCF
+         mVlF75+rkMX0DAEyMHqJzW3dvJF2Q1Wxz4C+ITsU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190807133857eucas1p2f55ef233cdb6008e414af50a35ceaee4~4p5bktSz61100111001eucas1p2M;
+        Wed,  7 Aug 2019 13:38:57 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1A.F6.04374.074DA4D5; Wed,  7
+        Aug 2019 14:38:56 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190807133855eucas1p1cab425b791262e8dee1b17cbe8b1b3da~4p5amdPUC1968119681eucas1p1J;
+        Wed,  7 Aug 2019 13:38:55 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190807133855eusmtrp144ac7bade6c0fb9ef41271cd4c3a5394~4p5aXxtZl3034030340eusmtrp1x;
+        Wed,  7 Aug 2019 13:38:55 +0000 (GMT)
+X-AuditID: cbfec7f5-4f7ff70000001116-04-5d4ad470f051
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 76.AE.04166.F64DA4D5; Wed,  7
+        Aug 2019 14:38:55 +0100 (BST)
+Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190807133854eusmtip239525b74c72cfe59383812ea79a8ef1a~4p5ZqloQ71919719197eusmtip2b;
+        Wed,  7 Aug 2019 13:38:54 +0000 (GMT)
+From:   k.konieczny@partner.samsung.com
+To:     k.konieczny@partner.samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v5 0/4] add coupled regulators for Exynos5422/5800
+Date:   Wed,  7 Aug 2019 15:38:34 +0200
+Message-Id: <20190807133838.14678-1-k.konieczny@partner.samsung.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20181017075242.21790-1-henryhsu@chromium.org> <CAAFQd5AL2CnnWLk+i133RRa36HTa0baFkezRhpTXf9YP0DSF1Q@mail.gmail.com>
- <CAHNYxRwbSSp02Zr4a1z5gh0q6cHUUDnZCqRQU7QtP8LMe3Jp2A@mail.gmail.com>
- <1610184.U7oo9Z4Yep@avalon> <CAAFQd5A7k2VgmawF-x=AcKhJiG-shrJiCP4Tu9054J0eE91+9w@mail.gmail.com>
- <d79e0857-c6ae-9e57-52e2-e596864a68f8@metafoo.de> <CAAFQd5C_QucJiZMUgCpztC52Mi3p6HDThHNkcNOm9C+SZUDDYQ@mail.gmail.com>
- <20190313012451.GR891@pendragon.ideasonboard.com> <CAAFQd5DtSD3TrXz8jaFnmBgpRQ6Gnq+LKxyY+LNZrqiM1pxNVA@mail.gmail.com>
- <CAAFQd5DreQkUsG9PnUxWMUDo6c+AxQMHm4ErZQFPjGqJz=wmCg@mail.gmail.com> <7c76f7ce-57ca-d7d5-fd81-70607f97b792@ideasonboard.com>
-In-Reply-To: <7c76f7ce-57ca-d7d5-fd81-70607f97b792@ideasonboard.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 7 Aug 2019 22:38:24 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DNA=ixWqq584r0goNitHs8bb7-h27jNGD_DMyt6jHp5A@mail.gmail.com>
-Message-ID: <CAAFQd5DNA=ixWqq584r0goNitHs8bb7-h27jNGD_DMyt6jHp5A@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Add boottime clock support
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Alexandru Stan <amstan@chromium.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Heng-Ruey Hsu <henryhsu@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ricky Liang <jcliang@chromium.org>, linux-iio@vger.kernel.org,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        =?UTF-8?B?SnVuZ28gTGluICjmnpfmmI7kv4op?= <jungo.lin@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHKsWRmVeSWpSXmKPExsWy7djPc7oFV7xiDS6c1rLYOGM9q8X1L89Z
+        LeYfOcdq0bfvP6NF/+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbP43HuE0WLG+X1MFmuP3GW3
+        WHr9IpPF7cYVbBZvfpxlsmjde4Td4t+1jSwWmx8cY3MQ8lgzbw2jx6ZVnWwem5fUexx8t4fJ
+        o2/LKkaP4ze2M3l83iQXwB7FZZOSmpNZllqkb5fAlfHgwTWWgqXCFVdbVrE2MB7h72Lk5JAQ
+        MJFYtuIpYxcjF4eQwApGiUObTjCCJIQEvjBKtPwOg0h8ZpR40DoHKMEB1rHkEBdEfDmjxPfN
+        i9ghHKCG2y/OsYJ0swmoSmyZ8ZIdxBYRUJaYfG86M0gRs8BPFokNlzeCJYQFnCTW7HzGBmKz
+        ADVMWHMcbDWvgIvE9C/LWCDuk5fo3LGbBSIuKHFy5hMwmxko3rx1NthQCYFr7BK3Zq1mg2hw
+        kdj+4iJUs7DEq+Nb2CFsGYnTk3ug4uUSTxf2sUM0twD91v4RKmEtcfj4RVaQP5kFNCXW79KH
+        CDtK7Dm2hBXifT6JG28FIW7gk5i0DeQxkDCvREebEES1rsS8/2dYIWxpia7/66BsD4nPvWeh
+        oRsrce9bB8sERoVZSD6bheSzWQg3LGBkXsUonlpanJueWmycl1quV5yYW1yal66XnJ+7iRGY
+        6k7/O/51B+O+P0mHGAU4GJV4eBkueMUKsSaWFVfmHmKU4GBWEuG9V+YZK8SbklhZlVqUH19U
+        mpNafIhRmoNFSZy3muFBtJBAemJJanZqakFqEUyWiYNTqoFxo+Omk8+e8PcvbnB5pXjZqO35
+        r9WzXzYZlX+LlL677dSi/1kH3k9fkLLX8Gfz0s/7/H6VaVqzvDTcWZURv2zr9dnmLR3fb7wS
+        F47ysI30vfT8l9xTPaXiGpmayTorerYtTVILZC2z01dU2/LJfWJa8q2aBZG6np86au0/qp00
+        Xi55fb3oGu+pSizFGYmGWsxFxYkA7/csynEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsVy+t/xe7r5V7xiDR436lhsnLGe1eL6l+es
+        FvOPnGO16Nv3n9Gi//FrZovz5zewW5xtesNusenxNVaLy7vmsFl87j3CaDHj/D4mi7VH7rJb
+        LL1+kcniduMKNos3P84yWbTuPcJu8e/aRhaLzQ+OsTkIeayZt4bRY9OqTjaPzUvqPQ6+28Pk
+        0bdlFaPH8RvbmTw+b5ILYI/SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3
+        s0lJzcksSy3St0vQy3jw4BpLwVLhiqstq1gbGI/wdzFycEgImEgsOcTVxcjFISSwlFFixduH
+        zF2MnEBxaYnG06uZIGxhiT/Xutggij4xSlxcuQGsiE1AVWLLjJfsILaIgLLE5HvTmUGKmAU6
+        WSVWPDnCBpIQFnCSWLPzGZjNAtQwYc1xRhCbV8BFYvqXZSwQG+QlOnfsZoGIC0qcnPkEzGYG
+        ijdvnc08gZFvFpLULCSpBYxMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQKjbNuxn5t3MF7a
+        GHyIUYCDUYmHl+GCV6wQa2JZcWXuIUYJDmYlEd57ZZ6xQrwpiZVVqUX58UWlOanFhxhNgY6d
+        yCwlmpwPTAB5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoY2SZm
+        /ODl8XX57H+SoUyEN7Sk12DpcrEsvls+J9mSHSqmT/rtsz3Au3CX55oplYrCvLvnOu1ztrOa
+        cdyD9f3ElaxV51LuLQo73rhkgjZf2oKcaxJ+GprlwXF5t/M+i85r5lg54ePlNb8vJMz7H/hj
+        nsKF6ax3vzg8nWa0uGjZ+sliEfuWvjobosRSnJFoqMVcVJwIADSoXbPIAgAA
+X-CMS-MailID: 20190807133855eucas1p1cab425b791262e8dee1b17cbe8b1b3da
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190807133855eucas1p1cab425b791262e8dee1b17cbe8b1b3da
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190807133855eucas1p1cab425b791262e8dee1b17cbe8b1b3da
+References: <CGME20190807133855eucas1p1cab425b791262e8dee1b17cbe8b1b3da@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 5:34 PM Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
->
-> Hi Tomasz,
->
-> On 06/08/2019 05:15, Tomasz Figa wrote:
-> > On Wed, Mar 13, 2019 at 11:38 AM Tomasz Figa <tfiga@chromium.org> wrote:
-> >>
-> >> On Wed, Mar 13, 2019 at 10:25 AM Laurent Pinchart
-> >> <laurent.pinchart@ideasonboard.com> wrote:
-> >>>
-> >>> Hi Tomasz,
-> >>>
-> >>> On Fri, Nov 23, 2018 at 11:46:43PM +0900, Tomasz Figa wrote:
-> >>>> On Fri, Nov 2, 2018 at 12:03 AM Lars-Peter Clausen wrote:
-> >>>>> On 11/01/2018 03:30 PM, Tomasz Figa wrote:
-> >>>>>> On Thu, Nov 1, 2018 at 11:03 PM Laurent Pinchart wrote:
-> >>>>>>> On Thursday, 18 October 2018 20:28:06 EET Alexandru M Stan wrote:
-> >>>>>>>> On Wed, Oct 17, 2018 at 9:31 PM, Tomasz Figa wrote:
-> >>>>>>>>> On Thu, Oct 18, 2018 at 5:50 AM Laurent Pinchart wrote:
-> >>>>>>>>>> On Wednesday, 17 October 2018 11:28:52 EEST Tomasz Figa wrote:
-> >>>>>>>>>>> On Wed, Oct 17, 2018 at 5:02 PM Laurent Pinchart wrote:
-> >>>>>>>>>>>> On Wednesday, 17 October 2018 10:52:42 EEST Heng-Ruey Hsu wrote:
-> >>>>>>>>>>>>> Android requires camera timestamps to be reported with
-> >>>>>>>>>>>>> CLOCK_BOOTTIME to sync timestamp with other sensor sources.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> What's the rationale behind this, why can't CLOCK_MONOTONIC work ? If
-> >>>>>>>>>>>> the monotonic clock has shortcomings that make its use impossible for
-> >>>>>>>>>>>> proper synchronization, then we should consider switching to
-> >>>>>>>>>>>> CLOCK_BOOTTIME globally in V4L2, not in selected drivers only.
-> >>>>>>>>>>>
-> >>>>>>>>>>> CLOCK_BOOTTIME includes the time spent in suspend, while
-> >>>>>>>>>>> CLOCK_MONOTONIC doesn't. I can imagine the former being much more
-> >>>>>>>>>>> useful for anything that cares about the actual, long term, time
-> >>>>>>>>>>> tracking. Especially important since suspend is a very common event on
-> >>>>>>>>>>> Android and doesn't stop the time flow there, i.e. applications might
-> >>>>>>>>>>> wake up the device to perform various tasks at necessary times.
-> >>>>>>>>>>
-> >>>>>>>>>> Sure, but this patch mentions timestamp synchronization with other
-> >>>>>>>>>> sensors, and from that point of view, I'd like to know what is wrong with
-> >>>>>>>>>> the monotonic clock if all devices use it.
-> >>>>>>>>>
-> >>>>>>>>> AFAIK the sensors mentioned there are not camera sensors, but rather
-> >>>>>>>>> things we normally put under IIO, e.g. accelerometers, gyroscopes and
-> >>>>>>>>> so on. I'm not sure how IIO deals with timestamps, but Android seems
-> >>>>>>>>> to operate in the CLOCK_BOTTIME domain. Let me add some IIO folks.
-> >>>>>>>>>
-> >>>>>>>>> Gwendal, Alexandru, do you think you could shed some light on how we
-> >>>>>>>>> handle IIO sensors timestamps across the kernel, Chrome OS and
-> >>>>>>>>> Android?
-> >>>>>>>>
-> >>>>>>>> On our devices of interest have a specialized "sensor" that comes via
-> >>>>>>>> IIO (from the EC, cros-ec-ring driver) that can be used to more
-> >>>>>>>> accurately timestamp each frame (since it's recorded with very low
-> >>>>>>>> jitter by a realtime-ish OS). In some high level userspace thing
-> >>>>>>>> (specifically the Android Camera HAL) we try to pick the best
-> >>>>>>>> timestamp from the IIO, whatever's closest to what the V4L stuff gives
-> >>>>>>>> us.
-> >>>>>>>>
-> >>>>>>>> I guess the Android convention is for sensor timestamps to be in
-> >>>>>>>> CLOCK_BOOTTIME (maybe because it likes sleeping so much). There's
-> >>>>>>>> probably no advantage to using one over the other, but the important
-> >>>>>>>> thing is that they have to be the same, otherwise the closest match
-> >>>>>>>> logic would fail.
-> >>>>>>>
-> >>>>>>> That's my understanding too, I don't think CLOCK_BOOTTIME really brings much
-> >>>>>>> benefit in this case,
-> >>>>>>
-> >>>>>> I think it does have a significant benefit. CLOCK_MONOTONIC stops when
-> >>>>>> the device is sleeping, but the sensors can still capture various
-> >>>>>> actions. We would lose the time keeping of those actions if we use
-> >>>>>> CLOCK_MONOTONIC.
->
-> That's an important distinction. If there are operations that can run
-> while the main host is in 'suspend' and still maintain "relative"
-> timestamps in any form - then time must continue during suspend.
->
->
-> >>>>>>> but it's important than all timestamps use the same
-> >>>>>>> clock. The question is thus which clock we should select. Mainline mostly uses
-> >>>>>>> CLOCK_MONOTONIC, and Android CLOCK_BOOTTIME. Would you like to submit patches
-> >>>>>>> to switch Android to CLOCK_MONOTONIC ? :-)
-> >>>>>> Is it Android using CLOCK_BOOTTIME or the sensors (IIO?). I have
-> >>>>>> almost zero familiarity with the IIO subsystem and was hoping someone
-> >>>>>> from there could comment on what time domain is used for those
-> >>>>>> sensors.
-> >>>>>
-> >>>>> IIO has the option to choose between BOOTTIME or MONOTONIC (and a few
-> >>>>> others) for the timestamp on a per device basis.
-> >>>>>
-> >>>>> There was a bit of a discussion about this a while back. See
-> >>>>> https://lkml.org/lkml/2018/7/10/432 and the following thread.
-> >>>>
-> >>>> Given that IIO supports BOOTTIME in upstream already and also the
-> >>>> important advantage of using it over MONOTONIC for systems which keep
-> >>>> capturing events during sleep, do you think we could move on with some
-> >>>> way to support it in uvcvideo or preferably V4L2 in general?
-> >>>
-> >>> I'm not opposed to that, but I don't think we should approach that from
-> >>> a UVC point of view. The issue should be addressed in V4L2, and then
-> >>> driver-specific support could be added, if needed.
->
-> Agreed, this is a V4L2 topic - not a UVC specific topic.
->
->
-> >> Yes, fully agreed. The purpose of sending this patch was just to start
-> >> the discussion on how to support this.
-> >>
-> >> Do you think something like a buffer flag called
-> >> V4L2_BUF_FLAG_TIMESTAMP_BOOTTIME that could be set by the userspace at
-> >> QBUF could work here? (That would change the timestamp flags
-> >> semantics, because it used to be just the information from the driver,
-> >> but shouldn't have any compatibility implications.) I suppose we would
-> >> also need some capability flag for querying purposes, possibly added
-> >> to the capability flags returned by REQBUFS/CREATE_BUFS?
->
-> What kind of 'compatibility' do we actually need to maintain here?
+Hi,
 
-The existing applications would expect the timestamps to come from
-CLOCK_MONOTONIC, so I believe that we can't make CLOCK_BOOTTIME the
-default.
+The main purpose of this patch series is to add coupled regulators for
+Exynos5422/5800 to keep constrain on voltage difference between vdd_arm
+and vdd_int to be at most 300mV. In exynos-bus instead of using
+regulator_set_voltage_tol() with default voltage tolerance it should be
+used regulator_set_voltage_triplet() with volatege range, and this is
+already present in opp/core.c code, so it can be reused. While at this,
+move setting regulators into opp/core.
 
-> IMO -
-> CLOCK_BOOTTIME makes much more sense globally for video, because it's
-> more representative of the temporal difference between frames captured
-> if a system goes into suspend.
->
-> If frames are captured:
->
-> A B         C D
->    <suspend>
->
-> Then I believe it would be correct for the timestamp delta between B-C
-> to be large <representative of the suspend duration/real time>
->'
+This patchset was tested on Odroid XU3.
 
-Indeed.
+The DTS coupled regulators patch depends on previous patches.
 
->
-> > Any thoughts?
->
-> Aha, there might be some gotchas around non-live sources operating
-> across suspend-resume boundaries .. so perhaps there are certainly
-> use-cases where both _MONOTONIC and _BOOTTIME have their relevance ...
->
+Changes:
+v5:
+- squashed last patch "remove exynos_bus_passive_target()" into second
+- added Acked-by to patch "correct clock enable sequence"
+v4:
+- removed "opp: core: add regulators enable and disable" from patchset
+  as it was applied by Viresh Kumar and changed cover letter
+- fix patch "devfreq: exynos-bus: correct clock enable sequence" to
+  correct order of enable/disable
+- removed unrelated changes in "devfreq: exynos-bus: convert to use
+  dev_pm_opp_set_rate()"
+- added new patch "devfreq: exynos-bus: remove exynos_bus_passive_target()"
+  as suggested by Chanwoo Choi
+v3:
+- added new exynos-bus patch to correct clock and regulator enabling
+  and disabling sequence as suggested by Chanwoo Choi
+- corrected error path in enable and improved commit message in opp/core
+- improve comment in devfreq/exynos-bus.c before devfreq_recommended_opp()
+- change cover letter as there is new patch
+- added note before Signed-off-by in 4th patch
+v2:
+- improve regulators enable/disable code in opp/core as suggested by
+  Viresh Kumar
+- add new patch for remove unused dt-bindings as suggested by Krzysztof
+  Kozlowski
 
-What would be an example of such a non-live source?
+Kamil Konieczny (3):
+  devfreq: exynos-bus: correct clock enable sequence
+  devfreq: exynos-bus: convert to use dev_pm_opp_set_rate()
+  dt-bindings: devfreq: exynos-bus: remove unused property
 
->
-> > Adding Hans and Kieran for more insight.
->
-> I think if we're talking about core-V4L2, Hans' opinion takes more
-> weight than my mumblings :-) - but overall - supporting _BOOTTIME in
-> some form sounds beneficial to me.
->
+Marek Szyprowski (1):
+  ARM: dts: exynos: add initial data for coupled regulators for
+    Exynos5422/5800
 
-Your input is very valuable. Thanks a lot! :)
+ .../bindings/devfreq/exynos-bus.txt           |   2 -
+ arch/arm/boot/dts/exynos5420.dtsi             |  34 ++--
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |   4 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |   4 +
+ arch/arm/boot/dts/exynos5800.dtsi             |  32 ++--
+ drivers/devfreq/exynos-bus.c                  | 153 +++++-------------
+ 6 files changed, 78 insertions(+), 151 deletions(-)
 
->
-> > Best regards,
-> > Tomasz
-> >
->
-> --
-> Regards
-> --
-> Kieran
+-- 
+2.22.0
+
