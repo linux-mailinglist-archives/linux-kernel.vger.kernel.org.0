@@ -2,270 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77EB485380
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 21:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B39785387
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 21:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389418AbfHGTT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 15:19:27 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:38750 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730363AbfHGTT1 (ORCPT
+        id S1730472AbfHGTXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 15:23:44 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52892 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730454AbfHGTXn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 15:19:27 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x77JJMq6018547;
-        Wed, 7 Aug 2019 14:19:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565205562;
-        bh=I5l7tZpOLVvaDo0sBDjPB0O3mDYenNENMAEUJH7tedU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=NcHhucRsHKo0wH4KS9iUq7GD/Cd8VzjMK1W0Xg/XNMGwI4FAyc1wJurAf3YIC1bhO
-         gr80njb6TeM/mDIdAvCyou469DU5xhGpiG5j9UvJpVGUKek6bcFNN7zQRP4eSQbmrO
-         SsFQHKlaWHXXMjpOCipQF43lYZB0lLDhDzZdsr9Q=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x77JJMNi004877
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 7 Aug 2019 14:19:22 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 7 Aug
- 2019 14:19:22 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 7 Aug 2019 14:19:22 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x77JJM3P066406;
-        Wed, 7 Aug 2019 14:19:22 -0500
-Subject: Re: [PATCH 1/9] remoteproc: qcom: Introduce driver to store pil info
- in IMEM
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC:     Andy Gross <agross@kernel.org>, Sibi Sankar <sibis@codeaurora.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>
-References: <20190807053942.9836-1-bjorn.andersson@linaro.org>
- <20190807053942.9836-2-bjorn.andersson@linaro.org>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <1ad356a7-760b-fb1d-076a-a70e238acd97@ti.com>
-Date:   Wed, 7 Aug 2019 14:19:22 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 7 Aug 2019 15:23:43 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s3so11956wms.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 12:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZKsoxc607/oVG4FUuBA6pIcOKMffd677oTtTK5nzkwQ=;
+        b=hAbyL2kbAFr/v1igXbo/LxpM6rdjv8gVdpmorEKD5FUrB1ZYcimF1qaQyLZMb6TYhW
+         QzjkRAErG1RegaWbCDdgGVUKwymrAJ/l+pGyRNvoPbXDKXge8tgQSb/geI+cOWjnRCmF
+         7S+MdI3tJIe3MxAgCLb1JPFwc7Iw0cXhq+bepW2li//lnMzfGH0Xze2qLht+6u85znTJ
+         b9RL7RNC9Ed/4MNuYeQ6PkUu8BWDc32Q97oGYvVmVAdzCrr6ofUU9a39FOw7h1OGyn1n
+         +sByh2bvE5LGEsst6gBAnGXTGpX7uyB2s6FVWLRXQJYOabz+3oz+SyUV5D9QlPrf8+2j
+         A9cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZKsoxc607/oVG4FUuBA6pIcOKMffd677oTtTK5nzkwQ=;
+        b=BBtk6gS0DDmlkaxP86wYfRGBpQ8ZZuM5nCJaoyjgx04lnNWXQiCm0P8yXxwWyKjpyU
+         cJAMODmxwzwepglG+zRkmeLtmBdLKS6zIPYyBTWY3iVkaC5tCgh3CtmB+JlBQK90PyqE
+         IAsbUKj1GpOHaDPuD607fg6y9GwpSVczGuQHsx0rr6PUS68M2Brgyq/WoSNiTsPfj64p
+         cSneP0SAMDTAwTp0Q4ZDV9ruU4uTIIkcgug93Mj6syd844wAoMLNg/bdtW6JQq8S9c2q
+         q604HQCNbgJ4apZ8b3eNfA2/mAB7w1cDN4bCNlp6gpSOJBz+D8fXo09FvuDy45IiUT82
+         cVkQ==
+X-Gm-Message-State: APjAAAXcx/viJhwcN+HJRn8UMh9TRF7yLgyUDThiY7RrjD/y8nzsz3XV
+        mmHFIXbyPaVpNDU95viIJYw=
+X-Google-Smtp-Source: APXvYqzrB/Ac6gK6PxwJ5f0X0aWnErXK6rJNnENn30REBvhx246EotYXNh2vR//dxdH43icmi3BPGw==
+X-Received: by 2002:a1c:f415:: with SMTP id z21mr21203wma.34.1565205821315;
+        Wed, 07 Aug 2019 12:23:41 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id t13sm109820555wrr.0.2019.08.07.12.23.40
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 07 Aug 2019 12:23:40 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "kernelci . org bot" <bot@kernelci.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] phy-rockchip-inno-hdmi: Fix RK3328_TERM_RESISTOR_CALIB_SPEED_7_0's third value
+Date:   Wed,  7 Aug 2019 12:23:05 -0700
+Message-Id: <20190807192305.6604-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20190807053942.9836-2-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/7/19 12:39 AM, Bjorn Andersson wrote:
-> A region in IMEM is used to communicate load addresses of remoteproc to
-> post mortem debug tools. Implement a driver that can be used to store
-> this information in order to enable these tools to process collected
-> ramdumps.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/remoteproc/Kconfig         |   3 +
->  drivers/remoteproc/Makefile        |   1 +
->  drivers/remoteproc/qcom_pil_info.c | 139 +++++++++++++++++++++++++++++
->  drivers/remoteproc/qcom_pil_info.h |   6 ++
->  4 files changed, 149 insertions(+)
->  create mode 100644 drivers/remoteproc/qcom_pil_info.c
->  create mode 100644 drivers/remoteproc/qcom_pil_info.h
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 28ed306982f7..3984bd16e670 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -85,6 +85,9 @@ config KEYSTONE_REMOTEPROC
->  	  It's safe to say N here if you're not interested in the Keystone
->  	  DSPs or just want to use a bare minimum kernel.
->  
-> +config QCOM_PIL_INFO
-> +	tristate
-> +
->  config QCOM_RPROC_COMMON
->  	tristate
->  
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index 00f09e658cb3..c1b46e9033cb 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
->  obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
->  obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
->  obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
-> +obj-$(CONFIG_QCOM_PIL_INFO)		+= qcom_pil_info.o
->  obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
->  obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
->  obj-$(CONFIG_QCOM_Q6V5_ADSP)		+= qcom_q6v5_adsp.o
-> diff --git a/drivers/remoteproc/qcom_pil_info.c b/drivers/remoteproc/qcom_pil_info.c
-> new file mode 100644
-> index 000000000000..aa42732016f3
-> --- /dev/null
-> +++ b/drivers/remoteproc/qcom_pil_info.c
-> @@ -0,0 +1,139 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2019 Linaro Ltd.
-> + */
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/mutex.h>
-> +#include <linux/regmap.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/slab.h>
-> +
-> +struct pil_reloc_entry {
-> +	char name[8];
-> +	__le64 base;
-> +	__le32 size;
-> +} __packed;
-> +
-> +#define PIL_INFO_SIZE	200
-> +#define PIL_INFO_ENTRIES (PIL_INFO_SIZE / sizeof(struct pil_reloc_entry))
-> +
-> +struct pil_reloc {
-> +	struct device *dev;
-> +	struct regmap *map;
-> +	u32 offset;
-> +	int val_bytes;
-> +
-> +	struct pil_reloc_entry entries[PIL_INFO_ENTRIES];
-> +};
-> +
-> +static struct pil_reloc *_reloc;
-> +static DEFINE_MUTEX(reloc_mutex);
-> +
-> +/**
-> + * qcom_pil_info_store() - store PIL information of image in IMEM
-> + * @image:	name of the image
-> + * @base:	base address of the loaded image
-> + * @size:	size of the loaded image
-> + */
-> +void qcom_pil_info_store(const char *image, phys_addr_t base, size_t size)
-> +{
-> +	struct pil_reloc_entry *entry;
-> +	int idx = -1;
-> +	int i;
-> +
-> +	mutex_lock(&reloc_mutex);
-> +	if (!_reloc)
-> +		goto unlock;
-> +
-> +	for (i = 0; i < PIL_INFO_ENTRIES; i++) {
-> +		if (!_reloc->entries[i].name[0]) {
-> +			if (idx == -1)
-> +				idx = i;
-> +			continue;
-> +		}
-> +
-> +		if (!strncmp(_reloc->entries[i].name, image, 8)) {
-> +			idx = i;
-> +			goto found;
-> +		}
-> +	}
-> +
-> +	if (idx) {
-> +		dev_warn(_reloc->dev, "insufficient PIL info slots\n");
-> +		goto unlock;
-> +	}
-> +
-> +found:
-> +	entry = &_reloc->entries[idx];
-> +	stracpy(entry->name, image);
-> +	entry->base = base;
-> +	entry->size = size;
-> +
-> +	regmap_bulk_write(_reloc->map, _reloc->offset + idx * sizeof(*entry),
-> +			  entry, sizeof(*entry) / _reloc->val_bytes);
-> +
-> +unlock:
-> +	mutex_unlock(&reloc_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_pil_info_store);
-> +
-> +static int pil_reloc_probe(struct platform_device *pdev)
-> +{
-> +	struct pil_reloc *reloc;
-> +
-> +	reloc = devm_kzalloc(&pdev->dev, sizeof(*reloc), GFP_KERNEL);
-> +	if (!reloc)
-> +		return -ENOMEM;
-> +
-> +	reloc->dev = &pdev->dev;
-> +	reloc->map = syscon_node_to_regmap(pdev->dev.parent->of_node);
-> +	if (IS_ERR(reloc->map))
-> +		return PTR_ERR(reloc->map);
-> +
-> +	if (of_property_read_u32(pdev->dev.of_node, "offset", &reloc->offset))
-> +		return -EINVAL;
-> +
-> +	reloc->val_bytes = regmap_get_val_bytes(reloc->map);
-> +	if (reloc->val_bytes < 0)
-> +		return -EINVAL;
-> +
-> +	regmap_bulk_write(reloc->map, reloc->offset, reloc->entries,
-> +			  sizeof(reloc->entries) / reloc->val_bytes);
-> +
-> +	mutex_lock(&reloc_mutex);
-> +	_reloc = reloc;
-> +	mutex_unlock(&reloc_mutex);
-> +
-> +	return 0;
-> +}
-> +
-> +static int pil_reloc_remove(struct platform_device *pdev)
-> +{
-> +	mutex_lock(&reloc_mutex);
-> +	_reloc = NULL;
-> +	mutex_unlock(&reloc_mutex);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id pil_reloc_of_match[] = {
-> +	{ .compatible = "qcom,pil-reloc-info" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, pil_reloc_of_match);
-> +
-> +static struct platform_driver pil_reloc_driver = {
-> +	.probe = pil_reloc_probe,
-> +	.remove = pil_reloc_remove,
-> +	.driver = {
-> +		.name = "qcom-pil-reloc-info",
-> +		.of_match_table = pil_reloc_of_match,
-> +	},
-> +};
-> +module_platform_driver(pil_reloc_driver);
-> +
-> +MODULE_DESCRIPTION("Qualcomm PIL relocation info");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/remoteproc/qcom_pil_info.h b/drivers/remoteproc/qcom_pil_info.h
-> new file mode 100644
-> index 000000000000..c30c186b665d
-> --- /dev/null
-> +++ b/drivers/remoteproc/qcom_pil_info.h
-> @@ -0,0 +1,6 @@
+After commit "linux/bits.h: Add compile time sanity check of GENMASK
+inputs" [1], arm64 defconfig builds started failing:
 
-Please add a SPDX license identifier.
+In file included from ../include/linux/bits.h:22,
+                 from ../include/linux/bitops.h:5,
+                 from ../include/linux/kernel.h:12,
+                 from ../include/linux/clk.h:13,
+                 from ../drivers/phy/rockchip/phy-rockchip-inno-hdmi.c:9:
+../drivers/phy/rockchip/phy-rockchip-inno-hdmi.c: In function 'inno_hdmi_phy_rk3328_power_on':
+../include/linux/build_bug.h:16:45: error: negative width in bit-field '<anonymous>'
+   16 | #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
+      |                                             ^
+../include/linux/bits.h:24:18: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+   24 |  ((unsigned long)BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+      |                  ^~~~~~~~~~~~~~~~~
+../include/linux/bits.h:39:3: note: in expansion of macro 'GENMASK_INPUT_CHECK'
+   39 |  (GENMASK_INPUT_CHECK(high, low) + __GENMASK(high, low))
+      |   ^~~~~~~~~~~~~~~~~~~
+../drivers/phy/rockchip/phy-rockchip-inno-hdmi.c:24:42: note: in expansion of macro 'GENMASK'
+   24 | #define UPDATE(x, h, l)  (((x) << (l)) & GENMASK((h), (l)))
+      |                                          ^~~~~~~
+../drivers/phy/rockchip/phy-rockchip-inno-hdmi.c:201:50: note: in expansion of macro 'UPDATE'
+  201 | #define RK3328_TERM_RESISTOR_CALIB_SPEED_7_0(x)  UPDATE(x, 7, 9)
+      |                                                  ^~~~~~
+../drivers/phy/rockchip/phy-rockchip-inno-hdmi.c:1046:26: note: in expansion of macro 'RK3328_TERM_RESISTOR_CALIB_SPEED_7_0'
+ 1046 |   inno_write(inno, 0xc6, RK3328_TERM_RESISTOR_CALIB_SPEED_7_0(v));
+      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-regards
-Suman
+As pointed out by Robin and Guenter, inno_write's val argument is an
+8-bit value so having a mask larger than that doesn't make sense. This
+also matches the rest of the *_7_0 macros in this driver.
 
-> +#ifndef __QCOM_PIL_INFO_H__
-> +#define __QCOM_PIL_INFO_H__
-> +
-> +void qcom_pil_info_store(const char *image, phys_addr_t base, size_t size);
-> +
-> +#endif
-> 
+[1]: https://lore.kernel.org/lkml/20190801230358.4193-2-rikard.falkeborn@gmail.com/
+
+Reported-by: Andrzej Hajda <a.hajda@samsung.com>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Reported-by: kernelci.org bot <bot@kernelci.org>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Suggested-by: Guenter Roeck <linux@roeck-us.net>
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/phy/rockchip/phy-rockchip-inno-hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c b/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c
+index b10a84cab4a7..2b97fb1185a0 100644
+--- a/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c
++++ b/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c
+@@ -198,7 +198,7 @@
+ #define RK3328_BYPASS_TERM_RESISTOR_CALIB		BIT(7)
+ #define RK3328_TERM_RESISTOR_CALIB_SPEED_14_8(x)	UPDATE((x) >> 8, 6, 0)
+ /* REG:0xc6 */
+-#define RK3328_TERM_RESISTOR_CALIB_SPEED_7_0(x)		UPDATE(x, 7, 9)
++#define RK3328_TERM_RESISTOR_CALIB_SPEED_7_0(x)		UPDATE(x, 7, 0)
+ /* REG:0xc7 */
+ #define RK3328_TERM_RESISTOR_50				UPDATE(0, 2, 1)
+ #define RK3328_TERM_RESISTOR_62_5			UPDATE(1, 2, 1)
+-- 
+2.23.0.rc1
 
