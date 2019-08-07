@@ -2,110 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08CE18511F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E98785124
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388835AbfHGQdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:33:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48604 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388026AbfHGQdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:33:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F06F7AF93;
-        Wed,  7 Aug 2019 16:33:38 +0000 (UTC)
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-To:     Waiman Long <longman@redhat.com>,
-        peter enderborg <peter.enderborg@sony.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190702183730.14461-1-longman@redhat.com>
- <71ab6307-9484-fdd3-fe6d-d261acf7c4a5@sony.com>
- <f878a00c-5d84-534b-deac-5736534a61cd@redhat.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <85f9074a-064c-acbc-2a22-968026f0a8c3@suse.cz>
-Date:   Wed, 7 Aug 2019 18:33:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <f878a00c-5d84-534b-deac-5736534a61cd@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S2388655AbfHGQe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:34:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33044 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729891AbfHGQe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 12:34:56 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E87B222FC;
+        Wed,  7 Aug 2019 16:34:55 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hvOtq-0007mc-4h; Wed, 07 Aug 2019 12:34:54 -0400
+Message-Id: <20190807163401.570339297@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 07 Aug 2019 12:34:01 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Jiping Ma <jiping.ma2@windriver.com>, mingo@redhat.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2] tracing/arm: Fix the stack tracer when LR is saved after local storage
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/23/19 4:30 PM, Waiman Long wrote:
-> On 7/22/19 8:46 AM, peter enderborg wrote:
->> On 7/2/19 8:37 PM, Waiman Long wrote:
->>> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
->>> file to shrink the slab by flushing all the per-cpu slabs and free
->>> slabs in partial lists. This applies only to the root caches, though.
->>>
->>> Extends this capability by shrinking all the child memcg caches and
->>> the root cache when a value of '2' is written to the shrink sysfs file.
->>>
->>> On a 4-socket 112-core 224-thread x86-64 system after a parallel kernel
->>> build, the the amount of memory occupied by slabs before shrinking
->>> slabs were:
->>>
->>>  # grep task_struct /proc/slabinfo
->>>  task_struct         7114   7296   7744    4    8 : tunables    0    0
->>>  0 : slabdata   1824   1824      0
->>>  # grep "^S[lRU]" /proc/meminfo
->>>  Slab:            1310444 kB
->>>  SReclaimable:     377604 kB
->>>  SUnreclaim:       932840 kB
->>>
->>> After shrinking slabs:
->>>
->>>  # grep "^S[lRU]" /proc/meminfo
->>>  Slab:             695652 kB
->>>  SReclaimable:     322796 kB
->>>  SUnreclaim:       372856 kB
->>>  # grep task_struct /proc/slabinfo
->>>  task_struct         2262   2572   7744    4    8 : tunables    0    0
->>>  0 : slabdata    643    643      0
->>
->> What is the time between this measurement points? Should not the shrinked memory show up as reclaimable?
-> 
-> In this case, I echoed '2' to all the shrink sysfs files under
-> /sys/kernel/slab. The purpose of shrinking caches is to reclaim as much
-> unused memory slabs from all the caches, irrespective if they are
-> reclaimable or not.
 
-Well, SReclaimable counts pages allocated by kmem caches with
-SLAB_RECLAIM_ACCOUNT flags, which should match those that have a shrinker
-associated and can thus actually reclaim objects. That shrinking slabs affected
-SReclaimable just a bit while reducing SUnreclaim by more than 50% looks
-certainly odd.
-For example the task_struct cache is not a reclaimable one, yet shows massive
-reduction. Could be that the reclaimable objects were pinning non-reclaimable
-ones, so the shrinking had secondary effects in non-reclaimable caches.
+As arm64 saves the link register after a function's local variables are
+stored, it causes the max stack tracer to be off by one in its output
+of which function has the bloated stack frame.
 
-> We do not reclaim any used objects. That is why we
-> see the numbers were reduced in both cases.
-> 
-> Cheers,
-> Longman
-> 
+The first patch fixes this by creating a ARCH_RET_ADDR_BEFORE_LOCAL_VARS
+define that an achitecture (arm64) may set in asm/ftrace.h, and this
+will cause the stack tracer to make the shift.
 
+As it has been proven that the stack tracer isn't the most trivial
+algorithm to understand by staring at the code, the second patch adds
+comments to the code to explain the algorithm with and without the
+ARCH_RET_ADDR_BEFORE_LOCAL_VARS.
+
+Hmm, should this be sent to stable (and for inclusion now?)
+
+-- Steve
+
+Steven Rostedt (VMware) (2):
+      tracing/arm64: Have max stack tracer handle the case of return address after data
+      tracing: Document the stack trace algorithm in the comments
+
+----
+ arch/arm64/include/asm/ftrace.h |   1 +
+ kernel/trace/trace_stack.c      | 112 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 113 insertions(+)
