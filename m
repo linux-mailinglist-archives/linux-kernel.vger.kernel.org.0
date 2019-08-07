@@ -2,80 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26D8285348
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 20:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F8AB8534C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 20:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389414AbfHGS4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 14:56:36 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37532 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389329AbfHGS4g (ORCPT
+        id S2389433AbfHGS55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 14:57:57 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:58252 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388728AbfHGS54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 14:56:36 -0400
-Received: by mail-ot1-f68.google.com with SMTP id s20so42993445otp.4;
-        Wed, 07 Aug 2019 11:56:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZXupRDzgpFO1W45CVIYMgKHhIpXoLsIBFZrG7vpgwSA=;
-        b=NBwGQC9dPiPWAfKMh4MwiU9bMTvw1iUhl7Gn44oZUr9fEC6E3ttwCqaT+XZ+5jQRRo
-         4iPjMLmHtw7dEiOfPlpxiNrsJbhw8rpqx42MscvageK9f/HHA4iwYRfmbGQ1OSXU1MvY
-         21INFuWMBhZ4udrW6B90MbIlobetJ0sgwy+1iabRad+gx202ODDNSNSnvbwpO+kmV6ow
-         b5XuaOlk++s80BjpHucVoYyNtB+gnnOKEyjFctL33TCVeGIFU2RlhI/ReFmTuJeTSlYN
-         2QEo23WAoxlMH7bQVWrXeM/FqZshDWYYFU3+gQE4KBJXCBrSYSl54w/5M27bCFtpK5bO
-         +4xg==
-X-Gm-Message-State: APjAAAWG/6eUw5ZmA8/7GcqiXUVJRaBAiX01e+jtbeiPrjFMCGWPgSOH
-        a/iBMxd5GK7ANluO/WVawS1BwByRmcuoQBNAThs=
-X-Google-Smtp-Source: APXvYqw1QHuSkF1qfbT4edWXR35qtnd6E/tcQTZZnDqO+2Y7iJU9IxNwVHe+njo7BrojHicCJK4/fqQ27q1aNYnfogo=
-X-Received: by 2002:a9d:5c11:: with SMTP id o17mr8576876otk.107.1565204195150;
- Wed, 07 Aug 2019 11:56:35 -0700 (PDT)
+        Wed, 7 Aug 2019 14:57:56 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x77IvY7d030044;
+        Wed, 7 Aug 2019 13:57:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565204254;
+        bh=SobSK+XTRicwfT84j/gf9bC0ofQzxtzKQ+T13Ia7Pog=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=rPqKTEz98nrXfblvTVhzbNhq7nf7N4Q/BI+tflArw/rUt2/Qo9KvUQcMBGlAOFOlR
+         skm/wdshS+IZbJ/gBnhwtvifvagHSvHRijeqXAzFes1xU2+/9IXb2cQMcJF+7koDFb
+         m+SwQh9ipFfQEVSAfViAPaHhkQzQ70N0dgn6LUzU=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x77IvYC9108583
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Aug 2019 13:57:34 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 7 Aug
+ 2019 13:57:34 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 7 Aug 2019 13:57:34 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x77IvY7d061832;
+        Wed, 7 Aug 2019 13:57:34 -0500
+Date:   Wed, 7 Aug 2019 13:57:34 -0500
+From:   Bin Liu <b-liu@ti.com>
+To:     Mans Rullgard <mans@mansr.com>
+CC:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen-Yu Tsai <wens@csie.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND][PATCH] usb: musb: sunxi: propagate devicetree node to
+ glue pdev
+Message-ID: <20190807185734.GA14027@uda0271908>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>, Mans Rullgard <mans@mansr.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190806113458.3304-1-mans@mansr.com>
 MIME-Version: 1.0
-References: <20190807084635.24173-1-geert+renesas@glider.be>
- <20190807084635.24173-3-geert+renesas@glider.be> <db9961d5-e075-5dca-3417-023b7b8ba4c1@linaro.org>
-In-Reply-To: <db9961d5-e075-5dca-3417-023b7b8ba4c1@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 7 Aug 2019 20:56:15 +0200
-Message-ID: <CAMuHMdWtvHYvzqJwxgQs3TVqo8K1KL-SDOQ6_QfTcVa3PjoFuA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clocksource/drivers/renesas-ostm: Fix probe error path
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190806113458.3304-1-mans@mansr.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On Tue, Aug 06, 2019 at 12:34:58PM +0100, Mans Rullgard wrote:
+> In order for devicetree nodes to be correctly associated with attached
+> devices, the controller node needs to be propagated to the glue device.
+> 
+> Signed-off-by: Mans Rullgard <mans@mansr.com>
 
-On Wed, Aug 7, 2019 at 8:13 PM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> On 07/08/2019 10:46, Geert Uytterhoeven wrote:
-> > Fix various issues in the error path of ostm_init():
-> >   1. Drop error message printing on of_iomap() failure, as the memory
-> >      allocation core already takes of that,
-> >   2. Handle irq_of_parse_and_map() failures correctly: it returns
-> >      unsigned int, hence make irq unsigned int, and zero is an error,
-> >   3. Propagate/return appropriate error codes instead of -EFAULT.
-> >   4. Add a missing clk_put(),
-> >   5. Split the single cleanup block in separate phases, to avoid
-> >      clk_put() calling WARN() when passed an error pointer.
->
-> Does it make sense to convert to timer-of API?
+Applied. Thanks.
 
-I don't know. Will have a look...
+-Bin.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
