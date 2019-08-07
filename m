@@ -2,93 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 461FE84E3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:08:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E96E84E41
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:08:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388079AbfHGOHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 10:07:42 -0400
-Received: from foss.arm.com ([217.140.110.172]:49116 "EHLO foss.arm.com"
+        id S2388118AbfHGOHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 10:07:46 -0400
+Received: from onstation.org ([52.200.56.107]:42714 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbfHGOHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 10:07:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 731E428;
-        Wed,  7 Aug 2019 07:07:41 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D259A3F706;
-        Wed,  7 Aug 2019 07:07:40 -0700 (PDT)
-Subject: Re: [PATCH] firmware: arm_scmi: Use {get,put}_unaligned_le32
- accessors
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190807130038.26878-1-sudeep.holla@arm.com>
- <1565184971.5048.8.camel@pengutronix.de> <20190807135757.GA27278@e107155-lin>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <4e6de98c-833b-a80b-acef-6e88391e80f2@arm.com>
-Date:   Wed, 7 Aug 2019 15:07:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726773AbfHGOHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 10:07:46 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id BA57E3E951;
+        Wed,  7 Aug 2019 14:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1565186865;
+        bh=6WKzOMIrRhn+HZ7Ye4fD0m71zD/5MBx+bsdK86Uuj2c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PJh2pZx1sesHz3Pw1IeyqA+GVWbYfJ/w8c7srPHO3nDhOIha6mDNXfDJs6HHIfAjM
+         CiXOvgEDhoMJYJEGRjJPE4brU1fDnmAqM60bKD9D20iVuIvBNLfFPQ3sn4nRUezk7d
+         wQ6YdoznMAubLi/7Re6c8szg+FIep7LAAvM4XQtw=
+Date:   Wed, 7 Aug 2019 10:07:44 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>, linux-tegra@vger.kernel.org,
+        David Daney <david.daney@cavium.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] gpio: hierarchical IRQ improvements
+Message-ID: <20190807140744.GA18224@onstation.org>
+References: <20190708110138.24657-1-masneyb@onstation.org>
+ <CACRpkdYQhyh1BW789OcxGTomMkC3e8hMr8sodbWz-z1=5s9fDw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190807135757.GA27278@e107155-lin>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYQhyh1BW789OcxGTomMkC3e8hMr8sodbWz-z1=5s9fDw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/2019 14:57, Sudeep Holla wrote:
-> On Wed, Aug 07, 2019 at 03:36:11PM +0200, Philipp Zabel wrote:
->> Hi Sudeep,
->>
->> On Wed, 2019-08-07 at 14:00 +0100, Sudeep Holla wrote:
->>> Instead of type-casting the {tx,rx}.buf all over the place while
->>> accessing them to read/write __le32 from/to the firmware, let's use
->>> the nice existing {get,put}_unaligned_le32 accessors to hide all the
->>> type cast ugliness.
->>>
->>> Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
->>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->>> ---
->>>   drivers/firmware/arm_scmi/base.c    |  2 +-
->>>   drivers/firmware/arm_scmi/clock.c   | 10 ++++------
->>>   drivers/firmware/arm_scmi/common.h  |  2 ++
->>>   drivers/firmware/arm_scmi/perf.c    |  8 ++++----
->>>   drivers/firmware/arm_scmi/power.c   |  6 +++---
->>>   drivers/firmware/arm_scmi/reset.c   |  2 +-
->>>   drivers/firmware/arm_scmi/sensors.c | 12 +++++-------
->>>   7 files changed, 20 insertions(+), 22 deletions(-)
->>>
->>> diff --git a/drivers/firmware/arm_scmi/base.c b/drivers/firmware/arm_scmi/base.c
->>> index 204390297f4b..f804e8af6521 100644
->>> --- a/drivers/firmware/arm_scmi/base.c
->>> +++ b/drivers/firmware/arm_scmi/base.c
->> [...]
->>> @@ -204,14 +204,12 @@ scmi_clock_rate_get(const struct scmi_handle *handle, u32 clk_id, u64 *value)
->>>   	if (ret)
->>>   		return ret;
->>>
->>> -	*(__le32 *)t->tx.buf = cpu_to_le32(clk_id);
->>> +	put_unaligned_le32(clk_id, t->tx.buf);
->>>
->>>   	ret = scmi_do_xfer(handle, t);
->>>   	if (!ret) {
->>> -		__le32 *pval = t->rx.buf;
->>> -
->>> -		*value = le32_to_cpu(*pval);
->>> -		*value |= (u64)le32_to_cpu(*(pval + 1)) << 32;
->>> +		*value = get_unaligned_le32(t->rx.buf);
->>> +		*value |= (u64)get_unaligned_le32(t->rx.buf + 1) << 32;
->>
->> Isn't t->rx.buf a void pointer? If I am not mistaken, you'd either have
->> to keep the pval local variables, or cast to (__le32 *) before doing
->> pointer arithmetic.
->>
+On Wed, Aug 07, 2019 at 03:41:05PM +0200, Linus Walleij wrote:
+> On Mon, Jul 8, 2019 at 1:01 PM Brian Masney <masneyb@onstation.org> wrote:
 > 
-> Ah right, that's the reason I added it at the first place. I will fix that.
+> > This builds on top of Linus Walleij's existing patches that adds
+> > hierarchical IRQ support to the GPIO core [1] so that Qualcomm's
+> > spmi-gpio and ssbi-gpio can be converted to use these new helpers.
+> >
+> > Linus: Feel free to squash these into your existing patches if you'd
+> > like to use any of this code. Just give me some kind of mention in the
+> > commit description.
+> >
+> > [1] https://lore.kernel.org/linux-gpio/20190624132531.6184-1-linus.walleij@linaro.org/
+> >
+> > Brian Masney (4):
+> >   gpio: introduce gpiochip_populate_parent_fwspec_{two,four}cell
+> >     functions
+> >   gpio: allow customizing hierarchical IRQ chips
+> >   gpio: use handler in gpio_irq_chip instead of handle_bad_irq
+> >   qcom: spmi-gpio: convert to hierarchical IRQ helpers in gpio core
+> 
+> I solved things like this:
+> 
+> - I kept patches 1 & 4 as-is
+> - I squashed patches 2 and 3 into the main patch with minor modifications.
+> - I added Co-developed-by: for your contributions
+> 
+> Now I need to address Masahiro's comments on top and let's see if the
+> result looks acceptable!
 
-Couldn't you just use get_unaligned_le64() here anyway?
+> Ooops had to squash patch 1 as well...
 
-Robin.
+All of this sounds good. I'll retest once you send out the updated
+series.
+
+Brian
