@@ -2,153 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F9B684F39
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D22284F3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbfHGO4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 10:56:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59070 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729550AbfHGO4F (ORCPT
+        id S1730122AbfHGO5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 10:57:11 -0400
+Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:43520 "EHLO
+        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729278AbfHGO5L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 10:56:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WHDkGIkGDhi7s/aX5RIG2h076WJQgiwTmFKZsiix88I=; b=AC2sFIrClzvrAuopVrXvwugiY
-        8pjCjcoNMRxBAbOu1e+IYWnWwBn23rrvVb3+zo9jSy/rEqV0jtM6OKmuaKJgIPCd+ZEJGVHI1xCUM
-        V33yiZR1LBHycuELJYuk3ChIMHbwC3+U3UkD+itrcmrRrXwcGTUiy4Emh3dDvFH8iJCGHKTIyZkSS
-        JkM7h5vZfpkNwqmfAGioAVQ7oEBCMiwDFERlYOCfEHok0Ct0gRQBQZhg0acgBiGO6N99OC8PyFqGX
-        RBH5duCu835KJqDGvsVYJ2T0t8xRO3dI5YDATQhUwKO6u2/VVkIlC73MRjL16m50yadyh4WpPfYWx
-        CslHyrvIQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvNM9-00082M-J1; Wed, 07 Aug 2019 14:56:01 +0000
-Date:   Wed, 7 Aug 2019 07:56:01 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
-        <thomas@shipmail.org>, Dave Airlie <airlied@gmail.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: drm pull for v5.3-rc1
-Message-ID: <20190807145601.GB5482@bombadil.infradead.org>
-References: <CAHk-=wiD6a189CXj-ugRzCxA9r1+siSCA0eP_eoZ_bk_bLTRMw@mail.gmail.com>
- <48890b55-afc5-ced8-5913-5a755ce6c1ab@shipmail.org>
- <CAHk-=whwcMLwcQZTmWgCnSn=LHpQG+EBbWevJEj5YTKMiE_-oQ@mail.gmail.com>
- <CAHk-=wghASUU7QmoibQK7XS09na7rDRrjSrWPwkGz=qLnGp_Xw@mail.gmail.com>
- <20190806073831.GA26668@infradead.org>
- <CAHk-=wi7L0MDG7DY39Hx6v8jUMSq3ZCE3QTnKKirba_8KAFNyw@mail.gmail.com>
- <20190806190937.GD30179@bombadil.infradead.org>
- <20190807064000.GC6002@infradead.org>
- <20190807141517.GA5482@bombadil.infradead.org>
- <62cbe523-e8a4-cdfd-90c2-80260cefa5de@arm.com>
+        Wed, 7 Aug 2019 10:57:11 -0400
+Received: from pps.filterd (m0122330.ppops.net [127.0.0.1])
+        by mx0b-00190b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x77ErAVF027634;
+        Wed, 7 Aug 2019 15:56:51 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=jan2016.eng;
+ bh=WxrDZfrPFE+RvJaiBPECJUVgzxPWUEvRSCLWbbN/jLk=;
+ b=T48ll+CdytcVMYVJht4s5V/Qo58ccg6Saf61fFUqb7kioyMPCy7QTcrFwn2J51JV5HKM
+ b21otkH0kD9m18HPCv/AtH8Qo04YnRUNj5FJ1Ep9iSFnB4t3xSaq66pPSpmvJ34O2dLI
+ 3by81euhHtYjvYhqe4TOQ/JIysuCRHSnxtGK5WF53eTwtVEkGVwA+zvtU7HMi6FKV2iI
+ CUAK8DobFVgnrFyxdBUnNY1SlBFeczgjMeBmiUsmcs7oI8eI6xhDi3z18o9SdiGA4qB7
+ 754UjvgtIDgU4TU0ZmlzOlLBoX9YWD2zjyT85Vlr4jLEQB3znHoGPFrrZiwx4XvRg88U jg== 
+Received: from prod-mail-ppoint6 (prod-mail-ppoint6.akamai.com [184.51.33.61] (may be forged))
+        by mx0b-00190b01.pphosted.com with ESMTP id 2u51wv18qb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 15:56:50 +0100
+Received: from pps.filterd (prod-mail-ppoint6.akamai.com [127.0.0.1])
+        by prod-mail-ppoint6.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x77ElwIP032212;
+        Wed, 7 Aug 2019 10:56:50 -0400
+Received: from email.msg.corp.akamai.com ([172.27.123.33])
+        by prod-mail-ppoint6.akamai.com with ESMTP id 2u55kw7b2a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 10:56:50 -0400
+Received: from usma1ex-dag1mb6.msg.corp.akamai.com (172.27.123.65) by
+ usma1ex-dag1mb3.msg.corp.akamai.com (172.27.123.103) with Microsoft SMTP
+ Server (TLS) id 15.0.1473.3; Wed, 7 Aug 2019 10:56:49 -0400
+Received: from usma1ex-dag1mb6.msg.corp.akamai.com ([172.27.123.65]) by
+ usma1ex-dag1mb6.msg.corp.akamai.com ([172.27.123.65]) with mapi id
+ 15.00.1473.005; Wed, 7 Aug 2019 10:56:49 -0400
+From:   "Lubashev, Igor" <ilubashe@akamai.com>
+To:     Jiri Olsa <jolsa@redhat.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        James Morris <jmorris@namei.org>
+Subject: RE: [PATCH v2 2/4] perf: Use CAP_SYS_ADMIN with perf_event_paranoid
+ checks
+Thread-Topic: [PATCH v2 2/4] perf: Use CAP_SYS_ADMIN with perf_event_paranoid
+ checks
+Thread-Index: AQHVTNFKCXp+3LpVfE2FoOm2P/P8Y6bv1MsA///vEXA=
+Date:   Wed, 7 Aug 2019 14:56:49 +0000
+Message-ID: <dac01704fb6847ebbc08bea4115d52df@usma1ex-dag1mb6.msg.corp.akamai.com>
+References: <cover.1565146171.git.ilubashe@akamai.com>
+ <70ce92d9c252bbafa883a6b5b3c96cf10d1a5b31.1565146171.git.ilubashe@akamai.com>
+ <20190807114602.GB9605@krava>
+In-Reply-To: <20190807114602.GB9605@krava>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [172.19.34.37]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62cbe523-e8a4-cdfd-90c2-80260cefa5de@arm.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-07_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908070158
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
+ definitions=2019-08-07_03:2019-08-07,2019-08-07 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 bulkscore=0
+ mlxlogscore=999 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ mlxscore=0 spamscore=0 phishscore=0 clxscore=1015 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1908070159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 03:30:38PM +0100, Steven Price wrote:
-> On 07/08/2019 15:15, Matthew Wilcox wrote:
-> > On Tue, Aug 06, 2019 at 11:40:00PM -0700, Christoph Hellwig wrote:
-> >> On Tue, Aug 06, 2019 at 12:09:38PM -0700, Matthew Wilcox wrote:
-> >>> Has anyone looked at turning the interface inside-out?  ie something like:
-> >>>
-> >>> 	struct mm_walk_state state = { .mm = mm, .start = start, .end = end, };
-> >>>
-> >>> 	for_each_page_range(&state, page) {
-> >>> 		... do something with page ...
-> >>> 	}
-> >>>
-> >>> with appropriate macrology along the lines of:
-> >>>
-> >>> #define for_each_page_range(state, page)				\
-> >>> 	while ((page = page_range_walk_next(state)))
-> >>>
-> >>> Then you don't need to package anything up into structs that are shared
-> >>> between the caller and the iterated function.
-> >>
-> >> I'm not an all that huge fan of super magic macro loops.  But in this
-> >> case I don't see how it could even work, as we get special callbacks
-> >> for huge pages and holes, and people are trying to add a few more ops
-> >> as well.
-> > 
-> > We could have bits in the mm_walk_state which indicate what things to return
-> > and what things to skip.  We could (and probably should) also use different
-> > iterator names if people actually want to iterate different things.  eg
-> > for_each_pte_range(&state, pte) as well as for_each_page_range().
-> > 
-> 
-> The iterator approach could be awkward for the likes of my generic
-> ptdump implementation[1]. It would require an iterator which returns all
-> levels and allows skipping levels when required (to prevent KASAN
-> slowing things down too much). So something like:
-> 
-> start_walk_range(&state);
-> for_each_page_range(&state, page) {
-> 	switch(page->level) {
-> 	case PTE:
-> 		...
-> 	case PMD:
-> 		if (...)
-> 			skip_pmd(&state);
-> 		...
-> 	case HOLE:
-> 		....
-> 	...
-> 	}
-> }
-> end_walk_range(&state);
-> 
-> It seems a little fragile - e.g. we wouldn't (easily) get type checking
-> that you are actually treating a PTE as a pte_t. The state mutators like
-> skip_pmd() also seem a bit clumsy.
+On Wed, August 7 at 2019 7:46 AM Jiri Olsa wrote:
+> On Tue, Aug 06, 2019 at 11:35:55PM -0400, Igor Lubashev wrote:
+> > The kernel is using CAP_SYS_ADMIN instead of euid=3D=3D0 to override
+> > perf_event_paranoid check. Make perf do the same.
+> >
+> > Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
+> > ---
+> >  tools/perf/arch/arm/util/cs-etm.c    | 3 ++-
+> >  tools/perf/arch/arm64/util/arm-spe.c | 4 ++--
+> > tools/perf/arch/x86/util/intel-bts.c | 3 ++-
+> > tools/perf/arch/x86/util/intel-pt.c  | 2 +-
+> >  tools/perf/util/evsel.c              | 2 +-
+> >  5 files changed, 8 insertions(+), 6 deletions(-)
+> >
+SNIP
+> > --- a/tools/perf/arch/arm64/util/arm-spe.c
+> > +++ b/tools/perf/arch/arm64/util/arm-spe.c
+> > @@ -12,6 +12,7 @@
+> >  #include <time.h>
+> >
+> >  #include "../../util/cpumap.h"
+> > +#include "../../util/event.h"
+> >  #include "../../util/evsel.h"
+> >  #include "../../util/evlist.h"
+> >  #include "../../util/session.h"
+> > @@ -65,8 +66,7 @@ static int arm_spe_recording_options(struct
+> auxtrace_record *itr,
+> >  	struct arm_spe_recording *sper =3D
+> >  			container_of(itr, struct arm_spe_recording, itr);
+> >  	struct perf_pmu *arm_spe_pmu =3D sper->arm_spe_pmu;
+> > -	struct evsel *evsel, *arm_spe_evsel =3D NULL;
+>=20
+> wouldn't this removal break the compilation on arm?
+>=20
+> jirka
+>=20
+> > -	bool privileged =3D geteuid() =3D=3D 0 || perf_event_paranoid() < 0;
+> > +	bool privileged =3D perf_event_paranoid_check(-1);
+> >  	struct evsel *tracking_evsel;
+> >  	int err;
+>=20
+> SNIP
 
-Once you're on-board with using a state structure, you can use it in all
-kinds of fun ways.  For example:
+Mea culpa!  (An artifact of a bad rebase.)  Just learned to cross-compile. =
+ Thanks, Alexey and Jirka!
 
-struct mm_walk_state {
-	struct mm_struct *mm;
-	unsigned long start;
-	unsigned long end;
-	unsigned long curr;
-	p4d_t p4d;
-	pud_t pud;
-	pmd_t pmd;
-	pte_t pte;
-	enum page_entry_size size;
-	int flags;
-};
+The v3 with the fix has been posted (https://lkml.kernel.org/lkml/cover.156=
+5188228.git.ilubashe@akamai.com).
 
-For this user, I'd expect something like ...
-
-	DECLARE_MM_WALK_FLAGS(state, mm, start, end,
-				MM_WALK_HOLES | MM_WALK_ALL_SIZES);
-
-	walk_each_pte(state) {
-		switch (state->size) {
-		case PE_SIZE_PTE:
-			... 
-		case PE_SIZE_PMD:
-			if (...(state->pmd))
-				continue;
-		...
-		}
-	}
-
-There's no need to have start / end walk function calls.
+- Igor
