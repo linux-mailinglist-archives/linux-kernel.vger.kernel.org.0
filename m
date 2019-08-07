@@ -2,69 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89D198420B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:03:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78BB384213
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbfHGCDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 22:03:03 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42616 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728660AbfHGCDD (ORCPT
+        id S1728853AbfHGCGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 22:06:04 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:34123 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbfHGCGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:03:03 -0400
-Received: by mail-lf1-f66.google.com with SMTP id s19so85564lfb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 19:03:01 -0700 (PDT)
+        Tue, 6 Aug 2019 22:06:04 -0400
+Received: by mail-pl1-f201.google.com with SMTP id 71so49474016pld.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 19:06:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=hUcKlTjR1HIw/YzjCQ7WTvYjftRSq8rHNjYT9AykjRQ=;
-        b=o9eweQMKWmNCRajsaZp4AH3AQXd0G+IAHuIUfDy3qiHpaQRdC9bglAvO6OV4Co5u/2
-         5m3+JMZ8YVymNCT9VH6TCpAmSCNsjbgYDFLt63pgr+2WIzz7ffeeFwx2e/6VFm7ptRim
-         5WzwhKxhjTqVnPjOnitTmhfiY5Gt/597SK2f1yw/Xwrgg+yqZbBrtzWT9uCZZlj6KZfl
-         VYSzLyh0jBhTrBl374nNzWO/uv8rNhg+denmE5p0Rq+1QhncHgJ+W+P3hMGRv9rKEwOg
-         LL+1maquxi4pSq+E0WaDm+I8gNe6fQ86CcpqwOu7hfXQHCEmQpKqXAIQ8d57E1vhlCK1
-         sMow==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=bdbKWZyjXxZ8gdygSGa9lktCzX8kxlzXL6a6uqaX3bg=;
+        b=Kl5CEiJl/MaPfmQJRxpS2c1fPM5g/w735FsApDzzZzR56wnn0csvwjboJv9Jbjz6HU
+         vULA/nOTL4J4BJHrQftcA5iZOBear0d0K+loneShngKG8oeNAQuDxzwMKm1WisYQt+bT
+         TfB1p2/qViJhOuUXXbCYyBckBgngIgMdLbnJBHq6gDAG3/oAHyA7PT0r5upuG9zuUFT2
+         Uh2jMJhH1OR0iTVbYZOqnGrUHeA4q+AEZq8T+tELAUzKJhpyHiw1EAs5RE6tv+80w1d5
+         mhDvo5Gw65tAIC6BvkdzOdnOmeVyQTjv5vOEt/cktNZ2pwNHbN/kH1xN5qdmBgHTU780
+         4bHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=hUcKlTjR1HIw/YzjCQ7WTvYjftRSq8rHNjYT9AykjRQ=;
-        b=jnOpSW2HZ6N+q22GsoQsNytXvy1V9ih2mGft60HCuf1lInPEiFv4Hd+GN6gT4BB4YB
-         bvbHaVAmdaskg13rCgKH+YBPSEypcoMWRnQs/uKKQx8Z9ivHGkvXH4TwXWiT4jC+l1/M
-         OsI8ZEdXo9P7xgMe9vGTP+xWJJTP4WTHae7NtdHnrZRJWUrnxLWnCyn3WrExsG66SBiH
-         JF5jTjIHUfXx4ZJzmGrAXjvOwHO2kgLCSHPxLHEEweyVaMZq1p2Q7DiKPyRgkuEXXad2
-         QfCb/oDyDJwaYC955QzvkWqIRpwvZ60VYzjcv+/+5xsAH/RvwOmLLYvVwnFc4S8Cnfut
-         0I8Q==
-X-Gm-Message-State: APjAAAUJACkzUE8uOBgNXV1d/6S1n0/MQsh/X1+2D8RanqWkUQh5DHku
-        NKgMADHYucDM8uqmQ46irUOO9UXK5uYefNiYBok=
-X-Google-Smtp-Source: APXvYqx63NCS5xUlZp43W+KDDk4O6eijr3C2rATDqqmBcIqMrd1lPin6LVKIePHQ8rO++8JTHZv6b1yA/Mr3r/TRbFA=
-X-Received: by 2002:ac2:5a1c:: with SMTP id q28mr4681670lfn.131.1565143380777;
- Tue, 06 Aug 2019 19:03:00 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:7507:0:0:0:0:0 with HTTP; Tue, 6 Aug 2019 19:03:00 -0700 (PDT)
-Reply-To: beronsimon69@gmail.com
-From:   Simon Beron <agbej57@gmail.com>
-Date:   Wed, 7 Aug 2019 04:03:00 +0200
-Message-ID: <CAPE2HD0X3M7uQvDf5ZkpLnjCh8mQM0OAEiFJPacF7dOanq3qQQ@mail.gmail.com>
-Subject: PARTNERSHIP REQUEST,
-To:     undisclosed-recipients:;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=bdbKWZyjXxZ8gdygSGa9lktCzX8kxlzXL6a6uqaX3bg=;
+        b=abn9ikNQo+dM5bQN9KGkrAL2vB6TXyu0dGBY3RnuVOKRle5kjFHvPbgnL1aGb6A+qE
+         EnDqkW2Q5Y7+jtvdiwdRl7mx6Tm4SZTiD/QpwSK2RWDTvynhUnTCS2UeQM+6yRPh0v77
+         Z+Wj9JpGomZwMB/ULMfUv4derv0yCEc6wUWHIA+9nzFHi7gWUBh7e/iF/KurjnIDSpHs
+         dkRKtn0af127yk8BlD2BntIVKO2lFCldAP6+Uq7lZxILopr+wnoWmQvEWFrRgjcuMbX6
+         hG39T8uEvNF9LiWqZC3TdxuU22OJLCjuSp4adXdoYx1Eb40MvJOXnz6goNTpgcXGoThc
+         Q+eg==
+X-Gm-Message-State: APjAAAWl3ouyrjAJffedTTo6bsDiwE6DjPhpvLe1/COoroOq8mBVGK09
+        oZrsGalIwXgDNBysbY2zWEus5oyQ2h6apRg=
+X-Google-Smtp-Source: APXvYqxcuEsLSdZXABfbaGLaPekdX0qCbxv3NGBtyC6zvs/T/8g2c6CDTAef9YrNBjb4Nx8tt8f2dLmZFckRn/4=
+X-Received: by 2002:a63:f07:: with SMTP id e7mr5914306pgl.238.1565143563303;
+ Tue, 06 Aug 2019 19:06:03 -0700 (PDT)
+Date:   Tue,  6 Aug 2019 19:05:58 -0700
+Message-Id: <20190807020559.74458-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH] of/platform: Fix device_links_supplier_sync_state_resume() warning
+From:   Saravana Kannan <saravanak@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Saravana Kannan <saravanak@google.com>, Qian Cai <cai@lca.pw>,
+        kernel-team@android.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+In platforms/devices which have CONFIG_OF turned on but don't have a
+populated DT, the calls to device_links_supplier_sync_state_pause() and
+device_links_supplier_sync_state_resume() can get mismatched. This will
+cause a warning during boot. Fix the warning by making sure the calls are
+matched even in that case.
 
-I need you to please let me know if there are fast growing investments
-in your country in which i can invest money in. I have access to a
-huge amount of money, which i want to invest in your country, i want
-to know if you can be an agent/partner to me and i will give you a
-commission of 30% only If you agree to assist me, i will like to know
-if the commission is ok for you, also i would love to know more about
-you too. Get Back to me without delay if you are interested
+Reported-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+---
+ drivers/of/platform.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index a2a4e4b79d43..e5f7e40df439 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -723,7 +723,8 @@ arch_initcall_sync(of_platform_default_populate_init);
+ 
+ static int __init of_platform_sync_state_init(void)
+ {
+-	device_links_supplier_sync_state_resume();
++	if (of_have_populated_dt())
++		device_links_supplier_sync_state_resume();
+ 	return 0;
+ }
+ late_initcall_sync(of_platform_sync_state_init);
+-- 
+2.23.0.rc1.153.gdeed80330f-goog
 
-Yours Faithfully
-
-Simon Beron.
