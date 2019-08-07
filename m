@@ -2,112 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A395B84321
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 06:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02CA884362
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 06:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725845AbfHGEMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 00:12:44 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55892 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbfHGEMn (ORCPT
+        id S1725996AbfHGEZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 00:25:53 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42443 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfHGEZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 00:12:43 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f72so5436wmf.5
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 21:12:42 -0700 (PDT)
+        Wed, 7 Aug 2019 00:25:53 -0400
+Received: by mail-ot1-f67.google.com with SMTP id l15so99098790otn.9
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 21:25:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=g4Mto+u+o/GrqhpuJO5sk5R5bWRkMiGx0GZ7PDoZHhY=;
-        b=hGk8PdnRxQzAhPWjp8Solk8ESY/KLU+gAfVMhPUcVLaljCWzEf6pRIB+ykme9AcMV8
-         uAMtTV6f+Mx5YHksBZHynRnf2uhdVUemjoj0uxOcmrrY1JIbbFbS0TII60Mk2X1s8Jl/
-         cMMx5rySLkA8gG789t5MzOsrqa0w7yTB0pEEEBDxkaLeh3zBd+1GZU9sY+yiinrg0DAe
-         hyS7LzVjCYue1rlQI0GA7Df+jRhMw0TfOfQbKfP7IGeSYpyIcPYtpCe5rpAeLJf0KAdC
-         Qkxv/hMazv3lm9Tbb+XMXF7EmbBgGFSUwcCFwyhL0rLnN8CnZlKlQXh1r8Ge2wr45zvb
-         P1zg==
+        bh=3ATctTDaGdbuSHTCGNV3yIygAvKI+PZ5Bx0qOvsrsdU=;
+        b=Pr1TFTBPQsPZQkpBl1gTXGD5ehedYAy5IgSiynzskrPnWdr4niMAIJVdzjNvrApE4r
+         FDSjtJCibdOlzOpQNWmdaIhwwiHAN9UkbuccdaCJxa2w4HVSoLB0X7putJWBQ4mziSpC
+         3/EHLm2TEeo4Ww++5N2jMzlt0GdyY86ZDUP2m5SSeqTTiIeUHaE7yGD4fNhJPwYiczEe
+         K9vDFUsmlQvuQP6kZY7H+E7TiWLayveSS1ece73bgYdl8HEu1O6B5pi+wybjZDOtRgi1
+         gxD3OKbAKL7L32rqu1b+yZOqR4ZYvwEd3dBvcmPEfDpf39eKu6wsYR1+4+huS8E+BjOK
+         4NXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=g4Mto+u+o/GrqhpuJO5sk5R5bWRkMiGx0GZ7PDoZHhY=;
-        b=V6azhc+0caiKa/m16vN+naIUqv25gi0qZhmCxZclm7xaJMvOUSVwoD0Bjx4D+MO3yZ
-         ktyOa4JvAhbdBjCD6fzi/dNfc8AWcwnx7fMn7YNAUCP0/PeXX8iZmBfQRUNbY7VVNrB9
-         Vdkjqre4TZI0D5lV75pb9z6cgNcxYVs+8wvjVqtiWqWz+wPC85z6HDP0zhJjeEQC89p2
-         UjuVXyDqVyRgK26o5LotifoWYnX1c/NSjDvhueGDDoanOe0QZjAt/yoTsckz+D33PO8H
-         pHQv2LvHsC4gd9bb/+GcMxVPxFuWJ+woYaalMlggCfUgdNWvO6E+eDDOejeHkOxnnnxC
-         6pBg==
-X-Gm-Message-State: APjAAAUD/MNZtPq6DBDteRGN/XvHQORaflMproIROk+bKypGJSD5Xqpd
-        4bRjc6UcFKK5mYoUWVJjGZx9qDyLMgCRkwaFIOroNw==
-X-Google-Smtp-Source: APXvYqxNQXi0Vk0popN48576tfFY9XromzfT2N02IGLgqdhJFMVPw6vXQpznv3nKE3ce9kACVusM9LL3MVE7mwSI0Mg=
-X-Received: by 2002:a1c:9d53:: with SMTP id g80mr7920551wme.103.1565151161058;
- Tue, 06 Aug 2019 21:12:41 -0700 (PDT)
+        bh=3ATctTDaGdbuSHTCGNV3yIygAvKI+PZ5Bx0qOvsrsdU=;
+        b=mIM2iCZSw4oIJ2wnkjbbTUamQGrCP0hvoV7BmTkSaTchOvepH9SJIB9J+ep23/laYG
+         JrWYF/5oTNoIuHr+b7ckuqvE+Srkz2QNeVTWa8Qpg/6Ye4CEumq0W98JTOmaT0Sejm2k
+         3jVEyht4wiA5QIkS8+lUTKvDIbfyCkhl9tc4JYbyCROfNEdFPUspNGGcLjViPCD1aD7s
+         Y8bCBK+W59TZT/vSnuWaZzG5oy5RtH8oBsUaMumtAJjpgGHLwhkxu0NL/d2iMnzoE6Xu
+         szrRXXN8OdPXWX7CzEtQS3nAe4oSp6qwnZ/bRfPo+vrxwgwU7OUseE/OQ+51dRaXBAYz
+         GbBQ==
+X-Gm-Message-State: APjAAAXhDIJX81BlQ7xpGUMumTkXmx2ElQBlVX6lJ2kb1I/0Slv4c1RC
+        OCqYyake7MqKUyM5aGmzN0Crf0zgj5I6oPH+rae44g==
+X-Google-Smtp-Source: APXvYqyd/Zu0XywNS/VeNaLFP0dsw9hCkyh6Xki5zJ7X68h0qtL57F5zTIUSNPDvsC+fAUE8xwVCmn/m7vN3YCNliKg=
+X-Received: by 2002:a05:6638:303:: with SMTP id w3mr7848813jap.103.1565151952221;
+ Tue, 06 Aug 2019 21:25:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190803042723.7163-1-atish.patra@wdc.com> <20190803042723.7163-3-atish.patra@wdc.com>
- <alpine.DEB.2.21.9999.1908061452570.13971@viisi.sifive.com>
-In-Reply-To: <alpine.DEB.2.21.9999.1908061452570.13971@viisi.sifive.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Wed, 7 Aug 2019 09:42:29 +0530
-Message-ID: <CAAhSdy3tJ3RbnyOtKAT4zsjPUxMQkm+UtWa4sTTZxSAsYUBs5g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] RISC-V: Add riscv_isa reprensenting ISA features
- common across CPUs
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Atish Patra <atish.patra@wdc.com>, Anup Patel <anup.patel@wdc.com>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Alan Kao <alankao@andestech.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org, Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
+References: <20190807100803.63007737@canb.auug.org.au> <20190807022356.8502-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20190807022356.8502-1-bjorn.andersson@linaro.org>
+From:   Vaishali Thakkar <vaishali.thakkar@linaro.org>
+Date:   Wed, 7 Aug 2019 09:55:41 +0530
+Message-ID: <CANNG1HVRCfQPk4pP37SbEcR+_Upx7+N_SH95TYUxAhiB+jNLHg@mail.gmail.com>
+Subject: Re: [PATCH v2] soc: qcom: socinfo: Annotate switch cases with fall through
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 7, 2019 at 3:24 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+On Wed, 7 Aug 2019 at 07:54, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
 >
-> Hi Anup, Atish,
+> Introduce fall through annotations in the switch statements of
+> socinfo_debugfs_init() to silence compiler warnings.
+
+Oops, I missed this. Thanks for fixing it!
+
+> Fixes: 9c84c1e78634 ("soc: qcom: socinfo: Expose custom attributes")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Acked-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
+
+> ---
+>  drivers/soc/qcom/socinfo.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 >
-> On Fri, 2 Aug 2019, Atish Patra wrote:
+> diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+> index 855353bed19e..a39ea5061dc5 100644
+> --- a/drivers/soc/qcom/socinfo.c
+> +++ b/drivers/soc/qcom/socinfo.c
+> @@ -323,6 +323,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+>                 debugfs_create_x32("raw_device_number", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.raw_device_num);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 11):
+>         case SOCINFO_VERSION(0, 10):
+>         case SOCINFO_VERSION(0, 9):
+> @@ -330,10 +331,12 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
 >
-> > From: Anup Patel <anup.patel@wdc.com>
-> >
-> > This patch adds riscv_isa integer to represent ISA features common
-> > across all CPUs. The riscv_isa is not same as elf_hwcap because
-> > elf_hwcap will only have ISA features relevant for user-space apps
-> > whereas riscv_isa will have ISA features relevant to both kernel
-> > and user-space apps.
-> >
-> > One of the use case is KVM hypervisor where riscv_isa will be used
-> > to do following operations:
-> >
-> > 1. Check whether hypervisor extension is available
-> > 2. Find ISA features that need to be virtualized (e.g. floating
-> >    point support, vector extension, etc.)
-> >
-> > Signed-off-by: Anup Patel <anup.patel@wdc.com>
-> > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>                 debugfs_create_u32("foundry_id", 0400, qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.foundry_id);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 8):
+>         case SOCINFO_VERSION(0, 7):
+>                 DEBUGFS_ADD(info, pmic_model);
+>                 DEBUGFS_ADD(info, pmic_die_rev);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 6):
+>                 qcom_socinfo->info.hw_plat_subtype =
+>                         __le32_to_cpu(info->hw_plat_subtype);
+> @@ -341,6 +344,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+>                 debugfs_create_u32("hardware_platform_subtype", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.hw_plat_subtype);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 5):
+>                 qcom_socinfo->info.accessory_chip =
+>                         __le32_to_cpu(info->accessory_chip);
+> @@ -348,23 +352,27 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+>                 debugfs_create_u32("accessory_chip", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.accessory_chip);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 4):
+>                 qcom_socinfo->info.plat_ver = __le32_to_cpu(info->plat_ver);
 >
-> Do you have any opinions on how this patch might change for the Z-prefix
-> extensions?  This bitfield approach probably won't scale, and with the
-> EXPORT_SYMBOL(), it might be worth trying to put together a approach that
-> would work over the long term?
-
-Our plan is to use bitmap instead of bitfield and all Zxyz extensions will be
-assigned bit positions "27 + i" where "i" will be based on order in-which they
-are defined in RISC-V spec. In general, "i" is just a unique relative index
-(starting from 0).
-
-To summarize, the existing bitfield approach can be naturally extended
-using bitmap.
-
-We will update this patch accordingly.
-
-Regards,
-Anup
+>                 debugfs_create_u32("platform_version", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.plat_ver);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 3):
+>                 qcom_socinfo->info.hw_plat = __le32_to_cpu(info->hw_plat);
+>
+>                 debugfs_create_u32("hardware_platform", 0400,
+>                                    qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.hw_plat);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 2):
+>                 qcom_socinfo->info.raw_ver  = __le32_to_cpu(info->raw_ver);
+>
+>                 debugfs_create_u32("raw_version", 0400, qcom_socinfo->dbg_root,
+>                                    &qcom_socinfo->info.raw_ver);
+> +               /* Fall through */
+>         case SOCINFO_VERSION(0, 1):
+>                 DEBUGFS_ADD(info, build_id);
+>                 break;
+> --
+> 2.18.0
+>
