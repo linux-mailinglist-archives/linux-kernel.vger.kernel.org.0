@@ -2,151 +2,269 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A627D85106
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5CA85101
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389035AbfHGQZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:25:28 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:47466 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388926AbfHGQZ0 (ORCPT
+        id S2388868AbfHGQZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:25:16 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58547 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729891AbfHGQZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:25:26 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x77GOf0D107164;
-        Wed, 7 Aug 2019 11:24:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565195081;
-        bh=Rd7DS5JXyHAAq1zmDNMB/zcMDAc9CvS8qijx51VvoE4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=B7V4WtUqCJKRhb8XCc+VDGs9BPnK8H9DPPO+JOynJn9NdS6J/ZooZPjWG2DTZ7OmS
-         MUHiWChnP2fE2N5RAHHnWDa+aQK6/JP/YWuqR4M7+r9IeYfGXZ/wlrq499Q0VkJy/r
-         c5ZJFeGC2x47zrH51wD09nxj5blpGvLibc5g9HZs=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x77GOfOS058892
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 7 Aug 2019 11:24:41 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 7 Aug
- 2019 11:24:41 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 7 Aug 2019 11:24:41 -0500
-Received: from [10.250.132.50] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x77GObFI102314;
-        Wed, 7 Aug 2019 11:24:38 -0500
-Subject: Re: [PATCH v2 5/5] mtd: spi-nor: add Kconfig option to disable write
- protection at power-up
-To:     <Tudor.Ambarus@microchip.com>, <marek.vasut@gmail.com>
-CC:     <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <boris.brezillon@collabora.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <Nicolas.Ferre@microchip.com>
-References: <0fc5d3bb-aa11-2816-4734-75dc86deb0d2@microchip.com>
- <20190717113047.32596-1-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <0ea41a21-a1bb-9d19-f739-8e6ccdd6a421@ti.com>
-Date:   Wed, 7 Aug 2019 21:54:37 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190717113047.32596-1-tudor.ambarus@microchip.com>
+        Wed, 7 Aug 2019 12:25:15 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190807162513euoutp029eea646a3680e057eccbba459f854f8c~4sKmq9uHy0958909589euoutp02p
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2019 16:25:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190807162513euoutp029eea646a3680e057eccbba459f854f8c~4sKmq9uHy0958909589euoutp02p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1565195113;
+        bh=2K7KEcP+kimYVvJP3walI9f/kxGTVXYr6YYRG716M1A=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=jlEgzIuSpHuTs/+yStffEcFSrzS+hkzuzVwkesdTdSVxTznh3X+3kGV2E3v/NSV2D
+         7AvZyrGg550fdSr8VXRG4zlFp3PAcftgBhtC47t4jlBN00s8R5SpluESiOLrOl0I6O
+         epbzNPlKISdxSOGeplnPyI2TZu1ieeJkIeR4kHAY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190807162512eucas1p2b0f5f5698a045f4bc8317114f44a0f15~4sKl9B1i00663006630eucas1p2_;
+        Wed,  7 Aug 2019 16:25:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 77.0B.04309.86BFA4D5; Wed,  7
+        Aug 2019 17:25:12 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190807162511eucas1p2eedb33bdee87f80528b59bb4e869daf1~4sKlIXS1e0663006630eucas1p29;
+        Wed,  7 Aug 2019 16:25:11 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190807162511eusmtrp21f68436d743c6f41a60d889f5db8ebca~4sKk6PsKH2110421104eusmtrp2Q;
+        Wed,  7 Aug 2019 16:25:11 +0000 (GMT)
+X-AuditID: cbfec7f4-afbff700000010d5-e1-5d4afb68897f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0E.EF.04117.76BFA4D5; Wed,  7
+        Aug 2019 17:25:11 +0100 (BST)
+Received: from AMDC3061.DIGITAL.local (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190807162510eusmtip2c2a6b10c105bf9cf2ef7571ce74776be~4sKkKCIs_0680706807eusmtip2h;
+        Wed,  7 Aug 2019 16:25:10 +0000 (GMT)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com
+Cc:     linux@armlinux.org.uk, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        krzk@kernel.org, cw00.choi@samsung.com, m.szyprowski@samsung.com,
+        b.zolnierkie@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 1/2] clk: samsung: Change signature of
+ exynos5_subcmus_init() function
+Date:   Wed,  7 Aug 2019 18:24:55 +0200
+Message-Id: <20190807162456.28694-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSfSzUcRzHfe93vwenaz8/Nh+S6pY2laey+ZUerdbxRw9/ZdlNJ785xdH9
+        UMqW9UTC1DQ0K7HINfOQJGJ26DaNIyVc4Q/FPNdda7mQ8zv13/vh9d7n+8eXwpjruBsVo07k
+        NGplrIyQiOvf/jZ4qyyhCr/Zlw5sTUEVzn4yj+OswVBNst+zhnG2r7GIYAsMLSJW96AZsZXt
+        X0i2t/Mo2zadjrNL/TXiQw7yvv5eTD43cIuU12rvEPKcOi2Sm2o9TuJnJPuiuNiYZE7je+Cs
+        RFVoNJIJHbsvd33F09D0jkxkTwEdAMVZFeJMJKEY+hkCXeWizZgRDFb1EIIxIaj4/BRfm3wY
+        LbFR5Qja5rqJf5Pa1sFViqD9IbsjB1m1M+0N6WUtqxBG3xTBR3MJZi2c6DCo6ZoSZSKKEtOe
+        8Kgr0hpL6SCwZAsI0JvgeXUrZt0C/YsA43idSCiOwNLUBCloJ5jU19m0Oyy/fiwSBjcQZDUZ
+        ScHkIhjRFyOBCoI2fS9uvYzRXlDV6CvEh2Fo0UBYY6DXw8CMozXGVuT9+nxMiKWQcZsR6K1g
+        0ebbnuMGd8eWxYKWw2jnt1XN0ApYaJgQ5SKPh/9vFSOkRS5cEh8XzfG71NwlH14Zxyepo33O
+        xcfVopWf8W5Jb25AjX8idYimkGyd1K4nVMHgymQ+JU6HgMJkztLh5BAFI41SplzhNPERmqRY
+        jtehDZRY5iK9ajcaztDRykTuAsclcJq1VkTZu6UhV6aUActGPSpKSgjIk2O4M0lPBlZiDuGZ
+        O/uxsu4np8Z+DtyL8PEd8fa6Jjn/Y78MQhrny4NfnZDP20e4huryLvYEn9YHppKOQzOmaUnq
+        VJq5+SCxd/Z9iLublmuK9NxyrDTj+B6Jd3vom22by1UtCzEVYQYRIXthLDT5mWViXqX0345p
+        eOVfPV+QkhUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsVy+t/xe7rpv71iDbr3s1hsnLGe1eL6l+es
+        FufPb2C3+Nhzj9Xi8q45bBYzzu9jsjg0dS+jxdojd9ktLp5ytTj8pp3V4t+1jSwO3B6Xr11k
+        9nh/o5XdY9OqTjaPvi2rGD0+b5ILYI3SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaP
+        tTIyVdK3s0lJzcksSy3St0vQy5h5+zZ7wVHjirNPWRsY32h3MXJySAiYSFx5sIili5GLQ0hg
+        KaPEzFmrmLoYOYASUhLzW5QgaoQl/lzrYoOo+cQo8fP4dVaQBJuAoUTv0T5GEFtEQF9ictsG
+        sEHMAn1MEnduXQErEhYIk3h7YRkLyFAWAVWJeWeTQMK8AtYSv3sXMUMskJdYveEA8wRGngWM
+        DKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECw3TbsZ9bdjB2vQs+xCjAwajEw8twwStWiDWx
+        rLgy9xCjBAezkgjvvTLPWCHelMTKqtSi/Pii0pzU4kOMpkC7JzJLiSbnA2MoryTe0NTQ3MLS
+        0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QD4/lZP1TnHvYtnfnKavEPQb8bt2Yc
+        3XZtvoDIypsmk/grEnNfm02NP8exJjyHT3uvcFtwiSRn8r/wF5XvztW9esF59trBY30qi+z/
+        7ufRDr9zh6dbkf/dMW5+ldnl167YLgjWuWr9aWns6R8epodnMhTPaxW643SakTnu0QvlY+fj
+        X11craqzab0SS3FGoqEWc1FxIgCQFVLFaQIAAA==
+X-CMS-MailID: 20190807162511eucas1p2eedb33bdee87f80528b59bb4e869daf1
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-RootMTR: 20190807162511eucas1p2eedb33bdee87f80528b59bb4e869daf1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190807162511eucas1p2eedb33bdee87f80528b59bb4e869daf1
+References: <CGME20190807162511eucas1p2eedb33bdee87f80528b59bb4e869daf1@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In order to make it easier in subsequent patch to create different subcmu
+lists for exynos5420 and exynos5800 SoCs the code is rewritten so we pass
+an array of pointers to the subcmus initialization function.
 
-Hi Tudor
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 16 +++----
+ drivers/clk/samsung/clk-exynos5-subcmu.h |  2 +-
+ drivers/clk/samsung/clk-exynos5250.c     |  7 ++-
+ drivers/clk/samsung/clk-exynos5420.c     | 60 ++++++++++++++----------
+ 4 files changed, 49 insertions(+), 36 deletions(-)
 
-On 17-Jul-19 5:00 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-[...]
-> 
->  drivers/mtd/spi-nor/Kconfig   | 8 ++++++++
->  drivers/mtd/spi-nor/spi-nor.c | 7 +++++--
->  2 files changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
-> index 6de83277ce8b..b550e10657f1 100644
-> --- a/drivers/mtd/spi-nor/Kconfig
-> +++ b/drivers/mtd/spi-nor/Kconfig
-> @@ -22,6 +22,14 @@ config MTD_SPI_NOR_USE_4K_SECTORS
->  	  Please note that some tools/drivers/filesystems may not work with
->  	  4096 B erase size (e.g. UBIFS requires 15 KiB as a minimum).
->  
-> +config MTD_SPI_NOR_DISABLE_POWER_UP_WRITE_PROTECTION
-> +	bool "Disable write protection during power-up"
-> +	default y
-> +	help
-> +	   Some spi-nor flashes are write protected by default after a power-on
-> +	   reset cycle, in order to avoid inadvertend writes during power-up.
-> +	   Disable the write protection during power-up.
-> +
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+index 91db7894125d..65c82d922b05 100644
+--- a/drivers/clk/samsung/clk-exynos5-subcmu.c
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -14,7 +14,7 @@
+ #include "clk-exynos5-subcmu.h"
+ 
+ static struct samsung_clk_provider *ctx;
+-static const struct exynos5_subcmu_info *cmu;
++static const struct exynos5_subcmu_info **cmu;
+ static int nr_cmus;
+ 
+ static void exynos5_subcmu_clk_save(void __iomem *base,
+@@ -56,17 +56,17 @@ static void exynos5_subcmu_defer_gate(struct samsung_clk_provider *ctx,
+  * when OF-core populates all device-tree nodes.
+  */
+ void exynos5_subcmus_init(struct samsung_clk_provider *_ctx, int _nr_cmus,
+-			  const struct exynos5_subcmu_info *_cmu)
++			  const struct exynos5_subcmu_info **_cmu)
+ {
+ 	ctx = _ctx;
+ 	cmu = _cmu;
+ 	nr_cmus = _nr_cmus;
+ 
+ 	for (; _nr_cmus--; _cmu++) {
+-		exynos5_subcmu_defer_gate(ctx, _cmu->gate_clks,
+-					  _cmu->nr_gate_clks);
+-		exynos5_subcmu_clk_save(ctx->reg_base, _cmu->suspend_regs,
+-					_cmu->nr_suspend_regs);
++		exynos5_subcmu_defer_gate(ctx, (*_cmu)->gate_clks,
++					  (*_cmu)->nr_gate_clks);
++		exynos5_subcmu_clk_save(ctx->reg_base, (*_cmu)->suspend_regs,
++					(*_cmu)->nr_suspend_regs);
+ 	}
+ }
+ 
+@@ -163,9 +163,9 @@ static int __init exynos5_clk_probe(struct platform_device *pdev)
+ 		if (of_property_read_string(np, "label", &name) < 0)
+ 			continue;
+ 		for (i = 0; i < nr_cmus; i++)
+-			if (strcmp(cmu[i].pd_name, name) == 0)
++			if (strcmp(cmu[i]->pd_name, name) == 0)
+ 				exynos5_clk_register_subcmu(&pdev->dev,
+-							    &cmu[i], np);
++							    cmu[i], np);
+ 	}
+ 	return 0;
+ }
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.h b/drivers/clk/samsung/clk-exynos5-subcmu.h
+index 755ee8aaa3de..9ae5356f25aa 100644
+--- a/drivers/clk/samsung/clk-exynos5-subcmu.h
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.h
+@@ -21,6 +21,6 @@ struct exynos5_subcmu_info {
+ };
+ 
+ void exynos5_subcmus_init(struct samsung_clk_provider *ctx, int nr_cmus,
+-			  const struct exynos5_subcmu_info *cmu);
++			  const struct exynos5_subcmu_info **cmu);
+ 
+ #endif
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index f2b896881768..931c70a4da19 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -681,6 +681,10 @@ static const struct exynos5_subcmu_info exynos5250_disp_subcmu = {
+ 	.pd_name	= "DISP1",
+ };
+ 
++static const struct exynos5_subcmu_info *exynos5250_subcmus[] = {
++	&exynos5250_disp_subcmu,
++};
++
+ static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
+ 	/* sorted in descending order */
+ 	/* PLL_36XX_RATE(rate, m, p, s, k) */
+@@ -843,7 +847,8 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 
+ 	samsung_clk_sleep_init(reg_base, exynos5250_clk_regs,
+ 			       ARRAY_SIZE(exynos5250_clk_regs));
+-	exynos5_subcmus_init(ctx, 1, &exynos5250_disp_subcmu);
++	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5250_subcmus),
++			     exynos5250_subcmus);
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 01bca5a498b2..fdb17c799aa5 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1281,32 +1281,40 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
+ 	{ DIV4_RATIO, 0, 0x3 },			/* DIV dout_mfc_blk */
+ };
+ 
+-static const struct exynos5_subcmu_info exynos5x_subcmus[] = {
+-	{
+-		.div_clks	= exynos5x_disp_div_clks,
+-		.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
+-		.gate_clks	= exynos5x_disp_gate_clks,
+-		.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
+-		.suspend_regs	= exynos5x_disp_suspend_regs,
+-		.nr_suspend_regs = ARRAY_SIZE(exynos5x_disp_suspend_regs),
+-		.pd_name	= "DISP",
+-	}, {
+-		.div_clks	= exynos5x_gsc_div_clks,
+-		.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
+-		.gate_clks	= exynos5x_gsc_gate_clks,
+-		.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
+-		.suspend_regs	= exynos5x_gsc_suspend_regs,
+-		.nr_suspend_regs = ARRAY_SIZE(exynos5x_gsc_suspend_regs),
+-		.pd_name	= "GSC",
+-	}, {
+-		.div_clks	= exynos5x_mfc_div_clks,
+-		.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
+-		.gate_clks	= exynos5x_mfc_gate_clks,
+-		.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
+-		.suspend_regs	= exynos5x_mfc_suspend_regs,
+-		.nr_suspend_regs = ARRAY_SIZE(exynos5x_mfc_suspend_regs),
+-		.pd_name	= "MFC",
+-	},
++static const struct exynos5_subcmu_info exynos5x_disp_subcmu = {
++	.div_clks	= exynos5x_disp_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
++	.gate_clks	= exynos5x_disp_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
++	.suspend_regs	= exynos5x_disp_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5x_disp_suspend_regs),
++	.pd_name	= "DISP",
++};
++
++static const struct exynos5_subcmu_info exynos5x_gsc_subcmu = {
++	.div_clks	= exynos5x_gsc_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
++	.gate_clks	= exynos5x_gsc_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
++	.suspend_regs	= exynos5x_gsc_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5x_gsc_suspend_regs),
++	.pd_name	= "GSC",
++};
++
++static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
++	.div_clks	= exynos5x_mfc_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
++	.gate_clks	= exynos5x_mfc_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
++	.suspend_regs	= exynos5x_mfc_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5x_mfc_suspend_regs),
++	.pd_name	= "MFC",
++};
++
++static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
++	&exynos5x_disp_subcmu,
++	&exynos5x_gsc_subcmu,
++	&exynos5x_mfc_subcmu,
+ };
+ 
+ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
+-- 
+2.17.1
 
-
-Hmm, how about setting MTD_POWERUP_LOCK flag in mtd->flags whenever
-flash powers up with WP enabled? User can disable WP by declaring
-partitions rw or keep partitions locked with ro. MTD core takes care of
-calling mtd->unlock() depending up on the rw/ro flag as part of
-add_mtd_device()
-
-We could probably enhance spi_nor_unlock() to use
-spi_nor_unlock_global_block_protection() when asked to unlock entire flash.
-
-Kconfig option does not scale well for multi-platform build. There would
-not be a way to have WP enabled on one platform but disabled on other.
-
-
-Regards
-Vignesh
-
->  config SPI_ASPEED_SMC
->  	tristate "Aspeed flash controllers in SPI mode"
->  	depends on ARCH_ASPEED || COMPILE_TEST
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index ffb53740031c..9b948295ef27 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -1684,7 +1684,7 @@ static int spi_nor_clear_sr_bp(struct spi_nor *nor)
->   *
->   * Return: 0 on success, -errno otherwise.
->   */
-> -static int spi_nor_spansion_clear_sr_bp(struct spi_nor *nor)
-> +static int __maybe_unused spi_nor_spansion_clear_sr_bp(struct spi_nor *nor)
->  {
->  	int ret;
->  	u8 mask = SR_BP2 | SR_BP1 | SR_BP0;
-> @@ -1726,7 +1726,8 @@ static int spi_nor_spansion_clear_sr_bp(struct spi_nor *nor)
->  	return spi_nor_clear_sr_bp(nor);
->  }
->  
-> -static int spi_nor_unlock_global_block_protection(struct spi_nor *nor)
-> +static int __maybe_unused
-> +spi_nor_unlock_global_block_protection(struct spi_nor *nor)
->  {
->  	int ret;
->  
-> @@ -4049,6 +4050,7 @@ static int spi_nor_init(struct spi_nor *nor)
->  {
->  	int err;
->  
-> +#ifdef CONFIG_MTD_SPI_NOR_DISABLE_POWER_UP_WRITE_PROTECTION
->  	/*
->  	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
->  	 * with the software protection bits set.
-> @@ -4082,6 +4084,7 @@ static int spi_nor_init(struct spi_nor *nor)
->  			return err;
->  		}
->  	}
-> +#endif
->  
->  	if (nor->quad_enable) {
->  		err = nor->quad_enable(nor);
-> 
