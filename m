@@ -2,365 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 438F0842A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:52:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 407888429F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbfHGCw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 22:52:56 -0400
-Received: from mga12.intel.com ([192.55.52.136]:47594 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfHGCw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:52:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 19:52:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
-   d="scan'208";a="192802685"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Aug 2019 19:52:53 -0700
-Date:   Wed, 7 Aug 2019 10:35:45 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v4 07/12] fpga: dfl: afu: add error reporting support.
-Message-ID: <20190807023545.GC24158@hao-dev>
-References: <1564914022-3710-1-git-send-email-hao.wu@intel.com>
- <1564914022-3710-8-git-send-email-hao.wu@intel.com>
- <20190805155437.GC8107@kroah.com>
+        id S1727874AbfHGCuv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 6 Aug 2019 22:50:51 -0400
+Received: from m4a0040g.houston.softwaregrp.com ([15.124.2.86]:44458 "EHLO
+        m4a0040g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726612AbfHGCuu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 22:50:50 -0400
+Received: FROM m4a0040g.houston.softwaregrp.com (15.120.17.147) BY m4a0040g.houston.softwaregrp.com WITH ESMTP;
+ Wed,  7 Aug 2019 02:50:31 +0000
+Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
+ M4W0335.microfocus.com (2002:f78:1193::f78:1193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 7 Aug 2019 02:49:48 +0000
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (15.124.72.11) by
+ M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Wed, 7 Aug 2019 02:49:47 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=huc/nwcaRr4lbs5ciZDuWkZ3pzzbampwc1sDftjJLEl4xNHbh76C7vuJoMB8E0mGKS+HryLAs2ccK4h2E72AKenN5Osp42eb1LnWw6oQdLeBeCAZbMFQRBUflfiAHvTJBg6j3kBf1uN8L4/oaAs9pYuJnSU9qVY6vqCxQuo9sFLiewGoD3u0layY1bVBfBQDPThlGMurj+7I2fXDfc4wajRDQEToSRoQLM7aKenSf/nXl2vAmIfGL0kd4robhvs+oN/S0HdYEZOVIL2m+MB1Q4MssB/b2FrBjz6sgzolwoAvIhfHJnWxW8s5NV6HIMiBz15jDYcVZg+3gJuhGBE3fg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EjA0KI7GnF7EgSCPDj+n1ygbaPRbKH9pXsE3/vpt56Y=;
+ b=RLnRDZAh7ghnFc+m/PubEJbO32z2ZCxDqHmEFg3Y1diRddz3YO9vMNc5lE6/eDo6lzPy0tNNxreOCie0jLAoug/IN3jvo+LeFarpg/PyVchizBbFuYhwcBfazHKBrkKrjFB0vLf32T2+TxMQvkuEiFEgjEDKh1dIsI8qsazUaMRDpH8Wk5bdFWPepPVnV0N0eCOXcjQflCrL44On3Zgq6ZEc9GMwrUkDNBbHoB3U6eIFpolsZLxj/VBnAsbCB9wOjtjx581ISxAU1Z9//X45GwV5JWwqdWrtx9bwhB7XQ4ZEusfzN87oDLJiEYMVNCZZ3DgHMnI0i4mSssYjlvVgpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=suse.com;dmarc=pass action=none header.from=suse.com;dkim=pass
+ header.d=suse.com;arc=none
+Received: from BY5PR18MB3187.namprd18.prod.outlook.com (10.255.139.221) by
+ BY5PR18MB3169.namprd18.prod.outlook.com (10.255.139.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.14; Wed, 7 Aug 2019 02:49:45 +0000
+Received: from BY5PR18MB3187.namprd18.prod.outlook.com
+ ([fe80::103a:94a8:b58d:3eac]) by BY5PR18MB3187.namprd18.prod.outlook.com
+ ([fe80::103a:94a8:b58d:3eac%4]) with mapi id 15.20.2136.018; Wed, 7 Aug 2019
+ 02:49:45 +0000
+From:   Firo Yang <firo.yang@suse.com>
+To:     "davem@davemloft.net" <davem@davemloft.net>
+CC:     "alexander.h.duyck@linux.intel.com" 
+        <alexander.h.duyck@linux.intel.com>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Firo Yang <firo.yang@suse.com>
+Subject: [PATCH v2 1/1] ixgbe: sync the first fragment unconditionally
+Thread-Topic: [PATCH v2 1/1] ixgbe: sync the first fragment unconditionally
+Thread-Index: AQHVTMrFkDapNm+vukGfNKy6YOsjCg==
+Date:   Wed, 7 Aug 2019 02:49:45 +0000
+Message-ID: <20190807024917.27682-1-firo.yang@suse.com>
+Accept-Language: en-US, en-GB, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SG2PR06CA0088.apcprd06.prod.outlook.com
+ (2603:1096:3:14::14) To BY5PR18MB3187.namprd18.prod.outlook.com
+ (2603:10b6:a03:196::29)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=firo.yang@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.16.4
+x-originating-ip: [45.122.156.254]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e738d238-4c73-4015-f681-08d71ae1e7b2
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BY5PR18MB3169;
+x-ms-traffictypediagnostic: BY5PR18MB3169:
+x-microsoft-antispam-prvs: <BY5PR18MB3169DB93B12EF9EEC59509C388D40@BY5PR18MB3169.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2089;
+x-forefront-prvs: 01221E3973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(376002)(39860400002)(346002)(366004)(136003)(199004)(189003)(6116002)(3846002)(25786009)(5640700003)(6436002)(6506007)(386003)(99286004)(54906003)(26005)(478600001)(2906002)(6486002)(68736007)(44832011)(6512007)(107886003)(486006)(2616005)(476003)(186003)(36756003)(53936002)(6916009)(14454004)(102836004)(4326008)(86362001)(66476007)(50226002)(66946007)(66446008)(64756008)(66556008)(52116002)(81166006)(81156014)(1730700003)(8676002)(8936002)(7736002)(14444005)(256004)(5660300002)(305945005)(1076003)(66066001)(2501003)(71200400001)(71190400001)(2351001)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR18MB3169;H:BY5PR18MB3187.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: p8eXH/9hmixvlilwAvX2TpmqCf3nsS/mqFRTOPXapxykJjWFL8VCMrumfVZMg33vUlscJtKMOhiukfwZfUtjCAo0W3LL6o2UG/KGXIeVluSUgxDKTk/rAJ3YvmHewFClgx8WDnpZt89vdT4vOl5VVhmLxZLM7nFBaXUKwuPeSfRwd8h6bZkG/T1B4w34ph9+/lUrdYmnr2Bw817yleRQjmeuWL36H+yTos1bTl4TmbjQdRzzphoKmfGikMJQRAeB18ovgbvWgq9FSXxQ+ABoUzKguME4oMtbV1ULbL2dFkq5jY2jNTVEAaZBUkP06Sl5Rgsslchz/XbVuaWTme0MxUKNm38wx1u4evKhR9Tn6U14XsymekHqUvEYccjwPO8bWiahaW9dTgoIrGCgJtTXzwseN1DomLwI2Iw8NKRu7Ww=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805155437.GC8107@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e738d238-4c73-4015-f681-08d71ae1e7b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 02:49:45.6312
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: firo.yang@suse.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR18MB3169
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 05:54:37PM +0200, Greg KH wrote:
-> On Sun, Aug 04, 2019 at 06:20:17PM +0800, Wu Hao wrote:
-> > Error reporting is one important private feature, it reports error
-> > detected on port and accelerated function unit (AFU). It introduces
-> > several sysfs interfaces to allow userspace to check and clear
-> > errors detected by hardware.
-> > 
-> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > Acked-by: Alan Tull <atull@kernel.org>
-> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> > ---
-> > v2: switch to device_add/remove_group for sysfs.
-> > v3: update kernel version and date in sysfs doc
-> > v4: remove dev_dbg in init/uinit callback function.
-> > ---
-> >  Documentation/ABI/testing/sysfs-platform-dfl-port |  39 ++++
-> >  drivers/fpga/Makefile                             |   1 +
-> >  drivers/fpga/dfl-afu-error.c                      | 221 ++++++++++++++++++++++
-> >  drivers/fpga/dfl-afu-main.c                       |   4 +
-> >  drivers/fpga/dfl-afu.h                            |   4 +
-> >  5 files changed, 269 insertions(+)
-> >  create mode 100644 drivers/fpga/dfl-afu-error.c
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-platform-dfl-port b/Documentation/ABI/testing/sysfs-platform-dfl-port
-> > index 5663441..3b6580b 100644
-> > --- a/Documentation/ABI/testing/sysfs-platform-dfl-port
-> > +++ b/Documentation/ABI/testing/sysfs-platform-dfl-port
-> > @@ -81,3 +81,42 @@ KernelVersion:	5.4
-> >  Contact:	Wu Hao <hao.wu@intel.com>
-> >  Description:	Read-only. Read this file to get the status of issued command
-> >  		to userclck_freqcntrcmd.
-> > +
-> > +What:		/sys/bus/platform/devices/dfl-port.0/errors/revision
-> > +Date:		August 2019
-> > +KernelVersion:	5.4
-> > +Contact:	Wu Hao <hao.wu@intel.com>
-> > +Description:	Read-only. Read this file to get the revision of this error
-> > +		reporting private feature.
-> 
-> Same revision question here that I had on an earlier patch.
-> 
-> 
-> > +
-> > +What:		/sys/bus/platform/devices/dfl-port.0/errors/errors
-> > +Date:		August 2019
-> > +KernelVersion:	5.4
-> > +Contact:	Wu Hao <hao.wu@intel.com>
-> > +Description:	Read-only. Read this file to get errors detected on port and
-> > +		Accelerated Function Unit (AFU).
-> > +
-> > +What:		/sys/bus/platform/devices/dfl-port.0/errors/first_error
-> > +Date:		August 2019
-> > +KernelVersion:	5.4
-> > +Contact:	Wu Hao <hao.wu@intel.com>
-> > +Description:	Read-only. Read this file to get the first error detected by
-> > +		hardware.
-> > +
-> > +What:		/sys/bus/platform/devices/dfl-port.0/errors/first_malformed_req
-> > +Date:		August 2019
-> > +KernelVersion:	5.4
-> > +Contact:	Wu Hao <hao.wu@intel.com>
-> > +Description:	Read-only. Read this file to get the first malformed request
-> > +		captured by hardware.
-> > +
-> > +What:		/sys/bus/platform/devices/dfl-port.0/errors/clear
-> > +Date:		August 2019
-> > +KernelVersion:	5.4
-> > +Contact:	Wu Hao <hao.wu@intel.com>
-> > +Description:	Write-only. Write error code to this file to clear errors.
-> > +		Write fails with -EINVAL if input parsing fails or input error
-> > +		code doesn't match.
-> > +		Write fails with -EBUSY or -ETIMEDOUT if error can't be cleared
-> > +		as hardware is in low power state (-EBUSY) or not responding
-> > +		(-ETIMEDOUT).
-> > diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-> > index 312b937..7255891 100644
-> > --- a/drivers/fpga/Makefile
-> > +++ b/drivers/fpga/Makefile
-> > @@ -41,6 +41,7 @@ obj-$(CONFIG_FPGA_DFL_AFU)		+= dfl-afu.o
-> >  
-> >  dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
-> >  dfl-afu-objs := dfl-afu-main.o dfl-afu-region.o dfl-afu-dma-region.o
-> > +dfl-afu-objs += dfl-afu-error.o
-> >  
-> >  # Drivers for FPGAs which implement DFL
-> >  obj-$(CONFIG_FPGA_DFL_PCI)		+= dfl-pci.o
-> > diff --git a/drivers/fpga/dfl-afu-error.c b/drivers/fpga/dfl-afu-error.c
-> > new file mode 100644
-> > index 0000000..c5e0efa
-> > --- /dev/null
-> > +++ b/drivers/fpga/dfl-afu-error.c
-> > @@ -0,0 +1,221 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Driver for FPGA Accelerated Function Unit (AFU) Error Reporting
-> > + *
-> > + * Copyright 2019 Intel Corporation, Inc.
-> > + *
-> > + * Authors:
-> > + *   Wu Hao <hao.wu@linux.intel.com>
-> > + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> > + *   Joseph Grecco <joe.grecco@intel.com>
-> > + *   Enno Luebbers <enno.luebbers@intel.com>
-> > + *   Tim Whisonant <tim.whisonant@intel.com>
-> > + *   Ananda Ravuri <ananda.ravuri@intel.com>
-> > + *   Mitchel Henry <henry.mitchel@intel.com>
-> > + */
-> > +
-> > +#include <linux/uaccess.h>
-> > +
-> > +#include "dfl-afu.h"
-> > +
-> > +#define PORT_ERROR_MASK		0x8
-> > +#define PORT_ERROR		0x10
-> > +#define PORT_FIRST_ERROR	0x18
-> > +#define PORT_MALFORMED_REQ0	0x20
-> > +#define PORT_MALFORMED_REQ1	0x28
-> > +
-> > +#define ERROR_MASK		GENMASK_ULL(63, 0)
-> > +
-> > +/* mask or unmask port errors by the error mask register. */
-> > +static void __port_err_mask(struct device *dev, bool mask)
-> > +{
-> > +	void __iomem *base;
-> > +
-> > +	base = dfl_get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_ERROR);
-> > +
-> > +	writeq(mask ? ERROR_MASK : 0, base + PORT_ERROR_MASK);
-> > +}
-> > +
-> > +/* clear port errors. */
-> > +static int __port_err_clear(struct device *dev, u64 err)
-> > +{
-> > +	struct platform_device *pdev = to_platform_device(dev);
-> > +	void __iomem *base_err, *base_hdr;
-> > +	int ret;
-> > +	u64 v;
-> > +
-> > +	base_err = dfl_get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_ERROR);
-> > +	base_hdr = dfl_get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_HEADER);
-> > +
-> > +	/*
-> > +	 * clear Port Errors
-> > +	 *
-> > +	 * - Check for AP6 State
-> > +	 * - Halt Port by keeping Port in reset
-> > +	 * - Set PORT Error mask to all 1 to mask errors
-> > +	 * - Clear all errors
-> > +	 * - Set Port mask to all 0 to enable errors
-> > +	 * - All errors start capturing new errors
-> > +	 * - Enable Port by pulling the port out of reset
-> > +	 */
-> > +
-> > +	/* if device is still in AP6 power state, can not clear any error. */
-> > +	v = readq(base_hdr + PORT_HDR_STS);
-> > +	if (FIELD_GET(PORT_STS_PWR_STATE, v) == PORT_STS_PWR_STATE_AP6) {
-> > +		dev_err(dev, "Could not clear errors, device in AP6 state.\n");
-> > +		return -EBUSY;
-> > +	}
-> > +
-> > +	/* Halt Port by keeping Port in reset */
-> > +	ret = __port_disable(pdev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	/* Mask all errors */
-> > +	__port_err_mask(dev, true);
-> > +
-> > +	/* Clear errors if err input matches with current port errors.*/
-> > +	v = readq(base_err + PORT_ERROR);
-> > +
-> > +	if (v == err) {
-> > +		writeq(v, base_err + PORT_ERROR);
-> > +
-> > +		v = readq(base_err + PORT_FIRST_ERROR);
-> > +		writeq(v, base_err + PORT_FIRST_ERROR);
-> > +	} else {
-> > +		ret = -EINVAL;
-> > +	}
-> > +
-> > +	/* Clear mask */
-> > +	__port_err_mask(dev, false);
-> > +
-> > +	/* Enable the Port by clear the reset */
-> > +	__port_enable(pdev);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static ssize_t revision_show(struct device *dev, struct device_attribute *attr,
-> > +			     char *buf)
-> > +{
-> > +	void __iomem *base;
-> > +
-> > +	base = dfl_get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_ERROR);
-> > +
-> > +	return sprintf(buf, "%u\n", dfl_feature_revision(base));
-> > +}
-> > +static DEVICE_ATTR_RO(revision);
-> > +
-> > +static ssize_t errors_show(struct device *dev, struct device_attribute *attr,
-> > +			   char *buf)
-> > +{
-> > +	struct dfl_feature_platform_data *pdata = dev_get_platdata(dev);
-> > +	void __iomem *base;
-> > +	u64 error;
-> > +
-> > +	base = dfl_get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_ERROR);
-> > +
-> > +	mutex_lock(&pdata->lock);
-> > +	error = readq(base + PORT_ERROR);
-> > +	mutex_unlock(&pdata->lock);
-> > +
-> > +	return sprintf(buf, "0x%llx\n", (unsigned long long)error);
-> > +}
-> > +static DEVICE_ATTR_RO(errors);
-> > +
-> > +static ssize_t first_error_show(struct device *dev,
-> > +				struct device_attribute *attr, char *buf)
-> > +{
-> > +	struct dfl_feature_platform_data *pdata = dev_get_platdata(dev);
-> > +	void __iomem *base;
-> > +	u64 error;
-> > +
-> > +	base = dfl_get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_ERROR);
-> > +
-> > +	mutex_lock(&pdata->lock);
-> > +	error = readq(base + PORT_FIRST_ERROR);
-> > +	mutex_unlock(&pdata->lock);
-> > +
-> > +	return sprintf(buf, "0x%llx\n", (unsigned long long)error);
-> > +}
-> > +static DEVICE_ATTR_RO(first_error);
-> > +
-> > +static ssize_t first_malformed_req_show(struct device *dev,
-> > +					struct device_attribute *attr,
-> > +					char *buf)
-> > +{
-> > +	struct dfl_feature_platform_data *pdata = dev_get_platdata(dev);
-> > +	void __iomem *base;
-> > +	u64 req0, req1;
-> > +
-> > +	base = dfl_get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_ERROR);
-> > +
-> > +	mutex_lock(&pdata->lock);
-> > +	req0 = readq(base + PORT_MALFORMED_REQ0);
-> > +	req1 = readq(base + PORT_MALFORMED_REQ1);
-> > +	mutex_unlock(&pdata->lock);
-> > +
-> > +	return sprintf(buf, "0x%016llx%016llx\n",
-> > +		       (unsigned long long)req1, (unsigned long long)req0);
-> > +}
-> > +static DEVICE_ATTR_RO(first_malformed_req);
-> > +
-> > +static ssize_t clear_store(struct device *dev, struct device_attribute *attr,
-> > +			   const char *buff, size_t count)
-> > +{
-> > +	struct dfl_feature_platform_data *pdata = dev_get_platdata(dev);
-> > +	u64 value;
-> > +	int ret;
-> > +
-> > +	if (kstrtou64(buff, 0, &value))
-> > +		return -EINVAL;
-> > +
-> > +	mutex_lock(&pdata->lock);
-> > +	ret = __port_err_clear(dev, value);
-> > +	mutex_unlock(&pdata->lock);
-> > +
-> > +	return ret ? ret : count;
-> > +}
-> > +static DEVICE_ATTR_WO(clear);
-> > +
-> > +static struct attribute *port_err_attrs[] = {
-> > +	&dev_attr_revision.attr,
-> > +	&dev_attr_errors.attr,
-> > +	&dev_attr_first_error.attr,
-> > +	&dev_attr_first_malformed_req.attr,
-> > +	&dev_attr_clear.attr,
-> > +	NULL,
-> > +};
-> > +
-> > +static struct attribute_group port_err_attr_group = {
-> > +	.attrs = port_err_attrs,
-> > +	.name = "errors",
-> > +};
-> > +
-> > +static int port_err_init(struct platform_device *pdev,
-> > +			 struct dfl_feature *feature)
-> > +{
-> > +	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> > +
-> > +	mutex_lock(&pdata->lock);
-> > +	__port_err_mask(&pdev->dev, false);
-> > +	mutex_unlock(&pdata->lock);
-> 
-> Locking one data structure and then modifying another one is up there
-> with "things never to do in the kernel unless you want a huge
-> headache!".
+In Xen environment, if Xen-swiotlb is enabled, ixgbe driver
+could possibly allocate a page, DMA memory buffer, for the first
+fragment which is not suitable for Xen-swiotlb to do DMA operations.
+Xen-swiotlb have to internally allocate another page for doing DMA
+operations. It requires syncing between those two pages. However,
+since commit f3213d932173 ("ixgbe: Update driver to make use of DMA
+attributes in Rx path"), the unmap operation is performed with
+DMA_ATTR_SKIP_CPU_SYNC. As a result, the sync is not performed.
 
-Actually we always use the same lock for protection as other places, but
-the code may cause some misunderstanding, let me improve this part in
-the next version.
+To fix this problem, always sync before possibly performing a page
+unmap operation.
 
-> 
-> > +
-> > +	return device_add_group(&pdev->dev, &port_err_attr_group);
-> 
-> You raced userspace and lost :(
+Fixes: f3213d932173 ("ixgbe: Update driver to make use of DMA
+attributes in Rx path")
+Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Signed-off-by: Firo Yang <firo.yang@suse.com>
+---
 
-Do you mind giving some more hints on this one? I guess I didn't fully
-understand this. :( Add handling if device_add_group failed here, or
-something else I should fix?
+Changes from v1:
+ * Imporved the patch description.
+ * Added Reviewed-by: and Fixes: as suggested by Alexander Duyck
 
-Thanks
-Hao
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-> 
-> thanks,
-> 
-> greg k-h
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index cbaf712d6529..200de9838096 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -1825,13 +1825,7 @@ static void ixgbe_pull_tail(struct ixgbe_ring *rx_ring,
+ static void ixgbe_dma_sync_frag(struct ixgbe_ring *rx_ring,
+ 				struct sk_buff *skb)
+ {
+-	/* if the page was released unmap it, else just sync our portion */
+-	if (unlikely(IXGBE_CB(skb)->page_released)) {
+-		dma_unmap_page_attrs(rx_ring->dev, IXGBE_CB(skb)->dma,
+-				     ixgbe_rx_pg_size(rx_ring),
+-				     DMA_FROM_DEVICE,
+-				     IXGBE_RX_DMA_ATTR);
+-	} else if (ring_uses_build_skb(rx_ring)) {
++	if (ring_uses_build_skb(rx_ring)) {
+ 		unsigned long offset = (unsigned long)(skb->data) & ~PAGE_MASK;
+ 
+ 		dma_sync_single_range_for_cpu(rx_ring->dev,
+@@ -1848,6 +1842,14 @@ static void ixgbe_dma_sync_frag(struct ixgbe_ring *rx_ring,
+ 					      skb_frag_size(frag),
+ 					      DMA_FROM_DEVICE);
+ 	}
++
++	/* If the page was released, just unmap it. */
++	if (unlikely(IXGBE_CB(skb)->page_released)) {
++		dma_unmap_page_attrs(rx_ring->dev, IXGBE_CB(skb)->dma,
++				     ixgbe_rx_pg_size(rx_ring),
++				     DMA_FROM_DEVICE,
++				     IXGBE_RX_DMA_ATTR);
++	}
+ }
+ 
+ /**
+-- 
+2.16.4
+
