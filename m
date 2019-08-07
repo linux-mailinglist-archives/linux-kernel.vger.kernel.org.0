@@ -2,152 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C9C684F09
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7536884F3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 16:56:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388090AbfHGOpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 10:45:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388025AbfHGOpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 10:45:40 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 306FE2199C;
-        Wed,  7 Aug 2019 14:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565189139;
-        bh=f1HrfA5UJA+9P1WwiXt0cKlp9OhG5kgjmIQYOpHTY0s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YD7X9p1V+X4Vpu9bUuweXKMNUWT/yjjmK6ZUORvnYM0Li2JO/n4G54ahYchEr7jGX
-         NLVUvV/2RQXCO3H6BGC7mXc1niW39Sl7AzlQwnXvx3CII11tMtJqgbHmM/KNsmnb0R
-         3kHLhKJvl353SXUmjOn+mZ848JfOT8Rc4KFHXv3Q=
-Date:   Wed, 7 Aug 2019 15:45:34 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Will Deacon <will@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
-        juri.lelli@redhat.com, williams@redhat.com, bristot@redhat.com,
-        longman@redhat.com, dave@stgolabs.net, jack@suse.com
-Subject: Re: [PATCH] locking/percpu_rwsem: Rewrite to not use rwsem
-Message-ID: <20190807144305.v55fohssujsqtegb@willie-the-truck>
-References: <20190805140241.GI2332@hirez.programming.kicks-ass.net>
+        id S1730106AbfHGO4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 10:56:18 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:43980 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729550AbfHGO4R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 10:56:17 -0400
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x77EuBhY021136
+        for <linux-kernel@vger.kernel.org>; Wed, 7 Aug 2019 23:56:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x77EuBhY021136
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565189771;
+        bh=OAO7XGlQdmEIgpn78eW2L2ZXYXkQrL3lABQNvOER8oU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VLvFt6S/I43TB+5ltV5z9dro2bM6nhwXidEu0BPBdGKajiKSTcZwbD0RGnPPhqnft
+         /mMTw1BfoqPeN8S6lE5X7wTJyEbdPbGKEwhkBW/1t9RhwmAyXYXc+f54mTnNhNckpb
+         wOQmT/2unaSifpeamaZS00so7/hpEivheLJNheRyhLdl3CgqA6pwaJ8jR/Sh0uAqkU
+         ypLaIQExZaFsLFVsj7Mfnil4erpWMEO/xB/lbQoq+cPAtE9Sm4Zqr1dZ3CH68ljCZj
+         r+JTSvXUkD8vHwGDhdBo7tcgQ8//l8NXDLGixIKVJi6+Iaa8GVm1kx85Y1ou+X1aw+
+         hTSlYn6li1fbQ==
+X-Nifty-SrcIP: [209.85.217.53]
+Received: by mail-vs1-f53.google.com with SMTP id v129so60844449vsb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 07:56:11 -0700 (PDT)
+X-Gm-Message-State: APjAAAU2eIzDvu1YazDvLDgKiVKyfkJS+6E0BjNulTm314jbmOkszx8b
+        /iQBgAJgPcM8CoermwOjNLSbmmvWYcyHMvc7Ogk=
+X-Google-Smtp-Source: APXvYqxcTU3HgFnWXtYedYJqFKQRBtWDWaMULS4dNjaFXj17+vON0Z92k0/VOYCtWad6HRH6isIAhdbZ0kfHeew7duo=
+X-Received: by 2002:a67:8e0a:: with SMTP id q10mr6182973vsd.215.1565189770430;
+ Wed, 07 Aug 2019 07:56:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805140241.GI2332@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190731190309.19909-1-rikard.falkeborn@gmail.com>
+ <20190801230358.4193-1-rikard.falkeborn@gmail.com> <20190801230358.4193-2-rikard.falkeborn@gmail.com>
+ <20190807142728.GA16360@roeck-us.net>
+In-Reply-To: <20190807142728.GA16360@roeck-us.net>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 7 Aug 2019 23:55:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATGuO0D0a-sTvWw5Pzkn5C7jrLiS=rCwiRsEqaS86KbuQ@mail.gmail.com>
+Message-ID: <CAK7LNATGuO0D0a-sTvWw5Pzkn5C7jrLiS=rCwiRsEqaS86KbuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] linux/bits.h: Add compile time sanity check of
+ GENMASK inputs
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On Wed, Aug 7, 2019 at 11:27 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Fri, Aug 02, 2019 at 01:03:58AM +0200, Rikard Falkeborn wrote:
+> > GENMASK() and GENMASK_ULL() are supposed to be called with the high bit
+> > as the first argument and the low bit as the second argument. Mixing
+> > them will return a mask with zero bits set.
+> >
+> > Recent commits show getting this wrong is not uncommon, see e.g.
+> > commit aa4c0c9091b0 ("net: stmmac: Fix misuses of GENMASK macro") and
+> > commit 9bdd7bb3a844 ("clocksource/drivers/npcm: Fix misuse of GENMASK
+> > macro").
+> >
+> > To prevent such mistakes from appearing again, add compile time sanity
+> > checking to the arguments of GENMASK() and GENMASK_ULL(). If both the
+> > arguments are known at compile time, and the low bit is higher than the
+> > high bit, break the build to detect the mistake immediately.
+> >
+> > Since GENMASK() is used in declarations, BUILD_BUG_ON_ZERO() must be
+> > used instead of BUILD_BUG_ON(), and __is_constexpr() must be used instead
+> > of __builtin_constant_p().
+> >
+> > If successful, BUILD_BUG_OR_ZERO() returns 0 of type size_t. To avoid
+> > problems with implicit conversions, cast the result of BUILD_BUG_OR_ZERO
+> > to unsigned long.
+> >
+> > Since both BUILD_BUG_ON_ZERO() and __is_constexpr() only uses sizeof()
+> > on the arguments passed to them, neither of them evaluate the expression
+> > unless it is a VLA. Therefore, GENMASK(1, x++) still behaves as
+> > expected.
+> >
+> > Commit 95b980d62d52 ("linux/bits.h: make BIT(), GENMASK(), and friends
+> > available in assembly") made the macros in linux/bits.h available in
+> > assembly. Since neither BUILD_BUG_OR_ZERO() or __is_constexpr() are asm
+> > compatible, disable the checks if the file is included in an asm file.
+> >
+>
+> Who is going to fix the fallout ? For example, arm64:defconfig no longer
+> compiles with this patch applied.
+>
+> It seems to me that the benefit of catching misuses of GENMASK is much
+> less than the fallout from no longer compiling kernels, since those
+> kernels won't get any test coverage at all anymore.
 
-I've mostly been spared the joys of pcpu rwsem, but I took a look anyway.
-Comments of questionable quality below.
 
-On Mon, Aug 05, 2019 at 04:02:41PM +0200, Peter Zijlstra wrote:
-> The filesystem freezer uses percpu_rwsem in a way that is effectively
-> write_non_owner() and achieves this with a few horrible hacks that
-> rely on the rwsem (!percpu) implementation.
-> 
-> When -RT re-implements rwsem this house of cards comes undone.
-> 
-> Re-implement percpu_rwsem without relying on rwsem.
-> 
-> Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Reported-by: Juri Lelli <juri.lelli@redhat.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Tested-by: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Clark Williams <williams@redhat.com>
-> Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: jack@suse.com
-> ---
->  include/linux/percpu-rwsem.h  |   72 +++++++++++++-------------
->  include/linux/wait.h          |    3 +
->  kernel/cpu.c                  |    4 -
->  kernel/locking/percpu-rwsem.c |  116 +++++++++++++++++++++++++-----------------
->  4 files changed, 112 insertions(+), 83 deletions(-)
+We cannot apply this until we fix all errors.
 
-[...]
+I do not understand why Andrew picked up this so soon.
 
-> +/*
-> + * Called with preemption disabled, and returns with preemption disabled,
-> + * except when it fails the trylock.
-> + */
-> +bool __percpu_down_read(struct percpu_rw_semaphore *sem, bool try)
->  {
->  	/*
->  	 * Due to having preemption disabled the decrement happens on
->  	 * the same CPU as the increment, avoiding the
->  	 * increment-on-one-CPU-and-decrement-on-another problem.
->  	 *
-> -	 * If the reader misses the writer's assignment of readers_block, then
-> -	 * the writer is guaranteed to see the reader's increment.
-> +	 * If the reader misses the writer's assignment of sem->block, then the
-> +	 * writer is guaranteed to see the reader's increment.
->  	 *
->  	 * Conversely, any readers that increment their sem->read_count after
-> -	 * the writer looks are guaranteed to see the readers_block value,
-> -	 * which in turn means that they are guaranteed to immediately
-> -	 * decrement their sem->read_count, so that it doesn't matter that the
-> -	 * writer missed them.
-> +	 * the writer looks are guaranteed to see the sem->block value, which
-> +	 * in turn means that they are guaranteed to immediately decrement
-> +	 * their sem->read_count, so that it doesn't matter that the writer
-> +	 * missed them.
->  	 */
->  
-> +again:
->  	smp_mb(); /* A matches D */
->  
->  	/*
-> -	 * If !readers_block the critical section starts here, matched by the
-> +	 * If !sem->block the critical section starts here, matched by the
->  	 * release in percpu_up_write().
->  	 */
-> -	if (likely(!smp_load_acquire(&sem->readers_block)))
-> -		return 1;
-> +	if (likely(!atomic_read_acquire(&sem->block)))
-> +		return true;
->  
->  	/*
->  	 * Per the above comment; we still have preemption disabled and
->  	 * will thus decrement on the same CPU as we incremented.
->  	 */
-> -	__percpu_up_read(sem);
-> +	__percpu_up_read(sem); /* implies preempt_enable() */
-
-Irritatingly, it also implies an smp_mb() which I don't think we need here.
-
->  	if (try)
-> -		return 0;
-> +		return false;
->  
-> -	/*
-> -	 * We either call schedule() in the wait, or we'll fall through
-> -	 * and reschedule on the preempt_enable() in percpu_down_read().
-> -	 */
-> -	preempt_enable_no_resched();
-> +	wait_event(sem->waiters, !atomic_read_acquire(&sem->block));
-
-Why do you need acquire semantics here? Is the control dependency to the
-increment not enough?
-
-Talking of control dependencies, could we replace the smp_mb() in
-readers_active_check() with smp_acquire__after_ctrl_dep()? In fact, perhaps
-we could remove it altogether, given that our writes will be ordered by
-the dependency and I don't think we care about ordering our reads wrt
-previous readers. Hmm. Either way, clearly not for this patch.
-
-Anyway, general shape of the patch looks good to me.
-
-Will
+-- 
+Best Regards
+Masahiro Yamada
