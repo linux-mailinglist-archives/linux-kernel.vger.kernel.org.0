@@ -2,138 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57FF683E4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 02:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A4FA83E57
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 02:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbfHGA3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 20:29:33 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:36669 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727617AbfHGA3c (ORCPT
+        id S1728493AbfHGAaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 20:30:22 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39377 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728407AbfHGAaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 20:29:32 -0400
-X-UUID: 8b691bcbe4874fa9937b0efe4dee114f-20190807
-X-UUID: 8b691bcbe4874fa9937b0efe4dee114f-20190807
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1562935432; Wed, 07 Aug 2019 08:29:21 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 7 Aug 2019 08:29:21 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 7 Aug 2019 08:29:21 +0800
-Message-ID: <1565137761.18034.1.camel@mtkswgap22>
-Subject: Re: [PATCH] arm64: mm: print hexadecimal EC value in
- mem_abort_decode()
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        James Morse <james.morse@arm.com>
-Date:   Wed, 7 Aug 2019 08:29:21 +0800
-In-Reply-To: <20190806123450.GE475@lakrids.cambridge.arm.com>
-References: <20190806112948.4357-1-miles.chen@mediatek.com>
-         <20190806123450.GE475@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Aug 2019 20:30:21 -0400
+Received: by mail-lf1-f67.google.com with SMTP id x3so8861160lfn.6
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 17:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=04KeAaCHcaHA13etq10kb5eqtxQxSQGGJ3drhfuep0U=;
+        b=fqRhCbgmWE11EYy3WIsEPjq48dq2jzTQOhZT7z7UW8KW//nC8dYqObDWTiTfCLO1kp
+         kxxcmjUAd/qgJ4YzxnhotT/4QmTXeMCRqlRUH6vvg2rdYn3xcQosK24cTLIVKz6qhULf
+         VJVsUbuWu0FTrMtZ86g1CyNgtVWby+VNSNh5A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=04KeAaCHcaHA13etq10kb5eqtxQxSQGGJ3drhfuep0U=;
+        b=pHGcB4GKJJ7jSZx1iwbeSN7dqliJ+00mIMevPojhq9p3Jpirb2tG4wNNRzxoB//xEN
+         FApTIZZPAukMN9uzgEMQ/RLUiYwoMGuK8Ty0dDtIdWUxrWPIavr6ZdYXFGlO52+IIA9e
+         ko/hYmGmkPirrsUdOcVoGIlZODllOKaIHJafZiGxd+yqAlZ7UvH98GChiWf0LhJd6p+v
+         1wfk8V27enygz3JFzK1ZveUub3S74e7ZShsvO8W45QyFAX7jr2XBbi7ymX9qmtWOmCAs
+         H1MWcabnFJEMGejD2LJG0QD87b35OUqELuWvctsfgFfZ3Svk9+g0YpdWT1e2x+7DOseR
+         oJYw==
+X-Gm-Message-State: APjAAAXv2PIeZUAGzYIPzJThg5NK4rnzbVRx7czW+aCJskngH3vAYbPE
+        f+wRIMg9qUd/XdMWY5lpS1gZCaLXIFM=
+X-Google-Smtp-Source: APXvYqxddrywG6Y9pPCABUIv7/PzG8bi/6HgUqUlqK4xjEXuMWya+B+d0Swzv96kbGFlYH71fB9/gA==
+X-Received: by 2002:a19:ca4b:: with SMTP id h11mr3997174lfj.162.1565137819145;
+        Tue, 06 Aug 2019 17:30:19 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id q22sm18376953lje.75.2019.08.06.17.30.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 17:30:18 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id z15so58362743lfh.13
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 17:30:17 -0700 (PDT)
+X-Received: by 2002:a19:ed11:: with SMTP id y17mr4205590lfy.141.1565137817348;
+ Tue, 06 Aug 2019 17:30:17 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+References: <CAH040W7fdd-ND4-QG3DwGpFAPTMGB4zzuXYohMdfoSejV6XE_Q@mail.gmail.com>
+In-Reply-To: <CAH040W7fdd-ND4-QG3DwGpFAPTMGB4zzuXYohMdfoSejV6XE_Q@mail.gmail.com>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Tue, 6 Aug 2019 17:30:06 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXM6Jz7YY9XUj6QKv5VJCED-BnQ5K1UZHNApB9p6qTWtgg@mail.gmail.com>
+Message-ID: <CA+ASDXM6Jz7YY9XUj6QKv5VJCED-BnQ5K1UZHNApB9p6qTWtgg@mail.gmail.com>
+Subject: Re: Realtek r8822be wireless card fails to work with new rtw88 kernel module
+To:     =?UTF-8?B?6rOg7KSA?= <gojun077@gmail.com>
+Cc:     linux-wireless <linux-wireless@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Tony Chuang <yhchuang@realtek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-06 at 13:34 +0100, Mark Rutland wrote:
-> On Tue, Aug 06, 2019 at 07:29:48PM +0800, Miles Chen wrote:
-> > This change prints the hexadecimal EC value in mem_abort_decode(),
-> > which makes it easier to lookup the corresponding EC in
-> > the ARM Architecture Reference Manual.
-> > 
-> > The commit 1f9b8936f36f ("arm64: Decode information from ESR upon mem
-> > faults") prints useful information when memory abort occurs. It would
-> > be easier to lookup "0x25" instead of "DABT" in the document. Then we
-> > can check the corresponding ISS.
-> > 
-> > For example:
-> > Current	info	  	Document
-> > 		  	EC	Exception class
-> > "CP15 MCR/MRC"		0x3	"MCR or MRC access to CP15a..."
-> > "ASIMD"			0x7	"Access to SIMD or floating-point..."
-> > "DABT (current EL)" 	0x25	"Data Abort taken without..."
-> > ...
-> > 
-> > Before:
-> > Unable to handle kernel paging request at virtual address 000000000000c000
-> > Mem abort info:
-> >   ESR = 0x96000046
-> >   Exception class = DABT (current EL), IL = 32 bits
-> >   SET = 0, FnV = 0
-> >   EA = 0, S1PTW = 0
-> > Data abort info:
-> >   ISV = 0, ISS = 0x00000046
-> >   CM = 0, WnR = 1
-> > 
-> > After:
-> > Unable to handle kernel paging request at virtual address 000000000000c000
-> > Mem abort info:
-> >   ESR = 0x96000046
-> >   EC = 0x25, Exception class = DABT (current EL), IL = 32 bits
-> >   SET = 0, FnV = 0
-> >   EA = 0, S1PTW = 0
-> > Data abort info:
-> >   ISV = 0, ISS = 0x00000046
-> >   CM = 0, WnR = 1
-> > 
-> > Cc: Mark Rutland <Mark.rutland@arm.com>
-> > Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> > Cc: James Morse <james.morse@arm.com>
-> > Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-> > ---
-> >  arch/arm64/mm/fault.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> > index cfd65b63f36f..afb6041e25e6 100644
-> > --- a/arch/arm64/mm/fault.c
-> > +++ b/arch/arm64/mm/fault.c
-> > @@ -86,8 +86,8 @@ static void mem_abort_decode(unsigned int esr)
-> >  	pr_alert("Mem abort info:\n");
-> >  
-> >  	pr_alert("  ESR = 0x%08x\n", esr);
-> > -	pr_alert("  Exception class = %s, IL = %u bits\n",
-> > -		 esr_get_class_string(esr),
-> > +	pr_alert("  EC = 0x%lx, Exception class = %s, IL = %u bits\n",
-> > +		 ESR_ELx_EC(esr), esr_get_class_string(esr),
-> 
-> Could we make this:
-> 
-> 	pr_alert("  EC = 0x%02lx: %s, IL = %u bits\n",
-> 		 ESR_ELx_EC(esr), esr_get_class_string(esr));
-> 
-> We don't need to spell out "Exception Class" if we say "EC", and we
-> should print the EC hex value with a consistent width as we do for the
-> ISS.
++ yhchuang
 
-Thanks for the advise.
-It looks better this way. I'll send patch v2.
+On Tue, Aug 6, 2019 at 7:32 AM =EA=B3=A0=EC=A4=80 <gojun077@gmail.com> wrot=
+e:
+>
+> Hello,
+>
+> I recently reported a bug to Ubuntu regarding a regression in wireless
+> driver support for the Realtek r8822be wireless chipset. The issue
+> link on launchpad is:
+>
+> https://bugs.launchpad.net/bugs/1838133
+>
+> After Canonical developers triaged the bug they determined that the
+> problem lies upstream, and instructed me to send mails to the relevant
+> kernel module maintainers at Realtek and to the general kernel.org
+> mailing list.
+>
+> I built kernel 5.3.0-rc1+ with the latest realtek drivers from
+> wireless-drivers-next but my Realtek r8822be doesn't work with
+> rtw88/rtwpci kernel modules.
+>
+> Please let me know if there is any additional information I can
+> provide that would help in debugging this issue.
 
+Any chance this would help you?
 
+https://patchwork.kernel.org/patch/11065631/
 
-Miles
+Somebody else was complaining about 8822be regressions that were fixed
+with that.
 
-> 
-> With that:
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Thanks,
-> Mark.
-
-
+Brian
