@@ -2,69 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C0184C26
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 14:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0880C84C2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 14:58:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387937AbfHGM5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 08:57:54 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36115 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387476AbfHGM5x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 08:57:53 -0400
-Received: by mail-pl1-f195.google.com with SMTP id k8so40733343plt.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 05:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=IVi0+NZ0tWSCQF2G+E9doP//jdO8wcwv1z7Q+3dAsws=;
-        b=diTZi+iQpcjIVf+GjOgemDfRU8U2sBiC7SkbFzD7TlOidWSb4riJQ6VLLdDdxRPFaA
-         gVoYmdJ3p/X0vdRKERUCgbxvb91/W6uyQVdrh8AIIhA9zZ1NVnJpDySmK6PM+EqcCRnS
-         MjowmCAQHajdNEGnOZMCSDCc6wY9t7QRHf/RAVuxnfBh4GrsSr/TTpiJsDfM3l4JzIXM
-         41D2AcTLI0AYE/eMUvyc0a4s+yI7iJ5jPm6F9GPi8zKDXxJk2Eu+4iEhwtiQWpzfj/DR
-         TSKAzSjxiW6a+fL7hgJ3uYZrIREtqqVRSl/4IBoFrTKHVrbZ7dz371ATNJhbcn894nNs
-         9/dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=IVi0+NZ0tWSCQF2G+E9doP//jdO8wcwv1z7Q+3dAsws=;
-        b=e7956trS51MxxA0skjDN+ljx6Rnq29kyxSLBCBseFoIlTGx9BJZAOLLP+ccpxn0HyO
-         uVnE023xKVAZsflH08fPohzhy+2w+GGF6qsVgiZg6xG6c+2/o/onG36HH5VkDLTMuhDG
-         zdndQbTxblGX8SQoitznw0079HO9viB8FukDp+tmfr+iGyjR6h7iSktXYwQGBiKMg+A5
-         yikPjG8IJ8ISUEmBaG+0lHAQXDBpvDGeCypxdU70nMiTN0dHbm+HL64dldKAYowXwoz4
-         BWIb+5D2c60vj1MktmQWqXZTN1nqZiLG3BktyyU5oD/2XHbOly+GxwD9/y1yVRIEOFag
-         duZg==
-X-Gm-Message-State: APjAAAW+KIwLy5+fRiBx83K/RK7G4n6TxFA7j652hHSVb4xyXnX+PqWy
-        pY2I5EA+eiSnc3noNMWx7Yi8ilgCCKniY3/xwRY=
-X-Google-Smtp-Source: APXvYqy57JrFa1Xo1bykH26NPlUcKNDxfag6licsi3R+t6NErdhPJknpCH2wY36WDIruORS70filqzk6nOh1fnHAvAY=
-X-Received: by 2002:a63:ec48:: with SMTP id r8mr7286482pgj.387.1565182672470;
- Wed, 07 Aug 2019 05:57:52 -0700 (PDT)
+        id S2387964AbfHGM60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 08:58:26 -0400
+Received: from foss.arm.com ([217.140.110.172]:47950 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387476AbfHGM6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 08:58:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9E2B28;
+        Wed,  7 Aug 2019 05:58:24 -0700 (PDT)
+Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 493D93F575;
+        Wed,  7 Aug 2019 05:58:22 -0700 (PDT)
+Subject: Re: [PATCH v10 20/22] x86: mm: Convert dump_pagetables to use
+ walk_page_range
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mark Rutland <Mark.Rutland@arm.com>, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <james.morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "Liang, Kan" <kan.liang@linux.intel.com>
+References: <20190731154603.41797-1-steven.price@arm.com>
+ <20190731154603.41797-21-steven.price@arm.com>
+ <20190806165823.3f735b45a7c4163aca20a767@linux-foundation.org>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <066fa4ca-5a46-ba86-607f-9c3e16f79cde@arm.com>
+Date:   Wed, 7 Aug 2019 13:58:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:33e2:0:0:0:0 with HTTP; Wed, 7 Aug 2019 05:57:51
- -0700 (PDT)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <crepinak.vainqueur@gmail.com>
-Date:   Wed, 7 Aug 2019 14:57:51 +0200
-Message-ID: <CAHwNn8K-PfjR=6Y67id-zQncbGqQ5DN8nUcAYDXkoxF6un1Qig@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190806165823.3f735b45a7c4163aca20a767@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On 07/08/2019 00:58, Andrew Morton wrote:
+> On Wed, 31 Jul 2019 16:46:01 +0100 Steven Price <steven.price@arm.com> wrote:
+> 
+>> Make use of the new functionality in walk_page_range to remove the
+>> arch page walking code and use the generic code to walk the page tables.
+>>
+>> The effective permissions are passed down the chain using new fields
+>> in struct pg_state.
+>>
+>> The KASAN optimisation is implemented by including test_p?d callbacks
+>> which can decide to skip an entire tree of entries
+>>
+>> ...
+>>
+>> +static const struct ptdump_range ptdump_ranges[] = {
+>> +#ifdef CONFIG_X86_64
+>>  
+>> -#define pgd_large(a) (pgtable_l5_enabled() ? pgd_large(a) : p4d_large(__p4d(pgd_val(a))))
+>> -#define pgd_none(a)  (pgtable_l5_enabled() ? pgd_none(a) : p4d_none(__p4d(pgd_val(a))))
+>> +#define normalize_addr_shift (64 - (__VIRTUAL_MASK_SHIFT + 1))
+>> +#define normalize_addr(u) ((signed long)(u << normalize_addr_shift) \
+>> +				>> normalize_addr_shift)
+>>  
+>> -static inline bool is_hypervisor_range(int idx)
+>> -{
+>> -#ifdef CONFIG_X86_64
+>> -	/*
+>> -	 * A hole in the beginning of kernel address space reserved
+>> -	 * for a hypervisor.
+>> -	 */
+>> -	return	(idx >= pgd_index(GUARD_HOLE_BASE_ADDR)) &&
+>> -		(idx <  pgd_index(GUARD_HOLE_END_ADDR));
+>> +	{0, PTRS_PER_PGD * PGD_LEVEL_MULT / 2},
+>> +	{normalize_addr(PTRS_PER_PGD * PGD_LEVEL_MULT / 2), ~0UL},
+> 
+> This blows up because PGD_LEVEL_MULT is sometimes not a constant.
+> 
+> x86_64 allmodconfig:
+> 
+> In file included from ./arch/x86/include/asm/pgtable_types.h:249:0,
+>                  from ./arch/x86/include/asm/paravirt_types.h:45,
+>                  from ./arch/x86/include/asm/ptrace.h:94,
+>                  from ./arch/x86/include/asm/math_emu.h:5,
+>                  from ./arch/x86/include/asm/processor.h:12,
+>                  from ./arch/x86/include/asm/cpufeature.h:5,
+>                  from ./arch/x86/include/asm/thread_info.h:53,
+>                  from ./include/linux/thread_info.h:38,
+>                  from ./arch/x86/include/asm/preempt.h:7,
+>                  from ./include/linux/preempt.h:78,
+>                  from ./include/linux/spinlock.h:51,
+>                  from ./include/linux/wait.h:9,
+>                  from ./include/linux/wait_bit.h:8,
+>                  from ./include/linux/fs.h:6,
+>                  from ./include/linux/debugfs.h:15,
+>                  from arch/x86/mm/dump_pagetables.c:11:
+> ./arch/x86/include/asm/pgtable_64_types.h:56:22: error: initializer element is not constant
+>  #define PTRS_PER_PGD 512
+>                       ^
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
+This is very unhelpful of GCC - it's actually PTRS_PER_P4D which isn't
+constant!
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002@gmail.com
+> arch/x86/mm/dump_pagetables.c:363:6: note: in expansion of macro ‘PTRS_PER_PGD’
+>   {0, PTRS_PER_PGD * PGD_LEVEL_MULT / 2},
+>       ^~~~~~~~~~~~
+> ./arch/x86/include/asm/pgtable_64_types.h:56:22: note: (near initialization for ‘ptdump_ranges[0].end’)
+>  #define PTRS_PER_PGD 512
+>                       ^
+> arch/x86/mm/dump_pagetables.c:363:6: note: in expansion of macro ‘PTRS_PER_PGD’
+>   {0, PTRS_PER_PGD * PGD_LEVEL_MULT / 2},
+>       ^~~~~~~~~~~~
+> arch/x86/mm/dump_pagetables.c:360:27: error: initializer element is not constant
+>  #define normalize_addr(u) ((signed long)(u << normalize_addr_shift) \
+>                            ^
+> arch/x86/mm/dump_pagetables.c:364:3: note: in expansion of macro ‘normalize_addr’
+>   {normalize_addr(PTRS_PER_PGD * PGD_LEVEL_MULT / 2), ~0UL},
+>    ^~~~~~~~~~~~~~
+> arch/x86/mm/dump_pagetables.c:360:27: note: (near initialization for ‘ptdump_ranges[1].start’)
+>  #define normalize_addr(u) ((signed long)(u << normalize_addr_shift) \
+>                            ^
+> arch/x86/mm/dump_pagetables.c:364:3: note: in expansion of macro ‘normalize_addr’
+>   {normalize_addr(PTRS_PER_PGD * PGD_LEVEL_MULT / 2), ~0UL},
+> 
+> I don't know what to do about this so I'll drop the series.
 
-Many thanks in advance,
-Mr.Eddy William,
+My best solution to this is to simply make ptdump_ranges dynamic (see
+below). But there are other problems with this series (thanks for
+spotting them), so I'll send out another version later.
+
+Thanks,
+
+Steve
+
+----8<-----
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 998c7f46763c..8fc129ff985e 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -353,7 +353,10 @@ static void note_page(struct ptdump_state *pt_st,
+unsigned long addr, int level,
+        }
+ }
+
+-static const struct ptdump_range ptdump_ranges[] = {
++static void ptdump_walk_pgd_level_core(struct seq_file *m, struct
+mm_struct *mm,
++                                      bool checkwx, bool dmesg)
++{
++       const struct ptdump_range ptdump_ranges[] = {
+ #ifdef CONFIG_X86_64
+
+ #define normalize_addr_shift (64 - (__VIRTUAL_MASK_SHIFT + 1))
+@@ -368,9 +371,6 @@ static const struct ptdump_range ptdump_ranges[] = {
+        {0, 0}
+ };
+
+-static void ptdump_walk_pgd_level_core(struct seq_file *m, struct
+mm_struct *mm,
+-                                      bool checkwx, bool dmesg)
+-{
+        struct pg_state st = {
+                .ptdump = {
+                        .note_page      = note_page,
