@@ -2,410 +2,388 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705AD84879
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 11:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 955E18488B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 11:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbfHGJRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 05:17:39 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:46986 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbfHGJRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 05:17:39 -0400
-Received: from zn.tnic (p200300EC2F0D5000E5DBE4FCCFA1B2C9.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:5000:e5db:e4fc:cfa1:b2c9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8712F1EC0B07;
-        Wed,  7 Aug 2019 11:17:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565169456;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=DnDOhlWyeBJK0zKV1ZwYlhfVwPmz+ei49G/WGlB2iao=;
-        b=hPfZMFaxhhqp2+aJnjwK3pVi8VFag/8HppNPSdmP0fZ6AzvUNyDeb9/5evvOfX5aUdI1HG
-        EKz8tZD9PL5rJ9BabtENxgO7cCgYD1urysOFmyGt6aAq/JV9VidP2Mzv8XYG2LfRGR+OLI
-        Ts5fRbeaJUwZ0vSLDw/jBjStFHS7uVY=
-Date:   Wed, 7 Aug 2019 11:18:22 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        kuo-lang.tseng@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 08/10] x86/resctrl: Support pseudo-lock regions
- spanning resources
-Message-ID: <20190807091822.GB18207@zn.tnic>
-References: <cover.1564504901.git.reinette.chatre@intel.com>
- <2a53901c44b1286097ba142a7b64cc092d99ad86.1564504902.git.reinette.chatre@intel.com>
+        id S1727354AbfHGJXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 05:23:46 -0400
+Received: from mail-eopbgr40066.outbound.protection.outlook.com ([40.107.4.66]:30337
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726529AbfHGJXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 05:23:46 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZG4ZbDuSCaqlwUByH1eL42YH53RwNcWnNXS307eEhxePgWfIQj2zaKIKSZ4Im8bc8h1JA0ak3YNY0MRHhELwBIhWflCu4RjXrKKSUTbxSQ/dxE5uhf4vMW2BGh/Kx1J4Gc3pLuOma92BJZs+l7OHNYEuqZPT1NWrGgI9r5jWMHwpzY6fg9fBnUj35IqyDLYVMtkdYJfy280fpVnBW0X75pttOVp5sOwlbrJZ5e2GMXkqyzgd/TNqD7PXwI+mumPasssRf4HqFvSZGpaLhsxWgi8/En49+m86633JeT9y6XL38Ym/s5eGGzXRDfX/86C0nvZwz9rVtpwAWuOVNNGmeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lolJSBZgfKdyXWTm8wWlWT6hl3ZOpJVe8EXIEQ7iZFY=;
+ b=hsn5jQDlkeDPKdWx1J2jh8TrHKsI71nbbF2szq64vhQ4QPZ1MG8x3JGWkSlqr9dY/U1b7CyZ6OjEMf54grutbBzqeUe+QNStMwPJp/8cP2sJt0cSQm7fnCWgkXaMqpweFPhre+ofWX5yeYVNFD5eySz54wTlFHDxc1ZROmubebcsYns1qx8yCdL4xm9zLwP4kUKbXBzWpPvsEAlB9oBZ+rTFjPn+ilsfGojj9vSo7vUfcvxFA8clFDkOTTL5jBbShIY4k3taCAMEa8L4KrmoVjtBWR5cBZKzs2O97sZ13vTcTBm9DJCblE+DzOfs+mMZGVtq/QLuPwlwOHHXsuSuxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lolJSBZgfKdyXWTm8wWlWT6hl3ZOpJVe8EXIEQ7iZFY=;
+ b=P8H3y32FHrCbDGTj61QGR62fSeYGI8doLrGEqSgZKE8cxwWg13IpQIjpy0a289w2/7QS1C5+5LkCbUgF3ecZodbiGPFFRGNql3wEp7MxWQt56WObQfIDmKDYVAmg2EC6lmeEJR6didijusW6kDViIHrpF3LWCc+c7HbsePxbp98=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6449.eurprd04.prod.outlook.com (20.179.253.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.14; Wed, 7 Aug 2019 09:23:41 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4%4]) with mapi id 15.20.2115.017; Wed, 7 Aug 2019
+ 09:23:41 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bo Zhang <bozhang.zhang@broadcom.com>,
+        Jim Quinlan <james.quinlan@broadcom.com>,
+        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
+        Gaku Inami <gaku.inami.xh@renesas.com>,
+        "aidapala@qti.qualcomm.com" <aidapala@qti.qualcomm.com>,
+        "pajay@qti.qualcomm.com" <pajay@qti.qualcomm.com>,
+        Etienne Carriere <etienne.carriere@linaro.org>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        "wesleys@xilinx.com" <wesleys@xilinx.com>,
+        Felix Burton <fburton@xilinx.com>,
+        Saeed Nowshadi <saeed.nowshadi@xilinx.com>,
+        Ionela Voinescu <Ionela.Voinescu@arm.com>,
+        Chris Redpath <Chris.Redpath@arm.com>,
+        Quentin Perret <Quentin.Perret@arm.com>
+Subject: RE: [PATCH v2 1/5] firmware: arm_scmi: Add discovery of SCMI v2.0
+ performance fastchannels
+Thread-Topic: [PATCH v2 1/5] firmware: arm_scmi: Add discovery of SCMI v2.0
+ performance fastchannels
+Thread-Index: AQHVTHi3HY5NFbDe5kuKtUFEt88FDqbvan6Q
+Date:   Wed, 7 Aug 2019 09:23:41 +0000
+Message-ID: <AM0PR04MB4481BA101A13A0E45DA50E9088D40@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <20190806170208.6787-1-sudeep.holla@arm.com>
+ <20190806170208.6787-2-sudeep.holla@arm.com>
+In-Reply-To: <20190806170208.6787-2-sudeep.holla@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6f3a9d2a-bd1f-4c0e-04c1-08d71b18f01c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6449;
+x-ms-traffictypediagnostic: AM0PR04MB6449:
+x-microsoft-antispam-prvs: <AM0PR04MB64499EA7AEB5314AB9E11B0888D40@AM0PR04MB6449.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3383;
+x-forefront-prvs: 01221E3973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(396003)(39860400002)(366004)(199004)(189003)(66476007)(66946007)(476003)(14444005)(64756008)(66446008)(256004)(66556008)(54906003)(76116006)(486006)(52536014)(7736002)(305945005)(44832011)(110136005)(6116002)(2501003)(316002)(8676002)(186003)(3846002)(68736007)(74316002)(53936002)(81166006)(33656002)(81156014)(6246003)(71200400001)(71190400001)(478600001)(25786009)(446003)(11346002)(7416002)(6506007)(8936002)(55016002)(9686003)(7696005)(14454004)(5660300002)(86362001)(6436002)(99286004)(2906002)(66066001)(229853002)(76176011)(4326008)(26005)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6449;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 74humZJPNOOURBmajbAl1m1yzVpAG3jxsTeNlq7fNJlmSR4a+4sl79upUNZ64YjszzWOqNQ9Qe+A8HwoTHPghO9AUxVCzCWz8zwkmJfJjZqywVDbsauongmq+GfT5LTFptR6C+BUwELEXHO26KvqfyzMCKuX9agPg/TPiE0eqyIjM9szAY6hIx8UZUX77QR78eGctPa9prjB1Tu/s4SQD+eH9nPeY2sRAIvfpMZuWcLIP7S6mnUwFRWuVEIkk4f9q1N1h2OEtG21K2k3USnGZOxVgRyfLM91DQ2m0ET3QUKuz4mx5BFL8IXqC5KlDP698e5hOlRShsXbYeV4UhFVSQcjWW/GYDwh5CMIYSp//sw8miEg+ktGBYmI1D16NbJUl0MIWNiSkUeIea08D2X30XTkWs8/Opsjk5oe2NWOPjQ=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2a53901c44b1286097ba142a7b64cc092d99ad86.1564504902.git.reinette.chatre@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f3a9d2a-bd1f-4c0e-04c1-08d71b18f01c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 09:23:41.6708
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: peng.fan@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6449
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 10:29:42AM -0700, Reinette Chatre wrote:
-> Currently cache pseudo-locked regions only consider one cache level but
-> cache pseudo-locked regions may span multiple cache levels.
-> 
-> In preparation for support of pseudo-locked regions spanning multiple
-> cache levels pseudo-lock 'portions' are introduced. A 'portion' of a
-> pseudo-locked region is the portion of a pseudo-locked region that
-> belongs to a specific resource. Each pseudo-locked portion is identified
-> with the resource (for example, L2 or L3 cache), the domain (the
-> specific cache instance), and the capacity bitmask that specifies which
-> region of the cache is used by the pseudo-locked region.
-> 
-> In support of pseudo-locked regions spanning multiple cache levels a
-> pseudo-locked region could have multiple 'portions' but in this
-> introduction only single portions are allowed.
-> 
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> Subject: [PATCH v2 1/5] firmware: arm_scmi: Add discovery of SCMI v2.0
+> performance fastchannels
+>=20
+> SCMI v2.0 adds support for "FastChannel", a lightweight unidirectional
+> channel that is dedicated to a single SCMI message type for controlling a
+> specific platform resource. They do not use a message header as they are
+> specialized for a single message.
+>=20
+> Only PERFORMANCE_LIMITS_{SET,GET} and
+> PERFORMANCE_LEVEL_{SET,GET} commands are supported over
+> fastchannels. As they are optional, they need to be discovered by
+> PERFORMANCE_DESCRIBE_FASTCHANNEL command.
+> Further {LIMIT,LEVEL}_SET commands can have optional doorbell support.
+>=20
+> Add support for discovery of these fastchannels.
+>=20
+> Cc: Ionela Voinescu <Ionela.Voinescu@arm.com>
+> Cc: Chris Redpath <Chris.Redpath@arm.com>
+> Cc: Quentin Perret <Quentin.Perret@arm.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 > ---
->  arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  26 +++-
->  arch/x86/kernel/cpu/resctrl/internal.h    |  32 ++--
->  arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 180 ++++++++++++++++------
->  arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  44 ++++--
->  4 files changed, 211 insertions(+), 71 deletions(-)
-
-This patch kinda got pretty big and is hard to review. Can
-you split it pls? The addition of pseudo_lock_portion and
-pseudo_lock_single_portion_valid() look like a separate patch to me.
-
-> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> index a0383ff80afe..a60fb38a4d20 100644
-> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> @@ -207,7 +207,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
->  	 * hierarchy.
->  	 */
->  	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
-> -	    rdtgroup_pseudo_locked_in_hierarchy(d)) {
-> +	    rdtgroup_pseudo_locked_in_hierarchy(rdtgrp, d)) {
->  		rdt_last_cmd_puts("Pseudo-locked region in hierarchy\n");
->  		return -EINVAL;
->  	}
-> @@ -282,6 +282,7 @@ static int parse_line(char *line, struct rdt_resource *r,
->  			if (r->parse_ctrlval(&data, r, d))
->  				return -EINVAL;
->  			if (rdtgrp->mode ==  RDT_MODE_PSEUDO_LOCKSETUP) {
-> +				struct pseudo_lock_portion *p;
->  				/*
->  				 * In pseudo-locking setup mode and just
->  				 * parsed a valid CBM that should be
-> @@ -290,9 +291,15 @@ static int parse_line(char *line, struct rdt_resource *r,
->  				 * the required initialization for single
->  				 * region and return.
->  				 */
-> -				rdtgrp->plr->r = r;
-> -				rdtgrp->plr->d_id = d->id;
-> -				rdtgrp->plr->cbm = d->new_ctrl;
-> +				p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +				if (!p) {
-> +					rdt_last_cmd_puts("Unable to allocate memory for pseudo-lock portion\n");
-> +					return -ENOMEM;
-> +				}
-> +				p->r = r;
-> +				p->d_id = d->id;
-> +				p->cbm = d->new_ctrl;
-> +				list_add(&p->list, &rdtgrp->plr->portions);
->  				return 0;
->  			}
-
-Looking at the indentation level of this, it is basically begging to
-become a separate, helper function...
-
->  			goto next;
-> @@ -410,8 +417,11 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
->  			goto out;
->  		}
->  		ret = rdtgroup_parse_resource(resname, tok, rdtgrp);
-> -		if (ret)
-> +		if (ret) {
-> +			if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP)
-> +				pseudo_lock_region_clear(rdtgrp->plr);
->  			goto out;
-> +		}
->  	}
->  
->  	for_each_alloc_enabled_rdt_resource(r) {
-> @@ -459,6 +469,7 @@ static void show_doms(struct seq_file *s, struct rdt_resource *r, int closid)
->  int rdtgroup_schemata_show(struct kernfs_open_file *of,
->  			   struct seq_file *s, void *v)
->  {
-> +	struct pseudo_lock_portion *p;
->  	struct rdtgroup *rdtgrp;
->  	struct rdt_resource *r;
->  	int ret = 0;
-> @@ -470,8 +481,9 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
->  			for_each_alloc_enabled_rdt_resource(r)
->  				seq_printf(s, "%s:uninitialized\n", r->name);
->  		} else if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
-> -			seq_printf(s, "%s:%d=%x\n", rdtgrp->plr->r->name,
-> -				   rdtgrp->plr->d_id, rdtgrp->plr->cbm);
-> +			list_for_each_entry(p, &rdtgrp->plr->portions, list)
-> +				seq_printf(s, "%s:%d=%x\n", p->r->name, p->d_id,
-> +					   p->cbm);
-
-Shouldn't this say that those are portions now?
-
->  		} else {
->  			closid = rdtgrp->closid;
->  			for_each_alloc_enabled_rdt_resource(r) {
-> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-> index 892f38899dda..b041029d4de1 100644
-> --- a/arch/x86/kernel/cpu/resctrl/internal.h
-> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-> @@ -145,13 +145,27 @@ struct mongroup {
->  	u32			rmid;
+>  drivers/firmware/arm_scmi/perf.c | 153
+> ++++++++++++++++++++++++++++++-
+>  1 file changed, 149 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/firmware/arm_scmi/perf.c
+> b/drivers/firmware/arm_scmi/perf.c
+> index 3c8ae7cc35de..6cce3e82e81e 100644
+> --- a/drivers/firmware/arm_scmi/perf.c
+> +++ b/drivers/firmware/arm_scmi/perf.c
+> @@ -5,7 +5,9 @@
+>   * Copyright (C) 2018 ARM Ltd.
+>   */
+>=20
+> +#include <linux/bits.h>
+>  #include <linux/of.h>
+> +#include <linux/io.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_opp.h>
+>  #include <linux/sort.h>
+> @@ -21,6 +23,7 @@ enum scmi_performance_protocol_cmd {
+>  	PERF_LEVEL_GET =3D 0x8,
+>  	PERF_NOTIFY_LIMITS =3D 0x9,
+>  	PERF_NOTIFY_LEVEL =3D 0xa,
+> +	PERF_DESCRIBE_FASTCHANNEL =3D 0xb,
 >  };
->  
-> +/**
-> + * struct pseudo_lock_portion - portion of a pseudo-lock region on one resource
-> + * @r:		RDT resource to which this pseudo-locked portion
-> + *		belongs
-> + * @d_id:	ID of cache instance to which this pseudo-locked portion
-> + *		belongs
-> + * @cbm:	bitmask of the pseudo-locked portion
-> + * @list:	Entry in the list of pseudo-locked portion
-> + *		belonging to the pseudo-locked region
-> + */
-> +struct pseudo_lock_portion {
-> +	struct rdt_resource	*r;
-> +	int			d_id;
-> +	u32			cbm;
-> +	struct list_head	list;
+>=20
+>  struct scmi_opp {
+> @@ -44,6 +47,7 @@ struct scmi_msg_resp_perf_domain_attributes {
+>  #define SUPPORTS_SET_PERF_LVL(x)	((x) & BIT(30))
+>  #define SUPPORTS_PERF_LIMIT_NOTIFY(x)	((x) & BIT(29))
+>  #define SUPPORTS_PERF_LEVEL_NOTIFY(x)	((x) & BIT(28))
+> +#define SUPPORTS_PERF_FASTCHANNELS(x)	((x) & BIT(27))
+>  	__le32 rate_limit_us;
+>  	__le32 sustained_freq_khz;
+>  	__le32 sustained_perf_level;
+> @@ -87,17 +91,56 @@ struct scmi_msg_resp_perf_describe_levels {
+>  	} opp[0];
+>  };
+>=20
+> +struct scmi_perf_get_fc_info {
+> +	__le32 domain;
+> +	__le32 message_id;
 > +};
 > +
->  /**
->   * struct pseudo_lock_region - pseudo-lock region information
-> - * @r:			RDT resource to which this pseudo-locked region
-> - *			belongs
-> - * @d_id:		ID of cache instance to which this pseudo-locked region
-> - *			belongs
-> - * @cbm:		bitmask of the pseudo-locked region
-> + * @portions:		list of portions across different resources that
-> + *			are associated with this pseudo-locked region
->   * @lock_thread_wq:	waitqueue used to wait on the pseudo-locking thread
->   *			completion
->   * @thread_done:	variable used by waitqueue to test if pseudo-locking
-> @@ -168,9 +182,7 @@ struct mongroup {
->   * @pm_reqs:		Power management QoS requests related to this region
->   */
->  struct pseudo_lock_region {
-> -	struct rdt_resource	*r;
-> -	int			d_id;
-> -	u32			cbm;
-> +	struct list_head	portions;
->  	wait_queue_head_t	lock_thread_wq;
->  	int			thread_done;
->  	int			cpu;
-> @@ -569,11 +581,13 @@ bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_resource *r,
->  					 struct rdt_domain *d,
->  					 unsigned long cbm);
->  u32 rdtgroup_pseudo_locked_bits(struct rdt_resource *r, struct rdt_domain *d);
-> -bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
-> +bool rdtgroup_pseudo_locked_in_hierarchy(struct rdtgroup *selfgrp,
-> +					 struct rdt_domain *d);
->  int rdt_pseudo_lock_init(void);
->  void rdt_pseudo_lock_release(void);
->  int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp);
->  void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp);
-> +void pseudo_lock_region_clear(struct pseudo_lock_region *plr);
->  struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
->  int update_domains(struct rdt_resource *r, int closid);
->  int closids_supported(void);
-> diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-> index 733cb7f34948..717ea26e325b 100644
-> --- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-> +++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-> @@ -270,28 +270,85 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr,
->   *
->   * Return: void
->   */
-> -static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
-> +void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
+> +struct scmi_msg_resp_perf_desc_fc {
+> +	__le32 attr;
+> +#define SUPPORTS_DOORBELL(x)		((x) & BIT(0))
+> +#define DOORBELL_REG_WIDTH(x)		FIELD_GET(GENMASK(2, 1), (x))
+> +	__le32 rate_limit;
+> +	__le32 chan_addr_low;
+> +	__le32 chan_addr_high;
+> +	__le32 chan_size;
+> +	__le32 db_addr_low;
+> +	__le32 db_addr_high;
+> +	__le32 db_set_lmask;
+> +	__le32 db_set_hmask;
+> +	__le32 db_preserve_lmask;
+> +	__le32 db_preserve_hmask;
+> +};
+> +
+> +struct scmi_fc_db_info {
+> +	int width;
+> +	u64 set;
+> +	u64 mask;
+> +	void __iomem *addr;
+> +};
+> +
+> +struct scmi_fc_info {
+> +	void __iomem *level_set_addr;
+> +	void __iomem *limit_set_addr;
+> +	void __iomem *level_get_addr;
+> +	void __iomem *limit_get_addr;
+> +	struct scmi_fc_db_info *level_set_db;
+> +	struct scmi_fc_db_info *limit_set_db;
+> +};
+> +
+>  struct perf_dom_info {
+>  	bool set_limits;
+>  	bool set_perf;
+>  	bool perf_limit_notify;
+>  	bool perf_level_notify;
+> +	bool perf_fastchannels;
+>  	u32 opp_count;
+>  	u32 sustained_freq_khz;
+>  	u32 sustained_perf_level;
+>  	u32 mult_factor;
+>  	char name[SCMI_MAX_STR_SIZE];
+>  	struct scmi_opp opp[MAX_OPPS];
+> +	struct scmi_fc_info *fc_info;
+>  };
+>=20
+>  struct scmi_perf_info {
+> @@ -162,6 +205,7 @@ scmi_perf_domain_attributes_get(const struct
+> scmi_handle *handle, u32 domain,
+>  		dom_info->set_perf =3D SUPPORTS_SET_PERF_LVL(flags);
+>  		dom_info->perf_limit_notify =3D
+> SUPPORTS_PERF_LIMIT_NOTIFY(flags);
+>  		dom_info->perf_level_notify =3D
+> SUPPORTS_PERF_LEVEL_NOTIFY(flags);
+> +		dom_info->perf_fastchannels =3D
+> SUPPORTS_PERF_FASTCHANNELS(flags);
+>  		dom_info->sustained_freq_khz =3D
+>  					le32_to_cpu(attr->sustained_freq_khz);
+>  		dom_info->sustained_perf_level =3D
+> @@ -250,7 +294,7 @@ scmi_perf_describe_levels_get(const struct
+> scmi_handle *handle, u32 domain,  }
+>=20
+>  static int scmi_perf_limits_set(const struct scmi_handle *handle, u32
+> domain,
+> -				u32 max_perf, u32 min_perf)
+> +				   u32 max_perf, u32 min_perf)
 >  {
-> +	struct pseudo_lock_portion *p, *tmp;
-> +
->  	plr->size = 0;
->  	plr->line_size = 0;
->  	kfree(plr->kmem);
->  	plr->kmem = NULL;
-> -	plr->r = NULL;
-> -	plr->d_id = -1;
-> -	plr->cbm = 0;
->  	pseudo_lock_cstates_relax(plr);
-> +	if (!list_empty(&plr->portions)) {
-> +		list_for_each_entry_safe(p, tmp, &plr->portions, list) {
-> +			list_del(&p->list);
-> +			kfree(p);
-> +		}
-> +	}
->  	plr->debugfs_dir = NULL;
+>  	int ret;
+>  	struct scmi_xfer *t;
+> @@ -273,7 +317,7 @@ static int scmi_perf_limits_set(const struct
+> scmi_handle *handle, u32 domain,  }
+>=20
+>  static int scmi_perf_limits_get(const struct scmi_handle *handle, u32
+> domain,
+> -				u32 *max_perf, u32 *min_perf)
+> +				   u32 *max_perf, u32 *min_perf)
+>  {
+>  	int ret;
+>  	struct scmi_xfer *t;
+> @@ -299,7 +343,7 @@ static int scmi_perf_limits_get(const struct
+> scmi_handle *handle, u32 domain,  }
+>=20
+>  static int scmi_perf_level_set(const struct scmi_handle *handle, u32
+> domain,
+> -			       u32 level, bool poll)
+> +				  u32 level, bool poll)
+>  {
+>  	int ret;
+>  	struct scmi_xfer *t;
+> @@ -322,7 +366,7 @@ static int scmi_perf_level_set(const struct
+> scmi_handle *handle, u32 domain,  }
+>=20
+>  static int scmi_perf_level_get(const struct scmi_handle *handle, u32
+> domain,
+> -			       u32 *level, bool poll)
+> +				  u32 *level, bool poll)
+>  {
+>  	int ret;
+>  	struct scmi_xfer *t;
+> @@ -343,6 +387,104 @@ static int scmi_perf_level_get(const struct
+> scmi_handle *handle, u32 domain,
+>  	return ret;
 >  }
->  
-> +/**
-> + * pseudo_lock_single_portion_valid - Verify properties of pseudo-lock region
-> + * @plr: the main pseudo-lock region
-> + * @p: the single portion that makes up the pseudo-locked region
-> + *
-> + * Verify and initialize properties of the pseudo-locked region.
-> + *
-> + * Return: -1 if portion of cache unable to be used for pseudo-locking
-> + *         0 if portion of cache can be used for pseudo-locking, in
-> + *         addition the CPU on which pseudo-locking will be performed will
-> + *         be initialized as well as the size and cache line size of the region
-> + */
-> +static int pseudo_lock_single_portion_valid(struct pseudo_lock_region *plr,
-> +					    struct pseudo_lock_portion *p)
-> +{
-> +	struct rdt_domain *d;
-> +
-> +	d = rdt_find_domain(p->r, p->d_id, NULL);
-> +	if (IS_ERR_OR_NULL(d)) {
-> +		rdt_last_cmd_puts("Cannot find cache domain\n");
-> +		return -1;
-> +	}
-> +
-> +	plr->cpu = cpumask_first(&d->cpu_mask);
-> +	if (!cpu_online(plr->cpu)) {
-> +		rdt_last_cmd_printf("CPU %u not online\n", plr->cpu);
-> +		goto err_cpu;
-> +	}
-> +
-> +	plr->line_size = get_cache_line_size(plr->cpu, p->r->cache_level);
-> +	if (plr->line_size == 0) {
-> +		rdt_last_cmd_puts("Unable to compute cache line length\n");
-> +		goto err_cpu;
-> +	}
-> +
-> +	if (pseudo_lock_cstates_constrain(plr, &d->cpu_mask)) {
-> +		rdt_last_cmd_puts("Cannot limit C-states\n");
-> +		goto err_line;
-> +	}
-> +
-> +	plr->size = rdtgroup_cbm_to_size(p->r, d, p->cbm);
-> +
-> +	return 0;
-> +
-> +err_line:
-> +	plr->line_size = 0;
-> +err_cpu:
-> +	plr->cpu = 0;
-> +	return -1;
+>=20
+> +static bool scmi_perf_fc_size_is_valid(u32 msg, u32 size) {
+> +	if ((msg =3D=3D PERF_LEVEL_GET || msg =3D=3D PERF_LEVEL_SET) && size =
+=3D=3D 4)
+> +		return true;
+> +	if ((msg =3D=3D PERF_LIMITS_GET || msg =3D=3D PERF_LIMITS_SET) && size =
+=3D=3D 8)
+> +		return true;
+> +	return false;
 > +}
 > +
->  /**
->   * pseudo_lock_region_init - Initialize pseudo-lock region information
->   * @plr: pseudo-lock region
->   *
->   * Called after user provided a schemata to be pseudo-locked. From the
->   * schemata the &struct pseudo_lock_region is on entry already initialized
-> - * with the resource, domain, and capacity bitmask. Here the information
-> - * required for pseudo-locking is deduced from this data and &struct
-> - * pseudo_lock_region initialized further. This information includes:
-> + * with the resource, domain, and capacity bitmask. Here the
-> + * provided data is validated and information required for pseudo-locking
-> + * deduced, and &struct pseudo_lock_region initialized further. This
-> + * information includes:
->   * - size in bytes of the region to be pseudo-locked
->   * - cache line size to know the stride with which data needs to be accessed
->   *   to be pseudo-locked
-> @@ -303,44 +360,50 @@ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
->   */
->  static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
->  {
-> -	struct rdt_domain *d;
-> +	struct rdt_resource *l3_resource = &rdt_resources_all[RDT_RESOURCE_L3];
-> +	struct pseudo_lock_portion *p;
->  	int ret;
->  
-> -	/* Pick the first cpu we find that is associated with the cache. */
-> -	d = rdt_find_domain(plr->r, plr->d_id, NULL);
-> -	if (IS_ERR_OR_NULL(d)) {
-> -		rdt_last_cmd_puts("Cache domain offline\n");
-> -		ret = -ENODEV;
-> +	if (list_empty(&plr->portions)) {
-> +		rdt_last_cmd_puts("No pseudo-lock portions provided\n");
->  		goto out_region;
-
-Not return?
-
-Do you need to clear anything in an not even initialized plr?
-
+> +static void
+> +scmi_perf_domain_desc_fc(const struct scmi_handle *handle, u32 domain,
+> +			 u32 message_id, void __iomem **p_addr,
+> +			 struct scmi_fc_db_info **p_db)
+> +{
+> +	int ret;
+> +	u32 flags;
+> +	u64 phys_addr;
+> +	u8 size;
+> +	void __iomem *addr;
+> +	struct scmi_xfer *t;
+> +	struct scmi_fc_db_info *db;
+> +	struct scmi_perf_get_fc_info *info;
+> +	struct scmi_msg_resp_perf_desc_fc *resp;
+> +
+> +	if (!p_addr)
+> +		return;
+> +
+> +	ret =3D scmi_xfer_get_init(handle, PERF_DESCRIBE_FASTCHANNEL,
+> +				 SCMI_PROTOCOL_PERF,
+> +				 sizeof(*info), sizeof(*resp), &t);
+> +	if (ret)
+> +		return;
+> +
+> +	info =3D t->tx.buf;
+> +	info->domain =3D cpu_to_le32(domain);
+> +	info->message_id =3D cpu_to_le32(message_id);
+> +
+> +	ret =3D scmi_do_xfer(handle, t);
+> +	if (ret)
+> +		goto err_xfer;
+> +
+> +	resp =3D t->rx.buf;
+> +	flags =3D le32_to_cpu(resp->attr);
+> +	size =3D le32_to_cpu(resp->chan_size);
+> +	if (!scmi_perf_fc_size_is_valid(message_id, size))
+> +		goto err_xfer;
+> +
+> +	phys_addr =3D le32_to_cpu(resp->chan_addr_low);
+> +	phys_addr |=3D (u64)le32_to_cpu(resp->chan_addr_high) << 32;
+> +	addr =3D devm_ioremap(handle->dev, phys_addr, size);
+> +	if (!addr)
+> +		goto err_xfer;
+> +	*p_addr =3D addr;
+> +
+> +	if (p_db && SUPPORTS_DOORBELL(flags)) {
+> +		db =3D devm_kzalloc(handle->dev, sizeof(*db), GFP_KERNEL);
+> +		if (!db)
+> +			goto err_xfer;
+> +
+> +		size =3D 1 << DOORBELL_REG_WIDTH(flags);
+> +		phys_addr =3D le32_to_cpu(resp->db_addr_low);
+> +		phys_addr |=3D (u64)le32_to_cpu(resp->db_addr_high) << 32;
+> +		addr =3D devm_ioremap(handle->dev, phys_addr, size);
+> +		if (!addr)
+> +			goto err_xfer;
+> +
+> +		db->addr =3D addr;
+> +		db->width =3D size;
+> +		db->set =3D le32_to_cpu(resp->db_set_lmask);
+> +		db->set |=3D (u64)le32_to_cpu(resp->db_set_hmask) << 32;
+> +		db->mask =3D le32_to_cpu(resp->db_preserve_lmask);
+> +		db->mask |=3D (u64)le32_to_cpu(resp->db_preserve_hmask) << 32;
+> +		*p_db =3D db;
+> +	}
+> +err_xfer:
+> +	scmi_xfer_put(handle, t);
+> +}
+> +
+> +static void scmi_perf_domain_init_fc(const struct scmi_handle *handle,
+> +				     u32 domain, struct scmi_fc_info **p_fc) {
+> +	struct scmi_fc_info *fc;
+> +
+> +	fc =3D devm_kzalloc(handle->dev, sizeof(*fc), GFP_KERNEL);
+> +	if (!fc)
+> +		return;
+> +
+> +	scmi_perf_domain_desc_fc(handle, domain, PERF_LEVEL_SET,
+> +				 &fc->level_set_addr, &fc->level_set_db);
+> +	scmi_perf_domain_desc_fc(handle, domain, PERF_LEVEL_GET,
+> +				 &fc->level_get_addr, NULL);
+> +	scmi_perf_domain_desc_fc(handle, domain, PERF_LIMITS_SET,
+> +				 &fc->limit_set_addr, &fc->limit_set_db);
+> +	scmi_perf_domain_desc_fc(handle, domain, PERF_LIMITS_GET,
+> +				 &fc->limit_get_addr, NULL);
+> +	*p_fc =3D fc;
+> +}
+> +
+>  /* Device specific ops */
+>  static int scmi_dev_domain_id(struct device *dev)  { @@ -494,6 +636,9
+> @@ static int scmi_perf_protocol_init(struct scmi_handle *handle)
+>=20
+>  		scmi_perf_domain_attributes_get(handle, domain, dom);
+>  		scmi_perf_describe_levels_get(handle, domain, dom);
+> +
+> +		if (dom->perf_fastchannels)
+> +			scmi_perf_domain_init_fc(handle, domain, &dom->fc_info);
 >  	}
->  
-> -	plr->cpu = cpumask_first(&d->cpu_mask);
-> -
-> -	if (!cpu_online(plr->cpu)) {
-> -		rdt_last_cmd_printf("CPU %u associated with cache not online\n",
-> -				    plr->cpu);
-> -		ret = -ENODEV;
-> -		goto out_region;
-> +	/* Cache Pseudo-Locking only supported on L2 and L3 resources */
-> +	list_for_each_entry(p, &plr->portions, list) {
-> +		if (p->r->rid != RDT_RESOURCE_L2 &&
-> +		    p->r->rid != RDT_RESOURCE_L3) {
-> +			rdt_last_cmd_puts("Unsupported resource\n");
-> +			goto out_region;
-> +		}
->  	}
->  
-> -	plr->line_size = get_cache_line_size(plr->cpu, plr->r->cache_level);
-> -	if (plr->line_size == 0) {
-> -		rdt_last_cmd_puts("Unable to determine cache line size\n");
-> -		ret = -1;
-> -		goto out_region;
-> +	/*
-> +	 * If only one resource requested to be pseudo-locked then:
-> +	 * - Just a L3 cache portion is valid
-> +	 * - Just a L2 cache portion on system without L3 cache is valid
-> +	 */
-> +	if (list_is_singular(&plr->portions)) {
-> +		p = list_first_entry(&plr->portions, struct pseudo_lock_portion,
-> +				     list);
+>=20
+>  	handle->perf_ops =3D &perf_ops;
 
-Let that line stick out.
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-> +		if (p->r->rid == RDT_RESOURCE_L3 ||
-> +		    (p->r->rid == RDT_RESOURCE_L2 &&
-> +		     !l3_resource->alloc_capable)) {
-> +			ret = pseudo_lock_single_portion_valid(plr, p);
-> +			if (ret < 0)
-> +				goto out_region;
-> +			return 0;
-> +		} else {
-> +			rdt_last_cmd_puts("Invalid resource or just L2 provided when L3 is required\n");
-> +			goto out_region;
-> +		}
-> +	} else {
-> +		rdt_last_cmd_puts("Multiple pseudo-lock portions unsupported\n");
->  	}
->  
-> -	plr->size = rdtgroup_cbm_to_size(plr->r, d, plr->cbm);
-> -
-> -	ret = pseudo_lock_cstates_constrain(plr, &d->cpu_mask);
-> -	if (ret < 0)
-> -		goto out_region;
-> -
-> -	return 0;
-> -
->  out_region:
->  	pseudo_lock_region_clear(plr);
-> -	return ret;
-> +	return -1;
->  }
->
+> --
+> 2.17.1
 
-Yap, this patch is doing too many things at once and splitting it would help.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
