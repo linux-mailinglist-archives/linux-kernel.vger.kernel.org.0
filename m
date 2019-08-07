@@ -2,118 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95D5A852A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 20:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB19852AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 20:09:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389198AbfHGSFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 14:05:43 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:42962 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S2388669AbfHGSFn (ORCPT
+        id S2389143AbfHGSJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 14:09:06 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46625 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387999AbfHGSJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 14:05:43 -0400
-Received: (qmail 22349 invoked by uid 2102); 7 Aug 2019 14:05:42 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 7 Aug 2019 14:05:42 -0400
-Date:   Wed, 7 Aug 2019 14:05:42 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     syzbot <syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com>
-cc:     andreyknvl@google.com, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <oneukum@suse.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: KASAN: use-after-free Read in device_release_driver_internal
-In-Reply-To: <00000000000085d6b4058f8a957a@google.com>
-Message-ID: <Pine.LNX.4.44L0.1908071402160.1514-100000@iolanthe.rowland.org>
+        Wed, 7 Aug 2019 14:09:05 -0400
+Received: by mail-ed1-f66.google.com with SMTP id d4so87334167edr.13;
+        Wed, 07 Aug 2019 11:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QwJtWVakiEP96kTbkFoUqxH1WvOLhFPnnG3gbiyDKlk=;
+        b=QH+xHLDZ8h7jAONg1Dh/3Ql+72SyGAQz1LfNGCnJM1+xeo9YGSGSpEq6CINv1ZUTN3
+         dnOcMxwTS4iNO2ND8CYtXDKVvgaEEQdThDijSve89oBokk0Wb4Uah/6vaWrFna1YhuD/
+         4Qlf+/g4khOYm7OxaOS8RNpOrq+qSFfhQnGyP3fOuaHAQMskx+PbHPGPbvGQSsMQsOrt
+         FtneiDcCb/ROHvOC3HduArDTEURsMp7O4n/AjqzUrqEPp5RWjOMO8iSY7uXwPQZhbEFi
+         cML2UlAqmv2BDOwrGrCAmSJ/vLrYvCdl7naVBPysHNWVoe0bxxqbdDdk0OgrXKMSKg9d
+         PuHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QwJtWVakiEP96kTbkFoUqxH1WvOLhFPnnG3gbiyDKlk=;
+        b=WSNs0Z76hmCDY7HVDY8XuqMqQtJyBJizi4cNRz8vHn2pkPMIKkIn4wzB1uqKkyFmHf
+         r4i5oDIROR1nMiPU/Z1CI60SgJZDuY269eYY98/SiAsCJGCg0CjQYS1W1T9J2cr+wUpV
+         T7RYTkX5XcKbJyvJPN6EKddLYSxRsvYnQ2WeesrsRsu+kZXV2O8poUyekc9Q1d4o6wfF
+         dEoaHnN3Ky0IONGCPLgLo9LeYC2uzmzbU+fyKVWx3Qr9ut1ou6LhiDTljBdmB1/c/i22
+         h3ht4E+EIFGRwUy4cfzEiDG4rO+GMXIZ5BG5ZbLKeRB8LYIco0oIzT4f+Yhy9EpTYhHu
+         qJ5A==
+X-Gm-Message-State: APjAAAWjlJHKW7yB4fzMWV4h+HrlKBoX8UGqLz7IUNV21LCZyE5Kdtih
+        /+zVoBKIvVUYf9tGcHH1UUcR9nEdKTzskvkWRAI=
+X-Google-Smtp-Source: APXvYqwNSW7qT7c14KaVkJ6ZlQvzKS1pNZqmXqcTIV2GCqWc+nIWGWtfR6JORaHchzzgwHd/UZI6g3dEbNkRdUCK5oQ=
+X-Received: by 2002:a17:906:e241:: with SMTP id gq1mr9491438ejb.265.1565201344021;
+ Wed, 07 Aug 2019 11:09:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <1565198667-4300-1-git-send-email-jcrouse@codeaurora.org> <20190807173838.GB30025@ravnborg.org>
+In-Reply-To: <20190807173838.GB30025@ravnborg.org>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Wed, 7 Aug 2019 11:08:53 -0700
+Message-ID: <CAF6AEGv6EY5UBYF8D9tuSaMDvkdrBt+zvRxQA+V4PG6ZfKhUAg@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH] drm/msm: Make DRM_MSM default to 'm'
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Jordan Crouse <jcrouse@codeaurora.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Aug 2019, syzbot wrote:
+On Wed, Aug 7, 2019 at 10:38 AM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Hi Jordan.
+> On Wed, Aug 07, 2019 at 11:24:27AM -0600, Jordan Crouse wrote:
+> > Most use cases for DRM_MSM will prefer to build both DRM and MSM_DRM as
+> > modules but there are some cases where DRM might be built in for whatever
+> > reason and in those situations it is preferable to still keep MSM as a
+> > module by default and let the user decide if they _really_ want to build
+> > it in.
+> >
+> > Additionally select QCOM_COMMAND_DB for ARCH_QCOM targets to make sure
+> > it doesn't get missed when we need it for a6xx tarets.
+> >
+> > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> > ---
+> >
+> >  drivers/gpu/drm/msm/Kconfig | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+> > index 9c37e4d..3b2334b 100644
+> > --- a/drivers/gpu/drm/msm/Kconfig
+> > +++ b/drivers/gpu/drm/msm/Kconfig
+> > @@ -14,11 +14,12 @@ config DRM_MSM
+> >       select SHMEM
+> >       select TMPFS
+> >       select QCOM_SCM if ARCH_QCOM
+> > +     select QCOM_COMMAND_DB if ARCH_QCOM
+> >       select WANT_DEV_COREDUMP
+> >       select SND_SOC_HDMI_CODEC if SND_SOC
+> >       select SYNC_FILE
+> >       select PM_OPP
+> > -     default y
+> > +     default m
+>
+> As a general comment the right thing would be to drop this default.
+> As it is now the Kconfig says that when DRM is selected then all of the
+> world would then also get DRM_MSM, which only a small part of this world
+> you see any benefit in.
+> So they now have to de-select MSM.
 
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer still triggered  
-> crash:
-> KASAN: use-after-free Read in device_release_driver_internal
+If the default is dropped, it should probably be accompanied by adding
+CONFIG_DRM_MSM=m to defconfig's, I think
 
-> Tested on:
-> 
-> commit:         6a3599ce usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git
-> console output: https://syzkaller.appspot.com/x/log.txt?x=142eec8c600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=15d95bf6600000
+BR,
+-R
 
-The kernel log is pretty definite here:
-
-[   40.270346][   T89] cdc_acm 5-1:0.234: Refcount before probe: 3
-[   40.284514][   T89] cdc_acm 5-1:0.234: invalid descriptor buffer length
-[   40.284523][   T89] cdc_acm 5-1:0.234: No union descriptor, testing for castrated device
-[   40.285322][   T89] cdc_acm 5-1:0.234: Refcount after probe: 2
-
-2 < 3.  So let's combine the diagnostic patch with Oliver's proposed 
-solution.
-
-Alan Stern
-
-#syz test: https://github.com/google/kasan.git 6a3599ce
-
-Index: usb-devel/drivers/usb/core/driver.c
-===================================================================
---- usb-devel.orig/drivers/usb/core/driver.c
-+++ usb-devel/drivers/usb/core/driver.c
-@@ -358,7 +358,11 @@ static int usb_probe_interface(struct de
- 		intf->needs_altsetting0 = 0;
- 	}
- 
-+	dev_info(&intf->dev, "Refcount before probe: %d\n",
-+			refcount_read(&intf->dev.kobj.kref.refcount));
- 	error = driver->probe(intf, id);
-+	dev_info(&intf->dev, "Refcount after probe: %d\n",
-+			refcount_read(&intf->dev.kobj.kref.refcount));
- 	if (error)
- 		goto err;
- 
-Index: usb-devel/drivers/usb/class/cdc-acm.c
-===================================================================
---- usb-devel.orig/drivers/usb/class/cdc-acm.c
-+++ usb-devel/drivers/usb/class/cdc-acm.c
-@@ -1301,10 +1301,6 @@ made_compressed_probe:
- 	tty_port_init(&acm->port);
- 	acm->port.ops = &acm_port_ops;
- 
--	minor = acm_alloc_minor(acm);
--	if (minor < 0)
--		goto alloc_fail1;
--
- 	ctrlsize = usb_endpoint_maxp(epctrl);
- 	readsize = usb_endpoint_maxp(epread) *
- 				(quirks == SINGLE_RX_URB ? 1 : 2);
-@@ -1312,6 +1308,13 @@ made_compressed_probe:
- 	acm->writesize = usb_endpoint_maxp(epwrite) * 20;
- 	acm->control = control_interface;
- 	acm->data = data_interface;
-+
-+	usb_get_intf(acm->control); /* undone in destroy() */
-+
-+	minor = acm_alloc_minor(acm);
-+	if (minor < 0)
-+		goto alloc_fail1;
-+
- 	acm->minor = minor;
- 	acm->dev = usb_dev;
- 	if (h.usb_cdc_acm_descriptor)
-@@ -1458,7 +1461,6 @@ skip_countries:
- 	usb_driver_claim_interface(&acm_driver, data_interface, acm);
- 	usb_set_intfdata(data_interface, acm);
- 
--	usb_get_intf(control_interface);
- 	tty_dev = tty_port_register_device(&acm->port, acm_tty_driver, minor,
- 			&control_interface->dev);
- 	if (IS_ERR(tty_dev)) {
-
+> Kconfig has:
+>     depends on ARCH_QCOM || SOC_IMX5 || (ARM && COMPILE_TEST)
+>
+> So maybe not all of the world but all QCOM or IMX5 users. Maybe they are all
+> interested in MSM. Otherwise the default should rather be dropped.
+> If there is any good hints then the help text could anyway use some
+> love, and then add the info there.
+>
+> The other change with QCOM_COMMAND_DB seems on the other hand to make
+> sense but then this is another patch.
+>
+>         Sam
+> _______________________________________________
+> Freedreno mailing list
+> Freedreno@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/freedreno
