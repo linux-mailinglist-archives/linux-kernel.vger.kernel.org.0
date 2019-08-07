@@ -2,88 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96E708546C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 22:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC0685478
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 22:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389373AbfHGUSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 16:18:52 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44056 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387969AbfHGUSv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 16:18:51 -0400
-Received: by mail-ot1-f66.google.com with SMTP id b7so59250215otl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 13:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=YtTOyOh7n4OSBhFF5Ofb8nIUnCfl2LFnKWkhzBBAffc=;
-        b=QyscVgQMwss6LhQyj1lFVqmTQAro7UK8NZEW+A49jcEG+eroRD7i/8237PF/XE9R0N
-         GYHs+n3zneJFG2kOOYx5xLOUTV4fCfchRIN2RJBDybmP7Az0o7gBKt+NXpIMUj5alBag
-         CDisu2pvaABvIyggVxp/CtFAsu30XOZPR5E4VTDiS4JwjIoHmK8NqgwDVu2InmaAXKsD
-         FsK67bJVExI44ndjDTuQXhJ0wgKD+U3e+mWEurQBwrL5dDEGhgfzbZ9Cg5c/bhYwxvkj
-         Cr8zWvSMYzP3tGOo601Rns+yLiQhLrz7f2kxwXCdnQEwqAW3CHICJJAgPZeDnx6qvtWd
-         SEsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=YtTOyOh7n4OSBhFF5Ofb8nIUnCfl2LFnKWkhzBBAffc=;
-        b=mSePq2BIDgvLAJKZdLgTu0c9V28M3RGghVzRNUb2nvORlKaRJyodTxWnFp9a/lMciC
-         s3OpkVo1lMFXy+GTJP0lGv5ny8V3O0JonDIUMnVfc/8QOMEFWWJzAeJnPdWpunTzf0GK
-         wp11XTP1e5wlR6gL7xbnDohny8wHqpPtM3F6RJkzgJ+itnvSkUdzoLSMb1oHyGloH9j2
-         meRFrJ7n8BnJ453oZ9Jxi9G0dSA9Bs9MoOW1kD7r7e0nQ2kPA6uQWHHVP+6j4Bc76MRp
-         xgw2uiz3xBpdGarGNmkYbK/xbwNwLGuPKjBCMQ31e8y0lBcevBjrpPa0omSsuTE3lZFj
-         gIMQ==
-X-Gm-Message-State: APjAAAWIaLR+GmO7MVLhFzuicBQNQW5B+FKOf1U3Ogpd5A+1e7bI9By+
-        bZqxj/k0ghhqCNTbtQKDxhlpIUlMqCwtWFMzftA=
-X-Google-Smtp-Source: APXvYqzI3rTp+c5fdrmSLVwDb/fNoSD0s4JtDkqsz1I0a2G4rQFM2m35K4d2Ox2fhuRPnjmPZa+ORKa5C2PRRSAklkA=
-X-Received: by 2002:a6b:f910:: with SMTP id j16mr11265479iog.256.1565209130751;
- Wed, 07 Aug 2019 13:18:50 -0700 (PDT)
+        id S2389383AbfHGU0U convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 7 Aug 2019 16:26:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:43937 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729804AbfHGU0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 16:26:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 13:26:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,358,1559545200"; 
+   d="scan'208";a="168747316"
+Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
+  by orsmga008.jf.intel.com with ESMTP; 07 Aug 2019 13:26:18 -0700
+Received: from orsmsx124.amr.corp.intel.com (10.22.240.120) by
+ ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 7 Aug 2019 13:26:18 -0700
+Received: from orsmsx115.amr.corp.intel.com ([169.254.4.6]) by
+ ORSMSX124.amr.corp.intel.com ([169.254.2.63]) with mapi id 14.03.0439.000;
+ Wed, 7 Aug 2019 13:26:18 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     'Christoph Hellwig' <hch@lst.de>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>
+CC:     'Arnd Bergmann' <arnd@arndb.de>,
+        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>,
+        "'linux-ia64@vger.kernel.org'" <linux-ia64@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: RE: remove sn2, hpsim and ia64 machvecs
+Thread-Topic: remove sn2, hpsim and ia64 machvecs
+Thread-Index: AQHVTSRfz+iOhLFk9UKAwDm9GuTPAKbv/SBAgAAkXyA=
+Date:   Wed, 7 Aug 2019 20:26:17 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7F4143CB@ORSMSX115.amr.corp.intel.com>
+References: <20190807133049.20893-1-hch@lst.de>
+ <3908561D78D1C84285E8C5FCA982C28F7F41388B@ORSMSX115.amr.corp.intel.com>
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7F41388B@ORSMSX115.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDQ3YzgwMjYtNDcwNi00NmM4LWI2NDEtMmE3NDhjYWIyNmNiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiS21ic3BtbkNTWVhab2NzZ1owaGlqd2NQMVVMWDFVXC8zb29nXC9jWGNRbGs5cmg0MmFBNnptXC85WEhiUmtJQlBSWiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:a05:6638:58e:0:0:0:0 with HTTP; Wed, 7 Aug 2019 13:18:49
- -0700 (PDT)
-Reply-To: ubanivincent@yandex.com
-From:   Ubani Vincent <sportsjooh3@gmail.com>
-Date:   Wed, 7 Aug 2019 20:18:49 +0000
-Message-ID: <CAA4EzvC2VSxrDXG_TFa9AFTSdiagMdXTzDy6-GkkqvDsP-8H-Q@mail.gmail.com>
-Subject: I HOPE TO HEAR FROM YOU SOON
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With due respect,
+> Even if I explicitly run:
+>
+> $ make compressed
+>
+> It still doesn't build it.  Weird.
 
-Good day and compliments, I know this letter will definitely come to
-you as a surprise, I am (Mr.Ubani Vincent) the Head of file Department
-in African development bank. In my department we discovered an
-abandoned sum of 15 million USA dollars. In an account that belongs to
-one of our foreign customer who died along with all his family in the
-Asia Earth Quake Disaster and all the relation died along side with
-him at the Earth Quake Disaster leaving nobody behind for the claim. I
-want you stand as next of kin to the deceased. I agree that 40% of
-this money will be for you as foreign partner, in respect to the
-provision of a foreign account and 60% would be for me. Upon receipt
-of your reply, I will send to you by email the text of the
-application. I will not fail to bring to your notice that this
-transaction is hitch free and that you should not entertain any atom
-of fear as all required arrangements have been made for the transfer.
+Ugh! The rule to do the compression was in arch/ia64/hp/sim/boot/Makefile
+which went away as part of the deletion of hpsim.
 
-I am waiting for your immediate response as you receive this mail.
-Yours faithfully,
-Mr. Ubani Vincent.
-
-FILL THIS FORM BELLOW AND RESEND IT TO ME THROUGH THIS
-EMAIL:(ubanivincent@yandex.com).
-1) Your Full Name ....
-2) Your Age .....
-3) Your Cell Phone Number ...
-4) Your Country .......
-5) Your Occupation ....
-6) Sex ............
-
-You have to keep everything secret as to enable the transfer to move
-very smoothly in to the account you will prove to the bank.
+-Tony
