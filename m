@@ -2,159 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B521D842BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 05:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A9D3842C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 05:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfHGDAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 23:00:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50500 "EHLO mx1.redhat.com"
+        id S1727677AbfHGDHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 23:07:37 -0400
+Received: from mga02.intel.com ([134.134.136.20]:18617 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726334AbfHGDAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 23:00:53 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 533A72F3677;
-        Wed,  7 Aug 2019 03:00:52 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-17.pek2.redhat.com [10.72.12.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4CE575D6D0;
-        Wed,  7 Aug 2019 03:00:45 +0000 (UTC)
-Date:   Wed, 7 Aug 2019 11:00:41 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Qian Cai <cai@lca.pw>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Daniel Drake <drake@endlessm.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, Baoquan He <bhe@redhat.com>,
-        kexec@lists.infradead.org, tony.luck@intel.com,
-        Xunlei Pang <xlpang@linux.alibaba.com>
-Subject: Re: [PATCH 0/4] x86/mce: protect nr_cpus from rebooting by broadcast
- mce
-Message-ID: <20190807025843.GA4776@dhcp-128-65.nay.redhat.com>
-References: <1564995539-29609-1-git-send-email-kernelfans@gmail.com>
+        id S1726797AbfHGDHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 23:07:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 20:07:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,356,1559545200"; 
+   d="scan'208";a="185855550"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 06 Aug 2019 20:07:34 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH 2/3] iommu/vt-d: Apply per-device dma_ops
+To:     Christoph Hellwig <hch@lst.de>
+References: <20190801060156.8564-1-baolu.lu@linux.intel.com>
+ <20190801060156.8564-3-baolu.lu@linux.intel.com>
+ <20190806064347.GA14906@lst.de>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <f532a2c3-f73a-85d2-d2ad-37cde02547ce@linux.intel.com>
+Date:   Wed, 7 Aug 2019 11:06:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1564995539-29609-1-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 07 Aug 2019 03:00:52 +0000 (UTC)
+In-Reply-To: <20190806064347.GA14906@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Tony and Xunlei in cc.
-On 08/05/19 at 04:58pm, Pingfan Liu wrote:
-> This series include two related groups:
-> [1-3/4]: protect nr_cpus from rebooting by broadcast mce
-> [4/4]: improve "kexec -l" robustness against broadcast mce
-> 
-> When I tried to fix [1], Thomas raised concern about the nr_cpus' vulnerability
-> to unexpected rebooting by broadcast mce. After analysis, I think only the
-> following first case suffers from the rebooting by broadcast mce. [1-3/4] aims
-> to fix that issue.
+Hi Christoph,
 
-I did not understand and read the MCE details, but we previously had a
-MCE problem, Xunlei fixed in below commit:
-commit 5bc329503e8191c91c4c40836f062ef771d8ba83
-Author: Xunlei Pang <xlpang@redhat.com>
-Date:   Mon Mar 13 10:50:19 2017 +0100
+On 8/6/19 2:43 PM, Christoph Hellwig wrote:
+> Hi Lu,
+> 
+> I really do like the switch to the per-device dma_map_ops, but:
+> 
+> On Thu, Aug 01, 2019 at 02:01:55PM +0800, Lu Baolu wrote:
+>> Current Intel IOMMU driver sets the system level dma_ops. This
+>> implementation has at least the following drawbacks: 1) each
+>> dma API will go through the IOMMU driver even the devices are
+>> using identity mapped domains; 2) if user requests to use an
+>> identity mapped domain (a.k.a. bypass iommu translation), the
+>> driver might fall back to dma domain blindly if the device is
+>> not able to address all system memory.
+> 
+> This is very clearly a behavioral regression.  The intel-iommu driver
+> has always used the iommu mapping to provide decent support for
+> devices that do not have the full 64-bit addressing capability, and
+> changing this will make a lot of existing setups go slower.
+>
 
-    x86/mce: Handle broadcasted MCE gracefully with kexec
+I agree with you that we should keep the capability and avoid possible
+performance regression on some setups. But, instead of hard-coding this
+in the iommu driver, I prefer a more scalable way.
 
-I wonder if this is same issue or not. Also the old discussion is in
-below thread:
-https://lore.kernel.org/patchwork/patch/753530/
+For example, the concept of per group default domain type [1] seems to
+be a good choice. The kernel could be statically compiled as by-default
+"pass through" or "translate everything". The per group default domain
+type API could then be used by the privileged user to tweak some of the
+groups for better performance, either by 1) bypassing iommu translation
+for the trusted super-speed devices, or 2) applying iommu translation to
+access the system memory which is beyond the device's address capability
+(without the necessary of using bounce buffer).
 
-Tony raised similar questions, but I'm not sure if it is still a problem
-or it has been fixed.
+[1] https://www.spinics.net/lists/iommu/msg37113.html
 
-> 
-> *** Back ground ***
-> 
-> On x86 it's required to have all logical CPUs set CR4.MCE=1. Otherwise, a
-> broadcast MCE observing CR4.MCE=0b on any core will shutdown the machine.
-> 
-> The option 'nosmt' has already complied with the above rule by Thomas's patch.
-> For detail, refer to 506a66f3748 (Revert "x86/apic: Ignore secondary threads if
-> nosmt=force")
-> 
-> But for nr_cpus option, the exposure to broadcast MCE is a little complicated,
-> and can be categorized into three cases.
-> 
-> -1. boot up by BIOS. Since no one set CR4.MCE=1, nr_cpus risks rebooting by
-> broadcast MCE.
-> 
-> -2. boot up by "kexec -p nr_cpus=".  Since the 1st kernel has all cpus'
-> CR4.MCE=1 set before kexec -p, nr_cpus is free of rebooting by broadcast MCE.
-> Furthermore, the crashed kernel's wreckage, including page table and text, is
-> not touched by capture kernel. Hence if MCE event happens on capped cpu,
-> do_machine_check->__mc_check_crashing_cpu() runs smoothly and returns
-> immediately, the capped cpu is still pinned on "halt".
-> 
-> -3. boot up by "kexec -l nr_cpus=". As "kexec -p", it is free of rebooting by
-> broadcast MCE. But the 1st kernel's wreckage is discarded and changed.  when
-> capped cpus execute do_machine_check(), they may crack the new kernel.  But
-> this is not related with broadcast MCE, and need an extra fix.
-> 
-> *** Solution ***
-> "nr_cpus" can not follow the same way as "nosmt".  Because nr_cpus limits the
-> allocation of percpu area and some other kthread memory, which is critical to
-> cpu hotplug framework.  Instead, developing a dedicated SIPI callback
-> make_capped_cpu_stable() for capped cpu, which does not lean on percpu area to
-> work.
-> 
-> [1]: https://lkml.org/lkml/2019/7/5/3
-> 
-> To: Gleixner <tglx@linutronix.de>
-> To: Andy Lutomirski <luto@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> To: x86@kernel.org
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Daniel Drake <drake@endlessm.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: kexec@lists.infradead.org
-> 
-> ---
-> Pingfan Liu (4):
->   x86/apic: correct the ENO in generic_processor_info()
->   x86/apic: record capped cpu in generic_processor_info()
->   x86/smp: send capped cpus to a stable state when smp_init()
->   x86/smp: disallow MCE handler on rebooting AP
-> 
->  arch/x86/include/asm/apic.h  |  1 +
->  arch/x86/include/asm/smp.h   |  3 ++
->  arch/x86/kernel/apic/apic.c  | 23 ++++++++----
->  arch/x86/kernel/cpu/common.c |  7 ++++
->  arch/x86/kernel/smp.c        |  8 +++++
->  arch/x86/kernel/smpboot.c    | 83 ++++++++++++++++++++++++++++++++++++++++++++
->  kernel/smp.c                 |  6 ++++
->  7 files changed, 124 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 2.7.5
+> I don't think having to use swiotlb for these devices helps anyone.
 > 
 
-Thanks
-Dave
+Best regards,
+Baolu
+
