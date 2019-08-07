@@ -2,58 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3AE184F8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2CD984F97
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:16:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388175AbfHGPMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:12:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35086 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbfHGPMb (ORCPT
+        id S1730208AbfHGPQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 11:16:06 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:16449 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbfHGPQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 11:12:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SXYk4z8+XUcrwUH0ETJaYqTcSP2s+uqNvgDYI9B18iM=; b=udjl5wYerj8dDNl2/fe+MAu0v
-        f/qpzJRnWO7ODN7/yx2FSts8Kyy/VfdtWN5KqxBo5hatblPpnqCq9omj1Og+q0enzLXvAUS+R8cKX
-        SMrL74pvvUCrOIhjyOxcGuxDPIldGfpkiLR2K0C9dHQxvDpVWjWJS6asUIY0mTYOGj2iMbYr0jYhV
-        pxwdwQl6kVq61ioceD4eVKLupH/2Gnf0vDW/ekvUkJEdin9WBef+/s4DMwW7Sovp52ML9t5PjNzW0
-        RxppFwk0RbheSj5EqY/F+dnNjEgWx/PWSYymR6ZFWmBosM0tSt0dslaoSGH9FhjduHmTLL3Omp+cP
-        +RCtISIIA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvNc6-0004bD-1i; Wed, 07 Aug 2019 15:12:30 +0000
-Date:   Wed, 7 Aug 2019 08:12:30 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Alexandre Ghiti <alex@ghiti.fr>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: kbuild: add virtual memory system selection
-Message-ID: <20190807151229.GA16432@infradead.org>
-References: <alpine.DEB.2.21.9999.1907261259420.26670@viisi.sifive.com>
- <20190802084453.GA1410@infradead.org>
- <alpine.DEB.2.21.9999.1908061648220.13971@viisi.sifive.com>
- <20190807054246.GB1398@infradead.org>
- <c331e389-5f33-634a-f62f-e48251ca4cfe@ghiti.fr>
+        Wed, 7 Aug 2019 11:16:06 -0400
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x77FFoT3029200;
+        Thu, 8 Aug 2019 00:15:51 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x77FFoT3029200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565190951;
+        bh=zEpwwj/bLxz+9v/6upCujJWZYSqW9H3fcev3JpzI/Lk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1ndkH8qLrLH/y7/wQBWdR5qFvKHGa+YEYg5TRffXkgI4M4GKz+viXQBUgY5T69QQc
+         81ZsxtR7yVQnsOUd3T8JJ3sV4Mtp8cLNVrjIHJqal8gAtml7qanNYNwOgJTg7VdQp3
+         Gqaa13bWQi/+4ZrbJLYGdr6gz8f4sYL09K0jtY3tLO7S9xgWjbrTMHGYwIwI5efqGl
+         hbMZiEVra3xHSvJ8vJ3pwEjSCAlzcqXudvqVaKQWVPvhR838mw4KSEjyJAZxRnBe+e
+         xCY2HFR8CbksU5xdfFkXjtlAtMZyQtnXcjKqC+hQecvCI2zior45kaoZ67xJWPVf7j
+         XT1O4FnUckGDg==
+X-Nifty-SrcIP: [209.85.222.43]
+Received: by mail-ua1-f43.google.com with SMTP id j2so8339776uaq.5;
+        Wed, 07 Aug 2019 08:15:50 -0700 (PDT)
+X-Gm-Message-State: APjAAAXsxl++yE53Mne1kKvgeR1i/02UdnEC+yFrr51KLcTjfFenqyvU
+        3YYNE7bpYNv3ncXnVX9rcykpFZTqZdu2wQYXKC0=
+X-Google-Smtp-Source: APXvYqwFYu/U4TpFFkpb/skM+8T6jsaqv8DLQN8+IzXjCk4Dx2idEiJDAP7lQQbSTzOXxT9ruzU/W1Rar1fg/eXgrR4=
+X-Received: by 2002:a9f:25e9:: with SMTP id 96mr6309131uaf.95.1565190949919;
+ Wed, 07 Aug 2019 08:15:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c331e389-5f33-634a-f62f-e48251ca4cfe@ghiti.fr>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190802102358.28408-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190802102358.28408-1-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 8 Aug 2019 00:15:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASfBWBqmBtA9kpbFDJD21HZfoHYexwA25jaJgn5CpPw=A@mail.gmail.com>
+Message-ID: <CAK7LNASfBWBqmBtA9kpbFDJD21HZfoHYexwA25jaJgn5CpPw=A@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: revive single target %.ko
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Don Brace <don.brace@microsemi.com>,
+        Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 09:04:40AM +0200, Alexandre Ghiti wrote:
-> I took a look at how x86 deals with 5-level page table: it allows to handle
-> 5-level and 4-level at runtime by folding the last page table level (cf
-> Documentation/x86/x86_64/5level-paging.rst). So we might want to be able to
-> do the same and deal with that at runtime.
+On Fri, Aug 2, 2019 at 7:24 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> I removed the single target %.ko in commit ff9b45c55b26 ("kbuild:
+> modpost: read modules.order instead of $(MODVERDIR)/*.mod") because
+> the modpost stage does not work reliably. For instance, the module
+> dependency, modversion, etc. do not work if we lack symbol information
+> from the other modules.
+>
+> Yet, some people still want to build only one module in their interest,
+> and it may be still useful if it is used within those limitations.
+>
+> Fixes: ff9b45c55b26 ("kbuild: modpost: read modules.order instead of $(MODVERDIR)/*.mod")
+> Reported-by: Don Brace <don.brace@microsemi.com>
+> Reported-by: Arend Van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Yes, following the X86_5LEVEL model is the right thing.
+Applied to linux-kbuild/fixes.
+
+>
+>  Makefile | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/Makefile b/Makefile
+> index 571cf862d7a4..e4c7211f5a3b 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -997,6 +997,8 @@ endif
+>
+>  PHONY += prepare0
+>
+> +export MODORDER := $(if $(KBUILD_EXTMOD),$(KBUILD_EXTMOD)/)modules.order
+> +
+>  ifeq ($(KBUILD_EXTMOD),)
+>  core-y         += kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
+>
+> @@ -1766,6 +1768,10 @@ build-dir = $(patsubst %/,%,$(dir $(build-target)))
+>         $(Q)$(MAKE) $(build)=$(build-dir) $(build-target)
+>  %.symtypes: prepare FORCE
+>         $(Q)$(MAKE) $(build)=$(build-dir) $(build-target)
+> +%.ko: prepare FORCE
+> +       $(Q)$(MAKE) $(build)=$(build-dir) $(build-target:.ko=.mod)
+> +       $(Q)echo $(build-target) > $(MODORDER)
+> +       $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost || { rm -f $(MODORDER); false; }
+>
+>  # Modules
+>  PHONY += /
+> --
+> 2.17.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
