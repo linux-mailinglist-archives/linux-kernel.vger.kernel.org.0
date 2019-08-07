@@ -2,60 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A36384FA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71FC284FA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388223AbfHGPR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:17:56 -0400
-Received: from mga06.intel.com ([134.134.136.31]:29249 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387543AbfHGPR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 11:17:56 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 08:17:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
-   d="scan'208";a="373803853"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
-  by fmsmga005.fm.intel.com with ESMTP; 07 Aug 2019 08:17:50 -0700
-Date:   Wed, 7 Aug 2019 18:17:51 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com
-Subject: Re: [PATCH v21 08/28] x86/cpu/intel: Detect SGX support and update
- caps appropriately
-Message-ID: <20190807151751.hfhi6x4lope5oipw@linux.intel.com>
-References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
- <20190713170804.2340-9-jarkko.sakkinen@linux.intel.com>
- <20190724193542.GD25376@linux.intel.com>
+        id S2388343AbfHGPTE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 7 Aug 2019 11:19:04 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:26904 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387543AbfHGPTE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 11:19:04 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-58-vbBGLUz5N52_YU_A_1ip9w-1; Wed, 07 Aug 2019 16:19:00 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 7 Aug 2019 16:18:59 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 7 Aug 2019 16:18:59 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Sudeep Holla' <sudeep.holla@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>
+Subject: RE: [PATCH] firmware: arm_scmi: Use {get,put}_unaligned_le32
+ accessors
+Thread-Topic: [PATCH] firmware: arm_scmi: Use {get,put}_unaligned_le32
+ accessors
+Thread-Index: AQHVTSAtyuEmH657y0Gt9ART6WUBkKbvzBcw
+Date:   Wed, 7 Aug 2019 15:18:59 +0000
+Message-ID: <4102ce79ef7a4f5ba819663d072bccc8@AcuMS.aculab.com>
+References: <20190807130038.26878-1-sudeep.holla@arm.com>
+In-Reply-To: <20190807130038.26878-1-sudeep.holla@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724193542.GD25376@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+X-MC-Unique: vbBGLUz5N52_YU_A_1ip9w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 12:35:42PM -0700, Sean Christopherson wrote:
-> > +	if (IS_ENABLED(CONFIG_INTEL_SGX) && cpu_has(c, X86_FEATURE_SGX))
-> > +		detect_sgx(c);
-> > +
-> > +	init_intel_energy_perf(c);
+From: Sudeep Holla
+> Sent: 07 August 2019 14:01
 > 
-> All of the energy_perf additions are bogus, looks like a rebase gone wrong.
+> Instead of type-casting the {tx,rx}.buf all over the place while
+> accessing them to read/write __le32 from/to the firmware, let's use
+> the nice existing {get,put}_unaligned_le32 accessors to hide all the
+> type cast ugliness.
 
-Fixed in the master.
+Why the 'unaligned' accessors?
 
-/Jarkko
+> -	*(__le32 *)t->tx.buf = cpu_to_le32(id);
+> +	put_unaligned_le32(id, t->tx.buf);
+
+These will be expensive if the cpu doesn't support them.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
