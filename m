@@ -2,87 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCB5284F7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:10:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4937B84F8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:13:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbfHGPKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:10:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33304 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbfHGPKP (ORCPT
+        id S1730243AbfHGPLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 11:11:08 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:64822 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727213AbfHGPLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 11:10:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T0fRlfd4abk9HYGG1nKDUkxYHuPUXgWRCiR6ogEG6zw=; b=Qiw8hQfyOdRHv9dgEr+L+T6t4
-        VKVJyKi4cIowFd1A2bAQ5O+sx4f5bFgaprle29oPO5hzSjNhgSF4sZA7bcX0WPJhOx3v5xU+pTeIg
-        2N3eGo+CCNNnfXBPneL2CBB9NzW2FzRnxDE48D5IyzIz4R5PZUG+bZhQqH+fBzkrem8OH1kX3jaAt
-        jbC85i1nGo2CYyFYaXoAUIxZGJBnRHcF0PFt85bKi4I3uV5pNbei7AjKwacHP4mI03N5bghwnByjQ
-        3XBmgDQ0HUJBHSdhhz0lpXZk+sioooLRussS4R6JMMT3EUFi5haQUdfrTkbnNrKiWSwgmn8vV5bce
-        E3FMyYckw==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvNZr-0004E4-IF; Wed, 07 Aug 2019 15:10:12 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     palmer@sifive.com, arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: move sifive_l2_cache.c to drivers/misc
-Date:   Wed,  7 Aug 2019 18:10:09 +0300
-Message-Id: <20190807151009.31971-1-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
+        Wed, 7 Aug 2019 11:11:05 -0400
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x77FAuHI009710;
+        Thu, 8 Aug 2019 00:10:56 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x77FAuHI009710
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565190657;
+        bh=67qqjSQgaI5xapbBsTJPeFasC6ZyVPxUa8DEePOjEzs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vekRQSa3P0aA2Lt0Y0CKv6+bwcFu7HwdM7HAyDpK3IYWEDQ8AoR5NV/p+P8Mnj6eZ
+         3W3vwlr2tmsU3NZI5lsj31pBxVswcQCfN3ZI4c9HvIw19y1L3mCkqmpmcfD6QebdsU
+         DmNPs4p2U4wlZ547Qmm4e3gKPqqNo9MF4ZwR/40z0gmHBJspvOwLdU5POB+c+bAuWL
+         4e26gXJQjxeiONu2Qsg36sCMuc71Vxfy+mKp1ByU/rcllOzjJmgAR1LfWErvlfoux/
+         MwEVkY8JRlBa9mHu3XNnkOIoSoCxVi9PDE0qaRPhzIOJv9+nISwPJ4Vcoy/ZfHRM30
+         8eW0lLDY5MSOA==
+X-Nifty-SrcIP: [209.85.222.48]
+Received: by mail-ua1-f48.google.com with SMTP id v18so35142837uad.12;
+        Wed, 07 Aug 2019 08:10:56 -0700 (PDT)
+X-Gm-Message-State: APjAAAUgJLHx5SalSfri1/y+FJZhU4ptYRp06oc6CaTDUIRHR69gQJU1
+        D0VvCSt1Vud7xLBNhQBDzjhoOgt7z/r6Rcfqu84=
+X-Google-Smtp-Source: APXvYqxfQikh8Yu523ElqIvo8PJliB1J4wMrJ7x9x1KrVPC7PkEBOS+h5axLa83TRK219YZDEbKZ4bEGImsqE5VzUSs=
+X-Received: by 2002:a9f:25e9:: with SMTP id 96mr6290071uaf.95.1565190655454;
+ Wed, 07 Aug 2019 08:10:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190731061358.30117-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190731061358.30117-1-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 8 Aug 2019 00:10:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQPezQovn6Lnw1Zgz7Y2xz7_XXaccyZ-79zSYXAVSE6jQ@mail.gmail.com>
+Message-ID: <CAK7LNAQPezQovn6Lnw1Zgz7Y2xz7_XXaccyZ-79zSYXAVSE6jQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: add [M] marker for build log of *.mod.o
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sifive_l2_cache.c is in no way related to RISC-V architecture
-memory management.  It is a little stub driver working around the fact
-that the EDAC maintainers prefer their drivers to be structured in a
-certain way that doesn't fit the SiFive SOCs.
+On Wed, Jul 31, 2019 at 3:14 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> This builds module objects, so [M] makes sense.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Move the file to drivers/misc and only build it when the EDAC_SIFIVE
-config option is selected.
+Applied to linux-kbuild.
 
-Fixes: a967a289f169 ("RISC-V: sifive_l2_cache: Add L2 cache controller driver for SiFive SoCs")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/riscv/mm/Makefile                            | 1 -
- drivers/misc/Makefile                             | 1 +
- {arch/riscv/mm => drivers/misc}/sifive_l2_cache.c | 0
- 3 files changed, 1 insertion(+), 1 deletion(-)
- rename {arch/riscv/mm => drivers/misc}/sifive_l2_cache.c (100%)
 
-diff --git a/arch/riscv/mm/Makefile b/arch/riscv/mm/Makefile
-index 74055e1d6f21..d2101d0741d4 100644
---- a/arch/riscv/mm/Makefile
-+++ b/arch/riscv/mm/Makefile
-@@ -11,6 +11,5 @@ obj-y += extable.o
- obj-y += ioremap.o
- obj-y += cacheflush.o
- obj-y += context.o
--obj-y += sifive_l2_cache.o
- 
- obj-$(CONFIG_HUGETLB_PAGE) += hugetlbpage.o
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index abd8ae249746..886d48301e8e 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -59,3 +59,4 @@ obj-y				+= cardreader/
- obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
- obj-$(CONFIG_HABANA_AI)		+= habanalabs/
- obj-$(CONFIG_XILINX_SDFEC)	+= xilinx_sdfec.o
-+obj-$(CONFIG_EDAC_SIFIVE)	+= sifive_l2_cache.o
-diff --git a/arch/riscv/mm/sifive_l2_cache.c b/drivers/misc/sifive_l2_cache.c
-similarity index 100%
-rename from arch/riscv/mm/sifive_l2_cache.c
-rename to drivers/misc/sifive_l2_cache.c
+> ---
+>
+>  scripts/Makefile.modpost | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+> index 6e328190d609..6c237af41417 100644
+> --- a/scripts/Makefile.modpost
+> +++ b/scripts/Makefile.modpost
+> @@ -112,7 +112,7 @@ $(modules:.ko=.mod.c): modules-modpost ;
+>  # modname is set to make c_flags define KBUILD_MODNAME
+>  modname = $(notdir $(@:.mod.o=))
+>
+> -quiet_cmd_cc_o_c = CC      $@
+> +quiet_cmd_cc_o_c = CC [M]  $@
+>        cmd_cc_o_c = $(CC) $(c_flags) $(KBUILD_CFLAGS_MODULE) $(CFLAGS_MODULE) \
+>                    -c -o $@ $<
+>
+> --
+> 2.17.1
+>
+
+
 -- 
-2.20.1
-
+Best Regards
+Masahiro Yamada
