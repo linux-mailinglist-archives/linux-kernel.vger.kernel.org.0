@@ -2,172 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C855B83F38
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 03:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24BD88405C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 03:38:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbfHGBez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 21:34:55 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33457 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730091AbfHGBev (ORCPT
+        id S1729253AbfHGBiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 21:38:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64162 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729380AbfHGBiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 21:34:51 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g2so42502899pfq.0;
-        Tue, 06 Aug 2019 18:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iyBF/TunLLNE9m64WGZW5xnvl+XVp1Tkb/4cWK4Q28U=;
-        b=eabm6eV7x6nJ3H6jB3OWHKTAjJ5hccshhWRSvyF8YaL4Xb3kcN3FPSj+mrT7hdf1FM
-         0MWhm5PqlQFyy6zw76EwLtyOlQEQTOAPUCRq2cKY8d4yFrfincU70ZRfebLbmlijIWR2
-         wTENuQ2R1ycfB8EIZdvDLYgUy7fahn8NbpOFjvcP7wPItsW4fy1klzu0bIomS6ZhLV9L
-         FATmBTkmPO3bz1bBRYsOrrqOVmLfRrGMChgnyEYGXYwKFOo3GWkjWYe147H72f0kIcVc
-         Tr73f17ZMCrLU+eCYt8HTv90LoBSVz+pg0lUMLNh1TQmkPNzI1sbpCYBSoNZ3shE6svq
-         cn7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iyBF/TunLLNE9m64WGZW5xnvl+XVp1Tkb/4cWK4Q28U=;
-        b=jxYZj1IpMxFlnfyQjbmcVYmRAXDbrRGaNsQo9KLj8UPFM2Ztimt9SzcQ8VejwQ6hp2
-         xEXXqR2TF1GpEHbubXsItY8AhqKbh5b3qieKSkp515efhI8Zau7JqkWpqdhRaVu/oqob
-         eFsa8R0hyqah/ymi78AMJzw3fiGee7JI0Eymws7uBpBioQsAK2JnkiazHRDM37h/GQt2
-         hUPZYVXOO37HMLZwy+BUoqxAHCl9GaC+IqC+dVzatOML7FSfN4dVLpEo4orzkIQ9cj7M
-         NW2ySjvlawz5T9H0ymhkxcj1KZceDmWjjhsELqj6NyZHranAzHZXU7DS2Wm1rDVG0ifX
-         aCsQ==
-X-Gm-Message-State: APjAAAUAR0O0DWusQDC1+F81F8nf6AV1eO3KwLs0Hw8lnA976z/M95EM
-        g28VuVh/pAEiCrIMZRLyr6Y=
-X-Google-Smtp-Source: APXvYqz3mrxPCB1S0CW+dxLuweNihe5G+Md2rLL8K5hOTJIrjMzyu1ZdPrsndXXUg8jjoSZHHVCyxA==
-X-Received: by 2002:a62:14c4:: with SMTP id 187mr6515801pfu.241.1565141690166;
-        Tue, 06 Aug 2019 18:34:50 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id u69sm111740800pgu.77.2019.08.06.18.34.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 18:34:49 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
-        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v3 41/41] mm/ksm: convert put_page() to put_user_page*()
-Date:   Tue,  6 Aug 2019 18:33:40 -0700
-Message-Id: <20190807013340.9706-42-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190807013340.9706-1-jhubbard@nvidia.com>
-References: <20190807013340.9706-1-jhubbard@nvidia.com>
+        Tue, 6 Aug 2019 21:38:02 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x771aqBb082922;
+        Tue, 6 Aug 2019 21:37:41 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7h71y7up-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Aug 2019 21:37:41 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x771beMp085009;
+        Tue, 6 Aug 2019 21:37:40 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7h71y7u5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Aug 2019 21:37:40 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x771Z6dc000311;
+        Wed, 7 Aug 2019 01:37:39 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma03wdc.us.ibm.com with ESMTP id 2u51w636ne-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 01:37:39 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x771bcFS54854100
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Aug 2019 01:37:38 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A2E28AC059;
+        Wed,  7 Aug 2019 01:37:38 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4BDC6AC05E;
+        Wed,  7 Aug 2019 01:37:36 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.167.225])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Wed,  7 Aug 2019 01:37:36 +0000 (GMT)
+References: <20190806052237.12525-1-bauerman@linux.ibm.com> <20190806052237.12525-14-bauerman@linux.ibm.com> <20190806054841.GA14197@lst.de>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Anshuman Khandual <anshuman.linux@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>
+Subject: Re: [PATCH v3 13/16] powerpc/pseries/iommu: Don't use dma_iommu_ops on secure guests
+In-reply-to: <20190806054841.GA14197@lst.de>
+Date:   Tue, 06 Aug 2019 22:37:34 -0300
+Message-ID: <87k1bpzrfl.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-06_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=945 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908070014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
 
-For pages that were retained via get_user_pages*(), release those pages
-via the new put_user_page*() routines, instead of via put_page() or
-release_pages().
+Hello Christoph,
 
-This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-("mm: introduce put_user_page*(), placeholder versions").
+Thanks for your review.
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Daniel Black <daniel@linux.ibm.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Christoph Hellwig <hch@lst.de> writes:
+
+> On Tue, Aug 06, 2019 at 02:22:34AM -0300, Thiago Jung Bauermann wrote:
+>> @@ -1318,7 +1319,10 @@ void iommu_init_early_pSeries(void)
+>>  	of_reconfig_notifier_register(&iommu_reconfig_nb);
+>>  	register_memory_notifier(&iommu_mem_nb);
+>>  
+>> -	set_pci_dma_ops(&dma_iommu_ops);
+>> +	if (is_secure_guest())
+>> +		set_pci_dma_ops(NULL);
+>> +	else
+>> +		set_pci_dma_ops(&dma_iommu_ops);
+>
+> Shoudn't:
+>
+> 	if (!is_secure_guest())
+> 		set_pci_dma_ops(&dma_iommu_ops);
+>
+> be enough here, given that NULL is the default?
+
+Indeed, it is enough.
+
+> Also either way I think this conditional needs a comment explaining
+> why it is there.
+
+Good point. I added the commit message as a comment in the code.
+New version of this patch below.
+
+
+From 5dc3914efa4765eef2869d554d4ea1c676bb1e75 Mon Sep 17 00:00:00 2001
+From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Date: Thu, 24 Jan 2019 22:40:16 -0200
+Subject: [PATCH] powerpc/pseries/iommu: Don't use dma_iommu_ops on secure
+ guests
+
+Secure guest memory is inacessible to devices so regular DMA isn't
+possible.
+
+In that case set devices' dma_map_ops to NULL so that the generic
+DMA code path will use SWIOTLB to bounce buffers for DMA.
+
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- mm/ksm.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/powerpc/platforms/pseries/iommu.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 3dc4346411e4..e10ee4d5fdd8 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -456,7 +456,7 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
-  * We use break_ksm to break COW on a ksm page: it's a stripped down
-  *
-  *	if (get_user_pages(addr, 1, 1, 1, &page, NULL) == 1)
-- *		put_page(page);
-+ *		put_user_page(page);
-  *
-  * but taking great care only to touch a ksm page, in a VM_MERGEABLE vma,
-  * in case the application has unmapped and remapped mm,addr meanwhile.
-@@ -483,7 +483,7 @@ static int break_ksm(struct vm_area_struct *vma, unsigned long addr)
- 					FAULT_FLAG_WRITE | FAULT_FLAG_REMOTE);
- 		else
- 			ret = VM_FAULT_WRITE;
--		put_page(page);
-+		put_user_page(page);
- 	} while (!(ret & (VM_FAULT_WRITE | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | VM_FAULT_OOM)));
- 	/*
- 	 * We must loop because handle_mm_fault() may back out if there's
-@@ -568,7 +568,7 @@ static struct page *get_mergeable_page(struct rmap_item *rmap_item)
- 		flush_anon_page(vma, page, addr);
- 		flush_dcache_page(page);
- 	} else {
--		put_page(page);
-+		put_user_page(page);
- out:
- 		page = NULL;
- 	}
-@@ -1974,10 +1974,10 @@ struct rmap_item *unstable_tree_search_insert(struct rmap_item *rmap_item,
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+index 889dc2e44b89..8d9c2b17ad54 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -36,6 +36,7 @@
+ #include <asm/udbg.h>
+ #include <asm/mmzone.h>
+ #include <asm/plpar_wrappers.h>
++#include <asm/svm.h>
  
- 		parent = *new;
- 		if (ret < 0) {
--			put_page(tree_page);
-+			put_user_page(tree_page);
- 			new = &parent->rb_left;
- 		} else if (ret > 0) {
--			put_page(tree_page);
-+			put_user_page(tree_page);
- 			new = &parent->rb_right;
- 		} else if (!ksm_merge_across_nodes &&
- 			   page_to_nid(tree_page) != nid) {
-@@ -1986,7 +1986,7 @@ struct rmap_item *unstable_tree_search_insert(struct rmap_item *rmap_item,
- 			 * it will be flushed out and put in the right unstable
- 			 * tree next time: only merge with it when across_nodes.
- 			 */
--			put_page(tree_page);
-+			put_user_page(tree_page);
- 			return NULL;
- 		} else {
- 			*tree_pagep = tree_page;
-@@ -2328,7 +2328,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
- 							&rmap_item->rmap_list;
- 					ksm_scan.address += PAGE_SIZE;
- 				} else
--					put_page(*page);
-+					put_user_page(*page);
- 				up_read(&mm->mmap_sem);
- 				return rmap_item;
- 			}
--- 
-2.22.0
-
+ #include "pseries.h"
+ 
+@@ -1318,7 +1319,15 @@ void iommu_init_early_pSeries(void)
+ 	of_reconfig_notifier_register(&iommu_reconfig_nb);
+ 	register_memory_notifier(&iommu_mem_nb);
+ 
+-	set_pci_dma_ops(&dma_iommu_ops);
++	/*
++	 * Secure guest memory is inacessible to devices so regular DMA isn't
++	 * possible.
++	 *
++	 * In that case keep devices' dma_map_ops as NULL so that the generic
++	 * DMA code path will use SWIOTLB to bounce buffers for DMA.
++	 */
++	if (!is_secure_guest())
++		set_pci_dma_ops(&dma_iommu_ops);
+ }
+ 
+ static int __init disable_multitce(char *str)
