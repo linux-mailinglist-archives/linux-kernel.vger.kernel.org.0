@@ -2,83 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0C9484BCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 14:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A3084BD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 14:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729871AbfHGMlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 08:41:36 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44178 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbfHGMlg (ORCPT
+        id S1729950AbfHGMnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 08:43:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46752 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbfHGMnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 08:41:36 -0400
-Received: by mail-lj1-f195.google.com with SMTP id k18so85307400ljc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 05:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RLO/b475rRpz9RyUfV1VHf/BilozL3MjKM9p1Cl7sdk=;
-        b=qzA3Athga7Gbe027N6GOUmETvhHSHnzhehrZqw/TiAXKjZMUn1eA4ZfaVEuTYX8nZ2
-         LFh8Qb0myCULRjPKG2WEqGKb/KwBuRwmorK9JfZDbZfolYxHmzBaVB0qPrOxpAyvdlkk
-         NeWkqKFAwmPOmXourJqh5hWUpW5ZBGXS6h++esPccHRF0NFpF0mMnAELWpAsKUz5Rdgz
-         fSHfPVULK1dVFn/PVbw1Lx1CkPoEL2YzONu9JiXXcJa36vse6eBYVHrHaI32S6DwN2cM
-         ZMHFKhe+giX/oQy2Z6lcISI123VSTCFO+VTrDsQwThwmtOJATMvCkQdWieWjVjpO+Lw3
-         bOug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RLO/b475rRpz9RyUfV1VHf/BilozL3MjKM9p1Cl7sdk=;
-        b=Cp+LVQWAZkocTPvr8BAkoJ9DLYr5r/KHQsduGumy6l6G3qlxFe8uUslTPtTepTfBUZ
-         U4fJXtbu5oMHz4YczHJfv0EN7lmsWthgTvddAjgkwIwL7aWSFxpM3Vq0PxlJe5nWuizF
-         FREXlBrpaB7n5W/i7af1uoHSTNTxrLKhslMwty2XIV0/KZZn7gtvstHO8wCnb2ZKcMtv
-         O1mPkP8rqLlAvCohA9zxiDNObp9/0Dycy9/LrXHXxyJF2iL0RlRVgKQST91A0BCkHBiB
-         3fc01oXnmwA62Uw4qVrulnr+gM/PD5VcvU6EHIOogzKxu+Iq9aONUtuGyiXGTN2RMdVb
-         /tLQ==
-X-Gm-Message-State: APjAAAV8FTULLusHwV9/kLnW6iKHewaxAOo7nApLgHWf3tF6y95HfZNB
-        wpC5SAKiUkTQRk/MAefNbMCxVFGLp/0qqPTsPZ7gZA==
-X-Google-Smtp-Source: APXvYqzTtmIjIjoa6hoWwCSMOWWHdKs00GB5hdlV+2HMLSnOtbZtK0udlhDTIR3s0F1OVFax3eGxg7fIA0va2AK0cts=
-X-Received: by 2002:a05:651c:28c:: with SMTP id b12mr4809273ljo.69.1565181694684;
- Wed, 07 Aug 2019 05:41:34 -0700 (PDT)
+        Wed, 7 Aug 2019 08:43:00 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hvLHO-0006up-AB; Wed, 07 Aug 2019 12:42:58 +0000
+Subject: Re: [PATCH][ocfs2-next] ocfs2: ensure ret is set to zero before
+ returning
+To:     Joseph Qi <jiangqi903@gmail.com>, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ocfs2-devel@oss.oracle.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190807121929.28918-1-colin.king@canonical.com>
+ <fb3d7441-93ea-b619-52fc-00da950c9201@gmail.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <bf4d059a-94fc-d8cf-78c7-8606644185a5@canonical.com>
+Date:   Wed, 7 Aug 2019 13:42:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190806145716.125421-1-maz@kernel.org> <20190806145716.125421-7-maz@kernel.org>
-In-Reply-To: <20190806145716.125421-7-maz@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 7 Aug 2019 14:41:23 +0200
-Message-ID: <CACRpkdbTPetycRFCasG0CYHeiJetStcFV+qCUX2wa6c_FuBs6A@mail.gmail.com>
-Subject: Re: [PATCH 6/8] gpio/ixp4xx: Register the base PA instead of its VA
- in fwnode
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <fb3d7441-93ea-b619-52fc-00da950c9201@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 4:57 PM Marc Zyngier <maz@kernel.org> wrote:
+On 07/08/2019 13:35, Joseph Qi wrote:
+> 
+> 
+> On 19/8/7 20:19, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> A previous commit introduced a regression where variable ret was
+>> originally being set from the return from a call to function
+>> dlm_create_debugfs_subroot and this set was removed. Currently
+>> ret is now uninitialized if no alloction errors are found which
+>> may end up with a bogus check on ret < 0 on the 'leave:' return
+>> path.  Fix this by setting ret to zero on a successful execution
+>> path.
+> 
+> Good catch.
+> Or shall we just initialize 'ret' at first?
 
-> Do not expose the base VA (it appears in debugfs). Instead,
-> record the PA, which at least can be used to precisely identify
-> the associated irqchip and domain.
->
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+Initialized ret first may not catch subsequent coding errors where error
+returns paths have not initialized ret, so my preference is when it is
+required and not before.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+>>
+>> Addresses-Coverity: ("Uninitialzed scalar variable")
 
-Please apply this directly to the irq subsystem tree with
-the rest of the fixes.
+Can this be fixed up when applied rather sending a V2?
+> 
+> Typo here. 
+> 
+> Thanks,
+> Joseph
+> 
+>> Fixes: cba322160ef0 ("ocfs2: further debugfs cleanups")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  fs/ocfs2/dlm/dlmdomain.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+>> index 5c4218d66dd2..ee6f459f9770 100644
+>> --- a/fs/ocfs2/dlm/dlmdomain.c
+>> +++ b/fs/ocfs2/dlm/dlmdomain.c
+>> @@ -2052,6 +2052,7 @@ static struct dlm_ctxt *dlm_alloc_ctxt(const char *domain,
+>>  	mlog(0, "context init: refcount %u\n",
+>>  		  kref_read(&dlm->dlm_refs));
+>>  
+>> +	ret = 0;
+>>  leave:
+>>  	if (ret < 0 && dlm) {
+>>  		if (dlm->master_hash)
+>>
 
-Yours,
-Linus Walleij
