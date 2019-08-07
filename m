@@ -2,122 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF7F850AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB7A685089
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388927AbfHGQIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:08:22 -0400
-Received: from mga03.intel.com ([134.134.136.65]:3597 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727213AbfHGQIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:08:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 09:01:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
-   d="scan'208";a="165358705"
-Received: from knguye7-mobl.amr.corp.intel.com (HELO [10.255.81.127]) ([10.255.81.127])
-  by orsmga007.jf.intel.com with ESMTP; 07 Aug 2019 09:01:21 -0700
-Subject: Re: [Sound-open-firmware] [PATCH v2 3/5] ASoC: SOF: Add DT DSP device
- support
-To:     Daniel Baluta <daniel.baluta@gmail.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Olaru <paul.olaru@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        sound-open-firmware@alsa-project.org
-References: <20190723084104.12639-1-daniel.baluta@nxp.com>
- <20190723084104.12639-4-daniel.baluta@nxp.com>
- <d85909d6-c7cb-c64b-dfa9-6cee6c0da2cb@linux.intel.com>
- <CAEnQRZARFQjutkvW3_xkQAQznNm8c5jSjtAG715VtrZnDxztoA@mail.gmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <123a1cf0-1eac-03bd-6628-8c67004eadc5@linux.intel.com>
-Date:   Wed, 7 Aug 2019 11:01:21 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730084AbfHGQCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:02:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59892 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727213AbfHGQCH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 12:02:07 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x77FkX28096892
+        for <linux-kernel@vger.kernel.org>; Wed, 7 Aug 2019 12:02:06 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u81k28qu2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 12:02:05 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 7 Aug 2019 17:02:05 +0100
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 7 Aug 2019 17:01:59 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x77G1wH135651914
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Aug 2019 16:01:58 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 98533B2068;
+        Wed,  7 Aug 2019 16:01:58 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7ABFDB2066;
+        Wed,  7 Aug 2019 16:01:58 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  7 Aug 2019 16:01:58 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C2E4F16C9A3D; Wed,  7 Aug 2019 09:01:58 -0700 (PDT)
+Date:   Wed, 7 Aug 2019 09:01:58 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Andrea Parri <parri.andrea@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>
+Subject: Re: [PATCH] MAINTAINERS: Update e-mail address for Andrea Parri
+Reply-To: paulmck@linux.ibm.com
+References: <20190805121517.4734-1-parri.andrea@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAEnQRZARFQjutkvW3_xkQAQznNm8c5jSjtAG715VtrZnDxztoA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805121517.4734-1-parri.andrea@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19080716-0052-0000-0000-000003E90D08
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011566; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01243437; UDB=6.00655942; IPR=6.01024906;
+ MB=3.00028080; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-07 16:02:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19080716-0053-0000-0000-000062026859
+Message-Id: <20190807160158.GA15313@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-07_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908070162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/7/19 10:29 AM, Daniel Baluta wrote:
-> On Tue, Jul 23, 2019 at 6:19 PM Pierre-Louis Bossart
-> <pierre-louis.bossart@linux.intel.com> wrote:
->>
->>
->>> diff --git a/sound/soc/sof/Kconfig b/sound/soc/sof/Kconfig
->>> index 61b97fc55bb2..2aa3a1cdf60c 100644
->>> --- a/sound/soc/sof/Kconfig
->>> +++ b/sound/soc/sof/Kconfig
->>> @@ -36,6 +36,15 @@ config SND_SOC_SOF_ACPI
->>>          Say Y if you need this option
->>>          If unsure select "N".
->>>
->>> +config SND_SOC_SOF_DT
->>> +     tristate "SOF DT enumeration support"
->>> +     select SND_SOC_SOF
->>> +     select SND_SOC_SOF_OPTIONS
->>> +     help
->>> +       This adds support for Device Tree enumeration. This option is
->>> +       required to enable i.MX8 devices.
->>> +       Say Y if you need this option. If unsure select "N".
->>> +
->>
->> [snip]
->>
->>> diff --git a/sound/soc/sof/imx/Kconfig b/sound/soc/sof/imx/Kconfig
->>> index fff64a9970f0..fa35994a79c4 100644
->>> --- a/sound/soc/sof/imx/Kconfig
->>> +++ b/sound/soc/sof/imx/Kconfig
->>> @@ -12,6 +12,7 @@ if SND_SOC_SOF_IMX_TOPLEVEL
->>>
->>>    config SND_SOC_SOF_IMX8
->>>        tristate "SOF support for i.MX8"
->>> +     select SND_SOC_SOF_DT
->>
->> This looks upside down. You should select SOF_DT first then include the
->> NXP stuff.
+On Mon, Aug 05, 2019 at 02:15:17PM +0200, Andrea Parri wrote:
+> My @amarulasolutions.com address stopped working this July, so update
+> to my @gmail.com address where you'll still be able to reach me.
 > 
-> One more thing: So this should be 'depends on SND_SOC_SOF_DT' right?
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
 
-I would do this:
+Queued for the v5.4 merge window, thank you!
 
-config SND_SOC_SOF_DT
-      	tristate "SOF DT enumeration support"
-      	depends on OF # or whatever the top-level DT dependency is
-      	select SND_SOC_SOF
-      	select SND_SOC_SOF_OPTIONS
+							Thanx, Paul
 
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
+> Cc: Daniel Lustig <dlustig@nvidia.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6426db5198f05..527317026492f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9326,7 +9326,7 @@ F:	drivers/misc/lkdtm/*
+>  
+>  LINUX KERNEL MEMORY CONSISTENCY MODEL (LKMM)
+>  M:	Alan Stern <stern@rowland.harvard.edu>
+> -M:	Andrea Parri <andrea.parri@amarulasolutions.com>
+> +M:	Andrea Parri <parri.andrea@gmail.com>
+>  M:	Will Deacon <will@kernel.org>
+>  M:	Peter Zijlstra <peterz@infradead.org>
+>  M:	Boqun Feng <boqun.feng@gmail.com>
+> -- 
+> 2.17.1
+> 
 
-config SND_SOC_SOF_IMX_TOPLEVEL
-	bool "SOF support for NXP i.MX audio DSPs"
-	depends on ARM64 && SND_SOC_SOF_DT || COMPILE_TEST
-	
-if SND_SOC_SOF_IMX_TOPLEVEL
-
-config SND_SOC_SOF_IMX8
-	tristate "SOF support for i.MX8"
-
-In other words push the dependencies at a higher level.
