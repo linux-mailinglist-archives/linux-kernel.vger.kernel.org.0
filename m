@@ -2,106 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71E2D8515D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F20878513A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730295AbfHGQp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:45:27 -0400
-Received: from mga03.intel.com ([134.134.136.65]:6866 "EHLO mga03.intel.com"
+        id S1730163AbfHGQkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:40:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730036AbfHGQp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:45:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 09:36:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
-   d="scan'208";a="192946806"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 07 Aug 2019 09:36:29 -0700
-Received: by lahna (sSMTP sendmail emulation); Wed, 07 Aug 2019 19:36:29 +0300
-Date:   Wed, 7 Aug 2019 19:36:29 +0300
-From:   'Mika Westerberg' <mika.westerberg@linux.intel.com>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     'Yehezkel Bernat' <yehezkelshb@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH 3/8] thunderbolt: Use 32-bit writes when writing ring
- producer/consumer
-Message-ID: <20190807163629.GV2716@lahna.fi.intel.com>
-References: <20190705095800.43534-1-mika.westerberg@linux.intel.com>
- <20190705095800.43534-4-mika.westerberg@linux.intel.com>
- <CA+CmpXtMBEtyh77fcrhX2BU8esiit56CWfZmey6LYEHZVUxf8A@mail.gmail.com>
- <0f3a47d8133945b181d623ea6e0d53f2@AcuMS.aculab.com>
- <20190807161359.GT2716@lahna.fi.intel.com>
- <79616dd147864771b0b74901e77f2607@AcuMS.aculab.com>
+        id S1729891AbfHGQkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 12:40:16 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 638A72229C;
+        Wed,  7 Aug 2019 16:40:15 +0000 (UTC)
+Date:   Wed, 7 Aug 2019 12:40:13 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Jiping Ma <jiping.ma2@windriver.com>, mingo@redhat.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] tracing: Document the stack trace algorithm in the
+ comments
+Message-ID: <20190807124013.4ced2f81@gandalf.local.home>
+In-Reply-To: <20190807163454.392141426@goodmis.org>
+References: <20190807163401.570339297@goodmis.org>
+        <20190807163454.392141426@goodmis.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79616dd147864771b0b74901e77f2607@AcuMS.aculab.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 04:22:26PM +0000, David Laight wrote:
-> From: Mika Westerberg
-> > Sent: 07 August 2019 17:14
-> > To: David Laight
-> > 
-> > On Fri, Jul 05, 2019 at 04:04:19PM +0000, David Laight wrote:
-> > > > Really a matter of taste, but maybe you want to consider having a single
-> > > > function, with a 3rd parameter, bool is_tx.
-> > > > The calls here will be unified to:
-> > > >         ring_iowrite(ring, ring->head, ring->is_tx);
-> > > > (No condition is needed here).
-> > > >
-> > > > The implementation uses the new parameter to decide which part of the register
-> > > > to mask, reducing the code duplication (in my eyes):
-> > > >
-> > > >         val = ioread32(ring_desc_base(ring) + 8);
-> > > >         if (is_tx) {
-> > > >                 val &= 0x0000ffff;
-> > > >                 val |= value << 16;
-> > > >         } else {
-> > > >                 val &= 0xffff0000;
-> > > >                 val |= value;
-> > > >         }
-> > > >         iowrite32(val, ring_desc_base(ring) + 8);
-> > > >
-> > > > I'm not sure if it improves the readability or makes it worse. Your call.
-> > >
-> > > Gah, that is all horrid beyond belief.
-> > > If a 32bit write is valid then the hardware must not be updating
-> > > the other 16 bits.
-> > > In which case the driver knows what they should be.
-> > > So it can do a single 32bit write of the required value.
-> > 
-> > I'm not entirely sure I understand what you say above. Can you shed some
-> > light on this by a concrete example how it should look like? :-)
-> 
-> The driver must know both the tx and rx ring values, so:
-> 	iowrite32(tx_val << 16 | rx_val, ring_desc_base(ring) + 8);
->
+On Wed, 07 Aug 2019 12:34:03 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I see. However, prod or cons side gets updated by the hardware as it
-processes buffers and other side is only updated by the driver. I'm not
-sure the above works here.
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-> The ioread32() is likely to be very slow - you only want to do them
-> if absolutely necessary.
-> The speed of the iowrite32() doesn't matter (much) since it is almost
-> certainly 'posted' and execution continues while the bus cycle is
-> in progress.
+> + * To fix this, if the architecture sets ARCH_RET_ADDR_AFTER_LOCAL_VARS the
+> + * values in stack_trace_index[] are shifted by one to and the number of
+> + * stack trace entries is decremented by one.
+> + *
+> + *        stack_dump_trace[]        |   stack_trace_index[]
+> + *        ------------------        +   -------------------
+> + *  return addr to kernel_func_bar  |          20
 
-OK thanks for the explanation.
+That should have been 29, not 20. I'll update it.
+
+-- Steve
+
+
+> + *  return addr to sys_foo          |          19
+> + *
+> + * Although the entry function is not displayed, the first function (sys_foo)
+> + * will still include the stack size of it.
+> + */
+>  static void check_stack(unsigned long ip, unsigned long *stack)
+>  {
+>  	unsigned long this_size, flags; unsigned long *p, *top, *start;
+
