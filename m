@@ -2,77 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1384285468
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 22:17:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96E708546C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 22:18:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389394AbfHGURA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 16:17:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387969AbfHGURA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 16:17:00 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EAC82199C;
-        Wed,  7 Aug 2019 20:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565209019;
-        bh=9jrCLwX3LNqceRPrIp1jyjebmoHx3o9gZO1ZatQ4skM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=sEN1paERUMluEqczWXfNlPMKbSdmYQaq4T7rTni0CxSxEnrjjHKQ765sgQWu8A8s0
-         QKx24YVdqUtvGPcVbdAJxRFJMxYJyV6Ah+0UPLJtP5uaP8snDxXhkkuBKnRyRw75Aq
-         iNGGe6IBLOd1dbfd+9eQdQKz0RAljH5GsNO+CLMo=
-Date:   Wed, 7 Aug 2019 13:16:58 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Mark Rutland <Mark.Rutland@arm.com>, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        James Morse <james.morse@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v10 20/22] x86: mm: Convert dump_pagetables to use
- walk_page_range
-Message-Id: <20190807131658.08793793a97fa4310af4f495@linux-foundation.org>
-In-Reply-To: <066fa4ca-5a46-ba86-607f-9c3e16f79cde@arm.com>
-References: <20190731154603.41797-1-steven.price@arm.com>
-        <20190731154603.41797-21-steven.price@arm.com>
-        <20190806165823.3f735b45a7c4163aca20a767@linux-foundation.org>
-        <066fa4ca-5a46-ba86-607f-9c3e16f79cde@arm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2389373AbfHGUSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 16:18:52 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44056 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387969AbfHGUSv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 16:18:51 -0400
+Received: by mail-ot1-f66.google.com with SMTP id b7so59250215otl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 13:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=YtTOyOh7n4OSBhFF5Ofb8nIUnCfl2LFnKWkhzBBAffc=;
+        b=QyscVgQMwss6LhQyj1lFVqmTQAro7UK8NZEW+A49jcEG+eroRD7i/8237PF/XE9R0N
+         GYHs+n3zneJFG2kOOYx5xLOUTV4fCfchRIN2RJBDybmP7Az0o7gBKt+NXpIMUj5alBag
+         CDisu2pvaABvIyggVxp/CtFAsu30XOZPR5E4VTDiS4JwjIoHmK8NqgwDVu2InmaAXKsD
+         FsK67bJVExI44ndjDTuQXhJ0wgKD+U3e+mWEurQBwrL5dDEGhgfzbZ9Cg5c/bhYwxvkj
+         Cr8zWvSMYzP3tGOo601Rns+yLiQhLrz7f2kxwXCdnQEwqAW3CHICJJAgPZeDnx6qvtWd
+         SEsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=YtTOyOh7n4OSBhFF5Ofb8nIUnCfl2LFnKWkhzBBAffc=;
+        b=mSePq2BIDgvLAJKZdLgTu0c9V28M3RGghVzRNUb2nvORlKaRJyodTxWnFp9a/lMciC
+         s3OpkVo1lMFXy+GTJP0lGv5ny8V3O0JonDIUMnVfc/8QOMEFWWJzAeJnPdWpunTzf0GK
+         wp11XTP1e5wlR6gL7xbnDohny8wHqpPtM3F6RJkzgJ+itnvSkUdzoLSMb1oHyGloH9j2
+         meRFrJ7n8BnJ453oZ9Jxi9G0dSA9Bs9MoOW1kD7r7e0nQ2kPA6uQWHHVP+6j4Bc76MRp
+         xgw2uiz3xBpdGarGNmkYbK/xbwNwLGuPKjBCMQ31e8y0lBcevBjrpPa0omSsuTE3lZFj
+         gIMQ==
+X-Gm-Message-State: APjAAAWIaLR+GmO7MVLhFzuicBQNQW5B+FKOf1U3Ogpd5A+1e7bI9By+
+        bZqxj/k0ghhqCNTbtQKDxhlpIUlMqCwtWFMzftA=
+X-Google-Smtp-Source: APXvYqzI3rTp+c5fdrmSLVwDb/fNoSD0s4JtDkqsz1I0a2G4rQFM2m35K4d2Ox2fhuRPnjmPZa+ORKa5C2PRRSAklkA=
+X-Received: by 2002:a6b:f910:: with SMTP id j16mr11265479iog.256.1565209130751;
+ Wed, 07 Aug 2019 13:18:50 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a05:6638:58e:0:0:0:0 with HTTP; Wed, 7 Aug 2019 13:18:49
+ -0700 (PDT)
+Reply-To: ubanivincent@yandex.com
+From:   Ubani Vincent <sportsjooh3@gmail.com>
+Date:   Wed, 7 Aug 2019 20:18:49 +0000
+Message-ID: <CAA4EzvC2VSxrDXG_TFa9AFTSdiagMdXTzDy6-GkkqvDsP-8H-Q@mail.gmail.com>
+Subject: I HOPE TO HEAR FROM YOU SOON
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Aug 2019 13:58:21 +0100 Steven Price <steven.price@arm.com> wrote:
+With due respect,
 
-> > ./arch/x86/include/asm/pgtable_64_types.h:56:22: error: initializer element is not constant
-> >  #define PTRS_PER_PGD 512
-> >                       ^
-> 
-> This is very unhelpful of GCC - it's actually PTRS_PER_P4D which isn't
-> constant!
+Good day and compliments, I know this letter will definitely come to
+you as a surprise, I am (Mr.Ubani Vincent) the Head of file Department
+in African development bank. In my department we discovered an
+abandoned sum of 15 million USA dollars. In an account that belongs to
+one of our foreign customer who died along with all his family in the
+Asia Earth Quake Disaster and all the relation died along side with
+him at the Earth Quake Disaster leaving nobody behind for the claim. I
+want you stand as next of kin to the deceased. I agree that 40% of
+this money will be for you as foreign partner, in respect to the
+provision of a foreign account and 60% would be for me. Upon receipt
+of your reply, I will send to you by email the text of the
+application. I will not fail to bring to your notice that this
+transaction is hitch free and that you should not entertain any atom
+of fear as all required arrangements have been made for the transfer.
 
-Well.  You had every right to assume that an all-caps macro is a
-compile-time constant.
+I am waiting for your immediate response as you receive this mail.
+Yours faithfully,
+Mr. Ubani Vincent.
 
-We are innocent victims of Kirill's c65e774fb3f6af2 ("x86/mm: Make
-PGDIR_SHIFT and PTRS_PER_P4D variable") which lazily converted these
-macros into runtime-only, under some Kconfig settings.  It should have
-changed those macros into static inlined lower-case functions.
+FILL THIS FORM BELLOW AND RESEND IT TO ME THROUGH THIS
+EMAIL:(ubanivincent@yandex.com).
+1) Your Full Name ....
+2) Your Age .....
+3) Your Cell Phone Number ...
+4) Your Country .......
+5) Your Occupation ....
+6) Sex ............
+
+You have to keep everything secret as to enable the transfer to move
+very smoothly in to the account you will prove to the bank.
