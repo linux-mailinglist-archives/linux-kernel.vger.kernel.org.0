@@ -2,137 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B9A85002
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:36:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2503685014
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 17:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbfHGPgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 11:36:18 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57733 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387827AbfHGPgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 11:36:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 08:36:16 -0700
-X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
-   d="scan'208";a="349794837"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 08:36:11 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 8A00920355; Wed,  7 Aug 2019 18:36:46 +0300 (EEST)
-Date:   Wed, 7 Aug 2019 18:36:46 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Helen Koike <helen.koike@collabora.com>
-Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
-        jacob2.chen@rock-chips.com, jeffy.chen@rock-chips.com,
-        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, kernel@collabora.com,
-        ezequiel@collabora.com, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
-        Jacob Chen <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>
-Subject: Re: [PATCH v8 09/14] media: rkisp1: add rockchip isp1 core driver
-Message-ID: <20190807153646.GO21370@paasikivi.fi.intel.com>
-References: <20190730184256.30338-1-helen.koike@collabora.com>
- <20190730184256.30338-10-helen.koike@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730184256.30338-10-helen.koike@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2388699AbfHGPhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 11:37:51 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43389 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387827AbfHGPhu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 11:37:50 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 4so34377505pld.10
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 08:37:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=SbXighRqPCoPZWVDEmqUD9WiXHWD2WoHQaBKm2NnUQ0=;
+        b=TLfgH3DoYq3Oa17B7acmQxuWyl1NQ1d2B9DrMw9ZzVvVK/HALUi2NT4XDE43cRhwCq
+         1bEGGYbk/ige/PGSGgtK+VXGSv2DkIPk2JQ/F9mHFmRM28HlSmkUWaZwow8qNV1fX5qS
+         JLOSlAg8xbg2hYQIjYnTh3ZtkiS8Pq+HUJAuAyyFEw+F9HzghPNQVlbHggDU/VLaWdQq
+         1ERW0ke4JbziPYAtQcLS3LodzHozqxncCpZ2YEvOeVL74Tyzxk2soj64gqT6v0YmfKqv
+         9kpAxFWHUuXx3PWtPfTnfgGvHdaSYL4phrY41lYCUjNLuNcROIqCH45Jon3/IBW+bOu6
+         v/7A==
+X-Gm-Message-State: APjAAAUH5JeEt7M/CskBWqDqB3mxlU/jzpZ60DcyT3Uv9uY9ltbrAmZ+
+        /bH+zS9uYHQCbuCi/gMawhunSg==
+X-Google-Smtp-Source: APXvYqwOxmLrwq/hmTiDm7ZkSCDmAQCrO2shh8IxFFNkXHW4/5EiApdsriHIksWl6eUkZz6HIzP15g==
+X-Received: by 2002:a17:90a:5288:: with SMTP id w8mr512178pjh.61.1565192269545;
+        Wed, 07 Aug 2019 08:37:49 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id 125sm127468985pfg.23.2019.08.07.08.37.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 07 Aug 2019 08:37:48 -0700 (PDT)
+Date:   Wed, 07 Aug 2019 08:37:48 -0700 (PDT)
+X-Google-Original-Date: Wed, 07 Aug 2019 08:21:35 PDT (-0700)
+Subject:     Re: [PATCH v3 3/5] RISC-V: Fix unsupported isa string info.
+In-Reply-To: <alpine.DEB.2.21.9999.1908061818360.13971@viisi.sifive.com>
+CC:     Atish Patra <Atish.Patra@wdc.com>, info@metux.net,
+        allison@lohutok.net, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        Anup Patel <Anup.Patel@wdc.com>, mark.rutland@arm.com,
+        robh+dt@kernel.org, johan@kernel.org, tiny.windzz@gmail.com,
+        Greg KH <gregkh@linuxfoundation.org>, gary@garyguo.net,
+        linux-riscv@lists.infradead.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Message-ID: <mhng-6a70927a-4b6a-452f-910c-0639d5f47dff@palmer-si-x1e>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helen,
+On Tue, 06 Aug 2019 18:26:08 PDT (-0700), Paul Walmsley wrote:
+> On Wed, 7 Aug 2019, Atish Patra wrote:
+>
+>> On Tue, 2019-08-06 at 16:27 -0700, Paul Walmsley wrote:
+>>
+>> > Seems like the "su" should be dropped from mandatory_ext.  What do you
+>> > think?
+>> >
+>>
+>> Yup. As DT binding only mention imafdc, mandatory extensions should
+>> contain only that and just consider "su" extensions are considered as
+>> implicit as we are running Linux.
+>
+> Discussing this with Andrew and Palmer, it looks like "su" is currently
+> non-compliant.  Section 22.6 of the user-level specification states that
+> the "s" character indicates that a longer standard supervisor extension
+> name will follow.  So far I don't think any of these have been defined.
+>
+>> Do you think QEMU DT should be updated to reflect that ?
+>
+> Yes.
 
-On Tue, Jul 30, 2019 at 03:42:51PM -0300, Helen Koike wrote:
+https://lists.nongnu.org/archive/html/qemu-riscv/2019-08/msg00141.html
 
-...
-
-> +static int rkisp1_fwnode_parse(struct device *dev,
-> +			       struct v4l2_fwnode_endpoint *vep,
-> +			       struct v4l2_async_subdev *asd)
-> +{
-> +	struct sensor_async_subdev *s_asd =
-> +			container_of(asd, struct sensor_async_subdev, asd);
-> +
-> +	if (vep->bus_type != V4L2_MBUS_CSI2_DPHY) {
-> +		dev_err(dev, "Only CSI2 bus type is currently supported\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (vep->base.port != 0) {
-> +		dev_err(dev, "The ISP has only port 0\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	s_asd->mbus.type = vep->bus_type;
-> +	s_asd->mbus.flags = vep->bus.mipi_csi2.flags;
-> +	s_asd->lanes = vep->bus.mipi_csi2.num_data_lanes;
-> +
-> +	switch (vep->bus.mipi_csi2.num_data_lanes) {
-> +	case 1:
-> +		s_asd->mbus.flags |= V4L2_MBUS_CSI2_1_LANE;
-> +		break;
-> +	case 2:
-> +		s_asd->mbus.flags |= V4L2_MBUS_CSI2_2_LANE;
-> +		break;
-> +	case 3:
-> +		s_asd->mbus.flags |= V4L2_MBUS_CSI2_3_LANE;
-> +		break;
-> +	case 4:
-> +		s_asd->mbus.flags |= V4L2_MBUS_CSI2_4_LANE;
-> +		break;
-
-Could you use struct v4l2_fwnode_endpoint directly? The mbus config is a
-legacy struct from bygone times and I'd like to avoid using it in new
-drivers.
-
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct v4l2_async_notifier_operations subdev_notifier_ops = {
-> +	.bound = subdev_notifier_bound,
-> +	.unbind = subdev_notifier_unbind,
-> +	.complete = subdev_notifier_complete,
-> +};
-> +
-> +static int isp_subdev_notifier(struct rkisp1_device *isp_dev)
-> +{
-> +	struct v4l2_async_notifier *ntf = &isp_dev->notifier;
-> +	struct device *dev = isp_dev->dev;
-> +	int ret;
-> +
-> +	v4l2_async_notifier_init(ntf);
-> +
-> +	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
-> +		dev, ntf, sizeof(struct sensor_async_subdev), 0,
-> +		rkisp1_fwnode_parse);
-
-I know these functions aren't old but there's a better alternative. See
-e.g. isp_parse_of_endpoints in drivers/media/platform/omap3isp/isp.c or
-cio2_parse_firmware in drivers/media/pci/intel/ipu3/ipu3-cio2.c.
-
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (list_empty(&ntf->asd_list))
-> +		return -ENODEV;	/* no endpoint */
-> +
-> +	ntf->ops = &subdev_notifier_ops;
-> +
-> +	return v4l2_async_notifier_register(&isp_dev->v4l2_dev, ntf);
-> +}
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+>
+>> > There's no Kconfig option by this name, and we're requiring
+>> > compressed
+>>
+>> Sorry. This was a typo. It should have been CONFIG_RISCV_ISA_C.
+>>
+>> > instruction support as part of the RISC-V Linux baseline.  Could you
+>> > share the rationale behind this?
+>>
+>> I think I added this check at the config file. Looking at the Kconfig,
+>> RISCV_ISA_C is always enabled. So we can drop this.
+>
+> OK great.  Do you want to resend an updated patch, or would you like me to
+> fix it up here?
+>
+> I'll also send a patch to drop CONFIG_RISCV_ISA_C.
+>
+>
+> - Paul
