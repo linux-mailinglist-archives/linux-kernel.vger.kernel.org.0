@@ -2,146 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB9D84C91
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBAC684CBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388151AbfHGNNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:13:23 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:57947 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388085AbfHGNNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:13:22 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 463X4b1wbfz9sNm;
-        Wed,  7 Aug 2019 23:13:19 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Jason Yan <yanaijie@huawei.com>, linuxppc-dev@lists.ozlabs.org,
-        diana.craciun@nxp.com, christophe.leroy@c-s.fr,
-        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
-        keescook@chromium.org, kernel-hardening@lists.openwall.com
-Cc:     linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com,
-        yebin10@huawei.com, thunder.leizhen@huawei.com,
-        jingxiangfeng@huawei.com, fanchengyang@huawei.com,
-        zhaohongjiang@huawei.com, Jason Yan <yanaijie@huawei.com>
-Subject: Re: [PATCH v5 01/10] powerpc: unify definition of M_IF_NEEDED
-In-Reply-To: <20190807065706.11411-2-yanaijie@huawei.com>
-References: <20190807065706.11411-1-yanaijie@huawei.com> <20190807065706.11411-2-yanaijie@huawei.com>
-Date:   Wed, 07 Aug 2019 23:13:15 +1000
-Message-ID: <87sgqdt8yc.fsf@concordia.ellerman.id.au>
+        id S2388216AbfHGNT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:19:29 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4188 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387970AbfHGNT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:19:28 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 16225B1D52EED8DA34B7;
+        Wed,  7 Aug 2019 21:19:24 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 7 Aug 2019 21:19:14 +0800
+From:   Yonglong Liu <liuyonglong@huawei.com>
+To:     <davem@davemloft.net>, <andrew@lunn.ch>, <hkallweit1@gmail.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <shiju.jose@huawei.com>
+Subject: [PATCH net] net: phy: rtl8211f: do a double read to get real time link status
+Date:   Wed, 7 Aug 2019 21:16:12 +0800
+Message-ID: <1565183772-44268-1-git-send-email-liuyonglong@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jason Yan <yanaijie@huawei.com> writes:
-> M_IF_NEEDED is defined too many times. Move it to a common place.
+[   27.232781] hns3 0000:bd:00.3 eth7: net open
+[   27.237303] 8021q: adding VLAN 0 to HW filter on device eth7
+[   27.242972] IPv6: ADDRCONF(NETDEV_CHANGE): eth7: link becomes ready
+[   27.244449] hns3 0000:bd:00.3: invalid speed (-1)
+[   27.253904] hns3 0000:bd:00.3 eth7: failed to adjust link.
+[   27.259379] RTL8211F Gigabit Ethernet mii-0000:bd:00.3:07: PHY state change UP -> RUNNING
+[   27.924903] hns3 0000:bd:00.3 eth7: link up
+[   28.280479] RTL8211F Gigabit Ethernet mii-0000:bd:00.3:07: PHY state change RUNNING -> NOLINK
+[   29.208452] hns3 0000:bd:00.3 eth7: link down
+[   32.376745] RTL8211F Gigabit Ethernet mii-0000:bd:00.3:07: PHY state change NOLINK -> RUNNING
+[   33.208448] hns3 0000:bd:00.3 eth7: link up
+[   35.253821] hns3 0000:bd:00.3 eth7: net stop
+[   35.258270] hns3 0000:bd:00.3 eth7: link down
 
-The name is not great, can you call it MAS2_M_IF_NEEDED, which at least
-gives a clue what it's for?
+When using rtl8211f in polling mode, may get a invalid speed,
+because of reading a fake link up and autoneg complete status
+immediately after starting autoneg:
 
-cheers
+        ifconfig-1176  [007] ....    27.232763: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
+  kworker/u257:1-670   [015] ....    27.232805: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x04 val:0x01e1
+  kworker/u257:1-670   [015] ....    27.232815: mdio_access: mii-0000:bd:00.3 write phy:0x07 reg:0x04 val:0x05e1
+  kworker/u257:1-670   [015] ....    27.232869: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79ad
+  kworker/u257:1-670   [015] ....    27.232904: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x09 val:0x0200
+  kworker/u257:1-670   [015] ....    27.232940: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
+  kworker/u257:1-670   [015] ....    27.232949: mdio_access: mii-0000:bd:00.3 write phy:0x07 reg:0x00 val:0x1240
+  kworker/u257:1-670   [015] ....    27.233003: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79ad
+  kworker/u257:1-670   [015] ....    27.233039: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x0a val:0x3002
+  kworker/u257:1-670   [015] ....    27.233074: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x09 val:0x0200
+  kworker/u257:1-670   [015] ....    27.233110: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x05 val:0x0000
+  kworker/u257:1-670   [000] ....    28.280475: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x7989
+  kworker/u257:1-670   [000] ....    29.304471: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x7989
 
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> Cc: Diana Craciun <diana.craciun@nxp.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Reviewed-by: Diana Craciun <diana.craciun@nxp.com>
-> Tested-by: Diana Craciun <diana.craciun@nxp.com>
-> ---
->  arch/powerpc/include/asm/nohash/mmu-book3e.h  | 10 ++++++++++
->  arch/powerpc/kernel/exceptions-64e.S          | 10 ----------
->  arch/powerpc/kernel/fsl_booke_entry_mapping.S | 10 ----------
->  arch/powerpc/kernel/misc_64.S                 |  5 -----
->  4 files changed, 10 insertions(+), 25 deletions(-)
->
-> diff --git a/arch/powerpc/include/asm/nohash/mmu-book3e.h b/arch/powerpc/include/asm/nohash/mmu-book3e.h
-> index 4c9777d256fb..0877362e48fa 100644
-> --- a/arch/powerpc/include/asm/nohash/mmu-book3e.h
-> +++ b/arch/powerpc/include/asm/nohash/mmu-book3e.h
-> @@ -221,6 +221,16 @@
->  #define TLBILX_T_CLASS2			6
->  #define TLBILX_T_CLASS3			7
->  
-> +/*
-> + * The mapping only needs to be cache-coherent on SMP, except on
-> + * Freescale e500mc derivatives where it's also needed for coherent DMA.
-> + */
-> +#if defined(CONFIG_SMP) || defined(CONFIG_PPC_E500MC)
-> +#define M_IF_NEEDED	MAS2_M
-> +#else
-> +#define M_IF_NEEDED	0
-> +#endif
-> +
->  #ifndef __ASSEMBLY__
->  #include <asm/bug.h>
->  
-> diff --git a/arch/powerpc/kernel/exceptions-64e.S b/arch/powerpc/kernel/exceptions-64e.S
-> index 1cfb3da4a84a..fd49ec07ce4a 100644
-> --- a/arch/powerpc/kernel/exceptions-64e.S
-> +++ b/arch/powerpc/kernel/exceptions-64e.S
-> @@ -1342,16 +1342,6 @@ skpinv:	addi	r6,r6,1				/* Increment */
->  	sync
->  	isync
->  
-> -/*
-> - * The mapping only needs to be cache-coherent on SMP, except on
-> - * Freescale e500mc derivatives where it's also needed for coherent DMA.
-> - */
-> -#if defined(CONFIG_SMP) || defined(CONFIG_PPC_E500MC)
-> -#define M_IF_NEEDED	MAS2_M
-> -#else
-> -#define M_IF_NEEDED	0
-> -#endif
-> -
->  /* 6. Setup KERNELBASE mapping in TLB[0]
->   *
->   * r3 = MAS0 w/TLBSEL & ESEL for the entry we started in
-> diff --git a/arch/powerpc/kernel/fsl_booke_entry_mapping.S b/arch/powerpc/kernel/fsl_booke_entry_mapping.S
-> index ea065282b303..de0980945510 100644
-> --- a/arch/powerpc/kernel/fsl_booke_entry_mapping.S
-> +++ b/arch/powerpc/kernel/fsl_booke_entry_mapping.S
-> @@ -153,16 +153,6 @@ skpinv:	addi	r6,r6,1				/* Increment */
->  	tlbivax 0,r9
->  	TLBSYNC
->  
-> -/*
-> - * The mapping only needs to be cache-coherent on SMP, except on
-> - * Freescale e500mc derivatives where it's also needed for coherent DMA.
-> - */
-> -#if defined(CONFIG_SMP) || defined(CONFIG_PPC_E500MC)
-> -#define M_IF_NEEDED	MAS2_M
-> -#else
-> -#define M_IF_NEEDED	0
-> -#endif
-> -
->  #if defined(ENTRY_MAPPING_BOOT_SETUP)
->  
->  /* 6. Setup KERNELBASE mapping in TLB1[0] */
-> diff --git a/arch/powerpc/kernel/misc_64.S b/arch/powerpc/kernel/misc_64.S
-> index b55a7b4cb543..26074f92d4bc 100644
-> --- a/arch/powerpc/kernel/misc_64.S
-> +++ b/arch/powerpc/kernel/misc_64.S
-> @@ -432,11 +432,6 @@ kexec_create_tlb:
->  	rlwimi	r9,r10,16,4,15		/* Setup MAS0 = TLBSEL | ESEL(r9) */
->  
->  /* Set up a temp identity mapping v:0 to p:0 and return to it. */
-> -#if defined(CONFIG_SMP) || defined(CONFIG_PPC_E500MC)
-> -#define M_IF_NEEDED	MAS2_M
-> -#else
-> -#define M_IF_NEEDED	0
-> -#endif
->  	mtspr	SPRN_MAS0,r9
->  
->  	lis	r9,(MAS1_VALID|MAS1_IPROT)@h
-> -- 
-> 2.17.2
+According to the datasheet of rtl8211f, to get the real time
+link status, need to read MII_BMSR twice.
+
+This patch add a read_status hook for rtl8211f, and do a fake
+phy_read before genphy_read_status(), so that can get real link
+status in genphy_read_status().
+
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+---
+ drivers/net/phy/realtek.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+index a669945..92e27d5 100644
+--- a/drivers/net/phy/realtek.c
++++ b/drivers/net/phy/realtek.c
+@@ -256,6 +256,18 @@ static int rtl8366rb_config_init(struct phy_device *phydev)
+ 	return ret;
+ }
+ 
++static int rtl8211f_read_status(struct phy_device *phydev)
++{
++	int status;
++
++	/* do a fake read */
++	status = phy_read(phydev, MII_BMSR);
++	if (status < 0)
++		return status;
++
++	return genphy_read_status(phydev);
++}
++
+ static struct phy_driver realtek_drvs[] = {
+ 	{
+ 		PHY_ID_MATCH_EXACT(0x00008201),
+@@ -325,6 +337,7 @@ static struct phy_driver realtek_drvs[] = {
+ 		.resume		= genphy_resume,
+ 		.read_page	= rtl821x_read_page,
+ 		.write_page	= rtl821x_write_page,
++		.read_status	= rtl8211f_read_status,
+ 	}, {
+ 		PHY_ID_MATCH_EXACT(0x001cc800),
+ 		.name		= "Generic Realtek PHY",
+-- 
+2.8.1
+
