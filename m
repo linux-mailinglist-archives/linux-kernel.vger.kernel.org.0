@@ -2,87 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D384384497
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 937ED844A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbfHGGkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 02:40:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38656 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727139AbfHGGkD (ORCPT
+        id S1728105AbfHGGkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 02:40:41 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:8123 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbfHGGkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 02:40:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7uoByRa+Al/xx5bip7rUm8otbKddClrdMOGAdUETRbE=; b=dLjgyEgYjD1Os5q21xXo4cPVG
-        9DH2AgUTdtbRF+g2nPIvPt5xl1Kb4pJ9PgP55ZxyrfEJopI8Y6zDiY54klLdOvkh50jjPzNLjN2g3
-        YJMwWzn4POHUA71za7cjK1UnTdmYk1umo1Q09nkIrCUrPUZmCC7kliZRklsJpjnPvb1jHKRK8B0LY
-        3exvnq5asy/EFK1Fz/4Pa7KlySZu1MpQqfwFN3NHTROnZmA5wy3d66hMcRR0PhsSe730aQcDCEiNP
-        Dz+EPfLNHWPuIyFAKQ++QPOeCkLMVt2t+i+At2EeInDwGgyJYOL+Ta8BJGxsLgFDTCd5axhBG1yp8
-        ZV8RsxtYw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvFc8-0007MG-7S; Wed, 07 Aug 2019 06:40:00 +0000
-Date:   Tue, 6 Aug 2019 23:40:00 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
-        <thomas@shipmail.org>, Dave Airlie <airlied@gmail.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        Wed, 7 Aug 2019 02:40:36 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4a726c0000>; Tue, 06 Aug 2019 23:40:44 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 06 Aug 2019 23:40:34 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 06 Aug 2019 23:40:34 -0700
+Received: from [10.2.165.207] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 7 Aug
+ 2019 06:40:34 +0000
+Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
+ put_user_page*()
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     <john.hubbard@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Steven Price <steven.price@arm.com>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: drm pull for v5.3-rc1
-Message-ID: <20190807064000.GC6002@infradead.org>
-References: <CAPM=9tzJQ+26n_Df1eBPG1A=tXf4xNuVEjbG3aZj-aqYQ9nnAg@mail.gmail.com>
- <CAPM=9twvwhm318btWy_WkQxOcpRCzjpok52R8zPQxQrnQ8QzwQ@mail.gmail.com>
- <CAHk-=wjC3VX5hSeGRA1SCLjT+hewPbbG4vSJPFK7iy26z4QAyw@mail.gmail.com>
- <CAHk-=wiD6a189CXj-ugRzCxA9r1+siSCA0eP_eoZ_bk_bLTRMw@mail.gmail.com>
- <48890b55-afc5-ced8-5913-5a755ce6c1ab@shipmail.org>
- <CAHk-=whwcMLwcQZTmWgCnSn=LHpQG+EBbWevJEj5YTKMiE_-oQ@mail.gmail.com>
- <CAHk-=wghASUU7QmoibQK7XS09na7rDRrjSrWPwkGz=qLnGp_Xw@mail.gmail.com>
- <20190806073831.GA26668@infradead.org>
- <CAHk-=wi7L0MDG7DY39Hx6v8jUMSq3ZCE3QTnKKirba_8KAFNyw@mail.gmail.com>
- <20190806190937.GD30179@bombadil.infradead.org>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <ceph-devel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <samba-technical@lists.samba.org>,
+        <v9fs-developer@lists.sourceforge.net>,
+        <virtualization@lists.linux-foundation.org>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+ <20190724061750.GA19397@infradead.org>
+ <c35aa2bf-c830-9e57-78ca-9ce6fb6cb53b@nvidia.com>
+ <20190807063448.GA6002@infradead.org>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <3ab1e69f-88c6-3e16-444d-cab78c3bf1d1@nvidia.com>
+Date:   Tue, 6 Aug 2019 23:38:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806190937.GD30179@bombadil.infradead.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190807063448.GA6002@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565160044; bh=jn0FnBY7ADCh0laBLX/xGqPiB9Jg8oG9YEaLS2KH1Js=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=cZhyddtfeWnuDzmY91G/o97CceVB5RM0qm7xIS+BT+DJS1yACOaMbPnxtDPonJo3O
+         Ckk802AdQClg27dtVTwqZlP1rJ45uR/xJxU2tj1bAWtx6wGx8MnDwDr9/hAcMofdtY
+         YSzbF7dvdBOxPO1CMgg0kHDyQnZ9XI/sZkIaiXVixuZIn5BzSqRh7aOyfPS3OIiva2
+         EdoAoTR8kqTmNnuIpmqz0Mts9lp7nFil4TrfQHcFTrur14aYk9UOgpcZdRREzoyCup
+         0KYEKb/ZJNSFduxPI76a4ilG78VxY7/mJHog1LdnWqMnq4OYf6DhFN3qt02E1MzswR
+         TFH77+TyL//6w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 12:09:38PM -0700, Matthew Wilcox wrote:
-> Has anyone looked at turning the interface inside-out?  ie something like:
-> 
-> 	struct mm_walk_state state = { .mm = mm, .start = start, .end = end, };
-> 
-> 	for_each_page_range(&state, page) {
-> 		... do something with page ...
-> 	}
-> 
-> with appropriate macrology along the lines of:
-> 
-> #define for_each_page_range(state, page)				\
-> 	while ((page = page_range_walk_next(state)))
-> 
-> Then you don't need to package anything up into structs that are shared
-> between the caller and the iterated function.
+On 8/6/19 11:34 PM, Christoph Hellwig wrote:
+> On Mon, Aug 05, 2019 at 03:54:35PM -0700, John Hubbard wrote:
+>> On 7/23/19 11:17 PM, Christoph Hellwig wrote:
+...
+>>> I think we can do this in a simple and better way.  We have 5 ITER_*
+>>> types.  Of those ITER_DISCARD as the name suggests never uses pages, so
+>>> we can skip handling it.  ITER_PIPE is rejected =D1=96n the direct I/O =
+path,
+>>> which leaves us with three.
+>>>
+>>
+>> Hi Christoph,
+>>
+>> Are you working on anything like this?
+>=20
+> I was hoping I could steer you towards it.  But if you don't want to do
+> it yourself I'll add it to my ever growing todo list.
+>=20
 
-I'm not an all that huge fan of super magic macro loops.  But in this
-case I don't see how it could even work, as we get special callbacks
-for huge pages and holes, and people are trying to add a few more ops
-as well.
+Sure, I'm up for this. The bvec-related items are the next logical part
+of the gup/dma conversions to work on, and I just wanted to avoid solving t=
+he
+same problem if you were already in the code.
+
+
+>> Or on the put_user_bvec() idea?
+>=20
+> I have a prototype from two month ago:
+>=20
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/gup-bvec
+>=20
+> but that only survived the most basic testing, so it'll need more work,
+> which I'm not sure when I'll find time for.
+>=20
+
+I'll take a peek, and probably pester you with a few questions if I get
+confused. :)
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
