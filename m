@@ -2,435 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D793284DF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D13084E02
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:56:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387944AbfHGNyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:54:02 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33406 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729743AbfHGNyC (ORCPT
+        id S2387926AbfHGN4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:56:01 -0400
+Received: from mail-ot1-f72.google.com ([209.85.210.72]:50330 "EHLO
+        mail-ot1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387484AbfHGN4B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:54:02 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c14so40855449plo.0;
-        Wed, 07 Aug 2019 06:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GCFIgMhhIBb816o8JYam+niQpT+/Nq9zbb11cr3xj3s=;
-        b=ruQatIm034ezo1oCgAPxbwXp5V07alI5xx+RUAltngtCTXuyvNViUU5TLaw/zQY7EL
-         yvDj3/Jz4jjdkRbcCwyjMGqF7soJX8ilShZTI3ggarki2eeiWdcgOG/1/5ui/KnPgV7f
-         SDM1WvcnPRa8SKjYJ5f9rfUpsctuK6J7oetbFXYyjhEZn5CvfuAwk8JpC+DZ9BpiVEDi
-         aO0E0ttoRQSTtkcNWXeripVeQR2fKP+zya3J5YmKHkjq0grv8XexrsG0+B/K74dcnGSP
-         WWGMq+JBt+bKkGrhrzJHP/pwCucjIC+tiw9OZ3KQa404ShRn/ZdXC3K5ddIIQkvBIel9
-         DOiw==
+        Wed, 7 Aug 2019 09:56:01 -0400
+Received: by mail-ot1-f72.google.com with SMTP id a21so54933554otk.17
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 06:56:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GCFIgMhhIBb816o8JYam+niQpT+/Nq9zbb11cr3xj3s=;
-        b=QqlvWoyovZIc50LPvVBCHPmaYue8HsYt5gSNMb0jVQCH44GAa8Vy5DiV8mkm6p4KRq
-         bdj0mtbMVlbl8gVm81AR3Fj+cjeQ6ExCEdI0Baz3oFZmyKk2i3700Om1fvDL3D8HvLZp
-         MHDXhdrINVeh40BTGktCp84GZuWWpafrd0+hjdQOecq2wKbMei842VmMoix/2pLwUf3D
-         gAHDbXUF6RxAEhIcR2SuX1XmSeNiNVXxql2DLgl2jkf1ae139Ffqmw9bT5mKeN6xB5N4
-         SH+f3rWFN8kqosJCJl5VmG+5jx2f0QwQE7q1bPX8LbZJMtvb0Dbw7thyu6QHbhYKS6OQ
-         FhMw==
-X-Gm-Message-State: APjAAAXqiqvQ0K1/nzHru27vC7Tf4ZnzDZTtovs/1+pqpBFHq94AGRa0
-        QhbaaNa1dW+M4nro2pCwY6Dl2B9g
-X-Google-Smtp-Source: APXvYqwkO9oJCiXmCJNEo+iannWgdWAO/FJ3KP6LezpKhku8dNNoLd6+3SunHt4iSk0tnM3jiw8/Ug==
-X-Received: by 2002:a63:3147:: with SMTP id x68mr8064987pgx.212.1565186041122;
-        Wed, 07 Aug 2019 06:54:01 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id z13sm92285059pfa.94.2019.08.07.06.54.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 06:54:00 -0700 (PDT)
-Date:   Wed, 7 Aug 2019 06:53:59 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Iker Perez <iker.perez@codethink.co.uk>
-Cc:     linux-hwmon@vger.kernel.org, jdelvare@suse.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] hwmon: (lm75) Create structure to save all the
- configuration parameters.
-Message-ID: <20190807135359.GB11447@roeck-us.net>
-References: <20190806091107.13322-1-iker.perez@codethink.co.uk>
- <20190806091107.13322-2-iker.perez@codethink.co.uk>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Bk+2r34Stl2rUBhRx5Gcygsy2Z7wB8nfPpt4MphB9xU=;
+        b=eFHOe2DuPQyMoGO2r0wihGmy5LvXd1COkoXfiIk78NxMxyciQ1XLge2ZCk2IDUepxt
+         pZcjEy2x5ow8qne5uRI3MXyKW25VH5RVvgUlQwJY7ZAbwq1K+5wWdxRVCCaDna9tKvYb
+         m7cuS/hvygm5ioAusmeOtdmtwoYqNUpsghZN65dHPfLmQTThE/DoIlSK8rYqh47YWj4s
+         7zDPN0P0HDArHjiJQ9kvEQPNmMyZMhBgKUw8k0uWqFuOfxElsm1l+rMKxwOs27I8RpP/
+         kfoRnlf3U0EjYbieJxxWE5ZxXtd+/jjULhKnWk6vVJIr6R8ZhKxp97XGdsajPUkz/ofs
+         KNyQ==
+X-Gm-Message-State: APjAAAVx/CSdowMW0wTJ3Q5etrRgHXN5a1XlDNpHaUSdiQDL6gFyvjn4
+        qf925K5ZRFtqSDixQMKR9LJbO4Aph5PYCR5KtBFfIM8JlXow
+X-Google-Smtp-Source: APXvYqz9nLua2ezFhBEBS/7mQaa0WuGqbxesIHCg0yzqzhVCeqS0n/CSMvTS+LmlmuK/6ZRJZNEbJm6WQPnpQIDiuEk1W+eOhdu0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806091107.13322-2-iker.perez@codethink.co.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Received: by 2002:a6b:3b03:: with SMTP id i3mr9381073ioa.302.1565186160323;
+ Wed, 07 Aug 2019 06:56:00 -0700 (PDT)
+Date:   Wed, 07 Aug 2019 06:56:00 -0700
+In-Reply-To: <CAAeHK+zDVmxgjkZ6dR-sk1=99-Aj=Z4wwxaRCaOXeuYYG3-bUw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000017f30b058f874dc2@google.com>
+Subject: Re: KASAN: use-after-free Read in device_release_driver_internal
+From:   syzbot <syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, oneukum@suse.com,
+        stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 10:11:04AM +0100, Iker Perez wrote:
-> From: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
-> 
-> * Add to lm75_data kind field to store the kind of device the driver is
->   working with.
-> * Add an structure to store the configuration parameters of all the
->   supported devices.
-> * Delete resolution_limits from lm75_data and include them in the structure
->   described above.
-> * Add a pointer to the configuration parameters structure to be used as a
->   reference to obtain the parameters.
-> * Delete switch-case approach to get the device configuration parameters.
-> * The structure is cleaner and easier to maintain.
-> 
-> Signed-off-by: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
-> ---
->  drivers/hwmon/lm75.c | 275 +++++++++++++++++++++++++++++++--------------------
->  1 file changed, 169 insertions(+), 106 deletions(-)
-> 
-> diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
-> index a2d3f2ce3e1d..1c012301b6ca 100644
-> --- a/drivers/hwmon/lm75.c
-> +++ b/drivers/hwmon/lm75.c
-> @@ -18,7 +18,6 @@
->  #include <linux/regmap.h>
->  #include "lm75.h"
->  
-> -
->  /*
->   * This driver handles the LM75 and compatible digital temperature sensors.
->   */
-> @@ -51,6 +50,25 @@ enum lm75_type {		/* keep sorted in alphabetical order */
->  	tmp75c,
->  };
->  
-> +/**
-> + * struct lm75_params - lm75 configuration parameters.
-> + * @set_mask:		Bits to set in cofiguration register when configuring
-> + *			the chip.
-> + * @clr_mask:		Bits to clear in configuration register when configuring
-> + *			the chip.
-> + * @resolution:		Number of bits to represent the temperatue value.
-> + * @resolution_limits:	Resolution range.
+Hello,
 
-I had to look this up to remember. Turns out this isn't the resolution range.
-Please replace the description with something like:
+syzbot has tested the proposed patch but the reproducer still triggered  
+crash:
+KASAN: use-after-free Read in device_release_driver_internal
 
-				Limit register resolution.
-				Optional. Should be set if the resolution of
-				limit registers does not match the resolution
-				of the temperature register.
+usb 4-1: USB disconnect, device number 2
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x3a5d/0x5340  
+kernel/locking/lockdep.c:3665
+Read of size 8 at addr ffff8881d4a54510 by task kworker/0:3/2876
 
-> + * default_sample_time:	Sample time to be set by default.
-> + */
-> +
-> +struct lm75_params {
-> +	u8		set_mask;
-> +	u8		clr_mask;
-> +	u8		default_resolution;
-> +	u8		resolution_limits;
-> +	unsigned int	default_sample_time;
-> +};
-> +
->  /* Addresses scanned */
->  static const unsigned short normal_i2c[] = { 0x48, 0x49, 0x4a, 0x4b, 0x4c,
->  					0x4d, 0x4e, 0x4f, I2C_CLIENT_END };
-> @@ -63,15 +81,147 @@ static const unsigned short normal_i2c[] = { 0x48, 0x49, 0x4a, 0x4b, 0x4c,
->  
->  /* Each client has this additional data */
->  struct lm75_data {
-> -	struct i2c_client	*client;
-> -	struct regmap		*regmap;
-> -	u8			orig_conf;
-> -	u8			resolution;	/* In bits, between 9 and 16 */
-> -	u8			resolution_limits;
-> -	unsigned int		sample_time;	/* In ms */
-> +	struct i2c_client		*client;
-> +	struct regmap			*regmap;
-> +	u8				orig_conf;
-> +	u8				current_conf;
-> +	u8				resolution;	/* In bits, 9 to 16 */
-> +	unsigned int			sample_time;	/* In ms */
-> +	enum lm75_type			kind;
-> +	const struct lm75_params	*params;
->  };
->  
->  /*-----------------------------------------------------------------------*/
-> +/* The structure below stores the configuration values of the supported devices.
-> + * In case of being supported multiple configurations, the default one must
-> + * always be the first element of the array
-> + */
-> +static const struct lm75_params device_params[] = {
-> +	[adt75] = {
-> +		.clr_mask = 1 << 5,	/* not one-shot mode */
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 8,
-> +	},
-> +	[ds1775] = {
-> +		.clr_mask = 3 << 5,
-> +		.set_mask = 2 << 5,	/* 11-bit mode */
-> +		.default_resolution = 11,
-> +		.default_sample_time = MSEC_PER_SEC,
-> +	},
-> +	[ds75] = {
-> +		.clr_mask = 3 << 5,
-> +		.set_mask = 2 << 5,	/* 11-bit mode */
-> +		.default_resolution = 11,
-> +		.default_sample_time = MSEC_PER_SEC,
-> +	},
-> +	[stds75] = {
-> +		.clr_mask = 3 << 5,
-> +		.set_mask = 2 << 5,	/* 11-bit mode */
-> +		.default_resolution = 11,
-> +		.default_sample_time = MSEC_PER_SEC,
-> +	},
-> +	[stlm75] = {
-> +		.default_resolution = 9,
-> +		.default_sample_time = MSEC_PER_SEC / 5,
-> +	},
-> +	[ds7505] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode*/
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 4,
-> +	},
-> +	[g751] = {
-> +		.default_resolution = 9,
-> +		.default_sample_time = MSEC_PER_SEC / 2,
-> +	},
-> +	[lm75] = {
-> +		.default_resolution = 9,
-> +		.default_sample_time = MSEC_PER_SEC / 2,
-> +	},
-> +	[lm75a] = {
-> +		.default_resolution = 9,
-> +		.default_sample_time = MSEC_PER_SEC / 2,
-> +	},
-> +	[lm75b] = {
-> +		.default_resolution = 11,
-> +		.default_sample_time = MSEC_PER_SEC / 4,
-> +	},
-> +	[max6625] = {
-> +		.default_resolution = 9,
-> +		.default_sample_time = MSEC_PER_SEC / 4,
-> +	},
-> +	[max6626] = {
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 4,
-> +		.resolution_limits = 9,
-> +	},
-> +	[max31725] = {
-> +		.default_resolution = 16,
-> +		.default_sample_time = MSEC_PER_SEC / 8,
-> +	},
-> +	[tcn75] = {
-> +		.default_resolution = 9,
-> +		.default_sample_time = MSEC_PER_SEC / 8,
-> +	},
-> +	[mcp980x] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode */
-> +		.clr_mask = 1 << 7,	/* not one-shot mode */
-> +		.default_resolution = 12,
-> +		.resolution_limits = 9,
-> +		.default_sample_time = MSEC_PER_SEC,
-> +	},
-> +	[tmp100] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode */
-> +		.clr_mask = 1 << 7,	/* not one-shot mode */
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC,
-> +	},
-> +	[tmp101] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode */
-> +		.clr_mask = 1 << 7,	/* not one-shot mode */
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC,
-> +	},
-> +	[tmp112] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode */
-> +		.clr_mask = 1 << 7,	/* no one-shot mode*/
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 4,
-> +	},
-> +	[tmp105] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode */
-> +		.clr_mask = 1 << 7,	/* not one-shot mode*/
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 2,
-> +	},
-> +	[tmp175] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode */
-> +		.clr_mask = 1 << 7,	/* not one-shot mode*/
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 2,
-> +	},
-> +	[tmp275] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode */
-> +		.clr_mask = 1 << 7,	/* not one-shot mode*/
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 2,
-> +	},
-> +	[tmp75] = {
-> +		.set_mask = 3 << 5,	/* 12-bit mode */
-> +		.clr_mask = 1 << 7,	/* not one-shot mode*/
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 2,
-> +	},
-> +	[tmp75b] = { /* not one-shot mode, Conversion rate 37Hz */
-> +		.clr_mask = 1 << 7 | 3 << 5,
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 37,
-> +	},
-> +	[tmp75c] = {
-> +		.clr_mask = 1 << 5,	/*not one-shot mode*/
-> +		.default_resolution = 12,
-> +		.default_sample_time = MSEC_PER_SEC / 4,
-> +	}
-> +};
->  
->  static inline long lm75_reg_to_mc(s16 temp, u8 resolution)
->  {
-> @@ -146,8 +296,8 @@ static int lm75_write(struct device *dev, enum hwmon_sensor_types type,
->  	 * Resolution of limit registers is assumed to be the same as the
->  	 * temperature input register resolution unless given explicitly.
->  	 */
-> -	if (data->resolution_limits)
-> -		resolution = data->resolution_limits;
-> +	if (data->params->resolution_limits)
-> +		resolution = data->params->resolution_limits;
->  	else
->  		resolution = data->resolution;
->  
-> @@ -239,7 +389,6 @@ lm75_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	struct device *hwmon_dev;
->  	struct lm75_data *data;
->  	int status, err;
-> -	u8 set_mask, clr_mask;
->  	int new;
->  	enum lm75_type kind;
->  
-> @@ -257,6 +406,7 @@ lm75_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		return -ENOMEM;
->  
->  	data->client = client;
-> +	data->kind = kind;
->  
->  	data->regmap = devm_regmap_init_i2c(client, &lm75_regmap_config);
->  	if (IS_ERR(data->regmap))
-> @@ -265,109 +415,22 @@ lm75_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	/* Set to LM75 resolution (9 bits, 1/2 degree C) and range.
->  	 * Then tweak to be more precise when appropriate.
->  	 */
-> -	set_mask = 0;
-> -	clr_mask = LM75_SHUTDOWN;		/* continuous conversions */
-> -
-> -	switch (kind) {
-> -	case adt75:
-> -		clr_mask |= 1 << 5;		/* not one-shot mode */
-> -		data->resolution = 12;
-> -		data->sample_time = MSEC_PER_SEC / 8;
-> -		break;
-> -	case ds1775:
-> -	case ds75:
-> -	case stds75:
-> -		clr_mask |= 3 << 5;
-> -		set_mask |= 2 << 5;		/* 11-bit mode */
-> -		data->resolution = 11;
-> -		data->sample_time = MSEC_PER_SEC;
-> -		break;
-> -	case stlm75:
-> -		data->resolution = 9;
-> -		data->sample_time = MSEC_PER_SEC / 5;
-> -		break;
-> -	case ds7505:
-> -		set_mask |= 3 << 5;		/* 12-bit mode */
-> -		data->resolution = 12;
-> -		data->sample_time = MSEC_PER_SEC / 4;
-> -		break;
-> -	case g751:
-> -	case lm75:
-> -	case lm75a:
-> -		data->resolution = 9;
-> -		data->sample_time = MSEC_PER_SEC / 2;
-> -		break;
-> -	case lm75b:
-> -		data->resolution = 11;
-> -		data->sample_time = MSEC_PER_SEC / 4;
-> -		break;
-> -	case max6625:
-> -		data->resolution = 9;
-> -		data->sample_time = MSEC_PER_SEC / 4;
-> -		break;
-> -	case max6626:
-> -		data->resolution = 12;
-> -		data->resolution_limits = 9;
-> -		data->sample_time = MSEC_PER_SEC / 4;
-> -		break;
-> -	case max31725:
-> -		data->resolution = 16;
-> -		data->sample_time = MSEC_PER_SEC / 8;
-> -		break;
-> -	case tcn75:
-> -		data->resolution = 9;
-> -		data->sample_time = MSEC_PER_SEC / 8;
-> -		break;
-> -	case pct2075:
-> -		data->resolution = 11;
-> -		data->sample_time = MSEC_PER_SEC / 10;
-> -		break;
-> -	case mcp980x:
-> -		data->resolution_limits = 9;
-> -		/* fall through */
-> -	case tmp100:
-> -	case tmp101:
-> -		set_mask |= 3 << 5;		/* 12-bit mode */
-> -		data->resolution = 12;
-> -		data->sample_time = MSEC_PER_SEC;
-> -		clr_mask |= 1 << 7;		/* not one-shot mode */
-> -		break;
-> -	case tmp112:
-> -		set_mask |= 3 << 5;		/* 12-bit mode */
-> -		clr_mask |= 1 << 7;		/* not one-shot mode */
-> -		data->resolution = 12;
-> -		data->sample_time = MSEC_PER_SEC / 4;
-> -		break;
-> -	case tmp105:
-> -	case tmp175:
-> -	case tmp275:
-> -	case tmp75:
-> -		set_mask |= 3 << 5;		/* 12-bit mode */
-> -		clr_mask |= 1 << 7;		/* not one-shot mode */
-> -		data->resolution = 12;
-> -		data->sample_time = MSEC_PER_SEC / 2;
-> -		break;
-> -	case tmp75b:  /* not one-shot mode, Conversion rate 37Hz */
-> -		clr_mask |= 1 << 7 | 0x3 << 5;
-> -		data->resolution = 12;
-> -		data->sample_time = MSEC_PER_SEC / 37;
-> -		break;
-> -	case tmp75c:
-> -		clr_mask |= 1 << 5;		/* not one-shot mode */
-> -		data->resolution = 12;
-> -		data->sample_time = MSEC_PER_SEC / 4;
-> -		break;
-> -	}
->  
-> -	/* configure as specified */
-> +	data->params = &device_params[data->kind];
-> +
-> +	/* Save default sample time and resolution*/
-> +	data->sample_time = data->params->default_sample_time;
-> +	data->resolution = data->params->default_resolution;
-> +
-> +	/* Cache original configuration */
->  	status = i2c_smbus_read_byte_data(client, LM75_REG_CONF);
->  	if (status < 0) {
->  		dev_dbg(dev, "Can't read config? %d\n", status);
->  		return status;
->  	}
->  	data->orig_conf = status;
-> -	new = status & ~clr_mask;
-> -	new |= set_mask;
-> +	new = status & ~(data->params->clr_mask | LM75_SHUTDOWN);
-> +	new |= data->params->set_mask;
->  	if (status != new)
->  		i2c_smbus_write_byte_data(client, LM75_REG_CONF, new);
->  
-> -- 
-> 2.11.0
-> 
+CPU: 0 PID: 2876 Comm: kworker/0:3 Not tainted 5.2.0-rc6+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description+0x67/0x231 mm/kasan/report.c:188
+  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
+  kasan_report+0xe/0x20 mm/kasan/common.c:614
+  __lock_acquire+0x3a5d/0x5340 kernel/locking/lockdep.c:3665
+  lock_acquire+0x100/0x2b0 kernel/locking/lockdep.c:4303
+  __mutex_lock_common kernel/locking/mutex.c:926 [inline]
+  __mutex_lock+0xf9/0x12b0 kernel/locking/mutex.c:1073
+  device_release_driver_internal+0x23/0x4c0 drivers/base/dd.c:1109
+  bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+  device_del+0x460/0xb80 drivers/base/core.c:2274
+  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+  usb_disconnect+0x284/0x830 drivers/usb/core/hub.c:2199
+  hub_port_connect drivers/usb/core/hub.c:4949 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x13bd/0x3550 drivers/usb/core/hub.c:5441
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x30b/0x410 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Allocated by task 22:
+  save_stack+0x1b/0x80 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_kmalloc mm/kasan/common.c:489 [inline]
+  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:462
+  kmalloc include/linux/slab.h:547 [inline]
+  kzalloc include/linux/slab.h:742 [inline]
+  usb_set_configuration+0x2c4/0x1670 drivers/usb/core/message.c:1846
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_new_device.cold+0x6a4/0xe61 drivers/usb/core/hub.c:2536
+  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x1abd/0x3550 drivers/usb/core/hub.c:5441
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x30b/0x410 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Freed by task 2876:
+  save_stack+0x1b/0x80 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:451
+  slab_free_hook mm/slub.c:1421 [inline]
+  slab_free_freelist_hook mm/slub.c:1448 [inline]
+  slab_free mm/slub.c:2994 [inline]
+  kfree+0xd7/0x280 mm/slub.c:3949
+  device_release+0x71/0x200 drivers/base/core.c:1064
+  kobject_cleanup lib/kobject.c:691 [inline]
+  kobject_release lib/kobject.c:720 [inline]
+  kref_put include/linux/kref.h:65 [inline]
+  kobject_put+0x171/0x280 lib/kobject.c:737
+  put_device+0x1b/0x30 drivers/base/core.c:2210
+  klist_put+0xce/0x170 lib/klist.c:221
+  bus_remove_device+0x3a4/0x4a0 drivers/base/bus.c:552
+  device_del+0x460/0xb80 drivers/base/core.c:2274
+  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+  usb_disconnect+0x284/0x830 drivers/usb/core/hub.c:2199
+  hub_port_connect drivers/usb/core/hub.c:4949 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x13bd/0x3550 drivers/usb/core/hub.c:5441
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x30b/0x410 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff8881d4a54400
+  which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 272 bytes inside of
+  2048-byte region [ffff8881d4a54400, ffff8881d4a54c00)
+The buggy address belongs to the page:
+page:ffffea0007529400 refcount:1 mapcount:0 mapping:ffff8881dac02800  
+index:0x0 compound_mapcount: 0
+flags: 0x200000000010200(slab|head)
+raw: 0200000000010200 ffffea000753da00 0000000500000005 ffff8881dac02800
+raw: 0000000000000000 00000000000f000f 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881d4a54400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881d4a54480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881d4a54500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                          ^
+  ffff8881d4a54580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881d4a54600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         6a3599ce usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=132aca2c600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
