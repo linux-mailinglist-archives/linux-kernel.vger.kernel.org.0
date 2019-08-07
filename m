@@ -2,71 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E44854C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 22:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E655C854C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 22:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389260AbfHGUwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 16:52:46 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51681 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729712AbfHGUwp (ORCPT
+        id S2389425AbfHGUxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 16:53:08 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39743 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387999AbfHGUxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 16:52:45 -0400
-Received: from p200300ddd742df588d2c07822b9f4274.dip0.t-ipconnect.de ([2003:dd:d742:df58:8d2c:782:2b9f:4274])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hvSvF-0006A9-Cj; Wed, 07 Aug 2019 22:52:38 +0200
-Date:   Wed, 7 Aug 2019 22:52:31 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Austin Kim <austindh.kim@gmail.com>
-cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>, peterz@infradead.org,
-        mingo@kernel.org, tj@kernel.org, jiangshanlai@gmail.com,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        =?EUC-KR?B?I7ytx/zB+A==?= <mike.seo@lge.com>
-Subject: Re: NULL ptr deref in wq_worker_sleeping on 4.19
-In-Reply-To: <CADLLry5bKjVB5BM7HVF8wOPXkQWpQ-6xM=F78MDRHhpCxE=uBw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1908072248410.24014@nanos.tec.linutronix.de>
-References: <20190719135352.GF4240@sasha-vm> <20190807114649.fjfaj4oytcxaua7o@linutronix.de> <CADLLry6a9a0TKOEEPxOW_DS+XXwk5qUuaH+W9cmbLwvudXAV8A@mail.gmail.com> <alpine.DEB.2.21.1908071452350.24014@nanos.tec.linutronix.de>
- <CADLLry5bKjVB5BM7HVF8wOPXkQWpQ-6xM=F78MDRHhpCxE=uBw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 7 Aug 2019 16:53:08 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v18so86708300ljh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 13:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HzPEva7t//48vc2Upo4H9X391yFFOid7B+wS/3JQJVo=;
+        b=VnqJY1AsT+sm3+z69qrT9NZeAT+aS6eJb3SDNkLFeDTLM6FjWxFiFLEwuO9awuj8a5
+         5HeaBC5hNw+sby1pHOi2HteduKaZ+3KmdicEPlZWm/da7AxCs8RrSUwDYniOFV+GK5BK
+         HcfpjeKFwxurGTB/8qYd1jZZ6JbKmlV7oDrCRnI3P7CkD7BFvLhqOUssMaF+n4BKNYv0
+         1grfE/4+ZfqcobeoZ4YDMvqxoeQAJCi256P1WRwGnM0tyu6YXXwCSfJGGg+KyixNW8oe
+         7HHDyoDIl4q6Cx7iMLIvHzbKiiZpvtNpvFEaeE3DJjptA0Qyoq5QBCJ6Xwl10SX9juoR
+         6BjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HzPEva7t//48vc2Upo4H9X391yFFOid7B+wS/3JQJVo=;
+        b=rF6ZH/77P7VJhI8sm+57rYxxgKoi/a9d+mdP/nVJh2KWk2MXv2xoJM1cSLifBnBxN/
+         9cV7rMGxXnlVW2T62fI/WpH605WmTl/x1QHAEL5egG67rw+GsJUSaVeUoW+nBRiQgoP5
+         WcP3Xxn5HqNa7tzef22wW1k3Q7nDTRITGbX6Zy0pMBjczJePIsfYDByXHA3RMvwvRj8N
+         i4j06anwd6skV+JMHIsc8oAkXG6QgssSkvsnYeLZDdjhtEx9pqfMp8my2oOMjcrlAYk4
+         RiMgjRWRRwJ5hmEz3r2yIoc46FmWS/YRC5gm9igUPGkJRp9CsuzlKa6UxUSL62X8uwSD
+         sN3g==
+X-Gm-Message-State: APjAAAV9GoBVdfvyZtJt1gic08yWCXJLkCeibfvf91PF8j0H5RH4P4lA
+        ZXWUnRGafr94K1egRyTKAWY=
+X-Google-Smtp-Source: APXvYqyvRwgwcbxhdq/miU/5qXUQY5aYJ1nN6DX4yon7bQqFB5Vcn+UGr2ofzuj1QzFJPjGSXtyh+Q==
+X-Received: by 2002:a2e:9cd1:: with SMTP id g17mr6178151ljj.234.1565211186666;
+        Wed, 07 Aug 2019 13:53:06 -0700 (PDT)
+Received: from rikard (h-158-174-186-115.NA.cust.bahnhof.se. [158.174.186.115])
+        by smtp.gmail.com with ESMTPSA id f28sm659942lfk.1.2019.08.07.13.53.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 07 Aug 2019 13:53:06 -0700 (PDT)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+X-Google-Original-From: Rikard Falkeborn <rikard.falkeborn>
+Date:   Wed, 7 Aug 2019 22:53:02 +0200
+To:     Joe Perches <joe@perches.com>
+Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] linux/bits.h: Add compile time sanity check of GENMASK
+ inputs
+Message-ID: <20190807205302.GB14779@rikard>
+References: <CAK7LNASw+Fraio3t=bZw-FzJihScTuDR=p2EktFVOmdLH4GTGA@mail.gmail.com>
+ <20190802181853.GA809@rikard>
+ <CAK7LNAT+cNxna4SER04MdkBsq_LDg4TwYR_U1ioNNxYOZWXigA@mail.gmail.com>
+ <CAK7LNAQv-5epL8DYDaUdHsQEQ=Va676t_6TgsaSYC30Eix=iyw@mail.gmail.com>
+ <20190803183637.GA831@rikard>
+ <CAK7LNASBndh4yJKVdeMb7RQGopUzEUSNXPQcUgQdB8PiJetMuQ@mail.gmail.com>
+ <20190805195526.GA869@rikard>
+ <CAK7LNATpQDWoMv+hnPrb1DTu4HravUhuhANnQkayxaJw99_ajQ@mail.gmail.com>
+ <20190806192727.GA11773@rikard>
+ <a687a6d29d4cc928a6aa128bcada5f55b26f41a4.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a687a6d29d4cc928a6aa128bcada5f55b26f41a4.camel@perches.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Aug 2019, Austin Kim wrote:
+On Tue, Aug 06, 2019 at 02:15:54PM -0700, Joe Perches wrote:
+> On Tue, 2019-08-06 at 21:27 +0200, Rikard Falkeborn wrote:
+> > On Wed, Aug 07, 2019 at 12:19:36AM +0900, Masahiro Yamada wrote:
+> > > How about this?
+> > > #define GENMASK_INPUT_CHECK(high, low) \
+> > >        BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+> > >               __builtin_constant_p((low) > (high)), (low) > (high), 0))
+> > Thanks for the feedback, your version looks much cleaner than mine. I
+> > *think* I had a reason for using __is_constexpr() instead of
+> > __builtin_constant_p but I'll try a full rebuild to see if something
+> > comes up.
+> 
+> Perhaps a statement expression so high and low aren't possibly
+> evaluated multiple times?
+> 
+> #define GENMASK_INPUT_CHECK(high, low)				\
+> ({								\
+> 	typeof(high) _high = high;				\
+> 	typeof(low) _low = low;					\
+> 	BUILD_BUG_ON_ZERO(__builtin_constant_p(_low > _high,	\
+> 					       _low > _high,	\
+> 					       0))		\
+> })
+> 
+> 
 
-Again:
+That doesn't work I think (even after adding __builtin_choose_expr).
+Even so, high and low are not evaluated multiple times (they're not
+evaluated at all in GENMASK_INPUT_CHECK, if they were, the arguments
+would be evaluated twice since they're evaluated in __GENMASK as well.
 
- A: Because it messes up the order in which people normally read text.
- Q: Why is top-posting such a bad thing?
- A: Top-posting.
- Q: What is the most annoying thing in e-mail?
+__builtin_constant_p does not seem to evaluate it's expression (even
+though I didn't manage to find that spelled out in the docs, but since
+__builtin_constant_p is evaluated at compile time it makes sense that it
+doesn't), and __builtin_choose_expr does not evaluate the operand that
+is not chosen (this is actually in the docs). Even if it was,
+BUIlD_BUG_ON_ZERO uses sizeof its argument, which is evaluated at compile
+time (unless the argument is a VLA).
 
- A: No.
- Q: Should I include quotations after my reply?
-
- http://daringfireball.net/2007/07/on_top
-
-> Is it possible for you to generate kernel patch only with **kernel
-> log** for 'use-after-free' case?
-
-What? I have no idea how to reproduce that issue so how should I create a
-kernel patch for something which can happen at some random place in several
-million lines of code?
-
-> With kernel log, we only have limited information, so it is hard to
-> debug 'use-after-free' case with this signature.
-
-My information is even more limited...
- 
-Thanks,
-
-	tglx
+So this should be safe.
