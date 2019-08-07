@@ -2,96 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76EF88461D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EDD984644
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:50:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387462AbfHGHnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 03:43:11 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43217 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727190AbfHGHnL (ORCPT
+        id S2387520AbfHGHty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 03:49:54 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:34756 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387476AbfHGHtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 03:43:11 -0400
-Received: by mail-pl1-f195.google.com with SMTP id 4so32472187pld.10;
-        Wed, 07 Aug 2019 00:43:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xyR+lCbovY7DSpuUffdnrpU/87Hr2gUcwjUISUwCLJw=;
-        b=TW3Gk/9LpD+OFs4lahdlhV3I4MGtLWKreblCOq+Yo+EDbQ871srDL6vRjTPnvwgnrN
-         PeKcjrsnqECNYvuYzY0+6PlVfSyU9xYfJe16uFdkPVJ0Uxb7iz/vvv8QkvWVoSC0Mort
-         FVASEPQ6CdYeS6QWKvMQLaQIbsKGb0eJBom2KFxSf2IDl4gLeFVjnxZnczS5hXMXX5zI
-         r221oZAfChl8ebIdqbDCyS5MczleMi+RS0AFUdLsAkvnvTmB34bk7JbplGWG7gld/PiE
-         EK1MUM6m5G7hcvOHAKH8TZqc31OBACF9TZgoEDtBfMlO2eVuYjoXm68VbjvX6Hbj3Y6A
-         JhQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xyR+lCbovY7DSpuUffdnrpU/87Hr2gUcwjUISUwCLJw=;
-        b=dkhuhdz4yEZ6yYTIcK1pSp0zzqWFRjYqo/PF86J6atUqu0EqwKc/A9hNlUp5Z6LZjy
-         3YFe1fGWs+UjqG3ERaJcGwFtKc5PekWEyiI63BsrlOCleUweiZcCQyheeFTL9/yLKIjd
-         n9tZEwQzuMUekJqle5X6wB9L5f5TZ+DyYd/m9obZL9vRsWTJ6lCNivrJ9vVuh0ZXOJIh
-         ZgbnFfZDQYrB+W2y/JRXMC2VfxX6lFCWBXZtik+x5DkqzR+xxhd5063dGv5Q5Cyn4RBG
-         fjH3QCoJCw0S4vrLlbKiP/fwzoAP4+0m4txTPCC4qbEil4BCjpeCfSi92Lf8UD72vbSR
-         t7eg==
-X-Gm-Message-State: APjAAAWsHDBQV8SJpO/fQj5awfyUqsQchzIxtbOTgMnr/hXITYaoDVWh
-        gC8UCF4k4z3thYTiaOBdo9Y=
-X-Google-Smtp-Source: APXvYqyc2fzP2b8R5VpfzEakKkrCvXr78uRPkaICsLFEGjveOsccUEADRRTbxq7djuWvsa2i98p6+Q==
-X-Received: by 2002:a62:874d:: with SMTP id i74mr7868817pfe.94.1565163790590;
-        Wed, 07 Aug 2019 00:43:10 -0700 (PDT)
-Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id f3sm146879233pfg.165.2019.08.07.00.43.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 00:43:09 -0700 (PDT)
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Fuqian Huang <huangfq.daxian@gmail.com>
-Subject: [PATCH] net: tundra: tsi108: use spin_lock_irqsave instead of spin_lock_irq in IRQ context
-Date:   Wed,  7 Aug 2019 15:43:00 +0800
-Message-Id: <20190807074300.23135-1-huangfq.daxian@gmail.com>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+        Wed, 7 Aug 2019 03:49:53 -0400
+Received: from ATCSQR.andestech.com (localhost [127.0.0.2] (may be forged))
+        by ATCSQR.andestech.com with ESMTP id x7779QrY027176
+        for <linux-kernel@vger.kernel.org>; Wed, 7 Aug 2019 15:09:26 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x7778SIa027025;
+        Wed, 7 Aug 2019 15:08:28 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 7 Aug 2019
+ 15:19:27 +0800
+From:   Nick Hu <nickhu@andestech.com>
+To:     <alankao@andestech.com>, <paul.walmsley@sifive.com>,
+        <palmer@sifive.com>, <aou@eecs.berkeley.edu>, <green.hu@gmail.com>,
+        <deanbo422@gmail.com>, <tglx@linutronix.de>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <aryabinin@virtuozzo.com>, <glider@google.com>,
+        <dvyukov@google.com>, <Anup.Patel@wdc.com>,
+        <gregkh@linuxfoundation.org>, <alexios.zavras@intel.com>,
+        <atish.patra@wdc.com>, <zong@andestech.com>,
+        <kasan-dev@googlegroups.com>
+CC:     Nick Hu <nickhu@andestech.com>
+Subject: [PATCH 1/2] riscv: Add memmove string operation.
+Date:   Wed, 7 Aug 2019 15:19:14 +0800
+Message-ID: <a6c24ce01dc40da10d58fdd30bc3e1316035c832.1565161957.git.nickhu@andestech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1565161957.git.nickhu@andestech.com>
+References: <cover.1565161957.git.nickhu@andestech.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x7778SIa027025
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As spin_unlock_irq will enable interrupts.
-Function tsi108_stat_carry is called from interrupt handler tsi108_irq.
-Interrupts are enabled in interrupt handler.
-Use spin_lock_irqsave/spin_unlock_irqrestore instead of spin_(un)lock_irq
-in IRQ context to avoid this.
+There are some features which need this string operation for compilation,
+like KASAN. So the purpose of this porting is for the features like KASAN
+which cannot be compiled without it.
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+KASAN's string operations would replace the original string operations and
+call for the architecture defined string operations. Since we don't have
+this in current kernel, this patch provides the implementation.
+
+This porting refers to the 'arch/nds32/lib/memmove.S'.
+
+Signed-off-by: Nick Hu <nickhu@andestech.com>
 ---
- drivers/net/ethernet/tundra/tsi108_eth.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/riscv/include/asm/string.h |    3 ++
+ arch/riscv/kernel/riscv_ksyms.c |    1 +
+ arch/riscv/lib/Makefile         |    1 +
+ arch/riscv/lib/memmove.S        |   63 +++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 68 insertions(+), 0 deletions(-)
+ create mode 100644 arch/riscv/lib/memmove.S
 
-diff --git a/drivers/net/ethernet/tundra/tsi108_eth.c b/drivers/net/ethernet/tundra/tsi108_eth.c
-index 78a7de3fb622..14215979d07e 100644
---- a/drivers/net/ethernet/tundra/tsi108_eth.c
-+++ b/drivers/net/ethernet/tundra/tsi108_eth.c
-@@ -372,8 +372,9 @@ static void tsi108_stat_carry(struct net_device *dev)
- {
- 	struct tsi108_prv_data *data = netdev_priv(dev);
- 	u32 carry1, carry2;
-+	unsigned long flags;
+diff --git a/arch/riscv/include/asm/string.h b/arch/riscv/include/asm/string.h
+index 1b5d445..11210f1 100644
+--- a/arch/riscv/include/asm/string.h
++++ b/arch/riscv/include/asm/string.h
+@@ -15,4 +15,7 @@
+ #define __HAVE_ARCH_MEMCPY
+ extern asmlinkage void *memcpy(void *, const void *, size_t);
  
--	spin_lock_irq(&data->misclock);
-+	spin_lock_irqsave(&data->misclock, flags);
++#define __HAVE_ARCH_MEMMOVE
++extern asmlinkage void *memmove(void *, const void *, size_t);
++
+ #endif /* _ASM_RISCV_STRING_H */
+diff --git a/arch/riscv/kernel/riscv_ksyms.c b/arch/riscv/kernel/riscv_ksyms.c
+index 4800cf7..ffabaf1 100644
+--- a/arch/riscv/kernel/riscv_ksyms.c
++++ b/arch/riscv/kernel/riscv_ksyms.c
+@@ -14,3 +14,4 @@
+ EXPORT_SYMBOL(__asm_copy_from_user);
+ EXPORT_SYMBOL(memset);
+ EXPORT_SYMBOL(memcpy);
++EXPORT_SYMBOL(memmove);
+diff --git a/arch/riscv/lib/Makefile b/arch/riscv/lib/Makefile
+index 8e364eb..9a4d5b3 100644
+--- a/arch/riscv/lib/Makefile
++++ b/arch/riscv/lib/Makefile
+@@ -2,6 +2,7 @@
+ lib-y	+= delay.o
+ lib-y	+= memcpy.o
+ lib-y	+= memset.o
++lib-y	+= memmove.o
+ lib-y	+= uaccess.o
  
- 	carry1 = TSI_READ(TSI108_STAT_CARRY1);
- 	carry2 = TSI_READ(TSI108_STAT_CARRY2);
-@@ -441,7 +442,7 @@ static void tsi108_stat_carry(struct net_device *dev)
- 			      TSI108_STAT_TXPAUSEDROP_CARRY,
- 			      &data->tx_pause_drop);
- 
--	spin_unlock_irq(&data->misclock);
-+	spin_unlock_irqrestore(&data->misclock, flags);
- }
- 
- /* Read a stat counter atomically with respect to carries.
+ lib-$(CONFIG_64BIT) += tishift.o
+diff --git a/arch/riscv/lib/memmove.S b/arch/riscv/lib/memmove.S
+new file mode 100644
+index 0000000..3657a06
+--- /dev/null
++++ b/arch/riscv/lib/memmove.S
+@@ -0,0 +1,63 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/linkage.h>
++#include <asm/asm.h>
++
++ENTRY(memmove)
++	move	t0, a0
++	move	t1, a1
++
++	beq 	a0, a1, exit_memcpy
++	beqz	a2, exit_memcpy
++	srli	t2, a2, 0x2
++
++	slt	t3, a0, a1
++	beqz	t3, do_reverse
++
++	andi	a2, a2, 0x3
++	li	t4, 1
++	beqz	t2, byte_copy
++
++word_copy:
++	lw	t3, 0(a1)
++	addi	t2, t2, -1
++	addi	a1, a1, 4
++	sw	t3, 0(a0)
++	addi	a0, a0, 4
++	bnez	t2, word_copy
++	beqz	a2, exit_memcpy
++	j	byte_copy
++
++do_reverse:
++	add	a0, a0, a2
++	add	a1, a1, a2
++	andi	a2, a2, 0x3
++	li	t4, -1
++	beqz	t2, reverse_byte_copy
++
++reverse_word_copy:
++	addi	a1, a1, -4
++	addi	t2, t2, -1
++	lw	t3, 0(a1)
++	addi	a0, a0, -4
++	sw	t3, 0(a0)
++	bnez	t2, reverse_word_copy
++	beqz	a2, exit_memcpy
++
++reverse_byte_copy:
++	addi	a0, a0, -1
++	addi	a1, a1, -1
++byte_copy:
++	lb	t3, 0(a1)
++	addi	a2, a2, -1
++	sb	t3, 0(a0)
++	add	a1, a1, t4
++	add	a0, a0, t4
++	bnez	a2, byte_copy
++
++exit_memcpy:
++	move a0, t0
++	move a1, t1
++	ret
++
++END(memmove)
 -- 
-2.11.0
+1.7.1
 
