@@ -2,127 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46C2083EB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 03:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A62283EB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 03:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbfHGBRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 21:17:05 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39035 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbfHGBRF (ORCPT
+        id S1727737AbfHGBUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 21:20:21 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40380 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbfHGBUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 21:17:05 -0400
-Received: by mail-pf1-f196.google.com with SMTP id f17so38483777pfn.6;
-        Tue, 06 Aug 2019 18:17:04 -0700 (PDT)
+        Tue, 6 Aug 2019 21:20:20 -0400
+Received: by mail-ot1-f65.google.com with SMTP id l15so40538021oth.7;
+        Tue, 06 Aug 2019 18:20:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GV9JQ2WNxKL1bjWx+vcWnlZmSRoCTmSS+egaYnjbX4o=;
-        b=OOkY2mECq07ay0Xkn5jKnjidQD7Y8rAbUg9yszwJK3KpW6U4gotRh9fOqwSowU5+w3
-         JcKu2uOfiRVZU8AUaC25yzBkfW3T0nn0j43EDVl8MOnataHeQdj5vcF8HtYZM/82gsB1
-         70bJuVf2VmFVX7KGZmLx4zx6CuDjpfDVMHaZfPzSuUBjAjXN2LlVLQ76C9PmPyIAF9JA
-         fVfBlvx6TRx0j8TxbxthDg8nBHDi9khm2aqPPHODo10L5pGFFyCAM3umhlnFchlJxyi3
-         Ycmnf72zDRGCVYXHcttAeOiovnJ2bnf+d3qRP1t29a4pnYk9br6LQ85uAFa4t986slHW
-         ZnUw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2h6gOAY3YgD8MOX44OfV8vPJGYNX/elEpaQ/VKNmceM=;
+        b=MxghsRAGFfqPvSB51oGFXysHGy1zHqGpjNmxCvowxoZlRlhQ2vSE1IkWtrsPqPS8M+
+         XUPiHQfnxmOVTkV1/nR/XKLMuLSKbEhTRE2UqPu+cqn5lfwLc9ZDHiTN/AO50LC/WvCr
+         RJw/2J6JcyDxfaZiRwS639smOUzWBt3TMb3ZUNylo9usZT2C+WhuI8TmjLJ0NmhiXZo3
+         2LGPh5IWSouJLwln0v74RqY0Gl8rflYRz03Hg6TNmWb7uTfRGgQKmn/kYzXINvs9KZ9E
+         nKlLU/HI/PDki9+BIDbFx+cc5CXlPPIw0mcugwFNnFMG5a8YihQinumS5dquZ9D4kdeF
+         ZkTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GV9JQ2WNxKL1bjWx+vcWnlZmSRoCTmSS+egaYnjbX4o=;
-        b=B8b4dl6Lj3+XWlUlNQ2aMR5ld1/looZJm0BjLnySIQZV5XD/yM/DFpOb3ksm6CHJ/9
-         Y8n+4wlJffZ4jCky8Rr2xP5RU21sbZB95LWLvLx9QPzTIjIlI7ly7r+V1rlvCPXAfdFk
-         dA9tBi0u/Zys8JqUBr3qClvel/Fv4CjWtPMYQqY73DLABMvvU/4q0lfIleRm7HRCyt0x
-         2Y6FrhVcIMxu5j446V3Gb05pVlnULnZPJUmVJNwLrG5nAtydZGXNCjBC+wb7EaWsjpee
-         tQouNNn/EQpBV0cSY2TuyZZfkwK24DuBb1tzCOe22H3dtwqX/LfRzjjsLyWnb0XceT6C
-         ujhw==
-X-Gm-Message-State: APjAAAWr3gaiXOsA2HUEZfxLyakRdZVBvbaftyWMsVuT4Av3u78rxtqQ
-        R1s8u2nyxUD50DNnxpvACHg=
-X-Google-Smtp-Source: APXvYqzHxmD8/7fJHI1GyT8D5iX+ET4Lx7na0hWQTte/JA6UCTeTD/qIcg8V0R6hoOtkUu8aYGy1Ig==
-X-Received: by 2002:a63:5765:: with SMTP id h37mr5358736pgm.183.1565140624218;
-        Tue, 06 Aug 2019 18:17:04 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id n5sm94563063pfn.38.2019.08.06.18.17.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Aug 2019 18:17:03 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 18:17:59 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     broonie@kernel.org, l.stach@pengutronix.de, mihai.serban@gmail.com,
-        alsa-devel@alsa-project.org, timur@kernel.org,
-        shengjiu.wang@nxp.com, angus@akkea.ca, tiwai@suse.com,
-        linux-imx@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh@kernel.org
-Subject: Re: [PATCH v3 2/5] ASoC: fsl_sai: Update Tx/Rx channel enable mask
-Message-ID: <20190807011758.GE8938@Asurada-Nvidia.nvidia.com>
-References: <20190806151214.6783-1-daniel.baluta@nxp.com>
- <20190806151214.6783-3-daniel.baluta@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2h6gOAY3YgD8MOX44OfV8vPJGYNX/elEpaQ/VKNmceM=;
+        b=JYactO/nBsbnuZG9C7KBGYzDTZrs4e3/fyLzc6B9mxg9v1xi+c2zGuCctxU+9tqflC
+         WyByJmp+mcu9q0znUA0a251jr6JrK/3R6IhSDsafSCNPajrsJQSwq/vucRrqSCijpgWv
+         JEPyTB+POHB9yjsXbDOs1DATnLFPxCbQu035D2ZLZSrlhdmFRp7+BnroS3Ziu8zATYxc
+         0L1ueCAI/GgXwxlAOVmARFLY5TkFZHhD5MUWK7hb+mDiQBDl31s6f1CEwLpLX2bGUukZ
+         1E4ow/ZxMByRn6u9Pa512CKgrLpgWwNE6BaqzdvNWA9o4OSO4UP+Lq7g6m60IzIuL03c
+         Cv2A==
+X-Gm-Message-State: APjAAAXJV+vNygfhjvGBoJobm1Y0pnkyFLabL5ycTx1RcM8oHMiSMiEJ
+        mfR+MvKKFihBsdd0OA8XnSfDXTC10/yo088guSJFlgd1
+X-Google-Smtp-Source: APXvYqwh+o7bRSbeyxSOOO5j1tZb7YSn3BqkHPQf1tUh9RemZjk6jVzQA+RhZtN1lTV2+QTQnY+7SVTzAGJWbTgh5BE=
+X-Received: by 2002:a02:13c3:: with SMTP id 186mr7445332jaz.30.1565140818255;
+ Tue, 06 Aug 2019 18:20:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806151214.6783-3-daniel.baluta@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190805193243.18584-1-andrew.smirnov@gmail.com> <CAHp75VcjUwUj-6r+k2bTFhhr9hk942-ZEu=GhvhKNjfgEYf1Qw@mail.gmail.com>
+In-Reply-To: <CAHp75VcjUwUj-6r+k2bTFhhr9hk942-ZEu=GhvhKNjfgEYf1Qw@mail.gmail.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Tue, 6 Aug 2019 18:20:06 -0700
+Message-ID: <CAHQ1cqEHNq9jJfKWKrZ1utbsk8HG4gywuaxNNMFOgFZGULwyEw@mail.gmail.com>
+Subject: Re: [PATCH] tty: serial: Introduce uart_tx_stoppped_or_empty()
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Chris Healy <cphealy@gmail.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 06:12:11PM +0300, Daniel Baluta wrote:
-> Tx channel enable (TCE) / Rx channel enable (RCE) bits
-> enable corresponding data channel for Tx/Rx operation.
-> 
-> Because SAI supports up the 8 channels TCE/RCE occupy
-> up the 8 bits inside TCR3/RCR3 registers we need to extend
-> the mask to reflect this.
-> 
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+On Mon, Aug 5, 2019 at 11:48 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Mon, Aug 5, 2019 at 10:36 PM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+> >
+> > The vast majority of the serial drivers check for
+> >
+> >     uart_tx_stopped(&p->port) || uart_circ_empty(xmit)
+> >
+> > condition one or more times. Create a dedicated helper function and
+> > convert drivers to use it.
+>
+> Sometimes the arguments are swapped. It means that in case of first
+> being false the second is aslo going to be checked.
+> So, does ordering have any side effect?
+>
+> Please, elaborate this in the commit message.
+>
 
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Neither  uart_tx_stopped() nor uart_circ_empty() should have any side
+effects. I also didn't see any comments indicating that ordering is
+important. Is that enough of a justification?
 
-Thanks
+> >  drivers/tty/serial/8250/8250_dma.c          |  2 +-
+> >  drivers/tty/serial/8250/8250_omap.c         |  7 +++----
+> >  drivers/tty/serial/sc16is7xx.c              |  2 +-
+>
+> For the drivers I care about (see above) I prefer to see conversion on
+> per driver basis. Of course, if Greg is okay with the current, I won't
+> object.
 
-> ---
->  sound/soc/fsl/fsl_sai.c | 6 ++++--
->  sound/soc/fsl/fsl_sai.h | 1 +
->  2 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-> index 17b0aff4ee8b..637b1d12a575 100644
-> --- a/sound/soc/fsl/fsl_sai.c
-> +++ b/sound/soc/fsl/fsl_sai.c
-> @@ -599,7 +599,8 @@ static int fsl_sai_startup(struct snd_pcm_substream *substream,
->  	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
->  	int ret;
->  
-> -	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx), FSL_SAI_CR3_TRCE,
-> +	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx),
-> +			   FSL_SAI_CR3_TRCE_MASK,
->  			   FSL_SAI_CR3_TRCE);
->  
->  	ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
-> @@ -614,7 +615,8 @@ static void fsl_sai_shutdown(struct snd_pcm_substream *substream,
->  	struct fsl_sai *sai = snd_soc_dai_get_drvdata(cpu_dai);
->  	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
->  
-> -	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx), FSL_SAI_CR3_TRCE, 0);
-> +	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx),
-> +			   FSL_SAI_CR3_TRCE_MASK, 0);
->  }
->  
->  static const struct snd_soc_dai_ops fsl_sai_pcm_dai_ops = {
-> diff --git a/sound/soc/fsl/fsl_sai.h b/sound/soc/fsl/fsl_sai.h
-> index 4bb478041d67..20c5b9b1e8bc 100644
-> --- a/sound/soc/fsl/fsl_sai.h
-> +++ b/sound/soc/fsl/fsl_sai.h
-> @@ -110,6 +110,7 @@
->  
->  /* SAI Transmit and Receive Configuration 3 Register */
->  #define FSL_SAI_CR3_TRCE	BIT(16)
-> +#define FSL_SAI_CR3_TRCE_MASK	GENMASK(23, 16)
->  #define FSL_SAI_CR3_WDFL(x)	(x)
->  #define FSL_SAI_CR3_WDFL_MASK	0x1f
->  
-> -- 
-> 2.17.1
-> 
+I am more than happy to split this any way necessary.
+
+>
+> > -               if (uart_tx_stopped(&up->port) ||
+> > -                   uart_circ_empty(&up->port.state->xmit)) {
+> > +               if (uart_tx_stopped_or_empty(&up->port)) {
+>
+> Yes, it becomes one line, but...
+>
+> > -       if (!(dmacr & UART011_TXDMAE) || uart_tx_stopped(&uap->port) ||
+> > -           uart_circ_empty(&uap->port.state->xmit)) {
+> > +       if (!(dmacr & UART011_TXDMAE) ||
+> > +           uart_tx_stopped_or_empty(&uap->port)) {
+>
+> ...wouldn't be the case here as well? And perhaps in other places?
+
+Hmm, not sure I am reading this comment right. Are we talking purely
+about formatting here? If we are, yeah, I probably can make this into
+a single line. Not sure if there any other places like that,
+sirfsoc_uart.c perhaps?
+
+Thanks,
+Andrey Smirnov
