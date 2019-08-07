@@ -2,156 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3F768484C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 10:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35CA78486E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 11:10:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfHGI6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 04:58:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58740 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725940AbfHGI6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 04:58:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9589EAC20;
-        Wed,  7 Aug 2019 08:58:45 +0000 (UTC)
-Message-ID: <eec72c2d533b7600c63de3c8001cc6ab9e915afe.camel@suse.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-From:   Dario Faggioli <dfaggioli@suse.com>
-To:     Julien Desfossez <jdesfossez@digitalocean.com>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>
-Cc:     Aaron Lu <aaron.lu@linux.alibaba.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?ISO-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Date:   Wed, 07 Aug 2019 10:58:40 +0200
-In-Reply-To: <20190802153715.GA18075@sinkpad>
-References: <20190612163345.GB26997@sinkpad>
-         <635c01b0-d8f3-561b-5396-10c75ed03712@oracle.com>
-         <20190613032246.GA17752@sinkpad>
-         <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
-         <20190619183302.GA6775@sinkpad> <20190718100714.GA469@aaronlu>
-         <CAERHkrtvLKxrpvfw04urAuougsYOWnNw4-H1vUDFx27Dvy0=Ww@mail.gmail.com>
-         <20190725143003.GA992@aaronlu> <20190726152101.GA27884@sinkpad>
-         <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
-         <20190802153715.GA18075@sinkpad>
-Organization: SUSE
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-4tYvlZYzl693s5My87+b"
-User-Agent: Evolution 3.32.4 
+        id S1728983AbfHGJJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 05:09:57 -0400
+Received: from m9a0002g.houston.softwaregrp.com ([15.124.64.67]:41927 "EHLO
+        m9a0002g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726498AbfHGJJ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 05:09:56 -0400
+Received: FROM m9a0002g.houston.softwaregrp.com (15.121.0.191) BY m9a0002g.houston.softwaregrp.com WITH ESMTP;
+ Wed,  7 Aug 2019 09:09:43 +0000
+Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
+ M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 7 Aug 2019 08:38:46 +0000
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (15.124.72.11) by
+ M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Wed, 7 Aug 2019 08:38:46 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dMxhm3bibX6KEfVwZIG2lmaDgQK31kJWJll74AiGg2Bgh/G0mQYFYxC+/VrhIDY0/8pvA4QDUH7ZBhJmROIO/byS2Y2JXja+zn7FUMZS+iAJUbN/VSZ5Cjvpxl4iKfMu5Xi58tEARCc5uAz9p9L8X7Gh0lFTA1PLcndKvDTqrM1asCIirtI3dSyQo/XgsEjcwUZaKxh/ofyW3sMQrMcjTPvdxSfWro4Xgb25uOi8l50ZU9LWVre08Ht2VFyNmbS9YlL6XyQ2B9O+DRRa49Uwow64lGv7gblH3FWbVFwSxJi73MpZGI74Rop7M+kWWWk9FFhTqoKjhLPBaWTFwyoJzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ng1DD3SFfeBrAtK6l5D6DPzBzE7BXJRk8H2HW4r835w=;
+ b=CHfkXXVF15LzcaoWApau4GGcduz/poLK/rv1eFJnSPsbqLZgTvZq/7abZUAmHunsJPQ2NU6pCw32ispibWe1YKfO4pLKVtwUBSOEIP5G1SobAJ+2e6M5hlZRUr4izDTaguejjjCTkCfNoAOW1TcCH4JeHssLlHQBQP5CCaHg6MXpiLCgLcBkS3TA1Nodc7Takz+2yK7Gt+PQuMEcRlMFtwcWXbJ/7BYp7/+WzsnEGNtwZa70cxfJKOI6OvFTmeRGwPxRyUeNL38aQgl4zXrOjOGxCteF0HOPAvSaA62YmJCv7NzRIylvea+ytfn4dsyuWM9RYd5ImAEGNmWfQIoqvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from BY5PR18MB3187.namprd18.prod.outlook.com (10.255.139.221) by
+ BY5PR18MB3121.namprd18.prod.outlook.com (10.255.136.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.14; Wed, 7 Aug 2019 08:38:44 +0000
+Received: from BY5PR18MB3187.namprd18.prod.outlook.com
+ ([fe80::103a:94a8:b58d:3eac]) by BY5PR18MB3187.namprd18.prod.outlook.com
+ ([fe80::103a:94a8:b58d:3eac%4]) with mapi id 15.20.2157.015; Wed, 7 Aug 2019
+ 08:38:44 +0000
+From:   Firo Yang <firo.yang@suse.com>
+To:     Jacob Wen <jian.w.wen@oracle.com>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "alexander.h.duyck@linux.intel.com" 
+        <alexander.h.duyck@linux.intel.com>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] ixgbe: sync the first fragment unconditionally
+Thread-Topic: [PATCH v2 1/1] ixgbe: sync the first fragment unconditionally
+Thread-Index: AQHVTMrFkDapNm+vukGfNKy6YOsjCqbvUa91gAALugA=
+Date:   Wed, 7 Aug 2019 08:38:43 +0000
+Message-ID: <20190807083831.GA6811@linux-6qg8>
+References: <20190807024917.27682-1-firo.yang@suse.com>
+ <85aaefdf-d454-1823-5840-d9e2f71ffb19@oracle.com>
+In-Reply-To: <85aaefdf-d454-1823-5840-d9e2f71ffb19@oracle.com>
+Accept-Language: en-US, en-GB, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SG2PR01CA0098.apcprd01.prod.exchangelabs.com
+ (2603:1096:3:15::24) To BY5PR18MB3187.namprd18.prod.outlook.com
+ (2603:10b6:a03:196::29)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=firo.yang@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [45.122.156.254]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2d3cf22d-a1ec-42ab-cad7-08d71b12a7f5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BY5PR18MB3121;
+x-ms-traffictypediagnostic: BY5PR18MB3121:
+x-microsoft-antispam-prvs: <BY5PR18MB31211F7A2BEF1E2C260FC9AC88D40@BY5PR18MB3121.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 01221E3973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(7916004)(376002)(396003)(366004)(39860400002)(136003)(346002)(199004)(189003)(102836004)(386003)(6506007)(53546011)(256004)(14444005)(25786009)(486006)(476003)(44832011)(99286004)(52116002)(76176011)(26005)(4326008)(229853002)(6436002)(6486002)(66066001)(2906002)(6916009)(71190400001)(71200400001)(33656002)(186003)(6246003)(9686003)(6512007)(53936002)(1076003)(54906003)(7736002)(33716001)(5660300002)(86362001)(478600001)(316002)(6116002)(3846002)(8676002)(446003)(8936002)(305945005)(66446008)(66946007)(66476007)(66556008)(64756008)(68736007)(81166006)(81156014)(14454004)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR18MB3121;H:BY5PR18MB3187.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: RVOxiQzOZoigePJeViL6aUais+xvG2E2cPJMS1uyYVzuYlmpZFb60MFGIcWbjXU+42AUFrp27dTOkrKh7LQZJ7LWSE+A9FWjn9E8WmzBDcKsyj+7JYSeivbfs4+cXj8EAbBoEe2bF308LH/t+AJuq+vck9EqJI4tR3uYSf8iXxVcW4yEzQ0psmiIM0vfgUUnmrj8SK1OK51FzJ0IK/qdd1NPUaJiw8aOAcsV3wbWFe3In3ITq3lAAghs0hY2fjTziwN5GQM/RESkLZ/rhTll1eUk5loEf1uqWDzBdizquD9xVajRbYNCMI5/hWE80UYR+VcVZXVkNspTjV71WtmOs0qAjc3jtZbXsoqtzlO0AmVRfzRYtGGG6mZqn75cwn03JUXelmnt8yapOdCHewWW9pNP4f48bVXMFBWbYnanJmI=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <24F50199789C5E4F9AEBC58ED3001D71@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d3cf22d-a1ec-42ab-cad7-08d71b12a7f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 08:38:43.8858
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XOa5w/RqWrj4Zt7EwvRsshDN09oOVQPJTM6KoLY2+wlFmdl/sdbSoxE+uo36gRYW/3PYzJQBcdCkDvoHT4zhXg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR18MB3121
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-4tYvlZYzl693s5My87+b
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hello everyone,
-
-This is Dario, from SUSE. I'm also interesting in core-scheduling, and
-using it in virtualization use cases.
-
-Just for context, I'm working in virt since a few years, mostly on Xen,
-but I've done Linux stuff before, and I am getting back at it.
-
-For now, I've been looking at the core-scheduling code, and run some
-benchmarks myself.
-
-On Fri, 2019-08-02 at 11:37 -0400, Julien Desfossez wrote:
-> We tested both Aaron's and Tim's patches and here are our results.
->=20
-> Test setup:
-> - 2 1-thread sysbench, one running the cpu benchmark, the other one
-> the
->   mem benchmark
-> - both started at the same time
-> - both are pinned on the same core (2 hardware threads)
-> - 10 30-seconds runs
-> - test script: https://paste.debian.net/plainh/834cf45c
-> - only showing the CPU events/sec (higher is better)
-> - tested 4 tag configurations:
->   - no tag
->   - sysbench mem untagged, sysbench cpu tagged
->   - sysbench mem tagged, sysbench cpu untagged
->   - both tagged with a different tag
-> - "Alone" is the sysbench CPU running alone on the core, no tag
-> - "nosmt" is both sysbench pinned on the same hardware thread, no tag
-> - "Tim's full patchset + sched" is an experiment with Tim's patchset
->   combined with Aaron's "hack patch" to get rid of the remaining deep
->   idle cases
-> - In all test cases, both tasks can run simultaneously (which was not
->   the case without those patches), but the standard deviation is a
->   pretty good indicator of the fairness/consistency.
->=20
-This, and of course the numbers below too, is very interesting.
-
-So, here comes my question: I've done a benchmarking campaign (yes,
-I'll post numbers soon) using this branch:
-
-https://github.com/digitalocean/linux-coresched.git  vpillai/coresched-v3-v=
-5.1.5-test
-https://github.com/digitalocean/linux-coresched/tree/vpillai/coresched-v3-v=
-5.1.5-test
-
-Last commit:
-7feb1007f274 "Fix stalling of untagged processes competing with tagged
-processes"
-
-Since I see that, in this thread, there are various patches being
-proposed and discussed... should I rerun my benchmarks with them
-applied? If yes, which ones? And is there, by any chance, one (or maybe
-more than one) updated git branch(es)?
-
-Thanks in advance and Regards
---=20
-Dario Faggioli, Ph.D
-http://about.me/dario.faggioli
-Virtualization Software Engineer
-SUSE Labs, SUSE https://www.suse.com/
--------------------------------------------------------------------
-<<This happens because _I_ choose it to happen!>> (Raistlin Majere)
-
-
---=-4tYvlZYzl693s5My87+b
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEES5ssOj3Vhr0WPnOLFkJ4iaW4c+4FAl1KksEACgkQFkJ4iaW4
-c+5h2xAA33JxoIgaoAyjD7w2D8stxoH8YVy+eeWBr4oACLGpAhK3ioijR0RN03h3
-w+AA8GWrfWlU0tGOFqsdbHyqf8MA2KhoWQmN/7BUJdYAR8WiX2BwhMFSP5J1YB7A
-DHD3xN2MMRUioStiKbCKukgvIW2wwmZ9N6uhIdJIywdQtwRZMsvCT8kEqeOrJmRS
-h3xV1kl5NNpqz73FxWltecI4YL2N5h4L6mFupiKvc+rUhuJNax/K2QgIYmZga2eC
-DyZ+q/jDVF98SFmJ+NIAqcC517w8s6Ovcw/3SMWkorIl1t0Aszgrcq2eGTCQWA74
-Gr5FI5dkUZL0o32g/s2xVYKRKDPm/C211sbz51TRq0RfGRpFlRUZ5V2Xe8ux/SQJ
-D3i2GXn/xc3NksdqJpPjHY1Btln3iQUEL3ZsVsyZeLZW2ASqUNuaukBhBRw+Eemh
-rgoDKrtYCNKWztITHe/mrQzu0tDDvF+6vGxuaWdGbVJOXmvpiZ9BMijWN0OseJ5s
-25K1n2JXIqDlYBV9W6yGDiLBIk6NLy8qtkpK/EtvpJORTovJFiISge1mhZw7RjgH
-dRRQmoNELIJQku7AEVXPviTp6iAx9mKWoqYts7oio7A4n8X6Pr8e8MCi62Mx9lPX
-ExZs8wF93EiVZ3yWAl0vtzJbPx8Lc8etMF8sRWxBOtWoRyawdXc=
-=LKN2
------END PGP SIGNATURE-----
-
---=-4tYvlZYzl693s5My87+b--
-
+VGhlIDA4LzA3LzIwMTkgMTU6NTYsIEphY29iIFdlbiB3cm90ZToNCj4gSSB0aGluayB0aGUgZGVz
+Y3JpcHRpb24gaXMgbm90IGNvcnJlY3QuIENvbnNpZGVyIHVzaW5nIHNvbWV0aGluZyBsaWtlIGJl
+bG93Lg0KVGhhbmsgeW91IGZvciBjb21tZW50cy4gDQoNCj4gDQo+IEluIFhlbiBlbnZpcm9ubWVu
+dCwgZHVlIHRvIG1lbW9yeSBmcmFnbWVudGF0aW9uIGl4Z2JlIG1heSBhbGxvY2F0ZSBhICdETUEn
+DQo+IGJ1ZmZlciB3aXRoIHBhZ2VzIHRoYXQgYXJlIG5vdCBwaHlzaWNhbGx5IGNvbnRpZ3VvdXMu
+DQpBY3R1YWxseSwgSSBkaWRuJ3QgbG9vayBpbnRvIHRoZSByZWFzb24gd2h5IGl4Z2JlIGdvdCBh
+IERNQSBidWZmZXIgd2hpY2gNCndhcyBtYXBwZWQgdG8gWGVuLXN3aW90bGIgYXJlYS4NCg0KQnV0
+IEkgZG9uJ3QgdGhpbmsgdGhpcyBpc3N1ZSByZWxhdGVzIHRvIHBoc2ljYWwgbWVtb3J5IGNvbnRp
+Z3VpdHkgYmVjYXVzZSwgaW4NCm91ciBjYXNlLCBvbmUgaXhnYmVfcnhfYnVmZmVyIG9ubHkgYXNz
+b2NpYXRlcyBhdCBtb3N0IG9uZSBwYWdlLg0KDQpJZiB5b3UgdGFrZSBhIGxvb2sgYXQgdGhlIHJl
+bGF0ZWQgY29kZSwgeW91IHdpbGwgZmluZCB0aGVyZSBhcmUgc2V2ZXJhbCByZWFzb25zDQpmb3Ig
+bWFwcGluZyBhIERNQSBidWZmZXIgdG8gWGVuLXN3aW90bGIgYXJlYToNCnN0YXRpYyBkbWFfYWRk
+cl90IHhlbl9zd2lvdGxiX21hcF9wYWdlKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHBhZ2Ug
+KnBhZ2UsDQogICAgICAgICAqLw0KICAgICAgICBpZiAoZG1hX2NhcGFibGUoZGV2LCBkZXZfYWRk
+ciwgc2l6ZSkgJiYNCiAgICAgICAgICAgICFyYW5nZV9zdHJhZGRsZXNfcGFnZV9ib3VuZGFyeShw
+aHlzLCBzaXplKSAmJg0KICAgICAgICAgICAgICAgICF4ZW5fYXJjaF9uZWVkX3N3aW90bGIoZGV2
+LCBwaHlzLCBkZXZfYWRkcikgJiYNCiAgICAgICAgICAgICAgICBzd2lvdGxiX2ZvcmNlICE9IFNX
+SU9UTEJfRk9SQ0UpDQogICAgICAgICAgICAgICAgZ290byBkb25lOw0KDQovLyBGaXJvDQo+IA0K
+PiBBIE5JQyBkb2Vzbid0IHN1cHBvcnQgZGlyZWN0bHkgd3JpdGUgc3VjaCBidWZmZXIuIFNvIHhl
+bi1zd2lvdGxiIHdvdWxkIHVzZQ0KPiB0aGUgcGFnZXMsIHdoaWNoIGFyZSBwaHlzaWNhbGx5IGNv
+bnRpZ3VvdXMsIGZyb20gdGhlIHN3aW90bGIgYnVmZmVyIGZvciB0aGUNCj4gTklDLg0KPiANCj4g
+VGhlIHVubWFwIG9wZXJhdGlvbiBpcyB1c2VkIHRvIGNvcHkgdGhlIHN3aW90bGIgYnVmZmVyIHRv
+IHRoZSBwYWdlcyB0aGF0IGFyZQ0KPiBhbGxvY2F0ZWQgYnkgaXhnYmUuDQo+IA0KPiBPbiA4Lzcv
+MTkgMTA6NDkgQU0sIEZpcm8gWWFuZyB3cm90ZToNCj4gPiBJbiBYZW4gZW52aXJvbm1lbnQsIGlm
+IFhlbi1zd2lvdGxiIGlzIGVuYWJsZWQsIGl4Z2JlIGRyaXZlcg0KPiA+IGNvdWxkIHBvc3NpYmx5
+IGFsbG9jYXRlIGEgcGFnZSwgRE1BIG1lbW9yeSBidWZmZXIsIGZvciB0aGUgZmlyc3QNCj4gPiBm
+cmFnbWVudCB3aGljaCBpcyBub3Qgc3VpdGFibGUgZm9yIFhlbi1zd2lvdGxiIHRvIGRvIERNQSBv
+cGVyYXRpb25zLg0KPiA+IFhlbi1zd2lvdGxiIGhhdmUgdG8gaW50ZXJuYWxseSBhbGxvY2F0ZSBh
+bm90aGVyIHBhZ2UgZm9yIGRvaW5nIERNQQ0KPiA+IG9wZXJhdGlvbnMuIEl0IHJlcXVpcmVzIHN5
+bmNpbmcgYmV0d2VlbiB0aG9zZSB0d28gcGFnZXMuIEhvd2V2ZXIsDQo+ID4gc2luY2UgY29tbWl0
+IGYzMjEzZDkzMjE3MyAoIml4Z2JlOiBVcGRhdGUgZHJpdmVyIHRvIG1ha2UgdXNlIG9mIERNQQ0K
+PiA+IGF0dHJpYnV0ZXMgaW4gUnggcGF0aCIpLCB0aGUgdW5tYXAgb3BlcmF0aW9uIGlzIHBlcmZv
+cm1lZCB3aXRoDQo+ID4gRE1BX0FUVFJfU0tJUF9DUFVfU1lOQy4gQXMgYSByZXN1bHQsIHRoZSBz
+eW5jIGlzIG5vdCBwZXJmb3JtZWQuDQo+ID4gDQo+ID4gVG8gZml4IHRoaXMgcHJvYmxlbSwgYWx3
+YXlzIHN5bmMgYmVmb3JlIHBvc3NpYmx5IHBlcmZvcm1pbmcgYSBwYWdlDQo+ID4gdW5tYXAgb3Bl
+cmF0aW9uLg0KPiA+IA0KPiA+IEZpeGVzOiBmMzIxM2Q5MzIxNzMgKCJpeGdiZTogVXBkYXRlIGRy
+aXZlciB0byBtYWtlIHVzZSBvZiBETUENCj4gPiBhdHRyaWJ1dGVzIGluIFJ4IHBhdGgiKQ0KPiA+
+IFJldmlld2VkLWJ5OiBBbGV4YW5kZXIgRHV5Y2sgPGFsZXhhbmRlci5oLmR1eWNrQGxpbnV4Lmlu
+dGVsLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBGaXJvIFlhbmcgPGZpcm8ueWFuZ0BzdXNlLmNv
+bT4NCj4gPiAtLS0NCj4gPiANCj4gPiBDaGFuZ2VzIGZyb20gdjE6DQo+ID4gICAqIEltcG9ydmVk
+IHRoZSBwYXRjaCBkZXNjcmlwdGlvbi4NCj4gPiAgICogQWRkZWQgUmV2aWV3ZWQtYnk6IGFuZCBG
+aXhlczogYXMgc3VnZ2VzdGVkIGJ5IEFsZXhhbmRlciBEdXljaw0KPiA+IA0KPiA+ICAgZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvaW50ZWwvaXhnYmUvaXhnYmVfbWFpbi5jIHwgMTYgKysrKysrKysrLS0t
+LS0tLQ0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMo
+LSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaXhn
+YmUvaXhnYmVfbWFpbi5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaXhnYmUvaXhnYmVf
+bWFpbi5jDQo+ID4gaW5kZXggY2JhZjcxMmQ2NTI5Li4yMDBkZTk4MzgwOTYgMTAwNjQ0DQo+ID4g
+LS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaXhnYmUvaXhnYmVfbWFpbi5jDQo+ID4g
+KysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaXhnYmUvaXhnYmVfbWFpbi5jDQo+ID4g
+QEAgLTE4MjUsMTMgKzE4MjUsNyBAQCBzdGF0aWMgdm9pZCBpeGdiZV9wdWxsX3RhaWwoc3RydWN0
+IGl4Z2JlX3JpbmcgKnJ4X3JpbmcsDQo+ID4gICBzdGF0aWMgdm9pZCBpeGdiZV9kbWFfc3luY19m
+cmFnKHN0cnVjdCBpeGdiZV9yaW5nICpyeF9yaW5nLA0KPiA+ICAgCQkJCXN0cnVjdCBza19idWZm
+ICpza2IpDQo+ID4gICB7DQo+ID4gLQkvKiBpZiB0aGUgcGFnZSB3YXMgcmVsZWFzZWQgdW5tYXAg
+aXQsIGVsc2UganVzdCBzeW5jIG91ciBwb3J0aW9uICovDQo+ID4gLQlpZiAodW5saWtlbHkoSVhH
+QkVfQ0Ioc2tiKS0+cGFnZV9yZWxlYXNlZCkpIHsNCj4gPiAtCQlkbWFfdW5tYXBfcGFnZV9hdHRy
+cyhyeF9yaW5nLT5kZXYsIElYR0JFX0NCKHNrYiktPmRtYSwNCj4gPiAtCQkJCSAgICAgaXhnYmVf
+cnhfcGdfc2l6ZShyeF9yaW5nKSwNCj4gPiAtCQkJCSAgICAgRE1BX0ZST01fREVWSUNFLA0KPiA+
+IC0JCQkJICAgICBJWEdCRV9SWF9ETUFfQVRUUik7DQo+ID4gLQl9IGVsc2UgaWYgKHJpbmdfdXNl
+c19idWlsZF9za2IocnhfcmluZykpIHsNCj4gPiArCWlmIChyaW5nX3VzZXNfYnVpbGRfc2tiKHJ4
+X3JpbmcpKSB7DQo+ID4gICAJCXVuc2lnbmVkIGxvbmcgb2Zmc2V0ID0gKHVuc2lnbmVkIGxvbmcp
+KHNrYi0+ZGF0YSkgJiB+UEFHRV9NQVNLOw0KPiA+ICAgCQlkbWFfc3luY19zaW5nbGVfcmFuZ2Vf
+Zm9yX2NwdShyeF9yaW5nLT5kZXYsDQo+ID4gQEAgLTE4NDgsNiArMTg0MiwxNCBAQCBzdGF0aWMg
+dm9pZCBpeGdiZV9kbWFfc3luY19mcmFnKHN0cnVjdCBpeGdiZV9yaW5nICpyeF9yaW5nLA0KPiA+
+ICAgCQkJCQkgICAgICBza2JfZnJhZ19zaXplKGZyYWcpLA0KPiA+ICAgCQkJCQkgICAgICBETUFf
+RlJPTV9ERVZJQ0UpOw0KPiA+ICAgCX0NCj4gPiArDQo+ID4gKwkvKiBJZiB0aGUgcGFnZSB3YXMg
+cmVsZWFzZWQsIGp1c3QgdW5tYXAgaXQuICovDQo+ID4gKwlpZiAodW5saWtlbHkoSVhHQkVfQ0Io
+c2tiKS0+cGFnZV9yZWxlYXNlZCkpIHsNCj4gPiArCQlkbWFfdW5tYXBfcGFnZV9hdHRycyhyeF9y
+aW5nLT5kZXYsIElYR0JFX0NCKHNrYiktPmRtYSwNCj4gPiArCQkJCSAgICAgaXhnYmVfcnhfcGdf
+c2l6ZShyeF9yaW5nKSwNCj4gPiArCQkJCSAgICAgRE1BX0ZST01fREVWSUNFLA0KPiA+ICsJCQkJ
+ICAgICBJWEdCRV9SWF9ETUFfQVRUUik7DQo+ID4gKwl9DQo+ID4gICB9DQo+ID4gICAvKioNCj4g
+DQo=
