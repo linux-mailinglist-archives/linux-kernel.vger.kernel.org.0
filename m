@@ -2,100 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A01685161
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7C4785170
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388656AbfHGQrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:47:43 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53060 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388448AbfHGQrm (ORCPT
+        id S2388896AbfHGQuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:50:11 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.56]:17954 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387967AbfHGQuJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:47:42 -0400
-Received: by mail-wm1-f65.google.com with SMTP id s3so717182wms.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 09:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cTRZZRA9lPB6Sdo9e/Z4yk5nD+1JdwQ7rNCDOZfB7Lg=;
-        b=MLiszg04V5uKu7F0cxspCVBeyuSdFGbM4y3K0CXP4WMZNF+/g2RFpJIRpsPsxqyh/a
-         qU4Z5DRr/LETvpIlnUh9CtsEmwVk1V1bckNwgpQgjW85E7pWcC/MAWICUHTU938Rhmeu
-         V6+5lMT2xOApgRyIW1t+RyZxEB1m+36aMwu/8BRlZgHUwZqYTyGAMkZQpzfTRougmTFZ
-         MJi1uuCW6NEaIfuoQHzGzxU3zjwLlyPggwL1zQ52/n/rgEe2VE87JQBFsPW5Si8tZ2YE
-         AOBpOZBWWwyJ+FMNxnRkFZrS46UoXDAvDT/mY9YUMw+kj22qToiiiQUqOIpvAdWIi+kO
-         Ux9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cTRZZRA9lPB6Sdo9e/Z4yk5nD+1JdwQ7rNCDOZfB7Lg=;
-        b=h8N0hI093mhWS9t6fh7doZKToS4ddmZog6zdPOXUghK80J38dJC1CFiOA40DfmlO5x
-         guC51ZTPeFdMWFcD19yMgV4LsQsmQLwzPualtox2E5KviUVdSMg7LqW62EYmsANcr/po
-         6XpO1tloK2sQwWBmvUa88zL7JWilJynQ2P9XRm43dvF720xKlW7V1WJu2gebjLB8KWr1
-         cavPeISltw/l8FR+AqCBisTrV+lVQ6B+aFi4P3E+iJwUbalgiG6/0DEGLFcooej4n3G3
-         fdi6qtCzbaaWEiwPNQaQ9cXg0CG1VBWX0jF6xvfKQcEt3gcDV2GG2B9BpjQ/GDNOH7+6
-         2xpA==
-X-Gm-Message-State: APjAAAWCkBa5OgdFaMdIadChUsH0HTIyYZj3+83PiiGxYnTLdnxgQz3s
-        EiNijp30j+6EnGPgHTVMDls=
-X-Google-Smtp-Source: APXvYqwP8yz18oF1uLm2UWxOPTii5AvY7ebyrn6wJIMy8tkSQSIPx3LVXekiVau7vTuKh4qLUvZZDw==
-X-Received: by 2002:a1c:343:: with SMTP id 64mr862947wmd.116.1565196460395;
-        Wed, 07 Aug 2019 09:47:40 -0700 (PDT)
-Received: from [10.83.36.153] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id w23sm560002wmi.45.2019.08.07.09.47.39
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 09:47:39 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] fork: extend clone3() to support CLONE_SET_TID
-From:   Dmitry Safonov <0x7f454c46@gmail.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Adrian Reber <areber@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelianov <xemul@virtuozzo.com>,
-        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-        Andrei Vagin <avagin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-References: <20190806191551.22192-1-areber@redhat.com>
- <20190807154828.GD24112@redhat.com>
- <b57e809d-e5fa-bda2-ee81-e86116bb2856@gmail.com>
- <20190807162112.GF24112@redhat.com>
- <6af63d84-b948-edd2-4fa1-a2e639fa716f@gmail.com>
-Message-ID: <88f55655-9310-5acb-10d2-8aeeee3ed397@gmail.com>
-Date:   Wed, 7 Aug 2019 17:47:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 7 Aug 2019 12:50:09 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 6712A4627B
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2019 11:50:08 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id vP8ah8bXM4FKpvP8ahGiDo; Wed, 07 Aug 2019 11:50:08 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=9OhMj7mJRoIKJ600Mv9jGb+7f/od8LHwUOBGDK6431k=; b=n+46KW4bbtihW9zMfA6jh+2UUp
+        sMSj60x7aPUhtTR6KmXsifZWRx2O2hU3seJjg6lsV41haMd7znnXgbM82u+WXfPG3IC40v1ZGvsdi
+        jPNNbh7K/Db6tahv++o3HwXmPKOHkJLYJKtsD2DXbstgdoWOcxAvgWMbG07SPgvR1cKNSrFtkxb/z
+        YIudsFOk9svaaedTOWkQNa6FrGaRb4vodlgvJRUccvzCuvNAminCr0q/Qj4W0mt97IdR+FQM3aZ76
+        W+Q6T7OBUiPlbpzs3Qg6a6mP449QsjxAqq9j5dW9z1/cfdLgBS9rRHwi91hQHTY1BHvwznXv0ThGr
+        SW3Ddeyw==;
+Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:45988 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hvP8W-000voF-LO; Wed, 07 Aug 2019 11:50:07 -0500
+Date:   Wed, 7 Aug 2019 11:49:57 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] perf/x86/intel/uncore: Use struct_size() in kzalloc_node()
+Message-ID: <20190807164957.GA32638@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <6af63d84-b948-edd2-4fa1-a2e639fa716f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.252.62
+X-Source-L: No
+X-Exim-ID: 1hvP8W-000voF-LO
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:45988
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/7/19 5:33 PM, Dmitry Safonov wrote:
-> On 8/7/19 5:21 PM, Oleg Nesterov wrote:
->> On 08/07, Dmitry Safonov wrote:
-> [..]
->>> What if the size is lesser than offsetof(struct clone_args, stack_size)?
->>> Probably, there should be still a check that it's not lesser than what's
->>> the required minimum..
->>
->> Not sure I understand... I mean, this doesn't differ from the case when
->> size == sizeof(clone_args) but uargs->stack == NULL ?
-> 
-> I might be mistaken and I confess that I don't fully understand the
-> code, but wouldn't it mystically fail in copy_thread_tls() with -ENOMEM
-> instead of -EINVAL?
-> Maybe not a huge difference, but..
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Actually, not there. I've just tried clone3() with stack_size == 0, it
-sets it a proper size somewhere on the way..
-So, apologies for the misinformation - it seems that we definitely could
-just memset() the missing fields.
+struct intel_uncore_box {
+        ...
+        struct intel_uncore_extra_reg shared_regs[0];
+};
 
-Thanks,
-          Dmitry
+size = sizeof(struct intel_uncore_box) + count * sizeof(struct intel_uncore_extra_reg);
+instance = kzalloc_node(size, GFP_KERNEL, node);
+
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = kzalloc_node(struct_size(instance, shared_regs, count), GFP_KERNEL,
+node);
+
+Notice that, in this case, variable size is not necessary, hence it
+is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ arch/x86/events/intel/uncore.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 3694a5d0703d..013768dc8f37 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -313,12 +313,11 @@ static void uncore_pmu_init_hrtimer(struct intel_uncore_box *box)
+ static struct intel_uncore_box *uncore_alloc_box(struct intel_uncore_type *type,
+ 						 int node)
+ {
+-	int i, size, numshared = type->num_shared_regs ;
++	int i, numshared = type->num_shared_regs;
+ 	struct intel_uncore_box *box;
+ 
+-	size = sizeof(*box) + numshared * sizeof(struct intel_uncore_extra_reg);
+-
+-	box = kzalloc_node(size, GFP_KERNEL, node);
++	box = kzalloc_node(struct_size(box, shared_regs, numshared), GFP_KERNEL,
++			   node);
+ 	if (!box)
+ 		return NULL;
+ 
+-- 
+2.22.0
+
