@@ -2,69 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6959484CCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83A5C84CC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:21:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388302AbfHGNVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:21:44 -0400
-Received: from shell.v3.sk ([90.176.6.54]:42164 "EHLO shell.v3.sk"
+        id S2388286AbfHGNVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:21:02 -0400
+Received: from mga06.intel.com ([134.134.136.31]:20092 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388059AbfHGNVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:21:43 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 2C065CE936;
-        Wed,  7 Aug 2019 15:21:28 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id SzZ9YSBTi9mQ; Wed,  7 Aug 2019 15:21:20 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id F35F1CE949;
-        Wed,  7 Aug 2019 15:21:19 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id eCep9nSFWp-x; Wed,  7 Aug 2019 15:21:19 +0200 (CEST)
-Received: from furthur.local (ip-37-188-233-8.eurotel.cz [37.188.233.8])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 5387BCE936;
-        Wed,  7 Aug 2019 15:21:11 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Jiri Kosina <trivial@kernel.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] PCI: OF: fix a trivial typo in a doc comment
-Date:   Wed,  7 Aug 2019 15:20:49 +0200
-Message-Id: <20190807132049.10304-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.21.0
+        id S2388079AbfHGNVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:21:02 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 06:21:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
+   d="scan'208";a="374406771"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Aug 2019 06:20:58 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1hvLs8-0002b6-FI; Wed, 07 Aug 2019 16:20:56 +0300
+Date:   Wed, 7 Aug 2019 16:20:56 +0300
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        jslaby@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        qi-ming.wu@intel.com, cheol.yong.kim@intel.com,
+        rahul.tanwar@intel.com
+Subject: Re: [PATCH 2/5] serial: lantiq: Use proper DT compatible string
+Message-ID: <20190807132056.GX30120@smile.fi.intel.com>
+References: <cover.1565160764.git.rahul.tanwar@linux.intel.com>
+ <12c3029f406ca1fedf14154154f7082e358f0473.1565160764.git.rahul.tanwar@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12c3029f406ca1fedf14154154f7082e358f0473.1565160764.git.rahul.tanwar@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Diverged from what the code does with commit 530210c7814e ("of/irq: Repla=
-ce
-of_irq with of_phandle_args").
+On Wed, Aug 07, 2019 at 05:21:32PM +0800, Rahul Tanwar wrote:
+> The patch adds change to use explicit string instead of a macro for
+> DT compatible string.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/pci/of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For consistency you may need to convert OF_EARLYCON_DECLARE() as well.
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index bc7b27a28795d..36891e7deee34 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -353,7 +353,7 @@ EXPORT_SYMBOL_GPL(devm_of_pci_get_host_bridge_resourc=
-es);
- /**
-  * of_irq_parse_pci - Resolve the interrupt for a PCI device
-  * @pdev:       the device whose interrupt is to be resolved
-- * @out_irq:    structure of_irq filled by this function
-+ * @out_irq:    structure of_phandle_args filled by this function
-  *
-  * This function resolves the PCI interrupt for a given PCI device. If a
-  * device-node exists for a given pci_dev, it will use normal OF tree
---=20
-2.21.0
+Perhaps commit message should explain the rationale, i.e. the following patches
+will add another compatible string and thus it makes sense to have them
+explicitly mentioned.
+
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> ---
+>  drivers/tty/serial/lantiq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+> index 42e27b48e9cc..1116261c973e 100644
+> --- a/drivers/tty/serial/lantiq.c
+> +++ b/drivers/tty/serial/lantiq.c
+> @@ -792,7 +792,7 @@ lqasc_probe(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id ltq_asc_match[] = {
+> -	{ .compatible = DRVNAME },
+> +	{ .compatible = "lantiq,asc" },
+>  	{},
+>  };
+>  
+> -- 
+> 2.11.0
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
