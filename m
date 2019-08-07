@@ -2,174 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 251158486A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 11:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1053284876
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 11:15:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbfHGJJn convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 7 Aug 2019 05:09:43 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53369 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728687AbfHGJJn (ORCPT
+        id S1728474AbfHGJPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 05:15:16 -0400
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:36151 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbfHGJPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 05:09:43 -0400
-X-Originating-IP: 86.250.200.211
-Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 5C81E60010;
-        Wed,  7 Aug 2019 09:09:38 +0000 (UTC)
-Date:   Wed, 7 Aug 2019 11:09:37 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     shiva.linuxworks@gmail.com
-Cc:     Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Shivamurthy Shastri <sshivamurthy@micron.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jeff Kletsky <git-commits@allycomm.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: Re: [PATCH 3/8] mtd: nand: create ONFI table parsing instance
-Message-ID: <20190807110937.4dfe1746@xps13>
-In-Reply-To: <20190722055621.23526-4-sshivamurthy@micron.com>
-References: <20190722055621.23526-1-sshivamurthy@micron.com>
-        <20190722055621.23526-4-sshivamurthy@micron.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 7 Aug 2019 05:15:16 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 22194100AFD86;
+        Wed,  7 Aug 2019 11:15:14 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id DC3054BEEC; Wed,  7 Aug 2019 11:15:13 +0200 (CEST)
+Date:   Wed, 7 Aug 2019 11:15:13 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yaohongbo@huawei.com,
+        guohanjun@huawei.com, huawei.libin@huawei.com
+Subject: Re: [RFC PATCH] pciehp: use completion to wait irq_thread
+ 'pciehp_ist'
+Message-ID: <20190807091513.m2aqfbk32y6qb343@wunner.de>
+References: <1562226638-54134-1-git-send-email-wangxiongfeng2@huawei.com>
+ <20190806072428.2v7k775tvvgkbloh@wunner.de>
+ <b522942f-053d-0e05-746d-7702ee9f8e61@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b522942f-053d-0e05-746d-7702ee9f8e61@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shiva,
-
-shiva.linuxworks@gmail.com wrote on Mon, 22 Jul 2019 07:56:16 +0200:
-
-> From: Shivamurthy Shastri <sshivamurthy@micron.com>
-
-"Create one generic ONFI table parsing instance"
-
+On Wed, Aug 07, 2019 at 04:28:32PM +0800, Xiongfeng Wang wrote:
+> On 2019/8/6 15:24, Lukas Wunner wrote:
+> > I'd suggest something like the below instead, could you give it a whirl
+> > and see if it reliably fixes the issue for you?
 > 
-> ONFI table parsing is common, as most of the variables are common
-> between raw and SPI NAND. The parsing function is instantiated in
-> onfi.c, which fills ONFI parameters into nand_memory_organization.
+> I tested the below patch. It can fix the issue.
 
-... into nand_memory_organization just as before.
-
-> 
-> Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
-> ---
->  drivers/mtd/nand/onfi.c          | 32 ++++++++++++++++++++++++++++++++
->  drivers/mtd/nand/raw/nand_onfi.c | 22 ++--------------------
->  include/linux/mtd/onfi.h         |  2 ++
->  3 files changed, 36 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/onfi.c b/drivers/mtd/nand/onfi.c
-> index 7aaf36dfc5e0..e78700894aea 100644
-> --- a/drivers/mtd/nand/onfi.c
-> +++ b/drivers/mtd/nand/onfi.c
-> @@ -87,3 +87,35 @@ void sanitize_string(u8 *s, size_t len)
->  	strim(s);
->  }
->  EXPORT_SYMBOL_GPL(sanitize_string);
-> +
-> +/**
-> + * fill_nand_memorg() - Parse ONFI table and fill memorg
-
-      ^ parse_onfi_params() - Parse an ONFI table and fill a memory
-      organization structure
-
-> + * @memorg: NAND memorg to be filled
-
-                    memory organization core structure to be filled
-
-> + * @p: ONFI table to be parsed
-> + *
-> + */
-> +void parse_onfi_params(struct nand_memory_organization *memorg,
-> +		       struct nand_onfi_params *p)
-> +{
-> +	memorg->pagesize = le32_to_cpu(p->byte_per_page);
-> +
-> +	/*
-> +	 * pages_per_block and blocks_per_lun may not be a power-of-2 size
-> +	 * (don't ask me who thought of this...). MTD assumes that these
-> +	 * dimensions will be power-of-2, so just truncate the remaining area.
-> +	 */
-> +	memorg->pages_per_eraseblock =
-> +			1 << (fls(le32_to_cpu(p->pages_per_block)) - 1);
-> +
-> +	memorg->oobsize = le16_to_cpu(p->spare_bytes_per_page);
-> +
-> +	memorg->luns_per_target = p->lun_count;
-> +	memorg->planes_per_lun = 1 << p->interleaved_bits;
-> +
-> +	/* See erasesize comment */
-> +	memorg->eraseblocks_per_lun =
-> +		1 << (fls(le32_to_cpu(p->blocks_per_lun)) - 1);
-> +	memorg->max_bad_eraseblocks_per_lun = le32_to_cpu(p->blocks_per_lun);
-> +	memorg->bits_per_cell = p->bits_per_cell;
-> +}
-> +EXPORT_SYMBOL_GPL(parse_onfi_params);
-> diff --git a/drivers/mtd/nand/raw/nand_onfi.c b/drivers/mtd/nand/raw/nand_onfi.c
-> index 2e8edfa636ef..263796d3298c 100644
-> --- a/drivers/mtd/nand/raw/nand_onfi.c
-> +++ b/drivers/mtd/nand/raw/nand_onfi.c
-> @@ -181,30 +181,12 @@ int nand_onfi_detect(struct nand_chip *chip)
->  		goto free_onfi_param_page;
->  	}
->  
-> -	memorg->pagesize = le32_to_cpu(p->byte_per_page);
-> -	mtd->writesize = memorg->pagesize;
-> +	parse_onfi_params(memorg, p);
->  
-> -	/*
-> -	 * pages_per_block and blocks_per_lun may not be a power-of-2 size
-> -	 * (don't ask me who thought of this...). MTD assumes that these
-> -	 * dimensions will be power-of-2, so just truncate the remaining area.
-> -	 */
-> -	memorg->pages_per_eraseblock =
-> -			1 << (fls(le32_to_cpu(p->pages_per_block)) - 1);
-> +	mtd->writesize = memorg->pagesize;
->  	mtd->erasesize = memorg->pages_per_eraseblock * memorg->pagesize;
-> -
-> -	memorg->oobsize = le16_to_cpu(p->spare_bytes_per_page);
->  	mtd->oobsize = memorg->oobsize;
->  
-> -	memorg->luns_per_target = p->lun_count;
-> -	memorg->planes_per_lun = 1 << p->interleaved_bits;
-> -
-> -	/* See erasesize comment */
-> -	memorg->eraseblocks_per_lun =
-> -		1 << (fls(le32_to_cpu(p->blocks_per_lun)) - 1);
-> -	memorg->max_bad_eraseblocks_per_lun = le32_to_cpu(p->blocks_per_lun);
-> -	memorg->bits_per_cell = p->bits_per_cell;
-> -
->  	if (le16_to_cpu(p->features) & ONFI_FEATURE_16_BIT_BUS)
->  		chip->options |= NAND_BUSWIDTH_16;
->  
-> diff --git a/include/linux/mtd/onfi.h b/include/linux/mtd/onfi.h
-> index 2c8a05a02bb0..4cacf4e9db6d 100644
-> --- a/include/linux/mtd/onfi.h
-> +++ b/include/linux/mtd/onfi.h
-> @@ -183,5 +183,7 @@ void nand_bit_wise_majority(const void **srcbufs,
->  			    void *dstbuf,
->  			    unsigned int bufsize);
->  void sanitize_string(u8 *s, size_t len);
-> +void parse_onfi_params(struct nand_memory_organization *memorg,
-> +		       struct nand_onfi_params *p);
->  
->  #endif /* __LINUX_MTD_ONFI_H */
+Thank you!  I'll submit it as a proper patch then.
 
 
+> I am not sure whether the following sequence will be a problem.
+> * pciehp_ist() is running, and 'ctrl->pending_events' is cleared
+> * a request to disable the slot is submitted via sysfs.
+>   'ctrl->pending_events' is set and the irq_thread 'pciehp_ist' is waken up.
+>   But pciehp_ist() is running. So it doesn't take effect.
+>   'ctrl->pending_events' is not cleared until next time pciehp_ist() is
+>   waken up. So pciehp_sysfs_enable_slot() will wait until next
+>   pciehp_ist() is waken up. I am not sure how 'irq_wake_thread()' will
+>   effect the running irq_thread.
 
+That's not a problem.  If irq_wake_thread() is called while pciehp_ist()
+is running, the latter will automatically perform another iteration.
+It's the same situation if an interrupt is received while pciehp_ist()
+is running.
+
+irq_wake_thread() sets the IRQTF_RUNTHREAD flag and irq_wait_for_interrupt()
+checks that flag and causes irq_thread() to perform another invocation
+of handler_fn(), which is pciehp_ist() in this case.
+
+So pciehp basically treats a user request like an interrupt received from
+the hardware.  It's meant to simplify the pciehp code.  But it's non-trivial
+to understand because one needs to have an understanding of the genirq
+code to appreciate the simplicity.
+
+Let me know if this explanation wasn't clear enough and you have further
+questions.
+
+
+> How about making the process synchronous instead of waking up the
+> irq_thread?
+
+That's what we had before, but it has its own problems since it requires
+locking and interaction between the IRQ thread and the sysfs entry points.
 
 Thanks,
-Miquèl
+
+Lukas
