@@ -2,195 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C5784DF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6DC184DFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387834AbfHGNx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:53:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47824 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726873AbfHGNx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:53:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0E346AD7C;
-        Wed,  7 Aug 2019 13:53:54 +0000 (UTC)
-Subject: Re: [PATCH v3] bcache: fix deadlock in bcache_allocator
-To:     Andrea Righi <andrea.righi@canonical.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190807103806.GA15450@xps-13>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <1360a7e6-9135-6f3e-fc30-0834779bcf69@suse.de>
-Date:   Wed, 7 Aug 2019 21:53:46 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S2388589AbfHGNyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:54:05 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35708 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387984AbfHGNyC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:54:02 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w24so40938585plp.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 06:54:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RoWuMVNmRfMP6twJoSi1+gPLSwhvWNnJuHSrIbb4GeQ=;
+        b=eyUcy5z6yfw7W/XYFZBrztR051qXApfEiFeV/KKMElwaltRh01FBH4xOMriqmhXp0S
+         n/v5K2gv8DkzWqmgi3OPIu/uZeatsk/e4eUzGdC/tnfmx7B5olD03Ys6HOFk0rzfIFkk
+         oA/DgVgpEyMOza2fUdSzLIot4e5OEk2/nTGtVCQ2ueoFhiMdtb2PXRsIn7WBf++sEABC
+         Yi2PICeym++vGALaVMd2XCJIW5JRrrpqhh+wohmHf72c1gY2dgUH/Ba6AsPkvF3kqNnc
+         T57wge3JXy4SGLqEQyZQTkK0m1+nxgiYoRdzni+bWhDOBzPPRY7SqyxSbC2ICet8Abbo
+         9JdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RoWuMVNmRfMP6twJoSi1+gPLSwhvWNnJuHSrIbb4GeQ=;
+        b=UjEv79Z69+KyhFkyJP/iL41DUsAVcpqoHm8WdwRtPJsgVscCuufusCwHfzZjE9Wc3Q
+         YZ//3s/EABNND9GhOV9Vtw0XIdK4/kJ2erx8slcumFXa9Qpw9ImxJUOCFcNw9zzHmHEy
+         SRcEe3CaEfe451XSzKfawRK2FbPjD6gP5dplNVAUC91d3gTT28uUJCrbwsZ6NNIOscr0
+         5qvyWtwfmGn/1pU08w13WbzXNr7TljWnG2Qvi781mqSt+d3AMt4fT+TeJKnFVa6A+FW6
+         zqijnZojRRrjreKh0QlaEQ8UpEVU2eGfjd8XVbUVKzlimDKJIc0bnQuHhNXtZKqwPbRV
+         iTyQ==
+X-Gm-Message-State: APjAAAU5xpsX350+ERIedozgvRUS7kQnHIhv8tDqDX2all5reJGKbSD+
+        czgO7g0wkvVACNjPIV2Zlo1N5INl28ULWHPfN0uK4Jnsljo=
+X-Google-Smtp-Source: APXvYqyvTTzfZlxz9lgLLA6e7+UPFvYSd1PebuD8n5S/aCiPLUwVFCoM3CmHUJckUsWy/8R2gqFgH/Uhfolr9hDtZBQ=
+X-Received: by 2002:a63:c442:: with SMTP id m2mr8020736pgg.286.1565186041896;
+ Wed, 07 Aug 2019 06:54:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190807103806.GA15450@xps-13>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <00000000000088af91058f0fe377@google.com> <Pine.LNX.4.44L0.1908061509040.1571-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1908061509040.1571-100000@iolanthe.rowland.org>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 7 Aug 2019 15:53:50 +0200
+Message-ID: <CAAeHK+zLrYaE+Kt6AULPjKhBNknxPBWncfkTDmm3eFoLSpsffw@mail.gmail.com>
+Subject: Re: possible deadlock in open_rio
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     syzbot <syzbot+7bbcbe9c9ff0cd49592a@syzkaller.appspotmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Cesar Miquel <miquel@df.uba.ar>,
+        rio500-users@lists.sourceforge.net,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/7 6:38 下午, Andrea Righi wrote:
-> bcache_allocator can call the following:
-> 
->  bch_allocator_thread()
->   -> bch_prio_write()
->      -> bch_bucket_alloc()
->         -> wait on &ca->set->bucket_wait
-> 
-> But the wake up event on bucket_wait is supposed to come from
-> bch_allocator_thread() itself => deadlock:
-> 
-> [ 1158.490744] INFO: task bcache_allocato:15861 blocked for more than 10 seconds.
-> [ 1158.495929]       Not tainted 5.3.0-050300rc3-generic #201908042232
-> [ 1158.500653] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [ 1158.504413] bcache_allocato D    0 15861      2 0x80004000
-> [ 1158.504419] Call Trace:
-> [ 1158.504429]  __schedule+0x2a8/0x670
-> [ 1158.504432]  schedule+0x2d/0x90
-> [ 1158.504448]  bch_bucket_alloc+0xe5/0x370 [bcache]
-> [ 1158.504453]  ? wait_woken+0x80/0x80
-> [ 1158.504466]  bch_prio_write+0x1dc/0x390 [bcache]
-> [ 1158.504476]  bch_allocator_thread+0x233/0x490 [bcache]
-> [ 1158.504491]  kthread+0x121/0x140
-> [ 1158.504503]  ? invalidate_buckets+0x890/0x890 [bcache]
-> [ 1158.504506]  ? kthread_park+0xb0/0xb0
-> [ 1158.504510]  ret_from_fork+0x35/0x40
-> 
-> Fix by making the call to bch_prio_write() non-blocking, so that
-> bch_allocator_thread() never waits on itself.
-> 
-> Moreover, make sure to wake up the garbage collector thread when
-> bch_prio_write() is failing to allocate buckets.
-> 
-> BugLink: https://bugs.launchpad.net/bugs/1784665
-> BugLink: https://bugs.launchpad.net/bugs/1796292
-> Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
+On Tue, Aug 6, 2019 at 9:13 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> On Thu, 1 Aug 2019, syzbot wrote:
+>
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=136b6aec600000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=7bbcbe9c9ff0cd49592a
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+7bbcbe9c9ff0cd49592a@syzkaller.appspotmail.com
+> >
+> > ======================================================
+> > WARNING: possible circular locking dependency detected
+> > 5.3.0-rc2+ #23 Not tainted
+> > ------------------------------------------------------
+>
+> Andrey:
+>
+> This should be completely reproducible, since it's a simple ABBA
+> locking violation.  Maybe just introducing a time delay (to avoid races
+> and give the open() call time to run) between the gadget creation and
+> gadget removal would be enough to do it.
 
-OK, I add this version into my for-test directory. Once you have a new
-version, I will update it. Thanks.
+I've tried some simple approaches to reproducing this, but failed.
+Should this require two rio500 devices to trigger?
 
-Coly Li
+>
+> Is there any way you can test this?
 
-> ---
-> Changes in v3:
->  - prevent buckets leak in bch_prio_write()
-> 
->  drivers/md/bcache/alloc.c  |  5 ++++-
->  drivers/md/bcache/bcache.h |  2 +-
->  drivers/md/bcache/super.c  | 27 +++++++++++++++++++++------
->  3 files changed, 26 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-> index 6f776823b9ba..a1df0d95151c 100644
-> --- a/drivers/md/bcache/alloc.c
-> +++ b/drivers/md/bcache/alloc.c
-> @@ -377,7 +377,10 @@ static int bch_allocator_thread(void *arg)
->  			if (!fifo_full(&ca->free_inc))
->  				goto retry_invalidate;
->  
-> -			bch_prio_write(ca);
-> +			if (bch_prio_write(ca, false) < 0) {
-> +				ca->invalidate_needs_gc = 1;
-> +				wake_up_gc(ca->set);
-> +			}
->  		}
->  	}
->  out:
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 013e35a9e317..deb924e1d790 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -977,7 +977,7 @@ bool bch_cached_dev_error(struct cached_dev *dc);
->  __printf(2, 3)
->  bool bch_cache_set_error(struct cache_set *c, const char *fmt, ...);
->  
-> -void bch_prio_write(struct cache *ca);
-> +int bch_prio_write(struct cache *ca, bool wait);
->  void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent);
->  
->  extern struct workqueue_struct *bcache_wq;
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 20ed838e9413..bd153234290d 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -529,12 +529,29 @@ static void prio_io(struct cache *ca, uint64_t bucket, int op,
->  	closure_sync(cl);
->  }
->  
-> -void bch_prio_write(struct cache *ca)
-> +int bch_prio_write(struct cache *ca, bool wait)
->  {
->  	int i;
->  	struct bucket *b;
->  	struct closure cl;
->  
-> +	pr_debug("free_prio=%zu, free_none=%zu, free_inc=%zu",
-> +		 fifo_used(&ca->free[RESERVE_PRIO]),
-> +		 fifo_used(&ca->free[RESERVE_NONE]),
-> +		 fifo_used(&ca->free_inc));
-> +
-> +	/*
-> +	 * Pre-check if there are enough free buckets. In the non-blocking
-> +	 * scenario it's better to fail early rather than starting to allocate
-> +	 * buckets and do a cleanup later in case of failure.
-> +	 */
-> +	if (!wait) {
-> +		size_t avail = fifo_used(&ca->free[RESERVE_PRIO]) +
-> +			       fifo_used(&ca->free[RESERVE_NONE]);
-> +		if (prio_buckets(ca) > avail)
-> +			return -ENOMEM;
-> +	}
-> +
->  	closure_init_stack(&cl);
->  
->  	lockdep_assert_held(&ca->set->bucket_lock);
-> @@ -544,9 +561,6 @@ void bch_prio_write(struct cache *ca)
->  	atomic_long_add(ca->sb.bucket_size * prio_buckets(ca),
->  			&ca->meta_sectors_written);
->  
-> -	//pr_debug("free %zu, free_inc %zu, unused %zu", fifo_used(&ca->free),
-> -	//	 fifo_used(&ca->free_inc), fifo_used(&ca->unused));
-> -
->  	for (i = prio_buckets(ca) - 1; i >= 0; --i) {
->  		long bucket;
->  		struct prio_set *p = ca->disk_buckets;
-> @@ -564,7 +578,7 @@ void bch_prio_write(struct cache *ca)
->  		p->magic	= pset_magic(&ca->sb);
->  		p->csum		= bch_crc64(&p->magic, bucket_bytes(ca) - 8);
->  
-> -		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, true);
-> +		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, wait);
->  		BUG_ON(bucket == -1);
->  
->  		mutex_unlock(&ca->set->bucket_lock);
-> @@ -593,6 +607,7 @@ void bch_prio_write(struct cache *ca)
->  
->  		ca->prio_last_buckets[i] = ca->prio_buckets[i];
->  	}
-> +	return 0;
->  }
->  
->  static void prio_read(struct cache *ca, uint64_t bucket)
-> @@ -1954,7 +1969,7 @@ static int run_cache_set(struct cache_set *c)
->  
->  		mutex_lock(&c->bucket_lock);
->  		for_each_cache(ca, c, i)
-> -			bch_prio_write(ca);
-> +			bch_prio_write(ca, true);
->  		mutex_unlock(&c->bucket_lock);
->  
->  		err = "cannot allocate new UUID bucket";
-> 
+Not yet.
 
-
--- 
-
-Coly Li
+>
+> Alan Stern
+>
