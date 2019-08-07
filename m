@@ -2,73 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F288464A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1491684665
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387471AbfHGHvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 03:51:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35212 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727331AbfHGHvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 03:51:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 42D39AFDD;
-        Wed,  7 Aug 2019 07:51:02 +0000 (UTC)
-Date:   Wed, 7 Aug 2019 09:51:01 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/mmap.c: refine data locality of find_vma_prev
-Message-ID: <20190807075101.GN11812@dhcp22.suse.cz>
-References: <20190806081123.22334-1-richardw.yang@linux.intel.com>
- <3e57ba64-732b-d5be-1ad6-eecc731ef405@suse.cz>
- <20190807003109.GB24750@richard>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807003109.GB24750@richard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728407AbfHGHyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 03:54:11 -0400
+Received: from gate.crashing.org ([63.228.1.57]:59697 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727541AbfHGHyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 03:54:10 -0400
+Received: from ufdda393ec48b57.ant.amazon.com (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x777pPaJ021791;
+        Wed, 7 Aug 2019 02:51:26 -0500
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     linux-nvme@lists.infradead.org
+Cc:     Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@fb.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        Paul Pawlowski <paul@mrarm.io>
+Subject: [PATCH v4 0/4] nvme-pci: Support for Apple 201+ (T2 chip) 
+Date:   Wed,  7 Aug 2019 17:51:18 +1000
+Message-Id: <20190807075122.6247-1-benh@kernel.crashing.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07-08-19 08:31:09, Wei Yang wrote:
-> On Tue, Aug 06, 2019 at 11:29:52AM +0200, Vlastimil Babka wrote:
-> >On 8/6/19 10:11 AM, Wei Yang wrote:
-> >> When addr is out of the range of the whole rb_tree, pprev will points to
-> >> the biggest node. find_vma_prev gets is by going through the right most
-> >
-> >s/biggest/last/ ? or right-most?
-> >
-> >> node of the tree.
-> >> 
-> >> Since only the last node is the one it is looking for, it is not
-> >> necessary to assign pprev to those middle stage nodes. By assigning
-> >> pprev to the last node directly, it tries to improve the function
-> >> locality a little.
-> >
-> >In the end, it will always write to the cacheline of pprev. The caller has most
-> >likely have it on stack, so it's already hot, and there's no other CPU stealing
-> >it. So I don't understand where the improved locality comes from. The compiler
-> >can also optimize the patched code so the assembly is identical to the previous
-> >code, or vice versa. Did you check for differences?
-> 
-> Vlastimil
-> 
-> Thanks for your comment.
-> 
-> I believe you get a point. I may not use the word locality. This patch tries
-> to reduce some unnecessary assignment of pprev.
-> 
-> Original code would assign the value on each node during iteration, this is
-> what I want to reduce.
+This series combines the original series and an updated version of the
+shared tags patch, and is rebased on nvme-5.4.
 
-Is there any measurable difference (on micro benchmarks or regular
-workloads)?
--- 
-Michal Hocko
-SUSE Labs
+This adds support for the controller found in recent Apple machines
+which is basically a SW emulated NVME controller in the T2 chip.
+
+The original reverse engineering work was done by
+Paul Pawlowski <paul@mrarm.io>.
+
+
