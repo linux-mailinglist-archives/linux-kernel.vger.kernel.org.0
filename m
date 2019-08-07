@@ -2,86 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D49B84DD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:46:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 740B784DE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388518AbfHGNqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:46:53 -0400
-Received: from mail-pl1-f171.google.com ([209.85.214.171]:37423 "EHLO
-        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388340AbfHGNqw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:46:52 -0400
-Received: by mail-pl1-f171.google.com with SMTP id b3so40946537plr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 06:46:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ySKqQSG2Sdtb6NR7X5LBOcrvnI79dZs/JcxGOAF7z8s=;
-        b=CBNtQWhZ4fSsR34rE64Wm2VTpkIt5MmcmcO/RsPUtQY6k/6KjqInWnu0lk3clDPf7E
-         bHESMJKisHtEChM7g3O7jPk+cyzVRc/MBuNvQKDysVLAV1Qm6o71U2LXB2PN5zter2BQ
-         pvUyB4WFpXx2e+dDFbcv2cMR3Cz7gtY4hdqYP5NGn9viFBzkSTxIe/+eZov9xSj74/rj
-         w7blLMQZGVOVq7HNM7ubADXYuT1UDy6uXmRacZ1VF5sJyp7PQnz0mMsPnWhSYH+x5mOJ
-         TdNVFYWGpGZ4/Qa+QeeHoVSmnJnLUsnDeuLRlrYUUWfZr0bnih/B/QUzhdAgRs2gq1Y6
-         67bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ySKqQSG2Sdtb6NR7X5LBOcrvnI79dZs/JcxGOAF7z8s=;
-        b=LqhM9d0kTKjMZWyCW7FEK81puTg/HbJGDoeuGpILHgcbFDPhQxQZghqeGRn2MlSWOR
-         s+AFJ9UAWhWdoVA/wD9c/xmnnU47rceZqSG2mAM9o9dqQf1EnsfC22iPmZVqqRxj3q7K
-         KuhtRTJlqF2FmVtiV7bGGHeocM3fJ4eVLqELswyxLG9QHg2TDqELFY2/Oy2pBFb4ci5k
-         5Z4YmLmNcLwUbzPf7RBtFIafhXxSymWJLCGPZ7i3EGNruLo3pTG6J77Yh2TVFNr6oimI
-         hQPV5flrzwF5etLLFGD8RcvbHnXMaRpXWOBRmb6HM/QKCGL0jBW2MLVehbk20N+Z4P3/
-         15sA==
-X-Gm-Message-State: APjAAAVbmFKLBD3HlXxobzdeRTf68qwwDt/QWiNtnOSxlvysIlujrdz/
-        mzSR5A6qHpMMBX0ldL0sWTSor8KUghMnZ1K/HpNN7g==
-X-Google-Smtp-Source: APXvYqwuJwIi1+8bhY+iSZWSE7B73AMVMzCQHsoMCu3BHZ260yvxNMQ9E/NW99umFwPd3dN4BLTvVPw5fH0LbL1UhJk=
-X-Received: by 2002:a63:3006:: with SMTP id w6mr7898479pgw.440.1565185611746;
- Wed, 07 Aug 2019 06:46:51 -0700 (PDT)
+        id S2388453AbfHGNvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:51:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:48890 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388123AbfHGNvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:51:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D9F228;
+        Wed,  7 Aug 2019 06:51:18 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D77E03F706;
+        Wed,  7 Aug 2019 06:51:16 -0700 (PDT)
+Subject: Re: [PATCH 6/9] KVM: arm64: Provide a PV_TIME device to user space
+To:     Steven Price <steven.price@arm.com>
+Cc:     kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+References: <20190802145017.42543-1-steven.price@arm.com>
+ <20190802145017.42543-7-steven.price@arm.com> <20190803135113.6cdf500c@why>
+ <20190803183335.149e0113@why> <5aa54066-b9f6-22d1-fa2b-ce5cbf244ab5@arm.com>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <9c416f28-d078-4575-8095-8b4cccfe40ec@kernel.org>
+Date:   Wed, 7 Aug 2019 14:51:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <Pine.LNX.4.44L0.1908061009450.1571-100000@iolanthe.rowland.org> <1565105624.8136.32.camel@suse.com>
-In-Reply-To: <1565105624.8136.32.camel@suse.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Wed, 7 Aug 2019 15:46:40 +0200
-Message-ID: <CAAeHK+wJ_26rFeeQkfELO5nXn57-1Wo4iodLJNY=9iTeaduHyA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in device_release_driver_internal
-To:     Oliver Neukum <oneukum@suse.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot <syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5aa54066-b9f6-22d1-fa2b-ce5cbf244ab5@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 6, 2019 at 5:34 PM Oliver Neukum <oneukum@suse.com> wrote:
->
-> Am Dienstag, den 06.08.2019, 10:19 -0400 schrieb Alan Stern:
-> > In any case, I don't know if this missing "get" would cause the
-> > problem, but it might well.
->
-> Hi,
->
-> upon further thought, this should be automated. Checking for
-> refcount leaks is KASAN's job. In particular, refcounts
-> should not
->
-> * decrease in probe()
-> * increase in disconnect()
-> * change in case probe() fails
+On 07/08/2019 14:39, Steven Price wrote:
+> On 03/08/2019 18:34, Marc Zyngier wrote:
+>> On Sat, 3 Aug 2019 13:51:13 +0100
+>> Marc Zyngier <maz@kernel.org> wrote:
+>>
+>> [forgot that one]
+>>
+>>> On Fri,  2 Aug 2019 15:50:14 +0100
+>>> Steven Price <steven.price@arm.com> wrote:
+>>
+>> [...]
+>>
+>>>> +static int __init kvm_pvtime_init(void)
+>>>> +{
+>>>> +	kvm_register_device_ops(&pvtime_ops, KVM_DEV_TYPE_ARM_PV_TIME);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +late_initcall(kvm_pvtime_init);
+>>
+>> Why is it an initcall? So far, the only initcall we've used is the one
+>> that initializes KVM itself. Can't we just the device_ops just like we
+>> do for the vgic?
+> 
+> So would you prefer a direct call from init_subsystems() in
+> virt/kvm/arm/arm.c?
 
-It's probably a job for some other refcount debugging tool, but yes,
-it would be nice to have a detector for this kind of stuff. It will
-probably require some annotations in each place we want this kind of
-checks to be performed.
+Yes. Consistency is important.
 
->
->         Regards
->                 Oliver
->
+> The benefit of initcall is just that it keeps the code self-contained.
+> In init_subsystems() I'd either need a #ifdef CONFIG_ARM64 or a dummy
+> function for arm.
+
+Having a dummy function for 32bit ARM is fine. Most of the code we add
+to the 32bit port is made of empty stubs anyway.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead, it just smells funny...
