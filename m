@@ -2,74 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8562C84455
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0104484460
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfHGGP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 02:15:56 -0400
-Received: from ajax.cs.uga.edu ([128.192.4.6]:44652 "EHLO ajax.cs.uga.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbfHGGP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 02:15:56 -0400
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-        (authenticated bits=0)
-        by ajax.cs.uga.edu (8.14.4/8.14.4) with ESMTP id x776Fsfj059912
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Wed, 7 Aug 2019 02:15:55 -0400
-Received: by mail-lf1-f41.google.com with SMTP id z15so58847743lfh.13
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 23:15:55 -0700 (PDT)
-X-Gm-Message-State: APjAAAVccdD1E4zktA0/aEMQD7KPGRuYzPONAD6P9t8zWgp9LDh2BJEe
-        YMkRuZvFqmQdC5D47APhjcdsVOcd0iwS+OrqYCQ=
-X-Google-Smtp-Source: APXvYqy4XMRsGmpJdQ8mDa5OGjnpO7xdZnCatFepXfm3Gwb+MVnr3/vNwfV36DaNYOTUYvY941x7Lpslz9YDzUCxxBU=
-X-Received: by 2002:ac2:418f:: with SMTP id z15mr4688367lfh.177.1565158553796;
- Tue, 06 Aug 2019 23:15:53 -0700 (PDT)
+        id S1727145AbfHGGQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 02:16:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59020 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbfHGGQX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 02:16:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rCYQCC3TGNYTbnGKL+NdUWUb7Cy3tCnvUbcf422Cqo8=; b=cqMrr/GpDS/ONJa2adLCzijXQ
+        nhlDPhMwkhB8TMArgr+DXtiNpRuxaX4gIqfxBbgl2R2TMWBoHU7VjEkm6RgE/+hCjg1dpL5y5tNnn
+        s81dLleKt6cPO7tG7ZK9StKoDepTYW/tT9J067lzaDoQk6auHE9prR7gJdA8jeIE8iAdNaUWoQLLx
+        5oI96/Ezmcy2PeCA7PjtVpiiBDbYQItbGaFbynb2bTc8fnQCF14c6deoNq/mqUscZaHFzLM2BsYZj
+        FJlvl6Vl3KkD6RjJREk7K8QQlAh3eMZFXr+SckdnYDGTzmN798A2lIndyBa1/n1ZhMi6XMaJ5XCDf
+        9ggljiyAA==;
+Received: from [195.167.85.94] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hvFEy-0007do-No; Wed, 07 Aug 2019 06:16:05 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Shawn Anastasio <shawn@anastas.io>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: fix default dma_mmap_* pgprot v3
+Date:   Wed,  7 Aug 2019 09:16:00 +0300
+Message-Id: <20190807061602.31217-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-Date:   Wed, 7 Aug 2019 02:15:17 -0400
-X-Gmail-Original-Message-ID: <CAAa=b7ffFNc4zuQfXEwsS363=kX_ZOx0+jhg4WM3JQ-d7n-LMA@mail.gmail.com>
-Message-ID: <CAAa=b7ffFNc4zuQfXEwsS363=kX_ZOx0+jhg4WM3JQ-d7n-LMA@mail.gmail.com>
-Subject: [PATCH] ALSA: pcm: fix a memory leak bug
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In hiface_pcm_init(), 'rt' is firstly allocated through kzalloc(). Later
-on, hiface_pcm_init_urb() is invoked to initialize 'rt->out_urbs[i]'.
-However, if the initialization fails, 'rt' is not deallocated, leading to a
-memory leak bug.
+Hi all,
 
-To fix the above issue, free 'rt' before returning the error.
+As Shawn pointed out we've had issues with the dma mmap pgprots ever
+since the dma_common_mmap helper was added beyong the initial
+architectures - we default to uncached mappings, but for devices that
+are DMA coherent, or if the DMA_ATTR_NON_CONSISTENT is set (and
+supported) this can lead to aliasing of cache attributes.  This patch
+fixes that.  My explanation of why this hasn't been much of an issue
+is that the dma_mmap_ helpers aren't used widely and mostly just in
+architecture specific drivers.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
----
- sound/usb/hiface/pcm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Changes since v2:
+ - fix m68knommu compile by inlining dma_prprot helper and providing
+   a stub for !CONFIG_MMU
+ - fix various typos in the commit messages
 
-diff --git a/sound/usb/hiface/pcm.c b/sound/usb/hiface/pcm.c
-index 14fc1e1..5dbcd0d 100644
---- a/sound/usb/hiface/pcm.c
-+++ b/sound/usb/hiface/pcm.c
-@@ -599,8 +599,10 @@ int hiface_pcm_init(struct hiface_chip *chip, u8
-extra_freq)
-        for (i = 0; i < PCM_N_URBS; i++) {
-                ret = hiface_pcm_init_urb(&rt->out_urbs[i], chip, OUT_EP,
-                                    hiface_pcm_out_urb_handler);
--               if (ret < 0)
-+               if (ret < 0) {
-+                       kfree(rt);
-                        return ret;
-+               }
-        }
-
-        ret = snd_pcm_new(chip->card, "USB-SPDIF Audio", 0, 1, 0, &pcm);
--- 
-2.7.4
+Changes since v1:
+ - fix handling of DMA_ATTR_NON_CONSISTENT where it is a no-op
+   (which is most architectures)
+ - remove DMA_ATTR_WRITE_COMBINE on mips, as it seem dangerous as-is
