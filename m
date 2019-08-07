@@ -2,103 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A87A8411F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 03:41:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC5F2841B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 03:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbfHGBlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 21:41:15 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41729 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728924AbfHGBlM (ORCPT
+        id S1728666AbfHGBo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 21:44:27 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34342 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727710AbfHGBo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 21:41:12 -0400
-Received: by mail-pl1-f196.google.com with SMTP id m9so38456584pls.8;
-        Tue, 06 Aug 2019 18:41:11 -0700 (PDT)
+        Tue, 6 Aug 2019 21:44:26 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n9so36332964pgc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 18:44:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Hwj3uGjc5P7Ed46PamHKrYgZN25uTv+4Y9CY8N3wDxE=;
-        b=C8vEJVaL0ESKCzP7lefx1wgcIKNEPnvmGnxPgANSawJd2TYlYWBNmyzn02+3hhrIW4
-         15kK0nHEK/7u1XpXTo8pF61gnaXoiwY6P/Gn50dCUnh6FHquoIT7a6gMNluhLYfMGCMJ
-         zxlFl/1BJfY2zEZSoxUaOsr+aev7K7Aeur4d3UsvITBNuCufguDQRYOV+u27pp3JStTz
-         hYtaywIaomr71CL0OgEpmgXNwWtz3L6NzXyeJoqhd+8dn80IsTy0gE6Yiv1xJz5GY7P7
-         EdrSzazVpkm9tmgS/F8PUFKYloOaQnEXYUSLBj4ao3lLdd0OskVPHMmhS6oOFYE9oC2y
-         E5zQ==
+        d=fossix-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=us4X2/Ffv/gh+Z95c5AMld/oLf6kFtURt8EKlK9JFC4=;
+        b=YXMcBrs65W/67DvADyGdD0BcIpES1T7tmdE80pZMunwXHKlXQZPyLniERqZmDFvptR
+         /XkCUV/WdSbLAn0r/3UPoO7v7FXSG0bAcVYJJ48Q2Kl4NJ5tNIj23hdhVMen9f8PS56X
+         RBtJdw0Eflk9Qu/H9tsSBicyJAmoBL8wXgA6OZLsY/5Tl5LleUWins6lWfTT7IKPRzbn
+         DAqIru1R8Bv4CUVQpGPE9cP0IeUVolmQH0sFg5muytlHEpihRgIQGudbL5IE2n+5f8uk
+         APpAgoBaeLKxbnx7FxOMjVJ0Gh61K0lE5CLqbzd3Y2kUllbBU7tlIa4HjOjTSioDfInA
+         XCZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hwj3uGjc5P7Ed46PamHKrYgZN25uTv+4Y9CY8N3wDxE=;
-        b=pdZ/1JrJAdXDpnph1ghO1A5hwpG+jwY7sF1zk+/uL3r7t6syMdnjZMjhbT20SI7CF9
-         4czCXkvgK6LQHjtNuSZ1742IrG2dQBC/Epy4vhsCTvjxzAym6Rc3116bugMG5imP+u7f
-         80EXbR2/jmBHnh5ZcxfhxJTdnAv8pDPX4E0+CkPVWTsEomYJaI9F20ZQg04EulnNAqOh
-         VuXhlNAutGhhbVHwxe0Z0x+46no9Of33iFrq5nIdmk7YH/LVOpef1g/J8HAYiPIkSg19
-         xipD/AEdygLaNOjekD2AVXtk/+1Qpxs2Y4SrKVbtrJ/zMJ/LCsGIrnhF/48GD01VDA9A
-         0Z5g==
-X-Gm-Message-State: APjAAAXUQjUfsThrnQsMmC2GxUcH1oHKjeKs4QxwMSmtA66GWu7DrcnB
-        JC2nhKuPRN1wPtdbGUaE0D0=
-X-Google-Smtp-Source: APXvYqyKWesJtrgg5eVS6TTcftVzlL7G23lqVSgTL3Z85jZoOflA0An/pnwl1gjI3N4imWHwAw2lFA==
-X-Received: by 2002:a17:902:925:: with SMTP id 34mr5869179plm.334.1565142071293;
-        Tue, 06 Aug 2019 18:41:11 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id v22sm87667096pgk.69.2019.08.06.18.41.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Aug 2019 18:41:11 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 18:42:06 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     broonie@kernel.org, l.stach@pengutronix.de, mihai.serban@gmail.com,
-        alsa-devel@alsa-project.org, timur@kernel.org,
-        shengjiu.wang@nxp.com, angus@akkea.ca, tiwai@suse.com,
-        linux-imx@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh@kernel.org
-Subject: Re: [PATCH v3 5/5] ASoC: dt-bindings: Introduce compatible strings
- for 7ULP and 8MQ
-Message-ID: <20190807014206.GG8938@Asurada-Nvidia.nvidia.com>
-References: <20190806151214.6783-1-daniel.baluta@nxp.com>
- <20190806151214.6783-6-daniel.baluta@nxp.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=us4X2/Ffv/gh+Z95c5AMld/oLf6kFtURt8EKlK9JFC4=;
+        b=M6ZnC2YX9EP7LQqspG8y5BWNwA4rOcsdJpp/CTd+6+bu9REf84OMR/SG5PIkjlv58v
+         S1tvLfZzmokNnW60AhtwjlHpMkPYxWVhBAdVN6GZsRWFfXOUuQt2UImuAx6cOjr3pwEu
+         7OovVU1SlrNp7IO8ezEUo8zr8yJxioAuLJCEVY+OIDORoi2Ce3U1Rcc7AIjD+wxMPe88
+         tdmgeTAgkGWqQCw0UYpYWz/GLfAgYTLGpfzlfIXqUPhle4wNvXQOcPclWdRyYU6jVtSj
+         IuJMm2cLdLR73WG6iG0/ehJjWzP6nHOESN6BMbKvj/2MCIavhauzQ0rivxUnTqQCKwPa
+         pMFg==
+X-Gm-Message-State: APjAAAXo5g3hN5fKTZvK/ayyUBu04O00O3CflZS/2g/UZVVHTw/Tzgv4
+        CmztLnN3loO91LWf5KACCmi/pxetIS0=
+X-Google-Smtp-Source: APXvYqyTqK3CX7JCzPdYO9xHwOeBv2HStnsRF27qO8fV3Ejg9Apmtxy0Edsq+4OLDdVaztpOgwh4ng==
+X-Received: by 2002:a62:ce8e:: with SMTP id y136mr6867296pfg.29.1565142265801;
+        Tue, 06 Aug 2019 18:44:25 -0700 (PDT)
+Received: from santosiv.in.ibm.com ([49.205.216.78])
+        by smtp.gmail.com with ESMTPSA id i9sm19321610pjj.2.2019.08.06.18.44.24
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 18:44:25 -0700 (PDT)
+From:   Santosh Sivaraj <santosh@fossix.org>
+To:     Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Nicholas Piggin <npiggin@gmail.com>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] kernel/watchdog: Fix watchdog_allowed_mask not used warning
+Date:   Wed,  7 Aug 2019 07:14:17 +0530
+Message-Id: <20190807014417.9418-1-santosh@fossix.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806151214.6783-6-daniel.baluta@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 06:12:14PM +0300, Daniel Baluta wrote:
-> For i.MX7ULP and i.MX8MQ register map is changed. Add two new compatbile
-> strings to differentiate this.
-> 
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Define watchdog_allowed_mask only when SOFTLOCKUP_DETECTOR is enabled.
 
-Looks good to me. As long as one of DT maintainers acks,
+Signed-off-by: Santosh Sivaraj <santosh@fossix.org>
+---
+ kernel/watchdog.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 7f9e7b9306fe..d365616f9ed3 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -44,8 +44,6 @@ int __read_mostly soft_watchdog_user_enabled = 1;
+ int __read_mostly watchdog_thresh = 10;
+ static int __read_mostly nmi_watchdog_available;
+ 
+-static struct cpumask watchdog_allowed_mask __read_mostly;
+-
+ struct cpumask watchdog_cpumask __read_mostly;
+ unsigned long *watchdog_cpumask_bits = cpumask_bits(&watchdog_cpumask);
+ 
+@@ -160,6 +158,7 @@ static void lockup_detector_update_enable(void)
+ }
+ 
+ #ifdef CONFIG_SOFTLOCKUP_DETECTOR
++static struct cpumask watchdog_allowed_mask __read_mostly;
+ 
+ /* Global variables, exported for sysctl */
+ unsigned int __read_mostly softlockup_panic =
+-- 
+2.20.1
 
-Thanks
-
-> ---
->  Documentation/devicetree/bindings/sound/fsl-sai.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/fsl-sai.txt b/Documentation/devicetree/bindings/sound/fsl-sai.txt
-> index 2e726b983845..e61c0dc1fc0b 100644
-> --- a/Documentation/devicetree/bindings/sound/fsl-sai.txt
-> +++ b/Documentation/devicetree/bindings/sound/fsl-sai.txt
-> @@ -8,7 +8,8 @@ codec/DSP interfaces.
->  Required properties:
->  
->    - compatible		: Compatible list, contains "fsl,vf610-sai",
-> -			  "fsl,imx6sx-sai" or "fsl,imx6ul-sai"
-> +			  "fsl,imx6sx-sai", "fsl,imx6ul-sai",
-> +			  "fsl,imx7ulp-sai" or "fsl,imx8mq-sai".
->  
->    - reg			: Offset and length of the register set for the device.
->  
-> -- 
-> 2.17.1
-> 
