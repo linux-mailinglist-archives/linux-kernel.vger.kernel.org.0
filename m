@@ -2,168 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07328849E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 12:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 288A4849FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 12:46:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbfHGKnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 06:43:09 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.70]:49615 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726893AbfHGKnJ (ORCPT
+        id S2387576AbfHGKoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 06:44:03 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45330 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387524AbfHGKoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 06:43:09 -0400
-Received: from [46.226.52.194] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-6.bemta.az-b.eu-west-1.aws.symcld.net id FF/5B-19136-93BAA4D5; Wed, 07 Aug 2019 10:43:05 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRWlGSWpSXmKPExsWSoc9jpWux2iv
-  W4N5GbYvLu+awWVzbe5zZgcnj8yY5j/VbtjIFMEWxZuYl5VcksGZsbOxiL7jBV9Fzbx1LA+Nd
-  7i5GTg5GgaXMEkf/ancxcgHZx1gkbpxZxw6RWM8o0TBBCCTBInCCWeLYzqNsII6QQD+TxIXVO
-  1khnDuMEh8Pn2IDaWETMJSY9+Y9I4gtAmQve7OBFcRmFnCUuL33LROILSzgJXHs/Gc2iBpvib
-  NLDjFD2E4SHY2PwFazCKhITL54G2wOr0CsRPvmvSwgtpDALkaJW7vUQGxOAWOJ/U/PM0KcKiv
-  xpXE1M8QucYlbT+aD7ZIQEJBYsuc8M4QtKvHy8T9WiPp4ifb9b9kh4joSZ68/YYSwlSSW3ZjF
-  CmHLSlya3w0V95V4tg0ULFxA9i1GibcHnkMltCTOd12BWiYlceLiUajmHIkrHf9YIGw1iRtvO
-  oCO4ACyZSROb4Iq+ccqcWZ/3QRGvVlIzoawdSQW7P7EBmFrSyxb+Jp5FjgoBCVOznzCsoCRZR
-  WjRVJRZnpGSW5iZo6uoYGBrqGhka6hpaWuoYmpXmKVbpJeaqlueWpxia6hXmJ5sV5xZW5yTop
-  eXmrJJkZgukkpOD5xB+O8G2/0DjFKcjApifKavfCMFeJLyk+pzEgszogvKs1JLT7EKMPBoSTB
-  u2GlV6yQYFFqempFWmYOMPXBpCU4eJREeK+ApHmLCxJzizPTIVKnGHU5Jrycu4hZiCUvPy9VS
-  pxXEKRIAKQoozQPbgQsDV9ilJUS5mVkYGAQ4ilILcrNLEGVf8UozsGoJMzbDDKFJzOvBG7TK6
-  AjmICOKHrnCXJESSJCSqqBSZbxH9uzo1f5dD/+5kq6XFfLP+/KpAxrNw1Tm7nJKWqXP4hdOO9
-  tzXxB49++1wftt/w8wpqf4Zn8Mz7K9opd1AadiFetn8WYTc2U9/D2c03+YObN9Ne+c9LPJxaV
-  c70Tj//XWG0Y5fErsXVr93bndqfNnTwa53bNLHWYZnuj/sLDvk0tHsd+VNtZTF5m7PyJsXbpl
-  INyZz4Fz3H8Zb3w7oXkw++y9O82hO3zFl6QGDMz9fxrPxaezkXb3/e+2fQ65N37dQEnTmZdj/
-  3kJSjofHYTt5s4Y3GEW/hegz3xl1hnrdJ2tPo/p9jONb3vGHNxFa93xKqPDiFKCz2ZY8PEF2j
-  qxpx2ktC4erYmr+S5EktxRqKhFnNRcSIAbOejpD4EAAA=
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-20.tower-282.messagelabs.com!1565174584!134985!1
-X-Originating-IP: [104.47.12.58]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.43.9; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 19464 invoked from network); 7 Aug 2019 10:43:04 -0000
-Received: from mail-db3eur04lp2058.outbound.protection.outlook.com (HELO EUR04-DB3-obe.outbound.protection.outlook.com) (104.47.12.58)
-  by server-20.tower-282.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 7 Aug 2019 10:43:04 -0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RY5rO6XFIaFGiardxf4hhZGMDU/3qSAOsDZt2e7fkNSG4Vvd1eUIU4THUDYf7w5MrzZ2L0cFzKx04MZSEPfmHJ7dWtZZCq9/3NAL0/6jE/zMikjL4KGD2x9rLTIZ5NTFAs8Kr8DxZ7URzvD2/q+jpTom062XsysTV3YIjAr93n1EXwFJZ7DQ5MK1113dGAtRlnLUr+iVJtOuIr1TLgJujyDFL26v243lexUb6NoMbEQjX1B1QYpjqSKuXtgiFYK30nVcAWWBtnfo9OIgJ/o030hA+w2+sk6We7WqWvu3N1BDssiEMjXAo5K6dHsQnuAxh6C++pfu7CuGgKWuDyw39Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xdHmmZfPRH4Sx95SAeZvrnROPuOHHGbK9gjaTwrmwU8=;
- b=nNA1Eam7cBquAnVJQU7WBtPlMbGScPNFt8YU9CEqQnBMafwMgoFn9vsB/wTNaJvmM4q1QF8Bjs3IKKR3SpAW5bsRECPKJWJ3vW1h8Dxi0DdZ3rpDj+VBieBwYoKz3tqPg6+bQiUbsYIdYkYdATYUYVladajw8yKttj762YYY+AJyBBTsPnBofSd7NK3wdMz/b2oQE9XAqvJgk4o38NMkVbFUVWuMMZYeWpeY3oolBLOpVe3OEgbz1bdgk3cAIqb024zYqzuAqI2ykgJmiCnhVPYrFh7JARlnpz/0z/PF408Siq0tECpO2P496nJjI6OvNGQeSoHH9nv9e9bOnh58Ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=diasemi.com;dmarc=pass action=none
- header.from=diasemi.com;dkim=pass header.d=diasemi.com;arc=none
+        Wed, 7 Aug 2019 06:44:02 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y8so40218893plr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 03:44:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dialogsemiconductor.onmicrosoft.com;
- s=selector2-dialogsemiconductor-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xdHmmZfPRH4Sx95SAeZvrnROPuOHHGbK9gjaTwrmwU8=;
- b=YfbiZYcJybPNJBzhsIHKvU3WvHeBZi85RvdI+vk1wY51bh3kr6HqDGok1x2KP8nT7Z0zxhL/gP1CSovfxQm5Rpo6CrtBCL7ihTpML3wW3GbNHnqc6wjIbcWDMt21SNlsxHPQxYoh5CJaYXWvVnCjpCGRYCUsHVqXuwsCTOgNsqM=
-Received: from VI1PR10MB2192.EURPRD10.PROD.OUTLOOK.COM (20.177.60.74) by
- VI1PR10MB3613.EURPRD10.PROD.OUTLOOK.COM (10.186.161.215) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.14; Wed, 7 Aug 2019 10:43:02 +0000
-Received: from VI1PR10MB2192.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::4ae:3860:5cb6:c1aa]) by VI1PR10MB2192.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::4ae:3860:5cb6:c1aa%5]) with mapi id 15.20.2136.018; Wed, 7 Aug 2019
- 10:43:02 +0000
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 00/22] mfd: demodularization of non-modular drivers
-Thread-Topic: [PATCH v2 00/22] mfd: demodularization of non-modular drivers
-Thread-Index: AQHUisAczvba87NOX02k8riZ/bkUjaVwDbfwgAO0IwCBfUBB4A==
-Date:   Wed, 7 Aug 2019 10:43:02 +0000
-Message-ID: <VI1PR10MB219250E43C2C31F73387DCF5FED40@VI1PR10MB2192.EURPRD10.PROD.OUTLOOK.COM>
-References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
- <6ED8E3B22081A4459DAC7699F3695FB7021C509AD4@SW-EX-MBX02.diasemi.com>
- <20181207203021.GR23156@windriver.com>
-In-Reply-To: <20181207203021.GR23156@windriver.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.240.73.196]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 208aeea6-122e-4073-212b-08d71b2405ee
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR10MB3613;
-x-ms-traffictypediagnostic: VI1PR10MB3613:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <VI1PR10MB361342909FC47E8FE3777CDAF5D40@VI1PR10MB3613.EURPRD10.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 01221E3973
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(396003)(39850400004)(136003)(199004)(189003)(966005)(25786009)(102836004)(6436002)(6506007)(9686003)(66066001)(53546011)(7696005)(99286004)(186003)(55016002)(6306002)(26005)(53936002)(14454004)(68736007)(71200400001)(71190400001)(478600001)(4326008)(81166006)(8676002)(52536014)(486006)(86362001)(5660300002)(81156014)(11346002)(8936002)(476003)(66446008)(76116006)(6246003)(66946007)(229853002)(6116002)(3846002)(33656002)(66476007)(66556008)(64756008)(6916009)(14444005)(316002)(2906002)(446003)(305945005)(76176011)(7736002)(256004)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR10MB3613;H:VI1PR10MB2192.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: diasemi.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vBQMI9dPzcHwsQ7qupNfVmbj/KIqZoYWtYnA2+iexHzDdKfQcDlKBHSZDOpOQ9fs8Hd5Z3UpeZgYKLb0VSsCCZDJRcoIPmjD7Roh+wj3e5daTPLr+t8CLHIn2nY5vZH9HjRWN2IonhrgB9SokVQ7m7/eQjqwX4AS3k6d9NkAwVCZ+Ifq6K8MVMAFhZFNuXOv4NOpNnxaEWnU8qX2vc98zojNTkLZdNoA5HXN/NGvz4Hj4rvbkRjXx+TOOGKtiOAwRCfSKRIg1qyiXE7oUrWkjYR7HN0SAKwwgtfCDq6eT9yYtofe5NwB567c/WghoYNVfLa4t3vMYCalFNAXAFD1IbHA7HgICRvZquS+sCwadU5BPX5ChzLXHHAtZlgE9R/JL2lpyV70FkjnQkMBnO33sO0Kua6ujAf+kDhoYadxSmQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2fwKnWSm6BGaf1qCsMupL+FnU52l2lN+u1iw/EIqr50=;
+        b=EWjeCR0yZJKY3n3DA1O/jj/8jCNguYJGj041raPo9ib9owsgj23JoOYOCjzmT0TtY8
+         NPY410yaiHp7lw3/lZEhwftyrJNRX79Uxb0SkKgkCDRfoV76b90AYYpVW9LO4UNm+r28
+         61IiR4cwEQh0/8Zc4pXpGvAeemCsH199taujg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2fwKnWSm6BGaf1qCsMupL+FnU52l2lN+u1iw/EIqr50=;
+        b=mzbasuzsAO2ZDL7GSWQH1jhXa/8vl2YlAYjt3CV6M1BJ7lqBwQOhuEHAVbUu4uUsaX
+         dIR/feqlLdq/ittQiexdFn5HT7jqUre1nxWeRK3Iy+ePZv8pg3f0eu34OVR5OQOo2mkq
+         bYCUdaq/krg4OZ15eWUhE1wXH+hfYGBuepz7nA+nxMdspSRZfyagW59vDOXSWPLMu1UF
+         Tq0ZA4zejyBTM79J8FbRVjdnhqQzW/ML/uw2PjWMFeQtBzk4hJUjXhxGZMlBmTlBr2yC
+         mWVY0he/vyhCSwY6oBNyr3dYk30eSymZVXSJrvv2neW3BS5wtTZw2T1BwgMGfhHZ5i8a
+         wRNw==
+X-Gm-Message-State: APjAAAWKfE/bFS0Vzeh7MpcchQFHICT2xHR6ceZ5hx7da0PF7JykCIxg
+        lvuBxajKcEwMwEHGn2jYJnGz/Q==
+X-Google-Smtp-Source: APXvYqwl+Lly+Mp853ylbDZIxsl9IpSvYkIq95u252zoo5bxtCncNtCNuULEpPhm+HMvPpkGgR8Ovg==
+X-Received: by 2002:a63:6ec1:: with SMTP id j184mr5727509pgc.232.1565174641058;
+        Wed, 07 Aug 2019 03:44:01 -0700 (PDT)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id a3sm24747697pje.3.2019.08.07.03.43.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 07 Aug 2019 03:44:00 -0700 (PDT)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support), linux-kernel@vger.kernel.org (open list),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
+        (REMOTEPROC) SUBSYSTEM)
+Subject: [PATCH v15 0/5] Add support for mt8183 SCP.
+Date:   Wed,  7 Aug 2019 18:43:41 +0800
+Message-Id: <20190807104352.259767-1-pihsun@chromium.org>
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
 MIME-Version: 1.0
-X-OriginatorOrg: diasemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 208aeea6-122e-4073-212b-08d71b2405ee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2019 10:43:02.7749
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: stephen.twiss@diasemi.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3613
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+Add support for controlling and communicating with mt8183's system
+control processor (SCP), using the remoteproc & rpmsg framework.
+And also add a cros_ec driver for CrOS EC host command over rpmsg.
 
-I will not be able to make these changes to support modularity any more.
+The overall structure of the series is:
+* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2, 3).
+* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
+  interrupt (IPI) and shared memory (Patch 2, 3).
+* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
+  device. Supports name service for SCP firmware to
+  announce channels (Patch 4).
+* add scp dts node to mt8183 platform (Patch 5).
 
-Although the support.opensource@diasemi.com e-mail address for Support
-is still working, I will not be able to review your patches if you were to =
-re-send
-them again.
+Changes from v14:
+ - Fix a typo on variable in DEBUG section.
 
-Regards,
-Stephen
+Changes from v13:
+ - Move include/linux/platform_data/mtk_scp.h to
+   include/linux/remoteproc/mtk_scp.h.
+ - Rename scp_get_reserve_* to scp_get_reserved_*.
+ - Add lock for access of scp->ipi_desc.
+ - Lock the whole ipi_send function.
+ - Move more setting of cache size from SCP firmware to kernel driver,
+   to prevent problem while loading firmware onto DRAM.
+ - Minor fixes addressing comment.
 
-On 07 December 2018 20:30, Paul Gortmaker=20
-> > On 03 December 2018 04:23, Paul Gortmaker wrote:
-> > > Subject: [PATCH v2 00/22] mfd: demodularization of non-modular driver=
-s
-> > >
-> > > [v1 --> v2: add some more commits as requested by Lee (MFD maintainer=
-),
-> > >  update the 00/NN text; re-do build and link testing on new linux-nex=
-t. ]
-> > >
-> > > This group of MFD drivers are all controlled by "bool" Kconfig settin=
-gs,
-> > > but contain various amounts of largely pointless uses of infrastructu=
-re
-> > > related to modular operations, even though they can't be built modula=
-r.
-> > >
-> > > We can easily remove/replace all of it.  We are trying to make driver
-> > > code consistent with the Makefiles/Kconfigs that control them.
-> >
-> > For the DA9052 and DA9055, changes:
-> >
-> > -  drivers/mfd/da9052-core.c         | 11 -----------
-> > -  drivers/mfd/da9052-i2c.c          | 22 ++-------------------
-> > -  drivers/mfd/da9052-irq.c          |  1 -
-> > -  drivers/mfd/da9052-spi.c          | 22 ++-------------------
-> > -  drivers/mfd/da9055-core.c         | 13 ++-----------
-> > -  drivers/mfd/da9055-i2c.c          | 24 ++---------------------
-> >
-> > The responsibility can fall back to Dialog for these changes. We will
-> > submit Kconfig patches for these and make them explicitly non-modular.
-> > This will remove the ambiguity caused by the Kconfig bool options.
->=20
-> Just FYI, I dropped the diasemi commits from my v3 send.
->=20
-> https://lore.kernel.org/lkml/1544213465-16259-1-git-send-email-
-> paul.gortmaker@windriver.com/
->=20
-> Thanks for taking on the modular conversions.
+Changes from v12:
+ - Initialize cache before firmware load, to avoid problem while loading
+   large firmware.
+ - Disable watchdog before stopping SCP, to avoid extra warning message.
+ - Fix new warnings by checkpatch.
 
+Changes from v11:
+ - Fixed a bug that mtk_rpmsg_endpoint is not properly cleaned up if
+   rproc_boot fails.
+ - Add missing documentation in comment.
+
+Changes from v10:
+ - Drop applied cros_ec_rpmsg patches.
+ - Add clock reset before loading SCP firmware.
+ - Fix some type mismatch warnings when printing debug messages.
+
+Changes from v9:
+ - Remove reserve-memory-vpu_share node.
+ - Remove change to cros_ec_commands.h (That is already in
+   https://lore.kernel.org/lkml/20190518063949.GY4319@dell/T/)
+
+Changes from v8:
+ - Rebased onto https://patchwork.kernel.org/cover/10962385/.
+ - Drop merged cros_ec_rpmsg patch, and add scp dts node patch.
+ - Add more reserved memory region.
+
+Changes from v7:
+ - Rebase onto https://lore.kernel.org/patchwork/patch/1059196/.
+ - Fix clock enable/disable timing for SCP driver.
+ - Add more SCP IPI ID.
+
+Changes from v6:
+ - Decouple mtk_rpmsg from mtk_scp.
+ - Change data of EC response to be aligned to 4 bytes.
+
+Changes from v5:
+ - Add device tree binding document for cros_ec_rpmsg.
+ - Better document in comments for cros_ec_rpmsg.
+ - Remove dependency on CONFIG_ in binding tree document.
+
+Changes from v4:
+ - Merge patch 6 (Load ELF firmware) into patch 2, so the driver loads
+   ELF firmware by default, and no longer accept plain binary.
+ - rpmsg_device listed in device tree (as a child of the SCP node) would
+   have it's device tree node mapped to the rpmsg_device, so the rpmsg
+   driver can use the properties on device tree.
+
+Changes from v3:
+ - Make writing to SCP SRAM aligned.
+ - Add a new patch (Patch 6) to load ELF instead of bin firmware.
+ - Add host event support for EC driver.
+ - Fix some bugs found in testing (missing spin_lock_init,
+   rproc_subdev_unprepare to rproc_subdev_stop).
+ - Fix some coding style issue found by checkpatch.pl.
+
+Changes from v2:
+ - Fold patch 3 into patch 2 in v2.
+ - Move IPI id around to support cross-testing for old and new firmware.
+ - Finish more TODO items.
+
+Changes from v1:
+ - Extract functions and rename variables in mtk_scp.c.
+ - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
+   short-lived work items.
+ - Code format fix based on feedback for cros_ec_rpmsg.c.
+ - Extract feature detection for SCP into separate patch (Patch 6).
+
+Eddie Huang (1):
+  arm64: dts: mt8183: add scp node
+
+Erin Lo (3):
+  dt-bindings: Add a binding for Mediatek SCP
+  remoteproc/mediatek: add SCP support for mt8183
+  remoteproc: mt8183: add reserved memory manager API
+
+Pi-Hsun Shih (1):
+  rpmsg: add rpmsg support for mt8183 SCP.
+
+ .../bindings/remoteproc/mtk,scp.txt           |  36 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |  11 +
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  12 +
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_common.h               |  92 +++
+ drivers/remoteproc/mtk_scp.c                  | 710 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_ipi.c              | 159 ++++
+ drivers/rpmsg/Kconfig                         |   9 +
+ drivers/rpmsg/Makefile                        |   1 +
+ drivers/rpmsg/mtk_rpmsg.c                     | 414 ++++++++++
+ include/linux/remoteproc/mtk_scp.h            | 168 +++++
+ include/linux/rpmsg/mtk_rpmsg.h               |  38 +
+ 13 files changed, 1661 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+ create mode 100644 drivers/remoteproc/mtk_common.h
+ create mode 100644 drivers/remoteproc/mtk_scp.c
+ create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+ create mode 100644 drivers/rpmsg/mtk_rpmsg.c
+ create mode 100644 include/linux/remoteproc/mtk_scp.h
+ create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
+
+-- 
+2.22.0.770.g0f2c4a37fd-goog
 
