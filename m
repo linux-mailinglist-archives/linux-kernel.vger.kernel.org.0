@@ -2,101 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7413484461
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 904668446E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 08:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfHGGQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 02:16:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59076 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbfHGGQY (ORCPT
+        id S1727011AbfHGGWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 02:22:46 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45616 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbfHGGWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 02:16:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jgzzL3I5x3/njtuj475AQreBKLX2Cy8dc4jfgocy1Bs=; b=kDdsER2lqFwDuw8/Pj+gJKAfOu
-        wto5AA07J0y3sTHNYKTaNW3ilKbPJXKNoonjXRfFzfm4OrJqGQGuxGi22zL4Be9QTrTXtLLcX6GtZ
-        0DQSK++jgm0gI4f9NFsWp9CMhq+l1o22F0L6K7ARNDnYSGwfff2WVcnA039DlgxHcLwxccUb2SKob
-        XwPvdWGI2z0+WTHfG35UElqatFf6b61GwEyUY1ZmdrQOe2wWphflBI8u3GYQvp8qDj2lXknyN/k1x
-        Jyjc8ItBEX2Mm+1YbRm3IsPXjxU1M2qWhoEGmyne4NU/AYpL6QBy7noeLp4THUD67/D5ctG2kuI5O
-        YO6pFdig==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvFF4-0007g0-Id; Wed, 07 Aug 2019 06:16:11 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org
-Cc:     Shawn Anastasio <shawn@anastas.io>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] MIPS: remove support for DMA_ATTR_WRITE_COMBINE
-Date:   Wed,  7 Aug 2019 09:16:02 +0300
-Message-Id: <20190807061602.31217-3-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190807061602.31217-1-hch@lst.de>
-References: <20190807061602.31217-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 7 Aug 2019 02:22:46 -0400
+Received: by mail-pl1-f196.google.com with SMTP id y8so39122151plr.12;
+        Tue, 06 Aug 2019 23:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=kPrp8nG0QEUeUMz0Ak8tH6QVQCe9QZAzvRu9tkMhvlo=;
+        b=gU1EKsK1Xyi6hcBW6jyVX8/FHdkfrg/w6z63scbu08I6eQ7OAaNRJPgW9ruJX4/Y+K
+         z2IlG3Rg9ftGpfxRuzTtAeQiZn7z1cPxoumMQSsF6F6cXwXGtDx0m2VWa0lB2BbfwNfM
+         u+iuU7VF0waiurTMx7rL876gKo4yT7AH1UDdc87OwayRN3VGyzsKdHylvAzzEGOk740i
+         +ctWa4dcQsWKWHqdhTApg7mhRAsV0llo6gh24iycRdfyuq5NKMAYTVx4EL0RK6exYjYg
+         HN71UKBcPweK27Vas50YA4tT3EVPrWkvFVuokAZck0OFCvTgYcp9/gGNZ2mQR99SXUjQ
+         XHbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=kPrp8nG0QEUeUMz0Ak8tH6QVQCe9QZAzvRu9tkMhvlo=;
+        b=V200gw/fB0GtTWgenOQe0NLO607rf6IBAbastK0cqO4QQlAk85VuzAnsVPIeGAfy2c
+         5KxrdevuhdzTCFIEHuKup/pUw4J0iBjnmcRt2bapa8uaBp21OBjQ94b46Mlfbh6395Vx
+         nX2tfWhKTOON+LkGKXyem63fNL9RI8rBAUPah127z7baD74/+Pe+K+JmNbKggXxUQDPj
+         NvdDJFY7f/Kxb14ZQKEhzlGCnzbYG/kcWxt86ecuL5McjWMVMpQSLtBv/9vq3mIg/V+S
+         XRg0xcneDKC3xW6USMbunrXuYk1Vloju8cBO/XNXcVhjBzx1kJ3JB2yrZxdiXlXtKEum
+         8nIg==
+X-Gm-Message-State: APjAAAWqeWSMzpWTowb4AhraqCgmj3znVwR+rAPgJppw9CEQoSCpVyzG
+        nWfV0ioqbiSfbOSbJeEJU1U=
+X-Google-Smtp-Source: APXvYqxSbOLXgQl6/SQk96QnmwJwXxYdXa/z4z0jNJd2HaSUW02GPmODddxX9YrVdZTnTWGGTmJC1w==
+X-Received: by 2002:aa7:81d9:: with SMTP id c25mr7795660pfn.255.1565158965373;
+        Tue, 06 Aug 2019 23:22:45 -0700 (PDT)
+Received: from localhost.localdomain (unknown-224-80.windriver.com. [147.11.224.80])
+        by smtp.gmail.com with ESMTPSA id 85sm95310585pfv.130.2019.08.06.23.22.44
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Tue, 06 Aug 2019 23:22:44 -0700 (PDT)
+From:   Bin Meng <bmeng.cn@gmail.com>
+To:     Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH] riscv: dts: sifive: Add missing "clock-frequency" to cpu0/cpu1 nodes
+Date:   Tue,  6 Aug 2019 23:22:40 -0700
+Message-Id: <1565158960-12240-1-git-send-email-bmeng.cn@gmail.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mips uses the KSEG1 kernel memory segment to map dma coherent
-allocations for non-coherent devices as uncacheable, and does not have
-any kind of special support for DMA_ATTR_WRITE_COMBINE in the allocation
-path.  Thus supporting DMA_ATTR_WRITE_COMBINE in dma_mmap_attrs will
-lead to multiple mappings with different caching attributes.
+Add the missing "clock-frequency" property to the cpu0/cpu1 nodes
+for consistency with other cpu nodes.
 
-Fixes: 8c172467be36 ("MIPS: Add implementation of dma_map_ops.mmap()")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
 ---
- arch/mips/Kconfig              | 1 -
- arch/mips/mm/dma-noncoherent.c | 8 --------
- 2 files changed, 9 deletions(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index d50fafd7bf3a..86e6760ef0d0 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -1119,7 +1119,6 @@ config DMA_PERDEV_COHERENT
- 
- config DMA_NONCOHERENT
- 	bool
--	select ARCH_HAS_DMA_MMAP_PGPROT
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_HAS_UNCACHED_SEGMENT
- 	select NEED_DMA_MAP_STATE
-diff --git a/arch/mips/mm/dma-noncoherent.c b/arch/mips/mm/dma-noncoherent.c
-index ed56c6fa7be2..1d4d57dd9acf 100644
---- a/arch/mips/mm/dma-noncoherent.c
-+++ b/arch/mips/mm/dma-noncoherent.c
-@@ -65,14 +65,6 @@ long arch_dma_coherent_to_pfn(struct device *dev, void *cpu_addr,
- 	return page_to_pfn(virt_to_page(cached_kernel_address(cpu_addr)));
- }
- 
--pgprot_t arch_dma_mmap_pgprot(struct device *dev, pgprot_t prot,
--		unsigned long attrs)
--{
--	if (attrs & DMA_ATTR_WRITE_COMBINE)
--		return pgprot_writecombine(prot);
--	return pgprot_noncached(prot);
--}
--
- static inline void dma_sync_virt(void *addr, size_t size,
- 		enum dma_data_direction dir)
- {
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+index 42b5ec2..4befc70 100644
+--- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
++++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+@@ -22,6 +22,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		cpu0: cpu@0 {
++			clock-frequency = <0>;
+ 			compatible = "sifive,e51", "sifive,rocket0", "riscv";
+ 			device_type = "cpu";
+ 			i-cache-block-size = <64>;
+@@ -37,6 +38,7 @@
+ 			};
+ 		};
+ 		cpu1: cpu@1 {
++			clock-frequency = <0>;
+ 			compatible = "sifive,u54-mc", "sifive,rocket0", "riscv";
+ 			d-cache-block-size = <64>;
+ 			d-cache-sets = <64>;
 -- 
-2.20.1
+2.7.4
 
