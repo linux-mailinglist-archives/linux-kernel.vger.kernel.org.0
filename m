@@ -2,119 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1D78568A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 01:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 761998568E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 01:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389552AbfHGXhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 19:37:51 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:26972 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389313AbfHGXht (ORCPT
+        id S2389229AbfHGXmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 19:42:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49378 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388412AbfHGXmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 19:37:49 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x77NXVX3019171
-        for <linux-kernel@vger.kernel.org>; Wed, 7 Aug 2019 16:37:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=NLo+kUCCETQ4ngAnRD6GoEVLB9ZFwANLd+99Aj/UcOA=;
- b=AiQRTnJEbjw7LPcoxeULFKcunsOEME5Pa3F/2vM5Z9o8A3yN9qTXLKIB/3rnvNWQ8nZu
- sOMS9zfVMpLXOYDv9k4kRFAlFmBMPneHXCSFPkWPqqVTKwhMRfVADDQPtWwgXI+FDvIZ
- 8gqnyjsfz/2Qj4ewiFp+jTqSEDDmofuEZ70= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2u87ueg40g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 16:37:48 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Wed, 7 Aug 2019 16:37:47 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 8712062E2D9E; Wed,  7 Aug 2019 16:37:45 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <akpm@linux-foundation.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <oleg@redhat.com>, <kernel-team@fb.com>,
-        <william.kucharski@oracle.com>, <srikar@linux.vnet.ibm.com>,
-        Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v12 6/6] uprobe: collapse THP pmd after removing all uprobes
-Date:   Wed, 7 Aug 2019 16:37:29 -0700
-Message-ID: <20190807233729.3899352-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190807233729.3899352-1-songliubraving@fb.com>
-References: <20190807233729.3899352-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Wed, 7 Aug 2019 19:42:01 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x77NadUW158861;
+        Wed, 7 Aug 2019 19:41:27 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u87072xr7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 19:41:27 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x77NdCMP164069;
+        Wed, 7 Aug 2019 19:41:26 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u87072xqs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 19:41:26 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x77Ne7Xr030667;
+        Wed, 7 Aug 2019 23:41:25 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma01dal.us.ibm.com with ESMTP id 2u51w7b4sc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 23:41:25 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x77NfPBl44957986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Aug 2019 23:41:25 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1B3C6B2065;
+        Wed,  7 Aug 2019 23:41:25 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F1940B205F;
+        Wed,  7 Aug 2019 23:41:24 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  7 Aug 2019 23:41:24 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 08E1A16C9A4E; Wed,  7 Aug 2019 16:41:26 -0700 (PDT)
+Date:   Wed, 7 Aug 2019 16:41:25 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Ethan Hansen <1ethanhansen@gmail.com>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave@stgolabs.net, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 1/1] rcu: Remove unused variable
+ rcu_perf_writer_state
+Message-ID: <20190807234125.GK28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <1565220415-3070-1-git-send-email-1ethanhansen@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1565220415-3070-1-git-send-email-1ethanhansen@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-07_07:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=427 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908070208
-X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After all uprobes are removed from the huge page (with PTE pgtable), it
-is possible to collapse the pmd and benefit from THP again. This patch
-does the collapse by calling collapse_pte_mapped_thp().
+On Wed, Aug 07, 2019 at 04:26:55PM -0700, Ethan Hansen wrote:
+> The variable rcu_perf_writer_state is declared and initialized,
+> but is never actually referenced. Remove it to clean code.
+> 
+> Signed-off-by: Ethan Hansen <1ethanhansen@gmail.com>
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- kernel/events/uprobes.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Good eyes, thank you!  One question below.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 27b596f14463..94d38a39d72e 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -26,6 +26,7 @@
- #include <linux/percpu-rwsem.h>
- #include <linux/task_work.h>
- #include <linux/shmem_fs.h>
-+#include <linux/khugepaged.h>
- 
- #include <linux/uprobes.h>
- 
-@@ -472,6 +473,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	struct page *old_page, *new_page;
- 	struct vm_area_struct *vma;
- 	int ret, is_register, ref_ctr_updated = 0;
-+	bool orig_page_huge = false;
- 
- 	is_register = is_swbp_insn(&opcode);
- 	uprobe = container_of(auprobe, struct uprobe, arch);
-@@ -529,6 +531,9 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 				/* let go new_page */
- 				put_page(new_page);
- 				new_page = NULL;
-+
-+				if (PageCompound(orig_page))
-+					orig_page_huge = true;
- 			}
- 			put_page(orig_page);
- 		}
-@@ -547,6 +552,10 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	if (ret && is_register && ref_ctr_updated)
- 		update_ref_ctr(uprobe, mm, -1);
- 
-+	/* try collapse pmd for compound page */
-+	if (!ret && orig_page_huge)
-+		collapse_pte_mapped_thp(mm, vaddr);
-+
- 	return ret;
- }
- 
--- 
-2.17.1
+							Thanx, Paul
 
+> ---
+>  kernel/rcu/rcuperf.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+> index 5a879d0..ff02936 100644
+> --- a/kernel/rcu/rcuperf.c
+> +++ b/kernel/rcu/rcuperf.c
+> @@ -109,7 +109,6 @@
+>  static unsigned long b_rcu_perf_writer_finished;
+>  static DEFINE_PER_CPU(atomic_t, n_async_inflight);
+>  
+> -static int rcu_perf_writer_state;
+>  #define RTWS_INIT		0
+>  #define RTWS_ASYNC		1
+>  #define RTWS_BARRIER		2
+
+Does removing this variable also mean that the RTWS_* C preprocessor
+macros are now unused?
+
+> @@ -404,25 +403,20 @@ static void rcu_perf_async_cb(struct rcu_head *rhp)
+>  			if (!rhp)
+>  				rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
+>  			if (rhp && atomic_read(this_cpu_ptr(&n_async_inflight)) < gp_async_max) {
+> -				rcu_perf_writer_state = RTWS_ASYNC;
+>  				atomic_inc(this_cpu_ptr(&n_async_inflight));
+>  				cur_ops->async(rhp, rcu_perf_async_cb);
+>  				rhp = NULL;
+>  			} else if (!kthread_should_stop()) {
+> -				rcu_perf_writer_state = RTWS_BARRIER;
+>  				cur_ops->gp_barrier();
+>  				goto retry;
+>  			} else {
+>  				kfree(rhp); /* Because we are stopping. */
+>  			}
+>  		} else if (gp_exp) {
+> -			rcu_perf_writer_state = RTWS_EXP_SYNC;
+>  			cur_ops->exp_sync();
+>  		} else {
+> -			rcu_perf_writer_state = RTWS_SYNC;
+>  			cur_ops->sync();
+>  		}
+> -		rcu_perf_writer_state = RTWS_IDLE;
+>  		t = ktime_get_mono_fast_ns();
+>  		*wdp = t - *wdp;
+>  		i_max = i;
+> @@ -463,10 +457,8 @@ static void rcu_perf_async_cb(struct rcu_head *rhp)
+>  		rcu_perf_wait_shutdown();
+>  	} while (!torture_must_stop());
+>  	if (gp_async) {
+> -		rcu_perf_writer_state = RTWS_BARRIER;
+>  		cur_ops->gp_barrier();
+>  	}
+> -	rcu_perf_writer_state = RTWS_STOPPING;
+>  	writer_n_durations[me] = i_max;
+>  	torture_kthread_stopping("rcu_perf_writer");
+>  	return 0;
+> -- 
+> 1.8.3.1
+> 
