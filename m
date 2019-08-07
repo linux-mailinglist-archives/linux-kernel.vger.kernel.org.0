@@ -2,75 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D44B585105
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA01585121
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:33:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388948AbfHGQZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:25:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388872AbfHGQZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:25:24 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AFDC21E6C;
-        Wed,  7 Aug 2019 16:25:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565195123;
-        bh=0YJZhuxybSXfTkrCYn3Xq0KGSSk6fV3f+W6vMNvDpIo=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=xxVnRE5hOwWszr8d7hmgxpcd3U6DLyNPQgnZuXmjWxvAOfLAKRv1FROVRlg75X2Qs
-         V+9FBbYiSwf2h0XTQxXhf2vOzEqhj8onXxo4EmV4tR374jNXg+PqUaheXd74f6t1I0
-         wWFPCiXzlK4rtKwEbVPxtb4nM13sBmT084HKsMMQ=
-Subject: Re: [PATCH v2] selftests: kvm: Adding config fragments
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        linux-kernel@vger.kernel.org, drjones@redhat.com,
-        sean.j.christopherson@intel.com, linux-kselftest@vger.kernel.org,
-        kvm@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190807135814.12906-1-naresh.kamboju@linaro.org>
- <b6b4f179-1fef-65db-8125-fa60e3627656@kernel.org>
- <769e7d1c-c3d4-278a-d623-3a1366065fb6@redhat.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <ace07599-7805-a75f-3af2-b61a5fb4053b@kernel.org>
-Date:   Wed, 7 Aug 2019 10:25:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730118AbfHGQdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:33:51 -0400
+Received: from gateway30.websitewelcome.com ([192.185.152.11]:20328 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729278AbfHGQdu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 12:33:50 -0400
+X-Greylist: delayed 1232 seconds by postgrey-1.27 at vger.kernel.org; Wed, 07 Aug 2019 12:33:49 EDT
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 81769183F2
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2019 11:13:16 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id vOYuh80BD4FKpvOYuhG78f; Wed, 07 Aug 2019 11:13:16 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RDLih2xLWqp+jClGe6quPxx2j3NmBQT7gXxnFLBcjPI=; b=IhyWC51nLhTrjc3Vu16cl6sJ2G
+        s9ltt4Pt+NqZlV9CIrKWPURUTLN8cPdvJ0HvpO5m1CsjLff9dgV/lP9thSiNTZJbBUslbCrJHHYhc
+        p4nMhqr/IOSY5a/guns9P49UhBLpexJrh3kDoShOrDRw4LczwgjN3lOp+tj340g3v+o9TZ8iw5k+f
+        NusgwMbGUySHojHyu+VDpevlDA4y77iu9KgCcmkINyyprQrScRVY7n/PsaapB74U/dQbW1TFc26nm
+        QBzuWEHaA+dNdwxXH6Jt2y1zIsXvZ5txKv7D34NGHHrkWYiLiq29TdiywNlRiSqQlwAENCxm3E+Xz
+        /OMfnK4Q==;
+Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:45386 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hvOYt-000bPc-21; Wed, 07 Aug 2019 11:13:15 -0500
+Date:   Wed, 7 Aug 2019 11:13:12 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] video: fbdev/mmp/core: Use struct_size() in kzalloc()
+Message-ID: <20190807161312.GA26835@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <769e7d1c-c3d4-278a-d623-3a1366065fb6@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.252.62
+X-Source-L: No
+X-Exim-ID: 1hvOYt-000bPc-21
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:45386
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/7/19 10:19 AM, Paolo Bonzini wrote:
-> On 07/08/19 17:52, shuah wrote:
->>
->>
->> On 8/7/19 7:58 AM, Naresh Kamboju wrote:
->>> selftests kvm test cases need pre-required kernel configs for the test
->>> to get pass.
->>>
->>
->> Can you elaborate and add more information on which tests fail without
->> these configs. I am all for adding configs, however I would like to
->> see more information explaining which tests don't pass without this
->> change.
-> 
-> The KVM tests are skipped without these configs:
-> 
->          dev_fd = open(KVM_DEV_PATH, O_RDONLY);
->          if (dev_fd < 0)
->                  exit(KSFT_SKIP);
-> 
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Thanks Paolo!
+struct mmp_path {
+	...
+        struct mmp_overlay overlays[0];
+};
 
-This would be great info. to add to the commit log.
+size = sizeof(struct mmp_path) + count * sizeof(struct mmp_overlay);
+instance = kzalloc(size, GFP_KERNEL)
 
-thanks,
--- Shuah
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = kzalloc(struct_size(instance, overlays, count), GFP_KERNEL)
+
+Notice that, in this case, variable size is not necessary, hence it
+is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/video/fbdev/mmp/core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/video/fbdev/mmp/core.c b/drivers/video/fbdev/mmp/core.c
+index 0ffc1b7b7052..154127256a2c 100644
+--- a/drivers/video/fbdev/mmp/core.c
++++ b/drivers/video/fbdev/mmp/core.c
+@@ -153,13 +153,11 @@ EXPORT_SYMBOL_GPL(mmp_get_path);
+ struct mmp_path *mmp_register_path(struct mmp_path_info *info)
+ {
+ 	int i;
+-	size_t size;
+ 	struct mmp_path *path = NULL;
+ 	struct mmp_panel *panel;
+ 
+-	size = sizeof(struct mmp_path)
+-		+ sizeof(struct mmp_overlay) * info->overlay_num;
+-	path = kzalloc(size, GFP_KERNEL);
++	path = kzalloc(struct_size(path, overlays, info->overlay_num),
++		       GFP_KERNEL);
+ 	if (!path)
+ 		return NULL;
+ 
+-- 
+2.22.0
+
