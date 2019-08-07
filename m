@@ -2,116 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FC9083E65
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 02:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 817F183E6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 02:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbfHGAdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 20:33:45 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:35214 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726340AbfHGAdp (ORCPT
+        id S1727625AbfHGAft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 20:35:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2580 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726419AbfHGAfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 20:33:45 -0400
-X-UUID: 37262de7528f4ec0ae64e19c3aa12211-20190807
-X-UUID: 37262de7528f4ec0ae64e19c3aa12211-20190807
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 48035339; Wed, 07 Aug 2019 08:33:37 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 7 Aug 2019 08:33:37 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 7 Aug 2019 08:33:37 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Mark Rutland <Mark.rutland@arm.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        James Morse <james.morse@arm.com>
-Subject: [PATCH v2] arm64: mm: print hexadecimal EC value in mem_abort_decode()
-Date:   Wed, 7 Aug 2019 08:33:36 +0800
-Message-ID: <20190807003336.28040-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        Tue, 6 Aug 2019 20:35:48 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x770VxAX064711;
+        Tue, 6 Aug 2019 20:35:03 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7hf851he-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Aug 2019 20:35:03 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x770W0Gl064841;
+        Tue, 6 Aug 2019 20:35:02 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u7hf851h0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Aug 2019 20:35:02 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x770UJoq032480;
+        Wed, 7 Aug 2019 00:35:01 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma02wdc.us.ibm.com with ESMTP id 2u51w633kc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Aug 2019 00:35:01 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x770Z1HA31654150
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Aug 2019 00:35:01 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D48EB205F;
+        Wed,  7 Aug 2019 00:35:01 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E38A6B2064;
+        Wed,  7 Aug 2019 00:35:00 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  7 Aug 2019 00:35:00 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id EBEE716C35DB; Tue,  6 Aug 2019 17:35:01 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 17:35:01 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com
+Subject: Re: [PATCH RFC tip/core/rcu 02/14] rcu/nocb: Add bypass callback
+ queueing
+Message-ID: <20190807003501.GX28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190802151435.GA1081@linux.ibm.com>
+ <20190802151501.13069-2-paulmck@linux.ibm.com>
+ <20190807000313.GA161170@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807000313.GA161170@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-06_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908070002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change prints the hexadecimal EC value in mem_abort_decode(),
-which makes it easier to lookup the corresponding EC in
-the ARM Architecture Reference Manual.
+On Tue, Aug 06, 2019 at 08:03:13PM -0400, Joel Fernandes wrote:
+> On Fri, Aug 02, 2019 at 08:14:49AM -0700, Paul E. McKenney wrote:
+> > Use of the rcu_data structure's segmented ->cblist for no-CBs CPUs
+> > takes advantage of unrelated grace periods, thus reducing the memory
+> > footprint in the face of floods of call_rcu() invocations.  However,
+> > the ->cblist field is a more-complex rcu_segcblist structure which must
+> > be protected via locking.  Even though there are only three entities
+> > which can acquire this lock (the CPU invoking call_rcu(), the no-CBs
+> > grace-period kthread, and the no-CBs callbacks kthread), the contention
+> > on this lock is excessive under heavy stress.
+> > 
+> > This commit therefore greatly reduces contention by provisioning
+> > an rcu_cblist structure field named ->nocb_bypass within the
+> > rcu_data structure.  Each no-CBs CPU is permitted only a limited
+> > number of enqueues onto the ->cblist per jiffy, controlled by a new
+> > nocb_nobypass_lim_per_jiffy kernel boot parameter that defaults to
+> > about 16 enqueues per millisecond (16 * 1000 / HZ).  When that limit is
+> > exceeded, the CPU instead enqueues onto the new ->nocb_bypass.
+> 
+> Looks quite interesting. I am guessing the not-no-CB (regular) enqueues don't
+> need to use the same technique because both enqueues / callback execution are
+> happening on same CPU..
 
-The commit 1f9b8936f36f ("arm64: Decode information from ESR upon mem
-faults") prints useful information when memory abort occurs. It would
-be easier to lookup "0x25" instead of "DABT" in the document. Then we
-can check the corresponding ISS.
+That is the theory!  ;-)
 
-For example:
-Current	info	  	Document
-		  	EC	Exception class
-"CP15 MCR/MRC"		0x3	"MCR or MRC access to CP15a..."
-"ASIMD"			0x7	"Access to SIMD or floating-point..."
-"DABT (current EL)" 	0x25	"Data Abort taken without..."
-...
+> Still looking through patch but I understood the basic idea. Some nits below:
+> 
+> [snip]
+> > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+> > index 2c3e9068671c..e4df86db8137 100644
+> > --- a/kernel/rcu/tree.h
+> > +++ b/kernel/rcu/tree.h
+> > @@ -200,18 +200,26 @@ struct rcu_data {
+> >  	atomic_t nocb_lock_contended;	/* Contention experienced. */
+> >  	int nocb_defer_wakeup;		/* Defer wakeup of nocb_kthread. */
+> >  	struct timer_list nocb_timer;	/* Enforce finite deferral. */
+> > +	unsigned long nocb_gp_adv_time;	/* Last call_rcu() CB adv (jiffies). */
+> > +
+> > +	/* The following fields are used by call_rcu, hence own cacheline. */
+> > +	raw_spinlock_t nocb_bypass_lock ____cacheline_internodealigned_in_smp;
+> > +	struct rcu_cblist nocb_bypass;	/* Lock-contention-bypass CB list. */
+> > +	unsigned long nocb_bypass_first; /* Time (jiffies) of first enqueue. */
+> > +	unsigned long nocb_nobypass_last; /* Last ->cblist enqueue (jiffies). */
+> > +	int nocb_nobypass_count;	/* # ->cblist enqueues at ^^^ time. */
+> 
+> Can these and below fields be ifdef'd out if !CONFIG_RCU_NOCB_CPU so as to
+> keep the size of struct smaller for benefit of systems that don't use NOCB?
 
-Before:
-Unable to handle kernel paging request at virtual address 000000000000c000
-Mem abort info:
-  ESR = 0x96000046
-  Exception class = DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-Data abort info:
-  ISV = 0, ISS = 0x00000046
-  CM = 0, WnR = 1
+Please see below...
 
-After:
-Unable to handle kernel paging request at virtual address 000000000000c000
-Mem abort info:
-  ESR = 0x96000046
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-Data abort info:
-  ISV = 0, ISS = 0x00000046
-  CM = 0, WnR = 1
+> >  	/* The following fields are used by GP kthread, hence own cacheline. */
+> >  	raw_spinlock_t nocb_gp_lock ____cacheline_internodealigned_in_smp;
+> > -	bool nocb_gp_sleep;
+> > -					/* Is the nocb GP thread asleep? */
+> > +	struct timer_list nocb_bypass_timer; /* Force nocb_bypass flush. */
+> > +	bool nocb_gp_sleep;		/* Is the nocb GP thread asleep? */
+> 
+> And these too, I think.
+> 
+> 
+> >  	struct swait_queue_head nocb_gp_wq; /* For nocb kthreads to sleep on. */
+> >  	bool nocb_cb_sleep;		/* Is the nocb CB thread asleep? */
+> >  	struct task_struct *nocb_cb_kthread;
+> >  	struct rcu_data *nocb_next_cb_rdp;
+> >  					/* Next rcu_data in wakeup chain. */
+> >  
+> > -	/* The following fields are used by CB kthread, hence new cachline. */
+> > +	/* The following fields are used by CB kthread, hence new cacheline. */
+> >  	struct rcu_data *nocb_gp_rdp ____cacheline_internodealigned_in_smp;
+> >  					/* GP rdp takes GP-end wakeups. */
+> >  #endif /* #ifdef CONFIG_RCU_NOCB_CPU */
 
-Change since v1:
-print "EC" instead of "Exception class"
-print EC in fixwidth
+I believe that they in fact are all under CONFIG_RCU_NOCB_CPU.
 
-Cc: Mark Rutland <Mark.rutland@arm.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
----
- arch/arm64/mm/fault.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> [snip]
+> > +static void rcu_nocb_try_flush_bypass(struct rcu_data *rdp, unsigned long j)
+> > +{
+> > +	rcu_lockdep_assert_cblist_protected(rdp);
+> > +	if (!rcu_segcblist_is_offloaded(&rdp->cblist) ||
+> > +	    !rcu_nocb_bypass_trylock(rdp))
+> > +		return;
+> > +	WARN_ON_ONCE(!rcu_nocb_do_flush_bypass(rdp, NULL, j));
+> > +}
+> > +
+> > +/*
+> > + * See whether it is appropriate to use the ->nocb_bypass list in order
+> > + * to control contention on ->nocb_lock.  A limited number of direct
+> > + * enqueues are permitted into ->cblist per jiffy.  If ->nocb_bypass
+> > + * is non-empty, further callbacks must be placed into ->nocb_bypass,
+> > + * otherwise rcu_barrier() breaks.  Use rcu_nocb_flush_bypass() to switch
+> > + * back to direct use of ->cblist.  However, ->nocb_bypass should not be
+> > + * used if ->cblist is empty, because otherwise callbacks can be stranded
+> > + * on ->nocb_bypass because we cannot count on the current CPU ever again
+> > + * invoking call_rcu().  The general rule is that if ->nocb_bypass is
+> > + * non-empty, the corresponding no-CBs grace-period kthread must not be
+> > + * in an indefinite sleep state.
+> > + *
+> > + * Finally, it is not permitted to use the bypass during early boot,
+> > + * as doing so would confuse the auto-initialization code.  Besides
+> > + * which, there is no point in worrying about lock contention while
+> > + * there is only one CPU in operation.
+> > + */
+> > +static bool rcu_nocb_try_bypass(struct rcu_data *rdp, struct rcu_head *rhp,
+> > +				bool *was_alldone, unsigned long flags)
+> > +{
+> > +	unsigned long c;
+> > +	unsigned long cur_gp_seq;
+> > +	unsigned long j = jiffies;
+> > +	long ncbs = rcu_cblist_n_cbs(&rdp->nocb_bypass);
+> > +
+> > +	if (!rcu_segcblist_is_offloaded(&rdp->cblist)) {
+> > +		*was_alldone = !rcu_segcblist_pend_cbs(&rdp->cblist);
+> > +		return false; /* Not offloaded, no bypassing. */
+> > +	}
+> > +	lockdep_assert_irqs_disabled();
+> > +
+> > +	// Don't use ->nocb_bypass during early boot.
+> 
+> Very minor nit: comment style should be /* */
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index cfd65b63f36f..ad4980a27edb 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -86,8 +86,8 @@ static void mem_abort_decode(unsigned int esr)
- 	pr_alert("Mem abort info:\n");
- 
- 	pr_alert("  ESR = 0x%08x\n", esr);
--	pr_alert("  Exception class = %s, IL = %u bits\n",
--		 esr_get_class_string(esr),
-+	pr_alert("  EC = 0x%02lx: %s, IL = %u bits\n",
-+		 ESR_ELx_EC(esr), esr_get_class_string(esr),
- 		 (esr & ESR_ELx_IL) ? 32 : 16);
- 	pr_alert("  SET = %lu, FnV = %lu\n",
- 		 (esr & ESR_ELx_SET_MASK) >> ESR_ELx_SET_SHIFT,
--- 
-2.18.0
+I thought that Linus said that "//" was now OK.  Am I confused?
 
+							Thanx, Paul
