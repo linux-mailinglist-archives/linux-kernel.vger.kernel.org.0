@@ -2,77 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 830178428B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC7284297
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:41:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbfHGCiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 22:38:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39762 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726331AbfHGCiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:38:11 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B72A521743;
-        Wed,  7 Aug 2019 02:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565145490;
-        bh=W5nsUZDTO0AqSSaVtlsS+i6EdJob7D409bMHK7rbsMw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XOQM/dkmUt+UV3+/cGe+O7uNKBjdx/sc9Ox51IjW6WH0X8JU9QaGum/sN9BZ3b5jG
-         LCSv89jjjheB9JKxCQF8VQj56HNDg/iqpf/AJOcpCPO3sVmRVOmwnFS4pOO+PElxKf
-         NPKopJqW3oBLrgBwPgrmbnigvmFwrl/M1N8oNphY=
-Date:   Tue, 6 Aug 2019 22:38:08 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        syzbot+d952e5e28f5fb7718d23@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH 5.2 03/20] ALSA: usb-audio: Sanity checks for each pipe
- and EP types
-Message-ID: <20190807023808.GS17747@sasha-vm>
-References: <20190802092055.131876977@linuxfoundation.org>
- <20190802092058.248343532@linuxfoundation.org>
- <20190802134828.GA797@sasha-vm>
- <20190802155154.GA28398@kroah.com>
+        id S1727807AbfHGClA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 22:41:00 -0400
+Received: from gateway36.websitewelcome.com ([192.185.184.18]:35030 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727087AbfHGClA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 22:41:00 -0400
+X-Greylist: delayed 1220 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Aug 2019 22:40:59 EDT
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 138C8400DD465
+        for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2019 20:45:12 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id vBZ6hGNKy2qH7vBZ6hH9GX; Tue, 06 Aug 2019 21:20:36 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=pUxBPsNGWxsRsB7NDgN9eNAS2Hr1pQIZdhHSWzXdg+w=; b=aj9oX8mRps4i4Vhhlaip9MvCwH
+        n2TJQa2tPHp0yCeXUx7ubaJqt3ATHJtoTvFuL15E4IgEQMGX/PUeO4iP2SW4oYPRJz4KKxuJEZdSb
+        sRxpyrEXo+RfUuXFO88hjlGQaiccBvOoaFSfdwUU49SrzJPQINVdQ5IV6DnsvV/0j6EluduHYoxlp
+        iDhS4kdR+KGwXgABQZOCgh9Q/LiCk64Woy0YKhLO6A1C0x1NQMdvxcUU0op67QdgkTtP7ayZCBHCt
+        OF1DBsN5XDVz5WAqzoMDYhuq1E2CKQzs2DzEd60lRzXakFzJc2RUogetxMCSFhJoS2JMGE5IaXAFS
+        hrNBd60A==;
+Received: from [187.192.11.120] (port=51758 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hvBZ4-001ybs-Ge; Tue, 06 Aug 2019 21:20:35 -0500
+Date:   Tue, 6 Aug 2019 21:20:33 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Xiong Zhang <xiong.y.zhang@intel.com>
+Cc:     intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/i915/gvt: Fix use-after-free in
+ intel_vgpu_create_workload
+Message-ID: <20190807022033.GA22623@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190802155154.GA28398@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hvBZ4-001ybs-Ge
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:51758
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 05:51:54PM +0200, Greg Kroah-Hartman wrote:
->On Fri, Aug 02, 2019 at 09:48:28AM -0400, Sasha Levin wrote:
->> On Fri, Aug 02, 2019 at 11:39:57AM +0200, Greg Kroah-Hartman wrote:
->> > From: Takashi Iwai <tiwai@suse.de>
->> >
->> > commit 801ebf1043ae7b182588554cc9b9ad3c14bc2ab5 upstream.
->> >
->> > The recent USB core code performs sanity checks for the given pipe and
->> > EP types, and it can be hit by manipulated USB descriptors by syzbot.
->> > For making syzbot happier, this patch introduces a local helper for a
->> > sanity check in the driver side and calls it at each place before the
->> > message handling, so that we can avoid the WARNING splats.
->> >
->> > Reported-by: syzbot+d952e5e28f5fb7718d23@syzkaller.appspotmail.com
->> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
->> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>
->> This commit has a fix: 5d78e1c2b7f4b ("ALSA: usb-audio: Fix gpf in
->> snd_usb_pipe_sanity_check") which was not pulled by Linus yet.
->>
->> I'm going to drop this commit and re-queue it together with it's fix
->> once it makes it upstream.
->
->Ah, thanks for doing that.
+kmem_cache_free() frees *workload*, hence there is a use-after-free bug
+when calling function gvt_vgpu_err().
 
-Now queued these two commits for 5.2.
+Fix this by storing the value of workload->wa_ctx.indirect_ctx.guest_gma
+and workload->wa_ctx.per_ctx.guest_gma into automatic variable
+guest_gma before freeing *workload*, for its further use.
 
---
-Thanks,
-Sasha
+Addresses-Coverity-ID: 1452235 ("Read from pointer after free")
+Fixes: 2089a76ade90 ("drm/i915/gvt: Checking workload's gma earlier")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/i915/gvt/scheduler.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/scheduler.c b/drivers/gpu/drm/i915/gvt/scheduler.c
+index 32ae6b5b7e16..c8cdb4a309f6 100644
+--- a/drivers/gpu/drm/i915/gvt/scheduler.c
++++ b/drivers/gpu/drm/i915/gvt/scheduler.c
+@@ -1525,9 +1525,11 @@ intel_vgpu_create_workload(struct intel_vgpu *vgpu, int ring_id,
+ 			if (!intel_gvt_ggtt_validate_range(vgpu,
+ 				workload->wa_ctx.indirect_ctx.guest_gma,
+ 				workload->wa_ctx.indirect_ctx.size)) {
++				unsigned long guest_gma =
++				       workload->wa_ctx.indirect_ctx.guest_gma;
+ 				kmem_cache_free(s->workloads, workload);
+ 				gvt_vgpu_err("invalid wa_ctx at: 0x%lx\n",
+-				    workload->wa_ctx.indirect_ctx.guest_gma);
++					     guest_gma);
+ 				return ERR_PTR(-EINVAL);
+ 			}
+ 		}
+@@ -1539,9 +1541,11 @@ intel_vgpu_create_workload(struct intel_vgpu *vgpu, int ring_id,
+ 			if (!intel_gvt_ggtt_validate_range(vgpu,
+ 				workload->wa_ctx.per_ctx.guest_gma,
+ 				CACHELINE_BYTES)) {
++				unsigned long guest_gma =
++					workload->wa_ctx.per_ctx.guest_gma;
+ 				kmem_cache_free(s->workloads, workload);
+ 				gvt_vgpu_err("invalid per_ctx at: 0x%lx\n",
+-					workload->wa_ctx.per_ctx.guest_gma);
++					     guest_gma);
+ 				return ERR_PTR(-EINVAL);
+ 			}
+ 		}
+-- 
+2.22.0
+
