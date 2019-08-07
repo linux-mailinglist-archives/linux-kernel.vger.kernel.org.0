@@ -2,94 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F58484261
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C58284269
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbfHGCVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 22:21:32 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52450 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728772AbfHGCVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:21:32 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AACF389BD91E6628DD48;
-        Wed,  7 Aug 2019 10:21:29 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 7 Aug 2019
- 10:21:23 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <j.vosburgh@gmail.com>, <vfalico@gmail.com>, <andy@greyhouse.net>,
-        <davem@davemloft.net>, <jiri@resnulli.us>,
-        <jay.vosburgh@canonical.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2] bonding: Add vlan tx offload to hw_enc_features
-Date:   Wed, 7 Aug 2019 10:19:59 +0800
-Message-ID: <20190807021959.58572-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        id S1729544AbfHGCYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 22:24:01 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42260 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728772AbfHGCYA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 22:24:00 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t132so42595311pgb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 19:24:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=pkL8MY9zC5v+zrBda/zPQm0g3an3ptjtpVdI7jzPVfs=;
+        b=hcewzGRW803/McXeTj5WrIwfjtIILcuMOhhJI0+XH2tVg9fxh/5KolBT0x1b5T51+R
+         XQ7IzrsxAVtHeyFEBDzoK5YSDcR82uErm3bVWGbHKSg1K4zRos0VapMK+1uxdw/foioe
+         8U99TG1Qn/sp68fFKtdn6NTCKGlwrmX0NtkvzSDWUbbHDKqXSrIiBsfWxTVkj/N/HyjT
+         iBlOtyfqcbF00/ppnxcHXZDVoeccewmF/JIELCQ0/o5INRAL4oHH+C/PTBqw4XC3Tb6P
+         RFC6O+PCswW6u79cxA/A/infPSvko1boCXwi+HBSH6bCnN9eOji0e8EqlqN67zYuqmqS
+         OzHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=pkL8MY9zC5v+zrBda/zPQm0g3an3ptjtpVdI7jzPVfs=;
+        b=KbdMT4p1LDPXqWM8ve2yWayrbnEBBNHokHjOBD9RKAg4+uFQmcsmbemybzBIe0UIpd
+         SLk5v/AqZHmlM5Qvau6/qwjqcbHrgzfGo2PT0oU7VwKcBgTgE1z4B6oh1d+mlKOKqGXv
+         JcJ+hKJ+i+OgRifDwubYNuKSpNvao+2Kn/wAFwj9EepqMOrVQ8cgfzNzNAR9gIQ8S5IQ
+         D1JXQ/CIhT0qDuDg6mLkOQEKVMJ6nKziES7hdXGiZ2RbTW4SVsbExfRANsYXc9+82YQ1
+         RofZvAjK+YnGiOYlWa3Wb4zbOep4l1qzcmIDU9hYjLt4LXniEYON/BcBSbm88EVLAvRM
+         nCDw==
+X-Gm-Message-State: APjAAAWqqZweofNVsqiosWCBscrrg2CU97AyVISpLG9p87qVjyzjQW+y
+        BAug20nVV0o5MgkzOf8nv9E4RA==
+X-Google-Smtp-Source: APXvYqz7rj/ZOxWgoHwJTLzC8i+4illOfJNW0JcRCpvRX9rpVQhzih41tpGt3i/vt14DeAjuz7iIjA==
+X-Received: by 2002:a62:b515:: with SMTP id y21mr6996570pfe.213.1565144639931;
+        Tue, 06 Aug 2019 19:23:59 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id i124sm164007064pfe.61.2019.08.06.19.23.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 19:23:59 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: [PATCH v2] soc: qcom: socinfo: Annotate switch cases with fall through
+Date:   Tue,  6 Aug 2019 19:23:56 -0700
+Message-Id: <20190807022356.8502-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20190807100803.63007737@canb.auug.org.au>
+References: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As commit 30d8177e8ac7 ("bonding: Always enable vlan tx offload")
-said, we should always enable bonding's vlan tx offload, pass the
-vlan packets to the slave devices with vlan tci, let them to handle
-vlan implementation.
+Introduce fall through annotations in the switch statements of
+socinfo_debugfs_init() to silence compiler warnings.
 
-Now if encapsulation protocols like VXLAN is used, skb->encapsulation
-may be set, then the packet is passed to vlan device which based on
-bonding device. However in netif_skb_features(), the check of
-hw_enc_features:
-
-	 if (skb->encapsulation)
-                 features &= dev->hw_enc_features;
-
-clears NETIF_F_HW_VLAN_CTAG_TX/NETIF_F_HW_VLAN_STAG_TX. This results
-in same issue in commit 30d8177e8ac7 like this:
-
-vlan_dev_hard_start_xmit
-  -->dev_queue_xmit
-    -->validate_xmit_skb
-      -->netif_skb_features //NETIF_F_HW_VLAN_CTAG_TX is cleared
-      -->validate_xmit_vlan
-        -->__vlan_hwaccel_push_inside //skb->tci is cleared
-...
- --> bond_start_xmit
-   --> bond_xmit_hash //BOND_XMIT_POLICY_ENCAP34
-     --> __skb_flow_dissect // nhoff point to IP header
-        -->  case htons(ETH_P_8021Q)
-             // skb_vlan_tag_present is false, so
-             vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan),
-             //vlan point to ip header wrongly
-
-Fixes: b2a103e6d0af ("bonding: convert to ndo_fix_features")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Fixes: 9c84c1e78634 ("soc: qcom: socinfo: Expose custom attributes")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-v2: fix a log typo, add Fixes tag
----
- drivers/net/bonding/bond_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soc/qcom/socinfo.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 02fd782..931d9d9 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1126,6 +1126,8 @@ static void bond_compute_features(struct bonding *bond)
- done:
- 	bond_dev->vlan_features = vlan_features;
- 	bond_dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL |
-+				    NETIF_F_HW_VLAN_CTAG_TX |
-+				    NETIF_F_HW_VLAN_STAG_TX |
- 				    NETIF_F_GSO_UDP_L4;
- 	bond_dev->mpls_features = mpls_features;
- 	bond_dev->gso_max_segs = gso_max_segs;
+diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+index 855353bed19e..a39ea5061dc5 100644
+--- a/drivers/soc/qcom/socinfo.c
++++ b/drivers/soc/qcom/socinfo.c
+@@ -323,6 +323,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+ 		debugfs_create_x32("raw_device_number", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.raw_device_num);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 11):
+ 	case SOCINFO_VERSION(0, 10):
+ 	case SOCINFO_VERSION(0, 9):
+@@ -330,10 +331,12 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+ 
+ 		debugfs_create_u32("foundry_id", 0400, qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.foundry_id);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 8):
+ 	case SOCINFO_VERSION(0, 7):
+ 		DEBUGFS_ADD(info, pmic_model);
+ 		DEBUGFS_ADD(info, pmic_die_rev);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 6):
+ 		qcom_socinfo->info.hw_plat_subtype =
+ 			__le32_to_cpu(info->hw_plat_subtype);
+@@ -341,6 +344,7 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+ 		debugfs_create_u32("hardware_platform_subtype", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.hw_plat_subtype);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 5):
+ 		qcom_socinfo->info.accessory_chip =
+ 			__le32_to_cpu(info->accessory_chip);
+@@ -348,23 +352,27 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo,
+ 		debugfs_create_u32("accessory_chip", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.accessory_chip);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 4):
+ 		qcom_socinfo->info.plat_ver = __le32_to_cpu(info->plat_ver);
+ 
+ 		debugfs_create_u32("platform_version", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.plat_ver);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 3):
+ 		qcom_socinfo->info.hw_plat = __le32_to_cpu(info->hw_plat);
+ 
+ 		debugfs_create_u32("hardware_platform", 0400,
+ 				   qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.hw_plat);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 2):
+ 		qcom_socinfo->info.raw_ver  = __le32_to_cpu(info->raw_ver);
+ 
+ 		debugfs_create_u32("raw_version", 0400, qcom_socinfo->dbg_root,
+ 				   &qcom_socinfo->info.raw_ver);
++		/* Fall through */
+ 	case SOCINFO_VERSION(0, 1):
+ 		DEBUGFS_ADD(info, build_id);
+ 		break;
 -- 
-2.7.4
-
+2.18.0
 
