@@ -2,169 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94D4D84CB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEF5484CC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388168AbfHGNTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:19:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43121 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387970AbfHGNTS (ORCPT
+        id S2388245AbfHGNT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:19:59 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41546 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387957AbfHGNT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:19:18 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x77DJBf72695406
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 7 Aug 2019 06:19:11 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x77DJBf72695406
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1565183952;
-        bh=MnPPyHF/3DqdV3ltYydc8rzca+L7XLy3cRk7ClNghso=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=RkOGCASfqMd0l1Fi/Z/ojE/MbkM9vDdcu4/U7qhKNrUPtIytylR8uK0Yy8Yx6NW+I
-         alDS3PRZmz0Wb59H84znfKjbjnC1tp9RZpFSXsNKFnHua0jFewZBozOEicfXyNp5dh
-         1VTgXjHQoI3wTm2gzcehL12hUOs1czXC/zw1GpX7x++Fmn3DRkqcnWHpOVnN4YxZnt
-         kgikS5Sx2OzPJ1N1vU7nCtUEwZvPryu0Be9miGRffrknSvmrWvKQew80B+QRe9zHgH
-         hs/Ndmh4yUw+DTQ3Mk4yWLeJOdhdzSeoLoXLOd42OUy59C/RrhHYAhnqpW6xqXsza2
-         dwyc0mQzTOXRQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x77DJAs62695403;
-        Wed, 7 Aug 2019 06:19:10 -0700
-Date:   Wed, 7 Aug 2019 06:19:10 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for John Hubbard <tipbot@zytor.com>
-Message-ID: <tip-610666f0581557944c3abec93a7c125b8303442c@git.kernel.org>
-Cc:     mingo@kernel.org, jhubbard@nvidia.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          jhubbard@nvidia.com, mingo@kernel.org
-In-Reply-To: <20190731054627.5627-2-jhubbard@nvidia.com>
-References: <20190731054627.5627-2-jhubbard@nvidia.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/boot] x86/boot: Save fields explicitly, zero out
- everything else
-Git-Commit-ID: 610666f0581557944c3abec93a7c125b8303442c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 7 Aug 2019 09:19:59 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p15so86154260eds.8;
+        Wed, 07 Aug 2019 06:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VsS99LwnBC3iQ8HWvvQz+DMgbBjpR0gNdAlatU6bOeA=;
+        b=VHHxvIM/f0VQ9SJFvUdoIzgQy3iZlKRCaxFeEfrXRUlstF9eR1j3imfN5H74UiMmja
+         7EhgHjidOeKuIzTjJ1/poY+/a6aM+vjU1LzNOCvbe1ajrJNz3qljEqpqSR7bXSGHfKNP
+         LRtAl1bu6KGV3wpPLV2htTq1o69HqEFFDyb80rJ1J35re6JSpGVvbO7cCNmL0XendxtC
+         Z5BvqumswsLxdr805Pkp7RSXIRK6+3uSdQ4IWTO0stjuq539ejVARGrdiWfjrioEia5D
+         mzw4iNY6pBJPYiMLNRcEy2rRvE1xblZqJ9jOqJKsAKZKXPoGEwefJ7PMcsEpvqUtBxRu
+         SfYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VsS99LwnBC3iQ8HWvvQz+DMgbBjpR0gNdAlatU6bOeA=;
+        b=CQkB+3DBIBmVMd5GTBLYd+8kWAmlM0D/OIx2b8gbxU7HhE7iSLlBHe3bXtg26GfZWG
+         K22mLvYkJ2BR/HBgfjyGYW0O2PKrm0ompdWfsJ47zQkhVKMLcZ9QvHxu+YD7pRWOUzTe
+         NzF7XdM2FHzMqZjgMKcTkEyMsQSL8rLVyzu9wt47XV2sSaw+AY9SpQpEykqPEGSZX2t0
+         /7RLKiUgl6XE9dUBdgDvDB8/XqdbJcsEh3p2diEWAL9GIuEqLdFGzl8JHOrPU5BElAO8
+         OgHnzegxRLMzfQAH7NzDeHnolTeX9+94FMM6MEfiQhX5l1wAqhcxmJeg5r2qsy20+op5
+         oWOw==
+X-Gm-Message-State: APjAAAVZiA4x37AZMkSP3OJVACUYPih2iKn+1vhWGbS2+AadLm3Y4Mr+
+        lKXbhkD7i39e2uW8sBpMgiZugb7SPzUioxcN074=
+X-Google-Smtp-Source: APXvYqx0eZkI6QO0WgJDZP9/db3DJXaNcEwIkkpd0jQp9gcp+BcQMHgWwwXO26vqbFfQLU0aCXszTwzgZHd0I1WabI0=
+X-Received: by 2002:a17:906:c459:: with SMTP id ck25mr8135070ejb.32.1565183997044;
+ Wed, 07 Aug 2019 06:19:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <20190807130856.60792-1-yuehaibing@huawei.com>
+In-Reply-To: <20190807130856.60792-1-yuehaibing@huawei.com>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Wed, 7 Aug 2019 16:19:45 +0300
+Message-ID: <CA+h21hrrWGrw4kiTfjowWvQ-B6sNPLAcgTaaadA02ZAmYw1SjQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: dsa: sja1105: remove set but not used
+ variables 'tx_vid' and 'rx_vid'
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  610666f0581557944c3abec93a7c125b8303442c
-Gitweb:     https://git.kernel.org/tip/610666f0581557944c3abec93a7c125b8303442c
-Author:     John Hubbard <jhubbard@nvidia.com>
-AuthorDate: Tue, 30 Jul 2019 22:46:27 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 7 Aug 2019 15:16:04 +0200
+On Wed, 7 Aug 2019 at 16:09, YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/net/dsa/sja1105/sja1105_main.c: In function sja1105_fdb_dump:
+> drivers/net/dsa/sja1105/sja1105_main.c:1226:14: warning:
+>  variable tx_vid set but not used [-Wunused-but-set-variable]
+> drivers/net/dsa/sja1105/sja1105_main.c:1226:6: warning:
+>  variable rx_vid set but not used [-Wunused-but-set-variable]
+>
+> They are not used since commit 6d7c7d948a2e ("net: dsa:
+> sja1105: Fix broken learning with vlan_filtering disabled")
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
 
-x86/boot: Save fields explicitly, zero out everything else
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
-Recent gcc compilers (gcc 9.1) generate warnings about an
-out of bounds memset, if you trying memset across several fields
-of a struct. This generated a couple of warnings on x86_64 builds.
-
-Fix this by explicitly saving the fields in struct boot_params
-that are intended to be preserved, and zeroing all the rest.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190731054627.5627-2-jhubbard@nvidia.com
-
----
- arch/x86/include/asm/bootparam_utils.h | 63 ++++++++++++++++++++++++++--------
- 1 file changed, 48 insertions(+), 15 deletions(-)
-
-diff --git a/arch/x86/include/asm/bootparam_utils.h b/arch/x86/include/asm/bootparam_utils.h
-index 101eb944f13c..f5e90a849bca 100644
---- a/arch/x86/include/asm/bootparam_utils.h
-+++ b/arch/x86/include/asm/bootparam_utils.h
-@@ -18,6 +18,20 @@
-  * Note: efi_info is commonly left uninitialized, but that field has a
-  * private magic, so it is better to leave it unchanged.
-  */
-+
-+#define sizeof_mbr(type, member) ({ sizeof(((type *)0)->member); })
-+
-+#define BOOT_PARAM_PRESERVE(struct_member)				\
-+	{								\
-+		.start = offsetof(struct boot_params, struct_member),	\
-+		.len   = sizeof_mbr(struct boot_params, struct_member),	\
-+	}
-+
-+struct boot_params_to_save {
-+	unsigned int start;
-+	unsigned int len;
-+};
-+
- static void sanitize_boot_params(struct boot_params *boot_params)
- {
- 	/* 
-@@ -35,21 +49,40 @@ static void sanitize_boot_params(struct boot_params *boot_params)
- 	 * problems again.
- 	 */
- 	if (boot_params->sentinel) {
--		/* fields in boot_params are left uninitialized, clear them */
--		boot_params->acpi_rsdp_addr = 0;
--		memset(&boot_params->ext_ramdisk_image, 0,
--		       (char *)&boot_params->efi_info -
--			(char *)&boot_params->ext_ramdisk_image);
--		memset(&boot_params->kbd_status, 0,
--		       (char *)&boot_params->hdr -
--		       (char *)&boot_params->kbd_status);
--		memset(&boot_params->_pad7[0], 0,
--		       (char *)&boot_params->edd_mbr_sig_buffer[0] -
--			(char *)&boot_params->_pad7[0]);
--		memset(&boot_params->_pad8[0], 0,
--		       (char *)&boot_params->eddbuf[0] -
--			(char *)&boot_params->_pad8[0]);
--		memset(&boot_params->_pad9[0], 0, sizeof(boot_params->_pad9));
-+		static struct boot_params scratch;
-+		char *bp_base = (char *)boot_params;
-+		char *save_base = (char *)&scratch;
-+		int i;
-+
-+		const struct boot_params_to_save to_save[] = {
-+			BOOT_PARAM_PRESERVE(screen_info),
-+			BOOT_PARAM_PRESERVE(apm_bios_info),
-+			BOOT_PARAM_PRESERVE(tboot_addr),
-+			BOOT_PARAM_PRESERVE(ist_info),
-+			BOOT_PARAM_PRESERVE(acpi_rsdp_addr),
-+			BOOT_PARAM_PRESERVE(hd0_info),
-+			BOOT_PARAM_PRESERVE(hd1_info),
-+			BOOT_PARAM_PRESERVE(sys_desc_table),
-+			BOOT_PARAM_PRESERVE(olpc_ofw_header),
-+			BOOT_PARAM_PRESERVE(efi_info),
-+			BOOT_PARAM_PRESERVE(alt_mem_k),
-+			BOOT_PARAM_PRESERVE(scratch),
-+			BOOT_PARAM_PRESERVE(e820_entries),
-+			BOOT_PARAM_PRESERVE(eddbuf_entries),
-+			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
-+			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
-+			BOOT_PARAM_PRESERVE(e820_table),
-+			BOOT_PARAM_PRESERVE(eddbuf),
-+		};
-+
-+		memset(&scratch, 0, sizeof(scratch));
-+
-+		for (i = 0; i < ARRAY_SIZE(to_save); i++) {
-+			memcpy(save_base + to_save[i].start,
-+			       bp_base + to_save[i].start, to_save[i].len);
-+		}
-+
-+		memcpy(boot_params, save_base, sizeof(*boot_params));
- 	}
- }
- 
+>  drivers/net/dsa/sja1105/sja1105_main.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
+> index d073baf..df976b25 100644
+> --- a/drivers/net/dsa/sja1105/sja1105_main.c
+> +++ b/drivers/net/dsa/sja1105/sja1105_main.c
+> @@ -1223,12 +1223,8 @@ static int sja1105_fdb_dump(struct dsa_switch *ds, int port,
+>  {
+>         struct sja1105_private *priv = ds->priv;
+>         struct device *dev = ds->dev;
+> -       u16 rx_vid, tx_vid;
+>         int i;
+>
+> -       rx_vid = dsa_8021q_rx_vid(ds, port);
+> -       tx_vid = dsa_8021q_tx_vid(ds, port);
+> -
+>         for (i = 0; i < SJA1105_MAX_L2_LOOKUP_COUNT; i++) {
+>                 struct sja1105_l2_lookup_entry l2_lookup = {0};
+>                 u8 macaddr[ETH_ALEN];
+> --
+> 2.7.4
+>
+>
