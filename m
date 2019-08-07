@@ -2,165 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3CC785125
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3CE8512D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388850AbfHGQfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:35:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730128AbfHGQe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:34:56 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61F5222305;
-        Wed,  7 Aug 2019 16:34:55 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hvOtq-0007nb-GQ; Wed, 07 Aug 2019 12:34:54 -0400
-Message-Id: <20190807163454.392141426@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 07 Aug 2019 12:34:03 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Jiping Ma <jiping.ma2@windriver.com>, mingo@redhat.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] tracing: Document the stack trace algorithm in the comments
-References: <20190807163401.570339297@goodmis.org>
+        id S2388871AbfHGQf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:35:57 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60517 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388758AbfHGQf4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 12:35:56 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190807163554euoutp02b0d46c535355cf17b0bd9618cd43f023~4sT75L_7d1404414044euoutp028
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2019 16:35:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190807163554euoutp02b0d46c535355cf17b0bd9618cd43f023~4sT75L_7d1404414044euoutp028
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1565195754;
+        bh=O1Gf0PgXMaNSYNT29LQTThX7gJ1bj5gAHeIRhFaNn/8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=u6jClI+FbJHWxdhgNor0zBy3VaztzXYxjqsnjUskJzHkqRe2VH2krSFhbOpl5zFgS
+         WkJlrPNv9pjmyUFcbKW4YA0Xfr+vp0gfdi8X1ZDij3qcbQAv2bJbW1fgmpy6jHxKAT
+         L9hl9Ms+spet6yZTfhtgmmkSGi+581a0ImI70Hz4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190807163553eucas1p12fb87d0e783adfbc7d6ca7f038524066~4sT7AgF-61950619506eucas1p1m;
+        Wed,  7 Aug 2019 16:35:53 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id D4.9B.04309.9EDFA4D5; Wed,  7
+        Aug 2019 17:35:53 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190807163552eucas1p2e257ece4a9db8e779817d88fed703bf5~4sT5uAvlr0939509395eucas1p2Z;
+        Wed,  7 Aug 2019 16:35:52 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190807163551eusmtrp1a2a5e04a833822ba927687bd6f5eb364~4sT5ftJ2K2733927339eusmtrp1T;
+        Wed,  7 Aug 2019 16:35:51 +0000 (GMT)
+X-AuditID: cbfec7f4-afbff700000010d5-27-5d4afde9d4ab
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 15.80.04117.7EDFA4D5; Wed,  7
+        Aug 2019 17:35:51 +0100 (BST)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190807163551eusmtip1147ce7d2a521109c2f2338d677ce1b91~4sT424it11682116821eusmtip1W;
+        Wed,  7 Aug 2019 16:35:51 +0000 (GMT)
+Subject: Re: Odroid-XU4 sound issue after suspend-resume
+To:     Jaafar Ali <jaafarkhalaf@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kgene@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        sam@ravnborg.org, linux-clk@vger.kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <b850da41-fd72-ec0a-52bd-4de558dd87f2@samsung.com>
+Date:   Wed, 7 Aug 2019 18:35:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+In-Reply-To: <24165241-1f65-fafa-0c59-b85cf89bc5bb@samsung.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djP87ov/3rFGuxdxG9x4NllZov+x6+Z
+        Lc6f38Bu8bHnHqvF5V1z2CxmnN/HZLHi51ZGB3aPnbPusntsWtXJ5rFk2lU2j8+b5AJYorhs
+        UlJzMstSi/TtErgy5j9eyFywhL9i/WSfBsYNPF2MnBwSAiYS93uWMncxcnEICaxglFj25CI7
+        hPOFUeJY618WCOczo8TG7mmsXYwcYC2Tv4hBxJczSrz5sZcJwnnLKPHz+Uk2kLnCAhYS1z7d
+        BrNFBNQlnu68AVbELLCWUeLmus0sIAk2AUOJ3qN9jCBTeQXsJGa99QQJswioSBxe94gVxBYV
+        iJA4dWQeWDmvgKDEyZlPWEDKOQXsJeZ+MgYJMwuISzR9WckKYctLNG+dDfaOhMAmdom+1e+Z
+        If50kdhwto8JwhaWeHV8CzuELSNxenIPC0RDM6NEz+7b7BDOBEaJ+8cXMEJUWUscPn4R7H1m
+        AU2J9bv0IcKOEh++XmGEhAqfxI23ghBH8ElM2jadGSLMK9HRJgRRrSLxe9V0qBOkJLqf/GeZ
+        wKg0C8lns5C8MwvJO7MQ9i5gZFnFKJ5aWpybnlpslJdarlecmFtcmpeul5yfu4kRmHZO/zv+
+        ZQfjrj9JhxgFOBiVeHgZLnjFCrEmlhVX5h5ilOBgVhLhvVfmGSvEm5JYWZValB9fVJqTWnyI
+        UZqDRUmct5rhQbSQQHpiSWp2ampBahFMlomDU6qB0fmd3dUC4YiXrmX6ka0yn44bnH3wdPb3
+        4J2/bNRMp747Zqt4zCDdI6FgocKMemMpK7fX6Uz1xXdf71p/+fuymx+9tRuuh91q/eXeWtSW
+        wW2auXmVDmefym77dAshAwfGZ5Fpk1i+PL1xb0Fjp876pfZPtB5932VcLjshWKb/vMa91pki
+        W4T9lViKMxINtZiLihMB6N03NjcDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsVy+t/xu7rP/3rFGiz8bWJx4NllZov+x6+Z
+        Lc6f38Bu8bHnHqvF5V1z2CxmnN/HZLHi51ZGB3aPnbPusntsWtXJ5rFk2lU2j8+b5AJYovRs
+        ivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQy5j9eyFyw
+        hL9i/WSfBsYNPF2MHBwSAiYSk7+IdTFycQgJLGWUeDO7lx0iLiUxv0Wpi5ETyBSW+HOtiw2i
+        5jWjxJMV7ewgCWEBC4lrn26zgdgiAuoST3feYAIpYhZYyyhxumcuE0THTUaJRU9WMYFUsQkY
+        SvQe7WME2cArYCcx660nSJhFQEXi8LpHrCC2qECExKRrO1lAbF4BQYmTM5+wgJRzCthLzP1k
+        DBJmBtr1Z94lZghbXKLpy0pWCFteonnrbOYJjEKzkHTPQtIyC0nLLCQtCxhZVjGKpJYW56bn
+        FhvpFSfmFpfmpesl5+duYgRG2bZjP7fsYOx6F3yIUYCDUYmHl+GCV6wQa2JZcWXuIUYJDmYl
+        Ed57ZZ6xQrwpiZVVqUX58UWlOanFhxhNgX6byCwlmpwPTAB5JfGGpobmFpaG5sbmxmYWSuK8
+        HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoYr2bd1Ov/02r25d9r1617o8TO/WZ++reNRXRxterP
+        ruidd7e99Im7wij25X7WnhSXqNhp78xif/7eW5XWwG3ou24mw23hts6DX03X38iSstd74/Gp
+        2EKx6mjyiVdSHVYqiUl96/306+vWyxfnbzMWSlvp4OAYU5Xwz+9Ph47zhYD14tr7CpKVWIoz
+        Eg21mIuKEwHGNR3oyAIAAA==
+X-CMS-MailID: 20190807163552eucas1p2e257ece4a9db8e779817d88fed703bf5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190805133249epcas2p3aea30967f18f03f7fc1ed9dc7cbcb1d5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190805133249epcas2p3aea30967f18f03f7fc1ed9dc7cbcb1d5
+References: <CGME20190805133249epcas2p3aea30967f18f03f7fc1ed9dc7cbcb1d5@epcas2p3.samsung.com>
+        <CAF-0O_4xOQNkX5ZyyVz7zZDAP9XBeUKv65T0cd+oAAV1ahLQ9Q@mail.gmail.com>
+        <24165241-1f65-fafa-0c59-b85cf89bc5bb@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On 8/7/19 10:22, Sylwester Nawrocki wrote:
+> On 8/5/19 15:27, Jaafar Ali wrote:
+>> Dear All,
+>> Kernel 5.3-rc1
+>> OS: ubuntu 18.04
+>> Hardware: Odroid-XU4
+>> The sound of Odroid-XU4 after suspend/resume cycle is choppy and slow. 
+>> I have found a workaround, the I2SMOD register value should be set to 
+>> zero after resume to force using internal codec clock (cdclkcon bit = 0),
+>> also the rclk_srcrate which is obtained from the function 
+>> *clk_get_rate(rclksrc) *inside *hw_params* function is not correct and 
+>> must be divided by 2 to obtain proper value, i2s_resume function 
+>> is modified to:
+>>
+>> static int i2s_resume(struct snd_soc_dai *dai)
+>> {
+>>         struct samsung_i2s_priv *priv = dev_get_drvdata(dai->dev);
+>>         priv->suspend_i2smod = 0;//workaround-1 ,
+>>         return pm_runtime_force_resume(dai->dev);
+>>
+>> }
+>>
+>> inside hw_params function, the rclk_srcrate must be halved to solve 
+>> unknown problem of clock shift, so before return from hw_params we 
+>> must insert:
+>> if(mod == 0){
+>> 	priv->rclk_srcrate = priv->rclk_srcrate / 2; //workaround-2, 
+>> }
+>>
+>> With these two workaround sound issue was solved, but I hope we can 
+>> get concrete fix.
+> Thank you for the bug report. I spent some time on debugging this and
+> it turned out that there is a clock mux between EPLL and the audio 
+> subsystem which looses its configuration during suspend/resume cycle.
+> So we end up with the I2S controller clocked from the main oscillator
+> clock (24 MHz) rather than the EPLL (196.608 MHz) after system suspend/
+> resume. I will post a patch for clk-exynos5420 driver shortly.
 
-As the max stack tracer algorithm is not that easy to understand from the
-code, add comments that explain the algorithm and mentions how
-ARCH_RET_ADDR_AFTER_LOCAL_VARS affects it.
-
-Link: http://lkml.kernel.org/r/20190806123455.487ac02b@gandalf.local.home
-
-Suggested-by: Joel Fernandes <joel@joelfernandes.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_stack.c | 98 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
-
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 40e4a88eea8f..7a9a62834af9 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -53,6 +53,104 @@ static void print_max_stack(void)
- 	}
- }
+My apologies, I forgot to add you at Cc of related patches, they are 
+available at patchwork:
+https://patchwork.kernel.org/patch/11082423
+https://patchwork.kernel.org/patch/11082427
  
-+/*
-+ * The stack tracer looks for a maximum stack at each call from a function. It
-+ * registers a callback from ftrace, and in that callback it examines the stack
-+ * size. It determines the stack size from the variable passed in, which is the
-+ * address of a local variable in the stack_trace_call() callback function.
-+ * The stack size is calculated by the address of the local variable to the top
-+ * of the current stack. If that size is smaller than the currently saved max
-+ * stack size, nothing more is done.
-+ *
-+ * If the size of the stack is greater than the maximum recorded size, then the
-+ * following algorithm takes place.
-+ *
-+ * For architectures (like x86) that store the function's return address before
-+ * saving the function's local variables, the stack will look something like
-+ * this:
-+ *
-+ *   [ top of stack ]
-+ *    0: sys call entry frame
-+ *   10: return addr to entry code
-+ *   11: start of sys_foo frame
-+ *   20: return addr to sys_foo
-+ *   21: start of kernel_func_bar frame
-+ *   30: return addr to kernel_func_bar
-+ *   31: [ do trace stack here ]
-+ *
-+ * The save_stack_trace() is called returning all the functions it finds in the
-+ * current stack. Which would be (from the bottom of the stack to the top):
-+ *
-+ *   return addr to kernel_func_bar
-+ *   return addr to sys_foo
-+ *   return addr to entry code
-+ *
-+ * Now to figure out how much each of these functions' local variable size is,
-+ * a search of the stack is made to find these values. When a match is made, it
-+ * is added to the stack_dump_trace[] array. The offset into the stack is saved
-+ * in the stack_trace_index[] array. The above example would show:
-+ *
-+ *        stack_dump_trace[]        |   stack_trace_index[]
-+ *        ------------------        +   -------------------
-+ *  return addr to kernel_func_bar  |          30
-+ *  return addr to sys_foo          |          20
-+ *  return addr to entry            |          10
-+ *
-+ * The print_max_stack() function above, uses these values to print the size of
-+ * each function's portion of the stack.
-+ *
-+ *  for (i = 0; i < nr_entries; i++) {
-+ *     size = i == nr_entries - 1 ? stack_trace_index[i] :
-+ *                    stack_trace_index[i] - stack_trace_index[i+1]
-+ *     print "%d %d %d %s\n", i, stack_trace_index[i], size, stack_dump_trace[i]);
-+ *  }
-+ *
-+ * The above shows
-+ *
-+ *     depth size  location
-+ *     ----- ----  --------
-+ *  0    30   10   kernel_func_bar
-+ *  1    20   10   sys_foo
-+ *  2    10   10   entry code
-+ *
-+ * Now for architectures that might save the return address after the functions
-+ * local variables (saving the link register before calling nested functions),
-+ * this will cause the stack to look a little different:
-+ *
-+ * [ top of stack ]
-+ *  0: sys call entry frame
-+ * 10: start of sys_foo_frame
-+ * 19: return addr to entry code << lr saved before calling kernel_func_bar
-+ * 20: start of kernel_func_bar frame
-+ * 29: return addr to sys_foo_frame << lr saved before calling next function
-+ * 30: [ do trace stack here ]
-+ *
-+ * Although the functions returned by save_stack_trace() may be the same, the
-+ * placement in the stack will be different. Using the same algorithm as above
-+ * would yield:
-+ *
-+ *        stack_dump_trace[]        |   stack_trace_index[]
-+ *        ------------------        +   -------------------
-+ *  return addr to kernel_func_bar  |          30
-+ *  return addr to sys_foo          |          29
-+ *  return addr to entry            |          19
-+ *
-+ * Where the mapping is off by one:
-+ *
-+ *   kernel_func_bar stack frame size is 29 - 19 not 30 - 29!
-+ *
-+ * To fix this, if the architecture sets ARCH_RET_ADDR_AFTER_LOCAL_VARS the
-+ * values in stack_trace_index[] are shifted by one to and the number of
-+ * stack trace entries is decremented by one.
-+ *
-+ *        stack_dump_trace[]        |   stack_trace_index[]
-+ *        ------------------        +   -------------------
-+ *  return addr to kernel_func_bar  |          20
-+ *  return addr to sys_foo          |          19
-+ *
-+ * Although the entry function is not displayed, the first function (sys_foo)
-+ * will still include the stack size of it.
-+ */
- static void check_stack(unsigned long ip, unsigned long *stack)
- {
- 	unsigned long this_size, flags; unsigned long *p, *top, *start;
+Could you try and test and let me know if that fixes your issue?
+
 -- 
-2.20.1
-
-
+Thanks,
+Sylwester
