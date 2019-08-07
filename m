@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E2F8523F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13CFF85241
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389210AbfHGRlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 13:41:14 -0400
-Received: from foss.arm.com ([217.140.110.172]:52516 "EHLO foss.arm.com"
+        id S2389225AbfHGRlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 13:41:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:52528 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388369AbfHGRlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 13:41:14 -0400
+        id S2388369AbfHGRlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 13:41:15 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFB211570;
-        Wed,  7 Aug 2019 10:41:12 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC26115A2;
+        Wed,  7 Aug 2019 10:41:14 -0700 (PDT)
 Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1DC183F575;
-        Wed,  7 Aug 2019 10:41:12 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1BC853F575;
+        Wed,  7 Aug 2019 10:41:14 -0700 (PDT)
 From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org
-Subject: [PATCH 1/3] sched/fair: Move active balance logic to its own function
-Date:   Wed,  7 Aug 2019 18:40:24 +0100
-Message-Id: <20190807174026.31242-2-valentin.schneider@arm.com>
+Subject: [PATCH 2/3] sched/fair: Prevent active LB from preempting higher sched classes
+Date:   Wed,  7 Aug 2019 18:40:25 +0100
+Message-Id: <20190807174026.31242-3-valentin.schneider@arm.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190807174026.31242-1-valentin.schneider@arm.com>
 References: <20190807174026.31242-1-valentin.schneider@arm.com>
@@ -33,173 +33,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The logic to trigger an active balance is already quite lengthy, and
-as I'm about to add yet another unlock condition it's probably better
-to give it its own corner.
+The CFS load balancer can cause the cpu_stopper to run a function to
+try and steal a rq's currently running task. However, it so happens
+that while only CFS tasks will ever be migrated by that function, we
+can end up preempting higher sched class tasks, since it is executed
+by the cpu_stopper.
 
-The only annoying requirement is that we need to branch to
-out_one_pinned when the active balance is cancelled due to the running
-task's affinity. Something like < 0, == 0 and > 0 return values could
-suffice, but I went for an enum for clarity.
+I don't expect this to be exceedingly common: we still need to have
+had a busiest group in the first place, which needs
 
-No change in functionality intended, but do note I had to move the
-nr_balance_failed in the same if block as the stop_one_cpu_nowait()
-call to not have it on the task pinned path.
+  busiest->sum_nr_running != 0
+
+which is a cfs.h_nr_running sum, so we should have something to pull,
+but if we fail to pull anything and the remote rq is executing
+an RT/DL task we can hit this.
+
+Add an extra check to not trigger the cpu_stopper if the remote
+rq's running task isn't CFS.
 
 Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- kernel/sched/fair.c | 122 ++++++++++++++++++++++++++------------------
- 1 file changed, 73 insertions(+), 49 deletions(-)
+ kernel/sched/fair.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 52834cba8ca8..b56b8edee3d3 100644
+index b56b8edee3d3..79bd6ead589c 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8804,6 +8804,72 @@ static int need_active_balance(struct lb_env *env)
+@@ -8834,6 +8834,10 @@ static inline enum alb_status active_load_balance(struct lb_env *env)
  
- static int active_load_balance_cpu_stop(void *data);
+ 	raw_spin_lock_irqsave(&busiest->lock, flags);
  
-+/* Active load balance */
-+enum alb_status {
-+	cancelled = 0,
-+	cancelled_affinity,
-+	started
-+};
-+
-+/* Attempt to move a remote rq's running task to env's dst_cpu */
-+static inline enum alb_status active_load_balance(struct lb_env *env)
-+{
-+	enum alb_status status = cancelled;
-+	struct sched_domain *sd = env->sd;
-+	struct rq *busiest = env->src_rq;
-+	unsigned long flags;
-+
-+	schedstat_inc(sd->lb_failed[env->idle]);
-+	/*
-+	 * Increment the failure counter only on periodic balance.
-+	 * We do not want newidle balance, which can be very frequent, pollute
-+	 * the failure counter causing excessive cache_hot migrations and
-+	 * active balances.
-+	 */
-+	if (env->idle != CPU_NEWLY_IDLE)
-+		sd->nr_balance_failed++;
-+
-+	if (!need_active_balance(env))
-+		goto out;
-+
-+	raw_spin_lock_irqsave(&busiest->lock, flags);
-+
-+	/*
-+	 * Don't kick the active_load_balance_cpu_stop, if the curr task on
-+	 * busiest CPU can't be moved to dst_cpu:
-+	 */
-+	if (!cpumask_test_cpu(env->dst_cpu, busiest->curr->cpus_ptr)) {
-+		env->flags |= LBF_ALL_PINNED;
-+		status = cancelled_affinity;
++	/* Make sure we're not about to stop a task from a higher sched class */
++	if (busiest->curr->sched_class != &fair_sched_class)
 +		goto unlock;
-+	}
 +
-+	/*
-+	 * ->active_balance synchronizes accesses to ->active_balance_work.
-+	 * Once set, it's cleared only after active load balance is finished.
-+	 */
-+	if (!busiest->active_balance) {
-+		busiest->active_balance = 1;
-+		busiest->push_cpu = env->dst_cpu;
-+		status = started;
-+	}
-+
-+unlock:
-+	raw_spin_unlock_irqrestore(&busiest->lock, flags);
-+
-+	if (status == started) {
-+		stop_one_cpu_nowait(cpu_of(busiest),
-+				    active_load_balance_cpu_stop, busiest,
-+				    &busiest->active_balance_work);
-+
-+		/* We've kicked active balancing, force task migration. */
-+		sd->nr_balance_failed = sd->cache_nice_tries+1;
-+	}
-+
-+out:
-+	return status;
-+}
-+
- static int should_we_balance(struct lb_env *env)
- {
- 	struct sched_group *sg = env->sd->groups;
-@@ -8850,7 +8916,8 @@ static int load_balance(int this_cpu, struct rq *this_rq,
- 			struct sched_domain *sd, enum cpu_idle_type idle,
- 			int *continue_balancing)
- {
--	int ld_moved, cur_ld_moved, active_balance = 0;
-+	enum alb_status active_balance;
-+	int ld_moved, cur_ld_moved;
- 	struct sched_domain *sd_parent = sd->parent;
- 	struct sched_group *group;
- 	struct rq *busiest;
-@@ -9009,56 +9076,13 @@ static int load_balance(int this_cpu, struct rq *this_rq,
- 	}
- 
- 	if (!ld_moved) {
--		schedstat_inc(sd->lb_failed[idle]);
--		/*
--		 * Increment the failure counter only on periodic balance.
--		 * We do not want newidle balance, which can be very
--		 * frequent, pollute the failure counter causing
--		 * excessive cache_hot migrations and active balances.
--		 */
--		if (idle != CPU_NEWLY_IDLE)
--			sd->nr_balance_failed++;
--
--		if (need_active_balance(&env)) {
--			unsigned long flags;
--
--			raw_spin_lock_irqsave(&busiest->lock, flags);
-+		active_balance = active_load_balance(&env);
-+		if (active_balance == cancelled_affinity)
-+			goto out_one_pinned;
- 
--			/*
--			 * Don't kick the active_load_balance_cpu_stop,
--			 * if the curr task on busiest CPU can't be
--			 * moved to this_cpu:
--			 */
--			if (!cpumask_test_cpu(this_cpu, busiest->curr->cpus_ptr)) {
--				raw_spin_unlock_irqrestore(&busiest->lock,
--							    flags);
--				env.flags |= LBF_ALL_PINNED;
--				goto out_one_pinned;
--			}
--
--			/*
--			 * ->active_balance synchronizes accesses to
--			 * ->active_balance_work.  Once set, it's cleared
--			 * only after active load balance is finished.
--			 */
--			if (!busiest->active_balance) {
--				busiest->active_balance = 1;
--				busiest->push_cpu = this_cpu;
--				active_balance = 1;
--			}
--			raw_spin_unlock_irqrestore(&busiest->lock, flags);
--
--			if (active_balance) {
--				stop_one_cpu_nowait(cpu_of(busiest),
--					active_load_balance_cpu_stop, busiest,
--					&busiest->active_balance_work);
--			}
--
--			/* We've kicked active balancing, force task migration. */
--			sd->nr_balance_failed = sd->cache_nice_tries+1;
--		}
--	} else
-+	} else {
- 		sd->nr_balance_failed = 0;
-+	}
- 
- 	if (likely(!active_balance) || voluntary_active_balance(&env)) {
- 		/* We were unbalanced, so reset the balancing interval */
--- 
+ 	/*
+ 	 * Don't kick the active_load_balance_cpu_stop, if the curr task on
+ 	 * busiest CPU can't be moved to dst_cpu:
+--
 2.22.0
 
