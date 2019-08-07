@@ -2,81 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51F7D8463E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F1284619
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 09:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387502AbfHGHtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 03:49:50 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:39580 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387476AbfHGHtu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 03:49:50 -0400
-X-Greylist: delayed 1762 seconds by postgrey-1.27 at vger.kernel.org; Wed, 07 Aug 2019 03:49:50 EDT
-Received: from ATCSQR.andestech.com (localhost [127.0.0.2] (may be forged))
-        by ATCSQR.andestech.com with ESMTP id x7779Q7h027175
-        for <linux-kernel@vger.kernel.org>; Wed, 7 Aug 2019 15:09:26 +0800 (GMT-8)
-        (envelope-from nickhu@andestech.com)
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id x7778Nlw027022;
-        Wed, 7 Aug 2019 15:08:23 +0800 (GMT-8)
-        (envelope-from nickhu@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 7 Aug 2019
- 15:19:21 +0800
-From:   Nick Hu <nickhu@andestech.com>
-To:     <alankao@andestech.com>, <paul.walmsley@sifive.com>,
-        <palmer@sifive.com>, <aou@eecs.berkeley.edu>, <green.hu@gmail.com>,
-        <deanbo422@gmail.com>, <tglx@linutronix.de>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <aryabinin@virtuozzo.com>, <glider@google.com>,
-        <dvyukov@google.com>, <Anup.Patel@wdc.com>,
-        <gregkh@linuxfoundation.org>, <alexios.zavras@intel.com>,
-        <atish.patra@wdc.com>, <zong@andestech.com>,
-        <kasan-dev@googlegroups.com>
-CC:     Nick Hu <nickhu@andestech.com>
-Subject: [PATCH 0/2] KASAN support for RISC-V
-Date:   Wed, 7 Aug 2019 15:19:13 +0800
-Message-ID: <cover.1565161957.git.nickhu@andestech.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727690AbfHGHlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 03:41:47 -0400
+Received: from mga04.intel.com ([192.55.52.120]:24656 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727190AbfHGHlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 03:41:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 00:41:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,356,1559545200"; 
+   d="scan'208";a="203093384"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Aug 2019 00:41:45 -0700
+Subject: Re: [PATCH v1] perf record: Add an option to take an AUX snapshot on
+ exit
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc:     Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+References: <20190806144101.62892-1-alexander.shishkin@linux.intel.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <0541bee6-7bdf-2dbc-998d-5df3ddf18208@intel.com>
+Date:   Wed, 7 Aug 2019 10:40:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com x7778Nlw027022
+In-Reply-To: <20190806144101.62892-1-alexander.shishkin@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KASAN is an important runtime memory debugging feature
-in linux kernel which can detect use-after-free and out-of-
-bounds problems.
+On 6/08/19 5:41 PM, Alexander Shishkin wrote:
+> It is sometimes useful to generate a snapshot when perf record exits;
+> I've been using a wrapper script around the workload that would do a
+> killall -USR2 perf when the workload exits.
+> 
+> This patch makes it easier and also works when perf record is attached
+> to a pre-existing task. A new snapshot option 'e' can be specified in
+> -S to enable this behavior:
+> 
+> root@elsewhere:~# perf record -e intel_pt// -Se sleep 1
+> [ perf record: Woken up 2 times to write data ]
+> [ perf record: Captured and wrote 0.085 MB perf.data ]
+> 
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-There are two patches in this letter:
-1. Porting the memmove string operation.
-2. Porting the feature KASAN.
+checkpatch says:
+WARNING: Co-developed-by: must be immediately followed by Signed-off-by
 
-Nick Hu (2):
-  riscv: Add memmove string operation.
-  riscv: Add KASAN support
+> ---
+>  tools/perf/Documentation/perf-record.txt | 11 +++++---
+>  tools/perf/builtin-record.c              | 34 +++++++++++++++++++++---
+>  tools/perf/perf.h                        |  1 +
+>  tools/perf/util/auxtrace.c               | 14 ++++++++--
+>  tools/perf/util/auxtrace.h               |  2 +-
+>  5 files changed, 52 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+> index 15e0fa87241b..d5e58e0a2bca 100644
+> --- a/tools/perf/Documentation/perf-record.txt
+> +++ b/tools/perf/Documentation/perf-record.txt
+> @@ -422,9 +422,14 @@ CLOCK_BOOTTIME, CLOCK_REALTIME and CLOCK_TAI.
+>  -S::
+>  --snapshot::
+>  Select AUX area tracing Snapshot Mode. This option is valid only with an
+> -AUX area tracing event. Optionally the number of bytes to capture per
+> -snapshot can be specified. In Snapshot Mode, trace data is captured only when
+> -signal SIGUSR2 is received.
+> +AUX area tracing event. Optionally, certain snapshot capturing parameters
+> +can be specified in a string that follows this option:
+> +  'e': take one last snapshot on exit; guarantees that there is at least one
+> +       snapshot in the output file;
+> +  <size>: if the PMU supports this, specify the desired snapshot size.
+> +
+> +In Snapshot Mode trace data is captured only when signal SIGUSR2 is received
+> +and on exit if the above 'e' option is given.
+>  
+>  --proc-map-timeout::
+>  When processing pre-existing threads /proc/XXX/mmap, it may take a long time,
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index d31d7a5a1be3..e9a2525ecfcc 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -613,19 +613,35 @@ static int record__auxtrace_read_snapshot_all(struct record *rec)
+>  	return rc;
+>  }
+>  
+> -static void record__read_auxtrace_snapshot(struct record *rec)
+> +static void record__read_auxtrace_snapshot(struct record *rec, bool on_exit)
+>  {
+>  	pr_debug("Recording AUX area tracing snapshot\n");
+>  	if (record__auxtrace_read_snapshot_all(rec) < 0) {
+>  		trigger_error(&auxtrace_snapshot_trigger);
+>  	} else {
+> -		if (auxtrace_record__snapshot_finish(rec->itr))
+> +		if (auxtrace_record__snapshot_finish(rec->itr, on_exit))
+>  			trigger_error(&auxtrace_snapshot_trigger);
+>  		else
+>  			trigger_ready(&auxtrace_snapshot_trigger);
+>  	}
+>  }
+>  
+> +static int record__auxtrace_snapshot_exit(struct record *rec)
+> +{
+> +	if (trigger_is_error(&auxtrace_snapshot_trigger))
+> +		return 0;
+> +
+> +	if (!auxtrace_record__snapshot_started &&
+> +	    auxtrace_record__snapshot_start(rec->itr))
+> +		return -1;
+> +
+> +	record__read_auxtrace_snapshot(rec, true);
 
- arch/riscv/Kconfig                  |    2 +
- arch/riscv/include/asm/kasan.h      |   26 +++++++++
- arch/riscv/include/asm/pgtable-64.h |    5 ++
- arch/riscv/include/asm/string.h     |   10 ++++
- arch/riscv/kernel/head.S            |    3 +
- arch/riscv/kernel/riscv_ksyms.c     |    4 ++
- arch/riscv/kernel/setup.c           |    9 +++
- arch/riscv/kernel/vmlinux.lds.S     |    1 +
- arch/riscv/lib/Makefile             |    1 +
- arch/riscv/lib/memcpy.S             |    5 +-
- arch/riscv/lib/memmove.S            |   64 ++++++++++++++++++++++
- arch/riscv/lib/memset.S             |    5 +-
- arch/riscv/mm/Makefile              |    6 ++
- arch/riscv/mm/kasan_init.c          |  102 +++++++++++++++++++++++++++++++++++
- 14 files changed, 239 insertions(+), 4 deletions(-)
- create mode 100644 arch/riscv/include/asm/kasan.h
- create mode 100644 arch/riscv/lib/memmove.S
- create mode 100644 arch/riscv/mm/kasan_init.c
+Buffers can get un-mapped earlier as tasks exit.  Refer
+perf_evlist__filter_pollfd() -> perf_evlist__munmap_filtered().
+Maybe we should prevent that for this case.
+e.g. do perf_mmap__get()'s on the mmaps at the start, and then 'put' them
+all here.
+
+> +	if (trigger_is_error(&auxtrace_snapshot_trigger))
+> +		return -1;
+> +
+> +	return 0;
+> +}
+> +
+>  static int record__auxtrace_init(struct record *rec)
+>  {
+>  	int err;
+> @@ -654,7 +670,7 @@ int record__auxtrace_mmap_read(struct record *rec __maybe_unused,
+>  }
+>  
+>  static inline
+> -void record__read_auxtrace_snapshot(struct record *rec __maybe_unused)
+> +void record__read_auxtrace_snapshot(struct record *rec __maybe_unused, bool on_exit)
+>  {
+>  }
+>  
+> @@ -664,6 +680,12 @@ int auxtrace_record__snapshot_start(struct auxtrace_record *itr __maybe_unused)
+>  	return 0;
+>  }
+>  
+> +static inline
+> +int record__auxtrace_snapshot_exit(struct record *rec)
+> +{
+> +	return 0;
+> +}
+> +
+>  static int record__auxtrace_init(struct record *rec __maybe_unused)
+>  {
+>  	return 0;
+> @@ -1536,7 +1558,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  		if (auxtrace_record__snapshot_started) {
+>  			auxtrace_record__snapshot_started = 0;
+>  			if (!trigger_is_error(&auxtrace_snapshot_trigger))
+> -				record__read_auxtrace_snapshot(rec);
+> +				record__read_auxtrace_snapshot(rec, false);
+>  			if (trigger_is_error(&auxtrace_snapshot_trigger)) {
+>  				pr_err("AUX area tracing snapshot failed\n");
+>  				err = -1;
+> @@ -1609,9 +1631,13 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  			disabled = true;
+>  		}
+>  	}
+> +
+>  	trigger_off(&auxtrace_snapshot_trigger);
+>  	trigger_off(&switch_output_trigger);
+>  
+> +	if (opts->auxtrace_snapshot_on_exit)
+> +		record__auxtrace_snapshot_exit(rec);
+> +
+>  	if (forks && workload_exec_errno) {
+>  		char msg[STRERR_BUFSIZE];
+>  		const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
+> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+> index 74d0124d38f3..dc0a7a237887 100644
+> --- a/tools/perf/perf.h
+> +++ b/tools/perf/perf.h
+> @@ -57,6 +57,7 @@ struct record_opts {
+>  	bool	     running_time;
+>  	bool	     full_auxtrace;
+>  	bool	     auxtrace_snapshot_mode;
+> +	bool	     auxtrace_snapshot_on_exit;
+>  	bool	     record_namespaces;
+>  	bool	     record_switch_events;
+>  	bool	     all_kernel;
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index 65728cdeefb6..72ce4c5e7c78 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -539,9 +539,9 @@ int auxtrace_record__snapshot_start(struct auxtrace_record *itr)
+>  	return 0;
+>  }
+>  
+> -int auxtrace_record__snapshot_finish(struct auxtrace_record *itr)
+> +int auxtrace_record__snapshot_finish(struct auxtrace_record *itr, bool on_exit)
+>  {
+> -	if (itr && itr->snapshot_finish)
+> +	if (!on_exit && itr && itr->snapshot_finish)
+
+You are assuming you know what every ->snapshot_finish() does.  It would be
+better to pass on_exit to ->snapshot_finish().
+
+>  		return itr->snapshot_finish(itr);
+>  	return 0;
+>  }
+> @@ -577,6 +577,16 @@ int auxtrace_parse_snapshot_options(struct auxtrace_record *itr,
+>  	if (!str)
+>  		return 0;
+>  
+> +	/* PMU-agnostic options */
+> +	switch (*str) {
+> +	case 'e':
+> +		opts->auxtrace_snapshot_on_exit = true;
+> +		str++;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+>  	if (itr)
+>  		return itr->parse_snapshot_options(itr, opts, str);
+>  
+> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+> index 17eb04a1da4d..8ccabacd0b11 100644
+> --- a/tools/perf/util/auxtrace.h
+> +++ b/tools/perf/util/auxtrace.h
+> @@ -499,7 +499,7 @@ int auxtrace_record__info_fill(struct auxtrace_record *itr,
+>  			       size_t priv_size);
+>  void auxtrace_record__free(struct auxtrace_record *itr);
+>  int auxtrace_record__snapshot_start(struct auxtrace_record *itr);
+> -int auxtrace_record__snapshot_finish(struct auxtrace_record *itr);
+> +int auxtrace_record__snapshot_finish(struct auxtrace_record *itr, bool on_exit);
+>  int auxtrace_record__find_snapshot(struct auxtrace_record *itr, int idx,
+>  				   struct auxtrace_mmap *mm,
+>  				   unsigned char *data, u64 *head, u64 *old);
+> 
 
