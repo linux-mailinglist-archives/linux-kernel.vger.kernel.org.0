@@ -2,96 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED36A85206
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C8B485211
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 19:29:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388732AbfHGRYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 13:24:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33094 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbfHGRYd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 13:24:33 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AE67A60F3B; Wed,  7 Aug 2019 17:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565198672;
-        bh=9K1MOxiCxYs/25EyWmBrmkD80zO1z57WgiTXJ3f3y6Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OxCnwmzuQnMmlh3okgONlCz5nhylnjZ13rQgFQHfSjlepS/i8uCL6MM+bFrvIWvXn
-         SKLFfBy4Aws2Cy9BQpBrZbOeulOU4rFgFrqY5u4780x9d23NgBy/obA1FgV7QRr+/o
-         wsz3UYoCy8ZSgp02JhVCruRzZ/W1ZGn+V/08zcFA=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S2388875AbfHGR3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 13:29:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388501AbfHGR3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 13:29:08 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A1E060ACF;
-        Wed,  7 Aug 2019 17:24:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565198672;
-        bh=9K1MOxiCxYs/25EyWmBrmkD80zO1z57WgiTXJ3f3y6Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OxCnwmzuQnMmlh3okgONlCz5nhylnjZ13rQgFQHfSjlepS/i8uCL6MM+bFrvIWvXn
-         SKLFfBy4Aws2Cy9BQpBrZbOeulOU4rFgFrqY5u4780x9d23NgBy/obA1FgV7QRr+/o
-         wsz3UYoCy8ZSgp02JhVCruRzZ/W1ZGn+V/08zcFA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A1E060ACF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     linux-arm-msm@vger.kernel.org, Sean Paul <sean@poorly.run>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH] drm/msm: Make DRM_MSM default to 'm'
-Date:   Wed,  7 Aug 2019 11:24:27 -0600
-Message-Id: <1565198667-4300-1-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        by mail.kernel.org (Postfix) with ESMTPSA id 03B7B2229C;
+        Wed,  7 Aug 2019 17:29:08 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hvPkJ-0007yx-2L; Wed, 07 Aug 2019 13:29:07 -0400
+Message-Id: <20190807172826.352574408@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 07 Aug 2019 13:28:26 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Jiping Ma <jiping.ma2@windriver.com>, mingo@redhat.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2 v2] tracing/arm: Fix the stack tracer when LR is saved after local storage
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most use cases for DRM_MSM will prefer to build both DRM and MSM_DRM as
-modules but there are some cases where DRM might be built in for whatever
-reason and in those situations it is preferable to still keep MSM as a
-module by default and let the user decide if they _really_ want to build
-it in.
+As arm64 saves the link register after a function's local variables are
+stored, it causes the max stack tracer to be off by one in its output
+of which function has the bloated stack frame.
 
-Additionally select QCOM_COMMAND_DB for ARCH_QCOM targets to make sure
-it doesn't get missed when we need it for a6xx tarets.
+The first patch fixes this by creating a ARCH_RET_ADDR_BEFORE_LOCAL_VARS
+define that an achitecture (arm64) may set in asm/ftrace.h, and this
+will cause the stack tracer to make the shift.
 
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
----
+As it has been proven that the stack tracer isn't the most trivial
+algorithm to understand by staring at the code, the second patch adds
+comments to the code to explain the algorithm with and without the
+ARCH_RET_ADDR_BEFORE_LOCAL_VARS.
 
- drivers/gpu/drm/msm/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hmm, should this be sent to stable (and for inclusion now?)
 
-diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-index 9c37e4d..3b2334b 100644
---- a/drivers/gpu/drm/msm/Kconfig
-+++ b/drivers/gpu/drm/msm/Kconfig
-@@ -14,11 +14,12 @@ config DRM_MSM
- 	select SHMEM
- 	select TMPFS
- 	select QCOM_SCM if ARCH_QCOM
-+	select QCOM_COMMAND_DB if ARCH_QCOM
- 	select WANT_DEV_COREDUMP
- 	select SND_SOC_HDMI_CODEC if SND_SOC
- 	select SYNC_FILE
- 	select PM_OPP
--	default y
-+	default m
- 	help
- 	  DRM/KMS driver for MSM/snapdragon.
- 
--- 
-2.7.4
+-- Steve
 
+Changes since v1:
+
+ - Fixed wrong value in stack_trace_index[] array in comment
+
+ - Added a comment about gcc currently saves the LR after local variables,
+   but there's no guarantee that it will be like that in the future.
+   (Notified of this by Mark Rutland)
+
+Steven Rostedt (VMware) (2):
+      tracing/arm64: Have max stack tracer handle the case of return address after data
+      tracing: Document the stack trace algorithm in the comments
+
+----
+ arch/arm64/include/asm/ftrace.h |  13 +++++
+ kernel/trace/trace_stack.c      | 112 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 125 insertions(+)
