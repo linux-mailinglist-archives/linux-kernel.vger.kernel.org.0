@@ -2,145 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A924853CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 21:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E0A853D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 21:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389555AbfHGTlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 15:41:19 -0400
-Received: from vern.gendns.com ([98.142.107.122]:43712 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389496AbfHGTlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 15:41:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=References:In-Reply-To:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pbaXv8/k76yXM2YSUI6OCA9KXxg0bErOr3/Oy6pyLQc=; b=fm9TJElXx7urRtkHpdrAlASKn
-        ZvRvvv22JlIUuESZN1sMD/SHohdI0IgyJcPTDkCYUOiitYGHUSh1nDwpVmePKd0PoFWnrVNXQg7Fi
-        Wl4TIsnt+mDz9YIEeIux6TDTKqcBGLj/i6FLrDQcmQn5IPFWyjlrUUgUdFTxreUq4163xq+DNggPB
-        ansjf2JQCu8TyIgS4gsZM+LxIY/+3ISfVY74YDl+VSAqn0ma8/41etOWZ4sc8JRpsfpPZvdUqONJ6
-        mUK+6dkms54fyxWcmFRUTiS3D++b8tlGkMSTmByy2ILbvVCvSIGjETFtCo0aZLJP469olaEvgwPhG
-        lFEehLYow==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:60292 helo=freyr.lechnology.com)
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <david@lechnology.com>)
-        id 1hvRo1-00006r-Cl; Wed, 07 Aug 2019 15:41:05 -0400
-From:   David Lechner <david@lechnology.com>
-To:     linux-iio@vger.kernel.org, linux-omap@vger.kernel.org
-Cc:     David Lechner <david@lechnology.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: [PATCH v2 5/5] ARM: dts: am335x-boneblue: Enable eQEP
-Date:   Wed,  7 Aug 2019 14:40:23 -0500
-Message-Id: <20190807194023.15318-6-david@lechnology.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190807194023.15318-1-david@lechnology.com>
-References: <20190807194023.15318-1-david@lechnology.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S2388926AbfHGTnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 15:43:10 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11240 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388270AbfHGTnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 15:43:10 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4b29ce0000>; Wed, 07 Aug 2019 12:43:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 07 Aug 2019 12:43:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 07 Aug 2019 12:43:09 -0700
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 7 Aug
+ 2019 19:43:08 +0000
+Subject: Re: [PATCH v2] x86/boot: save fields explicitly, zero out everything
+ else
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "H . Peter Anvin" <hpa@zytor.com>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190731054627.5627-1-jhubbard@nvidia.com>
+ <20190731054627.5627-2-jhubbard@nvidia.com>
+ <531b38aaa15e4de79a5e27fd37c04351@AcuMS.aculab.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <1ee72eca-1a09-0b71-f202-b1a909ca85b7@nvidia.com>
+Date:   Wed, 7 Aug 2019 12:43:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <531b38aaa15e4de79a5e27fd37c04351@AcuMS.aculab.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565206990; bh=wV0TIhB96lEXdxg4ZAPSQCvLdj50VGvQwt3aeXxT47Y=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ogFF0d2ww1f1FI7jm+ek1zbUaul8cBYZf8dEYS5iLyy2PncViRJnI6L1paYfjr6WR
+         vn8CvVZP1vTKFaOaL8GvV/v3Q8E/A9lH+b5gylKEUc2slbmFn6xqos9vSoZSdyfhrI
+         ndDZ+2ulEbzXjsSld1Cac8vBKZpCJaoWC5m4MXuh2ql7Tvsp7NkGbO/ulZjolI9Nw7
+         HSw5VWptsSNE0Cmtjpq8l8jL9x8b5G1UPf+CCDvlCyoy+v2baB+yy/PiR5FbSF+mm9
+         MqN/SlZLGjUtAVt/y2on2Pf4rKSUc3916oMsRCwHjqyyPAiWBBeHNao5nDduU9Y5gh
+         WMGv7AeZwDWqg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables the Enhanced Quadrature Encoder Pulse (eQEP) module for
-connectors E1, E2 and E3 on BeagleBone Blue.
+On 8/7/19 4:41 AM, David Laight wrote:
+> From: john.hubbard@gmail.com
+>> Sent: 31 July 2019 06:46
+...
+>>  	if (boot_params->sentinel) {
+>> -		/* fields in boot_params are left uninitialized, clear them */
+>> -		boot_params->acpi_rsdp_addr = 0;
+>> -		memset(&boot_params->ext_ramdisk_image, 0,
+>> -		       (char *)&boot_params->efi_info -
+>> -			(char *)&boot_params->ext_ramdisk_image);
+>> -		memset(&boot_params->kbd_status, 0,
+>> -		       (char *)&boot_params->hdr -
+>> -		       (char *)&boot_params->kbd_status);
+>> -		memset(&boot_params->_pad7[0], 0,
+>> -		       (char *)&boot_params->edd_mbr_sig_buffer[0] -
+>> -			(char *)&boot_params->_pad7[0]);
+>> -		memset(&boot_params->_pad8[0], 0,
+>> -		       (char *)&boot_params->eddbuf[0] -
+>> -			(char *)&boot_params->_pad8[0]);
+>> -		memset(&boot_params->_pad9[0], 0, sizeof(boot_params->_pad9));
+> ...
+> 
+> How about replacing the above first using:
+> #define zero_struct_fields(ptr, from, to) memset(&ptr->from, 0, (char *)&ptr->to - (char *)&ptr->from)
+> 	zero_struct_fields(boot_params, ext_ramdisk_image, efi_info);
+> 	...
+> Which is absolutely identical to the original code.
+> 
+> The replacing the define with:
+> 	#define so(s, m) offsetof(typeof(*s), m)
+> 	#define zero_struct_fields(ptr, from, to) memset((char *)ptr + so(ptr, from), 0, so(ptr, to) - so(ptr, from))
+> which gcc probably doesn't complain about, but should generate identical code again.
+> There might be an existing define for so().
+> 
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+Hi David,
 
-v2 changes:
-- none
+There was discussion about that [1], but preference ending up being to
+flip this around, in order to more closely match the original intent
+of this function (zero out everything except for certain carefully
+selected fields), and to therefore be more likely to keep working if 
+fields are added. 
 
- arch/arm/boot/dts/am335x-boneblue.dts | 54 +++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
 
-diff --git a/arch/arm/boot/dts/am335x-boneblue.dts b/arch/arm/boot/dts/am335x-boneblue.dts
-index 0257576d5d16..df3978ce061c 100644
---- a/arch/arm/boot/dts/am335x-boneblue.dts
-+++ b/arch/arm/boot/dts/am335x-boneblue.dts
-@@ -258,6 +258,30 @@
- 			AM33XX_PADCONF(AM335X_PIN_MII1_RXD0, PIN_OUTPUT, MUX_MODE7)		/* (M16) gmii1_rxd0.gpio2[21] */
- 		>;
- 	};
-+
-+	/* E1 */
-+	eqep0_pins: pinmux_eqep0_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_PADCONF(AM335X_PIN_MCASP0_AXR0, PIN_INPUT, MUX_MODE1)		/* (B12) mcasp0_aclkr.eQEP0A_in */
-+			AM33XX_PADCONF(AM335X_PIN_MCASP0_FSR, PIN_INPUT, MUX_MODE1)		/* (C13) mcasp0_fsr.eQEP0B_in */
-+		>;
-+	};
-+
-+	/* E2 */
-+	eqep1_pins: pinmux_eqep1_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA12, PIN_INPUT, MUX_MODE2)		/* (V2) lcd_data12.eQEP1A_in */
-+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA13, PIN_INPUT, MUX_MODE2)		/* (V3) lcd_data13.eQEP1B_in */
-+		>;
-+	};
-+
-+	/* E3 */
-+	eqep2_pins: pinmux_eqep2_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD12, PIN_INPUT, MUX_MODE4)		/* (T12) gpmc_ad12.eQEP2A_in */
-+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD13, PIN_INPUT, MUX_MODE4)		/* (R12) gpmc_ad13.eQEP2B_in */
-+		>;
-+	};
- };
- 
- &uart0 {
-@@ -530,3 +554,33 @@
- 		line-name = "LS_BUF_EN";
- 	};
- };
-+
-+&epwmss0 {
-+	status = "okay";
-+};
-+
-+&eqep0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&eqep0_pins>;
-+};
-+
-+&epwmss1 {
-+	status = "okay";
-+};
-+
-+&eqep1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&eqep1_pins>;
-+};
-+
-+&epwmss2 {
-+	status = "okay";
-+};
-+
-+&eqep2 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&eqep2_pins>;
-+};
+[1] https://lore.kernel.org/lkml/alpine.DEB.2.21.1907252358240.1791@nanos.tec.linutronix.de/
+
+thanks,
 -- 
-2.17.1
-
+John Hubbard
+NVIDIA
