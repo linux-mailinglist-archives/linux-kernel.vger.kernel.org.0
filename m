@@ -2,79 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C42A385145
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 622DE8514B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730271AbfHGQm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:42:29 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36464 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730010AbfHGQm3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:42:29 -0400
-Received: by mail-ot1-f66.google.com with SMTP id r6so106837694oti.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 09:42:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=OgPFf4sieXg6FSqMl/7z/egdCX4CBj1LSh4wy9vZMd0=;
-        b=JmLeqOSpk6X4jyeXqVA19M/C3q/EQo3ixua/k4pXgGjJwizYMK6DOHHGeTu2QRx/pi
-         Ro6gORNTivgGAzBqKHMOi6pxTU6w9aBJvqX9Fb5Gld/zqQwBjnBNtdJLJLnJ52YmH3h7
-         3iMK1Jc5RYXTOjx4i6Sio2583eBQKPfXxxjPxdrEvbSa/sHg4qqiDQOHPqcz1oP0BYmg
-         FE3H1oEzL/VB6Aw0e6BRldwbFwDDMlhOYKZfdZhp3xQkRsxDQesVNcoAM4MsHJo6QJvo
-         CCQOw2mSAvxoEsAG0/vXJqzqrT6cEzp/+RPkNaviB0duB+yaeTDzaoLHoInsr3WUDZnR
-         dmyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=OgPFf4sieXg6FSqMl/7z/egdCX4CBj1LSh4wy9vZMd0=;
-        b=cIRa5sXf6Md0eMVPDmqj72gTUWlqhfhNZl0ko+PZXDqmwGbLFZHtHro4Neoxoq6qvl
-         rlvUD4quBrbnSQ6X4bfh9q6Pk+DtGbUAghjbatrges4ZgT/4GOnVDx1UsUf1aVlmI5mx
-         bK/IyuxugDtQl9ItnBbwGDTvXAMY+7X7DPiGUO1ZnA8LSeTvi3DOdsWP6zYxohF+pLMB
-         Auanx7i/+DmeiRtHlvV20FvwVtoXD86tNXWC3+YHAqlB/c1pV4gDb5YNK53wVdABpuxd
-         WGdNVq8tzV91c3RmuWk10/FYVK0KJ/IuaZDhy5a7lDEOUXLXzSSKMBwokH02ZYq53DaY
-         0aRw==
-X-Gm-Message-State: APjAAAXYiuqSzTY7RCRpBd/CDG7w4Xv2PDC/iAjvs7YRO89z0YbdFeQz
-        GWB/Wo+TcwkENU7pJA+PhVceVnroTDw=
-X-Google-Smtp-Source: APXvYqwm/dtouaS2YDkg4nuZf7fonnO8dwiBe2IToY4UY/xI3nlngfUW1dUQIVzDV+FS9qhrZgGcjA==
-X-Received: by 2002:a5e:9314:: with SMTP id k20mr10575140iom.235.1565196148444;
-        Wed, 07 Aug 2019 09:42:28 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id n26sm66735984ioc.74.2019.08.07.09.42.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 07 Aug 2019 09:42:28 -0700 (PDT)
-Date:   Wed, 7 Aug 2019 09:42:27 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Alexandre Ghiti <alex@ghiti.fr>
-cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: kbuild: add virtual memory system selection
-In-Reply-To: <c331e389-5f33-634a-f62f-e48251ca4cfe@ghiti.fr>
-Message-ID: <alpine.DEB.2.21.9999.1908070940110.13971@viisi.sifive.com>
-References: <alpine.DEB.2.21.9999.1907261259420.26670@viisi.sifive.com> <20190802084453.GA1410@infradead.org> <alpine.DEB.2.21.9999.1908061648220.13971@viisi.sifive.com> <20190807054246.GB1398@infradead.org> <c331e389-5f33-634a-f62f-e48251ca4cfe@ghiti.fr>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S2388667AbfHGQnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:43:15 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:33984 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729944AbfHGQnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 12:43:15 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B07C2007C0;
+        Wed,  7 Aug 2019 18:43:13 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 382D32002E8;
+        Wed,  7 Aug 2019 18:43:13 +0200 (CEST)
+Received: from fsr-ub1864-103.ea.freescale.net (fsr-ub1864-103.ea.freescale.net [10.171.82.17])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 63AC6205E5;
+        Wed,  7 Aug 2019 18:43:12 +0200 (CEST)
+From:   Daniel Baluta <daniel.baluta@nxp.com>
+To:     daniel.baluta@nxp.com, shawnguo@kernel.org
+Cc:     aisheng.dong@nxp.com, anson.huang@nxp.com,
+        devicetree@vger.kernel.org, festevam@gmail.com,
+        kernel@pengutronix.de, leonard.crestez@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, m.felsch@pengutronix.de,
+        mark.rutland@arm.com, paul.olaru@nxp.com, peng.fan@nxp.com,
+        robh+dt@kernel.org, shengjiu.wang@nxp.com,
+        sound-open-firmware@alsa-project.org,
+        pierre-louis.bossart@linux.intel.com, l.stach@pengutronix.de
+Subject: [PATCH v3 0/5] Add DSP node for i.MX8QXP board to be used by DSP SOF driver
+Date:   Wed,  7 Aug 2019 19:42:53 +0300
+Message-Id: <20190807164258.8306-1-daniel.baluta@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Aug 2019, Alexandre Ghiti wrote:
+i.MX 8QXP boards feature an Hifi4 DSP from Tensilica.
 
-> And FYI my series and your patch are already in linux-next.
+This patch series aims on adding the DT node describing the DSP,
+but it also contains the Linux SOF DSP driver code that will use the DT node
+for easier review.
 
-Yes, I agree with Christoph that it would be preferable not to break 
-randconfig/allyesconfig.  So if you don't mind, could you respin the 
-RISC-V patch to drop the Sv48 portion, and simply assume Sv39 for RV64 as 
-we do for the rest of the RISC-V kernel code?  We can always add Sv48 
-back in later.
+Note that we switched to the new yaml format for bindings documentation.
 
-If you agree, then once you do that, I'll ask Andrew to drop the RISC-V 
-Kbuild patch that he's carrying.
+The DSP will run SOF Firmware [1]. Patches 1,2,3 are adding support
+for Linux DSP driver are already sent for review to SOF folks [2]
 
+Ideally, patches 4/5 and 5/5 will go upstream through Shawn's tree
+while 1-3/5 will go upstream via Pierre's tree -> ASoC tree.
 
-- Paul
+Mind that SOF DSP support depends on IMX DSP communication protocol
+up for review here: https://lkml.org/lkml/2019/8/1/260
+
+Shawn, can you pick this up first?
+
+Symbol dependencies are hopefully set correct so even if one of
+the patches is not in a tree the compilation will not fail because
+the symbols depending on that patches will not be selected.
+
+[1] https://github.com/thesofproject/sof
+[2] https://github.com/thesofproject/linux/pull/1048/commits
+
+Daniel Baluta (5):
+  ASoC: SOF: Add OF DSP device support
+  ASoC: SOF: imx: Add i.MX8 HW support
+  ASoC: SOF: topology: Add dummy support for i.MX8 DAIs
+  arm64: dts: imx8qxp: Add DSP DT node
+  dt-bindings: dsp: fsl: Add DSP core binding support
+
+ .../devicetree/bindings/dsp/fsl,dsp.yaml      |  88 ++++
+ arch/arm64/boot/dts/freescale/imx8qxp-mek.dts |   4 +
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi    |  32 ++
+ include/sound/sof/dai.h                       |   2 +
+ include/uapi/sound/sof/tokens.h               |   8 +
+ sound/soc/sof/Kconfig                         |  11 +
+ sound/soc/sof/Makefile                        |   4 +
+ sound/soc/sof/imx/Kconfig                     |  22 +
+ sound/soc/sof/imx/Makefile                    |   4 +
+ sound/soc/sof/imx/imx8.c                      | 394 ++++++++++++++++++
+ sound/soc/sof/sof-of-dev.c                    | 143 +++++++
+ sound/soc/sof/topology.c                      |  30 ++
+ 12 files changed, 742 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+ create mode 100644 sound/soc/sof/imx/Kconfig
+ create mode 100644 sound/soc/sof/imx/Makefile
+ create mode 100644 sound/soc/sof/imx/imx8.c
+ create mode 100644 sound/soc/sof/sof-of-dev.c
+
+-- 
+2.17.1
+
