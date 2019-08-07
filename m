@@ -2,120 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F108B84CFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D865684D59
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388315AbfHGNaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:30:03 -0400
-Received: from mga06.intel.com ([134.134.136.31]:20721 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387982AbfHGNaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:30:02 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 06:30:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
-   d="scan'208";a="185993385"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by orsmga002.jf.intel.com with ESMTP; 07 Aug 2019 06:29:59 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1hvM0r-0002hp-7c; Wed, 07 Aug 2019 16:29:57 +0300
-Date:   Wed, 7 Aug 2019 16:29:57 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        jslaby@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        qi-ming.wu@intel.com, cheol.yong.kim@intel.com,
-        rahul.tanwar@intel.com
-Subject: Re: [PATCH 3/5] serial: lantiq: Make IRQ & ISR assignment dynamic
-Message-ID: <20190807132957.GY30120@smile.fi.intel.com>
-References: <cover.1565160764.git.rahul.tanwar@linux.intel.com>
- <6dd57ea99f734bd4e413f6913914c0a93c00f295.1565160764.git.rahul.tanwar@linux.intel.com>
+        id S2388360AbfHGNbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:31:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60184 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388270AbfHGNa5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 09:30:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3ckEXQQQWe0VyUcKIbErhvAUX+jxDacyLSy6gj/b2Og=; b=jHqJHhQLgqMSB2hRFu1qWolUP
+        GIU2eQFAkl05c5ThRJ7LdSqlPxn+h+ei4beu4clpNhEFLx/qeTGsck+G3br2aFK4RtLaLDPrDMtqr
+        OIJtT56W/LcN4GOIz9bWoJS9EVFYT/i3s02LagQCFNVuH73iaGDfWKeLdCH8fvrbwBfPA2nkmrs25
+        emGISoNfwRFIwNCVZ+jk9Ysj2+rIovZxt8Hu8J5bbG3YMYlmckQyZQ3VnmVfmN0PUEv8CPzokZ3ik
+        4CwkDjkniHjdJ1rsIqvrI5/eW/1lf6nEseunIeIZraTGnZzaYYiztVmV2z039KHW7Uth+HB/4NsKG
+        2TK+ChC1w==;
+Received: from [195.167.85.94] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hvM1k-0007oT-4Z; Wed, 07 Aug 2019 13:30:52 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: RFC: remove sn2, hpsim and ia64 machvecs
+Date:   Wed,  7 Aug 2019 16:30:20 +0300
+Message-Id: <20190807133049.20893-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6dd57ea99f734bd4e413f6913914c0a93c00f295.1565160764.git.rahul.tanwar@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 05:21:33PM +0800, Rahul Tanwar wrote:
-> This driver/IP is reused across multiple SoCs. Older SoCs supported three
-> separate IRQs for tx, rx & err interrupts. Newer Lightning Mountain SoC
-> supports single IRQ for all of tx/rx/err interrupts. This patch modifies
-> the driver design to support dynamic assignment of IRQ resources & ISRs
-> based on devicetree node compatible entries.
+Hi Tony,
 
-> +struct ltq_soc_data {
-> +	int	(*fetch_irq)(struct platform_device *pdev,
-> +				 struct ltq_uart_port *ltq_port);
+let me know what you think of this series.  This drops the pretty much
+dead sn2 and hpsim support, which then allows us to build a single ia64
+kernel image that supports all remaining systems without extra indirections
+in the fast path.
 
-This can be simple
+A git tree is also available at:
 
-	int	(*fetch_irq)(struct device *dev, struct ltq_uart_port *ltq_port);
+    git://git.infradead.org/users/hch/misc.git ia64-remove-machvecs
 
-(Note one line and struct device instead of platform_device)
+Gitweb:
 
-> +	int	(*request_irq)(struct uart_port *port);
-> +	void	(*free_irq)(struct uart_port *port);
-> +};
-
-> +	retval = ltq_port->soc->request_irq(port);
-> +	if(retval)
-
-Space is missed.
-
->  		return retval;
-
-
-> +static int fetch_irq_lantiq(struct platform_device *pdev,
-> +			    struct ltq_uart_port *ltq_port)
-> +{
-> +	struct device_node *node = pdev->dev.of_node;
-> +	struct uart_port *port = &ltq_port->port;
-> +	struct resource irqres[3];
-> +	int ret;
-> +
-> +	ret = of_irq_to_resource_table(node, irqres, 3);
-> +	if (ret != 3) {
-> +		dev_err(&pdev->dev,
-> +			"failed to get IRQs for serial port\n");
-> +		return -ENODEV;
-> +	}
-> +	ltq_port->tx_irq = irqres[0].start;
-> +	ltq_port->rx_irq = irqres[1].start;
-> +	ltq_port->err_irq = irqres[2].start;
-> +	port->irq = irqres[0].start;
-> +
-
-> +	return ret;
-
-I'm not sure you need to return known value. 0 will be good enough...
-
-> +}
-
-> +	ltq_port->soc = of_device_get_match_data(&pdev->dev);
-> +	ret = ltq_port->soc->fetch_irq(pdev, ltq_port);
-
-> +	if (ret < 0)
-
-...and thus simple...
-
-	if (ret)
-
-...may be used.
-
-> +		return ret;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/ia64-remove-machvecs
