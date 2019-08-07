@@ -2,100 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 399CD8428D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:38:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC16784274
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727776AbfHGCiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 22:38:24 -0400
-Received: from mga11.intel.com ([192.55.52.93]:39432 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbfHGCiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:38:24 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 19:38:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,353,1559545200"; 
-   d="scan'208";a="374254553"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Aug 2019 19:38:22 -0700
-Date:   Wed, 7 Aug 2019 10:21:14 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v4 06/12] fpga: dfl: afu: export __port_enable/disable
- function.
-Message-ID: <20190807022114.GB24158@hao-dev>
-References: <1564914022-3710-1-git-send-email-hao.wu@intel.com>
- <1564914022-3710-7-git-send-email-hao.wu@intel.com>
- <20190805155240.GB8107@kroah.com>
+        id S1729117AbfHGCa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 22:30:27 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40447 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727653AbfHGCa1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 22:30:27 -0400
+Received: by mail-ot1-f67.google.com with SMTP id l15so41044472oth.7
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 19:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=fcElZ7wudLl4OkkEiYYbZc12nuQcPIrxhzg+jbUkCuA=;
+        b=UDOJPO3zORas6F4lihQxqeo6VOtTY+/Xof7TmRXnf8qQUc4oez8VQ/ykzcGIVigsL4
+         GJUsYrn9ctOdXiLvrCEuuAkVfhfbC/4RNOx9O8f6r+ALL9lk0XaWiEZefw8Gikyg70j7
+         YWiReY8nHjjs37lp24se6ySXefKSqFwgxZet5atWG7LwNkf+o46yRjA8XmKuXrDs803m
+         FdwKFQGlB8fMBtl/0FCegXzTLcqfvF5Oyy0NpUDd07EwRJtE3wSUgBSj+3/xGh07JVBe
+         m7mO//rTcZJzlpA1SlT7YukYp28nav+zwLLex55kBNQfGLdHK2CB9TjxYd93qXzYdjGp
+         op3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=fcElZ7wudLl4OkkEiYYbZc12nuQcPIrxhzg+jbUkCuA=;
+        b=od3IbtXF0b4bEiHw5MizJfqp+ePQpOLujqIIm5A7Nz65GyF2Q5UvPAsUKsYD7a9qub
+         Odh4aWTUqvjuA4epCHAYei4TrvJCAI3rQFR6O5pHT1MpbbBF7ZYlzLtEBjnqvnqtKEDz
+         NyNU259SY8msO/JzlkF4Tq3JtIfGPyis9ZBg8m2JDX98wgjwjRgknYZE7RzCv743Zqjr
+         pLaI4bodVlJgkU52QiLr+LNseGIYXHkzXCzroIHYxA2H4ENIqVpViMOrouS0ctQBE9fT
+         iFzk5OGt/NxuIHcPP/EdxfY18heUaq3KHUUohMgr2qoJmFZ+At4RenqFzB884d1wS2wZ
+         w6rA==
+X-Gm-Message-State: APjAAAUB7XsWtYF67iq8PWHMoIltZvfw3MYSK34v6ZGgSZpwnJhUwu3e
+        u2lVKWn9adp3LvqCk5HuPbrNTKkPBDc=
+X-Google-Smtp-Source: APXvYqy5awZKyZbsdh5g/oDEBb/x5E1IQyxC8xQ0M2N6V6fiNDKO+jW2FnJkWzfnrjdoiyAlwXiY8Q==
+X-Received: by 2002:a05:6638:40c:: with SMTP id q12mr7740016jap.17.1565145026561;
+        Tue, 06 Aug 2019 19:30:26 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id y20sm73451455ion.77.2019.08.06.19.30.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 06 Aug 2019 19:30:25 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 19:30:24 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     linux-riscv@lists.infradead.org
+cc:     linux-kernel@vger.kernel.org, atish.patra@wdc.com
+Subject: [PATCH] riscv: kbuild: drop CONFIG_RISCV_ISA_C
+Message-ID: <alpine.DEB.2.21.9999.1908061929230.19468@viisi.sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805155240.GB8107@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 05:52:40PM +0200, Greg KH wrote:
-> On Sun, Aug 04, 2019 at 06:20:16PM +0800, Wu Hao wrote:
-> > As these two functions are used by other private features. e.g.
-> > in error reporting private feature, it requires to check port status
-> > and reset port for error clearing.
-> > 
-> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > Acked-by: Moritz Fischer <mdf@kernel.org>
-> > Acked-by: Alan Tull <atull@kernel.org>
-> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> > ---
-> > v2: rebased
-> > ---
-> >  drivers/fpga/dfl-afu-main.c | 25 ++++++++++++++-----------
-> >  drivers/fpga/dfl-afu.h      |  3 +++
-> >  2 files changed, 17 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> > index e013afb..e312179 100644
-> > --- a/drivers/fpga/dfl-afu-main.c
-> > +++ b/drivers/fpga/dfl-afu-main.c
-> > @@ -22,14 +22,16 @@
-> >  #include "dfl-afu.h"
-> >  
-> >  /**
-> > - * port_enable - enable a port
-> > + * __port_enable - enable a port
-> >   * @pdev: port platform device.
-> >   *
-> >   * Enable Port by clear the port soft reset bit, which is set by default.
-> >   * The AFU is unable to respond to any MMIO access while in reset.
-> > - * port_enable function should only be used after port_disable function.
-> > + * __port_enable function should only be used after __port_disable function.
-> > + *
-> > + * The caller needs to hold lock for protection.
-> >   */
-> > -static void port_enable(struct platform_device *pdev)
-> > +void __port_enable(struct platform_device *pdev)
-> 
-> worst global function name ever.
-> 
-> Don't polute the global namespace like this for a single driver.  If you
-> REALLY need it, then use a prefix that shows it is your individual
-> dfl_special_sauce_platform_device_only type thing.
 
-Oh.. Sure.. Let me fix the naming in the next version.
+The baseline ISA support requirement for the RISC-V Linux kernel
+mandates compressed instructions, so it doesn't make sense for
+compressed instruction support to be configurable.
 
-Thanks
-Hao
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Atish Patra <atish.patra@wdc.com>
 
-> 
-> thanks,
-> 
-> greg k-h
+---
+ arch/riscv/Kconfig  | 10 ----------
+ arch/riscv/Makefile |  2 +-
+ 2 files changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 59a4727ecd6c..8c5b9329ec46 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -197,16 +197,6 @@ config TUNE_GENERIC
+ 
+ endchoice
+ 
+-config RISCV_ISA_C
+-	bool "Emit compressed instructions when building Linux"
+-	default y
+-	help
+-	   Adds "C" to the ISA subsets that the toolchain is allowed to emit
+-	   when building Linux, which results in compressed instructions in the
+-	   Linux binary.
+-
+-	   If you don't know what to do here, say Y.
+-
+ menu "supported PMU type"
+ 	depends on PERF_EVENTS
+ 
+diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+index 7a117be8297c..e23e066c55e2 100644
+--- a/arch/riscv/Makefile
++++ b/arch/riscv/Makefile
+@@ -38,7 +38,7 @@ endif
+ riscv-march-$(CONFIG_ARCH_RV32I)	:= rv32ima
+ riscv-march-$(CONFIG_ARCH_RV64I)	:= rv64ima
+ riscv-march-$(CONFIG_FPU)		:= $(riscv-march-y)fd
+-riscv-march-$(CONFIG_RISCV_ISA_C)	:= $(riscv-march-y)c
++riscv-march-y				:= $(riscv-march-y)c
+ KBUILD_CFLAGS += -march=$(subst fd,,$(riscv-march-y))
+ KBUILD_AFLAGS += -march=$(riscv-march-y)
+ 
+-- 
+2.22.0
+
