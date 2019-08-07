@@ -2,97 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B3E84D43
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB3FE84D5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 15:33:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388687AbfHGNcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 09:32:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60840 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388624AbfHGNcW (ORCPT
+        id S2388726AbfHGNde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 09:33:34 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35380 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388342AbfHGNa7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:32:22 -0400
+        Wed, 7 Aug 2019 09:30:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=35Wov8xFMRqPypDnINHOhGjn1zV2YlFcYXBEGdDF8FY=; b=iktkWZBftFPXxZN/7ldq5hE/qV
-        E0Rbym/X2WX9V6GD5EAtbpEdvQF11ZNdEYRys+YvlZQBXfIaj1ZiFItw7jC4w7B/mBHkwxLsJs1dy
-        HEFVTMnGDHX2SS+tsE/B93SRKovsYB7sBZV6ahCXLh3+xb1bpASFNIajfmBhPkVvH5k40kpdBI/Hy
-        64VrphCH5E6blhKL7JnV72/xRoT+hgEG7HphfX15vQJGQ242OU4ctWBT5iVJJJO0+W37XFZnf7rUf
-        skhlJbhZidxFk04DfbZGtPkpA7XTWXQD60gbOF7Dd5qefd6SchPe/ynMoqhY1yAnBJBrGjnUxj/g3
-        JtlShwvg==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvM3B-0008GR-Au; Wed, 07 Aug 2019 13:32:21 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 29/29] genirq: remove the is_affinity_mask_valid hook
-Date:   Wed,  7 Aug 2019 16:30:49 +0300
-Message-Id: <20190807133049.20893-30-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190807133049.20893-1-hch@lst.de>
-References: <20190807133049.20893-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=3mT0qX6BJMb19WlpAQonUb3hiJi+k8YBab91Hj0vvho=; b=LhjsSrdJD78p
+        CED+ljKGscLImtPr8cvKltrohbkNClfrC0SEY+UP0JVdNvM/j5+rbHsbi4p9e+yiqcFhdzCm0jD5w
+        OzSBPn91Kh/M8VhSVnSP0RsnF5xa8+QCJTZf33sJJOa5jiXmATUaZnac/OIMwhkyg+elvg970I2x1
+        J2W/w=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1hvM1o-0007hL-Fe; Wed, 07 Aug 2019 13:30:56 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id D6BF32742BE8; Wed,  7 Aug 2019 14:30:55 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: bcm-qspi: Fix BSPI QUAD and DUAL mode support when using flex mode" to the spi tree
+In-Reply-To: <1565086070-28451-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190807133055.D6BF32742BE8@ypsilon.sirena.org.uk>
+Date:   Wed,  7 Aug 2019 14:30:55 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This override was only used by the ia64 SGI SN2 platform, which is
-gone now.
+The patch
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+   spi: bcm-qspi: Fix BSPI QUAD and DUAL mode support when using flex mode
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 79629d0f7ce5b38515c1716911a0181f01b91102 Mon Sep 17 00:00:00 2001
+From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Date: Tue, 6 Aug 2019 15:37:50 +0530
+Subject: [PATCH] spi: bcm-qspi: Fix BSPI QUAD and DUAL mode support when using
+ flex mode
+
+Fix data transfer width settings based on DT field 'spi-rx-bus-width'
+to configure BSPI in single, dual or quad mode by using data width
+and not the command width.
+
+Fixes: 5f195ee7d830c ("spi: bcm-qspi: Implement the spi_mem interface")
+
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Link: https://lore.kernel.org/r/1565086070-28451-1-git-send-email-rayagonda.kokatanur@broadcom.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- kernel/irq/proc.c | 14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/spi/spi-bcm-qspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index da9addb8d655..cfc4f088a0e7 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -100,10 +100,6 @@ static int irq_affinity_hint_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--#ifndef is_affinity_mask_valid
--#define is_affinity_mask_valid(val) 1
--#endif
--
- int no_irq_affinity;
- static int irq_affinity_proc_show(struct seq_file *m, void *v)
+diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
+index 584bcb018a62..285a6f463013 100644
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -354,7 +354,7 @@ static int bcm_qspi_bspi_set_flex_mode(struct bcm_qspi *qspi,
  {
-@@ -136,11 +132,6 @@ static ssize_t write_irq_affinity(int type, struct file *file,
- 	if (err)
- 		goto free_cpumask;
+ 	int bpc = 0, bpp = 0;
+ 	u8 command = op->cmd.opcode;
+-	int width  = op->cmd.buswidth ? op->cmd.buswidth : SPI_NBITS_SINGLE;
++	int width = op->data.buswidth ? op->data.buswidth : SPI_NBITS_SINGLE;
+ 	int addrlen = op->addr.nbytes;
+ 	int flex_mode = 1;
  
--	if (!is_affinity_mask_valid(new_value)) {
--		err = -EINVAL;
--		goto free_cpumask;
--	}
--
- 	/*
- 	 * Do not allow disabling IRQs completely - it's a too easy
- 	 * way to make the system unusable accidentally :-) At least
-@@ -232,11 +223,6 @@ static ssize_t default_affinity_write(struct file *file,
- 	if (err)
- 		goto out;
+@@ -992,7 +992,7 @@ static int bcm_qspi_exec_mem_op(struct spi_mem *mem,
+ 	if (mspi_read)
+ 		return bcm_qspi_mspi_exec_mem_op(spi, op);
  
--	if (!is_affinity_mask_valid(new_value)) {
--		err = -EINVAL;
--		goto out;
--	}
--
- 	/*
- 	 * Do not allow disabling IRQs completely - it's a too easy
- 	 * way to make the system unusable accidentally :-) At least
+-	ret = bcm_qspi_bspi_set_mode(qspi, op, -1);
++	ret = bcm_qspi_bspi_set_mode(qspi, op, 0);
+ 
+ 	if (!ret)
+ 		ret = bcm_qspi_bspi_exec_mem_op(spi, op);
 -- 
 2.20.1
 
