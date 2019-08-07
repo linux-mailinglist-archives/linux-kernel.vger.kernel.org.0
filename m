@@ -2,173 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B046885084
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FF7F850AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:08:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388883AbfHGQBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:01:35 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52862 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729745AbfHGQBe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:01:34 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x77FhvPt186095;
-        Wed, 7 Aug 2019 16:01:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=9rRv2tdDYAME0jDzjUd41r2Q/7zEQd+eMUzoCt6a3gM=;
- b=fpFm9SNc7siFT9SdDqaYqcb0xOqyXr8Di+OXrRB4eLAbiEBxNqUULPYbDBSleZiAUWqE
- XtcjPMkgDm4RZcaXb0bOqSLq4NWefmgFTg2BJmQSP5ksAfKdv07ctayR1L+pdh122Alg
- Bjk3p2Yc/sFCSjW/rvbugCTcvQJymRUXD2y7OmVtGkL/ypABtyyuVS8+ZcqeO+S5kg+O
- tZZzzwUpqZdN2pjJgG3Tepz+OcwM/q4wHpuZclfmb0mpagM9nYDvlVySafzYg0oLxB7A
- jXB57spZlyy9089ZB8F7OwXKV268CJxTpHxQtzsLNzclW5bmgPgb9ztoVea1HQWCUdGj oA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2u51pu5dvh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 07 Aug 2019 16:01:32 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x77Fh2ok080593;
-        Wed, 7 Aug 2019 15:59:32 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2u763j1uht-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 07 Aug 2019 15:59:31 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x77FxV8c000807;
-        Wed, 7 Aug 2019 15:59:31 GMT
-Received: from Junxiaos-MacBook-Pro.local (/10.11.16.208)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 07 Aug 2019 08:59:30 -0700
-Subject: Re: [PATCH] block: fix RO partition with RW disk
-To:     linux-block@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, axboe@kernel.dk,
-        martin.petersen@oracle.com
-References: <20190805200138.28098-1-junxiao.bi@oracle.com>
-From:   Junxiao Bi <junxiao.bi@oracle.com>
-Message-ID: <b191908b-cc67-660a-468e-2f4164f430ba@oracle.com>
-Date:   Wed, 7 Aug 2019 08:59:27 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S2388927AbfHGQIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:08:22 -0400
+Received: from mga03.intel.com ([134.134.136.65]:3597 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727213AbfHGQIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 12:08:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 09:01:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
+   d="scan'208";a="165358705"
+Received: from knguye7-mobl.amr.corp.intel.com (HELO [10.255.81.127]) ([10.255.81.127])
+  by orsmga007.jf.intel.com with ESMTP; 07 Aug 2019 09:01:21 -0700
+Subject: Re: [Sound-open-firmware] [PATCH v2 3/5] ASoC: SOF: Add DT DSP device
+ support
+To:     Daniel Baluta <daniel.baluta@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Olaru <paul.olaru@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        sound-open-firmware@alsa-project.org
+References: <20190723084104.12639-1-daniel.baluta@nxp.com>
+ <20190723084104.12639-4-daniel.baluta@nxp.com>
+ <d85909d6-c7cb-c64b-dfa9-6cee6c0da2cb@linux.intel.com>
+ <CAEnQRZARFQjutkvW3_xkQAQznNm8c5jSjtAG715VtrZnDxztoA@mail.gmail.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <123a1cf0-1eac-03bd-6628-8c67004eadc5@linux.intel.com>
+Date:   Wed, 7 Aug 2019 11:01:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190805200138.28098-1-junxiao.bi@oracle.com>
+In-Reply-To: <CAEnQRZARFQjutkvW3_xkQAQznNm8c5jSjtAG715VtrZnDxztoA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908070162
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908070162
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anybody could help review this bug?
 
-thanks,
 
-Junxiao.
+On 8/7/19 10:29 AM, Daniel Baluta wrote:
+> On Tue, Jul 23, 2019 at 6:19 PM Pierre-Louis Bossart
+> <pierre-louis.bossart@linux.intel.com> wrote:
+>>
+>>
+>>> diff --git a/sound/soc/sof/Kconfig b/sound/soc/sof/Kconfig
+>>> index 61b97fc55bb2..2aa3a1cdf60c 100644
+>>> --- a/sound/soc/sof/Kconfig
+>>> +++ b/sound/soc/sof/Kconfig
+>>> @@ -36,6 +36,15 @@ config SND_SOC_SOF_ACPI
+>>>          Say Y if you need this option
+>>>          If unsure select "N".
+>>>
+>>> +config SND_SOC_SOF_DT
+>>> +     tristate "SOF DT enumeration support"
+>>> +     select SND_SOC_SOF
+>>> +     select SND_SOC_SOF_OPTIONS
+>>> +     help
+>>> +       This adds support for Device Tree enumeration. This option is
+>>> +       required to enable i.MX8 devices.
+>>> +       Say Y if you need this option. If unsure select "N".
+>>> +
+>>
+>> [snip]
+>>
+>>> diff --git a/sound/soc/sof/imx/Kconfig b/sound/soc/sof/imx/Kconfig
+>>> index fff64a9970f0..fa35994a79c4 100644
+>>> --- a/sound/soc/sof/imx/Kconfig
+>>> +++ b/sound/soc/sof/imx/Kconfig
+>>> @@ -12,6 +12,7 @@ if SND_SOC_SOF_IMX_TOPLEVEL
+>>>
+>>>    config SND_SOC_SOF_IMX8
+>>>        tristate "SOF support for i.MX8"
+>>> +     select SND_SOC_SOF_DT
+>>
+>> This looks upside down. You should select SOF_DT first then include the
+>> NXP stuff.
+> 
+> One more thing: So this should be 'depends on SND_SOC_SOF_DT' right?
 
-On 8/5/19 1:01 PM, Junxiao Bi wrote:
-> When md raid1 was used with imsm metadata, during the boot stage,
-> the raid device will first be set to readonly, then mdmon will set
-> it read-write later. When there were some partitions in this device,
-> the following race would make some partition left ro and fail to mount.
->
-> CPU 1:                                                 CPU 2:
-> add_partition()                                        set_disk_ro() //set disk RW
->   //disk was RO, so partition set to RO
->   p->policy = get_disk_ro(disk);
->                                                          if (disk->part0.policy != flag) {
->                                                              set_disk_ro_uevent(disk, flag);
->                                                              // disk set to RW
->                                                              disk->part0.policy = flag;
->                                                          }
->                                                          // set all exit partition to RW
->                                                          while ((part = disk_part_iter_next(&piter)))
->                                                              part->policy = flag;
->   // this part was not yet added, so it was still RO
->   rcu_assign_pointer(ptbl->part[partno], p);
->
-> Move RO status setting of partitions after they were added into partition
-> table and introduce a mutex to sync RO status between disk and partitions.
->
-> Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-> ---
->   block/genhd.c             | 3 +++
->   block/partition-generic.c | 5 ++++-
->   include/linux/genhd.h     | 1 +
->   3 files changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 54f1f0d381f4..f3cce1d354cf 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -1479,6 +1479,7 @@ struct gendisk *__alloc_disk_node(int minors, int node_id)
->   		}
->   		ptbl = rcu_dereference_protected(disk->part_tbl, 1);
->   		rcu_assign_pointer(ptbl->part[0], &disk->part0);
-> +		mutex_init(&disk->part_lock);
->   
->   		/*
->   		 * set_capacity() and get_capacity() currently don't use
-> @@ -1570,6 +1571,7 @@ void set_disk_ro(struct gendisk *disk, int flag)
->   	struct disk_part_iter piter;
->   	struct hd_struct *part;
->   
-> +	mutex_lock(&disk->part_lock);
->   	if (disk->part0.policy != flag) {
->   		set_disk_ro_uevent(disk, flag);
->   		disk->part0.policy = flag;
-> @@ -1579,6 +1581,7 @@ void set_disk_ro(struct gendisk *disk, int flag)
->   	while ((part = disk_part_iter_next(&piter)))
->   		part->policy = flag;
->   	disk_part_iter_exit(&piter);
-> +	mutex_unlock(&disk->part_lock);
->   }
->   
->   EXPORT_SYMBOL(set_disk_ro);
-> diff --git a/block/partition-generic.c b/block/partition-generic.c
-> index aee643ce13d1..63cb6fb996ff 100644
-> --- a/block/partition-generic.c
-> +++ b/block/partition-generic.c
-> @@ -345,7 +345,6 @@ struct hd_struct *add_partition(struct gendisk *disk, int partno,
->   		queue_limit_discard_alignment(&disk->queue->limits, start);
->   	p->nr_sects = len;
->   	p->partno = partno;
-> -	p->policy = get_disk_ro(disk);
->   
->   	if (info) {
->   		struct partition_meta_info *pinfo = alloc_part_info(disk);
-> @@ -401,6 +400,10 @@ struct hd_struct *add_partition(struct gendisk *disk, int partno,
->   	/* everything is up and running, commence */
->   	rcu_assign_pointer(ptbl->part[partno], p);
->   
-> +	mutex_lock(&disk->part_lock);
-> +	p->policy = get_disk_ro(disk);
-> +	mutex_unlock(&disk->part_lock);
-> +
->   	/* suppress uevent if the disk suppresses it */
->   	if (!dev_get_uevent_suppress(ddev))
->   		kobject_uevent(&pdev->kobj, KOBJ_ADD);
-> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-> index 8b5330dd5ac0..df6ddca8a92c 100644
-> --- a/include/linux/genhd.h
-> +++ b/include/linux/genhd.h
-> @@ -201,6 +201,7 @@ struct gendisk {
->   	 */
->   	struct disk_part_tbl __rcu *part_tbl;
->   	struct hd_struct part0;
-> +	struct mutex part_lock;
->   
->   	const struct block_device_operations *fops;
->   	struct request_queue *queue;
+I would do this:
+
+config SND_SOC_SOF_DT
+      	tristate "SOF DT enumeration support"
+      	depends on OF # or whatever the top-level DT dependency is
+      	select SND_SOC_SOF
+      	select SND_SOC_SOF_OPTIONS
+
+
+config SND_SOC_SOF_IMX_TOPLEVEL
+	bool "SOF support for NXP i.MX audio DSPs"
+	depends on ARM64 && SND_SOC_SOF_DT || COMPILE_TEST
+	
+if SND_SOC_SOF_IMX_TOPLEVEL
+
+config SND_SOC_SOF_IMX8
+	tristate "SOF support for i.MX8"
+
+In other words push the dependencies at a higher level.
