@@ -2,93 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43ABE84215
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A0184256
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 04:18:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbfHGCHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 22:07:08 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35839 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727651AbfHGCHI (ORCPT
+        id S1729193AbfHGCSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 22:18:17 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:49400 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727651AbfHGCSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 22:07:08 -0400
-Received: by mail-ot1-f67.google.com with SMTP id j19so21451137otq.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2019 19:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=MuFa6tZ7vFSe1LOVI7ekbYPMVwhBLKkDTybz3Yw3r44=;
-        b=JC4fDjkU965cDljrf9f9H+35WfdDcOLRBf4d4ck2STxWjiyn613K80IfbXIV3yjt8F
-         TaxsxQSVs/4+2cFoiO+YzykT21aoLXLSG3wELNAjtQAbQqwTVS6vp8AZpXutrzNEtHs2
-         03mhxA0YfSdoqbgMZdbgIGx/odmQ/pVngBPraMDIe2T8BLV5G/b2yzLMgkELXP4+AXmA
-         fstCg3FK/zG6HxmSpCXsLx0aDbBr0a4c0CUgL7QlbAVN+Lpdg4RpMokPM66xLHO9o9V0
-         3tkCHFklHn3oMNZz3aI/azdbQ/aY+d3txBL9HIzwxyqlEEpCPhJP1ZGIdLenH6lvgwI2
-         b4qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=MuFa6tZ7vFSe1LOVI7ekbYPMVwhBLKkDTybz3Yw3r44=;
-        b=uimWofHU5ueFonSOtPnLSgzMSGR4P2hBl9HB92vYngFxCqzIyQYCrOmlYA5+CsCBqq
-         yEriv5cIDQMu+KT9KZnfz4gJwY77CFsnqqSJBInehZeILbjdCJZEPIsdf9snITBrXh21
-         3PojNaarGEHRPoMKerZXUMbkZQBfqT2L612ZmXEhwmINAGnKvcTGECWFrPUqTG002M/+
-         EWZbDzNWIbAHjPcb/sDsbX/KyqDZnrlFZphitpI/eOBZIXSqq4h/9Hd5TzRV4GSFWcyf
-         jNU5ZvPliukfaidTPD8zHfistia5vK7HAzxqsFriJalcnDG6j/vGKeOA8pUmlb48q1PO
-         NZEQ==
-X-Gm-Message-State: APjAAAXGQaLACUo/CwDZLRzOfeVwrUnrMjImFjofJdO8qKV3gNBQ526N
-        LGvYrHZTBOB9JF68a3GauSTjGQ==
-X-Google-Smtp-Source: APXvYqyRjgjRUfPtCrkI5GZQR86YZZs4UWw3xYp+cV8dbhHh18X0tcLi4UP7kagxmb+VJst8/pQJ1A==
-X-Received: by 2002:a02:1441:: with SMTP id 62mr7791725jag.21.1565143627162;
-        Tue, 06 Aug 2019 19:07:07 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id h18sm69825603iob.80.2019.08.06.19.07.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 19:07:06 -0700 (PDT)
-Date:   Tue, 6 Aug 2019 19:07:06 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     linux-riscv@lists.infradead.org
-cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: delay: use do_div() instead of __udivdi3()
-Message-ID: <alpine.DEB.2.21.9999.1908061906240.25231@viisi.sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Tue, 6 Aug 2019 22:18:16 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TYr3obk_1565144286;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TYr3obk_1565144286)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 07 Aug 2019 10:18:12 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
+        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
+        shakeelb@google.com, rientjes@google.com, cai@lca.pw,
+        akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v5 PATCH 0/4] Make deferred split shrinker memcg aware
+Date:   Wed,  7 Aug 2019 10:17:53 +0800
+Message-Id: <1565144277-36240-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-In preparation for removing __udivdi3() from the RISC-V
-architecture-specific files, convert its one user to use do_div().
-This avoids breaking the RV32 build after __udivdi3() is removed.
+Currently THP deferred split shrinker is not memcg aware, this may cause
+premature OOM with some configuration. For example the below test would
+run into premature OOM easily:
 
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
----
- arch/riscv/lib/delay.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+$ cgcreate -g memory:thp
+$ echo 4G > /sys/fs/cgroup/memory/thp/memory/limit_in_bytes
+$ cgexec -g memory:thp transhuge-stress 4000
 
-diff --git a/arch/riscv/lib/delay.c b/arch/riscv/lib/delay.c
-index 87ff89e88f2c..8c686934e0f6 100644
---- a/arch/riscv/lib/delay.c
-+++ b/arch/riscv/lib/delay.c
-@@ -81,9 +81,14 @@ EXPORT_SYMBOL(__delay);
- void udelay(unsigned long usecs)
- {
- 	u64 ucycles = (u64)usecs * lpj_fine * UDELAY_MULT;
-+	u64 n;
-+	u32 rem;
+transhuge-stress comes from kernel selftest.
+
+It is easy to hit OOM, but there are still a lot THP on the deferred
+split queue, memcg direct reclaim can't touch them since the deferred
+split shrinker is not memcg aware.
+
+Convert deferred split shrinker memcg aware by introducing per memcg
+deferred split queue.  The THP should be on either per node or per memcg
+deferred split queue if it belongs to a memcg.  When the page is
+immigrated to the other memcg, it will be immigrated to the target
+memcg's deferred split queue too.
+
+Reuse the second tail page's deferred_list for per memcg list since the
+same THP can't be on multiple deferred split queues.
+
+Make deferred split shrinker not depend on memcg kmem since it is not slab.
+It doesn’t make sense to not shrink THP even though memcg kmem is disabled.
+
+With the above change the test demonstrated above doesn’t trigger OOM even
+though with cgroup.memory=nokmem.
+
+
+Changelog:
+v5: * Fixed the issue reported by Qian Cai, folded the fix in.
+    * Squashed build fix patches in.
+v4: * Replace list_del() to list_del_init() per Andrew.
+    * Fixed the build failure for different kconfig combo and tested the
+      below combo:
+          MEMCG + TRANSPARENT_HUGEPAGE
+          !MEMCG + TRANSPARENT_HUGEPAGE
+          MEMCG + !TRANSPARENT_HUGEPAGE
+          !MEMCG + !TRANSPARENT_HUGEPAGE
+    * Added Acked-by from Kirill Shutemov. 
+v3: * Adopted the suggestion from Kirill Shutemov to move mem_cgroup_uncharge()
+      out of __page_cache_release() in order to handle THP free properly. 
+    * Adjusted the sequence of the patches per Kirill Shutemov. Dropped the
+      patch 3/4 in v2.
+    * Moved enqueuing THP onto "to" memcg deferred split queue after
+      page->mem_cgroup is changed in memcg account move per Kirill Tkhai.
  
- 	if (unlikely(usecs > MAX_UDELAY_US)) {
--		__delay((u64)usecs * riscv_timebase / 1000000ULL);
-+		n = (u64)usecs * riscv_timebase;
-+		rem = do_div(n, 1000000);
-+
-+		__delay(n);
- 		return;
- 	}
- 
--- 
-2.22.0
+v2: * Adopted the suggestion from Krill Shutemov to extract deferred split
+      fields into a struct to reduce code duplication (patch 1/4).  With this
+      change, the lines of change is shrunk down to 198 from 278.
+    * Removed memcg_deferred_list. Use deferred_list for both global and memcg.
+      With the code deduplication, it doesn't make too much sense to keep it.
+      Kirill Tkhai also suggested so.
+    * Fixed typo for SHRINKER_NONSLAB.
 
+
+Yang Shi (4):
+      mm: thp: extract split_queue_* into a struct
+      mm: move mem_cgroup_uncharge out of __page_cache_release()
+      mm: shrinker: make shrinker not depend on memcg kmem
+      mm: thp: make deferred split shrinker memcg aware
+
+ include/linux/huge_mm.h    |   9 ++++++
+ include/linux/memcontrol.h |  23 +++++++++-----
+ include/linux/mm_types.h   |   1 +
+ include/linux/mmzone.h     |  12 ++++++--
+ include/linux/shrinker.h   |   3 +-
+ mm/huge_memory.c           | 111 ++++++++++++++++++++++++++++++++++++++++++++++++++----------------
+ mm/memcontrol.c            |  33 +++++++++++++++-----
+ mm/page_alloc.c            |   9 ++++--
+ mm/swap.c                  |   2 +-
+ mm/vmscan.c                |  66 +++++++++++++++++++--------------------
+ 10 files changed, 186 insertions(+), 83 deletions(-)
