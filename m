@@ -2,80 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D090850ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A5CE8510E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 18:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388784AbfHGQUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 12:20:06 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37688 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387827AbfHGQUF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 12:20:05 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f17so640092wme.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 09:20:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Nji/MJab6c8XNl8RhYUIOv/8j0dS1rMCymvSXokPK7k=;
-        b=mecDMQBf7s9iTvM5SOcFMmpRFDbN+XkBsUtfpY/5QW4POg47uICbkwl9dqrBC/4vj8
-         U/JBbADNick5zTd0bVqQOr8as+yj1q1gKdNh+z6Bb1YAD0O/qCtxBU+l9S2SB0E5OEHV
-         cDp0R4m1l9X0NnDy0gcVa8N1obXOiGtn0DAS+2ztmmARHaJNUfd/kp21LioubYfTfQA+
-         EPlcV+DnL137qmfIkkt3fu9r2LPez/7j0LYry2+qBBwart+S0WNd3iO72WqnUk8qHOu3
-         bVns74oADJHgWoMS4d//e0Y036Fsh7gBuPBk1mTPR5sCgWru+7dIAyP1NT1uFw94CKEV
-         4spQ==
-X-Gm-Message-State: APjAAAVYnJmqQxgu/qkFQDPaso7A5Njj1p2M2PRfFl3CBx+keE7hVahk
-        XLXrl58iMgyp5+Gw0cZCe1ehlQ==
-X-Google-Smtp-Source: APXvYqwxFOco66AbUs2Ulj8/mmxE2NSuK4Th8W7hmqh9AUm7GMYwaF/+/oJXMfpkkte3AFZq90xkbQ==
-X-Received: by 2002:a1c:5a56:: with SMTP id o83mr685267wmb.103.1565194803131;
-        Wed, 07 Aug 2019 09:20:03 -0700 (PDT)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id b2sm127335289wrp.72.2019.08.07.09.20.02
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 09:20:02 -0700 (PDT)
-Subject: Re: [PATCH v2] selftests: kvm: Adding config fragments
-To:     shuah <shuah@kernel.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        linux-kernel@vger.kernel.org, drjones@redhat.com,
-        sean.j.christopherson@intel.com, linux-kselftest@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <20190807135814.12906-1-naresh.kamboju@linaro.org>
- <b6b4f179-1fef-65db-8125-fa60e3627656@kernel.org>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <769e7d1c-c3d4-278a-d623-3a1366065fb6@redhat.com>
-Date:   Wed, 7 Aug 2019 18:19:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388505AbfHGQ16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 12:27:58 -0400
+Received: from mga02.intel.com ([134.134.136.20]:19068 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387943AbfHGQ16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 12:27:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 09:14:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
+   d="scan'208";a="192942726"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 07 Aug 2019 09:13:59 -0700
+Received: by lahna (sSMTP sendmail emulation); Wed, 07 Aug 2019 19:13:59 +0300
+Date:   Wed, 7 Aug 2019 19:13:59 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'Yehezkel Bernat' <yehezkelshb@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH 3/8] thunderbolt: Use 32-bit writes when writing ring
+ producer/consumer
+Message-ID: <20190807161359.GT2716@lahna.fi.intel.com>
+References: <20190705095800.43534-1-mika.westerberg@linux.intel.com>
+ <20190705095800.43534-4-mika.westerberg@linux.intel.com>
+ <CA+CmpXtMBEtyh77fcrhX2BU8esiit56CWfZmey6LYEHZVUxf8A@mail.gmail.com>
+ <0f3a47d8133945b181d623ea6e0d53f2@AcuMS.aculab.com>
 MIME-Version: 1.0
-In-Reply-To: <b6b4f179-1fef-65db-8125-fa60e3627656@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f3a47d8133945b181d623ea6e0d53f2@AcuMS.aculab.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/19 17:52, shuah wrote:
+On Fri, Jul 05, 2019 at 04:04:19PM +0000, David Laight wrote:
+> > Really a matter of taste, but maybe you want to consider having a single
+> > function, with a 3rd parameter, bool is_tx.
+> > The calls here will be unified to:
+> >         ring_iowrite(ring, ring->head, ring->is_tx);
+> > (No condition is needed here).
+> > 
+> > The implementation uses the new parameter to decide which part of the register
+> > to mask, reducing the code duplication (in my eyes):
+> > 
+> >         val = ioread32(ring_desc_base(ring) + 8);
+> >         if (is_tx) {
+> >                 val &= 0x0000ffff;
+> >                 val |= value << 16;
+> >         } else {
+> >                 val &= 0xffff0000;
+> >                 val |= value;
+> >         }
+> >         iowrite32(val, ring_desc_base(ring) + 8);
+> > 
+> > I'm not sure if it improves the readability or makes it worse. Your call.
 > 
-> 
-> On 8/7/19 7:58 AM, Naresh Kamboju wrote:
->> selftests kvm test cases need pre-required kernel configs for the test
->> to get pass.
->>
-> 
-> Can you elaborate and add more information on which tests fail without
-> these configs. I am all for adding configs, however I would like to
-> see more information explaining which tests don't pass without this
-> change.
+> Gah, that is all horrid beyond belief.
+> If a 32bit write is valid then the hardware must not be updating
+> the other 16 bits.
+> In which case the driver knows what they should be.
+> So it can do a single 32bit write of the required value.
 
-The KVM tests are skipped without these configs:
-
-        dev_fd = open(KVM_DEV_PATH, O_RDONLY);
-        if (dev_fd < 0)
-                exit(KSFT_SKIP);
-
-Paolo
+I'm not entirely sure I understand what you say above. Can you shed some
+light on this by a concrete example how it should look like? :-)
