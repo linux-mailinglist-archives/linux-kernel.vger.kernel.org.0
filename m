@@ -2,64 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3AC842C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 05:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01528842C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2019 05:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbfHGDEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 6 Aug 2019 23:04:51 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52780 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726334AbfHGDEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Aug 2019 23:04:50 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 15F5F136A16E935206AE;
-        Wed,  7 Aug 2019 10:48:46 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 7 Aug 2019
- 10:48:38 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <j.vosburgh@gmail.com>, <vfalico@gmail.com>, <andy@greyhouse.net>,
-        <davem@davemloft.net>, <jiri@resnulli.us>,
-        <jay.vosburgh@canonical.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] team: Add vlan tx offload to hw_enc_features
-Date:   Wed, 7 Aug 2019 10:38:08 +0800
-Message-ID: <20190807023808.51976-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727899AbfHGDCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 6 Aug 2019 23:02:32 -0400
+Received: from mga14.intel.com ([192.55.52.115]:3663 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726334AbfHGDCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Aug 2019 23:02:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Aug 2019 20:02:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,356,1559545200"; 
+   d="scan'208";a="374258437"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Aug 2019 20:02:29 -0700
+Date:   Wed, 7 Aug 2019 10:45:22 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, atull@kernel.org,
+        Luwei Kang <luwei.kang@intel.com>,
+        Ananda Ravuri <ananda.ravuri@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH v4 11/12] fpga: dfl: fme: add global error reporting
+ support
+Message-ID: <20190807024521.GD24158@hao-dev>
+References: <1564914022-3710-1-git-send-email-hao.wu@intel.com>
+ <1564914022-3710-12-git-send-email-hao.wu@intel.com>
+ <20190805155626.GD8107@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805155626.GD8107@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should also enable bonding's vlan tx offload in hw_enc_features,
-pass the vlan packets to the slave devices with vlan tci, let them
-to handle vlan tunneling offload implementation.
+On Mon, Aug 05, 2019 at 05:56:26PM +0200, Greg KH wrote:
+> On Sun, Aug 04, 2019 at 06:20:21PM +0800, Wu Hao wrote:
+> > +static int fme_global_err_init(struct platform_device *pdev,
+> > +			       struct dfl_feature *feature)
+> > +{
+> > +	struct device *dev;
+> > +	int ret = 0;
+> > +
+> > +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+> > +	if (!dev)
+> > +		return -ENOMEM;
+> > +
+> > +	dev->parent = &pdev->dev;
+> > +	dev->release = err_dev_release;
+> > +	dev_set_name(dev, "errors");
+> > +
+> > +	fme_error_enable(feature);
+> > +
+> > +	ret = device_register(dev);
+> > +	if (ret) {
+> > +		put_device(dev);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = device_add_groups(dev, error_groups);
+> 
+> cute, but no, you do not create a whole struct device for a subdir.  Use
+> the attribute group name like you did on earlier patches.
 
-Fixes: 3268e5cb494d ("team: Advertise tunneling offload features")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/team/team.c | 2 ++
- 1 file changed, 2 insertions(+)
+Sure, let me fix it in the next version.
 
-diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
-index abfa0da..e8089de 100644
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -1004,6 +1004,8 @@ static void __team_compute_features(struct team *team)
- 
- 	team->dev->vlan_features = vlan_features;
- 	team->dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL |
-+				     NETIF_F_HW_VLAN_CTAG_TX |
-+				     NETIF_F_HW_VLAN_STAG_TX |
- 				     NETIF_F_GSO_UDP_L4;
- 	team->dev->hard_header_len = max_hard_header_len;
- 
--- 
-2.7.4
+> 
+> And again, you raced userspace and lost :(
 
+Same here, could you please give some more hints here?
 
+Thanks in advance.
+Hao
+
+> 
+> thanks,
+> 
+> greg k-h
