@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70ABF869D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64428869D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405448AbfHHTLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:11:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45806 "EHLO mail.kernel.org"
+        id S2405459AbfHHTLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:11:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405442AbfHHTLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:11:14 -0400
+        id S2405084AbfHHTLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:11:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF35121743;
-        Thu,  8 Aug 2019 19:11:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5631A21743;
+        Thu,  8 Aug 2019 19:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291473;
-        bh=QR/+RiJBu5Vz2MvmCgi2zdsjQkqaeIi+8tB8wySTYGs=;
+        s=default; t=1565291475;
+        bh=c2Igk6UtaX5oNKCxUGV6GFvxDUsT6dELgHlujMAeG4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h6GuvJOFoBEF0Ojvj9GEMdNp2quWtd2GEoPldSv1f3X9PWVBiKQNFg3OW1q3MLfbC
-         gopkfNKxityhlKy/SLxSRTDl1W5VeQVwblCbwuYE5GtTv5GOugY+CXp5vV7dWDDeLA
-         FrI40E2JijIS6Suroa07X0YAyXxQD7APMDzdvPGE=
+        b=BNDetbUFoQosbA3vFp5umB8L4PMmhVVRYvyuYsHojaRFsGFCbDNGA9kUFaaOmpsHt
+         X+JCaxgV2cU3SkvWMtam7yzrOHOV8tJOXZziDOKALt5WLngVyDhVixoDdeST+xCImq
+         6yr3zbmGtZ7hxuJnZPrGyI4ApkvxpcoHOX49efTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Aaron Armstrong Skomra <aaron.skomra@wacom.com>,
-        Ping Cheng <ping.cheng@wacom.com>,
+        stable@vger.kernel.org, Sebastian Parschauer <s.parschauer@gmx.de>,
         Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 06/33] HID: wacom: fix bit shift for Cintiq Companion 2
-Date:   Thu,  8 Aug 2019 21:05:13 +0200
-Message-Id: <20190808190453.875321199@linuxfoundation.org>
+Subject: [PATCH 4.14 07/33] HID: Add quirk for HP X1200 PIXART OEM mouse
+Date:   Thu,  8 Aug 2019 21:05:14 +0200
+Message-Id: <20190808190453.930236428@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190453.582417307@linuxfoundation.org>
 References: <20190808190453.582417307@linuxfoundation.org>
@@ -45,50 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Armstrong Skomra <skomra@gmail.com>
+From: Sebastian Parschauer <s.parschauer@gmx.de>
 
-commit 693c3dab4e50403f91bca4b52fc6d8562a3180f6 upstream.
+commit 49869d2ea9eecc105a10724c1abf035151a3c4e2 upstream.
 
-The bit indicating BTN_6 on this device is overshifted
-by 2 bits, resulting in the incorrect button being
-reported.
+The PixArt OEM mice are known for disconnecting every minute in
+runlevel 1 or 3 if they are not always polled. So add quirk
+ALWAYS_POLL for this one as well.
 
-Also fix copy-paste mistake in comments.
+Jonathan Teh (@jonathan-teh) reported and tested the quirk.
+Reference: https://github.com/sriemer/fix-linux-mouse/issues/15
 
-Signed-off-by: Aaron Armstrong Skomra <aaron.skomra@wacom.com>
-Reviewed-by: Ping Cheng <ping.cheng@wacom.com>
-Link: https://github.com/linuxwacom/xf86-input-wacom/issues/71
-Fixes: c7f0522a1ad1 ("HID: wacom: Slim down wacom_intuos_pad processing")
-Cc: <stable@vger.kernel.org> # v4.5+
+Signed-off-by: Sebastian Parschauer <s.parschauer@gmx.de>
+CC: stable@vger.kernel.org
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/hid/wacom_wac.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -537,14 +537,14 @@ static int wacom_intuos_pad(struct wacom
- 		 */
- 		buttons = (data[4] << 1) | (data[3] & 0x01);
- 	} else if (features->type == CINTIQ_COMPANION_2) {
--		/* d-pad right  -> data[4] & 0x10
--		 * d-pad up     -> data[4] & 0x20
--		 * d-pad left   -> data[4] & 0x40
--		 * d-pad down   -> data[4] & 0x80
--		 * d-pad center -> data[3] & 0x01
-+		/* d-pad right  -> data[2] & 0x10
-+		 * d-pad up     -> data[2] & 0x20
-+		 * d-pad left   -> data[2] & 0x40
-+		 * d-pad down   -> data[2] & 0x80
-+		 * d-pad center -> data[1] & 0x01
- 		 */
- 		buttons = ((data[2] >> 4) << 7) |
--		          ((data[1] & 0x04) << 6) |
-+		          ((data[1] & 0x04) << 4) |
- 		          ((data[2] & 0x0F) << 2) |
- 		          (data[1] & 0x03);
- 	} else if (features->type >= INTUOS5S && features->type <= INTUOSPL) {
+---
+ drivers/hid/hid-ids.h           |    1 +
+ drivers/hid/usbhid/hid-quirks.c |    1 +
+ 2 files changed, 2 insertions(+)
+
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -537,6 +537,7 @@
+ #define USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0B4A	0x0b4a
+ #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE		0x134a
+ #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A	0x094a
++#define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0641	0x0641
+ 
+ #define USB_VENDOR_ID_HUION		0x256c
+ #define USB_DEVICE_ID_HUION_TABLET	0x006e
+--- a/drivers/hid/usbhid/hid-quirks.c
++++ b/drivers/hid/usbhid/hid-quirks.c
+@@ -100,6 +100,7 @@ static const struct hid_blacklist {
+ 	{ USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0B4A, HID_QUIRK_ALWAYS_POLL },
+ 	{ USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE, HID_QUIRK_ALWAYS_POLL },
+ 	{ USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A, HID_QUIRK_ALWAYS_POLL },
++	{ USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0641, HID_QUIRK_ALWAYS_POLL },
+ 	{ USB_VENDOR_ID_IDEACOM, USB_DEVICE_ID_IDEACOM_IDC6680, HID_QUIRK_MULTI_INPUT },
+ 	{ USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_C007, HID_QUIRK_ALWAYS_POLL },
+ 	{ USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_C077, HID_QUIRK_ALWAYS_POLL },
 
 
