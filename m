@@ -2,91 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5ADD85882
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 05:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D46185885
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 05:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbfHHD0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 23:26:17 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33384 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728019AbfHHD0R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 23:26:17 -0400
-Received: by mail-ed1-f65.google.com with SMTP id i11so25208106edq.0;
-        Wed, 07 Aug 2019 20:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=dFm+ntDkDYjpFiyYx8bMq6XtAhzvccojbCi+hTQfSAU=;
-        b=uXn5OuCIIHbX2C7G1bWWk4/YqWY9dH1yHAg+qSjrzNaGXt84cvn1eLurDBohQyqgKx
-         rRPX0sgRZACz7ksvHIZ0gdthaFudRWV7mClCkruVYWRgvisv+uwvmxNBPTO3CTHwaN4A
-         E1+BX7yaEQ/32Heu4OkiJSDTuWMN55CENjAyn54YBjDzSjBP7GqGeWmMDWokBGGZ1h7t
-         scBV+RnBTVYXIrVfMNd+SryRkRsjJ8PckHWiXQwA7/Ia+HEvDFvgcvvnSBFk0mIpbslk
-         KVfVCRPioBZmQdMK4sg3uwOLOIM/Yryq7T536RAlIEg8nBtK02+LjLjFWOnm2BJWMPC1
-         RBmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=dFm+ntDkDYjpFiyYx8bMq6XtAhzvccojbCi+hTQfSAU=;
-        b=d5RFXHL61h0z8PkO+fDQ+CZw2fA3JwZgAuD+jS85+8Dyov2+iCMmhudIB1eS7yYfdM
-         SvKfvHK2sF/EqVabP1dR5KnZ8azIFUqkniJ3MseuIvFgIm8Yop3XH/bspd7OL1VTpmtp
-         Il+bHDwNhId4LTtFnnlwXZCMHrAYbXe15y/vwwOplya4wZL0xPDcBzIDbqAg9Y22Rl05
-         x/RproFlyMNWZ8Z4OjqsT4wq8Sq447jzW25kpPbIjGY/bUY5T7tRq/3Wj0jVLVbE9FoO
-         GyBGBSI+BJvy+BgmcYkHbAKdCQSNYhSIREOEgJPWZWiyKu1cm+ua4xtd4GOUZGzwyBWL
-         UnQA==
-X-Gm-Message-State: APjAAAV/pLSi0FlNkTx0fbMojJO60QcRmWGKTOnncdfY7jZ4Z1+v73Ph
-        IS0va2fNfn8vdfmFrnveJGcJbHBJF1FEim/Obw8=
-X-Google-Smtp-Source: APXvYqwpSQ+XSI5DFDUtaGHNy0t0Mr97a8+cHVbmNIqfu6PXkhplyNXNb9dpwBBpIepkNcjpxfzv7yHjQTqfgfITjpE=
-X-Received: by 2002:aa7:d6d3:: with SMTP id x19mr13246758edr.119.1565234775342;
- Wed, 07 Aug 2019 20:26:15 -0700 (PDT)
+        id S1730716AbfHHD1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 23:27:03 -0400
+Received: from mga04.intel.com ([192.55.52.120]:48657 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728019AbfHHD1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 23:27:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 20:27:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,360,1559545200"; 
+   d="scan'208";a="203426188"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Aug 2019 20:27:01 -0700
+Date:   Thu, 8 Aug 2019 11:26:38 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/mmap.c: refine data locality of find_vma_prev
+Message-ID: <20190808032638.GA28138@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20190806081123.22334-1-richardw.yang@linux.intel.com>
+ <3e57ba64-732b-d5be-1ad6-eecc731ef405@suse.cz>
+ <20190807003109.GB24750@richard>
+ <20190807075101.GN11812@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <1564306219-17439-1-git-send-email-bmeng.cn@gmail.com>
- <1564306219-17439-2-git-send-email-bmeng.cn@gmail.com> <CAEUhbmVjELVPKwW6R+W+V2hQbZ_Zj_5j2ogjnTsuCwnK1pT-og@mail.gmail.com>
-In-Reply-To: <CAEUhbmVjELVPKwW6R+W+V2hQbZ_Zj_5j2ogjnTsuCwnK1pT-og@mail.gmail.com>
-From:   Bin Meng <bmeng.cn@gmail.com>
-Date:   Thu, 8 Aug 2019 11:26:03 +0800
-Message-ID: <CAEUhbmXHzK0Ho27nn+zMAxZfMQxcuN2Pe8fb6_uOEi7RVbJ=_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: pci: pci-msi: Correct the unit-address
- of the pci node name
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807075101.GN11812@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 5:53 PM Bin Meng <bmeng.cn@gmail.com> wrote:
+On Wed, Aug 07, 2019 at 09:51:01AM +0200, Michal Hocko wrote:
+>On Wed 07-08-19 08:31:09, Wei Yang wrote:
+>> On Tue, Aug 06, 2019 at 11:29:52AM +0200, Vlastimil Babka wrote:
+>> >On 8/6/19 10:11 AM, Wei Yang wrote:
+>> >> When addr is out of the range of the whole rb_tree, pprev will points to
+>> >> the biggest node. find_vma_prev gets is by going through the right most
+>> >
+>> >s/biggest/last/ ? or right-most?
+>> >
+>> >> node of the tree.
+>> >> 
+>> >> Since only the last node is the one it is looking for, it is not
+>> >> necessary to assign pprev to those middle stage nodes. By assigning
+>> >> pprev to the last node directly, it tries to improve the function
+>> >> locality a little.
+>> >
+>> >In the end, it will always write to the cacheline of pprev. The caller has most
+>> >likely have it on stack, so it's already hot, and there's no other CPU stealing
+>> >it. So I don't understand where the improved locality comes from. The compiler
+>> >can also optimize the patched code so the assembly is identical to the previous
+>> >code, or vice versa. Did you check for differences?
+>> 
+>> Vlastimil
+>> 
+>> Thanks for your comment.
+>> 
+>> I believe you get a point. I may not use the word locality. This patch tries
+>> to reduce some unnecessary assignment of pprev.
+>> 
+>> Original code would assign the value on each node during iteration, this is
+>> what I want to reduce.
 >
-> On Sun, Jul 28, 2019 at 5:30 PM Bin Meng <bmeng.cn@gmail.com> wrote:
-> >
-> > The unit-address must match the first address specified in the
-> > reg property of the node.
-> >
-> > Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
-> > ---
-> >
-> >  Documentation/devicetree/bindings/pci/pci-msi.txt | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/pci-msi.txt b/Documentation/devicetree/bindings/pci/pci-msi.txt
-> > index 9b3cc81..b73d839 100644
-> > --- a/Documentation/devicetree/bindings/pci/pci-msi.txt
-> > +++ b/Documentation/devicetree/bindings/pci/pci-msi.txt
-> > @@ -201,7 +201,7 @@ Example (5)
-> >                 #msi-cells = <1>;
-> >         };
-> >
-> > -       pci: pci@c {
-> > +       pci: pci@f {
-> >                 reg = <0xf 0x1>;
-> >                 compatible = "vendor,pcie-root-complex";
-> >                 device_type = "pci";
-> > --
->
-> Ping?
+>Is there any measurable difference (on micro benchmarks or regular
+>workloads)?
 
-Ping?
+I wrote a test case to compare these two methods, but not find visible
+difference in run time.
+
+While I found we may leverage rb_last to refine the code a little.
+
+@@ -2270,12 +2270,9 @@ find_vma_prev(struct mm_struct *mm, unsigned long addr,
+        if (vma) {
+                *pprev = vma->vm_prev;
+        } else {
+-               struct rb_node *rb_node = mm->mm_rb.rb_node;
+-               *pprev = NULL;
+-               while (rb_node) {
+-                       *pprev = rb_entry(rb_node, struct vm_area_struct, vm_rb);
+-                       rb_node = rb_node->rb_right;
+-               }
++               struct rb_node *rb_node = rb_last(&mm->mm_rb);
++               *pprev = !rb_node ? NULL :
++                        rb_entry(rb_node, struct vm_area_struct, vm_rb);
+        }
+        return vma;
+
+Not sure this style would help a little in understanding the code?
+
+>-- 
+>Michal Hocko
+>SUSE Labs
+
+-- 
+Wei Yang
+Help you, Help me
