@@ -2,115 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5725F86B93
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3824686B98
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390374AbfHHUd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 16:33:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59050 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389974AbfHHUdy (ORCPT
+        id S2390397AbfHHUeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 16:34:14 -0400
+Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:43396 "EHLO
+        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390186AbfHHUeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 16:33:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=3voCnN8Of2ynwHx3MJQutd/Kh6zmjomsglAokxWqF50=; b=kBASezOYADPm
-        QYgTaKLM+so3/xAdMW2ssjpVM3exxEVTIEbGJZC6PIti3jaAJ1SLT6bEXMe2CxsGrBgeZ4opj6IDx
-        UC2Mb1op+Uuw7FGCqhv90naiG3X7Wa8TgCTxNwY+NrhNj1g0aF1WTMBMRdXnDDgE4VQ2kRsW4pyw2
-        IQCF4=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hvp6c-00042n-4T; Thu, 08 Aug 2019 20:33:50 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 8CD7D2742B42; Thu,  8 Aug 2019 21:33:49 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Eric Jeong <eric.jeong.opensource@diasemi.com>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Applied "regulator: slg51000: Fix a couple NULL vs IS_ERR() checks" to the regulator tree
-In-Reply-To: <20190808103335.GD30506@mwanda>
-X-Patchwork-Hint: ignore
-Message-Id: <20190808203349.8CD7D2742B42@ypsilon.sirena.org.uk>
-Date:   Thu,  8 Aug 2019 21:33:49 +0100 (BST)
+        Thu, 8 Aug 2019 16:34:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id B14B03F5D5;
+        Thu,  8 Aug 2019 22:34:07 +0200 (CEST)
+Authentication-Results: pio-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="Lf5+Mxhb";
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id N-GpX9dXhaTB; Thu,  8 Aug 2019 22:34:06 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id B78203F5A8;
+        Thu,  8 Aug 2019 22:34:05 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id E0D65360301;
+        Thu,  8 Aug 2019 22:34:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1565296444; bh=EIk0/MUpwLpbdNkCz481ROZL1qwhrG0hJX4BjHbekd8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Lf5+MxhbJc+lwsstwp0LgCIZkWOVlVZhKQueAOEsO3kwvFF8OliImWzJw26HVXTf/
+         PUGGY9SB6hV4Qh3dGW73STTF+vVQ5BqMuvG9UanaRrb8uTJbuZ+CSLxEvu9rTo6c1n
+         mm8RZL/XZ8xyPu1syz5148DT/U61+whiMp3kL398=
+Subject: Re: [PATCH 2/3] pagewalk: seperate function pointers from iterator
+ data
+To:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Steven Price <steven.price@arm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190808154240.9384-1-hch@lst.de>
+ <20190808154240.9384-3-hch@lst.de>
+From:   Thomas Hellstrom <thomas@shipmail.org>
+Message-ID: <087f19ee-0278-b828-feb0-ff4a2c830a0f@shipmail.org>
+Date:   Thu, 8 Aug 2019 22:34:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190808154240.9384-3-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 8/8/19 5:42 PM, Christoph Hellwig wrote:
+> The mm_walk structure currently mixed data and code.  Split out the
+> operations vectors into a new mm_walk_ops structure, and while we
+> are changing the API also declare the mm_walk structure inside the
+> walk_page_range and walk_page_vma functions.
+>
+> Based on patch from Linus Torvalds.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-   regulator: slg51000: Fix a couple NULL vs IS_ERR() checks
+Typo: For the patch title s/seperate/separate/
 
-has been applied to the regulator tree at
+Otherwise for the series
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
+Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+/Thomas
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 7352e72a513fd2757b2fda695a349d86faa4c94e Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 8 Aug 2019 13:33:35 +0300
-Subject: [PATCH] regulator: slg51000: Fix a couple NULL vs IS_ERR() checks
-
-The devm_gpiod_get_from_of_node() function never returns NULL, it
-returns error pointers on error.
-
-Fixes: a867bde3dd03 ("regulator: slg51000: add slg51000 regulator driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Link: https://lore.kernel.org/r/20190808103335.GD30506@mwanda
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/slg51000-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/slg51000-regulator.c b/drivers/regulator/slg51000-regulator.c
-index 04b732991d69..4d859fef55e6 100644
---- a/drivers/regulator/slg51000-regulator.c
-+++ b/drivers/regulator/slg51000-regulator.c
-@@ -205,7 +205,7 @@ static int slg51000_of_parse_cb(struct device_node *np,
- 	ena_gpiod = devm_gpiod_get_from_of_node(chip->dev, np,
- 						"enable-gpios", 0,
- 						gflags, "gpio-en-ldo");
--	if (ena_gpiod) {
-+	if (!IS_ERR(ena_gpiod)) {
- 		config->ena_gpiod = ena_gpiod;
- 		devm_gpiod_unhinge(chip->dev, config->ena_gpiod);
- 	}
-@@ -459,7 +459,7 @@ static int slg51000_i2c_probe(struct i2c_client *client,
- 					       GPIOD_OUT_HIGH
- 					       | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 					       "slg51000-cs");
--	if (cs_gpiod) {
-+	if (!IS_ERR(cs_gpiod)) {
- 		dev_info(dev, "Found chip selector property\n");
- 		chip->cs_gpiod = cs_gpiod;
- 	}
--- 
-2.20.1
 
