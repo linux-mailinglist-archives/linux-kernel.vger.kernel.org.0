@@ -2,108 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB21F86AF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 696D386B08
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:03:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404296AbfHHT4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:56:22 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:54081 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390201AbfHHT4W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:56:22 -0400
-Received: from p200300ddd71876597e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7659:7e7a:91ff:fec9:8e25])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hvoWJ-00079W-LP; Thu, 08 Aug 2019 21:56:19 +0200
-Date:   Thu, 8 Aug 2019 21:56:14 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ben Luo <luoben@linux.alibaba.com>
-cc:     alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
-        tao.ma@linux.alibaba.com, gerry@linux.alibaba.com
-Subject: Re: [PATCH 1/2] genirq: introduce update_irq_devid()
-In-Reply-To: <39a5009c77d07c3ce42ef784465c05e36d5f684d.1565263723.git.luoben@linux.alibaba.com>
-Message-ID: <alpine.DEB.2.21.1908082138410.2882@nanos.tec.linutronix.de>
-References: <cover.1565263723.git.luoben@linux.alibaba.com> <39a5009c77d07c3ce42ef784465c05e36d5f684d.1565263723.git.luoben@linux.alibaba.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2404202AbfHHUDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 16:03:55 -0400
+Received: from mga11.intel.com ([192.55.52.93]:35369 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389883AbfHHUDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 16:03:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 13:03:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,362,1559545200"; 
+   d="scan'208";a="165801725"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga007.jf.intel.com with ESMTP; 08 Aug 2019 13:03:53 -0700
+Date:   Thu, 8 Aug 2019 14:01:28 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajat Jain <rajatja@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] nvme-pci: Allow PCI bus-level PM to be used if
+ ASPM is disabled
+Message-ID: <20190808200128.GC27077@localhost.localdomain>
+References: <4323ed84dd07474eab65699b4d007aaf@AUSX13MPC105.AMER.DELL.COM>
+ <20190731221956.GB15795@localhost.localdomain>
+ <1921165.pTveHRX1Co@kreacher>
+ <1870928.r7tBYyfqdz@kreacher>
+ <20190808134356.GF151852@google.com>
+ <CAJZ5v0h=nz8yXwOOGBUB9m1GtJPOqBwtNK7zXPNMJjzPhMWd9w@mail.gmail.com>
+ <20190808183954.GG151852@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808183954.GG151852@google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Aug 2019, Ben Luo wrote:
-> +int update_irq_devid(unsigned int irq, void *dev_id, void *new_dev_id)
-> +{
-> +	struct irq_desc *desc = irq_to_desc(irq);
-> +	struct irqaction *action, **action_ptr;
-> +	unsigned long flags;
-> +
-> +	WARN(in_interrupt(),
-> +			"Trying to update IRQ %d from IRQ context!\n", irq);
+On Thu, Aug 08, 2019 at 01:39:54PM -0500, Bjorn Helgaas wrote:
+> On Thu, Aug 08, 2019 at 04:47:45PM +0200, Rafael J. Wysocki wrote:
+> > On Thu, Aug 8, 2019 at 3:43 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > 
+> > > IIUC the NVMe device will go to the desired package idle state if
+> > > the link is in L0s or L1, but not if the link is in L0.  I don't
+> > > understand that connection; AFAIK that would be something outside
+> > > the scope of the PCIe spec.
+> > 
+> > Yes, it is outside of the PCIe spec.
+> > 
+> > No, this is not about the NVMe device, it is about the Intel SoC
+> > (System-on-a-Chip) the platform is based on.
+> 
+> Ah.  So this problem could occur with any device, not just NVMe?  If
+> so, how do you address that?  Obviously you don't want to patch all
+> drivers this way.
 
-This is broken. The function needs to return on that condition. Actually it
-cannot even be called from non-preemptible code.
+We discovered this when using an NVMe protocol specific power setting, so
+that part is driver specific. We just have to ensure device generic
+dependencies are met in order to achieve the our power target. So in
+that sense, I think you would need to patch all drivers if they're also
+using protocol specific settings incorrectly.
 
-What's worse is that if the interrupt in question is handled concurrently,
-then it will either see the old or the new dev_id and because the interrupt
-handler loop runs with desc->lock dropped even more crap can happen because
-dev_id can be subject to load and store tearing.
-
-Staring at that, I see that there is the same issue in setup_irq() and
-free_irq(). It's actually worse there. I'll have a look.
-
-> +	/*
-> +	 * There can be multiple actions per IRQ descriptor, find the right
-> +	 * one based on the dev_id:
-> +	 */
-> +	action_ptr = &desc->action;
-> +	for (;;) {
-> +		action = *action_ptr;
-> +
-> +		if (!action) {
-> +			WARN(1, "Trying to update already-free IRQ %d\n", irq);
-
-That's wrong in two aspects:
-
-       1) The warn should be outside of the locked region.
-
-       2) Just having the irq number is not useful for debugging either
-       	  when the interrupt is shared.
-
-> +			raw_spin_unlock_irqrestore(&desc->lock, flags);
-> +			chip_bus_sync_unlock(desc);
-> +			return -ENXIO;
-> +		}
-> +
-> +		if (action->dev_id == dev_id) {
-> +			action->dev_id = new_dev_id;
-> +			break;
-> +		}
-> +		action_ptr = &action->next;
-> +	}
-> +
-> +	raw_spin_unlock_irqrestore(&desc->lock, flags);
-> +	chip_bus_sync_unlock(desc);
-> +
-> +	/*
-> +	 * Make sure it's not being used on another CPU:
-> +	 * There is a risk of UAF for old *dev_id, if it is
-> +	 * freed in a short time after this func returns
-> +	 */
-> +	synchronize_irq(irq);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(update_irq_devid);
-
-EXPORT_SYMBOL_GPL() please.
-
-Thanks,
-
-	tglx
+Granted, the NVMe specification doesn't detail what PCIe settings may
+prevent NVMe power management from hitting the objective, but I think
+ASPM enabled makes sense.
