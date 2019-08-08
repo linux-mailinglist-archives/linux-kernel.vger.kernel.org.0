@@ -2,193 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FBA985EAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B099C85EAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732526AbfHHJhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 05:37:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37942 "EHLO mx1.redhat.com"
+        id S1732481AbfHHJhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 05:37:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40836 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731122AbfHHJhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732423AbfHHJhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 8 Aug 2019 05:37:07 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8BDB330C1F8E;
+        by mx1.redhat.com (Postfix) with ESMTPS id 9B01130C746E;
         Thu,  8 Aug 2019 09:37:06 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-144.ams2.redhat.com [10.36.116.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 85BB75D9D3;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F273A5DA5B;
         Thu,  8 Aug 2019 09:37:03 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id BDF2E9D42; Thu,  8 Aug 2019 11:37:02 +0200 (CEST)
+        id 0A95E9D00; Thu,  8 Aug 2019 11:37:03 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/8] ttm: turn ttm_bo_device.vma_manager into a pointer
-Date:   Thu,  8 Aug 2019 11:36:56 +0200
-Message-Id: <20190808093702.29512-3-kraxel@redhat.com>
+Subject: [PATCH v3 3/8] drm/ttm: add gem_ttm_bo_device_init()
+Date:   Thu,  8 Aug 2019 11:36:57 +0200
+Message-Id: <20190808093702.29512-4-kraxel@redhat.com>
 In-Reply-To: <20190808093702.29512-1-kraxel@redhat.com>
 References: <20190808093702.29512-1-kraxel@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 08 Aug 2019 09:37:06 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 08 Aug 2019 09:37:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the embedded struct vma_offset_manager, it is named _vma_manager
-now.  ttm_bo_device.vma_manager is a pointer now, pointing to the
-embedded ttm_bo_device._vma_manager by default.
+Now with ttm_buffer_object being a subclass of drm_gem_object we can
+easily lookup ttm_buffer_object for a given drm_gem_object, which in
+turm allows to create common helper functions.
 
-Add ttm_bo_device_init_with_vma_manager() function which allows to
-initialize ttm with a different vma manager.
+This patch starts off with a gem_ttm_bo_device_init() helper function
+which initializes ttm with the vma offset manager used by gem, to make
+sure gem and ttm have the same view on vma offsets.
+
+With that in place gem+ttm drivers don't need their private
+drm_driver.dumb_map_offset implementation any more.
+
+v3:
+ - complete rewrite
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- include/drm/ttm/ttm_bo_driver.h | 11 +++++++++--
- drivers/gpu/drm/ttm/ttm_bo.c    | 29 +++++++++++++++++++++--------
- drivers/gpu/drm/ttm/ttm_bo_vm.c |  6 +++---
- 3 files changed, 33 insertions(+), 13 deletions(-)
+ include/drm/drm_gem_ttm_helper.h     | 30 +++++++++++++++++++++++
+ drivers/gpu/drm/drm_gem_ttm_helper.c | 36 ++++++++++++++++++++++++++++
+ Documentation/gpu/drm-mm.rst         | 12 ++++++++++
+ drivers/gpu/drm/Kconfig              |  7 ++++++
+ drivers/gpu/drm/Makefile             |  3 +++
+ 5 files changed, 88 insertions(+)
+ create mode 100644 include/drm/drm_gem_ttm_helper.h
+ create mode 100644 drivers/gpu/drm/drm_gem_ttm_helper.c
 
-diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
-index 3f1935c19a66..2f84d6bcd1a7 100644
---- a/include/drm/ttm/ttm_bo_driver.h
-+++ b/include/drm/ttm/ttm_bo_driver.h
-@@ -441,7 +441,8 @@ extern struct ttm_bo_global {
-  *
-  * @driver: Pointer to a struct ttm_bo_driver struct setup by the driver.
-  * @man: An array of mem_type_managers.
-- * @vma_manager: Address space manager
-+ * @vma_manager: Address space manager (pointer)
-+ * @_vma_manager: Address space manager (enbedded)
-  * lru_lock: Spinlock that protects the buffer+device lru lists and
-  * ddestroy lists.
-  * @dev_mapping: A pointer to the struct address_space representing the
-@@ -464,7 +465,8 @@ struct ttm_bo_device {
- 	/*
- 	 * Protected by internal locks.
- 	 */
--	struct drm_vma_offset_manager vma_manager;
-+	struct drm_vma_offset_manager *vma_manager;
-+	struct drm_vma_offset_manager _vma_manager;
- 
- 	/*
- 	 * Protected by the global:lru lock.
-@@ -597,6 +599,11 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
- 		       struct ttm_bo_driver *driver,
- 		       struct address_space *mapping,
- 		       bool need_dma32);
-+int ttm_bo_device_init_with_vma_manager(struct ttm_bo_device *bdev,
-+					struct ttm_bo_driver *driver,
-+					struct address_space *mapping,
-+					struct drm_vma_offset_manager *vma_manager,
-+					bool need_dma32);
- 
- /**
-  * ttm_bo_unmap_virtual
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index 10a861a1690c..0ed1a1182962 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -672,7 +672,7 @@ static void ttm_bo_release(struct kref *kref)
- 	struct ttm_bo_device *bdev = bo->bdev;
- 	struct ttm_mem_type_manager *man = &bdev->man[bo->mem.mem_type];
- 
--	drm_vma_offset_remove(&bdev->vma_manager, &bo->base.vma_node);
-+	drm_vma_offset_remove(bdev->vma_manager, &bo->base.vma_node);
- 	ttm_mem_io_lock(man, false);
- 	ttm_mem_io_free_vm(bo);
- 	ttm_mem_io_unlock(man);
-@@ -1353,7 +1353,7 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
- 	 */
- 	if (bo->type == ttm_bo_type_device ||
- 	    bo->type == ttm_bo_type_sg)
--		ret = drm_vma_offset_add(&bdev->vma_manager, &bo->base.vma_node,
-+		ret = drm_vma_offset_add(bdev->vma_manager, &bo->base.vma_node,
- 					 bo->mem.num_pages);
- 
- 	/* passed reservation objects should already be locked,
-@@ -1704,7 +1704,7 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev)
- 			pr_debug("Swap list %d was clean\n", i);
- 	spin_unlock(&glob->lru_lock);
- 
--	drm_vma_offset_manager_destroy(&bdev->vma_manager);
-+	drm_vma_offset_manager_destroy(&bdev->_vma_manager);
- 
- 	if (!ret)
- 		ttm_bo_global_release();
-@@ -1713,10 +1713,11 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev)
- }
- EXPORT_SYMBOL(ttm_bo_device_release);
- 
--int ttm_bo_device_init(struct ttm_bo_device *bdev,
--		       struct ttm_bo_driver *driver,
--		       struct address_space *mapping,
--		       bool need_dma32)
-+int ttm_bo_device_init_with_vma_manager(struct ttm_bo_device *bdev,
-+					struct ttm_bo_driver *driver,
-+					struct address_space *mapping,
-+					struct drm_vma_offset_manager *vma_manager,
-+					bool need_dma32)
- {
- 	struct ttm_bo_global *glob = &ttm_bo_glob;
- 	int ret;
-@@ -1737,7 +1738,8 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
- 	if (unlikely(ret != 0))
- 		goto out_no_sys;
- 
--	drm_vma_offset_manager_init(&bdev->vma_manager,
-+	bdev->vma_manager = vma_manager;
-+	drm_vma_offset_manager_init(&bdev->_vma_manager,
- 				    DRM_FILE_PAGE_OFFSET_START,
- 				    DRM_FILE_PAGE_OFFSET_SIZE);
- 	INIT_DELAYED_WORK(&bdev->wq, ttm_bo_delayed_workqueue);
-@@ -1754,6 +1756,17 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
- 	ttm_bo_global_release();
- 	return ret;
- }
-+EXPORT_SYMBOL(ttm_bo_device_init_with_vma_manager);
+diff --git a/include/drm/drm_gem_ttm_helper.h b/include/drm/drm_gem_ttm_helper.h
+new file mode 100644
+index 000000000000..43c9db3583cc
+--- /dev/null
++++ b/include/drm/drm_gem_ttm_helper.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
 +
-+int ttm_bo_device_init(struct ttm_bo_device *bdev,
-+		       struct ttm_bo_driver *driver,
-+		       struct address_space *mapping,
-+		       bool need_dma32)
++#ifndef DRM_GEM_TTM_HELPER_H
++#define DRM_GEM_TTM_HELPER_H
++
++#include <linux/kernel.h>
++
++#include <drm/drm_gem.h>
++#include <drm/drm_device.h>
++#include <drm/ttm/ttm_bo_api.h>
++#include <drm/ttm/ttm_bo_driver.h>
++
++/**
++ * Returns the container of type &struct ttm_buffer_object
++ * for field base.
++ * @gem:	the GEM object
++ * Returns:	The containing GEM VRAM object
++ */
++static inline struct ttm_buffer_object *drm_gem_ttm_of_gem(
++	struct drm_gem_object *gem)
 +{
-+	return ttm_bo_device_init_with_vma_manager(bdev, driver, mapping,
-+						   &bdev->_vma_manager,
++	return container_of(gem, struct ttm_buffer_object, base);
++}
++
++int drm_gem_ttm_bo_device_init(struct drm_device *dev,
++			       struct ttm_bo_device *bdev,
++			       struct ttm_bo_driver *driver,
++			       bool need_dma32);
++
++#endif
+diff --git a/drivers/gpu/drm/drm_gem_ttm_helper.c b/drivers/gpu/drm/drm_gem_ttm_helper.c
+new file mode 100644
+index 000000000000..0c57e9fd50b9
+--- /dev/null
++++ b/drivers/gpu/drm/drm_gem_ttm_helper.c
+@@ -0,0 +1,36 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include <drm/drm_gem_ttm_helper.h>
++
++/**
++ * DOC: overview
++ *
++ * This library provides helper functions for gem objects backed by
++ * ttm.
++ */
++
++/**
++ * drm_gem_ttm_bo_device_init - ttm init for devices which use gem+ttm
++ *
++ * @dev: A pointer to a struct drm_device.
++ * @bdev: A pointer to a struct ttm_bo_device to initialize.
++ * @driver: A pointer to a struct ttm_bo_driver set up by the caller.
++ * @need_dma32: Whenever the device is limited to 32bit DMA.
++ *
++ * This initializes ttm with dev->vma_offset_manager, so gem and ttm
++ * fuction are working with the same vma_offset_manager.
++ *
++ * Returns:
++ * !0: Failure.
++ */
++int drm_gem_ttm_bo_device_init(struct drm_device *dev,
++			       struct ttm_bo_device *bdev,
++			       struct ttm_bo_driver *driver,
++			       bool need_dma32)
++{
++	return ttm_bo_device_init_with_vma_manager(bdev, driver,
++						   dev->anon_inode->i_mapping,
++						   dev->vma_offset_manager,
 +						   need_dma32);
 +}
- EXPORT_SYMBOL(ttm_bo_device_init);
++EXPORT_SYMBOL(drm_gem_ttm_bo_device_init);
+diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
+index b664f054c259..a70a1d9f30ec 100644
+--- a/Documentation/gpu/drm-mm.rst
++++ b/Documentation/gpu/drm-mm.rst
+@@ -412,6 +412,18 @@ VRAM MM Helper Functions Reference
+ .. kernel-doc:: drivers/gpu/drm/drm_vram_mm_helper.c
+    :export:
  
- /*
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-index 85f5bcbe0c76..d4eecde8d050 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-@@ -409,16 +409,16 @@ static struct ttm_buffer_object *ttm_bo_vm_lookup(struct ttm_bo_device *bdev,
- 	struct drm_vma_offset_node *node;
- 	struct ttm_buffer_object *bo = NULL;
++GEM TTM Helper Functions Reference
++-----------------------------------
++
++.. kernel-doc:: drivers/gpu/drm/drm_gem_ttm_helper.c
++   :doc: overview
++
++.. kernel-doc:: include/drm/drm_gem_ttm_helper.h
++   :internal:
++
++.. kernel-doc:: drivers/gpu/drm/drm_gem_ttm_helper.c
++   :export:
++
+ VMA Offset Manager
+ ==================
  
--	drm_vma_offset_lock_lookup(&bdev->vma_manager);
-+	drm_vma_offset_lock_lookup(bdev->vma_manager);
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index e6f40fb54c9a..f7b25519f95c 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -172,6 +172,13 @@ config DRM_VRAM_HELPER
+ 	help
+ 	  Helpers for VRAM memory management
  
--	node = drm_vma_offset_lookup_locked(&bdev->vma_manager, offset, pages);
-+	node = drm_vma_offset_lookup_locked(bdev->vma_manager, offset, pages);
- 	if (likely(node)) {
- 		bo = container_of(node, struct ttm_buffer_object,
- 				  base.vma_node);
- 		bo = ttm_bo_get_unless_zero(bo);
- 	}
++config DRM_TTM_HELPER
++	tristate
++	depends on DRM
++	select DRM_TTM
++	help
++	  Helpers for ttm-based gem objects
++
+ config DRM_GEM_CMA_HELPER
+ 	bool
+ 	depends on DRM
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index 10f8329a8b71..545c61d6528b 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -37,6 +37,9 @@ drm_vram_helper-y := drm_gem_vram_helper.o \
+ 		     drm_vram_mm_helper.o
+ obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o
  
--	drm_vma_offset_unlock_lookup(&bdev->vma_manager);
-+	drm_vma_offset_unlock_lookup(bdev->vma_manager);
- 
- 	if (!bo)
- 		pr_err("Could not find buffer object to map\n");
++drm_ttm_helper-y := drm_gem_ttm_helper.o
++obj-$(CONFIG_DRM_TTM_HELPER) += drm_ttm_helper.o
++
+ drm_kms_helper-y := drm_crtc_helper.o drm_dp_helper.o drm_dsc.o drm_probe_helper.o \
+ 		drm_plane_helper.o drm_dp_mst_topology.o drm_atomic_helper.o \
+ 		drm_kms_helper_common.o drm_dp_dual_mode_helper.o \
 -- 
 2.18.1
 
