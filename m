@@ -2,88 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D580386C8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2084B86C97
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390471AbfHHVnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 17:43:03 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42903 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733295AbfHHVnC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 17:43:02 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q10so44811088pff.9;
-        Thu, 08 Aug 2019 14:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1bNgei30R6lkF3hz+NsVCnBAfvYU1eRUdoqwp3463t0=;
-        b=PysEoIwt1QJUUowEDG3pVbNXkkflSPVaaCMFeBIrhGNvwPHuXwGT/TPYdysEaTJI3b
-         UV1nmlhyB52On3hIZeqIP71Pys6yrENCPU5q2zZKsebz16UcrAWC2W1kCIBJ6liUp/kq
-         r0xvqRlxjLLMakLhHlTzi1Y9xGICGoA1xer3kNcciftJR+6M+6jlc8WkEWm0zJZRv/5i
-         vS7VQaEBefSYc5Ru6fSuinXx9Q8JEw8XQq8VSyvcrVVkK2K/Urjh3ZSN2teV7rxf39XB
-         2n9xCZ97baGKPApYifT0fumuWGrozzknixJosH5u4UELLWRedE+lC2KljjtJVNTSUDbN
-         LQUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1bNgei30R6lkF3hz+NsVCnBAfvYU1eRUdoqwp3463t0=;
-        b=bCg00S9L9WotvyPmNtM1E1dQYU9eYUBS7hnkNBQg2w98XUjsL9kC0f8OfduFVK9hZ9
-         rWPx2ti5THuRhuSd6tZxiKMBjPvCls1tzI7hxfeylhbUDXCnXpID9hG5YUgUsbfyb2nF
-         eM2/K3EifLcTY5gaI7WKutu2nRgPU7h/ttHuYW4Um9ogirgefnnsgdaxR/Rl/kZYV6xe
-         h5jAC33WL9IcLvOrGMf87gdySU6aMXsu97B8YhE4vngacfyneRXshZKa170UPAoLzXns
-         V/yV17Xf5VcrIRcbGgXXLsieyXE15a7ZKHFFObBt794Xov/U195tPjxL3JEjqyOnCfWL
-         G2XA==
-X-Gm-Message-State: APjAAAWoHJuH8tobvQCqkoNsTf0l2BAm8n3ey6s4c+49L5WopvOo4Ral
-        WNsMgaXmmyFc4sysCPHNIxw=
-X-Google-Smtp-Source: APXvYqwEYgsfXg+hfoqo9RDdSe7+E36ffIyFkz/VT7eIvM9O8msVvBj84QMApyZWdQt9WCiZrKVPCw==
-X-Received: by 2002:a63:e306:: with SMTP id f6mr14301648pgh.39.1565300580917;
-        Thu, 08 Aug 2019 14:43:00 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id ev3sm16522616pjb.3.2019.08.08.14.42.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 14:42:59 -0700 (PDT)
-Date:   Thu, 8 Aug 2019 14:42:57 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/22] input: omap: void using mach/*.h headers
-Message-ID: <20190808214257.GF178933@dtor-ws>
-References: <20190808212234.2213262-1-arnd@arndb.de>
- <20190808212234.2213262-14-arnd@arndb.de>
+        id S2390495AbfHHVng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 17:43:36 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:42625 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733295AbfHHVnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 17:43:35 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 464MLs0kWsz9sND;
+        Fri,  9 Aug 2019 07:43:33 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565300613;
+        bh=PS8G/7lQMLzePnLYO1WZHyun9IUCnij9C8HUKhUzTJs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=R6CdS5AfYd3rKRx93uuRu4LogFSLZrx2d6IVCsl21yixw42taNTqNdAenDsJu4ehm
+         PyZ9L2AwGHP39aoisFV2VGhSVLAtqkDtg5hEJ7pXduAzGd2tFa2XHW40X5pkifQchv
+         OcZFceO38BNVHvoOQPEwnNoq8x4LIbpF4ztTwNKcH7dp3TEjKsqS88hIeNksBIt/8J
+         ggurRIE20dUOwDAg1f36FtxJDfNImIHtaga/Oce+zut94hH+7mOzfW/IP50up393y3
+         4TOPCm/VKglGsi6r6MjToy9VxQAAnvKq57WARjubgRElxyQ4MomBQN4FuWiPSzE3kx
+         PT6PTQnKT3WRQ==
+Date:   Fri, 9 Aug 2019 07:43:25 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the sound-asoc tree
+Message-ID: <20190809074325.65a72962@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808212234.2213262-14-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/RbJmcSp+m0Ab=t+LgdKH+Mm";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+--Sig_/RbJmcSp+m0Ab=t+LgdKH+Mm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2019 at 11:22:22PM +0200, Arnd Bergmann wrote:
-> By using the new linux/soc/ti/omap1-io.h header instead,
-> compile-testing can be enabled, and a CONFIG_ARCH_MULTIPLATFORM
-> conversion of omap1 may eventually be possible.
-> 
-> The warning in the header file gets removed in order to
-> allow CONFIG_COMPILE_TEST.
+Hi all,
 
-Given that we want to migrate people off this driver everywhere but
-OMAP1 I wonder why we would want to improve compile coverage of it.
+Commit
 
-Thanks.
+  c42d8cbee4c7 ("Merge branches from Takashi to ease Skylake development.")
 
--- 
-Dmitry
+is missing a Signed-off-by from its author and committer.
+
+Despite what the commit message says, this is not a merge commit.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/RbJmcSp+m0Ab=t+LgdKH+Mm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1Ml30ACgkQAVBC80lX
+0GwG2gf/Wd8smArT/Nj7a7JXIQ34odcrcuOSDQK3qTS6ugD5F1OyT+IKJGVIP/eU
+4NIDy/cO0DLdnZv8XP98UXcPC1b+5/I8KrisQ8n36nJ9Tw4pvbbK1VFQBFLRbeAy
+d6ZpVvlxCcvmvLy/kOyM4+WJmd9D4GAU1L3idHYl7Zb06wG2BLMkqavrWKvrWuzY
+n08N9bT7E7dGFWb26jBn5jgVAk/2DXR1A186bsRdcwCjO6BtsESnzQ4LHGsJcUQ6
+q+NSlss/KAZqfxC32FjlfUVQAXmoq821hFcJGoTGz0wdmA1vmfbTq2+BgIhSsTwo
+eH80vpw82mk+CaIFHuQuBFKijnvM1Q==
+=CMfa
+-----END PGP SIGNATURE-----
+
+--Sig_/RbJmcSp+m0Ab=t+LgdKH+Mm--
