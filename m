@@ -2,130 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45CF886215
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EC9B8620E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:42:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732490AbfHHMn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 08:43:27 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:60223 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728120AbfHHMnZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:43:25 -0400
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
-  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="Ludovic.Desroches@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 6BkT1O3KzLTrAEfzzKQKUg+ov/TLPRtRkX+Hy2eWKTrWrx6dAUCxmQ8HDSgbCnz8E6/jMTPpAL
- k4tC2ohBKyFmwAS4Dv1yPRX4Qt2x4vzsF53IUDGiIhgmRrf40QjlGNtNvMUJl6oTQqZM91ZeHj
- pdlsujUI+g2Fqo/kEdL7kNA1shBS8j2DvHBO3NqXkS6s78HEYWUrSc0WDXazgsq7L1Xu3BJoTO
- i4GZw3OgKZJpLmmLrAF9rD5C6Jy0sMviJ6+a8zYH2o6o8dTbU9CT1SnzA7TZm0n0fO/2IKZwaq
- 180=
-X-IronPort-AV: E=Sophos;i="5.64,361,1559545200"; 
-   d="scan'208";a="42891100"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Aug 2019 05:43:23 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 8 Aug 2019 05:43:21 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Thu, 8 Aug 2019 05:43:21 -0700
-Date:   Thu, 8 Aug 2019 14:42:18 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Eugen Hristev - M18282 <Eugen.Hristev@microchip.com>
-CC:     Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: at91: sama5d27_som1_ek: add mmc
- capabilities for SDMMC0
-Message-ID: <20190808124217.wrmcxohw5i6ju2qe@M43218.corp.atmel.com>
-Mail-Followup-To: Eugen Hristev - M18282 <Eugen.Hristev@microchip.com>,
-        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-References: <1565252928-28994-1-git-send-email-eugen.hristev@microchip.com>
- <1565252928-28994-2-git-send-email-eugen.hristev@microchip.com>
+        id S1732385AbfHHMmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 08:42:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49090 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728120AbfHHMmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:42:35 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38D102171F;
+        Thu,  8 Aug 2019 12:42:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565268154;
+        bh=H3Xm8TVT+2ZXNimGkZTlU8kaRfKXyQSpxg1WVh70iLI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TJa/AClplyDnhtCu5fn8WkR83+bJajnIKx+Y4J/LT90BwsHTPtDpOtcgvGdDDQlbd
+         IRrhenCSxisAAJhQynis+WiF7IQpOcrPUH0La7Cj68dREP9+aJBzFgC77voWxfueNH
+         jSfQXHMTJZxEwws2i/ZtP+jMwgtRbtPCP0JEjFdY=
+Date:   Thu, 8 Aug 2019 14:42:32 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     amit@kernel.org, mst@redhat.com, arnd@arndb.de,
+        virtualization@lists.linux-foundation.org, jasowang@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] virtio_ring: packed ring: fix
+ virtqueue_detach_unused_buf
+Message-ID: <20190808124232.GA32144@kroah.com>
+References: <20190808113606.19504-1-pagupta@redhat.com>
+ <20190808113606.19504-3-pagupta@redhat.com>
+ <20190808115630.GB2015@kroah.com>
+ <1512438873.7425183.1565267326035.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1565252928-28994-2-git-send-email-eugen.hristev@microchip.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1512438873.7425183.1565267326035.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 10:35:43AM +0200, Eugen Hristev - M18282 wrote:
-> From: Eugen Hristev <eugen.hristev@microchip.com>
+On Thu, Aug 08, 2019 at 08:28:46AM -0400, Pankaj Gupta wrote:
 > 
-> Add mmc capabilities for SDMMC0 for this board.
-> With this enabled, eMMC connected card is detected as:
 > 
-> mmc0: new DDR MMC card at address 0001
+> > > This patch makes packed ring code compatible with split ring in function
+> > > 'virtqueue_detach_unused_buf_*'.
+> > 
+> > What does that mean?  What does this "fix"?
 > 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Patch 1 frees the buffers When a port is unplugged from the virtio
+> console device. It does this with the help of 'virtqueue_detach_unused_buf_split/packed'
+> function. For split ring case, corresponding function decrements avail ring index.
+> For packed ring code, this functionality is not available, so this patch adds the
+> required support and hence help to remove the unused buffer completely.
 
-I am interested to have the some insights about the use of sd-uhs-*
-properties.
+Explain all of this in great detail in the changelog comment.  What you
+have in there today does not make any sense.
 
-Our IP can't deal with 1V8 by itself. It has a 1V8SEL signal which can
-be used as the logic control input of a mux. So even if the IP claims
-to support UHS modes, it depends on the board.
+thanks,
 
-Are the sd-uhs-* properties a way to deal with this? I tend to think no
-as sdhci_setup_host() will set the caps depending on the content of the
-capabilities register. Do we have to use the SDHCI_QUIRK_MISSING_CAPS
-quirk or sdhci-caps/sdhci-caps-mask?
-
-Regards
-
-Ludovic
-
-> ---
->  arch/arm/boot/dts/at91-sama5d27_som1_ek.dts | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/at91-sama5d27_som1_ek.dts b/arch/arm/boot/dts/at91-sama5d27_som1_ek.dts
-> index 149e539..194b3a3 100644
-> --- a/arch/arm/boot/dts/at91-sama5d27_som1_ek.dts
-> +++ b/arch/arm/boot/dts/at91-sama5d27_som1_ek.dts
-> @@ -54,6 +54,7 @@
->  
->  		sdmmc0: sdio-host@a0000000 {
->  			bus-width = <8>;
-> +			mmc-ddr-3_3v;
->  			pinctrl-names = "default";
->  			pinctrl-0 = <&pinctrl_sdmmc0_default>;
->  			status = "okay";
-> -- 
-> 2.7.4
-> 
+greg k-h
