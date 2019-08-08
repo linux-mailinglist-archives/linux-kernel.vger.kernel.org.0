@@ -2,96 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74383863D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF7DF863DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389947AbfHHOCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 10:02:03 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46872 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726156AbfHHOCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 10:02:02 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 42C517B0EE9AE632655A;
-        Thu,  8 Aug 2019 22:01:59 +0800 (CST)
-Received: from [127.0.0.1] (10.63.139.185) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 8 Aug 2019
- 22:01:52 +0800
-Subject: Re: [PATCH resend v2] lib: scatterlist: Fix to support no mapped sg
-To:     Jens Axboe <axboe@fb.com>,
-        "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-References: <1563940463-95597-1-git-send-email-wangzhou1@hisilicon.com>
- <5D3E4F91.4020605@hisilicon.com>
- <ba094177-6dc5-e1f6-d256-8e21d119729e@fb.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>
-From:   Zhou Wang <wangzhou1@hisilicon.com>
-Message-ID: <5D4C2B4F.2040401@hisilicon.com>
-Date:   Thu, 8 Aug 2019 22:01:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S2390075AbfHHOCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 10:02:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45572 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732866AbfHHOCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 10:02:33 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5736B21743;
+        Thu,  8 Aug 2019 14:02:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565272952;
+        bh=rZdFt1nTqsCFfJecz9OvxRQYmusq8d4LHI3dbVndMis=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BvBkOjzTXTL5BAvMofI5yEqRATA7GbCRZ7t0mWQ87KLXqEDmJOD/dFC+dYnTbXyMP
+         Kbxjs5id9rI/Fp0MfBaI/kYag0ExphOHAzsEbpOtpFN0QKWyvdt9gN5jfnQYp3GnsR
+         UUJJvqSeiemyvDqLBBxhE0LI6lwuzkLh/JBiZcXQ=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, frowand.list@gmail.com, keescook@chromium.org,
+        anton@enomsg.org, ccross@android.com, tony.luck@intel.com
+Subject: [PATCHv3] drivers/amba: add reset control to amba bus probe
+Date:   Thu,  8 Aug 2019 09:01:53 -0500
+Message-Id: <20190808140153.9156-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <ba094177-6dc5-e1f6-d256-8e21d119729e@fb.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.63.139.185]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/8 21:40, Jens Axboe wrote:
-> On 7/28/19 6:44 PM, Zhou Wang wrote:
->> On 2019/7/24 11:54, Zhou Wang wrote:
->>> In function sg_split, the second sg_calculate_split will return -EINVAL
->>> when in_mapped_nents is 0.
->>>
->>> Indeed there is no need to do second sg_calculate_split and sg_split_mapped
->>> when in_mapped_nents is 0, as in_mapped_nents indicates no mapped entry in
->>> original sgl.
->>>
->>> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
->>> Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
->>> ---
->>> v2: Just add Acked-by from Robert.
->>>
->>>   lib/sg_split.c | 12 +++++++-----
->>>   1 file changed, 7 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/lib/sg_split.c b/lib/sg_split.c
->>> index 9982c63..60a0bab 100644
->>> --- a/lib/sg_split.c
->>> +++ b/lib/sg_split.c
->>> @@ -176,11 +176,13 @@ int sg_split(struct scatterlist *in, const int in_mapped_nents,
->>>   	 * The order of these 3 calls is important and should be kept.
->>>   	 */
->>>   	sg_split_phys(splitters, nb_splits);
->>> -	ret = sg_calculate_split(in, in_mapped_nents, nb_splits, skip,
->>> -				 split_sizes, splitters, true);
->>> -	if (ret < 0)
->>> -		goto err;
->>> -	sg_split_mapped(splitters, nb_splits);
->>> +	if (in_mapped_nents) {
->>> +		ret = sg_calculate_split(in, in_mapped_nents, nb_splits, skip,
->>> +					 split_sizes, splitters, true);
->>> +		if (ret < 0)
->>> +			goto err;
->>> +		sg_split_mapped(splitters, nb_splits);
->>> +	}
->>>   
->>>   	for (i = 0; i < nb_splits; i++) {
->>>   		out[i] = splitters[i].out_sg;
->>>
->>
->> Hi Jens,
->>
->> I saw you are the committer of sg_splite.c, could you help to take this patch?
-> 
-> Yes, I can take it for 5.4, it looks fine to me. 
+The primecell controller on some SoCs, i.e. SoCFPGA, is held in reset by
+default. Until recently, the DMA controller was brought out of reset by the
+bootloader(i.e. U-Boot). But a recent change in U-Boot, the peripherals that
+are not used are held in reset and are left to Linux to bring them out of
+reset.
 
-Thanks a lot for taking this patch :)
+Add a mechanism for getting the reset property and de-assert the primecell
+module from reset if found. This is a not a hard fail if the reset property
+is not present in the device tree node, so the driver will continue to probe.
 
-> 
+Because there are different variants of the controller that may have multiple
+reset signals, the code will find all reset(s) specified and de-assert them.
+
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v3: add a reset_control_put()
+    add error handling for -EPROBE_DEFER
+v2: move reset control to bus code
+    find all reset properties and de-assert them
+---
+ drivers/amba/bus.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index 100e798a5c82..00e68ea416ca 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -18,6 +18,7 @@
+ #include <linux/limits.h>
+ #include <linux/clk/clk-conf.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ 
+ #include <asm/irq.h>
+ 
+@@ -401,6 +402,28 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
+ 	ret = amba_get_enable_pclk(dev);
+ 	if (ret == 0) {
+ 		u32 pid, cid;
++		int count;
++		struct reset_control *rstc;
++
++		/*
++		 * Find reset control(s) of the amba bus and de-assert them.
++		 */
++		count = reset_control_get_count(&dev->dev);
++		while (count > 0) {
++			rstc = of_reset_control_get_shared_by_index(dev->dev.of_node, count - 1);
++			if (IS_ERR(rstc)) {
++				if (PTR_ERR(rstc) == -EPROBE_DEFER) {
++					ret = -EPROBE_DEFER;
++				} else {
++					dev_err(&dev->dev, "Can't get amba reset!\n");
++				}
++				break;
++			} else {
++				reset_control_deassert(rstc);
++				reset_control_put(rstc);
++				count--;
++			}
++		}
+ 
+ 		/*
+ 		 * Read pid and cid based on size of resource
+-- 
+2.20.0
 
