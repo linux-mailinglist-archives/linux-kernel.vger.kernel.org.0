@@ -2,67 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC9B8620E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CF2986217
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:43:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732385AbfHHMmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 08:42:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49090 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728120AbfHHMmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:42:35 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38D102171F;
-        Thu,  8 Aug 2019 12:42:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565268154;
-        bh=H3Xm8TVT+2ZXNimGkZTlU8kaRfKXyQSpxg1WVh70iLI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TJa/AClplyDnhtCu5fn8WkR83+bJajnIKx+Y4J/LT90BwsHTPtDpOtcgvGdDDQlbd
-         IRrhenCSxisAAJhQynis+WiF7IQpOcrPUH0La7Cj68dREP9+aJBzFgC77voWxfueNH
-         jSfQXHMTJZxEwws2i/ZtP+jMwgtRbtPCP0JEjFdY=
-Date:   Thu, 8 Aug 2019 14:42:32 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     amit@kernel.org, mst@redhat.com, arnd@arndb.de,
-        virtualization@lists.linux-foundation.org, jasowang@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] virtio_ring: packed ring: fix
- virtqueue_detach_unused_buf
-Message-ID: <20190808124232.GA32144@kroah.com>
-References: <20190808113606.19504-1-pagupta@redhat.com>
- <20190808113606.19504-3-pagupta@redhat.com>
- <20190808115630.GB2015@kroah.com>
- <1512438873.7425183.1565267326035.JavaMail.zimbra@redhat.com>
+        id S1732519AbfHHMnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 08:43:43 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:6617 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728120AbfHHMnn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:43:43 -0400
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: UhMqoEB7R5wKP2mt2+WYc0BEl2Chih+xj1GWZXKExMYR0S5CsQboqsYaxz6b4JkkAXTIMUbk2U
+ T0EaEXKPbvMlBWnKJcWXV/9Kx0RPRGisaWsIF1FFhhDmPJ9oW2hUr9GdsD5/OezDS12Rjt/ru1
+ o7dOp3ot1ReAQxiM05xerQMZswlaTYtqPjEc90WN8p+jexQYMpnSjTyjwOXZOzBVMGoiXFiXIP
+ 0yNslWnYEn+Y8mlXsimrPRn5mjtB1XjbzNW83CHyj6PQi3aLgO0bUzXmJOmi6AW88eAMRfrOej
+ nFk=
+X-IronPort-AV: E=Sophos;i="5.64,361,1559545200"; 
+   d="scan'208";a="41506438"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Aug 2019 05:43:42 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 8 Aug 2019 05:43:42 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Thu, 8 Aug 2019 05:43:41 -0700
+Date:   Thu, 8 Aug 2019 14:42:38 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Eugen Hristev - M18282 <Eugen.Hristev@microchip.com>
+CC:     Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mmc: sdhci-of-at91: add quirk for broken HS200
+Message-ID: <20190808124238.qui3rhk3t6dabbk7@M43218.corp.atmel.com>
+Mail-Followup-To: Eugen Hristev - M18282 <Eugen.Hristev@microchip.com>,
+        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+References: <1565252928-28994-1-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1512438873.7425183.1565267326035.JavaMail.zimbra@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <1565252928-28994-1-git-send-email-eugen.hristev@microchip.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 08:28:46AM -0400, Pankaj Gupta wrote:
+On Thu, Aug 08, 2019 at 10:35:40AM +0200, Eugen Hristev - M18282 wrote:
+> From: Eugen Hristev <eugen.hristev@microchip.com>
 > 
+> HS200 is not implemented in the driver, but the controller claims it
+> through caps.
+> Remove it via quirk.
+> Without this quirk, the mmc core will try to enable hs200, which will fail,
+> and the eMMC initialization will fail.
 > 
-> > > This patch makes packed ring code compatible with split ring in function
-> > > 'virtqueue_detach_unused_buf_*'.
-> > 
-> > What does that mean?  What does this "fix"?
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+
+Thanks
+
+Ludovic
+
+> ---
+>  drivers/mmc/host/sdhci-of-at91.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Patch 1 frees the buffers When a port is unplugged from the virtio
-> console device. It does this with the help of 'virtqueue_detach_unused_buf_split/packed'
-> function. For split ring case, corresponding function decrements avail ring index.
-> For packed ring code, this functionality is not available, so this patch adds the
-> required support and hence help to remove the unused buffer completely.
-
-Explain all of this in great detail in the changelog comment.  What you
-have in there today does not make any sense.
-
-thanks,
-
-greg k-h
+> diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
+> index 57fe3b2..3a8c6d8 100644
+> --- a/drivers/mmc/host/sdhci-of-at91.c
+> +++ b/drivers/mmc/host/sdhci-of-at91.c
+> @@ -370,6 +370,9 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+>  	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+>  	pm_runtime_use_autosuspend(&pdev->dev);
+>  
+> +	/* HS200 is broken at this moment */
+> +	host->quirks2 = SDHCI_QUIRK2_BROKEN_HS200;
+> +
+>  	ret = sdhci_add_host(host);
+>  	if (ret)
+>  		goto pm_runtime_disable;
+> -- 
+> 2.7.4
+> 
