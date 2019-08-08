@@ -2,232 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 302A8868E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 20:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29027868F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 20:42:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403875AbfHHSj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 14:39:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389883AbfHHSj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 14:39:56 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AD54217F4;
-        Thu,  8 Aug 2019 18:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565289595;
-        bh=d9WMpQ18wPaCSAl8L9q4LyWOMnhWyCQuXribMUhFASA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VLKCzjDUC3356BGnBZagIOCZpjp2vhuMYe4MLA4mTTkR0HgQFZF6gLfdRTOl49FLd
-         WHvw0chHRhV1oAOfBAEKvh1u2D4ZOM65d6++xx/Kye5j/kXgyPSxneH38I63jG2LBY
-         0Ne2IAExBivEosxfHb105LMY82xFMH3FVfnkb6Ic=
-Date:   Thu, 8 Aug 2019 13:39:54 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Keith Busch <kbusch@kernel.org>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajat Jain <rajatja@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] nvme-pci: Allow PCI bus-level PM to be used if
- ASPM is disabled
-Message-ID: <20190808183954.GG151852@google.com>
-References: <4323ed84dd07474eab65699b4d007aaf@AUSX13MPC105.AMER.DELL.COM>
- <20190731221956.GB15795@localhost.localdomain>
- <1921165.pTveHRX1Co@kreacher>
- <1870928.r7tBYyfqdz@kreacher>
- <20190808134356.GF151852@google.com>
- <CAJZ5v0h=nz8yXwOOGBUB9m1GtJPOqBwtNK7zXPNMJjzPhMWd9w@mail.gmail.com>
+        id S2390210AbfHHSmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 14:42:02 -0400
+Received: from mx.aristanetworks.com ([162.210.129.12]:56150 "EHLO
+        smtp.aristanetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732375AbfHHSmC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 14:42:02 -0400
+X-Greylist: delayed 537 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Aug 2019 14:42:01 EDT
+Received: from smtp.aristanetworks.com (localhost [127.0.0.1])
+        by smtp.aristanetworks.com (Postfix) with ESMTP id 55FA1427D9F;
+        Thu,  8 Aug 2019 11:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1565289225;
+        bh=wT3T8uxsvhilc5G/Tu7ixGp1PL3OKIzCeyPA7IhRvw8=;
+        h=From:To:Cc:Subject:Date;
+        b=VEsafay3g9WIqrjD9haNX+x23eCGDrXxTE0V8upopDUlWe/lPcATaM9odkhJ9QR++
+         Au4D3fSf8h62w9LOzFz2b+d5hjLq5kW84wkHPYnv8ft+lmyQLNcut4TLqIKAWvMp6k
+         WyuxvBI6odO2aKXsTKpAgYaHAZV+qvckM8nH0t9bvuCn3u+dNYC1tmq8kN9WHdRcA9
+         ObapSM5RnUH3Wn2aiOL+5vD7W2dG3Ojn1ReRGYCgi+J4k4w3B9nXff0AQnKheJloZc
+         rMwKUOWhNjpd3jAcZ0stOZLuZ+R10+S8XF0Z1JAtPx/Q9G1BelqEuzHIPj2tHMaMGX
+         QXFvPLpFF5SgA==
+Received: from egc101.sjc.aristanetworks.com (unknown [172.20.210.50])
+        by smtp.aristanetworks.com (Postfix) with ESMTP id 51E3E427D83;
+        Thu,  8 Aug 2019 11:33:45 -0700 (PDT)
+From:   Edward Chron <echron@arista.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, colona@arista.com,
+        Edward Chron <echron@arista.com>
+Subject: [PATCH] mm/oom: Add killed process selection information
+Date:   Thu,  8 Aug 2019 11:32:47 -0700
+Message-Id: <20190808183247.28206-1-echron@arista.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0h=nz8yXwOOGBUB9m1GtJPOqBwtNK7zXPNMJjzPhMWd9w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 04:47:45PM +0200, Rafael J. Wysocki wrote:
-> On Thu, Aug 8, 2019 at 3:43 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Thu, Aug 08, 2019 at 12:10:06PM +0200, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > One of the modifications made by commit d916b1be94b6 ("nvme-pci: use
-> > > host managed power state for suspend") was adding a pci_save_state()
-> > > call to nvme_suspend() in order to prevent the PCI bus-level PM from
-> > > being applied to the suspended NVMe devices, but if ASPM is not
-> > > enabled for the target NVMe device, that causes its PCIe link to stay
-> > > up and the platform may not be able to get into its optimum low-power
-> > > state because of that.
-> > >
-> > > For example, if ASPM is disabled for the NVMe drive (PC401 NVMe SK
-> > > hynix 256GB) in my Dell XPS13 9380, leaving it in D0 during
-> > > suspend-to-idle prevents the SoC from reaching package idle states
-> > > deeper than PC3, which is way insufficient for system suspend.
-> >
-> > Just curious: I assume the SoC you reference is some part of the NVMe
-> > drive?
-> 
-> No, the SoC is what contains the Intel processor and PCH (formerly "chipset").
-> 
-> > > To address this shortcoming, make nvme_suspend() check if ASPM is
-> > > enabled for the target device and fall back to full device shutdown
-> > > and PCI bus-level PM if that is not the case.
-> > >
-> > > Fixes: d916b1be94b6 ("nvme-pci: use host managed power state for suspend")
-> > > Link: https://lore.kernel.org/linux-pm/2763495.NmdaWeg79L@kreacher/T/#t
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >
-> > > -> v2:
-> > >   * Move the PCI/PCIe ASPM changes to a separate patch.
-> > >   * Do not add a redundant ndev->last_ps == U32_MAX check in nvme_suspend().
-> > >
-> > > ---
-> > >  drivers/nvme/host/pci.c |   13 ++++++++++---
-> > >  1 file changed, 10 insertions(+), 3 deletions(-)
-> > >
-> > > Index: linux-pm/drivers/nvme/host/pci.c
-> > > ===================================================================
-> > > --- linux-pm.orig/drivers/nvme/host/pci.c
-> > > +++ linux-pm/drivers/nvme/host/pci.c
-> > > @@ -2846,7 +2846,7 @@ static int nvme_resume(struct device *de
-> > >       struct nvme_dev *ndev = pci_get_drvdata(to_pci_dev(dev));
-> > >       struct nvme_ctrl *ctrl = &ndev->ctrl;
-> > >
-> > > -     if (pm_resume_via_firmware() || !ctrl->npss ||
-> > > +     if (ndev->last_ps == U32_MAX ||
-> > >           nvme_set_power_state(ctrl, ndev->last_ps) != 0)
-> > >               nvme_reset_ctrl(ctrl);
-> > >       return 0;
-> > > @@ -2859,6 +2859,8 @@ static int nvme_suspend(struct device *d
-> > >       struct nvme_ctrl *ctrl = &ndev->ctrl;
-> > >       int ret = -EBUSY;
-> > >
-> > > +     ndev->last_ps = U32_MAX;
-> > > +
-> > >       /*
-> > >        * The platform does not remove power for a kernel managed suspend so
-> > >        * use host managed nvme power settings for lowest idle power if
-> > > @@ -2866,8 +2868,14 @@ static int nvme_suspend(struct device *d
-> > >        * shutdown.  But if the firmware is involved after the suspend or the
-> > >        * device does not support any non-default power states, shut down the
-> > >        * device fully.
-> > > +      *
-> > > +      * If ASPM is not enabled for the device, shut down the device and allow
-> > > +      * the PCI bus layer to put it into D3 in order to take the PCIe link
-> > > +      * down, so as to allow the platform to achieve its minimum low-power
-> > > +      * state (which may not be possible if the link is up).
-> > >        */
-> > > -     if (pm_suspend_via_firmware() || !ctrl->npss) {
-> > > +     if (pm_suspend_via_firmware() || !ctrl->npss ||
-> > > +         !pcie_aspm_enabled_mask(pdev)) {
-> >
-> > This seems like a layering violation, in the sense that ASPM is
-> > supposed to be hardware-autonomous and invisible to software.
-> 
-> But software has to enable it.
-> 
-> If it is not enabled, it will not be used, and that's what the check
-> is about.
-> 
-> > IIUC the NVMe device will go to the desired package idle state if
-> > the link is in L0s or L1, but not if the link is in L0.  I don't
-> > understand that connection; AFAIK that would be something outside
-> > the scope of the PCIe spec.
-> 
-> Yes, it is outside of the PCIe spec.
-> 
-> No, this is not about the NVMe device, it is about the Intel SoC
-> (System-on-a-Chip) the platform is based on.
+For an OOM event: print oomscore, memory pct, oom adjustment of the process
+that OOM kills and the totalpages value in kB (KiB) used in the calculation
+with the OOM killed process message. This is helpful to document why the
+process was selected by OOM at the time of the OOM event.
 
-Ah.  So this problem could occur with any device, not just NVMe?  If
-so, how do you address that?  Obviously you don't want to patch all
-drivers this way.
+Sample message output:
+Jul 21 20:07:48 yoursystem kernel: Out of memory: Killed process 2826
+ (processname) total-vm:1056800kB, anon-rss:1052784kB, file-rss:4kB,
+ shmem-rss:0kB memory-usage:3.2% oom_score:1032 oom_score_adj:1000
+ total-pages: 32791748kB
 
-> The background really is commit d916b1be94b6 and its changelog is
-> kind of misleading, unfortunately.  What it did, among other things,
-> was to cause the NVMe driver to prevent the PCI bus type from
-> applying the standard PCI PM to the devices handled by it in the
-> suspend-to-idle flow.  
+Signed-off-by: Edward Chron <echron@arista.com>
+---
+ fs/proc/base.c      |  2 +-
+ include/linux/oom.h | 18 +++++++++++-
+ mm/oom_kill.c       | 67 +++++++++++++++++++++++++++++++++------------
+ 3 files changed, 68 insertions(+), 19 deletions(-)
 
-This is more meaningful to you than to most people because "applying
-the standard PCI PM" doesn't tell us what that means in terms of the
-device.  Presumably it has something to do with a D-state transition?
-I *assume* a suspend might involve the D0 -> D3hot transition you
-mention below?
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..41880990e6a8 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -550,7 +550,7 @@ static int proc_oom_score(struct seq_file *m, struct pid_namespace *ns,
+ 	unsigned long totalpages = totalram_pages() + total_swap_pages;
+ 	unsigned long points = 0;
+ 
+-	points = oom_badness(task, totalpages) * 1000 / totalpages;
++	points = oom_badness(task, totalpages, NULL) * 1000 / totalpages;
+ 	seq_printf(m, "%lu\n", points);
+ 
+ 	return 0;
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index c696c265f019..7f7ab125c21c 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -49,6 +49,8 @@ struct oom_control {
+ 	unsigned long totalpages;
+ 	struct task_struct *chosen;
+ 	unsigned long chosen_points;
++	unsigned long chosen_mempts;
++	unsigned long chosen_adj;
+ 
+ 	/* Used to print the constraint info. */
+ 	enum oom_constraint constraint;
+@@ -105,10 +107,24 @@ static inline vm_fault_t check_stable_address_space(struct mm_struct *mm)
+ 	return 0;
+ }
+ 
++/*
++ * Optional argument that can be passed to oom_badness in the arg field
++ *
++ * Input fields that can be filled in: memcg and nodemask
++ * Output fields that can be returned: mempts, adj
++ */
++struct oom_bad_parms {
++	struct mem_cgroup *memcg;
++	const nodemask_t *nodemask;
++	unsigned long mempts;
++	long adj;
++};
++
+ bool __oom_reap_task_mm(struct mm_struct *mm);
+ 
+ extern unsigned long oom_badness(struct task_struct *p,
+-		unsigned long totalpages);
++				 unsigned long totalpages,
++				 struct oom_bad_parms *obp);
+ 
+ extern bool out_of_memory(struct oom_control *oc);
+ 
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index eda2e2a0bdc6..0548845dbef8 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -42,6 +42,7 @@
+ #include <linux/kthread.h>
+ #include <linux/init.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/oom.h>
+ 
+ #include <asm/tlb.h>
+ #include "internal.h"
+@@ -195,7 +196,8 @@ static bool is_dump_unreclaim_slabs(void)
+  * predictable as possible.  The goal is to return the highest value for the
+  * task consuming the most memory to avoid subsequent oom failures.
+  */
+-unsigned long oom_badness(struct task_struct *p, unsigned long totalpages)
++unsigned long oom_badness(struct task_struct *p, unsigned long totalpages,
++			  struct oom_bad_parms *obp)
+ {
+ 	long points;
+ 	long adj;
+@@ -208,15 +210,16 @@ unsigned long oom_badness(struct task_struct *p, unsigned long totalpages)
+ 		return 0;
+ 
+ 	/*
+-	 * Do not even consider tasks which are explicitly marked oom
+-	 * unkillable or have been already oom reaped or the are in
+-	 * the middle of vfork
++	 * Do not consider tasks which have already been oom reaped or
++	 * that are in the middle of vfork.
+ 	 */
+ 	adj = (long)p->signal->oom_score_adj;
+-	if (adj == OOM_SCORE_ADJ_MIN ||
+-			test_bit(MMF_OOM_SKIP, &p->mm->flags) ||
+-			in_vfork(p)) {
++	if (test_bit(MMF_OOM_SKIP, &p->mm->flags) || in_vfork(p)) {
+ 		task_unlock(p);
++		if (obp != NULL) {
++			obp->mempts = 0;
++			obp->adj = adj;
++		}
+ 		return 0;
+ 	}
+ 
+@@ -228,6 +231,16 @@ unsigned long oom_badness(struct task_struct *p, unsigned long totalpages)
+ 		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
+ 	task_unlock(p);
+ 
++	/* Also return raw mempts and oom_score_adj along */
++	if (obp != NULL) {
++		obp->mempts = points;
++		obp->adj = adj;
++	}
++
++	/* Unkillable oom task skipped but returns mempts and oom_score_adj */
++	if (adj == OOM_SCORE_ADJ_MIN)
++		return 0;
++
+ 	/* Normalize to oom_score_adj units */
+ 	adj *= totalpages / 1000;
+ 	points += adj;
+@@ -310,6 +323,8 @@ static int oom_evaluate_task(struct task_struct *task, void *arg)
+ {
+ 	struct oom_control *oc = arg;
+ 	unsigned long points;
++	struct oom_bad_parms obp = { .memcg = NULL, .nodemask = oc->nodemask,
++				     .mempts = 0, .adj = 0 };
+ 
+ 	if (oom_unkillable_task(task))
+ 		goto next;
+@@ -339,7 +354,7 @@ static int oom_evaluate_task(struct task_struct *task, void *arg)
+ 		goto select;
+ 	}
+ 
+-	points = oom_badness(task, oc->totalpages);
++	points = oom_badness(task, oc->totalpages, &obp);
+ 	if (!points || points < oc->chosen_points)
+ 		goto next;
+ 
+@@ -349,6 +364,8 @@ static int oom_evaluate_task(struct task_struct *task, void *arg)
+ 	get_task_struct(task);
+ 	oc->chosen = task;
+ 	oc->chosen_points = points;
++	oc->chosen_mempts = obp.mempts;
++	oc->chosen_adj = obp.adj;
+ next:
+ 	return 0;
+ abort:
+@@ -375,6 +392,9 @@ static void select_bad_process(struct oom_control *oc)
+ 				break;
+ 		rcu_read_unlock();
+ 	}
++
++	oc->chosen_points = oc->chosen_points * 1000 / oc->totalpages;
++	oc->chosen_mempts = oc->chosen_mempts * 1000 / oc->totalpages;
+ }
+ 
+ static int dump_task(struct task_struct *p, void *arg)
+@@ -853,7 +873,8 @@ static bool task_will_free_mem(struct task_struct *task)
+ 	return ret;
+ }
+ 
+-static void __oom_kill_process(struct task_struct *victim, const char *message)
++static void __oom_kill_process(struct task_struct *victim, const char *message,
++				struct oom_control *oc)
+ {
+ 	struct task_struct *p;
+ 	struct mm_struct *mm;
+@@ -884,12 +905,24 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
+ 	 */
+ 	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
+ 	mark_oom_victim(victim);
+-	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+-		message, task_pid_nr(victim), victim->comm,
+-		K(victim->mm->total_vm),
+-		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
+-		K(get_mm_counter(victim->mm, MM_FILEPAGES)),
+-		K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
++
++	if (oc != NULL && oc->chosen_mempts > 0)
++		pr_info("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB, memory-usage:%lu.%1lu%% oom_score:%lu oom_score_adj:%ld total-pages: %lukB",
++			message, task_pid_nr(victim), victim->comm,
++			K(victim->mm->total_vm),
++			K(get_mm_counter(victim->mm, MM_ANONPAGES)),
++			K(get_mm_counter(victim->mm, MM_FILEPAGES)),
++			K(get_mm_counter(victim->mm, MM_SHMEMPAGES)),
++			oc->chosen_mempts / 10, oc->chosen_mempts % 10,
++			oc->chosen_points, oc->chosen_adj, K(oc->totalpages));
++	else
++		pr_info("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB",
++			message, task_pid_nr(victim), victim->comm,
++			K(victim->mm->total_vm),
++			K(get_mm_counter(victim->mm, MM_ANONPAGES)),
++			K(get_mm_counter(victim->mm, MM_FILEPAGES)),
++			K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
++
+ 	task_unlock(victim);
+ 
+ 	/*
+@@ -942,7 +975,7 @@ static int oom_kill_memcg_member(struct task_struct *task, void *message)
+ 	if (task->signal->oom_score_adj != OOM_SCORE_ADJ_MIN &&
+ 	    !is_global_init(task)) {
+ 		get_task_struct(task);
+-		__oom_kill_process(task, message);
++		__oom_kill_process(task, message, NULL);
+ 	}
+ 	return 0;
+ }
+@@ -979,7 +1012,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	 */
+ 	oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
+ 
+-	__oom_kill_process(victim, message);
++	__oom_kill_process(victim, message, oc);
+ 
+ 	/*
+ 	 * If necessary, kill all tasks in the selected memory cgroup.
+-- 
+2.20.1
 
-> The reason for doing that was a (reportedly) widespread failure to
-> take the PCIe link down during D0 -> D3hot transitions of NVMe
-> devices,
-
-I don't know any of the details, but "failure to take the link down
-during D0 -> D3hot transitions" is phrased as though it might be a
-hardware erratum.  If this *is* related to an NVMe erratum, that would
-explain why you only need to patch the nvme driver, and it would be
-useful to mention that in the commit log, since otherwise it sounds
-like something that might be needed in other drivers, too.
-
-According to PCIe r5.0 sec 5.3.2, the only legal link states for D3hot
-are L1, L2/L3 Ready.  So if you put a device in D3hot and its link
-stays in L0, that sounds like a defect.  Is that what happens?
-
-Obviously I'm still confused.  I think it would help if you could
-describe the problem in terms of the specific PCIe states involved
-(D0, D3hot, L0, L1, L2, L3, etc) because then the spec would help
-explain what's happening.
-
-> which then prevented the platform from going into a deep enough
-> low-power state while suspended (because it was not sure whether or
-> not the NVMe device was really "sufficiently" inactive).  [I guess I
-> should mention that in the changelog of the $subject patch.]  So the
-> idea was to put the (NVMe) device into a low-power state internally
-> and then let ASPM take care of the PCIe link.
-> 
-> Of course, that can only work if ASPM is enabled at all for the
-> device in question, even though it may not be sufficient as you say
-> below.
-> 
-> > The spec (PCIe r5.0, sec 5.4.1.1.1 for L0s, 5.4.1.2.1 for L1) is
-> > careful to say that when the conditions are right, devices
-> > "should" enter L0s but it is never mandatory, or "may" enter L1.
-> >
-> > And this patch assumes that if ASPM is enabled, the link will
-> > eventually go to L0s or L1.
-> 
-> No, it doesn't.
-> 
-> It avoids failure in the case in which it is guaranteed to happen
-> (disabled ASPM) and that's it.
-> 
-> > Because the PCIe spec doesn't mandate that transition, I think
-> > this patch makes the driver dependent on device-specific behavior.
-> 
-> IMO not really.  It just adds a "don't do it if you are going to
-> fail" kind of check.
-> 
-> >
-> > >               nvme_dev_disable(ndev, true);
-> > >               return 0;
-> > >       }
-> > > @@ -2880,7 +2888,6 @@ static int nvme_suspend(struct device *d
-> > >           ctrl->state != NVME_CTRL_ADMIN_ONLY)
-> > >               goto unfreeze;
-> > >
-> > > -     ndev->last_ps = 0;
-> > >       ret = nvme_get_power_state(ctrl, &ndev->last_ps);
-> > >       if (ret < 0)
-> > >               goto unfreeze;
-> > >
-> > >
-> > >
