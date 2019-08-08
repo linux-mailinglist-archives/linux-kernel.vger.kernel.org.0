@@ -2,60 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05980865ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40F35865FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:36:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403997AbfHHPfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:35:18 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:44646 "EHLO vps0.lunn.ch"
+        id S2404021AbfHHPgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 11:36:09 -0400
+Received: from sauhun.de ([88.99.104.3]:56436 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732549AbfHHPfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:35:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=nu6rJdx/OR9M7kX9A1CXYGTkDCwz7C7JPL3VD4fk9lE=; b=ece1Oj7EG1wH5/v87qfjAICuR7
-        nHNvwuia4csDzGJE1k8b9wsdNaBuHSO/cLwprhyp4cVDSIwyNN0SnOnsgGec9MY0u/0Humd/OAz2h
-        BhGVEkOYkfORX2UEcOf2knt/nzv/qv9jDRXjtv/61AKOWaIE0IqDmXwm/5q1A0VWaauo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hvkRe-0003sF-6V; Thu, 08 Aug 2019 17:35:14 +0200
-Date:   Thu, 8 Aug 2019 17:35:14 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, f.fainelli@gmail.com,
-        hkallweit1@gmail.com
-Subject: Re: [PATCH v2 05/15] net: phy: adin: add {write,read}_mmd hooks
-Message-ID: <20190808153514.GE27917@lunn.ch>
-References: <20190808123026.17382-1-alexandru.ardelean@analog.com>
- <20190808123026.17382-6-alexandru.ardelean@analog.com>
+        id S1732549AbfHHPgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 11:36:08 -0400
+Received: from localhost (p5486CA1C.dip0.t-ipconnect.de [84.134.202.28])
+        by pokefinder.org (Postfix) with ESMTPSA id 150722C3112;
+        Thu,  8 Aug 2019 17:36:05 +0200 (CEST)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RFT 0/3] hwmon: convert remaining drivers to i2c_new_dummy_device()
+Date:   Thu,  8 Aug 2019 17:35:55 +0200
+Message-Id: <20190808153558.2362-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808123026.17382-6-alexandru.ardelean@analog.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 03:30:16PM +0300, Alexandru Ardelean wrote:
-> Both ADIN1200 & ADIN1300 support Clause 45 access.
-> The Extended Management Interface (EMI) registers are accessible via both
-> Clause 45 (at register MDIO_MMD_VEND1) and using Clause 22.
-> 
-> However, the Clause 22 MMD access operations differ from the implementation
-> in the kernel, in the sense that it uses registers ExtRegPtr (0x10) &
-> ExtRegData (0x11) to access Clause 45 & EMI registers.
+This series is part of a tree-wide movement to replace the I2C API call
+'i2c_new_dummy' which returns NULL with its new counterpart returning an
+ERRPTR.
 
-It is not that they differ from what the kernel supports. Its that
-they differ from what the Standard says they should use. These
-registers are defined in 802.3, part of C22, and this hardware
-implements the standard incorrectly.
+This series fixes the remaining hwmon drivers which could not be
+converted by my cocci script. So, I did it manually, yet all drivers
+still follow the same pattern. Build tested by me and by buildbot. No
+tests on HW have been performed, so testing is appreciated.
 
-	   Andrew
+The branch is based on v5.3-rc2. A branch (with some more stuff included) can
+be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/new_dummy
+
+
+Wolfram Sang (3):
+  hwmon: w83791d: convert to use devm_i2c_new_dummy_device
+  hwmon: w83792d: convert to use devm_i2c_new_dummy_device
+  hwmon: w83793d: convert to use devm_i2c_new_dummy_device
+
+ drivers/hwmon/w83791d.c | 32 +++++++++-----------------------
+ drivers/hwmon/w83792d.c | 32 +++++++++-----------------------
+ drivers/hwmon/w83793.c  | 30 ++++++++----------------------
+ 3 files changed, 26 insertions(+), 68 deletions(-)
+
+-- 
+2.20.1
+
