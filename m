@@ -2,55 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B87F186612
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A960D86634
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390122AbfHHPk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:40:58 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:44688 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732680AbfHHPk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:40:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=ykWdIZHW1UxomrUDZeNASp7QR/Ua4nkb9JcxElf/Skw=; b=Iho3v8FcNt3PT6dGV1NmpO2Zvc
-        gEoHz2ACz22WvqJ+n0keCnO5dh4JbJqo7R3TiXaKkTMfMM/ILGMI98WTGY9ta9TCCIYz+eHgGzLy3
-        F4+tye7TmohyT53VVteS48ooDiQmSxjq2Ti7WgdYF2UrVvsB8JCO8xVp2tJU9+wNBFJE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hvkX9-0003xO-BR; Thu, 08 Aug 2019 17:40:55 +0200
-Date:   Thu, 8 Aug 2019 17:40:55 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, f.fainelli@gmail.com,
-        hkallweit1@gmail.com
-Subject: Re: [PATCH v2 07/15] net: phy: adin: make RGMII internal delays
- configurable
-Message-ID: <20190808154055.GG27917@lunn.ch>
-References: <20190808123026.17382-1-alexandru.ardelean@analog.com>
- <20190808123026.17382-8-alexandru.ardelean@analog.com>
+        id S2390154AbfHHPsL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 8 Aug 2019 11:48:11 -0400
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:37049 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733248AbfHHPsL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 11:48:11 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Aug 2019 11:48:11 EDT
+IronPort-SDR: T1QHL6pa1qRd+ViMRHR+IxA7umAwd5ol9ie/wBL88UUWBlRiv6KVRgG0p9g9EGwXLwR3id6i6k
+ O43qrhpQi03OGQ/DAUrZWr+bgJdej+2pizPyCtQS5jZlj870VufGAE52+0QDk2z5X8a1rWqpOv
+ tMaCikK10f0E8b4+32G0z3IbJXiBB06kavbzqioa6HwwlLhTPLGDZDYyIl2ILJuZFVsLewbjj4
+ K1N2Z58QnV5r2czi6rI9RmLBjBqaU2hmXOXizNdlTZw4MAbFiCG6/N3QAk63IUN4AvWmZYSWIN
+ 0lc=
+X-IronPort-AV: E=Sophos;i="5.64,362,1559548800"; 
+   d="scan'208";a="42094792"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa1.mentor.iphmx.com with ESMTP; 08 Aug 2019 07:41:04 -0800
+IronPort-SDR: 4gd+k2LPXxqLSZ9JsdYDieMxAb36A2pTn0/o0OZlrH6sphtV7sxNzR8nwhKNTB/rnsmj2dAP7Q
+ 1vw117nOXAjyYW92g2c+lVKWPV+xRl9lS4zG7ld8NruFsfT/omPZc4RG4+WkEXGeZK0aoJmAvc
+ LBdFXOLgupFClBAfKhHt8E4de1R2352dWDmKmXEtpdFFuzn512DhFBcYEt7xFSoYNCDWRfLSkg
+ mwQ7S3GQrQGVieaR3o1s+A0pqinKhU9EOVyM4Gdy/nZtr0gYisAKBFJiqaYvgwGRkvo8iN+LY5
+ KRU=
+From:   "Schmid, Carsten" <Carsten_Schmid@mentor.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] kernel/resource.c: invalidate parent when freed resource has
+ childs
+Thread-Topic: [PATCH] kernel/resource.c: invalidate parent when freed resource
+ has childs
+Thread-Index: AQHVTf27k2ql41s2a0y+HEWXJQe+tQ==
+Date:   Thu, 8 Aug 2019 15:40:59 +0000
+Message-ID: <1565278859475.1962@mentor.com>
+Accept-Language: de-DE, en-IE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [137.202.0.90]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808123026.17382-8-alexandru.ardelean@analog.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 03:30:18PM +0300, Alexandru Ardelean wrote:
-> The internal delays for the RGMII are configurable for both RX & TX. This
-> change adds support for configuring them via device-tree (or ACPI).
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+When a resource is freed and has children, the childrens are
+left without any hint that their parent is no more valid.
+This caused at least one use-after-free in the xhci-hcd using
+ext-caps driver when platform code released platform devices.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fix this by setting child's parent to zero and warn.
 
-    Andrew
+Signed-off-by: Carsten Schmid <carsten_schmid@mentor.com>
+---
+Rationale:
+When hunting for the root cause of a crash on a 4.14.86 kernel, i
+have found the root cause and checked it being still present
+upstream. Our case:
+Having xhci-hcd and intel_xhci_usb_sw active we can see in
+/proc/meminfo: (exceirpt)
+  b3c00000-b3c0ffff : 0000:00:15.0
+    b3c00000-b3c0ffff : xhci-hcd
+      b3c08070-b3c0846f : intel_xhci_usb_sw
+intel_xhci_usb_sw being a child of xhci-hcd.
+
+Doing an unbind command
+echo 0000:00:15.0 > /sys/bus/pci/drivers/xhci_hcd/unbind
+leads to xhci-hcd being freed in __release_region.
+The intel_xhci_usb_sw resource is accessed in platform code
+in platform_device_del with
+		for (i = 0; i < pdev->num_resources; i++) {
+			struct resource *r = &pdev->resource[i];
+			if (r->parent)
+				release_resource(r);
+		}
+as the resource's parent has not been updated, the release_resource
+uses the parent:
+	p = &old->parent->child;
+which is now invalid.
+Fix this by marking the parent invalid in the child and give a warning
+in dmesg.
+---
+ kernel/resource.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 158f04ec1d4f..95340cb0b1c2 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1200,6 +1200,15 @@ void __release_region(struct resource *parent, resource_size_t start,
+ 			write_unlock(&resource_lock);
+ 			if (res->flags & IORESOURCE_MUXED)
+ 				wake_up(&muxed_resource_wait);
++
++			write_lock(&resource_lock);
++			if (res->child) {
++				printk(KERN_WARNING "__release_region: %s has child %s,"
++						"invalidating childs parent\n",
++						res->name, res->child->name);
++				res->child->parent = NULL;
++			}
++			write_unlock(&resource_lock);
+ 			free_resource(res);
+ 			return;
+ 		}
+-- 
+2.17.1
