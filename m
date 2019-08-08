@@ -2,239 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E761986C68
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8338486C3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:22:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390443AbfHHVaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 17:30:07 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:59461 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729780AbfHHVaH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 17:30:07 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M3VAI-1hwOCu3Lmc-000coR; Thu, 08 Aug 2019 23:29:38 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Cc:     linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/22] ARM: omap1: move CF chipselect setup to board file
-Date:   Thu,  8 Aug 2019 23:22:17 +0200
-Message-Id: <20190808212234.2213262-9-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190808212234.2213262-1-arnd@arndb.de>
-References: <20190808212234.2213262-1-arnd@arndb.de>
+        id S2390365AbfHHVWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 17:22:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:27333 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732601AbfHHVWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 17:22:43 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 09DFC60149;
+        Thu,  8 Aug 2019 21:22:42 +0000 (UTC)
+Received: from dcbz.redhat.com (ovpn-116-62.ams2.redhat.com [10.36.116.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F40CD5C231;
+        Thu,  8 Aug 2019 21:22:35 +0000 (UTC)
+From:   Adrian Reber <areber@redhat.com>
+To:     Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelianov <xemul@virtuozzo.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Adrian Reber <areber@redhat.com>
+Subject: [PATCH v4 1/2] fork: extend clone3() to support CLONE_SET_TID
+Date:   Thu,  8 Aug 2019 23:22:21 +0200
+Message-Id: <20190808212222.28276-1-areber@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:RnYUAFwmM2m8m3O3+HxSSuGDaMoTlH+cBY3+Em0tOAfUOFvgiWl
- DGMc8fUF062WVjG28ZUaUjq8Rg2rNw40pVJ58L5chj9rpHv7J9L6TBrJIbFnL2h5o1QXtr+
- N1LXPAFl2IyKboH9pXfEpzkQKV8H24+tFDXlUzWzf7JVy+Fjg4ifDix1Jwg3YkZHCkarvJT
- lUbx971y+k3+es6cqk4IQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3VR5CSysz1I=:iP2/yKLl57ITrfMx5hjul6
- Bha0XcVmbYovcD/iBBKCj1uzDy6KT6vwjB4AwlmFrHTUgLY8BZ9tMa4Ik7mrU7uwssU8dIisD
- hsTQV37EhUVgQdj5dgWluuFjcN3+pa0+qH8W6b5QTm5+wheWeI/mTSjcDhLxfQNnE5M27rAoN
- 6w5kFCm9zXloTf7MTln36UQhMBuBD6KtIy/qB9QqAkBv6VgyfYm4eSf+fZnxuOr9ySD3fXtxq
- gzhLRHVOq5nbGPWiTU3CdSzJNL9vEYA/k+TyRbOGjMysq24f1xzKvsQXGTnozTh1iOoAV0UN1
- nfg991BHUM03zZIqEM95pXgK9tQmmT8B+0FLs/JLIZAwRASO+7qWrnAhW3lrbgcqIHipijx3u
- u1Iwn6jv+L0/O+2PC7Lm1XH57FCtrqKSc/stl7FR+4o5GeSWmMXogqHTBETKwdGIllisM869y
- +Ivw/KTqHMoHIyoHfAmV7FOx4KLiohSYfUsdZnaEMwzi/sipZ58arT/gYewDn9Lg2nq3F2u+2
- 80KDfRMKJtWwoF/0bYnvEudR4BUgBsigLclTvrYtOMpTkK0LA/5GuKjikcV63LsE6SwjMOuaW
- Zh6xUwqQTt98d4Sui0D7PxTTOOxySM2Ra1SL0fUEGqJEMs86urCOWEVa4Bc9L/Xfk+5Ko5cAq
- LSrjWl+ZK+HnowMJwtfwlKxQ+lNLoHCvP5dKyjDiWHgSlPIz0yfWER7OdqfmoBiqTsDYvi7zs
- 28RqK/XWNHaas+ei7eQnVMT0HLgv3qFs9OwM9Q==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 08 Aug 2019 21:22:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is only one board that uses the omap_cf driver, so
-moving the chipselect configuration there does not lead
-to code duplication but avoids the use of mach/tc.h
-in drivers.
+The main motivation to add set_tid to clone3() is CRIU.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+To restore a process with the same PID/TID CRIU currently uses
+/proc/sys/kernel/ns_last_pid. It writes the desired (PID - 1) to
+ns_last_pid and then (quickly) does a clone(). This works most of the
+time, but it is racy. It is also slow as it requires multiple syscalls.
+
+Extending clone3() to support set_tid makes it possible restore a
+process using CRIU without accessing /proc/sys/kernel/ns_last_pid and
+race free (as long as the desired PID/TID is available).
+
+This clone3() extension places the same restrictions (CAP_SYS_ADMIN)
+on clone3() with set_tid as they are currently in place for ns_last_pid.
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
 ---
- arch/arm/mach-omap1/board-osk.c | 38 ++++++++++++++++++++++++++++-----
- drivers/pcmcia/Kconfig          |  3 ++-
- drivers/pcmcia/omap_cf.c        | 38 ++++++---------------------------
- 3 files changed, 42 insertions(+), 37 deletions(-)
+v2:
+ - Removed (size < sizeof(struct clone_args)) as discussed with
+   Christian and Dmitry
+ - Added comment to ((set_tid != 1) && idr_get_cursor() <= 1) (Oleg)
+ - Use idr_alloc() instead of idr_alloc_cyclic() (Oleg)
 
-diff --git a/arch/arm/mach-omap1/board-osk.c b/arch/arm/mach-omap1/board-osk.c
-index 99ebe4503787..38d73da5d13d 100644
---- a/arch/arm/mach-omap1/board-osk.c
-+++ b/arch/arm/mach-omap1/board-osk.c
-@@ -149,14 +149,14 @@ static struct resource osk5912_cf_resources[] = {
- 	[0] = {
- 		.flags	= IORESOURCE_IRQ,
- 	},
-+	[1] = {
-+		.flags = IORESOURCE_MEM,
-+	},
+v3:
+ - Return EEXIST if PID is already in use (Christian)
+ - Drop CLONE_SET_TID (Christian and Oleg)
+ - Use idr_is_empty() instead of idr_get_cursor() (Oleg)
+ - Handle different `struct clone_args` sizes (Dmitry)
+
+v4:
+ - Rework struct size check with defines (Christian)
+ - Reduce number of set_tid checks (Oleg)
+ - Less parentheses and more robust code (Oleg)
+ - Do ns_capable() on correct user_ns (Oleg, Christian)
+---
+ include/linux/pid.h        |  2 +-
+ include/linux/sched/task.h |  1 +
+ include/uapi/linux/sched.h |  1 +
+ kernel/fork.c              | 25 +++++++++++++++++++++++--
+ kernel/pid.c               | 34 +++++++++++++++++++++++++++-------
+ 5 files changed, 53 insertions(+), 10 deletions(-)
+
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 2a83e434db9d..052000db0ced 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -116,7 +116,7 @@ extern struct pid *find_vpid(int nr);
+ extern struct pid *find_get_pid(int nr);
+ extern struct pid *find_ge_pid(int nr, struct pid_namespace *);
+ 
+-extern struct pid *alloc_pid(struct pid_namespace *ns);
++extern struct pid *alloc_pid(struct pid_namespace *ns, pid_t set_tid);
+ extern void free_pid(struct pid *pid);
+ extern void disable_pid_allocation(struct pid_namespace *ns);
+ 
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 0497091e40c1..4f2a80564332 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -26,6 +26,7 @@ struct kernel_clone_args {
+ 	unsigned long stack;
+ 	unsigned long stack_size;
+ 	unsigned long tls;
++	pid_t set_tid;
  };
  
- static struct platform_device osk5912_cf_device = {
- 	.name		= "omap_cf",
- 	.id		= -1,
--	.dev = {
--		.platform_data	= (void *) 2 /* CS2 */,
--	},
- 	.num_resources	= ARRAY_SIZE(osk5912_cf_resources),
- 	.resource	= osk5912_cf_resources,
+ /*
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index b3105ac1381a..e1ce103a2c47 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -45,6 +45,7 @@ struct clone_args {
+ 	__aligned_u64 stack;
+ 	__aligned_u64 stack_size;
+ 	__aligned_u64 tls;
++	__aligned_u64 set_tid;
  };
-@@ -267,13 +267,41 @@ static void __init osk_init_smc91x(void)
- 	omap_writel(l, EMIFS_CCS(1));
- }
  
--static void __init osk_init_cf(void)
-+static void __init osk_init_cf(int seg)
- {
-+	struct resource *res = &osk5912_cf_resources[1];
+ /*
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 2852d0e76ea3..2a03f0e201e9 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -117,6 +117,13 @@
+  */
+ #define MAX_THREADS FUTEX_TID_MASK
+ 
++/*
++ * Different sizes of struct clone_args
++ */
++#define CLONE3_ARGS_SIZE_V0 64
++/* V1 includes set_tid */
++#define CLONE3_ARGS_SIZE_V1 72
 +
- 	omap_cfg_reg(M7_1610_GPIO62);
- 	if ((gpio_request(62, "cf_irq")) < 0) {
- 		printk("Error requesting gpio 62 for CF irq\n");
- 		return;
- 	}
-+
-+	switch (seg) {
-+	/* NOTE: CS0 could be configured too ... */
-+	case 1:
-+		res->start = OMAP_CS1_PHYS;
-+		break;
-+	case 2:
-+		res->start = OMAP_CS2_PHYS;
-+		break;
-+	case 3:
-+		res->start = omap_cs3_phys();
-+		break;
-+	}
-+
-+	res->end = res->start + SZ_8K - 1;
-+	osk5912_cf_device.dev.platform_data = (void *)(uintptr_t)seg;
-+
-+	/* NOTE:  better EMIFS setup might support more cards; but the
-+	 * TRM only shows how to affect regular flash signals, not their
-+	 * CF/PCMCIA variants...
-+	 */
-+	pr_debug("%s: cs%d, previous ccs %08x acs %08x\n", __func__,
-+		seg, omap_readl(EMIFS_CCS(seg)), omap_readl(EMIFS_ACS(seg)));
-+	omap_writel(0x0004a1b3, EMIFS_CCS(seg));	/* synch mode 4 etc */
-+	omap_writel(0x00000000, EMIFS_ACS(seg));	/* OE hold/setup */
-+
- 	/* the CF I/O IRQ is really active-low */
- 	irq_set_irq_type(gpio_to_irq(62), IRQ_TYPE_EDGE_FALLING);
- }
-@@ -577,7 +605,7 @@ static void __init osk_init(void)
- 	u32 l;
+ /*
+  * Protected counters by write_lock_irq(&tasklist_lock)
+  */
+@@ -2031,7 +2038,13 @@ static __latent_entropy struct task_struct *copy_process(
+ 	stackleak_task_init(p);
  
- 	osk_init_smc91x();
--	osk_init_cf();
-+	osk_init_cf(2); /* CS2 */
+ 	if (pid != &init_struct_pid) {
+-		pid = alloc_pid(p->nsproxy->pid_ns_for_children);
++		if (args->set_tid && !ns_capable(
++				p->nsproxy->pid_ns_for_children->user_ns,
++				CAP_SYS_ADMIN)) {
++			retval = -EPERM;
++			goto bad_fork_cleanup_thread;
++		}
++		pid = alloc_pid(p->nsproxy->pid_ns_for_children, args->set_tid);
+ 		if (IS_ERR(pid)) {
+ 			retval = PTR_ERR(pid);
+ 			goto bad_fork_cleanup_thread;
+@@ -2535,9 +2548,14 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 	if (unlikely(size > PAGE_SIZE))
+ 		return -E2BIG;
  
- 	/* Workaround for wrong CS3 (NOR flash) timing
- 	 * There are some U-Boot versions out there which configure
-diff --git a/drivers/pcmcia/Kconfig b/drivers/pcmcia/Kconfig
-index e004d8da03dc..ca6e2ac2a92f 100644
---- a/drivers/pcmcia/Kconfig
-+++ b/drivers/pcmcia/Kconfig
-@@ -250,7 +250,8 @@ config PCMCIA_VRC4173
- 
- config OMAP_CF
- 	tristate "OMAP CompactFlash Controller"
--	depends on PCMCIA && ARCH_OMAP16XX
-+	depends on PCMCIA
-+	depends on ARCH_OMAP16XX || (ARM && COMPILE_TEST)
- 	help
- 	  Say Y here to support the CompactFlash controller on OMAP.
- 	  Note that this doesn't support "True IDE" mode.
-diff --git a/drivers/pcmcia/omap_cf.c b/drivers/pcmcia/omap_cf.c
-index 0a04eb04f3a2..98df6473034d 100644
---- a/drivers/pcmcia/omap_cf.c
-+++ b/drivers/pcmcia/omap_cf.c
-@@ -16,13 +16,12 @@
- 
- #include <pcmcia/ss.h>
- 
--#include <mach/hardware.h>
- #include <asm/io.h>
- #include <linux/sizes.h>
- 
--#include <mach/mux.h>
--#include <mach/tc.h>
--
-+#include <linux/soc/ti/omap1-io.h>
-+#include <linux/soc/ti/omap1-soc.h>
-+#include <linux/soc/ti/omap1-mux.h>
- 
- /* NOTE:  don't expect this to support many I/O cards.  The 16xx chips have
-  * hard-wired timings to support Compact Flash memory cards; they won't work
-@@ -205,6 +204,7 @@ static int __init omap_cf_probe(struct platform_device *pdev)
- 	struct omap_cf_socket	*cf;
- 	int			irq;
- 	int			status;
-+	struct resource		*res;
- 
- 	seg = (int) pdev->dev.platform_data;
- 	if (seg == 0 || seg > 3)
-@@ -215,6 +215,8 @@ static int __init omap_cf_probe(struct platform_device *pdev)
- 	if (irq < 0)
+-	if (unlikely(size < sizeof(struct clone_args)))
++	/* The struct needs to be at least the size of the original struct. */
++	if (unlikely(size < CLONE3_ARGS_SIZE_V0))
  		return -EINVAL;
  
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (size < sizeof(struct clone_args))
++		memset((void *)&args + size, 0,
++				sizeof(struct clone_args) - size);
 +
- 	cf = kzalloc(sizeof *cf, GFP_KERNEL);
- 	if (!cf)
- 		return -ENOMEM;
-@@ -230,24 +232,7 @@ static int __init omap_cf_probe(struct platform_device *pdev)
- 		goto fail0;
- 	cf->irq = irq;
- 	cf->socket.pci_irq = irq;
--
--	switch (seg) {
--	/* NOTE: CS0 could be configured too ... */
--	case 1:
--		cf->phys_cf = OMAP_CS1_PHYS;
--		break;
--	case 2:
--		cf->phys_cf = OMAP_CS2_PHYS;
--		break;
--	case 3:
--		cf->phys_cf = omap_cs3_phys();
--		break;
--	default:
--		goto  fail1;
--	}
--	cf->iomem.start = cf->phys_cf;
--	cf->iomem.end = cf->iomem.end + SZ_8K - 1;
--	cf->iomem.flags = IORESOURCE_MEM;
-+	cf->phys_cf = res->start;
+ 	if (unlikely(!access_ok(uargs, size)))
+ 		return -EFAULT;
  
- 	/* pcmcia layer only remaps "real" memory */
- 	cf->socket.io_offset = (unsigned long)
-@@ -269,15 +254,6 @@ static int __init omap_cf_probe(struct platform_device *pdev)
+@@ -2573,6 +2591,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 		.tls		= args.tls,
+ 	};
  
- 	pr_info("%s: cs%d on irq %d\n", driver_name, seg, irq);
++	if (size >= CLONE3_ARGS_SIZE_V1)
++		kargs->set_tid = args.set_tid;
++
+ 	return 0;
+ }
  
--	/* NOTE:  better EMIFS setup might support more cards; but the
--	 * TRM only shows how to affect regular flash signals, not their
--	 * CF/PCMCIA variants...
--	 */
--	pr_debug("%s: cs%d, previous ccs %08x acs %08x\n", driver_name,
--		seg, omap_readl(EMIFS_CCS(seg)), omap_readl(EMIFS_ACS(seg)));
--	omap_writel(0x0004a1b3, EMIFS_CCS(seg));	/* synch mode 4 etc */
--	omap_writel(0x00000000, EMIFS_ACS(seg));	/* OE hold/setup */
--
- 	/* CF uses armxor_ck, which is "always" available */
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 0a9f2e437217..9ce89c35c5be 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -157,7 +157,7 @@ void free_pid(struct pid *pid)
+ 	call_rcu(&pid->rcu, delayed_put_pid);
+ }
  
- 	pr_debug("%s: sts %04x cfg %04x control %04x %s\n", driver_name,
+-struct pid *alloc_pid(struct pid_namespace *ns)
++struct pid *alloc_pid(struct pid_namespace *ns, int set_tid)
+ {
+ 	struct pid *pid;
+ 	enum pid_type type;
+@@ -186,12 +186,32 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ 		if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+ 			pid_min = RESERVED_PIDS;
+ 
+-		/*
+-		 * Store a null pointer so find_pid_ns does not find
+-		 * a partially initialized PID (see below).
+-		 */
+-		nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+-				      pid_max, GFP_ATOMIC);
++		if (set_tid) {
++			/*
++			 * Also fail if a PID != 1 is requested
++			 * and no PID 1 exists.
++			 */
++			nr = -EINVAL;
++			if (set_tid < pid_max && set_tid > 0 &&
++			    (set_tid == 1 || !idr_is_empty(&tmp->idr)))
++				nr = idr_alloc(&tmp->idr, NULL, set_tid,
++					       set_tid + 1, GFP_ATOMIC);
++			/*
++			 * If ENOSPC is returned it means that the PID is
++			 * alreay in use. Return EEXIST in that case.
++			 */
++			if (nr == -ENOSPC)
++				nr = -EEXIST;
++			/* Only use set_tid for one PID namespace. */
++			set_tid = 0;
++		} else {
++			/*
++			 * Store a null pointer so find_pid_ns does not find
++			 * a partially initialized PID (see below).
++			 */
++			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
++					      pid_max, GFP_ATOMIC);
++		}
+ 		spin_unlock_irq(&pidmap_lock);
+ 		idr_preload_end();
+ 
 -- 
-2.20.0
+2.21.0
 
