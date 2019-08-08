@@ -2,130 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAB7E85D07
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96B0D85D3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731162AbfHHIjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:39:40 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4220 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726187AbfHHIjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:39:40 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E49C46160CF7EB186C3B;
-        Thu,  8 Aug 2019 16:39:37 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.203) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 8 Aug 2019
- 16:39:27 +0800
-Subject: Re: [PATCH v5 10/10] powerpc/fsl_booke/kaslr: dump out kernel offset
- information on panic
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        <linuxppc-dev@lists.ozlabs.org>, <diana.craciun@nxp.com>,
-        <christophe.leroy@c-s.fr>, <benh@kernel.crashing.org>,
-        <paulus@samba.org>, <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>
-CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
-        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
-        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>,
-        <zhaohongjiang@huawei.com>
-References: <20190807065706.11411-1-yanaijie@huawei.com>
- <20190807065706.11411-11-yanaijie@huawei.com>
- <87zhklt9eg.fsf@concordia.ellerman.id.au>
-From:   Jason Yan <yanaijie@huawei.com>
-Message-ID: <9113cc5b-0e89-f423-712a-79220af82b92@huawei.com>
-Date:   Thu, 8 Aug 2019 16:39:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <87zhklt9eg.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+        id S1731669AbfHHIsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:48:33 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:52854 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbfHHIsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:48:33 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 548901A012F;
+        Thu,  8 Aug 2019 10:48:31 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 43C3E1A094A;
+        Thu,  8 Aug 2019 10:48:28 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7F6BA402FF;
+        Thu,  8 Aug 2019 16:48:24 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, leoyang.li@nxp.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biwen Li <biwen.li@nxp.com>
+Subject: [v3,1/3] arm64: dts: ls1028a: Add ftm_alarm0 DT node
+Date:   Thu,  8 Aug 2019 16:38:37 +0800
+Message-Id: <20190808083839.28594-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch adds ftm_alarm0 DT node for LS1028ARDB board
+FlexTimer1 module is used to wakeup the system
 
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+Change in v3:
+	- add little-endian property of rcpm
 
-On 2019/8/7 21:03, Michael Ellerman wrote:
-> Jason Yan <yanaijie@huawei.com> writes:
->> When kaslr is enabled, the kernel offset is different for every boot.
->> This brings some difficult to debug the kernel. Dump out the kernel
->> offset when panic so that we can easily debug the kernel.
-> 
-> Some of this is taken from the arm64 version right? Please say so when
-> you copy other people's code.
-> 
+Change in v2:
+	- None
 
-No problem. Architectures like x86 or arm64 or s390 both have this
-similar code. I guess x86 is the first one.
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
->> diff --git a/arch/powerpc/kernel/machine_kexec.c b/arch/powerpc/kernel/machine_kexec.c
->> index c4ed328a7b96..078fe3d76feb 100644
->> --- a/arch/powerpc/kernel/machine_kexec.c
->> +++ b/arch/powerpc/kernel/machine_kexec.c
->> @@ -86,6 +86,7 @@ void arch_crash_save_vmcoreinfo(void)
->>   	VMCOREINFO_STRUCT_SIZE(mmu_psize_def);
->>   	VMCOREINFO_OFFSET(mmu_psize_def, shift);
->>   #endif
->> +	vmcoreinfo_append_str("KERNELOFFSET=%lx\n", kaslr_offset());
->>   }
-> 
-> There's no mention of that in the commit log.
-> 
-> Please split it into a separate patch and describe what you're doing and
-> why.
-
-OK
-
-> 
->> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
->> index 1f8db666468d..064075f02837 100644
->> --- a/arch/powerpc/kernel/setup-common.c
->> +++ b/arch/powerpc/kernel/setup-common.c
->> @@ -715,12 +715,31 @@ static struct notifier_block ppc_panic_block = {
->>   	.priority = INT_MIN /* may not return; must be done last */
->>   };
->>   
->> +/*
->> + * Dump out kernel offset information on panic.
->> + */
->> +static int dump_kernel_offset(struct notifier_block *self, unsigned long v,
->> +			      void *p)
->> +{
->> +	pr_emerg("Kernel Offset: 0x%lx from 0x%lx\n",
->> +		 kaslr_offset(), KERNELBASE);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct notifier_block kernel_offset_notifier = {
->> +	.notifier_call = dump_kernel_offset
->> +};
->> +
->>   void __init setup_panic(void)
->>   {
->>   	/* PPC64 always does a hard irq disable in its panic handler */
->>   	if (!IS_ENABLED(CONFIG_PPC64) && !ppc_md.panic)
->>   		return;
->>   	atomic_notifier_chain_register(&panic_notifier_list, &ppc_panic_block);
-> 
->> +	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) && kaslr_offset() > 0)
->> +		atomic_notifier_chain_register(&panic_notifier_list,
->> +					       &kernel_offset_notifier);
-> 
-> Don't you want to do that before the return above?
-> 
-
-Eagle eye. This should not affected by the conditions above.
-
->>   }
-> 
-> cheers
-> 
-> .
-> 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 7975519b4f56..23a758239419 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -17,6 +17,10 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
++	aliases {
++		rtc1 = &ftm_alarm0;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -543,6 +547,20 @@
+ 				little-endian;
+ 			};
+ 		};
++
++		rcpm: rcpm@1e34040 {
++			compatible = "fsl,ls1028a-rcpm", "fsl,qoriq-rcpm-2.1+";
++			reg = <0x0 0x1e34040 0x0 0x1c>;
++			#fsl,rcpm-wakeup-cells = <7>;
++			little-endian;
++		};
++
++		ftm_alarm0: timer@2800000 {
++			compatible = "fsl,ls1028a-ftm-alarm";
++			reg = <0x0 0x2800000 0x0 0x10000>;
++			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0 0x0>;
++			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
++		};
+ 	};
+ 
+ 	malidp0: display@f080000 {
+-- 
+2.17.1
 
