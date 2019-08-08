@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F79869FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148F4869BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404982AbfHHTM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:12:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45622 "EHLO mail.kernel.org"
+        id S2405281AbfHHTKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:10:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405023AbfHHTLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:11:06 -0400
+        id S2405267AbfHHTKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:10:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1974A21882;
-        Thu,  8 Aug 2019 19:11:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 725F4214C6;
+        Thu,  8 Aug 2019 19:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291465;
-        bh=BP/tS18VTE6N5HHmLwif1oOT9QhY3RzIxw3IeNrq2Ko=;
+        s=default; t=1565291418;
+        bh=qbNSV5LpJ6X8wxF5fQvOQNQbGWvO5R4qcdZoAG+IbbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZSipWUmv7v6CP88zMD05YornGzzGbBemXzparK2vWiTQh4qhCdXgz0Hb8qLEFCu0U
-         IPoMpF3Df3t1sy3S0iCfDJS/5XIu5v1rfsabD6ymgdDuIV69Ehx8B6zw8vJngxKhXz
-         J89K3wWZ5DymG+CM/cZ0ZcYFm6W37J3ORl+pRMSI=
+        b=L3TjqF2HQVTqUd81SD6nTYAGOgMaj1fHsAL2n/c/yPeWEBObwRYblx5cjREleIAqb
+         gcyFZ034LKGI6dxu7ZI3CPU2tHK7LmvHCzoIq1GRcV8Dh9kYcTZnFdxigHLPXtI/ua
+         bAXosUmwE/AyOhGCyyx/DOb+6HgdXiZmcracZAus=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 03/33] ARM: dts: Add pinmuxing for i2c2 and i2c3 for LogicPD torpedo
-Date:   Thu,  8 Aug 2019 21:05:10 +0200
-Message-Id: <20190808190453.732688214@linuxfoundation.org>
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Mark Zhang <markz@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 25/45] net/mlx5: Use reversed order when unregister devices
+Date:   Thu,  8 Aug 2019 21:05:11 +0200
+Message-Id: <20190808190455.134715675@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.582417307@linuxfoundation.org>
-References: <20190808190453.582417307@linuxfoundation.org>
+In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
+References: <20190808190453.827571908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a135a392acbec7ecda782981788e8c03767a1571 ]
+From: Mark Zhang <markz@mellanox.com>
 
-Since I2C1 and I2C4 have explicit pinmuxing set, let's be on the
-safe side and set the pin muxing for I2C2 and I2C3.
+[ Upstream commit 08aa5e7da6bce1a1963f63cf32c2e7ad434ad578 ]
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+When lag is active, which is controlled by the bonded mlx5e netdev, mlx5
+interface unregestering must happen in the reverse order where rdma is
+unregistered (unloaded) first, to guarantee all references to the lag
+context in hardware is removed, then remove mlx5e netdev interface which
+will cleanup the lag context from hardware.
+
+Without this fix during destroy of LAG interface, we observed following
+errors:
+ * mlx5_cmd_check:752:(pid 12556): DESTROY_LAG(0x843) op_mod(0x0) failed,
+   status bad parameter(0x3), syndrome (0xe4ac33)
+ * mlx5_cmd_check:752:(pid 12556): DESTROY_LAG(0x843) op_mod(0x0) failed,
+   status bad parameter(0x3), syndrome (0xa5aee8).
+
+Fixes: a31208b1e11d ("net/mlx5_core: New init and exit flow for mlx5_core")
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Mark Zhang <markz@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/logicpd-torpedo-som.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-index cf22b35f0a289..fe4cbdc72359e 100644
---- a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-+++ b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-@@ -121,10 +121,14 @@
- };
+--- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
+@@ -307,7 +307,7 @@ void mlx5_unregister_device(struct mlx5_
+ 	struct mlx5_interface *intf;
  
- &i2c2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
- 	clock-frequency = <400000>;
- };
- 
- &i2c3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c3_pins>;
- 	clock-frequency = <400000>;
- 	at24@50 {
- 		compatible = "atmel,24c64";
-@@ -219,6 +223,18 @@
- 			OMAP3_CORE1_IOPAD(0x21bc, PIN_INPUT | MUX_MODE0)        /* i2c1_sda.i2c1_sda */
- 		>;
- 	};
-+	i2c2_pins: pinmux_i2c2_pins {
-+		pinctrl-single,pins = <
-+			OMAP3_CORE1_IOPAD(0x21be, PIN_INPUT | MUX_MODE0)	/* i2c2_scl */
-+			OMAP3_CORE1_IOPAD(0x21c0, PIN_INPUT | MUX_MODE0)	/* i2c2_sda */
-+		>;
-+	};
-+	i2c3_pins: pinmux_i2c3_pins {
-+		pinctrl-single,pins = <
-+			OMAP3_CORE1_IOPAD(0x21c2, PIN_INPUT | MUX_MODE0)	/* i2c3_scl */
-+			OMAP3_CORE1_IOPAD(0x21c4, PIN_INPUT | MUX_MODE0)	/* i2c3_sda */
-+		>;
-+	};
- };
- 
- &uart2 {
--- 
-2.20.1
-
+ 	mutex_lock(&mlx5_intf_mutex);
+-	list_for_each_entry(intf, &intf_list, list)
++	list_for_each_entry_reverse(intf, &intf_list, list)
+ 		mlx5_remove_device(intf, priv);
+ 	list_del(&priv->dev_list);
+ 	mutex_unlock(&mlx5_intf_mutex);
 
 
