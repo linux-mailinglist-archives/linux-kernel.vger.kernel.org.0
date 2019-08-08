@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B6286954
+	by mail.lfdr.de (Postfix) with ESMTP id CB22186955
 	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404332AbfHHTGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:06:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39538 "EHLO mail.kernel.org"
+        id S2404366AbfHHTGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:06:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404305AbfHHTGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:06:12 -0400
+        id S2403901AbfHHTGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:06:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B40721874;
-        Thu,  8 Aug 2019 19:06:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4B372184E;
+        Thu,  8 Aug 2019 19:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291171;
-        bh=dNmTb3QINlrpcp+OKj14SrI5Ih/AaDAsr/lQUlLus38=;
+        s=default; t=1565291174;
+        bh=g/tPa+jt+TvuRNuOou3zOSMr9LJkys2p6bHg72AjxpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pkvsv7wZBw832a7gqZe6sIEnqe0WyR7D5adWmFSx4uWunJqGO0+rZ04Ds9UGZFylb
-         Erf7WjygUFdRcLFCe8f72cDPKrBK4lDsRsobvxwCMiSBJSaXQsTUDwjOFoVaGoNlbK
-         r13Z6pdd4IIiou81k/YAi946K7pkmUpChsNuplM8=
+        b=NoCNAk+Jk/YVCoir8IojAUM66jEVlB7Aje2YxRwt3WK217onZFra8zL7W0C8N+8wR
+         Z/ufv4+aLOtz76GH1zBck/mVTJgDh9DVL/K2dTechiVmtn2bh9PEUlyJJZNnoPP/4C
+         uuq08DRDDF+iVBTVncset2mOgKXaa31veSLaNuRQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 14/56] ipip: validate header length in ipip_tunnel_xmit
-Date:   Thu,  8 Aug 2019 21:04:40 +0200
-Message-Id: <20190808190453.428439547@linuxfoundation.org>
+Subject: [PATCH 5.2 15/56] mlxsw: spectrum: Fix error path in mlxsw_sp_module_init()
+Date:   Thu,  8 Aug 2019 21:04:41 +0200
+Message-Id: <20190808190453.468265897@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
 References: <20190808190452.867062037@linuxfoundation.org>
@@ -44,33 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+From: Jiri Pirko <jiri@mellanox.com>
 
-[ Upstream commit 47d858d0bdcd47cc1c6c9eeca91b091dd9e55637 ]
+[ Upstream commit 28fe79000e9b0a6f99959869947f1ca305f14599 ]
 
-We need the same checks introduced by commit cb9f1b783850
-("ip: validate header length on virtual device xmit") for
-ipip tunnel.
+In case of sp2 pci driver registration fail, fix the error path to
+start with sp1 pci driver unregister.
 
-Fixes: cb9f1b783850b ("ip: validate header length on virtual device xmit")
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Fixes: c3ab435466d5 ("mlxsw: spectrum: Extend to support Spectrum-2 ASIC")
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ipip.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/ipip.c
-+++ b/net/ipv4/ipip.c
-@@ -275,6 +275,9 @@ static netdev_tx_t ipip_tunnel_xmit(stru
- 	const struct iphdr  *tiph = &tunnel->parms.iph;
- 	u8 ipproto;
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -5989,7 +5989,7 @@ static int __init mlxsw_sp_module_init(v
+ 	return 0;
  
-+	if (!pskb_inet_may_pull(skb))
-+		goto tx_error;
-+
- 	switch (skb->protocol) {
- 	case htons(ETH_P_IP):
- 		ipproto = IPPROTO_IPIP;
+ err_sp2_pci_driver_register:
+-	mlxsw_pci_driver_unregister(&mlxsw_sp2_pci_driver);
++	mlxsw_pci_driver_unregister(&mlxsw_sp1_pci_driver);
+ err_sp1_pci_driver_register:
+ 	mlxsw_core_driver_unregister(&mlxsw_sp2_driver);
+ err_sp2_core_driver_register:
 
 
