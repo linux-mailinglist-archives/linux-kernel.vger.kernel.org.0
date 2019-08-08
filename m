@@ -2,65 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 339AB86589
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFAC58652F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:10:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389981AbfHHPTQ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 8 Aug 2019 11:19:16 -0400
-Received: from 68.66.241.172.static.a2webhosting.com ([68.66.241.172]:55760
-        "EHLO vps.redhazel.co.uk" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1732680AbfHHPTQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:19:16 -0400
-X-Greylist: delayed 545 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Aug 2019 11:19:15 EDT
-Received: from [100.121.56.177] (unknown [213.205.240.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1732714AbfHHPKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 11:10:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40690 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730678AbfHHPKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 11:10:14 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by vps.redhazel.co.uk (Postfix) with ESMTPSA id 1A2EB1C02183;
-        Thu,  8 Aug 2019 16:10:09 +0100 (BST)
-Date:   Thu, 08 Aug 2019 16:10:07 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190808114826.GC18351@dhcp22.suse.cz>
-References: <ce102f29-3adc-d0fd-41ee-e32c1bcd7e8d@suse.cz> <20190805193148.GB4128@cmpxchg.org> <CAJuCfpHhR+9ybt9ENzxMbdVUd_8rJN+zFbDm+5CeE2Desu82Gg@mail.gmail.com> <398f31f3-0353-da0c-fc54-643687bb4774@suse.cz> <20190806142728.GA12107@cmpxchg.org> <20190806143608.GE11812@dhcp22.suse.cz> <CAJuCfpFmOzj-gU1NwoQFmS_pbDKKd2XN=CS1vUV4gKhYCJOUtw@mail.gmail.com> <20190806220150.GA22516@cmpxchg.org> <20190807075927.GO11812@dhcp22.suse.cz> <20190807205138.GA24222@cmpxchg.org> <20190808114826.GC18351@dhcp22.suse.cz>
+        by mx1.redhat.com (Postfix) with ESMTPS id 5ED5C8DA5B;
+        Thu,  8 Aug 2019 15:10:14 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D1EF9600CC;
+        Thu,  8 Aug 2019 15:10:12 +0000 (UTC)
+Date:   Thu, 8 Aug 2019 17:10:10 +0200
+From:   Andrew Jones <drjones@redhat.com>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     pbonzini@redhat.com, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
+        linux-kselftest@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v2] selftests: kvm: Adding config fragments
+Message-ID: <20190808151010.ktbqbfevgcs3bkjy@kamzik.brq.redhat.com>
+References: <20190808123140.25583-1-naresh.kamboju@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: Let's talk about the elephant in the room - the Linux kernel's inability to gracefully handle low memory pressure
-To:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-CC:     Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Artem S. Tashkinov" <aros@gmx.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-From:   ndrw.xf@redhazel.co.uk
-Message-ID: <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808123140.25583-1-naresh.kamboju@linaro.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 08 Aug 2019 15:10:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8 August 2019 12:48:26 BST, Michal Hocko <mhocko@kernel.org> wrote:
->> 
->> Per default, the OOM killer will engage after 15 seconds of at least
->> 80% memory pressure. These values are tunable via sysctls
->> vm.thrashing_oom_period and vm.thrashing_oom_level.
+On Thu, Aug 08, 2019 at 01:31:40PM +0100, Naresh Kamboju wrote:
+> selftests kvm all test cases need pre-required kernel configs for the
+> tests to get pass.
+> 
+> The KVM tests are skipped without these configs:
+> 
+>         dev_fd = open(KVM_DEV_PATH, O_RDONLY);
+>         if (dev_fd < 0)
+>                 exit(KSFT_SKIP);
+> 
+> Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> ---
+>  tools/testing/selftests/kvm/config | 3 +++
+>  1 file changed, 3 insertions(+)
+>  create mode 100644 tools/testing/selftests/kvm/config
+> 
+> diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
+> new file mode 100644
+> index 000000000000..63ed533f73d6
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/config
+> @@ -0,0 +1,3 @@
+> +CONFIG_KVM=y
+> +CONFIG_KVM_INTEL=y
+> +CONFIG_KVM_AMD=y
+> -- 
+> 2.17.1
 >
->As I've said earlier I would be somehow more comfortable with a kernel
->command line/module parameter based tuning because it is less of a
->stable API and potential future stall detector might be completely
->independent on PSI and the current metric exported. But I can live with
->that because a period and level sounds quite generic.
 
-Would it be possible to reserve a fixed (configurable) amount of RAM for caches, and trigger OOM killer earlier, before most UI code is evicted from memory? In my use case, I am happy sacrificing e.g. 0.5GB and kill runaway tasks _before_ the system freezes. Potentially OOM killer would also work better in such conditions. I almost never work at close to full memory capacity, it's always a single task that goes wrong and brings the system down.
+What does the kselftests config file do? I was about to complain that this
+would break compiling on non-x86 platforms, but 'make kselftest' and other
+forms of invoking the build work fine on aarch64 even with this config
+file. So is this just for documentation? If so, then its still obviously
+wrong for non-x86 platforms. The only config that makes sense here is KVM.
+If the other options need to be documented for x86, then should they get
+an additional config file? tools/testing/selftests/kvm/x86_64/config?
 
-The problem with PSI sensing is that it works after the fact (after the freeze has already occurred). It is not very different from issuing SysRq-f manually on a frozen system, although it would still be a handy feature for batched tasks and remote access. 
-
-Best regards, 
-ndrw
-
-
+Thanks,
+drew
