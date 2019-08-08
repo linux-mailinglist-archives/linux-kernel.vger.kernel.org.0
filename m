@@ -2,71 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AB4F85A0D
+	by mail.lfdr.de (Postfix) with ESMTP id 6223885A0E
 	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 07:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730955AbfHHFuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 01:50:51 -0400
-Received: from smtprelay0022.hostedemail.com ([216.40.44.22]:44146 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730884AbfHHFuv (ORCPT
+        id S1730995AbfHHFvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 01:51:09 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:44456 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730969AbfHHFvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 01:50:51 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 7C45F1802ED78;
-        Thu,  8 Aug 2019 05:50:49 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:152:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:3138:3139:3140:3141:3142:3351:3622:3653:3865:3867:3870:3871:4321:5007:7875:7903:10004:10400:10848:11232:11658:11914:12043:12297:12438:12555:12740:12895:13019:13069:13095:13311:13357:13894:14181:14659:14721:21080:21220:21365:21433:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
-X-HE-Tag: space68_414ad160ef10c
-X-Filterd-Recvd-Size: 1711
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  8 Aug 2019 05:50:48 +0000 (UTC)
-Message-ID: <33e3b8748959b2f56b906b0bfd790df322f1ed3c.camel@perches.com>
-Subject: Re: [PATCH] scripts/checkpatch.pl - fix *_NOTIFIER_HEAD handling
-From:   Joe Perches <joe@perches.com>
-To:     Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Wed, 07 Aug 2019 22:50:47 -0700
-In-Reply-To: <33485.1565228181@turing-police>
-References: <33485.1565228181@turing-police>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 8 Aug 2019 01:51:08 -0400
+Received: by mail-yw1-f65.google.com with SMTP id l79so33452548ywe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 22:51:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AXLTKpmnboGNtrfg+DmdekyXKJkeWsR7+WNv3PWE/bM=;
+        b=uMM74YFs2pn431woWqsHjrz+umgCye3PnD14rvVvBGZO8f2HxtMhMsIx47nkD+Qq0d
+         At4JKSXS8gHDKGzP7ZLwlIphW0J80DCd8xOuo+1VlnuooGbqEcwiHpb0G+6ZeFJKQe9R
+         hObsAok+JEy9iy770XED/+1KllOIpA8oAnWhtuz//nkf5XMEXW6hHal3yK5Tgv3AI/lz
+         AQXsf3wDwEpKP/lj8awMOr3h3GI7ZCLYa8UUXkQmXLtCqS7eoFd2SWOXkSYRucuTK97V
+         pHQS0BFFZ2ag20awPd/TsWlzVyO0Cd+1H8NSLZiNZD/9PbwRnoEAfRLpmd/vqpftqFvh
+         byNA==
+X-Gm-Message-State: APjAAAXg9HXaJSjT+xshAg+lGA4bmGqv/hluMOUATe/gI+KO2x3B3NiQ
+        P5C6D0csFGWo0tfFT0fbc+lHvXI7Z6U=
+X-Google-Smtp-Source: APXvYqy04G9o5K9YSoY8D/Ys2fE3n/lh1gBpDYtzN1RRi/4fpOtXuOscLdRgaSUPvQnaasDNLm+h8Q==
+X-Received: by 2002:a81:6288:: with SMTP id w130mr8042384ywb.343.1565243467745;
+        Wed, 07 Aug 2019 22:51:07 -0700 (PDT)
+Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
+        by smtp.gmail.com with ESMTPSA id q35sm1080020ywa.69.2019.08.07.22.51.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 07 Aug 2019 22:51:06 -0700 (PDT)
+From:   Wenwen Wang <wenwen@cs.uga.edu>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org (moderated list:FIREWIRE AUDIO DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ALSA: firewire: fix a memory leak bug
+Date:   Thu,  8 Aug 2019 00:50:58 -0500
+Message-Id: <1565243458-2771-1-git-send-email-wenwen@cs.uga.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-08-07 at 21:36 -0400, Valdis Klētnieks wrote:
-> commit 81398d99e9de80d9dbe65dfe7aadec9497f88242
-> Author: Gilad Ben-Yossef <gilad@benyossef.com>
-> Date:   Wed Jul 31 14:44:23 2019 +1000
-> 
->     checkpatch: add *_NOTIFIER_HEAD as var definition
-> 
-> has a typo, resulting in a truly amazing error message:
+In iso_packets_buffer_init(), 'b->packets' is allocated through
+kmalloc_array(). Then, the aligned packet size is checked. If it is
+larger than PAGE_SIZE, -EINVAL will be returned to indicate the error.
+However, the allocated 'b->packets' is not deallocated on this path,
+leading to a memory leak.
 
-Ouch, thanks.
+To fix the above issue, free 'b->packets' before returning the error code.
 
-> Unescaped left brace in regex is passed through in regex; marked by <-- HERE in m/(?:
-[]
-> Fix the typo.
-[]
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -3891,7 +3891,7 @@ sub process {
->  				^.DEFINE_$Ident\(\Q$name\E\)|
->  				^.DECLARE_$Ident\(\Q$name\E\)|
->  				^.LIST_HEAD\(\Q$name\E\)|
-> -				^.{$Ident}_NOTIFIER_HEAD\(\Q$name\E\)|
-> +				^.${Ident}_NOTIFIER_HEAD\(\Q$name\E\)|
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+---
+ sound/firewire/packets-buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Perhaps also better to convert all the '\Q$name\E' to '\s*\Q$name\E\s*'
-
-
+diff --git a/sound/firewire/packets-buffer.c b/sound/firewire/packets-buffer.c
+index 0d35359..0ecafd0 100644
+--- a/sound/firewire/packets-buffer.c
++++ b/sound/firewire/packets-buffer.c
+@@ -37,7 +37,7 @@ int iso_packets_buffer_init(struct iso_packets_buffer *b, struct fw_unit *unit,
+ 	packets_per_page = PAGE_SIZE / packet_size;
+ 	if (WARN_ON(!packets_per_page)) {
+ 		err = -EINVAL;
+-		goto error;
++		goto err_packets;
+ 	}
+ 	pages = DIV_ROUND_UP(count, packets_per_page);
+ 
+-- 
+2.7.4
 
