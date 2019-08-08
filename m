@@ -2,1065 +2,437 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5F286C9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:44:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3B8486C8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390530AbfHHVnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 17:43:52 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:38005 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390518AbfHHVnu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 17:43:50 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1McYP5-1iRsYj0bOf-00cz43; Thu, 08 Aug 2019 23:43:32 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Paul Walmsley <paul@pwsan.com>
-Cc:     linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH 19/22] ARM: omap1: clk: use common_clk-like callbacks
-Date:   Thu,  8 Aug 2019 23:41:29 +0200
-Message-Id: <20190808214232.2798396-5-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190808214232.2798396-1-arnd@arndb.de>
-References: <20190808212234.2213262-1-arnd@arndb.de>
- <20190808214232.2798396-1-arnd@arndb.de>
+        id S2390447AbfHHVnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 17:43:01 -0400
+Received: from mga07.intel.com ([134.134.136.100]:21944 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733295AbfHHVnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 17:43:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 14:42:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,363,1559545200"; 
+   d="scan'208";a="203725004"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Aug 2019 14:42:58 -0700
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+To:     Aaron Lu <aaron.lu@linux.alibaba.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <CAERHkrtvLKxrpvfw04urAuougsYOWnNw4-H1vUDFx27Dvy0=Ww@mail.gmail.com>
+ <20190725143003.GA992@aaronlu> <20190726152101.GA27884@sinkpad>
+ <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
+ <20190802153715.GA18075@sinkpad>
+ <f4778816-69e5-146c-2a30-ec42e7f1677f@linux.intel.com>
+ <20190806032418.GA54717@aaronlu>
+ <e1c4a7ed-822e-93cb-ff1d-6a0842db115f@linux.intel.com>
+ <20190806171241.GQ2349@hirez.programming.kicks-ass.net>
+ <21933a50-f796-3d28-664c-030cb7c98431@linux.intel.com>
+ <20190808064731.GA5121@aaronlu>
+ <70d1ff90-9be9-7b05-f1ff-e751f266183b@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ l50q2K/r651xphs7CGEdKi1nU0YJVbQxJQ==
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+Message-ID: <b7a83fcb-5c34-9794-5688-55c52697fd84@linux.intel.com>
+Date:   Thu, 8 Aug 2019 14:42:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <70d1ff90-9be9-7b05-f1ff-e751f266183b@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:b8HK2EMT9di2Sk43vdvnOawkYOp4+8v9GbqhcSS03u02KK+6+yD
- ZvARKg+Caebq0d2G3lGLXvAyIscd6p1c4vlg7nexbhuZLpBciDZtN+uGa1rV1S2m4X5dn81
- EooW7qRUoeert+lMdPaXv0iX+VCEXNy2jb57+FLXRCZlc1ft7BVejVsgWJygB4fJ8Fxr/XX
- mqj8o7MLHgTqW2zLGU58g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:TRx5sjOPgLU=:3g39GEv2uh8hz/FAhj98fW
- s8T+TyzvT/C/FT3V3avoZojNMbcmbNLx+ywat+023VcLQYh0bQWKpPDcEcM0MxDPrhrgXBZsU
- XKct7HdunUKjgpxpc3uOT6nLRaAqxRR51xtlFEwtsNmBs9XVfXgQ9CwxvorTKRBQFvEjPeM2F
- OWaisCF60n/2KP8IgySO4rIiruAnihTu33qWeSS8TmRx1ix0i+eHZ551cf+yFZga4JF0Ugmyu
- GozsaDeIqZQyErbPV7TiaGErKv7/GX2WzOPORI/mAW00R62TjwdvQinQL8MersYKI//hl9GkJ
- ochxhRnPXtp/mRD756oAlztAH4PnEblW0qmc8HLkh8Px657Hh8cFWX9p6jw/v6P/ZwWkFNT/M
- OOCVsH+XHnyQRD2iR57JinMGvS2qZn0Q5rSvHLdgBpz7kEQ03oUmMnTfhzzagNVSCD++a1hhZ
- WW3yfXYPhhl/rK0zQwtU3RXrEQgyTjLCahi6ef03NxijQTLjtVXyKQVDtZFjbCt6y49ORJT0Z
- sVEVLZvfnHBGGJB3ZzpQTN+efYPQXI/zwTedq7u5DcBei1KzE26CD5AuNQ+6rRZQrxpH43YmA
- 2kMrmKKPo0dfiG0mdVelvigg9FYzsZhQuL8lj4RQiqvEahUQix/agZQbkZXMJQClBq+ZawyRa
- azkdvMrtKnBZkzl/XHbdvWnHzuDakvepLQyOgkRFc8VDlO/3SHezxqjb1ohQUL2UcLjYmC31V
- tXNVeDvLeXdaUIXXpqk034184IQVJ1UYpcJklQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The callbacks for clocks are almost the same as those used
-on common_clk, now reduce the number of remaining differences:
+On 8/8/19 10:27 AM, Tim Chen wrote:
+> On 8/7/19 11:47 PM, Aaron Lu wrote:
+>> On Tue, Aug 06, 2019 at 02:19:57PM -0700, Tim Chen wrote:
+>>> +void account_core_idletime(struct task_struct *p, u64 exec)
+>>> +{
+>>> +	const struct cpumask *smt_mask;
+>>> +	struct rq *rq;
+>>> +	bool force_idle, refill;
+>>> +	int i, cpu;
+>>> +
+>>> +	rq = task_rq(p);
+>>> +	if (!sched_core_enabled(rq) || !p->core_cookie)
+>>> +		return;
+>>
+>> I don't see why return here for untagged task. Untagged task can also
+>> preempt tagged task and force a CPU thread enter idle state.
+>> Untagged is just another tag to me, unless we want to allow untagged
+>> task to coschedule with a tagged task.
+> 
+> You are right.  This needs to be fixed.
+> 
 
-- make .recalc_rate and .round_rate take a parent_rate argument
-- move .recalc_rate/.set_rate/.round_rate/.init from
-  'struct clk_hw' into 'struct clk_ops'.
+Here's the updated patchset, including Aaron's fix and also
+added accounting of force idle time by deadline and rt tasks.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Tim
+
+-----------------patch 1----------------------
+From 730dbb125f5f67c75f97f6be154d382767810f8b Mon Sep 17 00:00:00 2001
+From: Aaron Lu <aaron.lu@linux.alibaba.com>
+Date: Thu, 8 Aug 2019 08:57:46 -0700
+Subject: [PATCH 1/3 v2] sched: Fix incorrect rq tagged as forced idle
+
+Incorrect run queue was tagged as forced idle.
+Tag the correct one.
+
+Signed-off-by: Aaron Lu <aaron.lu@linux.alibaba.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/arm/mach-omap1/clock.c | 368 ++++++++++++++++++++----------------
- 1 file changed, 200 insertions(+), 168 deletions(-)
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap1/clock.c b/arch/arm/mach-omap1/clock.c
-index 577686f61b3b..8b4d5ee13ba0 100644
---- a/arch/arm/mach-omap1/clock.c
-+++ b/arch/arm/mach-omap1/clock.c
-@@ -56,6 +56,10 @@ struct omap1_clk_lookup {
-  * struct clk_ops - some clock function pointers
-  * @enable: fn ptr that enables the current clock in hardware
-  * @disable: fn ptr that enables the current clock in hardware
-+ * @recalc_rate: fn ptr that returns the clock's current rate
-+ * @set_rate: fn ptr that can change the clock's current rate
-+ * @round_rate: fn ptr that can round the clock's current rate
-+ * @init: fn ptr to do clock-specific initialization
-  *
-  * A "companion" clk is an accompanying clock to the one being queried
-  * that must be enabled for the IP module connected to the clock to
-@@ -66,8 +70,12 @@ struct omap1_clk_lookup {
-  * @find_companion must, unfortunately, remain.
-  */
- struct clk_ops {
--	int			(*enable)(struct clk_hw *);
--	void			(*disable)(struct clk_hw *);
-+	int		(*enable)(struct clk_hw *);
-+	void		(*disable)(struct clk_hw *);
-+	unsigned long	(*recalc_rate)(struct clk_hw *, unsigned long);
-+	int		(*set_rate)(struct clk_hw *, unsigned long, unsigned long);
-+	long		(*round_rate)(struct clk_hw *, unsigned long, unsigned long *);
-+	void		(*init)(struct clk_hw *);
- };
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index e3cd9cb17809..50453e1329f3 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3903,7 +3903,7 @@ next_class:;
+ 		WARN_ON_ONCE(!rq_i->core_pick);
  
- /*
-@@ -90,10 +98,6 @@ struct clk_ops {
-  * @sibling: list_head connecting this clk to its parent clk's @children
-  * @rate: current clock rate
-  * @enable_reg: register to write to enable the clock (see @enable_bit)
-- * @recalc: fn ptr that returns the clock's current rate
-- * @set_rate: fn ptr that can change the clock's current rate
-- * @round_rate: fn ptr that can round the clock's current rate
-- * @init: fn ptr to do clock-specific initialization
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @usecount: number of users that have requested this clock to be enabled
-  * @fixed_div: when > 0, this clock's rate is its parent's rate / @fixed_div
-@@ -138,10 +142,6 @@ struct omap1_clk {
- 	struct list_head	sibling;	/* node for children */
- 	unsigned long		rate;
- 	void __iomem		*enable_reg;
--	unsigned long		(*recalc)(struct clk_hw *);
--	int			(*set_rate)(struct clk_hw *, unsigned long);
--	long			(*round_rate)(struct clk_hw *, unsigned long);
--	void			(*init)(struct clk_hw *);
- 	u8			enable_bit;
- 	s8			usecount;
- 	u8			fixed_div;
-@@ -268,22 +268,21 @@ static DEFINE_SPINLOCK(clockfw_lock);
-  * Omap1 specific clock functions
-  */
+ 		if (is_idle_task(rq_i->core_pick) && rq_i->nr_running)
+-			rq->core_forceidle = true;
++			rq_i->core_forceidle = true;
  
--static unsigned long omap1_uart_recalc(struct clk_hw *clk_hw)
-+static unsigned long omap1_uart_recalc(struct clk_hw *clk_hw, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	unsigned int val = __raw_readl(clk->enable_reg);
- 	return val & clk->enable_bit ? 48000000 : 12000000;
- }
+ 		rq_i->core_pick->core_occupation = occ;
  
--static unsigned long omap1_sossi_recalc(struct clk_hw *clk_hw)
-+static unsigned long omap1_sossi_recalc(struct clk_hw *clk_hw, unsigned long parent_rate)
- {
--	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	u32 div = omap_readl(MOD_CONF_CTRL_1);
+-- 
+2.20.1
+
+--------------patch 2------------------------
+From 263ceeb40843b8ca3a91f1b268bec2b836d4986b Mon Sep 17 00:00:00 2001
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Date: Wed, 24 Jul 2019 13:58:18 -0700
+Subject: [PATCH 2/3 v2] sched: Move sched fair prio comparison to fair.c
+
+Consolidate the task priority comparison of the fair class
+to fair.c.  A simple code reorganization and there are no functional changes.
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+ kernel/sched/core.c  | 21 ++-------------------
+ kernel/sched/fair.c  | 21 +++++++++++++++++++++
+ kernel/sched/sched.h |  1 +
+ 3 files changed, 24 insertions(+), 19 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 50453e1329f3..0f893853766c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -105,25 +105,8 @@ static inline bool prio_less(struct task_struct *a, struct task_struct *b)
+ 	if (pa == -1) /* dl_prio() doesn't work because of stop_class above */
+ 		return !dl_time_before(a->dl.deadline, b->dl.deadline);
  
- 	div = (div >> 17) & 0x7;
- 	div++;
- 
--	return clk->parent->rate / div;
-+	return parent_rate / div;
- }
- 
- static void omap1_clk_allow_idle(struct clk_hw *clk_hw)
-@@ -363,7 +362,7 @@ static __u16 verify_ckctl_value(__u16 newval)
- 	return newval;
- }
- 
--static int calc_dsor_exp(struct omap1_clk *clk, unsigned long rate)
-+static int calc_dsor_exp(struct omap1_clk *clk, unsigned long rate, unsigned long parent_rate)
- {
- 	/* Note: If target frequency is too low, this function will return 4,
- 	 * which is invalid value. Caller must check for this value and act
-@@ -377,14 +376,9 @@ static int calc_dsor_exp(struct omap1_clk *clk, unsigned long rate)
- 	 * DSPMMU_CK >= TC_CK
- 	 */
- 	unsigned long realrate;
--	struct omap1_clk * parent;
- 	unsigned  dsor_exp;
- 
--	parent = clk->parent;
--	if (unlikely(parent == NULL))
--		return -EIO;
+-	if (pa == MAX_RT_PRIO + MAX_NICE)  { /* fair */
+-		u64 a_vruntime = a->se.vruntime;
+-		u64 b_vruntime = b->se.vruntime;
 -
--	realrate = parent->rate;
-+	realrate = parent_rate;
- 	for (dsor_exp=0; dsor_exp<4; dsor_exp++) {
- 		if (realrate <= rate)
- 			break;
-@@ -395,13 +389,13 @@ static int calc_dsor_exp(struct omap1_clk *clk, unsigned long rate)
- 	return dsor_exp;
+-		/*
+-		 * Normalize the vruntime if tasks are in different cpus.
+-		 */
+-		if (task_cpu(a) != task_cpu(b)) {
+-			b_vruntime -= task_cfs_rq(b)->min_vruntime;
+-			b_vruntime += task_cfs_rq(a)->min_vruntime;
+-
+-			trace_printk("(%d:%Lu,%Lu,%Lu) <> (%d:%Lu,%Lu,%Lu)\n",
+-				     a->pid, a_vruntime, a->se.vruntime, task_cfs_rq(a)->min_vruntime,
+-				     b->pid, b_vruntime, b->se.vruntime, task_cfs_rq(b)->min_vruntime);
+-
+-		}
+-
+-		return !((s64)(a_vruntime - b_vruntime) <= 0);
+-	}
++	if (pa == MAX_RT_PRIO + MAX_NICE) /* fair */
++		return prio_less_fair(a, b);
+ 
+ 	return false;
+ }
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 02bff10237d4..e289b6e1545b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -602,6 +602,27 @@ static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
+ 	return delta;
  }
  
--static unsigned long omap1_ckctl_recalc(struct clk_hw *clk_hw)
-+static unsigned long omap1_ckctl_recalc(struct clk_hw *clk_hw, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	/* Calculate divisor encoded as 2-bit exponent */
- 	int dsor = 1 << (3 & (omap_readw(ARM_CKCTL) >> clk->rate_offset));
- 
--	return clk->parent->rate / dsor;
-+	return parent_rate / dsor;
- }
- 
- /*-------------------------------------------------------------------------
-@@ -453,7 +447,7 @@ static struct mpu_rate omap1_rate_table[] = {
- };
- 
- /* MPU virtual clock functions */
--static int omap1_select_table_rate(struct clk_hw *clk_hw, unsigned long rate)
-+static int omap1_select_table_rate(struct clk_hw *clk_hw, unsigned long rate, unsigned long parent_rate)
- {
- 	/* Find the highest supported frequency <= rate and switch to it */
- 	struct mpu_rate * ptr;
-@@ -488,13 +482,13 @@ static int omap1_select_table_rate(struct clk_hw *clk_hw, unsigned long rate)
- 	return 0;
- }
- 
--static int omap1_clk_set_rate_dsp_domain(struct clk_hw *clk_hw, unsigned long rate)
-+static int omap1_clk_set_rate_dsp_domain(struct clk_hw *clk_hw, unsigned long rate, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	int dsor_exp;
- 	u16 regval;
- 
--	dsor_exp = calc_dsor_exp(clk, rate);
-+	dsor_exp = calc_dsor_exp(clk, rate, parent_rate);
- 	if (dsor_exp > 3)
- 		dsor_exp = -EINVAL;
- 	if (dsor_exp < 0)
-@@ -504,29 +498,29 @@ static int omap1_clk_set_rate_dsp_domain(struct clk_hw *clk_hw, unsigned long ra
- 	regval &= ~(3 << clk->rate_offset);
- 	regval |= dsor_exp << clk->rate_offset;
- 	__raw_writew(regval, DSP_CKCTL);
--	clk->rate = clk->parent->rate / (1 << dsor_exp);
-+	clk->rate = parent_rate / (1 << dsor_exp);
- 
- 	return 0;
- }
- 
--static long omap1_clk_round_rate_ckctl_arm(struct clk_hw *clk_hw, unsigned long rate)
-+static long omap1_clk_round_rate_ckctl_arm(struct clk_hw *clk_hw, unsigned long rate, unsigned long *parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
--	int dsor_exp = calc_dsor_exp(clk, rate);
-+	int dsor_exp = calc_dsor_exp(clk, rate, *parent_rate);
- 	if (dsor_exp < 0)
- 		return dsor_exp;
- 	if (dsor_exp > 3)
- 		dsor_exp = 3;
--	return clk->parent->rate / (1 << dsor_exp);
-+	return *parent_rate / (1 << dsor_exp);
- }
- 
--static int omap1_clk_set_rate_ckctl_arm(struct clk_hw *clk_hw, unsigned long rate)
-+static int omap1_clk_set_rate_ckctl_arm(struct clk_hw *clk_hw, unsigned long rate, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	int dsor_exp;
- 	u16 regval;
- 
--	dsor_exp = calc_dsor_exp(clk, rate);
-+	dsor_exp = calc_dsor_exp(clk, rate, parent_rate);
- 	if (dsor_exp > 3)
- 		dsor_exp = -EINVAL;
- 	if (dsor_exp < 0)
-@@ -537,11 +531,11 @@ static int omap1_clk_set_rate_ckctl_arm(struct clk_hw *clk_hw, unsigned long rat
- 	regval |= dsor_exp << clk->rate_offset;
- 	regval = verify_ckctl_value(regval);
- 	omap_writew(regval, ARM_CKCTL);
--	clk->rate = clk->parent->rate / (1 << dsor_exp);
-+	clk->rate = parent_rate / (1 << dsor_exp);
- 	return 0;
- }
- 
--static long omap1_round_to_table_rate(struct clk_hw *clk_hw, unsigned long rate)
-+static long omap1_round_to_table_rate(struct clk_hw *clk_hw, unsigned long rate, unsigned long *parent_rate)
- {
- 	/* Find the highest supported frequency <= rate */
- 	struct mpu_rate * ptr;
-@@ -592,7 +586,7 @@ static unsigned calc_ext_dsor(unsigned long rate)
- }
- 
- /* XXX Only needed on 1510 */
--static int omap1_set_uart_rate(struct clk_hw *clk_hw, unsigned long rate)
-+static int omap1_set_uart_rate(struct clk_hw *clk_hw, unsigned long rate, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	unsigned int val;
-@@ -611,7 +605,7 @@ static int omap1_set_uart_rate(struct clk_hw *clk_hw, unsigned long rate)
- }
- 
- /* External clock (MCLK & BCLK) functions */
--static int omap1_set_ext_clk_rate(struct clk_hw *clk_hw, unsigned long rate)
-+static int omap1_set_ext_clk_rate(struct clk_hw *clk_hw, unsigned long rate, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	unsigned dsor;
-@@ -630,16 +624,14 @@ static int omap1_set_ext_clk_rate(struct clk_hw *clk_hw, unsigned long rate)
- 	return 0;
- }
- 
--static int omap1_set_sossi_rate(struct clk_hw *clk_hw, unsigned long rate)
-+static int omap1_set_sossi_rate(struct clk_hw *clk_hw, unsigned long rate, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	u32 l;
- 	int div;
--	unsigned long p_rate;
- 
--	p_rate = clk->parent->rate;
- 	/* Round towards slower frequency */
--	div = (p_rate + rate - 1) / rate;
-+	div = (parent_rate + rate - 1) / rate;
- 	div--;
- 	if (div < 0 || div > 7)
- 		return -EINVAL;
-@@ -649,12 +641,12 @@ static int omap1_set_sossi_rate(struct clk_hw *clk_hw, unsigned long rate)
- 	l |= div << 17;
- 	omap_writel(l, MOD_CONF_CTRL_1);
- 
--	clk->rate = p_rate / (div + 1);
-+	clk->rate = parent_rate / (div + 1);
- 
- 	return 0;
- }
- 
--static long omap1_round_ext_clk_rate(struct clk_hw *clk_hw, unsigned long rate)
-+static long omap1_round_ext_clk_rate(struct clk_hw *clk_hw, unsigned long rate, unsigned long *parent_rate)
- {
- 	return 96000000 / calc_ext_dsor(rate);
- }
-@@ -678,16 +670,27 @@ static void omap1_init_ext_clk(struct clk_hw *clk_hw)
- 	clk-> rate = 96000000 / dsor;
- }
- 
-+struct clk_hw *clk_hw_get_parent(const struct clk_hw *clk_hw)
++bool prio_less_fair(struct task_struct *a, struct task_struct *b)
 +{
-+	struct omap1_clk *clk = to_omap1_clk(clk_hw);
++	u64 a_vruntime = a->se.vruntime;
++	u64 b_vruntime = b->se.vruntime;
 +
-+	if (!clk->parent)
-+		return NULL;
++	/*
++	 * Normalize the vruntime if tasks are in different cpus.
++	 */
++	if (task_cpu(a) != task_cpu(b)) {
++		b_vruntime -= task_cfs_rq(b)->min_vruntime;
++		b_vruntime += task_cfs_rq(a)->min_vruntime;
 +
-+	return &clk->parent->clk_hw;
-+}
++		trace_printk("(%d:%Lu,%Lu,%Lu) <> (%d:%Lu,%Lu,%Lu)\n",
++			     a->pid, a_vruntime, a->se.vruntime, task_cfs_rq(a)->min_vruntime,
++			     b->pid, b_vruntime, b->se.vruntime, task_cfs_rq(b)->min_vruntime);
 +
- static void omap1_clk_disable(struct clk_hw *clk_hw)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
-+	struct clk_hw *parent = clk_hw_get_parent(clk_hw);
- 
- 	if (clk->usecount > 0 && !(--clk->usecount)) {
--		clk->ops->disable(&clk->clk_hw);
--		if (likely(clk->parent)) {
--			omap1_clk_disable(&clk->parent->clk_hw);
-+		clk->ops->disable(clk_hw);
-+		if (likely(parent)) {
-+			omap1_clk_disable(parent);
- 			if (clk->flags & CLOCK_NO_IDLE_PARENT)
--				omap1_clk_allow_idle(&clk->parent->clk_hw);
-+				omap1_clk_allow_idle(parent);
- 		}
- 	}
- }
-@@ -695,22 +698,23 @@ static void omap1_clk_disable(struct clk_hw *clk_hw)
- static omap1_clk_enable(struct clk_hw *clk_hw)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
-+	struct clk_hw *parent = clk_hw_get_parent(clk_hw);
- 	int ret = 0;
- 
- 	if (clk->usecount++ == 0) {
--		if (clk->parent) {
--			ret = omap1_clk_enable(&clk->parent->clk_hw);
-+		if (parent) {
-+			ret = omap1_clk_enable(parent);
- 			if (ret)
- 				goto err;
- 
- 			if (clk->flags & CLOCK_NO_IDLE_PARENT)
--				omap1_clk_deny_idle(&clk->parent->clk_hw);
-+				omap1_clk_deny_idle(parent);
- 		}
- 
- 		ret = clk->ops->enable(&clk->clk_hw);
- 		if (ret) {
--			if (clk->parent)
--				omap1_clk_disable(&clk->parent->clk_hw);
-+			if (parent)
-+				omap1_clk_disable(parent);
- 			goto err;
- 		}
- 	}
-@@ -771,7 +775,7 @@ static const struct clk_ops clkops_generic = {
- 	.disable	= omap1_clk_disable_generic,
- };
- 
--static unsigned long omap1_ckctl_recalc_dsp_domain(struct clk_hw *clk_hw)
-+static unsigned long omap1_ckctl_recalc_dsp_domain(struct clk_hw *clk_hw, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 	int dsor;
-@@ -787,7 +791,7 @@ static unsigned long omap1_ckctl_recalc_dsp_domain(struct clk_hw *clk_hw)
- 	dsor = 1 << (3 & (__raw_readw(DSP_CKCTL) >> clk->rate_offset));
- 	omap1_clk_disable(api_ck_p);
- 
--	return clk->parent->rate / dsor;
-+	return parent_rate / dsor;
- }
- 
- static int omap1_clk_enable_dsp_domain(struct clk_hw *clk_hw)
-@@ -812,11 +816,6 @@ static void omap1_clk_disable_dsp_domain(struct clk_hw *clk_hw)
- 	}
- }
- 
--static const struct clk_ops clkops_dspck = {
--	.enable		= omap1_clk_enable_dsp_domain,
--	.disable	= omap1_clk_disable_dsp_domain,
--};
--
- /* XXX SYSC register handling does not belong in the clock framework */
- static int omap1_clk_enable_uart_functional_16xx(struct clk_hw *clk_hw)
- {
-@@ -857,9 +856,20 @@ static const struct clk_ops clkops_uart_16xx = {
- static long omap1_clk_round_rate(struct clk_hw *clk_hw, unsigned long rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
-+	struct clk_hw *parent = clk_hw_get_parent(clk_hw);
-+	struct omap1_clk *parent_clk;
-+	unsigned long parent_rate = 0;
-+
-+	if (parent) {
-+		parent_clk = to_omap1_clk(parent);
-+		parent_rate = parent_clk->rate;
 +	}
 +
-+	if (clk->ops->round_rate != NULL)
-+		return clk->ops->round_rate(clk_hw, rate, &parent_rate);
- 
--	if (clk->round_rate != NULL)
--		return clk->round_rate(clk_hw, rate);
-+	if (parent)
-+		parent_clk->rate = parent_rate;
- 
- 	return clk->rate;
- }
-@@ -867,10 +877,15 @@ static long omap1_clk_round_rate(struct clk_hw *clk_hw, unsigned long rate)
- static int omap1_clk_set_rate(struct clk_hw *clk_hw, unsigned long rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
-+	struct clk_hw *parent = clk_hw_get_parent(clk_hw);
-+	unsigned long parent_rate = 0;
- 	int  ret = -EINVAL;
- 
--	if (clk->set_rate)
--		ret = clk->set_rate(clk_hw, rate);
-+	if (parent)
-+		parent_rate = to_omap1_clk(parent)->rate;
-+
-+	if (clk->ops->set_rate)
-+		ret = clk->ops->set_rate(clk_hw, rate, parent_rate);
- 	return ret;
- }
- 
-@@ -880,8 +895,8 @@ static void propagate_rate(struct omap1_clk *tclk)
- 	struct omap1_clk *clkp;
- 
- 	list_for_each_entry(clkp, &tclk->children, sibling) {
--		if (clkp->recalc)
--			clkp->rate = clkp->recalc(&clkp->clk_hw);
-+		if (clkp->ops->recalc_rate)
-+			clkp->rate = clkp->ops->recalc_rate(&clkp->clk_hw, tclk->rate);
- 		propagate_rate(clkp);
- 	}
- }
-@@ -993,9 +1008,12 @@ EXPORT_SYMBOL(clk_set_parent);
- 
- struct clk *clk_get_parent(struct clk *clk)
- {
--	struct omap1_clk *parent = to_omap1_clk(clk->clk_hw)->parent;
-+	struct clk_hw *parent = clk_hw_get_parent(clk->clk_hw);
-+
-+	if (!parent)
-+		return NULL;
- 
--	return &parent->clk_hw.clk;
-+	return &parent->clk;
- }
- EXPORT_SYMBOL(clk_get_parent);
- 
-@@ -1004,24 +1022,22 @@ EXPORT_SYMBOL(clk_get_parent);
-  */
- 
- /* Used for clocks that always have same value as the parent clock */
--static unsigned long followparent_recalc(struct clk_hw *clk_hw)
-+static unsigned long followparent_recalc(struct clk_hw *clk_hw, unsigned long parent_rate)
- {
--	struct omap1_clk *clk = to_omap1_clk(clk_hw);
--
--	return clk->parent->rate;
-+	return parent_rate;
- }
- 
- /*
-  * Used for clocks that have the same value as the parent clock,
-  * divided by some factor
-  */
--static unsigned long omap_fixed_divisor_recalc(struct clk_hw *clk_hw)
-+static unsigned long omap_fixed_divisor_recalc(struct clk_hw *clk_hw, unsigned long parent_rate)
- {
- 	struct omap1_clk *clk = to_omap1_clk(clk_hw);
- 
- 	WARN_ON(!clk->fixed_div);
- 
--	return clk->parent->rate / clk->fixed_div;
-+	return parent_rate / clk->fixed_div;
- }
- 
- /**
-@@ -1056,8 +1072,8 @@ static int clk_register(struct device *dev, struct clk_hw *clk_hw)
- 		list_add(&clk->sibling, &clk->parent->children);
- 
- 	list_add(&clk->node, &clocks);
--	if (clk->init)
--		clk->init(&clk->clk_hw);
-+	if (clk->ops->init)
-+		clk->ops->init(&clk->clk_hw);
- 	mutex_unlock(&clocks_mutex);
- 
- 	return 0;
-@@ -1080,6 +1096,12 @@ static const struct clk_ops clkops_null = {
- 	.disable	= clkll_disable_null,
- };
- 
-+static const struct clk_ops clkops_followparent = {
-+	.enable		= clkll_enable_null,
-+	.disable	= clkll_disable_null,
-+	.recalc_rate	= followparent_recalc,
-+};
++	return !((s64)(a_vruntime - b_vruntime) <= 0);
++}
 +
  /*
-  * Dummy clock
+  * The idea is to set a period in which each task runs once.
   *
-@@ -1239,6 +1261,12 @@ static struct omap1_clk ck_dpll1 = {
- 	.parent		= &ck_ref,
- };
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index e91c188a452c..bdabe7ce1152 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1015,6 +1015,7 @@ static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+ }
  
-+static const struct clk_ops clkops_generic_followparent = {
-+	.enable		= omap1_clk_enable_generic,
-+	.disable	= omap1_clk_disable_generic,
-+	.recalc_rate	= followparent_recalc,
-+};
-+
- /*
-  * FIXME: This clock seems to be necessary but no-one has asked for its
-  * activation.  [ FIX: SoSSI, SSR ]
-@@ -1246,33 +1274,50 @@ static struct omap1_clk ck_dpll1 = {
- static struct arm_idlect1_clk ck_dpll1out = {
- 	.clk = {
- 		.name		= "ck_dpll1out",
--		.ops		= &clkops_generic,
-+		.ops		= &clkops_generic_followparent,
- 		.parent		= &ck_dpll1,
- 		.flags		= CLOCK_IDLE_CONTROL | ENABLE_REG_32BIT,
- 		.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 		.enable_bit	= EN_CKOUT_ARM,
--		.recalc		= &followparent_recalc,
- 	},
- 	.idlect_shift	= IDL_CLKOUT_ARM_SHIFT,
- };
+ extern void queue_core_balance(struct rq *rq);
++extern bool prio_less_fair(struct task_struct *a, struct task_struct *b);
  
-+static const struct clk_ops clkops_sossi = {
-+	.enable		= omap1_clk_enable_generic,
-+	.disable	= omap1_clk_disable_generic,
-+	.recalc_rate	= &omap1_sossi_recalc,
-+	.set_rate	= &omap1_set_sossi_rate,
-+};
-+
- static struct omap1_clk sossi_ck = {
- 	.name		= "ck_sossi",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_sossi,
- 	.parent		= &ck_dpll1out.clk,
- 	.flags		= CLOCK_NO_IDLE_PARENT | ENABLE_REG_32BIT,
- 	.enable_reg	= OMAP1_IO_ADDRESS(MOD_CONF_CTRL_1),
- 	.enable_bit	= CONF_MOD_SOSSI_CLK_EN_R,
--	.recalc		= &omap1_sossi_recalc,
--	.set_rate	= &omap1_set_sossi_rate,
-+};
-+
-+struct clk_ops clkops_null_ckctl = {
-+	.enable		= clkll_enable_null,
-+	.disable	= clkll_disable_null,
-+	.recalc_rate	= omap1_ckctl_recalc,
-+	.round_rate	= omap1_clk_round_rate_ckctl_arm,
-+	.set_rate	= omap1_clk_set_rate_ckctl_arm,
- };
+ #else /* !CONFIG_SCHED_CORE */
  
- static struct omap1_clk arm_ck = {
- 	.name		= "arm_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_null_ckctl,
- 	.parent		= &ck_dpll1,
- 	.rate_offset	= CKCTL_ARMDIV_OFFSET,
--	.recalc		= &omap1_ckctl_recalc,
-+};
-+
-+struct clk_ops clkops_generic_ckctl = {
-+	.enable		= omap1_clk_enable_generic,
-+	.disable	= omap1_clk_disable_generic,
-+	.recalc_rate	= omap1_ckctl_recalc,
- 	.round_rate	= omap1_clk_round_rate_ckctl_arm,
- 	.set_rate	= omap1_clk_set_rate_ckctl_arm,
- };
-@@ -1280,15 +1325,12 @@ static struct omap1_clk arm_ck = {
- static struct arm_idlect1_clk armper_ck = {
- 	.clk = {
- 		.name		= "armper_ck",
--		.ops		= &clkops_generic,
-+		.ops		= &clkops_generic_ckctl,
- 		.parent		= &ck_dpll1,
- 		.flags		= CLOCK_IDLE_CONTROL,
- 		.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 		.enable_bit	= EN_PERCK,
- 		.rate_offset	= CKCTL_PERDIV_OFFSET,
--		.recalc		= &omap1_ckctl_recalc,
--		.round_rate	= omap1_clk_round_rate_ckctl_arm,
--		.set_rate	= omap1_clk_set_rate_ckctl_arm,
- 	},
- 	.idlect_shift	= IDLPER_ARM_SHIFT,
- };
-@@ -1299,22 +1341,20 @@ static struct arm_idlect1_clk armper_ck = {
-  */
- static struct omap1_clk arm_gpio_ck = {
- 	.name		= "ick",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_generic_followparent,
- 	.parent		= &ck_dpll1,
- 	.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 	.enable_bit	= EN_GPIOCK,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct arm_idlect1_clk armxor_ck = {
- 	.clk = {
- 		.name		= "armxor_ck",
--		.ops		= &clkops_generic,
-+		.ops		= &clkops_generic_followparent,
- 		.parent		= &ck_ref,
- 		.flags		= CLOCK_IDLE_CONTROL,
- 		.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 		.enable_bit	= EN_XORPCK,
--		.recalc		= &followparent_recalc,
- 	},
- 	.idlect_shift	= IDLXORP_ARM_SHIFT,
- };
-@@ -1322,16 +1362,21 @@ static struct arm_idlect1_clk armxor_ck = {
- static struct arm_idlect1_clk armtim_ck = {
- 	.clk = {
- 		.name		= "armtim_ck",
--		.ops		= &clkops_generic,
-+		.ops		= &clkops_generic_followparent,
- 		.parent		= &ck_ref,
- 		.flags		= CLOCK_IDLE_CONTROL,
- 		.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 		.enable_bit	= EN_TIMCK,
--		.recalc		= &followparent_recalc,
- 	},
- 	.idlect_shift	= IDLTIM_ARM_SHIFT,
- };
- 
-+static const struct clk_ops clkops_fixed_divisor = {
-+	.enable		= omap1_clk_enable_generic,
-+	.disable	= omap1_clk_disable_generic,
-+	.recalc_rate	= omap_fixed_divisor_recalc,
-+};
-+
- static struct arm_idlect1_clk armwdt_ck = {
- 	.clk = {
- 		.name		= "armwdt_ck",
-@@ -1341,16 +1386,14 @@ static struct arm_idlect1_clk armwdt_ck = {
- 		.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 		.enable_bit	= EN_WDTCK,
- 		.fixed_div	= 14,
--		.recalc		= &omap_fixed_divisor_recalc,
- 	},
- 	.idlect_shift	= IDLWDT_ARM_SHIFT,
- };
- 
- static struct omap1_clk arminth_ck16xx = {
- 	.name		= "arminth_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.parent		= &arm_ck,
--	.recalc		= &followparent_recalc,
- 	/* Note: On 16xx the frequency can be divided by 2 by programming
- 	 * ARM_CKCTL:ARM_INTHCK_SEL(14) to 1
- 	 *
-@@ -1360,24 +1403,26 @@ static struct omap1_clk arminth_ck16xx = {
- 
- static struct omap1_clk dsp_ck = {
- 	.name		= "dsp_ck",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_generic_ckctl,
- 	.parent		= &ck_dpll1,
- 	.enable_reg	= OMAP1_IO_ADDRESS(ARM_CKCTL),
- 	.enable_bit	= EN_DSPCK,
- 	.rate_offset	= CKCTL_DSPDIV_OFFSET,
--	.recalc		= &omap1_ckctl_recalc,
--	.round_rate	= omap1_clk_round_rate_ckctl_arm,
--	.set_rate	= omap1_clk_set_rate_ckctl_arm,
- };
- 
- static struct omap1_clk dspmmu_ck = {
- 	.name		= "dspmmu_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_null_ckctl,
- 	.parent		= &ck_dpll1,
- 	.rate_offset	= CKCTL_DSPMMUDIV_OFFSET,
--	.recalc		= &omap1_ckctl_recalc,
-+};
-+
-+static const struct clk_ops clkops_dspck = {
-+	.enable		= omap1_clk_enable_dsp_domain,
-+	.disable	= omap1_clk_disable_dsp_domain,
-+	.recalc_rate	= omap1_ckctl_recalc_dsp_domain,
- 	.round_rate	= omap1_clk_round_rate_ckctl_arm,
--	.set_rate	= omap1_clk_set_rate_ckctl_arm,
-+	.set_rate	= omap1_clk_set_rate_dsp_domain,
- };
- 
- static struct omap1_clk dspper_ck = {
-@@ -1387,48 +1432,45 @@ static struct omap1_clk dspper_ck = {
- 	.enable_reg	= DSP_IDLECT2,
- 	.enable_bit	= EN_PERCK,
- 	.rate_offset	= CKCTL_PERDIV_OFFSET,
--	.recalc		= &omap1_ckctl_recalc_dsp_domain,
--	.round_rate	= omap1_clk_round_rate_ckctl_arm,
--	.set_rate	= &omap1_clk_set_rate_dsp_domain,
-+};
-+
-+static const struct clk_ops clkops_dspck_followparent = {
-+	.enable		= omap1_clk_enable_dsp_domain,
-+	.disable	= omap1_clk_disable_dsp_domain,
-+	.recalc_rate	= followparent_recalc,
- };
- 
- static struct omap1_clk dspxor_ck = {
- 	.name		= "dspxor_ck",
--	.ops		= &clkops_dspck,
-+	.ops		= &clkops_dspck_followparent,
- 	.parent		= &ck_ref,
- 	.enable_reg	= DSP_IDLECT2,
- 	.enable_bit	= EN_XORPCK,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct omap1_clk dsptim_ck = {
- 	.name		= "dsptim_ck",
--	.ops		= &clkops_dspck,
-+	.ops		= &clkops_dspck_followparent,
- 	.parent		= &ck_ref,
- 	.enable_reg	= DSP_IDLECT2,
- 	.enable_bit	= EN_DSPTIMCK,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct arm_idlect1_clk tc_ck = {
- 	.clk = {
- 		.name		= "tc_ck",
--		.ops		= &clkops_null,
-+		.ops		= &clkops_null_ckctl,
- 		.parent		= &ck_dpll1,
- 		.flags		= CLOCK_IDLE_CONTROL,
- 		.rate_offset	= CKCTL_TCDIV_OFFSET,
--		.recalc		= &omap1_ckctl_recalc,
--		.round_rate	= omap1_clk_round_rate_ckctl_arm,
--		.set_rate	= omap1_clk_set_rate_ckctl_arm,
- 	},
- 	.idlect_shift	= IDLIF_ARM_SHIFT,
- };
- 
- static struct omap1_clk arminth_ck1510 = {
- 	.name		= "arminth_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.parent		= &tc_ck.clk,
--	.recalc		= &followparent_recalc,
- 	/* Note: On 1510 the frequency follows TC_CK
- 	 *
- 	 * 16xx version is in MPU clocks.
-@@ -1438,28 +1480,25 @@ static struct omap1_clk arminth_ck1510 = {
- static struct omap1_clk tipb_ck = {
- 	/* No-idle controlled by "tc_ck" */
- 	.name		= "tipb_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.parent		= &tc_ck.clk,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct omap1_clk l3_ocpi_ck = {
- 	/* No-idle controlled by "tc_ck" */
- 	.name		= "l3_ocpi_ck",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_generic_followparent,
- 	.parent		= &tc_ck.clk,
- 	.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT3),
- 	.enable_bit	= EN_OCPI_CK,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct omap1_clk tc1_ck = {
- 	.name		= "tc1_ck",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_generic_followparent,
- 	.parent		= &tc_ck.clk,
- 	.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT3),
- 	.enable_bit	= EN_TC1_CK,
--	.recalc		= &followparent_recalc,
- };
- 
- /*
-@@ -1468,37 +1507,33 @@ static struct omap1_clk tc1_ck = {
-  */
- static struct omap1_clk tc2_ck = {
- 	.name		= "tc2_ck",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_generic_followparent,
- 	.parent		= &tc_ck.clk,
- 	.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT3),
- 	.enable_bit	= EN_TC2_CK,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct omap1_clk dma_ck = {
- 	/* No-idle controlled by "tc_ck" */
- 	.name		= "dma_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.parent		= &tc_ck.clk,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct omap1_clk dma_lcdfree_ck = {
- 	.name		= "dma_lcdfree_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.parent		= &tc_ck.clk,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct arm_idlect1_clk api_ck = {
- 	.clk = {
- 		.name		= "api_ck",
--		.ops		= &clkops_generic,
-+		.ops		= &clkops_generic_followparent,
- 		.parent		= &tc_ck.clk,
- 		.flags		= CLOCK_IDLE_CONTROL,
- 		.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 		.enable_bit	= EN_APICK,
--		.recalc		= &followparent_recalc,
- 	},
- 	.idlect_shift	= IDLAPI_ARM_SHIFT,
- };
-@@ -1506,58 +1541,56 @@ static struct arm_idlect1_clk api_ck = {
- static struct arm_idlect1_clk lb_ck = {
- 	.clk = {
- 		.name		= "lb_ck",
--		.ops		= &clkops_generic,
-+		.ops		= &clkops_generic_followparent,
- 		.parent		= &tc_ck.clk,
- 		.flags		= CLOCK_IDLE_CONTROL,
- 		.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 		.enable_bit	= EN_LBCK,
--		.recalc		= &followparent_recalc,
- 	},
- 	.idlect_shift	= IDLLB_ARM_SHIFT,
- };
- 
- static struct omap1_clk rhea1_ck = {
- 	.name		= "rhea1_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.parent		= &tc_ck.clk,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct omap1_clk rhea2_ck = {
- 	.name		= "rhea2_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.parent		= &tc_ck.clk,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct omap1_clk lcd_ck_16xx = {
- 	.name		= "lcd_ck",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_generic_ckctl,
- 	.parent		= &ck_dpll1,
- 	.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 	.enable_bit	= EN_LCDCK,
- 	.rate_offset	= CKCTL_LCDDIV_OFFSET,
--	.recalc		= &omap1_ckctl_recalc,
--	.round_rate	= omap1_clk_round_rate_ckctl_arm,
--	.set_rate	= omap1_clk_set_rate_ckctl_arm,
- };
- 
- static struct arm_idlect1_clk lcd_ck_1510 = {
- 	.clk = {
- 		.name		= "lcd_ck",
--		.ops		= &clkops_generic,
-+		.ops		= &clkops_generic_ckctl,
- 		.parent		= &ck_dpll1,
- 		.flags		= CLOCK_IDLE_CONTROL,
- 		.enable_reg	= OMAP1_IO_ADDRESS(ARM_IDLECT2),
- 		.enable_bit	= EN_LCDCK,
- 		.rate_offset	= CKCTL_LCDDIV_OFFSET,
--		.recalc		= &omap1_ckctl_recalc,
--		.round_rate	= omap1_clk_round_rate_ckctl_arm,
--		.set_rate	= omap1_clk_set_rate_ckctl_arm,
- 	},
- 	.idlect_shift	= OMAP1510_IDLLCD_ARM_SHIFT,
- };
- 
-+static const struct clk_ops clkops_uart = {
-+	.enable		= clkll_enable_null,
-+	.disable	= clkll_disable_null,
-+	.set_rate	= omap1_set_uart_rate,
-+	.recalc_rate	= omap1_uart_recalc,
-+};
-+
- /*
-  * XXX The enable_bit here is misused - it simply switches between 12MHz
-  * and 48MHz.  Reimplement with clksel.
-@@ -1566,15 +1599,13 @@ static struct arm_idlect1_clk lcd_ck_1510 = {
-  */
- static struct omap1_clk uart1_1510 = {
- 	.name		= "uart1_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_uart,
- 	/* Direct from ULPD, no real parent */
- 	.parent		= &armper_ck.clk,
- 	.rate		= 12000000,
- 	.flags		= ENABLE_REG_32BIT | CLOCK_NO_IDLE_PARENT,
- 	.enable_reg	= OMAP1_IO_ADDRESS(MOD_CONF_CTRL_0),
- 	.enable_bit	= CONF_MOD_UART1_CLK_MODE_R,
--	.set_rate	= &omap1_set_uart_rate,
--	.recalc		= &omap1_uart_recalc,
- };
- 
- /*
-@@ -1605,15 +1636,13 @@ static struct uart_clk uart1_16xx = {
-  */
- static struct omap1_clk uart2_ck = {
- 	.name		= "uart2_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_uart,
- 	/* Direct from ULPD, no real parent */
- 	.parent		= &armper_ck.clk,
- 	.rate		= 12000000,
- 	.flags		= ENABLE_REG_32BIT | CLOCK_NO_IDLE_PARENT,
- 	.enable_reg	= OMAP1_IO_ADDRESS(MOD_CONF_CTRL_0),
- 	.enable_bit	= CONF_MOD_UART2_CLK_MODE_R,
--	.set_rate	= &omap1_set_uart_rate,
--	.recalc		= &omap1_uart_recalc,
- };
- 
- /*
-@@ -1624,15 +1653,13 @@ static struct omap1_clk uart2_ck = {
-  */
- static struct omap1_clk uart3_1510 = {
- 	.name		= "uart3_ck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_uart,
- 	/* Direct from ULPD, no real parent */
- 	.parent		= &armper_ck.clk,
- 	.rate		= 12000000,
- 	.flags		= ENABLE_REG_32BIT | CLOCK_NO_IDLE_PARENT,
- 	.enable_reg	= OMAP1_IO_ADDRESS(MOD_CONF_CTRL_0),
- 	.enable_bit	= CONF_MOD_UART3_CLK_MODE_R,
--	.set_rate	= &omap1_set_uart_rate,
--	.recalc		= &omap1_uart_recalc,
- };
- 
- /*
-@@ -1722,15 +1749,20 @@ static struct omap1_clk mclk_1510 = {
- 	.enable_bit	= SOFT_COM_MCKO_REQ_SHIFT,
- };
- 
-+static const struct clk_ops clkops_ext_clk = {
-+	.enable		= omap1_clk_enable_generic,
-+	.disable	= omap1_clk_disable_generic,
-+	.set_rate	= omap1_set_ext_clk_rate,
-+	.round_rate	= omap1_round_ext_clk_rate,
-+	.init		= omap1_init_ext_clk,
-+};
-+
- static struct omap1_clk mclk_16xx = {
- 	.name		= "mclk",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_ext_clk,
- 	/* Direct from ULPD, no parent. May be enabled by ext hardware. */
- 	.enable_reg	= OMAP1_IO_ADDRESS(COM_CLK_DIV_CTRL_SEL),
- 	.enable_bit	= COM_ULPD_PLL_CLK_REQ,
--	.set_rate	= &omap1_set_ext_clk_rate,
--	.round_rate	= &omap1_round_ext_clk_rate,
--	.init		= &omap1_init_ext_clk,
- };
- 
- static struct omap1_clk bclk_1510 = {
-@@ -1742,13 +1774,10 @@ static struct omap1_clk bclk_1510 = {
- 
- static struct omap1_clk bclk_16xx = {
- 	.name		= "bclk",
--	.ops		= &clkops_generic,
-+	.ops		= &clkops_ext_clk,
- 	/* Direct from ULPD, no parent. May be enabled by ext hardware. */
- 	.enable_reg	= OMAP1_IO_ADDRESS(SWD_CLK_DIV_CTRL_SEL),
- 	.enable_bit	= SWD_ULPD_PLL_CLK_REQ,
--	.set_rate	= &omap1_set_ext_clk_rate,
--	.round_rate	= &omap1_round_ext_clk_rate,
--	.init		= &omap1_init_ext_clk,
- };
- 
- static struct omap1_clk mmc1_ck = {
-@@ -1788,31 +1817,34 @@ static struct omap1_clk mmc3_ck = {
- 	.enable_bit	= SOFT_MMC_DPLL_REQ_SHIFT,
- };
- 
-+static const struct clk_ops clkops_mpu = {
-+	.enable		= clkll_enable_null,
-+	.disable	= clkll_disable_null,
-+	.recalc_rate	= followparent_recalc,
-+	.set_rate	= omap1_select_table_rate,
-+	.round_rate	= omap1_round_to_table_rate,
-+};
-+
- static struct omap1_clk virtual_ck_mpu = {
- 	.name		= "mpu",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_mpu,
- 	.parent		= &arm_ck, /* Is smarter alias for */
--	.recalc		= &followparent_recalc,
--	.set_rate	= &omap1_select_table_rate,
--	.round_rate	= &omap1_round_to_table_rate,
- };
- 
- /* virtual functional clock domain for I2C. Just for making sure that ARMXOR_CK
- remains active during MPU idle whenever this is enabled */
- static struct omap1_clk i2c_fck = {
- 	.name		= "i2c_fck",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.flags		= CLOCK_NO_IDLE_PARENT,
- 	.parent		= &armxor_ck.clk,
--	.recalc		= &followparent_recalc,
- };
- 
- static struct omap1_clk i2c_ick = {
- 	.name		= "i2c_ick",
--	.ops		= &clkops_null,
-+	.ops		= &clkops_followparent,
- 	.flags		= CLOCK_NO_IDLE_PARENT,
- 	.parent		= &armper_ck.clk,
--	.recalc		= &followparent_recalc,
- };
- 
- /*
-@@ -2057,7 +2089,7 @@ void __init omap1_clk_late_init(void)
- 	unsigned long rate = ck_dpll1.rate;
- 
- 	/* Find the highest supported frequency and enable it */
--	if (omap1_select_table_rate(&virtual_ck_mpu.clk_hw, ~0)) {
-+	if (omap1_select_table_rate(&virtual_ck_mpu.clk_hw, ~0, 0)) {
- 		pr_err("System frequencies not set, using default. Check your config.\n");
- 		/*
- 		 * Reprogramming the DPLL is tricky, it must be done from SRAM.
 -- 
-2.20.0
+2.20.1
+
+------------------------patch 3---------------------------
+From 5318e23c741a832140effbaf2f79fdf4b08f883c Mon Sep 17 00:00:00 2001
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Date: Tue, 6 Aug 2019 12:50:45 -0700
+Subject: [PATCH 3/3 v2] sched: Enforce fairness between cpu threads
+
+CPU thread could be suppressed by its sibling for extended time.
+Implement a budget for force idling, making all CPU threads have
+equal chance to run.
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+ kernel/sched/core.c     | 43 +++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/deadline.c |  1 +
+ kernel/sched/fair.c     | 11 +++++++++++
+ kernel/sched/rt.c       |  1 +
+ kernel/sched/sched.h    |  4 ++++
+ 5 files changed, 60 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0f893853766c..de83dcb84495 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -207,6 +207,46 @@ static struct task_struct *sched_core_next(struct task_struct *p, unsigned long
+ 	return p;
+ }
+ 
++void account_core_idletime(struct task_struct *p, u64 exec)
++{
++	const struct cpumask *smt_mask;
++	struct rq *rq;
++	bool force_idle, refill;
++	int i, cpu;
++
++	rq = task_rq(p);
++	if (!sched_core_enabled(rq))
++		return;
++
++	cpu = task_cpu(p);
++	force_idle = false;
++	refill = true;
++	smt_mask = cpu_smt_mask(cpu);
++
++	for_each_cpu(i, smt_mask) {
++		if (cpu == i || cpu_is_offline(i))
++			continue;
++
++		if (cpu_rq(i)->core_forceidle)
++			force_idle = true;
++
++		/* Only refill if everyone has run out of allowance */
++		if (cpu_rq(i)->core_idle_allowance > 0)
++			refill = false;
++	}
++
++	if (force_idle)
++		rq->core_idle_allowance -= (s64) exec;
++
++	if (rq->core_idle_allowance < 0 && refill) {
++		for_each_cpu(i, smt_mask) {
++			if (cpu_is_offline(i))
++				continue;
++			cpu_rq(i)->core_idle_allowance += (s64) SCHED_IDLE_ALLOWANCE;
++		}
++	}
++}
++
+ /*
+  * The static-key + stop-machine variable are needed such that:
+  *
+@@ -273,6 +313,8 @@ void sched_core_put(void)
+ 
+ static inline void sched_core_enqueue(struct rq *rq, struct task_struct *p) { }
+ static inline void sched_core_dequeue(struct rq *rq, struct task_struct *p) { }
++static inline void account_core_idletime(struct task_struct *p, u64 exec) { }
++{
+ 
+ #endif /* CONFIG_SCHED_CORE */
+ 
+@@ -6773,6 +6815,7 @@ void __init sched_init(void)
+ 		rq->core_enabled = 0;
+ 		rq->core_tree = RB_ROOT;
+ 		rq->core_forceidle = false;
++		rq->core_idle_allowance = (s64) SCHED_IDLE_ALLOWANCE;
+ 
+ 		rq->core_cookie = 0UL;
+ #endif
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 64fc444f44f9..684c64a95ec7 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1175,6 +1175,7 @@ static void update_curr_dl(struct rq *rq)
+ 
+ 	curr->se.sum_exec_runtime += delta_exec;
+ 	account_group_exec_runtime(curr, delta_exec);
++	account_core_idletime(curr, delta_exec);
+ 
+ 	curr->se.exec_start = now;
+ 	cgroup_account_cputime(curr, delta_exec);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e289b6e1545b..f65270784c28 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -611,6 +611,16 @@ bool prio_less_fair(struct task_struct *a, struct task_struct *b)
+ 	 * Normalize the vruntime if tasks are in different cpus.
+ 	 */
+ 	if (task_cpu(a) != task_cpu(b)) {
++
++		if (a->core_cookie != b->core_cookie) {
++			/*
++			 * Will be force idling one thread,
++			 * pick the thread that has more allowance.
++			 */
++			return (task_rq(a)->core_idle_allowance <
++				task_rq(b)->core_idle_allowance) ? true : false;
++		}
++
+ 		b_vruntime -= task_cfs_rq(b)->min_vruntime;
+ 		b_vruntime += task_cfs_rq(a)->min_vruntime;
+ 
+@@ -817,6 +827,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
+ 		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
+ 		cgroup_account_cputime(curtask, delta_exec);
+ 		account_group_exec_runtime(curtask, delta_exec);
++		account_core_idletime(curtask, delta_exec);
+ 	}
+ 
+ 	account_cfs_rq_runtime(cfs_rq, delta_exec);
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 81557224548c..6f18e1455778 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -971,6 +971,7 @@ static void update_curr_rt(struct rq *rq)
+ 
+ 	curr->se.sum_exec_runtime += delta_exec;
+ 	account_group_exec_runtime(curr, delta_exec);
++	account_core_idletime(curr, delta_exec);
+ 
+ 	curr->se.exec_start = now;
+ 	cgroup_account_cputime(curr, delta_exec);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index bdabe7ce1152..927334b2078c 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -963,6 +963,7 @@ struct rq {
+ 	struct task_struct	*core_pick;
+ 	unsigned int		core_enabled;
+ 	unsigned int		core_sched_seq;
++	s64			core_idle_allowance;
+ 	struct rb_root		core_tree;
+ 	bool			core_forceidle;
+ 
+@@ -999,6 +1000,8 @@ static inline int cpu_of(struct rq *rq)
+ }
+ 
+ #ifdef CONFIG_SCHED_CORE
++#define SCHED_IDLE_ALLOWANCE	5000000 	/* 5 msec */
++
+ DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
+ 
+ static inline bool sched_core_enabled(struct rq *rq)
+@@ -1016,6 +1019,7 @@ static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+ 
+ extern void queue_core_balance(struct rq *rq);
+ extern bool prio_less_fair(struct task_struct *a, struct task_struct *b);
++extern void  account_core_idletime(struct task_struct *p, u64 exec);
+ 
+ #else /* !CONFIG_SCHED_CORE */
+ 
+-- 
+2.20.1
 
