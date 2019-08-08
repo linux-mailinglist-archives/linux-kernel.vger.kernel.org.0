@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 115BC867F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 19:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0D8A867F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 19:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404285AbfHHR0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 13:26:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42654 "EHLO mail.kernel.org"
+        id S2404310AbfHHR03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 13:26:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728020AbfHHR0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 13:26:25 -0400
+        id S1728020AbfHHR02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 13:26:28 -0400
 Received: from localhost.localdomain (unknown [194.230.155.124])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C3B1217F4;
-        Thu,  8 Aug 2019 17:26:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35FA72089E;
+        Thu,  8 Aug 2019 17:26:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565285184;
-        bh=R38QSOqLbhF6pYAmCUOKDTd+6QC0rCEyjflUlXWIJRM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sDUqFeeMPSVz1NcXYbaytu83sBeuni/Enfh+nvqE43gqLkZgiwDK7+W09b7ObkAS9
-         blyC6DSqrPf3EeqXaoGgPLrnEFj/ec++n7ccEPHRY4XBNTqNiTEanWKXyysUoPWH8g
-         wu2I8EVE1TWW5WA02EdS0IqTk5VccpKqrBUiJgPs=
+        s=default; t=1565285187;
+        bh=xOoHtkayuFTM7IWeNm0jfHM35tww8lvlY5cTq4QWz4Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=P64gMLxxrmXkQPCOjRJJDlQTYL6eEul3R8cPVWBemZ5mBQpjal1FB5zKndFn/8zYf
+         WrOCBuJMMUR+V1PG6B7dmoqvuGbovWqE8VrqlwOQT5wQjg53xNWF3Ib83bh2d+xri5
+         qTXgIf3VWeNRj/mGzm8wrNDOfqz83Pb5zugx7b30=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,49 +35,41 @@ To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Cc:     notify@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 1/3] dt-bindings: vendor-prefixes: Add Anvo-Systems
-Date:   Thu,  8 Aug 2019 19:26:14 +0200
-Message-Id: <20190808172616.11728-1-krzk@kernel.org>
+Subject: [PATCH v4 2/3] dt-bindings: eeprom: at25: Add Anvo ANV32E61W
+Date:   Thu,  8 Aug 2019 19:26:15 +0200
+Message-Id: <20190808172616.11728-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190808172616.11728-1-krzk@kernel.org>
+References: <20190808172616.11728-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add vendor prefix for Anvo-Systems Dresden GmbH.
+Document the compatible for ANV32E61W EEPROM chip.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
 ---
 
-Changes since v3:
-1. Add Rob's tag,
-2. Remove Admatec (not needed anymore).
-
-Changes since v2:
-1. Use admatecde vendor prefix.
-2. Add Anvo-Systems Dresden GmbH.
-
-Changes since v1:
 New patch
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/eeprom/at25.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 6992bbbbffab..519889f5aec8 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -81,6 +81,8 @@ patternProperties:
-     description: Analogix Semiconductor, Inc.
-   "^andestech,.*":
-     description: Andes Technology Corporation
-+  "^anvo,.*":
-+    description: Anvo-Systems Dresden GmbH
-   "^apm,.*":
-     description: Applied Micro Circuits Corporation (APM)
-   "^aptina,.*":
+diff --git a/Documentation/devicetree/bindings/eeprom/at25.txt b/Documentation/devicetree/bindings/eeprom/at25.txt
+index b3bde97dc199..42577dd113dd 100644
+--- a/Documentation/devicetree/bindings/eeprom/at25.txt
++++ b/Documentation/devicetree/bindings/eeprom/at25.txt
+@@ -3,6 +3,7 @@ EEPROMs (SPI) compatible with Atmel at25.
+ Required properties:
+ - compatible : Should be "<vendor>,<type>", and generic value "atmel,at25".
+   Example "<vendor>,<type>" values:
++    "anvo,anv32e61w"
+     "microchip,25lc040"
+     "st,m95m02"
+     "st,m95256"
 -- 
 2.17.1
 
