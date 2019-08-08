@@ -2,75 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51B9D86664
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB48086695
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390180AbfHHQAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:00:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43840 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390151AbfHHQAc (ORCPT
+        id S2404039AbfHHQDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:03:23 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:33378
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732698AbfHHQDW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:00:32 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p13so20870395wru.10
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 09:00:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HfUGKxoVg/Y5/HOrGuXxnrqxgohjqDijjBO+JOIgh3c=;
-        b=E0giQevvVH5lWGglSl8reoeQsyeB3c8m0bxWaIEUMHsDnyiy6Baa+ZbAaOKAez3eFN
-         oBioDKD/MFX/oBvN7HTw5ZjWy5TSta/OFziXD79NPmyabZWrQ50WkiVzGtm1QTBLfUlu
-         QRw68lWd7xTlcHD1f4zWRirsDlK6OMAUMrYpH6lPKA2r252CsSj/AyGYAGtxWxd5t16U
-         UpWcBMZk+BZuZD1RXWAibeTQtTij15WqRD5VWPaE5ahZYygS2xwPXMGusFhpPaV7P+Hd
-         XDwCnNyojuWVJxOzS78fgLfxcYCJIt+FOrGUOgO/nRhApNJycWfMIDoKw+V2fCJ4zl81
-         207w==
-X-Gm-Message-State: APjAAAUgpz26REckEDPQlKMDqKNL29C0Y9rCXmmcVIqw3iCawIehtpUL
-        /UEySurR+eiP6tqZLJWY2BFnAA==
-X-Google-Smtp-Source: APXvYqxtqFM9caIZn5rTW8wOofJ1xUSKrKa/bUvYhMgKj7LVB0oV7/nRwWPsVNruybr30NfBnztZ6w==
-X-Received: by 2002:adf:e2c1:: with SMTP id d1mr18729920wrj.283.1565280030781;
-        Thu, 08 Aug 2019 09:00:30 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:b42d:b492:69df:ed61? ([2001:b07:6468:f312:b42d:b492:69df:ed61])
-        by smtp.gmail.com with ESMTPSA id c1sm212065701wrh.1.2019.08.08.09.00.29
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Aug 2019 09:00:30 -0700 (PDT)
-Subject: Re: [PATCH v2] selftests: kvm: Adding config fragments
-To:     Andrew Jones <drjones@redhat.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     shuah@kernel.org, linux-kernel@vger.kernel.org,
-        sean.j.christopherson@intel.com, linux-kselftest@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <20190808123140.25583-1-naresh.kamboju@linaro.org>
- <20190808151010.ktbqbfevgcs3bkjy@kamzik.brq.redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <b34e8232-ccfd-898c-49de-afef4168a165@redhat.com>
-Date:   Thu, 8 Aug 2019 18:00:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 8 Aug 2019 12:03:22 -0400
+X-IronPort-AV: E=Sophos;i="5.64,362,1559512800"; 
+   d="scan'208";a="315951951"
+Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 18:03:20 +0200
+Date:   Thu, 8 Aug 2019 18:03:19 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: julia@hadrien
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+cc:     linux-kernel@vger.kernel.org, kbuild-all@01.org
+Subject: drivers/media/pci/cx23885/cx23885-video.c:636:24-44: duplicated
+ argument to & or | (fwd)
+Message-ID: <alpine.DEB.2.21.1908081802240.2995@hadrien>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190808151010.ktbqbfevgcs3bkjy@kamzik.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/08/19 17:10, Andrew Jones wrote:
->>
-> What does the kselftests config file do? I was about to complain that this
-> would break compiling on non-x86 platforms, but 'make kselftest' and other
-> forms of invoking the build work fine on aarch64 even with this config
-> file. So is this just for documentation? If so, then its still obviously
-> wrong for non-x86 platforms. The only config that makes sense here is KVM.
-> If the other options need to be documented for x86, then should they get
-> an additional config file? tools/testing/selftests/kvm/x86_64/config?
+V4L2_CAP_VBI_CAPTURE appears twice on lines 635-638.
 
-My understanding is that a config file fragment requires some kind of
-kconfig invocation to create a full .config file.  When you do that,
-unknown configurations are dropped silently.
+julia
 
-Paolo
+---------- Forwarded message ----------
+Date: Thu, 8 Aug 2019 22:11:43 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: drivers/media/pci/cx23885/cx23885-video.c:636:24-44: duplicated
+    argument to & or |
+
+CC: kbuild-all@01.org
+CC: linux-kernel@vger.kernel.org
+TO: Hans Verkuil <hverkuil@xs4all.nl>
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: linux-media@vger.kernel.org
+
+tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ecb095bff5d4b8711a81968625b3b4a235d3e477
+commit: 2161536516edcc0be31109eb1284939119e7ba6d media: media/pci: set device_caps in struct video_device
+date:   6 weeks ago
+:::::: branch date: 16 hours ago
+:::::: commit date: 6 weeks ago
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+
+>> drivers/media/pci/cx23885/cx23885-video.c:636:24-44: duplicated argument to & or |
+
+git remote add linus https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git
+git remote update linus
+git checkout 2161536516edcc0be31109eb1284939119e7ba6d
+vim +636 drivers/media/pci/cx23885/cx23885-video.c
+
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  625
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  626  static int vidioc_querycap(struct file *file, void  *priv,
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  627  	struct v4l2_capability *cap)
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  628  {
+568f44a18e9b63 drivers/media/pci/cx23885/cx23885-video.c   Hans Verkuil          2014-04-23  629  	struct cx23885_dev *dev = video_drvdata(file);
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  630
+cc1e6315e83db0 drivers/media/pci/cx23885/cx23885-video.c   Mauro Carvalho Chehab 2018-09-10  631  	strscpy(cap->driver, "cx23885", sizeof(cap->driver));
+c0decac19da390 drivers/media/pci/cx23885/cx23885-video.c   Mauro Carvalho Chehab 2018-09-10  632  	strscpy(cap->card, cx23885_boards[dev->board].name,
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  633  		sizeof(cap->card));
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  634  	sprintf(cap->bus_info, "PCIe:%s", pci_name(dev->pci));
+2161536516edcc drivers/media/pci/cx23885/cx23885-video.c   Hans Verkuil          2019-06-17  635  	cap->capabilities = V4L2_CAP_READWRITE | V4L2_CAP_STREAMING |
+2161536516edcc drivers/media/pci/cx23885/cx23885-video.c   Hans Verkuil          2019-06-17 @636  			    V4L2_CAP_AUDIO | V4L2_CAP_VBI_CAPTURE |
+2161536516edcc drivers/media/pci/cx23885/cx23885-video.c   Hans Verkuil          2019-06-17  637  			    V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VBI_CAPTURE |
+2161536516edcc drivers/media/pci/cx23885/cx23885-video.c   Hans Verkuil          2019-06-17  638  			    V4L2_CAP_DEVICE_CAPS;
+0f3bf3dc1ca394 drivers/media/pci/cx23885/cx23885-video.c   Hans Verkuil          2014-06-27  639  	if (dev->tuner_type != TUNER_ABSENT)
+2161536516edcc drivers/media/pci/cx23885/cx23885-video.c   Hans Verkuil          2019-06-17  640  		cap->capabilities |= V4L2_CAP_TUNER;
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  641  	return 0;
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  642  }
+e47f30b1403335 drivers/media/video/cx23885/cx23885-video.c Steven Toth           2008-01-10  643
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
