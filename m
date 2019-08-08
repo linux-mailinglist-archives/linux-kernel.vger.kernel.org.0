@@ -2,107 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7DF863DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBD68863D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:02:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390075AbfHHOCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 10:02:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45572 "EHLO mail.kernel.org"
+        id S2389997AbfHHOCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 10:02:11 -0400
+Received: from mga06.intel.com ([134.134.136.31]:62031 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbfHHOCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 10:02:33 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5736B21743;
-        Thu,  8 Aug 2019 14:02:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565272952;
-        bh=rZdFt1nTqsCFfJecz9OvxRQYmusq8d4LHI3dbVndMis=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BvBkOjzTXTL5BAvMofI5yEqRATA7GbCRZ7t0mWQ87KLXqEDmJOD/dFC+dYnTbXyMP
-         Kbxjs5id9rI/Fp0MfBaI/kYag0ExphOHAzsEbpOtpFN0QKWyvdt9gN5jfnQYp3GnsR
-         UUJJvqSeiemyvDqLBBxhE0LI6lwuzkLh/JBiZcXQ=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     devicetree@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, frowand.list@gmail.com, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com
-Subject: [PATCHv3] drivers/amba: add reset control to amba bus probe
-Date:   Thu,  8 Aug 2019 09:01:53 -0500
-Message-Id: <20190808140153.9156-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.20.0
+        id S1726156AbfHHOCK (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 10:02:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 07:02:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,361,1559545200"; 
+   d="scan'208";a="182601746"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.215.31]) ([10.254.215.31])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Aug 2019 07:02:08 -0700
+Subject: Re: [PATCH] perf pmu-events: Fix the missing "cpu_clk_unhalted.core"
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+References: <20190729072755.2166-1-yao.jin@linux.intel.com>
+ <20190808135636.GI19444@kernel.org>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <504a3bf5-d2fb-3576-0f43-ed80d3479c75@linux.intel.com>
+Date:   Thu, 8 Aug 2019 22:02:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190808135636.GI19444@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The primecell controller on some SoCs, i.e. SoCFPGA, is held in reset by
-default. Until recently, the DMA controller was brought out of reset by the
-bootloader(i.e. U-Boot). But a recent change in U-Boot, the peripherals that
-are not used are held in reset and are left to Linux to bring them out of
-reset.
 
-Add a mechanism for getting the reset property and de-assert the primecell
-module from reset if found. This is a not a hard fail if the reset property
-is not present in the device tree node, so the driver will continue to probe.
 
-Because there are different variants of the controller that may have multiple
-reset signals, the code will find all reset(s) specified and de-assert them.
+On 8/8/2019 9:56 PM, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Jul 29, 2019 at 03:27:55PM +0800, Jin Yao escreveu:
+>> The events defined in pmu-events JSON are parsed and added into
+>> perf tool. For fixed counters, we handle the encodings between
+>> JSON and perf by using a static array fixed[].
+>>
+>> But the fixed[] has missed an important event "cpu_clk_unhalted.core".
+>>
+>> For example, on tremont platform,
+>>
+>> [root@localhost ~]# perf stat -e cpu_clk_unhalted.core -a
+>> event syntax error: 'cpu_clk_unhalted.core'
+>>                       \___ parser error
+>>
+>> With this patch, the event cpu_clk_unhalted.core can be parsed.
+>>
+>> [root@localhost perf]# ./perf stat -e cpu_clk_unhalted.core -a -vvv
+>> ------------------------------------------------------------
+>> perf_event_attr:
+>>    type                             4
+>>    size                             112
+>>    config                           0x3c
+>>    sample_type                      IDENTIFIER
+>>    read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+>>    disabled                         1
+>>    inherit                          1
+>>    exclude_guest                    1
+>> ------------------------------------------------------------
+> 
+> Thanks, applied, next time please do not add lines starting with ---,
+> prefix it with two spaces so that git am scripts don't get confused.
+> 
+> 
+> - Arnaldo
+> 
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v3: add a reset_control_put()
-    add error handling for -EPROBE_DEFER
-v2: move reset control to bus code
-    find all reset properties and de-assert them
----
- drivers/amba/bus.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Got it, thanks for reminding. I will be careful next time.
 
-diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-index 100e798a5c82..00e68ea416ca 100644
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -18,6 +18,7 @@
- #include <linux/limits.h>
- #include <linux/clk/clk-conf.h>
- #include <linux/platform_device.h>
-+#include <linux/reset.h>
- 
- #include <asm/irq.h>
- 
-@@ -401,6 +402,28 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
- 	ret = amba_get_enable_pclk(dev);
- 	if (ret == 0) {
- 		u32 pid, cid;
-+		int count;
-+		struct reset_control *rstc;
-+
-+		/*
-+		 * Find reset control(s) of the amba bus and de-assert them.
-+		 */
-+		count = reset_control_get_count(&dev->dev);
-+		while (count > 0) {
-+			rstc = of_reset_control_get_shared_by_index(dev->dev.of_node, count - 1);
-+			if (IS_ERR(rstc)) {
-+				if (PTR_ERR(rstc) == -EPROBE_DEFER) {
-+					ret = -EPROBE_DEFER;
-+				} else {
-+					dev_err(&dev->dev, "Can't get amba reset!\n");
-+				}
-+				break;
-+			} else {
-+				reset_control_deassert(rstc);
-+				reset_control_put(rstc);
-+				count--;
-+			}
-+		}
- 
- 		/*
- 		 * Read pid and cid based on size of resource
--- 
-2.20.0
+Thanks
+Jin Yao
 
+>> ...
+>>
+>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>> ---
+>>   tools/perf/pmu-events/jevents.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+>> index 1a91a197cafb..d413761621b0 100644
+>> --- a/tools/perf/pmu-events/jevents.c
+>> +++ b/tools/perf/pmu-events/jevents.c
+>> @@ -453,6 +453,7 @@ static struct fixed {
+>>   	{ "inst_retired.any_p", "event=0xc0" },
+>>   	{ "cpu_clk_unhalted.ref", "event=0x0,umask=0x03" },
+>>   	{ "cpu_clk_unhalted.thread", "event=0x3c" },
+>> +	{ "cpu_clk_unhalted.core", "event=0x3c" },
+>>   	{ "cpu_clk_unhalted.thread_any", "event=0x3c,any=1" },
+>>   	{ NULL, NULL},
+>>   };
+>> -- 
+>> 2.17.1
+> 
