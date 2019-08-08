@@ -2,58 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3239285C40
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 09:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5379F85C46
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731777AbfHHH7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 03:59:51 -0400
-Received: from verein.lst.de ([213.95.11.211]:44280 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731548AbfHHH7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 03:59:51 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id DE88068B02; Thu,  8 Aug 2019 09:59:47 +0200 (CEST)
-Date:   Thu, 8 Aug 2019 09:59:47 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Rob Clark <robdclark@chromium.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Rob Clark <robdclark@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] drm: add cache support for arm64
-Message-ID: <20190808075947.GE30308@lst.de>
-References: <20190805211451.20176-1-robdclark@gmail.com> <20190806084821.GA17129@lst.de> <CAJs_Fx6eh1w7c=crMoD5XyEOMzP6orLhqUewErE51cPGYmObBQ@mail.gmail.com> <20190806143457.GF475@lakrids.cambridge.arm.com> <CAJs_Fx4h6SWGmDTLBnV4nmWUFAs_Ge1inxd-dW9aDKgKqmc1eQ@mail.gmail.com> <20190807123807.GD54191@lakrids.cambridge.arm.com> <CAJs_Fx5xU2-dn3iOVqWTzAjpTaQ8BBNP_Gn_iMc-eJpOX+iXoQ@mail.gmail.com> <20190807164958.GA44765@lakrids.cambridge.arm.com> <CAJs_Fx71T=kJEgt28TWqzw+jOahSbLQynCg83+szQW7op4xBkQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJs_Fx71T=kJEgt28TWqzw+jOahSbLQynCg83+szQW7op4xBkQ@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1731828AbfHHIAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:00:09 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45025 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731801AbfHHIAF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:00:05 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i18so43633701pgl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 01:00:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=xMV6uY/vHKVkmIKzViydmdx5B5e/xYSR7IpOeW3QoL8=;
+        b=h2q0oFr6RoQTAhYh9x7GZGp+e7kwYU3qvNAgbY6MX792jT3Zcvv9hdNTD84955pr8g
+         FDV6QHHKfYGqd5So/bC4uFNydlNxO6ZY+ADSeZTY9ESDL71ySAAhewAFPUobvN1i2d7Q
+         pADV1J9r8hvb6WhxAAq2rXg4E0ZfOF9G5jShMjxJ1HI6F0SFUe2xKk7Y2QA0zCIjXkK9
+         RjszYfVEJOa68PGiNiS4e92mFNICczNniUepfrudUghE+up+YhHmrmRtwyQJ2aAt0VPv
+         yoOUu9EGBVRFn+lWBdL7Ux6dqPc0V5AnEzB7C0s59aSjSq6fiS0lvSssgKIcbKSiLwyA
+         yNsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=xMV6uY/vHKVkmIKzViydmdx5B5e/xYSR7IpOeW3QoL8=;
+        b=d/mO1g3Iq3SHCA1hOWcCr67v+GpycX8Vby3G5ytVLd+ZQGcfddbUkKfNJfsTM+QnAj
+         Diya/o9LIGm60R/ulV9cYyjlAKP9SRmJUNU/akJ+Zk0/lnD/TalEOjlBfYM96wt1g+Nq
+         xHy0ke8V+QrNbTPF1qDGz7R6e5T8sfOgpq5Lqo2EInKponst8kZwu1koJouG8hSy6Rg9
+         zxIH1UQQmeQCDBDcujo/S6C71GSzRrtZ94rac/BP/KgxvUtm2XuuJWWSDk35gyv9QoBs
+         8k8V/loUEl9FRjO9JhorzBOTKAjBKV68kES9mXsWxtBvED1fsUrk8Nhy4uycEVSLIf9v
+         pjmQ==
+X-Gm-Message-State: APjAAAVCnNS9ilWA3UGW8D4tXAC4erG+lbphDiaztuMv1fPOxLNFN65j
+        jT5l94/2M8/hRLrUDcQynQK53A==
+X-Google-Smtp-Source: APXvYqzl/u71XCsVZLGazpQDqHur9BQxABWwvYEfmrFrgDr0o52f0uN0nguGi1Az1khXp/60g0wxDg==
+X-Received: by 2002:a62:1444:: with SMTP id 65mr13849575pfu.145.1565251204644;
+        Thu, 08 Aug 2019 01:00:04 -0700 (PDT)
+Received: from localhost.localdomain (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
+        by smtp.gmail.com with ESMTPSA id t8sm107697374pfq.31.2019.08.08.01.00.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 08 Aug 2019 01:00:04 -0700 (PDT)
+From:   Vincent Chen <vincent.chen@sifive.com>
+To:     paul.walmsley@sifive.com, palmer@sifive.com, aou@eecs.berkeley.edu
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Vincent Chen <vincent.chen@sifive.com>
+Subject: [PATCH 2/2] riscv: Make __fstate_clean() can work correctly.
+Date:   Thu,  8 Aug 2019 15:58:41 +0800
+Message-Id: <1565251121-28490-3-git-send-email-vincent.chen@sifive.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1565251121-28490-1-git-send-email-vincent.chen@sifive.com>
+References: <1565251121-28490-1-git-send-email-vincent.chen@sifive.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 10:30:04AM -0700, Rob Clark wrote:
-> So, we do end up using GFP_HIGHUSER, which appears to get passed thru
-> when shmem gets to the point of actually allocating pages.. not sure
-> if that just ends up being a hint, or if it guarantees that we don't
-> get something in the linear map.
-> 
-> (Bear with me while I "page" this all back in.. last time I dug thru
-> the shmem code was probably pre-armv8, or at least before I had any
-> armv8 hw)
+Make the __fstate_clean() function can correctly set the
+state of sstatus.FS in pt_regs to SR_FS_CLEAN.
 
-GFP_HIGHUSER basically just means that this is an allocation that could
-dip into highmem, in which case it would not have a kernel mapping.
-This can happen on arm + LPAE, but not on arm64.
+Tested on both QEMU and HiFive Unleashed using BBL + Linux.
+
+Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+---
+ arch/riscv/include/asm/switch_to.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+index d5fe573..544f99a 100644
+--- a/arch/riscv/include/asm/switch_to.h
++++ b/arch/riscv/include/asm/switch_to.h
+@@ -16,7 +16,7 @@ extern void __fstate_restore(struct task_struct *restore_from);
+ 
+ static inline void __fstate_clean(struct pt_regs *regs)
+ {
+-	regs->sstatus |= (regs->sstatus & ~(SR_FS)) | SR_FS_CLEAN;
++	regs->sstatus = (regs->sstatus & ~(SR_FS)) | SR_FS_CLEAN;
+ }
+ 
+ static inline void fstate_off(struct task_struct *task,
+-- 
+2.7.4
+
