@@ -2,75 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B96BD85C79
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20EA185C81
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731916AbfHHIIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:08:01 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:53742 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731658AbfHHIIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:08:00 -0400
-Received: from zn.tnic (p200300EC2F0FD700B5ECB790597D1186.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:d700:b5ec:b790:597d:1186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4C0461EC0BF2;
-        Thu,  8 Aug 2019 10:07:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565251678;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=rc80BBrVYz2/MVH2OYw1CCPq3Xf4SRzXHnHyfmI+Ffo=;
-        b=mtT9v/Qplf9BXzeub/cJvFGzb5d+rlX6FAzg9WDo1HVRQUsdPPE6Wmx3ilgCn1vdNLpM2L
-        NXiWro8/CJYra2BMEkIzk2ZVYW+rQi6u2EC2nluLz/PuVKM/AoBUbVUeAcX8BGF2ykTzhO
-        rPgUfBdYFKUFAxyQLWmojK1oj0XqloA=
-Date:   Thu, 8 Aug 2019 10:08:41 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        kuo-lang.tseng@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 01/10] x86/CPU: Expose if cache is inclusive of lower
- level caches
-Message-ID: <20190808080841.GA20745@zn.tnic>
-References: <20190806155716.GE25897@zn.tnic>
- <151002be-33e6-20d6-7699-bc9be7e51f33@intel.com>
- <20190806173300.GF25897@zn.tnic>
- <d0c04521-ec1a-3468-595c-6929f25f37ff@intel.com>
- <20190806183333.GA4698@zn.tnic>
- <e86c1f54-092d-6580-7652-cbc4ddade440@intel.com>
- <20190806191559.GB4698@zn.tnic>
- <18004821-577d-b0dd-62b8-13b6f9264e72@intel.com>
- <20190806204054.GD4698@zn.tnic>
- <98eeaa53-d100-28ff-0b68-ba57e0ea90fb@intel.com>
+        id S1731978AbfHHIJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:09:23 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36346 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731658AbfHHIJX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:09:23 -0400
+Received: by mail-ot1-f67.google.com with SMTP id r6so115155113oti.3;
+        Thu, 08 Aug 2019 01:09:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NBFSdcaTcFoDPEtsfprZTWviaehhzIBA9CqQY+IL5/Y=;
+        b=QWLrJVSTN+oAbY8u6+JjSBfg0cXKMI3XZQ+gDdGFWHhrkwsl9UMHLw+kjxum9wPNqj
+         po2aXEKcWt+duY4vHH8tGpwKqF+8JveQabU8DwSDeo+MWwCXygSzgVATvRFx4qQntc2a
+         iScU8C3/TVj6s8+ne8ZRW1yE6W13qIiKh2OQjgy6/DM0t7OARwezeV8rIcqscI9NOM2B
+         z7B3Y11JYQINiifdtHm0vGhqqlAe8aJSAUMEJ69KkuR25/DsBxqQefrK9sPZtD37zzQW
+         mPRGtUyQ8pnvyVC96CT6zdfjUyAUqgjuMkyol2ybfin/SH2OkJn95/VzhG3Q8Gnj+jbF
+         /wJw==
+X-Gm-Message-State: APjAAAV+vhawgbnciT+KqBPPZgmWGfXfzWZyxQS/h9RCLJPbgH3Bd0qe
+        SqISaw6SF3H8g/KZBoxgKNPpCsYQoU7WrveP5FM=
+X-Google-Smtp-Source: APXvYqydNbKoEj5yccYRAI19XY287hgtCeiyoefADzGyalRGi0KNiysoeatvbVR35E7SB8lrJ1JjxbckO9DPGCuWlA0=
+X-Received: by 2002:a9d:529:: with SMTP id 38mr12094425otw.145.1565251762153;
+ Thu, 08 Aug 2019 01:09:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <98eeaa53-d100-28ff-0b68-ba57e0ea90fb@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190730181557.90391-1-swboyd@chromium.org> <20190730181557.90391-42-swboyd@chromium.org>
+In-Reply-To: <20190730181557.90391-42-swboyd@chromium.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 8 Aug 2019 10:09:10 +0200
+Message-ID: <CAMuHMdWBFzNGhzAdEyFEbRE6nOWBKpCQ-5VXZfh3Bg+FMB7NXg@mail.gmail.com>
+Subject: Re: [PATCH v6 41/57] spi: Remove dev_err() usage after platform_get_irq()
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 02:16:10PM -0700, Reinette Chatre wrote:
-> > I'd leave it to tglx to say how we should mirror cache inclusivity in
-> > cpuinfo_x86: whether a synthetic X86_FEATURE bit or cache the respective
-> > CPUID words which state whether L2/L3 is inclusive...
-> 
-> Thank you very much. I appreciate your guidance here.
+Hi Stephen,
 
-Ok, tglx and I talked it over a bit on IRC: so your 1/10 patch is pretty
-close - just leave out the generic struct cacheinfo bits and put the
-cache inclusivity property in a static variable there. It will be a
-single bit of information only anyway, as this is system-wide and we can
-always move it to generic code when some other arch wants it too.
+On Tue, Jul 30, 2019 at 8:19 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> We don't need dev_err() messages when platform_get_irq() fails now that
+> platform_get_irq() prints an error message itself when something goes
+> wrong. Let's remove these prints with a simple semantic patch.
+>
+> // <smpl>
+> @@
+> expression ret;
+> struct platform_device *E;
+> @@
+>
+> ret =
+> (
+> platform_get_irq(E, ...)
+> |
+> platform_get_irq_byname(E, ...)
+> );
+>
+> if ( \( ret < 0 \| ret <= 0 \) )
+> {
+> (
+> -if (ret != -EPROBE_DEFER)
+> -{ ...
+> -dev_err(...);
+> -... }
+> |
+> ...
+> -dev_err(...);
+> )
+> ...
+> }
+> // </smpl>
+>
+> While we're here, remove braces on if statements that only have one
+> statement (manually).
+>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-spi@vger.kernel.org
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>
+> Please apply directly to subsystem trees
+>
+>  drivers/spi/atmel-quadspi.c     |  1 -
+>  drivers/spi/spi-armada-3700.c   |  1 -
+>  drivers/spi/spi-bcm2835.c       |  1 -
+>  drivers/spi/spi-bcm2835aux.c    |  1 -
+>  drivers/spi/spi-bcm63xx-hsspi.c |  4 +---
+>  drivers/spi/spi-bcm63xx.c       |  4 +---
+>  drivers/spi/spi-cadence.c       |  1 -
+>  drivers/spi/spi-dw-mmio.c       |  4 +---
+>  drivers/spi/spi-efm32.c         |  4 +---
+>  drivers/spi/spi-ep93xx.c        |  4 +---
+>  drivers/spi/spi-fsl-dspi.c      |  1 -
+>  drivers/spi/spi-fsl-qspi.c      |  4 +---
+>  drivers/spi/spi-geni-qcom.c     |  4 +---
+>  drivers/spi/spi-lantiq-ssc.c    | 12 +++---------
+>  drivers/spi/spi-mt65xx.c        |  1 -
+>  drivers/spi/spi-npcm-pspi.c     |  1 -
+>  drivers/spi/spi-nuc900.c        |  1 -
+>  drivers/spi/spi-nxp-fspi.c      |  4 +---
+>  drivers/spi/spi-pic32-sqi.c     |  1 -
+>  drivers/spi/spi-pic32.c         | 12 +++---------
+>  drivers/spi/spi-qcom-qspi.c     |  4 +---
+>  drivers/spi/spi-s3c24xx.c       |  1 -
+>  drivers/spi/spi-sh-msiof.c      |  1 -
+>  drivers/spi/spi-sh.c            |  4 +---
+>  drivers/spi/spi-sifive.c        |  1 -
+>  drivers/spi/spi-slave-mt27xx.c  |  1 -
+>  drivers/spi/spi-sprd.c          |  4 +---
+>  drivers/spi/spi-stm32-qspi.c    |  5 +----
+>  drivers/spi/spi-sun4i.c         |  1 -
+>  drivers/spi/spi-sun6i.c         |  1 -
+>  drivers/spi/spi-synquacer.c     |  2 --
+>  drivers/spi/spi-ti-qspi.c       |  1 -
+>  drivers/spi/spi-uniphier.c      |  1 -
+>  drivers/spi/spi-xlp.c           |  4 +---
+>  drivers/spi/spi-zynq-qspi.c     |  1 -
+>  drivers/spi/spi-zynqmp-gqspi.c  |  1 -
+>  36 files changed, 19 insertions(+), 80 deletions(-)
 
-Thx.
+Failed to catch
+drivers/spi/spi-rspi.c: ret = platform_get_irq_byname(pdev, "rx");
+drivers/spi/spi-rspi.c- if (ret < 0) {
+drivers/spi/spi-rspi.c:         ret = platform_get_irq_byname(pdev, "mux");
+drivers/spi/spi-rspi.c-         if (ret < 0)
+drivers/spi/spi-rspi.c:                 ret = platform_get_irq(pdev, 0);
+drivers/spi/spi-rspi.c-         if (ret >= 0)
+drivers/spi/spi-rspi.c-                 rspi->rx_irq = rspi->tx_irq = ret;
+drivers/spi/spi-rspi.c- } else {
+drivers/spi/spi-rspi.c-         rspi->rx_irq = ret;
+drivers/spi/spi-rspi.c:         ret = platform_get_irq_byname(pdev, "tx");
+drivers/spi/spi-rspi.c-         if (ret >= 0)
+drivers/spi/spi-rspi.c-                 rspi->tx_irq = ret;
+drivers/spi/spi-rspi.c- }
+drivers/spi/spi-rspi.c- if (ret < 0) {
+drivers/spi/spi-rspi.c:         dev_err(&pdev->dev, "platform_get_irq error\n");
+drivers/spi/spi-rspi.c-         goto error2;
+drivers/spi/spi-rspi.c- }
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards/Gruss,
-    Boris.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
