@@ -2,140 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8481C861A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D493E861B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388135AbfHHMa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 08:30:26 -0400
-Received: from mail-eopbgr30095.outbound.protection.outlook.com ([40.107.3.95]:59536
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726721AbfHHMa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:30:26 -0400
+        id S2389921AbfHHMbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 08:31:10 -0400
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:31676 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389798AbfHHMbE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:31:04 -0400
+Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x78CRscB002141;
+        Thu, 8 Aug 2019 08:30:57 -0400
+Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp2054.outbound.protection.outlook.com [104.47.46.54])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2u7wxfkv4x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Aug 2019 08:30:57 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jJr2MONo7ASxlrVUD1YyRHVhq/fXxGSYFNdTRh6cnVY7ufkfYwR6TXi7PHmvvSObSvwcjbP2ldGA/mhi746qv0HxtFdHvHWuR8377vYmn/Tu0fORG0YVGWdhvbGKvPwJjRiFXs2mlitpbYalZ/z0pjQnOdDLaUnMuV4NOiUtojUZfhcxhZTwYrRIXs9nUUHsvfXxpyaxlKIG1MB0lMDZnu0n5TnwJ4LrQOBJL5ta9rcZKdpXzAh04w5IQUi/nXQDhd9sXWz0U+43S9InPkzE1daelam8aGWj/yq+p8gbN8vSUKgaNW9maRXzaeZ+3mKPXYfv4y3IDMgqLOjxvBqm0w==
+ b=Z4A09v1LsdjI93nIrKJkR1R6dcwHcUbROCBdEiNEVhQWVTSDbHfDQ/Pe5VIoViU56wpVU3bx/rKxEK4q5LYdX1dHUyCfijc2Xd9HefV9valdkcx/1bZnZvT3tQuqWU9DmIU9HiiTwmiBeyiNocxD6+uBrEhk+YOcrAqhihQsfUTO2gWL27ku58y8qsFJVtH+z1ff14i/RZzBQkm29A69zX9MiQ8v2Lky/eU33pM33Z0X9oKoCzdEhNXROMy2sD2N17LArtJiP5qeGelNhcz2VXMNwT6+JqoCw47q1LrkmB6v/OAQ2cSCmxZvqhF6tJl0HMdl9x0tQkv0h1WmXTsOIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1VN3VEmc5tQWsuVGObqaqaDcvC9v5YM8hDCb0atTWg4=;
- b=bWi+mOtmGMKT4cI4YdRJwPGdlXYHRY+0oxXwTdhq7lU4e6ezoXaAMuLe8hNfxk5Na8Nb0Jf6znpduXk3PE6C/zN+IbWqhdn+eDOmqXKQRu3ERdECsSmQeDHC+zKGQXNDmf3ycD+TdEcEzOLIHnu8BdYrdgCXXWgS2r0Sg3ynW4qU4MgxBQgw/RYyeOtF8ZtlN9mY9AujxcMifo0A/8rOHJPmJhErXOIrWeqQ/BfZ9Ah5xPftkfXxMRdzEeCt6CeLrvBmqRkNnxcrep4VvlYtorMW1ZTMBnXblIYj7jO2nAD4CigAOU/ZSw3kryniaK1R1TOsYGHMWZu2smUGhNddRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
- dkim=pass header.d=habana.ai; arc=none
+ bh=GHPXD4spCXJ5uLs1jP2uoypa0o9tVtiQQM02OQbEPcU=;
+ b=P/jAKc28cOsWOoMzGKIJqiWAwXghG2KXFIrXwwBfRzP49iPn+bT4FnFHICPgPJrIs8ZUz42t4+KTNR/ofoEBcJHHR+bANaJEpFBK9VfxbtCQMdaftoG+eE1CmTLG8XXYYy/RRnh+BghmG32JUNw9JZMlxiMlVfKntDw9lp53kdnKEeaeoHsk8Jjk4FjHc4kjguaYSyc5Cl5wlWRHscM674TTZm3jIubNoozOsF9B84FB8zql/q4eHGutLzOzJeTuaAB1w02Ml3jcZIAdnj8At8xN9dOMUriJwmfnqXiRfXRrzWSrwOIOM/geCuz0G9/CRvo1KKZ9AvALdjb6r6xnmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 137.71.25.57) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
+ dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1VN3VEmc5tQWsuVGObqaqaDcvC9v5YM8hDCb0atTWg4=;
- b=la6ziIdvgbQ8rl3D003EYou0d0J006kqi35eWbaloZoc2fGXvdmqyRCWzlhjz+Io0h9BrFsPfhPeJ5SJfJCRiq2hGcaalUR0Jfsljlxo9Ja+Yt6zfdVw40YuMqO7+IPM6Ok1Ppp/dY4yw6ZW7whL2dZ+xF5qqGogg6rLOwQS4Dk=
-Received: from VI1PR02MB3054.eurprd02.prod.outlook.com (10.170.235.155) by
- VI1PR02MB3936.eurprd02.prod.outlook.com (20.177.58.85) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.15; Thu, 8 Aug 2019 12:30:22 +0000
-Received: from VI1PR02MB3054.eurprd02.prod.outlook.com
- ([fe80::30b7:2c9a:9b15:f88f]) by VI1PR02MB3054.eurprd02.prod.outlook.com
- ([fe80::30b7:2c9a:9b15:f88f%4]) with mapi id 15.20.2136.018; Thu, 8 Aug 2019
- 12:30:22 +0000
-From:   Tomer Tayar <ttayar@habana.ai>
-To:     "oded.gabbay@gmail.com" <oded.gabbay@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] habanalabs: Handle HW_IP_INFO if device disabled or in reset
-Thread-Topic: [PATCH] habanalabs: Handle HW_IP_INFO if device disabled or in
- reset
-Thread-Index: AQHVTeUMWSFAnG+tZE+ecGB9yO7osg==
-Date:   Thu, 8 Aug 2019 12:30:22 +0000
-Message-ID: <20190808122956.12789-1-ttayar@habana.ai>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PR2PR09CA0018.eurprd09.prod.outlook.com
- (2603:10a6:101:16::30) To VI1PR02MB3054.eurprd02.prod.outlook.com
- (2603:10a6:802:17::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ttayar@habana.ai; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [31.154.190.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: eb6afa63-19df-4266-d066-08d71bfc2e74
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR02MB3936;
-x-ms-traffictypediagnostic: VI1PR02MB3936:
-x-microsoft-antispam-prvs: <VI1PR02MB39360D3EE67FD5D5533532E7D2D70@VI1PR02MB3936.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 012349AD1C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(136003)(39840400004)(366004)(189003)(199004)(71200400001)(316002)(102836004)(5640700003)(2351001)(2906002)(3846002)(6916009)(6116002)(1361003)(53936002)(2501003)(81156014)(36756003)(476003)(6512007)(2616005)(486006)(7736002)(8936002)(81166006)(5660300002)(186003)(50226002)(66476007)(26005)(66556008)(66946007)(14444005)(64756008)(6506007)(256004)(6486002)(99286004)(86362001)(6436002)(66446008)(8676002)(66066001)(25786009)(305945005)(52116002)(386003)(14454004)(1076003)(71190400001)(4326008)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB3936;H:VI1PR02MB3054.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: y9/aHOCkGlyzambMrrib6cVArJKtf7LuO3dKWUy3iDVJiOydO9A1qbyEpmwgpaX46eK5GKyOrkOEmlqHJR4U7mCEsTU6dswMDGiy3VjE5hgK7UYVfhXBNUS/6n5HPqbWmA4DlSr+oe8wvNAaOJ48RiZq8+T8YtWXdmvbUO1jb2wbHy771/+p/E45ivIQFQJRY14Gad/ClE/59/jSKR8cRw+FrcBnZOvwLQY+54VQjcF5Y2X1iU5oQoyhpEC4X7sHOo71UNaSoU1D86+C7HMfqrg6UK2DfVNgemq5DdHRBP9IdtsA0jat4v7qb2LpcUU95oSjhVQWPlPv4IEQZEEMy0MHI6qqtos9uYZgvMUDPq+/y6kg6j7cNBqp9pdrTJnTHnQRB8TJ2H65+CotQ5z8bWwMYbEd6xaWOKdo4dG5TLM=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ bh=GHPXD4spCXJ5uLs1jP2uoypa0o9tVtiQQM02OQbEPcU=;
+ b=bz2bTKVsJWlbPSTw+i+kvjUtTns5Dnlr0wlENe8lSVhgPo/CPmVqPxJAetDViYEEdvzI+BEBIoPtZox5EmgrRXG7nOKXPnK3WXz98vCwTufYhXb7IxyrFVrX+zvWG0iAShmcUl9KTIzxH+MYnKp8nYxr5IhxNig5dF6dXA5qgZI=
+Received: from BN6PR03CA0012.namprd03.prod.outlook.com (2603:10b6:404:23::22)
+ by MN2PR03MB4895.namprd03.prod.outlook.com (2603:10b6:208:101::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.18; Thu, 8 Aug
+ 2019 12:30:55 +0000
+Received: from CY1NAM02FT038.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::202) by BN6PR03CA0012.outlook.office365.com
+ (2603:10b6:404:23::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.14 via Frontend
+ Transport; Thu, 8 Aug 2019 12:30:55 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ CY1NAM02FT038.mail.protection.outlook.com (10.152.74.217) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2157.15
+ via Frontend Transport; Thu, 8 Aug 2019 12:30:55 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x78CUsJW021273
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Thu, 8 Aug 2019 05:30:54 -0700
+Received: from saturn.ad.analog.com (10.48.65.113) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 8 Aug 2019 08:30:53 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <davem@davemloft.net>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <f.fainelli@gmail.com>,
+        <hkallweit1@gmail.com>, <andrew@lunn.ch>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH v2 11/15] net: phy: adin: implement PHY subsystem software reset
+Date:   Thu, 8 Aug 2019 15:30:22 +0300
+Message-ID: <20190808123026.17382-12-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190808123026.17382-1-alexandru.ardelean@analog.com>
+References: <20190808123026.17382-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb6afa63-19df-4266-d066-08d71bfc2e74
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2019 12:30:22.3329
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(39860400002)(376002)(2980300002)(199004)(189003)(316002)(107886003)(47776003)(486006)(126002)(11346002)(476003)(44832011)(2616005)(426003)(446003)(336012)(2906002)(305945005)(7636002)(2870700001)(246002)(8676002)(50466002)(186003)(6666004)(356004)(86362001)(2201001)(5660300002)(48376002)(1076003)(76176011)(26005)(7696005)(51416003)(110136005)(106002)(54906003)(36756003)(70586007)(70206006)(4326008)(14444005)(8936002)(50226002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR03MB4895;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7df3606d-866a-48f7-479e-08d71bfc4262
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:MN2PR03MB4895;
+X-MS-TrafficTypeDiagnostic: MN2PR03MB4895:
+X-Microsoft-Antispam-PRVS: <MN2PR03MB489546F9866DCE43E910B667F9D70@MN2PR03MB4895.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2201;
+X-Forefront-PRVS: 012349AD1C
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: mNZAOPDz+abW2CBRHPa3g8V9ZypOt59wzbIu6tOC8/suzPZGjo8ZiHAm15ewDHHwMuqPW2NUACSBLjGrhgfDutum1ybugLGeP/UuRyjDfKfqxxMB5Hb8dHZ9T/YVV6HGLqmmfnaVrzQUV9LmEO49Lsg2spkaXciYFz7lBXp1nqvP09tG0gHT8jspRA54GPLWaXudZ+wasXkqbjy0p0J6SJGLL+htfNfEZyNdKQp96T46NylJ6RGn8fgAjQmU3j1SjksquoxI82jNe+ZrUkeKNA7kXeQ1Mz8tnwZ9fjbx8Q6yuPFfTiHfOhoRR8iWxCcIvGX/l7YTqnjuNv7aSLuoYIEU2TrchhtDVAbevrhNzm9MqMLPm4QvbfFAnCCGIxqh3zzlORc3za4+VwmCNz8PZMUjTTLrqMm0g8t34HBorA8=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2019 12:30:55.0215
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ttayar@habana.ai
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB3936
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7df3606d-866a-48f7-479e-08d71bfc4262
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR03MB4895
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-08_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=911 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908080130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HW IP information is relevant even if the device is disabled or in
-reset, so always handle the corresponding INFO IOCTL opcode.
+The ADIN PHYs supports 4 types of reset:
+1. The standard PHY reset via BMCR_RESET bit in MII_BMCR reg
+2. Reset via GPIO
+3. Reset via reg GeSftRst (0xff0c) & reload previous pin configs
+4. Reset via reg GeSftRst (0xff0c) & request new pin configs
 
-Signed-off-by: Tomer Tayar <ttayar@habana.ai>
+Resets 2 & 4 are almost identical, with the exception that the crystal
+oscillator is available during reset for 2.
+
+As it turns out, phylib already supports GPIO reset.
+In case this is configured, the PHY driver won't do anything. In case it
+isn't specified the subsystem software reset will kick in.
+
+Resetting via GeSftRst or via GPIO is useful when doing a warm reboot,
+because this will reset the subsystem registers to default values.
+
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 ---
- drivers/misc/habanalabs/habanalabs_ioctl.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/net/phy/adin.c | 43 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/haba=
-nalabs/habanalabs_ioctl.c
-index 3ce65459b01c..589324ac19d0 100644
---- a/drivers/misc/habanalabs/habanalabs_ioctl.c
-+++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
-@@ -204,10 +204,21 @@ static int _hl_info_ioctl(struct hl_fpriv *hpriv, voi=
-d *data,
- 	struct hl_device *hdev =3D hpriv->hdev;
- 	int rc;
-=20
--	/* We want to return device status even if it disabled or in reset */
--	if (args->op =3D=3D HL_INFO_DEVICE_STATUS)
-+	/*
-+	 * Information is returned for the following opcodes even if the device
-+	 * is disabled or in reset.
-+	 */
-+	switch (args->op) {
-+	case HL_INFO_HW_IP_INFO:
-+		return hw_ip_info(hdev, args);
+diff --git a/drivers/net/phy/adin.c b/drivers/net/phy/adin.c
+index c1cea1b6bd75..f276d692bdee 100644
+--- a/drivers/net/phy/adin.c
++++ b/drivers/net/phy/adin.c
+@@ -6,6 +6,7 @@
+  */
+ #include <linux/kernel.h>
+ #include <linux/bitfield.h>
++#include <linux/delay.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+@@ -53,6 +54,9 @@
+ #define ADIN1300_CLOCK_STOP_REG			0x9400
+ #define ADIN1300_LPI_WAKE_ERR_CNT_REG		0xa000
+ 
++#define ADIN1300_GE_SOFT_RESET_REG		0xff0c
++#define   ADIN1300_GE_SOFT_RESET		BIT(0)
 +
-+	case HL_INFO_DEVICE_STATUS:
- 		return device_status_info(hdev, args);
-=20
-+	default:
-+		break;
+ #define ADIN1300_GE_RGMII_CFG_REG		0xff23
+ #define   ADIN1300_GE_RGMII_RX_MSK		GENMASK(8, 6)
+ #define   ADIN1300_GE_RGMII_RX_SEL(x)		\
+@@ -457,11 +461,49 @@ static int adin_read_status(struct phy_device *phydev)
+ 	return genphy_read_status(phydev);
+ }
+ 
++static int adin_subsytem_soft_reset(struct phy_device *phydev)
++{
++	int reg, rc, i;
++
++	rc = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
++			      ADIN1300_GE_SOFT_RESET_REG,
++			      ADIN1300_GE_SOFT_RESET);
++	if (rc < 0)
++		return rc;
++
++	for (i = 0; i < 20; i++) {
++		usleep_range(500, 1000);
++		reg = phy_read_mmd(phydev, MDIO_MMD_VEND1,
++				   ADIN1300_GE_SOFT_RESET_REG);
++		if (reg < 0 || (reg & ADIN1300_GE_SOFT_RESET))
++			continue;
++		return 0;
 +	}
 +
- 	if (hl_device_disabled_or_in_reset(hdev)) {
- 		dev_warn_ratelimited(dev,
- 			"Device is %s. Can't execute INFO IOCTL\n",
-@@ -216,10 +227,6 @@ static int _hl_info_ioctl(struct hl_fpriv *hpriv, void=
- *data,
- 	}
-=20
- 	switch (args->op) {
--	case HL_INFO_HW_IP_INFO:
--		rc =3D hw_ip_info(hdev, args);
--		break;
--
- 	case HL_INFO_HW_EVENTS:
- 		rc =3D hw_events_info(hdev, args);
- 		break;
---=20
-2.17.1
++	return -ETIMEDOUT;
++}
++
++static int adin_reset(struct phy_device *phydev)
++{
++	/* If there is a reset GPIO just exit */
++	if (!IS_ERR_OR_NULL(phydev->mdio.reset_gpio))
++		return 0;
++
++	/* Reset PHY core regs & subsystem regs */
++	return adin_subsytem_soft_reset(phydev);
++}
++
++static int adin_probe(struct phy_device *phydev)
++{
++	return adin_reset(phydev);
++}
++
+ static struct phy_driver adin_driver[] = {
+ 	{
+ 		PHY_ID_MATCH_MODEL(PHY_ID_ADIN1200),
+ 		.name		= "ADIN1200",
+ 		.config_init	= adin_config_init,
++		.probe		= adin_probe,
+ 		.config_aneg	= adin_config_aneg,
+ 		.read_status	= adin_read_status,
+ 		.get_features	= genphy_read_abilities,
+@@ -476,6 +518,7 @@ static struct phy_driver adin_driver[] = {
+ 		PHY_ID_MATCH_MODEL(PHY_ID_ADIN1300),
+ 		.name		= "ADIN1300",
+ 		.config_init	= adin_config_init,
++		.probe		= adin_probe,
+ 		.config_aneg	= adin_config_aneg,
+ 		.read_status	= adin_read_status,
+ 		.get_features	= genphy_read_abilities,
+-- 
+2.20.1
 
