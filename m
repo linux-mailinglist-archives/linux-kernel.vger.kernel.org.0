@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C25A8698C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:08:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8681E86991
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:09:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404926AbfHHTIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:08:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42592 "EHLO mail.kernel.org"
+        id S2404935AbfHHTIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:08:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404914AbfHHTI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:08:28 -0400
+        id S2404924AbfHHTIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:08:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67EF2214C6;
-        Thu,  8 Aug 2019 19:08:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D7532173E;
+        Thu,  8 Aug 2019 19:08:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291307;
-        bh=y+KGKOtF7MqVy0UVCsYg0rhY9gYOeiKEhvw/i2aTOgQ=;
+        s=default; t=1565291310;
+        bh=1v3C4Er5CSvndpqfC+4XC6Cn6pCNievAd8A4fILvc/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vY2p89Nf+SvpjxJZ/+ieV12ScLLNR6xUaY1iGXOkE694mnA0hx4aYeqmSt54aZETl
-         oqvUZPg0o394eSw4NBQyUSC4cJwQiYO0tl3Yg419/e88yRLx/eef+jPpFFjZIQxhH8
-         r1Kh7lssCyjfn9WTz90uI8B1LcI9KOAq1pduXay8=
+        b=yQYBq8BrT2n1hSYLGLQq7WbCwHD4skAtvJ3OSbF+LJ3inEWeqauWlINC1o0zQqDfr
+         RS75wpjaKlkinRm44eHXkaINL2CaFk9+BNqyUiai/oaABGYYwFwj/GuOBHpYPw9UCb
+         teDoE0p2LnqaCgU17cDZurF4ZpUoCqYSzQ13wMKM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Parschauer <s.parschauer@gmx.de>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.19 10/45] HID: Add quirk for HP X1200 PIXART OEM mouse
-Date:   Thu,  8 Aug 2019 21:04:56 +0200
-Message-Id: <20190808190454.344472304@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 11/45] [PATCH] IB: directly cast the sockaddr union to aockaddr
+Date:   Thu,  8 Aug 2019 21:04:57 +0200
+Message-Id: <20190808190454.404366737@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
 References: <20190808190453.827571908@linuxfoundation.org>
@@ -43,46 +42,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Parschauer <s.parschauer@gmx.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 49869d2ea9eecc105a10724c1abf035151a3c4e2 upstream.
+Like commit 641114d2af31 ("RDMA: Directly cast the sockaddr union to
+sockaddr") we need to quiet gcc 9 from warning about this crazy union.
+That commit did not fix all of the warnings in 4.19 and older kernels
+because the logic in roce_resolve_route_from_path() was rewritten
+between 4.19 and 5.2 when that change happened.
 
-The PixArt OEM mice are known for disconnecting every minute in
-runlevel 1 or 3 if they are not always polled. So add quirk
-ALWAYS_POLL for this one as well.
-
-Jonathan Teh (@jonathan-teh) reported and tested the quirk.
-Reference: https://github.com/sriemer/fix-linux-mouse/issues/15
-
-Signed-off-by: Sebastian Parschauer <s.parschauer@gmx.de>
-CC: stable@vger.kernel.org
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hid/hid-ids.h    |    1 +
- drivers/hid/hid-quirks.c |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/infiniband/core/sa_query.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -559,6 +559,7 @@
- #define USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0B4A	0x0b4a
- #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE		0x134a
- #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A	0x094a
-+#define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0641	0x0641
+--- a/drivers/infiniband/core/sa_query.c
++++ b/drivers/infiniband/core/sa_query.c
+@@ -1232,7 +1232,6 @@ static int roce_resolve_route_from_path(
+ {
+ 	struct rdma_dev_addr dev_addr = {};
+ 	union {
+-		struct sockaddr     _sockaddr;
+ 		struct sockaddr_in  _sockaddr_in;
+ 		struct sockaddr_in6 _sockaddr_in6;
+ 	} sgid_addr, dgid_addr;
+@@ -1249,12 +1248,12 @@ static int roce_resolve_route_from_path(
+ 	 */
+ 	dev_addr.net = &init_net;
  
- #define USB_VENDOR_ID_HUION		0x256c
- #define USB_DEVICE_ID_HUION_TABLET	0x006e
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -94,6 +94,7 @@ static const struct hid_device_id hid_qu
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0B4A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A), HID_QUIRK_ALWAYS_POLL },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0641), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_IDEACOM, USB_DEVICE_ID_IDEACOM_IDC6680), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_INNOMEDIA, USB_DEVICE_ID_INNEX_GENESIS_ATARI), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_KYE, USB_DEVICE_ID_KYE_EASYPEN_M610X), HID_QUIRK_MULTI_INPUT },
+-	rdma_gid2ip(&sgid_addr._sockaddr, &rec->sgid);
+-	rdma_gid2ip(&dgid_addr._sockaddr, &rec->dgid);
++	rdma_gid2ip((struct sockaddr *)&sgid_addr, &rec->sgid);
++	rdma_gid2ip((struct sockaddr *)&dgid_addr, &rec->dgid);
+ 
+ 	/* validate the route */
+-	ret = rdma_resolve_ip_route(&sgid_addr._sockaddr,
+-				    &dgid_addr._sockaddr, &dev_addr);
++	ret = rdma_resolve_ip_route((struct sockaddr *)&sgid_addr,
++				    (struct sockaddr *)&dgid_addr, &dev_addr);
+ 	if (ret)
+ 		return ret;
+ 
 
 
