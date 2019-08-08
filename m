@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 229F986A55
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E4D686A3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404953AbfHHTPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:15:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41140 "EHLO mail.kernel.org"
+        id S2404696AbfHHTHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:07:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404262AbfHHTH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:07:26 -0400
+        id S2404681AbfHHTHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:07:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F00D3214C6;
-        Thu,  8 Aug 2019 19:07:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BEA5214C6;
+        Thu,  8 Aug 2019 19:07:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291246;
-        bh=i+No/v5lAkCodta36V5I1H31ENzL9BPkUEng+6jrXHo=;
+        s=default; t=1565291251;
+        bh=UPWNm89fVyI/H2Z+QI/QaH6Ahsgr7FbuohmiZ8pZtX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nJfXSSote8gcvU6voiEv4TCV45LfUDiB9oDGHLitZwW5bpdAOzvRyROQTy9sD4/bP
-         vHA1lysc1XZkZgbYfHX+2IJHFQv8e3NYDkzESEwxsoP8XAe/OpiFpZsX5aq0BMBhK2
-         fndTlIfxRuWw/dxCaJi0tHx9BNXnZJo8D1se5sr0=
+        b=CBFWKLUfNyS/Tqcu8uIAtZ5aq4BGkYfpAVCx/Ke6RL4QSPqiFXh90x9riK92qRI+O
+         V0vl4ToZhwyWQqP+PcjiiawV7ueji9n3Vq2PyafSdMuwYm1DATSuptBKJnzNuZh46r
+         3Mr5i6okaPDPTIxIiVR7sQchwckHtp9/morfPJD4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Parschauer <s.parschauer@gmx.de>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 5.2 07/56] HID: Add quirk for HP X1200 PIXART OEM mouse
-Date:   Thu,  8 Aug 2019 21:04:33 +0200
-Message-Id: <20190808190453.156076010@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
+        Manish Chopra <manishc@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.2 09/56] bnx2x: Disable multi-cos feature.
+Date:   Thu,  8 Aug 2019 21:04:35 +0200
+Message-Id: <20190808190453.239926499@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
 References: <20190808190452.867062037@linuxfoundation.org>
@@ -43,46 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Parschauer <s.parschauer@gmx.de>
+From: Sudarsana Reddy Kalluru <skalluru@marvell.com>
 
-commit 49869d2ea9eecc105a10724c1abf035151a3c4e2 upstream.
+[ Upstream commit d1f0b5dce8fda09a7f5f04c1878f181d548e42f5 ]
 
-The PixArt OEM mice are known for disconnecting every minute in
-runlevel 1 or 3 if they are not always polled. So add quirk
-ALWAYS_POLL for this one as well.
+Commit 3968d38917eb ("bnx2x: Fix Multi-Cos.") which enabled multi-cos
+feature after prolonged time in driver added some regression causing
+numerous issues (sudden reboots, tx timeout etc.) reported by customers.
+We plan to backout this commit and submit proper fix once we have root
+cause of issues reported with this feature enabled.
 
-Jonathan Teh (@jonathan-teh) reported and tested the quirk.
-Reference: https://github.com/sriemer/fix-linux-mouse/issues/15
-
-Signed-off-by: Sebastian Parschauer <s.parschauer@gmx.de>
-CC: stable@vger.kernel.org
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: 3968d38917eb ("bnx2x: Fix Multi-Cos.")
+Signed-off-by: Sudarsana Reddy Kalluru <skalluru@marvell.com>
+Signed-off-by: Manish Chopra <manishc@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hid/hid-ids.h    |    1 +
- drivers/hid/hid-quirks.c |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -568,6 +568,7 @@
- #define USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0B4A	0x0b4a
- #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE		0x134a
- #define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A	0x094a
-+#define USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0641	0x0641
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+@@ -1934,8 +1934,7 @@ u16 bnx2x_select_queue(struct net_device
+ 	}
  
- #define USB_VENDOR_ID_HUION		0x256c
- #define USB_DEVICE_ID_HUION_TABLET	0x006e
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -91,6 +91,7 @@ static const struct hid_device_id hid_qu
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_LOGITECH_OEM_USB_OPTICAL_MOUSE_0B4A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_094A), HID_QUIRK_ALWAYS_POLL },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_HP, USB_PRODUCT_ID_HP_PIXART_OEM_USB_OPTICAL_MOUSE_0641), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_IDEACOM, USB_DEVICE_ID_IDEACOM_IDC6680), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_INNOMEDIA, USB_DEVICE_ID_INNEX_GENESIS_ATARI), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_KYE, USB_DEVICE_ID_KYE_EASYPEN_M610X), HID_QUIRK_MULTI_INPUT },
+ 	/* select a non-FCoE queue */
+-	return netdev_pick_tx(dev, skb, NULL) %
+-	       (BNX2X_NUM_ETH_QUEUES(bp) * bp->max_cos);
++	return netdev_pick_tx(dev, skb, NULL) % (BNX2X_NUM_ETH_QUEUES(bp));
+ }
+ 
+ void bnx2x_set_num_queues(struct bnx2x *bp)
 
 
