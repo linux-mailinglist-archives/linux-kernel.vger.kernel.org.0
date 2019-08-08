@@ -2,134 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D841865B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:27:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ECD5865C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:30:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732957AbfHHP1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:27:46 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:51700 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbfHHP1p (ORCPT
+        id S1733149AbfHHPaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 11:30:01 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:37132 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727096AbfHHPaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:27:45 -0400
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id x78FRVAq020810
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 8 Aug 2019 17:27:31 +0200
-Received: from [139.25.68.37] (md1q0hnc.ad001.siemens.net [139.25.68.37] (may be forged))
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id x78FRVDw010152;
-        Thu, 8 Aug 2019 17:27:31 +0200
-Subject: Re: [PATCH v2] kbuild: show hint if subdir-y/m is used to visit
- module Makefile
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     Tom Stonecypher <thomas.edwardx.stonecypher@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>
-References: <20190808112111.16159-1-yamada.masahiro@socionext.com>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <4377a933-1550-d95f-8a71-bb7f64756eb5@siemens.com>
-Date:   Thu, 8 Aug 2019 17:27:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 8 Aug 2019 11:30:00 -0400
+Received: by mail-vs1-f66.google.com with SMTP id v6so63370724vsq.4
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 08:30:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QQ67960ROY2a/127HWY6jHmfLZvvKglq5u8NMNjYI1Y=;
+        b=kmlK0/FKpYSrx2hur8a9t4OIdtqyOzr9THPxdPoXoVp2SotkfMdIG/oBPmgepUANo7
+         5wxGRYKFtXcz35m5NYV6n1mpRxqm3J2IZBnVx0RHjV/f6d+9Nbyp1jlPAq46MLaojzYN
+         zfi/wcFKJI3CHSAL+5RzV2adQgeYh7gk4sIk4EnOTPm8bYukyOnot1KAbcjyIKVBrUZh
+         sFrr6Tarmycg6qQ2M7QAqs9AkYpRdwv6qGUtBpfOhgF6bEPeR4Re16KmoQwXCwdNsmcl
+         zGYuMktiq2EFXkfZ9q8GKn/83u45cK2qTB/gs/sxKjc+SJZ8WXvAkQlU0hjn71hXwCB0
+         Kvuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QQ67960ROY2a/127HWY6jHmfLZvvKglq5u8NMNjYI1Y=;
+        b=PzXrVfH9D1ox3g2bcLyT0RUJ9uXcagbBw/SK53iHj6gXtyTqyYSX1W1bIGPIqFgylr
+         /PTzaqsetjIcZMNvAYsR7LFqLnw7myg7LuuEuSQDtGlevMMKmINjb0ffr4CHHLcDoma6
+         srzbX5ZWTIps5HEr0y+BuYVRAtTBKdCJN+5DBLD83/6KCSJ4GYY67u67hz9+ydB22G6G
+         Iu58l+7HPAkjXKP7Bs393iltjtoz+3C6/Imcaa5YWiajhT3MYEY92Gy/81yjMu0cHxKq
+         JDL8Y/nWtPEGZZ2o5zbYlLKBbXxLog6n80bagUH5tc15QofifGIZw/pKMY+V68QrVY2B
+         nv5A==
+X-Gm-Message-State: APjAAAXS4LpwCaF1ArMN31ejkFUvIghbZsNQ02WnWnJU76MlTpiewePn
+        ghdm2lIUafQj3MzeML7Az4jV154r2zFE7zraioHoYw==
+X-Google-Smtp-Source: APXvYqxKi3cA9YcGMYMd//YpNRPqFA3cCz3N7LoXHqKDwPYBU0jxMSGjHUhjBPY7g60T9+jxuZelgTW7fSvznp0WgLQ=
+X-Received: by 2002:a67:e454:: with SMTP id n20mr10625187vsm.34.1565278199947;
+ Thu, 08 Aug 2019 08:29:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190808112111.16159-1-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190722153745.32446-1-lorenzo.pieralisi@arm.com>
+ <20190722153745.32446-7-lorenzo.pieralisi@arm.com> <20190808125516.GA2246@e107155-lin>
+In-Reply-To: <20190808125516.GA2246@e107155-lin>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 8 Aug 2019 17:29:24 +0200
+Message-ID: <CAPDyKFqHHwq=3XhSH_=uu5QoFkP3VYJ+2h7ENG5DNs-YzM6bNQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] PSCI: cpuidle: Refactor CPU suspend power_state
+ parameter handling
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LAKML <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.08.19 13:21, Masahiro Yamada wrote:
-> Since commit ff9b45c55b26 ("kbuild: modpost: read modules.order instead
-> of $(MODVERDIR)/*.mod"), a module is no longer built in the following
-> pattern:
-> 
->   [Makefile]
->   subdir-y := some-module
-> 
->   [some-module/Makefile]
->   obj-m := some-module.o
-> 
-> You cannot write Makefile this way in upstream because modules.order is
-> not correctly generated. subdir-y is used to descend to a sub-directory
-> that builds tools, device trees, etc.
-> 
-> For external modules, the modules order does not matter. So, the
-> Makefile above was known to work.
-> 
-> I believe the Makefile should be re-written as follows:
-> 
->   [Makefile]
->   obj-m := some-module/
-> 
->   [some-module/Makefile]
->   obj-m := some-module.o
-> 
-> However, people will have no idea if their Makefile suddenly stops
-> working. In fact, I received questions from multiple people.
-> 
-> Show a warning if obj-m is specified in a Makefile visited by subdir-y
-> or subdir-m.
-> 
-> I touched the %/ rule to avoid false-positive warnings for the single
-> target.
-> 
-> Cc: Jan Kiszka <jan.kiszka@siemens.com>
-> Cc: Tom Stonecypher <thomas.edwardx.stonecypher@intel.com>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> Changes in v2:
->  - fix false-positive warnings for single targets
-> 
->  Makefile               | 2 +-
->  scripts/Makefile.build | 7 +++++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 0e37ad2f77bf..fac25e279da6 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1783,7 +1783,7 @@ PHONY += /
->  /: ./
->  
->  %/: prepare FORCE
-> -	$(Q)$(MAKE) KBUILD_MODULES=1 $(build)=$(build-dir)
-> +	$(Q)$(MAKE) KBUILD_MODULES=1 $(build)=$(build-dir) need-modorder=1
->  
->  # FIXME Should go into a make.lib or something
->  # ===========================================================================
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 37a1d2cd49d4..2f66ed388d1c 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -52,6 +52,13 @@ ifndef obj
->  $(warning kbuild: Makefile.build is included improperly)
->  endif
->  
-> +ifeq ($(MAKECMDGOALS)$(need-modorder),)
-> +ifneq ($(obj-m),)
-> +$(warning $(patsubst %.o,'%.ko',$(obj-m)) will not be built even though obj-m is specified.)
-> +$(warning You cannot use subdir-y/m to visit a module Makefile. Use obj-y/m instead.)
-> +endif
-> +endif
-> +
->  # ===========================================================================
->  
->  ifneq ($(strip $(lib-y) $(lib-m) $(lib-)),)
-> 
+On Thu, 8 Aug 2019 at 14:55, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On Mon, Jul 22, 2019 at 04:37:45PM +0100, Lorenzo Pieralisi wrote:
+> > Current PSCI code handles idle state entry through the
+> > psci_cpu_suspend_enter() API, that takes an idle state index as a
+> > parameter and convert the index into a previously initialized
+> > power_state parameter before calling the PSCI.CPU_SUSPEND() with it.
+> >
+> > This is unwieldly, since it forces the PSCI firmware layer to keep track
+> > of power_state parameter for every idle state so that the
+> > index->power_state conversion can be made in the PSCI firmware layer
+> > instead of the CPUidle driver implementations.
+> >
+> > Move the power_state handling out of drivers/firmware/psci
+> > into the respective ACPI/DT PSCI CPUidle backends and convert
+> > the psci_cpu_suspend_enter() API to get the power_state
+> > parameter as input, which makes it closer to its firmware
+> > interface PSCI.CPU_SUSPEND() API.
+> >
+> > A notable side effect is that the PSCI ACPI/DT CPUidle backends
+> > now can directly handle (and if needed update) power_state
+> > parameters before handing them over to the PSCI firmware
+> > interface to trigger PSCI.CPU_SUSPEND() calls.
+> >
+> > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>
+>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+>
+> > +static __init int psci_cpu_init_idle(unsigned int cpu)
+> > +{
+> > +     struct device_node *cpu_node;
+> > +     int ret;
+> > +
+> > +     /*
+> > +      * If the PSCI cpu_suspend function hook has not been initialized
+> > +      * idle states must not be enabled, so bail out
+> > +      */
+> > +     if (!psci_ops.cpu_suspend)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     cpu_node = of_get_cpu_node(cpu, NULL);
+>
+> [nit] You could use of_cpu_device_node_get in linux/of_device.h as
+> it may avoid parsing if used later during the boot(i.e. after
+> cpu->of_node is populated). I think there's another instance in
+> psci_idle_init_cpu
 
-FWIW, I've thrown this patch (with the other 2) at our "special" out-of-tree
-modules repo, and it worked as expected: Warned when we were still using
-subdir-y, remained silent after the fix.
+Good idea!
 
-Tested-by: Jan Kiszka <jan.kiszka@siemens.com>
+However, as $subject patch more or less just moves code from the
+current psci firmware directory into cpuidle, perhaps it's better to
+defer improvements to be made on top?
 
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Kind regards
+Uffe
