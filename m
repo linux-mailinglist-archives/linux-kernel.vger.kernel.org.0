@@ -2,55 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB39F8661C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:43:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE1186622
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390164AbfHHPm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:42:59 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:44704 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390135AbfHHPm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:42:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=71BgATi3fwScYhoG1VjUtXuzsnzG/QI4KdsUv9j4q2E=; b=W0+BR44zZTlOQ4LIzNLurbZaID
-        vxDpecDrIx2bOllUdp0MwEjpKeqtKA/E9c8GAcUigX5J2Lv1RQg61KphQehwtdl784kYAuVJ+pf1W
-        ycL9Y4UlwXvXkKBgR0K8EH6v1RCncBF/F+YgEcW9Jx+S3RP+Zfj81ijzpeSrCyCdWXR8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hvkZ3-0003zM-4X; Thu, 08 Aug 2019 17:42:53 +0200
-Date:   Thu, 8 Aug 2019 17:42:53 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, f.fainelli@gmail.com,
-        hkallweit1@gmail.com
-Subject: Re: [PATCH v2 08/15] net: phy: adin: make RMII fifo depth
- configurable
-Message-ID: <20190808154253.GH27917@lunn.ch>
-References: <20190808123026.17382-1-alexandru.ardelean@analog.com>
- <20190808123026.17382-9-alexandru.ardelean@analog.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808123026.17382-9-alexandru.ardelean@analog.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S2390156AbfHHPoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 11:44:16 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46814 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732845AbfHHPoQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 11:44:16 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c2so43679582plz.13;
+        Thu, 08 Aug 2019 08:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HE8FZxsruLvX3xYGHWKwgoiLO1Rd2XyeDoDtQvRCtWY=;
+        b=grsy3TOjiWtkORQo0KQVvYxBio+r+1W1VYhuqO0Ixlp/eJi5+qv7krzNM//xDoPLjf
+         aBkSIM3msOdm+qIzlp9azGTTbNGkZhP5TFr0HVlrZ9t4M03fvyvSonRZmCKDywCANjhs
+         Xi9Bq+BOD0X78QLL6RevrbBDRJd+cN3beZVgVuqEDk7rsrYQ/rYlY5OXlg8AunTkSWs2
+         HzWEhqEIFmZWfk3sVQ6X011c4X8vtSd6jOz5IKNycI0EjqQgEMNcvpKclHRVmcnzjfJk
+         B7RjWLDD8GANCewwkrcjQAtQvvLXM79SSQ/OoHHPmZJkf2mG9zUUG7XK20WzGX/OfdF0
+         gkKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HE8FZxsruLvX3xYGHWKwgoiLO1Rd2XyeDoDtQvRCtWY=;
+        b=eb8E+mH6r9AA+prvB0DQeruSCboemQ77QhBPnsRz+EYhJfJQWMEmzoulN7fypivcuO
+         /atr4Wiici3aRbT/YpLaaUcEpI/DMsSofbmjbXLJljUbEHxUy36WX0QbxguD4j2s/yEY
+         dP61XbItYZE9vajETQ0/txJzL8A99cBoizd9443uVVHnhmEQeIFoheCVDazJkbc4hIaV
+         H+kpXrmbvhmjSjY4h396a2cBSz8O6YwiHpcqLP3c4s4Q7Gn5hvBnjCSVok2OPADmKcRl
+         vsslsK1Nh63JCF4ERGA48BlU1spgDIYuMUN0rj+hxCxT4ghAbt9mFcKVOMt02ZrUdLn/
+         zU4w==
+X-Gm-Message-State: APjAAAWzE/Z1Cz06qmjdc+KCRz6tst2MUg7JLZCPjMYHIkPxEC3XbGoU
+        optWmpwrCleuL0xGbPR0c2Q=
+X-Google-Smtp-Source: APXvYqyJE4kvaS/a5NKJl4jOQIWf8UAHU39u6aDn4hk7Oz3YDqlkOVze10Lbmptf27kKa0ja5ylYAg==
+X-Received: by 2002:a17:902:b218:: with SMTP id t24mr10170494plr.213.1565279055259;
+        Thu, 08 Aug 2019 08:44:15 -0700 (PDT)
+Received: from localhost.localdomain ([103.83.147.157])
+        by smtp.gmail.com with ESMTPSA id j10sm64476517pfn.188.2019.08.08.08.44.03
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 08 Aug 2019 08:44:13 -0700 (PDT)
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     jic23@kernel.org
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        dpfrey@gmail.com, mike.looijmans@topic.nl,
+        Himanshu Jha <himanshujha199640@gmail.com>
+Subject: [PATCH] iio: chemical: bme680: Fix pressure and humidity ABI mismatch
+Date:   Thu,  8 Aug 2019 21:13:50 +0530
+Message-Id: <20190808154350.9693-1-himanshujha199640@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 03:30:19PM +0300, Alexandru Ardelean wrote:
-> The FIFO depth can be configured for the RMII mode. This change adds
-> support for doing this via device-tree (or ACPI).
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Standard ABI for reporting pressure is kilopascal and for
+relative humidity it is millipercent.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+What:           /sys/bus/iio/devices/iio:deviceX/in_pressureY_input
+What:           /sys/bus/iio/devices/iio:deviceX/in_pressure_input
+KernelVersion:  3.8
+Contact:        linux-iio@vger.kernel.org
+Description:
+                Scaled pressure measurement from channel Y, in kilopascal.
 
-    Andrew
+What:           /sys/bus/iio/devices/iio:deviceX/in_humidityrelative_input
+KernelVersion:  3.14
+Contact:        linux-iio@vger.kernel.org
+Description:
+                Scaled humidity measurement in milli percent.
+
+Currently pressure is reported in hectopascal(hPa) and relative humidity
+in percent. Hence fix this ABI mismatch conforming to the standard ABI.
+
+Fixes: 1b3bd8592780 ("iio: chemical: Add support for Bosch BME680 sensor")
+Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+---
+
+While cleaning this mess I wonder about the gas channel and there
+exists no `in_resistance_input` in standard ABI :-(
+
+We only have:
+
+What:           /sys/bus/iio/devices/iio:deviceX/in_resistance_raw
+What:           /sys/bus/iio/devices/iio:deviceX/in_resistanceX_raw
+What:           /sys/bus/iio/devices/iio:deviceX/out_resistance_raw
+What:           /sys/bus/iio/devices/iio:deviceX/out_resistanceX_raw
+KernelVersion:  4.3
+Contact:        linux-iio@vger.kernel.org
+Description:
+                Raw (unscaled no offset etc.) resistance reading that can be processed
+                into an ohm value.
+
+The sensor outputs processed value which is reported as is.
+
+So, does it need a new ABI ?
+
+ drivers/iio/chemical/bme680_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+index ccde4c65ff93..28cc96d1e3c8 100644
+--- a/drivers/iio/chemical/bme680_core.c
++++ b/drivers/iio/chemical/bme680_core.c
+@@ -670,7 +670,7 @@ static int bme680_read_press(struct bme680_data *data,
+ 	}
+ 
+ 	*val = bme680_compensate_press(data, adc_press);
+-	*val2 = 100;
++	*val2 = 1000;
+ 	return IIO_VAL_FRACTIONAL;
+ }
+ 
+@@ -704,7 +704,7 @@ static int bme680_read_humid(struct bme680_data *data,
+ 	comp_humidity = bme680_compensate_humid(data, adc_humidity);
+ 
+ 	*val = comp_humidity;
+-	*val2 = 1000;
++	*val2 = 1000000;
+ 	return IIO_VAL_FRACTIONAL;
+ }
+ 
+-- 
+2.17.1
+
