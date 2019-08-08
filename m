@@ -2,110 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D606C85C8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA67485C9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:15:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731989AbfHHINx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:13:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33204 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731781AbfHHINw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:13:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 68840AFFE;
-        Thu,  8 Aug 2019 08:13:49 +0000 (UTC)
-Date:   Thu, 8 Aug 2019 10:00:44 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
-        namhyung@google.com, paulmck@linux.ibm.com,
-        Robin Murphy <robin.murphy@arm.com>,
-        Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v5 1/6] mm/page_idle: Add per-pid idle page tracking
- using virtual index
-Message-ID: <20190808080044.GA18351@dhcp22.suse.cz>
-References: <20190807171559.182301-1-joel@joelfernandes.org>
- <20190807130402.49c9ea8bf144d2f83bfeb353@linux-foundation.org>
- <20190807204530.GB90900@google.com>
- <20190807135840.92b852e980a9593fe91fbf59@linux-foundation.org>
- <20190807213105.GA14622@google.com>
+        id S1732030AbfHHIP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:15:57 -0400
+Received: from mail.netline.ch ([148.251.143.178]:57153 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731891AbfHHIP5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:15:57 -0400
+X-Greylist: delayed 335 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Aug 2019 04:15:55 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 8810C2AA156;
+        Thu,  8 Aug 2019 10:10:19 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id d_GMqpSu42f8; Thu,  8 Aug 2019 10:10:19 +0200 (CEST)
+Received: from thor (116.245.63.188.dynamic.wline.res.cust.swisscom.ch [188.63.245.116])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id C6F842AA0BD;
+        Thu,  8 Aug 2019 10:10:18 +0200 (CEST)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.92)
+        (envelope-from <michel@daenzer.net>)
+        id 1hvdV3-0005XJ-SO; Thu, 08 Aug 2019 10:10:17 +0200
+Subject: Re: [Regression] "drm/amdgpu: enable gfxoff again on raven series
+ (v2)"
+To:     "Huang, Ray" <Ray.Huang@amd.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>
+References: <3EB0E920-31D7-4C91-A360-DBFB4417AC2F@canonical.com>
+ <MN2PR12MB330979BAFF5BCC758258D54CECD40@MN2PR12MB3309.namprd12.prod.outlook.com>
+ <624BFB8F-B586-492E-BEA6-4B138DAEC831@canonical.com>
+ <MN2PR12MB3309680845257BC66644133CECD70@MN2PR12MB3309.namprd12.prod.outlook.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <615a4948-d0f9-46fc-f43e-2025455e9af6@daenzer.net>
+Date:   Thu, 8 Aug 2019 10:10:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807213105.GA14622@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <MN2PR12MB3309680845257BC66644133CECD70@MN2PR12MB3309.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07-08-19 17:31:05, Joel Fernandes wrote:
-> On Wed, Aug 07, 2019 at 01:58:40PM -0700, Andrew Morton wrote:
-> > On Wed, 7 Aug 2019 16:45:30 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
-> > 
-> > > On Wed, Aug 07, 2019 at 01:04:02PM -0700, Andrew Morton wrote:
-> > > > On Wed,  7 Aug 2019 13:15:54 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
-> > > > 
-> > > > > In Android, we are using this for the heap profiler (heapprofd) which
-> > > > > profiles and pin points code paths which allocates and leaves memory
-> > > > > idle for long periods of time. This method solves the security issue
-> > > > > with userspace learning the PFN, and while at it is also shown to yield
-> > > > > better results than the pagemap lookup, the theory being that the window
-> > > > > where the address space can change is reduced by eliminating the
-> > > > > intermediate pagemap look up stage. In virtual address indexing, the
-> > > > > process's mmap_sem is held for the duration of the access.
-> > > > 
-> > > > So is heapprofd a developer-only thing?  Is heapprofd included in
-> > > > end-user android loads?  If not then, again, wouldn't it be better to
-> > > > make the feature Kconfigurable so that Android developers can enable it
-> > > > during development then disable it for production kernels?
-> > > 
-> > > Almost all of this code is already configurable with
-> > > CONFIG_IDLE_PAGE_TRACKING. If you disable it, then all of this code gets
-> > > disabled.
-> > > 
-> > > Or are you referring to something else that needs to be made configurable?
-> > 
-> > Yes - the 300+ lines of code which this patchset adds!
-> > 
-> > The impacted people will be those who use the existing
-> > idle-page-tracking feature but who will not use the new feature.  I
-> > guess we can assume this set is small...
+On 2019-08-08 8:29 a.m., Huang, Ray wrote:
+>> From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> at 00:03, Huang, Ray <Ray.Huang@amd.com> wrote:
+>>
+>>> May I know the all firmware version in your system?
 > 
-> Yes, I think this set should be small. The code size increase of page_idle.o
-> is from ~1KB to ~2KB. Most of the extra space is consumed by
-> page_idle_proc_generic() function which this patch adds. I don't think adding
-> another CONFIG option to disable this while keeping existing
-> CONFIG_IDLE_PAGE_TRACKING enabled, is worthwhile but I am open to the
-> addition of such an option if anyone feels strongly about it. I believe that
-> once this patch is merged, most like this new interface being added is what
-> will be used more than the old interface (for some of the usecases) so it
-> makes sense to keep it alive with CONFIG_IDLE_PAGE_TRACKING.
+> Seems to the issue we encountered with IOMMU enabled. Could you please disable iommu in SBIOS or GRUB?
 
-I would tend to agree with Joel here. The functionality falls into an
-existing IDLE_PAGE_TRACKING config option quite nicely. If there really
-are users who want to save some space and this is standing in the way
-then they can easily add a new config option with some justification so
-the savings are clear. Without that an additional config simply adds to
-the already existing configurability complexity and balkanization.
+The driver needs to work with the IOMMU enabled. If nothing else, ROCm
+only works with IOMMU I think.
+
+
 -- 
-Michal Hocko
-SUSE Labs
+Earthling Michel Dänzer               |              https://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
