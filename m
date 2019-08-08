@@ -2,73 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11AB385A94
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 08:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DB8785A9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 08:24:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731228AbfHHGV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 02:21:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35042 "EHLO mx1.suse.de"
+        id S1731260AbfHHGYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 02:24:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3783 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731005AbfHHGV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 02:21:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4FE4DAF37;
-        Thu,  8 Aug 2019 06:21:57 +0000 (UTC)
-Date:   Thu, 8 Aug 2019 08:21:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
-Message-ID: <20190808062155.GF11812@dhcp22.suse.cz>
-References: <20190805222019.28592-1-jhubbard@nvidia.com>
- <20190805222019.28592-2-jhubbard@nvidia.com>
- <20190807110147.GT11812@dhcp22.suse.cz>
- <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
+        id S1726187AbfHHGYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 02:24:07 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8FAB4BD13FE50CABA2B0;
+        Thu,  8 Aug 2019 14:24:05 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 8 Aug 2019
+ 14:23:57 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <j.vosburgh@gmail.com>, <vfalico@gmail.com>, <andy@greyhouse.net>,
+        <davem@davemloft.net>, <jiri@resnulli.us>,
+        <jay.vosburgh@canonical.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2] team: Add vlan tx offload to hw_enc_features
+Date:   Thu, 8 Aug 2019 14:22:47 +0800
+Message-ID: <20190808062247.38352-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190807023808.51976-1-yuehaibing@huawei.com>
+References: <20190807023808.51976-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07-08-19 16:32:08, John Hubbard wrote:
-> On 8/7/19 4:01 AM, Michal Hocko wrote:
-> > On Mon 05-08-19 15:20:17, john.hubbard@gmail.com wrote:
-> >> From: John Hubbard <jhubbard@nvidia.com>
-> >>
-> >> For pages that were retained via get_user_pages*(), release those pages
-> >> via the new put_user_page*() routines, instead of via put_page() or
-> >> release_pages().
-> > 
-> > Hmm, this is an interesting code path. There seems to be a mix of pages
-> > in the game. We get one page via follow_page_mask but then other pages
-> > in the range are filled by __munlock_pagevec_fill and that does a direct
-> > pte walk. Is using put_user_page correct in this case? Could you explain
-> > why in the changelog?
-> > 
-> 
-> Actually, I think follow_page_mask() gets all the pages, right? And the
-> get_page() in __munlock_pagevec_fill() is there to allow a pagevec_release() 
-> later.
+We should also enable team's vlan tx offload in hw_enc_features,
+pass the vlan packets to the slave devices with vlan tci, let the
+slave handle vlan tunneling offload implementation.
 
-Maybe I am misreading the code (looking at Linus tree) but munlock_vma_pages_range
-calls follow_page for the start address and then if not THP tries to
-fill up the pagevec with few more pages (up to end), do the shortcut
-via manual pte walk as an optimization and use generic get_page there.
+Fixes: 3268e5cb494d ("team: Advertise tunneling offload features")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: fix commit log typo
+---
+ drivers/net/team/team.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
+index abfa0da..e8089de 100644
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -1004,6 +1004,8 @@ static void __team_compute_features(struct team *team)
+ 
+ 	team->dev->vlan_features = vlan_features;
+ 	team->dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL |
++				     NETIF_F_HW_VLAN_CTAG_TX |
++				     NETIF_F_HW_VLAN_STAG_TX |
+ 				     NETIF_F_GSO_UDP_L4;
+ 	team->dev->hard_header_len = max_hard_header_len;
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
+
