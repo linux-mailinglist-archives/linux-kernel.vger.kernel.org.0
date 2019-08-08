@@ -2,70 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F60486DEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 01:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA34E86DF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 01:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390501AbfHHXja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 19:39:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390130AbfHHXja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 19:39:30 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 555262173E;
-        Thu,  8 Aug 2019 23:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565307569;
-        bh=DkAAejaivtf5zjkmcresyTQ54IwUXOKSGkqOhqPx9q8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=c5T+9+7pTiq+M8+tRJnzWxAdk5YAAoix4royPR9zIimI3fX2zFgoXWpW/NMtliOdE
-         HiW9bJP2T3sY3hkPDdPCAiM0fDFC70VcHJa0tzJi7i4wi5fW6XgFKvPqJNQ4Rpij5r
-         Vj8g+vFbWO3xkgW88RwCDFXw9p4DZOq4QsHt+1PU=
-Date:   Thu, 8 Aug 2019 16:39:28 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, ltp@lists.linux.it,
-        Li Wang <liwang@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Cyril Hrubis <chrubis@suse.cz>, xishi.qiuxishi@alibaba-inc.com
-Subject: Re: [PATCH] hugetlbfs: fix hugetlb page migration/fault race
- causing SIGBUS
-Message-Id: <20190808163928.118f8da4f4289f7c51b8ffd4@linux-foundation.org>
-In-Reply-To: <20190808185313.GG18351@dhcp22.suse.cz>
-References: <20190808000533.7701-1-mike.kravetz@oracle.com>
-        <20190808074607.GI11812@dhcp22.suse.cz>
-        <20190808074736.GJ11812@dhcp22.suse.cz>
-        <416ee59e-9ae8-f72d-1b26-4d3d31501330@oracle.com>
-        <20190808185313.GG18351@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2404450AbfHHXjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 19:39:35 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:44239 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390130AbfHHXjf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 19:39:35 -0400
+X-Originating-IP: 176.129.6.65
+Received: from localhost (car62-h01-176-129-6-65.dsl.sta.abo.bbox.fr [176.129.6.65])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id DC3221C0003;
+        Thu,  8 Aug 2019 23:39:31 +0000 (UTC)
+Date:   Fri, 9 Aug 2019 01:39:30 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        devicetree <devicetree@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-rtc@vger.kernel.org
+Subject: Re: [linux-sunxi] [PATCH 0/3] Add basic support for RTC on Allwinner
+ H6 SoC
+Message-ID: <20190808233930.GM3600@piout.net>
+References: <20190412120730.473-1-megous@megous.com>
+ <CAGb2v66cbpsoHJoiFJkBwhZ5SbO+uO+Kf6gtnA3kPFQZq0329Q@mail.gmail.com>
+ <20190806183045.edhm3qzpegscf2z7@core.my.home>
+ <20190807105502.GK3600@piout.net>
+ <20190808121237.g6twq2nh3sayu3vx@core.my.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190808121237.g6twq2nh3sayu3vx@core.my.home>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Aug 2019 20:53:13 +0200 Michal Hocko <mhocko@kernel.org> wrote:
-
-> > https://lkml.org/lkml/2019/6/1/165
+On 08/08/2019 14:12:37+0200, Ondřej Jirman wrote:
+> On Wed, Aug 07, 2019 at 12:55:02PM +0200, Alexandre Belloni wrote:
+> > Hi,
 > > 
-> > Ironic to find that commit message in a stable backport.
+> > On 06/08/2019 20:30:45+0200, Ondřej Jirman wrote:
+> > > Maybe whether XO or DCXO is used also matters if you want to do some fine
+> > > tunning of DCXO (control register has pletny of options), but that's probably
+> > > better done in u-boot. And there's still no need to read HOSC source from DT.
+> > > The driver can just check compatible, and if it is H6 and OSC_CLK_SRC_SEL is 1,
+> > > it can do it's DCXO tunning, or whatever. But neither OS nor bootloader will
+> > > be using this info to gate/disable the osciallator.
+> > > 
 > > 
-> > I'm happy to drop the Fixes tag.
+> > It is actually useful to be able to tweak the crystal tuning at
+> > runtime to be able to reduce clock drift and compare with a reliable
+> > source (e.g. NTP).
 > 
-> No, please do not drop the Fixes tag. That is a very _useful_
-> information. If the stable tree maintainers want to abuse it so be it.
-> They are responsible for their tree. If you do not think this is a
-> stable material then fine with me. I tend to agree but that doesn't mean
-> that we should obfuscate Fixes.
+> I don't think there's a Linux kernel API that you can use to achieve that, so
+> that's a rather theoretical concern at the moment.
+> 
 
-Well, we're responsible for stable trees too.  And yes, I find it
-irksome.  I/we evaluate *every* fix for -stable inclusion and if I/we
-decide "no" then dangit, it should be backported.
+There is /sys/class/rtc/rtcX/offset which is even properly documented.
 
-Maybe we should introduce the Fixes-no-stable: tag.  That should get
-their attention.
+The reason I asked is that some RTCs have both analog (changing the
+oscillator capacitance) and digital (changing the RTC counter) so I'm
+wondering whether this interface should be extended.
+
+> Also there are multiple clocks, that can drive the RTC, and you usually don't
+> drive it from 24MHz DCXO oscillator. The reason is that you'd have to deal with
+> the fact that the clock for RTC then becomes 24000000/750 (750 is fixed
+> divider), which is 32000.
+> 
+> So if you want to get 32768Hz for RTC by tuning the DCXO, it would have to have
+> 24 576 000 Hz. And even if you could achieve that (doubtful), it would throw off
+> timings in the rest of the system (say UART, USB, CPU, display ctl) in a major way.
+> 
+> I guess you can try tuning 24MHz oscillator so that it's closer to the
+> real-world 24MHz via NTP reference for other reasons. But it would be
+> complicated, and require precise interaction with other components, like using
+> HW timers sourced from 24MHz HOSC clock, because you can't use CPU's timers,
+> because of inaccuracies introduced during DVFS, for example.
+> 
+> regards,
+> 	o.
+> 
+> > I'm curious, what kind of options does this RTC have?
+> > 
+> > -- 
+> > Alexandre Belloni, Bootlin
+> > Embedded Linux and Kernel engineering
+> > https://bootlin.com
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
