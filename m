@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D844C869D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FBB86A45
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:15:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405113AbfHHTLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:11:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45954 "EHLO mail.kernel.org"
+        id S2404760AbfHHTHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:07:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405466AbfHHTLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:11:22 -0400
+        id S2404745AbfHHTHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:07:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D4921743;
-        Thu,  8 Aug 2019 19:11:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A837F2189D;
+        Thu,  8 Aug 2019 19:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291481;
-        bh=LS87dti7zdc7kX7Pyq3fOGJGubx/ROvQrnb62CiV/2M=;
+        s=default; t=1565291267;
+        bh=lutUNzudd+MrrM6q2H0wlI3WP4J0VQAy2GIXonk9nd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wz8QxP82wpXmuDWkBEzaxRj8iVa+ikqDIuXjBXl0TfrS2vS/5ndhq24QLg081VGNO
-         +POtwsSXinM8p1QcsrVpNKy4Fir8YZOQp7Mf4iOlGOf0me9YPui6deh7DduguLdutw
-         UetD3t9AMG6Gw1lzH4COBGXeuRAG2oMCTK1SvlmI=
+        b=2JWuwSObNVrKCQiwPsjMD1Y92GO3N2hgY1y1dRj+pM3KhJGQs3GBXq8oi/wqw8MVR
+         3n9psb0ylSPQRr5BEk/NMvFwFLezyV66/a2UfD2j2lcp0r++0EQnw1rgjpKOKhBabj
+         NaZfr3njX0INEVx9iaQLtw3GwTt515iH4Wtz0VUc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 09/33] [PATCH] IB: directly cast the sockaddr union to aockaddr
-Date:   Thu,  8 Aug 2019 21:05:16 +0200
-Message-Id: <20190808190454.035338318@linuxfoundation.org>
+        stable@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.2 51/56] net/mlx5: Add missing RDMA_RX capabilities
+Date:   Thu,  8 Aug 2019 21:05:17 +0200
+Message-Id: <20190808190455.296063658@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.582417307@linuxfoundation.org>
-References: <20190808190453.582417307@linuxfoundation.org>
+In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
+References: <20190808190452.867062037@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,45 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like commit 641114d2af31 ("RDMA: Directly cast the sockaddr union to
-sockaddr") we need to quiet gcc 9 from warning about this crazy union.
-That commit did not fix all of the warnings in 4.19 and older kernels
-because the logic in roce_resolve_route_from_path() was rewritten
-between 4.19 and 5.2 when that change happened.
+From: Maor Gottlieb <maorg@mellanox.com>
 
-Cc: Jason Gunthorpe <jgg@mellanox.com>
+[ Upstream commit 987f6c69dd923069d443f6a37225f5b1630a30f2 ]
+
+New flow table type RDMA_RX was added but the MLX5_CAP_FLOW_TABLE_TYPE
+didn't handle this new flow table type.
+This means that MLX5_CAP_FLOW_TABLE_TYPE returns an empty capability to
+this flow table type.
+
+Update both the macro and the maximum supported flow table type to
+RDMA_RX.
+
+Fixes: d83eb50e29de ("net/mlx5: Add support in RDMA RX steering")
+Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/sa_query.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.h |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/core/sa_query.c
-+++ b/drivers/infiniband/core/sa_query.c
-@@ -1263,7 +1263,6 @@ int ib_init_ah_from_path(struct ib_devic
- 				&init_net
- 		};
- 		union {
--			struct sockaddr     _sockaddr;
- 			struct sockaddr_in  _sockaddr_in;
- 			struct sockaddr_in6 _sockaddr_in6;
- 		} sgid_addr, dgid_addr;
-@@ -1271,12 +1270,13 @@ int ib_init_ah_from_path(struct ib_devic
- 		if (!device->get_netdev)
- 			return -EOPNOTSUPP;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.h
+@@ -68,7 +68,7 @@ enum fs_flow_table_type {
+ 	FS_FT_SNIFFER_RX	= 0X5,
+ 	FS_FT_SNIFFER_TX	= 0X6,
+ 	FS_FT_RDMA_RX		= 0X7,
+-	FS_FT_MAX_TYPE = FS_FT_SNIFFER_TX,
++	FS_FT_MAX_TYPE = FS_FT_RDMA_RX,
+ };
  
--		rdma_gid2ip(&sgid_addr._sockaddr, &rec->sgid);
--		rdma_gid2ip(&dgid_addr._sockaddr, &rec->dgid);
-+		rdma_gid2ip((struct sockaddr *)&sgid_addr, &rec->sgid);
-+		rdma_gid2ip((struct sockaddr *)&dgid_addr, &rec->dgid);
+ enum fs_flow_table_op_mod {
+@@ -274,7 +274,8 @@ void mlx5_cleanup_fs(struct mlx5_core_de
+ 	(type == FS_FT_FDB) ? MLX5_CAP_ESW_FLOWTABLE_FDB(mdev, cap) :		\
+ 	(type == FS_FT_SNIFFER_RX) ? MLX5_CAP_FLOWTABLE_SNIFFER_RX(mdev, cap) :		\
+ 	(type == FS_FT_SNIFFER_TX) ? MLX5_CAP_FLOWTABLE_SNIFFER_TX(mdev, cap) :		\
+-	(BUILD_BUG_ON_ZERO(FS_FT_SNIFFER_TX != FS_FT_MAX_TYPE))\
++	(type == FS_FT_RDMA_RX) ? MLX5_CAP_FLOWTABLE_RDMA_RX(mdev, cap) :		\
++	(BUILD_BUG_ON_ZERO(FS_FT_RDMA_RX != FS_FT_MAX_TYPE))\
+ 	)
  
- 		/* validate the route */
--		ret = rdma_resolve_ip_route(&sgid_addr._sockaddr,
--					    &dgid_addr._sockaddr, &dev_addr);
-+		ret = rdma_resolve_ip_route((struct sockaddr *)&sgid_addr,
-+					    (struct sockaddr *)&dgid_addr,
-+					    &dev_addr);
- 		if (ret)
- 			return ret;
- 
+ #endif
 
 
