@@ -2,96 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DB1F86777
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E299B86770
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404193AbfHHQtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:49:33 -0400
-Received: from mout.gmx.net ([212.227.17.20]:50869 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404015AbfHHQtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:49:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1565282955;
-        bh=NyYRIlyJp1dNqY9bMLhKdZDQoswA/k6BxEUTuDZ+Zb8=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=dV8YQMdchQ5RKjdA20SaoSKPKuU8G05WvMvaPIUMySCtxCIdbqnX0XC2JC+XnLud3
-         SYdo8NKzhO4ZzKKqlGhgHa08DhwP++1cPzSYiJORywewgfjql0t15WfFgsuhuJL2hm
-         Sg1zZdehUfG/U+LeXuL1WcH4lM6G6N/31IVucbfs=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([109.90.233.87]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0Lmwpk-1iWCHf00Am-00h5Fs; Thu, 08
- Aug 2019 18:49:15 +0200
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-doc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation/arm/samsung-s3c24xx: Remove stray U+FEFF character to fix title
-Date:   Thu,  8 Aug 2019 18:48:09 +0200
-Message-Id: <20190808164811.15645-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+        id S2404170AbfHHQs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:48:27 -0400
+Received: from smtprelay0053.hostedemail.com ([216.40.44.53]:54300 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728289AbfHHQs1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 12:48:27 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id CE7B9100E86C3;
+        Thu,  8 Aug 2019 16:48:25 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:979:988:989:1260:1263:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3354:3622:3865:3867:3868:3870:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4383:4384:4395:4605:4659:5007:7514:7903:9025:9389:10004:10049:10400:10848:10967:11232:11658:11914:12043:12296:12297:12555:12663:12679:12740:12760:12895:12986:13019:13069:13095:13311:13357:13439:14094:14096:14180:14181:14659:14721:14764:21080:21433:21450:21451:21611:21627:21691:30009:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: apple91_8397350969e63
+X-Filterd-Recvd-Size: 2983
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  8 Aug 2019 16:48:24 +0000 (UTC)
+Message-ID: <89848a6b90c81be5bac50cdb49847462def5653c.camel@perches.com>
+Subject: Re: [PATCH] isdn: hysdn: Fix error spaces around '*'
+From:   Joe Perches <joe@perches.com>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Karsten Keil <isdn@linux-pingi.de>
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
+        Jose Carlos Cazarin Filho <joseespiriki@gmail.com>,
+        isdn@linux-pingi.de, devel@driverdev.osuosl.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 08 Aug 2019 09:48:22 -0700
+In-Reply-To: <20190808164020.GA9453@kroah.com>
+References: <20190802195602.28414-1-joseespiriki@gmail.com>
+         <20190802145506.168b576b@hermes.lan>
+         <2ecfbf8dda354fe47912446bf5c3fe30ca905aa0.camel@perches.com>
+         <20190808163905.GA9224@kroah.com> <20190808164020.GA9453@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Hh+MMVrp26ugQyFj+D/l4R8ydI3JFX9v5nK/15hlhDut2Eh6Y2L
- QLxShqdo8KDJwsAdSSddpgpiCyup3PqyrM2a5LBmFDQI9C+Eqi+YKFi+Oz36OVw6zwviSk9
- VZEs46WEyXKOnAuOd9KmrKd8yx2RrwCHZuwP7N+EipYj+eYmxcIcJkVU462lmplJ93HFeZg
- lR6aVBBmQ4LJvuakhnAFA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:c6pVNIDsHNg=:FGqIiO2jLGaVGa76F74RXp
- tcUbzZT7A2Oe2urH83/b48cZWUlWW9UKIqGfjTykNm+rilrnwAq88cBHOz6Hz8p5bhBYTtNh5
- UO7O110UrafNB0hAiOJ9VeqzTor8S3K2LQc+VwdYK4dGshKqeY+QAIrURC4BGU3nDeuNTLzu4
- BF3NBaOf30B6rNE6QtHsn6yS7InHaIMlKs65YSVmxAH2kE0+Hyn8ZJ11G7/evujkUInGb5IhL
- iRobXZKV0Jqz5qQPQurj8xEyUvzfQGxkhfWucnJKZVhoW/+TV8FnylKrQIK9TY3f8Ot7ldsH5
- JqPBo/uJuB/eKCUR1j1Nj5px5LHJ1z2bPEOT3qineeJFqqhFTGKfiVNEJHg9YUNsB9vSlqlA5
- bFAQbDE6hua+ZDfxBGjzaW7mSB2E0CipOwPjmBtdx30E8a9OV2LWV3Warrm6dn7L1YJYqEEYg
- hYJ2GeWkWDCXaTlJq0K0iyE8oFXiJcIEKdej/1opQOcsN1rl0sRhmXCa1UyerECVvKtKcivrK
- ZSihTme0UhUsZLQ2QdhCbT/9Mgb0vKrEtO/Gu+cjLwjshItORUAQA6oBZAk2kirQadpMEd0vn
- aVXXhsvc9VMHUbjyVugzV0Pm0ooikDnyqyWHQ7e045GdoFAxoz+zTJlQVrieITAXzBFFXHuTb
- T4Msh2CZV15pW46AUFXHS5u1Qqp980ESjqxMvfA0i5lgMp7KjdnAfTzArDDYOAwvMmH9iR6nV
- 5my/YOSccGlfbI8hX/fAeXoUIYQBP4dJSLK1qqMi7OfEZmf6Vy+L1Z5AZpCCfiV1PG6T+z8c1
- QhWN8It4w7aVMchPtxACmU9y60yI2AN+xPlQFzVnmT5rtsLkw0D6AaJwL5aeg2ukpRsOh0S6H
- DghHEl1VFRBIOH+LHmBGNGJj3Gk7G+UHUiFRhAcu2LKpRXBYcfgV1pNjXPOFEjXZLsJyYR/vt
- azrmrmCHvhDw8pl8yOwCJacZLcf1HJW9PGIcJxi9pQVIx5pjRtOlmeHEoz+ZZbLrrae9Qiyb6
- sqGQmWfI27rt/VIpfV0nT9QpBFvcdb/Q5vnk6VnPKrmlAwHyhkc4zQ0lB5MO+RMlXq1A22VKb
- IjncQgDJuNvD2Rd9RFkUz1SHjExLLhFix5jMV0Cb0D7gezwDQlKjq0rn3CchNQ/rrhvFD9+Nr
- R47+8=
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems a UTF-8 byte order mark (the least useful kind of BOM...) snuck
-into the file and broke Sphinx's detection of the title line.
+On Thu, 2019-08-08 at 18:40 +0200, Greg KH wrote:
+> On Thu, Aug 08, 2019 at 06:39:05PM +0200, Greg KH wrote:
+> > On Fri, Aug 02, 2019 at 03:05:05PM -0700, Joe Perches wrote:
+> > > On Fri, 2019-08-02 at 14:55 -0700, Stephen Hemminger wrote:
+> > > > On Fri,  2 Aug 2019 19:56:02 +0000
+> > > > Jose Carlos Cazarin Filho <joseespiriki@gmail.com> wrote:
+> > > > 
+> > > > > Fix checkpath error:
+> > > > > CHECK: spaces preferred around that '*' (ctx:WxV)
+> > > > > +extern hysdn_card *card_root;        /* pointer to first card */
+> > > > > 
+> > > > > Signed-off-by: Jose Carlos Cazarin Filho <joseespiriki@gmail.com>
+> > > > 
+> > > > Read the TODO, these drivers are scheduled for removal, so changes
+> > > > are not helpful at this time.
+> > > 
+> > > Maybe better to mark the MAINTAINERS entry obsolete so
+> > > checkpatch bleats a message about unnecessary changes.
+> > > ---
+> > >  MAINTAINERS | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 30bf852e6d6b..b5df91032574 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -8628,7 +8628,7 @@ M:	Karsten Keil <isdn@linux-pingi.de>
+> > >  L:	isdn4linux@listserv.isdn4linux.de (subscribers-only)
+> > >  L:	netdev@vger.kernel.org
+> > >  W:	http://www.isdn4linux.de
+> > > -S:	Odd Fixes
+> > > +S:	Obsolete
+> > >  F:	Documentation/isdn/
+> > >  F:	drivers/isdn/capi/
+> > >  F:	drivers/staging/isdn/
+> > > 
+> > 
+> > Good idea, will take this patch now, thanks.
+> 
+> Can you resend this with a s-o-b so I can apply it?
+> 
+> thanks,
 
-Besides making arm/samsung-s3c24xx/index.html look a little better, this
-patch also confines the non-index pages in arm/samsung-s3c24xx to their
-own table of contents.
+Hey Greg.  It was just an idea and an example.
+I'm sure you can figure out if you want it.
+No need for my SOB really.
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- Documentation/arm/samsung-s3c24xx/index.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+btw: Karsten hasn't acked a patch or been active
+in 3+ years.  Maybe he should go into CREDITS.
 
-diff --git a/Documentation/arm/samsung-s3c24xx/index.rst b/Documentation/a=
-rm/samsung-s3c24xx/index.rst
-index 5b8a7f9398d8..ccb951a0bedb 100644
-=2D-- a/Documentation/arm/samsung-s3c24xx/index.rst
-+++ b/Documentation/arm/samsung-s3c24xx/index.rst
-@@ -1,6 +1,6 @@
- .. SPDX-License-Identifier: GPL-2.0
 
--=EF=BB=BF=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
- Samsung S3C24XX SoC Family
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-
-=2D-
-2.20.1
 
