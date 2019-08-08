@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C570586962
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A8AE86963
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404494AbfHHTGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:06:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40166 "EHLO mail.kernel.org"
+        id S2404507AbfHHTGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:06:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404475AbfHHTGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:06:38 -0400
+        id S2404486AbfHHTGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:06:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1083E214C6;
-        Thu,  8 Aug 2019 19:06:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A33232184E;
+        Thu,  8 Aug 2019 19:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291197;
-        bh=dQ6PS1WCEpBzXhZD5UEH0K4K783IqUu+5OPXTthOhBM=;
+        s=default; t=1565291200;
+        bh=Rgsn3PaiUomEhnUDUek54pKO3QXbvZ4dxKQM8YRnIFs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oc0l8xSVHmIeW/ilxiDtOrbn/hHN/j//va8J4GvDMOvjFBTy2swsxTGkUQnZtZcE0
-         tC+DiKaf4KX+8j1X0yMUItpslCaZxZkiBTGtJG3fhJ+k3xv785mQ0rLMS3DwkW4BeT
-         u8219dxC/RRlGNTDuNahZ0/pHUfnxr/Ehs+8lBfo=
+        b=ShdKNRcdUOEtreyo/WQ08gNFCKYq10m1ivDvqIEYwn2OgsJi9HKdJfQPmSU2vvVcC
+         j1H49owa5+Q544/ugMeKGcorz0m3qADuaQEdHQpeFTtUVr7iChATEu8oh7Bul8cX38
+         qMLkC2YYsXYF6oOpx2igrqErBqlxbsljwdKaUjyk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Mark Zhang <markz@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.2 23/56] net/mlx5: Use reversed order when unregister devices
-Date:   Thu,  8 Aug 2019 21:04:49 +0200
-Message-Id: <20190808190453.823001128@linuxfoundation.org>
+        stable@vger.kernel.org, Hubert Feurstein <h.feurstein@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.2 24/56] net: phy: fixed_phy: print gpio error only if gpio node is present
+Date:   Thu,  8 Aug 2019 21:04:50 +0200
+Message-Id: <20190808190453.868506535@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
 References: <20190808190452.867062037@linuxfoundation.org>
@@ -45,43 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Zhang <markz@mellanox.com>
+From: Hubert Feurstein <h.feurstein@gmail.com>
 
-[ Upstream commit 08aa5e7da6bce1a1963f63cf32c2e7ad434ad578 ]
+[ Upstream commit ab98c008ac761752cdc27f9eb053419feadeb2f7 ]
 
-When lag is active, which is controlled by the bonded mlx5e netdev, mlx5
-interface unregestering must happen in the reverse order where rdma is
-unregistered (unloaded) first, to guarantee all references to the lag
-context in hardware is removed, then remove mlx5e netdev interface which
-will cleanup the lag context from hardware.
+It is perfectly ok to not have an gpio attached to the fixed-link node. So
+the driver should not throw an error message when the gpio is missing.
 
-Without this fix during destroy of LAG interface, we observed following
-errors:
- * mlx5_cmd_check:752:(pid 12556): DESTROY_LAG(0x843) op_mod(0x0) failed,
-   status bad parameter(0x3), syndrome (0xe4ac33)
- * mlx5_cmd_check:752:(pid 12556): DESTROY_LAG(0x843) op_mod(0x0) failed,
-   status bad parameter(0x3), syndrome (0xa5aee8).
-
-Fixes: a31208b1e11d ("net/mlx5_core: New init and exit flow for mlx5_core")
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Mark Zhang <markz@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 5468e82f7034 ("net: phy: fixed-phy: Drop GPIO from fixed_phy_add()")
+Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/phy/fixed_phy.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
-@@ -213,7 +213,7 @@ void mlx5_unregister_device(struct mlx5_
- 	struct mlx5_interface *intf;
+--- a/drivers/net/phy/fixed_phy.c
++++ b/drivers/net/phy/fixed_phy.c
+@@ -216,8 +216,10 @@ static struct gpio_desc *fixed_phy_get_g
+ 	if (IS_ERR(gpiod)) {
+ 		if (PTR_ERR(gpiod) == -EPROBE_DEFER)
+ 			return gpiod;
+-		pr_err("error getting GPIO for fixed link %pOF, proceed without\n",
+-		       fixed_link_node);
++
++		if (PTR_ERR(gpiod) != -ENOENT)
++			pr_err("error getting GPIO for fixed link %pOF, proceed without\n",
++			       fixed_link_node);
+ 		gpiod = NULL;
+ 	}
  
- 	mutex_lock(&mlx5_intf_mutex);
--	list_for_each_entry(intf, &intf_list, list)
-+	list_for_each_entry_reverse(intf, &intf_list, list)
- 		mlx5_remove_device(intf, priv);
- 	list_del(&priv->dev_list);
- 	mutex_unlock(&mlx5_intf_mutex);
 
 
