@@ -2,200 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1AF586B39
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E21E486B3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:18:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404615AbfHHURF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 16:17:05 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33178 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404505AbfHHURF (ORCPT
+        id S2404663AbfHHUR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 16:17:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47745 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404324AbfHHUR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 16:17:05 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c14so43907593plo.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 13:17:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5f4CqgEOBdU1sAWH2G9u22gyRYPbta1aig+V48mAphg=;
-        b=K0fHDV/c6bvsC0qLSvpocXZbNgQfks/MdnquDqwksf7dhTD98RI4nANdKdU4EkY24x
-         0olhK/GhPbPPex9HnYXSj8j7OF0HgwYuSQJmcgDQq/Uj5scHAI+ui2G2tvoM9Lzudw5h
-         5XilgXJpwsOHsGXXb4xvQbuSxUu1T3VWv/b6o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5f4CqgEOBdU1sAWH2G9u22gyRYPbta1aig+V48mAphg=;
-        b=MO487P9vzMdUBs8MGkApLRFMTRWE8AU6eMTsw4bocEtACyx2dee00S7oSrKX6utHl1
-         vgN7/w5YE3e2mh2uvOJ/ItSoZU0bVlOZrXTz8v9YCY+RH7jdXhAkxLRAcVmIGOT99DhQ
-         ZBB7DcBdqLtuJ+9YqUIMXOR6aW6pgFxdaH7OHYn2Jx64uubOT2j4C/Pa686Bsk/IEru3
-         yf+J2RgBUFogb6xDMGYf3SEfP1HyAXYpKuYzT7PURRdkKsnl6Xh1BLDYkRNn6Pwrkzcs
-         yq/IlxXr+7PQ/P4hUuQOCRflLYVkkJeavmFotSIfHBb85oBR0g+QC0BzAK/FmDIbyYmW
-         ElGA==
-X-Gm-Message-State: APjAAAXz3mwNka/JganudaXuajkwo3on/UdLBERNspcRYxqUp5rXrvU+
-        jpGo8pozrPHFz3o3CqMZUmXZSQ==
-X-Google-Smtp-Source: APXvYqws/0AbAFRQrpc39ivMkiU/nNnCNzDeEutw3lh4sdHQxYIsAE9EYG1zanM54XVWwO1sxMytHg==
-X-Received: by 2002:a17:902:9004:: with SMTP id a4mr15566437plp.109.1565295424221;
-        Thu, 08 Aug 2019 13:17:04 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id cx22sm2915882pjb.25.2019.08.08.13.17.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 13:17:03 -0700 (PDT)
-Date:   Thu, 8 Aug 2019 16:17:02 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Jiping Ma <jiping.ma2@windriver.com>,
-        mingo@redhat.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2 v2] tracing: Document the stack trace algorithm in
- the comments
-Message-ID: <20190808201702.GF261256@google.com>
-References: <20190807172826.352574408@goodmis.org>
- <20190807172907.310138647@goodmis.org>
+        Thu, 8 Aug 2019 16:17:57 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x78KHnFF3320927
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 8 Aug 2019 13:17:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x78KHnFF3320927
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565295469;
+        bh=fY2A8QyFB0MqLBtu43yiHTYb2DT3d2bFrT7eQ8fwCMk=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=gxyvdHIsvjFil+jgmz4POLPwlRTyRCijnGIllnK0PCOqVqrpeAk/KSi6DYj3euIIn
+         nBVyccMIb+C4ZiRrargqGUFLu+LrsSA3GNIURlu/YAlmONZbbIhf62fAPZHFm+k2du
+         N5DNXtEuzvA4/b8WxvTuahGxnExhYm/Vz0UMjv7+1iP4VmYmwT8cJXKKjiaUsH2t4m
+         so1L1WVhLUQqEO+j32uH3+HfWBXgzGPeZ0OsWfxUz7xyJUhUBRyesjylWYMQKIzGaK
+         ytW95lZZLNf1FAhDToea1r3f5zRlTZweKaASUJR9FbUKkroigUG9Y8YJ0VVAhSLB0G
+         QXRCPA4HQlctg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x78KHmaW3320924;
+        Thu, 8 Aug 2019 13:17:48 -0700
+Date:   Thu, 8 Aug 2019 13:17:48 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-3de7ae0b2a1d86dbb23d0cb135150534fdb2e836@git.kernel.org>
+Cc:     jolsa@redhat.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+          acme@redhat.com, jolsa@redhat.com, mingo@kernel.org,
+          hpa@zytor.com, tglx@linutronix.de
+In-Reply-To: <20190808064823.14846-1-adrian.hunter@intel.com>
+References: <20190808064823.14846-1-adrian.hunter@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf db-export: Fix thread__exec_comm()
+Git-Commit-ID: 3de7ae0b2a1d86dbb23d0cb135150534fdb2e836
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190807172907.310138647@goodmis.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 01:28:28PM -0400, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> As the max stack tracer algorithm is not that easy to understand from the
-> code, add comments that explain the algorithm and mentions how
-> ARCH_RET_ADDR_AFTER_LOCAL_VARS affects it.
-> 
-> Link: http://lkml.kernel.org/r/20190806123455.487ac02b@gandalf.local.home
-> 
+Commit-ID:  3de7ae0b2a1d86dbb23d0cb135150534fdb2e836
+Gitweb:     https://git.kernel.org/tip/3de7ae0b2a1d86dbb23d0cb135150534fdb2e836
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Thu, 8 Aug 2019 09:48:23 +0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 8 Aug 2019 15:41:10 -0300
 
-Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+perf db-export: Fix thread__exec_comm()
 
-thanks!!
+Threads synthesized from /proc have comms with a start time of zero, and
+not marked as "exec". Currently, there can be 2 such comms. The first is
+created by processing a synthesized fork event and is set to the
+parent's comm string, and the second by processing a synthesized comm
+event set to the thread's current comm string.
 
-- Joel
+In the absence of an "exec" comm, thread__exec_comm() picks the last
+(oldest) comm, which, in the case above, is the parent's comm string.
+For a main thread, that is very probably wrong. Use the second-to-last
+in that case.
 
+This affects only db-export because it is the only user of
+thread__exec_comm().
 
-> Suggested-by: Joel Fernandes <joel@joelfernandes.org>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace_stack.c | 98 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 98 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-> index 40e4a88eea8f..f94a2fc567de 100644
-> --- a/kernel/trace/trace_stack.c
-> +++ b/kernel/trace/trace_stack.c
-> @@ -53,6 +53,104 @@ static void print_max_stack(void)
->  	}
->  }
->  
-> +/*
-> + * The stack tracer looks for a maximum stack at each call from a function. It
-> + * registers a callback from ftrace, and in that callback it examines the stack
-> + * size. It determines the stack size from the variable passed in, which is the
-> + * address of a local variable in the stack_trace_call() callback function.
-> + * The stack size is calculated by the address of the local variable to the top
-> + * of the current stack. If that size is smaller than the currently saved max
-> + * stack size, nothing more is done.
-> + *
-> + * If the size of the stack is greater than the maximum recorded size, then the
-> + * following algorithm takes place.
-> + *
-> + * For architectures (like x86) that store the function's return address before
-> + * saving the function's local variables, the stack will look something like
-> + * this:
-> + *
-> + *   [ top of stack ]
-> + *    0: sys call entry frame
-> + *   10: return addr to entry code
-> + *   11: start of sys_foo frame
-> + *   20: return addr to sys_foo
-> + *   21: start of kernel_func_bar frame
-> + *   30: return addr to kernel_func_bar
-> + *   31: [ do trace stack here ]
-> + *
-> + * The save_stack_trace() is called returning all the functions it finds in the
-> + * current stack. Which would be (from the bottom of the stack to the top):
-> + *
-> + *   return addr to kernel_func_bar
-> + *   return addr to sys_foo
-> + *   return addr to entry code
-> + *
-> + * Now to figure out how much each of these functions' local variable size is,
-> + * a search of the stack is made to find these values. When a match is made, it
-> + * is added to the stack_dump_trace[] array. The offset into the stack is saved
-> + * in the stack_trace_index[] array. The above example would show:
-> + *
-> + *        stack_dump_trace[]        |   stack_trace_index[]
-> + *        ------------------        +   -------------------
-> + *  return addr to kernel_func_bar  |          30
-> + *  return addr to sys_foo          |          20
-> + *  return addr to entry            |          10
-> + *
-> + * The print_max_stack() function above, uses these values to print the size of
-> + * each function's portion of the stack.
-> + *
-> + *  for (i = 0; i < nr_entries; i++) {
-> + *     size = i == nr_entries - 1 ? stack_trace_index[i] :
-> + *                    stack_trace_index[i] - stack_trace_index[i+1]
-> + *     print "%d %d %d %s\n", i, stack_trace_index[i], size, stack_dump_trace[i]);
-> + *  }
-> + *
-> + * The above shows
-> + *
-> + *     depth size  location
-> + *     ----- ----  --------
-> + *  0    30   10   kernel_func_bar
-> + *  1    20   10   sys_foo
-> + *  2    10   10   entry code
-> + *
-> + * Now for architectures that might save the return address after the functions
-> + * local variables (saving the link register before calling nested functions),
-> + * this will cause the stack to look a little different:
-> + *
-> + * [ top of stack ]
-> + *  0: sys call entry frame
-> + * 10: start of sys_foo_frame
-> + * 19: return addr to entry code << lr saved before calling kernel_func_bar
-> + * 20: start of kernel_func_bar frame
-> + * 29: return addr to sys_foo_frame << lr saved before calling next function
-> + * 30: [ do trace stack here ]
-> + *
-> + * Although the functions returned by save_stack_trace() may be the same, the
-> + * placement in the stack will be different. Using the same algorithm as above
-> + * would yield:
-> + *
-> + *        stack_dump_trace[]        |   stack_trace_index[]
-> + *        ------------------        +   -------------------
-> + *  return addr to kernel_func_bar  |          30
-> + *  return addr to sys_foo          |          29
-> + *  return addr to entry            |          19
-> + *
-> + * Where the mapping is off by one:
-> + *
-> + *   kernel_func_bar stack frame size is 29 - 19 not 30 - 29!
-> + *
-> + * To fix this, if the architecture sets ARCH_RET_ADDR_AFTER_LOCAL_VARS the
-> + * values in stack_trace_index[] are shifted by one to and the number of
-> + * stack trace entries is decremented by one.
-> + *
-> + *        stack_dump_trace[]        |   stack_trace_index[]
-> + *        ------------------        +   -------------------
-> + *  return addr to kernel_func_bar  |          29
-> + *  return addr to sys_foo          |          19
-> + *
-> + * Although the entry function is not displayed, the first function (sys_foo)
-> + * will still include the stack size of it.
-> + */
->  static void check_stack(unsigned long ip, unsigned long *stack)
->  {
->  	unsigned long this_size, flags; unsigned long *p, *top, *start;
-> -- 
-> 2.20.1
-> 
-> 
+Example:
+
+  $ sudo perf record -a -o pt-a-sleep-1 -e intel_pt//u -- sleep 1
+  $ sudo chown ahunter pt-a-sleep-1
+
+Before:
+
+  $ perf script -i pt-a-sleep-1 --itrace=bep -s tools/perf/scripts/python/export-to-sqlite.py pt-a-sleep-1.db branches calls
+  $ sqlite3 -header -column pt-a-sleep-1.db 'select * from comm_threads_view'
+  comm_id     command     thread_id   pid         tid
+  ----------  ----------  ----------  ----------  ----------
+  1           swapper     1           0           0
+  2           rcu_sched   2           10          10
+  3           kthreadd    3           78          78
+  5           sudo        4           15180       15180
+  5           sudo        5           15180       15182
+  7           kworker/4:  6           10335       10335
+  8           kthreadd    7           55          55
+  10          systemd     8           865         865
+  10          systemd     9           865         875
+  13          perf        10          15181       15181
+  15          sleep       10          15181       15181
+  16          kworker/3:  11          14179       14179
+  17          kthreadd    12          29376       29376
+  19          systemd     13          746         746
+  21          systemd     14          401         401
+  23          systemd     15          879         879
+  23          systemd     16          879         945
+  25          kthreadd    17          556         556
+  27          kworker/u1  18          14136       14136
+  28          kworker/u1  19          15021       15021
+  29          kthreadd    20          509         509
+  31          systemd     21          836         836
+  31          systemd     22          836         967
+  33          systemd     23          1148        1148
+  33          systemd     24          1148        1163
+  35          kworker/2:  25          17988       17988
+  36          kworker/0:  26          13478       13478
+
+After:
+
+  $ perf script -i pt-a-sleep-1 --itrace=bep -s tools/perf/scripts/python/export-to-sqlite.py pt-a-sleep-1b.db branches calls
+  $ sqlite3 -header -column pt-a-sleep-1b.db 'select * from comm_threads_view'
+  comm_id     command     thread_id   pid         tid
+  ----------  ----------  ----------  ----------  ----------
+  1           swapper     1           0           0
+  2           rcu_sched   2           10          10
+  3           kswapd0     3           78          78
+  4           perf        4           15180       15180
+  4           perf        5           15180       15182
+  6           kworker/4:  6           10335       10335
+  7           kcompactd0  7           55          55
+  8           accounts-d  8           865         865
+  8           accounts-d  9           865         875
+  10          perf        10          15181       15181
+  12          sleep       10          15181       15181
+  13          kworker/3:  11          14179       14179
+  14          kworker/1:  12          29376       29376
+  15          haveged     13          746         746
+  16          systemd-jo  14          401         401
+  17          NetworkMan  15          879         879
+  17          NetworkMan  16          879         945
+  19          irq/131-iw  17          556         556
+  20          kworker/u1  18          14136       14136
+  21          kworker/u1  19          15021       15021
+  22          kworker/u1  20          509         509
+  23          thermald    21          836         836
+  23          thermald    22          836         967
+  25          unity-sett  23          1148        1148
+  25          unity-sett  24          1148        1163
+  27          kworker/2:  25          17988       17988
+  28          kworker/0:  26          13478       13478
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 65de51f93ebf ("perf tools: Identify which comms are from exec")
+Link: http://lkml.kernel.org/r/20190808064823.14846-1-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/thread.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+index 873ab505ca80..590793cc5142 100644
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -214,14 +214,24 @@ struct comm *thread__comm(const struct thread *thread)
+ 
+ struct comm *thread__exec_comm(const struct thread *thread)
+ {
+-	struct comm *comm, *last = NULL;
++	struct comm *comm, *last = NULL, *second_last = NULL;
+ 
+ 	list_for_each_entry(comm, &thread->comm_list, list) {
+ 		if (comm->exec)
+ 			return comm;
++		second_last = last;
+ 		last = comm;
+ 	}
+ 
++	/*
++	 * 'last' with no start time might be the parent's comm of a synthesized
++	 * thread (created by processing a synthesized fork event). For a main
++	 * thread, that is very probably wrong. Prefer a later comm to avoid
++	 * that case.
++	 */
++	if (second_last && !last->start && thread->pid_ == thread->tid)
++		return second_last;
++
+ 	return last;
+ }
+ 
