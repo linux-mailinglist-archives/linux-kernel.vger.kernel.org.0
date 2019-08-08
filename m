@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88311869AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70820869AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:09:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405125AbfHHTJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:09:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43836 "EHLO mail.kernel.org"
+        id S2405138AbfHHTJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:09:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405117AbfHHTJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:09:31 -0400
+        id S2405119AbfHHTJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:09:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6C702184E;
-        Thu,  8 Aug 2019 19:09:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B46C21743;
+        Thu,  8 Aug 2019 19:09:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291370;
-        bh=9l2N5SIuEtZ7BOTgZYhRCMghjLx+HRbPEaw+B6lfg3s=;
+        s=default; t=1565291372;
+        bh=Nl+kRXkxWwMQ9iim9Tca5FCr6yfWrfnErkAgEcd9sRc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KWJ1fLhX4Q3ulDy01oGlZbOYrkJ07hqIQ9JnbeCFh49AQqDnPG77emiZPiQXrG6d8
-         xrVFAxu4poGZfjahm+GnohTu5LDPaK+jWqvdjZOre6LDtylUhpKrBbTed5vs7n1Yks
-         eM/WCzPMtE56uAuWmyNMZDDkcJ/bXBtMozO6UVdE=
+        b=UqgdpfK34WsZJFOBkhAbi25jGhflRZeVX2GC4KtLskaWLe95nD4UdiwlK5F8PvQwD
+         PUrLn2J5t5AwUYcgkxltZetJR1IVL/yqYf7APM5xJvZGnu5yeYx3L5pICno2qTv1IG
+         fWc1zgnW/mPhFQ57hnUrlEfprjmg887XlLVitOQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taras Kondratiuk <takondra@cisco.com>,
-        Ying Xue <ying.xue@windriver.com>,
+        stable@vger.kernel.org, Alexis Bauvin <abauvin@scaleway.com>,
+        Jason Wang <jasowang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 34/45] tipc: compat: allow tipc commands without arguments
-Date:   Thu,  8 Aug 2019 21:05:20 +0200
-Message-Id: <20190808190455.713867804@linuxfoundation.org>
+Subject: [PATCH 4.19 35/45] tun: mark small packets as owned by the tap sock
+Date:   Thu,  8 Aug 2019 21:05:21 +0200
+Message-Id: <20190808190455.784595339@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
 References: <20190808190453.827571908@linuxfoundation.org>
@@ -44,85 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taras Kondratiuk <takondra@cisco.com>
+From: Alexis Bauvin <abauvin@scaleway.com>
 
-[ Upstream commit 4da5f0018eef4c0de31675b670c80e82e13e99d1 ]
+[ Upstream commit 4b663366246be1d1d4b1b8b01245b2e88ad9e706 ]
 
-Commit 2753ca5d9009 ("tipc: fix uninit-value in tipc_nl_compat_doit")
-broke older tipc tools that use compat interface (e.g. tipc-config from
-tipcutils package):
+- v1 -> v2: Move skb_set_owner_w to __tun_build_skb to reduce patch size
 
-% tipc-config -p
-operation not supported
+Small packets going out of a tap device go through an optimized code
+path that uses build_skb() rather than sock_alloc_send_pskb(). The
+latter calls skb_set_owner_w(), but the small packet code path does not.
 
-The commit started to reject TIPC netlink compat messages that do not
-have attributes. It is too restrictive because some of such messages are
-valid (they don't need any arguments):
+The net effect is that small packets are not owned by the userland
+application's socket (e.g. QEMU), while large packets are.
+This can be seen with a TCP session, where packets are not owned when
+the window size is small enough (around PAGE_SIZE), while they are once
+the window grows (note that this requires the host to support virtio
+tso for the guest to offload segmentation).
+All this leads to inconsistent behaviour in the kernel, especially on
+netfilter modules that uses sk->socket (e.g. xt_owner).
 
-% grep 'tx none' include/uapi/linux/tipc_config.h
-#define  TIPC_CMD_NOOP              0x0000    /* tx none, rx none */
-#define  TIPC_CMD_GET_MEDIA_NAMES   0x0002    /* tx none, rx media_name(s) */
-#define  TIPC_CMD_GET_BEARER_NAMES  0x0003    /* tx none, rx bearer_name(s) */
-#define  TIPC_CMD_SHOW_PORTS        0x0006    /* tx none, rx ultra_string */
-#define  TIPC_CMD_GET_REMOTE_MNG    0x4003    /* tx none, rx unsigned */
-#define  TIPC_CMD_GET_MAX_PORTS     0x4004    /* tx none, rx unsigned */
-#define  TIPC_CMD_GET_NETID         0x400B    /* tx none, rx unsigned */
-#define  TIPC_CMD_NOT_NET_ADMIN     0xC001    /* tx none, rx none */
-
-This patch relaxes the original fix and rejects messages without
-arguments only if such arguments are expected by a command (reg_type is
-non zero).
-
-Fixes: 2753ca5d9009 ("tipc: fix uninit-value in tipc_nl_compat_doit")
-Cc: stable@vger.kernel.org
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
-Acked-by: Ying Xue <ying.xue@windriver.com>
+Fixes: 66ccbc9c87c2 ("tap: use build_skb() for small packet")
+Signed-off-by: Alexis Bauvin <abauvin@scaleway.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/netlink_compat.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/tun.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -55,6 +55,7 @@ struct tipc_nl_compat_msg {
- 	int rep_type;
- 	int rep_size;
- 	int req_type;
-+	int req_size;
- 	struct net *net;
- 	struct sk_buff *rep;
- 	struct tlv_desc *req;
-@@ -257,7 +258,8 @@ static int tipc_nl_compat_dumpit(struct
- 	int err;
- 	struct sk_buff *arg;
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1682,6 +1682,7 @@ static struct sk_buff *tun_build_skb(str
  
--	if (msg->req_type && !TLV_CHECK_TYPE(msg->req, msg->req_type))
-+	if (msg->req_type && (!msg->req_size ||
-+			      !TLV_CHECK_TYPE(msg->req, msg->req_type)))
- 		return -EINVAL;
+ 	skb_reserve(skb, pad - delta);
+ 	skb_put(skb, len);
++	skb_set_owner_w(skb, tfile->socket.sk);
+ 	get_page(alloc_frag->page);
+ 	alloc_frag->offset += buflen;
  
- 	msg->rep = tipc_tlv_alloc(msg->rep_size);
-@@ -354,7 +356,8 @@ static int tipc_nl_compat_doit(struct ti
- {
- 	int err;
- 
--	if (msg->req_type && !TLV_CHECK_TYPE(msg->req, msg->req_type))
-+	if (msg->req_type && (!msg->req_size ||
-+			      !TLV_CHECK_TYPE(msg->req, msg->req_type)))
- 		return -EINVAL;
- 
- 	err = __tipc_nl_compat_doit(cmd, msg);
-@@ -1276,8 +1279,8 @@ static int tipc_nl_compat_recv(struct sk
- 		goto send;
- 	}
- 
--	len = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
--	if (!len || !TLV_OK(msg.req, len)) {
-+	msg.req_size = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
-+	if (msg.req_size && !TLV_OK(msg.req, msg.req_size)) {
- 		msg.rep = tipc_get_err_tlv(TIPC_CFG_NOT_SUPPORTED);
- 		err = -EOPNOTSUPP;
- 		goto send;
 
 
