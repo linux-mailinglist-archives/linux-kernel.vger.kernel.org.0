@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DE686975
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C4678694F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404685AbfHHTHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:07:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41210 "EHLO mail.kernel.org"
+        id S2404184AbfHHTGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:06:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404250AbfHHTH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:07:29 -0400
+        id S2404142AbfHHTGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:06:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F6B62189D;
-        Thu,  8 Aug 2019 19:07:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04EF321880;
+        Thu,  8 Aug 2019 19:06:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291249;
-        bh=MTFwszCrmSaCj63SpvMh7Xi8g7NApYngPDhIgzx0W1A=;
+        s=default; t=1565291161;
+        bh=+Av3d2kPZIsYYbULr+uL0eeswbcyrNwKWhD1JysRTp4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CA1q8RhxX4ftsR2FGdhMjobLSwWUqWceFDeX2cYSswTSkq4r3LefiZ9fhVcs7dmW6
-         uzJGBe/3BZhr8bgroqvLeHhkmdkb56Y48Qy2SgZ3Jbco5WmdlKwO5VHq2umWBX42cB
-         AMIFi7LOq+cvsB/OfeJjSuSIce9mbdlPFfRFK9ow=
+        b=hXbWJR7NKpoxfRo9QQNyaAjD0FleZCWmcthnHQiFD39NcaKt5steibH7dKlGoBOpM
+         zfEdZ5JZx2nZ4t+E1pTOO9MKsjy3Lv/5Pitrbcndx4B7/0u6tgB38/ecAJEaN2XX/K
+         X05eP8M0BssKL7SSiX7n6YT+IO4wFOBEvIhvkMzk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        stable@vger.kernel.org, Arnaud Patard <arnaud.patard@rtp-net.org>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 08/56] atm: iphase: Fix Spectre v1 vulnerability
-Date:   Thu,  8 Aug 2019 21:04:34 +0200
-Message-Id: <20190808190453.197021495@linuxfoundation.org>
+Subject: [PATCH 5.2 10/56] drivers/net/ethernet/marvell/mvmdio.c: Fix non OF case
+Date:   Thu,  8 Aug 2019 21:04:36 +0200
+Message-Id: <20190808190453.280793067@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
 References: <20190808190452.867062037@linuxfoundation.org>
@@ -44,62 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>
 
-[ Upstream commit ea443e5e98b5b74e317ef3d26bcaea54931ccdee ]
+[ Upstream commit d934423ac26ed373dfe089734d505dca5ff679b6 ]
 
-board is controlled by user-space, hence leading to a potential
-exploitation of the Spectre variant 1 vulnerability.
+Orion5.x systems are still using machine files and not device-tree.
+Commit 96cb4342382290c9 ("net: mvmdio: allow up to three clocks to be
+specified for orion-mdio") has replaced devm_clk_get() with of_clk_get(),
+leading to a oops at boot and not working network, as reported in
+https://lists.debian.org/debian-arm/2019/07/msg00088.html and possibly in
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=908712.
 
-This issue was detected with the help of Smatch:
-
-drivers/atm/iphase.c:2765 ia_ioctl() warn: potential spectre issue 'ia_dev' [r] (local cap)
-drivers/atm/iphase.c:2774 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2782 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2816 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2823 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2830 ia_ioctl() warn: potential spectre issue '_ia_dev' [r] (local cap)
-drivers/atm/iphase.c:2845 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2856 ia_ioctl() warn: possible spectre second half.  'iadev'
-
-Fix this by sanitizing board before using it to index ia_dev and _ia_dev
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://lore.kernel.org/lkml/20180423164740.GY17484@dhcp22.suse.cz/
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Link: https://lists.debian.org/debian-arm/2019/07/msg00088.html
+Fixes: 96cb4342382290c9 ("net: mvmdio: allow up to three clocks to be specified for orion-mdio")
+Signed-off-by: Arnaud Patard <arnaud.patard@rtp-net.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/atm/iphase.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvmdio.c |   28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
---- a/drivers/atm/iphase.c
-+++ b/drivers/atm/iphase.c
-@@ -63,6 +63,7 @@
- #include <asm/byteorder.h>  
- #include <linux/vmalloc.h>
- #include <linux/jiffies.h>
-+#include <linux/nospec.h>
- #include "iphase.h"		  
- #include "suni.h"		  
- #define swap_byte_order(x) (((x & 0xff) << 8) | ((x & 0xff00) >> 8))
-@@ -2760,8 +2761,11 @@ static int ia_ioctl(struct atm_dev *dev,
-    }
-    if (copy_from_user(&ia_cmds, arg, sizeof ia_cmds)) return -EFAULT; 
-    board = ia_cmds.status;
--   if ((board < 0) || (board > iadev_count))
--         board = 0;    
+--- a/drivers/net/ethernet/marvell/mvmdio.c
++++ b/drivers/net/ethernet/marvell/mvmdio.c
+@@ -319,15 +319,31 @@ static int orion_mdio_probe(struct platf
+ 
+ 	init_waitqueue_head(&dev->smi_busy_wait);
+ 
+-	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
+-		dev->clk[i] = of_clk_get(pdev->dev.of_node, i);
+-		if (PTR_ERR(dev->clk[i]) == -EPROBE_DEFER) {
++	if (pdev->dev.of_node) {
++		for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
++			dev->clk[i] = of_clk_get(pdev->dev.of_node, i);
++			if (PTR_ERR(dev->clk[i]) == -EPROBE_DEFER) {
++				ret = -EPROBE_DEFER;
++				goto out_clk;
++			}
++			if (IS_ERR(dev->clk[i]))
++				break;
++			clk_prepare_enable(dev->clk[i]);
++		}
 +
-+	if ((board < 0) || (board > iadev_count))
-+		board = 0;
-+	board = array_index_nospec(board, iadev_count + 1);
-+
-    iadev = ia_dev[board];
-    switch (ia_cmds.cmd) {
-    case MEMDUMP:
++		if (!IS_ERR(of_clk_get(pdev->dev.of_node,
++				       ARRAY_SIZE(dev->clk))))
++			dev_warn(&pdev->dev,
++				 "unsupported number of clocks, limiting to the first "
++				 __stringify(ARRAY_SIZE(dev->clk)) "\n");
++	} else {
++		dev->clk[0] = clk_get(&pdev->dev, NULL);
++		if (PTR_ERR(dev->clk[0]) == -EPROBE_DEFER) {
+ 			ret = -EPROBE_DEFER;
+ 			goto out_clk;
+ 		}
+-		if (IS_ERR(dev->clk[i]))
+-			break;
+-		clk_prepare_enable(dev->clk[i]);
++		if (!IS_ERR(dev->clk[0]))
++			clk_prepare_enable(dev->clk[0]);
+ 	}
+ 
+ 	dev->err_interrupt = platform_get_irq(pdev, 0);
 
 
