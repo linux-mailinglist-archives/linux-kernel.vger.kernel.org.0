@@ -2,101 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5308E856C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 02:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9864E8571F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 02:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389483AbfHHAHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 20:07:45 -0400
-Received: from smtprelay0208.hostedemail.com ([216.40.44.208]:33977 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388425AbfHHAHm (ORCPT
+        id S2389861AbfHHAJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 20:09:34 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:33618 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389488AbfHHAHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 20:07:42 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id E4A74180A76CC;
-        Thu,  8 Aug 2019 00:07:40 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2553:2559:2565:2570:2682:2685:2703:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:7903:7974:8985:9025:10004:10400:10450:10455:11658:12740:13161:13229,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: cloth02_7d18cabf61225
-X-Filterd-Recvd-Size: 3653
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  8 Aug 2019 00:07:39 +0000 (UTC)
-Message-ID: <099e07d4b4ecca9798404b95dc78c89bc3dd9f7f.camel@perches.com>
-Subject: Re: [PATCH v2 2/2] linux/bits.h: Add compile time sanity check of
- GENMASK inputs
-From:   Joe Perches <joe@perches.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 07 Aug 2019 17:07:38 -0700
-In-Reply-To: <CAK7LNATGuO0D0a-sTvWw5Pzkn5C7jrLiS=rCwiRsEqaS86KbuQ@mail.gmail.com>
-References: <20190731190309.19909-1-rikard.falkeborn@gmail.com>
-         <20190801230358.4193-1-rikard.falkeborn@gmail.com>
-         <20190801230358.4193-2-rikard.falkeborn@gmail.com>
-         <20190807142728.GA16360@roeck-us.net>
-         <CAK7LNATGuO0D0a-sTvWw5Pzkn5C7jrLiS=rCwiRsEqaS86KbuQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Aug 2019 20:07:45 -0400
+Received: by mail-pf1-f202.google.com with SMTP id d190so57759174pfa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 17:07:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=0e260YowI9CRqgpWSZnFK5vaM3jseidaVbkh9lNaqp8=;
+        b=aQ4wn3P9fS1u1ewjS8eJttkaghjcu/R7h1tnuxyy/xeWvKDpKhjRvgSO7RrLNEHUMU
+         LED5o+fo7q5eEFGAl73Pz60kkKwy/GrW8qw1oEV2SHeE2sI7LIQ4aAFc63hmJEjqA8m4
+         VT4HU+lTU2wrfeWBNWy8WDDHjMcqhXhNl83ARfBqIbLW0IPeWRAKV5IJJlCrz2yppmDS
+         aULni2rAGpooCIwkn1sqHk0efejrXxf7Mr71tkaQJTJ1IG31RD4g4dKGErCCu1TQy4t9
+         qw8Ok6B7ti9N0+AqXpyBmDQcEx/zO20mRtWnibGRBhWH8hWl9LVRKnBMyU0RT5aVX/6n
+         NSUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=0e260YowI9CRqgpWSZnFK5vaM3jseidaVbkh9lNaqp8=;
+        b=ewF573zS7vWZCif+Gv6PhOLshitMp362vLLTNUpj63Ho/6JYIXqHvTNiTRwBNa7wAw
+         U5fBwqkLjWdAXKXinKA4tf5QDjNEZ9KWXRVhImbIsry99oBLKrUJJ2a18BhDgA9bcqmU
+         tFr9lbZ9SK1xZyo20MKQmiRdPrmJxSrzJx8G0JBAXOWRdxOr101fe85VtBmwZH2TBsLq
+         nKkYGY1XNnTRFkrb0M+jKPJIT0ndFjOYMeyVLIkrlUUjorCoq3HsYH3Osx8gy/fXPSXl
+         RXaSjijKvaH6yPG5LHCNrgy7Ul3KWqjwrF5+hIqrSUdma5z66Q9MsO8MWwc4T5K0d9/2
+         oo+Q==
+X-Gm-Message-State: APjAAAVO4W2hCu2nqIrFl3mfyXqL9jv6Bch/ve3Mwj+xIjIfM3pvQu7R
+        yvkHUoWj3WuEPkrYjyXHrYg/zLWJwFoSbe1JH1S1xQ==
+X-Google-Smtp-Source: APXvYqwZ4ajQSAuE3qXrhA8Gc7seQj1zeG29UnjPxKFv05XUEhTP1zFNAl6GAxE4FJArwTQ46bx/Ulzzlgi1s4LMx+ZfwQ==
+X-Received: by 2002:a63:f926:: with SMTP id h38mr10014401pgi.80.1565222864875;
+ Wed, 07 Aug 2019 17:07:44 -0700 (PDT)
+Date:   Wed,  7 Aug 2019 17:07:00 -0700
+In-Reply-To: <20190808000721.124691-1-matthewgarrett@google.com>
+Message-Id: <20190808000721.124691-9-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <20190808000721.124691-1-matthewgarrett@google.com>
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+Subject: [PATCH V38 08/29] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG
+ and KEXEC_SIG_FORCE
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Jiri Bohac <jbohac@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-08-07 at 23:55 +0900, Masahiro Yamada wrote:
-> On Wed, Aug 7, 2019 at 11:27 PM Guenter Roeck <linux@roeck-us.net> wrote:
-[]
-> > Who is going to fix the fallout ? For example, arm64:defconfig no longer
-> > compiles with this patch applied.
-> > 
-> > It seems to me that the benefit of catching misuses of GENMASK is much
-> > less than the fallout from no longer compiling kernels, since those
-> > kernels won't get any test coverage at all anymore.
-> 
-> We cannot apply this until we fix all errors.
-> I do not understand why Andrew picked up this so soon.
+From: Jiri Bohac <jbohac@suse.cz>
 
-I think it makes complete sense to break -next (not mainline)
-and force
-people to fix defects.  Especially these types of
-defects that are
-trivial to fix.
+This is a preparatory patch for kexec_file_load() lockdown.  A locked down
+kernel needs to prevent unsigned kernel images from being loaded with
+kexec_file_load().  Currently, the only way to force the signature
+verification is compiling with KEXEC_VERIFY_SIG.  This prevents loading
+usigned images even when the kernel is not locked down at runtime.
 
-I already sent patches a month ago for all decimal only
-defective uses of GENMASK
+This patch splits KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE.
+Analogous to the MODULE_SIG and MODULE_SIG_FORCE for modules, KEXEC_SIG
+turns on the signature verification but allows unsigned images to be
+loaded.  KEXEC_SIG_FORCE disallows images without a valid signature.
 
-https://lore.kernel.org/lkml/cover.1562734889.git.joe@perches.com/
+Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+Reviewed-by: Dave Young <dyoung@redhat.com>
+cc: kexec@lists.infradead.org
+---
+ arch/x86/Kconfig                       | 20 +++++++++----
+ crypto/asymmetric_keys/verify_pefile.c |  4 ++-
+ include/linux/kexec.h                  |  4 +--
+ kernel/kexec_file.c                    | 41 ++++++++++++++++++++++----
+ 4 files changed, 55 insertions(+), 14 deletions(-)
 
-A couple of which have _still_ not been picked up.
-
-These have been applied in -next:
-
-     1	9e037bdf743cc081858423ad4123824e846b2358 media: staging: media: cedrus: Fix misuse of GENMASK macro
-     2	5ff29d836d1beb347080bd96e6321c811a8e3f62 rtw88: Fix misuse of GENMASK macro
-     3	665e985c2f41bebc3e6cee7e04c36a44afbc58f7 mmc: meson-mx-sdio: Fix misuse of GENMASK macro
-     4	f7408a3d5b5fd10571a653d1a81ce9167c62727f ASoC: wcd9335: Fix misuse of GENMASK macro
-     5	ae8cc91a7d85e018c0c267f580820b2bb558cd48 iio: adc: max9611: Fix misuse of GENMASK macro
-     6	aa4c0c9091b0bb4cb261bbe0718d17c2834c4690 net: stmmac: Fix misuses of GENMASK macro
-     7	937a944090cca2f19458fd037a8aff61c546f0cd net: ethernet: mediatek: Fix misuses of GENMASK macro
-     8	9bdd7bb3a8447fe841cd37ddd9e0a6974b06a0bb clocksource/drivers/npcm: Fix misuse of GENMASK macro
-     9	20faba848752901de23a4d45a1174d64d2069dde irqchip/gic-v3-its: Fix misuse of GENMASK macro
-
-These have not:
-(and that's a rather sad indictment of lk process defects)
-
-[PATCH 03/12] drm: aspeed_gfx: Fix misuse of GENMASK macro
-https://lore.kernel.org/lkml/cddd7ad7e9f81dec1e86c106f04229d21fc21920.1562734889.git.joe@perches.com/
-
-[PATCH 10/12] phy: amlogic: G12A: Fix misuse of GENMASK macro
-https://lore.kernel.org/lkml/d149d2851f9aa2425c927cb8e311e20c4b83e186.1562734889.git.joe@perches.com/
-
-At least these last two do not seem to have actual uses.
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 05e78acb187c..fd2cd4f861cc 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2032,20 +2032,30 @@ config KEXEC_FILE
+ config ARCH_HAS_KEXEC_PURGATORY
+ 	def_bool KEXEC_FILE
+ 
+-config KEXEC_VERIFY_SIG
++config KEXEC_SIG
+ 	bool "Verify kernel signature during kexec_file_load() syscall"
+ 	depends on KEXEC_FILE
+ 	---help---
+-	  This option makes kernel signature verification mandatory for
+-	  the kexec_file_load() syscall.
+ 
+-	  In addition to that option, you need to enable signature
++	  This option makes the kexec_file_load() syscall check for a valid
++	  signature of the kernel image.  The image can still be loaded without
++	  a valid signature unless you also enable KEXEC_SIG_FORCE, though if
++	  there's a signature that we can check, then it must be valid.
++
++	  In addition to this option, you need to enable signature
+ 	  verification for the corresponding kernel image type being
+ 	  loaded in order for this to work.
+ 
++config KEXEC_SIG_FORCE
++	bool "Require a valid signature in kexec_file_load() syscall"
++	depends on KEXEC_SIG
++	---help---
++	  This option makes kernel signature verification mandatory for
++	  the kexec_file_load() syscall.
++
+ config KEXEC_BZIMAGE_VERIFY_SIG
+ 	bool "Enable bzImage signature verification support"
+-	depends on KEXEC_VERIFY_SIG
++	depends on KEXEC_SIG
+ 	depends on SIGNED_PE_FILE_VERIFICATION
+ 	select SYSTEM_TRUSTED_KEYRING
+ 	---help---
+diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+index 3b303fe2f061..cc9dbcecaaca 100644
+--- a/crypto/asymmetric_keys/verify_pefile.c
++++ b/crypto/asymmetric_keys/verify_pefile.c
+@@ -96,7 +96,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 
+ 	if (!ddir->certs.virtual_address || !ddir->certs.size) {
+ 		pr_debug("Unsigned PE binary\n");
+-		return -EKEYREJECTED;
++		return -ENODATA;
+ 	}
+ 
+ 	chkaddr(ctx->header_size, ddir->certs.virtual_address,
+@@ -403,6 +403,8 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
+  *  (*) 0 if at least one signature chain intersects with the keys in the trust
+  *	keyring, or:
+  *
++ *  (*) -ENODATA if there is no signature present.
++ *
+  *  (*) -ENOPKG if a suitable crypto module couldn't be found for a check on a
+  *	chain.
+  *
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 305f6a5ca4fe..998f77c3a0e1 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -125,7 +125,7 @@ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
+ 			     unsigned long cmdline_len);
+ typedef int (kexec_cleanup_t)(void *loader_data);
+ 
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ typedef int (kexec_verify_sig_t)(const char *kernel_buf,
+ 				 unsigned long kernel_len);
+ #endif
+@@ -134,7 +134,7 @@ struct kexec_file_ops {
+ 	kexec_probe_t *probe;
+ 	kexec_load_t *load;
+ 	kexec_cleanup_t *cleanup;
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ 	kexec_verify_sig_t *verify_sig;
+ #endif
+ };
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index b8cc032d5620..875482c34154 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -88,7 +88,7 @@ int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
+ 	return kexec_image_post_load_cleanup_default(image);
+ }
+ 
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ static int kexec_image_verify_sig_default(struct kimage *image, void *buf,
+ 					  unsigned long buf_len)
+ {
+@@ -186,7 +186,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 			     const char __user *cmdline_ptr,
+ 			     unsigned long cmdline_len, unsigned flags)
+ {
+-	int ret = 0;
++	const char *reason;
++	int ret;
+ 	void *ldata;
+ 	loff_t size;
+ 
+@@ -202,14 +203,42 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 	if (ret)
+ 		goto out;
+ 
+-#ifdef CONFIG_KEXEC_VERIFY_SIG
++#ifdef CONFIG_KEXEC_SIG
+ 	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
+ 					   image->kernel_buf_len);
+-	if (ret) {
+-		pr_debug("kernel signature verification failed.\n");
++	switch (ret) {
++	case 0:
++		break;
++
++		/* Certain verification errors are non-fatal if we're not
++		 * checking errors, provided we aren't mandating that there
++		 * must be a valid signature.
++		 */
++	case -ENODATA:
++		reason = "kexec of unsigned image";
++		goto decide;
++	case -ENOPKG:
++		reason = "kexec of image with unsupported crypto";
++		goto decide;
++	case -ENOKEY:
++		reason = "kexec of image with unavailable key";
++	decide:
++		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
++			pr_notice("%s rejected\n", reason);
++			goto out;
++		}
++
++		ret = 0;
++		break;
++
++		/* All other errors are fatal, including nomem, unparseable
++		 * signatures and signature check failures - even if signatures
++		 * aren't required.
++		 */
++	default:
++		pr_notice("kernel signature verification failed (%d).\n", ret);
+ 		goto out;
+ 	}
+-	pr_debug("kernel signature verification successful.\n");
+ #endif
+ 	/* It is possible that there no initramfs is being loaded */
+ 	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
+-- 
+2.22.0.770.g0f2c4a37fd-goog
 
