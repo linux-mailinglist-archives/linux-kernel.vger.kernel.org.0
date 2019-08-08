@@ -2,76 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA4C85C34
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 09:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7B285C44
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbfHHH6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 03:58:32 -0400
-Received: from verein.lst.de ([213.95.11.211]:44262 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731588AbfHHH6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 03:58:32 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 3D39168B02; Thu,  8 Aug 2019 09:58:27 +0200 (CEST)
-Date:   Thu, 8 Aug 2019 09:58:27 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Rob Clark <robdclark@chromium.org>, Christoph Hellwig <hch@lst.de>,
-        Rob Clark <robdclark@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] drm: add cache support for arm64
-Message-ID: <20190808075827.GD30308@lst.de>
-References: <20190805211451.20176-1-robdclark@gmail.com> <20190806084821.GA17129@lst.de> <CAJs_Fx6eh1w7c=crMoD5XyEOMzP6orLhqUewErE51cPGYmObBQ@mail.gmail.com> <20190806143457.GF475@lakrids.cambridge.arm.com> <CAJs_Fx4h6SWGmDTLBnV4nmWUFAs_Ge1inxd-dW9aDKgKqmc1eQ@mail.gmail.com> <20190807123807.GD54191@lakrids.cambridge.arm.com> <CAJs_Fx5xU2-dn3iOVqWTzAjpTaQ8BBNP_Gn_iMc-eJpOX+iXoQ@mail.gmail.com> <20190807164958.GA44765@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190807164958.GA44765@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1731793AbfHHIAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:00:02 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34135 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731548AbfHHIAC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:00:02 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b13so43641123pfo.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 01:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Mj0NlYSUurL6xj8Jw3i+0MeK0CDZOCR1M77+F9BwytE=;
+        b=ZmFoFiuFuEhRJV21WykRlWUovgwSUqqTFjQJtAVC3DZs9ENOnjbPjAb/yiWK8PreJ8
+         c2mnbTcpUBkOX5yrPYDjGZT1Atk+5/zgQaUFCvL7xOTjHJaUQ9YcfwQOu3g3oSiZW+AM
+         9m5gSVyyGv6FgsMCoj8O0sMg0tUx/sRahn1yQpLFeilUzMGBBsP3NwtpnfxYKO2UEj4v
+         H0MkwgSVoHQh77whMNTwaSX+OVH8ZSwQ0rCGvmMl2mIMVJTdv0caL7Dq6hTVDTkSf9Wa
+         Rkq+pjCFxwGS8VABoAYUgIea2CilG2bMTvG9f0NFLJlA0sybY7IR89paSM0ySD0Qp4Yr
+         vT4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Mj0NlYSUurL6xj8Jw3i+0MeK0CDZOCR1M77+F9BwytE=;
+        b=CcfF1YwPktD02ylf6gTKbqE/KLPNNtN7zfezMDjimBRXwlADpA752HL6tSRT3EZwU0
+         0SdsClXtw40KlTRTY6VH1/OY6NoCutIw2MvfJ4nqnGhXIyB6PxdBmqFQJBnaM2Kv/uPD
+         oHjvH9MuYgvZmfmOYfZp8/oAdc75Q7e2hyjStL/G7gur2Fpvme7SA6qdzRUxxI5OfGIk
+         LVQrRX3i9I2Iv9cYwGdU6+UEZ5Bf2HjOHmU3WZKhICnCFctmkUdtV1R+QTGZz/teDsJG
+         T6eaE1WODHwpVEXngG0vAnwVagigQcscxeWwO3V03Oy/mJUP0g7W2zgu4+T7vqXAeB3X
+         LQ+w==
+X-Gm-Message-State: APjAAAVqH6MxZIRZ+bH2GuG/NWL7VJz/J6+2QGw8MhlW5kyJhWUXkl8F
+        YZasoUrqBXPpbMVU2QCDJoRc5uhoozs=
+X-Google-Smtp-Source: APXvYqxzsjhUdbzOD9DNeF+PAk9GYhVZrZl1qUjHVEGtASrf1qnduOun6cNSSC0pt796s6zLw6HNjQ==
+X-Received: by 2002:a17:90b:8e:: with SMTP id bb14mr2717479pjb.19.1565251201455;
+        Thu, 08 Aug 2019 01:00:01 -0700 (PDT)
+Received: from localhost.localdomain (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
+        by smtp.gmail.com with ESMTPSA id t8sm107697374pfq.31.2019.08.08.00.59.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 08 Aug 2019 01:00:01 -0700 (PDT)
+From:   Vincent Chen <vincent.chen@sifive.com>
+To:     paul.walmsley@sifive.com, palmer@sifive.com, aou@eecs.berkeley.edu
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Vincent Chen <vincent.chen@sifive.com>
+Subject: [PATCH 0/2] riscv: Correct the initialized flow of FP and __fstate_clean()
+Date:   Thu,  8 Aug 2019 15:58:39 +0800
+Message-Id: <1565251121-28490-1-git-send-email-vincent.chen@sifive.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 05:49:59PM +0100, Mark Rutland wrote:
-> I'm fairly confident that the linear/direct map cacheable alias is not
-> torn down when pages are allocated. The gneeric page allocation code
-> doesn't do so, and I see nothing the shmem code to do so.
+The following two reasons cause FP registers are sometimes not
+initialized before starting the user program.
+1. Currently, the FP context is initialized in flush_thread() function
+   and we expect these initial values to be restored to FP register when
+   doing FP context switch. However, the FP context switch only occurs in
+   switch_to function. Hence, if this process does not be scheduled out
+   and scheduled in before entering the user space, the FP registers
+   have no chance to initialize.
+2. In flush_thread(), the state of reg->sstatus.FS inherits from the
+   parent. Hence, the state of reg->sstatus.FS may be dirty. If this
+   process is scheduled out during flush_thread() and initializing the
+   FP register, the fstate_save() in switch_to will corrupt the FP context
+   which has been initialized until flush_thread().
+In addition, the __fstate_clean() function cannot correctly set the state
+of sstatus.FS to SR_FS_CLEAN. These problems will be solved in this patch
+set.
 
-It is not torn down anywhere.
 
-> For arm64, we can tear down portions of the linear map, but that has to
-> be done explicitly, and this is only possible when using rodata_full. If
-> not using rodata_full, it is not possible to dynamically tear down the
-> cacheable alias.
+Vincent Chen (2):
+  riscv: Correct the initialized flow of FP register
+  riscv: Make __fstate_clean() can work correctly.
 
-Interesting.  For this or next merge window I plan to add support to the
-generic DMA code to remap pages as uncachable in place based on the
-openrisc code.  Aѕ far as I can tell the requirement for that is
-basically just that the kernel direct mapping doesn't use PMD or bigger
-mapping so that it supports changing protection bits on a per-PTE basis.
-Is that the case with arm64 + rodata_full?
+ arch/riscv/include/asm/switch_to.h |  8 +++++++-
+ arch/riscv/kernel/process.c        | 13 +++++++++++--
+ 2 files changed, 18 insertions(+), 3 deletions(-)
 
-> > My understanding is that a cacheable alias is "ok", with some
-> > caveats.. ie. that the cacheable alias is not accessed.  
-> 
-> Unfortunately, that is not true. You'll often get away with it in
-> practice, but that's a matter of probability rather than a guarantee.
-> 
-> You  cannot prevent a CPU from accessing a VA arbitrarily (e.g. as the
-> result of wild speculation). The ARM ARM (ARM DDI 0487E.a) points this
-> out explicitly:
+-- 
+2.7.4
 
-Well, if we want to fix this properly we'll have to remap in place
-for dma_alloc_coherent and friends.
