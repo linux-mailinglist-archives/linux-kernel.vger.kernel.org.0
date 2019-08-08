@@ -2,92 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA67485C9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D834F85C86
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732030AbfHHIP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:15:57 -0400
-Received: from mail.netline.ch ([148.251.143.178]:57153 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731891AbfHHIP5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:15:57 -0400
-X-Greylist: delayed 335 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Aug 2019 04:15:55 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 8810C2AA156;
-        Thu,  8 Aug 2019 10:10:19 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id d_GMqpSu42f8; Thu,  8 Aug 2019 10:10:19 +0200 (CEST)
-Received: from thor (116.245.63.188.dynamic.wline.res.cust.swisscom.ch [188.63.245.116])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id C6F842AA0BD;
-        Thu,  8 Aug 2019 10:10:18 +0200 (CEST)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.92)
-        (envelope-from <michel@daenzer.net>)
-        id 1hvdV3-0005XJ-SO; Thu, 08 Aug 2019 10:10:17 +0200
-Subject: Re: [Regression] "drm/amdgpu: enable gfxoff again on raven series
- (v2)"
-To:     "Huang, Ray" <Ray.Huang@amd.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>
-References: <3EB0E920-31D7-4C91-A360-DBFB4417AC2F@canonical.com>
- <MN2PR12MB330979BAFF5BCC758258D54CECD40@MN2PR12MB3309.namprd12.prod.outlook.com>
- <624BFB8F-B586-492E-BEA6-4B138DAEC831@canonical.com>
- <MN2PR12MB3309680845257BC66644133CECD70@MN2PR12MB3309.namprd12.prod.outlook.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <615a4948-d0f9-46fc-f43e-2025455e9af6@daenzer.net>
-Date:   Thu, 8 Aug 2019 10:10:17 +0200
+        id S1731852AbfHHIL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:11:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:57736 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726721AbfHHILz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:11:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA44B337;
+        Thu,  8 Aug 2019 01:11:54 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0BA763F706;
+        Thu,  8 Aug 2019 01:11:52 -0700 (PDT)
+Subject: Re: [RFC][PATCH 12/13] sched/deadline: Introduce deadline servers
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, juri.lelli@redhat.com,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        bristot@redhat.com, balsini@android.com, dvyukov@google.com,
+        tglx@linutronix.de, vpillai@digitalocean.com, rostedt@goodmis.org
+References: <20190726145409.947503076@infradead.org>
+ <20190726161358.056107990@infradead.org>
+ <34710762-f813-3913-0e55-fde7c91c6c2d@arm.com>
+ <20190808075635.GB17205@worktop.programming.kicks-ass.net>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <20cc05d3-0d0f-a558-2bbe-3b72527dd9bc@arm.com>
+Date:   Thu, 8 Aug 2019 10:11:51 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <MN2PR12MB3309680845257BC66644133CECD70@MN2PR12MB3309.namprd12.prod.outlook.com>
+In-Reply-To: <20190808075635.GB17205@worktop.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-08 8:29 a.m., Huang, Ray wrote:
->> From: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> at 00:03, Huang, Ray <Ray.Huang@amd.com> wrote:
+On 8/8/19 9:56 AM, Peter Zijlstra wrote:
+> On Wed, Aug 07, 2019 at 06:31:59PM +0200, Dietmar Eggemann wrote:
+>> On 7/26/19 4:54 PM, Peter Zijlstra wrote:
+>>>
+>>>
+>>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 >>
->>> May I know the all firmware version in your system?
+>> [...]
+>>
+>>> @@ -889,6 +891,8 @@ static void update_curr(struct cfs_rq *c
+>>>  		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
+>>>  		cgroup_account_cputime(curtask, delta_exec);
+>>>  		account_group_exec_runtime(curtask, delta_exec);
+>>> +		if (curtask->server)
+>>> +			dl_server_update(curtask->server, delta_exec);
+>>>  	}
+>>
+>> I get a lockdep_assert_held(&rq->lock) related warning in start_dl_timer()
+>> when running the full stack.
 > 
-> Seems to the issue we encountered with IOMMU enabled. Could you please disable iommu in SBIOS or GRUB?
+> That would seem to imply a stale curtask->server value; the hunk below:
+> 
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3756,8 +3756,11 @@ pick_next_task(struct rq *rq, struct tas
+> 
+>         for_each_class(class) {
+>                 p = class->pick_next_task(rq, NULL, NULL);
+> -               if (p)
+> +               if (p) {
+> +                       if (p->sched_class == class && p->server)
+> +                               p->server = NULL;
+>                         return p;
+> +               }
+>         }
+> 
+> 
+> Was supposed to clear p->server, but clearly something is going 'funny'.
 
-The driver needs to work with the IOMMU enabled. If nothing else, ROCm
-only works with IOMMU I think.
+What about the fast path in pick_next_task()?
 
-
--- 
-Earthling Michel Dänzer               |              https://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index bffe849b5a42..f1ea6ae16052 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3742,6 +3742,9 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+                if (unlikely(!p))
+                        p = idle_sched_class.pick_next_task(rq, prev, rf);
+ 
++               if (p->sched_class == &fair_sched_class && p->server)
++                       p->server = NULL;
++
+                return p;
+        }
