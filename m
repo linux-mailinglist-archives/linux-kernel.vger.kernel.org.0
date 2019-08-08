@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C27B6869C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE88086A1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:14:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405332AbfHHTKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:10:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44934 "EHLO mail.kernel.org"
+        id S2405232AbfHHTMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:12:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405312AbfHHTKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:10:32 -0400
+        id S2405322AbfHHTKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:10:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DE752173E;
-        Thu,  8 Aug 2019 19:10:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D494B2189D;
+        Thu,  8 Aug 2019 19:10:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291431;
-        bh=MTFwszCrmSaCj63SpvMh7Xi8g7NApYngPDhIgzx0W1A=;
+        s=default; t=1565291434;
+        bh=kQkCSML3p6gGTaYXMo3ygZUJW6sPyqX045IrhYREfh4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oS67qREMf2qzJtVoYLZ5FBU1/8LbTlbC/rRZ22F2NxIGaR8rHq7yMuYK1RNys18mV
-         UuAettCxkHbUvoM3/LksoVkA1eY7spkcgHg8OYyhkLcU5LBSmLfslokwtVlFLSIzMT
-         8R8eHVoMNciyMsdqIMa637NPVUDWbyzSt0cS7k/A=
+        b=BFIo9rKDLxTKhwhjh94Ip7Hk67huHiHiF/3yQg5ouR/6M1gMfhaNVKovbflbqBmZF
+         4qp6mcPuwZf/Kmwn2goKM/WXOFvYnicrF9DE5sdzF4IQT13avh2BpwlT5oV2kz+dQF
+         6DYFFI7AL+1ShDgKyCipmemBFxRj3+eZe9TBN4Qw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        syzbot+fbb5b288c9cb6a2eeac4@syzkaller.appspotmail.com,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 12/33] atm: iphase: Fix Spectre v1 vulnerability
-Date:   Thu,  8 Aug 2019 21:05:19 +0200
-Message-Id: <20190808190454.169203652@linuxfoundation.org>
+Subject: [PATCH 4.14 13/33] ife: error out when nla attributes are empty
+Date:   Thu,  8 Aug 2019 21:05:20 +0200
+Message-Id: <20190808190454.218276770@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190453.582417307@linuxfoundation.org>
 References: <20190808190453.582417307@linuxfoundation.org>
@@ -44,62 +47,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit ea443e5e98b5b74e317ef3d26bcaea54931ccdee ]
+[ Upstream commit c8ec4632c6ac9cda0e8c3d51aa41eeab66585bd5 ]
 
-board is controlled by user-space, hence leading to a potential
-exploitation of the Spectre variant 1 vulnerability.
+act_ife at least requires TCA_IFE_PARMS, so we have to bail out
+when there is no attribute passed in.
 
-This issue was detected with the help of Smatch:
-
-drivers/atm/iphase.c:2765 ia_ioctl() warn: potential spectre issue 'ia_dev' [r] (local cap)
-drivers/atm/iphase.c:2774 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2782 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2816 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2823 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2830 ia_ioctl() warn: potential spectre issue '_ia_dev' [r] (local cap)
-drivers/atm/iphase.c:2845 ia_ioctl() warn: possible spectre second half.  'iadev'
-drivers/atm/iphase.c:2856 ia_ioctl() warn: possible spectre second half.  'iadev'
-
-Fix this by sanitizing board before using it to index ia_dev and _ia_dev
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://lore.kernel.org/lkml/20180423164740.GY17484@dhcp22.suse.cz/
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reported-by: syzbot+fbb5b288c9cb6a2eeac4@syzkaller.appspotmail.com
+Fixes: ef6980b6becb ("introduce IFE action")
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/atm/iphase.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/sched/act_ife.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/atm/iphase.c
-+++ b/drivers/atm/iphase.c
-@@ -63,6 +63,7 @@
- #include <asm/byteorder.h>  
- #include <linux/vmalloc.h>
- #include <linux/jiffies.h>
-+#include <linux/nospec.h>
- #include "iphase.h"		  
- #include "suni.h"		  
- #define swap_byte_order(x) (((x & 0xff) << 8) | ((x & 0xff00) >> 8))
-@@ -2760,8 +2761,11 @@ static int ia_ioctl(struct atm_dev *dev,
-    }
-    if (copy_from_user(&ia_cmds, arg, sizeof ia_cmds)) return -EFAULT; 
-    board = ia_cmds.status;
--   if ((board < 0) || (board > iadev_count))
--         board = 0;    
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -459,6 +459,9 @@ static int tcf_ife_init(struct net *net,
+ 	int ret = 0;
+ 	int err;
+ 
++	if (!nla)
++		return -EINVAL;
 +
-+	if ((board < 0) || (board > iadev_count))
-+		board = 0;
-+	board = array_index_nospec(board, iadev_count + 1);
-+
-    iadev = ia_dev[board];
-    switch (ia_cmds.cmd) {
-    case MEMDUMP:
+ 	err = nla_parse_nested(tb, TCA_IFE_MAX, nla, ife_policy, NULL);
+ 	if (err < 0)
+ 		return err;
 
 
