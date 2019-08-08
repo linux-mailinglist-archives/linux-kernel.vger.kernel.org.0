@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AFAE86A62
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A071A86A30
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:14:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404453AbfHHTPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:15:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40110 "EHLO mail.kernel.org"
+        id S2405308AbfHHTOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:14:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404458AbfHHTGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:06:35 -0400
+        id S2404962AbfHHTIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:08:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E15F2184E;
-        Thu,  8 Aug 2019 19:06:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96399214C6;
+        Thu,  8 Aug 2019 19:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291194;
-        bh=uLl5H01r+k8IDY1DBXgejoGkOhkHH3VpZfJmjS8a4VQ=;
+        s=default; t=1565291326;
+        bh=rhvPZ3zepMtbGuWGUV2mDeaLMWFgBYdBP4GuSvDUE5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b8v3Cyr7pvkTQ9tw9GQUnMjbpQx76zbROYUchsHS302TQDGEEHbuzxiZ9Xhp8FroM
-         biuWxCPGIPThNLh9C5VYsktdIfdS28ztxqpqtDF2IeKF72IFJWtN0OY6IkgkUY0a0E
-         HjsMMvjOtwjvPg861LZGWqb6yM8APTOE047RIwB0=
+        b=CXp92f/bGjCY895J0HCCDUbuqkjnLExsFNAyLquUAQjaMz7+NhDTQKolGI/NJONhf
+         36W5IXxfZbmSSao/GmOqhgJ+YCv/omTLIimT83/Ygp7CnN49BSXZXYwJvVsCB1BFOT
+         EARG12yQZENIh3pLZpb/DI6yTc0FVhg/GqyImpOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 22/56] net/mlx5e: always initialize frag->last_in_page
-Date:   Thu,  8 Aug 2019 21:04:48 +0200
-Message-Id: <20190808190453.775711815@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 03/45] driver core: Establish order of operations for device_add and device_del via bitflag
+Date:   Thu,  8 Aug 2019 21:04:49 +0200
+Message-Id: <20190808190454.008105790@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
-References: <20190808190452.867062037@linuxfoundation.org>
+In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
+References: <20190808190453.827571908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,78 +45,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+commit 3451a495ef244a88ed6317a035299d835554d579 upstream.
 
-[ Upstream commit 60d60c8fbd8d1acf25b041ecd72ae4fa16e9405b ]
+Add an additional bit flag to the device_private struct named "dead".
 
-The commit 069d11465a80 ("net/mlx5e: RX, Enhance legacy Receive Queue
-memory scheme") introduced an undefined behaviour below due to
-"frag->last_in_page" is only initialized in mlx5e_init_frags_partition()
-when,
+This additional flag provides a guarantee that when a device_del is
+executed on a given interface an async worker will not attempt to attach
+the driver following the earlier device_del call. Previously this
+guarantee was not present and could result in the device_del call
+attempting to remove a driver from an interface only to have the async
+worker attempt to probe the driver later when it finally completes the
+asynchronous probe call.
 
-if (next_frag.offset + frag_info[f].frag_stride > PAGE_SIZE)
+One additional change added was that I pulled the check for dev->driver
+out of the __device_attach_driver call and instead placed it in the
+__device_attach_async_helper call. This was motivated by the fact that the
+only other caller of this, __device_attach, had already taken the
+device_lock() and checked for dev->driver. Instead of testing for this
+twice in this path it makes more sense to just consolidate the dev->dead
+and dev->driver checks together into one set of checks.
 
-or after bailed out the loop,
-
-for (i = 0; i < mlx5_wq_cyc_get_size(&rq->wqe.wq); i++)
-
-As the result, there could be some "frag" have uninitialized
-value of "last_in_page".
-
-Later, get_frag() obtains those "frag" and check "frag->last_in_page" in
-mlx5e_put_rx_frag() and triggers the error during boot. Fix it by always
-initializing "frag->last_in_page" to "false" in
-mlx5e_init_frags_partition().
-
-UBSAN: Undefined behaviour in
-drivers/net/ethernet/mellanox/mlx5/core/en_rx.c:325:12
-load of value 170 is not a valid value for type 'bool' (aka '_Bool')
-Call trace:
- dump_backtrace+0x0/0x264
- show_stack+0x20/0x2c
- dump_stack+0xb0/0x104
- __ubsan_handle_load_invalid_value+0x104/0x128
- mlx5e_handle_rx_cqe+0x8e8/0x12cc [mlx5_core]
- mlx5e_poll_rx_cq+0xca8/0x1a94 [mlx5_core]
- mlx5e_napi_poll+0x17c/0xa30 [mlx5_core]
- net_rx_action+0x248/0x940
- __do_softirq+0x350/0x7b8
- irq_exit+0x200/0x26c
- __handle_domain_irq+0xc8/0x128
- gic_handle_irq+0x138/0x228
- el1_irq+0xb8/0x140
- arch_cpu_idle+0x1a4/0x348
- do_idle+0x114/0x1b0
- cpu_startup_entry+0x24/0x28
- rest_init+0x1ac/0x1dc
- arch_call_rest_init+0x10/0x18
- start_kernel+0x4d4/0x57c
-
-Fixes: 069d11465a80 ("net/mlx5e: RX, Enhance legacy Receive Queue memory scheme")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/base/base.h |  4 ++++
+ drivers/base/core.c | 11 +++++++++++
+ drivers/base/dd.c   | 22 +++++++++++-----------
+ 3 files changed, 26 insertions(+), 11 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -340,12 +340,11 @@ static inline u64 mlx5e_get_mpwqe_offset
+diff --git a/drivers/base/base.h b/drivers/base/base.h
+index 7a419a7a6235b..559b047de9f75 100644
+--- a/drivers/base/base.h
++++ b/drivers/base/base.h
+@@ -66,6 +66,9 @@ struct driver_private {
+  *	probed first.
+  * @device - pointer back to the struct device that this structure is
+  * associated with.
++ * @dead - This device is currently either in the process of or has been
++ *	removed from the system. Any asynchronous events scheduled for this
++ *	device should exit without taking any action.
+  *
+  * Nothing outside of the driver core should ever touch these fields.
+  */
+@@ -76,6 +79,7 @@ struct device_private {
+ 	struct klist_node knode_bus;
+ 	struct list_head deferred_probe;
+ 	struct device *device;
++	u8 dead:1;
+ };
+ #define to_device_private_parent(obj)	\
+ 	container_of(obj, struct device_private, knode_parent)
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 92e2c32c22270..37a90d72f3736 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2050,6 +2050,17 @@ void device_del(struct device *dev)
+ 	struct kobject *glue_dir = NULL;
+ 	struct class_interface *class_intf;
  
- static void mlx5e_init_frags_partition(struct mlx5e_rq *rq)
- {
--	struct mlx5e_wqe_frag_info next_frag, *prev;
-+	struct mlx5e_wqe_frag_info next_frag = {};
-+	struct mlx5e_wqe_frag_info *prev = NULL;
- 	int i;
++	/*
++	 * Hold the device lock and set the "dead" flag to guarantee that
++	 * the update behavior is consistent with the other bitfields near
++	 * it and that we cannot have an asynchronous probe routine trying
++	 * to run while we are tearing out the bus/class/sysfs from
++	 * underneath the device.
++	 */
++	device_lock(dev);
++	dev->p->dead = true;
++	device_unlock(dev);
++
+ 	/* Notify clients of device removal.  This call must come
+ 	 * before dpm_sysfs_remove().
+ 	 */
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index d48b310c47603..11d24a552ee49 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -725,15 +725,6 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
+ 	bool async_allowed;
+ 	int ret;
  
- 	next_frag.di = &rq->wqe.di[0];
--	next_frag.offset = 0;
--	prev = NULL;
+-	/*
+-	 * Check if device has already been claimed. This may
+-	 * happen with driver loading, device discovery/registration,
+-	 * and deferred probe processing happens all at once with
+-	 * multiple threads.
+-	 */
+-	if (dev->driver)
+-		return -EBUSY;
+-
+ 	ret = driver_match_device(drv, dev);
+ 	if (ret == 0) {
+ 		/* no match */
+@@ -768,6 +759,15 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
  
- 	for (i = 0; i < mlx5_wq_cyc_get_size(&rq->wqe.wq); i++) {
- 		struct mlx5e_rq_frag_info *frag_info = &rq->wqe.info.arr[0];
+ 	device_lock(dev);
+ 
++	/*
++	 * Check if device has already been removed or claimed. This may
++	 * happen with driver loading, device discovery/registration,
++	 * and deferred probe processing happens all at once with
++	 * multiple threads.
++	 */
++	if (dev->p->dead || dev->driver)
++		goto out_unlock;
++
+ 	if (dev->parent)
+ 		pm_runtime_get_sync(dev->parent);
+ 
+@@ -778,7 +778,7 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+ 
+ 	if (dev->parent)
+ 		pm_runtime_put(dev->parent);
+-
++out_unlock:
+ 	device_unlock(dev);
+ 
+ 	put_device(dev);
+@@ -891,7 +891,7 @@ static int __driver_attach(struct device *dev, void *data)
+ 	if (dev->parent && dev->bus->need_parent_lock)
+ 		device_lock(dev->parent);
+ 	device_lock(dev);
+-	if (!dev->driver)
++	if (!dev->p->dead && !dev->driver)
+ 		driver_probe_device(drv, dev);
+ 	device_unlock(dev);
+ 	if (dev->parent && dev->bus->need_parent_lock)
+-- 
+2.20.1
+
 
 
