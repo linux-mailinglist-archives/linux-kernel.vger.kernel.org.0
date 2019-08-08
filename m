@@ -2,196 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45E888693B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F28686947
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390290AbfHHTBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:01:13 -0400
-Received: from mail-eopbgr750072.outbound.protection.outlook.com ([40.107.75.72]:57570
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732375AbfHHTBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:01:12 -0400
+        id S2390342AbfHHTDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:03:20 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:48626 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390203AbfHHTDT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:03:19 -0400
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x78IxIGZ011177;
+        Thu, 8 Aug 2019 12:03:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=I/Przh46c03xV6VZMV9H/IQoSx3QAVfULtJVLhEjwPw=;
+ b=j6sNhniDOLTebO58IcJxW30848pVT+pNsvg6yT+myCVcMh/au2l458KiA+klzk1w/TEP
+ zBnxx2MaPGH4ckHHafH0UfXIBuXfQoAEPShdcihzUEtt80VbhrLrG5scUk71g2P3k7cv
+ rmqhxeSMEWf+jRVvk1dupdeEJ5XpFPzu6uw= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2u8p5hgumx-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 08 Aug 2019 12:03:00 -0700
+Received: from prn-hub01.TheFacebook.com (2620:10d:c081:35::125) by
+ prn-hub05.TheFacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 8 Aug 2019 12:02:56 -0700
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Thu, 8 Aug 2019 12:02:56 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GXa/yh5T6BBzQTbJOfyXWG2ecPf3oNEKqaEe4UiTztLAfsCUUDi8JjvlXYjq8j8OSIcLGYXKFUTwhntTbiS/JWY6fnsfG5U3axqtDshN3y1xpkDQywbA86eROMGbucvdNeqvR9vPRbGBExP9W19gw6EAYla0G2JUTmSk/sfJBobYY0EiyBmxKjKOkGPbyt8iE6jk9bwDFry6U4RHl1cFuDs5t00sIoY0SZL0W7LFrSrX+UgE4Aqnb4tFwZOyLOhjDHnO4apeS7JOOKeHmEmL9Jh2s4iKsWPKPgYY6+yv7WIpi3F7+YvI7exd+1r/HKDVsQrNOcfWVqOpgRvBy/S0dw==
+ b=TLePU30qoW252dBy+gkj4GDnqYsPJfUNjSTjVmBaUZlnBqN9QMg7TcBzMc5USm0w/jboMarbaR+f8AZ6T4iYsDFmfFW+jbQKWSvuQrnZE08whXH7Mg5Uu1AES51XsC9KD1RDRgeb/MOxe9FJauQWfUYWOWufTtPRHwTKKqunGCeoUEdFbva2WDgdl/SW2+FTjaKfRj5pMXUP/kSzjA/rX5QGu7qP97E8MOpFjelKhtBMwcTkIV3uMagoosMEMyEESCeTaBOO9jQnV8leObJRRxy86aOBx3nnxG3K2tGN5CvOoGZAQ2P/eYueuKL8RCyjuCLKMD0B/z3WSXNmq8H2Eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uIGYYFurdZJEDWrUVgLQJxGefrpqgP2r5e0FtazLb8g=;
- b=P35UPPlhk7mwV/g9vlWQrO518rEHxWtIXtXNTiYJjMckr8jyQ7/2bPuKOyKZ1Zo+DfglgLYPI6HROZboXIgTo8TG2pF54tCX524QTfAXDKn/ez/0LtkgPf6YXnwRZAWDaEXGuLIuWej95kcBgG8kcGOkoNWERSn+XLTmqX3+eYy/OaBnuy8R9/ctznkyHx8R1AeR+DywFYWzAi9AMDmOduc7weztKUfucxJsGb85d3+/mtUzsj7pUjvjGc72W1HfbTVjUN4gbSJwL7SCySuRMXCjdHL0o6eYmvWuRooJZZJhCdX59QwPFrYnzuI86R/RHE7NXrnElREJs9lrVjOQ4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ bh=I/Przh46c03xV6VZMV9H/IQoSx3QAVfULtJVLhEjwPw=;
+ b=VHxb4KFmpl214XUXZalTH7Qz0T0J/nCsCgpNgk4z9z93Sw65+M1QgtWpqAtTSOymBz4UgjaF8c9AxsPLv7xadQwFhO4eNnxMiBOH25WdqD3AwQvDriYEzzzPuKcWRRHpplCZ/hxf1twUFO0KDTvjlhs9sW1BOn2k0v4HB3Hamtx9MykSSNGUMaFie4FPfe//FTWzLVt2Q6AENuUpZNxeXIDSMP0z2AMUqgUY2OkkaPiwQRLed1zjBZHCR/96RYUTyT3iN82SCjZwHyZa9hj3Mrm/6MsWIV7Wtq3J1NjSH9hJFZa6Tv3MW+pEgZBt1Q3ZHvIfrTFgfyOqlmsGT4zdTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uIGYYFurdZJEDWrUVgLQJxGefrpqgP2r5e0FtazLb8g=;
- b=QdBlNuBTcOBaoz9Gi3l50z6m0RIpdNEZBQEpBkrfZDFKKNTkqhIEG9mIbR27Iiht0PdAxlf2M/YuprUfavGGe4yRnSX6P8fCgaoeGOQ1hWvHol/MO23Ifoqr0a4NRKcYvxZu9dxH+YkoASbuH+hBGU2MGPeSZbuPoWggbvBLjZg=
-Received: from CY4PR02CA0004.namprd02.prod.outlook.com (2603:10b6:903:18::14)
- by SN6PR02MB4832.namprd02.prod.outlook.com (2603:10b6:805:98::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.18; Thu, 8 Aug
- 2019 19:01:08 +0000
-Received: from CY1NAM02FT060.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::201) by CY4PR02CA0004.outlook.office365.com
- (2603:10b6:903:18::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.14 via Frontend
- Transport; Thu, 8 Aug 2019 19:01:08 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT060.mail.protection.outlook.com (10.152.74.252) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2157.15
- via Frontend Transport; Thu, 8 Aug 2019 19:01:07 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1hvnet-0002c3-BN; Thu, 08 Aug 2019 12:01:07 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1hvneo-0004w0-6C; Thu, 08 Aug 2019 12:01:02 -0700
-Received: from xsj-pvapsmtp01 (mail.xilinx.com [149.199.38.66] (may be forged))
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x78J0vKi011972;
-        Thu, 8 Aug 2019 12:00:57 -0700
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1hvnej-0004rm-A1; Thu, 08 Aug 2019 12:00:57 -0700
-From:   Jolly Shah <jolly.shah@xilinx.com>
-To:     matthias.bgg@gmail.com, andy.gross@linaro.org, shawnguo@kernel.org,
-        geert+renesas@glider.be, bjorn.andersson@linaro.org,
-        sean.wang@mediatek.com, m.szyprowski@samsung.com,
-        michal.simek@xilinx.com
-Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Tejas Patel <tejas.patel@xilinx.com>,
-        Jolly Shah <jollys@xilinx.com>
-Subject: [PATCH] soc: xilinx: Set CAP_UNUSABLE requirement for versal while powering down domain
-Date:   Thu,  8 Aug 2019 12:00:36 -0700
-Message-Id: <1565290836-18204-1-git-send-email-jolly.shah@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(136003)(376002)(346002)(2980300002)(189003)(199004)(305945005)(36386004)(316002)(4326008)(106002)(70586007)(16586007)(63266004)(107886003)(54906003)(70206006)(8936002)(50226002)(47776003)(81156014)(48376002)(8676002)(36756003)(81166006)(356004)(9786002)(50466002)(5660300002)(2906002)(6636002)(6666004)(7696005)(336012)(51416003)(2616005)(476003)(426003)(26005)(186003)(14444005)(486006)(44832011)(478600001)(126002)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4832;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+ bh=I/Przh46c03xV6VZMV9H/IQoSx3QAVfULtJVLhEjwPw=;
+ b=EZsNLk03AzLO1kwbkMXdnSku6MvipRm4yVOOpN6htnkxFgjwzZ6FCFM7qwMVxYng2ebsLrMVtsWy7yCzRuV6PZSwkpSAZ4YkNLtYMVtIDTZpRKn1MfXjYP/WGodqMNK6RVOCO85NNcYd5zybCjp3V7951QlHCntcaQn6teOLe50=
+Received: from MWHPR15MB1216.namprd15.prod.outlook.com (10.175.2.17) by
+ MWHPR15MB1791.namprd15.prod.outlook.com (10.174.255.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.16; Thu, 8 Aug 2019 19:02:54 +0000
+Received: from MWHPR15MB1216.namprd15.prod.outlook.com
+ ([fe80::2971:619a:860e:b6cc]) by MWHPR15MB1216.namprd15.prod.outlook.com
+ ([fe80::2971:619a:860e:b6cc%2]) with mapi id 15.20.2157.015; Thu, 8 Aug 2019
+ 19:02:54 +0000
+From:   Tao Ren <taoren@fb.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        William Kennington <wak@google.com>,
+        Joel Stanley <joel@jms.id.au>
+Subject: Re: [PATCH net-next] net/ncsi: allow to customize BMC MAC Address
+ offset
+Thread-Topic: [PATCH net-next] net/ncsi: allow to customize BMC MAC Address
+ offset
+Thread-Index: AQHVTLYXvEPb5D4KhEGV/bPPR833MKbwAYEAgAAEloCAADQnAIABB7CAgABcZwA=
+Date:   Thu, 8 Aug 2019 19:02:54 +0000
+Message-ID: <77762b10-b8e7-b8a4-3fc0-e901707a1d54@fb.com>
+References: <20190807002118.164360-1-taoren@fb.com>
+ <20190807112518.644a21a2@cakuba.netronome.com>
+ <20190807184143.GE26047@lunn.ch>
+ <806a76a8-229a-7f24-33c7-2cf2094f3436@fb.com>
+ <20190808133209.GB32706@lunn.ch>
+In-Reply-To: <20190808133209.GB32706@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR11CA0030.namprd11.prod.outlook.com
+ (2603:10b6:300:115::16) To MWHPR15MB1216.namprd15.prod.outlook.com
+ (2603:10b6:320:22::17)
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::1:919d]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 12c68498-c21f-4184-31d4-08d71c3304b2
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1791;
+x-ms-traffictypediagnostic: MWHPR15MB1791:
+x-microsoft-antispam-prvs: <MWHPR15MB17914E2C3BAF70C9C268F64FB2D70@MWHPR15MB1791.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3513;
+x-forefront-prvs: 012349AD1C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(396003)(39860400002)(136003)(199004)(189003)(446003)(8676002)(58126008)(486006)(11346002)(6246003)(64126003)(4326008)(316002)(31686004)(53936002)(65956001)(476003)(52116002)(2616005)(54906003)(229853002)(186003)(14454004)(81166006)(102836004)(2906002)(6512007)(81156014)(6506007)(6436002)(386003)(65806001)(53546011)(65826007)(31696002)(66946007)(76176011)(25786009)(99286004)(5660300002)(71190400001)(64756008)(66556008)(66476007)(66446008)(6916009)(7736002)(36756003)(14444005)(305945005)(46003)(71200400001)(86362001)(8936002)(6486002)(256004)(6116002)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1791;H:MWHPR15MB1216.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: vPArJZOEvC6r6nznEa7wGtUEqqhgYDBvFxHYQPVq5bXR/ZsqDwqN3IUwoUuzkT4XdukQailM0DwAqzz+dIQAKZQ+nuZl7dUxRrKzYU89BJ5X6dpiPgLGgdrrdX/9KBoj/hmr3zLyzH4EjNdGpzCTc9QJkOaGlzIt+J1cpql/0zBr8PH4rDcBOWYSgUf+klz+QbqWn0stG+rRljTCh4bj7DKLua3kiXZfrtSefzd6vmceiGurm6bsXD6a8SY6/dsHU2LNv+IjZKayM3U5+Du0ga9Adfx6dg238dC8u0QHMcGLjiv3xBjQKJl6E6S2OzKjTM2gSPoHITEmyWH7p5XYa9RQ95eABGNixkhI2DcPou+zXD6i1hPA7upBAsAzxoQma2+V/D5X6JWKFJ5duFkGkKhLNZEsTy6Gq3BcmdimQAM=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <39D5E219252AA445ABFAF136782B7840@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f567b420-3067-4415-8f8c-08d71c32c599
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:SN6PR02MB4832;
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4832:
-X-Microsoft-Antispam-PRVS: <SN6PR02MB48329BF0F3F9D1B1F06EEFC9B8D70@SN6PR02MB4832.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
-X-Forefront-PRVS: 012349AD1C
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: JMa9VvUkPAmEw4BkzZlXqS7WVFk9Y0S2tiTJHH6PHFZ3E3iFfpd6etJ87tvVxLPQs9RqZI0+W/P1mOjxOmBNsmkziUT+LXEUiY0Ur5LOSjFdeFY8AQnFAonV2AgkbrTr1kDth3i/mztxJd6XsE329m7WFw4q7JwJKgAEWPha4/2zWKh31qcUxxiZz/KFiSdtJcY+Wn4/C10BhIi1lUfitBo7kr9043h2ggoqxhR1H+EwL7MjW7M3Cj7X1zi/7MOD0Fhe5ESAIUQUa689gIgAq3lTGjWKafiG/VSfGtPg8SsbTdFadNMlQXcsg+Vk9PnjcoqLrN5QQ9WdKfqoE8v8zHT0EXWTsPiUu35K36pmaF7IGidiMbdA7HdyNVpXWqOYYdrfiJ7RartgcrTo7Fm6n+ItggXOd8ikmi+1qo9yyOQ=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2019 19:01:07.9247
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12c68498-c21f-4184-31d4-08d71c3304b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2019 19:02:54.5950
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f567b420-3067-4415-8f8c-08d71c32c599
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4832
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WTk3lWrDFO8UZb7xVavRC8GI6DJHR+Ai4UDl5rxIlt3bWijaxZVmjsOKafjYKzAy
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1791
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908080170
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejas Patel <tejas.patel@xilinx.com>
-
-For "0" requirement which is used to inform firmware that
-device is not required currently by master, Versal LibPM disables
-clock, power it down and reset the device. genpd_power_off()
-is being called during runtime suspend also. So, if any device
-goes to runtime suspend state during resumes it needs to be
-re-initialized again. It is possible that drivers do not
-reinitialize device upon resume from runtime suspend every time.
-
-In LibPM new PM_CAP_UNUSABLE capability is added, which disables
-clock only and avoids power down and reset.
-So, set CAPABILITY_UNUSABLE requirement during zynqmp_gpd_power_off()
-if platform is other than zynqmp.
-
-Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/soc/xilinx/zynqmp_pm_domains.c | 10 ++++++++--
- include/linux/firmware/xlnx-zynqmp.h   |  3 ++-
- 2 files changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/soc/xilinx/zynqmp_pm_domains.c b/drivers/soc/xilinx/zynqmp_pm_domains.c
-index 600f57c..23d90cb 100644
---- a/drivers/soc/xilinx/zynqmp_pm_domains.c
-+++ b/drivers/soc/xilinx/zynqmp_pm_domains.c
-@@ -2,7 +2,7 @@
- /*
-  * ZynqMP Generic PM domain support
-  *
-- *  Copyright (C) 2015-2018 Xilinx, Inc.
-+ *  Copyright (C) 2015-2019 Xilinx, Inc.
-  *
-  *  Davorin Mista <davorin.mista@aggios.com>
-  *  Jolly Shah <jollys@xilinx.com>
-@@ -25,6 +25,8 @@
- 
- static const struct zynqmp_eemi_ops *eemi_ops;
- 
-+static int min_capability;
-+
- /**
-  * struct zynqmp_pm_domain - Wrapper around struct generic_pm_domain
-  * @gpd:		Generic power domain
-@@ -106,7 +108,7 @@ static int zynqmp_gpd_power_off(struct generic_pm_domain *domain)
- 	int ret;
- 	struct pm_domain_data *pdd, *tmp;
- 	struct zynqmp_pm_domain *pd;
--	u32 capabilities = 0;
-+	u32 capabilities = min_capability;
- 	bool may_wakeup;
- 
- 	if (!eemi_ops->set_requirement)
-@@ -283,6 +285,10 @@ static int zynqmp_gpd_probe(struct platform_device *pdev)
- 	if (!domains)
- 		return -ENOMEM;
- 
-+	if (!of_device_is_compatible(dev->parent->of_node,
-+				     "xlnx,zynqmp-firmware"))
-+		min_capability = ZYNQMP_PM_CAPABILITY_UNUSABLE;
-+
- 	for (i = 0; i < ZYNQMP_NUM_DOMAINS; i++, pd++) {
- 		pd->node_id = 0;
- 		pd->gpd.name = kasprintf(GFP_KERNEL, "domain%d", i);
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 778abbb..b8a7c22 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -2,7 +2,7 @@
- /*
-  * Xilinx Zynq MPSoC Firmware layer
-  *
-- *  Copyright (C) 2014-2018 Xilinx
-+ *  Copyright (C) 2014-2019 Xilinx
-  *
-  *  Michal Simek <michal.simek@xilinx.com>
-  *  Davorin Mista <davorin.mista@aggios.com>
-@@ -46,6 +46,7 @@
- #define	ZYNQMP_PM_CAPABILITY_ACCESS	0x1U
- #define	ZYNQMP_PM_CAPABILITY_CONTEXT	0x2U
- #define	ZYNQMP_PM_CAPABILITY_WAKEUP	0x4U
-+#define ZYNQMP_PM_CAPABILITY_UNUSABLE	0x8U
- 
- /*
-  * Firmware FPGA Manager flags
--- 
-2.7.4
-
+SGkgQW5kcmV3LA0KDQpPbiA4LzgvMTkgNjozMiBBTSwgQW5kcmV3IEx1bm4gd3JvdGU6DQo+PiBM
+ZXQgbWUgcHJlcGFyZSBwYXRjaCB2MiB1c2luZyBkZXZpY2UgdHJlZS4gSSdtIG5vdCBzdXJlIGlm
+IHN0YW5kYXJkDQo+PiAibWFjLWFkZHJlc3MiIGZpdHMgdGhpcyBzaXR1YXRpb24gYmVjYXVzZSBh
+bGwgd2UgbmVlZCBpcyBhbiBvZmZzZXQNCj4+IChpbnRlZ2VyKSBhbmQgQk1DIE1BQyBpcyBjYWxj
+dWxhdGVkIGJ5IGFkZGluZyB0aGUgb2Zmc2V0IHRvIE5JQydzDQo+PiBNQUMgYWRkcmVzcy4gQW55
+d2F5cywgbGV0IG1lIHdvcmsgb3V0IHYyIHBhdGNoIHdlIGNhbiBkaXNjdXNzIG1vcmUNCj4+IHRo
+ZW4uDQo+IA0KPiBIaSBUYW8NCj4gDQo+IEkgZG9uJ3Qga25vdyBCTUMgdGVybWlub2xvZ3kuIEJ5
+IE5JQ3MgTUFDIGFkZHJlc3MsIHlvdSBhcmUgcmVmZXJyaW5nDQo+IHRvIHRoZSBob3N0cyBNQUMg
+YWRkcmVzcz8gVGhlIE1BQyBhZGRyZXNzIHRoZSBiaWcgQ1BVIGlzIHVzaW5nIGZvciBpdHMNCj4g
+aW50ZXJmYWNlPyAgV2hlcmUgZG9lcyB0aGlzIE5JQyBnZXQgaXRzIE1BQyBhZGRyZXNzIGZyb20/
+IElmIHRoZSBCTUNzDQo+IGJvb3Rsb2FkZXIgaGFzIGFjY2VzcyB0byBpdCwgaXQgY2FuIHNldCB0
+aGUgbWFjLWFkZHJlc3MgcHJvcGVydHkgaW4NCj4gdGhlIGRldmljZSB0cmVlLg0KDQpTb3JyeSBm
+b3IgdGhlIGNvbmZ1c2lvbiBhbmQgbGV0IG1lIGNsYXJpZnkgbW9yZToNCg0KVGhlIE5JQyBoZXJl
+IHJlZmVycyB0byB0aGUgTmV0d29yayBjb250cm9sbGVyIHdoaWNoIHByb3ZpZGUgbmV0d29yayBj
+b25uZWN0aXZpdHkgZm9yIGJvdGggQk1DICh2aWEgTkMtU0kpIGFuZCBIb3N0IChmb3IgZXhhbXBs
+ZSwgdmlhIFBDSWUpLg0KDQpPbiBGYWNlYm9vayBZYW1wIEJNQywgQk1DIHNlbmRzIE5DU0lfT0VN
+X0dFVF9NQUMgY29tbWFuZCAoYXMgYW4gZXRoZXJuZXQgcGFja2V0KSB0byB0aGUgTmV0d29yayBD
+b250cm9sbGVyIHdoaWxlIGJyaW5naW5nIHVwIGV0aDAsIGFuZCB0aGUgKEJyb2FkY29tKSBOZXR3
+b3JrIENvbnRyb2xsZXIgcmVwbGllcyB3aXRoIHRoZSBCYXNlIE1BQyBBZGRyZXNzIHJlc2VydmVk
+IGZvciB0aGUgcGxhdGZvcm0uIEFzIGZvciBZYW1wLCBCYXNlLU1BQyBhbmQgQmFzZS1NQUMrMSBh
+cmUgdXNlZCBieSBIb3N0IChiaWcgQ1BVKSBhbmQgQmFzZS1NQUMrMiBhcmUgYXNzaWduZWQgdG8g
+Qk1DLiBJbiBteSBvcGluaW9uLCBCYXNlIE1BQyBhbmQgTUFDIGFkZHJlc3MgYXNzaWdubWVudHMg
+YXJlIGNvbnRyb2xsZWQgYnkgTmV0d29yayBDb250cm9sbGVyLCB3aGljaCBpcyB0cmFuc3BhcmVu
+dCB0byBib3RoIEJNQyBhbmQgSG9zdC4NCg0KSSdtIG5vdCBzdXJlIGlmIEkgdW5kZXJzdGFuZCB5
+b3VyIHN1Z2dlc3Rpb24gY29ycmVjdGx5OiBkbyB5b3UgbWVhbiB3ZSBzaG91bGQgbW92ZSB0aGUg
+bG9naWMgKEdFVF9NQUMgZnJvbSBOZXR3b3JrIENvbnRyb2xsZXIsIGFkZGluZyBvZmZzZXQgYW5k
+IGNvbmZpZ3VyaW5nIEJNQyBNQUMpIGZyb20ga2VybmVsIHRvIGJvb3QgbG9hZGVyPw0KDQpTYW0g
+cG9zdGVkIHNldmVyYWwgbmNzaSBwYXRjaGVzIGZvciB1LWJvb3QgcmVjZW50bHkuIFNhbSwgZG8g
+d2Ugc3VwcG9ydCB0aGUgd29yayAoaW1wbGVtZW50ZWQgaW4gdGhpcyBwYXRjaCkgaW4gdWJvb3Q/
+IE9yIGFyZSB3ZSBwbGFubmluZyB0byBkbyBzbz8NCg0KDQpUaGFua3MsDQoNClRhbw0K
