@@ -2,69 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96FE686715
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6704F86723
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:31:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbfHHQ3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:29:20 -0400
-Received: from mga07.intel.com ([134.134.136.100]:64301 "EHLO mga07.intel.com"
+        id S2389825AbfHHQbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:31:02 -0400
+Received: from mout.gmx.net ([212.227.17.21]:52759 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbfHHQ3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:29:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 09:29:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,362,1559545200"; 
-   d="scan'208";a="203633797"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 08 Aug 2019 09:29:19 -0700
-Received: from kyablokx-mobl.amr.corp.intel.com (unknown [10.251.19.34])
-        by linux.intel.com (Postfix) with ESMTP id 0EA5F58044F;
-        Thu,  8 Aug 2019 09:29:17 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH v2 4/4] ASoC: codecs: add wsa881x amplifier
- support
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        vkoul@kernel.org, broonie@kernel.org
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, plai@codeaurora.org,
-        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-        robh+dt@kernel.org
-References: <20190808144504.24823-1-srinivas.kandagatla@linaro.org>
- <20190808144504.24823-5-srinivas.kandagatla@linaro.org>
- <3ad15652-9d6c-11e4-7cc3-0f076c6841bb@linux.intel.com>
- <32516aae-8a43-6a74-c564-92dea8ff6e53@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <4e60b92f-a32e-671c-3b1b-9b1ccec4f9b5@linux.intel.com>
-Date:   Thu, 8 Aug 2019 11:29:20 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1732572AbfHHQbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 12:31:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1565281848;
+        bh=ApY7OZPSYwzixgHZnbsMvFQ1c+7KmwYp4ibokGDQPh4=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=Kdfhd7YGh3LIvz4hPEOX6zAQ1r/wM53Yye7YIAnwn49DgvyUrpnEDHHA7a0dNNpuw
+         7bUA/2RugqnopbUbQH21LRlY2UWNXpr4TvNI5QyPa0LglyxyMvA+Jd+W/sW34A+r6Z
+         MJmBpq/bH5F9tf6tYrkXnOUvekRw3is5cQz76AuA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([109.90.233.87]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M4s0t-1hvTvr3Eal-00206Y; Thu, 08
+ Aug 2019 18:30:48 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-doc@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: crypto: crypto_engine: Fix Sphinx warning
+Date:   Thu,  8 Aug 2019 18:30:11 +0200
+Message-Id: <20190808163011.13468-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <32516aae-8a43-6a74-c564-92dea8ff6e53@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iRrUwdnP6UvZOFNMPugqv13gYNrjJql3ZF1wCToYefNJiQOaI/Z
+ da64eNBOGz2H03FO3AGcefCkMag6RiR7WTkuc4/AR9wKVZu9c+4fbW04xeX3PIso4KRqoU+
+ 4RW8ZQ+18NmJncFaKOAw5XW/xrPEGMmmPlBQ8ZdJ3Bj2d3i+GJqMT8Ab31jIolpsKlt7FuE
+ W6h+HQuk7DEN+dctwXY5g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:as0rovH/+bE=:074+Rmgq//F8ZdwCFeKe8F
+ S2ZMJCvbRWH79yiEDQyEW52pixkoTeKJS1NBsUH3gmUNWgk/Arrum4LHoFdcOusM5r1WtN6Ef
+ 7QL5tIEBNiXjQqyngJP/JUJAC099m0SMFbjJ6r93jpNi32abX/10piHXp2UWtW74W3syk9pv0
+ f6URGyZmSGGmugKapb9sMf6u9EA7i7K4ty5OIzI6XMl/aqreiHFvhoAwva4wUuPz2Ox3QHWsP
+ pcRC9AKzRFLQvVyW2jGg5epu4UfOHnc7Lp8MjU8j/JCLvQ1DS6gKwh8F9upbJ+w59npi2Jzwn
+ cGg8yprpvEffVY+lZeAzkaa0KmcBOxbvxuutTstzpr5M4m9qPldXXVeSBaTnh9J4WWKjZx5/F
+ QAKvFK66Uai6eq20FFOOW0RySdUa0hu1fL2VEz7mrDhiRSJbqC62SbUTExmU8sderCklmo4FO
+ vTeE4dRfiZ5fXo4rd0Rz5R135Cv+EQrAbRwnjL0tBjd6LVHdzlEbWVCfIDRtSZI+RDwiobAZf
+ NK3C/CrljCmP2hCyWmX0y/sJrPu2YnK7JJMxUwOR9NqH8kQ/zJ8FB+/pJO3IUiYQps+PO6j7p
+ gAzXni4PGMPYjAU9VqM91RwxwCmjrwxb7m0WJe12FE/ZO/N+kPF2SmgbLa2Ar3GqCG3Lo4Swg
+ +zb/2yuCaiFCB88RK5dFmBlg4idjM+tVeb3Iqc36Vmly+fFl4mJOrB3OVWDglyyEw8BBLO185
+ NpTMC2RnC4cM6l9CzaRxWVhiOTuKgl1n/23545uJwiCzhELniVOnl8Lkn3QArdo1hH+lBUry0
+ 5brgRhVTIfzDtv2c81lTTfuA+iDGjj/vsTDPRHq01jD4k2maUhmx6MytKRdq5B5aY8gEEosW8
+ h4XIxZn1NE6dfvdc1gpbM2i3k1onmVYTrg7BIeSs7lAQAhq6A6D6AVIMCWAPkmkJFT06e5mG0
+ AaY77pzKc3rUK/dwJ22wTlDEAnY4O+AlAkTTx9douVUi9BXngta+KW84NJEd3O5/K/T/4AzZm
+ mZBSxWEHCwEKIPm8b2fRM0sb3+nkSH+qdwQSYAwE42mMktmVE8UtHMKzyu7bHcXQTpIzNGRUb
+ YcOcBxcKcm4ucPcYXB4SJBjzMZf2MK6N2rAw0V1LzQauNtAXdR1dOb5amv5K2L7aj7xI2VGxa
+ S6iuA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This fixes the following Sphinx warning:
 
->>> +/* 4 ports */
->>> +static struct sdw_dpn_prop wsa_sink_dpn_prop[WSA881X_MAX_SWR_PORTS] = {
->>> +    {
->>> +        /* DAC */
->>> +        .num = 1,
->>> +        .type = SDW_DPN_SIMPLE,
->>
->> IIRC we added the REDUCED type in SoundWire 1.1 to cover the PDM case 
->> with channel packing (or was it grouping) used by Qualcomm. I am not 
->> sure the SIMPLE type works?
-> grouping I guess.
-> 
-> This is a simplified data port as there is no DPn_OffsetCtrl2 register 
-> implemented.
+Documentation/crypto/crypto_engine.rst:2:
+  WARNING: Explicit markup ends without a blank line; unexpected unindent.
 
-ok, for the REDUCED type it's required to have BlockPackingMode and 
-OffsetCtrl2, so it does not apply here. Thanks for confirming.
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ Documentation/crypto/crypto_engine.rst | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/crypto/crypto_engine.rst b/Documentation/crypto=
+/crypto_engine.rst
+index 236c674d6897..3baa23c2cd08 100644
+=2D-- a/Documentation/crypto/crypto_engine.rst
++++ b/Documentation/crypto/crypto_engine.rst
+@@ -1,4 +1,5 @@
+ .. SPDX-License-Identifier: GPL-2.0
++
+ Crypto Engine
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+=2D-
+2.20.1
+
