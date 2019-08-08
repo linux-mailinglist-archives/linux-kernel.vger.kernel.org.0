@@ -2,93 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6934B86B8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D655486B9C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404750AbfHHUcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 16:32:54 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:54206 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404270AbfHHUcx (ORCPT
+        id S2390306AbfHHUe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 16:34:56 -0400
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:53004 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729780AbfHHUe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 16:32:53 -0400
-Received: from p200300ddd71876597e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7659:7e7a:91ff:fec9:8e25])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hvp5Y-0007kg-3Y; Thu, 08 Aug 2019 22:32:44 +0200
-Date:   Thu, 8 Aug 2019 22:32:38 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: Re: [PATCH] arch/x86/kernel/cpu/umwait.c - remove unused variable
-In-Reply-To: <141835.1565295884@turing-police>
-Message-ID: <alpine.DEB.2.21.1908082229010.2882@nanos.tec.linutronix.de>
-References: <79734.1565272329@turing-police> <alpine.DEB.2.21.1908082158580.2882@nanos.tec.linutronix.de> <141835.1565295884@turing-police>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 8 Aug 2019 16:34:56 -0400
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x78KQfvN011881;
+        Thu, 8 Aug 2019 20:33:26 GMT
+Received: from g4t3427.houston.hpe.com (g4t3427.houston.hpe.com [15.241.140.73])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2u8rx0rsxn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Aug 2019 20:33:26 +0000
+Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
+        by g4t3427.houston.hpe.com (Postfix) with ESMTP id 9B1C757;
+        Thu,  8 Aug 2019 20:33:25 +0000 (UTC)
+Received: from anatevka.americas.hpqcorp.net (anatevka.americas.hpqcorp.net [10.34.81.61])
+        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 912AC4E;
+        Thu,  8 Aug 2019 20:33:24 +0000 (UTC)
+Date:   Thu, 8 Aug 2019 14:33:24 -0600
+From:   Jerry Hoemann <jerry.hoemann@hpe.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH] perf/x86/amd: Change NMI latency mitigation to use a
+ timestamp
+Message-ID: <20190808203324.GA21769@anatevka.americas.hpqcorp.net>
+Reply-To: Jerry.Hoemann@hpe.com
+References: <833ee307989ac6bfb45efe823c5eca4b2b80c7cf.1564685848.git.thomas.lendacky@amd.com>
+ <20190801211613.GB3578@hirez.programming.kicks-ass.net>
+ <b4597324-6eb8-31fa-e911-63f3b704c974@amd.com>
+ <alpine.DEB.2.21.1908012331550.1789@nanos.tec.linutronix.de>
+ <20190801214813.GB2332@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1908012352390.1789@nanos.tec.linutronix.de>
+ <925c3458-aeae-a44b-ddd5-40a1e173a307@amd.com>
+ <20190802162015.GA2349@hirez.programming.kicks-ass.net>
+ <20190802163328.GB2349@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1568308266-1565296364=:2882"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802163328.GB2349@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908080181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1568308266-1565296364=:2882
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-Valdis,
-
-On Thu, 8 Aug 2019, Valdis Klētnieks wrote:
-> On Thu, 08 Aug 2019 22:04:03 +0200, Thomas Gleixner said:
+On Fri, Aug 02, 2019 at 06:33:28PM +0200, Peter Zijlstra wrote:
+> On Fri, Aug 02, 2019 at 06:20:15PM +0200, Peter Zijlstra wrote:
+> > On Fri, Aug 02, 2019 at 02:33:41PM +0000, Lendacky, Thomas wrote:
 > 
-> > I really appreciate your work, but can you please refrain from using file
-> > names as prefixes?
+> > > Talking to the hardware folks, they say setting CR8 is a serializing
+> > > instruction and has to communicate out to the APIC, so it's better to
+> > > use CLI/STI.
+> > 
+> > Bah; the Intel SDM states: "MOV CR* instructions, except for MOV CR8,
+> > are serializing instructions", which had given me a little hope.
+> > 
+> > At the same time, all these chips still have the APIC TPR field too, so
+> > much like how the TSC DEADLINE MSR is a hidden APIC write, so too is CR8
+> > I suppose :-(
+> > 
+> > I'll still finish the patches I started, just to see what it would look
+> > like.
 > 
-> OK, will do so going forward..
-
-Care to resend the last few with fixed subject lines, so I don't have to
-clean them up?
- 
-> > > And indeed, we don't do anything with it, so clean it  up.
-> >
-> > Well, the question is whether removing the variable is the right thing to
-> > do.
+> Another 'fun' issue I ran into while doing these patches; STI has a 1
+> instruction shadow, which we rely on, MOV CR8 does not. So things like:
 > 
-> > If that fails then umwait is broken. So instead of removing it, this should
-> > actually check the return code and act accordingly. Fenghua?
+> native_safe_halt:
+> 	sti
+> 	hlt
 > 
-> [/usr/src/linux-next] git grep umwait_init
-> arch/x86/kernel/cpu/umwait.c:static int __init umwait_init(void)
-> arch/x86/kernel/cpu/umwait.c:device_initcall(umwait_init);
+> turn into:
 > 
-> It isn't clear that whatever is doing the device_initcall()s will be able to do
-> any reasonable recovery if we return an error, so any error recovery is going
-> to have to happen before the function returns. It might make sense to do an
-> 'if (ret) return;' before going further in the function, but given the comment a
-> few lines further down about ignoring errors,  it was apparently considered
-> more important to struggle through and register stuff in sysfs even if umwait
-> was broken....
+> native_safe_halt:
+> 	cli
+> 	movl $0, %rax
+> 	movq %rax, %cr8
+> 	sti
+> 	hlt
+> 
 
-I missed that when going through it.
+Hi Peter,
 
-The right thing to do is to have a cpu_offline callback which clears the
-umwait MSR. That covers also the failure in the cpu hotplug setup. Then
-handling an error return makes sense and keeps everything in a workable
-shape.
+What is our the next step here?
 
-Thanks,
+Are you still looking to make this change?
 
-	tglx
+Do we want to pick up Tom Lendacky's patch on an interim basis while
+you're working on the bigger change?  (I can say we tested Tom's
+patch and it does address the issue we were seeing.)
 
+Thanks
 
+Jerry
 
---8323329-1568308266-1565296364=:2882--
+-- 
+
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
