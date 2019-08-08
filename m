@@ -2,111 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF8386212
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F52A8621C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:44:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732449AbfHHMnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 08:43:24 -0400
-Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:40830 "EHLO
-        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbfHHMnY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:43:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 557D23F5AB;
-        Thu,  8 Aug 2019 14:43:21 +0200 (CEST)
-Authentication-Results: pio-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="ckUXHhXo";
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id PNFA3GisQkMe; Thu,  8 Aug 2019 14:43:20 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 3DF8E3F3CA;
-        Thu,  8 Aug 2019 14:43:17 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 7E6DA360301;
-        Thu,  8 Aug 2019 14:43:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1565268197; bh=Y96A8mvBNgHpthhnaEAzth6EF+7dsvNIExRZqv5ZrRU=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=ckUXHhXo+S5yUd29rYFyBtENLt1uaNqV4fQz+6tMl5TSrlgdFSz83TS8PgxG5M2BM
-         l7fi7m93ajc+HnFDo+Bo3YlS0a8KYvERd8XbkIGWyJHAmvRn5zfcrkEtS44AWof/4U
-         nG61Vc7lVzETg8PSFZWcnEaQDa9lJ74Rv42HGZvc=
-Subject: Re: [PATCH v3 2/8] ttm: turn ttm_bo_device.vma_manager into a pointer
-To:     Gerd Hoffmann <kraxel@redhat.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190808093702.29512-1-kraxel@redhat.com>
- <20190808093702.29512-3-kraxel@redhat.com>
- <2a90c899-19eb-5be2-3eda-f20efd31aa29@amd.com>
- <20190808103521.u6ggltj4ftns77je@sirius.home.kraxel.org>
- <20190808120252.GO7444@phenom.ffwll.local>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <36145412-3c31-e635-1e8b-b42439811742@shipmail.org>
-Date:   Thu, 8 Aug 2019 14:43:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1732559AbfHHMoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 08:44:03 -0400
+Received: from mga03.intel.com ([134.134.136.65]:38983 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732254AbfHHMoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:44:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 05:43:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,361,1559545200"; 
+   d="asc'?scan'208";a="326298207"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by orsmga004.jf.intel.com with ESMTP; 08 Aug 2019 05:43:34 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     John Stultz <john.stultz@linaro.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc:     "fei.yang\@intel.com" <fei.yang@intel.com>,
+        "andrzej.p\@collabora.com" <andrzej.p@collabora.com>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] usb: dwc3: gadget: trb_dequeue is not updated properly
+In-Reply-To: <CALAqxLURCLHf3UJsMWKZUirDE9bWNYEhv-sKb01g7cTfCz5tOg@mail.gmail.com>
+References: <1563497183-7114-1-git-send-email-fei.yang@intel.com> <CY4PR1201MB003708ADAD79BF4FD24D3445AACB0@CY4PR1201MB0037.namprd12.prod.outlook.com> <CALAqxLURCLHf3UJsMWKZUirDE9bWNYEhv-sKb01g7cTfCz5tOg@mail.gmail.com>
+Date:   Thu, 08 Aug 2019 15:43:30 +0300
+Message-ID: <87k1bnn7yl.fsf@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190808120252.GO7444@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/8/19 2:02 PM, Daniel Vetter wrote:
-> On Thu, Aug 08, 2019 at 12:35:21PM +0200, Gerd Hoffmann wrote:
->> On Thu, Aug 08, 2019 at 09:48:49AM +0000, Koenig, Christian wrote:
->>> Am 08.08.19 um 11:36 schrieb Gerd Hoffmann:
->>>> Rename the embedded struct vma_offset_manager, it is named _vma_manager
->>>> now.  ttm_bo_device.vma_manager is a pointer now, pointing to the
->>>> embedded ttm_bo_device._vma_manager by default.
->>>>
->>>> Add ttm_bo_device_init_with_vma_manager() function which allows to
->>>> initialize ttm with a different vma manager.
->>> Can't we go down the route of completely removing the vma_manager from
->>> TTM? ttm_bo_mmap() would get the BO as parameter instead.
->> It surely makes sense to target that.  This patch can be a first step
->> into that direction.  It allows gem and ttm to use the same
->> vma_offset_manager (see patch #3), which in turn makes various gem
->> functions work on ttm objects (see patch #4 for vram helpers).
-> +1 on cleaning this up for good, at least long-term ...
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+
+Hi,
+
+John Stultz <john.stultz@linaro.org> writes:
+> On Thu, Jul 18, 2019 at 6:12 PM Thinh Nguyen <Thinh.Nguyen@synopsys.com> =
+wrote:
+>> fei.yang@intel.com wrote:
+>> > From: Fei Yang <fei.yang@intel.com>
+>> >
+>> > If scatter-gather operation is allowed, a large USB request is split i=
+nto
+>> > multiple TRBs. These TRBs are chained up by setting DWC3_TRB_CTRL_CHN =
+bit
+>> > except the last one which has DWC3_TRB_CTRL_IOC bit set instead.
+>> > Since only the last TRB has IOC set for the whole USB request, the
+>> > dwc3_gadget_ep_reclaim_trb_sg() gets called only once after the last T=
+RB
+>> > completes and all the TRBs allocated for this request are supposed to =
+be
+>> > reclaimed. However that is not what the current code does.
+>> >
+>> > dwc3_gadget_ep_reclaim_trb_sg() is trying to reclaim all the TRBs in t=
+he
+>> > following for-loop,
+>> >       for_each_sg(sg, s, pending, i) {
+>> >               trb =3D &dep->trb_pool[dep->trb_dequeue];
+>> >
+>> >                 if (trb->ctrl & DWC3_TRB_CTRL_HWO)
+>> >                         break;
+>> >
+>> >                 req->sg =3D sg_next(s);
+>> >                 req->num_pending_sgs--;
+>> >
+>> >                 ret =3D dwc3_gadget_ep_reclaim_completed_trb(dep, req,
+>> >                                 trb, event, status, chain);
+>> >                 if (ret)
+>> >                         break;
+>> >         }
+>> > but since the interrupt comes only after the last TRB completes, the
+>> > event->status has DEPEVT_STATUS_IOC bit set, so that the for-loop ends=
+ for
+>> > the first TRB due to dwc3_gadget_ep_reclaim_completed_trb() returns 1.
+>> >       if (event->status & DEPEVT_STATUS_IOC)
+>> >               return 1;
+>> >
+>> > This patch addresses the issue by checking each TRB in function
+>> > dwc3_gadget_ep_reclaim_trb_sg() and maing sure the chained ones are pr=
+operly
+>> > reclaimed. dwc3_gadget_ep_reclaim_completed_trb() will return 1 Only f=
+or the
+>> > last TRB.
+>> >
+>> > Signed-off-by: Fei Yang <fei.yang@intel.com>
+>> > Cc: stable <stable@vger.kernel.org>
+>> > ---
+>> > v2: Better solution is to reclaim chained TRBs in dwc3_gadget_ep_recla=
+im_trb_sg()
+>> >     and leave the last TRB to the dwc3_gadget_ep_reclaim_completed_trb=
+().
+>> > v3: Checking DWC3_TRB_CTRL_CHN bit for each TRB instead, and making su=
+re that
+>> >     dwc3_gadget_ep_reclaim_completed_trb() returns 1 only for the last=
+ TRB.
+>> > ---
+>> >  drivers/usb/dwc3/gadget.c | 11 ++++++++---
+>> >  1 file changed, 8 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+>> > index 173f532..88eed49 100644
+>> > --- a/drivers/usb/dwc3/gadget.c
+>> > +++ b/drivers/usb/dwc3/gadget.c
+>> > @@ -2394,7 +2394,7 @@ static int dwc3_gadget_ep_reclaim_completed_trb(=
+struct dwc3_ep *dep,
+>> >       if (event->status & DEPEVT_STATUS_SHORT && !chain)
+>> >               return 1;
+>> >
+>> > -     if (event->status & DEPEVT_STATUS_IOC)
+>> > +     if (event->status & DEPEVT_STATUS_IOC && !chain)
+>> >               return 1;
+>> >
+>> >       return 0;
+>> > @@ -2404,11 +2404,12 @@ static int dwc3_gadget_ep_reclaim_trb_sg(struc=
+t dwc3_ep *dep,
+>> >               struct dwc3_request *req, const struct dwc3_event_depevt=
+ *event,
+>> >               int status)
+>> >  {
+>> > -     struct dwc3_trb *trb =3D &dep->trb_pool[dep->trb_dequeue];
+>> > +     struct dwc3_trb *trb;
+>> >       struct scatterlist *sg =3D req->sg;
+>> >       struct scatterlist *s;
+>> >       unsigned int pending =3D req->num_pending_sgs;
+>> >       unsigned int i;
+>> > +     int chain =3D false;
+>> >       int ret =3D 0;
+>> >
+>> >       for_each_sg(sg, s, pending, i) {
+>> > @@ -2419,9 +2420,13 @@ static int dwc3_gadget_ep_reclaim_trb_sg(struct=
+ dwc3_ep *dep,
+>> >
+>> >               req->sg =3D sg_next(s);
+>> >               req->num_pending_sgs--;
+>> > +             if (trb->ctrl & DWC3_TRB_CTRL_CHN)
+>> > +                     chain =3D true;
+>> > +             else
+>> > +                     chain =3D false;
+>> >
+>> >               ret =3D dwc3_gadget_ep_reclaim_completed_trb(dep, req,
+>> > -                             trb, event, status, true);
+>> > +                             trb, event, status, chain);
+>> >               if (ret)
+>> >                       break;
+>> >       }
+>>
+>> There was already a fix a long time ago by Anurag. But it never made it
+>> to the kernel mainline. You can check this out:
+>> https://patchwork.kernel.org/patch/10640137/
 >
->>> That would also make the verify_access callback completely superfluous
->>> and looks like a good step into the right direction of de-midlayering.
->> Hmm, right, noticed that too while working on another patch series.
->> Guess I'll try to merge those two and see where I end up ...
-> ... but if it gets too invasive I'd vote for incremental changes. Even if
-> we completely rip out the vma/mmap lookup stuff from ttm, we still need to
-> keep a copy somewhere for vmwgfx. Or would the evil plan be the vmwgfx
-> would use the gem mmap helpers too?
+> So, back from a vacation last week, and just validated that both Fei's
+> patch and a forward ported version of this patch Thinh pointed out
+> both seem to resolve the usb stalls I've been seeing sinice 4.20 w/
+> dwc3 hardware on both hikey960 and dragonboard 845c.
+>
+> Felipe: Does Anurag's patch above make more sense as a proper fix?
 
-I don't think it would be too invasive. We could simply move 
-ttm_bo_vm_lookup into a vmw_mmap.
+I think it's enough to check only the TRB. We won't get events for bits
+we didn't enable on the TRB. The only problem here is when we get IOC
+event for multiple TRBs where only the last one has IOC.
 
-/Thomas
+So, instead of checking:
 
+	if (event->status & IOC && trb->ctrl & IOC)
 
+It's probably enough to check:
 
+	if (tbc->ctrl & IOC)
 
-> -Daniel
+Could you check that?
 
+Cheers
 
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl1MGPIACgkQzL64meEa
+mQY12w//SoBl8a0P9l1wQvjbp66d9nq+DfniJ1P0ZR+OZ49AjsagOTTlGxTOUifR
+TGtVC346hs1OjMMElsrOIKkfyE8J3yzLxbYzLemDdDw6eY5b0rZjqiAfF5S/zZzq
+DyrEH1o+kwKyhCzNvjZIOP3Y/Ugy2XO1J/bDlBcNBtphX8TDpC9p1Dxg6swhRNvp
+vX0FQW/MsE+R6wIftW6XG63bYB5aAM+kqQH4j0MR64b2nFGYAWx7WXJsViMCeK58
+TnKYLEOtkMe4qXbpYFWwiIsIDTY/w4k9jNvVKreFfyTB/cmE4kL9PtgIg+LhUfK/
+phudV1NTCQ6qKeCrgK/zSoT3FLGs5ZxuB60bPL4NFa2PgHeAccC6iwmS+AoMyVK3
+FIWaU2HHqoJSV6M11dDHlXtgzvz/IRD5Uk6M1vdXEDMnG4PAD4IqOfinaWSd+s0y
+H4Bm+jJfH5y/QmbZhLj64ciybsu9VDGNTvgWWu1vr1dZIn2lvNKWl6jBoG9/1KWq
+RFtDWuCgp8cJSZlVHnnTf9q2fVO2DrNYi3WnGhUqp678bhyQjwqwTTQT0kwzrkHc
+m0rgfy5R+pTfJmfy8KIF+HdUMFMVeaKEl/GiVJK7JhUqTHyonv6JEssG1m5u2C8L
+uJn+WRM9wYpSy6Rjqc6PqlzabRppIPwXqWnoBFMbneUhtVt3YfI=
+=SP19
+-----END PGP SIGNATURE-----
+--=-=-=--
