@@ -2,110 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5151F863D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4292F863D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389920AbfHHOAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 10:00:41 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:52877 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732866AbfHHOAl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 10:00:41 -0400
-Received: from [192.168.1.110] ([77.4.95.67]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N3sVq-1iMIFu3pg0-00zqa8; Thu, 08 Aug 2019 16:00:19 +0200
-Subject: Re: [PATCH RFC] modpost: Support I2C Aliases from OF tables
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Brown <broonie@kernel.org>
-References: <20190710193918.31135-1-kieran.bingham+renesas@ideasonboard.com>
- <0e1b6e0b-1c94-4b00-7fda-c2a303ee3816@redhat.com>
- <20190731194419.GB4084@kunai>
- <f4a78e93-6aaa-bc72-cf94-06fc2574451c@redhat.com>
- <CAMuHMdUA-hjVqSP_c0cB=76cfrucF6xxRi3ymVoEsJ2hbkfT=A@mail.gmail.com>
- <51451f89-9193-2be6-e724-e9ca44a25f52@redhat.com>
- <620e0aec-e3d8-7289-6525-b720013e8dfa@metux.net>
- <20190808132417.GU30120@smile.fi.intel.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <9f03f364-77b1-3ee5-cd93-0908bf863380@metux.net>
-Date:   Thu, 8 Aug 2019 16:00:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190808132417.GU30120@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S2390042AbfHHOCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 10:02:21 -0400
+Received: from mail-eopbgr60058.outbound.protection.outlook.com ([40.107.6.58]:65293
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732866AbfHHOCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 10:02:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IWWhsGAUKNO43OS0iim5dPN0AZOlHpOwu+YBRGs/sSHXxGrzr+VxiS8juZ6IUlnpU6U1ljICxyhmuYOuUvQq1TPX6AY81zhq7d+cZe6i/h25vMa4JT/n2Pko86T4BvRuqLNlw7u9ymFxKXBfBnsaOS0mznn2lIHgNamwzkWchxVEg6bX6OVkvOsu2+E2TD5pbc1Y+VR23T5zuftnWO8uzSYs2AADVzLVdl/TwPcw1ap3jlXK98ocieeZ88zL24JW5yyJbv+ePmiDtkopFMWHJFK4ywd/OEIVxPUct6WKjCq3bADX/b9pNeJvFVnc1g1Nq3Z24URNvdZRYRYn1nGcDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GOPdR3mV+mb+ay5DmA/YfIe/6Ij5Rr/8SGmSBYQeCQM=;
+ b=TbuIMVyis1Fcm8Q7nlFSR+TyhAYTVkRSKT3OlhI5ercgWduYhjGWjc2Udtomfc90BbqpeeCh1bGb0asKqWiBlx3GXXM5F1X/db1HKv/UlM2ipHDCLOzQnhNO5eIuADXTd8S+eDZf6OIJnWAVfU0mVgPjB+C92iQeVvsPbp3EvL4vc9YHruzAlCpN4qikGxdBkFBYasQ7JBJ3xI+RfKOVflIhqRlpGDOjgsGRpmotKYccmjnHYuDLxEzxF+PH5p8IwKXnolkaNbG1L8xIH7qZnSFYAg0JnQ3QMDWc4OoAjDNN2ZEXeox5A2nZGfsKTCgpCEFoZf7tV4cC4s5EkSgcPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=mellanox.com;dmarc=pass action=none
+ header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GOPdR3mV+mb+ay5DmA/YfIe/6Ij5Rr/8SGmSBYQeCQM=;
+ b=D3DFGPhamPfVqEgZ2MIJSq5GPf65QfhsR4jZtFqwW3ue6X/nn2halsr9nvc7MDYdGPbrJk2AY+Ue+qRuKKnQd1r+Dw5aQ1oU/b6/EbYpTwfWl6S3kylq7547FmC0LDwF4n++vXnd6rVUghQ6PliH7fwi8XNCE58Ti69dKyhEnwg=
+Received: from AM0PR05MB4866.eurprd05.prod.outlook.com (20.176.214.160) by
+ AM0PR05MB5698.eurprd05.prod.outlook.com (20.178.113.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.17; Thu, 8 Aug 2019 14:01:37 +0000
+Received: from AM0PR05MB4866.eurprd05.prod.outlook.com
+ ([fe80::216f:f548:1db0:41ea]) by AM0PR05MB4866.eurprd05.prod.outlook.com
+ ([fe80::216f:f548:1db0:41ea%6]) with mapi id 15.20.2136.018; Thu, 8 Aug 2019
+ 14:01:37 +0000
+From:   Parav Pandit <parav@mellanox.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "wankhede@nvidia.com" <wankhede@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "cjia@nvidia.com" <cjia@nvidia.com>
+Subject: RE: [PATCH v1 2/2] vfio/mdev: Removed unused and redundant API for
+ mdev UUID
+Thread-Topic: [PATCH v1 2/2] vfio/mdev: Removed unused and redundant API for
+ mdev UUID
+Thread-Index: AQHVTGHewj+1neBmdkuk/1V2f0BrWKbvbAyAgAB0EUCAAQ3sgIAAWv7w
+Date:   Thu, 8 Aug 2019 14:01:37 +0000
+Message-ID: <AM0PR05MB4866E52B0181657A4AFCFF4DD1D70@AM0PR05MB4866.eurprd05.prod.outlook.com>
+References: <20190802065905.45239-1-parav@mellanox.com>
+        <20190806141826.52712-1-parav@mellanox.com>
+        <20190806141826.52712-3-parav@mellanox.com>
+        <20190807112801.6b2ceb36.cohuck@redhat.com>
+        <AM0PR05MB48664379F91C8FA3D0035B41D1D40@AM0PR05MB4866.eurprd05.prod.outlook.com>
+ <20190808102931.40c6b4ae.cohuck@redhat.com>
+In-Reply-To: <20190808102931.40c6b4ae.cohuck@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:csfxQRdjtiNOl7i40o2/B7IYxkxAzKT92ybeBveWYrCtR86JV94
- SFwsN8hQWV6RD+HwY9yJEn2UGnlkry538yjexNvWkDl5F0nbE/kH8kqxMm+liGrea5cZWeq
- ndypCaSKSMWH69mKBexN70YWQvraS0lMUXNsjl0wgNi0N4JUmxVjHIMDenMUDzbFUvMfDWK
- 2Oj7CpXD65h0Sytfb7ljQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:104H55ooDy8=:toD2MsvpW6tFeoz7dWLl4O
- t4QQS5H9F7C5gTVwvr0oTGIIC7j7VXp2xIYN5vyqBwgSClm2yn2g8F1/SD7W34XUIR7VOIhWV
- Fsfm5PKGECOFhwoi8sPG60uo8kteK5a+BAwsop7oBrafd3lKOdY+FNDRjuIkGtl56jXmNCpRT
- SHgOp9gdlhjCO3HhWoXWuMT79fbCGlu1FL/exeZN9Y+eumPU2NJMzUiRtgOJYHkfG2+QaT6Mw
- ftPCAOafd5OZFtdZJiqRXHUxFVp40IRUrpgLNFppWVMnaHijq1H/8o5cTngeUSlRke8BYoTWi
- zpMpHyosVaVsRd+zHoDCGzVmuSpHVenz9M7AhcZX/eUC1itTw+BOW3mJTNFdfnEi3EMs8BIdL
- oHoTg3EtzAU9moDUCt72PVl0wQlq31ND5hu4gnU7taLlTDILx37jtaXK7Fza6r0HLT7rotTT/
- uqsDJLS71mS+sbZEapEd9gi9HrziiEL4Z6UAuZt99Vwn4l1IcqxolNrRKSSINH/mesLsMwsa5
- LQ/qtCr7rcaOuoXouyKTPBA43pefhoXM5jfWnB/+ZWbKUP+6HeIQYZv6kRkjv0x9nK6VF/0NM
- jZRWJrW9Uc8YOCkIVcv1nraeeXUzQbDS3L5O70Mcy3SII4pOTUrx1TubNxw8SBAgewKSslHzF
- OYOESPlVzkXsZSSZaRCQ2DQsfmpBGNwlUD3lFb21qrClXWy8NkhOEObrUqNcmaqL+v5fIFpJm
- MwCctagiW2hU+BRY7DkLPzParpbsc0R4OJwMkAeaiYF+FpuWF31OdMiulE0=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=parav@mellanox.com; 
+x-originating-ip: [2401:4900:2732:6c49:c1ba:239a:884f:fc23]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fe681f7b-f831-4d88-f477-08d71c08ee3e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR05MB5698;
+x-ms-traffictypediagnostic: AM0PR05MB5698:
+x-microsoft-antispam-prvs: <AM0PR05MB5698C32443F7CD4686336392D1D70@AM0PR05MB5698.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 012349AD1C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(136003)(39860400002)(376002)(346002)(51914003)(54534003)(13464003)(189003)(199004)(256004)(6246003)(14444005)(71190400001)(99286004)(478600001)(74316002)(6116002)(71200400001)(33656002)(6916009)(7736002)(76176011)(305945005)(7696005)(186003)(46003)(229853002)(11346002)(54906003)(2906002)(53546011)(446003)(6506007)(25786009)(476003)(486006)(14454004)(86362001)(6436002)(66556008)(66946007)(8676002)(55016002)(66446008)(64756008)(66476007)(76116006)(81156014)(316002)(4326008)(102836004)(81166006)(53936002)(9686003)(5660300002)(8936002)(52536014);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB5698;H:AM0PR05MB4866.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 4CdoYh29Whak/l0S2sT23d4g0MyWTf8el0tLvyyMTPchR2wJLfFIoVZuTAj0w0ZqM9Z/qAaHBYO7zwiWERtj1R+294p2mCrGqr7MN43q6oN9YRdTqFUA1IW23483ZN2gLg4rUdZ3lrLENHbbbLiAby+qgHmPk4F84tFGWCqDZ867NK69TQ7U8IKpBjeS6yCMRh/S2wyr7GT9EVsKZKWpU+Jqs59D7I4+9sYnMDEdfn4tUJvHBfbJ3h6j7uHc82u+5NnR0pcYmzGbc77fKOuQ0S0k6tAf1fD/HTrjW5MuDbLenpuRWJvYdAMIkgquWR/5VOtyInJ2qSrhYKXu2rWoW5FiPKtT2csI4j2KoVhIr7cIf9nhUQc5/1vgtYLnPhEcmipItJTY2Rv/Ctr5zvFxQHctnKL6c23PRb6v1A+yM7E=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe681f7b-f831-4d88-f477-08d71c08ee3e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2019 14:01:37.7684
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: parav@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB5698
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.08.19 15:24, Andy Shevchenko wrote:
-> On Thu, Aug 08, 2019 at 03:12:47PM +0200, Enrico Weigelt, metux IT consult wrote:
->> On 06.08.19 19:12, Javier Martinez Canillas wrote:
->>
->>> Right, we could add a macro for that. Although it should probably be called
->>> I2C_OF_MODULE_DEVICE_TABLE() or something like that since is specific to OF.
->>
->> At that point it should be completely noop when OF is disabled, so we
->> also can get rid of many ifdef's.
-> 
-> Why?
-
-For cases where drivers work w/ or w/o oftree. Not sure whether it
-applies to i2c specifically, but there're other places where we still
-need nasty ifdef's (eg. gpio-keyboard).
-
->> I've got some patch somewhere for introducing a MODULE_OF_TABLE() macro
->> as replacement for many MODULE_DEVICE_TABLE(of, ...) cases, which noops
->> when CONFIG_OF is disabled. (and similar ones for other table types).
-> 
-> It's simple wrong to have #ifdef CONFIG_OF without counterpart of_match_ptr().
-
-Of course, but that's just a part of the story. (actually I'd prefer
-using it everywhere, even if the driver only supports oftree).
-
-> And taking into consideration that ID table itself doesn't depend to OF at all,
-> why not simple drop that #ifdef and of_match_ptr() all together?
-
-Consumes less space. Yes, it isn't much, but in some scenarios one needs
-to heavily reduce the kernel size. And I wouldn't like to use
-of_match_ptr() inside a MODULE_DEVICE_TABLE() call :o
 
 
---mtx
+> -----Original Message-----
+> From: Cornelia Huck <cohuck@redhat.com>
+> Sent: Thursday, August 8, 2019 2:00 PM
+> To: Parav Pandit <parav@mellanox.com>
+> Cc: kvm@vger.kernel.org; wankhede@nvidia.com; linux-
+> kernel@vger.kernel.org; alex.williamson@redhat.com; cjia@nvidia.com
+> Subject: Re: [PATCH v1 2/2] vfio/mdev: Removed unused and redundant API
+> for mdev UUID
+>=20
+> On Wed, 7 Aug 2019 16:33:11 +0000
+> Parav Pandit <parav@mellanox.com> wrote:
+>=20
+> > > -----Original Message-----
+> > > From: Cornelia Huck <cohuck@redhat.com>
+> > > Sent: Wednesday, August 7, 2019 2:58 PM
+> > > To: Parav Pandit <parav@mellanox.com>
+> > > Cc: kvm@vger.kernel.org; wankhede@nvidia.com; linux-
+> > > kernel@vger.kernel.org; alex.williamson@redhat.com; cjia@nvidia.com
+> > > Subject: Re: [PATCH v1 2/2] vfio/mdev: Removed unused and redundant
+> > > API for mdev UUID
+> > >
+> > > On Tue,  6 Aug 2019 09:18:26 -0500
+> > > Parav Pandit <parav@mellanox.com> wrote:
+> > >
+> > > > There is no single production driver who is interested in mdev
+> > > > device uuid. Currently UUID is mainly used to derive a device name.
+> > > > Additionally mdev device name is already available using core
+> > > > kernel API dev_name().
+> > >
+> > > Well, the mdev code actually uses the uuid to check for duplicates
+> > > before registration with the driver core would fail... I'd just drop
+> > > the two sentences
+> > Yes, it does the check. But its mainly used to derive a device name.
+> > And to ensure that there are no two devices with duplicate name, it
+> compares with the uuid.
+> >
+> > Even this 16 bytes storage is redundant.
+> > Subsequently, I will submit a patch to get rid of storing this 16 bytes=
+ of
+> UUID too.
+> > Because for duplicate name check, device name itself is pretty good
+> enough.
+> >
+> > Since I ran out of time and rc-4 is going on, I differed the 3rd simpli=
+fication
+> patch.
+>=20
+> I'm not sure why we'd want to ditch the uuid; it's not like it is taking =
+up huge
+> amounts of space... and I see the device name being derived from the
+> unique identifier that is the uuid, and not as the unique identifier itse=
+lf.
+>
+Its just extra storage where ID is already present in device name.
+Its redundant. Same functionality can be achieved without its storage, so i=
+t's better to simplify.
+Anyways, will handle it right after this two patches.
 
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+I realized that I had typo in the email of Kirti. So resending it with corr=
+ected email.
+
+> >
+> > Commit message actually came from the thoughts of 3rd patch, but I see
+> that without it, its not so intuitive.
+> >
+> > > talking about the device name, IMHO they don't really add useful
+> > > information; but I'll leave that decision to the maintainers.
+> > >
+> > > >
+> > > > Hence removed unused exported symbol.
+> > > >
+> > > > Signed-off-by: Parav Pandit <parav@mellanox.com>
+> > > > ---
+> > > > Changelog:
+> > > > v0->v1:
+> > > >  - Updated commit log to address comments from Cornelia
+> > > > ---
+> > > >  drivers/vfio/mdev/mdev_core.c | 6 ------
+> > > >  include/linux/mdev.h          | 1 -
+> > > >  2 files changed, 7 deletions(-)
+> > >
+> > > Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> > Thanks for the review.
+
