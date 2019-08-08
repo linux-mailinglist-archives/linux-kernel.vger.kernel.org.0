@@ -2,205 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB41486392
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 15:45:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55C486377
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 15:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733238AbfHHNoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 09:44:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:6607 "EHLO mx1.redhat.com"
+        id S1733278AbfHHNo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 09:44:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55370 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733223AbfHHNoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 09:44:22 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1733249AbfHHNoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 09:44:24 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5AA3E30832E1;
-        Thu,  8 Aug 2019 13:44:22 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DDB5E30A5A62;
+        Thu,  8 Aug 2019 13:44:23 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-144.ams2.redhat.com [10.36.116.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2ADDA60BE1;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A67765D70D;
         Thu,  8 Aug 2019 13:44:19 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 7678F9D00; Thu,  8 Aug 2019 15:44:18 +0200 (CEST)
+        id B11C59D11; Thu,  8 Aug 2019 15:44:18 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 02/17] drm/ttm: add gem_ttm_bo_device_init()
-Date:   Thu,  8 Aug 2019 15:44:02 +0200
-Message-Id: <20190808134417.10610-3-kraxel@redhat.com>
+Subject: [PATCH v4 03/17] drm/vram: switch vram helpers to the new gem_ttm_bo_device_init()
+Date:   Thu,  8 Aug 2019 15:44:03 +0200
+Message-Id: <20190808134417.10610-4-kraxel@redhat.com>
 In-Reply-To: <20190808134417.10610-1-kraxel@redhat.com>
 References: <20190808134417.10610-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 08 Aug 2019 13:44:22 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 08 Aug 2019 13:44:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now with ttm_buffer_object being a subclass of drm_gem_object we can
-easily lookup ttm_buffer_object for a given drm_gem_object, which in
-turm allows to create common helper functions.
-
-This patch starts off with a gem_ttm_bo_device_init() helper function
-which initializes ttm with the vma offset manager used by gem, to make
-sure gem and ttm have the same view on vma offsets.
-
-With that in place gem+ttm drivers don't need their private
-drm_driver.dumb_map_offset implementation any more.
-
-v3:
- - complete rewrite
+This allows to drop drm_gem_vram_mmap_offset() and
+drm_gem_vram_driver_dumb_mmap_offset(), the default
+gem function works just fine.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- include/drm/drm_gem_ttm_helper.h     | 30 +++++++++++++++++++++++
- drivers/gpu/drm/drm_gem_ttm_helper.c | 36 ++++++++++++++++++++++++++++
- Documentation/gpu/drm-mm.rst         | 12 ++++++++++
- drivers/gpu/drm/Kconfig              |  7 ++++++
- drivers/gpu/drm/Makefile             |  3 +++
- 5 files changed, 88 insertions(+)
- create mode 100644 include/drm/drm_gem_ttm_helper.h
- create mode 100644 drivers/gpu/drm/drm_gem_ttm_helper.c
+ include/drm/drm_gem_vram_helper.h             |  6 +--
+ drivers/gpu/drm/drm_gem_vram_helper.c         | 48 -------------------
+ drivers/gpu/drm/drm_vram_mm_helper.c          |  6 +--
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  1 -
+ drivers/gpu/drm/Kconfig                       |  1 +
+ 5 files changed, 5 insertions(+), 57 deletions(-)
 
-diff --git a/include/drm/drm_gem_ttm_helper.h b/include/drm/drm_gem_ttm_helper.h
-new file mode 100644
-index 000000000000..43c9db3583cc
---- /dev/null
-+++ b/include/drm/drm_gem_ttm_helper.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+
-+#ifndef DRM_GEM_TTM_HELPER_H
-+#define DRM_GEM_TTM_HELPER_H
-+
-+#include <linux/kernel.h>
-+
-+#include <drm/drm_gem.h>
-+#include <drm/drm_device.h>
-+#include <drm/ttm/ttm_bo_api.h>
-+#include <drm/ttm/ttm_bo_driver.h>
-+
-+/**
-+ * Returns the container of type &struct ttm_buffer_object
-+ * for field base.
-+ * @gem:	the GEM object
-+ * Returns:	The containing GEM VRAM object
-+ */
-+static inline struct ttm_buffer_object *drm_gem_ttm_of_gem(
-+	struct drm_gem_object *gem)
-+{
-+	return container_of(gem, struct ttm_buffer_object, base);
-+}
-+
-+int drm_gem_ttm_bo_device_init(struct drm_device *dev,
-+			       struct ttm_bo_device *bdev,
-+			       struct ttm_bo_driver *driver,
-+			       bool need_dma32);
-+
-+#endif
-diff --git a/drivers/gpu/drm/drm_gem_ttm_helper.c b/drivers/gpu/drm/drm_gem_ttm_helper.c
-new file mode 100644
-index 000000000000..0c57e9fd50b9
---- /dev/null
-+++ b/drivers/gpu/drm/drm_gem_ttm_helper.c
-@@ -0,0 +1,36 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
+diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
+index ac217d768456..701d2c46a4f4 100644
+--- a/include/drm/drm_gem_vram_helper.h
++++ b/include/drm/drm_gem_vram_helper.h
+@@ -4,6 +4,7 @@
+ #define DRM_GEM_VRAM_HELPER_H
+ 
+ #include <drm/drm_gem.h>
 +#include <drm/drm_gem_ttm_helper.h>
-+
-+/**
-+ * DOC: overview
-+ *
-+ * This library provides helper functions for gem objects backed by
-+ * ttm.
-+ */
-+
-+/**
-+ * drm_gem_ttm_bo_device_init - ttm init for devices which use gem+ttm
-+ *
-+ * @dev: A pointer to a struct drm_device.
-+ * @bdev: A pointer to a struct ttm_bo_device to initialize.
-+ * @driver: A pointer to a struct ttm_bo_driver set up by the caller.
-+ * @need_dma32: Whenever the device is limited to 32bit DMA.
-+ *
-+ * This initializes ttm with dev->vma_offset_manager, so gem and ttm
-+ * fuction are working with the same vma_offset_manager.
-+ *
-+ * Returns:
-+ * !0: Failure.
-+ */
-+int drm_gem_ttm_bo_device_init(struct drm_device *dev,
-+			       struct ttm_bo_device *bdev,
-+			       struct ttm_bo_driver *driver,
-+			       bool need_dma32)
-+{
-+	return ttm_bo_device_init_with_vma_manager(bdev, driver,
-+						   dev->anon_inode->i_mapping,
-+						   dev->vma_offset_manager,
-+						   need_dma32);
-+}
-+EXPORT_SYMBOL(drm_gem_ttm_bo_device_init);
-diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
-index b664f054c259..a70a1d9f30ec 100644
---- a/Documentation/gpu/drm-mm.rst
-+++ b/Documentation/gpu/drm-mm.rst
-@@ -412,6 +412,18 @@ VRAM MM Helper Functions Reference
- .. kernel-doc:: drivers/gpu/drm/drm_vram_mm_helper.c
-    :export:
+ #include <drm/ttm/ttm_bo_api.h>
+ #include <drm/ttm/ttm_placement.h>
+ #include <linux/kernel.h> /* for container_of() */
+@@ -76,7 +77,6 @@ struct drm_gem_vram_object *drm_gem_vram_create(struct drm_device *dev,
+ 						unsigned long pg_align,
+ 						bool interruptible);
+ void drm_gem_vram_put(struct drm_gem_vram_object *gbo);
+-u64 drm_gem_vram_mmap_offset(struct drm_gem_vram_object *gbo);
+ s64 drm_gem_vram_offset(struct drm_gem_vram_object *gbo);
+ int drm_gem_vram_pin(struct drm_gem_vram_object *gbo, unsigned long pl_flag);
+ int drm_gem_vram_unpin(struct drm_gem_vram_object *gbo);
+@@ -110,9 +110,6 @@ extern const struct drm_vram_mm_funcs drm_gem_vram_mm_funcs;
+ int drm_gem_vram_driver_dumb_create(struct drm_file *file,
+ 				    struct drm_device *dev,
+ 				    struct drm_mode_create_dumb *args);
+-int drm_gem_vram_driver_dumb_mmap_offset(struct drm_file *file,
+-					 struct drm_device *dev,
+-					 uint32_t handle, uint64_t *offset);
  
-+GEM TTM Helper Functions Reference
-+-----------------------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/drm_gem_ttm_helper.c
-+   :doc: overview
-+
-+.. kernel-doc:: include/drm/drm_gem_ttm_helper.h
-+   :internal:
-+
-+.. kernel-doc:: drivers/gpu/drm/drm_gem_ttm_helper.c
-+   :export:
-+
- VMA Offset Manager
- ==================
+ /**
+  * define DRM_GEM_VRAM_DRIVER - default callback functions for \
+@@ -123,7 +120,6 @@ int drm_gem_vram_driver_dumb_mmap_offset(struct drm_file *file,
+  */
+ #define DRM_GEM_VRAM_DRIVER \
+ 	.dumb_create		  = drm_gem_vram_driver_dumb_create, \
+-	.dumb_map_offset	  = drm_gem_vram_driver_dumb_mmap_offset, \
+ 	.gem_prime_mmap		  = drm_gem_prime_mmap
  
+ #endif
+diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+index fd751078bae1..b78865055990 100644
+--- a/drivers/gpu/drm/drm_gem_vram_helper.c
++++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+@@ -156,22 +156,6 @@ void drm_gem_vram_put(struct drm_gem_vram_object *gbo)
+ }
+ EXPORT_SYMBOL(drm_gem_vram_put);
+ 
+-/**
+- * drm_gem_vram_mmap_offset() - Returns a GEM VRAM object's mmap offset
+- * @gbo:	the GEM VRAM object
+- *
+- * See drm_vma_node_offset_addr() for more information.
+- *
+- * Returns:
+- * The buffer object's offset for userspace mappings on success, or
+- * 0 if no offset is allocated.
+- */
+-u64 drm_gem_vram_mmap_offset(struct drm_gem_vram_object *gbo)
+-{
+-	return drm_vma_node_offset_addr(&gbo->bo.base.vma_node);
+-}
+-EXPORT_SYMBOL(drm_gem_vram_mmap_offset);
+-
+ /**
+  * drm_gem_vram_offset() - \
+ 	Returns a GEM VRAM object's offset in video memory
+@@ -511,38 +495,6 @@ int drm_gem_vram_driver_dumb_create(struct drm_file *file,
+ }
+ EXPORT_SYMBOL(drm_gem_vram_driver_dumb_create);
+ 
+-/**
+- * drm_gem_vram_driver_dumb_mmap_offset() - \
+-	Implements &struct drm_driver.dumb_mmap_offset
+- * @file:	DRM file pointer.
+- * @dev:	DRM device.
+- * @handle:	GEM handle
+- * @offset:	Returns the mapping's memory offset on success
+- *
+- * Returns:
+- * 0 on success, or
+- * a negative errno code otherwise.
+- */
+-int drm_gem_vram_driver_dumb_mmap_offset(struct drm_file *file,
+-					 struct drm_device *dev,
+-					 uint32_t handle, uint64_t *offset)
+-{
+-	struct drm_gem_object *gem;
+-	struct drm_gem_vram_object *gbo;
+-
+-	gem = drm_gem_object_lookup(file, handle);
+-	if (!gem)
+-		return -ENOENT;
+-
+-	gbo = drm_gem_vram_of_gem(gem);
+-	*offset = drm_gem_vram_mmap_offset(gbo);
+-
+-	drm_gem_object_put_unlocked(gem);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(drm_gem_vram_driver_dumb_mmap_offset);
+-
+ /*
+  * PRIME helpers
+  */
+diff --git a/drivers/gpu/drm/drm_vram_mm_helper.c b/drivers/gpu/drm/drm_vram_mm_helper.c
+index c911781d6728..a693f9ce356c 100644
+--- a/drivers/gpu/drm/drm_vram_mm_helper.c
++++ b/drivers/gpu/drm/drm_vram_mm_helper.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ 
++#include <drm/drm_gem_ttm_helper.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_file.h>
+ #include <drm/drm_vram_mm_helper.h>
+@@ -170,9 +171,8 @@ int drm_vram_mm_init(struct drm_vram_mm *vmm, struct drm_device *dev,
+ 	vmm->vram_size = vram_size;
+ 	vmm->funcs = funcs;
+ 
+-	ret = ttm_bo_device_init(&vmm->bdev, &bo_driver,
+-				 dev->anon_inode->i_mapping,
+-				 true);
++	ret = drm_gem_ttm_bo_device_init(dev, &vmm->bdev, &bo_driver,
++					 true);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+index 2ae538835781..6386c67e086b 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+@@ -59,7 +59,6 @@ static struct drm_driver hibmc_driver = {
+ 	.major			= 1,
+ 	.minor			= 0,
+ 	.dumb_create            = hibmc_dumb_create,
+-	.dumb_map_offset        = drm_gem_vram_driver_dumb_mmap_offset,
+ 	.gem_prime_mmap		= drm_gem_prime_mmap,
+ 	.irq_handler		= hibmc_drm_interrupt,
+ };
 diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index e6f40fb54c9a..f7b25519f95c 100644
+index f7b25519f95c..1be8ad30d8fe 100644
 --- a/drivers/gpu/drm/Kconfig
 +++ b/drivers/gpu/drm/Kconfig
-@@ -172,6 +172,13 @@ config DRM_VRAM_HELPER
+@@ -169,6 +169,7 @@ config DRM_VRAM_HELPER
+ 	tristate
+ 	depends on DRM
+ 	select DRM_TTM
++	select DRM_TTM_HELPER
  	help
  	  Helpers for VRAM memory management
  
-+config DRM_TTM_HELPER
-+	tristate
-+	depends on DRM
-+	select DRM_TTM
-+	help
-+	  Helpers for ttm-based gem objects
-+
- config DRM_GEM_CMA_HELPER
- 	bool
- 	depends on DRM
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index 10f8329a8b71..545c61d6528b 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -37,6 +37,9 @@ drm_vram_helper-y := drm_gem_vram_helper.o \
- 		     drm_vram_mm_helper.o
- obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o
- 
-+drm_ttm_helper-y := drm_gem_ttm_helper.o
-+obj-$(CONFIG_DRM_TTM_HELPER) += drm_ttm_helper.o
-+
- drm_kms_helper-y := drm_crtc_helper.o drm_dp_helper.o drm_dsc.o drm_probe_helper.o \
- 		drm_plane_helper.o drm_dp_mst_topology.o drm_atomic_helper.o \
- 		drm_kms_helper_common.o drm_dp_dual_mode_helper.o \
 -- 
 2.18.1
 
