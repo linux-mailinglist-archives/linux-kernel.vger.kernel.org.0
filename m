@@ -2,138 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B65861FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24EC986207
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:39:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732450AbfHHMiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 08:38:08 -0400
-Received: from mail-ot1-f70.google.com ([209.85.210.70]:41416 "EHLO
-        mail-ot1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbfHHMiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:38:07 -0400
-Received: by mail-ot1-f70.google.com with SMTP id a8so61413036oti.8
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 05:38:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=tgS7L48eHOQSpr+oZVkwi0R27Me8DH37A1UrEs6B3Ms=;
-        b=LLTxaHsRaNpQHegeg6qKHODO7JBy9D8jyZHjh0nzKDxXfBjfOfvm51g05Rf9PRfPGN
-         fHP8yZBjHCasnj3YrCzS7agVwsQi70gwfKh+1gUsrmsV+RLx/d6FK7YeaAWiUf3CqLu2
-         vi2PpUlx1ij4riEA6S7WyJAChS/ki7kTl2Ouvhn+STghrN91G7PXCQOvb6HKN9I+B1N2
-         5NJKnAA8hK7kjS7ZgG2Pp8ItjEkgkqQY44Y6ZpgcTjdHevwTWAkevj1tNs/8hOI3Rtve
-         NFuTQ7c7CE3ASEPlWhOAv0ZEUd9DltvbOej5O2cB20LPD0/WbbNTx/ZBoFd7FEvuPQf1
-         t6hQ==
-X-Gm-Message-State: APjAAAWIl17qZzluffVdarLYer7H/Lya7MjcVXGUO7sbevfTNjcU1o3J
-        4eARdPsm8jIhZ5ECOuLFqRT0CyU84ZfakwkGkQULGq6Gtcyg
-X-Google-Smtp-Source: APXvYqzfz3subnIk/sSUAuycYkgWhqVqk7+A5uJekseoGm+xV7U926JT3SWWTJ1uL0WiymxGOnQeP/+DtGOdZiNfJFg719VJG9Uf
+        id S1732473AbfHHMjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 08:39:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727649AbfHHMjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:39:45 -0400
+Received: from localhost (unknown [122.178.245.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99CA521874;
+        Thu,  8 Aug 2019 12:39:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565267985;
+        bh=tEVnB+ZIRs6bWPkFofl5oiksJyqMHWq5C73maWLshGc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0QWq71Bcutvw6b3bK5ZkpyziNhp5L8G1dYP5XTJz+Nur2B/nL/TpzVdDn57EuKluB
+         O+lymUv10ew71ZKsi7h3MHapYZbcxVQyylDlWw3BkZBFcXXyvyZaoB+Km0rox0F9fe
+         mQnDsfBJAb72DjrSWSrrCfkn1iUT8qLCtqUCNTsM=
+Date:   Thu, 8 Aug 2019 18:08:33 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Sameer Pujar <spujar@nvidia.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        dan.j.williams@intel.com, tiwai@suse.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com,
+        mkumard@nvidia.com
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+Message-ID: <20190808123833.GX12733@vkoul-mobl.Dlink>
+References: <23474b74-3c26-3083-be21-4de7731a0e95@nvidia.com>
+ <20190624062609.GV2962@vkoul-mobl>
+ <e9e822da-1cb9-b510-7639-43407fda8321@nvidia.com>
+ <75be49ac-8461-0798-b673-431ec527d74f@nvidia.com>
+ <20190719050459.GM12733@vkoul-mobl.Dlink>
+ <3e7f795d-56fb-6a71-b844-2fc2b85e099e@nvidia.com>
+ <20190729061010.GC12733@vkoul-mobl.Dlink>
+ <98954eb3-21f1-6008-f8e1-f9f9b82f87fb@nvidia.com>
+ <20190731151610.GT12733@vkoul-mobl.Dlink>
+ <c0f4de86-423a-35df-3744-40db89f2fdfe@nvidia.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:54c1:: with SMTP id t184mr16701744jaa.10.1565267886602;
- Thu, 08 Aug 2019 05:38:06 -0700 (PDT)
-Date:   Thu, 08 Aug 2019 05:38:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005c056c058f9a5437@google.com>
-Subject: BUG: bad usercopy in ld_usb_read
-From:   syzbot <syzbot+45b2f40f0778cfa7634e@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, andreyknvl@google.com, cai@lca.pw,
-        gregkh@linuxfoundation.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c0f4de86-423a-35df-3744-40db89f2fdfe@nvidia.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 02-08-19, 09:51, Jon Hunter wrote:
+> 
+> On 31/07/2019 16:16, Vinod Koul wrote:
+> > On 31-07-19, 10:48, Jon Hunter wrote:
+> >>
+> >> On 29/07/2019 07:10, Vinod Koul wrote:
+> >>> On 23-07-19, 11:24, Sameer Pujar wrote:
+> >>>>
+> >>>> On 7/19/2019 10:34 AM, Vinod Koul wrote:
+> >>>>> On 05-07-19, 11:45, Sameer Pujar wrote:
+> >>>>>> Hi Vinod,
+> >>>>>>
+> >>>>>> What are your final thoughts regarding this?
+> >>>>> Hi sameer,
+> >>>>>
+> >>>>> Sorry for the delay in replying
+> >>>>>
+> >>>>> On this, I am inclined to think that dma driver should not be involved.
+> >>>>> The ADMAIF needs this configuration and we should take the path of
+> >>>>> dma_router for this piece and add features like this to it
+> >>>>
+> >>>> Hi Vinod,
+> >>>>
+> >>>> The configuration is needed by both ADMA and ADMAIF. The size is
+> >>>> configurable
+> >>>> on ADMAIF side. ADMA needs to know this info and program accordingly.
+> >>>
+> >>> Well I would say client decides the settings for both DMA, DMAIF and
+> >>> sets the peripheral accordingly as well, so client communicates the two
+> >>> sets of info to two set of drivers
+> >>
+> >> That maybe, but I still don't see how the information is passed from the
+> >> client in the first place. The current problem is that there is no means
+> >> to pass both a max-burst size and fifo-size to the DMA driver from the
+> >> client.
+> > 
+> > So one thing not clear to me is why ADMA needs fifo-size, I thought it
+> > was to program ADMAIF and if we have client programme the max-burst
+> > size to ADMA and fifo-size to ADMAIF we wont need that. Can you please
+> > confirm if my assumption is valid?
+> 
+> Let me see if I can clarify ...
+> 
+> 1. The FIFO we are discussing here resides in the ADMAIF module which is
+>    a separate hardware block the ADMA (although the naming make this
+>    unclear).
+> 
+> 2. The size of FIFO in the ADMAIF is configurable and it this is
+>    configured via the ADMAIF registers. This allows different channels
+>    to use different FIFO sizes. Think of this as a shared memory that is
+>    divided into n FIFOs shared between all channels.
+> 
+> 3. The ADMA, not the ADMAIF, manages the flow to the FIFO and this is
+>    because the ADMAIF only tells the ADMA when a word has been
+>    read/written (depending on direction), the ADMAIF does not indicate
+>    if the FIFO is full, empty, etc. Hence, the ADMA needs to know the
+>    total FIFO size.
+> 
+> So the ADMA needs to know the FIFO size so that it does not overrun the
+> FIFO and we can also set a burst size (less than the total FIFO size)
+> indicating how many words to transfer at a time. Hence, the two parameters.
 
-syzbot found the following crash on:
+Thanks, I confirm this is my understanding as well.
 
-HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=13aeaece600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-dashboard link: https://syzkaller.appspot.com/bug?extid=45b2f40f0778cfa7634e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+To compare to regular case for example SPI on DMA, SPI driver will
+calculate fifo size & burst to be used and program dma (burst size) and
+its own fifos accordingly
 
-Unfortunately, I don't have any reproducer for this crash yet.
+So, in your case why should the peripheral driver not calculate the fifo
+size for both ADMA and ADMAIF and (if required it's own FIFO) and
+program the two (ADMA and ADMAIF).
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+45b2f40f0778cfa7634e@syzkaller.appspotmail.com
+What is the limiting factor in this flow is not clear to me.
 
-ldusb 6-1:0.124: Read buffer overflow, -131383996186150 bytes dropped
-usercopy: Kernel memory exposure attempt detected from SLUB  
-object 'kmalloc-2k' (offset 8, size 65062)!
-------------[ cut here ]------------
-kernel BUG at mm/usercopy.c:98!
-invalid opcode: 0000 [#1] SMP KASAN
-CPU: 0 PID: 15185 Comm: syz-executor.2 Not tainted 5.3.0-rc2+ #25
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:usercopy_abort+0xb9/0xbb mm/usercopy.c:98
-Code: e8 c1 f7 d6 ff 49 89 d9 4d 89 e8 4c 89 e1 41 56 48 89 ee 48 c7 c7 e0  
-f3 cd 85 ff 74 24 08 41 57 48 8b 54 24 20 e8 15 98 c1 ff <0f> 0b e8 95 f7  
-d6 ff e8 80 9f fd ff 8b 54 24 04 49 89 d8 4c 89 e1
-RSP: 0018:ffff8881ccb3fc38 EFLAGS: 00010286
-RAX: 0000000000000067 RBX: ffffffff86a659d4 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8128a0fd RDI: ffffed1039967f79
-RBP: ffffffff85cdf2c0 R08: 0000000000000067 R09: fffffbfff11acdaa
-R10: fffffbfff11acda9 R11: ffffffff88d66d4f R12: ffffffff86a696e8
-R13: ffffffff85cdf180 R14: 000000000000fe26 R15: ffffffff85cdf140
-FS:  00007ff6daf91700(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1de6600000 CR3: 00000001ca554000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __check_heap_object+0xdd/0x110 mm/slub.c:3914
-  check_heap_object mm/usercopy.c:234 [inline]
-  __check_object_size mm/usercopy.c:280 [inline]
-  __check_object_size+0x32d/0x39b mm/usercopy.c:250
-  check_object_size include/linux/thread_info.h:119 [inline]
-  check_copy_size include/linux/thread_info.h:150 [inline]
-  copy_to_user include/linux/uaccess.h:151 [inline]
-  ld_usb_read+0x304/0x780 drivers/usb/misc/ldusb.c:495
-  __vfs_read+0x76/0x100 fs/read_write.c:425
-  vfs_read+0x1ea/0x430 fs/read_write.c:461
-  ksys_read+0x1e8/0x250 fs/read_write.c:587
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459829
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ff6daf90c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
-RDX: 000000000000fe26 RSI: 00000000200000c0 RDI: 0000000000000003
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff6daf916d4
-R13: 00000000004c6c73 R14: 00000000004dbee8 R15: 00000000ffffffff
-Modules linked in:
----[ end trace 4fe8dba032d24ceb ]---
-RIP: 0010:usercopy_abort+0xb9/0xbb mm/usercopy.c:98
-Code: e8 c1 f7 d6 ff 49 89 d9 4d 89 e8 4c 89 e1 41 56 48 89 ee 48 c7 c7 e0  
-f3 cd 85 ff 74 24 08 41 57 48 8b 54 24 20 e8 15 98 c1 ff <0f> 0b e8 95 f7  
-d6 ff e8 80 9f fd ff 8b 54 24 04 49 89 d8 4c 89 e1
-RSP: 0018:ffff8881ccb3fc38 EFLAGS: 00010286
-RAX: 0000000000000067 RBX: ffffffff86a659d4 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8128a0fd RDI: ffffed1039967f79
-RBP: ffffffff85cdf2c0 R08: 0000000000000067 R09: fffffbfff11acdaa
-R10: fffffbfff11acda9 R11: ffffffff88d66d4f R12: ffffffff86a696e8
-R13: ffffffff85cdf180 R14: 000000000000fe26 R15: ffffffff85cdf140
-FS:  00007ff6daf91700(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1de6600000 CR3: 00000001ca554000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Even if we were to use some sort of router between the ADMA and ADMAIF,
+> the client still needs to indicate to the ADMA what FIFO size and burst
+> size, if I am following you correctly.
+> 
+> Let me know if this is clearer.
+> 
+> Thanks
+> Jon
+> 
+> -- 
+> nvpublic
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+~Vinod
