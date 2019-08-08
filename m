@@ -2,100 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98C9F86AD0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:52:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B73886AD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404008AbfHHTwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:52:25 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45696 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729925AbfHHTwX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:52:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1MWRQhv1JoqmBcDEPz0hEreVKta/Mv4QnU98H8se/ZU=; b=iVKOlFDOmWwddtjobr+BdDZW6
-        yi04iCpOXEqFxbDYYsmEipmZPg8rHBBwAsU0nL4Ok75LgzN3S4EO5wGYbcXzSaNfZ7GXKJ0Og9v/T
-        KwP0bMbCmrihAzqWFAF6GThe9BJcUiyTFktozEqRbs7MgWGONzwyvxaMPMIChKFKJNPts=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hvoSO-0003rT-To; Thu, 08 Aug 2019 19:52:16 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 249062742B42; Thu,  8 Aug 2019 20:52:16 +0100 (BST)
-Date:   Thu, 8 Aug 2019 20:52:16 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        vkoul@kernel.org, bgoswami@codeaurora.org, plai@codeaurora.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        lgirdwood@gmail.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: soundwire: add slave bindings
-Message-ID: <20190808195216.GM3795@sirena.co.uk>
-References: <20190808144504.24823-1-srinivas.kandagatla@linaro.org>
- <20190808144504.24823-2-srinivas.kandagatla@linaro.org>
- <d346b2af-f285-4c53-b706-46a129ab7951@linux.intel.com>
- <cdd2bded-551c-65f5-ca29-d2bb825bdaba@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kunpHVz1op/+13PW"
-Content-Disposition: inline
-In-Reply-To: <cdd2bded-551c-65f5-ca29-d2bb825bdaba@linaro.org>
-X-Cookie: I think we're in trouble.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2404305AbfHHTxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:53:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404228AbfHHTxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:53:10 -0400
+Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8987221883;
+        Thu,  8 Aug 2019 19:53:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565293989;
+        bh=S3QTZYjx6BDOf305mGjlzKbXfSHzEKqRofEbPjjrb/Q=;
+        h=From:To:Subject:Date:From;
+        b=ow4RoGCvPSaihud+cEfwSn2N0W89F64BxVI6fj7shR3ODMl2mZjy3MWijOiWJ5SUd
+         C1fP15c4SFUnubKKRv92GSMI3Db0Z2EUanzJNSnqTvyt1CHTMAHVMB0lK5vSTWuKFu
+         EFX5N0JmT162MXKxHYtQARBuj8W7cflQTc8lOcmg=
+From:   zanussi@kernel.org
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Julia Cartwright <julia@ni.com>
+Subject: [PATCH RT 00/19] Linux v4.14.137-rt65-rc1
+Date:   Thu,  8 Aug 2019 14:52:28 -0500
+Message-Id: <cover.1565293934.git.zanussi@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Tom Zanussi <zanussi@kernel.org>
 
---kunpHVz1op/+13PW
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dear RT Folks,
 
-On Thu, Aug 08, 2019 at 05:48:56PM +0100, Srinivas Kandagatla wrote:
-> On 08/08/2019 16:58, Pierre-Louis Bossart wrote:
+This is the RT stable review cycle of patch 4.14.137-rt65-rc1.
 
-> > > +- sdw-instance-id: Should be ('Instance ID') from SoundWire
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 Enumeration Address. Instance ID is for =
-the cases
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 where multiple Devices of the same type =
-or Class
-> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 are attached to the bus.
+Please scream at me if I messed something up. Please test the patches
+too.
 
-> > so it is actually required if you have a single Slave device? Or is it
-> > only required when you have more than 1 device of the same type?
+The -rc release will be uploaded to kernel.org and will be deleted
+when the final release is out. This is just a review release (or
+release candidate).
 
-> This is mandatory for any slave device!
+The pre-releases will not be pushed to the git repository, only the
+final release is.
 
-If it's mandatory the wording is a bit unclear.  How about something
-like:
+If all goes well, this patch will be converted to the next main
+release on 2019-08-15.
 
-	Should be ('Instance ID') from the SoundWire Enumeration
-	Address.  This must always be provided, if multiple devices
-	with the same type or class or attached to the bus each
-	instance must have a distinct value.
+To build 4.14.137-rt65-rc1 directly, the following patches should be applied:
 
---kunpHVz1op/+13PW
-Content-Type: application/pgp-signature; name="signature.asc"
+  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.14.tar.xz
 
------BEGIN PGP SIGNATURE-----
+  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.14.137.xz
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1MfW8ACgkQJNaLcl1U
-h9BC6Qf+MpoIdX8BiE+fy8vg1a5ZsWCGWK/V6LMgyk7vx2P8oWJylUyIG9xTvecn
-zrFjIwW5t44x8P5ycsmXZCqG8JCU0/qPSQ9Aw4qC1jesy3Ue4Lwtmu0qH5gvFsSg
-CKW/bidKNFSCg3t39fddxeawm+GiutGVwnCgnVtkH9tmcONusdDfnDdOLQiQUQa1
-CsmQIbGs/BEuF6LF11Ho58rf7UHvuu4oF9mrKszQWdZKTkhNPfjgqy4n8/scVObd
-TAbUUo0uixBk2YmmcxrwtF1V9QGPyifPM8LsHlXlxO3ZSH+/fARzkRoBYQlbwRju
-aGWXSh12SOwhelEkD1Q19DG25zsCsQ==
-=Nsvw
------END PGP SIGNATURE-----
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.14/patch-4.14.137-rt65-rc1.patch.xz
 
---kunpHVz1op/+13PW--
+You can also build from 4.14.137-rt64 by applying the incremental patch:
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.14/incr/patch-4.14.137-rt64-rt65-rc1.patch.xz
+
+
+Enjoy,
+
+-- Tom
+
+
+Corey Minyard (1):
+  sched/completion: Fix a lockup in wait_for_completion()
+
+Luis Claudio R. Goncalves (1):
+  mm/zswap: Do not disable preemption in zswap_frontswap_store()
+
+Sebastian Andrzej Siewior (13):
+  kthread: add a global worker thread.
+  genirq: Do not invoke the affinity callback via a workqueue on RT
+  genirq: Handle missing work_struct in irq_set_affinity_notifier()
+  locking/rwsem: Rename rwsem_rt.h to rwsem-rt.h
+  locking/lockdep: Don't complain about incorrect name for no validate
+    class
+  arm: imx6: cpuidle: Use raw_spinlock_t
+  rcu: Don't allow to change rcu_normal_after_boot on RT
+  sched/core: Drop a preempt_disable_rt() statement
+  Revert "futex: Ensure lock/unlock symetry versus pi_lock and hash
+    bucket lock"
+  Revert "futex: Fix bug on when a requeued RT task times out"
+  Revert "rtmutex: Handle the various new futex race conditions"
+  Revert "futex: workaround migrate_disable/enable in different context"
+  futex: Make the futex_hash_bucket lock raw
+
+Thomas Gleixner (1):
+  futex: Delay deallocation of pi_state
+
+Tom Zanussi (2):
+  kthread: Use __RAW_SPIN_LOCK_UNLOCK to initialize kthread_worker lock
+  Linux 4.14.137-rt65-rc1
+
+kbuild test robot (1):
+  pci/switchtec: fix stream_open.cocci warnings
+
+ arch/arm/mach-imx/cpuidle-imx6q.c        |  10 +-
+ drivers/block/loop.c                     |   2 +-
+ drivers/pci/switch/switchtec.c           |   2 +-
+ drivers/spi/spi-rockchip.c               |   1 +
+ include/linux/blk-cgroup.h               |   1 +
+ include/linux/interrupt.h                |   5 +-
+ include/linux/kthread-cgroup.h           |  17 +++
+ include/linux/kthread.h                  |  10 +-
+ include/linux/{rwsem_rt.h => rwsem-rt.h} |   0
+ include/linux/rwsem.h                    |   2 +-
+ init/main.c                              |   1 +
+ kernel/futex.c                           | 232 +++++++++++++------------------
+ kernel/irq/manage.c                      |  23 +--
+ kernel/kthread.c                         |  13 ++
+ kernel/locking/lockdep.c                 |   3 +-
+ kernel/locking/rtmutex.c                 |  65 +--------
+ kernel/locking/rtmutex_common.h          |   3 -
+ kernel/rcu/update.c                      |   2 +
+ kernel/sched/completion.c                |   2 +-
+ kernel/sched/core.c                      |   9 +-
+ localversion-rt                          |   2 +-
+ mm/zswap.c                               |  12 +-
+ 22 files changed, 179 insertions(+), 238 deletions(-)
+ create mode 100644 include/linux/kthread-cgroup.h
+ rename include/linux/{rwsem_rt.h => rwsem-rt.h} (100%)
+
+-- 
+2.14.1
+
