@@ -2,100 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20B9886528
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 339AB86589
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732655AbfHHPI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:08:59 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:41004 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730678AbfHHPI7 (ORCPT
+        id S2389981AbfHHPTQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 8 Aug 2019 11:19:16 -0400
+Received: from 68.66.241.172.static.a2webhosting.com ([68.66.241.172]:55760
+        "EHLO vps.redhazel.co.uk" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1732680AbfHHPTQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:08:59 -0400
-Received: from mr1.cc.vt.edu (smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x78F8vHH030144
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Aug 2019 11:08:57 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x78F8qo6019440
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Aug 2019 11:08:57 -0400
-Received: by mail-qk1-f198.google.com with SMTP id c79so82918309qkg.13
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 08:08:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=sZG45UfQMhTHDUgEHKrzSwCRO/ejJ3aFWUQpSgQlypU=;
-        b=ssG5jf51+m+ZWOsagUdMNHHXy23hp5Cd6jzG8hCPpd5D+KtsTKLHi6Ube127tTJP4v
-         J93+PcOZQmzG03+yr1cCUir8bz/nY2lwgdarP3GEyn6kV3jczHBHt9mftmB7cc7lJ0x0
-         Tb9XgNgdiuHEFJa7HuPj7PkSYyxKXwqpL1ywYcwmZZ1T0mS/4trQafooBi+6+LF9NpQ0
-         rgVxEw6juZwPPRixogqEQugYpdz+gfnRLsK+z5M8d9FL475sd2KpVq6Frv6hFLbhuDpP
-         eJQeJN8cDDNGkoKOqHEbdu9a3frCUbkadNUJcDK0Su24g3mrkeZIh/KV6osgLhZzib6V
-         Ce9A==
-X-Gm-Message-State: APjAAAU+K2mfYn5Mvrgo2kU4sWuuz9tP3XQWQvTghBvmGnGYBohKgXzF
-        Ws+XO7A5wla+DnUGvt2ZP1+wssR3vU/g6HbFWkDu6RtEH/F58B4fbWuaqg/QEMKapFjZsMLEuMd
-        tWU0dfbltd87l8USnZTRy6NLu/vGpzzfcX9U=
-X-Received: by 2002:ae9:eb08:: with SMTP id b8mr9196297qkg.481.1565276932488;
-        Thu, 08 Aug 2019 08:08:52 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyA4TmeX8wFs2niCTUr8jpeybcDjuWJjkUN+7g+sMgPRJHkHu8c64Y0d9aeO1jbLAwwx41VNg==
-X-Received: by 2002:ae9:eb08:: with SMTP id b8mr9196266qkg.481.1565276932155;
-        Thu, 08 Aug 2019 08:08:52 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:4341::359])
-        by smtp.gmail.com with ESMTPSA id r14sm43822769qke.47.2019.08.08.08.08.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 08:08:50 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Tony Luck <tony.luck@intel.com>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drivers/ras: Don't build debugfs.o if no debugfs in config
-In-Reply-To: <20190808142055.GF20745@zn.tnic>
-References: <7053.1565218556@turing-police> <20190808093101.GE20745@zn.tnic> <77171.1565269299@turing-police>
- <20190808142055.GF20745@zn.tnic>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1565276929_4269P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 08 Aug 2019 11:08:49 -0400
-Message-ID: <84877.1565276929@turing-police>
+        Thu, 8 Aug 2019 11:19:16 -0400
+X-Greylist: delayed 545 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Aug 2019 11:19:15 EDT
+Received: from [100.121.56.177] (unknown [213.205.240.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by vps.redhazel.co.uk (Postfix) with ESMTPSA id 1A2EB1C02183;
+        Thu,  8 Aug 2019 16:10:09 +0100 (BST)
+Date:   Thu, 08 Aug 2019 16:10:07 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190808114826.GC18351@dhcp22.suse.cz>
+References: <ce102f29-3adc-d0fd-41ee-e32c1bcd7e8d@suse.cz> <20190805193148.GB4128@cmpxchg.org> <CAJuCfpHhR+9ybt9ENzxMbdVUd_8rJN+zFbDm+5CeE2Desu82Gg@mail.gmail.com> <398f31f3-0353-da0c-fc54-643687bb4774@suse.cz> <20190806142728.GA12107@cmpxchg.org> <20190806143608.GE11812@dhcp22.suse.cz> <CAJuCfpFmOzj-gU1NwoQFmS_pbDKKd2XN=CS1vUV4gKhYCJOUtw@mail.gmail.com> <20190806220150.GA22516@cmpxchg.org> <20190807075927.GO11812@dhcp22.suse.cz> <20190807205138.GA24222@cmpxchg.org> <20190808114826.GC18351@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: Let's talk about the elephant in the room - the Linux kernel's inability to gracefully handle low memory pressure
+To:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
+CC:     Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Artem S. Tashkinov" <aros@gmx.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+From:   ndrw.xf@redhazel.co.uk
+Message-ID: <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1565276929_4269P
-Content-Type: text/plain; charset=us-ascii
 
-On Thu, 08 Aug 2019 16:20:55 +0200, Borislav Petkov said:
-> config RAS_CEC
->         depends on X86_MCE && MEMORY_FAILURE && DEBUG_FS
-> 						^^^^^^^^
 
-I'm willing to respin that patch that way instead - if cec.c is basically
-pointless without debugfs, that's probably a good solution. My first read
-of the code was that the debugfs support was "additional optional" code,
-not "this is pointless without it" code.
+On 8 August 2019 12:48:26 BST, Michal Hocko <mhocko@kernel.org> wrote:
+>> 
+>> Per default, the OOM killer will engage after 15 seconds of at least
+>> 80% memory pressure. These values are tunable via sysctls
+>> vm.thrashing_oom_period and vm.thrashing_oom_level.
+>
+>As I've said earlier I would be somehow more comfortable with a kernel
+>command line/module parameter based tuning because it is less of a
+>stable API and potential future stall detector might be completely
+>independent on PSI and the current metric exported. But I can live with
+>that because a period and level sounds quite generic.
 
---==_Exmh_1565276929_4269P
-Content-Type: application/pgp-signature
+Would it be possible to reserve a fixed (configurable) amount of RAM for caches, and trigger OOM killer earlier, before most UI code is evicted from memory? In my use case, I am happy sacrificing e.g. 0.5GB and kill runaway tasks _before_ the system freezes. Potentially OOM killer would also work better in such conditions. I almost never work at close to full memory capacity, it's always a single task that goes wrong and brings the system down.
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
+The problem with PSI sensing is that it works after the fact (after the freeze has already occurred). It is not very different from issuing SysRq-f manually on a frozen system, although it would still be a handy feature for batched tasks and remote access. 
 
-iQIVAwUBXUw7AQdmEQWDXROgAQKNRg/+KNGYFpbwNYNSUS145bUcs6vMvWaQtaao
-qWy9xgA3sFeykg6JDreq0viGTyIL/Sr3GHn2XR2Y96d58bOWZZs4o+uDfbjIEdO4
-lQ6qZPOo0gPKMYv04xTyyG8XTFXBCN/JgUQP5zGEapXVasd+IdmDJI3/ITfjx+TF
-+k15Ytf0sUGvR/RXaFnautbmcWkSlhKwkCluoo1+6S2As0IgalBCD4R2dx/1W1By
-wclZ+M2f+b4HS3qZC7u/VmLBy7pU6CFJ4aU3zCoc/bKc5lfRWf7xkNwG7DMUVnOV
-QLtDPa9bdMGX7s3HgTf1h4qXM81i6Gy6stjRoyE1CEI5VKO3EnyIycaje5xknEF7
-OAOxqKjgEYi06xlBoWjmMxjVfFUd+nqY61S0PoHPscvmWVJ6p8JkUb4G27tXK21l
-QxExAtX2f8YEYsv0Zjrrq0upXjHcOoiaVuVl9gv6bDaUZgfQ60/hT/78JNSVOv+g
-IRlq4egBQaeF2TrIuAwEoPWlnG6kOfLKuI1hIduKuHVKIcxNk6dmtPt5wO740O98
-8uF9nMivwqBwICkSPWPhAIOdCwSMh4HjhHkNd5xrQ5ZB8+woLy9nW76EdTFk2LUv
-vd9APOV9WNy6BmasFL3ojgYp1nz3tHTcfUQ6ADA/4so69dx7NPAa5FW4JoFTc2x0
-Is22wr5pjoQ=
-=ntaN
------END PGP SIGNATURE-----
+Best regards, 
+ndrw
 
---==_Exmh_1565276929_4269P--
+
