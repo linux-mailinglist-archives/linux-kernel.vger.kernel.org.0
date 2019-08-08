@@ -2,105 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 330DF85817
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 04:22:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4C4A8582A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 04:35:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbfHHCWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 22:22:32 -0400
-Received: from mga03.intel.com ([134.134.136.65]:53455 "EHLO mga03.intel.com"
+        id S1728192AbfHHCeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 22:34:09 -0400
+Received: from mga02.intel.com ([134.134.136.20]:4114 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728162AbfHHCW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 22:22:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1728020AbfHHCeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 22:34:09 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 19:22:03 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 19:33:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,358,1559545200"; 
-   d="scan'208";a="168832663"
-Received: from ipsg-l-lixuzha.sh.intel.com ([10.239.153.20])
-  by orsmga008.jf.intel.com with ESMTP; 07 Aug 2019 19:22:02 -0700
-From:   Zhang Lixu <lixu.zhang@intel.com>
-To:     linux-input@vger.kernel.org, jikos@kernel.org,
-        benjamin.tissoires@redhat.com
-Cc:     srinivas.pandruvada@linux.intel.com, linux-kernel@vger.kernel.org,
-        lixu.zhang@intel.com
-Subject: [PATCH v2 3/3] HID: intel-ish-hid: ipc: check the NO_D3 flag to distinguish resume paths
-Date:   Thu,  8 Aug 2019 18:21:13 +0800
-Message-Id: <20190808102113.27802-4-lixu.zhang@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190808102113.27802-1-lixu.zhang@intel.com>
-References: <20190808102113.27802-1-lixu.zhang@intel.com>
+   d="scan'208";a="168834754"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 07 Aug 2019 19:33:42 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hvYFK-00077q-AW; Thu, 08 Aug 2019 10:33:42 +0800
+Date:   Thu, 8 Aug 2019 10:32:57 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: [rcu:dev.2019.07.31a 110/123] kernel/rcu/rcu_segcblist.c:61:6:
+ sparse: sparse: symbol 'rcu_segcblist_set_len' was not declared. Should it
+ be static?
+Message-ID: <201908081009.37BaOO5n%lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The NO_D3 flag would be set if the ISH enter D0i3 in ish_suspend(),
-The resume paths can be distinguished by checking the NO_D3 flag.
-It's more reasonable than checking the FW status.
+tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2019.07.31a
+head:   71cf692f482ff45802352cf85a8880035fca9e52
+commit: ab2ef5c7b4d1933ee53a66d981cb67974de46815 [110/123] rcu/nocb: Atomic ->len field in rcu_segcblist structure
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
+        git checkout ab2ef5c7b4d1933ee53a66d981cb67974de46815
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-Signed-off-by: Zhang Lixu <lixu.zhang@intel.com>
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+   kernel/rcu/rcu_segcblist.c:32:6: sparse: sparse: symbol 'rcu_cblist_enqueue' was not declared. Should it be static?
+>> kernel/rcu/rcu_segcblist.c:61:6: sparse: sparse: symbol 'rcu_segcblist_set_len' was not declared. Should it be static?
+>> kernel/rcu/rcu_segcblist.c:77:6: sparse: sparse: symbol 'rcu_segcblist_add_len' was not declared. Should it be static?
+   kernel/rcu/rcu_segcblist.c:96:6: sparse: sparse: symbol 'rcu_segcblist_inc_len' was not declared. Should it be static?
+>> kernel/rcu/rcu_segcblist.c:107:6: sparse: sparse: symbol 'rcu_segcblist_xchg_len' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
 ---
- drivers/hid/intel-ish-hid/ipc/pci-ish.c | 34 +++++++++++--------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/hid/intel-ish-hid/ipc/pci-ish.c b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-index 35081f2cf781..f269852304e5 100644
---- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-+++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-@@ -210,19 +210,11 @@ static void __maybe_unused ish_resume_handler(struct work_struct *work)
- {
- 	struct pci_dev *pdev = to_pci_dev(ish_resume_device);
- 	struct ishtp_device *dev = pci_get_drvdata(pdev);
--	uint32_t fwsts;
- 	int ret;
- 
--	pdev->dev_flags &= ~PCI_DEV_FLAGS_NO_D3;
--
--	/* Get ISH FW status */
--	fwsts = IPC_GET_ISH_FWSTS(dev->ops->get_fw_status(dev));
--
--	/*
--	 * If currently, in ISH FW, sensor app is loaded or beyond that,
--	 * it means ISH isn't powered off, in this case, send a resume message.
--	 */
--	if (fwsts >= FWSTS_SENSOR_APP_LOADED) {
-+	/* Check the NO_D3 flag to distinguish the resume paths */
-+	if (pdev->dev_flags & PCI_DEV_FLAGS_NO_D3) {
-+		pdev->dev_flags &= ~PCI_DEV_FLAGS_NO_D3;
- 		disable_irq_wake(pdev->irq);
- 
- 		ishtp_send_resume(dev);
-@@ -232,16 +224,20 @@ static void __maybe_unused ish_resume_handler(struct work_struct *work)
- 			ret = wait_event_interruptible_timeout(dev->resume_wait,
- 				!dev->resume_flag,
- 				msecs_to_jiffies(WAIT_FOR_RESUME_ACK_MS));
--	}
- 
--	/*
--	 * If in ISH FW, sensor app isn't loaded yet, or no resume response.
--	 * That means this platform is not S0ix compatible, or something is
--	 * wrong with ISH FW. So on resume, full reboot of ISH processor will
--	 * happen, so need to go through init sequence again.
--	 */
--	if (dev->resume_flag)
-+		/*
-+		 * If the flag is not cleared, something is wrong with ISH FW.
-+		 * So on resume, need to go through init sequence again.
-+		 */
-+		if (dev->resume_flag)
-+			ish_init(dev);
-+	} else {
-+		/*
-+		 * Resume from the D3, full reboot of ISH processor will happen,
-+		 * so need to go through init sequence again.
-+		 */
- 		ish_init(dev);
-+	}
- }
- 
- /**
--- 
-2.17.1
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
