@@ -2,88 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75BA585D43
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:48:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 776F085D2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731789AbfHHIsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:48:37 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60904 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731682AbfHHIsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:48:33 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D5FBC20018D;
-        Thu,  8 Aug 2019 10:48:32 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C605B200154;
-        Thu,  8 Aug 2019 10:48:29 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0DFBB402E6;
-        Thu,  8 Aug 2019 16:48:25 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, leoyang.li@nxp.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Biwen Li <biwen.li@nxp.com>
-Subject: [v3,3/3] arm: dts: ls1021a: add ftm_alarm0 DT node
-Date:   Thu,  8 Aug 2019 16:38:39 +0800
-Message-Id: <20190808083839.28594-3-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190808083839.28594-1-biwen.li@nxp.com>
-References: <20190808083839.28594-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1731640AbfHHIoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:44:37 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53961 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731065AbfHHIog (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:44:36 -0400
+Received: from 79.184.254.29.ipv4.supernova.orange.pl (79.184.254.29) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
+ id 4dbb172df3063ed1; Thu, 8 Aug 2019 10:44:34 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     platform-driver-x86@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>
+Subject: [PATCH 0/2] intel-hid: intel-vbtn: Suspend-related fix and update
+Date:   Thu, 08 Aug 2019 10:40:19 +0200
+Message-ID: <1717835.1Yz4jNODO2@kreacher>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch add ftm_alarm0 DT node
-	- add rcpm node
-	- add ftm_alarm0 node
-	- aliases ftm_alarm0 as rtc1
+Hi,
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
-Change in v3:
-	- None
+These two patches fix a minor issue related to system suspend in the intel-hid
+and intel-vbtn drivers and update the suspend/resume handling in intel-hid to
+reduce special-casing in it somewhat.
 
-Change in v2:
-	- delete reg-name property
-	- correct fsl,rcpm-wakeup property
+Please refer to the changelogs for details.
 
- arch/arm/boot/dts/ls1021a.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Thanks,
+Rafael
 
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index 464df4290ffc..30bd6bc1f49a 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -66,6 +66,7 @@
- 		serial4 = &lpuart4;
- 		serial5 = &lpuart5;
- 		sysclk = &sysclk;
-+		rtc1 = &ftm_alarm0;
- 	};
- 
- 	cpus {
-@@ -985,5 +986,18 @@
- 			big-endian;
- 		};
- 
-+		rcpm: rcpm@1ee2140 {
-+			compatible = "fsl,ls1021a-rcpm", "fsl,qoriq-rcpm-2.1+";
-+			reg = <0x0 0x1ee2140 0x0 0x8>;
-+			#fsl,rcpm-wakeup-cells = <2>;
-+		};
-+
-+		ftm_alarm0: timer0@29d0000 {
-+			compatible = "fsl,ls1021a-ftm-alarm";
-+			reg = <0x0 0x29d0000 0x0 0x10000>;
-+			fsl,rcpm-wakeup = <&rcpm 0x0 0x20000000>;
-+			interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			big-endian;
-+		};
- 	};
- };
--- 
-2.17.1
+
 
