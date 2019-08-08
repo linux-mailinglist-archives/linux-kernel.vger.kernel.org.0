@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0799886A4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F07869C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:10:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404802AbfHHTID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:08:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41926 "EHLO mail.kernel.org"
+        id S2405358AbfHHTKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:10:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404324AbfHHTIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:08:00 -0400
+        id S2405334AbfHHTKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:10:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45D97214C6;
-        Thu,  8 Aug 2019 19:07:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B88FF214C6;
+        Thu,  8 Aug 2019 19:10:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291279;
-        bh=aFWjAWnkNgkPjMjUQKqFytHObHuRsWgRZDmqE8Vo808=;
+        s=default; t=1565291442;
+        bh=O0f5Pt4HIUa7dEb4d5Nhtlzex2Tz1uwdpdNFd888Iwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zJQRK6wSZfLSYxpmSYAP8JOzswqHySRAs0IdCHrAW3oTxPJQZZlAUmSIPrWwu0ph5
-         hB32dSGPTsW8E+MITjepCL0JyK6H55gTP85EAuk2vvLUhGJ/4YHDNJ75EaFt6ldZKY
-         ckUzv91R3Rkp3u8k22wEr0950Z86VgeREa/wDez8=
+        b=at8hvezo3k5n7BJ4/v73ikfJ8ci6XQeExLUc4mJJSVk5kxqhAnXBVxMzFVuUPJeR/
+         LDEtn7hny1lMWkPXWWPfU7yr6Qs1TWrMRZhJocb/lyxDNt0MNkDiT83dznrx1P67Ag
+         azhyjxGPx+AmEAUV6gLx0LqDmDcePVhoe92Ucamg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.2 56/56] spi: bcm2835: Fix 3-wire mode if DMA is enabled
-Date:   Thu,  8 Aug 2019 21:05:22 +0200
-Message-Id: <20190808190455.622676210@linuxfoundation.org>
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 16/33] net: bridge: mcast: dont delete permanent entries when fast leave is enabled
+Date:   Thu,  8 Aug 2019 21:05:23 +0200
+Message-Id: <20190808190454.390531534@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
-References: <20190808190452.867062037@linuxfoundation.org>
+In-Reply-To: <20190808190453.582417307@linuxfoundation.org>
+References: <20190808190453.582417307@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,51 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit 8d8bef50365847134b51c1ec46786bc2873e4e47 upstream.
+[ Upstream commit 5c725b6b65067909548ac9ca9bc777098ec9883d ]
 
-Commit 6935224da248 ("spi: bcm2835: enable support of 3-wire mode")
-added 3-wire support to the BCM2835 SPI driver by setting the REN bit
-(Read Enable) in the CS register when receiving data.  The REN bit puts
-the transmitter in high-impedance state.  The driver recognizes that
-data is to be received by checking whether the rx_buf of a transfer is
-non-NULL.
+When permanent entries were introduced by the commit below, they were
+exempt from timing out and thus igmp leave wouldn't affect them unless
+fast leave was enabled on the port which was added before permanent
+entries existed. It shouldn't matter if fast leave is enabled or not
+if the user added a permanent entry it shouldn't be deleted on igmp
+leave.
 
-Commit 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers
-meeting certain conditions") subsequently broke 3-wire support because
-it set the SPI_MASTER_MUST_RX flag which causes spi_map_msg() to replace
-rx_buf with a dummy buffer if it is NULL.  As a result, rx_buf is
-*always* non-NULL if DMA is enabled.
+Before:
+$ echo 1 > /sys/class/net/eth4/brport/multicast_fast_leave
+$ bridge mdb add dev br0 port eth4 grp 229.1.1.1 permanent
+$ bridge mdb show
+dev br0 port eth4 grp 229.1.1.1 permanent
 
-Reinstate 3-wire support by not only checking whether rx_buf is non-NULL,
-but also checking that it is not the dummy buffer.
+< join and leave 229.1.1.1 on eth4 >
 
-Fixes: 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers meeting certain conditions")
-Reported-by: Nuno Sá <nuno.sa@analog.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v4.2+
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Acked-by: Stefan Wahren <wahrenst@gmx.net>
-Link: https://lore.kernel.org/r/328318841455e505370ef8ecad97b646c033dc8a.1562148527.git.lukas@wunner.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
+$ bridge mdb show
+$
+
+After:
+$ echo 1 > /sys/class/net/eth4/brport/multicast_fast_leave
+$ bridge mdb add dev br0 port eth4 grp 229.1.1.1 permanent
+$ bridge mdb show
+dev br0 port eth4 grp 229.1.1.1 permanent
+
+< join and leave 229.1.1.1 on eth4 >
+
+$ bridge mdb show
+dev br0 port eth4 grp 229.1.1.1 permanent
+
+Fixes: ccb1c31a7a87 ("bridge: add flags to distinguish permanent mdb entires")
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/spi-bcm2835.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/bridge/br_multicast.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/spi/spi-bcm2835.c
-+++ b/drivers/spi/spi-bcm2835.c
-@@ -764,7 +764,8 @@ static int bcm2835_spi_transfer_one(stru
- 	bcm2835_wr(bs, BCM2835_SPI_CLK, cdiv);
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -1593,6 +1593,9 @@ br_multicast_leave_group(struct net_brid
+ 			if (!br_port_group_equal(p, port, src))
+ 				continue;
  
- 	/* handle all the 3-wire mode */
--	if ((spi->mode & SPI_3WIRE) && (tfr->rx_buf))
-+	if (spi->mode & SPI_3WIRE && tfr->rx_buf &&
-+	    tfr->rx_buf != master->dummy_rx)
- 		cs |= BCM2835_SPI_CS_REN;
- 	else
- 		cs &= ~BCM2835_SPI_CS_REN;
++			if (p->flags & MDB_PG_FLAGS_PERMANENT)
++				break;
++
+ 			rcu_assign_pointer(*pp, p->next);
+ 			hlist_del_init(&p->mglist);
+ 			del_timer(&p->timer);
 
 
