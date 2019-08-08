@@ -2,74 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFADE85E46
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E40F85E8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732226AbfHHJaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 05:30:14 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:38982 "EHLO mail.skyhub.de"
+        id S1732251AbfHHJfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 05:35:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731038AbfHHJaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 05:30:13 -0400
-Received: from zn.tnic (p200300EC2F0FD70068A09A673825513B.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:d700:68a0:9a67:3825:513b])
+        id S1728289AbfHHJfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 05:35:25 -0400
+Received: from localhost.localdomain (unknown [122.178.245.201])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 69AA41EC0419;
-        Thu,  8 Aug 2019 11:30:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565256612;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=C/kQJXHb2/y/WjXp3w/qhdx0nQQQmR2nc4/JBCbPe2s=;
-        b=n8L9ov26KIVJ1qvXIvQDTR5OFxSdqggYGzAeKeSmnNfI2OrCPMTi0KaLs3cAYSDkiq9vm2
-        TvthkEtoR+RPzFKd37zDQ+WRQm9l7ICq6TCcUa7fv8x9Wti9rZ6aRmeQXRzVRvQaLz8BZb
-        vJ7Dyk7tpMNzJ0OMfpDGHcUhHe96Anc=
-Date:   Thu, 8 Aug 2019 11:31:01 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Tony Luck <tony.luck@intel.com>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drivers/ras: Don't build debugfs.o if no debugfs
- in config
-Message-ID: <20190808093101.GE20745@zn.tnic>
-References: <7053.1565218556@turing-police>
+        by mail.kernel.org (Postfix) with ESMTPSA id D45A62173C;
+        Thu,  8 Aug 2019 09:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565256924;
+        bh=6XujZRThlT20ujUIgPR3BdV/8GT656Lkz4URvZkvsdI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=H9FF7FUn2hcsKngjJGg0WVZxpX96jBrujUR9qDIZ2LoLPYBVq4oxeA7AOeSXTqDR2
+         biaL7SAU4RVIpw7f3pP8/SOgPxqLE+uvTEO9ikAdx3d+ZRxUtEVbvoNQESFtXSd2Nc
+         bmrwjN4olSkab5/ARhLb1FltonZ668yroJxQxu0E=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 1/2] regulator: dt-bindings: Add PM8150x compatibles
+Date:   Thu,  8 Aug 2019 15:03:42 +0530
+Message-Id: <20190808093343.5600-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7053.1565218556@turing-police>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 06:55:56PM -0400, Valdis Klētnieks wrote:
-> There's no reason to build the debugfs.o if the kernel config doesn't
-> even include CONFIG_DEBUG_FS
-> 
-> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-> 
-> diff --git a/drivers/ras/Makefile b/drivers/ras/Makefile
-> index ef6777e14d3d..07a5c391cc23 100644
-> --- a/drivers/ras/Makefile
-> +++ b/drivers/ras/Makefile
-> @@ -1,3 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -obj-$(CONFIG_RAS)	+= ras.o debugfs.o
-> +obj-$(CONFIG_RAS)	+= ras.o
-> +ifeq ($(CONFIG_DEBUG_FS),y)
-> +obj-$(CONFIG_RAS)	+= debugfs.o
-> +endif
->  obj-$(CONFIG_RAS_CEC)	+= cec.o
+Add PM8150, PM8150L and PM8009 compatibles for these PMICs found
+in some Qualcomm platforms.
 
-If this is not causing real trouble then I'd prefer to keep it this way
-because ras.c is pretty useless without the debugfs functionality.
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ .../devicetree/bindings/regulator/qcom,rpmh-regulator.txt | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+index 14d2eee96b3d..1a9cab50503a 100644
+--- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+@@ -25,6 +25,9 @@ Supported regulator node names:
+ 	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
+ 	PMI8998:	bob
+ 	PM8005:		smps1 - smps4
++	PM8150:		smps1 - smps10, ldo1 - ldo18
++	PM8150L:	smps1 - smps8, ldo1 - ldo11, bob, flash, rgb
++	PM8009:		smps1 - smps2, ld01 - ldo7
+ 
+ ========================
+ First Level Nodes - PMIC
+@@ -35,7 +38,10 @@ First Level Nodes - PMIC
+ 	Value type: <string>
+ 	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
+ 		    "qcom,pmi8998-rpmh-regulators" or
+-		    "qcom,pm8005-rpmh-regulators".
++		    "qcom,pm8005-rpmh-regulators" or
++		    "qcom,pm8150-rpmh-regulators" or
++		    "qcom,pm8150l-rpmh-regulators" or
++		    "qcom,pm8009-rpmh-regulators".
+ 
+ - qcom,pmic-id
+ 	Usage:      required
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
