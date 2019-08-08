@@ -2,169 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB8B285F2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 12:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C1085F35
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 12:04:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389847AbfHHKC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 06:02:29 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44191 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389786AbfHHKC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 06:02:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 03:02:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,360,1559545200"; 
-   d="scan'208";a="168935651"
-Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
-  by orsmga008.jf.intel.com with ESMTP; 08 Aug 2019 03:02:23 -0700
-From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
-To:     linux-serial@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, jslaby@suse.com,
-        andriy.shevchenko@intel.com, qi-ming.wu@intel.com,
-        cheol.yong.kim@intel.com, rahul.tanwar@intel.com,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Subject: [PATCH v2 3/3] serial: lantiq: Add support for Lightning Mountain SoC
-Date:   Thu,  8 Aug 2019 18:02:08 +0800
-Message-Id: <0df20f6e4bbf9de09c85a5c92c92e642f62f441f.1565257887.git.rahul.tanwar@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1565257887.git.rahul.tanwar@linux.intel.com>
-References: <cover.1565257887.git.rahul.tanwar@linux.intel.com>
-In-Reply-To: <cover.1565257887.git.rahul.tanwar@linux.intel.com>
-References: <cover.1565257887.git.rahul.tanwar@linux.intel.com>
+        id S2389874AbfHHKEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 06:04:36 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46801 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389773AbfHHKEg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 06:04:36 -0400
+Received: by mail-qt1-f196.google.com with SMTP id h21so91447767qtn.13;
+        Thu, 08 Aug 2019 03:04:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RjvrmHnLkNY8judMLmiwx+J5kIvDISrhio/7dX5zE9M=;
+        b=A4L/lVEnAhzimNvZOk2dlay//kRmDE29VrHcAuetZ/+P4JB3Sld8H0YWMeCC1c3mQE
+         wstifSkxoflQ2ddSoIE+VNQ+yTVy9glgoyoKBxzR4dpYfrXoefpDcWMF4HLPEV9jWTbp
+         K/aasTxqk54UTrMWMLdLmxYVnjY1ccSJoj5VgLepnNfA/zFcgC71Hm/eYtj/OW69Wklk
+         m1fISftkc6C8sQD/5EYLMmNzB2TEHQKn2mMMsL2lyru+dNW0pRKJOcBxqmW20PWaae0/
+         GRB0xs0T6TDjR/3W+8s3e4B4sTRhQXX8HsRQ952ImdBoNy1lbzQ8vrriBqfc9opIoqAy
+         7X0A==
+X-Gm-Message-State: APjAAAUsGdPI8Qq8syVEwBV4KItFjxH2sLeAHH0lDWzjKDEUuP3KCn/g
+        Q5SAozm65eI/XTwDwDp5+v1TUv/8Yox7o0uE9hM=
+X-Google-Smtp-Source: APXvYqzYiIGgaQsnnsl/ev4HI3EBWf/N9eNNIZAf4tphrn0oTVGBurf6vSIQ6z6xYL8ITJbX0KbZAIZ3U8xYBBzOq94=
+X-Received: by 2002:ac8:6684:: with SMTP id d4mr7259661qtp.204.1565258674868;
+ Thu, 08 Aug 2019 03:04:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190724171615.20774-1-paul@crapouillou.net> <20190724171615.20774-5-paul@crapouillou.net>
+ <20190729165536.dd67ws6nr2msx4pk@pburton-laptop>
+In-Reply-To: <20190729165536.dd67ws6nr2msx4pk@pburton-laptop>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 8 Aug 2019 12:04:18 +0200
+Message-ID: <CAK8P3a0nOc2tpxYAoE0EGzXT1+FXFqzdK1mYE+ZR9CTqAaH_fQ@mail.gmail.com>
+Subject: Re: [EXTERNAL][PATCH v15 04/13] mfd/syscon: Add device_node_to_regmap()
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "od@zcrc.me" <od@zcrc.me>, Mathieu Malaterre <malat@debian.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds IRQ & ISR support in the driver for Lightning Mountain SoC.
+On Mon, Jul 29, 2019 at 6:55 PM Paul Burton <paul.burton@mips.com> wrote:
+>
+> Lee, Arnd,
+>
+> On Wed, Jul 24, 2019 at 01:16:06PM -0400, Paul Cercueil wrote:
+> > device_node_to_regmap() is exactly like syscon_node_to_regmap(), but it
+> > does not check that the node is compatible with "syscon", and won't
+> > attach the first clock it finds to the regmap.
+> >
+> > The rationale behind this, is that one device node with a standard
+> > compatible string "foo,bar" can be covered by multiple drivers sharing a
+> > regmap, or by a single driver doing all the job without a regmap, but
+> > these are implementation details which shouldn't reflect on the
+> > devicetree.
+>
+> Does this looks like a good path forwards to you? Its use in this case
+> is described by Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> in patch 3 of the series.
+>
+> If you're OK with it an ack would be appreciated so I can take the
+> series through mips-next, otherwise I guess we'd need to go back to the
+> v14 approach.
 
-Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
----
- drivers/tty/serial/lantiq.c | 71 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+Yes, I guess this is ok, sorry for missing the submission earlier.
 
-diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-index b129531dfb9a..fcbea43dc334 100644
---- a/drivers/tty/serial/lantiq.c
-+++ b/drivers/tty/serial/lantiq.c
-@@ -57,6 +57,7 @@
- #define ASC_IRNCR_TIR		0x1
- #define ASC_IRNCR_RIR		0x2
- #define ASC_IRNCR_EIR		0x4
-+#define ASC_IRNCR_MASK		GENMASK(2, 0)
- 
- #define ASCOPT_CSIZE		0x3
- #define TXFIFO_FL		1
-@@ -115,6 +116,7 @@ struct ltq_uart_port {
- 	unsigned int		tx_irq;
- 	unsigned int		rx_irq;
- 	unsigned int		err_irq;
-+	unsigned int		common_irq;
- 	spinlock_t		lock; /* exclusive access for multi core */
- 
- 	const struct ltq_soc_data	*soc;
-@@ -293,6 +295,31 @@ lqasc_rx_int(int irq, void *_port)
- 	return IRQ_HANDLED;
- }
- 
-+static irqreturn_t lqasc_irq(int irq, void *p)
-+{
-+	unsigned long flags;
-+	u32 stat;
-+	struct uart_port *port = p;
-+	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
-+
-+	spin_lock_irqsave(&ltq_port->lock, flags);
-+	stat = readl(port->membase + LTQ_ASC_IRNCR);
-+	spin_unlock_irqrestore(&ltq_port->lock, flags);
-+	if (!(stat & ASC_IRNCR_MASK))
-+		return IRQ_NONE;
-+
-+	if (stat & ASC_IRNCR_TIR)
-+		lqasc_tx_int(irq, p);
-+
-+	if (stat & ASC_IRNCR_RIR)
-+		lqasc_rx_int(irq, p);
-+
-+	if (stat & ASC_IRNCR_EIR)
-+		lqasc_err_int(irq, p);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static unsigned int
- lqasc_tx_empty(struct uart_port *port)
- {
-@@ -677,6 +704,7 @@ lqasc_serial_early_console_setup(struct earlycon_device *device,
- 	return 0;
- }
- OF_EARLYCON_DECLARE(lantiq, "lantiq,asc", lqasc_serial_early_console_setup);
-+OF_EARLYCON_DECLARE(lantiq, "intel,lgm-asc", lqasc_serial_early_console_setup);
- 
- static struct uart_driver lqasc_reg = {
- 	.owner =	THIS_MODULE,
-@@ -751,6 +779,42 @@ static void free_irq_lantiq(struct uart_port *port)
- 	free_irq(ltq_port->err_irq, port);
- }
- 
-+static int fetch_irq_intel(struct device *dev, struct ltq_uart_port *ltq_port)
-+{
-+	struct uart_port *port = &ltq_port->port;
-+	int ret;
-+
-+	ret = of_irq_get(dev->of_node, 0);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to fetch IRQ for serial port\n");
-+		return ret;
-+	}
-+	ltq_port->common_irq = ret;
-+	port->irq = ret;
-+
-+	return 0;
-+}
-+
-+static int request_irq_intel(struct uart_port *port)
-+{
-+	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
-+	int retval;
-+
-+	retval = request_irq(ltq_port->common_irq, lqasc_irq, 0,
-+			     "asc_irq", port);
-+	if (retval)
-+		dev_err(port->dev, "failed to request asc_irq\n");
-+
-+	return retval;
-+}
-+
-+static void free_irq_intel(struct uart_port *port)
-+{
-+	struct ltq_uart_port *ltq_port = to_ltq_uart_port(port);
-+
-+	free_irq(ltq_port->common_irq, port);
-+}
-+
- static int __init
- lqasc_probe(struct platform_device *pdev)
- {
-@@ -842,8 +906,15 @@ static const struct ltq_soc_data soc_data_lantiq = {
- 	.free_irq = free_irq_lantiq,
- };
- 
-+static const struct ltq_soc_data soc_data_intel = {
-+	.fetch_irq = fetch_irq_intel,
-+	.request_irq = request_irq_intel,
-+	.free_irq = free_irq_intel,
-+};
-+
- static const struct of_device_id ltq_asc_match[] = {
- 	{ .compatible = "lantiq,asc", .data = &soc_data_lantiq },
-+	{ .compatible = "intel,lgm-asc", .data = &soc_data_intel },
- 	{},
- };
- 
--- 
-2.11.0
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
