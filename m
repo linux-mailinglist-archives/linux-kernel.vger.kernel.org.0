@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A597E86810
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 19:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB34D8681D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 19:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404364AbfHHRbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 13:31:03 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37222 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404318AbfHHRbA (ORCPT
+        id S2404469AbfHHRbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 13:31:31 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42002 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404379AbfHHRbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 13:31:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b3so3336144wro.4
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 10:30:58 -0700 (PDT)
+        Thu, 8 Aug 2019 13:31:02 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x1so45824236wrr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 10:31:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=y//4rB2wtH2r+DHu+gdcgf9yPOsivJZSDgyXfNjoBv4=;
-        b=SYZXwHECr8AWTrSplCKVynI9oRFYdxJg+fjn5ZuSNPhQ7GruyiQVuxuYoMh9fHCylv
-         phH7oyL6K9DKqHOqVTirnYJ6yAUSqxkGWZzOiMqUJxjxxzzqPy+QwYiTjCM8k8TAPbUH
-         jc7AE+36rV6RGxvA06tQGo0tun3qVd4Frrjyvg1tCzzB2KqlAw9va0/rqjMxpmer4r6a
-         hM/+uWM1JEoN7eAd+ZhgtZ+YcVT5k1IogIfMCT/rJ0+aHT9JSRuJ4PpEz2NhO0rOpBfa
-         U/hkIAX4jp+93UI9az/D3rnG0js41AoqjlygNP7ASyCnSuO+TAH2eXwjzludJ2k7cRtt
-         Kjlg==
-X-Gm-Message-State: APjAAAULOK+p9bL2Rt1tBeHNbPMb8wAnZB/q4jcM7IEJjNHt6heDI6+8
-        hLCNCvbTwcyKxBdjpoSJRLxf8g==
-X-Google-Smtp-Source: APXvYqz+vpexVa+8nqHfUQ3sGOq25u6fIEK/8LsIT3eQaXAR1avY+v3g7QViFfV7loCf3SH+gWzRxQ==
-X-Received: by 2002:a5d:6749:: with SMTP id l9mr13341250wrw.73.1565285458172;
-        Thu, 08 Aug 2019 10:30:58 -0700 (PDT)
+        bh=5QNclWHn7I50/yByYJpJAi95dRXHnd68QPD5QLdpAaY=;
+        b=YuPRwzwPyFx91z+DVx35TPwS6z9Ab/4HiWqYONTJ9D1Bgta1gHfDe2zkm88hHjVL0g
+         bCacUFbegXlbGkSRH8N5Q/tTq4oDenNu0onzQ4MrlHu3tp5Pji4KiFJNZpTNMVFgjZN6
+         erZdRfm4N4lRQnbhVmrVEs4YhvWviiruXBisIoq462nJ0GOMFG/Mm1HSJQrpOK+sccuc
+         xr8xaQkJ+AzYgUPG2tI1DlOubWGKUOzkriTp39waQY+K+rejuzra66NrKsbQXsLMGeLN
+         XixztnX6r5KLQmIz6l807UlnEnSECHpaBbvcF6o5yTVLani05Knd+ozW/hlBFHgjcZos
+         oQuA==
+X-Gm-Message-State: APjAAAVQFd+LBsEBvc9NQz3Qrx3hZeYANtOha0LH9rONJrVtlGnQSv/Z
+        L0+lvvivB9+R/Rz8vMuiQoLEDw==
+X-Google-Smtp-Source: APXvYqzRg2bisd+LGUzlteXdIflm96RWkFrIQbtPx50BZLXO8WM7jtxu3zCYfl0aQY7Vo371sdiuuA==
+X-Received: by 2002:a05:6000:12c3:: with SMTP id l3mr14769850wrx.100.1565285459920;
+        Thu, 08 Aug 2019 10:30:59 -0700 (PDT)
 Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g25sm2136859wmk.39.2019.08.08.10.30.56
+        by smtp.gmail.com with ESMTPSA id g25sm2136859wmk.39.2019.08.08.10.30.58
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 10:30:57 -0700 (PDT)
+        Thu, 08 Aug 2019 10:30:59 -0700 (PDT)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -41,9 +41,9 @@ Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         Joerg Roedel <joro@8bytes.org>,
         Jim Mattson <jmattson@google.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH v3 2/7] x86: kvm: svm: propagate errors from skip_emulated_instruction()
-Date:   Thu,  8 Aug 2019 19:30:46 +0200
-Message-Id: <20190808173051.6359-3-vkuznets@redhat.com>
+Subject: [PATCH v3 3/7] x86: KVM: clear interrupt shadow on EMULTYPE_SKIP
+Date:   Thu,  8 Aug 2019 19:30:47 +0200
+Message-Id: <20190808173051.6359-4-vkuznets@redhat.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190808173051.6359-1-vkuznets@redhat.com>
 References: <20190808173051.6359-1-vkuznets@redhat.com>
@@ -54,181 +54,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On AMD, kvm_x86_ops->skip_emulated_instruction(vcpu) can, in theory,
-fail: in !nrips case we call kvm_emulate_instruction(EMULTYPE_SKIP).
-Currently, we only do printk(KERN_DEBUG) when this happens and this
-is not ideal. Propagate the error up the stack.
+When doing x86_emulate_instruction(EMULTYPE_SKIP) interrupt shadow has to
+be cleared if and only if the skipping is successful.
 
-On VMX, skip_emulated_instruction() doesn't fail, we have two call
-sites calling it explicitly: handle_exception_nmi() and
-handle_task_switch(), we can just ignore the result.
+There are two immediate issues:
+- In SVM skip_emulated_instruction() we are not zapping interrupt shadow
+  in case kvm_emulate_instruction(EMULTYPE_SKIP) is used to advance RIP
+  (!nrpip_save).
+- In VMX handle_ept_misconfig() when running as a nested hypervisor we
+  (static_cpu_has(X86_FEATURE_HYPERVISOR) case) forget to clear interrupt
+  shadow.
 
-On SVM, we also have two explicit call sites:
-svm_queue_exception() and it seems we don't need to do anything there as
-we check if RIP was advanced or not. In task_switch_interception(),
-however, we are better off not proceeding to kvm_task_switch() in case
-skip_emulated_instruction() failed.
+Note that we intentionally don't handle the case when the skipped
+instruction is supposed to prolong the interrupt shadow ("MOV/POP SS") as
+skip-emulation of those instructions should not happen under normal
+circumstances.
 
 Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kvm/svm.c              | 36 ++++++++++++++++++---------------
- arch/x86/kvm/vmx/vmx.c          |  8 +++++---
- arch/x86/kvm/x86.c              |  6 ++++--
- 4 files changed, 30 insertions(+), 22 deletions(-)
+ arch/x86/kvm/x86.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 7b0a4ee77313..f9e6d0b0f581 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1068,7 +1068,7 @@ struct kvm_x86_ops {
- 
- 	void (*run)(struct kvm_vcpu *vcpu);
- 	int (*handle_exit)(struct kvm_vcpu *vcpu);
--	void (*skip_emulated_instruction)(struct kvm_vcpu *vcpu);
-+	int (*skip_emulated_instruction)(struct kvm_vcpu *vcpu);
- 	void (*set_interrupt_shadow)(struct kvm_vcpu *vcpu, int mask);
- 	u32 (*get_interrupt_shadow)(struct kvm_vcpu *vcpu);
- 	void (*patch_hypercall)(struct kvm_vcpu *vcpu,
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 7e843b340490..8299b0de06e2 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -770,7 +770,7 @@ static void svm_set_interrupt_shadow(struct kvm_vcpu *vcpu, int mask)
- 
- }
- 
--static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
-+static int skip_emulated_instruction(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 
-@@ -779,18 +779,17 @@ static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
- 		svm->next_rip = svm->vmcb->control.next_rip;
- 	}
- 
--	if (!svm->next_rip) {
--		if (kvm_emulate_instruction(vcpu, EMULTYPE_SKIP) !=
--				EMULATE_DONE)
--			printk(KERN_DEBUG "%s: NOP\n", __func__);
--		return;
--	}
-+	if (!svm->next_rip)
-+		return kvm_emulate_instruction(vcpu, EMULTYPE_SKIP);
-+
- 	if (svm->next_rip - kvm_rip_read(vcpu) > MAX_INST_SIZE)
- 		printk(KERN_ERR "%s: ip 0x%lx next 0x%llx\n",
- 		       __func__, kvm_rip_read(vcpu), svm->next_rip);
- 
- 	kvm_rip_write(vcpu, svm->next_rip);
- 	svm_set_interrupt_shadow(vcpu, 0);
-+
-+	return EMULATE_DONE;
- }
- 
- static void svm_queue_exception(struct kvm_vcpu *vcpu)
-@@ -821,7 +820,7 @@ static void svm_queue_exception(struct kvm_vcpu *vcpu)
- 		 * raises a fault that is not intercepted. Still better than
- 		 * failing in all cases.
- 		 */
--		skip_emulated_instruction(&svm->vcpu);
-+		(void)skip_emulated_instruction(&svm->vcpu);
- 		rip = kvm_rip_read(&svm->vcpu);
- 		svm->int3_rip = rip + svm->vmcb->save.cs.base;
- 		svm->int3_injected = rip - old_rip;
-@@ -3899,20 +3898,25 @@ static int task_switch_interception(struct vcpu_svm *svm)
- 	if (reason != TASK_SWITCH_GATE ||
- 	    int_type == SVM_EXITINTINFO_TYPE_SOFT ||
- 	    (int_type == SVM_EXITINTINFO_TYPE_EXEPT &&
--	     (int_vec == OF_VECTOR || int_vec == BP_VECTOR)))
--		skip_emulated_instruction(&svm->vcpu);
-+	     (int_vec == OF_VECTOR || int_vec == BP_VECTOR))) {
-+		if (skip_emulated_instruction(&svm->vcpu) != EMULATE_DONE)
-+			goto fail;
-+	}
- 
- 	if (int_type != SVM_EXITINTINFO_TYPE_SOFT)
- 		int_vec = -1;
- 
- 	if (kvm_task_switch(&svm->vcpu, tss_selector, int_vec, reason,
--				has_error_code, error_code) == EMULATE_FAIL) {
--		svm->vcpu.run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
--		svm->vcpu.run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
--		svm->vcpu.run->internal.ndata = 0;
--		return 0;
--	}
-+				has_error_code, error_code) == EMULATE_FAIL)
-+		goto fail;
-+
- 	return 1;
-+
-+fail:
-+	svm->vcpu.run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-+	svm->vcpu.run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
-+	svm->vcpu.run->internal.ndata = 0;
-+	return 0;
- }
- 
- static int cpuid_interception(struct vcpu_svm *svm)
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 074385c86c09..2579e7a6d59d 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1473,7 +1473,7 @@ static int vmx_rtit_ctl_check(struct kvm_vcpu *vcpu, u64 data)
- }
- 
- 
--static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
-+static int skip_emulated_instruction(struct kvm_vcpu *vcpu)
- {
- 	unsigned long rip;
- 
-@@ -1483,6 +1483,8 @@ static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
- 
- 	/* skipping an emulated instruction also counts */
- 	vmx_set_interrupt_shadow(vcpu, 0);
-+
-+	return EMULATE_DONE;
- }
- 
- static void vmx_clear_hlt(struct kvm_vcpu *vcpu)
-@@ -4547,7 +4549,7 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- 			vcpu->arch.dr6 &= ~DR_TRAP_BITS;
- 			vcpu->arch.dr6 |= dr6 | DR6_RTM;
- 			if (is_icebp(intr_info))
--				skip_emulated_instruction(vcpu);
-+				(void)skip_emulated_instruction(vcpu);
- 
- 			kvm_queue_exception(vcpu, DB_VECTOR);
- 			return 1;
-@@ -5057,7 +5059,7 @@ static int handle_task_switch(struct kvm_vcpu *vcpu)
- 	if (!idt_v || (type != INTR_TYPE_HARD_EXCEPTION &&
- 		       type != INTR_TYPE_EXT_INTR &&
- 		       type != INTR_TYPE_NMI_INTR))
--		skip_emulated_instruction(vcpu);
-+		(void)skip_emulated_instruction(vcpu);
- 
- 	if (kvm_task_switch(vcpu, tss_selector,
- 			    type == INTR_TYPE_SOFT_INTR ? idt_index : -1, reason,
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c6d951cbd76c..a97818b1111d 100644
+index a97818b1111d..50e0b25092c7 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -6383,9 +6383,11 @@ static void kvm_vcpu_do_singlestep(struct kvm_vcpu *vcpu, int *r)
- int kvm_skip_emulated_instruction(struct kvm_vcpu *vcpu)
- {
- 	unsigned long rflags = kvm_x86_ops->get_rflags(vcpu);
--	int r = EMULATE_DONE;
-+	int r;
+@@ -6539,6 +6539,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
+ 		kvm_rip_write(vcpu, ctxt->_eip);
+ 		if (ctxt->eflags & X86_EFLAGS_RF)
+ 			kvm_set_rflags(vcpu, ctxt->eflags & ~X86_EFLAGS_RF);
++		kvm_x86_ops->set_interrupt_shadow(vcpu, 0);
+ 		return EMULATE_DONE;
+ 	}
  
--	kvm_x86_ops->skip_emulated_instruction(vcpu);
-+	r = kvm_x86_ops->skip_emulated_instruction(vcpu);
-+	if (r != EMULATE_DONE)
-+		return 0;
- 
- 	/*
- 	 * rflags is the old, "raw" value of the flags.  The new value has
 -- 
 2.20.1
 
