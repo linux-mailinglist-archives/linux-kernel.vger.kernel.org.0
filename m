@@ -2,141 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D27B386728
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C916B8672F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403778AbfHHQcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:32:36 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44027 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfHHQcc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:32:32 -0400
-Received: by mail-ot1-f67.google.com with SMTP id j11so20619973otp.10
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 09:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=erfhL7VDoeVN6LjjmIrSkztKG2I43YnuXIQ5QoKPdbc=;
-        b=kV+NV+qW/5qJZ2Z48xBPFEZ6LJYAXKY5/LhYbls4LmwDokugWNdTa16wJmKp0yXodN
-         iVYJzFf9wKMlE++n5p9Whx3JnTaCk53pROAM7OZ8x0kFxKIh5rsaR/LnSEl93Lnc1C2A
-         Hfwb5Y/I4iLfY0pVARlG0U/1rzE7/uJK5ZkZY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=erfhL7VDoeVN6LjjmIrSkztKG2I43YnuXIQ5QoKPdbc=;
-        b=QKcKMbqjfUSoceLHFuwVQVH6JdwS3nr2iApR9satzPFr9VIyBRFTtledowltWT28Ls
-         dpgHbax9wxCbYQ1bRsGtTa/6lI0JiQBQX3BhLs+kjubZXhOH0esKDN1f9RUgJX1+5tZc
-         2hIr71K9DTj7lFwx8GhK+2UPfcfSrysjlRWbNCQKN7+bEZI5x0ylNGk3XGrPkwOSEXSP
-         7Kw6RcQs5kECb4fZ5HYNJMbZXewfLp2Ig0K0g5Ou5xRK2jPOR7ETQMZkRhBEaC62eu5Z
-         E9zQia5qFWEAvsKNXgk9lbxHgG9fLmhowhILCDpFN/70L2tzEHGyRWOs3LF8s94qmIlL
-         b1HQ==
-X-Gm-Message-State: APjAAAV3ncTykO7w7BZUXnvfaXD0jy7o7rtoevpvnsBtjlNvL6Oc5/M2
-        jdTokhSEryujhs1D8xVPLyu+NPe+gtTd9n8JvzG5ZA==
-X-Google-Smtp-Source: APXvYqy8Y64Qwzaj+EcuykgpBje7tkhZgHMn/Tvi8eNyfMMvhJLC6rMpyPg9xxizaeKi+hpK8mPldF+gfVafFe2ZGzs=
-X-Received: by 2002:a6b:90c1:: with SMTP id s184mr15573418iod.244.1565281952009;
- Thu, 08 Aug 2019 09:32:32 -0700 (PDT)
+        id S2390141AbfHHQev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:34:51 -0400
+Received: from mga01.intel.com ([192.55.52.88]:54043 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbfHHQeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 12:34:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 09:34:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,362,1559545200"; 
+   d="scan'208";a="174895459"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga008.fm.intel.com with ESMTP; 08 Aug 2019 09:34:49 -0700
+Date:   Thu, 8 Aug 2019 10:32:24 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jon Derrick <jonathan.derrick@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, Ming Lei <ming.lei@redhat.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] genirq/affinity: report extra vectors on uneven nodes
+Message-ID: <20190808163224.GB27077@localhost.localdomain>
+References: <20190807201051.32662-1-jonathan.derrick@intel.com>
+ <alpine.DEB.2.21.1908080903360.2882@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20190805211451.20176-1-robdclark@gmail.com> <20190806084821.GA17129@lst.de>
- <CAJs_Fx6eh1w7c=crMoD5XyEOMzP6orLhqUewErE51cPGYmObBQ@mail.gmail.com>
- <20190806155044.GC25050@lst.de> <CAJs_Fx6uztwDy2PqRy3Tc9p12k8r_ovS2tAcsMV6HqnAp=Ggug@mail.gmail.com>
- <20190807062545.GF6627@lst.de> <CAJs_Fx7tqbr_gqRdqJEwOcRFReP0DqZzOu11Dxhxkp8+PygUQw@mail.gmail.com>
- <20190808100031.GA32658@lst.de>
-In-Reply-To: <20190808100031.GA32658@lst.de>
-From:   Rob Clark <robdclark@chromium.org>
-Date:   Thu, 8 Aug 2019 09:32:21 -0700
-Message-ID: <CAJs_Fx6ikxob7Mu6GM1ESe4pBXAbVv4NNnbZN7YUQdmyfPnxgg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm: add cache support for arm64
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Rob Clark <robdclark@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1908080903360.2882@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 8, 2019 at 3:00 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Wed, Aug 07, 2019 at 09:09:53AM -0700, Rob Clark wrote:
-> > > > (Eventually I'd like to support pages passed in from userspace.. but
-> > > > that is down the road.)
-> > >
-> > > Eww.  Please talk to the iommu list before starting on that.
-> >
-> > This is more of a long term goal, we can't do it until we have
-> > per-context/process pagetables, ofc.
-> >
-> > Getting a bit off topic, but I'm curious about what problems you are
-> > concerned about.  Userspace can shoot it's own foot, but if it is not
-> > sharing GPU pagetables with other processes, it can't shoot other's
-> > feet.  (I'm guessing you are concerned about non-page-aligned
-> > mappings?)
->
-> Maybe I misunderstood what you mean above, I though you mean messing
-> with page cachability attributes for userspace pages.  If what you are
-> looking into is just "standard" SVM I only hope that our APIs for that
-> which currently are a mess are in shape by then, as all users currently
-> have their own crufty and at least slightly buggy versions of that.  But
-> at least it is an issue that is being worked on.
+On Thu, Aug 08, 2019 at 09:04:28AM +0200, Thomas Gleixner wrote:
+> On Wed, 7 Aug 2019, Jon Derrick wrote:
+> > The current irq spreading algorithm spreads vectors amongst cpus evenly
+> > per node. If a node has more cpus than another node, the extra vectors
+> > being spread may not be reported back to the caller.
+> > 
+> > This is most apparent with the NVMe driver and nr_cpus < vectors, where
+> > the underreporting results in the caller's WARN being triggered:
+> > 
+> > irq_build_affinity_masks()
+> > ...
+> > 	if (nr_present < numvecs)
+> > 		WARN_ON(nr_present + nr_others < numvecs);
+> > 
+> > Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+> > ---
+> >  kernel/irq/affinity.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> > index 4352b08ae48d..9beafb8c7e92 100644
+> > --- a/kernel/irq/affinity.c
+> > +++ b/kernel/irq/affinity.c
+> > @@ -127,7 +127,8 @@ static int __irq_build_affinity_masks(unsigned int startvec,
+> >  	}
+> >  
+> >  	for_each_node_mask(n, nodemsk) {
+> > -		unsigned int ncpus, v, vecs_to_assign, vecs_per_node;
+> > +		unsigned int ncpus, v, vecs_to_assign, total_vecs_to_assign,
+> > +			vecs_per_node;
+> >  
+> >  		/* Spread the vectors per node */
+> >  		vecs_per_node = (numvecs - (curvec - firstvec)) / nodes;
+> > @@ -141,14 +142,16 @@ static int __irq_build_affinity_masks(unsigned int startvec,
+> >  
+> >  		/* Account for rounding errors */
+> >  		extra_vecs = ncpus - vecs_to_assign * (ncpus / vecs_to_assign);
+> > +		total_vecs_to_assign = vecs_to_assign + extra_vecs;
+> >  
+> > -		for (v = 0; curvec < last_affv && v < vecs_to_assign;
+> > +		for (v = 0; curvec < last_affv && v < total_vecs_to_assign;
+> >  		     curvec++, v++) {
+> >  			cpus_per_vec = ncpus / vecs_to_assign;
+> >  
+> >  			/* Account for extra vectors to compensate rounding errors */
+> >  			if (extra_vecs) {
+> >  				cpus_per_vec++;
+> > +				v++;
+> >  				--extra_vecs;
+> >  			}
+> >  			irq_spread_init_one(&masks[curvec].mask, nmsk,
+> > -- 
 
-ahh, ok.. and no, we wouldn't be remapping 'malloc' memory as
-writecombine.  We'd have to wire up better support for cached buffers.
+This looks like it will break the spread to non-present CPUs since
+it's not accurately reporting how many vectors were assigned for the
+present spread.
 
-Currently we use WC for basically all GEM buffers allocated from
-kernel, since that is a good choice for most GPU workloads.. ie. CPU
-isn't reading back from GPU buffers in most cases.  I'm told cached
-buffers are useful for compute workloads where there is more back and
-forth between GPU and CPU, but we haven't really crossed that bridge
-yet.  Compute workloads is also were the SVM interest is.
+I think the real problem is the spread's vecs_per_node doesn't account
+which nodes contribute more CPUs than others. For example:
 
-> > > So back to the question, I'd like to understand your use case (and
-> > > maybe hear from the other drm folks if that is common):
-> > >
-> > >  - you allocate pages from shmem (why shmem, btw?  if this is done by
-> > >    other drm drivers how do they guarantee addressability without an
-> > >    iommu?)
-> >
-> > shmem for swappable pages.  I don't unpin and let things get swapped
-> > out yet, but I'm told it starts to become important when you have 50
-> > browser tabs open ;-)
->
-> Yes,  but at that point the swapping can use the kernel linear mapping
-> and we are going into aliasing problems that can disturb the cache.  So
-> as-is this is going to problematic without new hooks into shmemfs.
->
+  Node 0 has 32 CPUs
+  Node 1 has 8 CPUs
+  Assign 32 vectors
 
-My expectation is that we'd treat the pages as cached when handing
-them back to shmemfs, and wb+inv when we take them back again from
-shmemfs and re-pin.  I think this works out to be basically the same
-scenario as having to wb+inv when we first get the pages from shmemfs.
+The current algorithm assigns 16 vectors to node 0 because vecs_per_node
+is calculated as 32 vectors / 2 nodes on the first iteration. The
+subsequent iteration for node 1 gets 8 vectors because it has only 8
+CPUs, leaving 8 vectors unassigned.
 
-> > >  - then the memory is either mapped to userspace or vmapped (or even
-> > >    both, althrough the lack of aliasing you mentioned would speak
-> > >    against it) as writecombine (aka arm v6+ normal uncached).  Does
-> > >    the mapping live on until the memory is freed?
-> >
-> > (side note, *most* of the drm/msm supported devices are armv8, the
-> > exceptions are 8060 and 8064 which are armv7.. I don't think drm/msm
-> > will ever have to deal w/ armv6)
->
-> Well, the point was that starting from v6 the kernels dma uncached
-> really is write combine.  So that applied to v7 and v8 as well.
-
-ahh, gotcha
-
-BR,
--R
+A more fair spread would give node 0 the remaining 8 vectors. This
+optimization, however, is a bit more complex than the current algorithm,
+which is probably why it wasn't done, so I think the warning should just
+be removed.
