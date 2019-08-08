@@ -2,178 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2140586C65
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A4B86C6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390408AbfHHV3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 17:29:40 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6286 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729780AbfHHV3j (ORCPT
+        id S2390466AbfHHVbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 17:31:17 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:42593 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728020AbfHHVbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 17:29:39 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4c944b0002>; Thu, 08 Aug 2019 14:29:47 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 08 Aug 2019 14:29:37 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 14:29:37 -0700
-Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
- 2019 21:29:35 +0000
-Subject: Re: [PATCH] nouveau/hmm: map pages after migration
-To:     Christoph Hellwig <hch@lst.de>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <nouveau@lists.freedesktop.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-References: <20190807150214.3629-1-rcampbell@nvidia.com>
- <20190808070701.GC29382@lst.de>
-From:   Ralph Campbell <rcampbell@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <0b96a8d8-86b5-3ce0-db95-669963c1f8a7@nvidia.com>
-Date:   Thu, 8 Aug 2019 14:29:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 8 Aug 2019 17:31:17 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MRVy9-1hhrWF2GCz-00NOKO; Thu, 08 Aug 2019 23:30:54 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 09/22] fbdev: omap: avoid using mach/*.h files
+Date:   Thu,  8 Aug 2019 23:22:18 +0200
+Message-Id: <20190808212234.2213262-10-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190808212234.2213262-1-arnd@arndb.de>
+References: <20190808212234.2213262-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20190808070701.GC29382@lst.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565299787; bh=PhGH3Fz3U6BG9IYzpAywsfQn2QaZDVfO/PlIuALj3rM=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=MJZge7m/9mkhZU4etBnQu2xchsH9bJVmIBhjlhBUSEeMEVfNkuCDij6bxrmYac4g9
-         9l00U+eic6gmLzXQPVqAn8j019mz/QqxOeYW/JKoLsBdEaVKz9RLkiSkpT8P2/nyQY
-         dJY3ZCzRLOOHHVCKzT1PdhiSUdG6plqyGdTnWLRTmmvPZ9RbteRLOLtOtrEFZ9RIKB
-         GzTGB8MM7HtJk/XeAG4akQYZ8yLwq74YHxldhk5dOYfCxGuneF/GePqweBWsMaiObR
-         Tzk5KikVIGjzbxE8Sq3t0NvbeP7bOgXH/SLMeMxad6ZhJxTHatunatImUt79RWsrWT
-         66U0nG6r9iVXA==
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:88szA/Fo8mKxxZtSI6a/3DryoEp3R0RLjKS0a4qc6cmQ6XF/WLN
+ W6t9LZZrLHyweQaVq4It4vpP6q85bngaTLNjJhSu5Zs2FGsc54mk16/FUff6KabydJOjjCe
+ gSmfFkLusQj3C1K+t2nV3Wqk3CMDq1pgtV+FfUcRXuvH8yvWc3/+WkYXaDaoJQ/KokIL5Gr
+ xffTou6CcBEBFvrAC7+Ag==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6N8ZFBB2B8Y=:wwhyQ2dKFdjd+6txhxm6GB
+ r5EWrXStpxQkas/tMQjlyNgIuWpDTVEGNewKIx4571rKYanefuhEZP0pD3j2pjFRdNzg5UgW+
+ IW7CzqHLPdUm85HJLglUX7OqEOcVEbgGAI1kCxHvXS1uOvbmi7D2v1c7w/yFoBi+vwWVS8LMC
+ aDov4Mh+N2gS8ZThs48vRk+9QD7cxwEEL8X/KY9uzByDaCWMzl/TCZ3Jh6fDzEz8gLit7wkEv
+ 4JZLpB3hartGRTwG+xBsKnN88mk4uf/CDeVnuk7PPbUHKr24BUHqNIqEZL5xsH6QHc5aAR7Hz
+ gRGxaUH6+xvfrWQsKR+4BVWyHEWi3DK7jRLdTDHoA9G0e9QOSV2qwxXqDKyLbuYsjUKFLnRLR
+ HnxedBZ1eZoQXa7u0JGSC3gTvrZODSrSNLszP37JOJu5YYZ2Xk3Z/89TeOGvfjXQHd+pY3I+a
+ qgQxEoY3gquwky6+fW1cac+0CMNSLt0rLsz4B/FSaOPcpddCWCFi7g56CFoGYRWStLTdMI3ku
+ VsedmQ+8yonko1eXRZbay8pU8N/GF4B7zrZKut9GQYn0tU3zh3gak2KJPmQQ3rxDT2ay263OF
+ GKprQYzYiToguAEYLSmF0fj+PvLCyShLqvTE0X9bwMYJ74sQrNCo7ua2Qs9aDs+Lb4jZ8A34Q
+ g6EE4OlJUTq14Pq3PRMnoKSvhNov8EeS6ihQ6jSwX2ds7twSs2Uvp3NvVraWllP7kdtbLG4ZL
+ CY7+25N0BR2fUkAk9y/nUxS35Oa1K3St34qBFQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+All the headers we actually need are now in include/linux/soc,
+so use those versions instead and allow compile-testing on
+other architectures.
 
-On 8/8/19 12:07 AM, Christoph Hellwig wrote:
-> On Wed, Aug 07, 2019 at 08:02:14AM -0700, Ralph Campbell wrote:
->> When memory is migrated to the GPU it is likely to be accessed by GPU
->> code soon afterwards. Instead of waiting for a GPU fault, map the
->> migrated memory into the GPU page tables with the same access permission=
-s
->> as the source CPU page table entries. This preserves copy on write
->> semantics.
->>
->> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
->> Cc: Christoph Hellwig <hch@lst.de>
->> Cc: Jason Gunthorpe <jgg@mellanox.com>
->> Cc: "J=C3=A9r=C3=B4me Glisse" <jglisse@redhat.com>
->> Cc: Ben Skeggs <bskeggs@redhat.com>
->> ---
->>
->> This patch is based on top of Christoph Hellwig's 9 patch series
->> https://lore.kernel.org/linux-mm/20190729234611.GC7171@redhat.com/T/#u
->> "turn the hmm migrate_vma upside down" but without patch 9
->> "mm: remove the unused MIGRATE_PFN_WRITE" and adds a use for the flag.
->=20
-> This looks useful.  I've already dropped that patch for the pending
-> resend.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/video/backlight/Kconfig          | 4 ++--
+ drivers/video/backlight/omap1_bl.c       | 4 ++--
+ drivers/video/fbdev/omap/Kconfig         | 4 ++--
+ drivers/video/fbdev/omap/lcd_ams_delta.c | 2 +-
+ drivers/video/fbdev/omap/lcd_dma.c       | 3 ++-
+ drivers/video/fbdev/omap/lcd_inn1510.c   | 2 +-
+ drivers/video/fbdev/omap/lcd_osk.c       | 4 ++--
+ drivers/video/fbdev/omap/lcdc.c          | 2 ++
+ drivers/video/fbdev/omap/omapfb_main.c   | 3 +--
+ drivers/video/fbdev/omap/sossi.c         | 1 +
+ 10 files changed, 16 insertions(+), 13 deletions(-)
 
-Thanks.
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index 8b081d61773e..195c71130827 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -213,8 +213,8 @@ config BACKLIGHT_LOCOMO
+ 
+ config BACKLIGHT_OMAP1
+ 	tristate "OMAP1 PWL-based LCD Backlight"
+-	depends on ARCH_OMAP1
+-	default y
++	depends on ARCH_OMAP1 || COMPILE_TEST
++	default ARCH_OMAP1
+ 	help
+ 	  This driver controls the LCD backlight level and power for
+ 	  the PWL module of OMAP1 processors.  Say Y if your board
+diff --git a/drivers/video/backlight/omap1_bl.c b/drivers/video/backlight/omap1_bl.c
+index 74263021b1b3..69a49384b3de 100644
+--- a/drivers/video/backlight/omap1_bl.c
++++ b/drivers/video/backlight/omap1_bl.c
+@@ -14,8 +14,8 @@
+ #include <linux/slab.h>
+ #include <linux/platform_data/omap1_bl.h>
+ 
+-#include <mach/hardware.h>
+-#include <mach/mux.h>
++#include <linux/soc/ti/omap1-io.h>
++#include <linux/soc/ti/omap1-mux.h>
+ 
+ #define OMAPBL_MAX_INTENSITY		0xff
+ 
+diff --git a/drivers/video/fbdev/omap/Kconfig b/drivers/video/fbdev/omap/Kconfig
+index df2a5d0d4aa2..b1786cf1b486 100644
+--- a/drivers/video/fbdev/omap/Kconfig
++++ b/drivers/video/fbdev/omap/Kconfig
+@@ -2,7 +2,7 @@
+ config FB_OMAP
+ 	tristate "OMAP frame buffer support"
+ 	depends on FB
+-	depends on ARCH_OMAP1
++	depends on ARCH_OMAP1 || (ARM && COMPILE_TEST)
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
+@@ -42,7 +42,7 @@ config FB_OMAP_LCD_MIPID
+ 
+ config FB_OMAP_LCD_H3
+ 	bool "TPS65010 LCD controller on OMAP-H3"
+-	depends on MACH_OMAP_H3
++	depends on MACH_OMAP_H3 || COMPILE_TEST
+ 	depends on TPS65010=y
+ 	default y
+ 	help
+diff --git a/drivers/video/fbdev/omap/lcd_ams_delta.c b/drivers/video/fbdev/omap/lcd_ams_delta.c
+index 8e54aae544a0..da2e32615abe 100644
+--- a/drivers/video/fbdev/omap/lcd_ams_delta.c
++++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
+@@ -14,7 +14,7 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/lcd.h>
+ 
+-#include <mach/hardware.h>
++#include <linux/soc/ti/omap1-io.h>
+ 
+ #include "omapfb.h"
+ 
+diff --git a/drivers/video/fbdev/omap/lcd_dma.c b/drivers/video/fbdev/omap/lcd_dma.c
+index 867a63c06f42..f85817635a8c 100644
+--- a/drivers/video/fbdev/omap/lcd_dma.c
++++ b/drivers/video/fbdev/omap/lcd_dma.c
+@@ -25,7 +25,8 @@
+ 
+ #include <linux/omap-dma.h>
+ 
+-#include <mach/hardware.h>
++#include <linux/soc/ti/omap1-soc.h>
++#include <linux/soc/ti/omap1-io.h>
+ 
+ #include "lcdc.h"
+ #include "lcd_dma.h"
+diff --git a/drivers/video/fbdev/omap/lcd_inn1510.c b/drivers/video/fbdev/omap/lcd_inn1510.c
+index 37ed0c14aa5a..bb915637e9b6 100644
+--- a/drivers/video/fbdev/omap/lcd_inn1510.c
++++ b/drivers/video/fbdev/omap/lcd_inn1510.c
+@@ -10,7 +10,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ 
+-#include <mach/hardware.h>
++#include <linux/soc/ti/omap1-soc.h>
+ 
+ #include "omapfb.h"
+ 
+diff --git a/drivers/video/fbdev/omap/lcd_osk.c b/drivers/video/fbdev/omap/lcd_osk.c
+index 5d5762128c8d..8168ba0d47fd 100644
+--- a/drivers/video/fbdev/omap/lcd_osk.c
++++ b/drivers/video/fbdev/omap/lcd_osk.c
+@@ -11,8 +11,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio.h>
+ 
+-#include <mach/hardware.h>
+-#include <mach/mux.h>
++#include <linux/soc/ti/omap1-io.h>
++#include <linux/soc/ti/omap1-mux.h>
+ 
+ #include "omapfb.h"
+ 
+diff --git a/drivers/video/fbdev/omap/lcdc.c b/drivers/video/fbdev/omap/lcdc.c
+index 65953b7fbdb9..3af758f12afd 100644
+--- a/drivers/video/fbdev/omap/lcdc.c
++++ b/drivers/video/fbdev/omap/lcdc.c
+@@ -17,6 +17,8 @@
+ #include <linux/clk.h>
+ #include <linux/gfp.h>
+ 
++#include <linux/soc/ti/omap1-io.h>
++#include <linux/soc/ti/omap1-soc.h>
+ #include <linux/omap-dma.h>
+ 
+ #include <asm/mach-types.h>
+diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbdev/omap/omapfb_main.c
+index dc06057de91d..af73a3f9ac53 100644
+--- a/drivers/video/fbdev/omap/omapfb_main.c
++++ b/drivers/video/fbdev/omap/omapfb_main.c
+@@ -19,8 +19,7 @@
+ 
+ #include <linux/omap-dma.h>
+ 
+-#include <mach/hardware.h>
+-
++#include <linux/soc/ti/omap1-soc.h>
+ #include "omapfb.h"
+ #include "lcdc.h"
+ 
+diff --git a/drivers/video/fbdev/omap/sossi.c b/drivers/video/fbdev/omap/sossi.c
+index ade9d452254c..6b99d89fbe6e 100644
+--- a/drivers/video/fbdev/omap/sossi.c
++++ b/drivers/video/fbdev/omap/sossi.c
+@@ -13,6 +13,7 @@
+ #include <linux/interrupt.h>
+ 
+ #include <linux/omap-dma.h>
++#include <linux/soc/ti/omap1-io.h>
+ 
+ #include "omapfb.h"
+ #include "lcd_dma.h"
+-- 
+2.20.0
 
->=20
->>   static unsigned long nouveau_dmem_migrate_copy_one(struct nouveau_drm =
-*drm,
->> -		struct vm_area_struct *vma, unsigned long addr,
->> -		unsigned long src, dma_addr_t *dma_addr)
->> +		struct vm_area_struct *vma, unsigned long src,
->> +		dma_addr_t *dma_addr, u64 *pfn)
->=20
-> I'll pick up the removal of the not needed addr argument for the patch
-> introducing nouveau_dmem_migrate_copy_one, thanks,
->=20
->>   static void nouveau_dmem_migrate_chunk(struct migrate_vma *args,
->> -		struct nouveau_drm *drm, dma_addr_t *dma_addrs)
->> +		struct nouveau_drm *drm, dma_addr_t *dma_addrs, u64 *pfns)
->>   {
->>   	struct nouveau_fence *fence;
->>   	unsigned long addr =3D args->start, nr_dma =3D 0, i;
->>  =20
->>   	for (i =3D 0; addr < args->end; i++) {
->>   		args->dst[i] =3D nouveau_dmem_migrate_copy_one(drm, args->vma,
->> -				addr, args->src[i], &dma_addrs[nr_dma]);
->> +				args->src[i], &dma_addrs[nr_dma], &pfns[i]);
->=20
-> Nit: I find the &pfns[i] way to pass the argument a little weird to read.
-> Why not "pfns + i"?
-
-OK, will do in v2.
-Should I convert to "dma_addrs + nr_dma" too?
-
->> +u64 *
->> +nouveau_pfns_alloc(unsigned long npages)
->> +{
->> +	struct nouveau_pfnmap_args *args;
->> +
->> +	args =3D kzalloc(sizeof(*args) + npages * sizeof(args->p.phys[0]),
->=20
-> Can we use struct_size here?
-
-Yes, good suggestion.
-
->=20
->> +	int ret;
->> +
->> +	if (!svm)
->> +		return;
->> +
->> +	mutex_lock(&svm->mutex);
->> +	svmm =3D nouveau_find_svmm(svm, mm);
->> +	if (!svmm) {
->> +		mutex_unlock(&svm->mutex);
->> +		return;
->> +	}
->> +	mutex_unlock(&svm->mutex);
->=20
-> Given that nouveau_find_svmm doesn't take any kind of reference, what
-> gurantees svmm doesn't go away after dropping the lock?
-
-I asked Ben and Jerome about this too.
-I'm still looking into it.
-
->=20
->> @@ -44,5 +49,19 @@ static inline int nouveau_svmm_bind(struct drm_device=
- *device, void *p,
->>   {
->>   	return -ENOSYS;
->>   }
->> +
->> +u64 *nouveau_pfns_alloc(unsigned long npages)
->> +{
->> +	return NULL;
->> +}
->> +
->> +void nouveau_pfns_free(u64 *pfns)
->> +{
->> +}
->> +
->> +void nouveau_pfns_map(struct nouveau_drm *drm, struct mm_struct *mm,
->> +		      unsigned long addr, u64 *pfns, unsigned long npages)
->> +{
->> +}
->>   #endif /* IS_ENABLED(CONFIG_DRM_NOUVEAU_SVM) */
->=20
-> nouveau_dmem.c and nouveau_svm.c are both built conditional on
-> CONFIG_DRM_NOUVEAU_SVM, so there is no need for stubs here.
->=20
-
-Good point. I'll remove them in v2.
