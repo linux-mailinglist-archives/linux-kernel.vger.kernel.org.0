@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE60869AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4AB78698A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:08:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405147AbfHHTJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:09:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43936 "EHLO mail.kernel.org"
+        id S2404906AbfHHTIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:08:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405117AbfHHTJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:09:36 -0400
+        id S2404896AbfHHTIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:08:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE36021743;
-        Thu,  8 Aug 2019 19:09:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F3EF2184E;
+        Thu,  8 Aug 2019 19:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291375;
-        bh=fPjyKWjqbff7ewKV5FEwt3VJernzWM6g/qqYgqjs4WU=;
+        s=default; t=1565291302;
+        bh=+hWlT7uUS4AlLaEPkmLlas7EoQBPeqvXeM/SV4hytTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hulqs+/NfW6bkrMwkPMzQP2ua79xeTUAB/SPicZPa9tD8vhw4ukPm2wpw/sFhsbA9
-         9qbNggypMsi1a2yjrM1HzkIp8PTaYCRdQmwDPBfcD635sZyXKoPy+LaF1SyZAFB9JX
-         JQxTuSexmu4DOqVmkFCuhl5z8svntr8PZ+vT9LDU=
+        b=XM4nHnl1CaA0R2oJL202jAD9g/La0VdP1xmawsrud0E23IA892eCpC+urvl1Q5soi
+         4F7U31tp/tWKHCcmifY6BjV2XSul8HqL1lSSxtPhiR1lC6LovCFSc5GtKxenm66J8T
+         Wc08KtgVKXmZg0E0WRLAbbMWcjEMcr5q9diWJWkM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Alexis Bauvin <abauvin@scaleway.com>,
+        Jason Wang <jasowang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 18/45] mlxsw: spectrum: Fix error path in mlxsw_sp_module_init()
+Subject: [PATCH 5.2 38/56] tun: mark small packets as owned by the tap sock
 Date:   Thu,  8 Aug 2019 21:05:04 +0200
-Message-Id: <20190808190454.757996450@linuxfoundation.org>
+Message-Id: <20190808190454.585476147@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
-References: <20190808190453.827571908@linuxfoundation.org>
+In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
+References: <20190808190452.867062037@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Pirko <jiri@mellanox.com>
+From: Alexis Bauvin <abauvin@scaleway.com>
 
-[ Upstream commit 28fe79000e9b0a6f99959869947f1ca305f14599 ]
+[ Upstream commit 4b663366246be1d1d4b1b8b01245b2e88ad9e706 ]
 
-In case of sp2 pci driver registration fail, fix the error path to
-start with sp1 pci driver unregister.
+- v1 -> v2: Move skb_set_owner_w to __tun_build_skb to reduce patch size
 
-Fixes: c3ab435466d5 ("mlxsw: spectrum: Extend to support Spectrum-2 ASIC")
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Small packets going out of a tap device go through an optimized code
+path that uses build_skb() rather than sock_alloc_send_pskb(). The
+latter calls skb_set_owner_w(), but the small packet code path does not.
+
+The net effect is that small packets are not owned by the userland
+application's socket (e.g. QEMU), while large packets are.
+This can be seen with a TCP session, where packets are not owned when
+the window size is small enough (around PAGE_SIZE), while they are once
+the window grows (note that this requires the host to support virtio
+tso for the guest to offload segmentation).
+All this leads to inconsistent behaviour in the kernel, especially on
+netfilter modules that uses sk->socket (e.g. xt_owner).
+
+Fixes: 66ccbc9c87c2 ("tap: use build_skb() for small packet")
+Signed-off-by: Alexis Bauvin <abauvin@scaleway.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/tun.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -5032,7 +5032,7 @@ static int __init mlxsw_sp_module_init(v
- 	return 0;
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1600,7 +1600,8 @@ static bool tun_can_build_skb(struct tun
+ 	return true;
+ }
  
- err_sp2_pci_driver_register:
--	mlxsw_pci_driver_unregister(&mlxsw_sp2_pci_driver);
-+	mlxsw_pci_driver_unregister(&mlxsw_sp1_pci_driver);
- err_sp1_pci_driver_register:
- 	mlxsw_core_driver_unregister(&mlxsw_sp2_driver);
- err_sp2_core_driver_register:
+-static struct sk_buff *__tun_build_skb(struct page_frag *alloc_frag, char *buf,
++static struct sk_buff *__tun_build_skb(struct tun_file *tfile,
++				       struct page_frag *alloc_frag, char *buf,
+ 				       int buflen, int len, int pad)
+ {
+ 	struct sk_buff *skb = build_skb(buf, buflen);
+@@ -1610,6 +1611,7 @@ static struct sk_buff *__tun_build_skb(s
+ 
+ 	skb_reserve(skb, pad);
+ 	skb_put(skb, len);
++	skb_set_owner_w(skb, tfile->socket.sk);
+ 
+ 	get_page(alloc_frag->page);
+ 	alloc_frag->offset += buflen;
+@@ -1687,7 +1689,8 @@ static struct sk_buff *tun_build_skb(str
+ 	 */
+ 	if (hdr->gso_type || !xdp_prog) {
+ 		*skb_xdp = 1;
+-		return __tun_build_skb(alloc_frag, buf, buflen, len, pad);
++		return __tun_build_skb(tfile, alloc_frag, buf, buflen, len,
++				       pad);
+ 	}
+ 
+ 	*skb_xdp = 0;
+@@ -1724,7 +1727,7 @@ static struct sk_buff *tun_build_skb(str
+ 	rcu_read_unlock();
+ 	local_bh_enable();
+ 
+-	return __tun_build_skb(alloc_frag, buf, buflen, len, pad);
++	return __tun_build_skb(tfile, alloc_frag, buf, buflen, len, pad);
+ 
+ err_xdp:
+ 	put_page(alloc_frag->page);
 
 
