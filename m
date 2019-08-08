@@ -2,92 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0F9F8576B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 03:09:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AC985770
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 03:15:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389469AbfHHBIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 21:08:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730626AbfHHBIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 21:08:49 -0400
-Received: from localhost (unknown [65.200.167.5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95AD82184E;
-        Thu,  8 Aug 2019 01:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565226528;
-        bh=gNF57YoB8Yriv3C573qb+XOB2FsI9s0QaaJyXutg9/4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2rvV4yOfIXfCJEHpC25spqGYHKgBoT+0D1pdEzPhdDAydud2z/8PVw9DNztXtoWd7
-         qAEBNzMOLYsSA3bMFMftKIzenyOnpiASeKaPlKnfJT8e6L0fb1WgoXGhgm1o/FxXKI
-         hVkWhYor2eLDGFTlIJlf27KYWw66edIxKiKN1jaE=
-Date:   Wed, 7 Aug 2019 21:08:47 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, corbet@lwn.net,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
-        thiruan@microsoft.com, bryankel@microsoft.com,
-        tee-dev@lists.linaro.org, ilias.apalodimas@linaro.org,
-        sumit.garg@linaro.org, rdunlap@infradead.org
-Subject: Re: [PATCH v8 0/2] fTPM: firmware TPM running in TEE
-Message-ID: <20190808010847.GU17747@sasha-vm>
-References: <20190705204746.27543-1-sashal@kernel.org>
- <20190711200858.xydm3wujikufxjcw@linux.intel.com>
- <20190804214218.vdv2sn4oc4cityy2@linux.intel.com>
- <20190805180518.GC17747@sasha-vm>
- <20190805223324.qvbqa45xnp5fgsib@linux.intel.com>
+        id S2389544AbfHHBPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 21:15:04 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:3933 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730038AbfHHBPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 21:15:04 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id 13737E7A906BCBCFF543;
+        Thu,  8 Aug 2019 09:15:02 +0800 (CST)
+Received: from dggeme760-chm.china.huawei.com (10.3.19.106) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 8 Aug 2019 09:15:01 +0800
+Received: from [127.0.0.1] (10.57.37.248) by dggeme760-chm.china.huawei.com
+ (10.3.19.106) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 8
+ Aug 2019 09:15:01 +0800
+Subject: Re: [PATCH net] net: phy: rtl8211f: do a double read to get real time
+ link status
+To:     Heiner Kallweit <hkallweit1@gmail.com>, <davem@davemloft.net>,
+        <andrew@lunn.ch>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <shiju.jose@huawei.com>
+References: <1565183772-44268-1-git-send-email-liuyonglong@huawei.com>
+ <d67831ab-8902-a653-3db9-b2f55adacabd@gmail.com>
+From:   Yonglong Liu <liuyonglong@huawei.com>
+Message-ID: <e663235c-93eb-702d-5a9c-8f781d631c42@huawei.com>
+Date:   Thu, 8 Aug 2019 09:15:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190805223324.qvbqa45xnp5fgsib@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d67831ab-8902-a653-3db9-b2f55adacabd@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.37.248]
+X-ClientProxiedBy: dggeme702-chm.china.huawei.com (10.1.199.98) To
+ dggeme760-chm.china.huawei.com (10.3.19.106)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 01:51:32AM +0300, Jarkko Sakkinen wrote:
->On Mon, Aug 05, 2019 at 02:05:18PM -0400, Sasha Levin wrote:
->> On Mon, Aug 05, 2019 at 12:44:28AM +0300, Jarkko Sakkinen wrote:
->> > On Thu, Jul 11, 2019 at 11:08:58PM +0300, Jarkko Sakkinen wrote:
->> > > On Fri, Jul 05, 2019 at 04:47:44PM -0400, Sasha Levin wrote:
->> > > > Changes from v7:
->> > > >
->> > > >  - Address Jarkko's comments.
->> > > >
->> > > > Sasha Levin (2):
->> > > >   fTPM: firmware TPM running in TEE
->> > > >   fTPM: add documentation for ftpm driver
->> > > >
->> > > >  Documentation/security/tpm/index.rst        |   1 +
->> > > >  Documentation/security/tpm/tpm_ftpm_tee.rst |  27 ++
->> > > >  drivers/char/tpm/Kconfig                    |   5 +
->> > > >  drivers/char/tpm/Makefile                   |   1 +
->> > > >  drivers/char/tpm/tpm_ftpm_tee.c             | 350 ++++++++++++++++++++
->> > > >  drivers/char/tpm/tpm_ftpm_tee.h             |  40 +++
->> > > >  6 files changed, 424 insertions(+)
->> > > >  create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
->> > > >  create mode 100644 drivers/char/tpm/tpm_ftpm_tee.c
->> > > >  create mode 100644 drivers/char/tpm/tpm_ftpm_tee.h
->> > > >
->> > > > --
->> > > > 2.20.1
->> > > >
->> > >
->> > > I applied the patches now. Appreciate a lot the patience with these.
->> > > Thank you.
->> >
->> > Hi, can you possibly fix these:
+
+
+On 2019/8/8 0:47, Heiner Kallweit wrote:
+> On 07.08.2019 15:16, Yonglong Liu wrote:
+>> [   27.232781] hns3 0000:bd:00.3 eth7: net open
+>> [   27.237303] 8021q: adding VLAN 0 to HW filter on device eth7
+>> [   27.242972] IPv6: ADDRCONF(NETDEV_CHANGE): eth7: link becomes ready
+>> [   27.244449] hns3 0000:bd:00.3: invalid speed (-1)
+>> [   27.253904] hns3 0000:bd:00.3 eth7: failed to adjust link.
+>> [   27.259379] RTL8211F Gigabit Ethernet mii-0000:bd:00.3:07: PHY state change UP -> RUNNING
+>> [   27.924903] hns3 0000:bd:00.3 eth7: link up
+>> [   28.280479] RTL8211F Gigabit Ethernet mii-0000:bd:00.3:07: PHY state change RUNNING -> NOLINK
+>> [   29.208452] hns3 0000:bd:00.3 eth7: link down
+>> [   32.376745] RTL8211F Gigabit Ethernet mii-0000:bd:00.3:07: PHY state change NOLINK -> RUNNING
+>> [   33.208448] hns3 0000:bd:00.3 eth7: link up
+>> [   35.253821] hns3 0000:bd:00.3 eth7: net stop
+>> [   35.258270] hns3 0000:bd:00.3 eth7: link down
 >>
->> Any objection to sending you a patch on top of your tree instead?
->
->Go ahead. Added the previous patches to my master.
+>> When using rtl8211f in polling mode, may get a invalid speed,
+>> because of reading a fake link up and autoneg complete status
+>> immediately after starting autoneg:
+>>
+>>         ifconfig-1176  [007] ....    27.232763: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
+>>   kworker/u257:1-670   [015] ....    27.232805: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x04 val:0x01e1
+>>   kworker/u257:1-670   [015] ....    27.232815: mdio_access: mii-0000:bd:00.3 write phy:0x07 reg:0x04 val:0x05e1
+>>   kworker/u257:1-670   [015] ....    27.232869: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79ad
+>>   kworker/u257:1-670   [015] ....    27.232904: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x09 val:0x0200
+>>   kworker/u257:1-670   [015] ....    27.232940: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
+>>   kworker/u257:1-670   [015] ....    27.232949: mdio_access: mii-0000:bd:00.3 write phy:0x07 reg:0x00 val:0x1240
+>>   kworker/u257:1-670   [015] ....    27.233003: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79ad
+>>   kworker/u257:1-670   [015] ....    27.233039: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x0a val:0x3002
+>>   kworker/u257:1-670   [015] ....    27.233074: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x09 val:0x0200
+>>   kworker/u257:1-670   [015] ....    27.233110: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x05 val:0x0000
+>>   kworker/u257:1-670   [000] ....    28.280475: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x7989
+>>   kworker/u257:1-670   [000] ....    29.304471: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x7989
+>>
+>> According to the datasheet of rtl8211f, to get the real time
+>> link status, need to read MII_BMSR twice.
+>>
+>> This patch add a read_status hook for rtl8211f, and do a fake
+>> phy_read before genphy_read_status(), so that can get real link
+>> status in genphy_read_status().
+>>
+>> Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+>> ---
+>>  drivers/net/phy/realtek.c | 13 +++++++++++++
+>>  1 file changed, 13 insertions(+)
+>>
+> Is this an accidental resubmit? Because we discussed this in
+> https://marc.info/?t=156413509900003&r=1&w=2 and a fix has
+> been applied already.
+> 
+> Heiner
+> 
+> .
+> 
 
-Thanks! I'm getting back home on Monday and I'll send it out right away.
+In https://marc.info/?t=156413509900003&r=1&w=2 , the invalid speed
+recurrence rate is almost 100%, and I had test the solution about
+5 times and it works. But yesterday it happen again suddenly, and than
+I fount that the recurrence rate reduce to 10%. This time we get 0x79ad
+after autoneg started which is not 0x798d from last discussion.
 
---
-Thanks,
-Sasha
+
