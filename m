@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8699786993
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:09:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 095958696B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:07:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404466AbfHHTIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:08:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42772 "EHLO mail.kernel.org"
+        id S2404607AbfHHTHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:07:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404940AbfHHTIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:08:36 -0400
+        id S2404590AbfHHTHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:07:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AD862173E;
-        Thu,  8 Aug 2019 19:08:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CD9D2184E;
+        Thu,  8 Aug 2019 19:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291315;
-        bh=+fdep5RJVQSc0mu4tM0fr/rxAD8tPOhZXxWz/dcPWLc=;
+        s=default; t=1565291225;
+        bh=MCaVAbKTzMcskmNplwwHB7pTzUAcdXsvYlD8ZsyQ8lM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2JpKN5EPF6oX4LITzRC41KJ5nuvpDXj/YkHDf+C5YHCW26PNbngPnhon1EWm0Lp/y
-         a5VUO2sXwm+hbQFS4GVcfByZO1fvUczSGCfResFG1Pf06oEsnZqy5EA5P4RjhwXwCa
-         hVzM6nAqyQsbwQjtSsiSgWe244WuyO+eLVuzsKmM=
+        b=tJH2os6qErk++ttogxdC6FL+REjQ5ZAW9/5Ug6e4xLoj51J/Csjaquh1J3EG678jm
+         IV0btzq3rtZcQSj62KXaiel7NOI9dzte8zVlzRwEpzl4NRFNqpsOngohWS103FbQjX
+         6d3TFAESIuToeNh7ZhqZIv+4VsISCOq9Td/0LU2w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
+        stable@vger.kernel.org, Frode Isaksen <fisaksen@baylibre.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 13/45] bnx2x: Disable multi-cos feature.
+Subject: [PATCH 5.2 33/56] net: stmmac: Use netif_tx_napi_add() for TX polling function
 Date:   Thu,  8 Aug 2019 21:04:59 +0200
-Message-Id: <20190808190454.503212078@linuxfoundation.org>
+Message-Id: <20190808190454.315977400@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
-References: <20190808190453.827571908@linuxfoundation.org>
+In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
+References: <20190808190452.867062037@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudarsana Reddy Kalluru <skalluru@marvell.com>
+From: Frode Isaksen <fisaksen@baylibre.com>
 
-[ Upstream commit d1f0b5dce8fda09a7f5f04c1878f181d548e42f5 ]
+[ Upstream commit 4d97972b45f080db4c6d27cc0b54321d9cd7be17 ]
 
-Commit 3968d38917eb ("bnx2x: Fix Multi-Cos.") which enabled multi-cos
-feature after prolonged time in driver added some regression causing
-numerous issues (sudden reboots, tx timeout etc.) reported by customers.
-We plan to backout this commit and submit proper fix once we have root
-cause of issues reported with this feature enabled.
+This variant of netif_napi_add() should be used from drivers
+using NAPI to exclusively poll a TX queue.
 
-Fixes: 3968d38917eb ("bnx2x: Fix Multi-Cos.")
-Signed-off-by: Sudarsana Reddy Kalluru <skalluru@marvell.com>
-Signed-off-by: Manish Chopra <manishc@marvell.com>
+Signed-off-by: Frode Isaksen <fisaksen@baylibre.com>
+Tested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -1936,8 +1936,7 @@ u16 bnx2x_select_queue(struct net_device
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4374,8 +4374,9 @@ int stmmac_dvr_probe(struct device *devi
+ 				       NAPI_POLL_WEIGHT);
+ 		}
+ 		if (queue < priv->plat->tx_queues_to_use) {
+-			netif_napi_add(ndev, &ch->tx_napi, stmmac_napi_poll_tx,
+-				       NAPI_POLL_WEIGHT);
++			netif_tx_napi_add(ndev, &ch->tx_napi,
++					  stmmac_napi_poll_tx,
++					  NAPI_POLL_WEIGHT);
+ 		}
  	}
  
- 	/* select a non-FCoE queue */
--	return fallback(dev, skb, NULL) %
--	       (BNX2X_NUM_ETH_QUEUES(bp) * bp->max_cos);
-+	return fallback(dev, skb, NULL) % (BNX2X_NUM_ETH_QUEUES(bp));
- }
- 
- void bnx2x_set_num_queues(struct bnx2x *bp)
 
 
