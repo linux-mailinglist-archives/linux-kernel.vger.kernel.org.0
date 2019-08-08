@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 213D986AF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:55:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4FD486ADA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404391AbfHHTym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:54:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57888 "EHLO mail.kernel.org"
+        id S2404442AbfHHTxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:53:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404296AbfHHTxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:53:13 -0400
+        id S2404353AbfHHTxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:53:14 -0400
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 785DB214C6;
-        Thu,  8 Aug 2019 19:53:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F413218A2;
+        Thu,  8 Aug 2019 19:53:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565293992;
-        bh=Wl/v+kMqCliTAzEFxqwHO5PoV20HmLtR8YI/gRJZrzg=;
+        s=default; t=1565293993;
+        bh=n/d8YBsjQqJ6w0oyoxIbnrSObuMo5tHZG4trAepJn3U=;
         h=From:To:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=Ds/D0d4oB7ZlRWIwUzjkuZx/eERIVktaq70pb0OzVrfcra0M9XY9Oj+RNDAjNABbt
-         HWY6SXtN1AWJMLkwUhVy5qYNjFH0dajNQdyvxZ5Z1ppIGoOKJ2hm9K0LM+kAdLtXw8
-         fjAetiGBA13eLvPlo97SCh9TZnQQajfEuMGHXFbw=
+        b=i2blnW+hwOBLPEHL4sOHkP6ZbXOH5XzaCQwV/NlsjBbIuOHPvxOwlL1MDoJfEu64N
+         ycZpNnKnmFKDnq8Xv0HvYe2UhKp3bGthdiHhFhzKobtkRDX1r1U0KBbOHEenR4F9Tl
+         RQMpiRyNpBx0pcE1ycY2lKs2TIXvI3KPspVDTdiE=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -35,9 +35,9 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>,
         Julia Cartwright <julia@ni.com>
-Subject: [PATCH RT 03/19] genirq: Do not invoke the affinity callback via a workqueue on RT
-Date:   Thu,  8 Aug 2019 14:52:31 -0500
-Message-Id: <16a19c7974fd531ce68182de87fc7314db33117b.1565293934.git.zanussi@kernel.org>
+Subject: [PATCH RT 04/19] genirq: Handle missing work_struct in irq_set_affinity_notifier()
+Date:   Thu,  8 Aug 2019 14:52:32 -0500
+Message-Id: <908d86a902fda96976e4eb568e9ce86aa8cee750.1565293934.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1565293934.git.zanussi@kernel.org>
 References: <cover.1565293934.git.zanussi@kernel.org>
@@ -56,101 +56,40 @@ If anyone has any objections, please let me know.
 -----------
 
 
-[ Upstream commit 2122adbe011cdc0eb62ad62494e181005b23c76a ]
+[ Upstream commit bbc4d2a7d6ff54ba923640d9a42c7bef7185fe98 ]
 
-Joe Korty reported, that __irq_set_affinity_locked() schedules a
-workqueue while holding a rawlock which results in a might_sleep()
-warning.
-This patch uses swork_queue() instead.
+The backported stable commit
+   59c39840f5abf ("genirq: Prevent use-after-free and work list corruption")
+
+added cancel_work_sync() on a work_struct element which is not available
+in RT.
+
+Replace cancel_work_sync() with kthread_cancel_work_sync() on RT.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
 
  Conflicts:
-	include/linux/interrupt.h
 	kernel/irq/manage.c
 ---
- include/linux/interrupt.h |  5 ++---
- kernel/irq/manage.c       | 19 ++++---------------
- 2 files changed, 6 insertions(+), 18 deletions(-)
+ kernel/irq/manage.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 0f25fa19b2d8..233e3c027f53 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -15,7 +15,7 @@
- #include <linux/hrtimer.h>
- #include <linux/kref.h>
- #include <linux/workqueue.h>
--#include <linux/swork.h>
-+#include <linux/kthread.h>
- 
- #include <linux/atomic.h>
- #include <asm/ptrace.h>
-@@ -230,7 +230,6 @@ extern void resume_device_irqs(void);
-  * struct irq_affinity_notify - context for notification of IRQ affinity changes
-  * @irq:		Interrupt to which notification applies
-  * @kref:		Reference count, for internal use
-- * @swork:		Swork item, for internal use
-  * @work:		Work item, for internal use
-  * @notify:		Function to be called on change.  This will be
-  *			called in process context.
-@@ -243,7 +242,7 @@ struct irq_affinity_notify {
- 	unsigned int irq;
- 	struct kref kref;
- #ifdef CONFIG_PREEMPT_RT_BASE
--	struct swork_event swork;
-+	struct kthread_work work;
- #else
- 	struct work_struct work;
- #endif
 diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index f9415590661c..3d5b33fe874b 100644
+index 3d5b33fe874b..071691963f7b 100644
 --- a/kernel/irq/manage.c
 +++ b/kernel/irq/manage.c
-@@ -228,7 +228,7 @@ int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
- 		kref_get(&desc->affinity_notify->kref);
+@@ -352,7 +352,9 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
  
- #ifdef CONFIG_PREEMPT_RT_BASE
--		swork_queue(&desc->affinity_notify->swork);
-+		kthread_schedule_work(&desc->affinity_notify->work);
- #else
- 		schedule_work(&desc->affinity_notify->work);
+ 	if (old_notify) {
+-#ifndef CONFIG_PREEMPT_RT_BASE
++#ifdef CONFIG_PREEMPT_RT_BASE
++		kthread_cancel_work_sync(&notify->work);
++#else
+ 		cancel_work_sync(&old_notify->work);
  #endif
-@@ -293,21 +293,11 @@ static void _irq_affinity_notify(struct irq_affinity_notify *notify)
- }
- 
- #ifdef CONFIG_PREEMPT_RT_BASE
--static void init_helper_thread(void)
--{
--	static int init_sworker_once;
--
--	if (init_sworker_once)
--		return;
--	if (WARN_ON(swork_get()))
--		return;
--	init_sworker_once = 1;
--}
- 
--static void irq_affinity_notify(struct swork_event *swork)
-+static void irq_affinity_notify(struct kthread_work *work)
- {
- 	struct irq_affinity_notify *notify =
--		container_of(swork, struct irq_affinity_notify, swork);
-+		container_of(work, struct irq_affinity_notify, work);
- 	_irq_affinity_notify(notify);
- }
- 
-@@ -350,8 +340,7 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
- 		notify->irq = irq;
- 		kref_init(&notify->kref);
- #ifdef CONFIG_PREEMPT_RT_BASE
--		INIT_SWORK(&notify->swork, irq_affinity_notify);
--		init_helper_thread();
-+		kthread_init_work(&notify->work, irq_affinity_notify);
- #else
- 		INIT_WORK(&notify->work, irq_affinity_notify);
- #endif
+ 		kref_put(&old_notify->kref, old_notify->release);
 -- 
 2.14.1
 
