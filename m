@@ -2,100 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD4D85C77
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:07:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B9B385C7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731877AbfHHIHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:07:43 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34778 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731737AbfHHIHn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:07:43 -0400
-Received: by mail-qt1-f195.google.com with SMTP id k10so22096870qtq.1;
-        Thu, 08 Aug 2019 01:07:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zpfTTWIVTM8a0np0YvcvEQ5LKGlmAj7NsTRFbsCvaus=;
-        b=PCIzaS+ZqeLxF7wCoLcHb35L3rCJbcM6ck4N6qyOoTrEsO1bRksbqTsKcZjpf3tv9n
-         hO5qRtHk2+x2dpExZuDeKa/tKfhcGYhtxJburSkp7wzpgO2vVx0Ur2QzhP5CJWuIXII7
-         +qwlEn2vFk1Z4YcCkE5c0rwp2flCrYqr50fhUY6Du/mZKAoEIBT4VOTlmtK9r8vhF5hG
-         MckfOYG3WLJRrrNOzneBRqmCUenK08QRz1ALop5wF+LQrktxZp6Li3WbIiTTDJ/n/ong
-         Lc6hmVMb0F5Y3tsVBX5UIpNM6ZIHe+D3TlLGyYr1qOxX+FsKeZ9thVj7qL2rccfaO/JL
-         MJRw==
-X-Gm-Message-State: APjAAAXFNZkW4QNBWxCEu7exHrAtL4Tt8qc+7Zf+z4ylLCL73y2H5qxJ
-        pEDcUvnToH2/k99Ls1DkyfpXR/PndvFVEIFb/II=
-X-Google-Smtp-Source: APXvYqwZZW9N6HttLUMOUHu8OVQ7m6alCwA745gemlJdjpV2mFtSjU3BCMjNtw+/B8K/8fMOgXq8xsaod0+xpp8WY4U=
-X-Received: by 2002:ac8:6684:: with SMTP id d4mr6915506qtp.204.1565251662202;
- Thu, 08 Aug 2019 01:07:42 -0700 (PDT)
+        id S1731958AbfHHIIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:08:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731658AbfHHIIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:08:40 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 987222187F;
+        Thu,  8 Aug 2019 08:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565251719;
+        bh=LEJBdGF3+zKiZ/gDRK/GSLC+1nib/flq+adxh2DDplc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BOa6iG5SmZfPC3g1w7HTtZx+ntqjy7vtMoKRrOB40Y1IAJadxT/a1qUH7M1hcWNN7
+         W8qiRDWZYvufdHdGDu+qM1d8a1ZVlDor3TTEdzdRnqhOaZb7tBU7wRwv+eqaHSlT7g
+         lxSTZpDBXTzZEgo0HCx0IGQcI53ACbHG1ptXyEHE=
+Date:   Thu, 8 Aug 2019 09:08:33 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Cosmin Stefan Stoica <cosmin.stoica@nxp.com>,
+        Larisa Ileana Grigore <larisa.grigore@nxp.com>
+Subject: Re: [PATCH 5/6] tty: serial: Add linflexuart driver for S32V234
+Message-ID: <20190808080832.nleult5bknmzr3ze@willie-the-truck>
+References: <20190802194702.30249-1-stefan-gabriel.mirea@nxp.com>
+ <20190802194702.30249-6-stefan-gabriel.mirea@nxp.com>
 MIME-Version: 1.0
-References: <20190807151009.31971-1-hch@lst.de> <20190807152215.GA26690@kroah.com>
- <20190807152438.GA16495@lst.de> <alpine.DEB.2.21.9999.1908070832500.13971@viisi.sifive.com>
- <20190808075029.GB30308@lst.de>
-In-Reply-To: <20190808075029.GB30308@lst.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 8 Aug 2019 10:07:26 +0200
-Message-ID: <CAK8P3a1nwTjt7gbL7bCa11-smQ0c6o-6QUL0vLZnZxzT_aa4-g@mail.gmail.com>
-Subject: Re: [PATCH] riscv: move sifive_l2_cache.c to drivers/misc
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        linux-riscv@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802194702.30249-6-stefan-gabriel.mirea@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 8, 2019 at 9:50 AM Christoph Hellwig <hch@lst.de> wrote:
-> On Wed, Aug 07, 2019 at 08:40:58AM -0700, Paul Walmsley wrote:
-> > On Wed, 7 Aug 2019, Christoph Hellwig wrote:
-> > > On Wed, Aug 07, 2019 at 05:22:15PM +0200, Greg KH wrote:
-> > > > > Fixes: a967a289f169 ("RISC-V: sifive_l2_cache: Add L2 cache controller driver for SiFive SoCs")
-> > > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > > > > ---
-> > > > >  arch/riscv/mm/Makefile                            | 1 -
-> > > > >  drivers/misc/Makefile                             | 1 +
-> > > > >  {arch/riscv/mm => drivers/misc}/sifive_l2_cache.c | 0
-> > > > >  3 files changed, 1 insertion(+), 1 deletion(-)
-> > > > >  rename {arch/riscv/mm => drivers/misc}/sifive_l2_cache.c (100%)
-> > > >
-> > > > Why isn't this in drivers/edac/ ?
-> > > > why is this a misc driver?  Seems like it should sit next to the edac
-> > > > stuff.
-> > >
-> > > No idea.  EDAC maintainers, would you object to taking what is
-> > > currently in arch/riscv/mm//sifive_l2_cache.c to drivers/edac/ ?
-> >
-> > If this driver is moved out of arch/riscv/mm, it should ideally go into
-> > some sort of common L2 cache controller driver directory, along
-> > with other L2 cache controller drivers like arch/arm/mm/*l2c*.
-> >
-> > Like many L2 cache controllers, this controller also supports cache
-> > flushing operations and SoC-specific way operations.  We just don't use
-> > those on RISC-V - yet.
->
-> Well, another reason to not have it under arch/riscv/ as it is a SOC
-> specific driver, which we all have somewhere else, just like arm64
-> and new arm ports do.  And especially not unconditionally built.
+On Fri, Aug 02, 2019 at 07:47:23PM +0000, Stefan-gabriel Mirea wrote:
+> Introduce support for LINFlex driver, based on:
+> - the version of Freescale LPUART driver after commit b3e3bf2ef2c7 ("Merge
+>   4.0-rc7 into tty-next");
+> - commit abf1e0a98083 ("tty: serial: fsl_lpuart: lock port on console
+>   write").
+> In this basic version, the driver can be tested using initramfs and relies
+> on the clocks and pin muxing set up by U-Boot.
+> 
+> Remarks concerning the earlycon support:
+> 
+> - LinFlexD does not allow character transmissions in the INIT mode (see
+>   section 47.4.2.1 in the reference manual[1]). Therefore, a mutual
+>   exclusion between the first linflex_setup_watermark/linflex_set_termios
+>   executions and linflex_earlycon_putchar was employed and the characters
+>   normally sent to earlycon during initialization are kept in a buffer and
+>   sent afterwards.
+> 
+> - Empirically, character transmission is also forbidden within the last 1-2
+>   ms before entering the INIT mode, so we use an explicit timeout
+>   (PREINIT_DELAY) between linflex_earlycon_putchar and the first call to
+>   linflex_setup_watermark.
+> 
+> - U-Boot currently uses the UART FIFO mode, while this driver makes the
+>   transition to the buffer mode. Therefore, the earlycon putchar function
+>   matches the U-Boot behavior before initializations and the Linux behavior
+>   after.
+> 
+> [1] https://www.nxp.com/webapp/Download?colCode=S32V234RM
+> 
+> Signed-off-by: Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>
+> Signed-off-by: Adrian.Nitu <adrian.nitu@freescale.com>
+> Signed-off-by: Larisa Grigore <Larisa.Grigore@nxp.com>
+> Signed-off-by: Ana Nedelcu <B56683@freescale.com>
+> Signed-off-by: Mihaela Martinas <Mihaela.Martinas@freescale.com>
+> Signed-off-by: Matthew Nunez <matthew.nunez@nxp.com>
+> [stefan-gabriel.mirea@nxp.com: Reduced for upstreaming and implemented
+>                                earlycon support]
+> Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+> ---
+>  .../admin-guide/kernel-parameters.txt         |   6 +
+>  drivers/tty/serial/Kconfig                    |  15 +
+>  drivers/tty/serial/Makefile                   |   1 +
+>  drivers/tty/serial/fsl_linflexuart.c          | 956 ++++++++++++++++++
+>  include/uapi/linux/serial_core.h              |   3 +
+>  5 files changed, 981 insertions(+)
+>  create mode 100644 drivers/tty/serial/fsl_linflexuart.c
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 46b826fcb5ad..4d545732aadc 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1090,6 +1090,12 @@
+>  			the framebuffer, pass the 'ram' option so that it is
+>  			mapped with the correct attributes.
+>  
+> +		linflex,<addr>
+> +			Use early console provided by Freescale LinFlex UART
+> +			serial driver for NXP S32V234 SoCs. A valid base
+> +			address must be provided, and the serial port must
+> +			already be setup and configured.
 
-soc specific drivers that don't have their own subsystem can
-go into drivers/soc/$VENDOR/.
+Why isn't earlycon= sufficient for this?
 
-For this driver, I would also think that the edac subsystem is the
-best fit. Right now, the driver is split in two halves: there
-is drivers/edac/sifive_edac.c and arch/riscv/mm/sifive_l2_cache.c,
-with neither of those working without the other.
-
-Moving both into a single file would seem to allow simplifying
-it as a proper 'platform_driver', which the drivers/edac side today
-is not (it just registers a platform device in its module_init call).
-
-      Arnd
+Will
