@@ -2,64 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 007CF85A63
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 08:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CA6085A68
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 08:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731064AbfHHGSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 02:18:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3781 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726475AbfHHGSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 02:18:04 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 53A80D5E323807A7AC4A;
-        Thu,  8 Aug 2019 14:18:01 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 8 Aug 2019
- 14:17:53 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix build error while CONFIG_NLS=m
-To:     YueHaibing <yuehaibing@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190808020253.27276-1-yuehaibing@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <4e1c457e-621f-e9bd-e625-3a9f27da2277@huawei.com>
-Date:   Thu, 8 Aug 2019 14:18:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1731127AbfHHGSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 02:18:24 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34688 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfHHGSX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 02:18:23 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n9so37257840pgc.1;
+        Wed, 07 Aug 2019 23:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+r07c/lyTLQL7Cb4AGcka/LdpqVJd36eUIffcM8hTEI=;
+        b=sLFf/+X5t4mu5egKSTcDzlZSPbcJL6iZZvb/C1hbneK3GQewRY0r6dePKSVxXYBtcc
+         Bjc9990Yfki8ZU+cvc6XgC2m3JTSUPtOitKLi1eDo6+M/XU/hkBu5hH8teK2OHRv/Ayw
+         gccl4gGPs9zP8EdniqWEXahGiou4cVqazBRovMUEkf5QfvPI6gD5hkz4BAnSdo0yg973
+         U9NZE6qpaoZ6qodH2NbpPHjSiM4xYrFAB7myZhH4+tuvVVwDTyyAEMxOJ5wFzePDtJ1H
+         1UxHS+mvTHNt5M9YBFwSFXcxu9LeunlN9/KCoWzsFoPWmGJ6uG9gbQ0YIaSkBHJjcx6r
+         FY2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+r07c/lyTLQL7Cb4AGcka/LdpqVJd36eUIffcM8hTEI=;
+        b=XGPLVBODUayNOy15kxTzB4z+AeR5gQ7nxZbPzaQGw1jEX/97N3RAlUKjKcbqgy4zdE
+         zBQlBbZmoaVRXJP5WRr+pvYUtD0FA5M/LCtB2RbD4LZ9CTlQZsitlH90DIB3mITwMW8E
+         GLqxD64b92io840e7iNATsTfU5oyEchqNdZFHpNYZUbyfsIc72BXS4Y4M+BED69ffZRe
+         8nTtFT+O+Mod/HKcM+GGsq5lppne+Bam7qbi7yMlJqJB5ASQ1IakLzdxo+2lo9B/L+zb
+         S5zo3W2p/jsTPLB01gVLVgcQDCd+DU+eYHW+USCLGpPfpF4EM/SGW6Aztath2VPqGhEI
+         YMmw==
+X-Gm-Message-State: APjAAAUzyuVrwxWpnFuOzZcr8/NtyF0Ba+wfhBqMtZvrQk0EB/8AIw0w
+        qalgZSOD27ewcgBI4NCyWwE=
+X-Google-Smtp-Source: APXvYqyI6sQQOLvaUkbq+xcUhJltUxl7laFmc7PhkK8VyXwXItFdpiaQtI0VtgaEzPhH6BddDmMMCw==
+X-Received: by 2002:aa7:9118:: with SMTP id 24mr13168559pfh.56.1565245102667;
+        Wed, 07 Aug 2019 23:18:22 -0700 (PDT)
+Received: from gmail.com (c-73-140-212-29.hsd1.wa.comcast.net. [73.140.212.29])
+        by smtp.gmail.com with ESMTPSA id u7sm84239482pgr.94.2019.08.07.23.18.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 07 Aug 2019 23:18:21 -0700 (PDT)
+Date:   Wed, 7 Aug 2019 23:18:19 -0700
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCHv5 06/37] alarmtimer: Provide get_timespec() callback
+Message-ID: <20190808061819.GA20004@gmail.com>
+References: <20190729215758.28405-1-dima@arista.com>
+ <20190729215758.28405-7-dima@arista.com>
+ <alpine.DEB.2.21.1908070803030.24014@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20190808020253.27276-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1908070803030.24014@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Haibing,
-
-Thanks for the patch!
-
-Out of curiosity, does Hulk Robot check linux-next git repo as well? This will
-be more valuable if the bug can be found during development of related patch?
-
-On 2019/8/8 10:02, YueHaibing wrote:
-> If CONFIG_F2FS_FS=y but CONFIG_NLS=m, building fails:
+On Wed, Aug 07, 2019 at 08:04:10AM +0200, Thomas Gleixner wrote:
+> On Mon, 29 Jul 2019, Dmitry Safonov wrote:
+> >  /**
+> > @@ -869,8 +871,10 @@ static int __init alarmtimer_init(void)
+> >  	/* Initialize alarm bases */
+> >  	alarm_bases[ALARM_REALTIME].base_clockid = CLOCK_REALTIME;
+> >  	alarm_bases[ALARM_REALTIME].get_ktime = &ktime_get_real;
+> > +	alarm_bases[ALARM_REALTIME].get_timespec = posix_get_timespec,
 > 
-> fs/f2fs/file.o: In function `f2fs_ioctl':
-> file.c:(.text+0xb86f): undefined reference to `utf16s_to_utf8s'
-> file.c:(.text+0xe651): undefined reference to `utf8s_to_utf16s'
+> That's just wrong:
 > 
-> Select CONFIG_NLS to fix this.
+> >  /*
+> >   * Get monotonic time for posix timers
+> >   */
+> > -static int posix_get_timespec(clockid_t which_clock, struct timespec64 *tp)
+> > +int posix_get_timespec(clockid_t which_clock, struct timespec64 *tp)
+> >  {
+> >  	ktime_get_ts64(tp);
+> >  	return 0;
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 61a3da4d5ef8 ("f2fs: support FS_IOC_{GET,SET}FSLABEL")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Using a proper function name would have avoided this.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
+You are right. Will fix. Thanks!
+> 
