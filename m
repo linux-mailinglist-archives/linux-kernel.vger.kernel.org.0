@@ -2,129 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E8C58575A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 02:59:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB7F185760
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 03:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbfHHA66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 20:58:58 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39572 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730433AbfHHA66 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 20:58:58 -0400
-Received: by mail-pg1-f194.google.com with SMTP id u17so43074136pgi.6
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 17:58:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ws7QsD740ytKlYZBbDWe9a4bjMxNv3fcn3TYb8t49PE=;
-        b=orjX/MK0sJHQSUrxArY/JYNEs4J52gygP3yaquH3DunYVe7+V+XNyL4/F2HFWCkK+t
-         Qvbrt+u4gQaldpasKtHCcH+mu4Qi61kSClP48BDF3MJSWwxMX1tZRdrv8Djx0EnVxBII
-         5tYHr9ela4SHUJPOJH48VEV1mma8wnOwsTjL0L9OiHpFidg8I7TEKoSRndcLRXMa4Oa9
-         f4hkQnDP1dmE1tcRWGssj2QsqZmQEDIWDOBbO0eUbKJbZMZSImGn/Z6U3+ji53Vkpvdr
-         oFttv4jgkQKXAYQzRkr/XtiU455dSRCByy77mivFAJ1S0H8nSYbYAjNorOIQs+3eCTXV
-         DoAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ws7QsD740ytKlYZBbDWe9a4bjMxNv3fcn3TYb8t49PE=;
-        b=Sh0k7Hfw3N1/htQuqbqLB2P7GINiqNQMoWnJ7kZs6Eg4kUhngQewUxqIlf+zEaXws2
-         +flqA6tuwEEjnJauZw51QoeSKwtKN3bNPtB2k+vMatreI1RclQHHKNuP5FJRJsV+51ik
-         1PwIihx/7VOpwrOCnp9/GEyn2B57ivn8stl1HhmAz5/jB9p5tB6jQGcIRnk0Jfmfuayg
-         OnTSy8HgN9FS6aE46TqCHefmZmlYeaKoD8d/LwgniRE7PKu8WIUpssLN3Cj6UUxVTGmN
-         Yk+OE403P/5l+39/Te482Bo00LhB2ltBeb79eda0Hefl3mj6DRxrAQRsngJhOYXf7G/a
-         foEQ==
-X-Gm-Message-State: APjAAAU/cKls30pnlR61hZwILz8Xq84rcCWB8hgtoJNrk0Bt1ZXC+/Gh
-        9iOjz+DO4CEIg9jk5gQckRAl/mFU
-X-Google-Smtp-Source: APXvYqwcUE8sSx2H1x9hupsadC5OcexbCjX/jjqJgdzhTiyrOXtNSSmSAKmDq3qMPz+WD4z/IHMDyw==
-X-Received: by 2002:aa7:9481:: with SMTP id z1mr12455276pfk.92.1565225936855;
-        Wed, 07 Aug 2019 17:58:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 65sm100858746pgf.30.2019.08.07.17.58.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 17:58:55 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] linux/bits.h: Add compile time sanity check of
- GENMASK inputs
-To:     Joe Perches <joe@perches.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190731190309.19909-1-rikard.falkeborn@gmail.com>
- <20190801230358.4193-1-rikard.falkeborn@gmail.com>
- <20190801230358.4193-2-rikard.falkeborn@gmail.com>
- <20190807142728.GA16360@roeck-us.net>
- <CAK7LNATGuO0D0a-sTvWw5Pzkn5C7jrLiS=rCwiRsEqaS86KbuQ@mail.gmail.com>
- <099e07d4b4ecca9798404b95dc78c89bc3dd9f7f.camel@perches.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <c4157db4-dbda-5ab1-2092-83c4a3b0f19e@roeck-us.net>
-Date:   Wed, 7 Aug 2019 17:58:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2389515AbfHHBBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 21:01:13 -0400
+Received: from ozlabs.org ([203.11.71.1]:47775 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387536AbfHHBBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Aug 2019 21:01:13 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 463qnK0hXRz9sN6;
+        Thu,  8 Aug 2019 11:01:09 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565226071;
+        bh=MsMFPAr56dFY8txzKEu0S50XsC7x6UWlqVj387uslpE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ul9uHSv2Ta3v3XNn4l0MbL7N55D+LloSbQoLFOMCydtRMR2w64dbN2GNiSq4Q4iVL
+         auqDYaV3U9Rm736O4eZ4XEyF4qFkBDRqIStHXY6JBXedpNhm+xN+qFWHlFxxC3gIBo
+         qwHRKRVFPaQ8JrQPwJgM4lPDerygjqIQ1eLt0/CI54EAHMhhE/ddu7qADHl0gKuJUU
+         9Y1OC96+/Cm/h5LBJgyNZmS8yopeCvRXy7dA9DGXoFVb16PEGN1lc2TwKpFa78KhVE
+         J1VSHRjVp7fVo+kDdHjWaOLEaOFkximdMWSIIMvfnBswO0y/s9OtWGnMarmYLWB2LJ
+         qxIFiOKzVJ5IQ==
+Date:   Thu, 8 Aug 2019 11:01:08 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        kishon@ti.com, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, lkft-triage@lists.linaro.org
+Subject: Re: Linux next-20190807: arm64: build failed -
+ phy-rockchip-inno-hdmi.c:1046:26: error: anonymous bit-field has negative
+ width (-1)
+Message-ID: <20190808110108.2db1b128@canb.auug.org.au>
+In-Reply-To: <CA+G9fYvehn=5Rn0RHjFvCc1pCDFTUtxNeR11CQjD6rjM53D4ig@mail.gmail.com>
+References: <CA+G9fYvehn=5Rn0RHjFvCc1pCDFTUtxNeR11CQjD6rjM53D4ig@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <099e07d4b4ecca9798404b95dc78c89bc3dd9f7f.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/PnbChS=XA/gL0CFTVs6ccQo";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/7/19 5:07 PM, Joe Perches wrote:
-> On Wed, 2019-08-07 at 23:55 +0900, Masahiro Yamada wrote:
->> On Wed, Aug 7, 2019 at 11:27 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> []
->>> Who is going to fix the fallout ? For example, arm64:defconfig no longer
->>> compiles with this patch applied.
->>>
->>> It seems to me that the benefit of catching misuses of GENMASK is much
->>> less than the fallout from no longer compiling kernels, since those
->>> kernels won't get any test coverage at all anymore.
->>
->> We cannot apply this until we fix all errors.
->> I do not understand why Andrew picked up this so soon.
-> 
-> I think it makes complete sense to break -next (not mainline)
-> and force
-> people to fix defects.  Especially these types of
-> defects that are
-> trivial to fix.
-> 
+--Sig_/PnbChS=XA/gL0CFTVs6ccQo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't think this (from next-20190807):
+Hi Naresh,
 
-Build results:
-	total: 158 pass: 137 fail: 21
-Qemu test results:
-	total: 391 pass: 318 fail: 73
+On Wed, 7 Aug 2019 16:48:15 +0530 Naresh Kamboju <naresh.kamboju@linaro.org=
+> wrote:
+>
+> Linux next 20190807 arm64 default config build failed due to below error.
+>=20
+> /drivers/phy/rockchip/phy-rockchip-inno-hdmi.c:1046:26: error:
+> anonymous bit-field has negative width (-1)
+>                 inno_write(inno, 0xc6, RK3328_TERM_RESISTOR_CALIB_SPEED_7=
+_0(v));
+>                                        ^
+> ../drivers/phy/rockchip/phy-rockchip-inno-hdmi.c:201:50: note:
+> expanded from macro 'RK3328_TERM_RESISTOR_CALIB_SPEED_7_0'
+> #define RK3328_TERM_RESISTOR_CALIB_SPEED_7_0(x)         UPDATE(x, 7, 9)
+>                                                         ^
+> ../drivers/phy/rockchip/phy-rockchip-inno-hdmi.c:24:42: note: expanded
+> from macro 'UPDATE'
+> #define UPDATE(x, h, l)         (((x) << (l)) & GENMASK((h), (l)))
+>                                                 ^
+> ../include/linux/bits.h:39:3: note: expanded from macro 'GENMASK'
+>         (GENMASK_INPUT_CHECK(high, low) + __GENMASK(high, low))
+>          ^
+> ../include/linux/bits.h:24:18: note: expanded from macro 'GENMASK_INPUT_C=
+HECK'
+>         ((unsigned long)BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+>                         ^
+> ../include/linux/build_bug.h:16:47: note: expanded from macro
+> 'BUILD_BUG_ON_ZERO'
+> #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
+>=20
+> Config link,
+> https://storage.kernelci.org/next/master/next-20190807/arm64/defconfig/cl=
+ang-8/kernel.config
+>=20
+> Build link,
+> https://storage.kernelci.org/next/master/next-20190807/arm64/defconfig/cl=
+ang-8/build.log
 
-is very useful. The situation is bad enough for newly introduced problems.
-It is all but impossible to get fixes for all problems discovered (or introduced)
-by adding checks like this one. In some cases, no one will care. In others,
-no one will pick up patches. Sometimes people won't know or realize that
-they are expected to fix something. Making the situation worse, the failures
-introduced by the new checks will hide other accumulating problems.
+I think the patch that caused this has been removed form linux-next for
+today (it had other problems as well).
 
-arch/sh has failed to build in mainline since 7/27 and in -next since
-next-20190711, due to the added "fallthrough" warning. I don't think
-that is too useful either. Ok, that situation may be a sign that the
-architecture isn't maintained as well as it should, but I don't think
-that this warrants breaking it on purpose in the hope to trigger
-some kind of reaction.
+--=20
+Cheers,
+Stephen Rothwell
 
-I don't mind if new checks are introduced, and I agree that it is useful
-and makes sense. But the checks should only be introduced after a reasonable
-attempt was made to fix _all_ associated problems. That doesn't mean that
-the entire work has to be done by the person introducing the check, but I
-do see that person responsible for making sure (or a reasonable definition
-of "make sure") that all problems are fixed before actually introducing
-the check. Yes, I understand, this is a lot of work, but adding checks
-and letting all hell break loose can not be the answer.
+--Sig_/PnbChS=XA/gL0CFTVs6ccQo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Guenter
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1LdFQACgkQAVBC80lX
+0GzDtgf/aEnfScThkUKIL3HX/GJiKdIkq1RrUzMyRCDBGdYLXLEqa5AkuWd6x0qb
+9MkNVLdg6ZatO2+T1JMstagNLw6X8ts3zQczqd/10e1mBlB2cw2jdO7jbLRmEO0m
+fz2igYmPkgFEN2ErYfwxdx0emqHpLkt0unV6TfSGNIt83isODNkH0YKS7LrSK+PK
+FDGj+eCgSFt8xjQ4Cpz+4XMngun6OMn8nRVCGj0kcRlDBvtSavxzQCFmI9HzF7Yn
+fHQ85Zg7m17qilNAJ+8HgjA5t5u18471SQxsgPujsuP1iWvRgdA5hzFujmFLpLDf
+Jxlds7woEgx7Q41L5gg56wTFwJs8Sw==
+=u6RM
+-----END PGP SIGNATURE-----
+
+--Sig_/PnbChS=XA/gL0CFTVs6ccQo--
