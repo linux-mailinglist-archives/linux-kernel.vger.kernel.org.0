@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96B3386B8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F29786B95
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:34:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390335AbfHHUdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 16:33:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59006 "EHLO
+        id S2404818AbfHHUd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 16:33:57 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59082 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389974AbfHHUdw (ORCPT
+        with ESMTP id S2390337AbfHHUdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 16:33:52 -0400
+        Thu, 8 Aug 2019 16:33:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=MVpAPxBt8ZhswfIlLL1JU/jg2jSxi77lrappcNJH5Bk=; b=nQvyrWqmuFf1
-        WIV5m3AVAX7ebPPun2VoxGfJLyfGTDPxBjHqqNxRV/IY4CsUw2VeE0TIsthdBWGH0bNNIIzRfig+V
-        b8Nr2/thaX3B5GMYQW69wKLrmQW6QwcS68wvmRvWo8U2fEeSXqjpLiHK4PxVP2gihm/UJUGpzsc6i
-        S7uWU=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        List-Archive; bh=/rq/2ce6mWXa/vegfzxi5Nnd0b+NfKRKsaObwqhcVSw=; b=eO4hS+87LtFB
+        xs//n93trhQpa6EEHoNxaR3YQUphwF8qeHgW+fvgTEttlJH0RHUE8xi906ona+f+oRl72I3GuHASa
+        HbaK+7OmollxD3mzw/PBMjiNZXnEPiFxg1UJxpsvTBO1ugufKy6GHbr1mCKp+Zr6Hr1ZhwGKawvFq
+        kO47k=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hvp6S-00041B-4s; Thu, 08 Aug 2019 20:33:40 +0000
+        id 1hvp6b-00042g-BG; Thu, 08 Aug 2019 20:33:49 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6ED712742EDC; Thu,  8 Aug 2019 21:33:39 +0100 (BST)
+        id DDAD72742B42; Thu,  8 Aug 2019 21:33:48 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+Cc:     broonie@kernel.org, Hulk Robot <hulkci@huawei.com>,
         lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, perex@perex.cz,
-        steven.eckhoff.opensource@gmail.com, tiwai@suse.com
-Subject: Applied "ASoC: tscs454: remove unused variable 'PLL_48K_RATE'" to the asoc tree
-In-Reply-To: <20190808032552.45360-1-yuehaibing@huawei.com>
+        maarten@treewalker.org, Mark Brown <broonie@kernel.org>,
+        paul@crapouillou.net
+Subject: Applied "regulator: act8865: Fix build error without CONFIG_POWER_SUPPLY" to the regulator tree
+In-Reply-To: <20190807133822.67124-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190808203339.6ED712742EDC@ypsilon.sirena.org.uk>
-Date:   Thu,  8 Aug 2019 21:33:39 +0100 (BST)
+Message-Id: <20190808203348.DDAD72742B42@ypsilon.sirena.org.uk>
+Date:   Thu,  8 Aug 2019 21:33:48 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: tscs454: remove unused variable 'PLL_48K_RATE'
+   regulator: act8865: Fix build error without CONFIG_POWER_SUPPLY
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -72,33 +72,42 @@ to this mail.
 Thanks,
 Mark
 
-From 8e082d8f42fabf9a4a0708d8012f4995765478fc Mon Sep 17 00:00:00 2001
+From 5375f1efd70b5adbbbaded22889d50c07f6f89a4 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 8 Aug 2019 11:25:52 +0800
-Subject: [PATCH] ASoC: tscs454: remove unused variable 'PLL_48K_RATE'
+Date: Wed, 7 Aug 2019 21:38:22 +0800
+Subject: [PATCH] regulator: act8865: Fix build error without
+ CONFIG_POWER_SUPPLY
 
-The global variable 'PLL_48K_RATE' is never used
-so just remove it.
+Building without CONFIG_POWER_SUPPLY will fail:
 
+drivers/regulator/act8865-regulator.o: In function `act8865_pmic_probe':
+act8865-regulator.c:(.text+0x357): undefined reference to `devm_power_supply_register'
+drivers/regulator/act8865-regulator.o: In function `act8600_charger_get_property':
+act8865-regulator.c:(.text+0x3f1): undefined reference to `power_supply_get_drvdata'
+
+Add POWER_SUPPLY dependency to Kconfig.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 2d09a79bf637 ("regulator: act8865: Add support for act8600 charger")
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190808032552.45360-1-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190807133822.67124-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tscs454.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/regulator/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/codecs/tscs454.c b/sound/soc/codecs/tscs454.c
-index 93d84e5ae2d5..c3587af9985c 100644
---- a/sound/soc/codecs/tscs454.c
-+++ b/sound/soc/codecs/tscs454.c
-@@ -22,7 +22,6 @@
- 
- #include "tscs454.h"
- 
--static const unsigned int PLL_48K_RATE = (48000 * 256);
- static const unsigned int PLL_44_1K_RATE = (44100 * 256);
- 
- #define COEFF_SIZE 3
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index b57093d7c01f..37e64884b9ee 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -83,6 +83,7 @@ config REGULATOR_88PM8607
+ config REGULATOR_ACT8865
+ 	tristate "Active-semi act8865 voltage regulator"
+ 	depends on I2C
++	depends on POWER_SUPPLY
+ 	select REGMAP_I2C
+ 	help
+ 	  This driver controls a active-semi act8865 voltage output
 -- 
 2.20.1
 
