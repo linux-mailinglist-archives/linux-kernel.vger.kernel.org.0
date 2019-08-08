@@ -2,158 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5480D86356
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 15:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70A1C8638D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 15:45:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733216AbfHHNn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 09:43:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39560 "EHLO mail.kernel.org"
+        id S2389958AbfHHNox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 09:44:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35644 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732297AbfHHNn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 09:43:58 -0400
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1733253AbfHHNoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 09:44:24 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 282CF2171F;
-        Thu,  8 Aug 2019 13:43:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565271837;
-        bh=33CZ8BCc/mP1hiNi8EJruOyKiaf5ldXoU8hbOOmln90=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jBGWMNbI+dfk1O1v2vrc4xhe2sxk55BGLecr95BrhBBrk8yReX3iy63K9/xXPIxfx
-         XHiLJ5BLVTBxFxUnsiDVOXkj2YITt6XXw0KAhxsT2DeGM1JpYGgm493RDtJubKrXrJ
-         riT9Oxg2+qwT4GGg9Hrm7srReHQpK75/WJheLbTA=
-Date:   Thu, 8 Aug 2019 08:43:56 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     linux-nvme <linux-nvme@lists.infradead.org>,
-        Keith Busch <kbusch@kernel.org>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajat Jain <rajatja@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] nvme-pci: Allow PCI bus-level PM to be used if
- ASPM is disabled
-Message-ID: <20190808134356.GF151852@google.com>
-References: <4323ed84dd07474eab65699b4d007aaf@AUSX13MPC105.AMER.DELL.COM>
- <20190731221956.GB15795@localhost.localdomain>
- <1921165.pTveHRX1Co@kreacher>
- <1870928.r7tBYyfqdz@kreacher>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1870928.r7tBYyfqdz@kreacher>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by mx1.redhat.com (Postfix) with ESMTPS id 30F40C0546D5;
+        Thu,  8 Aug 2019 13:44:24 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-144.ams2.redhat.com [10.36.116.144])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 02A885C220;
+        Thu,  8 Aug 2019 13:44:18 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 31E8C17444; Thu,  8 Aug 2019 15:44:18 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 01/17] drm/ttm: turn ttm_bo_device.vma_manager into a pointer
+Date:   Thu,  8 Aug 2019 15:44:01 +0200
+Message-Id: <20190808134417.10610-2-kraxel@redhat.com>
+In-Reply-To: <20190808134417.10610-1-kraxel@redhat.com>
+References: <20190808134417.10610-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 08 Aug 2019 13:44:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 12:10:06PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> One of the modifications made by commit d916b1be94b6 ("nvme-pci: use
-> host managed power state for suspend") was adding a pci_save_state()
-> call to nvme_suspend() in order to prevent the PCI bus-level PM from
-> being applied to the suspended NVMe devices, but if ASPM is not
-> enabled for the target NVMe device, that causes its PCIe link to stay
-> up and the platform may not be able to get into its optimum low-power
-> state because of that.
-> 
-> For example, if ASPM is disabled for the NVMe drive (PC401 NVMe SK
-> hynix 256GB) in my Dell XPS13 9380, leaving it in D0 during
-> suspend-to-idle prevents the SoC from reaching package idle states
-> deeper than PC3, which is way insufficient for system suspend.
+Rename the embedded struct vma_offset_manager, it is named _vma_manager
+now.  ttm_bo_device.vma_manager is a pointer now, pointing to the
+embedded ttm_bo_device._vma_manager by default.
 
-Just curious: I assume the SoC you reference is some part of the NVMe
-drive?
+Add ttm_bo_device_init_with_vma_manager() function which allows to
+initialize ttm with a different vma manager.
 
-> To address this shortcoming, make nvme_suspend() check if ASPM is
-> enabled for the target device and fall back to full device shutdown
-> and PCI bus-level PM if that is not the case.
-> 
-> Fixes: d916b1be94b6 ("nvme-pci: use host managed power state for suspend")
-> Link: https://lore.kernel.org/linux-pm/2763495.NmdaWeg79L@kreacher/T/#t
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> -> v2:
->   * Move the PCI/PCIe ASPM changes to a separate patch.
->   * Do not add a redundant ndev->last_ps == U32_MAX check in nvme_suspend().
-> 
-> ---
->  drivers/nvme/host/pci.c |   13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> Index: linux-pm/drivers/nvme/host/pci.c
-> ===================================================================
-> --- linux-pm.orig/drivers/nvme/host/pci.c
-> +++ linux-pm/drivers/nvme/host/pci.c
-> @@ -2846,7 +2846,7 @@ static int nvme_resume(struct device *de
->  	struct nvme_dev *ndev = pci_get_drvdata(to_pci_dev(dev));
->  	struct nvme_ctrl *ctrl = &ndev->ctrl;
->  
-> -	if (pm_resume_via_firmware() || !ctrl->npss ||
-> +	if (ndev->last_ps == U32_MAX ||
->  	    nvme_set_power_state(ctrl, ndev->last_ps) != 0)
->  		nvme_reset_ctrl(ctrl);
->  	return 0;
-> @@ -2859,6 +2859,8 @@ static int nvme_suspend(struct device *d
->  	struct nvme_ctrl *ctrl = &ndev->ctrl;
->  	int ret = -EBUSY;
->  
-> +	ndev->last_ps = U32_MAX;
-> +
->  	/*
->  	 * The platform does not remove power for a kernel managed suspend so
->  	 * use host managed nvme power settings for lowest idle power if
-> @@ -2866,8 +2868,14 @@ static int nvme_suspend(struct device *d
->  	 * shutdown.  But if the firmware is involved after the suspend or the
->  	 * device does not support any non-default power states, shut down the
->  	 * device fully.
-> +	 *
-> +	 * If ASPM is not enabled for the device, shut down the device and allow
-> +	 * the PCI bus layer to put it into D3 in order to take the PCIe link
-> +	 * down, so as to allow the platform to achieve its minimum low-power
-> +	 * state (which may not be possible if the link is up).
->  	 */
-> -	if (pm_suspend_via_firmware() || !ctrl->npss) {
-> +	if (pm_suspend_via_firmware() || !ctrl->npss ||
-> +	    !pcie_aspm_enabled_mask(pdev)) {
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/drm/ttm/ttm_bo_driver.h | 11 +++++++++--
+ drivers/gpu/drm/ttm/ttm_bo.c    | 29 +++++++++++++++++++++--------
+ drivers/gpu/drm/ttm/ttm_bo_vm.c |  6 +++---
+ 3 files changed, 33 insertions(+), 13 deletions(-)
 
-This seems like a layering violation, in the sense that ASPM is
-supposed to be hardware-autonomous and invisible to software.
+diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
+index 3f1935c19a66..2f84d6bcd1a7 100644
+--- a/include/drm/ttm/ttm_bo_driver.h
++++ b/include/drm/ttm/ttm_bo_driver.h
+@@ -441,7 +441,8 @@ extern struct ttm_bo_global {
+  *
+  * @driver: Pointer to a struct ttm_bo_driver struct setup by the driver.
+  * @man: An array of mem_type_managers.
+- * @vma_manager: Address space manager
++ * @vma_manager: Address space manager (pointer)
++ * @_vma_manager: Address space manager (enbedded)
+  * lru_lock: Spinlock that protects the buffer+device lru lists and
+  * ddestroy lists.
+  * @dev_mapping: A pointer to the struct address_space representing the
+@@ -464,7 +465,8 @@ struct ttm_bo_device {
+ 	/*
+ 	 * Protected by internal locks.
+ 	 */
+-	struct drm_vma_offset_manager vma_manager;
++	struct drm_vma_offset_manager *vma_manager;
++	struct drm_vma_offset_manager _vma_manager;
+ 
+ 	/*
+ 	 * Protected by the global:lru lock.
+@@ -597,6 +599,11 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
+ 		       struct ttm_bo_driver *driver,
+ 		       struct address_space *mapping,
+ 		       bool need_dma32);
++int ttm_bo_device_init_with_vma_manager(struct ttm_bo_device *bdev,
++					struct ttm_bo_driver *driver,
++					struct address_space *mapping,
++					struct drm_vma_offset_manager *vma_manager,
++					bool need_dma32);
+ 
+ /**
+  * ttm_bo_unmap_virtual
+diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+index 10a861a1690c..0ed1a1182962 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -672,7 +672,7 @@ static void ttm_bo_release(struct kref *kref)
+ 	struct ttm_bo_device *bdev = bo->bdev;
+ 	struct ttm_mem_type_manager *man = &bdev->man[bo->mem.mem_type];
+ 
+-	drm_vma_offset_remove(&bdev->vma_manager, &bo->base.vma_node);
++	drm_vma_offset_remove(bdev->vma_manager, &bo->base.vma_node);
+ 	ttm_mem_io_lock(man, false);
+ 	ttm_mem_io_free_vm(bo);
+ 	ttm_mem_io_unlock(man);
+@@ -1353,7 +1353,7 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
+ 	 */
+ 	if (bo->type == ttm_bo_type_device ||
+ 	    bo->type == ttm_bo_type_sg)
+-		ret = drm_vma_offset_add(&bdev->vma_manager, &bo->base.vma_node,
++		ret = drm_vma_offset_add(bdev->vma_manager, &bo->base.vma_node,
+ 					 bo->mem.num_pages);
+ 
+ 	/* passed reservation objects should already be locked,
+@@ -1704,7 +1704,7 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev)
+ 			pr_debug("Swap list %d was clean\n", i);
+ 	spin_unlock(&glob->lru_lock);
+ 
+-	drm_vma_offset_manager_destroy(&bdev->vma_manager);
++	drm_vma_offset_manager_destroy(&bdev->_vma_manager);
+ 
+ 	if (!ret)
+ 		ttm_bo_global_release();
+@@ -1713,10 +1713,11 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev)
+ }
+ EXPORT_SYMBOL(ttm_bo_device_release);
+ 
+-int ttm_bo_device_init(struct ttm_bo_device *bdev,
+-		       struct ttm_bo_driver *driver,
+-		       struct address_space *mapping,
+-		       bool need_dma32)
++int ttm_bo_device_init_with_vma_manager(struct ttm_bo_device *bdev,
++					struct ttm_bo_driver *driver,
++					struct address_space *mapping,
++					struct drm_vma_offset_manager *vma_manager,
++					bool need_dma32)
+ {
+ 	struct ttm_bo_global *glob = &ttm_bo_glob;
+ 	int ret;
+@@ -1737,7 +1738,8 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
+ 	if (unlikely(ret != 0))
+ 		goto out_no_sys;
+ 
+-	drm_vma_offset_manager_init(&bdev->vma_manager,
++	bdev->vma_manager = vma_manager;
++	drm_vma_offset_manager_init(&bdev->_vma_manager,
+ 				    DRM_FILE_PAGE_OFFSET_START,
+ 				    DRM_FILE_PAGE_OFFSET_SIZE);
+ 	INIT_DELAYED_WORK(&bdev->wq, ttm_bo_delayed_workqueue);
+@@ -1754,6 +1756,17 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
+ 	ttm_bo_global_release();
+ 	return ret;
+ }
++EXPORT_SYMBOL(ttm_bo_device_init_with_vma_manager);
++
++int ttm_bo_device_init(struct ttm_bo_device *bdev,
++		       struct ttm_bo_driver *driver,
++		       struct address_space *mapping,
++		       bool need_dma32)
++{
++	return ttm_bo_device_init_with_vma_manager(bdev, driver, mapping,
++						   &bdev->_vma_manager,
++						   need_dma32);
++}
+ EXPORT_SYMBOL(ttm_bo_device_init);
+ 
+ /*
+diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+index 85f5bcbe0c76..d4eecde8d050 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+@@ -409,16 +409,16 @@ static struct ttm_buffer_object *ttm_bo_vm_lookup(struct ttm_bo_device *bdev,
+ 	struct drm_vma_offset_node *node;
+ 	struct ttm_buffer_object *bo = NULL;
+ 
+-	drm_vma_offset_lock_lookup(&bdev->vma_manager);
++	drm_vma_offset_lock_lookup(bdev->vma_manager);
+ 
+-	node = drm_vma_offset_lookup_locked(&bdev->vma_manager, offset, pages);
++	node = drm_vma_offset_lookup_locked(bdev->vma_manager, offset, pages);
+ 	if (likely(node)) {
+ 		bo = container_of(node, struct ttm_buffer_object,
+ 				  base.vma_node);
+ 		bo = ttm_bo_get_unless_zero(bo);
+ 	}
+ 
+-	drm_vma_offset_unlock_lookup(&bdev->vma_manager);
++	drm_vma_offset_unlock_lookup(bdev->vma_manager);
+ 
+ 	if (!bo)
+ 		pr_err("Could not find buffer object to map\n");
+-- 
+2.18.1
 
-IIUC the NVMe device will go to the desired package idle state if the
-link is in L0s or L1, but not if the link is in L0.  I don't
-understand that connection; AFAIK that would be something outside the
-scope of the PCIe spec.
-
-The spec (PCIe r5.0, sec 5.4.1.1.1 for L0s, 5.4.1.2.1 for L1) is
-careful to say that when the conditions are right, devices "should"
-enter L0s but it is never mandatory, or "may" enter L1.
-
-And this patch assumes that if ASPM is enabled, the link will
-eventually go to L0s or L1.  Because the PCIe spec doesn't mandate
-that transition, I think this patch makes the driver dependent on
-device-specific behavior.
-
->  		nvme_dev_disable(ndev, true);
->  		return 0;
->  	}
-> @@ -2880,7 +2888,6 @@ static int nvme_suspend(struct device *d
->  	    ctrl->state != NVME_CTRL_ADMIN_ONLY)
->  		goto unfreeze;
->  
-> -	ndev->last_ps = 0;
->  	ret = nvme_get_power_state(ctrl, &ndev->last_ps);
->  	if (ret < 0)
->  		goto unfreeze;
-> 
-> 
-> 
