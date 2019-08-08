@@ -2,165 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13A2786942
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ECE88694E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390323AbfHHTDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:03:04 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44138 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390296AbfHHTDE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:03:04 -0400
-Received: by mail-pf1-f196.google.com with SMTP id t16so44585137pfe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 12:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=YaDw968sYZinLHwfTVtmoWadaU+xxvDOnKy5RkNnHhY=;
-        b=HIQxeRJULmhNEAqcWiiIVZr0UAHZw/vMZ/YXLmvIkXIat0A1z75P9Q0d/P74XRw3do
-         R7+ctJwPKZUsckjeTNvykCKZsWrBGUXA5z5ZhyRNBYXd8H4O6Fr/Cfh1Tgcp0VtQSpzQ
-         sHkoTTEtlwzMapLsx/9XmEPsqlkUGcTTXFX0+zFyl6atF/lOxErRKyNsY876FIdy4kom
-         iHrVYxjJMl+rUFyMB+98d2/kmsgt03t7E0C/Gw5ePaTD8Sis0vFdJXbU/8NWpzUYzFd/
-         +GAdy2lZyujaVYVCBCBCH4QSjJMb3LYnJxKiTOIRpKMlA/KjrXwRHyDPiu3C/9kVghl3
-         PqlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=YaDw968sYZinLHwfTVtmoWadaU+xxvDOnKy5RkNnHhY=;
-        b=RAf/PWKMAITUtR8iZMgUy/kQAGRi8JrJmw92FesprtKghX1bnij+hiPLasFisR0AGX
-         1WSyl1q4jeWEU0/jaCA4cX1fut+w11kqQHClyRewGLIhNizpMQ7V8KE5rqT/7GkOJpB9
-         4ek4F9stXdPZkLq5dc4epoY942hfAuyD1Of+AX7q980SVlRYfHkhcE2xcyQ+zMEej12m
-         femvVsP6KwbrKrhGdMIUylnBNiIuDs7r2hxR0H2YVp6A6YzrEoNcSNAG99uwSiFPlYvl
-         Cn6a/QponTkII+i3upZSXQWAGL9XDMS9v6bpHHviUMh+5OAUDx3hFK6sr3LRHEaOU7BV
-         L8sg==
-X-Gm-Message-State: APjAAAXb6h6VblQjFIvD0aTxTNsqM6+qD30m0XA3m/ulHYR2dh7bIfT7
-        4qAODksRMowtIy38p8X1ASLzVw==
-X-Google-Smtp-Source: APXvYqyauxFlil+jXyg34wXrmqepCBj1OqcfC1/2Gy4eTEI53he4OQNjlsbx5piBhi7v9zETXwpdnA==
-X-Received: by 2002:a17:90a:8b98:: with SMTP id z24mr5545969pjn.77.1565290983429;
-        Thu, 08 Aug 2019 12:03:03 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::1:e15f])
-        by smtp.gmail.com with ESMTPSA id t6sm22068113pgu.23.2019.08.08.12.03.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 12:03:02 -0700 (PDT)
-Date:   Thu, 8 Aug 2019 15:03:00 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] block: annotate refault stalls from IO submission
-Message-ID: <20190808190300.GA9067@cmpxchg.org>
+        id S2404135AbfHHTGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:06:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390203AbfHHTGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:06:00 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 655222173E;
+        Thu,  8 Aug 2019 19:05:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565291158;
+        bh=Ct6yfhpM0EHnkzsIo0k2BPaUHmJED0DtYiZUiip0UzY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fZe30Y4R33cVpioBdu+x8O3E14E17OvrDdfdoV5E9MTC/4NOCQd+EFUkZQDMwIhdA
+         BgohJ7vWxRqVDPYzVGJve1iSFRk6WZX6XkX6AGIvKgYVH3FQyC9KUnZtoTx12Tyk/+
+         Ae9bpTQHfnM07PG9sJdTsTiibS1LznsvxBy+/OAw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.2 01/56] scsi: fcoe: Embed fc_rport_priv in fcoe_rport structure
+Date:   Thu,  8 Aug 2019 21:04:27 +0200
+Message-Id: <20190808190452.926558107@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
+References: <20190808190452.867062037@linuxfoundation.org>
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-psi tracks the time tasks wait for refaulting pages to become
-uptodate, but it does not track the time spent submitting the IO. The
-submission part can be significant if backing storage is contended or
-when cgroup throttling (io.latency) is in effect - a lot of time is
-spent in submit_bio(). In that case, we underreport memory pressure.
+From: Hannes Reinecke <hare@suse.de>
 
-Annotate submit_bio() to account submission time as memory stall when
-the bio is reading userspace workingset pages.
+commit 023358b136d490ca91735ac6490db3741af5a8bd upstream.
 
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Gcc-9 complains for a memset across pointer boundaries, which happens as
+the code tries to allocate a flexible array on the stack.  Turns out we
+cannot do this without relying on gcc-isms, so with this patch we'll embed
+the fc_rport_priv structure into fcoe_rport, can use the normal
+'container_of' outcast, and will only have to do a memset over one
+structure.
+
+Signed-off-by: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- block/bio.c               |  3 +++
- block/blk-core.c          | 23 ++++++++++++++++++++++-
- include/linux/blk_types.h |  1 +
- 3 files changed, 26 insertions(+), 1 deletion(-)
+ drivers/scsi/fcoe/fcoe_ctlr.c |   51 ++++++++++++++++--------------------------
+ drivers/scsi/libfc/fc_rport.c |    5 +++-
+ include/scsi/libfcoe.h        |    1 
+ 3 files changed, 25 insertions(+), 32 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 299a0e7651ec..4196865dd300 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -806,6 +806,9 @@ void __bio_add_page(struct bio *bio, struct page *page,
- 
- 	bio->bi_iter.bi_size += len;
- 	bio->bi_vcnt++;
-+
-+	if (!bio_flagged(bio, BIO_WORKINGSET) && unlikely(PageWorkingset(page)))
-+		bio_set_flag(bio, BIO_WORKINGSET);
- }
- EXPORT_SYMBOL_GPL(__bio_add_page);
- 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index d0cc6e14d2f0..1b1705b7dde7 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -36,6 +36,7 @@
- #include <linux/blk-cgroup.h>
- #include <linux/debugfs.h>
- #include <linux/bpf.h>
-+#include <linux/psi.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/block.h>
-@@ -1128,6 +1129,10 @@ EXPORT_SYMBOL_GPL(direct_make_request);
+--- a/drivers/scsi/fcoe/fcoe_ctlr.c
++++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+@@ -2005,7 +2005,7 @@ EXPORT_SYMBOL_GPL(fcoe_wwn_from_mac);
   */
- blk_qc_t submit_bio(struct bio *bio)
+ static inline struct fcoe_rport *fcoe_ctlr_rport(struct fc_rport_priv *rdata)
  {
-+	bool workingset_read = false;
-+	unsigned long pflags;
-+	blk_qc_t ret;
-+
- 	if (blkcg_punt_bio_submit(bio))
- 		return BLK_QC_T_NONE;
+-	return (struct fcoe_rport *)(rdata + 1);
++	return container_of(rdata, struct fcoe_rport, rdata);
+ }
  
-@@ -1146,6 +1151,8 @@ blk_qc_t submit_bio(struct bio *bio)
- 		if (op_is_write(bio_op(bio))) {
- 			count_vm_events(PGPGOUT, count);
- 		} else {
-+			if (bio_flagged(bio, BIO_WORKINGSET))
-+				workingset_read = true;
- 			task_io_account_read(bio->bi_iter.bi_size);
- 			count_vm_events(PGPGIN, count);
- 		}
-@@ -1160,7 +1167,21 @@ blk_qc_t submit_bio(struct bio *bio)
- 		}
+ /**
+@@ -2269,7 +2269,7 @@ static void fcoe_ctlr_vn_start(struct fc
+  */
+ static int fcoe_ctlr_vn_parse(struct fcoe_ctlr *fip,
+ 			      struct sk_buff *skb,
+-			      struct fc_rport_priv *rdata)
++			      struct fcoe_rport *frport)
+ {
+ 	struct fip_header *fiph;
+ 	struct fip_desc *desc = NULL;
+@@ -2277,16 +2277,12 @@ static int fcoe_ctlr_vn_parse(struct fco
+ 	struct fip_wwn_desc *wwn = NULL;
+ 	struct fip_vn_desc *vn = NULL;
+ 	struct fip_size_desc *size = NULL;
+-	struct fcoe_rport *frport;
+ 	size_t rlen;
+ 	size_t dlen;
+ 	u32 desc_mask = 0;
+ 	u32 dtype;
+ 	u8 sub;
+ 
+-	memset(rdata, 0, sizeof(*rdata) + sizeof(*frport));
+-	frport = fcoe_ctlr_rport(rdata);
+-
+ 	fiph = (struct fip_header *)skb->data;
+ 	frport->flags = ntohs(fiph->fip_flags);
+ 
+@@ -2349,15 +2345,17 @@ static int fcoe_ctlr_vn_parse(struct fco
+ 			if (dlen != sizeof(struct fip_wwn_desc))
+ 				goto len_err;
+ 			wwn = (struct fip_wwn_desc *)desc;
+-			rdata->ids.node_name = get_unaligned_be64(&wwn->fd_wwn);
++			frport->rdata.ids.node_name =
++				get_unaligned_be64(&wwn->fd_wwn);
+ 			break;
+ 		case FIP_DT_VN_ID:
+ 			if (dlen != sizeof(struct fip_vn_desc))
+ 				goto len_err;
+ 			vn = (struct fip_vn_desc *)desc;
+ 			memcpy(frport->vn_mac, vn->fd_mac, ETH_ALEN);
+-			rdata->ids.port_id = ntoh24(vn->fd_fc_id);
+-			rdata->ids.port_name = get_unaligned_be64(&vn->fd_wwpn);
++			frport->rdata.ids.port_id = ntoh24(vn->fd_fc_id);
++			frport->rdata.ids.port_name =
++				get_unaligned_be64(&vn->fd_wwpn);
+ 			break;
+ 		case FIP_DT_FC4F:
+ 			if (dlen != sizeof(struct fip_fc4_feat))
+@@ -2738,10 +2736,7 @@ static int fcoe_ctlr_vn_recv(struct fcoe
+ {
+ 	struct fip_header *fiph;
+ 	enum fip_vn2vn_subcode sub;
+-	struct {
+-		struct fc_rport_priv rdata;
+-		struct fcoe_rport frport;
+-	} buf;
++	struct fcoe_rport frport = { };
+ 	int rc, vlan_id = 0;
+ 
+ 	fiph = (struct fip_header *)skb->data;
+@@ -2757,7 +2752,7 @@ static int fcoe_ctlr_vn_recv(struct fcoe
+ 		goto drop;
  	}
  
--	return generic_make_request(bio);
-+	/*
-+	 * If we're reading data that is part of the userspace
-+	 * workingset, count submission time as memory stall. When the
-+	 * device is congested, or the submitting cgroup IO-throttled,
-+	 * submission can be a significant part of overall IO time.
-+	 */
-+	if (workingset_read)
-+		psi_memstall_enter(&pflags);
-+
-+	ret = generic_make_request(bio);
-+
-+	if (workingset_read)
-+		psi_memstall_leave(&pflags);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(submit_bio);
+-	rc = fcoe_ctlr_vn_parse(fip, skb, &buf.rdata);
++	rc = fcoe_ctlr_vn_parse(fip, skb, &frport);
+ 	if (rc) {
+ 		LIBFCOE_FIP_DBG(fip, "vn_recv vn_parse error %d\n", rc);
+ 		goto drop;
+@@ -2766,19 +2761,19 @@ static int fcoe_ctlr_vn_recv(struct fcoe
+ 	mutex_lock(&fip->ctlr_mutex);
+ 	switch (sub) {
+ 	case FIP_SC_VN_PROBE_REQ:
+-		fcoe_ctlr_vn_probe_req(fip, &buf.rdata);
++		fcoe_ctlr_vn_probe_req(fip, &frport.rdata);
+ 		break;
+ 	case FIP_SC_VN_PROBE_REP:
+-		fcoe_ctlr_vn_probe_reply(fip, &buf.rdata);
++		fcoe_ctlr_vn_probe_reply(fip, &frport.rdata);
+ 		break;
+ 	case FIP_SC_VN_CLAIM_NOTIFY:
+-		fcoe_ctlr_vn_claim_notify(fip, &buf.rdata);
++		fcoe_ctlr_vn_claim_notify(fip, &frport.rdata);
+ 		break;
+ 	case FIP_SC_VN_CLAIM_REP:
+-		fcoe_ctlr_vn_claim_resp(fip, &buf.rdata);
++		fcoe_ctlr_vn_claim_resp(fip, &frport.rdata);
+ 		break;
+ 	case FIP_SC_VN_BEACON:
+-		fcoe_ctlr_vn_beacon(fip, &buf.rdata);
++		fcoe_ctlr_vn_beacon(fip, &frport.rdata);
+ 		break;
+ 	default:
+ 		LIBFCOE_FIP_DBG(fip, "vn_recv unknown subcode %d\n", sub);
+@@ -2802,22 +2797,18 @@ drop:
+  */
+ static int fcoe_ctlr_vlan_parse(struct fcoe_ctlr *fip,
+ 			      struct sk_buff *skb,
+-			      struct fc_rport_priv *rdata)
++			      struct fcoe_rport *frport)
+ {
+ 	struct fip_header *fiph;
+ 	struct fip_desc *desc = NULL;
+ 	struct fip_mac_desc *macd = NULL;
+ 	struct fip_wwn_desc *wwn = NULL;
+-	struct fcoe_rport *frport;
+ 	size_t rlen;
+ 	size_t dlen;
+ 	u32 desc_mask = 0;
+ 	u32 dtype;
+ 	u8 sub;
  
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 1b1fa1557e68..a9dadfc16a92 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -209,6 +209,7 @@ enum {
- 	BIO_BOUNCED,		/* bio is a bounce bio */
- 	BIO_USER_MAPPED,	/* contains user pages */
- 	BIO_NULL_MAPPED,	/* contains invalid user pages */
-+	BIO_WORKINGSET,		/* contains userspace workingset pages */
- 	BIO_QUIET,		/* Make BIO Quiet */
- 	BIO_CHAIN,		/* chained bio, ->bi_remaining in effect */
- 	BIO_REFFED,		/* bio has elevated ->bi_cnt */
--- 
-2.22.0
+-	memset(rdata, 0, sizeof(*rdata) + sizeof(*frport));
+-	frport = fcoe_ctlr_rport(rdata);
+-
+ 	fiph = (struct fip_header *)skb->data;
+ 	frport->flags = ntohs(fiph->fip_flags);
+ 
+@@ -2871,7 +2862,8 @@ static int fcoe_ctlr_vlan_parse(struct f
+ 			if (dlen != sizeof(struct fip_wwn_desc))
+ 				goto len_err;
+ 			wwn = (struct fip_wwn_desc *)desc;
+-			rdata->ids.node_name = get_unaligned_be64(&wwn->fd_wwn);
++			frport->rdata.ids.node_name =
++				get_unaligned_be64(&wwn->fd_wwn);
+ 			break;
+ 		default:
+ 			LIBFCOE_FIP_DBG(fip, "unexpected descriptor type %x "
+@@ -2982,22 +2974,19 @@ static int fcoe_ctlr_vlan_recv(struct fc
+ {
+ 	struct fip_header *fiph;
+ 	enum fip_vlan_subcode sub;
+-	struct {
+-		struct fc_rport_priv rdata;
+-		struct fcoe_rport frport;
+-	} buf;
++	struct fcoe_rport frport = { };
+ 	int rc;
+ 
+ 	fiph = (struct fip_header *)skb->data;
+ 	sub = fiph->fip_subcode;
+-	rc = fcoe_ctlr_vlan_parse(fip, skb, &buf.rdata);
++	rc = fcoe_ctlr_vlan_parse(fip, skb, &frport);
+ 	if (rc) {
+ 		LIBFCOE_FIP_DBG(fip, "vlan_recv vlan_parse error %d\n", rc);
+ 		goto drop;
+ 	}
+ 	mutex_lock(&fip->ctlr_mutex);
+ 	if (sub == FIP_SC_VL_REQ)
+-		fcoe_ctlr_vlan_disc_reply(fip, &buf.rdata);
++		fcoe_ctlr_vlan_disc_reply(fip, &frport.rdata);
+ 	mutex_unlock(&fip->ctlr_mutex);
+ 
+ drop:
+--- a/drivers/scsi/libfc/fc_rport.c
++++ b/drivers/scsi/libfc/fc_rport.c
+@@ -128,6 +128,7 @@ EXPORT_SYMBOL(fc_rport_lookup);
+ struct fc_rport_priv *fc_rport_create(struct fc_lport *lport, u32 port_id)
+ {
+ 	struct fc_rport_priv *rdata;
++	size_t rport_priv_size = sizeof(*rdata);
+ 
+ 	lockdep_assert_held(&lport->disc.disc_mutex);
+ 
+@@ -135,7 +136,9 @@ struct fc_rport_priv *fc_rport_create(st
+ 	if (rdata)
+ 		return rdata;
+ 
+-	rdata = kzalloc(sizeof(*rdata) + lport->rport_priv_size, GFP_KERNEL);
++	if (lport->rport_priv_size > 0)
++		rport_priv_size = lport->rport_priv_size;
++	rdata = kzalloc(rport_priv_size, GFP_KERNEL);
+ 	if (!rdata)
+ 		return NULL;
+ 
+--- a/include/scsi/libfcoe.h
++++ b/include/scsi/libfcoe.h
+@@ -229,6 +229,7 @@ struct fcoe_fcf {
+  * @vn_mac:	VN_Node assigned MAC address for data
+  */
+ struct fcoe_rport {
++	struct fc_rport_priv rdata;
+ 	unsigned long time;
+ 	u16 fcoe_len;
+ 	u16 flags;
+
 
