@@ -2,65 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 204E586B5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E5986B6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:22:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404281AbfHHUWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 16:22:08 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:54150 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404324AbfHHUWG (ORCPT
+        id S2404901AbfHHUWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 16:22:42 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43153 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404590AbfHHUWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 16:22:06 -0400
-Received: from p200300ddd71876597e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7659:7e7a:91ff:fec9:8e25])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hvov8-0007ZB-GX; Thu, 08 Aug 2019 22:21:58 +0200
-Date:   Thu, 8 Aug 2019 22:21:52 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        intel-gfx@lists.freedesktop.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] drm/i915: Remove redundant user_access_end() from
- __copy_from_user() error path
-In-Reply-To: <CAKwvOd=wa-XPCpoLQoQJH8Me7S=fXLfog0XsiKyFZKu8ojW_UQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1908082221150.2882@nanos.tec.linutronix.de>
-References: <51a4155c5bc2ca847a9cbe85c1c11918bb193141.1564086017.git.jpoimboe@redhat.com> <alpine.DEB.2.21.1907252355150.1791@nanos.tec.linutronix.de> <156416793450.30723.5556760526480191131@skylake-alporthouse-com> <alpine.DEB.2.21.1907262116530.1791@nanos.tec.linutronix.de>
- <156416944205.21451.12269136304831943624@skylake-alporthouse-com> <CA+icZUXwBFS-6e+Qp4e3PhnRzEHvwdzWtS6OfVsgy85R5YNGOg@mail.gmail.com> <CA+icZUWA6e0Zsio6sthRUC=Ehb2-mw_9U76UnvwGc_tOnOqt7w@mail.gmail.com> <20190806125931.oqeqateyzqikusku@treble>
- <CAKwvOd=wa-XPCpoLQoQJH8Me7S=fXLfog0XsiKyFZKu8ojW_UQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 8 Aug 2019 16:22:42 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x78KMV893321910
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 8 Aug 2019 13:22:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x78KMV893321910
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565295752;
+        bh=jGSbvkcc9gvV/Z7/TnETW4JyOHuIdmYewXw9ers7l1U=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=Hr4DKIN+ovhwsh6iIyfgRpRW5RywRHVDXfEYIkiDfLW2yb3sgDEBUxqwAFdh7IzJo
+         56DIzpiXYAtfD3STI7AIEoEft1c/CzwvN2xZHJXYeR3qd7jUIDZS1KG4tN0aIumaDq
+         nHpIRapiXmlYzcMa+K9KmRRhlTXZoqJ87CYUr5CrYoqwl1YSB3mzfZg6zvyC9ZY0Nw
+         PsIJabgrDdGdGkqajaxlgTTg2+jFnThFQ/dQEGR/R6PviBT+uM0R+4JPMMlEayboln
+         6tKqZ8fDK8na2j3dfKCbC6GxanWbPnYt3HFJqRehA446jsMpb3QCHR5ULxfZYY/uH7
+         KlVZANOpqLMNQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x78KMVoh3321907;
+        Thu, 8 Aug 2019 13:22:31 -0700
+Date:   Thu, 8 Aug 2019 13:22:31 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-b9c0a64901d5bdec6eafd38d1dc8fa0e2974fccb@git.kernel.org>
+Cc:     brueckner@linux.ibm.com, tmricht@linux.ibm.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        heiko.carstens@de.ibm.com, acme@redhat.com, gor@linux.ibm.com,
+        mingo@kernel.org, klaus.theurich@de.ibm.com
+Reply-To: brueckner@linux.ibm.com, tmricht@linux.ibm.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          heiko.carstens@de.ibm.com, acme@redhat.com, mingo@kernel.org,
+          gor@linux.ibm.com, klaus.theurich@de.ibm.com
+In-Reply-To: <20190724122703.3996-2-tmricht@linux.ibm.com>
+References: <20190724122703.3996-2-tmricht@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf annotate: Fix s390 gap between kernel end
+ and module start
+Git-Commit-ID: b9c0a64901d5bdec6eafd38d1dc8fa0e2974fccb
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Aug 2019, Nick Desaulniers wrote:
-> On Tue, Aug 6, 2019 at 5:59 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > > Gentle ping...
-> > > Thomas and Chris: Will someone of you pick this up?
-> > > As "objtool: Improve UACCESS coverage" [1] went trough tip tree I
-> > > highly appreciate to do so with this one.
-> >
-> > I think Thomas has gone on holiday, so hopefully Chris can pick it up
-> > after all.
-> 
-> tglx just picked up 2 other patches of mine, bumping just in case he's
-> not picking up patches while on vacation. ;)
+Commit-ID:  b9c0a64901d5bdec6eafd38d1dc8fa0e2974fccb
+Gitweb:     https://git.kernel.org/tip/b9c0a64901d5bdec6eafd38d1dc8fa0e2974fccb
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Wed, 24 Jul 2019 14:27:03 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 8 Aug 2019 15:41:25 -0300
 
-I'm only half on vacation :)
+perf annotate: Fix s390 gap between kernel end and module start
 
-So I can pick it up.
+During execution of command 'perf top' the error message:
+
+   Not enough memory for annotating '__irf_end' symbol!)
+
+is emitted from this call sequence:
+  __cmd_top
+    perf_top__mmap_read
+      perf_top__mmap_read_idx
+        perf_event__process_sample
+          hist_entry_iter__add
+            hist_iter__top_callback
+              perf_top__record_precise_ip
+                hist_entry__inc_addr_samples
+                  symbol__inc_addr_samples
+                    symbol__get_annotation
+                      symbol__alloc_hist
+
+In this function the size of symbol __irf_end is calculated. The size of
+a symbol is the difference between its start and end address.
+
+When the symbol was read the first time, its start and end was set to:
+
+   symbol__new: __irf_end 0xe954d0-0xe954d0
+
+which is correct and maps with /proc/kallsyms:
+
+   root@s8360046:~/linux-4.15.0/tools/perf# fgrep _irf_end /proc/kallsyms
+   0000000000e954d0 t __irf_end
+   root@s8360046:~/linux-4.15.0/tools/perf#
+
+In function symbol__alloc_hist() the end of symbol __irf_end is
+
+  symbol__alloc_hist sym:__irf_end start:0xe954d0 end:0x3ff80045a8
+
+which is identical with the first module entry in /proc/kallsyms
+
+This results in a symbol size of __irf_req for histogram analyses of
+70334140059072 bytes and a malloc() for this requested size fails.
+
+The root cause of this is function
+  __dso__load_kallsyms()
+  +-> symbols__fixup_end()
+
+Function symbols__fixup_end() enlarges the last symbol in the kallsyms
+map:
+
+   # fgrep __irf_end /proc/kallsyms
+   0000000000e954d0 t __irf_end
+   #
+
+to the start address of the first module:
+   # cat /proc/kallsyms | sort  | egrep ' [tT] '
+   ....
+   0000000000e952d0 T __security_initcall_end
+   0000000000e954d0 T __initramfs_size
+   0000000000e954d0 t __irf_end
+   000003ff800045a8 T fc_get_event_number       [scsi_transport_fc]
+   000003ff800045d0 t store_fc_vport_disable    [scsi_transport_fc]
+   000003ff800046a8 T scsi_is_fc_rport  [scsi_transport_fc]
+   000003ff800046d0 t fc_target_setup   [scsi_transport_fc]
+
+On s390 the kernel is located around memory address 0x200, 0x10000 or
+0x100000, depending on linux version. Modules however start some- where
+around 0x3ff xxxx xxxx.
+
+This is different than x86 and produces a large gap for which histogram
+allocation fails.
+
+Fix this by detecting the kernel's last symbol and do no adjustment for
+it. Introduce a weak function and handle s390 specifics.
+
+Reported-by: Klaus Theurich <klaus.theurich@de.ibm.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190724122703.3996-2-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/arch/s390/util/machine.c | 17 +++++++++++++++++
+ tools/perf/util/symbol.c            |  7 ++++++-
+ tools/perf/util/symbol.h            |  1 +
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/arch/s390/util/machine.c b/tools/perf/arch/s390/util/machine.c
+index de26b1441a48..c8c86a0c9b79 100644
+--- a/tools/perf/arch/s390/util/machine.c
++++ b/tools/perf/arch/s390/util/machine.c
+@@ -6,6 +6,7 @@
+ #include "machine.h"
+ #include "api/fs/fs.h"
+ #include "debug.h"
++#include "symbol.h"
+ 
+ int arch__fix_module_text_start(u64 *start, u64 *size, const char *name)
+ {
+@@ -33,3 +34,19 @@ int arch__fix_module_text_start(u64 *start, u64 *size, const char *name)
+ 
+ 	return 0;
+ }
++
++/* On s390 kernel text segment start is located at very low memory addresses,
++ * for example 0x10000. Modules are located at very high memory addresses,
++ * for example 0x3ff xxxx xxxx. The gap between end of kernel text segment
++ * and beginning of first module's text segment is very big.
++ * Therefore do not fill this gap and do not assign it to the kernel dso map.
++ */
++void arch__symbols__fixup_end(struct symbol *p, struct symbol *c)
++{
++	if (strchr(p->name, '[') == NULL && strchr(c->name, '['))
++		/* Last kernel symbol mapped to end of page */
++		p->end = roundup(p->end, page_size);
++	else
++		p->end = c->start;
++	pr_debug4("%s sym:%s end:%#lx\n", __func__, p->name, p->end);
++}
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 173f3378aaa0..4efde7879474 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -92,6 +92,11 @@ static int prefix_underscores_count(const char *str)
+ 	return tail - str;
+ }
+ 
++void __weak arch__symbols__fixup_end(struct symbol *p, struct symbol *c)
++{
++	p->end = c->start;
++}
++
+ const char * __weak arch__normalize_symbol_name(const char *name)
+ {
+ 	return name;
+@@ -218,7 +223,7 @@ void symbols__fixup_end(struct rb_root_cached *symbols)
+ 		curr = rb_entry(nd, struct symbol, rb_node);
+ 
+ 		if (prev->end == prev->start && prev->end != curr->start)
+-			prev->end = curr->start;
++			arch__symbols__fixup_end(prev, curr);
+ 	}
+ 
+ 	/* Last entry */
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index 12755b42ea93..183f630cb5f1 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -288,6 +288,7 @@ const char *arch__normalize_symbol_name(const char *name);
+ #define SYMBOL_A 0
+ #define SYMBOL_B 1
+ 
++void arch__symbols__fixup_end(struct symbol *p, struct symbol *c);
+ int arch__compare_symbol_names(const char *namea, const char *nameb);
+ int arch__compare_symbol_names_n(const char *namea, const char *nameb,
+ 				 unsigned int n);
