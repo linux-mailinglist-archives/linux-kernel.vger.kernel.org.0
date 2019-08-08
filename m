@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22206869A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8088B8697A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404672AbfHHTJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:09:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43564 "EHLO mail.kernel.org"
+        id S2404747AbfHHTHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:07:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405089AbfHHTJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:09:18 -0400
+        id S2404734AbfHHTHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:07:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE6AC2184E;
-        Thu,  8 Aug 2019 19:09:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0766F21882;
+        Thu,  8 Aug 2019 19:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291357;
-        bh=QDL8BVyypXe/oKSzuncJPHEodeCrkNt9VjGOsONMVKY=;
+        s=default; t=1565291264;
+        bh=xAKeC1Ay7OyxgDDNdrMmEq8ZYbemYt/h0OLCkvugigg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L9/6q89itXEkYOl3Bg42yqMWcUN6Le8RJL7n9LR4bes52rJpRKLobczm6xIoROSTo
-         T/hKkY4lSNL6eXZeYubKk6okCGNRq7OM3YufpmQmjE8cZqXvbGCQuqFd+NkMv+4Kos
-         oNBa+SsnwmQJpEojU/KAdHzEz17OCY/4qZLgnxyM=
+        b=kppK8OQWshod7DEpogYyBT5kNfqWONtN926bAb7vdSKY/U0qjHZIIPXyB0WnBR9Av
+         L2E+DOFd0lBpVAqUJiB1Vj94ETORYVxTGLQ3zYtKWPzO8hOigShqKBUAnLWezO6Q1o
+         9toshc9BeyOMV+q/0WdzKycwbqwlYWFVx7Q+XpiQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Mashak <mrv@mojatatu.com>,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 29/45] net sched: update vlan action for batched events operations
-Date:   Thu,  8 Aug 2019 21:05:15 +0200
-Message-Id: <20190808190455.374963381@linuxfoundation.org>
+Subject: [PATCH 5.2 50/56] mlxsw: spectrum_buffers: Further reduce pool size on Spectrum-2
+Date:   Thu,  8 Aug 2019 21:05:16 +0200
+Message-Id: <20190808190455.242734555@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
-References: <20190808190453.827571908@linuxfoundation.org>
+In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
+References: <20190808190452.867062037@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Mashak <mrv@mojatatu.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit b35475c5491a14c8ce7a5046ef7bcda8a860581a ]
+[ Upstream commit 744ad9a357280d03d567538cee7e1e457dedd481 ]
 
-Add get_fill_size() routine used to calculate the action size
-when building a batch of events.
+In commit e891ce1dd2a5 ("mlxsw: spectrum_buffers: Reduce pool size on
+Spectrum-2"), pool size was reduced to mitigate a problem in port buffer
+usage of ports split four ways. It turns out that this work around does not
+solve the issue, and a further reduction is required.
 
-Fixes: c7e2b9689 ("sched: introduce vlan action")
-Signed-off-by: Roman Mashak <mrv@mojatatu.com>
+Thus reduce the size of pool 0 by another 2.7 MiB, and round down to the
+whole number of cells.
+
+Fixes: e891ce1dd2a5 ("mlxsw: spectrum_buffers: Reduce pool size on Spectrum-2")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_vlan.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/sched/act_vlan.c
-+++ b/net/sched/act_vlan.c
-@@ -296,6 +296,14 @@ static int tcf_vlan_search(struct net *n
- 	return tcf_idr_search(tn, a, index);
- }
- 
-+static size_t tcf_vlan_get_fill_size(const struct tc_action *act)
-+{
-+	return nla_total_size(sizeof(struct tc_vlan))
-+		+ nla_total_size(sizeof(u16)) /* TCA_VLAN_PUSH_VLAN_ID */
-+		+ nla_total_size(sizeof(u16)) /* TCA_VLAN_PUSH_VLAN_PROTOCOL */
-+		+ nla_total_size(sizeof(u8)); /* TCA_VLAN_PUSH_VLAN_PRIORITY */
-+}
-+
- static struct tc_action_ops act_vlan_ops = {
- 	.kind		=	"vlan",
- 	.type		=	TCA_ACT_VLAN,
-@@ -305,6 +313,7 @@ static struct tc_action_ops act_vlan_ops
- 	.init		=	tcf_vlan_init,
- 	.cleanup	=	tcf_vlan_cleanup,
- 	.walk		=	tcf_vlan_walker,
-+	.get_fill_size	=	tcf_vlan_get_fill_size,
- 	.lookup		=	tcf_vlan_search,
- 	.size		=	sizeof(struct tcf_vlan),
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c
+@@ -437,8 +437,8 @@ static const struct mlxsw_sp_sb_pr mlxsw
+ 			   MLXSW_SP1_SB_PR_CPU_SIZE, true, false),
  };
+ 
+-#define MLXSW_SP2_SB_PR_INGRESS_SIZE	38128752
+-#define MLXSW_SP2_SB_PR_EGRESS_SIZE	38128752
++#define MLXSW_SP2_SB_PR_INGRESS_SIZE	35297568
++#define MLXSW_SP2_SB_PR_EGRESS_SIZE	35297568
+ #define MLXSW_SP2_SB_PR_CPU_SIZE	(256 * 1000)
+ 
+ /* Order according to mlxsw_sp2_sb_pool_dess */
 
 
