@@ -2,138 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46AD885C54
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:02:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CDD485C5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:03:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731836AbfHHICz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:02:55 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43716 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731548AbfHHICy (ORCPT
+        id S1731904AbfHHIDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:03:00 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:43393 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731852AbfHHIC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:02:54 -0400
-Received: by mail-ot1-f66.google.com with SMTP id j11so14714566otp.10;
-        Thu, 08 Aug 2019 01:02:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GOmXUqe6Ps1LYK7cNwZISmnpFncUMvpwFUibfCQ0KSw=;
-        b=F0R+ffh3bmulBDd0ltZALk+IjVf6wqiSLjjNF2J9HXk3i46dbOVTNR1dkYC3QRB21Z
-         aOH4DT8GIoDcVGE1B4zd04ZxVvSraP9ryF5Y9iQhAVVKn53HUqnZkbU+ftQdXV4A7vMc
-         OawRameYLdb9xC3GTMudLbNtaE8ucd78EBiilIcftJxD1a/yliVrPn6xtknMjT1EiTWZ
-         XnXlIk72sRduBEZnwgltQdEQulG66xTZ3ndaQwDkns3PSU78aQYUVjfrWk95Vz/KBNAn
-         xPUlOFyO72qEIYUqGa2hPVYaFBQYZnhAltOojs94V654asnp9aC8VssgoEcMUwI+oMC8
-         Y7BQ==
-X-Gm-Message-State: APjAAAUWGeDEYJ2XAgWoFS690TAFJotjHdxL+aDjIuluh0vVHu0vNAgG
-        C+HyPH0+0yg18KBihkL3dBW6rMwzm/mH4hGGlyk=
-X-Google-Smtp-Source: APXvYqxrI4/yih9SmRMVfK7WxuoAEScyImMdek0dI8U65VI+Rmpd+ammpwIo/9Bxr4KcqRv+RaATEsVzOD+uItwzeQQ=
-X-Received: by 2002:aca:338a:: with SMTP id z132mr1789689oiz.54.1565251373478;
- Thu, 08 Aug 2019 01:02:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190730181557.90391-1-swboyd@chromium.org> <20190730181557.90391-32-swboyd@chromium.org>
-In-Reply-To: <20190730181557.90391-32-swboyd@chromium.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 8 Aug 2019 10:02:42 +0200
-Message-ID: <CAMuHMdXkcqNF1dXxKX3ztVmVGTX4W+hz9Zzc3w6LPn34Gwj7Nw@mail.gmail.com>
-Subject: Re: [PATCH v6 31/57] pci: Remove dev_err() usage after platform_get_irq()
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 8 Aug 2019 04:02:56 -0400
+Received: from [167.98.27.226] (helo=ct-lt-765.unassigned)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1hvdNp-0008KB-VZ; Thu, 08 Aug 2019 09:02:50 +0100
+Received: from ikerpalomar by ct-lt-765.unassigned with local (Exim 4.89)
+        (envelope-from <ikerpalomar@ct-lt-765.unassigned>)
+        id 1hvdNp-0002Bi-26; Thu, 08 Aug 2019 09:02:49 +0100
+From:   Iker Perez <iker.perez@codethink.co.uk>
+To:     linux-hwmon@vger.kernel.org, linux@roeck-us.net
+Cc:     jdelvare@suse.com, linux-kernel@vger.kernel.org,
+        Iker Perez del Palomar Sustatxa 
+        <iker.perez@codethink.co.uk>
+Subject: [PATCH v2 0/4] Add support for variable sample time in lm75 driver
+Date:   Thu,  8 Aug 2019 09:02:42 +0100
+Message-Id: <20190808080246.8371-1-iker.perez@codethink.co.uk>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+From: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
 
-On Tue, Jul 30, 2019 at 8:21 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> We don't need dev_err() messages when platform_get_irq() fails now that
-> platform_get_irq() prints an error message itself when something goes
-> wrong. Let's remove these prints with a simple semantic patch.
->
-> // <smpl>
-> @@
-> expression ret;
-> struct platform_device *E;
-> @@
->
-> ret =
-> (
-> platform_get_irq(E, ...)
-> |
-> platform_get_irq_byname(E, ...)
-> );
->
-> if ( \( ret < 0 \| ret <= 0 \) )
-> {
-> (
-> -if (ret != -EPROBE_DEFER)
-> -{ ...
-> -dev_err(...);
-> -... }
-> |
-> ...
-> -dev_err(...);
-> )
-> ...
-> }
-> // </smpl>
->
-> While we're here, remove braces on if statements that only have one
-> statement (manually).
->
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->
-> Please apply directly to subsystem trees
->
->  drivers/pci/controller/dwc/pci-dra7xx.c     |  8 ++------
->  drivers/pci/controller/dwc/pci-exynos.c     |  8 ++------
->  drivers/pci/controller/dwc/pci-imx6.c       |  4 +---
->  drivers/pci/controller/dwc/pci-keystone.c   |  4 +---
->  drivers/pci/controller/dwc/pci-meson.c      |  4 +---
->  drivers/pci/controller/dwc/pcie-armada8k.c  |  4 +---
->  drivers/pci/controller/dwc/pcie-artpec6.c   |  4 +---
->  drivers/pci/controller/dwc/pcie-histb.c     |  4 +---
->  drivers/pci/controller/dwc/pcie-kirin.c     |  5 +----
->  drivers/pci/controller/dwc/pcie-spear13xx.c |  4 +---
->  drivers/pci/controller/pci-tegra.c          |  8 ++------
->  drivers/pci/controller/pci-v3-semi.c        |  4 +---
->  drivers/pci/controller/pci-xgene-msi.c      |  2 --
->  drivers/pci/controller/pcie-altera-msi.c    |  1 -
->  drivers/pci/controller/pcie-altera.c        |  4 +---
->  drivers/pci/controller/pcie-mobiveil.c      |  4 +---
->  drivers/pci/controller/pcie-rockchip-host.c | 12 +++---------
->  drivers/pci/controller/pcie-tango.c         |  4 +---
->  drivers/pci/controller/pcie-xilinx-nwl.c    | 11 ++---------
->  19 files changed, 23 insertions(+), 76 deletions(-)
+Hello,
 
-Failed to catch:
+The objective of following patch series is to add support to lm75 driver
+to be able to configure the sample time of it's supported devices,
+particularly the tmp75b.
 
-drivers/pci/controller/pci-rcar-gen2.c: priv->irq = platform_get_irq(pdev, 0);
-drivers/pci/controller/pci-rcar-gen2.c- priv->reg = reg;
-drivers/pci/controller/pci-rcar-gen2.c- priv->dev = dev;
-drivers/pci/controller/pci-rcar-gen2.c-
-drivers/pci/controller/pci-rcar-gen2.c- if (priv->irq < 0) {
-drivers/pci/controller/pci-rcar-gen2.c-         dev_err(dev, "no valid
-irq found\n");
-drivers/pci/controller/pci-rcar-gen2.c-         return priv->irq;
-drivers/pci/controller/pci-rcar-gen2.c- }
+The applied changes involve:
+	* Replace the current switch-case method for configuration
+	  parameters selection to a structure storing them. This method
+	  allows easier management of the parameters.
+	* Split the writing of configuration registers into a separate
+	  function. This method saves code in later patches.
+	* Include new fields in lm75_params to add support for multiple
+	  sample times.
+	* Split the lm75_write functionality into separate, simpler,
+	  functions.
+	* Add support for configuring the devices via their sysfs nodes.
 
-Gr{oetje,eeting}s,
+The patch series was based on linux-next's master branch.
 
-                        Geert
+Thank you Guenter Roeck, Michael Drake, Thomas Preston and Tom Eccles for
+your time, help and feedback.
+
+Regards,
+
+Iker Perez del Palomar Sustatxa
+
+Iker Perez del Palomar Sustatxa (4):
+  hwmon: (lm75) Create structure to save all the configuration
+    parameters.
+  hwmon: (lm75) Create function from code to write into registers
+  hwmon: (lm75) Add new fields into lm75_params_
+  hwmon: (lm75) Modularize lm75_write and make hwmon_chip writable
+
+ drivers/hwmon/lm75.c | 390 ++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 274 insertions(+), 116 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.11.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
