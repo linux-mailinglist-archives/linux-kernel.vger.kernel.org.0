@@ -2,163 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 931B78657E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE3F8658D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733046AbfHHPRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:17:36 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55145 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730768AbfHHPRg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:17:36 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p74so2788063wme.4
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 08:17:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JH79KLt/cUnUFrKqTtYF5L+pOS2C3hiTwjXkizwU6G0=;
-        b=RPKemEq/ngZ4XjkAzy5p6s0pFtRFtPfOVsD/+Z5n0ckPkUjKaDVfcUKCJ6xU31lahb
-         dXbkMwZ95S1PMkjcpZ2UobVQneuuBSFUepU8Rp973z7umkq9ItwCOxA/6VIZBos0hZTE
-         JKSG7rIvsM+ceVU4YtEcfqSC9mIrKLhhLhQC6cBP6CLrjbcSC6MaXTJD3An8duBbRPgz
-         PUv0ohwddDt3Yp7z5E8VjLbPZTzMzycd/B/lhdU7/smHV3qswv6W7LjBXIZMQzJ1pmiu
-         aeOV4/Fx6DvkZTOqR+stPYzRw4YvqArNDGJZInzd6i6fAYf1Ntp2h06vXV9XtBcF2iQl
-         BviQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JH79KLt/cUnUFrKqTtYF5L+pOS2C3hiTwjXkizwU6G0=;
-        b=MoPMfioy5/9828jJ/M4JLQjfDdWUO+IO8ys3e8wET7QjCoiP52eBTKIW54132o0GVQ
-         fJ2TFl3+kz1Go23pJ/ghE874qiyX3wucWxxGV51D6MkhBvkxjiBBGb58L8sImVEcLX2B
-         ydaEOKLywvtr5b+PLeNCRAVUsPUag9W9MQk+66iBqZ/hn4WdIqQlgO8q903SxmtDbhVj
-         iMjU05eIEVH76pGOejiYNcS2laDt8/EBfKnTtwkgImax8D6JytsH3szyFlkC1xSrHLzX
-         fhkKJi15/syW2gDCIfVgGHnZgkshobTScT72w8qeu9sLC/zcB8cifUVimnp0k4IwcKZ0
-         17Zw==
-X-Gm-Message-State: APjAAAUovGKEFef0c/Q2oY1IM0QXBQ1tMleY37vzxDHRRkjgLCXMhS30
-        8pNrELgLmzJAeRfDZqeQbgrlvWH/TaM=
-X-Google-Smtp-Source: APXvYqyrp7wFg8Mu3fozGa9Vv2k13JVkluOFUNFjwI6aSKz9AEJVqZgF8MJw6L5ZWJ419QegEd1mNQ==
-X-Received: by 2002:a05:600c:225a:: with SMTP id a26mr5268987wmm.81.1565277453643;
-        Thu, 08 Aug 2019 08:17:33 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id t19sm2992693wmi.29.2019.08.08.08.17.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Aug 2019 08:17:32 -0700 (PDT)
-Subject: Re: [PATCH v2 2/4] soundwire: core: add device tree support for slave
- devices
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        vkoul@kernel.org, broonie@kernel.org
-Cc:     bgoswami@codeaurora.org, plai@codeaurora.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20190808144504.24823-1-srinivas.kandagatla@linaro.org>
- <20190808144504.24823-3-srinivas.kandagatla@linaro.org>
- <42ca4170-0fa0-6951-f568-89a05c095d5a@linux.intel.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <564f5fa4-59ec-b4e5-a7a5-29dee99039b3@linaro.org>
-Date:   Thu, 8 Aug 2019 16:17:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2403786AbfHHPUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 11:20:07 -0400
+Received: from mga01.intel.com ([192.55.52.88]:46713 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbfHHPUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 11:20:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 08:20:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,361,1559545200"; 
+   d="scan'208";a="203611641"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Aug 2019 08:20:06 -0700
+Date:   Thu, 8 Aug 2019 09:17:40 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        Keith Busch <keith.busch@intel.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>
+Subject: Re: [PATCH] genirq/affinity: create affinity mask for single vector
+Message-ID: <20190808151740.GA27077@localhost.localdomain>
+References: <20190805011906.5020-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <42ca4170-0fa0-6951-f568-89a05c095d5a@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805011906.5020-1-ming.lei@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for taking time to review.
-
-On 08/08/2019 16:00, Pierre-Louis Bossart wrote:
+On Mon, Aug 05, 2019 at 09:19:06AM +0800, Ming Lei wrote:
+> Since commit c66d4bd110a1f8 ("genirq/affinity: Add new callback for
+> (re)calculating interrupt sets"), irq_create_affinity_masks() returns
+> NULL in case of single vector. This change has caused regression on some
+> drivers, such as lpfc.
 > 
->> @@ -35,6 +36,7 @@ static int sdw_slave_add(struct sdw_bus *bus,
->>       slave->dev.release = sdw_slave_release;
->>       slave->dev.bus = &sdw_bus_type;
->> +    slave->dev.of_node = of_node_get(to_of_node(fwnode));
+> The problem is that single vector may be triggered in some generic cases:
+> 1) kdump kernel 2) irq vectors resource is close to exhaustion.
 > 
-> shouldn't this protected by
-> #if IS_ENABLED(CONFIG_OF) ?
+> If we don't create affinity mask for single vector, almost every caller
+> has to handle the special case.
 > 
-These macros and functions have dummy entries, so it should not be an issue.
-I did build soundwire with i386_defconfig with no issues.
+> So still create affinity mask for single vector, since irq_create_affinity_masks()
+> is capable of handling that.
 
->>       slave->bus = bus;
->>       slave->status = SDW_SLAVE_UNATTACHED;
->>       slave->dev_num = 0;
->> @@ -112,3 +114,48 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
->>   }
->>   #endif
->> +
->> +/*
->> + * sdw_of_find_slaves() - Find Slave devices in master device tree node
->> + * @bus: SDW bus instance
->> + *
->> + * Scans Master DT node for SDW child Slave devices and registers it.
->> + */
->> +int sdw_of_find_slaves(struct sdw_bus *bus)
->> +{
->> +    struct device *dev = bus->dev;
->> +    struct device_node *node;
->> +
->> +    for_each_child_of_node(bus->dev->of_node, node) {
->> +        struct sdw_slave_id id;
->> +        const char *compat = NULL;
->> +        int unique_id, ret;
->> +        int ver, mfg_id, part_id, class_id;
->> +
->> +        compat = of_get_property(node, "compatible", NULL);
->> +        if (!compat)
->> +            continue;
->> +
->> +        ret = sscanf(compat, "sdw%x,%x,%x,%x",
->> +                 &ver, &mfg_id, &part_id, &class_id);
->> +        if (ret != 4) {
->> +            dev_err(dev, "Manf ID & Product code not found %s\n",
->> +                compat);
->> +            continue;
->> +        }
->> +
->> +        ret = of_property_read_u32(node, "sdw-instance-id", &unique_id);
->> +        if (ret) {
->> +            dev_err(dev, "Instance id not found:%d\n", ret);
->> +            continue;
+Hi Ming,
+
+Looks good to me.
+
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+ 
+> ---
+>  kernel/irq/affinity.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> I am confused here.
-> If you have two identical devices on the same link, isn't this property 
-> required and that should be a real error instead of a continue?
-
-Yes, I agree it will be mandatory in such cases.
-
-Am okay either way, I dont mind changing it to returning EINVAL in all 
-the cases.
-
-> 
->> +        }
->> +
->> +        id.sdw_version = ver - 0xF;
-> 
-> maybe a comment in the code would help to make the encoding 
-> self-explanatory, as you did in the DT bindings
-> 
->    Version number '0x10' represents SoundWire 1.0
->    Version number '0x11' represents SoundWire 1.1
-
-Makes sense, will fix this in next version.
-This info is also available in bindings.
-
-
---srini
-> 
->> +        id.unique_id = unique_id;
->> +        id.mfg_id = mfg_id;
->> +        id.part_id = part_id;
->> +        id.class_id = class_id;
->> +        sdw_slave_add(bus, &id, of_fwnode_handle(node));
->> +    }
->> +    return 0;
->> +}
->>
+> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> index 4352b08ae48d..6fef48033f96 100644
+> --- a/kernel/irq/affinity.c
+> +++ b/kernel/irq/affinity.c
+> @@ -251,11 +251,9 @@ irq_create_affinity_masks(unsigned int nvecs, struct irq_affinity *affd)
+>  	 * Determine the number of vectors which need interrupt affinities
+>  	 * assigned. If the pre/post request exhausts the available vectors
+>  	 * then nothing to do here except for invoking the calc_sets()
+> -	 * callback so the device driver can adjust to the situation. If there
+> -	 * is only a single vector, then managing the queue is pointless as
+> -	 * well.
+> +	 * callback so the device driver can adjust to the situation.
+>  	 */
+> -	if (nvecs > 1 && nvecs > affd->pre_vectors + affd->post_vectors)
+> +	if (nvecs > affd->pre_vectors + affd->post_vectors)
+>  		affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
+>  	else
+>  		affvecs = 0;
+> -- 
