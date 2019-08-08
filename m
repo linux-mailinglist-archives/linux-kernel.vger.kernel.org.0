@@ -2,96 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2893285B08
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 08:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A1C485B15
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 08:52:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731123AbfHHGtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 02:49:13 -0400
-Received: from mail-pf1-f170.google.com ([209.85.210.170]:33538 "EHLO
-        mail-pf1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbfHHGtN (ORCPT
+        id S2389082AbfHHGv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 02:51:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52340 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730903AbfHHGvz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 02:49:13 -0400
-Received: by mail-pf1-f170.google.com with SMTP id g2so43534826pfq.0;
-        Wed, 07 Aug 2019 23:49:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=3+NFfpGoY8/VELtwuYcVz4gVk+9W0Op7U8Nujrt53LI=;
-        b=P6VdDg2MP+9+kORH+ip2nwC13Fpje22BxthOM/9h8STcWscAa1yDkWPPPaHovrDdTe
-         o0dFrR/mgR++8PPYpdT05PBCo3RMe0mHUy+LkoxNbK2S0dx6ZU+vo14WNZoA/WOeXIHp
-         p+VWIfb7jFcjnncghZq0b0fXgYkaHmj4V571lfZMQZX5pRm/1vqsWEgzprapvlirkCe9
-         mk7eEKgwIzqDwfBZI8qkrwpJFMs+wcR8FyO91ItiLDAkbS/dRmo+vKdBX86D5dcs65Vm
-         gALFSPX74pcaqazmbLe1/n2FirEoTbVn2vCyg3JVEqN6HJsWwnxTXKs3IQlDlUVNnsI3
-         UIIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=3+NFfpGoY8/VELtwuYcVz4gVk+9W0Op7U8Nujrt53LI=;
-        b=Dg6az7HY+CEQ5QfcvuWk6WzzQ2hzDZb6xYCtU3VwRwr4PNmxvP5JhU2NavBxjz5d7d
-         xcaEdFXv4PFYMt3gIJJqtlgT6vUdkdR5woXxHOr1rl3ou1IP+bp6l0If8l3/NGrp8UVI
-         ndRFz1lBfogsLhmZpU0nmXeNSVOQlWzCWxmfpX5cbCKI2OkfE+TRCT9jG36JZTdKJlL8
-         azsyS7AmmmU2KjeH+FwmfIB034i/NO7j4yPpMuU4DRHefvfVazP0QgvsB8jd6DPBcVkz
-         YnO+wpS45eFsXbertbvtdhvJnvJJ8SQhaoMgPCAofUeJPIgM2Dw19A+7e2pfISH1QVJ+
-         0EtQ==
-X-Gm-Message-State: APjAAAUNm7poi35WRBGwvB4M8Y59nOf/aio5u8Z6xOahrPD1T2Q1UvMZ
-        +qLEz+j7QsnFcUzZK99Wq7Q/d4dxQDDZ5zWiT+uW2+rbGhU=
-X-Google-Smtp-Source: APXvYqw+4E+v/5HJq/8MKu2sX8Ia3jyx1gaDAYr5/v2TePUYlod/4L6QKth640WbehsSOsY+gBjJQgwofyebZ011Gkk=
-X-Received: by 2002:a17:90a:360c:: with SMTP id s12mr2505968pjb.30.1565246952007;
- Wed, 07 Aug 2019 23:49:12 -0700 (PDT)
+        Thu, 8 Aug 2019 02:51:55 -0400
+Received: from p200300ddd71876597e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7659:7e7a:91ff:fec9:8e25])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hvcGa-0001UH-CB; Thu, 08 Aug 2019 08:51:16 +0200
+Date:   Thu, 8 Aug 2019 08:51:04 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pingfan Liu <kernelfans@gmail.com>
+cc:     Dave Young <dyoung@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Qian Cai <cai@lca.pw>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Drake <drake@endlessm.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>,
+        kexec@lists.infradead.org, Tony Luck <tony.luck@intel.com>,
+        Xunlei Pang <xlpang@linux.alibaba.com>
+Subject: Re: [PATCH 0/4] x86/mce: protect nr_cpus from rebooting by broadcast
+ mce
+In-Reply-To: <CAFgQCTs7XN3xBPt64jPNb4wCGAZRmYSjhPM=tgcLriVCEx+uDA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1908080850220.2882@nanos.tec.linutronix.de>
+References: <1564995539-29609-1-git-send-email-kernelfans@gmail.com> <20190807025843.GA4776@dhcp-128-65.nay.redhat.com> <20190807075226.GA10392@mypc> <alpine.DEB.2.21.1908071504310.24014@nanos.tec.linutronix.de>
+ <CAFgQCTs7XN3xBPt64jPNb4wCGAZRmYSjhPM=tgcLriVCEx+uDA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 8 Aug 2019 01:49:01 -0500
-Message-ID: <CAH2r5ms07ipgU=g7pT_YpNmXQ_rW8KG0buFv=pag46V9qCX01Q@mail.gmail.com>
-Subject: [GIT PULL] SMB3 Fixes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull the following changes since commit
-e21a712a9685488f5ce80495b37b9fdbe96c230d:
+On Thu, 8 Aug 2019, Pingfan Liu wrote:
+> On Wed, Aug 7, 2019 at 9:07 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> [...]
+> > > > >
+> > > > > *** Back ground ***
+> > > > >
+> > > > > On x86 it's required to have all logical CPUs set CR4.MCE=1. Otherwise, a
+> > > > > broadcast MCE observing CR4.MCE=0b on any core will shutdown the machine.
+> >
+> > Pingfan, please trim your replies and remove the useless gunk after your answer.
+> OK. I will.
+> 
+> Thanks,
+>     Pingfan
+> >
+> > Thanks,
+> >
+> >         tglx
+> 
 
-  Linux 5.3-rc3 (2019-08-04 18:40:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.samba.org/sfrench/cifs-2.6.git tags/5.3-rc3-smb3-fixes
-
-for you to fetch changes up to ee9d66182392695535cc9fccfcb40c16f72de2a9:
-
-  SMB3: Kernel oops mounting a encryptData share with
-CONFIG_DEBUG_VIRTUAL (2019-08-05 22:50:38 -0500)
-
-----------------------------------------------------------------
-six small SMB3 fixes, two for stable
-
-----------------------------------------------------------------
-Pavel Shilovsky (2):
-      SMB3: Fix deadlock in validate negotiate hits reconnect
-      SMB3: Fix potential memory leak when processing compound chain
-
-Sebastien Tisserant (1):
-      SMB3: Kernel oops mounting a encryptData share with CONFIG_DEBUG_VIRTUAL
-
-Steve French (3):
-      cifs: fix rmmod regression in cifs.ko caused by force_sig changes
-      smb3: send CAP_DFS capability during session setup
-      smb3: update TODO list of missing features
-
- Documentation/filesystems/cifs/TODO | 26 ++++++++++++++++----------
- fs/cifs/connect.c                   |  1 +
- fs/cifs/smb2ops.c                   | 39
-++++++++++++++++++++++++++-------------
- fs/cifs/smb2pdu.c                   |  7 ++++++-
- 4 files changed, 49 insertions(+), 24 deletions(-)
-
-
--- 
-Thanks,
-
-Steve
+First attempt to do so failed :)
