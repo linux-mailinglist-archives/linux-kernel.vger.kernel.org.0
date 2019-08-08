@@ -2,187 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41E0486682
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51B9D86664
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404165AbfHHQBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:01:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58392 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403889AbfHHQBE (ORCPT
+        id S2390180AbfHHQAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:00:33 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43840 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390151AbfHHQAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:01:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ess16cPXbwlPMdQlB/xmV3Dd8N7gPnmmYAJHlhdUYyM=; b=UTQWvhiKzWRKxbwjgLpwDsLgDC
-        mdER2aY5BkjLhbcVD3e7Qn2ZWj8gN9YmhyDOIZXRFaHCOkJqMssGtkgQ6B8/VLEOBirIPphRjIcLq
-        tiS8OHDJu2YKmix5fXR8g6vL8uomNeUbO+m/Tuexlii7PxDRAESee02EcVtFUNHSxWkdaEdrhQGi0
-        K5xHqvMOWsAMX02BpcU/2C2e4OOxLMReujU0ZBGCPxq2purguCPYY2w0mLbdpOqV00tdd+PU8ms3b
-        Vw350H8QjPAmpD/uQ1hyaDUCyLtIOKSt1smGUSm651G33drEHzlSC2shYAz/YSDZpgctQ+GzJKuMh
-        Wzl07JIA==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvkqW-0006wr-CU; Thu, 08 Aug 2019 16:00:57 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Takashi Iwai <tiwai@suse.de>, Helge Deller <deller@gmx.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] dma-mapping: remove CONFIG_ARCH_NO_COHERENT_DMA_MMAP
-Date:   Thu,  8 Aug 2019 19:00:05 +0300
-Message-Id: <20190808160005.10325-9-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190808160005.10325-1-hch@lst.de>
-References: <20190808160005.10325-1-hch@lst.de>
+        Thu, 8 Aug 2019 12:00:32 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p13so20870395wru.10
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 09:00:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HfUGKxoVg/Y5/HOrGuXxnrqxgohjqDijjBO+JOIgh3c=;
+        b=E0giQevvVH5lWGglSl8reoeQsyeB3c8m0bxWaIEUMHsDnyiy6Baa+ZbAaOKAez3eFN
+         oBioDKD/MFX/oBvN7HTw5ZjWy5TSta/OFziXD79NPmyabZWrQ50WkiVzGtm1QTBLfUlu
+         QRw68lWd7xTlcHD1f4zWRirsDlK6OMAUMrYpH6lPKA2r252CsSj/AyGYAGtxWxd5t16U
+         UpWcBMZk+BZuZD1RXWAibeTQtTij15WqRD5VWPaE5ahZYygS2xwPXMGusFhpPaV7P+Hd
+         XDwCnNyojuWVJxOzS78fgLfxcYCJIt+FOrGUOgO/nRhApNJycWfMIDoKw+V2fCJ4zl81
+         207w==
+X-Gm-Message-State: APjAAAUgpz26REckEDPQlKMDqKNL29C0Y9rCXmmcVIqw3iCawIehtpUL
+        /UEySurR+eiP6tqZLJWY2BFnAA==
+X-Google-Smtp-Source: APXvYqxtqFM9caIZn5rTW8wOofJ1xUSKrKa/bUvYhMgKj7LVB0oV7/nRwWPsVNruybr30NfBnztZ6w==
+X-Received: by 2002:adf:e2c1:: with SMTP id d1mr18729920wrj.283.1565280030781;
+        Thu, 08 Aug 2019 09:00:30 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:b42d:b492:69df:ed61? ([2001:b07:6468:f312:b42d:b492:69df:ed61])
+        by smtp.gmail.com with ESMTPSA id c1sm212065701wrh.1.2019.08.08.09.00.29
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Aug 2019 09:00:30 -0700 (PDT)
+Subject: Re: [PATCH v2] selftests: kvm: Adding config fragments
+To:     Andrew Jones <drjones@redhat.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     shuah@kernel.org, linux-kernel@vger.kernel.org,
+        sean.j.christopherson@intel.com, linux-kselftest@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <20190808123140.25583-1-naresh.kamboju@linaro.org>
+ <20190808151010.ktbqbfevgcs3bkjy@kamzik.brq.redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <b34e8232-ccfd-898c-49de-afef4168a165@redhat.com>
+Date:   Thu, 8 Aug 2019 18:00:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190808151010.ktbqbfevgcs3bkjy@kamzik.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_ARCH_NO_COHERENT_DMA_MMAP is now functionally identical to
-!CONFIG_MMU, so remove the separate symbol.  The only difference is that
-arm did not set it for !CONFIG_MMU, but arm uses a separate dma mapping
-implementation including its own mmap method, which is handled by moving
-the CONFIG_MMU check in dma_can_mmap so that is only applies to the
-dma-direct case, just as the other ifdefs for it.
+On 08/08/19 17:10, Andrew Jones wrote:
+>>
+> What does the kselftests config file do? I was about to complain that this
+> would break compiling on non-x86 platforms, but 'make kselftest' and other
+> forms of invoking the build work fine on aarch64 even with this config
+> file. So is this just for documentation? If so, then its still obviously
+> wrong for non-x86 platforms. The only config that makes sense here is KVM.
+> If the other options need to be documented for x86, then should they get
+> an additional config file? tools/testing/selftests/kvm/x86_64/config?
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/Kconfig            |  3 ---
- arch/c6x/Kconfig        |  1 -
- arch/m68k/Kconfig       |  1 -
- arch/microblaze/Kconfig |  1 -
- arch/sh/Kconfig         |  1 -
- arch/xtensa/Kconfig     |  1 -
- kernel/dma/mapping.c    | 12 +++++-------
- 7 files changed, 5 insertions(+), 15 deletions(-)
+My understanding is that a config file fragment requires some kind of
+kconfig invocation to create a full .config file.  When you do that,
+unknown configurations are dropped silently.
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index a7b57dd42c26..ec2834206d08 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -790,9 +790,6 @@ config COMPAT_32BIT_TIME
- 	  This is relevant on all 32-bit architectures, and 64-bit architectures
- 	  as part of compat syscall handling.
- 
--config ARCH_NO_COHERENT_DMA_MMAP
--	bool
--
- config ARCH_NO_PREEMPT
- 	bool
- 
-diff --git a/arch/c6x/Kconfig b/arch/c6x/Kconfig
-index b4fb61c83494..e65e8d82442a 100644
---- a/arch/c6x/Kconfig
-+++ b/arch/c6x/Kconfig
-@@ -20,7 +20,6 @@ config C6X
- 	select OF_EARLY_FLATTREE
- 	select GENERIC_CLOCKEVENTS
- 	select MODULES_USE_ELF_RELA
--	select ARCH_NO_COHERENT_DMA_MMAP
- 	select MMU_GATHER_NO_RANGE if MMU
- 
- config MMU
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index c518d695c376..614b355ae338 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -8,7 +8,6 @@ config M68K
- 	select ARCH_HAS_DMA_PREP_COHERENT if HAS_DMA && MMU && !COLDFIRE
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if HAS_DMA
- 	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
--	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select ARCH_NO_PREEMPT if !COLDFIRE
- 	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
- 	select DMA_DIRECT_REMAP if HAS_DMA && MMU && !COLDFIRE
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index d411de05b628..632c9477a0f6 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -9,7 +9,6 @@ config MICROBLAZE
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
--	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select ARCH_WANT_IPC_PARSE_VERSION
- 	select BUILDTIME_EXTABLE_SORT
- 	select TIMER_OF
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index 6b1b5941b618..f356ee674d89 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -5,7 +5,6 @@ config SUPERH
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
--	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select HAVE_PATA_PLATFORM
- 	select CLKDEV_LOOKUP
- 	select DMA_DECLARE_COHERENT
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index ebc135bda921..70653aed3005 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -5,7 +5,6 @@ config XTENSA
- 	select ARCH_HAS_BINFMT_FLAT if !MMU
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
--	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select ARCH_USE_QUEUED_RWLOCKS
- 	select ARCH_USE_QUEUED_SPINLOCKS
- 	select ARCH_WANT_FRAME_POINTERS
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 64d1de59e133..fc17016b0871 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -186,7 +186,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- 		void *cpu_addr, dma_addr_t dma_addr, size_t size,
- 		unsigned long attrs)
- {
--#ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
-+#ifdef CONFIG_MMU
- 	unsigned long user_count = vma_pages(vma);
- 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
- 	unsigned long off = vma->vm_pgoff;
-@@ -217,7 +217,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- 			user_count << PAGE_SHIFT, vma->vm_page_prot);
- #else
- 	return -ENXIO;
--#endif /* !CONFIG_ARCH_NO_COHERENT_DMA_MMAP */
-+#endif /* CONFIG_MMU */
- }
- 
- /**
-@@ -231,12 +231,10 @@ bool dma_can_mmap(struct device *dev)
- {
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 
--	if (IS_ENABLED(CONFIG_ARCH_NO_COHERENT_DMA_MMAP))
--		return false;
--
- 	if (dma_is_direct(ops)) {
--		return dev_is_dma_coherent(dev) ||
--			IS_ENABLED(CONFIG_ARCH_HAS_DMA_COHERENT_TO_PFN);
-+		return IS_ENABLED(CONFIG_MMU) &&
-+		       (dev_is_dma_coherent(dev) ||
-+			IS_ENABLED(CONFIG_ARCH_HAS_DMA_COHERENT_TO_PFN));
- 	}
- 
- 	return ops->mmap != NULL;
--- 
-2.20.1
-
+Paolo
