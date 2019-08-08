@@ -2,129 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66FC685DD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38F7D85DDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:09:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731566AbfHHJGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 05:06:31 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46646 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730777AbfHHJGa (ORCPT
+        id S2388681AbfHHJJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 05:09:27 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:43039 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731054AbfHHJJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 05:06:30 -0400
-Received: by mail-ot1-f65.google.com with SMTP id z23so7467046ote.13;
-        Thu, 08 Aug 2019 02:06:30 -0700 (PDT)
+        Thu, 8 Aug 2019 05:09:27 -0400
+Received: by mail-yw1-f66.google.com with SMTP id n205so33712479ywb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 02:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=30SazUA7Tq8vOLew/Q0ozPIJ6UITJfx6OSiQFokXt+o=;
+        b=QoAMv3DejUjfnhb+6oRokGpixiiFkdSEwUMfIfWbE6OX7L2QqcKZDYpsVwpgwGt0Xk
+         gznDPs2eCQSu+Ggc2KcoJCA0UdzunKgwi8hiTkLY+ZHSFkDOl1zUGU2gyauNO+35qNsp
+         kOwUFaWA5dDE0XeEaTNpCZhgnTj2tFJ2LW3zQ8yymhoVryuAUaO6vk4vwuh8h+YQAoJi
+         Owph5vWtqqGKlpcP8gxCftLVd4t68yaEHLI2r3anufZwM+CkEeaZRxVRjJcy6dqaTrRW
+         n1JgFKH0jZOf0AvisfXH1BJw411XGuGYF7JGcYpFv4hjSmhazYegG1xn0LEBVT+LZNGq
+         fPkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=34pNCA2fAatpNgW2gdL2L6PIclEzNScEt8bxwQ+wQhw=;
-        b=btZ7kWQQ7+ANtWZZv0B8Zmo7GHQyct0e5GJoz2SUmqFBw5okICc3X8pjW217ewd8rP
-         tX8Axugdb5ZczQ608pY0Z7daXPJMT9KZsbCp2IdJl5ciRBtQG4NYoC2Za59aboZYK99O
-         0kOHoQXfd/CnpLcAEBu6HdpPoi4hecd8Qduk7rqPjVuvpkaTXgbdQSSAKdD5IT1HzyI2
-         0DzkyAjb7FXgHYNzP0hGRwPxQV/mI3hh6rECqosAOoEKCWosPZ3eecsSsHJx3+Q/TJM2
-         kGxp9upFhpDnA+zA2EGwdP87XSiQgat2RxfE6AxG31947lVx+kepppOamFbdidxYrYoq
-         FBbw==
-X-Gm-Message-State: APjAAAXiwkCDbdsRixfuTrleg//Eq9wEOAqeVAlC0HSQzawBkx2yAlTA
-        JKQ4f5z5qsnFLVZHqhfMvzZZonZC9WPFGkfJl8c=
-X-Google-Smtp-Source: APXvYqzj3UqThCxDGgQPBMBDcNMHtdPq2BpaEuppJuuyxhOKl1E6sX2FzFWUaJgpE/jjcNezeJuicOhA12ciL3iufCI=
-X-Received: by 2002:aca:cdd3:: with SMTP id d202mr1665889oig.115.1565255189517;
- Thu, 08 Aug 2019 02:06:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=30SazUA7Tq8vOLew/Q0ozPIJ6UITJfx6OSiQFokXt+o=;
+        b=P82tZyMZxkNqdeo73iscI7DkvI/Y0WZ+LiwGrT3dL0LJHMRU70bj+tpL9yAM+eui4W
+         6rT9oUw1E5LenpmlSLN+k/J/vx5+LxP09HIKQR9cl58YUoLe6MHNoPo8f2MKSiBONM/k
+         4e9NSxTH4XuHCnkLuQZSpGsM/qnss3W+Vs+cHjV94k8Kw38AHFMrz++D4Z656YzPBnz+
+         Cb8sMzOX1HD72gbzV9t4CZqPRENy1n3HffeyM4MYYGMIsMoLsJIrkJ5mng0Ffr2Ov3ep
+         3sfZD6ndgf34wl2otkdKV3Gs5Vis3zXLaOJX085rNwZjo8HRDv85+LGigFDw4KYYOpl1
+         3PbA==
+X-Gm-Message-State: APjAAAXUAcYTEczZ6Bqji0hTkK9NnpmGfC9zXo1OhqyhgslHzB1Ohnr/
+        05dJZqUV1BCsNXiM7yhUK8aNMQ==
+X-Google-Smtp-Source: APXvYqydeeI1ncc96UjZdrxAXhHgXZE1BP0vhmCGoDri//M4yZCIqo84HVJCeE6X+NfJt2l/kTMFsg==
+X-Received: by 2002:a81:3646:: with SMTP id d67mr9291114ywa.77.1565255366232;
+        Thu, 08 Aug 2019 02:09:26 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li1322-146.members.linode.com. [45.79.223.146])
+        by smtp.gmail.com with ESMTPSA id z9sm21277603ywj.84.2019.08.08.02.09.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Aug 2019 02:09:25 -0700 (PDT)
+Date:   Thu, 8 Aug 2019 17:09:13 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 0/3] arm/arm64: Add support for function error
+ injection
+Message-ID: <20190808090913.GD8313@leoy-ThinkPad-X240s>
+References: <20190806100015.11256-1-leo.yan@linaro.org>
+ <20190807160703.pe4jxak7hs7ptvde@willie-the-truck>
 MIME-Version: 1.0
-References: <47415939.KV5G6iaeJG@kreacher> <20190730144134.GA12844@localhost.localdomain>
- <100ba4aff1c6434a81e47774ab4acddc@AUSX13MPC105.AMER.DELL.COM>
- <8246360B-F7D9-42EB-94FC-82995A769E28@canonical.com> <20190730191934.GD13948@localhost.localdomain>
- <7d3e0b8ba1444194a153c93faa1cabb3@AUSX13MPC105.AMER.DELL.COM>
- <20190730213114.GK13948@localhost.localdomain> <CAJZ5v0gxfeMN8eCNRjcXmUOkReVsdozb3EccaYMpnmSHu3771g@mail.gmail.com>
- <20190731221956.GB15795@localhost.localdomain> <2583975.4sIyE3leJj@kreacher> <20190808084804.GA31404@lst.de>
-In-Reply-To: <20190808084804.GA31404@lst.de>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 8 Aug 2019 11:06:17 +0200
-Message-ID: <CAJZ5v0hTJKPi1zfB_RjuZ415-JjmK2nVP7mss3npqoB3+Xvy4w@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: Allow PCI bus-level PM to be used if ASPM is disabled
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Keith Busch <kbusch@kernel.org>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajat Jain <rajatja@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807160703.pe4jxak7hs7ptvde@willie-the-truck>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 8, 2019 at 10:48 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> > -     ndev->last_ps = 0;
-> >       ret = nvme_get_power_state(ctrl, &ndev->last_ps);
-> > -     if (ret < 0)
-> > +     if (ret < 0 || ndev->last_ps == U32_MAX)
->
-> Is the intent of the magic U32_MAX check to see if the
-> nvme_get_power_state failed at the nvme level?  In that case just
-> checking for any non-zero return value from nvme_get_power_state might
-> be the easier and more clear way to do it.
+On Wed, Aug 07, 2019 at 05:07:03PM +0100, Will Deacon wrote:
+> On Tue, Aug 06, 2019 at 06:00:12PM +0800, Leo Yan wrote:
+> > This small patch set is to add support for function error injection;
+> > this can be used to eanble more advanced debugging feature, e.g.
+> > CONFIG_BPF_KPROBE_OVERRIDE.
+> > 
+> > The patch 01/03 is to consolidate the function definition which can be
+> > suared cross architectures, patches 02,03/03 are used for enabling
+> > function error injection on arm64 and arm architecture respectively.
+> > 
+> > I tested on arm64 platform Juno-r2 and one of my laptop with x86
+> > architecture with below steps; I don't test for Arm architecture so
+> > only pass compilation.
+> 
+> Thanks. I've queued the first two patches up here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=for-next/error-injection
 
-Now that I think of that, it appears redundant.  I'll drop it.
+Thank you, Will.
 
->
-> > Index: linux-pm/drivers/pci/pcie/aspm.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/pci/pcie/aspm.c
-> > +++ linux-pm/drivers/pci/pcie/aspm.c
->
-> Shouldn't we split PCI vs nvme in two patches?
-
-That can be done.
-
-> > @@ -1170,6 +1170,26 @@ static int pcie_aspm_get_policy(char *bu
-> >  module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
-> >       NULL, 0644);
-> >
-> > +/*
-> > + * pcie_aspm_enabled - Return the mask of enabled ASPM link states.
-> > + * @pci_device: Target device.
-> > + */
-> > +u32 pcie_aspm_enabled(struct pci_dev *pci_device)
->
-> pcie_aspm_enabled sounds like it returns a boolean.  Shouldn't there be
-> a mask or so in the name better documenting what it returns?
-
-OK
-
-> > +{
-> > +     struct pci_dev *bridge = pci_upstream_bridge(pci_device);
-> > +     u32 ret;
-> > +
-> > +     if (!bridge)
-> > +             return 0;
-> > +
-> > +     mutex_lock(&aspm_lock);
-> > +     ret = bridge->link_state ? bridge->link_state->aspm_enabled : 0;
-> > +     mutex_unlock(&aspm_lock);
-> > +
-> > +     return ret;
-> > +}
->
-> I think this will need a EXPORT_SYMBOL_GPL thrown in so that modular
-> nvme continues working.
-
-Right, sorry.
-
-> > +
-> > +
-> >  #ifdef CONFIG_PCIEASPM_DEBUG
->
-> Nit: double blank line here.
-
-Overlooked, will fix.
-
-Thanks!
+Leo.
