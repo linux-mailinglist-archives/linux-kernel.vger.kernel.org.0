@@ -2,93 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9151285994
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 07:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C04248599C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 07:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730854AbfHHFEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 01:04:34 -0400
-Received: from ozlabs.org ([203.11.71.1]:60593 "EHLO ozlabs.org"
+        id S1730894AbfHHFHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 01:07:18 -0400
+Received: from mga05.intel.com ([192.55.52.43]:28742 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbfHHFEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 01:04:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 463xB76MJ6z9sBF;
-        Thu,  8 Aug 2019 15:04:31 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1565240671;
-        bh=Xa2MwgolVrtG1hRvqOby5CPhV+YKZxy3UyY32mksAaw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=amDxSOWwPaHRCi+LZya3DZQxaNN95vGGTcC/iyvyKHzYjlbqrM5K2dnC8AMeHul/e
-         EvBixVgeXlALqxBKYS3RwtLYh29GUpQBzFXEgEM/P1eX/v4VJpyIAERvvBv8m2SbKv
-         nHkB1Qv1pa7UjkFplKa3n9IXFvE+vVjoK4yihyOuhFSoY/k7d5nmtdoAjpyXkqA0dP
-         we3rlM/RvKKunPa+qjeYBep4wQizzPu9jwVlOT+V3wkAIdD+j2HJr8XjPxCri4EsR8
-         amh2ox68x8+9OF2z8M8VJDgXLSunmO+fmjNNm+FQFcUjO7xfjP61/q2LWpuk1948CP
-         ZYPx4qdqrAaWg==
-Date:   Thu, 8 Aug 2019 15:04:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Message-ID: <20190808150431.09c1be19@canb.auug.org.au>
-In-Reply-To: <20190808050004.GA17267@gondor.apana.org.au>
-References: <20190805145736.2d39f95b@canb.auug.org.au>
-        <20190808115245.0c88c300@canb.auug.org.au>
-        <20190808030156.GA15782@gondor.apana.org.au>
-        <20190808131710.7186de0c@canb.auug.org.au>
-        <20190808050004.GA17267@gondor.apana.org.au>
+        id S1725933AbfHHFHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 01:07:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 22:07:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,360,1559545200"; 
+   d="scan'208";a="174736649"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Aug 2019 22:07:15 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Yinbo Zhu <yinbo.zhu@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jiafei.pan@nxp.com,
+        Ran Wang <ran.wang_1@nxp.com>
+Subject: Re: [PATCH v1] usb: dwc3: remove the call trace of USBx_GFLADJ
+In-Reply-To: <20190729064607.8131-1-yinbo.zhu@nxp.com>
+References: <20190729064607.8131-1-yinbo.zhu@nxp.com>
+Date:   Thu, 08 Aug 2019 08:07:14 +0300
+Message-ID: <875zn8nt31.fsf@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UcC82gN90_6AWef8iLmJULb";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/UcC82gN90_6AWef8iLmJULb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi,
 
-On Thu, 8 Aug 2019 15:00:04 +1000 Herbert Xu <herbert@gondor.apana.org.au> =
-wrote:
+Yinbo Zhu <yinbo.zhu@nxp.com> writes:
+
+> layerscape board sometimes reported some usb call trace, that is due to
+> kernel sent LPM tokerns automatically when it has no pending transfers
+> and think that the link is idle enough to enter L1, which procedure will
+> ask usb register has a recovery,then kernel will compare USBx_GFLADJ and
+> set GFLADJ_30MHZ, GFLADJ_30MHZ_REG until GFLADJ_30MHZ is equal 0x20, if
+> the conditions were met then issue occur, but whatever the conditions
+> whether were met that usb is all need keep GFLADJ_30MHZ of value is 0x20
+> (xhci spec ask use GFLADJ_30MHZ to adjust any offset from clock source
+> that generates the clock that drives the SOF counter, 0x20 is default
+> value of it)That is normal logic, so need remove the call trace.
 >
-> On Thu, Aug 08, 2019 at 01:17:10PM +1000, Stephen Rothwell wrote:
-> >
-> > Excellent, thanks.  Should I add the crypto mailing list as a contact
-> > for problems?  Mostly the emails are just reporting conflicts and only
-> > very occasionally do I actually send a useful patch.  If so, what is
-> > its address? =20
->=20
-> Yes please.  The address is
->=20
-> 	linux-crypto@vger.kernel.org
+> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+> ---
+>  drivers/usb/dwc3/core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 98bce85c29d0..a133d8490322 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -300,8 +300,7 @@ static void dwc3_frame_length_adjustment(struct dwc3 *dwc)
+>  
+>  	reg = dwc3_readl(dwc->regs, DWC3_GFLADJ);
+>  	dft = reg & DWC3_GFLADJ_30MHZ_MASK;
+> -	if (!dev_WARN_ONCE(dwc->dev, dft == dwc->fladj,
+> -	    "request value same as default, ignoring\n")) {
+> +	if (dft != dwc->fladj) {
 
-Done.
+if the value isn't different, why do you want to change it?
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/UcC82gN90_6AWef8iLmJULb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1LrV8ACgkQAVBC80lX
-0Gwedwf/UGI+L69kQpgyjRdweWJGOWQZyNiDw0LgztZL1/I54BSN3PIvdiO/KTsE
-giVp5FLx7bkXamnmxsBhlHvpKtW3Cq8AWC+vzkewp9m5KDRljJVmALUSzqRmhBAp
-QC+74+FKGGh4zcfn0gezJDtZV6TMFpr2E6TykzU4/lMWYNJanSRPywqko1iaB091
-G44HX1VpIoT+Tq+Gu0kHe6AQhfQvaPf86TnZzd97kHRWc+qCUuYgjCy9six4dlY+
-xq2jFcg0VmVLvlYgra30mmhU4tivJxAA8IM8IzHvKujwH3eKNwwyDYeWC1efGRQ7
-BXIP2Gl3o2kiOMfoP0sCHKl4nHFBfQ==
-=VTk0
------END PGP SIGNATURE-----
-
---Sig_/UcC82gN90_6AWef8iLmJULb--
+-- 
+balbi
