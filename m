@@ -2,115 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E685486D8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 01:02:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0695786D91
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 01:03:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390493AbfHHXCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 19:02:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45758 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731914AbfHHXCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 19:02:49 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9871930EF4A0;
-        Thu,  8 Aug 2019 23:02:48 +0000 (UTC)
-Received: from x1.home (ovpn-116-99.phx2.redhat.com [10.3.116.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1CA205D772;
-        Thu,  8 Aug 2019 23:02:48 +0000 (UTC)
-Date:   Thu, 8 Aug 2019 17:02:47 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Parav Pandit <parav@mellanox.com>
-Cc:     kvm@vger.kernel.org, kwankhede@nvidia.com,
-        linux-kernel@vger.kernel.org, cohuck@redhat.com, cjia@nvidia.com
-Subject: Re: [PATCH v2 0/2] Simplify mtty driver and mdev core
-Message-ID: <20190808170247.1fc2c4c4@x1.home>
-In-Reply-To: <20190808141255.45236-1-parav@mellanox.com>
-References: <20190802065905.45239-1-parav@mellanox.com>
-        <20190808141255.45236-1-parav@mellanox.com>
-Organization: Red Hat
+        id S2404689AbfHHXDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 19:03:07 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46946 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404633AbfHHXDG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 19:03:06 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c3so21793136pfa.13
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 16:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w4PN33Lkfcqftf0QvPt6llyr/NqrBtuKXP5AjG4sS2I=;
+        b=VDlEGmqQayUasSCsFFl/kgJP0QooO8SApmQBdfy+BJLl5TJEwpbGtwtJq7T+qOSyqP
+         4pr+f9f/cobDjVxMHFw9yEWd6ystcw7NzJfLo/UBCyxRAllppqjZECKri1MBeMdHWnt5
+         lPecE59M+Yu4biklKc21qNhg6dGcDqL4iSekPE3+nzudK3ae0ckmJXABQK2P4yao4Ms+
+         gpT9Ha7D9di8pymw27zH6y5sFYK8o/fxUS9DMABoCbNg29v2kJf90UAAw9+HndEWWJpZ
+         6NSHmgdEp3UZTKKAQsBoYJDcv2cdrc4vbuU/x3uvPWGh/z4COVpgRk2oEyTytwH+OcvW
+         YyYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w4PN33Lkfcqftf0QvPt6llyr/NqrBtuKXP5AjG4sS2I=;
+        b=R830DyQ7CrN+T2ih5gkdQuHRJ/0ezFAl0uAfmWwHkgUrsHssEykPd/KNteNC6mvIx3
+         EalfKWA5hJalCQYDmkNQmoHeBLqFpcXwK1zXqxZ+qK74luIcleV9BDD7BDBgY/wozxox
+         k1H1QPHuuv3Q+RKFj48PwQrRrk+zuv++EAnRzLazENcYRZs5Xq4M7vAO05WiEG58fd3R
+         KiB+UQFstzEeHv99wK9gi0wmIqOtqnuqQBQC1KT5+c1GL75K9V+UCCMVpYflvbDOnQqa
+         bBH7krnz8VQrPhbOhiOhGU9zoB/Im+I9xqtRVlzlyvE/1/lr+CEZy9oxQCYpHVVYpy2n
+         xLFQ==
+X-Gm-Message-State: APjAAAUrL5ThtykwluW62JxwZorHDG9+yv+swtBuYe+73kYojPL1vLBp
+        vJy5+bjcnIZt21zhf0XKnUsZu5rULmZj0OJkYrDusg==
+X-Google-Smtp-Source: APXvYqzH449xBvCrlqjQwzF5xj2tRIVmQKanSHXknIuOYx+GTnQuSh1A8LBUrt41WSJC5l3ogvCmflURVarkffJBOuU=
+X-Received: by 2002:a17:90a:c20f:: with SMTP id e15mr358266pjt.123.1565305385027;
+ Thu, 08 Aug 2019 16:03:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 08 Aug 2019 23:02:48 +0000 (UTC)
+References: <51a4155c5bc2ca847a9cbe85c1c11918bb193141.1564086017.git.jpoimboe@redhat.com>
+ <alpine.DEB.2.21.1907252355150.1791@nanos.tec.linutronix.de>
+ <156416793450.30723.5556760526480191131@skylake-alporthouse-com>
+ <alpine.DEB.2.21.1907262116530.1791@nanos.tec.linutronix.de>
+ <156416944205.21451.12269136304831943624@skylake-alporthouse-com>
+ <CA+icZUXwBFS-6e+Qp4e3PhnRzEHvwdzWtS6OfVsgy85R5YNGOg@mail.gmail.com>
+ <CA+icZUWA6e0Zsio6sthRUC=Ehb2-mw_9U76UnvwGc_tOnOqt7w@mail.gmail.com>
+ <20190806125931.oqeqateyzqikusku@treble> <CAKwvOd=wa-XPCpoLQoQJH8Me7S=fXLfog0XsiKyFZKu8ojW_UQ@mail.gmail.com>
+ <alpine.DEB.2.21.1908082221150.2882@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1908082221150.2882@nanos.tec.linutronix.de>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 8 Aug 2019 16:02:53 -0700
+Message-ID: <CAKwvOdkTD-0inuEKLTsH_tKXzXjvzwnUDwYZ++-hOUrC_FU=sw@mail.gmail.com>
+Subject: Re: [PATCH] drm/i915: Remove redundant user_access_end() from
+ __copy_from_user() error path
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        intel-gfx@lists.freedesktop.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  8 Aug 2019 09:12:53 -0500
-Parav Pandit <parav@mellanox.com> wrote:
+On Thu, Aug 8, 2019 at 1:22 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > tglx just picked up 2 other patches of mine, bumping just in case he's
+> > not picking up patches while on vacation. ;)
+>
+> I'm only half on vacation :)
+>
+> So I can pick it up.
 
-> Currently mtty sample driver uses mdev state and UUID in convoluated way to
-> generate an interrupt.
-> It uses several translations from mdev_state to mdev_device to mdev uuid.
-> After which it does linear search of long uuid comparision to
-> find out mdev_state in mtty_trigger_interrupt().
-> mdev_state is already available while generating interrupt from which all
-> such translations are done to reach back to mdev_state.
-> 
-> This translations are done during interrupt generation path.
-> This is unnecessary and reduandant.
+Thanks, will send half margaritas.
 
-Is the interrupt handling efficiency of this particular sample driver
-really relevant, or is its purpose more to illustrate the API and
-provide a proof of concept?  If we go to the trouble to optimize the
-sample driver and remove this interface from the API, what do we lose?
-
-This interface was added via commit:
-
-99e3123e3d72 vfio-mdev: Make mdev_device private and abstract interfaces
-
-Where the goal was to create a more formal interface and abstract
-driver access to the struct mdev_device.  In part this served to make
-out-of-tree mdev vendor drivers more supportable; the object is
-considered opaque and access is provided via an API rather than through
-direct structure fields.
-
-I believe that the NVIDIA GRID mdev driver does make use of this
-interface and it's likely included in the sample driver specifically so
-that there is an in-kernel user for it (ie. specifically to avoid it
-being removed so casually).  An interesting feature of the NVIDIA mdev
-driver is that I believe it has portions that run in userspace.  As we
-know, mdevs are named with a UUID, so I can imagine there are some
-efficiencies to be gained in having direct access to the UUID for a
-device when interacting with userspace, rather than repeatedly parsing
-it from a device name.  Is that really something we want to make more
-difficult in order to optimize a sample driver?  Knowing that an mdev
-device uses a UUID for it's name, as tools like libvirt and mdevctl
-expect, is it really worthwhile to remove such a trivial API?
-
-> Hence,
-> Patch-1 simplifies mtty sample driver to directly use mdev_state.
-> 
-> Patch-2, Since no production driver uses mdev_uuid(), simplifies and
-> removes redandant mdev_uuid() exported symbol.
-
-s/no production driver/no in-kernel production driver/
-
-I'd be interested to hear how the NVIDIA folks make use of this API
-interface.  Thanks,
-
-Alex
-
-> ---
-> Changelog:
-> v1->v2:
->  - Corrected email of Kirti
->  - Updated cover letter commit log to address comment from Cornelia
->  - Added Reviewed-by tag
-> v0->v1:
->  - Updated commit log
-> 
-> Parav Pandit (2):
->   vfio-mdev/mtty: Simplify interrupt generation
->   vfio/mdev: Removed unused and redundant API for mdev UUID
-> 
->  drivers/vfio/mdev/mdev_core.c |  6 ------
->  include/linux/mdev.h          |  1 -
->  samples/vfio-mdev/mtty.c      | 39 +++++++----------------------------
->  3 files changed, 8 insertions(+), 38 deletions(-)
-> 
-
+-- 
+Thanks,
+~Nick Desaulniers
