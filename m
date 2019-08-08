@@ -2,70 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E1A86D31
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 00:27:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A7D86D3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 00:27:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404811AbfHHW1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 18:27:01 -0400
-Received: from foss.arm.com ([217.140.110.172]:39522 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404636AbfHHW07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 18:26:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB72F15A2;
-        Thu,  8 Aug 2019 15:26:58 -0700 (PDT)
-Received: from c02sv19cfvh4.usa.arm.com (c02sv19cfvh4.usa.arm.com [10.118.108.51])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D02DF3F575;
-        Thu,  8 Aug 2019 15:26:58 -0700 (PDT)
-Subject: Re: [Tee-dev] [RFC v2 2/6] tee: enable support to register kernel
- memory
-To:     Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     tee-dev@lists.linaro.org, daniel.thompson@linaro.org,
-        corbet@lwn.net, jejb@linux.ibm.com, ard.biesheuvel@linaro.org,
-        linux-doc@vger.kernel.org, zohar@linux.ibm.com,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jarkko.sakkinen@linux.intel.com, casey@schaufler-ca.com,
-        linux-arm-kernel@lists.infradead.org, serge@hallyn.com
-References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
- <1564489420-677-3-git-send-email-sumit.garg@linaro.org>
-From:   Stuart Yoder <stuart.yoder@arm.com>
-Message-ID: <99777010-db74-096a-ce1a-da30539d6fb5@arm.com>
-Date:   Thu, 8 Aug 2019 17:26:58 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <1564489420-677-3-git-send-email-sumit.garg@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S2404828AbfHHW1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 18:27:37 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:54561 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404609AbfHHW1g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 18:27:36 -0400
+Received: by mail-pl1-f201.google.com with SMTP id u10so56244627plq.21
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 15:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=SAgL5jWhKshtX+Ve/3etoFoiXzS3zGjwWIhCQNMQlx8=;
+        b=TyQVFXvf/kFQ0bvQ86SWxMEjt4o9KrYaB+Trgezb/Bcgjgn4vD2RJXh/9mMN/R+1g3
+         zWjumVbsW1O2SwO93Wvk/2d2HV6gdkTyaYAVxyxE4HDOLaVkN2oUDXmF0WNrUvEdpGWe
+         LTLS9MRc/w5cd3uwG/VBZwwv9LOQvSWGwjvCQoHGZ5QyWGilhKZ7vM9KrrUm/+bGwzeg
+         YoXbiHjuP3uh8yYk85R08bO6EzqzyUM3ZahO/W1m85nsTtxGqTnaiKrzk5PA9mEWh+Nm
+         o+OYx5YirPiUtLnWfU+7rzT/Ff/lPWKk/r2NhGnIycply2w962dtHbE+ogzZVKGMhrxp
+         fO0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=SAgL5jWhKshtX+Ve/3etoFoiXzS3zGjwWIhCQNMQlx8=;
+        b=DLpXYq5YLdhxgvNcLE4IheT/i1j9ZkZb5uowO8duB4WSb7FNQNgFjmCEye2tqrvDAu
+         1ZRnr9XQBYLrSu9h4wXVdCXqaC6rHDKbgAJkjMd9LVbLVvoUr5dGVui8zf8wwSJ5cpBB
+         LXhbu2GM5s+s+6v9QcPoClfQKVeeRttXX0eXhiE5p+LHy3UaquzizJ3Jv+QU4inGhBlX
+         OFE0mjDq0I3MBwahj9H3NVJj8NiQICoGaHUvgSM3l0Y5CCqCjl01vamwO+C9iGDitywU
+         h0FM4o1+7xF9bq99UZzsdc14zML8Xwq9Y/t2+cQOLadIiNPBxlxPlHqeVo8Bj44/UQZW
+         1vQA==
+X-Gm-Message-State: APjAAAWb4dkUcPcOhW72HnlSJ4yD3VTAJAhf/C5hK7s1OGDAPCCVzbrR
+        5bModBTXABe+8pamQ5AphDmMPMeXl8g=
+X-Google-Smtp-Source: APXvYqwu5frW+Wzs28+LrFXoDWWdYZ9T0FrWU2oqJjGiJYltMdSIViaX5d2+U7k19kcFScW35AoYhkkpiOU=
+X-Received: by 2002:a65:6904:: with SMTP id s4mr14655909pgq.33.1565303255834;
+ Thu, 08 Aug 2019 15:27:35 -0700 (PDT)
+Date:   Thu,  8 Aug 2019 15:27:24 -0700
+Message-Id: <20190808222727.132744-1-hridya@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+Subject: [PATCH v3 0/2] Add default binderfs devices
+From:   Hridya Valsaraju <hridya@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Hridya Valsaraju <hridya@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Binderfs was created to help provide private binder devices to
+containers in their own IPC namespace. Currently, every time a new binderfs
+instance is mounted, its private binder devices need to be created via
+IOCTL calls. This patch series eliminates the effort for creating
+the default binder devices for each binderfs instance by creating them
+automatically.
 
+Hridya Valsaraju (2):
+  binder: Add default binder devices through binderfs when configured
+  binder: Validate the default binderfs device names.
 
-On 7/30/19 7:23 AM, Sumit Garg wrote:
+ drivers/android/binder.c          |  5 +++--
+ drivers/android/binder_internal.h |  2 ++
+ drivers/android/binderfs.c        | 35 ++++++++++++++++++++++++++++---
+ 3 files changed, 37 insertions(+), 5 deletions(-)
 
-> @@ -264,7 +266,17 @@ struct tee_shm *tee_shm_register(struct tee_context *ctx, unsigned long addr,
->   		goto err;
->   	}
->   
-> -	rc = get_user_pages_fast(start, num_pages, FOLL_WRITE, shm->pages);
-> +	if (flags & TEE_SHM_USER_MAPPED) {
-> +		rc = get_user_pages_fast(start, num_pages, FOLL_WRITE,
-> +					 shm->pages);
-> +	} else {
-> +		const struct kvec kiov = {
-> +			.iov_base = (void *)start,
-> +			.iov_len = PAGE_SIZE
-> +		};
-> +
-> +		rc = get_kernel_pages(&kiov, num_pages, 0, shm->pages);
+-- 
+2.22.0.770.g0f2c4a37fd-goog
 
-Passing a single kvec struct is temporary I assume?  Because as currently
-written this will only work with num_pages==1.
-
-Stuart
