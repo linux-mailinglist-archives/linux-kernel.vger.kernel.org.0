@@ -2,124 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDA6285AE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 08:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD81B85ACC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 08:30:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731491AbfHHGd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 02:33:28 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:51379 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbfHHGd1 (ORCPT
+        id S1731376AbfHHGao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 02:30:44 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:54085 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbfHHGan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 02:33:27 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 6957F1BF207;
-        Thu,  8 Aug 2019 06:33:19 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v6 14/14] riscv: Make mmap allocation top-down by default
-Date:   Thu,  8 Aug 2019 02:17:56 -0400
-Message-Id: <20190808061756.19712-15-alex@ghiti.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190808061756.19712-1-alex@ghiti.fr>
-References: <20190808061756.19712-1-alex@ghiti.fr>
+        Thu, 8 Aug 2019 02:30:43 -0400
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x786US1B009911;
+        Thu, 8 Aug 2019 15:30:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x786US1B009911
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565245829;
+        bh=gPVn4kg/MQMRHf5Lz12yg0uXG1KyqNHjoIC0Y1yDWPo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mEJslXuASafslBYnKfdobR0iREcFNPyJfk6U35DUduNt6HiYpMm75SA0Gwxq9wfit
+         ustypL/fVDMLkNik17RqYikXROrOHIkt0yd5+LT30kNCZDzU9mQWjCKUJUW9ycwjC2
+         ujbMDDrv+b5Oe9fQd9g0RkcMCD+ZpAecdvahNp0vIJxldAgQ+Jo1U6ABWmbCpZow+o
+         ujyq6CfDT5Hljs1lugE8p1Hha6gETtCXdZjpjfTNrZTtHy+k2c7y6t/FoHimUC259j
+         fKmtXVY6zu37n2mGHBiTFWdEuZAm7P4gcn2JvBfdbtQMP5mqwiKRRY2GYZwJFdURKn
+         BTrXZ0qfVMWKw==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id y16so62270686vsc.3;
+        Wed, 07 Aug 2019 23:30:29 -0700 (PDT)
+X-Gm-Message-State: APjAAAWHvF8rgXd7ZRjvsqBd4DG8av/KjS/iArALXyqMoMnHzVZ2LK9R
+        XuM1yJ4ZKd/MjSuaHfq+hFSus41Q7hmG5cyF90k=
+X-Google-Smtp-Source: APXvYqz5LBOdTMvDI8Dv1tMNZP247T6t7FKAkqs+TVVnRbFMv21IkcWjIiYjripFL+jsFTam+Ic/T/5fQtOvkUD0Bbk=
+X-Received: by 2002:a67:d46:: with SMTP id 67mr8336889vsn.181.1565245828043;
+ Wed, 07 Aug 2019 23:30:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190806100323.22919-1-yamada.masahiro@socionext.com> <20190806100323.22919-3-yamada.masahiro@socionext.com>
+In-Reply-To: <20190806100323.22919-3-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 8 Aug 2019 15:29:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARrC2h_qtFaY6=2+YVz2kJcMK_+QZ+WJEba8T1AH_Nvjg@mail.gmail.com>
+Message-ID: <CAK7LNARrC2h_qtFaY6=2+YVz2kJcMK_+QZ+WJEba8T1AH_Nvjg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] kbuild: show hint if subdir-y/m is used to visit
+ module Makefile
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Tom Stonecypher <thomas.edwardx.stonecypher@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to avoid wasting user address space by using bottom-up mmap
-allocation scheme, prefer top-down scheme when possible.
+On Tue, Aug 6, 2019 at 7:03 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Since commit ff9b45c55b26 ("kbuild: modpost: read modules.order instead
+> of $(MODVERDIR)/*.mod"), a module is no longer built in the following
+> pattern:
+>
+>   [Makefile]
+>   subdir-y := some-module
+>
+>   [some-module/Makefile]
+>   obj-m := some-module.o
+>
+> You cannot write Makefile this way in upstream because modules.order is
+> not correctly generated. subdir-y is used to descend to a sub-directory
+> that builds tools, device trees, etc.
+>
+> For external modules, the modules order does not matter. So, the
+> Makefile above was known to work.
+>
+> I believe the Makefile should be re-written as follows:
+>
+>   [Makefile]
+>   obj-m := some-module/
+>
+>   [some-module/Makefile]
+>   obj-m := some-module.o
+>
+> However, people will have no idea if their Makefile suddenly stops
+> working. In fact, I received questions from multiple people.
+>
+> Show a warning if obj-m is specified in a Makefile visited by subdir-y
+> or subdir-m.
+>
+> Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> Cc: Tom Stonecypher <thomas.edwardx.stonecypher@intel.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Before:
-root@qemuriscv64:~# cat /proc/self/maps
-00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
-00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
-00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
-00018000-00039000 rw-p 00000000 00:00 0          [heap]
-1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
-155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
-155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
-155556f000-1555570000 rw-p 00000000 00:00 0
-1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
-1555574000-1555576000 rw-p 00000000 00:00 0
-1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
-1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
-1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
-155567a000-15556a0000 rw-p 00000000 00:00 0
-3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
+This produces false-positive warnings for single-targets.
+I will fix up as follows:
 
-After:
-root@qemuriscv64:~# cat /proc/self/maps
-00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
-00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
-00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
-2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
-3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
-3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
-3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
-3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
-3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
-3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
-3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
-3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
-3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
-3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
-3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Acked-by: Paul Walmsley <paul.walmsley@sifive.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
----
- arch/riscv/Kconfig | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+diff --git a/Makefile b/Makefile
+index 0e37ad2f77bf..fac25e279da6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1783,7 +1783,7 @@ PHONY += /
+ /: ./
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 59a4727ecd6c..87dc5370becb 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -54,6 +54,18 @@ config RISCV
- 	select EDAC_SUPPORT
- 	select ARCH_HAS_GIGANTIC_PAGE
- 	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
-+	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
-+	select HAVE_ARCH_MMAP_RND_BITS
-+
-+config ARCH_MMAP_RND_BITS_MIN
-+	default 18 if 64BIT
-+	default 8
-+
-+# max bits determined by the following formula:
-+#  VA_BITS - PAGE_SHIFT - 3
-+config ARCH_MMAP_RND_BITS_MAX
-+	default 24 if 64BIT # SV39 based
-+	default 17
- 
- config MMU
- 	def_bool y
+ %/: prepare FORCE
+-       $(Q)$(MAKE) KBUILD_MODULES=1 $(build)=$(build-dir)
++       $(Q)$(MAKE) KBUILD_MODULES=1 $(build)=$(build-dir) need-modorder=1
+
+ # FIXME Should go into a make.lib or something
+ # ===========================================================================
+
+
+
+>
+>  scripts/Makefile.build | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 37a1d2cd49d4..4a26c7ed9198 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -52,6 +52,13 @@ ifndef obj
+>  $(warning kbuild: Makefile.build is included improperly)
+>  endif
+>
+> +ifeq ($(need-modorder),)
+> +ifneq ($(obj-m),)
+> +$(warning $(patsubst %.o,'%.ko',$(obj-m)) will not be built even though obj-m is specified.)
+> +$(warning You cannot use subdir-y/m to visit a module Makefile. Use obj-y/m instead.)
+> +endif
+> +endif
+> +
+>  # ===========================================================================
+>
+>  ifneq ($(strip $(lib-y) $(lib-m) $(lib-)),)
+> --
+> 2.17.1
+>
+
+
 -- 
-2.20.1
-
+Best Regards
+Masahiro Yamada
