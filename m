@@ -2,145 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 552AB85C2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 09:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EA4C85C34
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 09:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731699AbfHHH5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 03:57:04 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40594 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbfHHH5E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 03:57:04 -0400
-Received: by mail-ot1-f65.google.com with SMTP id l15so57827970oth.7;
-        Thu, 08 Aug 2019 00:57:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PfgNCbwNh+egJUA3cbV8dUVAFRIGQlHaXhUpgK2RvWY=;
-        b=JGJMpSjCGosPfjQC++oRo9/VpIYQjtroBHN743qwzAzvGwWB5pIBYAiDbdvUr9BPJt
-         Eo75K5UBgZ/gNMoWwkPqrC1ebkSs6ugBxhbHyqohfNnLDNGaVk38PZCLn+DuTtHuWbh7
-         5hOZdCLwSYvYHaoqJcd3YCtb78oW/V7GqgaUuaKoez42d8Opdb+7SC6HbG3SMcwWfgOX
-         58mFj2RG/w8nyMm9/lRxYUJK4+B17RhjqJLtgW7lPpWJDtAsIvV9RPikTutK1Mb3WE/Z
-         7NkEE7P395FfzzoTyAL38adaFrI9UH5xaJbeITg8/VqaF/DK1vddCOeMp8womXVikOXV
-         qFkQ==
-X-Gm-Message-State: APjAAAWTQXbT7DoKFP8e7rXNysRmu2ExYF6MtNYw7tJUCwhn0jgjnO2h
-        cWv5ICjfuv2JQeBT8lSfrMyNJXm/bigR4DlWAC0=
-X-Google-Smtp-Source: APXvYqyxub+OuS4BmFWrwKCfra+oZAC4TQcubjFwMCIkh5Hd7WXBKupUhwY9Boc0JZWx3NsB6ilSK6bX/BtJ1nAWqYU=
-X-Received: by 2002:aca:bd43:: with SMTP id n64mr1504808oif.148.1565251023062;
- Thu, 08 Aug 2019 00:57:03 -0700 (PDT)
+        id S1731692AbfHHH6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 03:58:32 -0400
+Received: from verein.lst.de ([213.95.11.211]:44262 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731588AbfHHH6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 03:58:32 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 3D39168B02; Thu,  8 Aug 2019 09:58:27 +0200 (CEST)
+Date:   Thu, 8 Aug 2019 09:58:27 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Rob Clark <robdclark@chromium.org>, Christoph Hellwig <hch@lst.de>,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] drm: add cache support for arm64
+Message-ID: <20190808075827.GD30308@lst.de>
+References: <20190805211451.20176-1-robdclark@gmail.com> <20190806084821.GA17129@lst.de> <CAJs_Fx6eh1w7c=crMoD5XyEOMzP6orLhqUewErE51cPGYmObBQ@mail.gmail.com> <20190806143457.GF475@lakrids.cambridge.arm.com> <CAJs_Fx4h6SWGmDTLBnV4nmWUFAs_Ge1inxd-dW9aDKgKqmc1eQ@mail.gmail.com> <20190807123807.GD54191@lakrids.cambridge.arm.com> <CAJs_Fx5xU2-dn3iOVqWTzAjpTaQ8BBNP_Gn_iMc-eJpOX+iXoQ@mail.gmail.com> <20190807164958.GA44765@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-References: <20190730181557.90391-1-swboyd@chromium.org> <20190730181557.90391-26-swboyd@chromium.org>
-In-Reply-To: <20190730181557.90391-26-swboyd@chromium.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 8 Aug 2019 09:56:51 +0200
-Message-ID: <CAMuHMdV2786n3ex-rY7N5LdX4PpnqZ-tuX2SyTO0w+TRfrA84g@mail.gmail.com>
-Subject: Re: [PATCH v6 25/57] media: Remove dev_err() usage after platform_get_irq()
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190807164958.GA44765@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Wed, Aug 07, 2019 at 05:49:59PM +0100, Mark Rutland wrote:
+> I'm fairly confident that the linear/direct map cacheable alias is not
+> torn down when pages are allocated. The gneeric page allocation code
+> doesn't do so, and I see nothing the shmem code to do so.
 
-On Tue, Jul 30, 2019 at 8:21 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> We don't need dev_err() messages when platform_get_irq() fails now that
-> platform_get_irq() prints an error message itself when something goes
-> wrong. Let's remove these prints with a simple semantic patch.
->
-> // <smpl>
-> @@
-> expression ret;
-> struct platform_device *E;
-> @@
->
-> ret =
-> (
-> platform_get_irq(E, ...)
-> |
-> platform_get_irq_byname(E, ...)
-> );
->
-> if ( \( ret < 0 \| ret <= 0 \) )
-> {
-> (
-> -if (ret != -EPROBE_DEFER)
-> -{ ...
-> -dev_err(...);
-> -... }
-> |
-> ...
-> -dev_err(...);
-> )
-> ...
-> }
-> // </smpl>
->
-> While we're here, remove braces on if statements that only have one
-> statement (manually).
->
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: linux-media@vger.kernel.org
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->
-> Please apply directly to subsystem trees
->
->  drivers/media/platform/am437x/am437x-vpfe.c           | 1 -
->  drivers/media/platform/atmel/atmel-sama5d2-isc.c      | 7 ++-----
->  drivers/media/platform/exynos4-is/mipi-csis.c         | 4 +---
->  drivers/media/platform/imx-pxp.c                      | 4 +---
->  drivers/media/platform/omap3isp/isp.c                 | 1 -
->  drivers/media/platform/renesas-ceu.c                  | 4 +---
->  drivers/media/platform/rockchip/rga/rga.c             | 1 -
->  drivers/media/platform/s3c-camif/camif-core.c         | 4 +---
->  drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c | 8 ++------
->  drivers/media/platform/sti/hva/hva-hw.c               | 8 ++------
->  drivers/media/platform/stm32/stm32-dcmi.c             | 5 +----
->  drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c    | 7 ++-----
->  drivers/media/rc/img-ir/img-ir-core.c                 | 4 +---
->  drivers/media/rc/ir-hix5hd2.c                         | 4 +---
->  drivers/media/rc/meson-ir.c                           | 4 +---
->  drivers/media/rc/mtk-cir.c                            | 4 +---
->  drivers/media/rc/sunxi-cir.c                          | 1 -
->  17 files changed, 17 insertions(+), 54 deletions(-)
+It is not torn down anywhere.
 
-Looks like this didn't catch the double assignments in:
+> For arm64, we can tear down portions of the linear map, but that has to
+> be done explicitly, and this is only possible when using rodata_full. If
+> not using rodata_full, it is not possible to dynamically tear down the
+> cacheable alias.
 
-drivers/media/platform/rcar_fdp1.c:     fdp1->irq = ret =
-platform_get_irq(pdev, 0);
-drivers/media/platform/rcar_fdp1.c-     if (ret < 0) {
-drivers/media/platform/rcar_fdp1.c-             dev_err(&pdev->dev,
-"cannot find IRQ\n");
-drivers/media/platform/rcar_fdp1.c-             return ret;
-drivers/media/platform/rcar_fdp1.c-     }
-drivers/media/platform/rcar_fdp1.c-
---
-drivers/media/platform/rcar_jpu.c:      jpu->irq = ret =
-platform_get_irq(pdev, 0);
-drivers/media/platform/rcar_jpu.c-      if (ret < 0) {
-drivers/media/platform/rcar_jpu.c-              dev_err(&pdev->dev,
-"cannot find IRQ\n");
-drivers/media/platform/rcar_jpu.c-              return ret;
-drivers/media/platform/rcar_jpu.c-      }
-drivers/media/platform/rcar_jpu.c-
+Interesting.  For this or next merge window I plan to add support to the
+generic DMA code to remap pages as uncachable in place based on the
+openrisc code.  Aѕ far as I can tell the requirement for that is
+basically just that the kernel direct mapping doesn't use PMD or bigger
+mapping so that it supports changing protection bits on a per-PTE basis.
+Is that the case with arm64 + rodata_full?
 
-Gr{oetje,eeting}s,
+> > My understanding is that a cacheable alias is "ok", with some
+> > caveats.. ie. that the cacheable alias is not accessed.  
+> 
+> Unfortunately, that is not true. You'll often get away with it in
+> practice, but that's a matter of probability rather than a guarantee.
+> 
+> You  cannot prevent a CPU from accessing a VA arbitrarily (e.g. as the
+> result of wild speculation). The ARM ARM (ARM DDI 0487E.a) points this
+> out explicitly:
 
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Well, if we want to fix this properly we'll have to remap in place
+for dma_alloc_coherent and friends.
