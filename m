@@ -2,162 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EA185C81
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D606C85C8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:13:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731978AbfHHIJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:09:23 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36346 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731658AbfHHIJX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:09:23 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r6so115155113oti.3;
-        Thu, 08 Aug 2019 01:09:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NBFSdcaTcFoDPEtsfprZTWviaehhzIBA9CqQY+IL5/Y=;
-        b=QWLrJVSTN+oAbY8u6+JjSBfg0cXKMI3XZQ+gDdGFWHhrkwsl9UMHLw+kjxum9wPNqj
-         po2aXEKcWt+duY4vHH8tGpwKqF+8JveQabU8DwSDeo+MWwCXygSzgVATvRFx4qQntc2a
-         iScU8C3/TVj6s8+ne8ZRW1yE6W13qIiKh2OQjgy6/DM0t7OARwezeV8rIcqscI9NOM2B
-         z7B3Y11JYQINiifdtHm0vGhqqlAe8aJSAUMEJ69KkuR25/DsBxqQefrK9sPZtD37zzQW
-         mPRGtUyQ8pnvyVC96CT6zdfjUyAUqgjuMkyol2ybfin/SH2OkJn95/VzhG3Q8Gnj+jbF
-         /wJw==
-X-Gm-Message-State: APjAAAV+vhawgbnciT+KqBPPZgmWGfXfzWZyxQS/h9RCLJPbgH3Bd0qe
-        SqISaw6SF3H8g/KZBoxgKNPpCsYQoU7WrveP5FM=
-X-Google-Smtp-Source: APXvYqydNbKoEj5yccYRAI19XY287hgtCeiyoefADzGyalRGi0KNiysoeatvbVR35E7SB8lrJ1JjxbckO9DPGCuWlA0=
-X-Received: by 2002:a9d:529:: with SMTP id 38mr12094425otw.145.1565251762153;
- Thu, 08 Aug 2019 01:09:22 -0700 (PDT)
+        id S1731989AbfHHINx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:13:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33204 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731781AbfHHINw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:13:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 68840AFFE;
+        Thu,  8 Aug 2019 08:13:49 +0000 (UTC)
+Date:   Thu, 8 Aug 2019 10:00:44 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, paulmck@linux.ibm.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 1/6] mm/page_idle: Add per-pid idle page tracking
+ using virtual index
+Message-ID: <20190808080044.GA18351@dhcp22.suse.cz>
+References: <20190807171559.182301-1-joel@joelfernandes.org>
+ <20190807130402.49c9ea8bf144d2f83bfeb353@linux-foundation.org>
+ <20190807204530.GB90900@google.com>
+ <20190807135840.92b852e980a9593fe91fbf59@linux-foundation.org>
+ <20190807213105.GA14622@google.com>
 MIME-Version: 1.0
-References: <20190730181557.90391-1-swboyd@chromium.org> <20190730181557.90391-42-swboyd@chromium.org>
-In-Reply-To: <20190730181557.90391-42-swboyd@chromium.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 8 Aug 2019 10:09:10 +0200
-Message-ID: <CAMuHMdWBFzNGhzAdEyFEbRE6nOWBKpCQ-5VXZfh3Bg+FMB7NXg@mail.gmail.com>
-Subject: Re: [PATCH v6 41/57] spi: Remove dev_err() usage after platform_get_irq()
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807213105.GA14622@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Wed 07-08-19 17:31:05, Joel Fernandes wrote:
+> On Wed, Aug 07, 2019 at 01:58:40PM -0700, Andrew Morton wrote:
+> > On Wed, 7 Aug 2019 16:45:30 -0400 Joel Fernandes <joel@joelfernandes.org> wrote:
+> > 
+> > > On Wed, Aug 07, 2019 at 01:04:02PM -0700, Andrew Morton wrote:
+> > > > On Wed,  7 Aug 2019 13:15:54 -0400 "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+> > > > 
+> > > > > In Android, we are using this for the heap profiler (heapprofd) which
+> > > > > profiles and pin points code paths which allocates and leaves memory
+> > > > > idle for long periods of time. This method solves the security issue
+> > > > > with userspace learning the PFN, and while at it is also shown to yield
+> > > > > better results than the pagemap lookup, the theory being that the window
+> > > > > where the address space can change is reduced by eliminating the
+> > > > > intermediate pagemap look up stage. In virtual address indexing, the
+> > > > > process's mmap_sem is held for the duration of the access.
+> > > > 
+> > > > So is heapprofd a developer-only thing?  Is heapprofd included in
+> > > > end-user android loads?  If not then, again, wouldn't it be better to
+> > > > make the feature Kconfigurable so that Android developers can enable it
+> > > > during development then disable it for production kernels?
+> > > 
+> > > Almost all of this code is already configurable with
+> > > CONFIG_IDLE_PAGE_TRACKING. If you disable it, then all of this code gets
+> > > disabled.
+> > > 
+> > > Or are you referring to something else that needs to be made configurable?
+> > 
+> > Yes - the 300+ lines of code which this patchset adds!
+> > 
+> > The impacted people will be those who use the existing
+> > idle-page-tracking feature but who will not use the new feature.  I
+> > guess we can assume this set is small...
+> 
+> Yes, I think this set should be small. The code size increase of page_idle.o
+> is from ~1KB to ~2KB. Most of the extra space is consumed by
+> page_idle_proc_generic() function which this patch adds. I don't think adding
+> another CONFIG option to disable this while keeping existing
+> CONFIG_IDLE_PAGE_TRACKING enabled, is worthwhile but I am open to the
+> addition of such an option if anyone feels strongly about it. I believe that
+> once this patch is merged, most like this new interface being added is what
+> will be used more than the old interface (for some of the usecases) so it
+> makes sense to keep it alive with CONFIG_IDLE_PAGE_TRACKING.
 
-On Tue, Jul 30, 2019 at 8:19 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> We don't need dev_err() messages when platform_get_irq() fails now that
-> platform_get_irq() prints an error message itself when something goes
-> wrong. Let's remove these prints with a simple semantic patch.
->
-> // <smpl>
-> @@
-> expression ret;
-> struct platform_device *E;
-> @@
->
-> ret =
-> (
-> platform_get_irq(E, ...)
-> |
-> platform_get_irq_byname(E, ...)
-> );
->
-> if ( \( ret < 0 \| ret <= 0 \) )
-> {
-> (
-> -if (ret != -EPROBE_DEFER)
-> -{ ...
-> -dev_err(...);
-> -... }
-> |
-> ...
-> -dev_err(...);
-> )
-> ...
-> }
-> // </smpl>
->
-> While we're here, remove braces on if statements that only have one
-> statement (manually).
->
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: linux-spi@vger.kernel.org
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->
-> Please apply directly to subsystem trees
->
->  drivers/spi/atmel-quadspi.c     |  1 -
->  drivers/spi/spi-armada-3700.c   |  1 -
->  drivers/spi/spi-bcm2835.c       |  1 -
->  drivers/spi/spi-bcm2835aux.c    |  1 -
->  drivers/spi/spi-bcm63xx-hsspi.c |  4 +---
->  drivers/spi/spi-bcm63xx.c       |  4 +---
->  drivers/spi/spi-cadence.c       |  1 -
->  drivers/spi/spi-dw-mmio.c       |  4 +---
->  drivers/spi/spi-efm32.c         |  4 +---
->  drivers/spi/spi-ep93xx.c        |  4 +---
->  drivers/spi/spi-fsl-dspi.c      |  1 -
->  drivers/spi/spi-fsl-qspi.c      |  4 +---
->  drivers/spi/spi-geni-qcom.c     |  4 +---
->  drivers/spi/spi-lantiq-ssc.c    | 12 +++---------
->  drivers/spi/spi-mt65xx.c        |  1 -
->  drivers/spi/spi-npcm-pspi.c     |  1 -
->  drivers/spi/spi-nuc900.c        |  1 -
->  drivers/spi/spi-nxp-fspi.c      |  4 +---
->  drivers/spi/spi-pic32-sqi.c     |  1 -
->  drivers/spi/spi-pic32.c         | 12 +++---------
->  drivers/spi/spi-qcom-qspi.c     |  4 +---
->  drivers/spi/spi-s3c24xx.c       |  1 -
->  drivers/spi/spi-sh-msiof.c      |  1 -
->  drivers/spi/spi-sh.c            |  4 +---
->  drivers/spi/spi-sifive.c        |  1 -
->  drivers/spi/spi-slave-mt27xx.c  |  1 -
->  drivers/spi/spi-sprd.c          |  4 +---
->  drivers/spi/spi-stm32-qspi.c    |  5 +----
->  drivers/spi/spi-sun4i.c         |  1 -
->  drivers/spi/spi-sun6i.c         |  1 -
->  drivers/spi/spi-synquacer.c     |  2 --
->  drivers/spi/spi-ti-qspi.c       |  1 -
->  drivers/spi/spi-uniphier.c      |  1 -
->  drivers/spi/spi-xlp.c           |  4 +---
->  drivers/spi/spi-zynq-qspi.c     |  1 -
->  drivers/spi/spi-zynqmp-gqspi.c  |  1 -
->  36 files changed, 19 insertions(+), 80 deletions(-)
-
-Failed to catch
-drivers/spi/spi-rspi.c: ret = platform_get_irq_byname(pdev, "rx");
-drivers/spi/spi-rspi.c- if (ret < 0) {
-drivers/spi/spi-rspi.c:         ret = platform_get_irq_byname(pdev, "mux");
-drivers/spi/spi-rspi.c-         if (ret < 0)
-drivers/spi/spi-rspi.c:                 ret = platform_get_irq(pdev, 0);
-drivers/spi/spi-rspi.c-         if (ret >= 0)
-drivers/spi/spi-rspi.c-                 rspi->rx_irq = rspi->tx_irq = ret;
-drivers/spi/spi-rspi.c- } else {
-drivers/spi/spi-rspi.c-         rspi->rx_irq = ret;
-drivers/spi/spi-rspi.c:         ret = platform_get_irq_byname(pdev, "tx");
-drivers/spi/spi-rspi.c-         if (ret >= 0)
-drivers/spi/spi-rspi.c-                 rspi->tx_irq = ret;
-drivers/spi/spi-rspi.c- }
-drivers/spi/spi-rspi.c- if (ret < 0) {
-drivers/spi/spi-rspi.c:         dev_err(&pdev->dev, "platform_get_irq error\n");
-drivers/spi/spi-rspi.c-         goto error2;
-drivers/spi/spi-rspi.c- }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+I would tend to agree with Joel here. The functionality falls into an
+existing IDLE_PAGE_TRACKING config option quite nicely. If there really
+are users who want to save some space and this is standing in the way
+then they can easily add a new config option with some justification so
+the savings are clear. Without that an additional config simply adds to
+the already existing configurability complexity and balkanization.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Michal Hocko
+SUSE Labs
