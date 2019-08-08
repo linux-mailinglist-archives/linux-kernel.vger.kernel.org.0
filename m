@@ -2,123 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF00866DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8F0F866D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:20:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733152AbfHHQU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:20:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:63601 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727096AbfHHQU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:20:28 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 09:20:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,362,1559545200"; 
-   d="scan'208";a="374906890"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Aug 2019 09:20:26 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hvl9O-0004oP-46; Fri, 09 Aug 2019 00:20:26 +0800
-Date:   Fri, 9 Aug 2019 00:19:30 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Inki Dae <inki.dae@samsung.com>
-Subject: drivers/gpu/drm/exynos/exynos_drm_fbdev.c:244:26: sparse: sparse:
- incorrect type in argument 1 (different address spaces)
-Message-ID: <201908090009.K3ubLMtC%lkp@intel.com>
+        id S1732906AbfHHQUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:20:08 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34985 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732375AbfHHQUH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 12:20:07 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u14so44392995pfn.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 09:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:from:cc:to:user-agent:date;
+        bh=rpT1/n0MtDKR55gc7Xe/1ERiGiwTe4vZMPU9Bfy10FI=;
+        b=Y7o7tDsMydMyUuzGRnboQKe/5DZGF0GAAcTEKQ3TnqBW9YBJW+NKiPXSdtZCCYObN8
+         AtJrE90vxGnVWdwPAxzaJhl9IPp4pUP4BUo49u+TH7K9mJ7N7xJ5Ne1r/mTSLgfDqOqe
+         KMeAzvYaE5+sipQTmnJqT9BRA14XUcjFtqt14=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
+         :user-agent:date;
+        bh=rpT1/n0MtDKR55gc7Xe/1ERiGiwTe4vZMPU9Bfy10FI=;
+        b=aHpswDJ4BM03kI7Hk6HE5+aWa21U6RVJ9mhUW71P1mOU86M2KDqgzNRUg2La7MieJ+
+         69io1TakOSJwI5t6jG4GZ/uKhCOfBlsFVLyAzsReQAgGga8arY8p8C+UFmnrnQLbe7TZ
+         earAUNv9PJy85SgDiCUlb78PhNvtvuA4NrIdFzYjqDTkMBAu9ZL1CPLwRcs+IBiVv5v5
+         BH/+2CkAygRZ0hakV8xlRrkk9ZJ0P7ig5oUO7zoT/PAtL0RG+VmAOYFJPUHdcQHNyUVF
+         HwimjDRAOeze71DRnjGUqYJ2vJi0g8/yL+0r4NDVsaKuDr/NyuzHlRUEkQJrQYiEGZ3z
+         ifjQ==
+X-Gm-Message-State: APjAAAUfL3I5TugdL5X1US0KTjdIZn5WPc98PhYbulxnZ11uKSGy5rZq
+        FEtWeXdI9upo/FgnwaGSJEubAFuiRAo=
+X-Google-Smtp-Source: APXvYqwrRIJFaN3/EOnl4mURCxYQeFmoB2bV4p9L6PhJ6mv+tvNN2NH1QgEbMDZXoHTTiaqtDYC/uQ==
+X-Received: by 2002:a17:90a:c58e:: with SMTP id l14mr4875532pjt.104.1565281206991;
+        Thu, 08 Aug 2019 09:20:06 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id j6sm3065998pjd.19.2019.08.08.09.20.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 08 Aug 2019 09:20:06 -0700 (PDT)
+Message-ID: <5d4c4bb6.1c69fb81.db640.7518@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190808061228.16573-2-mkshah@codeaurora.org>
+References: <20190808061228.16573-1-mkshah@codeaurora.org> <20190808061228.16573-2-mkshah@codeaurora.org>
+Subject: Re: [PATCH 1/2] dt-bindings: Introduce soc sleep stats bindings for Qualcomm SoCs
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        bjorn.andersson@linaro.org, evgreen@chromium.org,
+        dianders@chromium.org, rnayak@codeaurora.org, ilina@codeaurora.org,
+        lsrao@codeaurora.org, mkshah@codeaurora.org,
+        devicetree@vger.kernel.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+To:     Maulik Shah <mkshah@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Thu, 08 Aug 2019 09:20:04 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ecb095bff5d4b8711a81968625b3b4a235d3e477
-commit: 156bdac99061b4013c8e47799c6e574f7f84e9f4 drm/exynos: trigger build of all modules
-date:   6 weeks ago
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
-        git checkout 156bdac99061b4013c8e47799c6e574f7f84e9f4
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+Quoting Maulik Shah (2019-08-07 23:12:27)
+> Add device binding documentation for Qualcomm Technology Inc's (QTI)
+> SoC sleep stats driver. The driver is used for displaying SoC sleep
+> statistic maintained by Always On Processor or Resource Power Manager.
+>=20
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+Your SoB chain is odd. The author is Mahesh? Otherwise, use the
+Co-Developed-by tag.
 
+> ---
+>  .../bindings/soc/qcom/soc-sleep-stats.txt     | 36 +++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/soc-sleep-=
+stats.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.t=
+xt b/Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.txt
+> new file mode 100644
+> index 000000000000..ee40687ded34
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.txt
+> @@ -0,0 +1,36 @@
+> +* SoC Sleep Stats
+> +
+> +Always On Processor/Resource Power Manager maintains statistics of the S=
+oC
+> +sleep modes involving lowering or powering down of the backbone rails - =
+Cx
 
-sparse warnings: (new ones prefixed by >>)
+What is a 'backbone' rail?
 
->> drivers/gpu/drm/exynos/exynos_drm_fbdev.c:244:26: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const *addr @@    got void [noderevoid const *addr @@
->> drivers/gpu/drm/exynos/exynos_drm_fbdev.c:244:26: sparse:    expected void const *addr
->> drivers/gpu/drm/exynos/exynos_drm_fbdev.c:244:26: sparse:    got void [noderef] <asn:2> *kvaddr
---
->> drivers/gpu/drm/exynos/exynos_drm_fimd.c:458:39: sparse: sparse: incorrect type in initializer (different address spaces) @@    expected void *timing_base @@    got void [noderef] <asvoid *timing_base @@
->> drivers/gpu/drm/exynos/exynos_drm_fimd.c:458:39: sparse:    expected void *timing_base
->> drivers/gpu/drm/exynos/exynos_drm_fimd.c:458:39: sparse:    got void [noderef] <asn:2> *
->> drivers/gpu/drm/exynos/exynos_drm_fimd.c:470:41: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2> *addr @@    got n:2> *addr @@
->> drivers/gpu/drm/exynos/exynos_drm_fimd.c:470:41: sparse:    expected void volatile [noderef] <asn:2> *addr
->> drivers/gpu/drm/exynos/exynos_drm_fimd.c:470:41: sparse:    got void *
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:473:39: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2> *addr @@    got n:2> *addr @@
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:473:39: sparse:    expected void volatile [noderef] <asn:2> *addr
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:473:39: sparse:    got void *
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:519:53: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2> *addr @@    got n:2> *addr @@
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:519:53: sparse:    expected void volatile [noderef] <asn:2> *addr
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:519:53: sparse:    got void *
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:945:39: sparse: sparse: incorrect type in initializer (different address spaces) @@    expected void *timing_base @@    got void [noderef] <asvoid *timing_base @@
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:945:39: sparse:    expected void *timing_base
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:945:39: sparse:    got void [noderef] <asn:2> *
->> drivers/gpu/drm/exynos/exynos_drm_fimd.c:958:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const volatile [noderef] <asn:2> *addr @@    got n:2> *addr @@
->> drivers/gpu/drm/exynos/exynos_drm_fimd.c:958:33: sparse:    expected void const volatile [noderef] <asn:2> *addr
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:958:33: sparse:    got void *
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:960:33: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected void volatile [noderef] <asn:2> *addr @@    got n:2> *addr @@
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:960:33: sparse:    expected void volatile [noderef] <asn:2> *addr
-   drivers/gpu/drm/exynos/exynos_drm_fimd.c:960:33: sparse:    got void *
---
->> drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c:527:5: sparse: sparse: symbol 'analogix_dp_start_aux_transaction' was not declared. Should it be static?
->> drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c:571:5: sparse: sparse: symbol 'analogix_dp_write_byte_to_dpcd' was not declared. Should it be static?
+> +and Mx and the oscillator clock, XO.
 
-vim +244 drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+Drop the comma? XO is the oscillator clock.
 
-1c248b7d2960fa Inki Dae       2011-10-04  236  
-1c248b7d2960fa Inki Dae       2011-10-04  237  static void exynos_drm_fbdev_destroy(struct drm_device *dev,
-1c248b7d2960fa Inki Dae       2011-10-04  238  				      struct drm_fb_helper *fb_helper)
-1c248b7d2960fa Inki Dae       2011-10-04  239  {
-4744ad2414bd89 Inki Dae       2012-12-07  240  	struct exynos_drm_fbdev *exynos_fbd = to_exynos_fbdev(fb_helper);
-813fd67b57ffca Joonyoung Shim 2015-10-02  241  	struct exynos_drm_gem *exynos_gem = exynos_fbd->exynos_gem;
-1c248b7d2960fa Inki Dae       2011-10-04  242  	struct drm_framebuffer *fb;
-1c248b7d2960fa Inki Dae       2011-10-04  243  
-813fd67b57ffca Joonyoung Shim 2015-10-02 @244  	vunmap(exynos_gem->kvaddr);
-4744ad2414bd89 Inki Dae       2012-12-07  245  
-1c248b7d2960fa Inki Dae       2011-10-04  246  	/* release drm framebuffer and real buffer */
-1c248b7d2960fa Inki Dae       2011-10-04  247  	if (fb_helper->fb && fb_helper->fb->funcs) {
-1c248b7d2960fa Inki Dae       2011-10-04  248  		fb = fb_helper->fb;
-328c057ca4def7 Daniel Vetter  2016-12-27  249  		if (fb)
-f7eff60ea0e4e3 Rob Clark      2012-09-05  250  			drm_framebuffer_remove(fb);
-1c248b7d2960fa Inki Dae       2011-10-04  251  	}
-1c248b7d2960fa Inki Dae       2011-10-04  252  
-7c7d4507fb04bb Archit Taneja  2015-07-22  253  	drm_fb_helper_unregister_fbi(fb_helper);
-1c248b7d2960fa Inki Dae       2011-10-04  254  
-1c248b7d2960fa Inki Dae       2011-10-04  255  	drm_fb_helper_fini(fb_helper);
-1c248b7d2960fa Inki Dae       2011-10-04  256  }
-1c248b7d2960fa Inki Dae       2011-10-04  257  
+> +
+> +Statistics includes SoC sleep mode type, number of times low power mode =
+were
+> +entered, time of last entry, time of last exit and accumulated sleep dur=
+ation.
+> +SoC Sleep Stats driver provides sysfs interface to display this informat=
+ion.
 
-:::::: The code at line 244 was first introduced by commit
-:::::: 813fd67b57ffca0dd19fe1834f894a4558cf5e0b drm/exynos: cleanup name of gem object for exynos_drm
+Can this document be YAML? Then it can be validated.
 
-:::::: TO: Joonyoung Shim <jy0922.shim@samsung.com>
-:::::: CC: Inki Dae <daeinki@gmail.com>
+> +
+> +PROPERTIES
+> +
+> +- compatible:
+> +       Usage: required
+> +       Value type: <string>
+> +       Definition: Should be "qcom,rpmh-sleep-stats" or "qcom,rpm-sleep-=
+stats".
+> +
+> +- reg:
+> +       Usage: required
+> +       Value type: <prop-encoded-array>
+> +       Definition: The base address on the Always On Processor or Resour=
+ce Power
+> +                   Manager from where the stats are read.
+> +
+> +EXAMPLE 1:
+> +
+> +       rpmh_sleep_stats: soc-sleep-stats@c3f0000 {
+> +               compatible =3D "qcom,rpmh-sleep-stats";
+> +               reg =3D <0 0xc3f0000 0 0x400>;
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Is this memory region in DDR? Or some specific IMEM location? I wonder
+if it would be better to just have a pointer from the RPM node to this
+memory region and then populate some stats if so.
+
+> +       };
+> +
