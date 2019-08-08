@@ -2,168 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7566686775
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A2E78677D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:53:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404187AbfHHQtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:49:01 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34883 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404108AbfHHQtB (ORCPT
+        id S2404107AbfHHQxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:53:07 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.219]:16246 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2403910AbfHHQxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:49:01 -0400
-Received: by mail-wm1-f65.google.com with SMTP id l2so3103753wmg.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 09:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lL2ShwsE/GA9BuDEpLxcIGuN5LXS8sAbxL9xoaNEokw=;
-        b=cwd3fSQiRwN6sA8taiEQr8r3230IVi0h+C58VurH9KWDmqdrJ2YUSTjZPnCZyQ3VrV
-         JwqOYtnxH4T9CkZrwy2RluKRFHYHLvGwkb+daaAt/nqT7asOx4UfOxu5nYs/oTMZf1Wq
-         3n1WIpgb/9BbwuYKpRC4BS1sB1heZb2sffB5OhQROsCmrQwZdVfH7OYV6On47fCuvzrp
-         ByJRSkM95InCOT9LHtdITzxsSpIGANBx5HxVgGCEEJcMz1l/zP0prRpZkaW+l1XXfph/
-         wdaacSUL1MW1gHpeuI5QHL3Y86/ts6T0XBqhtwJerzQ08gAH3siBPwwLKAfV6LWisVQ0
-         cbyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lL2ShwsE/GA9BuDEpLxcIGuN5LXS8sAbxL9xoaNEokw=;
-        b=pqHuAprZ5lp1GHbp+dOTVktRJJZgSvmDl+L5naQv/spDOYiOEH6mGR0khLilX85XfP
-         NHNlo+/F4vhMFJWi675vUtTETeXW2ZAIbpUcQZPUi7G8Tg4NSS9cTYEXmzu9yKn2nmJ2
-         w9qjiLU7DvLJiUDUiY9D51FFdbliY6psri4ju89H4tiTYNE30JGYOQW7pl45h29qyLG+
-         FS/uKwuwPifr+p0HFMM+fbYtjHXFtH83l0IZQdpxpMI4Bw5gJWpaHeox7FoLBAl2LjDh
-         PfTMEUYxyHwiO9DHsnSrgZo6F1CdicxJQgz5WMIDFg4vXdpgJb8rihW/YP0I1a/tGBzV
-         AMCQ==
-X-Gm-Message-State: APjAAAUOfE0k2rcm2IcytItvD9bonbG4FBeaeT7e7EEkzDJOBL/3ardN
-        CCxzf0os3cLREJA/IEhsUJ8hZBRKWPY=
-X-Google-Smtp-Source: APXvYqxffKPC+HPHpszeXHZyBaa0mp+CcvH1UOy9QMMrHgh8Dhaf1vCOw9UxYWNilMieJlTSzKH6rw==
-X-Received: by 2002:a7b:c766:: with SMTP id x6mr5627277wmk.40.1565282937783;
-        Thu, 08 Aug 2019 09:48:57 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id r5sm5114319wmh.35.2019.08.08.09.48.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Aug 2019 09:48:57 -0700 (PDT)
-Subject: Re: [PATCH v2 1/4] dt-bindings: soundwire: add slave bindings
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        vkoul@kernel.org, broonie@kernel.org
-Cc:     bgoswami@codeaurora.org, plai@codeaurora.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20190808144504.24823-1-srinivas.kandagatla@linaro.org>
- <20190808144504.24823-2-srinivas.kandagatla@linaro.org>
- <d346b2af-f285-4c53-b706-46a129ab7951@linux.intel.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <cdd2bded-551c-65f5-ca29-d2bb825bdaba@linaro.org>
-Date:   Thu, 8 Aug 2019 17:48:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 8 Aug 2019 12:53:07 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 138A5639DE
+        for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2019 11:53:06 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id vlf0h2XT1dnCevlf0hU0pM; Thu, 08 Aug 2019 11:53:06 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=y3YgOHS6bY8+iBEodkrq3S2tL1ugedHa5kZcaV5LOVE=; b=pm2/lEJh9Ul5SL9snCGYSz6+T/
+        vNV/CQJj4NXeMcXcf7QOz3xPz0vj/RvFtkGrjDadQq0E37YT+ydD1QBx/9odbiJn+KkGEeeCWD2fO
+        dqqqkZoGgt5A/fbDSA2o8gGiztYvFjtOXMBU8O+AhXD0DGEE/4vpXfFiMAOGhZ+aRvT31VVvRCOUX
+        IZuS7L4cmD+o75kIHpo4jjzXynYDrlywhoz+/zlGu0YnGWKcOZYPtzApBFurDIQqSMYQeGpEMP4V8
+        BXe6DVClkYXxCplZwcSNGWwgGirjL4zMBLBkhCPa9IA4KKs7HYxx4VIJAFCELEKfyYMR44jI9UNuN
+        iowGchKQ==;
+Received: from [187.192.11.120] (port=49892 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hvley-000Ebr-O5; Thu, 08 Aug 2019 11:53:04 -0500
+Date:   Thu, 8 Aug 2019 11:53:01 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] mmc: sdhci-cadence: use struct_size() helper
+Message-ID: <20190808165301.GA30877@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <d346b2af-f285-4c53-b706-46a129ab7951@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hvley-000Ebr-O5
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:49892
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-On 08/08/2019 16:58, Pierre-Louis Bossart wrote:
-> 
->> +++ b/Documentation/devicetree/bindings/soundwire/slave.txt
->> @@ -0,0 +1,46 @@
->> +SoundWire slave device bindings.
->> +
->> +SoundWire is a 2-pin multi-drop interface with data and clock line.
->> +It facilitates development of low cost, efficient, high performance 
->> systems.
->> +
->> +SoundWire slave devices:
->> +Every SoundWire controller node can contain zero or more child nodes
->> +representing slave devices on the bus. Every SoundWire slave device is
->> +uniquely determined by the enumeration address containing 5 fields:
->> +SoundWire Version, Instance ID, Manufacturer ID, Part ID and Class ID
->> +for a device. Addition to below required properties, child nodes can
->> +have device specific bindings.
-> 
-> In case the controller supports multiple links, what's the encoding then?
-> in the MIPI DisCo spec there is a linkId field in the _ADR encoding that 
-> helps identify which link the Slave device is connected to
->  >> +
->> +Required property for SoundWire child node if it is present:
->> +- compatible:     "sdwVER,MFD,PID,CID". The textual representation of
->> +          SoundWire Enumeration address comprising SoundWire
->> +          Version, Manufacturer ID, Part ID and Class ID,
->> +          shall be in lower-case hexadecimal with leading
->> +          zeroes suppressed.
->> +          Version number '0x10' represents SoundWire 1.0
->> +          Version number '0x11' represents SoundWire 1.1
->> +          ex: "sdw10,0217,2010,0"
->> +
->> +- sdw-instance-id: Should be ('Instance ID') from SoundWire
->> +          Enumeration Address. Instance ID is for the cases
->> +          where multiple Devices of the same type or Class
->> +          are attached to the bus.
-> 
-> so it is actually required if you have a single Slave device? Or is it 
-> only required when you have more than 1 device of the same type?
-> 
+struct sdhci_cdns_priv {
+	...
+        struct sdhci_cdns_phy_param phy_params[0];
+};
 
-This is mandatory for any slave device!
+Make use of the struct_size() helper instead of an open-coded version
+in order to avoid any potential type mistakes.
 
-> FWIW in the MIPI DisCo spec we kept the instanceID as part of the _ADR, 
-> so it's implicitly mandatory (and ignored by the bus if there is only 
-> one device of the same time)
-> 
->> +
->> +SoundWire example for Qualcomm's SoundWire controller:
->> +
->> +soundwire@c2d0000 {
->> +    compatible = "qcom,soundwire-v1.5.0"
->> +    reg = <0x0c2d0000 0x2000>;
->> +
->> +    spkr_left:wsa8810-left{
->> +        compatible = "sdw10,0217,2010,0";
->> +        sdw-instance-id = <1>;
->> +        ...
->> +    };
->> +
->> +    spkr_right:wsa8810-right{
->> +        compatible = "sdw10,0217,2010,0";
->> +        sdw-instance-id = <2>;
-> 
-> Isn't the MIPI encoding reported in the Dev_ID0..5 registers 0-based?
-> 
->> +        ...
->> +    };
->> +};
->>
-> 
-> And now that I think of it, wouldn't it be simpler for everyone if we 
-> aligned on that MIPI DisCo public spec? e.g. you'd have one property 
-> with a 64-bit number that follows the MIPI spec. No special encoding 
-> necessary for device tree cases, your DT blob would use this:
+So, replace the following form:
 
-Thanks for the suggestion, adding 64 device bits as compatible string 
-should take care of linkID too. I will give that a go!
+sizeof(*priv) + sizeof(priv->phy_params[0]) * nr_phy_params
 
-> 
-> soundwire@c2d0000 {
->      compatible = "qcom,soundwire-v1.5.0"
->      reg = <0x0c2d0000 0x2000>;
-> 
->      spkr_left:wsa8810-left{
->          compatible = "sdw00 00 10 02 17 20 10 00"
->      }
-> 
->      spkr_right:wsa8810-right{
->          compatible = "sdw0000100217201100"
->      }
-> }
-> 
-> We could use parentheses if it makes people happier, but the information 
-> from the MIPI DisCo spec can be used as is, and provide a means for spec 
-> changes via reserved bits.
+with:
+
+struct_size(priv, phy_params, nr_phy_params)
+
+Also, notice that, in this case, variable priv_size is not necessary,
+hence it is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/mmc/host/sdhci-cadence.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+index 163d1cf4367e..1768a13f89be 100644
+--- a/drivers/mmc/host/sdhci-cadence.c
++++ b/drivers/mmc/host/sdhci-cadence.c
+@@ -337,7 +337,6 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
+ 	struct sdhci_pltfm_host *pltfm_host;
+ 	struct sdhci_cdns_priv *priv;
+ 	struct clk *clk;
+-	size_t priv_size;
+ 	unsigned int nr_phy_params;
+ 	int ret;
+ 	struct device *dev = &pdev->dev;
+@@ -351,8 +350,8 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	nr_phy_params = sdhci_cdns_phy_param_count(dev->of_node);
+-	priv_size = sizeof(*priv) + sizeof(priv->phy_params[0]) * nr_phy_params;
+-	host = sdhci_pltfm_init(pdev, &sdhci_cdns_pltfm_data, priv_size);
++	host = sdhci_pltfm_init(pdev, &sdhci_cdns_pltfm_data,
++				struct_size(priv, phy_params, nr_phy_params));
+ 	if (IS_ERR(host)) {
+ 		ret = PTR_ERR(host);
+ 		goto disable_clk;
+-- 
+2.22.0
+
