@@ -2,144 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 824438644D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C97C686453
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732759AbfHHO05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 10:26:57 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40108 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728327AbfHHO05 (ORCPT
+        id S2389842AbfHHO1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 10:27:10 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38113 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387769AbfHHO1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 10:26:57 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p184so44196505pfp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 07:26:56 -0700 (PDT)
+        Thu, 8 Aug 2019 10:27:09 -0400
+Received: by mail-ot1-f67.google.com with SMTP id d17so119430132oth.5;
+        Thu, 08 Aug 2019 07:27:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=md2OPGZk0nCv756Mrn9PJif0bN7aUiYeyoo+Xz7PdYE=;
-        b=RGcrcGuU/OaUgSHbE78BfEVc9bZx1UvWtqQWxfNlsLkly64S1IvchY4VZgqriAGzPZ
-         lRISbM1zSNQuRIk871EoOpWK6/RjjnYOVQGS9vGBZk8+AIIx9JU5v9uqTeh/SwcEGTwK
-         q1A6Q2g/vFKmG92OceBjKRjRVp8yb9gg/1dqDM2OiIrtWOXpZa2yOGyNJFDDfTUaj0KF
-         NeoCjHzRZG6lZSI2rzXI7kHLLF8KREs02p0NASgArhkP+Ovji7OyP94FtzJOjrgVphfq
-         zv7AEHpsYP65+EDdccvh1R2mEJr5lcJygV7AQoPqPV84uT2XNxsrrhfiAXryL5G/UcML
-         axtA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kfupe5BCBY7jnSL0f7BIF2NQvyUM9IcPYdq/C0xPwjo=;
+        b=eBsLf4ymJd4TN1TmmVtWpS+ZvLVOln2SBpbkeYigaEHwcMXuaQS7D2/LjueqTfbWJR
+         uWoLzYhviUsYYdPGq0kl5qd0B29UvdUgSxXehrB8HTSCE1XXN5vMabO4qNVsJAOIx6YC
+         2/dvgD0CXyXpnV/ZTxm8prArw2a/H673BzmsI1odR9EnWnnI+kLBm4C+2X/rzaTl4fdT
+         3g+tod2Jcs8Vg2u8K+ZHR0vHDjc8X80Fx8fM1GUHPmWMhdP3MZziOSdRED9LCM5DxJ/b
+         qCHRQ2hqg7A687ZVzLS1JPWGYuTtMPU7IcI0Dp4wjCalaySQFsR9yYCxqgR9mlDSmJNw
+         oecw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=md2OPGZk0nCv756Mrn9PJif0bN7aUiYeyoo+Xz7PdYE=;
-        b=tWlQEP5op72Iax2mOb5goBSRJ12rok1Egl95OAssq2uBLsW2l8BWFwCTDoKhsUvIOo
-         mH/rvf19gobVcwePzwBj4u4uCZ6cVgTmAYUJhXlnom6ZYai/+TRC4fuTNECozhvaQz7G
-         zMelRXndTtWV5nGC0RRR0BqxAzbMySog5DzeCAvRGH9Bz6og6KeKbyw4dGbAzAUuonUV
-         LXHdfa9tOjfHkA6EqwRPXmqzII0bYO4iqZ6DZyhWN+buvbOo6U6XAhuVLyZJtAhQiQH9
-         l/P9sHODGyFvPmEqvjQBvBVfzfteFJzGsUhq44Haa6m2MsGDaINep8mmicdy4Hpy3KyM
-         vhTg==
-X-Gm-Message-State: APjAAAX+7V1EGKLD6quawepTAVwAo/8G+kiw9+MYEcBHmWqfLbtf4VxV
-        WuUbKIAF9kF/BVWNdRzyQUk=
-X-Google-Smtp-Source: APXvYqwfXVielMoSb1WFWeRq8TWMnABH9ZbDPtNew3A40VqJcYgKvnifq7ihKwD3wS7PvTDqk8LrVA==
-X-Received: by 2002:aa7:93a5:: with SMTP id x5mr15532929pff.87.1565274413336;
-        Thu, 08 Aug 2019 07:26:53 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id cx22sm2374760pjb.25.2019.08.08.07.26.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 07:26:52 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] iio: adc: max1027: Use device-managed APIs
-Date:   Thu,  8 Aug 2019 22:26:46 +0800
-Message-Id: <20190808142646.29567-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kfupe5BCBY7jnSL0f7BIF2NQvyUM9IcPYdq/C0xPwjo=;
+        b=jvgNY3CmzBwn+SMAGj5/tPuAsi1mP+/QQBzLvomC2iA4w3/LWcu910rc9aRTAMtIxk
+         gwFEbcDS3khsxVM9PgPZ1/JhNxWrO0QYSLzCw22s+pnY5bePEZ0ZmBaFIl9OC7vNfU6K
+         bR5ej2P5NDa2cQKeGVEyFydl36obJlCU7lWdjJl1qvYUGIjT2SBUEvzxz1TCukC6wpNK
+         PJSsgnV/ay3IBXPMlUNnsyqnnDj+tLtYbZBVstzYvP20oDQNPLwqZtGqUWwAjCUGo0No
+         s/JxAo4WzYv+WNRexiBqAmobQM3p4k6eteMH16UXEuaVpalA5hykCGW7McHVPP5RBp1X
+         ZfJw==
+X-Gm-Message-State: APjAAAW1/IJyfJ3ocpoXiLxxrWqhf5+oKA/2Bj6ASSjlYJLQrafHGPln
+        paAqr9S31e4F85mUmMuLgsfZ/8NrOz/d4p7bgw==
+X-Google-Smtp-Source: APXvYqyP1vcNnOqVtrNubvfjYGUmAcMf8O4IxgdBNXI6d0ODggbbZLLe1p7Z2PNdNyzA/kns9Rz4xd6na7idgKhgl2g=
+X-Received: by 2002:a9d:27e2:: with SMTP id c89mr13553083otb.302.1565274428280;
+ Thu, 08 Aug 2019 07:27:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <CAH040W7fdd-ND4-QG3DwGpFAPTMGB4zzuXYohMdfoSejV6XE_Q@mail.gmail.com>
+ <CA+ASDXM6Jz7YY9XUj6QKv5VJCED-BnQ5K1UZHNApB9p6qTWtgg@mail.gmail.com> <F7CD281DE3E379468C6D07993EA72F84D1889B04@RTITMBSVM04.realtek.com.tw>
+In-Reply-To: <F7CD281DE3E379468C6D07993EA72F84D1889B04@RTITMBSVM04.realtek.com.tw>
+From:   =?UTF-8?B?6rOg7KSA?= <gojun077@gmail.com>
+Date:   Thu, 8 Aug 2019 23:26:57 +0900
+Message-ID: <CAH040W7x92Bb_zOh=g+B+j7sUnsUFh_O2+SXwqcymyjbyNHuXg@mail.gmail.com>
+Subject: Re: Realtek r8822be wireless card fails to work with new rtw88 kernel module
+To:     Tony Chuang <yhchuang@realtek.com>
+Cc:     Brian Norris <briannorris@chromium.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use device-managed APIs to simplify the code.
+Hello,
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/iio/adc/max1027.c | 30 +++++++-----------------------
- 1 file changed, 7 insertions(+), 23 deletions(-)
+Thanks for sharing the patch, Brian. I am seeing some progress when
+building 5.3.0-rc1+ with
+the wireless-drivers-next patch for the rtw88 kernel module. Before
+the patch, my realtek r8822be
+was not recognized at all.
 
-diff --git a/drivers/iio/adc/max1027.c b/drivers/iio/adc/max1027.c
-index da84adfdb819..f1b90c544b82 100644
---- a/drivers/iio/adc/max1027.c
-+++ b/drivers/iio/adc/max1027.c
-@@ -427,8 +427,9 @@ static int max1027_probe(struct spi_device *spi)
- 		return -ENOMEM;
- 	}
- 
--	ret = iio_triggered_buffer_setup(indio_dev, &iio_pollfunc_store_time,
--					 &max1027_trigger_handler, NULL);
-+	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
-+					&iio_pollfunc_store_time,
-+					&max1027_trigger_handler, NULL);
- 	if (ret < 0) {
- 		dev_err(&indio_dev->dev, "Failed to setup buffer\n");
- 		return ret;
-@@ -439,7 +440,7 @@ static int max1027_probe(struct spi_device *spi)
- 	if (st->trig == NULL) {
- 		ret = -ENOMEM;
- 		dev_err(&indio_dev->dev, "Failed to allocate iio trigger\n");
--		goto fail_trigger_alloc;
-+		return ret;
- 	}
- 
- 	st->trig->ops = &max1027_trigger_ops;
-@@ -454,7 +455,7 @@ static int max1027_probe(struct spi_device *spi)
- 					spi->dev.driver->name, st->trig);
- 	if (ret < 0) {
- 		dev_err(&indio_dev->dev, "Failed to allocate IRQ.\n");
--		goto fail_dev_register;
-+		return ret;
- 	}
- 
- 	/* Disable averaging */
-@@ -462,33 +463,16 @@ static int max1027_probe(struct spi_device *spi)
- 	ret = spi_write(st->spi, &st->reg, 1);
- 	if (ret < 0) {
- 		dev_err(&indio_dev->dev, "Failed to configure averaging register\n");
--		goto fail_dev_register;
--	}
--
--	ret = iio_device_register(indio_dev);
--	if (ret < 0) {
--		dev_err(&indio_dev->dev, "Failed to register iio device\n");
--		goto fail_dev_register;
-+		return ret;
- 	}
- 
--	return 0;
--
--fail_dev_register:
--fail_trigger_alloc:
--	iio_triggered_buffer_cleanup(indio_dev);
--
--	return ret;
-+	return devm_iio_device_register(&spi->dev, indio_dev);
- }
- 
- static int max1027_remove(struct spi_device *spi)
- {
--	struct iio_dev *indio_dev = spi_get_drvdata(spi);
--
- 	pr_debug("%s: remove(spi = 0x%p)\n", __func__, spi);
- 
--	iio_device_unregister(indio_dev);
--	iio_triggered_buffer_cleanup(indio_dev);
--
- 	return 0;
- }
- 
--- 
-2.20.1
+After the patch, Realtek ethernet as well as wireless card r8822be are
+recognized and I can see
+a list of wireless access points. But for some reason, ping to my
+local gateway servers (both
+Ethernet and wireless) fail. Running tcpdump on my wireless and
+ethernet interfaces shows
+that ARP requests are showing up, but dns resolution doesn't work. I
+can associate with a
+wireless access point with wpa_supplicant and my ethernet port is
+getting a DHCP lease from
+my dhcp server, however.
 
+And for YH~
+Here is a dropbox link to debug info containing the output of dmesg,
+lsmod, and journalctl -b0 zipped
+up into a tarball:
+
+https://www.dropbox.com/s/pl85ob09y6q2qky/debug_5.3.0-rc1%2B_with_rtw88_pat=
+ch.tar.gz?dl=3D0
+
+Thanks for your help!
+Jun
+
+
+Link to GPG Public Key:
+https://keybase.io/gojun077#show-public
+
+
+Backup link:
+https://keys.openpgp.org/vks/v1/by-fingerprint/79F173A93EB3623D32F86309A569=
+30CF7235138D
+
+
+Link to GPG Public Key:
+
+https://keybase.io/gojun077#show-public
+
+
+Backup link:
+
+https://keys.openpgp.org/vks/v1/by-fingerprint/79F173A93EB3623D32F86309A569=
+30CF7235138D
+
+
+
+On Wed, Aug 7, 2019 at 11:33 AM Tony Chuang <yhchuang@realtek.com> wrote:
+>
+> > + yhchuang
+> >
+> > On Tue, Aug 6, 2019 at 7:32 AM =EA=B3=A0=EC=A4=80 <gojun077@gmail.com> =
+wrote:
+> > >
+> > > Hello,
+> > >
+> > > I recently reported a bug to Ubuntu regarding a regression in wireles=
+s
+> > > driver support for the Realtek r8822be wireless chipset. The issue
+> > > link on launchpad is:
+> > >
+> > > https://bugs.launchpad.net/bugs/1838133
+> > >
+> > > After Canonical developers triaged the bug they determined that the
+> > > problem lies upstream, and instructed me to send mails to the relevan=
+t
+> > > kernel module maintainers at Realtek and to the general kernel.org
+> > > mailing list.
+> > >
+> > > I built kernel 5.3.0-rc1+ with the latest realtek drivers from
+> > > wireless-drivers-next but my Realtek r8822be doesn't work with
+> > > rtw88/rtwpci kernel modules.
+> > >
+> > > Please let me know if there is any additional information I can
+> > > provide that would help in debugging this issue.
+> >
+> > Any chance this would help you?
+> >
+> > https://patchwork.kernel.org/patch/11065631/
+> >
+> > Somebody else was complaining about 8822be regressions that were fixed
+> > with that.
+> >
+>
+> I hope it could fix it.
+>
+> And as "r8822be" was dropped, it is preferred to use "rtw88" instead.
+> I have received two kinds of failures that cause driver stop working.
+> One is the MSI interrupt should be enabled on certain platforms.
+> Another is the RFE type of the card, could you send more dmesg to me?
+>
+> Yan-Hsuan
+>
+>
