@@ -2,44 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F29786B95
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:34:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C572786B94
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 22:34:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404818AbfHHUd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 16:33:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59082 "EHLO
+        id S2390196AbfHHUeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 16:34:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59014 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390337AbfHHUdy (ORCPT
+        with ESMTP id S2390186AbfHHUdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 16:33:54 -0400
+        Thu, 8 Aug 2019 16:33:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=/rq/2ce6mWXa/vegfzxi5Nnd0b+NfKRKsaObwqhcVSw=; b=eO4hS+87LtFB
-        xs//n93trhQpa6EEHoNxaR3YQUphwF8qeHgW+fvgTEttlJH0RHUE8xi906ona+f+oRl72I3GuHASa
-        HbaK+7OmollxD3mzw/PBMjiNZXnEPiFxg1UJxpsvTBO1ugufKy6GHbr1mCKp+Zr6Hr1ZhwGKawvFq
-        kO47k=;
+        List-Archive; bh=TGTfGqfOMgVvjL/QPZF6UpiPmWUonJ4ujvK9D1SoyDs=; b=d259rLtczXP/
+        L9mMrJ+SQA15m0imXlYkwBndLcFlBVvOW4JgRhQmQL4gYJ6a2AakfXSOfwMnrXiBrA3eaBbv1X4DA
+        WCIZ6CvHkVITeqb1KGtlhUN8wzMyBRAnx720dyUma0jGvghUjVBD6GMllS+bGE7voOBkPZg8q7LRq
+        JWvyM=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hvp6b-00042g-BG; Thu, 08 Aug 2019 20:33:49 +0000
+        id 1hvp6b-00042k-Q6; Thu, 08 Aug 2019 20:33:49 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id DDAD72742B42; Thu,  8 Aug 2019 21:33:48 +0100 (BST)
+        id 57C7A2742BE9; Thu,  8 Aug 2019 21:33:49 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     broonie@kernel.org, Hulk Robot <hulkci@huawei.com>,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        maarten@treewalker.org, Mark Brown <broonie@kernel.org>,
-        paul@crapouillou.net
-Subject: Applied "regulator: act8865: Fix build error without CONFIG_POWER_SUPPLY" to the regulator tree
-In-Reply-To: <20190807133822.67124-1-yuehaibing@huawei.com>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Applied "regulator: dt-bindings: Add PM8150x compatibles" to the regulator tree
+In-Reply-To: <20190808093343.5600-1-vkoul@kernel.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190808203348.DDAD72742B42@ypsilon.sirena.org.uk>
-Date:   Thu,  8 Aug 2019 21:33:48 +0100 (BST)
+Message-Id: <20190808203349.57C7A2742BE9@ypsilon.sirena.org.uk>
+Date:   Thu,  8 Aug 2019 21:33:49 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: act8865: Fix build error without CONFIG_POWER_SUPPLY
+   regulator: dt-bindings: Add PM8150x compatibles
 
 has been applied to the regulator tree at
 
@@ -72,42 +75,47 @@ to this mail.
 Thanks,
 Mark
 
-From 5375f1efd70b5adbbbaded22889d50c07f6f89a4 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 7 Aug 2019 21:38:22 +0800
-Subject: [PATCH] regulator: act8865: Fix build error without
- CONFIG_POWER_SUPPLY
+From d566aae1c80d9be2276057b3236c68bdcc5b3254 Mon Sep 17 00:00:00 2001
+From: Vinod Koul <vkoul@kernel.org>
+Date: Thu, 8 Aug 2019 15:03:42 +0530
+Subject: [PATCH] regulator: dt-bindings: Add PM8150x compatibles
 
-Building without CONFIG_POWER_SUPPLY will fail:
+Add PM8150, PM8150L and PM8009 compatibles for these PMICs found
+in some Qualcomm platforms.
 
-drivers/regulator/act8865-regulator.o: In function `act8865_pmic_probe':
-act8865-regulator.c:(.text+0x357): undefined reference to `devm_power_supply_register'
-drivers/regulator/act8865-regulator.o: In function `act8600_charger_get_property':
-act8865-regulator.c:(.text+0x3f1): undefined reference to `power_supply_get_drvdata'
-
-Add POWER_SUPPLY dependency to Kconfig.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 2d09a79bf637 ("regulator: act8865: Add support for act8600 charger")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190807133822.67124-1-yuehaibing@huawei.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Link: https://lore.kernel.org/r/20190808093343.5600-1-vkoul@kernel.org
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/regulator/qcom,rpmh-regulator.txt | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index b57093d7c01f..37e64884b9ee 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -83,6 +83,7 @@ config REGULATOR_88PM8607
- config REGULATOR_ACT8865
- 	tristate "Active-semi act8865 voltage regulator"
- 	depends on I2C
-+	depends on POWER_SUPPLY
- 	select REGMAP_I2C
- 	help
- 	  This driver controls a active-semi act8865 voltage output
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+index 14d2eee96b3d..1a9cab50503a 100644
+--- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+@@ -25,6 +25,9 @@ Supported regulator node names:
+ 	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
+ 	PMI8998:	bob
+ 	PM8005:		smps1 - smps4
++	PM8150:		smps1 - smps10, ldo1 - ldo18
++	PM8150L:	smps1 - smps8, ldo1 - ldo11, bob, flash, rgb
++	PM8009:		smps1 - smps2, ld01 - ldo7
+ 
+ ========================
+ First Level Nodes - PMIC
+@@ -35,7 +38,10 @@ First Level Nodes - PMIC
+ 	Value type: <string>
+ 	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
+ 		    "qcom,pmi8998-rpmh-regulators" or
+-		    "qcom,pm8005-rpmh-regulators".
++		    "qcom,pm8005-rpmh-regulators" or
++		    "qcom,pm8150-rpmh-regulators" or
++		    "qcom,pm8150l-rpmh-regulators" or
++		    "qcom,pm8009-rpmh-regulators".
+ 
+ - qcom,pmic-id
+ 	Usage:      required
 -- 
 2.20.1
 
