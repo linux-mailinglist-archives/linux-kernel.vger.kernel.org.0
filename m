@@ -2,66 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92EFB85795
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 03:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A518579E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 03:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730601AbfHHBXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 21:23:23 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:49848 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730382AbfHHBXX (ORCPT
+        id S1730679AbfHHB2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 21:28:00 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43124 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730459AbfHHB17 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Aug 2019 21:23:23 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvX98-0000RZ-U7; Thu, 08 Aug 2019 01:23:15 +0000
-Date:   Thu, 8 Aug 2019 02:23:14 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCHv2 2/3] i915: convert to new mount API
-Message-ID: <20190808012314.GK1131@ZenIV.linux.org.uk>
-References: <20190805160307.5418-1-sergey.senozhatsky@gmail.com>
- <20190805160307.5418-3-sergey.senozhatsky@gmail.com>
- <20190805181255.GH1131@ZenIV.linux.org.uk>
- <20190805182834.GI1131@ZenIV.linux.org.uk>
- <alpine.LSU.2.11.1908060007190.1941@eggly.anvils>
- <20190807063002.GG6627@lst.de>
+        Wed, 7 Aug 2019 21:27:59 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x781OIUb045363;
+        Thu, 8 Aug 2019 01:27:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=SMEScP/jvo2b4EcJaFhvsjBA1PqiD1E4MVP6+/D7Yl0=;
+ b=IV0Kfdu8wlLOPXxPTp1qW6FDs8juPfCi28IuxqfiDkH/bnbUcGPW1ZOOWyPeZmAPqUFO
+ nSzeaB3omFs8oF4a7LNlZHCayoLTnavoLfFbidw5cV9An+Ai76uj2m554cbr6mgykxGf
+ qI402hu8CZKyiYpC/PEmsD8bnTbT2CemTBZZW1g9UyJOq9T+Kf/0ZqoNzHy5aiswGUAx
+ YwojTxe3v/6c3a3zy9WnhC0vH6fC5s/k14MKbBx68XckikpvbGmYxTNix+Alnew1Y3ag
+ VEkXQx3qPGEAmireVQ49an/MFZOE1FwbUStwIGX6c2hSUZ4zVQv3no6kEuPP+RxNB+n3 XQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2u51pu7k62-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 08 Aug 2019 01:27:50 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x781MWxh084052;
+        Thu, 8 Aug 2019 01:27:50 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2u76689d2t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 08 Aug 2019 01:27:50 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x781Rlaa021948;
+        Thu, 8 Aug 2019 01:27:47 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 07 Aug 2019 18:27:47 -0700
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <kashyap.desai@broadcom.com>, <sumit.saxena@broadcom.com>,
+        <shivasharan.srikanteshwara@broadcom.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <megaraidlinux.pdl@broadcom.com>
+Subject: Re: [PATCH -next] scsi: megaraid_sas: Make a bunch of functions static
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190726135540.48780-1-yuehaibing@huawei.com>
+Date:   Wed, 07 Aug 2019 21:27:44 -0400
+In-Reply-To: <20190726135540.48780-1-yuehaibing@huawei.com>
+        (yuehaibing@huawei.com's message of "Fri, 26 Jul 2019 21:55:40 +0800")
+Message-ID: <yq1v9v8e99r.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807063002.GG6627@lst.de>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=817
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908080010
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9342 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=884 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908080010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 08:30:02AM +0200, Christoph Hellwig wrote:
-> On Tue, Aug 06, 2019 at 12:50:10AM -0700, Hugh Dickins wrote:
-> > Though personally I'm averse to managing "f"objects through
-> > "m"interfaces, which can get ridiculous (notably, MADV_HUGEPAGE works
-> > on the virtual address of a mapping, but the huge-or-not alignment of
-> > that mapping must have been decided previously).  In Google we do use
-> > fcntls F_HUGEPAGE and F_NOHUGEPAGE to override on a per-file basis -
-> > one day I'll get to upstreaming those.
-> 
-> Such an interface seems very useful, although the two fcntls seem a bit
-> odd.
-> 
-> But I think the point here is that the i915 has its own somewhat odd
-> instance of tmpfs.  If we could pass the equivalent of the huge=*
-> options to shmem_file_setup all that garbage (including the
-> shmem_file_setup_with_mnt function) could go away.
 
-... or follow shmem_file_super() with whatever that fcntl maps to
-internally.  I would really love to get rid of that i915 kludge.
+YueHaibing,
+
+> Fix sparse warnings:
+
+Applied to 5.4/scsi-queue, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
