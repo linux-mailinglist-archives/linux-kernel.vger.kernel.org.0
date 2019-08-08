@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 836B5869CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E77AB869E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:12:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404403AbfHHTLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:11:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45544 "EHLO mail.kernel.org"
+        id S2405561AbfHHTLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:11:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405412AbfHHTLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:11:04 -0400
+        id S2405550AbfHHTLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:11:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F2C121743;
-        Thu,  8 Aug 2019 19:11:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00776214C6;
+        Thu,  8 Aug 2019 19:11:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291463;
-        bh=DGxp/fdUdDq1SC23OdTpIicTPrWVXe9uVaqaKTC4L48=;
+        s=default; t=1565291509;
+        bh=swcvOI3KNeLxFSjg7V7JjCvr0A1lGFSeDTr3DL1ViD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2gaFV0wdqSXpkRyN8vMH8KEBCC+8X1XxSJ0yyndYuK1Ul/1bzBiP39kvow6ABPF0P
-         qSJcRwoh/Cy7mPQt7//a9k8JZ0/VnszjBgOODg2NS9GJKt+0oryuk3Q/oc/r4/Q9hR
-         Ou4uvEmPMpBlp/RWzJEEvAgBFE67K3vBRbtAGfHM=
+        b=1t6MixNjLej1nIJd+CpxNesLg045aOdwhBJrjChT6PXZJsF1s5dDzgvFJWeln5KIo
+         Hpe5s+Se6ZTGWEIdzkASXkvqVDXejwfXTEQA1tOsYIzo08jPhZL+AS8dIuymiAuHuB
+         2POXCn5ZFMwD9zsHYhVJKOu5F3IQe7Hb08E5pzqU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <g.nault@alphalink.fr>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 23/33] compat_ioctl: pppoe: fix PPPOEIOCSFWD handling
-Date:   Thu,  8 Aug 2019 21:05:30 +0200
-Message-Id: <20190808190454.759879073@linuxfoundation.org>
+        stable@vger.kernel.org, Ariel Levkovich <lariel@mellanox.com>,
+        Roi Dayan <roid@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 24/33] net/mlx5e: Prevent encap flow counter update async to user query
+Date:   Thu,  8 Aug 2019 21:05:31 +0200
+Message-Id: <20190808190454.820998128@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190453.582417307@linuxfoundation.org>
 References: <20190808190453.582417307@linuxfoundation.org>
@@ -44,132 +44,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Ariel Levkovich <lariel@mellanox.com>
 
-[ Upstream commit 055d88242a6046a1ceac3167290f054c72571cd9 ]
+[ Upstream commit 90bb769291161cf25a818d69cf608c181654473e ]
 
-Support for handling the PPPOEIOCSFWD ioctl in compat mode was added in
-linux-2.5.69 along with hundreds of other commands, but was always broken
-sincen only the structure is compatible, but the command number is not,
-due to the size being sizeof(size_t), or at first sizeof(sizeof((struct
-sockaddr_pppox)), which is different on 64-bit architectures.
+This patch prevents a race between user invoked cached counters
+query and a neighbor last usage updater.
 
-Guillaume Nault adds:
+The cached flow counter stats can be queried by calling
+"mlx5_fc_query_cached" which provides the number of bytes and
+packets that passed via this flow since the last time this counter
+was queried.
+It does so by reducting the last saved stats from the current, cached
+stats and then updating the last saved stats with the cached stats.
+It also provide the lastuse value for that flow.
 
-  And the implementation was broken until 2016 (see 29e73269aa4d ("pppoe:
-  fix reference counting in PPPoE proxy")), and nobody ever noticed. I
-  should probably have removed this ioctl entirely instead of fixing it.
-  Clearly, it has never been used.
+Since "mlx5e_tc_update_neigh_used_value" needs to retrieve the
+last usage time of encapsulation flows, it calls the flow counter
+query method periodically and async to user queries of the flow counter
+using cls_flower.
+This call is causing the driver to update the last reported bytes and
+packets from the cache and therefore, future user queries of the flow
+stats will return lower than expected number for bytes and packets
+since the last saved stats in the driver was updated async to the last
+saved stats in cls_flower.
 
-Fix it by adding a compat_ioctl handler for all pppoe variants that
-translates the command number and then calls the regular ioctl function.
+This causes wrong stats presentation of encapsulation flows to user.
 
-All other ioctl commands handled by pppoe are compatible between 32-bit
-and 64-bit, and require compat_ptr() conversion.
+Since the neighbor usage updater only needs the lastuse stats from the
+cached counter, the fix is to use a dedicated lastuse query call that
+returns the lastuse value without synching between the cached stats and
+the last saved stats.
 
-This should apply to all stable kernels.
-
-Acked-by: Guillaume Nault <g.nault@alphalink.fr>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: f6dfb4c3f216 ("net/mlx5e: Update neighbour 'used' state using HW flow rules counters")
+Signed-off-by: Ariel Levkovich <lariel@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ppp/pppoe.c  |    3 +++
- drivers/net/ppp/pppox.c  |   13 +++++++++++++
- drivers/net/ppp/pptp.c   |    3 +++
- fs/compat_ioctl.c        |    3 ---
- include/linux/if_pppox.h |    3 +++
- net/l2tp/l2tp_ppp.c      |    3 +++
- 6 files changed, 25 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c       |    4 ++--
+ drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c |    5 +++++
+ include/linux/mlx5/fs.h                               |    1 +
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -1137,6 +1137,9 @@ static const struct proto_ops pppoe_ops
- 	.recvmsg	= pppoe_recvmsg,
- 	.mmap		= sock_no_mmap,
- 	.ioctl		= pppox_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl	= pppox_compat_ioctl,
-+#endif
- };
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -473,13 +473,13 @@ void mlx5e_tc_encap_flows_del(struct mlx
+ void mlx5e_tc_update_neigh_used_value(struct mlx5e_neigh_hash_entry *nhe)
+ {
+ 	struct mlx5e_neigh *m_neigh = &nhe->m_neigh;
+-	u64 bytes, packets, lastuse = 0;
+ 	struct mlx5e_tc_flow *flow;
+ 	struct mlx5e_encap_entry *e;
+ 	struct mlx5_fc *counter;
+ 	struct neigh_table *tbl;
+ 	bool neigh_used = false;
+ 	struct neighbour *n;
++	u64 lastuse;
  
- static const struct pppox_proto pppoe_proto = {
---- a/drivers/net/ppp/pppox.c
-+++ b/drivers/net/ppp/pppox.c
-@@ -22,6 +22,7 @@
- #include <linux/string.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
-+#include <linux/compat.h>
- #include <linux/errno.h>
- #include <linux/netdevice.h>
- #include <linux/net.h>
-@@ -103,6 +104,18 @@ int pppox_ioctl(struct socket *sock, uns
+ 	if (m_neigh->family == AF_INET)
+ 		tbl = &arp_tbl;
+@@ -496,7 +496,7 @@ void mlx5e_tc_update_neigh_used_value(st
+ 		list_for_each_entry(flow, &e->flows, encap) {
+ 			if (flow->flags & MLX5E_TC_FLOW_OFFLOADED) {
+ 				counter = mlx5_flow_rule_counter(flow->rule);
+-				mlx5_fc_query_cached(counter, &bytes, &packets, &lastuse);
++				lastuse = mlx5_fc_query_lastuse(counter);
+ 				if (time_after((unsigned long)lastuse, nhe->reported_lastuse)) {
+ 					neigh_used = true;
+ 					break;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
+@@ -312,6 +312,11 @@ void mlx5_cleanup_fc_stats(struct mlx5_c
+ 	}
+ }
  
- EXPORT_SYMBOL(pppox_ioctl);
- 
-+#ifdef CONFIG_COMPAT
-+int pppox_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
++u64 mlx5_fc_query_lastuse(struct mlx5_fc *counter)
 +{
-+	if (cmd == PPPOEIOCSFWD32)
-+		cmd = PPPOEIOCSFWD;
-+
-+	return pppox_ioctl(sock, cmd, (unsigned long)compat_ptr(arg));
++	return counter->cache.lastuse;
 +}
 +
-+EXPORT_SYMBOL(pppox_compat_ioctl);
-+#endif
-+
- static int pppox_create(struct net *net, struct socket *sock, int protocol,
- 			int kern)
+ void mlx5_fc_query_cached(struct mlx5_fc *counter,
+ 			  u64 *bytes, u64 *packets, u64 *lastuse)
  {
---- a/drivers/net/ppp/pptp.c
-+++ b/drivers/net/ppp/pptp.c
-@@ -636,6 +636,9 @@ static const struct proto_ops pptp_ops =
- 	.recvmsg    = sock_no_recvmsg,
- 	.mmap       = sock_no_mmap,
- 	.ioctl      = pppox_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl = pppox_compat_ioctl,
-+#endif
- };
- 
- static const struct pppox_proto pppox_pptp_proto = {
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -1032,9 +1032,6 @@ COMPATIBLE_IOCTL(PPPIOCDISCONN)
- COMPATIBLE_IOCTL(PPPIOCATTCHAN)
- COMPATIBLE_IOCTL(PPPIOCGCHAN)
- COMPATIBLE_IOCTL(PPPIOCGL2TPSTATS)
--/* PPPOX */
--COMPATIBLE_IOCTL(PPPOEIOCSFWD)
--COMPATIBLE_IOCTL(PPPOEIOCDFWD)
- /* Big A */
- /* sparc only */
- /* Big Q for sound/OSS */
---- a/include/linux/if_pppox.h
-+++ b/include/linux/if_pppox.h
-@@ -84,6 +84,9 @@ extern int register_pppox_proto(int prot
- extern void unregister_pppox_proto(int proto_num);
- extern void pppox_unbind_sock(struct sock *sk);/* delete ppp-channel binding */
- extern int pppox_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg);
-+extern int pppox_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg);
-+
-+#define PPPOEIOCSFWD32    _IOW(0xB1 ,0, compat_size_t)
- 
- /* PPPoX socket states */
- enum {
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -1793,6 +1793,9 @@ static const struct proto_ops pppol2tp_o
- 	.recvmsg	= pppol2tp_recvmsg,
- 	.mmap		= sock_no_mmap,
- 	.ioctl		= pppox_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl = pppox_compat_ioctl,
-+#endif
- };
- 
- static const struct pppox_proto pppol2tp_proto = {
+--- a/include/linux/mlx5/fs.h
++++ b/include/linux/mlx5/fs.h
+@@ -164,6 +164,7 @@ int mlx5_modify_rule_destination(struct
+ struct mlx5_fc *mlx5_flow_rule_counter(struct mlx5_flow_handle *handler);
+ struct mlx5_fc *mlx5_fc_create(struct mlx5_core_dev *dev, bool aging);
+ void mlx5_fc_destroy(struct mlx5_core_dev *dev, struct mlx5_fc *counter);
++u64 mlx5_fc_query_lastuse(struct mlx5_fc *counter);
+ void mlx5_fc_query_cached(struct mlx5_fc *counter,
+ 			  u64 *bytes, u64 *packets, u64 *lastuse);
+ int mlx5_fs_add_rx_underlay_qpn(struct mlx5_core_dev *dev, u32 underlay_qpn);
 
 
