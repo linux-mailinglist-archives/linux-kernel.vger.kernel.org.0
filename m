@@ -2,63 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 124A08646A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 886B78647B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732832AbfHHOeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 10:34:44 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:59686 "EHLO mail.skyhub.de"
+        id S1732743AbfHHOh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 10:37:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728718AbfHHOen (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 10:34:43 -0400
-Received: from zn.tnic (p200300EC2F0FD700329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:d700:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728327AbfHHOh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 10:37:56 -0400
+Received: from [192.168.0.101] (unknown [180.111.132.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 82AAC1EC0B07;
-        Thu,  8 Aug 2019 16:34:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565274882;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RBnElMqX2QUiWIbxlRKCB/aJ7LHhc2Uta1rn6iNlw6A=;
-        b=p+svPhNMadJDVgXsvdYmF08Uf7P9Me+EOmXtzi4POasnQ79+cixwnaPCOovt6xzThs9zZ3
-        jvr33Wg89g8qn5VHx4VE++sVFeCRkwsZz9hZtTzs5vrkkTeB8AYb1jvpO3kLrzhaNgnu6f
-        iWP8vjAEdOhFOIsW12ZeBygBOvBZbR4=
-Date:   Thu, 8 Aug 2019 16:35:27 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Tony Luck <tony.luck@intel.com>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drivers/ras: Don't build debugfs.o if no debugfs
- in config
-Message-ID: <20190808143527.GG20745@zn.tnic>
-References: <7053.1565218556@turing-police>
- <20190808093101.GE20745@zn.tnic>
- <77171.1565269299@turing-police>
- <20190808142055.GF20745@zn.tnic>
+        by mail.kernel.org (Postfix) with ESMTPSA id F10EB2173E;
+        Thu,  8 Aug 2019 14:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565275075;
+        bh=otbC7ZHjlg0OuA+dibKxeYqdWppYhikbhtR5Iw6Pydw=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=iJlaLQ/3qqvhCh/FTvrsprgcpxGbowGXnMel3p1mqee5soCS9adbMxPkP90E94sRD
+         mW4coBP/RGc0xJiLelW+UE6bCgPP5WZWPlqvJf0fTgfdjwgNwqLkLX6lr0x3uhOBhz
+         Tzag9l7EJkUBqFo8GJIqcmlQW8ZnO35PWmb6M3OA=
+Subject: Re: [PATCH] mailmap: add entry for Jaegeuk Kim
+From:   Chao Yu <chao@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>, Chao Yu <yuchao0@huawei.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jaegeuk@kernel.org
+References: <20190802012135.31419-1-yuchao0@huawei.com>
+ <20190802072626.405246e3@lwn.net>
+ <fe9cd2bc-76ed-5371-e0c3-b538e7a805e7@kernel.org>
+Message-ID: <fd14e8d4-7468-ed3a-a679-6167eac72626@kernel.org>
+Date:   Thu, 8 Aug 2019 22:37:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <fe9cd2bc-76ed-5371-e0c3-b538e7a805e7@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190808142055.GF20745@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 04:20:55PM +0200, Borislav Petkov wrote:
-> On Thu, Aug 08, 2019 at 09:01:39AM -0400, Valdis Klētnieks wrote:
-> > It's needed if somebody applies the patch 2/2 -
+On 2019-8-2 22:23, Chao Yu wrote:
+> On 2019-8-2 21:26, Jonathan Corbet wrote:
+>> On Fri, 2 Aug 2019 09:21:35 +0800
+>> Chao Yu <yuchao0@huawei.com> wrote:
+>>
+>>> Add entry to connect all Jaegeuk's email addresses.
+>>>
+>>> Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>> ---
+>>>  .mailmap | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/.mailmap b/.mailmap
+>>> index 477debe3d960..70d41c86e644 100644
+>>> --- a/.mailmap
+>>> +++ b/.mailmap
+>>> @@ -89,6 +89,9 @@ Henrik Kretzschmar <henne@nachtwindheim.de>
+>>>  Henrik Rydberg <rydberg@bitmath.org>
+>>>  Herbert Xu <herbert@gondor.apana.org.au>
+>>>  Jacob Shin <Jacob.Shin@amd.com>
+>>> +Jaegeuk Kim <jaegeuk@kernel.org> <jaegeuk@google.com>
+>>> +Jaegeuk Kim <jaegeuk@kernel.org> <jaegeuk@motorola.com>
+>>> +Jaegeuk Kim <jaegeuk@kernel.org> <jaegeuk.kim@samsung.com>
+>>
+>> So as I understand it, the mailmap file is there mostly to ensure that a
+>> person's changesets are properly collected in 'git shortlog' and such.  As
+>> documented on the man page, it is used when a person's name is spelled
+>> differently at different times.
+>>
+>> That doesn't appear to be the case here, and shortlog output is correct
+>> already.  Given that, do we *really* need to maintain a collection of old
+>> email addresses in the mailmap file?  What is the benefit of that?
 > 
-> It is needed for what?
+> IMO, when we use git-blame to find out who is response for specified code, w/o
+> mailmap we may just found old obsolete email address in the related commit; even
+> we can search full name for his/her new email address, how can we make sure they
+> are the same person... so anyway, it can help to find last valid/canonical email
+> address of someone.
 
-Nevermind, saw the 0day build bot mail.
+Any thoughts?
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>> jon
+>>
