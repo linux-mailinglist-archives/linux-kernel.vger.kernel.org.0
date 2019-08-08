@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9372869A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:09:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B24AC86988
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:08:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405069AbfHHTJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:09:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43446 "EHLO mail.kernel.org"
+        id S2404885AbfHHTIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:08:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405054AbfHHTJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:09:10 -0400
+        id S2404866AbfHHTIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:08:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0F0A2173E;
-        Thu,  8 Aug 2019 19:09:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14137214C6;
+        Thu,  8 Aug 2019 19:08:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291349;
-        bh=8ENjWFfUfTAXG63YmnXa2SuLcNCqlbcW4RGfdmVmPJ8=;
+        s=default; t=1565291297;
+        bh=GO944Vpxi6hLaivkOV6+1MtsnIIXDbWFeObHenW4B/8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wZ3o8UsA/OQxNaPKKp/psHeKFV+bYq2nPn1C6sImguAmaLOOCJXJHdhc6uDsvKuq0
-         IbkSjZQgyTJrj3zK6SF8E/ZqAmB9G31SR7cJMk1cofYZZ3tliKMcrQCUgpegm8IkRy
-         bjAgfZ8BfHAv9wG4eshHUbhtWbOl0ImHUqG+Bc3Y=
+        b=kMvixmqKajo1TdKFS4lawTp6OtVtUDKxnVXwLE2AiS+O9FNtiPkBXcbDcljji2L5v
+         DYzICfUGcfP9+SO+7P7hByjGkl8x3MIzgEW7sju920GW6IVJLCoy7/Tg4HHoq5/IHG
+         GiAWVKo2SrJ6nq5ED+R0H/E5T+IHTXB3eFpSpthk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Ren=C3=A9=20van=20Dorst?= <opensource@vdorst.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Sunil Muthuswamy <sunilmut@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 26/45] net: phylink: Fix flow control for fixed-link
+Subject: [PATCH 5.2 46/56] hv_sock: Fix hang when a connection is closed
 Date:   Thu,  8 Aug 2019 21:05:12 +0200
-Message-Id: <20190808190455.188589554@linuxfoundation.org>
+Message-Id: <20190808190455.008606190@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
-References: <20190808190453.827571908@linuxfoundation.org>
+In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
+References: <20190808190452.867062037@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Ren� van Dorst" <opensource@vdorst.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit 8aace4f3eba2a3ceb431e18683ea0e1ecbade5cd ]
+[ Upstream commit 8c7885e5690be9a27231ebebf82ef29fbf46c4e4 ]
 
-In phylink_parse_fixedlink() the pl->link_config.advertising bits are AND
-with pl->supported, pl->supported is zeroed and only the speed/duplex
-modes and MII bits are set.
-So pl->link_config.advertising always loses the flow control/pause bits.
+There is a race condition for an established connection that is being closed
+by the guest: the refcnt is 4 at the end of hvs_release() (Note: here the
+'remove_sock' is false):
 
-By setting Pause and Asym_Pause bits in pl->supported, the flow control
-work again when devicetree "pause" is set in fixes-link node and the MAC
-advertise that is supports pause.
+1 for the initial value;
+1 for the sk being in the bound list;
+1 for the sk being in the connected list;
+1 for the delayed close_work.
 
-Results with this patch.
+After hvs_release() finishes, __vsock_release() -> sock_put(sk) *may*
+decrease the refcnt to 3.
 
-Legend:
-- DT = 'Pause' is set in the fixed-link in devicetree.
-- validate() = ‘Yes’ means phylink_set(mask, Pause) is set in the
-  validate().
-- flow = results reported my link is Up line.
+Concurrently, hvs_close_connection() runs in another thread:
+  calls vsock_remove_sock() to decrease the refcnt by 2;
+  call sock_put() to decrease the refcnt to 0, and free the sk;
+  next, the "release_sock(sk)" may hang due to use-after-free.
 
-+-----+------------+-------+
-| DT  | validate() | flow  |
-+-----+------------+-------+
-| Yes | Yes        | rx/tx |
-| No  | Yes        | off   |
-| Yes | No         | off   |
-+-----+------------+-------+
+In the above, after hvs_release() finishes, if hvs_close_connection() runs
+faster than "__vsock_release() -> sock_put(sk)", then there is not any issue,
+because at the beginning of hvs_close_connection(), the refcnt is still 4.
 
-Fixes: 9525ae83959b ("phylink: add phylink infrastructure")
-Signed-off-by: René van Dorst <opensource@vdorst.com>
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+The issue can be resolved if an extra reference is taken when the
+connection is established.
+
+Fixes: a9eeb998c28d ("hv_sock: Add support for delayed close")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Reviewed-by: Sunil Muthuswamy <sunilmut@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phylink.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/vmw_vsock/hyperv_transport.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -226,6 +226,8 @@ static int phylink_parse_fixedlink(struc
- 			       __ETHTOOL_LINK_MODE_MASK_NBITS, true);
- 	linkmode_zero(pl->supported);
- 	phylink_set(pl->supported, MII);
-+	phylink_set(pl->supported, Pause);
-+	phylink_set(pl->supported, Asym_Pause);
- 	if (s) {
- 		__set_bit(s->bit, pl->supported);
- 	} else {
+--- a/net/vmw_vsock/hyperv_transport.c
++++ b/net/vmw_vsock/hyperv_transport.c
+@@ -311,6 +311,11 @@ static void hvs_close_connection(struct
+ 	lock_sock(sk);
+ 	hvs_do_close_lock_held(vsock_sk(sk), true);
+ 	release_sock(sk);
++
++	/* Release the refcnt for the channel that's opened in
++	 * hvs_open_connection().
++	 */
++	sock_put(sk);
+ }
+ 
+ static void hvs_open_connection(struct vmbus_channel *chan)
+@@ -378,6 +383,9 @@ static void hvs_open_connection(struct v
+ 	}
+ 
+ 	set_per_channel_state(chan, conn_from_host ? new : sk);
++
++	/* This reference will be dropped by hvs_close_connection(). */
++	sock_hold(conn_from_host ? new : sk);
+ 	vmbus_set_chn_rescind_callback(chan, hvs_close_connection);
+ 
+ 	/* Set the pending send size to max packet size to always get
 
 
