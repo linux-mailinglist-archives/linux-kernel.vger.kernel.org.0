@@ -2,76 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C04248599C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 07:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7F9F859AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 07:14:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730894AbfHHFHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 01:07:18 -0400
-Received: from mga05.intel.com ([192.55.52.43]:28742 "EHLO mga05.intel.com"
+        id S1730912AbfHHFOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 01:14:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbfHHFHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 01:07:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 22:07:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,360,1559545200"; 
-   d="scan'208";a="174736649"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Aug 2019 22:07:15 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jiafei.pan@nxp.com,
-        Ran Wang <ran.wang_1@nxp.com>
-Subject: Re: [PATCH v1] usb: dwc3: remove the call trace of USBx_GFLADJ
-In-Reply-To: <20190729064607.8131-1-yinbo.zhu@nxp.com>
-References: <20190729064607.8131-1-yinbo.zhu@nxp.com>
-Date:   Thu, 08 Aug 2019 08:07:14 +0300
-Message-ID: <875zn8nt31.fsf@gmail.com>
+        id S1725446AbfHHFON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 01:14:13 -0400
+Received: from localhost (unknown [122.178.245.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D18022186A;
+        Thu,  8 Aug 2019 05:14:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565241252;
+        bh=uTQbu9mGSxVTJETQA4FUVAen+xLMIIOIE1bWzh+FlNk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GntMZuHjbR72qZbxMF3Y4KDcZuAsLd/9O+2tfW3Q5tK1auI7H/nH3dVqWsRPAu34r
+         3iPb4UGv9B/HPyejvqHjx0GTuNYqTXRfgvmIhzdeiN58f3rBJ+FxiBAX/AUxEpSGks
+         BhLEIpap271YTHWqbkMlUx8RhCv5r3swH2UPWE/o=
+Date:   Thu, 8 Aug 2019 10:43:01 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>, David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org
+Subject: Re: [PATCH v1 2/2] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7180
+Message-ID: <20190808051301.GL12733@vkoul-mobl.Dlink>
+References: <20190807181301.15326-1-tdas@codeaurora.org>
+ <20190807181301.15326-3-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807181301.15326-3-tdas@codeaurora.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07-08-19, 23:43, Taniya Das wrote:
 
-Hi,
+> +static struct clk_alpha_pll gpll0;
+> +static struct clk_alpha_pll gpll1;
+> +static struct clk_alpha_pll gpll4;
+> +static struct clk_alpha_pll gpll6;
+> +static struct clk_alpha_pll gpll7;
+> +static struct clk_alpha_pll_postdiv gpll0_out_even;
 
-Yinbo Zhu <yinbo.zhu@nxp.com> writes:
+I am not sure we need these, reordering code and getting rid of them
+should be easy enough (i did that for sm8150)
 
-> layerscape board sometimes reported some usb call trace, that is due to
-> kernel sent LPM tokerns automatically when it has no pending transfers
-> and think that the link is idle enough to enter L1, which procedure will
-> ask usb register has a recovery,then kernel will compare USBx_GFLADJ and
-> set GFLADJ_30MHZ, GFLADJ_30MHZ_REG until GFLADJ_30MHZ is equal 0x20, if
-> the conditions were met then issue occur, but whatever the conditions
-> whether were met that usb is all need keep GFLADJ_30MHZ of value is 0x20
-> (xhci spec ask use GFLADJ_30MHZ to adjust any offset from clock source
-> that generates the clock that drives the SOF counter, 0x20 is default
-> value of it)That is normal logic, so need remove the call trace.
->
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> ---
->  drivers/usb/dwc3/core.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 98bce85c29d0..a133d8490322 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -300,8 +300,7 @@ static void dwc3_frame_length_adjustment(struct dwc3 *dwc)
->  
->  	reg = dwc3_readl(dwc->regs, DWC3_GFLADJ);
->  	dft = reg & DWC3_GFLADJ_30MHZ_MASK;
-> -	if (!dev_WARN_ONCE(dwc->dev, dft == dwc->fladj,
-> -	    "request value same as default, ignoring\n")) {
-> +	if (dft != dwc->fladj) {
+> +static const struct parent_map gcc_parent_map_0[] = {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_GPLL0_OUT_MAIN, 1 },
+> +	{ P_GPLL0_OUT_EVEN, 6 },
+> +	{ P_CORE_BI_PLL_TEST_SE, 7 },
+> +};
+> +
+> +static const struct clk_parent_data gcc_parent_data_0[] = {
+> +	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
+> +	{ .hw = &gpll0.clkr.hw },
+> +	{ .hw = &gpll0_out_even.clkr.hw },
+> +	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
 
-if the value isn't different, why do you want to change it?
+This is legacy test, so we would want only fw_name being there
 
+> +static struct clk_branch gcc_camera_ahb_clk = {
+> +	.halt_reg = 0xb008,
+> +	.halt_check = BRANCH_HALT,
+> +	.hwcg_reg = 0xb008,
+> +	.hwcg_bit = 1,
+> +	.clkr = {
+> +		.enable_reg = 0xb008,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_camera_ahb_clk",
+> +			.flags = CLK_IS_CRITICAL,
+
+It would help to explain why this clk is critical
+
+> +static struct clk_branch gcc_disp_gpll0_div_clk_src = {
+> +	.halt_check = BRANCH_HALT_DELAY,
+
+And why this needs a delay
 -- 
-balbi
+~Vinod
