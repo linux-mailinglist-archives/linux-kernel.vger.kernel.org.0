@@ -2,125 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71F7859A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 07:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 625E5859AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 07:16:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbfHHFNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 01:13:38 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:35339 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728361AbfHHFNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 01:13:38 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 463xNY5DDzz9sN1;
-        Thu,  8 Aug 2019 15:13:33 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Aug 7
-In-Reply-To: <20190807183606.372ca1a4@canb.auug.org.au>
-References: <20190807183606.372ca1a4@canb.auug.org.au>
-Date:   Thu, 08 Aug 2019 15:13:33 +1000
-Message-ID: <87mugktf2a.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1730786AbfHHFPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 01:15:36 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:36466 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbfHHFPg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 01:15:36 -0400
+Received: by mail-yw1-f66.google.com with SMTP id x67so32107239ywd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2019 22:15:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Zqjm4Ms2LWPF2JxoVedKSLuooEVD3FC/Jr22qU9ttc0=;
+        b=OQmCdnT060VnjE2zspyMIDxNBbqt1c8DeP+zRRbmyjBmVqzI4NNh5Z1pdjnhHib5yN
+         feYHU+Le59Z8DtAZw+0XdKYbHGhxlqiYWYdwo+AnYF8OITbAdMJWORtwwnVqqs6AGvla
+         OjtbBnMK0ozG4wUaTABkWD7OivoTEERpC2e5hxVEq6gn3EAqplkHA6Cm4PVR6mNaoKYb
+         /nwMYonjfVHY85fkLzsLGPYQWb8ufAcrhCiNlKcEMcndRw14kQqd8SkUGIYideHAWk3W
+         /7gNxgD6H++Je5r7zvIxkqd6O9os9HA3dzuE34R1+AX/zWlxmJ3m1MA70kF2WhrvF5Cq
+         n2MQ==
+X-Gm-Message-State: APjAAAWYpMlo90ODLAv84rIdcERYaO4ay6ZrDoAnkxDmMKEJZv7GX1/Q
+        fyTxsy+2MJIV+SJDpRY3AF4=
+X-Google-Smtp-Source: APXvYqz08Zg+vgGovvm4k352MtWnv23Tf4vN81JusC7DQRnlND+8TfbEZkvXgCbk83qqGwiPPM57FA==
+X-Received: by 2002:a81:33cd:: with SMTP id z196mr7990265ywz.213.1565241335327;
+        Wed, 07 Aug 2019 22:15:35 -0700 (PDT)
+Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
+        by smtp.gmail.com with ESMTPSA id v141sm20845902ywe.66.2019.08.07.22.15.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 07 Aug 2019 22:15:34 -0700 (PDT)
+From:   Wenwen Wang <wenwen@cs.uga.edu>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org (moderated list:SOUND),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] sound: fix a memory leak bug
+Date:   Thu,  8 Aug 2019 00:15:21 -0500
+Message-Id: <1565241321-2418-1-git-send-email-wenwen@cs.uga.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> Hi all,
->
-> Changes since 20190806:
->
-> The arm64 tree introduced a patch that stopped the powerpc ppc64_defconfig
-> build from completing so I reverted that commit.
->
-> The mips tree gained a conflict against Linus' tree.
->
-> The crypto tree still had its build failure for which I applied a patch.
->
-> The drm-misc tree gained a conflict and a sematic conflct against the
-> amdgpu tree.
->
-> The integrity tree lost its build failure.
->
-> The akpm-current tree gained a conflict against the arm64 tree and a
-> build failure for which I reverted a commit.
->
-> The akpm tree lost a patch that turned up elsewhere.
->
-> Non-merge commits (relative to Linus' tree): 4586
->  4952 files changed, 265168 insertions(+), 120665 deletions(-)
+In sound_insert_unit(), the controlling structure 's' is allocated through
+kmalloc(). Then it is added to the sound driver list by invoking
+__sound_insert_unit(). Later on, if __register_chrdev() fails, 's' is
+removed from the list through __sound_remove_unit(). If 'index' is not less
+than 0, -EBUSY is returned to indicate the error. However, 's' is not
+deallocated on this execution path, leading to a memory leak bug.
 
-This is still popping a few implicit fallthrough warnings, from various
-configs:
+To fix the above issue, free 's' before -EBUSY is returned.
 
-    arch/arm64/include/asm/kvm_hyp.h:31:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/include/asm/sysreg.h:808:2: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:20:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:21:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:22:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:23:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:24:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:25:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:26:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:27:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:28:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:29:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:30:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:31:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:32:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:33:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/debug-sr.c:34:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/../../../../virt/kvm/arm/hyp/vgic-v3-sr.c:351:24: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/../../../../virt/kvm/arm/hyp/vgic-v3-sr.c:353:24: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/../../../../virt/kvm/arm/hyp/vgic-v3-sr.c:361:24: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/../../../../virt/kvm/arm/hyp/vgic-v3-sr.c:363:24: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/../../../../virt/kvm/arm/hyp/vgic-v3-sr.c:384:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/../../../../virt/kvm/arm/hyp/vgic-v3-sr.c:386:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/../../../../virt/kvm/arm/hyp/vgic-v3-sr.c:394:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/arm64/kvm/hyp/../../../../virt/kvm/arm/hyp/vgic-v3-sr.c:396:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/mips/include/asm/octeon/cvmx-sli-defs.h:47:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/nds32/kernel/signal.c:315:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    arch/nds32/kernel/signal.c:362:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:279:3: error: implicit declaration of function 'readq' [-Werror=implicit-function-declaration]
-    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:279:9: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
-    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:279:9: error: implicit declaration of function 'readq' [-Werror=implicit-function-declaration]
-    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:298:3: error: implicit declaration of function 'writeq'; did you mean 'writel'? [-Werror=implicit-function-declaration]
-    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:298:3: error: implicit declaration of function 'writeq' [-Werror=implicit-function-declaration]
-    drivers/gpu/drm/sun4i/sun4i_tcon.c:318:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c:993:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/iommu/arm-smmu-v3.c:1189:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/misc/lkdtm/bugs.c:279:8: error: implicit declaration of function 'native_read_cr4' [-Werror=implicit-function-declaration]
-    drivers/misc/lkdtm/bugs.c:288:2: error: implicit declaration of function 'native_write_cr4' [-Werror=implicit-function-declaration]
-    drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c:551:41: warning: overflow in implicit constant conversion [-Woverflow]
-    drivers/scsi/ncr53c8xx.c:3908:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/scsi/ncr53c8xx.c:3914:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/scsi/ncr53c8xx.c:3917:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/scsi/ncr53c8xx.c:6713:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/soc/qcom/socinfo.c:231:2: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/soc/qcom/socinfo.c:323:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/soc/qcom/socinfo.c:331:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/soc/qcom/socinfo.c:341:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/soc/qcom/socinfo.c:348:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/soc/qcom/socinfo.c:354:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/soc/qcom/socinfo.c:360:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/soc/qcom/socinfo.c:366:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/video/fbdev/sh_mobile_lcdcfb.c:1596:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    drivers/video/fbdev/sh_mobile_lcdcfb.c:2086:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    include/linux/printk.h:309:2: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    include/math-emu/op-common.h:310:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    include/math-emu/op-common.h:320:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    include/math-emu/op-common.h:417:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    include/math-emu/op-common.h:430:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    include/math-emu/soft-fp.h:124:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    mm/hmm.c:745:9: error: implicit declaration of function 'pud_pfn' [-Werror=implicit-function-declaration]
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+---
+ sound/sound_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-cheers
+diff --git a/sound/sound_core.c b/sound/sound_core.c
+index b730d97..90d118c 100644
+--- a/sound/sound_core.c
++++ b/sound/sound_core.c
+@@ -275,7 +275,8 @@ static int sound_insert_unit(struct sound_unit **list, const struct file_operati
+ 				goto retry;
+ 			}
+ 			spin_unlock(&sound_loader_lock);
+-			return -EBUSY;
++			r = -EBUSY;
++			goto fail;
+ 		}
+ 	}
+ 
+-- 
+2.7.4
+
