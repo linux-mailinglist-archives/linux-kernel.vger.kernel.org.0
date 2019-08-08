@@ -2,120 +2,382 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 816D885BAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 09:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 112DD85BFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 09:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731511AbfHHHgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 03:36:45 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41870 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbfHHHgp (ORCPT
+        id S1731597AbfHHHsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 03:48:07 -0400
+Received: from vip.corpemail.net ([162.243.126.186]:35486 "EHLO
+        vip.corpemail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731333AbfHHHsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 03:36:45 -0400
-Received: by mail-pf1-f194.google.com with SMTP id m30so43615874pff.8;
-        Thu, 08 Aug 2019 00:36:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZgFG813H9M+J+MaK+iihIFj7Hhcb4vweQ9Wlnc563TY=;
-        b=oxEKfnJLHnkBqy3PeQ++eGzd5GonzM/yqAHc0TFe7tL5rITGGPF6fCIwfVDzefgrT3
-         iY9D23MA/5WWyaXK5wvBvnLR96RjCkyN2sPMVEotzRp9vNRYK7pltFVJXRTOSaG4Zirr
-         C1ONodpGSv2ie7s53atih5P+HB97PmZTRG/Kr7NWvVURSBfsKROuzjitc3ncuKpDzfoa
-         ZFj9HurZn68Rjf1fCiKrMMpehbS6cXCceMMuK/CbiQevkkiIaegsw1aCEGknC4+iPt4y
-         apU3IkPyA0eswDhSnwfNAe2ar20qV0p+sOh7Mj1xDcw/1l7byJMr2x+HNbn4IOJJVslJ
-         R2RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZgFG813H9M+J+MaK+iihIFj7Hhcb4vweQ9Wlnc563TY=;
-        b=e5ZrfyRzYM1Xw6KWkxsfbHSM0Ozz0VXf5KxIDlfBBORh/GFd9oOYLRea5U94TMERns
-         5/OxAPQm5Lb4r12cBmF8Nr9iFGw/Wmk8m6PHm1g9rEf5fliuA2Woh10hYO/NJcEXcaSu
-         saFHUEx34ecJWCwZc7wQ0hlpIXXjQQpDWayXjofHcpecNS4ZSOxuWI0VG+p28GCLebRL
-         YDAo3GjLl1+3i2VS9YoeO1oKcjRGcXgXCXxXty1gHZSrg1fo5ioVRBFOIQHqLq7oqGWe
-         E1OSmZqIl/RWE1m0Ir8GgPh1C7KKIvW4Tr+QhxFnFoZX4gZErgHgiqcw9urvClvCzXlT
-         iA9A==
-X-Gm-Message-State: APjAAAUnMmf1W31GU3etHoLLhcS6iJFmdcUAP0cY99kq9Ct8UNJTUlV8
-        Hi74Y9oTlgesaGtMH+Aow1I=
-X-Google-Smtp-Source: APXvYqyNcp4TD9HuuIqvPKerRFAMYqI63NmNdeTWdXxnIjedGf6uhTvj1onW4EcZ43vq2J1RfyY21w==
-X-Received: by 2002:a65:6850:: with SMTP id q16mr11802967pgt.423.1565249804482;
-        Thu, 08 Aug 2019 00:36:44 -0700 (PDT)
-Received: from localhost.localdomain ([122.163.44.6])
-        by smtp.gmail.com with ESMTPSA id z13sm1492106pjn.32.2019.08.08.00.36.42
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 00:36:44 -0700 (PDT)
-From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
-To:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH v2] soc: qcom: smp2p: Add of_node_put() at goto
-Date:   Thu,  8 Aug 2019 13:06:32 +0530
-Message-Id: <20190808073632.15224-1-nishkadg.linux@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 8 Aug 2019 03:48:07 -0400
+X-Greylist: delayed 328 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Aug 2019 03:48:05 EDT
+Received: from ([60.208.111.195])
+        by unicom146.biz-email.net (Antispam) with ASMTP (SSL) id ZPS77040;
+        Thu, 08 Aug 2019 15:36:40 +0800
+Received: from localhost (10.100.1.52) by Jtjnmail201618.home.langchao.com
+ (10.100.2.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 8 Aug 2019
+ 15:36:36 +0800
+From:   John Wang <wangzqbj@inspur.com>
+To:     <mine260309@gmail.com>, <linux@roeck-us.net>, <jdelvare@suse.com>,
+        <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
+        <joel@jms.id.au>, <andrew@aj.id.au>, <openbmc@lists.ozlabs.org>,
+        <duanzhijia01@inspur.com>
+Subject: [PATCH] hwmon: pmbus: Add Inspur Power System power supply driver
+Date:   Thu, 8 Aug 2019 15:36:36 +0800
+Message-ID: <20190808073636.18611-1-wangzqbj@inspur.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.100.1.52]
+X-ClientProxiedBy: jtjnmail201610.home.langchao.com (10.100.2.10) To
+ Jtjnmail201618.home.langchao.com (10.100.2.18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each iteration of for_each_available_child_of_node() puts the previous
-node, but in the case of a goto from the middle of the loop, there is no
-put, thus causing a memory leak. Hence add an of_node_put() before each
-mid-loop goto.
-Issue found with Coccinelle.
+Add the driver to monitor Inspur Power System power supplies
+with hwmon over pmbus.
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+This driver adds debugfs entries for addintional power supply data,
+including vendor,model,part_number,serial number,firmware revision,
+hardware revision,and psu mode(active/standby).
+
+Signed-off-by: John Wang <wangzqbj@inspur.com>
 ---
-Changes in v2:
-- Remove the extra label.
-- Add the of_node_put() statements individually before each goto.
+ drivers/hwmon/pmbus/Kconfig        |   9 +
+ drivers/hwmon/pmbus/Makefile       |   1 +
+ drivers/hwmon/pmbus/inspur-ipsps.c | 291 +++++++++++++++++++++++++++++
+ 3 files changed, 301 insertions(+)
+ create mode 100644 drivers/hwmon/pmbus/inspur-ipsps.c
 
- drivers/soc/qcom/smp2p.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index c7300d54e444..c51b392f4000 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -501,6 +501,7 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
- 		entry = devm_kzalloc(&pdev->dev, sizeof(*entry), GFP_KERNEL);
- 		if (!entry) {
- 			ret = -ENOMEM;
-+			of_node_put(node);
- 			goto unwind_interfaces;
- 		}
+diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+index 30751eb9550a..c09357c26b10 100644
+--- a/drivers/hwmon/pmbus/Kconfig
++++ b/drivers/hwmon/pmbus/Kconfig
+@@ -203,4 +203,13 @@ config SENSORS_ZL6100
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called zl6100.
  
-@@ -508,19 +509,25 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
- 		spin_lock_init(&entry->lock);
- 
- 		ret = of_property_read_string(node, "qcom,entry-name", &entry->name);
--		if (ret < 0)
-+		if (ret < 0) {
-+			of_node_put(node);
- 			goto unwind_interfaces;
-+		}
- 
- 		if (of_property_read_bool(node, "interrupt-controller")) {
- 			ret = qcom_smp2p_inbound_entry(smp2p, entry, node);
--			if (ret < 0)
-+			if (ret < 0) {
-+				of_node_put(node);
- 				goto unwind_interfaces;
-+			}
- 
- 			list_add(&entry->node, &smp2p->inbound);
- 		} else  {
- 			ret = qcom_smp2p_outbound_entry(smp2p, entry, node);
--			if (ret < 0)
-+			if (ret < 0) {
-+				of_node_put(node);
- 				goto unwind_interfaces;
-+			}
- 
- 			list_add(&entry->node, &smp2p->outbound);
- 		}
++config SENSORS_INSPUR_IPSPS
++	tristate "INSPUR Power System Power Supply"
++	help
++	  If you say yes here you get hardware monitoring support for the INSPUR
++	  Power System power supply.
++
++	  This driver can also be built as a module. If so, the module will
++	  be called inspur-ipsps.
++
+ endif # PMBUS
+diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+index 2219b9300316..fde2d10cd05c 100644
+--- a/drivers/hwmon/pmbus/Makefile
++++ b/drivers/hwmon/pmbus/Makefile
+@@ -23,3 +23,4 @@ obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
+ obj-$(CONFIG_SENSORS_UCD9000)	+= ucd9000.o
+ obj-$(CONFIG_SENSORS_UCD9200)	+= ucd9200.o
+ obj-$(CONFIG_SENSORS_ZL6100)	+= zl6100.o
++obj-$(CONFIG_SENSORS_INSPUR_IPSPS)	+= inspur-ipsps.o
+diff --git a/drivers/hwmon/pmbus/inspur-ipsps.c b/drivers/hwmon/pmbus/inspur-ipsps.c
+new file mode 100644
+index 000000000000..7dc2b00cb192
+--- /dev/null
++++ b/drivers/hwmon/pmbus/inspur-ipsps.c
+@@ -0,0 +1,291 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright 2019 Inspur Corp.
++ */
++
++#include <linux/bitops.h>
++#include <linux/debugfs.h>
++#include <linux/device.h>
++#include <linux/fs.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/pmbus.h>
++
++#include "pmbus.h"
++
++#define IPSPS_VENDOR_ID		0x99
++#define IPSPS_MODEL		0x9A
++#define IPSPS_FW_VERSION	0x9B
++#define IPSPS_PN		0x9C
++#define IPSPS_SN		0x9E
++#define IPSPS_HW_VERSION	0xB0
++#define IPSPS_MODE		0xFC
++
++#define MODE_ACTIVE		0x55
++#define MODE_STANDBY		0x0E
++#define MODE_REDUNDANCY		0x00
++
++#define MODE_ACTIVE_STRING		"active"
++#define MODE_STANDBY_STRING		"standby"
++#define MODE_REDUNDANCY_STRING		"redundancy"
++
++struct ipsps_attr {
++	u8 reg;
++	umode_t mode;
++	const char *name;
++	int mask;
++	const struct file_operations *fops;
++};
++
++struct ipsps_entry {
++	struct i2c_client *client;
++	u8 reg;
++};
++
++static ssize_t ipsps_string_read(struct file *file, char __user *buf,
++					size_t count, loff_t *ppos)
++{
++	struct ipsps_entry *entry = file->private_data;
++	char data[I2C_SMBUS_BLOCK_MAX + 1] = { 0 };
++	int i, rc;
++
++	rc = i2c_smbus_read_block_data(entry->client, entry->reg, data);
++	if (rc <= 0)
++		return rc;
++
++	for (i = 0; i < rc; i++) {
++		if (data[i] == '#')
++			break;
++	}
++
++	data[i] = '\n';
++	i++;
++	data[i] = '\0';
++	i++;
++
++	return simple_read_from_buffer(buf, count, ppos, data, i);
++
++}
++
++static ssize_t ipsps_fw_version_read(struct file *file, char __user *buf,
++					size_t count, loff_t *ppos)
++{
++	char data[I2C_SMBUS_BLOCK_MAX] = { 0 };
++	int rc;
++	struct ipsps_entry *entry = file->private_data;
++
++	rc = i2c_smbus_read_block_data(entry->client, entry->reg, data);
++	if (rc < 0)
++		return rc;
++
++	if (rc != 6)
++		return -ENODATA;
++
++	rc = snprintf(data, sizeof(data), "%d.%02d.%02d\n",
++			data[1], data[2], data[3]);
++
++	return simple_read_from_buffer(buf, count, ppos, data, rc);
++}
++
++static ssize_t ipsps_mode_read(struct file *file,
++					    char __user *buf, size_t count,
++					    loff_t *ppos)
++{
++	int rc;
++	char data[64] = { 0 };
++	struct ipsps_entry *entry = file->private_data;
++
++	rc = i2c_smbus_read_byte_data(entry->client, entry->reg);
++	if (rc < 0)
++		return rc;
++
++	switch (rc) {
++	case MODE_ACTIVE:
++		rc = snprintf(data, sizeof(data), "[%s] %s %s\n",
++				MODE_ACTIVE_STRING,
++				MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
++		break;
++	case MODE_STANDBY:
++		rc = snprintf(data, sizeof(data), "%s [%s] %s\n",
++				MODE_ACTIVE_STRING,
++				MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
++		break;
++	case MODE_REDUNDANCY:
++		rc = snprintf(data, sizeof(data), "%s %s [%s]\n",
++				MODE_ACTIVE_STRING,
++				MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
++		break;
++	default:
++		rc = snprintf(data, sizeof(data), "unspecified\n");
++		break;
++	}
++
++	return simple_read_from_buffer(buf, count, ppos, data, rc);
++}
++
++static ssize_t ipsps_mode_write(struct file *file, const char __user *buf,
++					size_t count, loff_t *ppos)
++{
++	int rc;
++	char data[64] = { 0 };
++	struct ipsps_entry *entry = file->private_data;
++
++	rc = simple_write_to_buffer(data, sizeof(data), ppos, buf, count);
++	if (rc < 0)
++		return rc;
++
++	if (strcmp(MODE_STANDBY_STRING, data) == 0 ||
++			strcmp(MODE_STANDBY_STRING"\n", data) == 0) {
++		rc = i2c_smbus_write_byte_data(entry->client, entry->reg,
++						MODE_STANDBY);
++		if (rc < 0)
++			return rc;
++		return count;
++	} else if (strcmp(MODE_ACTIVE_STRING, data) == 0 ||
++			strcmp(MODE_ACTIVE_STRING"\n", data) == 0) {
++		rc = i2c_smbus_write_byte_data(entry->client, entry->reg,
++						MODE_ACTIVE);
++		if (rc < 0)
++			return rc;
++		return count;
++	}
++
++	return -EINVAL;
++}
++
++static const struct file_operations ipsps_string_fops = {
++	.llseek = noop_llseek,
++	.open = simple_open,
++	.read = ipsps_string_read,
++};
++
++static const struct file_operations ipsps_fw_version_fops = {
++	.llseek = noop_llseek,
++	.open = simple_open,
++	.read = ipsps_fw_version_read,
++};
++
++static const struct file_operations ipsps_mode_fops = {
++	.llseek = noop_llseek,
++	.open = simple_open,
++	.read = ipsps_mode_read,
++	.write = ipsps_mode_write,
++};
++
++struct ipsps_attr ipsps_attrs[] = {
++	{
++		.name = "vendor",
++		.fops = &ipsps_string_fops,
++		.reg = IPSPS_VENDOR_ID,
++		.mode = 0444,
++	}, {
++		.name = "model",
++		.fops = &ipsps_string_fops,
++		.reg = IPSPS_MODEL,
++		.mode = 0444,
++	}, {
++		.name = "fw_version",
++		.fops = &ipsps_fw_version_fops,
++		.reg = IPSPS_FW_VERSION,
++		.mode = 0444,
++	}, {
++		.name = "part_number",
++		.fops = &ipsps_string_fops,
++		.reg = IPSPS_PN,
++		.mode = 0444,
++	}, {
++		.name = "serial_number",
++		.fops = &ipsps_string_fops,
++		.reg = IPSPS_SN,
++		.mode = 0444,
++	}, {
++		.name = "hw_version",
++		.fops = &ipsps_string_fops,
++		.reg = IPSPS_HW_VERSION,
++		.mode = 0444,
++	}, {
++		.name = "mode",
++		.fops = &ipsps_mode_fops,
++		.reg = IPSPS_MODE,
++		.mode = 0644,
++	}
++
++};
++
++static struct pmbus_driver_info ipsps_info = {
++	.pages = 1,
++	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
++		PMBUS_HAVE_POUT | PMBUS_HAVE_PIN | PMBUS_HAVE_FAN12 |
++		PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
++		PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
++		PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_STATUS_TEMP |
++		PMBUS_HAVE_STATUS_FAN12,
++};
++
++static struct pmbus_platform_data ipsps_pdata = {
++	.flags = PMBUS_SKIP_STATUS_CHECK,
++};
++
++static int ipsps_probe(struct i2c_client *client,
++			   const struct i2c_device_id *id)
++{
++	int i, rc;
++	struct dentry *debugfs;
++	struct dentry *ipsps_dir;
++	struct ipsps_entry *entry;
++
++	client->dev.platform_data = &ipsps_pdata;
++	rc = pmbus_do_probe(client, id, &ipsps_info);
++	if (rc)
++		return rc;
++
++	/* Don't fail the probe if we can't create debugfs */
++	debugfs = pmbus_get_debugfs_dir(client);
++	if (!debugfs)
++		return 0;
++
++	ipsps_dir = debugfs_create_dir(client->name, debugfs);
++	if (!ipsps_dir)
++		return 0;
++
++	for (i = 0; i < ARRAY_SIZE(ipsps_attrs); ++i) {
++		entry = devm_kzalloc(&client->dev, sizeof(*entry), GFP_KERNEL);
++		if (!entry)
++			return 0;
++
++		entry->client = client;
++		entry->reg = ipsps_attrs[i].reg;
++		debugfs_create_file(ipsps_attrs[i].name, ipsps_attrs[i].mode,
++					ipsps_dir, entry, ipsps_attrs[i].fops);
++	}
++
++	return 0;
++}
++
++static const struct i2c_device_id ipsps_id[] = {
++	{ "inspur_ipsps1", 1 },
++	{}
++};
++MODULE_DEVICE_TABLE(i2c, ipsps_id);
++
++static const struct of_device_id ipsps_of_match[] = {
++	{ .compatible = "inspur,ipsps1" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, ipsps_of_match);
++
++static struct i2c_driver ipsps_driver = {
++	.driver = {
++		.name = "inspur-ipsps",
++		.of_match_table = ipsps_of_match,
++	},
++	.probe = ipsps_probe,
++	.remove = pmbus_do_remove,
++	.id_table = ipsps_id,
++};
++
++module_i2c_driver(ipsps_driver);
++
++MODULE_AUTHOR("John Wang");
++MODULE_DESCRIPTION("PMBus driver for Inspur Power System power supplies");
++MODULE_LICENSE("GPL");
 -- 
-2.19.1
+2.17.1
 
