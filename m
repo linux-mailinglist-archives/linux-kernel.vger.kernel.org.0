@@ -2,137 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6449486387
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 15:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B9CA8636E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 15:44:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389991AbfHHNoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 09:44:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54330 "EHLO mx1.redhat.com"
+        id S1733302AbfHHNoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 09:44:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43550 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733255AbfHHNoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 09:44:24 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1733292AbfHHNo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 09:44:28 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 216BC30A7BBB;
-        Thu,  8 Aug 2019 13:44:24 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 06A62316E536;
+        Thu,  8 Aug 2019 13:44:28 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-144.ams2.redhat.com [10.36.116.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 78AD060C47;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7E22760A9D;
         Thu,  8 Aug 2019 13:44:23 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 8A3B39D22; Thu,  8 Aug 2019 15:44:19 +0200 (CEST)
+        id AB02A9D2B; Thu,  8 Aug 2019 15:44:19 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Eric Anholt <eric@anholt.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        QEMU'S CIRRUS DEVICE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 07/17] drm/shmem: drop DEFINE_DRM_GEM_SHMEM_FOPS
-Date:   Thu,  8 Aug 2019 15:44:07 +0200
-Message-Id: <20190808134417.10610-8-kraxel@redhat.com>
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 08/17] drm/ttm: factor out ttm_bo_mmap_vma_setup
+Date:   Thu,  8 Aug 2019 15:44:08 +0200
+Message-Id: <20190808134417.10610-9-kraxel@redhat.com>
 In-Reply-To: <20190808134417.10610-1-kraxel@redhat.com>
 References: <20190808134417.10610-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 08 Aug 2019 13:44:24 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 08 Aug 2019 13:44:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DEFINE_DRM_GEM_SHMEM_FOPS is identical to DEFINE_DRM_GEM_FOPS now,
-drop it.
+Factor out ttm vma setup to a new function.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- include/drm/drm_gem_shmem_helper.h      | 26 -------------------------
- drivers/gpu/drm/cirrus/cirrus.c         |  2 +-
- drivers/gpu/drm/panfrost/panfrost_drv.c |  2 +-
- drivers/gpu/drm/v3d/v3d_drv.c           |  2 +-
- 4 files changed, 3 insertions(+), 29 deletions(-)
+ include/drm/ttm/ttm_bo_api.h    |  8 ++++++
+ drivers/gpu/drm/ttm/ttm_bo_vm.c | 47 ++++++++++++++++++---------------
+ 2 files changed, 33 insertions(+), 22 deletions(-)
 
-diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
-index 0f7b77cdc26b..813240dcfe17 100644
---- a/include/drm/drm_gem_shmem_helper.h
-+++ b/include/drm/drm_gem_shmem_helper.h
-@@ -85,32 +85,6 @@ struct drm_gem_shmem_object {
- #define to_drm_gem_shmem_obj(obj) \
- 	container_of(obj, struct drm_gem_shmem_object, base)
+diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
+index 65ef5376de59..2c5fab0f3ed4 100644
+--- a/include/drm/ttm/ttm_bo_api.h
++++ b/include/drm/ttm/ttm_bo_api.h
+@@ -734,6 +734,14 @@ int ttm_fbdev_mmap(struct vm_area_struct *vma, struct ttm_buffer_object *bo);
+ int ttm_bo_mmap(struct file *filp, struct vm_area_struct *vma,
+ 		struct ttm_bo_device *bdev);
  
--/**
-- * DEFINE_DRM_GEM_SHMEM_FOPS() - Macro to generate file operations for shmem drivers
-- * @name: name for the generated structure
-- *
-- * This macro autogenerates a suitable &struct file_operations for shmem based
-- * drivers, which can be assigned to &drm_driver.fops. Note that this structure
-- * cannot be shared between drivers, because it contains a reference to the
-- * current module using THIS_MODULE.
-- *
-- * Note that the declaration is already marked as static - if you need a
-- * non-static version of this you're probably doing it wrong and will break the
-- * THIS_MODULE reference by accident.
-- */
--#define DEFINE_DRM_GEM_SHMEM_FOPS(name) \
--	static const struct file_operations name = {\
--		.owner		= THIS_MODULE,\
--		.open		= drm_open,\
--		.release	= drm_release,\
--		.unlocked_ioctl	= drm_ioctl,\
--		.compat_ioctl	= drm_compat_ioctl,\
--		.poll		= drm_poll,\
--		.read		= drm_read,\
--		.llseek		= noop_llseek,\
--		.mmap		= drm_gem_mmap, \
--	}
--
- struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev, size_t size);
- void drm_gem_shmem_free_object(struct drm_gem_object *obj);
++/**
++ * ttm_bo_mmap_vma_setup - initialize vma for ttm bo mmap
++ *
++ * @bo: The buffer object.
++ * @vma: vma as input from the mmap method.
++ */
++void ttm_bo_mmap_vma_setup(struct ttm_buffer_object *bo, struct vm_area_struct *vma);
++
+ void *ttm_kmap_atomic_prot(struct page *page, pgprot_t prot);
  
-diff --git a/drivers/gpu/drm/cirrus/cirrus.c b/drivers/gpu/drm/cirrus/cirrus.c
-index 36a69aec8a4b..9438af468331 100644
---- a/drivers/gpu/drm/cirrus/cirrus.c
-+++ b/drivers/gpu/drm/cirrus/cirrus.c
-@@ -510,7 +510,7 @@ static void cirrus_mode_config_init(struct cirrus_device *cirrus)
- 
- /* ------------------------------------------------------------------ */
- 
--DEFINE_DRM_GEM_SHMEM_FOPS(cirrus_fops);
-+DEFINE_DRM_GEM_FOPS(cirrus_fops);
- 
- static struct drm_driver cirrus_driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index b187daa4da85..1c07e1c3386e 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -386,7 +386,7 @@ static const struct drm_ioctl_desc panfrost_drm_driver_ioctls[] = {
- 	PANFROST_IOCTL(PERFCNT_DUMP,	perfcnt_dump,	DRM_RENDER_ALLOW),
- };
- 
--DEFINE_DRM_GEM_SHMEM_FOPS(panfrost_drm_driver_fops);
-+DEFINE_DRM_GEM_FOPS(panfrost_drm_driver_fops);
- 
- static struct drm_driver panfrost_drm_driver = {
- 	.driver_features	= DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ,
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-index 3506ae2723ae..03e4fbe1b92b 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.c
-+++ b/drivers/gpu/drm/v3d/v3d_drv.c
-@@ -169,7 +169,7 @@ v3d_postclose(struct drm_device *dev, struct drm_file *file)
- 	kfree(v3d_priv);
+ void ttm_kunmap_atomic_prot(void *addr, pgprot_t prot);
+diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+index d4eecde8d050..903563a7496a 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+@@ -426,6 +426,29 @@ static struct ttm_buffer_object *ttm_bo_vm_lookup(struct ttm_bo_device *bdev,
+ 	return bo;
  }
  
--DEFINE_DRM_GEM_SHMEM_FOPS(v3d_drm_fops);
-+DEFINE_DRM_GEM_FOPS(v3d_drm_fops);
++void ttm_bo_mmap_vma_setup(struct ttm_buffer_object *bo, struct vm_area_struct *vma)
++{
++	vma->vm_ops = &ttm_bo_vm_ops;
++
++	/*
++	 * Note: We're transferring the bo reference to
++	 * vma->vm_private_data here.
++	 */
++
++	vma->vm_private_data = bo;
++
++	/*
++	 * We'd like to use VM_PFNMAP on shared mappings, where
++	 * (vma->vm_flags & VM_SHARED) != 0, for performance reasons,
++	 * but for some reason VM_PFNMAP + x86 PAT + write-combine is very
++	 * bad for performance. Until that has been sorted out, use
++	 * VM_MIXEDMAP on all mappings. See freedesktop.org bug #75719
++	 */
++	vma->vm_flags |= VM_MIXEDMAP;
++	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
++}
++EXPORT_SYMBOL(ttm_bo_mmap_vma_setup);
++
+ int ttm_bo_mmap(struct file *filp, struct vm_area_struct *vma,
+ 		struct ttm_bo_device *bdev)
+ {
+@@ -449,24 +472,7 @@ int ttm_bo_mmap(struct file *filp, struct vm_area_struct *vma,
+ 	if (unlikely(ret != 0))
+ 		goto out_unref;
  
- /* DRM_AUTH is required on SUBMIT_CL for now, while we don't have GMP
-  * protection between clients.  Note that render nodes would be be
+-	vma->vm_ops = &ttm_bo_vm_ops;
+-
+-	/*
+-	 * Note: We're transferring the bo reference to
+-	 * vma->vm_private_data here.
+-	 */
+-
+-	vma->vm_private_data = bo;
+-
+-	/*
+-	 * We'd like to use VM_PFNMAP on shared mappings, where
+-	 * (vma->vm_flags & VM_SHARED) != 0, for performance reasons,
+-	 * but for some reason VM_PFNMAP + x86 PAT + write-combine is very
+-	 * bad for performance. Until that has been sorted out, use
+-	 * VM_MIXEDMAP on all mappings. See freedesktop.org bug #75719
+-	 */
+-	vma->vm_flags |= VM_MIXEDMAP;
+-	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
++	ttm_bo_mmap_vma_setup(bo, vma);
+ 	return 0;
+ out_unref:
+ 	ttm_bo_put(bo);
+@@ -481,10 +487,7 @@ int ttm_fbdev_mmap(struct vm_area_struct *vma, struct ttm_buffer_object *bo)
+ 
+ 	ttm_bo_get(bo);
+ 
+-	vma->vm_ops = &ttm_bo_vm_ops;
+-	vma->vm_private_data = bo;
+-	vma->vm_flags |= VM_MIXEDMAP;
+-	vma->vm_flags |= VM_IO | VM_DONTEXPAND;
++	ttm_bo_mmap_vma_setup(bo, vma);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(ttm_fbdev_mmap);
 -- 
 2.18.1
 
