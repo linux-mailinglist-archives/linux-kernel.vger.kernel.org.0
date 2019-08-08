@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BAA7869C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0799886A4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405350AbfHHTKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:10:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45088 "EHLO mail.kernel.org"
+        id S2404802AbfHHTID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:08:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404950AbfHHTKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:10:40 -0400
+        id S2404324AbfHHTIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:08:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16F4A2184E;
-        Thu,  8 Aug 2019 19:10:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45D97214C6;
+        Thu,  8 Aug 2019 19:07:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291439;
-        bh=g8nANGYIFzqLcRbz1W4HcPaeJTDSNW5/rBxQlHopmJU=;
+        s=default; t=1565291279;
+        bh=aFWjAWnkNgkPjMjUQKqFytHObHuRsWgRZDmqE8Vo808=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qJ5i7f68mrX4wKnh8bLj5zBKxEVma+Ul8FkV5ql+iG4eRHcyg2kjq4UUhYsz5EN10
-         o+2epecX80cf4ArpLuZV5T7PHZiEV6LGlvt1QDiXL802CMkM5rfmZFIH0iwQYLgRia
-         5PuufaMMjfAljOVFBN6vJPWvNKJ9pOwVOf0Mtstw=
+        b=zJQRK6wSZfLSYxpmSYAP8JOzswqHySRAs0IdCHrAW3oTxPJQZZlAUmSIPrWwu0ph5
+         hB32dSGPTsW8E+MITjepCL0JyK6H55gTP85EAuk2vvLUhGJ/4YHDNJ75EaFt6ldZKY
+         ckUzv91R3Rkp3u8k22wEr0950Z86VgeREa/wDez8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+88533dc8b582309bf3ee@syzkaller.appspotmail.com,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 15/33] net: bridge: delete local fdb on device init failure
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.2 56/56] spi: bcm2835: Fix 3-wire mode if DMA is enabled
 Date:   Thu,  8 Aug 2019 21:05:22 +0200
-Message-Id: <20190808190454.326369843@linuxfoundation.org>
+Message-Id: <20190808190455.622676210@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.582417307@linuxfoundation.org>
-References: <20190808190453.582417307@linuxfoundation.org>
+In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
+References: <20190808190452.867062037@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +47,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-[ Upstream commit d7bae09fa008c6c9a489580db0a5a12063b97f97 ]
+commit 8d8bef50365847134b51c1ec46786bc2873e4e47 upstream.
 
-On initialization failure we have to delete the local fdb which was
-inserted due to the default pvid creation. This problem has been present
-since the inception of default_pvid. Note that currently there are 2 cases:
-1) in br_dev_init() when br_multicast_init() fails
-2) if register_netdevice() fails after calling ndo_init()
+Commit 6935224da248 ("spi: bcm2835: enable support of 3-wire mode")
+added 3-wire support to the BCM2835 SPI driver by setting the REN bit
+(Read Enable) in the CS register when receiving data.  The REN bit puts
+the transmitter in high-impedance state.  The driver recognizes that
+data is to be received by checking whether the rx_buf of a transfer is
+non-NULL.
 
-This patch takes care of both since br_vlan_flush() is called on both
-occasions. Also the new fdb delete would be a no-op on normal bridge
-device destruction since the local fdb would've been already flushed by
-br_dev_delete(). This is not an issue for ports since nbp_vlan_init() is
-called last when adding a port thus nothing can fail after it.
+Commit 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers
+meeting certain conditions") subsequently broke 3-wire support because
+it set the SPI_MASTER_MUST_RX flag which causes spi_map_msg() to replace
+rx_buf with a dummy buffer if it is NULL.  As a result, rx_buf is
+*always* non-NULL if DMA is enabled.
 
-Reported-by: syzbot+88533dc8b582309bf3ee@syzkaller.appspotmail.com
-Fixes: 5be5a2df40f0 ("bridge: Add filtering support for default_pvid")
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reinstate 3-wire support by not only checking whether rx_buf is non-NULL,
+but also checking that it is not the dummy buffer.
+
+Fixes: 3ecd37edaa2a ("spi: bcm2835: enable dma modes for transfers meeting certain conditions")
+Reported-by: Nuno Sá <nuno.sa@analog.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org # v4.2+
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Acked-by: Stefan Wahren <wahrenst@gmx.net>
+Link: https://lore.kernel.org/r/328318841455e505370ef8ecad97b646c033dc8a.1562148527.git.lukas@wunner.de
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/bridge/br_vlan.c |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- a/net/bridge/br_vlan.c
-+++ b/net/bridge/br_vlan.c
-@@ -636,6 +636,11 @@ void br_vlan_flush(struct net_bridge *br
+---
+ drivers/spi/spi-bcm2835.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -764,7 +764,8 @@ static int bcm2835_spi_transfer_one(stru
+ 	bcm2835_wr(bs, BCM2835_SPI_CLK, cdiv);
  
- 	ASSERT_RTNL();
- 
-+	/* delete auto-added default pvid local fdb before flushing vlans
-+	 * otherwise it will be leaked on bridge device init failure
-+	 */
-+	br_fdb_delete_by_port(br, NULL, 0, 1);
-+
- 	vg = br_vlan_group(br);
- 	__vlan_flush(vg);
- 	RCU_INIT_POINTER(br->vlgrp, NULL);
+ 	/* handle all the 3-wire mode */
+-	if ((spi->mode & SPI_3WIRE) && (tfr->rx_buf))
++	if (spi->mode & SPI_3WIRE && tfr->rx_buf &&
++	    tfr->rx_buf != master->dummy_rx)
+ 		cs |= BCM2835_SPI_CS_REN;
+ 	else
+ 		cs &= ~BCM2835_SPI_CS_REN;
 
 
