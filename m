@@ -2,148 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C91285D30
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5837D85D14
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:43:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731678AbfHHIom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:44:42 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49275 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731048AbfHHIof (ORCPT
+        id S1731129AbfHHIm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:42:59 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50668 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728289AbfHHIm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:44:35 -0400
-Received: from 79.184.254.29.ipv4.supernova.orange.pl (79.184.254.29) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
- id 975af00a9d8c7bd9; Thu, 8 Aug 2019 10:44:33 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>
-Subject: [PATCH 1/2] intel-hid: intel-vbtn: Avoid leaking wakeup_mode set
-Date:   Thu, 08 Aug 2019 10:42:42 +0200
-Message-ID: <7715913.DUxqI9eLD1@kreacher>
-In-Reply-To: <1717835.1Yz4jNODO2@kreacher>
-References: <1717835.1Yz4jNODO2@kreacher>
+        Thu, 8 Aug 2019 04:42:59 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v15so1545778wml.0;
+        Thu, 08 Aug 2019 01:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=o0gY6GIOGxAdAcOqxh/7txJTZ7y4Fp96qJrFWzmJvJs=;
+        b=RUwiyaImbBGQoy18xa2BhqGI8xsDFamrbahqE96VfeFA6VE0a+pYf+hMqnuX0AZhmo
+         Z+mJc+SlQn5ApVviiHsgsXmnDePZl0YFD0+TWX2vDF/RUl2FiIq6m2KsXrM1v1C48xmJ
+         7nN6hfG9Sbn4S4s2FztFp25RDmu+C91Jv9V6VjynVMBYlaIypgm3v9xzgqJD/XOftZpj
+         Zg9jkrI1j2cnfDSgNsF/lHXvEW7hgX0WfokMqFvil8cKK9kyV4VWlV0o4m4J4Zj8OfVi
+         nhdoe7sl2TURQXr2WEzaXbScdo97ImFTTpXg5AfS0d60/mGaaYnDFL10jlkslAIjTZFK
+         lg7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=o0gY6GIOGxAdAcOqxh/7txJTZ7y4Fp96qJrFWzmJvJs=;
+        b=QGsHu+NSfXTBdUonyHAi+iP53h4sJAWo0KzHiqwn7+5LuSoTga181bu6tnSkPrC4eE
+         HsLsvMoWHXND5zz1FnfNcjYNeNjup/D2kZvQCA9aWtKbeij1w+rDanmALnbH7RHx0J/v
+         TsZoPyTumtzjvUDdQCqOG+gZyA4u4TcKw6m2EvVpfWIVXqG5FY6xo8D7CUwGTqbsU6fj
+         ZAEzFJAjkTTVmuEb/Dr2iMeXzCmCpwkKQsXzZB8HdXrEOaSWDo57kMHPQ8lXbziLkIr7
+         iuyo0+tmfr2wHWoiyRdsP6U536j3wuLtkVcJ3mTITzsU86oFddQmx13x/zhAtHS6mteI
+         ZZaw==
+X-Gm-Message-State: APjAAAVlqEEUKzXxpLHNAsscMq9GONnRcGewvpim/SeWHZ7J9iIradRS
+        sZvM8WuCWJMY5CB4vi5idmWN6Kko
+X-Google-Smtp-Source: APXvYqwlO+R71FW8BynOKwYku3Wp9gYOHeIIBZF6I/QjRTsEvLX/UseL7h//+kMmc+MbDlaAx5ji/g==
+X-Received: by 2002:a7b:c383:: with SMTP id s3mr2992226wmj.44.1565253776712;
+        Thu, 08 Aug 2019 01:42:56 -0700 (PDT)
+Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id c1sm2059259wmc.40.2019.08.08.01.42.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Aug 2019 01:42:56 -0700 (PDT)
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     mark.rutland@arm.com, mripard@kernel.org, robh+dt@kernel.org,
+        wens@csie.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: [PATCH] ARM64: dts: allwinner: Add devicetree for pine H64 modelA evaluation board
+Date:   Thu,  8 Aug 2019 10:42:53 +0200
+Message-Id: <20190808084253.10573-1-clabbe.montjoie@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This patch adds the evaluation variant of the model A of the PineH64.
+The model A has the same size of the pine64 and has a PCIE slot.
 
-Both intel-hid and intel-vbtn set a wakeup_mode flag causing them
-to behave in a special way during system suspend and while suspended
-in their "prepare" PM callbacks and clear it in their "resume" PM
-callbacks.  That may cause the wakeup_mode flag to remain set after
-a system suspend failure (if some other driver's "suspend" callback
-returns an error before the "suspend" callback of either intel-hid
-or intel-vbtn is invoked).
+The only devicetree difference with current pineH64, is the PHY
+regulator.
 
-After commit 10a08fd65ec1 ("ACPI: PM: Set up EC GPE for system wakeup
-from drivers that need it") that also affects the "wakeup mask" bit
-of the EC GPE, which may not be cleared after a failing system
-suspend.
-
-Fix this issue by adding "complete" PM callbacks to intel-hid and
-intel-vbtn to clear the wakeup_mode flag and the "wakeup mask" bit
-of the EC GPE if they have not been cleared earlier.
-
-Fixes: 10a08fd65ec1 ("ACPI: PM: Set up EC GPE for system wakeup from drivers that need it")
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 ---
+ arch/arm64/boot/dts/allwinner/Makefile        |  1 +
+ .../sun50i-h6-pine-h64-modelA-eval.dts        | 26 +++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
 
-The commit pointed to by the Fixes: tag above is in linux-next only ATM.
-
-The problem had been there before that commit, but it wasn't fixed by it and
-the fix depends on that commit.
-
-
----
- drivers/platform/x86/intel-hid.c  |   17 ++++++++++++-----
- drivers/platform/x86/intel-vbtn.c |   12 +++++++++---
- 2 files changed, 21 insertions(+), 8 deletions(-)
-
-Index: linux-pm/drivers/platform/x86/intel-hid.c
-===================================================================
---- linux-pm.orig/drivers/platform/x86/intel-hid.c
-+++ linux-pm/drivers/platform/x86/intel-hid.c
-@@ -262,6 +262,16 @@ static int intel_hid_pm_prepare(struct d
- 	return 0;
- }
- 
-+static void intel_hid_pm_complete(struct device *device)
-+{
-+	struct intel_hid_priv *priv = dev_get_drvdata(device);
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index f6db0611cb85..9a02166cbf72 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -25,3 +25,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-3.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-lite2.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64-modelA-eval.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
+new file mode 100644
+index 000000000000..d8ff02747efe
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: (GPL-2.0+ or MIT)
++/*
++ * Copyright (C) 2019 Corentin Labbe <clabbe.montjoie@gmail.com>
++ */
 +
-+	if (priv->wakeup_mode) {
-+		acpi_ec_set_gpe_wake_mask(ACPI_GPE_DISABLE);
-+		priv->wakeup_mode = false;
-+	}
-+}
++#include "sun50i-h6-pine-h64.dts"
 +
- static int intel_hid_pl_suspend_handler(struct device *device)
- {
- 	if (pm_suspend_via_firmware()) {
-@@ -273,12 +283,8 @@ static int intel_hid_pl_suspend_handler(
- 
- static int intel_hid_pl_resume_handler(struct device *device)
- {
--	if (device_may_wakeup(device)) {
--		struct intel_hid_priv *priv = dev_get_drvdata(device);
-+	intel_hid_pm_complete(device);
- 
--		acpi_ec_set_gpe_wake_mask(ACPI_GPE_DISABLE);
--		priv->wakeup_mode = false;
--	}
- 	if (pm_resume_via_firmware()) {
- 		intel_hid_set_enable(device, true);
- 		intel_button_array_enable(device, true);
-@@ -288,6 +294,7 @@ static int intel_hid_pl_resume_handler(s
- 
- static const struct dev_pm_ops intel_hid_pl_pm_ops = {
- 	.prepare = intel_hid_pm_prepare,
-+	.complete = intel_hid_pm_complete,
- 	.freeze  = intel_hid_pl_suspend_handler,
- 	.thaw  = intel_hid_pl_resume_handler,
- 	.restore  = intel_hid_pl_resume_handler,
-Index: linux-pm/drivers/platform/x86/intel-vbtn.c
-===================================================================
---- linux-pm.orig/drivers/platform/x86/intel-vbtn.c
-+++ linux-pm/drivers/platform/x86/intel-vbtn.c
-@@ -210,19 +210,25 @@ static int intel_vbtn_pm_prepare(struct
- 	return 0;
- }
- 
--static int intel_vbtn_pm_resume(struct device *dev)
-+static void intel_vbtn_pm_complete(struct device *dev)
- {
--	if (device_may_wakeup(dev)) {
--		struct intel_vbtn_priv *priv = dev_get_drvdata(dev);
-+	struct intel_vbtn_priv *priv = dev_get_drvdata(dev);
- 
-+	if (priv->wakeup_mode) {
- 		acpi_ec_set_gpe_wake_mask(ACPI_GPE_DISABLE);
- 		priv->wakeup_mode = false;
- 	}
-+}
++/ {
++	model = "Pine H64 model A evaluation board";
++	compatible = "pine64,pine-h64-modelA-eval", "allwinner,sun50i-h6";
 +
-+static int intel_vbtn_pm_resume(struct device *dev)
-+{
-+	intel_vbtn_pm_complete(dev);
- 	return 0;
- }
- 
- static const struct dev_pm_ops intel_vbtn_pm_ops = {
- 	.prepare = intel_vbtn_pm_prepare,
-+	.complete = intel_vbtn_pm_complete,
- 	.resume = intel_vbtn_pm_resume,
- 	.restore = intel_vbtn_pm_resume,
- 	.thaw = intel_vbtn_pm_resume,
-
-
++	reg_gmac_3v3: gmac-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-gmac-3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		startup-delay-us = <100000>;
++		gpio = <&pio 2 16 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++};
++
++&emac {
++	phy-supply = <&reg_gmac_3v3>;
++};
+-- 
+2.21.0
 
