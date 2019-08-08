@@ -2,143 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F01785DA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32E5385DD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:07:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731731AbfHHJBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 05:01:36 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59286 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730777AbfHHJBf (ORCPT
+        id S1731827AbfHHJHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 05:07:43 -0400
+Received: from rp02.intra2net.com ([62.75.181.28]:55278 "EHLO
+        rp02.intra2net.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730777AbfHHJHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 05:01:35 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190808090133euoutp01d6b83e91a6a0bb6b8175c098834e6cbc~45whK_zyn1723417234euoutp01O
-        for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2019 09:01:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190808090133euoutp01d6b83e91a6a0bb6b8175c098834e6cbc~45whK_zyn1723417234euoutp01O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1565254893;
-        bh=vAPC1KqG78EX5MpxZmqoLOpy+g6UHWhf1FKimkaWP4A=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=pO8Xm438v/7EEIdA82aSLOjUZqy0rWF8TNWSQFD2AuUDYX/6JwjPg1gXh8ENARgP2
-         e3xr90ohBy3jU2A9JUj941NSAm82iGXDqWJYpcEXD2r9QK3gQDkIj++Hsv0mVA9LMF
-         qGUuH5aFDn5ibGl0asc4wW2tKyfLh9vo9m2ngd+Y=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190808090132eucas1p13b40a53172facc537e31245aebf3bae7~45wgZWn290878908789eucas1p1O;
-        Thu,  8 Aug 2019 09:01:32 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6C.9E.04374.CE4EB4D5; Thu,  8
-        Aug 2019 10:01:32 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190808090131eucas1p1df8f45ce2b1a6022be13edd66dc5a93d~45wfqrqUY0864008640eucas1p1M;
-        Thu,  8 Aug 2019 09:01:31 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190808090131eusmtrp2e352ba3f317c555186224aacbaa12396~45wfp_rbZ0831808318eusmtrp2K;
-        Thu,  8 Aug 2019 09:01:31 +0000 (GMT)
-X-AuditID: cbfec7f5-92d689c000001116-c1-5d4be4ec97fd
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1C.70.04166.BE4EB4D5; Thu,  8
-        Aug 2019 10:01:31 +0100 (BST)
-Received: from [106.120.51.18] (unknown [106.120.51.18]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190808090130eusmtip14e1361b874b470445d8ee44ed8931457~45wesHjyG0244502445eusmtip1v;
-        Thu,  8 Aug 2019 09:01:30 +0000 (GMT)
-Subject: Re: [PATCH v5 0/4] add coupled regulators for Exynos5422/5800
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
-Message-ID: <b0b8bd85-c016-ef13-7d5e-11d476e35ab0@partner.samsung.com>
-Date:   Thu, 8 Aug 2019 11:01:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Thu, 8 Aug 2019 05:07:42 -0400
+X-Greylist: delayed 328 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Aug 2019 05:07:40 EDT
+Received: from mail.m.i2n (unknown [172.17.128.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by rp02.intra2net.com (Postfix) with ESMTPS id DDE61100111;
+        Thu,  8 Aug 2019 11:02:11 +0200 (CEST)
+Received: from localhost (mail.m.i2n [127.0.0.1])
+        by localhost (Postfix) with ESMTP id B22BB326;
+        Thu,  8 Aug 2019 11:02:11 +0200 (CEST)
+X-Virus-Scanned: by Intra2net Mail Security (AVE=8.3.54.70,VDF=8.16.20.112)
+X-Spam-Status: 
+X-Spam-Level: 0
+Received: from localhost (storm.m.i2n [172.16.1.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.m.i2n (Postfix) with ESMTPS id EE0E62A5;
+        Thu,  8 Aug 2019 11:02:09 +0200 (CEST)
+Date:   Thu, 8 Aug 2019 11:02:09 +0200
+From:   Thomas Jarosch <thomas.jarosch@intra2net.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Florian Westphal <fw@strlen.de>,
+        Jakub Jankowski <shasta@toxcorp.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 04/42] netfilter: conntrack: always store
+ window size un-scaled
+Message-ID: <20190808090209.wb63n6ibii4ivvba@intra2net.com>
+References: <20190802132302.13537-1-sashal@kernel.org>
+ <20190802132302.13537-4-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6888b704-1971-4832-d7b9-092368c797d0@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju2zln57ianU3DlxUKI6KbVij4UXaDioVF/uhHJKNWHrTSKTs6
-        M6nWRS0jzUllVk5Luyy7eS0tqbmceWVoKppmXlBSiVKj0jS3Y+S/53nf93mf9/n4GEL+mVIw
-        R7TRnE6rCVeKJWRJ1a8G7+G+QPXaweH5+HnGUwq3jg1Q2GRtoHBq7xCBGxuf0bj+7DCNC3pb
-        KNxUdkuMRy9bEc5orBDhx9ZOGue12kW448wDMR7+WS/CCa+tNJ5qeU7iwu4q8RaZKj8rH6kK
-        zBfFqsLc06qUIjNS2dpKRarRAs8g8X5JQAgXfkTP6dZsOigJG6x9REal0ceL+nNoA5qgkpEL
-        A6wf1LVloWQkYeTsAwSWrFJaIGMIupIGSIGMIqgrryb/SYZMlyihcR+B3ZIxS0YQ1FT+ETum
-        3Ngd0GxIIxzYnV0ON/40O00ItomEaz1Gp7uY9Yee0jqRA0tnBNn302kHJtml8M54y2m3iN0H
-        37srKWFGBu9v9DnrLuxmSL435jQjWA9o7zOJBOwF54pvEg4zYBMY6G83zjgzM2QbGH8EChHc
-        4IutiBbwEph+KWiBjYX+nBRa0J5H0J30bTbzBqi02SnHHoJdAU/L1gjlrfCqKpcS1rtC24hM
-        OMEVjCXXCaEshQuJcmHaG7Km62bffTEkTz+hriBl5pxgmXPCZM4Jk/nfNxuRZuTBxfARoRzv
-        q+VifXhNBB+jDfU5HBlRgGY+Xu2UbfwFqpg8ZEEsg5QLpNU1gWo5pdHzcREWBAyhdJd26Xeq
-        5dIQTdwJThd5QBcTzvEWtJghlR7S+HndwXI2VBPNHeO4KE73rytiXBQGpDcxCyfXt+8J+vEw
-        6aoi3fx93HQoOz735NhUflwqWdhwr78s2MuQm/bpQwtz+851nZ6+OS3zHW8rXWmwn+ePBlgm
-        v+6yyjwfJQaoXSuKFem/sY7RB/jbJ/J2e3QqEr1X390bGSxZRk24JGjLN6q3r7K9MY8zfW/9
-        PlZ3KPSnhpQkH6ZZt5LQ8Zq/61CsR3QDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsVy+t/xu7qvn3jHGnw7rm6xccZ6VovrX56z
-        Wsw/co7Vov/xa2aL8+c3sFucbXrDbrHp8TVWi8u75rBZfO49wmgx4/w+Jou1R+6yWyy9fpHJ
-        4nbjCjaLNz/OMlm07j3CbvHv2kYWi80PjrE5CHqsmbeG0WPTqk42j81L6j36tqxi9Dh+YzuT
-        x+dNcgFsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2
-        CXoZL06vZimYyF6x5elC9gbG36xdjJwcEgImEq/ndwPZXBxCAksZJb7ceckIkZCWaDy9mgnC
-        Fpb4c62LDaLoNaPE/cWbWEASwgJuElcaJjKD2CICGhIz/15hBCliFrjKInF+4xyojrOMEpNv
-        nwKrYhMwl3i0/QzYWF6g7gXLJ7OD2CwCKhJHJ80BmyoqECFxeMcsRogaQYmTM5+AxTkF7CW6
-        ln1hA7GZBdQl/sy7xAxhi0vcejKfCcKWl2jeOpt5AqPQLCTts5C0zELSMgtJywJGllWMIqml
-        xbnpucWGesWJucWleel6yfm5mxiBUb7t2M/NOxgvbQw+xCjAwajEw1twwjtWiDWxrLgy9xCj
-        BAezkgjvvTLPWCHelMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OByagvJJ4Q1NDcwtLQ3Njc2Mz
-        CyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjPpFpkesp+WunWG9nO/Ujaws1kN787Ntu47H
-        lbFuucg/VXHN2WNuF195tS4tSnnq6LF628b3ojPd9aMUqnbELGJ5YGLHrL/WT6ym5Ozq4K/d
-        zwy0Y/9tidn4JmplcLeWQd3Fecu9N55oPpFTxHzrZOfNH5EO+3qF7k8smbzkTernE29vrMwo
-        lldiKc5INNRiLipOBAAKRIgXCAMAAA==
-X-CMS-MailID: 20190808090131eucas1p1df8f45ce2b1a6022be13edd66dc5a93d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190807133855eucas1p1cab425b791262e8dee1b17cbe8b1b3da
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190807133855eucas1p1cab425b791262e8dee1b17cbe8b1b3da
-References: <CGME20190807133855eucas1p1cab425b791262e8dee1b17cbe8b1b3da@eucas1p1.samsung.com>
-        <20190807133838.14678-1-k.konieczny@partner.samsung.com>
-        <6888b704-1971-4832-d7b9-092368c797d0@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802132302.13537-4-sashal@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+Hello together,
 
-On 08.08.2019 03:47, Chanwoo Choi wrote:
-> Hi Kamil,
+You wrote on Fri, Aug 02, 2019 at 09:22:24AM -0400:
+> From: Florian Westphal <fw@strlen.de>
 > 
-> When I applied them to testing branch, those don't have the author name
-> only just have the email address as following:
-> You have to edit the your git author information with your name.
-
-Sorry, I will resend with proper From: info.
-
-> author	k.konieczny@partner.samsung.com <k.konieczny@partner.samsung.com>	2019-08-07 15:38:36 +0200
-> committer	Chanwoo Choi <cw00.choi@samsung.com>	2019-08-08 10:35:16 +0900
-> commit	4304f4ecec93cebd255463d56b0a4f112ee9dc50 (patch)
-> tree	2859e566d6f68219f71a61e7c412717c1adba4f5
-> parent	57d85421038b458dd87ec268404ff608f90c36ae (diff)
-> download	linux-4304f4ecec93cebd255463d56b0a4f112ee9dc50.tar.gz
+> [ Upstream commit 959b69ef57db00cb33e9c4777400ae7183ebddd3 ]
 > 
-> Regards,
-> Chanwoo Choi
+> Jakub Jankowski reported following oddity:
 > 
-> On 19. 8. 7. 오후 10:38, k.konieczny@partner.samsung.com wrote:
->> [...]
+> After 3 way handshake completes, timeout of new connection is set to
+> max_retrans (300s) instead of established (5 days).
+> 
+> shortened excerpt from pcap provided:
+> 25.070622 IP (flags [DF], proto TCP (6), length 52)
+> 10.8.5.4.1025 > 10.8.1.2.80: Flags [S], seq 11, win 64240, [wscale 8]
+> 26.070462 IP (flags [DF], proto TCP (6), length 48)
+> 10.8.1.2.80 > 10.8.5.4.1025: Flags [S.], seq 82, ack 12, win 65535, [wscale 3]
+> 27.070449 IP (flags [DF], proto TCP (6), length 40)
+> 10.8.5.4.1025 > 10.8.1.2.80: Flags [.], ack 83, win 512, length 0
+> 
+> Turns out the last_win is of u16 type, but we store the scaled value:
+> 512 << 8 (== 0x20000) becomes 0 window.
+> 
+> The Fixes tag is not correct, as the bug has existed forever, but
+> without that change all that this causes might cause is to mistake a
+> window update (to-nonzero-from-zero) for a retransmit.
+> 
+> Fixes: fbcd253d2448b8 ("netfilter: conntrack: lower timeout to RETRANS seconds if window is 0")
+> Reported-by: Jakub Jankowski <shasta@toxcorp.com>
+> Tested-by: Jakub Jankowski <shasta@toxcorp.com>
+> Signed-off-by: Florian Westphal <fw@strlen.de>
+> Acked-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+> Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
--- 
+Also:
+Tested-by: Thomas Jarosch <thomas.jarosch@intra2net.com>
+
+;)
+
+We've hit the issue with the wrong conntrack timeout at two different sites,
+long-lived connections to a SAP server over IPSec VPN were constantly dropping.
+
+For us this was a regression after updating from kernel 3.14 to 4.19.
+Yesterday I've applied the patch to kernel 4.19.57 and the problem is fixed.
+
+The issue was extra hard to debug as we could just boot the new kernel
+for twenty minutes in the evening on these productive systems.
+
+The stable kernel patch from last Friday came right on time. I was just
+about the replay the TCP connection with tcpreplay, so this saved
+me from another week of debugging. Thanks everyone!
+
 Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
-
+Thomas Jarosch
