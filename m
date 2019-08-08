@@ -2,84 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC3A6861D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:33:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FFA5861DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403896AbfHHMbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 08:31:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403878AbfHHMbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:31:53 -0400
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3667F218A4;
-        Thu,  8 Aug 2019 12:31:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565267512;
-        bh=bdQZvsSQ32pIcK00dvHnvYCuayYBNzzTq0JqfKXAAnA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=opj1qQf9iEv45GohNPIZzhCfVIZu1ZKpRtt66TnyPL0lOzTJk5eitdVMhBoy+g0Hf
-         UVInrjj0SFWueYHRvOSGyc2Fpz0WX4Dk4DE0AzIZES1sOm0BnypToJNP5f4pPpc22P
-         wQUfdU1+dQ5DAUF2r3Ky0lG/+/V7pVl8LsPRJRnY=
-Received: by mail-lj1-f181.google.com with SMTP id p17so88755682ljg.1;
-        Thu, 08 Aug 2019 05:31:52 -0700 (PDT)
-X-Gm-Message-State: APjAAAUT5PPbj95rvcI9AaKvULcLH5UuERGUxkAPpnVMe3cRJG1kPyFF
-        WmS/pyH828ZjbTD7Dn0OwwGFNTNcj/dhTaIaMmA=
-X-Google-Smtp-Source: APXvYqzE6I+ay+3PmHe0pYVJmR3CgZhxE3A6RP3FlUDg7MjWb3h3zbv3W0JwnvdTTIFomcUI0MjdcuE87ZGWhiIDMH0=
-X-Received: by 2002:a2e:3008:: with SMTP id w8mr8290719ljw.13.1565267510378;
- Thu, 08 Aug 2019 05:31:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20190718143130eucas1p26f2058f47eb2f4020e1ddbf1619d1ac8@eucas1p2.samsung.com>
- <20190718143044.25066-1-s.nawrocki@samsung.com> <20190718143044.25066-4-s.nawrocki@samsung.com>
- <CAJKOXPeOfDHjqSotxVwVuy+6r9X3Q8ZXLit1_=gGd7bOwkHupA@mail.gmail.com> <a56fe2d8-1f26-b462-1564-f23902f7dbb5@samsung.com>
-In-Reply-To: <a56fe2d8-1f26-b462-1564-f23902f7dbb5@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 8 Aug 2019 14:31:39 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPc8iFo=2JAGEZSC46N3sZae4+JcZYBCjpKysb6PFPzyaQ@mail.gmail.com>
-Message-ID: <CAJKOXPc8iFo=2JAGEZSC46N3sZae4+JcZYBCjpKysb6PFPzyaQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/9] soc: samsung: Add Exynos Adaptive Supply Voltage driver
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org,
-        kgene@kernel.org, pankaj.dubey@samsung.com,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S2390029AbfHHMcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 08:32:06 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39920 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389970AbfHHMbv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:31:51 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t16so4628900wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 05:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=719/5DFvRfWwCLtGmiwAoLfgu4awkKtG7JiiAlJQkos=;
+        b=e7eo+W1fI12hnUdWyfetUQNy8huNzKGC0JTjy2Uf12H39LvQJjs2VSYqyNWH5IowtM
+         O4gs4wf1RNCEvAh4neSGwqpIbrJ1EDZa3A/kRSS5nlnBh8rja5DroiXGQG6/GnjSx07X
+         tcKyenRHFV4OQHg41LLJqa4joXEWOL/hZMtVTzHh017ouCrFd7R2wa03aVkvTIguwOLw
+         Diq4RiUuMUwT+kolbxDoDVmvLmgJWG8Qsnt5QBcF7HO/AVYmLbd7cIMTxtWFOUj5IJtQ
+         a+ci9bA2UTszQbarL4LpCpi9a8+F3xt6nbZ6B05RoktxiufweNYAosdPGGu1AlHtJUQl
+         L1YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=719/5DFvRfWwCLtGmiwAoLfgu4awkKtG7JiiAlJQkos=;
+        b=jPgZc9DUoV2Q1eGKlZ6qGGmGKiTo3EaTMaojWcpZOuDxH6FUBFLgF1QehGjU8L+FDx
+         8MNhzLsIvcWUrIT3N2ZuEJjD00TmdYondWMSCTC965+dPxIGEtz2/fUiT4dRk/dIOqJl
+         lsgpMaRxRr5Z78Oiiuo6uZtChYqtDwp1piOVfdMZnFsChNQspPKfSfm/QINBKnV2ehse
+         jHT8V55z0m4YW83ZHlCpYEWkpQB99mLfWOoR08f0xI9DdewU/DhRMT9qE0jsyBnwQbxy
+         oKYlCY0M/5uZnxhSJ6YhPHqa35tENytaw07izAOeLS9WiciP/w2POmrWv8dLYrfo43vV
+         fwsA==
+X-Gm-Message-State: APjAAAWgE9WJR5Vby3dXRJnjXW2WR/X27fAAypud+UJB+b3bctrn1g37
+        behJj+BZmiauFgPuY73kSd5PAQ==
+X-Google-Smtp-Source: APXvYqwlq7Scq3WaphemqYY+kgeK5uDkZrYgbJ3SRXsQJKsK6KIXuoAOPIVRKn+9+pdgqHpZk4NGJQ==
+X-Received: by 2002:adf:9486:: with SMTP id 6mr17484262wrr.242.1565267509386;
+        Thu, 08 Aug 2019 05:31:49 -0700 (PDT)
+Received: from hackbox2.linaro.org ([81.128.185.34])
+        by smtp.gmail.com with ESMTPSA id h97sm3206111wrh.74.2019.08.08.05.31.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 08 Aug 2019 05:31:48 -0700 (PDT)
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+To:     pbonzini@redhat.com, shuah@kernel.org
+Cc:     linux-kernel@vger.kernel.org, drjones@redhat.com,
+        sean.j.christopherson@intel.com, linux-kselftest@vger.kernel.org,
+        kvm@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: [PATCH v2] selftests: kvm: Adding config fragments
+Date:   Thu,  8 Aug 2019 13:31:40 +0100
+Message-Id: <20190808123140.25583-1-naresh.kamboju@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Aug 2019 at 14:07, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> >> +static unsigned int exynos5422_asv_parse_table(struct exynos_asv *asv,
-> >> +                                     unsigned int pkg_id)
-> >> +{
-> >> +       return (pkg_id >> EXYNOS5422_TABLE_OFFSET) & EXYNOS5422_TABLE_MASK;
-> >> +}
-> >> +
-> >> +static bool exynos5422_asv_parse_bin2(struct exynos_asv *asv,
-> >> +                                    unsigned int pkg_id)
-> >> +{
-> >> +       return (pkg_id >> EXYNOS5422_BIN2_OFFSET) & EXYNOS5422_BIN2_MASK;
-> >
-> > return !!() for converting to boolean.
->
-> I'm not convinced it is needed, the return type of the function is bool
-> and value of the expression will be implicitly converted to that type.
-> Is there any compiler warning related to that?
+selftests kvm all test cases need pre-required kernel configs for the
+tests to get pass.
 
-Yeah, but bool is int so there will be no implicit conversion... I
-guess it is a convention. In theory !! is the proper conversion to
-bool but if bool==int then it's essentially conversion to 1. I am not
-sure what's the benefit, maybe for some wrong code which would do
-comparisons on result like if (exynos5422_asv_parse_bin2() == TRUE)...
+The KVM tests are skipped without these configs:
 
-Best regards,
-Krzysztof
+        dev_fd = open(KVM_DEV_PATH, O_RDONLY);
+        if (dev_fd < 0)
+                exit(KSFT_SKIP);
+
+Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+---
+ tools/testing/selftests/kvm/config | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/config
+
+diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
+new file mode 100644
+index 000000000000..63ed533f73d6
+--- /dev/null
++++ b/tools/testing/selftests/kvm/config
+@@ -0,0 +1,3 @@
++CONFIG_KVM=y
++CONFIG_KVM_INTEL=y
++CONFIG_KVM_AMD=y
+-- 
+2.17.1
+
