@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D913C85EB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2600985EAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732581AbfHHJh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 05:37:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55504 "EHLO mx1.redhat.com"
+        id S1732512AbfHHJhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 05:37:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:1906 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732451AbfHHJhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 05:37:08 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1732443AbfHHJhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 05:37:07 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B145E316D798;
+        by mx1.redhat.com (Postfix) with ESMTPS id 5D91930C75BF;
         Thu,  8 Aug 2019 09:37:07 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-144.ams2.redhat.com [10.36.116.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 647B560BE1;
-        Thu,  8 Aug 2019 09:37:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 143DD5C541;
+        Thu,  8 Aug 2019 09:37:06 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id AE46F9D21; Thu,  8 Aug 2019 11:37:03 +0200 (CEST)
+        id CF0C39D22; Thu,  8 Aug 2019 11:37:03 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
@@ -29,13 +29,13 @@ Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 6/8] drm/ttm: add drm_gem_ttm_bo_driver_verify_access()
-Date:   Thu,  8 Aug 2019 11:37:00 +0200
-Message-Id: <20190808093702.29512-7-kraxel@redhat.com>
+Subject: [PATCH v3 7/8] gem/vram: use drm_gem_ttm_bo_driver_verify_access()
+Date:   Thu,  8 Aug 2019 11:37:01 +0200
+Message-Id: <20190808093702.29512-8-kraxel@redhat.com>
 In-Reply-To: <20190808093702.29512-1-kraxel@redhat.com>
 References: <20190808093702.29512-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 08 Aug 2019 09:37:07 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 08 Aug 2019 09:37:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -43,52 +43,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- include/drm/drm_gem_ttm_helper.h     |  2 ++
- drivers/gpu/drm/drm_gem_ttm_helper.c | 22 ++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ include/drm/drm_gem_vram_helper.h     |  3 ---
+ drivers/gpu/drm/drm_gem_vram_helper.c | 22 +---------------------
+ 2 files changed, 1 insertion(+), 24 deletions(-)
 
-diff --git a/include/drm/drm_gem_ttm_helper.h b/include/drm/drm_gem_ttm_helper.h
-index 43c9db3583cc..78e4d8930fec 100644
---- a/include/drm/drm_gem_ttm_helper.h
-+++ b/include/drm/drm_gem_ttm_helper.h
-@@ -26,5 +26,7 @@ int drm_gem_ttm_bo_device_init(struct drm_device *dev,
- 			       struct ttm_bo_device *bdev,
- 			       struct ttm_bo_driver *driver,
- 			       bool need_dma32);
-+int drm_gem_ttm_bo_driver_verify_access(struct ttm_buffer_object *bo,
-+					struct file *filp);
+diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
+index 701d2c46a4f4..7723ad59a0c5 100644
+--- a/include/drm/drm_gem_vram_helper.h
++++ b/include/drm/drm_gem_vram_helper.h
+@@ -98,9 +98,6 @@ int drm_gem_vram_fill_create_dumb(struct drm_file *file,
+ void drm_gem_vram_bo_driver_evict_flags(struct ttm_buffer_object *bo,
+ 					struct ttm_placement *pl);
  
- #endif
-diff --git a/drivers/gpu/drm/drm_gem_ttm_helper.c b/drivers/gpu/drm/drm_gem_ttm_helper.c
-index 0c57e9fd50b9..159768c7ec63 100644
---- a/drivers/gpu/drm/drm_gem_ttm_helper.c
-+++ b/drivers/gpu/drm/drm_gem_ttm_helper.c
-@@ -34,3 +34,25 @@ int drm_gem_ttm_bo_device_init(struct drm_device *dev,
- 						   need_dma32);
+-int drm_gem_vram_bo_driver_verify_access(struct ttm_buffer_object *bo,
+-					 struct file *filp);
+-
+ extern const struct drm_vram_mm_funcs drm_gem_vram_mm_funcs;
+ 
+ /*
+diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+index b78865055990..02d9cf0272bc 100644
+--- a/drivers/gpu/drm/drm_gem_vram_helper.c
++++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+@@ -415,26 +415,6 @@ void drm_gem_vram_bo_driver_evict_flags(struct ttm_buffer_object *bo,
  }
- EXPORT_SYMBOL(drm_gem_ttm_bo_device_init);
-+
-+/**
-+ * drm_gem_ttm_bo_driver_verify_access() - \
-+	Implements &struct ttm_bo_driver.verify_access
-+ * @bo:		TTM buffer object.
-+ * @filp:	File pointer.
-+ *
-+ * This function assumes filp->private_data refers to the
-+ * corresponding &struct drm_file.
-+ *
-+ * Returns:
-+ * 0 on success, or
-+ * a negative errno code otherwise.
-+ */
-+int drm_gem_ttm_bo_driver_verify_access(struct ttm_buffer_object *bo,
-+					struct file *filp)
-+{
-+	struct drm_file *ptr = filp->private_data;
-+
-+	return drm_vma_node_verify_access(&bo->base.vma_node, ptr);
-+}
-+EXPORT_SYMBOL(drm_gem_ttm_bo_driver_verify_access);
+ EXPORT_SYMBOL(drm_gem_vram_bo_driver_evict_flags);
+ 
+-/**
+- * drm_gem_vram_bo_driver_verify_access() - \
+-	Implements &struct ttm_bo_driver.verify_access
+- * @bo:		TTM buffer object. Refers to &struct drm_gem_vram_object.bo
+- * @filp:	File pointer.
+- *
+- * Returns:
+- * 0 on success, or
+- * a negative errno code otherwise.
+- */
+-int drm_gem_vram_bo_driver_verify_access(struct ttm_buffer_object *bo,
+-					 struct file *filp)
+-{
+-	struct drm_gem_vram_object *gbo = drm_gem_vram_of_bo(bo);
+-
+-	return drm_vma_node_verify_access(&gbo->bo.base.vma_node,
+-					  filp->private_data);
+-}
+-EXPORT_SYMBOL(drm_gem_vram_bo_driver_verify_access);
+-
+ /*
+  * drm_gem_vram_mm_funcs - Functions for &struct drm_vram_mm
+  *
+@@ -444,7 +424,7 @@ EXPORT_SYMBOL(drm_gem_vram_bo_driver_verify_access);
+  */
+ const struct drm_vram_mm_funcs drm_gem_vram_mm_funcs = {
+ 	.evict_flags = drm_gem_vram_bo_driver_evict_flags,
+-	.verify_access = drm_gem_vram_bo_driver_verify_access
++	.verify_access = drm_gem_ttm_bo_driver_verify_access
+ };
+ EXPORT_SYMBOL(drm_gem_vram_mm_funcs);
+ 
 -- 
 2.18.1
 
