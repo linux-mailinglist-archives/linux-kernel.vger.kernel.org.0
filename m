@@ -2,147 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0B2985F5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 12:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 133A385F63
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 12:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389927AbfHHKRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 06:17:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50576 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389773AbfHHKRP (ORCPT
+        id S2389948AbfHHKRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 06:17:41 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53302 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389907AbfHHKRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 06:17:15 -0400
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1hvfTt-0002dR-0f; Thu, 08 Aug 2019 10:17:13 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     joro@8bytes.org
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] iommu/amd: Override wrong IVRS IOAPIC on Raven Ridge systems
-Date:   Thu,  8 Aug 2019 18:17:07 +0800
-Message-Id: <20190808101707.16783-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 8 Aug 2019 06:17:41 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 10so1824594wmp.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 03:17:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A67o93psY5B4eG+Z4gU8la/fXN6tQo4s6p40YcJCO2U=;
+        b=c5eSw44burssOoFTN87qDDMEdKZYrxwitEzxmyGA+TClM4eL4j+U2vXkjSTWDg78k1
+         4kO3ET7xFc8yUFVM7rZOGGN+EW6e4ck/BVDqAy2QpDcxx6oeLpxjy6cbgbj0MGp2SY64
+         +2NaQQlnir4wPwxR7Za2cb2f1wUXEU1lWS1F4Eb7TAMevbAPuLLbjR43OaeMq/nu2xqY
+         aQmFBVEEUtW8leJ3J5gDUHXxCUQMiJu1q9KzyZZHxE+xD4UmHGjLlsRn+J5IPaIsa+qZ
+         OjcyMc8M6S76QLrpSsUg7Qa/rZCiVdgE8kuYxBeboEovW8RDtrByc9ttnnVluXFwltuq
+         B8zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A67o93psY5B4eG+Z4gU8la/fXN6tQo4s6p40YcJCO2U=;
+        b=KLABPsnyT63fOL3m4PIcRGOIbtkTWquNGzesDQlhgEMzFAf51uISYou4rm800H+w1o
+         /jqQvL1lA2aMT/x3kwNdihbM4G+WGyymsOBgHcyIUWvsqMuSZ/Ks5CUZHV9srvV/sjrN
+         eKJB43x9Czw8PmyHklSxTIQFQjxQo+aYZFG//fUDgjWPCPKVqlqX73+GbT04kUUwtvKy
+         RDKZcHiNmz9qzWEf60c91bj9hR119N4BI/OO4SP+YwZPf2Q8RnuzYF1tJvESZJxHBTFy
+         clOjbvX9gTPafYAuF0glx1iRlXg/38xfH/FxF1UcZhx4oo9NVEqCl1WfZz3ihHKirovk
+         Qpsg==
+X-Gm-Message-State: APjAAAXWt85rJ1PPJgi/eoCtEl6Ha6d+k3SIwWQJJZd/StqMcjTKe6jp
+        aSq3GK0BrYTbW8ktgJEDg99eYNrNj4EWQVqAtQL5tw==
+X-Google-Smtp-Source: APXvYqz7BKIweTGD0pA249jlnSDGofQc14qRXCJ79xu+fAryKh6X3PjA3bV6mjRS8i9LvDRdKCRm8/Adrr477M76s7k=
+X-Received: by 2002:a1c:3d89:: with SMTP id k131mr3238609wma.24.1565259458889;
+ Thu, 08 Aug 2019 03:17:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <1565251121-28490-1-git-send-email-vincent.chen@sifive.com> <1565251121-28490-3-git-send-email-vincent.chen@sifive.com>
+In-Reply-To: <1565251121-28490-3-git-send-email-vincent.chen@sifive.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Thu, 8 Aug 2019 15:47:26 +0530
+Message-ID: <CAAhSdy0+FeZecT0Xppwq+fGu-BV7dp+zY141R73=0O=khKdOKQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] riscv: Make __fstate_clean() can work correctly.
+To:     Vincent Chen <vincent.chen@sifive.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Raven Ridge systems may have malfunction touchpad or hang at boot if
-incorrect IVRS IOAPIC is provided by BIOS.
+On Thu, Aug 8, 2019 at 1:30 PM Vincent Chen <vincent.chen@sifive.com> wrote:
+>
+> Make the __fstate_clean() function can correctly set the
+> state of sstatus.FS in pt_regs to SR_FS_CLEAN.
+>
+> Tested on both QEMU and HiFive Unleashed using BBL + Linux.
+>
+> Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+> ---
+>  arch/riscv/include/asm/switch_to.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+> index d5fe573..544f99a 100644
+> --- a/arch/riscv/include/asm/switch_to.h
+> +++ b/arch/riscv/include/asm/switch_to.h
+> @@ -16,7 +16,7 @@ extern void __fstate_restore(struct task_struct *restore_from);
+>
+>  static inline void __fstate_clean(struct pt_regs *regs)
+>  {
+> -       regs->sstatus |= (regs->sstatus & ~(SR_FS)) | SR_FS_CLEAN;
+> +       regs->sstatus = (regs->sstatus & ~(SR_FS)) | SR_FS_CLEAN;
+>  }
+>
+>  static inline void fstate_off(struct task_struct *task,
+> --
+> 2.7.4
+>
 
-Users already found correct "ivrs_ioapic=" values, let's put them inside
-kernel to workaround buggy BIOS.
+Looks good to me.
 
-BugLink: https://bugs.launchpad.net/bugs/1795292
-BugLink: https://bugs.launchpad.net/bugs/1837688
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/iommu/amd_iommu_init.c | 75 ++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index 4413aa67000e..06fd008281e5 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -21,6 +21,7 @@
- #include <linux/iommu.h>
- #include <linux/kmemleak.h>
- #include <linux/mem_encrypt.h>
-+#include <linux/dmi.h>
- #include <asm/pci-direct.h>
- #include <asm/iommu.h>
- #include <asm/apic.h>
-@@ -1109,6 +1110,78 @@ static int __init add_early_maps(void)
- 	return 0;
- }
- 
-+struct quirk_entry {
-+	u8 id;
-+	u16 devid;
-+};
-+
-+enum {
-+	DELL_INSPIRON_7375 = 0,
-+	DELL_LATITUDE_5495,
-+	LENOVO_IDEAPAD_330S_15ARR,
-+};
-+
-+static const struct quirk_entry ivrs_ioapic_quirks[][3] __initconst = {
-+	/* ivrs_ioapic[4]=00:14.0 ivrs_ioapic[5]=00:00.2 */
-+	[DELL_INSPIRON_7375] = {
-+		{ .id = 4, .devid = 0xa0 },
-+		{ .id = 5, .devid = 0x2 },
-+		{}
-+	},
-+	/* ivrs_ioapic[4]=00:14.0 */
-+	[DELL_LATITUDE_5495] = {
-+		{ .id = 4, .devid = 0xa0 },
-+		{}
-+	},
-+	/* ivrs_ioapic[32]=00:14.0 */
-+	[LENOVO_IDEAPAD_330S_15ARR] = {
-+		{ .id = 32, .devid = 0xa0 },
-+		{}
-+	},
-+	{}
-+};
-+
-+static int __init ivrs_ioapic_quirk_cb(const struct dmi_system_id *d)
-+{
-+	const struct quirk_entry *i;
-+
-+	for (i = d->driver_data; i->id != 0 && i->devid != 0; i++)
-+		add_special_device(IVHD_SPECIAL_IOAPIC, i->id, &i->devid, 0);
-+
-+	return 0;
-+}
-+
-+static const struct dmi_system_id ivrs_quirks[] __initconst = {
-+	{
-+		.callback = ivrs_ioapic_quirk_cb,
-+		.ident = "Dell Inspiron 7375",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 7375"),
-+		},
-+		.driver_data = (void *)&ivrs_ioapic_quirks[DELL_INSPIRON_7375],
-+	},
-+	{
-+		.callback = ivrs_ioapic_quirk_cb,
-+		.ident = "Dell Latitude 5495",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 5495"),
-+		},
-+		.driver_data = (void *)&ivrs_ioapic_quirks[DELL_LATITUDE_5495],
-+	},
-+	{
-+		.callback = ivrs_ioapic_quirk_cb,
-+		.ident = "Lenovo ideapad 330S-15ARR",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "81FB"),
-+		},
-+		.driver_data = (void *)&ivrs_ioapic_quirks[LENOVO_IDEAPAD_330S_15ARR],
-+	},
-+	{}
-+};
-+
- /*
-  * Reads the device exclusion range from ACPI and initializes the IOMMU with
-  * it
-@@ -1153,6 +1226,8 @@ static int __init init_iommu_from_acpi(struct amd_iommu *iommu,
- 	if (ret)
- 		return ret;
- 
-+	dmi_check_system(ivrs_quirks);
-+
- 	/*
- 	 * First save the recommended feature enable bits from ACPI
- 	 */
--- 
-2.17.1
+This should be a RC fix.
 
+Please add "Fixes:" in your commit description and
+CC stable kernel.
+
+Regards,
+Anup
