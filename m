@@ -2,116 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C916B8672F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B9386727
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390141AbfHHQev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:34:51 -0400
-Received: from mga01.intel.com ([192.55.52.88]:54043 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbfHHQeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:34:50 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 09:34:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,362,1559545200"; 
-   d="scan'208";a="174895459"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga008.fm.intel.com with ESMTP; 08 Aug 2019 09:34:49 -0700
-Date:   Thu, 8 Aug 2019 10:32:24 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jon Derrick <jonathan.derrick@intel.com>,
+        id S1732763AbfHHQcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:32:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44080 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725535AbfHHQcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 12:32:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DEBE0AE7F;
+        Thu,  8 Aug 2019 16:32:29 +0000 (UTC)
+Date:   Thu, 8 Aug 2019 18:32:28 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     ndrw.xf@redhazel.co.uk
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Artem S. Tashkinov" <aros@gmx.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, Ming Lei <ming.lei@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] genirq/affinity: report extra vectors on uneven nodes
-Message-ID: <20190808163224.GB27077@localhost.localdomain>
-References: <20190807201051.32662-1-jonathan.derrick@intel.com>
- <alpine.DEB.2.21.1908080903360.2882@nanos.tec.linutronix.de>
+        linux-mm <linux-mm@kvack.org>
+Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
+ inability to gracefully handle low memory pressure
+Message-ID: <20190808163228.GE18351@dhcp22.suse.cz>
+References: <CAJuCfpHhR+9ybt9ENzxMbdVUd_8rJN+zFbDm+5CeE2Desu82Gg@mail.gmail.com>
+ <398f31f3-0353-da0c-fc54-643687bb4774@suse.cz>
+ <20190806142728.GA12107@cmpxchg.org>
+ <20190806143608.GE11812@dhcp22.suse.cz>
+ <CAJuCfpFmOzj-gU1NwoQFmS_pbDKKd2XN=CS1vUV4gKhYCJOUtw@mail.gmail.com>
+ <20190806220150.GA22516@cmpxchg.org>
+ <20190807075927.GO11812@dhcp22.suse.cz>
+ <20190807205138.GA24222@cmpxchg.org>
+ <20190808114826.GC18351@dhcp22.suse.cz>
+ <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1908080903360.2882@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 09:04:28AM +0200, Thomas Gleixner wrote:
-> On Wed, 7 Aug 2019, Jon Derrick wrote:
-> > The current irq spreading algorithm spreads vectors amongst cpus evenly
-> > per node. If a node has more cpus than another node, the extra vectors
-> > being spread may not be reported back to the caller.
-> > 
-> > This is most apparent with the NVMe driver and nr_cpus < vectors, where
-> > the underreporting results in the caller's WARN being triggered:
-> > 
-> > irq_build_affinity_masks()
-> > ...
-> > 	if (nr_present < numvecs)
-> > 		WARN_ON(nr_present + nr_others < numvecs);
-> > 
-> > Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-> > ---
-> >  kernel/irq/affinity.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> > index 4352b08ae48d..9beafb8c7e92 100644
-> > --- a/kernel/irq/affinity.c
-> > +++ b/kernel/irq/affinity.c
-> > @@ -127,7 +127,8 @@ static int __irq_build_affinity_masks(unsigned int startvec,
-> >  	}
-> >  
-> >  	for_each_node_mask(n, nodemsk) {
-> > -		unsigned int ncpus, v, vecs_to_assign, vecs_per_node;
-> > +		unsigned int ncpus, v, vecs_to_assign, total_vecs_to_assign,
-> > +			vecs_per_node;
-> >  
-> >  		/* Spread the vectors per node */
-> >  		vecs_per_node = (numvecs - (curvec - firstvec)) / nodes;
-> > @@ -141,14 +142,16 @@ static int __irq_build_affinity_masks(unsigned int startvec,
-> >  
-> >  		/* Account for rounding errors */
-> >  		extra_vecs = ncpus - vecs_to_assign * (ncpus / vecs_to_assign);
-> > +		total_vecs_to_assign = vecs_to_assign + extra_vecs;
-> >  
-> > -		for (v = 0; curvec < last_affv && v < vecs_to_assign;
-> > +		for (v = 0; curvec < last_affv && v < total_vecs_to_assign;
-> >  		     curvec++, v++) {
-> >  			cpus_per_vec = ncpus / vecs_to_assign;
-> >  
-> >  			/* Account for extra vectors to compensate rounding errors */
-> >  			if (extra_vecs) {
-> >  				cpus_per_vec++;
-> > +				v++;
-> >  				--extra_vecs;
-> >  			}
-> >  			irq_spread_init_one(&masks[curvec].mask, nmsk,
-> > -- 
+On Thu 08-08-19 16:10:07, ndrw.xf@redhazel.co.uk wrote:
+> 
+> 
+> On 8 August 2019 12:48:26 BST, Michal Hocko <mhocko@kernel.org> wrote:
+> >> 
+> >> Per default, the OOM killer will engage after 15 seconds of at least
+> >> 80% memory pressure. These values are tunable via sysctls
+> >> vm.thrashing_oom_period and vm.thrashing_oom_level.
+> >
+> >As I've said earlier I would be somehow more comfortable with a kernel
+> >command line/module parameter based tuning because it is less of a
+> >stable API and potential future stall detector might be completely
+> >independent on PSI and the current metric exported. But I can live with
+> >that because a period and level sounds quite generic.
+> 
+> Would it be possible to reserve a fixed (configurable) amount of RAM for caches,
 
-This looks like it will break the spread to non-present CPUs since
-it's not accurately reporting how many vectors were assigned for the
-present spread.
+I am afraid there is nothing like that available and I would even argue
+it doesn't make much sense either. What would you consider to be a
+cache? A kernel/userspace reclaimable memory? What about any other in
+kernel memory users? How would you setup such a limit and make it
+reasonably maintainable over different kernel releases when the memory
+footprint changes over time?
 
-I think the real problem is the spread's vecs_per_node doesn't account
-which nodes contribute more CPUs than others. For example:
+Besides that how does that differ from the existing reclaim mechanism?
+Once your cache hits the limit, there would have to be some sort of the
+reclaim to happen and then we are back to square one when the reclaim is
+making progress but you are effectively treshing over the hot working
+set (e.g. code pages)
 
-  Node 0 has 32 CPUs
-  Node 1 has 8 CPUs
-  Assign 32 vectors
+> and trigger OOM killer earlier, before most UI code is evicted from memory?
 
-The current algorithm assigns 16 vectors to node 0 because vecs_per_node
-is calculated as 32 vectors / 2 nodes on the first iteration. The
-subsequent iteration for node 1 gets 8 vectors because it has only 8
-CPUs, leaving 8 vectors unassigned.
+How does the kernel knows that important memory is evicted? E.g. say
+that your graphic stack is under pressure and it has to drop internal
+caches. No outstanding processes will be swapped out yet your UI will be
+completely frozen like.
 
-A more fair spread would give node 0 the remaining 8 vectors. This
-optimization, however, is a bit more complex than the current algorithm,
-which is probably why it wasn't done, so I think the warning should just
-be removed.
+> In my use case, I am happy sacrificing e.g. 0.5GB and kill runaway
+> tasks _before_ the system freezes. Potentially OOM killer would also
+> work better in such conditions. I almost never work at close to full
+> memory capacity, it's always a single task that goes wrong and brings
+> the system down.
+
+If you know which task is that then you can put it into a memory cgroup
+with a stricter memory limit and have it killed before the overal system
+starts suffering.
+
+> The problem with PSI sensing is that it works after the fact (after
+> the freeze has already occurred). It is not very different from
+> issuing SysRq-f manually on a frozen system, although it would still
+> be a handy feature for batched tasks and remote access.
+
+Not really. PSI is giving you a matric that tells you how much time you
+spend on the memory reclaim. So you can start watching the system from
+lower utilization already.
+-- 
+Michal Hocko
+SUSE Labs
