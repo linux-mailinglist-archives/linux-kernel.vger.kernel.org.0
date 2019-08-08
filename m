@@ -2,67 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA0FC85F8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 12:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E2A285F68
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 12:21:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403761AbfHHK0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 06:26:17 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:41270 "EHLO inva021.nxp.com"
+        id S2389907AbfHHKVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 06:21:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:59406 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389955AbfHHK0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 06:26:17 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B40D2000E0;
-        Thu,  8 Aug 2019 12:26:15 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 25902200030;
-        Thu,  8 Aug 2019 12:26:10 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 04DCE40319;
-        Thu,  8 Aug 2019 18:26:03 +0800 (SGT)
-From:   Hui Song <hui.song_1@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Song Hui <hui.song_1@nxp.com>
-Subject: [PATCH v1 3/3] gpio: mpc8xxx: add ls1088a platform  special function
-Date:   Thu,  8 Aug 2019 18:16:28 +0800
-Message-Id: <20190808101628.36782-3-hui.song_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190808101628.36782-1-hui.song_1@nxp.com>
-References: <20190808101628.36782-1-hui.song_1@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2389773AbfHHKVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 06:21:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EF2428;
+        Thu,  8 Aug 2019 03:21:00 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37F123F694;
+        Thu,  8 Aug 2019 03:20:58 -0700 (PDT)
+Date:   Thu, 8 Aug 2019 11:20:53 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] drm: add cache support for arm64
+Message-ID: <20190808102053.GA46901@lakrids.cambridge.arm.com>
+References: <20190805211451.20176-1-robdclark@gmail.com>
+ <20190806084821.GA17129@lst.de>
+ <CAJs_Fx6eh1w7c=crMoD5XyEOMzP6orLhqUewErE51cPGYmObBQ@mail.gmail.com>
+ <20190806143457.GF475@lakrids.cambridge.arm.com>
+ <CAJs_Fx4h6SWGmDTLBnV4nmWUFAs_Ge1inxd-dW9aDKgKqmc1eQ@mail.gmail.com>
+ <20190807123807.GD54191@lakrids.cambridge.arm.com>
+ <CAJs_Fx5xU2-dn3iOVqWTzAjpTaQ8BBNP_Gn_iMc-eJpOX+iXoQ@mail.gmail.com>
+ <20190807164958.GA44765@lakrids.cambridge.arm.com>
+ <20190808075827.GD30308@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190808075827.GD30308@lst.de>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Hui <hui.song_1@nxp.com>
+On Thu, Aug 08, 2019 at 09:58:27AM +0200, Christoph Hellwig wrote:
+> On Wed, Aug 07, 2019 at 05:49:59PM +0100, Mark Rutland wrote:
+> > For arm64, we can tear down portions of the linear map, but that has to
+> > be done explicitly, and this is only possible when using rodata_full. If
+> > not using rodata_full, it is not possible to dynamically tear down the
+> > cacheable alias.
+> 
+> Interesting.  For this or next merge window I plan to add support to the
+> generic DMA code to remap pages as uncachable in place based on the
+> openrisc code.  Aѕ far as I can tell the requirement for that is
+> basically just that the kernel direct mapping doesn't use PMD or bigger
+> mapping so that it supports changing protection bits on a per-PTE basis.
+> Is that the case with arm64 + rodata_full?
 
-ls1028a and ls1088a platform share common special function.
-The gpio hardware what they use is the same version.
+Yes, with the added case that on arm64 we can also have contiguous
+entries at the PTE level, which we also have to disable.
 
-Signed-off-by: Song Hui <hui.song_1@nxp.com>
----
- drivers/gpio/gpio-mpc8xxx.c | 1 +
- 1 file changed, 1 insertion(+)
+Our kernel page table creation code does that for rodata_full or
+DEBUG_PAGEALLOC. See arch/arm64/mmu.c, in map_mem(), where we pass
+NO_{BLOCK,CONT}_MAPPINGS down to our pagetable creation code.
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 1a680aa..16a47de 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -319,6 +319,7 @@ static const struct of_device_id mpc8xxx_gpio_ids[] = {
- 	{ .compatible = "fsl,mpc5125-gpio", .data = &mpc5125_gpio_devtype, },
- 	{ .compatible = "fsl,pq3-gpio",     },
- 	{ .compatible = "fsl,ls1028a-gpio", .data = &ls1028a_gpio_devtype, },
-+	{ .compatible = "fsl,ls1088a-gpio", .data = &ls1028a_gpio_devtype, },
- 	{ .compatible = "fsl,qoriq-gpio",   },
- 	{}
- };
--- 
-2.9.5
-
+Thanks,
+Mark.
