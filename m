@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26BF7869CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11F4986A10
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405417AbfHHTLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:11:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45492 "EHLO mail.kernel.org"
+        id S2405215AbfHHTKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:10:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405398AbfHHTLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:11:01 -0400
+        id S2405205AbfHHTJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:09:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DED73214C6;
-        Thu,  8 Aug 2019 19:10:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 012662173E;
+        Thu,  8 Aug 2019 19:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291460;
-        bh=ekEil7OIvosv3Ar8RW497EvnfJe5r+WgJEwJe01LqaA=;
+        s=default; t=1565291398;
+        bh=Z6vYSwF3i/SL/KjmwyRDEqkFfEj7HtgxLLeYqEI4hMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fHeJFmX2OtfrlWJRPSL6K9Y6xx38NpCLROBZtEss1EDIqwZtFFx/1eoNhLbRCZfZI
-         36Np2fEf0byig+KxojeFP1hssAnqrEXtoBbst35gmUlUeQREWtvK1BeppePYSStRtt
-         i1XnmnMqFCe/rKPcOrfuJ0qkwBi1m98rRvvaUxQo=
+        b=ehbd1ONi0QobQSk+QR18pk7CfP07aSpmWI+Rk+SK6b1Lfo0OhXOpQmEgkW6VqINJ+
+         SFTsX3/Sa0Kwkv0x5E6X6TR0GjXDe68gBYeTtjARGJ5Y0QNa+4melmh8iuGRUNhFYc
+         iwhvZfGthXKxpjg1g6LEkA95WV3dY0Fxd/sdMfB0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taras Kondratiuk <takondra@cisco.com>,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 22/33] tipc: compat: allow tipc commands without arguments
-Date:   Thu,  8 Aug 2019 21:05:29 +0200
-Message-Id: <20190808190454.715871628@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        syzbot+d4bba5ccd4f9a2a68681@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 44/45] cgroup: Fix css_task_iter_advance_css_set() cset skip condition
+Date:   Thu,  8 Aug 2019 21:05:30 +0200
+Message-Id: <20190808190456.379808712@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.582417307@linuxfoundation.org>
-References: <20190808190453.582417307@linuxfoundation.org>
+In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
+References: <20190808190453.827571908@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taras Kondratiuk <takondra@cisco.com>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit 4da5f0018eef4c0de31675b670c80e82e13e99d1 ]
+commit c596687a008b579c503afb7a64fcacc7270fae9e upstream.
 
-Commit 2753ca5d9009 ("tipc: fix uninit-value in tipc_nl_compat_doit")
-broke older tipc tools that use compat interface (e.g. tipc-config from
-tipcutils package):
+While adding handling for dying task group leaders c03cd7738a83
+("cgroup: Include dying leaders with live threads in PROCS
+iterations") added an inverted cset skip condition to
+css_task_iter_advance_css_set().  It should skip cset if it's
+completely empty but was incorrectly testing for the inverse condition
+for the dying_tasks list.  Fix it.
 
-% tipc-config -p
-operation not supported
-
-The commit started to reject TIPC netlink compat messages that do not
-have attributes. It is too restrictive because some of such messages are
-valid (they don't need any arguments):
-
-% grep 'tx none' include/uapi/linux/tipc_config.h
-#define  TIPC_CMD_NOOP              0x0000    /* tx none, rx none */
-#define  TIPC_CMD_GET_MEDIA_NAMES   0x0002    /* tx none, rx media_name(s) */
-#define  TIPC_CMD_GET_BEARER_NAMES  0x0003    /* tx none, rx bearer_name(s) */
-#define  TIPC_CMD_SHOW_PORTS        0x0006    /* tx none, rx ultra_string */
-#define  TIPC_CMD_GET_REMOTE_MNG    0x4003    /* tx none, rx unsigned */
-#define  TIPC_CMD_GET_MAX_PORTS     0x4004    /* tx none, rx unsigned */
-#define  TIPC_CMD_GET_NETID         0x400B    /* tx none, rx unsigned */
-#define  TIPC_CMD_NOT_NET_ADMIN     0xC001    /* tx none, rx none */
-
-This patch relaxes the original fix and rejects messages without
-arguments only if such arguments are expected by a command (reg_type is
-non zero).
-
-Fixes: 2753ca5d9009 ("tipc: fix uninit-value in tipc_nl_compat_doit")
-Cc: stable@vger.kernel.org
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
-Acked-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: c03cd7738a83 ("cgroup: Include dying leaders with live threads in PROCS iterations")
+Reported-by: syzbot+d4bba5ccd4f9a2a68681@syzkaller.appspotmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/tipc/netlink_compat.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -55,6 +55,7 @@ struct tipc_nl_compat_msg {
- 	int rep_type;
- 	int rep_size;
- 	int req_type;
-+	int req_size;
- 	struct net *net;
- 	struct sk_buff *rep;
- 	struct tlv_desc *req;
-@@ -252,7 +253,8 @@ static int tipc_nl_compat_dumpit(struct
- 	int err;
- 	struct sk_buff *arg;
+---
+ kernel/cgroup/cgroup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -4154,7 +4154,7 @@ static void css_task_iter_advance_css_se
+ 			it->task_pos = NULL;
+ 			return;
+ 		}
+-	} while (!css_set_populated(cset) && !list_empty(&cset->dying_tasks));
++	} while (!css_set_populated(cset) && list_empty(&cset->dying_tasks));
  
--	if (msg->req_type && !TLV_CHECK_TYPE(msg->req, msg->req_type))
-+	if (msg->req_type && (!msg->req_size ||
-+			      !TLV_CHECK_TYPE(msg->req, msg->req_type)))
- 		return -EINVAL;
- 
- 	msg->rep = tipc_tlv_alloc(msg->rep_size);
-@@ -345,7 +347,8 @@ static int tipc_nl_compat_doit(struct ti
- {
- 	int err;
- 
--	if (msg->req_type && !TLV_CHECK_TYPE(msg->req, msg->req_type))
-+	if (msg->req_type && (!msg->req_size ||
-+			      !TLV_CHECK_TYPE(msg->req, msg->req_type)))
- 		return -EINVAL;
- 
- 	err = __tipc_nl_compat_doit(cmd, msg);
-@@ -1267,8 +1270,8 @@ static int tipc_nl_compat_recv(struct sk
- 		goto send;
- 	}
- 
--	len = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
--	if (!len || !TLV_OK(msg.req, len)) {
-+	msg.req_size = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
-+	if (msg.req_size && !TLV_OK(msg.req, msg.req_size)) {
- 		msg.rep = tipc_get_err_tlv(TIPC_CFG_NOT_SUPPORTED);
- 		err = -EOPNOTSUPP;
- 		goto send;
+ 	if (!list_empty(&cset->tasks))
+ 		it->task_pos = cset->tasks.next;
 
 
