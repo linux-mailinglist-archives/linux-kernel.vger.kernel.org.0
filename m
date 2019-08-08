@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4AB78698A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A492686980
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404906AbfHHTIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:08:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42464 "EHLO mail.kernel.org"
+        id S2404822AbfHHTIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:08:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404896AbfHHTIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:08:23 -0400
+        id S2404799AbfHHTID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:08:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F3EF2184E;
-        Thu,  8 Aug 2019 19:08:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD5F82173E;
+        Thu,  8 Aug 2019 19:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291302;
-        bh=+hWlT7uUS4AlLaEPkmLlas7EoQBPeqvXeM/SV4hytTI=;
+        s=default; t=1565291282;
+        bh=of2w7NqEQwz4SLTO2cmpuBq288ETuftqfGJVbf4l79k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XM4nHnl1CaA0R2oJL202jAD9g/La0VdP1xmawsrud0E23IA892eCpC+urvl1Q5soi
-         4F7U31tp/tWKHCcmifY6BjV2XSul8HqL1lSSxtPhiR1lC6LovCFSc5GtKxenm66J8T
-         Wc08KtgVKXmZg0E0WRLAbbMWcjEMcr5q9diWJWkM=
+        b=Ova7lLxX34DpHOdUxY4f1AhjDgJIry6MhAgajwwZ2tRQtqXOrHcUC00mT9PvtmiHb
+         88JNz5S++cgtBwO1pIvXgLjPfGAb5U3gFhq510oWcisvFyr7HkQYAVfa0N6a8OeYWU
+         jx7e+56PdFY66/pXRcv89MtbxFRLgbYFQJdgmeqA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexis Bauvin <abauvin@scaleway.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 38/56] tun: mark small packets as owned by the tap sock
-Date:   Thu,  8 Aug 2019 21:05:04 +0200
-Message-Id: <20190808190454.585476147@linuxfoundation.org>
+        stable@vger.kernel.org, Ariel Levkovich <lariel@mellanox.com>,
+        Roi Dayan <roid@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.2 40/56] net/mlx5e: Prevent encap flow counter update async to user query
+Date:   Thu,  8 Aug 2019 21:05:06 +0200
+Message-Id: <20190808190454.687487319@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190808190452.867062037@linuxfoundation.org>
 References: <20190808190452.867062037@linuxfoundation.org>
@@ -44,72 +44,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexis Bauvin <abauvin@scaleway.com>
+From: Ariel Levkovich <lariel@mellanox.com>
 
-[ Upstream commit 4b663366246be1d1d4b1b8b01245b2e88ad9e706 ]
+[ Upstream commit 90bb769291161cf25a818d69cf608c181654473e ]
 
-- v1 -> v2: Move skb_set_owner_w to __tun_build_skb to reduce patch size
+This patch prevents a race between user invoked cached counters
+query and a neighbor last usage updater.
 
-Small packets going out of a tap device go through an optimized code
-path that uses build_skb() rather than sock_alloc_send_pskb(). The
-latter calls skb_set_owner_w(), but the small packet code path does not.
+The cached flow counter stats can be queried by calling
+"mlx5_fc_query_cached" which provides the number of bytes and
+packets that passed via this flow since the last time this counter
+was queried.
+It does so by reducting the last saved stats from the current, cached
+stats and then updating the last saved stats with the cached stats.
+It also provide the lastuse value for that flow.
 
-The net effect is that small packets are not owned by the userland
-application's socket (e.g. QEMU), while large packets are.
-This can be seen with a TCP session, where packets are not owned when
-the window size is small enough (around PAGE_SIZE), while they are once
-the window grows (note that this requires the host to support virtio
-tso for the guest to offload segmentation).
-All this leads to inconsistent behaviour in the kernel, especially on
-netfilter modules that uses sk->socket (e.g. xt_owner).
+Since "mlx5e_tc_update_neigh_used_value" needs to retrieve the
+last usage time of encapsulation flows, it calls the flow counter
+query method periodically and async to user queries of the flow counter
+using cls_flower.
+This call is causing the driver to update the last reported bytes and
+packets from the cache and therefore, future user queries of the flow
+stats will return lower than expected number for bytes and packets
+since the last saved stats in the driver was updated async to the last
+saved stats in cls_flower.
 
-Fixes: 66ccbc9c87c2 ("tap: use build_skb() for small packet")
-Signed-off-by: Alexis Bauvin <abauvin@scaleway.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This causes wrong stats presentation of encapsulation flows to user.
+
+Since the neighbor usage updater only needs the lastuse stats from the
+cached counter, the fix is to use a dedicated lastuse query call that
+returns the lastuse value without synching between the cached stats and
+the last saved stats.
+
+Fixes: f6dfb4c3f216 ("net/mlx5e: Update neighbour 'used' state using HW flow rules counters")
+Signed-off-by: Ariel Levkovich <lariel@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/tun.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c       |    4 ++--
+ drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c |    5 +++++
+ include/linux/mlx5/fs.h                               |    1 +
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1600,7 +1600,8 @@ static bool tun_can_build_skb(struct tun
- 	return true;
- }
- 
--static struct sk_buff *__tun_build_skb(struct page_frag *alloc_frag, char *buf,
-+static struct sk_buff *__tun_build_skb(struct tun_file *tfile,
-+				       struct page_frag *alloc_frag, char *buf,
- 				       int buflen, int len, int pad)
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -1210,13 +1210,13 @@ static struct mlx5_fc *mlx5e_tc_get_coun
+ void mlx5e_tc_update_neigh_used_value(struct mlx5e_neigh_hash_entry *nhe)
  {
- 	struct sk_buff *skb = build_skb(buf, buflen);
-@@ -1610,6 +1611,7 @@ static struct sk_buff *__tun_build_skb(s
+ 	struct mlx5e_neigh *m_neigh = &nhe->m_neigh;
+-	u64 bytes, packets, lastuse = 0;
+ 	struct mlx5e_tc_flow *flow;
+ 	struct mlx5e_encap_entry *e;
+ 	struct mlx5_fc *counter;
+ 	struct neigh_table *tbl;
+ 	bool neigh_used = false;
+ 	struct neighbour *n;
++	u64 lastuse;
  
- 	skb_reserve(skb, pad);
- 	skb_put(skb, len);
-+	skb_set_owner_w(skb, tfile->socket.sk);
+ 	if (m_neigh->family == AF_INET)
+ 		tbl = &arp_tbl;
+@@ -1236,7 +1236,7 @@ void mlx5e_tc_update_neigh_used_value(st
+ 					    encaps[efi->index]);
+ 			if (flow->flags & MLX5E_TC_FLOW_OFFLOADED) {
+ 				counter = mlx5e_tc_get_counter(flow);
+-				mlx5_fc_query_cached(counter, &bytes, &packets, &lastuse);
++				lastuse = mlx5_fc_query_lastuse(counter);
+ 				if (time_after((unsigned long)lastuse, nhe->reported_lastuse)) {
+ 					neigh_used = true;
+ 					break;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c
+@@ -367,6 +367,11 @@ int mlx5_fc_query(struct mlx5_core_dev *
+ }
+ EXPORT_SYMBOL(mlx5_fc_query);
  
- 	get_page(alloc_frag->page);
- 	alloc_frag->offset += buflen;
-@@ -1687,7 +1689,8 @@ static struct sk_buff *tun_build_skb(str
- 	 */
- 	if (hdr->gso_type || !xdp_prog) {
- 		*skb_xdp = 1;
--		return __tun_build_skb(alloc_frag, buf, buflen, len, pad);
-+		return __tun_build_skb(tfile, alloc_frag, buf, buflen, len,
-+				       pad);
- 	}
++u64 mlx5_fc_query_lastuse(struct mlx5_fc *counter)
++{
++	return counter->cache.lastuse;
++}
++
+ void mlx5_fc_query_cached(struct mlx5_fc *counter,
+ 			  u64 *bytes, u64 *packets, u64 *lastuse)
+ {
+--- a/include/linux/mlx5/fs.h
++++ b/include/linux/mlx5/fs.h
+@@ -211,6 +211,7 @@ int mlx5_modify_rule_destination(struct
  
- 	*skb_xdp = 0;
-@@ -1724,7 +1727,7 @@ static struct sk_buff *tun_build_skb(str
- 	rcu_read_unlock();
- 	local_bh_enable();
- 
--	return __tun_build_skb(alloc_frag, buf, buflen, len, pad);
-+	return __tun_build_skb(tfile, alloc_frag, buf, buflen, len, pad);
- 
- err_xdp:
- 	put_page(alloc_frag->page);
+ struct mlx5_fc *mlx5_fc_create(struct mlx5_core_dev *dev, bool aging);
+ void mlx5_fc_destroy(struct mlx5_core_dev *dev, struct mlx5_fc *counter);
++u64 mlx5_fc_query_lastuse(struct mlx5_fc *counter);
+ void mlx5_fc_query_cached(struct mlx5_fc *counter,
+ 			  u64 *bytes, u64 *packets, u64 *lastuse);
+ int mlx5_fc_query(struct mlx5_core_dev *dev, struct mlx5_fc *counter,
 
 
