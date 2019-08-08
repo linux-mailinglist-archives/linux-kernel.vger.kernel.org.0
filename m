@@ -2,157 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FAE28640E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C2B586415
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:13:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390105AbfHHOL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 10:11:57 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42942 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732866AbfHHOL5 (ORCPT
+        id S2403936AbfHHOM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 10:12:26 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39614 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403797AbfHHOMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 10:11:57 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t132so44130173pgb.9;
-        Thu, 08 Aug 2019 07:11:56 -0700 (PDT)
+        Thu, 8 Aug 2019 10:12:25 -0400
+Received: by mail-vs1-f68.google.com with SMTP id u3so63100122vsh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 07:12:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PrXLz85S8ZkGS5czaPVrydA5nObeEkrWljwkkj0fXAk=;
-        b=oGsb+zKHx5hVRjpU7EuRjLQTbwCmlbrR7otoZ252j+NJjCnVkhIUzblB+LWW/EIbmW
-         Y/Y/HRtHu3u29Gxp1Xte4JO2JOIFm0HssJwSKB8ThRiYKdzlxHLAcOmrusJn32CI7e9Q
-         CX6NQq6kqE5HPAduh4juWpRiQpGHs+TJk+4Fo1prYuwe7DV00xLDwPbPzK3WE5OcjXv2
-         Y+8Di17csl3d8RkOytRWpOZ7EOy7VFqgeW0hx+X+KTYc6KFk6Rj+3Evgn+Gaa7mzyxDq
-         wMXbQdrtfc1Wpr9MvjyMZeBE0pS/9KW1jXD4DdzMgT+oJF0Jdj3RdAv7L0RL3CgvjWg4
-         nEEw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r6O0K0Lbnp4hA0AJPB0Knf0/Gqi93FxhoE5wp3HoaE0=;
+        b=OoyThrHNHWSiQ2llrUFoT/+F6P++B3XNStkFuyZCAo4LzRZPqx505VtlW/Yybsuw2y
+         0hRKq5rAOuYiOiKK2sm4nzPupAIIhQbbPKVP/xK2r/JDkwRotrfRn+lYZLAijjeCs4vL
+         Nq9yxZiBrSP3acR/7iCX5KMrvNgaAZEQ/WPmMEwMjEK4Bl9shfsg/LG6Ex34KM2MiSnT
+         5aKk543EBaWIh95X+tQpEFpipexilcO+1KEveDXDTR9eFMsefK6eUGrGRO+B+BRCZK8k
+         UxwPJsjOCaFZIgW/LfntNyytKp1sEQJKnW4fiVd4c8hyMcpC002LNvuV5Z00/fv99muY
+         Q7og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PrXLz85S8ZkGS5czaPVrydA5nObeEkrWljwkkj0fXAk=;
-        b=mMLkx+9KCcyRzZsSiDI6a1zrssPzbPFUuxLb9o6kkhKJ/SlkRwF/Y6nRnR5mtvTtfd
-         sIeeyMeYf2g/8DNlTHRwWsVDZd0byhVQz0fNMTooD+n8RfwPEZC/0DOmp+AVLHZS3maI
-         ZDjp16cUj+TRRw5CVSNRRIWwCplztxNifePkPUpS91b99CSDo63WLpOHbhLp237vkMLW
-         1euTX4IIO0rYDGEA0V4mO/t3LOFfOMcnHEsvURy9aiHZotXpg8PxW4qT0AO+BArBT0X7
-         /15qOhOznnnR/8QwtUdJyJzIsDQtMEYoeTygp7xqHPCfMHfrAKQDX5P6Jyd6KrF6Z38V
-         5yMg==
-X-Gm-Message-State: APjAAAXUH4eP67OuZFM7EyJlr6HYii3Gq4bRLAYARs8dLI7U0MgwDRRI
-        ejB42ikmDzrByd7thL0HW9A=
-X-Google-Smtp-Source: APXvYqwKCRXKbG2A06Hfg7EOAhmQcB63uJxeLsjWcntxuFjKiI3YDw9eInd+0mibxaooMFkAZS91Yw==
-X-Received: by 2002:a63:de07:: with SMTP id f7mr13255328pgg.213.1565273515921;
-        Thu, 08 Aug 2019 07:11:55 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h26sm100736222pfq.64.2019.08.08.07.11.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Aug 2019 07:11:55 -0700 (PDT)
-Date:   Thu, 8 Aug 2019 07:11:54 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Iker Perez <iker.perez@codethink.co.uk>
-Cc:     linux-hwmon@vger.kernel.org, jdelvare@suse.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] hwmon: (lm75) Add new fields into lm75_params_
-Message-ID: <20190808141154.GA9369@roeck-us.net>
-References: <20190808080246.8371-1-iker.perez@codethink.co.uk>
- <20190808080246.8371-4-iker.perez@codethink.co.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r6O0K0Lbnp4hA0AJPB0Knf0/Gqi93FxhoE5wp3HoaE0=;
+        b=QKJ3aFRD2zielGCRl2EjcPKmgOoAN0kNjRJIc7issL9e104yBFgZmlvv24emfCJ1Vg
+         TH0ZzK7TXO2RBYH8DAKBPVg3otvobSa5qruvjMXnGFFf1m20goSxugJTFh4y9LsjAV3d
+         OtZ4ol4OuvRGmSWKRXElekuKs8Sm/8CI5T35Hq7qseuxtNQuSfzd1b13mrGmGJSSGnHY
+         zZO3gslEfP2PSuOqpKHtxZw8BOAK+q5xC7Yciow35NvQD6+YICcUac0hwMlpMWC37e4E
+         FR4m+1exQwpI1K/zAvb7g36DsO71tVgPm+vcyh1rY8VDNodgGLN3VUpLoIsYvibPTrgE
+         75kw==
+X-Gm-Message-State: APjAAAWxsn7J9tQJul3hVamOLMDiv+Vpw93cF3oiL31enkgFX3VozBvH
+        vD5LfLfFc2/0bQRjXaElYf8oxahoa1M5HANot/mdXg==
+X-Google-Smtp-Source: APXvYqzFM50V9Og3uLNsu+nyXdq5vyM3ZXqqtx4NOpbK5Y1y+kgRagpUs9tUh6+3XYi/f/0m9U33eEGw5XRPcLQhcow=
+X-Received: by 2002:a67:e3d5:: with SMTP id k21mr9505435vsm.172.1565273544734;
+ Thu, 08 Aug 2019 07:12:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808080246.8371-4-iker.perez@codethink.co.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190808122956.12789-1-ttayar@habana.ai>
+In-Reply-To: <20190808122956.12789-1-ttayar@habana.ai>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Thu, 8 Aug 2019 17:11:58 +0300
+Message-ID: <CAFCwf13hN7TUWcdCf7d-6AumoQjHTVVHOSdDzeaznXmTogZ8Gg@mail.gmail.com>
+Subject: Re: [PATCH] habanalabs: Handle HW_IP_INFO if device disabled or in reset
+To:     Tomer Tayar <ttayar@habana.ai>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 09:02:45AM +0100, Iker Perez wrote:
-> From: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
-> 
-> The new fields are included to prepare the driver for next patch. The
-> fields are:
-> 
-> * *resolutions: Stores all the supported resolutions by the device.
-> * num_sample_times: Stores the number of possible sample times.
-> * *sample_times: Stores all the possible sample times to be set.
-> * sample_set_masks: The set_masks for the possible sample times
-> * sample_clr_mask: Clear mask to set the default sample time.
-> 
-> Signed-off-by: Iker Perez del Palomar Sustatxa <iker.perez@codethink.co.uk>
+On Thu, Aug 8, 2019 at 3:30 PM Tomer Tayar <ttayar@habana.ai> wrote:
+>
+> The HW IP information is relevant even if the device is disabled or in
+> reset, so always handle the corresponding INFO IOCTL opcode.
+>
+> Signed-off-by: Tomer Tayar <ttayar@habana.ai>
 > ---
-> 
-> Changes since v1:
-> - In the lm75_params structure documentation there have been the next changes:
->         - @num_sample_times description has been extended.
->         - @sample_times description has been extended.
->         - @sample_set_masks description has been extended.
->         - @resolutions description has been included.
-> 
->  drivers/hwmon/lm75.c | 36 +++++++++++++++++++++++++++++++-----
->  1 file changed, 31 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
-> index a32d7952d799..ed72455bcfa3 100644
-> --- a/drivers/hwmon/lm75.c
-> +++ b/drivers/hwmon/lm75.c
-> @@ -61,15 +61,34 @@ enum lm75_type {		/* keep sorted in alphabetical order */
->   * @resolution_limits:	Limit register resolution. Optional. Should be set if
->   *			the resolution of limit registers does not match the
->   *			resolution of the temperature register.
-> + * @resolutions		List of resolutions associated with sample times.
+>  drivers/misc/habanalabs/habanalabs_ioctl.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
+> index 3ce65459b01c..589324ac19d0 100644
+> --- a/drivers/misc/habanalabs/habanalabs_ioctl.c
+> +++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
+> @@ -204,10 +204,21 @@ static int _hl_info_ioctl(struct hl_fpriv *hpriv, void *data,
+>         struct hl_device *hdev = hpriv->hdev;
+>         int rc;
+>
+> -       /* We want to return device status even if it disabled or in reset */
+> -       if (args->op == HL_INFO_DEVICE_STATUS)
+> +       /*
+> +        * Information is returned for the following opcodes even if the device
+> +        * is disabled or in reset.
+> +        */
+> +       switch (args->op) {
+> +       case HL_INFO_HW_IP_INFO:
+> +               return hw_ip_info(hdev, args);
+> +
+> +       case HL_INFO_DEVICE_STATUS:
+>                 return device_status_info(hdev, args);
+>
+> +       default:
+> +               break;
+> +       }
+> +
+>         if (hl_device_disabled_or_in_reset(hdev)) {
+>                 dev_warn_ratelimited(dev,
+>                         "Device is %s. Can't execute INFO IOCTL\n",
+> @@ -216,10 +227,6 @@ static int _hl_info_ioctl(struct hl_fpriv *hpriv, void *data,
+>         }
+>
+>         switch (args->op) {
+> -       case HL_INFO_HW_IP_INFO:
+> -               rc = hw_ip_info(hdev, args);
+> -               break;
+> -
+>         case HL_INFO_HW_EVENTS:
+>                 rc = hw_events_info(hdev, args);
+>                 break;
+> --
+> 2.17.1
+>
 
-@resolutions:
-
-> + *			Optional. Should be set if num_sample_times is larger
-> + *			than 1, and if the resolution changes with sample times.
-> + *			If set, number of entries must match num_sample_times.
->   * default_sample_time:	Sample time to be set by default.
-
-@default_sample_time:
-
-No need to resend; I'll fix that up when applying.
-
-> + * @num_sample_times:	Number of possible sample times to be set. Optional.
-> + *			Should be set if the number of sample times is larger
-> + *			than one.
-> + * @sample_times:	All the possible sample times to be set. Mandatory if
-> + *			num_sample_times is larger than 1. If set, number of
-> + *			entries must match num_sample_times.
-> + * @sample_set_masks:	All the set_masks for the possible sample times.
-> + *			Mandatory if num_sample_times is larger than 1.
-> + *			If set, number of entries must match num_sample_times.
-> + * @sample_clr_mask:	Clear mask to set the default sample time.
->   */
->  
->  struct lm75_params {
-> -	u8		set_mask;
-> -	u8		clr_mask;
-> -	u8		default_resolution;
-> -	u8		resolution_limits;
-> -	unsigned int	default_sample_time;
-> +	u8			set_mask;
-> +	u8			clr_mask;
-> +	u8			default_resolution;
-> +	u8			resolution_limits;
-> +	const u8		*resolutions;
-> +	unsigned int		default_sample_time;
-> +	u8			num_sample_times;
-> +	const unsigned int	*sample_times;
-> +	const u8		*sample_set_masks;
-> +	u8			sample_clr_mask;
->  };
->  
->  /* Addresses scanned */
-> @@ -221,7 +240,14 @@ static const struct lm75_params device_params[] = {
->  	[tmp75b] = { /* not one-shot mode, Conversion rate 37Hz */
->  		.clr_mask = 1 << 7 | 3 << 5,
->  		.default_resolution = 12,
-> +		.sample_set_masks = (u8 []){ 0 << 5, 1 << 5, 2 << 5,
-> +			3 << 5 },
-> +		.sample_clr_mask = 3 << 5,
->  		.default_sample_time = MSEC_PER_SEC / 37,
-> +		.sample_times = (unsigned int []){ MSEC_PER_SEC / 37,
-> +			MSEC_PER_SEC / 18,
-> +			MSEC_PER_SEC / 9, MSEC_PER_SEC / 4 },
-> +		.num_sample_times = 4,
->  	},
->  	[tmp75c] = {
->  		.clr_mask = 1 << 5,	/*not one-shot mode*/
+This patch is:
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
