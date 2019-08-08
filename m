@@ -2,107 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C85D86465
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 417428646D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 16:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732789AbfHHOdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 10:33:40 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41890 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732741AbfHHOdj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 10:33:39 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w5so2448565edl.8
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 07:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1+hRXOJC+ZDM/4/kVVufU5PRo9dpiWo2Z8YGtmpPW2I=;
-        b=cCOBoICU8CNt81EgZopFsi62bJmq0dCGhRRyOBZrHz6x4zgZMVW0I0qIH4tqKn99Ch
-         KCuglEQChTF0oNH1RULG7gBFl9ROMSdkWPvDjWYgtyOrwC7lBeww1a4RHafAsavxSbuz
-         Fm5M+8QkjJbkTLchwoDqDiNyYbvLWr++v5jvUHZn519FGt5V8pAxBJ4xQpWhD/gIuloD
-         XKVlh5ov7P2gm1HzEQ48jtXVuZeHjUX32eyJr6Bqts2hiTE9KbIsnJiV+CpxXmKThH2e
-         wmRBJg1RkKYjzuvNjK7zAtt1JAO3piFKSeZxcWyHrAMwdAXPw6YlB+ETRwL/ZUXfkWia
-         2s4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1+hRXOJC+ZDM/4/kVVufU5PRo9dpiWo2Z8YGtmpPW2I=;
-        b=qgyiQnj9YDMvD3ggUrdJ2lhNsj3M6OSr1hutHK6Aw1eNvSTbFEQS4mX80MlPr9UpjB
-         OL/wJgGKNbx6q5tDREkJI7FKSPSBuWPKqoIQq0mbhLpHe0qrmSdkFugmmS3750Jf2Uyi
-         C/ShSfl6OR8Ozm4P/ltkvf6d4tl2B0vw7GUgCcj3mJcZKSLGTQYa402GAhoBZmBltG6p
-         BQ7uCmL+49gE9gQhc7oNPmAt7a436Rd6BB9GdrilzGt4ajyJIOHvtK1kZ0k/GaljE5jZ
-         kq6sC8llPduDWeZNHM2RbQvgMO+tjEy13CDDFn4NWVZnKUlfS9ZVPIakC+lstpl46xWC
-         hnmQ==
-X-Gm-Message-State: APjAAAUfSdp2FoKPTwzQCfUfEXIK9TiQpkpOH8LB2c7aoq6uYfG/8zKW
-        gtaarzETyuifPM32seEHjd0=
-X-Google-Smtp-Source: APXvYqw60Qv6BR5nyiLLGJOB6JFXkK8yFSkjUH6a9VxpLPc86WgYOyY4BHMmwi1P9oj0mhGac7YRMA==
-X-Received: by 2002:a17:906:4354:: with SMTP id z20mr13315954ejm.163.1565274817932;
-        Thu, 08 Aug 2019 07:33:37 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id m17sm255658ejc.91.2019.08.08.07.33.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Aug 2019 07:33:37 -0700 (PDT)
-Date:   Thu, 8 Aug 2019 14:33:36 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/mmap.c: refine data locality of find_vma_prev
-Message-ID: <20190808143336.kgq4f6j5gfixtcb4@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20190806081123.22334-1-richardw.yang@linux.intel.com>
- <3e57ba64-732b-d5be-1ad6-eecc731ef405@suse.cz>
- <20190807003109.GB24750@richard>
- <20190807075101.GN11812@dhcp22.suse.cz>
- <20190808032638.GA28138@richard>
- <d4aab7f0-b653-8636-b5a7-97d3291f289d@suse.cz>
+        id S1732666AbfHHOfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 10:35:42 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38146 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727649AbfHHOfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 10:35:42 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 66391B08F833B03CD037;
+        Thu,  8 Aug 2019 22:35:36 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 8 Aug 2019
+ 22:35:26 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <allison@lohutok.net>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ASoC: max9850: remove unused variable 'max9850_reg'
+Date:   Thu, 8 Aug 2019 22:35:07 +0800
+Message-ID: <20190808143507.66788-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4aab7f0-b653-8636-b5a7-97d3291f289d@suse.cz>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 10:49:29AM +0200, Vlastimil Babka wrote:
->On 8/8/19 5:26 AM, Wei Yang wrote:
->> 
->> @@ -2270,12 +2270,9 @@ find_vma_prev(struct mm_struct *mm, unsigned long addr,
->>         if (vma) {
->>                 *pprev = vma->vm_prev;
->>         } else {
->> -               struct rb_node *rb_node = mm->mm_rb.rb_node;
->> -               *pprev = NULL;
->> -               while (rb_node) {
->> -                       *pprev = rb_entry(rb_node, struct vm_area_struct, vm_rb);
->> -                       rb_node = rb_node->rb_right;
->> -               }
->> +               struct rb_node *rb_node = rb_last(&mm->mm_rb);
->> +               *pprev = !rb_node ? NULL :
->> +                        rb_entry(rb_node, struct vm_area_struct, vm_rb);
->>         }
->>         return vma;
->> 
->> Not sure this style would help a little in understanding the code?
->
->Yeah using rb_last() would be nicer than basically repeating its
->implementation, so it's fine as a cleanup without performance implications.
->
+sound/soc/codecs/max9850.c:31:33: warning:
+ max9850_reg defined but not used [-Wunused-const-variable=]
 
-Thanks, I would send this version with proper change log.
+It is not used since commit 068416620c0d ("ASoC:
+max9850: Convert to direct regmap API usage")
 
->>> -- 
->>> Michal Hocko
->>> SUSE Labs
->> 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/codecs/max9850.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
+diff --git a/sound/soc/codecs/max9850.c b/sound/soc/codecs/max9850.c
+index f50ee8f..6f43748 100644
+--- a/sound/soc/codecs/max9850.c
++++ b/sound/soc/codecs/max9850.c
+@@ -27,19 +27,6 @@ struct max9850_priv {
+ 	unsigned int sysclk;
+ };
+ 
+-/* max9850 register cache */
+-static const struct reg_default max9850_reg[] = {
+-	{  2, 0x0c },
+-	{  3, 0x00 },
+-	{  4, 0x00 },
+-	{  5, 0x00 },
+-	{  6, 0x00 },
+-	{  7, 0x00 },
+-	{  8, 0x00 },
+-	{  9, 0x00 },
+-	{ 10, 0x00 },
+-};
+-
+ /* these registers are not used at the moment but provided for the sake of
+  * completeness */
+ static bool max9850_volatile_register(struct device *dev, unsigned int reg)
 -- 
-Wei Yang
-Help you, Help me
+2.7.4
+
+
