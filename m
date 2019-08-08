@@ -2,90 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0AD785D7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7504785D8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:57:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731806AbfHHIzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:55:32 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41380 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730777AbfHHIz2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:55:28 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c2so90854545wrm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 01:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cGMV7QhC8DNNZSd4DygDFTwAShSfi/80pVWOD2ZlzJ4=;
-        b=PeVELfYvvyjsx6clfPeEV6Kyb4FSgsdGONpfUp+mhUWbRbE6lOwzvPOuOzghkx6UY7
-         sV7OyXvLbqZR62Qbpmmw4l35xC2kfWcUBQ9+I1cBzj0J6TbruWWxPqzkzawHAzd3dNDq
-         LSGhY2wEMrRjIPBV4X3wMMXLBpcdLvif5+dTdz4KVRvyQ7ytn1UF/bgn3kkRGHH7e4T5
-         YsHJvm4sGZLQmwtl3c6ZDriwhEv982T5LMZGUnye2w1eT2zjbfINQ/MNb8q8VQ9+jPuP
-         epUB01MA29ckMpujdwib4vSG15vWT/tXHrpAh9yXYq7MethOMhpCYaazti6CrRejYT1v
-         F2UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cGMV7QhC8DNNZSd4DygDFTwAShSfi/80pVWOD2ZlzJ4=;
-        b=SOJ8XTL1AXCB73YOBL9h5HfPOPy/EtmOfnG1YniM2i+VBYFd+CUuIdv65eTeaGa/f1
-         QkJ7R5yHpdqkHeWZxkxQ2LNiuAY3/cVwhO+9agZRBVHWVvftWzdY9cbpHc2RA5iDf8i5
-         aoPbf1xtuUPi9ZuhkVUUFuoszAdMKlWHXil0YKOaRW8JlAwvdDkWrlUtBiLczeVjX8wb
-         daUOX3+SyOFX0KWc32G1iUopbYr3TlhaEv1ANVCgCSpLyARyn2+PFu2koLGKT/SQAont
-         FKmjgWTHdjZYlB8welXoavVhf3ELaaJf9nzQbzanD5xy7vL1LcXCjuSm0GM8IUWV0/ZE
-         zLRg==
-X-Gm-Message-State: APjAAAXgHY7UcttCRatNwZQd/J8R+bcEJB0p9DD3JRa3YAmI7L1SR4Jr
-        9/VCdtAizuiFOuavvS6FzXFRXA==
-X-Google-Smtp-Source: APXvYqx4HZQxEVZ8L3lNTFhLUVF9yFAHzskRwJoSI/HZlrCcCvMyPu5yrg2yl0ii5Hl6FetDC3yEvQ==
-X-Received: by 2002:adf:a348:: with SMTP id d8mr3321352wrb.235.1565254526837;
-        Thu, 08 Aug 2019 01:55:26 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id i66sm3380649wmi.11.2019.08.08.01.55.26
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 01:55:26 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     robh+dt@kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] MAINTAINERS: Update with Amlogic DRM bindings converted as YAML
-Date:   Thu,  8 Aug 2019 10:55:22 +0200
-Message-Id: <20190808085522.21950-4-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808085522.21950-1-narmstrong@baylibre.com>
-References: <20190808085522.21950-1-narmstrong@baylibre.com>
+        id S1731371AbfHHI5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:57:17 -0400
+Received: from foss.arm.com ([217.140.110.172]:58214 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728289AbfHHI5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:57:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68DD7337;
+        Thu,  8 Aug 2019 01:57:16 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D2323F706;
+        Thu,  8 Aug 2019 01:57:14 -0700 (PDT)
+Subject: Re: [RFC][PATCH 12/13] sched/deadline: Introduce deadline servers
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        bristot@redhat.com, balsini@android.com, dvyukov@google.com,
+        tglx@linutronix.de, vpillai@digitalocean.com, rostedt@goodmis.org
+References: <20190726145409.947503076@infradead.org>
+ <20190726161358.056107990@infradead.org>
+ <34710762-f813-3913-0e55-fde7c91c6c2d@arm.com>
+ <20190808075635.GB17205@worktop.programming.kicks-ass.net>
+ <20cc05d3-0d0f-a558-2bbe-3b72527dd9bc@arm.com>
+ <20190808084652.GG29310@localhost.localdomain>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <99a8339d-8e06-bff8-284b-1829d0683a7a@arm.com>
+Date:   Thu, 8 Aug 2019 10:57:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190808084652.GG29310@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The amlogic,meson-dw-hdmi.txt and amlogic,meson-vpu.txt has been
-converted to YAML schemas, update MAINTAINERS to match them again.
+On 8/8/19 10:46 AM, Juri Lelli wrote:
+> On 08/08/19 10:11, Dietmar Eggemann wrote:
+>> On 8/8/19 9:56 AM, Peter Zijlstra wrote:
+>>> On Wed, Aug 07, 2019 at 06:31:59PM +0200, Dietmar Eggemann wrote:
+>>>> On 7/26/19 4:54 PM, Peter Zijlstra wrote:
+>>>>>
+>>>>>
+>>>>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>>>
+>>>> [...]
+>>>>
+>>>>> @@ -889,6 +891,8 @@ static void update_curr(struct cfs_rq *c
+>>>>>  		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
+>>>>>  		cgroup_account_cputime(curtask, delta_exec);
+>>>>>  		account_group_exec_runtime(curtask, delta_exec);
+>>>>> +		if (curtask->server)
+>>>>> +			dl_server_update(curtask->server, delta_exec);
+>>>>>  	}
+>>>>
+>>>> I get a lockdep_assert_held(&rq->lock) related warning in start_dl_timer()
+>>>> when running the full stack.
+>>>
+>>> That would seem to imply a stale curtask->server value; the hunk below:
+>>>
+>>> --- a/kernel/sched/core.c
+>>> +++ b/kernel/sched/core.c
+>>> @@ -3756,8 +3756,11 @@ pick_next_task(struct rq *rq, struct tas
+>>>
+>>>         for_each_class(class) {
+>>>                 p = class->pick_next_task(rq, NULL, NULL);
+>>> -               if (p)
+>>> +               if (p) {
+>>> +                       if (p->sched_class == class && p->server)
+>>> +                               p->server = NULL;
+>>>                         return p;
+>>> +               }
+>>>         }
+>>>
+>>>
+>>> Was supposed to clear p->server, but clearly something is going 'funny'.
+>>
+>> What about the fast path in pick_next_task()?
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index bffe849b5a42..f1ea6ae16052 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -3742,6 +3742,9 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+>>                 if (unlikely(!p))
+>>                         p = idle_sched_class.pick_next_task(rq, prev, rf);
+>>  
+>> +               if (p->sched_class == &fair_sched_class && p->server)
+>> +                       p->server = NULL;
+>> +
+> 
+> Hummm, but then who sets it back to the correct server. AFAIU
+> update_curr() needs a ->server to do the correct DL accounting?
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6426db5198f0..c55c18531cd1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5318,8 +5318,8 @@ L:	linux-amlogic@lists.infradead.org
- W:	http://linux-meson.com/
- S:	Supported
- F:	drivers/gpu/drm/meson/
--F:	Documentation/devicetree/bindings/display/amlogic,meson-vpu.txt
--F:	Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.txt
-+F:	Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
-+F:	Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
- F:	Documentation/gpu/meson.rst
- T:	git git://anongit.freedesktop.org/drm/drm-misc
- 
--- 
-2.22.0
+Ah, OK, this would kill the whole functionality ;-)
 
