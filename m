@@ -2,129 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE1186622
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B22C86635
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390156AbfHHPoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:44:16 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46814 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732845AbfHHPoQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:44:16 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c2so43679582plz.13;
-        Thu, 08 Aug 2019 08:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=HE8FZxsruLvX3xYGHWKwgoiLO1Rd2XyeDoDtQvRCtWY=;
-        b=grsy3TOjiWtkORQo0KQVvYxBio+r+1W1VYhuqO0Ixlp/eJi5+qv7krzNM//xDoPLjf
-         aBkSIM3msOdm+qIzlp9azGTTbNGkZhP5TFr0HVlrZ9t4M03fvyvSonRZmCKDywCANjhs
-         Xi9Bq+BOD0X78QLL6RevrbBDRJd+cN3beZVgVuqEDk7rsrYQ/rYlY5OXlg8AunTkSWs2
-         HzWEhqEIFmZWfk3sVQ6X011c4X8vtSd6jOz5IKNycI0EjqQgEMNcvpKclHRVmcnzjfJk
-         B7RjWLDD8GANCewwkrcjQAtQvvLXM79SSQ/OoHHPmZJkf2mG9zUUG7XK20WzGX/OfdF0
-         gkKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HE8FZxsruLvX3xYGHWKwgoiLO1Rd2XyeDoDtQvRCtWY=;
-        b=eb8E+mH6r9AA+prvB0DQeruSCboemQ77QhBPnsRz+EYhJfJQWMEmzoulN7fypivcuO
-         /atr4Wiici3aRbT/YpLaaUcEpI/DMsSofbmjbXLJljUbEHxUy36WX0QbxguD4j2s/yEY
-         dP61XbItYZE9vajETQ0/txJzL8A99cBoizd9443uVVHnhmEQeIFoheCVDazJkbc4hIaV
-         H+kpXrmbvhmjSjY4h396a2cBSz8O6YwiHpcqLP3c4s4Q7Gn5hvBnjCSVok2OPADmKcRl
-         vsslsK1Nh63JCF4ERGA48BlU1spgDIYuMUN0rj+hxCxT4ghAbt9mFcKVOMt02ZrUdLn/
-         zU4w==
-X-Gm-Message-State: APjAAAWzE/Z1Cz06qmjdc+KCRz6tst2MUg7JLZCPjMYHIkPxEC3XbGoU
-        optWmpwrCleuL0xGbPR0c2Q=
-X-Google-Smtp-Source: APXvYqyJE4kvaS/a5NKJl4jOQIWf8UAHU39u6aDn4hk7Oz3YDqlkOVze10Lbmptf27kKa0ja5ylYAg==
-X-Received: by 2002:a17:902:b218:: with SMTP id t24mr10170494plr.213.1565279055259;
-        Thu, 08 Aug 2019 08:44:15 -0700 (PDT)
-Received: from localhost.localdomain ([103.83.147.157])
-        by smtp.gmail.com with ESMTPSA id j10sm64476517pfn.188.2019.08.08.08.44.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 08:44:13 -0700 (PDT)
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     jic23@kernel.org
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        dpfrey@gmail.com, mike.looijmans@topic.nl,
-        Himanshu Jha <himanshujha199640@gmail.com>
-Subject: [PATCH] iio: chemical: bme680: Fix pressure and humidity ABI mismatch
-Date:   Thu,  8 Aug 2019 21:13:50 +0530
-Message-Id: <20190808154350.9693-1-himanshujha199640@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S2403859AbfHHPtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 11:49:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:35216 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728380AbfHHPtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 11:49:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 593D01596;
+        Thu,  8 Aug 2019 08:49:48 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5E283F706;
+        Thu,  8 Aug 2019 08:49:46 -0700 (PDT)
+Subject: Re: [PATCH 9/9] arm64: Retrieve stolen time as paravirtualized guest
+To:     Steven Price <steven.price@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190802145017.42543-1-steven.price@arm.com>
+ <20190802145017.42543-10-steven.price@arm.com> <20190804105353.5e9824dc@why>
+ <dc8a1e56-7b52-cc8f-265d-27eb5f458613@arm.com>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <7108a70b-dafd-507b-8509-f4a092ef24af@kernel.org>
+Date:   Thu, 8 Aug 2019 16:49:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <dc8a1e56-7b52-cc8f-265d-27eb5f458613@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Standard ABI for reporting pressure is kilopascal and for
-relative humidity it is millipercent.
+On 08/08/2019 16:29, Steven Price wrote:
+> On 04/08/2019 10:53, Marc Zyngier wrote:
+>> On Fri,  2 Aug 2019 15:50:17 +0100
+>> Steven Price <steven.price@arm.com> wrote:
+>>
+>>> Enable paravirtualization features when running under a hypervisor
+>>> supporting the PV_TIME_ST hypercall.
+>>>
+>>> For each (v)CPU, we ask the hypervisor for the location of a shared
+>>> page which the hypervisor will use to report stolen time to us. We set
+>>> pv_time_ops to the stolen time function which simply reads the stolen
+>>> value from the shared page for a VCPU. We guarantee single-copy
+>>> atomicity using READ_ONCE which means we can also read the stolen
+>>> time for another VCPU than the currently running one while it is
+>>> potentially being updated by the hypervisor.
+>>>
+>>> Signed-off-by: Steven Price <steven.price@arm.com>
+>>> ---
+>>>  arch/arm64/kernel/Makefile |   1 +
+>>>  arch/arm64/kernel/kvm.c    | 155 +++++++++++++++++++++++++++++++++++++
 
-What:           /sys/bus/iio/devices/iio:deviceX/in_pressureY_input
-What:           /sys/bus/iio/devices/iio:deviceX/in_pressure_input
-KernelVersion:  3.8
-Contact:        linux-iio@vger.kernel.org
-Description:
-                Scaled pressure measurement from channel Y, in kilopascal.
+[...]
 
-What:           /sys/bus/iio/devices/iio:deviceX/in_humidityrelative_input
-KernelVersion:  3.14
-Contact:        linux-iio@vger.kernel.org
-Description:
-                Scaled humidity measurement in milli percent.
+>>> +static int __init kvm_guest_init(void)
+>>> +{
+>>> +	int ret = 0;
+>>> +
+>>> +	if (!has_kvm_steal_clock())
+>>> +		return 0;
+>>> +
+>>> +	ret = kvm_arm_init_stolen_time();
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	pv_ops.time.steal_clock = kvm_steal_clock;
+>>> +
+>>> +	static_key_slow_inc(&paravirt_steal_enabled);
+>>> +	if (steal_acc)
+>>> +		static_key_slow_inc(&paravirt_steal_rq_enabled);
+>>> +
+>>> +	pr_info("using stolen time PV\n");
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +early_initcall(kvm_guest_init);
+>>
+>> Is there any reason why we wouldn't directly call into this rather than
+>> using an initcall?
+> 
+> I'm not sure where the direct call would go - any pointers?
 
-Currently pressure is reported in hectopascal(hPa) and relative humidity
-in percent. Hence fix this ABI mismatch conforming to the standard ABI.
+I'd be temped to say arch/arm64/kernel/time.c:time_init(), provided that
+there is no issue with the CPU hotplug lock (I remember hitting that a
+while ago).
 
-Fixes: 1b3bd8592780 ("iio: chemical: Add support for Bosch BME680 sensor")
-Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
----
-
-While cleaning this mess I wonder about the gas channel and there
-exists no `in_resistance_input` in standard ABI :-(
-
-We only have:
-
-What:           /sys/bus/iio/devices/iio:deviceX/in_resistance_raw
-What:           /sys/bus/iio/devices/iio:deviceX/in_resistanceX_raw
-What:           /sys/bus/iio/devices/iio:deviceX/out_resistance_raw
-What:           /sys/bus/iio/devices/iio:deviceX/out_resistanceX_raw
-KernelVersion:  4.3
-Contact:        linux-iio@vger.kernel.org
-Description:
-                Raw (unscaled no offset etc.) resistance reading that can be processed
-                into an ohm value.
-
-The sensor outputs processed value which is reported as is.
-
-So, does it need a new ABI ?
-
- drivers/iio/chemical/bme680_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-index ccde4c65ff93..28cc96d1e3c8 100644
---- a/drivers/iio/chemical/bme680_core.c
-+++ b/drivers/iio/chemical/bme680_core.c
-@@ -670,7 +670,7 @@ static int bme680_read_press(struct bme680_data *data,
- 	}
- 
- 	*val = bme680_compensate_press(data, adc_press);
--	*val2 = 100;
-+	*val2 = 1000;
- 	return IIO_VAL_FRACTIONAL;
- }
- 
-@@ -704,7 +704,7 @@ static int bme680_read_humid(struct bme680_data *data,
- 	comp_humidity = bme680_compensate_humid(data, adc_humidity);
- 
- 	*val = comp_humidity;
--	*val2 = 1000;
-+	*val2 = 1000000;
- 	return IIO_VAL_FRACTIONAL;
- }
- 
+	M.
 -- 
-2.17.1
-
+Jazz is not dead, it just smells funny...
