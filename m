@@ -2,73 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 722158655A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73C5986560
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732866AbfHHPNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:13:12 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:44544 "EHLO vps0.lunn.ch"
+        id S2389741AbfHHPN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 11:13:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54620 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730678AbfHHPNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:13:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=N/sx/FwOwz1cNdvUzQADqjy4nEJNfOJJVfBa2REJnzE=; b=ZudZIYS4yxAb8Xk24AkDS0VUOD
-        oHLAbMmVN9PJkJlHe6Q3mBXDAYj61wD8buOn3RASROj3e2wDTzib/qpLkj4IvN65wgncaOP3Oau8c
-        oDnhmiBBzP518eF9uWHy9E6eRCScOLEeY7BDpnDkF/u7rw1SgcW+d92GFDZuibWBgS2s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hvk6F-0003ki-Ro; Thu, 08 Aug 2019 17:13:07 +0200
-Date:   Thu, 8 Aug 2019 17:13:07 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, f.fainelli@gmail.com,
-        hkallweit1@gmail.com
-Subject: Re: [PATCH v2 01/15] net: phy: adin: add support for Analog Devices
- PHYs
-Message-ID: <20190808151307.GA27917@lunn.ch>
-References: <20190808123026.17382-1-alexandru.ardelean@analog.com>
- <20190808123026.17382-2-alexandru.ardelean@analog.com>
+        id S1730678AbfHHPN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 11:13:58 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 606B93066FA7;
+        Thu,  8 Aug 2019 15:13:58 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 86F145D9E1;
+        Thu,  8 Aug 2019 15:13:51 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id x78FDo4j019011;
+        Thu, 8 Aug 2019 11:13:50 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id x78FDoGF019007;
+        Thu, 8 Aug 2019 11:13:50 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Thu, 8 Aug 2019 11:13:50 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mike Snitzer <msnitzer@redhat.com>, junxiao.bi@oracle.com,
+        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
+        honglei.wang@oracle.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] direct-io: use GFP_NOIO to avoid deadlock
+In-Reply-To: <20190808135329.GG5482@bombadil.infradead.org>
+Message-ID: <alpine.LRH.2.02.1908081112580.18950@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1908080540240.15519@file01.intranet.prod.int.rdu2.redhat.com> <20190808135329.GG5482@bombadil.infradead.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808123026.17382-2-alexandru.ardelean@analog.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 08 Aug 2019 15:13:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 03:30:12PM +0300, Alexandru Ardelean wrote:
-> This change adds support for Analog Devices Industrial Ethernet PHYs.
-> Particularly the PHYs this driver adds support for:
->  * ADIN1200 - Robust, Industrial, Low Power 10/100 Ethernet PHY
->  * ADIN1300 - Robust, Industrial, Low Latency 10/100/1000 Gigabit
->    Ethernet PHY
-> 
-> The 2 chips are pin & register compatible with one another. The main
-> difference being that ADIN1200 doesn't operate in gigabit mode.
-> 
-> The chips can be operated by the Generic PHY driver as well via the
-> standard IEEE PHY registers (0x0000 - 0x000F) which are supported by the
-> kernel as well. This assumes that configuration of the PHY has been done
-> completely in HW, according to spec.
-> 
-> Configuration can also be done via registers, which will be supported by
-> this driver.
-> 
-> Datasheets:
->   https://www.analog.com/media/en/technical-documentation/data-sheets/ADIN1300.pdf
->   https://www.analog.com/media/en/technical-documentation/data-sheets/ADIN1200.pdf
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-    Andrew
+On Thu, 8 Aug 2019, Matthew Wilcox wrote:
+
+> On Thu, Aug 08, 2019 at 05:50:10AM -0400, Mikulas Patocka wrote:
+> > A deadlock with this stacktrace was observed.
+> > 
+> > The obvious problem here is that in the call chain 
+> > xfs_vm_direct_IO->__blockdev_direct_IO->do_blockdev_direct_IO->kmem_cache_alloc 
+> > we do a GFP_KERNEL allocation while we are in a filesystem driver and in a 
+> > block device driver.
+> 
+> But that's not the problem.  The problem is the loop driver calls into the
+> filesystem without calling memalloc_noio_save() / memalloc_noio_restore().
+> There are dozens of places in XFS which use GFP_KERNEL allocations and
+> all can trigger this same problem if called from the loop driver.
+
+OK. I'll send a new patch that sets PF_MEMALLOC_NOIO in the loop driver.
+
+Mikulas
