@@ -2,83 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E42BD8576D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 03:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F9F8576B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 03:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389567AbfHHBIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 7 Aug 2019 21:08:53 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:51591 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730467AbfHHBIt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389469AbfHHBIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 7 Aug 2019 21:08:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730626AbfHHBIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Aug 2019 21:08:49 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TYvZ9x9_1565226526;
-Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TYvZ9x9_1565226526)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 08 Aug 2019 09:08:47 +0800
-Subject: Re: [PATCH][ocfs2-next] ocfs2: ensure ret is set to zero before
- returning
-To:     Colin Ian King <colin.king@canonical.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ocfs2-devel@oss.oracle.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190807121929.28918-1-colin.king@canonical.com>
- <fb3d7441-93ea-b619-52fc-00da950c9201@gmail.com>
- <bf4d059a-94fc-d8cf-78c7-8606644185a5@canonical.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <0cee7ca9-8704-171a-ec82-ee6c16e3381b@linux.alibaba.com>
-Date:   Thu, 8 Aug 2019 09:08:46 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+Received: from localhost (unknown [65.200.167.5])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95AD82184E;
+        Thu,  8 Aug 2019 01:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565226528;
+        bh=gNF57YoB8Yriv3C573qb+XOB2FsI9s0QaaJyXutg9/4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2rvV4yOfIXfCJEHpC25spqGYHKgBoT+0D1pdEzPhdDAydud2z/8PVw9DNztXtoWd7
+         qAEBNzMOLYsSA3bMFMftKIzenyOnpiASeKaPlKnfJT8e6L0fb1WgoXGhgm1o/FxXKI
+         hVkWhYor2eLDGFTlIJlf27KYWw66edIxKiKN1jaE=
+Date:   Wed, 7 Aug 2019 21:08:47 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
+        thiruan@microsoft.com, bryankel@microsoft.com,
+        tee-dev@lists.linaro.org, ilias.apalodimas@linaro.org,
+        sumit.garg@linaro.org, rdunlap@infradead.org
+Subject: Re: [PATCH v8 0/2] fTPM: firmware TPM running in TEE
+Message-ID: <20190808010847.GU17747@sasha-vm>
+References: <20190705204746.27543-1-sashal@kernel.org>
+ <20190711200858.xydm3wujikufxjcw@linux.intel.com>
+ <20190804214218.vdv2sn4oc4cityy2@linux.intel.com>
+ <20190805180518.GC17747@sasha-vm>
+ <20190805223324.qvbqa45xnp5fgsib@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <bf4d059a-94fc-d8cf-78c7-8606644185a5@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190805223324.qvbqa45xnp5fgsib@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 06, 2019 at 01:51:32AM +0300, Jarkko Sakkinen wrote:
+>On Mon, Aug 05, 2019 at 02:05:18PM -0400, Sasha Levin wrote:
+>> On Mon, Aug 05, 2019 at 12:44:28AM +0300, Jarkko Sakkinen wrote:
+>> > On Thu, Jul 11, 2019 at 11:08:58PM +0300, Jarkko Sakkinen wrote:
+>> > > On Fri, Jul 05, 2019 at 04:47:44PM -0400, Sasha Levin wrote:
+>> > > > Changes from v7:
+>> > > >
+>> > > >  - Address Jarkko's comments.
+>> > > >
+>> > > > Sasha Levin (2):
+>> > > >   fTPM: firmware TPM running in TEE
+>> > > >   fTPM: add documentation for ftpm driver
+>> > > >
+>> > > >  Documentation/security/tpm/index.rst        |   1 +
+>> > > >  Documentation/security/tpm/tpm_ftpm_tee.rst |  27 ++
+>> > > >  drivers/char/tpm/Kconfig                    |   5 +
+>> > > >  drivers/char/tpm/Makefile                   |   1 +
+>> > > >  drivers/char/tpm/tpm_ftpm_tee.c             | 350 ++++++++++++++++++++
+>> > > >  drivers/char/tpm/tpm_ftpm_tee.h             |  40 +++
+>> > > >  6 files changed, 424 insertions(+)
+>> > > >  create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
+>> > > >  create mode 100644 drivers/char/tpm/tpm_ftpm_tee.c
+>> > > >  create mode 100644 drivers/char/tpm/tpm_ftpm_tee.h
+>> > > >
+>> > > > --
+>> > > > 2.20.1
+>> > > >
+>> > >
+>> > > I applied the patches now. Appreciate a lot the patience with these.
+>> > > Thank you.
+>> >
+>> > Hi, can you possibly fix these:
+>>
+>> Any objection to sending you a patch on top of your tree instead?
+>
+>Go ahead. Added the previous patches to my master.
 
+Thanks! I'm getting back home on Monday and I'll send it out right away.
 
-On 19/8/7 20:42, Colin Ian King wrote:
-> On 07/08/2019 13:35, Joseph Qi wrote:
->>
->>
->> On 19/8/7 20:19, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> A previous commit introduced a regression where variable ret was
->>> originally being set from the return from a call to function
->>> dlm_create_debugfs_subroot and this set was removed. Currently
->>> ret is now uninitialized if no alloction errors are found which
->>> may end up with a bogus check on ret < 0 on the 'leave:' return
->>> path.  Fix this by setting ret to zero on a successful execution
->>> path.
->>
->> Good catch.
->> Or shall we just initialize 'ret' at first?
-> 
-> Initialized ret first may not catch subsequent coding errors where error
-> returns paths have not initialized ret, so my preference is when it is
-> required and not before.
-> 
-Okay, looks good to me.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
->>
->>>
->>> Addresses-Coverity: ("Uninitialzed scalar variable")
-> 
-> Can this be fixed up when applied rather sending a V2?
->>
-Currently ocfs2 patches are maintained in Andrew's mm tree.
-So it depends on Andrew.
-
+--
 Thanks,
-Joseph
+Sasha
