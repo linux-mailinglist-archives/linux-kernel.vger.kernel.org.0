@@ -2,196 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A104A86CFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 00:15:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FEEC86D03
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 00:18:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404575AbfHHWP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 18:15:26 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33793 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfHHWPZ (ORCPT
+        id S2390504AbfHHWSn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 18:18:43 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44634 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390340AbfHHWSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 18:15:25 -0400
-Received: by mail-ot1-f68.google.com with SMTP id n5so125105611otk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 15:15:24 -0700 (PDT)
+        Thu, 8 Aug 2019 18:18:43 -0400
+Received: by mail-qk1-f195.google.com with SMTP id d79so70105035qke.11
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 15:18:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NDuScBkGjT5nSsmn6LtJOvcXlMJwigFAIaUOlNo8VtQ=;
-        b=Dk+6FJdEexeYjR3aFFo2RcNwKRIMuHClL7PiIVO3hopF/LjfhAMdDKKMdvQDGJgK2R
-         Bfzl1ByNxGJ8ndlqV4/G1LPqRmNqcjqKqSPlmSCMXJXct0FhBDdgr/t/dHWbJasr4K8/
-         1JQJJdpNsB2TP4+uaOC/TwiGyhAktGZaoTC3KzJQ+zGTTgVGoUzSFtCHCooxCeCwy0A/
-         cCzuIt21lKPbv/vtBBHrO47ZB+Y0Lu8+Yl9PwjHBKwRFvVLaz4xF3nvYSghdDt6pi5gQ
-         ZkDsQdRSMtv8UFoJ0T6REQL/1OJlGVcVDysofrUaTIsVsfCaM0tRtTwCI/w7XT/NaOCs
-         sv1g==
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=QLZzrW7ZdQW83kYujBZ//d/WvY4fqGhP4bcyYPW9Wjc=;
+        b=kucOejN1r5TWtNxTNxQFaC04oKgS96Oev3tr4Te4PVP6k4yXz623fypMLZr3/X8yv8
+         yYIZzly2I5mO16T9Xl4GiHeCWVocTvBvWrz0P/QIePxoblkfu0eX5Ws/NOPaIle6ZfaH
+         4FvFr6jV8rB20loX4dga6EWpUnjbDEUZz7OkphtQYVl/GGHPa3AR7Hxg5pjGYAk67Udz
+         KgjiRyeWagUouAiQE/Rsu/7DKT3msHJmkYywIa0hODPn31BQxsM4a9VHlwesc0BeIBsS
+         uc7Jg2+dc08wTv03vOzZX3A+2Ev1F/TCQSd+hza4KTbN1Hp+6r2yylCI0vzoFr8E69Cn
+         tGRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NDuScBkGjT5nSsmn6LtJOvcXlMJwigFAIaUOlNo8VtQ=;
-        b=NgzS6OEh+K1vJg584oGwi8eE2cJGH+jgo1x5hEHfjLstXz6h535XgslN5kUl18jkuw
-         SK/XnHkL+nR6o23Z+z+G2Zksl61QxDFKIwwwhzwAi2I0omE580RAlX3WYuBrHpmQNG77
-         TNZtU396dmgXmMl71HB9NicRjP66/QFv9FLrAztxtwnfTFfRosMJcyTRNXBKzMnN2AiL
-         ZCse+6FIHiRYae8ubIufmYlpNee4svs9yHx31zHCF8F0TOOxkUeTaujN/nZtC9fxg7oE
-         wstaJtyonymotTYXcMfyJbMLUUpkVbu4chTXOkAe+VR4bhEmt+5yAfUqa/QHtYbfhKmF
-         Hl0g==
-X-Gm-Message-State: APjAAAUX8MbbqLrFca/UzoaMD6+WwioDcLASIBL0MKJWCsCSz75jxyCY
-        gh1IRa/4DeznV3Rk8mg9JSJo9U6BInJ0HtRwNvwwp7CV/AuU+ZPvzI4akC/5HOfJd0D+NQvtl22
-        VxLW4OzIY3CiW+2C1P3MDGrQl2Kc9Y5zWiqTdkxMnEPQnwDxiAiTgqW9MnCN6WlHGDNR6Xlde2A
-        1qcZq4DPYtiJxbEBQRJNq262vZsM9DNPCOkYugkWWJaRn9Cc9jow==
-X-Google-Smtp-Source: APXvYqxKzTeapIMM3uSrv1CUfmpNqVZPgXYnvHumDVA5DAS8WyMLEqYmtuLYmHYO4EzNz0LU9DhhOCN1zRePlcIPr5Y=
-X-Received: by 2002:a02:c519:: with SMTP id s25mr18744820jam.11.1565302524248;
- Thu, 08 Aug 2019 15:15:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190808183247.28206-1-echron@arista.com> <20190808185119.GF18351@dhcp22.suse.cz>
- <CAM3twVT0_f++p1jkvGuyMYtaYtzgEiaUtb8aYNCmNScirE4=og@mail.gmail.com> <20190808200715.GI18351@dhcp22.suse.cz>
-In-Reply-To: <20190808200715.GI18351@dhcp22.suse.cz>
-From:   Edward Chron <echron@arista.com>
-Date:   Thu, 8 Aug 2019 15:15:12 -0700
-Message-ID: <CAM3twVS7tqcHmHqjzJqO5DEsxzLfBaYF0FjVP+Jjb1ZS4rA9qA@mail.gmail.com>
-Subject: Re: [PATCH] mm/oom: Add killed process selection information
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
-Content-Type: text/plain; charset="UTF-8"
-X-CLOUD-SEC-AV-Info: arista,google_mail,monitor
-X-CLOUD-SEC-AV-Sent: true
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=QLZzrW7ZdQW83kYujBZ//d/WvY4fqGhP4bcyYPW9Wjc=;
+        b=jyHVlY+WoNIdeRYepSCFW458FGIzq/8jQsJBCpMc5rl3PTveJIS2HWNebmZ2h9T2ej
+         zpWgGw/cdQ+JPzszI/TtaUPUFo4HBii882mtKTAD6UKD3nljblsR7AuU0iV1XnBZ4NU7
+         UZ4uUEvZKmC1CduCElsZW6vr1JvbL6e0O3HJ37emkOkfodp/vGCgBWPegWuhMJb02seh
+         ZZOjnyfA/lsyRcM3t/wEnZkhTKCm9XvpF7k6Ey9iDMqqrjx34sWzRCKJfvgXAhtrq6cz
+         laFXuEMjyF9eawPQH5/Bh3rwHmeir+cCXZx08wrmVZ5nwbjHNdoDXTUduiBwjAzl9h1m
+         xY6g==
+X-Gm-Message-State: APjAAAWpRpa5tV2ecOgbRcOhmEh+QWjLjDMtmK4vogOoxcoZNC2416fE
+        i1cJuHsp1QGGZvw38rezdlu3CQ==
+X-Google-Smtp-Source: APXvYqxVYTQ1ShONsiy0DCWLZh4ngafA6BDzAMkeTZxXGi0m+ojO6+oil5OC6CsuH6ZUxDOUw/zVsg==
+X-Received: by 2002:a05:620a:70f:: with SMTP id 15mr15546578qkc.171.1565302721558;
+        Thu, 08 Aug 2019 15:18:41 -0700 (PDT)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u4sm41470668qkb.16.2019.08.08.15.18.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Aug 2019 15:18:40 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] arm64/cache: silence -Woverride-init warnings
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <20190808103808.GC46901@lakrids.cambridge.arm.com>
+Date:   Thu, 8 Aug 2019 18:18:39 -0400
+Cc:     Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D2A2F2B9-0563-4DF6-8E77-F191A768CE4E@lca.pw>
+References: <20190808032916.879-1-cai@lca.pw>
+ <20190808103808.GC46901@lakrids.cambridge.arm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In our experience far more (99.9%+) OOM events are not kernel issues,
-they're user task memory issues.
-Properly maintained Linux kernel only rarely have issues.
-So useful information about the killed task, displayed in a manner
-that can be quickly digested, is very helpful.
-But it turns out the totalpages parameter is also critical to make
-sense of what is shown.
-
-So if we report the fooWidget task was using ~15% of memory (I know
-this is just an approximation but it is often an adequate metric) we
-often can tell just from that the number is larger than expected so we
-can start there.
-Even though the % is a ballpark number, if you are familiar with the
-tasks on your system and approximately how much memory you expect them
-to use you can often tell if memory usage is excessive.
-This is not always the case but it is a fair amount of the time.
-So the % of memory field is helpful. But we've found we need totalpages as well.
-The totalpages effects the % of memory the task uses.
-
-You're an OOM expert so I don't need to tell you, but just for
-clarity, that if a system we're expecting to have swap space has it's
-swap diminshed or removed, that can have a significant effect both on
-the available memory and the % of memory/swap the task consumes.
-Just as if you run a task of a fixed memory size on a system with half
-the memory it's % of memory jumps up as does it's oom_score.
-Often we know the Memory Size and how much swap space a system is
-expected to have, printing totalpages allows us to confirm that this
-was in fact the case at the time of the oom event.
-Also the size of totalpages is very important to being to tell
-approximately how much memory/swap, the task was using because we have
-the % and we can quickly get an idea of usage.
-For systems that come in a variety of sizes that is important, the
-percentage number in conjunction with totalpages is essential since
-they are dependent on each other.
-
-With memcg usage increasing, having totalpages readily available is
-even more important because the memory container caps the value and it
-is helpful to know the value that was in use at the time of the oom
-event.
-
-The oom_score tells us how Linux calculated the score for the task,
-the oom_score_adj effects this so it is helpful to have that in
-conjunction with the oom_score.
-If the adjust is high it can tell us that the task was acting as a
-canary and so it's oom_score is high even though it's memory
-utilization can be modest or low.
-In that case we may need more information about what was going on
-because the task selected was not necessarily using much memory.
-But at least we know why it was selected. The kill message with a high
-oom_score_adjust and high oom_score makes that obvious.
-
-Just by adding a few values to the kill message we're often able to
-quickly get an idea of what the cause of an oom event was, or at least
-we have a better idea where to start looking.
-
-Since we're running a business and so are our customers anything we
-can do speed up the triage process saves money and makes people more
-productive, so we find it valuable.
-
-What other justification is needed? Let me know.
-
-Thanks!
-
-P.S.
-
-By the way, just for feedback, the recent reorganization of the OOM
-sections and print output, for those of us that do have to wade
-through OOM output, was appreciated:
-
-commit ef8444ea01d7442652f8e1b8a8b94278cb57eafd    (v5.0-rc1-107^2~63)
-Author: yuzhoujian <yuzhoujian@didichuxing.com>
-Date:   Fri Dec 28 00:36:07 2018 -0800
-
-    mm, oom: reorganize the oom report in dump_header
 
 
+> On Aug 8, 2019, at 6:38 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+>=20
+> On Wed, Aug 07, 2019 at 11:29:16PM -0400, Qian Cai wrote:
+>> The commit 155433cb365e ("arm64: cache: Remove support for =
+ASID-tagged
+>> VIVT I-caches") introduced some compiation warnings from GCC (and
+>> Clang) with -Winitializer-overrides),
+>>=20
+>> arch/arm64/kernel/cpuinfo.c:38:26: warning: initialized field
+>> overwritten [-Woverride-init]
+>> [ICACHE_POLICY_VIPT]  =3D "VIPT",
+>>                        ^~~~~~
+>> arch/arm64/kernel/cpuinfo.c:38:26: note: (near initialization for
+>> 'icache_policy_str[2]')
+>> arch/arm64/kernel/cpuinfo.c:39:26: warning: initialized field
+>> overwritten [-Woverride-init]
+>> [ICACHE_POLICY_PIPT]  =3D "PIPT",
+>>                        ^~~~~~
+>> arch/arm64/kernel/cpuinfo.c:39:26: note: (near initialization for
+>> 'icache_policy_str[3]')
+>> arch/arm64/kernel/cpuinfo.c:40:27: warning: initialized field
+>> overwritten [-Woverride-init]
+>> [ICACHE_POLICY_VPIPT]  =3D "VPIPT",
+>>                         ^~~~~~~
+>> arch/arm64/kernel/cpuinfo.c:40:27: note: (near initialization for
+>> 'icache_policy_str[0]')
+>>=20
+>> because it initializes icache_policy_str[0 ... 3] twice. Since
+>> arm64 developers are keen to keep the style of initializing a static
+>> array with a non-zero pattern first, just disable those warnings for
+>> both GCC and Clang of this file.
+>>=20
+>> Fixes: 155433cb365e ("arm64: cache: Remove support for ASID-tagged =
+VIVT I-caches")
+>> Signed-off-by: Qian Cai <cai@lca.pw>
+>=20
+> This is _not_ a fix, and should not require backporting to stable =
+trees.
 
-On Thu, Aug 8, 2019 at 1:07 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> [please do not top-post]
->
-> On Thu 08-08-19 12:21:30, Edward Chron wrote:
-> > It is helpful to the admin that looks at the kill message and records this
-> > information. OOMs can come in bunches.
-> > Knowing how much resource the oom selected process was using at the time of
-> > the OOM event is very useful, these fields document key process and system
-> > memory/swap values and can be quite helpful.
->
-> I do agree and we already print that information. rss with a break down
-> to anonymous, file backed and shmem, is usually a large part of the oom
-> victims foot print. It is not a complete information because there might
-> be a lot of memory hidden by other resource (open files etc.). We do not
-> print that information because it is not considered in the oom
-> selection. It is also not guaranteed to be freed upon the task exit.
->
-> > Also can't you disable printing the oom eligible task list? For systems
-> > with very large numbers of oom eligible processes that would seem to be
-> > very desirable.
->
-> Yes that is indeed the case. But how does the oom_score and
-> oom_score_adj alone without comparing it to other eligible tasks help in
-> isolation?
->
-> [...]
->
-> > I'm not sure that change would be supported upstream but again in our
-> > experience we've found it helpful, since you asked.
->
-> Could you be more specific about how that information is useful except
-> for recording it? I am all for giving an useful information in the OOM
-> report but I would like to hear a sound justification for each
-> additional piece of information.
->
-> E.g. this helped us to understand why the task has been selected - this
-> is usually dump_tasks portion of the report because it gives a picture
-> of what the OOM killer sees when choosing who to kill.
->
-> Then we have the summary to give us an estimation on how much
-> memory will get freed when the victim dies - rss is a very rough
-> estimation. But is a portion of the overal memory or oom_score{_adj}
-> important to print as well? Those are relative values. Say you get
-> memory-usage:10%, oom_score:42 and oom_score_adj:0. What are you going
-> to tell from that information?
-> --
-> Michal Hocko
-> SUSE Labs
+=46rom my experience, the stable AI will pick up whatever they want to =
+backport
+not matter if there Is a =E2=80=9CFixes=E2=80=9D tag or not unless it is =
+one of those subsystems like
+Networking that exclusively manually flag for. backporting by the =
+maintainer. =20
+
+>=20
+> What about all the other instances that we have in mainline?
+
+I have not had a chance to review all instances yet. It is not unusually =
+to fix one
+warning at a time, and then go on fixing some more if time permit.
+
+>=20
+> I really don't think that we need to go down this road; we're just =
+going
+> to end up adding this to every file that happens to include a header
+> using this scheme=E2=80=A6
+
+How about disable them this way in a top level like arch/arm64/Makefile =
+or
+arch/arm64/kernel/Makefile? Therefore, there is no need to add this to
+every file, but with a drawback that it could miss a few real issues =
+there
+in the future which probably not many people are checking for them of
+the arm64 subsystem nowadays.
+
+>=20
+> Please just turn this off by default for clang.
+
+As mentioned before, it is very valuable to run =E2=80=9Cmake W=3D1=E2=80=9D=
+ given it found
+many real developer mistakes which will enable =E2=80=9C-Woverride-init=E2=
+=80=9D for both
+compilers. Even =E2=80=9C-Woverride-init=E2=80=9D itself is useful find =
+real issues as in,
+
+ae5e033d65a (=E2=80=9Cmfd: rk808: Fix RK818_IRQ_DISCHG_ILIM =
+initializer=E2=80=9D)
+32df34d875bb (=E2=80=9C[media] rc: img-ir: jvc: Remove unused no-leader =
+timings=E2=80=9D)
+
+Especially, to find redundant initializations in large structures. e.g.,
+
+e6ea0b917875 (=E2=80=9C[media] dvb_frontend: Don't declare values twice =
+at a table=E2=80=9D)
+
+It is important to keep the noise-level as low as possible by keeping =
+the
+amount of false positives under control to be truly benefit from those
+valuable compiler warnings.=20
+
+>=20
+> If we want to enable this, we need a mechanism to permit overridable
+> assignments as we use range initializers for.
+
+I am not sure that it is worth filling a RFE for compilers of that =
+feature.
+I feel like the range initializers just another way to initialize an =
+array, and
+ it is just easier to make mistakes with unintended =
+double-initializations.
+The compiler developers probably recommend to enforce more of
+=E2=80=9C-Woverride-init=E2=80=9D for  the range initializers rather =
+than permitting it.
+
+>=20
+> Thanks,
+> Mark.
+>=20
+>> ---
+>> arch/arm64/kernel/Makefile | 3 +++
+>> 1 file changed, 3 insertions(+)
+>>=20
+>> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+>> index 478491f07b4f..397ed5f7be1e 100644
+>> --- a/arch/arm64/kernel/Makefile
+>> +++ b/arch/arm64/kernel/Makefile
+>> @@ -11,6 +11,9 @@ CFLAGS_REMOVE_ftrace.o =3D $(CC_FLAGS_FTRACE)
+>> CFLAGS_REMOVE_insn.o =3D $(CC_FLAGS_FTRACE)
+>> CFLAGS_REMOVE_return_address.o =3D $(CC_FLAGS_FTRACE)
+>>=20
+>> +CFLAGS_cpuinfo.o +=3D $(call cc-disable-warning, override-init)
+>> +CFLAGS_cpuinfo.o +=3D $(call cc-disable-warning, =
+initializer-overrides)
+>> +
+>> # Object file lists.
+>> obj-y			:=3D debug-monitors.o entry.o irq.o =
+fpsimd.o		\
+>> 			   entry-fpsimd.o process.o ptrace.o setup.o =
+signal.o	\
+>> --=20
+>> 2.20.1 (Apple Git-117)
+
