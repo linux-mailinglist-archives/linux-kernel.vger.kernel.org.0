@@ -2,40 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F7F1869BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1139E869F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 21:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404731AbfHHTKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 15:10:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44464 "EHLO mail.kernel.org"
+        id S2405486AbfHHTL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 15:11:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404830AbfHHTKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 15:10:07 -0400
+        id S2405476AbfHHTLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 15:11:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD25E21743;
-        Thu,  8 Aug 2019 19:10:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 221202173E;
+        Thu,  8 Aug 2019 19:11:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565291406;
-        bh=Qcy+4RkCqsyk7y3ye2bsGhK/Mc7XEY6y2lFVcBCGoZk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X93JVPUdWm3iqzrSg+w8lt4LMDLnfl4B0xvCFVp616uWBkOheTnJ/3G9oQBksVIjs
-         QWo5V0PLhzsXF0AJB25P+YEV1a/oigxObGQRWDZW112unKERqSjX4c3Z1bYxVT4Pxz
-         Dqoly5EVRe6+NVErQGh/yxQfc7TLX8FtOAUalOPA=
+        s=default; t=1565291483;
+        bh=/uu9e5gNxHHedZgQxb6JDIVEsarNFGlltB2IAoxex0E=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Cg/alxv3uXe986ZRNDbVUSW8h3poDpk4om6WPYubhGDq5TNuCOK5KEIn1bYRXo5hG
+         2+3GfhApkZMd217z2/kHPTnS+92/y600xyKHVKiX6urbSd8Jrjm2bd2btvu6y8mFpA
+         uhiwzvFpnckZQHi8Pi0GlsbXjq/CYd3/oUl7OX9Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 20/45] mvpp2: refactor MTU change code
-Date:   Thu,  8 Aug 2019 21:05:06 +0200
-Message-Id: <20190808190454.862440748@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 00/33] 4.14.138-stable review
+Date:   Thu,  8 Aug 2019 21:05:07 +0200
+Message-Id: <20190808190453.582417307@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808190453.827571908@linuxfoundation.org>
-References: <20190808190453.827571908@linuxfoundation.org>
-User-Agent: quilt/0.66
 MIME-Version: 1.0
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.138-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.14.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.14.138-rc1
+X-KernelTest-Deadline: 2019-08-10T19:04+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -43,85 +51,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matteo Croce <mcroce@redhat.com>
+This is the start of the stable review cycle for the 4.14.138 release.
+There are 33 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-[ Upstream commit 230bd958c2c846ee292aa38bc6b006296c24ca01 ]
+Responses should be made by Sat 10 Aug 2019 07:03:19 PM UTC.
+Anything received after that time might be too late.
 
-The MTU change code can call napi_disable() with the device already down,
-leading to a deadlock. Also, lot of code is duplicated unnecessarily.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.138-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+and the diffstat can be found below.
 
-Rework mvpp2_change_mtu() to avoid the deadlock and remove duplicated code.
+thanks,
 
-Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |   41 +++++++-----------------
- 1 file changed, 13 insertions(+), 28 deletions(-)
+greg k-h
 
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -3501,6 +3501,7 @@ static int mvpp2_set_mac_address(struct
- static int mvpp2_change_mtu(struct net_device *dev, int mtu)
- {
- 	struct mvpp2_port *port = netdev_priv(dev);
-+	bool running = netif_running(dev);
- 	int err;
- 
- 	if (!IS_ALIGNED(MVPP2_RX_PKT_SIZE(mtu), 8)) {
-@@ -3509,40 +3510,24 @@ static int mvpp2_change_mtu(struct net_d
- 		mtu = ALIGN(MVPP2_RX_PKT_SIZE(mtu), 8);
- 	}
- 
--	if (!netif_running(dev)) {
--		err = mvpp2_bm_update_mtu(dev, mtu);
--		if (!err) {
--			port->pkt_size =  MVPP2_RX_PKT_SIZE(mtu);
--			return 0;
--		}
-+	if (running)
-+		mvpp2_stop_dev(port);
- 
-+	err = mvpp2_bm_update_mtu(dev, mtu);
-+	if (err) {
-+		netdev_err(dev, "failed to change MTU\n");
- 		/* Reconfigure BM to the original MTU */
--		err = mvpp2_bm_update_mtu(dev, dev->mtu);
--		if (err)
--			goto log_error;
-+		mvpp2_bm_update_mtu(dev, dev->mtu);
-+	} else {
-+		port->pkt_size =  MVPP2_RX_PKT_SIZE(mtu);
- 	}
- 
--	mvpp2_stop_dev(port);
--
--	err = mvpp2_bm_update_mtu(dev, mtu);
--	if (!err) {
--		port->pkt_size =  MVPP2_RX_PKT_SIZE(mtu);
--		goto out_start;
-+	if (running) {
-+		mvpp2_start_dev(port);
-+		mvpp2_egress_enable(port);
-+		mvpp2_ingress_enable(port);
- 	}
- 
--	/* Reconfigure BM to the original MTU */
--	err = mvpp2_bm_update_mtu(dev, dev->mtu);
--	if (err)
--		goto log_error;
--
--out_start:
--	mvpp2_start_dev(port);
--	mvpp2_egress_enable(port);
--	mvpp2_ingress_enable(port);
--
--	return 0;
--log_error:
--	netdev_err(dev, "failed to change MTU\n");
- 	return err;
- }
- 
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.14.138-rc1
+
+Lukas Wunner <lukas@wunner.de>
+    spi: bcm2835: Fix 3-wire mode if DMA is enabled
+
+Tejun Heo <tj@kernel.org>
+    cgroup: Fix css_task_iter_advance_css_set() cset skip condition
+
+Tejun Heo <tj@kernel.org>
+    cgroup: css_task_iter_skip()'d iterators must be advanced before accessed
+
+Tejun Heo <tj@kernel.org>
+    cgroup: Include dying leaders with live threads in PROCS iterations
+
+Tejun Heo <tj@kernel.org>
+    cgroup: Implement css_task_iter_skip()
+
+Tejun Heo <tj@kernel.org>
+    cgroup: Call cgroup_release() before __exit_signal()
+
+Sudarsana Reddy Kalluru <skalluru@marvell.com>
+    bnx2x: Disable multi-cos feature.
+
+Matteo Croce <mcroce@redhat.com>
+    mvpp2: refactor MTU change code
+
+Alexis Bauvin <abauvin@scaleway.com>
+    tun: mark small packets as owned by the tap sock
+
+Ariel Levkovich <lariel@mellanox.com>
+    net/mlx5e: Prevent encap flow counter update async to user query
+
+Arnd Bergmann <arnd@arndb.de>
+    compat_ioctl: pppoe: fix PPPOEIOCSFWD handling
+
+Taras Kondratiuk <takondra@cisco.com>
+    tipc: compat: allow tipc commands without arguments
+
+Johan Hovold <johan@kernel.org>
+    NFC: nfcmrvl: fix gpio-handling regression
+
+Jia-Ju Bai <baijiaju1990@gmail.com>
+    net: sched: Fix a possible null-pointer dereference in dequeue_func()
+
+René van Dorst <opensource@vdorst.com>
+    net: phylink: Fix flow control for fixed-link
+
+Mark Zhang <markz@mellanox.com>
+    net/mlx5: Use reversed order when unregister devices
+
+Jiri Pirko <jiri@mellanox.com>
+    net: fix ifindex collision during namespace removal
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: mcast: don't delete permanent entries when fast leave is enabled
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: delete local fdb on device init failure
+
+Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+    ip6_tunnel: fix possible use-after-free on xmit
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    ife: error out when nla attributes are empty
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    atm: iphase: Fix Spectre v1 vulnerability
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    objtool: Add rewind_stack_do_exit() to the noreturn list
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    objtool: Add machine_real_restart() to the noreturn list
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    IB: directly cast the sockaddr union to aockaddr
+
+Jason Gunthorpe <jgg@mellanox.com>
+    RDMA: Directly cast the sockaddr union to sockaddr
+
+Sebastian Parschauer <s.parschauer@gmx.de>
+    HID: Add quirk for HP X1200 PIXART OEM mouse
+
+Aaron Armstrong Skomra <skomra@gmail.com>
+    HID: wacom: fix bit shift for Cintiq Companion 2
+
+Will Deacon <will@kernel.org>
+    arm64: cpufeature: Fix feature comparison for CTR_EL0.{CWG,ERG}
+
+Eric Dumazet <edumazet@google.com>
+    tcp: be more careful in tcp_fragment()
+
+Adam Ford <aford173@gmail.com>
+    ARM: dts: Add pinmuxing for i2c2 and i2c3 for LogicPD torpedo
+
+Adam Ford <aford173@gmail.com>
+    ARM: dts: Add pinmuxing for i2c2 and i2c3 for LogicPD SOM-LV
+
+Hannes Reinecke <hare@suse.de>
+    scsi: fcoe: Embed fc_rport_priv in fcoe_rport structure
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm/boot/dts/logicpd-som-lv.dtsi              |  16 ++++
+ arch/arm/boot/dts/logicpd-torpedo-som.dtsi         |  16 ++++
+ arch/arm64/include/asm/cpufeature.h                |   7 +-
+ arch/arm64/kernel/cpufeature.c                     |   8 +-
+ drivers/atm/iphase.c                               |   8 +-
+ drivers/hid/hid-ids.h                              |   1 +
+ drivers/hid/usbhid/hid-quirks.c                    |   1 +
+ drivers/hid/wacom_wac.c                            |  12 +--
+ drivers/infiniband/core/addr.c                     |  15 ++-
+ drivers/infiniband/core/sa_query.c                 |  10 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_ah.c           |   5 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c           |   5 +-
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c    |   2 +-
+ drivers/net/ethernet/marvell/mvpp2.c               |  41 +++-----
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c      |   2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c    |   4 +-
+ .../net/ethernet/mellanox/mlx5/core/fs_counters.c  |   5 +
+ drivers/net/phy/phylink.c                          |   2 +
+ drivers/net/ppp/pppoe.c                            |   3 +
+ drivers/net/ppp/pppox.c                            |  13 +++
+ drivers/net/ppp/pptp.c                             |   3 +
+ drivers/net/tun.c                                  |   1 +
+ drivers/nfc/nfcmrvl/main.c                         |   4 +-
+ drivers/nfc/nfcmrvl/uart.c                         |   4 +-
+ drivers/nfc/nfcmrvl/usb.c                          |   1 +
+ drivers/scsi/fcoe/fcoe_ctlr.c                      |  51 ++++------
+ drivers/scsi/libfc/fc_rport.c                      |   5 +-
+ drivers/spi/spi-bcm2835.c                          |   3 +-
+ fs/compat_ioctl.c                                  |   3 -
+ include/linux/cgroup-defs.h                        |   1 +
+ include/linux/cgroup.h                             |   4 +
+ include/linux/if_pppox.h                           |   3 +
+ include/linux/mlx5/fs.h                            |   1 +
+ include/net/tcp.h                                  |  17 ++++
+ include/scsi/libfcoe.h                             |   1 +
+ kernel/cgroup/cgroup.c                             | 106 +++++++++++++++------
+ kernel/exit.c                                      |   2 +-
+ net/bridge/br_multicast.c                          |   3 +
+ net/bridge/br_vlan.c                               |   5 +
+ net/core/dev.c                                     |   2 +
+ net/ipv4/tcp_output.c                              |  11 ++-
+ net/ipv6/ip6_tunnel.c                              |   6 +-
+ net/l2tp/l2tp_ppp.c                                |   3 +
+ net/sched/act_ife.c                                |   3 +
+ net/sched/sch_codel.c                              |   6 +-
+ net/tipc/netlink_compat.c                          |  11 ++-
+ tools/objtool/check.c                              |   2 +
+ 48 files changed, 293 insertions(+), 149 deletions(-)
 
 
