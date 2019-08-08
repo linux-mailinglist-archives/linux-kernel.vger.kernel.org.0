@@ -2,90 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8607F86745
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:40:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 612558674B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:42:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390183AbfHHQkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:40:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727096AbfHHQkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:40:23 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7930217F4;
-        Thu,  8 Aug 2019 16:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565282422;
-        bh=IHtsDi+gxFqVOzzgE355F6Bz9tWdXk5RvOnxv8yWTSk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ip5jOajFODXTFPX2Kfq71umTtXjA3AeD3LMdvALW23Wjjr+tleVlSk3OFqBgryeA4
-         ujxfgjDFgTMyoBXzvg4ZZweNDvAe4orZN3vLo4kInvIc+cSoNbPmf1/ZJ77k+6zT7j
-         6YXIRE/a3jJpoKI/vMWfGkNTdzdjxtZdwMAokCCo=
-Date:   Thu, 8 Aug 2019 18:40:20 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        Jose Carlos Cazarin Filho <joseespiriki@gmail.com>,
-        isdn@linux-pingi.de, devel@driverdev.osuosl.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] isdn: hysdn: Fix error spaces around '*'
-Message-ID: <20190808164020.GA9453@kroah.com>
-References: <20190802195602.28414-1-joseespiriki@gmail.com>
- <20190802145506.168b576b@hermes.lan>
- <2ecfbf8dda354fe47912446bf5c3fe30ca905aa0.camel@perches.com>
- <20190808163905.GA9224@kroah.com>
+        id S2390173AbfHHQmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:42:45 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42040 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728289AbfHHQmo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 12:42:44 -0400
+Received: by mail-ot1-f68.google.com with SMTP id l15so121178897otn.9
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 09:42:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0RerVaK+RfWl7f5w05muo3aZmEmhRBxNWB/GcQlwjNc=;
+        b=MEp8EvYRWSslpikdQQdsx3c5VaEEd6t0kaRpB4L4qI/mq8gtptlFrcEKcYcmu9PYHs
+         g/mScGw9K3Vjnj5477Uez5z79h9lZ6k+PKJoJQdMrU6Hpk+0u38xk40IVBBi/H8cfIXI
+         w3RImDvrnTqF8OxwCyY2YNI4ZimntJ+XPrlmQOanShHQ8VMy1pJmXGHgLrWUhIviUB/a
+         xJK6bIioTSRbs/hHEa/wJmx7ZS+HoSkfKMmeDgO1VLpvFMAWJmBDp2Eg7h+bddeFeNQ4
+         qk1Ey7Hqt5WvozY6pW2xHxiuBeSxVQ7RW3hI51292O+oRFrMPlPFe3P+iLsLq6HLJdig
+         3Bqg==
+X-Gm-Message-State: APjAAAUvRL8kBzZvM6YXeNYzpdAesMrQGIVHWQnIz1IAoYKdDJOM4Yps
+        5SN9tZLjFrKABDaNIzAiqfjEoA==
+X-Google-Smtp-Source: APXvYqwNm+JMvUchL8ENwcPkg8caHsOjZ2EP6tGKtQmFFNOzwhIfC4eTwW7565vc0l/aNSd0iANYJw==
+X-Received: by 2002:a5e:8c16:: with SMTP id n22mr16653814ioj.105.1565282562826;
+        Thu, 08 Aug 2019 09:42:42 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:5118:89b3:1f18:4090])
+        by smtp.gmail.com with ESMTPSA id w23sm80475158ioa.51.2019.08.08.09.42.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 08 Aug 2019 09:42:41 -0700 (PDT)
+Date:   Thu, 8 Aug 2019 10:42:37 -0600
+From:   Raul Rangel <rrangel@chromium.org>
+To:     "Shirley Her (SC)" <shirley.her@bayhubtech.com>
+Cc:     "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
+        "Louis Lu (TP)" <louis.lu@bayhubtech.com>,
+        "Max Huang (SC)" <max.huang@bayhubtech.com>,
+        "Shaper Liu (WH)" <shaper.liu@bayhubtech.com>
+Subject: Re: [PATCH V5 3/3] mmc: sdhci: Fix O2 Host data read/write DLL Lock
+ Phase shift issue
+Message-ID: <20190808164237.GA250824@google.com>
+References: <1565212208-32259-1-git-send-email-shirley.her@bayhubtech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190808163905.GA9224@kroah.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <1565212208-32259-1-git-send-email-shirley.her@bayhubtech.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 06:39:05PM +0200, Greg KH wrote:
-> On Fri, Aug 02, 2019 at 03:05:05PM -0700, Joe Perches wrote:
-> > On Fri, 2019-08-02 at 14:55 -0700, Stephen Hemminger wrote:
-> > > On Fri,  2 Aug 2019 19:56:02 +0000
-> > > Jose Carlos Cazarin Filho <joseespiriki@gmail.com> wrote:
-> > > 
-> > > > Fix checkpath error:
-> > > > CHECK: spaces preferred around that '*' (ctx:WxV)
-> > > > +extern hysdn_card *card_root;        /* pointer to first card */
-> > > > 
-> > > > Signed-off-by: Jose Carlos Cazarin Filho <joseespiriki@gmail.com>
-> > > 
-> > > Read the TODO, these drivers are scheduled for removal, so changes
-> > > are not helpful at this time.
-> > 
-> > Maybe better to mark the MAINTAINERS entry obsolete so
-> > checkpatch bleats a message about unnecessary changes.
-> > ---
-> >  MAINTAINERS | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 30bf852e6d6b..b5df91032574 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -8628,7 +8628,7 @@ M:	Karsten Keil <isdn@linux-pingi.de>
-> >  L:	isdn4linux@listserv.isdn4linux.de (subscribers-only)
-> >  L:	netdev@vger.kernel.org
-> >  W:	http://www.isdn4linux.de
-> > -S:	Odd Fixes
-> > +S:	Obsolete
-> >  F:	Documentation/isdn/
-> >  F:	drivers/isdn/capi/
-> >  F:	drivers/staging/isdn/
-> > 
-> 
-> Good idea, will take this patch now, thanks.
+On Wed, Aug 07, 2019 at 09:10:10PM +0000, Shirley Her (SC) wrote:
+> Fix data read/write error in HS200 mode due to chip DLL lock phase shift
+> +static int sdhci_o2_wait_dll_detect_lock(struct sdhci_host *host)
+> +{
+> +	ktime_t timeout;
+> +	u32 scratch32;
+> +
+> +	usleep_range(5000, 6000);
+> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+> +	if (!(scratch32 & O2_DLL_LOCK_STATUS)) {
+> +		pr_warn("%s: DLL is still unlocked after wait 5ms\n",
+> +			mmc_hostname(host->mmc));
+> +	}
+> +
+> +	/* Detect 1 s */
+> +	timeout = ktime_add_ms(ktime_get(), 1000);
+> +	while (1) {
+> +		bool timedout = ktime_after(ktime_get(), timeout);
+> +
+> +		scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+> +		if (!(scratch32 & O2_DLL_LOCK_STATUS))
+> +			return 0;
+> +
+> +		if (timedout)
+> +			return 1;
+> +	}
+> +}
 
-Can you resend this with a s-o-b so I can apply it?
+It would be better to use readx_poll_timeout instead of open coding the
+same logic.
 
-thanks,
+static u32 sdhci_o2_pll_dll_wdt_control(struct sdhci_host *host) {
+	return sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+}
 
-greg k-h
+static int sdhci_o2_wait_dll_detect_lock(struct sdhci_host *host) {
+	return readx_poll_timeout(sdhci_o2_pll_dll_wdt_control, host,
+		scratch32, !(scratch32 & O2_DLL_LOCK_STATUS), 100, 6000);
+}
