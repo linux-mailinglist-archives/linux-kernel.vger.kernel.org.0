@@ -2,239 +2,687 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A891286787
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C54E86792
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 19:00:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404128AbfHHQ5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:57:08 -0400
-Received: from mail-ot1-f69.google.com ([209.85.210.69]:34445 "EHLO
-        mail-ot1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbfHHQ5H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:57:07 -0400
-Received: by mail-ot1-f69.google.com with SMTP id 20so19488530oty.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 09:57:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=BN3UZkgNyJLCqUjBNQHBV4WCdXniJq9HZ5t4IGYKU4g=;
-        b=PU+7tgynrM3hX0HH2K3qaRdLEO3dFfKE0LtTPn0gVyYCd9g6Hu8+jfbfAW6BunQuGk
-         7G2xz3JgRWKULkv0UaOM7wpGL0qX4aAJZKlEOzJnUDoOMQleij2w9R7rjy3FX/ss94PD
-         jf7Su8df2eFWSg5/6YKqA+5nxMPPxTHXWdsZq7N58J4b8azlmrDrtp1eoQw/Epn3IYZv
-         SrCUpvAqnl8KAcf1gJvrJ+ExbVKnghfk6E7pmRXKy29oP9pzktrIGcu6zZwlvhNiz0Cl
-         7As+ARiQlNqLUBA/UP1ug8fC9vun8ZFJcDg5/bETVIuP0Cpj1LHW/bBpukSEQBNpu2sm
-         wjhw==
-X-Gm-Message-State: APjAAAX1T2GXWGspzD/RBOetiwvqHhAcDlOA4fxipDJ4H0gCnD7pTF+n
-        cPSFzR/DIUq3NW71ukKNJcj5zYT9uq1terSsD5QqeFSKbzhk
-X-Google-Smtp-Source: APXvYqynvht+Tm7siX6cfNrD+9+6E2we+nXHvfVCSqi8VeY6L/X6cbSbM52oKPvEfBQwLmqKbOoIeOOlqkEpHx6WHGyInnZk05PW
+        id S2404198AbfHHRAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 13:00:06 -0400
+Received: from mout.gmx.net ([212.227.15.18]:41187 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728020AbfHHRAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 13:00:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1565283589;
+        bh=5ZWBx0UX3/ng437SRV+3mNmqF8CMD79gPpuEkR2AKbM=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=YQryhn1rG/9+XBSxrotpKRjZbmXGxaRp4TLF/p8C8cSX4QZQgfGvAdrqTRjCZ/ryl
+         mYYSAEIY6404chQLg2HUs1Sx3EQGHbAl5CjGu5Iv1JrE8O83MNRlhicF2hdRLnJYH5
+         IDS+XoWsSJ5XGRtOqgI4OAEZYpPgoJ+NIEUXPsc4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([109.90.233.87]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MSuMn-1hm6c41Hbp-00Rmeb; Thu, 08
+ Aug 2019 18:59:49 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-doc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] Documentation/arm/sa1100: Remove some obsolete documentation
+Date:   Thu,  8 Aug 2019 18:58:55 +0200
+Message-Id: <20190808165929.16946-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f816:: with SMTP id o22mr16628334ioh.166.1565283426026;
- Thu, 08 Aug 2019 09:57:06 -0700 (PDT)
-Date:   Thu, 08 Aug 2019 09:57:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000094d2b5058f9df271@google.com>
-Subject: BUG: soft lockup in tcp_delack_timer
-From:   syzbot <syzbot+2d55fb97f42947bbcddd@syzkaller.appspotmail.com>
-To:     fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YsvMSYO6/qXktRlP9DkXrpJX0pfkQbk2oEw7BE1e4pc9QCCUx/c
+ nmMcYWdfredKjRRQhlfvj1UMPfJcAzXVu0HztDnXtGBIwoVTqyBmQ+4A5L6sLk2Rydqdx7z
+ g6WKk0pisksCZtA+AfjuLf7eirU1mFgNt+VuXqitqHhX6pXoxvsg93sI8ykynUJfoRnCWYq
+ 1LaHgYMce1mnrxyypxSDg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nTIuwVpECOU=:ixZtgS9B6mW7eEeSqo/XrF
+ yucycVxNAKQW1ED/k6QLCGQG78Iit+AT0jf+8Ziwg9Vt6pA51lmu6fxHYzviK0/Z7sZzaaBaA
+ s3teP3u7Le96b6PPDtA3k1edYOgJorAPRGKz+Iu4YC/XMVnmB8dZsY98FRnJVK6n0PyLa40H0
+ NnTsd8bDucELULVkCxq3PSIt1Xtz3Ggu/zW+1YXP8PlXVtzSlT1GCiLIYVzQx6RHN8yonHsF3
+ 5Z0pfmDW+d7r/FJ+LgSHw5cg2bWRUNJqVLaOLBzmV0gIxcJ9M8PHngrjEhdzlXqvSbSG4LHpR
+ B/dPtMdHbmht5palWHT+Z2jnltpEeJkmW0f19PRdLh91F032yvzbbGA3uVFjpw9Evr2/51H2J
+ P0g7LsVTjiyKqmM3dJ9DAs04VtPfdkpcQYPV+XlNT9rg1tABDUx/CtL/NXNBESCyDAPFh1kiJ
+ AgyRo1fVgYKeJ2SQmH6RW0ZLVAZqAmkJEXQV9kus15fLVNM8E3iDC5Qjp4wH34l4xj8SpWoNx
+ fMFjmuFRGkL4UPnd9WPkcqsmauFw9cRPiZs76g+LD76Hog23GUVbUQnArqqysRl07O7LiAnPM
+ h4wEFH9jTEoKTN83YEOL8kXfxtKccgN8WjM4OiL4xhmuH6nxJUPGDZFyQjTGVX+Sy7SEYaoxH
+ brmeDgO757E1/aK8dMw3Be9GYA8ggsg3tUd++pyfBtz/eUvVHr0F+2ThAY9IUTRQ8BZNAvyH/
+ 00IKibb5nw4gcIo1Zwoyfg4K6g6xrteQKEnDe+n++SiQW7VHEqOPapplP3wDRSHiYRVkNJLMa
+ fseEnmPI/Quo0j5xQGaUkAXrtHrNjme9nImQUQV1gvxcjTdaZBVBlvA4M2HS4rjfRbJFwVQfq
+ VnYXuDXvVlhXvzTAuRg1sjxLfrIp98VslyYVe/w89T9knGY83SQWeG+Rt31a8luopNFLcw7Li
+ OKmE77f07a5+XlS0HiiWvGXQSRcUqS6vnUNg324Br4SsFFSxSdgM5ioBC1OHd1q6SC+GuaWF9
+ STYZv80gCo6UAklY8cm9hTQmyP5esnPnbxssM4hJe336JUfWhGydJ4c/v4Xx0BrZTuWt1PwTN
+ L5PrDgt+f4bElf4L/qLIrHuYJSsSaCh2TTla7QZrLVVxnF8DeG2RdyRb2TOaJPa9Ro31IUOR6
+ FHTBo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The support for the following boards, among others, was removed in 2004
+with commit "[ARM] Remove broken SA1100 machine support.":
 
-syzbot found the following crash on:
+- ADS Bitsy
+- Brutus
+- Freebird
+- ADS GraphicsClient Plus
+- ADS GraphicsMaster
+- H=C3=B6ft & Wessel Webpanel
+- Compaq Itsy
+- nanoEngine
+- Pangolin
+- PLEB
+- Yopy
 
-HEAD commit:    0d8b3265 Add linux-next specific files for 20190729
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1101fdc8600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ae96f3b8a7e885f7
-dashboard link: https://syzkaller.appspot.com/bug?extid=2d55fb97f42947bbcddd
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Tifon support has been removed in 2.4.3.3.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ Documentation/arm/sa1100/adsbitsy.rst       |  51 ----------
+ Documentation/arm/sa1100/brutus.rst         |  69 -------------
+ Documentation/arm/sa1100/freebird.rst       |  25 -----
+ Documentation/arm/sa1100/graphicsclient.rst | 102 --------------------
+ Documentation/arm/sa1100/graphicsmaster.rst |  60 ------------
+ Documentation/arm/sa1100/huw_webpanel.rst   |  21 ----
+ Documentation/arm/sa1100/index.rst          |  12 ---
+ Documentation/arm/sa1100/itsy.rst           |  47 ---------
+ Documentation/arm/sa1100/nanoengine.rst     |  11 ---
+ Documentation/arm/sa1100/pangolin.rst       |  29 ------
+ Documentation/arm/sa1100/pleb.rst           |  13 ---
+ Documentation/arm/sa1100/tifon.rst          |   7 --
+ Documentation/arm/sa1100/yopy.rst           |   5 -
+ 13 files changed, 452 deletions(-)
+ delete mode 100644 Documentation/arm/sa1100/adsbitsy.rst
+ delete mode 100644 Documentation/arm/sa1100/brutus.rst
+ delete mode 100644 Documentation/arm/sa1100/freebird.rst
+ delete mode 100644 Documentation/arm/sa1100/graphicsclient.rst
+ delete mode 100644 Documentation/arm/sa1100/graphicsmaster.rst
+ delete mode 100644 Documentation/arm/sa1100/huw_webpanel.rst
+ delete mode 100644 Documentation/arm/sa1100/itsy.rst
+ delete mode 100644 Documentation/arm/sa1100/nanoengine.rst
+ delete mode 100644 Documentation/arm/sa1100/pangolin.rst
+ delete mode 100644 Documentation/arm/sa1100/pleb.rst
+ delete mode 100644 Documentation/arm/sa1100/tifon.rst
+ delete mode 100644 Documentation/arm/sa1100/yopy.rst
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2d55fb97f42947bbcddd@syzkaller.appspotmail.com
+diff --git a/Documentation/arm/sa1100/adsbitsy.rst b/Documentation/arm/sa1=
+100/adsbitsy.rst
+deleted file mode 100644
+index c179cb26b682..000000000000
+=2D-- a/Documentation/arm/sa1100/adsbitsy.rst
++++ /dev/null
+@@ -1,51 +0,0 @@
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+-ADS Bitsy Single Board Computer
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+-
+-(It is different from Bitsy(iPAQ) of Compaq)
+-
+-For more details, contact Applied Data Systems or see
+-http://www.applieddata.net/products.html
+-
+-The Linux support for this product has been provided by
+-Woojung Huh <whuh@applieddata.net>
+-
+-Use 'make adsbitsy_config' before any 'make config'.
+-This will set up defaults for ADS Bitsy support.
+-
+-The kernel zImage is linked to be loaded and executed at 0xc0400000.
+-
+-Linux can  be used with the ADS BootLoader that ships with the
+-newer rev boards. See their documentation on how to load Linux.
+-
+-Supported peripherals
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+=2D- SA1100 LCD frame buffer (8/16bpp...sort of)
+=2D- SA1111 USB Master
+=2D- SA1100 serial port
+=2D- pcmcia, compact flash
+=2D- touchscreen(ucb1200)
+=2D- console on LCD screen
+=2D- serial ports (ttyS[0-2])
+-  - ttyS0 is default for serial console
+-
+-To do
+-=3D=3D=3D=3D=3D
+-
+=2D- everything else!  :-)
+-
+-Notes
+-=3D=3D=3D=3D=3D
+-
+=2D- The flash on board is divided into 3 partitions.
+-  You should be careful to use flash on board.
+-  Its partition is different from GraphicsClient Plus and GraphicsMaster
+-
+=2D- 16bpp mode requires a different cable than what ships with the board.
+-  Contact ADS or look through the manual to wire your own. Currently,
+-  if you compile with 16bit mode support and switch into a lower bpp
+-  mode, the timing is off so the image is corrupted.  This will be
+-  fixed soon.
+-
+-Any contribution can be sent to nico@fluxnic.net and will be greatly welc=
+ome!
+diff --git a/Documentation/arm/sa1100/brutus.rst b/Documentation/arm/sa110=
+0/brutus.rst
+deleted file mode 100644
+index e1a23bee6d44..000000000000
+=2D-- a/Documentation/arm/sa1100/brutus.rst
++++ /dev/null
+@@ -1,69 +0,0 @@
+-=3D=3D=3D=3D=3D=3D
+-Brutus
+-=3D=3D=3D=3D=3D=3D
+-
+-Brutus is an evaluation platform for the SA1100 manufactured by Intel.
+-For more details, see:
+-
+-http://developer.intel.com
+-
+-To compile for Brutus, you must issue the following commands::
+-
+-	make brutus_config
+-	make config
+-	[accept all the defaults]
+-	make zImage
+-
+-The resulting kernel will end up in linux/arch/arm/boot/zImage.  This fil=
+e
+-must be loaded at 0xc0008000 in Brutus's memory and execution started at
+-0xc0008000 as well with the value of registers r0 =3D 0 and r1 =3D 16 upo=
+n
+-entry.
+-
+-But prior to execute the kernel, a ramdisk image must also be loaded in
+-memory.  Use memory address 0xd8000000 for this.  Note that the file
+-containing the (compressed) ramdisk image must not exceed 4 MB.
+-
+-Typically, you'll need angelboot to load the kernel.
+-The following angelboot.opt file should be used::
+-
+-	base 0xc0008000
+-	entry 0xc0008000
+-	r0 0x00000000
+-	r1 0x00000010
+-	device /dev/ttyS0
+-	options "9600 8N1"
+-	baud 115200
+-	otherfile ramdisk_img.gz
+-	otherbase 0xd8000000
+-
+-Then load the kernel and ramdisk with::
+-
+-	angelboot -f angelboot.opt zImage
+-
+-The first Brutus serial port (assumed to be linked to /dev/ttyS0 on your
+-host PC) is used by angel to load the kernel and ramdisk image. The seria=
+l
+-console is provided through the second Brutus serial port. To access it,
+-you may use minicom configured with /dev/ttyS1, 9600 baud, 8N1, no flow
+-control.
+-
+-Currently supported
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+-	- RS232 serial ports
+-	- audio output
+-	- LCD screen
+-	- keyboard
+-
+-The actual Brutus support may not be complete without extra patches.
+-If such patches exist, they should be found from
+-ftp.netwinder.org/users/n/nico.
+-
+-A full PCMCIA support is still missing, although it's possible to hack
+-some drivers in order to drive already inserted cards at boot time with
+-little modifications.
+-
+-Any contribution is welcome.
+-
+-Please send patches to nico@fluxnic.net
+-
+-Have Fun !
+diff --git a/Documentation/arm/sa1100/freebird.rst b/Documentation/arm/sa1=
+100/freebird.rst
+deleted file mode 100644
+index 81043d0c6d64..000000000000
+=2D-- a/Documentation/arm/sa1100/freebird.rst
++++ /dev/null
+@@ -1,25 +0,0 @@
+-=3D=3D=3D=3D=3D=3D=3D=3D
+-Freebird
+-=3D=3D=3D=3D=3D=3D=3D=3D
+-
+-Freebird-1.1 is produced by Legend(C), Inc.
+-`http://web.archive.org/web/*/http://www.legend.com.cn`
+-and software/linux maintained by Coventive(C), Inc.
+-(http://www.coventive.com)
+-
+-Based on the Nicolas's strongarm kernel tree.
+-
+-Maintainer:
+-
+-Chester Kuo
+-	- <chester@coventive.com>
+-	- <chester@linux.org.tw>
+-
+-Author:
+-
+=2D- Tim wu <timwu@coventive.com>
+=2D- CIH <cih@coventive.com>
+=2D- Eric Peng <ericpeng@coventive.com>
+=2D- Jeff Lee <jeff_lee@coventive.com>
+=2D- Allen Cheng
+=2D- Tony Liu <tonyliu@coventive.com>
+diff --git a/Documentation/arm/sa1100/graphicsclient.rst b/Documentation/a=
+rm/sa1100/graphicsclient.rst
+deleted file mode 100644
+index a73d61c3ce91..000000000000
+=2D-- a/Documentation/arm/sa1100/graphicsclient.rst
++++ /dev/null
+@@ -1,102 +0,0 @@
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-ADS GraphicsClient Plus Single Board Computer
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+-For more details, contact Applied Data Systems or see
+-http://www.applieddata.net/products.html
+-
+-The original Linux support for this product has been provided by
+-Nicolas Pitre <nico@fluxnic.net>. Continued development work by
+-Woojung Huh <whuh@applieddata.net>
+-
+-It's currently possible to mount a root filesystem via NFS providing a
+-complete Linux environment.  Otherwise a ramdisk image may be used.  The
+-board supports MTD/JFFS, so you could also mount something on there.
+-
+-Use 'make graphicsclient_config' before any 'make config'.  This will set=
+ up
+-defaults for GraphicsClient Plus support.
+-
+-The kernel zImage is linked to be loaded and executed at 0xc0200000.
+-Also the following registers should have the specified values upon entry:=
+:
+-
+-	r0 =3D 0
+-	r1 =3D 29	(this is the GraphicsClient architecture number)
+-
+-Linux can  be used with the ADS BootLoader that ships with the
+-newer rev boards. See their documentation on how to load Linux.
+-Angel is not available for the GraphicsClient Plus AFAIK.
+-
+-There is a  board known as just the GraphicsClient that ADS used to
+-produce but has end of lifed. This code will not work on the older
+-board with the ADS bootloader, but should still work with Angel,
+-as outlined below.  In any case, if you're planning on deploying
+-something en masse, you should probably get the newer board.
+-
+-If using Angel on the older boards, here is a typical angel.opt option fi=
+le
+-if the kernel is loaded through the Angel Debug Monitor::
+-
+-	base 0xc0200000
+-	entry 0xc0200000
+-	r0 0x00000000
+-	r1 0x0000001d
+-	device /dev/ttyS1
+-	options "38400 8N1"
+-	baud 115200
+-	#otherfile ramdisk.gz
+-	#otherbase 0xc0800000
+-	exec minicom
+-
+-Then the kernel (and ramdisk if otherfile/otherbase lines above are
+-uncommented) would be loaded with::
+-
+-	angelboot -f angelboot.opt zImage
+-
+-Here it is assumed that the board is connected to ttyS1 on your PC
+-and that minicom is preconfigured with /dev/ttyS1, 38400 baud, 8N1, no fl=
+ow
+-control by default.
+-
+-If any other bootloader is used, ensure it accomplish the same, especiall=
+y
+-for r0/r1 register values before jumping into the kernel.
+-
+-
+-Supported peripherals
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+=2D- SA1100 LCD frame buffer (8/16bpp...sort of)
+=2D- on-board SMC 92C96 ethernet NIC
+=2D- SA1100 serial port
+=2D- flash memory access (MTD/JFFS)
+=2D- pcmcia
+=2D- touchscreen(ucb1200)
+=2D- ps/2 keyboard
+=2D- console on LCD screen
+=2D- serial ports (ttyS[0-2])
+-  - ttyS0 is default for serial console
+=2D- Smart I/O (ADC, keypad, digital inputs, etc)
+-  See http://www.eurotech-inc.com/linux-sbc.asp for IOCTL documentation
+-  and example user space code. ps/2 keybd is multiplexed through this dri=
+ver
+-
+-To do
+-=3D=3D=3D=3D=3D
+-
+=2D- UCB1200 audio with new ucb_generic layer
+=2D- everything else!  :-)
+-
+-Notes
+-=3D=3D=3D=3D=3D
+-
+=2D- The flash on board is divided into 3 partitions.  mtd0 is where
+-  the ADS boot ROM and zImage is stored.  It's been marked as
+-  read-only to keep you from blasting over the bootloader. :)  mtd1 is
+-  for the ramdisk.gz image.  mtd2 is user flash space and can be
+-  utilized for either JFFS or if you're feeling crazy, running ext2
+-  on top of it. If you're not using the ADS bootloader, you're
+-  welcome to blast over the mtd1 partition also.
+-
+=2D- 16bpp mode requires a different cable than what ships with the board.
+-  Contact ADS or look through the manual to wire your own. Currently,
+-  if you compile with 16bit mode support and switch into a lower bpp
+-  mode, the timing is off so the image is corrupted.  This will be
+-  fixed soon.
+-
+-Any contribution can be sent to nico@fluxnic.net and will be greatly welc=
+ome!
+diff --git a/Documentation/arm/sa1100/graphicsmaster.rst b/Documentation/a=
+rm/sa1100/graphicsmaster.rst
+deleted file mode 100644
+index e39892514f0c..000000000000
+=2D-- a/Documentation/arm/sa1100/graphicsmaster.rst
++++ /dev/null
+@@ -1,60 +0,0 @@
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-ADS GraphicsMaster Single Board Computer
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+-For more details, contact Applied Data Systems or see
+-http://www.applieddata.net/products.html
+-
+-The original Linux support for this product has been provided by
+-Nicolas Pitre <nico@fluxnic.net>. Continued development work by
+-Woojung Huh <whuh@applieddata.net>
+-
+-Use 'make graphicsmaster_config' before any 'make config'.
+-This will set up defaults for GraphicsMaster support.
+-
+-The kernel zImage is linked to be loaded and executed at 0xc0400000.
+-
+-Linux can  be used with the ADS BootLoader that ships with the
+-newer rev boards. See their documentation on how to load Linux.
+-
+-Supported peripherals
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+=2D- SA1100 LCD frame buffer (8/16bpp...sort of)
+=2D- SA1111 USB Master
+=2D- on-board SMC 92C96 ethernet NIC
+=2D- SA1100 serial port
+=2D- flash memory access (MTD/JFFS)
+=2D- pcmcia, compact flash
+=2D- touchscreen(ucb1200)
+=2D- ps/2 keyboard
+=2D- console on LCD screen
+=2D- serial ports (ttyS[0-2])
+-  - ttyS0 is default for serial console
+=2D- Smart I/O (ADC, keypad, digital inputs, etc)
+-  See http://www.eurotech-inc.com/linux-sbc.asp for IOCTL documentation
+-  and example user space code. ps/2 keybd is multiplexed through this dri=
+ver
+-
+-To do
+-=3D=3D=3D=3D=3D
+-
+=2D- everything else!  :-)
+-
+-Notes
+-=3D=3D=3D=3D=3D
+-
+=2D- The flash on board is divided into 3 partitions.  mtd0 is where
+-  the zImage is stored.  It's been marked as read-only to keep you
+-  from blasting over the bootloader. :)  mtd1 is
+-  for the ramdisk.gz image.  mtd2 is user flash space and can be
+-  utilized for either JFFS or if you're feeling crazy, running ext2
+-  on top of it. If you're not using the ADS bootloader, you're
+-  welcome to blast over the mtd1 partition also.
+-
+=2D- 16bpp mode requires a different cable than what ships with the board.
+-  Contact ADS or look through the manual to wire your own. Currently,
+-  if you compile with 16bit mode support and switch into a lower bpp
+-  mode, the timing is off so the image is corrupted.  This will be
+-  fixed soon.
+-
+-Any contribution can be sent to nico@fluxnic.net and will be greatly welc=
+ome!
+diff --git a/Documentation/arm/sa1100/huw_webpanel.rst b/Documentation/arm=
+/sa1100/huw_webpanel.rst
+deleted file mode 100644
+index 1dc7ccb165f0..000000000000
+=2D-- a/Documentation/arm/sa1100/huw_webpanel.rst
++++ /dev/null
+@@ -1,21 +0,0 @@
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-Hoeft & Wessel Webpanel
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+-The HUW_WEBPANEL is a product of the german company Hoeft & Wessel AG
+-
+-If you want more information, please visit
+-http://www.hoeft-wessel.de
+-
+-To build the kernel::
+-
+-	make huw_webpanel_config
+-	make oldconfig
+-	[accept all defaults]
+-	make zImage
+-
+-Mostly of the work is done by:
+-Roman Jordan         jor@hoeft-wessel.de
+-Christoph Schulz    schu@hoeft-wessel.de
+-
+-2000/12/18/
+diff --git a/Documentation/arm/sa1100/index.rst b/Documentation/arm/sa1100=
+/index.rst
+index 68c2a280a745..c9aed43280ff 100644
+=2D-- a/Documentation/arm/sa1100/index.rst
++++ b/Documentation/arm/sa1100/index.rst
+@@ -7,19 +7,7 @@ Intel StrongARM 1100
+ .. toctree::
+     :maxdepth: 1
 
-net_ratelimit: 2 callbacks suppressed
-TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
-cookies.  Check SNMP counters.
-watchdog: BUG: soft lockup - CPU#0 stuck for 122s! [swapper/0:0]
-Modules linked in:
-irq event stamp: 92022
-hardirqs last  enabled at (92021): [<ffffffff81660331>]  
-tick_nohz_idle_exit+0x181/0x2e0 kernel/time/tick-sched.c:1180
-hardirqs last disabled at (92022): [<ffffffff873d5d7d>]  
-__schedule+0x1dd/0x15b0 kernel/sched/core.c:3862
-softirqs last  enabled at (90810): [<ffffffff876006cd>]  
-__do_softirq+0x6cd/0x98c kernel/softirq.c:319
-softirqs last disabled at (90703): [<ffffffff8144fc1b>] invoke_softirq  
-kernel/softirq.c:373 [inline]
-softirqs last disabled at (90703): [<ffffffff8144fc1b>]  
-irq_exit+0x19b/0x1e0 kernel/softirq.c:413
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.3.0-rc2-next-20190729 #54
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:cpu_relax arch/x86/include/asm/processor.h:656 [inline]
-RIP: 0010:virt_spin_lock arch/x86/include/asm/qspinlock.h:84 [inline]
-RIP: 0010:native_queued_spin_lock_slowpath+0x132/0x9f0  
-kernel/locking/qspinlock.c:325
-Code: 00 00 00 48 8b 45 d0 65 48 33 04 25 28 00 00 00 0f 85 37 07 00 00 48  
-81 c4 98 00 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 f3 90 <e9> 73 ff ff ff  
-8b 45 98 4c 8d 65 d8 3d 00 01 00 00 0f 84 e5 00 00
-RSP: 0018:ffff8880ae809b48 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000000 RBX: ffff8880621cd088 RCX: ffffffff8158f117
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880621cd088
-RBP: ffff8880ae809c08 R08: 1ffff1100c439a11 R09: ffffed100c439a12
-R10: ffffed100c439a11 R11: ffff8880621cd08b R12: 0000000000000001
-R13: 0000000000000003 R14: ffffed100c439a11 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000001541e88 CR3: 0000000068089000 CR4: 00000000001406f0
-Call Trace:
-  <IRQ>
-  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:642 [inline]
-  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:50 [inline]
-  queued_spin_lock include/asm-generic/qspinlock.h:81 [inline]
-  do_raw_spin_lock+0x20e/0x2e0 kernel/locking/spinlock_debug.c:113
-  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
-  _raw_spin_lock+0x37/0x40 kernel/locking/spinlock.c:151
-  spin_lock include/linux/spinlock.h:338 [inline]
-  tcp_delack_timer+0x2b/0x2a0 net/ipv4/tcp_timer.c:318
-  call_timer_fn+0x1ac/0x780 kernel/time/timer.c:1322
-  expire_timers kernel/time/timer.c:1366 [inline]
-  __run_timers kernel/time/timer.c:1685 [inline]
-  __run_timers kernel/time/timer.c:1653 [inline]
-  run_timer_softirq+0x697/0x17a0 kernel/time/timer.c:1698
-  __do_softirq+0x262/0x98c kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x19b/0x1e0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1095
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:828
-  </IRQ>
-RIP: 0010:native_safe_halt+0xe/0x10 arch/x86/include/asm/irqflags.h:61
-Code: c8 75 6e fa eb 8a 90 90 90 90 90 90 e9 07 00 00 00 0f 00 2d c4 b2 49  
-00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d b4 b2 49 00 fb f4 <c3> 90 55 48 89  
-e5 41 57 41 56 41 55 41 54 53 e8 8e 56 21 fa e8 29
-RSP: 0018:ffffffff88c07ce8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: 1ffffffff11a5e87 RBX: ffffffff88c7a1c0 RCX: 1ffffffff134bca6
-RDX: dffffc0000000000 RSI: ffffffff81779dee RDI: ffffffff873e794c
-RBP: ffffffff88c07d18 R08: ffffffff88c7a1c0 R09: fffffbfff118f439
-R10: fffffbfff118f438 R11: ffffffff88c7a1c7 R12: dffffc0000000000
-R13: ffffffff89a5b340 R14: 0000000000000000 R15: 0000000000000000
-  arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:571
-  default_idle_call+0x84/0xb0 kernel/sched/idle.c:94
-  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
-  do_idle+0x413/0x760 kernel/sched/idle.c:263
-  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:354
-  rest_init+0x245/0x37b init/main.c:451
-  arch_call_rest_init+0xe/0x1b
-  start_kernel+0x912/0x951 init/main.c:785
-  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:472
-  x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:453
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
-Sending NMI from CPU 0 to CPUs 1:
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.339  
-msecs
-NMI backtrace for cpu 1
-CPU: 1 PID: 7447 Comm: syz-executor.5 Not tainted 5.3.0-rc2-next-20190729  
-#54
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:cpu_relax arch/x86/include/asm/processor.h:656 [inline]
-RIP: 0010:virt_spin_lock arch/x86/include/asm/qspinlock.h:84 [inline]
-RIP: 0010:native_queued_spin_lock_slowpath+0x132/0x9f0  
-kernel/locking/qspinlock.c:325
-Code: 00 00 00 48 8b 45 d0 65 48 33 04 25 28 00 00 00 0f 85 37 07 00 00 48  
-81 c4 98 00 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 f3 90 <e9> 73 ff ff ff  
-8b 45 98 4c 8d 65 d8 3d 00 01 00 00 0f 84 e5 00 00
-RSP: 0018:ffff8880ae909210 EFLAGS: 00000202
-RAX: 0000000000000000 RBX: ffff8880621cd088 RCX: ffffffff8158f117
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880621cd088
-RBP: ffff8880ae9092d0 R08: 1ffff1100c439a11 R09: ffffed100c439a12
-R10: ffffed100c439a11 R11: ffff8880621cd08b R12: 0000000000000001
-R13: 0000000000000003 R14: ffffed100c439a11 R15: 0000000000000001
-FS:  0000555557246940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32b29000 CR3: 00000000a4e3a000 CR4: 00000000001406e0
-Call Trace:
-  <IRQ>
-  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:642 [inline]
-  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:50 [inline]
-  queued_spin_lock include/asm-generic/qspinlock.h:81 [inline]
-  do_raw_spin_lock+0x20e/0x2e0 kernel/locking/spinlock_debug.c:113
-  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:136 [inline]
-  _raw_spin_lock_bh+0x3b/0x50 kernel/locking/spinlock.c:175
-  spin_lock_bh include/linux/spinlock.h:343 [inline]
-  release_sock+0x20/0x1c0 net/core/sock.c:2932
-  wait_on_pending_writer+0x20f/0x420 net/tls/tls_main.c:91
-  tls_sk_proto_cleanup+0x2c5/0x3e0 net/tls/tls_main.c:295
-  tls_sk_proto_unhash+0x90/0x3f0 net/tls/tls_main.c:330
-  tcp_set_state+0x5b9/0x7d0 net/ipv4/tcp.c:2235
-  tcp_done+0xe2/0x320 net/ipv4/tcp.c:3824
-  tcp_reset+0x132/0x500 net/ipv4/tcp_input.c:4080
-  tcp_validate_incoming+0xa2d/0x1660 net/ipv4/tcp_input.c:5440
-  tcp_rcv_established+0x6b5/0x1e70 net/ipv4/tcp_input.c:5648
-  tcp_v6_do_rcv+0x41e/0x12c0 net/ipv6/tcp_ipv6.c:1356
-  tcp_v6_rcv+0x31f1/0x3500 net/ipv6/tcp_ipv6.c:1588
-  ip6_protocol_deliver_rcu+0x2fe/0x1660 net/ipv6/ip6_input.c:397
-  ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:438
-  NF_HOOK include/linux/netfilter.h:305 [inline]
-  NF_HOOK include/linux/netfilter.h:299 [inline]
-  ip6_input+0xe4/0x3f0 net/ipv6/ip6_input.c:447
-  dst_input include/net/dst.h:442 [inline]
-  ip6_rcv_finish+0x1de/0x2f0 net/ipv6/ip6_input.c:76
-  NF_HOOK include/linux/netfilter.h:305 [inline]
-  NF_HOOK include/linux/netfilter.h:299 [inline]
-  ipv6_rcv+0x10e/0x420 net/ipv6/ip6_input.c:272
-  __netif_receive_skb_one_core+0x113/0x1a0 net/core/dev.c:4999
-  __netif_receive_skb+0x2c/0x1d0 net/core/dev.c:5113
-  process_backlog+0x206/0x750 net/core/dev.c:5924
-  napi_poll net/core/dev.c:6347 [inline]
-  net_rx_action+0x508/0x10c0 net/core/dev.c:6413
-  __do_softirq+0x262/0x98c kernel/softirq.c:292
-  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1080
-  </IRQ>
-  do_softirq.part.0+0x11a/0x170 kernel/softirq.c:337
-  do_softirq kernel/softirq.c:329 [inline]
-  __local_bh_enable_ip+0x211/0x270 kernel/softirq.c:189
-  local_bh_enable include/linux/bottom_half.h:32 [inline]
-  inet_csk_listen_stop+0x1e0/0x850 net/ipv4/inet_connection_sock.c:993
-  tcp_close+0xd5b/0x10e0 net/ipv4/tcp.c:2338
-  inet_release+0xed/0x200 net/ipv4/af_inet.c:427
-  inet6_release+0x53/0x80 net/ipv6/af_inet6.c:470
-  __sock_release+0xce/0x280 net/socket.c:590
-  sock_close+0x1e/0x30 net/socket.c:1268
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x65f/0x760 arch/x86/entry/common.c:300
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x413511
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffebfc402f0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000413511
-RDX: 0000000000000000 RSI: 000000000000183f RDI: 0000000000000004
-RBP: 0000000000000001 R08: 00000000c44ab83f R09: 00000000c44ab843
-R10: 00007ffebfc403d0 R11: 0000000000000293 R12: 000000000075c9a0
-R13: 000000000075c9a0 R14: 0000000000760750 R15: ffffffffffffffff
+-    adsbitsy
+     assabet
+-    brutus
+     cerf
+-    freebird
+-    graphicsclient
+-    graphicsmaster
+-    huw_webpanel
+-    itsy
+     lart
+-    nanoengine
+-    pangolin
+-    pleb
+     serial_uart
+-    tifon
+-    yopy
+diff --git a/Documentation/arm/sa1100/itsy.rst b/Documentation/arm/sa1100/=
+itsy.rst
+deleted file mode 100644
+index f49896ba3ef1..000000000000
+=2D-- a/Documentation/arm/sa1100/itsy.rst
++++ /dev/null
+@@ -1,47 +0,0 @@
+-=3D=3D=3D=3D
+-Itsy
+-=3D=3D=3D=3D
+-
+-Itsy is a research project done by the Western Research Lab, and Systems
+-Research Center in Palo Alto, CA. The Itsy project is one of several
+-research projects at Compaq that are related to pocket computing.
+-
+-For more information, see:
+-
+-	http://www.hpl.hp.com/downloads/crl/itsy/
+-
+-Notes on initial 2.4 Itsy support (8/27/2000) :
+-
+-The port was done on an Itsy version 1.5 machine with a daughtercard with
+-64 Meg of DRAM and 32 Meg of Flash. The initial work includes support for
+-serial console (to see what you're doing).  No other devices have been
+-enabled.
+-
+-To build, do a "make menuconfig" (or xmenuconfig) and select Itsy support=
+.
+-Disable Flash and LCD support. and then do a make zImage.
+-Finally, you will need to cd to arch/arm/boot/tools and execute a make th=
+ere
+-to build the params-itsy program used to boot the kernel.
+-
+-In order to install the port of 2.4 to the itsy, You will need to set the
+-configuration parameters in the monitor as follows::
+-
+-	Arg 1:0x08340000, Arg2: 0xC0000000, Arg3:18 (0x12), Arg4:0
+-
+-Make sure the start-routine address is set to 0x00060000.
+-
+-Next, flash the params-itsy program to 0x00060000 ("p 1 0x00060000" in th=
+e
+-flash menu)  Flash the kernel in arch/arm/boot/zImage into 0x08340000
+-("p 1 0x00340000").  Finally flash an initial ramdisk into 0xC8000000
+-("p 2 0x0")  We used ramdisk-2-30.gz from the 0.11 version directory on
+-handhelds.org.
+-
+-The serial connection we established was at:
+-
+-8-bit data, no parity, 1 stop bit(s), 115200.00 b/s. in the monitor, in t=
+he
+-params-itsy program, and in the kernel itself.  This can be changed, but
+-not easily. The monitor parameters are easily changed, the params program
+-setup is assembly outl's, and the kernel is a configuration item specific=
+ to
+-the itsy. (i.e. grep for CONFIG_SA1100_ITSY and you'll find where it is.)
+-
+-
+-This should get you a properly booting 2.4 kernel on the itsy.
+diff --git a/Documentation/arm/sa1100/nanoengine.rst b/Documentation/arm/s=
+a1100/nanoengine.rst
+deleted file mode 100644
+index 47f1a14cf98a..000000000000
+=2D-- a/Documentation/arm/sa1100/nanoengine.rst
++++ /dev/null
+@@ -1,11 +0,0 @@
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-nanoEngine
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+-"nanoEngine" is a SA1110 based single board computer from
+-Bright Star Engineering Inc.  See www.brightstareng.com/arm
+-for more info.
+-(Ref: Stuart Adams <sja@brightstareng.com>)
+-
+-Also visit Larry Doolittle's "Linux for the nanoEngine" site:
+-http://www.brightstareng.com/arm/nanoeng.htm
+diff --git a/Documentation/arm/sa1100/pangolin.rst b/Documentation/arm/sa1=
+100/pangolin.rst
+deleted file mode 100644
+index f0c5c1618553..000000000000
+=2D-- a/Documentation/arm/sa1100/pangolin.rst
++++ /dev/null
+@@ -1,29 +0,0 @@
+-=3D=3D=3D=3D=3D=3D=3D=3D
+-Pangolin
+-=3D=3D=3D=3D=3D=3D=3D=3D
+-
+-Pangolin is a StrongARM 1110-based evaluation platform produced
+-by Dialogue Technology (http://www.dialogue.com.tw/).
+-It has EISA slots for ease of configuration with SDRAM/Flash
+-memory card, USB/Serial/Audio card, Compact Flash card,
+-PCMCIA/IDE card and TFT-LCD card.
+-
+-To compile for Pangolin, you must issue the following commands::
+-
+-	make pangolin_config
+-	make oldconfig
+-	make zImage
+-
+-Supported peripherals
+-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+=2D- SA1110 serial port (UART1/UART2/UART3)
+=2D- flash memory access
+=2D- compact flash driver
+=2D- UDA1341 sound driver
+=2D- SA1100 LCD controller for 800x600 16bpp TFT-LCD
+=2D- MQ-200 driver for 800x600 16bpp TFT-LCD
+=2D- Penmount(touch panel) driver
+=2D- PCMCIA driver
+=2D- SMC91C94 LAN driver
+=2D- IDE driver (experimental)
+diff --git a/Documentation/arm/sa1100/pleb.rst b/Documentation/arm/sa1100/=
+pleb.rst
+deleted file mode 100644
+index d5b732967aa3..000000000000
+=2D-- a/Documentation/arm/sa1100/pleb.rst
++++ /dev/null
+@@ -1,13 +0,0 @@
+-=3D=3D=3D=3D
+-PLEB
+-=3D=3D=3D=3D
+-
+-The PLEB project was started as a student initiative at the School of
+-Computer Science and Engineering, University of New South Wales to make a
+-pocket computer capable of running the Linux Kernel.
+-
+-PLEB support has yet to be fully integrated.
+-
+-For more information, see:
+-
+-	http://www.cse.unsw.edu.au
+diff --git a/Documentation/arm/sa1100/tifon.rst b/Documentation/arm/sa1100=
+/tifon.rst
+deleted file mode 100644
+index c26e910b9ea7..000000000000
+=2D-- a/Documentation/arm/sa1100/tifon.rst
++++ /dev/null
+@@ -1,7 +0,0 @@
+-=3D=3D=3D=3D=3D
+-Tifon
+-=3D=3D=3D=3D=3D
+-
+-More info has to come...
+-
+-Contact: Peter Danielsson <peter.danielsson@era-t.ericsson.se>
+diff --git a/Documentation/arm/sa1100/yopy.rst b/Documentation/arm/sa1100/=
+yopy.rst
+deleted file mode 100644
+index 5b35a5f61a44..000000000000
+=2D-- a/Documentation/arm/sa1100/yopy.rst
++++ /dev/null
+@@ -1,5 +0,0 @@
+-=3D=3D=3D=3D
+-Yopy
+-=3D=3D=3D=3D
+-
+-See http://www.yopydeveloper.org for more.
+=2D-
+2.20.1
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
