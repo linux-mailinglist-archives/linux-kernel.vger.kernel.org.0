@@ -2,88 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA3585D28
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF3185D32
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 10:44:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731592AbfHHIof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 04:44:35 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:55035 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbfHHIof (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 04:44:35 -0400
-Received: from 79.184.254.29.ipv4.supernova.orange.pl (79.184.254.29) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
- id 4f9bbccdaa245767; Thu, 8 Aug 2019 10:44:32 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>
-Subject: [PATCH 2/2] intel-hid: Disable button array during suspend-to-idle
-Date:   Thu, 08 Aug 2019 10:44:25 +0200
-Message-ID: <2765892.t9mEYBIOOk@kreacher>
-In-Reply-To: <1717835.1Yz4jNODO2@kreacher>
-References: <1717835.1Yz4jNODO2@kreacher>
+        id S1731721AbfHHIou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 04:44:50 -0400
+Received: from mga17.intel.com ([192.55.52.151]:29778 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731048AbfHHIot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 04:44:49 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 01:44:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,360,1559545200"; 
+   d="scan'208";a="374781621"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Aug 2019 01:44:48 -0700
+Date:   Thu, 8 Aug 2019 16:44:25 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/mmap.c: refine data locality of find_vma_prev
+Message-ID: <20190808084425.GA32524@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20190806081123.22334-1-richardw.yang@linux.intel.com>
+ <3e57ba64-732b-d5be-1ad6-eecc731ef405@suse.cz>
+ <20190807003109.GB24750@richard>
+ <20190807075101.GN11812@dhcp22.suse.cz>
+ <20190808032638.GA28138@richard>
+ <20190808060210.GE11812@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808060210.GE11812@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Aug 08, 2019 at 08:02:10AM +0200, Michal Hocko wrote:
+>On Thu 08-08-19 11:26:38, Wei Yang wrote:
+>> On Wed, Aug 07, 2019 at 09:51:01AM +0200, Michal Hocko wrote:
+>> >On Wed 07-08-19 08:31:09, Wei Yang wrote:
+>> >> On Tue, Aug 06, 2019 at 11:29:52AM +0200, Vlastimil Babka wrote:
+>> >> >On 8/6/19 10:11 AM, Wei Yang wrote:
+>> >> >> When addr is out of the range of the whole rb_tree, pprev will points to
+>> >> >> the biggest node. find_vma_prev gets is by going through the right most
+>> >> >
+>> >> >s/biggest/last/ ? or right-most?
+>> >> >
+>> >> >> node of the tree.
+>> >> >> 
+>> >> >> Since only the last node is the one it is looking for, it is not
+>> >> >> necessary to assign pprev to those middle stage nodes. By assigning
+>> >> >> pprev to the last node directly, it tries to improve the function
+>> >> >> locality a little.
+>> >> >
+>> >> >In the end, it will always write to the cacheline of pprev. The caller has most
+>> >> >likely have it on stack, so it's already hot, and there's no other CPU stealing
+>> >> >it. So I don't understand where the improved locality comes from. The compiler
+>> >> >can also optimize the patched code so the assembly is identical to the previous
+>> >> >code, or vice versa. Did you check for differences?
+>> >> 
+>> >> Vlastimil
+>> >> 
+>> >> Thanks for your comment.
+>> >> 
+>> >> I believe you get a point. I may not use the word locality. This patch tries
+>> >> to reduce some unnecessary assignment of pprev.
+>> >> 
+>> >> Original code would assign the value on each node during iteration, this is
+>> >> what I want to reduce.
+>> >
+>> >Is there any measurable difference (on micro benchmarks or regular
+>> >workloads)?
+>> 
+>> I wrote a test case to compare these two methods, but not find visible
+>> difference in run time.
+>
+>What is the point in changing this code if it doesn't lead to any
+>measurable improvement?
 
-Notice that intel_button_array_enable() never disables the power
-button which is the only one needed to wake up the system from
-suspend-to-idle, so it can be safely called during suspend-to-idle
-as well as during "regular" system suspend, and rearrange the
-code in the driver's "suspend" and "resume" callbacks accordingly.
+You are right.
 
-While at it, use pm_suspend_no_platform() to check if the current
-suspend-resume cycle is suspend-to-idle, as that is the only
-case when the device should be enabled while suspended.
+>-- 
+>Michal Hocko
+>SUSE Labs
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/platform/x86/intel-hid.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-Index: linux-pm/drivers/platform/x86/intel-hid.c
-===================================================================
---- linux-pm.orig/drivers/platform/x86/intel-hid.c
-+++ linux-pm/drivers/platform/x86/intel-hid.c
-@@ -274,10 +274,11 @@ static void intel_hid_pm_complete(struct
- 
- static int intel_hid_pl_suspend_handler(struct device *device)
- {
--	if (pm_suspend_via_firmware()) {
-+	intel_button_array_enable(device, false);
-+
-+	if (!pm_suspend_no_platform())
- 		intel_hid_set_enable(device, false);
--		intel_button_array_enable(device, false);
--	}
-+
- 	return 0;
- }
- 
-@@ -285,10 +286,10 @@ static int intel_hid_pl_resume_handler(s
- {
- 	intel_hid_pm_complete(device);
- 
--	if (pm_resume_via_firmware()) {
-+	if (!pm_suspend_no_platform())
- 		intel_hid_set_enable(device, true);
--		intel_button_array_enable(device, true);
--	}
-+
-+	intel_button_array_enable(device, true);
- 	return 0;
- }
- 
-
-
-
+-- 
+Wei Yang
+Help you, Help me
