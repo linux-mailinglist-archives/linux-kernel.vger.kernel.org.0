@@ -2,246 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84215861B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:31:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8481C861A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 14:30:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389864AbfHHMbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 08:31:05 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:29630 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732452AbfHHMbC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 08:31:02 -0400
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x78CRnfe002129;
-        Thu, 8 Aug 2019 08:30:56 -0400
-Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2058.outbound.protection.outlook.com [104.47.45.58])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2u7wxfkv4u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Aug 2019 08:30:55 -0400
+        id S2388135AbfHHMa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 08:30:26 -0400
+Received: from mail-eopbgr30095.outbound.protection.outlook.com ([40.107.3.95]:59536
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726721AbfHHMa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 08:30:26 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZDNUIJochJztbvY8u5X2p7Zft84B5DFFq9p98fCF0xtdGTfJRbctcT/WdvWMm+7PpJu+Daz5qbiYMbGXLGauAm7AR22c5ymCE4OAfa6YGE0tSNGXE5KgzyaRttiQ+SSzHVQbVELbTYfefvWBCIuoGnAAHHawSIcJr+a5mWDt1M+Xba1PXqiC6Bc6FIF/RtscbqfcD3aXaHjXiJq6mmNFxC1PeFFLKuX/lGL/7N8P5dRTvI2QiexbbUzrmfsDoOFyNeN5gWDLcjKy+O8Ez84Edqlr+kHVmN217BtWSQG6gtijoQXFwP35j07E9CDsMLLe1io9uhJ8V4P3SRad2NlU+Q==
+ b=jJr2MONo7ASxlrVUD1YyRHVhq/fXxGSYFNdTRh6cnVY7ufkfYwR6TXi7PHmvvSObSvwcjbP2ldGA/mhi746qv0HxtFdHvHWuR8377vYmn/Tu0fORG0YVGWdhvbGKvPwJjRiFXs2mlitpbYalZ/z0pjQnOdDLaUnMuV4NOiUtojUZfhcxhZTwYrRIXs9nUUHsvfXxpyaxlKIG1MB0lMDZnu0n5TnwJ4LrQOBJL5ta9rcZKdpXzAh04w5IQUi/nXQDhd9sXWz0U+43S9InPkzE1daelam8aGWj/yq+p8gbN8vSUKgaNW9maRXzaeZ+3mKPXYfv4y3IDMgqLOjxvBqm0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mzVOdnpFSj+yyTp2i7ivfM+0PyqRHg1Pul/8BTF6W00=;
- b=RtbdA9/408ZJ8L34aK+KJ9lkOmQlAhBsyP5sd39KrGyhv7OsLa4eU5vOk/u70spKuS/vPNHadntshPSxqsTgzj/h7I+8x2GZz/ob5BCxy1zndqqcYfbqZusy+f3m7Hdxwsl7/h4vAFL6aPply9QmU787Utj7egggoI2bXi9sfyl8vRq9oPts7o7bVCPzVanMwa6+tRPBdbLI8KTb7LzAd5dNMfG24da0JKLft+l9t2wH3dPfY4h5xFAeCR9hmvEFzK3s4BRoX/Rb8Hn9gcwTd/u49UVy6PjtWakRUmZdjyrsuvbnGKjv6DRYsDZwSFgSKicUlQu3a/E7WKEG/brc2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
+ bh=1VN3VEmc5tQWsuVGObqaqaDcvC9v5YM8hDCb0atTWg4=;
+ b=bWi+mOtmGMKT4cI4YdRJwPGdlXYHRY+0oxXwTdhq7lU4e6ezoXaAMuLe8hNfxk5Na8Nb0Jf6znpduXk3PE6C/zN+IbWqhdn+eDOmqXKQRu3ERdECsSmQeDHC+zKGQXNDmf3ycD+TdEcEzOLIHnu8BdYrdgCXXWgS2r0Sg3ynW4qU4MgxBQgw/RYyeOtF8ZtlN9mY9AujxcMifo0A/8rOHJPmJhErXOIrWeqQ/BfZ9Ah5xPftkfXxMRdzEeCt6CeLrvBmqRkNnxcrep4VvlYtorMW1ZTMBnXblIYj7jO2nAD4CigAOU/ZSw3kryniaK1R1TOsYGHMWZu2smUGhNddRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
+ dkim=pass header.d=habana.ai; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mzVOdnpFSj+yyTp2i7ivfM+0PyqRHg1Pul/8BTF6W00=;
- b=vVICqg4OTWzhI3YhAOx1GKY/PPCQVvlf/86JUWfd2L5ezjVWqhKeVl4jrzYXmnF365wPMHmIm08GkwR3qa/IAnq/qJgPwAnOGexJYJp3L4y5RXPuV6mjcKwYnwk35rIFNRh/2w3R+CaLMdmxzynJI0fORWSrIsJ76Syag8Ur97o=
-Received: from DM6PR03CA0033.namprd03.prod.outlook.com (2603:10b6:5:40::46) by
- DM6PR03MB5100.namprd03.prod.outlook.com (2603:10b6:5:1e9::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.16; Thu, 8 Aug 2019 12:30:53 +0000
-Received: from CY1NAM02FT031.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::207) by DM6PR03CA0033.outlook.office365.com
- (2603:10b6:5:40::46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2157.16 via Frontend
- Transport; Thu, 8 Aug 2019 12:30:53 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- CY1NAM02FT031.mail.protection.outlook.com (10.152.75.180) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2157.15
- via Frontend Transport; Thu, 8 Aug 2019 12:30:52 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x78CUq95021261
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 8 Aug 2019 05:30:52 -0700
-Received: from saturn.ad.analog.com (10.48.65.113) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 8 Aug 2019 08:30:51 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <f.fainelli@gmail.com>,
-        <hkallweit1@gmail.com>, <andrew@lunn.ch>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2 10/15] net: phy: adin: add EEE translation layer from Clause 45 to Clause 22
-Date:   Thu, 8 Aug 2019 15:30:21 +0300
-Message-ID: <20190808123026.17382-11-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190808123026.17382-1-alexandru.ardelean@analog.com>
-References: <20190808123026.17382-1-alexandru.ardelean@analog.com>
+ bh=1VN3VEmc5tQWsuVGObqaqaDcvC9v5YM8hDCb0atTWg4=;
+ b=la6ziIdvgbQ8rl3D003EYou0d0J006kqi35eWbaloZoc2fGXvdmqyRCWzlhjz+Io0h9BrFsPfhPeJ5SJfJCRiq2hGcaalUR0Jfsljlxo9Ja+Yt6zfdVw40YuMqO7+IPM6Ok1Ppp/dY4yw6ZW7whL2dZ+xF5qqGogg6rLOwQS4Dk=
+Received: from VI1PR02MB3054.eurprd02.prod.outlook.com (10.170.235.155) by
+ VI1PR02MB3936.eurprd02.prod.outlook.com (20.177.58.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.15; Thu, 8 Aug 2019 12:30:22 +0000
+Received: from VI1PR02MB3054.eurprd02.prod.outlook.com
+ ([fe80::30b7:2c9a:9b15:f88f]) by VI1PR02MB3054.eurprd02.prod.outlook.com
+ ([fe80::30b7:2c9a:9b15:f88f%4]) with mapi id 15.20.2136.018; Thu, 8 Aug 2019
+ 12:30:22 +0000
+From:   Tomer Tayar <ttayar@habana.ai>
+To:     "oded.gabbay@gmail.com" <oded.gabbay@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] habanalabs: Handle HW_IP_INFO if device disabled or in reset
+Thread-Topic: [PATCH] habanalabs: Handle HW_IP_INFO if device disabled or in
+ reset
+Thread-Index: AQHVTeUMWSFAnG+tZE+ecGB9yO7osg==
+Date:   Thu, 8 Aug 2019 12:30:22 +0000
+Message-ID: <20190808122956.12789-1-ttayar@habana.ai>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: PR2PR09CA0018.eurprd09.prod.outlook.com
+ (2603:10a6:101:16::30) To VI1PR02MB3054.eurprd02.prod.outlook.com
+ (2603:10a6:802:17::27)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ttayar@habana.ai; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [31.154.190.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: eb6afa63-19df-4266-d066-08d71bfc2e74
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR02MB3936;
+x-ms-traffictypediagnostic: VI1PR02MB3936:
+x-microsoft-antispam-prvs: <VI1PR02MB39360D3EE67FD5D5533532E7D2D70@VI1PR02MB3936.eurprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 012349AD1C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(136003)(39840400004)(366004)(189003)(199004)(71200400001)(316002)(102836004)(5640700003)(2351001)(2906002)(3846002)(6916009)(6116002)(1361003)(53936002)(2501003)(81156014)(36756003)(476003)(6512007)(2616005)(486006)(7736002)(8936002)(81166006)(5660300002)(186003)(50226002)(66476007)(26005)(66556008)(66946007)(14444005)(64756008)(6506007)(256004)(6486002)(99286004)(86362001)(6436002)(66446008)(8676002)(66066001)(25786009)(305945005)(52116002)(386003)(14454004)(1076003)(71190400001)(4326008)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB3936;H:VI1PR02MB3054.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: habana.ai does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: y9/aHOCkGlyzambMrrib6cVArJKtf7LuO3dKWUy3iDVJiOydO9A1qbyEpmwgpaX46eK5GKyOrkOEmlqHJR4U7mCEsTU6dswMDGiy3VjE5hgK7UYVfhXBNUS/6n5HPqbWmA4DlSr+oe8wvNAaOJ48RiZq8+T8YtWXdmvbUO1jb2wbHy771/+p/E45ivIQFQJRY14Gad/ClE/59/jSKR8cRw+FrcBnZOvwLQY+54VQjcF5Y2X1iU5oQoyhpEC4X7sHOo71UNaSoU1D86+C7HMfqrg6UK2DfVNgemq5DdHRBP9IdtsA0jat4v7qb2LpcUU95oSjhVQWPlPv4IEQZEEMy0MHI6qqtos9uYZgvMUDPq+/y6kg6j7cNBqp9pdrTJnTHnQRB8TJ2H65+CotQ5z8bWwMYbEd6xaWOKdo4dG5TLM=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(396003)(346002)(2980300002)(199004)(189003)(336012)(14444005)(426003)(44832011)(486006)(186003)(446003)(126002)(476003)(26005)(2616005)(11346002)(50466002)(36756003)(50226002)(2870700001)(1076003)(478600001)(5660300002)(8936002)(2906002)(6666004)(70206006)(356004)(70586007)(48376002)(7636002)(107886003)(76176011)(316002)(51416003)(7696005)(4326008)(110136005)(246002)(47776003)(86362001)(54906003)(8676002)(2201001)(106002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR03MB5100;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8ad59d7e-5bdc-4c41-427a-08d71bfc4127
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(4709080)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:DM6PR03MB5100;
-X-MS-TrafficTypeDiagnostic: DM6PR03MB5100:
-X-Microsoft-Antispam-PRVS: <DM6PR03MB51000F0B746F9D55C3567D82F9D70@DM6PR03MB5100.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-Forefront-PRVS: 012349AD1C
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 49dRt+iyqi0RaEe1QbgmKY6GZatIgI0dDaWlnUylH2zOok7yqZFoBYwKV9uAnsf2Urhv03hH5f+D+sbh0xrRl/4E1jmNNahaUaRHKiNhec/W5uAziLPkjb5iFZLwfWTi9sl20SAZzONjZ55gXxs+9X3Lkv/647QpOHOip8hH2z/o2V3D61btlNuoW+dhFjNiC/SLY+lkrCI3S1t12OKoC8rXKJU+fgTgjaJkOyRn7Ci2kdL3cydApeN8vujxEm4z6kriIsGe+QwTOwC7JdcUH6s8s0Tb1X1v8mMyUUulDGSFYHZu19DL8WDYeJoHfGivLvyYylrpdojfryqaZcok2w5rAaPBdITmgRKEWUkQf69dprNnU3DH8NCr9UZb49r4u03qXMGrSzymLKoBW1ZP5hOOtXl6jG0BUeRQ+owDaLA=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2019 12:30:52.9600
+X-OriginatorOrg: habana.ai
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb6afa63-19df-4266-d066-08d71bfc2e74
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2019 12:30:22.3329
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad59d7e-5bdc-4c41-427a-08d71bfc4127
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB5100
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-08_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=910 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908080130
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ttayar@habana.ai
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB3936
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ADIN1200 & ADIN1300 PHYs support EEE by using standard Clause 45 access
-to access MMD registers for EEE.
+The HW IP information is relevant even if the device is disabled or in
+reset, so always handle the corresponding INFO IOCTL opcode.
 
-The EEE register addresses (when using Clause 22) are available at
-different addresses (than Clause 45), and since accessing these regs (via
-Clause 22) needs a special mechanism, a translation table is required to
-convert these addresses.
-
-For Clause 45, this is not needed; the addresses are available as specified
-by IEEE.
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Tomer Tayar <ttayar@habana.ai>
 ---
- drivers/net/phy/adin.c | 69 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 2 deletions(-)
+ drivers/misc/habanalabs/habanalabs_ioctl.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/phy/adin.c b/drivers/net/phy/adin.c
-index 69ef53bbecc3..c1cea1b6bd75 100644
---- a/drivers/net/phy/adin.c
-+++ b/drivers/net/phy/adin.c
-@@ -42,6 +42,17 @@
- #define ADIN1300_PHY_STATUS1			0x001a
- #define   ADIN1300_PAIR_01_SWAP			BIT(11)
- 
-+/* EEE register addresses, accessible via Clause 22 access using
-+ * ADIN1300_MII_EXT_REG_PTR & ADIN1300_MII_EXT_REG_DATA.
-+ * The bit-fields are the same as specified by IEEE, and can be
-+ * accessed via standard Clause 45 access.
-+ */
-+#define ADIN1300_EEE_CAP_REG			0x8000
-+#define ADIN1300_EEE_ADV_REG			0x8001
-+#define ADIN1300_EEE_LPABLE_REG			0x8002
-+#define ADIN1300_CLOCK_STOP_REG			0x9400
-+#define ADIN1300_LPI_WAKE_ERR_CNT_REG		0xa000
+diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/haba=
+nalabs/habanalabs_ioctl.c
+index 3ce65459b01c..589324ac19d0 100644
+--- a/drivers/misc/habanalabs/habanalabs_ioctl.c
++++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
+@@ -204,10 +204,21 @@ static int _hl_info_ioctl(struct hl_fpriv *hpriv, voi=
+d *data,
+ 	struct hl_device *hdev =3D hpriv->hdev;
+ 	int rc;
+=20
+-	/* We want to return device status even if it disabled or in reset */
+-	if (args->op =3D=3D HL_INFO_DEVICE_STATUS)
++	/*
++	 * Information is returned for the following opcodes even if the device
++	 * is disabled or in reset.
++	 */
++	switch (args->op) {
++	case HL_INFO_HW_IP_INFO:
++		return hw_ip_info(hdev, args);
 +
- #define ADIN1300_GE_RGMII_CFG_REG		0xff23
- #define   ADIN1300_GE_RGMII_RX_MSK		GENMASK(8, 6)
- #define   ADIN1300_GE_RGMII_RX_SEL(x)		\
-@@ -103,6 +114,26 @@ static const struct adin_cfg_reg_map adin_rmii_fifo_depths[] = {
- 	{ },
- };
- 
-+/**
-+ * struct adin_clause45_mmd_map - map to convert Clause 45 regs to Clause 22
-+ * @devad		device address used in Clause 45 access
-+ * @cl45_regnum		register address defined by Clause 45
-+ * @adin_regnum		equivalent register address accessible via Clause 22
-+ */
-+struct adin_clause45_mmd_map {
-+	int devad;
-+	u16 cl45_regnum;
-+	u16 adin_regnum;
-+};
-+
-+static struct adin_clause45_mmd_map adin_clause45_mmd_map[] = {
-+	{ MDIO_MMD_PCS,	MDIO_PCS_EEE_ABLE,	ADIN1300_EEE_CAP_REG },
-+	{ MDIO_MMD_AN,	MDIO_AN_EEE_LPABLE,	ADIN1300_EEE_LPABLE_REG },
-+	{ MDIO_MMD_AN,	MDIO_AN_EEE_ADV,	ADIN1300_EEE_ADV_REG },
-+	{ MDIO_MMD_PCS,	MDIO_CTRL1,		ADIN1300_CLOCK_STOP_REG },
-+	{ MDIO_MMD_PCS, MDIO_PCS_EEE_WK_ERR,	ADIN1300_LPI_WAKE_ERR_CNT_REG },
-+};
-+
- static int adin_lookup_reg_value(const struct adin_cfg_reg_map *tbl, int cfg)
- {
- 	size_t i;
-@@ -253,10 +284,33 @@ static int adin_phy_config_intr(struct phy_device *phydev)
- 			      ADIN1300_INT_MASK_EN);
- }
- 
-+static int adin_cl45_to_adin_reg(struct phy_device *phydev, int devad,
-+				 u16 cl45_regnum)
-+{
-+	struct adin_clause45_mmd_map *m;
-+	int i;
-+
-+	if (devad == MDIO_MMD_VEND1)
-+		return cl45_regnum;
-+
-+	for (i = 0; i < ARRAY_SIZE(adin_clause45_mmd_map); i++) {
-+		m = &adin_clause45_mmd_map[i];
-+		if (m->devad == devad && m->cl45_regnum == cl45_regnum)
-+			return m->adin_regnum;
++	case HL_INFO_DEVICE_STATUS:
+ 		return device_status_info(hdev, args);
+=20
++	default:
++		break;
 +	}
 +
-+	phydev_err(phydev,
-+		   "No translation available for devad: %d reg: %04x\n",
-+		   devad, cl45_regnum);
-+
-+	return -EINVAL;
-+}
-+
- static int adin_read_mmd(struct phy_device *phydev, int devad, u16 regnum)
- {
- 	struct mii_bus *bus = phydev->mdio.bus;
- 	int phy_addr = phydev->mdio.addr;
-+	int adin_regnum;
- 	int err;
- 
- 	if (phydev->is_c45) {
-@@ -265,7 +319,12 @@ static int adin_read_mmd(struct phy_device *phydev, int devad, u16 regnum)
- 		return __mdiobus_read(bus, phy_addr, addr);
+ 	if (hl_device_disabled_or_in_reset(hdev)) {
+ 		dev_warn_ratelimited(dev,
+ 			"Device is %s. Can't execute INFO IOCTL\n",
+@@ -216,10 +227,6 @@ static int _hl_info_ioctl(struct hl_fpriv *hpriv, void=
+ *data,
  	}
- 
--	err = __mdiobus_write(bus, phy_addr, ADIN1300_MII_EXT_REG_PTR, regnum);
-+	adin_regnum = adin_cl45_to_adin_reg(phydev, devad, regnum);
-+	if (adin_regnum < 0)
-+		return adin_regnum;
-+
-+	err = __mdiobus_write(bus, phy_addr, ADIN1300_MII_EXT_REG_PTR,
-+			      adin_regnum);
- 	if (err)
- 		return err;
- 
-@@ -277,6 +336,7 @@ static int adin_write_mmd(struct phy_device *phydev, int devad, u16 regnum,
- {
- 	struct mii_bus *bus = phydev->mdio.bus;
- 	int phy_addr = phydev->mdio.addr;
-+	int adin_regnum;
- 	int err;
- 
- 	if (phydev->is_c45) {
-@@ -285,7 +345,12 @@ static int adin_write_mmd(struct phy_device *phydev, int devad, u16 regnum,
- 		return __mdiobus_write(bus, phy_addr, addr, val);
- 	}
- 
--	err = __mdiobus_write(bus, phy_addr, ADIN1300_MII_EXT_REG_PTR, regnum);
-+	adin_regnum = adin_cl45_to_adin_reg(phydev, devad, regnum);
-+	if (adin_regnum < 0)
-+		return adin_regnum;
-+
-+	err = __mdiobus_write(bus, phy_addr, ADIN1300_MII_EXT_REG_PTR,
-+			      adin_regnum);
- 	if (err)
- 		return err;
- 
--- 
-2.20.1
+=20
+ 	switch (args->op) {
+-	case HL_INFO_HW_IP_INFO:
+-		rc =3D hw_ip_info(hdev, args);
+-		break;
+-
+ 	case HL_INFO_HW_EVENTS:
+ 		rc =3D hw_events_info(hdev, args);
+ 		break;
+--=20
+2.17.1
 
