@@ -2,394 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09EDE86C6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7E7386C86
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 23:36:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390456AbfHHVaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 17:30:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11634 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390446AbfHHVaV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 17:30:21 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x78LOgZ6032704
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Aug 2019 17:30:18 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u8rep7ruu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 17:30:18 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 8 Aug 2019 22:30:17 +0100
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Aug 2019 22:30:12 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x78LUBH047382834
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 8 Aug 2019 21:30:11 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 57E11B205F;
-        Thu,  8 Aug 2019 21:30:11 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2A290B2066;
-        Thu,  8 Aug 2019 21:30:11 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Aug 2019 21:30:11 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 94AD416C9A2E; Thu,  8 Aug 2019 14:30:12 -0700 (PDT)
-Date:   Thu, 8 Aug 2019 14:30:12 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH RFC tip/core/rcu 14/14] rcu/nohz: Make multi_cpu_stop()
- enable tick on all online CPUs
-Reply-To: paulmck@linux.ibm.com
-References: <20190804144317.GF2349@hirez.programming.kicks-ass.net>
- <20190804144835.GB2386@hirez.programming.kicks-ass.net>
- <20190804184159.GC28441@linux.ibm.com>
- <20190805080531.GH2349@hirez.programming.kicks-ass.net>
- <20190805145448.GI28441@linux.ibm.com>
- <20190805155024.GK2332@hirez.programming.kicks-ass.net>
- <20190805174800.GK28441@linux.ibm.com>
- <20190806180824.GA28448@linux.ibm.com>
- <20190807214131.GA15124@linux.ibm.com>
- <20190808203541.GA8160@linux.ibm.com>
+        id S2390430AbfHHVgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 17:36:10 -0400
+Received: from mail-eopbgr800071.outbound.protection.outlook.com ([40.107.80.71]:38930
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728020AbfHHVgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 17:36:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KDZ7xeXpHbzk4m1OkbaP5yy7/V68iomA7LRQqFiMvluLsDvm9k5kCZGM65KLr4wJbyJYYlVWbmZim6RLyf/BHDLA+L49oXHseoYCqObk/hVzztToSZ+MemjHUga/k/n6osy2YD46PhxnEycIfC0/edibcZOlUHw3zk/h01fsCVWwoIU46SMQgHDyI9W1i/R/Rub9D4wG31ccmCN9VAX0iCCCK05NHekCLYoW39KKNouzlzYCZMJZ1f0ADN0l+ZW2MeC+jC97gMfn7swL3qObxHkfQeJob/sUF2zcaXnZjC35+JWz5Oo8s6fBX0fp5/lpjSpeCjtBBDSJ7jggSHYufg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hth4/bXrbJtN96CWl7AakSMiSQUugVLM/K6G6n+LMfI=;
+ b=ezdGeSh00MLMpLW6LOi2v8OpS3Rfx4/Js6G1Rx2JGD7NEoKA2xLvWolI0xpYvTP2V+ae5aL+4tNf3YtkRP3/KgythhwXjRMz43wsWOrjTLClK7LvlIV5rZ+EooKIFjnG/fOPMhp/8gqV8df9JYuxhd5rgATsciYPGjWTAQpJGTKXVXWpsz+6H6OCSDjQdVJYHbo5kfBllka6+GUFo0B+ta7mmeRm+g+RxA34p1ZWsXcJ9woSQPFwDF4qAhTvWFIHZrLJrOttmSzJuhChKhPkS/ZQ5nItB6rWMy/K+DzpzZpK9Rc9+IV+Q9iRbJHuMEX41GpaCVx7Gq8gLXNukPXfDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hth4/bXrbJtN96CWl7AakSMiSQUugVLM/K6G6n+LMfI=;
+ b=Hp25j02bVXWspEDTZHZTM4zpnNh26d2v/F5t0Bq8/0fRBxINudhRMkDjHj2esZsJEWK5AY78yHKebUV+JzK8cph2jgAAQCToEhXeiKAtMkEmkSoL+6DQdIq40gSfcDVpH6bVtFWzlidcCRI+FkrRKF5VR7MZX38mMhMtTC/Lo6A=
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.104.150) by
+ DM6PR12MB4025.namprd12.prod.outlook.com (10.255.175.90) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.18; Thu, 8 Aug 2019 21:36:05 +0000
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::9c3d:8593:906c:e4f7]) by DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::9c3d:8593:906c:e4f7%6]) with mapi id 15.20.2157.015; Thu, 8 Aug 2019
+ 21:36:05 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Daniel Drake <drake@endlessm.com>,
+        "x86@kernel.org" <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Endless Linux Upstreaming Team <linux@endlessm.com>
+Subject: Re: setup_boot_APIC_clock() NULL dereference during early boot on
+ reduced hardware platforms
+Thread-Topic: setup_boot_APIC_clock() NULL dereference during early boot on
+ reduced hardware platforms
+Thread-Index: AQHVSDHageyJLuj1e02we0A4NQI8qKbl4bwAgAAFR4CAAAXXgIAABMSAgAACPYCAAB85AIAAXHyAgAtSC4CAAAbxAIAAAgoAgAAHhAA=
+Date:   Thu, 8 Aug 2019 21:36:05 +0000
+Message-ID: <75e59ac6-5165-bd0a-aec9-be16d662ece9@amd.com>
+References: <CAD8Lp448i7jOk9C5NJtC2wHMaGuRLD4pxVqK17YqRCuMVXhsOA@mail.gmail.com>
+ <CAERHkruxfBc8DqNUr=fbYuQWrXrHC7cK6HnVR3xp0iLA9QtxiQ@mail.gmail.com>
+ <alpine.DEB.2.21.1908010931550.1788@nanos.tec.linutronix.de>
+ <CAERHkrtaVAQHDU1cj2_GLL59LPjp7E=3X0Zna0spfFB=Ve5__w@mail.gmail.com>
+ <alpine.DEB.2.21.1908011011250.1788@nanos.tec.linutronix.de>
+ <81666b28-d029-56c3-8978-90abc219d1b7@linux.intel.com>
+ <alpine.DEB.2.21.1908011054210.1965@nanos.tec.linutronix.de>
+ <3d14b0cc-3cca-1874-3521-4ee2ec52141d@amd.com>
+ <alpine.DEB.2.21.1908082235590.2882@nanos.tec.linutronix.de>
+ <5bf28ba4-b7c1-51de-88ae-feebae2a28db@amd.com>
+ <alpine.DEB.2.21.1908082306220.2882@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1908082306220.2882@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR0102CA0023.prod.exchangelabs.com (2603:10b6:805:1::36)
+ To DM6PR12MB3163.namprd12.prod.outlook.com (2603:10b6:5:182::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.159.242]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: dd10c2a9-33d7-4a2d-c131-08d71c486ad4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB4025;
+x-ms-traffictypediagnostic: DM6PR12MB4025:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <DM6PR12MB4025DB5AB087E86DE8D7D719ECD70@DM6PR12MB4025.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 012349AD1C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(376002)(366004)(346002)(396003)(199004)(189003)(6116002)(4326008)(3846002)(86362001)(31696002)(66066001)(478600001)(8936002)(966005)(71200400001)(256004)(99286004)(71190400001)(14444005)(6512007)(6306002)(14454004)(316002)(8676002)(25786009)(6436002)(26005)(7736002)(6506007)(53546011)(102836004)(76176011)(52116002)(6486002)(6246003)(2906002)(305945005)(53936002)(229853002)(54906003)(31686004)(64756008)(66476007)(5660300002)(66556008)(66946007)(36756003)(386003)(446003)(6916009)(2616005)(81166006)(81156014)(476003)(66446008)(486006)(11346002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB4025;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: fkJa0LZvE3RuksN4GAgX06Yn970xSvMdpQWj8JI00tYrJsxrqoXEYhxTULDECVnw0RBlzjCpLv4BhsWmJJG5Ohj3vmRe9yOg8kyzzb41Oqxj8PUouY48dQk1w9L+NZXWqgyS9wc94h3t1CgPPAHOtDvUcwEkIFdja4y0qR/TNJ7+kgoR3SQTpmDjbuPBzZUn3pP4HyHkUpBSh8yL3qNKX4aViENbDeBWg2hPRXBjE7Pkjdl6b7vYeeuTlJZnk90nOXbtnoMTXj+W//hfSXQn47Ng5Y1WKdb2/S6GNf/54BVm4LEQjT43B89zzN7r5tjQ93TvFXEGZKQSyRzg0I/50ZlugjSQPVT5zE8p6GLqpNgG8EmolRMn6Svm9G9Zw1B/aeXFDzhywP6PRGKjfbUxMryL4vBwVpOeGRzqX1S9z20=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6A05770B0DEE144D9BAECE023D08AD27@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808203541.GA8160@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19080821-0060-0000-0000-0000036B2416
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011571; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01244014; UDB=6.00656291; IPR=6.01025493;
- MB=3.00028097; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-08 21:30:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080821-0061-0000-0000-00004A7AC423
-Message-Id: <20190808213012.GA28773@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908080188
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd10c2a9-33d7-4a2d-c131-08d71c486ad4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2019 21:36:05.5193
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: I4aXRo+WbHJHPt6axunx0pHJP0vNrZVhYmR4atrsX4cfKoTrG5iwdKW2trvnZ2I4clyejS1vgneWb2yS3xIxbg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4025
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 01:35:41PM -0700, Paul E. McKenney wrote:
-> On Wed, Aug 07, 2019 at 02:41:31PM -0700, Paul E. McKenney wrote:
-> > On Tue, Aug 06, 2019 at 11:08:24AM -0700, Paul E. McKenney wrote:
-> > > On Mon, Aug 05, 2019 at 10:48:00AM -0700, Paul E. McKenney wrote:
-> > > > On Mon, Aug 05, 2019 at 05:50:24PM +0200, Peter Zijlstra wrote:
-> > > > > On Mon, Aug 05, 2019 at 07:54:48AM -0700, Paul E. McKenney wrote:
-> > > > > 
-> > > > > > > Right; so clearly we're not understanding what's happening. That seems
-> > > > > > > like a requirement for actually doing a patch.
-> > > > > > 
-> > > > > > Almost but not quite.  It is a requirement for a patch *that* *is*
-> > > > > > *supposed* *to* *be* *a* *fix*.  If you are trying to prohibit me from
-> > > > > > writing experimental patches, please feel free to take a long walk on
-> > > > > > a short pier.
-> > > > > > 
-> > > > > > Understood???
-> > > > > 
-> > > > > Ah, my bad, I thought you were actually proposing this as an actual
-> > > > > patch. I now see that is my bad, I'd overlooked the RFC part.
-> > > > 
-> > > > No problem!
-> > > > 
-> > > > And of course adding tracing decreases the frequency and duration of
-> > > > the multi_cpu_stop().  Re-running with shorter-duration triggering.  ;-)
-> > > 
-> > > And I did eventually get a good trace.  If I am interpreting this trace
-> > > correctly, the torture_-135 task didn't get around to attempting to wake
-> > > up all of the CPUs.  I will try again, but this time with the sched_switch
-> > > trace event enabled.
-> > > 
-> > > As a side note, enabling ftrace from the command line seems to interact
-> > > badly with turning tracing off and on in the kernel, so I eventually
-> > > resorted to trace_printk() in the functions of interest.  The trace
-> > > output is below, followed by the current diagnostic patch.  Please note
-> > > that I am -not- using the desperation hammer-the-scheduler patches.
-> > > 
-> > > More as I learn more!
-> > 
-> > And of course I forgot to dump out the online CPUs, so I really had no
-> > idea whether or not all the CPUs were accounted for.  I added tracing
-> > to dump out the online CPUs at the beginning of __stop_cpus() and then
-> > reworked it a few times to get the problem to happen in reasonable time.
-> > Please see below for the resulting annotated trace.
-> > 
-> > I was primed to expect a lost IPI, perhaps due to yet another qemu bug,
-> > but all the migration threads are running within about 2 milliseconds.
-> > It is then almost two minutes(!) until the next trace message.
-> > 
-> > Looks like time to (very carefully!) instrument multi_cpu_stop().
-> > 
-> > Of course, if you have any ideas, please do not keep them a secret!
-> 
-> Functionally, multi_cpu_stop() is working fine, according to the trace
-> below (search for a line beginning with TAB).  But somehow CPU 2 took
-> almost three -minutes- to do one iteration of the loop.  The prime suspect
-> in that loop is cpu_relax() due to the hypervisor having an opportunity
-> to do something at that point.  The commentary below (again, search for
-> a line beginning with TAB) gives my analysis.
-> 
-> Of course, if I am correct, it should be possible to catch cpu_relax()
-> in the act.  That is the next step, give or take the Heisenbuggy nature
-> of this beast.
-> 
-> Another thing for me to try is to run longer with !NO_HZ_FULL, just in
-> case the earlier runs just got lucky.
-> 
-> Thoughts?
-
-And it really can happen:
-
-[ 1881.467922] migratio-33      4...1 1879530317us : stop_machine_yield: cpu_relax() took 756140 ms
-
-The previous timestamp was 1123391100us, so the cpu_relax() is almost
-exactly the full delay.
-
-But another instance stalled for many minutes without a ten-second
-cpu_relax().  So it is not just cpu_relax() causing trouble.  I could
-rationalize that vCPU preemption being at fault...
-
-And my diagnostic patch is below, just in case I am doing something
-stupid with that.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index ce00b442ced0..1a50ed258ef0 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3569,6 +3569,7 @@ void __init rcu_init(void)
- 	rcu_par_gp_wq = alloc_workqueue("rcu_par_gp", WQ_MEM_RECLAIM, 0);
- 	WARN_ON(!rcu_par_gp_wq);
- 	srcu_init();
-+	tracing_off();
- }
- 
- #include "tree_stall.h"
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 0b22e55cebe8..a5a879a49051 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -479,6 +479,7 @@ void wake_up_q(struct wake_q_head *head)
- {
- 	struct wake_q_node *node = head->first;
- 
-+	trace_printk("entered\n");
- 	while (node != WAKE_Q_TAIL) {
- 		struct task_struct *task;
- 
-@@ -509,6 +510,7 @@ void resched_curr(struct rq *rq)
- 	struct task_struct *curr = rq->curr;
- 	int cpu;
- 
-+	trace_printk("entered\n");
- 	lockdep_assert_held(&rq->lock);
- 
- 	if (test_tsk_need_resched(curr))
-@@ -1197,6 +1199,7 @@ static inline void dequeue_task(struct rq *rq, struct task_struct *p, int flags)
- 
- void activate_task(struct rq *rq, struct task_struct *p, int flags)
- {
-+	trace_printk("entered\n");
- 	if (task_contributes_to_load(p))
- 		rq->nr_uninterruptible--;
- 
-@@ -1298,6 +1301,7 @@ void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
- {
- 	const struct sched_class *class;
- 
-+	trace_printk("entered\n");
- 	if (p->sched_class == rq->curr->sched_class) {
- 		rq->curr->sched_class->check_preempt_curr(rq, p, flags);
- 	} else {
-@@ -2097,6 +2101,7 @@ ttwu_stat(struct task_struct *p, int cpu, int wake_flags)
- static void ttwu_do_wakeup(struct rq *rq, struct task_struct *p, int wake_flags,
- 			   struct rq_flags *rf)
- {
-+	trace_printk("entered\n");
- 	check_preempt_curr(rq, p, wake_flags);
- 	p->state = TASK_RUNNING;
- 	trace_sched_wakeup(p);
-@@ -2132,6 +2137,7 @@ ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
- {
- 	int en_flags = ENQUEUE_WAKEUP | ENQUEUE_NOCLOCK;
- 
-+	trace_printk("entered\n");
- 	lockdep_assert_held(&rq->lock);
- 
- #ifdef CONFIG_SMP
-@@ -2178,9 +2184,11 @@ void sched_ttwu_pending(void)
- 	struct task_struct *p, *t;
- 	struct rq_flags rf;
- 
-+	trace_printk("entered\n");
- 	if (!llist)
- 		return;
- 
-+	trace_printk("non-NULL llist\n");
- 	rq_lock_irqsave(rq, &rf);
- 	update_rq_clock(rq);
- 
-@@ -2192,6 +2200,7 @@ void sched_ttwu_pending(void)
- 
- void scheduler_ipi(void)
- {
-+	trace_printk("entered\n");
- 	/*
- 	 * Fold TIF_NEED_RESCHED into the preempt_count; anybody setting
- 	 * TIF_NEED_RESCHED remotely (for the first time) will also send
-@@ -2232,6 +2241,7 @@ static void ttwu_queue_remote(struct task_struct *p, int cpu, int wake_flags)
- {
- 	struct rq *rq = cpu_rq(cpu);
- 
-+	trace_printk("%s entered, CPU %d\n", __func__, cpu);
- 	p->sched_remote_wakeup = !!(wake_flags & WF_MIGRATED);
- 
- 	if (llist_add(&p->wake_entry, &cpu_rq(cpu)->wake_list)) {
-@@ -2277,6 +2287,7 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
- 	struct rq *rq = cpu_rq(cpu);
- 	struct rq_flags rf;
- 
-+	trace_printk("%s entered\n", __func__);
- #if defined(CONFIG_SMP)
- 	if (sched_feat(TTWU_QUEUE) && !cpus_share_cache(smp_processor_id(), cpu)) {
- 		sched_clock_cpu(cpu); /* Sync clocks across CPUs */
-@@ -2399,6 +2410,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
- 	unsigned long flags;
- 	int cpu, success = 0;
- 
-+	trace_printk("entered\n");
- 	preempt_disable();
- 	if (p == current) {
- 		/*
-@@ -2545,6 +2557,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
-  */
- int wake_up_process(struct task_struct *p)
- {
-+	trace_printk("entered\n");
- 	return try_to_wake_up(p, TASK_NORMAL, 0);
- }
- EXPORT_SYMBOL(wake_up_process);
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index 5c2b2f90fae1..a07f77b9c1f2 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -21,6 +21,7 @@
- #include <linux/atomic.h>
- #include <linux/nmi.h>
- #include <linux/sched/wake_q.h>
-+#include <linux/sched/clock.h>
- 
- /*
-  * Structure to determine completion condition and record errors.  May
-@@ -80,6 +81,7 @@ static bool cpu_stop_queue_work(unsigned int cpu, struct cpu_stop_work *work)
- 	unsigned long flags;
- 	bool enabled;
- 
-+	trace_printk("entered for CPU %u\n", cpu);
- 	preempt_disable();
- 	raw_spin_lock_irqsave(&stopper->lock, flags);
- 	enabled = stopper->enabled;
-@@ -167,7 +169,7 @@ static void set_state(struct multi_stop_data *msdata,
- 	/* Reset ack counter. */
- 	atomic_set(&msdata->thread_ack, msdata->num_threads);
- 	smp_wmb();
--	msdata->state = newstate;
-+	WRITE_ONCE(msdata->state, newstate);
- }
- 
- /* Last one to ack a state moves to the next state. */
-@@ -179,7 +181,15 @@ static void ack_state(struct multi_stop_data *msdata)
- 
- void __weak stop_machine_yield(const struct cpumask *cpumask)
- {
-+	u64 starttime = local_clock();
-+	u64 endtime;
-+	const u64 delta = 100ULL * 1000ULL * 1000ULL * 1000ULL;
-+
- 	cpu_relax();
-+	endtime = local_clock();
-+	if (time_after64(endtime, starttime + delta))
-+		trace_printk("cpu_relax() took %llu ms\n",
-+			     (endtime - starttime) / (1000ULL * 1000ULL));
- }
- 
- /* This is the cpu_stop function which stops the CPU. */
-@@ -210,8 +220,9 @@ static int multi_cpu_stop(void *data)
- 	do {
- 		/* Chill out and ensure we re-read multi_stop_state. */
- 		stop_machine_yield(cpumask);
--		if (msdata->state != curstate) {
--			curstate = msdata->state;
-+		if (READ_ONCE(msdata->state) != curstate) {
-+			curstate = READ_ONCE(msdata->state);
-+			trace_printk("curstate = %d, ack = %d\n", curstate, atomic_read(&msdata->thread_ack));
- 			switch (curstate) {
- 			case MULTI_STOP_DISABLE_IRQ:
- 				local_irq_disable();
-@@ -382,6 +393,7 @@ static bool queue_stop_cpus_work(const struct cpumask *cpumask,
- 	 * preempted by a stopper which might wait for other stoppers
- 	 * to enter @fn which can lead to deadlock.
- 	 */
-+	trace_printk("entered\n");
- 	preempt_disable();
- 	stop_cpus_in_progress = true;
- 	for_each_cpu(cpu, cpumask) {
-@@ -402,11 +414,18 @@ static int __stop_cpus(const struct cpumask *cpumask,
- 		       cpu_stop_fn_t fn, void *arg)
- {
- 	struct cpu_stop_done done;
-+	unsigned long j = jiffies;
- 
-+	tracing_on();
-+	trace_printk("entered\n");
-+	trace_printk("CPUs %*pbl online\n", cpumask_pr_args(cpu_online_mask));
- 	cpu_stop_init_done(&done, cpumask_weight(cpumask));
- 	if (!queue_stop_cpus_work(cpumask, fn, arg, &done))
- 		return -ENOENT;
- 	wait_for_completion(&done.completion);
-+	tracing_off();
-+	if (time_after(jiffies, j + HZ * 20))
-+		ftrace_dump(DUMP_ALL);
- 	return done.ret;
- }
- 
-@@ -442,6 +461,7 @@ int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg)
- {
- 	int ret;
- 
-+	trace_printk("entered\n");
- 	/* static works are used, process one request at a time */
- 	mutex_lock(&stop_cpus_mutex);
- 	ret = __stop_cpus(cpumask, fn, arg);
-@@ -599,6 +619,7 @@ int stop_machine_cpuslocked(cpu_stop_fn_t fn, void *data,
- 		.active_cpus = cpus,
- 	};
- 
-+	trace_printk("entered\n");
- 	lockdep_assert_cpus_held();
- 
- 	if (!stop_machine_initialized) {
-
+SGkgVGhvbWFzLA0KDQpPbiA4LzgvMTkgNDowOCBQTSwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0K
+PiBUb20sDQo+IA0KPiBPbiBUaHUsIDggQXVnIDIwMTksIExlbmRhY2t5LCBUaG9tYXMgd3JvdGU6
+DQo+PiBPbiA4LzgvMTkgMzozNiBQTSwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPj4+IE9uIFRo
+dSwgMSBBdWcgMjAxOSwgTGVuZGFja3ksIFRob21hcyB3cm90ZToNCj4+Pj4gT24gOC8xLzE5IDU6
+MTMgQU0sIFRob21hcyBHbGVpeG5lciB3cm90ZToNCj4+Pj4+ICAgICAyLjEuOSBUaW1lcnMNCj4+
+Pj4+DQo+Pj4+PiAgICAgIEVhY2ggY29yZSBpbmNsdWRlcyB0aGUgZm9sbG93aW5nIHRpbWVycy4g
+VGhlc2UgdGltZXJzIGRvIG5vdCB2YXJ5IGluDQo+Pj4+PiAgICAgIGZyZXF1ZW5jeSByZWdhcmRs
+ZXNzIG9mIHRoZSBjdXJyZW50IFAtc3RhdGUgb3IgQy1zdGF0ZS4NCj4+Pj4+DQo+Pj4+PiAgICAg
+ICogQ29yZTo6WDg2OjpNc3I6OlRTQzsgdGhlIFRTQyBpbmNyZW1lbnRzIGF0IHRoZSByYXRlIHNw
+ZWNpZmllZCBieSB0aGUNCj4+Pj4+ICAgICAgICBQMCBQc3RhdGUuIFNlZSBDb3JlOjpYODY6Ok1z
+cjo6UFN0YXRlRGVmLg0KPj4+Pj4NCj4+Pj4+ICAgICAgKiBUaGUgQVBJQyB0aW1lciAoQ29yZTo6
+WDg2OjpBcGljOjpUaW1lckluaXRpYWxDb3VudCBhbmQNCj4+Pj4+ICAgICAgICBDb3JlOjpYODY6
+OkFwaWM6OlRpbWVyQ3VycmVudENvdW50KSwgd2hpY2ggaW5jcmVtZW50cyBhdCB0aGUgcmF0ZSBv
+Zg0KPj4+Pj4gICAgICAgIDJ4Q0xLSU47IHRoZSBBUElDIHRpbWVyIG1heSBpbmNyZW1lbnQgaW4g
+dW5pdHMgb2YgYmV0d2VlbiAxIGFuZCA4Lg0KPj4+Pj4NCj4+Pj4+IFRoZSBSeXplbnMgdXNlIGEg
+MTAwTUh6IGlucHV0IGNsb2NrIGZvciB0aGUgQVBJQyBub3JtYWxseSwgYnV0IEknbSBub3Qgc3Vy
+ZQ0KPj4+Pj4gd2hldGhlciB0aGlzIGlzIHN1YmplY3QgdG8gb3ZlcmNsb2NraW5nLiBJZiBzbyB0
+aGVuIGl0IHNob3VsZCBiZSBwb3NzaWJsZQ0KPj4+Pj4gdG8gZmlndXJlIHRoYXQgb3V0IHNvbWVo
+b3cuIFRvbT8NCj4+Pj4NCj4+Pj4gTGV0IG1lIGNoZWNrIHdpdGggdGhlIGhhcmR3YXJlIGZvbGtz
+IGFuZCBJJ2xsIGdldCBiYWNrIHRvIHlvdS4NCj4+Pg0KPj4+IGFueSB1cGRhdGUgb24gdGhpcz8g
+VGhlIHByb2JsZW0gc2VlbXMgdG8gY29tZSBpbiBmcm9tIHNldmVyYWwgc2lkZXMgbm93Lg0KPj4N
+Cj4+IFllcywgc29ydCBvZi4gVGhlcmUgYXJlIHR3byB3YXlzIHRvIG92ZXJjbG9jayBhbmQgaXQg
+YWxsIGRlcGVuZHMgb24gd2hpY2gNCj4+IG9uZSB3YXMgdXNlZC4gSWYgdGhlIG92ZXJjbG9ja2lu
+ZyBpcyBkb25lIGJ5IGNoYW5naW5nIHRoZSBtdWx0aXBsaWVycywNCj4+IHRoZW4gdGhhdCAxMDBN
+SHogY2xvY2sgd2lsbCBzdGlsbCBiZSAxMDBNSHouIEJ1dCBpZiB0aGUgb3ZlcmNsb2NraW5nIGlz
+DQo+PiBkb25lIGJ5IGluY3JlYXNpbmcgdGhlIGlucHV0IGNsb2NrLCB0aGVuIHRoYXQgMTAwTUh6
+IGNsb2NrIHdpbGwgYWxzbw0KPj4gaW5jcmVhc2UuDQo+Pg0KPj4gSSB3YXMgdHJ5aW5nIHRvIGdl
+dCBhIGJpdCBtb3JlIGNsYXJpZmljYXRpb24gb24gdGhpcyBiZWZvcmUgcmVwbHlpbmcsIGJ1dA0K
+Pj4gaXQgY2FuIGJlIGRldGVjdGVkIGluIHNvZnR3YXJlLiBUaGUgYmFzZSBjbG9jayBpcyAxMDBN
+SHosIHNvIHJlYWQgdGhlIFAwDQo+PiBtdWx0aXBsaWVyIGFuZCB0aGUgVFNDIHNob3VsZCBiZSBj
+b3VudGluZyBhdCBQMCAqIDEwME1Iei4gSWYgeW91IGNhbGlicmF0ZQ0KPj4gdGhlIHNwZWVkIG9m
+IHRoZSBUU0Mgd2l0aCB0aGUgSFBFVCB5b3UgY2FuIHNlZSB3aGF0IHNwZWVkIHRoZSBUU0MgaXMN
+Cj4+IGNvdW50aW5nIGF0LiBJZiB5b3UgZGl2aWRlIHRoZSBUU0MgZGVsdGEgZnJvbSB0aGUgSFBF
+VCBjYWxpYnJhdGlvbiBieSB0aGUNCj4+IFAwIG11bHRpcGxpZXIgeW91IHdpbGwgZWl0aGVyIGdl
+dCAxMDBNSHogaWYgdGhlcmUgaXMgbm8gb3ZlcmNsb2NraW5nIG9yIGlmDQo+PiB0aGUgbXVsdGlw
+bGllciBtZXRob2Qgb2Ygb3ZlcmNsb2NraW5nIHdhcyB1c2VkLCBvdGhlcndpc2UgeW91J2xsIGdl
+dCBhDQo+PiBoaWdoZXIgdmFsdWUgaWYgdGhlIGlucHV0IGNsb2NrIG1ldGhvZCB3YXMgdXNlZC4g
+RWl0aGVyIHdheSwgdGhhdCBzaG91bGQNCj4+IGdpdmUgeW91IHRoZSBBUElDIGNsb2NrIHNwZWVk
+IGJhc2VkIG9uIGEgc3RhcnRpbmcgYXNzdW1wdGlvbiBvZiAxMDBNSHouDQo+IA0KPiBUaGUgcHJv
+YmxlbSBpcyB0aGF0IHdlIGhhdmUgbm8gSFBFVCBvbiB0aG9zZSBtYWNoaW5lcyAuLi4uDQoNClNv
+cnJ5IGFib3V0IHRoYXQuLi4gIEkgaW50ZXJwcmV0ZWQgdGhlIGVtYWlsWzFdIHRoYXQgc2FpZCB0
+aGUgSFBFVCBBQ1BJDQp0YWJsZSB3YXMgcHJlc2VudCwgaW5jb3JyZWN0bHkuIEkgZ2V0IGl0IG5v
+dywgZm9yIGhhcmR3YXJlLXJlZHVjZWQgQUNQSQ0KeW91IGNhbid0IGRlcGVuZCBvbiB0aGF0IHRh
+YmxlIHRvIGJlIHByZXNlbnQuDQoNClRoYW5rcywNClRvbQ0KDQpbMV0gaHR0cHM6Ly9sb3JlLmtl
+cm5lbC5vcmcvbGttbC9DQUQ4THA0NTJHZG9MLUJ0N3JTUD11M1JLRVoySDNxbTNMdktmZT1jQ3Nq
+UDBiaUdfc1FAbWFpbC5nbWFpbC5jb20vDQogDQo+IA0KPiBJIHRoaW5rIEkgY2FuIGdldCBhd2F5
+IHdpdGhvdXQgaGF2aW5nIEhQRVQgYW5kIFBJVCBhbmQgZG8gc29tZSBzbWFydCBzdHVmZg0KPiB3
+aXRoIHRoZSBwbSB0aW1lciBmb3IgdGhhdCBzdHVmZi4gSSdsbCBsb29rIGF0IGl0IHRvbW9ycm93
+IHdpdGggYnJhaW4NCj4gYWN0dWFsbHkgYXdha2UuDQo+IA0KPiBUaGFua3MsDQo+IA0KPiAJdGds
+eA0KPiANCj4gDQo+IA0KPiANCj4gDQo=
