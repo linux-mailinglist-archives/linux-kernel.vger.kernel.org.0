@@ -2,137 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7CA85DB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 701F085DC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731933AbfHHJC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 05:02:58 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39100 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731903AbfHHJCz (ORCPT
+        id S1731682AbfHHJEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 05:04:11 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:41135 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731038AbfHHJEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 05:02:55 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190808090254euoutp02ff402d32df51ba0c08c7fc3512b1dfef~45xsVmjsP2109021090euoutp02P
-        for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2019 09:02:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190808090254euoutp02ff402d32df51ba0c08c7fc3512b1dfef~45xsVmjsP2109021090euoutp02P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1565254974;
-        bh=uK2H2CY5YVkbPXh3EKmhTQmAPpi5mTFt1H3u7NFbf9M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XYPKv9CisR+UF202TRHf4jqXzAqQShDRULjROkz37kNF/mA2dGJteJUt3QoLBNbcz
-         461B5SlCTqSpa5K3oZ/zJLDD5evvdpPWb4EzF3Ul4ZnSaD7wrvgrR6ajM3eGin87md
-         wsXq7jG/pkVpoicUvGt3abzZI92BPGaFtMWEcA9c=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190808090253eucas1p1052985fcc9af22168ed4480c9a027637~45xrw0RSf1971519715eucas1p1B;
-        Thu,  8 Aug 2019 09:02:53 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 76.9E.04469.D35EB4D5; Thu,  8
-        Aug 2019 10:02:53 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190808090252eucas1p1be186b7a34fa75073fddca120c292f04~45xq-4Wln0879608796eucas1p19;
-        Thu,  8 Aug 2019 09:02:52 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190808090252eusmtrp2ead827ae93f6a338cf8c2d2c4a3ecd55~45xq-Sb2T0889008890eusmtrp2C;
-        Thu,  8 Aug 2019 09:02:52 +0000 (GMT)
-X-AuditID: cbfec7f2-994db9c000001175-46-5d4be53d1584
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A1.B1.04117.C35EB4D5; Thu,  8
-        Aug 2019 10:02:52 +0100 (BST)
-Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190808090251eusmtip2c7bb3e0bb2f5f86d0937dc0a10dafa2d~45xqP_hYf3174031740eusmtip2K;
-        Thu,  8 Aug 2019 09:02:51 +0000 (GMT)
-From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
-To:     k.konieczny@partner.samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [RESEND PATCH v5 4/4] dt-bindings: devfreq: exynos-bus: remove
- unused property
-Date:   Thu,  8 Aug 2019 11:02:34 +0200
-Message-Id: <20190808090234.12577-5-k.konieczny@partner.samsung.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190808090234.12577-1-k.konieczny@partner.samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0gUURTHuzM7O+PSyLgVHdQKN4JK8oGFF8ooerBqgV8zpFYdVHJ12VXT
-        /JDZQ13IIvNZqFG2tqn5fuZa6+Km+UjFtEKz1ILSSk0pyczZMfTb7/zv/3/POZfLkPK3lCMT
-        ERXDa6NUkQqpTFLb9rtnj8+Ef5BHxgCDK3KeUHjw52cKF1i6KZxuWkL4xthXEvf0lNO4K3mS
-        xpVjrync33hXimevWxDO6TERuNQyTOOiwV4Cv7tULMWTv7oIfLXZQuO/ryskuGq0TXpIrizJ
-        L0HKSmOaVFn14KLy+benhDK92oiU1qE6QjlbuTWADpQdCOUjI+J4rfvBs7LwsoYTmmEmPqu5
-        gEpCrbQeMQxwe0HfEqNHMkbOFSN43JImFYufCDqyM0k9slsuZhG0TdsJLATu1b+lRd2AIMMC
-        q4GucVtAynnDx7pOQuCN3HbIGMkmBRPJ/ZZAeX+FLb2BOwWmiikkjCHhdsCiyVWQWe4oXHtj
-        lYjNtkFafZON7bhjUGpsl4geB2jPHbcxuey5XHPHdj9w0zQs3Hq/Ej4KA32LSOQN8MVaTYvs
-        DEsNBYTI52HiXjothq8gGE2ZXgnvh1ZrLyUMR3K74Emjuygfhu6+fEJ8OnsYmnIQZ7CHW7XC
-        joLMQuo1uejeA/lLnZTITqBfKqNEixLmmumbyCVvzTJ5a5bJW21biEgj2szH6tRhvM4zij/v
-        plOpdbFRYW4h0epKtPzjXv61ztSjub5gM+IYpFjPal74B8kpVZwuQW1GwJCKjexInG+QnA1V
-        JVzgtdFntLGRvM6MnBiJYjObuG70tJwLU8Xw53hew2v/nxKMnWMS8nZYSIy/sm9wr6EmcdLp
-        q+/Aq9RNrhBfy1JNj+oWMhftfee3JKfLy263BpQlm0cLaowphn6XmvKdx19orCaPoqpc2Td1
-        WshUofn+TS//H25vzupjDRNh8xrWL+TTiXlzp89A33BDlt+zP8FIn+Ls1dvx8Dt7MvCD15yf
-        QXHEMKOQ6MJVnrtJrU71D5VwGedtAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7o2T71jDSaclrfYOGM9q8X1L89Z
-        LeYfOcdq0bfvP6NF/+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbP43HuE0WLG+X1MFmuP3GW3
-        WHr9IpPF7cYVbBZvfpxlsmjde4Td4t+1jSwWmx8cY3MQ8lgzbw2jx6ZVnWwem5fUexx8t4fJ
-        o2/LKkaP4ze2M3l83iQXwB6lZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRv
-        Z5OSmpNZllqkb5egl7Fup0/BXY6KaXvnszYwHmbvYuTkkBAwkVi44xaQzcUhJLCUUeL3gmeM
-        EAlpicbTq5kgbGGJP9e62CCKPjFKPNq8kBkkwSZgLvFo+xmwIhEBZYnJ96YzgxQxC3SySqx4
-        coQNJCEsEC7xuP8D0AoODhYBVYm/+7RBwrwCLhJtN4+zQCyQl+jcsRvM5hRwlVi76iSYLQRU
-        s/H9dVaIekGJkzOfgMWZgeqbt85mnsAoMAtJahaS1AJGplWMIqmlxbnpucVGesWJucWleel6
-        yfm5mxiBMbnt2M8tOxi73gUfYhTgYFTi4S044R0rxJpYVlyZe4hRgoNZSYT3XplnrBBvSmJl
-        VWpRfnxRaU5q8SFGU6AfJjJLiSbnA9NFXkm8oamhuYWlobmxubGZhZI4b4fAwRghgfTEktTs
-        1NSC1CKYPiYOTqkGRrsW0eMyj04tnixwnuOEk12+8bzJiz2WKy46VhF0oMzvj9KGRe4Pj+Qu
-        4Dh+4PWt8h7nH3yP+JRe7V9z9OnNmZ8/H6r01BCsPC9hXDT3nanPF64FXFIH4napsbXdaNIv
-        2FoUv9Vn4+yOnotbtkrnGnrfOLP56aNPristQ+8t+f1O+spRt7SZjAeUWIozEg21mIuKEwGw
-        5K803wIAAA==
-X-CMS-MailID: 20190808090252eucas1p1be186b7a34fa75073fddca120c292f04
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190808090252eucas1p1be186b7a34fa75073fddca120c292f04
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190808090252eucas1p1be186b7a34fa75073fddca120c292f04
-References: <20190808090234.12577-1-k.konieczny@partner.samsung.com>
-        <CGME20190808090252eucas1p1be186b7a34fa75073fddca120c292f04@eucas1p1.samsung.com>
+        Thu, 8 Aug 2019 05:04:10 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 0EA5821FB7;
+        Thu,  8 Aug 2019 05:04:09 -0400 (EDT)
+Received: from imap5 ([10.202.2.55])
+  by compute1.internal (MEProxy); Thu, 08 Aug 2019 05:04:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+         h=mime-version:message-id:in-reply-to:references:date:from:to
+        :cc:subject:content-type; s=fm2; bh=UDxY0biEKiJkV/eKq0+tBQBLPV9S
+        8cgzUqiVh5nUXFg=; b=ba5wD/BCWuz96s1vBnUw02p43fsiVJqc9YiKZHXlKyXT
+        jhvCdrJE6pWbvtHiXtLsQOCH98bkZa7ZOVT9j3TP6h34tRGYBHn68g7JZ3hp8uwI
+        mczBVUM1FLlSWv9XMGES3MT4Gqp3lB273sAUkkrwBEe8fjcgBy9OVB+51ClJTFGp
+        ehY2fyuZhEPRsvfC8xZs7V+UF4N2kEKW9znbWzXE7zstfGVQIZULspIr126Vftvk
+        AqlAECJ5BNQFieCwAepTdcdexWZPccyH2vU52E7TNMOtEa1OCKA/iCPltMy5o7As
+        oQD/rBm/IpxaeJLYEvQVWbnscZhl93o+I2qNXiVg8w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=UDxY0b
+        iEKiJkV/eKq0+tBQBLPV9S8cgzUqiVh5nUXFg=; b=EDP/Uh9dw/lSheM3sSOAmP
+        HJLsLx02h9jie8yk25vTAWmYiM2MDTi+gSYrBt1JIWdZ5CLyFgO6/9m+TWZrNeAP
+        wlhoZowI+nghIOUHn3lvtwbBGyrlEOMyR5ivC+taAGZs5w53RTgm3jYhIMOKRjJk
+        mO1gD+fYmiyyaZMB4lBR6m/OATJ0973MfI/BjNTeu/UgXZYPO3l02MjiTWvLhdWD
+        VgJ0SSglAZRSRPrX6mG34WZCNq9+G0MmA4D9LBGpN5bT5uLhz/mOKGyuVJFQ7EHg
+        Uw2oMOO++zbGeUbOOcoUStW/bgr8BUvMTYIe9CO89QOGDHnIPV0ik0lAn1OJk+HA
+        ==
+X-ME-Sender: <xms:iOVLXcG7rA_7M_zbi7RPGRYVs7GxU1Vyo5FFfo5Ewm2ggeRKeMGlRw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudduhedguddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdfvrghk
+    rghshhhiucfurghkrghmohhtohdfuceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthh
+    hirdhjpheqnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghk
+    rghmohgttghhihdrjhhpnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:iOVLXcxO-QKzYQu_bfF8Wvp_KxmO9L0qkNpsMYGI16PQOoRj9AYu4w>
+    <xmx:iOVLXTjdfwG_pxjoP4g4CPrhI-PDb8cqedn0cNZcD2fjjRHwMGm6qg>
+    <xmx:iOVLXXwEnOwruQjMo3b9l0Yy4gZ1yMeeuHBn_Yqa1lcLeUT1AfMS7w>
+    <xmx:ieVLXd4qCunCQt9EOheq6iVPOAiHbBhvLs7D9QSGGG3K6MxTe3TchA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 413805C0099; Thu,  8 Aug 2019 05:04:08 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.6-808-g930a1a1-fmstable-20190805v2
+Mime-Version: 1.0
+Message-Id: <ce36089b-7061-4cd1-8262-eb3393c753af@www.fastmail.com>
+In-Reply-To: <1565243458-2771-1-git-send-email-wenwen@cs.uga.edu>
+References: <1565243458-2771-1-git-send-email-wenwen@cs.uga.edu>
+Date:   Thu, 08 Aug 2019 18:04:03 +0900
+From:   "Takashi Sakamoto" <o-takashi@sakamocchi.jp>
+To:     "Wenwen Wang" <wenwen@cs.uga.edu>
+Cc:     "open list" <linux-kernel@vger.kernel.org>,
+        "moderated list:FIREWIRE AUDIO DRIVERS" <alsa-devel@alsa-project.org>,
+        "Clemens Ladisch" <clemens@ladisch.de>,
+        "Takashi Iwai" <tiwai@suse.com>
+Subject: Re: [alsa-devel] [PATCH] ALSA: firewire: fix a memory leak bug
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unused DT property "exynos,voltage-tolerance".
+Hi,
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- Documentation/devicetree/bindings/devfreq/exynos-bus.txt | 2 --
- 1 file changed, 2 deletions(-)
+On Thu, Aug 8, 2019, at 14:53, Wenwen Wang wrote:
+> In iso_packets_buffer_init(), 'b->packets' is allocated through
+> kmalloc_array(). Then, the aligned packet size is checked. If it is
+> larger than PAGE_SIZE, -EINVAL will be returned to indicate the error.
+> However, the allocated 'b->packets' is not deallocated on this path,
+> leading to a memory leak.
+> 
+> To fix the above issue, free 'b->packets' before returning the error code.
+> 
+> Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+> ---
+>  sound/firewire/packets-buffer.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-index f8e946471a58..e71f752cc18f 100644
---- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-+++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-@@ -50,8 +50,6 @@ Required properties only for passive bus device:
- Optional properties only for parent bus device:
- - exynos,saturation-ratio: the percentage value which is used to calibrate
- 			the performance count against total cycle count.
--- exynos,voltage-tolerance: the percentage value for bus voltage tolerance
--			which is used to calculate the max voltage.
- 
- Detailed correlation between sub-blocks and power line according to Exynos SoC:
- - In case of Exynos3250, there are two power line as following:
--- 
-2.22.0
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
+And this bug exists till its first commit for v2.6.39.
+
+Fixes: 31ef9134eb52 ("ALSA: add LaCie FireWire Speakers/Griffin FireWave Surround driver")
+Cc: <stable@vger.kernel.org> # v2.6.39+
+
+
+Thanks
+
+Takashi Sakamoto
