@@ -2,83 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AEC486800
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 19:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0E8B86818
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 19:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404316AbfHHR2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 13:28:54 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:41538 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732444AbfHHR2y (ORCPT
+        id S2404459AbfHHRbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 13:31:19 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:25037 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404419AbfHHRbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 13:28:54 -0400
-Received: from mr2.cc.vt.edu (junk.cc.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x78HSrGY021721
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Aug 2019 13:28:53 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x78HSm1R019449
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Aug 2019 13:28:53 -0400
-Received: by mail-qk1-f198.google.com with SMTP id x17so83215294qkf.14
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 10:28:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
-         :message-id;
-        bh=ckuO7AH+Z8D+AGjx8XWAjP+p9H9PqjZuvFzkT06lDlY=;
-        b=IX+sRdoz2qfGLx6mQGQLXfmMDsRaalKNqpBGZneBWNf0y+tpUBvQ6FE2vzVUS+Z/Y1
-         M/e2Vx793G3axiOJfkJUFfslU2fHaNSh4/dnWmtSrq4ESXgjq3qaLRdFgVHgf28cR4Fk
-         MxseoizG8VGjJHNEk2MPCpTUF3V3SVO+msCz9hEz6i4HYSukOP55WgGqIYQ5RNOo1c23
-         P+TZPQpRW7mSKG3mFr4nq5o2aPY6wIrI22fC0/gKUj85LLQbZXms4R1BCtDWgXRE66Y/
-         viuoVpUBwePaOa5TUYnqBCrBuT85sFpHA1Hije6pyai2kGzUymCzmPcq+t3ligfK6VQC
-         IQgA==
-X-Gm-Message-State: APjAAAWlMWV1xUnQ78LQvkZTXx3RS0c+DHlQRhqAoDAEyix+g0IF+BwR
-        zvJvLuWJ22dvuJo0pWzyT3tKb6CZ5RXaX+xNF8d6Knm8homkC6YQsvjvxQuhXw7qy4eVveLcFHn
-        MYaoxRS5Dplp7FI3+dXqd9oZLbffgzE2iBi4=
-X-Received: by 2002:a37:490c:: with SMTP id w12mr14737121qka.327.1565285327487;
-        Thu, 08 Aug 2019 10:28:47 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxSGLmycWjv1kGN+Rwz5CRen998Ej9GiuSbCrNKuEG1856eNJLN27TdoaPqNJWY8W6+8iAe7g==
-X-Received: by 2002:a37:490c:: with SMTP id w12mr14737094qka.327.1565285327141;
-        Thu, 08 Aug 2019 10:28:47 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:4341::359])
-        by smtp.gmail.com with ESMTPSA id j19sm37123521qtq.94.2019.08.08.10.28.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 10:28:46 -0700 (PDT)
-From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arch/x86/events/intel/lbr.c - make variable static
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date:   Thu, 08 Aug 2019 13:28:45 -0400
-Message-ID: <122387.1565285325@turing-police>
+        Thu, 8 Aug 2019 13:31:16 -0400
+Received: from grover.flets-west.jp (softbank126125143222.bbtec.net [126.125.143.222]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x78HUVVE014684;
+        Fri, 9 Aug 2019 02:30:31 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x78HUVVE014684
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565285433;
+        bh=t3fsOOJG3DpN9ajEKSIklFwpAIHkAiyneGUffpd+6vU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MTDhtmMku36n7Xrx053DIT6AbYdQypVskwm0mozWesriPFm0Q9Q2H1WXCungXveTK
+         hJ+omcc/FyIk6ZIEtT/TMqKhU9ysTsLAUhBUcsHo/d3S3Xlf4gg3FO3xOegt/vLYHo
+         SmnBksH+jj6iW43Fm0X8/qck9WDkNAXcLhTMlvg/3AdIUuRoOU8M1khX5j2SAIe6QD
+         qG08x2p1OFfM5MC8h0/gX7WIhP365p18FqM9qXXeaUx2X9FOx6DXxZl2AE9le03ZQG
+         lCzX9yJFVy6TiTZTSgjkL4FXzB60DEUGk8R91S7s0GMjY+bj19yXq1GOOHgjq9ulpb
+         hOCoeJDmc2xUA==
+X-Nifty-SrcIP: [126.125.143.222]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] nds32: remove unneeded clean-files for DTB
+Date:   Fri,  9 Aug 2019 02:30:28 +0900
+Message-Id: <20190808173028.1930-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When compiling with C=2, sparse warns:
+These patterns are cleaned-up by the top-level Makefile
 
-  CHECK   arch/x86/events/intel/lbr.c
-arch/x86/events/intel/lbr.c:276:1: warning: symbol 'lbr_from_quirk_key' was not declared. Should it be static?
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-And yes, it can be static.
+ arch/nds32/boot/dts/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index 6f814a27416b..ea54634eabf3 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -273,7 +273,7 @@ static inline bool lbr_from_signext_quirk_needed(void)
- 	return !tsx_support && (lbr_desc[lbr_format] & LBR_TSX);
- }
- 
--DEFINE_STATIC_KEY_FALSE(lbr_from_quirk_key);
-+static DEFINE_STATIC_KEY_FALSE(lbr_from_quirk_key);
- 
- /* If quirk is enabled, ensure sign extension is 63 bits: */
- inline u64 lbr_from_signext_quirk_wr(u64 val)
+diff --git a/arch/nds32/boot/dts/Makefile b/arch/nds32/boot/dts/Makefile
+index fff8ade7a84f..f84bd529b6fd 100644
+--- a/arch/nds32/boot/dts/Makefile
++++ b/arch/nds32/boot/dts/Makefile
+@@ -5,5 +5,3 @@ else
+ BUILTIN_DTB :=
+ endif
+ obj-$(CONFIG_OF) += $(BUILTIN_DTB)
+-
+-clean-files := *.dtb *.dtb.S
+-- 
+2.17.1
 
