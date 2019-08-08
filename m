@@ -2,146 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B4886098
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 13:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D238860A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 13:14:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731774AbfHHLJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 07:09:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58192 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730678AbfHHLJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 07:09:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8B21DAE16;
-        Thu,  8 Aug 2019 11:09:21 +0000 (UTC)
-Subject: Re: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
-To:     Michal Hocko <mhocko@kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <20190805222019.28592-1-jhubbard@nvidia.com>
- <20190805222019.28592-2-jhubbard@nvidia.com>
- <20190807110147.GT11812@dhcp22.suse.cz>
- <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
- <20190808062155.GF11812@dhcp22.suse.cz>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <875dca95-b037-d0c7-38bc-4b4c4deea2c7@suse.cz>
-Date:   Thu, 8 Aug 2019 13:09:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731901AbfHHLNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 07:13:23 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37299 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731312AbfHHLNX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 07:13:23 -0400
+Received: by mail-ot1-f67.google.com with SMTP id s20so51444032otp.4;
+        Thu, 08 Aug 2019 04:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=maxTK/04XPrhP0Dhx7ZYnblUq+fXH69yPK3HdYZ8eNY=;
+        b=ehMxjIpitULmeEoBzl8SXMG93dg7IHdRlp07RiliNFFX2jVVnXvJ1Pob1K6XHKqZFx
+         XDR6OOSzCp2xzgbF/ShtarNGBThivAKce4F26qVG8TNutV58vqeQSVST8LZxixIJ8NKJ
+         mP1aR5d62JT6gr8+Fv5AsKNxGqgRXG54k2UTHgETCz32Sktvrcz4cG00M3p/U0pWKeGi
+         ct+2/12SqagKngOlIA/pwEAIAI7xQMuazenkGl2ekxVuuOu2OSyYHTJjSYlXcOY2Z7xT
+         y20OIW/FMpdqk3ysSnjFSa30fIDfzrwc1r/qMjlX/5cqPdHiqqFGK7J5tB+0RbIV5H6T
+         Rt1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=maxTK/04XPrhP0Dhx7ZYnblUq+fXH69yPK3HdYZ8eNY=;
+        b=StTDSoVANwo5l0xB39GqzoMTfFkqLByjJ6wqg9xG8U5/yxkDvz52z+4lhmt05WZ1Zw
+         OCY3HwVKDPp0GDMv6yRiwWTjtAcu1XAKqwEOd/kMMJ4e0RBjakaW8gBPACGpWj/AJEt4
+         Rk+RB4/olAO4oL0TrgHGifPuAoYYgDuxZPRJEuElIqjUBP9GqU/eMOsvqs7EphTzynTK
+         +4L3mxT4DOg8jEBtz0+1ZBYDA9xEeXsXJ9AobEIy10HOZ+VZl813CYXKdMj0OmC6WnrM
+         8uqDAty2eKMMgKSJJsANReoRaIjWs5dlYpy9mbofK9pyllMeI21a/pRH+hizTFLZwqmU
+         cwGA==
+X-Gm-Message-State: APjAAAV6GhQ//bm85pEfj0zEUK0pOhJwpmc5Eev5/dQnoIVUQblhSp40
+        PwTT5IDXR1aaZxBJflzrStgiq3Yx/IFtEOrqdFgK76KhM0I=
+X-Google-Smtp-Source: APXvYqz4JhR3wURQzAXhAKPJlC5wFGLQ85d/1WkM368Fagn1a+6TBFy41Hdq0fHXzew8nGgopRBnfYEVQ02PU6qe+/g=
+X-Received: by 2002:a5d:9703:: with SMTP id h3mr14008223iol.152.1565262801936;
+ Thu, 08 Aug 2019 04:13:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190808062155.GF11812@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CGME20190807162519eucas1p2b9dd9f31cc6e60e0bc935e9a6ceef908@eucas1p2.samsung.com>
+ <20190807162456.28694-1-s.nawrocki@samsung.com> <20190807162456.28694-2-s.nawrocki@samsung.com>
+In-Reply-To: <20190807162456.28694-2-s.nawrocki@samsung.com>
+From:   Jaafar Ali <jaafarkhalaf@gmail.com>
+Date:   Thu, 8 Aug 2019 14:08:13 +0300
+Message-ID: <CAF-0O_59PRWf0bpEEUTweKPwB6jaOStMkzdU8z552sYtsJ-jCQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: samsung: exynos5800: Move MAU subsystem clocks
+ to MAU sub-CMU
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, linux@armlinux.org.uk,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>, cw00.choi@samsung.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/8/19 8:21 AM, Michal Hocko wrote:
-> On Wed 07-08-19 16:32:08, John Hubbard wrote:
->> On 8/7/19 4:01 AM, Michal Hocko wrote:
->>> On Mon 05-08-19 15:20:17, john.hubbard@gmail.com wrote:
->>>> From: John Hubbard <jhubbard@nvidia.com>
->>>>
->>>> For pages that were retained via get_user_pages*(), release those pages
->>>> via the new put_user_page*() routines, instead of via put_page() or
->>>> release_pages().
->>>
->>> Hmm, this is an interesting code path. There seems to be a mix of pages
->>> in the game. We get one page via follow_page_mask but then other pages
->>> in the range are filled by __munlock_pagevec_fill and that does a direct
->>> pte walk. Is using put_user_page correct in this case? Could you explain
->>> why in the changelog?
->>>
->>
->> Actually, I think follow_page_mask() gets all the pages, right? And the
->> get_page() in __munlock_pagevec_fill() is there to allow a pagevec_release() 
->> later.
-> 
-> Maybe I am misreading the code (looking at Linus tree) but munlock_vma_pages_range
-> calls follow_page for the start address and then if not THP tries to
-> fill up the pagevec with few more pages (up to end), do the shortcut
-> via manual pte walk as an optimization and use generic get_page there.
+Tested-by: Jaafar Ali <jaafarkhalaf@gmail.com>
 
-That's true. However, I'm not sure munlocking is where the
-put_user_page() machinery is intended to be used anyway? These are
-short-term pins for struct page manipulation, not e.g. dirtying of page
-contents. Reading commit fc1d8e7cca2d I don't think this case falls
-within the reasoning there. Perhaps not all GUP users should be
-converted to the planned separate GUP tracking, and instead we should
-have a GUP/follow_page_mask() variant that keeps using get_page/put_page?
-
-
+On Thu, 8 Aug 2019 at 12:24, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> This patch fixes broken sound on Exynos5422/5800 platforms after
+> system/suspend resume cycle in cases where the audio root clock
+> is derived from MAU_EPLL_CLK.
+>
+> In order to preserve state of the USER_MUX_MAU_EPLL_CLK clock mux
+> during system suspend/resume cycle for Exynos5800 we group the MAU
+> block input clocks in "MAU" sub-CMU and add the clock mux control
+> bit to .suspend_regs.  This ensures that user configuration of the mux
+> is not lost after the PMU block changes the mux setting to OSC_DIV
+> when switching off the MAU power domain.
+>
+> Adding the SRC_TOP9 register to exynos5800_clk_regs[] array is not
+> sufficient as at the time of the syscore_ops suspend call MAU power
+> domain is already turned off and we already save and subsequently
+> restore an incorrect register's value.
+>
+> Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+> Reported-by: Jaafar Ali <jaafarkhalaf@gmail.com>
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 54 ++++++++++++++++++++++------
+>  1 file changed, 43 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index fdb17c799aa5..b52daf5aa755 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -534,8 +534,6 @@ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
+>                                 GATE_BUS_TOP, 24, 0, 0),
+>         GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+>                                 GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+> -       GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
+> -                       SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+>  };
+>
+>  static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+> @@ -577,8 +575,13 @@ static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
+>
+>  static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
+>         GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
+> +       /* Maudio Block */
+>         GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+>                         SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+> +       GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
+> +               GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+> +       GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
+> +               GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+>  };
+>
+>  static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+> @@ -1017,12 +1020,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+>         GATE(CLK_SCLK_DP1, "sclk_dp1", "dout_dp1",
+>                         GATE_TOP_SCLK_DISP1, 20, CLK_SET_RATE_PARENT, 0),
+>
+> -       /* Maudio Block */
+> -       GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
+> -               GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+> -       GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
+> -               GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+> -
+>         /* FSYS Block */
+>         GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
+>         GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
+> @@ -1281,6 +1278,20 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
+>         { DIV4_RATIO, 0, 0x3 },                 /* DIV dout_mfc_blk */
+>  };
+>
+> +
+> +static const struct samsung_gate_clock exynos5800_mau_gate_clks[] __initconst = {
+> +       GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
+> +                       SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+> +       GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
+> +               GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+> +       GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
+> +               GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+> +};
+> +
+> +static struct exynos5_subcmu_reg_dump exynos5800_mau_suspend_regs[] = {
+> +       { SRC_TOP9, 0, BIT(8) },
+> +};
+> +
+>  static const struct exynos5_subcmu_info exynos5x_disp_subcmu = {
+>         .div_clks       = exynos5x_disp_div_clks,
+>         .nr_div_clks    = ARRAY_SIZE(exynos5x_disp_div_clks),
+> @@ -1311,12 +1322,27 @@ static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
+>         .pd_name        = "MFC",
+>  };
+>
+> +static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
+> +       .gate_clks      = exynos5800_mau_gate_clks,
+> +       .nr_gate_clks   = ARRAY_SIZE(exynos5800_mau_gate_clks),
+> +       .suspend_regs   = exynos5800_mau_suspend_regs,
+> +       .nr_suspend_regs = ARRAY_SIZE(exynos5800_mau_suspend_regs),
+> +       .pd_name        = "MAU",
+> +};
+> +
+>  static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
+>         &exynos5x_disp_subcmu,
+>         &exynos5x_gsc_subcmu,
+>         &exynos5x_mfc_subcmu,
+>  };
+>
+> +static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
+> +       &exynos5x_disp_subcmu,
+> +       &exynos5x_gsc_subcmu,
+> +       &exynos5x_mfc_subcmu,
+> +       &exynos5800_mau_subcmu,
+> +};
+> +
+>  static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
+>         PLL_35XX_RATE(24 * MHZ, 2000000000, 250, 3, 0),
+>         PLL_35XX_RATE(24 * MHZ, 1900000000, 475, 6, 0),
+> @@ -1547,11 +1573,17 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>         samsung_clk_extended_sleep_init(reg_base,
+>                 exynos5x_clk_regs, ARRAY_SIZE(exynos5x_clk_regs),
+>                 exynos5420_set_clksrc, ARRAY_SIZE(exynos5420_set_clksrc));
+> -       if (soc == EXYNOS5800)
+> +
+> +       if (soc == EXYNOS5800) {
+>                 samsung_clk_sleep_init(reg_base, exynos5800_clk_regs,
+>                                        ARRAY_SIZE(exynos5800_clk_regs));
+> -       exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
+> -                            exynos5x_subcmus);
+> +
+> +               exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5800_subcmus),
+> +                                    exynos5800_subcmus);
+> +       } else {
+> +               exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
+> +                                    exynos5x_subcmus);
+> +       }
+>
+>         samsung_clk_of_add_provider(np, ctx);
+>  }
+> --
+> 2.17.1
+>
+>
+>
