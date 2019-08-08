@@ -2,143 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 623AC85EE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:42:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E80C585EE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 11:42:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389775AbfHHJl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 05:41:58 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46587 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732281AbfHHJlu (ORCPT
+        id S1732535AbfHHJmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 05:42:10 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:32939 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732494AbfHHJmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 05:41:50 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190808094148euoutp0104392fa2da58d467319e87d630d527c7~46TqZ2Aaz1464214642euoutp01N
-        for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2019 09:41:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190808094148euoutp0104392fa2da58d467319e87d630d527c7~46TqZ2Aaz1464214642euoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1565257308;
-        bh=cz4Qd6MlizXRretLU95QGiGoiGOemuoYoRdu6ABD9jw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KItGPt71NBC6ltnkE3fto32lsThXSodw2duHmJfqj4nmQLbqka0XOfTgub6BdaDSh
-         ICB95UjuEFer5hK+GABthehT4okCzEk8oCJOHofK2hkXfIt3Q9RLwhMpNyk1TU81w+
-         NIoimCfdfuDS/5Zyi7pa299yxI8/GExG5t896V+g=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190808094147eucas1p2389c9f807a695836c3c25b6629fe1524~46TpqTPUh3273032730eucas1p2f;
-        Thu,  8 Aug 2019 09:41:47 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 89.84.04374.B5EEB4D5; Thu,  8
-        Aug 2019 10:41:47 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190808094146eucas1p27c673846a5a9be0c55f1f87c89af4adf~46To-nEeV3273032730eucas1p2c;
-        Thu,  8 Aug 2019 09:41:46 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190808094146eusmtrp2ec2650f8d2256fd43dbab1e64b694e10~46ToweoCy2859328593eusmtrp2I;
-        Thu,  8 Aug 2019 09:41:46 +0000 (GMT)
-X-AuditID: cbfec7f5-4f7ff70000001116-bb-5d4bee5bb977
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id BC.E6.04117.A5EEB4D5; Thu,  8
-        Aug 2019 10:41:46 +0100 (BST)
-Received: from AMDC2765.DIGITAL.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190808094146eusmtip133b223338a0b9f9cfd92077cf8157957~46ToLCmDV2428224282eusmtip1Z;
-        Thu,  8 Aug 2019 09:41:45 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jochen Sprickerhof <jochen@sprickerhof.de>,
-        Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v2 2/2 RESEND] usb: dwc3: remove generic PHY calibrate()
- calls
-Date:   Thu,  8 Aug 2019 11:41:28 +0200
-Message-Id: <20190808094128.27213-3-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190808094128.27213-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djP87rR77xjDQ5OFrPYOGM9q8Wxtifs
-        Fs2L17NZLP17j9Hi/PkN7BaXd81hs5hxfh+TxaJlrcwW6zbeYrdYe+Quu8WxRSdZLJo3TWF1
-        4PHYOesuu8fTCZPZPRbvecnksWlVJ5vH/rlr2D36tqxi9Niw5R+Lx+dNcgEcUVw2Kak5mWWp
-        Rfp2CVwZk/7OZC5o466YdbaXtYFxGWcXIyeHhICJxJsZ81m7GLk4hARWMEq8PnqTGSQhJPCF
-        UeLXmlKIxGdGiX131rLAdCz9u4oFomg5o8S6T6oQRUANqw9+YQdJsAkYSnS97WIDsUUEHCSW
-        LL3DBlLELLCbWWLvz3dgCWGBAIn1MxrB1rEIqEo8eL4SbCqvgK3En0eb2SC2yUus3nAArIZT
-        wE7iRcMCRpBBEgKr2CV2dG1kgihykXi8aD47hC0s8er4FihbRuL/zvlMEA3NjBIPz61lh3B6
-        GCUuN81ghKiyljh8/CIwCDiA7tOUWL9LHyLsKDHtzTp2kLCEAJ/EjbeCIGFmIHPStunMEGFe
-        iY42IYhqNYlZx9fBrT144RIzhO0hMfXyamZICE1klJg9Zy/rBEb5WQjLFjAyrmIUTy0tzk1P
-        LTbOSy3XK07MLS7NS9dLzs/dxAhMO6f/Hf+6g3Hfn6RDjAIcjEo8vCdOeccKsSaWFVfmHmKU
-        4GBWEuG9V+YZK8SbklhZlVqUH19UmpNafIhRmoNFSZy3muFBtJBAemJJanZqakFqEUyWiYNT
-        qoHxpmVKhirL8etBWTs/cLnpek3mOfmm3CY7cPEbf733llPKMiQu8CuHGeo6Tkt+dnQnqyC3
-        jynjc8W1tXbnjjw0Mq6wkEtN3W61u8bKtP38vu9vNm3WflDMNrfyULiP7N0t2bt0PkVI7Ns0
-        7clVhj4Zb+kM/x21r75Nt+3cfO21doX2WnP947lKLMUZiYZazEXFiQAQWEAnNwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42I5/e/4Xd2od96xBlMbFS02zljPanGs7Qm7
-        RfPi9WwWS//eY7Q4f34Du8XlXXPYLGac38dksWhZK7PFuo232C3WHrnLbnFs0UkWi+ZNU1gd
-        eDx2zrrL7vF0wmR2j8V7XjJ5bFrVyeaxf+4ado++LasYPTZs+cfi8XmTXABHlJ5NUX5pSapC
-        Rn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GpL8zmQvauCtmne1l
-        bWBcxtnFyMkhIWAisfTvKpYuRi4OIYGljBI/v+5hg0jISJyc1sAKYQtL/LnWxQZR9IlR4vPf
-        FnaQBJuAoUTX2y6wBhEBJ4nOtafBipgFDjJLXLy4F6xIWMBPYuejRrBJLAKqEg+er2QBsXkF
-        bCX+PNoMtU1eYvWGA8wgNqeAncSLhgWMILYQUM3vfW0sExj5FjAyrGIUSS0tzk3PLTbSK07M
-        LS7NS9dLzs/dxAiMg23Hfm7Zwdj1LvgQowAHoxIPb8EJ71gh1sSy4srcQ4wSHMxKIrz3yjxj
-        hXhTEiurUovy44tKc1KLDzGaAh01kVlKNDkfGKN5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE
-        0hNLUrNTUwtSi2D6mDg4pRoY97CmXNUWPvVn3tkodhaXsqD/2szGAtxvtzQfq66Y7z4nhOOz
-        xNXVxVtnFjzUjbW7PFsn4ugH4xixAuPa+R88LFPSju+J6qgufuMTumdRf/DkbfKdux+82zGd
-        6cT7hBlT5tm97W18XqfIvzdz1oqVuZ5RTy/tTw79+Sn0tXvbreUl0jb7F5U9UWIpzkg01GIu
-        Kk4EABIURCCZAgAA
-X-CMS-MailID: 20190808094146eucas1p27c673846a5a9be0c55f1f87c89af4adf
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190808094146eucas1p27c673846a5a9be0c55f1f87c89af4adf
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190808094146eucas1p27c673846a5a9be0c55f1f87c89af4adf
-References: <20190808094128.27213-1-m.szyprowski@samsung.com>
-        <CGME20190808094146eucas1p27c673846a5a9be0c55f1f87c89af4adf@eucas1p2.samsung.com>
+        Thu, 8 Aug 2019 05:42:07 -0400
+Received: from [IPv6:2001:983:e9a7:1:dd78:ec97:6537:dc93] ([IPv6:2001:983:e9a7:1:dd78:ec97:6537:dc93])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id vevkhs1w4AffAvevmhBakW; Thu, 08 Aug 2019 11:42:05 +0200
+Subject: Re: [PATCH v4 0/3] DCMI bridge support
+To:     Hugues FRUCHET <hugues.fruchet@st.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Mickael GUENE <mickael.guene@st.com>
+References: <1564577783-18627-1-git-send-email-hugues.fruchet@st.com>
+ <28a2a9ac-d5b9-a312-616a-620e0385cf66@xs4all.nl>
+ <85edd40f-68cc-13aa-52e0-6ec832bf6c2f@st.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <c58613a7-a1d2-cc1b-5f94-beb2bd753e5e@xs4all.nl>
+Date:   Thu, 8 Aug 2019 11:41:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <85edd40f-68cc-13aa-52e0-6ec832bf6c2f@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfC5ACmRPuS3YAAfyW4BnQN1UU1u9dTyjgbg6D28/ejMIlmwugAn4Lgm1gsP6k6qYQh4okcjxQa6xKfGl3g7c0oahlOIl6COVcn55qS8YgJi50OtIMALk
+ UpVPWPmdB93XfcDjw18IkPJNc1hzjo3yOXJKMruxlLcC3KV0RZQ6jk8V33UWiY+wtN6T15kPmbrc4MAB4D9EZuVhoTuhZOZegwHhtkpb0fT7F16op6Xg7GpY
+ teNn385Qaho8zI6uA5Msq6r7aGTNVRUpNdp6E2w7iHDk4GQ53BtipOWyB+8073y1wFMhu7/DZ7CN+pyXT2CXHRcjScxinU7alz88DCGqjZdMRwsx2WmibCmM
+ wA1SmNp3E74eSFzb9m9ywfUSvmkHUwAVWrRSn7qm8CdSAHwDcDGrcRznYfurxSQq7zWkwbeS7sj2bWDNKxlxWMgs1cN4Luv/QbbwAwJZlvTwzyvNyGmp7zTP
+ 4ibGCs6B4F7LJLLI7gvSa2anue8cejdrz8InncEcgIYdaTPCUep+igNV1lBm1u5eBHthRBUryy98B7W6AmHwN8CQt/Qlyx12zmVZbE5MiQvwJ0P+yT+7+g7p
+ HlNEkD5OGeKlm/kqO2HHJF6ZQ3jKacnuCRCJnZ7lAmbqmXeYCGjjnUb0AWNbtbTMJw2R5TALI4FMwOUqeqY4i0ohHeHNZjUIM1jViP4V/IYeXpt94AyeOcec
+ L5o5hrZ04iI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calls to USB2 generic PHY calibrate() method has been moved to HCD core,
-which now successfully handles generic PHYs and their calibration after
-every HCD reset. This fixes all the timing issues related to PHY
-calibration done directly from DWC3 driver: incorrect operation after
-system suspend/resume or USB3.0 detection failure when XHCI-plat driver
-compiled as separate module.
+Hi Hugues,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
----
- drivers/usb/dwc3/core.c | 2 --
- 1 file changed, 2 deletions(-)
+On 8/8/19 11:38 AM, Hugues FRUCHET wrote:
+> Hi Hans,
+> 
+> You're welcome, here it is:
+> 
+> 1) v4l-utils master branch, commit 
+> 6aa15f7447d4aeca6af1ed7ee9644a0c7e891ece "v4l2-ctl: fix double 
+> decrementing of stream_count"
+> 
+> 2) Cropping test is failed as usual because of OV5640 discrete framesizes
+> 
+> 3) No more /dev/media* and /dev/v4l-*:
+> root@stm32mp1-av96:~# ls -al /dev/video0
+> crw-rw---- 1 root video 81, 0 Mar 19 17:42 /dev/video0
+> root@stm32mp1-av96:~# ls -al /dev/media*
+> ls: cannot access '/dev/media*': No such file or directory
+> root@stm32mp1-av96:~# ls -al /dev/v4l-*
+> ls: cannot access '/dev/v4l-*': No such file or directory
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index c9bb93a2c81e..7dd6d419254d 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -168,7 +168,6 @@ static void __dwc3_set_mode(struct work_struct *work)
- 				otg_set_vbus(dwc->usb2_phy->otg, true);
- 			phy_set_mode(dwc->usb2_generic_phy, PHY_MODE_USB_HOST);
- 			phy_set_mode(dwc->usb3_generic_phy, PHY_MODE_USB_HOST);
--			phy_calibrate(dwc->usb2_generic_phy);
- 		}
- 		break;
- 	case DWC3_GCTL_PRTCAP_DEVICE:
-@@ -1166,7 +1165,6 @@ static int dwc3_core_init_mode(struct dwc3 *dwc)
- 				dev_err(dev, "failed to initialize host\n");
- 			return ret;
- 		}
--		phy_calibrate(dwc->usb2_generic_phy);
- 		break;
- 	case USB_DR_MODE_OTG:
- 		INIT_WORK(&dwc->drd_work, __dwc3_set_mode);
--- 
-2.17.1
+Good. One more question: is this tested with two subdevs? So a bridge+sensor?
+
+Regards,
+
+	Hans
+
+> 
+> 
+> root@stm32mp1-av96:~# v4l2-compliance -s
+> v4l2-compliance SHA: 6aa15f7447d4aeca6af1ed7ee9644a0c7e891ece, 32 bits
+> 
+> Compliance test for stm32-dcmi device /dev/video0:
+> 
+> Driver Info:
+>          Driver name      : stm32-dcmi
+>          Card type        : STM32 Camera Memory Interface
+>          Bus info         : platform:dcmi
+>          Driver version   : 4.19.49
+>          Capabilities     : 0x85200001
+>                  Video Capture
+>                  Read/Write
+>                  Streaming
+>                  Extended Pix Format
+>                  Device Capabilities
+>          Device Caps      : 0x05200001
+>                  Video Capture
+>                  Read/Write
+>                  Streaming
+>                  Extended Pix Format
+> 
+> Required ioctls:
+>          test VIDIOC_QUERYCAP: OK
+> 
+> Allow for multiple opens:
+>          test second /dev/video0 open: OK
+>          test VIDIOC_QUERYCAP: OK
+>          test VIDIOC_G/S_PRIORITY: OK
+>          test for unlimited opens: OK
+> 
+> Debug ioctls:
+>          test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+>          test VIDIOC_LOG_STATUS: OK
+> 
+> Input ioctls:
+>          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>          test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>          test VIDIOC_G/S/ENUMINPUT: OK
+>          test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>          Inputs: 1 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+>          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>          Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+>          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>          test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>          test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+> Control ioctls (Input 0):
+>          test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>          test VIDIOC_QUERYCTRL: OK
+>          test VIDIOC_G/S_CTRL: OK
+>          test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>          test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>          test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>          Standard Controls: 18 Private Controls: 0
+> 
+> Format ioctls (Input 0):
+>          test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>          test VIDIOC_G/S_PARM: OK
+>          test VIDIOC_G_FBUF: OK (Not Supported)
+>          test VIDIOC_G_FMT: OK
+>          test VIDIOC_TRY_FMT: OK
+>          test VIDIOC_S_FMT: OK
+>          test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>                  fail: 
+> ../../../../../../../../../sources/v4l-utils/utils/v4l2-compliance/v4l2-test-formats.cpp(1414): 
+> node->frmsizes_count[pixfm
+> t] > 1
+>          test Cropping: FAIL
+>          test Composing: OK (Not Supported)
+>          test Scaling: OK (Not Supported)
+> 
+> Codec ioctls (Input 0):
+>          test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>          test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>          test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+> Buffer ioctls (Input 0):
+>          test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>          test VIDIOC_EXPBUF: OK
+>          test Requests: OK (Not Supported)
+> 
+> Test input 0:
+> 
+> Streaming ioctls:
+>          test read/write: OK
+>          test blocking wait: OK
+>          test MMAP (no poll): OK
+>          test MMAP (select): OK
+>          test MMAP (epoll): OK
+>          test USERPTR (no poll): OK (Not Supported)
+>          test USERPTR (select): OK (Not Supported)
+>          test DMABUF: Cannot test, specify --expbuf-device
+> 
+> Total for stm32-dcmi device /dev/video0: 51, Succeeded: 50, Failed: 1, 
+> Warnings: 0
+> 
+> 
+> On 8/7/19 12:15 PM, Hans Verkuil wrote:
+>> Hi Hugues,
+>>
+>> Can you provide the output of the most recent v4l2-compliance?
+>>
+>> Use 'v4l2-compliance -s'.
+>>
+>> Also, just to confirm, with this v4 there are no /dev/mediaX or
+>> /dev/v4l-subdevX devices created anymore, right?
+>>
+>> This v4 looks good to me, I just want to have these final checks
+>> done.
+>>
+>> Regards,
+>>
+>> 	Hans
+>>
+> 
+> Best regards,
+> Hugues.
+> 
 
