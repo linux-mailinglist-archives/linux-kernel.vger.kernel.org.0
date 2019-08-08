@@ -2,132 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD5778658B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37E7A86598
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 17:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733102AbfHHPTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 11:19:51 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40242 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfHHPTu (ORCPT
+        id S2390070AbfHHPVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 11:21:19 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40511 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728380AbfHHPVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:19:50 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5D68828C51F;
-        Thu,  8 Aug 2019 16:19:48 +0100 (BST)
-Date:   Thu, 8 Aug 2019 17:19:45 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v5 2/3] mtd: spi-nor: Move m25p80 code in spi-nor.c
-Message-ID: <20190808171945.21a608cc@collabora.com>
-In-Reply-To: <CAP6Zq1g6Z=o7FnX4UpZ-dq_9Ui-yv9E5OEJGirK49RqFUPoP_g@mail.gmail.com>
-References: <20190806051041.3636-1-vigneshr@ti.com>
-        <20190806051041.3636-3-vigneshr@ti.com>
-        <CAP6Zq1h9Xe9ptGxQpjYwoFaS1sTyd-3EsMTAYwp9e70Cm1czLg@mail.gmail.com>
-        <20190808160452.1da76beb@collabora.com>
-        <CAP6Zq1g6Z=o7FnX4UpZ-dq_9Ui-yv9E5OEJGirK49RqFUPoP_g@mail.gmail.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 8 Aug 2019 11:21:18 -0400
+Received: by mail-ot1-f68.google.com with SMTP id l15so62834626oth.7
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 08:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=62wPsGMynwfej/OoKErjBbr2fFO4UlH7moOGmVEgcPY=;
+        b=QWLuNsnE+aKeazvULF2iiss/MAzTxMI+IOnAKBvxpWmbKVHzAkXrbqU8MztcyHrsiO
+         jwrWHhPavRYFK5SVLhhCMoMdICyjKxDtbox4bzwFiQ0nIs5e4NZGRqYCkdxpWRsDUmP3
+         I+uu/NadCvnKhBlaQWYnKt+TpQKb/8KbISU3dcuDRJrQKgM6Za/37sy4M6Y4/ma9CJzH
+         ADGOcG0wVYpgqzLHNusWCg4Csc+rdplcWdM4JOBEElYeMpBtIpYO8LU9fhLYYZzZm6cY
+         6oSw1kpRjJp20WjnH17p/4+tl2yDx3AwkQ0BfVPHdOWkr1HljyIMB+T5BJ7JXfzsQBgW
+         T5Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=62wPsGMynwfej/OoKErjBbr2fFO4UlH7moOGmVEgcPY=;
+        b=T7vVgEebDKbvOebaVAGT56tNlX8mIMACnZYnKkpTrMuEPRPX3ZlILliGYtl7n3SQ8F
+         w6Zs0QS1BlvfkELUx3Yn0b39nFIQ2R5JaspHIOoVjgLX2qexhNT8cnav29xIgMWFYeSi
+         a6awdAy5jLlbrYAYubDu/PRBAabvmpjCxToKOrKXz/jl3kHqGLFfgTsoWg/8/Pd6ELhb
+         uyuzZ5Bww2dfd0hpHmdNqRu/Hl3XDE5nfqYVJthPTD2As767JNLbSQFv2huzuqLiNI8y
+         l9WVnjnSXsuBAzRVW+xZGFvRwy3Yai8oixXfp/fHBv7NyI8NYPIi345CyyrZvq5y/F9o
+         40+A==
+X-Gm-Message-State: APjAAAUeyN9p5rnlFgHi95FXFKOWrebN9JI2Vb5u57ES7bV0fstJuZ9B
+        5hO96cp8/bTxCM0oXbjEqRdlBIbJ0MvMYg==
+X-Google-Smtp-Source: APXvYqz0iXbOnWP16YmlifI9jTb20zfHdE8NCzF7SMqsdZfeBLXIN5Ne1Kph2nUmVWqVODt6NjInDQ==
+X-Received: by 2002:a05:6830:119:: with SMTP id i25mr14283189otp.288.1565277677096;
+        Thu, 08 Aug 2019 08:21:17 -0700 (PDT)
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com. [209.85.210.41])
+        by smtp.gmail.com with ESMTPSA id k10sm31320872otn.58.2019.08.08.08.21.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Aug 2019 08:21:16 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id z17so1630753otk.13
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 08:21:15 -0700 (PDT)
+X-Received: by 2002:a9d:7248:: with SMTP id a8mr14036212otk.363.1565277675268;
+ Thu, 08 Aug 2019 08:21:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190808022819.108337-1-balsini@android.com> <20190808090049.GC1265@kroah.com>
+In-Reply-To: <20190808090049.GC1265@kroah.com>
+From:   Alessio Balsini <balsini@android.com>
+Date:   Thu, 8 Aug 2019 08:21:04 -0700
+X-Gmail-Original-Message-ID: <CAKM9miJ=CmW0b-_3UDg7BySg73qVs2ctSiz7dQL5TXuOkacGyw@mail.gmail.com>
+Message-ID: <CAKM9miJ=CmW0b-_3UDg7BySg73qVs2ctSiz7dQL5TXuOkacGyw@mail.gmail.com>
+Subject: Re: [PATCH 3.18.y 4.4.y 4.9.y] block: blk_init_allocated_queue() set
+ q->fq as NULL in the fail case
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, xiao jin <jin.xiao@intel.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Aug 2019 17:44:35 +0300
-Tomer Maimon <tmaimon77@gmail.com> wrote:
+Oops, thanks!
 
-> Hi Boris,
-> 
-> On Thu, 8 Aug 2019 at 17:04, Boris Brezillon <boris.brezillon@collabora.com>
-> wrote:
-> 
-> > Hi Tomer,
+On Thu, Aug 8, 2019 at 2:00 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Aug 08, 2019 at 03:28:19AM +0100, Alessio Balsini wrote:
+> > From: xiao jin <jin.xiao@intel.com>
 > >
-> > On Thu, 8 Aug 2019 13:05:14 +0300
-> > Tomer Maimon <tmaimon77@gmail.com> wrote:
-> >  
-> > > @@ -688,6 +1003,16 @@ static int spi_nor_erase_sector(struct spi_nor  
-> > *nor,  
-> > > > u32 addr)
-> > > >         if (nor->erase)
-> > > >                 return nor->erase(nor, addr);
-> > > >
-> > > > +       if (nor->spimem) {
-> > > > +               struct spi_mem_op op =
-> > > > +                       SPI_MEM_OP(SPI_MEM_OP_CMD(nor->erase_opcode,  
-> > 1),  
-> > > > +                                  SPI_MEM_OP_ADDR(nor->addr_width,  
-> > addr,  
-> > > > 1),
-> > > > +                                  SPI_MEM_OP_NO_DUMMY,
-> > > > +                                  SPI_MEM_OP_NO_DATA);
-> > > > +
-> > > > +               return spi_mem_exec_op(nor->spimem, &op);
-> > > > +       }
-> > > > +
-> > > >  
-> > >
-> > > static int spi_nor_erase_sector(struct spi_nor *nor, u32 addr)
-> > > {
-> > >
-> > >       int i;
-> > >
-> > >       if (nor->flags & SNOR_F_S3AN_ADDR_DEFAULT)
-> > >               addr = spi_nor_s3an_addr_convert(nor, addr);
-> > >
-> > >       if (nor->erase)
-> > >               return nor->erase(nor, addr);
-> > >
-> > >       /*
-> > >        * Default implementation, if driver doesn't have a specialized HW
-> > >        * control
-> > >        */
-> > >       for (i = nor->addr_width - 1; i >= 0; i--) {
-> > >               nor->bouncebuf[i] = addr & 0xff;
-> > >               addr >>= 8;
-> > >       }
-> > >
-> > >       if (nor->spimem) {
-> > >               struct spi_mem_op op =
-> > >                       SPI_MEM_OP(SPI_MEM_OP_CMD(nor->erase_opcode, 1),
-> > >                       SPI_MEM_OP_NO_ADDR,
-> > >                       SPI_MEM_OP_NO_DUMMY,
-> > >                       SPI_MEM_OP_DATA_OUT(nor->addr_width,  
-> > nor->bouncebuf, 1));
+> > commit 54648cf1ec2d7f4b6a71767799c45676a138ca24 upstream.
 > >
-> > That's wrong. If you need that, that's probably a spi-mem controller
-> > driver issue. Address cycles should be passed through the
-> > spi_mem_op->addr field, not packed with the data cycles.
-> >  
-> 
-> Maybe I missing something but this is not the way it
-> working in the current spi-nor and m25p80 driver...
-> in function  spi_nor_erase_sector it calling
-> nor->write_reg(nor, nor->erase_opcode, nor->bouncebuf, nor->addr_width);
-> 
-> so it will call m25p80_write_reg and in this function the op sets as follow:
-> 
->         struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(opcode, 1),
->                                           SPI_MEM_OP_NO_ADDR,
->                                           SPI_MEM_OP_NO_DUMMY,
->                                           SPI_MEM_OP_DATA_OUT(len, NULL, 1));
-> 
-> Do we like to modify it?
-
-Yes. The spi-mem core is taking care of this conversion [1].
-
-[1]https://elixir.bootlin.com/linux/v5.3-rc3/source/drivers/spi/spi-mem.c#L329
+> > We find the memory use-after-free issue in __blk_drain_queue()
+> > on the kernel 4.14. After read the latest kernel 4.18-rc6 we
+> > think it has the same problem.
+> >
+> > Memory is allocated for q->fq in the blk_init_allocated_queue().
+> > If the elevator init function called with error return, it will
+> > run into the fail case to free the q->fq.
+> >
+> > Then the __blk_drain_queue() uses the same memory after the free
+> > of the q->fq, it will lead to the unpredictable event.
+> >
+> > The patch is to set q->fq as NULL in the fail case of
+> > blk_init_allocated_queue().
+> >
+> > Fixes: commit 7c94e1c157a2 ("block: introduce blk_flush_queue to drive flush machinery")
+> > Cc: <stable@vger.kernel.org>
+> > Reviewed-by: Ming Lei <ming.lei@redhat.com>
+> > Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+> > Signed-off-by: xiao jin <jin.xiao@intel.com>
+> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> > Signed-off-by: Alessio Balsini <balsini@android.com>
+> > ---
+> >  block/blk-core.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/block/blk-core.c b/block/blk-core.c
+> > index 50d77c90070d..7662f97dded6 100644
+> > --- a/block/blk-core.c
+> > +++ b/block/blk-core.c
+> > @@ -870,6 +870,7 @@ blk_init_allocated_queue(struct request_queue *q, request_fn_proc *rfn,
+> >
+> >  fail:
+> >       blk_free_flush_queue(q->fq);
+> > +     q->fq = NULL;
+> >       return NULL;
+> >  }
+> >  EXPORT_SYMBOL(blk_init_allocated_queue);
+> > --
+> > 2.22.0.770.g0f2c4a37fd-goog
+> >
+>
+> Guenter sent this backport a day before you did, so I took his version
+> and added your s-o-b to it.
+>
+> thanks,
+>
+> greg k-h
