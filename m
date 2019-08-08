@@ -2,107 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B9386727
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A50158672A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2019 18:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732763AbfHHQcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 12:32:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44080 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725535AbfHHQcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 12:32:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DEBE0AE7F;
-        Thu,  8 Aug 2019 16:32:29 +0000 (UTC)
-Date:   Thu, 8 Aug 2019 18:32:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     ndrw.xf@redhazel.co.uk
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Artem S. Tashkinov" <aros@gmx.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
- inability to gracefully handle low memory pressure
-Message-ID: <20190808163228.GE18351@dhcp22.suse.cz>
-References: <CAJuCfpHhR+9ybt9ENzxMbdVUd_8rJN+zFbDm+5CeE2Desu82Gg@mail.gmail.com>
- <398f31f3-0353-da0c-fc54-643687bb4774@suse.cz>
- <20190806142728.GA12107@cmpxchg.org>
- <20190806143608.GE11812@dhcp22.suse.cz>
- <CAJuCfpFmOzj-gU1NwoQFmS_pbDKKd2XN=CS1vUV4gKhYCJOUtw@mail.gmail.com>
- <20190806220150.GA22516@cmpxchg.org>
- <20190807075927.GO11812@dhcp22.suse.cz>
- <20190807205138.GA24222@cmpxchg.org>
- <20190808114826.GC18351@dhcp22.suse.cz>
- <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
+        id S2403935AbfHHQdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 12:33:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54252 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbfHHQdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 12:33:06 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6CD3BCF22;
+        Thu,  8 Aug 2019 16:33:06 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A42CE19C69;
+        Thu,  8 Aug 2019 16:33:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu,  8 Aug 2019 18:33:06 +0200 (CEST)
+Date:   Thu, 8 Aug 2019 18:33:03 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
+        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
+        william.kucharski@oracle.com, srikar@linux.vnet.ibm.com
+Subject: Re: [PATCH v12 5/6] khugepaged: enable collapse pmd for pte-mapped
+ THP
+Message-ID: <20190808163303.GB7934@redhat.com>
+References: <20190807233729.3899352-1-songliubraving@fb.com>
+ <20190807233729.3899352-6-songliubraving@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190807233729.3899352-6-songliubraving@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 08 Aug 2019 16:33:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 08-08-19 16:10:07, ndrw.xf@redhazel.co.uk wrote:
-> 
-> 
-> On 8 August 2019 12:48:26 BST, Michal Hocko <mhocko@kernel.org> wrote:
-> >> 
-> >> Per default, the OOM killer will engage after 15 seconds of at least
-> >> 80% memory pressure. These values are tunable via sysctls
-> >> vm.thrashing_oom_period and vm.thrashing_oom_level.
-> >
-> >As I've said earlier I would be somehow more comfortable with a kernel
-> >command line/module parameter based tuning because it is less of a
-> >stable API and potential future stall detector might be completely
-> >independent on PSI and the current metric exported. But I can live with
-> >that because a period and level sounds quite generic.
-> 
-> Would it be possible to reserve a fixed (configurable) amount of RAM for caches,
+On 08/07, Song Liu wrote:
+>
+> +void collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr)
+> +{
+> +	unsigned long haddr = addr & HPAGE_PMD_MASK;
+> +	struct vm_area_struct *vma = find_vma(mm, haddr);
+> +	struct page *hpage = NULL;
+> +	pmd_t *pmd, _pmd;
+> +	spinlock_t *ptl;
+> +	int count = 0;
+> +	int i;
+> +
+> +	if (!vma || !vma->vm_file ||
+> +	    vma->vm_start > haddr || vma->vm_end < haddr + HPAGE_PMD_SIZE)
+> +		return;
+> +
+> +	/*
+> +	 * This vm_flags may not have VM_HUGEPAGE if the page was not
+> +	 * collapsed by this mm. But we can still collapse if the page is
+> +	 * the valid THP. Add extra VM_HUGEPAGE so hugepage_vma_check()
+> +	 * will not fail the vma for missing VM_HUGEPAGE
+> +	 */
+> +	if (!hugepage_vma_check(vma, vma->vm_flags | VM_HUGEPAGE))
+> +		return;
+> +
+> +	pmd = mm_find_pmd(mm, haddr);
 
-I am afraid there is nothing like that available and I would even argue
-it doesn't make much sense either. What would you consider to be a
-cache? A kernel/userspace reclaimable memory? What about any other in
-kernel memory users? How would you setup such a limit and make it
-reasonably maintainable over different kernel releases when the memory
-footprint changes over time?
+OK, I do not see anything really wrong...
 
-Besides that how does that differ from the existing reclaim mechanism?
-Once your cache hits the limit, there would have to be some sort of the
-reclaim to happen and then we are back to square one when the reclaim is
-making progress but you are effectively treshing over the hot working
-set (e.g. code pages)
+a couple of questions below.
 
-> and trigger OOM killer earlier, before most UI code is evicted from memory?
+> +	for (i = 0, addr = haddr; i < HPAGE_PMD_NR; i++, addr += PAGE_SIZE) {
+> +		pte_t *pte = pte_offset_map(pmd, addr);
+> +		struct page *page;
+> +
+> +		if (pte_none(*pte))
+> +			continue;
+> +
+> +		page = vm_normal_page(vma, addr, *pte);
+> +
+> +		if (!page || !PageCompound(page))
+> +			return;
+> +
+> +		if (!hpage) {
+> +			hpage = compound_head(page);
 
-How does the kernel knows that important memory is evicted? E.g. say
-that your graphic stack is under pressure and it has to drop internal
-caches. No outstanding processes will be swapped out yet your UI will be
-completely frozen like.
+OK,
 
-> In my use case, I am happy sacrificing e.g. 0.5GB and kill runaway
-> tasks _before_ the system freezes. Potentially OOM killer would also
-> work better in such conditions. I almost never work at close to full
-> memory capacity, it's always a single task that goes wrong and brings
-> the system down.
+> +			if (hpage->mapping != vma->vm_file->f_mapping)
+> +				return;
 
-If you know which task is that then you can put it into a memory cgroup
-with a stricter memory limit and have it killed before the overal system
-starts suffering.
+is it really possible? May be WARN_ON(hpage->mapping != vm_file->f_mapping)
+makes more sense ?
 
-> The problem with PSI sensing is that it works after the fact (after
-> the freeze has already occurred). It is not very different from
-> issuing SysRq-f manually on a frozen system, although it would still
-> be a handy feature for batched tasks and remote access.
+> +		if (hpage + i != page)
+> +			return;
 
-Not really. PSI is giving you a matric that tells you how much time you
-spend on the memory reclaim. So you can start watching the system from
-lower utilization already.
--- 
-Michal Hocko
-SUSE Labs
+ditto.
+
+Oleg.
+
