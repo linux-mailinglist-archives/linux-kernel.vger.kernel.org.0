@@ -2,116 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8C0186CE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 00:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7887886CEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 00:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404527AbfHHWA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 18:00:28 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36509 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfHHWA1 (ORCPT
+        id S2390483AbfHHWEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 18:04:44 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:53466 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728020AbfHHWEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 18:00:27 -0400
-Received: by mail-lj1-f193.google.com with SMTP id i21so11046587ljj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 15:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8FKs1Lf93PhHeNickgScG68jCCCMLn5xmM2hWU+zOc0=;
-        b=N7vVOeDk0i8tnwx9FeM0bk2hzb1qQcG0jyudUYorCU2/vjX7WrpzoiXUdfAgBlwV/G
-         HX8JXBL1UxIX4Zu566P7/BNQrodMwexwK3EDTayIOh7D27fiThpx4iWjhRlJ/UyIDTZp
-         i4ftV8wMpo0OH12cyB11iavFzsVyoqJ2bDHH64WYzZ6KHBrXkeTLTqJFQVJwOgxGpgck
-         55EoB1vyGjJdhV4KVvTqNDmnOyzZJhIW8T6CARg1I5SjHZNs9uwBOpsjIvkozv5eC8nG
-         juUycyymABCTPmiSXbgshS9NIK9N/y0tPGBEGoJug8vdv5Bmms8RsofSZrtKBrR8tI76
-         oL6Q==
+        Thu, 8 Aug 2019 18:04:44 -0400
+Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x78M4gtQ010196
+        for <linux-kernel@vger.kernel.org>; Thu, 8 Aug 2019 18:04:42 -0400
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x78M4bL7032145
+        for <linux-kernel@vger.kernel.org>; Thu, 8 Aug 2019 18:04:42 -0400
+Received: by mail-qt1-f198.google.com with SMTP id e22so21205292qtp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 15:04:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8FKs1Lf93PhHeNickgScG68jCCCMLn5xmM2hWU+zOc0=;
-        b=WH6qj2ZorhOR5KOThBst5VwJaJ3klvKVEpZ1IJasoA9B/xzXoVicf1rxCvCoIbnjXW
-         mly92yddMCB5JiPBuNuaTu+qdWR0RXjxHG/qrxPOTsm/EgHSdahw7ofEARqDCRy1kDTv
-         H9V1h3odNwkndMHA6mHJ86JoCLZfr1k9uR/BkC9QUk2jFUz/otwARgZPPuNB5cb5BIRt
-         B7/w8Ok3F2bYLj5ALE7rkF+IN2FtQGz0ERQAZ/4cKRV7oz6FRXRXZTdjM09HoqQQqxCl
-         C7Yss3WJI//lZaQYlBzxvMeuy9FsZbyw2LwTsAoQRs+QmiItfRidEYTwuJG19r2/pNTH
-         i/Iw==
-X-Gm-Message-State: APjAAAX+t7NpSPKmbC7JVeFt1/Gj4ZGaup8izclTtVdATxeD1lnjHBc9
-        MZ9IshSJfT+lxaTVR4P1UEIoXxJK
-X-Google-Smtp-Source: APXvYqwjZxd1Ihga4FE40fWoYBPdQTYfvm+tf5LuRvCEuMq+vckO1dXIYqIyeUTKIAKT5zlFhQbsvw==
-X-Received: by 2002:a2e:8650:: with SMTP id i16mr9568178ljj.178.1565301625333;
-        Thu, 08 Aug 2019 15:00:25 -0700 (PDT)
-Received: from localhost.localdomain ([46.216.207.166])
-        by smtp.gmail.com with ESMTPSA id h19sm3635422lfc.93.2019.08.08.15.00.24
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=TuPUW4uauKZvKtW12t0EYu+Ky+eWDM1YUZMuhx8X6Sc=;
+        b=ff1SvV6kSiFgFTbKE/+xhyrwe0QcqJwTPPdrDZ+jxi7kALlJtF9DwT6c+gIcxKaksX
+         LuXyhO9spFECeJvqXx7yilBcXpdT7gfDdG8j6ZYPt89lY7bs3sXj5IVGqLJu0lhUq7oe
+         OfoESIY0hbc+It2OJqZxHJEBHulNokIwJETXjFujGHGM0UlpgfCzKppz/RvxI1pgLBzx
+         LqsNXnC8mee/PBpsqVlQBn3/nJlNHfyo8+qCpfnA28LMdAceS1hfY5cs71uAKv5huLb5
+         TwSiRF9OhSLyD2hV/ZLiXmxPH8CHhQ1o5uxmNg2YRxtO1gNJeoR7i9gb3Fnql3Y51juI
+         lnFg==
+X-Gm-Message-State: APjAAAVZi98Si14m4IFMX2ahLp579zV/6y6SOKnICGWNGWleIUYHip8K
+        QmVtpZpcV/Oyt+d/9rMC5hgpkVUxm/3gOsTi/e6ukPSCRD9dUZm1JCHKqN2D4o9v3clZrqLtDzF
+        UBZB9TrREXQpOVXSmJSqFLmVtntL+21AJhsw=
+X-Received: by 2002:a37:a744:: with SMTP id q65mr15514314qke.151.1565301877416;
+        Thu, 08 Aug 2019 15:04:37 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqylW9odmQuabnL8zaJIVyfwISfEf8nn6NAGHAnPJMhlOL+krnoyx+GmOVKUb8WJfz1a8+/paw==
+X-Received: by 2002:a37:a744:: with SMTP id q65mr15514293qke.151.1565301877198;
+        Thu, 08 Aug 2019 15:04:37 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::359])
+        by smtp.gmail.com with ESMTPSA id j66sm40204505qkf.86.2019.08.08.15.04.35
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 15:00:24 -0700 (PDT)
-Received: from jek by localhost.localdomain with local (Exim 4.92)
-        (envelope-from <jekhor@gmail.com>)
-        id 1hvqTZ-0000is-Re; Fri, 09 Aug 2019 01:01:37 +0300
-From:   Yauhen Kharuzhy <jekhor@gmail.com>
-To:     linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yauhen Kharuzhy <jekhor@gmail.com>
-Subject: [PATCH] extcon-intel-cht-wc: Don't reset USB data connection at probe
-Date:   Fri,  9 Aug 2019 01:01:29 +0300
-Message-Id: <20190808220129.2737-1-jekhor@gmail.com>
-X-Mailer: git-send-email 2.23.0.rc0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 08 Aug 2019 15:04:35 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Subject: Re: [PATCH] arch/x86/kernel/cpu/umwait.c - remove unused variable
+In-Reply-To: <alpine.DEB.2.21.1908082229010.2882@nanos.tec.linutronix.de>
+References: <79734.1565272329@turing-police> <alpine.DEB.2.21.1908082158580.2882@nanos.tec.linutronix.de> <141835.1565295884@turing-police>
+ <alpine.DEB.2.21.1908082229010.2882@nanos.tec.linutronix.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1565301874_4269P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 08 Aug 2019 18:04:34 -0400
+Message-ID: <147298.1565301874@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel Cherry Trail Whiskey Cove extcon driver connect USB data lines to
-PMIC at driver probing for further charger detection. This causes reset of
-USB data sessions and removing all devices from bus. If system was
-booted from Live CD or USB dongle, this makes system unusable.
+--==_Exmh_1565301874_4269P
+Content-Type: text/plain; charset=us-ascii
 
-Check if USB ID pin is floating and re-route data lines in this case
-only, don't touch otherwise.
+On Thu, 08 Aug 2019 22:32:38 +0200, Thomas Gleixner said:
 
-Signed-off-by: Yauhen Kharuzhy <jekhor@gmail.com>
----
- drivers/extcon/extcon-intel-cht-wc.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+> Care to resend the last few with fixed subject lines, so I don't have to
+> clean them up?
 
-diff --git a/drivers/extcon/extcon-intel-cht-wc.c b/drivers/extcon/extcon-intel-cht-wc.c
-index 9d32150e68db..3ae573e93e6e 100644
---- a/drivers/extcon/extcon-intel-cht-wc.c
-+++ b/drivers/extcon/extcon-intel-cht-wc.c
-@@ -338,6 +338,7 @@ static int cht_wc_extcon_probe(struct platform_device *pdev)
- 	struct intel_soc_pmic *pmic = dev_get_drvdata(pdev->dev.parent);
- 	struct cht_wc_extcon_data *ext;
- 	unsigned long mask = ~(CHT_WC_PWRSRC_VBUS | CHT_WC_PWRSRC_USBID_MASK);
-+	int pwrsrc_sts, id;
- 	int irq, ret;
- 
- 	irq = platform_get_irq(pdev, 0);
-@@ -387,8 +388,19 @@ static int cht_wc_extcon_probe(struct platform_device *pdev)
- 		goto disable_sw_control;
- 	}
- 
--	/* Route D+ and D- to PMIC for initial charger detection */
--	cht_wc_extcon_set_phymux(ext, MUX_SEL_PMIC);
-+	ret = regmap_read(ext->regmap, CHT_WC_PWRSRC_STS, &pwrsrc_sts);
-+	if (ret) {
-+		dev_err(ext->dev, "Error reading pwrsrc status: %d\n", ret);
-+		goto disable_sw_control;
-+	}
-+
-+	id = cht_wc_extcon_get_id(ext, pwrsrc_sts);
-+
-+	/* If no USB host or device connected, route D+ and D- to PMIC for
-+	 * initial charger detection
-+	 */
-+	if (id == INTEL_USB_ID_FLOAT)
-+		cht_wc_extcon_set_phymux(ext, MUX_SEL_PMIC);
- 
- 	/* Get initial state */
- 	cht_wc_extcon_pwrsrc_event(ext);
--- 
-2.23.0.rc0
+Will do that later this evening...
 
+> The right thing to do is to have a cpu_offline callback which clears the
+> umwait MSR. That covers also the failure in the cpu hotplug setup. Then
+> handling an error return makes sense and keeps everything in a workable
+> shape.
+
+OK, in that case, toss the umwait patch for now....
+
+--==_Exmh_1565301874_4269P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXUyccgdmEQWDXROgAQKy0A//XOZgqtQLKHSpYvU3JNwuVsNWXXY2YDGE
+fz4Hz4jh0McUtMvQxB/CucNnu0k4fxNt317OrpUyi05/BHzeJ9sVwDbFAKUArzCB
+4PRL1ZR38FK7S0YQtGIOlFEu9SwpQVGd3gb0y/hR5AzFHwizGK134mvLMHHj5r3E
+00I1bmzlkFJ1TLuYEzsYQvfg6ybwZE6l5pXku7hhdEN0efr01Af5vfed8t8ZZZF+
+QTVTtlrgOHhUrVJhN8r1RZejB4KLMwpiqnRTMxb4sZwKxUkU+kLGnJ4F4yVQmS0l
+QubnTFujqlnHp/59CBmj3lzHAxrcoka5Il2WxtPC6CyAal31MYlb/IkuHAS/a3Ck
+/euRxdnxfr05xxtnBaBLGu/3yL0F9b8faH4t+tmGQbFVF98SbeAHd7H51tqfTv4k
+nrFH0nN0Dz/qgpbI27Bhey4ASeP5EOABPeTx1xv5v4E9DUoRuI78/GyzO3UjIQgx
+clveWJsQ4eooZ1z0NvvWY+O9FjJnsyGJfA8KD/M5a64QJdWuO7CgK/04zXk+4cI7
+O9p7Qf3SOofxuXC1sdH2RBnd1ntEPrr1dORLchYzYG0kNyem+07CqXwec92XN+Bv
+kp70QgGrFnd3HmB9/mqsWiV1DjvchJkWoW3cFCVRR91P1RS9iZ0GetAa3WK6lYEh
+77swpa305J0=
+=5blX
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1565301874_4269P--
