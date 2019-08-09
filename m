@@ -2,131 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD9B787AE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D229C87AF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:18:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406934AbfHINPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 09:15:17 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:43872 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbfHINPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:15:16 -0400
-Received: from zn.tnic (p200300EC2F0BAF004D276273DCAF0EAA.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:af00:4d27:6273:dcaf:eaa])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3C2EC1EC0B07;
-        Fri,  9 Aug 2019 15:15:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565356515;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=sTeaFwbbAjE+f6AcN4Z6yDkT173vzN9tQEm11E8OlTA=;
-        b=RYY8FKu7Twf/EdUKVlLXRvsHCtn439oWBKH7rrhZbR0L61VvLkZlXzwwDNLVg8UmWbylfv
-        zbk3z0cKDnrq2C1RUIVHp3ZuFiJRa3RJ6mN+B6rGnRPh4oe2GvL5abRkxuypeW9ChXoitg
-        /AgJWbAhoBdgb3wnJrkbUmltKUVFoJo=
-Date:   Fri, 9 Aug 2019 15:15:59 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 02/24] EDAC, ghes: Fix grain calculation
-Message-ID: <20190809131559.GF2152@zn.tnic>
-References: <20190624150758.6695-1-rrichter@marvell.com>
- <20190624150758.6695-3-rrichter@marvell.com>
+        id S2407022AbfHINSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 09:18:08 -0400
+Received: from mail-ot1-f69.google.com ([209.85.210.69]:33939 "EHLO
+        mail-ot1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406878AbfHINSI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 09:18:08 -0400
+Received: by mail-ot1-f69.google.com with SMTP id 20so25263113oty.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 06:18:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=VXzutlNhDah6arTUyAYrVcxlR7yZHCjN1bYgiV3eUos=;
+        b=nj3+sAjsFR6DfxpoIf39zWr90OMfO+aLwnQmWT7M0J6kx+7yu5j1xzx6AU5xThwUAP
+         nQFhGDj6uE5BufK4+7iw4F3/Zsed5fUQg32CZBVvAnyAgvbiVCW37ul6SodaaivgMmcv
+         WI7ynKRX9yFKE6QheS0178yix4/Ej5TsF8wEqXa+cgzPjzBOMCXt90cdh5RigN9sHWFP
+         weXYB/hZ9PTHI24o+w2GvZ55GsDIoFkPlWcPBpu/8UZo4xJ0+z/5OPgdr7BL1L2tPh9+
+         IPOc0hQvUAuUgYZCGfzNbOcsVRd2TsxQUiI9+u4Zsew+nyvwf6X7uci7MIqz0jMGXl3/
+         bAIQ==
+X-Gm-Message-State: APjAAAXcHpe1BLV8kgYfGIig16ck0Ejy1GRzM6Y+z4ZLUfSm5VPxmTUj
+        3bcVgW4iOAYhQKhYM+cgY91Tw+cQ1mKTAd/JXKdKt2DmqZyO
+X-Google-Smtp-Source: APXvYqw7xOGcwZAOmlCHadLqenE0yz5Y2uP/Qs3apYDikEK1TrXBlpoOUWv9W5d1Sm72DxkpYEyRKD7SW0/LI/OqOvotczfIChx9
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190624150758.6695-3-rrichter@marvell.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a05:6638:348:: with SMTP id x8mr14322147jap.31.1565356686812;
+ Fri, 09 Aug 2019 06:18:06 -0700 (PDT)
+Date:   Fri, 09 Aug 2019 06:18:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000043b599058faf0145@google.com>
+Subject: possible deadlock in display_open
+From:   syzbot <syzbot+c558267ad910fc494497@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+        mchehab@kernel.org, sean@mess.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:08:57PM +0000, Robert Richter wrote:
-> The conversion from the physical address mask to a grain (defined as
-> granularity in bytes) is broken:
-> 
-> 	e->grain = ~(mem_err->physical_addr_mask & ~PAGE_MASK);
-> 
-> E.g., a physical address mask of ~0xfff should give a grain of 0x1000,
-> instead the grain is wrong with the upper bits always set. We also
-> remove the limitation to the page size as the granularity is unrelated
-> to the page size used in the system. We fix this with:
-> 
-> 	e->grain = ~mem_err->physical_addr_mask + 1;
-> 
-> Note: We need to adopt the grain_bits calculation as e->grain is now a
-> power of 2 and no longer a bit mask. The formula is now the same as in
-> edac_mc and can later be unified.
+Hello,
 
-Please refrain from using "We" or "I" or etc personal pronouns in a
-commit message and in the code comments below.
+syzbot found the following crash on:
 
-From Documentation/process/submitting-patches.rst:
+HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b29b26600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
+dashboard link: https://syzkaller.appspot.com/bug?extid=c558267ad910fc494497
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15427002600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111cb61c600000
 
- "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-  to do frotz", as if you are giving orders to the codebase to change
-  its behaviour."
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c558267ad910fc494497@syzkaller.appspotmail.com
 
-Please fix all your other commit messages for the next submission.
+======================================================
+WARNING: possible circular locking dependency detected
+5.3.0-rc2+ #25 Not tainted
+------------------------------------------------------
+syz-executor626/1723 is trying to acquire lock:
+000000001a0d74d7 (driver_lock#2){+.+.}, at: display_open+0x1f/0x1d0  
+drivers/media/rc/imon.c:475
 
-> Signed-off-by: Robert Richter <rrichter@marvell.com>
-> ---
->  drivers/edac/ghes_edac.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-> index 7f19f1c672c3..d095d98d6a8d 100644
-> --- a/drivers/edac/ghes_edac.c
-> +++ b/drivers/edac/ghes_edac.c
-> @@ -222,6 +222,7 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  	/* Cleans the error report buffer */
->  	memset(e, 0, sizeof (*e));
->  	e->error_count = 1;
-> +	e->grain = 1;
->  	strcpy(e->label, "unknown label");
->  	e->msg = pvt->msg;
->  	e->other_detail = pvt->other_detail;
-> @@ -317,7 +318,7 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  
->  	/* Error grain */
->  	if (mem_err->validation_bits & CPER_MEM_VALID_PA_MASK)
-> -		e->grain = ~(mem_err->physical_addr_mask & ~PAGE_MASK);
-> +		e->grain = ~mem_err->physical_addr_mask + 1;
+but task is already holding lock:
+00000000076a0058 (minor_rwsem){++++}, at: usb_open+0x23/0x270  
+drivers/usb/core/file.c:39
 
-This is assuming that that ->physical_addr_mask is contiguous but I
-don't trust any firmware. I guess we can leave it like that for now
-until some "inventive" firmware actually does it.
+which lock already depends on the new lock.
 
->  
->  	/* Memory error location, mapped on e->location */
->  	p = e->location;
-> @@ -433,8 +434,15 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  	if (p > pvt->other_detail)
->  		*(p - 1) = '\0';
->  
-> +	/*
-> +	 * We expect the hw to report a reasonable grain, fallback to
-> +	 * 1 byte granularity otherwise.
-> +	 */
-> +	if (WARN_ON_ONCE(!e->grain))
 
-Please move that WARN_ON_ONCE in the
+the existing dependency chain (in reverse order) is:
 
-	if (mem_err->validation_bits & CPER_MEM_VALID_PA_MASK)
+-> #2 (minor_rwsem){++++}:
+        down_write+0x92/0x150 kernel/locking/rwsem.c:1500
+        usb_register_dev drivers/usb/core/file.c:187 [inline]
+        usb_register_dev+0x131/0x6a0 drivers/usb/core/file.c:156
+        imon_init_display drivers/media/rc/imon.c:2343 [inline]
+        imon_probe+0x244d/0x2af0 drivers/media/rc/imon.c:2426
+        usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+        really_probe+0x281/0x650 drivers/base/dd.c:548
+        driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+        __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+        bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+        __device_attach+0x217/0x360 drivers/base/dd.c:882
+        bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+        device_add+0xae6/0x16f0 drivers/base/core.c:2114
+        usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+        generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+        usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+        really_probe+0x281/0x650 drivers/base/dd.c:548
+        driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+        __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+        bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+        __device_attach+0x217/0x360 drivers/base/dd.c:882
+        bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+        device_add+0xae6/0x16f0 drivers/base/core.c:2114
+        usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+        hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+        hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+        port_event drivers/usb/core/hub.c:5359 [inline]
+        hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+        process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+        worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+        kthread+0x318/0x420 kernel/kthread.c:255
+        ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
-branch above because you're presetting grain to 1 so the warn should be
-close to where it could happen, i.e., when coming from the firmware.
+-> #1 (&ictx->lock){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        imon_init_intf0 drivers/media/rc/imon.c:2188 [inline]
+        imon_probe+0xf0c/0x2af0 drivers/media/rc/imon.c:2387
+        usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+        really_probe+0x281/0x650 drivers/base/dd.c:548
+        driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+        __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+        bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+        __device_attach+0x217/0x360 drivers/base/dd.c:882
+        bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+        device_add+0xae6/0x16f0 drivers/base/core.c:2114
+        usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+        generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+        usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+        really_probe+0x281/0x650 drivers/base/dd.c:548
+        driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+        __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+        bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+        __device_attach+0x217/0x360 drivers/base/dd.c:882
+        bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+        device_add+0xae6/0x16f0 drivers/base/core.c:2114
+        usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+        hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+        hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+        port_event drivers/usb/core/hub.c:5359 [inline]
+        hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+        process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+        worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+        kthread+0x318/0x420 kernel/kthread.c:255
+        ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
-Thx.
+-> #0 (driver_lock#2){+.+.}:
+        check_prev_add kernel/locking/lockdep.c:2405 [inline]
+        check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+        validate_chain kernel/locking/lockdep.c:2897 [inline]
+        __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+        lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        display_open+0x1f/0x1d0 drivers/media/rc/imon.c:475
+        usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+        chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+        do_dentry_open+0x494/0x1120 fs/open.c:797
+        do_last fs/namei.c:3416 [inline]
+        path_openat+0x1430/0x3f50 fs/namei.c:3533
+        do_filp_open+0x1a1/0x280 fs/namei.c:3563
+        do_sys_open+0x3c0/0x580 fs/open.c:1089
+        do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
--- 
-Regards/Gruss,
-    Boris.
+other info that might help us debug this:
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Chain exists of:
+   driver_lock#2 --> &ictx->lock --> minor_rwsem
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(minor_rwsem);
+                                lock(&ictx->lock);
+                                lock(minor_rwsem);
+   lock(driver_lock#2);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor626/1723:
+  #0: 00000000076a0058 (minor_rwsem){++++}, at: usb_open+0x23/0x270  
+drivers/usb/core/file.c:39
+
+stack backtrace:
+CPU: 1 PID: 1723 Comm: syz-executor626 Not tainted 5.3.0-rc2+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  check_noncircular+0x345/0x3e0 kernel/locking/lockdep.c:1741
+  check_prev_add kernel/locking/lockdep.c:2405 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+  validate_chain kernel/locking/lockdep.c:2897 [inline]
+  __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+  __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+  __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+  display_open+0x1f/0x1d0 drivers/media/rc/imon.c:475
+  usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+  chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+  do_dentry_open+0x494/0x1120 fs/open.c:797
+  do_last fs/namei.c:3416 [inline]
+  path_openat+0x1430/0x3f50 fs/namei.c:3533
+  do_filp_open+0x1a1/0x280 fs/namei.c:3563
+  do_sys_open+0x3c0/0x580 fs/open.c:1089
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x401300
+Code: 01 f0 ff ff 0f 83 00 0b 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f  
+44 00 00 83 3d 8d 0a 2d 00 00 75 14 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 d4 0a 00 00 c3 48 83 ec 08 e8 3a 00 00 00
+RSP: 002b:00007ffc59dcdec8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000401300
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00007ffc59dcdee0
+RBP: 00000
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
