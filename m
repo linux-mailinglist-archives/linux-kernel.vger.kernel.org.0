@@ -2,86 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FA4F86F97
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D04F286FA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404921AbfHICYo convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 8 Aug 2019 22:24:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729419AbfHICYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 22:24:44 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4229D2054F;
-        Fri,  9 Aug 2019 02:24:42 +0000 (UTC)
-Date:   Thu, 8 Aug 2019 22:24:40 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Jiping Ma <Jiping.Ma2@windriver.com>
-Cc:     Will Deacon <will@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mingo@redhat.com>, Joel Fernandes <joel@joelfernandes.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2 v2] tracing/arm64: Have max stack tracer handle the
- case of return address after data
-Message-ID: <20190808222440.2f99c50e@oasis.local.home>
-In-Reply-To: <21530ce5-3847-c669-2a64-7c59ffb45f35@windriver.com>
-References: <20190807172826.352574408@goodmis.org>
-        <20190807172907.155165959@goodmis.org>
-        <20190808162825.7klpu3ffza5zxwrt@willie-the-truck>
-        <20190808123632.0dd1a58c@gandalf.local.home>
-        <20190808171153.6j56h4hlcpcl5trz@willie-the-truck>
-        <20190808132455.5fa2c660@gandalf.local.home>
-        <21530ce5-3847-c669-2a64-7c59ffb45f35@windriver.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2405222AbfHICdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 22:33:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58880 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733258AbfHICdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 22:33:33 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EABEE274636517B80210;
+        Fri,  9 Aug 2019 10:33:31 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 9 Aug 2019 10:33:21 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 00/12] net: hns3: add some bugfixes & optimizations & cleanups for HNS3 driver
+Date:   Fri, 9 Aug 2019 10:31:06 +0800
+Message-ID: <1565317878-31806-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Aug 2019 10:17:19 +0800
-Jiping Ma <Jiping.Ma2@windriver.com> wrote:
+This patch-set includes code optimizations, bugfixes and cleanups for
+the HNS3 ethernet controller driver.
 
-> On 2019年08月09日 01:24, Steven Rostedt wrote:
-> > On Thu, 8 Aug 2019 18:11:53 +0100
-> > Will Deacon <will@kernel.org> wrote:
-> >  
-> >>> We could make it more descriptive of what it will do and not the reason
-> >>> for why it is done...
-> >>>
-> >>>
-> >>>    ARCH_FTRACE_SHIFT_STACK_TRACER  
-> >> Acked-by: Will Deacon <will@kernel.org>  
-> > Thanks Will!
-> >
-> > Here's the official patch.
-> >
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> >
-> > Most archs (well at least x86) store the function call return address on the
-> > stack before storing the local variables for the function. The max stack
-> > tracer depends on this in its algorithm to display the stack size of each
-> > function it finds in the back trace.
-> >
-> > Some archs (arm64), may store the return address (from its link register)
-> > just before calling a nested function. There's no reason to save the link
-> > register on leaf functions, as it wont be updated. This breaks the algorithm
-> > of the max stack tracer.
-> >
-> > Add a new define ARCH_RET_ADDR_AFTER_LOCAL_VARS that an architecture may set  
-> 
-> ARCH_FTRACE_SHIFT_STACK_TRACER is used in the code.
+[patch 01/12] fixes a GFP flag error.
 
-Ah, I did a s/x/y/ to the diff of the patch, but not the change log.
-Thanks for pointing that out. I also need to update the comment in 2/2.
+[patch 02/12] fixes a VF interrupt error.
 
--- Steve
+[patch 03/12] adds a cleanup for VLAN handling.
 
-> 
-> Jiping
-> 
->
+[patch 04/12] fixes a bug in debugfs.
+
+[patch 05/12] modifies pause displaying format.
+
+[patch 06/12] adds more DFX information for ethtool -d.
+
+[patch 07/12] adds more TX statistics information.
+
+[patch 08/12] adds a check for TX BD number.
+
+[patch 09/12] adds a cleanup for dumping NCL_CONFIG.
+
+[patch 10/12] refines function for querying MAC pause statistics.
+
+[patch 11/12] adds a handshake with VF when doing PF reset.
+
+[patch 12/12] refines some macro definitions.
+
+Guangbin Huang (1):
+  net: hns3: add DFX registers information for ethtool -d
+
+Guojia Liao (1):
+  net: hns3: refine some macro definitions
+
+Huazhong Tan (2):
+  net: hns3: fix interrupt clearing error for VF
+  net: hns3: add handshake with VF for PF reset
+
+Yonglong Liu (1):
+  net: hns3: modify how pause options is displayed
+
+Yufeng Mo (3):
+  net: hns3: add input length check for debugfs write function
+  net: hns3: add function display NCL_CONFIG info
+  net: hns3: refine MAC pause statistics querying function
+
+Yunsheng Lin (3):
+  net: hns3: clean up for vlan handling in hns3_fill_desc_vtags
+  net: hns3: add some statitics info to tx process
+  net: hns3: add check for max TX BD num for tso and non-tso case
+
+Zhongzhu Liu (1):
+  net: hns3: fix GFP flag error in hclge_mac_update_stats()
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  15 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |   4 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 268 ++++++------
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   7 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |   4 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   7 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c |  64 +--
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 454 +++++++++++++++++----
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   2 +
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  28 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |   4 +-
+ 11 files changed, 615 insertions(+), 242 deletions(-)
+
+-- 
+2.7.4
+
