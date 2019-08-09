@@ -2,91 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5958771C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39FFD87720
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:22:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406342AbfHIKUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 06:20:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:44996 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbfHIKUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 06:20:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5C341596;
-        Fri,  9 Aug 2019 03:20:40 -0700 (PDT)
-Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1BB8B3F575;
-        Fri,  9 Aug 2019 03:20:40 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     suzuki.poulose@arm.com, kbuild test robot <lkp@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] htmldocs: device.h: Fix warnings for mismatched parameter names in comments
-Date:   Fri,  9 Aug 2019 11:20:33 +0100
-Message-Id: <20190809102033.28463-1-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.21.0
+        id S2406354AbfHIKWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 06:22:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4653 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726037AbfHIKWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 06:22:20 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 360CEC9566F2D0524110;
+        Fri,  9 Aug 2019 18:22:18 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 9 Aug 2019
+ 18:22:09 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <ard.biesheuvel@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] staging: wusbcore: Fix build error without CONFIG_USB
+Date:   Fri, 9 Aug 2019 18:21:50 +0800
+Message-ID: <20190809102150.66896-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the warnings for parameter named as "driver" instead of the actual "drv"
-in the comments as reported by the kbuild robot.
+USB_WUSB should depends on CONFIG_USB, otherwise building fails
 
-Reported-by:  kbuild test robot <lkp@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
-Greg,
+drivers/staging/wusbcore/wusbhc.o: In function `wusbhc_giveback_urb':
+wusbhc.c:(.text+0xa28): undefined reference to `usb_hcd_giveback_urb'
 
-Sorry about these silly typos. Applies on linux-next.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 71ed79b0e4be ("USB: Move wusbcore and UWB to staging as it is obsolete")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
----
- include/linux/device.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/wusbcore/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 41d7ed091029..76496497e753 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -479,7 +479,7 @@ struct device *driver_find_device(struct device_driver *drv,
- /**
-  * driver_find_device_by_name - device iterator for locating a particular device
-  * of a specific name.
-- * @driver: the driver we're iterating
-+ * @drv: the driver we're iterating
-  * @name: name of the device to match
-  */
- static inline struct device *driver_find_device_by_name(struct device_driver *drv,
-@@ -491,7 +491,7 @@ static inline struct device *driver_find_device_by_name(struct device_driver *dr
- /**
-  * driver_find_device_by_of_node- device iterator for locating a particular device
-  * by of_node pointer.
-- * @driver: the driver we're iterating
-+ * @drv: the driver we're iterating
-  * @np: of_node pointer to match.
-  */
- static inline struct device *
-@@ -504,7 +504,7 @@ driver_find_device_by_of_node(struct device_driver *drv,
- /**
-  * driver_find_device_by_fwnode- device iterator for locating a particular device
-  * by fwnode pointer.
-- * @driver: the driver we're iterating
-+ * @drv: the driver we're iterating
-  * @fwnode: fwnode pointer to match.
-  */
- static inline struct device *
-@@ -536,7 +536,7 @@ static inline struct device *driver_find_next_device(struct device_driver *drv,
- /**
-  * driver_find_device_by_acpi_dev : device iterator for locating a particular
-  * device matching the ACPI_COMPANION device.
-- * @driver: the driver we're iterating
-+ * @drv: the driver we're iterating
-  * @adev: ACPI_COMPANION device to match.
-  */
- static inline struct device *
+diff --git a/drivers/staging/wusbcore/Kconfig b/drivers/staging/wusbcore/Kconfig
+index 056c60b..a559d02 100644
+--- a/drivers/staging/wusbcore/Kconfig
++++ b/drivers/staging/wusbcore/Kconfig
+@@ -4,7 +4,7 @@
+ #
+ config USB_WUSB
+ 	tristate "Enable Wireless USB extensions"
+-	depends on UWB
++	depends on UWB && USB
+ 	select CRYPTO
+ 	select CRYPTO_AES
+ 	select CRYPTO_CCM
 -- 
-2.21.0
+2.7.4
+
 
