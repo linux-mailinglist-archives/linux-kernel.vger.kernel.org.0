@@ -2,199 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FD2687BD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E5A87C03
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436610AbfHINrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 09:47:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37774 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407279AbfHINrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:47:42 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00CEE2086D;
-        Fri,  9 Aug 2019 13:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565358461;
-        bh=SJOB4R5aZzWIG3LHq9WYbcWrMIlfc+ou/bJmVPU/X2E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dmtGPPVRp/q91LY1MwOQlBE9kLG894UJpjqbWqOtSE6SEfs0+nw5arZNSMDIg993e
-         /BcQenTCYtcEyQhKhvC77+qtooVKX7TQ+LGz7TZDP2cZJbSMY2Fp8BaDesvikuUNxT
-         ZJlu9/YwpCFj+BEUiA2Ou3nyxpdtCKfsoDFlT/KE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Cooper <andrew.cooper3@citrix.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.9 32/32] x86/speculation/swapgs: Exclude ATOMs from speculation through SWAPGS
-Date:   Fri,  9 Aug 2019 15:45:35 +0200
-Message-Id: <20190809133923.957917253@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190809133922.945349906@linuxfoundation.org>
-References: <20190809133922.945349906@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2407228AbfHINtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 09:49:12 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46066 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436496AbfHINq1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 09:46:27 -0400
+Received: by mail-ed1-f68.google.com with SMTP id x19so89100996eda.12
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 06:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LyignUp7I1w3k1JhRB7hSSaZmUScIlvleAzqEtH71gA=;
+        b=a4W0NpB7Ky7ZNvyTrbh1FeBLRkzD3aPh58RS1Yx4bs/BVTnp45+DINWMGfkbq8hq7Q
+         Y3Z4bdj5hgCTeGW+PRshMaXOMxfFs+yMLbXwPTZLqJTcO/dIrpBRkUNMwIYuvyefgxLE
+         ghaZnnGxRRWhYKHkI/uJzl52jBCmY6GTaX4J6IMtYXbQlVLgECyZntsud91yKcOGxjq1
+         ATUWqTH0gQtzKxNRtGFOYFydwjEzo49N/C0g2sw3KGDcPT84ORGadNZJiyoF1tdgy86l
+         pT+EYQrZCc/tezrHEA9IExUAHvjCjPlw9d1k0TydyGhC6W7edZj2zop9pkCTsz+j9sKa
+         GMoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LyignUp7I1w3k1JhRB7hSSaZmUScIlvleAzqEtH71gA=;
+        b=E6/E093iNzfh1IkVjH+MGFmj3Za8JrapJa0hKg9DPmktU1mj/yynOBVXwppSEx3Dzz
+         lmE78Pku1PFVernVEtbMNd0wSZc5YxxOny37Yb7dHlpQe9ZXZH/OM5fNW1ALW7bvlipK
+         cnrBfxDhPQ2OK7R05WwgDxNANGv/GgaV76JAzkfBecyRRNcgNxQFyXopvce02q9Xf0aq
+         Ge+1HhAsyjstofw2ESy0OO8zh+ruIeyOTu9Gbjb8qd569r/gHvhCl9QBknGoSKz0cW/F
+         1eM+2eov9fFgnLRYzdSMeRDZB5/C1inCSjJMeYsoyMBR+gigV1prCwHUfnmFAk3vJPPs
+         81xA==
+X-Gm-Message-State: APjAAAWobaXrzhtelQFkQG2o+B4HIWIGA2/I8lr3wiSMz5Cle4WorVUX
+        Q5Qyf3zSRM2pagJbckVLN0o=
+X-Google-Smtp-Source: APXvYqxaz13nFHHrpZp/JtkeyPbtXPvJTVD23pHrWjqDjJb17ei5Rg0+DU4QM5tQfP2jLc7hWf/1lw==
+X-Received: by 2002:aa7:ccd6:: with SMTP id y22mr21987171edt.274.1565358386098;
+        Fri, 09 Aug 2019 06:46:26 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id c15sm16018545ejs.17.2019.08.09.06.46.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Aug 2019 06:46:25 -0700 (PDT)
+Date:   Fri, 9 Aug 2019 13:46:24 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        akpm@linux-foundation.org, osalvador@suse.de,
+        pasha.tatashin@oracle.com, mhocko@suse.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/sparse: use __nr_to_section(section_nr) to get
+ mem_section
+Message-ID: <20190809134624.htv6jws7hphs4tvz@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20190809010242.29797-1-richardw.yang@linux.intel.com>
+ <e17278f0-94dc-e0c6-379b-b7694cec3247@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e17278f0-94dc-e0c6-379b-b7694cec3247@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On Fri, Aug 09, 2019 at 02:39:59PM +0530, Anshuman Khandual wrote:
+>
+>
+>On 08/09/2019 06:32 AM, Wei Yang wrote:
+>> __pfn_to_section is defined as __nr_to_section(pfn_to_section_nr(pfn)).
+>
+>Right.
+>
+>> 
+>> Since we already get section_nr, it is not necessary to get mem_section
+>> from start_pfn. By doing so, we reduce one redundant operation.
+>> 
+>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>
+>Looks right.
+>
+>With this applied, memory hot add still works on arm64.
 
-commit f36cf386e3fec258a341d446915862eded3e13d8 upstream.
+Thanks for your test.
 
-Intel provided the following information:
+>
+>Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>
+>> ---
+>>  mm/sparse.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/mm/sparse.c b/mm/sparse.c
+>> index 72f010d9bff5..95158a148cd1 100644
+>> --- a/mm/sparse.c
+>> +++ b/mm/sparse.c
+>> @@ -867,7 +867,7 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
+>>  	 */
+>>  	page_init_poison(pfn_to_page(start_pfn), sizeof(struct page) * nr_pages);
+>>  
+>> -	ms = __pfn_to_section(start_pfn);
+>> +	ms = __nr_to_section(section_nr);
+>>  	set_section_nid(section_nr, nid);
+>>  	section_mark_present(ms);
+>>  
+>> 
 
- On all current Atom processors, instructions that use a segment register
- value (e.g. a load or store) will not speculatively execute before the
- last writer of that segment retires. Thus they will not use a
- speculatively written segment value.
-
-That means on ATOMs there is no speculation through SWAPGS, so the SWAPGS
-entry paths can be excluded from the extra LFENCE if PTI is disabled.
-
-Create a separate bug flag for the through SWAPGS speculation and mark all
-out-of-order ATOMs and AMD/HYGON CPUs as not affected. The in-order ATOMs
-are excluded from the whole mitigation mess anyway.
-
-Reported-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-[bwh: Backported to 4.4:
- - There's no whitelist entry (or any support) for Hygon CPUs
- - Adjust context, indentation]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/cpufeatures.h |    1 
- arch/x86/kernel/cpu/bugs.c         |   18 +++------------
- arch/x86/kernel/cpu/common.c       |   42 +++++++++++++++++++++++--------------
- 3 files changed, 32 insertions(+), 29 deletions(-)
-
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -356,5 +356,6 @@
- #define X86_BUG_L1TF		X86_BUG(18) /* CPU is affected by L1 Terminal Fault */
- #define X86_BUG_MDS		X86_BUG(19) /* CPU is affected by Microarchitectural data sampling */
- #define X86_BUG_MSBDS_ONLY	X86_BUG(20) /* CPU is only affected by the  MSDBS variant of BUG_MDS */
-+#define X86_BUG_SWAPGS		X86_BUG(21) /* CPU is affected by speculation through SWAPGS */
- 
- #endif /* _ASM_X86_CPUFEATURES_H */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -281,18 +281,6 @@ static const char * const spectre_v1_str
- 	[SPECTRE_V1_MITIGATION_AUTO] = "Mitigation: usercopy/swapgs barriers and __user pointer sanitization",
- };
- 
--static bool is_swapgs_serializing(void)
--{
--	/*
--	 * Technically, swapgs isn't serializing on AMD (despite it previously
--	 * being documented as such in the APM).  But according to AMD, %gs is
--	 * updated non-speculatively, and the issuing of %gs-relative memory
--	 * operands will be blocked until the %gs update completes, which is
--	 * good enough for our purposes.
--	 */
--	return boot_cpu_data.x86_vendor == X86_VENDOR_AMD;
--}
--
- /*
-  * Does SMAP provide full mitigation against speculative kernel access to
-  * userspace?
-@@ -343,9 +331,11 @@ static void __init spectre_v1_select_mit
- 			 * PTI as the CR3 write in the Meltdown mitigation
- 			 * is serializing.
- 			 *
--			 * If neither is there, mitigate with an LFENCE.
-+			 * If neither is there, mitigate with an LFENCE to
-+			 * stop speculation through swapgs.
- 			 */
--			if (!is_swapgs_serializing() && !boot_cpu_has(X86_FEATURE_KAISER))
-+			if (boot_cpu_has_bug(X86_BUG_SWAPGS) &&
-+			    !boot_cpu_has(X86_FEATURE_KAISER))
- 				setup_force_cpu_cap(X86_FEATURE_FENCE_SWAPGS_USER);
- 
- 			/*
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -897,6 +897,7 @@ static void identify_cpu_without_cpuid(s
- #define NO_L1TF		BIT(3)
- #define NO_MDS		BIT(4)
- #define MSBDS_ONLY	BIT(5)
-+#define NO_SWAPGS	BIT(6)
- 
- #define VULNWL(_vendor, _family, _model, _whitelist)	\
- 	{ X86_VENDOR_##_vendor, _family, _model, X86_FEATURE_ANY, _whitelist }
-@@ -920,29 +921,37 @@ static const __initconst struct x86_cpu_
- 	VULNWL_INTEL(ATOM_BONNELL,		NO_SPECULATION),
- 	VULNWL_INTEL(ATOM_BONNELL_MID,		NO_SPECULATION),
- 
--	VULNWL_INTEL(ATOM_SILVERMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY),
--	VULNWL_INTEL(ATOM_SILVERMONT_X,		NO_SSB | NO_L1TF | MSBDS_ONLY),
--	VULNWL_INTEL(ATOM_SILVERMONT_MID,	NO_SSB | NO_L1TF | MSBDS_ONLY),
--	VULNWL_INTEL(ATOM_AIRMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY),
--	VULNWL_INTEL(XEON_PHI_KNL,		NO_SSB | NO_L1TF | MSBDS_ONLY),
--	VULNWL_INTEL(XEON_PHI_KNM,		NO_SSB | NO_L1TF | MSBDS_ONLY),
-+	VULNWL_INTEL(ATOM_SILVERMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
-+	VULNWL_INTEL(ATOM_SILVERMONT_X,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
-+	VULNWL_INTEL(ATOM_SILVERMONT_MID,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
-+	VULNWL_INTEL(ATOM_AIRMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
-+	VULNWL_INTEL(XEON_PHI_KNL,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
-+	VULNWL_INTEL(XEON_PHI_KNM,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
- 
- 	VULNWL_INTEL(CORE_YONAH,		NO_SSB),
- 
--	VULNWL_INTEL(ATOM_AIRMONT_MID,		NO_L1TF | MSBDS_ONLY),
-+	VULNWL_INTEL(ATOM_AIRMONT_MID,		NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
- 
--	VULNWL_INTEL(ATOM_GOLDMONT,		NO_MDS | NO_L1TF),
--	VULNWL_INTEL(ATOM_GOLDMONT_X,		NO_MDS | NO_L1TF),
--	VULNWL_INTEL(ATOM_GOLDMONT_PLUS,	NO_MDS | NO_L1TF),
-+	VULNWL_INTEL(ATOM_GOLDMONT,		NO_MDS | NO_L1TF | NO_SWAPGS),
-+	VULNWL_INTEL(ATOM_GOLDMONT_X,		NO_MDS | NO_L1TF | NO_SWAPGS),
-+	VULNWL_INTEL(ATOM_GOLDMONT_PLUS,	NO_MDS | NO_L1TF | NO_SWAPGS),
-+
-+	/*
-+	 * Technically, swapgs isn't serializing on AMD (despite it previously
-+	 * being documented as such in the APM).  But according to AMD, %gs is
-+	 * updated non-speculatively, and the issuing of %gs-relative memory
-+	 * operands will be blocked until the %gs update completes, which is
-+	 * good enough for our purposes.
-+	 */
- 
- 	/* AMD Family 0xf - 0x12 */
--	VULNWL_AMD(0x0f,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS),
--	VULNWL_AMD(0x10,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS),
--	VULNWL_AMD(0x11,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS),
--	VULNWL_AMD(0x12,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS),
-+	VULNWL_AMD(0x0f,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS),
-+	VULNWL_AMD(0x10,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS),
-+	VULNWL_AMD(0x11,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS),
-+	VULNWL_AMD(0x12,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS),
- 
- 	/* FAMILY_ANY must be last, otherwise 0x0f - 0x12 matches won't work */
--	VULNWL_AMD(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS),
-+	VULNWL_AMD(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS),
- 	{}
- };
- 
-@@ -979,6 +988,9 @@ static void __init cpu_set_bug_bits(stru
- 			setup_force_cpu_bug(X86_BUG_MSBDS_ONLY);
- 	}
- 
-+	if (!cpu_matches(NO_SWAPGS))
-+		setup_force_cpu_bug(X86_BUG_SWAPGS);
-+
- 	if (cpu_matches(NO_MELTDOWN))
- 		return;
- 
-
-
+-- 
+Wei Yang
+Help you, Help me
