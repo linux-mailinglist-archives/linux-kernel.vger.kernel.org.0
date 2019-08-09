@@ -2,114 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC7C8872CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA195872CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405730AbfHIHOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 03:14:41 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60362 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725954AbfHIHOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 03:14:40 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3DBCDBFB3BEAEDC60BD7;
-        Fri,  9 Aug 2019 15:14:30 +0800 (CST)
-Received: from [127.0.0.1] (10.63.139.185) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Fri, 9 Aug 2019
- 15:14:23 +0800
-Subject: Re: [PATCH v3 0/7] crypto: hisilicon: Add HiSilicon QM and ZIP
- controller driver
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-References: <1564732676-35987-1-git-send-email-wangzhou1@hisilicon.com>
- <20190809061946.GN10392@gondor.apana.org.au>
-CC:     <davem@davemloft.net>, <linux-crypto@vger.kernel.org>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
-From:   Zhou Wang <wangzhou1@hisilicon.com>
-Message-ID: <5D4D1D4E.2070906@hisilicon.com>
-Date:   Fri, 9 Aug 2019 15:14:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <20190809061946.GN10392@gondor.apana.org.au>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.63.139.185]
-X-CFilter-Loop: Reflected
+        id S2405744AbfHIHTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 03:19:23 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38016 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405664AbfHIHTW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 03:19:22 -0400
+Received: by mail-wm1-f68.google.com with SMTP id m125so602670wmm.3;
+        Fri, 09 Aug 2019 00:19:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=Vz75i2RTvhUJa5g/9yEomMKKQAza1FcKyAdc6BXdIz4=;
+        b=fZhSoo2XgAJGnYA6RXKxk4XccYB41qWDwO4vKG5SPzL1nXWjkbLKgG2uFeCc+RGqVg
+         mhA+oa47b3Ed2IckmD+yW7mtLuyPikQ9DU0oCykKzO986yOa+zguNyR+B+Oyzfpq6a9T
+         fJ4TRjHNcPgfKcU51GuEj0u8q8h9BAyMFSPW6INMYczY1repivftEu3pH4ESGPi42Vna
+         Eg/188GV3vJqjOL5b54dT88PnU5MdOZ+avjFdXbJlE/T1HFx5DR8+P3svAFV+gK0mN/f
+         FS0SCEx6WxZW5Hy90DNjcKRbuyuifyZxmRI0Fs/YbeaJIQZxdZpkar2VKORU/kbQZfHC
+         kj+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=Vz75i2RTvhUJa5g/9yEomMKKQAza1FcKyAdc6BXdIz4=;
+        b=G/EiDw4Qa+yFmOkrpulzHAfcjRagjUmICAYfTbSyp9xDsS5X8TTkto9D1qHBuCVTvz
+         y6IjdGJ+OoyXxC9kul40Gx4myvLra3fEbVSysinxEDxFap65yBUEAqz+62BdSBhFevoX
+         svbxAx+T5mqcgLKi7fcoyp4tz9Q3+8Yo/61Z2O/FFebGP7VWFifQlzqxRJr+DwYKjXeH
+         UZm5/FGOvUl3p0I7u3feuTKfR62EarF8IIKNhIQGBwYnRhkL8iGb/DwMASyCayA7GuI6
+         3X0NJJg7j/lHUM3TmaoXFttfxm+OKt4W2ShSuxYtk4mT6dxuWU2/nzp+adZjb1/574Cj
+         bywA==
+X-Gm-Message-State: APjAAAURiWFBykifJ1f0hrtQjQVaLAqSrCR5Ba7HnRnbDKveoMoltqBQ
+        N1GmoQtsHxVEMCVpw9HOTvUNdT40
+X-Google-Smtp-Source: APXvYqwp+9XJ5xl3RIvMkHOPPPYbtfw6fOO//jyrZnMBeqMEUI2L5Nput20D3n5kUIOlj9sAQ4u13Q==
+X-Received: by 2002:a1c:c706:: with SMTP id x6mr7402591wmf.104.1565335160191;
+        Fri, 09 Aug 2019 00:19:20 -0700 (PDT)
+Received: from 640k.localdomain.com ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id f10sm1503270wrm.31.2019.08.09.00.19.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Aug 2019 00:19:19 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     frankja@linux.ibm.com,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: [PATCH] MAINTAINERS: change list for KVM/s390
+Date:   Fri,  9 Aug 2019 09:19:16 +0200
+Message-Id: <1565335156-28660-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/9 14:19, Herbert Xu wrote:
-> On Fri, Aug 02, 2019 at 03:57:49PM +0800, Zhou Wang wrote:
->> This series adds HiSilicon QM and ZIP controller driver in crypto subsystem.
->>
->> A simple QM/ZIP driver which helps to provide an example for a general
->> accelerator framework is under review in community[1]. Based on this simple
->> driver, this series adds HW v2 support, PCI passthrough, PCI/misc error
->> handler, debug support. But unlike [1], driver in this patchset only registers
->> to crypto subsystem.
->>
->> There will be a long discussion about above accelerator framework in the
->> process of upstreaming. So let's firstly review and upstream QM/ZIP crypto
->> driver.
->>
->> Changes v2 -> v3:
->> - Change to register zlib/gzip to crypto acomp.
->> - As acomp is using sgl interface, add a common hardware sgl module which
->>   also can be used in other HiSilicon accelerator drivers.
->> - Change irq thread to work queue in the flow of irq handler in QM.
->> - Split SRIOV and debugfs out for the convenience of review.
->> - rebased on v5.3-rc1.
->> - Some tiny fixes.
->>
->> Links:
->> - v2  https://lkml.org/lkml/2019/1/23/358
->> - v1  https://lwn.net/Articles/775484/
->> - rfc https://lkml.org/lkml/2018/12/13/290
->>
->> Note: this series is based on https://lkml.org/lkml/2019/7/23/1135
->>
->> Reference:
->> [1] https://lkml.org/lkml/2018/11/12/1951
->>
->> Zhou Wang (7):
->>   crypto: hisilicon: Add queue management driver for HiSilicon QM module
->>   crypto: hisilicon: Add hardware SGL support
->>   crypto: hisilicon: Add HiSilicon ZIP accelerator support
->>   crypto: hisilicon: Add SRIOV support for ZIP
->>   Documentation: Add debugfs doc for hisi_zip
->>   crypto: hisilicon: Add debugfs for ZIP and QM
->>   MAINTAINERS: add maintainer for HiSilicon QM and ZIP controller driver
->>
->>  Documentation/ABI/testing/debugfs-hisi-zip |   50 +
->>  MAINTAINERS                                |   11 +
->>  drivers/crypto/hisilicon/Kconfig           |   23 +
->>  drivers/crypto/hisilicon/Makefile          |    3 +
->>  drivers/crypto/hisilicon/qm.c              | 1912 ++++++++++++++++++++++++++++
->>  drivers/crypto/hisilicon/qm.h              |  215 ++++
->>  drivers/crypto/hisilicon/sgl.c             |  214 ++++
->>  drivers/crypto/hisilicon/sgl.h             |   24 +
->>  drivers/crypto/hisilicon/zip/Makefile      |    2 +
->>  drivers/crypto/hisilicon/zip/zip.h         |   71 ++
->>  drivers/crypto/hisilicon/zip/zip_crypto.c  |  651 ++++++++++
->>  drivers/crypto/hisilicon/zip/zip_main.c    | 1013 +++++++++++++++
->>  12 files changed, 4189 insertions(+)
->>  create mode 100644 Documentation/ABI/testing/debugfs-hisi-zip
->>  create mode 100644 drivers/crypto/hisilicon/qm.c
->>  create mode 100644 drivers/crypto/hisilicon/qm.h
->>  create mode 100644 drivers/crypto/hisilicon/sgl.c
->>  create mode 100644 drivers/crypto/hisilicon/sgl.h
->>  create mode 100644 drivers/crypto/hisilicon/zip/Makefile
->>  create mode 100644 drivers/crypto/hisilicon/zip/zip.h
->>  create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.c
->>  create mode 100644 drivers/crypto/hisilicon/zip/zip_main.c
-> 
-> All applied.  Thanks.
+KVM/s390 does not have a list of its own, and linux-s390 is in the
+loop anyway thanks to the generic arch/s390 match.  So use the generic
+KVM list for s390 patches.
 
-Many thanks.
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Zhou
-
-> 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1aec93695040..6498ebaca2f6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8788,7 +8788,7 @@ M:	Christian Borntraeger <borntraeger@de.ibm.com>
+ M:	Janosch Frank <frankja@linux.ibm.com>
+ R:	David Hildenbrand <david@redhat.com>
+ R:	Cornelia Huck <cohuck@redhat.com>
+-L:	linux-s390@vger.kernel.org
++L:	kvm@vger.kernel.org
+ W:	http://www.ibm.com/developerworks/linux/linux390/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git
+ S:	Supported
+-- 
+1.8.3.1
 
