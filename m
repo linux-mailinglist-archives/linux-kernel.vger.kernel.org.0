@@ -2,83 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF9A86EF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 02:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E2686EFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 02:55:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405093AbfHIAsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 20:48:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34794 "EHLO mail.kernel.org"
+        id S2405174AbfHIAz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 20:55:27 -0400
+Received: from mga05.intel.com ([192.55.52.43]:56413 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728032AbfHIAsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 20:48:45 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F3DA20C01;
-        Fri,  9 Aug 2019 00:48:43 +0000 (UTC)
-Date:   Thu, 8 Aug 2019 20:48:41 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     John Ogness <john.ogness@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>
-Subject: Re: [RFC PATCH v4 9/9] printk: use a new ringbuffer implementation
-Message-ID: <20190808204841.5afcad46@gandalf.local.home>
-In-Reply-To: <CAHk-=wiRpvRg6dpEWqaB20QUFRq8or0-AGgkjvisygptRE64UA@mail.gmail.com>
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
-        <20190807222634.1723-10-john.ogness@linutronix.de>
-        <CAHk-=wiKTn-BMpp4w645XqmFBEtUXe84+TKc6aRMPbvFwUjA=A@mail.gmail.com>
-        <874l2rclmw.fsf@linutronix.de>
-        <CAHk-=wiRN9v7UmhbTZgskh-MLyY2f0-8Zi3fUziy+GpZnj2i3w@mail.gmail.com>
-        <20190808194523.6f83e087@gandalf.local.home>
-        <CAHk-=wiRpvRg6dpEWqaB20QUFRq8or0-AGgkjvisygptRE64UA@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729419AbfHIAz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 20:55:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 17:55:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,363,1559545200"; 
+   d="scan'208";a="258890899"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga001.jf.intel.com with ESMTP; 08 Aug 2019 17:55:26 -0700
+Date:   Thu, 8 Aug 2019 17:44:39 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arch/x86/kernel/cpu/umwait.c - remove unused variable
+Message-ID: <20190809004438.GA56628@romley-ivt3.sc.intel.com>
+References: <79734.1565272329@turing-police>
+ <alpine.DEB.2.21.1908082158580.2882@nanos.tec.linutronix.de>
+ <141835.1565295884@turing-police>
+ <alpine.DEB.2.21.1908082229010.2882@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1908082229010.2882@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Aug 2019 17:21:09 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> But laptops don't have reset buttons. They have "press the power
-> button for ten seconds, power turns off. Press it again, and power
-> comes on" reset sequences.
-
-I've never tried, but are you saying that even with the "10 second
-hold" the laptop's DRAM may still have old data that is accessible?
-
-
+On Thu, Aug 08, 2019 at 10:32:38PM +0200, Thomas Gleixner wrote:
+> Valdis,
 > 
-> They are nasty to debug when they happen on a developer machine (I
-> should know, I've definitely had them), but when they happen in the
-> wild they are basically "user just rebooted the machine". End of
-> story, and no stats or anything like that.
+> On Thu, 8 Aug 2019, Valdis Klētnieks wrote:
+> > On Thu, 08 Aug 2019 22:04:03 +0200, Thomas Gleixner said: It isn't 
+> > clear that whatever is doing the device_initcall()s will be able to 
+> > do any reasonable recovery if we return an error, so any error 
+> > recovery is going to have to happen before the function returns. It 
+> > might make sense to do an 'if (ret) return;' before going further in 
+> > the function, but given the comment a few lines further down about 
+> > ignoring errors, it was apparently considered more important to 
+> > struggle through and register stuff in sysfs even if umwait was 
+> > broken....
+> 
+> I missed that when going through it.
+> 
+> The right thing to do is to have a cpu_offline callback which clears 
+> the umwait MSR. That covers also the failure in the cpu hotplug setup. 
+> Then handling an error return makes sense and keeps everything in a 
+> workable shape.
 
-Would a best effort 1 page buffer work? Really, with a hard hang we
-usually only care about the last thing that was printed (we need to add
-one of those: stop printing after the first WARN_ON is hit, to not
-lose the initial bug).
+When cpu is offline, the MSR won't be used. We don't need to clear it, right?
 
-That way you could have a buffer that is written to constantly but only
-is the size of one or two pages. It can have a variable in it that gets
-reset on shutdown. If the system hangs, the next boot could look to see
-if that page was shutdown cleanly (or never initialized) otherwise, it
-can read the page or pages into a buffer that can be read from debugfs.
+Thanks.
 
-A user space tool could read this page and if it detects that it
-contains data from a crash, notify the user and say "Can you send this
-to linux-kernel@vger.kernel.org"? Even better if it tells the user the
-subject and content of the email that should be sent.
+-Fenghua
 
--- Steve
