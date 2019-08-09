@@ -2,70 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB69872F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5484D87304
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405777AbfHIHac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 03:30:32 -0400
-Received: from sonic309-22.consmr.mail.ne1.yahoo.com ([66.163.184.148]:41273
-        "EHLO sonic309-22.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405617AbfHIHac (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 03:30:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1565335831; bh=tPdyM4f7Tq8kspt5syr9wxbiHLUxanV8lkCr2Pkkkas=; h=Date:From:Reply-To:Subject:From:Subject; b=rf4naa26XUKZaKeKUJDVFEpUaW2Ehr8Nzx0e34SXV+bUUaNTCCZRjh2qPzE56jkNTgJZrIpmjUw5aTysw1618Pa8prXxrJt+Zw2YdEG5KBv7unhTKn3kU7IYPMt+0c1yQVp4Nv2LBahkEpJec6apb5ujyHkwLc5ikAAtYUH0NggU2VNnLfeCCG75CniZDbAl0rWk95nRqr6ktFJB/QgUiJimpyI00LKJEDPy66CATVMgnL6nUsNKxziL8zr3rMZKv6U5jimpmLr/QSPHEvX48v9xUuxlUhk1E0bcIOTb0dKRkPd1mf6lLedn8ygg9shjneOqIBy7uLySZ0HdQd9VGw==
-X-YMail-OSG: K7v19REVM1nGvWXbneYT.G2x34un_3.OGbUYL181pbcLcHyePtlLUtaWugOeZw8
- 0195QCFQSyUugaxnZH.ug8t2qQXxU0jEXgxVMvbqa3qeQ7qcuU8FktdQfN7SQk6KQ0Zj0HgwfNf2
- kiIOGGPfg16ZMnR4F3INMCGdwAJd2B1RWyEmVNoidw.4ykUHxO_HRfVZ5xI5Pk9CKv1VlI6bS_Tq
- myMJ9wqjChjJbebH1hQ73II.s29.Hm0DPq0j066CZzHLaNR57BLL4a18rF1Gd7mIae4FvBzfwT2o
- HRaRHskvpoprSRJ.B41AmPPsfcynG2WVu5KNA_m6vaJ3MYMgHcpM2yjzGW5s.foeUtTWQxGy09Ke
- DbZzNw056gCSPE7UILSfhYp5q1q3PWQLRsUmLpqlH1t4eKXr8uW__Xo7WbKUdZ1whS7fXy7a6fIT
- E9lIJMQ.ViSPpU2O.4clDJ336gs0ArOaJs0SxRvTCYFUp8ysGcWrvXGdM7DvOPgwirmp91Fyxuej
- wESx3ikACEbQxElm4sGpJ0mupRxaI01c7ipwLnNHtnFZqKEaMiDjq1sboyJWs.9k_xLY5Jcfdg1.
- x.wy9DivsaV48YRWPCB_NkhjvTR9MWHO2VtgQvrHLam4U2ZXJsuKeoQA7UkThCBOuOsF7Fnb6T8G
- aPAFVrMmBpkq5DYlbeugijSBTUDeQFtP0JfRTrGlmbOcegAqV3xPTQcM9h_zBszwkFKBsX6pZL55
- 9DdH2DlJ5EfA6JJB3DqtXmtzdJalp.FGTShCiwVvUkWmCJkPCM9dop0qBVfuV2UysakBRdJ_xki8
- p0UttDLzJbZRSneHYMlI7H1CCPy0PHvS5cPX39acqFNAN3zqJNNuG0spRJa1vvZPALDokNBwzRc2
- jKY5Dhhsb4evUvsQ5s416obbp6M7QxQIUTu6EnN1P_j9Qh02ywUJXO5KqVjcv9JFt3XSzfgDxj3g
- 1t0boNimJi0efAldNaq9pgNOSdDrtVm01F7hv0VYIUhNSTNZ.66x2BXA0KQw6JpgIKG.PWP5wsvS
- qXsWbQM5PjF.1cDS5tMDQout7rSsOO8iROIXGfxsyP62z0YHz6u_cKsYLQSHUOkdk5ikpDPvAbEh
- Im3ZJoVXgLOU82euyGc2d5tSv0plpASzTM3xVKQbasINDM.qezVxBSGm3DOVyBb_tcbFwAb6i1RH
- Tble7RvBcSjLbzPSYUqoqz5.8GjmKGI6fg3k5xgmZ7EnQ4Dd0ozgRub4-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 9 Aug 2019 07:30:31 +0000
-Date:   Fri, 9 Aug 2019 07:30:26 +0000 (UTC)
-From:   Aisha Gaddafi <gaddafiaisha25552@aol.com>
-Reply-To: gaisha983@gmail.com
-Message-ID: <645747930.3169670.1565335826594@mail.yahoo.com>
-Subject: Dear Friend,
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+        id S2405816AbfHIHdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 03:33:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:42416 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbfHIHdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 03:33:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D0D0344;
+        Fri,  9 Aug 2019 00:33:48 -0700 (PDT)
+Received: from p8cg001049571a15.arm.com (unknown [10.163.1.243])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 031723F706;
+        Fri,  9 Aug 2019 00:33:31 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC V2 0/1] mm/debug: Add tests for architecture exported page table helpers
+Date:   Fri,  9 Aug 2019 13:03:17 +0530
+Message-Id: <1565335998-22553-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+This series adds a test validation for architecture exported page table
+helpers. Patch in the series adds basic transformation tests at various
+levels of the page table.
 
-I came across your e-mail contact prior a private search while in need of 
-your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
-three Children. I am the only biological Daughter of late Libyan President 
-(Late Colonel Muammar Gaddafi).
+This test was originally suggested by Catalin during arm64 THP migration
+RFC discussion earlier. Going forward it can include more specific tests
+with respect to various generic MM functions like THP, HugeTLB etc and
+platform specific tests.
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand 
-United State Dollar ($27.500.000.00 ) and i need a trusted investment 
-Manager/Partner because of my current refugee status, however, I am 
-interested in you for investment project assistance in your country, may be 
-from there, we can build business relationship in the nearest future.
+https://lore.kernel.org/linux-mm/20190628102003.GA56463@arrakis.emea.arm.com/
 
-I am willing to negotiate investment/business profit sharing ratio with you 
-base on the future investment earning profits.
+Questions:
 
-If you are willing to handle this project on my behalf kindly reply urgent 
-to enable me provide you more information about the investment funds.
+Should alloc_gigantic_page() be made available as an interface for general
+use in the kernel. The test module here uses very similar implementation from
+HugeTLB to allocate a PUD aligned memory block. Similar for mm_alloc() which
+needs to be exported through a header.
 
-Your Urgent Reply Will Be Appreciated.
+Testing:
 
-Best Regards
-Mrs Aisha Gaddafi
-(gaisha983@gmail.com)
+Build and boot tested on arm64 and x86 platforms. While arm64 clears all
+these tests, following errors were reported on x86.
+
+1. WARN_ON(pud_bad(pud)) in pud_populate_tests()
+2. WARN_ON(p4d_bad(p4d)) in p4d_populate_tests()
+
+I would really appreciate if folks can help validate this test on other
+platforms and report back problems if any. Suggestions, comments and
+inputs welcome. Thank you.
+
+Changes in V2:
+
+- Moved test module and it's config from lib/ to mm/
+- Renamed config TEST_ARCH_PGTABLE as DEBUG_ARCH_PGTABLE_TEST
+- Renamed file from test_arch_pgtable.c to arch_pgtable_test.c
+- Added relevant MODULE_DESCRIPTION() and MODULE_AUTHOR() details
+- Dropped loadable module config option
+- Basic tests now use memory blocks with required size and alignment
+- PUD aligned memory block gets allocated with alloc_contig_range()
+- If PUD aligned memory could not be allocated it falls back on PMD aligned
+  memory block from page allocator and pud_* tests are skipped
+- Clear and populate tests now operate on real in memory page table entries
+- Dummy mm_struct gets allocated with mm_alloc()
+- Dummy page table entries get allocated with [pud|pmd|pte]_alloc_[map]()
+- Simplified [p4d|pgd]_basic_tests(), now has random values in the entries
+
+RFC V1:
+
+https://lore.kernel.org/linux-mm/1564037723-26676-1-git-send-email-anshuman.khandual@arm.com/
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steven Price <Steven.Price@arm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Sri Krishna chowdary <schowdary@nvidia.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-snps-arc@lists.infradead.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-ia64@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Anshuman Khandual (1):
+  mm/pgtable/debug: Add test validating architecture page table helpers
+
+ mm/Kconfig.debug       |  14 ++
+ mm/Makefile            |   1 +
+ mm/arch_pgtable_test.c | 400 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 415 insertions(+)
+ create mode 100644 mm/arch_pgtable_test.c
+
+-- 
+2.20.1
+
