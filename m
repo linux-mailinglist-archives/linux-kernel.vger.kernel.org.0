@@ -2,93 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 311AC882A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B381882BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436555AbfHISgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 14:36:31 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:38458 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2407406AbfHISgb (ORCPT
+        id S2436997AbfHISi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 14:38:27 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:15322 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407359AbfHISiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 14:36:31 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 9CBA0C0B9F;
-        Fri,  9 Aug 2019 18:36:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1565375791; bh=nCNzho8v5alI/6i+1aHygJFRglDtTEl398Nq+I6/yIg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RN61SRAeyCRovJOdAw3w51pIzr4qX27Evn2Gxk1CVaM57hiZFcd9XGZUG/vwmBudU
-         EC7v0tXdh6Y3nAn826Tmywch55W4daNIOp7Is1PWy9ANjOhLxHBfxLxAle+HWj8FAM
-         BvucbXYt9OA4DKv/jvd9Qfc5lXmAdhNADV84ow6C0i1yaZP+Qw3ZreOSqLswCX42sS
-         5tOwiEt7847Q+lkFRf+Kq0whtADYQ4VqBAAqncXm8CfQtUazD38g6WyqnCqlOByswC
-         qwmdu4MAxM594bAQXHiuTb3dcSH2J61qbwq4h8bJxa4Q/qiKyhdBIAyXyf/36/MqcX
-         b/DVojavfeMHg==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 4E0CAA0057;
-        Fri,  9 Aug 2019 18:36:27 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 00/12] net: stmmac: Improvements for -next
-Date:   Fri,  9 Aug 2019 20:36:08 +0200
-Message-Id: <cover.1565375521.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 9 Aug 2019 14:38:20 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4dbd9b0000>; Fri, 09 Aug 2019 11:38:20 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 09 Aug 2019 11:38:18 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 09 Aug 2019 11:38:18 -0700
+Received: from [10.2.165.207] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 9 Aug
+ 2019 18:38:17 +0000
+Subject: Re: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
+To:     "Weiny, Ira" <ira.weiny@intel.com>,
+        Michal Hocko <mhocko@kernel.org>, Jan Kara <jack@suse.cz>
+CC:     Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jerome Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        Daniel Black <daniel@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+References: <20190805222019.28592-2-jhubbard@nvidia.com>
+ <20190807110147.GT11812@dhcp22.suse.cz>
+ <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
+ <20190808062155.GF11812@dhcp22.suse.cz>
+ <875dca95-b037-d0c7-38bc-4b4c4deea2c7@suse.cz>
+ <306128f9-8cc6-761b-9b05-578edf6cce56@nvidia.com>
+ <d1ecb0d4-ea6a-637d-7029-687b950b783f@nvidia.com>
+ <420a5039-a79c-3872-38ea-807cedca3b8a@suse.cz>
+ <20190809082307.GL18351@dhcp22.suse.cz>
+ <20190809135813.GF17568@quack2.suse.cz>
+ <20190809175210.GR18351@dhcp22.suse.cz>
+ <2807E5FD2F6FDA4886F6618EAC48510E79E7F3E7@CRSMSX101.amr.corp.intel.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <e2bad873-137a-0c35-0674-f5dea6c61f3a@nvidia.com>
+Date:   Fri, 9 Aug 2019 11:36:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <2807E5FD2F6FDA4886F6618EAC48510E79E7F3E7@CRSMSX101.amr.corp.intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565375900; bh=AWUDkVLqdIORGIbcTInm0lQJHtik3ucba+VqqEeNdtM=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=piG3eQePf8V+mHT9Zce3BSUjqk9l6uDwFxA9H2EedRCzVUFYtqH1h4nXGte/KWFlN
+         xZGLguGJGcQxYhB9IuSFjRUgaOPgTkpVIZwP5arOrYCiPtgtzTeltSOIXvrqdit/Tn
+         QJB5ptzF8lyqgfmHRnDKP0NfUjUrgTHNEGsqbfkGedUbma1Pp7ya87wnpiMvF6edFa
+         ZxlzE6K3WTkJs9WNAUxATkydOVAVg7+N+mvCq8IvQjUZS/BAOXY5nA51BLkM1THFHj
+         ij+lLOsW/RZi/WiFtmvTVe6QCJM0XbxuH8T0lKRw7Q9uY/Oy3N9nHUIVaqJ7ZFxMCx
+         2iVeFvON8EsvQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Couple of improvements for -next tree. More info in commit logs.
+On 8/9/19 11:14 AM, Weiny, Ira wrote:
+>> On Fri 09-08-19 15:58:13, Jan Kara wrote:
+>>> On Fri 09-08-19 10:23:07, Michal Hocko wrote:
+>>>> On Fri 09-08-19 10:12:48, Vlastimil Babka wrote:
+>>>>> On 8/9/19 12:59 AM, John Hubbard wrote:
+...
+>>> In principle, I'm not strongly opposed to a new FOLL flag to determine
+>>> whether a pin or an ordinary page reference will be acquired at least
+>>> as an internal implementation detail inside mm/gup.c. But I would
+>>> really like to discourage new GUP users taking just page reference as
+>>> the most clueless users (drivers) usually need a pin in the sense John
+>>> implements. So in terms of API I'd strongly prefer to deprecate GUP as
+>>> an API, provide
+>>> vaddr_pin_pages() for drivers to get their buffer pages pinned and
+>>> then for those few users who really know what they are doing (and who
+>>> are not interested in page contents) we can have APIs like
+>>> follow_page() to get a page reference from a virtual address.
+>>
+>> Yes, going with a dedicated API sounds much better to me. Whether a
+>> dedicated FOLL flag is used internally is not that important. I am also for
+>> making the underlying gup to be really internal to the core kernel.
+> 
+> +1
+> 
+> I think GUP is too confusing.  I've been working with the details for many months now and it continues to confuse me.  :-(
+> 
+> My patches should be posted soon (based on mmotm) and I'll have my flame suit on so we can debate the interface.
+> 
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
+OK, so: use FOLL_PIN as an internal gup flag. FOLL_PIN will get set by the
+new vaddr_pin_pages*() wrapper calls. Then, put_user_page*() shall only be
+invoked from call sites that use FOLL_PIN.
 
-Jose Abreu (12):
-  net: stmmac: Get correct timestamp values from XGMAC
-  net: stmmac: Prepare to add Split Header support
-  net: stmmac: xgmac: Correctly return that RX descriptor is not last
-    one
-  net: stmmac: Add Split Header support and enable it in XGMAC cores
-  net: stmmac: Add a counter for Split Header packets
-  net: stmmac: dwxgmac: Add Flexible PPS support
-  net: stmmac: Add ethtool register dump for XGMAC cores
-  net: stmmac: Add support for SA Insertion/Replacement in XGMAC cores
-  net: stmmac: selftests: Add tests for SA Insertion/Replacement
-  net: stmmac: xgmac: Add EEE support
-  net: stmmac: Add support for VLAN Insertion Offload
-  net: stmmac: selftests: Add selftest for VLAN TX Offload
+With that approach in mind, I can sweep through my callsite conversion
+patchset and drop a few patches. There are actually quite a few patches that
+just want to find the page, not really operate on its data.
 
- drivers/net/ethernet/stmicro/stmmac/common.h       |  10 +
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |  56 ++++
- .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    | 189 +++++++++++++-
- .../net/ethernet/stmicro/stmmac/dwxgmac2_descs.c   |  88 ++++++-
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  31 ++-
- drivers/net/ethernet/stmicro/stmmac/hwif.h         |  30 +++
- drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  10 +
- .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  25 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 282 ++++++++++++++++-----
- .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 194 +++++++++++++-
- 10 files changed, 824 insertions(+), 91 deletions(-)
+And the conversion of the actual gup() calls can be done almost independently
+of the put_user_page*() conversions, if necessary (and it sounds like with your
+patchset, it is).
 
+btw, as part of the conversion, to make merging and call site conversion
+smoother, maybe it's OK to pass in FOLL_PIN to existing gup() calls, with
+the intent to convert them to use vaddr_pin_pages.)
+
+thanks,
 -- 
-2.7.4
-
+John Hubbard
+NVIDIA
+  
