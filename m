@@ -2,280 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA8A88084
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0652188087
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:52:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407387AbfHIQvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:51:03 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:55138 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726157AbfHIQvC (ORCPT
+        id S2407438AbfHIQwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:52:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57358 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726157AbfHIQwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:51:02 -0400
-Received: (qmail 3682 invoked by uid 2102); 9 Aug 2019 12:51:00 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 9 Aug 2019 12:51:00 -0400
-Date:   Fri, 9 Aug 2019 12:51:00 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Greg KH <greg@kroah.com>,
-        syzbot <syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com>
-cc:     andreyknvl@google.com, <bhelgaas@google.com>, <kirr@nexedi.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>, <linux@roeck-us.net>,
-        <lkundrak@v3.sk>, <logang@deltatee.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: KASAN: use-after-free Read in ld_usb_release
-In-Reply-To: <000000000000475ecc058faf017f@google.com>
-Message-ID: <Pine.LNX.4.44L0.1908091229540.1630-100000@iolanthe.rowland.org>
+        Fri, 9 Aug 2019 12:52:03 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x79Glbk5010243;
+        Fri, 9 Aug 2019 12:51:21 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u9c4x9bfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Aug 2019 12:51:21 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x79GmKHt013029;
+        Fri, 9 Aug 2019 12:51:20 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u9c4x9bf1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Aug 2019 12:51:20 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x79GnX88016163;
+        Fri, 9 Aug 2019 16:51:19 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma04dal.us.ibm.com with ESMTP id 2u51w7fdv2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Aug 2019 16:51:19 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x79GpIUv52232612
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 9 Aug 2019 16:51:18 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC20EB2064;
+        Fri,  9 Aug 2019 16:51:18 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 85255B205F;
+        Fri,  9 Aug 2019 16:51:18 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  9 Aug 2019 16:51:18 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2AEAD16C35AF; Fri,  9 Aug 2019 09:51:20 -0700 (PDT)
+Date:   Fri, 9 Aug 2019 09:51:20 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH RFC tip/core/rcu 14/14] rcu/nohz: Make multi_cpu_stop()
+ enable tick on all online CPUs
+Message-ID: <20190809165120.GA5668@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190804144835.GB2386@hirez.programming.kicks-ass.net>
+ <20190804184159.GC28441@linux.ibm.com>
+ <20190805080531.GH2349@hirez.programming.kicks-ass.net>
+ <20190805145448.GI28441@linux.ibm.com>
+ <20190805155024.GK2332@hirez.programming.kicks-ass.net>
+ <20190805174800.GK28441@linux.ibm.com>
+ <20190806180824.GA28448@linux.ibm.com>
+ <20190807214131.GA15124@linux.ibm.com>
+ <20190808203541.GA8160@linux.ibm.com>
+ <20190808213012.GA28773@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808213012.GA28773@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-09_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908090165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg:
-
-See below...
-
-On Fri, 9 Aug 2019, syzbot wrote:
-
-> Hello,
+On Thu, Aug 08, 2019 at 02:30:12PM -0700, Paul E. McKenney wrote:
+> On Thu, Aug 08, 2019 at 01:35:41PM -0700, Paul E. McKenney wrote:
+> > On Wed, Aug 07, 2019 at 02:41:31PM -0700, Paul E. McKenney wrote:
+> > > On Tue, Aug 06, 2019 at 11:08:24AM -0700, Paul E. McKenney wrote:
+> > > > On Mon, Aug 05, 2019 at 10:48:00AM -0700, Paul E. McKenney wrote:
+> > > > > On Mon, Aug 05, 2019 at 05:50:24PM +0200, Peter Zijlstra wrote:
+> > > > > > On Mon, Aug 05, 2019 at 07:54:48AM -0700, Paul E. McKenney wrote:
+> > > > > > 
+> > > > > > > > Right; so clearly we're not understanding what's happening. That seems
+> > > > > > > > like a requirement for actually doing a patch.
+> > > > > > > 
+> > > > > > > Almost but not quite.  It is a requirement for a patch *that* *is*
+> > > > > > > *supposed* *to* *be* *a* *fix*.  If you are trying to prohibit me from
+> > > > > > > writing experimental patches, please feel free to take a long walk on
+> > > > > > > a short pier.
+> > > > > > > 
+> > > > > > > Understood???
+> > > > > > 
+> > > > > > Ah, my bad, I thought you were actually proposing this as an actual
+> > > > > > patch. I now see that is my bad, I'd overlooked the RFC part.
+> > > > > 
+> > > > > No problem!
+> > > > > 
+> > > > > And of course adding tracing decreases the frequency and duration of
+> > > > > the multi_cpu_stop().  Re-running with shorter-duration triggering.  ;-)
+> > > > 
+> > > > And I did eventually get a good trace.  If I am interpreting this trace
+> > > > correctly, the torture_-135 task didn't get around to attempting to wake
+> > > > up all of the CPUs.  I will try again, but this time with the sched_switch
+> > > > trace event enabled.
+> > > > 
+> > > > As a side note, enabling ftrace from the command line seems to interact
+> > > > badly with turning tracing off and on in the kernel, so I eventually
+> > > > resorted to trace_printk() in the functions of interest.  The trace
+> > > > output is below, followed by the current diagnostic patch.  Please note
+> > > > that I am -not- using the desperation hammer-the-scheduler patches.
+> > > > 
+> > > > More as I learn more!
+> > > 
+> > > And of course I forgot to dump out the online CPUs, so I really had no
+> > > idea whether or not all the CPUs were accounted for.  I added tracing
+> > > to dump out the online CPUs at the beginning of __stop_cpus() and then
+> > > reworked it a few times to get the problem to happen in reasonable time.
+> > > Please see below for the resulting annotated trace.
+> > > 
+> > > I was primed to expect a lost IPI, perhaps due to yet another qemu bug,
+> > > but all the migration threads are running within about 2 milliseconds.
+> > > It is then almost two minutes(!) until the next trace message.
+> > > 
+> > > Looks like time to (very carefully!) instrument multi_cpu_stop().
+> > > 
+> > > Of course, if you have any ideas, please do not keep them a secret!
+> > 
+> > Functionally, multi_cpu_stop() is working fine, according to the trace
+> > below (search for a line beginning with TAB).  But somehow CPU 2 took
+> > almost three -minutes- to do one iteration of the loop.  The prime suspect
+> > in that loop is cpu_relax() due to the hypervisor having an opportunity
+> > to do something at that point.  The commentary below (again, search for
+> > a line beginning with TAB) gives my analysis.
+> > 
+> > Of course, if I am correct, it should be possible to catch cpu_relax()
+> > in the act.  That is the next step, give or take the Heisenbuggy nature
+> > of this beast.
+> > 
+> > Another thing for me to try is to run longer with !NO_HZ_FULL, just in
+> > case the earlier runs just got lucky.
+> > 
+> > Thoughts?
 > 
-> syzbot found the following crash on:
+> And it really can happen:
 > 
-> HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15a16f26600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=30cf45ebfe0b0c4847a1
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1416df26600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ce511c600000
+> [ 1881.467922] migratio-33      4...1 1879530317us : stop_machine_yield: cpu_relax() took 756140 ms
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com
+> The previous timestamp was 1123391100us, so the cpu_relax() is almost
+> exactly the full delay.
 > 
-> ==================================================================
-> BUG: KASAN: use-after-free in __mutex_lock_common  
-> kernel/locking/mutex.c:912 [inline]
-> BUG: KASAN: use-after-free in __mutex_lock+0xf23/0x1360  
-> kernel/locking/mutex.c:1077
-> Read of size 8 at addr ffff8881d21fc2d8 by task syz-executor834/1878
+> But another instance stalled for many minutes without a ten-second
+> cpu_relax().  So it is not just cpu_relax() causing trouble.  I could
+> rationalize that vCPU preemption being at fault...
 > 
-> CPU: 0 PID: 1878 Comm: syz-executor834 Not tainted 5.3.0-rc2+ #25
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xca/0x13e lib/dump_stack.c:113
->   print_address_description+0x6a/0x32c mm/kasan/report.c:351
->   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
->   kasan_report+0xe/0x12 mm/kasan/common.c:612
->   __mutex_lock_common kernel/locking/mutex.c:912 [inline]
->   __mutex_lock+0xf23/0x1360 kernel/locking/mutex.c:1077
->   ld_usb_release+0xb1/0x400 drivers/usb/misc/ldusb.c:386
->   __fput+0x2d7/0x840 fs/file_table.c:280
->   task_work_run+0x13f/0x1c0 kernel/task_work.c:113
->   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->   exit_to_usermode_loop+0x1d2/0x200 arch/x86/entry/common.c:163
->   prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
->   do_syscall_64+0x45f/0x580 arch/x86/entry/common.c:299
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x406b31
-> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 19 00 00 c3 48  
-> 83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-> 89 c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-> RSP: 002b:00007ffcf13bd080 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000406b31
-> RDX: fffffffffffffff7 RSI: 0000000000000080 RDI: 0000000000000004
-> RBP: 0000000000000159 R08: 0000000000000020 R09: 0000000000000020
-> R10: 00007ffcf13bd0b0 R11: 0000000000000293 R12: 000000000001d884
-> R13: 0000000000000004 R14: 00000000006e39ec R15: 0000000000000064
-> 
-> Allocated by task 1775:
->   save_stack+0x1b/0x80 mm/kasan/common.c:69
->   set_track mm/kasan/common.c:77 [inline]
->   __kasan_kmalloc mm/kasan/common.c:487 [inline]
->   __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
->   kmalloc include/linux/slab.h:552 [inline]
->   kzalloc include/linux/slab.h:748 [inline]
->   ld_usb_probe+0x6e/0xa65 drivers/usb/misc/ldusb.c:661
->   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
->   really_probe+0x281/0x650 drivers/base/dd.c:548
->   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
->   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
->   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:882
->   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x16f0 drivers/base/core.c:2114
->   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
->   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
->   usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
->   really_probe+0x281/0x650 drivers/base/dd.c:548
->   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
->   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
->   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:882
->   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x16f0 drivers/base/core.c:2114
->   usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
->   hub_port_connect drivers/usb/core/hub.c:5098 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
->   port_event drivers/usb/core/hub.c:5359 [inline]
->   hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
->   process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
->   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
->   kthread+0x318/0x420 kernel/kthread.c:255
->   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> 
-> Freed by task 1775:
->   save_stack+0x1b/0x80 mm/kasan/common.c:69
->   set_track mm/kasan/common.c:77 [inline]
->   __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
->   slab_free_hook mm/slub.c:1423 [inline]
->   slab_free_freelist_hook mm/slub.c:1470 [inline]
->   slab_free mm/slub.c:3012 [inline]
->   kfree+0xe4/0x2f0 mm/slub.c:3953
->   ld_usb_probe+0x728/0xa65 drivers/usb/misc/ldusb.c:744
->   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
->   really_probe+0x281/0x650 drivers/base/dd.c:548
->   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
->   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
->   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:882
->   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x16f0 drivers/base/core.c:2114
->   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
->   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
->   usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
->   really_probe+0x281/0x650 drivers/base/dd.c:548
->   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
->   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
->   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x217/0x360 drivers/base/dd.c:882
->   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
->   device_add+0xae6/0x16f0 drivers/base/core.c:2114
->   usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
->   hub_port_connect drivers/usb/core/hub.c:5098 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
->   port_event drivers/usb/core/hub.c:5359 [inline]
->   hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
->   process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
->   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
->   kthread+0x318/0x420 kernel/kthread.c:255
->   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> 
-> The buggy address belongs to the object at ffff8881d21fc280
->   which belongs to the cache kmalloc-512 of size 512
-> The buggy address is located 88 bytes inside of
->   512-byte region [ffff8881d21fc280, ffff8881d21fc480)
-> The buggy address belongs to the page:
-> page:ffffea0007487f00 refcount:1 mapcount:0 mapping:ffff8881da002500  
-> index:0x0 compound_mapcount: 0
-> flags: 0x200000000010200(slab|head)
-> raw: 0200000000010200 ffffea000739fc80 0000000900000009 ffff8881da002500
-> raw: 0000000000000000 00000000000c000c 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->   ffff8881d21fc180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff8881d21fc200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > ffff8881d21fc280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                                      ^
->   ffff8881d21fc300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff8881d21fc380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
+> And my diagnostic patch is below, just in case I am doing something
+> stupid with that.
 
-I have tracked this bug down.  The root causes lie in 
-usb_register_dev() and usb_deregister_dev().
+I did a 12-hour run with the same configuration except for leaving out the
+"nohz_full=1-7" kernel parameter without problems (aside from the RCU CPU
+stall warnings due to the ftrace_dump() at the end of the run -- isn't
+there some way to clear the ftrace buffer without actually printing it?).
 
-The first problem is that usb_deregister_dev() sets 
-usb_minors[intf->minor] to NULL before calling device_destroy() on the 
-class device.  This leaves a window during which another thread can 
-allocate the same minor number but will encounter a duplicate name 
-error when it tries to register its own class device.
+My next step is to do an over-the-weekend run with the same configuration,
+then a similar run with more recent kernel and qemu but with the
+"nohz_full=1-7".  If both of those pass, I will consider this to be a
+KVM/qemu bug that has since been fixed.
 
-This error shows up in the kernel log from the syzbot test (not shown 
-in the bug report above, though):
-
-[  120.583776][ T1775] sysfs: cannot create duplicate filename '/class/usbmisc/ldusb0'
-
-This can be fixed easily enough by reordering the statements in 
-usb_deregister_dev().
-
-The second problem is in usb_register_dev().  When that routine runs,
-it first allocates a minor number, then drops minor_rwsem, and then
-creates the class device.  If the device creation fails, the minor
-number is deallocated and the whole routine returns an error.  But
-during the time while minor_rwsem was dropped, there is a window in
-which the minor number is allocated and so another thread could
-successfully open the device file!
-
-These two scenarios are exactly what happened during the syzbot test.  
-Minor number 0 was deallocated and then allocated in another thread.  
-The second allocation failed because the old class device was still in
-existence.  As a result of this failure, ldusb's private data structure
-was released.  Nevertheless, a third thread managed to open the device
-file during the brief time that minor number 0 was re-allocated.  When
-that thread closed the file, it tried to access the private data
-structure that had already been released.
-
-I believe the patch below will fix both problems.  But you should take
-a look at it first to see if it seems right; syzbot can't really test
-the patch because it involves two separate races both coming out wrong!
-
-Alan Stern
-
-
- drivers/usb/core/file.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-Index: usb-devel/drivers/usb/core/file.c
-===================================================================
---- usb-devel.orig/drivers/usb/core/file.c
-+++ usb-devel/drivers/usb/core/file.c
-@@ -193,9 +193,10 @@ int usb_register_dev(struct usb_interfac
- 		intf->minor = minor;
- 		break;
- 	}
--	up_write(&minor_rwsem);
--	if (intf->minor < 0)
-+	if (intf->minor < 0) {
-+		up_write(&minor_rwsem);
- 		return -EXFULL;
-+	}
- 
- 	/* create a usb class device for this usb interface */
- 	snprintf(name, sizeof(name), class_driver->name, minor - minor_base);
-@@ -203,12 +204,11 @@ int usb_register_dev(struct usb_interfac
- 				      MKDEV(USB_MAJOR, minor), class_driver,
- 				      "%s", kbasename(name));
- 	if (IS_ERR(intf->usb_dev)) {
--		down_write(&minor_rwsem);
- 		usb_minors[minor] = NULL;
- 		intf->minor = -1;
--		up_write(&minor_rwsem);
- 		retval = PTR_ERR(intf->usb_dev);
- 	}
-+	up_write(&minor_rwsem);
- 	return retval;
- }
- EXPORT_SYMBOL_GPL(usb_register_dev);
-@@ -234,12 +234,12 @@ void usb_deregister_dev(struct usb_inter
- 		return;
- 
- 	dev_dbg(&intf->dev, "removing %d minor\n", intf->minor);
-+	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
- 
- 	down_write(&minor_rwsem);
- 	usb_minors[intf->minor] = NULL;
- 	up_write(&minor_rwsem);
- 
--	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
- 	intf->usb_dev = NULL;
- 	intf->minor = -1;
- 	destroy_usb_class();
-
+							Thanx, Paul
