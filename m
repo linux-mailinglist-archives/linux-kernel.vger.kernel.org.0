@@ -2,117 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 593E187EDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD89387ED0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436998AbfHIQDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:03:39 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8054 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2436968AbfHIQDj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:03:39 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x79Fx0ZC115867;
-        Fri, 9 Aug 2019 12:03:02 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u99yw5vm2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Aug 2019 12:03:02 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x79Fxu6P120684;
-        Fri, 9 Aug 2019 12:03:02 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u99yw5vjh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Aug 2019 12:03:01 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x79G0rHB030868;
-        Fri, 9 Aug 2019 16:03:00 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma02dal.us.ibm.com with ESMTP id 2u51w67d6c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Aug 2019 16:03:00 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x79G2wo847055168
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Aug 2019 16:02:58 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE060C605A;
-        Fri,  9 Aug 2019 16:02:58 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3BAAEC6059;
-        Fri,  9 Aug 2019 16:02:54 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.152.224])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Fri,  9 Aug 2019 16:02:53 +0000 (GMT)
-References: <20190806044919.10622-1-bauerman@linux.ibm.com> <87sgqasdr6.fsf@concordia.ellerman.id.au>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     mpe@ellerman.id.au
-Cc:     x86@kernel.org, iommu@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        id S2436966AbfHIQDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:03:10 -0400
+Received: from foss.arm.com ([217.140.110.172]:49390 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbfHIQDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 12:03:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 979B315A2;
+        Fri,  9 Aug 2019 09:03:08 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C67723F575;
+        Fri,  9 Aug 2019 09:03:03 -0700 (PDT)
+Date:   Fri, 9 Aug 2019 17:03:01 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Lianbo Jiang <lijiang@redhat.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH v4 0/6] Remove x86-specific code from generic headers
-In-reply-to: <87sgqasdr6.fsf@concordia.ellerman.id.au>
-Date:   Fri, 09 Aug 2019 13:02:48 -0300
-Message-ID: <874l2qfhsn.fsf@morokweng.localdomain>
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v19 04/15] mm: untag user pointers passed to memory
+ syscalls
+Message-ID: <20190809160301.GB23083@arrakis.emea.arm.com>
+References: <cover.1563904656.git.andreyknvl@google.com>
+ <aaf0c0969d46b2feb9017f3e1b3ef3970b633d91.1563904656.git.andreyknvl@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908090155
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aaf0c0969d46b2feb9017f3e1b3ef3970b633d91.1563904656.git.andreyknvl@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 23, 2019 at 07:58:41PM +0200, Andrey Konovalov wrote:
+> This patch is a part of a series that extends kernel ABI to allow to pass
+> tagged user pointers (with the top byte set to something else other than
+> 0x00) as syscall arguments.
+> 
+> This patch allows tagged pointers to be passed to the following memory
+> syscalls: get_mempolicy, madvise, mbind, mincore, mlock, mlock2, mprotect,
+> mremap, msync, munlock, move_pages.
+> 
+> The mmap and mremap syscalls do not currently accept tagged addresses.
+> Architectures may interpret the tag as a background colour for the
+> corresponding vma.
+> 
+> Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+> Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> ---
+>  mm/madvise.c   | 2 ++
+>  mm/mempolicy.c | 3 +++
+>  mm/migrate.c   | 2 +-
+>  mm/mincore.c   | 2 ++
+>  mm/mlock.c     | 4 ++++
+>  mm/mprotect.c  | 2 ++
+>  mm/mremap.c    | 7 +++++++
+>  mm/msync.c     | 2 ++
+>  8 files changed, 23 insertions(+), 1 deletion(-)
 
-mpe@ellerman.id.au writes:
+More back and forth discussions on how to specify the exceptions here.
+I'm proposing just dropping the exceptions and folding in the diff
+below.
 
-> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
->> Hello,
->>
->> This version has only a small change in the last patch as requested by
->> Christoph and Halil, and collects Reviewed-by's.
->>
->> These patches are applied on top of v5.3-rc2.
->>
->> I don't have a way to test SME, SEV, nor s390's PEF so the patches have only
->> been build tested.
->
-> I need to take this series via the powerpc tree because there is another
-> fairly large powerpc specific series dependent on it.
->
-> I think this series already has pretty much all the acks it needs, which
-> almost never happens, amazing work!
+Andrew, if you prefer a standalone patch instead, please let me know:
 
-Yes, thank you very much to everyone who reviewed the patches!
+------------------8<----------------------------
+From 9a5286acaa638c6a917d96986bf28dad35e24a0c Mon Sep 17 00:00:00 2001
+From: Catalin Marinas <catalin.marinas@arm.com>
+Date: Fri, 9 Aug 2019 14:21:33 +0100
+Subject: [PATCH] fixup! mm: untag user pointers passed to memory syscalls
 
-> I'll put the series in a topic branch, just in case there's any bad
-> conflicts and other folks want to merge it later on. I'll then merge the
-> topic branch into my next, and so this series will be tested in
-> linux-next that way.
+mmap, mremap, munmap, brk added to the list of syscalls that accept
+tagged pointers.
 
-That's awesome. Thank you very much!
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+---
+ mm/mmap.c   | 5 +++++
+ mm/mremap.c | 6 +-----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 7e8c3e8ae75f..b766b633b7ae 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -201,6 +201,8 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
+ 	bool downgraded = false;
+ 	LIST_HEAD(uf);
+ 
++	brk = untagged_addr(brk);
++
+ 	if (down_write_killable(&mm->mmap_sem))
+ 		return -EINTR;
+ 
+@@ -1573,6 +1575,8 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
+ 	struct file *file = NULL;
+ 	unsigned long retval;
+ 
++	addr = untagged_addr(addr);
++
+ 	if (!(flags & MAP_ANONYMOUS)) {
+ 		audit_mmap_fd(fd, flags);
+ 		file = fget(fd);
+@@ -2874,6 +2878,7 @@ EXPORT_SYMBOL(vm_munmap);
+ 
+ SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
+ {
++	addr = untagged_addr(addr);
+ 	profile_munmap(addr);
+ 	return __vm_munmap(addr, len, true);
+ }
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 64c9a3b8be0a..1fc8a29fbe3f 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -606,12 +606,8 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
+ 	LIST_HEAD(uf_unmap_early);
+ 	LIST_HEAD(uf_unmap);
+ 
+-	/*
+-	 * Architectures may interpret the tag passed to mmap as a background
+-	 * colour for the corresponding vma. For mremap we don't allow tagged
+-	 * new_addr to preserve similar behaviour to mmap.
+-	 */
+ 	addr = untagged_addr(addr);
++	new_addr = untagged_addr(new_addr);
+ 
+ 	if (flags & ~(MREMAP_FIXED | MREMAP_MAYMOVE))
+ 		return ret;
