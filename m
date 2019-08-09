@@ -2,130 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B2C88133
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:31:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7883E88138
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407156AbfHIRbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 13:31:12 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41207 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfHIRbL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 13:31:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x15so35837902pgg.8
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 10:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=o4KyUArqXmkClyMndBwARjbgAguNJaXFLfZH+78C3Fk=;
-        b=NblyOw93JRPVTmFr5sfAXmZSjW11mR/3bmjjggtv8t6I2F/6NpZYR70YToAJzZdftd
-         cgbG4waoTnjLtthk6byMT+yut72nDrtMyvnwR5IW+w2wdO4PUpTS2dysfV15KfjtWZuY
-         oj46fy0OqniYuAet1QfkFHfjXziev78OEQBTgVfg2MKCBwyV81neNmVrZXlAtyLkimcs
-         S1k5R3v97gJVKAR6xbyxwCIiI4rhYTKeELLzorRMW+umEB69RnbMcux4CZYvDqsP73Pv
-         o706rZCWSzeChY54iZjz8L7SNKpNmAHsAyhtQ75PoEZEX1haIhLCDpk6dITnX4edQ3gg
-         Cb+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o4KyUArqXmkClyMndBwARjbgAguNJaXFLfZH+78C3Fk=;
-        b=O1oc9ps8xL89gWf1+uwm00l8XF5FBFxdsZafDmSHI+e3SDoVFNP+QmnOJmolMDVrPM
-         ovFFKp+bxvC9HafvrqfTwFhbjUohUKtgv4rZhhI+CZhx74xq1gjWPeDqc2fQ75PLCzd5
-         L99A7M6W6cWwDl3xPzmV6D2SmsIfuy1KP7VetE2A4CEpb/w7PF8PulyGfjGKx6q0Tf00
-         GQ7mEC8c5GGHOg7stzf4srYawzjbkj4JFkS594iSwx9oxaQg8Oh6/90JCMN11HN3YDoH
-         Jd/1k7J7XdrTACaydx/9AlvAbCE9Bwq4G8HiFr9fatFepga0Q8Au607vzaFy8gtuLRf/
-         mn/w==
-X-Gm-Message-State: APjAAAUN43V75+MFRF3MyGtwSl7BdkouwS35yIGUHDexMLpjAgq6nWWV
-        PNa8VUDtsWzic3zLGgv2RnOgKkE4Goc=
-X-Google-Smtp-Source: APXvYqzMr7pLWX9oUN+nN/IL/jhIcg+L8Yr6aSg8RTDdYi5us3s5rTWlZZfhmbsFg3tPpjihJVTQlw==
-X-Received: by 2002:a63:3d4f:: with SMTP id k76mr18907892pga.345.1565371870824;
-        Fri, 09 Aug 2019 10:31:10 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:180::ad32])
-        by smtp.gmail.com with ESMTPSA id o95sm5483952pjb.4.2019.08.09.10.31.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 10:31:10 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 13:31:08 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "Artem S. Tashkinov" <aros@gmx.com>,
+        id S2436704AbfHIRcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 13:32:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbfHIRcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 13:32:17 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8699620B7C;
+        Fri,  9 Aug 2019 17:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565371936;
+        bh=nKtquqpuBswHHe3M9vYfEcgyY9mTt3OC4sC8Acqz9S0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Sft2YIQACYCduRbRTnneckix2VbtG9Hhl98cCy0c2qnQRhsE9jrv8FxeZL9aU5Fyl
+         BkG8Ao47QYkBp81HCpLNUvIyhO0+YDyDBdPtD8PfwV5ADp5FtlrsOhd0tJFAuP4K+3
+         XShYTyJ6CZMt2j+uVEr/Gf3AGxdWe3X9Gu3ZoZ7A=
+Date:   Fri, 9 Aug 2019 19:32:13 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
- inability to gracefully handle low memory pressure
-Message-ID: <20190809173108.GA21089@cmpxchg.org>
-References: <398f31f3-0353-da0c-fc54-643687bb4774@suse.cz>
- <20190806142728.GA12107@cmpxchg.org>
- <20190806143608.GE11812@dhcp22.suse.cz>
- <CAJuCfpFmOzj-gU1NwoQFmS_pbDKKd2XN=CS1vUV4gKhYCJOUtw@mail.gmail.com>
- <20190806220150.GA22516@cmpxchg.org>
- <20190807075927.GO11812@dhcp22.suse.cz>
- <20190807205138.GA24222@cmpxchg.org>
- <e535fb6a-8af4-3844-34ac-3294eef26ca6@suse.cz>
- <20190808172725.GA16900@cmpxchg.org>
- <6e7f0cd2-8b13-7534-1c0e-f3569f8b4c05@suse.cz>
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.14.138
+Message-ID: <20190809173213.GA18653@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Content-Disposition: inline
-In-Reply-To: <6e7f0cd2-8b13-7534-1c0e-f3569f8b4c05@suse.cz>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 04:56:28PM +0200, Vlastimil Babka wrote:
-> On 8/8/19 7:27 PM, Johannes Weiner wrote:
-> > On Thu, Aug 08, 2019 at 04:47:18PM +0200, Vlastimil Babka wrote:
-> >> On 8/7/19 10:51 PM, Johannes Weiner wrote:
-> >>> From 9efda85451062dea4ea287a886e515efefeb1545 Mon Sep 17 00:00:00 2001
-> >>> From: Johannes Weiner <hannes@cmpxchg.org>
-> >>> Date: Mon, 5 Aug 2019 13:15:16 -0400
-> >>> Subject: [PATCH] psi: trigger the OOM killer on severe thrashing
-> >>
-> >> Thanks a lot, perhaps finally we are going to eat the elephant ;)
-> >>
-> >> I've tested this by booting with mem=8G and activating browser tabs as
-> >> long as I could. Then initially the system started thrashing and didn't
-> >> recover for minutes. Then I realized sysrq+f is disabled... Fixed that
-> >> up after next reboot, tried lower thresholds, also started monitoring
-> >> /proc/pressure/memory, and found out that after minutes of not being
-> >> able to move the cursor, both avg10 and avg60 shows only around 15 for
-> >> both some and full. Lowered thrashing_oom_level to 10 and (with
-> >> thrashing_oom_period of 5) the thrashing OOM finally started kicking,
-> >> and the system recovered by itself in reasonable time.
-> > 
-> > It sounds like there is a missing annotation. The time has to be going
-> > somewhere, after all. One *known* missing vector I fixed recently is
-> > stalls in submit_bio() itself when refaulting, but it's not merged
-> > yet. Attaching the patch below, can you please test it?
-> 
-> It made a difference, but not enough, it seems. Before the patch I could
-> observe "io:full avg10" around 75% and "memory:full avg10" around 20%,
-> after the patch, "memory:full avg10" went to around 45%, while io stayed
-> the same (BTW should the refaults be discounted from the io counters, so
-> that the sum is still <=100%?)
->
-> As a result I could change the knobs to recover successfully with
-> thrashing detected for 10s of 40% memory pressure.
-> 
-> Perhaps being low on memory we can't detect refaults so well due to
-> limited number of shadow entries, or there was genuine non-refault I/O
-> in the mix. The detection would then probably have to look at both I/O
-> and memory?
 
-Thanks for testing it. It's possible that there is legitimate
-non-refault IO, and there can be interaction of course between that
-and the refault IO. But to be sure that all genuine refaults are
-captured, can you record the workingset_* values from /proc/vmstat
-before/after the thrash storm? In particular, workingset_nodereclaim
-would indicate whether we are losing refault information.
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[ The different resource pressures are not meant to be summed
-  up. Refaults truly are both IO events and memory events: they
-  indicate memory contention, but they also contribute to the IO
-  load. So both metrics need to include them, or it would skew the
-  picture when you only look at one of them. ]
+I'm announcing the release of the 4.14.138 kernel.
+
+All users of the 4.14 kernel series must upgrade.
+
+The updated 4.14.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.14.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Ds=
+ummary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                              |    2=20
+ arch/arm/boot/dts/logicpd-som-lv.dtsi                 |   16 ++
+ arch/arm/boot/dts/logicpd-torpedo-som.dtsi            |   16 ++
+ arch/arm64/include/asm/cpufeature.h                   |    7 -
+ arch/arm64/kernel/cpufeature.c                        |    8 +
+ drivers/atm/iphase.c                                  |    8 +
+ drivers/hid/hid-ids.h                                 |    1=20
+ drivers/hid/usbhid/hid-quirks.c                       |    1=20
+ drivers/hid/wacom_wac.c                               |   12 +-
+ drivers/infiniband/core/addr.c                        |   15 +-
+ drivers/infiniband/core/sa_query.c                    |   10 -
+ drivers/infiniband/hw/ocrdma/ocrdma_ah.c              |    5=20
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c              |    5=20
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c       |    2=20
+ drivers/net/ethernet/marvell/mvpp2.c                  |   41 ++----
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c         |    2=20
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c       |    4=20
+ drivers/net/ethernet/mellanox/mlx5/core/fs_counters.c |    5=20
+ drivers/net/phy/phylink.c                             |    2=20
+ drivers/net/ppp/pppoe.c                               |    3=20
+ drivers/net/ppp/pppox.c                               |   13 ++
+ drivers/net/ppp/pptp.c                                |    3=20
+ drivers/net/tun.c                                     |    1=20
+ drivers/nfc/nfcmrvl/main.c                            |    4=20
+ drivers/nfc/nfcmrvl/uart.c                            |    4=20
+ drivers/nfc/nfcmrvl/usb.c                             |    1=20
+ drivers/scsi/fcoe/fcoe_ctlr.c                         |   51 +++-----
+ drivers/scsi/libfc/fc_rport.c                         |    5=20
+ drivers/spi/spi-bcm2835.c                             |    3=20
+ fs/compat_ioctl.c                                     |    3=20
+ include/linux/cgroup-defs.h                           |    1=20
+ include/linux/cgroup.h                                |    4=20
+ include/linux/if_pppox.h                              |    3=20
+ include/linux/mlx5/fs.h                               |    1=20
+ include/net/tcp.h                                     |   17 ++
+ include/scsi/libfcoe.h                                |    1=20
+ kernel/cgroup/cgroup.c                                |  106 ++++++++++++-=
+-----
+ kernel/exit.c                                         |    2=20
+ net/bridge/br_multicast.c                             |    3=20
+ net/bridge/br_vlan.c                                  |    5=20
+ net/core/dev.c                                        |    2=20
+ net/ipv4/tcp_output.c                                 |   11 +
+ net/ipv6/ip6_tunnel.c                                 |    6 -
+ net/l2tp/l2tp_ppp.c                                   |    3=20
+ net/sched/act_ife.c                                   |    3=20
+ net/sched/sch_codel.c                                 |    6 -
+ net/tipc/netlink_compat.c                             |   11 +
+ tools/objtool/check.c                                 |    2=20
+ 48 files changed, 292 insertions(+), 148 deletions(-)
+
+Aaron Armstrong Skomra (1):
+      HID: wacom: fix bit shift for Cintiq Companion 2
+
+Adam Ford (2):
+      ARM: dts: Add pinmuxing for i2c2 and i2c3 for LogicPD SOM-LV
+      ARM: dts: Add pinmuxing for i2c2 and i2c3 for LogicPD torpedo
+
+Alexis Bauvin (1):
+      tun: mark small packets as owned by the tap sock
+
+Ariel Levkovich (1):
+      net/mlx5e: Prevent encap flow counter update async to user query
+
+Arnd Bergmann (1):
+      compat_ioctl: pppoe: fix PPPOEIOCSFWD handling
+
+Cong Wang (1):
+      ife: error out when nla attributes are empty
+
+Eric Dumazet (1):
+      tcp: be more careful in tcp_fragment()
+
+Greg Kroah-Hartman (2):
+      IB: directly cast the sockaddr union to aockaddr
+      Linux 4.14.138
+
+Gustavo A. R. Silva (1):
+      atm: iphase: Fix Spectre v1 vulnerability
+
+Haishuang Yan (1):
+      ip6_tunnel: fix possible use-after-free on xmit
+
+Hannes Reinecke (1):
+      scsi: fcoe: Embed fc_rport_priv in fcoe_rport structure
+
+Jason Gunthorpe (1):
+      RDMA: Directly cast the sockaddr union to sockaddr
+
+Jia-Ju Bai (1):
+      net: sched: Fix a possible null-pointer dereference in dequeue_func()
+
+Jiri Pirko (1):
+      net: fix ifindex collision during namespace removal
+
+Johan Hovold (1):
+      NFC: nfcmrvl: fix gpio-handling regression
+
+Josh Poimboeuf (2):
+      objtool: Add machine_real_restart() to the noreturn list
+      objtool: Add rewind_stack_do_exit() to the noreturn list
+
+Lukas Wunner (1):
+      spi: bcm2835: Fix 3-wire mode if DMA is enabled
+
+Mark Zhang (1):
+      net/mlx5: Use reversed order when unregister devices
+
+Matteo Croce (1):
+      mvpp2: refactor MTU change code
+
+Nikolay Aleksandrov (2):
+      net: bridge: delete local fdb on device init failure
+      net: bridge: mcast: don't delete permanent entries when fast leave is=
+ enabled
+
+Ren=E9 van Dorst (1):
+      net: phylink: Fix flow control for fixed-link
+
+Sebastian Parschauer (1):
+      HID: Add quirk for HP X1200 PIXART OEM mouse
+
+Sudarsana Reddy Kalluru (1):
+      bnx2x: Disable multi-cos feature.
+
+Taras Kondratiuk (1):
+      tipc: compat: allow tipc commands without arguments
+
+Tejun Heo (5):
+      cgroup: Call cgroup_release() before __exit_signal()
+      cgroup: Implement css_task_iter_skip()
+      cgroup: Include dying leaders with live threads in PROCS iterations
+      cgroup: css_task_iter_skip()'d iterators must be advanced before acce=
+ssed
+      cgroup: Fix css_task_iter_advance_css_set() cset skip condition
+
+Will Deacon (1):
+      arm64: cpufeature: Fix feature comparison for CTR_EL0.{CWG,ERG}
+
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAl1NrhkACgkQONu9yGCS
+aT6TpBAAvtcYmWi9MtC+pEpE4H8v45/SE+eKilRCMMjeAu+O2+8zAW56xGNG3ts9
+Zg96DqtHoSC8vIX0kEjBMoAUCaa9lbeZE4W5jkncTf+b9SIN4NXOVWPKO4FZBhcV
+jWYs05FQ0D0whYWtmHj4H5rdyBwzf05/l46Ij1HRYYMKAAftQB7gJmmG6k5m0PEd
+SB8goxHyLmF9PSoDHy10l7htmQ9jVTLH+cuDoMf5yKr3ZvmE5vbQRC4hCEjOaf6j
+Rt/aG/EgLm+LYAYB3GwaA4GDes0YiCLmXeCfrnb8tWc63OY1py/LwSinPxEFvBaM
+uDNs0oD+NFNLbyP9HgqT0Bg9Y3XEZI6WqvMs0YJ77dYeC5x6bzhBYWF3xUGWPxBH
+KGAwlrpoOcSsxnmjGlao5QjUeZK0Zy9hPjA5KIsyxD0LrL0Hvil19RH0gM3IVTkh
+xNi3mZ209cg2PVTBH5Gh2BcHAKKEGtDE1UpL+FqFJJfJZjwjwcJc5/+mccJoaRPw
+x/WAYV8hnCf2MFNc0ZrxF82nV+sqmKJFOWTFLYlKFad5q1BGDTz74IvW1SgFz8PY
+PuurTzVns1hQ7bgJs73eJ32Z9zqcOfeqVBmpNHEvLygeTBGy0DnH39qxg1gsnGJL
+CdRhF5GqP65fZop+yB4BiJ48PikWoWJhl6S1A+m8QKJAqykv+5c=
+=N+Wd
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
