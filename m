@@ -2,64 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33135881D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4299B881DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:00:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437211AbfHIR7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 13:59:39 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39987 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436920AbfHIR7j (ORCPT
+        id S2437243AbfHIR75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 13:59:57 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35514 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436792AbfHIR74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 13:59:39 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hw9Aq-0002U0-C0; Fri, 09 Aug 2019 17:59:32 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: sym53c8xx_2: remove redundant assignment to retv
-Date:   Fri,  9 Aug 2019 18:59:32 +0100
-Message-Id: <20190809175932.10197-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 9 Aug 2019 13:59:56 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w20so95798221edd.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 10:59:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=GrdyiqEFc7d9G/zdkgFcJ6VHW0IWWZvW+Hm2PT6e4V0=;
+        b=rYkBHj9hJo/nV0dHMoD6XVvMfZTtHDFFOuO6oMCGugZVyBkmDttGrHf8jqoxRhlD2l
+         J5zVMuqheUTe9ggc4SxK6HqOWcSXV2FgXZ5wEZ6cswkluQIhc6Z+XJGwPgUe6Dw29KoJ
+         gNJCPadsqvmnswlpKmFKILZc/zZ9iYD93XEQuIhalLNrRi2UL0fF4SAv8DJOk48G9x8l
+         Eu3hr/ueW3lTxF6SNAnaZdvADgxNccybH8HrJhtC+GGiszVPWwx8AsDvhxo/SCgjWRA6
+         NADICE7BgI9RPN/AChfCi6YLo6+9I5W66FeM/dp5FE8O5ctkRkeAVg0+SMMQ52yKh1o9
+         uyQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=GrdyiqEFc7d9G/zdkgFcJ6VHW0IWWZvW+Hm2PT6e4V0=;
+        b=Zi5a3L2B+bjMketEzVkFGwP7qZ5u0yS9P8N328MLIbd0FwGVN6ojwaawiEHisoeIRq
+         mMtoVI7r2ipjMNGs5H69RMMN8aA7flqkDhW3mWEoNOpTMardKR5LZW2NSKse3umOV4eb
+         V4TpaQ5Vgtbv2XgysW5lWZjFUhoDXb6Z/JfVUNUZdIOkBqIGQ+k74GWt7TfNwRW+Vd5Z
+         oQEGOjS71dffq7x2xa9EMbnZ6f1mLvg1iYSfJ34+EGD4foDQo8CgbgYytk0QYDPpQn2W
+         38m5eNN+4ZnukyT86rPVJetuEEsBry6Cb/S/OlWyy1dcC4bIP1L431R+RkuXMpgCFiY7
+         HNnA==
+X-Gm-Message-State: APjAAAUvRur/stnfmX7Bet6bOAOFtZx9kDRHF1PvUrLxQ3cUWQHDsGNt
+        PA8PBDV2Y2Djye/Am1/jV+fiRn5L38RhjygvVGQ=
+X-Google-Smtp-Source: APXvYqwjWz+V4OkLui9gAG1bBQkxh9OQ2k8CCXydZns0N9FXFAXTq6Vdlo/nhQPlEGD+YVeEOqba220TtAXbY9sGL7Y=
+X-Received: by 2002:a50:ba19:: with SMTP id g25mr23184183edc.123.1565373595060;
+ Fri, 09 Aug 2019 10:59:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a50:92bd:0:0:0:0:0 with HTTP; Fri, 9 Aug 2019 10:59:54 -0700 (PDT)
+Reply-To: tracywilliam26@gmail.com
+From:   Miss Tracy William <harikunda1116@gmail.com>
+Date:   Fri, 9 Aug 2019 10:59:54 -0700
+Message-ID: <CAGEpkWryjpL4uG+PBRhySSu_musVWkM+vAOpUQOmz9uxadUjBQ@mail.gmail.com>
+Subject: GREETINGS FROM TRACY WILLIAM
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Variable retv is initialized to a value that is never read and it
-is re-assigned later. The initialization is redundant and can be
-removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/sym53c8xx_2/sym_nvram.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/sym53c8xx_2/sym_nvram.c b/drivers/scsi/sym53c8xx_2/sym_nvram.c
-index dd3f07b31612..9dc17f1288f9 100644
---- a/drivers/scsi/sym53c8xx_2/sym_nvram.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_nvram.c
-@@ -648,7 +648,7 @@ static int sym_read_T93C46_nvram(struct sym_device *np, Tekram_nvram *nvram)
- {
- 	u_char gpcntl, gpreg;
- 	u_char old_gpcntl, old_gpreg;
--	int retv = 1;
-+	int retv;
- 
- 	/* save current state of GPCNTL and GPREG */
- 	old_gpreg	= INB(np, nc_gpreg);
 -- 
-2.20.1
+Hello Dear,
+how are you today,I hope you are doing great.
+It is my great pleasure to
+contact you and i hope you don't mind,I was just surfing
+through the Internet search when i found your email address,I want to make a new
+and special friend,I hope you don't mind.
 
+My name is Tracy William,I am from the United States of America but
+presently I live
+and work in England,
+I will give you pictures and details of me as soon as i hear from you
+bye
+Tracy
