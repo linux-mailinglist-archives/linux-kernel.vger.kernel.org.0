@@ -2,279 +2,537 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF3F58822B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:18:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF67788247
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437003AbfHISSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 14:18:22 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33601 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436690AbfHISSV (ORCPT
+        id S2436603AbfHISVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 14:21:46 -0400
+Received: from UPDC19PA24.eemsg.mail.mil ([214.24.27.199]:49871 "EHLO
+        UPDC19PA24.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407409AbfHISVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 14:18:21 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x3so70264921lfc.0;
-        Fri, 09 Aug 2019 11:18:18 -0700 (PDT)
+        Fri, 9 Aug 2019 14:21:45 -0400
+X-Greylist: delayed 430 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Aug 2019 14:21:39 EDT
+X-EEMSG-check-017: 3376545|UPDC19PA24_ESA_OUT06.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.64,366,1559520000"; 
+   d="scan'208";a="3376545"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UPDC19PA24.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 09 Aug 2019 18:14:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=E8y8IXxBU1Y+QO/+Z71ZJ5cdap8FRJZXKelTnTfTFa0=;
-        b=euTzh+U2GMc3WnxhTxHx7xKEo8TD8kayctwddiyX9IhODbilWoLMK6Z6H1t/e0YfBy
-         djt4zvB6/bCnP4IdYTlZCsrusFa7rjkvxrm/wOYXLwudNBF94fFMXbElVxxzdv3jp/up
-         VlleztW3YbYTsZEjHn5vrmBv0I1MaKNdfrXJIdyN4zqyOGh+dS9VDS2pD6dsze838/4X
-         Se/9cGgZgj0pCmovfDaQn2g2UpnOAFv+C/J2suNDa/2QpHUcGuzMGld0VUlUFzHwmOlS
-         mlR2gAx+58wo/yu+6Q9kDXqYRLMT4gm0ORqrHbEBprO/SSMgVQEgLao5pT108JVQ35Qw
-         yxtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=E8y8IXxBU1Y+QO/+Z71ZJ5cdap8FRJZXKelTnTfTFa0=;
-        b=gn0eZHjr7YoqgcvldPexjjMvbBgAZmLCJzTvl7zyVpimXAWx2J8M0Y5JdfsZrda6iJ
-         cqV4tiZr76cS/vmTg0m0c2/QtIz1iZV9isCFdXjUaDsw2ihakQkSRHU3UHyOAjPHsb/e
-         v2EGSUzdaIGwTGC5ivacvgsCdb09K8DnsDJWJMu+BYhaR66lzsVNAdjR+fH1IWz3TCB1
-         41OsRgVFmPGRYlN7f2Yy3FwUouMFCaSEQ42Kc3MptSa5V0SkkuN9NpQUo1eoXpHjKQK0
-         mzyvIHhFtS06e/vGqgFOksJJ4QyJOi+oXTE/8LV1f6jZMJbfH6OfHiutoJ2lulqhQiP5
-         /swQ==
-X-Gm-Message-State: APjAAAUxlpD5utmD6siflpMlwcNwRthYHzk/dIp/RqKWZ83jLnMS2xu7
-        v34c3qrdx/i8cM0i/X/g9Cmwzqvf
-X-Google-Smtp-Source: APXvYqySaKU/e4oRuB2ismLcDn7BqjcUfVKWHaA4Ebi/dHnqGHREG7WunIHs1KVPYE/oFCygkVFlrg==
-X-Received: by 2002:ac2:4c12:: with SMTP id t18mr13526812lfq.134.1565374697788;
-        Fri, 09 Aug 2019 11:18:17 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.34.218])
-        by smtp.googlemail.com with ESMTPSA id k23sm16344839ljg.90.2019.08.09.11.18.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Aug 2019 11:18:17 -0700 (PDT)
-Subject: Re: [PATCH v8 14/21] clk: tegra210: Add suspend and resume support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-15-git-send-email-skomatineni@nvidia.com>
- <a21b7464-62c3-8461-04c2-a0e863bdde85@gmail.com>
- <7d101ec9-c559-8b40-1764-6bf67a9c7a7a@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <aa823801-00c7-df88-0f63-45338bffa854@gmail.com>
-Date:   Fri, 9 Aug 2019 21:18:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1565374464; x=1596910464;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=R9zx81r2PuRBibI972A4m0f/L356klxBhWIcPr5y5sM=;
+  b=CwLBtfsjmgrJ/S2z3iuXu9u2/jWLz/L8zc2Zn8YUU5Ra+DBS+UjwMNYu
+   sLFOLvYFxpchzg2aaMylRL4bbuXu7d9u4AuCBYeud+I+unNOHIHMYdA9E
+   jeKcqgia7ntMs/qji+eYTtkljl8KFDn6pFPH/cRTok37PwpCU46IF90xL
+   g3Znb6fPyySl8I2pWRxLQt6wCBWRCql4s9lfLb6LM/KhXMzOnq2rcUTLf
+   C5HNo+v0ltVHzJQXzTeg7MB/snWPhRlmuFarH7y1999jMNHknflbco07C
+   ck8Vqbh61IoqZ446CSjmqo5C/Haeu58yz+8PKXYHKqSzh2UEeo7qn8u0a
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.64,366,1559520000"; 
+   d="scan'208";a="26644347"
+IronPort-PHdr: =?us-ascii?q?9a23=3ARxSwxx2chJXeX0FQsmDT+DRfVm0co7zxezQtwd?=
+ =?us-ascii?q?8ZsesVLvrxwZ3uMQTl6Ol3ixeRBMOHsqgC0rOJ+Pm6ACQp2tWoiDg6aptCVh?=
+ =?us-ascii?q?sI2409vjcLJ4q7M3D9N+PgdCcgHc5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFR?=
+ =?us-ascii?q?rhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTagf79+Ngi6oRjTu8UZnIduNLs9wQ?=
+ =?us-ascii?q?bVr3VVfOhb2XlmLk+JkRbm4cew8p9j8yBOtP8k6sVNT6b0cbkmQLJBFDgpPH?=
+ =?us-ascii?q?w768PttRnYUAuA/WAcXXkMkhpJGAfK8hf3VYrsvyTgt+p93C6aPdDqTb0xRD?=
+ =?us-ascii?q?+v4btnRAPuhSwaLDMy7n3ZhdJsg6JauBKhpgJww4jIYIGOKfFyerrRcc4GSW?=
+ =?us-ascii?q?ZdW8pcUSJOApm4b4ASEeQPO+hWpJT5q1cXoxazAQygCeXywTFKm3D2x7U33e?=
+ =?us-ascii?q?Q/Hw/b0gIuHNUAv3vbotjuKKsfUvq4wLXSwDnfc/9b3yr25ojSchAmpPGBRa?=
+ =?us-ascii?q?59ftDLyUkoEQPOk1SeqYvkPzyIyOsNt3WQ4u16Wu2zhG4nrABxrSWxyco3lo?=
+ =?us-ascii?q?nIhp4aylDD9SljxoY1Pse3RFR0Yd6jDptdrieXPJZ1TMM6W2xkpSk3x7IctZ?=
+ =?us-ascii?q?O7YSQG0ooryhHBZ/CdboSF5A/oWvyLLjdinn1lfaqyhxO18Ue91OLxTtK00F?=
+ =?us-ascii?q?NWripdldnMq2wN2wTT6seZTvt9+V+s2SqV2ADJ6+FEPFs0mbDHK58h3rEwlp?=
+ =?us-ascii?q?0TvV7FHiDqg0X5kLWadkAl+uis8+jnY7PmqYGAN4Jslw3zPasjlta/DOglKA?=
+ =?us-ascii?q?QCQWeW9fqm2LH+5UH5Ra9FjvwykqnXqpDaIsEbq7ajDABJ3YYj7Be/ACq439?=
+ =?us-ascii?q?kDgXkGLE5KeBKAj4TzPVHOO+r3Ae2wg1Srjjdn3+rGMaH5ApXRMnjDl6/scq?=
+ =?us-ascii?q?pn5E5H1gUyzctS54lIBbEBOv3zR0HxtNjGAR8jKgC73/zoBM9h2YMZXGKFGr?=
+ =?us-ascii?q?WZP7/KsV+U+uIvJPGBZIsUuDb7Nvgk6OfijXwnll8He6mmw58XZWumHvRpPU?=
+ =?us-ascii?q?qZe2DggtQfHmcQuAoxUujqhEeFUT5JaHa4R7g86S0jCIK6EYfDQZiggL6E3C?=
+ =?us-ascii?q?e8BJ1WfGFGCkuXHHfubYqEXukDaCOILs9miDwEWqCrS5U92hG2qA/6171nI/?=
+ =?us-ascii?q?LO9S0dtJLjztp46uPSlRE27jF0AMGd3HuMT2FwhG8HWzg23KVnq0xn1liDyb?=
+ =?us-ascii?q?R4g+BfFdFL5fNGSBs1NZ3HwuxhFtDyQRzOcs2VR1enWt+mGy0+Tsotw98SZE?=
+ =?us-ascii?q?ZwA8itjhDE3yukHbAVk7iLBIcv/6LGwXf+OsZ9xGza1KU7k1YmRc5PP3W8hq?=
+ =?us-ascii?q?Fj7wjTG5LJk0KBmqaudKQc2jPN9WiawWqAp0FXTRB/UbvbUnAbfUbWs9v56V?=
+ =?us-ascii?q?3YT7O0CrQoLBFBycicJatOcNHpik9GRPj7MtTEf22xg3uwBQqPxr6UaIrqem?=
+ =?us-ascii?q?Md3DjSCUQdiAAc42qJNRUkBiegv2LfDCViFVfoY0zx7Ol+rG20Q1QqzwGFcU?=
+ =?us-ascii?q?JhzaC5+h0LivyGTfMcwLYEtD0mqzVuE1a3x8jWBMaYpwp9YKVcZssw4ExZ2m?=
+ =?us-ascii?q?Ldtgx9OIGgLq95i14AfAR4oVnu2w90Copei8gqqm0lzA5oJaKfylNBeCuS3Y?=
+ =?us-ascii?q?rsNb3PNmny4BevZrbO2l7EzdaW/rwC6OwipFX+uAGlD08i83Jg09lPzXSQ/I?=
+ =?us-ascii?q?nFDA0XUcG5bkFi7xFno5nCazQ5oobT0mdhd6Kzt2zswdUsUcIs0BGmN/hYMa?=
+ =?us-ascii?q?+JEEemGsYVAMmiJcQ2ilOpaVQCJ+kU+6kqaZD1P8Ca0bKmab4z1Amtin5Ktc?=
+ =?us-ascii?q?UkiROB?=
+X-IPAS-Result: =?us-ascii?q?A2DqCQC7tk1d/wHyM5BmHgEGBwaBZ4FpBSqBPgEyKpQRA?=
+ =?us-ascii?q?QEBAQEGgjSIa5EhCQEBAQEBAQEBARsZAQIBAYQ/gmMjOBMBBAEBAQQBAQMBC?=
+ =?us-ascii?q?QEBbIUzgjopAYMUCwFEAoFRglcMP4F3FKx4M4kCgUmBNIcLZoNzF3iBB4ERg?=
+ =?us-ascii?q?l1zg34SGIV/BJQ7lwoJgh+LXIhHDBuCMItDikWnXyGBWCsIAhgIIQ+DJ4ESg?=
+ =?us-ascii?q?TwXFY4pIwMwgQYBAYs3DRcHgiUBAQ?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 09 Aug 2019 18:14:22 +0000
+Received: from moss-callisto.infosec.tycho.ncsc.mil (moss-callisto [192.168.25.136])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x79IEKTN024373;
+        Fri, 9 Aug 2019 14:14:20 -0400
+From:   Aaron Goidel <acgoide@tycho.nsa.gov>
+To:     paul@paul-moore.com
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
+        amir73il@gmail.com, jmorris@namei.org, sds@tycho.nsa.gov,
+        linux-kernel@vger.kernel.org, Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH v2] fanotify, inotify, dnotify, security: add security hook for fs notifications
+Date:   Fri,  9 Aug 2019 14:14:01 -0400
+Message-Id: <20190809181401.7086-1-acgoide@tycho.nsa.gov>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <7d101ec9-c559-8b40-1764-6bf67a9c7a7a@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-09.08.2019 19:19, Sowjanya Komatineni пишет:
-> 
-> On 8/9/19 6:56 AM, Dmitry Osipenko wrote:
->> 09.08.2019 2:46, Sowjanya Komatineni пишет:
->>> This patch adds support for clk: tegra210: suspend-resume.
->>>
->>> All the CAR controller settings are lost on suspend when core
->>> power goes off.
->>>
->>> This patch has implementation for saving and restoring all PLLs
->>> and clocks context during system suspend and resume to have the
->>> clocks back to same state for normal operation.
->>>
->>> Clock driver suspend and resume are registered as syscore_ops as clocks
->>> restore need to happen before the other drivers resume to have all their
->>> clocks back to the same state as before suspend.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>>   drivers/clk/tegra/clk-tegra210.c | 103 +++++++++++++++++++++++++++++++++++++--
->>>   drivers/clk/tegra/clk.c          |  64 ++++++++++++++++++++++++
->>>   drivers/clk/tegra/clk.h          |   3 ++
->>>   3 files changed, 166 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->>> index 998bf60b219a..8dd6f4f4debb 100644
->>> --- a/drivers/clk/tegra/clk-tegra210.c
->>> +++ b/drivers/clk/tegra/clk-tegra210.c
->>> @@ -9,13 +9,13 @@
->>>   #include <linux/clkdev.h>
->>>   #include <linux/of.h>
->>>   #include <linux/of_address.h>
->>> +#include <linux/syscore_ops.h>
->>>   #include <linux/delay.h>
->>>   #include <linux/export.h>
->>>   #include <linux/mutex.h>
->>>   #include <linux/clk/tegra.h>
->>>   #include <dt-bindings/clock/tegra210-car.h>
->>>   #include <dt-bindings/reset/tegra210-car.h>
->>> -#include <linux/iopoll.h>
->>>   #include <linux/sizes.h>
->>>   #include <soc/tegra/pmc.h>
->>>   @@ -220,11 +220,15 @@
->>>   #define CLK_M_DIVISOR_SHIFT 2
->>>   #define CLK_M_DIVISOR_MASK 0x3
->>>   +#define CLK_MASK_ARM    0x44
->>> +#define MISC_CLK_ENB    0x48
->>> +
->>>   #define RST_DFLL_DVCO 0x2f4
->>>   #define DVFS_DFLL_RESET_SHIFT 0
->>>     #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
->>>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
->>> +#define CPU_SOFTRST_CTRL 0x380
->>>     #define LVL2_CLK_GATE_OVRA 0xf8
->>>   #define LVL2_CLK_GATE_OVRC 0x3a0
->>> @@ -2825,6 +2829,7 @@ static int tegra210_enable_pllu(void)
->>>       struct tegra_clk_pll_freq_table *fentry;
->>>       struct tegra_clk_pll pllu;
->>>       u32 reg;
->>> +    int ret;
->>>         for (fentry = pll_u_freq_table; fentry->input_rate; fentry++) {
->>>           if (fentry->input_rate == pll_ref_freq)
->>> @@ -2853,9 +2858,14 @@ static int tegra210_enable_pllu(void)
->>>       reg |= PLL_ENABLE;
->>>       writel(reg, clk_base + PLLU_BASE);
->>>   -    readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
->>> -                      reg & PLL_BASE_LOCK, 2, 1000);
->>> -    if (!(reg & PLL_BASE_LOCK)) {
->>> +    /*
->>> +     * During clocks resume, same PLLU init and enable sequence get
->>> +     * executed. So, readx_poll_timeout_atomic can't be used here as it
->>> +     * uses ktime_get() and timekeeping resume doesn't happen by that
->>> +     * time. So, using tegra210_wait_for_mask for PLL LOCK.
->>> +     */
->>> +    ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
->>> +    if (ret) {
->>>           pr_err("Timed out waiting for PLL_U to lock\n");
->>>           return -ETIMEDOUT;
->>>       }
->>> @@ -3288,6 +3298,84 @@ static void tegra210_disable_cpu_clock(u32 cpu)
->>>   }
->>>     #ifdef CONFIG_PM_SLEEP
->>> +/*
->>> + * This array lists mask values for each peripheral clk bank
->>> + * to mask out reserved bits during the clocks state restore
->>> + * on SC7 resume to prevent accidental writes to these reserved
->>> + * bits.
->>> + */
->>> +static u32 periph_clk_rsvd_mask[TEGRA210_CAR_BANK_COUNT] = {
->> Should be more natural to have a "valid_mask" instead of "rsvd_mask".
->>
->> What's actually wrong with touching of the reserved bits? They must be NO-OP.. or the
->> reserved bits are actually some kind of "secret" bits? If those bits have some use-case
->> outside of Silicon HW (like FPGA simulation), then this doesn't matter for upstream and you
->> have to keep the workaround locally in the downstream kernel or whatever.
-> 
-> Will rename as valid_mask.
-> 
-> some bits in these registers are undefined and is not good to write to these bits as they
-> can cause pslverr.
+As of now, setting watches on filesystem objects has, at most, applied a
+check for read access to the inode, and in the case of fanotify, requires
+CAP_SYS_ADMIN. No specific security hook or permission check has been
+provided to control the setting of watches. Using any of inotify, dnotify,
+or fanotify, it is possible to observe, not only write-like operations, but
+even read access to a file. Modeling the watch as being merely a read from
+the file is insufficient for the needs of SELinux. This is due to the fact
+that read access should not necessarily imply access to information about
+when another process reads from a file. Furthermore, fanotify watches grant
+more power to an application in the form of permission events. While
+notification events are solely, unidirectional (i.e. they only pass
+information to the receiving application), permission events are blocking.
+Permission events make a request to the receiving application which will
+then reply with a decision as to whether or not that action may be
+completed. This causes the issue of the watching application having the
+ability to exercise control over the triggering process. Without drawing a
+distinction within the permission check, the ability to read would imply
+the greater ability to control an application. Additionally, mount and
+superblock watches apply to all files within the same mount or superblock.
+Read access to one file should not necessarily imply the ability to watch
+all files accessed within a given mount or superblock.
 
-Okay, it should be explained in the comment.
+In order to solve these issues, a new LSM hook is implemented and has been
+placed within the system calls for marking filesystem objects with inotify,
+fanotify, and dnotify watches. These calls to the hook are placed at the
+point at which the target path has been resolved and are provided with the
+path struct, the mask of requested notification events, and the type of
+object on which the mark is being set (inode, superblock, or mount). The
+mask and obj_type have already been translated into common FS_* values
+shared by the entirety of the fs notification infrastructure. The path
+struct is passed rather than just the inode so that the mount is available,
+particularly for mount watches. This also allows for use of the hook by
+pathname-based security modules. However, since the hook is intended for
+use even by inode based security modules, it is not placed under the
+CONFIG_SECURITY_PATH conditional. Otherwise, the inode-based security
+modules would need to enable all of the path hooks, even though they do not
+use any of them.
 
-Is it possible to disable trapping of changing the undefined bits?
+This only provides a hook at the point of setting a watch, and presumes
+that permission to set a particular watch implies the ability to receive
+all notification about that object which match the mask. This is all that
+is required for SELinux. If other security modules require additional hooks
+or infrastructure to control delivery of notification, these can be added
+by them. It does not make sense for us to propose hooks for which we have
+no implementation. The understanding that all notifications received by the
+requesting application are all strictly of a type for which the application
+has been granted permission shows that this implementation is sufficient in
+its coverage.
 
->>
->>> +    0x23282006,
->>> +    0x782e0c18,
->>> +    0x0c012c05,
->>> +    0x003e7304,
->>> +    0x86c04800,
->>> +    0xc0199000,
->>> +    0x03e03800,
->>> +};
->>> +
->>> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) + ((_off) * 4))
->>> +#define car_writel(_val, _base, _off) \
->>> +        writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
->>> +
->>> +static u32 spare_reg_ctx, misc_clk_enb_ctx, clk_msk_arm_ctx;
->>> +static u32 cpu_softrst_ctx[3];
->>> +
->>> +static int tegra210_clk_suspend(void)
->>> +{
->>> +    unsigned int i;
->>> +
->>> +    clk_save_context();
->>> +
->>> +    /*
->>> +     * Save the bootloader configured clock registers SPARE_REG0,
->>> +     * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL.
->>> +     */
->>> +    spare_reg_ctx = readl_relaxed(clk_base + SPARE_REG0);
->>> +    misc_clk_enb_ctx = readl_relaxed(clk_base + MISC_CLK_ENB);
->>> +    clk_msk_arm_ctx = readl_relaxed(clk_base + CLK_MASK_ARM);
->>> +
->>> +    for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->>> +        cpu_softrst_ctx[i] = car_readl(CPU_SOFTRST_CTRL, i);
->>> +
->>> +    tegra_clk_periph_suspend();
->>> +    return 0;
->>> +}
->>> +
->>> +static void tegra210_clk_resume(void)
->>> +{
->>> +    unsigned int i;
->>> +
->>> +    tegra_clk_osc_resume(clk_base);
->>> +
->>> +    /*
->>> +     * Restore the bootloader configured clock registers SPARE_REG0,
->>> +     * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL from saved context.
->>> +     */
->>> +    writel_relaxed(spare_reg_ctx, clk_base + SPARE_REG0);
->>> +    writel_relaxed(misc_clk_enb_ctx, clk_base + MISC_CLK_ENB);
->>> +    writel_relaxed(clk_msk_arm_ctx, clk_base + CLK_MASK_ARM);
->>> +
->>> +    for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
->>> +        car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
->>> +
->>> +    fence_udelay(5, clk_base);
->>> +
->>> +    /* enable all the clocks before changing the clock sources */
->>> +    tegra_clk_periph_force_on(periph_clk_rsvd_mask);
->> Why clocks need to be enabled before changing the sources?
-> 
-> To prevent glitchless frequency switch, Tegra clock programming recommended sequence is to
-> change MUX control or divisor or both with the clocks running.
+Security modules wishing to provide complete control over fanotify must
+also implement a security_file_open hook that validates that the access
+requested by the watching application is authorized. Fanotify has the issue
+that it returns a file descriptor with the file mode specified during
+fanotify_init() to the watching process on event. This is already covered
+by the LSM security_file_open hook if the security module implements
+checking of the requested file mode there. Otherwise, a watching process
+can obtain escalated access to a file for which it has not been authorized.
 
-This should be explained in the comment.
+The selinux_path_notify hook implementation works by adding five new file
+permissions: watch, watch_mount, watch_sb, watch_reads, and watch_with_perm
+(descriptions about which will follow), and one new filesystem permission:
+watch (which is applied to superblock checks). The hook then decides which
+subset of these permissions must be held by the requesting application
+based on the contents of the provided mask and the obj_type. The
+selinux_file_open hook already checks the requested file mode and therefore
+ensures that a watching process cannot escalate its access through
+fanotify.
 
-> Actual state of clocks before suspend are restored later after all PLL's and peripheral
-> clocks are restored.
-> 
->>
->>> +    /* wait for all writes to happen to have all the clocks enabled */
->>> +    wmb();
->> fence_udelay() has exactly the same barrier at the very beginning of readl(), no need to
->> duplicate it here.
+The watch, watch_mount, and watch_sb permissions are the baseline
+permissions for setting a watch on an object and each are a requirement for
+any watch to be set on a file, mount, or superblock respectively. It should
+be noted that having either of the other two permissions (watch_reads and
+watch_with_perm) does not imply the watch, watch_mount, or watch_sb
+permission. Superblock watches further require the filesystem watch
+permission to the superblock. As there is no labeled object in view for
+mounts, there is no specific check for mount watches beyond watch_mount to
+the inode. Such a check could be added in the future, if a suitable labeled
+object existed representing the mount.
 
-Actually, readl does the rmb() and it should be a more correct variant of fencing because it
-actually ensures that the write reached hardware. I suppose that something like fence_udelay
-should be used for the pinctrl as well.
+The watch_reads permission is required to receive notifications from
+read-exclusive events on filesystem objects. These events include accessing
+a file for the purpose of reading and closing a file which has been opened
+read-only. This distinction has been drawn in order to provide a direct
+indication in the policy for this otherwise not obvious capability. Read
+access to a file should not necessarily imply the ability to observe read
+events on a file.
 
->>> +    fence_udelay(2, clk_base);
->>> +
->>> +    /* restore PLLs and all peripheral clock rates */
->>> +    tegra210_init_pllu();
->> Why USB PLL need to be restored at first?
-> USB PLL restore is independent to all other clocks restore. So this can be done either
-> before clk_restore_context or even after.
+Finally, watch_with_perm only applies to fanotify masks since it is the
+only way to set a mask which allows for the blocking, permission event.
+This permission is needed for any watch which is of this type. Though
+fanotify requires CAP_SYS_ADMIN, this is insufficient as it gives implicit
+trust to root, which we do not do, and does not support least privilege.
 
-Then why not to implement restore_context for PLLU?
+Signed-off-by: Aaron Goidel <acgoide@tycho.nsa.gov>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+v2:
+  - move initialization of obj_type up to remove duplicate work
+  - convert inotify and fanotify flags to common FS_* flags
+ fs/notify/dnotify/dnotify.c         | 15 +++++++--
+ fs/notify/fanotify/fanotify_user.c  | 19 ++++++++++--
+ fs/notify/inotify/inotify_user.c    | 14 +++++++--
+ include/linux/lsm_hooks.h           |  9 +++++-
+ include/linux/security.h            | 10 ++++--
+ security/security.c                 |  6 ++++
+ security/selinux/hooks.c            | 47 +++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h |  5 +--
+ 8 files changed, 113 insertions(+), 12 deletions(-)
 
->>> +    clk_restore_context();
->>> +
->>> +    /* restore all peripheral clocks enable and reset state */
->>> +    tegra_clk_periph_resume();
->>> +}
->> [snip]
+diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+index 250369d6901d..87a7f61bc91c 100644
+--- a/fs/notify/dnotify/dnotify.c
++++ b/fs/notify/dnotify/dnotify.c
+@@ -22,6 +22,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/dnotify.h>
+ #include <linux/init.h>
++#include <linux/security.h>
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+ #include <linux/fdtable.h>
+@@ -288,6 +289,17 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+ 		goto out_err;
+ 	}
+ 
++	/*
++	 * convert the userspace DN_* "arg" to the internal FS_*
++	 * defined in fsnotify
++	 */
++	mask = convert_arg(arg);
++
++	error = security_path_notify(&filp->f_path, mask,
++			FSNOTIFY_OBJ_TYPE_INODE);
++	if (error)
++		goto out_err;
++
+ 	/* expect most fcntl to add new rather than augment old */
+ 	dn = kmem_cache_alloc(dnotify_struct_cache, GFP_KERNEL);
+ 	if (!dn) {
+@@ -302,9 +314,6 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+ 		goto out_err;
+ 	}
+ 
+-	/* convert the userspace DN_* "arg" to the internal FS_* defines in fsnotify */
+-	mask = convert_arg(arg);
+-
+ 	/* set up the new_fsn_mark and new_dn_mark */
+ 	new_fsn_mark = &new_dn_mark->fsn_mark;
+ 	fsnotify_init_mark(new_fsn_mark, dnotify_group);
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index a90bb19dcfa2..8b4e2ad6d208 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -528,7 +528,8 @@ static const struct file_operations fanotify_fops = {
+ };
+ 
+ static int fanotify_find_path(int dfd, const char __user *filename,
+-			      struct path *path, unsigned int flags)
++			      struct path *path, unsigned int flags, __u64 mask,
++			      unsigned int obj_type)
+ {
+ 	int ret;
+ 
+@@ -567,8 +568,15 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+ 
+ 	/* you can only watch an inode if you have read permissions on it */
+ 	ret = inode_permission(path->dentry->d_inode, MAY_READ);
++	if (ret) {
++		path_put(path);
++		goto out;
++	}
++
++	ret = security_path_notify(path, mask, obj_type);
+ 	if (ret)
+ 		path_put(path);
++
+ out:
+ 	return ret;
+ }
+@@ -931,6 +939,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	__kernel_fsid_t __fsid, *fsid = NULL;
+ 	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
+ 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
++	unsigned int obj_type;
+ 	int ret;
+ 
+ 	pr_debug("%s: fanotify_fd=%d flags=%x dfd=%d pathname=%p mask=%llx\n",
+@@ -945,8 +954,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 
+ 	switch (mark_type) {
+ 	case FAN_MARK_INODE:
++		obj_type = FSNOTIFY_OBJ_TYPE_INODE;
++		break;
+ 	case FAN_MARK_MOUNT:
++		obj_type = FSNOTIFY_OBJ_TYPE_VFSMOUNT;
++		break;
+ 	case FAN_MARK_FILESYSTEM:
++		obj_type = FSNOTIFY_OBJ_TYPE_SB;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -1014,7 +1028,8 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		goto fput_and_out;
+ 	}
+ 
+-	ret = fanotify_find_path(dfd, pathname, &path, flags);
++	ret = fanotify_find_path(dfd, pathname, &path, flags,
++			(mask & ALL_FSNOTIFY_EVENTS), obj_type);
+ 	if (ret)
+ 		goto fput_and_out;
+ 
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 7b53598c8804..408e9917ed42 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -39,6 +39,7 @@
+ #include <linux/poll.h>
+ #include <linux/wait.h>
+ #include <linux/memcontrol.h>
++#include <linux/security.h>
+ 
+ #include "inotify.h"
+ #include "../fdinfo.h"
+@@ -342,7 +343,8 @@ static const struct file_operations inotify_fops = {
+ /*
+  * find_inode - resolve a user-given path to a specific inode
+  */
+-static int inotify_find_inode(const char __user *dirname, struct path *path, unsigned flags)
++static int inotify_find_inode(const char __user *dirname, struct path *path,
++						unsigned int flags, __u64 mask)
+ {
+ 	int error;
+ 
+@@ -351,8 +353,15 @@ static int inotify_find_inode(const char __user *dirname, struct path *path, uns
+ 		return error;
+ 	/* you can only watch an inode if you have read permissions on it */
+ 	error = inode_permission(path->dentry->d_inode, MAY_READ);
++	if (error) {
++		path_put(path);
++		return error;
++	}
++	error = security_path_notify(path, mask,
++				FSNOTIFY_OBJ_TYPE_INODE);
+ 	if (error)
+ 		path_put(path);
++
+ 	return error;
+ }
+ 
+@@ -744,7 +753,8 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ 	if (mask & IN_ONLYDIR)
+ 		flags |= LOOKUP_DIRECTORY;
+ 
+-	ret = inotify_find_inode(pathname, &path, flags);
++	ret = inotify_find_inode(pathname, &path, flags,
++			(mask & IN_ALL_EVENTS));
+ 	if (ret)
+ 		goto fput_and_out;
+ 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 47f58cfb6a19..ead98af9c602 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -339,6 +339,9 @@
+  *	Check for permission to change root directory.
+  *	@path contains the path structure.
+  *	Return 0 if permission is granted.
++ * @path_notify:
++ *	Check permissions before setting a watch on events as defined by @mask,
++ *	on an object at @path, whose type is defined by @obj_type.
+  * @inode_readlink:
+  *	Check the permission to read the symbolic link.
+  *	@dentry contains the dentry structure for the file link.
+@@ -1535,7 +1538,9 @@ union security_list_options {
+ 	int (*path_chown)(const struct path *path, kuid_t uid, kgid_t gid);
+ 	int (*path_chroot)(const struct path *path);
+ #endif
+-
++	/* Needed for inode based security check */
++	int (*path_notify)(const struct path *path, u64 mask,
++				unsigned int obj_type);
+ 	int (*inode_alloc_security)(struct inode *inode);
+ 	void (*inode_free_security)(struct inode *inode);
+ 	int (*inode_init_security)(struct inode *inode, struct inode *dir,
+@@ -1860,6 +1865,8 @@ struct security_hook_heads {
+ 	struct hlist_head path_chown;
+ 	struct hlist_head path_chroot;
+ #endif
++	/* Needed for inode based modules as well */
++	struct hlist_head path_notify;
+ 	struct hlist_head inode_alloc_security;
+ 	struct hlist_head inode_free_security;
+ 	struct hlist_head inode_init_security;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 659071c2e57c..7d9c1da1f659 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -259,7 +259,8 @@ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					struct qstr *name,
+ 					const struct cred *old,
+ 					struct cred *new);
+-
++int security_path_notify(const struct path *path, u64 mask,
++					unsigned int obj_type);
+ int security_inode_alloc(struct inode *inode);
+ void security_inode_free(struct inode *inode);
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+@@ -387,7 +388,6 @@ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+ int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
+ void security_release_secctx(char *secdata, u32 seclen);
+-
+ void security_inode_invalidate_secctx(struct inode *inode);
+ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+ int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+@@ -621,6 +621,12 @@ static inline int security_move_mount(const struct path *from_path,
+ 	return 0;
+ }
+ 
++static inline int security_path_notify(const struct path *path, u64 mask,
++				unsigned int obj_type)
++{
++	return 0;
++}
++
+ static inline int security_inode_alloc(struct inode *inode)
+ {
+ 	return 0;
+diff --git a/security/security.c b/security/security.c
+index 613a5c00e602..30687e1366b7 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -871,6 +871,12 @@ int security_move_mount(const struct path *from_path, const struct path *to_path
+ 	return call_int_hook(move_mount, 0, from_path, to_path);
+ }
+ 
++int security_path_notify(const struct path *path, u64 mask,
++				unsigned int obj_type)
++{
++	return call_int_hook(path_notify, 0, path, mask, obj_type);
++}
++
+ int security_inode_alloc(struct inode *inode)
+ {
+ 	int rc = lsm_inode_alloc(inode);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f77b314d0575..a47376d1c924 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -92,6 +92,8 @@
+ #include <linux/kernfs.h>
+ #include <linux/stringhash.h>	/* for hashlen_string() */
+ #include <uapi/linux/mount.h>
++#include <linux/fsnotify.h>
++#include <linux/fanotify.h>
+ 
+ #include "avc.h"
+ #include "objsec.h"
+@@ -3261,6 +3263,50 @@ static int selinux_inode_removexattr(struct dentry *dentry, const char *name)
+ 	return -EACCES;
+ }
+ 
++static int selinux_path_notify(const struct path *path, u64 mask,
++						unsigned int obj_type)
++{
++	int ret;
++	u32 perm;
++
++	struct common_audit_data ad;
++
++	ad.type = LSM_AUDIT_DATA_PATH;
++	ad.u.path = *path;
++
++	/*
++	 * Set permission needed based on the type of mark being set.
++	 * Performs an additional check for sb watches.
++	 */
++	switch (obj_type) {
++	case FSNOTIFY_OBJ_TYPE_VFSMOUNT:
++		perm = FILE__WATCH_MOUNT;
++		break;
++	case FSNOTIFY_OBJ_TYPE_SB:
++		perm = FILE__WATCH_SB;
++		ret = superblock_has_perm(current_cred(), path->dentry->d_sb,
++						FILESYSTEM__WATCH, &ad);
++		if (ret)
++			return ret;
++		break;
++	case FSNOTIFY_OBJ_TYPE_INODE:
++		perm = FILE__WATCH;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	// check if the mask is requesting ability to set a blocking watch
++	if (mask & (ALL_FSNOTIFY_PERM_EVENTS))
++		perm |= FILE__WATCH_WITH_PERM; // if so, check that permission
++
++	// is the mask asking to watch file reads?
++	if (mask & (FS_ACCESS | FS_ACCESS_PERM | FS_CLOSE_NOWRITE))
++		perm |= FILE__WATCH_READS; // check that permission as well
++
++	return path_has_perm(current_cred(), path, perm);
++}
++
+ /*
+  * Copy the inode security context value to the user.
+  *
+@@ -6798,6 +6844,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_getsecid, selinux_inode_getsecid),
+ 	LSM_HOOK_INIT(inode_copy_up, selinux_inode_copy_up),
+ 	LSM_HOOK_INIT(inode_copy_up_xattr, selinux_inode_copy_up_xattr),
++	LSM_HOOK_INIT(path_notify, selinux_path_notify),
+ 
+ 	LSM_HOOK_INIT(kernfs_init_security, selinux_kernfs_init_security),
+ 
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 201f7e588a29..32e9b03be3dd 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -7,7 +7,8 @@
+ 
+ #define COMMON_FILE_PERMS COMMON_FILE_SOCK_PERMS, "unlink", "link", \
+     "rename", "execute", "quotaon", "mounton", "audit_access", \
+-    "open", "execmod"
++	"open", "execmod", "watch", "watch_mount", "watch_sb", \
++	"watch_with_perm", "watch_reads"
+ 
+ #define COMMON_SOCK_PERMS COMMON_FILE_SOCK_PERMS, "bind", "connect", \
+     "listen", "accept", "getopt", "setopt", "shutdown", "recvfrom",  \
+@@ -60,7 +61,7 @@ struct security_class_mapping secclass_map[] = {
+ 	{ "filesystem",
+ 	  { "mount", "remount", "unmount", "getattr",
+ 	    "relabelfrom", "relabelto", "associate", "quotamod",
+-	    "quotaget", NULL } },
++	    "quotaget", "watch", NULL } },
+ 	{ "file",
+ 	  { COMMON_FILE_PERMS,
+ 	    "execute_no_trans", "entrypoint", NULL } },
+-- 
+2.21.0
 
