@@ -2,53 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CD7C88038
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 574748803A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:35:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437301AbfHIQfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:35:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50546 "EHLO mail.kernel.org"
+        id S2437326AbfHIQfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:35:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726516AbfHIQfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:35:02 -0400
-Subject: Re: [GIT PULL for v5.3-rc4] media fixes
+        id S2437311AbfHIQfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 12:35:08 -0400
+Subject: Re: [GIT PULL] Power management fix for v5.3-rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565368501;
-        bh=fcr/iQNAZKpTtkt/hTq+CZ7aYyrm6waFfTWt9mt4fJI=;
+        s=default; t=1565368507;
+        bh=G0du5UKxFgMmOYmCBIFTj9ntUjh4VpjlD4YwqFj3VB0=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=nZmzLNVXlkEA3HYQUiOjX1OjheCZyPjxu7roe2OLPD6KqrbYg20lMeOewYIvBT58E
-         CN+avF9V7YJ/emDfWJIdGuqOW6rI13MXWmWwn0pKI5Jh8jItATlcCOj2D2HGCQjNac
-         MssjpIzfSM0yVdmvyEWpjyEdaUzwNfPfxZ1wZNsw=
+        b=jsHxWbzS9YpFfdEdMIPr4ZuHzS6EiW18xcwZk7x8QO+pFHJ1yQ803hmzNIXKizWDS
+         vUzENB9ZyoCtm5q0iG3BzmIQFXDYcgXSZBH+Fb2fnY0QKLr+M4sDoveEyGzjMzlwSA
+         HyoNBebqhhDAK8oX4UUx14XPfAsNsafl8c1DPn4M=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190808123943.1551193d@coco.lan>
-References: <20190808123943.1551193d@coco.lan>
-X-PR-Tracked-List-Id: <linux-media.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190808123943.1551193d@coco.lan>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
- media/v5.3-2
-X-PR-Tracked-Commit-Id: 92f5b0313e37e2b37aaf8f0bb75b6c50eafb5808
+In-Reply-To: <CAJZ5v0jeVsVCC70s-jVphdMH9zx+pFTcMm-EhHcthJCtDxwkvQ@mail.gmail.com>
+References: <CAJZ5v0jeVsVCC70s-jVphdMH9zx+pFTcMm-EhHcthJCtDxwkvQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0jeVsVCC70s-jVphdMH9zx+pFTcMm-EhHcthJCtDxwkvQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.3-rc4
+X-PR-Tracked-Commit-Id: 0617bdede5114a0002298b12cd0ca2b0cfd0395d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6c02b6300fec062405ed0215e8ed1ed2b690da55
-Message-Id: <156536850166.6429.12711568322533011086.pr-tracker-bot@kernel.org>
-Date:   Fri, 09 Aug 2019 16:35:01 +0000
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+X-PR-Merge-Commit-Id: 0acf5676dc0ffe0683543a20d5ecbd112af5b8ee
+Message-Id: <156536850784.6429.11653924089047359420.pr-tracker-bot@kernel.org>
+Date:   Fri, 09 Aug 2019 16:35:07 +0000
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 8 Aug 2019 12:39:43 -0300:
+The pull request you sent on Fri, 9 Aug 2019 10:47:28 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media media/v5.3-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.3-rc4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6c02b6300fec062405ed0215e8ed1ed2b690da55
+https://git.kernel.org/torvalds/c/0acf5676dc0ffe0683543a20d5ecbd112af5b8ee
 
 Thank you!
 
