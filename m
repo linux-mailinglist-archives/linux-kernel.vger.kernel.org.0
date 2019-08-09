@@ -2,1191 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6284187964
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 14:07:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FDDF8795E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 14:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406709AbfHIMHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 08:07:02 -0400
-Received: from mga11.intel.com ([192.55.52.93]:38768 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbfHIMHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 08:07:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 05:06:59 -0700
-X-IronPort-AV: E=Sophos;i="5.64,364,1559545200"; 
-   d="scan'208";a="259022530"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 05:06:53 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 1085B205BE; Fri,  9 Aug 2019 15:05:55 +0300 (EEST)
-Date:   Fri, 9 Aug 2019 15:05:55 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Helen Koike <helen.koike@collabora.com>
-Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
-        jacob2.chen@rock-chips.com, jeffy.chen@rock-chips.com,
-        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
-        tfiga@chromium.org, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, kernel@collabora.com,
-        ezequiel@collabora.com, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
-        Jacob Chen <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>
-Subject: Re: [PATCH v8 09/14] media: rkisp1: add rockchip isp1 core driver
-Message-ID: <20190809120554.GB6566@paasikivi.fi.intel.com>
-References: <20190730184256.30338-1-helen.koike@collabora.com>
- <20190730184256.30338-10-helen.koike@collabora.com>
- <20190807152727.GN21370@paasikivi.fi.intel.com>
- <bca5e3fe-8a37-2b91-ae96-30378fd98012@collabora.com>
+        id S2406682AbfHIMGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 08:06:16 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:15252 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726505AbfHIMGP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 08:06:15 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x79C3Cgt002322;
+        Fri, 9 Aug 2019 08:06:06 -0400
+Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp2053.outbound.protection.outlook.com [104.47.46.53])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2u7xkj6y5j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Aug 2019 08:06:05 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FSxZW+0Ltt9Pjst2UoEOa4RjaOScBXgWnZLNhQdMOS8rpoE/2mV+CR9wB4ltxutq+CvXO4pN5+LacxbzmzzaPkUlVyXmhz4zqrv0TLi4PshxRDfVCB0HvsGG4ycWmJfHoLUvbUfg2XCRpsL1wvT7gKgFoIv3FVglVV3x3+mzAK54x2L0lvNMZoqwhIv/+sclb0sOGUFtHqFM+V1F6zPY94YZ3ywVeDfRT9tu6opc/sFhF5CRfaXTF+RX9g8tfCs2Jjoql67jyCxQboM8VRUEdyDg1rramHVCoc1wupwKEtAvWqINIXiL3kq0mBuM0D7hm2rw3UFcU62+pHknk0AB5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YYjUb13BEwYKNQbrj7LS5e74mio+Xg3ZBpJd5G48mEo=;
+ b=AbJNYoFCLXXnAME9l2WjVD+Gnk4PmNhXzz3TQqd+lzKxK59e1n9jgOJ7RCv+ourf6S1CUn/2g1bXEJQ02uBNjY40z1FBL/st3RCNLgE8Ldj99GFawyaU0DTgTANUAhK/XOqE8uKAiY2PG6s/WwQpGPr56FrWgMo7i0OSc0J37sGb1ni369RGr9mgW5FFEOP8SVBNB/sSL5CbjGnz7cOPy23PSJRl5pgW4B80xYeiR8tRTggyXgEOlJpNDnLKyRMsa5mjHCufa//OHS5SJI0MgPhOU9kaaDBpKuenqVBzYCyy6e0TPPX+ICjwJoarcyUkss+T+6dnPNHiuCnFaUkerg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 137.71.25.57) smtp.rcpttodomain=davemloft.net smtp.mailfrom=analog.com;
+ dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YYjUb13BEwYKNQbrj7LS5e74mio+Xg3ZBpJd5G48mEo=;
+ b=N/ATjOdVY9/m53OoZZDVuBvBnSRz+Zq8cfUYJYnAVWoHvrqrDI8QpWrZ1qrz22J2ttfJqS7Gi8zhwI8dNuVzFUaiT7N5hRYcmg+/teUX05SBQLNKxFtGzjLxNbw7WXvY0n1y1PYidbQ3WwCeAxjnoLISMvvnB53QegYfCpExg4M=
+Received: from BN6PR03CA0054.namprd03.prod.outlook.com (2603:10b6:404:4c::16)
+ by CO2PR03MB2309.namprd03.prod.outlook.com (2603:10b6:102:a::26) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.13; Fri, 9 Aug
+ 2019 12:06:02 +0000
+Received: from BL2NAM02FT044.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::201) by BN6PR03CA0054.outlook.office365.com
+ (2603:10b6:404:4c::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2157.16 via Frontend
+ Transport; Fri, 9 Aug 2019 12:06:02 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ BL2NAM02FT044.mail.protection.outlook.com (10.152.77.35) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2157.15
+ via Frontend Transport; Fri, 9 Aug 2019 12:06:02 +0000
+Received: from NWD2HUBCAS9.ad.analog.com (nwd2hubcas9.ad.analog.com [10.64.69.109])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x79C61li003564
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 9 Aug 2019 05:06:01 -0700
+Received: from NWD2MBX7.ad.analog.com ([fe80::190e:f9c1:9a22:9663]) by
+ NWD2HUBCAS9.ad.analog.com ([fe80::44a2:871b:49ab:ea47%12]) with mapi id
+ 14.03.0415.000; Fri, 9 Aug 2019 08:06:01 -0400
+From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+To:     "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>
+CC:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: Re: [PATCH v2 13/15] net: phy: adin: configure downshift on
+ config_init
+Thread-Topic: [PATCH v2 13/15] net: phy: adin: configure downshift on
+ config_init
+Thread-Index: AQHVTeUhGVe2tUsWyUqMTCQQruRr26bx6QYAgAARAQCAAQLZgA==
+Date:   Fri, 9 Aug 2019 12:06:00 +0000
+Message-ID: <7c9e9cc9c8b1694a5641a60378a3b0d3a672ac4d.camel@analog.com>
+References: <20190808123026.17382-1-alexandru.ardelean@analog.com>
+         <20190808123026.17382-14-alexandru.ardelean@analog.com>
+         <420c8e15-3361-a722-4ad1-3c448b1d3bc1@gmail.com>
+         <20190808203932.GP27917@lunn.ch>
+In-Reply-To: <20190808203932.GP27917@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.65.113]
+x-adiroutedonprem: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BC713A5D76EBD948BE5C12C294848747@analog.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bca5e3fe-8a37-2b91-ae96-30378fd98012@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(136003)(346002)(2980300002)(189003)(199004)(186003)(7636002)(229853002)(14454004)(6246003)(2501003)(478600001)(4326008)(70206006)(70586007)(486006)(126002)(446003)(11346002)(476003)(2616005)(102836004)(53546011)(36756003)(50466002)(118296001)(336012)(8676002)(3846002)(23676004)(76176011)(7696005)(54906003)(6116002)(26005)(2486003)(110136005)(8936002)(106002)(356004)(436003)(2906002)(86362001)(426003)(47776003)(246002)(316002)(5660300002)(305945005)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR03MB2309;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 23c0a64d-0714-4d77-af24-08d71cc1f2a5
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(4709080)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CO2PR03MB2309;
+X-MS-TrafficTypeDiagnostic: CO2PR03MB2309:
+X-Microsoft-Antispam-PRVS: <CO2PR03MB23099BB41FA20A02292F71E1F9D60@CO2PR03MB2309.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 01244308DF
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: J1OwEUG0IL+aK2lh9HJ4gjA8rWrCRTmbDi18Wh5LfzTS5WuyxZMEn8qI6A2TNz7/W46g8RDgoT1MsZI1GCCdCT6RYf7/kjepaA8np3E7LCySWpZDgXc41TaP5pntLxNduKFJFzZELKWT38RqYKZ9//kcSyL2G4L1bstQqrTbM81khGvpRF8gs9Idby7CxqaKpt6BSIqRoW2Wx5VpwTa/kUpPd684m+htJpJAUVNeE1O5jaTp6BSpgVUZbZaaGxDE7XSu+FC/BGn79zMhwdw6PlvO2qjN5gytfyEeFpUJC8YYjR0xwv9trGo3dXAawjjM6z9T+SM+W0plCDDoqlOJ/ZhFRyGOONL7o1oVicVhwKYiXxm7lI4xRcxhG5SA8Mz2tnn364/Y5I6aAt/zJXUKfl8IdcJpU4JhmEhL1PzNtW0=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2019 12:06:02.0494
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23c0a64d-0714-4d77-af24-08d71cc1f2a5
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR03MB2309
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-09_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908090126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helen,
-
-On Thu, Aug 08, 2019 at 06:59:47PM -0300, Helen Koike wrote:
-> Hi Sakari,
-> 
-> Thanks for your review, just some comments/questions below:
-> 
-> On 8/7/19 12:27 PM, Sakari Ailus wrote:
-> > Hi Helen,
-> > 
-> > On Tue, Jul 30, 2019 at 03:42:51PM -0300, Helen Koike wrote:
-> >> From: Jacob Chen <jacob2.chen@rock-chips.com>
-> >>
-> >> Add the core driver for rockchip isp1.
-> >>
-> >> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
-> >> Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
-> >> Signed-off-by: Yichong Zhong <zyc@rock-chips.com>
-> >> Signed-off-by: Jacob Chen <cc@rock-chips.com>
-> >> Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
-> >> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> >> Signed-off-by: Allon Huang <allon.huang@rock-chips.com>
-> >> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> >> [fixed compilation and run time errors regarding new v4l2 async API]
-> >> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >> [Add missing module device table]
-> >> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> >> [update for upstream]
-> >> Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> >>
-> >> ---
-> >>
-> >> Changes in v8: None
-> >> Changes in v7:
-> >> - VIDEO_ROCKCHIP_ISP1 selects VIDEOBUF2_VMALLOC
-> >> - add PHY_ROCKCHIP_DPHY as a dependency for VIDEO_ROCKCHIP_ISP1
-> >> - Fix compilation and runtime errors due to bitrotting
-> >> The code has bit-rotten since March 2018, fix compilation errors.
-> >> The new V4L2 async notifier API requires notifiers to be initialized by
-> >> a call to v4l2_async_notifier_init() before being used, do so.
-> >> - Add missing module device table
-> >> - use clk_bulk framework
-> >> - add missing notifiers cleanups
-> >> - s/strlcpy/strscpy
-> >> - normalize bus_info name
-> >> - fix s_stream error path, stream_cnt wans't being decremented properly
-> >> - use devm_platform_ioremap_resource() helper
-> >> - s/deice/device
-> >> - redesign: remove mipi/csi subdevice, sensors connect directly to the
-> >> isp subdevice in the media topology now.
-> >> - remove "saved_state" member from rkisp1_stream struct
-> >> - Reverse the order of MIs
-> >> - Simplify MI interrupt handling
-> >> Rather than adding unnecessary indirection, just use stream index to
-> >> handle MI interrupt enable/disable/clear, since the stream index matches
-> >> the order of bits now, thanks to previous patch. While at it, remove
-> >> some dead code.
-> >> - code styling and checkpatch fixes
-> >>
-> >>  drivers/media/platform/Kconfig                |  12 +
-> >>  drivers/media/platform/Makefile               |   1 +
-> >>  drivers/media/platform/rockchip/isp1/Makefile |   7 +
-> >>  drivers/media/platform/rockchip/isp1/common.h | 101 +++
-> >>  drivers/media/platform/rockchip/isp1/dev.c    | 675 ++++++++++++++++++
-> >>  drivers/media/platform/rockchip/isp1/dev.h    |  97 +++
-> >>  6 files changed, 893 insertions(+)
-> >>  create mode 100644 drivers/media/platform/rockchip/isp1/Makefile
-> >>  create mode 100644 drivers/media/platform/rockchip/isp1/common.h
-> >>  create mode 100644 drivers/media/platform/rockchip/isp1/dev.c
-> >>  create mode 100644 drivers/media/platform/rockchip/isp1/dev.h
-> >>
-> >> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> >> index 89555f9a813f..e0e98937c565 100644
-> >> --- a/drivers/media/platform/Kconfig
-> >> +++ b/drivers/media/platform/Kconfig
-> >> @@ -106,6 +106,18 @@ config VIDEO_QCOM_CAMSS
-> >>  	select VIDEOBUF2_DMA_SG
-> >>  	select V4L2_FWNODE
-> >>  
-> >> +config VIDEO_ROCKCHIP_ISP1
-> >> +	tristate "Rockchip Image Signal Processing v1 Unit driver"
-> >> +	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
-> >> +	depends on ARCH_ROCKCHIP || COMPILE_TEST
-> >> +	select VIDEOBUF2_DMA_CONTIG
-> >> +	select VIDEOBUF2_VMALLOC
-> >> +	select V4L2_FWNODE
-> >> +	select PHY_ROCKCHIP_DPHY
-> >> +	default n
-> >> +	---help---
-> >> +	  Support for ISP1 on the rockchip SoC.
-> >> +
-> >>  config VIDEO_S3C_CAMIF
-> >>  	tristate "Samsung S3C24XX/S3C64XX SoC Camera Interface driver"
-> >>  	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
-> >> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-> >> index 7cbbd925124c..f9fcf8e7c513 100644
-> >> --- a/drivers/media/platform/Makefile
-> >> +++ b/drivers/media/platform/Makefile
-> >> @@ -69,6 +69,7 @@ obj-$(CONFIG_VIDEO_RENESAS_FDP1)	+= rcar_fdp1.o
-> >>  obj-$(CONFIG_VIDEO_RENESAS_JPU)		+= rcar_jpu.o
-> >>  obj-$(CONFIG_VIDEO_RENESAS_VSP1)	+= vsp1/
-> >>  
-> >> +obj-$(CONFIG_VIDEO_ROCKCHIP_ISP1)	+= rockchip/isp1/
-> >>  obj-$(CONFIG_VIDEO_ROCKCHIP_RGA)	+= rockchip/rga/
-> >>  
-> >>  obj-y	+= omap/
-> >> diff --git a/drivers/media/platform/rockchip/isp1/Makefile b/drivers/media/platform/rockchip/isp1/Makefile
-> >> new file mode 100644
-> >> index 000000000000..72706e80fc8b
-> >> --- /dev/null
-> >> +++ b/drivers/media/platform/rockchip/isp1/Makefile
-> >> @@ -0,0 +1,7 @@
-> >> +obj-$(CONFIG_VIDEO_ROCKCHIP_ISP1) += 	rockchip-isp1.o
-> >> +rockchip-isp1-objs 	   += 	rkisp1.o \
-> >> +				dev.o \
-> >> +				regs.o \
-> >> +				isp_stats.o \
-> >> +				isp_params.o \
-> >> +				capture.o
-> >> diff --git a/drivers/media/platform/rockchip/isp1/common.h b/drivers/media/platform/rockchip/isp1/common.h
-> >> new file mode 100644
-> >> index 000000000000..606ce2793546
-> >> --- /dev/null
-> >> +++ b/drivers/media/platform/rockchip/isp1/common.h
-> >> @@ -0,0 +1,101 @@
-> >> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> >> +/*
-> >> + * Rockchip isp1 driver
-> >> + *
-> >> + * Copyright (C) 2017 Rockchip Electronics Co., Ltd.
-> >> + */
-> >> +
-> >> +#ifndef _RKISP1_COMMON_H
-> >> +#define _RKISP1_COMMON_H
-> >> +
-> >> +#include <linux/mutex.h>
-> >> +#include <media/media-device.h>
-> >> +#include <media/media-entity.h>
-> >> +#include <media/v4l2-ctrls.h>
-> >> +#include <media/v4l2-device.h>
-> >> +#include <media/videobuf2-v4l2.h>
-> >> +
-> >> +#define RKISP1_DEFAULT_WIDTH		800
-> >> +#define RKISP1_DEFAULT_HEIGHT		600
-> >> +
-> >> +#define RKISP1_MAX_STREAM		2
-> >> +#define RKISP1_STREAM_MP		0
-> >> +#define RKISP1_STREAM_SP		1
-> >> +
-> >> +#define RKISP1_PLANE_Y			0
-> >> +#define RKISP1_PLANE_CB			1
-> >> +#define RKISP1_PLANE_CR			2
-> >> +
-> >> +enum rkisp1_sd_type {
-> >> +	RKISP1_SD_SENSOR,
-> >> +	RKISP1_SD_PHY_CSI,
-> >> +	RKISP1_SD_VCM,
-> >> +	RKISP1_SD_FLASH,
-> >> +	RKISP1_SD_MAX,
-> >> +};
-> > 
-> > I wonder if this is a leftover from the driver development time. Same goes
-> > for the subdevs field in struct rkisp1_device.
-> 
-> It is a left over, I'm removing them for the next version, thanks.
-> 
-> > 
-> >> +
-> >> +/* One structure per video node */
-> >> +struct rkisp1_vdev_node {
-> >> +	struct vb2_queue buf_queue;
-> >> +	/* vfd lock */
-> >> +	struct mutex vlock;
-> >> +	struct video_device vdev;
-> >> +	struct media_pad pad;
-> >> +};
-> >> +
-> >> +enum rkisp1_fmt_pix_type {
-> >> +	FMT_YUV,
-> >> +	FMT_RGB,
-> >> +	FMT_BAYER,
-> >> +	FMT_JPEG,
-> >> +	FMT_MAX
-> >> +};
-> >> +
-> >> +enum rkisp1_fmt_raw_pat_type {
-> >> +	RAW_RGGB = 0,
-> >> +	RAW_GRBG,
-> >> +	RAW_GBRG,
-> >> +	RAW_BGGR,
-> >> +};
-> >> +
-> >> +struct rkisp1_buffer {
-> >> +	struct vb2_v4l2_buffer vb;
-> >> +	struct list_head queue;
-> >> +	union {
-> >> +		u32 buff_addr[VIDEO_MAX_PLANES];
-> >> +		void *vaddr[VIDEO_MAX_PLANES];
-> >> +	};
-> >> +};
-> >> +
-> >> +struct rkisp1_dummy_buffer {
-> >> +	void *vaddr;
-> >> +	dma_addr_t dma_addr;
-> >> +	u32 size;
-> >> +};
-> >> +
-> >> +extern int rkisp1_debug;
-> >> +
-> >> +static inline
-> >> +struct rkisp1_vdev_node *vdev_to_node(struct video_device *vdev)
-> >> +{
-> >> +	return container_of(vdev, struct rkisp1_vdev_node, vdev);
-> >> +}
-> >> +
-> >> +static inline struct rkisp1_vdev_node *queue_to_node(struct vb2_queue *q)
-> >> +{
-> >> +	return container_of(q, struct rkisp1_vdev_node, buf_queue);
-> >> +}
-> >> +
-> >> +static inline struct rkisp1_buffer *to_rkisp1_buffer(struct vb2_v4l2_buffer *vb)
-> >> +{
-> >> +	return container_of(vb, struct rkisp1_buffer, vb);
-> >> +}
-> >> +
-> >> +static inline struct vb2_queue *to_vb2_queue(struct file *file)
-> >> +{
-> >> +	struct rkisp1_vdev_node *vnode = video_drvdata(file);
-> >> +
-> >> +	return &vnode->buf_queue;
-> >> +}
-> >> +
-> >> +#endif /* _RKISP1_COMMON_H */
-> >> diff --git a/drivers/media/platform/rockchip/isp1/dev.c b/drivers/media/platform/rockchip/isp1/dev.c
-> >> new file mode 100644
-> >> index 000000000000..2b4a67e1a3b5
-> >> --- /dev/null
-> >> +++ b/drivers/media/platform/rockchip/isp1/dev.c
-> >> @@ -0,0 +1,675 @@
-> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >> +/*
-> >> + * Rockchip isp1 driver
-> >> + *
-> >> + * Copyright (C) 2017 Rockchip Electronics Co., Ltd.
-> >> + */
-> >> +
-> >> +#include <linux/clk.h>
-> >> +#include <linux/interrupt.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/of.h>
-> >> +#include <linux/of_graph.h>
-> >> +#include <linux/of_platform.h>
-> >> +#include <linux/pm_runtime.h>
-> >> +#include <linux/pinctrl/consumer.h>
-> >> +#include <linux/phy/phy.h>
-> >> +#include <linux/phy/phy-mipi-dphy.h>
-> >> +
-> >> +#include "common.h"
-> >> +#include "regs.h"
-> >> +
-> >> +struct isp_match_data {
-> >> +	const char * const *clks;
-> >> +	int size;
-> > 
-> > unsigned int
-> 
-> ack
-> 
-> > 
-> >> +};
-> >> +
-> >> +struct sensor_async_subdev {
-> >> +	struct v4l2_async_subdev asd;
-> >> +	struct v4l2_mbus_config mbus;
-> >> +	unsigned int lanes;
-> >> +};
-> >> +
-> >> +int rkisp1_debug;
-> >> +module_param_named(debug, rkisp1_debug, int, 0644);
-> >> +MODULE_PARM_DESC(debug, "Debug level (0-1)");
-> > 
-> > Have you thought of using dynamic debug instead?
-> 
-> right, this is being used in v4l2_dbg(), which I can replace by dev_dbg()
-> that is already covered by dynamic debug iirc.
-> Should I also replace v4l2_err() by dev_err() (I always get confused by
-> which log function I should use).
-
-In case you switch to the dev_*() macros, then yes. The corresponding
-v4l2_*() macros are still an entirely valid interface to use. But today we
-likely wouldn't add such macros; I usually ask driver developers using both
-to switch to the dev_*() ones.
-
-> 
-> > 
-> >> +
-> >> +/**************************** pipeline operations******************************/
-> >> +
-> >> +static int __isp_pipeline_prepare(struct rkisp1_pipeline *p,
-> >> +				  struct media_entity *me)
-> >> +{
-> >> +	struct rkisp1_device *dev = container_of(p, struct rkisp1_device, pipe);
-> >> +	struct v4l2_subdev *sd;
-> >> +	unsigned int i;
-> >> +
-> >> +	p->num_subdevs = 0;
-> >> +	memset(p->subdevs, 0, sizeof(p->subdevs));
-> >> +
-> >> +	while (1) {
-> >> +		struct media_pad *pad = NULL;
-> >> +
-> >> +		/* Find remote source pad */
-> >> +		for (i = 0; i < me->num_pads; i++) {
-> >> +			struct media_pad *spad = &me->pads[i];
-> >> +
-> >> +			if (!(spad->flags & MEDIA_PAD_FL_SINK))
-> >> +				continue;
-> >> +			pad = media_entity_remote_pad(spad);
-> >> +			if (pad)
-> >> +				break;
-> >> +		}
-> >> +
-> >> +		if (!pad)
-> >> +			break;
-> >> +
-> >> +		sd = media_entity_to_v4l2_subdev(pad->entity);
-> >> +		if (sd != &dev->isp_sdev.sd)
-> >> +			p->subdevs[p->num_subdevs++] = sd;
-> > 
-> > How do you make sure you don't overrun the array?
-> 
-> Because the maximum path the topology can have is:
-> sensor->rkisp->capture
-
-The sensor may consist of more than one sub-device, and there may be
-bridges such as parallel/CSI-2 ones in between. The latter would be an
-unlikely hardware configuration for this ISP though as it supports both.
-
-External ISPs in front of the camera sensor are another possibility.
-
-Basically you can't make expectations of the topology outside the scope of
-your own device --- the topology of which is known.
-
-> 
-> > 
-> > Instead, I'd avoid maintaining the array in the first place --- the same
-> > information is available from the MC framework data structures --- see e.g.
-> > the omap3isp driver.
-> 
-> If I understand correctly, omap3isp navigates through the topology in the same way,
-> but it just don't save in an array, but I reuse this information in other places,
-> mostly for power up/down (see below why I don't use v4l2_pipeline_pm_use())
-
-Correct.
-
-> 
-> > 
-> >> +
-> >> +		me = &sd->entity;
-> >> +		if (me->num_pads == 1)
-> >> +			break;
-> >> +	}
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int __subdev_set_power(struct v4l2_subdev *sd, int on)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	if (!sd)
-> >> +		return -ENXIO;
-> >> +
-> >> +	ret = v4l2_subdev_call(sd, core, s_power, on);
-> >> +
-> >> +	return ret != -ENOIOCTLCMD ? ret : 0;
-> >> +}
-> >> +
-> >> +static int __isp_pipeline_s_power(struct rkisp1_pipeline *p, bool on)
-> > 
-> > Could you instead use v4l2_pipeline_pm_use()?
-> 
-> Unless I misunderstood this (which is very likely), v4l2_pipeline_pm_use() calls pipeline_pm_power(),
-> that applies power change to all entities in a pipeline, but if I have two sensors
-> connected to the ISP, one with link enabled and the other with a disabled link,
-> I don't want to power both sensors on, just the one participating in that stream. And
-> if I call v4l2_pipeline_pm_use() it will power on both, which is not what I want.
-> 
-> Does it make sense?
-
-The v4l2_pipeline_pm_use() only follows the active links. A simplistic
-implementation could power on all the subdevs in the graph but no; the
-v4l2_pipeline_pm_use() exists for this very purpose.
-
-> 
-> > 
-> >> +{
-> >> +	struct rkisp1_device *dev = container_of(p, struct rkisp1_device, pipe);
-> >> +	int i, ret;
-> >> +
-> >> +	if (on) {
-> >> +		__subdev_set_power(&dev->isp_sdev.sd, true);
-> >> +
-> >> +		for (i = p->num_subdevs - 1; i >= 0; --i) {
-> >> +			ret = __subdev_set_power(p->subdevs[i], true);
-> >> +			if (ret < 0 && ret != -ENXIO)
-> >> +				goto err_power_off;
-> >> +		}
-> >> +	} else {
-> >> +		for (i = 0; i < p->num_subdevs; ++i)
-> >> +			__subdev_set_power(p->subdevs[i], false);
-> >> +
-> >> +		__subdev_set_power(&dev->isp_sdev.sd, false);
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +
-> >> +err_power_off:
-> >> +	for (++i; i < p->num_subdevs; ++i)
-> >> +		__subdev_set_power(p->subdevs[i], false);
-> >> +	__subdev_set_power(&dev->isp_sdev.sd, true);
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static int rkisp1_pipeline_open(struct rkisp1_pipeline *p,
-> >> +				struct media_entity *me,
-> >> +				bool prepare)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	if (WARN_ON(!p || !me))
-> >> +		return -EINVAL;
-> >> +	if (atomic_inc_return(&p->power_cnt) > 1)
-> >> +		return 0;
-> >> +
-> >> +	/* go through media graphic and get subdevs */
-> >> +	if (prepare)
-> >> +		__isp_pipeline_prepare(p, me);
-> >> +
-> >> +	if (!p->num_subdevs)
-> >> +		return -EINVAL;
-> >> +
-> >> +	ret = __isp_pipeline_s_power(p, 1);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int rkisp1_pipeline_close(struct rkisp1_pipeline *p)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	if (atomic_dec_return(&p->power_cnt) > 0)
-> >> +		return 0;
-> >> +	ret = __isp_pipeline_s_power(p, 0);
-> >> +
-> >> +	return ret == -ENXIO ? 0 : ret;
-> >> +}
-> >> +
-> >> +/*
-> >> + * stream-on order: isp_subdev, mipi dphy, sensor
-> >> + * stream-off order: mipi dphy, sensor, isp_subdev
-> >> + */
-> >> +static int rkisp1_pipeline_set_stream(struct rkisp1_pipeline *p, bool on)
-> >> +{
-> >> +	struct rkisp1_device *dev = container_of(p, struct rkisp1_device, pipe);
-> >> +	int i, ret;
-> >> +
-> >> +	if ((on && atomic_inc_return(&p->stream_cnt) > 1) ||
-> >> +	    (!on && atomic_dec_return(&p->stream_cnt) > 0))
-> >> +		return 0;
-> >> +
-> >> +	if (on) {
-> >> +		ret = v4l2_subdev_call(&dev->isp_sdev.sd, video, s_stream,
-> >> +				       true);
-> >> +		if (ret && ret != -ENOIOCTLCMD && ret != -ENODEV) {
-> >> +			v4l2_err(&dev->v4l2_dev,
-> >> +				 "s_stream failed on subdevice %s (%d)\n",
-> >> +				 dev->isp_sdev.sd.name,
-> >> +				 ret);
-> >> +			atomic_dec(&p->stream_cnt);
-> >> +			return ret;
-> >> +		}
-> >> +	}
-> >> +
-> >> +	/* phy -> sensor */
-> >> +	for (i = 0; i < p->num_subdevs; ++i) {
-> >> +		ret = v4l2_subdev_call(p->subdevs[i], video, s_stream, on);
-> >> +		if (on && ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-> >> +			goto err_stream_off;
-> > 
-> > You should stop after the first external sub-device.
-> > 
-> > It seems even the omap3isp driver doesn't do that. It's not easy to spot
-> > such issues indeed.
-> 
-> I'm not sure I understand, what do you call an external sub-device? Is the sensor
-> an external subdevice?
-
-One that is not controlled by this driver.
-
-> 
-> > 
-> >> +	}
-> >> +
-> >> +	if (!on)
-> >> +		v4l2_subdev_call(&dev->isp_sdev.sd, video, s_stream, false);
-> >> +
-> >> +	return 0;
-> >> +
-> >> +err_stream_off:
-> >> +	for (--i; i >= 0; --i)
-> >> +		v4l2_subdev_call(p->subdevs[i], video, s_stream, false);
-> >> +	v4l2_subdev_call(&dev->isp_sdev.sd, video, s_stream, false);
-> >> +	atomic_dec(&p->stream_cnt);
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +/***************************** media controller *******************************/
-> >> +/* See http://opensource.rock-chips.com/wiki_Rockchip-isp1 for Topology */
-> > 
-> > The host appears to be down, or there's a routing problem. Unless this is
-> > fixed, having such a URL here doesn't do much good. :-I
-> 
-> This is a left over, sorry about that.
-> I can access the URL now. I'll try to get some of the docs and move to the kernel docs.
-
-I wonder if the server is only powered on during the local office hours.
-;-)
-
-More seriously, I looked into this and it seems there's a routing problem
-somewhere between my ISP and that server. From a few other places the
-server is reachable.
-
-> 
-> > 
-> >> +
-> >> +static int rkisp1_create_links(struct rkisp1_device *dev)
-> >> +{
-> >> +	struct media_entity *source, *sink;
-> >> +	struct rkisp1_sensor *sensor;
-> >> +	unsigned int flags, pad;
-> >> +	int ret;
-> >> +
-> >> +	/* sensor links(or mipi-phy) */
-> >> +	list_for_each_entry(sensor, &dev->sensors, list) {
-> >> +		for (pad = 0; pad < sensor->sd->entity.num_pads; pad++)
-> >> +			if (sensor->sd->entity.pads[pad].flags &
-> >> +				MEDIA_PAD_FL_SOURCE)
-> >> +				break;
-> > 
-> > Could you use media_entity_get_fwnode_pad() instead?
-> 
-> Yes, I didn't know about it actually, thanks for that, looks cleaner (I'll send in
-> the next version).
-> 
-> > 
-> >> +
-> >> +		if (pad == sensor->sd->entity.num_pads) {
-> >> +			dev_err(dev->dev,
-> >> +				"failed to find src pad for %s\n",
-> >> +				sensor->sd->name);
-> >> +
-> >> +			return -ENXIO;
-> >> +		}
-> >> +
-> >> +		ret = media_create_pad_link(
-> >> +				&sensor->sd->entity, pad,
-> >> +				&dev->isp_sdev.sd.entity,
-> >> +				RKISP1_ISP_PAD_SINK,
-> >> +				list_is_first(&sensor->list, &dev->sensors) ?
-> >> +				MEDIA_LNK_FL_ENABLED : 0);
-> >> +		if (ret) {
-> >> +			dev_err(dev->dev,
-> >> +				"failed to create link for %s\n",
-> >> +				sensor->sd->name);
-> >> +			return ret;
-> >> +		}
-> >> +	}
-> >> +
-> >> +	/* params links */
-> >> +	source = &dev->params_vdev.vnode.vdev.entity;
-> >> +	sink = &dev->isp_sdev.sd.entity;
-> >> +	flags = MEDIA_LNK_FL_ENABLED;
-> >> +	ret = media_create_pad_link(source, 0, sink,
-> >> +				       RKISP1_ISP_PAD_SINK_PARAMS, flags);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	/* create isp internal links */
-> >> +	/* SP links */
-> >> +	source = &dev->isp_sdev.sd.entity;
-> >> +	sink = &dev->stream[RKISP1_STREAM_SP].vnode.vdev.entity;
-> >> +	ret = media_create_pad_link(source, RKISP1_ISP_PAD_SOURCE_PATH,
-> >> +				       sink, 0, flags);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	/* MP links */
-> >> +	source = &dev->isp_sdev.sd.entity;
-> >> +	sink = &dev->stream[RKISP1_STREAM_MP].vnode.vdev.entity;
-> >> +	ret = media_create_pad_link(source, RKISP1_ISP_PAD_SOURCE_PATH,
-> >> +				       sink, 0, flags);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	/* 3A stats links */
-> >> +	source = &dev->isp_sdev.sd.entity;
-> >> +	sink = &dev->stats_vdev.vnode.vdev.entity;
-> >> +	return media_create_pad_link(source, RKISP1_ISP_PAD_SOURCE_STATS,
-> >> +					sink, 0, flags);
-> > 
-> > Indentation. Same for the calls to the same function above.
-> 
-> ack
-> 
-> > 
-> >> +}
-> >> +
-> >> +static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
-> >> +				 struct v4l2_subdev *sd,
-> >> +				 struct v4l2_async_subdev *asd)
-> >> +{
-> >> +	struct rkisp1_device *isp_dev = container_of(notifier,
-> >> +						     struct rkisp1_device,
-> >> +						     notifier);
-> >> +	struct sensor_async_subdev *s_asd = container_of(asd,
-> >> +					struct sensor_async_subdev, asd);
-> >> +	struct rkisp1_sensor *sensor;
-> >> +
-> >> +	sensor = devm_kzalloc(isp_dev->dev, sizeof(*sensor), GFP_KERNEL);
-> >> +	if (!sensor)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	sensor->lanes = s_asd->lanes;
-> >> +	sensor->mbus = s_asd->mbus;
-> >> +	sensor->sd = sd;
-> >> +	sensor->dphy = devm_phy_get(isp_dev->dev, "dphy");
-> >> +	if (IS_ERR(sensor->dphy)) {
-> >> +		if (PTR_ERR(sensor->dphy) != -EPROBE_DEFER)
-> >> +			dev_err(isp_dev->dev, "Couldn't get the MIPI D-PHY\n");
-> >> +		return PTR_ERR(sensor->dphy);
-> >> +	}
-> >> +	phy_init(sensor->dphy);
-> >> +
-> >> +	list_add(&sensor->list, &isp_dev->sensors);
-> > 
-> > In general, maintaining the information on the external subdevs on your own
-> > adds complexity to the driver. You can get the information when you need it
-> > from the data structures maintained by MC (see e.g. the omap3isp driver for
-> > examples).
-> > 
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static struct rkisp1_sensor *sd_to_sensor(struct rkisp1_device *dev,
-> >> +					  struct v4l2_subdev *sd)
-> >> +{
-> >> +	struct rkisp1_sensor *sensor;
-> >> +
-> >> +	list_for_each_entry(sensor, &dev->sensors, list)
-> >> +		if (sensor->sd == sd)
-> >> +			return sensor;
-> >> +
-> >> +	return NULL;
-> >> +}
-> >> +
-> >> +static void subdev_notifier_unbind(struct v4l2_async_notifier *notifier,
-> >> +				   struct v4l2_subdev *sd,
-> >> +				   struct v4l2_async_subdev *asd)
-> >> +{
-> >> +	struct rkisp1_device *isp_dev = container_of(notifier,
-> >> +						     struct rkisp1_device,
-> >> +						     notifier);
-> >> +	struct rkisp1_sensor *sensor = sd_to_sensor(isp_dev, sd);
-> >> +
-> >> +	/* TODO: check if a lock is required here */
-> >> +	list_del(&sensor->list);
-> >> +
-> >> +	phy_exit(sensor->dphy);
-> >> +}
-> >> +
-> >> +static int subdev_notifier_complete(struct v4l2_async_notifier *notifier)
-> >> +{
-> >> +	struct rkisp1_device *dev = container_of(notifier, struct rkisp1_device,
-> >> +						 notifier);
-> >> +	int ret;
-> >> +
-> >> +	mutex_lock(&dev->media_dev.graph_mutex);
-> >> +	ret = rkisp1_create_links(dev);
-> >> +	if (ret < 0)
-> >> +		goto unlock;
-> >> +	ret = v4l2_device_register_subdev_nodes(&dev->v4l2_dev);
-> >> +	if (ret < 0)
-> >> +		goto unlock;
-> >> +
-> >> +	v4l2_info(&dev->v4l2_dev, "Async subdev notifier completed\n");
-> >> +
-> >> +unlock:
-> >> +	mutex_unlock(&dev->media_dev.graph_mutex);
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static int rkisp1_fwnode_parse(struct device *dev,
-> >> +			       struct v4l2_fwnode_endpoint *vep,
-> >> +			       struct v4l2_async_subdev *asd)
-> >> +{
-> >> +	struct sensor_async_subdev *s_asd =
-> >> +			container_of(asd, struct sensor_async_subdev, asd);
-> >> +
-> >> +	if (vep->bus_type != V4L2_MBUS_CSI2_DPHY) {
-> >> +		dev_err(dev, "Only CSI2 bus type is currently supported\n");
-> >> +		return -EINVAL;
-> >> +	}
-> >> +
-> >> +	if (vep->base.port != 0) {
-> >> +		dev_err(dev, "The ISP has only port 0\n");
-> >> +		return -EINVAL;
-> >> +	}
-> >> +
-> >> +	s_asd->mbus.type = vep->bus_type;
-> >> +	s_asd->mbus.flags = vep->bus.mipi_csi2.flags;
-> >> +	s_asd->lanes = vep->bus.mipi_csi2.num_data_lanes;
-> >> +
-> >> +	switch (vep->bus.mipi_csi2.num_data_lanes) {
-> >> +	case 1:
-> >> +		s_asd->mbus.flags |= V4L2_MBUS_CSI2_1_LANE;
-> >> +		break;
-> >> +	case 2:
-> >> +		s_asd->mbus.flags |= V4L2_MBUS_CSI2_2_LANE;
-> >> +		break;
-> >> +	case 3:
-> >> +		s_asd->mbus.flags |= V4L2_MBUS_CSI2_3_LANE;
-> >> +		break;
-> >> +	case 4:
-> >> +		s_asd->mbus.flags |= V4L2_MBUS_CSI2_4_LANE;
-> >> +		break;
-> >> +	default:
-> >> +		return -EINVAL;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct v4l2_async_notifier_operations subdev_notifier_ops = {
-> >> +	.bound = subdev_notifier_bound,
-> >> +	.unbind = subdev_notifier_unbind,
-> >> +	.complete = subdev_notifier_complete,
-> >> +};
-> >> +
-> >> +static int isp_subdev_notifier(struct rkisp1_device *isp_dev)
-> >> +{
-> >> +	struct v4l2_async_notifier *ntf = &isp_dev->notifier;
-> >> +	struct device *dev = isp_dev->dev;
-> >> +	int ret;
-> >> +
-> >> +	v4l2_async_notifier_init(ntf);
-> >> +
-> >> +	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
-> >> +		dev, ntf, sizeof(struct sensor_async_subdev), 0,
-> >> +		rkisp1_fwnode_parse);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	if (list_empty(&ntf->asd_list))
-> >> +		return -ENODEV;	/* no endpoint */
-> >> +
-> >> +	ntf->ops = &subdev_notifier_ops;
-> >> +
-> >> +	return v4l2_async_notifier_register(&isp_dev->v4l2_dev, ntf);
-> >> +}
-> >> +
-> >> +/***************************** platform device *******************************/
-> >> +
-> >> +static int rkisp1_register_platform_subdevs(struct rkisp1_device *dev)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	ret = rkisp1_register_isp_subdev(dev, &dev->v4l2_dev);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	ret = rkisp1_register_stream_vdevs(dev);
-> >> +	if (ret < 0)
-> >> +		goto err_unreg_isp_subdev;
-> >> +
-> >> +	ret = rkisp1_register_stats_vdev(&dev->stats_vdev, &dev->v4l2_dev, dev);
-> >> +	if (ret < 0)
-> >> +		goto err_unreg_stream_vdev;
-> >> +
-> >> +	ret = rkisp1_register_params_vdev(&dev->params_vdev, &dev->v4l2_dev,
-> >> +					  dev);
-> >> +	if (ret < 0)
-> >> +		goto err_unreg_stats_vdev;
-> >> +
-> >> +	ret = isp_subdev_notifier(dev);
-> >> +	if (ret < 0) {
-> >> +		v4l2_err(&dev->v4l2_dev,
-> >> +			 "Failed to register subdev notifier(%d)\n", ret);
-> >> +		goto err_unreg_params_vdev;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +err_unreg_params_vdev:
-> >> +	rkisp1_unregister_params_vdev(&dev->params_vdev);
-> >> +err_unreg_stats_vdev:
-> >> +	rkisp1_unregister_stats_vdev(&dev->stats_vdev);
-> >> +err_unreg_stream_vdev:
-> >> +	rkisp1_unregister_stream_vdevs(dev);
-> >> +err_unreg_isp_subdev:
-> >> +	rkisp1_unregister_isp_subdev(dev);
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static const char * const rk3399_isp_clks[] = {
-> >> +	"clk_isp",
-> >> +	"aclk_isp",
-> >> +	"hclk_isp",
-> >> +	"aclk_isp_wrap",
-> >> +	"hclk_isp_wrap",
-> >> +};
-> >> +
-> >> +static const char * const rk3288_isp_clks[] = {
-> >> +	"clk_isp",
-> >> +	"aclk_isp",
-> >> +	"hclk_isp",
-> >> +	"pclk_isp_in",
-> >> +	"sclk_isp_jpe",
-> >> +};
-> >> +
-> >> +static const struct isp_match_data rk3288_isp_clk_data = {
-> >> +	.clks = rk3288_isp_clks,
-> >> +	.size = ARRAY_SIZE(rk3288_isp_clks),
-> >> +};
-> >> +
-> >> +static const struct isp_match_data rk3399_isp_clk_data = {
-> >> +	.clks = rk3399_isp_clks,
-> >> +	.size = ARRAY_SIZE(rk3399_isp_clks),
-> >> +};
-> >> +
-> >> +static const struct of_device_id rkisp1_plat_of_match[] = {
-> >> +	{
-> >> +		.compatible = "rockchip,rk3288-cif-isp",
-> >> +		.data = &rk3288_isp_clk_data,
-> >> +	}, {
-> >> +		.compatible = "rockchip,rk3399-cif-isp",
-> >> +		.data = &rk3399_isp_clk_data,
-> >> +	},
-> >> +	{},
-> >> +};
-> >> +MODULE_DEVICE_TABLE(of, rkisp1_plat_of_match);
-> >> +
-> >> +static irqreturn_t rkisp1_irq_handler(int irq, void *ctx)
-> >> +{
-> >> +	struct device *dev = ctx;
-> >> +	struct rkisp1_device *rkisp1_dev = dev_get_drvdata(dev);
-> >> +	unsigned int mis_val;
-> >> +
-> >> +	mis_val = readl(rkisp1_dev->base_addr + CIF_ISP_MIS);
-> >> +	if (mis_val)
-> >> +		rkisp1_isp_isr(mis_val, rkisp1_dev);
-> >> +
-> >> +	mis_val = readl(rkisp1_dev->base_addr + CIF_MIPI_MIS);
-> >> +	if (mis_val)
-> >> +		rkisp1_mipi_isr(mis_val, rkisp1_dev);
-> >> +
-> >> +	mis_val = readl(rkisp1_dev->base_addr + CIF_MI_MIS);
-> >> +	if (mis_val)
-> >> +		rkisp1_mi_isr(mis_val, rkisp1_dev);
-> >> +
-> >> +	return IRQ_HANDLED;
-> >> +}
-> >> +
-> >> +static int rkisp1_plat_probe(struct platform_device *pdev)
-> >> +{
-> >> +	struct device_node *node = pdev->dev.of_node;
-> >> +	const struct isp_match_data *clk_data;
-> >> +	const struct of_device_id *match;
-> >> +	struct device *dev = &pdev->dev;
-> >> +	struct rkisp1_device *isp_dev;
-> >> +	struct v4l2_device *v4l2_dev;
-> >> +	unsigned int i;
-> >> +	int ret, irq;
-> >> +
-> >> +	match = of_match_node(rkisp1_plat_of_match, node);
-> >> +	isp_dev = devm_kzalloc(dev, sizeof(*isp_dev), GFP_KERNEL);
-> >> +	if (!isp_dev)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	INIT_LIST_HEAD(&isp_dev->sensors);
-> >> +
-> >> +	dev_set_drvdata(dev, isp_dev);
-> >> +	isp_dev->dev = dev;
-> >> +
-> >> +	isp_dev->base_addr = devm_platform_ioremap_resource(pdev, 0);
-> >> +	if (IS_ERR(isp_dev->base_addr))
-> >> +		return PTR_ERR(isp_dev->base_addr);
-> >> +
-> >> +	irq = platform_get_irq(pdev, 0);
-> >> +	if (irq < 0)
-> >> +		return irq;
-> >> +
-> >> +	ret = devm_request_irq(dev, irq, rkisp1_irq_handler, IRQF_SHARED,
-> >> +			       dev_driver_string(dev), dev);
-> >> +	if (ret < 0) {
-> >> +		dev_err(dev, "request irq failed: %d\n", ret);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	isp_dev->irq = irq;
-> >> +	clk_data = match->data;
-> >> +
-> >> +	for (i = 0; i < clk_data->size; i++)
-> >> +		isp_dev->clks[i].id = clk_data->clks[i];
-> >> +	ret = devm_clk_bulk_get(dev, clk_data->size, isp_dev->clks);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +	isp_dev->clk_size = clk_data->size;
-> >> +
-> >> +	atomic_set(&isp_dev->pipe.power_cnt, 0);
-> >> +	atomic_set(&isp_dev->pipe.stream_cnt, 0);
-> >> +	isp_dev->pipe.open = rkisp1_pipeline_open;
-> >> +	isp_dev->pipe.close = rkisp1_pipeline_close;
-> >> +	isp_dev->pipe.set_stream = rkisp1_pipeline_set_stream;
-> >> +
-> >> +	rkisp1_stream_init(isp_dev, RKISP1_STREAM_SP);
-> >> +	rkisp1_stream_init(isp_dev, RKISP1_STREAM_MP);
-> >> +
-> >> +	strscpy(isp_dev->media_dev.model, "rkisp1",
-> >> +		sizeof(isp_dev->media_dev.model));
-> >> +	isp_dev->media_dev.dev = &pdev->dev;
-> >> +	strscpy(isp_dev->media_dev.bus_info,
-> >> +		"platform: " DRIVER_NAME, sizeof(isp_dev->media_dev.bus_info));
-> >> +	media_device_init(&isp_dev->media_dev);
-> >> +
-> >> +	v4l2_dev = &isp_dev->v4l2_dev;
-> >> +	v4l2_dev->mdev = &isp_dev->media_dev;
-> >> +	strscpy(v4l2_dev->name, "rkisp1", sizeof(v4l2_dev->name));
-> >> +	v4l2_ctrl_handler_init(&isp_dev->ctrl_handler, 5);
-> >> +	v4l2_dev->ctrl_handler = &isp_dev->ctrl_handler;
-> >> +
-> >> +	ret = v4l2_device_register(isp_dev->dev, &isp_dev->v4l2_dev);
-> >> +	if (ret < 0)
-> > 
-> > Once you've initialised the control handler, you'll need to free it in case
-> > of an error. I.e. add one more label for that purpose near the end.
-> 
-> control handler is not required, I'll remove it for the next version.
-> 
-> > 
-> >> +		return ret;
-> >> +
-> >> +	ret = media_device_register(&isp_dev->media_dev);
-> >> +	if (ret < 0) {
-> >> +		v4l2_err(v4l2_dev, "Failed to register media device: %d\n",
-> >> +			 ret);
-> >> +		goto err_unreg_v4l2_dev;
-> >> +	}
-> >> +
-> >> +	/* create & register platefom subdev (from of_node) */
-> >> +	ret = rkisp1_register_platform_subdevs(isp_dev);
-> >> +	if (ret < 0)
-> >> +		goto err_unreg_media_dev;
-> >> +
-> >> +	pm_runtime_enable(&pdev->dev);
-> >> +
-> >> +	return 0;
-> >> +
-> >> +err_unreg_media_dev:
-> >> +	media_device_unregister(&isp_dev->media_dev);
-> >> +err_unreg_v4l2_dev:
-> >> +	v4l2_device_unregister(&isp_dev->v4l2_dev);
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static int rkisp1_plat_remove(struct platform_device *pdev)
-> >> +{
-> >> +	struct rkisp1_device *isp_dev = platform_get_drvdata(pdev);
-> >> +
-> >> +	pm_runtime_disable(&pdev->dev);
-> >> +	media_device_unregister(&isp_dev->media_dev);
-> >> +	v4l2_async_notifier_unregister(&isp_dev->notifier);
-> >> +	v4l2_async_notifier_cleanup(&isp_dev->notifier);
-> >> +	v4l2_device_unregister(&isp_dev->v4l2_dev);
-> >> +	rkisp1_unregister_params_vdev(&isp_dev->params_vdev);
-> >> +	rkisp1_unregister_stats_vdev(&isp_dev->stats_vdev);
-> >> +	rkisp1_unregister_stream_vdevs(isp_dev);
-> >> +	rkisp1_unregister_isp_subdev(isp_dev);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int __maybe_unused rkisp1_runtime_suspend(struct device *dev)
-> >> +{
-> >> +	struct rkisp1_device *isp_dev = dev_get_drvdata(dev);
-> >> +
-> >> +	clk_bulk_disable_unprepare(isp_dev->clk_size, isp_dev->clks);
-> >> +	return pinctrl_pm_select_sleep_state(dev);
-> >> +}
-> >> +
-> >> +static int __maybe_unused rkisp1_runtime_resume(struct device *dev)
-> >> +{
-> >> +	struct rkisp1_device *isp_dev = dev_get_drvdata(dev);
-> >> +	int ret;
-> >> +
-> >> +	ret = pinctrl_pm_select_default_state(dev);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +	ret = clk_bulk_prepare_enable(isp_dev->clk_size, isp_dev->clks);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct dev_pm_ops rkisp1_plat_pm_ops = {
-> >> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> >> +				pm_runtime_force_resume)
-> >> +	SET_RUNTIME_PM_OPS(rkisp1_runtime_suspend, rkisp1_runtime_resume, NULL)
-> >> +};
-> >> +
-> >> +static struct platform_driver rkisp1_plat_drv = {
-> >> +	.driver = {
-> >> +		.name = DRIVER_NAME,
-> >> +		.of_match_table = of_match_ptr(rkisp1_plat_of_match),
-> >> +		.pm = &rkisp1_plat_pm_ops,
-> >> +	},
-> >> +	.probe = rkisp1_plat_probe,
-> >> +	.remove = rkisp1_plat_remove,
-> >> +};
-> >> +
-> >> +module_platform_driver(rkisp1_plat_drv);
-> >> +MODULE_AUTHOR("Rockchip Camera/ISP team");
-> >> +MODULE_DESCRIPTION("Rockchip ISP1 platform driver");
-> >> +MODULE_LICENSE("Dual BSD/GPL");
-> > 
-> > BSD or MIT?
-> 
-> Thanks for spotting this, I'll verify.
-
-I think this was the only place where the BSD license was present. The file
-header has MIT.
-
-> 
-> > 
-> >> diff --git a/drivers/media/platform/rockchip/isp1/dev.h b/drivers/media/platform/rockchip/isp1/dev.h
-> >> new file mode 100644
-> >> index 000000000000..f7cbee316523
-> >> --- /dev/null
-> >> +++ b/drivers/media/platform/rockchip/isp1/dev.h
-> >> @@ -0,0 +1,97 @@
-> >> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> >> +/*
-> >> + * Rockchip isp1 driver
-> >> + *
-> >> + * Copyright (C) 2017 Rockchip Electronics Co., Ltd.
-> >> + */
-> >> +
-> >> +#ifndef _RKISP1_DEV_H
-> >> +#define _RKISP1_DEV_H
-> >> +
-> >> +#include <linux/clk.h>
-> >> +
-> >> +#include "capture.h"
-> >> +#include "rkisp1.h"
-> >> +#include "isp_params.h"
-> >> +#include "isp_stats.h"
-> >> +
-> >> +#define DRIVER_NAME "rkisp1"
-> >> +#define ISP_VDEV_NAME DRIVER_NAME  "_ispdev"
-> >> +#define SP_VDEV_NAME DRIVER_NAME   "_selfpath"
-> >> +#define MP_VDEV_NAME DRIVER_NAME   "_mainpath"
-> >> +#define DMA_VDEV_NAME DRIVER_NAME  "_dmapath"
-> >> +
-> >> +#define GRP_ID_SENSOR			BIT(0)
-> >> +#define GRP_ID_MIPIPHY			BIT(1)
-> >> +#define GRP_ID_ISP			BIT(2)
-> >> +#define GRP_ID_ISP_MP			BIT(3)
-> >> +#define GRP_ID_ISP_SP			BIT(4)
-> >> +
-> >> +#define RKISP1_MAX_BUS_CLK	8
-> >> +#define RKISP1_MAX_SENSOR	2
-> >> +#define RKISP1_MAX_PIPELINE	4
-> >> +
-> >> +/*
-> >> + * struct rkisp1_pipeline - An ISP hardware pipeline
-> >> + *
-> >> + * Capture device call other devices via pipeline
-> >> + *
-> >> + * @num_subdevs: number of linked subdevs
-> >> + * @power_cnt: pipeline power count
-> >> + * @stream_cnt: stream power count
-> >> + */
-> >> +struct rkisp1_pipeline {
-> >> +	struct media_pipeline pipe;
-> >> +	int num_subdevs;
-> >> +	atomic_t power_cnt;
-> >> +	atomic_t stream_cnt;
-> >> +	struct v4l2_subdev *subdevs[RKISP1_MAX_PIPELINE];
-> >> +	int (*open)(struct rkisp1_pipeline *p,
-> >> +		    struct media_entity *me, bool prepare);
-> >> +	int (*close)(struct rkisp1_pipeline *p);
-> >> +	int (*set_stream)(struct rkisp1_pipeline *p, bool on);
-> >> +};
-> >> +
-> >> +/*
-> >> + * struct rkisp1_sensor - Sensor information
-> >> + * @mbus: media bus configuration
-> >> + */
-> >> +struct rkisp1_sensor {
-> >> +	struct v4l2_subdev *sd;
-> >> +	struct v4l2_mbus_config mbus;
-> >> +	unsigned int lanes;
-> >> +	struct phy *dphy;
-> >> +	struct list_head list;
-> >> +};
-> > 
-> > You seem to also have struct sensor_async_subdev that appears to contain
-> > similar information. Would it be possible to unify the two?
-> > 
-> > This would appear to allow you getting rid of functions such as
-> > sd_to_sensor, for instance.
-> 
-> ack, I managed to get rid of this, and I don't even need to keep them
-> on a list, I'll submit in the next version.
-
-Nice!
-
-> 
-> Thanks a lot for your review
-
-You're welcome!
-
--- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+T24gVGh1LCAyMDE5LTA4LTA4IGF0IDIyOjM5ICswMjAwLCBBbmRyZXcgTHVubiB3cm90ZToNCj4g
+W0V4dGVybmFsXQ0KPiANCj4gT24gVGh1LCBBdWcgMDgsIDIwMTkgYXQgMDk6Mzg6NDBQTSArMDIw
+MCwgSGVpbmVyIEthbGx3ZWl0IHdyb3RlOg0KPiA+IE9uIDA4LjA4LjIwMTkgMTQ6MzAsIEFsZXhh
+bmRydSBBcmRlbGVhbiB3cm90ZToNCj4gPiA+IERvd24tc3BlZWQgYXV0by1uZWdvdGlhdGlvbiBt
+YXkgbm90IGFsd2F5cyBiZSBlbmFibGVkLCBpbiB3aGljaCBjYXNlIHRoZQ0KPiA+ID4gUEhZIHdv
+bid0IGRvd24tc2hpZnQgdG8gMTAwIG9yIDEwIGR1cmluZyBhdXRvLW5lZ290aWF0aW9uLg0KPiA+
+ID4gDQo+ID4gPiBUaGlzIGNoYW5nZSBlbmFibGVzIGRvd25zaGlmdCBhbmQgY29uZmlndXJlcyB0
+aGUgbnVtYmVyIG9mIHJldHJpZXMgdG8NCj4gPiA+IGRlZmF1bHQgOCAobWF4aW11bSBzdXBwb3J0
+ZWQgdmFsdWUpLg0KPiA+ID4gDQo+ID4gPiBUaGUgY2hhbmdlIGhhcyBiZWVuIGFkYXB0ZWQgZnJv
+bSB0aGUgTWFydmVsbCBQSFkgZHJpdmVyLg0KPiA+ID4gDQo+ID4gSW5zdGVhZCBvZiBhIGZpeGVk
+IGRvd25zaGlmdCBzZXR0aW5nIChsaWtlIGluIHRoZSBNYXJ2ZWxsIGRyaXZlcikgeW91DQo+ID4g
+bWF5IGNvbnNpZGVyIHRvIGltcGxlbWVudCB0aGUgZXRodG9vbCBwaHktdHVuYWJsZSBFVEhUT09M
+X1BIWV9ET1dOU0hJRlQuDQo+IA0KPiBIaSBBbGV4YW5kcnUNCj4gDQo+IFVwcHMsIHNvcnJ5LCBt
+eSBiYWQuDQo+IA0KPiBJIGxvb2tlZCBhdCBtYXJ2ZWxsX3NldF9kb3duc2hpZnQoKSwgYW5kIGFz
+c3VtZWQgaXQgd2FzIGNvbm5lY3RlZCB0bw0KPiB0aGUgcGh5LXR1bmFibGUuIEkgaGF2ZSBwYXRj
+aGVzIHNvbWV3aGVyZSB3aGljaCBkb2VzIHRoYXQuIEJ1dCB0aGV5DQo+IGhhdmUgbm90IG1hZGUg
+aXQgaW50byBtYWlubGluZSB5ZXQuDQo+IA0KPiA+IFNlZSB0aGUgQXF1YW50aWEgUEhZIGRyaXZl
+ciBmb3IgYW4gZXhhbXBsZS4NCj4gDQo+IFllcywgdGhhdCBkb2VzIGhhdmUgYWxsIHRoZSB0dW5h
+YmxlIHN0dWZmLg0KDQpBY2suDQpXaWxsIHVzZSB0aGF0DQoNCj4gDQo+ICAgICAgQW5kcmV3DQo=
