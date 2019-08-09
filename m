@@ -2,61 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 356A18803C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F189688047
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437349AbfHIQfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:35:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50626 "EHLO mail.kernel.org"
+        id S2437437AbfHIQfk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:35:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437309AbfHIQfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:35:08 -0400
-Subject: Re: [GIT] Crypto Fixes for 5.3
+        id S2437311AbfHIQfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 12:35:10 -0400
+Subject: Re: [GIT PULL] s390 updates for 5.3-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565368507;
-        bh=h8yvuZKp/qw8bEdg0bWJTyQ7WnGy6ktEzKdG6fMM9VE=;
+        s=default; t=1565368509;
+        bh=Sy1NFzK5II8U4lIrfExT3QawBzTbjsw/rHwqYHNoREg=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jgUBbpC1BfHogbhUqwTIijlz0UQBHCBT1z/GEilZdVa0HJBti9oE3xXRwdXfjoRmM
-         /PV4pMudKZg4PifJZpj+a4ayjf8Msyoi/4oW2Qo/WfFXfwFu97+81ZT2XLw0/XATrH
-         WtySJ/Bo8iGrqQypCgO77HJohjgzAXhgIOF076UI=
+        b=wktlVMh376vcjzy3Zn4mwdmZnSrbWil2FgAn5RVT/XGoYWsGAGcB05Y4jMxSF0DNE
+         yDkk1oKNF68asFhjiUfBP0JkrVtBNwomFk86plyl3JO2WLI4UYoiEb3I8+ekXUrX1N
+         qxzG7CIR/zpScoe1oL2thFHGiWrz0E5Z2kZPPlk4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190809061548.GA10530@gondor.apana.org.au>
-References: <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
- <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
- <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
- <20181207061409.xflg423nknleuddw@gondor.apana.org.au>
- <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
- <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
- <20190215024738.fynl64d5u5htcy2l@gondor.apana.org.au>
- <20190312045818.bgpiuxogmaxyscdv@gondor.apana.org.au>
- <20190515060552.ecfwhazt2fnthepg@gondor.apana.org.au>
- <20190719031206.nxyxk4vj6dg7hwxg@gondor.apana.org.au>
- <20190809061548.GA10530@gondor.apana.org.au>
+In-Reply-To: <your-ad-here.call-01565348470-ext-7484@work.hours>
+References: <your-ad-here.call-01565348470-ext-7484@work.hours>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190809061548.GA10530@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
-X-PR-Tracked-Commit-Id: e2664ecbb2f26225ac6646876f2899558ffb2604
+X-PR-Tracked-Message-Id: <your-ad-here.call-01565348470-ext-7484@work.hours>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.3-5
+X-PR-Tracked-Commit-Id: 404861e15b5fa7edbab22400f9174c1a21fde731
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e577dc152e232c78e5774e4c9b5486a04561920b
-Message-Id: <156536850756.6429.4109081202813215233.pr-tracker-bot@kernel.org>
-Date:   Fri, 09 Aug 2019 16:35:07 +0000
-To:     Herbert Xu <herbert@gondor.apana.org.au>
+X-PR-Merge-Commit-Id: cb7ef4bc927233304aeeeb891c1cfc5ad6f87975
+Message-Id: <156536850967.6429.3536164448724937140.pr-tracker-bot@kernel.org>
+Date:   Fri, 09 Aug 2019 16:35:09 +0000
+To:     Vasily Gorbik <gor@linux.ibm.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 9 Aug 2019 16:15:48 +1000:
+The pull request you sent on Fri, 9 Aug 2019 13:01:10 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.3-5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e577dc152e232c78e5774e4c9b5486a04561920b
+https://git.kernel.org/torvalds/c/cb7ef4bc927233304aeeeb891c1cfc5ad6f87975
 
 Thank you!
 
