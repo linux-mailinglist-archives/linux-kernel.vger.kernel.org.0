@@ -2,94 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9213787AE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD9B787AE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406993AbfHINPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 09:15:20 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:49802 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfHINPT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:15:19 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x79DEQcH051478;
-        Fri, 9 Aug 2019 08:14:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565356466;
-        bh=lqd4cvYerI+bLrW81rK95niroFLbI9sxTGg612NPmek=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=xtrtu2h6nP1YNCrnZ692gMoH/T0GxF8LseKl+MC9nSK3mVtkFYhvP1IkspE2d5/5J
-         /0iG7w9n9sa9A+m6oYiJ5Kgb0BaRhbP4xftiAgIcyjLt2EaU+zNZE0TAgT/2lu1PAZ
-         iumzoiWEB5dUiFH2kjWox/nWba9JGGZtZMEWBygc=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x79DEQUv064547
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 9 Aug 2019 08:14:26 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 9 Aug
- 2019 08:14:26 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 9 Aug 2019 08:14:26 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x79DEOC9069090;
-        Fri, 9 Aug 2019 08:14:24 -0500
-Subject: Re: [PATCH] fix odd_ptr_err.cocci warnings
-To:     Mark Brown <broonie@kernel.org>,
-        Julia Lawall <julia.lawall@lip6.fr>
-CC:     <kbuild-all@01.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-References: <alpine.DEB.2.21.1908091229140.2946@hadrien>
- <20190809123112.GC3963@sirena.co.uk>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <88ac4c79-5ce3-3f1a-5f6e-3928a30a1ef5@ti.com>
-Date:   Fri, 9 Aug 2019 16:14:35 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2406934AbfHINPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 09:15:17 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43872 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbfHINPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 09:15:16 -0400
+Received: from zn.tnic (p200300EC2F0BAF004D276273DCAF0EAA.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:af00:4d27:6273:dcaf:eaa])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3C2EC1EC0B07;
+        Fri,  9 Aug 2019 15:15:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565356515;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=sTeaFwbbAjE+f6AcN4Z6yDkT173vzN9tQEm11E8OlTA=;
+        b=RYY8FKu7Twf/EdUKVlLXRvsHCtn439oWBKH7rrhZbR0L61VvLkZlXzwwDNLVg8UmWbylfv
+        zbk3z0cKDnrq2C1RUIVHp3ZuFiJRa3RJ6mN+B6rGnRPh4oe2GvL5abRkxuypeW9ChXoitg
+        /AgJWbAhoBdgb3wnJrkbUmltKUVFoJo=
+Date:   Fri, 9 Aug 2019 15:15:59 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Robert Richter <rrichter@marvell.com>
+Cc:     James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 02/24] EDAC, ghes: Fix grain calculation
+Message-ID: <20190809131559.GF2152@zn.tnic>
+References: <20190624150758.6695-1-rrichter@marvell.com>
+ <20190624150758.6695-3-rrichter@marvell.com>
 MIME-Version: 1.0
-In-Reply-To: <20190809123112.GC3963@sirena.co.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190624150758.6695-3-rrichter@marvell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/08/2019 15.31, Mark Brown wrote:
-> On Fri, Aug 09, 2019 at 12:30:46PM +0200, Julia Lawall wrote:
+On Mon, Jun 24, 2019 at 03:08:57PM +0000, Robert Richter wrote:
+> The conversion from the physical address mask to a grain (defined as
+> granularity in bytes) is broken:
 > 
->> tree:   https://github.com/omap-audio/linux-audio peter/ti-linux-4.19.y/wip
->> head:   62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a
->> commit: 62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a [34/34] j721e new machine driver wip
->> :::::: branch date: 20 hours ago
->> :::::: commit date: 20 hours ago
->>
->>  j721e-evm.c |    4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> --- a/sound/soc/ti/j721e-evm.c
->> +++ b/sound/soc/ti/j721e-evm.c
->> @@ -283,7 +283,7 @@ static int j721e_get_clocks(struct platf
+> 	e->grain = ~(mem_err->physical_addr_mask & ~PAGE_MASK);
 > 
-> This file isn't upstream, it's only in the TI BSP.
+> E.g., a physical address mask of ~0xfff should give a grain of 0x1000,
+> instead the grain is wrong with the upper bits always set. We also
+> remove the limitation to the page size as the granularity is unrelated
+> to the page size used in the system. We fix this with:
+> 
+> 	e->grain = ~mem_err->physical_addr_mask + 1;
+> 
+> Note: We need to adopt the grain_bits calculation as e->grain is now a
+> power of 2 and no longer a bit mask. The formula is now the same as in
+> edac_mc and can later be unified.
 
-Yes, it is not upstream, but the fix is valid.
+Please refrain from using "We" or "I" or etc personal pronouns in a
+commit message and in the code comments below.
 
-Julia: is it possible to direct these notifications only to me from
-https://github.com/omap-audio/linux-audio.git ?
+From Documentation/process/submitting-patches.rst:
 
-It mostly carries TI BSP stuff and my various for upstream branches nowdays.
+ "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+  to do frotz", as if you are giving orders to the codebase to change
+  its behaviour."
 
-- Péter
+Please fix all your other commit messages for the next submission.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Signed-off-by: Robert Richter <rrichter@marvell.com>
+> ---
+>  drivers/edac/ghes_edac.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+> index 7f19f1c672c3..d095d98d6a8d 100644
+> --- a/drivers/edac/ghes_edac.c
+> +++ b/drivers/edac/ghes_edac.c
+> @@ -222,6 +222,7 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+>  	/* Cleans the error report buffer */
+>  	memset(e, 0, sizeof (*e));
+>  	e->error_count = 1;
+> +	e->grain = 1;
+>  	strcpy(e->label, "unknown label");
+>  	e->msg = pvt->msg;
+>  	e->other_detail = pvt->other_detail;
+> @@ -317,7 +318,7 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+>  
+>  	/* Error grain */
+>  	if (mem_err->validation_bits & CPER_MEM_VALID_PA_MASK)
+> -		e->grain = ~(mem_err->physical_addr_mask & ~PAGE_MASK);
+> +		e->grain = ~mem_err->physical_addr_mask + 1;
+
+This is assuming that that ->physical_addr_mask is contiguous but I
+don't trust any firmware. I guess we can leave it like that for now
+until some "inventive" firmware actually does it.
+
+>  
+>  	/* Memory error location, mapped on e->location */
+>  	p = e->location;
+> @@ -433,8 +434,15 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+>  	if (p > pvt->other_detail)
+>  		*(p - 1) = '\0';
+>  
+> +	/*
+> +	 * We expect the hw to report a reasonable grain, fallback to
+> +	 * 1 byte granularity otherwise.
+> +	 */
+> +	if (WARN_ON_ONCE(!e->grain))
+
+Please move that WARN_ON_ONCE in the
+
+	if (mem_err->validation_bits & CPER_MEM_VALID_PA_MASK)
+
+branch above because you're presetting grain to 1 so the warn should be
+close to where it could happen, i.e., when coming from the firmware.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
