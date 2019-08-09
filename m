@@ -2,82 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA195872CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91BE2872DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:21:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405744AbfHIHTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 03:19:23 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38016 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405664AbfHIHTW (ORCPT
+        id S2405774AbfHIHVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 03:21:41 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46586 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405701AbfHIHVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 03:19:22 -0400
-Received: by mail-wm1-f68.google.com with SMTP id m125so602670wmm.3;
-        Fri, 09 Aug 2019 00:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=Vz75i2RTvhUJa5g/9yEomMKKQAza1FcKyAdc6BXdIz4=;
-        b=fZhSoo2XgAJGnYA6RXKxk4XccYB41qWDwO4vKG5SPzL1nXWjkbLKgG2uFeCc+RGqVg
-         mhA+oa47b3Ed2IckmD+yW7mtLuyPikQ9DU0oCykKzO986yOa+zguNyR+B+Oyzfpq6a9T
-         fJ4TRjHNcPgfKcU51GuEj0u8q8h9BAyMFSPW6INMYczY1repivftEu3pH4ESGPi42Vna
-         Eg/188GV3vJqjOL5b54dT88PnU5MdOZ+avjFdXbJlE/T1HFx5DR8+P3svAFV+gK0mN/f
-         FS0SCEx6WxZW5Hy90DNjcKRbuyuifyZxmRI0Fs/YbeaJIQZxdZpkar2VKORU/kbQZfHC
-         kj+A==
+        Fri, 9 Aug 2019 03:21:40 -0400
+Received: by mail-ot1-f68.google.com with SMTP id z17so10595949otk.13;
+        Fri, 09 Aug 2019 00:21:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=Vz75i2RTvhUJa5g/9yEomMKKQAza1FcKyAdc6BXdIz4=;
-        b=G/EiDw4Qa+yFmOkrpulzHAfcjRagjUmICAYfTbSyp9xDsS5X8TTkto9D1qHBuCVTvz
-         y6IjdGJ+OoyXxC9kul40Gx4myvLra3fEbVSysinxEDxFap65yBUEAqz+62BdSBhFevoX
-         svbxAx+T5mqcgLKi7fcoyp4tz9Q3+8Yo/61Z2O/FFebGP7VWFifQlzqxRJr+DwYKjXeH
-         UZm5/FGOvUl3p0I7u3feuTKfR62EarF8IIKNhIQGBwYnRhkL8iGb/DwMASyCayA7GuI6
-         3X0NJJg7j/lHUM3TmaoXFttfxm+OKt4W2ShSuxYtk4mT6dxuWU2/nzp+adZjb1/574Cj
-         bywA==
-X-Gm-Message-State: APjAAAURiWFBykifJ1f0hrtQjQVaLAqSrCR5Ba7HnRnbDKveoMoltqBQ
-        N1GmoQtsHxVEMCVpw9HOTvUNdT40
-X-Google-Smtp-Source: APXvYqwp+9XJ5xl3RIvMkHOPPPYbtfw6fOO//jyrZnMBeqMEUI2L5Nput20D3n5kUIOlj9sAQ4u13Q==
-X-Received: by 2002:a1c:c706:: with SMTP id x6mr7402591wmf.104.1565335160191;
-        Fri, 09 Aug 2019 00:19:20 -0700 (PDT)
-Received: from 640k.localdomain.com ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id f10sm1503270wrm.31.2019.08.09.00.19.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Aug 2019 00:19:19 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     frankja@linux.ibm.com,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH] MAINTAINERS: change list for KVM/s390
-Date:   Fri,  9 Aug 2019 09:19:16 +0200
-Message-Id: <1565335156-28660-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A7mCF4lTq2gFXOvcmY2h+y2/MZQDfsM2+XB9S0QJ6k4=;
+        b=Yq/lZ82TgclMTYySws9jxx3lmQUskkUTnEY9kSysVlelH0jt+6mVkzvVk6zo/HvC5H
+         0Ycj3+nqrpwVw/xxaOyEZm2bs1TSxraY8+OpQhrjW0Cs8kg4jRnQzC44f2vtqKGJPhbX
+         4OUr7kkbMPHSmD6rFDqGZnpylXj0fK+0OpKRl1kQU5uLnZlc6567k0/8/K2FCd6BnTGU
+         2RUwfTM04tj7iG3SGB6fTkIwS/yhHofva9gY+ey67NjIDYK4IwVA79h6VCycbj2EOznY
+         0RD8xpi+kfGVC3Aqw65FKhR1plD+RGHi4moZJNIMnk5ldNljscZawjSAxXgxXgZsh6b3
+         fPpw==
+X-Gm-Message-State: APjAAAVD/yZKoa7JrOvu4j09XLaSf/14kav8vi6CRBlQPoeYr4JHwd38
+        jR427iRv9vQbqfIAF8xvdnaU9JE2h12Sx+dhUl4=
+X-Google-Smtp-Source: APXvYqyBXPOK98jaQhUmqtFlEEGP/W76NVu4RQ2ZHS+SsKdevOL3KYGUiRHhF15E80P339HCx6FddAsKPmlukbGoIK8=
+X-Received: by 2002:a9d:7a90:: with SMTP id l16mr17247630otn.297.1565335299510;
+ Fri, 09 Aug 2019 00:21:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190808160005.10325-1-hch@lst.de> <20190808160005.10325-9-hch@lst.de>
+In-Reply-To: <20190808160005.10325-9-hch@lst.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 9 Aug 2019 09:21:28 +0200
+Message-ID: <CAMuHMdV0JfZ_K2V7W0FQkobE_zLwe4Uez-EWzMMdTfVffpAWtA@mail.gmail.com>
+Subject: Re: [PATCH 8/8] dma-mapping: remove CONFIG_ARCH_NO_COHERENT_DMA_MMAP
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Takashi Iwai <tiwai@suse.de>, Helge Deller <deller@gmx.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM/s390 does not have a list of its own, and linux-s390 is in the
-loop anyway thanks to the generic arch/s390 match.  So use the generic
-KVM list for s390 patches.
+Hi Christoph,
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Aug 8, 2019 at 6:01 PM Christoph Hellwig <hch@lst.de> wrote:
+> CONFIG_ARCH_NO_COHERENT_DMA_MMAP is now functionally identical to
+> !CONFIG_MMU, so remove the separate symbol.  The only difference is that
+> arm did not set it for !CONFIG_MMU, but arm uses a separate dma mapping
+> implementation including its own mmap method, which is handled by moving
+> the CONFIG_MMU check in dma_can_mmap so that is only applies to the
+> dma-direct case, just as the other ifdefs for it.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1aec93695040..6498ebaca2f6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8788,7 +8788,7 @@ M:	Christian Borntraeger <borntraeger@de.ibm.com>
- M:	Janosch Frank <frankja@linux.ibm.com>
- R:	David Hildenbrand <david@redhat.com>
- R:	Cornelia Huck <cohuck@redhat.com>
--L:	linux-s390@vger.kernel.org
-+L:	kvm@vger.kernel.org
- W:	http://www.ibm.com/developerworks/linux/linux390/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git
- S:	Supported
+>  arch/m68k/Kconfig       |  1 -
+
+For m68k:
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.8.3.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
