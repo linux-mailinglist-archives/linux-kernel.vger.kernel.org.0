@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E084087BCC
+	by mail.lfdr.de (Postfix) with ESMTP id 67D3E87BCB
 	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406684AbfHINrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 09:47:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37018 "EHLO mail.kernel.org"
+        id S2436588AbfHINrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 09:47:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407191AbfHINrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:47:06 -0400
+        id S2436577AbfHINrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 09:47:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6CD521882;
-        Fri,  9 Aug 2019 13:47:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8109A214C6;
+        Fri,  9 Aug 2019 13:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565358425;
-        bh=GMqdQoXIWjF57ZTZWSOEgTW3aV1UfI7oxWttN+HsNz4=;
+        s=default; t=1565358428;
+        bh=5O/qCdf5EeoEXV+hINy4coar5n+yKm8x+R7wXINU+U8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kvdrkSwhp39LVy0K1nmGeFTddUB+oI2xMjABLffstUVav9+wZj/PbvsXCpG+9cpVP
-         n5RCC13qq4rQS4i96dYWqBZTicSiA10UegFbPyOMdZzs8lVJrYnIZPaqdV33mbLUvV
-         wPg90arML8LfuhgjyACrpviXRsWnAxD+aBBRKnR8=
+        b=iXMD4B0RTMe0DnBVRIJ2I0vMXPw6sGkEcpvI5bZ8LuCAh25CAmXRXF3zd+1tPibjs
+         5Zthbcj9v/iz5AftRxQHDoAMsfeixxCEzgrD4ESB4ZxrEjnzCnGbSu4NZUBmdY2R+X
+         1wochU3mfRAiwNwjQtey6OAKuVTj2Gp812lNlhbo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Mark Zhang <markz@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.9 19/32] net/mlx5: Use reversed order when unregister devices
-Date:   Fri,  9 Aug 2019 15:45:22 +0200
-Message-Id: <20190809133923.571819099@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 20/32] net: sched: Fix a possible null-pointer dereference in dequeue_func()
+Date:   Fri,  9 Aug 2019 15:45:23 +0200
+Message-Id: <20190809133923.599973260@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190809133922.945349906@linuxfoundation.org>
 References: <20190809133922.945349906@linuxfoundation.org>
@@ -45,43 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Zhang <markz@mellanox.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 08aa5e7da6bce1a1963f63cf32c2e7ad434ad578 ]
+[ Upstream commit 051c7b39be4a91f6b7d8c4548444e4b850f1f56c ]
 
-When lag is active, which is controlled by the bonded mlx5e netdev, mlx5
-interface unregestering must happen in the reverse order where rdma is
-unregistered (unloaded) first, to guarantee all references to the lag
-context in hardware is removed, then remove mlx5e netdev interface which
-will cleanup the lag context from hardware.
+In dequeue_func(), there is an if statement on line 74 to check whether
+skb is NULL:
+    if (skb)
 
-Without this fix during destroy of LAG interface, we observed following
-errors:
- * mlx5_cmd_check:752:(pid 12556): DESTROY_LAG(0x843) op_mod(0x0) failed,
-   status bad parameter(0x3), syndrome (0xe4ac33)
- * mlx5_cmd_check:752:(pid 12556): DESTROY_LAG(0x843) op_mod(0x0) failed,
-   status bad parameter(0x3), syndrome (0xa5aee8).
+When skb is NULL, it is used on line 77:
+    prefetch(&skb->end);
 
-Fixes: a31208b1e11d ("net/mlx5_core: New init and exit flow for mlx5_core")
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Mark Zhang <markz@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Thus, a possible null-pointer dereference may occur.
+
+To fix this bug, skb->end is used when skb is not NULL.
+
+This bug is found by a static analysis tool STCheck written by us.
+
+Fixes: 76e3cc126bb2 ("codel: Controlled Delay AQM")
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/sch_codel.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
-@@ -207,7 +207,7 @@ void mlx5_unregister_device(struct mlx5_
- 	struct mlx5_interface *intf;
+--- a/net/sched/sch_codel.c
++++ b/net/sched/sch_codel.c
+@@ -71,10 +71,10 @@ static struct sk_buff *dequeue_func(stru
+ 	struct Qdisc *sch = ctx;
+ 	struct sk_buff *skb = __qdisc_dequeue_head(&sch->q);
  
- 	mutex_lock(&mlx5_intf_mutex);
--	list_for_each_entry(intf, &intf_list, list)
-+	list_for_each_entry_reverse(intf, &intf_list, list)
- 		mlx5_remove_device(intf, priv);
- 	list_del(&priv->dev_list);
- 	mutex_unlock(&mlx5_intf_mutex);
+-	if (skb)
++	if (skb) {
+ 		sch->qstats.backlog -= qdisc_pkt_len(skb);
+-
+-	prefetch(&skb->end); /* we'll need skb_shinfo() */
++		prefetch(&skb->end); /* we'll need skb_shinfo() */
++	}
+ 	return skb;
+ }
+ 
 
 
