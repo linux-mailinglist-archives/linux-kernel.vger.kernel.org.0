@@ -2,127 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CAD7880AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:00:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0764C880B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:03:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407523AbfHIRAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 13:00:40 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43659 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407439AbfHIRAk (ORCPT
+        id S2437042AbfHIRDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 13:03:07 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38875 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436932AbfHIRDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 13:00:40 -0400
-Received: by mail-pl1-f193.google.com with SMTP id 4so38193567pld.10
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 10:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iQe6ew6EIuFXeLlZv8LtrdQvCD02fcDe9gmuPP3qi/s=;
-        b=kH0Y5j1nHYWzkDq/Qoxxr4NC+cgj7xa9ho1tUL8KA3hZmnbes2pVZZBrUehMulpgE9
-         ibMetjDE0ZoqqFdfeAqlc83Fgvp/MFu1J3JFJiQ7ej+YSW1Zind6hD5/Y3sx/KtmUfOu
-         WSEPt8T+XVfhruKADp6OaFA7jcNxhqICyhEdeP2uA3HrcwuTy0TqEqNTWjlY5Doftboi
-         2kOCzU6+nkze2uRTYir0coAyGplP2+rQR8Z1fd1rI5aEYCpiaAHzmkzSfu0H6KiAVM/S
-         Dzu9mdpMeRnVI5DtT1/SqUh7GwG56TX+t/RR1tLTxmflgFXk+cp4orm9bfcz+wW5QcTp
-         deBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iQe6ew6EIuFXeLlZv8LtrdQvCD02fcDe9gmuPP3qi/s=;
-        b=oMOxHgW27UfyPz4kZf9EPREFV5UCVzhXhOBy0A6uMk6dKtyCeX4cZkgIGDConsHEfv
-         ZZdqTtrxce+HdSkXkrqSUwrSGVmogBUIYjGdL70S0/5notFHrO1WkdIN6VY+Sbt4XfHb
-         +jipnxIycZXXbtxyuJglkrHX2pfW2U7IjO1iOyiO/w3FUHc9OZ/Nd1nHYPOUb0xXjJVL
-         R6AfCCyMjE50F3SntKtOlJPjWwxPqZtWiPcHa/Pu2WPf1jiwXd6qOgIjKZftC0YqlHTO
-         DSzR8v7toNal7YxbI2TTdsctw50b0qzBYBJq4O2oGM6usIRaL6hD2qg/zNNN7jU/D7vQ
-         vKsg==
-X-Gm-Message-State: APjAAAXk2Ybei9ma9+3Z902YMfQDTNT9TtsEy4Yk+tY5Q47qBrgB3FDs
-        lLg8hYS6Au/tYCSPuXsXxsozqw==
-X-Google-Smtp-Source: APXvYqyH7lr5etiJgvdBKU7PpRWbpeGLt963jNmcvwdSEeNDY0Eij8BM6SIM9Ih5P6YBlGFRLHaavg==
-X-Received: by 2002:a17:902:30d:: with SMTP id 13mr9943532pld.284.1565370039322;
-        Fri, 09 Aug 2019 10:00:39 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 5sm35954078pgh.93.2019.08.09.10.00.38
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 10:00:38 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 10:02:13 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] regulator: qcom-rpmh: Sort the compatibles
-Message-ID: <20190809170213.GN26807@tuxbook-pro>
-References: <20190809073616.1235-1-vkoul@kernel.org>
- <20190809073616.1235-2-vkoul@kernel.org>
+        Fri, 9 Aug 2019 13:03:07 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hw8I7-0006uW-LD; Fri, 09 Aug 2019 17:02:59 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     David Howells <dhowells@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-afs@lists.infradead.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][net-next] rxrpc: fix uninitialized return value in variable err
+Date:   Fri,  9 Aug 2019 18:02:59 +0100
+Message-Id: <20190809170259.29859-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809073616.1235-2-vkoul@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 09 Aug 00:36 PDT 2019, Vinod Koul wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> It helps to keep sorted order for compatibles, so sort them
-> 
-> Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+An earlier commit removed the setting of err to -ENOMEM so currently
+the skb_shinfo(skb)->nr_frags > 16 check returns with an uninitialized
+bogus return code.  Fix this by setting err to -ENOMEM to restore
+the original behaviour.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: b214b2d8f277 ("rxrpc: Don't use skb_cow_data() in rxkad")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rxrpc/rxkad.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/regulator/qcom-rpmh-regulator.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
-> index 693ffec62f3e..0ef2716da3bd 100644
-> --- a/drivers/regulator/qcom-rpmh-regulator.c
-> +++ b/drivers/regulator/qcom-rpmh-regulator.c
-> @@ -878,18 +878,14 @@ static int rpmh_regulator_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id rpmh_regulator_match_table[] = {
-> -	{
-> -		.compatible = "qcom,pm8998-rpmh-regulators",
-> -		.data = pm8998_vreg_data,
-> -	},
-> -	{
-> -		.compatible = "qcom,pmi8998-rpmh-regulators",
-> -		.data = pmi8998_vreg_data,
-> -	},
->  	{
->  		.compatible = "qcom,pm8005-rpmh-regulators",
->  		.data = pm8005_vreg_data,
->  	},
-> +	{
-> +		.compatible = "qcom,pm8009-rpmh-regulators",
-> +		.data = pm8009_vreg_data,
-> +	},
->  	{
->  		.compatible = "qcom,pm8150-rpmh-regulators",
->  		.data = pm8150_vreg_data,
-> @@ -899,8 +895,12 @@ static const struct of_device_id rpmh_regulator_match_table[] = {
->  		.data = pm8150l_vreg_data,
->  	},
->  	{
-> -		.compatible = "qcom,pm8009-rpmh-regulators",
-> -		.data = pm8009_vreg_data,
-> +		.compatible = "qcom,pm8998-rpmh-regulators",
-> +		.data = pm8998_vreg_data,
-> +	},
-> +	{
-> +		.compatible = "qcom,pmi8998-rpmh-regulators",
-> +		.data = pmi8998_vreg_data,
->  	},
->  	{}
->  };
-> -- 
-> 2.20.1
-> 
+diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
+index 8b4cddd8b673..c810a7c43b0f 100644
+--- a/net/rxrpc/rxkad.c
++++ b/net/rxrpc/rxkad.c
+@@ -248,8 +248,10 @@ static int rxkad_secure_packet_encrypt(const struct rxrpc_call *call,
+ 	crypto_skcipher_encrypt(req);
+ 
+ 	/* we want to encrypt the skbuff in-place */
+-	if (skb_shinfo(skb)->nr_frags > 16)
++	if (skb_shinfo(skb)->nr_frags > 16) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	len = data_size + call->conn->size_align - 1;
+ 	len &= ~(call->conn->size_align - 1);
+-- 
+2.20.1
+
