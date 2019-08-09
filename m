@@ -2,128 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E415F886C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 01:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55A3886CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 01:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbfHIXEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 19:04:16 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34719 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbfHIXEP (ORCPT
+        id S1727512AbfHIXFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 19:05:51 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39835 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfHIXFu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 19:04:15 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so40328482pgc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 16:04:15 -0700 (PDT)
+        Fri, 9 Aug 2019 19:05:50 -0400
+Received: by mail-wm1-f68.google.com with SMTP id u25so6886603wmc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 16:05:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oVPbxJaD3UlTGSiEOIZnak9eRubpnpMnGIk5QeEIN+Q=;
-        b=g9293YwYxXJryipILr2+zXdVfXatyrkrTb/IzcI3rZ1q3fqq6Gtoo4ldo161Z9T+rA
-         2N2g+3COGSj95G2zAX8qpvuotntayqC2MNMvxKjaISGQ9bKCTuyUHuX0Vf8q/qIqYhkB
-         r9jo85pV/pPT8Dn3T8wNSorE1SmYP4VIXHE/1fpfXz2DJvfk/5d6hshJSy1LL8Sws5L8
-         BAtgKqvqWKs+RGdYl9cgoHfvuh29ka7tsItcUYvRWTVOzXb0pFC+UeRPNuWBAlBxyWRg
-         vweNmtESL/VsS0nT/zfB/MPekfOlPnmL1e1MOU5eyDekcq5BK8JvIrtfB5fLtns1jnsx
-         YFoA==
+        bh=1VwyOAXo7eohMBN8xZNUOLTE4Y6Up/vz30c30b2901o=;
+        b=mWeeK/dI7isF36qGFvVF6s8fzsuKm/X9kRrS0TRtB+fNCmtNJGRZMcHSGY/ib1FnIA
+         UY1m7UVvnn1hGBSuYxwSRwze4J00e/39Z8hoJzIXsTzT6nTO0DATxXN2xNqmKBAo1fMp
+         Y//GS5xG2Jd4Yb7nw3MbzZrnEzCoDulkPLQwZSHxbAGYYoK+qV/Uf6CQGwU+bVlDZfie
+         2mJ84c3HB0fu7y0LUMvtLJJrMnjcQ76pkDy3oi45FO2917t7CXEKcdYTCE2lYtMkf652
+         iVQiV15A17GXvulm4iHxskvIlR94Vl+KH3iB2ABI8G2yzjcRTDmJAju6RNUQFnF+b0Ir
+         atbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oVPbxJaD3UlTGSiEOIZnak9eRubpnpMnGIk5QeEIN+Q=;
-        b=qjH5k4IWuJ52jH+Y9gU7XpI1opTIwaugVchDjoHdMRkCqdcdgHKakVvQBlZ3eQB6yJ
-         d1M9YaXRdSagvsysrAgJa/80IYXmQ5/Vxrv2ijzrqHUexmIIXbx3GBpAAl+DedDAD6WQ
-         cMYh4H7RWO/5be256Racx/oYV5pGSEIprwObSKm/YV2sU9lz8aa2pg6zYG18yu05XNw1
-         1343qwW6mH25CPdzvee08KoFU0u5u1TkadGAhYfX+JRDcu1uDv7j7lQOdnLUQyVK9t7k
-         WbW2i05kFGC7Q3nHhX0NcIwUbTfvQPDOHceZrJYMvC8f7m2RWPs5Ai3LXjM0H3+fdyZX
-         mU4Q==
-X-Gm-Message-State: APjAAAUUd6DBJXEwDMPHaA/oFenPgAphW/GG1wvVRc3iQHRVSQjmpz3j
-        IH6qDb0hf/dVHvq2eNRxwNmCpiHEqE/oh+bb+46NbQ==
-X-Google-Smtp-Source: APXvYqxIdynaf7el6ANmPjYETdxQfGvIvf+ISN44zp62Bdl74RT7D+4P5DY4IGKzGZjQaOLisIhmwR2tIPEkbYFh2iQ=
-X-Received: by 2002:a17:90a:c20f:: with SMTP id e15mr5630058pjt.123.1565391854648;
- Fri, 09 Aug 2019 16:04:14 -0700 (PDT)
+        bh=1VwyOAXo7eohMBN8xZNUOLTE4Y6Up/vz30c30b2901o=;
+        b=WHReFdsUzHloWIZaGWVr5LwiNONylw3mwKkPggW6q5FBXhgrF1ZtmjGo8DRtI23iz7
+         XFx/6siyDwaqnhaI5WIOUCsC28K/VFS6AGO/CAJq71L0Zd5w6daIqgPBtM/b5nOfL8Xn
+         ZuXpksowyjyjB3GV2ntvEy7dc0WB0bi3tZ47eiZoqquvJsxdpeKYsG1DYPNGToMaCs3z
+         pduDxLx7m7MNJU8z1mmNCjZOnDw4zJpLbgTyzLYSwxITDVu7bMlddCL4QmsWlyLqZmcW
+         I/VyQDuiSm8rg+ogeQFDQ9sziVPZpTcg7jagKfzn6HAhu0bGcFdnVxE8ljhvC86gSebq
+         fAMA==
+X-Gm-Message-State: APjAAAVgecqsyYXmvO+4O+Zg40VJMWTDJtUh8SOMhNw/dG+bVlpcXV5B
+        pepa73NvTRMY6ayh34d51ZMWKg+oqAJV5i/G4mc2R2Jkj33Alw==
+X-Google-Smtp-Source: APXvYqzJJVoSGjVK7OxaCu55+M8GCaH+jjgQucuB9ktT0bhYJCwiP9IIjubxaz2oeJmm2ZlPndOBlRIAwp1nUkW4edM=
+X-Received: by 2002:a05:600c:2144:: with SMTP id v4mr11735016wml.146.1565391948663;
+ Fri, 09 Aug 2019 16:05:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAKwvOdmNdvgv=+P1CU36fG+trETojmPEXSMmAmX2TY0e67X-Wg@mail.gmail.com>
- <7c4db60a2b1976a92b5c824c7d24c4c77aa57278.camel@perches.com>
-In-Reply-To: <7c4db60a2b1976a92b5c824c7d24c4c77aa57278.camel@perches.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 9 Aug 2019 16:04:03 -0700
-Message-ID: <CAKwvOd=n_8i6+9K=g2OK2mAqubBZZHhmJrDM0=FtT_m0e0D5sQ@mail.gmail.com>
-Subject: Re: checkpatch.pl should suggest __section
-To:     Joe Perches <joe@perches.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
+References: <20190809102310.27246-1-ming.lei@redhat.com> <20190809102310.27246-2-ming.lei@redhat.com>
+ <20190809144204.GA28515@localhost.localdomain>
+In-Reply-To: <20190809144204.GA28515@localhost.localdomain>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Sat, 10 Aug 2019 07:05:32 +0800
+Message-ID: <CACVXFVMT=rkZC7LwK5quXgudS7fb7bQ_LunA1tEE-Z-9s1uvaA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] genirq/affinity: improve __irq_build_affinity_masks()
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 3:58 PM Joe Perches <joe@perches.com> wrote:
+On Fri, Aug 9, 2019 at 10:44 PM Keith Busch <kbusch@kernel.org> wrote:
 >
-> On Fri, 2019-08-09 at 15:21 -0700, Nick Desaulniers wrote:
-> > Hi Joe,
-> > While debugging:
-> > https://github.com/ClangBuiltLinux/linux/issues/619
-> > we found a bunch of places where __section is not used but could be,
-> > and uses a string literal when it probably should not be.
+> On Fri, Aug 09, 2019 at 06:23:09PM +0800, Ming Lei wrote:
+> > One invariant of __irq_build_affinity_masks() is that all CPUs in the
+> > specified masks( cpu_mask AND node_to_cpumask for each node) should be
+> > covered during the spread. Even though all requested vectors have been
+> > reached, we still need to spread vectors among left CPUs. The similar
+> > policy has been taken in case of 'numvecs <= nodes'.
 > >
-> > Just a thought that maybe checkpatch.pl could warn if
-> > `__attribute__((section` appeared in the added diff, and suggest
-> > __section? Then further warn to not use `""` for the section name?
+> > So remove the following check inside the loop:
+> >
+> >       if (done >= numvecs)
+> >               break;
+> >
+> > Meantime assign at least 1 vector for left nodes if 'numvecs' vectors
+> > have been spread.
+> >
+> > Also, if the specified cpumask for one numa node is empty, simply not
+> > spread vectors on this node.
+> >
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Keith Busch <kbusch@kernel.org>
+> > Cc: linux-nvme@lists.infradead.org,
+> > Cc: Jon Derrick <jonathan.derrick@intel.com>
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > ---
+> >  kernel/irq/affinity.c | 33 +++++++++++++++++++++------------
+> >  1 file changed, 21 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> > index 6fef48033f96..bc3652a2c61b 100644
+> > --- a/kernel/irq/affinity.c
+> > +++ b/kernel/irq/affinity.c
+> > @@ -129,21 +129,32 @@ static int __irq_build_affinity_masks(unsigned int startvec,
+> >       for_each_node_mask(n, nodemsk) {
+> >               unsigned int ncpus, v, vecs_to_assign, vecs_per_node;
+> >
+> > -             /* Spread the vectors per node */
+> > -             vecs_per_node = (numvecs - (curvec - firstvec)) / nodes;
+> > -
+> >               /* Get the cpus on this node which are in the mask */
+> >               cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
+> > -
+> > -             /* Calculate the number of cpus per vector */
+> >               ncpus = cpumask_weight(nmsk);
+> > +             if (!ncpus)
+> > +                     continue;
 >
-> Hmm, that makes me wonder about the existing __section uses
-> _with_ a quote are actually in the proper sections.
->
-> $ git grep -n -P '\b__section\s*\(\s*"'
-> arch/arm64/kernel/smp_spin_table.c:22:volatile unsigned long __section(".mmuoff.data.read")
-> arch/s390/boot/startup.c:49:static struct diag210 _diag210_tmp_dma __section(".dma.data");
-> include/linux/compiler.h:27:                            __section("_ftrace_annotated_branch")   \
-> include/linux/compiler.h:63:            __section("_ftrace_branch")             \
-> include/linux/compiler.h:121:#define __annotate_jump_table __section(".rodata..c_jump_table")
-> include/linux/compiler.h:158:   __section("___kentry" "+" #sym )                        \
-> include/linux/compiler.h:301:   static void * __section(".discard.addressable") __used \
-> include/linux/export.h:107:     static int __ksym_marker_##sym[0] __section(".discard.ksym") __used
-> include/linux/srcutree.h:127:           __section("___srcu_struct_ptrs") = &name
+> This shouldn't be possible, right? The nodemsk we're looping  wouldn't
+> have had that node set if no CPUs intersect the node_to_cpu_mask for
+> that node, so the resulting cpumask should always have a non-zero weight.
 
-I'm going through and fixing all of these now.  Thinking about sending
-one treewide fix to akpm.
+     cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
+
+It is often true, see the following cases:
+
+1) all CPUs in one node are not present
+
+OR
+
+2) all CPUs in one node are present
 
 >
-> Maybe there should also be a __section("<foo>") test too.
-
-I think so.  Some of the trickier ones are ones that use the
-stringification C preprocessor operator.  I need to think more about
-these.
-
+> > @@ -153,16 +164,14 @@ static int __irq_build_affinity_masks(unsigned int startvec,
+> >                       }
+> >                       irq_spread_init_one(&masks[curvec].mask, nmsk,
+> >                                               cpus_per_vec);
+> > +                     if (++curvec >= last_affv)
+> > +                             curvec = firstvec;
 >
-> Anyway, how about:
-> ---
->  scripts/checkpatch.pl | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 1cdacb4fd207..8e6693ca772c 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -5901,6 +5901,15 @@ sub process {
->                              "__aligned(size) is preferred over __attribute__((aligned(size)))\n" . $herecurr);
->                 }
->
-> +# Check for __attribute__ section, prefer __section (without quotes)
-> +               if ($realfile !~ m@\binclude/uapi/@ &&
-> +                   $line =~ /\b__attribute__\s*\(\s*\(.*_*section_*\s*\(\s*("[^"]*")/) {
-> +                       my $old = substr($rawline, $-[1], $+[1] - $-[1]);
-> +                       my $new = substr($old, 1, -1);
-> +                       WARN("PREFER_SECTION",
-> +                            "__section($new) is preferred over __attribute__((section($old)))\n" . $herecurr);
-> +               }
-> +
+> I'm not so sure about wrapping the vector to share it across nodes. We
 
-I can't read Perl, but this looks pretty good.
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
--- 
+The wrapping is always there, not added by this patch.
+
+Most time it won't happen since we spread vectors on remaining
+(un-assigned)nodes.  And it only happens when there is remaining
+nodes not spread. We have to make sure all nodes are spread.
+
+And the similar policy is applied on the branch of 'numvecs <= nodes' too.
+
+> have enough vectors in this path to ensure each compute node can have
+> a unique one, and it's much cheaper to share these within nodes than
+> across them.
+
+The patch just moves the wrapping from loop outside into the loop, then
+all 'extra_vecs' can be covered because it is always < 'vecs_to_assign'.
+
+What matters is that the following check is removed:
+
+   if (done >= numvecs)
+                break;
+
+then all nodes can be covered.
+
 Thanks,
-~Nick Desaulniers
+Ming Lei
