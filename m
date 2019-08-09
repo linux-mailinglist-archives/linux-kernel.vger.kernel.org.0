@@ -2,219 +2,296 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CB3988232
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:18:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB1388223
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:18:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437296AbfHISSn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 14:18:43 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:49110 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfHISSm (ORCPT
+        id S2407282AbfHISSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 14:18:09 -0400
+Received: from mail-ot1-f71.google.com ([209.85.210.71]:42405 "EHLO
+        mail-ot1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbfHISSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 14:18:42 -0400
-Received: by mail-pf1-f201.google.com with SMTP id u21so61970815pfn.15
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 11:18:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=vCc93vaFXwMRZ3fSZ6FSA2GqVkDbS0j1jfgTmaZ8aBc=;
-        b=rP5d8uUtgyhIBDjs3pOQIuKA7CqPkZD87wr6U31d5zfiCN3+zpqMplqHMlAAaxJv5Y
-         mtLjOGMMCHDiDW4eRm5ZqTb8YJp+nUsl6X/dXmaQ6YKC99OzzbfXbosMyYikyKx+YxMK
-         WddcEWcZjamXOX0SzMHQLdh6BYQBctAuMgDwUuBx680TIuZbqFChFDUmuzsNIgJUX4V1
-         RnVJoLfKEjC50m/1xX+078kcG9btrDBeIVgagoOHFJ/JTOZdPj65IWvBOIniw94xrSA6
-         8LmhqGentKO3nOnsG63CBC0FeconSn075YP0D8gwkVY5TLhtdAab5zV1IozxKfU/txpL
-         c6Nw==
+        Fri, 9 Aug 2019 14:18:08 -0400
+Received: by mail-ot1-f71.google.com with SMTP id x18so70464956otp.9
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 11:18:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=vCc93vaFXwMRZ3fSZ6FSA2GqVkDbS0j1jfgTmaZ8aBc=;
-        b=jg/leGkmgh+jfhL1dAZ4tPzLtXxPne6hc8eZKFfqKRzkClmDf+VfjXH44C5PMhCqfE
-         PDOkKxQ2voMrc1GsXj3fOJKpQS3HuTNnqbc8Ney/682RctLkTaQDNAIL4qAjkzPwNZRm
-         CjzDlM4loa6C2M3ye8krDbxi8p/9XZJWOJ4raSL8nkkoD0h8PHi5l+B8rzJw7x57+sCR
-         rseot0dRkwVFkB5/L4zVZVCYcCPqI3RwpjTk6Y6KYX/gRTWh67ibXntVu6LQAMiMklSv
-         7aV855id8ppbB3DTgE/Gl4YDaUMw3H/wYi3FOHGcEyXNd+5Q/xYXHtDFY4+pPu/kf20B
-         LlSQ==
-X-Gm-Message-State: APjAAAWDstw0YJ+hQwzgdplBRVXAoXekagi10GpmwOPNPiuR+iAIWbIJ
-        1xSPZucGOsjE1DCgrrJXQFPyQdn04Oe7rWa+
-X-Google-Smtp-Source: APXvYqyg54n0lDkaOi6YoNCD+Q2chFnQmSkX+NV/dn8iBvhAgc9UN9MRDpw/360/Y3bVmdFJO7zx9N1Mqe5obIpC
-X-Received: by 2002:a63:e807:: with SMTP id s7mr18031604pgh.194.1565374721199;
- Fri, 09 Aug 2019 11:18:41 -0700 (PDT)
-Date:   Fri,  9 Aug 2019 11:17:51 -0700
-In-Reply-To: <20190809181751.219326-1-henryburns@google.com>
-Message-Id: <20190809181751.219326-2-henryburns@google.com>
-Mime-Version: 1.0
-References: <20190809181751.219326-1-henryburns@google.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH 2/2 v2] mm/zsmalloc.c: Fix race condition in zs_destroy_pool
-From:   Henry Burns <henryburns@google.com>
-To:     Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jonathan Adams <jwadams@google.com>,
-        HenryBurns <henrywolfeburns@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Henry Burns <henryburns@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=vVE+xjXEdzgKKGQoTLt6bL1E2quI1ALF9LR6mqQcMSE=;
+        b=O9K8LzcCRFzuN5fKMDraC4WzoA3A95giAZHMGN1UkCSty86PHH7y4aIU6yaFx7a+Gp
+         1X6V4X+M70Dq9g8ZXmTG+QqH/VAZeHFu7VuzxxU4MU8MuL1DpoyyZeT3H3QTQAuRJPyt
+         4tZjFUTqwYXKpjHX6inK8sfyZeWN/NWxk11aQ2XAg6a3rfBKNvM3RrJdoJiEcXcYY81s
+         +V2OFndGnIxd3HOFoa+eKPMJVXN+NmQ/zmoKe/hpt7xOap6maj29m/o5KmfxVWEOkc1v
+         vpSobW0kfF+l6V8fPbZ0T0Y/RpgOTe86cUojFR98Eg020f3x1alZqHsOnfGIoJcV+5Pg
+         gfCA==
+X-Gm-Message-State: APjAAAVgZC075RUoIlXe1mi0LDWd4Bua+hDxflGwvRX/1ncQJeCNCJlg
+        QGsjxVS+PMIb1ngV0gXpNYxD9Z87qMoebmcA4vw7B5+mlbCU
+X-Google-Smtp-Source: APXvYqz9uDoNMoSZHjuhNMMKIGhSOfyXV78O34EhAaVVAjdrfhVs48m+P/A4cB0WXYMseBBlXCLN0lTiLsDW5biw+isFex1E1gN3
+MIME-Version: 1.0
+X-Received: by 2002:a6b:730f:: with SMTP id e15mr21581931ioh.74.1565374686873;
+ Fri, 09 Aug 2019 11:18:06 -0700 (PDT)
+Date:   Fri, 09 Aug 2019 11:18:06 -0700
+In-Reply-To: <000000000000cce142058f5d6be6@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000026d72f058fb33242@google.com>
+Subject: Re: possible deadlock in usb_deregister_dev
+From:   syzbot <syzbot+a64a382964bf6c71a9c0@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        oneukum@suse.de, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In zs_destroy_pool() we call flush_work(&pool->free_work). However, we
-have no guarantee that migration isn't happening in the background
-at that time.
+syzbot has found a reproducer for the following crash on:
 
-Since migration can't directly free pages, it relies on free_work
-being scheduled to free the pages.  But there's nothing preventing an
-in-progress migrate from queuing the work *after*
-zs_unregister_migration() has called flush_work().  Which would mean
-pages still pointing at the inode when we free it.
+HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=15bf780e600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
+dashboard link: https://syzkaller.appspot.com/bug?extid=a64a382964bf6c71a9c0
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16787574600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136cc4d2600000
 
-Since we know at destroy time all objects should be free, no new
-migrations can come in (since zs_page_isolate() fails for fully-free
-zspages).  This means it is sufficient to track a "# isolated zspages"
-count by class, and have the destroy logic ensure all such pages have
-drained before proceeding.  Keeping that state under the class
-spinlock keeps the logic straightforward.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a64a382964bf6c71a9c0@syzkaller.appspotmail.com
 
-Fixes: 48b4800a1c6a ("zsmalloc: page migration support")
-Signed-off-by: Henry Burns <henryburns@google.com>
----
- Changelog since v1:
- - Changed the class level isolated count to a pool level isolated count
-   (of zspages). Also added a pool level flag for when destruction
-   starts and a memory barrier to ensure this flag has global
-   visibility.
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+iowarrior 1-1:0.236: IOWarrior product=0x1501, serial= interface=236 now  
+attached to iowarrior0
+usb 1-1: USB disconnect, device number 2
+======================================================
+WARNING: possible circular locking dependency detected
+5.3.0-rc2+ #25 Not tainted
+------------------------------------------------------
+kworker/0:1/12 is trying to acquire lock:
+00000000cd63e8f1 (minor_rwsem){++++}, at: usb_deregister_dev  
+drivers/usb/core/file.c:238 [inline]
+00000000cd63e8f1 (minor_rwsem){++++}, at: usb_deregister_dev+0x61/0x270  
+drivers/usb/core/file.c:230
 
- mm/zsmalloc.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 59 insertions(+), 2 deletions(-)
+but task is already holding lock:
+000000001d1989ef (iowarrior_open_disc_lock){+.+.}, at:  
+iowarrior_disconnect+0x45/0x2c0 drivers/usb/misc/iowarrior.c:867
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 5105b9b66653..08def3a0d200 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -54,6 +54,7 @@
- #include <linux/mount.h>
- #include <linux/pseudo_fs.h>
- #include <linux/migrate.h>
-+#include <linux/wait.h>
- #include <linux/pagemap.h>
- #include <linux/fs.h>
- 
-@@ -268,6 +269,10 @@ struct zs_pool {
- #ifdef CONFIG_COMPACTION
- 	struct inode *inode;
- 	struct work_struct free_work;
-+	/* A wait queue for when migration races with async_free_zspage() */
-+	struct wait_queue_head migration_wait;
-+	atomic_long_t isolated_pages;
-+	bool destroying;
- #endif
- };
- 
-@@ -1874,6 +1879,19 @@ static void putback_zspage_deferred(struct zs_pool *pool,
- 
- }
- 
-+static inline void zs_pool_dec_isolated(struct zs_pool *pool)
-+{
-+	VM_BUG_ON(atomic_long_read(&pool->isolated_pages) <= 0);
-+	atomic_long_dec(&pool->isolated_pages);
-+	/*
-+	 * There's no possibility of racing, since wait_for_isolated_drain()
-+	 * checks the isolated count under &class->lock after enqueuing
-+	 * on migration_wait.
-+	 */
-+	if (atomic_long_read(&pool->isolated_pages) == 0 && pool->destroying)
-+		wake_up_all(&pool->migration_wait);
-+}
-+
- static void replace_sub_page(struct size_class *class, struct zspage *zspage,
- 				struct page *newpage, struct page *oldpage)
- {
-@@ -1943,6 +1961,7 @@ static bool zs_page_isolate(struct page *page, isolate_mode_t mode)
- 	 */
- 	if (!list_empty(&zspage->list) && !is_zspage_isolated(zspage)) {
- 		get_zspage_mapping(zspage, &class_idx, &fullness);
-+		atomic_long_inc(&pool->isolated_pages);
- 		remove_zspage(class, zspage, fullness);
- 	}
- 
-@@ -2042,8 +2061,16 @@ static int zs_page_migrate(struct address_space *mapping, struct page *newpage,
- 	 * Page migration is done so let's putback isolated zspage to
- 	 * the list if @page is final isolated subpage in the zspage.
- 	 */
--	if (!is_zspage_isolated(zspage))
-+	if (!is_zspage_isolated(zspage)) {
-+		/*
-+		 * We cannot race with zs_destroy_pool() here because we wait
-+		 * for isolation to hit zero before we start destroying.
-+		 * Also, we ensure that everyone can see pool->destroying before
-+		 * we start waiting.
-+		 */
- 		putback_zspage_deferred(pool, class, zspage);
-+		zs_pool_dec_isolated(pool);
-+	}
- 
- 	reset_page(page);
- 	put_page(page);
-@@ -2094,8 +2121,8 @@ static void zs_page_putback(struct page *page)
- 		 * so let's defer.
- 		 */
- 		putback_zspage_deferred(pool, class, zspage);
-+		zs_pool_dec_isolated(pool);
- 	}
--
- 	spin_unlock(&class->lock);
- }
- 
-@@ -2118,8 +2145,36 @@ static int zs_register_migration(struct zs_pool *pool)
- 	return 0;
- }
- 
-+static bool pool_isolated_are_drained(struct zs_pool *pool)
-+{
-+	return atomic_long_read(&pool->isolated_pages) == 0;
-+}
-+
-+/* Function for resolving migration */
-+static void wait_for_isolated_drain(struct zs_pool *pool)
-+{
-+
-+	/*
-+	 * We're in the process of destroying the pool, so there are no
-+	 * active allocations. zs_page_isolate() fails for completely free
-+	 * zspages, so we need only wait for the zs_pool's isolated
-+	 * count to hit zero.
-+	 */
-+	wait_event(pool->migration_wait,
-+		   pool_isolated_are_drained(pool));
-+}
-+
- static void zs_unregister_migration(struct zs_pool *pool)
- {
-+	pool->destroying = true;
-+	/*
-+	 * We need a memory barrier here to ensure global visibility of
-+	 * pool->destroying. Thus pool->isolated pages will either be 0 in which
-+	 * case we don't care, or it will be > 0 and pool->destroying will
-+	 * ensure that we wake up once isolation hits 0.
-+	 */
-+	smp_mb();
-+	wait_for_isolated_drain(pool); /* This can block */
- 	flush_work(&pool->free_work);
- 	iput(pool->inode);
- }
-@@ -2357,6 +2412,8 @@ struct zs_pool *zs_create_pool(const char *name)
- 	if (!pool->name)
- 		goto err;
- 
-+	init_waitqueue_head(&pool->migration_wait);
-+
- 	if (create_cache(pool))
- 		goto err;
- 
--- 
-2.23.0.rc1.153.gdeed80330f-goog
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (iowarrior_open_disc_lock){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        iowarrior_open+0x8a/0x2a0 drivers/usb/misc/iowarrior.c:600
+        usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+        chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+        do_dentry_open+0x494/0x1120 fs/open.c:797
+        do_last fs/namei.c:3416 [inline]
+        path_openat+0x1430/0x3f50 fs/namei.c:3533
+        do_filp_open+0x1a1/0x280 fs/namei.c:3563
+        do_sys_open+0x3c0/0x580 fs/open.c:1089
+        do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #1 (iowarrior_mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        iowarrior_open+0x23/0x2a0 drivers/usb/misc/iowarrior.c:589
+        usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+        chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+        do_dentry_open+0x494/0x1120 fs/open.c:797
+        do_last fs/namei.c:3416 [inline]
+        path_openat+0x1430/0x3f50 fs/namei.c:3533
+        do_filp_open+0x1a1/0x280 fs/namei.c:3563
+        do_sys_open+0x3c0/0x580 fs/open.c:1089
+        do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (minor_rwsem){++++}:
+        check_prev_add kernel/locking/lockdep.c:2405 [inline]
+        check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+        validate_chain kernel/locking/lockdep.c:2897 [inline]
+        __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+        lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+        down_write+0x92/0x150 kernel/locking/rwsem.c:1500
+        usb_deregister_dev drivers/usb/core/file.c:238 [inline]
+        usb_deregister_dev+0x61/0x270 drivers/usb/core/file.c:230
+        iowarrior_disconnect+0xa8/0x2c0 drivers/usb/misc/iowarrior.c:873
+        usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
+        __device_release_driver drivers/base/dd.c:1120 [inline]
+        device_release_driver_internal+0x404/0x4c0 drivers/base/dd.c:1151
+        bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+        device_del+0x420/0xb10 drivers/base/core.c:2288
+        usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+        usb_disconnect+0x284/0x8d0 drivers/usb/core/hub.c:2199
+        hub_port_connect drivers/usb/core/hub.c:4949 [inline]
+        hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+        port_event drivers/usb/core/hub.c:5359 [inline]
+        hub_event+0x1454/0x3640 drivers/usb/core/hub.c:5441
+        process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+        worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+        kthread+0x318/0x420 kernel/kthread.c:255
+        ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+other info that might help us debug this:
+
+Chain exists of:
+   minor_rwsem --> iowarrior_mutex --> iowarrior_open_disc_lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(iowarrior_open_disc_lock);
+                                lock(iowarrior_mutex);
+                                lock(iowarrior_open_disc_lock);
+   lock(minor_rwsem);
+
+  *** DEADLOCK ***
+
+6 locks held by kworker/0:1/12:
+  #0: 0000000016a35280 ((wq_completion)usb_hub_wq){+.+.}, at:  
+__write_once_size include/linux/compiler.h:226 [inline]
+  #0: 0000000016a35280 ((wq_completion)usb_hub_wq){+.+.}, at:  
+arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+  #0: 0000000016a35280 ((wq_completion)usb_hub_wq){+.+.}, at: atomic64_set  
+include/asm-generic/atomic-instrumented.h:855 [inline]
+  #0: 0000000016a35280 ((wq_completion)usb_hub_wq){+.+.}, at:  
+atomic_long_set include/asm-generic/atomic-long.h:40 [inline]
+  #0: 0000000016a35280 ((wq_completion)usb_hub_wq){+.+.}, at: set_work_data  
+kernel/workqueue.c:620 [inline]
+  #0: 0000000016a35280 ((wq_completion)usb_hub_wq){+.+.}, at:  
+set_work_pool_and_clear_pending kernel/workqueue.c:647 [inline]
+  #0: 0000000016a35280 ((wq_completion)usb_hub_wq){+.+.}, at:  
+process_one_work+0x827/0x1530 kernel/workqueue.c:2240
+  #1: 0000000001908f5f ((work_completion)(&hub->events)){+.+.}, at:  
+process_one_work+0x85b/0x1530 kernel/workqueue.c:2244
+  #2: 00000000894e02c9 (&dev->mutex){....}, at: device_lock  
+include/linux/device.h:1220 [inline]
+  #2: 00000000894e02c9 (&dev->mutex){....}, at: hub_event+0x17c/0x3640  
+drivers/usb/core/hub.c:5387
+  #3: 00000000e2dd0256 (&dev->mutex){....}, at: device_lock  
+include/linux/device.h:1220 [inline]
+  #3: 00000000e2dd0256 (&dev->mutex){....}, at: usb_disconnect+0x91/0x8d0  
+drivers/usb/core/hub.c:2190
+  #4: 0000000021bbb80a (&dev->mutex){....}, at:  
+device_release_driver_internal+0x23/0x4c0 drivers/base/dd.c:1148
+  #5: 000000001d1989ef (iowarrior_open_disc_lock){+.+.}, at:  
+iowarrior_disconnect+0x45/0x2c0 drivers/usb/misc/iowarrior.c:867
+
+stack backtrace:
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.3.0-rc2+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  check_noncircular+0x345/0x3e0 kernel/locking/lockdep.c:1741
+  check_prev_add kernel/locking/lockdep.c:2405 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+  validate_chain kernel/locking/lockdep.c:2897 [inline]
+  __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+  down_write+0x92/0x150 kernel/locking/rwsem.c:1500
+  usb_deregister_dev drivers/usb/core/file.c:238 [inline]
+  usb_deregister_dev+0x61/0x270 drivers/usb/core/file.c:230
+  iowarrior_disconnect+0xa8/0x2c0 drivers/usb/misc/iowarrior.c:873
+  usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
+  __device_release_driver drivers/base/dd.c:1120 [inline]
+  device_release_driver_internal+0x404/0x4c0 drivers/base/dd.c:1151
+  bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+  device_del+0x420/0xb10 drivers/base/core.c:2288
+  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+  usb_disconnect+0x284/0x8d0 drivers/usb/core/hub.c:2199
+  hub_port_connect drivers/usb/core/hub.c:4949 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x1454/0x3640 drivers/usb/core/hub.c:5441
+  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x318/0x420 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+iowarrior 1-1:0.236: I/O-Warror #0 now disconnected
+usb 1-1: new low-speed USB device number 3 using dummy_hcd
+usb 1-1: config 0 has an invalid interface number: 236 but max is 0
+usb 1-1: config 0 has an invalid descriptor of length 0, skipping remainder  
+of the config
+usb 1-1: config 0 has no interface number 0
+usb 1-1: config 0 interface 236 altsetting 0 endpoint 0x81 is Bulk;  
+changing to Interrupt
+usb 1-1: New USB device found, idVendor=07c0, idProduct=1501,  
+bcdDevice=74.a0
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+iowarrior 1-1:0.236: IOWarrior product=0x1501, serial= interface=236 now  
+attached to iowarrior0
+usb 1-1: USB disconnect, device number 5
+iowarrior 1-1:0.236: I/O-Warror #0 now disconnected
+usb 1-1: new low-speed USB device number 6 using dummy_hcd
+usb 1-1: config 0 has an invalid interface number: 236 but max is 0
+usb 1-1: config 0 has an invalid descriptor of length 0, skipping remainder  
+of the config
+usb 1-1: config 0 has no interface number 0
+usb 1-1: config 0 interface 236 altsetting 0 endpoint 0x81 is Bulk;  
+changing to Interrupt
+usb 1-1: New USB device found, idVendor=07c0, idProduct=1501,  
+bcdDevice=74.a0
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+iowarrior 1-1:0.236: IOWarrior product=0x1501, serial= interface=236 now  
+attached to iowarrior0
+usb 1-1: USB disconnect, device number 7
+iowarrior 1-1:0.236: I/O-Warror #0 now disconnected
+usb 1-1: new low-speed USB device number 8 using dummy_hcd
+usb 1-1: config 0 has an invalid interface number: 236 but max is 0
+usb 1-1: config 0 has an invalid descriptor of length 0, skipping remainder  
+of the config
+usb 1-1: config 0 has no interface number 0
+usb 1-1: config 0 interface 236 altsetting 0 endpoint 0x81 is Bulk;  
+changing to Interrupt
+usb 1-1: New USB device found, idVendor=07c0, idProduct=1501,  
+bcdDevice=74.a0
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+iowarrior 1-1:0.236: IOWarrior product=0x1501, serial= interface=236 now  
+attached to iowarrior0
+usb 1-1: USB disconnect, device number 8
+iowarrior 1-1:0.236: I/O-Warror #0 now disconnected
+usb 1-1: new low-speed USB device number 9 using dummy_hcd
+usb 1-1: config 0 has an invalid interface number: 236 but max is 0
+usb 1-1: config 0 has an invalid descriptor of length 0, skipping remainder  
+of the config
+usb 1-1: config 0 has no interface number 0
+usb 1-1: config 0 interface 236 altsetting 0 endpoint 0x81 is Bulk;  
+changing to Interrupt
+usb 1-1: New USB device found, idVendor=07c0, idProduct=1501,  
+bcdDevice=74.a0
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+iowarrior 1-1:0.236: IOWarrior product=0x1501, serial= interface=236 now  
+attached to iowarrior0
+usb 1-1: USB disconnect, device number 9
+iowarrior 1-1:0.236: I/O-Warror #0 now disconnected
+usb 1-1: new low-speed USB device number 10 using dummy_hcd
+usb 1-1: config 0 has an invalid interface number: 236 but max is 0
+usb 1-1: config 0 has an invalid descriptor of length 0, skipping remainder  
+of the config
+usb 1-1: config 0 has no interface number 0
+usb 1-1: config 0 interface 236 altsetting 0 endpoint 0x81 is Bulk;  
+changing to Interrupt
+usb 1-1: New USB device found, idVendor=07c0, idProduct=1501,  
+bcdDevice=74.a0
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+iowarrior 1-1:0.236: IOWarrior product=0x1501, serial= interface=236 now  
+attached to iowarrior0
+usb 1-1: USB disconnect, device number 11
+iowarrior 1-1:0.236: I/O-Warror #0 now disconnected
 
