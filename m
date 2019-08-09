@@ -2,43 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F23F887E37
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 17:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B1C87E4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 17:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436755AbfHIPje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 11:39:34 -0400
-Received: from 8bytes.org ([81.169.241.247]:48598 "EHLO theia.8bytes.org"
+        id S2436762AbfHIPlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 11:41:46 -0400
+Received: from mga04.intel.com ([192.55.52.120]:57597 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436715AbfHIPje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 11:39:34 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id F27853D0; Fri,  9 Aug 2019 17:39:32 +0200 (CEST)
-Date:   Fri, 9 Aug 2019 17:39:31 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/amd: Override wrong IVRS IOAPIC on Raven Ridge
- systems
-Message-ID: <20190809153931.GG12930@8bytes.org>
-References: <20190808101707.16783-1-kai.heng.feng@canonical.com>
+        id S1726255AbfHIPlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 11:41:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 08:41:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,364,1559545200"; 
+   d="scan'208";a="193411041"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Aug 2019 08:41:45 -0700
+Date:   Fri, 9 Aug 2019 08:30:57 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arch/x86/kernel/cpu/umwait.c - remove unused variable
+Message-ID: <20190809153056.GB56628@romley-ivt3.sc.intel.com>
+References: <79734.1565272329@turing-police>
+ <alpine.DEB.2.21.1908082158580.2882@nanos.tec.linutronix.de>
+ <141835.1565295884@turing-police>
+ <alpine.DEB.2.21.1908082229010.2882@nanos.tec.linutronix.de>
+ <20190809004438.GA56628@romley-ivt3.sc.intel.com>
+ <alpine.DEB.2.21.1908091147290.21433@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190808101707.16783-1-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1908091147290.21433@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 06:17:07PM +0800, Kai-Heng Feng wrote:
-> Raven Ridge systems may have malfunction touchpad or hang at boot if
-> incorrect IVRS IOAPIC is provided by BIOS.
+On Fri, Aug 09, 2019 at 11:49:49AM +0200, Thomas Gleixner wrote:
+> On Thu, 8 Aug 2019, Fenghua Yu wrote:
+> > On Thu, Aug 08, 2019 at 10:32:38PM +0200, Thomas Gleixner wrote:
+> > > Valdis,
+> > > 
+> > > On Thu, 8 Aug 2019, Valdis Klētnieks wrote:
+> > > > On Thu, 08 Aug 2019 22:04:03 +0200, Thomas Gleixner said: It isn't 
+> > > > clear that whatever is doing the device_initcall()s will be able to 
+> > > > do any reasonable recovery if we return an error, so any error 
+> > > > recovery is going to have to happen before the function returns. It 
+> > > > might make sense to do an 'if (ret) return;' before going further in 
+> > > > the function, but given the comment a few lines further down about 
+> > > > ignoring errors, it was apparently considered more important to 
+> > > > struggle through and register stuff in sysfs even if umwait was 
+> > > > broken....
+> > > 
+> > > I missed that when going through it.
+> > > 
+> > > The right thing to do is to have a cpu_offline callback which clears 
+> > > the umwait MSR. That covers also the failure in the cpu hotplug setup. 
+> > > Then handling an error return makes sense and keeps everything in a 
+> > > workable shape.
+> > 
+> > When cpu is offline, the MSR won't be used. We don't need to clear it, right?
 > 
-> Users already found correct "ivrs_ioapic=" values, let's put them inside
-> kernel to workaround buggy BIOS.
+> Groan. If soemthing goes wrong when registering the hotplug callback, what
+> undoes the MSR setup which might have happened and what takes care of it on
+> cpus coming online later? Exactly nothing. Then you have a non-consistent
+> behaviour.
+> 
+> Make stuff symmmetric and correct and not optimized for the sunshine case.
 
-Will that still work when a fixed BIOS for these laptops is released?
+I see.
 
+Just want to make sure I understand it correctly:
 
-	Joerg
+sysfs_create_group() should not be called if cpuhp_setup_state() has
+ error.
+
+Otherwise, the sysadmin can change the MSR through the sysfs interface.
+After that, a CPU is online and its MSR is not updated because cpu_online
+is not installed. Then this online CPU has different MSR value from
+the other CPUs.
+
+Is that right?
+
+Thanks.
+
+-Fenghua
