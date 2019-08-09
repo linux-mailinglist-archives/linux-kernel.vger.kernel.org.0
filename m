@@ -2,142 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 499A0871AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 07:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51B78871B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 07:47:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405507AbfHIFpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 01:45:42 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46422 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728823AbfHIFpl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 01:45:41 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c3so22286380pfa.13;
-        Thu, 08 Aug 2019 22:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ue6XQOVELq822OL849VifImiATioxfu/TeuZwZ8ImaU=;
-        b=i5mJ24dj0cY9P0PFAkhFAQMwXDmNXe6yn9jSB1SKUxOhhdQ3sbdEyW7QKzLX9hW3ac
-         uhR18WP8/H3o/bCrn+HGoXCDhQxT/OiiznrZST3tAFkwO42W20XdVtXpNsFko8gr1SXL
-         kJcaT5XGeCAfWIyo0Q2BDs53mqBeITXLsrwCR+JUNWANQIiBFUlUcd4CFtarcfVge6dP
-         Ehb51ogx9/HXI8YgWci4vqJkb5Ad4Ub8IGNX2C3InfFG2kB2fazs0bkbOz8vHH+lRMtd
-         +72g7jWlqKUc10ovgls967zFaS8qm26eJvFH5Rsrg9nyYExzZgOSna60rBzOvD/FurO/
-         Df+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ue6XQOVELq822OL849VifImiATioxfu/TeuZwZ8ImaU=;
-        b=Xcmsy79jJNJvsUF8MYrfcZbo5JV20YFiU0m499QnS0BM/iqnGF0xW+2cLqhgKrxt0R
-         FUE8b4w5PtwYmNEO25cJckCETN6WZeH3FKbP4uCCXm8InkX+/QRTnBIJT9LAMagJRTIQ
-         4FYzRsEgrcX/ptN2nfcFHaKsP+2uxP2JqUqY+15AMLZltwNNKpIVCx7QVgczFzzDPKvs
-         Fc/+HZbhZhR6Xrg5ZIj84dyW+E0kDnku0W9YyPdCyFKxOyulICHJShzgCHo7AHZ4oLCm
-         Vofv/fe3vEH2Nx8L4OrwUwsSHTJP1gCo7Bgoio3viGTxzAm0Nei2gn3zTAJ3vl9PLmPF
-         fbTg==
-X-Gm-Message-State: APjAAAV0rYhFBcABmJFauPX9VpF0GNkL7tEEASukKDLx60ulWQKzfHNm
-        XmWV09Jc1Lw12pXVM6vSl8Gdmegb
-X-Google-Smtp-Source: APXvYqz6aMQmF1wFSgot6F6bpSHRmLbub+V9kgYra0iqiBf3fMNKa1WTCcIw4PNc5W1csX0RZlW3MA==
-X-Received: by 2002:a63:29c4:: with SMTP id p187mr16304648pgp.330.1565329541085;
-        Thu, 08 Aug 2019 22:45:41 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id c12sm1167614pfc.22.2019.08.08.22.45.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 08 Aug 2019 22:45:40 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH] KVM: LAPIC: Periodically revaluate appropriate lapic_timer_advance_ns
-Date:   Fri,  9 Aug 2019 13:45:31 +0800
-Message-Id: <1565329531-12327-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        id S2405607AbfHIFrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 01:47:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725912AbfHIFrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 01:47:16 -0400
+Received: from localhost (unknown [122.167.65.92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FFCB20C01;
+        Fri,  9 Aug 2019 05:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565329635;
+        bh=0NGH7pa4qGdi2942c1QYy0xh8Num+O/K8NEalY+oyGU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VWDkjNU0fHKREEctsjhTGG5vYGpFBmwBGgIRi6C5Qm9oTsvdakjZY6PAceWV6hCy1
+         Dd6GSPZoVIF5PFHFtKsno0L0SVfpWY32J5jE1/NbjYqJNVwHm8ADRzfAxlACBrECmt
+         GkWzMKQFOFxvkSGeoEyLjcvlrPk01QN5hxtuAAVk=
+Date:   Fri, 9 Aug 2019 11:16:02 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        broonie@kernel.org, bgoswami@codeaurora.org, plai@codeaurora.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        lgirdwood@gmail.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] soundwire: core: add device tree support for
+ slave devices
+Message-ID: <20190809054602.GK12733@vkoul-mobl.Dlink>
+References: <20190808144504.24823-1-srinivas.kandagatla@linaro.org>
+ <20190808144504.24823-3-srinivas.kandagatla@linaro.org>
+ <42ca4170-0fa0-6951-f568-89a05c095d5a@linux.intel.com>
+ <564f5fa4-59ec-b4e5-a7a5-29dee99039b3@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <564f5fa4-59ec-b4e5-a7a5-29dee99039b3@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On 08-08-19, 16:17, Srinivas Kandagatla wrote:
+> Thanks for taking time to review.
+> 
+> On 08/08/2019 16:00, Pierre-Louis Bossart wrote:
+> > 
+> > > @@ -35,6 +36,7 @@ static int sdw_slave_add(struct sdw_bus *bus,
+> > > ††††† slave->dev.release = sdw_slave_release;
+> > > ††††† slave->dev.bus = &sdw_bus_type;
+> > > +††† slave->dev.of_node = of_node_get(to_of_node(fwnode));
+> > 
+> > shouldn't this protected by
+> > #if IS_ENABLED(CONFIG_OF) ?
+> > 
+> These macros and functions have dummy entries, so it should not be an issue.
+> I did build soundwire with i386_defconfig with no issues.
 
-Even if for realtime CPUs, cache line bounces, frequency scaling, presence 
-of higher-priority RT tasks, etc can cause different response. These 
-interferences should be considered and periodically revaluate whether 
-or not the lapic_timer_advance_ns value is the best, do nothing if it is,
-otherwise recaluate again. 
+That means this function was compiled without errors, that is not strange nowadays
+given the ARM compiles ACPI and x86 OF, so check with OF being disable
+just to be safe :) I think dummy entries are helping
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krƒçm√°≈ô <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kvm/lapic.c | 16 +++++++++++++++-
- arch/x86/kvm/lapic.h |  1 +
- 2 files changed, 16 insertions(+), 1 deletion(-)
+> 
+> > > ††††† slave->bus = bus;
+> > > ††††† slave->status = SDW_SLAVE_UNATTACHED;
+> > > ††††† slave->dev_num = 0;
+> > > @@ -112,3 +114,48 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
+> > > † }
+> > > † #endif
+> > > +
+> > > +/*
+> > > + * sdw_of_find_slaves() - Find Slave devices in master device tree node
+> > > + * @bus: SDW bus instance
+> > > + *
+> > > + * Scans Master DT node for SDW child Slave devices and registers it.
+> > > + */
+> > > +int sdw_of_find_slaves(struct sdw_bus *bus)
+> > > +{
+> > > +††† struct device *dev = bus->dev;
+> > > +††† struct device_node *node;
+> > > +
+> > > +††† for_each_child_of_node(bus->dev->of_node, node) {
+> > > +††††††† struct sdw_slave_id id;
+> > > +††††††† const char *compat = NULL;
+> > > +††††††† int unique_id, ret;
+> > > +††††††† int ver, mfg_id, part_id, class_id;
+> > > +
+> > > +††††††† compat = of_get_property(node, "compatible", NULL);
+> > > +††††††† if (!compat)
+> > > +††††††††††† continue;
+> > > +
+> > > +††††††† ret = sscanf(compat, "sdw%x,%x,%x,%x",
+> > > +†††††††††††††††† &ver, &mfg_id, &part_id, &class_id);
+> > > +††††††† if (ret != 4) {
+> > > +††††††††††† dev_err(dev, "Manf ID & Product code not found %s\n",
+> > > +††††††††††††††† compat);
+> > > +††††††††††† continue;
+> > > +††††††† }
+> > > +
+> > > +††††††† ret = of_property_read_u32(node, "sdw-instance-id", &unique_id);
+> > > +††††††† if (ret) {
+> > > +††††††††††† dev_err(dev, "Instance id not found:%d\n", ret);
+> > > +††††††††††† continue;
+> > 
+> > I am confused here.
+> > If you have two identical devices on the same link, isn't this property
+> > required and that should be a real error instead of a continue?
+> 
+> Yes, I agree it will be mandatory in such cases.
+> 
+> Am okay either way, I dont mind changing it to returning EINVAL in all the
+> cases.
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index df5cd07..8b62008 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -69,6 +69,7 @@
- #define LAPIC_TIMER_ADVANCE_ADJUST_INIT 1000
- /* step-by-step approximation to mitigate fluctuation */
- #define LAPIC_TIMER_ADVANCE_ADJUST_STEP 8
-+#define LAPIC_TIMER_ADVANCE_RECALC_PERIOD (600 * HZ)
- 
- static inline int apic_test_vector(int vec, void *bitmap)
- {
-@@ -1484,6 +1485,17 @@ static inline void adjust_lapic_timer_advance(struct kvm_vcpu *vcpu,
- 	u32 timer_advance_ns = apic->lapic_timer.timer_advance_ns;
- 	u64 ns;
- 
-+	/* periodic revaluate */
-+	if (unlikely(apic->lapic_timer.timer_advance_adjust_done)) {
-+		apic->lapic_timer.recalc_timer_advance_ns = jiffies +
-+			LAPIC_TIMER_ADVANCE_RECALC_PERIOD;
-+		if (abs(advance_expire_delta) > LAPIC_TIMER_ADVANCE_ADJUST_DONE) {
-+			timer_advance_ns = LAPIC_TIMER_ADVANCE_ADJUST_INIT;
-+			apic->lapic_timer.timer_advance_adjust_done = false;
-+		} else
-+			return;
-+	}
-+
- 	/* too early */
- 	if (advance_expire_delta < 0) {
- 		ns = -advance_expire_delta * 1000000ULL;
-@@ -1523,7 +1535,8 @@ static void __kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
- 	if (guest_tsc < tsc_deadline)
- 		__wait_lapic_expire(vcpu, tsc_deadline - guest_tsc);
- 
--	if (unlikely(!apic->lapic_timer.timer_advance_adjust_done))
-+	if (unlikely(!apic->lapic_timer.timer_advance_adjust_done) ||
-+		time_before(apic->lapic_timer.recalc_timer_advance_ns, jiffies))
- 		adjust_lapic_timer_advance(vcpu, apic->lapic_timer.advance_expire_delta);
- }
- 
-@@ -2301,6 +2314,7 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
- 	if (timer_advance_ns == -1) {
- 		apic->lapic_timer.timer_advance_ns = LAPIC_TIMER_ADVANCE_ADJUST_INIT;
- 		apic->lapic_timer.timer_advance_adjust_done = false;
-+		apic->lapic_timer.recalc_timer_advance_ns = jiffies;
- 	} else {
- 		apic->lapic_timer.timer_advance_ns = timer_advance_ns;
- 		apic->lapic_timer.timer_advance_adjust_done = true;
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 50053d2..31ced36 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -31,6 +31,7 @@ struct kvm_timer {
- 	u32 timer_mode_mask;
- 	u64 tscdeadline;
- 	u64 expired_tscdeadline;
-+	unsigned long recalc_timer_advance_ns;
- 	u32 timer_advance_ns;
- 	s64 advance_expire_delta;
- 	atomic_t pending;			/* accumulated triggered timers */
+Do we want to abort? We are in loop scanning for devices so makes sense
+if we do not do that and continue to check next one..
+
 -- 
-2.7.4
-
+~Vinod
