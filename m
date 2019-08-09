@@ -2,131 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 807BF8833D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 21:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2B8188342
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 21:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbfHIT0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 15:26:12 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:55428 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726022AbfHIT0L (ORCPT
+        id S1726463AbfHIT3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 15:29:17 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50594 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfHIT3Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 15:26:11 -0400
-Received: (qmail 5219 invoked by uid 2102); 9 Aug 2019 15:26:10 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 9 Aug 2019 15:26:10 -0400
-Date:   Fri, 9 Aug 2019 15:26:10 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     syzbot <syzbot+22ae4e3b9fcc8a5c153a@syzkaller.appspotmail.com>
-cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
-        <gustavo@embeddedor.com>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: KASAN: use-after-free Read in usb_kill_urb
-In-Reply-To: <000000000000e3e6d7058fb2c624@google.com>
-Message-ID: <Pine.LNX.4.44L0.1908091524250.1630-100000@iolanthe.rowland.org>
+        Fri, 9 Aug 2019 15:29:16 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x79JIbuB170462;
+        Fri, 9 Aug 2019 19:29:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2019-08-05; bh=qy8Hj53Xb1Dfh7O7VOv0dgBCkLnskXSxJx2txNy1KfQ=;
+ b=JsGevr6FC4QjGUTTA76pyDACP1sX0fQfr1zjm+IiO4tI8cyPz4AZL9FGqG1etgGUSFTW
+ 9ET5b/96hdUEW93BGbHXIj4K0KVSkOQRCB504uQs5z561siCV8YFTvUuRzrqVrGaJfE9
+ SjtmOpFjHx92OrOpuh3DzCgXT1uY5EqZgAFgYXd4xOJPp3XNa2ohw3MM7HbHbjldNNKn
+ +Cr3e1KGqoKwwOsxPqcC2LW2nVdRt4pXg9Qz/izJTw4rpc++OJlb+KlIPDrv6AH/lDX5
+ YZ+zFQJTOy5MBwdstqol5Z0UzxYnmM8xStC2cQZgWLusbf6Fw7J6ASyutkxmyswfKgLO fQ== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2018-07-02; bh=qy8Hj53Xb1Dfh7O7VOv0dgBCkLnskXSxJx2txNy1KfQ=;
+ b=Cai3YE3sSvSOhoAV1ti3U/JkV2Pvc3SG1ck6OKO8MbRz03fXi7rAVuCxR0g8MclYKG4L
+ 46nw3TEBf84Wn42wyt9xQVP9xtkVPbvnF3O7xJVwDYY0MxQ301ZNbJUfChzmUwZ+0xOn
+ mubNAnkH0rlllZB/gC70h/dDJGptlSvdoK1YTtGBa1L1ffCju5nSVMg87YuTHJPZ+YWx
+ XbixtWILHT/n8pQqYJi5XCLZU8e68VoFybRwPzfmVxYb3SoJPLRou1NVJ0T+xupOaQUz
+ pNsA7Gxk0hQ2Z1vQuIPLt/adlt6hfDg4h/E2jGEAoQMshpCnbQHbXTBRUhVM20F5x4wV 7Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2u8hgp9pwf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 09 Aug 2019 19:29:06 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x79JIwjH035307;
+        Fri, 9 Aug 2019 19:29:06 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2u8x1h34ws-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 09 Aug 2019 19:29:05 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x79JT3Gr017790;
+        Fri, 9 Aug 2019 19:29:04 GMT
+Received: from localhost.localdomain (/73.60.114.248)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 09 Aug 2019 12:29:03 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] padata: always acquire cpu_hotplug_lock before pinst->lock
+Date:   Fri,  9 Aug 2019 15:28:56 -0400
+Message-Id: <20190809192857.26585-1-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9344 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908090190
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9344 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908090190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Aug 2019, syzbot wrote:
+On a 5.2 kernel, lockdep complains when offlining a CPU and writing to a
+parallel_cpumask sysfs file.
 
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1799392c600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=22ae4e3b9fcc8a5c153a
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1134c802600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13278c4a600000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+22ae4e3b9fcc8a5c153a@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in atomic_read  
-> include/asm-generic/atomic-instrumented.h:26 [inline]
-> BUG: KASAN: use-after-free in usb_kill_urb drivers/usb/core/urb.c:695  
-> [inline]
-> BUG: KASAN: use-after-free in usb_kill_urb+0x24b/0x2c0  
-> drivers/usb/core/urb.c:687
-> Read of size 4 at addr ffff8881d635b110 by task syz-executor672/1999
-> 
-> CPU: 1 PID: 1999 Comm: syz-executor672 Not tainted 5.3.0-rc2+ #25
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xca/0x13e lib/dump_stack.c:113
->   print_address_description+0x6a/0x32c mm/kasan/report.c:351
->   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
->   kasan_report+0xe/0x12 mm/kasan/common.c:612
->   check_memory_region_inline mm/kasan/generic.c:185 [inline]
->   check_memory_region+0x128/0x190 mm/kasan/generic.c:192
->   atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
->   usb_kill_urb drivers/usb/core/urb.c:695 [inline]
->   usb_kill_urb+0x24b/0x2c0 drivers/usb/core/urb.c:687
->   ld_usb_abort_transfers+0xb7/0x1d0 drivers/usb/misc/ldusb.c:196
->   ld_usb_release+0x19f/0x400 drivers/usb/misc/ldusb.c:406
+  echo 0 > /sys/devices/system/cpu/cpu1/online
+  echo ff > /sys/kernel/pcrypt/pencrypt/parallel_cpumask
 
-Since this also involves ldusb.c, maybe it will be fixed by the same 
-patch as the other bug.
+  ======================================================
+  WARNING: possible circular locking dependency detected
+  5.2.0-padata-base+ #19 Not tainted
+  ------------------------------------------------------
+  cpuhp/1/13 is trying to acquire lock:
+  ...  (&pinst->lock){+.+.}, at: padata_cpu_prep_down+0x37/0x70
 
-Alan Stern
+  but task is already holding lock:
+  ...  (cpuhp_state-down){+.+.}, at: cpuhp_thread_fun+0x34/0x240
 
+  which lock already depends on the new lock.
 
-#syz test: https://github.com/google/kasan.git e96407b4
+padata doesn't take cpu_hotplug_lock and pinst->lock in a consistent
+order.  Which should be first?  CPU hotplug calls into padata with
+cpu_hotplug_lock already held, so it should have priority.
 
-Index: usb-devel/drivers/usb/core/file.c
-===================================================================
---- usb-devel.orig/drivers/usb/core/file.c
-+++ usb-devel/drivers/usb/core/file.c
-@@ -193,9 +193,10 @@ int usb_register_dev(struct usb_interfac
- 		intf->minor = minor;
- 		break;
- 	}
--	up_write(&minor_rwsem);
--	if (intf->minor < 0)
-+	if (intf->minor < 0) {
-+		up_write(&minor_rwsem);
- 		return -EXFULL;
-+	}
+Remove the cpu_hotplug_lock acquisition from __padata_stop and hoist it
+up to padata_stop, before pd->lock is taken.  That fixes a
+recursive acquisition of cpu_hotplug_lock in padata_remove_cpu at the
+same time:
+
+  padata_remove_cpu
+    mutex_lock(&pinst->lock)
+    get_online_cpus()
+    __padata_remove_cpu
+      __padata_stop
+        get_online_cpus()
+
+The rest is just switching the order where the two locks are taken
+together.
+
+Fixes: 6751fb3c0e0c ("padata: Use get_online_cpus/put_online_cpus")
+Fixes: 65ff577e6b6e ("padata: Rearrange set_cpumask functions")
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Hello, these two patches are based on all padata fixes now in cryptodev-2.6.
+
+ kernel/padata.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/padata.c b/kernel/padata.c
+index b60cc3dcee58..d056276a96ce 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -487,9 +487,7 @@ static void __padata_stop(struct padata_instance *pinst)
  
- 	/* create a usb class device for this usb interface */
- 	snprintf(name, sizeof(name), class_driver->name, minor - minor_base);
-@@ -203,12 +204,11 @@ int usb_register_dev(struct usb_interfac
- 				      MKDEV(USB_MAJOR, minor), class_driver,
- 				      "%s", kbasename(name));
- 	if (IS_ERR(intf->usb_dev)) {
--		down_write(&minor_rwsem);
- 		usb_minors[minor] = NULL;
- 		intf->minor = -1;
--		up_write(&minor_rwsem);
- 		retval = PTR_ERR(intf->usb_dev);
- 	}
-+	up_write(&minor_rwsem);
- 	return retval;
+ 	synchronize_rcu();
+ 
+-	get_online_cpus();
+ 	padata_flush_queues(pinst->pd);
+-	put_online_cpus();
  }
- EXPORT_SYMBOL_GPL(usb_register_dev);
-@@ -234,12 +234,12 @@ void usb_deregister_dev(struct usb_inter
- 		return;
  
- 	dev_dbg(&intf->dev, "removing %d minor\n", intf->minor);
-+	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
+ /* Replace the internal control structure with a new one. */
+@@ -614,8 +612,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
+ 	struct cpumask *serial_mask, *parallel_mask;
+ 	int err = -EINVAL;
  
- 	down_write(&minor_rwsem);
- 	usb_minors[intf->minor] = NULL;
- 	up_write(&minor_rwsem);
+-	mutex_lock(&pinst->lock);
+ 	get_online_cpus();
++	mutex_lock(&pinst->lock);
  
--	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
- 	intf->usb_dev = NULL;
- 	intf->minor = -1;
- 	destroy_usb_class();
+ 	switch (cpumask_type) {
+ 	case PADATA_CPU_PARALLEL:
+@@ -633,8 +631,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
+ 	err =  __padata_set_cpumasks(pinst, parallel_mask, serial_mask);
+ 
+ out:
+-	put_online_cpus();
+ 	mutex_unlock(&pinst->lock);
++	put_online_cpus();
+ 
+ 	return err;
+ }
+@@ -669,9 +667,11 @@ EXPORT_SYMBOL(padata_start);
+  */
+ void padata_stop(struct padata_instance *pinst)
+ {
++	get_online_cpus();
+ 	mutex_lock(&pinst->lock);
+ 	__padata_stop(pinst);
+ 	mutex_unlock(&pinst->lock);
++	put_online_cpus();
+ }
+ EXPORT_SYMBOL(padata_stop);
+ 
+@@ -739,18 +739,18 @@ int padata_remove_cpu(struct padata_instance *pinst, int cpu, int mask)
+ 	if (!(mask & (PADATA_CPU_SERIAL | PADATA_CPU_PARALLEL)))
+ 		return -EINVAL;
+ 
++	get_online_cpus();
+ 	mutex_lock(&pinst->lock);
+ 
+-	get_online_cpus();
+ 	if (mask & PADATA_CPU_SERIAL)
+ 		cpumask_clear_cpu(cpu, pinst->cpumask.cbcpu);
+ 	if (mask & PADATA_CPU_PARALLEL)
+ 		cpumask_clear_cpu(cpu, pinst->cpumask.pcpu);
+ 
+ 	err = __padata_remove_cpu(pinst, cpu);
+-	put_online_cpus();
+ 
+ 	mutex_unlock(&pinst->lock);
++	put_online_cpus();
+ 
+ 	return err;
+ }
+-- 
+2.22.0
 
