@@ -2,97 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D844880B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 206E4880B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:04:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436874AbfHIRBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 13:01:50 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39274 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436813AbfHIRBt (ORCPT
+        id S2437121AbfHIREs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 13:04:48 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34072 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437086AbfHIREs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 13:01:49 -0400
-Received: by mail-pl1-f194.google.com with SMTP id b7so45255240pls.6
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 10:01:49 -0700 (PDT)
+        Fri, 9 Aug 2019 13:04:48 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s49so60860079edb.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 10:04:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mQxrbMZs/P0o3fvXA6rWNom+DiEV73SK0CyreYYoeco=;
-        b=g6XhQsxjBSHr7B3N+XAUtFobb0a6Qhe5NzHTss0Z3N6hg2Lj+w3Fc0+mmNK2ddfzvi
-         ifdSm4AhQex1l9YpBOIBpix6YdbZOV3YEZwpEtlX6mo9FqK78njXXUYna5ZR0htvQx/y
-         UKMsMYhVHHTqr8vrEKRG+NgGoxa4/GQCEA7LWdQniWGLP5Vat73a5CUg/j4noYI+DBHB
-         w5ozBbNcUGYPs9kTfnRkyzATzV3yR/z7w6sn7p8gS61o5vb4HmQL6NB2JOd2qN8egQsq
-         dTFxGmIo15mJ9xI0fyMSsjwVonsgWtbdqRBtGdBK2OKm4wl4HIq5vemoAlCnrSzrzVXR
-         RrcQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SVm+IxX6yGNetZ1noaOGvk3cck8u8/5E12taR+hrzuY=;
+        b=eVFI3JOH5DluCznSfwkv+tvmdDi7A08we5AJVmkQ5ei6VmnaURk3d65Wft9KmpteKx
+         TcORgXt18VKv1O0PIZmsknj/A16wO3RINuCPiqUeKYBGi2ynlI5/wsiySsjMfnwtj4KI
+         HfwO/tIsTVZwDvjVfpHj97G0WB76mlWM/DGFM9jjak2x0l0TPjDyHXnS6n9UB0E1kHvk
+         Cn+OUDO7/XsyxQ0ChaoVGrkpjF3aAMuQ48RbRW86R5W2qpcZIhvno5FOKuor7XK2l8n+
+         CdHtml7t3Xw+dOTWEF8tSMovQmD+0wsA/nwjqLecI1dKB0/M1UTMFEP4ih2g/jXpSm7g
+         0+HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mQxrbMZs/P0o3fvXA6rWNom+DiEV73SK0CyreYYoeco=;
-        b=HGar83o745iLNd/mhyas3Jg016dMb6AbYcm05zf8vy/Y3ZJzTvmW5c2fQIOdkPx8x+
-         JQdfTmnCGZniwVNtxpbPyP+NYpZYokYL9oxX4DFqZdL0Iyhtmxr8gMd5LDfDn7ynCD2k
-         hKMWZlw4Gfjj80jBWOfXuEuOcvji+j3ziMFjnrARnl/CvmgNbc9QC0/F/aYQ+FGbsVIb
-         sk/u7gjdHD0t43SZiB5A1RTxWnx/KhXIoqU8f83W2AJpYEbMc8Y4jZWubnn1IoZnAwe5
-         LAALx3xoI44SDN6F25z3x1rHDTugE5RmHJuPOxmLYi5KZecSQQbZPCjq5B8JDmb7ig//
-         GpIw==
-X-Gm-Message-State: APjAAAUn3FgD4fmpptvTeM3mLXwCmtfG3biW6AEkkUOimY8gB5mUnSgW
-        Rz3vTkzHOZ4XJWFFkPpAjRXbnA==
-X-Google-Smtp-Source: APXvYqz/+EaQnfQKxiBOqQ5ZQQWWUCD2VOGKCRvqtpriP1SeTj/ziKt4NAn1mwADltF9GXsvm1S38A==
-X-Received: by 2002:a17:902:e613:: with SMTP id cm19mr18634717plb.299.1565370108924;
-        Fri, 09 Aug 2019 10:01:48 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 4sm111526529pfc.92.2019.08.09.10.01.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 10:01:48 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 10:03:22 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] regulator: qcom-rpmh: Fix pmic5_bob voltage count
-Message-ID: <20190809170322.GO26807@tuxbook-pro>
-References: <20190809073616.1235-1-vkoul@kernel.org>
- <20190809073616.1235-3-vkoul@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SVm+IxX6yGNetZ1noaOGvk3cck8u8/5E12taR+hrzuY=;
+        b=C/xKWmscVq8a8GsDs9TjKZg1u35ZeMS1bJ+sYFK0xgUudRug18uRjabZsFH96i4buZ
+         ZUBQ7hRQo/fi7cDXUGAIi4egnAnmWtEXltl2I2dQxM7fX5Qunv49T1I/mGGqV3FujVYU
+         QKFUCQOCjiWDhT4NczLvRPJJ+D19odEzJNMpTcMrSz6H0Lj30+DKe77G5kAyBtvMuAAo
+         PCMnXl9VV7JAq/foUiccel1wr11kB94U1KIbMigQPAfX8R+yIdlY7eSKEDGEiCIg17E7
+         gZA3flC04zZd0//xGNWqHWfGXmoeBJ1eMRVZWt8/+23CcWvNd8FFEvEbWeO2KQUkzXOM
+         ZLCA==
+X-Gm-Message-State: APjAAAUrwFtbXHksy5xJ5J7z9kmwRX2+UYuOFlUnOhiv6KFQjpTSJXRX
+        ciEK5w5ILCx1qp4DZaym3OUmxomt393PRC2yqKo=
+X-Google-Smtp-Source: APXvYqwyAO3PHh8CsDP/fgKOS5XeSiKM21hhrMAiXJHObVwafrosM1WwbUVs2nV7MshcFxRnNZXx7jRoEr2WYPYpVHs=
+X-Received: by 2002:aa7:ca54:: with SMTP id j20mr23149212edt.50.1565370286475;
+ Fri, 09 Aug 2019 10:04:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809073616.1235-3-vkoul@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190809071051.17387-1-hslester96@gmail.com> <e10b37c6-25fa-e584-b943-07aa32725198@arm.com>
+In-Reply-To: <e10b37c6-25fa-e584-b943-07aa32725198@arm.com>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Sat, 10 Aug 2019 01:04:35 +0800
+Message-ID: <CANhBUQ1LaEKDBrUWZZ_+SUWDTx9u6bTi0vaK-C4aLMFN3dUD=Q@mail.gmail.com>
+Subject: Re: [PATCH v4 6/8] sched: Replace strncmp with str_has_prefix
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 09 Aug 00:36 PDT 2019, Vinod Koul wrote:
+On Fri, Aug 9, 2019 at 7:31 PM Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+>
+> On 09/08/2019 08:10, Chuhong Yuan wrote:
+> > strncmp(str, const, len) is error-prone because len
+> > is easy to have typo.
+> > The example is the hard-coded len has counting error
+> > or sizeof(const) forgets - 1.
+> > So we prefer using newly introduced str_has_prefix()
+> > to substitute such strncmp to make code better.
+> >
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+>
+> I tried to have a look at the series as a whole but it's not properly
+> threaded (or at least doesn't appear as such on lore), which makes it
+> unnecessarily annoying to review.
+>
+> Please make sure to use git-send-email, which should properly thread all
+> patches (IOW make them in-reply-to the cover letter).
+>
 
-> pmic5_bob voltages count is 136 [0,135] so update it
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+I have used git-send-email to send the series with a cover letter.
+The cover letter is here:
+https://lkml.org/lkml/2019/8/9/108
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Indeed I find the series are not in the same thread, I am not sure
+what is wrong with them.
 
-> ---
->  drivers/regulator/qcom-rpmh-regulator.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
-> index 0ef2716da3bd..391ed844a251 100644
-> --- a/drivers/regulator/qcom-rpmh-regulator.c
-> +++ b/drivers/regulator/qcom-rpmh-regulator.c
-> @@ -698,7 +698,7 @@ static const struct rpmh_vreg_hw_data pmic5_bob = {
->  	.regulator_type = VRM,
->  	.ops = &rpmh_regulator_vrm_bypass_ops,
->  	.voltage_range = REGULATOR_LINEAR_RANGE(300000, 0, 135, 32000),
-> -	.n_voltages = 135,
-> +	.n_voltages = 136,
->  	.pmic_mode_map = pmic_mode_map_pmic4_bob,
->  	.of_map_mode = rpmh_regulator_pmic4_bob_of_map_mode,
->  };
-> -- 
-> 2.20.1
-> 
+>
+> Other than that, I stared at it and it seems fine. It's not that helpful
+> here since I doubt any of these prefixes will change in the near feature,
+> but hey, why not.
+>
+> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+>
+> > ---
+> > Changes in v4:
+> >   - Eliminate assignments in if conditions.
+> >
+> >  kernel/sched/debug.c     |  6 ++++--
+> >  kernel/sched/isolation.c | 11 +++++++----
+> >  2 files changed, 11 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+> > index f7e4579e746c..a03900523e5d 100644
+> > --- a/kernel/sched/debug.c
+> > +++ b/kernel/sched/debug.c
+> > @@ -102,10 +102,12 @@ static int sched_feat_set(char *cmp)
+> >  {
+> >       int i;
+> >       int neg = 0;
+> > +     size_t len;
+> >
+> > -     if (strncmp(cmp, "NO_", 3) == 0) {
+> > +     len = str_has_prefix(cmp, "NO_");
+> > +     if (len) {
+> >               neg = 1;
+> > -             cmp += 3;
+> > +             cmp += len;
+> >       }
+> >
+> >       i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
+> > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> > index ccb28085b114..ea2ead4b1906 100644
+> > --- a/kernel/sched/isolation.c
+> > +++ b/kernel/sched/isolation.c
+> > @@ -141,16 +141,19 @@ __setup("nohz_full=", housekeeping_nohz_full_setup);
+> >  static int __init housekeeping_isolcpus_setup(char *str)
+> >  {
+> >       unsigned int flags = 0;
+> > +     size_t len;
+> >
+> >       while (isalpha(*str)) {
+> > -             if (!strncmp(str, "nohz,", 5)) {
+> > -                     str += 5;
+> > +             len = str_has_prefix(str, "nohz,");
+> > +             if (len) {
+> > +                     str += len;
+> >                       flags |= HK_FLAG_TICK;
+> >                       continue;
+> >               }
+> >
+> > -             if (!strncmp(str, "domain,", 7)) {
+> > -                     str += 7;
+> > +             len = str_has_prefix(str, "domain,");
+> > +             if (len) {
+> > +                     str += len;
+> >                       flags |= HK_FLAG_DOMAIN;
+> >                       continue;
+> >               }
+> >
