@@ -2,78 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6521B8758C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04FE987596
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406146AbfHIJSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 05:18:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406007AbfHIJSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:18:09 -0400
+        id S2406168AbfHIJSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 05:18:21 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:42639 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2406007AbfHIJSU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 05:18:20 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 734D92205E;
+        Fri,  9 Aug 2019 05:18:19 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Fri, 09 Aug 2019 05:18:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=7mMXW9cnAZ1j+T1wlyyUtiNi5ou
+        7J3bcd1b/yM9O7ds=; b=nSbxfpektxuFALpWBYSRtTDj1pyWsalG65H7JS1zRYh
+        r0HUvUkUkzryzlpbC8XS9M2ayFF48sJ4UIHasAprkC8V+FzwXZIrPZ7I2D8sCZkE
+        MYp8yy88eEDKdWwqRW+YpJQNuIrQXmKXwsdHZLbWojo9JJShLNY0+Vnjv1FwyN0H
+        QEDLHwHqgFG+GAR1qym6vWAcB/bJAAFtNtE2StQJ39PyhBL1eDIkXAaeGJJJBpHJ
+        Ts/rOcxzMifIF6W4Vs5TVQcD70K3hw9VDKr5bxCwAC8PA5yOKKxF0J4rXCuaqN09
+        wRqIr1FSv2pe+KX2W8BVGufsr8i6vOBjEub//ryjorw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=7mMXW9
+        cnAZ1j+T1wlyyUtiNi5ou7J3bcd1b/yM9O7ds=; b=lK5KXLCVY8IcTt7jNKmGnj
+        ilB2CIBhwQp7lzj+8rR3MODedC0mUcD2UDNyidI+pJboepM7Br8bHfvVtPrAW+g8
+        NvUK6kYygyJpulyDR9ZmocKXIZxL9AYxqVze4L5/nXyMd5hG4YjX6W6VmICB6ILO
+        KUxfwxs1z3WLg8j+GRyaxSjpmmcFIwKjphcn0KWrladq2wg08HefHJU5vjR3eJZl
+        r5nogb8uGfWdOJeHZIN0mGfpMKveCkiyhuzBVef4QGr5kHqrRbOHtN/UxqH29Ctb
+        UGAzOAzsYerRkArFODgsQ6VIbW6xB9r1M9tuyC50OiXSNZb5RVfbINyYw869iLUw
+        ==
+X-ME-Sender: <xms:WjpNXd9ly854zdpEVvHwLSS9Qeba0OWU5naGVlYUCxmhEMTEo90nfw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddruddujedgudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
+    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
+    vehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:WjpNXRLeGzF8b-07DVGTMuSriOq1RBBpOuRcLD--SRuslAq_YQjDbg>
+    <xmx:WjpNXcG-JNvnLKbRe0gi3_-1KrSz290QG9wRQjh3h7Gfq4bfcU3p-w>
+    <xmx:WjpNXVwRnb0sDTBTxW5KGV_DWR_y--B5FII6Mr4gZaImdYoeI0hsgQ>
+    <xmx:WzpNXYLVlMdHOeQWzElgwBvuGzqK_kFTZ0vohSmwFHz4LWysY-jm1w>
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04FA52184E;
-        Fri,  9 Aug 2019 09:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565342288;
-        bh=IEpqj6xkaOVgv1+xNDozKfujFRajkj+vMmI3IFXddpQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eKQqEcEL2wg1EKmiHYqkH8EVLnXEeUi1aoKY6BLfWyFD8cvyCv2KUmCMkwZBs4tWc
-         HJyiNFaApwuUyPkRuOnuRYKLZlCB7NCdkZLI2pF35KNoRNM3ELh6mSwdRVLovly/VE
-         ZC3CCK++s8Hbrsws8Ryzo8+jQyhz35wYpoL9DHtE=
-Date:   Fri, 9 Aug 2019 10:42:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 5.2 00/56] 5.2.8-stable review
-Message-ID: <20190809084204.GA4014@kroah.com>
-References: <20190808190452.867062037@linuxfoundation.org>
- <CA+G9fYuAYB11dZefGa7bY27Dz3GrKZWQurLaCwOehx1mLDWTOA@mail.gmail.com>
+        by mail.messagingengine.com (Postfix) with ESMTPA id 43A408005A;
+        Fri,  9 Aug 2019 05:18:18 -0400 (EDT)
+Date:   Fri, 9 Aug 2019 10:53:26 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Benjamin Poirier <bpoirier@suse.com>
+Subject: Re: linux-next: manual merge of the usb tree with the net-next tree
+Message-ID: <20190809085326.GA21320@kroah.com>
+References: <20190809151940.06c2e7a5@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYuAYB11dZefGa7bY27Dz3GrKZWQurLaCwOehx1mLDWTOA@mail.gmail.com>
+In-Reply-To: <20190809151940.06c2e7a5@canb.auug.org.au>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 01:15:26PM +0530, Naresh Kamboju wrote:
-> On Fri, 9 Aug 2019 at 00:38, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.2.8 release.
-> > There are 56 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat 10 Aug 2019 07:03:19 PM UTC.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.8-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Fri, Aug 09, 2019 at 03:19:40PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
+> Today's linux-next merge of the usb tree got conflicts in:
+> 
+>   drivers/staging/Kconfig
+>   drivers/staging/Makefile
+> 
+> between commit:
+> 
+>   955315b0dc8c ("qlge: Move drivers/net/ethernet/qlogic/qlge/ to drivers/staging/qlge/")
+> 
+> from the net-next tree and commit:
+> 
+>   71ed79b0e4be ("USB: Move wusbcore and UWB to staging as it is obsolete")
+> 
+> from the usb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc drivers/staging/Kconfig
+> index 0b8a614be11e,cf419d9c942d..000000000000
+> --- a/drivers/staging/Kconfig
+> +++ b/drivers/staging/Kconfig
+> @@@ -120,6 -120,7 +120,9 @@@ source "drivers/staging/kpc2000/Kconfig
+>   
+>   source "drivers/staging/isdn/Kconfig"
+>   
+>  +source "drivers/staging/qlge/Kconfig"
+>  +
+> + source "drivers/staging/wusbcore/Kconfig"
+> + source "drivers/staging/uwb/Kconfig"
+> + 
+>   endif # STAGING
+> diff --cc drivers/staging/Makefile
+> index 741152511a10,38179bc842a8..000000000000
+> --- a/drivers/staging/Makefile
+> +++ b/drivers/staging/Makefile
+> @@@ -50,4 -50,5 +50,6 @@@ obj-$(CONFIG_EROFS_FS)		+= erofs
+>   obj-$(CONFIG_FIELDBUS_DEV)     += fieldbus/
+>   obj-$(CONFIG_KPC2000)		+= kpc2000/
+>   obj-$(CONFIG_ISDN_CAPI)		+= isdn/
+>  +obj-$(CONFIG_QLGE)		+= qlge/
+> + obj-$(CONFIG_UWB)		+= uwb/
+> + obj-$(CONFIG_USB_WUSB)		+= wusbcore/
 
-Thanks for testing all of these and letting me know.
+
+Merge looks good to me, thanks!
 
 greg k-h
