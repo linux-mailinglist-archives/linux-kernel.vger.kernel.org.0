@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A255883F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7124883EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbfHIU3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 16:29:22 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:60313 "EHLO
+        id S1729410AbfHIU3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 16:29:14 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:39109 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728985AbfHIU3R (ORCPT
+        with ESMTP id S1728985AbfHIU3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 16:29:17 -0400
+        Fri, 9 Aug 2019 16:29:13 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MV6G6-1hmnLD3sJC-00SB7i; Fri, 09 Aug 2019 22:29:06 +0200
+ 1MuluN-1iDqgZ18F9-00rrQN; Fri, 09 Aug 2019 22:29:08 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     soc@kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [PATCH 14/16] rtc: remove w90x900/nuc900 driver
-Date:   Fri,  9 Aug 2019 22:27:42 +0200
-Message-Id: <20190809202749.742267-15-arnd@arndb.de>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [PATCH 15/16] usb: remove ehci-w90x900 driver
+Date:   Fri,  9 Aug 2019 22:27:43 +0200
+Message-Id: <20190809202749.742267-16-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190809202749.742267-1-arnd@arndb.de>
 References: <20190809202749.742267-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:G8qc/wYNLtJbkuHPeqI/QzOt8e9lF3Tmm4TBFiQWdZlmGL8c/cp
- uogjri1+5d1ebyNGebf3HL2775NUYtbTwPNEdG6HjjGSa3v+fdZWaNB5xvRmCWZvBOlzhFK
- 02BZy0I0AwwEX4ltQ3LXfCkwRPDAR2DDdrqPqhXkPFH8+gDCCLcEbxe8EgvxTkgp+6wtjLB
- PWonxDLwlz2h1Km/+kpHQ==
+X-Provags-ID: V03:K1:wPb76nKdF5ukUOXyjS8AZRENduOC7LpgNPFvMuock5ZAhYRqQao
+ gvKLPV1umWtIhcVdiLRa0DoIQV/OCyejR4JycbIVVOZHIjlNDDyMW9SvIPThUT9kg9EZ/KS
+ sz1mPeOFO52p033XspngdYSQSIKfCFpDqhzxuG4VGoq0IQw7eh5HIEXCtDtSNZeKVZW1Rpc
+ eif2zt/I1wUHaS+eVsdag==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6WFg8zv6ofE=:u2heJHDISJ0KANbIVxC8fY
- OXFKBbZSGDola/OaViuqgSk1YxYZIbOLhDLB1RkAOngCyX8BwbA1QI+42sQLGnfclJtiBqOv0
- TsrS54687OMHU3eIf0YBb+GYjy6TdQ28Zbj4Xi6MJd1W2ulGBlgkCa/ZXaMushUI0y/Kil9XL
- sw5uaGjdK9PA496+DHU+ibjt6gcsUaGO+bYe3BdahvShf4RKVib2uqB5SK7gwk9Y+7pJX9iQx
- PfVXh57E6D3OTeLrM6QkamcJWMfCU1tQtkiKTOTYee62i/HorzSE8t2VzJoKavi3KbCC2XrY4
- Ue4nh6qBjHAqcXKyp9dIOxsviInlLzHe4cBrICmBOj9xPdEUNhG7qVe01bZvKGbuEXaOnn2nG
- zSbHglhQ2l0eD//ZtMcyqD+kbqdO+qj5hv2ORitZzjS9rcqlbf9KX2AXtaAYYGHnlCxrItkXx
- 2W/p8ZYslRZYcB5tPT9e1wrzBE6hvHZq/PtbZdvIeBMnBm1//Mhid815/r+VYL0JaumdZHWVz
- rzsISkJRfIqsccyHQocofq2OYF23omZkA0GiJhFoqNDkflC1th3FKD/udsth/fPlfgvRkOCOq
- 0WC0rMgDfWA7L/oJCA0++O8dUJZVphqEN0rxAI+buCDP026NiP7nu4+cE2LocDPH/wPdp1NV4
- gYUh1CFgOXgL/HyLz8q61WfIpgwcnVcn8cTm9ktf7XYKA7idtjyqrtG19W33mxxEC3tu0MHrB
- sBXETIP7FcjvU6fHtrm47wQ130fl/jAH2kAcrg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:krqIrxD/H+I=:F0XIUeNMJNSMKpdBEraPd+
+ wszOmk23slJ2+EFaf9xDGvXs57+uug+Uyr7YOcF3PNTX5tqBgn7APWopxEH+8J9jQBE3Rhp1t
+ UG0BNlUNayakZ4x1JGMqAAjXTtnpahPPQoLiDNZidHFcFc8aZdMkq0TL7JhR5HOw0ImnJi/ni
+ Xh6oRwgnKwlmvvzHLUiEaGZbtXHzqPArI33vUB3wL/Iq9sppHdDFSxFTjrFjXVF3dkxr80Vqv
+ OxeSWBikJpauDwvpJ10v7/NBP9pejfOLlWS6WZEarELZsIkOQpoporUE21dpD4mG3ny90amFO
+ O8oSeWGL1jdnbI9VEXaeJkB+qj6wX98bRFv2xE2m/3h3cX97RtV400NDMonaXl5Aig5Z28AJX
+ ZBH4Es7pvN+xwpivDxi4IFPqsL63OZvcd5Qq1MFVpJXzacsQ0jRa3vq8rvPXqqZ+KSRaUuTFw
+ DMDC7ec8gQODBg7wJRM5i70y9+5dPVtcse7JkfVbJjjUZZCFL/+3Z9oMjY2QY8w96ug7a+Rhg
+ fT3w7OpFnSP7zxbQhVcyXj2uBlue4r7RpWloUni61z9cgFUrCywgvNUzLSWImzU1SdExHLF3e
+ +d6reW7nUJJX42K96EQ1vbfjtIkZ+D2u2z17itfY5PwP02JvjFrG93xPGS+hrDmDLiFxwWdVN
+ wuW5q+zgLDwFiO9p61bkj/4T1fzDed83ty6e8lAYJh6dL3SiYnsKVTD2Af6bggiPd4lw5glnH
+ ugqB7yHhWupiqsW2gfCNIj1BZOlQcLZGPyxpbQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,319 +55,177 @@ The ARM w90x900 platform is getting removed, so this driver is obsolete.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/rtc/Kconfig      |   7 -
- drivers/rtc/Makefile     |   1 -
- drivers/rtc/rtc-nuc900.c | 271 ---------------------------------------
- 3 files changed, 279 deletions(-)
- delete mode 100644 drivers/rtc/rtc-nuc900.c
+ drivers/usb/host/Kconfig        |   6 --
+ drivers/usb/host/Makefile       |   1 -
+ drivers/usb/host/ehci-w90x900.c | 130 --------------------------------
+ 3 files changed, 137 deletions(-)
+ delete mode 100644 drivers/usb/host/ehci-w90x900.c
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index e72f65b61176..2805cbb32ade 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1247,13 +1247,6 @@ config RTC_DRV_AB8500
- 	  Select this to enable the ST-Ericsson AB8500 power management IC RTC
- 	  support. This chip contains a battery- and capacitor-backed RTC.
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 40b5de597112..782ead054a90 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -287,12 +287,6 @@ config USB_EHCI_MV
+ 	  Dova, Armada 370 and Armada XP. See "Support for Marvell EBU
+ 	  on-chip EHCI USB controller" for those.
  
--config RTC_DRV_NUC900
--	tristate "NUC910/NUC920 RTC driver"
--	depends on ARCH_W90X900 || COMPILE_TEST
--	help
--	  If you say yes here you get support for the RTC subsystem of the
--	  NUC910/NUC920 used in embedded systems.
+-config USB_W90X900_EHCI
+-	tristate "W90X900(W90P910) EHCI support"
+-	depends on ARCH_W90X900
+-	---help---
+-		Enables support for the W90X900 USB controller
 -
- config RTC_DRV_OPAL
- 	tristate "IBM OPAL RTC driver"
- 	depends on PPC_POWERNV
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 6b09c21dc1b6..9fe0e938272c 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -113,7 +113,6 @@ obj-$(CONFIG_RTC_DRV_MT7622)	+= rtc-mt7622.o
- obj-$(CONFIG_RTC_DRV_MV)	+= rtc-mv.o
- obj-$(CONFIG_RTC_DRV_MXC)	+= rtc-mxc.o
- obj-$(CONFIG_RTC_DRV_MXC_V2)	+= rtc-mxc_v2.o
--obj-$(CONFIG_RTC_DRV_NUC900)	+= rtc-nuc900.o
- obj-$(CONFIG_RTC_DRV_OMAP)	+= rtc-omap.o
- obj-$(CONFIG_RTC_DRV_OPAL)	+= rtc-opal.o
- obj-$(CONFIG_RTC_DRV_PALMAS)	+= rtc-palmas.o
-diff --git a/drivers/rtc/rtc-nuc900.c b/drivers/rtc/rtc-nuc900.c
+ config USB_CNS3XXX_EHCI
+ 	bool "Cavium CNS3XXX EHCI Module (DEPRECATED)"
+ 	depends on ARCH_CNS3XXX
+diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
+index 84514f71ae44..0bba93de7654 100644
+--- a/drivers/usb/host/Makefile
++++ b/drivers/usb/host/Makefile
+@@ -51,7 +51,6 @@ obj-$(CONFIG_USB_EHCI_HCD_STI)	+= ehci-st.o
+ obj-$(CONFIG_USB_EHCI_EXYNOS)	+= ehci-exynos.o
+ obj-$(CONFIG_USB_EHCI_HCD_AT91) += ehci-atmel.o
+ obj-$(CONFIG_USB_EHCI_TEGRA)	+= ehci-tegra.o
+-obj-$(CONFIG_USB_W90X900_EHCI)	+= ehci-w90x900.o
+ 
+ obj-$(CONFIG_USB_OXU210HP_HCD)	+= oxu210hp-hcd.o
+ obj-$(CONFIG_USB_ISP116X_HCD)	+= isp116x-hcd.o
+diff --git a/drivers/usb/host/ehci-w90x900.c b/drivers/usb/host/ehci-w90x900.c
 deleted file mode 100644
-index 49cc4058614d..000000000000
---- a/drivers/rtc/rtc-nuc900.c
+index 6d77ace1697b..000000000000
+--- a/drivers/usb/host/ehci-w90x900.c
 +++ /dev/null
-@@ -1,271 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
+@@ -1,130 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
 -/*
-- * Copyright (c) 2008-2009 Nuvoton technology corporation.
+- * linux/driver/usb/host/ehci-w90x900.c
+- *
+- * Copyright (c) 2008 Nuvoton technology corporation.
 - *
 - * Wan ZongShun <mcuos.com@gmail.com>
 - */
 -
--#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
--#include <linux/rtc.h>
--#include <linux/delay.h>
+-#include <linux/dma-mapping.h>
 -#include <linux/io.h>
--#include <linux/bcd.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/platform_device.h>
+-#include <linux/usb.h>
+-#include <linux/usb/hcd.h>
 -
--/* RTC Control Registers */
--#define REG_RTC_INIR		0x00
--#define REG_RTC_AER		0x04
--#define REG_RTC_FCR		0x08
--#define REG_RTC_TLR		0x0C
--#define REG_RTC_CLR		0x10
--#define REG_RTC_TSSR		0x14
--#define REG_RTC_DWR		0x18
--#define REG_RTC_TAR		0x1C
--#define REG_RTC_CAR		0x20
--#define REG_RTC_LIR		0x24
--#define REG_RTC_RIER		0x28
--#define REG_RTC_RIIR		0x2C
--#define REG_RTC_TTR		0x30
+-#include "ehci.h"
 -
--#define RTCSET			0x01
--#define AERRWENB		0x10000
--#define INIRRESET		0xa5eb1357
--#define AERPOWERON		0xA965
--#define AERPOWEROFF		0x0000
--#define LEAPYEAR		0x0001
--#define TICKENB			0x80
--#define TICKINTENB		0x0002
--#define ALARMINTENB		0x0001
--#define MODE24			0x0001
+-/* enable phy0 and phy1 for w90p910 */
+-#define	ENPHY		(0x01<<8)
+-#define PHY0_CTR	(0xA4)
+-#define PHY1_CTR	(0xA8)
 -
--struct nuc900_rtc {
--	int			irq_num;
--	void __iomem		*rtc_reg;
--	struct rtc_device	*rtcdev;
--};
+-#define DRIVER_DESC "EHCI w90x900 driver"
 -
--struct nuc900_bcd_time {
--	int bcd_sec;
--	int bcd_min;
--	int bcd_hour;
--	int bcd_mday;
--	int bcd_mon;
--	int bcd_year;
--};
+-static const char hcd_name[] = "ehci-w90x900 ";
 -
--static irqreturn_t nuc900_rtc_interrupt(int irq, void *_rtc)
+-static struct hc_driver __read_mostly ehci_w90x900_hc_driver;
+-
+-static int ehci_w90x900_probe(struct platform_device *pdev)
 -{
--	struct nuc900_rtc *rtc = _rtc;
--	unsigned long events = 0, rtc_irq;
--
--	rtc_irq = __raw_readl(rtc->rtc_reg + REG_RTC_RIIR);
--
--	if (rtc_irq & ALARMINTENB) {
--		rtc_irq &= ~ALARMINTENB;
--		__raw_writel(rtc_irq, rtc->rtc_reg + REG_RTC_RIIR);
--		events |= RTC_AF | RTC_IRQF;
--	}
--
--	if (rtc_irq & TICKINTENB) {
--		rtc_irq &= ~TICKINTENB;
--		__raw_writel(rtc_irq, rtc->rtc_reg + REG_RTC_RIIR);
--		events |= RTC_UF | RTC_IRQF;
--	}
--
--	rtc_update_irq(rtc->rtcdev, 1, events);
--
--	return IRQ_HANDLED;
--}
--
--static int *check_rtc_access_enable(struct nuc900_rtc *nuc900_rtc)
--{
--	unsigned int timeout = 0x1000;
--	__raw_writel(INIRRESET, nuc900_rtc->rtc_reg + REG_RTC_INIR);
--
--	mdelay(10);
--
--	__raw_writel(AERPOWERON, nuc900_rtc->rtc_reg + REG_RTC_AER);
--
--	while (!(__raw_readl(nuc900_rtc->rtc_reg + REG_RTC_AER) & AERRWENB)
--								&& --timeout)
--		mdelay(1);
--
--	if (!timeout)
--		return ERR_PTR(-EPERM);
--
--	return NULL;
--}
--
--static void nuc900_rtc_bcd2bin(unsigned int timereg,
--			       unsigned int calreg, struct rtc_time *tm)
--{
--	tm->tm_mday	= bcd2bin(calreg >> 0);
--	tm->tm_mon	= bcd2bin(calreg >> 8);
--	tm->tm_year	= bcd2bin(calreg >> 16) + 100;
--
--	tm->tm_sec	= bcd2bin(timereg >> 0);
--	tm->tm_min	= bcd2bin(timereg >> 8);
--	tm->tm_hour	= bcd2bin(timereg >> 16);
--}
--
--static void nuc900_rtc_bin2bcd(struct device *dev, struct rtc_time *settm,
--						struct nuc900_bcd_time *gettm)
--{
--	gettm->bcd_mday = bin2bcd(settm->tm_mday) << 0;
--	gettm->bcd_mon  = bin2bcd(settm->tm_mon) << 8;
--
--	if (settm->tm_year < 100) {
--		dev_warn(dev, "The year will be between 1970-1999, right?\n");
--		gettm->bcd_year = bin2bcd(settm->tm_year) << 16;
--	} else {
--		gettm->bcd_year = bin2bcd(settm->tm_year - 100) << 16;
--	}
--
--	gettm->bcd_sec  = bin2bcd(settm->tm_sec) << 0;
--	gettm->bcd_min  = bin2bcd(settm->tm_min) << 8;
--	gettm->bcd_hour = bin2bcd(settm->tm_hour) << 16;
--}
--
--static int nuc900_alarm_irq_enable(struct device *dev, unsigned int enabled)
--{
--	struct nuc900_rtc *rtc = dev_get_drvdata(dev);
--
--	if (enabled)
--		__raw_writel(__raw_readl(rtc->rtc_reg + REG_RTC_RIER)|
--				(ALARMINTENB), rtc->rtc_reg + REG_RTC_RIER);
--	else
--		__raw_writel(__raw_readl(rtc->rtc_reg + REG_RTC_RIER)&
--				(~ALARMINTENB), rtc->rtc_reg + REG_RTC_RIER);
--
--	return 0;
--}
--
--static int nuc900_rtc_read_time(struct device *dev, struct rtc_time *tm)
--{
--	struct nuc900_rtc *rtc = dev_get_drvdata(dev);
--	unsigned int timeval, clrval;
--
--	timeval = __raw_readl(rtc->rtc_reg + REG_RTC_TLR);
--	clrval	= __raw_readl(rtc->rtc_reg + REG_RTC_CLR);
--
--	nuc900_rtc_bcd2bin(timeval, clrval, tm);
--
--	return 0;
--}
--
--static int nuc900_rtc_set_time(struct device *dev, struct rtc_time *tm)
--{
--	struct nuc900_rtc *rtc = dev_get_drvdata(dev);
--	struct nuc900_bcd_time gettm;
--	unsigned long val;
--	int *err;
--
--	nuc900_rtc_bin2bcd(dev, tm, &gettm);
--
--	err = check_rtc_access_enable(rtc);
--	if (IS_ERR(err))
--		return PTR_ERR(err);
--
--	val = gettm.bcd_mday | gettm.bcd_mon | gettm.bcd_year;
--	__raw_writel(val, rtc->rtc_reg + REG_RTC_CLR);
--
--	val = gettm.bcd_sec | gettm.bcd_min | gettm.bcd_hour;
--	__raw_writel(val, rtc->rtc_reg + REG_RTC_TLR);
--
--	return 0;
--}
--
--static int nuc900_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
--{
--	struct nuc900_rtc *rtc = dev_get_drvdata(dev);
--	unsigned int timeval, carval;
--
--	timeval = __raw_readl(rtc->rtc_reg + REG_RTC_TAR);
--	carval	= __raw_readl(rtc->rtc_reg + REG_RTC_CAR);
--
--	nuc900_rtc_bcd2bin(timeval, carval, &alrm->time);
--
--	return rtc_valid_tm(&alrm->time);
--}
--
--static int nuc900_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
--{
--	struct nuc900_rtc *rtc = dev_get_drvdata(dev);
--	struct nuc900_bcd_time tm;
--	unsigned long val;
--	int *err;
--
--	nuc900_rtc_bin2bcd(dev, &alrm->time, &tm);
--
--	err = check_rtc_access_enable(rtc);
--	if (IS_ERR(err))
--		return PTR_ERR(err);
--
--	val = tm.bcd_mday | tm.bcd_mon | tm.bcd_year;
--	__raw_writel(val, rtc->rtc_reg + REG_RTC_CAR);
--
--	val = tm.bcd_sec | tm.bcd_min | tm.bcd_hour;
--	__raw_writel(val, rtc->rtc_reg + REG_RTC_TAR);
--
--	return 0;
--}
--
--static const struct rtc_class_ops nuc900_rtc_ops = {
--	.read_time = nuc900_rtc_read_time,
--	.set_time = nuc900_rtc_set_time,
--	.read_alarm = nuc900_rtc_read_alarm,
--	.set_alarm = nuc900_rtc_set_alarm,
--	.alarm_irq_enable = nuc900_alarm_irq_enable,
--};
--
--static int __init nuc900_rtc_probe(struct platform_device *pdev)
--{
+-	struct usb_hcd *hcd;
+-	struct ehci_hcd *ehci;
 -	struct resource *res;
--	struct nuc900_rtc *nuc900_rtc;
+-	int retval = 0, irq;
+-	unsigned long val;
 -
--	nuc900_rtc = devm_kzalloc(&pdev->dev, sizeof(struct nuc900_rtc),
--				GFP_KERNEL);
--	if (!nuc900_rtc)
--		return -ENOMEM;
+-	hcd = usb_create_hcd(&ehci_w90x900_hc_driver,
+-			&pdev->dev, "w90x900 EHCI");
+-	if (!hcd) {
+-		retval = -ENOMEM;
+-		goto err1;
+-	}
 -
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	nuc900_rtc->rtc_reg = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(nuc900_rtc->rtc_reg))
--		return PTR_ERR(nuc900_rtc->rtc_reg);
+-	hcd->regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(hcd->regs)) {
+-		retval = PTR_ERR(hcd->regs);
+-		goto err2;
+-	}
+-	hcd->rsrc_start = res->start;
+-	hcd->rsrc_len = resource_size(res);
 -
--	platform_set_drvdata(pdev, nuc900_rtc);
+-	ehci = hcd_to_ehci(hcd);
+-	ehci->caps = hcd->regs;
+-	ehci->regs = hcd->regs +
+-		HC_LENGTH(ehci, ehci_readl(ehci, &ehci->caps->hc_capbase));
 -
--	nuc900_rtc->rtcdev = devm_rtc_device_register(&pdev->dev, pdev->name,
--						&nuc900_rtc_ops, THIS_MODULE);
--	if (IS_ERR(nuc900_rtc->rtcdev)) {
--		dev_err(&pdev->dev, "rtc device register failed\n");
--		return PTR_ERR(nuc900_rtc->rtcdev);
+-	/* enable PHY 0,1,the regs only apply to w90p910
+-	 *  0xA4,0xA8 were offsets of PHY0 and PHY1 controller of
+-	 *  w90p910 IC relative to ehci->regs.
+-	 */
+-	val = __raw_readl(ehci->regs+PHY0_CTR);
+-	val |= ENPHY;
+-	__raw_writel(val, ehci->regs+PHY0_CTR);
+-
+-	val = __raw_readl(ehci->regs+PHY1_CTR);
+-	val |= ENPHY;
+-	__raw_writel(val, ehci->regs+PHY1_CTR);
+-
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		retval = irq;
+-		goto err2;
 -	}
 -
--	__raw_writel(__raw_readl(nuc900_rtc->rtc_reg + REG_RTC_TSSR) | MODE24,
--					nuc900_rtc->rtc_reg + REG_RTC_TSSR);
+-	retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
+-	if (retval != 0)
+-		goto err2;
 -
--	nuc900_rtc->irq_num = platform_get_irq(pdev, 0);
--	if (devm_request_irq(&pdev->dev, nuc900_rtc->irq_num,
--			nuc900_rtc_interrupt, 0, "nuc900rtc", nuc900_rtc)) {
--		dev_err(&pdev->dev, "NUC900 RTC request irq failed\n");
--		return -EBUSY;
--	}
+-	device_wakeup_enable(hcd->self.controller);
+-	return retval;
+-err2:
+-	usb_put_hcd(hcd);
+-err1:
+-	return retval;
+-}
+-
+-static int ehci_w90x900_remove(struct platform_device *pdev)
+-{
+-	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+-
+-	usb_remove_hcd(hcd);
+-	usb_put_hcd(hcd);
 -
 -	return 0;
 -}
 -
--static struct platform_driver nuc900_rtc_driver = {
--	.driver		= {
--		.name	= "nuc900-rtc",
+-static struct platform_driver ehci_hcd_w90x900_driver = {
+-	.probe  = ehci_w90x900_probe,
+-	.remove = ehci_w90x900_remove,
+-	.driver = {
+-		.name = "w90x900-ehci",
 -	},
 -};
 -
--module_platform_driver_probe(nuc900_rtc_driver, nuc900_rtc_probe);
+-static int __init ehci_w90X900_init(void)
+-{
+-	if (usb_disabled())
+-		return -ENODEV;
 -
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+-	ehci_init_driver(&ehci_w90x900_hc_driver, NULL);
+-	return platform_driver_register(&ehci_hcd_w90x900_driver);
+-}
+-module_init(ehci_w90X900_init);
+-
+-static void __exit ehci_w90X900_cleanup(void)
+-{
+-	platform_driver_unregister(&ehci_hcd_w90x900_driver);
+-}
+-module_exit(ehci_w90X900_cleanup);
+-
+-MODULE_DESCRIPTION(DRIVER_DESC);
 -MODULE_AUTHOR("Wan ZongShun <mcuos.com@gmail.com>");
--MODULE_DESCRIPTION("nuc910/nuc920 RTC driver");
--MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:nuc900-rtc");
+-MODULE_ALIAS("platform:w90p910-ehci");
+-MODULE_LICENSE("GPL v2");
 -- 
 2.20.0
 
