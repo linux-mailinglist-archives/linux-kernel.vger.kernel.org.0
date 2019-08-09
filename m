@@ -2,146 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 295AF877C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:50:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70E89877CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:51:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfHIKuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 06:50:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49822 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726140AbfHIKuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 06:50:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D802AB071;
-        Fri,  9 Aug 2019 10:50:21 +0000 (UTC)
-Date:   Fri, 9 Aug 2019 12:50:16 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     ndrw <ndrw.xf@redhazel.co.uk>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Artem S. Tashkinov" <aros@gmx.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
- inability to gracefully handle low memory pressure
-Message-ID: <20190809105016.GP18351@dhcp22.suse.cz>
-References: <20190807075927.GO11812@dhcp22.suse.cz>
- <20190807205138.GA24222@cmpxchg.org>
- <20190808114826.GC18351@dhcp22.suse.cz>
- <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
- <20190808163228.GE18351@dhcp22.suse.cz>
- <5FBB0A26-0CFE-4B88-A4F2-6A42E3377EDB@redhazel.co.uk>
- <20190808185925.GH18351@dhcp22.suse.cz>
- <08e5d007-a41a-e322-5631-b89978b9cc20@redhazel.co.uk>
- <20190809085748.GN18351@dhcp22.suse.cz>
- <cdb392ee-e192-c136-41cb-48d9e4e4bf47@redhazel.co.uk>
+        id S2406183AbfHIKvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 06:51:36 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43571 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfHIKvf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 06:51:35 -0400
+Received: by mail-pl1-f194.google.com with SMTP id 4so37819273pld.10
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 03:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Fq3JjQiPRSr9h5rdyuZsyHe1NcG45aIFnLyLsEYW9MM=;
+        b=fmz7CBprhcOyROOnhxAQLeMaTiFeYLCzctiCa/09jIWbFLdPDUzgq7S2n2tOgobfLt
+         CfgvD3poJNs9c7R2m8zDmwyrvKFVVjkPl6OoYzKR9/LvmVzeBYsdfdcqgTmg2CkePj7+
+         TrHG3u5TO/rB+5DP3CwDuZAfg4LQ4J2qJO83zrm90dDvX4BbVFBIPrkjDUi1SFAm5GjF
+         WUCQplopPdm3Hv6De4vhOzh0H4+Nzs4nUi6TwaPWiRzFEgEOoTC8duMb218XgFdERX6T
+         J7XtbHk9IRvE2iiqmxbGm7EILGQ6tfR/1PmCgIUm0c9vrQNrwGWhYco8ZUHTm12+QyYl
+         F75Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fq3JjQiPRSr9h5rdyuZsyHe1NcG45aIFnLyLsEYW9MM=;
+        b=uYhAGwxbLdj0k4LE72k3Srd6g+M7CiGcmRkLHJP+k5baszYsRdbUAa8Zgu/yrqnviu
+         xBWnLVDrrleKPd9g9i1RNBWIy0cTgE3LoGb0vgSZhuU4WAQ1LShbirXJZ0qXJ64A6x28
+         FSknPmdT9h68AxfVmFXVYrIqP0IwYtmyeklIUhWGgxCx62SCcAd6KBNeNNQRrS3x0Uj+
+         RoNDkySLhmle4b6nEyTO31NVVAmqGZuay/UNjHqjm/NAQTuPRtLITHAXMWUmmfgtBOWx
+         p2+7suC21wtesUQZVJDq8+e3orO8ewtgTc9e1WpJC77G187KLLl9CZSpw+NflpD7EsVQ
+         rjWg==
+X-Gm-Message-State: APjAAAVwNxPvOyd5s6v/twQsRh06+Buof2wIsXuOW/FnobZtW1bt0bdy
+        PFqDHYx7Vo1EpSCl53A9TRTuIMaUXdjQ4ihyV83mTN4AG/o=
+X-Google-Smtp-Source: APXvYqyl/oWaFXkz86QgXMjklwFEFy4ERJznniRCq6jWm80+1iIZDj5QBUOEmuRRxdjnF1XqJi/hREMrctqnVpqt1uw=
+X-Received: by 2002:a17:902:934a:: with SMTP id g10mr18754588plp.18.1565347894910;
+ Fri, 09 Aug 2019 03:51:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cdb392ee-e192-c136-41cb-48d9e4e4bf47@redhazel.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190809012457.56685-1-justin.he@arm.com> <20190809012457.56685-2-justin.he@arm.com>
+In-Reply-To: <20190809012457.56685-2-justin.he@arm.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 9 Aug 2019 13:51:23 +0300
+Message-ID: <CAHp75VdH4=fnygn-a3acrbjMAVkGb9qkSSvDoTkMUYfUWV3XYw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] lib/test_printf: add test of null/invalid pointer
+ dereference for dentry
+To:     Jia He <justin.he@arm.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Tobin C. Harding" <tobin@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 09-08-19 11:09:33, ndrw wrote:
-> On 09/08/2019 09:57, Michal Hocko wrote:
-> > We already do have a reserve (min_free_kbytes). That gives kswapd some
-> > room to perform reclaim in the background without obvious latencies to
-> > allocating tasks (well CPU still be used so there is still some effect).
-> 
-> I tried this option in the past. Unfortunately, I didn't prevent freezes. My
-> understanding is this option reserves some amount of memory to not be
+On Fri, Aug 9, 2019 at 4:28 AM Jia He <justin.he@arm.com> wrote:
+>
+> This add some additional test cases of null/invalid pointer dereference
+> for dentry and file (%pd and %pD)
+>
 
-to not be used by normal allocations. It defines reclaim watermarks and
-that influences when the background and direct reclaim start to act.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> swapped out but does not prevent the kernel from evicting all pages from
-> cache when more memory is needed.
+> Signed-off-by: Jia He <justin.he@arm.com>
+> ---
+>  lib/test_printf.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/lib/test_printf.c b/lib/test_printf.c
+> index 944eb50f3862..befedffeb476 100644
+> --- a/lib/test_printf.c
+> +++ b/lib/test_printf.c
+> @@ -455,6 +455,13 @@ dentry(void)
+>         test("foo", "%pd", &test_dentry[0]);
+>         test("foo", "%pd2", &test_dentry[0]);
+>
+> +       /* test the null/invalid pointer case for dentry */
+> +       test("(null)", "%pd", NULL);
+> +       test("(efault)", "%pd", PTR_INVALID);
+> +       /* test the null/invalid pointer case for file */
+> +       test("(null)", "%pD", NULL);
+> +       test("(efault)", "%pD", PTR_INVALID);
+> +
+>         test("romeo", "%pd", &test_dentry[3]);
+>         test("alfa/romeo", "%pd2", &test_dentry[3]);
+>         test("bravo/alfa/romeo", "%pd3", &test_dentry[3]);
+> --
+> 2.17.1
+>
 
-It doesn't have any say on the actual decision on what to reclaim.
-
-> > Kswapd tries to keep a balance and free memory low but still with some
-> > room to satisfy an immediate memory demand. Once kswapd doesn't catch up
-> > with the memory demand we dive into the direct reclaim and that is where
-> > people usually see latencies coming from.
-> 
-> Reclaiming memory is fine, of course, but not all the way to 0 caches. No
-> caches means all executable pages, ro pages (e.g. fonts) are evicted from
-> memory and have to be constantly reloaded on every user action. All this
-> while competing with tasks that are using up all memory. This happens with
-> of without swap, although swap does spread this issue in time a bit.
-
-We try to protect low amount of cache. Have a look at get_scan_count
-function. But the exact amount of the cache to be protected is really
-hard to know wihtout a crystal ball or understanding of the workload.
-The kernel doesn't have neither of the two.
-
-> > The main problem here is that it is hard to tell from a single
-> > allocation latency that we have a bigger problem. As already said, the
-> > usual trashing scenario doesn't show problem during the reclaim because
-> > pages can be freed up very efficiently. The problem is that they are
-> > refaulted very quickly so we are effectively rotating working set like
-> > crazy. Compare that to a normal used-once streaming IO workload which is
-> > generating a lot of page cache that can be recycled in a similar pace
-> > but a working set doesn't get freed. Free memory figures will look very
-> > similar in both cases.
-> 
-> Thank you for the explanation. It is indeed a difficult problem - some
-> cached pages (streaming IO) will likely not be needed again and should be
-> discarded asap, other (like mmapped executable/ro pages of UI utilities)
-> will cause thrashing when evicted under high memory pressure. Another aspect
-> is that PSI is probably not the best measure of detecting imminent
-> thrashing. However, if it can at least detect a freeze that has already
-> occurred and force the OOM killer that is still a lot better than a dead
-> system, which is the current user experience.
-
-We have been thinking about this problem for a long time and couldn't
-come up with anything much better than we have now. PSI is the most recent
-improvement in that area. If you have better ideas then patches are
-always welcome.
-
-> > Good that earlyoom works for you.
-> 
-> I am giving it as an example of a heuristic that seems to work very well for
-> me. Something to look into. And yes, I wouldn't mind having such mechanism
-> built into the kernel.
-> 
-> >   All I am saying is that this is not
-> > generally applicable heuristic because we do care about a larger variety
-> > of workloads. I should probably emphasise that the OOM killer is there
-> > as a _last resort_ hand break when something goes terribly wrong. It
-> > operates at times when any user intervention would be really hard
-> > because there is a lack of resources to be actionable.
-> 
-> It is indeed a last resort solution - without it the system is unusable.
-> Still, accuracy matters because killing a wrong task does not fix the
-> problem (a task hogging memory is still running) and may break the system
-> anyway if something important is killed instead.
-
-That is a completely orthogonal problem, I am afraid. So far we have
-been discussing _when_ to trigger OOM killer. This is _who_ to kill. I
-haven't heard any recent examples that the victim selection would be way
-off and killing something obviously incorrect.
-
-> [...]
-> 
-> > This is a useful feedback! What was your workload? Which kernel version?
-> 
-> I tested it by running a python script that processes a large amount of data
-> in memory (needs around 15GB of RAM). I normally run 2 instances of that
-> script in parallel but for testing I started 4 of them. I sometimes
-> experience the same issue when using multiple regular memory intensive
-> desktop applications in a manner described in the first post but that's
-> harder to reproduce because of the user input needed.
-
-Something that other people can play with to reproduce the issue would
-be more than welcome.
 
 -- 
-Michal Hocko
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
