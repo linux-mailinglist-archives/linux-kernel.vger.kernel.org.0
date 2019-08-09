@@ -2,66 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E51587EC2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 17:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D338987EC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:00:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436915AbfHIP7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 11:59:30 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:41425 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436905AbfHIP73 (ORCPT
+        id S2436924AbfHIQA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:00:27 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38300 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436681AbfHIQA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 11:59:29 -0400
-Received: by mail-vs1-f65.google.com with SMTP id 2so65688006vso.8
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 08:59:29 -0700 (PDT)
+        Fri, 9 Aug 2019 12:00:26 -0400
+Received: by mail-lj1-f193.google.com with SMTP id r9so92532851ljg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 09:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=1g9ySVsouZwJ5aSJe/XxuwcJdyWdEEPc9Z3+LvF/RfI=;
-        b=pr226pQhshwET32uKVi6f7Pu5bHtWspKjgHZi5FU89EwUSDU3EjA5RGzT0r42RooYT
-         3NGamj2+Q2DnF6V+1yaF+SWvt3hzfc/voLqw5dsPYAooCr9VZpNp2NW+XcI9dge1lNPk
-         SNqVMT52Qicmn1OSp+g+W8+0tZ0frx0AsUEn8GwCc7T0TrMpz9yK9ojb546FpwWt4pgh
-         15j0Y24eJImp6YqXmt77TY58ZDYhwjHAJn3rfp0UJUypomXznxZxf7tEbOPsrtPHQVk1
-         OVwXyEhpMsVRjOaSSdm11HH5xzrPlYHb/qxcoQ/GXgaUejFiJdi2JPWic2vMDpoyrB5R
-         D0lQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=82Cb8KU5pdOeKmjLeh4TKVu4zgRDfxjUZ199bGrU4aM=;
+        b=EGzmlqYyEKP+GRNNIQtRf9/Zmf02DAJzgUCe61CjlwR0xDNa/vwL4PM82Q5u8nooip
+         ntaH45KfblduWkM5AVyFbE65jmPaTx/MNM93KmbwWGzHbS9BQUULkFANWUhOT00yHDxX
+         KZOwl99pcNie47caZ4/Mg9PKG0/A+riIIlEJk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=1g9ySVsouZwJ5aSJe/XxuwcJdyWdEEPc9Z3+LvF/RfI=;
-        b=b+g0JunOLeZXkf/d4mQpit6sjGR9XZsnQCRP8EKTIdeeqHfNvCgtyUyZl97TymX9si
-         tEGaErPSqs0i6TAMX0SETi25eDEmJuFiILtOLJjF5pQz6A0/g5eu2alCMUt1DFEAkuMu
-         JpnQJD9GNRlqDnU9WwEry4KsCGxwbUQq0Cktt7CVft9veOgVDz3R9gIZUga1MC2ZbBi3
-         6+xwJKCYWzGAAIeIKemf0IW5a3hxobQ7w3CSBttxBbN+nSuxpQqtJNYSqceu9itPYOxa
-         Cp+rCBnlUaWM4otJVobAW7jBFTrR+6pVR9sgmguwFDPk6lY2OPKRTPlz95OH0DHSBFLR
-         d4Cw==
-X-Gm-Message-State: APjAAAWRNtARrwguJHDg51Nbh5htcRYcIrX6S/5vN6M0uMUMyriAzapr
-        +xrpDxzY+8jIi/QPWYMPUPmdOAA8JmtI6sJx2BM=
-X-Google-Smtp-Source: APXvYqyodsLTLsyUjDN6+6vnun0hxsfaP95lGM7UhfpcVgfwVXRcdhFEbTP/RbLJ0zm/Wu7rXsqL5GFLwM7O0VPZi0w=
-X-Received: by 2002:a67:6988:: with SMTP id e130mr13950650vsc.197.1565366368962;
- Fri, 09 Aug 2019 08:59:28 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=82Cb8KU5pdOeKmjLeh4TKVu4zgRDfxjUZ199bGrU4aM=;
+        b=RZle8tT2PwDM+vnTCdU+dfQtR5dnLRA85S7rdD1Q4rqINL9VGEz3MpfrxlaMiHNrPQ
+         FKcup1PP3qeV69aiRuqIRU7PtfFzV9Jig4xpdcVIem77fkPFWfrKd2sJl5jTcGv8h0nr
+         J3K2306ULaxNE510nkyJNCvfBB9Xe5ya6l8ggGxZQAisnT770sX1YKnV5ul4taQhSwok
+         qvkcALX349Syr5Up4ksjXX9nFc5ApLshyyZAFa0k1YTRH65XRMRXD/thQ3e3BJg4KAtx
+         x5i+hs0+DVGZuNpfspSmFk6anvNBKZLYm0rMWkHBl97v7Tw5vpuVEmdqlMdPgSE5TZbn
+         aP4w==
+X-Gm-Message-State: APjAAAXHxe1IQhvAfmo48ML1FqqLFltaoNsf13vtZxcYnzADp5DHbOrK
+        xFZluUlaWLPdQTOH2Yk4djUMDAyeHW0=
+X-Google-Smtp-Source: APXvYqw5OMAOuRIanCQz2iFpJRif7dylp94A0O/dT6SHwiqKsaF9x+TAAaklb8PaQrW35jPWF38Qgg==
+X-Received: by 2002:a2e:9c19:: with SMTP id s25mr11684793lji.188.1565366424135;
+        Fri, 09 Aug 2019 09:00:24 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id f23sm1179992lfc.25.2019.08.09.09.00.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Aug 2019 09:00:21 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id x3so69985552lfc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 09:00:21 -0700 (PDT)
+X-Received: by 2002:a19:641a:: with SMTP id y26mr12874406lfb.29.1565366420690;
+ Fri, 09 Aug 2019 09:00:20 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:2c13:0:0:0:0:0 with HTTP; Fri, 9 Aug 2019 08:59:28 -0700 (PDT)
-From:   Kelani Alfasasi <alfasasikelani1@gmail.com>
-Date:   Fri, 9 Aug 2019 16:59:28 +0100
-Message-ID: <CAC22KigVz9aFy6Jm+OWOdkyUAE4-XPH4uF_AH0BeToeJgD=RLQ@mail.gmail.com>
-Subject: hope
-To:     undisclosed-recipients:;
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+ <20190807222634.1723-10-john.ogness@linutronix.de> <CAHk-=wiKTn-BMpp4w645XqmFBEtUXe84+TKc6aRMPbvFwUjA=A@mail.gmail.com>
+ <874l2rclmw.fsf@linutronix.de> <CAHk-=wiRN9v7UmhbTZgskh-MLyY2f0-8Zi3fUziy+GpZnj2i3w@mail.gmail.com>
+ <20190808194523.6f83e087@gandalf.local.home> <CAHk-=wiRpvRg6dpEWqaB20QUFRq8or0-AGgkjvisygptRE64UA@mail.gmail.com>
+ <20190808204841.5afcad46@gandalf.local.home> <CAHk-=whNcrysjJYPDFhKAc4tvd80XGAyh95oZeAY6bmzpv3G-A@mail.gmail.com>
+ <alpine.DEB.2.21.1908091306520.21433@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1908091306520.21433@nanos.tec.linutronix.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 9 Aug 2019 09:00:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiDzz+KU-ArqpnzjYkvDtKWjUqMfiiJXpXhgYU+Wd0r-w@mail.gmail.com>
+Message-ID: <CAHk-=wiDzz+KU-ArqpnzjYkvDtKWjUqMfiiJXpXhgYU+Wd0r-w@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 9/9] printk: use a new ringbuffer implementation
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day , i write to inform you as auditor onbehalf of ORABANK.
+On Fri, Aug 9, 2019 at 4:15 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> >
+> > But I don't know what a power-off-in-laptop scenario really looks like..
+>
+> That's random behaviour. It's hardware & BIOS & value add. What do you
+> expect?
+>
+> I tried on a few machines. My laptop does not retain any useful information
+> and on some server box (which takes ages to boot) the memory is squeaky
+> clean, i.e. the BIOS wiped it already. Some others worked with a two second
+> delay between turning the remote power switch on and off.
 
-Transaction number 000399577OBK have been approved for release
-through VISA ELECTRON ATM Card.
+You were there at the Intel meeting, weren't you?
 
-Note that you are required to reconfirm your complete mailing address
-for delivery.
+This is all about the fact that "we're not getting sane and reliable
+debug facilities for remote debugging". We haven't gotten them over
+two decades, we're not seeing it in the future either.
 
-Reconfirm code 000399577OBK to the Director Mr. Patrick Masrellet on ( (
-atm.orabank@iname.com )) for further action.
+So what if we _can_ get an ACPI update and in the next decade your
+laptop _will_ have a memory area that doesn't get scribbled over?
 
-Regards.
- Kelani Alfasasi( Esq)
+Does it work today? Yes it does, but only for very special cases
+(basically warm reboot with "fast boot" enabled).
+
+But they are special cases that may be things that can be extended
+upon without any actual hardware changes.
+
+                  Linus
