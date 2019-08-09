@@ -2,121 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE84883B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 735B7883BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfHIUNN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 9 Aug 2019 16:13:13 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33741 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbfHIUNN (ORCPT
+        id S1726204AbfHIUQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 16:16:57 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:49852 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfHIUQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 16:13:13 -0400
-Received: by mail-qt1-f195.google.com with SMTP id v38so4653021qtb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 13:13:12 -0700 (PDT)
+        Fri, 9 Aug 2019 16:16:56 -0400
+Received: by mail-pl1-f201.google.com with SMTP id b30so4249969pla.16
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 13:16:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=ps+kwDWgQoJY3CUqmmTxPvXo4adLKJif88scg6lrYf8=;
+        b=fv2YO58sdU4AQ4I/RtKsVvbmSmj2rwepYD+glEMaxde9cOm6Ya1Ge8Yqqh3kUojLFR
+         JR9B6TmnOS9/7Cby5qjnT7Jwt+MSb5MBzoEadrZflPdmFu4/4wUorIzus/YVb/0vW54b
+         7BM8Ma7BcDggHUci6UxcpH6E3/K/FaVHCspRanUX+/U6xeYXGoAU/Y5yL4mA76W2t+Vt
+         U+pv5sBr0JvQPF2XU5wobvmIToBPSRKm0/7tbvw9m/SLl9CB9qlnKfcBs6XBzNLns0+E
+         xhzTcCdRsNKolC/cIfwsLdeQyrCtbWSTPecL+kc83QZ+Tc040PLhv9PgsNjp5E6kMhgw
+         xYRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GbPWtVLcWUFZEanEykp/OCGxgAAWNiMhq/BzUwSZwpc=;
-        b=Pfzv3Vx5kuVq9FwniEfM9fybl5j2vplgWPZHj3YsngCwPcRPIen54GkZxGk8idsHDg
-         pYXCkFPxstZlTyXMMxSTdQcspaNQWVrV+tyu2DNY79C1Zmx3FXCR2b4OQn3nHwkdywOR
-         6+GjY7qaR7ggnrAN/Gkh1Fjy5lcYEqBNDdlZckTh1zHyZ6/+UkUpUJRd3loZwTOwgdOy
-         52J6BqTzQCnHImUev4yF5S3UQ8SkpHBlSqydheph6OgruWw0FK5FPBeLGapleWHt4VeU
-         g0kjgDLs8gWmuHa6GwnLOy9e2MOdUt07oMEF4cRQ+CowPZnG4e0htzTor9mPARHw1TVt
-         aLVg==
-X-Gm-Message-State: APjAAAW+OJVF5z1pvoSHy+1mql/DkCzGm0tH5+CO434YRz3yKTxh27v3
-        4Rt8fhgIejB2yEqN/6IWMQMq1nwZEsA+VexkPeA=
-X-Google-Smtp-Source: APXvYqyk3q8MhchB1R6AFYNT+9FpyBYbsPgBvN9+GrgESLIDnDfEbrh9okrGG2cC4n/YagmVVq76vmcA8yBUqOX0j7Y=
-X-Received: by 2002:a0c:ba2c:: with SMTP id w44mr19391116qvf.62.1565381592182;
- Fri, 09 Aug 2019 13:13:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <87h873zs88.fsf@concordia.ellerman.id.au> <20190809182106.62130-1-ndesaulniers@google.com>
- <CAK8P3a3LynWTbpV8=VPm2TqgNM2MnoEyCPJd0PL2D+tcZqJgHg@mail.gmail.com> <20190809220301.Horde.AR6y4Bx4WGIq58V9K0En9g4@messagerie.si.c-s.fr>
-In-Reply-To: <20190809220301.Horde.AR6y4Bx4WGIq58V9K0En9g4@messagerie.si.c-s.fr>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 9 Aug 2019 22:12:56 +0200
-Message-ID: <CAK8P3a1AwmAe+PpHTRmN153fhG4ZkF_pb+240rj1ZAg-S6SKeg@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: fix inline asm constraints for dcbz
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     clang-built-linux <clang-built-linux@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        kbuild test robot <lkp@intel.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nick Desaulniers <ndesaulniers@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=ps+kwDWgQoJY3CUqmmTxPvXo4adLKJif88scg6lrYf8=;
+        b=hXEDyEvkjycBe+UlWa3fjk0DsY7W9/DNZ+8WggrOxvh5Qc5iy7ha/rq0kr4aPEciSQ
+         rVUqP4Vkg3waWztM3GPsMn5sj6KD7f5V9DNP5oxfT+Dbw6U94bTf9ea0+j0wjuqx81M7
+         aO6RdaEuneWogZRzLnBCzazwUrnVlPomMmMZoyTdQm0AkH1Zbwe+Rb0eSAnjzS+8ecyH
+         xN9kGYyA2e09wEy2d1wKBMiVEReJOAvqoNfFjrvwBvfV+T+gbl6rtG7oqByu/tzpCe4M
+         s39UnRk/3zb2MNwbjx5K4tP8YH4FwMNLIM/dpsanTYurwgV9jVaOIguKM9b4kkmFMH9Q
+         +Jkw==
+X-Gm-Message-State: APjAAAWURQnwYxZuKWWPENSKFN6E86zS/ua6eJwnn+jVDS0Zk9Ir5tdJ
+        jH/XGw24SEodoMlEzn552kGaBa1fOw==
+X-Google-Smtp-Source: APXvYqx4tBQFTVP3rt8jWo6e+xDOIHSc4BJlYb3KbGQ87YLO7T3+MR/DvWzL1C/XLAPt3HRHlZUVWLQzMIM=
+X-Received: by 2002:a63:29c4:: with SMTP id p187mr19362879pgp.330.1565381815497;
+ Fri, 09 Aug 2019 13:16:55 -0700 (PDT)
+Date:   Fri,  9 Aug 2019 13:16:31 -0700
+In-Reply-To: <84df6071-ef7e-c3d6-6ffa-fcfcbab0c8e6@arm.com>
+Message-Id: <20190809201631.208455-1-yabinc@google.com>
+Mime-Version: 1.0
+References: <84df6071-ef7e-c3d6-6ffa-fcfcbab0c8e6@arm.com>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: Re: [PATCH] coresight: tmc-etr: Remove perf_data check.
+From:   Yabin Cui <yabinc@google.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yabin Cui <yabinc@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 10:02 PM Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
->
-> Arnd Bergmann <arnd@arndb.de> a écrit :
-> > On Fri, Aug 9, 2019 at 8:21 PM 'Nick Desaulniers' via Clang Built
-> > Linux <clang-built-linux@googlegroups.com> wrote:
-> >
-> >>  static inline void dcbz(void *addr)
-> >>  {
-> >> -       __asm__ __volatile__ ("dcbz %y0" : : "Z"(*(u8 *)addr) : "memory");
-> >> +       __asm__ __volatile__ ("dcbz %y0" : "=Z"(*(u8 *)addr) :: "memory");
-> >>  }
-> >>
-> >>  static inline void dcbi(void *addr)
-> >>  {
-> >> -       __asm__ __volatile__ ("dcbi %y0" : : "Z"(*(u8 *)addr) : "memory");
-> >> +       __asm__ __volatile__ ("dcbi %y0" : "=Z"(*(u8 *)addr) :: "memory");
-> >>  }
-> >
-> > I think the result of the discussion was that an output argument only kind-of
-> > makes sense for dcbz, but for the others it's really an input, and clang is
-> > wrong in the way it handles the "Z" constraint by making a copy, which it
-> > doesn't do for "m".
-> >
-> > I'm not sure whether it's correct to use "m" instead of "Z" here, which
-> > would be a better workaround if that works. More importantly though,
-> > clang really needs to be fixed to handle "Z" correctly.
->
-> As the benefit is null, I think the best is probably to reverse my
-> original commit until at least CLang is fixed, as initialy suggested
-> by mpe
-
-Yes, makes sense.
-
-There is one other use of the "Z" constraint, so on top of the revert, I
-think it might be helpful if Nick could check if the patch below makes
-any difference with clang and, if it does, whether the current version
-is broken.
-
-       Arnd
-
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index 23e5d5d16c7e..28b467779328 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -106,7 +106,7 @@ static inline u##size name(const volatile u##size
-__iomem *addr)    \
- {                                                                      \
-        u##size ret;                                                    \
-        __asm__ __volatile__("sync;"#insn" %0,%y1;twi 0,%0,0;isync"     \
--               : "=r" (ret) : "Z" (*addr) : "memory");                 \
-+               : "=r" (ret) : "m" (*addr) : "memory");                 \
-        return ret;                                                     \
- }
-
-@@ -114,7 +114,7 @@ static inline u##size name(const volatile u##size
-__iomem *addr)    \
- static inline void name(volatile u##size __iomem *addr, u##size val)   \
- {                                                                      \
-        __asm__ __volatile__("sync;"#insn" %1,%y0"                      \
--               : "=Z" (*addr) : "r" (val) : "memory");                 \
-+               : "=m" (*addr) : "r" (val) : "memory");                 \
-        mmiowb_set_pending();                                           \
- }
+I totally agree that checking etr_buf is a better way.
+It solves my problem.
+I will upload a new patch soon.
