@@ -2,100 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 754258772D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E778187785
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:34:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406417AbfHIKZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 06:25:19 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50902 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406209AbfHIKZT (ORCPT
+        id S2406313AbfHIKeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 06:34:00 -0400
+Received: from mailout2.hostsharing.net ([83.223.78.233]:46121 "EHLO
+        mailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405928AbfHIKd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 06:25:19 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v15so5182248wml.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 03:25:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=9RMmhoSUrN0Bhtv9fCJWAnol3TBLl1D92lZ0b8FvEvQ=;
-        b=twza2qsVbp6P6Fmeb/VVe8M+YggEXNLnzTYJ8nhjtCrvSYxS1h8J/EbShEh2xTpKSN
-         C9nznaJ1b4r7vSv82nRyngwYyB9yXFQP+QGqR6tJppZARKUMYNZ6ru+qWO4R5k64UZN4
-         BRKeagbfkHNfhuLmplM+E6ZWtVb7WYTk9UNlSQZqURZBcZq4ObipHKL2ugeSNkOGqv03
-         e1qSS4sm+PoGoGKoiuPQdakN2Y0G+NZhYhW9JtpdpVMyJUFWsh6pkqJPD9R6x+gCZJCQ
-         216OKfK8HTTpp4ZLVPsVALo42Fa7V5J8WgTTSPlIQvfas3rotAXzaa95vOIygjQ+J7rs
-         cNRg==
-X-Gm-Message-State: APjAAAUkFHsGPKKNfqYACNT38Kw/WEuwLCAphS6N4+p2J4OPKYKYg4Mo
-        yxbaIYtLRH9muOUNAVoXnkWadQ==
-X-Google-Smtp-Source: APXvYqyJ40a5L04Ns0aHchac7p2jnJnwM+yb5T8gVpHG3KVtOStxdWUTnYLvrdmG+zuCj+G/jj4KJg==
-X-Received: by 2002:a1c:7606:: with SMTP id r6mr9682972wmc.118.1565346317107;
-        Fri, 09 Aug 2019 03:25:17 -0700 (PDT)
-Received: from vitty.brq.redhat.com (ip-89-176-127-93.net.upcbroadband.cz. [89.176.127.93])
-        by smtp.gmail.com with ESMTPSA id u6sm5604014wml.9.2019.08.09.03.25.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 03:25:16 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     lantianyu1986@gmail.com
-Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, corbet@lwn.net, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com, sashal@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, michael.h.kelley@microsoft.com
-Subject: Re: [PATCH 1/3] x86/Hyper-V: Fix definition of struct hv_vp_assist_page
-In-Reply-To: <20190809094939.76093-2-Tianyu.Lan@microsoft.com>
-References: <20190809094939.76093-1-Tianyu.Lan@microsoft.com> <20190809094939.76093-2-Tianyu.Lan@microsoft.com>
-Date:   Fri, 09 Aug 2019 12:25:14 +0200
-Message-ID: <87tvaqbppx.fsf@vitty.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 9 Aug 2019 06:33:59 -0400
+X-Greylist: delayed 311 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Aug 2019 06:33:57 EDT
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by mailout2.hostsharing.net (Postfix) with ESMTPS id 67DDC1005998E;
+        Fri,  9 Aug 2019 12:28:44 +0200 (CEST)
+Received: from localhost (unknown [89.246.108.87])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by h08.hostsharing.net (Postfix) with ESMTPSA id 0B2136133AB0;
+        Fri,  9 Aug 2019 12:28:44 +0200 (CEST)
+X-Mailbox-Line: From 4174210466e27eb7e2243dd1d801d5f75baaffd8 Mon Sep 17 00:00:00 2001
+Message-Id: <4174210466e27eb7e2243dd1d801d5f75baaffd8.1565345211.git.lukas@wunner.de>
+From:   Lukas Wunner <lukas@wunner.de>
+Date:   Fri, 9 Aug 2019 12:28:43 +0200
+Subject: [PATCH] PCI: pciehp: Avoid returning prematurely from sysfs requests
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiongfeng Wang <wangxiongfeng2@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lantianyu1986@gmail.com writes:
+A sysfs request to enable or disable a PCIe hotplug slot should not
+return before it has been carried out.  That is sought to be achieved
+by waiting until the controller's "pending_events" have been cleared.
 
-> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
->
-> The struct hv_vp_assist_page was defined incorrectly.
-> The "vtl_control" should be u64[3], "nested_enlightenments_control"
-> should be a u64 and there is 7 reserved bytes following "enlighten_vmentry".
-> This patch is to fix it.
->
-> Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> ---
->  arch/x86/include/asm/hyperv-tlfs.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-> index af78cd72b8f3..a79703c56ebe 100644
-> --- a/arch/x86/include/asm/hyperv-tlfs.h
-> +++ b/arch/x86/include/asm/hyperv-tlfs.h
-> @@ -517,11 +517,11 @@ struct hv_timer_message_payload {
->  /* Define virtual processor assist page structure. */
->  struct hv_vp_assist_page {
->  	__u32 apic_assist;
-> -	__u32 reserved;
-> -	__u64 vtl_control[2];
-> +	__u32 reserved1;
-> +	__u64 vtl_control[3];
->  	__u64 nested_enlightenments_control[2];
+However the IRQ thread pciehp_ist() clears the "pending_events" before
+it acts on them.  If pciehp_sysfs_enable_slot() / _disable_slot() happen
+to check the "pending_events" after they have been cleared but while
+pciehp_ist() is still running, the functions may return prematurely
+with an incorrect return value.
 
-In PATCH3 you define 'struct hv_nested_enlightenments_control' and it is
-64bit long, not 128. We should change it here too as ...
+Fix by introducing an "ist_running" flag which must be false before a
+sysfs request is allowed to return.
 
-> -	__u32 enlighten_vmentry;
+Fixes: 32a8cef274fe ("PCI: pciehp: Enable/disable exclusively from IRQ thread")
+Link: https://lore.kernel.org/linux-pci/1562226638-54134-1-git-send-email-wangxiongfeng2@huawei.com
+Reported-and-tested-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org # v4.19+
+---
+ drivers/pci/hotplug/pciehp.h      | 2 ++
+ drivers/pci/hotplug/pciehp_ctrl.c | 6 ++++--
+ drivers/pci/hotplug/pciehp_hpc.c  | 2 ++
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
-enlighten_vmentry filed will get a very different offset breaking
-Enlightened VMCS.
-
-> -	__u32 padding;
-> +	__u8 enlighten_vmentry;
-> +	__u8 reserved2[7];
->  	__u64 current_nested_vmcs;
->  } __packed;
-
+diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
+index 8c51a04b8083..e316bde45c7b 100644
+--- a/drivers/pci/hotplug/pciehp.h
++++ b/drivers/pci/hotplug/pciehp.h
+@@ -72,6 +72,7 @@ extern int pciehp_poll_time;
+  * @reset_lock: prevents access to the Data Link Layer Link Active bit in the
+  *	Link Status register and to the Presence Detect State bit in the Slot
+  *	Status register during a slot reset which may cause them to flap
++ * @ist_running: flag to keep user request waiting while IRQ thread is running
+  * @request_result: result of last user request submitted to the IRQ thread
+  * @requester: wait queue to wake up on completion of user request,
+  *	used for synchronous slot enable/disable request via sysfs
+@@ -101,6 +102,7 @@ struct controller {
+ 
+ 	struct hotplug_slot hotplug_slot;	/* hotplug core interface */
+ 	struct rw_semaphore reset_lock;
++	unsigned int ist_running;
+ 	int request_result;
+ 	wait_queue_head_t requester;
+ };
+diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+index 631ced0ab28a..1ce9ce335291 100644
+--- a/drivers/pci/hotplug/pciehp_ctrl.c
++++ b/drivers/pci/hotplug/pciehp_ctrl.c
+@@ -368,7 +368,8 @@ int pciehp_sysfs_enable_slot(struct hotplug_slot *hotplug_slot)
+ 		ctrl->request_result = -ENODEV;
+ 		pciehp_request(ctrl, PCI_EXP_SLTSTA_PDC);
+ 		wait_event(ctrl->requester,
+-			   !atomic_read(&ctrl->pending_events));
++			   !atomic_read(&ctrl->pending_events) &&
++			   !ctrl->ist_running);
+ 		return ctrl->request_result;
+ 	case POWERON_STATE:
+ 		ctrl_info(ctrl, "Slot(%s): Already in powering on state\n",
+@@ -401,7 +402,8 @@ int pciehp_sysfs_disable_slot(struct hotplug_slot *hotplug_slot)
+ 		mutex_unlock(&ctrl->state_lock);
+ 		pciehp_request(ctrl, DISABLE_SLOT);
+ 		wait_event(ctrl->requester,
+-			   !atomic_read(&ctrl->pending_events));
++			   !atomic_read(&ctrl->pending_events) &&
++			   !ctrl->ist_running);
+ 		return ctrl->request_result;
+ 	case POWEROFF_STATE:
+ 		ctrl_info(ctrl, "Slot(%s): Already in powering off state\n",
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index bd990e3371e3..9e2d7688e8cc 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -608,6 +608,7 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
+ 	irqreturn_t ret;
+ 	u32 events;
+ 
++	ctrl->ist_running = true;
+ 	pci_config_pm_runtime_get(pdev);
+ 
+ 	/* rerun pciehp_isr() if the port was inaccessible on interrupt */
+@@ -654,6 +655,7 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
+ 	up_read(&ctrl->reset_lock);
+ 
+ 	pci_config_pm_runtime_put(pdev);
++	ctrl->ist_running = false;
+ 	wake_up(&ctrl->requester);
+ 	return IRQ_HANDLED;
+ }
 -- 
-Vitaly
+2.20.1
+
