@@ -2,119 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AECF987117
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 06:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE1F687123
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 06:56:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbfHIEvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 00:51:40 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40792 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfHIEvh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 00:51:37 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C718561418; Fri,  9 Aug 2019 04:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565326296;
-        bh=iw4lsWYTbQS4yhyC0rTNbF2CidP7RA8CNdq3sqREgIc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aWqbSXqCBWTfkL7DL813WgFK4a+utOGpUzfftFgQjhxacQlndREE6BuWuQxh4Bmdn
-         kfL74d1zK8AkPlU2Fc8QkvrVH4qQpFWeWKpyVgEZ2l1hwVXzu1Qw7mPgU3Zl5cVKKm
-         BtJ7tV16NKyrAV0NAfpxmKQiIHR8hy2OR7I7D88A=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 12B3760ACF;
-        Fri,  9 Aug 2019 04:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565326295;
-        bh=iw4lsWYTbQS4yhyC0rTNbF2CidP7RA8CNdq3sqREgIc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DmKF8B8C7sNb8KHEDTPTrPYPY2im9cOTwMIHphvvKCZ8KvcvPq0pP5cdepjL5+bkX
-         1C6o39vccWw8Vj7AQX0b+kkD5TDHfsJqXBRvjC/RRDiMtJNUVsVbHtMjgnlojY5CPL
-         yJzYqvHYbMJVRGOL9o/ypERI2pZezBXEydqB42cY=
+        id S1728021AbfHIE4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 00:56:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725811AbfHIE4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 00:56:19 -0400
+Received: from localhost (unknown [122.167.65.92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA381214C6;
+        Fri,  9 Aug 2019 04:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565326578;
+        bh=A5FsRFBnniHu6TuyUAvzx8w6I2VU88+WwPu49KfYdyg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EoyQqSnrmea2hOYn2w61l5JiMl9KSvEEq17SQ7eUiUSozzNoesRysI70yB9i0wxF+
+         9wRKIgAg8dLsTip+mjdBpVF1FFWzXQmB+GJFOau4cnpfQB7XZD6jjJjP+wi4WDT38E
+         4o3Z2r72B8+PL50K6DR2DQvsoyHLdXA+EvVeWxG4=
+Date:   Fri, 9 Aug 2019 10:24:59 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Mark Brown <broonie@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        bgoswami@codeaurora.org, plai@codeaurora.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, lgirdwood@gmail.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: soundwire: add slave bindings
+Message-ID: <20190809045459.GG12733@vkoul-mobl.Dlink>
+References: <20190808144504.24823-1-srinivas.kandagatla@linaro.org>
+ <20190808144504.24823-2-srinivas.kandagatla@linaro.org>
+ <d346b2af-f285-4c53-b706-46a129ab7951@linux.intel.com>
+ <cdd2bded-551c-65f5-ca29-d2bb825bdaba@linaro.org>
+ <20190808195216.GM3795@sirena.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 09 Aug 2019 10:21:35 +0530
-From:   Harish Bandi <c-hbandi@codeaurora.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        anubhavg@codeaurora.org
-Subject: Re: [PATCH v1] Bluetooth: hci_qca: wait for Pre shutdown to command
- complete event before sending the Power off pulse
-In-Reply-To: <83f6833dd901e42e2f86d20ff0898526@codeaurora.org>
-References: <1565256353-4476-1-git-send-email-c-hbandi@codeaurora.org>
- <83f6833dd901e42e2f86d20ff0898526@codeaurora.org>
-Message-ID: <69e95b7d65f5c58f94473dcbe116d0d2@codeaurora.org>
-X-Sender: c-hbandi@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190808195216.GM3795@sirena.co.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bala,
+On 08-08-19, 20:52, Mark Brown wrote:
+> On Thu, Aug 08, 2019 at 05:48:56PM +0100, Srinivas Kandagatla wrote:
+> > On 08/08/2019 16:58, Pierre-Louis Bossart wrote:
+> 
+> > > > +- sdw-instance-id: Should be ('Instance ID') from SoundWire
+> > > > +          Enumeration Address. Instance ID is for the cases
+> > > > +          where multiple Devices of the same type or Class
+> > > > +          are attached to the bus.
+> 
+> > > so it is actually required if you have a single Slave device? Or is it
+> > > only required when you have more than 1 device of the same type?
+> 
+> > This is mandatory for any slave device!
+> 
+> If it's mandatory the wording is a bit unclear.  How about something
+> like:
+> 
+> 	Should be ('Instance ID') from the SoundWire Enumeration
+> 	Address.  This must always be provided, if multiple devices
+> 	with the same type or class or attached to the bus each
+> 	instance must have a distinct value.
 
-On 2019-08-08 16:25, Balakrishna Godavarthi wrote:
-> Hi Harish,
-> 
-> On 2019-08-08 14:55, Harish Bandi wrote:
->> When SoC receives pre shut down command, it share the same
->> with other COEX shared clients. So SoC needs a short
->> time after sending VS pre shutdown command before
->> turning off the regulators and sending the power off pulse.
->> 
->> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
->> ---
->>  drivers/bluetooth/btqca.c   | 5 +++--
->>  drivers/bluetooth/hci_qca.c | 2 ++
->>  2 files changed, 5 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
->> index 2221935..f20991e 100644
->> --- a/drivers/bluetooth/btqca.c
->> +++ b/drivers/bluetooth/btqca.c
->> @@ -106,8 +106,9 @@ int qca_send_pre_shutdown_cmd(struct hci_dev 
->> *hdev)
->> 
->>  	bt_dev_dbg(hdev, "QCA pre shutdown cmd");
->> 
->> -	skb = __hci_cmd_sync(hdev, QCA_PRE_SHUTDOWN_CMD, 0,
->> -				NULL, HCI_INIT_TIMEOUT);
->> +	skb = __hci_cmd_sync_ev(hdev, QCA_PRE_SHUTDOWN_CMD, 0,
->> +				NULL, HCI_EV_CMD_COMPLETE, HCI_INIT_TIMEOUT);
-> 
-> [Bala]: nit: can you also add reason in commit text for adding
-> HCI_EV_CMD_COMPLETE
-[Harish] - I will add reason fo HCI_EV_CMD_COMPLETE in commit text and 
-post new patch.
-> 
->> +
->>  	if (IS_ERR(skb)) {
->>  		err = PTR_ERR(skb);
->>  		bt_dev_err(hdev, "QCA preshutdown_cmd failed (%d)", err);
->> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> index 16db6c0..566aa28 100644
->> --- a/drivers/bluetooth/hci_qca.c
->> +++ b/drivers/bluetooth/hci_qca.c
->> @@ -1386,6 +1386,8 @@ static int qca_power_off(struct hci_dev *hdev)
->>  	/* Perform pre shutdown command */
->>  	qca_send_pre_shutdown_cmd(hdev);
->> 
->> +	usleep_range(8000, 10000);
->> +
->>  	qca_power_shutdown(hu);
->>  	return 0;
->>  }
-> 
-> Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+That helps to make it clear.
 
-Thanks,
-Harish
+Also the section of properties starts with Mandatory property, it should
+be made Mandatory Properties instead, like in other binding docs to make
+it clear that properties mentioned in the section are mandatory
+
+-- 
+~Vinod
