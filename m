@@ -2,93 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E009C87A10
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 14:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A8387A25
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 14:32:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406960AbfHIMbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 08:31:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58810 "EHLO
+        id S2406827AbfHIMcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 08:32:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59408 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406946AbfHIMbt (ORCPT
+        with ESMTP id S2406997AbfHIMcF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 08:31:49 -0400
+        Fri, 9 Aug 2019 08:32:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pyBBsbalHEvtPhoCExuHav8txrXCNwbsReP97YH2hRk=; b=Wh7hAlHDJXrNQvL2E8vafoxwe
-        eXEdpKG1tXNZupk7mE6dJQYL6UgojaSJdJoQsz2L0bWq12zW9kxuI4cVhiPI+T7y5WnwwCG5s2FVl
-        ucUNM4/CdbBjNqW5GoFaSjBKISPhvig8gDI5VMLhMzdQRAk5pC7iTmHPwYRzyBeRYrRZ8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=al+IDLkvrSWI6sWkuIdC0Y1CSo3vy5Hk3ckNI2dZEuE=; b=lD8fVUF1iJ0F
+        Ulkq/Etr6KJF9If/B6mgEeNInsSEL16WSfDHmb5B/VoVqmzIA3ye/TtrFqX1UzlNb0taT/oiNir6G
+        fu2pRsWmwPuq+MabgZL9t5l6lxleS6scgL7K04VGpeeUG6kwR/tGV+OWkhj7sToA31QC0To2jYDzu
+        kk0Ko=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hw437-00060J-Ee; Fri, 09 Aug 2019 12:31:13 +0000
+        id 1hw43l-00061E-Kj; Fri, 09 Aug 2019 12:31:53 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 7B2A8274303D; Fri,  9 Aug 2019 13:31:12 +0100 (BST)
-Date:   Fri, 9 Aug 2019 13:31:12 +0100
+        id E96DE27430B7; Fri,  9 Aug 2019 13:31:52 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, kbuild-all@01.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fix odd_ptr_err.cocci warnings
-Message-ID: <20190809123112.GC3963@sirena.co.uk>
-References: <alpine.DEB.2.21.1908091229140.2946@hadrien>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eHhjakXzOLJAF9wJ"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1908091229140.2946@hadrien>
-X-Cookie: Klatu barada nikto.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        Hulk Robot <hulkci@huawei.com>, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        perex@perex.cz, pierre-louis.bossart@linux.intel.com,
+        tiwai@suse.com, yang.jie@linux.intel.com
+Subject: Applied "ASoC: SOF: Intel: Add missing include file hdac_hda.h" to the asoc tree
+In-Reply-To: <20190809110100.71236-1-yuehaibing@huawei.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190809123152.E96DE27430B7@ypsilon.sirena.org.uk>
+Date:   Fri,  9 Aug 2019 13:31:52 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---eHhjakXzOLJAF9wJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   ASoC: SOF: Intel: Add missing include file hdac_hda.h
 
-On Fri, Aug 09, 2019 at 12:30:46PM +0200, Julia Lawall wrote:
+has been applied to the asoc tree at
 
-> tree:   https://github.com/omap-audio/linux-audio peter/ti-linux-4.19.y/w=
-ip
-> head:   62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a
-> commit: 62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a [34/34] j721e new machin=
-e driver wip
-> :::::: branch date: 20 hours ago
-> :::::: commit date: 20 hours ago
->=20
->  j721e-evm.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> --- a/sound/soc/ti/j721e-evm.c
-> +++ b/sound/soc/ti/j721e-evm.c
-> @@ -283,7 +283,7 @@ static int j721e_get_clocks(struct platf
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
-This file isn't upstream, it's only in the TI BSP.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---eHhjakXzOLJAF9wJ
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1NZ48ACgkQJNaLcl1U
-h9CcMQf+Km4bvdFc5fXpozUNHkhmiDGf5UtThFctMq6C6MK4tB+cTSjQqpLPip75
-hihD/NMWNNvcxkJxNaK5pDv4yEWI+F9DLhjLePmCOdUjg68CwYF2e5tLEKs7LAzo
-muAywApdJXbOOd+1yGG5lKw0EEoidrU5n9rzBYSbSjKwbtFhf4C1rQ8GO7T15S7U
-+0sq47MSOf3Q5fji1RcvGy98RkZbzU9gcheLcTXcQfRZ+eapGu11PmHR+OqgO/GG
-owL2DpqbypT+9iLdfmR9AOxwi3ykOWtU93h8uMh1tmDxfT4Auuj5j8leIEVdoCHP
-KKhhYS2X70ImKlg4SeUrEJQTcWVntw==
-=ykm0
------END PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---eHhjakXzOLJAF9wJ--
+Thanks,
+Mark
+
+From a62bd63893027bfa32fccbba0e0ac067824c362c Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 9 Aug 2019 19:01:00 +0800
+Subject: [PATCH] ASoC: SOF: Intel: Add missing include file hdac_hda.h
+
+Building with SND_SOC_SOF_HDA_AUDIO_CODEC fails:
+
+sound/soc/sof/intel/hda-bus.c: In function sof_hda_bus_init:
+sound/soc/sof/intel/hda-bus.c:16:25: error: implicit declaration of function
+ snd_soc_hdac_hda_get_ops; did you mean snd_soc_jack_add_gpiods? [-Werror=implicit-function-declaration]
+ #define sof_hda_ext_ops snd_soc_hdac_hda_get_ops()
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Takashi Iwai <tiwai@suse.de>
+Fixes: d4ff1b3917a5 ('ASoC: SOF: Intel: Initialize hdaudio bus properly")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20190809110100.71236-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sof/intel/hda-bus.c | 1 +
+ sound/soc/sof/intel/hda.c     | 3 ---
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/sound/soc/sof/intel/hda-bus.c b/sound/soc/sof/intel/hda-bus.c
+index 0caec3a070d3..1d2babdda9dd 100644
+--- a/sound/soc/sof/intel/hda-bus.c
++++ b/sound/soc/sof/intel/hda-bus.c
+@@ -13,6 +13,7 @@
+ #include "hda.h"
+ 
+ #if IS_ENABLED(CONFIG_SND_SOC_SOF_HDA_AUDIO_CODEC)
++#include "../../codecs/hdac_hda.h"
+ #define sof_hda_ext_ops	snd_soc_hdac_hda_get_ops()
+ #else
+ #define sof_hda_ext_ops	NULL
+diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+index d04844d6b104..28eb780494aa 100644
+--- a/sound/soc/sof/intel/hda.c
++++ b/sound/soc/sof/intel/hda.c
+@@ -23,9 +23,6 @@
+ #include <sound/sof/xtensa.h>
+ #include "../ops.h"
+ #include "hda.h"
+-#if IS_ENABLED(CONFIG_SND_SOC_SOF_HDA_AUDIO_CODEC)
+-#include "../../codecs/hdac_hda.h"
+-#endif
+ 
+ #if IS_ENABLED(CONFIG_SND_SOC_SOF_HDA)
+ #include <sound/soc-acpi-intel-match.h>
+-- 
+2.20.1
+
