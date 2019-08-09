@@ -2,149 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 008BB87C76
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1731587C7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406905AbfHIOSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 10:18:06 -0400
-Received: from mail-eopbgr70108.outbound.protection.outlook.com ([40.107.7.108]:57577
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726342AbfHIOSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 10:18:06 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YmU60R/nfyFdm6Go1YZz//r3hVSPs+kcCgRE5VbUj9QiTWfI10DtF08qLVQ3LXtqnuZj2MJUrFYfHbvgxJkvxWL2UVwHKVBdwZ3lUCtuE042LFzLx+kIrrHk94yhIV6NoG4/3ra3RHSJd4GXe9MK5kGT6V+pBsJE4wAClu0naJ8fjg7u7UUw/KqI//h7H8QzXy/d7Hq7H4auG4aGA5IlFU8xRNekwDSAk+nmAeXYRH9KOrUxAIrcdmDAI6HIp15+EwRkgGStlb0MuazvVNwmzpt2QdPM4ktpaJ0cm7Jth740clFWvwR0mwB0taEZmC20YXFZJSWvoBjXSY4gy5xw1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mXoCPzRbQxbsytNpL3OhZfoVEDOMrThQSOQ2RkQUfcA=;
- b=RwS8GMKx4bG8vapcUpRj4DXC1UqFWnYmV1o5Sd4DBegeg4ibeVOwgBWyMajqPHbyIGxfO9Jvd9fBo6d5GbIuV91vQ/YddDH5MSkkkJNF74/dVN/OiIwUQvGm7fj2nKYjCkpFTSCtiFSJjjcpjQw6cNyRrzKKhfl12TNOn6SW+Z/w8XAFr9jWMTJNdb+iJ2gj7MS52C0y3/LH1oWUqYyIgAn7vY6NHrWiHjol/GOV6GFdHZuDIKuk7TQ8p3qZSridv3MT4vWfh1918PYgUSeDcY0BHxvzHZd9G+hhY0YXRysFMw2vIkcobSNTXahb/G4DF0XSE9+nX++oFtPq6Gr7LQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=silicom-usa.com; dmarc=pass action=none
- header.from=silicom-usa.com; dkim=pass header.d=silicom-usa.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=SILICOMLTD.onmicrosoft.com; s=selector2-SILICOMLTD-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mXoCPzRbQxbsytNpL3OhZfoVEDOMrThQSOQ2RkQUfcA=;
- b=dXuH0bbx8fr5Uj2118e5i0SbAf81SkhRxbWHy+7m2od7SkkBxzNIzrlm9SKMM2TsEQt5Ni76yBmK+XjaPukVRqy5X8qo6El/6yVrbw0DPhHp1llJ8lPaPDEPzLl3e3U+vqKdM6qPlbBt4wXnQxByaZ+UjE89DoCdsoX7tZjvA50=
-Received: from VI1PR0402MB2717.eurprd04.prod.outlook.com (10.175.22.139) by
- VI1PR0402MB3774.eurprd04.prod.outlook.com (52.134.15.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.20; Fri, 9 Aug 2019 14:18:02 +0000
-Received: from VI1PR0402MB2717.eurprd04.prod.outlook.com
- ([fe80::eca9:e1f:eca7:8439]) by VI1PR0402MB2717.eurprd04.prod.outlook.com
- ([fe80::eca9:e1f:eca7:8439%9]) with mapi id 15.20.2157.020; Fri, 9 Aug 2019
- 14:18:02 +0000
-From:   Stephen Douthit <stephend@silicom-usa.com>
-To:     Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>
-CC:     Stephen Douthit <stephend@silicom-usa.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] EDAC, pnd2: Fix ioremap() size in dnv_rd_reg()
-Thread-Topic: [PATCH] EDAC, pnd2: Fix ioremap() size in dnv_rd_reg()
-Thread-Index: AQHVTr1AyXwgab8zJESZbW4mAIpUAw==
-Date:   Fri, 9 Aug 2019 14:18:02 +0000
-Message-ID: <20190809141737.15580-1-stephend@silicom-usa.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BN6PR2001CA0027.namprd20.prod.outlook.com
- (2603:10b6:405:16::13) To VI1PR0402MB2717.eurprd04.prod.outlook.com
- (2603:10a6:800:b4::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=stephend@silicom-usa.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.21.0
-x-originating-ip: [96.82.2.57]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 05df1eaa-ba6a-4ca9-3518-08d71cd4632e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR0402MB3774;
-x-ms-traffictypediagnostic: VI1PR0402MB3774:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB3774A486D226329E6452B69A94D60@VI1PR0402MB3774.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
-x-forefront-prvs: 01244308DF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(396003)(136003)(39840400004)(189003)(199004)(50226002)(8936002)(486006)(2906002)(66066001)(6512007)(2616005)(476003)(316002)(3846002)(99286004)(6436002)(110136005)(54906003)(25786009)(6486002)(14454004)(53936002)(6116002)(256004)(478600001)(7736002)(86362001)(305945005)(81156014)(81166006)(8676002)(14444005)(102836004)(66446008)(5660300002)(4326008)(66946007)(66476007)(64756008)(36756003)(66556008)(6506007)(386003)(52116002)(26005)(71190400001)(71200400001)(186003)(1076003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0402MB3774;H:VI1PR0402MB2717.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: silicom-usa.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nfMnYUERkUg8EP7GvWNs7kDB86wLEipnLWa5Me52iOgodzM0iNYO7ILewRSN2gwNCeaIJMLzF0VBG3BjISCAXnw8PFcefwbGNcEJb0Pb0r0UktyAXb4vVTwWiN+BMxrn32rU1hpWH+G5lzYyxT6zqmqu/uqjUUza79jYRMQqTe8M3NTjos2bhfIWURf8KwhQ3La2IX9t957uLzDdKthXUHlhOooi/XcEN1Z5sP2F9vvtUy1mnkZDAjPmZZ/M56N2D+etYnbsi+kjNmEP5p0gBJpQ7SQEMCmFvp9R2zgH6Nt0aTUrbs/u99MmInNcB8jkKLQ63osrE+rxjJ1KXHlT53ZO8TA0HmJLYYecByvdmDbm0xysCa5u7YwsoHknrvc0QEKysOqs9JIMdgii9IYi01Y4tGfHoee66+xXyYHUzm4=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S2407098AbfHIOTC convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 9 Aug 2019 10:19:02 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41937 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfHIOTB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 10:19:01 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g17so1058726qkk.8;
+        Fri, 09 Aug 2019 07:19:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TEfOzDxFX7gDpnqMzrlBGrH3Syt9gXqMdj4yqEybIZo=;
+        b=QXHfe+5F2OOhd2CElNQM4DMdlNJ4IJl8fINRHiW3jKlocffCMbvetrzZAqZj73zlmj
+         KWvFoVIYkOHvDj1DaYKbfsuCvroIUYFb3KL+M9mkFDlElbx/WQrXDrEmoD9TEU4aBY4V
+         KOYSTDW4jBYl1Q1ouhbunaHKhuxt1uFwhly4aynTDR3/pFoatrZAGcllqAX3imwjf7rg
+         Zvptpq+bditHfN3KQpZl7biqacUzCNzWVHXcWNc47zgDNuTW5Ddvc7FolbuGOSKoYWHe
+         U95f/JthiUb4jQ8Awib8m4ByohBD8ZbF9S/ymEA2OIxhbWwKX69SfaGeAtETxlf7AIPX
+         4bTg==
+X-Gm-Message-State: APjAAAULwbc9OKX1TGlOPd/2K493GXivn5Vz3PzAouoEWlMHdClUpahm
+        1/NNzHwi7xx3joyV/qXpaBZpTVA/KRvGrriqZOs=
+X-Google-Smtp-Source: APXvYqwdOIIhs7aYJbryOrEuz/1xQSAZBUfsTj7jxd0qGAmaTDwXDUSNUG1kGVNfZ5fjxOBFSW0skDDZmykp0YbSLSg=
+X-Received: by 2002:a37:984:: with SMTP id 126mr12380366qkj.3.1565360340175;
+ Fri, 09 Aug 2019 07:19:00 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: silicom-usa.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05df1eaa-ba6a-4ca9-3518-08d71cd4632e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2019 14:18:02.0960
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c9e326d8-ce47-4930-8612-cc99d3c87ad1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xGPj2o197h/0xpFYOatlg1N2WOFxsOgIREdt/tGCKsqp9NYOVLsNbv2l1pjGFJSJw+eP5UdhnSzkc7+lx8M+RYCN3fa5P3cvTpFDlq0dYGk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3774
+References: <20190731195713.3150463-1-arnd@arndb.de> <20190731195713.3150463-6-arnd@arndb.de>
+ <CAMpxmJWFfT_vrDas2fzW5tnxskk9kmgHQpGnGQ-_C20UaS_jhA@mail.gmail.com>
+ <CAK8P3a3KpKvRKXY72toE_5eAp4ER_Mre0GX3guwGeQgsY2HX+g@mail.gmail.com> <CAMpxmJUdSnp0QNwWB0rJ1opFrYs9R2KSVS64Tz8X5GDYAJYLpg@mail.gmail.com>
+In-Reply-To: <CAMpxmJUdSnp0QNwWB0rJ1opFrYs9R2KSVS64Tz8X5GDYAJYLpg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 9 Aug 2019 16:18:43 +0200
+Message-ID: <CAK8P3a1NT_yoP39y52oJTMsFCb96-bRyuMm=+5HPPsxyq0fJDA@mail.gmail.com>
+Subject: Re: [PATCH 05/14] gpio: lpc32xx: allow building on non-lpc32xx targets
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     soc@kernel.org, arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-serial@vger.kernel.org,
+        USB list <linux-usb@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Depending on how BIOS has marked the reserved region containing the 32KB
-MCHBAR you can get warnings like:
+On Mon, Aug 5, 2019 at 10:28 AM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+>
+> pt., 2 sie 2019 o 13:20 Arnd Bergmann <arnd@arndb.de> napisał(a):
+> >
+> > On Fri, Aug 2, 2019 at 9:10 AM Bartosz Golaszewski
+> > <bgolaszewski@baylibre.com> wrote:
+> > > > -#include <mach/hardware.h>
+> > > > -#include <mach/platform.h>
+> > > > +#define _GPREG(x)                              (x)
+> > >
+> > > What purpose does this macro serve?
+> > >
+> > > >
+> > > >  #define LPC32XX_GPIO_P3_INP_STATE              _GPREG(0x000)
+> > > >  #define LPC32XX_GPIO_P3_OUTP_SET               _GPREG(0x004)
+> >
+> > In the existing code base, this macro converts a register offset to
+> > an __iomem pointer for a gpio register. I changed the definition of the
+> > macro here to keep the number of changes down, but I it's just
+> > as easy to remove it if you prefer.
+>
+> Could you just add a comment so that it's clear at first glance?
 
-resource sanity check: requesting [mem 0xfed10000-0xfed1ffff], which spans =
-more than reserved [mem 0xfed10000-0xfed17fff]
-caller dnv_rd_reg+0xc8/0x240 [pnd2_edac] mapping multiple BARs
+I ended up removing the macro. With the change to keep the reg_base as
+a struct member, this ends up being a relatively small change, and it's
+more straightforward that way.
 
-Not all of the mmio regions used in dnv_rd_reg() are the same size.  The
-MCHBAR window is 32KB and the sideband ports are 64KB.  Pass the correct
-size to ioremap() depending on which resource we're reading from.
+> > > > @@ -167,14 +166,26 @@ struct lpc32xx_gpio_chip {
+> > > >         struct gpio_regs        *gpio_grp;
+> > > >  };
+> > > >
+> > > > +void __iomem *gpio_reg_base;
+> > >
+> > > Any reason why this can't be made part of struct lpc32xx_gpio_chip?
+> >
+> > It could be, but it's the same for each instance, and not known until
+> > probe() time, so the same pointer would need to be copied into each
+> > instance that is otherwise read-only.
+> >
+> > Let me know if you'd prefer me to rework these two things or leave
+> > them as they are.
+>
+> I would prefer not to have global state in the driver, let's just
+> store the pointer in the data passed to gpiochip_add_data().
 
-Signed-off-by: Stephen Douthit <stephend@silicom-usa.com>
----
- drivers/edac/pnd2_edac.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Ok, done.
 
-diff --git a/drivers/edac/pnd2_edac.c b/drivers/edac/pnd2_edac.c
-index 903a4f1fadcc..0153c730750e 100644
---- a/drivers/edac/pnd2_edac.c
-+++ b/drivers/edac/pnd2_edac.c
-@@ -268,11 +268,14 @@ static u64 get_sideband_reg_base_addr(void)
- 	}
- }
-=20
-+#define DNV_MCHBAR_SIZE  0x8000
-+#define DNV_SB_PORT_SIZE 0x10000
- static int dnv_rd_reg(int port, int off, int op, void *data, size_t sz, ch=
-ar *name)
- {
- 	struct pci_dev *pdev;
- 	char *base;
- 	u64 addr;
-+	unsigned long size;
-=20
- 	if (op =3D=3D 4) {
- 		pdev =3D pci_get_device(PCI_VENDOR_ID_INTEL, 0x1980, NULL);
-@@ -287,15 +290,17 @@ static int dnv_rd_reg(int port, int off, int op, void=
- *data, size_t sz, char *na
- 			addr =3D get_mem_ctrl_hub_base_addr();
- 			if (!addr)
- 				return -ENODEV;
-+			size =3D DNV_MCHBAR_SIZE;
- 		} else {
- 			/* MMIO via sideband register base address */
- 			addr =3D get_sideband_reg_base_addr();
- 			if (!addr)
- 				return -ENODEV;
- 			addr +=3D (port << 16);
-+			size =3D DNV_SB_PORT_SIZE;
- 		}
-=20
--		base =3D ioremap((resource_size_t)addr, 0x10000);
-+		base =3D ioremap((resource_size_t)addr, size);
- 		if (!base)
- 			return -ENODEV;
-=20
---=20
-2.21.0
-
+       Arnd
