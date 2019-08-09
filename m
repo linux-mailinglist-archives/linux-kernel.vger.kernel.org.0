@@ -2,82 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D510B8731E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2659187334
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405823AbfHIHgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 03:36:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34971 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405711AbfHIHgM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 03:36:12 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l14so1280605lje.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 00:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HXqS2DL68BnoaWC7BPpejArIxz6sqUi2fc/63WuQaUE=;
-        b=QKL0hpgsd+0DNocYhr0sEvnxDUB9OXgs3iaJcewg/PpKtcZDd9q9ztHww7OdRd8K1x
-         EsNY858u9uPhQWSOAVrxpmMIUu5KUzwaV3TsHkDCS1t3TCobq/9PGwCabM7oU8ARaMNf
-         M8TmaT+8j2S7leYm4lrZuMoQyyDppVz5G/6gHWkJamj1HsNdShB8on/i+0uX0I6felNt
-         seus2hiiiuYCV5cZO2OpOQTu+nPXKojbfezQmKNtqns0RTRELCP/y5WoSbMDbCsUQDL7
-         xLOJABYKiF1x5K7QwK36deq4e1LaIpzb8TQQ9upjahFFRuEioMivr1TwvLkKnpeAgCfN
-         PQ/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HXqS2DL68BnoaWC7BPpejArIxz6sqUi2fc/63WuQaUE=;
-        b=f8ZhxsCM7Y0KdhIODmAnNefr2vJqgYU4quur6mzJieUFgasnlSFK8QrTc6dZ4dpiIW
-         RZRM/Ye6HkrGoO5jQX5FQ2yM6ihu8CEoAbTjS5jXTg7GAhrnla8F26/lIx1OVWOgjkBs
-         ZvbbEY9WNJfJ7DeY4svNXklWW4kXYE1v6NhTwk1zwXhR3hV1Et4tTyuxxCTbqwfKm+yj
-         hYrh0o0j5lSDeq7qOTKa1rhQ4qQxguf0y2RFQe8UBc8BjWHD/aXN2yyD2EXJw1NyO6nT
-         gyBZIStYo8ZjnSJmfXXOztfeYP48zb4hIGjgV9wtoBRhX/Css520LFz+gSDjstuxMnhP
-         AvVA==
-X-Gm-Message-State: APjAAAUwO14poPui9dfSNIVPS2QRJw4kEJNNsgCDzEvPKGDfvQleEsDV
-        q2SugKrD61u+JYzCUx3yDueEC4MU8Eb5z1lAIExjTQ==
-X-Google-Smtp-Source: APXvYqzeqLykT6zxNpcnNSzGlO76tabSwRrSF7hhpaCzhGrqiXaDTvhfTN7tkmBVUZHwxkSdgdismvv4yqPs8ykrJOo=
-X-Received: by 2002:a2e:6e0c:: with SMTP id j12mr10467584ljc.123.1565336170583;
- Fri, 09 Aug 2019 00:36:10 -0700 (PDT)
+        id S2405911AbfHIHhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 03:37:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725980AbfHIHhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 03:37:54 -0400
+Received: from localhost.localdomain (unknown [122.167.65.92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3780B2171F;
+        Fri,  9 Aug 2019 07:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565336274;
+        bh=Wub1Zh9b0Ued8Nu9nACHA+ybTs6jaysV3XnW8dA4YcE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ocuwjTNk7pUIjC5736gkGIKpY0rf1OIL2FwHCE4UXCLKNpWmctZP9xCrt6lJZaty3
+         SBlB2aUUkhGsMmqJ3d2mvtYNTpsB4aqjdoh5nV6JS/hxZWSACsyCpzaamXh/VamDez
+         o+97aOd+qcKlDt8zJZUbpD/Vv/Cdx71bMqeWoO88=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 1/4] regulator: dt-bindings: Sort the compatibles and nodes
+Date:   Fri,  9 Aug 2019 13:06:13 +0530
+Message-Id: <20190809073616.1235-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190808123140.25583-1-naresh.kamboju@linaro.org>
- <20190808151010.ktbqbfevgcs3bkjy@kamzik.brq.redhat.com> <b34e8232-ccfd-898c-49de-afef4168a165@redhat.com>
-In-Reply-To: <b34e8232-ccfd-898c-49de-afef4168a165@redhat.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 9 Aug 2019 13:05:59 +0530
-Message-ID: <CA+G9fYv7RZgm36fbQU5yH=58sX84TxgE93SneB_UhRsD1ivGhg@mail.gmail.com>
-Subject: Re: [PATCH v2] selftests: kvm: Adding config fragments
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Andrew Jones <drjones@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        sean.j.christopherson@intel.com,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kvm list <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Aug 2019 at 21:30, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 08/08/19 17:10, Andrew Jones wrote:
-> >>
-> > What does the kselftests config file do? I was about to complain that this
-> > would break compiling on non-x86 platforms, but 'make kselftest' and other
-> > forms of invoking the build work fine on aarch64 even with this config
-> > file. So is this just for documentation? If so, then its still obviously
-> > wrong for non-x86 platforms. The only config that makes sense here is KVM.
-> > If the other options need to be documented for x86, then should they get
-> > an additional config file? tools/testing/selftests/kvm/x86_64/config?
->
-> My understanding is that a config file fragment requires some kind of
-> kconfig invocation to create a full .config file.  When you do that,
-> unknown configurations are dropped silently.
+It helps to keep sorted order for compatibles and nodes, so sort them
 
-You are right on this point. As you said, unknown configs getting dropped for
-arm64 cross compilation.
+Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ .../regulator/qcom,rpmh-regulator.txt         | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-- Naresh
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+index 1a9cab50503a..bab9f71140b8 100644
+--- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+@@ -22,12 +22,12 @@ RPMh resource.
+ 
+ The names used for regulator nodes must match those supported by a given PMIC.
+ Supported regulator node names:
+-	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
+-	PMI8998:	bob
+ 	PM8005:		smps1 - smps4
++	PM8009:		smps1 - smps2, ldo1 - ldo7
+ 	PM8150:		smps1 - smps10, ldo1 - ldo18
+ 	PM8150L:	smps1 - smps8, ldo1 - ldo11, bob, flash, rgb
+-	PM8009:		smps1 - smps2, ld01 - ldo7
++	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
++	PMI8998:	bob
+ 
+ ========================
+ First Level Nodes - PMIC
+@@ -36,12 +36,13 @@ First Level Nodes - PMIC
+ - compatible
+ 	Usage:      required
+ 	Value type: <string>
+-	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
+-		    "qcom,pmi8998-rpmh-regulators" or
+-		    "qcom,pm8005-rpmh-regulators" or
+-		    "qcom,pm8150-rpmh-regulators" or
+-		    "qcom,pm8150l-rpmh-regulators" or
+-		    "qcom,pm8009-rpmh-regulators".
++	Definition: Must be one of below:
++		    "qcom,pm8005-rpmh-regulators"
++		    "qcom,pm8009-rpmh-regulators"
++		    "qcom,pm8150-rpmh-regulators"
++		    "qcom,pm8150l-rpmh-regulators"
++		    "qcom,pm8998-rpmh-regulators"
++		    "qcom,pmi8998-rpmh-regulators"
+ 
+ - qcom,pmic-id
+ 	Usage:      required
+-- 
+2.20.1
+
