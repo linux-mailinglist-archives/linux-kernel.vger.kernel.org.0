@@ -2,104 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B017872EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E0A887322
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405719AbfHIH14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 03:27:56 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38441 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfHIH1z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 03:27:55 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r9so91186324ljg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 00:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j5PzgqthqNRuPc/O6zjcnQFvUBq2ST4aJwKtYlkB6r0=;
-        b=RiYyRscS8AoY2DF8UL5j6arJQEDjRLSdG5/XqqZNz4Wo4+ZCyBbSzF4inWxiDAU8ul
-         qyFoWWGnH1ZXNJvu9J/kWnB7ExsLKsJq8N0KXEBvVyIbbbX5ENy1IKlVAlsC4QbxWLZl
-         vS03VHu9dblAqsfuh4U3BZJtMySSuS/j41vhlfQb9knKb5DzPu//KSL0qGaaH873xiDi
-         E1sGBP0xVFXzTLtQwCzCjStO+aVtLA0ZmBjLTu6GebHVtrXqX88z4/QaczEl3Rz8hIew
-         Fod48liLXk6vvOncGcWBpuW9Fcsmw9lKfIzIL6QUYs96BCe5ITk+yShBvUX3PT4siYTM
-         H8hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j5PzgqthqNRuPc/O6zjcnQFvUBq2ST4aJwKtYlkB6r0=;
-        b=KhoMyRGB0h8yU5ql+eNPBouzxN1HP/9ZyiL4GLjr7bO1YQNZ+RytahCL3I3tPdTNuR
-         1/dr8HGg4yfesv4rxyTAUpyefGWY3JHFsa2/8s7X0qzW9GNGfyc5rd9qKKDGeIpgqjIr
-         m7jI8JD73gxsNmlYElnuL6kyA8Yaxdsws9N2yZAQ9Rcv3xidEnlp1xkD1jLREy+HdaIp
-         6MI+IXIoFzYmbn4e28ra5G+rTi7LYtD+NS/RVma2zBPWMiUVHAM/d8UybaHvhWn4P5oC
-         bBJXLrcI9yJadan2FVgtrMMfYgAA6web3utEtfLN9RDw32idL4xqxxjDeO4V617zX3zv
-         44dw==
-X-Gm-Message-State: APjAAAWH4mE2Oi8iUtCn2UfbNfTBlFb36enO6UvDsNe/CxetE2LbZZd2
-        rpMPP8nLS5CVteRjc5+k0e3S5je5g6nG2orn/SOxnw==
-X-Google-Smtp-Source: APXvYqyCuFeaq1a4/P9xx90As+UW4V6kMqDqpu95i79ahBuuEBrT/uchnIGIQvmzPWUXXhJlJxtGbqOmbZWadBPcaMk=
-X-Received: by 2002:a2e:9b4a:: with SMTP id o10mr10632360ljj.137.1565335673522;
- Fri, 09 Aug 2019 00:27:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190808123140.25583-1-naresh.kamboju@linaro.org> <20190808151010.ktbqbfevgcs3bkjy@kamzik.brq.redhat.com>
-In-Reply-To: <20190808151010.ktbqbfevgcs3bkjy@kamzik.brq.redhat.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 9 Aug 2019 12:57:42 +0530
-Message-ID: <CA+G9fYsj79w5t9F4P180DTFvcjxcoxVW5+SDhEK3DESvTGw4zQ@mail.gmail.com>
-Subject: Re: [PATCH v2] selftests: kvm: Adding config fragments
-To:     Andrew Jones <drjones@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        sean.j.christopherson@intel.com,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kvm list <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2405833AbfHIHhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 03:37:10 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59678 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405697AbfHIHhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 03:37:09 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BAAB01A036E;
+        Fri,  9 Aug 2019 09:37:07 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7143D1A015F;
+        Fri,  9 Aug 2019 09:36:59 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 849E54030D;
+        Fri,  9 Aug 2019 15:36:49 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     wim@linux-watchdog.org, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux@armlinux.org.uk,
+        otavio@ossystems.com.br, leonard.crestez@nxp.com,
+        schnitzeltony@gmail.com, u.kleine-koenig@pengutronix.de,
+        jan.tuerk@emtrion.com, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/4] dt-bindings: watchdog: Add i.MX7ULP bindings
+Date:   Fri,  9 Aug 2019 15:13:59 +0800
+Message-Id: <1565334842-28161-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Aug 2019 at 20:40, Andrew Jones <drjones@redhat.com> wrote:
->
-> On Thu, Aug 08, 2019 at 01:31:40PM +0100, Naresh Kamboju wrote:
-> > selftests kvm all test cases need pre-required kernel configs for the
-> > tests to get pass.
-> >
-> > The KVM tests are skipped without these configs:
-> >
-> >         dev_fd = open(KVM_DEV_PATH, O_RDONLY);
-> >         if (dev_fd < 0)
-> >                 exit(KSFT_SKIP);
-> >
-> > Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> > ---
-> >  tools/testing/selftests/kvm/config | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >  create mode 100644 tools/testing/selftests/kvm/config
-> >
-> > diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
-> > new file mode 100644
-> > index 000000000000..63ed533f73d6
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/kvm/config
-> > @@ -0,0 +1,3 @@
-> > +CONFIG_KVM=y
-> > +CONFIG_KVM_INTEL=y
-> > +CONFIG_KVM_AMD=y
-> > --
-> > 2.17.1
-> >
->
-> What does the kselftests config file do? I was about to complain that this
-> would break compiling on non-x86 platforms, but 'make kselftest' and other
-> forms of invoking the build work fine on aarch64 even with this config
-> file. So is this just for documentation? If so, then its still obviously
-> wrong for non-x86 platforms. The only config that makes sense here is KVM.
-> If the other options need to be documented for x86, then should they get
-> an additional config file? tools/testing/selftests/kvm/x86_64/config?
+Add the watchdog bindings for Freescale i.MX7ULP.
 
-Addressed your comments and sent out v3 patch.
-Thank for the review.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ .../bindings/watchdog/fsl-imx7ulp-wdt.txt          | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
 
-- Naresh
+diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+new file mode 100644
+index 0000000..d83fc5c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+@@ -0,0 +1,22 @@
++* Freescale i.MX7ULP Watchdog Timer (WDT) Controller
++
++Required properties:
++- compatible : Should be "fsl,imx7ulp-wdt"
++- reg : Should contain WDT registers location and length
++- interrupts : Should contain WDT interrupt
++- clocks: Should contain a phandle pointing to the gated peripheral clock.
++
++Optional properties:
++- timeout-sec : Contains the watchdog timeout in seconds
++
++Examples:
++
++wdog1: wdog@403d0000 {
++	compatible = "fsl,imx7ulp-wdt";
++	reg = <0x403d0000 0x10000>;
++	interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
++	assigned-clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
++	assigned-clocks-parents = <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>;
++	timeout-sec = <40>;
++};
+-- 
+2.7.4
+
