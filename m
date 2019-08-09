@@ -2,429 +2,578 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC683883EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A99E883E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbfHIU3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 16:29:06 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:56971 "EHLO
+        id S1728092AbfHIU2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 16:28:48 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:39325 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbfHIU3E (ORCPT
+        with ESMTP id S1727984AbfHIU2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 16:29:04 -0400
+        Fri, 9 Aug 2019 16:28:46 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M26iv-1htiWo404n-002Ur7; Fri, 09 Aug 2019 22:28:36 +0200
+ 1MyseA-1iIVXW00Ju-00vy1u; Fri, 09 Aug 2019 22:28:40 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     soc@kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 06/16] watchdog: remove w90x900 driver
-Date:   Fri,  9 Aug 2019 22:27:34 +0200
-Message-Id: <20190809202749.742267-7-arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: [PATCH 07/16] spi: remove w90x900 driver
+Date:   Fri,  9 Aug 2019 22:27:35 +0200
+Message-Id: <20190809202749.742267-8-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190809202749.742267-1-arnd@arndb.de>
 References: <20190809202749.742267-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:4aZZJ0adOC4gNbJNr72QyItZi8IyivyiRyv6tRpgrjVP+CGv1cv
- 2uO0jATNpCZk/ogPQlZbBKnYr7D679/NRP4wiAo9nJm0x+zBB9ZkQLJxTFOurIoJW5a0MIS
- 1bCLvs+82yAUazyFXUIpU1JraDmICYVRBTLPZ4XUa9MJlL+plsL1ZJdU35WHbBHKKLouJg+
- c/buwbH2Oi1MOTjKiLOWQ==
+X-Provags-ID: V03:K1:JqH27kA3Qoi1b+pnAqK0VgsxNvciWL6b93nQ/1T/pe+AaU9tw2U
+ U/YkbsZnEFPqgDfhkjVyYYyOZNboib+AV5W1JkviMxYy/1ZDUcy24n7mf8YnBkeuI9w0Ot2
+ vZwQ4FrJp7vPpK9PmSOKxNZBG4iiwWhdkxXj6X2tV8KYoYcX79YpzgVlp3oxOgwjDinGLg7
+ 0vuHYOcZYqZ7at8yluipQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:TIiZUlyO4KI=:xMX0wJO46U8BafJBRrX1L/
- euv754YHVVFavyBFIjjId75wTHZUlzd/xcQYQCKFrHI8HwI2Nk+1VpMHwpiidDMsbIuqGFsms
- Gbe1hSoKiA+0Fo3+LncljjMgrxOBRV0Ee9XIuaCTs62/o6RlJ2r/RyukzmfwnLGrpzHMBL4vu
- VeyCLPVbYwashUqOhk1KawscikvyHW8z8cDuNgejY9/grpcG/VxVeYWrAnWIu/cOUK8WP+TvN
- mkwLcp39r8KWQei7FGv6LUGupcRhy0wqdGcwZLCkr9TnjjjeX5h9gOCGjIDnmS3mRxOW9l5cS
- IypKV4hU+8kRNEJhrtPR3yZCJPBxFUeFRP6sn7X2AtR7mPzdHCkxMSd2q3+4vWMxyUGUdB2W7
- Q7Sn6zljTYK/7tzoy7oAl4fa558Fjhk0ZRfv+jNscYRLNCsLcc14msVQGzn53FPDAFx8mKaqH
- YC3vCTFUL1Dj+2kIyVDVVqUHGIdUZGmhhrFJrBJRZ3oGRqfj4PUS/JJCvwMUMaDMgM7PKwT7V
- oU+m1EgG+kwXLGu4GzIfFNa0C01nVGxrN9WJx40RCLHPF0GZwgXzVzXKSDpxMLlLdz6jRl31b
- fZoU/APAHpv8T1/y82xau+xvtPQNqA7P4jajDxMjm2/tsaER8yUbmKsje0gdPhyawgStqSDI/
- 0jiCJt/8db5+bQywyof9SDTRsioCZS92yVX+G0YSm6PgBS17tYHVQdCsiS8IluwcvvKmUal23
- 8X9iTCz5GpwIeTKgwkAe5yGk86NM1D2m4HCn8g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rjmqXyktiug=:3Zgeb+CEt39IC2TvY9B2ct
+ 21dlKZ6aCMYUNFG4DpzUnmxQ6/QkC08x6ioGXibAHWyOXs92OvQl6bqbAqtAgx5HDPcCppMiD
+ /1ppZ1eySyRdo09lvM7uqjwHuyeoWYU9Cz7gDeO6iYQDdn5gj1C20K3bIya4/0Pzc5S4xALi7
+ nKfGi6bHfTbitCHUI1P9g+NtXeJRHo4vPYnA5sW9uhOgJPr/izD6OrrkKnb4j63KuLfv1rA0/
+ LbOpHhDnjqLFjpDhtm/Kvq2xRQIKGIAjIw9pQe3SsCtkG68BJnQP8WodszfNtG5nPeBvGrbJM
+ S3UuWA1VNAWKoiPP92525yNuaJ0Pvk6l9ssLRnGDLJh3Ly8fDULDO3Xff3D2a7zist7I5eGxC
+ has8C7s6Y41HPYv4UCAUcW3DBWqdplypB/uALpLmfxltn4Nuk6lwNBhuXM7zzsBBdCr+RhpsT
+ ESQgK3zED4zbwkGbWkELNR3GyHQCuD1YsgS1flQavfawiui2zDMKDS3HFc+ivOfIqh25Z97YE
+ EaIzrTGaGUOMP5xC7A55LZuUdPzMbsBWDs9Wd6svsH2eedWR8W02KTv3FLTrFolb4hzgxJjxt
+ qbmXPqfEVJVQ9NRBCLg7GT5qZgv565cvnei1uJEpBCY6ksBoRyBvYjJn+BPTgdYPMvCkB3irl
+ 5jREeTvuiS9k3eQhOHk2m4iilcqbqThHxcOTSASLUZMSuwOKeS+z00c1Dn759IP3OFLAO0oRV
+ iln0tA2LbV/+Qo28b+6L0uNr+ZawZ+SH1BKD5A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ARM w90x900 platform is getting removed, so this driver is obsolete
+The ARM w90x900 platform is getting removed, so this driver is obsolete.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../watchdog/watchdog-parameters.rst          |  10 -
- drivers/watchdog/Kconfig                      |   9 -
- drivers/watchdog/Makefile                     |   1 -
- drivers/watchdog/nuc900_wdt.c                 | 302 ------------------
- 4 files changed, 322 deletions(-)
- delete mode 100644 drivers/watchdog/nuc900_wdt.c
+ drivers/spi/Kconfig                      |   7 -
+ drivers/spi/Makefile                     |   1 -
+ drivers/spi/spi-nuc900.c                 | 429 -----------------------
+ include/Kbuild                           |   1 -
+ include/linux/platform_data/spi-nuc900.h |  29 --
+ 5 files changed, 467 deletions(-)
+ delete mode 100644 drivers/spi/spi-nuc900.c
+ delete mode 100644 include/linux/platform_data/spi-nuc900.h
 
-diff --git a/Documentation/watchdog/watchdog-parameters.rst b/Documentation/watchdog/watchdog-parameters.rst
-index 226aba56f704..223c99361a30 100644
---- a/Documentation/watchdog/watchdog-parameters.rst
-+++ b/Documentation/watchdog/watchdog-parameters.rst
-@@ -366,16 +366,6 @@ nic7018_wdt:
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 3a1d8f1170de..949b18ed9d6b 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -440,13 +440,6 @@ config SPI_NPCM_PSPI
+ 	  This driver provides support for Nuvoton NPCM BMC
+ 	  Peripheral SPI controller in master mode.
  
- -------------------------------------------------
- 
--nuc900_wdt:
--    heartbeat:
--	Watchdog heartbeats in seconds.
--	(default = 15)
--    nowayout:
--	Watchdog cannot be stopped once started
--	(default=kernel config parameter)
--
---------------------------------------------------
--
- omap_wdt:
-     timer_margin:
- 	initial watchdog timeout (in seconds)
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index e631f1ae303a..0e64f501ef30 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -655,15 +655,6 @@ config STMP3XXX_RTC_WATCHDOG
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called stmp3xxx_rtc_wdt.
- 
--config NUC900_WATCHDOG
--	tristate "Nuvoton NUC900 watchdog"
--	depends on ARCH_W90X900 || COMPILE_TEST
+-config SPI_NUC900
+-	tristate "Nuvoton NUC900 series SPI"
+-	depends on ARCH_W90X900
+-	select SPI_BITBANG
 -	help
--	  Say Y here if to include support for the watchdog timer
--	  for the Nuvoton NUC900 series SoCs.
--	  To compile this driver as a module, choose M here: the
--	  module will be called nuc900_wdt.
+-	  SPI driver for Nuvoton NUC900 series ARM SoCs
 -
- config TS4800_WATCHDOG
- 	tristate "TS-4800 Watchdog"
- 	depends on HAS_IOMEM && OF
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index 85f55ec76f8d..b5a0aed537af 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -63,7 +63,6 @@ obj-$(CONFIG_RN5T618_WATCHDOG) += rn5t618_wdt.o
- obj-$(CONFIG_COH901327_WATCHDOG) += coh901327_wdt.o
- obj-$(CONFIG_NPCM7XX_WATCHDOG) += npcm_wdt.o
- obj-$(CONFIG_STMP3XXX_RTC_WATCHDOG) += stmp3xxx_rtc_wdt.o
--obj-$(CONFIG_NUC900_WATCHDOG) += nuc900_wdt.o
- obj-$(CONFIG_TS4800_WATCHDOG) += ts4800_wdt.o
- obj-$(CONFIG_TS72XX_WATCHDOG) += ts72xx_wdt.o
- obj-$(CONFIG_IMX2_WDT) += imx2_wdt.o
-diff --git a/drivers/watchdog/nuc900_wdt.c b/drivers/watchdog/nuc900_wdt.c
+ config SPI_LANTIQ_SSC
+ 	tristate "Lantiq SSC SPI controller"
+ 	depends on LANTIQ || COMPILE_TEST
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index 63dcab552bcb..b1131809a294 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -64,7 +64,6 @@ obj-$(CONFIG_SPI_MT7621)		+= spi-mt7621.o
+ obj-$(CONFIG_SPI_MXIC)			+= spi-mxic.o
+ obj-$(CONFIG_SPI_MXS)			+= spi-mxs.o
+ obj-$(CONFIG_SPI_NPCM_PSPI)		+= spi-npcm-pspi.o
+-obj-$(CONFIG_SPI_NUC900)		+= spi-nuc900.o
+ obj-$(CONFIG_SPI_NXP_FLEXSPI)		+= spi-nxp-fspi.o
+ obj-$(CONFIG_SPI_OC_TINY)		+= spi-oc-tiny.o
+ spi-octeon-objs				:= spi-cavium.o spi-cavium-octeon.o
+diff --git a/drivers/spi/spi-nuc900.c b/drivers/spi/spi-nuc900.c
 deleted file mode 100644
-index db124cebe838..000000000000
---- a/drivers/watchdog/nuc900_wdt.c
+index 37e2034ad4d5..000000000000
+--- a/drivers/spi/spi-nuc900.c
 +++ /dev/null
-@@ -1,302 +0,0 @@
+@@ -1,429 +0,0 @@
 -// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Copyright (c) 2009 Nuvoton technology.
+- * Wan ZongShun <mcuos.com@gmail.com>
+- */
+-
+-#include <linux/module.h>
+-#include <linux/spinlock.h>
+-#include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/errno.h>
+-#include <linux/err.h>
+-#include <linux/clk.h>
+-#include <linux/device.h>
+-#include <linux/platform_device.h>
+-#include <linux/gpio.h>
+-#include <linux/io.h>
+-#include <linux/slab.h>
+-
+-#include <linux/spi/spi.h>
+-#include <linux/spi/spi_bitbang.h>
+-
+-#include <linux/platform_data/spi-nuc900.h>
+-
+-/* usi registers offset */
+-#define USI_CNT		0x00
+-#define USI_DIV		0x04
+-#define USI_SSR		0x08
+-#define USI_RX0		0x10
+-#define USI_TX0		0x10
+-
+-/* usi register bit */
+-#define ENINT		(0x01 << 17)
+-#define ENFLG		(0x01 << 16)
+-#define SLEEP		(0x0f << 12)
+-#define TXNUM		(0x03 << 8)
+-#define TXBITLEN	(0x1f << 3)
+-#define TXNEG		(0x01 << 2)
+-#define RXNEG		(0x01 << 1)
+-#define LSB		(0x01 << 10)
+-#define SELECTLEV	(0x01 << 2)
+-#define SELECTPOL	(0x01 << 31)
+-#define SELECTSLAVE	0x01
+-#define GOBUSY		0x01
+-
+-struct nuc900_spi {
+-	struct spi_bitbang	 bitbang;
+-	struct completion	 done;
+-	void __iomem		*regs;
+-	int			 irq;
+-	int			 len;
+-	int			 count;
+-	const unsigned char	*tx;
+-	unsigned char		*rx;
+-	struct clk		*clk;
+-	struct spi_master	*master;
+-	struct nuc900_spi_info *pdata;
+-	spinlock_t		lock;
+-};
+-
+-static inline struct nuc900_spi *to_hw(struct spi_device *sdev)
+-{
+-	return spi_master_get_devdata(sdev->master);
+-}
+-
+-static void nuc900_slave_select(struct spi_device *spi, unsigned int ssr)
+-{
+-	struct nuc900_spi *hw = to_hw(spi);
+-	unsigned int val;
+-	unsigned int cs = spi->mode & SPI_CS_HIGH ? 1 : 0;
+-	unsigned int cpol = spi->mode & SPI_CPOL ? 1 : 0;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_SSR);
+-
+-	if (!cs)
+-		val &= ~SELECTLEV;
+-	else
+-		val |= SELECTLEV;
+-
+-	if (!ssr)
+-		val &= ~SELECTSLAVE;
+-	else
+-		val |= SELECTSLAVE;
+-
+-	__raw_writel(val, hw->regs + USI_SSR);
+-
+-	val = __raw_readl(hw->regs + USI_CNT);
+-
+-	if (!cpol)
+-		val &= ~SELECTPOL;
+-	else
+-		val |= SELECTPOL;
+-
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-}
+-
+-static void nuc900_spi_chipsel(struct spi_device *spi, int value)
+-{
+-	switch (value) {
+-	case BITBANG_CS_INACTIVE:
+-		nuc900_slave_select(spi, 0);
+-		break;
+-
+-	case BITBANG_CS_ACTIVE:
+-		nuc900_slave_select(spi, 1);
+-		break;
+-	}
+-}
+-
+-static void nuc900_spi_setup_txnum(struct nuc900_spi *hw, unsigned int txnum)
+-{
+-	unsigned int val;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_CNT) & ~TXNUM;
+-
+-	if (txnum)
+-		val |= txnum << 0x08;
+-
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-
+-}
+-
+-static void nuc900_spi_setup_txbitlen(struct nuc900_spi *hw,
+-							unsigned int txbitlen)
+-{
+-	unsigned int val;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_CNT) & ~TXBITLEN;
+-
+-	val |= (txbitlen << 0x03);
+-
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-}
+-
+-static void nuc900_spi_gobusy(struct nuc900_spi *hw)
+-{
+-	unsigned int val;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_CNT);
+-
+-	val |= GOBUSY;
+-
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-}
+-
+-static inline unsigned int hw_txbyte(struct nuc900_spi *hw, int count)
+-{
+-	return hw->tx ? hw->tx[count] : 0;
+-}
+-
+-static int nuc900_spi_txrx(struct spi_device *spi, struct spi_transfer *t)
+-{
+-	struct nuc900_spi *hw = to_hw(spi);
+-
+-	hw->tx = t->tx_buf;
+-	hw->rx = t->rx_buf;
+-	hw->len = t->len;
+-	hw->count = 0;
+-
+-	__raw_writel(hw_txbyte(hw, 0x0), hw->regs + USI_TX0);
+-
+-	nuc900_spi_gobusy(hw);
+-
+-	wait_for_completion(&hw->done);
+-
+-	return hw->count;
+-}
+-
+-static irqreturn_t nuc900_spi_irq(int irq, void *dev)
+-{
+-	struct nuc900_spi *hw = dev;
+-	unsigned int status;
+-	unsigned int count = hw->count;
+-
+-	status = __raw_readl(hw->regs + USI_CNT);
+-	__raw_writel(status, hw->regs + USI_CNT);
+-
+-	if (status & ENFLG) {
+-		hw->count++;
+-
+-		if (hw->rx)
+-			hw->rx[count] = __raw_readl(hw->regs + USI_RX0);
+-		count++;
+-
+-		if (count < hw->len) {
+-			__raw_writel(hw_txbyte(hw, count), hw->regs + USI_TX0);
+-			nuc900_spi_gobusy(hw);
+-		} else {
+-			complete(&hw->done);
+-		}
+-
+-		return IRQ_HANDLED;
+-	}
+-
+-	complete(&hw->done);
+-	return IRQ_HANDLED;
+-}
+-
+-static void nuc900_tx_edge(struct nuc900_spi *hw, unsigned int edge)
+-{
+-	unsigned int val;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_CNT);
+-
+-	if (edge)
+-		val |= TXNEG;
+-	else
+-		val &= ~TXNEG;
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-}
+-
+-static void nuc900_rx_edge(struct nuc900_spi *hw, unsigned int edge)
+-{
+-	unsigned int val;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_CNT);
+-
+-	if (edge)
+-		val |= RXNEG;
+-	else
+-		val &= ~RXNEG;
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-}
+-
+-static void nuc900_send_first(struct nuc900_spi *hw, unsigned int lsb)
+-{
+-	unsigned int val;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_CNT);
+-
+-	if (lsb)
+-		val |= LSB;
+-	else
+-		val &= ~LSB;
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-}
+-
+-static void nuc900_set_sleep(struct nuc900_spi *hw, unsigned int sleep)
+-{
+-	unsigned int val;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_CNT) & ~SLEEP;
+-
+-	if (sleep)
+-		val |= (sleep << 12);
+-
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-}
+-
+-static void nuc900_enable_int(struct nuc900_spi *hw)
+-{
+-	unsigned int val;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hw->lock, flags);
+-
+-	val = __raw_readl(hw->regs + USI_CNT);
+-
+-	val |= ENINT;
+-
+-	__raw_writel(val, hw->regs + USI_CNT);
+-
+-	spin_unlock_irqrestore(&hw->lock, flags);
+-}
+-
+-static void nuc900_set_divider(struct nuc900_spi *hw)
+-{
+-	__raw_writel(hw->pdata->divider, hw->regs + USI_DIV);
+-}
+-
+-static void nuc900_init_spi(struct nuc900_spi *hw)
+-{
+-	clk_enable(hw->clk);
+-	spin_lock_init(&hw->lock);
+-
+-	nuc900_tx_edge(hw, hw->pdata->txneg);
+-	nuc900_rx_edge(hw, hw->pdata->rxneg);
+-	nuc900_send_first(hw, hw->pdata->lsb);
+-	nuc900_set_sleep(hw, hw->pdata->sleep);
+-	nuc900_spi_setup_txbitlen(hw, hw->pdata->txbitlen);
+-	nuc900_spi_setup_txnum(hw, hw->pdata->txnum);
+-	nuc900_set_divider(hw);
+-	nuc900_enable_int(hw);
+-}
+-
+-static int nuc900_spi_probe(struct platform_device *pdev)
+-{
+-	struct nuc900_spi *hw;
+-	struct spi_master *master;
+-	struct resource *res;
+-	int err = 0;
+-
+-	master = spi_alloc_master(&pdev->dev, sizeof(struct nuc900_spi));
+-	if (master == NULL) {
+-		dev_err(&pdev->dev, "No memory for spi_master\n");
+-		return -ENOMEM;
+-	}
+-
+-	hw = spi_master_get_devdata(master);
+-	hw->master = master;
+-	hw->pdata  = dev_get_platdata(&pdev->dev);
+-
+-	if (hw->pdata == NULL) {
+-		dev_err(&pdev->dev, "No platform data supplied\n");
+-		err = -ENOENT;
+-		goto err_pdata;
+-	}
+-
+-	platform_set_drvdata(pdev, hw);
+-	init_completion(&hw->done);
+-
+-	master->mode_bits          = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
+-	if (hw->pdata->lsb)
+-		master->mode_bits |= SPI_LSB_FIRST;
+-	master->num_chipselect     = hw->pdata->num_cs;
+-	master->bus_num            = hw->pdata->bus_num;
+-	hw->bitbang.master         = hw->master;
+-	hw->bitbang.chipselect     = nuc900_spi_chipsel;
+-	hw->bitbang.txrx_bufs      = nuc900_spi_txrx;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hw->regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(hw->regs)) {
+-		err = PTR_ERR(hw->regs);
+-		goto err_pdata;
+-	}
+-
+-	hw->irq = platform_get_irq(pdev, 0);
+-	if (hw->irq < 0) {
+-		dev_err(&pdev->dev, "No IRQ specified\n");
+-		err = -ENOENT;
+-		goto err_pdata;
+-	}
+-
+-	err = devm_request_irq(&pdev->dev, hw->irq, nuc900_spi_irq, 0,
+-				pdev->name, hw);
+-	if (err) {
+-		dev_err(&pdev->dev, "Cannot claim IRQ\n");
+-		goto err_pdata;
+-	}
+-
+-	hw->clk = devm_clk_get(&pdev->dev, "spi");
+-	if (IS_ERR(hw->clk)) {
+-		dev_err(&pdev->dev, "No clock for device\n");
+-		err = PTR_ERR(hw->clk);
+-		goto err_pdata;
+-	}
+-
+-	mfp_set_groupg(&pdev->dev, NULL);
+-	nuc900_init_spi(hw);
+-
+-	err = spi_bitbang_start(&hw->bitbang);
+-	if (err) {
+-		dev_err(&pdev->dev, "Failed to register SPI master\n");
+-		goto err_register;
+-	}
+-
+-	return 0;
+-
+-err_register:
+-	clk_disable(hw->clk);
+-err_pdata:
+-	spi_master_put(hw->master);
+-	return err;
+-}
+-
+-static int nuc900_spi_remove(struct platform_device *dev)
+-{
+-	struct nuc900_spi *hw = platform_get_drvdata(dev);
+-
+-	spi_bitbang_stop(&hw->bitbang);
+-	clk_disable(hw->clk);
+-	spi_master_put(hw->master);
+-	return 0;
+-}
+-
+-static struct platform_driver nuc900_spi_driver = {
+-	.probe		= nuc900_spi_probe,
+-	.remove		= nuc900_spi_remove,
+-	.driver		= {
+-		.name	= "nuc900-spi",
+-	},
+-};
+-module_platform_driver(nuc900_spi_driver);
+-
+-MODULE_AUTHOR("Wan ZongShun <mcuos.com@gmail.com>");
+-MODULE_DESCRIPTION("nuc900 spi driver!");
+-MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:nuc900-spi");
+diff --git a/include/Kbuild b/include/Kbuild
+index c38f0d46b267..5e0642d79dce 100644
+--- a/include/Kbuild
++++ b/include/Kbuild
+@@ -550,7 +550,6 @@ header-test-			+= linux/platform_data/sky81452-backlight.h
+ header-test-			+= linux/platform_data/spi-davinci.h
+ header-test-			+= linux/platform_data/spi-ep93xx.h
+ header-test-			+= linux/platform_data/spi-mt65xx.h
+-header-test-			+= linux/platform_data/spi-nuc900.h
+ header-test-			+= linux/platform_data/st_sensors_pdata.h
+ header-test-			+= linux/platform_data/ti-sysc.h
+ header-test-			+= linux/platform_data/timer-ixp4xx.h
+diff --git a/include/linux/platform_data/spi-nuc900.h b/include/linux/platform_data/spi-nuc900.h
+deleted file mode 100644
+index ca3510877000..000000000000
+--- a/include/linux/platform_data/spi-nuc900.h
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
 -/*
 - * Copyright (c) 2009 Nuvoton technology corporation.
 - *
 - * Wan ZongShun <mcuos.com@gmail.com>
 - */
 -
--#include <linux/bitops.h>
--#include <linux/errno.h>
--#include <linux/fs.h>
--#include <linux/io.h>
--#include <linux/clk.h>
--#include <linux/kernel.h>
--#include <linux/miscdevice.h>
--#include <linux/module.h>
--#include <linux/moduleparam.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
--#include <linux/interrupt.h>
--#include <linux/types.h>
--#include <linux/watchdog.h>
--#include <linux/uaccess.h>
+-#ifndef __SPI_NUC900_H
+-#define __SPI_NUC900_H
 -
--#define REG_WTCR		0x1c
--#define WTCLK			(0x01 << 10)
--#define WTE			(0x01 << 7)	/*wdt enable*/
--#define WTIS			(0x03 << 4)
--#define WTIF			(0x01 << 3)
--#define WTRF			(0x01 << 2)
--#define WTRE			(0x01 << 1)
--#define WTR			(0x01 << 0)
--/*
-- * The watchdog time interval can be calculated via following formula:
-- * WTIS		real time interval (formula)
-- * 0x00		((2^ 14 ) * ((external crystal freq) / 256))seconds
-- * 0x01		((2^ 16 ) * ((external crystal freq) / 256))seconds
-- * 0x02		((2^ 18 ) * ((external crystal freq) / 256))seconds
-- * 0x03		((2^ 20 ) * ((external crystal freq) / 256))seconds
-- *
-- * The external crystal freq is 15Mhz in the nuc900 evaluation board.
-- * So 0x00 = +-0.28 seconds, 0x01 = +-1.12 seconds, 0x02 = +-4.48 seconds,
-- * 0x03 = +- 16.92 seconds..
-- */
--#define WDT_HW_TIMEOUT		0x02
--#define WDT_TIMEOUT		(HZ/2)
--#define WDT_HEARTBEAT		15
+-extern void mfp_set_groupg(struct device *dev, const char *subname);
 -
--static int heartbeat = WDT_HEARTBEAT;
--module_param(heartbeat, int, 0);
--MODULE_PARM_DESC(heartbeat, "Watchdog heartbeats in seconds. "
--	"(default = " __MODULE_STRING(WDT_HEARTBEAT) ")");
--
--static bool nowayout = WATCHDOG_NOWAYOUT;
--module_param(nowayout, bool, 0);
--MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started "
--	"(default=" __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
--
--struct nuc900_wdt {
--	struct clk	 *wdt_clock;
--	struct platform_device *pdev;
--	void __iomem	 *wdt_base;
--	char		 expect_close;
--	struct timer_list timer;
--	spinlock_t       wdt_lock;
--	unsigned long next_heartbeat;
+-struct nuc900_spi_info {
+-	unsigned int num_cs;
+-	unsigned int lsb;
+-	unsigned int txneg;
+-	unsigned int rxneg;
+-	unsigned int divider;
+-	unsigned int sleep;
+-	unsigned int txnum;
+-	unsigned int txbitlen;
+-	int bus_num;
 -};
 -
--static unsigned long nuc900wdt_busy;
--static struct nuc900_wdt *nuc900_wdt;
--
--static inline void nuc900_wdt_keepalive(void)
--{
--	unsigned int val;
--
--	spin_lock(&nuc900_wdt->wdt_lock);
--
--	val = __raw_readl(nuc900_wdt->wdt_base + REG_WTCR);
--	val |= (WTR | WTIF);
--	__raw_writel(val, nuc900_wdt->wdt_base + REG_WTCR);
--
--	spin_unlock(&nuc900_wdt->wdt_lock);
--}
--
--static inline void nuc900_wdt_start(void)
--{
--	unsigned int val;
--
--	spin_lock(&nuc900_wdt->wdt_lock);
--
--	val = __raw_readl(nuc900_wdt->wdt_base + REG_WTCR);
--	val |= (WTRE | WTE | WTR | WTCLK | WTIF);
--	val &= ~WTIS;
--	val |= (WDT_HW_TIMEOUT << 0x04);
--	__raw_writel(val, nuc900_wdt->wdt_base + REG_WTCR);
--
--	spin_unlock(&nuc900_wdt->wdt_lock);
--
--	nuc900_wdt->next_heartbeat = jiffies + heartbeat * HZ;
--	mod_timer(&nuc900_wdt->timer, jiffies + WDT_TIMEOUT);
--}
--
--static inline void nuc900_wdt_stop(void)
--{
--	unsigned int val;
--
--	del_timer(&nuc900_wdt->timer);
--
--	spin_lock(&nuc900_wdt->wdt_lock);
--
--	val = __raw_readl(nuc900_wdt->wdt_base + REG_WTCR);
--	val &= ~WTE;
--	__raw_writel(val, nuc900_wdt->wdt_base + REG_WTCR);
--
--	spin_unlock(&nuc900_wdt->wdt_lock);
--}
--
--static inline void nuc900_wdt_ping(void)
--{
--	nuc900_wdt->next_heartbeat = jiffies + heartbeat * HZ;
--}
--
--static int nuc900_wdt_open(struct inode *inode, struct file *file)
--{
--
--	if (test_and_set_bit(0, &nuc900wdt_busy))
--		return -EBUSY;
--
--	nuc900_wdt_start();
--
--	return stream_open(inode, file);
--}
--
--static int nuc900_wdt_close(struct inode *inode, struct file *file)
--{
--	if (nuc900_wdt->expect_close == 42)
--		nuc900_wdt_stop();
--	else {
--		dev_crit(&nuc900_wdt->pdev->dev,
--			"Unexpected close, not stopping watchdog!\n");
--		nuc900_wdt_ping();
--	}
--
--	nuc900_wdt->expect_close = 0;
--	clear_bit(0, &nuc900wdt_busy);
--	return 0;
--}
--
--static const struct watchdog_info nuc900_wdt_info = {
--	.identity	= "nuc900 watchdog",
--	.options	= WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING |
--						WDIOF_MAGICCLOSE,
+-struct nuc900_spi_chip {
+-	unsigned char bits_per_word;
 -};
 -
--static long nuc900_wdt_ioctl(struct file *file,
--					unsigned int cmd, unsigned long arg)
--{
--	void __user *argp = (void __user *)arg;
--	int __user *p = argp;
--	int new_value;
--
--	switch (cmd) {
--	case WDIOC_GETSUPPORT:
--		return copy_to_user(argp, &nuc900_wdt_info,
--				sizeof(nuc900_wdt_info)) ? -EFAULT : 0;
--	case WDIOC_GETSTATUS:
--	case WDIOC_GETBOOTSTATUS:
--		return put_user(0, p);
--
--	case WDIOC_KEEPALIVE:
--		nuc900_wdt_ping();
--		return 0;
--
--	case WDIOC_SETTIMEOUT:
--		if (get_user(new_value, p))
--			return -EFAULT;
--
--		heartbeat = new_value;
--		nuc900_wdt_ping();
--
--		return put_user(new_value, p);
--	case WDIOC_GETTIMEOUT:
--		return put_user(heartbeat, p);
--	default:
--		return -ENOTTY;
--	}
--}
--
--static ssize_t nuc900_wdt_write(struct file *file, const char __user *data,
--						size_t len, loff_t *ppos)
--{
--	if (!len)
--		return 0;
--
--	/* Scan for magic character */
--	if (!nowayout) {
--		size_t i;
--
--		nuc900_wdt->expect_close = 0;
--
--		for (i = 0; i < len; i++) {
--			char c;
--			if (get_user(c, data + i))
--				return -EFAULT;
--			if (c == 'V') {
--				nuc900_wdt->expect_close = 42;
--				break;
--			}
--		}
--	}
--
--	nuc900_wdt_ping();
--	return len;
--}
--
--static void nuc900_wdt_timer_ping(struct timer_list *unused)
--{
--	if (time_before(jiffies, nuc900_wdt->next_heartbeat)) {
--		nuc900_wdt_keepalive();
--		mod_timer(&nuc900_wdt->timer, jiffies + WDT_TIMEOUT);
--	} else
--		dev_warn(&nuc900_wdt->pdev->dev, "Will reset the machine !\n");
--}
--
--static const struct file_operations nuc900wdt_fops = {
--	.owner		= THIS_MODULE,
--	.llseek		= no_llseek,
--	.unlocked_ioctl	= nuc900_wdt_ioctl,
--	.open		= nuc900_wdt_open,
--	.release	= nuc900_wdt_close,
--	.write		= nuc900_wdt_write,
--};
--
--static struct miscdevice nuc900wdt_miscdev = {
--	.minor		= WATCHDOG_MINOR,
--	.name		= "watchdog",
--	.fops		= &nuc900wdt_fops,
--};
--
--static int nuc900wdt_probe(struct platform_device *pdev)
--{
--	int ret = 0;
--
--	nuc900_wdt = devm_kzalloc(&pdev->dev, sizeof(*nuc900_wdt),
--				GFP_KERNEL);
--	if (!nuc900_wdt)
--		return -ENOMEM;
--
--	nuc900_wdt->pdev = pdev;
--
--	spin_lock_init(&nuc900_wdt->wdt_lock);
--
--	nuc900_wdt->wdt_base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(nuc900_wdt->wdt_base))
--		return PTR_ERR(nuc900_wdt->wdt_base);
--
--	nuc900_wdt->wdt_clock = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(nuc900_wdt->wdt_clock)) {
--		dev_err(&pdev->dev, "failed to find watchdog clock source\n");
--		return PTR_ERR(nuc900_wdt->wdt_clock);
--	}
--
--	clk_enable(nuc900_wdt->wdt_clock);
--
--	timer_setup(&nuc900_wdt->timer, nuc900_wdt_timer_ping, 0);
--
--	ret = misc_register(&nuc900wdt_miscdev);
--	if (ret) {
--		dev_err(&pdev->dev, "err register miscdev on minor=%d (%d)\n",
--			WATCHDOG_MINOR, ret);
--		goto err_clk;
--	}
--
--	return 0;
--
--err_clk:
--	clk_disable(nuc900_wdt->wdt_clock);
--	return ret;
--}
--
--static int nuc900wdt_remove(struct platform_device *pdev)
--{
--	misc_deregister(&nuc900wdt_miscdev);
--
--	clk_disable(nuc900_wdt->wdt_clock);
--
--	return 0;
--}
--
--static struct platform_driver nuc900wdt_driver = {
--	.probe		= nuc900wdt_probe,
--	.remove		= nuc900wdt_remove,
--	.driver		= {
--		.name	= "nuc900-wdt",
--	},
--};
--
--module_platform_driver(nuc900wdt_driver);
--
--MODULE_AUTHOR("Wan ZongShun <mcuos.com@gmail.com>");
--MODULE_DESCRIPTION("Watchdog driver for NUC900");
--MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:nuc900-wdt");
+-#endif /* __SPI_NUC900_H */
 -- 
 2.20.0
 
