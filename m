@@ -2,471 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADDD8877F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C716A87804
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406426AbfHIKzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 06:55:07 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40174 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406093AbfHIKzG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 06:55:06 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h8so6403263edv.7;
-        Fri, 09 Aug 2019 03:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IFobf+v5u7ekboCmajvIduUsjW5C7G85pX/gGR/QpIM=;
-        b=tCVqZ9yL9JRYNlLzVmtpUSGoiEHAXl7Gl9ND+MXKzQlU/RUUaM/5bN9Kk7mUzsTTwa
-         yg6TA7AeENPsR/QEcdxMiPFD0Fv2XbGajVMHBCELBf5FHplv06FBVJTyr9DrS/34r2m2
-         5x5qn1mFKhJzJDhnPwqQlyYlmmnJMDncuNyHf0/agTQ52b0kcOi/7kWEMFIenQRlRj6s
-         hd/46ggl5vja/w8/J2HnFwNsJ0b4wMZGnNNrJZgGvUkZ7MmXqPadFmnTOfAAmxtRP/G0
-         PID9NT88lIQrwcle3Dof8flzKWwhGRUthpFDrCY+ygjxljm1VgSodK+Qfj+WGlEhKmk5
-         pXBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IFobf+v5u7ekboCmajvIduUsjW5C7G85pX/gGR/QpIM=;
-        b=S+jbTMoOH5QdHvAdDhfmiJQIANZ1f8DjiQdZH0KAhgf1OobyBjspOQ0Ga7maSZ0cU7
-         a9mvL2bo0bwNv1xkjMJlid1F/dLmdgjVf7PfwjmvNfgICLZF2bOdJs2gnd/IlUmbThic
-         Hzy/GEFx3hdCy7ntp5cfwFwNB4/S7LoyBMGAEs0TzFn4eQjXuwWGWuVYpRsoCM2RJ/eU
-         nmZd22GA1/wU7lt+U0lQUCt60iCih+4mCmFNYXqfwyMjjg8NajbzkIFJT0Z9Qxtxa5fV
-         K3B800gvdf3bDuOnABBlA7seUREhyXOBhHVZ23nSLgRlpMOdQGBxHytGyIuvMKlXRoIP
-         Jwaw==
-X-Gm-Message-State: APjAAAUeZmQi6LruCjv81l0XDOz9cmXYq71Noq1xa7/2NR3yS6CkPE+k
-        atsLSHC+T9Hk7Ki3eRFZJAR37pGEG/t7Ww==
-X-Google-Smtp-Source: APXvYqx6MCjOzh34eccuqlRuKfyP8sl1s9oDvFEvvd5eq4SJxQXMPvyIgigEYkc1hRt6l/rfQJWTZA==
-X-Received: by 2002:a50:91e5:: with SMTP id h34mr20734238eda.72.1565348102877;
-        Fri, 09 Aug 2019 03:55:02 -0700 (PDT)
-Received: from continental.suse.de ([177.96.42.43])
-        by smtp.gmail.com with ESMTPSA id x55sm22289167edm.11.2019.08.09.03.54.53
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 03:55:02 -0700 (PDT)
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>, hch@lst.de,
-        axboe@kernel.dk, linux-block@vger.kernel.org,
-        Tim Waugh <tim@cyberelk.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Avri Altman <avri.altman@wdc.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chris Boot <bootc@bootc.net>, Zachary Hays <zhays@lexmark.com>,
-        Ming Lei <ming.lei@redhat.com>, Omar Sandoval <osandov@fb.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-ide@vger.kernel.org (open list:IDE SUBSYSTEM),
-        linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE
-        DIGITAL (SD) AND...),
-        linux-nvme@lists.infradead.org (open list:NVM EXPRESS DRIVER),
-        linux-scsi@vger.kernel.org (open list:SCSI SUBSYSTEM),
-        linux-nfs@vger.kernel.org (open list:KERNEL NFSD, SUNRPC, AND LOCKD
-        SERVERS)
-Subject: [PATCHv2  4/4] block: Change at_head argument of blk_execute_rq to bool
-Date:   Fri,  9 Aug 2019 07:54:33 -0300
-Message-Id: <20190809105433.8946-5-marcos.souza.org@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190809105433.8946-1-marcos.souza.org@gmail.com>
-References: <20190809105433.8946-1-marcos.souza.org@gmail.com>
+        id S2406446AbfHIK4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 06:56:31 -0400
+Received: from mail-eopbgr80074.outbound.protection.outlook.com ([40.107.8.74]:40005
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2405928AbfHIK43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 06:56:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h+K2u7m8VQglbBdju9n9+gJh1prbQM8eTIb6RZI/Q8w=;
+ b=i1nbwsMz5rNxXQ5CrWCgeVp9/fHtauZptPayITvCiSO4gl2tc+h7c+/RD3vN4N83rIkdgTF5D5Cu4qUS7KycxOT5GimjsFeiD+6ibsTVR3w8o9FGDD7g0Oo0poilV3ObP5+lnQ6immL6wuFseI44V2+955wVtSBXgBGcIM/UPHc=
+Received: from VI1PR08CA0100.eurprd08.prod.outlook.com (2603:10a6:800:d3::26)
+ by VI1PR0801MB1855.eurprd08.prod.outlook.com (2603:10a6:800:59::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.15; Fri, 9 Aug
+ 2019 10:56:18 +0000
+Received: from VE1EUR03FT054.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::208) by VI1PR08CA0100.outlook.office365.com
+ (2603:10a6:800:d3::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2157.14 via Frontend
+ Transport; Fri, 9 Aug 2019 10:56:18 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=temperror action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT054.mail.protection.outlook.com (10.152.19.64) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2052.18 via Frontend Transport; Fri, 9 Aug 2019 10:56:16 +0000
+Received: ("Tessian outbound 71602e13cd49:v26"); Fri, 09 Aug 2019 10:56:11 +0000
+X-CR-MTA-TID: 64aa7808
+Received: from 65c5bba726de.1 (cr-mta-lb-1.cr-mta-net [104.47.1.51])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 8228BA48-3C1D-4E53-90F0-17430C596893.1;
+        Fri, 09 Aug 2019 10:56:06 +0000
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (mail-ve1eur01lp2051.outbound.protection.outlook.com [104.47.1.51])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 65c5bba726de.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Fri, 09 Aug 2019 10:56:06 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jURJZbmKqKefHN7adu/i4/idX/qOOC1LBQ6jHSMJe3sORDldzuHzHHOmdZWeEnSDiBHOwEhS6ePmwoISHDoEjb0GSCqhuJRbC1KAFTnp5SO2LwBTnlZWRAWo4xAQa+jMkZunU5al8A2AmwLZ0i4kpLyUZyNCrJ2f5tiEcC5e5utW1y3dpwIbruR0y5ESTiVgXiUPtBsZ30dVcvp7BYI/UULhT960eqQCP6eaN+a7q8CC40MYuWdfh5Gv7vYNEV4mxvMO4gV47ualN18kxkKhrbt5X7WWZ7z03oeLjlNLvQBoRcVu/1sJoIFVRgxscQbmHm6K7CroiO8ubTj+bvcFZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qVhb3QP8F3FbnFywKTdRj95pJmrMaLa+wYlOyDSBx88=;
+ b=dkVFzPhpn551gUWlb1kyIi/A1s/fT9iZYQQ4H1vgCtl/ppVhuDm3WjO+PvrSQi9viZVIwWrORiP/LkiDoLnxHcOpnFQvgDJXplVTFFEgN6Yyb4MUhdXwgtPmxHooIxgEuAx9S9YuTz99aiUZdnhfsrp/V9cuEVDbSF2GbQRcGfuC5ZTDurD5PQDITqZXc3xuopfVWSTOe04IY82+CSdsR/g52/Ws8RrEGRFpBauOAmpUpJf6CJWv5Mu8t2edoaeh7ul0qco35kMHPYWKAcmgbXU/gEDL398YxoHY4Jkhrxz17kBmcllAjMR/HU/kCBWydNRvoB7ztjBJ+1ID6l7wTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qVhb3QP8F3FbnFywKTdRj95pJmrMaLa+wYlOyDSBx88=;
+ b=iiyHwhVtcEHX1clHEMa5TY8/MsKtupXaPn3qZrCgqZg4ZCdVwpQ1Y1I8ZZ4BE2haxBA1Ggvqjq3BLTE26rndMcv/bz6J03/fefwwCHFN5oV4V81q2SVLNb3T+COJZdxCZtxvVHuyEvow6HZG105t8+LNdB9+OBnt6ZL7A4n4e9s=
+Received: from DB7PR08MB3082.eurprd08.prod.outlook.com (52.134.110.24) by
+ DB7PR08MB3642.eurprd08.prod.outlook.com (20.177.120.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.14; Fri, 9 Aug 2019 10:56:04 +0000
+Received: from DB7PR08MB3082.eurprd08.prod.outlook.com
+ ([fe80::a13f:5848:5d6d:beef]) by DB7PR08MB3082.eurprd08.prod.outlook.com
+ ([fe80::a13f:5848:5d6d:beef%5]) with mapi id 15.20.2157.020; Fri, 9 Aug 2019
+ 10:56:04 +0000
+From:   "Justin He (Arm Technology China)" <Justin.He@arm.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Kees Cook" <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        "Tobin C. Harding" <tobin@kernel.org>
+Subject: RE: [PATCH 1/2] vsprintf: Prevent crash when dereferencing invalid
+ pointers for %pD
+Thread-Topic: [PATCH 1/2] vsprintf: Prevent crash when dereferencing invalid
+ pointers for %pD
+Thread-Index: AQHVTlFi3Xg58F0mk0itPSqLumHfBKbypEqAgAAAY/A=
+Date:   Fri, 9 Aug 2019 10:56:04 +0000
+Message-ID: <DB7PR08MB3082C27A075C410FE339F308F7D60@DB7PR08MB3082.eurprd08.prod.outlook.com>
+References: <20190809012457.56685-1-justin.he@arm.com>
+ <CAHp75VcR1rJ5AX_Nj3n2NnMasLRp74Y3R6Mh4XQ5s64aKrF6tw@mail.gmail.com>
+In-Reply-To: <CAHp75VcR1rJ5AX_Nj3n2NnMasLRp74Y3R6Mh4XQ5s64aKrF6tw@mail.gmail.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ts-tracking-id: 74d556d6-bd0c-4451-b991-abc2113b7b20.0
+x-checkrecipientchecked: true
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Justin.He@arm.com; 
+x-originating-ip: [113.29.88.7]
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: 53b10bb7-36ee-4a8d-94e5-08d71cb833d6
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam-Untrusted: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR08MB3642;
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3642:|VI1PR0801MB1855:
+X-Microsoft-Antispam-PRVS: <VI1PR0801MB18556D67F8152E2C82B9099CF7D60@VI1PR0801MB1855.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:2803;OLM:2803;
+x-forefront-prvs: 01244308DF
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(39860400002)(136003)(346002)(396003)(13464003)(189003)(199004)(14454004)(4326008)(54906003)(316002)(7416002)(71200400001)(71190400001)(86362001)(256004)(74316002)(25786009)(33656002)(7736002)(305945005)(229853002)(6916009)(2906002)(6436002)(52536014)(66066001)(55236004)(5660300002)(66476007)(66556008)(64756008)(66946007)(76116006)(3846002)(6116002)(66446008)(6506007)(486006)(11346002)(102836004)(53546011)(76176011)(446003)(53936002)(81156014)(81166006)(476003)(186003)(6246003)(8936002)(26005)(478600001)(8676002)(7696005)(55016002)(9686003)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR08MB3642;H:DB7PR08MB3082.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info-Original: BptKx9bLu2OPVhQn8rdzsz7p5sC819eLrkQ1bJU4LsBNrQ4IfZrCEeiKKk+znlgvcn0MQAsWdWI6q3hyxjZCBo2AsOk8SrGYeedaJ0gBzeCSI8vAxhquPaj6QT7tRe7FwStUoNFbzJwLMdBP5njQp8IOOgH9D55tvPbWUj4bPYsebCAucyCHFS15Y3ACjJjFHXdS2mgHqwopC5KgNSlQQEUEf1MeinfNNQ4iq00SqQxNYLggSIVimrrJfskAZO38FzbEosMjdocj7ZFJt19VJAVk5ik/Qd5IyhBges5ZHhnvXz8NmJ80z2T+Tswl8/KgAcehLTSfB1QQDYNSWcl6qCLwI1du+6VnSpGWvyQG+I+Gtsd0U/lOq7+VXnSEeL1/bAt/YQ7936OpupakIa3/NoQajfkwSjn6I7Jm2v0fd0M=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3642
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Justin.He@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT054.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(376002)(39860400002)(396003)(2980300002)(13464003)(40434004)(189003)(199004)(316002)(6116002)(36906005)(305945005)(186003)(436003)(63370400001)(11346002)(446003)(66066001)(74316002)(7736002)(8676002)(5024004)(126002)(14444005)(63350400001)(476003)(486006)(26005)(336012)(70206006)(7696005)(33656002)(76176011)(99286004)(70586007)(2486003)(102836004)(23676004)(6506007)(47776003)(54906003)(53546011)(3846002)(356004)(25786009)(81166006)(81156014)(26826003)(76130400001)(22756006)(8936002)(55016002)(9686003)(2906002)(86362001)(6862004)(478600001)(4326008)(229853002)(5660300002)(50466002)(14454004)(6246003)(52536014);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0801MB1855;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 196d6a51-1c29-4943-93ac-08d71cb82cc3
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(710020)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR0801MB1855;
+X-Forefront-PRVS: 01244308DF
+X-Microsoft-Antispam-Message-Info: iB7k0QfqyJdAUpbSxtmlxSLcapWyucnubXGEeeqiDb5FxM9CzTegrpbVgEBobKs24uvhVF0GXQB3t5eSfaLbgLbC6c6Q/L+CxnwVc7RPLdv8pqwHvRpqnhc48wuO8kNMMbek9DJrFOoVPEPF9GHImqE2mWmeoTFcYWgseuzBDTWfUsRrF4tNWt5xpwyhFEj6UCV+hFXIJtd/hT3swEZzxzj0XvBN4kEhI0gNo45FJXxsCsubWRGleZ22ihRDWNA7erncOGGGM/2eW8GIpb95CJR3X2wFCA9MF+INVsuR9Pig3jGl4MT/lcjfbLdKmnUbffHz3JJ+7deRDLHAUgj3lMvVqf49YLIeONMHfeVbPmi0l3fcvS/zbvTC+Lxu6j1ek2Ql/K17zrMxiG5vPiNjun+RlvmRzDj+6Wxw0zCQVeM=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2019 10:56:16.2883
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53b10bb7-36ee-4a8d-94e5-08d71cb833d6
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1855
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
----
- block/blk-exec.c             |  2 +-
- block/scsi_ioctl.c           |  8 ++++----
- drivers/block/paride/pd.c    |  2 +-
- drivers/block/pktcdvd.c      |  2 +-
- drivers/cdrom/cdrom.c        |  2 +-
- drivers/ide/ide-atapi.c      |  2 +-
- drivers/ide/ide-cd.c         |  2 +-
- drivers/ide/ide-cd_ioctl.c   |  2 +-
- drivers/ide/ide-devsets.c    |  2 +-
- drivers/ide/ide-disk.c       |  2 +-
- drivers/ide/ide-ioctls.c     |  4 ++--
- drivers/ide/ide-park.c       |  2 +-
- drivers/ide/ide-pm.c         |  2 +-
- drivers/ide/ide-tape.c       |  2 +-
- drivers/ide/ide-taskfile.c   |  2 +-
- drivers/mmc/core/block.c     | 10 +++++-----
- drivers/nvme/host/core.c     |  2 +-
- drivers/nvme/host/lightnvm.c |  4 ++--
- drivers/scsi/scsi_lib.c      |  2 +-
- fs/nfsd/blocklayout.c        |  2 +-
- include/linux/blkdev.h       |  2 +-
- 21 files changed, 30 insertions(+), 30 deletions(-)
-
-diff --git a/block/blk-exec.c b/block/blk-exec.c
-index c8b88f469988..dcc4bfb7b981 100644
---- a/block/blk-exec.c
-+++ b/block/blk-exec.c
-@@ -71,7 +71,7 @@ EXPORT_SYMBOL_GPL(blk_execute_rq_nowait);
-  *    Insert a fully prepared request at the back of the I/O scheduler queue
-  *    for execution and wait for completion.
-  */
--void blk_execute_rq(struct gendisk *bd_disk, struct request *rq, int at_head)
-+void blk_execute_rq(struct gendisk *bd_disk, struct request *rq, bool at_head)
- {
- 	DECLARE_COMPLETION_ONSTACK(wait);
- 	unsigned long hang_check;
-diff --git a/block/scsi_ioctl.c b/block/scsi_ioctl.c
-index 5411fb322c56..3231c347ee94 100644
---- a/block/scsi_ioctl.c
-+++ b/block/scsi_ioctl.c
-@@ -281,7 +281,7 @@ static int sg_io(struct request_queue *q, struct gendisk *bd_disk,
- 	unsigned long start_time;
- 	ssize_t ret = 0;
- 	int writing = 0;
--	int at_head = 0;
-+	bool at_head = false;
- 	struct request *rq;
- 	struct scsi_request *req;
- 	struct bio *bio;
-@@ -304,7 +304,7 @@ static int sg_io(struct request_queue *q, struct gendisk *bd_disk,
- 			break;
- 		}
- 	if (hdr->flags & SG_FLAG_Q_AT_HEAD)
--		at_head = 1;
-+		at_head = true
-
- 	ret = -ENOMEM;
- 	rq = blk_get_request(q, writing ? REQ_OP_SCSI_OUT : REQ_OP_SCSI_IN, 0);
-@@ -490,7 +490,7 @@ int sg_scsi_ioctl(struct request_queue *q, struct gendisk *disk, fmode_t mode,
- 		goto error;
- 	}
-
--	blk_execute_rq(disk, rq, 0);
-+	blk_execute_rq(disk, rq, false);
-
- 	err = req->result & 0xff;	/* only 8 bit SCSI status */
- 	if (err) {
-@@ -529,7 +529,7 @@ static int __blk_send_generic(struct request_queue *q, struct gendisk *bd_disk,
- 	scsi_req(rq)->cmd[0] = cmd;
- 	scsi_req(rq)->cmd[4] = data;
- 	scsi_req(rq)->cmd_len = 6;
--	blk_execute_rq(bd_disk, rq, 0);
-+	blk_execute_rq(bd_disk, rq, false);
- 	err = scsi_req(rq)->result ? -EIO : 0;
- 	blk_put_request(rq);
-
-diff --git a/drivers/block/paride/pd.c b/drivers/block/paride/pd.c
-index 22f36dc28018..d02c57247c9d 100644
---- a/drivers/block/paride/pd.c
-+++ b/drivers/block/paride/pd.c
-@@ -781,7 +781,7 @@ static int pd_special_command(struct pd_unit *disk,
- 	req = blk_mq_rq_to_pdu(rq);
-
- 	req->func = func;
--	blk_execute_rq(disk->gd, rq, 0);
-+	blk_execute_rq(disk->gd, rq, false);
- 	blk_put_request(rq);
- 	return 0;
- }
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 00b0aa14ca07..6bd163c4c5c2 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -722,7 +722,7 @@ static int pkt_generic_packet(struct pktcdvd_device *pd, struct packet_command *
- 	if (cgc->quiet)
- 		rq->rq_flags |= RQF_QUIET;
-
--	blk_execute_rq(pd->bdev->bd_disk, rq, 0);
-+	blk_execute_rq(pd->bdev->bd_disk, rq, false);
- 	if (scsi_req(rq)->result)
- 		ret = -EIO;
- out:
-diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index fa85c6ab4915..b5406301e823 100644
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2221,7 +2221,7 @@ static int cdrom_read_cdda_bpc(struct cdrom_device_info *cdi, __u8 __user *ubuf,
- 		rq->timeout = 60 * HZ;
- 		bio = rq->bio;
-
--		blk_execute_rq(cdi->disk, rq, 0);
-+		blk_execute_rq(cdi->disk, rq, false);
- 		if (scsi_req(rq)->result) {
- 			struct scsi_sense_hdr sshdr;
-
-diff --git a/drivers/ide/ide-atapi.c b/drivers/ide/ide-atapi.c
-index f3e5f25e4065..571e30187a0f 100644
---- a/drivers/ide/ide-atapi.c
-+++ b/drivers/ide/ide-atapi.c
-@@ -107,7 +107,7 @@ int ide_queue_pc_tail(ide_drive_t *drive, struct gendisk *disk,
- 	memcpy(scsi_req(rq)->cmd, pc->c, 12);
- 	if (drive->media == ide_tape)
- 		scsi_req(rq)->cmd[13] = REQ_IDETAPE_PC1;
--	blk_execute_rq(disk, rq, 0);
-+	blk_execute_rq(disk, rq, false);
- 	error = scsi_req(rq)->result ? -EIO : 0;
- put_req:
- 	blk_put_request(rq);
-diff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c
-index 31a6d1af0c2f..3d0dbb11fa8f 100644
---- a/drivers/ide/ide-cd.c
-+++ b/drivers/ide/ide-cd.c
-@@ -466,7 +466,7 @@ int ide_cd_queue_pc(ide_drive_t *drive, const unsigned char *cmd,
- 			}
- 		}
-
--		blk_execute_rq(info->disk, rq, 0);
-+		blk_execute_rq(info->disk, rq, false);
- 		error = scsi_req(rq)->result ? -EIO : 0;
-
- 		if (buffer)
-diff --git a/drivers/ide/ide-cd_ioctl.c b/drivers/ide/ide-cd_ioctl.c
-index 011eab9c69b7..2eed0e43bb2b 100644
---- a/drivers/ide/ide-cd_ioctl.c
-+++ b/drivers/ide/ide-cd_ioctl.c
-@@ -299,7 +299,7 @@ int ide_cdrom_reset(struct cdrom_device_info *cdi)
- 	rq = blk_get_request(drive->queue, REQ_OP_DRV_IN, 0);
- 	ide_req(rq)->type = ATA_PRIV_MISC;
- 	rq->rq_flags = RQF_QUIET;
--	blk_execute_rq(cd->disk, rq, 0);
-+	blk_execute_rq(cd->disk, rq, false);
- 	ret = scsi_req(rq)->result ? -EIO : 0;
- 	blk_put_request(rq);
- 	/*
-diff --git a/drivers/ide/ide-devsets.c b/drivers/ide/ide-devsets.c
-index ca1d4b3d3878..304df2b35b42 100644
---- a/drivers/ide/ide-devsets.c
-+++ b/drivers/ide/ide-devsets.c
-@@ -173,7 +173,7 @@ int ide_devset_execute(ide_drive_t *drive, const struct ide_devset *setting,
- 	*(int *)&scsi_req(rq)->cmd[1] = arg;
- 	ide_req(rq)->special = setting->set;
-
--	blk_execute_rq(NULL, rq, 0);
-+	blk_execute_rq(NULL, rq, false);
- 	ret = scsi_req(rq)->result;
- 	blk_put_request(rq);
-
-diff --git a/drivers/ide/ide-disk.c b/drivers/ide/ide-disk.c
-index ffb42a566c2b..2d2614607df9 100644
---- a/drivers/ide/ide-disk.c
-+++ b/drivers/ide/ide-disk.c
-@@ -482,7 +482,7 @@ static int set_multcount(ide_drive_t *drive, int arg)
-
- 	drive->mult_req = arg;
- 	drive->special_flags |= IDE_SFLAG_SET_MULTMODE;
--	blk_execute_rq(NULL, rq, 0);
-+	blk_execute_rq(NULL, rq, false);
- 	blk_put_request(rq);
-
- 	return (drive->mult_count == arg) ? 0 : -EIO;
-diff --git a/drivers/ide/ide-ioctls.c b/drivers/ide/ide-ioctls.c
-index 45a313cd8698..fd861037b723 100644
---- a/drivers/ide/ide-ioctls.c
-+++ b/drivers/ide/ide-ioctls.c
-@@ -128,7 +128,7 @@ static int ide_cmd_ioctl(ide_drive_t *drive, unsigned long arg)
-
- 		rq = blk_get_request(drive->queue, REQ_OP_DRV_IN, 0);
- 		ide_req(rq)->type = ATA_PRIV_TASKFILE;
--		blk_execute_rq(NULL, rq, 0);
-+		blk_execute_rq(NULL, rq, false);
- 		err = scsi_req(rq)->result ? -EIO : 0;
- 		blk_put_request(rq);
-
-@@ -227,7 +227,7 @@ static int generic_drive_reset(ide_drive_t *drive)
- 	ide_req(rq)->type = ATA_PRIV_MISC;
- 	scsi_req(rq)->cmd_len = 1;
- 	scsi_req(rq)->cmd[0] = REQ_DRIVE_RESET;
--	blk_execute_rq(NULL, rq, 1);
-+	blk_execute_rq(NULL, rq, true);
- 	ret = scsi_req(rq)->result;
- 	blk_put_request(rq);
- 	return ret;
-diff --git a/drivers/ide/ide-park.c b/drivers/ide/ide-park.c
-index a80a0f28f7b9..0069feb228fd 100644
---- a/drivers/ide/ide-park.c
-+++ b/drivers/ide/ide-park.c
-@@ -37,7 +37,7 @@ static void issue_park_cmd(ide_drive_t *drive, unsigned long timeout)
- 	scsi_req(rq)->cmd_len = 1;
- 	ide_req(rq)->type = ATA_PRIV_MISC;
- 	ide_req(rq)->special = &timeout;
--	blk_execute_rq(NULL, rq, 1);
-+	blk_execute_rq(NULL, rq, true);
- 	rc = scsi_req(rq)->result ? -EIO : 0;
- 	blk_put_request(rq);
- 	if (rc)
-diff --git a/drivers/ide/ide-pm.c b/drivers/ide/ide-pm.c
-index fc3cb37fec14..7c53449dc462 100644
---- a/drivers/ide/ide-pm.c
-+++ b/drivers/ide/ide-pm.c
-@@ -27,7 +27,7 @@ int generic_ide_suspend(struct device *dev, pm_message_t mesg)
- 		mesg.event = PM_EVENT_FREEZE;
- 	rqpm.pm_state = mesg.event;
-
--	blk_execute_rq(NULL, rq, 0);
-+	blk_execute_rq(NULL, rq, false);
- 	ret = scsi_req(rq)->result ? -EIO : 0;
- 	blk_put_request(rq);
-
-diff --git a/drivers/ide/ide-tape.c b/drivers/ide/ide-tape.c
-index 56f66cb0d6b6..484daef19ffe 100644
---- a/drivers/ide/ide-tape.c
-+++ b/drivers/ide/ide-tape.c
-@@ -867,7 +867,7 @@ static int idetape_queue_rw_tail(ide_drive_t *drive, int cmd, int size)
- 			goto out_put;
- 	}
-
--	blk_execute_rq(tape->disk, rq, 0);
-+	blk_execute_rq(tape->disk, rq, false);
-
- 	/* calculate the number of transferred bytes and update buffer state */
- 	size -= scsi_req(rq)->resid_len;
-diff --git a/drivers/ide/ide-taskfile.c b/drivers/ide/ide-taskfile.c
-index 577e34b80244..4f9422deaf28 100644
---- a/drivers/ide/ide-taskfile.c
-+++ b/drivers/ide/ide-taskfile.c
-@@ -444,7 +444,7 @@ int ide_raw_taskfile(ide_drive_t *drive, struct ide_cmd *cmd, u8 *buf,
- 	ide_req(rq)->special = cmd;
- 	cmd->rq = rq;
-
--	blk_execute_rq(NULL, rq, 0);
-+	blk_execute_rq(NULL, rq, false);
- 	error = scsi_req(rq)->result ? -EIO : 0;
- put_req:
- 	blk_put_request(rq);
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 7cba68054435..2543850aee99 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -249,7 +249,7 @@ static ssize_t power_ro_lock_store(struct device *dev,
- 		goto out_put;
- 	}
- 	req_to_mmc_queue_req(req)->drv_op = MMC_DRV_OP_BOOT_WP;
--	blk_execute_rq(NULL, req, 0);
-+	blk_execute_rq(NULL, req, false);
- 	ret = req_to_mmc_queue_req(req)->drv_op_result;
- 	blk_put_request(req);
-
-@@ -664,7 +664,7 @@ static int mmc_blk_ioctl_cmd(struct mmc_blk_data *md,
- 		rpmb ? MMC_DRV_OP_IOCTL_RPMB : MMC_DRV_OP_IOCTL;
- 	req_to_mmc_queue_req(req)->drv_op_data = idatas;
- 	req_to_mmc_queue_req(req)->ioc_count = 1;
--	blk_execute_rq(NULL, req, 0);
-+	blk_execute_rq(NULL, req, false);
- 	ioc_err = req_to_mmc_queue_req(req)->drv_op_result;
- 	err = mmc_blk_ioctl_copy_to_user(ic_ptr, idata);
- 	blk_put_request(req);
-@@ -733,7 +733,7 @@ static int mmc_blk_ioctl_multi_cmd(struct mmc_blk_data *md,
- 		rpmb ? MMC_DRV_OP_IOCTL_RPMB : MMC_DRV_OP_IOCTL;
- 	req_to_mmc_queue_req(req)->drv_op_data = idata;
- 	req_to_mmc_queue_req(req)->ioc_count = num_of_cmds;
--	blk_execute_rq(NULL, req, 0);
-+	blk_execute_rq(NULL, req, false);
- 	ioc_err = req_to_mmc_queue_req(req)->drv_op_result;
-
- 	/* copy to user if data and response */
-@@ -2752,7 +2752,7 @@ static int mmc_dbg_card_status_get(void *data, u64 *val)
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 	req_to_mmc_queue_req(req)->drv_op = MMC_DRV_OP_GET_CARD_STATUS;
--	blk_execute_rq(NULL, req, 0);
-+	blk_execute_rq(NULL, req, false);
- 	ret = req_to_mmc_queue_req(req)->drv_op_result;
- 	if (ret >= 0) {
- 		*val = ret;
-@@ -2791,7 +2791,7 @@ static int mmc_ext_csd_open(struct inode *inode, struct file *filp)
- 	}
- 	req_to_mmc_queue_req(req)->drv_op = MMC_DRV_OP_GET_EXT_CSD;
- 	req_to_mmc_queue_req(req)->drv_op_data = &ext_csd;
--	blk_execute_rq(NULL, req, 0);
-+	blk_execute_rq(NULL, req, false);
- 	err = req_to_mmc_queue_req(req)->drv_op_result;
- 	blk_put_request(req);
- 	if (err) {
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 38c1a5db9e56..0aa72962f2a7 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -884,7 +884,7 @@ static int nvme_submit_user_cmd(struct request_queue *q,
- 		}
- 	}
-
--	blk_execute_rq(disk, req, 0);
-+	blk_execute_rq(disk, req, false);
- 	if (nvme_req(req)->flags & NVME_REQ_CANCELLED)
- 		ret = -EINTR;
- 	else
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index c09989376c3b..220e34097f94 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -706,7 +706,7 @@ static int nvme_nvm_submit_io_sync(struct nvm_dev *dev, struct nvm_rq *rqd)
- 	/* I/Os can fail and the error is signaled through rqd. Callers must
- 	 * handle the error accordingly.
- 	 */
--	blk_execute_rq(NULL, rq, 0);
-+	blk_execute_rq(NULL, rq, false);
- 	if (nvme_req(rq)->flags & NVME_REQ_CANCELLED)
- 		ret = -EINTR;
-
-@@ -835,7 +835,7 @@ static int nvme_nvm_submit_user_cmd(struct request_queue *q,
- 		bio->bi_disk = disk;
- 	}
-
--	blk_execute_rq(NULL, rq, 0);
-+	blk_execute_rq(NULL, rq, false);
-
- 	if (nvme_req(rq)->flags & NVME_REQ_CANCELLED)
- 		ret = -EINTR;
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 9551bc93ad0c..b02df7b09312 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -276,7 +276,7 @@ int __scsi_execute(struct scsi_device *sdev, const unsigned char *cmd,
- 	/*
- 	 * head injection *required* here otherwise quiesce won't work
- 	 */
--	blk_execute_rq(NULL, req, 1);
-+	blk_execute_rq(NULL, req, true);
-
- 	/*
- 	 * Some devices (USB mass-storage in particular) may transfer
-diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-index b6fc7f7a0568..407b633b7691 100644
---- a/fs/nfsd/blocklayout.c
-+++ b/fs/nfsd/blocklayout.c
-@@ -253,7 +253,7 @@ static int nfsd4_scsi_identify_device(struct block_device *bdev,
- 	req->cmd[4] = bufflen & 0xff;
- 	req->cmd_len = COMMAND_SIZE(INQUIRY);
-
--	blk_execute_rq(NULL, rq, 1);
-+	blk_execute_rq(NULL, rq, true);
- 	if (req->result) {
- 		pr_err("pNFS: INQUIRY 0x83 failed with: %x\n",
- 			req->result);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 19ed996f0074..405f8ae31e5c 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -865,7 +865,7 @@ extern int blk_rq_map_kern(struct request_queue *, struct request *, void *, uns
- extern int blk_rq_map_user_iov(struct request_queue *, struct request *,
- 			       struct rq_map_data *, const struct iov_iter *,
- 			       gfp_t);
--extern void blk_execute_rq(struct gendisk *, struct request *, int);
-+extern void blk_execute_rq(struct gendisk *, struct request *, bool);
- extern void blk_execute_rq_nowait(struct gendisk *, struct request *, bool,
- 				rq_end_io_fn *);
-
---
-2.22.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
+IDxhbmR5LnNoZXZjaGVua29AZ21haWwuY29tPg0KPiBTZW50OiAyMDE55bm0OOaciDnml6UgMTg6
+NTINCj4gVG86IEp1c3RpbiBIZSAoQXJtIFRlY2hub2xvZ3kgQ2hpbmEpIDxKdXN0aW4uSGVAYXJt
+LmNvbT4NCj4gQ2M6IFBldHIgTWxhZGVrIDxwbWxhZGVrQHN1c2UuY29tPjsgQW5keSBTaGV2Y2hl
+bmtvDQo+IDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+OyBTZXJnZXkgU2Vub3po
+YXRza3kNCj4gPHNlcmdleS5zZW5vemhhdHNreUBnbWFpbC5jb20+OyBHZWVydCBVeXR0ZXJob2V2
+ZW4NCj4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPjsgTGludXggS2VybmVsIE1haWxpbmcgTGlz
+dCA8bGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBUaG9tYXMgR2xlaXhuZXIgPHRn
+bHhAbGludXRyb25peC5kZT47IFN0ZXZlbg0KPiBSb3N0ZWR0IChWTXdhcmUpIDxyb3N0ZWR0QGdv
+b2RtaXMub3JnPjsgS2VlcyBDb29rDQo+IDxrZWVzY29va0BjaHJvbWl1bS5vcmc+OyBTaHVhaCBL
+aGFuIDxzaHVhaEBrZXJuZWwub3JnPjsgVG9iaW4gQy4NCj4gSGFyZGluZyA8dG9iaW5Aa2VybmVs
+Lm9yZz4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzJdIHZzcHJpbnRmOiBQcmV2ZW50IGNyYXNo
+IHdoZW4gZGVyZWZlcmVuY2luZyBpbnZhbGlkDQo+IHBvaW50ZXJzIGZvciAlcEQNCj4NCj4gT24g
+RnJpLCBBdWcgOSwgMjAxOSBhdCA0OjI4IEFNIEppYSBIZSA8anVzdGluLmhlQGFybS5jb20+IHdy
+b3RlOg0KPiA+DQo+ID4gQ29tbWl0IDNlNTkwM2ViOWNmZiAoInZzcHJpbnRmOiBQcmV2ZW50IGNy
+YXNoIHdoZW4gZGVyZWZlcmVuY2luZw0KPiBpbnZhbGlkDQo+ID4gcG9pbnRlcnMiKSBwcmV2ZW50
+cyBtb3N0IGNyYXNoIGV4Y2VwdCBmb3IgJXBELg0KPiA+IFRoZXJlIGlzIGFuIGFkZGl0aW9uYWwg
+cG9pbnRlciBkZXJlZmVyZW5jaW5nIGJlZm9yZSBkZW50cnlfbmFtZS4NCj4gPg0KPiA+IEF0IGxl
+YXN0LCB2bWEtPmZpbGUgY2FuIGJlIE5VTEwgYW5kIGJlIHBhc3NlZCB0byBwcmludGsgJXBEIGlu
+DQo+ID4gcHJpbnRfYmFkX3B0ZSwgd2hpY2ggY2FuIGNhdXNlIGNyYXNoLg0KPiA+DQo+ID4gVGhp
+cyBwYXRjaCBmaXhlcyBpdCB3aXRoIGludHJvZHVjaW5nIGEgbmV3IGZpbGVfZGVudHJ5X25hbWUu
+DQo+ID4NCj4NCj4gUmV2aWV3ZWQtYnk6IEFuZHkgU2hldmNoZW5rbyA8YW5keS5zaGV2Y2hlbmtv
+QGdtYWlsLmNvbT4NCj4NCj4gUGVyaGFwcyB5b3UgbmVlZCB0byBhZGQgYSBGaXhlcyB0YWcNClRo
+YW5rcywgQW5keQ0KRml4ZXM6IDNlNTkwM2ViOWNmZiAoInZzcHJpbnRmOiBQcmV2ZW50IGNyYXNo
+IHdoZW4gZGVyZWZlcmVuY2luZyBpbnZhbGlkIHBvaW50ZXJzIikNCg0KTmVlZCBJIHJlcG9zdGVk
+IHYyPw0KDQoNCi0tDQpDaGVlcnMsDQpKdXN0aW4gKEppYSBIZSkNCg0KDQo+DQo+ID4gU2lnbmVk
+LW9mZi1ieTogSmlhIEhlIDxqdXN0aW4uaGVAYXJtLmNvbT4NCj4gPiAtLS0NCj4gPiAgbGliL3Zz
+cHJpbnRmLmMgfCAxMyArKysrKysrKysrLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNl
+cnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2xpYi92c3By
+aW50Zi5jIGIvbGliL3ZzcHJpbnRmLmMNCj4gPiBpbmRleCA2MzkzNzA0NGM1N2QuLmI0YTExOTE3
+NmZkYiAxMDA2NDQNCj4gPiAtLS0gYS9saWIvdnNwcmludGYuYw0KPiA+ICsrKyBiL2xpYi92c3By
+aW50Zi5jDQo+ID4gQEAgLTg2OSw2ICs4NjksMTUgQEAgY2hhciAqZGVudHJ5X25hbWUoY2hhciAq
+YnVmLCBjaGFyICplbmQsIGNvbnN0DQo+IHN0cnVjdCBkZW50cnkgKmQsIHN0cnVjdCBwcmludGZf
+c3ANCj4gPiAgICAgICAgIHJldHVybiB3aWRlbl9zdHJpbmcoYnVmLCBuLCBlbmQsIHNwZWMpOw0K
+PiA+ICB9DQo+ID4NCj4gPiArc3RhdGljIG5vaW5saW5lX2Zvcl9zdGFjaw0KPiA+ICtjaGFyICpm
+aWxlX2RlbnRyeV9uYW1lKGNoYXIgKmJ1ZiwgY2hhciAqZW5kLCBjb25zdCBzdHJ1Y3QgZmlsZSAq
+ZiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgcHJpbnRmX3NwZWMgc3BlYywg
+Y29uc3QgY2hhciAqZm10KQ0KPiA+ICt7DQo+ID4gKyAgICAgICBpZiAoY2hlY2tfcG9pbnRlcigm
+YnVmLCBlbmQsIGYsIHNwZWMpKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gYnVmOw0KPiA+
+ICsNCj4gPiArICAgICAgIHJldHVybiBkZW50cnlfbmFtZShidWYsIGVuZCwgZi0+Zl9wYXRoLmRl
+bnRyeSwgc3BlYywgZm10KTsNCj4gPiArfQ0KPiA+ICAjaWZkZWYgQ09ORklHX0JMT0NLDQo+ID4g
+IHN0YXRpYyBub2lubGluZV9mb3Jfc3RhY2sNCj4gPiAgY2hhciAqYmRldl9uYW1lKGNoYXIgKmJ1
+ZiwgY2hhciAqZW5kLCBzdHJ1Y3QgYmxvY2tfZGV2aWNlICpiZGV2LA0KPiA+IEBAIC0yMTY2LDkg
+KzIxNzUsNyBAQCBjaGFyICpwb2ludGVyKGNvbnN0IGNoYXIgKmZtdCwgY2hhciAqYnVmLCBjaGFy
+DQo+ICplbmQsIHZvaWQgKnB0ciwNCj4gPiAgICAgICAgIGNhc2UgJ0MnOg0KPiA+ICAgICAgICAg
+ICAgICAgICByZXR1cm4gY2xvY2soYnVmLCBlbmQsIHB0ciwgc3BlYywgZm10KTsNCj4gPiAgICAg
+ICAgIGNhc2UgJ0QnOg0KPiA+IC0gICAgICAgICAgICAgICByZXR1cm4gZGVudHJ5X25hbWUoYnVm
+LCBlbmQsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoKGNvbnN0IHN0
+cnVjdCBmaWxlICopcHRyKS0+Zl9wYXRoLmRlbnRyeSwNCj4gPiAtICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHNwZWMsIGZtdCk7DQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBm
+aWxlX2RlbnRyeV9uYW1lKGJ1ZiwgZW5kLCBwdHIsIHNwZWMsIGZtdCk7DQo+ID4gICNpZmRlZiBD
+T05GSUdfQkxPQ0sNCj4gPiAgICAgICAgIGNhc2UgJ2cnOg0KPiA+ICAgICAgICAgICAgICAgICBy
+ZXR1cm4gYmRldl9uYW1lKGJ1ZiwgZW5kLCBwdHIsIHNwZWMsIGZtdCk7DQo+ID4gLS0NCj4gPiAy
+LjE3LjENCj4gPg0KPg0KPg0KPiAtLQ0KPiBXaXRoIEJlc3QgUmVnYXJkcywNCj4gQW5keSBTaGV2
+Y2hlbmtvDQpJTVBPUlRBTlQgTk9USUNFOiBUaGUgY29udGVudHMgb2YgdGhpcyBlbWFpbCBhbmQg
+YW55IGF0dGFjaG1lbnRzIGFyZSBjb25maWRlbnRpYWwgYW5kIG1heSBhbHNvIGJlIHByaXZpbGVn
+ZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsIHBsZWFzZSBub3RpZnkg
+dGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZG8gbm90IGRpc2Nsb3NlIHRoZSBjb250ZW50cyB0
+byBhbnkgb3RoZXIgcGVyc29uLCB1c2UgaXQgZm9yIGFueSBwdXJwb3NlLCBvciBzdG9yZSBvciBj
+b3B5IHRoZSBpbmZvcm1hdGlvbiBpbiBhbnkgbWVkaXVtLiBUaGFuayB5b3UuDQo=
