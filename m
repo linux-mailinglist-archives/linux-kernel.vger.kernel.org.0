@@ -2,116 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09AF587AE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9213787AE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406950AbfHINN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 09:13:26 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45574 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfHINNZ (ORCPT
+        id S2406993AbfHINPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 09:15:20 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49802 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfHINPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:13:25 -0400
-Received: by mail-lf1-f67.google.com with SMTP id a30so6430752lfk.12;
-        Fri, 09 Aug 2019 06:13:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R/qbfybNTawBfvTZEySh0cjltm2Kq0tph5R6n428udM=;
-        b=GlblEZrkT23FfH3YxwgAttCw6xMNP7KmjYM4WXbspvsjFKfa2jnMBD9iz9n/359YcB
-         mh1ba0d5xf1zHxpLYacNsJ3P90ZN+296q6JzVff86xucaYj/+8z6O4lg6Lk8RQX1Ftfi
-         ISE1PqIr2YzS82esJXELAiYZhczT1wMe71LlZOhk/PnPHjZ2R5k3+3XQCEEg4zOWHdHr
-         md4eFoFMjx17VGzybjmylCG7pkgn06aca+wnsBRr6jiVDdjPDUmN+4APIHiT9poKviyF
-         oMEBxX3477w1dW3K+x6B52wSS/8CkF3eQtIrPf+jvad1ZuOdshSYXAMuhyVGzBm78tth
-         3qsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=R/qbfybNTawBfvTZEySh0cjltm2Kq0tph5R6n428udM=;
-        b=j1YtCmyfZ48Dgraz2bmpoKEtL8ufcAevdF5JTPvFIHTIsWQb9AbJJKXb8Ubr9jvBdT
-         aOmBfvE+yNH/iiuwkxoDvR09+MdssA7ZCVUf021iZMI9sjcP9jwRbz4ezqKDthz5pfU+
-         T7PF9T9c/8WIFPaQiTQCygYlLL5JPytZEh0GMd4yfRjLiRTMgRF0uLc1UdbPHitH8Wqu
-         B964jWD7e/OX3C6P9tavqmGTEx5x5l0Q34ihhX7kPpHcIqgu7s8ZsJhX90uOFoBWELKB
-         EFi8hKDg5X91ctI0nlZ7d7xwj9jQT+WCz5fhnpfWE+JG2Y1Srny2fOMvU7Ipw4OqK+CH
-         EthQ==
-X-Gm-Message-State: APjAAAVaqDVFElqP5I4yHme1FMNQlqfG6NqGKEQhFVO/gzyEihhdodzT
-        sd7s+OVI4j7Ig1SsDTH6PV4KB+2K
-X-Google-Smtp-Source: APXvYqyf29S37MuD+Ii1VOieSMvQRwalWsMCTSNp4taVg2fWHXkXUtz+sOa2dH9UTLHVaWFwFCfeCQ==
-X-Received: by 2002:ac2:568e:: with SMTP id 14mr12994101lfr.189.1565356402685;
-        Fri, 09 Aug 2019 06:13:22 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.34.218])
-        by smtp.googlemail.com with ESMTPSA id k124sm17587000lfd.60.2019.08.09.06.13.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Aug 2019 06:13:21 -0700 (PDT)
-Subject: Re: [PATCH v8 18/21] soc/tegra: pmc: Configure core power request
- polarity
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-19-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <29842147-a5f8-d51d-c594-b93b20b2e20f@gmail.com>
-Date:   Fri, 9 Aug 2019 16:13:20 +0300
+        Fri, 9 Aug 2019 09:15:19 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x79DEQcH051478;
+        Fri, 9 Aug 2019 08:14:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565356466;
+        bh=lqd4cvYerI+bLrW81rK95niroFLbI9sxTGg612NPmek=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=xtrtu2h6nP1YNCrnZ692gMoH/T0GxF8LseKl+MC9nSK3mVtkFYhvP1IkspE2d5/5J
+         /0iG7w9n9sa9A+m6oYiJ5Kgb0BaRhbP4xftiAgIcyjLt2EaU+zNZE0TAgT/2lu1PAZ
+         iumzoiWEB5dUiFH2kjWox/nWba9JGGZtZMEWBygc=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x79DEQUv064547
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 9 Aug 2019 08:14:26 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 9 Aug
+ 2019 08:14:26 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 9 Aug 2019 08:14:26 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x79DEOC9069090;
+        Fri, 9 Aug 2019 08:14:24 -0500
+Subject: Re: [PATCH] fix odd_ptr_err.cocci warnings
+To:     Mark Brown <broonie@kernel.org>,
+        Julia Lawall <julia.lawall@lip6.fr>
+CC:     <kbuild-all@01.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+References: <alpine.DEB.2.21.1908091229140.2946@hadrien>
+ <20190809123112.GC3963@sirena.co.uk>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <88ac4c79-5ce3-3f1a-5f6e-3928a30a1ef5@ti.com>
+Date:   Fri, 9 Aug 2019 16:14:35 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1565308020-31952-19-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190809123112.GC3963@sirena.co.uk>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-09.08.2019 2:46, Sowjanya Komatineni пишет:
-> This patch configures polarity of the core power request signal
-> in PMC control register based on the device tree property.
-> 
-> PMC asserts and de-asserts power request signal based on it polarity
-> when it need to power-up and power-down the core rail during SC7.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 3aa71c28a10a..e013ada7e4e9 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -56,6 +56,7 @@
->  #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
->  #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
->  #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
-> +#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
->  #define  PMC_CNTRL_MAIN_RST		BIT(4)
->  
->  #define PMC_WAKE_MASK			0x0c
-> @@ -2290,6 +2291,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
->  	else
->  		value |= PMC_CNTRL_SYSCLK_POLARITY;
->  
-> +	if (pmc->corereq_high)
-> +		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
-> +	else
-> +		value |= PMC_CNTRL_PWRREQ_POLARITY;
-> +
->  	/* configure the output polarity while the request is tristated */
->  	tegra_pmc_writel(pmc, value, PMC_CNTRL);
->  
-> 
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+
+On 09/08/2019 15.31, Mark Brown wrote:
+> On Fri, Aug 09, 2019 at 12:30:46PM +0200, Julia Lawall wrote:
+> 
+>> tree:   https://github.com/omap-audio/linux-audio peter/ti-linux-4.19.y/wip
+>> head:   62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a
+>> commit: 62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a [34/34] j721e new machine driver wip
+>> :::::: branch date: 20 hours ago
+>> :::::: commit date: 20 hours ago
+>>
+>>  j721e-evm.c |    4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> --- a/sound/soc/ti/j721e-evm.c
+>> +++ b/sound/soc/ti/j721e-evm.c
+>> @@ -283,7 +283,7 @@ static int j721e_get_clocks(struct platf
+> 
+> This file isn't upstream, it's only in the TI BSP.
+
+Yes, it is not upstream, but the fix is valid.
+
+Julia: is it possible to direct these notifications only to me from
+https://github.com/omap-audio/linux-audio.git ?
+
+It mostly carries TI BSP stuff and my various for upstream branches nowdays.
+
+- P�ter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
