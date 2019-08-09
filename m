@@ -2,155 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39A6B86EC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 02:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E7486ED4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 02:27:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405062AbfHIAVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 20:21:31 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36794 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404422AbfHIAVb (ORCPT
+        id S2404850AbfHIA1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 20:27:48 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39605 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729419AbfHIA1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 20:21:31 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j17so14155696lfp.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 17:21:29 -0700 (PDT)
+        Thu, 8 Aug 2019 20:27:48 -0400
+Received: by mail-qt1-f194.google.com with SMTP id l9so94122054qtu.6;
+        Thu, 08 Aug 2019 17:27:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y3bTco2Lcs48f6Fyl9zkTa3/P3Hh2NXOsrEemToyYjg=;
-        b=aOINADnKxCA9kwIJmqoq8aBUnMQy+sOjelyY9NBDQJ3FdmwzVkFlhI0vwcHTn5mvmT
-         LZxxwDhcx5yqZeGlwSOSFjRFdo52rH/8KGBdjS3uid9qTjV0OHKuHRBA4CrAwaOQWOXK
-         jbBD6KH1/H+P7ApfwfZ4djM1nazxtmS5eAD+8=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=11xnYV0nLuTfHH50YX7WG8U4a7R04qxCQzIia3Aq77A=;
+        b=DY6YN0HidRLoCjDAVy75tPCMpvaFqFDYG77GX+XnUoZwnRS6PXKQGa8fKrzJ5Leslv
+         ZIMyxR4gMHDP2lb5pPOdurSKUha5/jWlJZRYMmZ/wn2yQ0UuyVuFdTKWNSZclYg4DrPr
+         Cv+uOS1GWI/u9pPja1fWsirXQfNeZeQJypEiUin8+0FRoVRtBb3dA/RcOm6Y4TKQoee3
+         L5PJX/NTOwehJbIEI6gdtU7hUwM0Srj8HQpowFRULXz+9l5sH8q+ezJbHqpNvrtRGB2s
+         DdSjx5d58TI6BwYXDCF9+xDoyKtPfrVoWeyJP+uZRlXh0lOJRAP8COg4vn5h9BbjdOJk
+         V6eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y3bTco2Lcs48f6Fyl9zkTa3/P3Hh2NXOsrEemToyYjg=;
-        b=Wqnt4xfap4jOeCZxnmsodSEO4qDOGZB+xEwvcyxKzwj64/47wgbWpGK0Dz0WSgDWLF
-         vLKzxeO3fhoS4B9es+EgHFhhKUoxb5/hsMoluGlNnu4EJLPFwDclXf2AML/k7ry0A55s
-         JyUfTGEnAAZrTxljFDq4RdnYOSCxpqDzLsaQ15Prl1O2RAavBh0WghYQf/a665iPSPE4
-         Zwq+YF/aHC9KfqSbO4VNftNgwfsRkygfZpovWgjTARbrii0jnWxNaFI4BAwjDylxclNQ
-         Lf0GtTCMcQ8yR9sNOUJTqAkvh45A2QdzJhsp5cyWh1Hk7WToLsHXJA1JOaRCNbncW4dP
-         u3tQ==
-X-Gm-Message-State: APjAAAVzQ6kG6FAZlptAodUFnUZZxnLvKTU2g7v3kB4mGS6p7kc5WHDu
-        uQu6a7T6u1jWih/lb+EFB1eTvBrdmuU=
-X-Google-Smtp-Source: APXvYqwRcTP80v+fwz3YBVvuMLnUY++9h0ftO0007HatEGRwyLPfdeX1PH02yyxqf0wSuWU55vogbw==
-X-Received: by 2002:ac2:4c37:: with SMTP id u23mr10691848lfq.119.1565310087363;
-        Thu, 08 Aug 2019 17:21:27 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id f22sm58101ljh.22.2019.08.08.17.21.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Aug 2019 17:21:26 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id i21so11277127ljj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 17:21:25 -0700 (PDT)
-X-Received: by 2002:a2e:9b83:: with SMTP id z3mr9356279lji.84.1565310085639;
- Thu, 08 Aug 2019 17:21:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=11xnYV0nLuTfHH50YX7WG8U4a7R04qxCQzIia3Aq77A=;
+        b=a5xWJfFJFpHnE+E9aAOTOgG+X2E70uFDjLv21ag+8MuKeCQ7M4slD6PPa4rN0qzRAs
+         +/Jj9NgDjXZzKxINYoNpy3AlnscSQa2z3n7KIqh+nwmkPWiW+zzZn+oVeEP3f4D8Y+X7
+         nZ+vJnn+vZwiFOiTfQkJy6mpu0I8Ew9IWxPDXjIFpQG4Ezxkrj19+n1U9Lm1CE0vLodr
+         tKu+3qn3bPzC6YSRJhTs4D8V1fzboyb7SAdiDFD5LctJUtt2wEr3TTMQYz7upNho0S40
+         9uArltLjbatJ6PAOxF6iEqlFaBAFSeZpgjQaVQZCqDkXWa074nJb2q8kkw07HYqvPWjN
+         fumA==
+X-Gm-Message-State: APjAAAWt6RklQmZ4xGrXw+UPFOBaeJiJf/u6t53O/ss89DAI3jpZ2pr2
+        kP9BTCD4N4BvyXwvkL5408IqEQ1PkJc=
+X-Google-Smtp-Source: APXvYqzK3eJvHmjsNqUI0sk+E12L5i8bn+3ZHOt03w4bAA9dG/xXnQ2sJX9qYmaDhOcccs5jDTjNFg==
+X-Received: by 2002:ac8:32a1:: with SMTP id z30mr15816454qta.117.1565310467076;
+        Thu, 08 Aug 2019 17:27:47 -0700 (PDT)
+Received: from localhost.localdomain ([2804:431:c7f0:20d6:c52:d75:1f0d:f1e9])
+        by smtp.gmail.com with ESMTPSA id d71sm4489082qkg.70.2019.08.08.17.27.44
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 08 Aug 2019 17:27:46 -0700 (PDT)
+From:   =?UTF-8?q?Lucas=20A=2E=20M=2E=20Magalh=C3=A3es?= 
+        <lucmaga@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, skhan@linuxfoundation.org,
+        helen.koike@collabora.com,
+        "Lucas A . M . Magalhaes" <lucmaga@gmail.com>
+Subject: [PATCH v2 1/2] media: Revert "media: vimc: Remove or modify stream checks"
+Date:   Thu,  8 Aug 2019 21:27:40 -0300
+Message-Id: <b3eec274c34f7516acf0b963587f6e094f2fe01a.1565309305.git.lucmaga@gmail.com>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
- <20190807222634.1723-10-john.ogness@linutronix.de> <CAHk-=wiKTn-BMpp4w645XqmFBEtUXe84+TKc6aRMPbvFwUjA=A@mail.gmail.com>
- <874l2rclmw.fsf@linutronix.de> <CAHk-=wiRN9v7UmhbTZgskh-MLyY2f0-8Zi3fUziy+GpZnj2i3w@mail.gmail.com>
- <20190808194523.6f83e087@gandalf.local.home>
-In-Reply-To: <20190808194523.6f83e087@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 8 Aug 2019 17:21:09 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiRpvRg6dpEWqaB20QUFRq8or0-AGgkjvisygptRE64UA@mail.gmail.com>
-Message-ID: <CAHk-=wiRpvRg6dpEWqaB20QUFRq8or0-AGgkjvisygptRE64UA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 9/9] printk: use a new ringbuffer implementation
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     John Ogness <john.ogness@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 8, 2019 at 4:45 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> Could we possibly have a magic value in some location that if it is
-> set, we know right away that the buffer here has data from the last
-> reboot, and we read it out into a safe location before we start using
-> it again?
+From: Helen Koike <helen.koike@collabora.com>
 
-Right now I don't know how reliable RAM ends up being.
+This reverts commit 3c1b9ac753e99005d7ee0a883d6e5b577ba32aa9.
 
-But with a small enough buffer I guess we could just do it
-unconditionally and then let some debug tool in user space try to make
-sense of it later.
+Required to Revert "media: vimc: propagate pixel format in the stream"
+which introduced the stream object in the vimc_ent_device struct.
 
-More background for what I'm looking for: my hope for this is that we
-can finally get the case of "undebuggable laptop hangs" logged with
-something like this.
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Signed-off-by: Lucas A. M. Magalhaes <lucmaga@gmail.com>
+---
 
-But laptops don't have reset buttons. They have "press the power
-button for ten seconds, power turns off. Press it again, and power
-comes on" reset sequences.
+I'm just helping out Helen by solving this patch set conflicts.
+There was no conflict in this patch.
 
-So DRAM power off for maybe 5 seconds? I've tried to find papers on
-how well DRAM retention works (not very common: usually they happen
-because you have some security researcher that wants to move a DIMM
-and read it on another system, and some of them talk about using
-freezing techniques to increase retention), and from what I've seen,
-retention *should* be possible even for that kind of timeframe,
-despite the usual "DRAM wants 60ms refresh". As in "maybe 90% of bits
-might still be legible". And newer DRAM with smaller capacitors isn't
-apparently a downside, because they have much less leakage too.
+ drivers/media/platform/vimc/vimc-debayer.c | 5 ++++-
+ drivers/media/platform/vimc/vimc-scaler.c  | 7 +++++--
+ drivers/media/platform/vimc/vimc-sensor.c  | 6 +++++-
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
-But some of those papers were for old DRAM. Maybe somebody knows
-better. I don't have any real data myself, because my cold-boot tests
-all seemed to show the BIOS reinitializing it to garbage. For all I
-know, the DRAM training will guarantee garbage and it's all a pipe
-dream.
+diff --git a/drivers/media/platform/vimc/vimc-debayer.c b/drivers/media/platform/vimc/vimc-debayer.c
+index 00598fbf3cba..72adba6cf892 100644
+--- a/drivers/media/platform/vimc/vimc-debayer.c
++++ b/drivers/media/platform/vimc/vimc-debayer.c
+@@ -262,7 +262,7 @@ static int vimc_deb_set_fmt(struct v4l2_subdev *sd,
+ 
+ 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+ 		/* Do not change the format while stream is on */
+-		if (vdeb->ved.stream)
++		if (vdeb->src_frame)
+ 			return -EBUSY;
+ 
+ 		sink_fmt = &vdeb->sink_fmt;
+@@ -329,6 +329,9 @@ static int vimc_deb_s_stream(struct v4l2_subdev *sd, int enable)
+ 		const struct v4l2_format_info *pix_info;
+ 		unsigned int frame_size;
+ 
++		if (vdeb->src_frame)
++			return 0;
++
+ 		/* We only support translating bayer to RGB24 */
+ 		if (src_pixelformat != V4L2_PIX_FMT_RGB24) {
+ 			dev_err(vdeb->dev,
+diff --git a/drivers/media/platform/vimc/vimc-scaler.c b/drivers/media/platform/vimc/vimc-scaler.c
+index c7123a45c55b..5f31c1e351a3 100644
+--- a/drivers/media/platform/vimc/vimc-scaler.c
++++ b/drivers/media/platform/vimc/vimc-scaler.c
+@@ -148,7 +148,7 @@ static int vimc_sca_set_fmt(struct v4l2_subdev *sd,
+ 
+ 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+ 		/* Do not change the format while stream is on */
+-		if (vsca->ved.stream)
++		if (vsca->src_frame)
+ 			return -EBUSY;
+ 
+ 		sink_fmt = &vsca->sink_fmt;
+@@ -203,6 +203,9 @@ static int vimc_sca_s_stream(struct v4l2_subdev *sd, int enable)
+ 		const struct v4l2_format_info *pix_info;
+ 		unsigned int frame_size;
+ 
++		if (vsca->src_frame)
++			return 0;
++
+ 		if (!vimc_sca_is_pixfmt_supported(pixelformat)) {
+ 			dev_err(vsca->dev, "pixfmt (0x%08x) is not supported\n",
+ 				pixelformat);
+@@ -324,7 +327,7 @@ static void *vimc_sca_process_frame(struct vimc_ent_device *ved,
+ 						    ved);
+ 
+ 	/* If the stream in this node is not active, just return */
+-	if (!ved->stream)
++	if (!vsca->src_frame)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	vimc_sca_fill_src_frame(vsca, sink_frame);
+diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+index 51359472eef2..c47454cc7f70 100644
+--- a/drivers/media/platform/vimc/vimc-sensor.c
++++ b/drivers/media/platform/vimc/vimc-sensor.c
+@@ -131,7 +131,7 @@ static int vimc_sen_set_fmt(struct v4l2_subdev *sd,
+ 
+ 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+ 		/* Do not change the format while stream is on */
+-		if (vsen->ved.stream)
++		if (vsen->frame)
+ 			return -EBUSY;
+ 
+ 		mf = &vsen->mbus_format;
+@@ -187,6 +187,10 @@ static int vimc_sen_s_stream(struct v4l2_subdev *sd, int enable)
+ 		const struct v4l2_format_info *pix_info;
+ 		unsigned int frame_size;
+ 
++		if (vsen->kthread_sen)
++			/* tpg is already executing */
++			return 0;
++
+ 		/* Calculate the frame size */
+ 		pix_info = v4l2_format_info(pixelformat);
+ 		frame_size = vsen->mbus_format.width * pix_info->bpp[0] *
+-- 
+2.23.0.rc1
 
-Anyway, from some wild handwaving of "maybe  we can get 90% bit
-retention" means that a human can read garbled data and guess
-(particularly if you can see "ok, it's an oops, I know what the
-overall pattern is, I can ignore a lot of bits that don't matter").
-But I wouldn't want to necessarily automte it all that much.
-
-But the retention pattern might be very random too, and honestly, I'm
-mostly guessing to begin with (if that wasn't clear already ;).
-
-But the "random user didn't have any other choice but to just
-powercycle the machine" is one of the nastiest debug problems we have
-right now, and if we were to get "next boot automatically sends a
-report to the distro or whatever after a non-clean shutdown" that
-might be *very* useful.
-
-Or it might not be. Right now we simply don't have that kind of data
-at all. Sure, we have a ton of virtual machines and servers that have
-"reliable IO" (either thanks to the VM or thanks to serial lines etc),
-but it's literally the "normal random consumer who runs
-Fedora/Ubuntu/Suse workstation" that currently basically has no data
-at all if it's the kind of crash that doesn't get you a saved log.
-
-And the people running VM's and servers with serial lines are simply
-not doing the same things as real people on real hardware are, so I
-don't think it's an argument that "hey, we get reports from those nice
-datacenter guys".
-
-We likely don't even have any idea of how common it is, because while
-I know "hangs on resume with no logs" used to be a fairly common
-problem case, it by definition never gets _logged_. Maybe people
-complain, but more likely they just curse and reboot.
-
-And no, I don't think this is actually common at all. But the problem
-with those unloggable problems is that _if_ they happen - even if it's
-very very rare indeed - they are really nasty to debug.
-
-They are nasty to debug when they happen on a developer machine (I
-should know, I've definitely had them), but when they happen in the
-wild they are basically "user just rebooted the machine". End of
-story, and no stats or anything like that.
-
-               Linus
