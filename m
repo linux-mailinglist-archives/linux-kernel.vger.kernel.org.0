@@ -2,140 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E494B87CE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:41:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81D7687CDA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:40:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436467AbfHIOlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 10:41:39 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:56201 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfHIOlh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 10:41:37 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MV2Sk-1hmqRB0T3u-00S5Pl; Fri, 09 Aug 2019 16:41:23 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     soc@kernel.org
-Cc:     Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH v2 01/13] usb: ohci-nxp: enable compile-testing
-Date:   Fri,  9 Aug 2019 16:40:27 +0200
-Message-Id: <20190809144043.476786-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190809144043.476786-1-arnd@arndb.de>
-References: <20190809144043.476786-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:AxvKy6jf+t9d21xZPdfYBHuuoe857kj7IZxWzWdJ5LgVwyC0plW
- N6v6x9Z00yOXwvoWPiV5buUcxhC7491l21ZEe9ZhO/frzZGRWBRGEtxAgjyECNA0rqmcq9k
- qAkEMP1R6koIhhI7cMjIF86JqouP/hAVmc3zysqtAlmNOiYXxl3nl9Ohf3PxuG4WFdO4T6V
- yZnJxYGQpu+NzxMGEWryA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vnpa/i6Pl7A=:Z8kSVbOHBcIByVsErk7lNg
- Wy/jyu6PzaL2faqwyCBwVD4rWeBx+r/t+GSSyMt/Fa/c6ESek2LtBW2K6fPkBtsNoM2c5lH6w
- Xe/Y0bLHLxUyhoTjzGjm8pIXTuAGKe8r1Shcr0AofFlt2GR9Gcxs/WjrU1ukmH4T+rq9UNxXJ
- yWvAzju0cr0EJk/sz/XnFL+0bX75TktvnIoGnNDu4Rtqk/fgj8YFggpH9+04/n5Ri5P3Wq+fv
- uYLmrn+hHD7QQa6VIh5SvhqRNkQaoagTJHV6QjTJ3C0KHYXjn7+Gykj1rJvUY8AWJid3N3d80
- iEAzVt2i/UhXyj84HPEgA+EapGcSXAf9v4tPZALZaUzjK0m3hpw0mvFpkSV/I+CCzQo0XWJ5t
- zwg67JeZFvVJuliDkaBW7dAeNkZN4/pRZCUpWtYH7i1gp/KMtE+PIbwwp0DI1qQJkCzYYWrsG
- v3k2P2DXqD7PP9liCvOxA5n20zC2BmudSavUt/uo1xYtKmC6u6pWsCcclLRsyxu62+Jq/z+C3
- rB5eyLzGmteCDmGPRo/Gn7a+iHO/ZqqQgtlmNhBk+b4x2y/kPLEyQ8bvI0TdL83LJceYg3VnD
- SM+d6RnIDLkimjhIVYA7H4OUQQUtH2BRFL3lcoq5x7xxau3rgbKYFgc3X5iUiRJog50xL04U/
- Jqy6JmOaWtM+3PfJmjNtWKmy+IEnztgLAEMgU4yHAGCpmYfBDdlEvfUrz7fW9lnbatFdeOjGH
- pPc0iQtZ8VZNHbm5ycRuzPfWoQxIeANRCiWZyw==
+        id S2406598AbfHIOke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 10:40:34 -0400
+Received: from foss.arm.com ([217.140.110.172]:48090 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726140AbfHIOke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 10:40:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 218CC15A2;
+        Fri,  9 Aug 2019 07:40:34 -0700 (PDT)
+Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 700D33F706;
+        Fri,  9 Aug 2019 07:40:33 -0700 (PDT)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: arm: Extend SCMI to support new reset protocol
+Date:   Fri,  9 Aug 2019 15:40:27 +0100
+Message-Id: <20190809144027.20912-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver hardcodes a hardware I/O address the way one should
-generally not do, and this prevents both compile-testing, and
-moving the platform to CONFIG_ARCH_MULTIPLATFORM.
+SCMIv2.0 adds a new Reset Management Protocol to manage various reset
+states a given device or domain can enter. Extend the existing SCMI
+bindings to add reset protocol support by re-using the reset bindings
+for both reset providers and consumers.
 
-Change the code to be independent of the machine headers
-to allow those two. Removing the hardcoded address would
-be hard and is not necessary, so leave that in place for now.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/usb/host/Kconfig    |  3 ++-
- drivers/usb/host/ohci-nxp.c | 25 ++++++++++++++++++-------
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/arm/arm,scmi.txt        | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 40b5de597112..73d233d3bf4d 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -441,7 +441,8 @@ config USB_OHCI_HCD_S3C2410
- 
- config USB_OHCI_HCD_LPC32XX
- 	tristate "Support for LPC on-chip OHCI USB controller"
--	depends on USB_OHCI_HCD && ARCH_LPC32XX
-+	depends on USB_OHCI_HCD
-+	depends on ARCH_LPC32XX || COMPILE_TEST
- 	depends on USB_ISP1301
- 	default y
- 	---help---
-diff --git a/drivers/usb/host/ohci-nxp.c b/drivers/usb/host/ohci-nxp.c
-index f5f532601092..c561881d0e79 100644
---- a/drivers/usb/host/ohci-nxp.c
-+++ b/drivers/usb/host/ohci-nxp.c
-@@ -29,10 +29,7 @@
- 
- #include "ohci.h"
- 
--#include <mach/hardware.h>
--
- #define USB_CONFIG_BASE		0x31020000
--#define USB_OTG_STAT_CONTROL	IO_ADDRESS(USB_CONFIG_BASE + 0x110)
- 
- /* USB_OTG_STAT_CONTROL bit defines */
- #define TRANSPARENT_I2C_EN	(1 << 7)
-@@ -122,19 +119,33 @@ static inline void isp1301_vbus_off(void)
- 
- static void ohci_nxp_start_hc(void)
- {
--	unsigned long tmp = __raw_readl(USB_OTG_STAT_CONTROL) | HOST_EN;
-+	void __iomem *usb_otg_stat_control = ioremap(USB_CONFIG_BASE + 0x110, 4);
-+	unsigned long tmp;
+Hi Rob,
+
+I am posting this separately to avoid reposting the driver patches that
+are already reviewed/asked. I need your ack to take the changes for v5.4
+I might have messed up something that it got missed from your patchworks
+Full series @[1]
+
+Regards,
+Sudeep
+
+[1] https://lore.kernel.org/lkml/20190806170208.6787-4-sudeep.holla@arm.com/
+
+diff --git a/Documentation/devicetree/bindings/arm/arm,scmi.txt b/Documentation/devicetree/bindings/arm/arm,scmi.txt
+index 317a2fc3667a..083dbf96ee00 100644
+--- a/Documentation/devicetree/bindings/arm/arm,scmi.txt
++++ b/Documentation/devicetree/bindings/arm/arm,scmi.txt
+@@ -73,6 +73,16 @@ SCMI provides an API to access the various sensors on the SoC.
+ 			 as used by the firmware. Refer to  platform details
+ 			 for your implementation for the IDs to use.
+
++Reset signal bindings for the reset domains based on SCMI Message Protocol
++------------------------------------------------------------
 +
-+	if (WARN_ON(!usb_otg_stat_control))
-+		return;
++This binding for the SCMI reset domain providers uses the generic reset
++signal binding[5].
 +
-+	tmp = __raw_readl(usb_otg_stat_control) | HOST_EN;
- 
--	__raw_writel(tmp, USB_OTG_STAT_CONTROL);
-+	__raw_writel(tmp, usb_otg_stat_control);
- 	isp1301_vbus_on();
++Required properties:
++ - #reset-cells : Should be 1. Contains the reset domain ID value used
++		  by SCMI commands.
 +
-+	iounmap(usb_otg_stat_control);
- }
- 
- static void ohci_nxp_stop_hc(void)
- {
-+	void __iomem *usb_otg_stat_control = ioremap(USB_CONFIG_BASE + 0x110, 4);
- 	unsigned long tmp;
- 
-+	if (WARN_ON(!usb_otg_stat_control))
-+		return;
+ SRAM and Shared Memory for SCMI
+ -------------------------------
+
+@@ -93,6 +103,7 @@ Each sub-node represents the reserved area for SCMI.
+ [2] Documentation/devicetree/bindings/power/power_domain.txt
+ [3] Documentation/devicetree/bindings/thermal/thermal.txt
+ [4] Documentation/devicetree/bindings/sram/sram.txt
++[5] Documentation/devicetree/bindings/reset/reset.txt
+
+ Example:
+
+@@ -152,6 +163,11 @@ firmware {
+ 			reg = <0x15>;
+ 			#thermal-sensor-cells = <1>;
+ 		};
 +
- 	isp1301_vbus_off();
--	tmp = __raw_readl(USB_OTG_STAT_CONTROL) & ~HOST_EN;
--	__raw_writel(tmp, USB_OTG_STAT_CONTROL);
-+	tmp = __raw_readl(usb_otg_stat_control) & ~HOST_EN;
-+	__raw_writel(tmp, usb_otg_stat_control);
-+
-+	iounmap(usb_otg_stat_control);
- }
- 
- static int ohci_hcd_nxp_probe(struct platform_device *pdev)
--- 
-2.20.0
++		scmi_reset: protocol@16 {
++			reg = <0x16>;
++			#reset-cells = <1>;
++		};
+ 	};
+ };
+
+@@ -166,6 +182,7 @@ hdlcd@7ff60000 {
+ 	reg = <0 0x7ff60000 0 0x1000>;
+ 	clocks = <&scmi_clk 4>;
+ 	power-domains = <&scmi_devpd 1>;
++	resets = <&scmi_reset 10>;
+ };
+
+ thermal-zones {
+--
+2.17.1
 
