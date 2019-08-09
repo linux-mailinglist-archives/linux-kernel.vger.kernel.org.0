@@ -2,80 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3784488270
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5456882C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407371AbfHIS2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 14:28:36 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38803 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfHIS2f (ORCPT
+        id S2437141AbfHISik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 14:38:40 -0400
+Received: from bmailout2.hostsharing.net ([83.223.78.240]:51331 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407437AbfHISik (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 14:28:35 -0400
-Received: by mail-qk1-f193.google.com with SMTP id u190so8730064qkh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 11:28:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=meYZAOaqZ5KaoPmXpKdQX8BQbEOPXVSFqQOk/Zs8rsA=;
-        b=ce7Y8J51F91Wbnr69zfjOY6ncKZCfRi/gCZIPbQ97bT65NFIuYIkz0iibeXJQcKiGk
-         rKS2TUIfZn8VOk8PHNSDKFqsb4iGeKhTqn396ib6Y+ZblxVNLxjE550+hqwbSuLXpzP4
-         FxIhS/rXFwkj+C+8stHE7lARA8aIpsxqto5TG6UA45FGkeTccTbNK3KAA7OaI66/iwXw
-         b07cbNMGulJvlgDVmCq1PsD9nmT8yRmqZzivPA5LTq3CAfqyRwo7R2KqLvi5TLAEpfw7
-         3n8RKHDSODsQ6dEjQl+6ZYbJqO3lPjshGipQq+X2StUYyPnHdPTX5Iq5NfsSRRF/JAL4
-         hiBg==
-X-Gm-Message-State: APjAAAXjyHOtN3zvzAA+8ao4Zru7J7yAUjpUs5puBoxxWl2etukbKczX
-        ZeJNYonIazxbFcsqgMMjwO4ijx/WatzFOKsxswOKxJcn
-X-Google-Smtp-Source: APXvYqzLxdQHC0gUKiwVO2NJAHpHdYXdIWcXVTsS7VCUpP4IfTQCbdx5V1hKHFH1R7BU89gajb/sE4UT39NYqjWxAtw=
-X-Received: by 2002:a37:4ac3:: with SMTP id x186mr18866428qka.138.1565375314918;
- Fri, 09 Aug 2019 11:28:34 -0700 (PDT)
+        Fri, 9 Aug 2019 14:38:40 -0400
+X-Greylist: delayed 586 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Aug 2019 14:38:39 EDT
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 76C062800935A;
+        Fri,  9 Aug 2019 20:28:52 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 42430DFE15; Fri,  9 Aug 2019 20:28:52 +0200 (CEST)
+Date:   Fri, 9 Aug 2019 20:28:52 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Subject: Re: [PATCH] PCI: pciehp: Avoid returning prematurely from sysfs
+ requests
+Message-ID: <20190809182852.rkkhng7d5m5xf3tp@wunner.de>
+References: <4174210466e27eb7e2243dd1d801d5f75baaffd8.1565345211.git.lukas@wunner.de>
+ <f26a6667-5474-895f-f9ba-1f812c44270e@linux.intel.com>
 MIME-Version: 1.0
-References: <87h873zs88.fsf@concordia.ellerman.id.au> <20190809182106.62130-1-ndesaulniers@google.com>
-In-Reply-To: <20190809182106.62130-1-ndesaulniers@google.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 9 Aug 2019 20:28:19 +0200
-Message-ID: <CAK8P3a3LynWTbpV8=VPm2TqgNM2MnoEyCPJd0PL2D+tcZqJgHg@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: fix inline asm constraints for dcbz
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        kbuild test robot <lkp@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f26a6667-5474-895f-f9ba-1f812c44270e@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 8:21 PM 'Nick Desaulniers' via Clang Built
-Linux <clang-built-linux@googlegroups.com> wrote:
+On Fri, Aug 09, 2019 at 10:28:15AM -0700, sathyanarayanan kuppuswamy wrote:
+> On 8/9/19 3:28 AM, Lukas Wunner wrote:
+> > A sysfs request to enable or disable a PCIe hotplug slot should not
+> > return before it has been carried out.  That is sought to be achieved
+> > by waiting until the controller's "pending_events" have been cleared.
+> > 
+> > However the IRQ thread pciehp_ist() clears the "pending_events" before
+> > it acts on them.  If pciehp_sysfs_enable_slot() / _disable_slot() happen
+> > to check the "pending_events" after they have been cleared but while
+> > pciehp_ist() is still running, the functions may return prematurely
+> > with an incorrect return value.
+> 
+> Can this be fixed by changing the sequence of clearing the pending_events in
+> pciehp_ist() ?
 
->  static inline void dcbz(void *addr)
->  {
-> -       __asm__ __volatile__ ("dcbz %y0" : : "Z"(*(u8 *)addr) : "memory");
-> +       __asm__ __volatile__ ("dcbz %y0" : "=Z"(*(u8 *)addr) :: "memory");
->  }
->
->  static inline void dcbi(void *addr)
->  {
-> -       __asm__ __volatile__ ("dcbi %y0" : : "Z"(*(u8 *)addr) : "memory");
-> +       __asm__ __volatile__ ("dcbi %y0" : "=Z"(*(u8 *)addr) :: "memory");
->  }
+It can't.  The processing logic is such that pciehp_ist() atomically
+removes bits from pending_events and acts upon them.  Simultaneously, new
+events may be queued up by adding bits to pending_events (through a
+hardirq handled by pciehp_isr(), through a sysfs request, etc).
+Those will be handled in an additional iteration of pciehp_ist().
 
-I think the result of the discussion was that an output argument only kind-of
-makes sense for dcbz, but for the others it's really an input, and clang is
-wrong in the way it handles the "Z" constraint by making a copy, which it
-doesn't do for "m".
+If I'd delay removing bits from pending_events, I then couldn't tell if
+new events have accumulated while others have been processed.
+E.g. a PDS event may occur while another one is being processed.
+The second PDS events may signify a card removal immediately after
+the card has been brought up.  It's crucial not to lose the second PDS
+event but act properly on it by bringing the slot down again.
 
-I'm not sure whether it's correct to use "m" instead of "Z" here, which
-would be a better workaround if that works. More importantly though,
-clang really needs to be fixed to handle "Z" correctly.
+This way of processing events also allows me to easily filter events.
+E.g. we tolerate link flaps occurring during the first 100 ms after
+enabling the slot simply by atomically removing bits from pending_events
+at a certain point.  See commit 6c35a1ac3da6 ("PCI: pciehp: Tolerate
+initially unstable link").
 
-        Arnd
+Now what I *could* do would be to make the events currently being
+processed public, e.g. by adding an "atomic_t current_events" to
+struct controller.  Then I could wait in pciehp_sysfs_enable_slot() /
+_disable_slot() until both "pending_events" and "current_events"
+becomes empty.  But it would basically amount to the same as this patch,
+and we don't really need to know *which* events are being processed,
+only the *fact* that events are being processed.
+
+Let me know if you have further questions regarding the pciehp
+processing logic.
+
+Thanks,
+
+Lukas
