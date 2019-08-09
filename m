@@ -2,68 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A2CB877CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 295AF877C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:50:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406125AbfHIKuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 06:50:51 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:56538 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbfHIKut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 06:50:49 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 068D21A013B;
-        Fri,  9 Aug 2019 12:50:48 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E5F101A0068;
-        Fri,  9 Aug 2019 12:50:42 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 696B04029A;
-        Fri,  9 Aug 2019 18:50:36 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 2/2] ASoC: fsl_esai: Add new compatible string for imx6ull
-Date:   Fri,  9 Aug 2019 18:27:47 +0800
-Message-Id: <1565346467-5769-2-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1565346467-5769-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1565346467-5769-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726655AbfHIKuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 06:50:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49822 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726140AbfHIKuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 06:50:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D802AB071;
+        Fri,  9 Aug 2019 10:50:21 +0000 (UTC)
+Date:   Fri, 9 Aug 2019 12:50:16 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     ndrw <ndrw.xf@redhazel.co.uk>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Artem S. Tashkinov" <aros@gmx.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
+ inability to gracefully handle low memory pressure
+Message-ID: <20190809105016.GP18351@dhcp22.suse.cz>
+References: <20190807075927.GO11812@dhcp22.suse.cz>
+ <20190807205138.GA24222@cmpxchg.org>
+ <20190808114826.GC18351@dhcp22.suse.cz>
+ <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
+ <20190808163228.GE18351@dhcp22.suse.cz>
+ <5FBB0A26-0CFE-4B88-A4F2-6A42E3377EDB@redhazel.co.uk>
+ <20190808185925.GH18351@dhcp22.suse.cz>
+ <08e5d007-a41a-e322-5631-b89978b9cc20@redhazel.co.uk>
+ <20190809085748.GN18351@dhcp22.suse.cz>
+ <cdb392ee-e192-c136-41cb-48d9e4e4bf47@redhazel.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cdb392ee-e192-c136-41cb-48d9e4e4bf47@redhazel.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new compatible string "fsl,imx6ull-esai" in the binding document.
+On Fri 09-08-19 11:09:33, ndrw wrote:
+> On 09/08/2019 09:57, Michal Hocko wrote:
+> > We already do have a reserve (min_free_kbytes). That gives kswapd some
+> > room to perform reclaim in the background without obvious latencies to
+> > allocating tasks (well CPU still be used so there is still some effect).
+> 
+> I tried this option in the past. Unfortunately, I didn't prevent freezes. My
+> understanding is this option reserves some amount of memory to not be
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- Documentation/devicetree/bindings/sound/fsl,esai.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+to not be used by normal allocations. It defines reclaim watermarks and
+that influences when the background and direct reclaim start to act.
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl,esai.txt b/Documentation/devicetree/bindings/sound/fsl,esai.txt
-index 5b9914367610..0e6e2166f76c 100644
---- a/Documentation/devicetree/bindings/sound/fsl,esai.txt
-+++ b/Documentation/devicetree/bindings/sound/fsl,esai.txt
-@@ -7,8 +7,11 @@ other DSPs. It has up to six transmitters and four receivers.
- 
- Required properties:
- 
--  - compatible		: Compatible list, must contain "fsl,imx35-esai" or
--			  "fsl,vf610-esai"
-+  - compatible		: Compatible list, should contain one of the following
-+			  compatibles:
-+			  "fsl,imx35-esai",
-+			  "fsl,vf610-esai",
-+			  "fsl,imx6ull-esai",
- 
-   - reg			: Offset and length of the register set for the device.
- 
+> swapped out but does not prevent the kernel from evicting all pages from
+> cache when more memory is needed.
+
+It doesn't have any say on the actual decision on what to reclaim.
+
+> > Kswapd tries to keep a balance and free memory low but still with some
+> > room to satisfy an immediate memory demand. Once kswapd doesn't catch up
+> > with the memory demand we dive into the direct reclaim and that is where
+> > people usually see latencies coming from.
+> 
+> Reclaiming memory is fine, of course, but not all the way to 0 caches. No
+> caches means all executable pages, ro pages (e.g. fonts) are evicted from
+> memory and have to be constantly reloaded on every user action. All this
+> while competing with tasks that are using up all memory. This happens with
+> of without swap, although swap does spread this issue in time a bit.
+
+We try to protect low amount of cache. Have a look at get_scan_count
+function. But the exact amount of the cache to be protected is really
+hard to know wihtout a crystal ball or understanding of the workload.
+The kernel doesn't have neither of the two.
+
+> > The main problem here is that it is hard to tell from a single
+> > allocation latency that we have a bigger problem. As already said, the
+> > usual trashing scenario doesn't show problem during the reclaim because
+> > pages can be freed up very efficiently. The problem is that they are
+> > refaulted very quickly so we are effectively rotating working set like
+> > crazy. Compare that to a normal used-once streaming IO workload which is
+> > generating a lot of page cache that can be recycled in a similar pace
+> > but a working set doesn't get freed. Free memory figures will look very
+> > similar in both cases.
+> 
+> Thank you for the explanation. It is indeed a difficult problem - some
+> cached pages (streaming IO) will likely not be needed again and should be
+> discarded asap, other (like mmapped executable/ro pages of UI utilities)
+> will cause thrashing when evicted under high memory pressure. Another aspect
+> is that PSI is probably not the best measure of detecting imminent
+> thrashing. However, if it can at least detect a freeze that has already
+> occurred and force the OOM killer that is still a lot better than a dead
+> system, which is the current user experience.
+
+We have been thinking about this problem for a long time and couldn't
+come up with anything much better than we have now. PSI is the most recent
+improvement in that area. If you have better ideas then patches are
+always welcome.
+
+> > Good that earlyoom works for you.
+> 
+> I am giving it as an example of a heuristic that seems to work very well for
+> me. Something to look into. And yes, I wouldn't mind having such mechanism
+> built into the kernel.
+> 
+> >   All I am saying is that this is not
+> > generally applicable heuristic because we do care about a larger variety
+> > of workloads. I should probably emphasise that the OOM killer is there
+> > as a _last resort_ hand break when something goes terribly wrong. It
+> > operates at times when any user intervention would be really hard
+> > because there is a lack of resources to be actionable.
+> 
+> It is indeed a last resort solution - without it the system is unusable.
+> Still, accuracy matters because killing a wrong task does not fix the
+> problem (a task hogging memory is still running) and may break the system
+> anyway if something important is killed instead.
+
+That is a completely orthogonal problem, I am afraid. So far we have
+been discussing _when_ to trigger OOM killer. This is _who_ to kill. I
+haven't heard any recent examples that the victim selection would be way
+off and killing something obviously incorrect.
+
+> [...]
+> 
+> > This is a useful feedback! What was your workload? Which kernel version?
+> 
+> I tested it by running a python script that processes a large amount of data
+> in memory (needs around 15GB of RAM). I normally run 2 instances of that
+> script in parallel but for testing I started 4 of them. I sometimes
+> experience the same issue when using multiple regular memory intensive
+> desktop applications in a manner described in the first post but that's
+> harder to reproduce because of the user input needed.
+
+Something that other people can play with to reproduce the issue would
+be more than welcome.
+
 -- 
-2.21.0
-
+Michal Hocko
+SUSE Labs
