@@ -2,76 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5A087AFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F76187B13
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407031AbfHINVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 09:21:07 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:63962
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2406273AbfHINVH (ORCPT
+        id S2407062AbfHINY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 09:24:58 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51035 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406273AbfHINY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:21:07 -0400
-X-IronPort-AV: E=Sophos;i="5.64,364,1559512800"; 
-   d="scan'208";a="316018627"
-Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:21:04 +0200
-Date:   Fri, 9 Aug 2019 15:21:03 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: julia@hadrien
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-cc:     Mark Brown <broonie@kernel.org>,
-        Julia Lawall <julia.lawall@lip6.fr>, kbuild-all@01.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fix odd_ptr_err.cocci warnings
-In-Reply-To: <88ac4c79-5ce3-3f1a-5f6e-3928a30a1ef5@ti.com>
-Message-ID: <alpine.DEB.2.21.1908091519400.2946@hadrien>
-References: <alpine.DEB.2.21.1908091229140.2946@hadrien> <20190809123112.GC3963@sirena.co.uk> <88ac4c79-5ce3-3f1a-5f6e-3928a30a1ef5@ti.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 9 Aug 2019 09:24:58 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so5724247wml.0;
+        Fri, 09 Aug 2019 06:24:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ILDppnCmjlOfgJgJ2qNB5ceciycNxLir06qMezCpixc=;
+        b=eZT+w59UUZFyL2cCRDMRHbuHDIC4RKWJEJrzCdA8oNEb6thqLiNew7cw7jfP0Phi7J
+         f+FMHqlAI16KHYSE0ibaSbNqX+dizyMIqiEEEwVV3QIwtMbLv02nJ5CQvVYuUxBXR/VF
+         0l8m7qMLUqGDNtWlKpHhxIRJJCdztftGKS301K7JgJ9CsKj+RKbbSLvjJbF6EvypPIlT
+         HsPE+Gv/ODbYaM22lNsT33zTECWqnV3KUF3jwZLDkWtami3ij+fUi6/LQnR9Ht9Jh4VY
+         781LpF4t7NA2AHAViDrw8v0kl+ezWbfaOn0hkp/rN6EGmJL4j/dHpKgmfceU6/hl+c7n
+         e7ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ILDppnCmjlOfgJgJ2qNB5ceciycNxLir06qMezCpixc=;
+        b=VfuIjVaWUUoGcB6GumWyfYT+9DnU3kXhEg+mwjeczyTWQaoFTBAalQfVWGT2E382YK
+         uh6NjRKRn2ZSRCzK4/dxKFRIA/3ey9qql0Twc13vfjky46JfT/B5jEPS9vgcZmkTj1jd
+         RWsmciCYwAAv92Zl4ZDm30s0UgbASMEHvQvqrgpaVfhLqYZwS9j3P4F7X9I6DegnrBG8
+         Ey5LDH6JU8j4ehpwQLLyfztHv3CN/pSEUXtvnKL9XralshrvueBQpW49a5rxNHyHsqm6
+         gWz/SliBDJoJOIqQoR0AQCVoNOL6DYgPaSo6lE5VQgl9G70IloCjXY/PzkJCmmSnKnAf
+         qpDQ==
+X-Gm-Message-State: APjAAAVRlxFVAu6rkun1MxN8GiwYuPZM5it0L+WlYaodaGtYUwhyQVx8
+        YBQICWGSabTYoukjcWS7fEI=
+X-Google-Smtp-Source: APXvYqyoIq7cQyCyqyaTH2fo4y1zxmmZ+SxcwfcCyTtt3q94bYPWzefG8vVhK4GVKNwWCIJEWnX5Vw==
+X-Received: by 2002:a1c:ab06:: with SMTP id u6mr10757190wme.125.1565357095875;
+        Fri, 09 Aug 2019 06:24:55 -0700 (PDT)
+Received: from localhost ([197.211.57.145])
+        by smtp.gmail.com with ESMTPSA id a2sm4863912wmj.9.2019.08.09.06.24.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 09 Aug 2019 06:24:55 -0700 (PDT)
+Date:   Fri, 9 Aug 2019 14:23:49 +0100
+From:   Sheriff Esseson <sheriffesseson@gmail.com>
+To:     skhan@linuxfoundation.org
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+        "open list:BPF (Safe dynamic programs and tools)" 
+        <netdev@vger.kernel.org>,
+        "open list:BPF (Safe dynamic programs and tools)" 
+        <bpf@vger.kernel.org>
+Subject: [PATCH v2] Documentation: virt: Fix broken reference to virt tree's
+ index
+Message-ID: <20190809132349.GA15460@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix broken reference to virt/index.rst.
 
+Fixes: 2f5947dfcaec ("Documentation: move Documentation/virtual to
+Documentation/virt")
 
-On Fri, 9 Aug 2019, Peter Ujfalusi wrote:
+Signed-off-by: Sheriff Esseson <sheriffesseson@gmail.com>
+---
 
->
->
-> On 09/08/2019 15.31, Mark Brown wrote:
-> > On Fri, Aug 09, 2019 at 12:30:46PM +0200, Julia Lawall wrote:
-> >
-> >> tree:   https://github.com/omap-audio/linux-audio peter/ti-linux-4.19.y/wip
-> >> head:   62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a
-> >> commit: 62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a [34/34] j721e new machine driver wip
-> >> :::::: branch date: 20 hours ago
-> >> :::::: commit date: 20 hours ago
-> >>
-> >>  j721e-evm.c |    4 ++--
-> >>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> --- a/sound/soc/ti/j721e-evm.c
-> >> +++ b/sound/soc/ti/j721e-evm.c
-> >> @@ -283,7 +283,7 @@ static int j721e_get_clocks(struct platf
-> >
-> > This file isn't upstream, it's only in the TI BSP.
->
-> Yes, it is not upstream, but the fix is valid.
->
-> Julia: is it possible to direct these notifications only to me from
-> https://github.com/omap-audio/linux-audio.git ?
->
-> It mostly carries TI BSP stuff and my various for upstream branches nowdays.
+Changes in v2:
+	- Fix patch description. 
 
-Please discuss it with the kbuild people.  They should be able to set it
-up as you want.
+ Documentation/index.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You can try lkp@intel.com
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index 2df5a3da563c..5205430305d5 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -115,7 +115,7 @@ needed).
+    target/index
+    timers/index
+    watchdog/index
+-   virtual/index
++   virt/index
+    input/index
+    hwmon/index
+    gpu/index
+-- 
+2.17.1
 
-julia
