@@ -2,82 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1156687EC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC03387ECA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436936AbfHIQA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:00:56 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38848 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436926AbfHIQAy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:00:54 -0400
-Received: by mail-pl1-f194.google.com with SMTP id m12so6519712plt.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 09:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=txjrO/ukHW/V8tkDPdv+tXjuE6UndjIzFZV6EbQgweI=;
-        b=AdaoX5kfmRRDO75Blops/TNpQi1Me4FTv/2FQvDgEKKZp73pwIHbiJhj1LBW35UKjN
-         0YrzgMVnJfzQJInbm18v3QSJjKnHyqJK8lenJ4EsMt9s+3uHmu8+8dQKGhxtFuQk1oxg
-         BmTveXlUtQ0c3pOv88F7TMvBGqZSPK2Ti4pQFZlvUF0nrr77ydJ/hgcmKIPrz6v7YCVY
-         vCNJc97r6WNUoDUs4YnuedPG9iO6n3CJyT3G9y1fzStGndf02iKG713R9nfU9klw0YFV
-         YsT5ZBo+CCkxSq06baoAd9WG3TWrbB6yN+6b7dJf/PbQABQPU1DrlM5r8Ze3jD02Pq5U
-         fP7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=txjrO/ukHW/V8tkDPdv+tXjuE6UndjIzFZV6EbQgweI=;
-        b=jfde8QEg0IhkYyWiCbpEYOueYuVTEVeg8P78noLveET2+NxPreq6KO8CILpA9+I/h6
-         B4KJQF+o+4f4IggtZu5E2NHlr42ViuLU+O5Nl3Hh32pLtGYFIxUNG7/ddSmw/RMgnjmp
-         +G6wCmKJzEZT8+0s2xvXLkF+HC7O2pK5grIIDx+D46LaxRfUjjN3c9CsxGT1dJc0wkcd
-         MYOs5+gaQwB0nAKKXvZAwcNONOG7OLqCg+QOMvjMQVjkmSYsfSjtiIF3nKjpwEF5izu6
-         +A9hOFnTGFdB9k7KSEP4O4oE+K/0WkfsV3eNPXYA41dwz5g5ZUgbUbLDa9xpDj9XLpbt
-         oCFw==
-X-Gm-Message-State: APjAAAUnhq86B88bQZjnYOCAbRaNfBi+jHJH8cTI8abvoyicnul5QtrX
-        o6ooIZOTVlWfl4J3nm9I8N/WepEvda0tzg==
-X-Google-Smtp-Source: APXvYqymjDUUZeDcn23AB/pb/kVfmj76shSiPkafdWeOx6i3oPDMLrepqSpwPiHzizPqTJzC6CW8VA==
-X-Received: by 2002:a17:902:ab96:: with SMTP id f22mr13267254plr.147.1565366453173;
-        Fri, 09 Aug 2019 09:00:53 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:83a1:8460:a1eb:bc6a:7081? ([2605:e000:100e:83a1:8460:a1eb:bc6a:7081])
-        by smtp.gmail.com with ESMTPSA id p68sm115840887pfb.80.2019.08.09.09.00.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Aug 2019 09:00:52 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] Lookup PCS offset, and cleanup hex formatting
-To:     Stephen Douthit <stephend@silicom-usa.com>
-Cc:     "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190809144827.1609-1-stephend@silicom-usa.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d73ec81d-52d3-816f-0a3b-fa1f493df53a@kernel.dk>
-Date:   Fri, 9 Aug 2019 09:00:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2436948AbfHIQCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:02:25 -0400
+Received: from mga09.intel.com ([134.134.136.24]:8195 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbfHIQCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 12:02:25 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 09:02:24 -0700
+X-IronPort-AV: E=Sophos;i="5.64,364,1559545200"; 
+   d="scan'208";a="166045189"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 09:02:21 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 22D9E20CEA; Fri,  9 Aug 2019 19:01:22 +0300 (EEST)
+Date:   Fri, 9 Aug 2019 19:01:21 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Hugues Fruchet <hugues.fruchet@st.com>
+Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Mickael GUENE <mickael.guene@st.com>
+Subject: Re: [PATCH v4 1/3] media: stm32-dcmi: improve sensor subdev naming
+Message-ID: <20190809160121.GA6194@paasikivi.fi.intel.com>
+References: <1564577783-18627-1-git-send-email-hugues.fruchet@st.com>
+ <1564577783-18627-2-git-send-email-hugues.fruchet@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20190809144827.1609-1-stephend@silicom-usa.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1564577783-18627-2-git-send-email-hugues.fruchet@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/9/19 7:48 AM, Stephen Douthit wrote:
-> v2: Fix case of hex values
-> 
-> Stephen Douthit (2):
->    ata: ahci: Lookup PCS register offset based on PCI device ID
->    ata: ahci: Cleanup hex values to use lowercase everywhere
-> 
->   drivers/ata/ahci.c | 62 ++++++++++++++++++++++++++++++++++++----------
->   1 file changed, 49 insertions(+), 13 deletions(-)
+Hi Hugues,
 
-Thanks, applied.
+Thanks for teh update.
+
+On Wed, Jul 31, 2019 at 02:56:21PM +0200, Hugues Fruchet wrote:
+> Rename "subdev" entity struct field to "source"
+> to prepare for several subdev support.
+> Move asd field on top of entity struct.
+> 
+> Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+> Change-Id: I1545a1a29a8061ee67cc6e4b799e9a69071911e7
+
+No Change-Id tags in the kernel, please. Check the other two as well.
+
+With that fixed,
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 -- 
-Jens Axboe
-
+Sakari Ailus
+sakari.ailus@linux.intel.com
