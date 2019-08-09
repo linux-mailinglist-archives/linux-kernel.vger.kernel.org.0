@@ -2,114 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4209487802
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C21787807
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 12:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406436AbfHIK4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 06:56:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:45416 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406078AbfHIK4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 06:56:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15F3B1596;
-        Fri,  9 Aug 2019 03:56:24 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 60D033F575;
-        Fri,  9 Aug 2019 03:56:22 -0700 (PDT)
-Subject: Re: [PATCH 06/19] irqchip/mmp: add missing chained_irq_{enter,exit}()
-To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-References: <20190809093158.7969-1-lkundrak@v3.sk>
- <20190809093158.7969-7-lkundrak@v3.sk>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <319ebbbc-2231-42c9-faec-731ad81eb485@kernel.org>
-Date:   Fri, 9 Aug 2019 11:56:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2406385AbfHIK6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 06:58:07 -0400
+Received: from mail-ot1-f72.google.com ([209.85.210.72]:50806 "EHLO
+        mail-ot1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbfHIK6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 06:58:07 -0400
+Received: by mail-ot1-f72.google.com with SMTP id a21so68032614otk.17
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 03:58:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=mUAdjdWVqLEji+9QaZjr6SC7lAukAXPaOBa5eBib/zQ=;
+        b=KPulVai8Q+dkEyYdgbnhWyH0nSNvOfjlOiyKMLxfsZyvwgkhVrCdH1l/UJdivyzFl+
+         jku0uL29vsz/LMygwdwXomlf0r7RLOo3wGOV9De6YlLECp6ve0Wd0liGoX4DrZIHVU28
+         5H2jhGtQjpXRfzIYGOBz+ao9FV9JZRk2BRV1ttsE7/f+Iy+4AqEU3QzZfpInb1HOKw8N
+         XeAlf/prTOLs0Jn/WM8b28/4aU+icu2Izwg7kfN97YQTCHxRJX+hdOip/N/qvNxYPxPb
+         xsX7FFhH559HbTix1F7nn6dbWbPO7Jmg5TUfzurfuwAEPX13rgpQtOLMMUkpdkJwDWcI
+         /LIg==
+X-Gm-Message-State: APjAAAV8f2eRHpLg3xp11Q+AXogGS38wRs1AtetegbXv3SdL2IeTI3cu
+        +P/DjdpkYdZvhabh1991zqNp/m0MWKhvznZsUS+uEI/JpVZa
+X-Google-Smtp-Source: APXvYqzfxc+WwHQY5PBUiXp07yIZY9T57CR+iHoYVMfbZymKTn0MCiZnMfMSJrsjUldT/7ClvmsuVvR5jWyz41ngOahYU63+uD9g
 MIME-Version: 1.0
-In-Reply-To: <20190809093158.7969-7-lkundrak@v3.sk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5d:924e:: with SMTP id e14mr19114492iol.215.1565348286229;
+ Fri, 09 Aug 2019 03:58:06 -0700 (PDT)
+Date:   Fri, 09 Aug 2019 03:58:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008cf14e058fad0c41@google.com>
+Subject: KASAN: null-ptr-deref Write in rxrpc_unuse_local
+From:   syzbot <syzbot+20dee719a2e090427b5f@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dhowells@redhat.com,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/2019 10:31, Lubomir Rintel wrote:
-> The lack of chained_irq_exit() leaves the muxed interrupt masked on MMP3.
-> For reasons unknown this is not a problem on MMP2.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/irqchip/irq-mmp.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-> index af9cba4a51c2e..cd8d2253f56d1 100644
-> --- a/drivers/irqchip/irq-mmp.c
-> +++ b/drivers/irqchip/irq-mmp.c
-> @@ -13,6 +13,7 @@
->  #include <linux/init.h>
->  #include <linux/irq.h>
->  #include <linux/irqchip.h>
-> +#include <linux/irqchip/chained_irq.h>
->  #include <linux/irqdomain.h>
->  #include <linux/io.h>
->  #include <linux/ioport.h>
-> @@ -132,11 +133,14 @@ struct irq_chip icu_irq_chip = {
->  static void icu_mux_irq_demux(struct irq_desc *desc)
->  {
->  	unsigned int irq = irq_desc_get_irq(desc);
-> +	struct irq_chip *chip = irq_get_chip(irq);
+Hello,
 
-Consider using irq_desc_get_chip() instead, which avoids going through
-the irq->desc again.
+syzbot found the following crash on:
 
->  	struct irq_domain *domain;
->  	struct icu_chip_data *data;
->  	int i;
->  	unsigned long mask, status, n;
->  
-> +	chained_irq_enter(chip, desc);
-> +
->  	for (i = 1; i < max_icu_nr; i++) {
->  		if (irq == icu_data[i].cascade_irq) {
->  			domain = icu_data[i].domain;
-> @@ -146,7 +150,7 @@ static void icu_mux_irq_demux(struct irq_desc *desc)
->  	}
->  	if (i >= max_icu_nr) {
->  		pr_err("Spurious irq %d in MMP INTC\n", irq);
-> -		return;
-> +		goto out;
->  	}
->  
->  	mask = readl_relaxed(data->reg_mask);
-> @@ -158,6 +162,9 @@ static void icu_mux_irq_demux(struct irq_desc *desc)
->  			generic_handle_irq(icu_data[i].virq_base + n);
->  		}
->  	}
-> +
-> +out:
-> +	chained_irq_exit(chip, desc);
->  }
->  
->  static int mmp_irq_domain_map(struct irq_domain *d, unsigned int irq,
-> 
+HEAD commit:    87b983f5 Add linux-next specific files for 20190809
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=143aecee600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28eea330e11df0eb
+dashboard link: https://syzkaller.appspot.com/bug?extid=20dee719a2e090427b5f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ceae36600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ebc40e600000
 
-Otherwise looks OK.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+20dee719a2e090427b5f@syzkaller.appspotmail.com
 
-	M.
--- 
-Jazz is not dead, it just smells funny...
+==================================================================
+BUG: KASAN: null-ptr-deref in atomic_sub_return  
+include/asm-generic/atomic-instrumented.h:159 [inline]
+BUG: KASAN: null-ptr-deref in atomic_dec_return  
+include/linux/atomic-fallback.h:455 [inline]
+BUG: KASAN: null-ptr-deref in rxrpc_unuse_local+0x23/0x70  
+net/rxrpc/local_object.c:405
+Write of size 4 at addr 0000000000000010 by task syz-executor725/10010
+
+CPU: 1 PID: 10010 Comm: syz-executor725 Not tainted 5.3.0-rc3-next-20190809  
+#63
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  __kasan_report.cold+0x5/0x36 mm/kasan/report.c:486
+  kasan_report+0x12/0x17 mm/kasan/common.c:610
+  check_memory_region_inline mm/kasan/generic.c:185 [inline]
+  check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
+  __kasan_check_write+0x14/0x20 mm/kasan/common.c:98
+  atomic_sub_return include/asm-generic/atomic-instrumented.h:159 [inline]
+  atomic_dec_return include/linux/atomic-fallback.h:455 [inline]
+  rxrpc_unuse_local+0x23/0x70 net/rxrpc/local_object.c:405
+  rxrpc_release_sock net/rxrpc/af_rxrpc.c:904 [inline]
+  rxrpc_release+0x47d/0x840 net/rxrpc/af_rxrpc.c:930
+  __sock_release+0xce/0x280 net/socket.c:590
+  sock_close+0x1e/0x30 net/socket.c:1268
+  __fput+0x2ff/0x890 fs/file_table.c:280
+  ____fput+0x16/0x20 fs/file_table.c:313
+  task_work_run+0x145/0x1c0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x92f/0x2e50 kernel/exit.c:879
+  do_group_exit+0x135/0x360 kernel/exit.c:983
+  __do_sys_exit_group kernel/exit.c:994 [inline]
+  __se_sys_exit_group kernel/exit.c:992 [inline]
+  __x64_sys_exit_group+0x44/0x50 kernel/exit.c:992
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43ed68
+Code: Bad RIP value.
+RSP: 002b:00007ffc2b7b93f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ed68
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004be568 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d0180 R14: 0000000000000000 R15: 0000000000000000
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
