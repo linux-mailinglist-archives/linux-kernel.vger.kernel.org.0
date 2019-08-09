@@ -2,50 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E74883EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2423883E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfHIU3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 16:29:07 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:38499 "EHLO
+        id S1728654AbfHIU3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 16:29:02 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:37939 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728557AbfHIU3E (ORCPT
+        with ESMTP id S1728252AbfHIU26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 16:29:04 -0400
+        Fri, 9 Aug 2019 16:28:58 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MowT0-1ifiHM1SxC-00qQ8w; Fri, 09 Aug 2019 22:28:50 +0200
+ 1MekvV-1iTrd20yAf-00ajkH; Fri, 09 Aug 2019 22:28:53 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     soc@kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Subject: [PATCH 09/16] fbdev: remove w90x900/nuc900 platform drivers
-Date:   Fri,  9 Aug 2019 22:27:37 +0200
-Message-Id: <20190809202749.742267-10-arnd@arndb.de>
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [PATCH 10/16] Input: remove w90x900 keyboard driver
+Date:   Fri,  9 Aug 2019 22:27:38 +0200
+Message-Id: <20190809202749.742267-11-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190809202749.742267-1-arnd@arndb.de>
 References: <20190809202749.742267-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:OWJd8Mlp6GosttFVeesvPBCF6H1qMbR45XoNLn6QCIT09DzgB8Z
- B3G2a3xY+i5R2Bbqyu7WNSaHKBB4iBms9lawabi7zdxxdzONbZvOuM1xtwd5CjGziCp/VhN
- Xioqckvrd1jLLowbm78XLPjlfGd8t+cTEjUzfyMOtD8oZt639ZEVYh7cmk5Qgw7kRprEGbo
- 2yJdqc/5i5Fmij08/qryg==
+X-Provags-ID: V03:K1:B9uf6nqpqCvt0g4bgHe/VJ7Oo6T7W9PFQuUHXJDWTVtHG4RP0qf
+ Vfoz0D9TXzkrIeFexgI+WIlXO2Ph0b8WOgm4nMKp2JG7NdYO83kO+uimIwU7tXgnv4XPEZe
+ agiL6hHosEsJ4040lDCLURCq05wZikhAQ751INNMF62qNOasLqtJVnpqEDhIRZ4m5AW5rgc
+ hx79LJpnFlT30eZXC4+aA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0m+dLqi+nP4=:2upQrvmukfpBS3SC2UnNKt
- PAu/rKUBjYp1S8hqobJgJKhd54h2O0S0PuBpuzW6+UmIrZmc04L1xQW40uuksIyk2x3vpWSOG
- Is5yDwAKXD2t14cjHcDTUkEtr6vPkopDMrCUlT0wMV7I2mlK90BeHtv8TMM0UDC0NOFBJLTj9
- QSdKkZ8NzEPvVcbNXy1qUM6ix2ofk4th0tHQoQMmnaV0pAcqu4UMP8aR1+zP4gNmZKLReIcdu
- ZzJCFxgeY1fo1HwkfRqCWWBQmhNqVOpgQX3p6pwi5Nr0MShyvRKMfUgGEkBY79b3pso+aOVd5
- tzpLSj5jcT0m5z0keKaAbsioW29Y6vkxez43xjOmeSeQ9zzKvrd7GrBkap9IUEhFjzeryT54/
- fpyZRMkhgKPZKcPTP+A7mQP8wD4+v8XAdASHeymPYhu/b3/dDAr9DrRqSzAZBiKIzWSwBMFp1
- 0t2+5c6+rTil83khVdnyFJxB586quyaUEvl7Zhk6nwJWAs+QLXcxv+8HaclZmtr1ojUosAOvc
- WoKhR5Ju7pJU6Ezlmmzm/34m2Pqnz6ZRm011wB5b8sHPzS2XWsOcPUR0bf2HL80n0hUW9m5Xw
- 4bzeLnhw1mbfv/26goOU3Gy4EmjiH7W6IDZ4vCfyGJ7+MNsuCr558bsA2zAEGugg9exSk6iNR
- DELZJnfSDQ6moTRednZqlTJkfavblwOw61cNB7E9eJikUU91J1AtNs/vkBiBLtuLN1bHTDr6/
- fMRneNx8QrS7yc3R0LnvqxoNVgCRmW3BORB6dw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ZFggz2mqPK0=:agiv6d5BGkL6g/2pK3NKpj
+ gh83uUZUs39coUEYJBkz9q69Ly4mdR/7DOfQigWMx/hk5zZNZjQbIaeofZpa8cNY4Q7GleN4R
+ 6bFZnci+Qk0rsKNM9RvzvQLnnvMD3mxsfoHxqjeWaiT0fyG9CEsdCFxRWlp9LA0AlPWe9mUwa
+ g5y5Cr4OwWVrcONj7iI+iT5BmPczYfIwEPlvjtyhz8f1ECEsIPBRbvDhwAqMIPOkzQZhSvffg
+ WXop0t3NQ6MEF3SAe4dQOvd+f5UF4228tgLw8+amBAqeUKLw8dUQFkuI539pX19CNEoPDvPwu
+ f7A/fyH38Yi5onmB5OQMSz1ZX1RZVUW/HUCriWyBFI6ARDSMkaWuAUBK2F2iDE12mOvJydu+I
+ ZUGaUbJPIxKH/bamkY7Tca9Slnsxj3S0rN/5ICs/QRaBZps+uJ0O67Cr1/ivfMBJax+xmqepG
+ JKHhC5IDfSMnYa9IzUkQ3SqlTWbXQV+HqswXCsqFiJanXtbyJla0E4rmkYkl9nuMHuYBrKcc+
+ 9IVfc3mJuwGGMuVyQ6Je2iUwiNjbdMzGnXBMdjVoA3duBGYRL0BOz3YbTH7C0UqVenA7XAZNh
+ 9sjNmEIAvaerksVkfRai01Owwx1JnGn64/KbB2XdXTSaJ3qwv3gugUcuh+4GKekuchao88PhB
+ Fs9R/Y2L4+rSgsOWoVEQYatGUIoeDZ8nNe6KgfJ7X21yxrjdOC4DU8JHWzuSPrKR3AVdiWTMM
+ uPJFO/jHqC3tLzU5zUfD4obiem3WBPcZH4+VXQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,974 +54,337 @@ The ARM w90x900 platform is getting removed, so this driver is obsolete.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/video/fbdev/Kconfig                  |  14 -
- drivers/video/fbdev/Makefile                 |   1 -
- drivers/video/fbdev/nuc900fb.c               | 760 -------------------
- drivers/video/fbdev/nuc900fb.h               |  51 --
- include/Kbuild                               |   1 -
- include/linux/platform_data/video-nuc900fb.h |  79 --
- 6 files changed, 906 deletions(-)
- delete mode 100644 drivers/video/fbdev/nuc900fb.c
- delete mode 100644 drivers/video/fbdev/nuc900fb.h
- delete mode 100644 include/linux/platform_data/video-nuc900fb.h
+ drivers/input/keyboard/Kconfig               |  11 -
+ drivers/input/keyboard/Makefile              |   1 -
+ drivers/input/keyboard/w90p910_keypad.c      | 264 -------------------
+ include/linux/platform_data/keypad-w90p910.h |  16 --
+ 4 files changed, 292 deletions(-)
+ delete mode 100644 drivers/input/keyboard/w90p910_keypad.c
+ delete mode 100644 include/linux/platform_data/keypad-w90p910.h
 
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index 6b2de93bd302..5f83cd715387 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -1924,20 +1924,6 @@ config FB_S3C2410_DEBUG
- 	  Turn on debugging messages. Note that you can set/unset at run time
- 	  through sysfs
+diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+index 8e9c3ea9d5e7..c1da129a4eb5 100644
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@ -731,17 +731,6 @@ config KEYBOARD_XTKBD
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called xtkbd.
  
--config FB_NUC900
--	tristate "NUC900 LCD framebuffer support"
--	depends on FB && ARCH_W90X900
--	select FB_CFB_FILLRECT
--	select FB_CFB_COPYAREA
--	select FB_CFB_IMAGEBLIT
--	---help---
--	  Frame buffer driver for the built-in LCD controller in the Nuvoton
--	  NUC900 processor
+-config KEYBOARD_W90P910
+-	tristate "W90P910 Matrix Keypad support"
+-	depends on ARCH_W90X900
+-	select INPUT_MATRIXKMAP
+-	help
+-	  Say Y here to enable the matrix keypad on evaluation board
+-	  based on W90P910.
 -
--config GPM1040A0_320X240
--	bool "Giantplus Technology GPM1040A0 320x240 Color TFT LCD"
--	depends on FB_NUC900
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called w90p910_keypad.
 -
- config FB_SM501
- 	tristate "Silicon Motion SM501 framebuffer support"
- 	depends on FB && MFD_SM501
-diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
-index 7dc4861a93e6..aab7155884ea 100644
---- a/drivers/video/fbdev/Makefile
-+++ b/drivers/video/fbdev/Makefile
-@@ -116,7 +116,6 @@ obj-y                             += omap2/
- obj-$(CONFIG_XEN_FBDEV_FRONTEND)  += xen-fbfront.o
- obj-$(CONFIG_FB_CARMINE)          += carminefb.o
- obj-$(CONFIG_FB_MB862XX)	  += mb862xx/
--obj-$(CONFIG_FB_NUC900)           += nuc900fb.o
- obj-$(CONFIG_FB_JZ4740)		  += jz4740_fb.o
- obj-$(CONFIG_FB_PUV3_UNIGFX)      += fb-puv3.o
- obj-$(CONFIG_FB_HYPERV)		  += hyperv_fb.o
-diff --git a/drivers/video/fbdev/nuc900fb.c b/drivers/video/fbdev/nuc900fb.c
+ config KEYBOARD_CROS_EC
+ 	tristate "ChromeOS EC keyboard"
+ 	select INPUT_MATRIXKMAP
+diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
+index 06a0af6efeae..9510325c0c5d 100644
+--- a/drivers/input/keyboard/Makefile
++++ b/drivers/input/keyboard/Makefile
+@@ -68,4 +68,3 @@ obj-$(CONFIG_KEYBOARD_TEGRA)		+= tegra-kbc.o
+ obj-$(CONFIG_KEYBOARD_TM2_TOUCHKEY)	+= tm2-touchkey.o
+ obj-$(CONFIG_KEYBOARD_TWL4030)		+= twl4030_keypad.o
+ obj-$(CONFIG_KEYBOARD_XTKBD)		+= xtkbd.o
+-obj-$(CONFIG_KEYBOARD_W90P910)		+= w90p910_keypad.o
+diff --git a/drivers/input/keyboard/w90p910_keypad.c b/drivers/input/keyboard/w90p910_keypad.c
 deleted file mode 100644
-index 4fd851598584..000000000000
---- a/drivers/video/fbdev/nuc900fb.c
+index c88d05d6108a..000000000000
+--- a/drivers/input/keyboard/w90p910_keypad.c
 +++ /dev/null
-@@ -1,760 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
+@@ -1,264 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
 -/*
+- * Copyright (c) 2008-2009 Nuvoton technology corporation.
 - *
-- * Copyright (c) 2009 Nuvoton technology corporation
-- * All rights reserved.
-- *
-- *  Description:
-- *    Nuvoton LCD Controller Driver
-- *  Author:
-- *    Wang Qiang (rurality.linux@gmail.com) 2009/12/11
+- * Wan ZongShun <mcuos.com@gmail.com>
 - */
--#include <linux/module.h>
+-
 -#include <linux/kernel.h>
--#include <linux/err.h>
--#include <linux/errno.h>
--#include <linux/string.h>
--#include <linux/mm.h>
--#include <linux/tty.h>
--#include <linux/slab.h>
--#include <linux/delay.h>
--#include <linux/fb.h>
--#include <linux/init.h>
--#include <linux/dma-mapping.h>
+-#include <linux/module.h>
 -#include <linux/interrupt.h>
--#include <linux/workqueue.h>
--#include <linux/wait.h>
+-#include <linux/input.h>
+-#include <linux/device.h>
 -#include <linux/platform_device.h>
 -#include <linux/clk.h>
--#include <linux/cpufreq.h>
+-#include <linux/err.h>
 -#include <linux/io.h>
--#include <linux/pm.h>
--#include <linux/device.h>
+-#include <linux/slab.h>
 -
--#include <mach/map.h>
--#include <mach/regs-clock.h>
--#include <mach/regs-ldm.h>
--#include <linux/platform_data/video-nuc900fb.h>
+-#include <linux/platform_data/keypad-w90p910.h>
 -
--#include "nuc900fb.h"
+-/* Keypad Interface Control Registers */
+-#define KPI_CONF		0x00
+-#define KPI_3KCONF		0x04
+-#define KPI_LPCONF		0x08
+-#define KPI_STATUS		0x0C
 -
+-#define IS1KEY			(0x01 << 16)
+-#define INTTR			(0x01 << 21)
+-#define KEY0R			(0x0f << 3)
+-#define KEY0C			0x07
+-#define DEBOUNCE_BIT		0x08
+-#define KSIZE0			(0x01 << 16)
+-#define KSIZE1			(0x01 << 17)
+-#define KPSEL			(0x01 << 19)
+-#define ENKP			(0x01 << 18)
 -
--/*
-- *  Initialize the nuc900 video (dual) buffer address
-- */
--static void nuc900fb_set_lcdaddr(struct fb_info *info)
--{
--	struct nuc900fb_info *fbi = info->par;
--	void __iomem *regs = fbi->io;
--	unsigned long vbaddr1, vbaddr2;
+-#define KGET_RAW(n)		(((n) & KEY0R) >> 3)
+-#define KGET_COLUMN(n)		((n) & KEY0C)
 -
--	vbaddr1  = info->fix.smem_start;
--	vbaddr2  = info->fix.smem_start;
--	vbaddr2 += info->fix.line_length * info->var.yres;
+-#define W90P910_NUM_ROWS	8
+-#define W90P910_NUM_COLS	8
+-#define W90P910_ROW_SHIFT	3
 -
--	/* set frambuffer start phy addr*/
--	writel(vbaddr1, regs + REG_LCM_VA_BADDR0);
--	writel(vbaddr2, regs + REG_LCM_VA_BADDR1);
--
--	writel(fbi->regs.lcd_va_fbctrl, regs + REG_LCM_VA_FBCTRL);
--	writel(fbi->regs.lcd_va_scale, regs + REG_LCM_VA_SCALE);
--}
--
--/*
-- *	calculate divider for lcd div
-- */
--static unsigned int nuc900fb_calc_pixclk(struct nuc900fb_info *fbi,
--					 unsigned long pixclk)
--{
--	unsigned long clk = fbi->clk_rate;
--	unsigned long long div;
--
--	/* pixclk is in picseconds. our clock is in Hz*/
--	/* div = (clk * pixclk)/10^12 */
--	div = (unsigned long long)clk * pixclk;
--	div >>= 12;
--	do_div(div, 625 * 625UL * 625);
--
--	dev_dbg(fbi->dev, "pixclk %ld, divisor is %lld\n", pixclk, div);
--
--	return div;
--}
--
--/*
-- *	Check the video params of 'var'.
-- */
--static int nuc900fb_check_var(struct fb_var_screeninfo *var,
--			       struct fb_info *info)
--{
--	struct nuc900fb_info *fbi = info->par;
--	struct nuc900fb_mach_info *mach_info = dev_get_platdata(fbi->dev);
--	struct nuc900fb_display *display = NULL;
--	struct nuc900fb_display *default_display = mach_info->displays +
--						   mach_info->default_display;
--	int i;
--
--	dev_dbg(fbi->dev, "check_var(var=%p, info=%p)\n", var, info);
--
--	/* validate x/y resolution */
--	/* choose default mode if possible */
--	if (var->xres == default_display->xres &&
--	    var->yres == default_display->yres &&
--	    var->bits_per_pixel == default_display->bpp)
--		display = default_display;
--	else
--		for (i = 0; i < mach_info->num_displays; i++)
--			if (var->xres == mach_info->displays[i].xres &&
--			    var->yres == mach_info->displays[i].yres &&
--			    var->bits_per_pixel == mach_info->displays[i].bpp) {
--				display = mach_info->displays + i;
--				break;
--			}
--
--	if (display == NULL) {
--		printk(KERN_ERR "wrong resolution or depth %dx%d at %d bit per pixel\n",
--			var->xres, var->yres, var->bits_per_pixel);
--		return -EINVAL;
--	}
--
--	/* it should be the same size as the display */
--	var->xres_virtual	= display->xres;
--	var->yres_virtual	= display->yres;
--	var->height		= display->height;
--	var->width		= display->width;
--
--	/* copy lcd settings */
--	var->pixclock		= display->pixclock;
--	var->left_margin	= display->left_margin;
--	var->right_margin	= display->right_margin;
--	var->upper_margin	= display->upper_margin;
--	var->lower_margin	= display->lower_margin;
--	var->vsync_len		= display->vsync_len;
--	var->hsync_len		= display->hsync_len;
--
--	var->transp.offset	= 0;
--	var->transp.length	= 0;
--
--	fbi->regs.lcd_dccs = display->dccs;
--	fbi->regs.lcd_device_ctrl = display->devctl;
--	fbi->regs.lcd_va_fbctrl = display->fbctrl;
--	fbi->regs.lcd_va_scale = display->scale;
--
--	/* set R/G/B possions */
--	switch (var->bits_per_pixel) {
--	case 1:
--	case 2:
--	case 4:
--	case 8:
--	default:
--		var->red.offset 	= 0;
--		var->red.length 	= var->bits_per_pixel;
--		var->green 		= var->red;
--		var->blue		= var->red;
--		break;
--	case 12:
--		var->red.length		= 4;
--		var->green.length	= 4;
--		var->blue.length	= 4;
--		var->red.offset		= 8;
--		var->green.offset	= 4;
--		var->blue.offset	= 0;
--		break;
--	case 16:
--		var->red.length		= 5;
--		var->green.length	= 6;
--		var->blue.length	= 5;
--		var->red.offset		= 11;
--		var->green.offset	= 5;
--		var->blue.offset	= 0;
--		break;
--	case 18:
--		var->red.length		= 6;
--		var->green.length	= 6;
--		var->blue.length	= 6;
--		var->red.offset		= 12;
--		var->green.offset	= 6;
--		var->blue.offset	= 0;
--		break;
--	case 32:
--		var->red.length		= 8;
--		var->green.length	= 8;
--		var->blue.length	= 8;
--		var->red.offset		= 16;
--		var->green.offset	= 8;
--		var->blue.offset	= 0;
--		break;
--	}
--
--	return 0;
--}
--
--/*
-- *	Calculate lcd register values from var setting & save into hw
-- */
--static void nuc900fb_calculate_lcd_regs(const struct fb_info *info,
--					struct nuc900fb_hw *regs)
--{
--	const struct fb_var_screeninfo *var = &info->var;
--	int vtt = var->height + var->upper_margin + var->lower_margin;
--	int htt = var->width + var->left_margin + var->right_margin;
--	int hsync = var->width + var->right_margin;
--	int vsync = var->height + var->lower_margin;
--
--	regs->lcd_crtc_size = LCM_CRTC_SIZE_VTTVAL(vtt) |
--			      LCM_CRTC_SIZE_HTTVAL(htt);
--	regs->lcd_crtc_dend = LCM_CRTC_DEND_VDENDVAL(var->height) |
--			      LCM_CRTC_DEND_HDENDVAL(var->width);
--	regs->lcd_crtc_hr = LCM_CRTC_HR_EVAL(var->width + 5) |
--			    LCM_CRTC_HR_SVAL(var->width + 1);
--	regs->lcd_crtc_hsync = LCM_CRTC_HSYNC_EVAL(hsync + var->hsync_len) |
--			       LCM_CRTC_HSYNC_SVAL(hsync);
--	regs->lcd_crtc_vr = LCM_CRTC_VR_EVAL(vsync + var->vsync_len) |
--			    LCM_CRTC_VR_SVAL(vsync);
--
--}
--
--/*
-- *	Activate (set) the controller from the given framebuffer
-- *	information
-- */
--static void nuc900fb_activate_var(struct fb_info *info)
--{
--	struct nuc900fb_info *fbi = info->par;
--	void __iomem *regs = fbi->io;
--	struct fb_var_screeninfo *var = &info->var;
--	int clkdiv;
--
--	clkdiv = nuc900fb_calc_pixclk(fbi, var->pixclock) - 1;
--	if (clkdiv < 0)
--		clkdiv = 0;
--
--	nuc900fb_calculate_lcd_regs(info, &fbi->regs);
--
--	/* set the new lcd registers*/
--
--	dev_dbg(fbi->dev, "new lcd register set:\n");
--	dev_dbg(fbi->dev, "dccs       = 0x%08x\n", fbi->regs.lcd_dccs);
--	dev_dbg(fbi->dev, "dev_ctl    = 0x%08x\n", fbi->regs.lcd_device_ctrl);
--	dev_dbg(fbi->dev, "crtc_size  = 0x%08x\n", fbi->regs.lcd_crtc_size);
--	dev_dbg(fbi->dev, "crtc_dend  = 0x%08x\n", fbi->regs.lcd_crtc_dend);
--	dev_dbg(fbi->dev, "crtc_hr    = 0x%08x\n", fbi->regs.lcd_crtc_hr);
--	dev_dbg(fbi->dev, "crtc_hsync = 0x%08x\n", fbi->regs.lcd_crtc_hsync);
--	dev_dbg(fbi->dev, "crtc_vr    = 0x%08x\n", fbi->regs.lcd_crtc_vr);
--
--	writel(fbi->regs.lcd_device_ctrl, regs + REG_LCM_DEV_CTRL);
--	writel(fbi->regs.lcd_crtc_size, regs + REG_LCM_CRTC_SIZE);
--	writel(fbi->regs.lcd_crtc_dend, regs + REG_LCM_CRTC_DEND);
--	writel(fbi->regs.lcd_crtc_hr, regs + REG_LCM_CRTC_HR);
--	writel(fbi->regs.lcd_crtc_hsync, regs + REG_LCM_CRTC_HSYNC);
--	writel(fbi->regs.lcd_crtc_vr, regs + REG_LCM_CRTC_VR);
--
--	/* set lcd address pointers */
--	nuc900fb_set_lcdaddr(info);
--
--	writel(fbi->regs.lcd_dccs, regs + REG_LCM_DCCS);
--}
--
--/*
-- *      Alters the hardware state.
-- *
-- */
--static int nuc900fb_set_par(struct fb_info *info)
--{
--	struct fb_var_screeninfo *var = &info->var;
--
--	switch (var->bits_per_pixel) {
--	case 32:
--	case 24:
--	case 18:
--	case 16:
--	case 12:
--		info->fix.visual = FB_VISUAL_TRUECOLOR;
--		break;
--	case 1:
--		info->fix.visual = FB_VISUAL_MONO01;
--		break;
--	default:
--		info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
--		break;
--	}
--
--	info->fix.line_length = (var->xres_virtual * var->bits_per_pixel) / 8;
--
--	/* activate this new configuration */
--	nuc900fb_activate_var(info);
--	return 0;
--}
--
--static inline unsigned int chan_to_field(unsigned int chan,
--					 struct fb_bitfield *bf)
--{
--	chan &= 0xffff;
--	chan >>= 16 - bf->length;
--	return chan << bf->offset;
--}
--
--static int nuc900fb_setcolreg(unsigned regno,
--			       unsigned red, unsigned green, unsigned blue,
--			       unsigned transp, struct fb_info *info)
--{
--	unsigned int val;
--
--	switch (info->fix.visual) {
--	case FB_VISUAL_TRUECOLOR:
--		/* true-colour, use pseuo-palette */
--		if (regno < 16) {
--			u32 *pal = info->pseudo_palette;
--
--			val  = chan_to_field(red, &info->var.red);
--			val |= chan_to_field(green, &info->var.green);
--			val |= chan_to_field(blue, &info->var.blue);
--			pal[regno] = val;
--		}
--		break;
--
--	default:
--		return 1;   /* unknown type */
--	}
--	return 0;
--}
--
--/**
-- *      nuc900fb_blank
-- *
-- */
--static int nuc900fb_blank(int blank_mode, struct fb_info *info)
--{
--
--	return 0;
--}
--
--static struct fb_ops nuc900fb_ops = {
--	.owner			= THIS_MODULE,
--	.fb_check_var		= nuc900fb_check_var,
--	.fb_set_par		= nuc900fb_set_par,
--	.fb_blank		= nuc900fb_blank,
--	.fb_setcolreg		= nuc900fb_setcolreg,
--	.fb_fillrect		= cfb_fillrect,
--	.fb_copyarea		= cfb_copyarea,
--	.fb_imageblit		= cfb_imageblit,
+-struct w90p910_keypad {
+-	const struct w90p910_keypad_platform_data *pdata;
+-	struct clk *clk;
+-	struct input_dev *input_dev;
+-	void __iomem *mmio_base;
+-	int irq;
+-	unsigned short keymap[W90P910_NUM_ROWS * W90P910_NUM_COLS];
 -};
 -
--
--static inline void modify_gpio(void __iomem *reg,
--			       unsigned long set, unsigned long mask)
+-static void w90p910_keypad_scan_matrix(struct w90p910_keypad *keypad,
+-							unsigned int status)
 -{
--	unsigned long tmp;
--	tmp = readl(reg) & ~mask;
--	writel(tmp | set, reg);
+-	struct input_dev *input_dev = keypad->input_dev;
+-	unsigned int row = KGET_RAW(status);
+-	unsigned int col = KGET_COLUMN(status);
+-	unsigned int code = MATRIX_SCAN_CODE(row, col, W90P910_ROW_SHIFT);
+-	unsigned int key = keypad->keymap[code];
+-
+-	input_event(input_dev, EV_MSC, MSC_SCAN, code);
+-	input_report_key(input_dev, key, 1);
+-	input_sync(input_dev);
+-
+-	input_event(input_dev, EV_MSC, MSC_SCAN, code);
+-	input_report_key(input_dev, key, 0);
+-	input_sync(input_dev);
 -}
 -
--/*
-- * Initialise LCD-related registers
-- */
--static int nuc900fb_init_registers(struct fb_info *info)
+-static irqreturn_t w90p910_keypad_irq_handler(int irq, void *dev_id)
 -{
--	struct nuc900fb_info *fbi = info->par;
--	struct nuc900fb_mach_info *mach_info = dev_get_platdata(fbi->dev);
--	void __iomem *regs = fbi->io;
+-	struct w90p910_keypad *keypad = dev_id;
+-	unsigned int  kstatus, val;
 -
--	/*reset the display engine*/
--	writel(0, regs + REG_LCM_DCCS);
--	writel(readl(regs + REG_LCM_DCCS) | LCM_DCCS_ENG_RST,
--	       regs + REG_LCM_DCCS);
--	ndelay(100);
--	writel(readl(regs + REG_LCM_DCCS) & (~LCM_DCCS_ENG_RST),
--	       regs + REG_LCM_DCCS);
--	ndelay(100);
+-	kstatus = __raw_readl(keypad->mmio_base + KPI_STATUS);
 -
--	writel(0, regs + REG_LCM_DEV_CTRL);
+-	val = INTTR | IS1KEY;
 -
--	/* config gpio output */
--	modify_gpio(W90X900_VA_GPIO + 0x54, mach_info->gpio_dir,
--		    mach_info->gpio_dir_mask);
--	modify_gpio(W90X900_VA_GPIO + 0x58, mach_info->gpio_data,
--		    mach_info->gpio_data_mask);
--
--	return 0;
--}
--
--
--/*
-- *    Alloc the SDRAM region of NUC900 for the frame buffer.
-- *    The buffer should be a non-cached, non-buffered, memory region
-- *    to allow palette and pixel writes without flushing the cache.
-- */
--static int nuc900fb_map_video_memory(struct fb_info *info)
--{
--	struct nuc900fb_info *fbi = info->par;
--	dma_addr_t map_dma;
--	unsigned long map_size = PAGE_ALIGN(info->fix.smem_len);
--
--	dev_dbg(fbi->dev, "nuc900fb_map_video_memory(fbi=%p) map_size %lu\n",
--		fbi, map_size);
--
--	info->screen_base = dma_alloc_wc(fbi->dev, map_size, &map_dma,
--					 GFP_KERNEL);
--
--	if (!info->screen_base)
--		return -ENOMEM;
--
--	memset(info->screen_base, 0x00, map_size);
--	info->fix.smem_start = map_dma;
--
--	return 0;
--}
--
--static inline void nuc900fb_unmap_video_memory(struct fb_info *info)
--{
--	struct nuc900fb_info *fbi = info->par;
--	dma_free_wc(fbi->dev, PAGE_ALIGN(info->fix.smem_len),
--		    info->screen_base, info->fix.smem_start);
--}
--
--static irqreturn_t nuc900fb_irqhandler(int irq, void *dev_id)
--{
--	struct nuc900fb_info *fbi = dev_id;
--	void __iomem *regs = fbi->io;
--	void __iomem *irq_base = fbi->irq_base;
--	unsigned long lcdirq = readl(regs + REG_LCM_INT_CS);
--
--	if (lcdirq & LCM_INT_CS_DISP_F_STATUS) {
--		writel(readl(irq_base) | 1<<30, irq_base);
--
--		/* wait VA_EN low */
--		if ((readl(regs + REG_LCM_DCCS) &
--		    LCM_DCCS_SINGLE) == LCM_DCCS_SINGLE)
--			while ((readl(regs + REG_LCM_DCCS) &
--			       LCM_DCCS_VA_EN) == LCM_DCCS_VA_EN)
--				;
--		/* display_out-enable */
--		writel(readl(regs + REG_LCM_DCCS) | LCM_DCCS_DISP_OUT_EN,
--			regs + REG_LCM_DCCS);
--		/* va-enable*/
--		writel(readl(regs + REG_LCM_DCCS) | LCM_DCCS_VA_EN,
--			regs + REG_LCM_DCCS);
--	} else if (lcdirq & LCM_INT_CS_UNDERRUN_INT) {
--		writel(readl(irq_base) | LCM_INT_CS_UNDERRUN_INT, irq_base);
--	} else if (lcdirq & LCM_INT_CS_BUS_ERROR_INT) {
--		writel(readl(irq_base) | LCM_INT_CS_BUS_ERROR_INT, irq_base);
--	}
+-	if (kstatus & val)
+-		w90p910_keypad_scan_matrix(keypad, kstatus);
 -
 -	return IRQ_HANDLED;
 -}
 -
--#ifdef CONFIG_CPU_FREQ
--
--static int nuc900fb_cpufreq_transition(struct notifier_block *nb,
--				       unsigned long val, void *data)
+-static int w90p910_keypad_open(struct input_dev *dev)
 -{
--	struct nuc900fb_info *info;
--	struct fb_info *fbinfo;
--	long delta_f;
--	info = container_of(nb, struct nuc900fb_info, freq_transition);
--	fbinfo = dev_get_drvdata(info->dev);
+-	struct w90p910_keypad *keypad = input_get_drvdata(dev);
+-	const struct w90p910_keypad_platform_data *pdata = keypad->pdata;
+-	unsigned int val, config;
 -
--	delta_f = info->clk_rate - clk_get_rate(info->clk);
+-	/* Enable unit clock */
+-	clk_enable(keypad->clk);
 -
--	if ((val == CPUFREQ_POSTCHANGE && delta_f > 0) ||
--	   (val == CPUFREQ_PRECHANGE && delta_f < 0)) {
--		info->clk_rate = clk_get_rate(info->clk);
--		nuc900fb_activate_var(fbinfo);
--	}
+-	val = __raw_readl(keypad->mmio_base + KPI_CONF);
+-	val |= (KPSEL | ENKP);
+-	val &= ~(KSIZE0 | KSIZE1);
+-
+-	config = pdata->prescale | (pdata->debounce << DEBOUNCE_BIT);
+-
+-	val |= config;
+-
+-	__raw_writel(val, keypad->mmio_base + KPI_CONF);
 -
 -	return 0;
 -}
 -
--static inline int nuc900fb_cpufreq_register(struct nuc900fb_info *fbi)
+-static void w90p910_keypad_close(struct input_dev *dev)
 -{
--	fbi->freq_transition.notifier_call = nuc900fb_cpufreq_transition;
--	return cpufreq_register_notifier(&fbi->freq_transition,
--				  CPUFREQ_TRANSITION_NOTIFIER);
+-	struct w90p910_keypad *keypad = input_get_drvdata(dev);
+-
+-	/* Disable clock unit */
+-	clk_disable(keypad->clk);
 -}
 -
--static inline void nuc900fb_cpufreq_deregister(struct nuc900fb_info *fbi)
+-static int w90p910_keypad_probe(struct platform_device *pdev)
 -{
--	cpufreq_unregister_notifier(&fbi->freq_transition,
--				    CPUFREQ_TRANSITION_NOTIFIER);
--}
--#else
--static inline int nuc900fb_cpufreq_transition(struct notifier_block *nb,
--				       unsigned long val, void *data)
--{
--	return 0;
--}
--
--static inline int nuc900fb_cpufreq_register(struct nuc900fb_info *fbi)
--{
--	return 0;
--}
--
--static inline void nuc900fb_cpufreq_deregister(struct nuc900fb_info *info)
--{
--}
--#endif
--
--static char driver_name[] = "nuc900fb";
--
--static int nuc900fb_probe(struct platform_device *pdev)
--{
--	struct nuc900fb_info *fbi;
--	struct nuc900fb_display *display;
--	struct fb_info	   *fbinfo;
--	struct nuc900fb_mach_info *mach_info;
+-	const struct w90p910_keypad_platform_data *pdata =
+-						dev_get_platdata(&pdev->dev);
+-	const struct matrix_keymap_data *keymap_data;
+-	struct w90p910_keypad *keypad;
+-	struct input_dev *input_dev;
 -	struct resource *res;
--	int ret;
 -	int irq;
--	int i;
--	int size;
+-	int error;
 -
--	dev_dbg(&pdev->dev, "devinit\n");
--	mach_info = dev_get_platdata(&pdev->dev);
--	if (mach_info == NULL) {
--		dev_err(&pdev->dev,
--			"no platform data for lcd, cannot attach\n");
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "no platform data defined\n");
 -		return -EINVAL;
 -	}
 -
--	if (mach_info->default_display > mach_info->num_displays) {
--		dev_err(&pdev->dev,
--			"default display No. is %d but only %d displays \n",
--			mach_info->default_display, mach_info->num_displays);
--		return -EINVAL;
--	}
--
--
--	display = mach_info->displays + mach_info->default_display;
+-	keymap_data = pdata->keymap_data;
 -
 -	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "no irq for device\n");
--		return -ENOENT;
+-		dev_err(&pdev->dev, "failed to get keypad irq\n");
+-		return -ENXIO;
 -	}
 -
--	fbinfo = framebuffer_alloc(sizeof(struct nuc900fb_info), &pdev->dev);
--	if (!fbinfo)
--		return -ENOMEM;
+-	keypad = kzalloc(sizeof(struct w90p910_keypad), GFP_KERNEL);
+-	input_dev = input_allocate_device();
+-	if (!keypad || !input_dev) {
+-		dev_err(&pdev->dev, "failed to allocate driver data\n");
+-		error = -ENOMEM;
+-		goto failed_free;
+-	}
 -
--	platform_set_drvdata(pdev, fbinfo);
--
--	fbi = fbinfo->par;
--	fbi->dev = &pdev->dev;
--
--#ifdef CONFIG_CPU_NUC950
--	fbi->drv_type = LCDDRV_NUC950;
--#endif
+-	keypad->pdata = pdata;
+-	keypad->input_dev = input_dev;
+-	keypad->irq = irq;
 -
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--
--	size = resource_size(res);
--	fbi->mem = request_mem_region(res->start, size, pdev->name);
--	if (fbi->mem == NULL) {
--		dev_err(&pdev->dev, "failed to alloc memory region\n");
--		ret = -ENOENT;
--		goto free_fb;
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "failed to get I/O memory\n");
+-		error = -ENXIO;
+-		goto failed_free;
 -	}
 -
--	fbi->io = ioremap(res->start, size);
--	if (fbi->io == NULL) {
--		dev_err(&pdev->dev, "ioremap() of lcd registers failed\n");
--		ret = -ENXIO;
--		goto release_mem_region;
+-	res = request_mem_region(res->start, resource_size(res), pdev->name);
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "failed to request I/O memory\n");
+-		error = -EBUSY;
+-		goto failed_free;
 -	}
 -
--	fbi->irq_base = fbi->io + REG_LCM_INT_CS;
--
--
--	/* Stop the LCD */
--	writel(0, fbi->io + REG_LCM_DCCS);
--
--	/* fill the fbinfo*/
--	strcpy(fbinfo->fix.id, driver_name);
--	fbinfo->fix.type		= FB_TYPE_PACKED_PIXELS;
--	fbinfo->fix.type_aux		= 0;
--	fbinfo->fix.xpanstep		= 0;
--	fbinfo->fix.ypanstep		= 0;
--	fbinfo->fix.ywrapstep		= 0;
--	fbinfo->fix.accel		= FB_ACCEL_NONE;
--	fbinfo->var.nonstd		= 0;
--	fbinfo->var.activate		= FB_ACTIVATE_NOW;
--	fbinfo->var.accel_flags		= 0;
--	fbinfo->var.vmode		= FB_VMODE_NONINTERLACED;
--	fbinfo->fbops			= &nuc900fb_ops;
--	fbinfo->flags			= FBINFO_FLAG_DEFAULT;
--	fbinfo->pseudo_palette		= &fbi->pseudo_pal;
--
--	ret = request_irq(irq, nuc900fb_irqhandler, 0, pdev->name, fbi);
--	if (ret) {
--		dev_err(&pdev->dev, "cannot register irq handler %d -err %d\n",
--			irq, ret);
--		ret = -EBUSY;
--		goto release_regs;
+-	keypad->mmio_base = ioremap(res->start, resource_size(res));
+-	if (keypad->mmio_base == NULL) {
+-		dev_err(&pdev->dev, "failed to remap I/O memory\n");
+-		error = -ENXIO;
+-		goto failed_free_res;
 -	}
 -
--	fbi->clk = clk_get(&pdev->dev, NULL);
--	if (IS_ERR(fbi->clk)) {
--		printk(KERN_ERR "nuc900-lcd:failed to get lcd clock source\n");
--		ret = PTR_ERR(fbi->clk);
--		goto release_irq;
+-	keypad->clk = clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(keypad->clk)) {
+-		dev_err(&pdev->dev, "failed to get keypad clock\n");
+-		error = PTR_ERR(keypad->clk);
+-		goto failed_free_io;
 -	}
 -
--	clk_enable(fbi->clk);
--	dev_dbg(&pdev->dev, "got and enabled clock\n");
+-	/* set multi-function pin for w90p910 kpi. */
+-	mfp_set_groupi(&pdev->dev);
 -
--	fbi->clk_rate = clk_get_rate(fbi->clk);
+-	input_dev->name = pdev->name;
+-	input_dev->id.bustype = BUS_HOST;
+-	input_dev->open = w90p910_keypad_open;
+-	input_dev->close = w90p910_keypad_close;
+-	input_dev->dev.parent = &pdev->dev;
 -
--	/* calutate the video buffer size */
--	for (i = 0; i < mach_info->num_displays; i++) {
--		unsigned long smem_len = mach_info->displays[i].xres;
--		smem_len *= mach_info->displays[i].yres;
--		smem_len *= mach_info->displays[i].bpp;
--		smem_len >>= 3;
--		if (fbinfo->fix.smem_len < smem_len)
--			fbinfo->fix.smem_len = smem_len;
+-	error = matrix_keypad_build_keymap(keymap_data, NULL,
+-					   W90P910_NUM_ROWS, W90P910_NUM_COLS,
+-					   keypad->keymap, input_dev);
+-	if (error) {
+-		dev_err(&pdev->dev, "failed to build keymap\n");
+-		goto failed_put_clk;
 -	}
 -
--	/* Initialize Video Memory */
--	ret = nuc900fb_map_video_memory(fbinfo);
--	if (ret) {
--		printk(KERN_ERR "Failed to allocate video RAM: %x\n", ret);
--		goto release_clock;
+-	error = request_irq(keypad->irq, w90p910_keypad_irq_handler,
+-			    0, pdev->name, keypad);
+-	if (error) {
+-		dev_err(&pdev->dev, "failed to request IRQ\n");
+-		goto failed_put_clk;
 -	}
 -
--	dev_dbg(&pdev->dev, "got video memory\n");
+-	__set_bit(EV_REP, input_dev->evbit);
+-	input_set_capability(input_dev, EV_MSC, MSC_SCAN);
+-	input_set_drvdata(input_dev, keypad);
 -
--	fbinfo->var.xres = display->xres;
--	fbinfo->var.yres = display->yres;
--	fbinfo->var.bits_per_pixel = display->bpp;
--
--	nuc900fb_init_registers(fbinfo);
--
--	nuc900fb_check_var(&fbinfo->var, fbinfo);
--
--	ret = nuc900fb_cpufreq_register(fbi);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to register cpufreq\n");
--		goto free_video_memory;
+-	/* Register the input device */
+-	error = input_register_device(input_dev);
+-	if (error) {
+-		dev_err(&pdev->dev, "failed to register input device\n");
+-		goto failed_free_irq;
 -	}
 -
--	ret = register_framebuffer(fbinfo);
--	if (ret) {
--		printk(KERN_ERR "failed to register framebuffer device: %d\n",
--			ret);
--		goto free_cpufreq;
--	}
--
--	fb_info(fbinfo, "%s frame buffer device\n", fbinfo->fix.id);
--
+-	platform_set_drvdata(pdev, keypad);
 -	return 0;
 -
--free_cpufreq:
--	nuc900fb_cpufreq_deregister(fbi);
--free_video_memory:
--	nuc900fb_unmap_video_memory(fbinfo);
--release_clock:
--	clk_disable(fbi->clk);
--	clk_put(fbi->clk);
--release_irq:
--	free_irq(irq, fbi);
--release_regs:
--	iounmap(fbi->io);
--release_mem_region:
--	release_mem_region(res->start, size);
--free_fb:
--	framebuffer_release(fbinfo);
--	return ret;
+-failed_free_irq:
+-	free_irq(irq, keypad);
+-failed_put_clk:
+-	clk_put(keypad->clk);
+-failed_free_io:
+-	iounmap(keypad->mmio_base);
+-failed_free_res:
+-	release_mem_region(res->start, resource_size(res));
+-failed_free:
+-	input_free_device(input_dev);
+-	kfree(keypad);
+-	return error;
 -}
 -
--/*
-- * shutdown the lcd controller
-- */
--static void nuc900fb_stop_lcd(struct fb_info *info)
+-static int w90p910_keypad_remove(struct platform_device *pdev)
 -{
--	struct nuc900fb_info *fbi = info->par;
--	void __iomem *regs = fbi->io;
+-	struct w90p910_keypad *keypad = platform_get_drvdata(pdev);
+-	struct resource *res;
 -
--	writel((~LCM_DCCS_DISP_INT_EN) | (~LCM_DCCS_VA_EN) | (~LCM_DCCS_OSD_EN),
--		regs + REG_LCM_DCCS);
--}
+-	free_irq(keypad->irq, keypad);
 -
--/*
-- *  Cleanup
-- */
--static int nuc900fb_remove(struct platform_device *pdev)
--{
--	struct fb_info *fbinfo = platform_get_drvdata(pdev);
--	struct nuc900fb_info *fbi = fbinfo->par;
--	int irq;
+-	clk_put(keypad->clk);
 -
--	nuc900fb_stop_lcd(fbinfo);
--	msleep(1);
+-	input_unregister_device(keypad->input_dev);
 -
--	unregister_framebuffer(fbinfo);
--	nuc900fb_cpufreq_deregister(fbi);
--	nuc900fb_unmap_video_memory(fbinfo);
+-	iounmap(keypad->mmio_base);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(res->start, resource_size(res));
 -
--	iounmap(fbi->io);
--
--	irq = platform_get_irq(pdev, 0);
--	free_irq(irq, fbi);
--
--	release_resource(fbi->mem);
--	kfree(fbi->mem);
--
--	framebuffer_release(fbinfo);
+-	kfree(keypad);
 -
 -	return 0;
 -}
 -
--#ifdef CONFIG_PM
--
--/*
-- *	suspend and resume support for the lcd controller
-- */
--
--static int nuc900fb_suspend(struct platform_device *dev, pm_message_t state)
--{
--	struct fb_info	   *fbinfo = platform_get_drvdata(dev);
--	struct nuc900fb_info *info = fbinfo->par;
--
--	nuc900fb_stop_lcd(fbinfo);
--	msleep(1);
--	clk_disable(info->clk);
--	return 0;
--}
--
--static int nuc900fb_resume(struct platform_device *dev)
--{
--	struct fb_info	   *fbinfo = platform_get_drvdata(dev);
--	struct nuc900fb_info *fbi = fbinfo->par;
--
--	printk(KERN_INFO "nuc900fb resume\n");
--
--	clk_enable(fbi->clk);
--	msleep(1);
--
--	nuc900fb_init_registers(fbinfo);
--	nuc900fb_activate_var(fbinfo);
--
--	return 0;
--}
--
--#else
--#define nuc900fb_suspend NULL
--#define nuc900fb_resume  NULL
--#endif
--
--static struct platform_driver nuc900fb_driver = {
--	.probe		= nuc900fb_probe,
--	.remove		= nuc900fb_remove,
--	.suspend	= nuc900fb_suspend,
--	.resume		= nuc900fb_resume,
+-static struct platform_driver w90p910_keypad_driver = {
+-	.probe		= w90p910_keypad_probe,
+-	.remove		= w90p910_keypad_remove,
 -	.driver		= {
--		.name	= "nuc900-lcd",
+-		.name	= "nuc900-kpi",
 -	},
 -};
+-module_platform_driver(w90p910_keypad_driver);
 -
--module_platform_driver(nuc900fb_driver);
--
--MODULE_DESCRIPTION("Framebuffer driver for the NUC900");
+-MODULE_AUTHOR("Wan ZongShun <mcuos.com@gmail.com>");
+-MODULE_DESCRIPTION("w90p910 keypad driver");
 -MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/nuc900fb.h b/drivers/video/fbdev/nuc900fb.h
+-MODULE_ALIAS("platform:nuc900-keypad");
+diff --git a/include/linux/platform_data/keypad-w90p910.h b/include/linux/platform_data/keypad-w90p910.h
 deleted file mode 100644
-index 055ae9297931..000000000000
---- a/drivers/video/fbdev/nuc900fb.h
+index 206ca4ecd93f..000000000000
+--- a/include/linux/platform_data/keypad-w90p910.h
 +++ /dev/null
-@@ -1,51 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- *
-- * Copyright (c) 2009 Nuvoton technology corporation
-- * All rights reserved.
-- *
-- *   Author:
-- *        Wang Qiang(rurality.linux@gmail.com)  2009/12/16
-- */
+@@ -1,16 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __ASM_ARCH_W90P910_KEYPAD_H
+-#define __ASM_ARCH_W90P910_KEYPAD_H
 -
--#ifndef __NUC900FB_H
--#define __NUC900FB_H
+-#include <linux/input/matrix_keypad.h>
 -
--#include <mach/map.h>
--#include <linux/platform_data/video-nuc900fb.h>
+-extern void mfp_set_groupi(struct device *dev);
 -
--enum nuc900_lcddrv_type {
--	LCDDRV_NUC910,
--	LCDDRV_NUC930,
--	LCDDRV_NUC932,
--	LCDDRV_NUC950,
--	LCDDRV_NUC960,
+-struct w90p910_keypad_platform_data {
+-	const struct matrix_keymap_data *keymap_data;
+-
+-	unsigned int	prescale;
+-	unsigned int	debounce;
 -};
 -
--
--#define PALETTE_BUFFER_SIZE	256
--#define PALETTE_BUFF_CLEAR 	(0x80000000) /* entry is clear/invalid */
--
--struct nuc900fb_info {
--	struct device		*dev;
--	struct clk		*clk;
--
--	struct resource		*mem;
--	void __iomem		*io;
--	void __iomem		*irq_base;
--	int 			drv_type;
--	struct nuc900fb_hw	regs;
--	unsigned long		clk_rate;
--
--#ifdef CONFIG_CPU_FREQ
--	struct notifier_block	freq_transition;
--#endif
--
--	/* keep these registers in case we need to re-write palette */
--	u32			palette_buffer[PALETTE_BUFFER_SIZE];
--	u32			pseudo_pal[16];
--};
--
--int nuc900fb_init(void);
--
--#endif /* __NUC900FB_H */
-diff --git a/include/Kbuild b/include/Kbuild
-index 5e0642d79dce..4d5a03a81fb5 100644
---- a/include/Kbuild
-+++ b/include/Kbuild
-@@ -568,7 +568,6 @@ header-test-			+= linux/platform_data/usb3503.h
- header-test-			+= linux/platform_data/ux500_wdt.h
- header-test-			+= linux/platform_data/video-clcd-versatile.h
- header-test-			+= linux/platform_data/video-imxfb.h
--header-test-			+= linux/platform_data/video-nuc900fb.h
- header-test-			+= linux/platform_data/video-pxafb.h
- header-test-			+= linux/platform_data/video_s3c.h
- header-test-			+= linux/platform_data/voltage-omap.h
-diff --git a/include/linux/platform_data/video-nuc900fb.h b/include/linux/platform_data/video-nuc900fb.h
-deleted file mode 100644
-index 3da504460c91..000000000000
---- a/include/linux/platform_data/video-nuc900fb.h
-+++ /dev/null
-@@ -1,79 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/* linux/include/asm/arch-nuc900/fb.h
-- *
-- * Copyright (c) 2008 Nuvoton technology corporation
-- * All rights reserved.
-- *
-- * Changelog:
-- *
-- *   2008/08/26     vincen.zswan modify this file for LCD.
-- */
--
--#ifndef __ASM_ARM_FB_H
--#define __ASM_ARM_FB_H
--
--
--
--/* LCD Controller Hardware Desc */
--struct nuc900fb_hw {
--	unsigned int lcd_dccs;
--	unsigned int lcd_device_ctrl;
--	unsigned int lcd_mpulcd_cmd;
--	unsigned int lcd_int_cs;
--	unsigned int lcd_crtc_size;
--	unsigned int lcd_crtc_dend;
--	unsigned int lcd_crtc_hr;
--	unsigned int lcd_crtc_hsync;
--	unsigned int lcd_crtc_vr;
--	unsigned int lcd_va_baddr0;
--	unsigned int lcd_va_baddr1;
--	unsigned int lcd_va_fbctrl;
--	unsigned int lcd_va_scale;
--	unsigned int lcd_va_test;
--	unsigned int lcd_va_win;
--	unsigned int lcd_va_stuff;
--};
--
--/* LCD Display Description */
--struct nuc900fb_display {
--	/* LCD Image type */
--	unsigned type;
--
--	/* LCD Screen Size */
--	unsigned short width;
--	unsigned short height;
--
--	/* LCD Screen Info */
--	unsigned short xres;
--	unsigned short yres;
--	unsigned short bpp;
--
--	unsigned long pixclock;
--	unsigned short left_margin;
--	unsigned short right_margin;
--	unsigned short hsync_len;
--	unsigned short upper_margin;
--	unsigned short lower_margin;
--	unsigned short vsync_len;
--
--	/* hardware special register value */
--	unsigned int dccs;
--	unsigned int devctl;
--	unsigned int fbctrl;
--	unsigned int scale;
--};
--
--struct nuc900fb_mach_info {
--	struct nuc900fb_display *displays;
--	unsigned num_displays;
--	unsigned default_display;
--	/* GPIO Setting  Info */
--	unsigned gpio_dir;
--	unsigned gpio_dir_mask;
--	unsigned gpio_data;
--	unsigned gpio_data_mask;
--};
--
--extern void __init nuc900_fb_set_platdata(struct nuc900fb_mach_info *);
--
--#endif /* __ASM_ARM_FB_H */
+-#endif /* __ASM_ARCH_W90P910_KEYPAD_H */
 -- 
 2.20.0
 
