@@ -2,119 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2053887132
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 07:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D25187130
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 07:01:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405426AbfHIFBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 01:01:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbfHIFBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 01:01:17 -0400
-Received: from localhost (unknown [106.51.111.143])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71BE2214C6;
-        Fri,  9 Aug 2019 05:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565326876;
-        bh=55Gs1G9Rz04Gs41D1M4WjTdna+61wD7lIipwnYMQUFY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cwaTFUMUPfzNaN/PYEWqdDYZ+GJMRCu5TiiLR7EnQoxnGsSVl8Z+09Q7JAHTOXjeL
-         jvlwUdLeiND0cIP93SeVPyFcKaXUVGw4Wrk+JstNZmj+yvQLLlJ/C+OWjE+2ATQFcr
-         E4DCh5p77RxazIhzmgohj63LIDqUX/RbUlnBn12Y=
-Date:   Fri, 9 Aug 2019 10:30:04 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     broonie@kernel.org, bgoswami@codeaurora.org, plai@codeaurora.org,
-        pierre-louis.bossart@linux.intel.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: soundwire: add slave bindings
-Message-ID: <20190809050004.GI12733@vkoul-mobl.Dlink>
-References: <20190808144504.24823-1-srinivas.kandagatla@linaro.org>
- <20190808144504.24823-2-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808144504.24823-2-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S2405371AbfHIFBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 01:01:12 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55888 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbfHIFBM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 01:01:12 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1D07D140505DB;
+        Thu,  8 Aug 2019 22:01:11 -0700 (PDT)
+Date:   Thu, 08 Aug 2019 22:01:10 -0700 (PDT)
+Message-Id: <20190808.220110.894522042255176514.davem@davemloft.net>
+To:     ivan.khoronzhuk@linaro.org
+Cc:     vinicius.gomes@intel.com, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, jiri@resnulli.us, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: sched: sch_taprio: fix memleak in error path
+ for sched list parse
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190806224540.24912-1-ivan.khoronzhuk@linaro.org>
+References: <20190806224540.24912-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 08 Aug 2019 22:01:11 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-08-19, 15:45, Srinivas Kandagatla wrote:
-> This patch adds bindings for Soundwire Slave devices which includes how
-> SoundWire enumeration address is represented in SoundWire slave device
-> tree nodes.
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Date: Wed,  7 Aug 2019 01:45:40 +0300
+
+> In error case, all entries should be freed from the sched list
+> before deleting it. For simplicity use rcu way.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  .../devicetree/bindings/soundwire/slave.txt   | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soundwire/slave.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/soundwire/slave.txt b/Documentation/devicetree/bindings/soundwire/slave.txt
-> new file mode 100644
-> index 000000000000..b8e8d34bbc92
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soundwire/slave.txt
-> @@ -0,0 +1,46 @@
-> +SoundWire slave device bindings.
-> +
-> +SoundWire is a 2-pin multi-drop interface with data and clock line.
-> +It facilitates development of low cost, efficient, high performance systems.
-> +
-> +SoundWire slave devices:
-> +Every SoundWire controller node can contain zero or more child nodes
-> +representing slave devices on the bus. Every SoundWire slave device is
-> +uniquely determined by the enumeration address containing 5 fields:
-> +SoundWire Version, Instance ID, Manufacturer ID, Part ID and Class ID
-> +for a device. Addition to below required properties, child nodes can
+> Fixes: 5a781ccbd19e46 ("tc: Add support for configuring the taprio scheduler")
+> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 
-It would help to list them rather than free flowing text
-
-> +have device specific bindings.
-> +
-> +Required property for SoundWire child node if it is present:
-
-As said earlier, lets make it "Required properties:"
-
-> +- compatible:	 "sdwVER,MFD,PID,CID". The textual representation of
-> +		  SoundWire Enumeration address comprising SoundWire
-> +		  Version, Manufacturer ID, Part ID and Class ID,
-> +		  shall be in lower-case hexadecimal with leading
-> +		  zeroes suppressed.
-> +		  Version number '0x10' represents SoundWire 1.0
-> +		  Version number '0x11' represents SoundWire 1.1
-> +		  ex: "sdw10,0217,2010,0"
-> +
-> +- sdw-instance-id: Should be ('Instance ID') from SoundWire
-> +		  Enumeration Address. Instance ID is for the cases
-> +		  where multiple Devices of the same type or Class
-> +		  are attached to the bus.
-> +
-> +SoundWire example for Qualcomm's SoundWire controller:
-> +
-> +soundwire@c2d0000 {
-> +	compatible = "qcom,soundwire-v1.5.0"
-> +	reg = <0x0c2d0000 0x2000>;
-> +
-> +	spkr_left:wsa8810-left{
-> +		compatible = "sdw10,0217,2010,0";
-> +		sdw-instance-id = <1>;
-> +		...
-> +	};
-> +
-> +	spkr_right:wsa8810-right{
-> +		compatible = "sdw10,0217,2010,0";
-> +		sdw-instance-id = <2>;
-> +		...
-> +	};
-> +};
-> -- 
-> 2.21.0
-
--- 
-~Vinod
+Applied and queued up for -stable, thank you.
