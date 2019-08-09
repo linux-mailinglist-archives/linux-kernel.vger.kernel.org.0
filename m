@@ -2,179 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5317B86FB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3256086F9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405530AbfHICej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 22:34:39 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58882 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2403994AbfHICde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 22:33:34 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F0DC0BA11ED27F493A5C;
-        Fri,  9 Aug 2019 10:33:31 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 9 Aug 2019 10:33:25 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 11/12] net: hns3: add handshake with VF for PF reset
-Date:   Fri, 9 Aug 2019 10:31:17 +0800
-Message-ID: <1565317878-31806-12-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1565317878-31806-1-git-send-email-tanhuazhong@huawei.com>
-References: <1565317878-31806-1-git-send-email-tanhuazhong@huawei.com>
+        id S2404941AbfHICb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 22:31:26 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37610 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404764AbfHICb0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 22:31:26 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d1so12247335pgp.4
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 19:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bMNqVTC61ypu+88qN0eTI1f8hSP5KZE17a9B+Qs+PMw=;
+        b=jdzZbjEv1HGQgbPwhfoUEelLmCwVNm7oKg2xTku+3T3d2C+1HpkjpkWFpnrxfeR4N2
+         W40UXxyZU0p2lcv1zz2jELuqIZaerygCoJguuwQu0dMEDLsesCRYW3BmBtKrdS9e1mYY
+         IVhYzaUvLfXa/KgFxh8bMqIxG5X+Y8QByVIrizejtiFYxqU065gs08u93Z1HpR285MGh
+         /6PQMs5j1M0QB6IepHTLIH7JA1Hc0S3Lr2HOXvzbA8fR4lHmU1P2HLMu3+sdXmX+rgKt
+         UwQf4bO1S5s9Hxatos5UqPtGR85Wf6BYZqyKn1C1w1//21TrBoD9hBlJx0Nx7fCcUdZg
+         gL+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bMNqVTC61ypu+88qN0eTI1f8hSP5KZE17a9B+Qs+PMw=;
+        b=ORNNOcjAs/wu9+fM5r0HqweNGCftYQJEYB8L9gaNCeZOY7/FOocZ1Y08WRlmb1nHJs
+         dP5K+d4KE+Lgz2bEfna9zJOoeglaI9lBQnwBIYx67ypETzRzpHL3zr5fi4YRURsKtoop
+         cPw3bAbuCt1mC+ATCAv7/u7Pd5c7Aw7PX543ccYo30bnByF+fMAaUfxRgiynrU6adQUf
+         lXQcYrCPZzVmC9wkwVIXDt0Gdt3UDQk4z560Dwheblv/T8ckDaJlnA2f+TZvBkuMpEg7
+         Uta4XOlpeVxUWAHI+Iop9KuBWzADdQ7ZWdHhoSaYZJNJgr+cVP22GVpoJzX/nz2sKF10
+         jRyw==
+X-Gm-Message-State: APjAAAVoc8O1GUU3zyJZ1Tlzt8mBtkF7l8UC2mwMABObggfQJAchO4Fg
+        /tQCyOcuUU3uvyj/9ZTh+sIWCA==
+X-Google-Smtp-Source: APXvYqxGPCk+7L2t3wh1awq3+I2SX3k9faPUfe81sclEk52lCogdeJYv3C7RfxYp6PJpFiv2mtp3Yw==
+X-Received: by 2002:a65:6891:: with SMTP id e17mr15715871pgt.305.1565317885649;
+        Thu, 08 Aug 2019 19:31:25 -0700 (PDT)
+Received: from localhost ([122.172.76.219])
+        by smtp.gmail.com with ESMTPSA id l31sm140038368pgm.63.2019.08.08.19.31.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Aug 2019 19:31:25 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: dev_pm_qos_update_request() can return 1 on success
+Date:   Fri,  9 Aug 2019 08:01:17 +0530
+Message-Id: <2b17498122cc3509db4e410cbf6f1d9605f2c70b.1565317865.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before PF asserting function reset, it should make sure
-that all its VFs have been ready, otherwise, it will cause
-some hardware errors.
+dev_pm_qos_update_request() can return 1 on success, don't treat it as
+error.
 
-So this patch adds function hclge_func_reset_sync_vf() to
-synchronize VF before asserting PF function reset. For new
-firmware which supports command HCLGE_OPC_QUERY_VF_RST_RDY,
-we will try to query VFs' ready status within 30 seconds.
-And keep the old implementation for compatible with firmware
-which does not support this command.
-
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Reviewed-by: Yunsheng Lin <linyunsheng@huawei.com>
+Fixes: 18c49926c4bf ("cpufreq: Add QoS requests for userspace constraints")
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  7 +++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 56 ++++++++++++++++++----
- 2 files changed, 55 insertions(+), 8 deletions(-)
+ drivers/cpufreq/cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index dade20a..29979be 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -87,6 +87,7 @@ enum hclge_opcode_type {
- 	HCLGE_OPC_QUERY_VF_RSRC		= 0x0024,
- 	HCLGE_OPC_GET_CFG_PARAM		= 0x0025,
- 	HCLGE_OPC_PF_RST_DONE		= 0x0026,
-+	HCLGE_OPC_QUERY_VF_RST_RDY	= 0x0027,
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index e0ee23895497..2e5ab042abe1 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -2519,7 +2519,7 @@ static int cpufreq_boost_set_sw(int state)
+ 		}
  
- 	HCLGE_OPC_STATS_64_BIT		= 0x0030,
- 	HCLGE_OPC_STATS_32_BIT		= 0x0031,
-@@ -588,6 +589,12 @@ struct hclge_config_mac_mode_cmd {
- 	u8 rsv[20];
- };
+ 		ret = dev_pm_qos_update_request(policy->max_freq_req, policy->max);
+-		if (ret)
++		if (ret < 0)
+ 			break;
+ 	}
  
-+struct hclge_pf_rst_sync_cmd {
-+#define HCLGE_PF_RST_ALL_VF_RDY_B	0
-+	u8 all_vf_ready;
-+	u8 rsv[23];
-+};
-+
- #define HCLGE_CFG_SPEED_S		0
- #define HCLGE_CFG_SPEED_M		GENMASK(5, 0)
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 1315275..d207dac 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -35,6 +35,9 @@
- #define BUF_RESERVE_PERCENT	90
- 
- #define HCLGE_RESET_MAX_FAIL_CNT	5
-+#define HCLGE_RESET_SYNC_TIME		100
-+#define HCLGE_PF_RESET_SYNC_TIME	20
-+#define HCLGE_PF_RESET_SYNC_CNT		1500
- 
- /* Get DFX BD number offset */
- #define HCLGE_DFX_BIOS_BD_OFFSET        1
-@@ -3184,6 +3187,39 @@ static int hclge_set_all_vf_rst(struct hclge_dev *hdev, bool reset)
- 	return 0;
- }
- 
-+int hclge_func_reset_sync_vf(struct hclge_dev *hdev)
-+{
-+	struct hclge_pf_rst_sync_cmd *req;
-+	struct hclge_desc desc;
-+	int cnt = 0;
-+	int ret;
-+
-+	req = (struct hclge_pf_rst_sync_cmd *)desc.data;
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_QUERY_VF_RST_RDY, true);
-+
-+	do {
-+		ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+		/* for compatible with old firmware, wait
-+		 * 100 ms for VF to stop IO
-+		 */
-+		if (ret == -EOPNOTSUPP) {
-+			msleep(HCLGE_RESET_SYNC_TIME);
-+			return 0;
-+		} else if (ret) {
-+			dev_err(&hdev->pdev->dev, "sync with VF fail %d!\n",
-+				ret);
-+			return ret;
-+		} else if (req->all_vf_ready) {
-+			return 0;
-+		}
-+		msleep(HCLGE_PF_RESET_SYNC_TIME);
-+		hclge_cmd_reuse_desc(&desc, true);
-+	} while (cnt++ < HCLGE_PF_RESET_SYNC_CNT);
-+
-+	dev_err(&hdev->pdev->dev, "sync with VF timeout!\n");
-+	return -ETIME;
-+}
-+
- int hclge_func_reset_cmd(struct hclge_dev *hdev, int func_id)
- {
- 	struct hclge_desc desc;
-@@ -3350,17 +3386,18 @@ static void hclge_reset_handshake(struct hclge_dev *hdev, bool enable)
- 
- static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
- {
--#define HCLGE_RESET_SYNC_TIME 100
--
- 	u32 reg_val;
- 	int ret = 0;
- 
- 	switch (hdev->reset_type) {
- 	case HNAE3_FUNC_RESET:
--		/* There is no mechanism for PF to know if VF has stopped IO
--		 * for now, just wait 100 ms for VF to stop IO
-+		/* to confirm whether all running VF is ready
-+		 * before request PF reset
- 		 */
--		msleep(HCLGE_RESET_SYNC_TIME);
-+		ret = hclge_func_reset_sync_vf(hdev);
-+		if (ret)
-+			return ret;
-+
- 		ret = hclge_func_reset_cmd(hdev, 0);
- 		if (ret) {
- 			dev_err(&hdev->pdev->dev,
-@@ -3377,10 +3414,13 @@ static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
- 		hdev->rst_stats.pf_rst_cnt++;
- 		break;
- 	case HNAE3_FLR_RESET:
--		/* There is no mechanism for PF to know if VF has stopped IO
--		 * for now, just wait 100 ms for VF to stop IO
-+		/* to confirm whether all running VF is ready
-+		 * before request PF reset
- 		 */
--		msleep(HCLGE_RESET_SYNC_TIME);
-+		ret = hclge_func_reset_sync_vf(hdev);
-+		if (ret)
-+			return ret;
-+
- 		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
- 		set_bit(HNAE3_FLR_DOWN, &hdev->flr_state);
- 		hdev->rst_stats.flr_rst_cnt++;
 -- 
-2.7.4
+2.21.0.rc0.269.g1a574e7a288b
 
