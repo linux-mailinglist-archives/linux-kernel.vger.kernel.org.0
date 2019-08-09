@@ -2,114 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E5A87C03
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A63A487BFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407228AbfHINtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 09:49:12 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46066 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436496AbfHINq1 (ORCPT
+        id S2407241AbfHINsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 09:48:54 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37474 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407117AbfHINsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:46:27 -0400
-Received: by mail-ed1-f68.google.com with SMTP id x19so89100996eda.12
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 06:46:26 -0700 (PDT)
+        Fri, 9 Aug 2019 09:48:52 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w13so95108296eds.4;
+        Fri, 09 Aug 2019 06:48:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LyignUp7I1w3k1JhRB7hSSaZmUScIlvleAzqEtH71gA=;
-        b=a4W0NpB7Ky7ZNvyTrbh1FeBLRkzD3aPh58RS1Yx4bs/BVTnp45+DINWMGfkbq8hq7Q
-         Y3Z4bdj5hgCTeGW+PRshMaXOMxfFs+yMLbXwPTZLqJTcO/dIrpBRkUNMwIYuvyefgxLE
-         ghaZnnGxRRWhYKHkI/uJzl52jBCmY6GTaX4J6IMtYXbQlVLgECyZntsud91yKcOGxjq1
-         ATUWqTH0gQtzKxNRtGFOYFydwjEzo49N/C0g2sw3KGDcPT84ORGadNZJiyoF1tdgy86l
-         pT+EYQrZCc/tezrHEA9IExUAHvjCjPlw9d1k0TydyGhC6W7edZj2zop9pkCTsz+j9sKa
-         GMoQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yR+5s19H5XCk7doKkod5jfqUZgK48EnsW+tAB5UH8bw=;
+        b=dAKPX25MR2kQZQZvgVKx5T7q/vyxdZRYsqbQOt+mcp3EMtuwhvqwBkUfQiyBRGsHqF
+         JsGiM+VsbPyY4TLT88JdaiQgPm11MSsTwFypm09G/XbjHMtgAI8sEOSkJuP0dfzFZmb+
+         QTU8CoazveBoQTaPgIKLAfSUPELNsMuxVuMsqVQ4CL6aZPr8AgA/NF0mCRaXe12bXCuO
+         iEHhhbzoFQ8cjB58nQHrPW3J4o1kUDQDVayMIsJCgoM0O/R/mBRD87Da8CSzPk8uyeKo
+         5wN+b6qjcwEnPz3ydmuo2uilF8fhh+r3aY4g1tZhc/fMO0tbTt4+3M1pBA6NUetzjNLG
+         Hqvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LyignUp7I1w3k1JhRB7hSSaZmUScIlvleAzqEtH71gA=;
-        b=E6/E093iNzfh1IkVjH+MGFmj3Za8JrapJa0hKg9DPmktU1mj/yynOBVXwppSEx3Dzz
-         lmE78Pku1PFVernVEtbMNd0wSZc5YxxOny37Yb7dHlpQe9ZXZH/OM5fNW1ALW7bvlipK
-         cnrBfxDhPQ2OK7R05WwgDxNANGv/GgaV76JAzkfBecyRRNcgNxQFyXopvce02q9Xf0aq
-         Ge+1HhAsyjstofw2ESy0OO8zh+ruIeyOTu9Gbjb8qd569r/gHvhCl9QBknGoSKz0cW/F
-         1eM+2eov9fFgnLRYzdSMeRDZB5/C1inCSjJMeYsoyMBR+gigV1prCwHUfnmFAk3vJPPs
-         81xA==
-X-Gm-Message-State: APjAAAWobaXrzhtelQFkQG2o+B4HIWIGA2/I8lr3wiSMz5Cle4WorVUX
-        Q5Qyf3zSRM2pagJbckVLN0o=
-X-Google-Smtp-Source: APXvYqxaz13nFHHrpZp/JtkeyPbtXPvJTVD23pHrWjqDjJb17ei5Rg0+DU4QM5tQfP2jLc7hWf/1lw==
-X-Received: by 2002:aa7:ccd6:: with SMTP id y22mr21987171edt.274.1565358386098;
-        Fri, 09 Aug 2019 06:46:26 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id c15sm16018545ejs.17.2019.08.09.06.46.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Aug 2019 06:46:25 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 13:46:24 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, osalvador@suse.de,
-        pasha.tatashin@oracle.com, mhocko@suse.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/sparse: use __nr_to_section(section_nr) to get
- mem_section
-Message-ID: <20190809134624.htv6jws7hphs4tvz@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20190809010242.29797-1-richardw.yang@linux.intel.com>
- <e17278f0-94dc-e0c6-379b-b7694cec3247@arm.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yR+5s19H5XCk7doKkod5jfqUZgK48EnsW+tAB5UH8bw=;
+        b=QqA4xDf+6bVbvwLzTw/qIMdGCNTZFkEPKjVcNWvZiZ84uhflx2s9uQlTEZAiR5aqee
+         hhBnIrGvgnJg97/8KLmVRCSVwcZ6xBCHcKiWHQkuT5e6yZ3eeoyZldAOSRFoNWyV3x0v
+         vcer5aGy7tMRM/Hanq7CG1NwMH8zOEssYCtBqAFccw9dLxfZMNUe68ZcYaB8More4FaB
+         SyKxBPR4V0XR/Mhh3UTCsLBxWy8szrLoW1NCtKUwPSAXCihK90oKZVd/x19M174b29Gi
+         5IehTVbvStcYb1Z46zIm/0XbMYyoTu90faH0LZxgnXGlnlAOMcYH4IO5ADizdAb51878
+         k02Q==
+X-Gm-Message-State: APjAAAX2L0MznT+J5q64nJBc7m6MU95VeaaR+Hb7kf17mnwGoXDzS4XQ
+        hMLSuBcvUz3I6USPZet+sn8=
+X-Google-Smtp-Source: APXvYqx9OCKX+nWFkLmri91BqlVkrRygPvan6hB0ETflRbvT1wRyzTakPMOjjsr4Zd4n2oNcNVUNvQ==
+X-Received: by 2002:a50:f5f5:: with SMTP id x50mr21466114edm.89.1565358530524;
+        Fri, 09 Aug 2019 06:48:50 -0700 (PDT)
+Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
+        by smtp.gmail.com with ESMTPSA id rv16sm15937818ejb.79.2019.08.09.06.48.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 09 Aug 2019 06:48:49 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] pwm: Fixes for v5.3-rc4
+Date:   Fri,  9 Aug 2019 15:48:48 +0200
+Message-Id: <20190809134848.18297-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e17278f0-94dc-e0c6-379b-b7694cec3247@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 02:39:59PM +0530, Anshuman Khandual wrote:
->
->
->On 08/09/2019 06:32 AM, Wei Yang wrote:
->> __pfn_to_section is defined as __nr_to_section(pfn_to_section_nr(pfn)).
->
->Right.
->
->> 
->> Since we already get section_nr, it is not necessary to get mem_section
->> from start_pfn. By doing so, we reduce one redundant operation.
->> 
->> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->
->Looks right.
->
->With this applied, memory hot add still works on arm64.
+Hi Linus,
 
-Thanks for your test.
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
->
->Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
->
->> ---
->>  mm/sparse.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/mm/sparse.c b/mm/sparse.c
->> index 72f010d9bff5..95158a148cd1 100644
->> --- a/mm/sparse.c
->> +++ b/mm/sparse.c
->> @@ -867,7 +867,7 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
->>  	 */
->>  	page_init_poison(pfn_to_page(start_pfn), sizeof(struct page) * nr_pages);
->>  
->> -	ms = __pfn_to_section(start_pfn);
->> +	ms = __nr_to_section(section_nr);
->>  	set_section_nid(section_nr, nid);
->>  	section_mark_present(ms);
->>  
->> 
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
--- 
-Wei Yang
-Help you, Help me
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git tags/pwm/for-5.3-rc4
+
+for you to fetch changes up to 6cf9481b440da6d6d86bd8e4c99a8b553b9d1271:
+
+  pwm: Fallback to the static lookup-list when acpi_pwm_get fails (2019-08-08 13:17:38 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+pwm: Fixes for v5.3-rc4
+
+This contains a single fix for a backlight brightness regression
+introduced in v5.3-rc1.
+
+----------------------------------------------------------------
+Hans de Goede (1):
+      pwm: Fallback to the static lookup-list when acpi_pwm_get fails
+
+ drivers/pwm/core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
