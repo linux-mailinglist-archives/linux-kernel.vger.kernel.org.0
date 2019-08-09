@@ -2,70 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9830A8836A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 21:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF06788361
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 21:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbfHITnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 15:43:52 -0400
-Received: from mga04.intel.com ([192.55.52.120]:12176 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725927AbfHITnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 15:43:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 12:43:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,366,1559545200"; 
-   d="scan'208";a="169405835"
-Received: from wulili-mobl1.ger.corp.intel.com ([10.249.36.9])
-  by orsmga008.jf.intel.com with ESMTP; 09 Aug 2019 12:43:45 -0700
-Message-ID: <93400d11833bd42c4be0b846416ff1f469904784.camel@linux.intel.com>
-Subject: Re: [PATCH v3 1/4] tpm: Add a flag to indicate TPM power is
- managed by firmware
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Boyd <swboyd@chromium.org>, Peter Huewe <peterhuewe@gmx.de>
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-In-Reply-To: <20190806220750.86597-2-swboyd@chromium.org>
-References: <20190806220750.86597-1-swboyd@chromium.org>
-         <20190806220750.86597-2-swboyd@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
- Espoo
-Content-Type: text/plain; charset="UTF-8"
+        id S1726382AbfHITko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 15:40:44 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57634 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbfHITkn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 15:40:43 -0400
+Received: from p200300ddd71876457e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7645:7e7a:91ff:fec9:8e25])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hwAkZ-000558-T9; Fri, 09 Aug 2019 21:40:31 +0200
+Date:   Fri, 9 Aug 2019 21:40:26 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+cc:     "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Daniel Drake <drake@endlessm.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Endless Linux Upstreaming Team <linux@endlessm.com>,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: Re: [PATCH] x86/apic: Handle missing global clockevent gracefully
+In-Reply-To: <d212566c-3ee6-a7c1-98f5-2db5d3c63e44@amd.com>
+Message-ID: <alpine.DEB.2.21.1908092138520.21433@nanos.tec.linutronix.de>
+References: <CAD8Lp448i7jOk9C5NJtC2wHMaGuRLD4pxVqK17YqRCuMVXhsOA@mail.gmail.com> <CAERHkruxfBc8DqNUr=fbYuQWrXrHC7cK6HnVR3xp0iLA9QtxiQ@mail.gmail.com> <alpine.DEB.2.21.1908010931550.1788@nanos.tec.linutronix.de> <CAERHkrtaVAQHDU1cj2_GLL59LPjp7E=3X0Zna0spfFB=Ve5__w@mail.gmail.com>
+ <alpine.DEB.2.21.1908011011250.1788@nanos.tec.linutronix.de> <81666b28-d029-56c3-8978-90abc219d1b7@linux.intel.com> <alpine.DEB.2.21.1908011054210.1965@nanos.tec.linutronix.de> <3d14b0cc-3cca-1874-3521-4ee2ec52141d@amd.com> <alpine.DEB.2.21.1908082235590.2882@nanos.tec.linutronix.de>
+ <5bf28ba4-b7c1-51de-88ae-feebae2a28db@amd.com> <alpine.DEB.2.21.1908082306220.2882@nanos.tec.linutronix.de> <75e59ac6-5165-bd0a-aec9-be16d662ece9@amd.com> <alpine.DEB.2.21.1908091443030.21433@nanos.tec.linutronix.de>
+ <d212566c-3ee6-a7c1-98f5-2db5d3c63e44@amd.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Date:   Fri, 09 Aug 2019 21:02:01 +0300
-User-Agent: Evolution 3.32.1-2 
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-06 at 15:07 -0700, Stephen Boyd wrote:
-> On some platforms, the TPM power is managed by firmware and therefore we
-> don't need to stop the TPM on suspend when going to a light version of
-> suspend such as S0ix ("freeze" suspend state). Add a chip flag to
-> indicate this so that certain platforms can probe for the usage of this
-> light suspend and avoid touching the TPM state across suspend/resume.
+On Fri, 9 Aug 2019, Lendacky, Thomas wrote:
+> On 8/9/19 7:54 AM, Thomas Gleixner wrote:
+> > +	local_irq_disable();
+> >   	/*
+> >   	 * Setup the APIC counter to maximum. There is no way the lapic
+> >   	 * can underflow in the 100ms detection time frame
+> >   	 */
+> >   	__setup_APIC_LVTT(0xffffffff, 0, 0);
+> >   
+> > -	/* Let the interrupts run */
+> > -	local_irq_enable();
+> > +	/*
+> > +	 * Methods to terminate the calibration loop:
+> > +	 *  1) Global clockevent if available (jiffies)
+> > +	 *  2) TSC if available and frequency is known
+> > +	 */
+> > +	jif_start = READ_ONCE(jiffies);
+> > +
+> > +	if (tsc_khz) {
+> > +		tsc_start = rdtsc();
+> > +		tsc_perj = div_u64((u64)tsc_khz * 1000, HZ);
+> > +	}
+> > +
+> > +	while (lapic_cal_loops <= LAPIC_CAL_LOOPS) {
+> > +		/*
+> > +		 * Enable interrupts so the tick can fire, if a global
+> > +		 * clockevent device is available
+> > +		 */
+> > +		local_irq_enable();
+> 
+> Just a nit, but you end up doing this at the bottom of the loop, so you
+> could move this invocation to just before the loop and avoid doing two
+> local_irq_enable() calls in succession after the first iteration.
 
-The commit message should mention the new constant.
+Indeed. Lets see how the reports go. That change is a nobrainer.
 
-> +	if (chip->flags & TPM_CHIP_FLAG_FIRMWARE_POWER_MANAGED)
-> +		if (!pm_suspend_via_firmware())
+Thanks,
 
-Why both checks are needed?
-
-If both checks are needed, you could write it as a single
-conditional statement:
-
-if (chip->flags & TPM_CHIP_FLAG_FIRMWARE_POWER_MANAGED &&
-    !pm_suspend_via_firmware())
-
-/Jarkko
-
+	tglx
