@@ -2,263 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C128712A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 06:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2053887132
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 07:01:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405389AbfHIE6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 00:58:21 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42518 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfHIE6U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 00:58:20 -0400
-Received: by mail-ed1-f66.google.com with SMTP id m44so75441edd.9;
-        Thu, 08 Aug 2019 21:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PL2Jgogtu2k8AmJ64fpJ0vvQA/W8ih7TKpBd6icTw2s=;
-        b=MnbyPliF/prJwVrPi1bszEW3vRY2JUMf+dPQuB512WXoIF0Qjg+SE7lPmbqXjXVMmj
-         GbevF0QPY1QjOsQi3cH9/RxwZNufkoDAfLTPd/gMxnuBgXuuSbsoLZKQAK/tEbl/HuJ6
-         VtJ786VFw8Ob0J0lXuXvBeccbRrVGJFmpF1JeU/3ij1JXdKfTDYqpNq3vuCx4kZHVWXX
-         prtPlf5tbLJqcf3zt7OXp1aD+adv5sp8RbKD/8fWSqa0nzu/ImneIs2ABqczUMJYhmv5
-         leuB7YDLfoW2Izly7js43LS5EC32n/Pz9ZBZRwFBzgQvyWpGJAiaumcoAFq3VlWjwoGV
-         tSwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PL2Jgogtu2k8AmJ64fpJ0vvQA/W8ih7TKpBd6icTw2s=;
-        b=NoB0rxgQn517BXuSVJ6yfJyc+/PR9a0DxtwF97QliodVRyPoQNOmerozqqn45lrh08
-         4AiOGuO0iZuH/7+CKXS0cTDTJFCAy5PaSjJRaDcJpwqWYpSIbS9L6NdC1aAhvyU1hFDs
-         NB1qMOwzXk738yTosR+oI1ltjPF+FdANRHONd1qgqpsYVt28mcfT3R0rZ9YaCEIycq9s
-         mNmsY75PdJV3CSp097H0epWdjK/YcBfpsXpsz/nh+6XVfha19Fv9Zsp0SnMxR1RedpQQ
-         huFWlxo++thKRp3q6n9K9Tm6seKR7sGyXDADEmjEyVslfwUUQCCjNnMyOGxmy5yUYbuH
-         7v9w==
-X-Gm-Message-State: APjAAAVbOnB1suvsz4O+Nr2SNcZRjv5FD6GC+gNXi6DDRzqSr/cgTsLg
-        d/dsU2fM8+ex5UZP6DGd/KOoWX/r7CIEK1mqVs4=
-X-Google-Smtp-Source: APXvYqwH04PsVqfE9KvzA0Gw8n1mS7s0MRG2Nz7x4iM36NXmjbLzIqcU0Um5dNC6c9T0vcvI8ba9/Ir9VJEIBOVnCXc=
-X-Received: by 2002:a05:6402:1351:: with SMTP id y17mr19480461edw.18.1565326697822;
- Thu, 08 Aug 2019 21:58:17 -0700 (PDT)
+        id S2405426AbfHIFBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 01:01:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34432 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbfHIFBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 01:01:17 -0400
+Received: from localhost (unknown [106.51.111.143])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71BE2214C6;
+        Fri,  9 Aug 2019 05:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565326876;
+        bh=55Gs1G9Rz04Gs41D1M4WjTdna+61wD7lIipwnYMQUFY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cwaTFUMUPfzNaN/PYEWqdDYZ+GJMRCu5TiiLR7EnQoxnGsSVl8Z+09Q7JAHTOXjeL
+         jvlwUdLeiND0cIP93SeVPyFcKaXUVGw4Wrk+JstNZmj+yvQLLlJ/C+OWjE+2ATQFcr
+         E4DCh5p77RxazIhzmgohj63LIDqUX/RbUlnBn12Y=
+Date:   Fri, 9 Aug 2019 10:30:04 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, bgoswami@codeaurora.org, plai@codeaurora.org,
+        pierre-louis.bossart@linux.intel.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, lgirdwood@gmail.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: soundwire: add slave bindings
+Message-ID: <20190809050004.GI12733@vkoul-mobl.Dlink>
+References: <20190808144504.24823-1-srinivas.kandagatla@linaro.org>
+ <20190808144504.24823-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-References: <20190808234816.4189789-1-taoren@fb.com>
-In-Reply-To: <20190808234816.4189789-1-taoren@fb.com>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Fri, 9 Aug 2019 07:58:06 +0300
-Message-ID: <CA+h21hpcmpXZZrN6NYwAMhqrOKK2oGq27iiRiDBFT-zAvvZfWA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 2/3] net: phy: add support for clause 37 auto-negotiation
-To:     Tao Ren <taoren@fb.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, openbmc@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808144504.24823-2-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Aug 2019 at 02:48, Tao Ren <taoren@fb.com> wrote:
->
-> From: Heiner Kallweit <hkallweit1@gmail.com>
->
-> This patch adds support for clause 37 1000Base-X auto-negotiation.
-> It's compile-tested only as I don't have fiber equipment.
->
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+On 08-08-19, 15:45, Srinivas Kandagatla wrote:
+> This patch adds bindings for Soundwire Slave devices which includes how
+> SoundWire enumeration address is represented in SoundWire slave device
+> tree nodes.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
+>  .../devicetree/bindings/soundwire/slave.txt   | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soundwire/slave.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/soundwire/slave.txt b/Documentation/devicetree/bindings/soundwire/slave.txt
+> new file mode 100644
+> index 000000000000..b8e8d34bbc92
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soundwire/slave.txt
+> @@ -0,0 +1,46 @@
+> +SoundWire slave device bindings.
+> +
+> +SoundWire is a 2-pin multi-drop interface with data and clock line.
+> +It facilitates development of low cost, efficient, high performance systems.
+> +
+> +SoundWire slave devices:
+> +Every SoundWire controller node can contain zero or more child nodes
+> +representing slave devices on the bus. Every SoundWire slave device is
+> +uniquely determined by the enumeration address containing 5 fields:
+> +SoundWire Version, Instance ID, Manufacturer ID, Part ID and Class ID
+> +for a device. Addition to below required properties, child nodes can
 
-This needs your signed-off-by as well.
+It would help to list them rather than free flowing text
 
->  drivers/net/phy/phy_device.c | 139 +++++++++++++++++++++++++++++++++++
->  include/linux/phy.h          |   5 ++
->  2 files changed, 144 insertions(+)
->
-> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> index 252a712d1b2b..7c5315302937 100644
-> --- a/drivers/net/phy/phy_device.c
-> +++ b/drivers/net/phy/phy_device.c
-> @@ -1617,6 +1617,40 @@ static int genphy_config_advert(struct phy_device *phydev)
->         return changed;
->  }
->
-> +/**
-> + * genphy_c37_config_advert - sanitize and advertise auto-negotiation parameters
-> + * @phydev: target phy_device struct
-> + *
-> + * Description: Writes MII_ADVERTISE with the appropriate values,
-> + *   after sanitizing the values to make sure we only advertise
-> + *   what is supported.  Returns < 0 on error, 0 if the PHY's advertisement
-> + *   hasn't changed, and > 0 if it has changed. This function is intended
-> + *   for Clause 37 1000Base-X mode.
-> + */
-> +static int genphy_c37_config_advert(struct phy_device *phydev)
-> +{
-> +       u16 adv = 0;
+> +have device specific bindings.
 > +
-> +       /* Only allow advertising what this PHY supports */
-> +       linkmode_and(phydev->advertising, phydev->advertising,
-> +                    phydev->supported);
+> +Required property for SoundWire child node if it is present:
+
+As said earlier, lets make it "Required properties:"
+
+> +- compatible:	 "sdwVER,MFD,PID,CID". The textual representation of
+> +		  SoundWire Enumeration address comprising SoundWire
+> +		  Version, Manufacturer ID, Part ID and Class ID,
+> +		  shall be in lower-case hexadecimal with leading
+> +		  zeroes suppressed.
+> +		  Version number '0x10' represents SoundWire 1.0
+> +		  Version number '0x11' represents SoundWire 1.1
+> +		  ex: "sdw10,0217,2010,0"
 > +
-> +       if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-> +                             phydev->advertising))
-> +               adv |= ADVERTISE_1000XFULL;
-> +       if (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT,
-> +                             phydev->advertising))
-> +               adv |= ADVERTISE_1000XPAUSE;
-> +       if (linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-> +                             phydev->advertising))
-> +               adv |= ADVERTISE_1000XPSE_ASYM;
+> +- sdw-instance-id: Should be ('Instance ID') from SoundWire
+> +		  Enumeration Address. Instance ID is for the cases
+> +		  where multiple Devices of the same type or Class
+> +		  are attached to the bus.
 > +
-> +       return phy_modify_changed(phydev, MII_ADVERTISE,
-> +                                 ADVERTISE_1000XFULL | ADVERTISE_1000XPAUSE |
-> +                                 ADVERTISE_1000XHALF | ADVERTISE_1000XPSE_ASYM,
-> +                                 adv);
-> +}
+> +SoundWire example for Qualcomm's SoundWire controller:
 > +
->  /**
->   * genphy_config_eee_advert - disable unwanted eee mode advertisement
->   * @phydev: target phy_device struct
-> @@ -1726,6 +1760,54 @@ int genphy_config_aneg(struct phy_device *phydev)
->  }
->  EXPORT_SYMBOL(genphy_config_aneg);
->
-> +/**
-> + * genphy_c37_config_aneg - restart auto-negotiation or write BMCR
-> + * @phydev: target phy_device struct
-> + *
-> + * Description: If auto-negotiation is enabled, we configure the
-> + *   advertising, and then restart auto-negotiation.  If it is not
-> + *   enabled, then we write the BMCR. This function is intended
-> + *   for use with Clause 37 1000Base-X mode.
-> + */
-> +int genphy_c37_config_aneg(struct phy_device *phydev)
-> +{
-> +       int err, changed;
+> +soundwire@c2d0000 {
+> +	compatible = "qcom,soundwire-v1.5.0"
+> +	reg = <0x0c2d0000 0x2000>;
 > +
-> +       if (AUTONEG_ENABLE != phydev->autoneg)
-> +               return genphy_setup_forced(phydev);
+> +	spkr_left:wsa8810-left{
+> +		compatible = "sdw10,0217,2010,0";
+> +		sdw-instance-id = <1>;
+> +		...
+> +	};
 > +
-> +       err = phy_modify(phydev, MII_BMCR, BMCR_SPEED1000 | BMCR_SPEED100,
-> +                        BMCR_SPEED1000);
-> +       if (err)
-> +               return err;
-> +
-> +       changed = genphy_c37_config_advert(phydev);
-> +       if (changed < 0) /* error */
-> +               return changed;
-> +
-> +       if (!changed) {
-> +               /* Advertisement hasn't changed, but maybe aneg was never on to
-> +                * begin with?  Or maybe phy was isolated?
-> +                */
-> +               int ctl = phy_read(phydev, MII_BMCR);
-> +
-> +               if (ctl < 0)
-> +                       return ctl;
-> +
-> +               if (!(ctl & BMCR_ANENABLE) || (ctl & BMCR_ISOLATE))
-> +                       changed = 1; /* do restart aneg */
-> +       }
-> +
-> +       /* Only restart aneg if we are advertising something different
-> +        * than we were before.
-> +        */
-> +       if (changed > 0)
-> +               return genphy_restart_aneg(phydev);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(genphy_c37_config_aneg);
-> +
->  /**
->   * genphy_aneg_done - return auto-negotiation status
->   * @phydev: target phy_device struct
-> @@ -1864,6 +1946,63 @@ int genphy_read_status(struct phy_device *phydev)
->  }
->  EXPORT_SYMBOL(genphy_read_status);
->
-> +/**
-> + * genphy_c37_read_status - check the link status and update current link state
-> + * @phydev: target phy_device struct
-> + *
-> + * Description: Check the link, then figure out the current state
-> + *   by comparing what we advertise with what the link partner
-> + *   advertises. This function is for Clause 37 1000Base-X mode.
-> + */
-> +int genphy_c37_read_status(struct phy_device *phydev)
-> +{
-> +       int lpa, err, old_link = phydev->link;
-> +
-> +       /* Update the link, but return if there was an error */
-> +       err = genphy_update_link(phydev);
-> +       if (err)
-> +               return err;
-> +
-> +       /* why bother the PHY if nothing can have changed */
-> +       if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
-> +               return 0;
-> +
-> +       phydev->duplex = DUPLEX_UNKNOWN;
-> +       phydev->pause = 0;
-> +       phydev->asym_pause = 0;
-> +
-> +       if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
-> +               lpa = phy_read(phydev, MII_LPA);
-> +               if (lpa < 0)
-> +                       return lpa;
-> +
-> +               linkmode_mod_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-> +                                phydev->lp_advertising, lpa & LPA_LPACK);
-> +               linkmode_mod_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-> +                                phydev->lp_advertising, lpa & LPA_1000XFULL);
-> +               linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT,
-> +                                phydev->lp_advertising, lpa & LPA_1000XPAUSE);
-> +               linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-> +                                phydev->lp_advertising,
-> +                                lpa & LPA_1000XPAUSE_ASYM);
-> +
-> +               phy_resolve_aneg_linkmode(phydev);
-> +       } else if (phydev->autoneg == AUTONEG_DISABLE) {
-> +               int bmcr = phy_read(phydev, MII_BMCR);
-> +
-> +               if (bmcr < 0)
-> +                       return bmcr;
-> +
-> +               if (bmcr & BMCR_FULLDPLX)
-> +                       phydev->duplex = DUPLEX_FULL;
-> +               else
-> +                       phydev->duplex = DUPLEX_HALF;
-> +       }
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(genphy_c37_read_status);
-> +
->  /**
->   * genphy_soft_reset - software reset the PHY via BMCR_RESET bit
->   * @phydev: target phy_device struct
-> diff --git a/include/linux/phy.h b/include/linux/phy.h
-> index 462b90b73f93..81a2921512ee 100644
-> --- a/include/linux/phy.h
-> +++ b/include/linux/phy.h
-> @@ -1077,6 +1077,11 @@ int genphy_suspend(struct phy_device *phydev);
->  int genphy_resume(struct phy_device *phydev);
->  int genphy_loopback(struct phy_device *phydev, bool enable);
->  int genphy_soft_reset(struct phy_device *phydev);
-> +
-> +/* Clause 37 */
-> +int genphy_c37_config_aneg(struct phy_device *phydev);
-> +int genphy_c37_read_status(struct phy_device *phydev);
-> +
->  static inline int genphy_no_soft_reset(struct phy_device *phydev)
->  {
->         return 0;
-> --
-> 2.17.1
->
+> +	spkr_right:wsa8810-right{
+> +		compatible = "sdw10,0217,2010,0";
+> +		sdw-instance-id = <2>;
+> +		...
+> +	};
+> +};
+> -- 
+> 2.21.0
+
+-- 
+~Vinod
