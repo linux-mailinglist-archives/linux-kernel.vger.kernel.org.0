@@ -2,162 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 458878856C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 00:01:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B898188576
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 00:03:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbfHIWBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 18:01:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbfHIWBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 18:01:19 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71C4F2089E;
-        Fri,  9 Aug 2019 22:01:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565388078;
-        bh=g7gv0QYYb35ljO9lYoG4pHHDfLadVPRJuFZjOE++jYE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JDwR44NcwyUy5qLqieDYFPX65nZosdcUdIEypACHYZl3lvY+6CqyW8/ZTS+hxjjw1
-         E8O/T6Ojc44aE3AVNS7dfP0CWS3biO5peNqqWKRGpMVlGeA2EQusMMcwtQUC+dyO0B
-         1/dVBQvcvXjlxTrNCeHqj8blERBfcsn25zhgBo1o=
-Date:   Fri, 9 Aug 2019 17:01:16 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] PCI / PM: Check for error when reading Power State
-Message-ID: <20190809220116.GA221706@google.com>
-References: <20190805205214.194981-1-helgaas@kernel.org>
- <20190805205214.194981-5-helgaas@kernel.org>
- <CAJZ5v0jFPU38zDugumJB0iq5d-LctcMCdygTrFU4=gYP3UJ+oA@mail.gmail.com>
+        id S1728190AbfHIWDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 18:03:43 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40255 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfHIWDn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 18:03:43 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w10so46489723pgj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 15:03:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4YE5LFpbQmY5CUf9HiiZAitomsRy44hXFJVcN3+uc3g=;
+        b=F2iKZ4lOk3Ih5R8vAeqlbdrBc0o0/2oPVqnxRiWVqXjqSSkS0hpJwY8/YpKGOaysmn
+         S7RZmGdJWCcjYz5bky70ydz7Ay2uw/D5UfOz58OF/e09ambmcuAy/7caWD6Gu/8MZQDD
+         kVqtz0SfTVti/fNY1P+4wOxv9CyVCfKZW/JhCEIdShv7eyoDF0003q3Qz5cDaNO/oV+8
+         ocxCDTmnNj6lX9aKWMtmKBid2xr8N7AmyTYIAQSf2rpqUIxrXM6haG3j8DFCDjmQTg9z
+         YMtbBY7z9XoMpxQTQAeQanKoqciXuUF8/jLaNvyJvHQlxiHfytWc3UIpLanxf2sUkmtH
+         mUHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4YE5LFpbQmY5CUf9HiiZAitomsRy44hXFJVcN3+uc3g=;
+        b=WSDK/oRgphPETQ0YXKMW4TODcwqnWQDzUYybTvignEcY0eMIqYTn0aP+D3PfaR4rHB
+         hKTrsMKhNGjFZIEPtC/yWyvm5CylOjcqhcGfKeGtKb/v33C9OZVVS7gc9mWrRmgRRWIi
+         BBDTh9BiCj9oVoFOLe9yEHIZQO09TUvvgrNX6dz5F9acQeDK4FwVlqPED5kkvc35fUoH
+         Wdk9BlLdXpdYk+GywmQ6olGp7foLRLQIQWJDuV7nq+egaWNlNiL80/lAHz/RdGYQZUpd
+         gPoDuEkMa0i14BfaYK6duASxrrVrMGgULDFIDljUNQ8dUh9OgsC98gqB53wG653Y0jf9
+         3H4Q==
+X-Gm-Message-State: APjAAAWVuw/O+xh8XwXXQLyZDyBJEsHP19De710ZPJK+G4AZ2NvM1IGl
+        aM5iNOm+stym2HfSorR6dQK0pk2Ix/YNKNSw8oiq1DvnVyl1bg==
+X-Google-Smtp-Source: APXvYqzoA3qP5cLMx/N6kQkj8ONKAvUo3SkoeRrc9oKrOALvTgOH+HjnoEMS8kqTYGRPlpr+JSvGRCE1qbTPLaobk8c=
+X-Received: by 2002:a63:61cd:: with SMTP id v196mr19675034pgb.263.1565388221708;
+ Fri, 09 Aug 2019 15:03:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jFPU38zDugumJB0iq5d-LctcMCdygTrFU4=gYP3UJ+oA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <87h873zs88.fsf@concordia.ellerman.id.au> <20190809182106.62130-1-ndesaulniers@google.com>
+ <CAK8P3a3LynWTbpV8=VPm2TqgNM2MnoEyCPJd0PL2D+tcZqJgHg@mail.gmail.com>
+ <20190809220301.Horde.AR6y4Bx4WGIq58V9K0En9g4@messagerie.si.c-s.fr> <CAK8P3a1AwmAe+PpHTRmN153fhG4ZkF_pb+240rj1ZAg-S6SKeg@mail.gmail.com>
+In-Reply-To: <CAK8P3a1AwmAe+PpHTRmN153fhG4ZkF_pb+240rj1ZAg-S6SKeg@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 9 Aug 2019 15:03:30 -0700
+Message-ID: <CAKwvOdmhUPTUPa3=_AQ04zEDTsScduqOM29TfK656riAb_t=rQ@mail.gmail.com>
+Subject: Re: [PATCH] powerpc: fix inline asm constraints for dcbz
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        kbuild test robot <lkp@intel.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 11:09:19PM +0200, Rafael J. Wysocki wrote:
-> On Mon, Aug 5, 2019 at 10:52 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+On Fri, Aug 9, 2019 at 1:13 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Fri, Aug 9, 2019 at 10:02 PM Christophe Leroy
+> <christophe.leroy@c-s.fr> wrote:
 > >
-> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > Arnd Bergmann <arnd@arndb.de> a =C3=A9crit :
+> > > On Fri, Aug 9, 2019 at 8:21 PM 'Nick Desaulniers' via Clang Built
+> > > Linux <clang-built-linux@googlegroups.com> wrote:
+> > >
+> > >>  static inline void dcbz(void *addr)
+> > >>  {
+> > >> -       __asm__ __volatile__ ("dcbz %y0" : : "Z"(*(u8 *)addr) : "mem=
+ory");
+> > >> +       __asm__ __volatile__ ("dcbz %y0" : "=3DZ"(*(u8 *)addr) :: "m=
+emory");
+> > >>  }
+> > >>
+> > >>  static inline void dcbi(void *addr)
+> > >>  {
+> > >> -       __asm__ __volatile__ ("dcbi %y0" : : "Z"(*(u8 *)addr) : "mem=
+ory");
+> > >> +       __asm__ __volatile__ ("dcbi %y0" : "=3DZ"(*(u8 *)addr) :: "m=
+emory");
+> > >>  }
+> > >
+> > > I think the result of the discussion was that an output argument only=
+ kind-of
+> > > makes sense for dcbz, but for the others it's really an input, and cl=
+ang is
+> > > wrong in the way it handles the "Z" constraint by making a copy, whic=
+h it
+> > > doesn't do for "m".
+> > >
+> > > I'm not sure whether it's correct to use "m" instead of "Z" here, whi=
+ch
+> > > would be a better workaround if that works. More importantly though,
+> > > clang really needs to be fixed to handle "Z" correctly.
 > >
-> > The Power Management Status Register is in config space, and reads while
-> > the device is in D3cold typically return ~0 data (PCI_ERROR_RESPONSE).  If
-> > we just look at the PCI_PM_CTRL_STATE_MASK bits, that is 0x3, which looks
-> > like D3hot, not D3cold.
-> >
-> > Check the entire register for PCI_ERROR_RESPONSE so we can distinguish
-> > D3cold from D3hot.
-> >
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >  drivers/pci/pci.c   |  6 +++---
-> >  include/linux/pci.h | 13 +++++++++++++
-> >  2 files changed, 16 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index af6a97d7012b..d8686e3cd5eb 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -894,7 +894,7 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
-> >                 udelay(PCI_PM_D2_DELAY);
-> >
-> >         pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
-> > -       dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
-> > +       dev->current_state = pci_power_state(pmcsr);
-> 
-> But pci_raw_set_power_state() should not even be called for devices in
-> D3_cold, so this at best is redundant.
+> > As the benefit is null, I think the best is probably to reverse my
+> > original commit until at least CLang is fixed, as initialy suggested
+> > by mpe
+>
+> Yes, makes sense.
+>
+> There is one other use of the "Z" constraint, so on top of the revert, I
+> think it might be helpful if Nick could check if the patch below makes
+> any difference with clang and, if it does, whether the current version
+> is broken.
+>
+>        Arnd
+>
+> diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.=
+h
+> index 23e5d5d16c7e..28b467779328 100644
+> --- a/arch/powerpc/include/asm/io.h
+> +++ b/arch/powerpc/include/asm/io.h
+> @@ -106,7 +106,7 @@ static inline u##size name(const volatile u##size
+> __iomem *addr)    \
+>  {                                                                      \
+>         u##size ret;                                                    \
+>         __asm__ __volatile__("sync;"#insn" %0,%y1;twi 0,%0,0;isync"     \
+> -               : "=3Dr" (ret) : "Z" (*addr) : "memory");                =
+ \
+> +               : "=3Dr" (ret) : "m" (*addr) : "memory");                =
+ \
+>         return ret;                                                     \
+>  }
+>
+> @@ -114,7 +114,7 @@ static inline u##size name(const volatile u##size
+> __iomem *addr)    \
+>  static inline void name(volatile u##size __iomem *addr, u##size val)   \
+>  {                                                                      \
+>         __asm__ __volatile__("sync;"#insn" %1,%y0"                      \
+> -               : "=3DZ" (*addr) : "r" (val) : "memory");                =
+ \
+> +               : "=3Dm" (*addr) : "r" (val) : "memory");                =
+ \
+>         mmiowb_set_pending();                                           \
+>  }
 
-I tried to verify that we don't call pci_raw_set_power_state() for
-devices in D3cold, but it wasn't obvious to me.  Is there an easy way
-to verify that?  I'd rather have code that doesn't rely on deep
-knowledge about other areas.
+Does not work:
+https://travis-ci.com/ClangBuiltLinux/continuous-integration/builds/1226548=
+99
+https://github.com/ClangBuiltLinux/continuous-integration/pull/197/files#di=
+ff-40bd16e3188587e4d648c30e0c2d6d37
 
-Even if the device was in, say D0, what if it is hot-removed just
-before we read PCI_PM_CTRL?  We'll set dev->current_state to D3hot,
-when I think D3cold would better correspond to the state of the
-device.  Maybe that's harmless, but I don't know how to verify that.
-
-> >         if (dev->current_state != state && printk_ratelimit())
-> >                 pci_info(dev, "Refused to change power state, currently in D%d\n",
-> >                          dev->current_state);
-> > @@ -942,7 +942,7 @@ void pci_update_current_state(struct pci_dev *dev, pci_power_t state)
-> >                 u16 pmcsr;
-> >
-> >                 pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
-> > -               dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
-> > +               dev->current_state = pci_power_state(pmcsr);
-> 
-> The if () branch above should cover the D3cold case, shouldn't it?
-
-You mean the "if (platform_pci_get_power_state(dev) == PCI_D3cold)"
-test?
-
-platform_pci_get_power_state() returns PCI_UNKNOWN in some cases.
-When that happens, might we not read PCI_PM_CTRL of a device in
-D3cold?  I think this also has the same hotplug question as above.
-
-> >         } else {
-> >                 dev->current_state = state;
-> >         }
-> > @@ -1677,7 +1677,7 @@ static int pci_enable_device_flags(struct pci_dev *dev, unsigned long flags)
-> >         if (dev->pm_cap) {
-> >                 u16 pmcsr;
-> >                 pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
-> > -               dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
-> > +               dev->current_state = pci_power_state(pmcsr);
-> 
-> So this appears to be only case in which pci_power_state(pmcsr) is
-> useful at all.
-> 
-> It might be better to use the code from it directly here IMO.
-
-If we're decoding CSR values, I think it's better to notice error
-responses when we can than it is to try to figure out whether the
-error response is theoretically impossible or the incorrectly decoded
-value (e.g., D3hot instead of D3cold) is harmless.
-
-> >         }
-> >
-> >         if (atomic_inc_return(&dev->enable_cnt) > 1)
-> > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > index d64fd3788061..fdfe990e9661 100644
-> > --- a/include/linux/pci.h
-> > +++ b/include/linux/pci.h
-> > @@ -152,6 +152,19 @@ static inline const char *pci_power_name(pci_power_t state)
-> >         return pci_power_names[1 + (__force int) state];
-> >  }
-> >
-> > +/*
-> > + * Convert a Power Management Status Register value to a pci_power_t.
-> > + * Note that if we read the register while the device is in D3cold, we
-> > + * typically get PCI_ERROR_RESPONSE, which looks like D3hot (0x3) if we
-> > + * only look at the PCI_PM_CTRL_STATE_MASK bits.
-> > + */
-> > +static inline pci_power_t pci_power_state(u16 pmcsr)
-> > +{
-> > +       if (pmcsr == (u16) PCI_ERROR_RESPONSE)
-> > +               return PCI_D3cold;
-> > +       return pmcsr & PCI_PM_CTRL_STATE_MASK;
-> > +}
-> > +
-> >  #define PCI_PM_D2_DELAY                200
-> >  #define PCI_PM_D3_WAIT         10
-> >  #define PCI_PM_D3COLD_WAIT     100
-> > --
-> > 2.22.0.770.g0f2c4a37fd-goog
-> >
+--=20
+Thanks,
+~Nick Desaulniers
