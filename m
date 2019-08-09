@@ -2,254 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2682872FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4297587316
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 09:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405793AbfHIHdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 03:33:08 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:46032 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbfHIHdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 03:33:08 -0400
-Received: from zn.tnic (p200300EC2F0BAF001CD97DA1D84759A1.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:af00:1cd9:7da1:d847:59a1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BA3F31EC0503;
-        Fri,  9 Aug 2019 09:33:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565335986;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=6YWhh6FO29jYPaBhQLPpBYD6y3juXwFjPlm36VozGx4=;
-        b=IZDzHLBCV6IvprNxCc+JXtPZzr/EKQYkeJUPOF4eOX6rNcX+HMotysyRXVj4PW6ju+4zTr
-        6vpkAfe4/Tzl/hX809TyrXl5umcKIvtNMc0G81belAkjgIzNCZIXFYsY5ynfwAvor/63nR
-        uu4i1/pS+v3rN/9prysonfg/d/d7xk0=
-Date:   Fri, 9 Aug 2019 09:33:50 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        kuo-lang.tseng@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 01/10] x86/CPU: Expose if cache is inclusive of lower
- level caches
-Message-ID: <20190809073350.GB2152@zn.tnic>
-References: <d0c04521-ec1a-3468-595c-6929f25f37ff@intel.com>
- <20190806183333.GA4698@zn.tnic>
- <e86c1f54-092d-6580-7652-cbc4ddade440@intel.com>
- <20190806191559.GB4698@zn.tnic>
- <18004821-577d-b0dd-62b8-13b6f9264e72@intel.com>
- <20190806204054.GD4698@zn.tnic>
- <98eeaa53-d100-28ff-0b68-ba57e0ea90fb@intel.com>
- <20190808080841.GA20745@zn.tnic>
- <20190808081342.GB20745@zn.tnic>
- <1b0b14aa-2c78-8259-9fdc-06ee7f6050f4@intel.com>
+        id S2405847AbfHIHeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 03:34:17 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33887 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405674AbfHIHeQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 03:34:16 -0400
+Received: by mail-wm1-f66.google.com with SMTP id e8so5312439wme.1;
+        Fri, 09 Aug 2019 00:34:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HkX6nmLkGtFz5sMFHHQF7NoNIfXNya+Vs9yW/ji0+R0=;
+        b=QkWIL5tlEYJEp0ilZ1FcksWVfGD8oOb+GcgWizi4lf+92K1Y8PJ8ut+Hk5w2l//Hqt
+         ++8Jfu6QJbBLyVAUrNrlsdMIdOlnBUzJkgE+v3eEKKb9oBE4+/zeeV9GIpycVswes2ij
+         TmUXTAqYkSyXnKkFNh069zTorVk2iV6jrB9pkuu96WHrJrWYjkgHAyTuew99UxI3nGc5
+         akJe0U5436jpbBhW/7dPE/SnJnVjBNdTD5zYh45sG2ABq6E4C4HzMBM/forwQ225IEaj
+         XVscx8T0zKYLVH+CRwE7DC+TFp6cOC849biS9u7AsrerbqPkmsX2TuvgMhcyEpSjI882
+         0kyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=HkX6nmLkGtFz5sMFHHQF7NoNIfXNya+Vs9yW/ji0+R0=;
+        b=EonJwFXt0rnnruOeuRwWOTj8A/1+qq7O6X9dm9yxRvgMRWVpjUtSc2liwzQodORSgz
+         oA7zqQBLVCelI6jJ6Xu1O6xRD9FglcatMgvb37f0EkL39gqaD3bcN1/JUibbKz4yZH27
+         8wpxDSVgXwl6GDGcu+I6iS3KkcWxluxKAzN8s6Gzg47FKsn/jCZKaIPSRu4I67yJscYo
+         +ZlmGgmDXlxWMXuzJhcqKCoNs7ghaEyS05gkr1N/4BXBBexiaeltb7qr2MhPAZwEXpMZ
+         Tq96AAn79M7DuUOWP1Df60oy/QDMmk10fWbTLxJJt9J5knxXHBVfCfpAl8cpQIM17ny0
+         QxFg==
+X-Gm-Message-State: APjAAAU4dN0jCG/+s3BH/yTwKPg+qmO89sAxQD3wJgHuklMkHte2TmTv
+        tu9ls7ucQIUB/SDsxHv4mGEIPls0
+X-Google-Smtp-Source: APXvYqzX3aiy2Bu+eV/dv5HzjggJD4xiK8V0x3AzyKhiGiV0McJ8ls9qpnSL2vCm954wUlSYXXoRPA==
+X-Received: by 2002:a05:600c:24cb:: with SMTP id 11mr8816042wmu.94.1565336053802;
+        Fri, 09 Aug 2019 00:34:13 -0700 (PDT)
+Received: from 640k.localdomain.com ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id d19sm6552743wrb.7.2019.08.09.00.34.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Aug 2019 00:34:13 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH] MAINTAINERS: add KVM x86 reviewers
+Date:   Fri,  9 Aug 2019 09:34:11 +0200
+Message-Id: <1565336051-31793-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1b0b14aa-2c78-8259-9fdc-06ee7f6050f4@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 01:08:59PM -0700, Reinette Chatre wrote:
-> With the goal of following these guidelines exactly I came up with the
-> below that is an incremental diff on top of what this review started out as.
+This is probably overdone---KVM x86 has quite a few contributors that
+usually review each other's patches, which is really helpful to me.
+Formalize this by listing them as reviewers.  I am including people
+with various expertise:
 
-Thanks but pls in the future, do not use windoze to send a diff - it
-mangles it to inapplicability.
+- Joerg for SVM (with designated reviewers, it makes more sense to have
+him in the main KVM/x86 stanza)
 
-> Some changes to highlight that may be of concern:
-> * In your previous email you do mention that this will be a "single bit
-> of information". Please note that I did not specifically use an actual
-> bit to capture this information but an unsigned int (I am very aware
-> that you also commented on this initially). If you do mean that this
-> should be stored as an actual bit, could you please help me by
-> elaborating how you would like to see this implemented?
+- Sean for MMU and VMX
 
-See below for a possible way to do it.
+- Jim for VMX
 
-> * Please note that I moved the initialization to init_intel_cacheinfo()
-> to be specific to Intel. I did so because from what I understand there
-> are some AMD platforms for which this information cannot be determined
-> and I thought it simpler to make it specific to Intel with the new
-> single static variable.
+- Vitaly for Hyper-V and possibly SVM
 
-Yeah, I renamed your function to cacheinfo_l3_inclusive() in case the
-other vendors would want to use it someday.
+- Wanpeng for LAPIC and paravirtualization.
 
-> * Please note that while this is a single global static variable it will
-> be set over and over for each CPU on the system.
+Please ack if you are okay with this arrangement, otherwise speak up.
 
-That's fine.
+In other news, Radim is going to leave Red Hat soon.  However, he has
+not been very much involved in upstream KVM development for some time,
+and in the immediate future he is still going to help maintain kvm/queue
+while I am on vacation.  Since not much is going to change, I will let
+him decide whether he wants to keep the maintainer role after he leaves.
 
-Also, the bits in include/linux/cacheinfo.h need to go too. Here's a diff ontop
-of your patchset:
-
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Wanpeng Li <wanpengli@tencent.com>
+Cc: Jim Mattson <jmattson@google.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
-diff --git a/arch/x86/include/asm/cacheinfo.h b/arch/x86/include/asm/cacheinfo.h
-index 86b63c7feab7..87eca716e03d 100644
---- a/arch/x86/include/asm/cacheinfo.h
-+++ b/arch/x86/include/asm/cacheinfo.h
-@@ -5,4 +5,6 @@
- void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
- void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
- 
-+bool cacheinfo_l3_inclusive(void);
-+
- #endif /* _ASM_X86_CACHEINFO_H */
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 3b678f46be53..418a6f7392d0 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -188,6 +188,13 @@ struct _cpuid4_info_regs {
- 
- static unsigned short num_cache_leaves;
- 
-+struct cache_attributes {
-+	u64 l3_inclusive	: 1,
-+	    __resv		: 63;
-+};
-+
-+static struct cache_attributes cache_attrs;
-+
- /* AMD doesn't have CPUID4. Emulate it here to report the same
-    information to the user.  This makes some assumptions about the machine:
-    L2 not shared, no SMT etc. that is currently true on AMD CPUs.
-@@ -745,6 +752,14 @@ void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
- 	num_cache_leaves = find_num_cache_leaves(c);
- }
- 
-+bool cacheinfo_l3_inclusive(void)
-+{
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-+		return false;
-+
-+	return cache_attrs.l3_inclusive;
-+}
-+
- void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- {
- 	/* Cache sizes */
-@@ -795,6 +810,7 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 				num_threads_sharing = 1 + this_leaf.eax.split.num_threads_sharing;
- 				index_msb = get_count_order(num_threads_sharing);
- 				l3_id = c->apicid & ~((1 << index_msb) - 1);
-+				cache_attrs.l3_inclusive = this_leaf.edx.split.inclusive;
- 				break;
- 			default:
- 				break;
-@@ -1009,13 +1025,6 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
- 	this_leaf->number_of_sets = base->ecx.split.number_of_sets + 1;
- 	this_leaf->physical_line_partition =
- 				base->ebx.split.physical_line_partition + 1;
--	if ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
--	     boot_cpu_has(X86_FEATURE_TOPOEXT)) ||
--	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON ||
--	    boot_cpu_data.x86_vendor == X86_VENDOR_INTEL) {
--		this_leaf->attributes |= CACHE_INCLUSIVE_SET;
--		this_leaf->inclusive = base->edx.split.inclusive;
--	}
- 	this_leaf->priv = base->nb;
- }
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index b4fff88572bd..644d1780671e 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -26,6 +26,7 @@
- #include <asm/intel-family.h>
- #include <asm/resctrl_sched.h>
- #include <asm/perf_event.h>
-+#include <asm/cacheinfo.h>
- 
- #include "../../events/perf_event.h" /* For X86_CONFIG() */
- #include "internal.h"
-@@ -125,30 +126,6 @@ static unsigned int get_cache_line_size(unsigned int cpu, int level)
- 	return 0;
- }
- 
--/**
-- * get_cache_inclusive - Determine if cache is inclusive of lower levels
-- * @cpu: CPU with which cache is associated
-- * @level: Cache level
-- *
-- * Context: @cpu has to be online.
-- * Return: 1 if cache is inclusive of lower cache levels, 0 if cache is not
-- *         inclusive of lower cache levels or on failure.
-- */
--static unsigned int get_cache_inclusive(unsigned int cpu, int level)
--{
--	struct cpu_cacheinfo *ci;
--	int i;
--
--	ci = get_cpu_cacheinfo(cpu);
--
--	for (i = 0; i < ci->num_leaves; i++) {
--		if (ci->info_list[i].level == level)
--			return ci->info_list[i].inclusive;
--	}
--
--	return 0;
--}
--
- /**
-  * pseudo_lock_minor_get - Obtain available minor number
-  * @minor: Pointer to where new minor number will be stored
-@@ -341,8 +318,7 @@ static int pseudo_lock_single_portion_valid(struct pseudo_lock_region *plr,
- 		goto err_cpu;
- 	}
- 
--	if (p->r->cache_level == 3 &&
--	    !get_cache_inclusive(plr->cpu, p->r->cache_level)) {
-+	if (p->r->cache_level == 3 && !cacheinfo_l3_inclusive()) {
- 		rdt_last_cmd_puts("L3 cache not inclusive\n");
- 		goto err_cpu;
- 	}
-@@ -448,7 +424,7 @@ static int pseudo_lock_l2_l3_portions_valid(struct pseudo_lock_region *plr,
- 		goto err_cpu;
- 	}
- 
--	if (!get_cache_inclusive(plr->cpu, l3_p->r->cache_level)) {
-+	if (!cacheinfo_l3_inclusive()) {
- 		rdt_last_cmd_puts("L3 cache not inclusive\n");
- 		goto err_cpu;
- 	}
-diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-index cdc7a9d6923f..46b92cd61d0c 100644
---- a/include/linux/cacheinfo.h
-+++ b/include/linux/cacheinfo.h
-@@ -33,8 +33,6 @@ extern unsigned int coherency_max_size;
-  * @physical_line_partition: number of physical cache lines sharing the
-  *	same cachetag
-  * @size: Total size of the cache
-- * @inclusive: Cache is inclusive of lower level caches. Only valid if
-- *	CACHE_INCLUSIVE_SET attribute is set.
-  * @shared_cpu_map: logical cpumask representing all the cpus sharing
-  *	this cache node
-  * @attributes: bitfield representing various cache attributes
-@@ -57,7 +55,6 @@ struct cacheinfo {
- 	unsigned int ways_of_associativity;
- 	unsigned int physical_line_partition;
- 	unsigned int size;
--	unsigned int inclusive;
- 	cpumask_t shared_cpu_map;
- 	unsigned int attributes;
- #define CACHE_WRITE_THROUGH	BIT(0)
-@@ -69,7 +66,6 @@ struct cacheinfo {
- #define CACHE_ALLOCATE_POLICY_MASK	\
- 	(CACHE_READ_ALLOCATE | CACHE_WRITE_ALLOCATE)
- #define CACHE_ID		BIT(4)
--#define CACHE_INCLUSIVE_SET	BIT(5)
- 	void *fw_token;
- 	bool disable_sysfs;
- 	void *priv;
+ MAINTAINERS | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6498ebaca2f6..c569bd194d2a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8738,14 +8738,6 @@ F:	virt/kvm/*
+ F:	tools/kvm/
+ F:	tools/testing/selftests/kvm/
+ 
+-KERNEL VIRTUAL MACHINE FOR AMD-V (KVM/amd)
+-M:	Joerg Roedel <joro@8bytes.org>
+-L:	kvm@vger.kernel.org
+-W:	http://www.linux-kvm.org/
+-S:	Maintained
+-F:	arch/x86/include/asm/svm.h
+-F:	arch/x86/kvm/svm.c
+-
+ KERNEL VIRTUAL MACHINE FOR ARM/ARM64 (KVM/arm, KVM/arm64)
+ M:	Marc Zyngier <marc.zyngier@arm.com>
+ R:	James Morse <james.morse@arm.com>
+@@ -8803,6 +8795,11 @@ F:	tools/testing/selftests/kvm/*/s390x/
+ KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)
+ M:	Paolo Bonzini <pbonzini@redhat.com>
+ M:	Radim Krčmář <rkrcmar@redhat.com>
++R:	Sean Christopherson <sean.j.christopherson@intel.com>
++R:	Vitaly Kuznetsov <vkuznets@redhat.com>
++R:	Wanpeng Li <wanpengli@tencent.com>
++R:	Jim Mattson <jmattson@google.com>
++R:	Joerg Roedel <joro@8bytes.org>
+ L:	kvm@vger.kernel.org
+ W:	http://www.linux-kvm.org
+ T:	git git://git.kernel.org/pub/scm/virt/kvm/kvm.git
+@@ -8810,8 +8807,12 @@ S:	Supported
+ F:	arch/x86/kvm/
+ F:	arch/x86/kvm/*/
+ F:	arch/x86/include/uapi/asm/kvm*
++F:	arch/x86/include/uapi/asm/vmx.h
++F:	arch/x86/include/uapi/asm/svm.h
+ F:	arch/x86/include/asm/kvm*
+ F:	arch/x86/include/asm/pvclock-abi.h
++F:	arch/x86/include/asm/svm.h
++F:	arch/x86/include/asm/vmx.h
+ F:	arch/x86/kernel/kvm.c
+ F:	arch/x86/kernel/kvmclock.c
+ 
 -- 
-Regards/Gruss,
-    Boris.
+1.8.3.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
