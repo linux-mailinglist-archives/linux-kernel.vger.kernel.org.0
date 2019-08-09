@@ -2,67 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C72787C98
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B086787CC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:31:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407034AbfHIO0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 10:26:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51728 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfHIO0Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 10:26:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EaBoxEWlwr4zZ1rJszejMFTUZoMex/Sf4azgLrG5t04=; b=JH5PlAW1P2xfQ+UotOi2WPcif
-        C19dMDk6AncmpZY3SMLP16T8M5SGZUNI02MGYfsWwHSsQxhnYdPMXDE/rLpAP+7lCYOyADYpGM0z7
-        gtGfOgSE7pZzBwYe+vjSFFHzHmuJDIsqXYQL3ViPGaBxFATmoPqv3oK1UJBO9sAZ02mPwUw29Najp
-        nWDEyZSTpAapVfw0ofuowNHThlH+U7ZlvyQyETUpS2WbUhnYzz9F7kwdt5498KBCoEACm6R+Y6j7q
-        pZa5eIT2eGWi3ZBnt4MBZ2NR5uL/1SxETSyrY8IFjGvtEQ73OpE+b1AxiX4A/ilb/+hcfrlkKqrEv
-        VYTD+LGxg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hw5qT-0007Je-Q0; Fri, 09 Aug 2019 14:26:17 +0000
-Date:   Fri, 9 Aug 2019 07:26:17 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Miles Chen <miles.chen@mediatek.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        wsd_upstream@mediatek.com, "Tobin C . Harding" <me@tobin.cc>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC PATCH v2] mm: slub: print kernel addresses in slub debug
- messages
-Message-ID: <20190809142617.GO5482@bombadil.infradead.org>
-References: <20190809010837.24166-1-miles.chen@mediatek.com>
- <20190809024644.GL5482@bombadil.infradead.org>
- <1565359918.12824.20.camel@mtkswgap22>
+        id S2406802AbfHIOb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 10:31:28 -0400
+Received: from verein.lst.de ([213.95.11.211]:55714 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726358AbfHIOb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 10:31:28 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6E1E568C4E; Fri,  9 Aug 2019 16:31:24 +0200 (CEST)
+Date:   Fri, 9 Aug 2019 16:31:24 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc:     Christoph Hellwig <hch@lst.de>, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH for-5.3] drm/omap: ensure we have a valid dma_mask
+Message-ID: <20190809143124.GA10121@lst.de>
+References: <20190808101042.18809-1-hch@lst.de> <7fff8fd3-16ae-1f42-fcd6-9aa360fe36b5@ti.com> <20190809080750.GA21874@lst.de> <c219e7e6-0f66-d6fd-e0cf-59c803386825@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1565359918.12824.20.camel@mtkswgap22>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <c219e7e6-0f66-d6fd-e0cf-59c803386825@ti.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 10:11:58PM +0800, Miles Chen wrote:
-> On Thu, 2019-08-08 at 19:46 -0700, Matthew Wilcox wrote:
-> > On Fri, Aug 09, 2019 at 09:08:37AM +0800, miles.chen@mediatek.com wrote:
-> > > INFO: Slab 0x(____ptrval____) objects=25 used=10 fp=0x(____ptrval____)
-> > 
-> > ... you don't have any randomness on your platform?
+On Fri, Aug 09, 2019 at 01:00:38PM +0300, Tomi Valkeinen wrote:
+> Alright, thanks for the clarification!
 > 
-> We have randomized base on our platforms.
+> Here's my version.
 
-Look at initialize_ptr_random().  If you have randomness, then you
-get a siphash_1u32() of the address.  With no randomness, you get this
-___ptrval___ string instead.
+Looks god to me:
 
+Reviewed-by: Christoph Hellwig <hch@lst.de>
