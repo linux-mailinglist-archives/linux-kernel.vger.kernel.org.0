@@ -2,87 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B78386EBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 02:20:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D90686EC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 02:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405038AbfHIAUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 20:20:46 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43735 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404428AbfHIAUp (ORCPT
+        id S2405088AbfHIAVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 20:21:52 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44675 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732796AbfHIAVw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 20:20:45 -0400
-Received: by mail-qt1-f194.google.com with SMTP id w17so13550397qto.10
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 17:20:45 -0700 (PDT)
+        Thu, 8 Aug 2019 20:21:52 -0400
+Received: by mail-ot1-f67.google.com with SMTP id b7so75799596otl.11;
+        Thu, 08 Aug 2019 17:21:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=SrXlbID68lhPKrJjkmbTtajZDQHFU0j/ynkOO+lAohM=;
-        b=Yr5u2Vmo96zfWo39ki7h7j7HCO1EXUDceAcYfoQtM5RXkFFvJypKjsEjKiv8bUFEWd
-         ndb3UqgQdVG5d7QyqSo97A3i3BPmPoiVELQKMA1Y2j3qmge4ZhPji+1S0lPqrtEUxiaC
-         MbJEyrANZe7MemMD0mDcPUlws7G4xTK/eXmUhFky1OS2l8RttkA2unobufRTaXikM86m
-         JjgluiH74qu/c0dBiWmCgueiRclbh5xeau3N0NtY+U7uiSmXweWXVGnCuN+OF9hJPCKc
-         eD4NnaKttNVkM6x4t06CaMZP0P0/iCI3pMHsvmGwzS1YFDZ6jZEsfV2a11ncE5Ojd1jU
-         fVqw==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qJ18L1wbrERX6F3k10BGEMdcTJ2aPiTL4BfastDFNCk=;
+        b=efR77BEuls51ClSBywaN/hcJ6AZ5kn0vIw/M0u8cgAabCxj3RPufdHV5E1zFLIPjh5
+         VLQe4lQ4mfafTAjeFWtrG/iApUet5NUBLELLd8cIU05T/6SJU+oQSWuZxnsck5H9e4+d
+         AVqYTen2tOawpHvT88kTFJ+rkFlUjutbPiH2qtNIfZXKzKb2j42mkPjoj2qoSlCjWzBa
+         03hQyHaULEXxY81DUZa6zdt1ZD9tYWybRTFng5/Vb13BSD5AZ7lVsIzyPuFFga6wyWNe
+         SK0zzHsRmbI+0uFe0MrUwL2xkALc+H6kLZFpFlq/a29ZzgjfRfLpiUXDJBDErrGk/KJS
+         vDuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=SrXlbID68lhPKrJjkmbTtajZDQHFU0j/ynkOO+lAohM=;
-        b=ZoxEAW4dDQaLhVP+FDr6xw0Qm+6WQMifbhbRrOcx/b5+0/kLmy7XJ12DP2mNFXP0m9
-         RRTnrCgiwd4iB7lDP5QM1kMA5kT3M4AcSrB2wMDFygcjsSdsjzdryejAJNJl67f4+HMP
-         dynHnGxF73d7nCWruRnki7zXaLCrcuqZiFeTuQEoS87lzRNk2ZIZs7cul7epHSIFQn9q
-         b1r8Rt5iG/kYn0ZM/7333mWoUkjVybBk0ITK17bU96d1QbSFVaKZXWKwrRJsd+Nn+ooN
-         TTdzTukHuCm26vMoaRYC9jZ65bJLWRkca1c3QrhfxnLwwGxdYPfQaALPHvZLmCixgehN
-         dcLQ==
-X-Gm-Message-State: APjAAAWONcb+8ts3tLdKJJ3zZPCifOOCMfVuu0QrZKYOmTF+Vjjca2xq
-        t4vpvM7EQ3u5OyA4fk1D70E2pA==
-X-Google-Smtp-Source: APXvYqxXRpoNHsJzyfCUQYdj2V8c2KZTPv3rU9ocRemD+2B0qsEHSJiuOKcias/L0ujb0D4xLA65Pw==
-X-Received: by 2002:a0c:8602:: with SMTP id p2mr15734769qva.111.1565310044622;
-        Thu, 08 Aug 2019 17:20:44 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id q17sm37509666qtl.13.2019.08.08.17.20.43
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=qJ18L1wbrERX6F3k10BGEMdcTJ2aPiTL4BfastDFNCk=;
+        b=JdGVI2THjL+GdCadLm7SoJu/YjaIbm0B4SUY0uJZtlDS1O+oOXBiO8AQX2x8glpLyX
+         rm9hwEN290nHVYf7m98Pxq4nizUiKR689A0O8aKxVKpMrjE7Jemjg6zkDomuDxsAQyMV
+         8QDwZoQSSBQ8VQbC1AZhxHtp2GoGoizB2uZ6QWKvdcaUEDBm7J47ARmMCGm4VHAzxMTm
+         1MA+oVAoujYia3lD1o8uEnLkgmOM1JDCRDAfRBdcro6PkEPLs57WbqjQpXNr0E6hfv1l
+         El2F+UsdPiyTOehV0IISL5tUPdjBdi5146AyFKitdnfeaGWrOZjgXVRQCPYDpMhl1cfs
+         7a8Q==
+X-Gm-Message-State: APjAAAXh7bxNVjlV0bW3xer9iYGZDIjllMhRpcv9LhC6wYT0nFbTAzra
+        /gZu+M6sY1faffNl2yW/YsE=
+X-Google-Smtp-Source: APXvYqz+CkU4806/CIx6WZm+rcWifVImcUB5taTQGzvDeO2HlNEropKLCzMbdOV3P7x3CatDHMWbTA==
+X-Received: by 2002:a5d:8451:: with SMTP id w17mr18797106ior.226.1565310111075;
+        Thu, 08 Aug 2019 17:21:51 -0700 (PDT)
+Received: from wandering.us.cray.com (msp-nat.cray.com. [136.162.2.1])
+        by smtp.gmail.com with ESMTPSA id l7sm8426377iof.81.2019.08.08.17.21.49
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 17:20:44 -0700 (PDT)
-Date:   Thu, 8 Aug 2019 17:20:41 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     syzbot <syzbot+30c791a76814a3c6c9f9@syzkaller.appspotmail.com>
-Cc:     ast@kernel.org, aviadye@mellanox.com, borisp@mellanox.com,
-        bpf@vger.kernel.org, daniel@iogearbox.net, davejwatson@fb.com,
-        davem@davemloft.net, john.fastabend@gmail.com, kafai@fb.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
-Subject: Re: KASAN: use-after-free Read in tls_wait_data
-Message-ID: <20190808172041.282a755d@cakuba.netronome.com>
-In-Reply-To: <000000000000262820058f9dc474@google.com>
-References: <000000000000262820058f9dc474@google.com>
-Organization: Netronome Systems, Ltd.
+        Thu, 08 Aug 2019 17:21:50 -0700 (PDT)
+From:   Shaun Tancheff <shaun@tancheff.com>
+X-Google-Original-From: Shaun Tancheff <stancheff@cray.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Shaun Tancheff <stancheff@cray.com>, linux-kbuild@vger.kernel.org,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "'Martin K . Petersen'" <martin.petersen@oracle.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Renninger <trenn@suse.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH 0/1] kbuild: Support building a tree of modules with -M=<root>
+Date:   Thu,  8 Aug 2019 19:21:03 -0500
+Message-Id: <20190809002104.18599-1-stancheff@cray.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 08 Aug 2019 09:44:07 -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    7b4980e0 Add linux-next specific files for 20190802
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14a749b4600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7e1348afd44b5e02
-> dashboard link: https://syzkaller.appspot.com/bug?extid=30c791a76814a3c6c9f9
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+30c791a76814a3c6c9f9@syzkaller.appspotmail.com
+Currently when building lustre against 5.3 kernel modules fail to
+generate <module>.ko files.
 
-Also old tree, pretty confidently I can say:
+Lustre builds a tree of modules however the numerous modules.order files
+are created but only the modules.order file at the root appears to be 
+read.
 
-#syz fix: net/tls: partially revert fix transition through disconnect with close
+This changes the the scheme for KBUILD_EXTMOD to write to and read from
+a single modules.order file at the root.
+
+Shaun Tancheff (1):
+  kbuild: recursive build of external kernel modules
+
+ Makefile               | 1 +
+ scripts/Makefile.build | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+-- 
+2.20.1
+
