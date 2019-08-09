@@ -2,93 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFAF787D0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4C9287D17
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407185AbfHIOo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 10:44:58 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:53237 "EHLO
+        id S2407214AbfHIOqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 10:46:05 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:58941 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfHIOo5 (ORCPT
+        with ESMTP id S2406127AbfHIOqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 10:44:57 -0400
+        Fri, 9 Aug 2019 10:46:04 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M7ehh-1hwwfj3ddd-0084kM; Fri, 09 Aug 2019 16:44:47 +0200
+ 1N79Ey-1iNaIe1kU8-017V2R; Fri, 09 Aug 2019 16:45:20 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     soc@kernel.org
 Cc:     Vladimir Zapolskiy <vz@mleia.com>,
         Sylvain Lemieux <slemieux.tyco@gmail.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCH v2 10/13] net: lpc-enet: allow compile testing
-Date:   Fri,  9 Aug 2019 16:40:36 +0200
-Message-Id: <20190809144043.476786-11-arnd@arndb.de>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Subject: [PATCH v2 11/13] serial: lpc32xx: allow compile testing
+Date:   Fri,  9 Aug 2019 16:40:37 +0200
+Message-Id: <20190809144043.476786-12-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190809144043.476786-1-arnd@arndb.de>
 References: <20190809144043.476786-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:RCFvjeuu0t6f1S3c2jeBwyAit2sEKCe3winoluK8TV6k5NAoOUO
- 0HaU0UeVh1bfmegCwZ/LxZYBGuVQ+7eXPexo60SZ4/fhiQPq4crzC1qGmIJ/ZR2C10ryy8P
- +3n+Rbdz54ykoqC2GhA3rvwxeJ73S0gOOpx9LpPn+IDp8M7Qct4l2VjHj5K1QVYXDT4/g+1
- gvS4O0eBreeQVVrF4XDYQ==
+X-Provags-ID: V03:K1:QSyZAIrEK0tisvxeshqXx4Yf121VPR+VVNYcnXCO8jzU+Wj3Ush
+ I/ukpTsjSD50wlu5mlErjvyyjoC7r5ZaE9gO6Bzq5JQB8kvQN/7/3zM8Bih+zpxqpE1wyo4
+ T5ehI8/mM/L7wAgH4tcbxV4iEiOQijuNX2En16g/UAdInN5IC+HSJHS6z7Tyg1No1B2si8l
+ 19wPbeSZDJ1CNo4wggS2A==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vO1wbEWxD8I=:6+u3R4GfutAihcMR0mmONZ
- HP7bzqimvfTuINSG21LTieDz2KUv6efnOlbOGeMn/i80QZwho0TC8mAEWfJXPHxbAKDG5Suh4
- RknDI+FhEgZXDXw+DJvO73m1TbsaSWq2ADaOzaNwMKz7Yz4pLjKnkyjMsAXyqXqCKvpsnzanG
- DgCK/RBBm1OyJ4pOqRVtrly4GqCbLNtqtqww+vCW+wF2UVLD8sfjRbflblvU3XjSkdb8lxMjW
- Od8LUDWA4Q/S4zjmOaM8r+7U6V1V9EUUhMU8ZmL7yMbEansGeMyI01jfvMSd/YY4eJ7Z5j9Mi
- 4uew4FuY2ITGLxTVi3UPQQVs+qsi8o/GhBVluXyBAkVbRigHeUHG8DvCn2LGcPkWDbBBtAs++
- cnGw/LGJ1ElnskF8l3d/+52MiyvPTv7yNgPEPXW0G+JcTKe+NE3ZVT/64VkZrjVXr4w57wx5h
- v005eDqI5QkSiqRdjwzeJxgfoXeUsRsJrZtQtZyQOphMoQeJKZsR9dHCZBwq/ocx8x8bC7iGf
- BMS2ffpA+JkheWx0C7rTmkMzyAnIFPMYV/Po522SNNBCx4MlExhIzMw5aWwG5vujNXpeXtrSD
- 0WeGsWIjjNnImHwadAS1ScB4KbQd0Xcv7VSH83TABwqk/9+M0AiscaQ6OL6rauWRhnvvucmdq
- hJ4xCU1b0ilijKOsiP6+DOn9UJH6iQOSwn5qWI79J+uZC16GTA08mzqfWm9BYDLFzck/qhkE9
- 5iCn+1XwlD62XtNtWSIAMC5X1XYrH4ZPc/M73w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VJCyh49joGQ=:hiDrY4RgZVRXKwVAgZwTaF
+ zd/yvwV5BTZewhK51/lohRaZMa4Ns09MbbfjiVlXLr5F+LAzi3ITNBjb79lgUU0Y3zS5zA0Gg
+ 6fMw1KccRDUHKbZ7nR5vc3++tNjZAY8jtUo8K1uTy7g7c8fU29PKEi1rzwGZofnn7OUmhCK9/
+ +SoDdtlr/BCbvIO8lImCdQ6JUpVEhWW2ZW6skW9CBes3Aud4FKEi2N/AEreZqioOOYxOxVVbC
+ E7ZXajHg0vvQvFwqJKTMEHyssG8oGufrB2rl2mltwc/9AyeWX5gLPnrgwwGKAYieJgrHBKd90
+ 2hdrZOhAt6ju6w3H7zepU+DH3gSl8nopfVfESIfOH708xGNuc9p3bDTiq61nsIza3PM7gCmGs
+ w44mJQY5PlsPIGTFdlzKnJy+xhElyaG3CbTYGUBn0lngXe6pEAah6teBvuIhbhe9z2KbBoVae
+ xL6OnSGYwiKhBS2tq0YmF+AN4Cvv6dq7t68dsK24GOgio4AyGLVg7DLrJhguVowEXjR3qAqSU
+ vyvia2c9x7tzYcRE2DvRfP7km8GnHCORRT34OKCUqNiMD5pwREOpwFiU0AO86WFKuZhxzydlG
+ uheyaIfuS+5sTAUwai+7fYv+NvzQ5wIxwI/1kz6tLkzmBBAQVrvXoHqxhfqmgJAcwNoa3YLnr
+ Ok37nwVz4h+iJIXlt6wzL8C3QHsoOhlH4hXBTMxqosmMvDo5Skz356oB7K+CDQDhQAaVW9Kuu
+ C3BZGQW5BFpJC6DTSfIJQyquZnDaMZQUeE0TuA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lpc-enet driver can now be built on all platforms, so
-allow compile testing as well.
-
-Add one missing header inclusion that is required in some
-configurations.
+The lpc32xx_loopback_set() function in hte lpc32xx_hs driver is the
+one thing that relies on platform header files. Move that into the
+core platform code so we only need a variable declaration for it,
+and enable COMPILE_TEST building.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ethernet/nxp/Kconfig   | 2 +-
- drivers/net/ethernet/nxp/lpc_eth.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/mach-lpc32xx/serial.c       | 30 ++++++++++++++++++++++++
+ drivers/tty/serial/lpc32xx_hs.c      | 35 ++++------------------------
+ include/linux/soc/nxp/lpc32xx-misc.h |  4 ++++
+ 3 files changed, 38 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/net/ethernet/nxp/Kconfig b/drivers/net/ethernet/nxp/Kconfig
-index 261f107e2be0..418afb84c84b 100644
---- a/drivers/net/ethernet/nxp/Kconfig
-+++ b/drivers/net/ethernet/nxp/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config LPC_ENET
-         tristate "NXP ethernet MAC on LPC devices"
--        depends on ARCH_LPC32XX
-+        depends on ARCH_LPC32XX || COMPILE_TEST
-         select PHYLIB
-         help
- 	  Say Y or M here if you want to use the NXP ethernet MAC included on
-diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
-index 96d509c418bf..141571e2ec11 100644
---- a/drivers/net/ethernet/nxp/lpc_eth.c
-+++ b/drivers/net/ethernet/nxp/lpc_eth.c
+diff --git a/arch/arm/mach-lpc32xx/serial.c b/arch/arm/mach-lpc32xx/serial.c
+index 3f9b30df9f0e..cfb35e5691cd 100644
+--- a/arch/arm/mach-lpc32xx/serial.c
++++ b/arch/arm/mach-lpc32xx/serial.c
+@@ -60,6 +60,36 @@ static struct uartinit uartinit_data[] __initdata = {
+ 	},
+ };
+ 
++/* LPC3250 Errata HSUART.1: Hang workaround via loopback mode on inactivity */
++void lpc32xx_loopback_set(resource_size_t mapbase, int state)
++{
++	int bit;
++	u32 tmp;
++
++	switch (mapbase) {
++	case LPC32XX_HS_UART1_BASE:
++		bit = 0;
++		break;
++	case LPC32XX_HS_UART2_BASE:
++		bit = 1;
++		break;
++	case LPC32XX_HS_UART7_BASE:
++		bit = 6;
++		break;
++	default:
++		WARN(1, "lpc32xx_hs: Warning: Unknown port at %08x\n", mapbase);
++		return;
++	}
++
++	tmp = readl(LPC32XX_UARTCTL_CLOOP);
++	if (state)
++		tmp |= (1 << bit);
++	else
++		tmp &= ~(1 << bit);
++	writel(tmp, LPC32XX_UARTCTL_CLOOP);
++}
++EXPORT_SYMBOL_GPL(lpc32xx_loopback_set);
++
+ void __init lpc32xx_serial_init(void)
+ {
+ 	u32 tmp, clkmodes = 0;
+diff --git a/drivers/tty/serial/lpc32xx_hs.c b/drivers/tty/serial/lpc32xx_hs.c
+index 7f14cd8fac47..d3843f722182 100644
+--- a/drivers/tty/serial/lpc32xx_hs.c
++++ b/drivers/tty/serial/lpc32xx_hs.c
+@@ -25,6 +25,8 @@
+ #include <linux/irq.h>
+ #include <linux/gpio.h>
+ #include <linux/of.h>
++#include <linux/sizes.h>
++#include <linux/soc/nxp/lpc32xx-misc.h>
+ 
+ /*
+  * High Speed UART register offsets
+@@ -79,6 +81,8 @@
+ #define LPC32XX_HSU_TX_TL8B			(0x2 << 0)
+ #define LPC32XX_HSU_TX_TL16B			(0x3 << 0)
+ 
++#define LPC32XX_MAIN_OSC_FREQ			13000000
++
+ #define MODNAME "lpc32xx_hsuart"
+ 
+ struct lpc32xx_hsuart_port {
+@@ -149,8 +153,6 @@ static void lpc32xx_hsuart_console_write(struct console *co, const char *s,
+ 	local_irq_restore(flags);
+ }
+ 
+-static void lpc32xx_loopback_set(resource_size_t mapbase, int state);
+-
+ static int __init lpc32xx_hsuart_console_setup(struct console *co,
+ 					       char *options)
+ {
+@@ -437,35 +439,6 @@ static void serial_lpc32xx_break_ctl(struct uart_port *port,
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ }
+ 
+-/* LPC3250 Errata HSUART.1: Hang workaround via loopback mode on inactivity */
+-static void lpc32xx_loopback_set(resource_size_t mapbase, int state)
+-{
+-	int bit;
+-	u32 tmp;
+-
+-	switch (mapbase) {
+-	case LPC32XX_HS_UART1_BASE:
+-		bit = 0;
+-		break;
+-	case LPC32XX_HS_UART2_BASE:
+-		bit = 1;
+-		break;
+-	case LPC32XX_HS_UART7_BASE:
+-		bit = 6;
+-		break;
+-	default:
+-		WARN(1, "lpc32xx_hs: Warning: Unknown port at %08x\n", mapbase);
+-		return;
+-	}
+-
+-	tmp = readl(LPC32XX_UARTCTL_CLOOP);
+-	if (state)
+-		tmp |= (1 << bit);
+-	else
+-		tmp &= ~(1 << bit);
+-	writel(tmp, LPC32XX_UARTCTL_CLOOP);
+-}
+-
+ /* port->lock is not held.  */
+ static int serial_lpc32xx_startup(struct uart_port *port)
+ {
+diff --git a/include/linux/soc/nxp/lpc32xx-misc.h b/include/linux/soc/nxp/lpc32xx-misc.h
+index af4f82f6cf3b..699c6f1e3aab 100644
+--- a/include/linux/soc/nxp/lpc32xx-misc.h
++++ b/include/linux/soc/nxp/lpc32xx-misc.h
 @@ -14,6 +14,7 @@
- #include <linux/crc32.h>
- #include <linux/etherdevice.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/of_net.h>
- #include <linux/phy.h>
- #include <linux/platform_device.h>
+ #ifdef CONFIG_ARCH_LPC32XX
+ extern u32 lpc32xx_return_iram(void __iomem **mapbase, dma_addr_t *dmaaddr);
+ extern void lpc32xx_set_phy_interface_mode(phy_interface_t mode);
++extern void lpc32xx_loopback_set(resource_size_t mapbase, int state);
+ #else
+ static inline u32 lpc32xx_return_iram(void __iomem **mapbase, dma_addr_t *dmaaddr)
+ {
+@@ -24,6 +25,9 @@ static inline u32 lpc32xx_return_iram(void __iomem **mapbase, dma_addr_t *dmaadd
+ static inline void lpc32xx_set_phy_interface_mode(phy_interface_t mode)
+ {
+ }
++static inline void lpc32xx_loopback_set(resource_size_t mapbase, int state)
++{
++}
+ #endif
+ 
+ #endif  /* __SOC_LPC32XX_MISC_H */
 -- 
 2.20.0
 
