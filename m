@@ -2,336 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1921F87A50
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 14:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5DF87A5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 14:44:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406808AbfHIMip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 08:38:45 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:33766 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406338AbfHIMip (ORCPT
+        id S2406812AbfHIMoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 08:44:11 -0400
+Received: from m4a0039g.houston.softwaregrp.com ([15.124.2.85]:42062 "EHLO
+        m4a0039g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405948AbfHIMoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 08:38:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1565354323; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:references; bh=FndS2oPSLKjThva69oxQR7nLrr+YqC3DHHMjRRpj7Jc=;
-        b=a5MnHzP5fnfOmikNZsrDe1jNtdASMZSFcSedEx77CMt2AWqdyjOVOOuRiLfN68dEkWrxnf
-        k0IYBTpqgw3aociGUqhNE3OnzEZ5h0AZd9yWvu8TLeNyfYV5npwkw8OoBHQeQ/rOmUnTse
-        uSNPRthmDUSpZY0yhiIrcAmXW3u97t8=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     od@zcrc.me, linux-kernel@vger.kernel.org,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-Subject: [PATCH] clocksource: Add driver for the Ingenic JZ47xx OST
-Date:   Fri,  9 Aug 2019 14:38:24 +0200
-Message-Id: <20190809123824.26025-1-paul@crapouillou.net>
+        Fri, 9 Aug 2019 08:44:11 -0400
+Received: FROM m4a0039g.houston.softwaregrp.com (15.120.17.147) BY m4a0039g.houston.softwaregrp.com WITH ESMTP
+ FOR linux-kernel@vger.kernel.org;
+ Fri,  9 Aug 2019 12:43:59 +0000
+Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
+ M4W0335.microfocus.com (2002:f78:1193::f78:1193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Fri, 9 Aug 2019 12:41:44 +0000
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (15.124.8.14) by
+ M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Fri, 9 Aug 2019 12:41:44 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SwKvO7/SIMg5MaGRVhPtNUCxOk+Mr7vfl0YhdHenyMTZqePo2w4tw0rTCEGBEabAA0zbzivhsZLx7P6oRnSSDZT8leoZ4WblstEMQ8Q6qJ+HvZj1THyrvvLAtyg3xsWFhxji5cial9NLjCz0lFefrqcowd7tJas9cR56vIu64cDUmlqJ55SyhumoCJYWrP2Xg185QK2/Q1hlDx3yv/ryDDCdmi7uqCduqcG447BAc/4HiIi1I7Ub+2KklXwx3RG8+p/rNu/kgUCaOsNfrNvCCEPTiPBXsPZlRFTmY+RD7jRAWQffLoqT9ORLVAyuDZazsXMLm+H4lSodD+zfqzC//A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sYcvOwjg8cUJpSFkjmv9VmGrPz3s6iUiLi6iwIx3sng=;
+ b=OSQGCh0d/VjaY8dtSzMtGuRwSUzENTn01UIFUYh90+eOyDGqXAPq53h5EgZuY4cuSOIF8ao+FuP/O14JPlF96J7D33ou039O7KH8SWxxTljxYxofcCCdAa+Api8sG5NHQKe7Sv+UaDb+mh77+zfhNroVm27THkQS/R/waakdVuDe1U2IjhQrEcDr8LZ8OgR+dohL+5eQ7vg9+zOCMbRfVVoLrOUutzzBc5k5QkfAXsJux4kWrFFW7S4M7hNEG4GWMjDvDSAFj+O3AeiA/PvOZdy1ba99eKs4RPztB3j4d75XDoUnqvuEfndxDfwPS5Q2Gxo9OZUEmjN1vqXzKSYymg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from CH2PR18MB3349.namprd18.prod.outlook.com (52.132.246.91) by
+ CH2PR18MB3094.namprd18.prod.outlook.com (52.132.247.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.18; Fri, 9 Aug 2019 12:41:43 +0000
+Received: from CH2PR18MB3349.namprd18.prod.outlook.com
+ ([fe80::8818:7a86:93d7:561a]) by CH2PR18MB3349.namprd18.prod.outlook.com
+ ([fe80::8818:7a86:93d7:561a%6]) with mapi id 15.20.2157.015; Fri, 9 Aug 2019
+ 12:41:42 +0000
+From:   Martin Wilck <Martin.Wilck@suse.com>
+To:     "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: 5.3-rc3: Frozen graphics with kcompactd migrating i915 pages
+Thread-Topic: 5.3-rc3: Frozen graphics with kcompactd migrating i915 pages
+Thread-Index: AQHVTq/MWvioSNESukKKSJFs3b9mpA==
+Date:   Fri, 9 Aug 2019 12:41:42 +0000
+Message-ID: <ad70d1985e8d0227dc55fedeec769de166e63ae0.camel@suse.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Martin.Wilck@suse.com; 
+x-originating-ip: [94.218.227.174]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5ac63d25-9da2-4e0a-7dbb-08d71cc6eeaa
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CH2PR18MB3094;
+x-ms-traffictypediagnostic: CH2PR18MB3094:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <CH2PR18MB3094FF0254A0470A4A0BC64AFCD60@CH2PR18MB3094.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 01244308DF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(346002)(376002)(366004)(136003)(39860400002)(199004)(189003)(256004)(14444005)(6116002)(4326008)(3846002)(86362001)(66066001)(2501003)(478600001)(8936002)(966005)(71190400001)(99286004)(71200400001)(6512007)(6306002)(14454004)(316002)(25786009)(6486002)(6506007)(7736002)(6436002)(5640700003)(26005)(2906002)(102836004)(66556008)(53936002)(305945005)(8676002)(64756008)(66476007)(118296001)(91956017)(66946007)(76116006)(5660300002)(36756003)(486006)(6916009)(81166006)(2351001)(476003)(2616005)(81156014)(66446008)(186003)(10126625002);DIR:OUT;SFP:1102;SCL:1;SRVR:CH2PR18MB3094;H:CH2PR18MB3349.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: HFXsEq3Rxuc/glnwt5TG6HqHdX/XL7+TP4+LH8gzL2UwuYRb0vwSyQGGZqEu9eJGO+yvqzyZlGLeVZU1AczFhR75Sg5/Qsi0u9yF9d++aPILketMg4prle/JQNpFv95fnK/8gYOAu2LgagzEbdJEUeb3VH8EenVPAhrQPCs7tfu8bIJoNGZKieFcuZIvcht1xejyNuxmU5UvFKQEObXSdKCrwsnDRmErbqi2hVSomsF5hNQNgWlr8CdT1WRTBp/9/Dz43G3zsdL3uxTRrpyp2ZYkYCLBF/05W1R9+hqhqyoO/YSyoc0+RZoodIjgklYNyPItHuzUaSRJxtB5dtWaQ5Fx6hvP4TMuf03FTRvkYUPwUU1gh9IIqgSOVcdq7nDpF0QL9Ts1E/DKHUd43GDIQywaUYOiYyb3V71LCMCkjiU=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6362FECD24F3944981FF0F6601AC15D0@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ac63d25-9da2-4e0a-7dbb-08d71cc6eeaa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2019 12:41:42.8418
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cSdgwa7fwWJmyN6jTOkt5LuczLqzzg2g6WCfc89fC1cUMBK82TB3FGVy//tQjaIGOGkWb/8BDL2riZJ0EuN6Jw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR18MB3094
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maarten ter Huurne <maarten@treewalker.org>
-
-OST is the OS Timer, a 64-bit timer/counter with buffered reading.
-
-SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770 and
-JZ4780 have a 64-bit OST.
-
-This driver will register both a clocksource and a sched_clock to the
-system.
-
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Tested-by: Artur Rojek <contact@artur-rojek.eu>
----
-
-Hi,
-
-This patch comes from a bigger patchset that was cut in smaller pieces
-for easier integration to mainline.
-(The patchset was https://lkml.org/lkml/2019/3/27/1837)
-
-The only change is the use of device_node_to_regmap(), which was added
-in a prior patchset now merged in the MIPS tree.
-
-For that reason this patch is based on the ingenic-tcu-v5.4 branch of
-the MIPS tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git).
-
-Thanks,
--Paul
-
- drivers/clocksource/Kconfig       |   8 ++
- drivers/clocksource/Makefile      |   1 +
- drivers/clocksource/ingenic-ost.c | 221 ++++++++++++++++++++++++++++++
- 3 files changed, 230 insertions(+)
- create mode 100644 drivers/clocksource/ingenic-ost.c
-
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index a9cdc2c4f8bd..3b1503082a23 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -696,4 +696,12 @@ config INGENIC_TIMER
- 	help
- 	  Support for the timer/counter unit of the Ingenic JZ SoCs.
- 
-+config INGENIC_OST
-+	bool "Ingenic JZ47xx Operating System Timer"
-+	depends on MIPS || COMPILE_TEST
-+	depends on COMMON_CLK
-+	select MFD_SYSCON
-+	help
-+	  Support for the OS Timer of the Ingenic JZ4770 or similar SoC.
-+
- endmenu
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 4dfe4225ece7..6bc97a6fd229 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -80,6 +80,7 @@ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
- obj-$(CONFIG_H8300_TMR8)		+= h8300_timer8.o
- obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
- obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
-+obj-$(CONFIG_INGENIC_OST)		+= ingenic-ost.o
- obj-$(CONFIG_INGENIC_TIMER)		+= ingenic-timer.o
- obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
- obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
-diff --git a/drivers/clocksource/ingenic-ost.c b/drivers/clocksource/ingenic-ost.c
-new file mode 100644
-index 000000000000..c708d5d7dd15
---- /dev/null
-+++ b/drivers/clocksource/ingenic-ost.c
-@@ -0,0 +1,221 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * JZ47xx SoCs TCU Operating System Timer driver
-+ *
-+ * Copyright (C) 2016 Maarten ter Huurne <maarten@treewalker.org>
-+ * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clocksource.h>
-+#include <linux/mfd/ingenic-tcu.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/regmap.h>
-+#include <linux/sched_clock.h>
-+
-+#define TCU_OST_TCSR_MASK	0xffc0
-+#define TCU_OST_TCSR_CNT_MD	BIT(15)
-+
-+#define TCU_OST_CHANNEL		15
-+
-+struct ingenic_ost_soc_info {
-+	bool is64bit;
-+};
-+
-+struct ingenic_ost {
-+	struct regmap *map;
-+	struct clk *clk;
-+
-+	struct clocksource cs;
-+};
-+
-+static struct ingenic_ost *ingenic_ost;
-+
-+static u64 notrace ingenic_ost_read_cntl(void)
-+{
-+	u32 val;
-+
-+	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTL, &val);
-+
-+	return val;
-+}
-+
-+static u64 notrace ingenic_ost_read_cnth(void)
-+{
-+	u32 val;
-+
-+	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTH, &val);
-+
-+	return val;
-+}
-+
-+static u64 notrace ingenic_ost_clocksource_read64(struct clocksource *cs)
-+{
-+	u32 val1, val2;
-+	u64 count, recount;
-+	s64 diff;
-+
-+	/*
-+	 * The buffering of the upper 32 bits of the timer prevents wrong
-+	 * results from the bottom 32 bits overflowing due to the timer ticking
-+	 * along. However, it does not prevent wrong results from simultaneous
-+	 * reads of the timer, which could reset the buffer mid-read.
-+	 * Since this kind of wrong read can happen only when the bottom bits
-+	 * overflow, there will be minutes between wrong reads, so if we read
-+	 * twice in succession, at least one of the reads will be correct.
-+	 */
-+
-+	/* Bypass the regmap here as we must return as soon as possible */
-+	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTL, &val1);
-+	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTHBUF, &val2);
-+	count = (u64)val1 | (u64)val2 << 32;
-+
-+	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTL, &val1);
-+	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTHBUF, &val2);
-+	recount = (u64)val1 | (u64)val2 << 32;
-+
-+	/*
-+	 * A wrong read will produce a result that is 1<<32 too high: the bottom
-+	 * part from before overflow and the upper part from after overflow.
-+	 * Therefore, the lower value of the two reads is the correct value.
-+	 */
-+
-+	diff = (s64)(recount - count);
-+	if (unlikely(diff < 0))
-+		count = recount;
-+
-+	return count;
-+}
-+
-+static u64 notrace ingenic_ost_clocksource_read32(struct clocksource *cs)
-+{
-+	return ingenic_ost_read_cnth();
-+}
-+
-+static int __init ingenic_ost_probe(struct platform_device *pdev)
-+{
-+	const struct ingenic_ost_soc_info *soc_info;
-+	struct device *dev = &pdev->dev;
-+	struct ingenic_ost *ost;
-+	struct clocksource *cs;
-+	unsigned long rate, flags;
-+	int err;
-+
-+	soc_info = device_get_match_data(dev);
-+	if (!soc_info)
-+		return -EINVAL;
-+
-+	ost = devm_kzalloc(dev, sizeof(*ost), GFP_KERNEL);
-+	if (!ost)
-+		return -ENOMEM;
-+
-+	ingenic_ost = ost;
-+
-+	ost->map = device_node_to_regmap(dev->parent->of_node);
-+	if (!ost->map) {
-+		dev_err(dev, "regmap not found\n");
-+		return -EINVAL;
-+	}
-+
-+	ost->clk = devm_clk_get(dev, "ost");
-+	if (IS_ERR(ost->clk))
-+		return PTR_ERR(ost->clk);
-+
-+	err = clk_prepare_enable(ost->clk);
-+	if (err)
-+		return err;
-+
-+	/* Clear counter high/low registers */
-+	if (soc_info->is64bit)
-+		regmap_write(ost->map, TCU_REG_OST_CNTL, 0);
-+	regmap_write(ost->map, TCU_REG_OST_CNTH, 0);
-+
-+	/* Don't reset counter at compare value. */
-+	regmap_update_bits(ost->map, TCU_REG_OST_TCSR,
-+			   TCU_OST_TCSR_MASK, TCU_OST_TCSR_CNT_MD);
-+
-+	rate = clk_get_rate(ost->clk);
-+
-+	/* Enable OST TCU channel */
-+	regmap_write(ost->map, TCU_REG_TESR, BIT(TCU_OST_CHANNEL));
-+
-+	cs = &ost->cs;
-+	cs->name	= "ingenic-ost";
-+	cs->rating	= 320;
-+	cs->flags	= CLOCK_SOURCE_IS_CONTINUOUS;
-+
-+	if (soc_info->is64bit) {
-+		cs->mask = CLOCKSOURCE_MASK(64);
-+		cs->read = ingenic_ost_clocksource_read64;
-+	} else {
-+		cs->mask = CLOCKSOURCE_MASK(32);
-+		cs->read = ingenic_ost_clocksource_read32;
-+	}
-+
-+	err = clocksource_register_hz(cs, rate);
-+	if (err) {
-+		dev_err(dev, "clocksource registration failed: %d\n", err);
-+		clk_disable_unprepare(ost->clk);
-+		return err;
-+	}
-+
-+	/* Cannot register a sched_clock with interrupts on */
-+	local_irq_save(flags);
-+	if (soc_info->is64bit)
-+		sched_clock_register(ingenic_ost_read_cntl, 32, rate);
-+	else
-+		sched_clock_register(ingenic_ost_read_cnth, 32, rate);
-+	local_irq_restore(flags);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused ingenic_ost_suspend(struct device *dev)
-+{
-+	struct ingenic_ost *ost = dev_get_drvdata(dev);
-+
-+	clk_disable(ost->clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused ingenic_ost_resume(struct device *dev)
-+{
-+	struct ingenic_ost *ost = dev_get_drvdata(dev);
-+
-+	return clk_enable(ost->clk);
-+}
-+
-+static const struct dev_pm_ops __maybe_unused ingenic_ost_pm_ops = {
-+	/* _noirq: We want the OST clock to be gated last / ungated first */
-+	.suspend_noirq = ingenic_ost_suspend,
-+	.resume_noirq  = ingenic_ost_resume,
-+};
-+
-+static const struct ingenic_ost_soc_info jz4725b_ost_soc_info = {
-+	.is64bit = false,
-+};
-+
-+static const struct ingenic_ost_soc_info jz4770_ost_soc_info = {
-+	.is64bit = true,
-+};
-+
-+static const struct of_device_id ingenic_ost_of_match[] = {
-+	{ .compatible = "ingenic,jz4725b-ost", .data = &jz4725b_ost_soc_info, },
-+	{ .compatible = "ingenic,jz4770-ost", .data = &jz4770_ost_soc_info, },
-+	{ }
-+};
-+
-+static struct platform_driver ingenic_ost_driver = {
-+	.driver = {
-+		.name = "ingenic-ost",
-+#ifdef CONFIG_PM_SUSPEND
-+		.pm = &ingenic_ost_pm_ops,
-+#endif
-+		.of_match_table = ingenic_ost_of_match,
-+	},
-+};
-+builtin_platform_driver_probe(ingenic_ost_driver, ingenic_ost_probe);
--- 
-2.21.0.593.g511ec345e18
-
+VGhpcyBoYXBwZW5lZCB0byBtZSB0b2RheSwgcnVubmluZyBrZXJuZWwgNS4zLjAtcmMzLTEuZzU3
+MTg2M2ItZGVmYXVsdA0KKDUuMy1yYzMgd2l0aCBqdXN0IGEgZmV3IHBhdGNoZXMgb24gdG9wKSwg
+YWZ0ZXIgc3RhcnRpbmcgYSBLVk0gdmlydHVhbA0KbWFjaGluZS4gVGhlIFggc2NyZWVuIHdhcyBm
+cm96ZW4uIFJlbW90ZSBsb2dpbiB2aWEgc3NoIHdhcyBzdGlsbA0KcG9zc2libGUsIHRodXMgSSB3
+YXMgYWJsZSB0byByZXRyaWV2ZSBiYXNpYyBsb2dzLg0KDQpzeXNycS13IHNob3dlZCB0d28gYmxv
+Y2tlZCBwcm9jZXNzZXMgKGtjb21wYWN0ZDAgYW5kIEtWTSkuIEFmdGVyIGENCm1pbnV0ZSwgdGhl
+IHNhbWUgdHdvIHByb2Nlc3NlcyB3ZXJlIHN0aWxsIGJsb2NrZWQuIEtWTSBzZWVtcyB0byB0cnkg
+dG8NCmFjcXVpcmUgYSBsb2NrIHRoYXQga2NvbXBhY3RkIGlzIGhvbGRpbmcuIGtjb21wYWN0ZCBp
+cyB3YWl0aW5nIGZvciBJTw0KdG8gY29tcGxldGUgb24gcGFnZXMgb3duZWQgYnkgdGhlIGk5MTUg
+ZHJpdmVyLg0KDQprY29tcGFjdGQgc3RhY2s6DQoNCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1
+c2UuZGUga2VybmVsOiBzeXNycTogU2hvdyBCbG9ja2VkIFN0YXRlDQpBdWcgMDkgMTI6MTI6NDgg
+YXBvbGxvbi5zdXNlLmRlDQprZXJuZWw6ICAgdGFzayAgICAgICAgICAgICAgICAgICAgICAgIFBD
+IHN0YWNrICAgcGlkIGZhdGhlcg0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJu
+ZWw6DQprY29tcGFjdGQwICAgICAgRCAgICAwICAgIDQzICAgICAgMiAweDgwMDA0MDAwDQpBdWcg
+MDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlIGtlcm5lbDogQ2FsbCBUcmFjZToNCkF1ZyAwOSAx
+MjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiAgPyBfX3NjaGVkdWxlKzB4MmFmLzB4NmEw
+DQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlIGtlcm5lbDogIHNjaGVkdWxlKzB4MzMv
+MHg5MA0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJuZWw6ICBpb19zY2hlZHVs
+ZSsweDEyLzB4NDANCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiAgX19s
+b2NrX3BhZ2UrMHgxMjMvMHgyMDANCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2Vy
+bmVsOiAgPw0KZ2VuOF9wcGd0dF9jbGVhcl9wZHArMHhjMC8weDE0MCBbaTkxNV0NCkF1ZyAwOSAx
+MjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiAgPw0KZmlsZV9mZGF0YXdhaXRfcmFuZ2Ur
+MHgyMC8weDIwDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlIGtlcm5lbDogIHNldF9w
+YWdlX2RpcnR5X2xvY2srMHg0OS8weDUwDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRl
+DQprZXJuZWw6ICBpOTE1X2dlbV91c2VycHRyX3B1dF9wYWdlcysweDEzZi8weDFjMCBbaTkxNV0N
+CkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUNCmtlcm5lbDogIF9faTkxNV9nZW1fb2Jq
+ZWN0X3B1dF9wYWdlcysweDVlLzB4YTAgW2k5MTVdDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5z
+dXNlLmRlDQprZXJuZWw6ICB1c2VycHRyX21uX2ludmFsaWRhdGVfcmFuZ2Vfc3RhcnQrMHgxZmYv
+MHgyMjAgW2k5MTVdDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlDQprZXJuZWw6ICBf
+X21tdV9ub3RpZmllcl9pbnZhbGlkYXRlX3JhbmdlX3N0YXJ0KzB4NTcvMHhhMA0KQXVnIDA5IDEy
+OjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJuZWw6ICB0cnlfdG9fdW5tYXBfb25lKzB4YTBiLzB4
+YWUwDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlIGtlcm5lbDogID8gX19tb2RfbHJ1
+dmVjX3N0YXRlKzB4M2YvMHhmMA0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJu
+ZWw6ICBybWFwX3dhbGtfZmlsZSsweGYyLzB4MjUwDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5z
+dXNlLmRlIGtlcm5lbDogIHRyeV90b191bm1hcCsweGE2LzB4ZTANCkF1ZyAwOSAxMjoxMjo0OCBh
+cG9sbG9uLnN1c2UuZGUga2VybmVsOiAgPyBwYWdlX3JlbW92ZV9ybWFwKzB4MjkwLzB4MjkwDQpB
+dWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlIGtlcm5lbDogID8gcGFnZV9ub3RfbWFwcGVk
+KzB4MjAvMHgyMA0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJuZWw6ICA/IHBh
+Z2VfZ2V0X2Fub25fdm1hKzB4ODAvMHg4MA0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5k
+ZSBrZXJuZWw6ICBtaWdyYXRlX3BhZ2VzKzB4OGNkLzB4YmMwDQpBdWcgMDkgMTI6MTI6NDggYXBv
+bGxvbi5zdXNlLmRlIGtlcm5lbDogID8NCmZhc3RfaXNvbGF0ZV9mcmVlcGFnZXMrMHg2YjAvMHg2
+YjANCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiAgPyBtb3ZlX2ZyZWVs
+aXN0X3RhaWwrMHhiMC8weGIwDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlIGtlcm5l
+bDogIGNvbXBhY3Rfem9uZSsweDY2OS8weGM4MA0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3Vz
+ZS5kZSBrZXJuZWw6ICA/DQplbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHhiOC8weGJl
+DQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlIGtlcm5lbDogIGtjb21wYWN0ZF9kb193
+b3JrKzB4MTIwLzB4MjkwDQoNCg0KS1ZNIHN0YWNrOg0KDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxv
+bi5zdXNlLmRlIGtlcm5lbDogQ1BVIDAvS1ZNICAgICAgIEQgICAgMA0KMjUxODkgICAgICAxIDB4
+MDAwMDAzMjANCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiBDYWxsIFRy
+YWNlOg0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJuZWw6ICA/IF9fc2NoZWR1
+bGUrMHgyYWYvMHg2YTANCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiAg
+c2NoZWR1bGUrMHgzMy8weDkwDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlDQprZXJu
+ZWw6ICBzY2hlZHVsZV9wcmVlbXB0X2Rpc2FibGVkKzB4YS8weDEwDQpBdWcgMDkgMTI6MTI6NDgg
+YXBvbGxvbi5zdXNlLmRlDQprZXJuZWw6ICBfX211dGV4X2xvY2suaXNyYS4wKzB4MTcyLzB4NGQw
+DQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlDQprZXJuZWw6ICB1c2VycHRyX21uX2lu
+dmFsaWRhdGVfcmFuZ2Vfc3RhcnQrMHgxYmYvMHgyMjAgW2k5MTVdDQpBdWcgMDkgMTI6MTI6NDgg
+YXBvbGxvbi5zdXNlLmRlDQprZXJuZWw6ICBfX21tdV9ub3RpZmllcl9pbnZhbGlkYXRlX3Jhbmdl
+X3N0YXJ0KzB4NTcvMHhhMA0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJuZWw6
+ICB0cnlfdG9fdW5tYXBfb25lKzB4YTBiLzB4YWUwDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5z
+dXNlLmRlIGtlcm5lbDogIHJtYXBfd2Fsa19maWxlKzB4ZjIvMHgyNTANCkF1ZyAwOSAxMjoxMjo0
+OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiAgdHJ5X3RvX3VubWFwKzB4YTYvMHhlMA0KQXVnIDA5
+IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJuZWw6ICA/IHBhZ2VfcmVtb3ZlX3JtYXArMHgy
+OTAvMHgyOTANCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiAgPyBwYWdl
+X25vdF9tYXBwZWQrMHgyMC8weDIwDQpBdWcgMDkgMTI6MTI6NDggYXBvbGxvbi5zdXNlLmRlIGtl
+cm5lbDogID8gcGFnZV9nZXRfYW5vbl92bWErMHg4MC8weDgwDQpBdWcgMDkgMTI6MTI6NDggYXBv
+bGxvbi5zdXNlLmRlIGtlcm5lbDogIG1pZ3JhdGVfcGFnZXMrMHg4Y2QvMHhiYzANCkF1ZyAwOSAx
+MjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUga2VybmVsOiAgPw0KZmFzdF9pc29sYXRlX2ZyZWVwYWdl
+cysweDZiMC8weDZiMA0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJuZWw6ICA/
+IG1vdmVfZnJlZWxpc3RfdGFpbCsweGIwLzB4YjANCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1
+c2UuZGUga2VybmVsOiAgY29tcGFjdF96b25lKzB4NjY5LzB4YzgwDQpBdWcgMDkgMTI6MTI6NDgg
+YXBvbGxvbi5zdXNlLmRlIGtlcm5lbDogIGNvbXBhY3Rfem9uZV9vcmRlcisweGM2LzB4ZjANCkF1
+ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUNCmtlcm5lbDogIHRyeV90b19jb21wYWN0X3Bh
+Z2VzKzB4Y2MvMHgyYTANCkF1ZyAwOSAxMjoxMjo0OCBhcG9sbG9uLnN1c2UuZGUNCmtlcm5lbDog
+IF9fYWxsb2NfcGFnZXNfZGlyZWN0X2NvbXBhY3QrMHg3Yy8weDE1MA0KQXVnIDA5IDEyOjEyOjQ4
+IGFwb2xsb24uc3VzZS5kZQ0Ka2VybmVsOiAgX19hbGxvY19wYWdlc19zbG93cGF0aCsweDFlZS8w
+eGQwMA0KQXVnIDA5IDEyOjEyOjQ4IGFwb2xsb24uc3VzZS5kZSBrZXJuZWw6ICA/IHZteF92Y3B1
+X2xvYWQrMHgxMDAvMHgxMjANCltrdm1faW50ZWxdDQoNCkZ1bGwgbG9ncyBjYW4gYmUgZm91bmQg
+dW5kZXIgaHR0cHM6Ly9wYXN0ZWJpbi5jb20vS0o2dGNjajQNCkkgaGF2ZW4ndCB5ZXQgdHJpZWQg
+aWYgdGhpcyBpcyByZXByb2R1Y2libGUuDQoNClJlZ2FyZHMNCk1hcnRpbg0KDQo=
