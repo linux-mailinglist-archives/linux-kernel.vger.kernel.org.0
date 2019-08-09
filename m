@@ -2,151 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50E6587FC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4084B87FCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:24:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407429AbfHIQXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:23:25 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3035 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407405AbfHIQXY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:23:24 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4d9dfc0001>; Fri, 09 Aug 2019 09:23:24 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 09 Aug 2019 09:23:22 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 09 Aug 2019 09:23:22 -0700
-Received: from [10.2.167.88] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 9 Aug
- 2019 16:23:21 +0000
-Subject: Re: [PATCH v8 19/21] soc/tegra: pmc: Configure deep sleep control
- settings
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <rjw@rjwysocki.net>,
-        <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-20-git-send-email-skomatineni@nvidia.com>
- <57ed54cd-bf57-cab1-eb63-8548761640de@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <275f3685-bc53-38ff-c778-cf2ea588e5a5@nvidia.com>
-Date:   Fri, 9 Aug 2019 09:23:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2437012AbfHIQYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:24:34 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:58914 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406775AbfHIQYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 12:24:31 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id B7BF8FB03;
+        Fri,  9 Aug 2019 18:24:27 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3amAQx4zBijK; Fri,  9 Aug 2019 18:24:24 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id A595841D9E; Fri,  9 Aug 2019 18:24:23 +0200 (CEST)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Sam Ravnborg <sam@ravnborg.org>
+Subject: [PATCH v2 0/3] drm: bridge: Add NWL MIPI DSI host controller support
+Date:   Fri,  9 Aug 2019 18:24:20 +0200
+Message-Id: <cover.1565367567.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <57ed54cd-bf57-cab1-eb63-8548761640de@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565367804; bh=hZlKkX1rFr4vL+pJND2gxRlDf4kcTv5t7znratg6u9E=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=SJkVka8g7pDkab2VphrL2rmAmK5iXvcQ05yk3qkKTv3xk4y3vUoBg/pRkL3nWidRN
-         5oiE+oirqHYJS+K+KJFSToQ7i7sCrAbjVP6LflqEOf7/PFpjEuCR/CS120Tlm4UKWF
-         admBMJgXBi4e0v/n+PqESkWFCAGHv5ndT77VICIqXja+08Cg+hAiq9WgpEUDN6MIuB
-         f4XvEanilPyGjZp81Au9pHkxlKQO/WFLl2dftnl38Me4HaR/WB4prpS25quawOpctt
-         yszooDw8n76ZdYfVywL8u3Vciydmc3ezjp+2wBcs4tbMS8Xejdw3WWIzKGrwkmJIcE
-         pbyST3xXUvLcw==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds initial support for the NWL MIPI DSI Host controller found on i.MX8
+SoCs.
 
-On 8/9/19 6:23 AM, Dmitry Osipenko wrote:
-> 09.08.2019 2:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
->> timings which are platform specific that should be configured before
->> entering into deep sleep.
->>
->> Below are the timing specific configurations for deep sleep entry and
->> wakeup.
->> - Core rail power-on stabilization timer
->> - OSC clock stabilization timer after SOC rail power is stabilized.
->> - Core power off time is the minimum wake delay to keep the system
->>    in deep sleep state irrespective of any quick wake event.
->>
->> These values depends on the discharge time of regulators and turn OFF
->> time of the PMIC to allow the complete system to finish entering into
->> deep sleep state.
->>
->> These values vary based on the platform design and are specified
->> through the device tree.
->>
->> This patch has implementation to configure these timings which are must
->> to have for proper deep sleep and wakeup operations.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/soc/tegra/pmc.c | 13 ++++++++++++-
->>   1 file changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index e013ada7e4e9..9a78d8417367 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -88,6 +88,8 @@
->>  =20
->>   #define PMC_CPUPWRGOOD_TIMER		0xc8
->>   #define PMC_CPUPWROFF_TIMER		0xcc
->> +#define PMC_COREPWRGOOD_TIMER		0x3c
->> +#define PMC_COREPWROFF_TIMER		0xe0
->>  =20
->>   #define PMC_PWR_DET_VALUE		0xe4
->>  =20
->> @@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs tegra20_pmc_reg=
-s =3D {
->>  =20
->>   static void tegra20_pmc_init(struct tegra_pmc *pmc)
->>   {
->> -	u32 value;
->> +	u32 value, osc, pmu, off;
->>  =20
->>   	/* Always enable CPU power request */
->>   	value =3D tegra_pmc_readl(pmc, PMC_CNTRL);
->> @@ -2303,6 +2305,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pm=
-c)
->>   	value =3D tegra_pmc_readl(pmc, PMC_CNTRL);
->>   	value |=3D PMC_CNTRL_SYSCLK_OE;
->>   	tegra_pmc_writel(pmc, value, PMC_CNTRL);
->> +
->> +	osc =3D DIV_ROUND_UP(pmc->core_osc_time * 8192, 1000000);
->> +	pmu =3D DIV_ROUND_UP(pmc->core_pmu_time * 32768, 1000000);
->> +	off =3D DIV_ROUND_UP(pmc->core_off_time * 32768, 1000000);
->> +	if (osc && pmu)
->> +		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
->> +				 PMC_COREPWRGOOD_TIMER);
->> +	if (off)
->> +		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
-> The osc/pmu/off values are undefined if they are not defined in device-tr=
-ee. I suppose this
-> need to be corrected in tegra_pmc_parse_dt() if the values really matter =
-even if LP0 suspend
-> isn't supported in device-tree.
->
-> And I'm also not sure what's wrong with setting 0 for the timers.
->
-These settings are for SC7 only and will not have any impact in normal=20
-state.
->>   }
->>  =20
->>   static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
->>
+It adds support for the i.MX8MQ but the same IP core can also be found on e.g.
+i.MX8QXP. I added the necessary hooks to support other imx8 variants but since
+I only have imx8mq boards to test I omitted the platform data for other SoCs.
+
+The code is based on NXPs BSP so I added Robert Chiras as
+Co-authored-by. Robert, if this looks sane could you add your
+Signed-off-by:?
+
+The most notable changes over the BSP driver are
+ - Calculate HS mode timing from phy_configure_opts_mipi_dphy
+ - Perform all clock setup via DT
+ - Merge nwl-imx and nwl drivers
+ - Add B0 silion revision quirk
+ - Become a bridge driver to hook into mxsfb (from what I read[0] DCSS, which
+   also can drive the nwl on the imx8mq will likely not become part of
+   imx-display-subsystem so it makes sense to make it drive a bridge for dsi as
+   well).
+ - Use panel_bridge to attach the panel
+
+This has been tested on a Librem 5 devkit using mxsfb with Robert's patches[1]
+and the rocktech-jh057n00900 panel driver on next-20190807. The DCSS can later
+on also act as input source too.
+
+Changes from v1:
+- Per review comments by Sam Ravnborg
+  https://lists.freedesktop.org/archives/dri-devel/2019-July/228130.html
+  - Change binding docs to YAML
+  - build: Don't always visit imx-nwl/
+  - build: Add header-test-y
+  - Sort headers according to DRM convention
+  - Use drm_display_mode instead of videmode
+- Per review comments by Fabio Estevam
+  https://lists.freedesktop.org/archives/dri-devel/2019-July/228299.html
+  - Don't restrict build to ARCH_MXC
+  - Drop unused includes
+  - Drop unreachable code in imx_nwl_dsi_bridge_mode_fixup()
+  - Drop remaining calls of dev_err() and use DRM_DEV_ERR()
+    consistently.
+  - Use devm_platform_ioremap_resource()
+  - Drop devm_free_irq() in probe() error path
+  - Use single line comments where sufficient
+  - Use <linux/time64.h> instead of defining USEC_PER_SEC
+  - Make input source select imx8 specific
+  - Drop <asm/unaligned.h> inclusion (after removal of get_unaligned_le32)
+  - Drop all EXPORT_SYMBOL_GPL() for functions used in the same module
+    but different source files.
+  - Drop nwl_dsi_enable_{rx,tx}_clock() by invoking clk_prepare_enable()
+    directly
+  - Remove pointless comment
+- Laurent Pinchart
+  https://lists.freedesktop.org/archives/dri-devel/2019-July/228313.html
+  https://lists.freedesktop.org/archives/dri-devel/2019-July/228308.html
+  - Drop (on iMX8MQ) unused csr regmap
+  - Use NWL_MAX_PLATFORM_CLOCKS everywhere
+  - Drop get_unaligned_le32() usage
+  - remove duplicate 'for the' in binding docs
+  - Don't include unused <linux/clk-provider.h>
+  - Don't include unused <linux/component.h>
+  - Drop dpms_mode for tracking state, trust the drm layer on that
+  - Use pm_runtime_put() instead of pm_runtime_put_sync()
+  - Don't overwrite encoder type
+  - Make imx_nwl_platform_data const
+  - Use the reset controller API instead of open coding that platform specific
+    part
+  - Use <linux/bitfield.h> intead of making up our own defines
+  - name mipi_dsi_transfer less generic: nwl_dsi_transfer
+  - ensure clean in .remove by calling mipi_dsi_host_unregister.
+  - prefix constants by NWL_DSI_
+  - properly format transfer_direction enum
+  - simplify platform clock handling
+  - Don't modify state in mode_fixup() and use mode_set() instead
+  - Drop bridge detach(), already handle by nwl_dsi_host_detach()
+  - Drop USE_*_QUIRK() macros
+- Drop (for now) unused clock defnitions. 'pixel' and 'bypass' clock will be
+  used for i.MX8 SoCs but since they're unused atm drop the definitions - but
+  keep the logic to enable/disable several clocks in place since we know we'll
+  need it in the future.
+
+Changes from v0:
+- Add quirk for IMQ8MQ silicon B0 revision to not mess with the
+  system reset controller on power down since enable() won't work
+  otherwise.
+- Drop devm_free_irq() handled by the device driver core
+- Disable tx esc clock after the phy power down to unbreak
+  disable/enable (unblank/blank)
+- Add ports to dt binding docs
+- Select GENERIC_PHY_MIPI_DPHY instead of GENERIC_PHY for
+  phy_mipi_dphy_get_default_config
+- Select DRM_MIPI_DSI
+- Include drm_print.h to fix build on next-20190408
+- Drop some debugging messages
+- Newline terminate all DRM_ printouts
+- Turn component driver into a drm bridge
+
+[0]: https://lists.freedesktop.org/archives/dri-devel/2019-May/219484.html
+[1]: https://patchwork.freedesktop.org/series/62822/
+
+Guido Günther (3):
+  arm64: imx8mq: add imx8mq iomux-gpr field defines
+  dt-bindings: display/bridge: Add binding for NWL mipi dsi host
+    controller
+  drm/bridge: Add NWL MIPI DSI host controller support
+
+ .../bindings/display/bridge/nwl-dsi.yaml      | 155 ++++
+ drivers/gpu/drm/bridge/Kconfig                |   2 +
+ drivers/gpu/drm/bridge/Makefile               |   1 +
+ drivers/gpu/drm/bridge/nwl-dsi/Kconfig        |  15 +
+ drivers/gpu/drm/bridge/nwl-dsi/Makefile       |   4 +
+ drivers/gpu/drm/bridge/nwl-dsi/nwl-drv.c      | 484 ++++++++++++
+ drivers/gpu/drm/bridge/nwl-dsi/nwl-drv.h      |  66 ++
+ drivers/gpu/drm/bridge/nwl-dsi/nwl-dsi.c      | 700 ++++++++++++++++++
+ drivers/gpu/drm/bridge/nwl-dsi/nwl-dsi.h      | 112 +++
+ include/linux/mfd/syscon/imx8mq-iomuxc-gpr.h  |  62 ++
+ 10 files changed, 1601 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
+ create mode 100644 drivers/gpu/drm/bridge/nwl-dsi/Kconfig
+ create mode 100644 drivers/gpu/drm/bridge/nwl-dsi/Makefile
+ create mode 100644 drivers/gpu/drm/bridge/nwl-dsi/nwl-drv.c
+ create mode 100644 drivers/gpu/drm/bridge/nwl-dsi/nwl-drv.h
+ create mode 100644 drivers/gpu/drm/bridge/nwl-dsi/nwl-dsi.c
+ create mode 100644 drivers/gpu/drm/bridge/nwl-dsi/nwl-dsi.h
+ create mode 100644 include/linux/mfd/syscon/imx8mq-iomuxc-gpr.h
+
+-- 
+2.20.1
+
