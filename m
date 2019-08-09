@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D937B87608
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1666F87613
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406230AbfHIJcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 05:32:53 -0400
-Received: from shell.v3.sk ([90.176.6.54]:51824 "EHLO shell.v3.sk"
+        id S2406282AbfHIJdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 05:33:12 -0400
+Received: from shell.v3.sk ([90.176.6.54]:51903 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406211AbfHIJcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:32:51 -0400
+        id S2406260AbfHIJdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 05:33:09 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 2AD31D63CB;
-        Fri,  9 Aug 2019 11:32:47 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 1463AD63C5;
+        Fri,  9 Aug 2019 11:33:07 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id U4eW2BXeBpSA; Fri,  9 Aug 2019 11:32:25 +0200 (CEST)
+        with ESMTP id INB1BAhD0YMU; Fri,  9 Aug 2019 11:32:37 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id C9178D63C5;
-        Fri,  9 Aug 2019 11:32:18 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id A1066D63CE;
+        Fri,  9 Aug 2019 11:32:19 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id AqQmtuGLID-s; Fri,  9 Aug 2019 11:32:13 +0200 (CEST)
+        with ESMTP id t41b6dnic8-d; Fri,  9 Aug 2019 11:32:14 +0200 (CEST)
 Received: from furthur.local (ip-37-188-137-236.eurotel.cz [37.188.137.236])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 59D4AD63BE;
-        Fri,  9 Aug 2019 11:32:11 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 8A6FBD63C2;
+        Fri,  9 Aug 2019 11:32:12 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -39,10 +39,11 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 04/19] dt-bindings: phy-mmp3-usb: Add bindings
-Date:   Fri,  9 Aug 2019 11:31:43 +0200
-Message-Id: <20190809093158.7969-5-lkundrak@v3.sk>
+        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH 05/19] irqchip/mmp: do not use of_address_to_resource() to get mux regs
+Date:   Fri,  9 Aug 2019 11:31:44 +0200
+Message-Id: <20190809093158.7969-6-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190809093158.7969-1-lkundrak@v3.sk>
 References: <20190809093158.7969-1-lkundrak@v3.sk>
@@ -53,38 +54,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the PHY chip for USB OTG on MMP3 platform.
+The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
+are offsets from intc's base, not addresses on the parent bus. At this
+point it probably can't be fixed.
+
+On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
+axi bus, and thus of_address_to_resource() won't work. We should treat
+the values as mere integers as opposed to bus addresses.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- .../devicetree/bindings/phy/phy-mmp3-usb.txt     | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-mmp3-usb.tx=
-t
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt b/Doc=
-umentation/devicetree/bindings/phy/phy-mmp3-usb.txt
-new file mode 100644
-index 0000000000000..b9623b98151bc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt
-@@ -0,0 +1,16 @@
-+Marvell MMP3 USB PHY
-+--------------------
+---
+ drivers/irqchip/irq-mmp.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index 14618dc0bd396..af9cba4a51c2e 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -424,9 +424,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_=
+init);
+ static int __init mmp2_mux_of_init(struct device_node *node,
+ 				   struct device_node *parent)
+ {
+-	struct resource res;
+ 	int i, ret, irq, j =3D 0;
+ 	u32 nr_irqs, mfp_irq;
++	u32 reg[4];
+=20
+ 	if (!parent)
+ 		return -ENODEV;
+@@ -438,18 +438,20 @@ static int __init mmp2_mux_of_init(struct device_no=
+de *node,
+ 		pr_err("Not found mrvl,intc-nr-irqs property\n");
+ 		return -EINVAL;
+ 	}
+-	ret =3D of_address_to_resource(node, 0, &res);
 +
-+Required properties:
-+- compatible: must be "marvell,mmp3-usb-phy"
-+- #phy-cells: must be 0
-+
-+Example:
-+	usb-phy: usbphy@d4207000 {
-+		compatible =3D "marvell,mmp3-usb-phy";
-+		reg =3D <0xd4207000 0x40>;
-+		#phy-cells =3D <0>;
-+	};
-+
-+This document explains the device tree binding. For general information
-+about PHY subsystem refer to Documentation/phy.txt
++	/*
++	 * For historical reasonsm, the "regs" property of the
++	 * mrvl,mmp2-mux-intc is not a regular * "regs" property containing
++	 * addresses on the parent bus, but offsets from the intc's base.
++	 * That is why we can't use of_address_to_resource() here.
++	 */
++	ret =3D of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));
+ 	if (ret < 0) {
+ 		pr_err("Not found reg property\n");
+ 		return -EINVAL;
+ 	}
+-	icu_data[i].reg_status =3D mmp_icu_base + res.start;
+-	ret =3D of_address_to_resource(node, 1, &res);
+-	if (ret < 0) {
+-		pr_err("Not found reg property\n");
+-		return -EINVAL;
+-	}
+-	icu_data[i].reg_mask =3D mmp_icu_base + res.start;
++	icu_data[i].reg_status =3D mmp_icu_base + reg[0];
++	icu_data[i].reg_mask =3D mmp_icu_base + reg[2];
+ 	icu_data[i].cascade_irq =3D irq_of_parse_and_map(node, 0);
+ 	if (!icu_data[i].cascade_irq)
+ 		return -EINVAL;
 --=20
 2.21.0
 
