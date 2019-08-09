@@ -2,127 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AAE0880A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D2B880B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:02:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436772AbfHIRAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 13:00:01 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44152 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436716AbfHIRAB (ORCPT
+        id S2436919AbfHIRC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 13:02:27 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39465 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407436AbfHIRC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 13:00:01 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t14so45170598plr.11
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 10:00:00 -0700 (PDT)
+        Fri, 9 Aug 2019 13:02:27 -0400
+Received: by mail-qt1-f194.google.com with SMTP id l9so96399213qtu.6
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 10:02:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HzTYQAsTwaeVmkPpyYA1+naQMbibccJuAVbeLptpfdo=;
-        b=jLURGumwZc6E/p0KiMVcYkNhD2BqzUR63Qb5/zAULhocRqcCYmkB3afGtGBPibGK8g
-         kE9JHSlMRB/Dv6m6pfftnIfCMzVc7OsepxQRXmXOeC9MqYcZB9lNEKVXGBrSiGHv4CWi
-         Mt2hQMxvMS8k5RAg5MRZDajoCjGOVCxONDVAyo7HssYFEUF6miW/Ph9ojHWuz4Wwnrwb
-         INWAX2BJIs8RhNAAqZbBG0BHV92QTFpkXtUFFNOlfm7rWNa5Mg7caNoonzIH7PYhKqx/
-         jAmstmGYBm9Q4d+XKNpjbylQCgtRL8fVbGjcCMT6b5m8wHwvqzhrjmXMddlQFa7+zlFy
-         dq7w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FclrxiNVeDQRBUVrlhHeOXQhVrnasVK2qCxhjrZ+ESw=;
+        b=p98Vpv2+yYXOmOjE4tNlUje0o/LvDN/IAP+Fw1/Itzh0AJJ/uEtrDzY8ClOf7M0TnO
+         mN1LOwLQUEzGyxEbMGGdyJH1s/VCPwzmUZJHTwEG0MVM5qhAx11Sg4ja/z45ABcp0k1W
+         aY8RKwKC44kvIKcHqscV8bEWZrvvHnu/s6pcCE4Jpz7LSWYF1xlNVt1UmxKYtSS7ZBEH
+         2Dqz8S6e0VM9dFdAnDPj+PdrYisTl43RWG9JC83jwpUaEQwvqrnoQN2IO+39b8X0h4Q+
+         76YB2aKWznpt4hd3SQ+cMH0iWVjxSEkSCG9iXTs6wcnPIfgd/Q328wN7GPx/P66NzMiZ
+         tGLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HzTYQAsTwaeVmkPpyYA1+naQMbibccJuAVbeLptpfdo=;
-        b=BiEB3blrDE2RLMk1YV54Y3FA/6vx7YdL6atRAaCfQ92UPXBSZJf3NXv0zUVR+ikGvT
-         E4LiqtvWfqy0dgnGYCfOhOy6xLdKU0kHilhc87MwsihI8JuAIikS+hBVcvd1DHifymjQ
-         hgzWZxg9LOkx1u7tdflap607AkYOLroXv6pDOJN/u1uh1Uuu51sITK3ZuKU8SBcNEF2A
-         BdjfFgwEQ6gK6sRdXWtHpyZnn4LNSrgv74wUohG4CQuwbMwgHYfjdYbGrKQ2siGnfXLU
-         J/wAeG/iMHAdPJ3mWDzq249dRr8JzPfeg2FG5eRSho1oYsT/WOJUw+WWFRrT6gl8d2Oy
-         nSYw==
-X-Gm-Message-State: APjAAAVqdNsWFN/kDCoO8fv3KmSYNszZi2W0WEl2XQiOXtj5Ped0t1Y9
-        wlC8W/Nqxb/jPuhYALyiRtRLkw==
-X-Google-Smtp-Source: APXvYqxIvh8RXaUTDHMAAPall519zovv23HzUG1DHQ2lDtsV6hbQ9nI3rJVwqZmuAYs+AgsL8D8x4Q==
-X-Received: by 2002:a17:902:a40c:: with SMTP id p12mr20027983plq.146.1565370000206;
-        Fri, 09 Aug 2019 10:00:00 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 185sm98899540pfd.125.2019.08.09.09.59.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 09:59:59 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 10:01:34 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/4] regulator: dt-bindings: Sort the compatibles and
- nodes
-Message-ID: <20190809170134.GM26807@tuxbook-pro>
-References: <20190809073616.1235-1-vkoul@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FclrxiNVeDQRBUVrlhHeOXQhVrnasVK2qCxhjrZ+ESw=;
+        b=iFOIRZpoE0D44FlAPRUJz30uDGFStIOsGEdVaAiBLGg0AnLcXTFzZwyjKh8Lj7+OeP
+         fDjabjSu96pypwsEoY1DWXuGvuTjV+380EtWFUvrPKArqBB+kEo9aw/4hIAGzrI1sGOh
+         pi52FoKU3K1RTrwokrV4DxNwEXz4FpRAAc+xAqaUvNLq3c7EPc25En/FWyY1LBoNnVHY
+         6Em4hY8WTT/yK0TRbWZik/neATIMF2GNmJG0swIakj19Jc+p+DKwS41spW7QITDOqbEE
+         4z6G7JWV6mzZY2FtE+/P2InYjmT1cMw7heytUkKCgqgoz+weMLvucEEATA9NUAf3U50m
+         z7BA==
+X-Gm-Message-State: APjAAAXNA7F42Srj/5VhhG6JjHF2LS2PB66wP3IB56hQINy9O0Jj49Xb
+        FtFZ2XjAJxm6Ub2+HH94eQBneOz89aiQ+i5V2/I=
+X-Google-Smtp-Source: APXvYqz1xhE/4o+0ZlH0Rf7lEhuFwWXCEs3E301pFyqqHmAL1WP299xrXXmTXkvNd9hsV4hnq5V09xAyO+eXSgbaQIA=
+X-Received: by 2002:ad4:4423:: with SMTP id e3mr19119365qvt.145.1565370146012;
+ Fri, 09 Aug 2019 10:02:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809073616.1235-1-vkoul@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190109203911.7887-1-logang@deltatee.com> <20190109203911.7887-3-logang@deltatee.com>
+ <CAEbi=3d0RNVKbDUwRL-o70O12XBV7q6n_UT-pLqFoh9omYJZKQ@mail.gmail.com>
+ <c4298fdd-6fd6-fa7f-73f7-5ff016788e49@deltatee.com> <CAEbi=3cn4+7zk2DU1iRa45CDwTsJYfkAV8jXHf-S7Jz63eYy-A@mail.gmail.com>
+ <CAEbi=3eZcgWevpX9VO9ohgxVDFVprk_t52Xbs3-TdtZ+js3NVA@mail.gmail.com> <0926a261-520e-4c40-f926-ddd40bb8ce44@deltatee.com>
+In-Reply-To: <0926a261-520e-4c40-f926-ddd40bb8ce44@deltatee.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Sat, 10 Aug 2019 01:01:50 +0800
+Message-ID: <CAEbi=3ebNM-t_vA4OA7KCvQUF08o6VmL1j=kMojVnYsYsN_fBw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] RISC-V: Implement sparsemem
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     greentime.hu@sifive.com, paul.walmsley@sifive.com,
+        Rob Herring <robh@kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andrew Waterman <andrew@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Bates <sbates@raithlin.com>,
+        Zong Li <zong@andestech.com>, Olof Johansson <olof@lixom.net>,
+        linux-riscv@lists.infradead.org,
+        Michael Clark <michaeljclark@mac.com>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 09 Aug 00:36 PDT 2019, Vinod Koul wrote:
+Hi Logan,
 
-> It helps to keep sorted order for compatibles and nodes, so sort them
-> 
-> Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  .../regulator/qcom,rpmh-regulator.txt         | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-> index 1a9cab50503a..bab9f71140b8 100644
-> --- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-> +++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-> @@ -22,12 +22,12 @@ RPMh resource.
->  
->  The names used for regulator nodes must match those supported by a given PMIC.
->  Supported regulator node names:
-> -	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
-> -	PMI8998:	bob
->  	PM8005:		smps1 - smps4
-> +	PM8009:		smps1 - smps2, ldo1 - ldo7
->  	PM8150:		smps1 - smps10, ldo1 - ldo18
->  	PM8150L:	smps1 - smps8, ldo1 - ldo11, bob, flash, rgb
-> -	PM8009:		smps1 - smps2, ld01 - ldo7
-> +	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
-> +	PMI8998:	bob
->  
->  ========================
->  First Level Nodes - PMIC
-> @@ -36,12 +36,13 @@ First Level Nodes - PMIC
->  - compatible
->  	Usage:      required
->  	Value type: <string>
-> -	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
-> -		    "qcom,pmi8998-rpmh-regulators" or
-> -		    "qcom,pm8005-rpmh-regulators" or
-> -		    "qcom,pm8150-rpmh-regulators" or
-> -		    "qcom,pm8150l-rpmh-regulators" or
-> -		    "qcom,pm8009-rpmh-regulators".
-> +	Definition: Must be one of below:
-> +		    "qcom,pm8005-rpmh-regulators"
-> +		    "qcom,pm8009-rpmh-regulators"
-> +		    "qcom,pm8150-rpmh-regulators"
-> +		    "qcom,pm8150l-rpmh-regulators"
-> +		    "qcom,pm8998-rpmh-regulators"
-> +		    "qcom,pmi8998-rpmh-regulators"
+Logan Gunthorpe <logang@deltatee.com> =E6=96=BC 2019=E5=B9=B48=E6=9C=889=E6=
+=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8811:47=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+>
+>
+> On 2019-08-08 10:23 p.m., Greentime Hu wrote:
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index 3f12b069af1d..208b3e14ccd8 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -116,7 +116,8 @@ config PGTABLE_LEVELS
+> >         default 2
+> >
+> >  config HAVE_ARCH_PFN_VALID
+> > -       def_bool y
+> > +       bool
+> > +       default !SPARSEMEM_VMEMMAP
+> >
+> >  menu "Platform type"
+> >
+> > diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/pag=
+e.h
+> > index 8ddb6c7fedac..6991f7a5a4a7 100644
+> > --- a/arch/riscv/include/asm/page.h
+> > +++ b/arch/riscv/include/asm/page.h
+> > @@ -93,16 +93,20 @@ extern unsigned long min_low_pfn;
+> >  #define virt_to_pfn(vaddr)     (phys_to_pfn(__pa(vaddr)))
+> >  #define pfn_to_virt(pfn)       (__va(pfn_to_phys(pfn)))
+> >
+> > +#if !defined(CONFIG_SPARSEMEM_VMEMMAP)
+> > +#define pfn_valid(pfn) \
+> > +       (((pfn) >=3D pfn_base) && (((pfn)-pfn_base) < max_mapnr))
+> >  #define virt_to_page(vaddr)    (pfn_to_page(virt_to_pfn(vaddr)))
+> >  #define page_to_virt(page)     (pfn_to_virt(page_to_pfn(page)))
+> > +#else
+> > +#define virt_to_page(vaddr)    ((struct page *)((((u64)vaddr -
+> > va_pa_offset) / PAGE_SIZE) * sizeof(struct page) + VMEMMAP_START))
+> > +#define page_to_virt(pg)       ((void *)(((((u64)pg - VMEMMAP_START) /
+> > sizeof(struct page)) * PAGE_SIZE) + va_pa_offset))
+> > +#endif
+>
+> This doesn't make sense to me at all. It should always use pfn_to_page()
+> for virt_to_page() and the generic pfn_to_page()/page_to_pfn()
+> implementations essentially already do what you are doing in a cleaner
+> way. So I'd be really surprised if this does anything at all.
+>
 
-Thanks for dropping the "or" as well.
+Thank you for point me out that. I just checked the generic
+implementation and I should use that one.
+Sorry I didn't check the generic one and just implement it again.
+I think the only patch we need is the first part to use generic
+pfn_valid(). I just tested it and yes it can boot successfully in dts
+with hole.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+It will fail in this check ((pfn)-pfn_base) < max_mapnr.
+In my test case it will be
+((6GB>>PAGE_SHIFT)-(2GB>>PAGE_SHIFT)=3D(4GB>>PAGE_SHIFT) <
+(3GB>>PAGE_SHIFT) to return false.
+ memory@80000000 {
+         device_type =3D "memory";
+         reg =3D <0x0 0x80000000 0x0 0x80000000>;
+ };
+ memory@180000000 {
+         device_type =3D "memory";
+         reg =3D <0x1 0x80000000 0x0 0x40000000>;
+ };
 
->  
->  - qcom,pmic-id
->  	Usage:      required
-> -- 
-> 2.20.1
-> 
+To cause the check here failed to initialize page struct.
+
+for (pfn =3D start_pfn; pfn < end_pfn; pfn++) {
+        /*
+         * There can be holes in boot-time mem_map[]s handed to this
+         * function.  They do not exist on hotplugged memory.
+         */
+        if (context =3D=3D MEMMAP_EARLY) {
+                if (!early_pfn_valid(pfn))
+                        continue;
+                if (!early_pfn_in_nid(pfn, nid))
+                        continue;
+                if (overlap_memmap_init(zone, &pfn))
+                        continue;
+                if (defer_init(nid, pfn, end_pfn))
+                        break;
+        }
+
+        page =3D pfn_to_page(pfn);
+        __init_single_page(page, pfn, zone, nid);
+
+
+---------------------------------------------------------------------------=
+---
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 3f12b069af1d..208b3e14ccd8 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -116,7 +116,8 @@ config PGTABLE_LEVELS
+        default 2
+
+ config HAVE_ARCH_PFN_VALID
+-       def_bool y
++       bool
++       default !SPARSEMEM_VMEMMAP
+
+ menu "Platform type"
+
+diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
+index 8ddb6c7fedac..80d28fa1e2eb 100644
+--- a/arch/riscv/include/asm/page.h
++++ b/arch/riscv/include/asm/page.h
+@@ -100,8 +100,10 @@ extern unsigned long min_low_pfn;
+ #define page_to_bus(page)      (page_to_phys(page))
+ #define phys_to_page(paddr)    (pfn_to_page(phys_to_pfn(paddr)))
+
++#if !defined(CONFIG_SPARSEMEM_VMEMMAP)
+ #define pfn_valid(pfn) \
+        (((pfn) >=3D pfn_base) && (((pfn)-pfn_base) < max_mapnr))
++#endif
+
+ #define ARCH_PFN_OFFSET                (pfn_base)
