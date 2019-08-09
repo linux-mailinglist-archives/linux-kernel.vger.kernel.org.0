@@ -2,57 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA1088220
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F46F8822E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 20:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436697AbfHISRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 14:17:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41056 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbfHISRf (ORCPT
+        id S2437055AbfHISSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 14:18:39 -0400
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:36424 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfHISSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 14:17:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ml+u8yDNnJwbZxXnTPYLCdyaPo9+Hy67Rp3YV4keyc8=; b=pp3TclQjfSki7ddzzzNjASr3G
-        GRd3rBPoMlFVX863gg7sBFrn9L25y19+wdosfDlMoty125IpEgEwpG1zvO00VHRXOnClW3sESsI6r
-        uy1FTUpYOqwnTDC0MRvWe65liPigljt4a+V/JDtB58rANp9bgKm3URSN1eLXuqXQE8ByHtOd/0aI8
-        WvwyzqcOxRqZKhetkGKUzbPfGoX2ZsqLdiloSuYGs/bnS4bDbaVns7Ppag11MdqjKP+48va3ez+G5
-        +XPERsTtxYpBk1UoNXO5RCOxIff/t+YW9UekL1THLl9OLACsqnYOomSFDmlP05GmYx55Fgrbi6tl7
-        38lXJtvlw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hw9SH-0002hr-Lr; Fri, 09 Aug 2019 18:17:33 +0000
-Date:   Fri, 9 Aug 2019 11:17:33 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: sym53c8xx_2: remove redundant assignment to retv
-Message-ID: <20190809181733.GQ5482@bombadil.infradead.org>
-References: <20190809175932.10197-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809175932.10197-1-colin.king@canonical.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        Fri, 9 Aug 2019 14:18:38 -0400
+Received: by mail-qt1-f202.google.com with SMTP id q26so89703034qtr.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 11:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=1tTOS0Kr72a3ig2rpitn9bCmZeR/zOLT1qe1/3whgEM=;
+        b=t4ojcX4zM3ReDMDWCqGhCTvaqHBK+DuPIlzAdeiU72qvxO9xy9fn1Q6XpZm7bG1TY9
+         DcTgReEoKCXV6hx6uhDkgrOBydyAG7m95uH2GgH+MpjoY5dBW1XlJuSLaiClxd80i9wQ
+         uGWlwouFz2kNGMsP82G5m5c3QdsA3UTgtCzOWJZbC62mlfPkPyeTb/PGohfZneqJjjII
+         e4TziFLEBwXH8c7dph/NR4Cf/P3BHtpNUUqq70fVcaV4P871k09OTx/GBiyEROIIHgAO
+         qjIIeON5PngXGZ9T/XsUQBgx8jcAvK93OCFYAvJHYk8d6nDQ7VHqphneeXOaVwdVn+9U
+         YyWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=1tTOS0Kr72a3ig2rpitn9bCmZeR/zOLT1qe1/3whgEM=;
+        b=qOl+iNhLXYyJLuGMBpn0fGx3fdmtlHT/YOmzjft0+uypxwOm47ospAKtN4/Geudg6m
+         4g76Yeb2rs2Hnlj8XcfwMnor0f0bjFZobr/Rbhx0qwbDyW9vQJrBTYcyCqhleAzp/0v0
+         IkbXM/nv1EtT1WljTOTcnLB+hNJrvRF/3kSLTK0okK4tDl9mOfFISqVSvwuk5+zPjj4+
+         aGV9j48JGUqz02jrmERNo9uND1V2EQtmelz+QPwgGmm8xw4M6ZFPAod3jHg27RY72hqq
+         qOxJhmcHvzWrVNdRdi29Ydz9zVqpgIsvwIIyapdLplhq/+/lIePVbVS2FmKy4eJ7vLI2
+         YTHA==
+X-Gm-Message-State: APjAAAWszIV0mzIcWuOR8cDvL/YPA11F68xUC4N7kPkSoDuKYDMHjDJa
+        cRJB4zwvA8fNFC7fMKL2A80Pp7EE/hFNUeLK
+X-Google-Smtp-Source: APXvYqw2K/VdYvQblbTHJHxoM6dqlB8YfnUUHpG4eYjJSnSc4X/YL0P/7AjXqV062axKFffWbIEPqpGDJf00/gB/
+X-Received: by 2002:a37:5e04:: with SMTP id s4mr15541529qkb.268.1565374717530;
+ Fri, 09 Aug 2019 11:18:37 -0700 (PDT)
+Date:   Fri,  9 Aug 2019 11:17:50 -0700
+Message-Id: <20190809181751.219326-1-henryburns@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH 1/2 v2] mm/zsmalloc.c: Migration can leave pages in ZS_EMPTY indefinitely
+From:   Henry Burns <henryburns@google.com>
+To:     Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jonathan Adams <jwadams@google.com>,
+        HenryBurns <henrywolfeburns@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Henry Burns <henryburns@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 06:59:32PM +0100, Colin King wrote:
-> Variable retv is initialized to a value that is never read and it
-> is re-assigned later. The initialization is redundant and can be
-> removed.
+In zs_page_migrate() we call putback_zspage() after we have finished
+migrating all pages in this zspage. However, the return value is ignored.
+If a zs_free() races in between zs_page_isolate() and zs_page_migrate(),
+freeing the last object in the zspage, putback_zspage() will leave the page
+in ZS_EMPTY for potentially an unbounded amount of time.
 
-Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+To fix this, we need to do the same thing as zs_page_putback() does:
+schedule free_work to occur.  To avoid duplicated code, move the
+sequence to a new putback_zspage_deferred() function which both
+zs_page_migrate() and zs_page_putback() call.
 
-Seems like a bit of a pointless class of warnings, given that gcc now
-initialises all locals.  But I'm happy for James or Martin to pick it up.
+Fixes: 48b4800a1c6a ("zsmalloc: page migration support")
+Signed-off-by: Henry Burns <henryburns@google.com>
+---
+ Changelog since v1:
+ - Moved the comment from putback_zspage_deferred() to
+   zs_page_putback().
+
+ mm/zsmalloc.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 57fbb7ced69f..5105b9b66653 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -1862,6 +1862,18 @@ static void dec_zspage_isolation(struct zspage *zspage)
+ 	zspage->isolated--;
+ }
+ 
++static void putback_zspage_deferred(struct zs_pool *pool,
++				    struct size_class *class,
++				    struct zspage *zspage)
++{
++	enum fullness_group fg;
++
++	fg = putback_zspage(class, zspage);
++	if (fg == ZS_EMPTY)
++		schedule_work(&pool->free_work);
++
++}
++
+ static void replace_sub_page(struct size_class *class, struct zspage *zspage,
+ 				struct page *newpage, struct page *oldpage)
+ {
+@@ -2031,7 +2043,7 @@ static int zs_page_migrate(struct address_space *mapping, struct page *newpage,
+ 	 * the list if @page is final isolated subpage in the zspage.
+ 	 */
+ 	if (!is_zspage_isolated(zspage))
+-		putback_zspage(class, zspage);
++		putback_zspage_deferred(pool, class, zspage);
+ 
+ 	reset_page(page);
+ 	put_page(page);
+@@ -2077,14 +2089,13 @@ static void zs_page_putback(struct page *page)
+ 	spin_lock(&class->lock);
+ 	dec_zspage_isolation(zspage);
+ 	if (!is_zspage_isolated(zspage)) {
+-		fg = putback_zspage(class, zspage);
+ 		/*
+ 		 * Due to page_lock, we cannot free zspage immediately
+ 		 * so let's defer.
+ 		 */
+-		if (fg == ZS_EMPTY)
+-			schedule_work(&pool->free_work);
++		putback_zspage_deferred(pool, class, zspage);
+ 	}
++
+ 	spin_unlock(&class->lock);
+ }
+ 
+-- 
+2.23.0.rc1.153.gdeed80330f-goog
 
