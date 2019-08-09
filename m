@@ -2,169 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E72C86EA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 01:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B210986EBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 02:19:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404963AbfHHX5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 19:57:54 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13241 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733140AbfHHX5y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 19:57:54 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4cb7020002>; Thu, 08 Aug 2019 16:57:54 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 08 Aug 2019 16:57:52 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 16:57:52 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
- 2019 23:57:51 +0000
-Subject: Re: [PATCH 1/3] mm/mlock.c: convert put_page() to put_user_page*()
-To:     Ira Weiny <ira.weiny@intel.com>
-CC:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Black <daniel@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <20190805222019.28592-1-jhubbard@nvidia.com>
- <20190805222019.28592-2-jhubbard@nvidia.com>
- <20190807110147.GT11812@dhcp22.suse.cz>
- <01b5ed91-a8f7-6b36-a068-31870c05aad6@nvidia.com>
- <20190808062155.GF11812@dhcp22.suse.cz>
- <875dca95-b037-d0c7-38bc-4b4c4deea2c7@suse.cz>
- <306128f9-8cc6-761b-9b05-578edf6cce56@nvidia.com>
- <d1ecb0d4-ea6a-637d-7029-687b950b783f@nvidia.com>
- <20190808234138.GA15908@iweiny-DESK2.sc.intel.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <5713cc2b-b41c-142a-eb52-f5cda999eca7@nvidia.com>
-Date:   Thu, 8 Aug 2019 16:57:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190808234138.GA15908@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565308674; bh=ItTlcxLB3OzkqKxPiAlZSVxn8wLR/CcyzAXny5jY54w=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=PkoJ+EDWEq2PAabC2cPHA1oueE3YrcKkjoul5TR4Oa1yBcvabjT4+f41IFrkiWh2Z
-         FMyHHF6xQc3T1CBt7cg1mqsbQ5mtIYUvCL++2XyzG8RuqfLyjoQpj11SZummKWRV/z
-         XcR8S/Kdg4cmuC0ro638QgTio3qAJoA8sC+XAHtJqsH4Fibn2aZezpl+ol7b0a9c+o
-         xLyC3/U6MxfnBH6duwZ/owBk7ytCphS6oa+2DMO396CuXm3w0FiJGsC3pHOVlWcHg1
-         DD1wz2Shd4QjyoRYu/PDeBzxX/9Nf0jaSgifEpzmFnz+2z5iIqzhtWVw9mrQDdUu35
-         f0aIucgjoeWKw==
+        id S2404969AbfHIATy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 20:19:54 -0400
+Received: from mga12.intel.com ([192.55.52.136]:58703 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404850AbfHIATx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 20:19:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 17:19:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,363,1559545200"; 
+   d="scan'208";a="169158764"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga008.jf.intel.com with ESMTP; 08 Aug 2019 17:19:51 -0700
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        kirill.shutemov@linux.intel.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH v2] mm/mmap.c: refine find_vma_prev with rb_last
+Date:   Fri,  9 Aug 2019 08:19:28 +0800
+Message-Id: <20190809001928.4950-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/8/19 4:41 PM, Ira Weiny wrote:
-> On Thu, Aug 08, 2019 at 03:59:15PM -0700, John Hubbard wrote:
->> On 8/8/19 12:20 PM, John Hubbard wrote:
->>> On 8/8/19 4:09 AM, Vlastimil Babka wrote:
->>>> On 8/8/19 8:21 AM, Michal Hocko wrote:
->>>>> On Wed 07-08-19 16:32:08, John Hubbard wrote:
->>>>>> On 8/7/19 4:01 AM, Michal Hocko wrote:
->>>>>>> On Mon 05-08-19 15:20:17, john.hubbard@gmail.com wrote:
-...
->> Oh, and meanwhile, I'm leaning toward a cheap fix: just use gup_fast() instead
->> of get_page(), and also fix the releasing code. So this incremental patch, on
->> top of the existing one, should do it:
->>
->> diff --git a/mm/mlock.c b/mm/mlock.c
->> index b980e6270e8a..2ea272c6fee3 100644
->> --- a/mm/mlock.c
->> +++ b/mm/mlock.c
->> @@ -318,18 +318,14 @@ static void __munlock_pagevec(struct pagevec *pvec, struct zone *zone)
->>                 /*
->>                  * We won't be munlocking this page in the next phase
->>                  * but we still need to release the follow_page_mask()
->> -                * pin. We cannot do it under lru_lock however. If it's
->> -                * the last pin, __page_cache_release() would deadlock.
->> +                * pin.
->>                  */
->> -               pagevec_add(&pvec_putback, pvec->pages[i]);
->> +               put_user_page(pages[i]);
+When addr is out of the range of the whole rb_tree, pprev will points to
+the right-most node. rb_tree facility already provides a helper
+function, rb_last, to do this task. We can leverage this instead of
+re-implement it.
 
-correction, make that:   
-                   put_user_page(pvec->pages[i]);
+This patch refines find_vma_prev with rb_last to make it a little nicer
+to read.
 
-(This is not fully tested yet.)
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 
->>                 pvec->pages[i] = NULL;
->>         }
->>         __mod_zone_page_state(zone, NR_MLOCK, delta_munlocked);
->>         spin_unlock_irq(&zone->zone_pgdat->lru_lock);
->>  
->> -       /* Now we can release pins of pages that we are not munlocking */
->> -       pagevec_release(&pvec_putback);
->> -
-> 
-> I'm not an expert but this skips a call to lru_add_drain().  Is that ok?
+---
+v2: leverage rb_last
+---
+ mm/mmap.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Yes: unless I'm missing something, there is no reason to go through lru_add_drain
-in this case. These are gup'd pages that are not going to get any further
-processing.
-
-> 
->>         /* Phase 2: page munlock */
->>         for (i = 0; i < nr; i++) {
->>                 struct page *page = pvec->pages[i];
->> @@ -394,6 +390,8 @@ static unsigned long __munlock_pagevec_fill(struct pagevec *pvec,
->>         start += PAGE_SIZE;
->>         while (start < end) {
->>                 struct page *page = NULL;
->> +               int ret;
->> +
->>                 pte++;
->>                 if (pte_present(*pte))
->>                         page = vm_normal_page(vma, start, *pte);
->> @@ -411,7 +409,13 @@ static unsigned long __munlock_pagevec_fill(struct pagevec *pvec,
->>                 if (PageTransCompound(page))
->>                         break;
->>  
->> -               get_page(page);
->> +               /*
->> +                * Use get_user_pages_fast(), instead of get_page() so that the
->> +                * releasing code can unconditionally call put_user_page().
->> +                */
->> +               ret = get_user_pages_fast(start, 1, 0, &page);
->> +               if (ret != 1)
->> +                       break;
-> 
-> I like the idea of making this a get/put pair but I'm feeling uneasy about how
-> this is really supposed to work.
-> 
-> For sure the GUP/PUP was supposed to be separate from [get|put]_page.
-> 
-
-Actually, they both take references on the page. And it is absolutely OK to call
-them both on the same page.
-
-But anyway, we're not mixing them up here. If you follow the code paths, either 
-gup or follow_page_mask() is used, and then put_user_page() releases. 
-
-So...you haven't actually pointed to a bug here, right? :)
-
-
-thanks,
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 7e8c3e8ae75f..f7ed0afb994c 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2270,12 +2270,9 @@ find_vma_prev(struct mm_struct *mm, unsigned long addr,
+ 	if (vma) {
+ 		*pprev = vma->vm_prev;
+ 	} else {
+-		struct rb_node *rb_node = mm->mm_rb.rb_node;
+-		*pprev = NULL;
+-		while (rb_node) {
+-			*pprev = rb_entry(rb_node, struct vm_area_struct, vm_rb);
+-			rb_node = rb_node->rb_right;
+-		}
++		struct rb_node *rb_node = rb_last(&mm->mm_rb);
++		*pprev = !rb_node ? NULL :
++			 rb_entry(rb_node, struct vm_area_struct, vm_rb);
+ 	}
+ 	return vma;
+ }
 -- 
-John Hubbard
-NVIDIA
+2.17.1
+
