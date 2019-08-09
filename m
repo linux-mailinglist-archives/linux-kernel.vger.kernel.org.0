@@ -2,155 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E0C987B97
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E4A87BF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 15:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406614AbfHINot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 09:44:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38013 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405999AbfHINos (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 09:44:48 -0400
-Received: by mail-pf1-f193.google.com with SMTP id o70so749730pfg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 06:44:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cuW7kmnkjezQ8aMd9rmD4VTFMgZO6FdDUXYwitNe1k8=;
-        b=vMdeXKEh7eFUUwZXTeO1KB3t0VYqnDsqK+Pe6NqWE1OkpDl66QSxelZSz3WvzqpJTI
-         lzI9NW3hFpD7FCKLKeyZSp9vveeBagM1OsgpVPuDMEwu+qf7X9NR6Zu/m2BBRrx90BgV
-         gcJk85qtmVkAmJUMHUn7lbeDAwl1oOmxx9IMsftUQ/XkpMYOML7igDGAPwGzVGMTC9FR
-         TqIUJ6F7sk0mluIAfi3FrW58zIj8vfEKrKBOuw/y12LIOcV3S55PWuu5vpu9m45xbuNV
-         oHhaGa7gGvU46H1K2qfUTbLHqJSJxoHwH2DcglgeZFx7FtT4NU5OSZLJKXfqlPTS77gu
-         a7tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cuW7kmnkjezQ8aMd9rmD4VTFMgZO6FdDUXYwitNe1k8=;
-        b=dvGW5lNZ8kvpIVvnGfWZUNQnwtZ7wwKvtJcQJoCO92Qe2TKp1f+z/bArw+rM0GjHAt
-         RbtgQnmjMEDfDCdpAu2zQJwekGf8jsMBOM4v3vrI1gCwhZ5dJLFWorCsSBX+3kUj8tiQ
-         dyjcW46v5jkzBc1L2zVC9MQbiMjmaJ/RC7r2Np1m+mxyEZoF1O51hqef41bunGEcvTct
-         SNSuFaRWgYMgp8mKz6PLZ1nTLyrVOcaR6RDS0tMGTuYTthOGin1BLc+VMK5rBCs4zD6a
-         tY+nb6yVGLcC4k+NBXTe+p/EOYKeIuNE9zluF0LbJT8FjoXVaB3a/Ut9NF/jKQaulRap
-         Dnug==
-X-Gm-Message-State: APjAAAUCdwlxt7QfwuX272MHEV5VzIGMxtkAn7U1FvIY1+Sm9Q/1s5sE
-        8Oq6+llj7W91M1efAMzTwBpKEA==
-X-Google-Smtp-Source: APXvYqzboj5qLeiqBXB007VpMJk0G9XY5d2C5KIpSxTqDgmDKjPfcxEEvfgm3VGFPm/6SzPcQqfycQ==
-X-Received: by 2002:a17:90a:8a15:: with SMTP id w21mr9575094pjn.134.1565358287738;
-        Fri, 09 Aug 2019 06:44:47 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li456-16.members.linode.com. [50.116.10.16])
-        by smtp.gmail.com with ESMTPSA id y128sm119018995pgy.41.2019.08.09.06.44.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Aug 2019 06:44:46 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 21:44:31 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH] perf trace: Fix segmentation fault when access syscall
- info
-Message-ID: <20190809134431.GE8313@leoy-ThinkPad-X240s>
-References: <20190809104752.27338-1-leo.yan@linaro.org>
- <20190809132522.GB20899@kernel.org>
+        id S2406497AbfHINrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 09:47:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36788 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2407169AbfHINq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 09:46:56 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 906AE217F4;
+        Fri,  9 Aug 2019 13:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565358415;
+        bh=u3Ix3IFwQLRFKVaIdupUE+8P+maUiVt7S38iCrW3uDs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KP29PuqfTggxokfMmHnBlMg5XtFFYXm3P0sWjD/65TlJuL4KwmUkX0AZFjSdvphDy
+         D+tBejQ4DuMzSCtC6bNYGVfaUN6o+TMYxKjewuHHPaRmOJjfiuQh8rdqnwUwczRc3D
+         KU8AcDooz1KXLxr1qVH8dy2QxbHz3FB6B6TVnDWA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.9 00/32] 4.9.189-stable review
+Date:   Fri,  9 Aug 2019 15:45:03 +0200
+Message-Id: <20190809133922.945349906@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809132522.GB20899@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.189-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.9.189-rc1
+X-KernelTest-Deadline: 2019-08-11T13:39+00:00
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 10:25:22AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Aug 09, 2019 at 06:47:52PM +0800, Leo Yan escreveu:
-> > 'perf trace' reports the segmentation fault as below on Arm64:
-> > 
-> >   # perf trace -e string -e augmented_raw_syscalls.c
-> >   LLVM: dumping tools/perf/examples/bpf/augmented_raw_syscalls.o
-> >   perf: Segmentation fault
-> >   Obtained 12 stack frames.
-> >   perf(sighandler_dump_stack+0x47) [0xaaaaac96ac87]
-> >   linux-vdso.so.1(+0x5b7) [0xffffadbeb5b7]
-> >   /lib/aarch64-linux-gnu/libc.so.6(strlen+0x10) [0xfffface7d5d0]
-> >   /lib/aarch64-linux-gnu/libc.so.6(_IO_vfprintf+0x1ac7) [0xfffface49f97]
-> >   /lib/aarch64-linux-gnu/libc.so.6(__vsnprintf_chk+0xc7) [0xffffacedfbe7]
-> >   perf(scnprintf+0x97) [0xaaaaac9ca3ff]
-> >   perf(+0x997bb) [0xaaaaac8e37bb]
-> >   perf(cmd_trace+0x28e7) [0xaaaaac8ec09f]
-> >   perf(+0xd4a13) [0xaaaaac91ea13]
-> >   perf(main+0x62f) [0xaaaaac8a147f]
-> >   /lib/aarch64-linux-gnu/libc.so.6(__libc_start_main+0xe3) [0xfffface22d23]
-> >   perf(+0x57723) [0xaaaaac8a1723]
-> >   Segmentation fault
-> > 
-> > This issue is introduced by commit 30a910d7d3e0 ("perf trace:
-> > Preallocate the syscall table"), it allocates trace->syscalls.table[]
-> > array and the element count is 'trace->sctbl->syscalls.nr_entries';
-> > but on Arm64, the system call number is not continuously used; e.g. the
-> > syscall maximum id is 436 but the real entries is only 281.  So the
-> > table is allocated with 'nr_entries' as the element count, but it
-> > accesses the table with the syscall id, which might be out of the bound
-> > of the array and cause the segmentation fault.
-> > 
-> > This patch allocates trace->syscalls.table[] with the element count is
-> > 'trace->sctbl->syscalls.max_id + 1', this allows any id to access the
-> > table without out of the bound.
-> 
-> Thanks a lot!
+This is the start of the stable review cycle for the 4.9.189 release.
+There are 32 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-You are welcome, Arnaldo.
+Responses should be made by Sun 11 Aug 2019 01:38:45 PM UTC.
+Anything received after that time might be too late.
 
-> My bad, that is why we have that max_id there, I forgot
-> about it and since I tested so far only on x86_64... applied to
-> perf/core, since it is only on:
-> 
-> [acme@quaco perf]$ git tag --contains 30a910d7d3e0
-> perf-core-for-mingo-5.4-20190729
-> [acme@quaco perf]$
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.189-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+and the diffstat can be found below.
 
-Thanks!  Yes, I am working on perf/core branch and hit this issue.
+thanks,
 
-Just in case Ingo has not merged your PR, if could save your efforts
-it's quite fine for me to merge this change in your original patch.
+greg k-h
 
-Thanks,
-Leo Yan
+-------------
+Pseudo-Shortlog of commits:
 
-> 
-> - Arnaldo
->  
-> > Fixes: 30a910d7d3e0 ("perf trace: Preallocate the syscall table")
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  tools/perf/builtin-trace.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > index 75eb3811e942..d553d06a9aeb 100644
-> > --- a/tools/perf/builtin-trace.c
-> > +++ b/tools/perf/builtin-trace.c
-> > @@ -1492,7 +1492,7 @@ static int trace__read_syscall_info(struct trace *trace, int id)
-> >  	const char *name = syscalltbl__name(trace->sctbl, id);
-> >  
-> >  	if (trace->syscalls.table == NULL) {
-> > -		trace->syscalls.table = calloc(trace->sctbl->syscalls.nr_entries, sizeof(*sc));
-> > +		trace->syscalls.table = calloc(trace->sctbl->syscalls.max_id + 1, sizeof(*sc));
-> >  		if (trace->syscalls.table == NULL)
-> >  			return -ENOMEM;
-> >  	}
-> > -- 
-> > 2.17.1
-> 
-> -- 
-> 
-> - Arnaldo
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.9.189-rc1
+
+Thomas Gleixner <tglx@linutronix.de>
+    x86/speculation/swapgs: Exclude ATOMs from speculation through SWAPGS
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    x86/entry/64: Use JMP instead of JMPQ
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    x86/speculation: Enable Spectre v1 swapgs mitigations
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    x86/speculation: Prepare entry code for Spectre v1 swapgs mitigations
+
+Ben Hutchings <ben@decadent.org.uk>
+    x86: cpufeatures: Sort feature word 7
+
+Lukas Wunner <lukas@wunner.de>
+    spi: bcm2835: Fix 3-wire mode if DMA is enabled
+
+xiao jin <jin.xiao@intel.com>
+    block: blk_init_allocated_queue() set q->fq as NULL in the fail case
+
+Sudarsana Reddy Kalluru <skalluru@marvell.com>
+    bnx2x: Disable multi-cos feature.
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    ife: error out when nla attributes are empty
+
+Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+    ip6_tunnel: fix possible use-after-free on xmit
+
+Arnd Bergmann <arnd@arndb.de>
+    compat_ioctl: pppoe: fix PPPOEIOCSFWD handling
+
+Taras Kondratiuk <takondra@cisco.com>
+    tipc: compat: allow tipc commands without arguments
+
+Jia-Ju Bai <baijiaju1990@gmail.com>
+    net: sched: Fix a possible null-pointer dereference in dequeue_func()
+
+Mark Zhang <markz@mellanox.com>
+    net/mlx5: Use reversed order when unregister devices
+
+Jiri Pirko <jiri@mellanox.com>
+    net: fix ifindex collision during namespace removal
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: mcast: don't delete permanent entries when fast leave is enabled
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: delete local fdb on device init failure
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    atm: iphase: Fix Spectre v1 vulnerability
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: use kbasename() and kill ceph_file_part()
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    objtool: Add rewind_stack_do_exit() to the noreturn list
+
+Josh Poimboeuf <jpoimboe@redhat.com>
+    objtool: Add machine_real_restart() to the noreturn list
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    IB: directly cast the sockaddr union to aockaddr
+
+Jason Gunthorpe <jgg@mellanox.com>
+    RDMA: Directly cast the sockaddr union to sockaddr
+
+Sebastian Parschauer <s.parschauer@gmx.de>
+    HID: Add quirk for HP X1200 PIXART OEM mouse
+
+Aaron Armstrong Skomra <skomra@gmail.com>
+    HID: wacom: fix bit shift for Cintiq Companion 2
+
+Eric Dumazet <edumazet@google.com>
+    tcp: be more careful in tcp_fragment()
+
+Will Deacon <will@kernel.org>
+    arm64: cpufeature: Fix feature comparison for CTR_EL0.{CWG,ERG}
+
+Will Deacon <will.deacon@arm.com>
+    arm64: cpufeature: Fix CTR_EL0 field definitions
+
+Adam Ford <aford173@gmail.com>
+    ARM: dts: logicpd-som-lv: Fix Audio Mute
+
+Adam Ford <aford173@gmail.com>
+    ARM: dts: Add pinmuxing for i2c2 and i2c3 for LogicPD torpedo
+
+Adam Ford <aford173@gmail.com>
+    ARM: dts: Add pinmuxing for i2c2 and i2c3 for LogicPD SOM-LV
+
+Hannes Reinecke <hare@suse.de>
+    scsi: fcoe: Embed fc_rport_priv in fcoe_rport structure
+
+
+-------------
+
+Diffstat:
+
+ Documentation/kernel-parameters.txt             |   9 +-
+ Makefile                                        |   4 +-
+ arch/arm/boot/dts/logicpd-som-lv.dtsi           |  18 ++++
+ arch/arm/boot/dts/logicpd-torpedo-som.dtsi      |  16 ++++
+ arch/arm64/include/asm/cpufeature.h             |   7 +-
+ arch/arm64/kernel/cpufeature.c                  |  14 +++-
+ arch/x86/entry/calling.h                        |  18 ++++
+ arch/x86/entry/entry_64.S                       |  21 ++++-
+ arch/x86/include/asm/cpufeatures.h              |   8 +-
+ arch/x86/kernel/cpu/bugs.c                      | 105 ++++++++++++++++++++++--
+ arch/x86/kernel/cpu/common.c                    |  42 ++++++----
+ block/blk-core.c                                |   1 +
+ drivers/atm/iphase.c                            |   8 +-
+ drivers/hid/hid-ids.h                           |   1 +
+ drivers/hid/usbhid/hid-quirks.c                 |   1 +
+ drivers/hid/wacom_wac.c                         |  12 +--
+ drivers/infiniband/core/addr.c                  |  15 ++--
+ drivers/infiniband/core/sa_query.c              |  10 +--
+ drivers/infiniband/hw/ocrdma/ocrdma_ah.c        |   5 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c        |   5 +-
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |   2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c   |   2 +-
+ drivers/net/ppp/pppoe.c                         |   3 +
+ drivers/net/ppp/pppox.c                         |  13 +++
+ drivers/net/ppp/pptp.c                          |   3 +
+ drivers/scsi/fcoe/fcoe_ctlr.c                   |  51 +++++-------
+ drivers/scsi/libfc/fc_rport.c                   |   5 +-
+ drivers/spi/spi-bcm2835.c                       |   3 +-
+ fs/compat_ioctl.c                               |   3 -
+ include/linux/ceph/ceph_debug.h                 |   6 +-
+ include/linux/if_pppox.h                        |   3 +
+ include/net/tcp.h                               |  17 ++++
+ include/scsi/libfcoe.h                          |   1 +
+ net/bridge/br_multicast.c                       |   3 +
+ net/bridge/br_vlan.c                            |   5 ++
+ net/ceph/ceph_common.c                          |  13 ---
+ net/core/dev.c                                  |   2 +
+ net/ipv4/tcp_output.c                           |  11 ++-
+ net/ipv6/ip6_tunnel.c                           |   8 +-
+ net/l2tp/l2tp_ppp.c                             |   3 +
+ net/sched/act_ife.c                             |   3 +
+ net/sched/sch_codel.c                           |   6 +-
+ net/tipc/netlink_compat.c                       |  11 ++-
+ tools/objtool/check.c                           |   2 +
+ 44 files changed, 363 insertions(+), 136 deletions(-)
+
+
