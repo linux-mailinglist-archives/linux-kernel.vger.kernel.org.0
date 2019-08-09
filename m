@@ -2,82 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A429875F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:30:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E5F87600
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:32:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406165AbfHIJa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 05:30:56 -0400
-Received: from mail-qt1-f177.google.com ([209.85.160.177]:32877 "EHLO
-        mail-qt1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbfHIJa4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:30:56 -0400
-Received: by mail-qt1-f177.google.com with SMTP id v38so2769051qtb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 02:30:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=pf61PqN6dZ7xwejrqX8UsVfPlb8KycDCKtziC5JrmJg=;
-        b=khf7FwrOnMEguYXOSLJ2FXRJNEoFOvkMqhCjiw8gbOutjfD/DtgAOSXgVM1f8AiIXt
-         iXI6BOkLLBRYmbrBfP4lYPnN6T80bwFHf2Fs7Cfd2xHRRblmi7/32CVk51V8mOswZicD
-         h7D7JFsQiILCWMa0ujAc1ghByUwmWb+NzeWY1yKm52e3ITdt8LldgIVOQwD+TxtPQLBP
-         tMWRfwkLNFi6Oyr1okdpusc0MHKxadRCTgGDGtlBWyDnjrIHAG3x6z7HBOItFQg+2yrz
-         DZ0eHLbrwHlll0gVDHZRYu2pH+OLT8DagEtYJn2Z/AKxv4l4tZQ/Mnyc20A7cvnpaYju
-         c4lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=pf61PqN6dZ7xwejrqX8UsVfPlb8KycDCKtziC5JrmJg=;
-        b=Vr1j5nzdiZNQqokWHmf8UaUsm7fcflwSe01mM9xz+SPMPfDtA6bmj2qK29jQwg6ugg
-         xMcpUNDju2jKLIwODM3LKXKpHl0/9wn2S2QAxsXm+swtaSBAkxQeGu2PHtHaE8kDqo+z
-         LyuNH0YY6VeubDb6K2UzwPHRJLEKy0VYzbXRbU03tfT0Md4mHZzY4GXIu+Novw3wppgK
-         8NTsmGtogdkI/ywVT9bjsVpkxln+VOiowY712lOYzs36Foa6r/mVMUsqxzmMw3Vc9DVM
-         oYhRR5fVDd2jI4k6bEb7lDT3kI4aFLmFbvRXHHzWKVYqtSaaMriXqr61DzXusKAVC9qf
-         d//Q==
-X-Gm-Message-State: APjAAAWqLbwbb7PwDY2OpkQS8DFew6CHaC2Zagh6DvwwcVAIrMQY8z9h
-        f3zUSmTevi2oqDijEtkI4TyyoKr8dv0VBejW82Fd5OaF
-X-Google-Smtp-Source: APXvYqyQgsbUtkWJuScrtBxZEe1LdJEnF7HBQmJ3CdpmvJ+G3EYVb/ceWHxec1DKdp5nsjVQdG9Eawp+z8wq8RbKvoo=
-X-Received: by 2002:ac8:1a6c:: with SMTP id q41mr14680589qtk.217.1565343055018;
- Fri, 09 Aug 2019 02:30:55 -0700 (PDT)
+        id S2406193AbfHIJcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 05:32:45 -0400
+Received: from shell.v3.sk ([90.176.6.54]:51811 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405957AbfHIJco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 05:32:44 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id BB13ED63BD;
+        Fri,  9 Aug 2019 11:32:35 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id RBewaE-fcJTT; Fri,  9 Aug 2019 11:32:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id F3F7CD63C0;
+        Fri,  9 Aug 2019 11:32:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id gOklHG2eGQZ3; Fri,  9 Aug 2019 11:32:08 +0200 (CEST)
+Received: from furthur.local (ip-37-188-137-236.eurotel.cz [37.188.137.236])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 88485D6350;
+        Fri,  9 Aug 2019 11:32:07 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 00/19] Initial support for Marvell MMP3 SoC
+Date:   Fri,  9 Aug 2019 11:31:39 +0200
+Message-Id: <20190809093158.7969-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-From:   Charlemagne Lasse <charlemagnelasse@gmail.com>
-Date:   Fri, 9 Aug 2019 11:30:44 +0200
-Message-ID: <CAFGhKbwJVv23Mwd7ruo8JCC-0U3BdNRwnxih9zgFSCyPe=jnoA@mail.gmail.com>
-Subject: REUSE/SPDX: Invalid LicenseRef in Linux sources
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Basil Peace <grv87@yandex.ru>,
-        Carmen Bianca Bakker <carmen@carmenbianca.eu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keith Maxwell <keith.maxwell@gmail.com>,
-        =?UTF-8?Q?Matija_=C5=A0uklje?= <matija.suklje@liferay.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When I run the reuse lint tool on the current linux sources, I get
-following error
+Hi,
 
-reuse.project - WARNING - Could not resolve SPDX identifier of
-LICENSES/deprecated/GPL-1.0, resolving to LicenseRef-Unknown0
-reuse.project - WARNING - Could not resolve SPDX identifier of
-LICENSES/exceptions/GCC-exception-2.0, resolving to
-LicenseRef-Unknown1
-reuse.project - WARNING - Could not resolve SPDX identifier of
-LICENSES/preferred/LGPL-2.0, resolving to LicenseRef-Unknown2
-reuse.project - WARNING - Could not resolve SPDX identifier of
-LICENSES/preferred/LGPL-2.1, resolving to LicenseRef-Unknown3
-reuse.project - WARNING - Could not resolve SPDX identifier of
-LICENSES/preferred/GPL-2.0, resolving to LicenseRef-Unknown4
-reuse.project - WARNING - Could not resolve SPDX identifier of
-LICENSES/dual/Apache-2.0, resolving to LicenseRef-Unknown5
-reuse.project - WARNING - Could not resolve SPDX identifier of
-LICENSES/dual/MPL-1.1, resolving to LicenseRef-Unknown6
-reuse.project - WARNING - Could not resolve SPDX identifier of
-LICENSES/dual/CDDL-1.0, resolving to LicenseRef-Unknown7
+this patch set adds support for the Marvell MMP3 processor. MMP3 is used
+in OLPC XO-4 laptops, Panasonic Toughpad FZ-A1 tablet and Dell Wyse 3020
+Tx0D thin clients.
 
-Can you please help to fix the problem
+Apart from the adjustments in mach-mmp/, the patch makes necessary
+changes to the irqchip driver and adds an USB2 PHY driver. The latter
+has a dependency on the mach-mmp/ changes, so it can't be submitted
+separately.
 
-Thanks
+The patch set has been tested to work on Wyse Tx0D and not ruin MMP2
+support on XO-1.75.
+
+Lubo
+
+
