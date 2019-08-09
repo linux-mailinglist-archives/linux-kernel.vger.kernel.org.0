@@ -2,160 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E094186F7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 03:59:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D705886F91
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:16:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404703AbfHIB7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 21:59:23 -0400
-Received: from mail-eopbgr1310110.outbound.protection.outlook.com ([40.107.131.110]:46646
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729418AbfHIB7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 21:59:23 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mJXAp/2AkU22Z4liuSLKHhrXX3QJ1yhiIKL7hr58Bzm6Y/5HCU2i1rzYJML8XjV0mNZ6z2wl2aojshUZ4N2KlYTrVDHO/352gkRN0EAinTvcNEm1lMb4SoMC2Pyg2OC9tK8NCpD7SWp+TcWTEjvL2/EsCm9djzB7ocwORmNN8EfsV8GN30MXHIx/0nbPHtJxDigVp/+36zlI8aG+jIN/4AsvYZpRvTvYesAyTlZp1/TKdnC0nbENsM/LDonqJeiLR/aIV4pIrVpcyfS/qnIIpgdIiWvoyYUzTx/PmDxfi5aPTwrw/59mT1iOsx/4ZmNGY2YGoRn8C5QWKpDZ+qykfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9wOZSCg2VTqZ4zEfjjKVdyprhmpUtHEynjwd3l05h1E=;
- b=gCzXbm1sohYN7PfpbfMwDAO2EV95AouhcC2pB389rH08IMMh4N+h4483Ub2EtSdYuaZvObBMPEZ0xumDCBxxvi2/8ib5vRlFQOnuds3qUDjv5uiwTqOGU1/Gk0N1I7QU8VzCFie3LRqXeMXs0TX6UzHAjWIk28e+ZzIWJgvCNbWYkXQ6cLX1vDgcweqKoxtUlXAE0qFOsoemAxKy6FozyV3TBJDTo0SMYDD7/43u7LvQxPef/YhZ5QPmNmmkew1ebxRrP6MfVK2hzEx2bZDc+S70Ncf6f+V057n+oxTS0yTu0FEWr61cWtFL8+mbYEogCCxuKzx34K/GQoL9bd1lUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9wOZSCg2VTqZ4zEfjjKVdyprhmpUtHEynjwd3l05h1E=;
- b=UtoVo6lJgJ6pX83NFWkDgZSx3s3FFk0HVY51B2cUQIP9fDkTo12q8nFW9c7wCAejh7/R6oFKURfhTUIXLjxOK9dlxPUJtX8BhbXJux77IJuJ6IShDMKVMxMCkpcolrKA6XylWsA7itMqKsjn4C4tN5FbSTaHJ7FtL9gVqrm3TfQ=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0122.APCP153.PROD.OUTLOOK.COM (10.170.188.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.11; Fri, 9 Aug 2019 01:58:09 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::d44e:57b7:d8fc:e91c]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::d44e:57b7:d8fc:e91c%7]) with mapi id 15.20.2157.001; Fri, 9 Aug 2019
- 01:58:09 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-CC:     "sashal@kernel.org" <sashal@kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Subject: [PATCH net v2] hv_netvsc: Fix a warning of suspicious RCU usage
-Thread-Topic: [PATCH net v2] hv_netvsc: Fix a warning of suspicious RCU usage
-Thread-Index: AdVOVD9gLFcQf0/RTjuMeKNDKND6rA==
-Date:   Fri, 9 Aug 2019 01:58:08 +0000
-Message-ID: <PU1P153MB0169A6492DCBB490FE7FE52CBFD60@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-08-09T01:58:05.7733632Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=2a2d5270-0545-433c-a357-4b4931a48124;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:0:c9b5:49d6:29e2:b6ef]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3270e8e2-c20c-46c0-9ae1-08d71c6d071f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600158)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0122;
-x-ms-traffictypediagnostic: PU1P153MB0122:|PU1P153MB0122:
-x-ms-exchange-transport-forked: True
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <PU1P153MB0122251C24A2985CA187F4FFBFD60@PU1P153MB0122.APCP153.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 01244308DF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(396003)(39860400002)(136003)(376002)(346002)(199004)(189003)(33656002)(2501003)(66946007)(76116006)(66446008)(64756008)(66556008)(66476007)(14444005)(6116002)(7416002)(256004)(81156014)(8676002)(10290500003)(8990500004)(4326008)(81166006)(53936002)(478600001)(71200400001)(71190400001)(25786009)(74316002)(14454004)(6436002)(22452003)(55016002)(10090500001)(305945005)(8936002)(9686003)(7736002)(1511001)(99286004)(46003)(52536014)(2906002)(5660300002)(476003)(86362001)(102836004)(486006)(6506007)(110136005)(54906003)(186003)(7696005)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0122;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pm0yeMl6RMoSBIK16+r3kmk1hV/3QCuIRU1GZTYOMFS8PUiNgf7fIQN5TQIeALPVU+3IMyn9ktGuy1drpMwaQjD81DI5/bq5rRitxkwO/WiVvojV1fNERD0bIQ98YTqBx2qsX7Kx/cMGE4gk/5oSkUPaf7JLidYys9bRHJGmnBw9KXTpgwaRqAllrySa5yfqDJDv52LWPO8MwZ3hJtUY5YEQ5Jjp4bldQ9b3lZUrwp2M8fAYnpoCXYy57anE1xRUN0zFe+Vyz4LhpH7Zi8qttxlTlzk21hAUVtFmwFFOJToGJyQnwAfruRJlePYeGkTYtooPROuVSSKUdgBRlPsaJnCXekD+U2I2sLKs+mQkfzjLkhBspJ8qvSfrtC/xXYNNhrE2rfo0G9alE1fIU2+zBw4MLn+pga77AlO/VWtuBrw=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2404880AbfHICQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 22:16:15 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36415 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729454AbfHICQO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 22:16:14 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r7so45168365pfl.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 19:16:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a/1ruBHpVt1jTKAf0TMhUUwHx4NvRraYwQZo6GfSVdo=;
+        b=eTYKcvZclF2mMygBExsdVr8uQ39XImTZpvwxdzuJFUrwvnE8abhTW+W9gsCG57Z9X8
+         rxoFxWAEfkg+q7jBAGOkZdQ40J6JzsQt1/4KB2PfNQPXK+ytgI41WcpbBEsi34qqvwAT
+         lhac3eXaCR/13s1Tsc3tgSn7aWy22eiv/dQqJEaHSHVYVvZLqEABjJMNHgD2kXp1E4Nf
+         ZakzsZ7uwpWEefKBNvYa+nnWbnXAnO6QmgnAKqdvRG1QdktLm/qTmfHsc7TRReUPdadn
+         1sac74YI0B8976EX9CVI8WSY6OojDG9mUSejDHx/LM9QJ+Ego1YMwgCzcF7Zh1ACY3+j
+         WBtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a/1ruBHpVt1jTKAf0TMhUUwHx4NvRraYwQZo6GfSVdo=;
+        b=HHcU8tv8LWaJ64GtCWUesxSdvLtEbGpdPMekzXCKXZCsweDzbw+rq3kGq6wtUPgi2e
+         C8f4FFAfNMg1lwektJM8MoFuSi6S9+NpwNUslVen0n1iTeMjdK5RZz8Z5fHEJr688+Kf
+         jAxmQ0DrY6iZp2ytVMhnoqZ7HDhjcrAqBPBnPBLsmCg2SObtfwC+abzs+66f14WIvjFl
+         ZKb0twIbfwiOimXh1Rv6JSDvV4DQ2weOHXCcKLmE/LBh9b9tkd6qGpI8e9AAWnBtNSLX
+         OqF+uyZ7u8YJmhUhMLFcRQki2NTNrW7ccYWPzRYPNR+lqhm7SQh2yOS4c47My9+Skk/x
+         VJpw==
+X-Gm-Message-State: APjAAAXbt1LTOY6NunbrWiBxPDI/C5wIMt3UEayW3BI6RVflsOdOkL5y
+        ZnPxbuK4KnQOeipaT+XGRRiVew==
+X-Google-Smtp-Source: APXvYqxjFIjKEG2YLl39xJG9/4t10wZbRfOIyNBGmfhWSGuOXgrpO7JTwqWuk4mpETywH4ktBbQbEQ==
+X-Received: by 2002:a17:90a:de02:: with SMTP id m2mr7070396pjv.18.1565316973979;
+        Thu, 08 Aug 2019 19:16:13 -0700 (PDT)
+Received: from localhost ([122.172.76.219])
+        by smtp.gmail.com with ESMTPSA id a3sm97786667pfo.49.2019.08.08.19.16.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Aug 2019 19:16:12 -0700 (PDT)
+Date:   Fri, 9 Aug 2019 07:46:07 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Doug Smythies <dsmythies@telus.net>
+Cc:     linux-pm@vger.kernel.org,
+        'Vincent Guittot' <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, 'Rafael Wysocki' <rjw@rjwysocki.net>,
+        'Srinivas Pandruvada' <srinivas.pandruvada@linux.intel.com>,
+        'Len Brown' <lenb@kernel.org>
+Subject: Re: [PATCH V4 2/2] cpufreq: intel_pstate: Implement QoS supported
+ freq constraints
+Message-ID: <20190809021607.j4qj3jm72gbisvqh@vireshk-i7>
+References: <70fce19e43bb825c3b2546e1211d262a59ae7378.1565161495.git.viresh.kumar@linaro.org>
+ <e789eceae3f32a66fff923daeb85b33b88f21fe1.1565161495.git.viresh.kumar@linaro.org>
+ <000601d54e05$e93d0130$bbb70390$@net>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3270e8e2-c20c-46c0-9ae1-08d71c6d071f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2019 01:58:08.8711
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: z8WsU+9uo2DPihQr7H0jDf6hiHXGiiLQQDaR61J9+kQfjeanmqVK3XPkv3GiTk7bYNQEppJXWQDi1RHtINCGbg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0122
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000601d54e05$e93d0130$bbb70390$@net>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08-08-19, 09:25, Doug Smythies wrote:
+> On 2019.08.07 00:06 Viresh Kumar wrote:
+> Tested by: Doug Smythies <dsmythies@telus.net>
+> Thermald seems to now be working O.K. for all the governors.
 
-This fixes a warning of "suspicious rcu_dereference_check() usage"
-when nload runs.
+Thanks for testing Doug.
 
-Fixes: 776e726bfb34 ("netvsc: fix RCU warning in get_stats")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
----
+> I do note that if one sets
+> /sys/devices/system/cpu/cpufreq/policy*/scaling_max_freq
+> It seems to override subsequent attempts via
+> /sys/devices/system/cpu/intel_pstate/max_perf_pct.
+> Myself, I find this confusing.
+> 
+> So the question becomes which one is the "master"?
 
-Changes in v2:
-    Made the minimal required change.
-	Added a Fixes tag.
-	Removed Stephen H.'s Signed-off-by since this is somewhat different from t=
-he=20
-		v1 from him; if there is any bug in v2, it's all my fault. :-)
+No one is master, cpufreq takes all the requests for frequency
+constraints and tries to set the value based on aggregation of all. So
+for max frequency, the lowest value wins and is shown up in sysfs.
 
- drivers/net/hyperv/netvsc_drv.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+So, everything looks okay to me.
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_dr=
-v.c
-index f9209594624b..b6357a75712c 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -1240,12 +1240,15 @@ static void netvsc_get_stats64(struct net_device *n=
-et,
- 			       struct rtnl_link_stats64 *t)
- {
- 	struct net_device_context *ndev_ctx =3D netdev_priv(net);
--	struct netvsc_device *nvdev =3D rcu_dereference_rtnl(ndev_ctx->nvdev);
-+	struct netvsc_device *nvdev;
- 	struct netvsc_vf_pcpu_stats vf_tot;
- 	int i;
-=20
-+	rcu_read_lock();
-+
-+	nvdev =3D rcu_dereference(ndev_ctx->nvdev);
- 	if (!nvdev)
--		return;
-+		goto out;
-=20
- 	netdev_stats_to_stats64(t, &net->stats);
-=20
-@@ -1284,6 +1287,8 @@ static void netvsc_get_stats64(struct net_device *net=
-,
- 		t->rx_packets	+=3D packets;
- 		t->multicast	+=3D multicast;
- 	}
-+out:
-+	rcu_read_unlock();
- }
-=20
- static int netvsc_set_mac_addr(struct net_device *ndev, void *p)
---=20
-2.19.1
+> > +static void update_qos_request(enum dev_pm_qos_req_type type)
+> > +{
+> > +	int max_state, turbo_max, freq, i, perf_pct;
+> > +	struct dev_pm_qos_request *req;
+> > +	struct cpufreq_policy *policy;
+> > +
+> > +	for_each_possible_cpu(i) {
+> > +		struct cpudata *cpu = all_cpu_data[i];
+> > +
+> > +		policy = cpufreq_cpu_get(i);
+> > +		if (!policy)
+> > +			continue;
+> > +
+> > +		req = policy->driver_data;
+> > +		cpufreq_cpu_put(policy);
+> > +
+> > +		if (!req)
+> > +			continue;
+> > +
+> > +		if (hwp_active)
+> > +			intel_pstate_get_hwp_max(i, &turbo_max, &max_state);
+> > +		else
+> > +			turbo_max = cpu->pstate.turbo_pstate;
+> > +
+> > +		if (type == DEV_PM_QOS_MIN_FREQUENCY) {
+> 
+> Is it O.K. to assume if the passed op code is
+> not DEV_PM_QOS_MIN_FREQUENCY
+> then it must have been
+> DEV_PM_QOS_MAX_FREQUENCY
+> ?
+> 
+> It is within this patch, but what about in future?
 
+Yes, because it is called locally there is no need to add another if
+statement here. And reviews should catch it in future and I don't
+expect it to change much anyway.
+
+> > +			perf_pct = global.min_perf_pct;
+> > +		} else {
+> > +			req++;
+> > +			perf_pct = global.max_perf_pct;
+> > +		}
+> > +
+> > +		freq = DIV_ROUND_UP(turbo_max * perf_pct, 100);
+> > +		freq *= cpu->pstate.scaling;
+> > +
+> > +		if (dev_pm_qos_update_request(req, freq))
+> > +			pr_warn("Failed to update freq constraint: CPU%d\n", i);
+> 
+> I get many of these messages (4520 so far, always in groups of 8 (I have 8 CPUs)),
+> and have yet to figure out exactly why. It seems to actually be working fine.
+
+Because of something I missed. dev_pm_qos_update_request() can return
+1, when the constraint value gets changed. Will fix this patch.
+
+-- 
+viresh
