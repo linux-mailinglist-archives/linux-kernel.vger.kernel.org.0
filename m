@@ -2,74 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E6C887ED6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 572E887EDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:04:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436984AbfHIQDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:03:19 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46710 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbfHIQDS (ORCPT
+        id S2437006AbfHIQE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:04:26 -0400
+Received: from mail-qk1-f177.google.com ([209.85.222.177]:36261 "EHLO
+        mail-qk1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfHIQE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:03:18 -0400
-Received: by mail-qt1-f195.google.com with SMTP id j15so2687272qtl.13;
-        Fri, 09 Aug 2019 09:03:17 -0700 (PDT)
+        Fri, 9 Aug 2019 12:04:26 -0400
+Received: by mail-qk1-f177.google.com with SMTP id g18so754963qkl.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 09:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=xel7PXRC4R/rnhsYvj8GQ1rwIBZrbD1zkzhd5zm878Y=;
-        b=dQfJKfziUd5BIIhnmKWm5QryRbkd42Q1/Tnqs9KXosa0Fy7PZbBE7fjT4MT0IdoewE
-         UWPZefpflc19oP5b3wSZasXpuBSi889ihXkxtmx/oNloLrWbnuRMATgEkXwbcTawsmDS
-         5O0GCy94BjW2+OPefPjl9CeNMvGl3y6oegu6wKs25sqieb4mDwP5b1fsIaqPriPruhfu
-         UAwOGrpIYKD1CiegfYKNBi38c3TJuvYaChrK5PPGLQJCYkEC6FIe5HeroupWFGt8khYP
-         NkYiIrhKl8/a9sgqqbi/vIxkzLEkmYWbXbI7jPub80bLRxj0HAGdhtMlXR1fgfghfOQI
-         oF7A==
+        bh=2PJLO8mzX7P8JmLFdEoCg9GN+XpWzpxzeTDvlNuxKhk=;
+        b=g+jVToaKi0qrneBdCfE4DOIb9yCwOEXaZAGKhucWtFOqg8JL8Tj+wVMGFXi9F51cNL
+         2ikazQ/A/2QpFYXn35Pk4UKPpFmTjTZbqbSxv+pFF4Q7NnbXGVxg+DdDtJffbi+w1RYr
+         qowRR2eHRkKWZ3J+1WjdLkHggbeeGqsEQMKQH8kVlFJ2zSnFQUYWzPvnXbxV1eOU/XYM
+         HgomxI3h2UB4eD6VlNE3+faw5m9SFv2OHlzckoTopgv0WIe8/0DwrvPQuvwZSv+bV5Tw
+         SMPyF2u8usIXtG86mn8pd2fK9Y4dIXpIJDo9ghz2ScNaR/FQ4v0my4BCyfjCj3htv3Cv
+         HZqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xel7PXRC4R/rnhsYvj8GQ1rwIBZrbD1zkzhd5zm878Y=;
-        b=gdvfjhpyDYGWiTfTM7yuy38oW+wz2y5u5X0pEpEJP2/YmKFUEHeZ1VkoqPnYo5SIds
-         VwGZzZziwjeiPLs7KEA/7SikQOXOvf0Vcmzd2Gbn6Fwze6iPbcnyjavSM1i9c+xycXnX
-         MX8CFn949htokeOPs1HIUZQP6fiULKtrF6Q8Uemgav/z8YJMQWulZFYR0nGf8ygJ8o8g
-         3GoDRvQf5JzkQ/cBslhhrv8N8bJ3CFiPQc+BYsyVNwo0mEGv/qlaSFWWar1ODGWixgkL
-         RWMcx4lBR/slN5R2PZjo56+bsvH81jyp0EL8rcPpqspYhheqtPLJNz09C7JY7qD8XHFd
-         bYnQ==
-X-Gm-Message-State: APjAAAWouFa9t0MA5I1BJcevM9Os2HjNXoGfdMpJ4B9Y4rw/1dwvADTr
-        zvlJSgCDh57lA4vJMwpi0uQ=
-X-Google-Smtp-Source: APXvYqweXIEM9Qd18EZsE0BquWOtFBkkGxNWe1jzmCExse3IwwVkL7mR3t+QJkHssIVPoNGPHEMYcQ==
-X-Received: by 2002:a0c:b59c:: with SMTP id g28mr18922345qve.244.1565366596692;
-        Fri, 09 Aug 2019 09:03:16 -0700 (PDT)
+        bh=2PJLO8mzX7P8JmLFdEoCg9GN+XpWzpxzeTDvlNuxKhk=;
+        b=JzLlgCvOxAJwT2GEElX4MtXC0DFO3EVPf4ZatSHFwK/RHl0n4GoBEQxNW1Itk1V+nq
+         aTLC2+iJSzqs/laWXCdSm13exZ9zX5tFS6neyIkGmblrt6BB0bgE0PF5ENflS7Vn706B
+         Dzwj45+V9M5S81bm40mXxexFMbj9UlG5sdEDElIXq4wFiVggmLe0tIt1lx7VhTHM2aQr
+         7f8hwKkmbVLEHX9oc/O6fIeoa8Yg8FbFlPF/TpNXJroGOBpWyux7/CyFvp+lbs08nSe7
+         41ph25Vx+tBcCSpGqkXmdW+EM8Dmo3ikKf7vujGckj5Wa1tAGAx4E8vxbY6dXEyVMTyL
+         vTOw==
+X-Gm-Message-State: APjAAAV0Z2BBSg/Vezmym9xMVJLnpHvxsDLZd6bs9lkoYnPtzN45vwQ1
+        ri3W6KmDQtVgROfQCPZGmcY=
+X-Google-Smtp-Source: APXvYqwjQI+9OITGBLKxSuTq8iauyvURpDO3C7gjrRT58S6vzBVIDgko1oRvRpBs+vOQ3BMN6FkhcA==
+X-Received: by 2002:ae9:ed94:: with SMTP id c142mr6800596qkg.70.1565366664590;
+        Fri, 09 Aug 2019 09:04:24 -0700 (PDT)
 Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id o50sm14727107qtj.17.2019.08.09.09.03.13
+        by smtp.gmail.com with ESMTPSA id f26sm53337367qtf.44.2019.08.09.09.04.23
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 09:03:13 -0700 (PDT)
+        Fri, 09 Aug 2019 09:04:23 -0700 (PDT)
 From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
 X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
 Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 4EAED40340; Fri,  9 Aug 2019 13:03:11 -0300 (-03)
-Date:   Fri, 9 Aug 2019 13:03:11 -0300
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+        id B120940340; Fri,  9 Aug 2019 13:04:21 -0300 (-03)
+Date:   Fri, 9 Aug 2019 13:04:21 -0300
+To:     "Hunter, Adrian" <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH] perf trace: Fix segmentation fault when access syscall
- info
-Message-ID: <20190809160311.GA9280@kernel.org>
-References: <20190809104752.27338-1-leo.yan@linaro.org>
- <20190809132522.GB20899@kernel.org>
- <20190809134431.GE8313@leoy-ThinkPad-X240s>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] perf_sample_id::idx
+Message-ID: <20190809160421.GB9280@kernel.org>
+References: <20190809092736.GA9377@krava>
+ <363DA0ED52042842948283D2FC38E4649C5B1DB0@IRSMSX106.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190809134431.GE8313@leoy-ThinkPad-X240s>
+In-Reply-To: <363DA0ED52042842948283D2FC38E4649C5B1DB0@IRSMSX106.ger.corp.intel.com>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,98 +72,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Aug 09, 2019 at 09:44:31PM +0800, Leo Yan escreveu:
-> On Fri, Aug 09, 2019 at 10:25:22AM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Fri, Aug 09, 2019 at 06:47:52PM +0800, Leo Yan escreveu:
-> > > 'perf trace' reports the segmentation fault as below on Arm64:
-> > > 
-> > >   # perf trace -e string -e augmented_raw_syscalls.c
-> > >   LLVM: dumping tools/perf/examples/bpf/augmented_raw_syscalls.o
-> > >   perf: Segmentation fault
-> > >   Obtained 12 stack frames.
-> > >   perf(sighandler_dump_stack+0x47) [0xaaaaac96ac87]
-> > >   linux-vdso.so.1(+0x5b7) [0xffffadbeb5b7]
-> > >   /lib/aarch64-linux-gnu/libc.so.6(strlen+0x10) [0xfffface7d5d0]
-> > >   /lib/aarch64-linux-gnu/libc.so.6(_IO_vfprintf+0x1ac7) [0xfffface49f97]
-> > >   /lib/aarch64-linux-gnu/libc.so.6(__vsnprintf_chk+0xc7) [0xffffacedfbe7]
-> > >   perf(scnprintf+0x97) [0xaaaaac9ca3ff]
-> > >   perf(+0x997bb) [0xaaaaac8e37bb]
-> > >   perf(cmd_trace+0x28e7) [0xaaaaac8ec09f]
-> > >   perf(+0xd4a13) [0xaaaaac91ea13]
-> > >   perf(main+0x62f) [0xaaaaac8a147f]
-> > >   /lib/aarch64-linux-gnu/libc.so.6(__libc_start_main+0xe3) [0xfffface22d23]
-> > >   perf(+0x57723) [0xaaaaac8a1723]
-> > >   Segmentation fault
-> > > 
-> > > This issue is introduced by commit 30a910d7d3e0 ("perf trace:
-> > > Preallocate the syscall table"), it allocates trace->syscalls.table[]
-> > > array and the element count is 'trace->sctbl->syscalls.nr_entries';
-> > > but on Arm64, the system call number is not continuously used; e.g. the
-> > > syscall maximum id is 436 but the real entries is only 281.  So the
-> > > table is allocated with 'nr_entries' as the element count, but it
-> > > accesses the table with the syscall id, which might be out of the bound
-> > > of the array and cause the segmentation fault.
-> > > 
-> > > This patch allocates trace->syscalls.table[] with the element count is
-> > > 'trace->sctbl->syscalls.max_id + 1', this allows any id to access the
-> > > table without out of the bound.
-> > 
-> > Thanks a lot!
-> 
-> You are welcome, Arnaldo.
-> 
-> > My bad, that is why we have that max_id there, I forgot
-> > about it and since I tested so far only on x86_64... applied to
-> > perf/core, since it is only on:
-> > 
-> > [acme@quaco perf]$ git tag --contains 30a910d7d3e0
-> > perf-core-for-mingo-5.4-20190729
-> > [acme@quaco perf]$
-> 
-> Thanks!  Yes, I am working on perf/core branch and hit this issue.
-> 
-> Just in case Ingo has not merged your PR, if could save your efforts
-> it's quite fine for me to merge this change in your original patch.
+Em Fri, Aug 09, 2019 at 03:20:14PM +0000, Hunter, Adrian escreveu:
 
-This got already merged into tip/perf/core, so no way to combine both by
-now, unfortunately, would be good for bisection purposes on ARM64,
-agreed, but not possible.
+> It will be used for AUX area sampling.  A sample will have AUX area
+> data that will be queued for decoding, where there are separate queues
+> for each CPU (per-cpu tracing) or task (per-thread tracing).  The
+> sample ID can be used to lookup 'idx' which is effectively the queue
+> number.
 
-Thanks again,
+Would be good to have this as a comment in the perf_sample_id struct
+definition :-)
 
 - Arnaldo
  
-> Thanks,
-> Leo Yan
-> 
+> > -----Original Message-----
+> > From: Jiri Olsa [mailto:jolsa@redhat.com]
+> > Sent: Friday, August 9, 2019 12:28 PM
+> > To: Hunter, Adrian <adrian.hunter@intel.com>
+> > Cc: Arnaldo Carvalho de Melo <acme@kernel.org>; Ingo Molnar
+> > <mingo@kernel.org>; Namhyung Kim <namhyung@kernel.org>; Alexander
+> > Shishkin <alexander.shishkin@linux.intel.com>; Peter Zijlstra
+> > <a.p.zijlstra@chello.nl>; Michael Petlan <mpetlan@redhat.com>; linux-
+> > kernel@vger.kernel.org
+> > Subject: [RFC] perf_sample_id::idx
 > > 
-> > - Arnaldo
-> >  
-> > > Fixes: 30a910d7d3e0 ("perf trace: Preallocate the syscall table")
-> > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > > ---
-> > >  tools/perf/builtin-trace.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > > index 75eb3811e942..d553d06a9aeb 100644
-> > > --- a/tools/perf/builtin-trace.c
-> > > +++ b/tools/perf/builtin-trace.c
-> > > @@ -1492,7 +1492,7 @@ static int trace__read_syscall_info(struct trace *trace, int id)
-> > >  	const char *name = syscalltbl__name(trace->sctbl, id);
-> > >  
-> > >  	if (trace->syscalls.table == NULL) {
-> > > -		trace->syscalls.table = calloc(trace->sctbl->syscalls.nr_entries, sizeof(*sc));
-> > > +		trace->syscalls.table = calloc(trace->sctbl->syscalls.max_id + 1, sizeof(*sc));
-> > >  		if (trace->syscalls.table == NULL)
-> > >  			return -ENOMEM;
-> > >  	}
-> > > -- 
-> > > 2.17.1
+> > hi,
+> > what's the perf_sample_id::idx for? It was added in here:
+> >   3c659eedada2 perf tools: Add id index
 > > 
-> > -- 
+> > but I dont see any practical usage of it in the sources, when I remove it like
+> > below, I get clean build
 > > 
-> > - Arnaldo
+> > any idea?
+> > 
+> > thanks,
+> > jirka
+> > 
+> > 
+> > ---
+> > diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h index
+> > 70841d115349..24b90f68d616 100644
+> > --- a/tools/perf/util/event.h
+> > +++ b/tools/perf/util/event.h
+> > @@ -498,7 +498,7 @@ struct tracing_data_event {
+> > 
+> >  struct id_index_entry {
+> >  	u64 id;
+> > -	u64 idx;
+> > +	u64 idx; /* deprecated */
+> >  	u64 cpu;
+> >  	u64 tid;
+> >  };
+> > diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c index
+> > c4489a1ad6bc..e55133cacb64 100644
+> > --- a/tools/perf/util/evlist.c
+> > +++ b/tools/perf/util/evlist.c
+> > @@ -519,11 +519,11 @@ int perf_evlist__id_add_fd(struct evlist *evlist,  }
+> > 
+> >  static void perf_evlist__set_sid_idx(struct evlist *evlist,
+> > -				     struct evsel *evsel, int idx, int cpu,
+> > +				     struct evsel *evsel, int cpu,
+> >  				     int thread)
+> >  {
+> >  	struct perf_sample_id *sid = SID(evsel, cpu, thread);
+> > -	sid->idx = idx;
+> > +
+> >  	if (evlist->core.cpus && cpu >= 0)
+> >  		sid->cpu = evlist->core.cpus->map[cpu];
+> >  	else
+> > @@ -795,8 +795,7 @@ static int perf_evlist__mmap_per_evsel(struct evlist
+> > *evlist, int idx,
+> >  			if (perf_evlist__id_add_fd(evlist, evsel, cpu, thread,
+> >  						   fd) < 0)
+> >  				return -1;
+> > -			perf_evlist__set_sid_idx(evlist, evsel, idx, cpu,
+> > -						 thread);
+> > +			perf_evlist__set_sid_idx(evlist, evsel, cpu, thread);
+> >  		}
+> >  	}
+> > 
+> > diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h index
+> > 3cf35aa782b9..b9d864933d75 100644
+> > --- a/tools/perf/util/evsel.h
+> > +++ b/tools/perf/util/evsel.h
+> > @@ -23,7 +23,6 @@ struct perf_sample_id {
+> >  	struct hlist_node 	node;
+> >  	u64		 	id;
+> >  	struct evsel		*evsel;
+> > -	int			idx;
+> >  	int			cpu;
+> >  	pid_t			tid;
+> > 
+> > diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c index
+> > b9fe71d11bf6..2642d60aa875 100644
+> > --- a/tools/perf/util/session.c
+> > +++ b/tools/perf/util/session.c
+> > @@ -2394,7 +2394,6 @@ int perf_event__process_id_index(struct
+> > perf_session *session,
+> >  		sid = perf_evlist__id2sid(evlist, e->id);
+> >  		if (!sid)
+> >  			return -ENOENT;
+> > -		sid->idx = e->idx;
+> >  		sid->cpu = e->cpu;
+> >  		sid->tid = e->tid;
+> >  	}
+> > @@ -2454,7 +2453,7 @@ int perf_event__synthesize_id_index(struct
+> > perf_tool *tool,
+> >  				return -ENOENT;
+> >  			}
+> > 
+> > -			e->idx = sid->idx;
+> > +			e->idx = -1;
+> >  			e->cpu = sid->cpu;
+> >  			e->tid = sid->tid;
+> >  		}
 
 -- 
 
