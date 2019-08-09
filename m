@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C5387FC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32F6387FD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:24:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407440AbfHIQYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:24:30 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:58878 "EHLO honk.sigxcpu.org"
+        id S2437100AbfHIQYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:24:43 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:58948 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406171AbfHIQYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:24:30 -0400
+        id S2406171AbfHIQYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 12:24:32 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 8677FFB06;
-        Fri,  9 Aug 2019 18:24:26 +0200 (CEST)
+        by honk.sigxcpu.org (Postfix) with ESMTP id D3A35FB02;
+        Fri,  9 Aug 2019 18:24:28 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zhSWzhnDUXoG; Fri,  9 Aug 2019 18:24:24 +0200 (CEST)
+        with ESMTP id 3YWp7d4m5v1w; Fri,  9 Aug 2019 18:24:26 +0200 (CEST)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id B0B2540B40; Fri,  9 Aug 2019 18:24:23 +0200 (CEST)
+        id B904E41DAD; Fri,  9 Aug 2019 18:24:23 +0200 (CEST)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -40,9 +40,9 @@ To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Robert Chiras <robert.chiras@nxp.com>,
         Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v2 1/3] arm64: imx8mq: add imx8mq iomux-gpr field defines
-Date:   Fri,  9 Aug 2019 18:24:21 +0200
-Message-Id: <e0562d8bb4098dc4cdb4023b41fb75b312be22a5.1565367567.git.agx@sigxcpu.org>
+Subject: [PATCH v2 2/3] dt-bindings: display/bridge: Add binding for NWL mipi dsi host controller
+Date:   Fri,  9 Aug 2019 18:24:22 +0200
+Message-Id: <9c906bb6592424acdb1a67447a482e010a113b49.1565367567.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1565367567.git.agx@sigxcpu.org>
 References: <cover.1565367567.git.agx@sigxcpu.org>
@@ -54,83 +54,175 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds all the gpr registers and the define needed for selecting
-the input source in the imx-nwl drm bridge.
+The Northwest Logic MIPI DSI IP core can be found in NXPs i.MX8 SoCs.
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
 ---
- include/linux/mfd/syscon/imx8mq-iomuxc-gpr.h | 62 ++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 include/linux/mfd/syscon/imx8mq-iomuxc-gpr.h
+ .../bindings/display/bridge/nwl-dsi.yaml      | 155 ++++++++++++++++++
+ 1 file changed, 155 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
 
-diff --git a/include/linux/mfd/syscon/imx8mq-iomuxc-gpr.h b/include/linux/mfd/syscon/imx8mq-iomuxc-gpr.h
+diff --git a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
 new file mode 100644
-index 000000000000..62e85ffacfad
+index 000000000000..5ed8bc4a4d18
 --- /dev/null
-+++ b/include/linux/mfd/syscon/imx8mq-iomuxc-gpr.h
-@@ -0,0 +1,62 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2017 NXP
-+ *               2019 Purism SPC
-+ */
++++ b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
+@@ -0,0 +1,155 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/imx-nwl-dsi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#ifndef __LINUX_IMX8MQ_IOMUXC_GPR_H
-+#define __LINUX_IMX8MQ_IOMUXC_GPR_H
++title: Northwest Logic MIPI-DSI on imx SoCs
 +
-+#define IOMUXC_GPR0	0x00
-+#define IOMUXC_GPR1	0x04
-+#define IOMUXC_GPR2	0x08
-+#define IOMUXC_GPR3	0x0c
-+#define IOMUXC_GPR4	0x10
-+#define IOMUXC_GPR5	0x14
-+#define IOMUXC_GPR6	0x18
-+#define IOMUXC_GPR7	0x1c
-+#define IOMUXC_GPR8	0x20
-+#define IOMUXC_GPR9	0x24
-+#define IOMUXC_GPR10	0x28
-+#define IOMUXC_GPR11	0x2c
-+#define IOMUXC_GPR12	0x30
-+#define IOMUXC_GPR13	0x34
-+#define IOMUXC_GPR14	0x38
-+#define IOMUXC_GPR15	0x3c
-+#define IOMUXC_GPR16	0x40
-+#define IOMUXC_GPR17	0x44
-+#define IOMUXC_GPR18	0x48
-+#define IOMUXC_GPR19	0x4c
-+#define IOMUXC_GPR20	0x50
-+#define IOMUXC_GPR21	0x54
-+#define IOMUXC_GPR22	0x58
-+#define IOMUXC_GPR23	0x5c
-+#define IOMUXC_GPR24	0x60
-+#define IOMUXC_GPR25	0x64
-+#define IOMUXC_GPR26	0x68
-+#define IOMUXC_GPR27	0x6c
-+#define IOMUXC_GPR28	0x70
-+#define IOMUXC_GPR29	0x74
-+#define IOMUXC_GPR30	0x78
-+#define IOMUXC_GPR31	0x7c
-+#define IOMUXC_GPR32	0x80
-+#define IOMUXC_GPR33	0x84
-+#define IOMUXC_GPR34	0x88
-+#define IOMUXC_GPR35	0x8c
-+#define IOMUXC_GPR36	0x90
-+#define IOMUXC_GPR37	0x94
-+#define IOMUXC_GPR38	0x98
-+#define IOMUXC_GPR39	0x9c
-+#define IOMUXC_GPR40	0xa0
-+#define IOMUXC_GPR41	0xa4
-+#define IOMUXC_GPR42	0xa8
-+#define IOMUXC_GPR43	0xac
-+#define IOMUXC_GPR44	0xb0
-+#define IOMUXC_GPR45	0xb4
-+#define IOMUXC_GPR46	0xb8
-+#define IOMUXC_GPR47	0xbc
++maintainers:
++  - Guido Gúnther <agx@sigxcpu.org>
++  - Robert Chiras <robert.chiras@nxp.com>
 +
-+/* i.MX8Mq iomux gpr register field defines */
-+#define IMX8MQ_GPR13_MIPI_MUX_SEL		BIT(2)
++description: |
++  NWL MIPI-DSI host controller found on i.MX8 platforms. This is a dsi bridge for
++  the SOCs NWL MIPI-DSI host controller.
 +
-+#endif /* __LINUX_IMX8MQ_IOMUXC_GPR_H */
++properties:
++  compatible:
++    oneOf:
++      - items:
++        - const: fsl,imx8mq-nwl-dsi
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: DSI core clock
++      - description: RX_ESC clock (used in escape mode)
++      - description: TX_ESC clock (used in escape mode)
++      - description: PHY_REF clock
++
++  clock-names:
++    items:
++      - const: core
++      - const: rx_esc
++      - const: tx_esc
++      - const: phy_ref
++
++  phys:
++    maxItems: 1
++    description:
++      A phandle to the phy module representing the DPHY
++
++  phy-names:
++    items:
++      - const: dphy
++
++  power-domains:
++    maxItems: 1
++    description:
++      A phandle to the power domain
++
++  resets:
++    maxItems: 4
++    description:
++      A phandle to the reset controller
++
++  reset-names:
++    items:
++      - const: byte
++      - const: dpi
++      - const: esc
++      - const: pclk
++
++  mux-sel:
++    maxItems: 1
++    description:
++      A phandle to the MUX register set
++
++  port:
++    type: object
++    description:
++      A input put or output port node.
++
++  ports:
++    type: object
++    description:
++      A node containing DSI input & output port nodes with endpoint
++      definitions as documented in
++      Documentation/devicetree/bindings/graph.txt.
++
++patternProperties:
++  "^panel@[0-9]+$": true
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - fsl,imx8mq-nwl-dsi
++    then:
++      required:
++        - resets
++        - reset-names
++        - mux-sel
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - phys
++  - phy-names
++
++examples:
++ - |
++
++   mipi_dsi: mipi_dsi@30a00000 {
++              #address-cells = <1>;
++              #size-cells = <0>;
++              compatible = "fsl,imx8mq-nwl-dsi";
++              reg = <0x30A00000 0x300>;
++              clocks = <&clk 163>, <&clk 244>, <&clk 245>, <&clk 164>;
++              clock-names = "core", "rx_esc", "tx_esc", "phy_ref";
++              interrupts = <0 34 4>;
++              power-domains = <&pgc_mipi>;
++              resets = <&src 0>, <&src 1>, <&src 2>, <&src 3>;
++              reset-names = "byte", "dpi", "esc", "pclk";
++              mux-sel = <&iomuxc_gpr>;
++              phys = <&dphy>;
++              phy-names = "dphy";
++
++              panel@0 {
++                      compatible = "...";
++                      port@0 {
++                           panel_in: endpoint {
++                                     remote-endpoint = <&mipi_dsi_out>;
++                           };
++                      };
++              };
++
++              ports {
++                    #address-cells = <1>;
++                    #size-cells = <0>;
++
++                    port@0 {
++                           reg = <0>;
++                           mipi_dsi_in: endpoint {
++                                        remote-endpoint = <&lcdif_mipi_dsi>;
++                           };
++                    };
++                    port@1 {
++                           reg = <1>;
++                           mipi_dsi_out: endpoint {
++                                         remote-endpoint = <&panel_in>;
++                           };
++                    };
++              };
++      };
 -- 
 2.20.1
 
