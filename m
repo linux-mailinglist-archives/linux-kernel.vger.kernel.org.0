@@ -2,118 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB75687854
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 13:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5E78785F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 13:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406290AbfHILZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 07:25:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfHILZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 07:25:03 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 602252086D;
-        Fri,  9 Aug 2019 11:25:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565349902;
-        bh=JciUXLKzG32CJnk0QfzfKKNTtJ9F6xeSpXCY5HDRwVc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kA+gzUAwOc7nN9Wm2WAfiyMpf3xmtr4wF9zPE97QeyUbO2dC0VXl8S9GXbwchpFRX
-         CmZUqVhjk8UWbNwZdTHXgjVdW2qjOXTy1ZWvyt93CLggXzGoFD1POasGoZHBxhN+gd
-         uhgRZAG15UOeucySWCEc6IksmKviQyon38FfzVJ4=
-Message-ID: <368e0c787cc9d0c0d99121f8f1b03c45e1a93f08.camel@kernel.org>
-Subject: Re: [PATCH] fs/ceph: use release_pages() directly
-From:   Jeff Layton <jlayton@kernel.org>
-To:     john.hubbard@gmail.com
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel@vger.kernel.org
-Date:   Fri, 09 Aug 2019 07:24:59 -0400
-In-Reply-To: <20190809035647.18866-1-jhubbard@nvidia.com>
-References: <20190809035647.18866-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S2406331AbfHIL1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 07:27:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33926 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726152AbfHIL1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 07:27:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C52E3AD93;
+        Fri,  9 Aug 2019 11:27:40 +0000 (UTC)
+Date:   Fri, 9 Aug 2019 13:27:39 +0200
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     mike.kravetz@oracle.com, shuah@kernel.org, rientjes@google.com,
+        shakeelb@google.com, gthelen@google.com, akpm@linux-foundation.org,
+        khalid.aziz@oracle.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        cgroups@vger.kernel.org
+Subject: Re: [RFC PATCH] hugetlbfs: Add hugetlb_cgroup reservation limits
+Message-ID: <20190809112738.GB13061@blackbody.suse.cz>
+References: <20190808194002.226688-1-almasrymina@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
+Content-Disposition: inline
+In-Reply-To: <20190808194002.226688-1-almasrymina@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-08 at 20:56 -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> release_pages() has been available to modules since Oct, 2010,
-> when commit 0be8557bcd34 ("fuse: use release_pages()") added
-> EXPORT_SYMBOL(release_pages). However, this ceph code was still
-> using a workaround.
-> 
-> Remove the workaround, and call release_pages() directly.
-> 
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: Sage Weil <sage@redhat.com>
-> Cc: Ilya Dryomov <idryomov@gmail.com>
-> Cc: ceph-devel@vger.kernel.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
-> 
-> Hi,
-> 
-> I noticed this while I trying to understand mlock.c's use of
-> pagevec_release(). So I was looking around for examples, and stumbled
-> across this, which seems worth cleaning up.
-> 
-> thanks,
-> John Hubbard
-> NVIDIA
-> 
->  fs/ceph/addr.c | 19 +------------------
->  1 file changed, 1 insertion(+), 18 deletions(-)
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index e078cc55b989..22ed45d143be 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -679,23 +679,6 @@ static int ceph_writepage(struct page *page, struct writeback_control *wbc)
->  	return err;
->  }
->  
-> -/*
-> - * lame release_pages helper.  release_pages() isn't exported to
-> - * modules.
-> - */
-> -static void ceph_release_pages(struct page **pages, int num)
-> -{
-> -	struct pagevec pvec;
-> -	int i;
-> -
-> -	pagevec_init(&pvec);
-> -	for (i = 0; i < num; i++) {
-> -		if (pagevec_add(&pvec, pages[i]) == 0)
-> -			pagevec_release(&pvec);
-> -	}
-> -	pagevec_release(&pvec);
-> -}
-> -
->  /*
->   * async writeback completion handler.
->   *
-> @@ -769,7 +752,7 @@ static void writepages_finish(struct ceph_osd_request *req)
->  		dout("writepages_finish %p wrote %llu bytes cleaned %d pages\n",
->  		     inode, osd_data->length, rc >= 0 ? num_pages : 0);
->  
-> -		ceph_release_pages(osd_data->pages, num_pages);
-> +		release_pages(osd_data->pages, num_pages);
->  	}
->  
->  	ceph_put_wrbuffer_cap_refs(ci, total_pages, snapc);
 
-Thanks John. Running tests on it now, and will probably push to our
-testing branch later today. It should make v5.4.
+--IiVenqGWf+H9Y6IX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Jeff Layton <jlayton@kernel.org>
+(+CC cgroups@vger.kernel.org)
 
+On Thu, Aug 08, 2019 at 12:40:02PM -0700, Mina Almasry <almasrymina@google.com> wrote:
+> We have developers interested in using hugetlb_cgroups, and they have expressed
+> dissatisfaction regarding this behavior.
+I assume you still want to enforce a limit on a particular group and the
+application must be able to handle resource scarcity (but better
+notified than SIGBUS).
+
+> Alternatives considered:
+> [...]
+(I did not try that but) have you considered:
+3) MAP_POPULATE while you're making the reservation,
+4) Using multple hugetlbfs mounts with respective limits.
+
+> Caveats:
+> 1. This support is implemented for cgroups-v1. I have not tried
+>    hugetlb_cgroups with cgroups v2, and AFAICT it's not supported yet.
+>    This is largely because we use cgroups-v1 for now.
+Adding something new into v1 without v2 counterpart, is making migration
+harder, that's one of the reasons why v1 API is rather frozen now. (I'm
+not sure whether current hugetlb controller fits into v2 at all though.)
+
+Michal
+
+--IiVenqGWf+H9Y6IX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl1NWKMACgkQia1+riC5
+qSi2Sw/+M4XGujSB2JZaZ0/yi48MZThHdXWt5rWC6L/Nt7CW42/WhqltGcNl9c9F
+O7Fegy17Qhgi0y/UUqUbQ2l27VD5AD5DZB+DIVmAIraiznhljDL24hTmSELtwOi9
+Zn+c9dudCpUV4Z6LwBme2DSrsA9YAHwcjBSAhFu1YTTq07t+cT2RShx0ntKS5R9a
+dYYh4JKFTsQ+qL/lWzl8aF4nYZGii7e+3i8E9+8ZYMLje6AYolAKJwQSmkWEJGGP
+9asZ61GcnygJyxY4jEXo5xqUirK0c2knwT+41w1cwSto6+qdsYIYBuXueksUfMcv
+LRKp/72MRdb7vHQdVQq/0uXj4QB5WAq8qFvhPbbTFgDRdMIyxUlltuLSCZ4oEKWK
+TdDK/cfyowjrTbcqydWHLhX2R711IlpP2g1gGBa4nHHnXssOMTBrUthuSpX8EPUZ
+YxDV4IQFEDCNxFsqsDJqd6mCZxm/Wdb+0LYz7Hi7Dqrs47bp+ggp3gYkVxFiZSsj
+MzbjDYwrxdMgv6SS2P/IGUJI0Duzx3PjArGCAkYO5mjsi6HvfsF9l+pIRbb3uejC
+EsWo/ReGFPTKmogjoAX4vxCRg1LpktYtzIzpqWqVTmWL70jiLnV4+FmeWBijlAJU
+3TJwzTYrBbizqKm/PSjakNr9+3bBc+Tq2ZBcnq0bewC8hJZzdls=
+=q8Ru
+-----END PGP SIGNATURE-----
+
+--IiVenqGWf+H9Y6IX--
