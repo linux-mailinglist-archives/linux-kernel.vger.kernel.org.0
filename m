@@ -2,101 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDD687598
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2592C874EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406050AbfHIJSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 05:18:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406167AbfHIJSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:18:21 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53BA421783;
-        Fri,  9 Aug 2019 09:18:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565342300;
-        bh=vDFk0iDv4uhF/mh6uYPLsEe3xs+segrrcnOWuXxQKms=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=guBuS1ZbRdjlgZXkIRMxo5T/SU/GeSbZSxdnKSL6erjXVJ68Ixg5GfFw48ZcAQDUJ
-         vTZF38S2BSeNjyyySFS+ew1qhyVgLU9/0UnNyatr/Z0JcgoD0Fmx/FRLRvGYhvhSGK
-         go/RU2KVvB6UqqPtB9Y439Cv67wUAgDcPXYyT1DU=
-Date:   Fri, 9 Aug 2019 10:55:45 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     syzbot <syzbot+45b2f40f0778cfa7634e@syzkaller.appspotmail.com>,
-        Michael Hund <mhund@ld-didactic.de>, akpm@linux-foundation.org,
-        andreyknvl@google.com, cai@lca.pw, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Subject: Re: BUG: bad usercopy in ld_usb_read
-Message-ID: <20190809085545.GB21320@kroah.com>
-References: <0000000000005c056c058f9a5437@google.com>
- <20190808124654.GB32144@kroah.com>
- <201908081604.D1203D408@keescook>
+        id S2406117AbfHIJLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 05:11:10 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38350 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2405991AbfHIJLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 05:11:09 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3196522D7CAED50D4FE6;
+        Fri,  9 Aug 2019 17:11:07 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 9 Aug 2019
+ 17:10:56 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <perex@perex.cz>, <tiwai@suse.com>, <broonie@kernel.org>,
+        <rfontana@redhat.com>, <kstewart@linuxfoundation.org>,
+        <allison@lohutok.net>, <armijn@tjaldur.nl>
+CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ALSA: Au88x0 - remove some unused const variables
+Date:   Fri, 9 Aug 2019 17:06:20 +0800
+Message-ID: <20190809090620.70496-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201908081604.D1203D408@keescook>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 04:06:32PM -0700, Kees Cook wrote:
-> On Thu, Aug 08, 2019 at 02:46:54PM +0200, Greg KH wrote:
-> > On Thu, Aug 08, 2019 at 05:38:06AM -0700, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following crash on:
-> > > 
-> > > HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-> > > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=13aeaece600000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=45b2f40f0778cfa7634e
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > 
-> > > Unfortunately, I don't have any reproducer for this crash yet.
-> > > 
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+45b2f40f0778cfa7634e@syzkaller.appspotmail.com
-> > > 
-> > > ldusb 6-1:0.124: Read buffer overflow, -131383996186150 bytes dropped
-> > 
-> > That's a funny number :)
-> > 
-> > Nice overflow found, I see you are now starting to fuzz the char device
-> > nodes of usb drivers...
-> > 
-> > Michael, care to fix this up?
-> 
-> This looks like the length in the read-from-device buffer is unchecked:
-> 
->         /* actual_buffer contains actual_length + interrupt_in_buffer */
->         actual_buffer = (size_t *)(dev->ring_buffer + dev->ring_tail * (sizeof(size_t)+dev->interrupt_in_endpoint_size));
->         bytes_to_read = min(count, *actual_buffer);
->         if (bytes_to_read < *actual_buffer)
->                 dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
->                          *actual_buffer-bytes_to_read);
-> 
->         /* copy one interrupt_in_buffer from ring_buffer into userspace */
->         if (copy_to_user(buffer, actual_buffer+1, bytes_to_read)) {
->                 retval = -EFAULT;
->                 goto unlock_exit;
->         }
-> 
-> I assume what's stored at actual_buffer is bogus and needs validation
-> somewhere before it's actually used. (If not here, maybe where ever the
-> write into the buffer originally happens?)
+sound/pci/au88x0/au88x0_xtalk.c:121:28: warning: asXtalkWideCoefsRightXt defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:152:28: warning: asXtalkNarrowCoefsRightXt defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:175:28: warning: asXtalkCoefsNegPipe defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:183:28: warning: asXtalkCoefsNumTest defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:191:28: warning: asXtalkCoefsDenTest defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:199:28: warning: asXtalkOutStateTest defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:20:20: warning: sXtalkWideKRightXt defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:231:28: warning: asDiamondCoefsRightXt defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:24:20: warning: sXtalkWideShiftRightXt defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:30:20: warning: sXtalkNarrowKRightXt defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:34:20: warning: sXtalkNarrowShiftRightXt defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:38:28: warning: asXtalkGainsDefault defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:43:28: warning: asXtalkGainsTest defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:48:28: warning: asXtalkGains1Chan defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:67:28: warning: alXtalkDlineTest defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:77:30: warning: asXtalkInStateTest defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:92:20: warning: sDiamondKRightXt defined but not used [-Wunused-const-variable=]
+sound/pci/au88x0/au88x0_xtalk.c:96:20: warning: sDiamondShiftRightXt defined but not used [-Wunused-const-variable=]
 
-I think it should be verified here, as that's when it is parsed.  The
-data is written to the buffer in ld_usb_interrupt_in_callback() but it
-does not "know" how to parse it at that location.
+They are never used, so can be removed.
 
-thanks,
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/pci/au88x0/au88x0_xtalk.c | 85 -----------------------------------------
+ 1 file changed, 85 deletions(-)
 
-greg k-h
+diff --git a/sound/pci/au88x0/au88x0_xtalk.c b/sound/pci/au88x0/au88x0_xtalk.c
+index 084fcbf..143646c 100644
+--- a/sound/pci/au88x0/au88x0_xtalk.c
++++ b/sound/pci/au88x0/au88x0_xtalk.c
+@@ -17,39 +17,20 @@
+ static short const sXtalkWideKLeftEq = 0x269C;
+ static short const sXtalkWideKRightEq = 0x269C;
+ static short const sXtalkWideKLeftXt = 0xF25E;
+-static short const sXtalkWideKRightXt = 0xF25E;
+ static short const sXtalkWideShiftLeftEq = 1;
+ static short const sXtalkWideShiftRightEq = 1;
+ static short const sXtalkWideShiftLeftXt = 0;
+-static short const sXtalkWideShiftRightXt = 0;
+ static unsigned short const wXtalkWideLeftDelay = 0xd;
+ static unsigned short const wXtalkWideRightDelay = 0xd;
+ static short const sXtalkNarrowKLeftEq = 0x468D;
+ static short const sXtalkNarrowKRightEq = 0x468D;
+ static short const sXtalkNarrowKLeftXt = 0xF82E;
+-static short const sXtalkNarrowKRightXt = 0xF82E;
+ static short const sXtalkNarrowShiftLeftEq = 0x3;
+ static short const sXtalkNarrowShiftRightEq = 0x3;
+ static short const sXtalkNarrowShiftLeftXt = 0;
+-static short const sXtalkNarrowShiftRightXt = 0;
+ static unsigned short const wXtalkNarrowLeftDelay = 0x7;
+ static unsigned short const wXtalkNarrowRightDelay = 0x7;
+ 
+-static xtalk_gains_t const asXtalkGainsDefault = {
+-	0x4000, 0x4000, 0x4000, 0x4000, 0x4000,
+-	0x4000, 0x4000, 0x4000, 0x4000,	0x4000
+-};
+-
+-static xtalk_gains_t const asXtalkGainsTest = {
+-	0x7fff, 0x8000, 0x0000, 0x0000, 0x0001,
+-	0xffff, 0x4000, 0xc000, 0x0002, 0xfffe
+-};
+-
+-static xtalk_gains_t const asXtalkGains1Chan = {
+-	0x7FFF, 0, 0, 0, 0,
+-	0x7FFF, 0, 0, 0, 0,
+-};
+-
+ // Input gain for 4 A3D slices. One possible input pair is left zero.
+ static xtalk_gains_t const asXtalkGainsAllChan = {
+ 	0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0,
+@@ -64,20 +45,11 @@ static xtalk_dline_t const alXtalkDlineZeros = {
+ 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+ };
+-static xtalk_dline_t const alXtalkDlineTest = {
+-	0x0000fc18, 0xfff03e8, 0x000186a0, 0xfffe7960, 1, 0xffffffff, 0, 0,
+-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+-	0, 0, 0, 0, 0, 0, 0, 0
+-};
+ 
+ static xtalk_instate_t const asXtalkInStateZeros = {
+ 	0, 0, 0, 0
+ };
+ 
+-static xtalk_instate_t const asXtalkInStateTest = {
+-	0x0080, 0xff80, 0x0001, 0xffff
+-};
+-
+ static xtalk_state_t const asXtalkOutStateZeros = {
+ 	{0, 0, 0, 0},
+ 	{0, 0, 0, 0},
+@@ -89,11 +61,9 @@ static xtalk_state_t const asXtalkOutStateZeros = {
+ static short const sDiamondKLeftEq = 0x401d;
+ static short const sDiamondKRightEq = 0x401d;
+ static short const sDiamondKLeftXt = 0xF90E;
+-static short const sDiamondKRightXt = 0xF90E;
+ static short const sDiamondShiftLeftEq = 1;
+ static short const sDiamondShiftRightEq = 1;
+ static short const sDiamondShiftLeftXt = 0;
+-static short const sDiamondShiftRightXt = 0;
+ static unsigned short const wDiamondLeftDelay = 0xb;
+ static unsigned short const wDiamondRightDelay = 0xb;
+ 
+@@ -118,13 +88,6 @@ static xtalk_coefs_t const asXtalkWideCoefsLeftXt = {
+ 	{0x77dc, 0xc79e, 0xffb8, 0x000a, 0},
+ 	{0, 0, 0, 0, 0}
+ };
+-static xtalk_coefs_t const asXtalkWideCoefsRightXt = {
+-	{0x55c6, 0xc97b, 0x005b, 0x0047, 0},
+-	{0x6a60, 0xca20, 0xffc6, 0x0040, 0},
+-	{0x6411, 0xd711, 0xfca1, 0x0190, 0},
+-	{0x77dc, 0xc79e, 0xffb8, 0x000a, 0},
+-	{0, 0, 0, 0, 0}
+-};
+ static xtalk_coefs_t const asXtalkNarrowCoefsLeftEq = {
+ 	{0x50B5, 0xD07C, 0x026D, 0xFD21, 0},
+ 	{0x460F, 0xE44F, 0xF75E, 0xEFA6, 0},
+@@ -149,14 +112,6 @@ static xtalk_coefs_t const asXtalkNarrowCoefsLeftXt = {
+ 	{0, 0, 0, 0, 0}
+ };
+ 
+-static xtalk_coefs_t const asXtalkNarrowCoefsRightXt = {
+-	{0x3CB2, 0xDF49, 0xF6EA, 0x095B, 0},
+-	{0x6777, 0xC915, 0xFEAF, 0x00B1, 0},
+-	{0x7762, 0xC7D9, 0x025B, 0xFDA6, 0},
+-	{0x6B7A, 0xD2AA, 0xF2FB, 0x0B64, 0},
+-	{0, 0, 0, 0, 0}
+-};
+-
+ static xtalk_coefs_t const asXtalkCoefsZeros = {
+ 	{0, 0, 0, 0, 0},
+ 	{0, 0, 0, 0, 0},
+@@ -172,37 +127,6 @@ static xtalk_coefs_t const asXtalkCoefsPipe = {
+ 	{0, 0, 0x0FA0, 0, 0},
+ 	{0, 0, 0x1180, 0, 0},
+ };
+-static xtalk_coefs_t const asXtalkCoefsNegPipe = {
+-	{0, 0, 0xF380, 0, 0},
+-	{0, 0, 0xF380, 0, 0},
+-	{0, 0, 0xF380, 0, 0},
+-	{0, 0, 0xF380, 0, 0},
+-	{0, 0, 0xF200, 0, 0}
+-};
+-
+-static xtalk_coefs_t const asXtalkCoefsNumTest = {
+-	{0, 0, 0xF380, 0x8000, 0x6D60},
+-	{0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0}
+-};
+-
+-static xtalk_coefs_t const asXtalkCoefsDenTest = {
+-	{0xC000, 0x2000, 0x4000, 0, 0},
+-	{0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0}
+-};
+-
+-static xtalk_state_t const asXtalkOutStateTest = {
+-	{0x7FFF, 0x0004, 0xFFFC, 0},
+-	{0xFE00, 0x0008, 0xFFF8, 0x4000},
+-	{0x0200, 0x0010, 0xFFF0, 0xC000},
+-	{0x8000, 0x0020, 0xFFE0, 0},
+-	{0, 0, 0, 0}
+-};
+ 
+ static xtalk_coefs_t const asDiamondCoefsLeftEq = {
+ 	{0x0F1E, 0x2D05, 0xF8E3, 0x07C8, 0},
+@@ -228,15 +152,6 @@ static xtalk_coefs_t const asDiamondCoefsLeftXt = {
+ 	{0, 0, 0, 0, 0}
+ };
+ 
+-static xtalk_coefs_t const asDiamondCoefsRightXt = {
+-	{0x3B50, 0xFE08, 0xF959, 0x0060, 0},
+-	{0x9FCB, 0xD8F1, 0x00A2, 0x003A, 0},
+-	{0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0}
+-};
+-
+- /**/
+ /* XTalk EQ and XT */
+ static void
+ vortex_XtalkHw_SetLeftEQ(vortex_t * vortex, short arg_0, short arg_4,
+-- 
+2.7.4
+
+
