@@ -2,70 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFEE873DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 10:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C54873E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 10:19:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405935AbfHIIPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 04:15:33 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37793 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbfHIIPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 04:15:33 -0400
-Received: by mail-ot1-f66.google.com with SMTP id s20so63989493otp.4;
-        Fri, 09 Aug 2019 01:15:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vnY7oAsY1586ACxhjBeo4HzooGDvWg/bO7dlEEDQ6lw=;
-        b=W4xi6YfwcjwWKsSEIGkzW3famA2I1TNwh6HCniGiDvW077yhXA4k6xl9h8/mQaKcsL
-         3mmzgR+TOJ0dXpZXR6rt0zfIMfEGlWcSqXbU/kjHNqhtAFnW5O8bvvjEPOAQeHQ4Bu2m
-         UeNzXSW2cJ0REzRndKE3/ytB4zBH9ONmm3OAIHd0ZpbRUVE7UfuVQM6Efu25Im6U8M0F
-         VHI+TTmGyuciNeYowtyBKREtz75ZZUfCMBGXVCuLDIEYE4Web8LWYCOUxqIhdd+JVpsT
-         VKrvTng3y4SU1B4IlJmFMcXOMu2bh9t49zeUfWB2GBOgkNW/KRccPIgzhvvgdNFEqwEn
-         RT6w==
-X-Gm-Message-State: APjAAAWxtF5kuat+woIuTVcB3meuf0kCe4mey5yiHQfY/CwlC+fb5kft
-        xCk0wO08LGSOq9etxcLGHAhUmmB9uimVO8tLRoA=
-X-Google-Smtp-Source: APXvYqxD5CZq8T4kQd204KLi1aG86Z1J38p4cBHVivVKXkMRm7iLcJLySC1n4t0d2NHxSE2hatpOs10CBonmjZQMous=
-X-Received: by 2002:a05:6830:8a:: with SMTP id a10mr15636164oto.167.1565338532516;
- Fri, 09 Aug 2019 01:15:32 -0700 (PDT)
+        id S2405855AbfHIITC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 04:19:02 -0400
+Received: from verein.lst.de ([213.95.11.211]:53350 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726054AbfHIITC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 04:19:02 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 2822D68AFE; Fri,  9 Aug 2019 10:18:58 +0200 (CEST)
+Date:   Fri, 9 Aug 2019 10:18:57 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Rob Clark <robdclark@chromium.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] drm: add cache support for arm64
+Message-ID: <20190809081857.GB21967@lst.de>
+References: <20190806084821.GA17129@lst.de> <CAJs_Fx6eh1w7c=crMoD5XyEOMzP6orLhqUewErE51cPGYmObBQ@mail.gmail.com> <20190806143457.GF475@lakrids.cambridge.arm.com> <CAJs_Fx4h6SWGmDTLBnV4nmWUFAs_Ge1inxd-dW9aDKgKqmc1eQ@mail.gmail.com> <20190807123807.GD54191@lakrids.cambridge.arm.com> <CAJs_Fx5xU2-dn3iOVqWTzAjpTaQ8BBNP_Gn_iMc-eJpOX+iXoQ@mail.gmail.com> <20190807164958.GA44765@lakrids.cambridge.arm.com> <CAJs_Fx71T=kJEgt28TWqzw+jOahSbLQynCg83+szQW7op4xBkQ@mail.gmail.com> <20190808075947.GE30308@lst.de> <CAJs_Fx5fJ31CsFODBgBbhcCvoxSX_D1NHDjQs4LtJ_0GwuxMVA@mail.gmail.com>
 MIME-Version: 1.0
-References: <1717835.1Yz4jNODO2@kreacher> <20190808111941.GJ30120@smile.fi.intel.com>
-In-Reply-To: <20190808111941.GJ30120@smile.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 9 Aug 2019 10:15:21 +0200
-Message-ID: <CAJZ5v0h+iHWMkS-vVHUHwd6AmYE2UR_CCoUjhBJH_-ik_jbVQQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] intel-hid: intel-vbtn: Suspend-related fix and update
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJs_Fx5fJ31CsFODBgBbhcCvoxSX_D1NHDjQs4LtJ_0GwuxMVA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 8, 2019 at 1:19 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Aug 08, 2019 at 10:40:19AM +0200, Rafael J. Wysocki wrote:
-> > Hi,
-> >
-> > These two patches fix a minor issue related to system suspend in the intel-hid
-> > and intel-vbtn drivers and update the suspend/resume handling in intel-hid to
-> > reduce special-casing in it somewhat.
-> >
->
-> AFAIR the original patches go via other than PDx86 tree.
+On Thu, Aug 08, 2019 at 09:44:32AM -0700, Rob Clark wrote:
+> > GFP_HIGHUSER basically just means that this is an allocation that could
+> > dip into highmem, in which case it would not have a kernel mapping.
+> > This can happen on arm + LPAE, but not on arm64.
+> 
+> Just a dumb question, but why is *all* memory in the linear map on
+> arm64?  It would seem useful to have a source of pages that is not in
+> the linear map.
+> I guess it is mapped as huge pages (or something larger than 4k pages)?
 
-That's correct.
+In general that is just how the Linux kernel always worked, on all
+architectures - we always had a linear mapping for all memory in the
+kernel to make accessing it simple.  That started to break down a bit
+with the 32-bit x86 PAE mode that supported more physical addressing
+that virtual, which required the "high" memory to not be mapped into
+the kernel direct mapping.  Similar schemes later showed up on various
+other 32-bit architectures.
 
-> Thus, while patches are looking good to me,
->
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+There is a patchset called XPFO that ensures memory is either in the
+kernel direct map, or in userspace but not both to work around
+speculation related vulnerabilities, but it has a pretty big performance
+impact.
 
-Thanks!
+> Any recommended reading to understand how/why the kernel address space
+> is setup the way it is (so I can ask fewer dumb questions)?
+
+I don't really have a good pointer.  But usually there is just dumb
+answers, not dumb questions.
