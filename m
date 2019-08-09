@@ -2,92 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5161A883AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:11:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EA9A883B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:13:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfHIULr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 16:11:47 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:47026 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbfHIULq (ORCPT
+        id S1726895AbfHIUNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 16:13:18 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:28055 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbfHIUNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 16:11:46 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z1so99305924wru.13;
-        Fri, 09 Aug 2019 13:11:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=33J6hcH2HYc/2SD598sQ3T89Yhn76Qy1ADbBG1GDC0o=;
-        b=DnfnsGgcPMmRHKwXnNaf58qgyjzoIuiCLIfMUs66yGXQt8yAQXsUjwGlY/hw/sUMsf
-         gygQBRnWCF3QUO/l+3mSuyoDBSG0YdCDL3guXxi3aG4nybUoQz+dt/NPDLthm/dBAt8q
-         ARPR12Krx0rcGrElO0Z4WN5p0xT/oBn1dGfALlQiYuCpkFnc95SOUDtIrnYLey4Dqc9h
-         14DkLmcnQKFrwsiehpWYujU3Uv/LBSbBDutcQk/AsOwlXyHW8GmmoK8jK5QQ6BywfLec
-         hp4zA+4eZXX3GHutPNLO7q1SodMx4QAZQNg3mc8p073+mT0XiiVERMCHuHdBBEfKLXt0
-         lSrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=33J6hcH2HYc/2SD598sQ3T89Yhn76Qy1ADbBG1GDC0o=;
-        b=TWFi5DPEDZ8wIsjAIs0hAULo+uVs0aqM75NLybK5jynomniM7vgvMn5mnWyckAt4Vt
-         2gfSGcI6QfHycWINYVUVrauFoWfChrT1Jm9x0a5yqtpEzUYeNjpYlyryGABVGmNU5i6E
-         AtqwrFHmhIKJhC3oE3mzWcUj+qYjLgY2mtmFipxY/lsj0Ma8hMJZjGTKeNwhGjjUm8ty
-         Z/0zDkJ0OaoOoXdG57b1ze4WyNROjK5r4NfYnLU0fz6p1q/LwjoixOHzykPF1ccp5Fg/
-         /KUwc+kEOmzcMPDjpTf+C5uGcnT3L7IROif+ZaUTNV62HWhMYI/nYaNtqUmk9Q3Ar54d
-         22mA==
-X-Gm-Message-State: APjAAAXWZ0WlkHbwSUggDnfXlPMabu1ficMCpN+3pbZFg1e32TiPSK/X
-        ttZFoye2V+zTBjcuCYoWAlRXLXOwtRvyHZBi1/14rtgA+G0=
-X-Google-Smtp-Source: APXvYqz0exDywPgcVRqLNQZMypGQRjFJA/Zqg/3boLLQ4hSQlQ0sb7OyAOqZivtVWIt3mA2nHUaqta2NqrbHO7maF+o=
-X-Received: by 2002:adf:f54a:: with SMTP id j10mr7271950wrp.220.1565381504029;
- Fri, 09 Aug 2019 13:11:44 -0700 (PDT)
+        Fri, 9 Aug 2019 16:13:17 -0400
+Received: from localhost.localdomain ([92.140.207.10])
+        by mwinf5d28 with ME
+        id n8DA2000G0Dzhgk038DAPq; Fri, 09 Aug 2019 22:13:14 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 09 Aug 2019 22:13:14 +0200
+X-ME-IP: 92.140.207.10
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     harry.wentland@amd.com, sunpeng.li@amd.com,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/amd/display: Fix a typo - dce_aduio_mask --> dce_audio_mask
+Date:   Fri,  9 Aug 2019 22:12:19 +0200
+Message-Id: <20190809201219.629-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190808172226.18306-1-chris@chris-wilson.co.uk>
- <CAM0jSHP0BZJyJO3JeMqPDK=eYhS-Az6i6fGFz1tUQgaErA7mfA@mail.gmail.com> <156537674371.32306.7527004745489566049@skylake-alporthouse-com>
-In-Reply-To: <156537674371.32306.7527004745489566049@skylake-alporthouse-com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 9 Aug 2019 22:11:30 +0200
-Message-ID: <CA+icZUVy2P6jm-36jWErJA9q=SX3ORyKnoxhKGB5qz=xZkPrUw@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: Stop reconfiguring our shmemfs mountpoint
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Matthew Auld <matthew.william.auld@gmail.com>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Hugh Dickins <hughd@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Matthew Auld <matthew.auld@intel.com>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 8:52 PM Chris Wilson <chris@chris-wilson.co.uk> wrote:
->
-> Quoting Matthew Auld (2019-08-09 19:47:02)
-> > On Thu, 8 Aug 2019 at 18:23, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> > >
-> > > The filesystem reconfigure API is undergoing a transition, breaking our
-> > > current code. As we only set the default options, we can simply remove
-> > > the call to s_op->remount_fs(). In the future, when HW permits, we can
-> > > try re-enabling huge page support, albeit as suggested with new per-file
-> > > controls.
-> > >
-> > > Reported-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > > Suggested-by: Hugh Dickins <hughd@google.com>
-> > > Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-> > > Cc: Matthew Auld <matthew.auld@intel.com>
-> > > Cc: Hugh Dickins <hughd@google.com>
-> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > Reviewed-by: Matthew Auld <matthew.auld@intel.com>
->
-> Thanks, picked up with the s/within/within_size/ fix.
-> -Chris
+This should be 'dce_audio_mask', not 'dce_aduio_mask'.
 
-For the records and followers:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/amd/display/dc/dce/dce_audio.c          | 2 +-
+ drivers/gpu/drm/amd/display/dc/dce/dce_audio.h          | 6 +++---
+ drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c   | 2 +-
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c   | 2 +-
+ 8 files changed, 10 insertions(+), 10 deletions(-)
 
-[1] https://cgit.freedesktop.org/drm-intel/commit/?h=for-linux-next&id=72e67f04637432f91e4cc5e8e4f7eb4e38461e8e
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c b/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
+index 549704998f84..1e88c5f46be7 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
+@@ -937,7 +937,7 @@ struct audio *dce_audio_create(
+ 		unsigned int inst,
+ 		const struct dce_audio_registers *reg,
+ 		const struct dce_audio_shift *shifts,
+-		const struct dce_aduio_mask *masks
++		const struct dce_audio_mask *masks
+ 		)
+ {
+ 	struct dce_audio *audio = kzalloc(sizeof(*audio), GFP_KERNEL);
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_audio.h b/drivers/gpu/drm/amd/display/dc/dce/dce_audio.h
+index a0d5724aab31..1392fab0860b 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_audio.h
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_audio.h
+@@ -101,7 +101,7 @@ struct dce_audio_shift {
+ 	uint32_t DCCG_AUDIO_DTO1_USE_512FBR_DTO;
+ };
+ 
+-struct dce_aduio_mask {
++struct dce_audio_mask {
+ 	uint32_t AZALIA_ENDPOINT_REG_INDEX;
+ 	uint32_t AZALIA_ENDPOINT_REG_DATA;
+ 
+@@ -125,7 +125,7 @@ struct dce_audio {
+ 	struct audio base;
+ 	const struct dce_audio_registers *regs;
+ 	const struct dce_audio_shift *shifts;
+-	const struct dce_aduio_mask *masks;
++	const struct dce_audio_mask *masks;
+ };
+ 
+ struct audio *dce_audio_create(
+@@ -133,7 +133,7 @@ struct audio *dce_audio_create(
+ 		unsigned int inst,
+ 		const struct dce_audio_registers *reg,
+ 		const struct dce_audio_shift *shifts,
+-		const struct dce_aduio_mask *masks);
++		const struct dce_audio_mask *masks);
+ 
+ void dce_aud_destroy(struct audio **audio);
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c b/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
+index 6248c8455314..81116286b15b 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c
+@@ -304,7 +304,7 @@ static const struct dce_audio_shift audio_shift = {
+ 		AUD_COMMON_MASK_SH_LIST(__SHIFT)
+ };
+ 
+-static const struct dce_aduio_mask audio_mask = {
++static const struct dce_audio_mask audio_mask = {
+ 		AUD_COMMON_MASK_SH_LIST(_MASK)
+ };
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
+index 764329264c3b..765e26454a18 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c
+@@ -331,7 +331,7 @@ static const struct dce_audio_shift audio_shift = {
+ 		AUD_COMMON_MASK_SH_LIST(__SHIFT)
+ };
+ 
+-static const struct dce_aduio_mask audio_mask = {
++static const struct dce_audio_mask audio_mask = {
+ 		AUD_COMMON_MASK_SH_LIST(_MASK)
+ };
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c b/drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c
+index c6136e0ed1a4..3ac4c7e73050 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dce112/dce112_resource.c
+@@ -337,7 +337,7 @@ static const struct dce_audio_shift audio_shift = {
+ 		AUD_COMMON_MASK_SH_LIST(__SHIFT)
+ };
+ 
+-static const struct dce_aduio_mask audio_mask = {
++static const struct dce_audio_mask audio_mask = {
+ 		AUD_COMMON_MASK_SH_LIST(_MASK)
+ };
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c b/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
+index 54be7ab370df..9a922cd39cf2 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dce120/dce120_resource.c
+@@ -352,7 +352,7 @@ static const struct dce_audio_shift audio_shift = {
+ 		DCE120_AUD_COMMON_MASK_SH_LIST(__SHIFT)
+ };
+ 
+-static const struct dce_aduio_mask audio_mask = {
++static const struct dce_audio_mask audio_mask = {
+ 		DCE120_AUD_COMMON_MASK_SH_LIST(_MASK)
+ };
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
+index 860a524ebcfa..2a1ce9ecc66e 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
+@@ -322,7 +322,7 @@ static const struct dce_audio_shift audio_shift = {
+ 		AUD_COMMON_MASK_SH_LIST(__SHIFT)
+ };
+ 
+-static const struct dce_aduio_mask audio_mask = {
++static const struct dce_audio_mask audio_mask = {
+ 		AUD_COMMON_MASK_SH_LIST(_MASK)
+ };
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
+index 1a20461c2937..1c5835975935 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c
+@@ -270,7 +270,7 @@ static const struct dce_audio_shift audio_shift = {
+ 		DCE120_AUD_COMMON_MASK_SH_LIST(__SHIFT)
+ };
+ 
+-static const struct dce_aduio_mask audio_mask = {
++static const struct dce_audio_mask audio_mask = {
+ 		DCE120_AUD_COMMON_MASK_SH_LIST(_MASK)
+ };
+ 
+-- 
+2.20.1
+
