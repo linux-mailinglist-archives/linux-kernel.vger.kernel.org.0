@@ -2,111 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC9687680
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C1AE8768D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406215AbfHIJp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 05:45:57 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35101 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406138AbfHIJp4 (ORCPT
+        id S2405963AbfHIJuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 05:50:00 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34445 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730233AbfHIJuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:45:56 -0400
-X-Originating-IP: 81.250.144.103
-Received: from [10.30.1.20] (lneuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 732B46000D;
-        Fri,  9 Aug 2019 09:45:51 +0000 (UTC)
-Subject: Re: [PATCH v6 11/14] mips: Adjust brk randomization offset to fit
- generic version
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        James Hogan <jhogan@kernel.org>,
-        linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20190808061756.19712-1-alex@ghiti.fr>
- <20190808061756.19712-12-alex@ghiti.fr>
- <68ec5cf6-6ba3-68ab-aa01-668b701c642f@cogentembedded.com>
-From:   Alexandre Ghiti <alex@ghiti.fr>
-Message-ID: <7b7e256d-5106-3022-9ded-0af4193b6b8b@ghiti.fr>
-Date:   Fri, 9 Aug 2019 11:45:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <68ec5cf6-6ba3-68ab-aa01-668b701c642f@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: fr
+        Fri, 9 Aug 2019 05:50:00 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b13so45774180pfo.1;
+        Fri, 09 Aug 2019 02:49:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=M4LYnoEJb207t6aRi5HbsF+k6e61KxB5f8QClUX5QIY=;
+        b=B7sZuZnKX9erQAhbjqw7MPqVXJ1QGVCBauMPHnwn+8d3Y70ibLxR/VuXgfpYq9U9Mq
+         wD8WP7IsMY8UxnPc9tSz1arJGz58NG2i1+8Ovm6bDASpvLwtIx7EqiRHbqd5z81IOSOo
+         hZkiEuKO68UxMRliSf6XwL91l0//eBIA9WlFNXDV3m0098aAO1Na+2cDI+kRVDTvdc+/
+         a6QEINj1di2Qdd4kWjRbSsR0nNyqhAy7a/+lqeLbSLqlSgrLOrcOFgsrh0fv9XjQuQQY
+         IBlcnU5AVTnC4ZyWAHVEXqjgfB5cDOIhQYh4DroPRCVAwMXxAG2WgjaJqh70Mh15ZxCj
+         YyvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=M4LYnoEJb207t6aRi5HbsF+k6e61KxB5f8QClUX5QIY=;
+        b=qVIzXcun/XLV0do0vaLR5EyMlFqLL8nH1fmQd3ysvotRC/sygyuWLwoNU/wM5sksZQ
+         oMq1M0LHFpIb++VoOxuOah4jmvg2Pf31wgqGIVLczFW1PEEHt34hn3IIUOXsT6yfNi1R
+         h6YPW5iSSHSsLaNTvd40P9XQAhmiMEFGXdKS8Nx5IaRqLqNqPNJgnJ16+hc+erDea+Oo
+         lGgYqq2eoQhJKPFa6bqAdfLM+3hj8gsFQc7vU5K9A2kaUM951eu0xmsz65iuQGHvpjgb
+         uBwGagLaxRTVLIUCBX0hm6y4kx+ZyOKzPzAWIzRLsMJP8EaTJPEGXk6RNkvEKzC+Vhc6
+         EBOw==
+X-Gm-Message-State: APjAAAUr6kPNZE4BEiAhRDkDKjmNCUiNEttRvfof6Oqqfi3/IKSNQrs3
+        MpPrfstxgoP96SQQOFzPbX0=
+X-Google-Smtp-Source: APXvYqwEf426bx7Lg/Kot7Q5FVKeANn4QigqsluEKd28l6me5MSvuWJJG/VFDpcQRQSVOu+dGsRYmg==
+X-Received: by 2002:a17:90a:2305:: with SMTP id f5mr8964682pje.128.1565344199350;
+        Fri, 09 Aug 2019 02:49:59 -0700 (PDT)
+Received: from localhost.corp.microsoft.com ([167.220.255.114])
+        by smtp.googlemail.com with ESMTPSA id b16sm159653631pfo.54.2019.08.09.02.49.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Aug 2019 02:49:58 -0700 (PDT)
+From:   lantianyu1986@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        sashal@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com
+Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org, vkuznets@redhat.com
+Subject: [PATCH 0/3] KVM/Hyper-V: Add Hyper-V direct tlb flush support
+Date:   Fri,  9 Aug 2019 17:49:36 +0800
+Message-Id: <20190809094939.76093-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/8/19 11:19 AM, Sergei Shtylyov wrote:
-> Hello!
->
-> On 08.08.2019 9:17, Alexandre Ghiti wrote:
->
->> This commit simply bumps up to 32MB and 1GB the random offset
->> of brk, compared to 8MB and 256MB, for 32bit and 64bit respectively.
->>
->> Suggested-by: Kees Cook <keescook@chromium.org>
->> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
->> Acked-by: Paul Burton <paul.burton@mips.com>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
->> ---
->>   arch/mips/mm/mmap.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
->> index a7e84b2e71d7..ff6ab87e9c56 100644
->> --- a/arch/mips/mm/mmap.c
->> +++ b/arch/mips/mm/mmap.c
-> [...]
->> @@ -189,11 +190,11 @@ static inline unsigned long brk_rnd(void)
->>       unsigned long rnd = get_random_long();
->>         rnd = rnd << PAGE_SHIFT;
->> -    /* 8MB for 32bit, 256MB for 64bit */
->> +    /* 32MB for 32bit, 1GB for 64bit */
->>       if (TASK_IS_32BIT_ADDR)
->> -        rnd = rnd & 0x7ffffful;
->> +        rnd = rnd & (SZ_32M - 1);
->>       else
->> -        rnd = rnd & 0xffffffful;
->> +        rnd = rnd & (SZ_1G - 1);
->
->    Why not make these 'rnd &= SZ_* - 1', while at it anyways?
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
 
 
-You're right, I could have. Again, this code gets removed afterwards, so 
-I think it's ok
-to leave it as is.
+This patchset is to add Hyper-V direct tlb support in KVM. Hyper-V
+in L0 can delegate L1 hypervisor to handle tlb flush request from
+L2 guest when direct tlb flush is enabled in L1.
 
-Anyway, thanks for your remarks Sergei !
+Patch 2 introduces new cap KVM_CAP_HYPERV_DIRECT_TLBFLUSH to enable
+feature from user space. User space should enable this feature only
+when Hyper-V hypervisor capability is exposed to guest and KVM profile
+is hided. There is a parameter conflict between KVM and Hyper-V hypercall.
+We hope L2 guest doesn't use KVM hypercall when the feature is
+enabled. Detail please see comment of new API "KVM_CAP_HYPERV_DIRECT_TLBFLUSH"
 
-Alex
+Tianyu Lan (2):
+  x86/Hyper-V: Fix definition of struct hv_vp_assist_page
+  KVM/Hyper-V: Add new KVM cap KVM_CAP_HYPERV_DIRECT_TLBFLUSH
 
+Vitaly Kuznetsov (1):
+  KVM/Hyper-V/VMX: Add direct tlb flush support
 
->
-> [...]
->
-> MBR, Sergei
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+ Documentation/virtual/kvm/api.txt  | 10 ++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h | 24 +++++++++++++++++++-----
+ arch/x86/include/asm/kvm_host.h    |  2 ++
+ arch/x86/kvm/vmx/evmcs.h           |  2 ++
+ arch/x86/kvm/vmx/vmx.c             | 38 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.c                 |  8 ++++++++
+ include/linux/kvm_host.h           |  1 +
+ include/uapi/linux/kvm.h           |  1 +
+ 8 files changed, 81 insertions(+), 5 deletions(-)
+
+-- 
+2.14.2
+
