@@ -2,128 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E69EB86FC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2B7386FCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404764AbfHICqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 22:46:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37592 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733140AbfHICqx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 22:46:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=k9ysUCj8sFdxJhtdA1rA7e9UmHUPqdKijogVrakBrS8=; b=WaAJIxvxqLMJwq4r0MuB186tS
-        eB35TdZihw8we7T+6rzfXNcdc1BFrSHTsICCgF9IYxPFMXnH51MOTuYcDuzIEQFJTMbpdZHz7kU4l
-        1gXCVm3zmGNat8g+4gEFOmlEJuABJAdswqsBLhwukirmbwfQV0VJh1UOgKcKX0IHlCnqa9ftb3GN5
-        anKRc6DAtdHrlXV80dZ8UTLKLtWWw6siF34Vuvs30NBWsAIUoDuZlJjPXL5Z3iyVaI9c8MyiBg6a+
-        ZzMgnF9fEFZkYUNsrMbPcS0zzVnVA5rZwBUyx3/flkMtA4BlYIqbgSIAqMmX6Ch8YNSw7wcyQUOQo
-        SWWUHUk+A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hvuvU-0008Bg-Kn; Fri, 09 Aug 2019 02:46:44 +0000
-Date:   Thu, 8 Aug 2019 19:46:44 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     miles.chen@mediatek.com
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        wsd_upstream@mediatek.com, "Tobin C . Harding" <me@tobin.cc>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC PATCH v2] mm: slub: print kernel addresses in slub debug
- messages
-Message-ID: <20190809024644.GL5482@bombadil.infradead.org>
-References: <20190809010837.24166-1-miles.chen@mediatek.com>
+        id S2404895AbfHICzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 22:55:02 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:43489 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729503AbfHICzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 22:55:02 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 464VGC2vJhz9sND;
+        Fri,  9 Aug 2019 12:54:59 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565319299;
+        bh=N6x42FJqLLtf5AJTJ8N9Ouj0LI/pvxasYl0hdfaKxdw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fP6dn5ZwosFfv5RFrhyZUlWBC/cuaOg7VTE5SXlIbFtbSZ3M2N5lw+i8xKQw5h+kC
+         tFvSBBdQWOCgQZUsIRURSLVp4UgCbwe8TvVx3thji5w4ghN/d/JhQTN0m4MVylwmUx
+         UlmNOWci3rZxGzpmEZW6OsWNcnYzZ4RvN/uPKI/OA4YGlx+JhktxQY7oWx6VpRbmuW
+         9LSjEeL4w0oSRL82iu776tXgksEqoTlxP0wOCnO91HBKSXMO+lKjPAJBZbzWw18dTi
+         S59xAOD0P779B922uYLwDlCs1NTHhCPX3T7Ty+HAqGgABcXaMq3dQf6QuZo5Yb8X3m
+         w1XcWZjvsl2Ow==
+Date:   Fri, 9 Aug 2019 12:54:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the sound tree
+Message-ID: <20190809125458.6c7aaa6c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809010837.24166-1-miles.chen@mediatek.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: multipart/signed; boundary="Sig_/S8foUJF8H+=wKJ0yGK/NO+X";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 09:08:37AM +0800, miles.chen@mediatek.com wrote:
-> Possible approaches are:
-> 1. stop printing kernel addresses
-> 2. print with %pK,
-> 3. print with %px.
+--Sig_/S8foUJF8H+=wKJ0yGK/NO+X
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No.  The point of obscuring kernel addresses is that if the attacker manages to find a way to get the kernel to spit out some debug messages that we shouldn't
-leak all this extra information.
+Hi all,
 
-> 4. do nothing
+After merging the sound tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-5. Find something more useful to print.
+sound/hda/hdac_bus.c: In function 'snd_hdac_aligned_read':
+sound/hda/hdac_bus.c:228:6: error: implicit declaration of function 'readl'=
+; did you mean 'd_real'? [-Werror=3Dimplicit-function-declaration]
+  v =3D readl(aligned_addr);
+      ^~~~~
+      d_real
+sound/hda/hdac_bus.c: In function 'snd_hdac_aligned_write':
+sound/hda/hdac_bus.c:244:2: error: implicit declaration of function 'writel=
+' [-Werror=3Dimplicit-function-declaration]
+  writel(v, aligned_addr);
+  ^~~~~~
 
-> INFO: Slab 0x(____ptrval____) objects=25 used=10 fp=0x(____ptrval____)
+Caused by commit
 
-... you don't have any randomness on your platform?
+  19abfefd4c76 ("ALSA: hda: Direct MMIO accesses")
 
-> INFO: Object 0x(____ptrval____) @offset=1408 fp=0x(____ptrval____)
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object (____ptrval____): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5
-> Redzone (____ptrval____): bb bb bb bb bb bb bb bb
-> Padding (____ptrval____): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a
-> Padding (____ptrval____): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a
-> Padding (____ptrval____): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a
-> Padding (____ptrval____): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a
-> ...
-> FIX kmalloc-128: Object at 0x(____ptrval____) not freed
+I have applied the following patch for today:
 
-But if you have randomness, at least some of these "pointers" are valuable
-because you can compare them against "pointers" printed by other parts
-of the kernel.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 9 Aug 2019 12:50:25 +1000
+Subject: [PATCH] ALSA: hda: readl/writel need linux/io.h
 
-> After this patch:
-> 
-> INFO: Slab 0xffffffbf00f57000 objects=25 used=23 fp=0xffffffc03d5c3500
-> INFO: Object 0xffffffc03d5c3500 @offset=13568 fp=0xffffffc03d5c0800
-> Redzone 00000000: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone 00000010: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone 00000020: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone 00000030: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone 00000040: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone 00000050: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone 00000060: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Redzone 00000070: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-> Object 00000000: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object 00000010: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object 00000020: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object 00000030: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object 00000040: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object 00000050: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object 00000060: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
-> Object 00000070: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5
-> Redzone 00000000: bb bb bb bb bb bb bb bb
-> Padding 00000000: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a
-> Padding 00000010: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a
-> Padding 00000020: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a
-> Padding 00000030: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a
-> ...
-> FIX kmalloc-128: Object at 0xffffffc03d5c3500 not freed
+Fixes: 19abfefd4c76 ("ALSA: hda: Direct MMIO accesses")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/hda/hdac_bus.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-It looks prettier, but I'm not convinced it's more useful.  Unless your
-platform lacks randomness ...
+diff --git a/sound/hda/hdac_bus.c b/sound/hda/hdac_bus.c
+index dc2523ef7d98..cd25e2b3f7f2 100644
+--- a/sound/hda/hdac_bus.c
++++ b/sound/hda/hdac_bus.c
+@@ -4,6 +4,7 @@
+  */
+=20
+ #include <linux/init.h>
++#include <linux/io.h>
+ #include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/export.h>
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/S8foUJF8H+=wKJ0yGK/NO+X
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1M4IIACgkQAVBC80lX
+0Gy2cAf/QU6iCDbKpCqx2f0EepphckuXKMSJU4qM+MdkhBZLSppQSFrQ5O0ce1MG
+4OFFDSCXqT5Hsug/eGJlmInZPQ37JdU9wEuPNdZFs8nkEkJZfS2WSfuiZXbP6GAl
+r+TvaCPvZ4SWMsPgY9WnNuMp+WBdBSrKH4ZHPyBQFZiWLOqHiIPf5JoavgiXeZmQ
+m5r2Nf+741eDbG3bDwsrocRzELiYQSBmCwlLzOjN8wGQ42n2XXGnblrwKvpiJ3qw
+oA6h7goZYdT3NlYT+mqSIctq9aqs7EmgYcnSUo8h5chQWT856CRrrIcWzIdTuNOf
+gFBlygd5WZrgXL2/8S0us8E7EyLsfw==
+=Nfo2
+-----END PGP SIGNATURE-----
+
+--Sig_/S8foUJF8H+=wKJ0yGK/NO+X--
