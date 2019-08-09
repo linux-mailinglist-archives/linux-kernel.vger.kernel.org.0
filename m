@@ -2,733 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC0B88022
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 414288800D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437273AbfHIQeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:34:19 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:59139 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726516AbfHIQeS (ORCPT
+        id S2437090AbfHIQdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:33:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22688 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2406775AbfHIQdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:34:18 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MeCd5-1iUMvQ1qyt-00bNEQ; Fri, 09 Aug 2019 18:33:59 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     soc@kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: [PATCH 7/7] ARM: iop32x: merge everything into mach-iop32x/
-Date:   Fri,  9 Aug 2019 18:33:21 +0200
-Message-Id: <20190809163334.489360-7-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190809163334.489360-1-arnd@arndb.de>
-References: <20190809162956.488941-1-arnd@arndb.de>
- <20190809163334.489360-1-arnd@arndb.de>
+        Fri, 9 Aug 2019 12:33:53 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x79GXB8R114636
+        for <linux-kernel@vger.kernel.org>; Fri, 9 Aug 2019 12:33:51 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u9cd1g5tm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 12:33:51 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 9 Aug 2019 17:33:50 +0100
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 9 Aug 2019 17:33:46 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x79GXjOj24052074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 9 Aug 2019 16:33:45 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6461DB2067;
+        Fri,  9 Aug 2019 16:33:45 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B21EB205F;
+        Fri,  9 Aug 2019 16:33:45 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  9 Aug 2019 16:33:45 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id CD4A816C9A29; Fri,  9 Aug 2019 09:33:46 -0700 (PDT)
+Date:   Fri, 9 Aug 2019 09:33:46 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Byungchul Park <byungchul.park@lge.com>,
+        linux-kernel@vger.kernel.org, Rao Shoaib <rao.shoaib@oracle.com>,
+        max.byungchul.park@gmail.com, kernel-team@android.com,
+        kernel-team@lge.com, Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC v1 1/2] rcu/tree: Add basic support for kfree_rcu
+ batching
+Reply-To: paulmck@linux.ibm.com
+References: <20190806212041.118146-1-joel@joelfernandes.org>
+ <20190806235631.GU28441@linux.ibm.com>
+ <20190807094504.GB169551@google.com>
+ <20190807175215.GE28441@linux.ibm.com>
+ <20190808095232.GA30401@X58A-UD3R>
+ <20190808125607.GB261256@google.com>
+ <20190808233014.GA184373@google.com>
+ <20190809151619.GD28441@linux.ibm.com>
+ <20190809153924.GB211412@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:vGdFETC8T6cVfKFAfP5qqphwVXYITl9uUg+E0rFaHju/C++Ve44
- mq/wBYbKOaR6GOIaaWELrDC7SW5dHg2I2f77JfKDAgbR9ck1v6uvFTOHerR+ZpptN1QaQCy
- WUDQzNkVZRcZn+T6SRJPYCuU+7XYIza1usj/Y8qyz6+VrocONqGG0dVhCiGPDecYyKptSkX
- dtxCB1zQMsUXrrIlsubGg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1yU16ztvtR8=:tXGRaN2lEuQaRQ3YDneIIs
- rdkp6z7Jidn7tCD1WJs0scbdrf5bjVZpyuLa4OGVr3e1H62cuDCbw1qWfyNhOtu7HHvinb/4b
- 8Axo1XQRbz5cU/EDNnpO//0wdyY+AHqCPE2JhBzomQPiNeL+OKIie8O3a9P6RU45hjPxiWHiX
- PfDS0MvKGsDAwlbbPc42wcztYT5lxVYdW77EHG3tJ6qxaoPS2hCqVLdOoJgs45MaxshTO5jW8
- OeBrd8gGyv0J9QHg/KMFKle1C3PGZiQnXSMp1ESrExC4PDVpBMoE/Oog5gMh8pdbEmfc2fjH6
- m88CqcLscoENzE4EhplWmr+OYh/hkrnRh3M9QtuaZLMLyxTVOC+7f/s28cKqdd7Vhvt6sHF5y
- aY73IZN+ciYY0cQO1HWjyb+iHVs9sO1IEbnOzwY6tNhr04zgOdx1myL4IvGFreBQ350MLNmyN
- znF3PfO9bUsyVUC8LzRIy2e/0lCpIYm6NqkonQdXQzX7SNqkzB07ViIvZR79lL5m9m1VxlDlR
- EU6VVGbwpcHkpt0VQ+Ub02WBSTBS17fwLrkFSHt9fkhWepPMYIBkbV6jDiu+1Lnu9MdyD0/I2
- xmzqYT4zfWXY8Yv+xGgflLLJqK5hraBT4mfZyT/8haiAv2CClu/tSEGeXu9T/hjNISMns1ZFu
- 9anibrnKlTD+wvYgpK/gIaVcehn2S53FKNuQgr5wIj4jWgCndOvzE7KC27phRT95QfNnno0e2
- hdXTD9i+8E3equE0gnw5/fjCo/jranU2IZLMJe0MBUOXpyT3AQfdkj1dlcw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190809153924.GB211412@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19080916-0060-0000-0000-0000036B59CE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011575; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01244392; UDB=6.00656519; IPR=6.01025874;
+ MB=3.00028109; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-09 16:33:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19080916-0061-0000-0000-00004A7D3341
+Message-Id: <20190809163346.GF28441@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-09_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908090162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various bits of iop32x are now in their traditional locations in plat-iop,
-mach-iop/include/mach/ and in include/asm/mach/hardware. As nothing
-outside of the iop32x mach code references these any more, this can all
-be moved into one place now.
+On Fri, Aug 09, 2019 at 11:39:24AM -0400, Joel Fernandes wrote:
+> On Fri, Aug 09, 2019 at 08:16:19AM -0700, Paul E. McKenney wrote:
+> > On Thu, Aug 08, 2019 at 07:30:14PM -0400, Joel Fernandes wrote:
+> [snip]
+> > > > But I could make it something like:
+> > > > 1. Letting ->head grow if ->head_free busy
+> > > > 2. If head_free is busy, then just queue/requeue the monitor to try again.
+> > > > 
+> > > > This would even improve performance, but will still risk going out of memory.
+> > > 
+> > > It seems I can indeed hit an out of memory condition once I changed it to
+> > > "letting list grow" (diff is below which applies on top of this patch) while
+> > > at the same time removing the schedule_timeout(2) and replacing it with
+> > > cond_resched() in the rcuperf test.  I think the reason is the rcuperf test
+> > > starves the worker threads that are executing in workqueue context after a
+> > > grace period and those are unable to get enough CPU time to kfree things fast
+> > > enough. But I am not fully sure about it and need to test/trace more to
+> > > figure out why this is happening.
+> > > 
+> > > If I add back the schedule_uninterruptibe_timeout(2) call, the out of memory
+> > > situation goes away.
+> > > 
+> > > Clearly we need to do more work on this patch.
+> > > 
+> > > In the regular kfree_rcu_no_batch() case, I don't hit this issue. I believe
+> > > that since the kfree is happening in softirq context in the _no_batch() case,
+> > > it fares better. The question then I guess is how do we run the rcu_work in a
+> > > higher priority context so it is not starved and runs often enough. I'll
+> > > trace more.
+> > > 
+> > > Perhaps I can also lower the priority of the rcuperf threads to give the
+> > > worker thread some more room to run and see if anything changes. But I am not
+> > > sure then if we're preparing the code for the real world with such
+> > > modifications.
+> > > 
+> > > Any thoughts?
+> > 
+> > Several!  With luck, perhaps some are useful.  ;-)
+> > 
+> > o	Increase the memory via kvm.sh "--memory 1G" or more.  The
+> > 	default is "--memory 500M".
+> 
+> Thanks, this definitely helped.
+> 
+> > o	Leave a CPU free to run things like the RCU grace-period kthread.
+> > 	You might also need to bind that kthread to that CPU.
+> > 
+> > o	Alternatively, use the "rcutree.kthread_prio=" boot parameter to
+> > 	boost the RCU kthreads to real-time priority.  This won't do
+> > 	anything for ksoftirqd, though.
+> 
+> I will try these as well.
+> 
+> > 
+> > o	Along with the above boot parameter, use "rcutree.use_softirq=0"
+> > 	to cause RCU to use kthreads instead of softirq.  (You might well
+> > 	find issues in priority setting as well, but might as well find
+> > 	them now if so!)
+> 
+> Doesn't think one actually reduce the priority of the core RCU work? softirq
+> will always have higher priority than any there. So wouldn't that have the
+> effect of not reclaiming things fast enough? (Or, in my case not scheduling
+> the rcu_work which does the reclaim).
 
-The only remaining things in the include/mach/ directory are now the
-NR_IRQS definition, the entry-macros.S file and the the decompressor
-uart access. After the irqchip code has been converted to SPARSE_IRQ
-and GENERIC_IRQ_MULTI_HANDLER, it can be moved to ARCH_MULTIPLATFORM.
+For low kfree_rcu() loads, yes, it increases overhead due to the need
+for context switches instead of softirq running at the tail end of an
+interrupt.  But for high kfree_rcu() loads, it gets you realtime priority
+(in conjunction with "rcutree.kthread_prio=", that is).
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/Makefile                             |  1 -
- arch/arm/mach-iop32x/Makefile                 | 10 ++++-
- arch/arm/{plat-iop => mach-iop32x}/adma.c     |  4 +-
- arch/arm/{plat-iop => mach-iop32x}/cp6.c      |  0
- arch/arm/mach-iop32x/em7210.c                 |  5 ++-
- arch/arm/mach-iop32x/glantank.c               |  5 ++-
- .../mach-iop32x/{include/mach => }/glantank.h |  2 -
- .../mach-iop32x/{include/mach => }/hardware.h |  6 +--
- arch/arm/{plat-iop => mach-iop32x}/i2c.c      |  6 ++-
- .../mach-iop32x/include/mach/entry-macro.S    |  2 -
- arch/arm/mach-iop32x/include/mach/iop32x.h    | 31 --------------
- arch/arm/mach-iop32x/include/mach/irqs.h      | 33 ---------------
- arch/arm/mach-iop32x/include/mach/time.h      |  5 ---
- .../asm/hardware => mach-iop32x}/iop3xx.h     | 18 +++++++-
- arch/arm/mach-iop32x/iq31244.c                |  5 ++-
- .../mach-iop32x/{include/mach => }/iq31244.h  |  2 -
- arch/arm/mach-iop32x/iq80321.c                |  5 ++-
- .../mach-iop32x/{include/mach => }/iq80321.h  |  2 -
- arch/arm/mach-iop32x/irq.c                    |  3 +-
- arch/arm/mach-iop32x/irqs.h                   | 42 +++++++++++++++++++
- arch/arm/mach-iop32x/n2100.c                  |  5 ++-
- .../mach-iop32x/{include/mach => }/n2100.h    |  2 -
- arch/arm/{plat-iop => mach-iop32x}/pci.c      |  4 +-
- arch/arm/{plat-iop => mach-iop32x}/pmu.c      |  2 +-
- arch/arm/{plat-iop => mach-iop32x}/restart.c  |  4 +-
- arch/arm/{plat-iop => mach-iop32x}/setup.c    |  2 +-
- arch/arm/{plat-iop => mach-iop32x}/time.c     |  7 ++--
- arch/arm/plat-iop/Makefile                    | 14 -------
- 28 files changed, 102 insertions(+), 125 deletions(-)
- rename arch/arm/{plat-iop => mach-iop32x}/adma.c (98%)
- rename arch/arm/{plat-iop => mach-iop32x}/cp6.c (100%)
- rename arch/arm/mach-iop32x/{include/mach => }/glantank.h (78%)
- rename arch/arm/mach-iop32x/{include/mach => }/hardware.h (90%)
- rename arch/arm/{plat-iop => mach-iop32x}/i2c.c (96%)
- delete mode 100644 arch/arm/mach-iop32x/include/mach/iop32x.h
- delete mode 100644 arch/arm/mach-iop32x/include/mach/time.h
- rename arch/arm/{include/asm/hardware => mach-iop32x}/iop3xx.h (96%)
- rename arch/arm/mach-iop32x/{include/mach => }/iq31244.h (89%)
- rename arch/arm/mach-iop32x/{include/mach => }/iq80321.h (89%)
- create mode 100644 arch/arm/mach-iop32x/irqs.h
- rename arch/arm/mach-iop32x/{include/mach => }/n2100.h (89%)
- rename arch/arm/{plat-iop => mach-iop32x}/pci.c (99%)
- rename arch/arm/{plat-iop => mach-iop32x}/pmu.c (96%)
- rename arch/arm/{plat-iop => mach-iop32x}/restart.c (82%)
- rename arch/arm/{plat-iop => mach-iop32x}/setup.c (95%)
- rename arch/arm/{plat-iop => mach-iop32x}/time.c (97%)
- delete mode 100644 arch/arm/plat-iop/Makefile
+> > o	With any of the above, invoke rcu_momentary_dyntick_idle() along
+> > 	with cond_resched() in your kfree_rcu() loop.  This simulates
+> > 	a trip to userspace for nohz_full CPUs, so if this helps for
+> > 	non-nohz_full CPUs, adjustments to the kernel might be called for.
+> 
+> Ok, will try it.
+> 
+> Save these bullet points for future reference! ;-)  thanks,
 
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index d92bc5328df7..075dd2f06d78 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -231,7 +231,6 @@ plat-$(CONFIG_ARCH_EXYNOS)	+= samsung
- plat-$(CONFIG_ARCH_OMAP)	+= omap
- plat-$(CONFIG_ARCH_S3C64XX)	+= samsung
- plat-$(CONFIG_ARCH_S5PV210)	+= samsung
--plat-$(CONFIG_PLAT_IOP)		+= iop
- plat-$(CONFIG_PLAT_ORION)	+= orion
- plat-$(CONFIG_PLAT_PXA)		+= pxa
- plat-$(CONFIG_PLAT_S3C24XX)	+= samsung
-diff --git a/arch/arm/mach-iop32x/Makefile b/arch/arm/mach-iop32x/Makefile
-index 71d62447d4d5..c8018ef5c6a9 100644
---- a/arch/arm/mach-iop32x/Makefile
-+++ b/arch/arm/mach-iop32x/Makefile
-@@ -3,7 +3,15 @@
- # Makefile for the linux kernel.
- #
- 
--obj-y			:= irq.o
-+obj-$(CONFIG_ARCH_IOP32X) += irq.o
-+obj-$(CONFIG_ARCH_IOP32X) += i2c.o
-+obj-$(CONFIG_ARCH_IOP32X) += pci.o
-+obj-$(CONFIG_ARCH_IOP32X) += setup.o
-+obj-$(CONFIG_ARCH_IOP32X) += time.o
-+obj-$(CONFIG_ARCH_IOP32X) += cp6.o
-+obj-$(CONFIG_ARCH_IOP32X) += adma.o
-+obj-$(CONFIG_ARCH_IOP32X) += pmu.o
-+obj-$(CONFIG_ARCH_IOP32X) += restart.o
- 
- obj-$(CONFIG_MACH_GLANTANK) += glantank.o
- obj-$(CONFIG_ARCH_IQ80321) += iq80321.o
-diff --git a/arch/arm/plat-iop/adma.c b/arch/arm/mach-iop32x/adma.c
-similarity index 98%
-rename from arch/arm/plat-iop/adma.c
-rename to arch/arm/mach-iop32x/adma.c
-index 601cc9c11b07..764bcbff98df 100644
---- a/arch/arm/plat-iop/adma.c
-+++ b/arch/arm/mach-iop32x/adma.c
-@@ -4,10 +4,12 @@
-  * Copyright © 2006, Intel Corporation.
-  */
- #include <linux/platform_device.h>
--#include <asm/hardware/iop3xx.h>
- #include <linux/dma-mapping.h>
- #include <linux/platform_data/dma-iop32x.h>
- 
-+#include "iop3xx.h"
-+#include "irqs.h"
-+
- #define IRQ_DMA0_EOT IRQ_IOP32X_DMA0_EOT
- #define IRQ_DMA0_EOC IRQ_IOP32X_DMA0_EOC
- #define IRQ_DMA0_ERR IRQ_IOP32X_DMA0_ERR
-diff --git a/arch/arm/plat-iop/cp6.c b/arch/arm/mach-iop32x/cp6.c
-similarity index 100%
-rename from arch/arm/plat-iop/cp6.c
-rename to arch/arm/mach-iop32x/cp6.c
-diff --git a/arch/arm/mach-iop32x/em7210.c b/arch/arm/mach-iop32x/em7210.c
-index 61a1e593f9ec..d43ced3cd4e7 100644
---- a/arch/arm/mach-iop32x/em7210.c
-+++ b/arch/arm/mach-iop32x/em7210.c
-@@ -21,7 +21,6 @@
- #include <linux/i2c.h>
- #include <linux/gpio.h>
- #include <linux/gpio/machine.h>
--#include <mach/hardware.h>
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <asm/mach/arch.h>
-@@ -29,8 +28,10 @@
- #include <asm/mach/pci.h>
- #include <asm/mach/time.h>
- #include <asm/mach-types.h>
--#include <mach/time.h>
-+
-+#include "hardware.h"
- #include "gpio-iop32x.h"
-+#include "irqs.h"
- 
- static void __init em7210_timer_init(void)
- {
-diff --git a/arch/arm/mach-iop32x/glantank.c b/arch/arm/mach-iop32x/glantank.c
-index 5a45d616d9ac..2fe0f77d1f1d 100644
---- a/arch/arm/mach-iop32x/glantank.c
-+++ b/arch/arm/mach-iop32x/glantank.c
-@@ -22,7 +22,6 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/gpio/machine.h>
--#include <mach/hardware.h>
- #include <asm/irq.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -30,8 +29,10 @@
- #include <asm/mach/time.h>
- #include <asm/mach-types.h>
- #include <asm/page.h>
--#include <mach/time.h>
-+
-+#include "hardware.h"
- #include "gpio-iop32x.h"
-+#include "irqs.h"
- 
- /*
-  * GLAN Tank timer tick configuration.
-diff --git a/arch/arm/mach-iop32x/include/mach/glantank.h b/arch/arm/mach-iop32x/glantank.h
-similarity index 78%
-rename from arch/arm/mach-iop32x/include/mach/glantank.h
-rename to arch/arm/mach-iop32x/glantank.h
-index b9df2e4614cf..f38e86b82c3d 100644
---- a/arch/arm/mach-iop32x/include/mach/glantank.h
-+++ b/arch/arm/mach-iop32x/glantank.h
-@@ -1,7 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * arch/arm/mach-iop32x/include/mach/glantank.h
-- *
-  * IO-Data GLAN Tank board registers
-  */
- 
-diff --git a/arch/arm/mach-iop32x/include/mach/hardware.h b/arch/arm/mach-iop32x/hardware.h
-similarity index 90%
-rename from arch/arm/mach-iop32x/include/mach/hardware.h
-rename to arch/arm/mach-iop32x/hardware.h
-index 6e5303e60226..43ab4fb8f9b0 100644
---- a/arch/arm/mach-iop32x/include/mach/hardware.h
-+++ b/arch/arm/mach-iop32x/hardware.h
-@@ -1,8 +1,4 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--/*
-- * arch/arm/mach-iop32x/include/mach/hardware.h
-- */
--
- #ifndef __HARDWARE_H
- #define __HARDWARE_H
- 
-@@ -28,7 +24,7 @@ void iop32x_init_irq(void);
- /*
-  * Generic chipset bits
-  */
--#include "iop32x.h"
-+#include "iop3xx.h"
- 
- /*
-  * Board specific bits
-diff --git a/arch/arm/plat-iop/i2c.c b/arch/arm/mach-iop32x/i2c.c
-similarity index 96%
-rename from arch/arm/plat-iop/i2c.c
-rename to arch/arm/mach-iop32x/i2c.c
-index 8d5fe349c7cd..dc9f6a14ab1b 100644
---- a/arch/arm/plat-iop/i2c.c
-+++ b/arch/arm/mach-iop32x/i2c.c
-@@ -22,10 +22,12 @@
- #include <asm/mach/map.h>
- #include <asm/setup.h>
- #include <asm/memory.h>
--#include <mach/hardware.h>
--#include <asm/hardware/iop3xx.h>
- #include <asm/mach/arch.h>
- 
-+#include "hardware.h"
-+#include "iop3xx.h"
-+#include "irqs.h"
-+
- /*
-  * Each of the I2C busses have corresponding GPIO lines, and the driver
-  * need to access these directly to drive the bus low at times.
-diff --git a/arch/arm/mach-iop32x/include/mach/entry-macro.S b/arch/arm/mach-iop32x/include/mach/entry-macro.S
-index ea13ae02d9b1..8e6766d4621e 100644
---- a/arch/arm/mach-iop32x/include/mach/entry-macro.S
-+++ b/arch/arm/mach-iop32x/include/mach/entry-macro.S
-@@ -7,8 +7,6 @@
-  * License version 2. This program is licensed "as is" without any
-  * warranty of any kind, whether express or implied.
-  */
--#include <mach/iop32x.h>
--
- 	.macro get_irqnr_preamble, base, tmp
- 	mrc	p15, 0, \tmp, c15, c1, 0
- 	orr	\tmp, \tmp, #(1 << 6)
-diff --git a/arch/arm/mach-iop32x/include/mach/iop32x.h b/arch/arm/mach-iop32x/include/mach/iop32x.h
-deleted file mode 100644
-index 84223f86552f..000000000000
---- a/arch/arm/mach-iop32x/include/mach/iop32x.h
-+++ /dev/null
-@@ -1,31 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * arch/arm/mach-iop32x/include/mach/iop32x.h
-- *
-- * Intel IOP32X Chip definitions
-- *
-- * Author: Rory Bolt <rorybolt@pacbell.net>
-- * Copyright (C) 2002 Rory Bolt
-- * Copyright (C) 2004 Intel Corp.
-- */
--
--#ifndef __IOP32X_H
--#define __IOP32X_H
--
--/*
-- * Peripherals that are shared between the iop32x and iop33x but
-- * located at different addresses.
-- */
--#define IOP3XX_TIMER_REG(reg)	(IOP3XX_PERIPHERAL_VIRT_BASE + 0x07e0 + (reg))
--
--#include <asm/hardware/iop3xx.h>
--
--/* ATU Parameters
-- * set up a 1:1 bus to physical ram relationship
-- * w/ physical ram on top of pci in the memory map
-- */
--#define IOP32X_MAX_RAM_SIZE            0x40000000UL
--#define IOP3XX_MAX_RAM_SIZE            IOP32X_MAX_RAM_SIZE
--#define IOP3XX_PCI_LOWER_MEM_BA        0x80000000
--
--#endif
-diff --git a/arch/arm/mach-iop32x/include/mach/irqs.h b/arch/arm/mach-iop32x/include/mach/irqs.h
-index 82b11743e91c..c4e78df428e8 100644
---- a/arch/arm/mach-iop32x/include/mach/irqs.h
-+++ b/arch/arm/mach-iop32x/include/mach/irqs.h
-@@ -9,39 +9,6 @@
- #ifndef __IRQS_H
- #define __IRQS_H
- 
--/*
-- * IOP80321 chipset interrupts
-- */
--#define IRQ_IOP32X_DMA0_EOT	0
--#define IRQ_IOP32X_DMA0_EOC	1
--#define IRQ_IOP32X_DMA1_EOT	2
--#define IRQ_IOP32X_DMA1_EOC	3
--#define IRQ_IOP32X_AA_EOT	6
--#define IRQ_IOP32X_AA_EOC	7
--#define IRQ_IOP32X_CORE_PMON	8
--#define IRQ_IOP32X_TIMER0	9
--#define IRQ_IOP32X_TIMER1	10
--#define IRQ_IOP32X_I2C_0	11
--#define IRQ_IOP32X_I2C_1	12
--#define IRQ_IOP32X_MESSAGING	13
--#define IRQ_IOP32X_ATU_BIST	14
--#define IRQ_IOP32X_PERFMON	15
--#define IRQ_IOP32X_CORE_PMU	16
--#define IRQ_IOP32X_BIU_ERR	17
--#define IRQ_IOP32X_ATU_ERR	18
--#define IRQ_IOP32X_MCU_ERR	19
--#define IRQ_IOP32X_DMA0_ERR	20
--#define IRQ_IOP32X_DMA1_ERR	21
--#define IRQ_IOP32X_AA_ERR	23
--#define IRQ_IOP32X_MSG_ERR	24
--#define IRQ_IOP32X_SSP		25
--#define IRQ_IOP32X_XINT0	27
--#define IRQ_IOP32X_XINT1	28
--#define IRQ_IOP32X_XINT2	29
--#define IRQ_IOP32X_XINT3	30
--#define IRQ_IOP32X_HPI		31
--
- #define NR_IRQS			32
- 
--
- #endif
-diff --git a/arch/arm/mach-iop32x/include/mach/time.h b/arch/arm/mach-iop32x/include/mach/time.h
-deleted file mode 100644
-index d08950ccebc4..000000000000
---- a/arch/arm/mach-iop32x/include/mach/time.h
-+++ /dev/null
-@@ -1,5 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _IOP32X_TIME_H_
--#define _IOP32X_TIME_H_
--#define IRQ_IOP_TIMER0 IRQ_IOP32X_TIMER0
--#endif
-diff --git a/arch/arm/include/asm/hardware/iop3xx.h b/arch/arm/mach-iop32x/iop3xx.h
-similarity index 96%
-rename from arch/arm/include/asm/hardware/iop3xx.h
-rename to arch/arm/mach-iop32x/iop3xx.h
-index 3cb6f22f510b..46b4b34a4ad2 100644
---- a/arch/arm/include/asm/hardware/iop3xx.h
-+++ b/arch/arm/mach-iop32x/iop3xx.h
-@@ -1,7 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * arch/arm/include/asm/hardware/iop3xx.h
-- *
-  * Intel IOP32X and IOP33X register definitions
-  *
-  * Author: Rory Bolt <rorybolt@pacbell.net>
-@@ -12,6 +10,22 @@
- #ifndef __IOP3XX_H
- #define __IOP3XX_H
- 
-+/*
-+ * Peripherals that are shared between the iop32x and iop33x but
-+ * located at different addresses.
-+ */
-+#define IOP3XX_TIMER_REG(reg)	(IOP3XX_PERIPHERAL_VIRT_BASE + 0x07e0 + (reg))
-+
-+#include "iop3xx.h"
-+
-+/* ATU Parameters
-+ * set up a 1:1 bus to physical ram relationship
-+ * w/ physical ram on top of pci in the memory map
-+ */
-+#define IOP32X_MAX_RAM_SIZE            0x40000000UL
-+#define IOP3XX_MAX_RAM_SIZE            IOP32X_MAX_RAM_SIZE
-+#define IOP3XX_PCI_LOWER_MEM_BA        0x80000000
-+
- /*
-  * IOP3XX GPIO handling
-  */
-diff --git a/arch/arm/mach-iop32x/iq31244.c b/arch/arm/mach-iop32x/iq31244.c
-index 8755aa87e591..04a7d389d365 100644
---- a/arch/arm/mach-iop32x/iq31244.c
-+++ b/arch/arm/mach-iop32x/iq31244.c
-@@ -23,7 +23,6 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/gpio/machine.h>
--#include <mach/hardware.h>
- #include <asm/cputype.h>
- #include <asm/irq.h>
- #include <asm/mach/arch.h>
-@@ -33,7 +32,9 @@
- #include <asm/mach-types.h>
- #include <asm/page.h>
- #include <asm/pgtable.h>
--#include <mach/time.h>
-+
-+#include "hardware.h"
-+#include "irqs.h"
- #include "gpio-iop32x.h"
- 
- /*
-diff --git a/arch/arm/mach-iop32x/include/mach/iq31244.h b/arch/arm/mach-iop32x/iq31244.h
-similarity index 89%
-rename from arch/arm/mach-iop32x/include/mach/iq31244.h
-rename to arch/arm/mach-iop32x/iq31244.h
-index e62da5da6ed4..a7ac691e48d3 100644
---- a/arch/arm/mach-iop32x/include/mach/iq31244.h
-+++ b/arch/arm/mach-iop32x/iq31244.h
-@@ -1,7 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * arch/arm/mach-iop32x/include/mach/iq31244.h
-- *
-  * Intel IQ31244 evaluation board registers
-  */
- 
-diff --git a/arch/arm/mach-iop32x/iq80321.c b/arch/arm/mach-iop32x/iq80321.c
-index e12699d1c540..4bd596d6c9c1 100644
---- a/arch/arm/mach-iop32x/iq80321.c
-+++ b/arch/arm/mach-iop32x/iq80321.c
-@@ -20,7 +20,6 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/gpio/machine.h>
--#include <mach/hardware.h>
- #include <asm/irq.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -29,7 +28,9 @@
- #include <asm/mach-types.h>
- #include <asm/page.h>
- #include <asm/pgtable.h>
--#include <mach/time.h>
-+
-+#include "hardware.h"
-+#include "irqs.h"
- #include "gpio-iop32x.h"
- 
- /*
-diff --git a/arch/arm/mach-iop32x/include/mach/iq80321.h b/arch/arm/mach-iop32x/iq80321.h
-similarity index 89%
-rename from arch/arm/mach-iop32x/include/mach/iq80321.h
-rename to arch/arm/mach-iop32x/iq80321.h
-index faf62c26f6f8..3a5d10626ea6 100644
---- a/arch/arm/mach-iop32x/include/mach/iq80321.h
-+++ b/arch/arm/mach-iop32x/iq80321.h
-@@ -1,7 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * arch/arm/mach-iop32x/include/mach/iq80321.h
-- *
-  * Intel IQ80321 evaluation board registers
-  */
- 
-diff --git a/arch/arm/mach-iop32x/irq.c b/arch/arm/mach-iop32x/irq.c
-index 2f5d4ec94f9c..2d48bf1398c1 100644
---- a/arch/arm/mach-iop32x/irq.c
-+++ b/arch/arm/mach-iop32x/irq.c
-@@ -13,9 +13,10 @@
- #include <linux/list.h>
- #include <asm/mach/irq.h>
- #include <asm/irq.h>
--#include <mach/hardware.h>
- #include <asm/mach-types.h>
- 
-+#include "hardware.h"
-+
- static u32 iop32x_mask;
- 
- static void intctl_write(u32 val)
-diff --git a/arch/arm/mach-iop32x/irqs.h b/arch/arm/mach-iop32x/irqs.h
-new file mode 100644
-index 000000000000..69858e4e905d
---- /dev/null
-+++ b/arch/arm/mach-iop32x/irqs.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Author:	Rory Bolt <rorybolt@pacbell.net>
-+ * Copyright:	(C) 2002 Rory Bolt
-+ */
-+
-+#ifndef __IOP32X_IRQS_H
-+#define __IOP32X_IRQS_H
-+
-+/*
-+ * IOP80321 chipset interrupts
-+ */
-+#define IRQ_IOP32X_DMA0_EOT	0
-+#define IRQ_IOP32X_DMA0_EOC	1
-+#define IRQ_IOP32X_DMA1_EOT	2
-+#define IRQ_IOP32X_DMA1_EOC	3
-+#define IRQ_IOP32X_AA_EOT	6
-+#define IRQ_IOP32X_AA_EOC	7
-+#define IRQ_IOP32X_CORE_PMON	8
-+#define IRQ_IOP32X_TIMER0	9
-+#define IRQ_IOP32X_TIMER1	10
-+#define IRQ_IOP32X_I2C_0	11
-+#define IRQ_IOP32X_I2C_1	12
-+#define IRQ_IOP32X_MESSAGING	13
-+#define IRQ_IOP32X_ATU_BIST	14
-+#define IRQ_IOP32X_PERFMON	15
-+#define IRQ_IOP32X_CORE_PMU	16
-+#define IRQ_IOP32X_BIU_ERR	17
-+#define IRQ_IOP32X_ATU_ERR	18
-+#define IRQ_IOP32X_MCU_ERR	19
-+#define IRQ_IOP32X_DMA0_ERR	20
-+#define IRQ_IOP32X_DMA1_ERR	21
-+#define IRQ_IOP32X_AA_ERR	23
-+#define IRQ_IOP32X_MSG_ERR	24
-+#define IRQ_IOP32X_SSP		25
-+#define IRQ_IOP32X_XINT0	27
-+#define IRQ_IOP32X_XINT1	28
-+#define IRQ_IOP32X_XINT2	29
-+#define IRQ_IOP32X_XINT3	30
-+#define IRQ_IOP32X_HPI		31
-+
-+#endif
-diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
-index 26d76b377e79..5382a93ad0f8 100644
---- a/arch/arm/mach-iop32x/n2100.c
-+++ b/arch/arm/mach-iop32x/n2100.c
-@@ -28,7 +28,6 @@
- #include <linux/io.h>
- #include <linux/gpio.h>
- #include <linux/gpio/machine.h>
--#include <mach/hardware.h>
- #include <asm/irq.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -37,7 +36,9 @@
- #include <asm/mach-types.h>
- #include <asm/page.h>
- #include <asm/pgtable.h>
--#include <mach/time.h>
-+
-+#include "hardware.h"
-+#include "irqs.h"
- #include "gpio-iop32x.h"
- 
- /*
-diff --git a/arch/arm/mach-iop32x/include/mach/n2100.h b/arch/arm/mach-iop32x/n2100.h
-similarity index 89%
-rename from arch/arm/mach-iop32x/include/mach/n2100.h
-rename to arch/arm/mach-iop32x/n2100.h
-index 70bb660b643a..0b97b940d3e7 100644
---- a/arch/arm/mach-iop32x/include/mach/n2100.h
-+++ b/arch/arm/mach-iop32x/n2100.h
-@@ -1,7 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * arch/arm/mach-iop32x/include/mach/n2100.h
-- *
-  * Thecus N2100 board registers
-  */
- 
-diff --git a/arch/arm/plat-iop/pci.c b/arch/arm/mach-iop32x/pci.c
-similarity index 99%
-rename from arch/arm/plat-iop/pci.c
-rename to arch/arm/mach-iop32x/pci.c
-index 4c42c95e4bf5..ab0010dc3145 100644
---- a/arch/arm/plat-iop/pci.c
-+++ b/arch/arm/mach-iop32x/pci.c
-@@ -17,9 +17,9 @@
- #include <linux/io.h>
- #include <asm/irq.h>
- #include <asm/signal.h>
--#include <mach/hardware.h>
- #include <asm/mach/pci.h>
--#include <asm/hardware/iop3xx.h>
-+#include "hardware.h"
-+#include "iop3xx.h"
- 
- // #define DEBUG
- 
-diff --git a/arch/arm/plat-iop/pmu.c b/arch/arm/mach-iop32x/pmu.c
-similarity index 96%
-rename from arch/arm/plat-iop/pmu.c
-rename to arch/arm/mach-iop32x/pmu.c
-index 3834142c17f4..bdbc7a3cb8a3 100644
---- a/arch/arm/plat-iop/pmu.c
-+++ b/arch/arm/mach-iop32x/pmu.c
-@@ -5,7 +5,7 @@
-  */
- 
- #include <linux/platform_device.h>
--#include <mach/irqs.h>
-+#include "irqs.h"
- 
- static struct resource pmu_resource = {
- 	.start	= IRQ_IOP32X_CORE_PMU,
-diff --git a/arch/arm/plat-iop/restart.c b/arch/arm/mach-iop32x/restart.c
-similarity index 82%
-rename from arch/arm/plat-iop/restart.c
-rename to arch/arm/mach-iop32x/restart.c
-index cf6d3d9a2112..3dfa54d3a7a8 100644
---- a/arch/arm/plat-iop/restart.c
-+++ b/arch/arm/mach-iop32x/restart.c
-@@ -4,9 +4,9 @@
-  *
-  * Copyright (C) 2001 MontaVista Software, Inc.
-  */
--#include <asm/hardware/iop3xx.h>
- #include <asm/system_misc.h>
--#include <mach/hardware.h>
-+#include "hardware.h"
-+#include "iop3xx.h"
- 
- void iop3xx_restart(enum reboot_mode mode, const char *cmd)
- {
-diff --git a/arch/arm/plat-iop/setup.c b/arch/arm/mach-iop32x/setup.c
-similarity index 95%
-rename from arch/arm/plat-iop/setup.c
-rename to arch/arm/mach-iop32x/setup.c
-index d10e0102d82c..a0a81c28a632 100644
---- a/arch/arm/plat-iop/setup.c
-+++ b/arch/arm/mach-iop32x/setup.c
-@@ -10,7 +10,7 @@
- #include <linux/mm.h>
- #include <linux/init.h>
- #include <asm/mach/map.h>
--#include <asm/hardware/iop3xx.h>
-+#include "iop3xx.h"
- 
- /*
-  * Standard IO mapping for all IOP3xx based systems.  Note that
-diff --git a/arch/arm/plat-iop/time.c b/arch/arm/mach-iop32x/time.c
-similarity index 97%
-rename from arch/arm/plat-iop/time.c
-rename to arch/arm/mach-iop32x/time.c
-index f9dd1f50cfe5..18a4df5c1baa 100644
---- a/arch/arm/plat-iop/time.c
-+++ b/arch/arm/mach-iop32x/time.c
-@@ -19,12 +19,13 @@
- #include <linux/clockchips.h>
- #include <linux/export.h>
- #include <linux/sched_clock.h>
--#include <mach/hardware.h>
- #include <asm/irq.h>
- #include <linux/uaccess.h>
- #include <asm/mach/irq.h>
- #include <asm/mach/time.h>
--#include <mach/time.h>
-+
-+#include "hardware.h"
-+#include "irqs.h"
- 
- /*
-  * Minimum clocksource/clockevent timer range in seconds
-@@ -167,7 +168,7 @@ void __init iop_init_time(unsigned long tick_rate)
- 	 */
- 	write_tmr0(timer_ctl & ~IOP_TMR_EN);
- 	write_tisr(1);
--	setup_irq(IRQ_IOP_TIMER0, &iop_timer_irq);
-+	setup_irq(IRQ_IOP32X_TIMER0, &iop_timer_irq);
- 	iop_clockevent.cpumask = cpumask_of(0);
- 	clockevents_config_and_register(&iop_clockevent, tick_rate,
- 					0xf, 0xfffffffe);
-diff --git a/arch/arm/plat-iop/Makefile b/arch/arm/plat-iop/Makefile
-deleted file mode 100644
-index 86e354b9065d..000000000000
---- a/arch/arm/plat-iop/Makefile
-+++ /dev/null
-@@ -1,14 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--#
--# Makefile for the linux kernel.
--#
--
--# IOP32X
--obj-$(CONFIG_ARCH_IOP32X) += i2c.o
--obj-$(CONFIG_ARCH_IOP32X) += pci.o
--obj-$(CONFIG_ARCH_IOP32X) += setup.o
--obj-$(CONFIG_ARCH_IOP32X) += time.o
--obj-$(CONFIG_ARCH_IOP32X) += cp6.o
--obj-$(CONFIG_ARCH_IOP32X) += adma.o
--obj-$(CONFIG_ARCH_IOP32X) += pmu.o
--obj-$(CONFIG_ARCH_IOP32X) += restart.o
--- 
-2.20.0
+I guess this is helping me to prepare for Plumbers.  ;-)
+
+							Thanx, Paul
+
+>  - Joel
+> 
+> 
+> > 
+> > Probably others, but this should do for a start.
+> > 
+> > 							Thanx, Paul
+> > 
+> > > thanks,
+> > > 
+> > >  - Joel
+> > > 
+> > > ---8<-----------------------
+> > > 
+> > > >From 098d62e5a1b84a11139236c9b1f59e7f32289b40 Mon Sep 17 00:00:00 2001
+> > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > > Date: Thu, 8 Aug 2019 16:29:58 -0400
+> > > Subject: [PATCH] Let list grow
+> > > 
+> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > ---
+> > >  kernel/rcu/rcuperf.c |  2 +-
+> > >  kernel/rcu/tree.c    | 52 +++++++++++++++++++-------------------------
+> > >  2 files changed, 23 insertions(+), 31 deletions(-)
+> > > 
+> > > diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+> > > index 34658760da5e..7dc831db89ae 100644
+> > > --- a/kernel/rcu/rcuperf.c
+> > > +++ b/kernel/rcu/rcuperf.c
+> > > @@ -654,7 +654,7 @@ kfree_perf_thread(void *arg)
+> > >  			}
+> > >  		}
+> > >  
+> > > -		schedule_timeout_uninterruptible(2);
+> > > +		cond_resched();
+> > >  	} while (!torture_must_stop() && ++l < kfree_loops);
+> > >  
+> > >  	kfree(alloc_ptrs);
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index bdbd483606ce..bab77220d8ac 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -2595,7 +2595,7 @@ EXPORT_SYMBOL_GPL(call_rcu);
+> > >  
+> > >  
+> > >  /* Maximum number of jiffies to wait before draining batch */
+> > > -#define KFREE_DRAIN_JIFFIES 50
+> > > +#define KFREE_DRAIN_JIFFIES (HZ / 20)
+> > >  
+> > >  /*
+> > >   * Maximum number of kfree(s) to batch, if limit is hit
+> > > @@ -2684,27 +2684,19 @@ static void kfree_rcu_drain_unlock(struct kfree_rcu_cpu *krc,
+> > >  {
+> > >  	struct rcu_head *head, *next;
+> > >  
+> > > -	/* It is time to do bulk reclaim after grace period */
+> > > -	krc->monitor_todo = false;
+> > > +	/* It is time to do bulk reclaim after grace period. */
+> > >  	if (queue_kfree_rcu_work(krc)) {
+> > >  		spin_unlock_irqrestore(&krc->lock, flags);
+> > >  		return;
+> > >  	}
+> > >  
+> > > -	/*
+> > > -	 * Use non-batch regular call_rcu for kfree_rcu in case things are too
+> > > -	 * busy and batching of kfree_rcu could not be used.
+> > > -	 */
+> > > -	head = krc->head;
+> > > -	krc->head = NULL;
+> > > -	krc->kfree_batch_len = 0;
+> > > -	spin_unlock_irqrestore(&krc->lock, flags);
+> > > -
+> > > -	for (; head; head = next) {
+> > > -		next = head->next;
+> > > -		head->next = NULL;
+> > > -		__call_rcu(head, head->func, -1, 1);
+> > > +	/* Previous batch did not get free yet, let us try again soon. */
+> > > +	if (krc->monitor_todo == false) {
+> > > +		schedule_delayed_work_on(smp_processor_id(),
+> > > +				&krc->monitor_work,  KFREE_DRAIN_JIFFIES/4);
+> > > +		krc->monitor_todo = true;
+> > >  	}
+> > > +	spin_unlock_irqrestore(&krc->lock, flags);
+> > >  }
+> > >  
+> > >  /*
+> > > -- 
+> > > 2.23.0.rc1.153.gdeed80330f-goog
+> > > 
+> > 
+> 
 
