@@ -2,72 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7660287FA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD21687FB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 18:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437292AbfHIQUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 12:20:24 -0400
-Received: from mga07.intel.com ([134.134.136.100]:33507 "EHLO mga07.intel.com"
+        id S2437106AbfHIQVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 12:21:33 -0400
+Received: from foss.arm.com ([217.140.110.172]:49872 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437153AbfHIQUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 12:20:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 09:20:15 -0700
-X-IronPort-AV: E=Sophos;i="5.64,364,1559545200"; 
-   d="scan'208";a="203968184"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.251.6.227]) ([10.251.6.227])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/AES256-SHA; 09 Aug 2019 09:20:14 -0700
-Subject: Re: [PATCH V2 09/10] x86/resctrl: Pseudo-lock portions of multiple
- resources
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        kuo-lang.tseng@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1564504901.git.reinette.chatre@intel.com>
- <c0095fd15488d87be06deddf43abb4a2834dc7e6.1564504902.git.reinette.chatre@intel.com>
- <20190807152511.GB24328@zn.tnic>
- <e9145623-bf5a-b96c-d802-7b61caa406e0@intel.com>
- <20190808084416.GC20745@zn.tnic>
- <a69981df-80f5-d8cf-e118-2ee639dcdb77@intel.com>
- <20190809073807.GC2152@zn.tnic>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <cdfbc993-6e73-5045-518f-51be2172675d@intel.com>
-Date:   Fri, 9 Aug 2019 09:20:14 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+        id S1726421AbfHIQVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 12:21:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 314DE15A2;
+        Fri,  9 Aug 2019 09:21:32 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD9AB3F575;
+        Fri,  9 Aug 2019 09:21:26 -0700 (PDT)
+Subject: Re: [tip:sched/core] sched/fair: Use rq_lock/unlock in
+ online_fair_sched_group
+To:     pauld@redhat.com, vincent.guittot@linaro.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, tglx@linutronix.de, mingo@kernel.org,
+        linux-tip-commits@vger.kernel.org
+References: <20190801133749.11033-1-pauld@redhat.com>
+ <tip-6b8fd01b21f5f2701b407a7118f236ba4c41226d@git.kernel.org>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <dfc8f652-ca98-e30a-546f-e6a2df36e33a@arm.com>
+Date:   Fri, 9 Aug 2019 18:21:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190809073807.GC2152@zn.tnic>
+In-Reply-To: <tip-6b8fd01b21f5f2701b407a7118f236ba4c41226d@git.kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borislav,
+On 8/8/19 1:01 PM, tip-bot for Phil Auld wrote:
 
-On 8/9/2019 12:38 AM, Borislav Petkov wrote:
-> On Thu, Aug 08, 2019 at 01:13:46PM -0700, Reinette Chatre wrote:
->> There is a locking order dependency between cpu_hotplug_lock and
->> rdtgroup_mutex (cpu_hotplug_lock before rdtgroup_mutex) that has to be
->> maintained. To do so in this flow you will find cpus_read_lock() in
->> rdtgroup_schemata_write(), so quite a distance from where it is needed.
->>
->> Perhaps I should add a comment at the location where the lock is
->> required to document where the lock is obtained?
-> 
-> Even better - you can add:
-> 
-> 	lockdep_assert_cpus_held();
-> 
-> above it which documents *and* checks too. :-)
-> 
+[...]
 
-Will do.
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 19c58599e967..d9407517dae9 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -10281,18 +10281,18 @@ err:
+>  void online_fair_sched_group(struct task_group *tg)
+>  {
+>  	struct sched_entity *se;
+> +	struct rq_flags rf;
+>  	struct rq *rq;
+>  	int i;
+>  
+>  	for_each_possible_cpu(i) {
+>  		rq = cpu_rq(i);
+>  		se = tg->se[i];
+> -
+> -		raw_spin_lock_irq(&rq->lock);
+> +		rq_lock(rq, &rf);
+>  		update_rq_clock(rq);
+>  		attach_entity_cfs_rq(se);
+>  		sync_throttle(tg, i);
+> -		raw_spin_unlock_irq(&rq->lock);
+> +		rq_unlock(rq, &rf);
+>  	}
+>  }
 
-Thank you
+Shouldn't this be:
 
-Reinette
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d9407517dae9..1054d2cf6aaa 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -10288,11 +10288,11 @@ void online_fair_sched_group(struct task_group
+*tg)
+        for_each_possible_cpu(i) {
+                rq = cpu_rq(i);
+                se = tg->se[i];
+-               rq_lock(rq, &rf);
++               rq_lock_irq(rq, &rf);
+                update_rq_clock(rq);
+                attach_entity_cfs_rq(se);
+                sync_throttle(tg, i);
+-               rq_unlock(rq, &rf);
++               rq_unlock_irq(rq, &rf);
+        }
+ }
+
+Currently, you should get a 'inconsistent lock state' warning with
+CONFIG_PROVE_LOCKING.
