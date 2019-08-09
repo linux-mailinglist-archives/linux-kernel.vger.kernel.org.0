@@ -2,49 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88084883FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E74883EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbfHIU25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 16:28:57 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:35049 "EHLO
+        id S1728964AbfHIU3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 16:29:07 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:38499 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbfHIU2y (ORCPT
+        with ESMTP id S1728557AbfHIU3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 16:28:54 -0400
+        Fri, 9 Aug 2019 16:29:04 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MeTwa-1iU8oE1gWa-00aSd6; Fri, 09 Aug 2019 22:28:46 +0200
+ 1MowT0-1ifiHM1SxC-00qQ8w; Fri, 09 Aug 2019 22:28:50 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     soc@kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 08/16] ASoC: remove w90x900/nuc900 platform drivers
-Date:   Fri,  9 Aug 2019 22:27:36 +0200
-Message-Id: <20190809202749.742267-9-arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+Subject: [PATCH 09/16] fbdev: remove w90x900/nuc900 platform drivers
+Date:   Fri,  9 Aug 2019 22:27:37 +0200
+Message-Id: <20190809202749.742267-10-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190809202749.742267-1-arnd@arndb.de>
 References: <20190809202749.742267-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ts85G1TOzezu2/A4EeIAJfnG7e4SzYrCCtrBZoqZdNnwjRmm4HT
- JtRP4xfGqRnxKxYPuy2YCeMvUxdDsMznR6U3DCf3O03rsPKAdmWGKwhnsylekNIDC2Oq6S2
- MM7T3aWJfhlU6fcZjubcEu81N1opZIm64tByAbc/6gtJMWAyM8Ml3vXXChaJU7LhhPLy9e1
- u/sZTBwb+6km0APWFk+lQ==
+X-Provags-ID: V03:K1:OWJd8Mlp6GosttFVeesvPBCF6H1qMbR45XoNLn6QCIT09DzgB8Z
+ B3G2a3xY+i5R2Bbqyu7WNSaHKBB4iBms9lawabi7zdxxdzONbZvOuM1xtwd5CjGziCp/VhN
+ Xioqckvrd1jLLowbm78XLPjlfGd8t+cTEjUzfyMOtD8oZt639ZEVYh7cmk5Qgw7kRprEGbo
+ 2yJdqc/5i5Fmij08/qryg==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:x19icWnEGwU=:IPHhlV8GsIolZzPSZ2bFu5
- PzG/h64+fo1Rtc6PL85HZ+6VdziP0aIP6OShjNSTzGgYr/EIdKuFarNtxbOThtzdUNKrJmlzN
- yDLxtJO4Gqu3yUY8+XCOTEMKlvm4BX6Zz0OqnUCR04e9aCyDHQEGHgBcVkGN/QwCH84VDQBff
- Vn6sMmPGB3wGXQZi/kc5HLNPqONyXyuf7E6xemeXDPHoSX9T7aHMsFFLsaZeb41wVGr8xS9U5
- S9uyD3ruwetXxObi+IIYbIhV4B1lQg674RxUWNIGCDf6aMNCB9Aff+DdCCm8WfE3Jheo7w9ZN
- MSKqIUbDLlXCFEXyGV1f5rLfARqDV1N92KaTrPXit3icq3FfUG9j/A05gKHxJ+7rZrQMs7nIO
- JnIVonM0g7CXAzdxvJ9jEw1emsdP4qK/j8j8iDX0vj4com4ziJ6zx1wWyM5pHUx9VaeY7Eyr7
- xpag5VcWDm4H1ky81BA3qFnK+2s8txQw6JzfPLKBNSHGqB3chutV2ll2JckfKvNYZesadJgcU
- /2sU1ukMXCV0q6pBEtpiI6TPhZEHwJFj6ESfU2VbEtCfkVMh7Uk6dS7v66EEys6HNOoXdcYNS
- oBOVN3Gazl41vTmyBEIXEHtZ9C/9OrKq75a4159enBvKHGvI5FimZxLAw8t16v+tZ4MClicTM
- G3bPPYLC+5aYoSv1GKlL2lCS/t22QDUZ+QwaFSdpmkRJCZ4PZ41+UseozHjx/oLArLsUJwZ8I
- bg5R3YQQlrP5JiO4aWqdTcfAGbWqty926qlyjw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:0m+dLqi+nP4=:2upQrvmukfpBS3SC2UnNKt
+ PAu/rKUBjYp1S8hqobJgJKhd54h2O0S0PuBpuzW6+UmIrZmc04L1xQW40uuksIyk2x3vpWSOG
+ Is5yDwAKXD2t14cjHcDTUkEtr6vPkopDMrCUlT0wMV7I2mlK90BeHtv8TMM0UDC0NOFBJLTj9
+ QSdKkZ8NzEPvVcbNXy1qUM6ix2ofk4th0tHQoQMmnaV0pAcqu4UMP8aR1+zP4gNmZKLReIcdu
+ ZzJCFxgeY1fo1HwkfRqCWWBQmhNqVOpgQX3p6pwi5Nr0MShyvRKMfUgGEkBY79b3pso+aOVd5
+ tzpLSj5jcT0m5z0keKaAbsioW29Y6vkxez43xjOmeSeQ9zzKvrd7GrBkap9IUEhFjzeryT54/
+ fpyZRMkhgKPZKcPTP+A7mQP8wD4+v8XAdASHeymPYhu/b3/dDAr9DrRqSzAZBiKIzWSwBMFp1
+ 0t2+5c6+rTil83khVdnyFJxB586quyaUEvl7Zhk6nwJWAs+QLXcxv+8HaclZmtr1ojUosAOvc
+ WoKhR5Ju7pJU6Ezlmmzm/34m2Pqnz6ZRm011wB5b8sHPzS2XWsOcPUR0bf2HL80n0hUW9m5Xw
+ 4bzeLnhw1mbfv/26goOU3Gy4EmjiH7W6IDZ4vCfyGJ7+MNsuCr558bsA2zAEGugg9exSk6iNR
+ DELZJnfSDQ6moTRednZqlTJkfavblwOw61cNB7E9eJikUU91J1AtNs/vkBiBLtuLN1bHTDr6/
+ fMRneNx8QrS7yc3R0LnvqxoNVgCRmW3BORB6dw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -54,1016 +55,974 @@ The ARM w90x900 platform is getting removed, so this driver is obsolete.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- sound/soc/Kconfig               |   1 -
- sound/soc/Makefile              |   1 -
- sound/soc/nuc900/Kconfig        |  29 ---
- sound/soc/nuc900/Makefile       |  12 -
- sound/soc/nuc900/nuc900-ac97.c  | 391 --------------------------------
- sound/soc/nuc900/nuc900-audio.c |  73 ------
- sound/soc/nuc900/nuc900-audio.h | 108 ---------
- sound/soc/nuc900/nuc900-pcm.c   | 321 --------------------------
- 8 files changed, 936 deletions(-)
- delete mode 100644 sound/soc/nuc900/Kconfig
- delete mode 100644 sound/soc/nuc900/Makefile
- delete mode 100644 sound/soc/nuc900/nuc900-ac97.c
- delete mode 100644 sound/soc/nuc900/nuc900-audio.c
- delete mode 100644 sound/soc/nuc900/nuc900-audio.h
- delete mode 100644 sound/soc/nuc900/nuc900-pcm.c
+ drivers/video/fbdev/Kconfig                  |  14 -
+ drivers/video/fbdev/Makefile                 |   1 -
+ drivers/video/fbdev/nuc900fb.c               | 760 -------------------
+ drivers/video/fbdev/nuc900fb.h               |  51 --
+ include/Kbuild                               |   1 -
+ include/linux/platform_data/video-nuc900fb.h |  79 --
+ 6 files changed, 906 deletions(-)
+ delete mode 100644 drivers/video/fbdev/nuc900fb.c
+ delete mode 100644 drivers/video/fbdev/nuc900fb.h
+ delete mode 100644 include/linux/platform_data/video-nuc900fb.h
 
-diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
-index dc86e4073001..bdc305cece6e 100644
---- a/sound/soc/Kconfig
-+++ b/sound/soc/Kconfig
-@@ -51,7 +51,6 @@ source "sound/soc/dwc/Kconfig"
- source "sound/soc/fsl/Kconfig"
- source "sound/soc/hisilicon/Kconfig"
- source "sound/soc/jz4740/Kconfig"
--source "sound/soc/nuc900/Kconfig"
- source "sound/soc/kirkwood/Kconfig"
- source "sound/soc/img/Kconfig"
- source "sound/soc/intel/Kconfig"
-diff --git a/sound/soc/Makefile b/sound/soc/Makefile
-index d90ce8a32887..3fe3e7f3b7d5 100644
---- a/sound/soc/Makefile
-+++ b/sound/soc/Makefile
-@@ -39,7 +39,6 @@ obj-$(CONFIG_SND_SOC)	+= intel/
- obj-$(CONFIG_SND_SOC)	+= mediatek/
- obj-$(CONFIG_SND_SOC)	+= meson/
- obj-$(CONFIG_SND_SOC)	+= mxs/
--obj-$(CONFIG_SND_SOC)	+= nuc900/
- obj-$(CONFIG_SND_SOC)	+= kirkwood/
- obj-$(CONFIG_SND_SOC)	+= pxa/
- obj-$(CONFIG_SND_SOC)	+= qcom/
-diff --git a/sound/soc/nuc900/Kconfig b/sound/soc/nuc900/Kconfig
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 6b2de93bd302..5f83cd715387 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -1924,20 +1924,6 @@ config FB_S3C2410_DEBUG
+ 	  Turn on debugging messages. Note that you can set/unset at run time
+ 	  through sysfs
+ 
+-config FB_NUC900
+-	tristate "NUC900 LCD framebuffer support"
+-	depends on FB && ARCH_W90X900
+-	select FB_CFB_FILLRECT
+-	select FB_CFB_COPYAREA
+-	select FB_CFB_IMAGEBLIT
+-	---help---
+-	  Frame buffer driver for the built-in LCD controller in the Nuvoton
+-	  NUC900 processor
+-
+-config GPM1040A0_320X240
+-	bool "Giantplus Technology GPM1040A0 320x240 Color TFT LCD"
+-	depends on FB_NUC900
+-
+ config FB_SM501
+ 	tristate "Silicon Motion SM501 framebuffer support"
+ 	depends on FB && MFD_SM501
+diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
+index 7dc4861a93e6..aab7155884ea 100644
+--- a/drivers/video/fbdev/Makefile
++++ b/drivers/video/fbdev/Makefile
+@@ -116,7 +116,6 @@ obj-y                             += omap2/
+ obj-$(CONFIG_XEN_FBDEV_FRONTEND)  += xen-fbfront.o
+ obj-$(CONFIG_FB_CARMINE)          += carminefb.o
+ obj-$(CONFIG_FB_MB862XX)	  += mb862xx/
+-obj-$(CONFIG_FB_NUC900)           += nuc900fb.o
+ obj-$(CONFIG_FB_JZ4740)		  += jz4740_fb.o
+ obj-$(CONFIG_FB_PUV3_UNIGFX)      += fb-puv3.o
+ obj-$(CONFIG_FB_HYPERV)		  += hyperv_fb.o
+diff --git a/drivers/video/fbdev/nuc900fb.c b/drivers/video/fbdev/nuc900fb.c
 deleted file mode 100644
-index e1b22fbcb159..000000000000
---- a/sound/soc/nuc900/Kconfig
+index 4fd851598584..000000000000
+--- a/drivers/video/fbdev/nuc900fb.c
 +++ /dev/null
-@@ -1,29 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0-only
--##
--## NUC900 series AC97 API
--##
--config SND_SOC_NUC900
--	tristate "SoC Audio for NUC900 series"
--	depends on ARCH_W90X900
--	select SND_SOC_NUC900_AC97
--	help
--	  This option enables support for AC97 mode on the NUC900 SoC.
--
--config SND_SOC_NUC900_AC97
--	tristate
--	select AC97_BUS
--	select SND_AC97_CODEC
--	select SND_SOC_AC97_BUS
--
--
--##
--## Boards
--##
--config SND_SOC_NUC900EVB
--	tristate "NUC900 AC97 support for demo board"
--	depends on SND_SOC_NUC900
--	select SND_SOC_NUC900_AC97
--	select SND_SOC_AC97_CODEC
--	help
--	  Select this option to enable audio (AC97) on the
--	  NUC900 demoboard.
-diff --git a/sound/soc/nuc900/Makefile b/sound/soc/nuc900/Makefile
-deleted file mode 100644
-index c7ba2b9549d2..000000000000
---- a/sound/soc/nuc900/Makefile
-+++ /dev/null
-@@ -1,12 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--# NUC900 series audio
--snd-soc-nuc900-pcm-objs := nuc900-pcm.o
--snd-soc-nuc900-ac97-objs := nuc900-ac97.o
--
--obj-$(CONFIG_SND_SOC_NUC900) += snd-soc-nuc900-pcm.o
--obj-$(CONFIG_SND_SOC_NUC900_AC97) += snd-soc-nuc900-ac97.o
--
--# Boards
--snd-soc-nuc900-audio-objs := nuc900-audio.o
--
--obj-$(CONFIG_SND_SOC_NUC900EVB) += snd-soc-nuc900-audio.o
-diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.c
-deleted file mode 100644
-index 5f2e5c069377..000000000000
---- a/sound/soc/nuc900/nuc900-ac97.c
-+++ /dev/null
-@@ -1,391 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
+@@ -1,760 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
 -/*
-- * Copyright (c) 2009-2010 Nuvoton technology corporation.
 - *
-- * Wan ZongShun <mcuos.com@gmail.com>
+- * Copyright (c) 2009 Nuvoton technology corporation
+- * All rights reserved.
+- *
+- *  Description:
+- *    Nuvoton LCD Controller Driver
+- *  Author:
+- *    Wang Qiang (rurality.linux@gmail.com) 2009/12/11
 - */
--
--#include <linux/init.h>
 -#include <linux/module.h>
+-#include <linux/kernel.h>
+-#include <linux/err.h>
+-#include <linux/errno.h>
+-#include <linux/string.h>
+-#include <linux/mm.h>
+-#include <linux/tty.h>
 -#include <linux/slab.h>
--#include <linux/device.h>
 -#include <linux/delay.h>
--#include <linux/mutex.h>
--#include <linux/suspend.h>
--#include <sound/core.h>
--#include <sound/pcm.h>
--#include <sound/initval.h>
--#include <sound/soc.h>
+-#include <linux/fb.h>
+-#include <linux/init.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/interrupt.h>
+-#include <linux/workqueue.h>
+-#include <linux/wait.h>
+-#include <linux/platform_device.h>
 -#include <linux/clk.h>
+-#include <linux/cpufreq.h>
+-#include <linux/io.h>
+-#include <linux/pm.h>
+-#include <linux/device.h>
 -
--#include <mach/mfp.h>
+-#include <mach/map.h>
+-#include <mach/regs-clock.h>
+-#include <mach/regs-ldm.h>
+-#include <linux/platform_data/video-nuc900fb.h>
 -
--#include "nuc900-audio.h"
+-#include "nuc900fb.h"
 -
--static DEFINE_MUTEX(ac97_mutex);
--struct nuc900_audio *nuc900_ac97_data;
--EXPORT_SYMBOL_GPL(nuc900_ac97_data);
 -
--static int nuc900_checkready(void)
+-/*
+- *  Initialize the nuc900 video (dual) buffer address
+- */
+-static void nuc900fb_set_lcdaddr(struct fb_info *info)
 -{
--	struct nuc900_audio *nuc900_audio = nuc900_ac97_data;
+-	struct nuc900fb_info *fbi = info->par;
+-	void __iomem *regs = fbi->io;
+-	unsigned long vbaddr1, vbaddr2;
 -
--	if (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACIS0) & CODEC_READY))
--		return -EPERM;
+-	vbaddr1  = info->fix.smem_start;
+-	vbaddr2  = info->fix.smem_start;
+-	vbaddr2 += info->fix.line_length * info->var.yres;
+-
+-	/* set frambuffer start phy addr*/
+-	writel(vbaddr1, regs + REG_LCM_VA_BADDR0);
+-	writel(vbaddr2, regs + REG_LCM_VA_BADDR1);
+-
+-	writel(fbi->regs.lcd_va_fbctrl, regs + REG_LCM_VA_FBCTRL);
+-	writel(fbi->regs.lcd_va_scale, regs + REG_LCM_VA_SCALE);
+-}
+-
+-/*
+- *	calculate divider for lcd div
+- */
+-static unsigned int nuc900fb_calc_pixclk(struct nuc900fb_info *fbi,
+-					 unsigned long pixclk)
+-{
+-	unsigned long clk = fbi->clk_rate;
+-	unsigned long long div;
+-
+-	/* pixclk is in picseconds. our clock is in Hz*/
+-	/* div = (clk * pixclk)/10^12 */
+-	div = (unsigned long long)clk * pixclk;
+-	div >>= 12;
+-	do_div(div, 625 * 625UL * 625);
+-
+-	dev_dbg(fbi->dev, "pixclk %ld, divisor is %lld\n", pixclk, div);
+-
+-	return div;
+-}
+-
+-/*
+- *	Check the video params of 'var'.
+- */
+-static int nuc900fb_check_var(struct fb_var_screeninfo *var,
+-			       struct fb_info *info)
+-{
+-	struct nuc900fb_info *fbi = info->par;
+-	struct nuc900fb_mach_info *mach_info = dev_get_platdata(fbi->dev);
+-	struct nuc900fb_display *display = NULL;
+-	struct nuc900fb_display *default_display = mach_info->displays +
+-						   mach_info->default_display;
+-	int i;
+-
+-	dev_dbg(fbi->dev, "check_var(var=%p, info=%p)\n", var, info);
+-
+-	/* validate x/y resolution */
+-	/* choose default mode if possible */
+-	if (var->xres == default_display->xres &&
+-	    var->yres == default_display->yres &&
+-	    var->bits_per_pixel == default_display->bpp)
+-		display = default_display;
+-	else
+-		for (i = 0; i < mach_info->num_displays; i++)
+-			if (var->xres == mach_info->displays[i].xres &&
+-			    var->yres == mach_info->displays[i].yres &&
+-			    var->bits_per_pixel == mach_info->displays[i].bpp) {
+-				display = mach_info->displays + i;
+-				break;
+-			}
+-
+-	if (display == NULL) {
+-		printk(KERN_ERR "wrong resolution or depth %dx%d at %d bit per pixel\n",
+-			var->xres, var->yres, var->bits_per_pixel);
+-		return -EINVAL;
+-	}
+-
+-	/* it should be the same size as the display */
+-	var->xres_virtual	= display->xres;
+-	var->yres_virtual	= display->yres;
+-	var->height		= display->height;
+-	var->width		= display->width;
+-
+-	/* copy lcd settings */
+-	var->pixclock		= display->pixclock;
+-	var->left_margin	= display->left_margin;
+-	var->right_margin	= display->right_margin;
+-	var->upper_margin	= display->upper_margin;
+-	var->lower_margin	= display->lower_margin;
+-	var->vsync_len		= display->vsync_len;
+-	var->hsync_len		= display->hsync_len;
+-
+-	var->transp.offset	= 0;
+-	var->transp.length	= 0;
+-
+-	fbi->regs.lcd_dccs = display->dccs;
+-	fbi->regs.lcd_device_ctrl = display->devctl;
+-	fbi->regs.lcd_va_fbctrl = display->fbctrl;
+-	fbi->regs.lcd_va_scale = display->scale;
+-
+-	/* set R/G/B possions */
+-	switch (var->bits_per_pixel) {
+-	case 1:
+-	case 2:
+-	case 4:
+-	case 8:
+-	default:
+-		var->red.offset 	= 0;
+-		var->red.length 	= var->bits_per_pixel;
+-		var->green 		= var->red;
+-		var->blue		= var->red;
+-		break;
+-	case 12:
+-		var->red.length		= 4;
+-		var->green.length	= 4;
+-		var->blue.length	= 4;
+-		var->red.offset		= 8;
+-		var->green.offset	= 4;
+-		var->blue.offset	= 0;
+-		break;
+-	case 16:
+-		var->red.length		= 5;
+-		var->green.length	= 6;
+-		var->blue.length	= 5;
+-		var->red.offset		= 11;
+-		var->green.offset	= 5;
+-		var->blue.offset	= 0;
+-		break;
+-	case 18:
+-		var->red.length		= 6;
+-		var->green.length	= 6;
+-		var->blue.length	= 6;
+-		var->red.offset		= 12;
+-		var->green.offset	= 6;
+-		var->blue.offset	= 0;
+-		break;
+-	case 32:
+-		var->red.length		= 8;
+-		var->green.length	= 8;
+-		var->blue.length	= 8;
+-		var->red.offset		= 16;
+-		var->green.offset	= 8;
+-		var->blue.offset	= 0;
+-		break;
+-	}
 -
 -	return 0;
 -}
 -
--/* AC97 controller reads codec register */
--static unsigned short nuc900_ac97_read(struct snd_ac97 *ac97,
--					unsigned short reg)
+-/*
+- *	Calculate lcd register values from var setting & save into hw
+- */
+-static void nuc900fb_calculate_lcd_regs(const struct fb_info *info,
+-					struct nuc900fb_hw *regs)
 -{
--	struct nuc900_audio *nuc900_audio = nuc900_ac97_data;
--	unsigned long timeout = 0x10000, val;
+-	const struct fb_var_screeninfo *var = &info->var;
+-	int vtt = var->height + var->upper_margin + var->lower_margin;
+-	int htt = var->width + var->left_margin + var->right_margin;
+-	int hsync = var->width + var->right_margin;
+-	int vsync = var->height + var->lower_margin;
 -
--	mutex_lock(&ac97_mutex);
--
--	val = nuc900_checkready();
--	if (val) {
--		dev_err(nuc900_audio->dev, "AC97 codec is not ready\n");
--		goto out;
--	}
--
--	/* set the R_WB bit and write register index */
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS1, R_WB | reg);
--
--	/* set the valid frame bit and valid slots */
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_ACOS0);
--	val |= (VALID_FRAME | SLOT1_VALID);
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS0, val);
--
--	udelay(100);
--
--	/* polling the AC_R_FINISH */
--	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
--								&& --timeout)
--		mdelay(1);
--
--	if (!timeout) {
--		dev_err(nuc900_audio->dev, "AC97 read register time out !\n");
--		val = -EPERM;
--		goto out;
--	}
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_ACOS0) ;
--	val &= ~SLOT1_VALID;
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS0, val);
--
--	if (AUDIO_READ(nuc900_audio->mmio + ACTL_ACIS1) >> 2 != reg) {
--		dev_err(nuc900_audio->dev,
--				"R_INDEX of REG_ACTL_ACIS1 not match!\n");
--	}
--
--	udelay(100);
--	val = (AUDIO_READ(nuc900_audio->mmio + ACTL_ACIS2) & 0xFFFF);
--
--out:
--	mutex_unlock(&ac97_mutex);
--	return val;
--}
--
--/* AC97 controller writes to codec register */
--static void nuc900_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
--				unsigned short val)
--{
--	struct nuc900_audio *nuc900_audio = nuc900_ac97_data;
--	unsigned long tmp, timeout = 0x10000;
--
--	mutex_lock(&ac97_mutex);
--
--	tmp = nuc900_checkready();
--	if (tmp)
--		dev_err(nuc900_audio->dev, "AC97 codec is not ready\n");
--
--	/* clear the R_WB bit and write register index */
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS1, reg);
--
--	/* write register value */
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS2, val);
--
--	/* set the valid frame bit and valid slots */
--	tmp = AUDIO_READ(nuc900_audio->mmio + ACTL_ACOS0);
--	tmp |= SLOT1_VALID | SLOT2_VALID | VALID_FRAME;
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS0, tmp);
--
--	udelay(100);
--
--	/* polling the AC_W_FINISH */
--	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
--								&& --timeout)
--		mdelay(1);
--
--	if (!timeout)
--		dev_err(nuc900_audio->dev, "AC97 write register time out !\n");
--
--	tmp = AUDIO_READ(nuc900_audio->mmio + ACTL_ACOS0);
--	tmp &= ~(SLOT1_VALID | SLOT2_VALID);
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS0, tmp);
--
--	mutex_unlock(&ac97_mutex);
+-	regs->lcd_crtc_size = LCM_CRTC_SIZE_VTTVAL(vtt) |
+-			      LCM_CRTC_SIZE_HTTVAL(htt);
+-	regs->lcd_crtc_dend = LCM_CRTC_DEND_VDENDVAL(var->height) |
+-			      LCM_CRTC_DEND_HDENDVAL(var->width);
+-	regs->lcd_crtc_hr = LCM_CRTC_HR_EVAL(var->width + 5) |
+-			    LCM_CRTC_HR_SVAL(var->width + 1);
+-	regs->lcd_crtc_hsync = LCM_CRTC_HSYNC_EVAL(hsync + var->hsync_len) |
+-			       LCM_CRTC_HSYNC_SVAL(hsync);
+-	regs->lcd_crtc_vr = LCM_CRTC_VR_EVAL(vsync + var->vsync_len) |
+-			    LCM_CRTC_VR_SVAL(vsync);
 -
 -}
 -
--static void nuc900_ac97_warm_reset(struct snd_ac97 *ac97)
+-/*
+- *	Activate (set) the controller from the given framebuffer
+- *	information
+- */
+-static void nuc900fb_activate_var(struct fb_info *info)
 -{
--	struct nuc900_audio *nuc900_audio = nuc900_ac97_data;
--	unsigned long val;
+-	struct nuc900fb_info *fbi = info->par;
+-	void __iomem *regs = fbi->io;
+-	struct fb_var_screeninfo *var = &info->var;
+-	int clkdiv;
 -
--	mutex_lock(&ac97_mutex);
+-	clkdiv = nuc900fb_calc_pixclk(fbi, var->pixclock) - 1;
+-	if (clkdiv < 0)
+-		clkdiv = 0;
 -
--	/* warm reset AC 97 */
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON);
--	val |= AC_W_RES;
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACCON, val);
+-	nuc900fb_calculate_lcd_regs(info, &fbi->regs);
 -
--	udelay(100);
+-	/* set the new lcd registers*/
 -
--	val = nuc900_checkready();
--	if (val)
--		dev_err(nuc900_audio->dev, "AC97 codec is not ready\n");
+-	dev_dbg(fbi->dev, "new lcd register set:\n");
+-	dev_dbg(fbi->dev, "dccs       = 0x%08x\n", fbi->regs.lcd_dccs);
+-	dev_dbg(fbi->dev, "dev_ctl    = 0x%08x\n", fbi->regs.lcd_device_ctrl);
+-	dev_dbg(fbi->dev, "crtc_size  = 0x%08x\n", fbi->regs.lcd_crtc_size);
+-	dev_dbg(fbi->dev, "crtc_dend  = 0x%08x\n", fbi->regs.lcd_crtc_dend);
+-	dev_dbg(fbi->dev, "crtc_hr    = 0x%08x\n", fbi->regs.lcd_crtc_hr);
+-	dev_dbg(fbi->dev, "crtc_hsync = 0x%08x\n", fbi->regs.lcd_crtc_hsync);
+-	dev_dbg(fbi->dev, "crtc_vr    = 0x%08x\n", fbi->regs.lcd_crtc_vr);
 -
--	mutex_unlock(&ac97_mutex);
+-	writel(fbi->regs.lcd_device_ctrl, regs + REG_LCM_DEV_CTRL);
+-	writel(fbi->regs.lcd_crtc_size, regs + REG_LCM_CRTC_SIZE);
+-	writel(fbi->regs.lcd_crtc_dend, regs + REG_LCM_CRTC_DEND);
+-	writel(fbi->regs.lcd_crtc_hr, regs + REG_LCM_CRTC_HR);
+-	writel(fbi->regs.lcd_crtc_hsync, regs + REG_LCM_CRTC_HSYNC);
+-	writel(fbi->regs.lcd_crtc_vr, regs + REG_LCM_CRTC_VR);
+-
+-	/* set lcd address pointers */
+-	nuc900fb_set_lcdaddr(info);
+-
+-	writel(fbi->regs.lcd_dccs, regs + REG_LCM_DCCS);
 -}
 -
--static void nuc900_ac97_cold_reset(struct snd_ac97 *ac97)
+-/*
+- *      Alters the hardware state.
+- *
+- */
+-static int nuc900fb_set_par(struct fb_info *info)
 -{
--	struct nuc900_audio *nuc900_audio = nuc900_ac97_data;
--	unsigned long val;
+-	struct fb_var_screeninfo *var = &info->var;
 -
--	mutex_lock(&ac97_mutex);
--
--	/* reset Audio Controller */
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_RESET);
--	val |= ACTL_RESET_BIT;
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_RESET, val);
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_RESET);
--	val &= (~ACTL_RESET_BIT);
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_RESET, val);
--
--	/* reset AC-link interface */
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_RESET);
--	val |= AC_RESET;
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_RESET, val);
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_RESET);
--	val &= ~AC_RESET;
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_RESET, val);
--
--	/* cold reset AC 97 */
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON);
--	val |= AC_C_RES;
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACCON, val);
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON);
--	val &= (~AC_C_RES);
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACCON, val);
--
--	udelay(100);
--
--	mutex_unlock(&ac97_mutex);
--
--}
--
--/* AC97 controller operations */
--static struct snd_ac97_bus_ops nuc900_ac97_ops = {
--	.read		= nuc900_ac97_read,
--	.write		= nuc900_ac97_write,
--	.reset		= nuc900_ac97_cold_reset,
--	.warm_reset	= nuc900_ac97_warm_reset,
--};
--
--static int nuc900_ac97_trigger(struct snd_pcm_substream *substream,
--				int cmd, struct snd_soc_dai *dai)
--{
--	struct nuc900_audio *nuc900_audio = nuc900_ac97_data;
--	int ret;
--	unsigned long val, tmp;
--
--	ret = 0;
--
--	switch (cmd) {
--	case SNDRV_PCM_TRIGGER_START:
--	case SNDRV_PCM_TRIGGER_RESUME:
--		val = AUDIO_READ(nuc900_audio->mmio + ACTL_RESET);
--		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--			tmp = AUDIO_READ(nuc900_audio->mmio + ACTL_ACOS0);
--			tmp |= (SLOT3_VALID | SLOT4_VALID | VALID_FRAME);
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS0, tmp);
--
--			tmp = AUDIO_READ(nuc900_audio->mmio + ACTL_PSR);
--			tmp |= (P_DMA_END_IRQ | P_DMA_MIDDLE_IRQ);
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_PSR, tmp);
--			val |= AC_PLAY;
--		} else {
--			tmp = AUDIO_READ(nuc900_audio->mmio + ACTL_RSR);
--			tmp |= (R_DMA_END_IRQ | R_DMA_MIDDLE_IRQ);
--
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_RSR, tmp);
--			val |= AC_RECORD;
--		}
--
--		AUDIO_WRITE(nuc900_audio->mmio + ACTL_RESET, val);
--
+-	switch (var->bits_per_pixel) {
+-	case 32:
+-	case 24:
+-	case 18:
+-	case 16:
+-	case 12:
+-		info->fix.visual = FB_VISUAL_TRUECOLOR;
 -		break;
--	case SNDRV_PCM_TRIGGER_STOP:
--	case SNDRV_PCM_TRIGGER_SUSPEND:
--		val = AUDIO_READ(nuc900_audio->mmio + ACTL_RESET);
--		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--			tmp = AUDIO_READ(nuc900_audio->mmio + ACTL_ACOS0);
--			tmp &= ~(SLOT3_VALID | SLOT4_VALID);
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_ACOS0, tmp);
--
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_PSR, RESET_PRSR);
--			val &= ~AC_PLAY;
--		} else {
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_RSR, RESET_PRSR);
--			val &= ~AC_RECORD;
--		}
--
--		AUDIO_WRITE(nuc900_audio->mmio + ACTL_RESET, val);
--
+-	case 1:
+-		info->fix.visual = FB_VISUAL_MONO01;
 -		break;
 -	default:
--		ret = -EINVAL;
+-		info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
+-		break;
 -	}
 -
--	return ret;
+-	info->fix.line_length = (var->xres_virtual * var->bits_per_pixel) / 8;
+-
+-	/* activate this new configuration */
+-	nuc900fb_activate_var(info);
+-	return 0;
 -}
 -
--static int nuc900_ac97_probe(struct snd_soc_dai *dai)
+-static inline unsigned int chan_to_field(unsigned int chan,
+-					 struct fb_bitfield *bf)
 -{
--	struct nuc900_audio *nuc900_audio = nuc900_ac97_data;
--	unsigned long val;
+-	chan &= 0xffff;
+-	chan >>= 16 - bf->length;
+-	return chan << bf->offset;
+-}
 -
--	mutex_lock(&ac97_mutex);
+-static int nuc900fb_setcolreg(unsigned regno,
+-			       unsigned red, unsigned green, unsigned blue,
+-			       unsigned transp, struct fb_info *info)
+-{
+-	unsigned int val;
 -
--	/* enable unit clock */
--	clk_enable(nuc900_audio->clk);
+-	switch (info->fix.visual) {
+-	case FB_VISUAL_TRUECOLOR:
+-		/* true-colour, use pseuo-palette */
+-		if (regno < 16) {
+-			u32 *pal = info->pseudo_palette;
 -
--	/* enable audio controller and AC-link interface */
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_CON);
--	val |= (IIS_AC_PIN_SEL | ACLINK_EN);
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_CON, val);
+-			val  = chan_to_field(red, &info->var.red);
+-			val |= chan_to_field(green, &info->var.green);
+-			val |= chan_to_field(blue, &info->var.blue);
+-			pal[regno] = val;
+-		}
+-		break;
 -
--	mutex_unlock(&ac97_mutex);
+-	default:
+-		return 1;   /* unknown type */
+-	}
+-	return 0;
+-}
+-
+-/**
+- *      nuc900fb_blank
+- *
+- */
+-static int nuc900fb_blank(int blank_mode, struct fb_info *info)
+-{
 -
 -	return 0;
 -}
 -
--static int nuc900_ac97_remove(struct snd_soc_dai *dai)
--{
--	struct nuc900_audio *nuc900_audio = nuc900_ac97_data;
+-static struct fb_ops nuc900fb_ops = {
+-	.owner			= THIS_MODULE,
+-	.fb_check_var		= nuc900fb_check_var,
+-	.fb_set_par		= nuc900fb_set_par,
+-	.fb_blank		= nuc900fb_blank,
+-	.fb_setcolreg		= nuc900fb_setcolreg,
+-	.fb_fillrect		= cfb_fillrect,
+-	.fb_copyarea		= cfb_copyarea,
+-	.fb_imageblit		= cfb_imageblit,
+-};
 -
--	clk_disable(nuc900_audio->clk);
+-
+-static inline void modify_gpio(void __iomem *reg,
+-			       unsigned long set, unsigned long mask)
+-{
+-	unsigned long tmp;
+-	tmp = readl(reg) & ~mask;
+-	writel(tmp | set, reg);
+-}
+-
+-/*
+- * Initialise LCD-related registers
+- */
+-static int nuc900fb_init_registers(struct fb_info *info)
+-{
+-	struct nuc900fb_info *fbi = info->par;
+-	struct nuc900fb_mach_info *mach_info = dev_get_platdata(fbi->dev);
+-	void __iomem *regs = fbi->io;
+-
+-	/*reset the display engine*/
+-	writel(0, regs + REG_LCM_DCCS);
+-	writel(readl(regs + REG_LCM_DCCS) | LCM_DCCS_ENG_RST,
+-	       regs + REG_LCM_DCCS);
+-	ndelay(100);
+-	writel(readl(regs + REG_LCM_DCCS) & (~LCM_DCCS_ENG_RST),
+-	       regs + REG_LCM_DCCS);
+-	ndelay(100);
+-
+-	writel(0, regs + REG_LCM_DEV_CTRL);
+-
+-	/* config gpio output */
+-	modify_gpio(W90X900_VA_GPIO + 0x54, mach_info->gpio_dir,
+-		    mach_info->gpio_dir_mask);
+-	modify_gpio(W90X900_VA_GPIO + 0x58, mach_info->gpio_data,
+-		    mach_info->gpio_data_mask);
+-
 -	return 0;
 -}
 -
--static const struct snd_soc_dai_ops nuc900_ac97_dai_ops = {
--	.trigger	= nuc900_ac97_trigger,
--};
 -
--static struct snd_soc_dai_driver nuc900_ac97_dai = {
--	.probe			= nuc900_ac97_probe,
--	.remove			= nuc900_ac97_remove,
--	.bus_control		= true,
--	.playback = {
--		.rates		= SNDRV_PCM_RATE_8000_48000,
--		.formats	= SNDRV_PCM_FMTBIT_S16_LE,
--		.channels_min	= 1,
--		.channels_max	= 2,
--	},
--	.capture = {
--		.rates		= SNDRV_PCM_RATE_8000_48000,
--		.formats	= SNDRV_PCM_FMTBIT_S16_LE,
--		.channels_min	= 1,
--		.channels_max	= 2,
--	},
--	.ops = &nuc900_ac97_dai_ops,
--};
--
--static const struct snd_soc_component_driver nuc900_ac97_component = {
--	.name		= "nuc900-ac97",
--};
--
--static int nuc900_ac97_drvprobe(struct platform_device *pdev)
+-/*
+- *    Alloc the SDRAM region of NUC900 for the frame buffer.
+- *    The buffer should be a non-cached, non-buffered, memory region
+- *    to allow palette and pixel writes without flushing the cache.
+- */
+-static int nuc900fb_map_video_memory(struct fb_info *info)
 -{
--	struct nuc900_audio *nuc900_audio;
--	int ret;
+-	struct nuc900fb_info *fbi = info->par;
+-	dma_addr_t map_dma;
+-	unsigned long map_size = PAGE_ALIGN(info->fix.smem_len);
 -
--	if (nuc900_ac97_data)
--		return -EBUSY;
+-	dev_dbg(fbi->dev, "nuc900fb_map_video_memory(fbi=%p) map_size %lu\n",
+-		fbi, map_size);
 -
--	nuc900_audio = devm_kzalloc(&pdev->dev, sizeof(struct nuc900_audio),
--				    GFP_KERNEL);
--	if (!nuc900_audio)
+-	info->screen_base = dma_alloc_wc(fbi->dev, map_size, &map_dma,
+-					 GFP_KERNEL);
+-
+-	if (!info->screen_base)
 -		return -ENOMEM;
 -
--	spin_lock_init(&nuc900_audio->lock);
--
--	nuc900_audio->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	nuc900_audio->mmio = devm_ioremap_resource(&pdev->dev,
--						   nuc900_audio->res);
--	if (IS_ERR(nuc900_audio->mmio))
--		return PTR_ERR(nuc900_audio->mmio);
--
--	nuc900_audio->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(nuc900_audio->clk)) {
--		ret = PTR_ERR(nuc900_audio->clk);
--		goto out;
--	}
--
--	ret = platform_get_irq(pdev, 0);
--	if (ret < 0)
--		goto out;
--	nuc900_audio->irq_num = ret;
--
--	nuc900_ac97_data = nuc900_audio;
--
--	ret = snd_soc_set_ac97_ops(&nuc900_ac97_ops);
--	if (ret)
--		goto out;
--
--	ret = devm_snd_soc_register_component(&pdev->dev, &nuc900_ac97_component,
--					 &nuc900_ac97_dai, 1);
--	if (ret)
--		goto out;
--
--	/* enbale ac97 multifunction pin */
--	mfp_set_groupg(nuc900_audio->dev, NULL);
--
--	return 0;
--
--out:
--	snd_soc_set_ac97_ops(NULL);
--	return ret;
--}
--
--static int nuc900_ac97_drvremove(struct platform_device *pdev)
--{
--	nuc900_ac97_data = NULL;
--	snd_soc_set_ac97_ops(NULL);
+-	memset(info->screen_base, 0x00, map_size);
+-	info->fix.smem_start = map_dma;
 -
 -	return 0;
 -}
 -
--static struct platform_driver nuc900_ac97_driver = {
--	.driver	= {
--		.name	= "nuc900-ac97",
--	},
--	.probe		= nuc900_ac97_drvprobe,
--	.remove		= nuc900_ac97_drvremove,
--};
--
--module_platform_driver(nuc900_ac97_driver);
--
--MODULE_AUTHOR("Wan ZongShun <mcuos.com@gmail.com>");
--MODULE_DESCRIPTION("NUC900 AC97 SoC driver!");
--MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:nuc900-ac97");
-diff --git a/sound/soc/nuc900/nuc900-audio.c b/sound/soc/nuc900/nuc900-audio.c
-deleted file mode 100644
-index 19146690d514..000000000000
---- a/sound/soc/nuc900/nuc900-audio.c
-+++ /dev/null
-@@ -1,73 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * Copyright (c) 2010 Nuvoton technology corporation.
-- *
-- * Wan ZongShun <mcuos.com@gmail.com>
-- */
--
--#include <linux/module.h>
--#include <linux/moduleparam.h>
--#include <linux/timer.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--
--#include <sound/core.h>
--#include <sound/pcm.h>
--#include <sound/soc.h>
--
--#include "nuc900-audio.h"
--
--SND_SOC_DAILINK_DEFS(ac97,
--	DAILINK_COMP_ARRAY(COMP_CPU("nuc900-ac97")),
--	DAILINK_COMP_ARRAY(COMP_CODEC("ac97-codec", "ac97-hifi")),
--	DAILINK_COMP_ARRAY(COMP_PLATFORM("nuc900-pcm-audio")));
--
--static struct snd_soc_dai_link nuc900evb_ac97_dai = {
--	.name		= "AC97",
--	.stream_name	= "AC97 HiFi",
--	SND_SOC_DAILINK_REG(ac97),
--};
--
--static struct snd_soc_card nuc900evb_audio_machine = {
--	.name		= "NUC900EVB_AC97",
--	.owner		= THIS_MODULE,
--	.dai_link	= &nuc900evb_ac97_dai,
--	.num_links	= 1,
--};
--
--static struct platform_device *nuc900evb_asoc_dev;
--
--static int __init nuc900evb_audio_init(void)
+-static inline void nuc900fb_unmap_video_memory(struct fb_info *info)
 -{
--	int ret;
+-	struct nuc900fb_info *fbi = info->par;
+-	dma_free_wc(fbi->dev, PAGE_ALIGN(info->fix.smem_len),
+-		    info->screen_base, info->fix.smem_start);
+-}
 -
--	ret = -ENOMEM;
--	nuc900evb_asoc_dev = platform_device_alloc("soc-audio", -1);
--	if (!nuc900evb_asoc_dev)
--		goto out;
+-static irqreturn_t nuc900fb_irqhandler(int irq, void *dev_id)
+-{
+-	struct nuc900fb_info *fbi = dev_id;
+-	void __iomem *regs = fbi->io;
+-	void __iomem *irq_base = fbi->irq_base;
+-	unsigned long lcdirq = readl(regs + REG_LCM_INT_CS);
 -
--	/* nuc900 board audio device */
--	platform_set_drvdata(nuc900evb_asoc_dev, &nuc900evb_audio_machine);
+-	if (lcdirq & LCM_INT_CS_DISP_F_STATUS) {
+-		writel(readl(irq_base) | 1<<30, irq_base);
 -
--	ret = platform_device_add(nuc900evb_asoc_dev);
--
--	if (ret) {
--		platform_device_put(nuc900evb_asoc_dev);
--		nuc900evb_asoc_dev = NULL;
+-		/* wait VA_EN low */
+-		if ((readl(regs + REG_LCM_DCCS) &
+-		    LCM_DCCS_SINGLE) == LCM_DCCS_SINGLE)
+-			while ((readl(regs + REG_LCM_DCCS) &
+-			       LCM_DCCS_VA_EN) == LCM_DCCS_VA_EN)
+-				;
+-		/* display_out-enable */
+-		writel(readl(regs + REG_LCM_DCCS) | LCM_DCCS_DISP_OUT_EN,
+-			regs + REG_LCM_DCCS);
+-		/* va-enable*/
+-		writel(readl(regs + REG_LCM_DCCS) | LCM_DCCS_VA_EN,
+-			regs + REG_LCM_DCCS);
+-	} else if (lcdirq & LCM_INT_CS_UNDERRUN_INT) {
+-		writel(readl(irq_base) | LCM_INT_CS_UNDERRUN_INT, irq_base);
+-	} else if (lcdirq & LCM_INT_CS_BUS_ERROR_INT) {
+-		writel(readl(irq_base) | LCM_INT_CS_BUS_ERROR_INT, irq_base);
 -	}
--
--out:
--	return ret;
--}
--
--static void __exit nuc900evb_audio_exit(void)
--{
--	platform_device_unregister(nuc900evb_asoc_dev);
--}
--
--module_init(nuc900evb_audio_init);
--module_exit(nuc900evb_audio_exit);
--
--MODULE_LICENSE("GPL");
--MODULE_DESCRIPTION("NUC900 Series ASoC audio support");
--MODULE_AUTHOR("Wan ZongShun");
-diff --git a/sound/soc/nuc900/nuc900-audio.h b/sound/soc/nuc900/nuc900-audio.h
-deleted file mode 100644
-index 90ffa7bbce01..000000000000
---- a/sound/soc/nuc900/nuc900-audio.h
-+++ /dev/null
-@@ -1,108 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (c) 2010 Nuvoton technology corporation.
-- *
-- * Wan ZongShun <mcuos.com@gmail.com>
-- */
--
--#ifndef _NUC900_AUDIO_H
--#define _NUC900_AUDIO_H
--
--#include <linux/io.h>
--
--/* Audio Control Registers */
--#define ACTL_CON		0x00
--#define ACTL_RESET		0x04
--#define ACTL_RDSTB		0x08
--#define ACTL_RDST_LENGTH	0x0C
--#define ACTL_RDSTC		0x10
--#define ACTL_RSR		0x14
--#define ACTL_PDSTB		0x18
--#define ACTL_PDST_LENGTH	0x1C
--#define ACTL_PDSTC		0x20
--#define ACTL_PSR		0x24
--#define ACTL_IISCON		0x28
--#define ACTL_ACCON		0x2C
--#define ACTL_ACOS0		0x30
--#define ACTL_ACOS1		0x34
--#define ACTL_ACOS2		0x38
--#define ACTL_ACIS0		0x3C
--#define ACTL_ACIS1		0x40
--#define ACTL_ACIS2		0x44
--#define ACTL_COUNTER		0x48
--
--/* bit definition of REG_ACTL_CON register */
--#define R_DMA_IRQ		0x1000
--#define T_DMA_IRQ		0x0800
--#define IIS_AC_PIN_SEL		0x0100
--#define FIFO_TH			0x0080
--#define ADC_EN			0x0010
--#define M80_EN			0x0008
--#define ACLINK_EN		0x0004
--#define IIS_EN			0x0002
--
--/* bit definition of REG_ACTL_RESET register */
--#define W5691_PLAY		0x20000
--#define ACTL_RESET_BIT		0x10000
--#define RECORD_RIGHT_CHNNEL	0x08000
--#define RECORD_LEFT_CHNNEL	0x04000
--#define PLAY_RIGHT_CHNNEL	0x02000
--#define PLAY_LEFT_CHNNEL	0x01000
--#define DAC_PLAY		0x00800
--#define ADC_RECORD		0x00400
--#define M80_PLAY		0x00200
--#define AC_RECORD		0x00100
--#define AC_PLAY			0x00080
--#define IIS_RECORD		0x00040
--#define IIS_PLAY		0x00020
--#define DAC_RESET		0x00010
--#define ADC_RESET		0x00008
--#define M80_RESET		0x00004
--#define AC_RESET		0x00002
--#define IIS_RESET		0x00001
--
--/* bit definition of REG_ACTL_ACCON register */
--#define AC_BCLK_PU_EN		0x20
--#define AC_R_FINISH		0x10
--#define AC_W_FINISH		0x08
--#define AC_W_RES		0x04
--#define AC_C_RES		0x02
--
--/* bit definition of ACTL_RSR register */
--#define R_FIFO_EMPTY		0x04
--#define R_DMA_END_IRQ		0x02
--#define R_DMA_MIDDLE_IRQ	0x01
--
--/* bit definition of ACTL_PSR register */
--#define P_FIFO_EMPTY		0x04
--#define P_DMA_END_IRQ		0x02
--#define P_DMA_MIDDLE_IRQ	0x01
--
--/* bit definition of ACTL_ACOS0 register */
--#define SLOT1_VALID		0x01
--#define SLOT2_VALID		0x02
--#define SLOT3_VALID		0x04
--#define SLOT4_VALID		0x08
--#define VALID_FRAME		0x10
--
--/* bit definition of ACTL_ACOS1 register */
--#define R_WB			0x80
--
--#define CODEC_READY		0x10
--#define RESET_PRSR		0x00
--#define AUDIO_WRITE(addr, val)	__raw_writel(val, addr)
--#define AUDIO_READ(addr)	__raw_readl(addr)
--
--struct nuc900_audio {
--	void __iomem *mmio;
--	spinlock_t lock;
--	unsigned long irq_num;
--	struct resource *res;
--	struct clk *clk;
--	struct device *dev;
--
--};
--
--extern struct nuc900_audio *nuc900_ac97_data;
--
--#endif /*end _NUC900_AUDIO_H */
-diff --git a/sound/soc/nuc900/nuc900-pcm.c b/sound/soc/nuc900/nuc900-pcm.c
-deleted file mode 100644
-index 4442a26e9502..000000000000
---- a/sound/soc/nuc900/nuc900-pcm.c
-+++ /dev/null
-@@ -1,321 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * Copyright (c) 2010 Nuvoton technology corporation.
-- *
-- * Wan ZongShun <mcuos.com@gmail.com>
-- */
--
--#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/io.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
--#include <linux/dma-mapping.h>
--
--#include <sound/core.h>
--#include <sound/pcm.h>
--#include <sound/pcm_params.h>
--#include <sound/soc.h>
--
--#include <mach/hardware.h>
--
--#include "nuc900-audio.h"
--
--static const struct snd_pcm_hardware nuc900_pcm_hardware = {
--	.info			= SNDRV_PCM_INFO_INTERLEAVED |
--					SNDRV_PCM_INFO_BLOCK_TRANSFER |
--					SNDRV_PCM_INFO_MMAP |
--					SNDRV_PCM_INFO_MMAP_VALID |
--					SNDRV_PCM_INFO_PAUSE |
--					SNDRV_PCM_INFO_RESUME,
--	.buffer_bytes_max	= 4*1024,
--	.period_bytes_min	= 1*1024,
--	.period_bytes_max	= 4*1024,
--	.periods_min		= 1,
--	.periods_max		= 1024,
--};
--
--static int nuc900_dma_hw_params(struct snd_pcm_substream *substream,
--	struct snd_pcm_hw_params *params)
--{
--	return snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
--}
--
--static void nuc900_update_dma_register(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct nuc900_audio *nuc900_audio = runtime->private_data;
--	void __iomem *mmio_addr, *mmio_len;
--
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		mmio_addr = nuc900_audio->mmio + ACTL_PDSTB;
--		mmio_len = nuc900_audio->mmio + ACTL_PDST_LENGTH;
--	} else {
--		mmio_addr = nuc900_audio->mmio + ACTL_RDSTB;
--		mmio_len = nuc900_audio->mmio + ACTL_RDST_LENGTH;
--	}
--
--	AUDIO_WRITE(mmio_addr, runtime->dma_addr);
--	AUDIO_WRITE(mmio_len, runtime->dma_bytes);
--}
--
--static void nuc900_dma_start(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct nuc900_audio *nuc900_audio = runtime->private_data;
--	unsigned long val;
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_CON);
--	val |= (T_DMA_IRQ | R_DMA_IRQ);
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_CON, val);
--}
--
--static void nuc900_dma_stop(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct nuc900_audio *nuc900_audio = runtime->private_data;
--	unsigned long val;
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_CON);
--	val &= ~(T_DMA_IRQ | R_DMA_IRQ);
--	AUDIO_WRITE(nuc900_audio->mmio + ACTL_CON, val);
--}
--
--static irqreturn_t nuc900_dma_interrupt(int irq, void *dev_id)
--{
--	struct snd_pcm_substream *substream = dev_id;
--	struct nuc900_audio *nuc900_audio = substream->runtime->private_data;
--	unsigned long val;
--
--	spin_lock(&nuc900_audio->lock);
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_CON);
--
--	if (val & R_DMA_IRQ) {
--		AUDIO_WRITE(nuc900_audio->mmio + ACTL_CON, val | R_DMA_IRQ);
--
--		val = AUDIO_READ(nuc900_audio->mmio + ACTL_RSR);
--
--		if (val & R_DMA_MIDDLE_IRQ) {
--			val |= R_DMA_MIDDLE_IRQ;
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_RSR, val);
--		}
--
--		if (val & R_DMA_END_IRQ) {
--			val |= R_DMA_END_IRQ;
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_RSR, val);
--		}
--	} else if (val & T_DMA_IRQ) {
--		AUDIO_WRITE(nuc900_audio->mmio + ACTL_CON, val | T_DMA_IRQ);
--
--		val = AUDIO_READ(nuc900_audio->mmio + ACTL_PSR);
--
--		if (val & P_DMA_MIDDLE_IRQ) {
--			val |= P_DMA_MIDDLE_IRQ;
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_PSR, val);
--		}
--
--		if (val & P_DMA_END_IRQ) {
--			val |= P_DMA_END_IRQ;
--			AUDIO_WRITE(nuc900_audio->mmio + ACTL_PSR, val);
--		}
--	} else {
--		dev_err(nuc900_audio->dev, "Wrong DMA interrupt status!\n");
--		spin_unlock(&nuc900_audio->lock);
--		return IRQ_HANDLED;
--	}
--
--	spin_unlock(&nuc900_audio->lock);
--
--	snd_pcm_period_elapsed(substream);
 -
 -	return IRQ_HANDLED;
 -}
 -
--static int nuc900_dma_hw_free(struct snd_pcm_substream *substream)
+-#ifdef CONFIG_CPU_FREQ
+-
+-static int nuc900fb_cpufreq_transition(struct notifier_block *nb,
+-				       unsigned long val, void *data)
 -{
--	snd_pcm_lib_free_pages(substream);
--	return 0;
--}
+-	struct nuc900fb_info *info;
+-	struct fb_info *fbinfo;
+-	long delta_f;
+-	info = container_of(nb, struct nuc900fb_info, freq_transition);
+-	fbinfo = dev_get_drvdata(info->dev);
 -
--static int nuc900_dma_prepare(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct nuc900_audio *nuc900_audio = runtime->private_data;
--	unsigned long flags, val;
--	int ret = 0;
+-	delta_f = info->clk_rate - clk_get_rate(info->clk);
 -
--	spin_lock_irqsave(&nuc900_audio->lock, flags);
--
--	nuc900_update_dma_register(substream);
--
--	val = AUDIO_READ(nuc900_audio->mmio + ACTL_RESET);
--
--	switch (runtime->channels) {
--	case 1:
--		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--			val &= ~(PLAY_LEFT_CHNNEL | PLAY_RIGHT_CHNNEL);
--			val |= PLAY_RIGHT_CHNNEL;
--		} else {
--			val &= ~(RECORD_LEFT_CHNNEL | RECORD_RIGHT_CHNNEL);
--			val |= RECORD_RIGHT_CHNNEL;
--		}
--		AUDIO_WRITE(nuc900_audio->mmio + ACTL_RESET, val);
--		break;
--	case 2:
--		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--			val |= (PLAY_LEFT_CHNNEL | PLAY_RIGHT_CHNNEL);
--		else
--			val |= (RECORD_LEFT_CHNNEL | RECORD_RIGHT_CHNNEL);
--		AUDIO_WRITE(nuc900_audio->mmio + ACTL_RESET, val);
--		break;
--	default:
--		ret = -EINVAL;
--	}
--	spin_unlock_irqrestore(&nuc900_audio->lock, flags);
--	return ret;
--}
--
--static int nuc900_dma_trigger(struct snd_pcm_substream *substream, int cmd)
--{
--	int ret = 0;
--
--	switch (cmd) {
--	case SNDRV_PCM_TRIGGER_START:
--	case SNDRV_PCM_TRIGGER_RESUME:
--		nuc900_dma_start(substream);
--		break;
--
--	case SNDRV_PCM_TRIGGER_STOP:
--	case SNDRV_PCM_TRIGGER_SUSPEND:
--		nuc900_dma_stop(substream);
--		break;
--
--	default:
--		ret = -EINVAL;
--		break;
+-	if ((val == CPUFREQ_POSTCHANGE && delta_f > 0) ||
+-	   (val == CPUFREQ_PRECHANGE && delta_f < 0)) {
+-		info->clk_rate = clk_get_rate(info->clk);
+-		nuc900fb_activate_var(fbinfo);
 -	}
 -
--	return ret;
--}
--
--static int nuc900_dma_getposition(struct snd_pcm_substream *substream,
--					dma_addr_t *src, dma_addr_t *dst)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct nuc900_audio *nuc900_audio = runtime->private_data;
--
--	if (src != NULL)
--		*src = AUDIO_READ(nuc900_audio->mmio + ACTL_PDSTC);
--
--	if (dst != NULL)
--		*dst = AUDIO_READ(nuc900_audio->mmio + ACTL_RDSTC);
--
 -	return 0;
 -}
 -
--static snd_pcm_uframes_t nuc900_dma_pointer(struct snd_pcm_substream *substream)
+-static inline int nuc900fb_cpufreq_register(struct nuc900fb_info *fbi)
 -{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	dma_addr_t src, dst;
--	unsigned long res;
--
--	nuc900_dma_getposition(substream, &src, &dst);
--
--	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
--		res = dst - runtime->dma_addr;
--	else
--		res = src - runtime->dma_addr;
--
--	return bytes_to_frames(substream->runtime, res);
+-	fbi->freq_transition.notifier_call = nuc900fb_cpufreq_transition;
+-	return cpufreq_register_notifier(&fbi->freq_transition,
+-				  CPUFREQ_TRANSITION_NOTIFIER);
 -}
 -
--static int nuc900_dma_open(struct snd_pcm_substream *substream)
+-static inline void nuc900fb_cpufreq_deregister(struct nuc900fb_info *fbi)
 -{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct nuc900_audio *nuc900_audio;
--
--	snd_soc_set_runtime_hwparams(substream, &nuc900_pcm_hardware);
--
--	nuc900_audio = nuc900_ac97_data;
--
--	if (request_irq(nuc900_audio->irq_num, nuc900_dma_interrupt,
--			0, "nuc900-dma", substream))
--		return -EBUSY;
--
--	runtime->private_data = nuc900_audio;
--
+-	cpufreq_unregister_notifier(&fbi->freq_transition,
+-				    CPUFREQ_TRANSITION_NOTIFIER);
+-}
+-#else
+-static inline int nuc900fb_cpufreq_transition(struct notifier_block *nb,
+-				       unsigned long val, void *data)
+-{
 -	return 0;
 -}
 -
--static int nuc900_dma_close(struct snd_pcm_substream *substream)
+-static inline int nuc900fb_cpufreq_register(struct nuc900fb_info *fbi)
 -{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct nuc900_audio *nuc900_audio = runtime->private_data;
--
--	free_irq(nuc900_audio->irq_num, substream);
--
 -	return 0;
 -}
 -
--static int nuc900_dma_mmap(struct snd_pcm_substream *substream,
--	struct vm_area_struct *vma)
+-static inline void nuc900fb_cpufreq_deregister(struct nuc900fb_info *info)
 -{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--
--	return dma_mmap_wc(substream->pcm->card->dev, vma, runtime->dma_area,
--			   runtime->dma_addr, runtime->dma_bytes);
 -}
+-#endif
 -
--static const struct snd_pcm_ops nuc900_dma_ops = {
--	.open		= nuc900_dma_open,
--	.close		= nuc900_dma_close,
--	.ioctl		= snd_pcm_lib_ioctl,
--	.hw_params	= nuc900_dma_hw_params,
--	.hw_free	= nuc900_dma_hw_free,
--	.prepare	= nuc900_dma_prepare,
--	.trigger	= nuc900_dma_trigger,
--	.pointer	= nuc900_dma_pointer,
--	.mmap		= nuc900_dma_mmap,
--};
+-static char driver_name[] = "nuc900fb";
 -
--static int nuc900_dma_new(struct snd_soc_pcm_runtime *rtd)
+-static int nuc900fb_probe(struct platform_device *pdev)
 -{
--	struct snd_card *card = rtd->card->snd_card;
--	struct snd_pcm *pcm = rtd->pcm;
+-	struct nuc900fb_info *fbi;
+-	struct nuc900fb_display *display;
+-	struct fb_info	   *fbinfo;
+-	struct nuc900fb_mach_info *mach_info;
+-	struct resource *res;
 -	int ret;
+-	int irq;
+-	int i;
+-	int size;
 -
--	ret = dma_coerce_mask_and_coherent(card->dev, DMA_BIT_MASK(32));
--	if (ret)
--		return ret;
+-	dev_dbg(&pdev->dev, "devinit\n");
+-	mach_info = dev_get_platdata(&pdev->dev);
+-	if (mach_info == NULL) {
+-		dev_err(&pdev->dev,
+-			"no platform data for lcd, cannot attach\n");
+-		return -EINVAL;
+-	}
 -
--	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
--		card->dev, 4 * 1024, (4 * 1024) - 1);
+-	if (mach_info->default_display > mach_info->num_displays) {
+-		dev_err(&pdev->dev,
+-			"default display No. is %d but only %d displays \n",
+-			mach_info->default_display, mach_info->num_displays);
+-		return -EINVAL;
+-	}
+-
+-
+-	display = mach_info->displays + mach_info->default_display;
+-
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no irq for device\n");
+-		return -ENOENT;
+-	}
+-
+-	fbinfo = framebuffer_alloc(sizeof(struct nuc900fb_info), &pdev->dev);
+-	if (!fbinfo)
+-		return -ENOMEM;
+-
+-	platform_set_drvdata(pdev, fbinfo);
+-
+-	fbi = fbinfo->par;
+-	fbi->dev = &pdev->dev;
+-
+-#ifdef CONFIG_CPU_NUC950
+-	fbi->drv_type = LCDDRV_NUC950;
+-#endif
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-
+-	size = resource_size(res);
+-	fbi->mem = request_mem_region(res->start, size, pdev->name);
+-	if (fbi->mem == NULL) {
+-		dev_err(&pdev->dev, "failed to alloc memory region\n");
+-		ret = -ENOENT;
+-		goto free_fb;
+-	}
+-
+-	fbi->io = ioremap(res->start, size);
+-	if (fbi->io == NULL) {
+-		dev_err(&pdev->dev, "ioremap() of lcd registers failed\n");
+-		ret = -ENXIO;
+-		goto release_mem_region;
+-	}
+-
+-	fbi->irq_base = fbi->io + REG_LCM_INT_CS;
+-
+-
+-	/* Stop the LCD */
+-	writel(0, fbi->io + REG_LCM_DCCS);
+-
+-	/* fill the fbinfo*/
+-	strcpy(fbinfo->fix.id, driver_name);
+-	fbinfo->fix.type		= FB_TYPE_PACKED_PIXELS;
+-	fbinfo->fix.type_aux		= 0;
+-	fbinfo->fix.xpanstep		= 0;
+-	fbinfo->fix.ypanstep		= 0;
+-	fbinfo->fix.ywrapstep		= 0;
+-	fbinfo->fix.accel		= FB_ACCEL_NONE;
+-	fbinfo->var.nonstd		= 0;
+-	fbinfo->var.activate		= FB_ACTIVATE_NOW;
+-	fbinfo->var.accel_flags		= 0;
+-	fbinfo->var.vmode		= FB_VMODE_NONINTERLACED;
+-	fbinfo->fbops			= &nuc900fb_ops;
+-	fbinfo->flags			= FBINFO_FLAG_DEFAULT;
+-	fbinfo->pseudo_palette		= &fbi->pseudo_pal;
+-
+-	ret = request_irq(irq, nuc900fb_irqhandler, 0, pdev->name, fbi);
+-	if (ret) {
+-		dev_err(&pdev->dev, "cannot register irq handler %d -err %d\n",
+-			irq, ret);
+-		ret = -EBUSY;
+-		goto release_regs;
+-	}
+-
+-	fbi->clk = clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(fbi->clk)) {
+-		printk(KERN_ERR "nuc900-lcd:failed to get lcd clock source\n");
+-		ret = PTR_ERR(fbi->clk);
+-		goto release_irq;
+-	}
+-
+-	clk_enable(fbi->clk);
+-	dev_dbg(&pdev->dev, "got and enabled clock\n");
+-
+-	fbi->clk_rate = clk_get_rate(fbi->clk);
+-
+-	/* calutate the video buffer size */
+-	for (i = 0; i < mach_info->num_displays; i++) {
+-		unsigned long smem_len = mach_info->displays[i].xres;
+-		smem_len *= mach_info->displays[i].yres;
+-		smem_len *= mach_info->displays[i].bpp;
+-		smem_len >>= 3;
+-		if (fbinfo->fix.smem_len < smem_len)
+-			fbinfo->fix.smem_len = smem_len;
+-	}
+-
+-	/* Initialize Video Memory */
+-	ret = nuc900fb_map_video_memory(fbinfo);
+-	if (ret) {
+-		printk(KERN_ERR "Failed to allocate video RAM: %x\n", ret);
+-		goto release_clock;
+-	}
+-
+-	dev_dbg(&pdev->dev, "got video memory\n");
+-
+-	fbinfo->var.xres = display->xres;
+-	fbinfo->var.yres = display->yres;
+-	fbinfo->var.bits_per_pixel = display->bpp;
+-
+-	nuc900fb_init_registers(fbinfo);
+-
+-	nuc900fb_check_var(&fbinfo->var, fbinfo);
+-
+-	ret = nuc900fb_cpufreq_register(fbi);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Failed to register cpufreq\n");
+-		goto free_video_memory;
+-	}
+-
+-	ret = register_framebuffer(fbinfo);
+-	if (ret) {
+-		printk(KERN_ERR "failed to register framebuffer device: %d\n",
+-			ret);
+-		goto free_cpufreq;
+-	}
+-
+-	fb_info(fbinfo, "%s frame buffer device\n", fbinfo->fix.id);
+-
+-	return 0;
+-
+-free_cpufreq:
+-	nuc900fb_cpufreq_deregister(fbi);
+-free_video_memory:
+-	nuc900fb_unmap_video_memory(fbinfo);
+-release_clock:
+-	clk_disable(fbi->clk);
+-	clk_put(fbi->clk);
+-release_irq:
+-	free_irq(irq, fbi);
+-release_regs:
+-	iounmap(fbi->io);
+-release_mem_region:
+-	release_mem_region(res->start, size);
+-free_fb:
+-	framebuffer_release(fbinfo);
+-	return ret;
+-}
+-
+-/*
+- * shutdown the lcd controller
+- */
+-static void nuc900fb_stop_lcd(struct fb_info *info)
+-{
+-	struct nuc900fb_info *fbi = info->par;
+-	void __iomem *regs = fbi->io;
+-
+-	writel((~LCM_DCCS_DISP_INT_EN) | (~LCM_DCCS_VA_EN) | (~LCM_DCCS_OSD_EN),
+-		regs + REG_LCM_DCCS);
+-}
+-
+-/*
+- *  Cleanup
+- */
+-static int nuc900fb_remove(struct platform_device *pdev)
+-{
+-	struct fb_info *fbinfo = platform_get_drvdata(pdev);
+-	struct nuc900fb_info *fbi = fbinfo->par;
+-	int irq;
+-
+-	nuc900fb_stop_lcd(fbinfo);
+-	msleep(1);
+-
+-	unregister_framebuffer(fbinfo);
+-	nuc900fb_cpufreq_deregister(fbi);
+-	nuc900fb_unmap_video_memory(fbinfo);
+-
+-	iounmap(fbi->io);
+-
+-	irq = platform_get_irq(pdev, 0);
+-	free_irq(irq, fbi);
+-
+-	release_resource(fbi->mem);
+-	kfree(fbi->mem);
+-
+-	framebuffer_release(fbinfo);
 -
 -	return 0;
 -}
 -
--static const struct snd_soc_component_driver nuc900_soc_component = {
--	.ops		= &nuc900_dma_ops,
--	.pcm_new	= nuc900_dma_new,
--};
+-#ifdef CONFIG_PM
 -
--static int nuc900_soc_platform_probe(struct platform_device *pdev)
+-/*
+- *	suspend and resume support for the lcd controller
+- */
+-
+-static int nuc900fb_suspend(struct platform_device *dev, pm_message_t state)
 -{
--	return devm_snd_soc_register_component(&pdev->dev, &nuc900_soc_component,
--					       NULL, 0);
+-	struct fb_info	   *fbinfo = platform_get_drvdata(dev);
+-	struct nuc900fb_info *info = fbinfo->par;
+-
+-	nuc900fb_stop_lcd(fbinfo);
+-	msleep(1);
+-	clk_disable(info->clk);
+-	return 0;
 -}
 -
--static struct platform_driver nuc900_pcm_driver = {
--	.driver = {
--			.name = "nuc900-pcm-audio",
--	},
+-static int nuc900fb_resume(struct platform_device *dev)
+-{
+-	struct fb_info	   *fbinfo = platform_get_drvdata(dev);
+-	struct nuc900fb_info *fbi = fbinfo->par;
 -
--	.probe = nuc900_soc_platform_probe,
+-	printk(KERN_INFO "nuc900fb resume\n");
+-
+-	clk_enable(fbi->clk);
+-	msleep(1);
+-
+-	nuc900fb_init_registers(fbinfo);
+-	nuc900fb_activate_var(fbinfo);
+-
+-	return 0;
+-}
+-
+-#else
+-#define nuc900fb_suspend NULL
+-#define nuc900fb_resume  NULL
+-#endif
+-
+-static struct platform_driver nuc900fb_driver = {
+-	.probe		= nuc900fb_probe,
+-	.remove		= nuc900fb_remove,
+-	.suspend	= nuc900fb_suspend,
+-	.resume		= nuc900fb_resume,
+-	.driver		= {
+-		.name	= "nuc900-lcd",
+-	},
 -};
 -
--module_platform_driver(nuc900_pcm_driver);
+-module_platform_driver(nuc900fb_driver);
 -
--MODULE_AUTHOR("Wan ZongShun, <mcuos.com@gmail.com>");
--MODULE_DESCRIPTION("nuc900 Audio DMA module");
+-MODULE_DESCRIPTION("Framebuffer driver for the NUC900");
 -MODULE_LICENSE("GPL");
+diff --git a/drivers/video/fbdev/nuc900fb.h b/drivers/video/fbdev/nuc900fb.h
+deleted file mode 100644
+index 055ae9297931..000000000000
+--- a/drivers/video/fbdev/nuc900fb.h
++++ /dev/null
+@@ -1,51 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- *
+- * Copyright (c) 2009 Nuvoton technology corporation
+- * All rights reserved.
+- *
+- *   Author:
+- *        Wang Qiang(rurality.linux@gmail.com)  2009/12/16
+- */
+-
+-#ifndef __NUC900FB_H
+-#define __NUC900FB_H
+-
+-#include <mach/map.h>
+-#include <linux/platform_data/video-nuc900fb.h>
+-
+-enum nuc900_lcddrv_type {
+-	LCDDRV_NUC910,
+-	LCDDRV_NUC930,
+-	LCDDRV_NUC932,
+-	LCDDRV_NUC950,
+-	LCDDRV_NUC960,
+-};
+-
+-
+-#define PALETTE_BUFFER_SIZE	256
+-#define PALETTE_BUFF_CLEAR 	(0x80000000) /* entry is clear/invalid */
+-
+-struct nuc900fb_info {
+-	struct device		*dev;
+-	struct clk		*clk;
+-
+-	struct resource		*mem;
+-	void __iomem		*io;
+-	void __iomem		*irq_base;
+-	int 			drv_type;
+-	struct nuc900fb_hw	regs;
+-	unsigned long		clk_rate;
+-
+-#ifdef CONFIG_CPU_FREQ
+-	struct notifier_block	freq_transition;
+-#endif
+-
+-	/* keep these registers in case we need to re-write palette */
+-	u32			palette_buffer[PALETTE_BUFFER_SIZE];
+-	u32			pseudo_pal[16];
+-};
+-
+-int nuc900fb_init(void);
+-
+-#endif /* __NUC900FB_H */
+diff --git a/include/Kbuild b/include/Kbuild
+index 5e0642d79dce..4d5a03a81fb5 100644
+--- a/include/Kbuild
++++ b/include/Kbuild
+@@ -568,7 +568,6 @@ header-test-			+= linux/platform_data/usb3503.h
+ header-test-			+= linux/platform_data/ux500_wdt.h
+ header-test-			+= linux/platform_data/video-clcd-versatile.h
+ header-test-			+= linux/platform_data/video-imxfb.h
+-header-test-			+= linux/platform_data/video-nuc900fb.h
+ header-test-			+= linux/platform_data/video-pxafb.h
+ header-test-			+= linux/platform_data/video_s3c.h
+ header-test-			+= linux/platform_data/voltage-omap.h
+diff --git a/include/linux/platform_data/video-nuc900fb.h b/include/linux/platform_data/video-nuc900fb.h
+deleted file mode 100644
+index 3da504460c91..000000000000
+--- a/include/linux/platform_data/video-nuc900fb.h
++++ /dev/null
+@@ -1,79 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/* linux/include/asm/arch-nuc900/fb.h
+- *
+- * Copyright (c) 2008 Nuvoton technology corporation
+- * All rights reserved.
+- *
+- * Changelog:
+- *
+- *   2008/08/26     vincen.zswan modify this file for LCD.
+- */
+-
+-#ifndef __ASM_ARM_FB_H
+-#define __ASM_ARM_FB_H
+-
+-
+-
+-/* LCD Controller Hardware Desc */
+-struct nuc900fb_hw {
+-	unsigned int lcd_dccs;
+-	unsigned int lcd_device_ctrl;
+-	unsigned int lcd_mpulcd_cmd;
+-	unsigned int lcd_int_cs;
+-	unsigned int lcd_crtc_size;
+-	unsigned int lcd_crtc_dend;
+-	unsigned int lcd_crtc_hr;
+-	unsigned int lcd_crtc_hsync;
+-	unsigned int lcd_crtc_vr;
+-	unsigned int lcd_va_baddr0;
+-	unsigned int lcd_va_baddr1;
+-	unsigned int lcd_va_fbctrl;
+-	unsigned int lcd_va_scale;
+-	unsigned int lcd_va_test;
+-	unsigned int lcd_va_win;
+-	unsigned int lcd_va_stuff;
+-};
+-
+-/* LCD Display Description */
+-struct nuc900fb_display {
+-	/* LCD Image type */
+-	unsigned type;
+-
+-	/* LCD Screen Size */
+-	unsigned short width;
+-	unsigned short height;
+-
+-	/* LCD Screen Info */
+-	unsigned short xres;
+-	unsigned short yres;
+-	unsigned short bpp;
+-
+-	unsigned long pixclock;
+-	unsigned short left_margin;
+-	unsigned short right_margin;
+-	unsigned short hsync_len;
+-	unsigned short upper_margin;
+-	unsigned short lower_margin;
+-	unsigned short vsync_len;
+-
+-	/* hardware special register value */
+-	unsigned int dccs;
+-	unsigned int devctl;
+-	unsigned int fbctrl;
+-	unsigned int scale;
+-};
+-
+-struct nuc900fb_mach_info {
+-	struct nuc900fb_display *displays;
+-	unsigned num_displays;
+-	unsigned default_display;
+-	/* GPIO Setting  Info */
+-	unsigned gpio_dir;
+-	unsigned gpio_dir_mask;
+-	unsigned gpio_data;
+-	unsigned gpio_data_mask;
+-};
+-
+-extern void __init nuc900_fb_set_platdata(struct nuc900fb_mach_info *);
+-
+-#endif /* __ASM_ARM_FB_H */
 -- 
 2.20.0
 
