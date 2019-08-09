@@ -2,57 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9366B88338
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 21:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 807BF8833D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 21:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbfHITYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 15:24:25 -0400
-Received: from webmail.riopomba.mg.gov.br ([177.154.169.38]:1860 "EHLO
-        webmail.riopomba.mg.gov.br" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725860AbfHITYY (ORCPT
+        id S1726358AbfHIT0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 15:26:12 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:55428 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726022AbfHIT0L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 15:24:24 -0400
-X-Greylist: delayed 382 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Aug 2019 15:24:23 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by webmail.riopomba.mg.gov.br (Postfix) with ESMTP id 504BC2AF64A;
-        Fri,  9 Aug 2019 16:17:59 -0300 (-03)
-Received: from webmail.riopomba.mg.gov.br ([127.0.0.1])
-        by localhost (webmail.riopomba.mg.gov.br [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id C-QGbD--XvUQ; Fri,  9 Aug 2019 16:17:58 -0300 (-03)
-Received: from localhost (localhost [127.0.0.1])
-        by webmail.riopomba.mg.gov.br (Postfix) with ESMTP id B05032AF649;
-        Fri,  9 Aug 2019 16:17:58 -0300 (-03)
-DKIM-Filter: OpenDKIM Filter v2.10.3 webmail.riopomba.mg.gov.br B05032AF649
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=riopomba.mg.gov.br;
-        s=EC7357D0-5159-11E9-9F34-426358A7410A; t=1565378278;
-        bh=XE9Ajjkyfm49v+eeCb5uNVDsI5xFD7aSE0LQUaUGOmM=;
-        h=MIME-Version:To:From:Date:Message-Id;
-        b=RhNlFX24dupIzbyVsH+LBGwhSr2/2onIYz3DgNjKEgpoF24A19UavvVF1hv+vySze
-         UZtvF8/ufH6K1by76I7YUnpTsfVxYfm4pMXB351oO3MILqypy/OVXqcUzuad+bl0Vd
-         DST2s4+U2Ys5bi9TmlNWMG59HQSiUZK6ePw0937CDuhLSsO+XIgB5KyUcgoCIimEKu
-         jVsXq8gGRrFwng59dNOnxgtrTwYLDRkE6Nh+EBNQ0Ide4lNMRfjNLA/rqJMz3n+U6g
-         Zl/XGpiY0qVh1fzvxshj8qQW5J936OVRRn+0eR/mxx0MqPdM5HPxLCsSfmmmtftJHC
-         eJDIWXvkbVHig==
-X-Virus-Scanned: amavisd-new at riopomba.mg.gov.br
-Received: from webmail.riopomba.mg.gov.br ([127.0.0.1])
-        by localhost (webmail.riopomba.mg.gov.br [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id wZQvLvX8oRf6; Fri,  9 Aug 2019 16:17:58 -0300 (-03)
-Received: from EC2AMAZ-THIVS92.eu-west-2.compute.internal (ec2-35-176-76-127.eu-west-2.compute.amazonaws.com [35.176.76.127])
-        by webmail.riopomba.mg.gov.br (Postfix) with ESMTPSA id D87592AF629;
-        Fri,  9 Aug 2019 16:17:52 -0300 (-03)
-Content-Type: text/plain; charset="iso-8859-1"
+        Fri, 9 Aug 2019 15:26:11 -0400
+Received: (qmail 5219 invoked by uid 2102); 9 Aug 2019 15:26:10 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 9 Aug 2019 15:26:10 -0400
+Date:   Fri, 9 Aug 2019 15:26:10 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+22ae4e3b9fcc8a5c153a@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
+        <gustavo@embeddedor.com>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: use-after-free Read in usb_kill_urb
+In-Reply-To: <000000000000e3e6d7058fb2c624@google.com>
+Message-ID: <Pine.LNX.4.44L0.1908091524250.1630-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: kkk
-To:     Recipients <Admin@riopomba.mg.gov.br>
-From:   "BORRO LOAN" <Admin@riopomba.mg.gov.br>
-Date:   Fri, 09 Aug 2019 19:17:46 +0000
-Reply-To: boroloan101@gmail.com
-Message-Id: <20190809191752.D87592AF629@webmail.riopomba.mg.gov.br>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Are you interested in loan, contact me: borrroloan101@gmail.com
+On Fri, 9 Aug 2019, syzbot wrote:
+
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1799392c600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=22ae4e3b9fcc8a5c153a
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1134c802600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13278c4a600000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+22ae4e3b9fcc8a5c153a@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in atomic_read  
+> include/asm-generic/atomic-instrumented.h:26 [inline]
+> BUG: KASAN: use-after-free in usb_kill_urb drivers/usb/core/urb.c:695  
+> [inline]
+> BUG: KASAN: use-after-free in usb_kill_urb+0x24b/0x2c0  
+> drivers/usb/core/urb.c:687
+> Read of size 4 at addr ffff8881d635b110 by task syz-executor672/1999
+> 
+> CPU: 1 PID: 1999 Comm: syz-executor672 Not tainted 5.3.0-rc2+ #25
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0xca/0x13e lib/dump_stack.c:113
+>   print_address_description+0x6a/0x32c mm/kasan/report.c:351
+>   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
+>   kasan_report+0xe/0x12 mm/kasan/common.c:612
+>   check_memory_region_inline mm/kasan/generic.c:185 [inline]
+>   check_memory_region+0x128/0x190 mm/kasan/generic.c:192
+>   atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
+>   usb_kill_urb drivers/usb/core/urb.c:695 [inline]
+>   usb_kill_urb+0x24b/0x2c0 drivers/usb/core/urb.c:687
+>   ld_usb_abort_transfers+0xb7/0x1d0 drivers/usb/misc/ldusb.c:196
+>   ld_usb_release+0x19f/0x400 drivers/usb/misc/ldusb.c:406
+
+Since this also involves ldusb.c, maybe it will be fixed by the same 
+patch as the other bug.
+
+Alan Stern
+
+
+#syz test: https://github.com/google/kasan.git e96407b4
+
+Index: usb-devel/drivers/usb/core/file.c
+===================================================================
+--- usb-devel.orig/drivers/usb/core/file.c
++++ usb-devel/drivers/usb/core/file.c
+@@ -193,9 +193,10 @@ int usb_register_dev(struct usb_interfac
+ 		intf->minor = minor;
+ 		break;
+ 	}
+-	up_write(&minor_rwsem);
+-	if (intf->minor < 0)
++	if (intf->minor < 0) {
++		up_write(&minor_rwsem);
+ 		return -EXFULL;
++	}
+ 
+ 	/* create a usb class device for this usb interface */
+ 	snprintf(name, sizeof(name), class_driver->name, minor - minor_base);
+@@ -203,12 +204,11 @@ int usb_register_dev(struct usb_interfac
+ 				      MKDEV(USB_MAJOR, minor), class_driver,
+ 				      "%s", kbasename(name));
+ 	if (IS_ERR(intf->usb_dev)) {
+-		down_write(&minor_rwsem);
+ 		usb_minors[minor] = NULL;
+ 		intf->minor = -1;
+-		up_write(&minor_rwsem);
+ 		retval = PTR_ERR(intf->usb_dev);
+ 	}
++	up_write(&minor_rwsem);
+ 	return retval;
+ }
+ EXPORT_SYMBOL_GPL(usb_register_dev);
+@@ -234,12 +234,12 @@ void usb_deregister_dev(struct usb_inter
+ 		return;
+ 
+ 	dev_dbg(&intf->dev, "removing %d minor\n", intf->minor);
++	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
+ 
+ 	down_write(&minor_rwsem);
+ 	usb_minors[intf->minor] = NULL;
+ 	up_write(&minor_rwsem);
+ 
+-	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
+ 	intf->usb_dev = NULL;
+ 	intf->minor = -1;
+ 	destroy_usb_class();
+
