@@ -2,228 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2592C874EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45647874E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 11:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406117AbfHIJLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 05:11:10 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38350 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405991AbfHIJLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:11:09 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3196522D7CAED50D4FE6;
-        Fri,  9 Aug 2019 17:11:07 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 9 Aug 2019
- 17:10:56 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <perex@perex.cz>, <tiwai@suse.com>, <broonie@kernel.org>,
-        <rfontana@redhat.com>, <kstewart@linuxfoundation.org>,
-        <allison@lohutok.net>, <armijn@tjaldur.nl>
-CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] ALSA: Au88x0 - remove some unused const variables
-Date:   Fri, 9 Aug 2019 17:06:20 +0800
-Message-ID: <20190809090620.70496-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2406087AbfHIJKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 05:10:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:43896 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726054AbfHIJKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 05:10:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8043515A2;
+        Fri,  9 Aug 2019 02:10:07 -0700 (PDT)
+Received: from [10.163.1.243] (unknown [10.163.1.243])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE6A33F575;
+        Fri,  9 Aug 2019 02:10:03 -0700 (PDT)
+Subject: Re: [PATCH] mm/sparse: use __nr_to_section(section_nr) to get
+ mem_section
+To:     Wei Yang <richardw.yang@linux.intel.com>,
+        akpm@linux-foundation.org, osalvador@suse.de,
+        pasha.tatashin@oracle.com, mhocko@suse.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20190809010242.29797-1-richardw.yang@linux.intel.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <e17278f0-94dc-e0c6-379b-b7694cec3247@arm.com>
+Date:   Fri, 9 Aug 2019 14:39:59 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190809010242.29797-1-richardw.yang@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sound/pci/au88x0/au88x0_xtalk.c:121:28: warning: asXtalkWideCoefsRightXt defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:152:28: warning: asXtalkNarrowCoefsRightXt defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:175:28: warning: asXtalkCoefsNegPipe defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:183:28: warning: asXtalkCoefsNumTest defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:191:28: warning: asXtalkCoefsDenTest defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:199:28: warning: asXtalkOutStateTest defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:20:20: warning: sXtalkWideKRightXt defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:231:28: warning: asDiamondCoefsRightXt defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:24:20: warning: sXtalkWideShiftRightXt defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:30:20: warning: sXtalkNarrowKRightXt defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:34:20: warning: sXtalkNarrowShiftRightXt defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:38:28: warning: asXtalkGainsDefault defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:43:28: warning: asXtalkGainsTest defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:48:28: warning: asXtalkGains1Chan defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:67:28: warning: alXtalkDlineTest defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:77:30: warning: asXtalkInStateTest defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:92:20: warning: sDiamondKRightXt defined but not used [-Wunused-const-variable=]
-sound/pci/au88x0/au88x0_xtalk.c:96:20: warning: sDiamondShiftRightXt defined but not used [-Wunused-const-variable=]
-
-They are never used, so can be removed.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- sound/pci/au88x0/au88x0_xtalk.c | 85 -----------------------------------------
- 1 file changed, 85 deletions(-)
-
-diff --git a/sound/pci/au88x0/au88x0_xtalk.c b/sound/pci/au88x0/au88x0_xtalk.c
-index 084fcbf..143646c 100644
---- a/sound/pci/au88x0/au88x0_xtalk.c
-+++ b/sound/pci/au88x0/au88x0_xtalk.c
-@@ -17,39 +17,20 @@
- static short const sXtalkWideKLeftEq = 0x269C;
- static short const sXtalkWideKRightEq = 0x269C;
- static short const sXtalkWideKLeftXt = 0xF25E;
--static short const sXtalkWideKRightXt = 0xF25E;
- static short const sXtalkWideShiftLeftEq = 1;
- static short const sXtalkWideShiftRightEq = 1;
- static short const sXtalkWideShiftLeftXt = 0;
--static short const sXtalkWideShiftRightXt = 0;
- static unsigned short const wXtalkWideLeftDelay = 0xd;
- static unsigned short const wXtalkWideRightDelay = 0xd;
- static short const sXtalkNarrowKLeftEq = 0x468D;
- static short const sXtalkNarrowKRightEq = 0x468D;
- static short const sXtalkNarrowKLeftXt = 0xF82E;
--static short const sXtalkNarrowKRightXt = 0xF82E;
- static short const sXtalkNarrowShiftLeftEq = 0x3;
- static short const sXtalkNarrowShiftRightEq = 0x3;
- static short const sXtalkNarrowShiftLeftXt = 0;
--static short const sXtalkNarrowShiftRightXt = 0;
- static unsigned short const wXtalkNarrowLeftDelay = 0x7;
- static unsigned short const wXtalkNarrowRightDelay = 0x7;
- 
--static xtalk_gains_t const asXtalkGainsDefault = {
--	0x4000, 0x4000, 0x4000, 0x4000, 0x4000,
--	0x4000, 0x4000, 0x4000, 0x4000,	0x4000
--};
--
--static xtalk_gains_t const asXtalkGainsTest = {
--	0x7fff, 0x8000, 0x0000, 0x0000, 0x0001,
--	0xffff, 0x4000, 0xc000, 0x0002, 0xfffe
--};
--
--static xtalk_gains_t const asXtalkGains1Chan = {
--	0x7FFF, 0, 0, 0, 0,
--	0x7FFF, 0, 0, 0, 0,
--};
--
- // Input gain for 4 A3D slices. One possible input pair is left zero.
- static xtalk_gains_t const asXtalkGainsAllChan = {
- 	0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0,
-@@ -64,20 +45,11 @@ static xtalk_dline_t const alXtalkDlineZeros = {
- 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
- };
--static xtalk_dline_t const alXtalkDlineTest = {
--	0x0000fc18, 0xfff03e8, 0x000186a0, 0xfffe7960, 1, 0xffffffff, 0, 0,
--	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--	0, 0, 0, 0, 0, 0, 0, 0
--};
- 
- static xtalk_instate_t const asXtalkInStateZeros = {
- 	0, 0, 0, 0
- };
- 
--static xtalk_instate_t const asXtalkInStateTest = {
--	0x0080, 0xff80, 0x0001, 0xffff
--};
--
- static xtalk_state_t const asXtalkOutStateZeros = {
- 	{0, 0, 0, 0},
- 	{0, 0, 0, 0},
-@@ -89,11 +61,9 @@ static xtalk_state_t const asXtalkOutStateZeros = {
- static short const sDiamondKLeftEq = 0x401d;
- static short const sDiamondKRightEq = 0x401d;
- static short const sDiamondKLeftXt = 0xF90E;
--static short const sDiamondKRightXt = 0xF90E;
- static short const sDiamondShiftLeftEq = 1;
- static short const sDiamondShiftRightEq = 1;
- static short const sDiamondShiftLeftXt = 0;
--static short const sDiamondShiftRightXt = 0;
- static unsigned short const wDiamondLeftDelay = 0xb;
- static unsigned short const wDiamondRightDelay = 0xb;
- 
-@@ -118,13 +88,6 @@ static xtalk_coefs_t const asXtalkWideCoefsLeftXt = {
- 	{0x77dc, 0xc79e, 0xffb8, 0x000a, 0},
- 	{0, 0, 0, 0, 0}
- };
--static xtalk_coefs_t const asXtalkWideCoefsRightXt = {
--	{0x55c6, 0xc97b, 0x005b, 0x0047, 0},
--	{0x6a60, 0xca20, 0xffc6, 0x0040, 0},
--	{0x6411, 0xd711, 0xfca1, 0x0190, 0},
--	{0x77dc, 0xc79e, 0xffb8, 0x000a, 0},
--	{0, 0, 0, 0, 0}
--};
- static xtalk_coefs_t const asXtalkNarrowCoefsLeftEq = {
- 	{0x50B5, 0xD07C, 0x026D, 0xFD21, 0},
- 	{0x460F, 0xE44F, 0xF75E, 0xEFA6, 0},
-@@ -149,14 +112,6 @@ static xtalk_coefs_t const asXtalkNarrowCoefsLeftXt = {
- 	{0, 0, 0, 0, 0}
- };
- 
--static xtalk_coefs_t const asXtalkNarrowCoefsRightXt = {
--	{0x3CB2, 0xDF49, 0xF6EA, 0x095B, 0},
--	{0x6777, 0xC915, 0xFEAF, 0x00B1, 0},
--	{0x7762, 0xC7D9, 0x025B, 0xFDA6, 0},
--	{0x6B7A, 0xD2AA, 0xF2FB, 0x0B64, 0},
--	{0, 0, 0, 0, 0}
--};
--
- static xtalk_coefs_t const asXtalkCoefsZeros = {
- 	{0, 0, 0, 0, 0},
- 	{0, 0, 0, 0, 0},
-@@ -172,37 +127,6 @@ static xtalk_coefs_t const asXtalkCoefsPipe = {
- 	{0, 0, 0x0FA0, 0, 0},
- 	{0, 0, 0x1180, 0, 0},
- };
--static xtalk_coefs_t const asXtalkCoefsNegPipe = {
--	{0, 0, 0xF380, 0, 0},
--	{0, 0, 0xF380, 0, 0},
--	{0, 0, 0xF380, 0, 0},
--	{0, 0, 0xF380, 0, 0},
--	{0, 0, 0xF200, 0, 0}
--};
--
--static xtalk_coefs_t const asXtalkCoefsNumTest = {
--	{0, 0, 0xF380, 0x8000, 0x6D60},
--	{0, 0, 0, 0, 0},
--	{0, 0, 0, 0, 0},
--	{0, 0, 0, 0, 0},
--	{0, 0, 0, 0, 0}
--};
--
--static xtalk_coefs_t const asXtalkCoefsDenTest = {
--	{0xC000, 0x2000, 0x4000, 0, 0},
--	{0, 0, 0, 0, 0},
--	{0, 0, 0, 0, 0},
--	{0, 0, 0, 0, 0},
--	{0, 0, 0, 0, 0}
--};
--
--static xtalk_state_t const asXtalkOutStateTest = {
--	{0x7FFF, 0x0004, 0xFFFC, 0},
--	{0xFE00, 0x0008, 0xFFF8, 0x4000},
--	{0x0200, 0x0010, 0xFFF0, 0xC000},
--	{0x8000, 0x0020, 0xFFE0, 0},
--	{0, 0, 0, 0}
--};
- 
- static xtalk_coefs_t const asDiamondCoefsLeftEq = {
- 	{0x0F1E, 0x2D05, 0xF8E3, 0x07C8, 0},
-@@ -228,15 +152,6 @@ static xtalk_coefs_t const asDiamondCoefsLeftXt = {
- 	{0, 0, 0, 0, 0}
- };
- 
--static xtalk_coefs_t const asDiamondCoefsRightXt = {
--	{0x3B50, 0xFE08, 0xF959, 0x0060, 0},
--	{0x9FCB, 0xD8F1, 0x00A2, 0x003A, 0},
--	{0, 0, 0, 0, 0},
--	{0, 0, 0, 0, 0},
--	{0, 0, 0, 0, 0}
--};
--
-- /**/
- /* XTalk EQ and XT */
- static void
- vortex_XtalkHw_SetLeftEQ(vortex_t * vortex, short arg_0, short arg_4,
--- 
-2.7.4
 
 
+On 08/09/2019 06:32 AM, Wei Yang wrote:
+> __pfn_to_section is defined as __nr_to_section(pfn_to_section_nr(pfn)).
+
+Right.
+
+> 
+> Since we already get section_nr, it is not necessary to get mem_section
+> from start_pfn. By doing so, we reduce one redundant operation.
+> 
+> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+
+Looks right.
+
+With this applied, memory hot add still works on arm64.
+
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+
+> ---
+>  mm/sparse.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 72f010d9bff5..95158a148cd1 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -867,7 +867,7 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
+>  	 */
+>  	page_init_poison(pfn_to_page(start_pfn), sizeof(struct page) * nr_pages);
+>  
+> -	ms = __pfn_to_section(start_pfn);
+> +	ms = __nr_to_section(section_nr);
+>  	set_section_nid(section_nr, nid);
+>  	section_mark_present(ms);
+>  
+> 
