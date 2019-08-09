@@ -2,319 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB38386FBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 306DE86FC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 04:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405545AbfHICev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 8 Aug 2019 22:34:51 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40638 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405424AbfHICeu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Aug 2019 22:34:50 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so45068271pgj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2019 19:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=n8KBG5nmkGEaawsHMjPOBzO6NvS/PfrVgyogK3T8Log=;
-        b=pS3vTy2IwGTZJtm8Atxiya+8KlteqaTjfeLrA+t36U4t867/r7Ng1H9i1bydZy61y9
-         y/kNlou8qCAhJrhnBxa+B/p8N09Gn0fZUEp8HxeY4RFZMvZXzKeDbeCunqUaSOQTjQCF
-         7iaD6BsdBLZ2ing382OlgLdyJEMPeyMcx3oKfjYas59jLwuiZ1ZoWQVUzEqhD65PR/m6
-         haG/akiESl+bLMJSSzadJ6TaeQ9nJkfRDoG+sz2uf9i1BcoM6DTgizTu9f4bM1c7EzXk
-         zjq8R4Buf8BrW3QIfdQYzFHSl4sJrFLOHrVlzKpGgJk7Un7U03IcPpO6l6XES8RON9eB
-         i0OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n8KBG5nmkGEaawsHMjPOBzO6NvS/PfrVgyogK3T8Log=;
-        b=ceBPTR3SU4NYL5kffoKirr3Z1saw2Z9ndqSVyTEGS33vew9VLvqiktIfjWHZR6D88h
-         Mecf7emaEv+HGKenZpHZibC1v/GrOJm+wEix4XWQmyp/IxsgmFPdiG0fVzSd6LHxFvzt
-         Emv9kLsa6h3gpRroQsJLOkIxV6sAXxbmTNrNKaqmeWTy6N4II4kHogH5obKM0GuQ6LOx
-         Ws3O6uyCNh15n2n8zz3zdo+iBThQtYqasuWBcQUnfpADTkbaG7JD/LJ/teKo0dUE24Bd
-         VqgrVJ7+yR0xM+aGnUm7TqV8nQhk/qqE5gph5KXDxReo3APE2VaUBh7EBUTTaDFJthj2
-         MVsQ==
-X-Gm-Message-State: APjAAAU1xSB0ZOM9yo5QbPSNym4Y0L7Fa7Hw/wtqQZaXsepvRViacRBA
-        qhgvJ9rB4k/e8dS3Z1UKw1pSiA==
-X-Google-Smtp-Source: APXvYqwAIzonWFvFcHs1FTxusshjF79mDe9DU1nTJkKVIo3XGpatkk8lRn0c/3N6oxEo2NfhFMqqAw==
-X-Received: by 2002:a65:4304:: with SMTP id j4mr15863872pgq.419.1565318089782;
-        Thu, 08 Aug 2019 19:34:49 -0700 (PDT)
-Received: from localhost ([122.172.76.219])
-        by smtp.gmail.com with ESMTPSA id q19sm101879983pfc.62.2019.08.08.19.34.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Aug 2019 19:34:49 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 08:04:45 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 04/10] cpufreq: powerpc_cbe: Switch to QoS requests
- instead of cpufreq notifier
-Message-ID: <20190809023445.xn3mlv5qxjgz6bpp@vireshk-i7>
-References: <cover.1563862014.git.viresh.kumar@linaro.org>
- <524de8ace0596e68a24b57b3b4043c707db32ca7.1563862014.git.viresh.kumar@linaro.org>
+        id S2404898AbfHICtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 8 Aug 2019 22:49:24 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48888 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729476AbfHICtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Aug 2019 22:49:24 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E46D8D91BFA54964D24E;
+        Fri,  9 Aug 2019 10:33:31 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 9 Aug 2019 10:33:22 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 02/12] net: hns3: fix interrupt clearing error for VF
+Date:   Fri, 9 Aug 2019 10:31:08 +0800
+Message-ID: <1565317878-31806-3-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1565317878-31806-1-git-send-email-tanhuazhong@huawei.com>
+References: <1565317878-31806-1-git-send-email-tanhuazhong@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <524de8ace0596e68a24b57b3b4043c707db32ca7.1563862014.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-07-19, 11:44, Viresh Kumar wrote:
-> The cpufreq core now takes the min/max frequency constraints via QoS
-> requests and the CPUFREQ_ADJUST notifier shall get removed later on.
-> 
-> Switch over to using the QoS request for maximum frequency constraint
-> for ppc_cbe_cpufreq driver.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/ppc_cbe_cpufreq.c     | 19 +++++-
->  drivers/cpufreq/ppc_cbe_cpufreq.h     |  8 +++
->  drivers/cpufreq/ppc_cbe_cpufreq_pmi.c | 96 +++++++++++++++++----------
->  3 files changed, 86 insertions(+), 37 deletions(-)
+Currently, VF driver has two kinds of interrupts, reset & CMDQ RX.
+For revision 0x21, according to the UM, each interrupt should be
+cleared by write 0 to the corresponding bit, but the implementation
+writes 0 to the whole register in fact, it will clear other
+interrupt at the same time, then the VF will loss the interrupt.
+But for revision 0x20, this interrupt clear register is a read &
+write register, for compatible, we just keep the old implementation
+for 0x20.
 
--------------------------8<-------------------------
-From b84e1c119d63ab842c9e4f3acbc3aec22efa866d Mon Sep 17 00:00:00 2001
-Message-Id: <b84e1c119d63ab842c9e4f3acbc3aec22efa866d.1565318034.git.viresh.kumar@linaro.org>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Fri, 5 Jul 2019 15:49:48 +0530
-Subject: [PATCH] cpufreq: powerpc_cbe: Switch to QoS requests instead of
- cpufreq notifier
+This patch fixes it, also, adds a new register for reading the interrupt
+status according to hardware user manual.
 
-The cpufreq core now takes the min/max frequency constraints via QoS
-requests and the CPUFREQ_ADJUST notifier shall get removed later on.
+Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
+Fixes: b90fcc5bd904 ("net: hns3: add reset handling for VF when doing Core/Global/IMP reset")
 
-Switch over to using the QoS request for maximum frequency constraint
-for ppc_cbe_cpufreq driver.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Reviewed-by: Yunsheng Lin <linyunsheng@huawei.com>
 ---
-- dev_pm_qos_update_request() can return 1 on success
- drivers/cpufreq/ppc_cbe_cpufreq.c     | 19 +++++-
- drivers/cpufreq/ppc_cbe_cpufreq.h     |  8 +++
- drivers/cpufreq/ppc_cbe_cpufreq_pmi.c | 96 +++++++++++++++++----------
- 3 files changed, 86 insertions(+), 37 deletions(-)
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 28 +++++++++++++++-------
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |  2 ++
+ 2 files changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/cpufreq/ppc_cbe_cpufreq.c b/drivers/cpufreq/ppc_cbe_cpufreq.c
-index b83f36febf03..c58abb4cca3a 100644
---- a/drivers/cpufreq/ppc_cbe_cpufreq.c
-+++ b/drivers/cpufreq/ppc_cbe_cpufreq.c
-@@ -110,6 +110,13 @@ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
- #endif
- 
- 	policy->freq_table = cbe_freqs;
-+	cbe_cpufreq_pmi_policy_init(policy);
-+	return 0;
-+}
-+
-+static int cbe_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-+{
-+	cbe_cpufreq_pmi_policy_exit(policy);
- 	return 0;
- }
- 
-@@ -129,6 +136,7 @@ static struct cpufreq_driver cbe_cpufreq_driver = {
- 	.verify		= cpufreq_generic_frequency_table_verify,
- 	.target_index	= cbe_cpufreq_target,
- 	.init		= cbe_cpufreq_cpu_init,
-+	.exit		= cbe_cpufreq_cpu_exit,
- 	.name		= "cbe-cpufreq",
- 	.flags		= CPUFREQ_CONST_LOOPS,
- };
-@@ -139,15 +147,24 @@ static struct cpufreq_driver cbe_cpufreq_driver = {
- 
- static int __init cbe_cpufreq_init(void)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index ce82b2b..d8b8281 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -1889,21 +1889,20 @@ static void hclgevf_clear_event_cause(struct hclgevf_dev *hdev, u32 regclr)
+ static enum hclgevf_evt_cause hclgevf_check_evt_cause(struct hclgevf_dev *hdev,
+ 						      u32 *clearval)
  {
-+	int ret;
+-	u32 val, cmdq_src_reg, rst_ing_reg;
++	u32 val, cmdq_stat_reg, rst_ing_reg;
+ 
+ 	/* fetch the events from their corresponding regs */
+-	cmdq_src_reg = hclgevf_read_dev(&hdev->hw,
+-					HCLGEVF_VECTOR0_CMDQ_SRC_REG);
++	cmdq_stat_reg = hclgevf_read_dev(&hdev->hw,
++					 HCLGEVF_VECTOR0_CMDQ_STAT_REG);
+ 
+-	if (BIT(HCLGEVF_VECTOR0_RST_INT_B) & cmdq_src_reg) {
++	if (BIT(HCLGEVF_VECTOR0_RST_INT_B) & cmdq_stat_reg) {
+ 		rst_ing_reg = hclgevf_read_dev(&hdev->hw, HCLGEVF_RST_ING);
+ 		dev_info(&hdev->pdev->dev,
+ 			 "receive reset interrupt 0x%x!\n", rst_ing_reg);
+ 		set_bit(HNAE3_VF_RESET, &hdev->reset_pending);
+ 		set_bit(HCLGEVF_RESET_PENDING, &hdev->reset_state);
+ 		set_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state);
+-		cmdq_src_reg &= ~BIT(HCLGEVF_VECTOR0_RST_INT_B);
+-		*clearval = cmdq_src_reg;
++		*clearval = ~(1U << HCLGEVF_VECTOR0_RST_INT_B);
+ 		hdev->rst_stats.vf_rst_cnt++;
+ 		/* set up VF hardware reset status, its PF will clear
+ 		 * this status when PF has initialized done.
+@@ -1915,9 +1914,20 @@ static enum hclgevf_evt_cause hclgevf_check_evt_cause(struct hclgevf_dev *hdev,
+ 	}
+ 
+ 	/* check for vector0 mailbox(=CMDQ RX) event source */
+-	if (BIT(HCLGEVF_VECTOR0_RX_CMDQ_INT_B) & cmdq_src_reg) {
+-		cmdq_src_reg &= ~BIT(HCLGEVF_VECTOR0_RX_CMDQ_INT_B);
+-		*clearval = cmdq_src_reg;
++	if (BIT(HCLGEVF_VECTOR0_RX_CMDQ_INT_B) & cmdq_stat_reg) {
++		/* for revision 0x21, clearing interrupt is writing bit 0
++		 * to the clear register, writing bit 1 means to keep the
++		 * old value.
++		 * for revision 0x20, the clear register is a read & write
++		 * register, so we should just write 0 to the bit we are
++		 * handling, and keep other bits as cmdq_stat_reg.
++		 */
++		if (hdev->pdev->revision >= 0x21)
++			*clearval = ~(1U << HCLGEVF_VECTOR0_RX_CMDQ_INT_B);
++		else
++			*clearval = cmdq_stat_reg &
++				    ~BIT(HCLGEVF_VECTOR0_RX_CMDQ_INT_B);
 +
- 	if (!machine_is(cell))
- 		return -ENODEV;
+ 		return HCLGEVF_VECTOR0_EVENT_MBX;
+ 	}
  
--	return cpufreq_register_driver(&cbe_cpufreq_driver);
-+	cbe_cpufreq_pmi_init();
-+
-+	ret = cpufreq_register_driver(&cbe_cpufreq_driver);
-+	if (ret)
-+		cbe_cpufreq_pmi_exit();
-+
-+	return ret;
- }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+index f0736b0..4ccf107 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+@@ -87,6 +87,8 @@
  
- static void __exit cbe_cpufreq_exit(void)
- {
- 	cpufreq_unregister_driver(&cbe_cpufreq_driver);
-+	cbe_cpufreq_pmi_exit();
- }
- 
- module_init(cbe_cpufreq_init);
-diff --git a/drivers/cpufreq/ppc_cbe_cpufreq.h b/drivers/cpufreq/ppc_cbe_cpufreq.h
-index 9d973519d669..00cd8633b0d9 100644
---- a/drivers/cpufreq/ppc_cbe_cpufreq.h
-+++ b/drivers/cpufreq/ppc_cbe_cpufreq.h
-@@ -20,6 +20,14 @@ int cbe_cpufreq_set_pmode_pmi(int cpu, unsigned int pmode);
- 
- #if IS_ENABLED(CONFIG_CPU_FREQ_CBE_PMI)
- extern bool cbe_cpufreq_has_pmi;
-+void cbe_cpufreq_pmi_policy_init(struct cpufreq_policy *policy);
-+void cbe_cpufreq_pmi_policy_exit(struct cpufreq_policy *policy);
-+void cbe_cpufreq_pmi_init(void);
-+void cbe_cpufreq_pmi_exit(void);
- #else
- #define cbe_cpufreq_has_pmi (0)
-+static inline void cbe_cpufreq_pmi_policy_init(struct cpufreq_policy *policy) {}
-+static inline void cbe_cpufreq_pmi_policy_exit(struct cpufreq_policy *policy) {}
-+static inline void cbe_cpufreq_pmi_init(void) {}
-+static inline void cbe_cpufreq_pmi_exit(void) {}
- #endif
-diff --git a/drivers/cpufreq/ppc_cbe_cpufreq_pmi.c b/drivers/cpufreq/ppc_cbe_cpufreq_pmi.c
-index 97c8ee4614b7..bc9dd30395c4 100644
---- a/drivers/cpufreq/ppc_cbe_cpufreq_pmi.c
-+++ b/drivers/cpufreq/ppc_cbe_cpufreq_pmi.c
-@@ -12,6 +12,7 @@
- #include <linux/timer.h>
- #include <linux/init.h>
- #include <linux/of_platform.h>
-+#include <linux/pm_qos.h>
- 
- #include <asm/processor.h>
- #include <asm/prom.h>
-@@ -24,8 +25,6 @@
- 
- #include "ppc_cbe_cpufreq.h"
- 
--static u8 pmi_slow_mode_limit[MAX_CBE];
--
- bool cbe_cpufreq_has_pmi = false;
- EXPORT_SYMBOL_GPL(cbe_cpufreq_has_pmi);
- 
-@@ -65,64 +64,89 @@ EXPORT_SYMBOL_GPL(cbe_cpufreq_set_pmode_pmi);
- 
- static void cbe_cpufreq_handle_pmi(pmi_message_t pmi_msg)
- {
-+	struct cpufreq_policy *policy;
-+	struct dev_pm_qos_request *req;
- 	u8 node, slow_mode;
-+	int cpu, ret;
- 
- 	BUG_ON(pmi_msg.type != PMI_TYPE_FREQ_CHANGE);
- 
- 	node = pmi_msg.data1;
- 	slow_mode = pmi_msg.data2;
- 
--	pmi_slow_mode_limit[node] = slow_mode;
-+	cpu = cbe_node_to_cpu(node);
- 
- 	pr_debug("cbe_handle_pmi: node: %d max_freq: %d\n", node, slow_mode);
--}
--
--static int pmi_notifier(struct notifier_block *nb,
--				       unsigned long event, void *data)
--{
--	struct cpufreq_policy *policy = data;
--	struct cpufreq_frequency_table *cbe_freqs = policy->freq_table;
--	u8 node;
--
--	/* Should this really be called for CPUFREQ_ADJUST and CPUFREQ_NOTIFY
--	 * policy events?)
--	 */
--	node = cbe_cpu_to_node(policy->cpu);
--
--	pr_debug("got notified, event=%lu, node=%u\n", event, node);
- 
--	if (pmi_slow_mode_limit[node] != 0) {
--		pr_debug("limiting node %d to slow mode %d\n",
--			 node, pmi_slow_mode_limit[node]);
-+	policy = cpufreq_cpu_get(cpu);
-+	if (!policy) {
-+		pr_warn("cpufreq policy not found cpu%d\n", cpu);
-+		return;
-+	}
- 
--		cpufreq_verify_within_limits(policy, 0,
-+	req = policy->driver_data;
- 
--			cbe_freqs[pmi_slow_mode_limit[node]].frequency);
--	}
-+	ret = dev_pm_qos_update_request(req,
-+			policy->freq_table[slow_mode].frequency);
-+	if (ret < 0)
-+		pr_warn("Failed to update freq constraint: %d\n", ret);
-+	else
-+		pr_debug("limiting node %d to slow mode %d\n", node, slow_mode);
- 
--	return 0;
-+	cpufreq_cpu_put(policy);
- }
- 
--static struct notifier_block pmi_notifier_block = {
--	.notifier_call = pmi_notifier,
--};
--
- static struct pmi_handler cbe_pmi_handler = {
- 	.type			= PMI_TYPE_FREQ_CHANGE,
- 	.handle_pmi_message	= cbe_cpufreq_handle_pmi,
- };
- 
-+void cbe_cpufreq_pmi_policy_init(struct cpufreq_policy *policy)
-+{
-+	struct dev_pm_qos_request *req;
-+	int ret;
-+
-+	if (!cbe_cpufreq_has_pmi)
-+		return;
-+
-+	req = kzalloc(sizeof(*req), GFP_KERNEL);
-+	if (!req)
-+		return;
-+
-+	ret = dev_pm_qos_add_request(get_cpu_device(policy->cpu), req,
-+				     DEV_PM_QOS_MAX_FREQUENCY,
-+				     policy->freq_table[0].frequency);
-+	if (ret < 0) {
-+		pr_err("Failed to add freq constraint (%d)\n", ret);
-+		kfree(req);
-+		return;
-+	}
- 
-+	policy->driver_data = req;
-+}
-+EXPORT_SYMBOL_GPL(cbe_cpufreq_pmi_policy_init);
- 
--static int __init cbe_cpufreq_pmi_init(void)
-+void cbe_cpufreq_pmi_policy_exit(struct cpufreq_policy *policy)
- {
--	cbe_cpufreq_has_pmi = pmi_register_handler(&cbe_pmi_handler) == 0;
-+	struct dev_pm_qos_request *req = policy->driver_data;
- 
--	if (!cbe_cpufreq_has_pmi)
--		return -ENODEV;
-+	if (cbe_cpufreq_has_pmi) {
-+		dev_pm_qos_remove_request(req);
-+		kfree(req);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(cbe_cpufreq_pmi_policy_exit);
- 
--	cpufreq_register_notifier(&pmi_notifier_block, CPUFREQ_POLICY_NOTIFIER);
-+void cbe_cpufreq_pmi_init(void)
-+{
-+	if (!pmi_register_handler(&cbe_pmi_handler))
-+		cbe_cpufreq_has_pmi = true;
-+}
-+EXPORT_SYMBOL_GPL(cbe_cpufreq_pmi_init);
- 
--	return 0;
-+void cbe_cpufreq_pmi_exit(void)
-+{
-+	pmi_unregister_handler(&cbe_pmi_handler);
-+	cbe_cpufreq_has_pmi = false;
- }
--device_initcall(cbe_cpufreq_pmi_init);
-+EXPORT_SYMBOL_GPL(cbe_cpufreq_pmi_exit);
+ /* Vector0 interrupt CMDQ event source register(RW) */
+ #define HCLGEVF_VECTOR0_CMDQ_SRC_REG	0x27100
++/* Vector0 interrupt CMDQ event status register(RO) */
++#define HCLGEVF_VECTOR0_CMDQ_STAT_REG	0x27104
+ /* CMDQ register bits for RX event(=MBX event) */
+ #define HCLGEVF_VECTOR0_RX_CMDQ_INT_B	1
+ /* RST register bits for RESET event */
+-- 
+2.7.4
+
