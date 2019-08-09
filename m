@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B32288676
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 00:59:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D69886B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 01:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731037AbfHIW7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 18:59:22 -0400
-Received: from mga01.intel.com ([192.55.52.88]:62321 "EHLO mga01.intel.com"
+        id S1730262AbfHIXAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 19:00:31 -0400
+Received: from mga17.intel.com ([192.55.52.151]:9691 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730769AbfHIW7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 18:59:10 -0400
+        id S1729112AbfHIW6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 18:58:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:59:09 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:58:43 -0700
 X-IronPort-AV: E=Sophos;i="5.64,367,1559545200"; 
-   d="scan'208";a="183030881"
+   d="scan'208";a="199539184"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:59:09 -0700
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:58:43 -0700
 From:   ira.weiny@intel.com
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
@@ -32,9 +32,9 @@ Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         linux-ext4@vger.kernel.org, linux-mm@kvack.org,
         Ira Weiny <ira.weiny@intel.com>
-Subject: [RFC PATCH v2 19/19] mm/gup: Remove FOLL_LONGTERM DAX exclusion
-Date:   Fri,  9 Aug 2019 15:58:33 -0700
-Message-Id: <20190809225833.6657-20-ira.weiny@intel.com>
+Subject: [RFC PATCH v2 02/19] fs/locks: Add Exclusive flag to user Layout lease
+Date:   Fri,  9 Aug 2019 15:58:16 -0700
+Message-Id: <20190809225833.6657-3-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190809225833.6657-1-ira.weiny@intel.com>
 References: <20190809225833.6657-1-ira.weiny@intel.com>
@@ -47,172 +47,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Now that there is a mechanism for users to safely take LONGTERM pins on
-FS DAX pages, remove the FS DAX exclusion from the GUP implementation.
+Add an exclusive lease flag which indicates that the layout mechanism
+can not be broken.
 
-Special processing remains in effect for CONFIG_CMA
+Exclusive layout leases allow the file system to know that pages may be
+GUP pined and that attempts to change the layout, ie truncate, should be
+failed.
 
-NOTE: Some callers still fail because the vaddr_pin information has not
-been passed into the new interface.  As new users appear they can start
-to use the new interface to support FS DAX.
+A process which attempts to break it's own exclusive lease gets an
+EDEADLOCK return to help determine that this is likely a programming bug
+vs someone else holding a resource.
 
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- mm/gup.c | 78 ++++++--------------------------------------------------
- 1 file changed, 8 insertions(+), 70 deletions(-)
+ fs/locks.c                       | 23 +++++++++++++++++++++--
+ include/linux/fs.h               |  1 +
+ include/uapi/asm-generic/fcntl.h |  2 ++
+ 3 files changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 6d23f70d7847..58f008a3c153 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1415,26 +1415,6 @@ static long __get_user_pages_locked(struct task_struct *tsk,
- }
- #endif /* !CONFIG_MMU */
- 
--#if defined(CONFIG_FS_DAX) || defined (CONFIG_CMA)
--static bool check_dax_vmas(struct vm_area_struct **vmas, long nr_pages)
--{
--	long i;
--	struct vm_area_struct *vma_prev = NULL;
--
--	for (i = 0; i < nr_pages; i++) {
--		struct vm_area_struct *vma = vmas[i];
--
--		if (vma == vma_prev)
--			continue;
--
--		vma_prev = vma;
--
--		if (vma_is_fsdax(vma))
--			return true;
--	}
--	return false;
--}
--
- #ifdef CONFIG_CMA
- static struct page *new_non_cma_page(struct page *page, unsigned long private)
- {
-@@ -1568,18 +1548,6 @@ static long check_and_migrate_cma_pages(struct task_struct *tsk,
- 
- 	return nr_pages;
- }
--#else
--static long check_and_migrate_cma_pages(struct task_struct *tsk,
--					struct mm_struct *mm,
--					unsigned long start,
--					unsigned long nr_pages,
--					struct page **pages,
--					struct vm_area_struct **vmas,
--					unsigned int gup_flags)
--{
--	return nr_pages;
--}
--#endif /* CONFIG_CMA */
- 
- /*
-  * __gup_longterm_locked() is a wrapper for __get_user_pages_locked which
-@@ -1594,49 +1562,28 @@ static long __gup_longterm_locked(struct task_struct *tsk,
- 				  unsigned int gup_flags,
- 				  struct vaddr_pin *vaddr_pin)
- {
--	struct vm_area_struct **vmas_tmp = vmas;
- 	unsigned long flags = 0;
--	long rc, i;
-+	long rc;
- 
--	if (gup_flags & FOLL_LONGTERM) {
--		if (!pages)
--			return -EINVAL;
--
--		if (!vmas_tmp) {
--			vmas_tmp = kcalloc(nr_pages,
--					   sizeof(struct vm_area_struct *),
--					   GFP_KERNEL);
--			if (!vmas_tmp)
--				return -ENOMEM;
--		}
-+	if (flags & FOLL_LONGTERM)
- 		flags = memalloc_nocma_save();
--	}
- 
- 	rc = __get_user_pages_locked(tsk, mm, start, nr_pages, pages,
--				     vmas_tmp, NULL, gup_flags, vaddr_pin);
-+				     vmas, NULL, gup_flags, vaddr_pin);
- 
- 	if (gup_flags & FOLL_LONGTERM) {
- 		memalloc_nocma_restore(flags);
- 		if (rc < 0)
- 			goto out;
- 
--		if (check_dax_vmas(vmas_tmp, rc)) {
--			for (i = 0; i < rc; i++)
--				put_page(pages[i]);
--			rc = -EOPNOTSUPP;
--			goto out;
--		}
--
- 		rc = check_and_migrate_cma_pages(tsk, mm, start, rc, pages,
--						 vmas_tmp, gup_flags);
-+						 vmas, gup_flags);
+diff --git a/fs/locks.c b/fs/locks.c
+index ad17c6ffca06..0c7359cdab92 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -626,6 +626,8 @@ static int lease_init(struct file *filp, long type, unsigned int flags,
+ 	fl->fl_flags = FL_LEASE;
+ 	if (flags & FL_LAYOUT)
+ 		fl->fl_flags |= FL_LAYOUT;
++	if (flags & FL_EXCLUSIVE)
++		fl->fl_flags |= FL_EXCLUSIVE;
+ 	fl->fl_start = 0;
+ 	fl->fl_end = OFFSET_MAX;
+ 	fl->fl_ops = NULL;
+@@ -1619,6 +1621,14 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+ 	list_for_each_entry_safe(fl, tmp, &ctx->flc_lease, fl_list) {
+ 		if (!leases_conflict(fl, new_fl))
+ 			continue;
++		if (fl->fl_flags & FL_EXCLUSIVE) {
++			error = -ETXTBSY;
++			if (new_fl->fl_pid == fl->fl_pid) {
++				error = -EDEADLOCK;
++				goto out;
++			}
++			continue;
++		}
+ 		if (want_write) {
+ 			if (fl->fl_flags & FL_UNLOCK_PENDING)
+ 				continue;
+@@ -1634,6 +1644,13 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+ 			locks_delete_lock_ctx(fl, &dispose);
  	}
  
- out:
--	if (vmas_tmp != vmas)
--		kfree(vmas_tmp);
- 	return rc;
- }
--#else /* !CONFIG_FS_DAX && !CONFIG_CMA */
-+#else /* !CONFIG_CMA */
- static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
- 						  struct mm_struct *mm,
- 						  unsigned long start,
-@@ -1649,7 +1596,7 @@ static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
- 	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
- 				       NULL, flags, vaddr_pin);
- }
--#endif /* CONFIG_FS_DAX || CONFIG_CMA */
-+#endif /* CONFIG_CMA */
++	/* We differentiate between -EDEADLOCK and -ETXTBSY so the above loop
++	 * continues with -ETXTBSY looking for a potential deadlock instead.
++	 * If deadlock is not found go ahead and return -ETXTBSY.
++	 */
++	if (error == -ETXTBSY)
++		goto out;
++
+ 	if (list_empty(&ctx->flc_lease))
+ 		goto out;
  
- /*
-  * This is the same as get_user_pages_remote(), just with a
-@@ -1887,9 +1834,6 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- 			goto pte_unmap;
+@@ -2044,9 +2061,11 @@ static int do_fcntl_add_lease(unsigned int fd, struct file *filp, long arg)
+ 	 * to revoke the lease in break_layout()  And this is done by using
+ 	 * F_WRLCK in the break code.
+ 	 */
+-	if (arg == F_LAYOUT) {
++	if ((arg & F_LAYOUT) == F_LAYOUT) {
++		if ((arg & F_EXCLUSIVE) == F_EXCLUSIVE)
++			flags |= FL_EXCLUSIVE;
+ 		arg = F_RDLCK;
+-		flags = FL_LAYOUT;
++		flags |= FL_LAYOUT;
+ 	}
  
- 		if (pte_devmap(pte)) {
--			if (unlikely(flags & FOLL_LONGTERM))
--				goto pte_unmap;
--
- 			pgmap = get_dev_pagemap(pte_pfn(pte), pgmap);
- 			if (unlikely(!pgmap)) {
- 				undo_dev_pagemap(nr, nr_start, pages);
-@@ -2139,12 +2083,9 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 	if (!pmd_access_permitted(orig, flags & FOLL_WRITE))
- 		return 0;
+ 	fl = lease_alloc(filp, arg, flags);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index dd60d5be9886..2e41ce547913 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1005,6 +1005,7 @@ static inline struct file *get_file(struct file *f)
+ #define FL_UNLOCK_PENDING	512 /* Lease is being broken */
+ #define FL_OFDLCK	1024	/* lock is "owned" by struct file */
+ #define FL_LAYOUT	2048	/* outstanding pNFS layout or user held pin */
++#define FL_EXCLUSIVE	4096	/* Layout lease is exclusive */
  
--	if (pmd_devmap(orig)) {
--		if (unlikely(flags & FOLL_LONGTERM))
--			return 0;
-+	if (pmd_devmap(orig))
- 		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr,
- 					     flags, vaddr_pin);
--	}
+ #define FL_CLOSE_POSIX (FL_POSIX | FL_CLOSE)
  
- 	refs = 0;
- 	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-@@ -2182,12 +2123,9 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- 	if (!pud_access_permitted(orig, flags & FOLL_WRITE))
- 		return 0;
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index baddd54f3031..88b175ceccbc 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -176,6 +176,8 @@ struct f_owner_ex {
  
--	if (pud_devmap(orig)) {
--		if (unlikely(flags & FOLL_LONGTERM))
--			return 0;
-+	if (pud_devmap(orig))
- 		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr,
- 					     flags, vaddr_pin);
--	}
+ #define F_LAYOUT	16      /* layout lease to allow longterm pins such as
+ 				   RDMA */
++#define F_EXCLUSIVE	32      /* layout lease is exclusive */
++				/* FIXME or shoudl this be F_EXLCK??? */
  
- 	refs = 0;
- 	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+ /* operations for bsd flock(), also used by the kernel implementation */
+ #define LOCK_SH		1	/* shared lock */
 -- 
 2.20.1
 
