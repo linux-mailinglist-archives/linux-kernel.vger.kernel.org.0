@@ -2,94 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92271883FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2041B88412
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 22:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729589AbfHIU31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 16:29:27 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39412 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729533AbfHIU3X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 16:29:23 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b7so45442325pls.6
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 13:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A9NhgTl7zfb3l1+NKbkDU/P+hrZFZUgJYh8JpIsec0E=;
-        b=MLDFO4GFjW+A+4D9jAGcXTdfEyXRibjGCZMZZ5cEKAKSUpleSuAJgryFida0cokfZq
-         oApVkJ/APJFAV//OVXvzZNrwYnSrC75TeDz0WS6iedhnobDKVsLxx9AjkKAH6+y+HyhV
-         iubniIEPLSFYfria85M3qoMT6UyFfMsUqYawE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A9NhgTl7zfb3l1+NKbkDU/P+hrZFZUgJYh8JpIsec0E=;
-        b=RnonJfs2NZs4m4gg7Q7ckKhKDSr13VcKIwFz7UBpfn46e+lUNVlw5xIaFEp/2JkBUS
-         1n5b1zSK5QmVkDZrBfws0DlUBnxn84N55NcneaWNrhsXMEnDQn9BYUbfym4KG3+j/6dU
-         2V+hNIqInEME5ZzdIiRFLWHwSQQqfjMMqwoThPZaB5Db4Xh1YdptoStspiW2XqbuER7L
-         tqQNTz3AZMyI9BSbyVZrL87pbHEx88Wka1B9UG5ftLfRl8fdfG0A63Yn5XRdIyGAyAQj
-         OOk8xTGy2iIbuDtEtqEcHW1dHBym4h24rubqPLhGGjv3P2whqNIeRNQc8TDJtI09tmx4
-         dF7A==
-X-Gm-Message-State: APjAAAXFL2m1PlaV8C4YgrEIUZ7ihMyFz8+tZqtb7NnhW7JElpUu7q1a
-        +hVEa2DADCJlb6NHAgQILI72Zw==
-X-Google-Smtp-Source: APXvYqxAzSoqBoiHk7b+bAdo2F3seV7zxBnNzc1weazPV3iVfTuGK1yaJE3TB+II7IRyJkDlx9xARQ==
-X-Received: by 2002:a17:902:ac88:: with SMTP id h8mr15447969plr.77.1565382562846;
-        Fri, 09 Aug 2019 13:29:22 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id v185sm110394406pfb.14.2019.08.09.13.29.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 13:29:21 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 16:29:20 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Byungchul Park <byungchul.park@lge.com>,
-        linux-kernel@vger.kernel.org, Rao Shoaib <rao.shoaib@oracle.com>,
-        max.byungchul.park@gmail.com, kernel-team@android.com,
-        kernel-team@lge.com, Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC v1 1/2] rcu/tree: Add basic support for kfree_rcu
- batching
-Message-ID: <20190809202920.GE255533@google.com>
-References: <20190806235631.GU28441@linux.ibm.com>
- <20190807094504.GB169551@google.com>
- <20190807175215.GE28441@linux.ibm.com>
- <20190808095232.GA30401@X58A-UD3R>
- <20190808125607.GB261256@google.com>
- <20190808233014.GA184373@google.com>
- <20190809151619.GD28441@linux.ibm.com>
- <20190809153924.GB211412@google.com>
- <20190809163346.GF28441@linux.ibm.com>
- <20190809202226.GC255533@google.com>
+        id S1727695AbfHIUbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 16:31:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:61895 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725860AbfHIUbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 16:31:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 13:31:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,366,1559545200"; 
+   d="scan'208";a="169414994"
+Received: from wulili-mobl1.ger.corp.intel.com ([10.249.36.9])
+  by orsmga008.jf.intel.com with ESMTP; 09 Aug 2019 13:31:04 -0700
+Message-ID: <e7951cb251116e903cf0040ee6f271dc4e68ff2e.camel@linux.intel.com>
+Subject: Re: [PATCH v3 4/4] tpm: add driver for cr50 on SPI
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Boyd <swboyd@chromium.org>, Peter Huewe <peterhuewe@gmx.de>
+Cc:     Andrey Pronin <apronin@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Date:   Fri, 09 Aug 2019 23:31:04 +0300
+In-Reply-To: <20190806220750.86597-5-swboyd@chromium.org>
+References: <20190806220750.86597-1-swboyd@chromium.org>
+         <20190806220750.86597-5-swboyd@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809202226.GC255533@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 04:22:26PM -0400, Joel Fernandes wrote:
-> > > > o	With any of the above, invoke rcu_momentary_dyntick_idle() along
-> > > > 	with cond_resched() in your kfree_rcu() loop.  This simulates
-> > > > 	a trip to userspace for nohz_full CPUs, so if this helps for
-> > > > 	non-nohz_full CPUs, adjustments to the kernel might be called for.
+On Tue, 2019-08-06 at 15:07 -0700, Stephen Boyd wrote:
+> From: Andrey Pronin <apronin@chromium.org>
 > 
-> I did not try this yet. But I am thinking why would this help in nohz_idle
-> case? In nohz_idle we already have the tick active when CPU is idle. I guess
-> it is because there may be a long time that elapses before
-> rcu_data.rcu_need_heavy_qs == true ?
+> Add TPM2.0 PTP FIFO compatible SPI interface for chips with Cr50
+> firmware. The firmware running on the currently supported H1
+> Secure Microcontroller requires a special driver to handle its
+> specifics:
+> 
+>  - need to ensure a certain delay between spi transactions, or else
+>    the chip may miss some part of the next transaction;
+>  - if there is no spi activity for some time, it may go to sleep,
+>    and needs to be waken up before sending further commands;
+>  - access to vendor-specific registers.
 
-Sorry, here I meant 'tick active when CPU is not idle'.
+Which Chromebook models have this chip?
 
-thanks,
+If I had an access to one, how do I do kernel testing with it i.e.
+how do I get it to boot initramfs and bzImage from a USB stick?
 
- - Joel
- 
+/Jarkko
+
