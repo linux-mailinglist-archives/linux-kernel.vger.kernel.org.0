@@ -2,79 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 782C887DEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 17:24:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9180C87DF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 17:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407366AbfHIPYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 11:24:03 -0400
-Received: from mga02.intel.com ([134.134.136.20]:38882 "EHLO mga02.intel.com"
+        id S2407385AbfHIPYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 11:24:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45386 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbfHIPYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 11:24:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 08:24:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,364,1559545200"; 
-   d="scan'208";a="182932690"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 09 Aug 2019 08:24:02 -0700
-Received: from [10.252.0.91] (abudanko-mobl.ccr.corp.intel.com [10.252.0.91])
-        by linux.intel.com (Postfix) with ESMTP id 5EFF6580417;
-        Fri,  9 Aug 2019 08:23:59 -0700 (PDT)
-Subject: [PATCH v1 1/3] perf record: enable LBR callstack capture jointly with
- thread stack
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        "Jin, Yao" <yao.jin@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <ec5fe6b1-a116-fb60-42c6-dc8a9dedfc15@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <e9e00090-66fb-d2a4-c90f-1d12344f7788@linux.intel.com>
-Date:   Fri, 9 Aug 2019 18:23:58 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726463AbfHIPYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 11:24:08 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 58AA930C2425;
+        Fri,  9 Aug 2019 15:24:07 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 95D7260600;
+        Fri,  9 Aug 2019 15:24:05 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri,  9 Aug 2019 17:24:07 +0200 (CEST)
+Date:   Fri, 9 Aug 2019 17:24:04 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        "srikar@linux.vnet.ibm.com" <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH v12 5/6] khugepaged: enable collapse pmd for pte-mapped
+ THP
+Message-ID: <20190809152404.GA21489@redhat.com>
+References: <20190807233729.3899352-1-songliubraving@fb.com>
+ <20190807233729.3899352-6-songliubraving@fb.com>
+ <20190808163303.GB7934@redhat.com>
+ <770B3C29-CE8F-4228-8992-3C6E2B5487B6@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <ec5fe6b1-a116-fb60-42c6-dc8a9dedfc15@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <770B3C29-CE8F-4228-8992-3C6E2B5487B6@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 09 Aug 2019 15:24:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/08, Song Liu wrote:
+>
+> > On Aug 8, 2019, at 9:33 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> >> +	for (i = 0, addr = haddr; i < HPAGE_PMD_NR; i++, addr += PAGE_SIZE) {
+> >> +		pte_t *pte = pte_offset_map(pmd, addr);
+> >> +		struct page *page;
+> >> +
+> >> +		if (pte_none(*pte))
+> >> +			continue;
+> >> +
+> >> +		page = vm_normal_page(vma, addr, *pte);
 
-Enable '-j stack' applicability together with '--call-graph dwarf'
-option so thread stack data and LBR call stack could be captured 
-jointly:
+just noticed... shouldn't you also check pte_present() before
+vm_normal_page() ?
 
-  $ perf record -g --call-graph dwarf,1024 -j stack,u -- stack_test
+> >> +		if (!page || !PageCompound(page))
+> >> +			return;
+> >> +
+> >> +		if (!hpage) {
+> >> +			hpage = compound_head(page);
+> >
+> > OK,
+> >
+> >> +			if (hpage->mapping != vma->vm_file->f_mapping)
+> >> +				return;
+> >
+> > is it really possible? May be WARN_ON(hpage->mapping != vm_file->f_mapping)
+> > makes more sense ?
+>
+> I haven't found code paths lead to this,
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- tools/perf/util/parse-branch-options.c | 1 +
- 1 file changed, 1 insertion(+)
+Neither me, that is why I asked. I think this should not be possible,
+but again this is not my area.
 
-diff --git a/tools/perf/util/parse-branch-options.c b/tools/perf/util/parse-branch-options.c
-index 726e8d9e8c54..4ed20c833d44 100644
---- a/tools/perf/util/parse-branch-options.c
-+++ b/tools/perf/util/parse-branch-options.c
-@@ -30,6 +30,7 @@ static const struct branch_mode branch_modes[] = {
- 	BRANCH_OPT("ind_jmp", PERF_SAMPLE_BRANCH_IND_JUMP),
- 	BRANCH_OPT("call", PERF_SAMPLE_BRANCH_CALL),
- 	BRANCH_OPT("save_type", PERF_SAMPLE_BRANCH_TYPE_SAVE),
-+	BRANCH_OPT("stack", PERF_SAMPLE_BRANCH_CALL_STACK),
- 	BRANCH_END
- };
- 
--- 
-2.20.1
+> but this is technically possible.
+> This pmd could contain subpages from different THPs.
+
+Then please explain how this can happen ?
+
+> The __replace_page()
+> function in uprobes.c creates similar pmd.
+
+No it doesn't,
+
+> Current uprobe code won't really create this problem, because
+> !PageCompound() check above is sufficient. But it won't be difficult to
+> modify uprobe code to break this.
+
+I bet it will be a) difficult and b) the very idea to do this would be wrong.
+
+> For this code to be accurate and safe,
+> I think both this check and the one below are necessary.
+
+I didn't suggest to remove these checks.
+
+> Also, this code
+> is not on any critical path, so the overhead should be negligible.
+
+I do not care about overhead. But I do care about a poor reader like me
+who will try to understand this code.
+
+If you too do not understand how a THP page can have a different mapping
+then use VM_WARN or at least add a comment to explain that this is not
+supposed to happen!
+
+> Does this make sense?
+
+Not to me :/
+
+Oleg.
 
