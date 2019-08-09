@@ -2,106 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81D7687CDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D237087CE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 16:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406598AbfHIOke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 10:40:34 -0400
-Received: from foss.arm.com ([217.140.110.172]:48090 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726140AbfHIOke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 10:40:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 218CC15A2;
-        Fri,  9 Aug 2019 07:40:34 -0700 (PDT)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 700D33F706;
-        Fri,  9 Aug 2019 07:40:33 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: Extend SCMI to support new reset protocol
-Date:   Fri,  9 Aug 2019 15:40:27 +0100
-Message-Id: <20190809144027.20912-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
+        id S2436499AbfHIOlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 10:41:49 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:54285 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfHIOls (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 10:41:48 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mvbr4-1iD4VT2f4w-00saWn; Fri, 09 Aug 2019 16:41:37 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     soc@kernel.org
+Cc:     Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-usb@vger.kernel.org
+Subject: [PATCH v2 02/13] usb: udc: lpc32xx: allow compile-testing
+Date:   Fri,  9 Aug 2019 16:40:28 +0200
+Message-Id: <20190809144043.476786-3-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190809144043.476786-1-arnd@arndb.de>
+References: <20190809144043.476786-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:imKF8CYOdXNLcMsBRk3mkfe2XaXiYZ/dpgIAJ8vRCoyxvlRyj33
+ AVF5BJ04yO+4T850DaBd0tsnYRR8Kr57cnSNT3OeGpKfcEBIX8M9GQMwT1IUYdprcSqX4vO
+ EeKrYORhADLbzjwUhXrKNiu9yK1kPe1XBmNsZb+rNlS3zJR9ml4+W8sWjKbu1DGbmJqJCp8
+ TP+LwRSu/+D+dPieDgwZw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:o+P30devlyk=:ZOux45NQXABh307CDaffwC
+ eRRPJf8wFJnTFHt8ABbfXpKy4+2KstsbFkVk7tp+8vg4RTNo+M0qNZuHja9WiuljDwDeeHKcR
+ JxyOvwefJYugKbJYpqRg2PBrMHB/XvtsyuqQMKg6MW0mGJk+wUbEB88paGrIS/Z4GIMor3210
+ qI/jAwzxrydt6db2oU8rWGakd4MF7/PQKoleMWB6eEL683yBW0UqbgyGETizPP/DAsE3BgaaY
+ n1GFH9keXNXLp8Xhf+ZE5mBYr2ExNpKkbKCk5RA9MJQF4T0neuwFC91NWpUMkC4fvpBKNYttN
+ DlXWhYa5RA59/nEeBjcnTVwhV0UVR+x1laNjs+CvutXhcstOZLZ4DLnirepeO2IjaKjkTB68E
+ WPSCJLJS70sOdynJzhit1m7j49KEN77V/Yk0bExKwvI9+6INzhs/cKpqGC8EkE87qhzOfx1Jw
+ VxkvqpnmJjGiEUJVi/fVAv4Izr3dwKSZ+Ahn9ePU0N9HLxPwbFcZoAKs3Ec+3zA5lIuQCzta0
+ at21vUSECg93O+CzFZY7g0meK28uC1IVZxzI0gQm8lkt0rXQuLIbK+fJekVelMDCWZF8IwghO
+ cu0S6TwolJqo0s/Ne+Zpn138n5DzWwUfAxLpaeBExS5sdoIpkvdiiNDMLIql1FUOR+ONQbviM
+ ICGimsocRL3e9CqZnT7W2tc+ve+MFAKwCFQ00cgCy+DbaPUGMxRxv4WBMRhZ2IJCB8oDAdLQX
+ VyxbDTMn3knDPVcYN44yMWdFlMgOC1wRYKle3g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SCMIv2.0 adds a new Reset Management Protocol to manage various reset
-states a given device or domain can enter. Extend the existing SCMI
-bindings to add reset protocol support by re-using the reset bindings
-for both reset providers and consumers.
+The only thing that prevents building this driver on other
+platforms is the mach/hardware.h include, which is not actually
+used here at all, so remove the line and allow CONFIG_COMPILE_TEST.
 
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Herring <robh+dt@kernel.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../devicetree/bindings/arm/arm,scmi.txt        | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/usb/gadget/udc/Kconfig       | 3 ++-
+ drivers/usb/gadget/udc/lpc32xx_udc.c | 3 +--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Hi Rob,
-
-I am posting this separately to avoid reposting the driver patches that
-are already reviewed/asked. I need your ack to take the changes for v5.4
-I might have messed up something that it got missed from your patchworks
-Full series @[1]
-
-Regards,
-Sudeep
-
-[1] https://lore.kernel.org/lkml/20190806170208.6787-4-sudeep.holla@arm.com/
-
-diff --git a/Documentation/devicetree/bindings/arm/arm,scmi.txt b/Documentation/devicetree/bindings/arm/arm,scmi.txt
-index 317a2fc3667a..083dbf96ee00 100644
---- a/Documentation/devicetree/bindings/arm/arm,scmi.txt
-+++ b/Documentation/devicetree/bindings/arm/arm,scmi.txt
-@@ -73,6 +73,16 @@ SCMI provides an API to access the various sensors on the SoC.
- 			 as used by the firmware. Refer to  platform details
- 			 for your implementation for the IDs to use.
-
-+Reset signal bindings for the reset domains based on SCMI Message Protocol
-+------------------------------------------------------------
-+
-+This binding for the SCMI reset domain providers uses the generic reset
-+signal binding[5].
-+
-+Required properties:
-+ - #reset-cells : Should be 1. Contains the reset domain ID value used
-+		  by SCMI commands.
-+
- SRAM and Shared Memory for SCMI
- -------------------------------
-
-@@ -93,6 +103,7 @@ Each sub-node represents the reserved area for SCMI.
- [2] Documentation/devicetree/bindings/power/power_domain.txt
- [3] Documentation/devicetree/bindings/thermal/thermal.txt
- [4] Documentation/devicetree/bindings/sram/sram.txt
-+[5] Documentation/devicetree/bindings/reset/reset.txt
-
- Example:
-
-@@ -152,6 +163,11 @@ firmware {
- 			reg = <0x15>;
- 			#thermal-sensor-cells = <1>;
- 		};
-+
-+		scmi_reset: protocol@16 {
-+			reg = <0x16>;
-+			#reset-cells = <1>;
-+		};
- 	};
- };
-
-@@ -166,6 +182,7 @@ hdlcd@7ff60000 {
- 	reg = <0 0x7ff60000 0 0x1000>;
- 	clocks = <&scmi_clk 4>;
- 	power-domains = <&scmi_devpd 1>;
-+	resets = <&scmi_reset 10>;
- };
-
- thermal-zones {
---
-2.17.1
+diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
+index ef0259a950ba..d354036ff6c8 100644
+--- a/drivers/usb/gadget/udc/Kconfig
++++ b/drivers/usb/gadget/udc/Kconfig
+@@ -45,7 +45,8 @@ config USB_AT91
+ 
+ config USB_LPC32XX
+ 	tristate "LPC32XX USB Peripheral Controller"
+-	depends on ARCH_LPC32XX && I2C
++	depends on ARCH_LPC32XX || COMPILE_TEST
++	depends on I2C
+ 	select USB_ISP1301
+ 	help
+ 	   This option selects the USB device controller in the LPC32xx SoC.
+diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
+index 5f1b14f3e5a0..defe04d52e6d 100644
+--- a/drivers/usb/gadget/udc/lpc32xx_udc.c
++++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
+@@ -24,6 +24,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/prefetch.h>
+ #include <linux/proc_fs.h>
+ #include <linux/slab.h>
+ #include <linux/usb/ch9.h>
+@@ -35,8 +36,6 @@
+ #include <linux/seq_file.h>
+ #endif
+ 
+-#include <mach/hardware.h>
+-
+ /*
+  * USB device configuration structure
+  */
+-- 
+2.20.0
 
