@@ -2,102 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6551688128
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7FE8812C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2019 19:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436548AbfHIR3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 13:29:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46364 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfHIR3J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 13:29:09 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w3so8977198pgt.13;
-        Fri, 09 Aug 2019 10:29:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=2l2uOku7IZIdjpnDK2uRPlXP2kUl+VlcuE2o6tTh0qM=;
-        b=VOhJowUjF7HpnqkbCxFXoMMEq+gVRzXhe2DBlCi5etX6yBcO+JO9bVYCXJ/BLxX2hH
-         b3zbUhe+0LS72aW1bQNp/HRElRZdWKfB2/UDhSrBegbUf7F3Vv/dB40zVLC/cIKEuCnE
-         B3zZwPUe+jwI13wD9XaNQtuAyf5kdJFLc4AG6jVf9cIIuRZPHJX1j68EPknjWq7sJylT
-         5aLe3V6gf6IKWhRWsUPV/ETZ5SEPhJP3qukNKXp2whMHT92dzlpPkJbhXKqePZ/OD8rU
-         gmZVdIbvb9iDRmVMUraebYkz2F9EhJv8Ye9yffKS0JzBNE9qLSXdAP4XI1Fj/mZ6addv
-         c6sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=2l2uOku7IZIdjpnDK2uRPlXP2kUl+VlcuE2o6tTh0qM=;
-        b=R6SFi+r4UmLY+9gBtCDl15t1DVO39tcqSsVRGnOFRlzF/JGiKvlqIAj8ps5u0INMGL
-         ihVKNiNkyPyhqERu5QoP50hzrp+shqaF9sl/TG3WmtJlmxw30nVBhue8KXgwwWqWpdJK
-         6b+R5M761wXUAjlrqhPMNFkPXmiFZF4OFPq4pYBDSktqBgDHKdydss5ywHF98FCdoB0/
-         0TbWDUgWhY3a3Zh6qvoql4dyp7A6U/lxasXtflRx2LvDVQdwN7rJIPRwIPgZfx5Lso95
-         Zb/uRJe6YdxW/P2DLQ8I9ZsJ8H3jHDskRzuUM+lkvxqgG5Wi+i6tVhYYTLkhwlSMepAB
-         53tg==
-X-Gm-Message-State: APjAAAXDJTXUlKg8R9NnPBmuGlxESayGbfU8g1WkFMmSntqufmmzRhIQ
-        +joY4ZqyJ9K7PhwbMJOW8Xo=
-X-Google-Smtp-Source: APXvYqypywdRwkvnpkLb0alAWpcF3w1UWCqaPzX3ClRIQhWQ+QJv1naaOve6ISzMPMzRpujrUVKiJw==
-X-Received: by 2002:a17:90a:9301:: with SMTP id p1mr10439917pjo.22.1565371748343;
-        Fri, 09 Aug 2019 10:29:08 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g1sm161190879pgg.27.2019.08.09.10.29.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Aug 2019 10:29:07 -0700 (PDT)
-Date:   Fri, 9 Aug 2019 10:29:06 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>, od@zcrc.me,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] watchdog: jz4740: Driver update
-Message-ID: <20190809172906.GA21450@roeck-us.net>
-References: <20190809115930.6050-1-paul@crapouillou.net>
- <20190809165207.GA18104@roeck-us.net>
- <1565369726.2091.0@crapouillou.net>
+        id S2436700AbfHIR3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 13:29:21 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55038 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436582AbfHIR3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 13:29:20 -0400
+Received: from zn.tnic (p200300EC2F0BAF00B1329C581B3162A4.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:af00:b132:9c58:1b31:62a4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 47D3E1EC0B07;
+        Fri,  9 Aug 2019 19:29:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565371759;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=lPOAxolSCgoaWZk1kS26/9P2YdNN990Xnj6QZv/OKPs=;
+        b=JPo0s4zQc0LOr/iSubZgHo+6UW032/vJHsP9WcS+UDI/EnyKB7AGlEFb7DrhdJD4cli6iC
+        sZqU61sBSSuNLzfnRg5ex3ZGW7tmyKd8j9lDzuY+hgp7tyGkJDC9I1HDWP6QtPzLrAe7a5
+        9gnFutMjJSQIZda43F1Zd+d+GgVlqyQ=
+Date:   Fri, 9 Aug 2019 19:30:03 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Garnier <thgarnie@chromium.org>
+Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
+        keescook@chromium.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Maran Wilson <maran.wilson@oracle.com>,
+        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 08/11] x86/boot/64: Adapt assembly for PIE support
+Message-ID: <20190809173003.GG2152@zn.tnic>
+References: <20190730191303.206365-1-thgarnie@chromium.org>
+ <20190730191303.206365-9-thgarnie@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1565369726.2091.0@crapouillou.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190730191303.206365-9-thgarnie@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 06:55:26PM +0200, Paul Cercueil wrote:
-> Hi Guenter,
+chOn Tue, Jul 30, 2019 at 12:12:52PM -0700, Thomas Garnier wrote:
+> Change the assembly code to use only relative references of symbols for the
+> kernel to be PIE compatible.
 > 
-> 
-> Le ven. 9 août 2019 à 18:52, Guenter Roeck <linux@roeck-us.net> a écrit :
-> >On Fri, Aug 09, 2019 at 01:59:27PM +0200, Paul Cercueil wrote:
-> >> Hi,
-> >>
-> >> This patchset comes from a bigger patchset that was cut in smaller
-> >> pieces for easier integration to mainline.
-> >> (The patchset was https://lkml.org/lkml/2019/3/27/1837)
-> >>
-> >> The reviews were kept since the code mostly didn't change. The
-> >>exception
-> >> is the use of device_node_to_regmap() in patch 2/3. This function was
-> >> added in a prior patch, now merged in the MIPS tree.
-> >>
-> >> For that reason this patchset is based on the ingenic-tcu-v5.4 branch
-> >>of
-> >> the MIPS tree
-> >> (git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git).
-> >>
-> >
-> >What is the expectation here ? Should the series be sent upstream
-> >through the watchdog tree, or through some other tree ?
-> 
-> You can get it through the watchdog tree if you merge the ingenic-tcu-v5.4
-> branch from the MIPS tree. If you'd rather not do that, I can get it merged
-> through the MIPS tree.
-> 
-I would prefer a merge through the mips tree.
+> Early at boot, the kernel is mapped at a temporary address while preparing
+> the page table. To know the changes needed for the page table with KASLR,
 
-Guenter
+These manipulations need to be done regardless of whether KASLR is
+enabled or not. You're basically accomodating them to PIE.
+
+> the boot code calculate the difference between the expected address of the
+
+calculates
+
+> kernel and the one chosen by KASLR. It does not work with PIE because all
+> symbols in code are relatives. Instead of getting the future relocated
+> virtual address, you will get the current temporary mapping.
+
+Please avoid "you", "we" etc personal pronouns in commit messages.
+
+> Instructions were changed to have absolute 64-bit references.
+
+From Documentation/process/submitting-patches.rst:
+
+ "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+  to do frotz", as if you are giving orders to the codebase to change
+  its behaviour."
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
