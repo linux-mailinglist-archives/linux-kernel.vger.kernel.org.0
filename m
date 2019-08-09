@@ -2,87 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF1A2886A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 01:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B232188680
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 01:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731273AbfHIW7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 18:59:45 -0400
-Received: from mga05.intel.com ([192.55.52.43]:23658 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730266AbfHIW7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 18:59:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:59:06 -0700
-X-IronPort-AV: E=Sophos;i="5.64,367,1559545200"; 
-   d="scan'208";a="375343545"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 15:59:05 -0700
-From:   ira.weiny@intel.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org,
-        Ira Weiny <ira.weiny@intel.com>
-Subject: [RFC PATCH v2 16/19] RDMA/uverbs: Add back pointer to system file object
-Date:   Fri,  9 Aug 2019 15:58:30 -0700
-Message-Id: <20190809225833.6657-17-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190809225833.6657-1-ira.weiny@intel.com>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
+        id S1729808AbfHIW6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 18:58:50 -0400
+Received: from smtprelay0145.hostedemail.com ([216.40.44.145]:47251 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729533AbfHIW6q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Aug 2019 18:58:46 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id BC25C1801C4F4;
+        Fri,  9 Aug 2019 22:58:44 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:334:355:379:599:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1801:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3653:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4384:4605:5007:6119:6691:8603:8957:9025:10004:10400:10450:10455:10848:11026:11232:11658:11914:12043:12297:12438:12555:12740:12760:12895:13019:13439:14093:14097:14180:14181:14659:14721:19904:19999:21060:21063:21080:21451:21627:30029:30054:30070:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: net87_4c35b90f10723
+X-Filterd-Recvd-Size: 3471
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  9 Aug 2019 22:58:43 +0000 (UTC)
+Message-ID: <7c4db60a2b1976a92b5c824c7d24c4c77aa57278.camel@perches.com>
+Subject: Re: checkpatch.pl should suggest __section
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Fri, 09 Aug 2019 15:58:41 -0700
+In-Reply-To: <CAKwvOdmNdvgv=+P1CU36fG+trETojmPEXSMmAmX2TY0e67X-Wg@mail.gmail.com>
+References: <CAKwvOdmNdvgv=+P1CU36fG+trETojmPEXSMmAmX2TY0e67X-Wg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Fri, 2019-08-09 at 15:21 -0700, Nick Desaulniers wrote:
+> Hi Joe,
+> While debugging:
+> https://github.com/ClangBuiltLinux/linux/issues/619
+> we found a bunch of places where __section is not used but could be,
+> and uses a string literal when it probably should not be.
+> 
+> Just a thought that maybe checkpatch.pl could warn if
+> `__attribute__((section` appeared in the added diff, and suggest
+> __section? Then further warn to not use `""` for the section name?
 
-In order for MRs to be tracked against the open verbs context the ufile
-needs to have a pointer to hand to the GUP code.
+Hmm, that makes me wonder about the existing __section uses
+_with_ a quote are actually in the proper sections.
 
-No references need to be taken as this should be valid for the lifetime
-of the context.
+$ git grep -n -P '\b__section\s*\(\s*"'
+arch/arm64/kernel/smp_spin_table.c:22:volatile unsigned long __section(".mmuoff.data.read")
+arch/s390/boot/startup.c:49:static struct diag210 _diag210_tmp_dma __section(".dma.data");
+include/linux/compiler.h:27:                            __section("_ftrace_annotated_branch")   \
+include/linux/compiler.h:63:            __section("_ftrace_branch")             \
+include/linux/compiler.h:121:#define __annotate_jump_table __section(".rodata..c_jump_table")
+include/linux/compiler.h:158:   __section("___kentry" "+" #sym )                        \
+include/linux/compiler.h:301:   static void * __section(".discard.addressable") __used \
+include/linux/export.h:107:     static int __ksym_marker_##sym[0] __section(".discard.ksym") __used
+include/linux/srcutree.h:127:           __section("___srcu_struct_ptrs") = &name
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Maybe there should also be a __section("<foo>") test too.
+
+Anyway, how about:
 ---
- drivers/infiniband/core/uverbs.h      | 1 +
- drivers/infiniband/core/uverbs_main.c | 1 +
- 2 files changed, 2 insertions(+)
+ scripts/checkpatch.pl | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
-index 1e5aeb39f774..e802ba8c67d6 100644
---- a/drivers/infiniband/core/uverbs.h
-+++ b/drivers/infiniband/core/uverbs.h
-@@ -163,6 +163,7 @@ struct ib_uverbs_file {
- 	struct page *disassociate_page;
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 1cdacb4fd207..8e6693ca772c 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5901,6 +5901,15 @@ sub process {
+ 			     "__aligned(size) is preferred over __attribute__((aligned(size)))\n" . $herecurr);
+ 		}
  
- 	struct xarray		idr;
-+	struct file             *sys_file; /* backpointer to system file object */
- };
- 
- struct ib_uverbs_event {
-diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
-index 11c13c1381cf..002c24e0d4db 100644
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -1092,6 +1092,7 @@ static int ib_uverbs_open(struct inode *inode, struct file *filp)
- 	INIT_LIST_HEAD(&file->umaps);
- 
- 	filp->private_data = file;
-+	file->sys_file = filp;
- 	list_add_tail(&file->list, &dev->uverbs_file_list);
- 	mutex_unlock(&dev->lists_mutex);
- 	srcu_read_unlock(&dev->disassociate_srcu, srcu_key);
--- 
-2.20.1
++# Check for __attribute__ section, prefer __section (without quotes)
++		if ($realfile !~ m@\binclude/uapi/@ &&
++		    $line =~ /\b__attribute__\s*\(\s*\(.*_*section_*\s*\(\s*("[^"]*")/) {
++			my $old = substr($rawline, $-[1], $+[1] - $-[1]);
++			my $new = substr($old, 1, -1);
++			WARN("PREFER_SECTION",
++			     "__section($new) is preferred over __attribute__((section($old)))\n" . $herecurr);
++		}
++
+ # Check for __attribute__ format(printf, prefer __printf
+ 		if ($realfile !~ m@\binclude/uapi/@ &&
+ 		    $line =~ /\b__attribute__\s*\(\s*\(\s*format\s*\(\s*printf/) {
+
+
 
