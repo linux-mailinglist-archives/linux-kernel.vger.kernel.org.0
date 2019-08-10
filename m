@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBBD288D66
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA8588D6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfHJUpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:45:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55416 "EHLO
+        id S1727260AbfHJUqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:46:03 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55286 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726913AbfHJUoI (ORCPT
+        by vger.kernel.org with ESMTP id S1726892AbfHJUoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:08 -0400
+        Sat, 10 Aug 2019 16:44:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDb-00053t-W6; Sat, 10 Aug 2019 21:44:04 +0100
+        id 1hwYDb-00053j-W8; Sat, 10 Aug 2019 21:44:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDL-0003cz-0r; Sat, 10 Aug 2019 21:43:47 +0100
+        id 1hwYDL-0003dY-Ah; Sat, 10 Aug 2019 21:43:47 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Tokunori Ikegami" <ikegami_to@yahoo.co.jp>,
-        "Richard Weinberger" <richard@nod.at>,
-        "Liu Jian" <liujian56@huawei.com>,
-        "Yi Huaijie" <yihuaijie@huawei.com>
+        "Christophe Leroy" <christophe.leroy@c-s.fr>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Christian Zigotzky" <chzigotzky@xenosoft.de>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.292130683@decadent.org.uk>
+Message-ID: <lsq.1565469607.253685011@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 069/157] mtd: cfi: fix deadloop in cfi_cmdset_0002.c
- do_write_buffer
+Subject: [PATCH 3.16 076/157] powerpc/vdso32: fix CLOCK_MONOTONIC on PPC64
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,39 +48,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liu Jian <liujian56@huawei.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit d9b8a67b3b95a5c5aae6422b8113adc1c2485f2b upstream.
+commit dd9a994fc68d196a052b73747e3366c57d14a09e upstream.
 
-In function do_write_buffer(), in the for loop, there is a case
-chip_ready() returns 1 while chip_good() returns 0, so it never
-break the loop.
-To fix this, chip_good() is enough and it should timeout if it stay
-bad for a while.
+Commit b5b4453e7912 ("powerpc/vdso64: Fix CLOCK_MONOTONIC
+inconsistencies across Y2038") changed the type of wtom_clock_sec
+to s64 on PPC64. Therefore, VDSO32 needs to read it with a 4 bytes
+shift in order to retrieve the lower part of it.
 
-Fixes: dfeae1073583("mtd: cfi_cmdset_0002: Change write buffer to check correct value")
-Signed-off-by: Yi Huaijie <yihuaijie@huawei.com>
-Signed-off-by: Liu Jian <liujian56@huawei.com>
-Reviewed-by: Tokunori Ikegami <ikegami_to@yahoo.co.jp>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Fixes: b5b4453e7912 ("powerpc/vdso64: Fix CLOCK_MONOTONIC inconsistencies across Y2038")
+Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/vdso32/gettimeofday.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -1538,7 +1538,11 @@ static int __xipram do_write_buffer(stru
- 			continue;
- 		}
+--- a/arch/powerpc/kernel/vdso32/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
+@@ -98,7 +98,7 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
+ 	 * can be used, r7 contains NSEC_PER_SEC.
+ 	 */
  
--		if (time_after(jiffies, timeo) && !chip_ready(map, adr))
-+		/*
-+		 * We check "time_after" and "!chip_good" before checking "chip_good" to avoid
-+		 * the failure due to scheduling.
-+		 */
-+		if (time_after(jiffies, timeo) && !chip_good(map, adr, datum))
- 			break;
+-	lwz	r5,WTOM_CLOCK_SEC(r9)
++	lwz	r5,(WTOM_CLOCK_SEC+LOPART)(r9)
+ 	lwz	r6,WTOM_CLOCK_NSEC(r9)
  
- 		if (chip_good(map, adr, datum)) {
+ 	/* We now have our offset in r5,r6. We create a fake dependency
 
