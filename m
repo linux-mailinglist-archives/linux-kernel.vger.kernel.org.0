@@ -2,60 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 293BE888EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 08:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 165DE888ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 08:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbfHJGyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 02:54:01 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37663 "EHLO
+        id S1726119AbfHJG7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 02:59:06 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46946 "EHLO
         mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbfHJGyA (ORCPT
+        with ESMTP id S1725468AbfHJG7F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 02:54:00 -0400
-Received: by mail-ot1-f66.google.com with SMTP id f17so5859741otq.4;
-        Fri, 09 Aug 2019 23:54:00 -0700 (PDT)
+        Sat, 10 Aug 2019 02:59:05 -0400
+Received: by mail-ot1-f66.google.com with SMTP id z17so22830794otk.13;
+        Fri, 09 Aug 2019 23:59:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eOMFEQULG4ETNfmsGWkYizG85VQ8dOBtOOsPpC+4IwY=;
-        b=L5CFCCJphaLGy3vIdj8h5tSRWryp3pwAlfCE/gK6iIsemDIoSfauqYe4zzpqAob9JI
-         Vu6OKizu7JSdv4FulOzDoyR7OrVofMkQzHaLCi3l9AQDclv99Y+SjVyThweQ+3ZX6BeC
-         vRywy9HgytCWXeIlMAyUco+r6Jgs7gcijh19sIWFsLPNF68BPXnjCNv7yGyBmrQ8Bndc
-         9Gsv+6g3KfJwx+982Faku4wPRLydl9iIg720l4zXnnTYkbEhCbMcoN+XD/I+loHwaA+x
-         JOAIzc7d9v+fai9bnSOmkxllK2+3vzAUf3Y+meJQhL/ECE+StzukjD/Ke/WFxCbGvMuB
-         Uu7g==
-X-Gm-Message-State: APjAAAWpcAoVCTMmrxu9nLWU90ohpG/hKGrB6xqVTxM6DaRvSuYiXXIy
-        aQX5JvxBI+aUczRrnWxhXATTCCW9nn4KL915VE0=
-X-Google-Smtp-Source: APXvYqzx/6FRCr7+yJQuE/vV4iW79D32w2ZddbygPHnzwQk6mt6bW5QSWrxyu66D6u1qWeaVyzMGijid1pHQPAzCr+M=
-X-Received: by 2002:a9d:459d:: with SMTP id x29mr6988532ote.39.1565420039948;
- Fri, 09 Aug 2019 23:53:59 -0700 (PDT)
+        bh=jCiIkAHQv04Yhu2YlExm6Y+RKbCmTgvVHfMoq6E68UA=;
+        b=eyIACgnUF8YpkqDIM1zd6v5ND29rfboXy15POXc3Ln9mSIwFRHRJiY63eGjeW1wvbU
+         1GfkzlL0+FaeKB+1Dw6mz1cOjbmftelvd+arsmv9qjsn+ju05mCtFlp5qDU+EaAPnv87
+         Nw5EhrhUrqVBv0+n77nnzWKjcag9nzMObR8MlTZ+UZ1dIqAd77pyTJ9paZPGMYew3Ntd
+         /LppDGUAlfjyUZQAiVBdqHWCxEzdg+m8z3VZ90e2Kxn0z1BkruIHPcokzfCQ0gTza0CT
+         4MF6fJTL8ZyUwY5IAZqu98Uero08ytYpbT9bL0iRLHQDPJh7nO6WlxZ3tugnzoLCHtR8
+         xvRQ==
+X-Gm-Message-State: APjAAAXX2AIWjSwqz4A39hoDIbEt4/n0fxpsSX8BK3lkwrIXcUXQM2Mk
+        C846+Qti5Kf4mSBovZKwzO6JXf11GtuOMcyhPW0=
+X-Google-Smtp-Source: APXvYqzQL2QVOjIqeka+4Ecte5cpEweDrJl7zSog7SaRU49m2YOMldmuib9eXa77Xvnfs1Wvn5jBdn3tpy7PYudki18=
+X-Received: by 2002:a9d:5c11:: with SMTP id o17mr19824177otk.107.1565420344701;
+ Fri, 09 Aug 2019 23:59:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190810045944.GA13815@embeddedor>
-In-Reply-To: <20190810045944.GA13815@embeddedor>
+References: <20190810052442.GA21354@embeddedor>
+In-Reply-To: <20190810052442.GA21354@embeddedor>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 10 Aug 2019 08:53:48 +0200
-Message-ID: <CAMuHMdVF8qoqR2EkCe8ND-SDMRf8tiEDdbZ0fJCL+eziiXBKBg@mail.gmail.com>
-Subject: Re: [PATCH] sh: kernel: hw_breakpoint: Fix missing break in switch statement
+Date:   Sat, 10 Aug 2019 08:58:53 +0200
+Message-ID: <CAMuHMdWsu56u_HmwMSTy3N0_uKN0ngi4pmuXoX0y5iU7Y=L=6g@mail.gmail.com>
+Subject: Re: [PATCH v2] sh: kernel: disassemble: Mark expected switch fall-throughs
 To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>,
         Linux-sh list <linux-sh@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
+        Guenter Roeck <linux@roeck-us.net>,
+        Joe Perches <joe@perches.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 10, 2019 at 6:59 AM Gustavo A. R. Silva
+On Sat, Aug 10, 2019 at 7:26 AM Gustavo A. R. Silva
 <gustavo@embeddedor.com> wrote:
-> Add missing break statement in order to prevent the code from
-> erroneously falling through to case SH_BREAKPOINT_WRITE.
+> Remove logically dead code and mark switch cases where we are expecting
+> to fall through.
 >
-> Fixes: 09a072947791 ("sh: hw-breakpoints: Add preliminary support for SH-4A UBC.")
-> Cc: stable@vger.kernel.org
+> Fix the following warnings (Building: defconfig sh):
+>
+> arch/sh/kernel/disassemble.c:478:8: warning: this statement may fall
+> through [-Wimplicit-fallthrough=]
+> arch/sh/kernel/disassemble.c:487:8: warning: this statement may fall
+> through [-Wimplicit-fallthrough=]
+> arch/sh/kernel/disassemble.c:496:8: warning: this statement may fall
+> through [-Wimplicit-fallthrough=]
+>
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
