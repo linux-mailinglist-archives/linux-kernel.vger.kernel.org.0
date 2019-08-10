@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BC488DDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C076988D55
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfHJUtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:49:52 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54580 "EHLO
+        id S1727141AbfHJUom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:44:42 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55066 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726740AbfHJUn5 (ORCPT
+        by vger.kernel.org with ESMTP id S1726845AbfHJUoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:57 -0400
+        Sat, 10 Aug 2019 16:44:04 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDS-00053i-Fm; Sat, 10 Aug 2019 21:43:54 +0100
+        id 1hwYDY-00053e-Ke; Sat, 10 Aug 2019 21:44:00 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDP-0003mZ-Ic; Sat, 10 Aug 2019 21:43:51 +0100
+        id 1hwYDM-0003ee-41; Sat, 10 Aug 2019 21:43:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,21 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "chenxiang" <chenxiang66@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>,
-        "Johannes Thumshirn" <jthumshirn@suse.de>,
-        "Ewan Milne" <emilne@redhat.com>,
-        "Dan Williams" <dan.j.williams@intel.com>,
-        "Tomas Henzl" <thenzl@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Hannes Reinecke" <hare@suse.com>,
-        "Christoph Hellwig" <hch@lst.de>, "Jason Yan" <yanaijie@huawei.com>
+        "Ian Abbott" <abbotti@mev.co.uk>,
+        syzbot+54c2f58f15fe6876b6ad@syzkaller.appspotmail.com,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.672530587@decadent.org.uk>
+Message-ID: <lsq.1565469607.121049315@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 157/157] scsi: libsas: fix a race condition when smp
- task timeout
+Subject: [PATCH 3.16 087/157] staging: comedi: vmk80xx: Fix use of
+ uninitialized semaphore
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,62 +49,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Ian Abbott <abbotti@mev.co.uk>
 
-commit b90cd6f2b905905fb42671009dc0e27c310a16ae upstream.
+commit 08b7c2f9208f0e2a32159e4e7a4831b7adb10a3e upstream.
 
-When the lldd is processing the complete sas task in interrupt and set the
-task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to be
-triggered at the same time. And smp_task_timedout() will complete the task
-wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may freed
-before lldd end the interrupt process. Thus a use-after-free will happen.
+If `vmk80xx_auto_attach()` returns an error, the core comedi module code
+will call `vmk80xx_detach()` to clean up.  If `vmk80xx_auto_attach()`
+successfully allocated the comedi device private data,
+`vmk80xx_detach()` assumes that a `struct semaphore limit_sem` contained
+in the private data has been initialized and uses it.  Unfortunately,
+there are a couple of places where `vmk80xx_auto_attach()` can return an
+error after allocating the device private data but before initializing
+the semaphore, so this assumption is invalid.  Fix it by initializing
+the semaphore just after allocating the private data in
+`vmk80xx_auto_attach()` before any other errors can be returned.
 
-Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
-set. And remove the check of the return value of the del_timer(). Once the
-LLDD sets DONE, it must call task->done(), which will call
-smp_task_done()->complete() and the task will be completed and freed
-correctly.
+I believe this was the cause of the following syzbot crash report
+<https://syzkaller.appspot.com/bug?extid=54c2f58f15fe6876b6ad>:
 
-Reported-by: chenxiang <chenxiang66@hisilicon.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: Johannes Thumshirn <jthumshirn@suse.de>
-CC: Ewan Milne <emilne@redhat.com>
-CC: Christoph Hellwig <hch@lst.de>
-CC: Tomas Henzl <thenzl@redhat.com>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: John Garry <john.garry@huawei.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+usb 1-1: config 0 has no interface number 0
+usb 1-1: New USB device found, idVendor=10cf, idProduct=8068, bcdDevice=e6.8d
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+vmk80xx 1-1:0.117: driver 'vmk80xx' failed to auto-configure device.
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.1.0-rc4-319354-g9a33b36 #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xe8/0x16e lib/dump_stack.c:113
+ assign_lock_key kernel/locking/lockdep.c:786 [inline]
+ register_lock_class+0x11b8/0x1250 kernel/locking/lockdep.c:1095
+ __lock_acquire+0xfb/0x37c0 kernel/locking/lockdep.c:3582
+ lock_acquire+0x10d/0x2f0 kernel/locking/lockdep.c:4211
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x44/0x60 kernel/locking/spinlock.c:152
+ down+0x12/0x80 kernel/locking/semaphore.c:58
+ vmk80xx_detach+0x59/0x100 drivers/staging/comedi/drivers/vmk80xx.c:829
+ comedi_device_detach+0xed/0x800 drivers/staging/comedi/drivers.c:204
+ comedi_device_cleanup.part.0+0x68/0x140 drivers/staging/comedi/comedi_fops.c:156
+ comedi_device_cleanup drivers/staging/comedi/comedi_fops.c:187 [inline]
+ comedi_free_board_dev.part.0+0x16/0x90 drivers/staging/comedi/comedi_fops.c:190
+ comedi_free_board_dev drivers/staging/comedi/comedi_fops.c:189 [inline]
+ comedi_release_hardware_device+0x111/0x140 drivers/staging/comedi/comedi_fops.c:2880
+ comedi_auto_config.cold+0x124/0x1b0 drivers/staging/comedi/drivers.c:1068
+ usb_probe_interface+0x31d/0x820 drivers/usb/core/driver.c:361
+ really_probe+0x2da/0xb10 drivers/base/dd.c:509
+ driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
+ __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
+ bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
+ __device_attach+0x223/0x3a0 drivers/base/dd.c:844
+ bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
+ device_add+0xad2/0x16e0 drivers/base/core.c:2106
+ usb_set_configuration+0xdf7/0x1740 drivers/usb/core/message.c:2021
+ generic_probe+0xa2/0xda drivers/usb/core/generic.c:210
+ usb_probe_device+0xc0/0x150 drivers/usb/core/driver.c:266
+ really_probe+0x2da/0xb10 drivers/base/dd.c:509
+ driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
+ __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
+ bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
+ __device_attach+0x223/0x3a0 drivers/base/dd.c:844
+ bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
+ device_add+0xad2/0x16e0 drivers/base/core.c:2106
+ usb_new_device.cold+0x537/0xccf drivers/usb/core/hub.c:2534
+ hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+ port_event drivers/usb/core/hub.c:5350 [inline]
+ hub_event+0x138e/0x3b00 drivers/usb/core/hub.c:5432
+ process_one_work+0x90f/0x1580 kernel/workqueue.c:2269
+ worker_thread+0x9b/0xe20 kernel/workqueue.c:2415
+ kthread+0x313/0x420 kernel/kthread.c:253
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+Reported-by: syzbot+54c2f58f15fe6876b6ad@syzkaller.appspotmail.com
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/scsi/libsas/sas_expander.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/staging/comedi/drivers/vmk80xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -47,17 +47,16 @@ static void smp_task_timedout(unsigned l
- 	unsigned long flags;
+--- a/drivers/staging/comedi/drivers/vmk80xx.c
++++ b/drivers/staging/comedi/drivers/vmk80xx.c
+@@ -872,6 +872,8 @@ static int vmk80xx_auto_attach(struct co
  
- 	spin_lock_irqsave(&task->task_state_lock, flags);
--	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
-+	if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
- 		task->task_state_flags |= SAS_TASK_STATE_ABORTED;
-+		complete(&task->slow_task->completion);
-+	}
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+ 	devpriv->model = boardinfo->model;
+ 
++	sema_init(&devpriv->limit_sem, 8);
++
+ 	ret = vmk80xx_find_usb_endpoints(dev);
+ 	if (ret)
+ 		return ret;
+@@ -880,8 +882,6 @@ static int vmk80xx_auto_attach(struct co
+ 	if (ret)
+ 		return ret;
+ 
+-	sema_init(&devpriv->limit_sem, 8);
 -
--	complete(&task->slow_task->completion);
- }
+ 	usb_set_intfdata(intf, devpriv);
  
- static void smp_task_done(struct sas_task *task)
- {
--	if (!del_timer(&task->slow_task->timer))
--		return;
-+	del_timer(&task->slow_task->timer);
- 	complete(&task->slow_task->completion);
- }
- 
+ 	if (devpriv->model == VMK8061_MODEL) {
 
