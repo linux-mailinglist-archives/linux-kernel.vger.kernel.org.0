@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFEA488E1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5CDA88E29
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfHJUwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:52:02 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54164 "EHLO
+        id S1727714AbfHJUwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:52:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54148 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726595AbfHJUnw (ORCPT
+        by vger.kernel.org with ESMTP id S1726582AbfHJUnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 10 Aug 2019 16:43:52 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDN-00053r-8Z; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDM-00053h-Q6; Sat, 10 Aug 2019 21:43:48 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003az-Qx; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDJ-0003b3-Rm; Sat, 10 Aug 2019 21:43:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Alexandru Ardelean" <alexandru.ardelean@analog.com>,
-        "Dragos Bogdan" <dragos.bogdan@analog.com>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
+        "Simon Wunderlich" <sw@simonwunderlich.de>,
+        "Sven Eckelmann" <sven@narfation.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.438808068@decadent.org.uk>
+Message-ID: <lsq.1565469607.970365987@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 044/157] iio: ad_sigma_delta: select channel when
- reading register
+Subject: [PATCH 3.16 045/157] batman-adv: Reduce claim hash refcnt only
+ for removed entry
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,32 +48,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dragos Bogdan <dragos.bogdan@analog.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit fccfb9ce70ed4ea7a145f77b86de62e38178517f upstream.
+commit 4ba104f468bbfc27362c393815d03aa18fb7a20f upstream.
 
-The desired channel has to be selected in order to correctly fill the
-buffer with the corresponding data.
-The `ad_sd_write_reg()` already does this, but for the
-`ad_sd_read_reg_raw()` this was omitted.
+The batadv_hash_remove is a function which searches the hashtable for an
+entry using a needle, a hashtable bucket selection function and a compare
+function. It will lock the bucket list and delete an entry when the compare
+function matches it with the needle. It returns the pointer to the
+hlist_node which matches or NULL when no entry matches the needle.
 
-Fixes: af3008485ea03 ("iio:adc: Add common code for ADI Sigma Delta devices")
-Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+The batadv_bla_del_claim is not itself protected in anyway to avoid that
+any other function is modifying the hashtable between the search for the
+entry and the call to batadv_hash_remove. It can therefore happen that the
+entry either doesn't exist anymore or an entry was deleted which is not the
+same object as the needle. In such an situation, the reference counter (for
+the reference stored in the hashtable) must not be reduced for the needle.
+Instead the reference counter of the actually removed entry has to be
+reduced.
+
+Otherwise the reference counter will underflow and the object might be
+freed before all its references were dropped. The kref helpers reported
+this problem as:
+
+  refcount_t: underflow; use-after-free.
+
+Fixes: 23721387c409 ("batman-adv: add basic bridge loop avoidance code")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+[bwh: Backported to 3.16: keep using batadv_claim_free_ref()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/iio/adc/ad_sigma_delta.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/batman-adv/bridge_loop_avoidance.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/drivers/iio/adc/ad_sigma_delta.c
-+++ b/drivers/iio/adc/ad_sigma_delta.c
-@@ -121,6 +121,7 @@ static int ad_sd_read_reg_raw(struct ad_
- 	if (sigma_delta->info->has_registers) {
- 		data[0] = reg << sigma_delta->info->addr_shift;
- 		data[0] |= sigma_delta->info->read_mask;
-+		data[0] |= sigma_delta->comm;
- 		spi_message_add_tail(&t[0], &m);
- 	}
- 	spi_message_add_tail(&t[1], &m);
+--- a/net/batman-adv/bridge_loop_avoidance.c
++++ b/net/batman-adv/bridge_loop_avoidance.c
+@@ -677,6 +677,8 @@ static void batadv_bla_del_claim(struct
+ 				 const uint8_t *mac, const unsigned short vid)
+ {
+ 	struct batadv_bla_claim search_claim, *claim;
++	struct batadv_bla_claim *claim_removed_entry;
++	struct hlist_node *claim_removed_node;
+ 
+ 	ether_addr_copy(search_claim.addr, mac);
+ 	search_claim.vid = vid;
+@@ -687,10 +689,18 @@ static void batadv_bla_del_claim(struct
+ 	batadv_dbg(BATADV_DBG_BLA, bat_priv, "bla_del_claim(): %pM, vid %d\n",
+ 		   mac, BATADV_PRINT_VID(vid));
+ 
+-	batadv_hash_remove(bat_priv->bla.claim_hash, batadv_compare_claim,
+-			   batadv_choose_claim, claim);
+-	batadv_claim_free_ref(claim); /* reference from the hash is gone */
++	claim_removed_node = batadv_hash_remove(bat_priv->bla.claim_hash,
++						batadv_compare_claim,
++						batadv_choose_claim, claim);
++	if (!claim_removed_node)
++		goto free_claim;
+ 
++	/* reference from the hash is gone */
++	claim_removed_entry = hlist_entry(claim_removed_node,
++					  struct batadv_bla_claim, hash_entry);
++	batadv_claim_free_ref(claim_removed_entry);
++
++free_claim:
+ 	/* don't need the reference from hash_find() anymore */
+ 	batadv_claim_free_ref(claim);
+ }
 
