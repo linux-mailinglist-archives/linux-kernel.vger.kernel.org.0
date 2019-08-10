@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B8AB88DF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 332E688E1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfHJUu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:50:28 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54546 "EHLO
+        id S1727709AbfHJUwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:52:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54166 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726734AbfHJUn5 (ORCPT
+        by vger.kernel.org with ESMTP id S1726594AbfHJUnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:57 -0400
+        Sat, 10 Aug 2019 16:43:52 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDS-00053h-LQ; Sat, 10 Aug 2019 21:43:54 +0100
+        id 1hwYDN-00053m-7p; Sat, 10 Aug 2019 21:43:49 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003kq-Ru; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDK-0003br-A3; Sat, 10 Aug 2019 21:43:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
+        "Jim Mattson" <jmattson@google.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.506823237@decadent.org.uk>
+Message-ID: <lsq.1565469607.160863860@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 145/157] Revert "inet: update the IP ID generation
- algorithm to higher standards."
+Subject: [PATCH 3.16 055/157] kvm: x86: IA32_ARCH_CAPABILITIES is always
+ supported
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -46,49 +49,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Jim Mattson <jmattson@google.com>
 
-This reverts commit 8b197d3ce585d6777197e0633d71e5af7d98cb35, which
-was a stable-specific improvement to IP ID selection.  I will apply
-the upstream changes instead.
+commit 1eaafe91a0df4157521b6417b3dd8430bf5f52f0 upstream.
 
+If there is a possibility that a VM may migrate to a Skylake host,
+then the hypervisor should report IA32_ARCH_CAPABILITIES.RSBA[bit 2]
+as being set (future work, of course). This implies that
+CPUID.(EAX=7,ECX=0):EDX.ARCH_CAPABILITIES[bit 29] should be
+set. Therefore, kvm should report this CPUID bit as being supported
+whether or not the host supports it.  Userspace is still free to clear
+the bit if it chooses.
+
+For more information on RSBA, see Intel's white paper, "Retpoline: A
+Branch Target Injection Mitigation" (Document Number 337131-001),
+currently available at https://bugzilla.kernel.org/show_bug.cgi?id=199511.
+
+Since the IA32_ARCH_CAPABILITIES MSR is emulated in kvm, there is no
+dependency on hardware support for this feature.
+
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Fixes: 28c1c9fabf48 ("KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES")
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -487,15 +487,13 @@ EXPORT_SYMBOL(ip_idents_reserve);
- void __ip_select_ident(struct iphdr *iph, int segs)
- {
- 	static u32 ip_idents_hashrnd __read_mostly;
--	static u32 ip_idents_hashrnd_extra __read_mostly;
- 	u32 hash, id;
- 
- 	net_get_random_once(&ip_idents_hashrnd, sizeof(ip_idents_hashrnd));
--	net_get_random_once(&ip_idents_hashrnd_extra, sizeof(ip_idents_hashrnd_extra));
- 
- 	hash = jhash_3words((__force u32)iph->daddr,
- 			    (__force u32)iph->saddr,
--			    iph->protocol ^ ip_idents_hashrnd_extra,
-+			    iph->protocol,
- 			    ip_idents_hashrnd);
- 	id = ip_idents_reserve(hash, segs);
- 	iph->id = htons(id);
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -541,15 +541,12 @@ static void ip6_copy_metadata(struct sk_
- static void ipv6_select_ident(struct frag_hdr *fhdr, struct rt6_info *rt)
- {
- 	static u32 ip6_idents_hashrnd __read_mostly;
--	static u32 ip6_idents_hashrnd_extra __read_mostly;
- 	u32 hash, id;
- 
- 	net_get_random_once(&ip6_idents_hashrnd, sizeof(ip6_idents_hashrnd));
--	net_get_random_once(&ip6_idents_hashrnd_extra, sizeof(ip6_idents_hashrnd_extra));
- 
- 	hash = __ipv6_addr_jhash(&rt->rt6i_dst.addr, ip6_idents_hashrnd);
- 	hash = __ipv6_addr_jhash(&rt->rt6i_src.addr, hash);
--	hash = jhash_1word(hash, ip6_idents_hashrnd_extra);
- 
- 	id = ip_idents_reserve(hash, 1);
- 	fhdr->identification = htonl(id);
+ arch/x86/kvm/cpuid.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -395,6 +395,11 @@ static inline int __do_cpuid_ent(struct
+ 			entry->ebx |= F(TSC_ADJUST);
+ 			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
+ 			cpuid_mask(&entry->edx, 10);
++			/*
++			 * We emulate ARCH_CAPABILITIES in software even
++			 * if the host doesn't support it.
++			 */
++			entry->edx |= F(ARCH_CAPABILITIES);
+ 		} else {
+ 			entry->ebx = 0;
+ 			entry->edx = 0;
 
