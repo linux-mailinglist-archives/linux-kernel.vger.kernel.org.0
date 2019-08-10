@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6204588E4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3434588E2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfHJUxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:53:41 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53860 "EHLO
+        id S1727766AbfHJUwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:52:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54130 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726502AbfHJUnt (ORCPT
+        by vger.kernel.org with ESMTP id S1726578AbfHJUnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:49 -0400
+        Sat, 10 Aug 2019 16:43:52 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-00053X-Mb; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDN-00053s-56; Sat, 10 Aug 2019 21:43:49 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003ZQ-6A; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDK-0003bn-8n; Sat, 10 Aug 2019 21:43:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Kangjie Lu" <kjlu@umn.edu>
+        "Sean Christopherson" <sean.j.christopherson@intel.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.474736016@decadent.org.uk>
+Message-ID: <lsq.1565469607.308888712@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 025/157] tty: mxs-auart: fix a potential NULL pointer
- dereference
+Subject: [PATCH 3.16 054/157] KVM: Reject device ioctls from processes
+ other than the VM's creator
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,34 +48,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 6734330654dac550f12e932996b868c6d0dcb421 upstream.
+commit ddba91801aeb5c160b660caed1800eb3aef403f8 upstream.
 
-In case ioremap fails, the fix returns -ENOMEM to avoid NULL
-pointer dereferences.
-Multiple places use port.membase.
+KVM's API requires thats ioctls must be issued from the same process
+that created the VM.  In other words, userspace can play games with a
+VM's file descriptors, e.g. fork(), SCM_RIGHTS, etc..., but only the
+creator can do anything useful.  Explicitly reject device ioctls that
+are issued by a process other than the VM's creator, and update KVM's
+API documentation to extend its requirements to device ioctls.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: There is no out_disable_clks label, so goto
- out_free_clk on error]
+Fixes: 852b6d57dc7f ("kvm: add device control API")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/mxs-auart.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/virtual/kvm/api.txt | 16 +++++++++++-----
+ virt/kvm/kvm_main.c               |  3 +++
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
---- a/drivers/tty/serial/mxs-auart.c
-+++ b/drivers/tty/serial/mxs-auart.c
-@@ -1075,6 +1075,10 @@ static int mxs_auart_probe(struct platfo
+--- a/Documentation/virtual/kvm/api.txt
++++ b/Documentation/virtual/kvm/api.txt
+@@ -13,7 +13,7 @@ of a virtual machine.  The ioctls belong
  
- 	s->port.mapbase = r->start;
- 	s->port.membase = ioremap(r->start, resource_size(r));
-+	if (!s->port.membase) {
-+		ret = -ENOMEM;
-+		goto out_free_clk;
-+	}
- 	s->port.ops = &mxs_auart_ops;
- 	s->port.iotype = UPIO_MEM;
- 	s->port.fifosize = MXS_AUART_FIFO_SIZE;
+  - VM ioctls: These query and set attributes that affect an entire virtual
+    machine, for example memory layout.  In addition a VM ioctl is used to
+-   create virtual cpus (vcpus).
++   create virtual cpus (vcpus) and devices.
+ 
+    Only run VM ioctls from the same process (address space) that was used
+    to create the VM.
+@@ -24,6 +24,11 @@ of a virtual machine.  The ioctls belong
+    Only run vcpu ioctls from the same thread that was used to create the
+    vcpu.
+ 
++ - device ioctls: These query and set attributes that control the operation
++   of a single device.
++
++   device ioctls must be issued from the same process (address space) that
++   was used to create the VM.
+ 
+ 2. File descriptors
+ -------------------
+@@ -32,10 +37,11 @@ The kvm API is centered around file desc
+ open("/dev/kvm") obtains a handle to the kvm subsystem; this handle
+ can be used to issue system ioctls.  A KVM_CREATE_VM ioctl on this
+ handle will create a VM file descriptor which can be used to issue VM
+-ioctls.  A KVM_CREATE_VCPU ioctl on a VM fd will create a virtual cpu
+-and return a file descriptor pointing to it.  Finally, ioctls on a vcpu
+-fd can be used to control the vcpu, including the important task of
+-actually running guest code.
++ioctls.  A KVM_CREATE_VCPU or KVM_CREATE_DEVICE ioctl on a VM fd will
++create a virtual cpu or device and return a file descriptor pointing to
++the new resource.  Finally, ioctls on a vcpu or device fd can be used
++to control the vcpu or device.  For vcpus, this includes the important
++task of actually running guest code.
+ 
+ In general file descriptors can be migrated among processes by means
+ of fork() and the SCM_RIGHTS facility of unix domain socket.  These
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2240,6 +2240,9 @@ static long kvm_device_ioctl(struct file
+ {
+ 	struct kvm_device *dev = filp->private_data;
+ 
++	if (dev->kvm->mm != current->mm)
++		return -EIO;
++
+ 	switch (ioctl) {
+ 	case KVM_SET_DEVICE_ATTR:
+ 		return kvm_device_ioctl_attr(dev, dev->ops->set_attr, arg);
 
