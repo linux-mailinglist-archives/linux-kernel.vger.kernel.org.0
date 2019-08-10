@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D6E88D61
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3802E88DC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfHJUp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:45:27 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55492 "EHLO
+        id S1726869AbfHJUsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:48:53 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54816 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726925AbfHJUoJ (ORCPT
+        by vger.kernel.org with ESMTP id S1726797AbfHJUoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:09 -0400
+        Sat, 10 Aug 2019 16:44:00 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDf-00053Y-02; Sat, 10 Aug 2019 21:44:07 +0100
+        id 1hwYDV-00053i-Kj; Sat, 10 Aug 2019 21:43:57 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-0003c6-Ew; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDO-0003iw-2I; Sat, 10 Aug 2019 21:43:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Fabrice Gasnier" <fabrice.gasnier@st.com>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
+        "Andrew Cooper" <andrew.cooper3@citrix.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Tyler Hicks" <tyhicks@canonical.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.457406167@decadent.org.uk>
+Message-ID: <lsq.1565469607.413104328@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 058/157] iio: core: fix a possible circular locking
- dependency
+Subject: [PATCH 3.16 128/157] x86/speculation/swapgs: Exclude ATOMs from
+ speculation through SWAPGS
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,151 +50,154 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 7f75591fc5a123929a29636834d1bcb8b5c9fee3 upstream.
+commit f36cf386e3fec258a341d446915862eded3e13d8 upstream.
 
-This fixes a possible circular locking dependency detected warning seen
-with:
-- CONFIG_PROVE_LOCKING=y
-- consumer/provider IIO devices (ex: "voltage-divider" consumer of "adc")
+Intel provided the following information:
 
-When using the IIO consumer interface, e.g. iio_channel_get(), the consumer
-device will likely call iio_read_channel_raw() or similar that rely on
-'info_exist_lock' mutex.
+ On all current Atom processors, instructions that use a segment register
+ value (e.g. a load or store) will not speculatively execute before the
+ last writer of that segment retires. Thus they will not use a
+ speculatively written segment value.
 
-typically:
-...
-	mutex_lock(&chan->indio_dev->info_exist_lock);
-	if (chan->indio_dev->info == NULL) {
-		ret = -ENODEV;
-		goto err_unlock;
-	}
-	ret = do_some_ops()
-err_unlock:
-	mutex_unlock(&chan->indio_dev->info_exist_lock);
-	return ret;
-...
+That means on ATOMs there is no speculation through SWAPGS, so the SWAPGS
+entry paths can be excluded from the extra LFENCE if PTI is disabled.
 
-Same mutex is also hold in iio_device_unregister().
+Create a separate bug flag for the through SWAPGS speculation and mark all
+out-of-order ATOMs and AMD/HYGON CPUs as not affected. The in-order ATOMs
+are excluded from the whole mitigation mess anyway.
 
-The following deadlock warning happens when:
-- the consumer device has called an API like iio_read_channel_raw()
-  at least once.
-- the consumer driver is unregistered, removed (unbind from sysfs)
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.19.24 #577 Not tainted
-------------------------------------------------------
-sh/372 is trying to acquire lock:
-(kn->count#30){++++}, at: kernfs_remove_by_name_ns+0x3c/0x84
-
-but task is already holding lock:
-(&dev->info_exist_lock){+.+.}, at: iio_device_unregister+0x18/0x60
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&dev->info_exist_lock){+.+.}:
-       __mutex_lock+0x70/0xa3c
-       mutex_lock_nested+0x1c/0x24
-       iio_read_channel_raw+0x1c/0x60
-       iio_read_channel_info+0xa8/0xb0
-       dev_attr_show+0x1c/0x48
-       sysfs_kf_seq_show+0x84/0xec
-       seq_read+0x154/0x528
-       __vfs_read+0x2c/0x15c
-       vfs_read+0x8c/0x110
-       ksys_read+0x4c/0xac
-       ret_fast_syscall+0x0/0x28
-       0xbedefb60
-
--> #0 (kn->count#30){++++}:
-       lock_acquire+0xd8/0x268
-       __kernfs_remove+0x288/0x374
-       kernfs_remove_by_name_ns+0x3c/0x84
-       remove_files+0x34/0x78
-       sysfs_remove_group+0x40/0x9c
-       sysfs_remove_groups+0x24/0x34
-       device_remove_attrs+0x38/0x64
-       device_del+0x11c/0x360
-       cdev_device_del+0x14/0x2c
-       iio_device_unregister+0x24/0x60
-       release_nodes+0x1bc/0x200
-       device_release_driver_internal+0x1a0/0x230
-       unbind_store+0x80/0x130
-       kernfs_fop_write+0x100/0x1e4
-       __vfs_write+0x2c/0x160
-       vfs_write+0xa4/0x17c
-       ksys_write+0x4c/0xac
-       ret_fast_syscall+0x0/0x28
-       0xbe906840
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&dev->info_exist_lock);
-                               lock(kn->count#30);
-                               lock(&dev->info_exist_lock);
-  lock(kn->count#30);
-
- *** DEADLOCK ***
-...
-
-cdev_device_del() can be called without holding the lock. It should be safe
-as info_exist_lock prevents kernelspace consumers to use the exported
-routines during/after provider removal. cdev_device_del() is for userspace.
-
-Help to reproduce:
-See example: Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
-sysv {
-	compatible = "voltage-divider";
-	io-channels = <&adc 0>;
-	output-ohms = <22>;
-	full-ohms = <222>;
-};
-
-First, go to iio:deviceX for the "voltage-divider", do one read:
-$ cd /sys/bus/iio/devices/iio:deviceX
-$ cat in_voltage0_raw
-
-Then, unbind the consumer driver. It triggers above deadlock warning.
-$ cd /sys/bus/platform/drivers/iio-rescale/
-$ echo sysv > unbind
-
-Note I don't actually expect stable will pick this up all the
-way back into IIO being in staging, but if's probably valid that
-far back.
-
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Fixes: ac917a81117c ("staging:iio:core set the iio_dev.info pointer to null on unregister")
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-[bwh: Backported to 3.16: adjust context]
+Reported-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+[bwh: Backported to 3.16:
+ - There's no whitelist entry (or any support) for Hygon CPUs
+ - Use the next available X86_BUG number
+ - Adjust context, indentation]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/iio/industrialio-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |  1 +
+ arch/x86/kernel/cpu/bugs.c         | 18 +++----------
+ arch/x86/kernel/cpu/common.c       | 42 +++++++++++++++++++-----------
+ 3 files changed, 32 insertions(+), 29 deletions(-)
 
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -1195,12 +1195,12 @@ EXPORT_SYMBOL(iio_device_register);
-  **/
- void iio_device_unregister(struct iio_dev *indio_dev)
- {
--	mutex_lock(&indio_dev->info_exist_lock);
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -278,5 +278,6 @@
+ #define X86_BUG_L1TF		X86_BUG(9) /* CPU is affected by L1 Terminal Fault */
+ #define X86_BUG_MDS		X86_BUG(10) /* CPU is affected by Microarchitectural data sampling */
+ #define X86_BUG_MSBDS_ONLY	X86_BUG(11) /* CPU is only affected by the  MSDBS variant of BUG_MDS */
++#define X86_BUG_SWAPGS		X86_BUG(12) /* CPU is affected by speculation through SWAPGS */
+ 
+ #endif /* _ASM_X86_CPUFEATURES_H */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -328,18 +328,6 @@ static const char * const spectre_v1_str
+ 	[SPECTRE_V1_MITIGATION_AUTO] = "Mitigation: usercopy/swapgs barriers and __user pointer sanitization",
+ };
+ 
+-static bool is_swapgs_serializing(void)
+-{
+-	/*
+-	 * Technically, swapgs isn't serializing on AMD (despite it previously
+-	 * being documented as such in the APM).  But according to AMD, %gs is
+-	 * updated non-speculatively, and the issuing of %gs-relative memory
+-	 * operands will be blocked until the %gs update completes, which is
+-	 * good enough for our purposes.
+-	 */
+-	return boot_cpu_data.x86_vendor == X86_VENDOR_AMD;
+-}
 -
- 	device_del(&indio_dev->dev);
+ /*
+  * Does SMAP provide full mitigation against speculative kernel access to
+  * userspace?
+@@ -390,9 +378,11 @@ static void __init spectre_v1_select_mit
+ 			 * PTI as the CR3 write in the Meltdown mitigation
+ 			 * is serializing.
+ 			 *
+-			 * If neither is there, mitigate with an LFENCE.
++			 * If neither is there, mitigate with an LFENCE to
++			 * stop speculation through swapgs.
+ 			 */
+-			if (!is_swapgs_serializing() && !boot_cpu_has(X86_FEATURE_KAISER))
++			if (boot_cpu_has_bug(X86_BUG_SWAPGS) &&
++			    !boot_cpu_has(X86_FEATURE_KAISER))
+ 				setup_force_cpu_cap(X86_FEATURE_FENCE_SWAPGS_USER);
  
- 	if (indio_dev->chrdev.dev)
- 		cdev_del(&indio_dev->chrdev);
+ 			/*
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -813,6 +813,7 @@ static void identify_cpu_without_cpuid(s
+ #define NO_L1TF		BIT(3)
+ #define NO_MDS		BIT(4)
+ #define MSBDS_ONLY	BIT(5)
++#define NO_SWAPGS	BIT(6)
+ 
+ #define VULNWL(_vendor, _family, _model, _whitelist)	\
+ 	{ X86_VENDOR_##_vendor, _family, _model, X86_FEATURE_ANY, _whitelist }
+@@ -836,29 +837,37 @@ static const __initconst struct x86_cpu_
+ 	VULNWL_INTEL(ATOM_BONNELL,		NO_SPECULATION),
+ 	VULNWL_INTEL(ATOM_BONNELL_MID,		NO_SPECULATION),
+ 
+-	VULNWL_INTEL(ATOM_SILVERMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY),
+-	VULNWL_INTEL(ATOM_SILVERMONT_X,		NO_SSB | NO_L1TF | MSBDS_ONLY),
+-	VULNWL_INTEL(ATOM_SILVERMONT_MID,	NO_SSB | NO_L1TF | MSBDS_ONLY),
+-	VULNWL_INTEL(ATOM_AIRMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY),
+-	VULNWL_INTEL(XEON_PHI_KNL,		NO_SSB | NO_L1TF | MSBDS_ONLY),
+-	VULNWL_INTEL(XEON_PHI_KNM,		NO_SSB | NO_L1TF | MSBDS_ONLY),
++	VULNWL_INTEL(ATOM_SILVERMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
++	VULNWL_INTEL(ATOM_SILVERMONT_X,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
++	VULNWL_INTEL(ATOM_SILVERMONT_MID,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
++	VULNWL_INTEL(ATOM_AIRMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
++	VULNWL_INTEL(XEON_PHI_KNL,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
++	VULNWL_INTEL(XEON_PHI_KNM,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
+ 
+ 	VULNWL_INTEL(CORE_YONAH,		NO_SSB),
+ 
+-	VULNWL_INTEL(ATOM_AIRMONT_MID,		NO_L1TF | MSBDS_ONLY),
++	VULNWL_INTEL(ATOM_AIRMONT_MID,		NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
+ 
+-	VULNWL_INTEL(ATOM_GOLDMONT,		NO_MDS | NO_L1TF),
+-	VULNWL_INTEL(ATOM_GOLDMONT_X,		NO_MDS | NO_L1TF),
+-	VULNWL_INTEL(ATOM_GOLDMONT_PLUS,	NO_MDS | NO_L1TF),
++	VULNWL_INTEL(ATOM_GOLDMONT,		NO_MDS | NO_L1TF | NO_SWAPGS),
++	VULNWL_INTEL(ATOM_GOLDMONT_X,		NO_MDS | NO_L1TF | NO_SWAPGS),
++	VULNWL_INTEL(ATOM_GOLDMONT_PLUS,	NO_MDS | NO_L1TF | NO_SWAPGS),
 +
-+	mutex_lock(&indio_dev->info_exist_lock);
- 	iio_device_unregister_debugfs(indio_dev);
++	/*
++	 * Technically, swapgs isn't serializing on AMD (despite it previously
++	 * being documented as such in the APM).  But according to AMD, %gs is
++	 * updated non-speculatively, and the issuing of %gs-relative memory
++	 * operands will be blocked until the %gs update completes, which is
++	 * good enough for our purposes.
++	 */
  
- 	iio_disable_all_buffers(indio_dev);
+ 	/* AMD Family 0xf - 0x12 */
+-	VULNWL_AMD(0x0f,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS),
+-	VULNWL_AMD(0x10,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS),
+-	VULNWL_AMD(0x11,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS),
+-	VULNWL_AMD(0x12,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS),
++	VULNWL_AMD(0x0f,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS),
++	VULNWL_AMD(0x10,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS),
++	VULNWL_AMD(0x11,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS),
++	VULNWL_AMD(0x12,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS),
+ 
+ 	/* FAMILY_ANY must be last, otherwise 0x0f - 0x12 matches won't work */
+-	VULNWL_AMD(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS),
++	VULNWL_AMD(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS),
+ 	{}
+ };
+ 
+@@ -895,6 +904,9 @@ static void __init cpu_set_bug_bits(stru
+ 			setup_force_cpu_bug(X86_BUG_MSBDS_ONLY);
+ 	}
+ 
++	if (!cpu_matches(NO_SWAPGS))
++		setup_force_cpu_bug(X86_BUG_SWAPGS);
++
+ 	if (cpu_matches(NO_MELTDOWN))
+ 		return;
+ 
 
