@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C8C88E2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 409A588DFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbfHJUwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:52:17 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54144 "EHLO
+        id S1727659AbfHJUuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:50:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54362 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726584AbfHJUnw (ORCPT
+        by vger.kernel.org with ESMTP id S1726688AbfHJUnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:52 -0400
+        Sat, 10 Aug 2019 16:43:55 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-00053a-Q8; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDQ-00053u-5u; Sat, 10 Aug 2019 21:43:52 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003bG-VE; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDN-0003ho-BT; Sat, 10 Aug 2019 21:43:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Takashi Iwai" <tiwai@suse.de>
+        syzbot+45474c076a4927533d2e@syzkaller.appspotmail.com,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "David Miller" <davem@davemloft.net>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.28313327@decadent.org.uk>
+Message-ID: <lsq.1565469607.349357644@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 048/157] ALSA: pcm: Don't suspend stream in
- unrecoverable PCM state
+Subject: [PATCH 3.16 114/157] slip: make slhc_free() silently accept an
+ error pointer
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,67 +49,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 113ce08109f8e3b091399e7cc32486df1cff48e7 upstream.
+commit baf76f0c58aec435a3a864075b8f6d8ee5d1f17e upstream.
 
-Currently PCM core sets each opened stream forcibly to SUSPENDED state
-via snd_pcm_suspend_all() call, and the user-space is responsible for
-re-triggering the resume manually either via snd_pcm_resume() or
-prepare call.  The scheme works fine usually, but there are corner
-cases where the stream can't be resumed by that call: the streams
-still in OPEN state before finishing hw_params.  When they are
-suspended, user-space cannot perform resume or prepare because they
-haven't been set up yet.  The only possible recovery is to re-open the
-device, which isn't nice at all.  Similarly, when a stream is in
-DISCONNECTED state, it makes no sense to change it to SUSPENDED
-state.  Ditto for in SETUP state; which you can re-prepare directly.
+This way, slhc_free() accepts what slhc_init() returns, whether that is
+an error or not.
 
-So, this patch addresses these issues by filtering the PCM streams to
-be suspended by checking the PCM state.  When a stream is in either
-OPEN, SETUP or DISCONNECTED as well as already SUSPENDED, the suspend
-action is skipped.
+In particular, the pattern in sl_alloc_bufs() is
 
-To be noted, this problem was originally reported for the PCM runtime
-PM on HD-audio.  And, the runtime PM problem itself was already
-addressed (although not intended) by the code refactoring commits
-3d21ef0b49f8 ("ALSA: pcm: Suspend streams globally via device type PM
-ops") and 17bc4815de58 ("ALSA: pci: Remove superfluous
-snd_pcm_suspend*() calls").  These commits eliminated the
-snd_pcm_suspend*() calls from the runtime PM suspend callback code
-path, hence the racy OPEN state won't appear while runtime PM.
-(FWIW, the race window is between snd_pcm_open_substream() and the
-first power up in azx_pcm_open().)
+        slcomp = slhc_init(16, 16);
+        ...
+        slhc_free(slcomp);
 
-Although the runtime PM issue was already "fixed", the same problem is
-still present for the system PM, hence this patch is still needed.
-And for stable trees, this patch alone should suffice for fixing the
-runtime PM problem, too.
+for the error handling path, and rather than complicate that code, just
+make it ok to always free what was returned by the init function.
 
-Reported-and-tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+That's what the code used to do before commit 4ab42d78e37a ("ppp, slip:
+Validate VJ compression slot parameters completely") when slhc_init()
+just returned NULL for the error case, with no actual indication of the
+details of the error.
+
+Reported-by: syzbot+45474c076a4927533d2e@syzkaller.appspotmail.com
+Fixes: 4ab42d78e37a ("ppp, slip: Validate VJ compression slot parameters completely")
+Acked-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: David Miller <davem@davemloft.net>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/pcm_native.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/slip/slhc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -1063,8 +1063,15 @@ static int snd_pcm_pause(struct snd_pcm_
- static int snd_pcm_pre_suspend(struct snd_pcm_substream *substream, int state)
+--- a/drivers/net/slip/slhc.c
++++ b/drivers/net/slip/slhc.c
+@@ -153,7 +153,7 @@ out_fail:
+ void
+ slhc_free(struct slcompress *comp)
  {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
--	if (runtime->status->state == SNDRV_PCM_STATE_SUSPENDED)
-+	switch (runtime->status->state) {
-+	case SNDRV_PCM_STATE_SUSPENDED:
- 		return -EBUSY;
-+	/* unresumable PCM state; return -EBUSY for skipping suspend */
-+	case SNDRV_PCM_STATE_OPEN:
-+	case SNDRV_PCM_STATE_SETUP:
-+	case SNDRV_PCM_STATE_DISCONNECTED:
-+		return -EBUSY;
-+	}
- 	runtime->trigger_master = substream;
- 	return 0;
- }
+-	if ( comp == NULLSLCOMPR )
++	if ( IS_ERR_OR_NULL(comp) )
+ 		return;
+ 
+ 	if ( comp->tstate != NULLSLSTATE )
 
