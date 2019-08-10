@@ -2,90 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE3588E7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 23:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF76788E7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 23:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbfHJVCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 17:02:06 -0400
-Received: from smtprelay0013.hostedemail.com ([216.40.44.13]:48350 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726377AbfHJVCG (ORCPT
+        id S1726497AbfHJVHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 17:07:52 -0400
+Received: from 68.66.241.172.static.a2webhosting.com ([68.66.241.172]:48738
+        "EHLO vps.redhazel.co.uk" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1725863AbfHJVHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 17:02:06 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id D4B0D8368EFE;
-        Sat, 10 Aug 2019 21:02:04 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:69:355:379:599:800:960:973:988:989:1042:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2911:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3874:4321:4425:5007:7576:7903:8603:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21451:21627:21772:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
-X-HE-Tag: rings78_8660776233603
-X-Filterd-Recvd-Size: 2510
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 10 Aug 2019 21:02:03 +0000 (UTC)
-Message-ID: <b8a167bfb3731a665ba54b4fa4ccf899a31d9644.camel@perches.com>
-Subject: Re: [PATCH 3.16 004/157] iio: Use kmalloc_array() in
- iio_scan_mask_set()
-From:   Joe Perches <joe@perches.com>
-To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        Jonathan Cameron <jic23@kernel.org>
-Date:   Sat, 10 Aug 2019 14:02:02 -0700
-In-Reply-To: <lsq.1565469607.57202441@decadent.org.uk>
-References: <lsq.1565469607.57202441@decadent.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Sat, 10 Aug 2019 17:07:52 -0400
+Received: from [192.168.1.66] (unknown [212.159.68.143])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by vps.redhazel.co.uk (Postfix) with ESMTPSA id 1E5011C02B32;
+        Sat, 10 Aug 2019 22:07:50 +0100 (BST)
+Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
+ inability to gracefully handle low memory pressure
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Artem S. Tashkinov" <aros@gmx.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+References: <CAJuCfpFmOzj-gU1NwoQFmS_pbDKKd2XN=CS1vUV4gKhYCJOUtw@mail.gmail.com>
+ <20190806220150.GA22516@cmpxchg.org> <20190807075927.GO11812@dhcp22.suse.cz>
+ <20190807205138.GA24222@cmpxchg.org> <20190808114826.GC18351@dhcp22.suse.cz>
+ <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
+ <20190808163228.GE18351@dhcp22.suse.cz>
+ <5FBB0A26-0CFE-4B88-A4F2-6A42E3377EDB@redhazel.co.uk>
+ <20190808185925.GH18351@dhcp22.suse.cz>
+ <08e5d007-a41a-e322-5631-b89978b9cc20@redhazel.co.uk>
+ <20190809085748.GN18351@dhcp22.suse.cz>
+From:   ndrw <ndrw.xf@redhazel.co.uk>
+Message-ID: <5fcf237c-d270-26e5-e995-02755695b459@redhazel.co.uk>
+Date:   Sat, 10 Aug 2019 22:07:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190809085748.GN18351@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-08-10 at 21:40 +0100, Ben Hutchings wrote:
-> 3.16.72-rc1 review patch.  If anyone has any objections, please let me know.
+On 09/08/2019 09:57, Michal Hocko wrote:
+> This is a useful feedback! What was your workload? Which kernel version? 
 
-Unless to enable applying further patches,
-I doubt there is ever a need to have any
-of Markus Elfring's patches applied to any
--stable kernel.
+With 16GB zram swap and swappiness=60 I get the avg10 memory PSI numbers 
+of about 10 when swap is half filled and ~30 immediately before the 
+freeze. Swapping with zram has less effect on system responsiveness 
+comparing to swapping to an ssd, so, if combined with the proposed PSI 
+triggered OOM killer, this could be a viable solution.
 
-> ------------------
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> commit 057ac1acdfc4743f066fcefe359385cad00549eb upstream.
-> 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Signed-off-by: Jonathan Cameron <jic23@kernel.org>
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> ---
->  drivers/iio/industrialio-buffer.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> --- a/drivers/iio/industrialio-buffer.c
-> +++ b/drivers/iio/industrialio-buffer.c
-> @@ -836,10 +836,9 @@ int iio_scan_mask_set(struct iio_dev *in
->  	const unsigned long *mask;
->  	unsigned long *trialmask;
->  
-> -	trialmask = kmalloc(sizeof(*trialmask)*
-> -			    BITS_TO_LONGS(indio_dev->masklength),
-> -			    GFP_KERNEL);
-> -
-> +	trialmask = kmalloc_array(BITS_TO_LONGS(indio_dev->masklength),
-> +				  sizeof(*trialmask),
-> +				  GFP_KERNEL);
->  	if (trialmask == NULL)
->  		return -ENOMEM;
->  	if (!indio_dev->masklength) {
-> 
+Still, using swap only to make PSI sensing work when triggering OOM 
+killer at non-zero available memory would do the job just as well is a 
+bit of an overkill. I don't really need these extra few GB or memory, 
+just want to get rid of system freezes. Perhaps we could have both 
+heuristics.
+
+Best regards,
+
+ndrw
+
 
