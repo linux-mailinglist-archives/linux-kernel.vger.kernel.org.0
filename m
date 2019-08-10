@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A695F88DCD
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2D6E88D61
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfHJUtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:49:16 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54622 "EHLO
+        id S1727192AbfHJUp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:45:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55492 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726753AbfHJUn6 (ORCPT
+        by vger.kernel.org with ESMTP id S1726925AbfHJUoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:58 -0400
+        Sat, 10 Aug 2019 16:44:09 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDT-00053s-9x; Sat, 10 Aug 2019 21:43:55 +0100
+        id 1hwYDf-00053Y-02; Sat, 10 Aug 2019 21:44:07 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003kd-PO; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDK-0003c6-Ew; Sat, 10 Aug 2019 21:43:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,17 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Roman Kagan" <rkagan@virtuozzo.com>,
-        "Denis V. Lunev" <den@openvz.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Igor Redko" <redkoi@virtuozzo.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+        "Fabrice Gasnier" <fabrice.gasnier@st.com>,
+        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.617883725@decadent.org.uk>
+Message-ID: <lsq.1565469607.457406167@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 143/157] mm/page_alloc.c: calculate 'available'
- memory in a separate function
+Subject: [PATCH 3.16 058/157] iio: core: fix a possible circular locking
+ dependency
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -51,150 +48,151 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Igor Redko <redkoi@virtuozzo.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-commit d02bd27bd33dd7e8d22594cd568b81be0cb584cd upstream.
+commit 7f75591fc5a123929a29636834d1bcb8b5c9fee3 upstream.
 
-Add a new field, VIRTIO_BALLOON_S_AVAIL, to virtio_balloon memory
-statistics protocol, corresponding to 'Available' in /proc/meminfo.
+This fixes a possible circular locking dependency detected warning seen
+with:
+- CONFIG_PROVE_LOCKING=y
+- consumer/provider IIO devices (ex: "voltage-divider" consumer of "adc")
 
-It indicates to the hypervisor how big the balloon can be inflated
-without pushing the guest system to swap.  This metric would be very
-useful in VM orchestration software to improve memory management of
-different VMs under overcommit.
+When using the IIO consumer interface, e.g. iio_channel_get(), the consumer
+device will likely call iio_read_channel_raw() or similar that rely on
+'info_exist_lock' mutex.
 
-This patch (of 2):
+typically:
+...
+	mutex_lock(&chan->indio_dev->info_exist_lock);
+	if (chan->indio_dev->info == NULL) {
+		ret = -ENODEV;
+		goto err_unlock;
+	}
+	ret = do_some_ops()
+err_unlock:
+	mutex_unlock(&chan->indio_dev->info_exist_lock);
+	return ret;
+...
 
-Factor out calculation of the available memory counter into a separate
-exportable function, in order to be able to use it in other parts of the
-kernel.
+Same mutex is also hold in iio_device_unregister().
 
-In particular, it appears a relevant metric to report to the hypervisor
-via virtio-balloon statistics interface (in a followup patch).
+The following deadlock warning happens when:
+- the consumer device has called an API like iio_read_channel_raw()
+  at least once.
+- the consumer driver is unregistered, removed (unbind from sysfs)
 
-Signed-off-by: Igor Redko <redkoi@virtuozzo.com>
-Signed-off-by: Denis V. Lunev <den@openvz.org>
-Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16 as dependency of commit a1078e821b60
- "xen: let alloc_xenballooned_pages() fail if not enough memory free"]
+======================================================
+WARNING: possible circular locking dependency detected
+4.19.24 #577 Not tainted
+------------------------------------------------------
+sh/372 is trying to acquire lock:
+(kn->count#30){++++}, at: kernfs_remove_by_name_ns+0x3c/0x84
+
+but task is already holding lock:
+(&dev->info_exist_lock){+.+.}, at: iio_device_unregister+0x18/0x60
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&dev->info_exist_lock){+.+.}:
+       __mutex_lock+0x70/0xa3c
+       mutex_lock_nested+0x1c/0x24
+       iio_read_channel_raw+0x1c/0x60
+       iio_read_channel_info+0xa8/0xb0
+       dev_attr_show+0x1c/0x48
+       sysfs_kf_seq_show+0x84/0xec
+       seq_read+0x154/0x528
+       __vfs_read+0x2c/0x15c
+       vfs_read+0x8c/0x110
+       ksys_read+0x4c/0xac
+       ret_fast_syscall+0x0/0x28
+       0xbedefb60
+
+-> #0 (kn->count#30){++++}:
+       lock_acquire+0xd8/0x268
+       __kernfs_remove+0x288/0x374
+       kernfs_remove_by_name_ns+0x3c/0x84
+       remove_files+0x34/0x78
+       sysfs_remove_group+0x40/0x9c
+       sysfs_remove_groups+0x24/0x34
+       device_remove_attrs+0x38/0x64
+       device_del+0x11c/0x360
+       cdev_device_del+0x14/0x2c
+       iio_device_unregister+0x24/0x60
+       release_nodes+0x1bc/0x200
+       device_release_driver_internal+0x1a0/0x230
+       unbind_store+0x80/0x130
+       kernfs_fop_write+0x100/0x1e4
+       __vfs_write+0x2c/0x160
+       vfs_write+0xa4/0x17c
+       ksys_write+0x4c/0xac
+       ret_fast_syscall+0x0/0x28
+       0xbe906840
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&dev->info_exist_lock);
+                               lock(kn->count#30);
+                               lock(&dev->info_exist_lock);
+  lock(kn->count#30);
+
+ *** DEADLOCK ***
+...
+
+cdev_device_del() can be called without holding the lock. It should be safe
+as info_exist_lock prevents kernelspace consumers to use the exported
+routines during/after provider removal. cdev_device_del() is for userspace.
+
+Help to reproduce:
+See example: Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
+sysv {
+	compatible = "voltage-divider";
+	io-channels = <&adc 0>;
+	output-ohms = <22>;
+	full-ohms = <222>;
+};
+
+First, go to iio:deviceX for the "voltage-divider", do one read:
+$ cd /sys/bus/iio/devices/iio:deviceX
+$ cat in_voltage0_raw
+
+Then, unbind the consumer driver. It triggers above deadlock warning.
+$ cd /sys/bus/platform/drivers/iio-rescale/
+$ echo sysv > unbind
+
+Note I don't actually expect stable will pick this up all the
+way back into IIO being in staging, but if's probably valid that
+far back.
+
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Fixes: ac917a81117c ("staging:iio:core set the iio_dev.info pointer to null on unregister")
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/proc/meminfo.c  | 31 +------------------------------
- include/linux/mm.h |  1 +
- mm/page_alloc.c    | 43 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 45 insertions(+), 30 deletions(-)
+ drivers/iio/industrialio-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -27,10 +27,7 @@ static int meminfo_proc_show(struct seq_
- 	struct vmalloc_info vmi;
- 	long cached;
- 	long available;
--	unsigned long pagecache;
--	unsigned long wmark_low = 0;
- 	unsigned long pages[NR_LRU_LISTS];
--	struct zone *zone;
- 	int lru;
- 
- /*
-@@ -51,33 +48,7 @@ static int meminfo_proc_show(struct seq_
- 	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
- 		pages[lru] = global_page_state(NR_LRU_BASE + lru);
- 
--	for_each_zone(zone)
--		wmark_low += zone->watermark[WMARK_LOW];
--
--	/*
--	 * Estimate the amount of memory available for userspace allocations,
--	 * without causing swapping.
--	 */
--	available = i.freeram - totalreserve_pages;
--
--	/*
--	 * Not all the page cache can be freed, otherwise the system will
--	 * start swapping. Assume at least half of the page cache, or the
--	 * low watermark worth of cache, needs to stay.
--	 */
--	pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
--	pagecache -= min(pagecache / 2, wmark_low);
--	available += pagecache;
--
--	/*
--	 * Part of the reclaimable slab consists of items that are in use,
--	 * and cannot be freed. Cap this estimate at the low watermark.
--	 */
--	available += global_page_state(NR_SLAB_RECLAIMABLE) -
--		     min(global_page_state(NR_SLAB_RECLAIMABLE) / 2, wmark_low);
--
--	if (available < 0)
--		available = 0;
-+	available = si_mem_available();
- 
- 	/*
- 	 * Tagged format, for easy grepping and expansion.
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1699,6 +1699,7 @@ extern int __meminit init_per_zone_wmark
- extern void mem_init(void);
- extern void __init mmap_init(void);
- extern void show_mem(unsigned int flags);
-+extern long si_mem_available(void);
- extern void si_meminfo(struct sysinfo * val);
- extern void si_meminfo_node(struct sysinfo *val, int nid);
- 
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3072,6 +3072,49 @@ static inline void show_node(struct zone
- 		printk("Node %d ", zone_to_nid(zone));
- }
- 
-+long si_mem_available(void)
-+{
-+	long available;
-+	unsigned long pagecache;
-+	unsigned long wmark_low = 0;
-+	unsigned long pages[NR_LRU_LISTS];
-+	struct zone *zone;
-+	int lru;
-+
-+	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
-+		pages[lru] = global_page_state(NR_LRU_BASE + lru);
-+
-+	for_each_zone(zone)
-+		wmark_low += zone->watermark[WMARK_LOW];
-+
-+	/*
-+	 * Estimate the amount of memory available for userspace allocations,
-+	 * without causing swapping.
-+	 */
-+	available = global_page_state(NR_FREE_PAGES) - totalreserve_pages;
-+
-+	/*
-+	 * Not all the page cache can be freed, otherwise the system will
-+	 * start swapping. Assume at least half of the page cache, or the
-+	 * low watermark worth of cache, needs to stay.
-+	 */
-+	pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
-+	pagecache -= min(pagecache / 2, wmark_low);
-+	available += pagecache;
-+
-+	/*
-+	 * Part of the reclaimable slab consists of items that are in use,
-+	 * and cannot be freed. Cap this estimate at the low watermark.
-+	 */
-+	available += global_page_state(NR_SLAB_RECLAIMABLE) -
-+		     min(global_page_state(NR_SLAB_RECLAIMABLE) / 2, wmark_low);
-+
-+	if (available < 0)
-+		available = 0;
-+	return available;
-+}
-+EXPORT_SYMBOL_GPL(si_mem_available);
-+
- void si_meminfo(struct sysinfo *val)
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -1195,12 +1195,12 @@ EXPORT_SYMBOL(iio_device_register);
+  **/
+ void iio_device_unregister(struct iio_dev *indio_dev)
  {
- 	val->totalram = totalram_pages;
+-	mutex_lock(&indio_dev->info_exist_lock);
+-
+ 	device_del(&indio_dev->dev);
+ 
+ 	if (indio_dev->chrdev.dev)
+ 		cdev_del(&indio_dev->chrdev);
++
++	mutex_lock(&indio_dev->info_exist_lock);
+ 	iio_device_unregister_debugfs(indio_dev);
+ 
+ 	iio_disable_all_buffers(indio_dev);
 
