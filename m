@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8286488D4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A07FE88DC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfHJUoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:44:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54542 "EHLO
+        id S1727514AbfHJUs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:48:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54750 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726730AbfHJUn5 (ORCPT
+        by vger.kernel.org with ESMTP id S1726768AbfHJUoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:57 -0400
+        Sat, 10 Aug 2019 16:44:00 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDS-00053e-LR; Sat, 10 Aug 2019 21:43:54 +0100
+        id 1hwYDV-00053O-Co; Sat, 10 Aug 2019 21:43:57 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003l3-UX; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDO-0003jW-CT; Sat, 10 Aug 2019 21:43:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Vlad Yasevich" <vyasevich@gmail.com>,
-        "Vladislav Yasevich" <vyasevic@redhat.com>
+        syzbot+79337b501d6aa974d0f6@syzkaller.appspotmail.com,
+        "Vladis Dronov" <vdronov@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Marcel Holtmann" <marcel@holtmann.org>,
+        "Yu-Chen, Cho" <acho@suse.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.265297102@decadent.org.uk>
+Message-ID: <lsq.1565469607.541662992@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 147/157] Revert "drivers/net, ipv6: Select IPv6
- fragment idents for virtio UFO packets"
+Subject: [PATCH 3.16 135/157] Bluetooth: hci_uart: check for missing tty
+ operations
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,79 +51,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlad Yasevich <vyasevich@gmail.com>
+From: Vladis Dronov <vdronov@redhat.com>
 
-commit 72f6510745592c87f612f62ae4f16bb002934df4 upstream.
+commit b36a1552d7319bbfd5cf7f08726c23c5c66d4f73 upstream.
 
-This reverts commit 5188cd44c55db3e92cd9e77a40b5baa7ed4340f7.
+Certain ttys operations (pty_unix98_ops) lack tiocmget() and tiocmset()
+functions which are called by the certain HCI UART protocols (hci_ath,
+hci_bcm, hci_intel, hci_mrvl, hci_qca) via hci_uart_set_flow_control()
+or directly. This leads to an execution at NULL and can be triggered by
+an unprivileged user. Fix this by adding a helper function and a check
+for the missing tty operations in the protocols code.
 
-Now that GSO layer can track if fragment id has been selected
-and can allocate one if necessary, we don't need to do this in
-tap and macvtap.  This reverts most of the code and only keeps
-the new ipv6 fragment id generation function that is still needed.
+This fixes CVE-2019-10207. The Fixes: lines list commits where calls to
+tiocm[gs]et() or hci_uart_set_flow_control() were added to the HCI UART
+protocols.
 
-Fixes: 3d0ad09412ff (drivers/net: Disable UFO through virtio)
-Signed-off-by: Vladislav Yasevich <vyasevic@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: https://syzkaller.appspot.com/bug?id=1b42faa2848963564a5b1b7f8c837ea7b55ffa50
+Reported-by: syzbot+79337b501d6aa974d0f6@syzkaller.appspotmail.com
+Fixes: b3190df62861 ("Bluetooth: Support for Atheros AR300x serial chip")
+Fixes: 118612fb9165 ("Bluetooth: hci_bcm: Add suspend/resume PM functions")
+Fixes: ff2895592f0f ("Bluetooth: hci_intel: Add Intel baudrate configuration support")
+Fixes: 162f812f23ba ("Bluetooth: hci_uart: Add Marvell support")
+Fixes: fa9ad876b8e0 ("Bluetooth: hci_qca: Add support for Qualcomm Bluetooth chip wcn3990")
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Reviewed-by: Yu-Chen, Cho <acho@suse.com>
+Tested-by: Yu-Chen, Cho <acho@suse.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.16:
+ - Only hci_ath is affected
+ - There is no serdev support]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/macvtap.c | 3 ---
- drivers/net/tun.c     | 6 +-----
- 2 files changed, 1 insertion(+), 8 deletions(-)
-
---- a/drivers/net/macvtap.c
-+++ b/drivers/net/macvtap.c
-@@ -16,7 +16,6 @@
- #include <linux/idr.h>
- #include <linux/fs.h>
+--- a/drivers/bluetooth/hci_ath.c
++++ b/drivers/bluetooth/hci_ath.c
+@@ -112,6 +112,9 @@ static int ath_open(struct hci_uart *hu)
  
--#include <net/ipv6.h>
- #include <net/net_namespace.h>
- #include <net/rtnetlink.h>
- #include <net/sock.h>
-@@ -571,8 +570,6 @@ static int macvtap_skb_from_vnet_hdr(str
- 			break;
- 		case VIRTIO_NET_HDR_GSO_UDP:
- 			gso_type = SKB_GSO_UDP;
--			if (skb->protocol == htons(ETH_P_IPV6))
--				ipv6_proxy_select_ident(skb);
- 			break;
- 		default:
- 			return -EINVAL;
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -65,7 +65,6 @@
- #include <linux/nsproxy.h>
- #include <linux/virtio_net.h>
- #include <linux/rcupdate.h>
--#include <net/ipv6.h>
- #include <net/net_namespace.h>
- #include <net/netns/generic.h>
- #include <net/rtnetlink.h>
-@@ -1143,8 +1142,6 @@ static ssize_t tun_get_user(struct tun_s
- 		break;
- 	}
+ 	BT_DBG("hu %p", hu);
  
--	skb_reset_network_header(skb);
--
- 	if (gso.gso_type != VIRTIO_NET_HDR_GSO_NONE) {
- 		pr_debug("GSO!\n");
- 		switch (gso.gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
-@@ -1156,8 +1153,6 @@ static ssize_t tun_get_user(struct tun_s
- 			break;
- 		case VIRTIO_NET_HDR_GSO_UDP:
- 			skb_shinfo(skb)->gso_type = SKB_GSO_UDP;
--			if (skb->protocol == htons(ETH_P_IPV6))
--				ipv6_proxy_select_ident(skb);
- 			break;
- 		default:
- 			tun->dev->stats.rx_frame_errors++;
-@@ -1187,6 +1182,7 @@ static ssize_t tun_get_user(struct tun_s
- 		skb_shinfo(skb)->tx_flags |= SKBTX_SHARED_FRAG;
- 	}
++	if (!hci_uart_has_flow_control(hu))
++		return -EOPNOTSUPP;
++
+ 	ath = kzalloc(sizeof(*ath), GFP_KERNEL);
+ 	if (!ath)
+ 		return -ENOMEM;
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -261,6 +261,15 @@ static int hci_uart_send_frame(struct hc
+ 	return 0;
+ }
  
-+	skb_reset_network_header(skb);
- 	skb_probe_transport_header(skb, 0);
++/* Check the underlying device or tty has flow control support */
++bool hci_uart_has_flow_control(struct hci_uart *hu)
++{
++	if (hu->tty->driver->ops->tiocmget && hu->tty->driver->ops->tiocmset)
++		return true;
++
++	return false;
++}
++
+ /* ------ LDISC part ------ */
+ /* hci_uart_tty_open
+  *
+--- a/drivers/bluetooth/hci_uart.h
++++ b/drivers/bluetooth/hci_uart.h
+@@ -90,6 +90,7 @@ int hci_uart_register_proto(struct hci_u
+ int hci_uart_unregister_proto(struct hci_uart_proto *p);
+ int hci_uart_tx_wakeup(struct hci_uart *hu);
+ int hci_uart_init_ready(struct hci_uart *hu);
++bool hci_uart_has_flow_control(struct hci_uart *hu);
  
- 	rxhash = skb_get_hash(skb);
+ #ifdef CONFIG_BT_HCIUART_H4
+ int h4_init(void);
 
