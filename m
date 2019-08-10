@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45F0E88DAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C83888DD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfHJUsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:48:02 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55004 "EHLO
+        id S1727558AbfHJUtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:49:32 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54624 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726831AbfHJUoD (ORCPT
+        by vger.kernel.org with ESMTP id S1726754AbfHJUn6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:03 -0400
+        Sat, 10 Aug 2019 16:43:58 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDY-00053p-KB; Sat, 10 Aug 2019 21:44:00 +0100
+        id 1hwYDT-00053r-9y; Sat, 10 Aug 2019 21:43:55 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-0003fG-8W; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDO-0003k4-Nv; Sat, 10 Aug 2019 21:43:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Steve French" <stfrench@microsoft.com>,
-        "Pavel Shilovsky" <pshilov@microsoft.com>,
-        "Ronnie Sahlberg" <lsahlber@redhat.com>
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Willy Tarreau" <w@1wt.eu>, "Denis Efremov" <efremov@ispras.ru>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.521653675@decadent.org.uk>
+Message-ID: <lsq.1565469607.528093703@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 091/157] cifs: fix handle leak in smb2_query_symlink()
+Subject: [PATCH 3.16 141/157] floppy: fix out-of-bounds read in copy_buffer
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,34 +47,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Denis Efremov <efremov@ispras.ru>
 
-commit e6d0fb7b34f264f72c33053558a360a6a734905e upstream.
+commit da99466ac243f15fbba65bd261bfc75ffa1532b6 upstream.
 
-If we enter smb2_query_symlink() for something that is not a symlink
-and where the SMB2_open() would succeed we would never end up
-closing this handle and would thus leak a handle on the server.
+This fixes a global out-of-bounds read access in the copy_buffer
+function of the floppy driver.
 
-Fix this by immediately calling SMB2_close() on successfull open.
+The FDDEFPRM ioctl allows one to set the geometry of a disk.  The sect
+and head fields (unsigned int) of the floppy_drive structure are used to
+compute the max_sector (int) in the make_raw_rw_request function.  It is
+possible to overflow the max_sector.  Next, max_sector is passed to the
+copy_buffer function and used in one of the memcpy calls.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-[bwh: Backported to 3.16: adjust context]
+An unprivileged user could trigger the bug if the device is accessible,
+but requires a floppy disk to be inserted.
+
+The patch adds the check for the .sect * .head multiplication for not
+overflowing in the set_geometry function.
+
+The bug was found by syzkaller.
+
+Signed-off-by: Denis Efremov <efremov@ispras.ru>
+Tested-by: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cifs/smb2ops.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/floppy.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -906,6 +906,8 @@ smb2_query_symlink(const unsigned int xi
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3236,8 +3236,10 @@ static int set_geometry(unsigned int cmd
+ 	int cnt;
  
- 	rc = SMB2_open(xid, &oparms, utf16_path, &oplock, NULL, &err_buf);
- 
-+	if (!rc)
-+		SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
- 	if (!rc || !err_buf) {
- 		kfree(utf16_path);
- 		return -ENOENT;
+ 	/* sanity checking for parameters. */
+-	if (g->sect <= 0 ||
+-	    g->head <= 0 ||
++	if ((int)g->sect <= 0 ||
++	    (int)g->head <= 0 ||
++	    /* check for overflow in max_sector */
++	    (int)(g->sect * g->head) <= 0 ||
+ 	    /* check for zero in F_SECT_PER_TRACK */
+ 	    (unsigned char)((g->sect << 2) >> FD_SIZECODE(g)) == 0 ||
+ 	    g->track <= 0 || g->track > UDP->tracks >> STRETCH(g) ||
 
