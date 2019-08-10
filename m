@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 593DB88E67
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 594C188E3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:53:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbfHJUyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:54:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53780 "EHLO
+        id S1727775AbfHJUwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:52:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54016 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726463AbfHJUns (ORCPT
+        by vger.kernel.org with ESMTP id S1726543AbfHJUnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:48 -0400
+        Sat, 10 Aug 2019 16:43:50 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-00053L-JC; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDJ-00053Y-UY; Sat, 10 Aug 2019 21:43:45 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDI-0003Yx-Tc; Sat, 10 Aug 2019 21:43:44 +0100
+        id 1hwYDJ-0003ZW-6m; Sat, 10 Aug 2019 21:43:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Li Shuang" <shuali@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Xin Long" <lucien.xin@gmail.com>
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Hoan Nguyen An" <na-hoan@jinso.co.jp>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.137194373@decadent.org.uk>
+Message-ID: <lsq.1565469607.565559628@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 019/157] sctp: get sctphdr by offset in
- sctp_compute_cksum
+Subject: [PATCH 3.16 026/157] serial: sh-sci: Fix setting SCSCR_TIE while
+ transferring data
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,39 +48,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-commit 273160ffc6b993c7c91627f5a84799c66dfe4dee upstream.
+commit 93bcefd4c6bad4c69dbc4edcd3fbf774b24d930d upstream.
 
-sctp_hdr(skb) only works when skb->transport_header is set properly.
+We disable transmission interrupt (clear SCSCR_TIE) after all data has been transmitted
+(if uart_circ_empty(xmit)). While transmitting, if the data is still in the tty buffer,
+re-enable the SCSCR_TIE bit, which was done at sci_start_tx().
+This is unnecessary processing, wasting CPU operation if the data transmission length is large.
+And further, transmit end, FIFO empty bits disabling have also been performed in the step above.
 
-But in Netfilter, skb->transport_header for ipv6 is not guaranteed
-to be right value for sctphdr. It would cause to fail to check the
-checksum for sctp packets.
-
-So fix it by using offset, which is always right in all places.
-
-v1->v2:
-  - Fix the changelog.
-
-Fixes: e6d8b64b34aa ("net: sctp: fix and consolidate SCTP checksumming code")
-Reported-by: Li Shuang <shuali@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/net/sctp/checksum.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/sh-sci.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
---- a/include/net/sctp/checksum.h
-+++ b/include/net/sctp/checksum.h
-@@ -61,7 +61,7 @@ static inline __wsum sctp_csum_combine(_
- static inline __le32 sctp_compute_cksum(const struct sk_buff *skb,
- 					unsigned int offset)
- {
--	struct sctphdr *sh = sctp_hdr(skb);
-+	struct sctphdr *sh = (struct sctphdr *)(skb->data + offset);
- 	const struct skb_checksum_ops ops = {
- 		.update  = sctp_csum_update,
- 		.combine = sctp_csum_combine,
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -633,19 +633,9 @@ static void sci_transmit_chars(struct ua
+ 
+ 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+ 		uart_write_wakeup(port);
+-	if (uart_circ_empty(xmit)) {
++	if (uart_circ_empty(xmit))
+ 		sci_stop_tx(port);
+-	} else {
+-		ctrl = serial_port_in(port, SCSCR);
+ 
+-		if (port->type != PORT_SCI) {
+-			serial_port_in(port, SCxSR); /* Dummy read */
+-			serial_port_out(port, SCxSR, SCxSR_TDxE_CLEAR(port));
+-		}
+-
+-		ctrl |= SCSCR_TIE;
+-		serial_port_out(port, SCSCR, ctrl);
+-	}
+ }
+ 
+ /* On SH3, SCIF may read end-of-break as a space->mark char */
 
