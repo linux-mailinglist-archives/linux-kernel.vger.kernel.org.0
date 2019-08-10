@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB3C988A0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 10:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25DF988A14
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 10:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbfHJIm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 04:42:56 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:21815 "EHLO rere.qmqm.pl"
+        id S1726375AbfHJInI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 04:43:08 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:42497 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbfHJImy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 04:42:54 -0400
+        id S1726199AbfHJImz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Aug 2019 04:42:55 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 465FvQ0mfGz6q;
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 465FvQ6QjnzDq;
         Sat, 10 Aug 2019 10:41:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1565426482; bh=G7R5e0R8xvaPUp5VxDgIxn2z2zA6lF8ZjDv/d5wGWZ4=;
+        t=1565426483; bh=GPn5XARqd1zn5tX+2/TX87v2oA3wEhgR0YuXSO1JjZA=;
         h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=jK4hN7ldot/gkRoFcHO/XX7LC6g4B4iBuE2/xFMOGngBKJI+jnCudz7V8gs0dgBNr
-         UmN2xQK5YVs2jtvcCDMky860A7WHkK5rTgghV3/nP72sdMytCTuWg8zKhQYvfS+ZRt
-         A+4S4chNCsT0adsEvmBmz7OoAOzTO9tn92UoJUsZYKdfZMOgmcYxizPiTIQDHeQhEG
-         ANq80oW7WQON3iRmjpusek96cxCb3cqd7dtdgi4mcHduB8QYCU5Qap/UPOZJLQnuJM
-         xa1uAwahb7enCFhxy/XwRpiTiaBzRKh5iYW01ZH9MWSlbh6MThgNMTu9KvCaln7Cwk
-         kuNjbUEql8YPQ==
+        b=ZXec2AAp1lJsJuACcCtIdsQ8TkNscBPCCQ8inPW02zYCirtSF1PG6vD3pgz9qZjXx
+         CkirJ+nvNPR7wu8LWW5QXZPjr+iwT0JZu967htotG/LMjpaSRwo0jHuLMSoV1gZI6C
+         RLt1VLyffthG3PhwByaRivSYKiR86rd0d8x4pWOx3M4R4QcFepCutpL9y+Eri+QrbC
+         2mGlVIDGewhxWBBahqS6lMxlv5PV00teTU5hQI/e8znhsFQ0aPsKgVX6KFKoMA8d1l
+         mPk6b13wewECZvgA0ZQ9OXdf4mrIVDmz1e0WAAdDUmRPwpaFDjAT6Zp9kfgQc2kDjv
+         S/sXz0cPTmzGw==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.100.3 at mail
-Date:   Sat, 10 Aug 2019 10:42:50 +0200
-Message-Id: <15b3e89a888a24d90647dc5d93820bf5b80c9a06.1565426370.git.mirq-linux@rere.qmqm.pl>
+Date:   Sat, 10 Aug 2019 10:42:51 +0200
+Message-Id: <34dd968708265f3a522940f67c733b3a91c682a2.1565426370.git.mirq-linux@rere.qmqm.pl>
 In-Reply-To: <cover.1565426370.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1565426370.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v6 3/7] usb: gadget: u_serial: make OBEX port not a console
+Subject: [PATCH v6 4/7] usb: gadget: u_serial: allow more console gadget ports
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,90 +43,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prevent OBEX serial port from ever becoming a console. Console messages
-will definitely break the protocol, and since you have to instantiate
-the port making it explicitly for OBEX, there is no point in allowing
-console to break it by mistake.
+Allow configuring more than one console using USB serial or ACM gadget.
+
+By default, only first (ttyGS0) is a console, but this may be changed
+using function's new "console" attribute.
 
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
   v6: rebased on balbi/testing/next
-  v5: no changes
-  v4: no changes
-  v3: rename gserial_alloc_line_raw() -> gserial_alloc_line_no_console()
-  v2: change of API
-    + commit message massage
+  v5: fixed locking in gserial_get_console()
+  v4: fixed locking in gserial_set_console()
+  v3: no changes
+  v2: no changes
 
 ---
- drivers/usb/gadget/function/f_obex.c   |  2 +-
- drivers/usb/gadget/function/u_serial.c | 16 ++++++++++++----
- drivers/usb/gadget/function/u_serial.h |  1 +
- 3 files changed, 14 insertions(+), 5 deletions(-)
+ drivers/usb/gadget/function/f_acm.c    | 21 +++++++++++
+ drivers/usb/gadget/function/f_serial.c | 21 +++++++++++
+ drivers/usb/gadget/function/u_serial.c | 48 ++++++++++++++++++++++++++
+ drivers/usb/gadget/function/u_serial.h |  7 ++++
+ 4 files changed, 97 insertions(+)
 
-diff --git a/drivers/usb/gadget/function/f_obex.c b/drivers/usb/gadget/function/f_obex.c
-index 55b7f57d2dc7..ab26d84ed95e 100644
---- a/drivers/usb/gadget/function/f_obex.c
-+++ b/drivers/usb/gadget/function/f_obex.c
-@@ -432,7 +432,7 @@ static struct usb_function_instance *obex_alloc_inst(void)
- 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/usb/gadget/function/f_acm.c b/drivers/usb/gadget/function/f_acm.c
+index 9fc98de83624..7c152c28b26c 100644
+--- a/drivers/usb/gadget/function/f_acm.c
++++ b/drivers/usb/gadget/function/f_acm.c
+@@ -771,6 +771,24 @@ static struct configfs_item_operations acm_item_ops = {
+ 	.release                = acm_attr_release,
+ };
  
- 	opts->func_inst.free_func_inst = obex_free_inst;
--	ret = gserial_alloc_line(&opts->port_num);
-+	ret = gserial_alloc_line_no_console(&opts->port_num);
- 	if (ret) {
- 		kfree(opts);
- 		return ERR_PTR(ret);
++#ifdef CONFIG_U_SERIAL_CONSOLE
++
++static ssize_t f_acm_console_store(struct config_item *item,
++		const char *page, size_t count)
++{
++	return gserial_set_console(to_f_serial_opts(item)->port_num,
++				   page, count);
++}
++
++static ssize_t f_acm_console_show(struct config_item *item, char *page)
++{
++	return gserial_get_console(to_f_serial_opts(item)->port_num, page);
++}
++
++CONFIGFS_ATTR(f_acm_, console);
++
++#endif /* CONFIG_U_SERIAL_CONSOLE */
++
+ static ssize_t f_acm_port_num_show(struct config_item *item, char *page)
+ {
+ 	return sprintf(page, "%u\n", to_f_serial_opts(item)->port_num);
+@@ -779,6 +797,9 @@ static ssize_t f_acm_port_num_show(struct config_item *item, char *page)
+ CONFIGFS_ATTR_RO(f_acm_, port_num);
+ 
+ static struct configfs_attribute *acm_attrs[] = {
++#ifdef CONFIG_U_SERIAL_CONSOLE
++	&f_acm_attr_console,
++#endif
+ 	&f_acm_attr_port_num,
+ 	NULL,
+ };
+diff --git a/drivers/usb/gadget/function/f_serial.c b/drivers/usb/gadget/function/f_serial.c
+index c860f30a0ea2..1406255d0865 100644
+--- a/drivers/usb/gadget/function/f_serial.c
++++ b/drivers/usb/gadget/function/f_serial.c
+@@ -266,6 +266,24 @@ static struct configfs_item_operations serial_item_ops = {
+ 	.release	= serial_attr_release,
+ };
+ 
++#ifdef CONFIG_U_SERIAL_CONSOLE
++
++static ssize_t f_serial_console_store(struct config_item *item,
++		const char *page, size_t count)
++{
++	return gserial_set_console(to_f_serial_opts(item)->port_num,
++				   page, count);
++}
++
++static ssize_t f_serial_console_show(struct config_item *item, char *page)
++{
++	return gserial_get_console(to_f_serial_opts(item)->port_num, page);
++}
++
++CONFIGFS_ATTR(f_serial_, console);
++
++#endif /* CONFIG_U_SERIAL_CONSOLE */
++
+ static ssize_t f_serial_port_num_show(struct config_item *item, char *page)
+ {
+ 	return sprintf(page, "%u\n", to_f_serial_opts(item)->port_num);
+@@ -274,6 +292,9 @@ static ssize_t f_serial_port_num_show(struct config_item *item, char *page)
+ CONFIGFS_ATTR_RO(f_serial_, port_num);
+ 
+ static struct configfs_attribute *acm_attrs[] = {
++#ifdef CONFIG_U_SERIAL_CONSOLE
++	&f_serial_attr_console,
++#endif
+ 	&f_serial_attr_port_num,
+ 	NULL,
+ };
 diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-index 94f6999e8262..62280c23cde2 100644
+index 62280c23cde2..0da00546006f 100644
 --- a/drivers/usb/gadget/function/u_serial.c
 +++ b/drivers/usb/gadget/function/u_serial.c
-@@ -1180,7 +1180,7 @@ void gserial_free_line(unsigned char port_num)
+@@ -1081,6 +1081,54 @@ static void gs_console_exit(struct gs_port *port)
+ 	port->console = NULL;
  }
- EXPORT_SYMBOL_GPL(gserial_free_line);
  
--int gserial_alloc_line(unsigned char *line_num)
-+int gserial_alloc_line_no_console(unsigned char *line_num)
- {
- 	struct usb_cdc_line_coding	coding;
- 	struct gs_port			*port;
-@@ -1221,12 +1221,20 @@ int gserial_alloc_line(unsigned char *line_num)
- 		goto err;
- 	}
- 	*line_num = port_num;
--
--	if (!port_num)
--		gs_console_init(port);
- err:
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(gserial_alloc_line_no_console);
-+
-+int gserial_alloc_line(unsigned char *line_num)
++ssize_t gserial_set_console(unsigned char port_num, const char *page, size_t count)
 +{
-+	int ret = gserial_alloc_line_no_console(line_num);
++	struct gs_port *port;
++	bool enable;
++	int ret;
 +
-+	if (!ret && !*line_num)
-+		gs_console_init(ports[*line_num].port);
++	ret = strtobool(page, &enable);
++	if (ret)
++		return ret;
++
++	mutex_lock(&ports[port_num].lock);
++	port = ports[port_num].port;
++
++	if (WARN_ON(port == NULL)) {
++		ret = -ENXIO;
++		goto out;
++	}
++
++	if (enable)
++		ret = gs_console_init(port);
++	else
++		gs_console_exit(port);
++out:
++	mutex_unlock(&ports[port_num].lock);
++
++	return ret < 0 ? ret : count;
++}
++EXPORT_SYMBOL_GPL(gserial_set_console);
++
++ssize_t gserial_get_console(unsigned char port_num, char *page)
++{
++	struct gs_port *port;
++	ssize_t ret;
++
++	mutex_lock(&ports[port_num].lock);
++	port = ports[port_num].port;
++
++	if (WARN_ON(port == NULL))
++		ret = -ENXIO;
++	else
++		ret = sprintf(page, "%u\n", !!port->console);
++
++	mutex_unlock(&ports[port_num].lock);
 +
 +	return ret;
 +}
- EXPORT_SYMBOL_GPL(gserial_alloc_line);
++EXPORT_SYMBOL_GPL(gserial_get_console);
++
+ #else
  
- /**
+ static int gs_console_connect(struct gs_port *port)
 diff --git a/drivers/usb/gadget/function/u_serial.h b/drivers/usb/gadget/function/u_serial.h
-index 9acaac1cbb75..8b472b0c8cb4 100644
+index 8b472b0c8cb4..e5b08ab8cf7a 100644
 --- a/drivers/usb/gadget/function/u_serial.h
 +++ b/drivers/usb/gadget/function/u_serial.h
-@@ -54,6 +54,7 @@ struct usb_request *gs_alloc_req(struct usb_ep *ep, unsigned len, gfp_t flags);
- void gs_free_req(struct usb_ep *, struct usb_request *req);
- 
- /* management of individual TTY ports */
-+int gserial_alloc_line_no_console(unsigned char *port_line);
+@@ -58,6 +58,13 @@ int gserial_alloc_line_no_console(unsigned char *port_line);
  int gserial_alloc_line(unsigned char *port_line);
  void gserial_free_line(unsigned char port_line);
  
++#ifdef CONFIG_U_SERIAL_CONSOLE
++
++ssize_t gserial_set_console(unsigned char port_num, const char *page, size_t count);
++ssize_t gserial_get_console(unsigned char port_num, char *page);
++
++#endif /* CONFIG_U_SERIAL_CONSOLE */
++
+ /* connect/disconnect is handled by individual functions */
+ int gserial_connect(struct gserial *, u8 port_num);
+ void gserial_disconnect(struct gserial *);
 -- 
 2.20.1
 
