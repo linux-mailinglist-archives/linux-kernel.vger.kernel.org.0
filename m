@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5C888DBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB2788D7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfHJUsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:48:39 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54780 "EHLO
+        id S1727304AbfHJUq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:46:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55362 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726785AbfHJUoA (ORCPT
+        by vger.kernel.org with ESMTP id S1726911AbfHJUoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:00 -0400
+        Sat, 10 Aug 2019 16:44:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDT-00053q-9P; Sat, 10 Aug 2019 21:43:55 +0100
+        id 1hwYDd-00053m-42; Sat, 10 Aug 2019 21:44:05 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003kW-Om; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDK-0003cb-PJ; Sat, 10 Aug 2019 21:43:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,19 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Johannes Weiner" <hannes@cmpxchg.org>,
-        "Rik van Riel" <riel@redhat.com>, "Michal Hocko" <mhocko@suse.com>,
+        "Valentin Schneider" <valentin.schneider@arm.com>,
+        "Mike Galbraith" <efault@gmx.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Mel Gorman" <mgorman@suse.de>
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Mel Gorman" <mgorman@techsingularity.net>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.576161906@decadent.org.uk>
+Message-ID: <lsq.1565469607.727370332@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 142/157] proc: meminfo: estimate available memory
- more conservatively
+Subject: [PATCH 3.16 064/157] sched/fair: Do not re-read ->h_load_next
+ during hierarchical load calculation
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,46 +53,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+From: Mel Gorman <mgorman@techsingularity.net>
 
-commit 84ad5802a33a4964a49b8f7d24d80a214a096b19 upstream.
+commit 0e9f02450da07fc7b1346c8c32c771555173e397 upstream.
 
-The MemAvailable item in /proc/meminfo is to give users a hint of how
-much memory is allocatable without causing swapping, so it excludes the
-zones' low watermarks as unavailable to userspace.
+A NULL pointer dereference bug was reported on a distribution kernel but
+the same issue should be present on mainline kernel. It occured on s390
+but should not be arch-specific.  A partial oops looks like:
 
-However, for a userspace allocation, kswapd will actually reclaim until
-the free pages hit a combination of the high watermark and the page
-allocator's lowmem protection that keeps a certain amount of DMA and
-DMA32 memory from userspace as well.
+  Unable to handle kernel pointer dereference in virtual kernel address space
+  ...
+  Call Trace:
+    ...
+    try_to_wake_up+0xfc/0x450
+    vhost_poll_wakeup+0x3a/0x50 [vhost]
+    __wake_up_common+0xbc/0x178
+    __wake_up_common_lock+0x9e/0x160
+    __wake_up_sync_key+0x4e/0x60
+    sock_def_readable+0x5e/0x98
 
-Subtract the full amount we know to be unavailable to userspace from the
-number of free pages when calculating MemAvailable.
+The bug hits any time between 1 hour to 3 days. The dereference occurs
+in update_cfs_rq_h_load when accumulating h_load. The problem is that
+cfq_rq->h_load_next is not protected by any locking and can be updated
+by parallel calls to task_h_load. Depending on the compiler, code may be
+generated that re-reads cfq_rq->h_load_next after the check for NULL and
+then oops when reading se->avg.load_avg. The dissassembly showed that it
+was possible to reread h_load_next after the check for NULL.
 
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+While this does not appear to be an issue for later compilers, it's still
+an accident if the correct code is generated. Full locking in this path
+would have high overhead so this patch uses READ_ONCE to read h_load_next
+only once and check for NULL before dereferencing. It was confirmed that
+there were no further oops after 10 days of testing.
+
+As Peter pointed out, it is also necessary to use WRITE_ONCE() to avoid any
+potential problems with store tearing.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 685207963be9 ("sched: Move h_load calculation to task_h_load()")
+Link: https://lkml.kernel.org/r/20190319123610.nsivgf3mjbjjesxb@techsingularity.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: use ACCESS_ONCE()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/proc/meminfo.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ kernel/sched/fair.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -57,11 +57,8 @@ static int meminfo_proc_show(struct seq_
- 	/*
- 	 * Estimate the amount of memory available for userspace allocations,
- 	 * without causing swapping.
--	 *
--	 * Free memory cannot be taken below the low watermark, before the
--	 * system starts swapping.
- 	 */
--	available = i.freeram - wmark_low;
-+	available = i.freeram - totalreserve_pages;
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5487,10 +5487,10 @@ static void update_cfs_rq_h_load(struct
+ 	if (cfs_rq->last_h_load_update == now)
+ 		return;
  
- 	/*
- 	 * Not all the page cache can be freed, otherwise the system will
+-	cfs_rq->h_load_next = NULL;
++	ACCESS_ONCE(cfs_rq->h_load_next) = NULL;
+ 	for_each_sched_entity(se) {
+ 		cfs_rq = cfs_rq_of(se);
+-		cfs_rq->h_load_next = se;
++		ACCESS_ONCE(cfs_rq->h_load_next) = se;
+ 		if (cfs_rq->last_h_load_update == now)
+ 			break;
+ 	}
+@@ -5500,7 +5500,7 @@ static void update_cfs_rq_h_load(struct
+ 		cfs_rq->last_h_load_update = now;
+ 	}
+ 
+-	while ((se = cfs_rq->h_load_next) != NULL) {
++	while ((se = ACCESS_ONCE(cfs_rq->h_load_next)) != NULL) {
+ 		load = cfs_rq->h_load;
+ 		load = div64_ul(load * se->avg.load_avg_contrib,
+ 				cfs_rq->runnable_load_avg + 1);
 
