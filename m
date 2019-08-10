@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D991C88E5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F29288E54
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfHJUyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:54:14 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53788 "EHLO
+        id S1727800AbfHJUxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:53:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53872 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726472AbfHJUns (ORCPT
+        by vger.kernel.org with ESMTP id S1726506AbfHJUnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:48 -0400
+        Sat, 10 Aug 2019 16:43:49 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDI-00052r-Li; Sat, 10 Aug 2019 21:43:44 +0100
+        id 1hwYDI-000534-W9; Sat, 10 Aug 2019 21:43:45 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDI-0003Xf-Bc; Sat, 10 Aug 2019 21:43:44 +0100
+        id 1hwYDI-0003YJ-MF; Sat, 10 Aug 2019 21:43:44 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Michael Hennerich" <michael.hennerich@analog.com>,
-        "Leonard Pollak" <leonardp@tr-host.de>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
+        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+        "Peter Meerwald-Stadler" <pmeerw@pmeerw.net>,
+        "Jean-Francois Dagenais" <jeff.dagenais@gmail.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.393019235@decadent.org.uk>
+Message-ID: <lsq.1565469607.848644193@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 003/157] Staging: iio: meter: fixed typo
+Subject: [PATCH 3.16 011/157] iio: dac: mcp4725: add missing powerdown
+ bits in store eeprom
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,31 +49,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leonard Pollak <leonardp@tr-host.de>
+From: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
 
-commit 0a8a29be499cbb67df79370aaf5109085509feb8 upstream.
+commit 06003531502d06bc89d32528f6ec96bf978790f9 upstream.
 
-This patch fixes an obvious typo, which will cause erroneously returning the Peak
-Voltage instead of the Peak Current.
+When issuing the write DAC register and write eeprom command, the two
+powerdown bits (PD0 and PD1) are assumed by the chip to be present in
+the bytes sent. Leaving them at 0 implies "powerdown disabled" which is
+a different state that the current one. By adding the current state of
+the powerdown in the i2c write, the chip will correctly power-on exactly
+like as it is at the moment of store_eeprom call.
 
-Signed-off-by: Leonard Pollak <leonardp@tr-host.de>
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+This is documented in MCP4725's datasheet, FIGURE 6-2: "Write Commands
+for DAC Input Register and EEPROM" and MCP4726's datasheet, FIGURE 6-3:
+"Write All Memory Command".
+
+Signed-off-by: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
+Acked-by: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/iio/meter/ade7854.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/dac/mcp4725.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/staging/iio/meter/ade7854.c
-+++ b/drivers/staging/iio/meter/ade7854.c
-@@ -269,7 +269,7 @@ static IIO_DEV_ATTR_VPEAK(S_IWUSR | S_IR
- static IIO_DEV_ATTR_IPEAK(S_IWUSR | S_IRUGO,
- 		ade7854_read_32bit,
- 		ade7854_write_32bit,
--		ADE7854_VPEAK);
-+		ADE7854_IPEAK);
- static IIO_DEV_ATTR_APHCAL(S_IWUSR | S_IRUGO,
- 		ade7854_read_16bit,
- 		ade7854_write_16bit,
+--- a/drivers/iio/dac/mcp4725.c
++++ b/drivers/iio/dac/mcp4725.c
+@@ -86,6 +86,7 @@ static ssize_t mcp4725_store_eeprom(stru
+ 		return 0;
+ 
+ 	inoutbuf[0] = 0x60; /* write EEPROM */
++	inoutbuf[0] |= data->powerdown ? ((data->powerdown_mode + 1) << 1) : 0;
+ 	inoutbuf[1] = data->dac_value >> 4;
+ 	inoutbuf[2] = (data->dac_value & 0xf) << 4;
+ 
 
