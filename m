@@ -2,73 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B7BE88D9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEDE88DFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfHJUrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:47:39 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33253 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbfHJUrW (ORCPT
+        id S1727651AbfHJUux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:50:53 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54430 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726703AbfHJUnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:47:22 -0400
-Received: by mail-ot1-f67.google.com with SMTP id q20so145672199otl.0;
-        Sat, 10 Aug 2019 13:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5j1WOyiF8SuI/K9sc0sg2QlEKDu+SHpvsRnF7h1iTVg=;
-        b=KUr9xOzWnC/gL8k9K0IAZ4y9qVw4oXDTy8DYpXm3gjKZggxFIUKEBAgU2GqTIBCffP
-         8rb6vgW2Jz5mcHtGIQlBE2HcHKb9cCJaWwmN96EW9C/yx+TJabHxWCTRtQ6AklX0Rarn
-         lumHFQluwWtdQGT2PISpMAzTKQmR5Gxnumrg7hsiJnlLVf2M5tYVPoo7RktMBEiRj2EP
-         QEt6dEgQNFUPSzyQbitXnYd1Gy/fKCrutWwL1MJ7QGhLWfd+iNzm4rX9Y3Pzvm4Y9VFT
-         H9UyBc4OoePbB4F0vCCoAd7+QnP/eesVF+IQl64BjmbJ2zNl0QvOeA58B9pjatPHIEix
-         kHow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5j1WOyiF8SuI/K9sc0sg2QlEKDu+SHpvsRnF7h1iTVg=;
-        b=TbDej6UYdk2PxoSjvuO7+PC1jvAD2zJiKsMc6zmQuY+XUlGNGXfjKixYAt7VY5tYCY
-         CN0onQ3qag4rJx03o71IZOIFhvIHPxBXH6TZC2limYyBNx9OPDKJswV2yp7MfWZs9aha
-         JlexM9HqfTxOPYDXqFL343APIs5uKspILRlLRmPRrFvq7l79IgM27fS46U+6YBCVcvkZ
-         Qcl+YkHd4yjKrSRcTXVHrUrI/axbHu+vKB1bMa9Z0df8aRDveisp2oDcISjtYd/TGDu5
-         aej+dBSJCAzntwmd4R8RkRtfrqinPvqxszY32so+DhIPN/DtNC5L9O9SKl+MMeI+x72C
-         R6Ww==
-X-Gm-Message-State: APjAAAUmgRRFvhKtQ5p15gSgyk5nuafjfJqPdQHYKq29E5c0tcke1Gno
-        K40QlircZTXm6ee11vXz/4q+fCQo//Qg914N0sA6yw==
-X-Google-Smtp-Source: APXvYqzcwCc7bIeiO/j07C8FaJX6CnNQvE3nUs/oCycy00nyxBs+rjvzo05eebzsq6aum8gP9IL47hR8VLp/QFLCS0U=
-X-Received: by 2002:a5e:8210:: with SMTP id l16mr27792136iom.240.1565470041896;
- Sat, 10 Aug 2019 13:47:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-5-deepa.kernel@gmail.com>
- <eb2027cdccc0a0ff0a9d061fa8dd04a927c63819.camel@codethink.co.uk>
-In-Reply-To: <eb2027cdccc0a0ff0a9d061fa8dd04a927c63819.camel@codethink.co.uk>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Sat, 10 Aug 2019 13:47:10 -0700
-Message-ID: <CABeXuvrFze2-vDWyoFApoHK=yRWEZaNiYCy_DR+q3GZhty+MWg@mail.gmail.com>
-Subject: Re: [Y2038] [PATCH 04/20] mount: Add mount warning for impending
- timestamp expiry
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
+        Sat, 10 Aug 2019 16:43:55 -0400
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hwYDP-00058M-8C; Sat, 10 Aug 2019 21:43:51 +0100
+Received: from ben by deadeye with local (Exim 4.92)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hwYDO-0003jp-Jq; Sat, 10 Aug 2019 21:43:50 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Denis Efremov" <efremov@ispras.ru>, "Willy Tarreau" <w@1wt.eu>
+Date:   Sat, 10 Aug 2019 21:40:07 +0100
+Message-ID: <lsq.1565469607.238740986@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+X-Patchwork-Hint: ignore
+Subject: [PATCH 3.16 139/157] floppy: fix out-of-bounds read in
+ next_valid_format
+In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> This doesn't seem like a helpful way to log the time.  Maybe use
-> time64_to_tm() to convert to "broken down" time and then print it with
-> "%ptR"... but that wants struct rtc_time.  If you apply the attached
-> patch, however, you should then be able to print struct tm with
-> "%ptT".
+3.16.72-rc1 review patch.  If anyone has any objections, please let me know.
 
-OK. Will print a more user friendly date string here.
+------------------
 
-Thanks,
--Deepa
+From: Denis Efremov <efremov@ispras.ru>
+
+commit 5635f897ed83fd539df78e98ba69ee91592f9bb8 upstream.
+
+This fixes a global out-of-bounds read access in the next_valid_format
+function of the floppy driver.
+
+The values from autodetect field of the struct floppy_drive_params are
+used as indices for the floppy_type array in the next_valid_format
+function 'floppy_type[DP->autodetect[probed_format]].sect'.
+
+To trigger the bug, one could use a value out of range and set the drive
+parameters with the FDSETDRVPRM ioctl.  A floppy disk is not required to
+be inserted.
+
+CAP_SYS_ADMIN is required to call FDSETDRVPRM.
+
+The patch adds the check for values of the autodetect field to be in the
+'0 <= x < ARRAY_SIZE(floppy_type)' range of the floppy_type array indices.
+
+The bug was found by syzkaller.
+
+Signed-off-by: Denis Efremov <efremov@ispras.ru>
+Tested-by: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.16: Drop changes in compat_setdrvprm(), as compat
+ ioctls go via fd_ioctl_locked() after translation in compat_ioctl.c.]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3383,6 +3383,20 @@ static int fd_getgeo(struct block_device
+ 	return 0;
+ }
+ 
++static bool valid_floppy_drive_params(const short autodetect[8])
++{
++	size_t floppy_type_size = ARRAY_SIZE(floppy_type);
++	size_t i = 0;
++
++	for (i = 0; i < 8; ++i) {
++		if (autodetect[i] < 0 ||
++		    autodetect[i] >= floppy_type_size)
++			return false;
++	}
++
++	return true;
++}
++
+ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd,
+ 		    unsigned long param)
+ {
+@@ -3509,6 +3523,8 @@ static int fd_locked_ioctl(struct block_
+ 		SUPBOUND(size, strlen((const char *)outparam) + 1);
+ 		break;
+ 	case FDSETDRVPRM:
++		if (!valid_floppy_drive_params(inparam.dp.autodetect))
++			return -EINVAL;
+ 		*UDP = inparam.dp;
+ 		break;
+ 	case FDGETDRVPRM:
+
