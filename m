@@ -2,109 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 540A788A1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 10:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4E1C88A28
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 10:58:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbfHJIpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 04:45:36 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:46718 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbfHJIpg (ORCPT
+        id S1726048AbfHJI6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 04:58:55 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:32839 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfHJI6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 04:45:36 -0400
-Received: by mail-yb1-f194.google.com with SMTP id w196so8776570ybe.13;
-        Sat, 10 Aug 2019 01:45:35 -0700 (PDT)
+        Sat, 10 Aug 2019 04:58:55 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x3so71312028lfc.0
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2019 01:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4N2DP4l2LpXR0ja9/QlgTCxk89cb9ApRuW6Y7KL7/QM=;
-        b=tFjHxYGsshA6uhC4ZyO8gQA5CGqOklLRWWxRbDw74L/pi+b9ttnCV0SxJXzM1GWIvS
-         F9rYQq1hBhIsaxKOI08ZyaGxkadwK312OhWil5n/UwwkKSmadnu/olRJh1TePylAFF1P
-         4ktVi+A2LsntpLrg+0r5GSjYQS6MoaBf5QcbFDhiWv7xJnDJnGAAFTUKJLcAwhajChY9
-         OyZKinHBA6UhYKPjOgT2ZHjTfw/jp+Njsc09CGDN2oGgyuMarC1b8lJbRsvnx9Il0N93
-         Q2aGmNoPzI8TmYFqu0vVtm5p9ZXDTei6QktQwpM52ZY7q5UI24kSvWdBmw3r3ttiWOfn
-         PRfg==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=eACVUSS6+kAuWMY6Y/Rvo5Ji9wXuF3LroigfQBmD9vM=;
+        b=d2mfruYSRYaSGF5yv3D83sQwKvJlJJKM+/OA8HClDw1CgQcoT6qMQlnstC40xRzcD8
+         baI8453lIvRRlzv84SSi/JKx4BmSloonlPjlTna/9YUZojdG/P6TFHtVOzEkJNzfqZbP
+         HAn6pqb9n+MkmxkJlKizka51EXAkuGFYLW3jdGMcJes7spXqIE0n1039pVDKXlT+2pZ6
+         UROReAN0oTwb4gphLooyMzLJ0o1O10sUHQtbS76QXVZqI2k2+FxGDPXz9HOOfBdJ0uZw
+         oQ3QGx12JL5YYq0wVoQ7Uuqbhby8NyHBbgiITLuGqfZcVW2cDIb2gwfMB5JH/wDSLvq1
+         bsqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4N2DP4l2LpXR0ja9/QlgTCxk89cb9ApRuW6Y7KL7/QM=;
-        b=e0jFvHJrt/Ei0HgtWqj5//2isnrkp+vyAXTitNstIFCReo/eYytWQlBOU+Qh3Eapj2
-         6dDvh3A1IjSzqsiQYeloC6Ryo3QimUeNiQOTBiTiOBsOUIfg+bzhrWKr6Xyym3vIcmuT
-         Pze5YCJ/shKbWejTHE8o5PGJm3TEPI7Sh5UVBP5t152VDcEubxTDjoyJRF5PIyW0Owq2
-         pouUXcKgac/psoQ6mYFfgcDg97iLyVgzebtkqf5BG68JHD/xaU6RfRst67p6yr4fSEtx
-         gYrzcRD6lF3tS+aibUmHP7neV7IzCmvHllivGgNvRNXHXVtDbDSu0QyJYsnXKFe3eILj
-         f7gg==
-X-Gm-Message-State: APjAAAULcyvAW4L7qXx95o9aAJXVAKaDBia8rDbMUM+mi2t30pbRlpur
-        QwaAWjTCvj2X4zwt+RxT73+8vY74dQrJ9mkIbUc=
-X-Google-Smtp-Source: APXvYqwYP1MVAOUz7wJvEpUhVTE97jzCm1T5VZgDMaOxdDC99C9zKxDOMpuB6Lus4uMwey10ooqmjZMMWn1jbSlbvgQ=
-X-Received: by 2002:a25:9109:: with SMTP id v9mr17429940ybl.396.1565426734980;
- Sat, 10 Aug 2019 01:45:34 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=eACVUSS6+kAuWMY6Y/Rvo5Ji9wXuF3LroigfQBmD9vM=;
+        b=ejM6mm/BtvpdIT6F6aUdunAw/Fvow8kQWTa9tEwK8FPbBUCQ1WOUx7baJRps7ZYyCC
+         tsWqSvC0K00CaYP3oDuicjhH2xrihSans3/YTQQPrT+A37raAhh4BsqG0eoW0KA/P/+T
+         /njs5LdI0IccEgAu02zdKxnsJKjsI1sUaPv3FijuLmEfuO8nDJfthkKrO6loI767GNx5
+         sBfwiHYi5AUfQWJTaCNPxZf2iqF5cbj+jK3DVKH23lJ4CXbeY3XfJDJvHASixVTMCK6b
+         VLDZXN5H8xwfj9pEVONKUjaJSVzZXfX5kOvYnZu7GaKUwata3IPGJZvXGfNEiYQp+q7s
+         dwlA==
+X-Gm-Message-State: APjAAAXYBPfq1+lWtbPfBYPkzS9mn0obKbQbdFVTX5GFG7f4OfEP2i+Y
+        rMCqPLdezi19JFslQet7GPm450MY7Wo+aNCRR4M=
+X-Google-Smtp-Source: APXvYqxjel5Ko0tVKJoK4ZlIqbO0eqATlaPge1kuv5ptrCCUFRUYJOIWoSnZfWe/oWRs17omhiS9jfeId/+cwdE0ftg=
+X-Received: by 2002:a19:48c5:: with SMTP id v188mr14757016lfa.69.1565427533316;
+ Sat, 10 Aug 2019 01:58:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190527200627.8635-1-peron.clem@gmail.com> <CAJiuCcfUhBxEr=o7VVpPROQZadQh7z1QC0SkWSYt-53Sj3H2qw@mail.gmail.com>
- <CAJiuCcc3_1jZWV7G3+fFQYRZ8b6qcAbnH+K6pkRvww6_D=OMAw@mail.gmail.com> <20190715193842.GC4503@sirena.org.uk>
-In-Reply-To: <20190715193842.GC4503@sirena.org.uk>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Sat, 10 Aug 2019 10:45:23 +0200
-Message-ID: <CAJiuCceYDnyxRLLLLy6Dn6DLTZ+NmSaUnoX1Vmzvgiy0XvF_Fw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] Allwinner H6 SPDIF support
-To:     Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
+Received: by 2002:a19:8c0b:0:0:0:0:0 with HTTP; Sat, 10 Aug 2019 01:58:52
+ -0700 (PDT)
+Reply-To: sgt.hester33@gmail.com
+From:   Ann Hester <sgthester612@gmail.com>
+Date:   Sat, 10 Aug 2019 08:58:52 +0000
+Message-ID: <CAJdfrwrPT_ZuRyAgJFNw7ShZWdzfO-PUbLv4M0cyzi_byEaCDw@mail.gmail.com>
+Subject: Greetings
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Sorry, I just discovered that the ASoC patches have been merged into
-the broonie and linus tree in 5.3.
-
-I'm still quite new in the sending of patches to the Kernel but
-souldn't be a ack or a mail sent to warn the sender when the series
-are accepted?
-
-Should 5/6/7 patches be picked by Sunxi maintainer?
-
-Thanks,
-Cl=C3=A9ment
-
-
-
-
-
-On Mon, 15 Jul 2019 at 21:38, Mark Brown <broonie@kernel.org> wrote:
->
-> On Mon, Jul 15, 2019 at 09:21:01PM +0200, Cl=C3=A9ment P=C3=A9ron wrote:
-> > Hi,
-> >
-> > I'm missing ACK from ASoC Maintainers patch 2-3-4.
-> >
-> > It's really small paches, if you could have a look at it.
->
-> Please don't send content free pings and please allow a reasonable time
-> for review.  People get busy, go on holiday, attend conferences and so
-> on so unless there is some reason for urgency (like critical bug fixes)
-> please allow at least a couple of weeks for review.  If there have been
-> review comments then people may be waiting for those to be addressed.
->
-> Sending content free pings adds to the mail volume (if they are seen at
-> all) which is often the problem and since they can't be reviewed
-> directly if something has gone wrong you'll have to resend the patches
-> anyway, so sending again is generally a better approach though there are
-> some other maintainers who like them - if in doubt look at how patches
-> for the subsystem are normally handled.
+How are you? I hope you are well. My name is Ann Leigh, please reply
+back to confirm your email address so I can tell you my reason for
+contacting you.
