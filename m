@@ -2,121 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB7288D1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E5288D26
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfHJUIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:08:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:58360 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfHJUIE (ORCPT
+        id S1726427AbfHJUS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:18:26 -0400
+Received: from smtprelay0191.hostedemail.com ([216.40.44.191]:58430 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726212AbfHJUS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:08:04 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hwXek-0007tb-JY; Sat, 10 Aug 2019 22:08:02 +0200
-Date:   Sat, 10 Aug 2019 20:01:51 -0000
-From:   Thomas Gleixner <tglx@linutronix.de>
+        Sat, 10 Aug 2019 16:18:26 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id DAC29181D33FC;
+        Sat, 10 Aug 2019 20:18:24 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2559:2564:2682:2685:2691:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4362:5007:7903:8985:9025:10004:10400:10848:11232:11658:11854:11914:12043:12050:12114:12297:12438:12555:12679:12740:12760:12895:12986:13069:13142:13161:13229:13230:13255:13311:13357:13439:14096:14097:14181:14659:14721:14819:21080:21451:21627:21811:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: match45_2c3a38353573a
+X-Filterd-Recvd-Size: 2366
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 10 Aug 2019 20:18:23 +0000 (UTC)
+Message-ID: <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
+Subject: Re: [PATCH] Makefile: Convert -Wimplicit-fallthrough=3 to just
+ -Wimplicit-fallthrough for clang
+From:   Joe Perches <joe@perches.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] sched/urgent for 5.3-rc4
-References: <156546731194.17538.17422312639927927426.tglx@nanos.tec.linutronix.de>
-Message-ID: <156546731194.17538.15988994782634770420.tglx@nanos.tec.linutronix.de>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux@googlegroups.com
+Date:   Sat, 10 Aug 2019 13:18:22 -0700
+In-Reply-To: <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
+References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
+         <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
+         <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Sat, 2019-08-10 at 12:44 -0700, Linus Torvalds wrote:
+> On Sat, Aug 10, 2019 at 12:32 PM Joe Perches <joe@perches.com> wrote:
+> > What does it take for this sort of patch to be applied by you?
+> 
+> The basic rule tends to be: "normal channels".
+[]
+> I pulled from Gustavo earlier today to add a few more expected switch
+> fall-through's, I guess I can take this Makefile change directly.
 
-please pull the latest sched-urgent-for-linus git tree from:
+Thanks. It's simple enough.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
+There are classes of patches generated by scripts that have
+no real mechanism to be applied today.
 
-up to:  04e048cf09d7: sched/psi: Do not require setsched permission from the trigger creator
+For instance: global coccinelle scripted changes to use stracpy
+https://lore.kernel.org/lkml/alpine.DEB.2.21.1907251747560.2494@hadrien/
 
-Three fixlets for the scheduler:
+and trivial scripted changes to MAINTAINERS
+https://lore.kernel.org/lkml/6482e6546dc328ec47b07dba9a78a9573ebb3e56.camel@perches.com/
 
- - Avoid double bandwidth accounting in the push & pull code
+that are basically impossible to be applied by anyone but you.
 
- - Use a sane FIFO priority for the Pressure Stall Information (PSI) thread.
- 
- - Avoid permission checks when setting the scheduler params for the PSI thread
+Otherwise there are hundreds of little micro patches most of
+which would not otherwise be applied.
 
-Thanks,
+There should be some process available to get these treewide
+or difficult to keep up-to-date and apply patches handled.
 
-	tglx
+I believe these sorts of scripted patches should ideally
+be handled immediately before an RC1 so other trees can be 
+synchronized in the simplest way possible.
 
------------------->
-Dietmar Eggemann (1):
-      sched/deadline: Fix double accounting of rq/running bw in push & pull
-
-Peter Zijlstra (1):
-      sched/psi: Reduce psimon FIFO priority
-
-Suren Baghdasaryan (1):
-      sched/psi: Do not require setsched permission from the trigger creator
-
-
- kernel/sched/deadline.c | 8 --------
- kernel/sched/psi.c      | 4 ++--
- 2 files changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index ef5b9f6b1d42..46122edd8552 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2088,17 +2088,13 @@ static int push_dl_task(struct rq *rq)
- 	}
- 
- 	deactivate_task(rq, next_task, 0);
--	sub_running_bw(&next_task->dl, &rq->dl);
--	sub_rq_bw(&next_task->dl, &rq->dl);
- 	set_task_cpu(next_task, later_rq->cpu);
--	add_rq_bw(&next_task->dl, &later_rq->dl);
- 
- 	/*
- 	 * Update the later_rq clock here, because the clock is used
- 	 * by the cpufreq_update_util() inside __add_running_bw().
- 	 */
- 	update_rq_clock(later_rq);
--	add_running_bw(&next_task->dl, &later_rq->dl);
- 	activate_task(later_rq, next_task, ENQUEUE_NOCLOCK);
- 	ret = 1;
- 
-@@ -2186,11 +2182,7 @@ static void pull_dl_task(struct rq *this_rq)
- 			resched = true;
- 
- 			deactivate_task(src_rq, p, 0);
--			sub_running_bw(&p->dl, &src_rq->dl);
--			sub_rq_bw(&p->dl, &src_rq->dl);
- 			set_task_cpu(p, this_cpu);
--			add_rq_bw(&p->dl, &this_rq->dl);
--			add_running_bw(&p->dl, &this_rq->dl);
- 			activate_task(this_rq, p, 0);
- 			dmin = p->dl.deadline;
- 
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 7acc632c3b82..23fbbcc414d5 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -1051,7 +1051,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group,
- 
- 	if (!rcu_access_pointer(group->poll_kworker)) {
- 		struct sched_param param = {
--			.sched_priority = MAX_RT_PRIO - 1,
-+			.sched_priority = 1,
- 		};
- 		struct kthread_worker *kworker;
- 
-@@ -1061,7 +1061,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group,
- 			mutex_unlock(&group->trigger_lock);
- 			return ERR_CAST(kworker);
- 		}
--		sched_setscheduler(kworker->task, SCHED_FIFO, &param);
-+		sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
- 		kthread_init_delayed_work(&group->poll_work,
- 				psi_poll_work);
- 		rcu_assign_pointer(group->poll_kworker, kworker);
 
