@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F7BD88D52
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D91C88D8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfHJUoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:44:32 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54872 "EHLO
+        id S1726967AbfHJUrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:47:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55086 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726805AbfHJUoB (ORCPT
+        by vger.kernel.org with ESMTP id S1726858AbfHJUoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:01 -0400
+        Sat, 10 Aug 2019 16:44:04 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDW-00053m-R0; Sat, 10 Aug 2019 21:43:58 +0100
+        id 1hwYDZ-00053q-OT; Sat, 10 Aug 2019 21:44:01 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDN-0003iI-Lu; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDL-0003e2-PZ; Sat, 10 Aug 2019 21:43:47 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Al Viro" <viro@zeniv.linux.org.uk>
+        "David S. Miller" <davem@davemloft.net>,
+        "Colin Ian King" <colin.king@canonical.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.999591096@decadent.org.uk>
+Message-ID: <lsq.1565469607.831407213@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 120/157] ufs: fix braino in ufs_get_inode_gid() for
- solaris UFS flavour
+Subject: [PATCH 3.16 082/157] vxge: fix return of a free'd memblock on a
+ failed dma mapping
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,31 +48,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 4e9036042fedaffcd868d7f7aa948756c48c637d upstream.
+commit 0a2c34f18c94b596562bf3d019fceab998b8b584 upstream.
 
-To choose whether to pick the GID from the old (16bit) or new (32bit)
-field, we should check if the old gid field is set to 0xffff.  Mainline
-checks the old *UID* field instead - cut'n'paste from the corresponding
-code in ufs_get_inode_uid().
+Currently if a pci dma mapping failure is detected a free'd
+memblock address is returned rather than a NULL (that indicates
+an error). Fix this by ensuring NULL is returned on this error case.
 
-Fixes: 252e211e90ce
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Addresses-Coverity: ("Use after free")
+Fixes: 528f727279ae ("vxge: code cleanup and reorganization")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ufs/util.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/neterion/vxge/vxge-config.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ufs/util.h
-+++ b/fs/ufs/util.h
-@@ -228,7 +228,7 @@ ufs_get_inode_gid(struct super_block *sb
- 	case UFS_UID_44BSD:
- 		return fs32_to_cpu(sb, inode->ui_u3.ui_44.ui_gid);
- 	case UFS_UID_EFT:
--		if (inode->ui_u1.oldids.ui_suid == 0xFFFF)
-+		if (inode->ui_u1.oldids.ui_sgid == 0xFFFF)
- 			return fs32_to_cpu(sb, inode->ui_u3.ui_sun.ui_gid);
- 		/* Fall through */
- 	default:
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -2381,6 +2381,7 @@ static void *__vxge_hw_blockpool_malloc(
+ 			vxge_os_dma_free(devh->pdev, memblock,
+ 				&dma_object->acc_handle);
+ 			status = VXGE_HW_ERR_OUT_OF_MEMORY;
++			memblock = NULL;
+ 			goto exit;
+ 		}
+ 
 
