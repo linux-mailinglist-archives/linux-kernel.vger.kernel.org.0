@@ -2,59 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4D6E8885C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 07:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9251788860
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 07:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbfHJFZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 01:25:24 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57966 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfHJFZY (ORCPT
+        id S1726104AbfHJF3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 01:29:03 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43756 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbfHJF3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 01:25:24 -0400
-Received: from p200300ddd71876457e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7645:7e7a:91ff:fec9:8e25])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hwJsK-0001gl-Ea; Sat, 10 Aug 2019 07:25:08 +0200
-Date:   Sat, 10 Aug 2019 07:25:02 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        x86 <x86@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/umwait: Fix error handling in umwait_init()
-In-Reply-To: <1565401237-60936-1-git-send-email-fenghua.yu@intel.com>
-Message-ID: <alpine.DEB.2.21.1908100718580.21433@nanos.tec.linutronix.de>
-References: <1565401237-60936-1-git-send-email-fenghua.yu@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sat, 10 Aug 2019 01:29:03 -0400
+Received: by mail-pl1-f193.google.com with SMTP id 4so38766794pld.10;
+        Fri, 09 Aug 2019 22:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wwnkha2cPalip0BRfrHsmWB3+skZcqk2g4L3dadW7dk=;
+        b=H9+DbqeRAbiVFOVv27yxPfHJ4OI4UyI/Oo/c7lNEytzV7UFucZSdGLxmxtx9pPR7ny
+         9YpDzxGgR8zy/2BL7xHfkr6066cTNPsSoeOv93JqxYfrpiDnFK/Zj3OIn+GQUykM5jtQ
+         XdduqCV93DQF4uWog0v3M5FWj/bU8osBz28QjwUoQo/lnt6RLzIWa0ElT+ZuCfyk5/jF
+         0knjq5eWJoix988ngCDNNOlJmbwYY/ndIl7KPvHCB9kVdTcfQKlr7JvrI960ivEY3nqB
+         xogVwXvTx7sN2tVE+wZnPsJn5GvNDTfESVV2m0PV5rLhH4oVIows53TAst0y3hq74fgv
+         kvLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wwnkha2cPalip0BRfrHsmWB3+skZcqk2g4L3dadW7dk=;
+        b=eFSpYiewhVSA+ezWc6lPeaKNaMHeyOQAFLqrIHxzdWLhhmA7JnhulzBP4w4EqVW6Ma
+         0YbSlauV02138uJ4D6IVZI34ZaPNxfY6hPE7wxIZd61nDwq9VLcR59Eq4aGo05sd/hOE
+         q7xSkYcgE2WfMxSOan60tOy9uD5dWgsDwqvK41NRdntMGjAkcLgif5jLdUypxf+eCT8b
+         jyHGJgcvPr27bwLexZJiyyokhSFd6+V1kiVlKh8yL8QRmtf7CVy5EpP+PPy8kkhpVI8Z
+         pZQkh1S8BTXaBCJqNrpz1tRlLK+uLrEkcz1VNqVzIbHs7/7XrfvNx1dSqvpyvudkMiaz
+         CY0g==
+X-Gm-Message-State: APjAAAW8OZvapbUzQH1QOIMWPvtWF4UUj/nNPvShfKVAVnKZWlML7R6u
+        T6luLPh5kIxOEtW7iTXEfUs=
+X-Google-Smtp-Source: APXvYqzMo7nOByZJMmjM7GKUOTMF/RVyxY8jSVwew10yohKpvdkmRmd12vIA5OSvtsjRXEUGHIttwQ==
+X-Received: by 2002:a17:902:1125:: with SMTP id d34mr22696273pla.40.1565414942290;
+        Fri, 09 Aug 2019 22:29:02 -0700 (PDT)
+Received: from localhost ([202.182.106.211])
+        by smtp.gmail.com with ESMTPSA id a12sm25517729pgv.48.2019.08.09.22.29.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Aug 2019 22:29:01 -0700 (PDT)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
+        mchehab+samsung@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
+        nicolas.ferre@microchip.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v5 00/18] add thermal driver for h6
+Date:   Sat, 10 Aug 2019 05:28:11 +0000
+Message-Id: <20190810052829.6032-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Aug 2019, Fenghua Yu wrote:
-> +/*
-> + * The CPU hotplug callback sets the control MSR to the original control
-> + * value.
-> + */
-> +static int umwait_cpu_offline(unsigned int cpu)
-> +{
-> +	/*
-> +	 * This code is protected by the CPU hotplug already and
-> +	 * orig_umwait_control_cached is never changed after it caches
-> +	 * the original control MSR value in umwait_init(). So there
-> +	 * is no race condition here.
-> +	 */
-> +	wrmsr(MSR_IA32_UMWAIT_CONTROL, orig_umwait_control_cached, 0);
+This patchset add support for A64, H3, H5, H6 and R40 thermal sensor.
 
-Even my brain compiler emits an error here.
+Thx to Icenowy and Vasily.
 
-Thanks,
+BTY, do a cleanup in thermal makfile.
 
-	tglx
+Icenowy Zheng (3):
+  thermal: sun8i: allow to use custom temperature calculation function
+  thermal: sun8i: add support for Allwinner H5 thermal sensor
+  thermal: sun8i: add support for Allwinner R40 thermal sensor
+
+Vasily Khoruzhick (1):
+  thermal: sun8i: add thermal driver for A64
+
+Yangtao Li (14):
+  thermal: sun8i: add thermal driver for h6
+  dt-bindings: thermal: add binding document for h6 thermal controller
+  thermal: fix indentation in makefile
+  thermal: sun8i: get ths sensor number from device compatible
+  thermal: sun8i: rework for sun8i_ths_get_temp()
+  thermal: sun8i: get ths init func from device compatible
+  thermal: sun8i: rework for ths irq handler func
+  thermal: sun8i: support mod clocks
+  thermal: sun8i: rework for ths calibrate func
+  dt-bindings: thermal: add binding document for h3 thermal controller
+  thermal: sun8i: add thermal driver for h3
+  dt-bindings: thermal: add binding document for a64 thermal controller
+  dt-bindings: thermal: add binding document for h5 thermal controller
+  dt-bindings: thermal: add binding document for r40 thermal controller
+
+ .../bindings/thermal/sun8i-thermal.yaml       | 157 +++++
+ MAINTAINERS                                   |   7 +
+ drivers/thermal/Kconfig                       |  14 +
+ drivers/thermal/Makefile                      |   9 +-
+ drivers/thermal/sun8i_thermal.c               | 596 ++++++++++++++++++
+ 5 files changed, 779 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/sun8i-thermal.yaml
+ create mode 100644 drivers/thermal/sun8i_thermal.c
+
+---
+v5:
+-add more support
+-some trival fix
+---
+2.17.1
+
