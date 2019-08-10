@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA3588CE6
+	by mail.lfdr.de (Postfix) with ESMTP id C3DB788CE7
 	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 21:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbfHJTaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 15:30:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37488 "EHLO mail.kernel.org"
+        id S1726213AbfHJTaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 15:30:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbfHJTaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 15:30:08 -0400
-Subject: Re: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc4
+        id S1726024AbfHJTaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Aug 2019 15:30:09 -0400
+Subject: Re: [GIT PULL] pin control fixes for v5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565465407;
-        bh=NlH8zRqvOHFDhA01nuO2JV4+RDVqxAoHCLt841HagGc=;
+        s=default; t=1565465409;
+        bh=cKcE2p2umTvbxXH9qkmleUtUr6AkaJN/nm4H3ex+Fis=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=AyiYsLJMbbOltPlefX6d0WnfiFoLF46gVBbjzBrUPUKdEt7b8QU1wRLOE+LfyeFbJ
-         iYf8LMhcRYqOdPAjUTDq8rpQ/TNTsznimhf1PQ4fAt9sa/qXSG1/V6Y37XdWS+mWPh
-         eYshgl4aZOL7+DRUfKkM6jwhcNEPkUV5T6BmXqxs=
+        b=UA2XEZMhnHZbh1mDM5d/FjLxpCWYKRc91Z5Jr/Ae14fKv7OnbV7tyEzziBapU5rN/
+         qaox36aOaIRuqrdpD/9s6iJgm3+ZIVqd134c4hzMvq60BLygS6Fz38EmmcXk2lTcTu
+         BXIQHcMHOI20f42t1zwhjp03A+ozH2js37UfoGQs=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190810041610.GA27921@embeddedor>
-References: <20190810041610.GA27921@embeddedor>
+In-Reply-To: <CACRpkdaMp16=-NGxOhe_Gz-vvoZrN7S+CE6zVmD+erVU051kmQ@mail.gmail.com>
+References: <CACRpkdaMp16=-NGxOhe_Gz-vvoZrN7S+CE6zVmD+erVU051kmQ@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190810041610.GA27921@embeddedor>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git
- tags/Wimplicit-fallthrough-5.3-rc4
-X-PR-Tracked-Commit-Id: 1f7585f30a3af595ac07f610b807c738c9e3baab
+X-PR-Tracked-Message-Id: <CACRpkdaMp16=-NGxOhe_Gz-vvoZrN7S+CE6zVmD+erVU051kmQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+ tags/pinctrl-v5.3-2
+X-PR-Tracked-Commit-Id: 8c4407de3be44c2a0ec3e316cd3e4a711bc2aaba
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bf1881cf484dd96a97606a804553019f8f08f0d4
-Message-Id: <156546540774.17840.1309326139320334743.pr-tracker-bot@kernel.org>
-Date:   Sat, 10 Aug 2019 19:30:07 +0000
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+X-PR-Merge-Commit-Id: 97946f59fe7fecff44032f8e775975991a612d18
+Message-Id: <156546540895.17840.14387024581232214836.pr-tracker-bot@kernel.org>
+Date:   Sat, 10 Aug 2019 19:30:08 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        YueHaibing <yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 9 Aug 2019 23:16:10 -0500:
+The pull request you sent on Sat, 10 Aug 2019 11:01:00 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.3-rc4
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.3-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bf1881cf484dd96a97606a804553019f8f08f0d4
+https://git.kernel.org/torvalds/c/97946f59fe7fecff44032f8e775975991a612d18
 
 Thank you!
 
