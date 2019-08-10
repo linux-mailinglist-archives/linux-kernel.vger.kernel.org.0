@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A351F88D48
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474D488D77
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbfHJUoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:44:21 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54450 "EHLO
+        id S1727303AbfHJUqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:46:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55328 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726707AbfHJUn4 (ORCPT
+        by vger.kernel.org with ESMTP id S1726903AbfHJUoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:56 -0400
+        Sat, 10 Aug 2019 16:44:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDQ-00053r-6U; Sat, 10 Aug 2019 21:43:52 +0100
+        id 1hwYDb-00053W-W4; Sat, 10 Aug 2019 21:44:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDN-0003he-8n; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDL-0003dr-J9; Sat, 10 Aug 2019 21:43:47 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,25 +27,12 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Roman Gushchin" <guro@fb.com>,
-        "Will Deacon" <will.deacon@arm.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "huang ying" <huang.ying.caritas@gmail.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Alexei Starovoitov" <ast@kernel.org>,
-        "Davidlohr Bueso" <dave@stgolabs.net>,
-        "Ingo Molnar" <mingo@redhat.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "Daniel Borkmann" <daniel@iogearbox.net>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>,
-        "Waiman Long" <longman@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+        "Joerg Roedel" <jroedel@suse.de>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.775611502@decadent.org.uk>
+Message-ID: <lsq.1565469607.467361670@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 112/157] trace: Fix preempt_enable_no_resched() abuse
+Subject: [PATCH 3.16 080/157] iommu/amd: Set exclusion range correctly
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,45 +46,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Joerg Roedel <jroedel@suse.de>
 
-commit d6097c9e4454adf1f8f2c9547c2fa6060d55d952 upstream.
+commit 3c677d206210f53a4be972211066c0f1cd47fe12 upstream.
 
-Unless the very next line is schedule(), or implies it, one must not use
-preempt_enable_no_resched(). It can cause a preemption to go missing and
-thereby cause arbitrary delays, breaking the PREEMPT=y invariant.
+The exlcusion range limit register needs to contain the
+base-address of the last page that is part of the range, as
+bits 0-11 of this register are treated as 0xfff by the
+hardware for comparisons.
 
-Link: http://lkml.kernel.org/r/20190423200318.GY14281@hirez.programming.kicks-ass.net
+So correctly set the exclusion range in the hardware to the
+last page which is _in_ the range.
 
-Cc: Waiman Long <longman@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: the arch/x86 maintainers <x86@kernel.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: huang ying <huang.ying.caritas@gmail.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Fixes: 2c2d7329d8af ("tracing/ftrace: use preempt_enable_no_resched_notrace in ring_buffer_time_stamp()")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: b2026aa2dce44 ('x86, AMD IOMMU: add functions for programming IOMMU MMIO space')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/trace/ring_buffer.c | 2 +-
+ drivers/iommu/amd_iommu_init.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -729,7 +729,7 @@ u64 ring_buffer_time_stamp(struct ring_b
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -293,7 +293,7 @@ static void iommu_write_l2(struct amd_io
+ static void iommu_set_exclusion_range(struct amd_iommu *iommu)
+ {
+ 	u64 start = iommu->exclusion_start & PAGE_MASK;
+-	u64 limit = (start + iommu->exclusion_length) & PAGE_MASK;
++	u64 limit = (start + iommu->exclusion_length - 1) & PAGE_MASK;
+ 	u64 entry;
  
- 	preempt_disable_notrace();
- 	time = rb_time_stamp(buffer);
--	preempt_enable_no_resched_notrace();
-+	preempt_enable_notrace();
- 
- 	return time;
- }
+ 	if (!iommu->exclusion_start)
 
