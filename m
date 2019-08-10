@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C83888DD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA6EA88D93
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfHJUtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:49:32 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54624 "EHLO
+        id S1726188AbfHJUrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:47:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55094 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726754AbfHJUn6 (ORCPT
+        by vger.kernel.org with ESMTP id S1726859AbfHJUoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:58 -0400
+        Sat, 10 Aug 2019 16:44:04 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDT-00053r-9y; Sat, 10 Aug 2019 21:43:55 +0100
+        id 1hwYDZ-00053m-TS; Sat, 10 Aug 2019 21:44:02 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003k4-Nv; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDL-0003eJ-SS; Sat, 10 Aug 2019 21:43:47 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Willy Tarreau" <w@1wt.eu>, "Denis Efremov" <efremov@ispras.ru>
+        "Thomas Lendacky" <thomas.lendacky@amd.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Mikhail Gavrilov" <mikhail.v.gavrilov@gmail.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.528093703@decadent.org.uk>
+Message-ID: <lsq.1565469607.972476944@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 141/157] floppy: fix out-of-bounds read in copy_buffer
+Subject: [PATCH 3.16 084/157] x86/speculation: Prevent deadlock on
+ ssb_state::lock
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,48 +49,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Denis Efremov <efremov@ispras.ru>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit da99466ac243f15fbba65bd261bfc75ffa1532b6 upstream.
+commit 2f5fb19341883bb6e37da351bc3700489d8506a7 upstream.
 
-This fixes a global out-of-bounds read access in the copy_buffer
-function of the floppy driver.
+Mikhail reported a lockdep splat related to the AMD specific ssb_state
+lock:
 
-The FDDEFPRM ioctl allows one to set the geometry of a disk.  The sect
-and head fields (unsigned int) of the floppy_drive structure are used to
-compute the max_sector (int) in the make_raw_rw_request function.  It is
-possible to overflow the max_sector.  Next, max_sector is passed to the
-copy_buffer function and used in one of the memcpy calls.
+  CPU0                       CPU1
+  lock(&st->lock);
+                             local_irq_disable();
+                             lock(&(&sighand->siglock)->rlock);
+                             lock(&st->lock);
+  <Interrupt>
+     lock(&(&sighand->siglock)->rlock);
 
-An unprivileged user could trigger the bug if the device is accessible,
-but requires a floppy disk to be inserted.
+  *** DEADLOCK ***
 
-The patch adds the check for the .sect * .head multiplication for not
-overflowing in the set_geometry function.
+The connection between sighand->siglock and st->lock comes through seccomp,
+which takes st->lock while holding sighand->siglock.
 
-The bug was found by syzkaller.
+Make sure interrupts are disabled when __speculation_ctrl_update() is
+invoked via prctl() -> speculation_ctrl_update(). Add a lockdep assert to
+catch future offenders.
 
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
-Tested-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 1f50ddb4f418 ("x86/speculation: Handle HT correctly on AMD")
+Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Thomas Lendacky <thomas.lendacky@amd.com>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1904141948200.4917@nanos.tec.linutronix.de
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/block/floppy.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/kernel/process.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3236,8 +3236,10 @@ static int set_geometry(unsigned int cmd
- 	int cnt;
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -351,6 +351,8 @@ static __always_inline void __speculatio
+ 	u64 msr = x86_spec_ctrl_base;
+ 	bool updmsr = false;
  
- 	/* sanity checking for parameters. */
--	if (g->sect <= 0 ||
--	    g->head <= 0 ||
-+	if ((int)g->sect <= 0 ||
-+	    (int)g->head <= 0 ||
-+	    /* check for overflow in max_sector */
-+	    (int)(g->sect * g->head) <= 0 ||
- 	    /* check for zero in F_SECT_PER_TRACK */
- 	    (unsigned char)((g->sect << 2) >> FD_SIZECODE(g)) == 0 ||
- 	    g->track <= 0 || g->track > UDP->tracks >> STRETCH(g) ||
++	lockdep_assert_irqs_disabled();
++
+ 	/*
+ 	 * If TIF_SSBD is different, select the proper mitigation
+ 	 * method. Note that if SSBD mitigation is disabled or permanentely
+@@ -402,10 +404,12 @@ static unsigned long speculation_ctrl_up
+ 
+ void speculation_ctrl_update(unsigned long tif)
+ {
++	unsigned long flags;
++
+ 	/* Forced update. Make sure all relevant TIF flags are different */
+-	preempt_disable();
++	local_irq_save(flags);
+ 	__speculation_ctrl_update(~tif, tif);
+-	preempt_enable();
++	local_irq_restore(flags);
+ }
+ 
+ /* Called from seccomp/prctl update */
 
