@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F341588D4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 572CC88D62
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfHJUo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:44:27 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54808 "EHLO
+        id S1727175AbfHJUp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:45:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55470 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726796AbfHJUoA (ORCPT
+        by vger.kernel.org with ESMTP id S1726924AbfHJUoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:00 -0400
+        Sat, 10 Aug 2019 16:44:09 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDV-00053Y-Kn; Sat, 10 Aug 2019 21:43:57 +0100
+        id 1hwYDf-00053p-04; Sat, 10 Aug 2019 21:44:07 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDN-0003ig-T0; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDK-0003c1-DA; Sat, 10 Aug 2019 21:43:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,22 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>
+        "Alexei Starovoitov" <ast@kernel.org>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Kees Cook" <keescook@chromium.org>,
+        "YueHaibing" <yuehaibing@huawei.com>,
+        "Alexey Dobriyan" <adobriyan@gmail.com>,
+        "Hulk Robot" <hulkci@huawei.com>,
+        "Luis Chamberlain" <mcgrof@kernel.org>,
+        "Al Viro" <viro@zeniv.linux.org.uk>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.17941817@decadent.org.uk>
+Message-ID: <lsq.1565469607.769359793@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 125/157] x86/speculation: Prepare entry code for
- Spectre v1 swapgs mitigations
+Subject: [PATCH 3.16 057/157] fs/proc/proc_sysctl.c: fix NULL pointer
+ dereference in put_links
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,215 +56,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 18ec54fdd6d18d92025af097cd042a75cf0ea24c upstream.
+commit 23da9588037ecdd4901db76a5b79a42b529c4ec3 upstream.
 
-Spectre v1 isn't only about array bounds checks.  It can affect any
-conditional checks.  The kernel entry code interrupt, exception, and NMI
-handlers all have conditional swapgs checks.  Those may be problematic in
-the context of Spectre v1, as kernel code can speculatively run with a user
-GS.
+Syzkaller reports:
 
-For example:
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN PTI
+CPU: 1 PID: 5373 Comm: syz-executor.0 Not tainted 5.0.0-rc8+ #3
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+RIP: 0010:put_links+0x101/0x440 fs/proc/proc_sysctl.c:1599
+Code: 00 0f 85 3a 03 00 00 48 8b 43 38 48 89 44 24 20 48 83 c0 38 48 89 c2 48 89 44 24 28 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f 85 fe 02 00 00 48 8b 74 24 20 48 c7 c7 60 2a 9d 91
+RSP: 0018:ffff8881d828f238 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff8881e01b1140 RCX: ffffffff8ee98267
+RDX: 0000000000000007 RSI: ffffc90001479000 RDI: ffff8881e01b1178
+RBP: dffffc0000000000 R08: ffffed103ee27259 R09: ffffed103ee27259
+R10: 0000000000000001 R11: ffffed103ee27258 R12: fffffffffffffff4
+R13: 0000000000000006 R14: ffff8881f59838c0 R15: dffffc0000000000
+FS:  00007f072254f700(0000) GS:ffff8881f7100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff8b286668 CR3: 00000001f0542002 CR4: 00000000007606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ drop_sysctl_table+0x152/0x9f0 fs/proc/proc_sysctl.c:1629
+ get_subdir fs/proc/proc_sysctl.c:1022 [inline]
+ __register_sysctl_table+0xd65/0x1090 fs/proc/proc_sysctl.c:1335
+ br_netfilter_init+0xbc/0x1000 [br_netfilter]
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f072254ec58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000003
+RBP: 00007f072254ec70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f072254f6bc
+R13: 00000000004bcefa R14: 00000000006f6fb0 R15: 0000000000000004
+Modules linked in: br_netfilter(+) dvb_usb_dibusb_mc_common dib3000mc dibx000_common dvb_usb_dibusb_common dvb_usb_dw2102 dvb_usb classmate_laptop palmas_regulator cn videobuf2_v4l2 v4l2_common snd_soc_bd28623 mptbase snd_usb_usx2y snd_usbmidi_lib snd_rawmidi wmi libnvdimm lockd sunrpc grace rc_kworld_pc150u rc_core rtc_da9063 sha1_ssse3 i2c_cros_ec_tunnel adxl34x_spi adxl34x nfnetlink lib80211 i5500_temp dvb_as102 dvb_core videobuf2_common videodev media videobuf2_vmalloc videobuf2_memops udc_core lnbp22 leds_lp3952 hid_roccat_ryos s1d13xxxfb mtd vport_geneve openvswitch nf_conncount nf_nat_ipv6 nsh geneve udp_tunnel ip6_udp_tunnel snd_soc_mt6351 sis_agp phylink snd_soc_adau1761_spi snd_soc_adau1761 snd_soc_adau17x1 snd_soc_core snd_pcm_dmaengine ac97_bus snd_compress snd_soc_adau_utils snd_soc_sigmadsp_regmap snd_soc_sigmadsp raid_class hid_roccat_konepure hid_roccat_common hid_roccat c2port_duramar2150 core mdio_bcm_unimac iptable_security iptable_raw iptable_mangle
+ iptable_nat nf_nat_ipv4 nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_filter bpfilter ip6_vti ip_vti ip_gre ipip sit tunnel4 ip_tunnel hsr veth netdevsim devlink vxcan batman_adv cfg80211 rfkill chnl_net caif nlmon dummy team bonding vcan bridge stp llc ip6_gre gre ip6_tunnel tunnel6 tun crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel joydev mousedev ide_pci_generic piix aesni_intel aes_x86_64 ide_core crypto_simd atkbd cryptd glue_helper serio_raw ata_generic pata_acpi i2c_piix4 floppy sch_fq_codel ip_tables x_tables ipv6 [last unloaded: lm73]
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+---[ end trace 770020de38961fd0 ]---
 
-	if (coming from user space)
-		swapgs
-	mov %gs:<percpu_offset>, %reg
-	mov (%reg), %reg1
+A new dir entry can be created in get_subdir and its 'header->parent' is
+set to NULL.  Only after insert_header success, it will be set to 'dir',
+otherwise 'header->parent' is set to NULL and drop_sysctl_table is called.
+However in err handling path of get_subdir, drop_sysctl_table also be
+called on 'new->header' regardless its value of parent pointer.  Then
+put_links is called, which triggers NULL-ptr deref when access member of
+header->parent.
 
-When coming from user space, the CPU can speculatively skip the swapgs, and
-then do a speculative percpu load using the user GS value.  So the user can
-speculatively force a read of any kernel value.  If a gadget exists which
-uses the percpu value as an address in another load/store, then the
-contents of the kernel value may become visible via an L1 side channel
-attack.
+In fact we have multiple error paths which call drop_sysctl_table() there,
+upon failure on insert_links() we also call drop_sysctl_table().And even
+in the successful case on __register_sysctl_table() we still always call
+drop_sysctl_table().This patch fix it.
 
-A similar attack exists when coming from kernel space.  The CPU can
-speculatively do the swapgs, causing the user GS to get used for the rest
-of the speculative window.
-
-The mitigation is similar to a traditional Spectre v1 mitigation, except:
-
-  a) index masking isn't possible; because the index (percpu offset)
-     isn't user-controlled; and
-
-  b) an lfence is needed in both the "from user" swapgs path and the
-     "from kernel" non-swapgs path (because of the two attacks described
-     above).
-
-The user entry swapgs paths already have SWITCH_TO_KERNEL_CR3, which has a
-CR3 write when PTI is enabled.  Since CR3 writes are serializing, the
-lfences can be skipped in those cases.
-
-On the other hand, the kernel entry swapgs paths don't depend on PTI.
-
-To avoid unnecessary lfences for the user entry case, create two separate
-features for alternative patching:
-
-  X86_FEATURE_FENCE_SWAPGS_USER
-  X86_FEATURE_FENCE_SWAPGS_KERNEL
-
-Use these features in entry code to patch in lfences where needed.
-
-The features aren't enabled yet, so there's no functional change.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Dave Hansen <dave.hansen@intel.com>
-[bwh: Backported to 3.16:
- - Assign the CPU feature bits from word 7
- - Add FENCE_SWAPGS_KERNEL_ENTRY to NMI entry, since it does not
-   use paranoid_entry
- - Add a return after .Lerror_entry_from_usermode_after_swapgs, done
-   upstream by commit f10750536fa7 "x86/entry/64: Fix irqflag tracing wrt
-   context tracking"
- - Include <asm/cpufeatures.h> in calling.h
- - Adjust filenames, context]
+Link: http://lkml.kernel.org/r/20190314085527.13244-1-yuehaibing@huawei.com
+Fixes: 0e47c99d7fe25 ("sysctl: Replace root_list with links between sysctl_table_sets")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/calling.h
-+++ b/arch/x86/include/asm/calling.h
-@@ -47,6 +47,7 @@ For 32-bit we have the following convent
- */
+ fs/proc/proc_sysctl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -1550,7 +1550,8 @@ static void drop_sysctl_table(struct ctl
+ 	if (--header->nreg)
+ 		return;
  
- #include <asm/dwarf2.h>
-+#include <asm/cpufeatures.h>
- 
- #ifdef CONFIG_X86_64
- 
-@@ -195,6 +196,23 @@ For 32-bit we have the following convent
- 	.byte 0xf1
- 	.endm
- 
-+/*
-+ * Mitigate Spectre v1 for conditional swapgs code paths.
-+ *
-+ * FENCE_SWAPGS_USER_ENTRY is used in the user entry swapgs code path, to
-+ * prevent a speculative swapgs when coming from kernel space.
-+ *
-+ * FENCE_SWAPGS_KERNEL_ENTRY is used in the kernel entry non-swapgs code path,
-+ * to prevent the swapgs from getting speculatively skipped when coming from
-+ * user space.
-+ */
-+.macro FENCE_SWAPGS_USER_ENTRY
-+	ALTERNATIVE "", "lfence", X86_FEATURE_FENCE_SWAPGS_USER
-+.endm
-+.macro FENCE_SWAPGS_KERNEL_ENTRY
-+	ALTERNATIVE "", "lfence", X86_FEATURE_FENCE_SWAPGS_KERNEL
-+.endm
-+
- #else /* CONFIG_X86_64 */
- 
- /*
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -183,7 +183,8 @@
- #define X86_FEATURE_DTHERM	( 7*32+ 7) /* Digital Thermal Sensor */
- #define X86_FEATURE_HW_PSTATE	( 7*32+ 8) /* AMD HW-PState */
- #define X86_FEATURE_PROC_FEEDBACK ( 7*32+ 9) /* AMD ProcFeedbackInterface */
--
-+#define X86_FEATURE_FENCE_SWAPGS_USER	( 7*32+10) /* "" LFENCE in user entry SWAPGS path */
-+#define X86_FEATURE_FENCE_SWAPGS_KERNEL	( 7*32+11) /* "" LFENCE in kernel entry SWAPGS path */
- #define X86_FEATURE_RETPOLINE	( 7*32+12) /* "" Generic Retpoline mitigation for Spectre variant 2 */
- #define X86_FEATURE_RETPOLINE_AMD ( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
- 
---- a/arch/x86/kernel/entry_64.S
-+++ b/arch/x86/kernel/entry_64.S
-@@ -265,14 +265,19 @@ ENDPROC(native_usergs_sysret64)
- 	testl $3, CS-RBP(%rsi)
- 	je 1f
- 	SWAPGS
-+	FENCE_SWAPGS_USER_ENTRY
- 	SWITCH_KERNEL_CR3
-+	jmpq	2f
-+1:
-+	FENCE_SWAPGS_KERNEL_ENTRY
-+2:
- 	/*
- 	 * irq_count is used to check if a CPU is already on an interrupt stack
- 	 * or not. While this is essentially redundant with preempt_count it is
- 	 * a little cheaper to use a separate counter in the PDA (short of
- 	 * moving irq_enter into assembly, which would be too much work)
- 	 */
--1:	incl PER_CPU_VAR(irq_count)
-+	incl PER_CPU_VAR(irq_count)
- 	cmovzq PER_CPU_VAR(irq_stack_ptr),%rsp
- 	CFI_DEF_CFA_REGISTER	rsi
- 
-@@ -337,6 +342,13 @@ ENTRY(save_paranoid)
- 	movq	%rax, %cr3
- 2:
- #endif
-+	/*
-+	 * The above doesn't do an unconditional CR3 write, even in the PTI
-+	 * case.  So do an lfence to prevent GS speculation, regardless of
-+	 * whether PTI is enabled.
-+	 */
-+	FENCE_SWAPGS_KERNEL_ENTRY
-+
- 	ret
- 	CFI_ENDPROC
- END(save_paranoid)
-@@ -1452,8 +1464,19 @@ ENTRY(error_entry)
- 	 * from user mode due to an IRET fault.
- 	 */
- 	SWAPGS
-+	FENCE_SWAPGS_USER_ENTRY
- 
- .Lerror_entry_from_usermode_after_swapgs:
-+	/*
-+	 * We need to tell lockdep that IRQs are off.  We can't do this until
-+	 * we fix gsbase, and we should do it before enter_from_user_mode
-+	 * (which can take locks).
-+	 */
-+	TRACE_IRQS_OFF
-+	ret
-+
-+.Lerror_entry_done_lfence:
-+	FENCE_SWAPGS_KERNEL_ENTRY
- .Lerror_entry_done:
- 	TRACE_IRQS_OFF
- 	ret
-@@ -1472,7 +1495,7 @@ ENTRY(error_entry)
- 	cmpq %rax,RIP+8(%rsp)
- 	je	.Lbstep_iret
- 	cmpq $gs_change,RIP+8(%rsp)
--	jne	.Lerror_entry_done
-+	jne	.Lerror_entry_done_lfence
- 
- 	/*
- 	 * hack: gs_change can fail with user gsbase.  If this happens, fix up
-@@ -1480,6 +1503,7 @@ ENTRY(error_entry)
- 	 * gs_change's error handler with kernel gsbase.
- 	 */
- 	SWAPGS
-+	FENCE_SWAPGS_USER_ENTRY
- 	jmp .Lerror_entry_done
- 
- .Lbstep_iret:
-@@ -1493,6 +1517,7 @@ ENTRY(error_entry)
- 	 * Switch to kernel gsbase:
- 	 */
- 	SWAPGS
-+	FENCE_SWAPGS_USER_ENTRY
- 
- 	/*
- 	 * Pretend that the exception came from user mode: set up pt_regs
-@@ -1601,6 +1626,7 @@ ENTRY(nmi)
- 	 * to switch CR3 here.
- 	 */
- 	cld
-+	FENCE_SWAPGS_USER_ENTRY
- 	movq	%rsp, %rdx
- 	movq	PER_CPU_VAR(kernel_stack), %rsp
- 	addq	$KERNEL_STACK_OFFSET, %rsp
-@@ -1646,6 +1672,7 @@ ENTRY(nmi)
- 	movq	%rax, %cr3
- 2:
- #endif
-+	FENCE_SWAPGS_KERNEL_ENTRY
- 	call	do_nmi
- 
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
+-	put_links(header);
++	if (parent)
++		put_links(header);
+ 	start_unregistering(header);
+ 	if (!--header->count)
+ 		kfree_rcu(header, rcu);
 
