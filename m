@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 171F588E58
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A4988E0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:51:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbfHJUyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:54:05 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53848 "EHLO
+        id S1727533AbfHJUvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:51:18 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54318 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726498AbfHJUnt (ORCPT
+        by vger.kernel.org with ESMTP id S1726671AbfHJUny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:49 -0400
+        Sat, 10 Aug 2019 16:43:54 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-00053t-AE; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDP-00053W-Nq; Sat, 10 Aug 2019 21:43:51 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003aP-HK; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDM-0003h0-VI; Sat, 10 Aug 2019 21:43:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Takashi Iwai" <tiwai@suse.de>
+        "Steve French" <stfrench@microsoft.com>,
+        "Frank Sorenson" <sorenson@redhat.com>,
+        "Ronnie Sahlberg" <lsahlber@redhat.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.608627100@decadent.org.uk>
+Message-ID: <lsq.1565469607.231193852@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 037/157] ALSA: seq: oss: Fix Spectre v1 vulnerability
+Subject: [PATCH 3.16 105/157] cifs: do not attempt cifs operation on smb2+
+ rename error
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,50 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Frank Sorenson <sorenson@redhat.com>
 
-commit c709f14f0616482b67f9fbcb965e1493a03ff30b upstream.
+commit 652727bbe1b17993636346716ae5867627793647 upstream.
 
-dev is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+A path-based rename returning EBUSY will incorrectly try opening
+the file with a cifs (NT Create AndX) operation on an smb2+ mount,
+which causes the server to force a session close.
 
-This issue was detected with the help of Smatch:
+If the mount is smb2+, skip the fallback.
 
-sound/core/seq/oss/seq_oss_synth.c:626 snd_seq_oss_synth_make_info() warn: potential spectre issue 'dp->synths' [w] (local cap)
-
-Fix this by sanitizing dev before using it to index dp->synths.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://lore.kernel.org/lkml/20180423164740.GY17484@dhcp22.suse.cz/
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Frank Sorenson <sorenson@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/seq/oss/seq_oss_synth.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/cifs/inode.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/core/seq/oss/seq_oss_synth.c
-+++ b/sound/core/seq/oss/seq_oss_synth.c
-@@ -617,13 +617,14 @@ int
- snd_seq_oss_synth_make_info(struct seq_oss_devinfo *dp, int dev, struct synth_info *inf)
- {
- 	struct seq_oss_synth *rec;
-+	struct seq_oss_synthinfo *info = get_synthinfo_nospec(dp, dev);
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -1627,6 +1627,10 @@ cifs_do_rename(const unsigned int xid, s
+ 	if (rc == 0 || rc != -EBUSY)
+ 		goto do_rename_exit;
  
--	if (dev < 0 || dev >= dp->max_synthdev)
-+	if (!info)
- 		return -ENXIO;
- 
--	if (dp->synths[dev].is_midi) {
-+	if (info->is_midi) {
- 		struct midi_info minf;
--		snd_seq_oss_midi_make_info(dp, dp->synths[dev].midi_mapped, &minf);
-+		snd_seq_oss_midi_make_info(dp, info->midi_mapped, &minf);
- 		inf->synth_type = SYNTH_TYPE_MIDI;
- 		inf->synth_subtype = 0;
- 		inf->nr_voices = 16;
++	/* Don't fall back to using SMB on SMB 2+ mount */
++	if (server->vals->protocol_id != 0)
++		goto do_rename_exit;
++
+ 	/* open-file renames don't work across directories */
+ 	if (to_dentry->d_parent != from_dentry->d_parent)
+ 		goto do_rename_exit;
 
