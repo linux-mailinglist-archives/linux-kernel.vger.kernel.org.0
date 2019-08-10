@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A73A88DE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:50:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D49CC88E12
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:51:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbfHJUuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:50:06 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54550 "EHLO
+        id S1727697AbfHJUvh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:51:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54302 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726735AbfHJUn5 (ORCPT
+        by vger.kernel.org with ESMTP id S1726668AbfHJUny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:57 -0400
+        Sat, 10 Aug 2019 16:43:54 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDS-00053Y-LQ; Sat, 10 Aug 2019 21:43:54 +0100
+        id 1hwYDP-00053p-IH; Sat, 10 Aug 2019 21:43:51 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003kk-Q4; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDM-0003gk-QC; Sat, 10 Aug 2019 21:43:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Juergen Gross" <jgross@suse.com>
+        "Florian Westphal" <fw@strlen.de>,
+        syzbot+659574e7bcc7f7eb4df7@syzkaller.appspotmail.com,
+        "Pablo Neira Ayuso" <pablo@netfilter.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.648207322@decadent.org.uk>
+Message-ID: <lsq.1565469607.328511265@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 144/157] xen: let alloc_xenballooned_pages() fail if
- not enough memory free
+Subject: [PATCH 3.16 102/157] netfilter: ebtables: CONFIG_COMPAT: drop a
+ bogus WARN_ON
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,69 +49,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit a1078e821b605813b63bf6bca414a85f804d5c66 upstream.
+commit 7caa56f006e9d712b44f27b32520c66420d5cbc6 upstream.
 
-Instead of trying to allocate pages with GFP_USER in
-add_ballooned_pages() check the available free memory via
-si_mem_available(). GFP_USER is far less limiting memory exhaustion
-than the test via si_mem_available().
+It means userspace gave us a ruleset where there is some other
+data after the ebtables target but before the beginning of the next rule.
 
-This will avoid dom0 running out of memory due to excessive foreign
-page mappings especially on ARM and on x86 in PVH mode, as those don't
-have a pre-ballooned area which can be used for foreign mappings.
-
-As the normal ballooning suffers from the same problem don't balloon
-down more than si_mem_available() pages in one iteration. At the same
-time limit the default maximum number of retries.
-
-This is part of XSA-300.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-[bwh: Backported to 3.16: adjust context, indentation]
+Fixes: 81e675c227ec ("netfilter: ebtables: add CONFIG_COMPAT support")
+Reported-by: syzbot+659574e7bcc7f7eb4df7@syzkaller.appspotmail.com
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/xen/balloon.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ net/bridge/netfilter/ebtables.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -502,8 +502,15 @@ static void balloon_process(struct work_
- 				state = reserve_additional_memory(credit);
- 		}
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2011,7 +2011,8 @@ static int ebt_size_mwt(struct compat_eb
+ 		if (match_kern)
+ 			match_kern->match_size = ret;
  
--		if (credit < 0)
--			state = decrease_reservation(-credit, GFP_BALLOON);
-+		if (credit < 0) {
-+			long n_pages;
-+
-+			n_pages = min(-credit, si_mem_available());
-+			state = decrease_reservation(n_pages, GFP_BALLOON);
-+			if (state == BP_DONE && n_pages != -credit &&
-+			    n_pages < totalreserve_pages)
-+				state = BP_EAGAIN;
-+		}
+-		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
++		/* rule should have no remaining data after target */
++		if (type == EBT_COMPAT_TARGET && size_left)
+ 			return -EINVAL;
  
- 		state = update_schedule(state);
- 
-@@ -561,6 +568,9 @@ int alloc_xenballooned_pages(int nr_page
- 			enum bp_state st;
- 			if (page)
- 				balloon_append(page);
-+			if (si_mem_available() < nr_pages)
-+				return -ENOMEM;
-+
- 			st = decrease_reservation(nr_pages - pgno,
- 					highmem ? GFP_HIGHUSER : GFP_USER);
- 			if (st != BP_DONE)
-@@ -692,7 +702,7 @@ static int __init balloon_init(void)
- 	balloon_stats.schedule_delay = 1;
- 	balloon_stats.max_schedule_delay = 32;
- 	balloon_stats.retry_count = 1;
--	balloon_stats.max_retry_count = RETRY_UNLIMITED;
-+	balloon_stats.max_retry_count = 4;
- 
- #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
- 	balloon_stats.hotplug_pages = 0;
+ 		match32 = (struct compat_ebt_entry_mwt *) buf;
 
