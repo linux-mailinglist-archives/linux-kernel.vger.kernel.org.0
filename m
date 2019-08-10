@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DFC088DF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A248A88E61
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfHJUum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:50:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54380 "EHLO
+        id S1727727AbfHJUyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:54:24 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53812 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726698AbfHJUn4 (ORCPT
+        by vger.kernel.org with ESMTP id S1726487AbfHJUns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:56 -0400
+        Sat, 10 Aug 2019 16:43:48 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDP-00053t-QH; Sat, 10 Aug 2019 21:43:51 +0100
+        id 1hwYDK-00053j-6D; Sat, 10 Aug 2019 21:43:46 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDN-0003hE-0R; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDJ-0003Zv-CT; Sat, 10 Aug 2019 21:43:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Alan Stern" <stern@rowland.harvard.edu>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.737701998@decadent.org.uk>
+Message-ID: <lsq.1565469607.490919960@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 107/157] USB: yurex: Fix protection fault after
- device removal
+Subject: [PATCH 3.16 031/157] dccp: do not use ipv6 header for ipv4 flow
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,38 +47,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Eric Dumazet <edumazet@google.com>
 
-commit ef61eb43ada6c1d6b94668f0f514e4c268093ff3 upstream.
+commit e0aa67709f89d08c8d8e5bdd9e0b649df61d0090 upstream.
 
-The syzkaller USB fuzzer found a general-protection-fault bug in the
-yurex driver.  The fault occurs when a device has been unplugged; the
-driver's interrupt-URB handler logs an error message referring to the
-device by name, after the device has been unregistered and its name
-deallocated.
+When a dual stack dccp listener accepts an ipv4 flow,
+it should not attempt to use an ipv6 header or
+inet6_iif() helper.
 
-This problem is caused by the fact that the interrupt URB isn't
-cancelled until the driver's private data structure is released, which
-can happen long after the device is gone.  The cure is to make sure
-that the interrupt URB is killed before yurex_disconnect() returns;
-this is exactly the sort of thing that usb_poison_urb() was meant for.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: syzbot+2eb9121678bdb36e6d57@syzkaller.appspotmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 3df80d9320bc ("[DCCP]: Introduce DCCPv6")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/misc/yurex.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/dccp/ipv6.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -332,6 +332,7 @@ static void yurex_disconnect(struct usb_
- 	usb_deregister_dev(interface, &yurex_class);
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -491,8 +491,8 @@ static struct sock *dccp_v6_request_recv
+ 		newnp->ipv6_mc_list = NULL;
+ 		newnp->ipv6_ac_list = NULL;
+ 		newnp->ipv6_fl_list = NULL;
+-		newnp->mcast_oif   = inet6_iif(skb);
+-		newnp->mcast_hops  = ipv6_hdr(skb)->hop_limit;
++		newnp->mcast_oif   = inet_iif(skb);
++		newnp->mcast_hops  = ip_hdr(skb)->ttl;
  
- 	/* prevent more I/O from starting */
-+	usb_poison_urb(dev->urb);
- 	mutex_lock(&dev->io_mutex);
- 	dev->interface = NULL;
- 	mutex_unlock(&dev->io_mutex);
+ 		/*
+ 		 * No need to charge this sock to the relevant IPv6 refcnt debug socks count
 
