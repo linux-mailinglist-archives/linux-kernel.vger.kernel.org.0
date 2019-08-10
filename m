@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 332E688E1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD4A88E6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:55:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfHJUwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:52:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54166 "EHLO
+        id S1727726AbfHJUyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:54:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53758 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726594AbfHJUnw (ORCPT
+        by vger.kernel.org with ESMTP id S1726427AbfHJUns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:52 -0400
+        Sat, 10 Aug 2019 16:43:48 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDN-00053m-7p; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDI-00052z-VZ; Sat, 10 Aug 2019 21:43:45 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-0003br-A3; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDI-0003Y9-J5; Sat, 10 Aug 2019 21:43:44 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
-        "Jim Mattson" <jmattson@google.com>
+        "Lukas Czerner" <lczerner@redhat.com>,
+        "Theodore Ts'o" <tytso@mit.edu>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.160863860@decadent.org.uk>
+Message-ID: <lsq.1565469607.133828826@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 055/157] kvm: x86: IA32_ARCH_CAPABILITIES is always
- supported
+Subject: [PATCH 3.16 009/157] ext4: add missing brelse() in
+ add_new_gdb_meta_bg()
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,47 +48,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jim Mattson <jmattson@google.com>
+From: Lukas Czerner <lczerner@redhat.com>
 
-commit 1eaafe91a0df4157521b6417b3dd8430bf5f52f0 upstream.
+commit d64264d6218e6892edd832dc3a5a5857c2856c53 upstream.
 
-If there is a possibility that a VM may migrate to a Skylake host,
-then the hypervisor should report IA32_ARCH_CAPABILITIES.RSBA[bit 2]
-as being set (future work, of course). This implies that
-CPUID.(EAX=7,ECX=0):EDX.ARCH_CAPABILITIES[bit 29] should be
-set. Therefore, kvm should report this CPUID bit as being supported
-whether or not the host supports it.  Userspace is still free to clear
-the bit if it chooses.
+Currently in add_new_gdb_meta_bg() there is a missing brelse of gdb_bh
+in case ext4_journal_get_write_access() fails.
+Additionally kvfree() is missing in the same error path. Fix it by
+moving the ext4_journal_get_write_access() before the ext4 sb update as
+Ted suggested and release n_group_desc and gdb_bh in case it fails.
 
-For more information on RSBA, see Intel's white paper, "Retpoline: A
-Branch Target Injection Mitigation" (Document Number 337131-001),
-currently available at https://bugzilla.kernel.org/show_bug.cgi?id=199511.
-
-Since the IA32_ARCH_CAPABILITIES MSR is emulated in kvm, there is no
-dependency on hardware support for this feature.
-
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Fixes: 28c1c9fabf48 ("KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES")
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Fixes: 61a9c11e5e7a ("ext4: add missing brelse() add_new_gdb_meta_bg()'s error path")
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kvm/cpuid.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/ext4/resize.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -395,6 +395,11 @@ static inline int __do_cpuid_ent(struct
- 			entry->ebx |= F(TSC_ADJUST);
- 			entry->edx &= kvm_cpuid_7_0_edx_x86_features;
- 			cpuid_mask(&entry->edx, 10);
-+			/*
-+			 * We emulate ARCH_CAPABILITIES in software even
-+			 * if the host doesn't support it.
-+			 */
-+			entry->edx |= F(ARCH_CAPABILITIES);
- 		} else {
- 			entry->ebx = 0;
- 			entry->edx = 0;
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -908,11 +908,18 @@ static int add_new_gdb_meta_bg(struct su
+ 	memcpy(n_group_desc, o_group_desc,
+ 	       EXT4_SB(sb)->s_gdb_count * sizeof(struct buffer_head *));
+ 	n_group_desc[gdb_num] = gdb_bh;
++
++	BUFFER_TRACE(gdb_bh, "get_write_access");
++	err = ext4_journal_get_write_access(handle, gdb_bh);
++	if (err) {
++		kvfree(n_group_desc);
++		brelse(gdb_bh);
++		return err;
++	}
++
+ 	EXT4_SB(sb)->s_group_desc = n_group_desc;
+ 	EXT4_SB(sb)->s_gdb_count++;
+ 	ext4_kvfree(o_group_desc);
+-	BUFFER_TRACE(gdb_bh, "get_write_access");
+-	err = ext4_journal_get_write_access(handle, gdb_bh);
+ 	return err;
+ }
+ 
 
