@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F6F88D4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB76188DD8
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbfHJUok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:44:40 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55006 "EHLO
+        id S1727566AbfHJUtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:49:35 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54614 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726834AbfHJUoD (ORCPT
+        by vger.kernel.org with ESMTP id S1726751AbfHJUn6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:03 -0400
+        Sat, 10 Aug 2019 16:43:58 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDY-00053t-Ke; Sat, 10 Aug 2019 21:44:00 +0100
+        id 1hwYDT-00053m-9o; Sat, 10 Aug 2019 21:43:55 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-0003fA-7Q; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDO-0003jk-Hy; Sat, 10 Aug 2019 21:43:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Rikard Falkeborn" <rikard.falkeborn@gmail.com>,
-        "Tzvetomir Stoyanov" <tstoyanov@vmware.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Willy Tarreau" <w@1wt.eu>, "Denis Efremov" <efremov@ispras.ru>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.122674765@decadent.org.uk>
+Message-ID: <lsq.1565469607.827914321@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 090/157] tools lib traceevent: Fix missing equality
- check for strcmp
+Subject: [PATCH 3.16 138/157] floppy: fix div-by-zero in setup_format_params
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,55 +47,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+From: Denis Efremov <efremov@ispras.ru>
 
-commit f32c2877bcb068a718bb70094cd59ccc29d4d082 upstream.
+commit f3554aeb991214cbfafd17d55e2bfddb50282e32 upstream.
 
-There was a missing comparison with 0 when checking if type is "s64" or
-"u64". Therefore, the body of the if-statement was entered if "type" was
-"u64" or not "s64", which made the first strcmp() redundant since if
-type is "u64", it's not "s64".
+This fixes a divide by zero error in the setup_format_params function of
+the floppy driver.
 
-If type is "s64", the body of the if-statement is not entered but since
-the remainder of the function consists of if-statements which will not
-be entered if type is "s64", we will just return "val", which is
-correct, albeit at the cost of a few more calls to strcmp(), i.e., it
-will behave just as if the if-statement was entered.
+Two consecutive ioctls can trigger the bug: The first one should set the
+drive geometry with such .sect and .rate values for the F_SECT_PER_TRACK
+to become zero.  Next, the floppy format operation should be called.
 
-If type is neither "s64" or "u64", the body of the if-statement will be
-entered incorrectly and "val" returned. This means that any type that is
-checked after "s64" and "u64" is handled the same way as "s64" and
-"u64", i.e., the limiting of "val" to fit in for example "s8" is never
-reached.
+A floppy disk is not required to be inserted.  An unprivileged user
+could trigger the bug if the device is accessible.
 
-This was introduced in the kernel tree when the sources were copied from
-trace-cmd in commit f7d82350e597 ("tools/events: Add files to create
-libtraceevent.a"), and in the trace-cmd repo in 1cdbae6035cei
-("Implement typecasting in parser") when the function was introduced,
-i.e., it has always behaved the wrong way.
+The patch checks F_SECT_PER_TRACK for a non-zero value in the
+set_geometry function.  The proper check should involve a reasonable
+upper limit for the .sect and .rate fields, but it could change the
+UAPI.
 
-Detected by cppcheck.
+The patch also checks F_SECT_PER_TRACK in the setup_format_params, and
+cancels the formatting operation in case of zero.
 
-Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Fixes: f7d82350e597 ("tools/events: Add files to create libtraceevent.a")
-Link: http://lkml.kernel.org/r/20190409091529.2686-1-rikard.falkeborn@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+The bug was found by syzkaller.
+
+Signed-off-by: Denis Efremov <efremov@ispras.ru>
+Tested-by: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- tools/lib/traceevent/event-parse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/floppy.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -2065,7 +2065,7 @@ eval_type_str(unsigned long long val, co
- 		return val & 0xffffffff;
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -2113,6 +2113,9 @@ static void setup_format_params(int trac
+ 	raw_cmd->kernel_data = floppy_track_buffer;
+ 	raw_cmd->length = 4 * F_SECT_PER_TRACK;
  
- 	if (strcmp(type, "u64") == 0 ||
--	    strcmp(type, "s64"))
-+	    strcmp(type, "s64") == 0)
- 		return val;
++	if (!F_SECT_PER_TRACK)
++		return;
++
+ 	/* allow for about 30ms for data transport per track */
+ 	head_shift = (F_SECT_PER_TRACK + 5) / 6;
  
- 	if (strcmp(type, "s8") == 0)
+@@ -3235,6 +3238,8 @@ static int set_geometry(unsigned int cmd
+ 	/* sanity checking for parameters. */
+ 	if (g->sect <= 0 ||
+ 	    g->head <= 0 ||
++	    /* check for zero in F_SECT_PER_TRACK */
++	    (unsigned char)((g->sect << 2) >> FD_SIZECODE(g)) == 0 ||
+ 	    g->track <= 0 || g->track > UDP->tracks >> STRETCH(g) ||
+ 	    /* check if reserved bits are set */
+ 	    (g->stretch & ~(FD_STRETCH | FD_SWAPSIDES | FD_SECTBASEMASK)) != 0)
 
