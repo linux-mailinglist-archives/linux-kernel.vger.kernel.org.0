@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8301088D7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDF3288D9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbfHJUq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:46:28 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55340 "EHLO
+        id S1727181AbfHJUrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:47:31 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55034 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726457AbfHJUoH (ORCPT
+        by vger.kernel.org with ESMTP id S1726836AbfHJUoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:07 -0400
+        Sat, 10 Aug 2019 16:44:04 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDb-00053a-W5; Sat, 10 Aug 2019 21:44:04 +0100
+        id 1hwYDY-00058O-Eh; Sat, 10 Aug 2019 21:44:00 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDL-0003dJ-5n; Sat, 10 Aug 2019 21:43:47 +0100
+        id 1hwYDN-0003hy-EP; Sat, 10 Aug 2019 21:43:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        "NeilBrown" <neilb@suse.com>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "syzbot" <syzkaller@googlegroups.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.504505883@decadent.org.uk>
+Message-ID: <lsq.1565469607.485122702@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 073/157] sunrpc: don't mark uninitialised items as VALID.
+Subject: [PATCH 3.16 116/157] ipv6/flowlabel: wait rcu grace period before
+ put_pid()
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,55 +50,151 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit d58431eacb226222430940134d97bfd72f292fcd upstream.
+commit 6c0afef5fb0c27758f4d52b2210c61b6bd8b4470 upstream.
 
-A recent commit added a call to cache_fresh_locked()
-when an expired item was found.
-The call sets the CACHE_VALID flag, so it is important
-that the item actually is valid.
-There are two ways it could be valid:
-1/ If ->update has been called to fill in relevant content
-2/ if CACHE_NEGATIVE is set, to say that content doesn't exist.
+syzbot was able to catch a use-after-free read in pid_nr_ns() [1]
 
-An expired item that is waiting for an update will be neither.
-Setting CACHE_VALID will mean that a subsequent call to cache_put()
-will be likely to dereference uninitialised pointers.
+ip6fl_seq_show() seems to use RCU protection, dereferencing fl->owner.pid
+but fl_free() releases fl->owner.pid before rcu grace period is started.
 
-So we must make sure the item is valid, and we already have code to do
-that in try_to_negate_entry().  This takes the hash lock and so cannot
-be used directly, so take out the two lines that we need and use them.
+[1]
 
-Now cache_fresh_locked() is certain to be called only on
-a valid item.
+BUG: KASAN: use-after-free in pid_nr_ns+0x128/0x140 kernel/pid.c:407
+Read of size 4 at addr ffff888094012a04 by task syz-executor.0/18087
 
-Fixes: 4ecd55ea0742 ("sunrpc: fix cache_head leak due to queued request")
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-[bwh: Backported to 3.16: adjust context]
+CPU: 0 PID: 18087 Comm: syz-executor.0 Not tainted 5.1.0-rc6+ #89
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+ kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+ __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
+ pid_nr_ns+0x128/0x140 kernel/pid.c:407
+ ip6fl_seq_show+0x2f8/0x4f0 net/ipv6/ip6_flowlabel.c:794
+ seq_read+0xad3/0x1130 fs/seq_file.c:268
+ proc_reg_read+0x1fe/0x2c0 fs/proc/inode.c:227
+ do_loop_readv_writev fs/read_write.c:701 [inline]
+ do_loop_readv_writev fs/read_write.c:688 [inline]
+ do_iter_read+0x4a9/0x660 fs/read_write.c:922
+ vfs_readv+0xf0/0x160 fs/read_write.c:984
+ kernel_readv fs/splice.c:358 [inline]
+ default_file_splice_read+0x475/0x890 fs/splice.c:413
+ do_splice_to+0x12a/0x190 fs/splice.c:876
+ splice_direct_to_actor+0x2d2/0x970 fs/splice.c:953
+ do_splice_direct+0x1da/0x2a0 fs/splice.c:1062
+ do_sendfile+0x597/0xd00 fs/read_write.c:1443
+ __do_sys_sendfile64 fs/read_write.c:1498 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1490 [inline]
+ __x64_sys_sendfile64+0x15a/0x220 fs/read_write.c:1490
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458da9
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f300d24bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000458da9
+RDX: 00000000200000c0 RSI: 0000000000000008 RDI: 0000000000000007
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000000000005a R11: 0000000000000246 R12: 00007f300d24c6d4
+R13: 00000000004c5fa3 R14: 00000000004da748 R15: 00000000ffffffff
+
+Allocated by task 17543:
+ save_stack+0x45/0xd0 mm/kasan/common.c:75
+ set_track mm/kasan/common.c:87 [inline]
+ __kasan_kmalloc mm/kasan/common.c:497 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:470
+ kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:505
+ slab_post_alloc_hook mm/slab.h:437 [inline]
+ slab_alloc mm/slab.c:3393 [inline]
+ kmem_cache_alloc+0x11a/0x6f0 mm/slab.c:3555
+ alloc_pid+0x55/0x8f0 kernel/pid.c:168
+ copy_process.part.0+0x3b08/0x7980 kernel/fork.c:1932
+ copy_process kernel/fork.c:1709 [inline]
+ _do_fork+0x257/0xfd0 kernel/fork.c:2226
+ __do_sys_clone kernel/fork.c:2333 [inline]
+ __se_sys_clone kernel/fork.c:2327 [inline]
+ __x64_sys_clone+0xbf/0x150 kernel/fork.c:2327
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 7789:
+ save_stack+0x45/0xd0 mm/kasan/common.c:75
+ set_track mm/kasan/common.c:87 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:459
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:467
+ __cache_free mm/slab.c:3499 [inline]
+ kmem_cache_free+0x86/0x260 mm/slab.c:3765
+ put_pid.part.0+0x111/0x150 kernel/pid.c:111
+ put_pid+0x20/0x30 kernel/pid.c:105
+ fl_free+0xbe/0xe0 net/ipv6/ip6_flowlabel.c:102
+ ip6_fl_gc+0x295/0x3e0 net/ipv6/ip6_flowlabel.c:152
+ call_timer_fn+0x190/0x720 kernel/time/timer.c:1325
+ expire_timers kernel/time/timer.c:1362 [inline]
+ __run_timers kernel/time/timer.c:1681 [inline]
+ __run_timers kernel/time/timer.c:1649 [inline]
+ run_timer_softirq+0x652/0x1700 kernel/time/timer.c:1694
+ __do_softirq+0x266/0x95a kernel/softirq.c:293
+
+The buggy address belongs to the object at ffff888094012a00
+ which belongs to the cache pid_2 of size 88
+The buggy address is located 4 bytes inside of
+ 88-byte region [ffff888094012a00, ffff888094012a58)
+The buggy address belongs to the page:
+page:ffffea0002500480 count:1 mapcount:0 mapping:ffff88809a483080 index:0xffff888094012980
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea00018a3508 ffffea0002524a88 ffff88809a483080
+raw: ffff888094012980 ffff888094012000 000000010000001b 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888094012900: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+ ffff888094012980: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+>ffff888094012a00: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+                   ^
+ ffff888094012a80: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+ ffff888094012b00: fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc
+
+Fixes: 4f82f45730c6 ("net ip6 flowlabel: Make owner a union of struct pid * and kuid_t")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: Move the release_net() call too, not that it does
+ anything.]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/sunrpc/cache.c | 3 +++
- 1 file changed, 3 insertions(+)
-
---- a/net/sunrpc/cache.c
-+++ b/net/sunrpc/cache.c
-@@ -50,6 +50,7 @@ static void cache_init(struct cache_head
- 	h->last_refresh = now;
+--- a/net/ipv6/ip6_flowlabel.c
++++ b/net/ipv6/ip6_flowlabel.c
+@@ -94,16 +94,22 @@ static struct ip6_flowlabel *fl_lookup(s
+ 	return fl;
  }
  
-+static inline int cache_is_valid(struct cache_head *h);
- static void cache_fresh_locked(struct cache_head *head, time_t expiry);
- static void cache_fresh_unlocked(struct cache_head *head,
- 				struct cache_detail *detail);
-@@ -98,6 +99,8 @@ struct cache_head *sunrpc_cache_lookup(s
- 				*hp = tmp->next;
- 				tmp->next = NULL;
- 				detail->entries --;
-+				if (cache_is_valid(tmp) == -EAGAIN)
-+					set_bit(CACHE_NEGATIVE, &tmp->flags);
- 				cache_fresh_locked(tmp, 0);
- 				freeme = tmp;
- 				break;
++static void fl_free_rcu(struct rcu_head *head)
++{
++	struct ip6_flowlabel *fl = container_of(head, struct ip6_flowlabel, rcu);
++
++	if (fl->share == IPV6_FL_S_PROCESS)
++		put_pid(fl->owner.pid);
++	release_net(fl->fl_net);
++	kfree(fl->opt);
++	kfree(fl);
++}
++
+ 
+ static void fl_free(struct ip6_flowlabel *fl)
+ {
+-	if (fl) {
+-		if (fl->share == IPV6_FL_S_PROCESS)
+-			put_pid(fl->owner.pid);
+-		release_net(fl->fl_net);
+-		kfree(fl->opt);
+-		kfree_rcu(fl, rcu);
+-	}
++	if (fl)
++		call_rcu(&fl->rcu, fl_free_rcu);
+ }
+ 
+ static void fl_release(struct ip6_flowlabel *fl)
 
