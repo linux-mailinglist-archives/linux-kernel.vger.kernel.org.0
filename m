@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9BEE88D40
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E9188DB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbfHJUoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:44:03 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54114 "EHLO
+        id S1727221AbfHJUsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:48:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54878 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726566AbfHJUnv (ORCPT
+        by vger.kernel.org with ESMTP id S1726807AbfHJUoB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:51 -0400
+        Sat, 10 Aug 2019 16:44:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-00053t-V1; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDW-00053q-Qz; Sat, 10 Aug 2019 21:43:58 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003at-Pu; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDN-0003i8-IC; Sat, 10 Aug 2019 21:43:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Hulk Robot" <hulkci@huawei.com>, "Jan Kara" <jack@suse.cz>,
-        "zhangyi (F)" <yi.zhang@huawei.com>,
-        "Theodore Ts'o" <tytso@mit.edu>
+        "David S. Miller" <davem@davemloft.net>,
+        "Willem de Bruijn" <willemb@google.com>,
+        "David Laight" <David.Laight@aculab.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.761898531@decadent.org.uk>
+Message-ID: <lsq.1565469607.702055650@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 043/157] ext4: brelse all indirect buffer in
- ext4_ind_remove_space()
+Subject: [PATCH 3.16 118/157] packet: in recvmsg msg_name return at least
+ sizeof sockaddr_ll
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,67 +49,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "zhangyi (F)" <yi.zhang@huawei.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 674a2b27234d1b7afcb0a9162e81b2e53aeef217 upstream.
+commit b2cf86e1563e33a14a1c69b3e508d15dc12f804c upstream.
 
-All indirect buffers get by ext4_find_shared() should be released no
-mater the branch should be freed or not. But now, we forget to release
-the lower depth indirect buffers when removing space from the same
-higher depth indirect block. It will lead to buffer leak and futher
-more, it may lead to quota information corruption when using old quota,
-consider the following case.
+Packet send checks that msg_name is at least sizeof sockaddr_ll.
+Packet recv must return at least this length, so that its output
+can be passed unmodified to packet send.
 
- - Create and mount an empty ext4 filesystem without extent and quota
-   features,
- - quotacheck and enable the user & group quota,
- - Create some files and write some data to them, and then punch hole
-   to some files of them, it may trigger the buffer leak problem
-   mentioned above.
- - Disable quota and run quotacheck again, it will create two new
-   aquota files and write the checked quota information to them, which
-   probably may reuse the freed indirect block(the buffer and page
-   cache was not freed) as data block.
- - Enable quota again, it will invoke
-   vfs_load_quota_inode()->invalidate_bdev() to try to clean unused
-   buffers and pagecache. Unfortunately, because of the buffer of quota
-   data block is still referenced, quota code cannot read the up to date
-   quota info from the device and lead to quota information corruption.
+This ceased to be true since adding support for lladdr longer than
+sll_addr. Since, the return value uses true address length.
 
-This problem can be reproduced by xfstests generic/231 on ext3 file
-system or ext4 file system without extent and quota features.
+Always return at least sizeof sockaddr_ll, even if address length
+is shorter. Zero the padding bytes.
 
-This patch fix this problem by releasing the missing indirect buffers,
-in ext4_ind_remove_space().
+Change v1->v2: do not overwrite zeroed padding again. use copy_len.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Fixes: 0fb375fb9b93 ("[AF_PACKET]: Allow for > 8 byte hardware addresses.")
+Suggested-by: David Laight <David.Laight@aculab.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/indirect.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/packet/af_packet.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/indirect.c
-+++ b/fs/ext4/indirect.c
-@@ -1481,10 +1481,14 @@ end_range:
- 					   partial->p + 1,
- 					   partial2->p,
- 					   (chain+n-1) - partial);
--			BUFFER_TRACE(partial->bh, "call brelse");
--			brelse(partial->bh);
--			BUFFER_TRACE(partial2->bh, "call brelse");
--			brelse(partial2->bh);
-+			while (partial > chain) {
-+				BUFFER_TRACE(partial->bh, "call brelse");
-+				brelse(partial->bh);
-+			}
-+			while (partial2 > chain2) {
-+				BUFFER_TRACE(partial2->bh, "call brelse");
-+				brelse(partial2->bh);
-+			}
- 			return 0;
- 		}
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -3027,19 +3027,28 @@ static int packet_recvmsg(struct kiocb *
+ 	sock_recv_ts_and_drops(msg, sk, skb);
  
+ 	if (msg->msg_name) {
++		int copy_len;
++
+ 		/* If the address length field is there to be filled
+ 		 * in, we fill it in now.
+ 		 */
+ 		if (sock->type == SOCK_PACKET) {
+ 			__sockaddr_check_size(sizeof(struct sockaddr_pkt));
+ 			msg->msg_namelen = sizeof(struct sockaddr_pkt);
++			copy_len = msg->msg_namelen;
+ 		} else {
+ 			struct sockaddr_ll *sll = &PACKET_SKB_CB(skb)->sa.ll;
+ 			msg->msg_namelen = sll->sll_halen +
+ 				offsetof(struct sockaddr_ll, sll_addr);
++			copy_len = msg->msg_namelen;
++			if (msg->msg_namelen < sizeof(struct sockaddr_ll)) {
++				memset(msg->msg_name +
++				       offsetof(struct sockaddr_ll, sll_addr),
++				       0, sizeof(sll->sll_addr));
++				msg->msg_namelen = sizeof(struct sockaddr_ll);
++			}
+ 		}
+-		memcpy(msg->msg_name, &PACKET_SKB_CB(skb)->sa,
+-		       msg->msg_namelen);
++		memcpy(msg->msg_name, &PACKET_SKB_CB(skb)->sa, copy_len);
+ 	}
+ 
+ 	if (pkt_sk(sk)->auxdata) {
 
