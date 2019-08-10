@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A07FE88DC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F360B88D5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbfHJUs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:48:56 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54750 "EHLO
+        id S1727202AbfHJUp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:45:28 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55464 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726768AbfHJUoA (ORCPT
+        by vger.kernel.org with ESMTP id S1726920AbfHJUoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:00 -0400
+        Sat, 10 Aug 2019 16:44:09 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDV-00053O-Co; Sat, 10 Aug 2019 21:43:57 +0100
+        id 1hwYDe-00053i-Vp; Sat, 10 Aug 2019 21:44:07 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003jW-CT; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDK-0003cB-GO; Sat, 10 Aug 2019 21:43:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,17 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        syzbot+79337b501d6aa974d0f6@syzkaller.appspotmail.com,
-        "Vladis Dronov" <vdronov@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Marcel Holtmann" <marcel@holtmann.org>,
-        "Yu-Chen, Cho" <acho@suse.com>
+        "Ilya Dryomov" <idryomov@gmail.com>,
+        "Mike Snitzer" <snitzer@redhat.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.541662992@decadent.org.uk>
+Message-ID: <lsq.1565469607.124084088@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 135/157] Bluetooth: hci_uart: check for missing tty
- operations
+Subject: [PATCH 3.16 059/157] dm table: propagate BDI_CAP_STABLE_WRITES to
+ fix sporadic checksum errors
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -51,76 +48,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vladis Dronov <vdronov@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit b36a1552d7319bbfd5cf7f08726c23c5c66d4f73 upstream.
+commit eb40c0acdc342b815d4d03ae6abb09e80c0f2988 upstream.
 
-Certain ttys operations (pty_unix98_ops) lack tiocmget() and tiocmset()
-functions which are called by the certain HCI UART protocols (hci_ath,
-hci_bcm, hci_intel, hci_mrvl, hci_qca) via hci_uart_set_flow_control()
-or directly. This leads to an execution at NULL and can be triggered by
-an unprivileged user. Fix this by adding a helper function and a check
-for the missing tty operations in the protocols code.
+Some devices don't use blk_integrity but still want stable pages
+because they do their own checksumming.  Examples include rbd and iSCSI
+when data digests are negotiated.  Stacking DM (and thus LVM) on top of
+these devices results in sporadic checksum errors.
 
-This fixes CVE-2019-10207. The Fixes: lines list commits where calls to
-tiocm[gs]et() or hci_uart_set_flow_control() were added to the HCI UART
-protocols.
+Set BDI_CAP_STABLE_WRITES if any underlying device has it set.
 
-Link: https://syzkaller.appspot.com/bug?id=1b42faa2848963564a5b1b7f8c837ea7b55ffa50
-Reported-by: syzbot+79337b501d6aa974d0f6@syzkaller.appspotmail.com
-Fixes: b3190df62861 ("Bluetooth: Support for Atheros AR300x serial chip")
-Fixes: 118612fb9165 ("Bluetooth: hci_bcm: Add suspend/resume PM functions")
-Fixes: ff2895592f0f ("Bluetooth: hci_intel: Add Intel baudrate configuration support")
-Fixes: 162f812f23ba ("Bluetooth: hci_uart: Add Marvell support")
-Fixes: fa9ad876b8e0 ("Bluetooth: hci_qca: Add support for Qualcomm Bluetooth chip wcn3990")
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Reviewed-by: Yu-Chen, Cho <acho@suse.com>
-Tested-by: Yu-Chen, Cho <acho@suse.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16:
- - Only hci_ath is affected
- - There is no serdev support]
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+[bwh: Backported to 3.16: request_queue::backing_dev_info is a struct
+ not a pointer]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/bluetooth/hci_ath.c
-+++ b/drivers/bluetooth/hci_ath.c
-@@ -112,6 +112,9 @@ static int ath_open(struct hci_uart *hu)
- 
- 	BT_DBG("hu %p", hu);
- 
-+	if (!hci_uart_has_flow_control(hu))
-+		return -EOPNOTSUPP;
-+
- 	ath = kzalloc(sizeof(*ath), GFP_KERNEL);
- 	if (!ath)
- 		return -ENOMEM;
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -261,6 +261,15 @@ static int hci_uart_send_frame(struct hc
- 	return 0;
+ drivers/md/dm-table.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1432,6 +1432,36 @@ static bool dm_table_supports_write_same
+ 	return true;
  }
  
-+/* Check the underlying device or tty has flow control support */
-+bool hci_uart_has_flow_control(struct hci_uart *hu)
++static int device_requires_stable_pages(struct dm_target *ti,
++					struct dm_dev *dev, sector_t start,
++					sector_t len, void *data)
 +{
-+	if (hu->tty->driver->ops->tiocmget && hu->tty->driver->ops->tiocmset)
-+		return true;
++	struct request_queue *q = bdev_get_queue(dev->bdev);
++
++	return q && bdi_cap_stable_pages_required(&q->backing_dev_info);
++}
++
++/*
++ * If any underlying device requires stable pages, a table must require
++ * them as well.  Only targets that support iterate_devices are considered:
++ * don't want error, zero, etc to require stable pages.
++ */
++static bool dm_table_requires_stable_pages(struct dm_table *t)
++{
++	struct dm_target *ti;
++	unsigned i;
++
++	for (i = 0; i < dm_table_get_num_targets(t); i++) {
++		ti = dm_table_get_target(t, i);
++
++		if (ti->type->iterate_devices &&
++		    ti->type->iterate_devices(ti, device_requires_stable_pages, NULL))
++			return true;
++	}
 +
 +	return false;
 +}
 +
- /* ------ LDISC part ------ */
- /* hci_uart_tty_open
-  *
---- a/drivers/bluetooth/hci_uart.h
-+++ b/drivers/bluetooth/hci_uart.h
-@@ -90,6 +90,7 @@ int hci_uart_register_proto(struct hci_u
- int hci_uart_unregister_proto(struct hci_uart_proto *p);
- int hci_uart_tx_wakeup(struct hci_uart *hu);
- int hci_uart_init_ready(struct hci_uart *hu);
-+bool hci_uart_has_flow_control(struct hci_uart *hu);
+ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 			       struct queue_limits *limits)
+ {
+@@ -1474,6 +1504,15 @@ void dm_table_set_restrictions(struct dm
+ 	dm_table_set_integrity(t);
  
- #ifdef CONFIG_BT_HCIUART_H4
- int h4_init(void);
+ 	/*
++	 * Some devices don't use blk_integrity but still want stable pages
++	 * because they do their own checksumming.
++	 */
++	if (dm_table_requires_stable_pages(t))
++		q->backing_dev_info.capabilities |= BDI_CAP_STABLE_WRITES;
++	else
++		q->backing_dev_info.capabilities &= ~BDI_CAP_STABLE_WRITES;
++
++	/*
+ 	 * Determine whether or not this queue's I/O timings contribute
+ 	 * to the entropy pool, Only request-based targets use this.
+ 	 * Clear QUEUE_FLAG_ADD_RANDOM if any underlying device does not
 
