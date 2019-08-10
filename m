@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B938988E2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60C8C88E2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbfHJUwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:52:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54128 "EHLO
+        id S1727724AbfHJUwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:52:17 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54144 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726571AbfHJUnw (ORCPT
+        by vger.kernel.org with ESMTP id S1726584AbfHJUnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 10 Aug 2019 16:43:52 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-00053p-Pt; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDM-00053a-Q8; Sat, 10 Aug 2019 21:43:48 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-0003bX-2a; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDJ-0003bG-VE; Sat, 10 Aug 2019 21:43:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jens Remus" <jremus@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Steffen Maier" <maier@linux.ibm.com>,
-        "Benjamin Block" <bblock@linux.ibm.com>
+        "Takashi Iwai" <tiwai@suse.de>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.332619319@decadent.org.uk>
+Message-ID: <lsq.1565469607.28313327@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 051/157] scsi: zfcp: fix scsi_eh host reset with
- port_forced ERP for non-NPIV FCP devices
+Subject: [PATCH 3.16 048/157] ALSA: pcm: Don't suspend stream in
+ unrecoverable PCM state
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,91 +47,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 242ec1455151267fe35a0834aa9038e4c4670884 upstream.
+commit 113ce08109f8e3b091399e7cc32486df1cff48e7 upstream.
 
-Suppose more than one non-NPIV FCP device is active on the same channel.
-Send I/O to storage and have some of the pending I/O run into a SCSI
-command timeout, e.g. due to bit errors on the fibre. Now the error
-situation stops. However, we saw FCP requests continue to timeout in the
-channel. The abort will be successful, but the subsequent TUR fails.
-Scsi_eh starts. The LUN reset fails. The target reset fails.  The host
-reset only did an FCP device recovery. However, for non-NPIV FCP devices,
-this does not close and reopen ports on the SAN-side if other non-NPIV FCP
-device(s) share the same open ports.
+Currently PCM core sets each opened stream forcibly to SUSPENDED state
+via snd_pcm_suspend_all() call, and the user-space is responsible for
+re-triggering the resume manually either via snd_pcm_resume() or
+prepare call.  The scheme works fine usually, but there are corner
+cases where the stream can't be resumed by that call: the streams
+still in OPEN state before finishing hw_params.  When they are
+suspended, user-space cannot perform resume or prepare because they
+haven't been set up yet.  The only possible recovery is to re-open the
+device, which isn't nice at all.  Similarly, when a stream is in
+DISCONNECTED state, it makes no sense to change it to SUSPENDED
+state.  Ditto for in SETUP state; which you can re-prepare directly.
 
-In order to resolve the continuing FCP request timeouts, we need to
-explicitly close and reopen ports on the SAN-side.
+So, this patch addresses these issues by filtering the PCM streams to
+be suspended by checking the PCM state.  When a stream is in either
+OPEN, SETUP or DISCONNECTED as well as already SUSPENDED, the suspend
+action is skipped.
 
-This was missing since the beginning of zfcp in v2.6.0 history commit
-ea127f975424 ("[PATCH] s390 (7/7): zfcp host adapter.").
+To be noted, this problem was originally reported for the PCM runtime
+PM on HD-audio.  And, the runtime PM problem itself was already
+addressed (although not intended) by the code refactoring commits
+3d21ef0b49f8 ("ALSA: pcm: Suspend streams globally via device type PM
+ops") and 17bc4815de58 ("ALSA: pci: Remove superfluous
+snd_pcm_suspend*() calls").  These commits eliminated the
+snd_pcm_suspend*() calls from the runtime PM suspend callback code
+path, hence the racy OPEN state won't appear while runtime PM.
+(FWIW, the race window is between snd_pcm_open_substream() and the
+first power up in azx_pcm_open().)
 
-Note: The FSF requests for forced port reopen could run into FSF request
-timeouts due to other reasons. This would trigger an internal FCP device
-recovery. Pending forced port reopen recoveries would get dismissed. So
-some ports might not get fully reopened during this host reset handler.
-However, subsequent I/O would trigger the above described escalation and
-eventually all ports would be forced reopen to resolve any continuing FCP
-request timeouts due to earlier bit errors.
+Although the runtime PM issue was already "fixed", the same problem is
+still present for the system PM, hence this patch is still needed.
+And for stable trees, this patch alone should suffice for fixing the
+runtime PM problem, too.
 
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reported-and-tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/s390/scsi/zfcp_erp.c  | 14 ++++++++++++++
- drivers/s390/scsi/zfcp_ext.h  |  2 ++
- drivers/s390/scsi/zfcp_scsi.c |  4 ++++
- 3 files changed, 20 insertions(+)
+ sound/core/pcm_native.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -652,6 +652,20 @@ static void zfcp_erp_strategy_memwait(st
- 	add_timer(&erp_action->timer);
- }
- 
-+void zfcp_erp_port_forced_reopen_all(struct zfcp_adapter *adapter,
-+				     int clear, char *dbftag)
-+{
-+	unsigned long flags;
-+	struct zfcp_port *port;
-+
-+	write_lock_irqsave(&adapter->erp_lock, flags);
-+	read_lock(&adapter->port_list_lock);
-+	list_for_each_entry(port, &adapter->port_list, list)
-+		_zfcp_erp_port_forced_reopen(port, clear, dbftag);
-+	read_unlock(&adapter->port_list_lock);
-+	write_unlock_irqrestore(&adapter->erp_lock, flags);
-+}
-+
- static void _zfcp_erp_port_reopen_all(struct zfcp_adapter *adapter,
- 				      int clear, char *id)
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -1063,8 +1063,15 @@ static int snd_pcm_pause(struct snd_pcm_
+ static int snd_pcm_pre_suspend(struct snd_pcm_substream *substream, int state)
  {
---- a/drivers/s390/scsi/zfcp_ext.h
-+++ b/drivers/s390/scsi/zfcp_ext.h
-@@ -68,6 +68,8 @@ extern void zfcp_erp_clear_port_status(s
- extern int  zfcp_erp_port_reopen(struct zfcp_port *, int, char *);
- extern void zfcp_erp_port_shutdown(struct zfcp_port *, int, char *);
- extern void zfcp_erp_port_forced_reopen(struct zfcp_port *, int, char *);
-+extern void zfcp_erp_port_forced_reopen_all(struct zfcp_adapter *adapter,
-+					    int clear, char *dbftag);
- extern void zfcp_erp_set_lun_status(struct scsi_device *, u32);
- extern void zfcp_erp_clear_lun_status(struct scsi_device *, u32);
- extern void zfcp_erp_lun_reopen(struct scsi_device *, int, char *);
---- a/drivers/s390/scsi/zfcp_scsi.c
-+++ b/drivers/s390/scsi/zfcp_scsi.c
-@@ -347,6 +347,10 @@ static int zfcp_scsi_eh_host_reset_handl
- 	struct zfcp_adapter *adapter = zfcp_sdev->port->adapter;
- 	int ret = SUCCESS, fc_ret;
- 
-+	if (!(adapter->connection_features & FSF_FEATURE_NPIV_MODE)) {
-+		zfcp_erp_port_forced_reopen_all(adapter, 0, "schrh_p");
-+		zfcp_erp_wait(adapter);
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+-	if (runtime->status->state == SNDRV_PCM_STATE_SUSPENDED)
++	switch (runtime->status->state) {
++	case SNDRV_PCM_STATE_SUSPENDED:
+ 		return -EBUSY;
++	/* unresumable PCM state; return -EBUSY for skipping suspend */
++	case SNDRV_PCM_STATE_OPEN:
++	case SNDRV_PCM_STATE_SETUP:
++	case SNDRV_PCM_STATE_DISCONNECTED:
++		return -EBUSY;
 +	}
- 	zfcp_erp_adapter_reopen(adapter, 0, "schrh_1");
- 	zfcp_erp_wait(adapter);
- 	fc_ret = fc_block_scsi_eh(scpnt);
+ 	runtime->trigger_master = substream;
+ 	return 0;
+ }
 
