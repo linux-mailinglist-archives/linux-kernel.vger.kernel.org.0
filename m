@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A88088E48
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89C9788E59
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfHJUxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:53:31 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53880 "EHLO
+        id S1727823AbfHJUyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:54:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53824 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726510AbfHJUnt (ORCPT
+        by vger.kernel.org with ESMTP id S1726490AbfHJUnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 10 Aug 2019 16:43:49 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-00053r-8E; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDJ-00053F-9r; Sat, 10 Aug 2019 21:43:45 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003aF-Fl; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDI-0003Yi-QF; Sat, 10 Aug 2019 21:43:44 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Jan Kara" <jack@suse.cz>,
+        "jean-luc malet" <jeanluc.malet@gmail.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.92622742@decadent.org.uk>
+Message-ID: <lsq.1565469607.39091445@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 035/157] staging: rtl8712: uninitialized memory in
- read_bbreg_hdl()
+Subject: [PATCH 3.16 016/157] udf: Fix crash on IO error during truncate
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,64 +47,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 22c971db7dd4b0ad8dd88e99c407f7a1f4231a2e upstream.
+commit d3ca4651d05c0ff7259d087d8c949bcf3e14fb46 upstream.
 
-Colin King reported a bug in read_bbreg_hdl():
+When truncate(2) hits IO error when reading indirect extent block the
+code just bugs with:
 
-	memcpy(pcmd->rsp, (u8 *)&val, pcmd->rspsz);
+kernel BUG at linux-4.15.0/fs/udf/truncate.c:249!
+...
 
-The problem is that "val" is uninitialized.
+Fix the problem by bailing out cleanly in case of IO error.
 
-This code is obviously not useful, but so far as I can tell
-"pcmd->cmdcode" is never GEN_CMD_CODE(_Read_BBREG) so it's not harmful
-either.  For now the easiest fix is to just call r8712_free_cmd_obj()
-and return.
-
-Fixes: 2865d42c78a9 ("staging: r8712u: Add the new driver to the mainline kernel")
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust context]
+Reported-by: jean-luc malet <jeanluc.malet@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/rtl8712/rtl8712_cmd.c | 10 +---------
- drivers/staging/rtl8712/rtl8712_cmd.h |  2 +-
- 2 files changed, 2 insertions(+), 10 deletions(-)
+ fs/udf/truncate.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/staging/rtl8712/rtl8712_cmd.c
-+++ b/drivers/staging/rtl8712/rtl8712_cmd.c
-@@ -155,19 +155,11 @@ static u8 write_macreg_hdl(struct _adapt
- 
- static u8 read_bbreg_hdl(struct _adapter *padapter, u8 *pbuf)
- {
--	u32 val;
--	void (*pcmd_callback)(struct _adapter *dev, struct cmd_obj	*pcmd);
- 	struct readBB_parm *prdbbparm;
- 	struct cmd_obj *pcmd  = (struct cmd_obj *)pbuf;
- 
- 	prdbbparm = (struct readBB_parm *)pcmd->parmbuf;
--	if (pcmd->rsp && pcmd->rspsz > 0)
--		memcpy(pcmd->rsp, (u8 *)&val, pcmd->rspsz);
--	pcmd_callback = cmd_callback[pcmd->cmdcode].callback;
--	if (pcmd_callback == NULL)
--		r8712_free_cmd_obj(pcmd);
--	else
--		pcmd_callback(padapter, pcmd);
-+	r8712_free_cmd_obj(pcmd);
- 	return H2C_SUCCESS;
- }
- 
---- a/drivers/staging/rtl8712/rtl8712_cmd.h
-+++ b/drivers/staging/rtl8712/rtl8712_cmd.h
-@@ -152,7 +152,7 @@ enum rtl8712_h2c_cmd {
- static struct _cmd_callback	cmd_callback[] = {
- 	{GEN_CMD_CODE(_Read_MACREG), NULL}, /*0*/
- 	{GEN_CMD_CODE(_Write_MACREG), NULL},
--	{GEN_CMD_CODE(_Read_BBREG), &r8712_getbbrfreg_cmdrsp_callback},
-+	{GEN_CMD_CODE(_Read_BBREG), NULL},
- 	{GEN_CMD_CODE(_Write_BBREG), NULL},
- 	{GEN_CMD_CODE(_Read_RFREG), &r8712_getbbrfreg_cmdrsp_callback},
- 	{GEN_CMD_CODE(_Write_RFREG), NULL}, /*5*/
+--- a/fs/udf/truncate.c
++++ b/fs/udf/truncate.c
+@@ -261,6 +261,9 @@ void udf_truncate_extents(struct inode *
+ 			epos.block = eloc;
+ 			epos.bh = udf_tread(sb,
+ 					udf_get_lb_pblock(sb, &eloc, 0));
++			/* Error reading indirect block? */
++			if (!epos.bh)
++				return;
+ 			if (elen)
+ 				indirect_ext_len =
+ 					(elen + sb->s_blocksize - 1) >>
 
