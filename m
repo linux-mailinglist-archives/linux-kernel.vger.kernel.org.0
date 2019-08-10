@@ -2,44 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D063B88DAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE6C688DB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfHJUr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:47:59 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55014 "EHLO
+        id S1727320AbfHJUsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:48:32 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54842 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726835AbfHJUoD (ORCPT
+        by vger.kernel.org with ESMTP id S1726799AbfHJUoB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:03 -0400
+        Sat, 10 Aug 2019 16:44:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDY-00053h-Ec; Sat, 10 Aug 2019 21:44:00 +0100
+        id 1hwYDW-00053u-Qy; Sat, 10 Aug 2019 21:43:58 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-0003fZ-Br; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDN-0003iN-NT; Sat, 10 Aug 2019 21:43:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ben Segall" <bsegall@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Phil Auld" <pauld@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Anton Blanchard" <anton@ozlabs.org>
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.586954811@decadent.org.uk>
+Message-ID: <lsq.1565469607.360144767@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 093/157] sched/fair: Limit sched_cfs_period_timer()
- loop to avoid hard lockup
+Subject: [PATCH 3.16 121/157] x86: cpufeatures: Renumber feature word 7
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -53,98 +45,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Phil Auld <pauld@redhat.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-commit 2e8e19226398db8265a8e675fcc0118b9e80c9e8 upstream.
+Use the same bit numbers for all features that are also present in
+4.4.y and 4.9.y, to make further backports slightly easier.
 
-With extremely short cfs_period_us setting on a parent task group with a large
-number of children the for loop in sched_cfs_period_timer() can run until the
-watchdog fires. There is no guarantee that the call to hrtimer_forward_now()
-will ever return 0.  The large number of children can make
-do_sched_cfs_period_timer() take longer than the period.
-
- NMI watchdog: Watchdog detected hard LOCKUP on cpu 24
- RIP: 0010:tg_nop+0x0/0x10
-  <IRQ>
-  walk_tg_tree_from+0x29/0xb0
-  unthrottle_cfs_rq+0xe0/0x1a0
-  distribute_cfs_runtime+0xd3/0xf0
-  sched_cfs_period_timer+0xcb/0x160
-  ? sched_cfs_slack_timer+0xd0/0xd0
-  __hrtimer_run_queues+0xfb/0x270
-  hrtimer_interrupt+0x122/0x270
-  smp_apic_timer_interrupt+0x6a/0x140
-  apic_timer_interrupt+0xf/0x20
-  </IRQ>
-
-To prevent this we add protection to the loop that detects when the loop has run
-too many times and scales the period and quota up, proportionally, so that the timer
-can complete before then next period expires.  This preserves the relative runtime
-quota while preventing the hard lockup.
-
-A warning is issued reporting this state and the new values.
-
-Signed-off-by: Phil Auld <pauld@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Anton Blanchard <anton@ozlabs.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190319130005.25492-1-pauld@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/sched/fair.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3704,6 +3704,8 @@ static enum hrtimer_restart sched_cfs_sl
- 	return HRTIMER_NORESTART;
- }
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -177,29 +177,32 @@
+ #define X86_FEATURE_ARAT	( 7*32+ 1) /* Always Running APIC Timer */
+ #define X86_FEATURE_CPB		( 7*32+ 2) /* AMD Core Performance Boost */
+ #define X86_FEATURE_EPB		( 7*32+ 3) /* IA32_ENERGY_PERF_BIAS support */
+-#define X86_FEATURE_XSAVEOPT	( 7*32+ 4) /* Optimized Xsave */
++#define X86_FEATURE_INVPCID_SINGLE ( 7*32+4) /* Effectively INVPCID && CR4.PCIDE=1 */
+ #define X86_FEATURE_PLN		( 7*32+ 5) /* Intel Power Limit Notification */
+ #define X86_FEATURE_PTS		( 7*32+ 6) /* Intel Package Thermal Status */
+ #define X86_FEATURE_DTHERM	( 7*32+ 7) /* Digital Thermal Sensor */
+ #define X86_FEATURE_HW_PSTATE	( 7*32+ 8) /* AMD HW-PState */
+ #define X86_FEATURE_PROC_FEEDBACK ( 7*32+ 9) /* AMD ProcFeedbackInterface */
+-#define X86_FEATURE_INVPCID_SINGLE ( 7*32+10) /* Effectively INVPCID && CR4.PCIDE=1 */
+-#define X86_FEATURE_RSB_CTXSW	( 7*32+11) /* "" Fill RSB on context switches */
+-#define X86_FEATURE_USE_IBPB	( 7*32+12) /* "" Indirect Branch Prediction Barrier enabled */
+-#define X86_FEATURE_USE_IBRS_FW ( 7*32+13) /* "" Use IBRS during runtime firmware calls */
+-#define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE ( 7*32+14) /* "" Disable Speculative Store Bypass. */
+-#define X86_FEATURE_LS_CFG_SSBD	( 7*32+15) /* "" AMD SSBD implementation */
+-#define X86_FEATURE_IBRS	( 7*32+16) /* Indirect Branch Restricted Speculation */
+-#define X86_FEATURE_IBPB	( 7*32+17) /* Indirect Branch Prediction Barrier */
+-#define X86_FEATURE_STIBP	( 7*32+18) /* Single Thread Indirect Branch Predictors */
+-#define X86_FEATURE_MSR_SPEC_CTRL ( 7*32+19) /* "" MSR SPEC_CTRL is implemented */
+-#define X86_FEATURE_SSBD	( 7*32+20) /* Speculative Store Bypass Disable */
+-#define X86_FEATURE_ZEN		( 7*32+21) /* "" CPU is AMD family 0x17 (Zen) */
+-#define X86_FEATURE_L1TF_PTEINV	( 7*32+22) /* "" L1TF workaround PTE inversion */
+-#define X86_FEATURE_IBRS_ENHANCED ( 7*32+23) /* Enhanced IBRS */
+-#define X86_FEATURE_RETPOLINE	( 7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
+-#define X86_FEATURE_RETPOLINE_AMD ( 7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
+-/* Because the ALTERNATIVE scheme is for members of the X86_FEATURE club... */
++
++#define X86_FEATURE_RETPOLINE	( 7*32+12) /* "" Generic Retpoline mitigation for Spectre variant 2 */
++#define X86_FEATURE_RETPOLINE_AMD ( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
++
++#define X86_FEATURE_XSAVEOPT	( 7*32+15) /* Optimized Xsave */
++#define X86_FEATURE_MSR_SPEC_CTRL ( 7*32+16) /* "" MSR SPEC_CTRL is implemented */
++#define X86_FEATURE_SSBD	( 7*32+17) /* Speculative Store Bypass Disable */
++
++#define X86_FEATURE_RSB_CTXSW	( 7*32+19) /* "" Fill RSB on context switches */
++
++#define X86_FEATURE_USE_IBPB	( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
++#define X86_FEATURE_USE_IBRS_FW ( 7*32+22) /* "" Use IBRS during runtime firmware calls */
++#define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE ( 7*32+23) /* "" Disable Speculative Store Bypass. */
++#define X86_FEATURE_LS_CFG_SSBD	( 7*32+24) /* "" AMD SSBD implementation */
++#define X86_FEATURE_IBRS	( 7*32+25) /* Indirect Branch Restricted Speculation */
++#define X86_FEATURE_IBPB	( 7*32+26) /* Indirect Branch Prediction Barrier */
++#define X86_FEATURE_STIBP	( 7*32+27) /* Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_ZEN		( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
++#define X86_FEATURE_L1TF_PTEINV	( 7*32+29) /* "" L1TF workaround PTE inversion */
++#define X86_FEATURE_IBRS_ENHANCED ( 7*32+30) /* Enhanced IBRS */
+ #define X86_FEATURE_KAISER	( 7*32+31) /* CONFIG_PAGE_TABLE_ISOLATION w/o nokaiser */
  
-+extern const u64 max_cfs_quota_period;
-+
- static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
- {
- 	struct cfs_bandwidth *cfs_b =
-@@ -3711,6 +3713,7 @@ static enum hrtimer_restart sched_cfs_pe
- 	ktime_t now;
- 	int overrun;
- 	int idle = 0;
-+	int count = 0;
- 
- 	raw_spin_lock(&cfs_b->lock);
- 	for (;;) {
-@@ -3720,6 +3723,28 @@ static enum hrtimer_restart sched_cfs_pe
- 		if (!overrun)
- 			break;
- 
-+		if (++count > 3) {
-+			u64 new, old = ktime_to_ns(cfs_b->period);
-+
-+			new = (old * 147) / 128; /* ~115% */
-+			new = min(new, max_cfs_quota_period);
-+
-+			cfs_b->period = ns_to_ktime(new);
-+
-+			/* since max is 1s, this is limited to 1e9^2, which fits in u64 */
-+			cfs_b->quota *= new;
-+			cfs_b->quota = div64_u64(cfs_b->quota, old);
-+
-+			pr_warn_ratelimited(
-+	"cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us %lld, cfs_quota_us = %lld)\n",
-+				smp_processor_id(),
-+				div_u64(new, NSEC_PER_USEC),
-+				div_u64(cfs_b->quota, NSEC_PER_USEC));
-+
-+			/* reset count so we don't come right back in here */
-+			count = 0;
-+		}
-+
- 		idle = do_sched_cfs_period_timer(cfs_b, overrun);
- 	}
- 	raw_spin_unlock(&cfs_b->lock);
+ /* Virtualization flags: Linux defined, word 8 */
 
