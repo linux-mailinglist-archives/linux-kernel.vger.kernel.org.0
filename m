@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E9688D88
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6FE688D74
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbfHJUqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:46:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55344 "EHLO
+        id S1727267AbfHJUqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:46:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55268 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726900AbfHJUoH (ORCPT
+        by vger.kernel.org with ESMTP id S1726884AbfHJUoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 10 Aug 2019 16:44:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDd-00053q-4A; Sat, 10 Aug 2019 21:44:05 +0100
+        id 1hwYDb-00053p-W8; Sat, 10 Aug 2019 21:44:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-0003ck-Sp; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDK-0003cu-Vx; Sat, 10 Aug 2019 21:43:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Johannes Thumshirn" <jthumshirn@suse.de>,
-        "Nikolay Borisov" <nborisov@suse.com>,
-        "David Sterba" <dsterba@suse.com>
+        "Mike Snitzer" <snitzer@redhat.com>,
+        "David Jeffery" <djeffery@redhat.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.354797597@decadent.org.uk>
+Message-ID: <lsq.1565469607.380103166@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 066/157] btrfs: correctly validate compression type
+Subject: [PATCH 3.16 068/157] dm: disable DISCARD if the underlying
+ storage no longer supports it
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,173 +48,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit aa53e3bfac7205fb3a8815ac1c937fd6ed01b41e upstream.
+commit bcb44433bba5eaff293888ef22ffa07f1f0347d6 upstream.
 
-Nikolay reported the following KASAN splat when running btrfs/048:
+Storage devices which report supporting discard commands like
+WRITE_SAME_16 with unmap, but reject discard commands sent to the
+storage device.  This is a clear storage firmware bug but it doesn't
+change the fact that should a program cause discards to be sent to a
+multipath device layered on this buggy storage, all paths can end up
+failed at the same time from the discards, causing possible I/O loss.
 
-[ 1843.470920] ==================================================================
-[ 1843.471971] BUG: KASAN: slab-out-of-bounds in strncmp+0x66/0xb0
-[ 1843.472775] Read of size 1 at addr ffff888111e369e2 by task btrfs/3979
+The first discard to a path will fail with Illegal Request, Invalid
+field in cdb, e.g.:
+ kernel: sd 8:0:8:19: [sdfn] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+ kernel: sd 8:0:8:19: [sdfn] tag#0 Sense Key : Illegal Request [current]
+ kernel: sd 8:0:8:19: [sdfn] tag#0 Add. Sense: Invalid field in cdb
+ kernel: sd 8:0:8:19: [sdfn] tag#0 CDB: Write same(16) 93 08 00 00 00 00 00 a0 08 00 00 00 80 00 00 00
+ kernel: blk_update_request: critical target error, dev sdfn, sector 10487808
 
-[ 1843.473904] CPU: 3 PID: 3979 Comm: btrfs Not tainted 5.2.0-rc3-default #536
-[ 1843.475009] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[ 1843.476322] Call Trace:
-[ 1843.476674]  dump_stack+0x7c/0xbb
-[ 1843.477132]  ? strncmp+0x66/0xb0
-[ 1843.477587]  print_address_description+0x114/0x320
-[ 1843.478256]  ? strncmp+0x66/0xb0
-[ 1843.478740]  ? strncmp+0x66/0xb0
-[ 1843.479185]  __kasan_report+0x14e/0x192
-[ 1843.479759]  ? strncmp+0x66/0xb0
-[ 1843.480209]  kasan_report+0xe/0x20
-[ 1843.480679]  strncmp+0x66/0xb0
-[ 1843.481105]  prop_compression_validate+0x24/0x70
-[ 1843.481798]  btrfs_xattr_handler_set_prop+0x65/0x160
-[ 1843.482509]  __vfs_setxattr+0x71/0x90
-[ 1843.483012]  __vfs_setxattr_noperm+0x84/0x130
-[ 1843.483606]  vfs_setxattr+0xac/0xb0
-[ 1843.484085]  setxattr+0x18c/0x230
-[ 1843.484546]  ? vfs_setxattr+0xb0/0xb0
-[ 1843.485048]  ? __mod_node_page_state+0x1f/0xa0
-[ 1843.485672]  ? _raw_spin_unlock+0x24/0x40
-[ 1843.486233]  ? __handle_mm_fault+0x988/0x1290
-[ 1843.486823]  ? lock_acquire+0xb4/0x1e0
-[ 1843.487330]  ? lock_acquire+0xb4/0x1e0
-[ 1843.487842]  ? mnt_want_write_file+0x3c/0x80
-[ 1843.488442]  ? debug_lockdep_rcu_enabled+0x22/0x40
-[ 1843.489089]  ? rcu_sync_lockdep_assert+0xe/0x70
-[ 1843.489707]  ? __sb_start_write+0x158/0x200
-[ 1843.490278]  ? mnt_want_write_file+0x3c/0x80
-[ 1843.490855]  ? __mnt_want_write+0x98/0xe0
-[ 1843.491397]  __x64_sys_fsetxattr+0xba/0xe0
-[ 1843.492201]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[ 1843.493201]  do_syscall_64+0x6c/0x230
-[ 1843.493988]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 1843.495041] RIP: 0033:0x7fa7a8a7707a
-[ 1843.495819] Code: 48 8b 0d 21 de 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 be 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ee dd 2b 00 f7 d8 64 89 01 48
-[ 1843.499203] RSP: 002b:00007ffcb73bca38 EFLAGS: 00000202 ORIG_RAX: 00000000000000be
-[ 1843.500210] RAX: ffffffffffffffda RBX: 00007ffcb73bda9d RCX: 00007fa7a8a7707a
-[ 1843.501170] RDX: 00007ffcb73bda9d RSI: 00000000006dc050 RDI: 0000000000000003
-[ 1843.502152] RBP: 00000000006dc050 R08: 0000000000000000 R09: 0000000000000000
-[ 1843.503109] R10: 0000000000000002 R11: 0000000000000202 R12: 00007ffcb73bda91
-[ 1843.504055] R13: 0000000000000003 R14: 00007ffcb73bda82 R15: ffffffffffffffff
+The SCSI layer converts this to the BLK_STS_TARGET error number, the sd
+device disables its support for discard on this path, and because of the
+BLK_STS_TARGET error multipath fails the discard without failing any
+path or retrying down a different path.  But subsequent discards can
+cause path failures.  Any discards sent to the path which already failed
+a discard ends up failing with EIO from blk_cloned_rq_check_limits with
+an "over max size limit" error since the discard limit was set to 0 by
+the sd driver for the path.  As the error is EIO, this now fails the
+path and multipath tries to send the discard down the next path.  This
+cycle continues as discards are sent until all paths fail.
 
-[ 1843.505268] Allocated by task 3979:
-[ 1843.505771]  save_stack+0x19/0x80
-[ 1843.506211]  __kasan_kmalloc.constprop.5+0xa0/0xd0
-[ 1843.506836]  setxattr+0xeb/0x230
-[ 1843.507264]  __x64_sys_fsetxattr+0xba/0xe0
-[ 1843.507886]  do_syscall_64+0x6c/0x230
-[ 1843.508429]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Fix this by training DM core to disable DISCARD if the underlying
+storage already did so.
 
-[ 1843.509558] Freed by task 0:
-[ 1843.510188] (stack is not available)
+Also, fix branching in dm_done() and clone_endio() to reflect the
+mutually exclussive nature of the IO operations in question.
 
-[ 1843.511309] The buggy address belongs to the object at ffff888111e369e0
-                which belongs to the cache kmalloc-8 of size 8
-[ 1843.514095] The buggy address is located 2 bytes inside of
-                8-byte region [ffff888111e369e0, ffff888111e369e8)
-[ 1843.516524] The buggy address belongs to the page:
-[ 1843.517561] page:ffff88813f478d80 refcount:1 mapcount:0 mapping:ffff88811940c300 index:0xffff888111e373b8 compound_mapcount: 0
-[ 1843.519993] flags: 0x4404000010200(slab|head)
-[ 1843.520951] raw: 0004404000010200 ffff88813f48b008 ffff888119403d50 ffff88811940c300
-[ 1843.522616] raw: ffff888111e373b8 000000000016000f 00000001ffffffff 0000000000000000
-[ 1843.524281] page dumped because: kasan: bad access detected
-
-[ 1843.525936] Memory state around the buggy address:
-[ 1843.526975]  ffff888111e36880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 1843.528479]  ffff888111e36900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 1843.530138] >ffff888111e36980: fc fc fc fc fc fc fc fc fc fc fc fc 02 fc fc fc
-[ 1843.531877]                                                        ^
-[ 1843.533287]  ffff888111e36a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 1843.534874]  ffff888111e36a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 1843.536468] ==================================================================
-
-This is caused by supplying a too short compression value ('lz') in the
-test-case and comparing it to 'lzo' with strncmp() and a length of 3.
-strncmp() read past the 'lz' when looking for the 'o' and thus caused an
-out-of-bounds read.
-
-Introduce a new check 'btrfs_compress_is_valid_type()' which not only
-checks the user-supplied value against known compression types, but also
-employs checks for too short values.
-
-Reported-by: Nikolay Borisov <nborisov@suse.com>
-Fixes: 272e5326c783 ("btrfs: prop: fix vanished compression property after failed set")
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: David Jeffery <djeffery@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 [bwh: Backported to 3.16:
- - "zstd" is not supported
- - Add definition of btrfs_compression_types[]
- - Include compression.h in props.c
- - Adjust context]
+ - Keep using op & flag to check operation type
+ - Keep using bdev_get_queue() to find queue in clone_endio()
+ - WRITE_ZEROES is not handled
+ - Use queue_flag_clear() instead of blk_queue_flag_clear()
+ - Adjust filenames, context
+ - Declare disable_discard() static as its only user is in the same
+   source file]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -42,6 +42,8 @@
- #include "extent_io.h"
- #include "extent_map.h"
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -756,6 +756,15 @@ static void dec_pending(struct dm_io *io
+ 	}
+ }
  
-+static const char* const btrfs_compress_types[] = { "", "zlib", "lzo" };
-+
- struct compressed_bio {
- 	/* number of bios pending for this compressed extent */
- 	atomic_t pending_bios;
-@@ -81,6 +83,22 @@ struct compressed_bio {
- 	u32 sums;
- };
- 
-+bool btrfs_compress_is_valid_type(const char *str, size_t len)
++static void disable_discard(struct mapped_device *md)
 +{
-+	int i;
++	struct queue_limits *limits = dm_get_queue_limits(md);
 +
-+	for (i = 1; i < ARRAY_SIZE(btrfs_compress_types); i++) {
-+		size_t comp_len = strlen(btrfs_compress_types[i]);
-+
-+		if (len < comp_len)
-+			continue;
-+
-+		if (!strncmp(btrfs_compress_types[i], str, comp_len))
-+			return true;
-+	}
-+	return false;
++	/* device doesn't really support DISCARD, disable it */
++	limits->max_discard_sectors = 0;
++	queue_flag_clear(QUEUE_FLAG_DISCARD, md->queue);
 +}
 +
- static int btrfs_decompress_biovec(int type, struct page **pages_in,
- 				   u64 disk_start, struct bio_vec *bvec,
- 				   int vcnt, size_t srclen);
---- a/fs/btrfs/compression.h
-+++ b/fs/btrfs/compression.h
-@@ -80,4 +80,5 @@ struct btrfs_compress_op {
- extern struct btrfs_compress_op btrfs_zlib_compress;
- extern struct btrfs_compress_op btrfs_lzo_compress;
- 
-+bool btrfs_compress_is_valid_type(const char *str, size_t len);
- #endif
---- a/fs/btrfs/props.c
-+++ b/fs/btrfs/props.c
-@@ -22,6 +22,7 @@
- #include "hash.h"
- #include "transaction.h"
- #include "xattr.h"
-+#include "compression.h"
- 
- #define BTRFS_PROP_HANDLERS_HT_BITS 8
- static DEFINE_HASHTABLE(prop_handlers_ht, BTRFS_PROP_HANDLERS_HT_BITS);
-@@ -378,9 +379,7 @@ int btrfs_subvol_inherit_props(struct bt
- 
- static int prop_compression_validate(const char *value, size_t len)
+ static void disable_write_same(struct mapped_device *md)
  {
--	if (!strncmp("lzo", value, 3))
--		return 0;
--	else if (!strncmp("zlib", value, 4))
-+	if (btrfs_compress_is_valid_type(value, len))
- 		return 0;
+ 	struct queue_limits *limits = dm_get_queue_limits(md);
+@@ -792,9 +801,14 @@ static void clone_endio(struct bio *bio,
+ 		}
+ 	}
  
- 	return -EINVAL;
+-	if (unlikely(r == -EREMOTEIO && (bio->bi_rw & REQ_WRITE_SAME) &&
+-		     !bdev_get_queue(bio->bi_bdev)->limits.max_write_same_sectors))
+-		disable_write_same(md);
++	if (unlikely(r == -EREMOTEIO)) {
++		if (bio->bi_rw & REQ_DISCARD &&
++		    !bdev_get_queue(bio->bi_bdev)->limits.max_discard_sectors)
++			disable_discard(md);
++		else if (bio->bi_rw & REQ_WRITE_SAME &&
++			 !bdev_get_queue(bio->bi_bdev)->limits.max_write_same_sectors)
++ 			disable_write_same(md);
++	}
+ 
+ 	free_tio(md, tio);
+ 	dec_pending(io, error);
+@@ -996,9 +1010,14 @@ static void dm_done(struct request *clon
+ 			r = rq_end_io(tio->ti, clone, error, &tio->info);
+ 	}
+ 
+-	if (unlikely(r == -EREMOTEIO && (clone->cmd_flags & REQ_WRITE_SAME) &&
+-		     !clone->q->limits.max_write_same_sectors))
+-		disable_write_same(tio->md);
++	if (unlikely(r == -EREMOTEIO)) {
++		if (clone->cmd_flags & REQ_DISCARD &&
++		    !clone->q->limits.max_discard_sectors)
++			disable_discard(tio->md);
++		else if (clone->cmd_flags & REQ_WRITE_SAME &&
++			 !clone->q->limits.max_write_same_sectors)
++			disable_write_same(tio->md);
++	}
+ 
+ 	if (r <= 0)
+ 		/* The target wants to complete the I/O */
 
