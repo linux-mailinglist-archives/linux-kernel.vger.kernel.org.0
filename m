@@ -2,59 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4E1C88A28
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 10:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4FE288A2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 11:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbfHJI6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 04:58:55 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:32839 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfHJI6z (ORCPT
+        id S1726119AbfHJJBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 05:01:15 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38618 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfHJJBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 04:58:55 -0400
-Received: by mail-lf1-f65.google.com with SMTP id x3so71312028lfc.0
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2019 01:58:53 -0700 (PDT)
+        Sat, 10 Aug 2019 05:01:14 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r9so94175092ljg.5
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2019 02:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=eACVUSS6+kAuWMY6Y/Rvo5Ji9wXuF3LroigfQBmD9vM=;
-        b=d2mfruYSRYaSGF5yv3D83sQwKvJlJJKM+/OA8HClDw1CgQcoT6qMQlnstC40xRzcD8
-         baI8453lIvRRlzv84SSi/JKx4BmSloonlPjlTna/9YUZojdG/P6TFHtVOzEkJNzfqZbP
-         HAn6pqb9n+MkmxkJlKizka51EXAkuGFYLW3jdGMcJes7spXqIE0n1039pVDKXlT+2pZ6
-         UROReAN0oTwb4gphLooyMzLJ0o1O10sUHQtbS76QXVZqI2k2+FxGDPXz9HOOfBdJ0uZw
-         oQ3QGx12JL5YYq0wVoQ7Uuqbhby8NyHBbgiITLuGqfZcVW2cDIb2gwfMB5JH/wDSLvq1
-         bsqg==
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=oD/Q6G/6W7nTlypRrPNMZQgnb5/E1uytnbBR5dQIk4Q=;
+        b=J4fnE0Lcep5KmTR/bSIzJSIUS/cLyiUz2x4KsdUfRK5dB/gjcfCfslOEfBcLw52rgs
+         EMviEh1o+yJISGq8uMDk7CV/aA94Xc8NFKmZvsT04xbm7Sv1egPq8EkG8Y+2LLnk1WIp
+         IrB/TgtySjNylZf3B+oeGGmCRQ5VJUeeCWEvcwQRkDF/M4UYAzaIyntpdKQgV9cmmOJa
+         naPD8MS/fUk0c1RBADmraZ/2TGk45RNDcWb63BjppByRH/TKd1nI3hWIfmdgI9rvv+03
+         g+pQxjpAki6ZqDOXULCRgqNYJCi7TMJX7BWhbfllYt1/OR5QjmgVM4VfingW/CpkN85a
+         fK4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=eACVUSS6+kAuWMY6Y/Rvo5Ji9wXuF3LroigfQBmD9vM=;
-        b=ejM6mm/BtvpdIT6F6aUdunAw/Fvow8kQWTa9tEwK8FPbBUCQ1WOUx7baJRps7ZYyCC
-         tsWqSvC0K00CaYP3oDuicjhH2xrihSans3/YTQQPrT+A37raAhh4BsqG0eoW0KA/P/+T
-         /njs5LdI0IccEgAu02zdKxnsJKjsI1sUaPv3FijuLmEfuO8nDJfthkKrO6loI767GNx5
-         sBfwiHYi5AUfQWJTaCNPxZf2iqF5cbj+jK3DVKH23lJ4CXbeY3XfJDJvHASixVTMCK6b
-         VLDZXN5H8xwfj9pEVONKUjaJSVzZXfX5kOvYnZu7GaKUwata3IPGJZvXGfNEiYQp+q7s
-         dwlA==
-X-Gm-Message-State: APjAAAXYBPfq1+lWtbPfBYPkzS9mn0obKbQbdFVTX5GFG7f4OfEP2i+Y
-        rMCqPLdezi19JFslQet7GPm450MY7Wo+aNCRR4M=
-X-Google-Smtp-Source: APXvYqxjel5Ko0tVKJoK4ZlIqbO0eqATlaPge1kuv5ptrCCUFRUYJOIWoSnZfWe/oWRs17omhiS9jfeId/+cwdE0ftg=
-X-Received: by 2002:a19:48c5:: with SMTP id v188mr14757016lfa.69.1565427533316;
- Sat, 10 Aug 2019 01:58:53 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=oD/Q6G/6W7nTlypRrPNMZQgnb5/E1uytnbBR5dQIk4Q=;
+        b=BAJf+SsQcapMtMq5+zaUKHimFpbu6nXz5HYVykCQsQ1NC35aYTgCuk8GQph5hXLtE6
+         iVregFqidXvU3tHaaA8PHns5Ndq45OLnpAtfLXclydQmfi6sfIG7D/nV71MJetlQa+xX
+         rOGmgCJlZVOkRbQRHM7KjTTl+8Mp/MB78zSPty9XE4HlaXip7L2HyMQk92oD1qZ/ybin
+         ntAufcBdHOKmPCbCH8tLcPl/Ydw+TGs0enTyMonzsGB4wBPFWPNXcXZoVzWbZHqqHtoO
+         JzzdxbFqhkyhZCZjWqXtd8hefU9/XYNrvNqMy5I/eMWtszO5M4Ayqj4r65UP5KYUWTeL
+         QZmQ==
+X-Gm-Message-State: APjAAAWbevvdaBxj7APQlVFmTAmkK8P1EgUKeuavfAkSNymBMVx+5ujN
+        +WpjAT959I4kC+6GiuErzmU/N3N4eanX4vSq7NhOWg==
+X-Google-Smtp-Source: APXvYqzAONLPdh4o+NouNG/QFJxb4T9bH5J8zHJQGa7JZySBNXe2HJoRmhj4JGiLvN+pM/qj2zTkv397Dbnvlxzplg4=
+X-Received: by 2002:a2e:9048:: with SMTP id n8mr13725271ljg.37.1565427672367;
+ Sat, 10 Aug 2019 02:01:12 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:8c0b:0:0:0:0:0 with HTTP; Sat, 10 Aug 2019 01:58:52
- -0700 (PDT)
-Reply-To: sgt.hester33@gmail.com
-From:   Ann Hester <sgthester612@gmail.com>
-Date:   Sat, 10 Aug 2019 08:58:52 +0000
-Message-ID: <CAJdfrwrPT_ZuRyAgJFNw7ShZWdzfO-PUbLv4M0cyzi_byEaCDw@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 10 Aug 2019 11:01:00 +0200
+Message-ID: <CACRpkdaMp16=-NGxOhe_Gz-vvoZrN7S+CE6zVmD+erVU051kmQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v5.3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        YueHaibing <yuehaibing@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-How are you? I hope you are well. My name is Ann Leigh, please reply
-back to confirm your email address so I can tell you my reason for
-contacting you.
+Hi Linus,
+
+here are some pin control fixes for the v5.3 development.
+
+I should have sent earlier, vacation interfered. Thus there
+is a syntax fix I would normally not put in as fix at this point in
+this set, but I think it is no big deal.
+
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.3-2
+
+for you to fetch changes up to 8c4407de3be44c2a0ec3e316cd3e4a711bc2aaba:
+
+  pinctrl: aspeed: Make aspeed_pinmux_ips static (2019-07-29 23:35:31 +0200)
+
+----------------------------------------------------------------
+Some pin control fixes for the v5.4 series:
+
+- Delay acquisition of regmaps in the Aspeed G5 driver.
+
+- Make a symbol static to reduce compiler noise.
+
+----------------------------------------------------------------
+Andrew Jeffery (1):
+      pinctrl: aspeed-g5: Delay acquisition of regmaps
+
+YueHaibing (1):
+      pinctrl: aspeed: Make aspeed_pinmux_ips static
+
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c |  2 +-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 92 +++++++++++++++++++++---------
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c    | 12 ++--
+ drivers/pinctrl/aspeed/pinmux-aspeed.c     |  2 +-
+ drivers/pinctrl/aspeed/pinmux-aspeed.h     |  5 +-
+ 5 files changed, 75 insertions(+), 38 deletions(-)
