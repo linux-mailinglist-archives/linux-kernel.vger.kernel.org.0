@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17E9188DB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F0E88DAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbfHJUsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:48:16 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54878 "EHLO
+        id S1727459AbfHJUsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:48:02 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55004 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726807AbfHJUoB (ORCPT
+        by vger.kernel.org with ESMTP id S1726831AbfHJUoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:01 -0400
+        Sat, 10 Aug 2019 16:44:03 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDW-00053q-Qz; Sat, 10 Aug 2019 21:43:58 +0100
+        id 1hwYDY-00053p-KB; Sat, 10 Aug 2019 21:44:00 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDN-0003i8-IC; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDM-0003fG-8W; Sat, 10 Aug 2019 21:43:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Willem de Bruijn" <willemb@google.com>,
-        "David Laight" <David.Laight@aculab.com>
+        "Steve French" <stfrench@microsoft.com>,
+        "Pavel Shilovsky" <pshilov@microsoft.com>,
+        "Ronnie Sahlberg" <lsahlber@redhat.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.702055650@decadent.org.uk>
+Message-ID: <lsq.1565469607.521653675@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 118/157] packet: in recvmsg msg_name return at least
- sizeof sockaddr_ll
+Subject: [PATCH 3.16 091/157] cifs: fix handle leak in smb2_query_symlink()
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,63 +48,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-commit b2cf86e1563e33a14a1c69b3e508d15dc12f804c upstream.
+commit e6d0fb7b34f264f72c33053558a360a6a734905e upstream.
 
-Packet send checks that msg_name is at least sizeof sockaddr_ll.
-Packet recv must return at least this length, so that its output
-can be passed unmodified to packet send.
+If we enter smb2_query_symlink() for something that is not a symlink
+and where the SMB2_open() would succeed we would never end up
+closing this handle and would thus leak a handle on the server.
 
-This ceased to be true since adding support for lladdr longer than
-sll_addr. Since, the return value uses true address length.
+Fix this by immediately calling SMB2_close() on successfull open.
 
-Always return at least sizeof sockaddr_ll, even if address length
-is shorter. Zero the padding bytes.
-
-Change v1->v2: do not overwrite zeroed padding again. use copy_len.
-
-Fixes: 0fb375fb9b93 ("[AF_PACKET]: Allow for > 8 byte hardware addresses.")
-Suggested-by: David Laight <David.Laight@aculab.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/packet/af_packet.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ fs/cifs/smb2ops.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -3027,19 +3027,28 @@ static int packet_recvmsg(struct kiocb *
- 	sock_recv_ts_and_drops(msg, sk, skb);
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -906,6 +906,8 @@ smb2_query_symlink(const unsigned int xi
  
- 	if (msg->msg_name) {
-+		int copy_len;
-+
- 		/* If the address length field is there to be filled
- 		 * in, we fill it in now.
- 		 */
- 		if (sock->type == SOCK_PACKET) {
- 			__sockaddr_check_size(sizeof(struct sockaddr_pkt));
- 			msg->msg_namelen = sizeof(struct sockaddr_pkt);
-+			copy_len = msg->msg_namelen;
- 		} else {
- 			struct sockaddr_ll *sll = &PACKET_SKB_CB(skb)->sa.ll;
- 			msg->msg_namelen = sll->sll_halen +
- 				offsetof(struct sockaddr_ll, sll_addr);
-+			copy_len = msg->msg_namelen;
-+			if (msg->msg_namelen < sizeof(struct sockaddr_ll)) {
-+				memset(msg->msg_name +
-+				       offsetof(struct sockaddr_ll, sll_addr),
-+				       0, sizeof(sll->sll_addr));
-+				msg->msg_namelen = sizeof(struct sockaddr_ll);
-+			}
- 		}
--		memcpy(msg->msg_name, &PACKET_SKB_CB(skb)->sa,
--		       msg->msg_namelen);
-+		memcpy(msg->msg_name, &PACKET_SKB_CB(skb)->sa, copy_len);
- 	}
+ 	rc = SMB2_open(xid, &oparms, utf16_path, &oplock, NULL, &err_buf);
  
- 	if (pkt_sk(sk)->auxdata) {
++	if (!rc)
++		SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
+ 	if (!rc || !err_buf) {
+ 		kfree(utf16_path);
+ 		return -ENOENT;
 
