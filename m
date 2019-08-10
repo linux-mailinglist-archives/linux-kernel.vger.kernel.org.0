@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8352688DCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5580688D46
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbfHJUtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:49:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54682 "EHLO
+        id S1726953AbfHJUoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:44:13 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54288 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726760AbfHJUn7 (ORCPT
+        by vger.kernel.org with ESMTP id S1726634AbfHJUny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:59 -0400
+        Sat, 10 Aug 2019 16:43:54 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDV-00058M-Bv; Sat, 10 Aug 2019 21:43:57 +0100
+        id 1hwYDP-00053L-66; Sat, 10 Aug 2019 21:43:51 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003jQ-AS; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDM-0003fo-Eo; Sat, 10 Aug 2019 21:43:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Jason Wang" <jasowang@redhat.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Stefan Hajnoczi" <stefanha@redhat.com>
+        "Zhiqiang Liu" <liuzhiqiang26@huawei.com>,
+        "Jie Liu" <liujie165@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Miaohe Lin" <linmiaohe@huawei.com>,
+        "Qiang Ning" <ningqiang1@huawei.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.621186972@decadent.org.uk>
+Message-ID: <lsq.1565469607.25428937@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 134/157] vhost: scsi: add weight support
+Subject: [PATCH 3.16 095/157] tipc: set sysctl_tipc_rmem and named_timeout
+ right range
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,58 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Jie Liu <liujie165@huawei.com>
 
-commit c1ea02f15ab5efb3e93fc3144d895410bf79fcf2 upstream.
+commit 4bcd4ec1017205644a2697bccbc3b5143f522f5f upstream.
 
-This patch will check the weight and exit the loop if we exceeds the
-weight. This is useful for preventing scsi kthread from hogging cpu
-which is guest triggerable.
+We find that sysctl_tipc_rmem and named_timeout do not have the right minimum
+setting. sysctl_tipc_rmem should be larger than zero, like sysctl_tcp_rmem.
+And named_timeout as a timeout setting should be not less than zero.
 
-This addresses CVE-2019-3900.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Stefan Hajnoczi <stefanha@redhat.com>
-Fixes: 057cbf49a1f0 ("tcm_vhost: Initial merge for vhost level target fabric driver")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-[bwh: Backported to 3.16:
- - Drop changes in vhost_scsi_ctl_handle_vq()
- - Adjust context]
+Fixes: cc79dd1ba9c10 ("tipc: change socket buffer overflow control to respect sk_rcvbuf")
+Fixes: a5325ae5b8bff ("tipc: add name distributor resiliency queue")
+Signed-off-by: Jie Liu <liujie165@huawei.com>
+Reported-by: Qiang Ning <ningqiang1@huawei.com>
+Reviewed-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: only the tipc_rmem sysctl exists here]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/vhost/scsi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -998,7 +998,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
- 	u64 tag;
- 	u32 exp_data_len, data_first, data_num, data_direction, prot_first;
- 	unsigned out, in, i;
--	int head, ret, data_niov, prot_niov, prot_bytes;
-+	int head, ret, data_niov, prot_niov, prot_bytes, c = 0;
- 	size_t req_size;
- 	u16 lun;
- 	u8 *target, *lunp, task_attr;
-@@ -1016,7 +1016,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
+--- a/net/tipc/sysctl.c
++++ b/net/tipc/sysctl.c
+@@ -37,6 +37,7 @@
  
- 	vhost_disable_notify(&vs->dev, vq);
+ #include <linux/sysctl.h>
  
--	for (;;) {
-+	do {
- 		head = vhost_get_vq_desc(vq, vq->iov,
- 					ARRAY_SIZE(vq->iov), &out, &in,
- 					NULL, NULL);
-@@ -1219,7 +1219,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
- 		 */
- 		INIT_WORK(&cmd->work, tcm_vhost_submission_work);
- 		queue_work(tcm_vhost_workqueue, &cmd->work);
--	}
-+	} while (likely(!vhost_exceeds_weight(vq, ++c, 0)));
++static int one = 1;
+ static struct ctl_table_header *tipc_ctl_hdr;
  
- 	mutex_unlock(&vq->mutex);
- 	return;
+ static struct ctl_table tipc_table[] = {
+@@ -45,7 +46,8 @@ static struct ctl_table tipc_table[] = {
+ 		.data		= &sysctl_tipc_rmem,
+ 		.maxlen		= sizeof(sysctl_tipc_rmem),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1         = &one,
+ 	},
+ 	{}
+ };
 
