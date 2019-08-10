@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 111E888DE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A9F88E16
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfHJUuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:50:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54538 "EHLO
+        id S1726622AbfHJUnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:43:53 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53768 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726729AbfHJUn5 (ORCPT
+        by vger.kernel.org with ESMTP id S1726457AbfHJUns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:57 -0400
+        Sat, 10 Aug 2019 16:43:48 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDS-00053P-9R; Sat, 10 Aug 2019 21:43:54 +0100
+        id 1hwYDI-00052t-LC; Sat, 10 Aug 2019 21:43:44 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDP-0003lq-6Q; Sat, 10 Aug 2019 21:43:51 +0100
+        id 1hwYDI-0003Xp-DW; Sat, 10 Aug 2019 21:43:44 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Hannes Frederic Sowa" <hannes@stressinduktion.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Rick Jones" <rick.jones2@hp.com>
+        "Lars-Peter Clausen" <lars@metafoo.de>,
+        "Alexandru Ardelean" <alexandru.ardelean@analog.com>,
+        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.179170197@decadent.org.uk>
+Message-ID: <lsq.1565469607.318012602@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 152/157] ipv4: ip_tunnel: use net namespace from
- rtable not socket
+Subject: [PATCH 3.16 005/157] iio: Fix scan mask selection
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,35 +48,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hannes Frederic Sowa <hannes@stressinduktion.org>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-commit 926a882f6916fd76b6f8ee858d45a2241c5e7999 upstream.
+commit 20ea39ef9f2f911bd01c69519e7d69cfec79fde3 upstream.
 
-The socket parameter might legally be NULL, thus sock_net is sometimes
-causing a NULL pointer dereference. Using net_device pointer in dst_entry
-is more reliable.
+The trialmask is expected to have all bits set to 0 after allocation.
+Currently kmalloc_array() is used which does not zero the memory and so
+random bits are set. This results in random channels being enabled when
+they shouldn't. Replace kmalloc_array() with kcalloc() which has the same
+interface but zeros the memory.
 
-Fixes: b6a7719aedd7e5c ("ipv4: hash net ptr into fragmentation bucket selection")
-Reported-by: Rick Jones <rick.jones2@hp.com>
-Cc: Rick Jones <rick.jones2@hp.com>
-Cc: David S. Miller <davem@davemloft.net>
-Signed-off-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Note the fix is actually required earlier than the below fixes tag, but
+will require a manual backport due to move from kmalloc to kmalloc_array.
+
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Fixes commit 057ac1acdfc4 ("iio: Use kmalloc_array() in iio_scan_mask_set()").
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/ip_tunnel_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iio/industrialio-buffer.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/ip_tunnel_core.c
-+++ b/net/ipv4/ip_tunnel_core.c
-@@ -74,7 +74,8 @@ int iptunnel_xmit(struct sock *sk, struc
- 	iph->daddr	=	dst;
- 	iph->saddr	=	src;
- 	iph->ttl	=	ttl;
--	__ip_select_ident(sock_net(sk), iph, skb_shinfo(skb)->gso_segs ?: 1);
-+	__ip_select_ident(dev_net(rt->dst.dev), iph,
-+			  skb_shinfo(skb)->gso_segs ?: 1);
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -836,9 +836,8 @@ int iio_scan_mask_set(struct iio_dev *in
+ 	const unsigned long *mask;
+ 	unsigned long *trialmask;
  
- 	err = ip_local_out_sk(sk, skb);
- 	if (unlikely(net_xmit_eval(err)))
+-	trialmask = kmalloc_array(BITS_TO_LONGS(indio_dev->masklength),
+-				  sizeof(*trialmask),
+-				  GFP_KERNEL);
++	trialmask = kcalloc(BITS_TO_LONGS(indio_dev->masklength),
++			    sizeof(*trialmask), GFP_KERNEL);
+ 	if (trialmask == NULL)
+ 		return -ENOMEM;
+ 	if (!indio_dev->masklength) {
 
