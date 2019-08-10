@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47FCB88D45
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A351F88D48
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbfHJUoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:44:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54292 "EHLO
+        id S1726999AbfHJUoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:44:21 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54450 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726640AbfHJUny (ORCPT
+        by vger.kernel.org with ESMTP id S1726707AbfHJUn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:54 -0400
+        Sat, 10 Aug 2019 16:43:56 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDP-00053j-B3; Sat, 10 Aug 2019 21:43:51 +0100
+        id 1hwYDQ-00053r-6U; Sat, 10 Aug 2019 21:43:52 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-0003gf-Oa; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDN-0003he-8n; Sat, 10 Aug 2019 21:43:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,25 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Hangbin Liu" <liuhangbin@gmail.com>,
-        "Jiri Pirko" <jiri@mellanox.com>
+        "Roman Gushchin" <guro@fb.com>,
+        "Will Deacon" <will.deacon@arm.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "huang ying" <huang.ying.caritas@gmail.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Alexei Starovoitov" <ast@kernel.org>,
+        "Davidlohr Bueso" <dave@stgolabs.net>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Waiman Long" <longman@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.780592421@decadent.org.uk>
+Message-ID: <lsq.1565469607.775611502@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 101/157] team: fix possible recursive locking when
- add slaves
+Subject: [PATCH 3.16 112/157] trace: Fix preempt_enable_no_resched() abuse
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,49 +59,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 925b0c841e066b488cc3a60272472b2c56300704 upstream.
+commit d6097c9e4454adf1f8f2c9547c2fa6060d55d952 upstream.
 
-If we add a bond device which is already the master of the team interface,
-we will hold the team->lock in team_add_slave() first and then request the
-lock in team_set_mac_address() again. The functions are called like:
+Unless the very next line is schedule(), or implies it, one must not use
+preempt_enable_no_resched(). It can cause a preemption to go missing and
+thereby cause arbitrary delays, breaking the PREEMPT=y invariant.
 
-- team_add_slave()
- - team_port_add()
-   - team_port_enter()
-     - team_modeop_port_enter()
-       - __set_port_dev_addr()
-         - dev_set_mac_address()
-           - bond_set_mac_address()
-             - dev_set_mac_address()
-  	       - team_set_mac_address
+Link: http://lkml.kernel.org/r/20190423200318.GY14281@hirez.programming.kicks-ass.net
 
-Although team_upper_dev_link() would check the upper devices but it is
-called too late. Fix it by adding a checking before processing the slave.
-
-v2: Do not split the string in netdev_err()
-
-Fixes: 3d249d4ca7d0 ("net: introduce ethernet teaming device")
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: netlink doesn't support extack]
+Cc: Waiman Long <longman@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: the arch/x86 maintainers <x86@kernel.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: huang ying <huang.ying.caritas@gmail.com>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 2c2d7329d8af ("tracing/ftrace: use preempt_enable_no_resched_notrace in ring_buffer_time_stamp()")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -1116,6 +1116,12 @@ static int team_port_add(struct team *te
- 		return -EINVAL;
- 	}
+ kernel/trace/ring_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -729,7 +729,7 @@ u64 ring_buffer_time_stamp(struct ring_b
  
-+	if (netdev_has_upper_dev(dev, port_dev)) {
-+		netdev_err(dev, "Device %s is already an upper device of the team interface\n",
-+			   portname);
-+		return -EBUSY;
-+	}
-+
- 	if (port_dev->features & NETIF_F_VLAN_CHALLENGED &&
- 	    vlan_uses_dev(dev)) {
- 		netdev_err(dev, "Device %s is VLAN challenged and team device has VLAN set up\n",
+ 	preempt_disable_notrace();
+ 	time = rb_time_stamp(buffer);
+-	preempt_enable_no_resched_notrace();
++	preempt_enable_notrace();
+ 
+ 	return time;
+ }
 
