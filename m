@@ -2,188 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 074BF88DE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EE3588E7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 23:02:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbfHJUuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:50:13 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54522 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726727AbfHJUn5 (ORCPT
+        id S1726649AbfHJVCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 17:02:06 -0400
+Received: from smtprelay0013.hostedemail.com ([216.40.44.13]:48350 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726377AbfHJVCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:57 -0400
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDS-00058O-7q; Sat, 10 Aug 2019 21:43:54 +0100
-Received: from ben by deadeye with local (Exim 4.92)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDP-0003m0-86; Sat, 10 Aug 2019 21:43:51 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sat, 10 Aug 2019 17:02:06 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id D4B0D8368EFE;
+        Sat, 10 Aug 2019 21:02:04 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:69:355:379:599:800:960:973:988:989:1042:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2911:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3874:4321:4425:5007:7576:7903:8603:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21451:21627:21772:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
+X-HE-Tag: rings78_8660776233603
+X-Filterd-Recvd-Size: 2510
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 10 Aug 2019 21:02:03 +0000 (UTC)
+Message-ID: <b8a167bfb3731a665ba54b4fa4ccf899a31d9644.camel@perches.com>
+Subject: Re: [PATCH 3.16 004/157] iio: Use kmalloc_array() in
+ iio_scan_mask_set()
+From:   Joe Perches <joe@perches.com>
+To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Jonathan Cameron <jic23@kernel.org>
+Date:   Sat, 10 Aug 2019 14:02:02 -0700
+In-Reply-To: <lsq.1565469607.57202441@decadent.org.uk>
+References: <lsq.1565469607.57202441@decadent.org.uk>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Flavio Leitner" <fbl@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Hannes Frederic Sowa" <hannes@stressinduktion.org>
-Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.563481538@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 153/157] ipv6: hash net ptr into fragmentation bucket
- selection
-In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.72-rc1 review patch.  If anyone has any objections, please let me know.
+On Sat, 2019-08-10 at 21:40 +0100, Ben Hutchings wrote:
+> 3.16.72-rc1 review patch.  If anyone has any objections, please let me know.
 
-------------------
+Unless to enable applying further patches,
+I doubt there is ever a need to have any
+of Markus Elfring's patches applied to any
+-stable kernel.
 
-From: Hannes Frederic Sowa <hannes@stressinduktion.org>
-
-commit 5a352dd0a3aac03b443c94828dfd7144261c8636 upstream.
-
-As namespaces are sometimes used with overlapping ip address ranges,
-we should also use the namespace as input to the hash to select the ip
-fragmentation counter bucket.
-
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Flavio Leitner <fbl@redhat.com>
-Signed-off-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- include/net/ipv6.h     |  5 +++--
- net/ipv6/ip6_output.c  |  6 +++---
- net/ipv6/output_core.c | 14 ++++++++------
- net/ipv6/udp_offload.c |  4 ++--
- 4 files changed, 16 insertions(+), 13 deletions(-)
-
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -688,8 +688,9 @@ static inline int ipv6_addr_diff(const s
- 	return __ipv6_addr_diff(a1, a2, sizeof(struct in6_addr));
- }
- 
--void ipv6_select_ident(struct frag_hdr *fhdr, struct rt6_info *rt);
--void ipv6_proxy_select_ident(struct sk_buff *skb);
-+void ipv6_select_ident(struct net *net, struct frag_hdr *fhdr,
-+		       struct rt6_info *rt);
-+void ipv6_proxy_select_ident(struct net *net, struct sk_buff *skb);
- 
- int ip6_dst_hoplimit(struct dst_entry *dst);
- 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -632,7 +632,7 @@ int ip6_fragment(struct sk_buff *skb, in
- 		skb_reset_network_header(skb);
- 		memcpy(skb_network_header(skb), tmp_hdr, hlen);
- 
--		ipv6_select_ident(fh, rt);
-+		ipv6_select_ident(net, fh, rt);
- 		fh->nexthdr = nexthdr;
- 		fh->reserved = 0;
- 		fh->frag_off = htons(IP6_MF);
-@@ -785,7 +785,7 @@ slow_path:
- 		fh->nexthdr = nexthdr;
- 		fh->reserved = 0;
- 		if (!frag_id) {
--			ipv6_select_ident(fh, rt);
-+			ipv6_select_ident(net, fh, rt);
- 			frag_id = fh->identification;
- 		} else
- 			fh->identification = frag_id;
-@@ -1079,7 +1079,7 @@ static inline int ip6_ufo_append_data(st
- 	skb_shinfo(skb)->gso_size = (mtu - fragheaderlen -
- 				     sizeof(struct frag_hdr)) & ~7;
- 	skb_shinfo(skb)->gso_type = SKB_GSO_UDP;
--	ipv6_select_ident(&fhdr, rt);
-+	ipv6_select_ident(sock_net(sk), &fhdr, rt);
- 	skb_shinfo(skb)->ip6_frag_id = fhdr.identification;
- 
- append:
---- a/net/ipv6/output_core.c
-+++ b/net/ipv6/output_core.c
-@@ -9,13 +9,14 @@
- #include <net/addrconf.h>
- #include <net/secure_seq.h>
- 
--static u32 __ipv6_select_ident(u32 hashrnd, struct in6_addr *dst,
--			       struct in6_addr *src)
-+static u32 __ipv6_select_ident(struct net *net, u32 hashrnd,
-+			       struct in6_addr *dst, struct in6_addr *src)
- {
- 	u32 hash, id;
- 
- 	hash = __ipv6_addr_jhash(dst, hashrnd);
- 	hash = __ipv6_addr_jhash(src, hash);
-+	hash ^= net_hash_mix(net);
- 
- 	/* Treat id of 0 as unset and if we get 0 back from ip_idents_reserve,
- 	 * set the hight order instead thus minimizing possible future
-@@ -36,7 +37,7 @@ static u32 __ipv6_select_ident(u32 hashr
-  *
-  * The network header must be set before calling this.
-  */
--void ipv6_proxy_select_ident(struct sk_buff *skb)
-+void ipv6_proxy_select_ident(struct net *net, struct sk_buff *skb)
- {
- 	static u32 ip6_proxy_idents_hashrnd __read_mostly;
- 	struct in6_addr buf[2];
-@@ -53,20 +54,21 @@ void ipv6_proxy_select_ident(struct sk_b
- 	net_get_random_once(&ip6_proxy_idents_hashrnd,
- 			    sizeof(ip6_proxy_idents_hashrnd));
- 
--	id = __ipv6_select_ident(ip6_proxy_idents_hashrnd,
-+	id = __ipv6_select_ident(net, ip6_proxy_idents_hashrnd,
- 				 &addrs[1], &addrs[0]);
- 	skb_shinfo(skb)->ip6_frag_id = htonl(id);
- }
- EXPORT_SYMBOL_GPL(ipv6_proxy_select_ident);
- 
--void ipv6_select_ident(struct frag_hdr *fhdr, struct rt6_info *rt)
-+void ipv6_select_ident(struct net *net, struct frag_hdr *fhdr,
-+		       struct rt6_info *rt)
- {
- 	static u32 ip6_idents_hashrnd __read_mostly;
- 	u32 id;
- 
- 	net_get_random_once(&ip6_idents_hashrnd, sizeof(ip6_idents_hashrnd));
- 
--	id = __ipv6_select_ident(ip6_idents_hashrnd, &rt->rt6i_dst.addr,
-+	id = __ipv6_select_ident(net, ip6_idents_hashrnd, &rt->rt6i_dst.addr,
- 				 &rt->rt6i_src.addr);
- 	fhdr->identification = htonl(id);
- }
---- a/net/ipv6/udp_offload.c
-+++ b/net/ipv6/udp_offload.c
-@@ -77,7 +77,7 @@ static struct sk_buff *udp6_ufo_fragment
- 
- 		/* Set the IPv6 fragment id if not set yet */
- 		if (!skb_shinfo(skb)->ip6_frag_id)
--			ipv6_proxy_select_ident(skb);
-+			ipv6_proxy_select_ident(dev_net(skb->dev), skb);
- 
- 		segs = NULL;
- 		goto out;
-@@ -125,7 +125,7 @@ static struct sk_buff *udp6_ufo_fragment
- 		fptr->nexthdr = nexthdr;
- 		fptr->reserved = 0;
- 		if (!skb_shinfo(skb)->ip6_frag_id)
--			ipv6_proxy_select_ident(skb);
-+			ipv6_proxy_select_ident(dev_net(skb->dev), skb);
- 		fptr->identification = skb_shinfo(skb)->ip6_frag_id;
- 
- 		/* Fragment the skb. ipv6 header and the remaining fields of the
+> ------------------
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> 
+> commit 057ac1acdfc4743f066fcefe359385cad00549eb upstream.
+> 
+> A multiplication for the size determination of a memory allocation
+> indicated that an array data structure should be processed.
+> Thus use the corresponding function "kmalloc_array".
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> ---
+>  drivers/iio/industrialio-buffer.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> --- a/drivers/iio/industrialio-buffer.c
+> +++ b/drivers/iio/industrialio-buffer.c
+> @@ -836,10 +836,9 @@ int iio_scan_mask_set(struct iio_dev *in
+>  	const unsigned long *mask;
+>  	unsigned long *trialmask;
+>  
+> -	trialmask = kmalloc(sizeof(*trialmask)*
+> -			    BITS_TO_LONGS(indio_dev->masklength),
+> -			    GFP_KERNEL);
+> -
+> +	trialmask = kmalloc_array(BITS_TO_LONGS(indio_dev->masklength),
+> +				  sizeof(*trialmask),
+> +				  GFP_KERNEL);
+>  	if (trialmask == NULL)
+>  		return -ENOMEM;
+>  	if (!indio_dev->masklength) {
+> 
 
