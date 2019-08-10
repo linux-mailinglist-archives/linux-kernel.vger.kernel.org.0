@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65A9F88E16
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E9388E10
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:51:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbfHJUnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:43:53 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53768 "EHLO
+        id S1726810AbfHJUvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:51:33 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54326 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726457AbfHJUns (ORCPT
+        by vger.kernel.org with ESMTP id S1726673AbfHJUny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:48 -0400
+        Sat, 10 Aug 2019 16:43:54 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDI-00052t-LC; Sat, 10 Aug 2019 21:43:44 +0100
+        id 1hwYDK-00053w-AF; Sat, 10 Aug 2019 21:43:46 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDI-0003Xp-DW; Sat, 10 Aug 2019 21:43:44 +0100
+        id 1hwYDJ-0003aZ-J9; Sat, 10 Aug 2019 21:43:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Lars-Peter Clausen" <lars@metafoo.de>,
-        "Alexandru Ardelean" <alexandru.ardelean@analog.com>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
+        "" <peterz@infradead.org>, "Chen Jie" <chenjie6@huawei.com>,
+        "" <dvhart@infradead.org>, "" <zengweilin@huawei.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.318012602@decadent.org.uk>
+Message-ID: <lsq.1565469607.880857944@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 005/157] iio: Fix scan mask selection
+Subject: [PATCH 3.16 039/157] futex: Ensure that futex address is aligned
+ in handle_futex_death()
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,40 +49,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Chen Jie <chenjie6@huawei.com>
 
-commit 20ea39ef9f2f911bd01c69519e7d69cfec79fde3 upstream.
+commit 5a07168d8d89b00fe1760120714378175b3ef992 upstream.
 
-The trialmask is expected to have all bits set to 0 after allocation.
-Currently kmalloc_array() is used which does not zero the memory and so
-random bits are set. This results in random channels being enabled when
-they shouldn't. Replace kmalloc_array() with kcalloc() which has the same
-interface but zeros the memory.
+The futex code requires that the user space addresses of futexes are 32bit
+aligned. sys_futex() checks this in futex_get_keys() but the robust list
+code has no alignment check in place.
 
-Note the fix is actually required earlier than the below fixes tag, but
-will require a manual backport due to move from kmalloc to kmalloc_array.
+As a consequence the kernel crashes on architectures with strict alignment
+requirements in handle_futex_death() when trying to cmpxchg() on an
+unaligned futex address which was retrieved from the robust list.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Fixes commit 057ac1acdfc4 ("iio: Use kmalloc_array() in iio_scan_mask_set()").
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[ tglx: Rewrote changelog, proper sizeof() based alignement check and add
+  	comment ]
+
+Fixes: 0771dfefc9e5 ("[PATCH] lightweight robust futexes: core")
+Signed-off-by: Chen Jie <chenjie6@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: <dvhart@infradead.org>
+Cc: <peterz@infradead.org>
+Cc: <zengweilin@huawei.com>
+Link: https://lkml.kernel.org/r/1552621478-119787-1-git-send-email-chenjie6@huawei.com
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/iio/industrialio-buffer.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/futex.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -836,9 +836,8 @@ int iio_scan_mask_set(struct iio_dev *in
- 	const unsigned long *mask;
- 	unsigned long *trialmask;
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -2909,6 +2909,10 @@ int handle_futex_death(u32 __user *uaddr
+ {
+ 	u32 uval, uninitialized_var(nval), mval;
  
--	trialmask = kmalloc_array(BITS_TO_LONGS(indio_dev->masklength),
--				  sizeof(*trialmask),
--				  GFP_KERNEL);
-+	trialmask = kcalloc(BITS_TO_LONGS(indio_dev->masklength),
-+			    sizeof(*trialmask), GFP_KERNEL);
- 	if (trialmask == NULL)
- 		return -ENOMEM;
- 	if (!indio_dev->masklength) {
++	/* Futex address must be 32bit aligned */
++	if ((((unsigned long)uaddr) % sizeof(*uaddr)) != 0)
++		return -1;
++
+ retry:
+ 	if (get_user(uval, uaddr))
+ 		return -1;
 
