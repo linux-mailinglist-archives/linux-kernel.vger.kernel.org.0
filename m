@@ -2,64 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36E9C88BCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 16:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C6488BD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 17:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbfHJO6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 10:58:24 -0400
-Received: from ms.lwn.net ([45.79.88.28]:54206 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbfHJO6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 10:58:24 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id EA68D2EF;
-        Sat, 10 Aug 2019 14:58:22 +0000 (UTC)
-Date:   Sat, 10 Aug 2019 08:58:21 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
-Cc:     linux-doc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        netdev@vger.kernel.org, xdp-newbies@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/networking/af_xdp: Inhibit reference to
- struct socket
-Message-ID: <20190810085821.11cee8b0@lwn.net>
-In-Reply-To: <20190810121738.19587-1-j.neuschaefer@gmx.net>
-References: <20190810121738.19587-1-j.neuschaefer@gmx.net>
-Organization: LWN.net
+        id S1726383AbfHJPBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 11:01:55 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37307 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbfHJPBy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Aug 2019 11:01:54 -0400
+Received: by mail-qt1-f193.google.com with SMTP id y26so98767084qto.4;
+        Sat, 10 Aug 2019 08:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8mYT1ugU9XRJDqmG3NJqTPI0yF8pfPERIAlPeQwQtf0=;
+        b=UDu6z/Ryj5Yfv0lVew1vY4USzE5YR0tHTTGKa6pJxuBs5mciviPi8g8+E5vtvCIk6U
+         aiuB3WNP0JTY2d0ogF1V1RMIoOdLBLRMYp+BBSeQH7L+leWH5avL6qyacwYhXBIPOE6D
+         3QWQAengrm16iF/XCUdurKjlWHhLP1MeULmftZiPeeH1blN6KDC3m8Up9rXEiM/H20Jq
+         bcma6QMHvI/8Fia29TwreP9uTLkOiCI8mRsCZwbDcHrOjt6rORSU+m8H19G/pWkf51AJ
+         yFLa/qWNKfpzN2Db19/sutNWpE3HPjKiaIbdoDXMMu9mMUXhAg3iNBRawZ4i1af6tKpC
+         RKyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8mYT1ugU9XRJDqmG3NJqTPI0yF8pfPERIAlPeQwQtf0=;
+        b=WBjShuLS5rfHDwfLcurZaovCcs1DORkF1GyNSdYRRMlcXYzrpxWAPDmxfhBr16ybv4
+         GvBQ46p8H6C8tvlxJrCs5vX3RhV6K1uAUpvVfsnvP8erEMJh5JLrAtJ+hhzYTGB6gSeG
+         gp9BGrepkgoawJOMUVe8MkEu3RCdxkNgA2ZAY1YqT0/tEb2GQfegVJz+cp2ichA6O/7E
+         o++KxDVVjUTjtBIErR7ZM7ZgYTL1kfBHatjKKgLWlNXG8X4KE0r2gDAKrtsbcMRUSIg/
+         IT9nHOCpUqOpkpPQZEHLQJRKHxhGcFIUdUwJm8DW7zEQDl0gqWtEclO7diO7NxSCw24W
+         KxDA==
+X-Gm-Message-State: APjAAAW1RHQZPa1D3w97B/5t+QzpNgLIWtn0nYc+aUv4n96VjVbUaphs
+        D/h6w+tgDe6I64ceE+4JsJs=
+X-Google-Smtp-Source: APXvYqxnQk2WPGlsBCZXZQu9NJFObYjPab0Ld/NBPiUpclVSBl5TMw7Jm8xAVB7UmcgqDAm5nCZY7A==
+X-Received: by 2002:aed:3a03:: with SMTP id n3mr22246315qte.85.1565449313499;
+        Sat, 10 Aug 2019 08:01:53 -0700 (PDT)
+Received: from localhost.localdomain ([187.34.245.102])
+        by smtp.gmail.com with ESMTPSA id 47sm58079273qtw.90.2019.08.10.08.01.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 10 Aug 2019 08:01:53 -0700 (PDT)
+From:   Rodrigo <rodrigorsdc@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
+        Rodrigo Carvalho <rodrigorsdc@gmail.com>
+Subject: [PATCH] staging: iio: accel: adis16240: Improve readability on write_raw function
+Date:   Sat, 10 Aug 2019 12:00:58 -0300
+Message-Id: <20190810150058.3509-1-rodrigorsdc@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 10 Aug 2019 14:17:37 +0200
-Jonathan Neuschäfer <j.neuschaefer@gmx.net> wrote:
+From: Rodrigo Carvalho <rodrigorsdc@gmail.com>
 
-> With the recent change to auto-detect function names, Sphinx parses
-> socket() as a reference to the in-kernel definition of socket. It then
-> decides that struct socket is a good match, which was obviously not
-> intended in this case, because the text speaks about the syscall with
-> the same name.
-> 
-> Prevent socket() from being misinterpreted by wrapping it in ``inline
-> literal`` quotes.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Improve readability by using GENMASK macro, changing switch statement
+by if statement and removing unnecessary local variables.
 
-Thanks for looking at that.  The better fix, though, would be to add
-socket() to the Skipfuncs array in Documentation/sphinx/automarkup.py.
-Then it will do the right thing everywhere without the need to add markup
-to the RST files.
+Signed-off-by: Rodrigo Ribeiro Carvalho <rodrigorsdc@gmail.com>
+---
+ drivers/staging/iio/accel/adis16240.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-Thanks,
+diff --git a/drivers/staging/iio/accel/adis16240.c b/drivers/staging/iio/accel/adis16240.c
+index 62f4b3b1b457..68f165501389 100644
+--- a/drivers/staging/iio/accel/adis16240.c
++++ b/drivers/staging/iio/accel/adis16240.c
+@@ -309,17 +309,15 @@ static int adis16240_write_raw(struct iio_dev *indio_dev,
+ 			       long mask)
+ {
+ 	struct adis *st = iio_priv(indio_dev);
+-	int bits = 10;
+-	s16 val16;
++	int m;
+ 	u8 addr;
+ 
+-	switch (mask) {
+-	case IIO_CHAN_INFO_CALIBBIAS:
+-		val16 = val & ((1 << bits) - 1);
+-		addr = adis16240_addresses[chan->scan_index][0];
+-		return adis_write_reg_16(st, addr, val16);
+-	}
+-	return -EINVAL;
++	if (mask != IIO_CHAN_INFO_CALIBBIAS)
++		return -EINVAL;
++
++	m = GENMASK(9, 0);
++	addr = adis16240_addresses[chan->scan_index][0];
++	return adis_write_reg_16(st, addr, val & m);
+ }
+ 
+ static const struct iio_chan_spec adis16240_channels[] = {
+-- 
+2.20.1
 
-jon
