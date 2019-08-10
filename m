@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CCC688D90
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB4988D3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbfHJUrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:47:13 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55084 "EHLO
+        id S1726804AbfHJUoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:44:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53954 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726852AbfHJUoE (ORCPT
+        by vger.kernel.org with ESMTP id S1726530AbfHJUnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:04 -0400
+        Sat, 10 Aug 2019 16:43:49 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDZ-00053u-TS; Sat, 10 Aug 2019 21:44:02 +0100
+        id 1hwYDJ-00053P-Kb; Sat, 10 Aug 2019 21:43:45 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDL-0003eB-QT; Sat, 10 Aug 2019 21:43:47 +0100
+        id 1hwYDJ-0003Z7-1I; Sat, 10 Aug 2019 21:43:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,21 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Tejun Heo" <tj@kernel.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Frederic Weisbecker" <frederic@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Lai Jiangshan" <jiangshanlai@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Ingo Molnar" <mingo@kernel.org>
+        "Kohji Okuno" <okuno.kohji@jp.panasonic.com>,
+        "Shawn Guo" <shawnguo@kernel.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.807087769@decadent.org.uk>
+Message-ID: <lsq.1565469607.702416996@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 083/157] locking/lockdep: Add IRQs disabled/enabled
- assertion APIs: lockdep_assert_irqs_enabled()/disabled()
+Subject: [PATCH 3.16 021/157] ARM: imx6q: cpuidle: fix bug that CPU might
+ not wake up at expected time
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,59 +48,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frederic Weisbecker <frederic@kernel.org>
+From: Kohji Okuno <okuno.kohji@jp.panasonic.com>
 
-commit f54bb2ec02c839f6bfe3e8d438cd93d30b4809dd upstream.
+commit 91740fc8242b4f260cfa4d4536d8551804777fae upstream.
 
-Checking whether IRQs are enabled or disabled is a very common sanity
-check, however not free of overhead especially on fastpath where such
-assertion is very common.
+In the current cpuidle implementation for i.MX6q, the CPU that sets
+'WAIT_UNCLOCKED' and the CPU that returns to 'WAIT_CLOCKED' are always
+the same. While the CPU that sets 'WAIT_UNCLOCKED' is in IDLE state of
+"WAIT", if the other CPU wakes up and enters IDLE state of "WFI"
+istead of "WAIT", this CPU can not wake up at expired time.
+ Because, in the case of "WFI", the CPU must be waked up by the local
+timer interrupt. But, while 'WAIT_UNCLOCKED' is set, the local timer
+is stopped, when all CPUs execute "wfi" instruction. As a result, the
+local timer interrupt is not fired.
+ In this situation, this CPU will wake up by IRQ different from local
+timer. (e.g. broacast timer)
 
-Lockdep is a good host for such concurrency correctness check and it
-even already tracks down IRQs disablement state. Just reuse its
-machinery. This will allow us to get rid of the flags pop and check
-overhead from fast path when kernel is built for production.
+So, this fix changes CPU to return to 'WAIT_CLOCKED'.
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Tejun Heo <tj@kernel.org>
-Link: http://lkml.kernel.org/r/1509980490-4285-2-git-send-email-frederic@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kohji Okuno <okuno.kohji@jp.panasonic.com>
+Fixes: e5f9dec8ff5f ("ARM: imx6q: support WAIT mode using cpuidle")
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+[bwh: Backported to 3.16: use imx6q_set_lpm() instead of imx6_set_lpm()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/lockdep.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/mach-imx/cpuidle-imx6q.c | 27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
 
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -525,9 +525,24 @@ do {									\
- 	lock_acquire(&(lock)->dep_map, 0, 0, 1, 1, NULL, _THIS_IP_);	\
- 	lock_release(&(lock)->dep_map, 0, _THIS_IP_);			\
- } while (0)
-+
-+#define lockdep_assert_irqs_enabled()	do {				\
-+		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
-+			  !current->hardirqs_enabled,			\
-+			  "IRQs not enabled as expected\n");		\
-+	} while (0)
-+
-+#define lockdep_assert_irqs_disabled()	do {				\
-+		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
-+			  current->hardirqs_enabled,			\
-+			  "IRQs not disabled as expected\n");		\
-+	} while (0)
-+
- #else
- # define might_lock(lock) do { } while (0)
- # define might_lock_read(lock) do { } while (0)
-+# define lockdep_assert_irqs_enabled() do { } while (0)
-+# define lockdep_assert_irqs_disabled() do { } while (0)
- #endif
+--- a/arch/arm/mach-imx/cpuidle-imx6q.c
++++ b/arch/arm/mach-imx/cpuidle-imx6q.c
+@@ -14,30 +14,23 @@
+ #include "common.h"
+ #include "cpuidle.h"
  
- #ifdef CONFIG_PROVE_RCU
+-static atomic_t master = ATOMIC_INIT(0);
+-static DEFINE_SPINLOCK(master_lock);
++static int num_idle_cpus = 0;
++static DEFINE_SPINLOCK(cpuidle_lock);
+ 
+ static int imx6q_enter_wait(struct cpuidle_device *dev,
+ 			    struct cpuidle_driver *drv, int index)
+ {
+-	if (atomic_inc_return(&master) == num_online_cpus()) {
+-		/*
+-		 * With this lock, we prevent other cpu to exit and enter
+-		 * this function again and become the master.
+-		 */
+-		if (!spin_trylock(&master_lock))
+-			goto idle;
++	spin_lock(&cpuidle_lock);
++	if (++num_idle_cpus == num_online_cpus())
+ 		imx6q_set_lpm(WAIT_UNCLOCKED);
+-		cpu_do_idle();
+-		imx6q_set_lpm(WAIT_CLOCKED);
+-		spin_unlock(&master_lock);
+-		goto done;
+-	}
++	spin_unlock(&cpuidle_lock);
+ 
+-idle:
+ 	cpu_do_idle();
+-done:
+-	atomic_dec(&master);
++
++	spin_lock(&cpuidle_lock);
++	if (num_idle_cpus-- == num_online_cpus())
++		imx6q_set_lpm(WAIT_CLOCKED);
++	spin_unlock(&cpuidle_lock);
+ 
+ 	return index;
+ }
 
