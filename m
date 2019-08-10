@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D977A88E3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:53:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DFC088DF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbfHJUwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:52:55 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53984 "EHLO
+        id S1727417AbfHJUum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:50:42 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54380 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726538AbfHJUnu (ORCPT
+        by vger.kernel.org with ESMTP id S1726698AbfHJUn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:50 -0400
+        Sat, 10 Aug 2019 16:43:56 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-00053q-8X; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDP-00053t-QH; Sat, 10 Aug 2019 21:43:51 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003aA-Ex; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDN-0003hE-0R; Sat, 10 Aug 2019 21:43:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Lin Yi" <teroincn@163.com>, "Johan Hovold" <johan@kernel.org>
+        "Alan Stern" <stern@rowland.harvard.edu>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.721808367@decadent.org.uk>
+Message-ID: <lsq.1565469607.737701998@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 034/157] USB: serial: mos7720: fix mos_parport
- refcount imbalance on error path
+Subject: [PATCH 3.16 107/157] USB: yurex: Fix protection fault after
+ device removal
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,44 +48,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lin Yi <teroincn@163.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 2908b076f5198d231de62713cb2b633a3a4b95ac upstream.
+commit ef61eb43ada6c1d6b94668f0f514e4c268093ff3 upstream.
 
-The write_parport_reg_nonblock() helper takes a reference to the struct
-mos_parport, but failed to release it in a couple of error paths after
-allocation failures, leading to a memory leak.
+The syzkaller USB fuzzer found a general-protection-fault bug in the
+yurex driver.  The fault occurs when a device has been unplugged; the
+driver's interrupt-URB handler logs an error message referring to the
+device by name, after the device has been unregistered and its name
+deallocated.
 
-Johan said that move the kref_get() and mos_parport assignment to the
-end of urbtrack initialisation is a better way, so move it. and
-mos_parport do not used until urbtrack initialisation.
+This problem is caused by the fact that the interrupt URB isn't
+cancelled until the driver's private data structure is released, which
+can happen long after the device is gone.  The cure is to make sure
+that the interrupt URB is killed before yurex_disconnect() returns;
+this is exactly the sort of thing that usb_poison_urb() was meant for.
 
-Signed-off-by: Lin Yi <teroincn@163.com>
-Fixes: b69578df7e98 ("USB: usbserial: mos7720: add support for parallel port on moschip 7715")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-and-tested-by: syzbot+2eb9121678bdb36e6d57@syzkaller.appspotmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/mos7720.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/misc/yurex.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/serial/mos7720.c
-+++ b/drivers/usb/serial/mos7720.c
-@@ -362,8 +362,6 @@ static int write_parport_reg_nonblock(st
- 	if (!urbtrack)
- 		return -ENOMEM;
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -332,6 +332,7 @@ static void yurex_disconnect(struct usb_
+ 	usb_deregister_dev(interface, &yurex_class);
  
--	kref_get(&mos_parport->ref_count);
--	urbtrack->mos_parport = mos_parport;
- 	urbtrack->urb = usb_alloc_urb(0, GFP_ATOMIC);
- 	if (!urbtrack->urb) {
- 		kfree(urbtrack);
-@@ -384,6 +382,8 @@ static int write_parport_reg_nonblock(st
- 			     usb_sndctrlpipe(usbdev, 0),
- 			     (unsigned char *)urbtrack->setup,
- 			     NULL, 0, async_complete, urbtrack);
-+	kref_get(&mos_parport->ref_count);
-+	urbtrack->mos_parport = mos_parport;
- 	kref_init(&urbtrack->ref_count);
- 	INIT_LIST_HEAD(&urbtrack->urblist_entry);
- 
+ 	/* prevent more I/O from starting */
++	usb_poison_urb(dev->urb);
+ 	mutex_lock(&dev->io_mutex);
+ 	dev->interface = NULL;
+ 	mutex_unlock(&dev->io_mutex);
 
