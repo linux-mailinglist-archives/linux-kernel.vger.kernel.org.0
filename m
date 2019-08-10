@@ -2,82 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7DA288BF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 17:45:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A464588C11
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 17:55:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfHJPpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 11:45:30 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45075 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfHJPpa (ORCPT
+        id S1726618AbfHJPzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 11:55:24 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:35281 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfHJPzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 11:45:30 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y8so4045016plr.12;
-        Sat, 10 Aug 2019 08:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=g8EryOusqX/mFfSa4kBJXrjKexBE7DMaLxTAFZHSwh0=;
-        b=hTzTVzq6wfwgn4jt3dReWCS/nTWpJWkqQrtotcq+Fxi1r2AfpMbWQZsv7gztQkFV2d
-         7gQW1k1m2I7P/tHFROQjRavaA3kYGwqSILh88b+KEMMJwmrfswVAsHs4/Ix9Rooro3eA
-         wg30rWESUC/ScvmVWsEoa5Ujv7uuL4UNzyvM2mQg9ze6Xr7vdOBIZAUvizdUaRprhtyG
-         9Z4SZB+MBfCTsG5vRMguOFqo/6Kz9pQnr/zfcxtswzUsSU6Flq/S0qrAeBhac6yKI7x4
-         1/BeezTtwhoBIveSGK5sXTePGLIIkUUjjJEPDyS68aPILUi5pi9xmK4RH9zzihLrT/OW
-         s91A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=g8EryOusqX/mFfSa4kBJXrjKexBE7DMaLxTAFZHSwh0=;
-        b=hR9DQiUr4WpP5q73t0jxGUC6Qlevxe48kUediZPH7ph6BlzTGxdE2pm1lRHLls0snT
-         OvTUtg+ICR/v0QPqvKF+c1vqQMSz9L0l3xaCWvkrkhMi9JEyrDO8nHg4rB2YvQU5wl+w
-         +fhMCYr6CuGYG6jG19lstk0C/MdxqlMMBOfQV23PBygJtlS1jznszFoUJu99LosueBIw
-         KYFemroIqeH7S/DO9P8EkRMfNcBTVhSELUsWO3XSSpirLhGkgINnRc/UOJ/P/nWXDKf4
-         dXpWZsfgMYHjw/1Jds8ultRpvRjHOvuKJhdEmMdiBbqBSkuzypRRx7FxmuasNOH/pdkI
-         s0pg==
-X-Gm-Message-State: APjAAAVVHdTSObSvLxDVEpQZudvuafOIgIoPkcjaQQSjdGKjLCC1iS/P
-        i2aMFwdv3L3RyZ4VwI+lsCM=
-X-Google-Smtp-Source: APXvYqw6d8N9ayb1YObIvxMPmMRDFKablVAPi/LHX6THrFMeG6J+gfSvKoskgkzIbwZxqCugMsoAFA==
-X-Received: by 2002:a17:902:82c4:: with SMTP id u4mr24797136plz.196.1565451929651;
-        Sat, 10 Aug 2019 08:45:29 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m9sm156631605pgr.24.2019.08.10.08.45.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Aug 2019 08:45:29 -0700 (PDT)
-Date:   Sat, 10 Aug 2019 08:45:28 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/32] 4.9.189-stable review
-Message-ID: <20190810154528.GB11992@roeck-us.net>
-References: <20190809133922.945349906@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809133922.945349906@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Sat, 10 Aug 2019 11:55:24 -0400
+Received: from grover.flets-west.jp (softbank126125143222.bbtec.net [126.125.143.222]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x7AFrG8t009713;
+        Sun, 11 Aug 2019 00:53:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x7AFrG8t009713
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565452398;
+        bh=oC63xap+fxhG9bzK+JnNTDD45f6COtr1Al2zhD2RQ+A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QRz/HTl63qVrVTBqUg3+u+Dklu40WD9vhseAg4FJ5HltnTHBLjXl/xoo5p1cQaowl
+         2SbyyKz6G7ZsMJeOXEA1NevVxbw2p+BDy/WnSkiGXuEA8IgxM1gdqq6ice3Ocpq8eG
+         5wXh9rypOSc3FpReWjYOlzm3Km8ISSl797/j2PotFFDP+ITNphwWGF3gG228KXZvdG
+         +DVWRjSfCcxV3fRTy1RJ0wQdZscJUJ5+1TJZJaHNd8uMtPN+M3SdbsN1J4ccjmajk2
+         cIYJpMIbPJ+XhO4NJWNrvdbI0WoXHgjzeKYJeWuRXa6Z+LV1DjB1lJNEZuuv10GMZH
+         PfGev3kUnpmsw==
+X-Nifty-SrcIP: [126.125.143.222]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        oss-drivers@netronome.com
+Subject: [PATCH 00/11] kbuild: clean-ups and improvement of single targets
+Date:   Sun, 11 Aug 2019 00:52:56 +0900
+Message-Id: <20190810155307.29322-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 03:45:03PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.189 release.
-> There are 32 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun 11 Aug 2019 01:38:45 PM UTC.
-> Anything received after that time might be too late.
-> 
 
-Build results:
-	total: 172 pass: 172 fail: 0
-Qemu test results:
-	total: 356 pass: 356 fail: 0
+01/11-09/11 are trivial clean-ups.
 
-Guenter
+10/11 makes the single targets work more correctly.
+
+11/11 cleans up Makefiles that have been added
+to work aroud the single target issues.
+
+
+
+Masahiro Yamada (11):
+  kbuild: move the Module.symvers check for external module build
+  kbuild: refactor part-of-module more
+  kbuild: fix modkern_aflags implementation
+  kbuild: remove 'make /' support
+  kbuild: remove meaningless 'targets' in ./Kbuild
+  kbuild: do not descend to ./Kbuild when cleaning
+  kbuild: unset variables in top Makefile instead of setting 0
+  kbuild: unify vmlinux-dirs and module-dirs rules
+  kbuild: unify clean-dirs rule for in-kernel and external module
+  kbuild: make single targets work more correctly
+  treewide: remove dummy Makefiles for single targets
+
+ Kbuild                                        |   7 -
+ Makefile                                      | 193 ++++++++++--------
+ .../aquantia/atlantic/hw_atl/Makefile         |   2 -
+ .../mellanox/mlx5/core/accel/Makefile         |   2 -
+ .../ethernet/mellanox/mlx5/core/diag/Makefile |   2 -
+ .../ethernet/mellanox/mlx5/core/en/Makefile   |   2 -
+ .../mellanox/mlx5/core/en/xsk/Makefile        |   1 -
+ .../mellanox/mlx5/core/en_accel/Makefile      |   2 -
+ .../ethernet/mellanox/mlx5/core/fpga/Makefile |   2 -
+ .../mellanox/mlx5/core/ipoib/Makefile         |   2 -
+ .../ethernet/mellanox/mlx5/core/lib/Makefile  |   2 -
+ .../net/ethernet/netronome/nfp/bpf/Makefile   |   2 -
+ .../ethernet/netronome/nfp/flower/Makefile    |   2 -
+ .../ethernet/netronome/nfp/nfpcore/Makefile   |   2 -
+ .../netronome/nfp/nfpcore/nfp6000/Makefile    |   2 -
+ .../net/ethernet/netronome/nfp/nic/Makefile   |   2 -
+ scripts/Makefile.build                        |  55 +++--
+ 17 files changed, 149 insertions(+), 133 deletions(-)
+ delete mode 100644 drivers/net/ethernet/aquantia/atlantic/hw_atl/Makefile
+ delete mode 100644 drivers/net/ethernet/mellanox/mlx5/core/accel/Makefile
+ delete mode 100644 drivers/net/ethernet/mellanox/mlx5/core/diag/Makefile
+ delete mode 100644 drivers/net/ethernet/mellanox/mlx5/core/en/Makefile
+ delete mode 100644 drivers/net/ethernet/mellanox/mlx5/core/en/xsk/Makefile
+ delete mode 100644 drivers/net/ethernet/mellanox/mlx5/core/en_accel/Makefile
+ delete mode 100644 drivers/net/ethernet/mellanox/mlx5/core/fpga/Makefile
+ delete mode 100644 drivers/net/ethernet/mellanox/mlx5/core/ipoib/Makefile
+ delete mode 100644 drivers/net/ethernet/mellanox/mlx5/core/lib/Makefile
+ delete mode 100644 drivers/net/ethernet/netronome/nfp/bpf/Makefile
+ delete mode 100644 drivers/net/ethernet/netronome/nfp/flower/Makefile
+ delete mode 100644 drivers/net/ethernet/netronome/nfp/nfpcore/Makefile
+ delete mode 100644 drivers/net/ethernet/netronome/nfp/nfpcore/nfp6000/Makefile
+ delete mode 100644 drivers/net/ethernet/netronome/nfp/nic/Makefile
+
+-- 
+2.17.1
+
