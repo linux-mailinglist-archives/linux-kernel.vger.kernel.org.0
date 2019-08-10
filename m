@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A35E688E2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFC188E6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfHJUwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:52:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54090 "EHLO
+        id S1727890AbfHJUyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:54:47 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53744 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726560AbfHJUnv (ORCPT
+        by vger.kernel.org with ESMTP id S1726251AbfHJUns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:51 -0400
+        Sat, 10 Aug 2019 16:43:48 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-00053P-EX; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDJ-00053S-H3; Sat, 10 Aug 2019 21:43:45 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003aj-Ll; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDJ-0003ZC-2G; Sat, 10 Aug 2019 21:43:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Bartosz Golaszewski" <bgolaszewski@baylibre.com>,
-        "Axel Lin" <axel.lin@ingics.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>
+        "Johan Hovold" <johan@kernel.org>,
+        "George McCollister" <george.mccollister@gmail.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.228247538@decadent.org.uk>
+Message-ID: <lsq.1565469607.32960424@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 041/157] gpio: adnp: Fix testing wrong value in
- adnp_gpio_direction_input
+Subject: [PATCH 3.16 022/157] USB: serial: ftdi_sio: add additional
+ NovaTech products
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,37 +48,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Axel Lin <axel.lin@ingics.com>
+From: George McCollister <george.mccollister@gmail.com>
 
-commit c5bc6e526d3f217ed2cc3681d256dc4a2af4cc2b upstream.
+commit 422c2537ba9d42320f8ab6573940269f87095320 upstream.
 
-Current code test wrong value so it does not verify if the written
-data is correctly read back. Fix it.
-Also make it return -EPERM if read value does not match written bit,
-just like it done for adnp_gpio_direction_output().
+Add PIDs for the NovaTech OrionLX+ and Orion I/O so they can be
+automatically detected.
 
-Fixes: 5e969a401a01 ("gpio: Add Avionic Design N-bit GPIO expander support")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Reviewed-by: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: George McCollister <george.mccollister@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpio/gpio-adnp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/serial/ftdi_sio.c     | 2 ++
+ drivers/usb/serial/ftdi_sio_ids.h | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-adnp.c
-+++ b/drivers/gpio/gpio-adnp.c
-@@ -140,8 +140,10 @@ static int adnp_gpio_direction_input(str
- 	if (err < 0)
- 		goto out;
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -617,6 +617,8 @@ static const struct usb_device_id id_tab
+ 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+ 	{ USB_DEVICE(FTDI_VID, FTDI_NT_ORIONLXM_PID),
+ 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
++	{ USB_DEVICE(FTDI_VID, FTDI_NT_ORIONLX_PLUS_PID) },
++	{ USB_DEVICE(FTDI_VID, FTDI_NT_ORION_IO_PID) },
+ 	{ USB_DEVICE(FTDI_VID, FTDI_SYNAPSE_SS200_PID) },
+ 	{ USB_DEVICE(FTDI_VID, FTDI_CUSTOMWARE_MINIPLEX_PID) },
+ 	{ USB_DEVICE(FTDI_VID, FTDI_CUSTOMWARE_MINIPLEX2_PID) },
+--- a/drivers/usb/serial/ftdi_sio_ids.h
++++ b/drivers/usb/serial/ftdi_sio_ids.h
+@@ -566,7 +566,9 @@
+ /*
+  * NovaTech product ids (FTDI_VID)
+  */
+-#define FTDI_NT_ORIONLXM_PID	0x7c90	/* OrionLXm Substation Automation Platform */
++#define FTDI_NT_ORIONLXM_PID		0x7c90	/* OrionLXm Substation Automation Platform */
++#define FTDI_NT_ORIONLX_PLUS_PID	0x7c91	/* OrionLX+ Substation Automation Platform */
++#define FTDI_NT_ORION_IO_PID		0x7c92	/* Orion I/O */
  
--	if (err & BIT(pos))
--		err = -EACCES;
-+	if (value & BIT(pos)) {
-+		err = -EPERM;
-+		goto out;
-+	}
- 
- 	err = 0;
- 
+ /*
+  * Synapse Wireless product ids (FTDI_VID)
 
