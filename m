@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F5888D5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EE2A88D89
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfHJUpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:45:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55472 "EHLO
+        id S1727070AbfHJUqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:46:48 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55298 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726921AbfHJUoJ (ORCPT
+        by vger.kernel.org with ESMTP id S1726896AbfHJUoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:09 -0400
+        Sat, 10 Aug 2019 16:44:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDf-00053j-03; Sat, 10 Aug 2019 21:44:07 +0100
+        id 1hwYDb-00053O-W2; Sat, 10 Aug 2019 21:44:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-0003cG-IP; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDL-0003dn-HG; Sat, 10 Aug 2019 21:43:47 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "YueHaibing" <yuehaibing@huawei.com>,
-        "Hulk Robot" <hulkci@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Mukesh Ojha" <mojha@codeaurora.org>
+        "Nikolay Aleksandrov" <nikolay@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.301010446@decadent.org.uk>
+Message-ID: <lsq.1565469607.585020956@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 060/157] dccp: Fix memleak in __feat_register_sp
+Subject: [PATCH 3.16 079/157] net: bridge: multicast: use rcu to access
+ port list from br_multicast_start_querier
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,37 +48,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit 1d3ff0950e2b40dc861b1739029649d03f591820 upstream.
+commit c5b493ce192bd7a4e7bd073b5685aad121eeef82 upstream.
 
-If dccp_feat_push_change fails, we forget free the mem
-which is alloced by kmemdup in dccp_feat_clone_sp_val.
+br_multicast_start_querier() walks over the port list but it can be
+called from a timer with only multicast_lock held which doesn't protect
+the port list, so use RCU to walk over it.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: e8ef967a54f4 ("dccp: Registration routines for changing feature values")
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: c83b8fab06fc ("bridge: Restart queries when last querier expires")
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/dccp/feat.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/bridge/br_multicast.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/dccp/feat.c
-+++ b/net/dccp/feat.c
-@@ -738,7 +738,12 @@ static int __feat_register_sp(struct lis
- 	if (dccp_feat_clone_sp_val(&fval, sp_val, sp_len))
- 		return -ENOMEM;
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -2036,7 +2036,8 @@ static void br_multicast_start_querier(s
  
--	return dccp_feat_push_change(fn, feat, is_local, mandatory, &fval);
-+	if (dccp_feat_push_change(fn, feat, is_local, mandatory, &fval)) {
-+		kfree(fval.sp.vec);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
+ 	__br_multicast_open(br, query);
+ 
+-	list_for_each_entry(port, &br->port_list, list) {
++	rcu_read_lock();
++	list_for_each_entry_rcu(port, &br->port_list, list) {
+ 		if (port->state == BR_STATE_DISABLED ||
+ 		    port->state == BR_STATE_BLOCKING)
+ 			continue;
+@@ -2048,6 +2049,7 @@ static void br_multicast_start_querier(s
+ 			br_multicast_enable(&port->ip6_own_query);
+ #endif
+ 	}
++	rcu_read_unlock();
  }
  
- /**
+ int br_multicast_toggle(struct net_bridge *br, unsigned long val)
 
