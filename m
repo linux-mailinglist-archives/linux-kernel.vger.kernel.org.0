@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6612A88E11
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ECAD88E5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfHJUvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:51:36 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54306 "EHLO
+        id S1727826AbfHJUyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:54:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53764 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726670AbfHJUny (ORCPT
+        by vger.kernel.org with ESMTP id S1726441AbfHJUns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:54 -0400
+        Sat, 10 Aug 2019 16:43:48 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDP-00053i-IA; Sat, 10 Aug 2019 21:43:51 +0100
+        id 1hwYDJ-00053J-9v; Sat, 10 Aug 2019 21:43:45 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-0003gp-RM; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDI-0003Ys-SL; Sat, 10 Aug 2019 21:43:44 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Johannes Berg" <johannes.berg@intel.com>,
-        syzbot+4ece1a28b8f4730547c9@syzkaller.appspotmail.com
+        "Finn Thain" <fthain@telegraphics.com.au>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.885250051@decadent.org.uk>
+Message-ID: <lsq.1565469607.473255390@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 103/157] mac80211: don't attempt to rename ERR_PTR()
- debugfs dirs
+Subject: [PATCH 3.16 018/157] mac8390: Fix mmio access size probe
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,34 +47,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-commit 517879147493a5e1df6b89a50f708f1133fcaddb upstream.
+commit bb9e5c5bcd76f4474eac3baf643d7a39f7bac7bb upstream.
 
-We need to dereference the directory to get its parent to
-be able to rename it, so it's clearly not safe to try to
-do this with ERR_PTR() pointers. Skip in this case.
+The bug that Stan reported is as follows. After a restart, a 16-bit NIC
+may be incorrectly identified as a 32-bit NIC and stop working.
 
-It seems that this is most likely what was causing the
-report by syzbot, but I'm not entirely sure as it didn't
-come with a reproducer this time.
+mac8390 slot.E: Memory length resource not found, probing
+mac8390 slot.E: Farallon EtherMac II-C (type farallon)
+mac8390 slot.E: MAC 00:00:c5:30:c2:99, IRQ 61, 32 KB shared memory at 0xfeed0000, 32-bit access.
 
-Reported-by: syzbot+4ece1a28b8f4730547c9@syzkaller.appspotmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+The bug never arises after a cold start and only intermittently after a
+warm start. (I didn't investigate why the bug is intermittent.)
+
+It turns out that memcpy_toio() is deprecated and memcmp_withio() also
+has issues. Replacing these calls with mmio accessors fixes the problem.
+
+Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
+Fixes: 2964db0f5904 ("m68k: Mac DP8390 update")
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/mac80211/debugfs_netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/8390/mac8390.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
---- a/net/mac80211/debugfs_netdev.c
-+++ b/net/mac80211/debugfs_netdev.c
-@@ -735,7 +735,7 @@ void ieee80211_debugfs_rename_netdev(str
+--- a/drivers/net/ethernet/8390/mac8390.c
++++ b/drivers/net/ethernet/8390/mac8390.c
+@@ -153,8 +153,6 @@ static void dayna_block_input(struct net
+ static void dayna_block_output(struct net_device *dev, int count,
+ 			       const unsigned char *buf, int start_page);
  
- 	dir = sdata->vif.debugfs_dir;
+-#define memcmp_withio(a, b, c)	memcmp((a), (void *)(b), (c))
+-
+ /* Slow Sane (16-bit chunk memory read/write) Cabletron uses this */
+ static void slow_sane_get_8390_hdr(struct net_device *dev,
+ 				   struct e8390_pkt_hdr *hdr, int ring_page);
+@@ -241,19 +239,26 @@ static enum mac8390_type __init mac8390_
  
--	if (!dir)
-+	if (IS_ERR_OR_NULL(dir))
- 		return;
+ static enum mac8390_access __init mac8390_testio(volatile unsigned long membase)
+ {
+-	unsigned long outdata = 0xA5A0B5B0;
+-	unsigned long indata =  0x00000000;
++	u32 outdata = 0xA5A0B5B0;
++	u32 indata = 0;
++
+ 	/* Try writing 32 bits */
+-	memcpy_toio((void __iomem *)membase, &outdata, 4);
+-	/* Now compare them */
+-	if (memcmp_withio(&outdata, membase, 4) == 0)
++	nubus_writel(outdata, membase);
++	/* Now read it back */
++	indata = nubus_readl(membase);
++	if (outdata == indata)
+ 		return ACCESS_32;
++
++	outdata = 0xC5C0D5D0;
++	indata = 0;
++
+ 	/* Write 16 bit output */
+ 	word_memcpy_tocard(membase, &outdata, 4);
+ 	/* Now read it back */
+ 	word_memcpy_fromcard(&indata, membase, 4);
+ 	if (outdata == indata)
+ 		return ACCESS_16;
++
+ 	return ACCESS_UNKNOWN;
+ }
  
- 	sprintf(buf, "netdev:%s", sdata->name);
 
