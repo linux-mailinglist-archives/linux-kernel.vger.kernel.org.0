@@ -2,90 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64B9A889D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 10:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C86889D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 10:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbfHJINM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 04:13:12 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43745 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfHJINM (ORCPT
+        id S1726196AbfHJIPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 04:15:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41008 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfHJIPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 04:13:12 -0400
-Received: by mail-lj1-f194.google.com with SMTP id h15so452989ljg.10
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2019 01:13:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oqsU2heLXHHBs96Q5jI1j5tMoKsUDIBVmfyGumKZ6LM=;
-        b=VnJxbftIzPrqH4FoIz+w63T9HvLAwPyuIAzFqmtEtWAsLj/01rK86PGFGuGpSqWYv+
-         EOc3pJBX5N72NrROGYfkzRIEBM/NZHAtlunaj25jmAa22WMIK6W8WaeA6NQrcRQ890ve
-         gTKEzqoNeorIPkcAkbULvIA82MectHdfWgQVc2tti+zAedXKseEDZCsXl4IK+jsWOZyk
-         R7BDcza0vJn1D+S49B4cTvaTLZpzO5Zji8UHdpqukz0sSpuhB6HNFG8n8zxgS0EkyZrb
-         5PC++TGzLIxcQd3/xU9h8T2WbaloLuBlyrUH/bwdms17HdBtBey1e6TEAlNNF3mOqFH5
-         GZ8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oqsU2heLXHHBs96Q5jI1j5tMoKsUDIBVmfyGumKZ6LM=;
-        b=kYrbgK5Xk5EEYNSx2wRBBDmf1jcl95t5pUZnWyz81+zPYGnQsuQQiKkz62TTAXOdHX
-         GjjY+OX465dvJIYnP23eCLu8mV9C+W/GeNz8OH1Bo4rk6QGr6o2/aumyz4k/LPBiOD+g
-         aPiGFAwroYRAr9uNfOZ4TkU6nhicm7QXwWURGq5ZV+l+nOVat3eLX39M5ZrkYEwPuDIX
-         KERa/iWxJ9YPa4B32+g0GABMTIPoqLRP07/xsf9O+ME7LM5ZsXcubh2ujb1MSF/U8gfo
-         BaxS1gmUhx41DtjvjzuiO1es+EGHZyvSFuA2uwrTmyYhhTXul24pIw6BN5BMVth2qO8i
-         4urQ==
-X-Gm-Message-State: APjAAAXgikboysAkh+wxATyCBjb0PihIkwBn74DHf3d/tGLcuHzvwbgq
-        Y3UiGIKGyMt6bJQifYcfb37yx2Ojqwvx2/rZk8LBaQ==
-X-Google-Smtp-Source: APXvYqw5IJDtu+KvWNV5b+0f7BnCDMIkmE9siMLHoOIDt6M7/m7Z1qUizRn9O0DLYl+XLv2UlhKWmwCr8OjDx7Cm5k0=
-X-Received: by 2002:a2e:8756:: with SMTP id q22mr13818205ljj.108.1565424790000;
- Sat, 10 Aug 2019 01:13:10 -0700 (PDT)
+        Sat, 10 Aug 2019 04:15:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l/8ZpdSjNJGlaMRnpgRX93SKgxcJOiB3tmAP4Xrhmq8=; b=gwp4ceQoYX55nhYbf83A4kSEa
+        aYGw/CmaBlPTk+bOPXYYuEsc3k7qy+jtCjB3ITwKDgZlaXjzhPxMZJQUDTBGzZjvUckXfTn4UtQTV
+        xLXADSc9dfUPJvZeXAiX+W1dlrb40e496u+BcCoRon5bxaDSOD3wAYQYqwNUUVb5r8ZG+yXqKHpA1
+        Xwp4T///NUInyMPkgCBRYjcvI5OLDYCBGHP9jj0HMgkxqtX9h8ZH8nwvvChqQ06Ks8rFCrJFYnW88
+        xqMPStWVoKzp/AJUDXTz61Nl0xufX4u2Vk5boeHYowDlusWWlTUprAJ09GTPQCGlorJXRbf+cKwRy
+        zuFu6rLPQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hwMXM-0000C3-Qu; Sat, 10 Aug 2019 08:15:40 +0000
+Date:   Sat, 10 Aug 2019 01:15:40 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     egranata@chromium.org
+Cc:     linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, trivial@kernel.org, egranata@google.com
+Subject: Re: [PATCH] vhost: do not reference a file that does not exist
+Message-ID: <20190810081540.GA30426@infradead.org>
+References: <20190808005255.106299-1-egranata@chromium.org>
 MIME-Version: 1.0
-References: <20190807003037.48457-1-natechancellor@gmail.com>
-In-Reply-To: <20190807003037.48457-1-natechancellor@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 10 Aug 2019 10:12:57 +0200
-Message-ID: <CACRpkdbDgOQXfxgM4dEyzBRhtske3=V+858B7J8jGExnJE5fJQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: aspeed: g6: Remove const specifier from
- aspeed_g6_sig_expr_set's ctx parameter
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808005255.106299-1-egranata@chromium.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 7, 2019 at 2:32 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
+On Wed, Aug 07, 2019 at 05:52:55PM -0700, egranata@chromium.org wrote:
+> From: Enrico Granata <egranata@google.com>
+> 
+> lguest was removed from the mainline kernel in late 2017.
+> 
+> Signed-off-by: Enrico Granata <egranata@google.com>
 
-> clang errors:
->
-> drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c:2325:9: error: incompatible
-> pointer types initializing 'int (*)(struct aspeed_pinmux_data *, const
-> struct aspeed_sig_expr *, bool)' with an expression of type 'int (const
-> struct aspeed_pinmux_data *, const struct aspeed_sig_expr *, bool)'
-> [-Werror,-Wincompatible-pointer-types]
->         .set = aspeed_g6_sig_expr_set,
->                ^~~~~~~~~~~~~~~~~~~~~~
-> 1 error generated.
->
-> Commit 674fa8daa8c9 ("pinctrl: aspeed-g5: Delay acquisition of regmaps")
-> changed the set function pointer declaration and the g6 one wasn't
-> updated (I assume because it wasn't merged yet).
->
-> Fixes: 2eda1cdec49f ("pinctrl: aspeed: Add AST2600 pinmux support")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/632
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-
-Patch applied with Andrew's ACK.
-
-Yours,
-Linus Walleij
+But this particular file even has an override in the script looking
+for dead references, which together with the content of the overal
+contents makes me thing the dangling reference is somewhat intentional.
