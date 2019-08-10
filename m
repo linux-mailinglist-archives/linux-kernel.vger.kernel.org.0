@@ -2,136 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB51A88DBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A90F988D57
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfHJUsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:48:36 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54768 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726781AbfHJUoA (ORCPT
+        id S1726618AbfHJUpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:45:13 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41856 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbfHJUpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:00 -0400
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDV-00053p-Ko; Sat, 10 Aug 2019 21:43:57 +0100
-Received: from ben by deadeye with local (Exim 4.92)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003j6-5T; Sat, 10 Aug 2019 21:43:50 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sat, 10 Aug 2019 16:45:10 -0400
+Received: by mail-ot1-f67.google.com with SMTP id o101so10889669ota.8;
+        Sat, 10 Aug 2019 13:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OxgKq0uvzgCy9T3HtT1FHqYi+XIOfhSX9HlOxN06+Q4=;
+        b=EnyNaVfR6RBYyx+WdJpxHBqOGXStQ1CR0UViT9LmJrhpXHZ5Alpzl4erD6vu8UVFzM
+         I9CJTMHWXU4ehhHPipZ1rmTYULmZPQS9rqB4pma/8MFzAww89hM3o+6zHWAa7dmgisgt
+         4WgI36e6M1CT1qGPrFHWP3AKge2nY1sqhCZyFZ3BT9r5q+aVkdJDQelvthvwqDNcrf3A
+         ukr13yXnMF6hyqJlgsj20W7fvSREYyhh/OXa6WJp4gunXU6tyXU+4l8lfSJsTMBUFAgc
+         g+4efOCXNnsp8NIVq/EGXOAB2FssqWCGILegUSJntnVYC9oC3k1MPhSjmaI3wmHj0vNh
+         OifQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OxgKq0uvzgCy9T3HtT1FHqYi+XIOfhSX9HlOxN06+Q4=;
+        b=pLacBFqNSqow4FejV7dGsE5xePHaWuMdWp3n1tUASRaDftLkHVzPeiQQhUAeeUIbVK
+         DyG+vPRJF68PnBWaxHLCMjWTbvqplmcNwMpqikbBSA6ZUMntVrGoE/TLn+7aTxnlsJ4E
+         kLtrkZQn5970AxH0h8g+8CiAe9MLOelco6jxJFUqZ3KhnYG2A0qRY9iB49k0l8Iph2/7
+         QhycdomXpMVSN/VfmOwLG8AuoI6LXAu0d9MfQnYCw3ZRG/ND+BPWQEDVrCnDBlVAN9vb
+         wr6zxR2c9FrHWy99q8Xcp9MhbaF9yv2QjMGeNgPPwtMTcAinj7U2DNNMQd7EbwUD4pBP
+         z+Nw==
+X-Gm-Message-State: APjAAAWCOmkWaWE/q28XM3AcbXyVIDCMZdJvw5CJvCA2Pr/p6bhHOf3f
+        f8PLpIKbgSsHGO18ElJRviVMGBQVrxEBqKtZ21l5sw==
+X-Google-Smtp-Source: APXvYqyLFLjwXOVFOcYFXPODdfCLOQdnEaEv3OW/QjfpGeANuOjHLCLd/XzqkJzMQdfsBj81W8y7nvyUQG5WyUUUgKs=
+X-Received: by 2002:a02:10:: with SMTP id 16mr15375851jaa.96.1565469909350;
+ Sat, 10 Aug 2019 13:45:09 -0700 (PDT)
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jason Wang" <jasowang@redhat.com>,
-        "Paolo Abeni" <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.938280604@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 130/157] vhost_net: use packet weight for rx handler, too
-In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-5-deepa.kernel@gmail.com>
+ <c508fe0116b77ff0496ebb17a69f756c47be62b7.camel@codethink.co.uk>
+In-Reply-To: <c508fe0116b77ff0496ebb17a69f756c47be62b7.camel@codethink.co.uk>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Sat, 10 Aug 2019 13:44:57 -0700
+Message-ID: <CABeXuvruROn7j1DiCDbP6MLBt9SB4Pp3HoKqcQbUNPDJgGWLgw@mail.gmail.com>
+Subject: Re: [Y2038] [PATCH 04/20] mount: Add mount warning for impending
+ timestamp expiry
+To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.72-rc1 review patch.  If anyone has any objections, please let me know.
+On Mon, Aug 5, 2019 at 7:14 AM Ben Hutchings
+<ben.hutchings@codethink.co.uk> wrote:
+>
+> On Mon, 2019-07-29 at 18:49 -0700, Deepa Dinamani wrote:
+> > The warning reuses the uptime max of 30 years used by the
+> > setitimeofday().
+> >
+> > Note that the warning is only added for new filesystem mounts
+> > through the mount syscall. Automounts do not have the same warning.
+> [...]
+>
+> Another thing - perhaps this warning should be suppressed for read-only
+> mounts?
 
-------------------
+Many filesystems support read only mounts only. We do fill in right
+granularities and limits for these filesystems as well. In keeping
+with the trend, I have added the warning accordingly. I don't think I
+have a preference either way. But, not warning for the red only mounts
+adds another if case. If you have a strong preference, I could add it
+in.
 
-From: Paolo Abeni <pabeni@redhat.com>
-
-commit db688c24eada63b1efe6d0d7d835e5c3bdd71fd3 upstream.
-
-Similar to commit a2ac99905f1e ("vhost-net: set packet weight of
-tx polling to 2 * vq size"), we need a packet-based limit for
-handler_rx, too - elsewhere, under rx flood with small packets,
-tx can be delayed for a very long time, even without busypolling.
-
-The pkt limit applied to handle_rx must be the same applied by
-handle_tx, or we will get unfair scheduling between rx and tx.
-Tying such limit to the queue length makes it less effective for
-large queue length values and can introduce large process
-scheduler latencies, so a constant valued is used - likewise
-the existing bytes limit.
-
-The selected limit has been validated with PVP[1] performance
-test with different queue sizes:
-
-queue size		256	512	1024
-
-baseline		366	354	362
-weight 128		715	723	670
-weight 256		740	745	733
-weight 512		600	460	583
-weight 1024		423	427	418
-
-A packet weight of 256 gives peek performances in under all the
-tested scenarios.
-
-No measurable regression in unidirectional performance tests has
-been detected.
-
-[1] https://developers.redhat.com/blog/2017/06/05/measuring-and-comparing-open-vswitch-performance/
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/vhost/net.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -40,8 +40,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "
- #define VHOST_NET_WEIGHT 0x80000
- 
- /* Max number of packets transferred before requeueing the job.
-- * Using this limit prevents one virtqueue from starving rx. */
--#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
-+ * Using this limit prevents one virtqueue from starving others with small
-+ * pkts.
-+ */
-+#define VHOST_NET_PKT_WEIGHT 256
- 
- /* MAX number of TX used buffers for outstanding zerocopy */
- #define VHOST_MAX_PEND 128
-@@ -456,7 +458,7 @@ static void handle_tx(struct vhost_net *
- 		total_len += len;
- 		vhost_net_tx_packet(net);
- 		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
--		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT(vq))) {
-+		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT)) {
- 			vhost_poll_queue(&vq->poll);
- 			break;
- 		}
-@@ -581,6 +583,7 @@ static void handle_rx(struct vhost_net *
- 	size_t vhost_hlen, sock_hlen;
- 	size_t vhost_len, sock_len;
- 	struct socket *sock;
-+	int recv_pkts = 0;
- 
- 	mutex_lock(&vq->mutex);
- 	sock = vq->private_data;
-@@ -665,7 +668,8 @@ static void handle_rx(struct vhost_net *
- 		if (unlikely(vq_log))
- 			vhost_log_write(vq, vq_log, log, vhost_len);
- 		total_len += vhost_len;
--		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
-+		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
-+		    unlikely(++recv_pkts >= VHOST_NET_PKT_WEIGHT)) {
- 			vhost_poll_queue(&vq->poll);
- 			break;
- 		}
-
+-Deepa
