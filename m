@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6EA88D75
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BC488DDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbfHJUqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:46:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55342 "EHLO
+        id S1727582AbfHJUtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:49:52 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54580 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726899AbfHJUoH (ORCPT
+        by vger.kernel.org with ESMTP id S1726740AbfHJUn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:07 -0400
+        Sat, 10 Aug 2019 16:43:57 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDc-00053r-92; Sat, 10 Aug 2019 21:44:04 +0100
+        id 1hwYDS-00053i-Fm; Sat, 10 Aug 2019 21:43:54 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-0003cq-Un; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDP-0003mZ-Ic; Sat, 10 Aug 2019 21:43:51 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,12 +27,21 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Max Filippov" <jcmvbkbc@gmail.com>
+        "chenxiang" <chenxiang66@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>,
+        "Johannes Thumshirn" <jthumshirn@suse.de>,
+        "Ewan Milne" <emilne@redhat.com>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        "Tomas Henzl" <thenzl@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Hannes Reinecke" <hare@suse.com>,
+        "Christoph Hellwig" <hch@lst.de>, "Jason Yan" <yanaijie@huawei.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.887281316@decadent.org.uk>
+Message-ID: <lsq.1565469607.672530587@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 067/157] xtensa: fix return_address
+Subject: [PATCH 3.16 157/157] scsi: libsas: fix a race condition when smp
+ task timeout
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -46,39 +55,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Jason Yan <yanaijie@huawei.com>
 
-commit ada770b1e74a77fff2d5f539bf6c42c25f4784db upstream.
+commit b90cd6f2b905905fb42671009dc0e27c310a16ae upstream.
 
-return_address returns the address that is one level higher in the call
-stack than requested in its argument, because level 0 corresponds to its
-caller's return address. Use requested level as the number of stack
-frames to skip.
+When the lldd is processing the complete sas task in interrupt and set the
+task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to be
+triggered at the same time. And smp_task_timedout() will complete the task
+wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may freed
+before lldd end the interrupt process. Thus a use-after-free will happen.
 
-This fixes the address reported by might_sleep and friends.
+Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
+set. And remove the check of the return value of the del_timer(). Once the
+LLDD sets DONE, it must call task->done(), which will call
+smp_task_done()->complete() and the task will be completed and freed
+correctly.
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Reported-by: chenxiang <chenxiang66@hisilicon.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+CC: Johannes Thumshirn <jthumshirn@suse.de>
+CC: Ewan Milne <emilne@redhat.com>
+CC: Christoph Hellwig <hch@lst.de>
+CC: Tomas Henzl <thenzl@redhat.com>
+CC: Dan Williams <dan.j.williams@intel.com>
+CC: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/xtensa/kernel/stacktrace.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/scsi/libsas/sas_expander.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/arch/xtensa/kernel/stacktrace.c
-+++ b/arch/xtensa/kernel/stacktrace.c
-@@ -107,10 +107,14 @@ static int return_address_cb(struct stac
- 	return 1;
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -47,17 +47,16 @@ static void smp_task_timedout(unsigned l
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&task->task_state_lock, flags);
+-	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
++	if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+ 		task->task_state_flags |= SAS_TASK_STATE_ABORTED;
++		complete(&task->slow_task->completion);
++	}
+ 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+-
+-	complete(&task->slow_task->completion);
  }
  
-+/*
-+ * level == 0 is for the return address from the caller of this function,
-+ * not from this function itself.
-+ */
- unsigned long return_address(unsigned level)
+ static void smp_task_done(struct sas_task *task)
  {
- 	struct return_addr_data r = {
--		.skip = level + 1,
-+		.skip = level,
- 	};
- 	walk_stackframe(stack_pointer(NULL), return_address_cb, &r);
- 	return r.addr;
+-	if (!del_timer(&task->slow_task->timer))
+-		return;
++	del_timer(&task->slow_task->timer);
+ 	complete(&task->slow_task->completion);
+ }
+ 
 
