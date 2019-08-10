@@ -2,215 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2CC8874A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 02:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D5888751
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 02:25:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730481AbfHJAVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 20:21:11 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39241 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730032AbfHJAUx (ORCPT
+        id S1726972AbfHJAZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 20:25:53 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57596 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbfHJAZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 20:20:53 -0400
-Received: by mail-pg1-f195.google.com with SMTP id u17so46619848pgi.6;
-        Fri, 09 Aug 2019 17:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bP866RJhE0Aw3c4PzYQXFFenn8Oj6jLB5TldzC/ljuY=;
-        b=Dla7mIvHWr+cir1J4FvT0qPq4gF4X4gwataq5NcMBqZv1mLp3kO/uL9IgI4Br1UrIR
-         ej56pHLkTEkY/tE4vwrhbUwyzKZD0Kng/9VOVDVQYgd/qY6l4wg70/GuhEyj/0VSKEiq
-         ZlaSC4aTU/QG+GQOWkx4+HiVLjSYSIF8n2ZZNz7oRN8tE9WiZrD9qh8BeNEZ53ssvV24
-         ox6TAh9XNiPTBqwWD7kqe50ezfbVH70egnkbpMuYQB9uP8fjFXjAJthRBQKFH/Yj7kcl
-         UN8GxatoyvoHU9w5/n4Zykz+zlpopTrq7bf+jZtggVTV3Ssl3zVPa2x5TqVxcodMaBGl
-         mviA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bP866RJhE0Aw3c4PzYQXFFenn8Oj6jLB5TldzC/ljuY=;
-        b=p342h6RumphUos+qw1LU16609o+BHsEN5b/dhVR5AhEV9sgbYccmTb59M/+BMHYrVB
-         4ZKKx3Gz7ASKFjA2ySd3x0pdntl67nTsNQ24Rvvg3h5Nj5thFgR7GloSzM9qjqlkfnWE
-         0hqjQhXDTtFETv0M4XuPOaKk12S7ZRBRjBGmrsfOEzUwIY7s5NIy90HsSgq9FSoOaiCK
-         2txcL+2VtUYj5v3mWax1FHFnJ50XpNba6pWjcMowTPhoBBdaU381qClheSp9idyqIJwF
-         Thu+oXqnfPhw2w1qYusNu88zGvJu7LByn9Hixor4O5qWFReuD+TYVUlMRqV5xoHF9T4D
-         rmRQ==
-X-Gm-Message-State: APjAAAWsZ2WXUl2sRI+c76pKGA3qqqkEFQ88YZokpGvxSqh39DcYefAj
-        WnQUL8LuodHQC3F72bdcdJw=
-X-Google-Smtp-Source: APXvYqyTldKJFNlvC64ZnOefDoIGzLwP5EmqZGy588f633Q2BAGx6NUtzmTi8Nzj1B0suONepHMlJw==
-X-Received: by 2002:a62:3103:: with SMTP id x3mr23876544pfx.107.1565396451898;
-        Fri, 09 Aug 2019 17:20:51 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id v185sm110701150pfb.14.2019.08.09.17.20.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 17:20:51 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] Input: bu21013_ts - switch to using standard touchscreen properties
-Date:   Fri,  9 Aug 2019 17:20:39 -0700
-Message-Id: <20190810002039.95876-12-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-In-Reply-To: <20190810002039.95876-1-dmitry.torokhov@gmail.com>
-References: <20190810002039.95876-1-dmitry.torokhov@gmail.com>
+        Fri, 9 Aug 2019 20:25:52 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: tonyk)
+        with ESMTPSA id F250A28CE1A
+Subject: Re: [PATCH 0/3] Collapse vimc into single monolithic driver
+To:     Shuah Khan <skhan@linuxfoundation.org>, mchehab@kernel.org,
+        helen.koike@collabora.com, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com
+Cc:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        kernel@collabora.com
+References: <cover.1565386363.git.skhan@linuxfoundation.org>
+ <3118bc46-14ac-8015-9a6c-a8dfcdcea940@collabora.com>
+ <4e9b8eb3-23c5-62ea-07dc-b51acb238dee@linuxfoundation.org>
+From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
+Message-ID: <15badf5e-49fa-7fbe-de6b-296e9a7f5cd9@collabora.com>
+Date:   Fri, 9 Aug 2019 21:24:53 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <4e9b8eb3-23c5-62ea-07dc-b51acb238dee@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This switches the driver over to the standard touchscreen properties for
-coordinate transformation, while keeping old bindings working as well.
+On 8/9/19 9:17 PM, Shuah Khan wrote:
+> Hi Andre,
+> 
+> On 8/9/19 5:52 PM, André Almeida wrote:
+>> Hello Shuah,
+>>
+>> Thanks for the patch, I did some comments below.
+>>
+>> On 8/9/19 6:45 PM, Shuah Khan wrote:
+>>> vimc uses Component API to split the driver into functional components.
+>>> The real hardware resembles a monolith structure than component and
+>>> component structure added a level of complexity making it hard to
+>>> maintain without adding any real benefit.
+>>>      The sensor is one vimc component that would makes sense to be a
+>>> separate
+>>> module to closely align with the real hardware. It would be easier to
+>>> collapse vimc into single monolithic driver first and then split the
+>>> sensor off as a separate module.
+>>>
+>>> This patch series emoves the component API and makes minimal changes to
+>>> the code base preserving the functional division of the code structure.
+>>> Preserving the functional structure allows us to split the sensor off
+>>> as a separate module in the future.
+>>>
+>>> Major design elements in this change are:
+>>>      - Use existing struct vimc_ent_config and struct
+>>> vimc_pipeline_config
+>>>        to drive the initialization of the functional components.
+>>>      - Make vimc_ent_config global by moving it to vimc.h
+>>>      - Add two new hooks add and rm to initialize and register,
+>>> unregister
+>>>        and free subdevs.
+>>>      - All component API is now gone and bind and unbind hooks are
+>>> modified
+>>>        to do "add" and "rm" with minimal changes to just add and rm
+>>> subdevs.
+>>>      - vimc-core's bind and unbind are now register and unregister.
+>>>      - vimc-core invokes "add" hooks from its vimc_register_devices().
+>>>        The "add" hooks remain the same and register subdevs. They don't
+>>>        create platform devices of their own and use vimc's pdev.dev as
+>>>        their reference device. The "add" hooks save their
+>>> vimc_ent_device(s)
+>>>        in the corresponding vimc_ent_config.
+>>>      - vimc-core invokes "rm" hooks from its unregister to unregister
+>>> subdevs
+>>>        and cleanup.
+>>>      - vimc-core invokes "add" and "rm" hooks with pointer to struct
+>>> vimc_device
+>>>        and the corresponding struct vimc_ent_config pointer.
+>>>      The following configure and stream test works on all devices.
+>>>           media-ctl -d platform:vimc -V '"Sensor
+>>> A":0[fmt:SBGGR8_1X8/640x480]'
+>>>      media-ctl -d platform:vimc -V '"Debayer
+>>> A":0[fmt:SBGGR8_1X8/640x480]'
+>>>      media-ctl -d platform:vimc -V '"Sensor
+>>> B":0[fmt:SBGGR8_1X8/640x480]'
+>>>      media-ctl -d platform:vimc -V '"Debayer
+>>> B":0[fmt:SBGGR8_1X8/640x480]'
+>>>           v4l2-ctl -z platform:vimc -d "RGB/YUV Capture" -v
+>>> width=1920,height=1440
+>>>      v4l2-ctl -z platform:vimc -d "Raw Capture 0" -v pixelformat=BA81
+>>>      v4l2-ctl -z platform:vimc -d "Raw Capture 1" -v pixelformat=BA81
+>>>           v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video1
+>>>      v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video2
+>>>      v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video3
+>>>
+>>> The third patch in the series fixes a general protection fault found
+>>> when rmmod is done while stream is active.
+>>
+>> I applied your patch on top of media_tree/master and I did some testing.
+>> Not sure if I did something wrong, but just adding and removing the
+>> module generated a kernel panic:
+> 
+> Thanks for testing.
+> 
+> Odd. I tested modprobe and rmmod both.I was working on Linux 5.3-rc2.
+> I will apply these to media latest and work from there. I have to
+> rebase these on top of the reverts from Lucas and Helen
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- .../bindings/input/touchscreen/bu21013.txt    | 16 ++++--
- drivers/input/touchscreen/bu21013_ts.c        | 54 +++++++++++--------
- 2 files changed, 46 insertions(+), 24 deletions(-)
+Ok, please let me know if I succeeded to reproduce.
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/bu21013.txt b/Documentation/devicetree/bindings/input/touchscreen/bu21013.txt
-index 7ddb5de8343d..da4c9d8b99b1 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/bu21013.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/bu21013.txt
-@@ -10,6 +10,16 @@ Required properties:
- Optional properties:
-  - touch-gpios             : GPIO pin registering a touch event
-  - <supply_name>-supply    : Phandle to a regulator supply
-+ - touchscreen-size-x      : General touchscreen binding, see [1].
-+ - touchscreen-size-y      : General touchscreen binding, see [1].
-+ - touchscreen-inverted-x  : General touchscreen binding, see [1].
-+ - touchscreen-inverted-y  : General touchscreen binding, see [1].
-+ - touchscreen-swapped-x-y : General touchscreen binding, see [1].
-+
-+[1] All general touchscreen properties are described in
-+    Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt.
-+
-+Deprecated properties:
-  - rohm,touch-max-x        : Maximum outward permitted limit in the X axis
-  - rohm,touch-max-y        : Maximum outward permitted limit in the Y axis
-  - rohm,flip-x             : Flip touch coordinates on the X axis
-@@ -26,8 +36,8 @@ Example:
- 			touch-gpio = <&gpio2 20 GPIO_ACTIVE_LOW>;
- 			avdd-supply = <&ab8500_ldo_aux1_reg>;
- 
--			rohm,touch-max-x = <384>;
--			rohm,touch-max-y = <704>;
--			rohm,flip-y;
-+			touchscreen-size-x = <384>;
-+			touchscreen-size-y = <704>;
-+			touchscreen-inverted-y;
- 		};
- 	};
-diff --git a/drivers/input/touchscreen/bu21013_ts.c b/drivers/input/touchscreen/bu21013_ts.c
-index 2c534aa61687..c89a00a6e67c 100644
---- a/drivers/input/touchscreen/bu21013_ts.c
-+++ b/drivers/input/touchscreen/bu21013_ts.c
-@@ -10,6 +10,7 @@
- #include <linux/i2c.h>
- #include <linux/input.h>
- #include <linux/input/mt.h>
-+#include <linux/input/touchscreen.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -139,6 +140,7 @@
-  * struct bu21013_ts - touch panel data structure
-  * @client: pointer to the i2c client
-  * @in_dev: pointer to the input device structure
-+ * @props: the device coordinate transformation properties
-  * @regulator: pointer to the Regulator used for touch screen
-  * @cs_gpiod: chip select GPIO line
-  * @int_gpiod: touch interrupt GPIO line
-@@ -155,6 +157,7 @@
- struct bu21013_ts {
- 	struct i2c_client *client;
- 	struct input_dev *in_dev;
-+	struct touchscreen_properties props;
- 	struct regulator *regulator;
- 	struct gpio_desc *cs_gpiod;
- 	struct gpio_desc *int_gpiod;
-@@ -201,19 +204,13 @@ static int bu21013_do_touch_report(struct bu21013_ts *ts)
- 
- 	for (i = 0; i < MAX_FINGERS; i++) {
- 		const u8 *data = &buf[4 * i + 3];
--		struct input_mt_pos *p = &pos[finger_down_count];
-+		unsigned int x, y;
- 
--		p->x = data[0] << SHIFT_2 | (data[1] & MASK_BITS);
--		p->y = data[2] << SHIFT_2 | (data[3] & MASK_BITS);
--		if (p->x == 0 || p->y == 0)
--			continue;
--
--		finger_down_count++;
--
--		if (ts->x_flip)
--			p->x = ts->touch_x_max - p->x;
--		if (ts->y_flip)
--			p->y = ts->touch_y_max - p->y;
-+		x = data[0] << SHIFT_2 | (data[1] & MASK_BITS);
-+		y = data[2] << SHIFT_2 | (data[3] & MASK_BITS);
-+		if (x != 0 && y != 0)
-+			touchscreen_set_mt_pos(&pos[finger_down_count++],
-+					       &ts->props, x, y);
- 	}
- 
- 	if (finger_down_count == 2 &&
-@@ -412,6 +409,8 @@ static int bu21013_probe(struct i2c_client *client,
- {
- 	struct bu21013_ts *ts;
- 	struct input_dev *in_dev;
-+	struct input_absinfo *info;
-+	u32 max_x = 0, max_y = 0;
- 	int error;
- 
- 	if (!i2c_check_functionality(client->adapter,
-@@ -434,11 +433,6 @@ static int bu21013_probe(struct i2c_client *client,
- 	ts->x_flip = device_property_read_bool(&client->dev, "rohm,flip-x");
- 	ts->y_flip = device_property_read_bool(&client->dev, "rohm,flip-y");
- 
--	device_property_read_u32(&client->dev, "rohm,touch-max-x",
--				 &ts->touch_x_max);
--	device_property_read_u32(&client->dev, "rohm,touch-max-y",
--				 &ts->touch_y_max);
--
- 	in_dev = devm_input_allocate_device(&client->dev);
- 	if (!in_dev) {
- 		dev_err(&client->dev, "device memory alloc failed\n");
-@@ -451,10 +445,28 @@ static int bu21013_probe(struct i2c_client *client,
- 	in_dev->name = DRIVER_TP;
- 	in_dev->id.bustype = BUS_I2C;
- 
--	input_set_abs_params(in_dev, ABS_MT_POSITION_X,
--			     0, ts->touch_x_max, 0, 0);
--	input_set_abs_params(in_dev, ABS_MT_POSITION_Y,
--			     0, ts->touch_y_max, 0, 0);
-+	device_property_read_u32(&client->dev, "rohm,touch-max-x", &max_x);
-+	device_property_read_u32(&client->dev, "rohm,touch-max-y", &max_y);
-+
-+	input_set_abs_params(in_dev, ABS_MT_POSITION_X, 0, max_x, 0, 0);
-+	input_set_abs_params(in_dev, ABS_MT_POSITION_Y, 0, max_y, 0, 0);
-+
-+	touchscreen_parse_properties(in_dev, true, &ts->props);
-+
-+	/* Adjust for the legacy "flip" properties, if present */
-+	if (!ts->props.invert_x &&
-+	    device_property_read_bool(&client->dev, "rohm,flip-x")) {
-+		info = &in_dev->absinfo[ABS_MT_POSITION_X];
-+		info->maximum -= info->minimum;
-+		info->minimum = 0;
-+	}
-+
-+	if (!ts->props.invert_y &&
-+	    device_property_read_bool(&client->dev, "rohm,flip-y")) {
-+		info = &in_dev->absinfo[ABS_MT_POSITION_Y];
-+		info->maximum -= info->minimum;
-+		info->minimum = 0;
-+	}
- 
- 	error = input_mt_init_slots(in_dev, MAX_FINGERS,
- 				    INPUT_MT_DIRECT | INPUT_MT_TRACK |
--- 
-2.23.0.rc1.153.gdeed80330f-goog
+>>
+>> ~# modprobe vimc
+>> ~# rmmod vimc
+>> [   16.452974] stack segment: 0000 [#1] SMP PTI
+>> [   16.453688] CPU: 0 PID: 2038 Comm: rmmod Not tainted 5.3.0-rc2+ #36
+>> [   16.454678] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+>> BIOS 1.12.0-20181126_142135-anatol 04/01/2014
+>> [   16.456191] RIP: 0010:kfree+0x4d/0x240
+>>
+>> <registers values...>
+>>
+>> [   16.469188] Call Trace:
+>> [   16.469666]  vimc_remove+0x35/0x90 [vimc]
+>> [   16.470436]  platform_drv_remove+0x1f/0x40
+>> [   16.471233]  device_release_driver_internal+0xd3/0x1b0
+>> [   16.472184]  driver_detach+0x37/0x6b
+>> [   16.472882]  bus_remove_driver+0x50/0xc1
+>> [   16.473569]  vimc_exit+0xc/0xca0 [vimc]
+>> [   16.474231]  __x64_sys_delete_module+0x18d/0x240
+>> [   16.475036]  do_syscall_64+0x43/0x110
+>> [   16.475656]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [   16.476504] RIP: 0033:0x7fceb8dafa4b
+>>
+>> <registers values...>
+>>
+>> [   16.484853] Modules linked in: vimc(-) videobuf2_vmalloc
+>> videobuf2_memops v4l2_tpg videobuf2_v4l2 videobuf2_common
+>> [   16.486187] ---[ end trace 91e5e0894e254d49 ]---
+>> [   16.486758] RIP: 0010:kfree+0x4d/0x240
+>>
+>> <registers values...>
+>>
+>> fish: “rmmod vimc” terminated by signal SIGSEGV (Address boundary error)
+>>
+>> I just added the module after booting, no other action was made. Here is
+>> how my `git log --oneline` looks like:
+>>
+>> 897d708e922b media: vimc: Fix gpf in rmmod path when stream is active
+>> 2e4a5ad8ad6d media: vimc: Collapse component structure into a single
+>> monolithic driver
+>> 7c8da1687e92 media: vimc: move private defines to a common header
+>> 97299a303532 media: Remove dev_err() usage after platform_get_irq()
+>> 25a3d6bac6b9 media: adv7511/cobalt: rename driver name to adv7511-v4l2
+>> ...
+>>
+>>>
+>>> vimc_print_dot (--print-dot) topology after this change:
+>>> digraph board {
+>>>     rankdir=TB
+>>>     n00000001 [label="{{} | Sensor A\n/dev/v4l-subdev0 | {<port0>
+>>> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+>>>     n00000001:port0 -> n00000005:port0 [style=bold]
+>>>     n00000001:port0 -> n0000000b [style=bold]
+>>>     n00000003 [label="{{} | Sensor B\n/dev/v4l-subdev1 | {<port0>
+>>> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+>>>     n00000003:port0 -> n00000008:port0 [style=bold]
+>>>     n00000003:port0 -> n0000000f [style=bold]
+>>>     n00000005 [label="{{<port0> 0} | Debayer A\n/dev/v4l-subdev2 |
+>>> {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+>>>     n00000005:port1 -> n00000015:port0
+>>>     n00000008 [label="{{<port0> 0} | Debayer B\n/dev/v4l-subdev3 |
+>>> {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+>>>     n00000008:port1 -> n00000015:port0 [style=dashed]
+>>>     n0000000b [label="Raw Capture 0\n/dev/video1", shape=box,
+>>> style=filled, fillcolor=yellow]
+>>>     n0000000f [label="Raw Capture 1\n/dev/video2", shape=box,
+>>> style=filled, fillcolor=yellow]
+>>>     n00000013 [label="{{} | RGB/YUV Input\n/dev/v4l-subdev4 |
+>>> {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+>>>     n00000013:port0 -> n00000015:port0 [style=dashed]
+>>>     n00000015 [label="{{<port0> 0} | Scaler\n/dev/v4l-subdev5 |
+>>> {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+>>>     n00000015:port1 -> n00000018 [style=bold]
+>>>     n00000018 [label="RGB/YUV Capture\n/dev/video3", shape=box,
+>>> style=filled, fillcolor=yellow]
+>>> }
+>>
+>> Since the topology changed, it would be nice to change in the
+>> documentation as well. The current dot file can be found at
+>> `Documentation/media/v4l-drivers/vimc.dot` and it's rendered at this
+>> page: https://www.kernel.org/doc/html/latest/media/v4l-drivers/vimc.html
+>>
+> 
+> Topology shouldn't have changed. No changes to links or pads etc.
+> I will take a look to be sure. I agree that if topology changes
+> document should be updated.
+
+If you "diff" the current dot with the dot you generated, you will see
+some differences. The main difference is that "RGB/YUV Input" was a
+device "/dev/video2/", and now it a subdevice "/dev/v4l-subdev4".
+
+> 
+> thanks,
+> -- Shuah
 
