@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A3F88D7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9801688D59
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfHJUq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:46:29 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55266 "EHLO
+        id S1726964AbfHJUoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:44:15 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54360 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726882AbfHJUoH (ORCPT
+        by vger.kernel.org with ESMTP id S1726685AbfHJUnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:07 -0400
+        Sat, 10 Aug 2019 16:43:55 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDc-00053e-04; Sat, 10 Aug 2019 21:44:04 +0100
+        id 1hwYDQ-00053s-4z; Sat, 10 Aug 2019 21:43:52 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDL-0003d4-24; Sat, 10 Aug 2019 21:43:47 +0100
+        id 1hwYDN-0003hU-6u; Sat, 10 Aug 2019 21:43:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Juergen Gross" <jgross@suse.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
+        cj.chengjian@huawei.com, "Xie XiuQi" <xiexiuqi@huawei.com>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.426255235@decadent.org.uk>
+Message-ID: <lsq.1565469607.537023530@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 070/157] xen: Prevent buffer overflow in privcmd ioctl
+Subject: [PATCH 3.16 110/157] sched/numa: Fix a possible divide-by-zero
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,35 +50,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Xie XiuQi <xiexiuqi@huawei.com>
 
-commit 42d8644bd77dd2d747e004e367cb0c895a606f39 upstream.
+commit a860fa7b96e1a1c974556327aa1aee852d434c21 upstream.
 
-The "call" variable comes from the user in privcmd_ioctl_hypercall().
-It's an offset into the hypercall_page[] which has (PAGE_SIZE / 32)
-elements.  We need to put an upper bound on it to prevent an out of
-bounds access.
+sched_clock_cpu() may not be consistent between CPUs. If a task
+migrates to another CPU, then se.exec_start is set to that CPU's
+rq_clock_task() by update_stats_curr_start(). Specifically, the new
+value might be before the old value due to clock skew.
 
-Fixes: 1246ae0bb992 ("xen: add variable hypercall caller")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-[bwh: Backported to 3.16: adjust context]
+So then if in numa_get_avg_runtime() the expression:
+
+  'now - p->last_task_numa_placement'
+
+ends up as -1, then the divider '*period + 1' in task_numa_placement()
+is 0 and things go bang. Similar to update_curr(), check if time goes
+backwards to avoid this.
+
+[ peterz: Wrote new changelog. ]
+[ mingo: Tweaked the code comment. ]
+
+Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: cj.chengjian@huawei.com
+Link: http://lkml.kernel.org/r/20190425080016.GX11158@hirez.programming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/xen/hypercall.h | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/sched/fair.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/x86/include/asm/xen/hypercall.h
-+++ b/arch/x86/include/asm/xen/hypercall.h
-@@ -215,6 +215,9 @@ privcmd_call(unsigned call,
- 	__HYPERCALL_DECLS;
- 	__HYPERCALL_5ARG(a1, a2, a3, a4, a5);
- 
-+	if (call >= PAGE_SIZE / sizeof(hypercall_page[0]))
-+		return -EINVAL;
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1503,6 +1503,10 @@ static u64 numa_get_avg_runtime(struct t
+ 	if (p->last_task_numa_placement) {
+ 		delta = runtime - p->last_sum_exec_runtime;
+ 		*period = now - p->last_task_numa_placement;
 +
- 	stac();
- 	asm volatile(CALL_NOSPEC
- 		     : __HYPERCALL_5PARAM
++		/* Avoid time going backwards, prevent potential divide error: */
++		if (unlikely((s64)*period < 0))
++			*period = 0;
+ 	} else {
+ 		delta = p->se.avg.runnable_avg_sum;
+ 		*period = p->se.avg.runnable_avg_period;
 
