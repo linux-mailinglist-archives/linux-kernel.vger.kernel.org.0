@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B848C88D8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1734988DA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbfHJUqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:46:52 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55296 "EHLO
+        id S1727241AbfHJUrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:47:46 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55056 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726893AbfHJUoH (ORCPT
+        by vger.kernel.org with ESMTP id S1726840AbfHJUoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:07 -0400
+        Sat, 10 Aug 2019 16:44:04 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDb-00058O-VO; Sat, 10 Aug 2019 21:44:04 +0100
+        id 1hwYDY-00053Y-K7; Sat, 10 Aug 2019 21:44:00 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDL-0003dg-GN; Sat, 10 Aug 2019 21:43:47 +0100
+        id 1hwYDM-0003fj-CV; Sat, 10 Aug 2019 21:43:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        linux-block@vger.kernel.org,
-        "=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?=" <jglisse@redhat.com>,
-        "Jens Axboe" <axboe@kernel.dk>,
-        "Chaitanya Kulkarni" <chaitanya.kulkarni@wdc.com>
+        syzbot+48df349490c36f9f54ab@syzkaller.appspotmail.com,
+        "Takashi Iwai" <tiwai@suse.de>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.283676874@decadent.org.uk>
+Message-ID: <lsq.1565469607.329556158@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 078/157] block: do not leak memory in bio_copy_user_iov()
+Subject: [PATCH 3.16 094/157] ALSA: core: Fix card races between register
+ and disconnect
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,36 +48,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jérôme Glisse <jglisse@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit a3761c3c91209b58b6f33bf69dd8bb8ec0c9d925 upstream.
+commit 2a3f7221acddfe1caa9ff09b3a8158c39b2fdeac upstream.
 
-When bio_add_pc_page() fails in bio_copy_user_iov() we should free
-the page we just allocated otherwise we are leaking it.
+There is a small race window in the card disconnection code that
+allows the registration of another card with the very same card id.
+This leads to a warning in procfs creation as caught by syzkaller.
 
-Cc: linux-block@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+The problem is that we delete snd_cards and snd_cards_lock entries at
+the very beginning of the disconnection procedure.  This makes the
+slot available to be assigned for another card object while the
+disconnection procedure is being processed.  Then it becomes possible
+to issue a procfs registration with the existing file name although we
+check the conflict beforehand.
+
+The fix is simply to move the snd_cards and snd_cards_lock clearances
+at the end of the disconnection procedure.  The references to these
+entries are merely either from the global proc files like
+/proc/asound/cards or from the card registration / disconnection, so
+it should be fine to shift at the very end.
+
+Reported-by: syzbot+48df349490c36f9f54ab@syzkaller.appspotmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- block/bio.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/core/init.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1216,8 +1216,11 @@ struct bio *bio_copy_user_iov(struct req
- 			}
- 		}
+--- a/sound/core/init.c
++++ b/sound/core/init.c
+@@ -389,14 +389,7 @@ int snd_card_disconnect(struct snd_card
+ 	card->shutdown = 1;
+ 	spin_unlock(&card->files_lock);
  
--		if (bio_add_pc_page(q, bio, page, bytes, offset) < bytes)
-+		if (bio_add_pc_page(q, bio, page, bytes, offset) < bytes) {
-+			if (!map_data)
-+				__free_page(page);
- 			break;
-+		}
+-	/* phase 1: disable fops (user space) operations for ALSA API */
+-	mutex_lock(&snd_card_mutex);
+-	snd_cards[card->number] = NULL;
+-	clear_bit(card->number, snd_cards_lock);
+-	mutex_unlock(&snd_card_mutex);
+-	
+-	/* phase 2: replace file->f_op with special dummy operations */
+-	
++	/* replace file->f_op with special dummy operations */
+ 	spin_lock(&card->files_lock);
+ 	list_for_each_entry(mfile, &card->files_list, list) {
+ 		/* it's critical part, use endless loop */
+@@ -412,7 +405,7 @@ int snd_card_disconnect(struct snd_card
+ 	}
+ 	spin_unlock(&card->files_lock);	
  
- 		len -= bytes;
- 		offset = 0;
+-	/* phase 3: notify all connected devices about disconnection */
++	/* notify all connected devices about disconnection */
+ 	/* at this point, they cannot respond to any calls except release() */
+ 
+ #if IS_ENABLED(CONFIG_SND_MIXER_OSS)
+@@ -430,6 +423,13 @@ int snd_card_disconnect(struct snd_card
+ 		device_del(&card->card_dev);
+ 		card->registered = false;
+ 	}
++
++	/* disable fops (user space) operations for ALSA API */
++	mutex_lock(&snd_card_mutex);
++	snd_cards[card->number] = NULL;
++	clear_bit(card->number, snd_cards_lock);
++	mutex_unlock(&snd_card_mutex);
++
+ #ifdef CONFIG_PM
+ 	wake_up(&card->power_sleep);
+ #endif
 
