@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01FCA88D4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5C888DBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbfHJUoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:44:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55332 "EHLO
+        id S1727117AbfHJUsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:48:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54780 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726901AbfHJUoI (ORCPT
+        by vger.kernel.org with ESMTP id S1726785AbfHJUoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:08 -0400
+        Sat, 10 Aug 2019 16:44:00 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDd-00053u-3S; Sat, 10 Aug 2019 21:44:05 +0100
+        id 1hwYDT-00053q-9P; Sat, 10 Aug 2019 21:43:55 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-0003cf-Qz; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDO-0003kW-Om; Sat, 10 Aug 2019 21:43:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Nikolay Borisov" <nborisov@suse.com>,
-        "Anand Jain" <anand.jain@oracle.com>,
-        "David Sterba" <dsterba@suse.com>
+        "Johannes Weiner" <hannes@cmpxchg.org>,
+        "Rik van Riel" <riel@redhat.com>, "Michal Hocko" <mhocko@suse.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Mel Gorman" <mgorman@suse.de>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.524371688@decadent.org.uk>
+Message-ID: <lsq.1565469607.576161906@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 065/157] btrfs: prop: fix vanished compression
- property after failed set
+Subject: [PATCH 3.16 142/157] proc: meminfo: estimate available memory
+ more conservatively
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,45 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Johannes Weiner <hannes@cmpxchg.org>
 
-commit 272e5326c7837697882ce3162029ba893059b616 upstream.
+commit 84ad5802a33a4964a49b8f7d24d80a214a096b19 upstream.
 
-The compression property resets to NULL, instead of the old value if we
-fail to set the new compression parameter.
+The MemAvailable item in /proc/meminfo is to give users a hint of how
+much memory is allocatable without causing swapping, so it excludes the
+zones' low watermarks as unavailable to userspace.
 
-  $ btrfs prop get /btrfs compression
-    compression=lzo
-  $ btrfs prop set /btrfs compression zli
-    ERROR: failed to set compression for /btrfs: Invalid argument
-  $ btrfs prop get /btrfs compression
+However, for a userspace allocation, kswapd will actually reclaim until
+the free pages hit a combination of the high watermark and the page
+allocator's lowmem protection that keeps a certain amount of DMA and
+DMA32 memory from userspace as well.
 
-This is because the compression property ->validate() is successful for
-'zli' as the strncmp() used the length passed from the userspace.
+Subtract the full amount we know to be unavailable to userspace from the
+number of free pages when calculating MemAvailable.
 
-Fix it by using the expected string length in strncmp().
-
-Fixes: 63541927c8d1 ("Btrfs: add support for inode properties")
-Fixes: 5c1aab1dd544 ("btrfs: Add zstd support")
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16: "zstd" is not supported]
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/btrfs/props.c
-+++ b/fs/btrfs/props.c
-@@ -378,9 +378,9 @@ int btrfs_subvol_inherit_props(struct bt
+ fs/proc/meminfo.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -57,11 +57,8 @@ static int meminfo_proc_show(struct seq_
+ 	/*
+ 	 * Estimate the amount of memory available for userspace allocations,
+ 	 * without causing swapping.
+-	 *
+-	 * Free memory cannot be taken below the low watermark, before the
+-	 * system starts swapping.
+ 	 */
+-	available = i.freeram - wmark_low;
++	available = i.freeram - totalreserve_pages;
  
- static int prop_compression_validate(const char *value, size_t len)
- {
--	if (!strncmp("lzo", value, len))
-+	if (!strncmp("lzo", value, 3))
- 		return 0;
--	else if (!strncmp("zlib", value, len))
-+	else if (!strncmp("zlib", value, 4))
- 		return 0;
- 
- 	return -EINVAL;
+ 	/*
+ 	 * Not all the page cache can be freed, otherwise the system will
 
