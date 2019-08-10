@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D91E588E69
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0090288E06
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbfHJUyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:54:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53794 "EHLO
+        id S1727509AbfHJUvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:51:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54348 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726477AbfHJUns (ORCPT
+        by vger.kernel.org with ESMTP id S1726677AbfHJUny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:48 -0400
+        Sat, 10 Aug 2019 16:43:54 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDK-00053h-4F; Sat, 10 Aug 2019 21:43:46 +0100
+        id 1hwYDP-00053O-62; Sat, 10 Aug 2019 21:43:51 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003Zl-9Z; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDM-0003gE-II; Sat, 10 Aug 2019 21:43:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,21 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Hulk Robot" <hulkci@huawei.com>,
-        "YueHaibing" <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Steven Rostedt" <rostedt@goodmis.org>,
+        "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Masami Hiramatsu" <mhiramat@kernel.org>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Francis Deslauriers" <francis.deslauriers@efficios.com>,
+        "Andrea Righi" <righi.andrea@gmail.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.156035753@decadent.org.uk>
+Message-ID: <lsq.1565469607.139165272@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 029/157] net-sysfs: call dev_hold if kobject_init_and_add
- success
+Subject: [PATCH 3.16 097/157] kprobes: Mark ftrace mcount handler
+ functions nokprobe
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,62 +55,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit a3e23f719f5c4a38ffb3d30c8d7632a4ed8ccd9e upstream.
+commit fabe38ab6b2bd9418350284c63825f13b8a6abba upstream.
 
-In netdev_queue_add_kobject and rx_queue_add_kobject,
-if sysfs_create_group failed, kobject_put will call
-netdev_queue_release to decrease dev refcont, however
-dev_hold has not be called. So we will see this while
-unregistering dev:
+Mark ftrace mcount handler functions nokprobe since
+probing on these functions with kretprobe pushes
+return address incorrectly on kretprobe shadow stack.
 
-unregister_netdevice: waiting for bcsh0 to become free. Usage count = -1
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: d0d668371679 ("net: don't decrement kobj reference count on init failure")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+Reported-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+Tested-by: Andrea Righi <righi.andrea@gmail.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Steven Rostedt <rostedt@goodmis.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/155094062044.6137.6419622920568680640.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: there is no ftrace_ops_assist_func()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/core/net-sysfs.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -788,6 +788,8 @@ static int rx_queue_add_kobject(struct n
- 	if (error)
- 		return error;
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -32,6 +32,7 @@
+ #include <linux/list.h>
+ #include <linux/hash.h>
+ #include <linux/rcupdate.h>
++#include <linux/kprobes.h>
  
-+	dev_hold(queue->dev);
-+
- 	if (net->sysfs_rx_queue_group) {
- 		error = sysfs_create_group(kobj, net->sysfs_rx_queue_group);
- 		if (error) {
-@@ -797,7 +799,6 @@ static int rx_queue_add_kobject(struct n
- 	}
+ #include <trace/events/sched.h>
  
- 	kobject_uevent(kobj, KOBJ_ADD);
--	dev_hold(queue->dev);
+@@ -4508,7 +4509,7 @@ static struct ftrace_ops control_ops = {
+ 	INIT_OPS_HASH(control_ops)
+ };
  
- 	return error;
+-static inline void
++static nokprobe_inline void
+ __ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+ 		       struct ftrace_ops *ignored, struct pt_regs *regs)
+ {
+@@ -4561,11 +4562,13 @@ static void ftrace_ops_list_func(unsigne
+ {
+ 	__ftrace_ops_list_func(ip, parent_ip, NULL, regs);
  }
-@@ -1146,6 +1147,8 @@ static int netdev_queue_add_kobject(stru
- 	if (error)
- 		return error;
- 
-+	dev_hold(queue->dev);
-+
- #ifdef CONFIG_BQL
- 	error = sysfs_create_group(kobj, &dql_group);
- 	if (error) {
-@@ -1155,7 +1158,6 @@ static int netdev_queue_add_kobject(stru
++NOKPROBE_SYMBOL(ftrace_ops_list_func);
+ #else
+ static void ftrace_ops_no_ops(unsigned long ip, unsigned long parent_ip)
+ {
+ 	__ftrace_ops_list_func(ip, parent_ip, NULL, NULL);
+ }
++NOKPROBE_SYMBOL(ftrace_ops_no_ops);
  #endif
  
- 	kobject_uevent(kobj, KOBJ_ADD);
--	dev_hold(queue->dev);
- 
- 	return 0;
- }
+ static void clear_ftrace_swapper(void)
 
