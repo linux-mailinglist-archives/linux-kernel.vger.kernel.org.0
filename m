@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8219A88DB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8352688DCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfHJUsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:48:22 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54840 "EHLO
+        id S1727528AbfHJUtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:49:10 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54682 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726798AbfHJUoB (ORCPT
+        by vger.kernel.org with ESMTP id S1726760AbfHJUn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:44:01 -0400
+        Sat, 10 Aug 2019 16:43:59 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDW-00053s-Qz; Sat, 10 Aug 2019 21:43:58 +0100
+        id 1hwYDV-00058M-Bv; Sat, 10 Aug 2019 21:43:57 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDN-0003iS-PJ; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDO-0003jQ-AS; Sat, 10 Aug 2019 21:43:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,22 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Borislav Petkov" <bp@alien8.de>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Brian Gerst" <brgerst@gmail.com>,
-        "Denys Vlasenko" <dvlasenk@redhat.com>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Andy Lutomirski" <luto@amacapital.net>
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Jason Wang" <jasowang@redhat.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Stefan Hajnoczi" <stefanha@redhat.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.539176798@decadent.org.uk>
+Message-ID: <lsq.1565469607.621186972@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 122/157] x86/asm/entry/64: Disentangle
- error_entry/exit gsbase/ebx/usermode code
+Subject: [PATCH 3.16 134/157] vhost: scsi: add weight support
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,99 +49,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
 
-commit 539f5113650068ba221197f190267ab727296ef5 upstream.
+commit c1ea02f15ab5efb3e93fc3144d895410bf79fcf2 upstream.
 
-The error_entry/error_exit code to handle gsbase and whether we
-return to user mdoe was a mess:
+This patch will check the weight and exit the loop if we exceeds the
+weight. This is useful for preventing scsi kthread from hogging cpu
+which is guest triggerable.
 
- - error_sti was misnamed.  In particular, it did not enable interrupts.
+This addresses CVE-2019-3900.
 
- - Error handling for gs_change was hopelessly tangled the normal
-   usermode path.  Separate it out.  This saves a branch in normal
-   entries from kernel mode.
-
- - The comments were bad.
-
-Fix it up.  As a nice side effect, there's now a code path that
-happens on error entries from user mode.  We'll use it soon.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/f1be898ab93360169fb845ab85185948832209ee.1433878454.git.luto@kernel.org
-[ Prettified it, clarified comments some more. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16 as dependency of commit 18ec54fdd6d1
- "x86/speculation: Prepare entry code for Spectre v1 swapgs mitigations":
- - We do not use %ebx as a flag since we already have a backport of commit
-   b3681dd548d0 "x86/entry/64: Remove %ebx handling from error_entry/exit",
-   so don't add the comments about that
- - Adjust filename, context]
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Fixes: 057cbf49a1f0 ("tcm_vhost: Initial merge for vhost level target fabric driver")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+[bwh: Backported to 3.16:
+ - Drop changes in vhost_scsi_ctl_handle_vq()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kernel/entry_64.S
-+++ b/arch/x86/kernel/entry_64.S
-@@ -1446,9 +1446,11 @@ ENTRY(error_entry)
- 	SWITCH_KERNEL_CR3
- 	testl $3,CS+8(%rsp)
- 	je error_kernelspace
--error_swapgs:
-+
-+	/* We entered from user mode */
- 	SWAPGS
--error_sti:
-+
-+error_entry_done:
- 	TRACE_IRQS_OFF
- 	ret
+ drivers/vhost/scsi.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -998,7 +998,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
+ 	u64 tag;
+ 	u32 exp_data_len, data_first, data_num, data_direction, prot_first;
+ 	unsigned out, in, i;
+-	int head, ret, data_niov, prot_niov, prot_bytes;
++	int head, ret, data_niov, prot_niov, prot_bytes, c = 0;
+ 	size_t req_size;
+ 	u16 lun;
+ 	u8 *target, *lunp, task_attr;
+@@ -1016,7 +1016,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
  
-@@ -1466,8 +1468,15 @@ error_kernelspace:
- 	cmpq %rax,RIP+8(%rsp)
- 	je bstep_iret
- 	cmpq $gs_change,RIP+8(%rsp)
--	je error_swapgs
--	jmp error_sti
-+	jne	error_entry_done
-+
-+	/*
-+	 * hack: gs_change can fail with user gsbase.  If this happens, fix up
-+	 * gsbase and proceed.  We'll fix up the exception and land in
-+	 * gs_change's error handler with kernel gsbase.
-+	 */
-+	SWAPGS
-+	jmp	error_entry_done
+ 	vhost_disable_notify(&vs->dev, vq);
  
- bstep_iret:
- 	/* Fix truncated RIP */
-@@ -1475,11 +1484,20 @@ bstep_iret:
- 	/* fall through */
+-	for (;;) {
++	do {
+ 		head = vhost_get_vq_desc(vq, vq->iov,
+ 					ARRAY_SIZE(vq->iov), &out, &in,
+ 					NULL, NULL);
+@@ -1219,7 +1219,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
+ 		 */
+ 		INIT_WORK(&cmd->work, tcm_vhost_submission_work);
+ 		queue_work(tcm_vhost_workqueue, &cmd->work);
+-	}
++	} while (likely(!vhost_exceeds_weight(vq, ++c, 0)));
  
- error_bad_iret:
-+	/*
-+	 * We came from an IRET to user mode, so we have user gsbase.
-+	 * Switch to kernel gsbase:
-+	 */
- 	SWAPGS
-+
-+	/*
-+	 * Pretend that the exception came from user mode: set up pt_regs
-+	 * as if we faulted immediately after IRET.
-+	 */
- 	mov %rsp,%rdi
- 	call fixup_bad_iret
- 	mov %rax,%rsp
--	jmp error_sti
-+	jmp	error_entry_done
- 	CFI_ENDPROC
- END(error_entry)
- 
+ 	mutex_unlock(&vq->mutex);
+ 	return;
 
