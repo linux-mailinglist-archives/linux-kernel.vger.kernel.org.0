@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07ED288E27
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF36788E6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfHJUwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:52:14 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54150 "EHLO
+        id S1727857AbfHJUym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:54:42 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53786 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726587AbfHJUnw (ORCPT
+        by vger.kernel.org with ESMTP id S1726469AbfHJUns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:52 -0400
+        Sat, 10 Aug 2019 16:43:48 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-00053e-Q6; Sat, 10 Aug 2019 21:43:48 +0100
+        id 1hwYDI-00052u-O7; Sat, 10 Aug 2019 21:43:44 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003b8-SR; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDI-0003Xu-Ev; Sat, 10 Aug 2019 21:43:44 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Sven Eckelmann" <sven@narfation.org>,
-        "Simon Wunderlich" <sw@simonwunderlich.de>
+        "Ludovic Desroches" <ludovic.desroches@microchip.com>,
+        "Georg Ottinger" <g.ottinger@abatec.at>,
+        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.336708598@decadent.org.uk>
+Message-ID: <lsq.1565469607.533012668@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 046/157] batman-adv: Reduce tt_local hash refcnt only
- for removed entry
+Subject: [PATCH 3.16 006/157] iio: adc: at91: disable adc channel
+ interrupt in timeout case
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,75 +49,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Georg Ottinger <g.ottinger@abatec.at>
 
-commit 3d65b9accab4a7ed5038f6df403fbd5e298398c7 upstream.
+commit 09c6bdee51183a575bf7546890c8c137a75a2b44 upstream.
 
-The batadv_hash_remove is a function which searches the hashtable for an
-entry using a needle, a hashtable bucket selection function and a compare
-function. It will lock the bucket list and delete an entry when the compare
-function matches it with the needle. It returns the pointer to the
-hlist_node which matches or NULL when no entry matches the needle.
+Having a brief look at at91_adc_read_raw() it is obvious that in the case
+of a timeout the setting of AT91_ADC_CHDR and AT91_ADC_IDR registers is
+omitted. If 2 different channels are queried we can end up with a
+situation where two interrupts are enabled, but only one interrupt is
+cleared in the interrupt handler. Resulting in a interrupt loop and a
+system hang.
 
-The batadv_tt_local_remove is not itself protected in anyway to avoid that
-any other function is modifying the hashtable between the search for the
-entry and the call to batadv_hash_remove. It can therefore happen that the
-entry either doesn't exist anymore or an entry was deleted which is not the
-same object as the needle. In such an situation, the reference counter (for
-the reference stored in the hashtable) must not be reduced for the needle.
-Instead the reference counter of the actually removed entry has to be
-reduced.
-
-Otherwise the reference counter will underflow and the object might be
-freed before all its references were dropped. The kref helpers reported
-this problem as:
-
-  refcount_t: underflow; use-after-free.
-
-Fixes: ef72706a0543 ("batman-adv: protect tt_local_entry from concurrent delete events")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Georg Ottinger <g.ottinger@abatec.at>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/batman-adv/translation-table.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/iio/adc/at91_adc.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -1021,9 +1021,10 @@ uint16_t batadv_tt_local_remove(struct b
- 				const uint8_t *addr, unsigned short vid,
- 				const char *message, bool roaming)
- {
-+	struct batadv_tt_local_entry *tt_removed_entry;
- 	struct batadv_tt_local_entry *tt_local_entry;
- 	uint16_t flags, curr_flags = BATADV_NO_FLAGS;
--	void *tt_entry_exists;
-+	struct hlist_node *tt_removed_node;
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
+@@ -702,23 +702,29 @@ static int at91_adc_read_raw(struct iio_
+ 		ret = wait_event_interruptible_timeout(st->wq_data_avail,
+ 						       st->done,
+ 						       msecs_to_jiffies(1000));
+-		if (ret == 0)
+-			ret = -ETIMEDOUT;
+-		if (ret < 0) {
+-			mutex_unlock(&st->lock);
+-			return ret;
+-		}
+-
+-		*val = st->last_value;
  
- 	tt_local_entry = batadv_tt_local_hash_find(bat_priv, addr, vid);
- 	if (!tt_local_entry)
-@@ -1052,15 +1053,18 @@ uint16_t batadv_tt_local_remove(struct b
- 	 */
- 	batadv_tt_local_event(bat_priv, tt_local_entry, BATADV_TT_CLIENT_DEL);
++		/* Disable interrupts, regardless if adc conversion was
++		 * successful or not
++		 */
+ 		at91_adc_writel(st, AT91_ADC_CHDR,
+ 				AT91_ADC_CH(chan->channel));
+ 		at91_adc_writel(st, AT91_ADC_IDR, BIT(chan->channel));
  
--	tt_entry_exists = batadv_hash_remove(bat_priv->tt.local_hash,
-+	tt_removed_node = batadv_hash_remove(bat_priv->tt.local_hash,
- 					     batadv_compare_tt,
- 					     batadv_choose_tt,
- 					     &tt_local_entry->common);
--	if (!tt_entry_exists)
-+	if (!tt_removed_node)
- 		goto out;
+-		st->last_value = 0;
+-		st->done = false;
++		if (ret > 0) {
++			/* a valid conversion took place */
++			*val = st->last_value;
++			st->last_value = 0;
++			st->done = false;
++			ret = IIO_VAL_INT;
++		} else if (ret == 0) {
++			/* conversion timeout */
++			dev_err(&idev->dev, "ADC Channel %d timeout.\n",
++				chan->channel);
++			ret = -ETIMEDOUT;
++		}
++
+ 		mutex_unlock(&st->lock);
+-		return IIO_VAL_INT;
++		return ret;
  
--	/* extra call to free the local tt entry */
--	batadv_tt_local_entry_free_ref(tt_local_entry);
-+	/* drop reference of remove hash entry */
-+	tt_removed_entry = hlist_entry(tt_removed_node,
-+				       struct batadv_tt_local_entry,
-+				       common.hash_entry);
-+	batadv_tt_local_entry_free_ref(tt_removed_entry);
- 
- out:
- 	if (tt_local_entry)
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = st->vref_mv;
 
