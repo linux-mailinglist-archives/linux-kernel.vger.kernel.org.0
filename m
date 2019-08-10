@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F29288E54
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A73A88DE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfHJUxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:53:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53872 "EHLO
+        id S1727445AbfHJUuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:50:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54550 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726506AbfHJUnt (ORCPT
+        by vger.kernel.org with ESMTP id S1726735AbfHJUn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:49 -0400
+        Sat, 10 Aug 2019 16:43:57 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDI-000534-W9; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDS-00053Y-LQ; Sat, 10 Aug 2019 21:43:54 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDI-0003YJ-MF; Sat, 10 Aug 2019 21:43:44 +0100
+        id 1hwYDO-0003kk-Q4; Sat, 10 Aug 2019 21:43:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-        "Peter Meerwald-Stadler" <pmeerw@pmeerw.net>,
-        "Jean-Francois Dagenais" <jeff.dagenais@gmail.com>
+        "Juergen Gross" <jgross@suse.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.848644193@decadent.org.uk>
+Message-ID: <lsq.1565469607.648207322@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 011/157] iio: dac: mcp4725: add missing powerdown
- bits in store eeprom
+Subject: [PATCH 3.16 144/157] xen: let alloc_xenballooned_pages() fail if
+ not enough memory free
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,38 +47,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit 06003531502d06bc89d32528f6ec96bf978790f9 upstream.
+commit a1078e821b605813b63bf6bca414a85f804d5c66 upstream.
 
-When issuing the write DAC register and write eeprom command, the two
-powerdown bits (PD0 and PD1) are assumed by the chip to be present in
-the bytes sent. Leaving them at 0 implies "powerdown disabled" which is
-a different state that the current one. By adding the current state of
-the powerdown in the i2c write, the chip will correctly power-on exactly
-like as it is at the moment of store_eeprom call.
+Instead of trying to allocate pages with GFP_USER in
+add_ballooned_pages() check the available free memory via
+si_mem_available(). GFP_USER is far less limiting memory exhaustion
+than the test via si_mem_available().
 
-This is documented in MCP4725's datasheet, FIGURE 6-2: "Write Commands
-for DAC Input Register and EEPROM" and MCP4726's datasheet, FIGURE 6-3:
-"Write All Memory Command".
+This will avoid dom0 running out of memory due to excessive foreign
+page mappings especially on ARM and on x86 in PVH mode, as those don't
+have a pre-ballooned area which can be used for foreign mappings.
 
-Signed-off-by: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
-Acked-by: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-[bwh: Backported to 3.16: adjust context]
+As the normal ballooning suffers from the same problem don't balloon
+down more than si_mem_available() pages in one iteration. At the same
+time limit the default maximum number of retries.
+
+This is part of XSA-300.
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
+[bwh: Backported to 3.16: adjust context, indentation]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/iio/dac/mcp4725.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/xen/balloon.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/drivers/iio/dac/mcp4725.c
-+++ b/drivers/iio/dac/mcp4725.c
-@@ -86,6 +86,7 @@ static ssize_t mcp4725_store_eeprom(stru
- 		return 0;
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -502,8 +502,15 @@ static void balloon_process(struct work_
+ 				state = reserve_additional_memory(credit);
+ 		}
  
- 	inoutbuf[0] = 0x60; /* write EEPROM */
-+	inoutbuf[0] |= data->powerdown ? ((data->powerdown_mode + 1) << 1) : 0;
- 	inoutbuf[1] = data->dac_value >> 4;
- 	inoutbuf[2] = (data->dac_value & 0xf) << 4;
+-		if (credit < 0)
+-			state = decrease_reservation(-credit, GFP_BALLOON);
++		if (credit < 0) {
++			long n_pages;
++
++			n_pages = min(-credit, si_mem_available());
++			state = decrease_reservation(n_pages, GFP_BALLOON);
++			if (state == BP_DONE && n_pages != -credit &&
++			    n_pages < totalreserve_pages)
++				state = BP_EAGAIN;
++		}
  
+ 		state = update_schedule(state);
+ 
+@@ -561,6 +568,9 @@ int alloc_xenballooned_pages(int nr_page
+ 			enum bp_state st;
+ 			if (page)
+ 				balloon_append(page);
++			if (si_mem_available() < nr_pages)
++				return -ENOMEM;
++
+ 			st = decrease_reservation(nr_pages - pgno,
+ 					highmem ? GFP_HIGHUSER : GFP_USER);
+ 			if (st != BP_DONE)
+@@ -692,7 +702,7 @@ static int __init balloon_init(void)
+ 	balloon_stats.schedule_delay = 1;
+ 	balloon_stats.max_schedule_delay = 32;
+ 	balloon_stats.retry_count = 1;
+-	balloon_stats.max_retry_count = RETRY_UNLIMITED;
++	balloon_stats.max_retry_count = 4;
+ 
+ #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+ 	balloon_stats.hotplug_pages = 0;
 
