@@ -2,112 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CAE388D17
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 21:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F2488D1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfHJTxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 15:53:49 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:40902 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfHJTxt (ORCPT
+        id S1726441AbfHJUIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:08:06 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58365 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbfHJUIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 15:53:49 -0400
-Received: by mail-vs1-f68.google.com with SMTP id a186so10611606vsd.7
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2019 12:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7WHZ0iMjd+y5AxcpJPPv9/Si0IhWcZrpj60zl/nubnc=;
-        b=JwYjtk9Er6QiAGFKksCHmtjgunBpUCUyEpSEhT97xuJsGUpeGEXerinV3lutAkJ6GW
-         vwEhaVRZ3qcWU35DlOtK7jM58biKlDAhJwwAAbMwFqLFSVcz/T0JcbZIW0aYE4QoXlgU
-         T0THitnvvZIwMDIVmTGE218t0xpU40oiL8JCPiIUbZgQyDXDEmbPRne3qyCB+2cF81l6
-         yxT/bsCTjllYmZ/dljdF3tkf6tmL2eKb9PIz6WlunUUy1UF+02VdOImort+wc+mQmNDs
-         CV9JbhEdjm/7RdoPHN5mtZUIAVwJcrtRdPIqsdmAX2rCwD88GnQp8MzmZ+FUWHbbChJk
-         Fpmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7WHZ0iMjd+y5AxcpJPPv9/Si0IhWcZrpj60zl/nubnc=;
-        b=LKLX9U1CgZWHPCnWsFgVGMW2fgojUJvFBfDE5qOUeRpuwNj6Vy0JhyzrK91kjQciAM
-         3ak8LMKbK8pW2ZBsWSCYFLyLgZGEoMD6JMtxioN/F6OsRDKXh/hrdGwxDfiK4oBB9+7f
-         yfogccOURgz17ATZWgS3uh/8QEUFP86wqriF4SFg7ZU0pvfusOH4mvwWGLYV9XaJuzmg
-         x6vDRd2lrEV3Jmyg9Vvo/YL0MFrmsuOyxxJoVUxgwpJzYjCRYGa3hlSDq8Ecz8dgTBZZ
-         Z5kd+tlbPIBKVnkdRRjIVoGtHa6r6PCNgLiNtIJJzphtdenWdC6x4QuAKgBz8utfVgjZ
-         1/DQ==
-X-Gm-Message-State: APjAAAV+IaXrnkZg5FCaUbK+M83+lzjhdpCyVqAUOtSspDWezUEn2WlA
-        JlzF7M4tITgsjMPdZ1Vi9oGcH9qObRXT0KeHwJM=
-X-Google-Smtp-Source: APXvYqzrHeuOxmth4tU/7yLbE618cFdFWZToMJadZdpNsejf89DvMaLfvT/XK8esuOZbHBUY3RkcHJP+nWyL+ihQWJ8=
-X-Received: by 2002:a67:79d4:: with SMTP id u203mr17584811vsc.85.1565466827820;
- Sat, 10 Aug 2019 12:53:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190711012915.5581-1-yuchao0@huawei.com>
-In-Reply-To: <20190711012915.5581-1-yuchao0@huawei.com>
-From:   Ju Hyung Park <qkrwngud825@gmail.com>
-Date:   Sun, 11 Aug 2019 04:53:37 +0900
-Message-ID: <CAD14+f3fiY8m7f91-ohHUj8ThMeYF7+Q=DU8c2c_8PTis8t-mw@mail.gmail.com>
-Subject: Re: [PATCH v2] f2fs: improve print log in f2fs_sanity_check_ckpt()
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 10 Aug 2019 16:08:05 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hwXek-0007tk-VP; Sat, 10 Aug 2019 22:08:03 +0200
+Date:   Sat, 10 Aug 2019 20:01:51 -0000
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] x86/urgent for 5.3-rc4
+References: <156546731194.17538.17422312639927927426.tglx@nanos.tec.linutronix.de>
+Message-ID: <156546731195.17538.5037114068802413527.tglx@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
+Linus,
 
-I think we'll all appreciate if v1.13.0 gets tagged :)
-I believe the current dev branch has been in good shape for quite some time=
- now.
+please pull the latest x86-urgent-for-linus git tree from:
 
-Thanks.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+
+up to:  04f5bda84b07: x86/lib/cpu: Address missing prototypes warning
+
+A few fixes for x86:
+
+ - Don't reset the carefully adjusted build flags for the purgatory and
+   remove the unwanted flags instead. The 'reset all' approach led to build
+   fails under certain circumstances.
+
+ - Unbreak CLANG build of the purgatory by avoiding the builtin
+   memcpy/memset implementations.
+
+ - Address missing prototype warnings by including the proper header
+
+ - Fix yet more fall-through issues
+
+Thanks,
+
+	tglx
+
+------------------>
+Gustavo A. R. Silva (2):
+      x86/ptrace: Mark expected switch fall-through
+      x86: mtrr: cyrix: Mark expected switch fall-through
+
+Nick Desaulniers (2):
+      x86/purgatory: Do not use __builtin_memcpy and __builtin_memset
+      x86/purgatory: Use CFLAGS_REMOVE rather than reset KBUILD_CFLAGS
+
+Valdis Kletnieks (1):
+      x86/lib/cpu: Address missing prototypes warning
 
 
-2019=EB=85=84 7=EC=9B=94 11=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 10:31, =
-Chao Yu <yuchao0@huawei.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> As Park Ju Hyung suggested:
->
-> "I'd like to suggest to write down an actual version of f2fs-tools
-> here as we've seen older versions of fsck doing even more damage
-> and the users might not have the latest f2fs-tools installed."
->
-> This patch give a more detailed info of how we fix such corruption
-> to user to avoid damageable repair with low version fsck.
->
-> Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2:
-> - add fixing patch's title in log suggested by Jaegeuk.
->  fs/f2fs/super.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 1a6d82d558e4..47dae7c3ae4f 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2696,7 +2696,9 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi=
-)
->
->         if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG) &&
->                 le32_to_cpu(ckpt->checksum_offset) !=3D CP_MIN_CHKSUM_OFF=
-SET) {
-> -               f2fs_warn(sbi, "layout of large_nat_bitmap is deprecated,=
- run fsck to repair, chksum_offset: %u",
-> +               f2fs_warn(sbi, "using deprecated layout of large_nat_bitm=
-ap, "
-> +                         "please run fsck v1.13.0 or higher to repair, c=
-hksum_offset: %u, "
-> +                         "fixed with patch: \"f2fs-tools: relocate chksu=
-m_offset for large_nat_bitmap feature\"",
->                           le32_to_cpu(ckpt->checksum_offset));
->                 return 1;
->         }
-> --
-> 2.18.0.rc1
->
+ arch/x86/boot/string.c           |  8 ++++++++
+ arch/x86/kernel/cpu/mtrr/cyrix.c |  1 +
+ arch/x86/kernel/ptrace.c         |  1 +
+ arch/x86/lib/cpu.c               |  1 +
+ arch/x86/purgatory/Makefile      | 36 +++++++++++++++++++++++++++++++-----
+ arch/x86/purgatory/purgatory.c   |  6 ++++++
+ arch/x86/purgatory/string.c      | 23 -----------------------
+ 7 files changed, 48 insertions(+), 28 deletions(-)
+ delete mode 100644 arch/x86/purgatory/string.c
+
+diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
+index 401e30ca0a75..8272a4492844 100644
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -37,6 +37,14 @@ int memcmp(const void *s1, const void *s2, size_t len)
+ 	return diff;
+ }
+ 
++/*
++ * Clang may lower `memcmp == 0` to `bcmp == 0`.
++ */
++int bcmp(const void *s1, const void *s2, size_t len)
++{
++	return memcmp(s1, s2, len);
++}
++
+ int strcmp(const char *str1, const char *str2)
+ {
+ 	const unsigned char *s1 = (const unsigned char *)str1;
+diff --git a/arch/x86/kernel/cpu/mtrr/cyrix.c b/arch/x86/kernel/cpu/mtrr/cyrix.c
+index 4296c702a3f7..72182809b333 100644
+--- a/arch/x86/kernel/cpu/mtrr/cyrix.c
++++ b/arch/x86/kernel/cpu/mtrr/cyrix.c
+@@ -98,6 +98,7 @@ cyrix_get_free_region(unsigned long base, unsigned long size, int replace_reg)
+ 	case 7:
+ 		if (size < 0x40)
+ 			break;
++		/* Else, fall through */
+ 	case 6:
+ 	case 5:
+ 	case 4:
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 0fdbe89d0754..3c5bbe8e4120 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -201,6 +201,7 @@ static int set_segment_reg(struct task_struct *task,
+ 	case offsetof(struct user_regs_struct, ss):
+ 		if (unlikely(value == 0))
+ 			return -EIO;
++		/* Else, fall through */
+ 
+ 	default:
+ 		*pt_regs_access(task_pt_regs(task), offset) = value;
+diff --git a/arch/x86/lib/cpu.c b/arch/x86/lib/cpu.c
+index 04967cdce5d1..7ad68917a51e 100644
+--- a/arch/x86/lib/cpu.c
++++ b/arch/x86/lib/cpu.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/types.h>
+ #include <linux/export.h>
++#include <asm/cpu.h>
+ 
+ unsigned int x86_family(unsigned int sig)
+ {
+diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+index 3cf302b26332..8901a1f89cf5 100644
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
+ targets += $(purgatory-y)
+ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+ 
++$(obj)/string.o: $(srctree)/arch/x86/boot/compressed/string.c FORCE
++	$(call if_changed_rule,cc_o_c)
++
+ $(obj)/sha256.o: $(srctree)/lib/sha256.c FORCE
+ 	$(call if_changed_rule,cc_o_c)
+ 
+@@ -17,11 +20,34 @@ KCOV_INSTRUMENT := n
+ 
+ # Default KBUILD_CFLAGS can have -pg option set when FTRACE is enabled. That
+ # in turn leaves some undefined symbols like __fentry__ in purgatory and not
+-# sure how to relocate those. Like kexec-tools, use custom flags.
+-
+-KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes -fno-zero-initialized-in-bss -fno-builtin -ffreestanding -c -Os -mcmodel=large
+-KBUILD_CFLAGS += -m$(BITS)
+-KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
++# sure how to relocate those.
++ifdef CONFIG_FUNCTION_TRACER
++CFLAGS_REMOVE_sha256.o		+= $(CC_FLAGS_FTRACE)
++CFLAGS_REMOVE_purgatory.o	+= $(CC_FLAGS_FTRACE)
++CFLAGS_REMOVE_string.o		+= $(CC_FLAGS_FTRACE)
++CFLAGS_REMOVE_kexec-purgatory.o	+= $(CC_FLAGS_FTRACE)
++endif
++
++ifdef CONFIG_STACKPROTECTOR
++CFLAGS_REMOVE_sha256.o		+= -fstack-protector
++CFLAGS_REMOVE_purgatory.o	+= -fstack-protector
++CFLAGS_REMOVE_string.o		+= -fstack-protector
++CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector
++endif
++
++ifdef CONFIG_STACKPROTECTOR_STRONG
++CFLAGS_REMOVE_sha256.o		+= -fstack-protector-strong
++CFLAGS_REMOVE_purgatory.o	+= -fstack-protector-strong
++CFLAGS_REMOVE_string.o		+= -fstack-protector-strong
++CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector-strong
++endif
++
++ifdef CONFIG_RETPOLINE
++CFLAGS_REMOVE_sha256.o		+= $(RETPOLINE_CFLAGS)
++CFLAGS_REMOVE_purgatory.o	+= $(RETPOLINE_CFLAGS)
++CFLAGS_REMOVE_string.o		+= $(RETPOLINE_CFLAGS)
++CFLAGS_REMOVE_kexec-purgatory.o	+= $(RETPOLINE_CFLAGS)
++endif
+ 
+ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+ 		$(call if_changed,ld)
+diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
+index 6d8d5a34c377..b607bda786f6 100644
+--- a/arch/x86/purgatory/purgatory.c
++++ b/arch/x86/purgatory/purgatory.c
+@@ -68,3 +68,9 @@ void purgatory(void)
+ 	}
+ 	copy_backup_region();
+ }
++
++/*
++ * Defined in order to reuse memcpy() and memset() from
++ * arch/x86/boot/compressed/string.c
++ */
++void warn(const char *msg) {}
+diff --git a/arch/x86/purgatory/string.c b/arch/x86/purgatory/string.c
+deleted file mode 100644
+index 01ad43873ad9..000000000000
+--- a/arch/x86/purgatory/string.c
++++ /dev/null
+@@ -1,23 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Simple string functions.
+- *
+- * Copyright (C) 2014 Red Hat Inc.
+- *
+- * Author:
+- *       Vivek Goyal <vgoyal@redhat.com>
+- */
+-
+-#include <linux/types.h>
+-
+-#include "../boot/string.c"
+-
+-void *memcpy(void *dst, const void *src, size_t len)
+-{
+-	return __builtin_memcpy(dst, src, len);
+-}
+-
+-void *memset(void *dst, int c, size_t len)
+-{
+-	return __builtin_memset(dst, c, len);
+-}
+
