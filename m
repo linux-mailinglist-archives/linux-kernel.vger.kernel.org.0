@@ -2,84 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCFB188EC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 01:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D133A88ECE
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 01:20:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbfHJXOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 19:14:07 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51443 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfHJXOH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 19:14:07 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BA1B38030F; Sun, 11 Aug 2019 01:13:52 +0200 (CEST)
-Date:   Sun, 11 Aug 2019 01:14:04 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     ofono@ofono.org, kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: Motorola Droid 4 SMS sending
-Message-ID: <20190810231404.GA26417@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1726476AbfHJXUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 19:20:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726177AbfHJXUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Aug 2019 19:20:08 -0400
+Subject: Re: [GIT pull] core/urgent for 5.3-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565479207;
+        bh=I1H+yv4T0IXqCoS+Q6XifhW8TmV/c5Ar4pq/hA/L+zw=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=M8jQLMP4afU497NmihidcX+AUJUXegdwRu0LQ0v3sXFdGs4BfekQuAeO9F84+tVPA
+         DHmCg4nwcNWlOAm7fonZGRljq27epZdEXHr2soFLb+m+MSWi4sUdEWdAd9QiabiI6+
+         mtL9JCz2iRFbKDJ511X1JlcwGuJGr3Cd1O+mfQo0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <156546731194.17538.17422312639927927426.tglx@nanos.tec.linutronix.de>
+References: <156546731194.17538.17422312639927927426.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <156546731194.17538.17422312639927927426.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ core-urgent-for-linus
+X-PR-Tracked-Commit-Id: e6a9522ac3ff59980ea00e070b6b8573aface36a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6054f4ecdc116ce64bd5c50df8edd01d2c105e69
+Message-Id: <156547920786.21687.7784231944447152746.pr-tracker-bot@kernel.org>
+Date:   Sat, 10 Aug 2019 23:20:07 +0000
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The pull request you sent on Sat, 10 Aug 2019 20:01:51 -0000:
 
---W/nzBZO5zC0uMSeA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
 
-Hi!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6054f4ecdc116ce64bd5c50df8edd01d2c105e69
 
-Motorola Droid 4 runs packet protocol over serial... and its kernel
-driver requires explicit "write()" boundaries at places where packet
-boundaries should be.
+Thank you!
 
-So I can send SMS using low level g_at... functions (that are not
-normally accessible), but not using g_at_chat_send().
-
-If anyone has good idea for clean (or clean enough) solution, let me
-know.
-
-Best regards,
-									Pavel
-
-   snprintf(buf, sizeof(buf), "AT+GCMGS=3D\r");
-   encode_hex_own_buf(pdu, pdu_len, 0, buf_pdu);
-
-#if WANT_IT_BROKEN
-        strcat(buf, buf_pdu+2);
-        g_at_chat_send(data->send_chat, buf, none_prefix, NULL, data, NULL);
-#else
-        g_at_io_write(data->send_chat->parent->io, buf, strlen(buf));
- 	g_at_io_write(data->send_chat->parent->io, buf_pdu, strlen(buf_pdu));
-	g_io_channel_flush(data->send_chat->parent->io->channel, NULL);
-#endif
-		=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---W/nzBZO5zC0uMSeA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1PT7wACgkQMOfwapXb+vLHKQCbB1FXu15H78z7H1X+NaG1Y/pJ
-UfsAn1FJ/Qlz2GsssMPxTbGJBNgwHcZZ
-=YHx4
------END PGP SIGNATURE-----
-
---W/nzBZO5zC0uMSeA--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
