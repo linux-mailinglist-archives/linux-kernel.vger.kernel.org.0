@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ACA388DCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD37188D68
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbfHJUtL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:49:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54738 "EHLO
+        id S1727247AbfHJUpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:45:51 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55430 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726767AbfHJUn7 (ORCPT
+        by vger.kernel.org with ESMTP id S1726917AbfHJUoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:59 -0400
+        Sat, 10 Aug 2019 16:44:08 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDV-00053j-Cl; Sat, 10 Aug 2019 21:43:57 +0100
+        id 1hwYDe-00053h-Pe; Sat, 10 Aug 2019 21:44:06 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDO-0003jL-8o; Sat, 10 Aug 2019 21:43:50 +0100
+        id 1hwYDK-0003cQ-Li; Sat, 10 Aug 2019 21:43:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jason Wang" <jasowang@redhat.com>,
-        "Stefan Hajnoczi" <stefanha@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
+        "Steffen Klassert" <steffen.klassert@secunet.com>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.806417010@decadent.org.uk>
+Message-ID: <lsq.1565469607.86940932@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 133/157] vhost_net: fix possible infinite loop
+Subject: [PATCH 3.16 062/157] xfrm4: Reload skb header pointers after
+ calling pskb_may_pull.
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,110 +47,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
-commit e2412c07f8f3040593dfb88207865a3cd58680c0 upstream.
+commit ea673a4d3a337184f3c314dcc6300bf02f39e077 upstream.
 
-When the rx buffer is too small for a packet, we will discard the vq
-descriptor and retry it for the next packet:
+A call to pskb_may_pull may change the pointers into the packet,
+so reload the pointers after the call.
 
-while ((sock_len = vhost_net_rx_peek_head_len(net, sock->sk,
-					      &busyloop_intr))) {
-...
-	/* On overrun, truncate and discard */
-	if (unlikely(headcount > UIO_MAXIOV)) {
-		iov_iter_init(&msg.msg_iter, READ, vq->iov, 1, 1);
-		err = sock->ops->recvmsg(sock, &msg,
-					 1, MSG_DONTWAIT | MSG_TRUNC);
-		pr_debug("Discarded rx packet: len %zd\n", sock_len);
-		continue;
-	}
-...
-}
-
-This makes it possible to trigger a infinite while..continue loop
-through the co-opreation of two VMs like:
-
-1) Malicious VM1 allocate 1 byte rx buffer and try to slow down the
-   vhost process as much as possible e.g using indirect descriptors or
-   other.
-2) Malicious VM2 generate packets to VM1 as fast as possible
-
-Fixing this by checking against weight at the end of RX and TX
-loop. This also eliminate other similar cases when:
-
-- userspace is consuming the packets in the meanwhile
-- theoretical TOCTOU attack if guest moving avail index back and forth
-  to hit the continue after vhost find guest just add new buffers
-
-This addresses CVE-2019-3900.
-
-Fixes: d8316f3991d20 ("vhost: fix total length when packets are too short")
-Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-[bwh: Backported to 3.16:
- - Both Tx modes are handled in one loop in handle_tx()
- - Adjust context]
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/vhost/net.c | 29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
+ net/ipv4/xfrm4_policy.c | 33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -369,7 +369,7 @@ static void handle_tx(struct vhost_net *
- 	hdr_size = nvq->vhost_hlen;
- 	zcopy = nvq->ubufs;
- 
--	for (;;) {
-+	do {
- 		/* Release DMAs done buffers first */
- 		if (zcopy)
- 			vhost_zerocopy_signal_used(net, vq);
-@@ -457,9 +457,7 @@ static void handle_tx(struct vhost_net *
- 			vhost_zerocopy_signal_used(net, vq);
- 		total_len += len;
- 		vhost_net_tx_packet(net);
--		if (vhost_exceeds_weight(vq, ++sent_pkts, total_len))
--			break;
--	}
-+	} while (likely(!vhost_exceeds_weight(vq, ++sent_pkts, total_len)));
- out:
- 	mutex_unlock(&vq->mutex);
- }
-@@ -595,7 +593,10 @@ static void handle_rx(struct vhost_net *
- 		vq->log : NULL;
- 	mergeable = vhost_has_feature(vq, VIRTIO_NET_F_MRG_RXBUF);
- 
--	while ((sock_len = peek_head_len(sock->sk))) {
-+	do {
-+		sock_len = peek_head_len(sock->sk);
-+		if (!sock_len)
-+			break;
- 		sock_len += sock_hlen;
- 		vhost_len = sock_len + vhost_hlen;
- 		headcount = get_rx_bufs(vq, vq->heads, vhost_len,
-@@ -665,9 +666,8 @@ static void handle_rx(struct vhost_net *
- 		if (unlikely(vq_log))
- 			vhost_log_write(vq, vq_log, log, vhost_len);
- 		total_len += vhost_len;
--		if (unlikely(vhost_exceeds_weight(vq, ++recv_pkts, total_len)))
--			break;
--	}
-+	} while (likely(!vhost_exceeds_weight(vq, ++recv_pkts, total_len)));
+--- a/net/ipv4/xfrm4_policy.c
++++ b/net/ipv4/xfrm4_policy.c
+@@ -123,7 +123,10 @@ _decode_session4(struct sk_buff *skb, st
+ 		case IPPROTO_DCCP:
+ 			if (xprth + 4 < skb->data ||
+ 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
+-				__be16 *ports = (__be16 *)xprth;
++				__be16 *ports;
 +
- out:
- 	mutex_unlock(&vq->mutex);
- }
-@@ -737,7 +737,7 @@ static int vhost_net_open(struct inode *
- 		n->vqs[i].sock_hlen = 0;
- 	}
- 	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX,
--		       VHOST_NET_WEIGHT, VHOST_NET_PKT_WEIGHT);
-+		       VHOST_NET_PKT_WEIGHT, VHOST_NET_WEIGHT);
++				xprth = skb_network_header(skb) + iph->ihl * 4;
++				ports = (__be16 *)xprth;
  
- 	vhost_poll_init(n->poll + VHOST_NET_VQ_TX, handle_tx_net, POLLOUT, dev);
- 	vhost_poll_init(n->poll + VHOST_NET_VQ_RX, handle_rx_net, POLLIN, dev);
+ 				fl4->fl4_sport = ports[!!reverse];
+ 				fl4->fl4_dport = ports[!reverse];
+@@ -133,7 +136,10 @@ _decode_session4(struct sk_buff *skb, st
+ 		case IPPROTO_ICMP:
+ 			if (xprth + 2 < skb->data ||
+ 			    pskb_may_pull(skb, xprth + 2 - skb->data)) {
+-				u8 *icmp = xprth;
++				u8 *icmp;
++
++				xprth = skb_network_header(skb) + iph->ihl * 4;
++				icmp = xprth;
+ 
+ 				fl4->fl4_icmp_type = icmp[0];
+ 				fl4->fl4_icmp_code = icmp[1];
+@@ -143,7 +149,10 @@ _decode_session4(struct sk_buff *skb, st
+ 		case IPPROTO_ESP:
+ 			if (xprth + 4 < skb->data ||
+ 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
+-				__be32 *ehdr = (__be32 *)xprth;
++				__be32 *ehdr;
++
++				xprth = skb_network_header(skb) + iph->ihl * 4;
++				ehdr = (__be32 *)xprth;
+ 
+ 				fl4->fl4_ipsec_spi = ehdr[0];
+ 			}
+@@ -152,7 +161,10 @@ _decode_session4(struct sk_buff *skb, st
+ 		case IPPROTO_AH:
+ 			if (xprth + 8 < skb->data ||
+ 			    pskb_may_pull(skb, xprth + 8 - skb->data)) {
+-				__be32 *ah_hdr = (__be32 *)xprth;
++				__be32 *ah_hdr;
++
++				xprth = skb_network_header(skb) + iph->ihl * 4;
++				ah_hdr = (__be32 *)xprth;
+ 
+ 				fl4->fl4_ipsec_spi = ah_hdr[1];
+ 			}
+@@ -161,7 +173,10 @@ _decode_session4(struct sk_buff *skb, st
+ 		case IPPROTO_COMP:
+ 			if (xprth + 4 < skb->data ||
+ 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
+-				__be16 *ipcomp_hdr = (__be16 *)xprth;
++				__be16 *ipcomp_hdr;
++
++				xprth = skb_network_header(skb) + iph->ihl * 4;
++				ipcomp_hdr = (__be16 *)xprth;
+ 
+ 				fl4->fl4_ipsec_spi = htonl(ntohs(ipcomp_hdr[1]));
+ 			}
+@@ -170,8 +185,12 @@ _decode_session4(struct sk_buff *skb, st
+ 		case IPPROTO_GRE:
+ 			if (xprth + 12 < skb->data ||
+ 			    pskb_may_pull(skb, xprth + 12 - skb->data)) {
+-				__be16 *greflags = (__be16 *)xprth;
+-				__be32 *gre_hdr = (__be32 *)xprth;
++				__be16 *greflags;
++				__be32 *gre_hdr;
++
++				xprth = skb_network_header(skb) + iph->ihl * 4;
++				greflags = (__be16 *)xprth;
++				gre_hdr = (__be32 *)xprth;
+ 
+ 				if (greflags[0] & GRE_KEY) {
+ 					if (greflags[0] & GRE_CSUM)
 
