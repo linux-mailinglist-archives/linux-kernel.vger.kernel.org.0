@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2B488E19
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D977A88E3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 22:53:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfHJUvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 16:51:53 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54180 "EHLO
+        id S1727784AbfHJUwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 16:52:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53984 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726601AbfHJUnw (ORCPT
+        by vger.kernel.org with ESMTP id S1726538AbfHJUnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 16:43:52 -0400
+        Sat, 10 Aug 2019 16:43:50 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDM-00053W-Va; Sat, 10 Aug 2019 21:43:49 +0100
+        id 1hwYDK-00053q-8X; Sat, 10 Aug 2019 21:43:46 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hwYDJ-0003bC-Ta; Sat, 10 Aug 2019 21:43:45 +0100
+        id 1hwYDJ-0003aA-Ex; Sat, 10 Aug 2019 21:43:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Simon Wunderlich" <sw@simonwunderlich.de>,
-        "Sven Eckelmann" <sven@narfation.org>,
-        "Antonio Quartulli" <a@unstable.cc>,
-        "Martin Weinelt" <martin@linuxlounge.net>
+        "Lin Yi" <teroincn@163.com>, "Johan Hovold" <johan@kernel.org>
 Date:   Sat, 10 Aug 2019 21:40:07 +0100
-Message-ID: <lsq.1565469607.834087516@decadent.org.uk>
+Message-ID: <lsq.1565469607.721808367@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 047/157] batman-adv: Reduce tt_global hash refcnt
- only for removed entry
+Subject: [PATCH 3.16 034/157] USB: serial: mos7720: fix mos_parport
+ refcount imbalance on error path
 In-Reply-To: <lsq.1565469607.188083258@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,72 +47,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Lin Yi <teroincn@163.com>
 
-commit f131a56880d10932931e74773fb8702894a94a75 upstream.
+commit 2908b076f5198d231de62713cb2b633a3a4b95ac upstream.
 
-The batadv_hash_remove is a function which searches the hashtable for an
-entry using a needle, a hashtable bucket selection function and a compare
-function. It will lock the bucket list and delete an entry when the compare
-function matches it with the needle. It returns the pointer to the
-hlist_node which matches or NULL when no entry matches the needle.
+The write_parport_reg_nonblock() helper takes a reference to the struct
+mos_parport, but failed to release it in a couple of error paths after
+allocation failures, leading to a memory leak.
 
-The batadv_tt_global_free is not itself protected in anyway to avoid that
-any other function is modifying the hashtable between the search for the
-entry and the call to batadv_hash_remove. It can therefore happen that the
-entry either doesn't exist anymore or an entry was deleted which is not the
-same object as the needle. In such an situation, the reference counter (for
-the reference stored in the hashtable) must not be reduced for the needle.
-Instead the reference counter of the actually removed entry has to be
-reduced.
+Johan said that move the kref_get() and mos_parport assignment to the
+end of urbtrack initialisation is a better way, so move it. and
+mos_parport do not used until urbtrack initialisation.
 
-Otherwise the reference counter will underflow and the object might be
-freed before all its references were dropped. The kref helpers reported
-this problem as:
-
-  refcount_t: underflow; use-after-free.
-
-Fixes: 7683fdc1e886 ("batman-adv: protect the local and the global trans-tables with rcu")
-Reported-by: Martin Weinelt <martin@linuxlounge.net>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Antonio Quartulli <a@unstable.cc>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Lin Yi <teroincn@163.com>
+Fixes: b69578df7e98 ("USB: usbserial: mos7720: add support for parallel port on moschip 7715")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/batman-adv/translation-table.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/usb/serial/mos7720.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -483,14 +483,26 @@ static void batadv_tt_global_free(struct
- 				  struct batadv_tt_global_entry *tt_global,
- 				  const char *message)
- {
-+	struct batadv_tt_global_entry *tt_removed_entry;
-+	struct hlist_node *tt_removed_node;
-+
- 	batadv_dbg(BATADV_DBG_TT, bat_priv,
- 		   "Deleting global tt entry %pM (vid: %d): %s\n",
- 		   tt_global->common.addr,
- 		   BATADV_PRINT_VID(tt_global->common.vid), message);
+--- a/drivers/usb/serial/mos7720.c
++++ b/drivers/usb/serial/mos7720.c
+@@ -362,8 +362,6 @@ static int write_parport_reg_nonblock(st
+ 	if (!urbtrack)
+ 		return -ENOMEM;
  
--	batadv_hash_remove(bat_priv->tt.global_hash, batadv_compare_tt,
--			   batadv_choose_tt, &tt_global->common);
--	batadv_tt_global_entry_free_ref(tt_global);
-+	tt_removed_node = batadv_hash_remove(bat_priv->tt.global_hash,
-+					     batadv_compare_tt,
-+					     batadv_choose_tt,
-+					     &tt_global->common);
-+	if (!tt_removed_node)
-+		return;
-+
-+	/* drop reference of remove hash entry */
-+	tt_removed_entry = hlist_entry(tt_removed_node,
-+				       struct batadv_tt_global_entry,
-+				       common.hash_entry);
-+	batadv_tt_global_entry_free_ref(tt_removed_entry);
- }
+-	kref_get(&mos_parport->ref_count);
+-	urbtrack->mos_parport = mos_parport;
+ 	urbtrack->urb = usb_alloc_urb(0, GFP_ATOMIC);
+ 	if (!urbtrack->urb) {
+ 		kfree(urbtrack);
+@@ -384,6 +382,8 @@ static int write_parport_reg_nonblock(st
+ 			     usb_sndctrlpipe(usbdev, 0),
+ 			     (unsigned char *)urbtrack->setup,
+ 			     NULL, 0, async_complete, urbtrack);
++	kref_get(&mos_parport->ref_count);
++	urbtrack->mos_parport = mos_parport;
+ 	kref_init(&urbtrack->ref_count);
+ 	INIT_LIST_HEAD(&urbtrack->urblist_entry);
  
- /**
 
