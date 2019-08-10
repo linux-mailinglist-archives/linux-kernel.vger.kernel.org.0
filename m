@@ -2,261 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C6AA88777
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 03:11:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D9CC88780
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2019 03:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729571AbfHJBLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 9 Aug 2019 21:11:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45887 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbfHJBLI (ORCPT
+        id S1729588AbfHJBZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 9 Aug 2019 21:25:33 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:32962 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726870AbfHJBZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Aug 2019 21:11:08 -0400
-Received: from 96-95-199-68-static.hfc.comcastbusiness.net ([96.95.199.68] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1hwFuC-0005Sj-13; Sat, 10 Aug 2019 01:10:49 +0000
-Date:   Sat, 10 Aug 2019 03:10:34 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelianov <xemul@virtuozzo.com>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-Subject: Re: [PATCH v4 1/2] fork: extend clone3() to support CLONE_SET_TID
-Message-ID: <20190810011033.ns23e7ivlnzkwj6f@wittgenstein>
-References: <20190808212222.28276-1-areber@redhat.com>
+        Fri, 9 Aug 2019 21:25:32 -0400
+Received: by mail-ed1-f65.google.com with SMTP id i11so33457238edq.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2019 18:25:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NDyGTNUlAIJSsd2gHGS97/3RJOYDdm2ReyWWRSQNAzg=;
+        b=rnqIjeWamgRoNEkmSdp39pB4BHD1ZMt45SlShR8HNFjMDhN+EjIZH1x028jBcpwUZ6
+         nLlNFlMHMSmS09IR7hdl4AwWuxn2f9bznUcheJibNXsHTnIPa5U1ZnYDe5ZhsHaG2g0/
+         QrjOwGHUGFrU7n5Ql8hjNRdhxosQw6mXCZTobGXWy3uL8PEvoeTagZpF/z7265RjkQY8
+         +48uZNT0js6SJ6a9DZ+P03EMdxBDq8PghuHSRJ5m1wG3LFSWCf2qnGw8KR5lMA+swFeh
+         Mg8qAgV32mMdpMrXPhIzqOKGMvQT9EFULGegNcmGFzuCKNkEfuinPRrZr2vIfo80Gssz
+         l8cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NDyGTNUlAIJSsd2gHGS97/3RJOYDdm2ReyWWRSQNAzg=;
+        b=b0P3LU0NRizcHlb7gNt4HkIqYYjjHrKg2busmCVJNtnseVxXUIt29dJnji+hF+tRJs
+         ehv3qwb2k1TKqlBTc/dIRYRGsFt5jBpdui1CJBaaa7BLV9uPmY3nrShNb5KTtsdyiYVZ
+         Zjdslugt/m3xb7VxxuDnmgC8H/ktw4tkLyBe4fam4FKV1ttbj94rPjftHFbw771nQggB
+         gSxcUUFFMYfU6I+qXt5TRJNNzKkF8ZIrZuj2xg1ezhxq29K8Hne9AbyU9M2zHehqyx6q
+         8WZj8k3J2d/d3JzFS93Mua7f31Hx8/gpBLl3cMm+A2d1nwVMRQ2BNEXQoxq7HeAqm11U
+         PigA==
+X-Gm-Message-State: APjAAAVjLOz2DgB4CqORfuhM6oxFXssBnE7lSPYNqf4s//tx9WO2BXLt
+        yz6K03Y5qj7pJ1wrntvMrNCXBYl1K1uw4Tr7elc=
+X-Google-Smtp-Source: APXvYqzWyFYDx6zcjLqAejhETmd/jBdE6rJma6bcs3NyI8MGZ5uR1f65UlvFOn7nFq6uMf2yTdb4UOQup4s6tdjBgOU=
+X-Received: by 2002:aa7:cf8e:: with SMTP id z14mr25154937edx.40.1565400330482;
+ Fri, 09 Aug 2019 18:25:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190808212222.28276-1-areber@redhat.com>
-User-Agent: NeoMutt/20180716
+References: <20190808071808.6531-1-hslester96@gmail.com> <87y302segw.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87y302segw.fsf@concordia.ellerman.id.au>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Sat, 10 Aug 2019 09:25:19 +0800
+Message-ID: <CANhBUQ3VpwxyMpQ29kphcowgmpPPTBLtBV19tBGVX82uUs=Wmw@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/mm: Use refcount_t for refcount
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 11:22:21PM +0200, Adrian Reber wrote:
-> The main motivation to add set_tid to clone3() is CRIU.
-> 
-> To restore a process with the same PID/TID CRIU currently uses
-> /proc/sys/kernel/ns_last_pid. It writes the desired (PID - 1) to
-> ns_last_pid and then (quickly) does a clone(). This works most of the
-> time, but it is racy. It is also slow as it requires multiple syscalls.
-> 
-> Extending clone3() to support set_tid makes it possible restore a
-> process using CRIU without accessing /proc/sys/kernel/ns_last_pid and
-> race free (as long as the desired PID/TID is available).
-> 
-> This clone3() extension places the same restrictions (CAP_SYS_ADMIN)
-> on clone3() with set_tid as they are currently in place for ns_last_pid.
-> 
-> Signed-off-by: Adrian Reber <areber@redhat.com>
-> ---
-> v2:
->  - Removed (size < sizeof(struct clone_args)) as discussed with
->    Christian and Dmitry
->  - Added comment to ((set_tid != 1) && idr_get_cursor() <= 1) (Oleg)
->  - Use idr_alloc() instead of idr_alloc_cyclic() (Oleg)
-> 
-> v3:
->  - Return EEXIST if PID is already in use (Christian)
->  - Drop CLONE_SET_TID (Christian and Oleg)
->  - Use idr_is_empty() instead of idr_get_cursor() (Oleg)
->  - Handle different `struct clone_args` sizes (Dmitry)
-> 
-> v4:
->  - Rework struct size check with defines (Christian)
->  - Reduce number of set_tid checks (Oleg)
->  - Less parentheses and more robust code (Oleg)
->  - Do ns_capable() on correct user_ns (Oleg, Christian)
-> ---
->  include/linux/pid.h        |  2 +-
->  include/linux/sched/task.h |  1 +
->  include/uapi/linux/sched.h |  1 +
->  kernel/fork.c              | 25 +++++++++++++++++++++++--
->  kernel/pid.c               | 34 +++++++++++++++++++++++++++-------
->  5 files changed, 53 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/pid.h b/include/linux/pid.h
-> index 2a83e434db9d..052000db0ced 100644
-> --- a/include/linux/pid.h
-> +++ b/include/linux/pid.h
-> @@ -116,7 +116,7 @@ extern struct pid *find_vpid(int nr);
->  extern struct pid *find_get_pid(int nr);
->  extern struct pid *find_ge_pid(int nr, struct pid_namespace *);
->  
-> -extern struct pid *alloc_pid(struct pid_namespace *ns);
-> +extern struct pid *alloc_pid(struct pid_namespace *ns, pid_t set_tid);
->  extern void free_pid(struct pid *pid);
->  extern void disable_pid_allocation(struct pid_namespace *ns);
->  
-> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-> index 0497091e40c1..4f2a80564332 100644
-> --- a/include/linux/sched/task.h
-> +++ b/include/linux/sched/task.h
-> @@ -26,6 +26,7 @@ struct kernel_clone_args {
->  	unsigned long stack;
->  	unsigned long stack_size;
->  	unsigned long tls;
-> +	pid_t set_tid;
->  };
->  
->  /*
-> diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
-> index b3105ac1381a..e1ce103a2c47 100644
-> --- a/include/uapi/linux/sched.h
-> +++ b/include/uapi/linux/sched.h
-> @@ -45,6 +45,7 @@ struct clone_args {
->  	__aligned_u64 stack;
->  	__aligned_u64 stack_size;
->  	__aligned_u64 tls;
-> +	__aligned_u64 set_tid;
->  };
->  
->  /*
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 2852d0e76ea3..2a03f0e201e9 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -117,6 +117,13 @@
->   */
->  #define MAX_THREADS FUTEX_TID_MASK
->  
-> +/*
-> + * Different sizes of struct clone_args
-> + */
-> +#define CLONE3_ARGS_SIZE_V0 64
-> +/* V1 includes set_tid */
-> +#define CLONE3_ARGS_SIZE_V1 72
-> +
->  /*
->   * Protected counters by write_lock_irq(&tasklist_lock)
->   */
-> @@ -2031,7 +2038,13 @@ static __latent_entropy struct task_struct *copy_process(
->  	stackleak_task_init(p);
->  
->  	if (pid != &init_struct_pid) {
-> -		pid = alloc_pid(p->nsproxy->pid_ns_for_children);
-> +		if (args->set_tid && !ns_capable(
-> +				p->nsproxy->pid_ns_for_children->user_ns,
-> +				CAP_SYS_ADMIN)) {
-> +			retval = -EPERM;
-> +			goto bad_fork_cleanup_thread;
-> +		}
-> +		pid = alloc_pid(p->nsproxy->pid_ns_for_children, args->set_tid);
->  		if (IS_ERR(pid)) {
->  			retval = PTR_ERR(pid);
->  			goto bad_fork_cleanup_thread;
-> @@ -2535,9 +2548,14 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
->  	if (unlikely(size > PAGE_SIZE))
->  		return -E2BIG;
->  
-> -	if (unlikely(size < sizeof(struct clone_args)))
-> +	/* The struct needs to be at least the size of the original struct. */
+On Fri, Aug 9, 2019 at 8:36 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+> Chuhong Yuan <hslester96@gmail.com> writes:
+> > Reference counters are preferred to use refcount_t instead of
+> > atomic_t.
+> > This is because the implementation of refcount_t can prevent
+> > overflows and detect possible use-after-free.
+> > So convert atomic_t ref counters to refcount_t.
+> >
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+>
+> Thanks.
+>
+> We don't have a fast implementation of refcount_t, so I'm worried this
+> could cause a measurable performance regression.
+>
+> Did you benchmark it at all?
+>
 
-I don't think you need that comment. I think the macro is pretty
-self-explanatory. If you want it to be even clearer you could even make
-it CLONE3_ARGS_SIZE_MIN but V0 is good enough. :)
+I did not benchmark it and I don't have the testing environment...
 
-> +	if (unlikely(size < CLONE3_ARGS_SIZE_V0))
->  		return -EINVAL;
->  
-> +	if (size < sizeof(struct clone_args))
-> +		memset((void *)&args + size, 0,
-> +				sizeof(struct clone_args) - size);
-> +
->  	if (unlikely(!access_ok(uargs, size)))
->  		return -EFAULT;
->  
-> @@ -2573,6 +2591,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
->  		.tls		= args.tls,
->  	};
->  
-> +	if (size >= CLONE3_ARGS_SIZE_V1)
-> +		kargs->set_tid = args.set_tid;
-
-Hm, the if-condition is not needed though, right? At this point we will
-have already copied from struct clone_args __user *uargs into struct
-clone_args args. If we hit that codepath that means the kernel
-definitely has a field for set_tid in its struct clone_args. :) So this
-could probably just be:
-
-   		.tls		= args.tls,
-		.set_tid	= args.set_tid,
-	}
-
-	?
-
-> +
->  	return 0;
->  }
->  
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 0a9f2e437217..9ce89c35c5be 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -157,7 +157,7 @@ void free_pid(struct pid *pid)
->  	call_rcu(&pid->rcu, delayed_put_pid);
->  }
->  
-> -struct pid *alloc_pid(struct pid_namespace *ns)
-> +struct pid *alloc_pid(struct pid_namespace *ns, int set_tid)
->  {
->  	struct pid *pid;
->  	enum pid_type type;
-> @@ -186,12 +186,32 @@ struct pid *alloc_pid(struct pid_namespace *ns)
->  		if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
->  			pid_min = RESERVED_PIDS;
->  
-> -		/*
-> -		 * Store a null pointer so find_pid_ns does not find
-> -		 * a partially initialized PID (see below).
-> -		 */
-> -		nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> -				      pid_max, GFP_ATOMIC);
-> +		if (set_tid) {
-> +			/*
-> +			 * Also fail if a PID != 1 is requested
-> +			 * and no PID 1 exists.
-> +			 */
-> +			nr = -EINVAL;
-> +			if (set_tid < pid_max && set_tid > 0 &&
-
-Hm, you're already in the if-branch hat verified if (set_tid) so the
-set_tid > 0 conjunct seems redundant. :)
-
-> +			    (set_tid == 1 || !idr_is_empty(&tmp->idr)))
-> +				nr = idr_alloc(&tmp->idr, NULL, set_tid,
-> +					       set_tid + 1, GFP_ATOMIC);
-
-I'm confused, shouldn't this be
-
-	if (set_tid < pid_max || (set_tid == 1 && !idr_is_emtpy(&tmp->idf)))
-
-> +			/*
-> +			 * If ENOSPC is returned it means that the PID is
-> +			 * alreay in use. Return EEXIST in that case.
-> +			 */
-> +			if (nr == -ENOSPC)
-> +				nr = -EEXIST;
-> +			/* Only use set_tid for one PID namespace. */
-> +			set_tid = 0;
-> +		} else {
-> +			/*
-> +			 * Store a null pointer so find_pid_ns does not find
-> +			 * a partially initialized PID (see below).
-> +			 */
-> +			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> +					      pid_max, GFP_ATOMIC);
-> +		}
->  		spin_unlock_irq(&pidmap_lock);
->  		idr_preload_end();
->  
-> -- 
-> 2.21.0
-> 
+> cheers
+>
+> > diff --git a/arch/powerpc/mm/book3s64/mmu_context.c b/arch/powerpc/mm/book3s64/mmu_context.c
+> > index 2d0cb5ba9a47..f836fd5a6abc 100644
+> > --- a/arch/powerpc/mm/book3s64/mmu_context.c
+> > +++ b/arch/powerpc/mm/book3s64/mmu_context.c
+> > @@ -231,7 +231,7 @@ static void pmd_frag_destroy(void *pmd_frag)
+> >       /* drop all the pending references */
+> >       count = ((unsigned long)pmd_frag & ~PAGE_MASK) >> PMD_FRAG_SIZE_SHIFT;
+> >       /* We allow PTE_FRAG_NR fragments from a PTE page */
+> > -     if (atomic_sub_and_test(PMD_FRAG_NR - count, &page->pt_frag_refcount)) {
+> > +     if (refcount_sub_and_test(PMD_FRAG_NR - count, &page->pt_frag_refcount)) {
+> >               pgtable_pmd_page_dtor(page);
+> >               __free_page(page);
+> >       }
+> > diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
+> > index 7d0e0d0d22c4..40056896ce4e 100644
+> > --- a/arch/powerpc/mm/book3s64/pgtable.c
+> > +++ b/arch/powerpc/mm/book3s64/pgtable.c
+> > @@ -277,7 +277,7 @@ static pmd_t *__alloc_for_pmdcache(struct mm_struct *mm)
+> >               return NULL;
+> >       }
+> >
+> > -     atomic_set(&page->pt_frag_refcount, 1);
+> > +     refcount_set(&page->pt_frag_refcount, 1);
+> >
+> >       ret = page_address(page);
+> >       /*
+> > @@ -294,7 +294,7 @@ static pmd_t *__alloc_for_pmdcache(struct mm_struct *mm)
+> >        * count.
+> >        */
+> >       if (likely(!mm->context.pmd_frag)) {
+> > -             atomic_set(&page->pt_frag_refcount, PMD_FRAG_NR);
+> > +             refcount_set(&page->pt_frag_refcount, PMD_FRAG_NR);
+> >               mm->context.pmd_frag = ret + PMD_FRAG_SIZE;
+> >       }
+> >       spin_unlock(&mm->page_table_lock);
+> > @@ -317,8 +317,7 @@ void pmd_fragment_free(unsigned long *pmd)
+> >  {
+> >       struct page *page = virt_to_page(pmd);
+> >
+> > -     BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
+> > -     if (atomic_dec_and_test(&page->pt_frag_refcount)) {
+> > +     if (refcount_dec_and_test(&page->pt_frag_refcount)) {
+> >               pgtable_pmd_page_dtor(page);
+> >               __free_page(page);
+> >       }
+> > diff --git a/arch/powerpc/mm/pgtable-frag.c b/arch/powerpc/mm/pgtable-frag.c
+> > index a7b05214760c..4ef8231b677f 100644
+> > --- a/arch/powerpc/mm/pgtable-frag.c
+> > +++ b/arch/powerpc/mm/pgtable-frag.c
+> > @@ -24,7 +24,7 @@ void pte_frag_destroy(void *pte_frag)
+> >       /* drop all the pending references */
+> >       count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
+> >       /* We allow PTE_FRAG_NR fragments from a PTE page */
+> > -     if (atomic_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
+> > +     if (refcount_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
+> >               pgtable_page_dtor(page);
+> >               __free_page(page);
+> >       }
+> > @@ -71,7 +71,7 @@ static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
+> >                       return NULL;
+> >       }
+> >
+> > -     atomic_set(&page->pt_frag_refcount, 1);
+> > +     refcount_set(&page->pt_frag_refcount, 1);
+> >
+> >       ret = page_address(page);
+> >       /*
+> > @@ -87,7 +87,7 @@ static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
+> >        * count.
+> >        */
+> >       if (likely(!pte_frag_get(&mm->context))) {
+> > -             atomic_set(&page->pt_frag_refcount, PTE_FRAG_NR);
+> > +             refcount_set(&page->pt_frag_refcount, PTE_FRAG_NR);
+> >               pte_frag_set(&mm->context, ret + PTE_FRAG_SIZE);
+> >       }
+> >       spin_unlock(&mm->page_table_lock);
+> > @@ -110,8 +110,7 @@ void pte_fragment_free(unsigned long *table, int kernel)
+> >  {
+> >       struct page *page = virt_to_page(table);
+> >
+> > -     BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
+> > -     if (atomic_dec_and_test(&page->pt_frag_refcount)) {
+> > +     if (refcount_dec_and_test(&page->pt_frag_refcount)) {
+> >               if (!kernel)
+> >                       pgtable_page_dtor(page);
+> >               __free_page(page);
+> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > index 3a37a89eb7a7..7fe23a3faf95 100644
+> > --- a/include/linux/mm_types.h
+> > +++ b/include/linux/mm_types.h
+> > @@ -14,6 +14,7 @@
+> >  #include <linux/uprobes.h>
+> >  #include <linux/page-flags-layout.h>
+> >  #include <linux/workqueue.h>
+> > +#include <linux/refcount.h>
+> >
+> >  #include <asm/mmu.h>
+> >
+> > @@ -147,7 +148,7 @@ struct page {
+> >                       unsigned long _pt_pad_2;        /* mapping */
+> >                       union {
+> >                               struct mm_struct *pt_mm; /* x86 pgds only */
+> > -                             atomic_t pt_frag_refcount; /* powerpc */
+> > +                             refcount_t pt_frag_refcount; /* powerpc */
+> >                       };
+> >  #if ALLOC_SPLIT_PTLOCKS
+> >                       spinlock_t *ptl;
+> > --
+> > 2.20.1
