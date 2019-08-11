@@ -2,95 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705FD89160
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 12:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C600089180
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 13:13:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfHKKlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 06:41:07 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:41982 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726587AbfHKKlE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 06:41:04 -0400
-X-UUID: 035dacbbd7b443ca8f8ccbcfe730f91e-20190811
-X-UUID: 035dacbbd7b443ca8f8ccbcfe730f91e-20190811
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1089279554; Sun, 11 Aug 2019 18:40:56 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 11 Aug
- 2019 18:40:54 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
- MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Sun, 11 Aug 2019 18:40:53 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Jitao Shi <jitao.shi@mediatek.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <ck.hu@mediatek.com>, <stonea168@163.com>
-Subject: [PATCH v6 7/7] drm: mediatek: adjust dsi and mipi_tx probe sequence
-Date:   Sun, 11 Aug 2019 18:40:08 +0800
-Message-ID: <20190811104008.53372-8-jitao.shi@mediatek.com>
+        id S1726231AbfHKLJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 07:09:34 -0400
+Received: from mail.bugwerft.de ([46.23.86.59]:58526 "EHLO mail.bugwerft.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726029AbfHKLJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Aug 2019 07:09:34 -0400
+X-Greylist: delayed 433 seconds by postgrey-1.27 at vger.kernel.org; Sun, 11 Aug 2019 07:09:33 EDT
+Received: from localhost.localdomain (p57BC9E04.dip0.t-ipconnect.de [87.188.158.4])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 3D0F429A1F4;
+        Sun, 11 Aug 2019 10:58:23 +0000 (UTC)
+From:   Daniel Mack <daniel@zonque.org>
+To:     gregkh@linuxfoundation.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Mack <daniel@zonque.org>
+Subject: [PATCH] uio: uio_pdrv_genirq: Make UIO name controllable via DT node property
+Date:   Sun, 11 Aug 2019 13:02:13 +0200
+Message-Id: <20190811110213.5537-1-daniel@zonque.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190811104008.53372-1-jitao.shi@mediatek.com>
-References: <20190811104008.53372-1-jitao.shi@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-TM-SNTS-SMTP: F406B3C082464647BA30F6630EE6FAEF64DFDB60DBCFFF655D16DEC9BB6AEA842000:8
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mtk_mipi_tx is the phy of mtk_dsi.
-mtk_dsi get the phy(mtk_mipi_tx) in probe().
+When probed via DT, the uio_pdrv_genirq driver currently uses the name
+of the node and exposes that as name of the UIO device to userspace.
 
-So,  mtk_mipi_tx init should be ahead of mtk_dsi. Or mtk_dsi will
-defer to wait mtk_mipi_tx probe done.
+This doesn't work for systems where multiple nodes with the same name
+(but different unit addresses) are present, or for systems where the
+node names are auto-generated by a third-party tool.
 
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+This patch adds the possibility to read the UIO name from the optional
+"linux,uio-name" property.
+
+Signed-off-by: Daniel Mack <daniel@zonque.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/uio/uio_pdrv_genirq.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 95fdbd0fbcac..a762fd9111ff 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -630,8 +630,8 @@ static struct platform_driver * const mtk_drm_drivers[] = {
- 	&mtk_disp_rdma_driver,
- 	&mtk_dpi_driver,
- 	&mtk_drm_platform_driver,
--	&mtk_dsi_driver,
- 	&mtk_mipi_tx_driver,
-+	&mtk_dsi_driver,
- };
+diff --git a/drivers/uio/uio_pdrv_genirq.c b/drivers/uio/uio_pdrv_genirq.c
+index 6c759934bff3..24d60eb1bda5 100644
+--- a/drivers/uio/uio_pdrv_genirq.c
++++ b/drivers/uio/uio_pdrv_genirq.c
+@@ -105,12 +105,15 @@ static int uio_pdrv_genirq_irqcontrol(struct uio_info *dev_info, s32 irq_on)
+ static int uio_pdrv_genirq_probe(struct platform_device *pdev)
+ {
+ 	struct uio_info *uioinfo = dev_get_platdata(&pdev->dev);
++	struct device_node *node = pdev->dev.of_node;
+ 	struct uio_pdrv_genirq_platdata *priv;
+ 	struct uio_mem *uiomem;
+ 	int ret = -EINVAL;
+ 	int i;
  
- static int __init mtk_drm_init(void)
+-	if (pdev->dev.of_node) {
++	if (node) {
++		const char *name;
++
+ 		/* alloc uioinfo for one device */
+ 		uioinfo = devm_kzalloc(&pdev->dev, sizeof(*uioinfo),
+ 				       GFP_KERNEL);
+@@ -118,8 +121,13 @@ static int uio_pdrv_genirq_probe(struct platform_device *pdev)
+ 			dev_err(&pdev->dev, "unable to kmalloc\n");
+ 			return -ENOMEM;
+ 		}
+-		uioinfo->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%pOFn",
+-					       pdev->dev.of_node);
++
++		if (!of_property_read_string(node, "linux,uio-name", &name))
++			uioinfo->name = devm_kstrdup(&pdev->dev, name, GFP_KERNEL);
++		else
++			uioinfo->name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
++						       "%pOFn", node);
++
+ 		uioinfo->version = "devicetree";
+ 		/* Multiple IRQs are not supported */
+ 	}
 -- 
 2.21.0
 
