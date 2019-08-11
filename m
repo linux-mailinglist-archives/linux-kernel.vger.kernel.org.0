@@ -2,171 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD7458908C
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 10:13:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43B94890A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 10:23:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbfHKINE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 04:13:04 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36075 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726500AbfHKIM7 (ORCPT
+        id S1726463AbfHKIXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 04:23:09 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43628 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfHKIXJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 04:12:59 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z4so100070482qtc.3
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 01:12:58 -0700 (PDT)
+        Sun, 11 Aug 2019 04:23:09 -0400
+Received: by mail-pf1-f194.google.com with SMTP id v12so463954pfn.10
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 01:23:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wo4/uRiHIALFdqkgpwktSoLWl4QtwkIFB23okqQapww=;
+        b=RYEuc9J/vOST/W8tZzIQFZNhcC0yZxjak4y3HFNOKsVzosFaj1j7+3cCSOlDO6aLob
+         zYwcRhY0EbmDXngqblcVApgs6Ies9CuaXAimU1RXSz+M1rMSmXKtL7bnCwF2cOQ3Cod5
+         eTnRFr5flDU+XlSS2jM7wFNzqOBCNMIH8WXHE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lK2BvTRRqJlMRPRV20MG66suKP5my4fsNc+MbdelOFY=;
-        b=nGAy0K5Vf6UmF3MLjVr6dg6ZUYq91OSCG4zRRQmp9X5PxnrVr/4eiKtKsTvXuO+NVS
-         V56+bJiQdmNVe+qhJrBkL9OOZmrjFbOC0wlkwszbsVJLk1UXXWXhqS4Mk5N2HiSHbeCp
-         MoJW1mImCpO+SbNDKQpKfEIDAcljVbRZaxhEOlJkBRJTRmioYp68pTjgzz+NkiHA1NmV
-         E1JunfKyqdMR/ps1PBGm06eXKXsuYc67kx7wpzGYDOZg0ud9nGpbVXyUyIZcZdT6eXnb
-         9KN5Q4P7qS7zA7yAzIk3JsoEubbLBwzb/aZ+BG7NnDJMKDw6RWf7KXYvGVA3nhMe/xui
-         OHJw==
-X-Gm-Message-State: APjAAAWzvnxkm2E1+P2PnRRRa3TwpXKrdHd+i9FnakGarOggpclBEFo7
-        TJt6NWdlrZtVAJoasklByG3Sdw==
-X-Google-Smtp-Source: APXvYqyKfn4s+AIYTpA1AFYCjNuZfg0Z55WNP4r2G9r1W2+SGXIZqpz/IX3y8ci3TiAqrtmHL07K4w==
-X-Received: by 2002:ad4:4112:: with SMTP id i18mr8157789qvp.175.1565511178073;
-        Sun, 11 Aug 2019 01:12:58 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id l80sm26005979qke.24.2019.08.11.01.12.53
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wo4/uRiHIALFdqkgpwktSoLWl4QtwkIFB23okqQapww=;
+        b=RfN+YxT4q0a4EMKBE+IabWfzrQq+mrKgeW5lQSLLQBTxeBDnHoCL9ch58t01VpwCyp
+         Z2QELx6yF7uWLwLPuaWHIWn6wy3z0aKHGnzRE2D7CcxwJug7qoYRkUbAvkhLpRjUjaiW
+         Mu5fubJEp4hf7RNoJuu5jNaa/on1W1E2e1DFsn1oTpBzIM/tcv8GlCAQUGrkldjeUbmn
+         xztvL0dWkw0PyYTp/yJ9DmFSb3nGLeaXwqAFZprQJ3FHFj2718nz1ZijBpncojVduVRn
+         9H4Pu9/iNbXCDirOTTL0kPSgmu1viGa1q34XVpy+27BU88Md5enOP8X7s7B9Mjrsdpu5
+         hthQ==
+X-Gm-Message-State: APjAAAXMTAcq1rH82PDQgCA7v2RoZwG9njbIacyQfXMbcftVRCmYF1DU
+        bRLmXtryyqMplQc1Jm2iXgtZDg==
+X-Google-Smtp-Source: APXvYqymMdyFVk+KzTCVYi2Yr41UUABkv/0v1F5H5bRd/n3h6adkpBkfYEJXBbx789agxpQrjrHTlQ==
+X-Received: by 2002:a17:90a:8a15:: with SMTP id w21mr18096468pjn.134.1565511788520;
+        Sun, 11 Aug 2019 01:23:08 -0700 (PDT)
+Received: from ikjn-glaptop.roam.corp.google.com (36-224-206-174.dynamic-ip.hinet.net. [36.224.206.174])
+        by smtp.gmail.com with ESMTPSA id d14sm122742498pfo.154.2019.08.11.01.23.06
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 11 Aug 2019 01:12:56 -0700 (PDT)
-Date:   Sun, 11 Aug 2019 04:12:50 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Ram Pai <linuxram@us.ibm.com>
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linuxppc-devel@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Alexey Kardashevskiy <aik@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
-Message-ID: <20190811041035-mutt-send-email-mst@kernel.org>
-References: <87zhrj8kcp.fsf@morokweng.localdomain>
- <20190810143038-mutt-send-email-mst@kernel.org>
- <20190810220702.GA5964@ram.ibm.com>
+        Sun, 11 Aug 2019 01:23:08 -0700 (PDT)
+From:   Ikjoon Jang <ikjn@chromium.org>
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ikjoon Jang <ikjn@chromium.org>
+Subject: [PATCH] xhci: fix memleak on setup address fails.
+Date:   Sun, 11 Aug 2019 16:22:59 +0800
+Message-Id: <20190811082259.48176-1-ikjn@chromium.org>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190810220702.GA5964@ram.ibm.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 10, 2019 at 03:07:02PM -0700, Ram Pai wrote:
-> On Sat, Aug 10, 2019 at 02:57:17PM -0400, Michael S. Tsirkin wrote:
-> > On Tue, Jan 29, 2019 at 03:08:12PM -0200, Thiago Jung Bauermann wrote:
-> > > 
-> > > Hello,
-> > > 
-> > > With Christoph's rework of the DMA API that recently landed, the patch
-> > > below is the only change needed in virtio to make it work in a POWER
-> > > secure guest under the ultravisor.
-> > > 
-> > > The other change we need (making sure the device's dma_map_ops is NULL
-> > > so that the dma-direct/swiotlb code is used) can be made in
-> > > powerpc-specific code.
-> > > 
-> > > Of course, I also have patches (soon to be posted as RFC) which hook up
-> > > <linux/mem_encrypt.h> to the powerpc secure guest support code.
-> > > 
-> > > What do you think?
-> > > 
-> > > >From d0629a36a75c678b4a72b853f8f7f8c17eedd6b3 Mon Sep 17 00:00:00 2001
-> > > From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> > > Date: Thu, 24 Jan 2019 22:08:02 -0200
-> > > Subject: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
-> > > 
-> > > The host can't access the guest memory when it's encrypted, so using
-> > > regular memory pages for the ring isn't an option. Go through the DMA API.
-> > > 
-> > > Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> > > ---
-> > >  drivers/virtio/virtio_ring.c | 5 ++++-
-> > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > index cd7e755484e3..321a27075380 100644
-> > > --- a/drivers/virtio/virtio_ring.c
-> > > +++ b/drivers/virtio/virtio_ring.c
-> > > @@ -259,8 +259,11 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
-> > >  	 * not work without an even larger kludge.  Instead, enable
-> > >  	 * the DMA API if we're a Xen guest, which at least allows
-> > >  	 * all of the sensible Xen configurations to work correctly.
-> > > +	 *
-> > > +	 * Also, if guest memory is encrypted the host can't access
-> > > +	 * it directly. In this case, we'll need to use the DMA API.
-> > >  	 */
-> > > -	if (xen_domain())
-> > > +	if (xen_domain() || sev_active())
-> > >  		return true;
-> > > 
-> > >  	return false;
-> > 
-> > So I gave this lots of thought, and I'm coming round to
-> > basically accepting something very similar to this patch.
-> > 
-> > But not exactly like this :).
-> > 
-> > Let's see what are the requirements.
-> > 
-> > If
-> > 
-> > 1. We do not trust the device (so we want to use a bounce buffer with it)
-> > 2. DMA address is also a physical address of a buffer
-> > 
-> > then we should use DMA API with virtio.
-> > 
-> > 
-> > sev_active() above is one way to put (1).  I can't say I love it but
-> > it's tolerable.
-> > 
-> > 
-> > But we also want promise from DMA API about 2.
-> > 
-> > 
-> > Without promise 2 we simply can't use DMA API with a legacy device.
-> > 
-> > 
-> > Otherwise, on a SEV system with an IOMMU which isn't 1:1
-> > and with a virtio device without ACCESS_PLATFORM, we are trying
-> > to pass a virtual address, and devices without ACCESS_PLATFORM
-> > can only access CPU physical addresses.
-> > 
-> > So something like:
-> > 
-> > dma_addr_is_phys_addr?
-> 
-> 
-> On our Secure pseries platform,  dma address is physical address and this
-> proposal will help us, use DMA API. 
-> 
-> On our normal pseries platform, dma address is physical address too.
-> But we do not necessarily need to use the DMA API.  We can use the DMA
-> API, but our handlers will do the same thing, the generic virtio handlers
-> would do. If there is an opt-out option; even when dma addr is same as
-> physical addr, than there will be less code duplication.
-> 
-> Would something like this be better.
-> 
-> (dma_addr_is_phys_addr  && arch_want_to_use_dma_api()) ?
-> 
-> 
-> RP
+Xhci re-enables a slot on transaction error in set_address using
+xhci_disable_slot() + xhci_alloc_dev().
 
-I think sev_active() is an OK replacement for arch_want_to_use_dma_api.
-So just the addition of dma_addr_is_phys_addr would be enough.
+But in this case, xhci_alloc_dev() creates debugfs entries upon an
+existing device without cleaning up old entries, thus memory leaks.
 
-> 
-> > -- 
-> > MST
-> 
-> -- 
-> Ram Pai
+So this patch simply moves calling xhci_debugfs_free_dev() from
+xhci_free_dev() to xhci_disable_slot().
+
+Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+---
+ drivers/usb/host/xhci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 03d1e552769b..c24c5bf9ef9c 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3814,7 +3814,6 @@ static void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev)
+ 		virt_dev->eps[i].ep_state &= ~EP_STOP_CMD_PENDING;
+ 		del_timer_sync(&virt_dev->eps[i].stop_cmd_timer);
+ 	}
+-	xhci_debugfs_remove_slot(xhci, udev->slot_id);
+ 	virt_dev->udev = NULL;
+ 	ret = xhci_disable_slot(xhci, udev->slot_id);
+ 	if (ret)
+@@ -3832,6 +3831,8 @@ int xhci_disable_slot(struct xhci_hcd *xhci, u32 slot_id)
+ 	if (!command)
+ 		return -ENOMEM;
+ 
++	xhci_debugfs_remove_slot(xhci, slot_id);
++
+ 	spin_lock_irqsave(&xhci->lock, flags);
+ 	/* Don't disable the slot if the host controller is dead. */
+ 	state = readl(&xhci->op_regs->status);
+-- 
+2.23.0.rc1.153.gdeed80330f-goog
+
