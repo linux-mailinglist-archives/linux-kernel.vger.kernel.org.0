@@ -2,104 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5867D8932F
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 20:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 908B389330
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 20:50:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfHKSuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 14:50:04 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42203 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfHKSuE (ORCPT
+        id S1726539AbfHKSuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 14:50:08 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45058 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbfHKSuH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 14:50:04 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 15so4676500ljr.9
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 11:50:03 -0700 (PDT)
+        Sun, 11 Aug 2019 14:50:07 -0400
+Received: by mail-lf1-f65.google.com with SMTP id a30so9789375lfk.12
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 11:50:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HWRJ8Pcye0IhTFR2bXm/cIQMe1eta7Og2Pu/IVHaA48=;
-        b=kooF8enJAKY0dsAeYmSPELaQoJY4fmZHApmLcbQwxpk5KJvF28qI87zJfPq4Hki8Wy
-         nLzaurYBRhJdtgxa/iLgk8OZKgQJuOZygZ3Bjo4ooma/SwQeTxnXqZXIUfyJb6Tr49J3
-         5tbN+Qx8xU2QIIxOJJgxhIW9NcwhTylS+fQuO4j52AQZ29CZ17aSWqjkFMY8qXHhOUep
-         h6Z/e6Zsk60/NpC/JF78KuiVdfiaR+8v92JVZ197b2slRNm4soDHd8KCS3cG4A4xessN
-         2876r9Env227t1sX0AkDDJESeAO4ONy2Hw7c1BnZS/iVC9HAZ8GZP7j4p2WHvHfFSB7e
-         cf0A==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=+B/s8fE0M+DZeWVXzu4BkIJDO8niKZ1/JOLgaN2hF5I=;
+        b=NOzV+h0axwgAqzENigWDKbVhgRUcXZGf717SKZiX7kcnIr9WOyB5omHWRYOIPojLhJ
+         5O+wqYMt02TTCbJwMdWqpMoQ5fW0CJMKRywI6vM1hIMHL070kNzn0WHBlxLytWtsDfpr
+         O/zwouLDBLNh8lFinnOXUDXisucHHAu7QGpJ/9HoEYONr2tmu3dzt467522FBIWJHojf
+         ThPVE+gzV6yRHoZc14XKPj2C2rb+elmOfNzLFzpjSs/hYqwU47Zyir2Nq9NFus5kWZgk
+         oemOpvo1z71tvhd8HPeIqmFzBumUEmn+PSMCrY/Bez3Ll26v3hfzB7yQC0TqRVju5EgS
+         Horw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HWRJ8Pcye0IhTFR2bXm/cIQMe1eta7Og2Pu/IVHaA48=;
-        b=Ub/glLtazrLpSQZrnZw6B4pwCS0eJ9zkM+lTnbRBSK/a24+OjARypVsaUNTckgEGAE
-         lAIN2fMxl+GCmE3g9dJqHDJhYmGxmhz2wjoTx6mMnWlQORTQff8KTviE6hsA+WTUHyI0
-         L1Ru8M+6Q77EaPpsigkj72XN4x1ZvfSf7+/PGf/WXP52gEPXg6yYVSCHDF2rmqhfA5lJ
-         QIO7P7nNYtdFP1FrRVbGbwXXASj2qQINiJMhDU8JhxRXhL+dJsZOnAB0G8Qjt9igwW9U
-         +fsh6atxwnlVm7ZfPK1exnLAma9AEpJwMQf0EHhKq6WXQ+bU44S3nEhHUrdIuVu3JoLq
-         06ZA==
-X-Gm-Message-State: APjAAAUxYvTe2D0aXXpEAH7P7DiaUNUkY9gkG7tteLzWqwpMIBB0cmaW
-        +YyfdqsOFvZU5YdRgK4V4aY=
-X-Google-Smtp-Source: APXvYqzFpKeaF5n/WtVauP75lTQCqp01OjfuC+U5ImR2oKeYBCWh02S47toSKzxO/jmk3YBilcRbkA==
-X-Received: by 2002:a2e:b1c1:: with SMTP id e1mr6522365lja.228.1565549402383;
-        Sun, 11 Aug 2019 11:50:02 -0700 (PDT)
-Received: from localhost.localdomain (h-158-174-186-115.NA.cust.bahnhof.se. [158.174.186.115])
-        by smtp.gmail.com with ESMTPSA id r21sm5250117lfi.32.2019.08.11.11.50.01
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 11 Aug 2019 11:50:01 -0700 (PDT)
-From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
-To:     rikard.falkeborn@gmail.com
-Cc:     akpm@linux-foundation.org, joe@perches.com,
-        johannes@sipsolutions.net, linux-kernel@vger.kernel.org,
-        yamada.masahiro@socionext.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 2/3] linux/build_bug.h: Change type to int
-Date:   Sun, 11 Aug 2019 20:49:37 +0200
-Message-Id: <20190811184938.1796-3-rikard.falkeborn@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190811184938.1796-1-rikard.falkeborn@gmail.com>
-References: <20190801230358.4193-1-rikard.falkeborn@gmail.com>
- <20190811184938.1796-1-rikard.falkeborn@gmail.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=+B/s8fE0M+DZeWVXzu4BkIJDO8niKZ1/JOLgaN2hF5I=;
+        b=ZMwWGG17TPgL0nUGvNr/qzavY7uN0Wf28Q9JqbCACaP+22A7oI6Vf9byCk3kKcXLag
+         PTmtTymBQxvTpzuZiKneBs+0moU1JK4Th6uqYyoUUeSC0vClK5QmsuUTNUAioyRWqWYc
+         j0W4O6vR/yuKsg7H082kCYgHh/cuQiNA64iil5cCz/WRtE9pXYoelO+YUhs5QtDlCupt
+         3qtrBYf/qPKQHRyCwrncRD254DoXvUNfT4syH0wxy6tZE3705pCJ2WaL5OGNcELqDD36
+         Olw4qwJhrOAvw9mImcNOOMTS1W1gt3KApxNVsN3XKRgp38FhXyPmAT5h0tQ9WMgoBDzz
+         cm+g==
+X-Gm-Message-State: APjAAAUQyNTin6FjtVLKZ44wk0ZvANo4K20q8LCrBeMivpGMIFHp+jGz
+        DCred/qyPi3s5OpT8JzrUDXg+OsBW0qahIEmdZ4=
+X-Google-Smtp-Source: APXvYqwfHuYt37eOAYCReQ2w867Qr7iat5vsxQuKdV99XJIPI5/uf+r+IUfCTRnxuCI6+a3TN+k3w79WgW0TLb9Oa+A=
+X-Received: by 2002:ac2:5981:: with SMTP id w1mr17972155lfn.85.1565549405312;
+ Sun, 11 Aug 2019 11:50:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ab3:2cf:0:0:0:0:0 with HTTP; Sun, 11 Aug 2019 11:50:05 -0700 (PDT)
+From:   ududonka ahmed <ududonka.ahmed12@gmail.com>
+Date:   Sun, 11 Aug 2019 18:50:05 +0000
+Message-ID: <CAJT-s-QGdw-zqBJ8o7g7TRZMAigwz1eyo1w77uHsTMiqP2svJA@mail.gmail.com>
+Subject: Thanks you very much
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having BUILD_BUG_ON_ZERO produce a value of type size_t leads to awkward
-casts in cases where the result needs to be signed, or of smaller type
-than size_t. To avoid this, cast the value to int instead and rely on
-implicit type conversions when a larger or unsigned type is needed.
+Dear,
 
-Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
----
-Changes in v3:
-  - This patch is new in v3
+I was shocked you stopped communicating me, I really can't understand
+your reason for doing so, but I am very happy now to inform you about
+my success in getting the fund out of the bank with the help of a
+staff working in the remittance office and also with the special
+assistance of a French business woman that catered for other
+logistics.
 
- include/linux/build_bug.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+However, I left the sum of $800,000 (Eight Hundred Thousand U.S
+Dollars Only) in an ATM cash withdrawal Card. This $800,000 is for you
+and it is purposely for your compensation for your little effort in
+this transaction. The ATM Card is a global payment card which is
+acceptable, workable and usable worldwide in making daily withdrawal
+of money from any ATM location.  So you can be able to make
+withdrawals of money in any countries on daily basis.
 
-diff --git a/include/linux/build_bug.h b/include/linux/build_bug.h
-index 0fe5426f2bdc..e3a0be2c90ad 100644
---- a/include/linux/build_bug.h
-+++ b/include/linux/build_bug.h
-@@ -9,11 +9,11 @@
- #else /* __CHECKER__ */
- /*
-  * Force a compilation error if condition is true, but also produce a
-- * result (of value 0 and type size_t), so the expression can be used
-+ * result (of value 0 and type int), so the expression can be used
-  * e.g. in a structure initializer (or where-ever else comma expressions
-  * aren't permitted).
-  */
--#define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
-+#define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
- #endif /* __CHECKER__ */
- 
- /* Force a compilation error if a constant expression is not a power of 2 */
--- 
-2.22.0
+I would have sent the ATM card to your address by myself, but I lack
+the time to do that now because I have to urgently meet up with my
+business colleagues in Russia. I will be heading to the airport as
+soon as I send you this email because I will be traveling out of my
+country to Russia where I shall continue with a petroleum business
+engagements.
 
+For your good, I left the ATM card with one Mrss.Sumon, now go on and
+contact him through his email address so that he can dispatch to you
+the ATM card at your contact address.  Simply contact Mrss.Sumon
+immediately so that he can send the ATM card to you. Below is the
+contact of Mrss.Sumon;
+
+E-Mail:  mrsceline.sumon@yandex.com
+
+Name:    Mrss Celine Sumon
+
+I will no longer be able to email you again.
+
+Bye and best regards,
+
+Mr Ududonka Ahmed.
