@@ -2,101 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B556D893EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 23:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F1789416
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 23:11:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfHKVCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 17:02:09 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42143 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfHKVBp (ORCPT
+        id S1726358AbfHKVLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 17:11:25 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:47258 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfHKVLZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 17:01:45 -0400
-Received: by mail-lf1-f67.google.com with SMTP id s19so10284489lfb.9;
-        Sun, 11 Aug 2019 14:01:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3ErUctKt9CJ3rgf9ZExT4u2Tmx1X1fVjtqY74IUmVOo=;
-        b=jGEd5UOL6f98H6d9lWDdBF0tDLQhodxBKsyskxAtdT7jABiBUDFoO8vGh4+W+9mF32
-         BfM1g3CRpA6EMr6KrXdh4GI309W8Lz/j1Om4GHR5KA6eSYIMS89+5Ab2rvbAaiQtTbK4
-         kzxUzQG4kBmKFrSuj82WftSfbq/mYQgSh9numgfPkcV28JIhMbH66G1h8FssMuLdEQOR
-         gBrwPDfZ5BquYzFN2dygXZsSthLzb7g7D5wXL9khRVfB7W4gbRcAJreYw2fI3E1LheTl
-         yX9Y+14iZOeznspLUe1EyY+EjA7LpjlKf46A28IJZUbqvidPZh39vpY039D1Ov+rEwii
-         1d9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3ErUctKt9CJ3rgf9ZExT4u2Tmx1X1fVjtqY74IUmVOo=;
-        b=UIEFFvwT+tyZ2v/+Vqsaw9y5E+ajM0OZamLit0WzOD2njNHIZY2KfwFoQrNiAXOEtj
-         xJVvFDzM9rq7qlSGikpjstpI87HRZ19Af2zj27HglOK9EwxL4X1gGGHnneVHx8EUy3Ri
-         APm/A25grXHIjHqGt2pAtxWeuay5cl3tXL/InGXBc8lzuVmcf2Xgigu9OaFLYWhTvavP
-         s8TMDfvGTf3l7+jpjCLVzWlkcGbt3pbGWxUXwKF3IlY++I7BYisvG9aYFLv8udfdF5ki
-         JBqtcJ0MeuXOHmIVNO3ao+44DCwAx6abGFfPoLPR4FybRBdzs+gOl9yxPJ7L+NMNbcCg
-         ff8Q==
-X-Gm-Message-State: APjAAAXMU3tlIDWhgCeJdKs9onkzUSljbk5BQ7i0gsYkpuKdFJDQ9rAq
-        Y8RpJ+To+hYYoRJeunfbXaQ=
-X-Google-Smtp-Source: APXvYqwcVR/JomYFG2mKKrmisBy3ksrqMbR2iWb0QAH4erviQYOhWFCXudyo1pGkliRlHPg+71Ad9A==
-X-Received: by 2002:a19:234c:: with SMTP id j73mr17739317lfj.96.1565557302583;
-        Sun, 11 Aug 2019 14:01:42 -0700 (PDT)
-Received: from localhost.localdomain ([94.29.34.218])
-        by smtp.gmail.com with ESMTPSA id z25sm18708161lfi.51.2019.08.11.14.01.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Aug 2019 14:01:42 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v10 15/15] ARM: dts: tegra30: Add External Memory Controller node
-Date:   Mon, 12 Aug 2019 00:00:43 +0300
-Message-Id: <20190811210043.20122-16-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190811210043.20122-1-digetx@gmail.com>
-References: <20190811210043.20122-1-digetx@gmail.com>
+        Sun, 11 Aug 2019 17:11:25 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id CB5CF2002B;
+        Sun, 11 Aug 2019 23:11:19 +0200 (CEST)
+Date:   Sun, 11 Aug 2019 23:11:18 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Jitao Shi <jitao.shi@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        linux-pwm@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>, stonea168@163.com,
+        dri-devel@lists.freedesktop.org,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        cawa.cheng@mediatek.com,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        linux-arm-kernel@lists.infradead.org,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v4 0/4] Add drivers for auo, kd101n80-45na and boe,
+ tv101wum-nl6 panels
+Message-ID: <20190811211118.GA23636@ravnborg.org>
+References: <20190811091001.49555-1-jitao.shi@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190811091001.49555-1-jitao.shi@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
+        a=pdzb0zgU1xEUnBsD4PIA:9 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add External Memory Controller node to the device-tree.
+Hi Jitao.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra30.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+>  .../display/panel/auo,kd101n80-45na.txt       |  34 +
+>  .../display/panel/boe,tv101wum-nl6.txt        |  34 +
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index e074258d4518..8355264e2265 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -732,6 +732,15 @@
- 		#reset-cells = <1>;
- 	};
- 
-+	memory-controller@7000f400 {
-+		compatible = "nvidia,tegra30-emc";
-+		reg = <0x7000f400 0x400>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_EMC>;
-+
-+		nvidia,memory-controller = <&mc>;
-+	};
-+
- 	fuse@7000f800 {
- 		compatible = "nvidia,tegra30-efuse";
- 		reg = <0x7000f800 0x400>;
--- 
-2.22.0
+panel bindings are in the process of being migrated to the new
+meta-schema format.
+Therefore new bindings should preferably also follow the new format.
 
+Can you please look into this.
+In upstream and drm-misc-next there is already some examples.
+
+Note: It is not a hard rule that new bindings shall be in
+the new meta-schema format (.yaml extension), but as this is
+best practice now it is preferred.
+Same goes for display bindings btw.
+
+	Sam
