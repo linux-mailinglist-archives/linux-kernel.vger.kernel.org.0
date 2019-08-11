@@ -2,128 +2,355 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B6D189338
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 21:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D38CE8933C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 21:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbfHKTAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 15:00:23 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45518 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfHKTAX (ORCPT
+        id S1726164AbfHKTH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 15:07:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49084 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfHKTH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 15:00:23 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y8so4924602plr.12
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 12:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=g4HRffWR5sTfOdPb8n2H2gBlNEK3O7QkgVCtkSjBUGc=;
-        b=NKH6a5rKubvrnRjIiAagMdwN7DNFvpDIxEUxLYf+kcaaRrXUD4LXVeEaPzEwnv51Qn
-         7QZtgmEqhK5E4pjO/rrk1i6VlM2ljoxMczTY2s0GmrCxGCEIRTRvwfm2eZyvt5gl2ail
-         i4BetvPir8rZaPCg6FdYaMlO7QhhsOWiFl05YooTM8FK+qi+aGZytl2RfGMDZccqWYcH
-         c7A1ri271xLpFxZkPBYu7DbHUIaK8beRCewn28rCUTsX9GjAB64fyF3nlcG1issWWlne
-         M1MeftR3HX7ZBV69FKtlbTP5HTcIxgTIQFwFvS9sWY9tl+c2q40uABiEoYtg7El1O0aC
-         FcCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=g4HRffWR5sTfOdPb8n2H2gBlNEK3O7QkgVCtkSjBUGc=;
-        b=rUkVqpOC0+YjBG3d6+oOVOG+KaitivYRcAxzBj/zNEF8GCpMxm+cUbjF3+q4TIOo60
-         Gb6q86Sa2vO7CiI1ugzxO4K3GIy84fJZcITwPYEKH/Q8L5HHRtC+jex8Dq9cJQlRueud
-         mncJIgdcP6ovqz1klhxYeAoP+mPVtOdf3GM9xXDKQBEM3Z7N4NglQu0aurY74okSmuo0
-         WyoKs2pwLd5Kgf0LBscG3lThBanS9XZGvIQZJwb8PJsE5T5jNtKKagEkrcXioD/ou3dC
-         oACk8BXip7zCAbnJY2lOrKTPyWyFqZYCYRWqTb+zvDXavs5Zw96vksj+3PB1MQGG/3gl
-         rQ1A==
-X-Gm-Message-State: APjAAAXf+qXCLfleQGm5Cs9mmQJ+0QsyLbjBsj4cu0HoqOm9uV0FCrDx
-        EQBSYOjOcQ7sobadAm5+zJoquw==
-X-Google-Smtp-Source: APXvYqzc4Bn9ATOCQYg7LsJf9jLHX1jrV/wEcEKA0Dzyd51K6OZ8vz1CVcwhFwEFMJTVX7DrRrXbdA==
-X-Received: by 2002:a17:902:e4:: with SMTP id a91mr29498761pla.150.1565550022586;
-        Sun, 11 Aug 2019 12:00:22 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 5sm41932620pgh.93.2019.08.11.12.00.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 11 Aug 2019 12:00:21 -0700 (PDT)
-Date:   Sun, 11 Aug 2019 12:01:59 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        robh+dt <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Andy Gross <agross@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 4/4] arm64: dts/sdm845: Enable FW implemented safe
- sequence handler on MTP
-Message-ID: <20190811190159.GQ26807@tuxbook-pro>
-References: <20190612071554.13573-1-vivek.gautam@codeaurora.org>
- <20190612071554.13573-5-vivek.gautam@codeaurora.org>
- <20190805222627.GA2634@builder>
- <CAFp+6iHGrXAJ2Y1ewxaePGYEcbnprjScUnGyR61qvOv03HVZhQ@mail.gmail.com>
+        Sun, 11 Aug 2019 15:07:26 -0400
+Received: from [216.9.110.7] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1hwtBI-0003NB-5L; Sun, 11 Aug 2019 19:07:04 +0000
+Date:   Sun, 11 Aug 2019 21:06:59 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelianov <xemul@virtuozzo.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>
+Subject: Re: [PATCH v4 1/2] fork: extend clone3() to support CLONE_SET_TID
+Message-ID: <20190811190658.qaipk5pj2j65plsj@wittgenstein>
+References: <20190808212222.28276-1-areber@redhat.com>
+ <20190810011033.ns23e7ivlnzkwj6f@wittgenstein>
+ <20190810055918.GA8738@dcbz.redhat.com>
+ <20190811065148.wiy5t7i2cfs7bn4z@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAFp+6iHGrXAJ2Y1ewxaePGYEcbnprjScUnGyR61qvOv03HVZhQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190811065148.wiy5t7i2cfs7bn4z@wittgenstein>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 11 Aug 09:08 PDT 2019, Vivek Gautam wrote:
-
-> On Tue, Aug 6, 2019 at 3:56 AM Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> >
-> > On Wed 12 Jun 00:15 PDT 2019, Vivek Gautam wrote:
-> >
-> > > Indicate on MTP SDM845 that firmware implements handler to
-> > > TLB invalidate erratum SCM call where SAFE sequence is toggled
-> > > to achieve optimum performance on real-time clients, such as
-> > > display and camera.
-> > >
-> > > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > index 78ec373a2b18..6a73d9744a71 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > @@ -2368,6 +2368,7 @@
-> > >                       compatible = "qcom,sdm845-smmu-500", "arm,mmu-500";
-> > >                       reg = <0 0x15000000 0 0x80000>;
-> > >                       #iommu-cells = <2>;
-> > > +                     qcom,smmu-500-fw-impl-safe-errata;
-> >
-> > Looked back at this series and started to wonder if there there is a
-> > case where this should not be set? I mean we're after all adding this to
-> > the top 845 dtsi...
+On Sun, Aug 11, 2019 at 08:51:48AM +0200, Christian Brauner wrote:
+> On Sat, Aug 10, 2019 at 07:59:18AM +0200, Adrian Reber wrote:
+> > On Sat, Aug 10, 2019 at 03:10:34AM +0200, Christian Brauner wrote:
+> > > On Thu, Aug 08, 2019 at 11:22:21PM +0200, Adrian Reber wrote:
+> > > > The main motivation to add set_tid to clone3() is CRIU.
+> > > > 
+> > > > To restore a process with the same PID/TID CRIU currently uses
+> > > > /proc/sys/kernel/ns_last_pid. It writes the desired (PID - 1) to
+> > > > ns_last_pid and then (quickly) does a clone(). This works most of the
+> > > > time, but it is racy. It is also slow as it requires multiple syscalls.
+> > > > 
+> > > > Extending clone3() to support set_tid makes it possible restore a
+> > > > process using CRIU without accessing /proc/sys/kernel/ns_last_pid and
+> > > > race free (as long as the desired PID/TID is available).
+> > > > 
+> > > > This clone3() extension places the same restrictions (CAP_SYS_ADMIN)
+> > > > on clone3() with set_tid as they are currently in place for ns_last_pid.
+> > > > 
+> > > > Signed-off-by: Adrian Reber <areber@redhat.com>
+> > > > ---
+> > > > v2:
+> > > >  - Removed (size < sizeof(struct clone_args)) as discussed with
+> > > >    Christian and Dmitry
+> > > >  - Added comment to ((set_tid != 1) && idr_get_cursor() <= 1) (Oleg)
+> > > >  - Use idr_alloc() instead of idr_alloc_cyclic() (Oleg)
+> > > > 
+> > > > v3:
+> > > >  - Return EEXIST if PID is already in use (Christian)
+> > > >  - Drop CLONE_SET_TID (Christian and Oleg)
+> > > >  - Use idr_is_empty() instead of idr_get_cursor() (Oleg)
+> > > >  - Handle different `struct clone_args` sizes (Dmitry)
+> > > > 
+> > > > v4:
+> > > >  - Rework struct size check with defines (Christian)
+> > > >  - Reduce number of set_tid checks (Oleg)
+> > > >  - Less parentheses and more robust code (Oleg)
+> > > >  - Do ns_capable() on correct user_ns (Oleg, Christian)
+> > > > ---
+> > > >  include/linux/pid.h        |  2 +-
+> > > >  include/linux/sched/task.h |  1 +
+> > > >  include/uapi/linux/sched.h |  1 +
+> > > >  kernel/fork.c              | 25 +++++++++++++++++++++++--
+> > > >  kernel/pid.c               | 34 +++++++++++++++++++++++++++-------
+> > > >  5 files changed, 53 insertions(+), 10 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/pid.h b/include/linux/pid.h
+> > > > index 2a83e434db9d..052000db0ced 100644
+> > > > --- a/include/linux/pid.h
+> > > > +++ b/include/linux/pid.h
+> > > > @@ -116,7 +116,7 @@ extern struct pid *find_vpid(int nr);
+> > > >  extern struct pid *find_get_pid(int nr);
+> > > >  extern struct pid *find_ge_pid(int nr, struct pid_namespace *);
+> > > >  
+> > > > -extern struct pid *alloc_pid(struct pid_namespace *ns);
+> > > > +extern struct pid *alloc_pid(struct pid_namespace *ns, pid_t set_tid);
+> > > >  extern void free_pid(struct pid *pid);
+> > > >  extern void disable_pid_allocation(struct pid_namespace *ns);
+> > > >  
+> > > > diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+> > > > index 0497091e40c1..4f2a80564332 100644
+> > > > --- a/include/linux/sched/task.h
+> > > > +++ b/include/linux/sched/task.h
+> > > > @@ -26,6 +26,7 @@ struct kernel_clone_args {
+> > > >  	unsigned long stack;
+> > > >  	unsigned long stack_size;
+> > > >  	unsigned long tls;
+> > > > +	pid_t set_tid;
+> > > >  };
+> > > >  
+> > > >  /*
+> > > > diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+> > > > index b3105ac1381a..e1ce103a2c47 100644
+> > > > --- a/include/uapi/linux/sched.h
+> > > > +++ b/include/uapi/linux/sched.h
+> > > > @@ -45,6 +45,7 @@ struct clone_args {
+> > > >  	__aligned_u64 stack;
+> > > >  	__aligned_u64 stack_size;
+> > > >  	__aligned_u64 tls;
+> > > > +	__aligned_u64 set_tid;
+> > > >  };
+> > > >  
+> > > >  /*
+> > > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > > index 2852d0e76ea3..2a03f0e201e9 100644
+> > > > --- a/kernel/fork.c
+> > > > +++ b/kernel/fork.c
+> > > > @@ -117,6 +117,13 @@
+> > > >   */
+> > > >  #define MAX_THREADS FUTEX_TID_MASK
+> > > >  
+> > > > +/*
+> > > > + * Different sizes of struct clone_args
+> > > > + */
+> > > > +#define CLONE3_ARGS_SIZE_V0 64
+> > > > +/* V1 includes set_tid */
+> > > > +#define CLONE3_ARGS_SIZE_V1 72
+> > > > +
+> > > >  /*
+> > > >   * Protected counters by write_lock_irq(&tasklist_lock)
+> > > >   */
+> > > > @@ -2031,7 +2038,13 @@ static __latent_entropy struct task_struct *copy_process(
+> > > >  	stackleak_task_init(p);
+> > > >  
+> > > >  	if (pid != &init_struct_pid) {
+> > > > -		pid = alloc_pid(p->nsproxy->pid_ns_for_children);
+> > > > +		if (args->set_tid && !ns_capable(
+> > > > +				p->nsproxy->pid_ns_for_children->user_ns,
+> > > > +				CAP_SYS_ADMIN)) {
+> > > > +			retval = -EPERM;
+> > > > +			goto bad_fork_cleanup_thread;
+> > > > +		}
+> > > > +		pid = alloc_pid(p->nsproxy->pid_ns_for_children, args->set_tid);
+> > > >  		if (IS_ERR(pid)) {
+> > > >  			retval = PTR_ERR(pid);
+> > > >  			goto bad_fork_cleanup_thread;
+> > > > @@ -2535,9 +2548,14 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+> > > >  	if (unlikely(size > PAGE_SIZE))
+> > > >  		return -E2BIG;
+> > > >  
+> > > > -	if (unlikely(size < sizeof(struct clone_args)))
+> > > > +	/* The struct needs to be at least the size of the original struct. */
+> > > 
+> > > I don't think you need that comment. I think the macro is pretty
+> > > self-explanatory. If you want it to be even clearer you could even make
+> > > it CLONE3_ARGS_SIZE_MIN but V0 is good enough. :)
+> > 
+> > Will remove the comment.
+> > 
+> > > > +	if (unlikely(size < CLONE3_ARGS_SIZE_V0))
+> > > >  		return -EINVAL;
+> > > >  
+> > > > +	if (size < sizeof(struct clone_args))
+> > > > +		memset((void *)&args + size, 0,
+> > > > +				sizeof(struct clone_args) - size);
+> > > > +
+> > > >  	if (unlikely(!access_ok(uargs, size)))
+> > > >  		return -EFAULT;
+> > > >  
+> > > > @@ -2573,6 +2591,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+> > > >  		.tls		= args.tls,
+> > > >  	};
+> > > >  
+> > > > +	if (size >= CLONE3_ARGS_SIZE_V1)
+> > > > +		kargs->set_tid = args.set_tid;
+> > > 
+> > > Hm, the if-condition is not needed though, right? At this point we will
+> > > have already copied from struct clone_args __user *uargs into struct
+> > > clone_args args. If we hit that codepath that means the kernel
+> > > definitely has a field for set_tid in its struct clone_args. :) So this
+> > > could probably just be:
+> > > 
+> > >    		.tls		= args.tls,
+> > > 		.set_tid	= args.set_tid,
+> > > 	}
+> > > 
+> > > 	?
+> > 
+> > Right.
+> > 
+> > > > +
+> > > >  	return 0;
+> > > >  }
+> > > >  
+> > > > diff --git a/kernel/pid.c b/kernel/pid.c
+> > > > index 0a9f2e437217..9ce89c35c5be 100644
+> > > > --- a/kernel/pid.c
+> > > > +++ b/kernel/pid.c
+> > > > @@ -157,7 +157,7 @@ void free_pid(struct pid *pid)
+> > > >  	call_rcu(&pid->rcu, delayed_put_pid);
+> > > >  }
+> > > >  
+> > > > -struct pid *alloc_pid(struct pid_namespace *ns)
+> > > > +struct pid *alloc_pid(struct pid_namespace *ns, int set_tid)
+> > > >  {
+> > > >  	struct pid *pid;
+> > > >  	enum pid_type type;
+> > > > @@ -186,12 +186,32 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+> > > >  		if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+> > > >  			pid_min = RESERVED_PIDS;
+> > > >  
+> > > > -		/*
+> > > > -		 * Store a null pointer so find_pid_ns does not find
+> > > > -		 * a partially initialized PID (see below).
+> > > > -		 */
+> > > > -		nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+> > > > -				      pid_max, GFP_ATOMIC);
+> > > > +		if (set_tid) {
+> > > > +			/*
+> > > > +			 * Also fail if a PID != 1 is requested
+> > > > +			 * and no PID 1 exists.
+> > > > +			 */
+> > > > +			nr = -EINVAL;
+> > > > +			if (set_tid < pid_max && set_tid > 0 &&
+> > > 
+> > > Hm, you're already in the if-branch hat verified if (set_tid) so the
+> > > set_tid > 0 conjunct seems redundant. :)
+> > 
+> > Yes, but I dropped all checks to see if set_tid is negative as suggested
+> > by Oleg and moved it here.
+> > 
+> > > > +			    (set_tid == 1 || !idr_is_empty(&tmp->idr)))
+> > > > +				nr = idr_alloc(&tmp->idr, NULL, set_tid,
+> > > > +					       set_tid + 1, GFP_ATOMIC);
+> > > 
+> > > I'm confused, shouldn't this be
+> > > 
+> > > 	if (set_tid < pid_max || (set_tid == 1 && !idr_is_emtpy(&tmp->idf)))
+> > 
+> > Now I am also confused ;). This does not work. This will always return
+> > true if set_tid is less than pid_max. So pid_max needs to be something
+> > like 1 for the check after || to make sense, right? But you really got
+> > me confused here right now. Right now I still think what I did is
+> > correct.
 > 
-> My bad.
-> This is not valid in case of cheza. Cheza firmware doesn't implement
-> the safe errata handling hook.
-> On cheza we just have the liberty of accessing the secure registers
-> through scm calls - this is what
-> we were doing in earlier patch series handling this errata.
-> So, a property like this should go to mtp board's dts file.
+> I missed the part where you reset set_tid to 0 below and mis-parsed the
+> rightmost conjunct in the if statement.
 > 
+> One thing I dislike is that you do
+> 
+> if (set_tid) {
+> 	if ([...] && set_tid > 0 && [...])
+> }
 
-It would have been nice if the common case was just selected by default,
-but afaict no safe workaround is needed on Cheza? You mention here that
-it should (could?) use the scm write based approach instead, would an
-introduction of that come with another flag?
+Thinking about this a bit more you probably did the explicit set_tid > 0 to
+catch the case where it is negative? But also, I don't understand why we do any
+work at all before having verified that set_tid is sensible, i.e. why do we
+call kmem_cache_calloc(), do idr_preload(), and take a spinlock, before even
+verifying that our parameters are sane? If there's no specific reason for this
+I suggest to patch alloc_pid() like this:
 
+-struct pid *alloc_pid(struct pid_namespace *ns)
++struct pid *alloc_pid(struct pid_namespace *ns, int set_tid)
+ {
+        struct pid *pid;
+        enum pid_type type;
+@@ -166,6 +166,9 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+        struct upid *upid;
+        int retval = -ENOMEM;
 
-PS. In it's current form it's correct that this should be moved to the
-device dts files - all but one of them...
++       if (set_tid < 0 || set_tid >= pid_max)
++               return ERR_PTR(-EINVAL);
++
+        pid = kmem_cache_alloc(ns->pid_cachep, GFP_KERNEL);
+        if (!pid)
+                return ERR_PTR(retval);
+@@ -186,12 +189,31 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+                if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+                        pid_min = RESERVED_PIDS;
 
-Regards,
-Bjorn
+-               /*
+-                * Store a null pointer so find_pid_ns does not find
+-                * a partially initialized PID (see below).
+-                */
+-               nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+-                                     pid_max, GFP_ATOMIC);
++               if (set_tid) {
++                       /*
++                        * Also fail if a PID != 1 is requested
++                        * and no PID 1 exists.
++                        */
++                       nr = -EINVAL;
++                       if (set_tid == 1 || !idr_is_empty(&tmp->idr))
++                               nr = idr_alloc(&tmp->idr, NULL, set_tid,
++                                              set_tid + 1, GFP_ATOMIC);
++                       /*
++                        * If ENOSPC is returned it means that the PID is
++                        * alreay in use. Return EEXIST in that case.
++                        */
++                       if (nr == -ENOSPC)
++                               nr = -EEXIST;
++                       /* Only use set_tid for one PID namespace. */
++                       set_tid = 0;
++               } else {
++                       /*
++                        * Store a null pointer so find_pid_ns does not find
++                        * a partially initialized PID (see below).
++                        */
++                       nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
++                                             pid_max, GFP_ATOMIC);
++               }
+                spin_unlock_irq(&pidmap_lock);
+                idr_preload_end()
+
+This makes things a lot more clearer in my opinion. First, verify that the
+pre-conditions are met. Second, verify that the conditions are met which depend
+on the state of the pid namespace, i.e. there's either already a pid 1 or pid 1
+is requested.
+We should also do this since alloc_pid() is exported in a header file and so we
+can't and shouldn't rely on the fact that all callers will pass in something
+sensible for set_tid.
+
+> 
+> For consistency this should rather be:
+> 
+> if (set_tid) {
+> 	if ([...] && set_tid && [...])
+> }
+> 
+> Overall I'd rather write the second if as:
+> 
+> if (set_tid && set_tid < pid_max && (set_tid == 1 || !idr_is_empty(&tmp->idr)))
+> 
+> to place the most basic condition (i.e. set_tid is non-zero) leftmost.
+> 
+> The right-most conjunct (set_tid == 1 || !idr_is_empty(&tmp->idr)) is
+> non-trivial to parse. Someone not familiar with that code would need
+> time to figure out why and how exactly 1 is special-cased.
+> I think overall this is begging for alloc_pid() to be documented now if
+> you don't mind. :)
+> 
+> Christian
