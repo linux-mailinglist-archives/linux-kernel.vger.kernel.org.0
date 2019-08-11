@@ -2,80 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9533D894CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 01:05:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18111894D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 01:07:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfHKXFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 19:05:43 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40559 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfHKXFm (ORCPT
+        id S1726608AbfHKXH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 19:07:26 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7185 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbfHKXH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 19:05:42 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c34so12674174otb.7
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 16:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=iA6a4qC4pEGqTR513iAiCdf6YZdJrbIKcB73xSjnGJk=;
-        b=XnPOTzGTbZRnjOHxngGkhQI5Kg+21CK3xlUQMHycdbk3GMI5HCW8TuVfZNFopEg7WY
-         zGX8gHKmrHXg5qvulXFmp6I5Mg8A5faVNFFXiSzc5eNjMNY42HXHsoEToZYN3RYSkEJE
-         BTSyhBwzePhzfDcekQXS0iA9GodWKx1HcQdddq275eZaSOTP0EDpfpQsSLALDDtnHTrF
-         mV597qG+h+WGXwumsC5NVS80ZBbyVchCaOUuB0Qye03Kbq9aS9yF2A0sG0T2bs1c0nFk
-         j2Cqg0O+qhdkqyN2cU4s0ILQtiRDC6eOfi833Gt+l7S64iHyZ2DOrz5ypjfYLSDVfbCR
-         mEcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=iA6a4qC4pEGqTR513iAiCdf6YZdJrbIKcB73xSjnGJk=;
-        b=og7gxWCXCFtp52ZkBBJe/UKJhNxmTszYE/DQxm1S0t0ftvERv1XLyXtFWFhlidNZT1
-         lA20gjckpxYYxJ1uWTqVAxTOnAWAPFKXA32PvQme7L2dQ3LZdnfZ8WPNvUXPKMIgRAHw
-         IY84ij6lMYJcneqfppG0TkGH+K1W8pHp7HpHlFUd9kUkHUD5u+5Fye3rERJJwb6bXmEs
-         Az9jNmvdRsvPVNf2v1oqLOp2DnFl+wDXjCV1+PXUJVmAnZzMKq25qLq35ek2ZnMZex3y
-         MvjeQzT9zCUp/uDdrb9uxORPzlM5Y4lclXYDIFQTXkwvNALL9fsmgLH1KvbHn0yQIl49
-         sx+g==
-X-Gm-Message-State: APjAAAXwXLkocwD2pG42VQK3F5jOdanDa2aM6+uzwhUbXt7csyXlpeaB
-        jASVEvT4P2zoGEqVIFCZ2PFRw+aH3AwJLfTDGnk=
-X-Google-Smtp-Source: APXvYqzdH5InEaJxRmITjSZltTqi8yFrXGzMAGz4NqHdxyOLpO2KbH4Hia4uHAVovTleRceUCkG07KvVQlBasCLp0x8=
-X-Received: by 2002:a05:6808:8d3:: with SMTP id k19mr12339467oij.164.1565564741225;
- Sun, 11 Aug 2019 16:05:41 -0700 (PDT)
+        Sun, 11 Aug 2019 19:07:26 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d509fb60000>; Sun, 11 Aug 2019 16:07:34 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Sun, 11 Aug 2019 16:07:24 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Sun, 11 Aug 2019 16:07:24 -0700
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 11 Aug
+ 2019 23:07:23 +0000
+Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
+To:     <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
+        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-16-ira.weiny@intel.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <88d82639-c0b2-0b35-1919-999a8438031c@nvidia.com>
+Date:   Sun, 11 Aug 2019 16:07:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:a8a:2d6:0:0:0:0:0 with HTTP; Sun, 11 Aug 2019 16:05:40 -0700 (PDT)
-Reply-To: stellerbarid@barid.com
-From:   "Mrs. Stellar Maoris" <agencydirectorwu@gmail.com>
-Date:   Sun, 11 Aug 2019 16:05:40 -0700
-Message-ID: <CAMTsjJe1QQ7dd1=i-aN3P7WXt1XvcpUFh0ZCSddTnOcv9igtfA@mail.gmail.com>
-Subject: Hello Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190809225833.6657-16-ira.weiny@intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565564854; bh=WyN+cqUy4NONmSoVEoC5zyApgJufQNRRkmxYAmxiNRk=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=GjochqX+orN7s3BQGomPrZQyWc/568hzhVWT8sDxI6ycL8n3NJRfjYVyxlilSkFJV
+         0v1gr7a1sg2wL7PQ7Q0Dcubx1ogIn8Ke72whU/7rqtGuRqPq7C+Ov/M2GpkOhsvG7D
+         prYV07lPVe1n7zXbUFOOqu0O+zmZFD4o9ZwEYryqx80zMRNZ+bq7HCwxmmVbIxjO2a
+         eyfVpsIxVN8KjqFFKHnKr50U23pYiJqe16sEcZFBVMMPBbuIaXUFHzc2oRYO+Hbvbq
+         BtKCArw8N2g27OxonpaIrJUWZPBJhIbV9JVwYzpariVg0rZ5RNb/Q9Z0jeOeGL3ylM
+         qgEDDHrL4QwYQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear Friend.
-I=E2=80=99m  Mrs. Stellar Maoris  a manger in  HSBC  bank  of  Spain Madrid=
-, I
-am sending
-this brief letter  to seek for  your partnership and long term relationship=
-,
-I have an important and urgent issue I want to discuss with you privately a=
-bout
-Transaction fund worth the sum of $9.5m America dollars left by most
-of the greedy
-Asia Kuwait politician in our bank here in Spain Madrid, A fund which
-suppose to have been use to develop the continent.
+On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> The addition of FOLL_LONGTERM has taken on additional meaning for CMA
+> pages.
+> 
+> In addition subsystems such as RDMA require new information to be passed
+> to the GUP interface to track file owning information.  As such a simple
+> FOLL_LONGTERM flag is no longer sufficient for these users to pin pages.
+> 
+> Introduce a new GUP like call which takes the newly introduced vaddr_pin
+> information.  Failure to pass the vaddr_pin object back to a vaddr_put*
+> call will result in a failure if pins were created on files during the
+> pin operation.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
 
-If you know that you can invest this fund into profitable business in
-your country by the end we shall have 50%50 share each, kindly get
-back to me for more detail and procedures.
+I'm creating a new call site conversion series, to replace the 
+"put_user_pages(): miscellaneous call sites" series. This uses
+vaddr_pin_pages*() where appropriate. So it's based on your series here.
 
-Your urgent respond will be highly appreciated
-Awaiting to hear from you asap.
-My Regard.
-Stellar Maoris
-Email: stellerbarid@barid.com
-Phone Number:  +34(62) 768 5146
+btw, while doing that, I noticed one more typo while re-reading some of the comments. 
+Thought you probably want to collect them all for the next spin. Below...
+
+> ---
+> Changes from list:
+> 	Change to vaddr_put_pages_dirty_lock
+> 	Change to vaddr_unpin_pages_dirty_lock
+> 
+>  include/linux/mm.h |  5 ++++
+>  mm/gup.c           | 59 ++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 64 insertions(+)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 657c947bda49..90c5802866df 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1603,6 +1603,11 @@ int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
+>  int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
+>  			struct task_struct *task, bool bypass_rlim);
+>  
+> +long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
+> +		     unsigned int gup_flags, struct page **pages,
+> +		     struct vaddr_pin *vaddr_pin);
+> +void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
+> +				  struct vaddr_pin *vaddr_pin, bool make_dirty);
+>  bool mapping_inode_has_layout(struct vaddr_pin *vaddr_pin, struct page *page);
+>  
+>  /* Container for pinned pfns / pages */
+> diff --git a/mm/gup.c b/mm/gup.c
+> index eeaa0ddd08a6..6d23f70d7847 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2536,3 +2536,62 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(get_user_pages_fast);
+> +
+> +/**
+> + * vaddr_pin_pages pin pages by virtual address and return the pages to the
+> + * user.
+> + *
+> + * @addr, start address
+> + * @nr_pages, number of pages to pin
+> + * @gup_flags, flags to use for the pin
+> + * @pages, array of pages returned
+> + * @vaddr_pin, initalized meta information this pin is to be associated
+
+Typo:
+                  initialized
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
