@@ -2,100 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FB68943D
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 23:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34DE189464
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 23:29:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfHKVY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 17:24:59 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36377 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbfHKVYx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 17:24:53 -0400
-Received: by mail-lj1-f195.google.com with SMTP id u15so1645772ljl.3;
-        Sun, 11 Aug 2019 14:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=o7LGlq6WIVQMLtb/JEtFncARlenXInquAoE0QDVW21U=;
-        b=P51t0m3rzz0PnQOdu2pOxpETktNoisJUH72+SbZPzsmw9KgYP1PMraJK99BR99qkxa
-         Hcl1qqDbcvH/fE0z1IJom0SsGKljkT0HZKKWGUHqsC+Hjd4wTH5wQRxe5MCEKXHvY03y
-         OqTJeUSCBF3h36AnAQHmFlc6KagyLk25Rt5YLzblEu0Zdd/GlSxivXawqJDX7qRKydxe
-         X8Q47iE9OdFkXsASbni2Or/BQZxx0w047gDLhegRnwQsNjWFOd1BJBLDgm14556UJ/Zm
-         TWxIs97EDiGpwhveypfNLeT3amBCtEHz5J+i18XKQn1aZfG2333mUsDDvibssXt+dtoR
-         Po9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=o7LGlq6WIVQMLtb/JEtFncARlenXInquAoE0QDVW21U=;
-        b=IAgOUU5cnUOCyEj5rkDSBJ2QcB94Cl8ONdYPPBDCS3P3fRe3d3ody+1hQy5baxETJu
-         buznkAggIBDQl/eCpzvTtvMuy4ptoZZei+GZAhokirHsLkmUqdCPWbCRX7odkBsWi7ox
-         mfY7qOSevs7tmuGnR/OERfsocuVDBQazQHwrS+qH6YHMiMtsfHM5zDXoxGhf7vyh+lZ2
-         ihq6nv+i2D4sUB8qiOwPoVT2gk3Tlwv9oc+Z8ooIw03OfakJJXyYHh90/T9olqaBKs68
-         KVBdmaTiwPTj3VKPjNkGtqH6smnTnCKw0Kj2/764YeeOKtjnmwTLkwXqvhfiK9eqmTSf
-         SnXw==
-X-Gm-Message-State: APjAAAVjCc+pYBXRI0NYI6SkDv3PyvKR6WopwP5Ac0uA55WeeCuaqcj1
-        /uxIQp6TU0slo+njOBwYzJU=
-X-Google-Smtp-Source: APXvYqwLe+JA9gDyV0I4Abvwjk3D+0Nufs1khKyHDrSKSFRdXMkl7MVQamMrjYtd6zjrlU56W0uF1Q==
-X-Received: by 2002:a2e:9b84:: with SMTP id z4mr17382353lji.75.1565558691639;
-        Sun, 11 Aug 2019 14:24:51 -0700 (PDT)
-Received: from localhost.localdomain ([94.29.34.218])
-        by smtp.gmail.com with ESMTPSA id f1sm20470806ljk.86.2019.08.11.14.24.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Aug 2019 14:24:51 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 19/19] PM / devfreq: tegra20/30: Add Dmitry as a maintainer
-Date:   Mon, 12 Aug 2019 00:23:15 +0300
-Message-Id: <20190811212315.12689-20-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190811212315.12689-1-digetx@gmail.com>
-References: <20190811212315.12689-1-digetx@gmail.com>
+        id S1726539AbfHKV1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 17:27:15 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48631 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbfHKV1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Aug 2019 17:27:15 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 466Brc3ctcz9sML;
+        Mon, 12 Aug 2019 07:27:12 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565558832;
+        bh=lemg1XZKoY/pD1ybQMwC+6Du3MCkFzha4FmfuaD/GUg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=sqBxk/kZNe2wpuIoLf3MW/bewetlG4FJlGudpYYvjnftLt2Bp0iYHwoZil4N5VP2z
+         4LnyAp8oLHh3MxnW0BmpPNiLhXnTKIexqw1l1pZI5rgGLPsgG/D6hN0q5ljXY18DQ5
+         cI7JRXRcTAu+T/3xZDPiFD17iz8A3zLWbL7/kSzuTv5g7zzlsVrFaRIPWQWaYBIIEZ
+         q2VJgeF6pWtv9JrICw1Njf7JKtcM3c9l37p3h3UiduNypikFD6H1/3yxeCLLHYAHiF
+         TjVyuNpfQNtvkCmvquvWg5/fSRKPbSFfY9oXfmBUuQ1nSgYGROWUfyH68SPfYbgRPN
+         EFafp5E2ap1mw==
+Date:   Mon, 12 Aug 2019 07:26:59 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Add SPDX kernel tree to linux-next
+Message-ID: <20190812072659.606b2107@canb.auug.org.au>
+In-Reply-To: <20190810115533.GA6302@kroah.com>
+References: <20190810115533.GA6302@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/joDWPergj0mqSvlW2B4zo=E";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
-want to help keep them working and evolving in the future.
+--Sig_/joDWPergj0mqSvlW2B4zo=E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Hi Greg,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e60f5c361969..8a78abe4739e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10420,6 +10420,15 @@ F:	include/linux/memblock.h
- F:	mm/memblock.c
- F:	Documentation/core-api/boot-time-mm.rst
- 
-+MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
-+M:	Dmitry Osipenko <digetx@gmail.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-tegra@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+S:	Maintained
-+F:	drivers/devfreq/tegra20-devfreq.c
-+F:	drivers/devfreq/tegra30-devfreq.c
-+
- MEMORY MANAGEMENT
- L:	linux-mm@kvack.org
- W:	http://www.linux-mm.org
--- 
-2.22.0
+On Sat, 10 Aug 2019 13:55:33 +0200 Greg KH <gregkh@linuxfoundation.org> wro=
+te:
+>=20
+> I realized that I've been sending patches to Linus from my "SPDX" kernel
+> tree for a few releases now, and it's not included in linux-next, which
+> is not good.
+>=20
+> So, could you please add the kernel tree / branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/spdx.git spdx-linus
+>=20
+> to linux-next?
 
+Added from today.  One question: is this meant to be a -next tree or a
+-fixes tree?
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/joDWPergj0mqSvlW2B4zo=E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1QiCMACgkQAVBC80lX
+0Gwlzgf7BHK49PKtF9cbwzB+OTFwcYVI5QBhlxcgG7jPdrI+YRBJXPnszm6VcdwA
+TZ3qgjkJl8SDAy88LsefAtMqRgZi52rIiJ6SB9YXfPlPzu/3tre47Umb+zLfTCoj
++HMN6zHnKskaPB0jxyEv3Lm/m8CWT4pzdXlQnWMrguvp+6PVbczZMsvJqMg9WEWr
+X8a8df9QIlhDPIHOFgJ7BiNSMT1/L3/uN2Wu2szqMLix5PoRoAI+OSA8mBRcWWUI
+RPE9fa8SGwloMIoU8CsRFAmy9DAT+F+wArb11iyjyfuPavqhglGJywPzCQS4O5/1
+v+PjPeos8+qfC6AxI23IjvFJtBxEaw==
+=7LyJ
+-----END PGP SIGNATURE-----
+
+--Sig_/joDWPergj0mqSvlW2B4zo=E--
