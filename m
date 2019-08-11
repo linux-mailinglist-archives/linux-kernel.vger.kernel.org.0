@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1B87893DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 23:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E13AC893E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 23:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbfHKVBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 17:01:42 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46315 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfHKVBg (ORCPT
+        id S1726696AbfHKVBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 17:01:48 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35691 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfHKVBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 17:01:36 -0400
-Received: by mail-lf1-f65.google.com with SMTP id n19so4553323lfe.13;
-        Sun, 11 Aug 2019 14:01:34 -0700 (PDT)
+        Sun, 11 Aug 2019 17:01:37 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l14so6654234lje.2;
+        Sun, 11 Aug 2019 14:01:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ACV2ZWfTaEmtxdFrYT9DjBnIgPftGulBSmYYyCGemp8=;
-        b=oahMoOm4p/vTtEBBtK5p7lG8L3eOLIMI0I9LpsHAKi+Zx81Wijz0Kuvdzjtg3DRNjt
-         +GTl59I8f0xsAtgc8+/8jfevxHGamY7jb8qGm50zBeZw0on/gULp4vqhHtU8A29crvze
-         3zcCO46LQRLvWX5EcqbIFaJW73oFgiLNuVuuwGXNrposp+vFaIEjKBCFeHDSxkp8NLLe
-         eG8Q5/ipGAFgKYoDnSO/lMOx6jViTbvZrnKbNilnWPQRMwZvgTF78OcQmONlq1yVk53D
-         RdBYj6mlJnjG1KUWPU8e0jd7ESPrGHdcxPinyz5edFY9TJ7jUlS6AiT38pOkDS2vZUDq
-         cVyQ==
+        bh=ty6qgDcH1fj9SELU8vi4wQcPSTs39HjIXkEXwkiA/cs=;
+        b=F5rqKHTkuGSItl/SFJhzPHsZ6eWEUZ8635fYyEgq5ZlwiLOcK4tipDB/UbnauYhhwK
+         /OnIt4VL0FZR8yf9Q6dQvCC87oQjhQ/89Ebjxus5J2iF2a4+ucdnTQy7gcdsbhYr6HFJ
+         CJxJrlSEqCi1hb61nTtbF6SVNieC5dWly8e9Gt3H7g+lBVhvmdav/iexwwVOLim8tcMY
+         FeN6nVoqCwqH7t7MVI+7P3jddRgabUMFjpOKHFSNM2Y/crCpjPuk2O6xbFYlvx+M3IKX
+         4Ck7cZv4ffvV9hiVaxc//7SLK73wQxWm7pmSL3eoG4+BQ12C1gy90X6mapM7xz6l2fCk
+         g8Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ACV2ZWfTaEmtxdFrYT9DjBnIgPftGulBSmYYyCGemp8=;
-        b=iKj2tjRjBeL3TVmFcs3gTHoqZk2omAdaQP40vyCT1cg3L7gaO7V1ZjptdV0iNMfixj
-         psDccfmYwWyGv/K3xlaatWOC7xXrYjvaBeowycXoBQNlI6rV1cPCc0u6ktpu8IPpYFFg
-         OM4Vz4hh0WUP30RfHx3tl082v7FJGjt80/MJFTx314mme4Bgq0s73Iyxgsi6BLUsuKF2
-         KHk1cfeScmPKR3aCnkZZpMf30dCkc4dzsVQkM+mV8VtazqSDPfogflyMiYxXrExyVM9U
-         aReI2TpiD+27cXUr+/7GXwxsxAa4SkKXDukK5wtwT/SasjZ2us5gGCAywi7jrDL5IRgv
-         ZflQ==
-X-Gm-Message-State: APjAAAXpkGyaE79XOeXM4Kxx8rTyGy1tOEm2adu6plviDqBtU7c6j2/9
-        UkDiiJJ6i5m53KxHDPdnRv0=
-X-Google-Smtp-Source: APXvYqxtH2c3pbBC8y11UUgC+QRh+QcPtPKGSRMvpl6I+PP4PJvzo11zCTGN/5v7K8TE2MMMutNjxw==
-X-Received: by 2002:a19:ec0c:: with SMTP id b12mr18340455lfa.107.1565557293751;
-        Sun, 11 Aug 2019 14:01:33 -0700 (PDT)
+        bh=ty6qgDcH1fj9SELU8vi4wQcPSTs39HjIXkEXwkiA/cs=;
+        b=hJydUxaFRoL9KRyULvOFDwtXqVgZgXBxx7rfv+6eyCrUpOiyZQWNVR4pOEK0wGs+bg
+         ZsAJ087Ki2UUKEkXUAOz3ZWi58eV3iqH75u5KjeI4AJNQTN2rF3GPA+hLhu2gk2G0UIw
+         9uI+rr3hsdLmTi6Qjgw5d+3iGAekIRjrOR3OQWVDdrwljYMNGd2/J61EsuBNAD8QaUjF
+         3o3QLyIbahecmE954lQV3UqeG7cFE7bWBez5TTUCGq9334dtY7G8X5Zwvx0gHwo03Ugb
+         lw7uByknZi0Z5zHkYznV6cImU3nHytIIiHFjkFjqcZduS2Mw2ZI49e0x2WAuR6s/42vp
+         nmuw==
+X-Gm-Message-State: APjAAAXs889tOnWuHjtH1MrfVkSYmDpl7g9Q2eJ82bKiwLPsbepBoUUO
+        WByEubvHLeqxHoVuOSrM9vE=
+X-Google-Smtp-Source: APXvYqxcN3oLfWoRraakU0W1WjQJGDJ9U4FfsahgMk7CkfOmcMdmW5toIJ6pHWweXWQCDbvc/i5LRA==
+X-Received: by 2002:a2e:7001:: with SMTP id l1mr4743724ljc.48.1565557294756;
+        Sun, 11 Aug 2019 14:01:34 -0700 (PDT)
 Received: from localhost.localdomain ([94.29.34.218])
-        by smtp.gmail.com with ESMTPSA id z25sm18708161lfi.51.2019.08.11.14.01.32
+        by smtp.gmail.com with ESMTPSA id z25sm18708161lfi.51.2019.08.11.14.01.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Aug 2019 14:01:33 -0700 (PDT)
+        Sun, 11 Aug 2019 14:01:34 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -56,9 +56,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v10 07/15] memory: tegra20-emc: Increase handshake timeout
-Date:   Mon, 12 Aug 2019 00:00:35 +0300
-Message-Id: <20190811210043.20122-8-digetx@gmail.com>
+Subject: [PATCH v10 08/15] memory: tegra20-emc: wait_for_completion_timeout() doesn't return error
+Date:   Mon, 12 Aug 2019 00:00:36 +0300
+Message-Id: <20190811210043.20122-9-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190811210043.20122-1-digetx@gmail.com>
 References: <20190811210043.20122-1-digetx@gmail.com>
@@ -69,30 +69,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turned out that it could take over a millisecond under some circumstances,
-like running on a very low CPU/memory frequency. TRM says that handshake
-happens when there is a "safe" moment, but not explains exactly what that
-moment is. Apparently at least memory should be idling and thus the low
-frequency should be a reasonable cause for a longer handshake delay.
+The "interruptible" variant may error out, the "uninterruptible" not.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memory/tegra/tegra20-emc.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 25a6aad6a7a9..da75efc632c7 100644
+index da75efc632c7..1b23b1c34476 100644
 --- a/drivers/memory/tegra/tegra20-emc.c
 +++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -236,7 +236,7 @@ static int emc_complete_timing_change(struct tegra_emc *emc, bool flush)
- 	}
+@@ -224,7 +224,7 @@ static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
  
- 	timeout = wait_for_completion_timeout(&emc->clk_handshake_complete,
--					      usecs_to_jiffies(100));
-+					      msecs_to_jiffies(100));
+ static int emc_complete_timing_change(struct tegra_emc *emc, bool flush)
+ {
+-	long timeout;
++	unsigned long timeout;
+ 
+ 	dev_dbg(emc->dev, "%s: flush %d\n", __func__, flush);
+ 
+@@ -240,10 +240,6 @@ static int emc_complete_timing_change(struct tegra_emc *emc, bool flush)
  	if (timeout == 0) {
  		dev_err(emc->dev, "EMC-CAR handshake failed\n");
  		return -EIO;
+-	} else if (timeout < 0) {
+-		dev_err(emc->dev, "failed to wait for EMC-CAR handshake: %ld\n",
+-			timeout);
+-		return timeout;
+ 	}
+ 
+ 	return 0;
 -- 
 2.22.0
 
