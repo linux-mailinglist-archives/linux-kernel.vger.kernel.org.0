@@ -2,105 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A261688F2F
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 05:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C25A88F37
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2019 05:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfHKDRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 10 Aug 2019 23:17:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52725 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfHKDRU (ORCPT
+        id S1726506AbfHKDZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 10 Aug 2019 23:25:29 -0400
+Received: from mail.rationali.st ([13.54.121.199]:44530 "EHLO
+        mail.rationali.st" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfHKDZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Aug 2019 23:17:20 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so9268898wms.2
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2019 20:17:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CJTRgRoQys59T83fv2iqLib5QcQAZ/wqe7J9GPlE24g=;
-        b=B7bLl+eKaMPsG+QbROJDP7SGHYXqM2kTNx3nEIQH2QBkhUBT9udm2pQcMF+mSrFV89
-         mTclRC7muzaGvAb8/iKYd3Wlhuuu062xXrqn4atB7ywTjmpY50mxr9uTPnzePodnRzUd
-         P4l8tnFUJQFjFgxjM21n8zDYZru2mxwBPqXzkvL8ReJj+Agm0T44mCmktOcWbKXX3n2w
-         pi+cExU6mK6dtWEa/9QTbDXG0kjdAFlnqQ6Wtq+uorte8AvF9tCE3eeIQXStnpk7SzJ8
-         ocIKvclxx7AM3yBBzBiVHrF+0M2XL3EiuKsKcATgMSTMT1FaTjXKnlvogZEcCgTA/q9X
-         Hxyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CJTRgRoQys59T83fv2iqLib5QcQAZ/wqe7J9GPlE24g=;
-        b=nXCJYhOZgqiEpuIqdpeZepYpP3IL1Q/El1tUftLWTop8eGxPUjl3fc0eeKxTss2Mw9
-         EvBw8R/wyF7qA816+ldn1wgftgkmhE18LAnpTn//dRx5uD5SbNprMHkBWkAiA/zwYUQH
-         1sCBnOiOBpAb9Ytw4Gy5KJgJ8CL79oOk+XbOCVja2t0ADhasG2c9kFpRwbViwyDjhsgw
-         /QZcppz7PakN/6F7u9ZmJRqIRNJnW4afoCnBW+70D5kB0QCLtbX/d36b9qMljR5822XS
-         fTEpTxR8NxipukwOJcSbtyXzsf63n9rAXpQ942nm2MMrqtmrFROt/ljgsIbzr+EpihyI
-         qeQA==
-X-Gm-Message-State: APjAAAUfW5NvTAIGr91gNlBvb+QOPOKvaRQd/MmxXMc9ypatBL/XleGy
-        temdwG/W91WH7Xi5qN/uguc=
-X-Google-Smtp-Source: APXvYqz4tIfbTsWk6WavONnmqrVrMLrB+D3W4ERW37SCHjL2OtB6lwPl/M7DY2HGUoSv2IqJmzui4w==
-X-Received: by 2002:a05:600c:21ca:: with SMTP id x10mr12149120wmj.112.1565493437886;
-        Sat, 10 Aug 2019 20:17:17 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id l3sm17489437wrb.41.2019.08.10.20.17.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 10 Aug 2019 20:17:17 -0700 (PDT)
-Date:   Sat, 10 Aug 2019 20:17:15 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] Makefile: Convert -Wimplicit-fallthrough=3 to just
- -Wimplicit-fallthrough for clang
-Message-ID: <20190811031715.GA22334@archlinux-threadripper>
-References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
- <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
- <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
- <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
- <20190811020442.GA22736@archlinux-threadripper>
- <871efd6113ee2f6491410409511b871b7637f9e3.camel@perches.com>
+        Sat, 10 Aug 2019 23:25:29 -0400
+Received: from ppp167-208-210.static.internode.on.net ([59.167.208.210] helo=t460s.rationali.st)
+        by mail.rationali.st with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <acooks@rationali.st>)
+        id 1hwdyJ-0000m7-9g; Sun, 11 Aug 2019 02:53:10 +0000
+Reply-To: acooks@rationali.st
+Subject: Re: [PATCH v5 0/3] Enable ACPI-defined peripherals on i2c-piix4 SMBus
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        Jean Delvare <jdelvare@suse.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, platypus-sw@opengear.com,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Will Wagner <willw@carallon.com>
+References: <20190802145109.38dd4045@endymion>
+ <b013c33b-da11-ce5e-08d4-0b24a8575109@metux.net>
+From:   Andrew Cooks <acooks@rationali.st>
+Message-ID: <db725a3b-7b6e-ac79-ef1c-e601ff45c0f2@rationali.st>
+Date:   Sun, 11 Aug 2019 12:52:37 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871efd6113ee2f6491410409511b871b7637f9e3.camel@perches.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <b013c33b-da11-ce5e-08d4-0b24a8575109@metux.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Score: -2.9 (--)
+X-Spam-Report: Spam detection software, running on the system "mail.rationali.st",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  Hi Enrico On 8/8/19 7:17 PM, Enrico Weigelt, metux IT consult
+    wrote: > On 02.08.19 14:51, Jean Delvare wrote: > > Hi, > >> These patches
+    fix a couple of issues with the i2c-piix4 driver on >> AMD Family 16h Mod
+    [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 10, 2019 at 08:06:05PM -0700, Joe Perches wrote:
-> On Sat, 2019-08-10 at 19:04 -0700, Nathan Chancellor wrote:
-> > On a tangential note, how are you planning on doing the fallthrough
-> > comment to attribute conversion? The reason I ask is clang does not
-> > support the comment annotations, meaning that when Nathan Huckleberry's
-> > patch is applied to clang (which has been accepted [1]), we are going
-> > to get slammed by the warnings. I just ran an x86 defconfig build at
-> > 296d05cb0d3c with his patch applied and I see 27673 instances of this
-> > warning... (mostly coming from some header files so nothing crazy but it
-> > will be super noisy).
-> > 
-> > If you have something to share like a script or patch, I'd be happy to
-> > test it locally.
-> > 
-> > [1]: https://reviews.llvm.org/D64838
-> 
-> Something like this patch:
-> 
-> https://lore.kernel.org/patchwork/patch/1108577/
-> 
-> Maybe use:
-> 
-> #define fallthrough [[fallthrough]]
-> 
-> if the compiler supports that notation
-> 
+Hi Enrico
 
-That patch as it stands will work with D64838, as it is adding support
-for the GNU fallthrough attribute.
+On 8/8/19 7:17 PM, Enrico Weigelt, metux IT consult wrote:
+> On 02.08.19 14:51, Jean Delvare wrote:
+>
+> Hi,
+>
+>> These patches fix a couple of issues with the i2c-piix4 driver on
+>> AMD Family 16h Model 30h SoCs and add ACPI-based enumeration to the
+>> i2c-piix4 driver.
+> Can you tell a little bit more about what devices are behind the smbus ?
+> I recall the G-412 SoCs (such as on apu2+ boards) have an Hudson inside
+> and fall into this category. (I'll have to check when back in office),
+> so (as the apu2 platform driver maintainer) I'm very interested in this.
+My initial work is based on a board that is similar to the APU2, but has additional peripherals connected to the smbus, including a NCT7491 thermal monitor/fan controller and PCA6524 GPIO controller. These are simply peripherals on a board variant, not 'platform' devices, so I didn't want to follow the platform driver approach that the APU2 GPIO driver uses.
+>
+> Does the probing need some special BIOS support (or do the necessary
+> table entries already come from aegesa) ?
 
-However, I assume that all of the /* fall through */ comments will need
-to be converted to the attribute macro, was that going to be done with
-Coccinelle or something else?
+SMBus (and I2C) peripherals can generally not be enumerated without some firmware support. It is possible to probe for specific devices on the bus (eg sensors-detect) but in general it is not feasible to let every supported device driver probe the bus for its device. ACPI and Devicetree provides the kernel with metadata for the device: type, address, calibrated set points for temperature, etc.
+
+Since the peripherals are not standard platform devices, they are not described by the ACPI tables provided by Coreboot or AMD, but it's not too difficult to create supplementary device description tables (ACPI) for non-standard devices. These can be added to coreboot, supplied to qemu as additional firmware files (see -acpitable arg), or built into the kernel (see https://www.kernel.org/doc/Documentation/acpi/ssdt-overlays.txt)
+
+ACPI may be an ugly abomination, but it's what we're stuck with on x86 and it can only improve when more people get their hands on it.
+
+>
+> I have to admit, I'm still confused by the AMD documentation - haven't
+> found a clear documentation on what peripherals exactly are in the
+> G-412 SoC, just puzzled together that the FCH seems to be an Hudson,
+> probably v2. There also seems to be some relation between smbus and
+> gpio, but the gpio's are directly memory-mapped - no idea whether they
+> just share the same base address register or the gpios are really behind
+> smbus and some hw logic directy maps them into mmio space ...
+> Do you happen to have some more information on that ?
+You might find it helpful to look at the coreboot source for the APU2 (src/mainboard/pcengines/apu2/gpio_ftns.h)
+>
+> By the way: I'm considering collecting some hw documentation in the
+> kernel tree (maybe Documentation/hardware/...) - do you folks think
+> that's a good idea ?
+
+Would it be awesome if specs were available for every device supported by the kernel? Absolutely, what a dream! Perhaps a separate repo, like the linux-firmware repo, would be better for binary objects that don't change. Unfortunately, copyright makes this hard. NDAs make this hard. Hardware companies just don't seem to work like that.
+
+>
+> --mtx
+
+Regards,
+ 
+
+Andrew
