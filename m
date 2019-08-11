@@ -2,144 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18111894D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 01:07:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79DCC894DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 01:19:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfHKXH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 19:07:26 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7185 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbfHKXH0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 19:07:26 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d509fb60000>; Sun, 11 Aug 2019 16:07:34 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 11 Aug 2019 16:07:24 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 11 Aug 2019 16:07:24 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 11 Aug
- 2019 23:07:23 +0000
-Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
-To:     <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-16-ira.weiny@intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <88d82639-c0b2-0b35-1919-999a8438031c@nvidia.com>
-Date:   Sun, 11 Aug 2019 16:07:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726566AbfHKXTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 19:19:39 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37111 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbfHKXTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Aug 2019 19:19:39 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 466FLH4JJnz9s00;
+        Mon, 12 Aug 2019 09:19:35 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565565576;
+        bh=wPCT2WTXBYyy3JKuYxFMQHhR5bJiR/Hp9VAWzW6jjzg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=R2zaZwASExQ1Nersrcwb0xEbPQxTYvs40IR7Kp0Wl+jF1AXX2Qldv+s+hfLz3zc64
+         sN53aDoMoeB1pIYsbbdnr2bnJ4J0UoI6YbCy8c0hWidqV6PQYT/Sk87qBAVshWy9Ek
+         8evSN8r0+ZvtswyThgtZOjCezHr/UrDC3YsBAZhZEFAmUNHoeDE5toISZvJ8h7lPhj
+         peMf3KcXTZxgBA0A1zlVKTNWdNH+iIS3tXWl7UBcirWTP/MGv2/kkSEd7MyHeARfZ7
+         N0atEe7dmEaNIuVAcZQ0Bm/SrkvsL4/hWskQu2TwZEv/W48my/UEggLV1atpErSvuL
+         I0t3Io4baE7lA==
+Date:   Mon, 12 Aug 2019 09:19:15 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: linux-next: manual merge of the mips tree with Linus' tree
+Message-ID: <20190812091915.6ce11ea7@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190809225833.6657-16-ira.weiny@intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565564854; bh=WyN+cqUy4NONmSoVEoC5zyApgJufQNRRkmxYAmxiNRk=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=GjochqX+orN7s3BQGomPrZQyWc/568hzhVWT8sDxI6ycL8n3NJRfjYVyxlilSkFJV
-         0v1gr7a1sg2wL7PQ7Q0Dcubx1ogIn8Ke72whU/7rqtGuRqPq7C+Ov/M2GpkOhsvG7D
-         prYV07lPVe1n7zXbUFOOqu0O+zmZFD4o9ZwEYryqx80zMRNZ+bq7HCwxmmVbIxjO2a
-         eyfVpsIxVN8KjqFFKHnKr50U23pYiJqe16sEcZFBVMMPBbuIaXUFHzc2oRYO+Hbvbq
-         BtKCArw8N2g27OxonpaIrJUWZPBJhIbV9JVwYzpariVg0rZ5RNb/Q9Z0jeOeGL3ylM
-         qgEDDHrL4QwYQ==
+Content-Type: multipart/signed; boundary="Sig_/YELST0//HVa5J11uvx0/NHc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> The addition of FOLL_LONGTERM has taken on additional meaning for CMA
-> pages.
-> 
-> In addition subsystems such as RDMA require new information to be passed
-> to the GUP interface to track file owning information.  As such a simple
-> FOLL_LONGTERM flag is no longer sufficient for these users to pin pages.
-> 
-> Introduce a new GUP like call which takes the newly introduced vaddr_pin
-> information.  Failure to pass the vaddr_pin object back to a vaddr_put*
-> call will result in a failure if pins were created on files during the
-> pin operation.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
+--Sig_/YELST0//HVa5J11uvx0/NHc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm creating a new call site conversion series, to replace the 
-"put_user_pages(): miscellaneous call sites" series. This uses
-vaddr_pin_pages*() where appropriate. So it's based on your series here.
+Hi all,
 
-btw, while doing that, I noticed one more typo while re-reading some of the comments. 
-Thought you probably want to collect them all for the next spin. Below...
+Today's linux-next merge of the mips tree got a conflict in:
 
-> ---
-> Changes from list:
-> 	Change to vaddr_put_pages_dirty_lock
-> 	Change to vaddr_unpin_pages_dirty_lock
-> 
->  include/linux/mm.h |  5 ++++
->  mm/gup.c           | 59 ++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 64 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 657c947bda49..90c5802866df 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1603,6 +1603,11 @@ int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
->  int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
->  			struct task_struct *task, bool bypass_rlim);
->  
-> +long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
-> +		     unsigned int gup_flags, struct page **pages,
-> +		     struct vaddr_pin *vaddr_pin);
-> +void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
-> +				  struct vaddr_pin *vaddr_pin, bool make_dirty);
->  bool mapping_inode_has_layout(struct vaddr_pin *vaddr_pin, struct page *page);
->  
->  /* Container for pinned pfns / pages */
-> diff --git a/mm/gup.c b/mm/gup.c
-> index eeaa0ddd08a6..6d23f70d7847 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2536,3 +2536,62 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(get_user_pages_fast);
-> +
-> +/**
-> + * vaddr_pin_pages pin pages by virtual address and return the pages to the
-> + * user.
-> + *
-> + * @addr, start address
-> + * @nr_pages, number of pages to pin
-> + * @gup_flags, flags to use for the pin
-> + * @pages, array of pages returned
-> + * @vaddr_pin, initalized meta information this pin is to be associated
+  Documentation/index.rst
 
-Typo:
-                  initialized
+between commit:
 
+  08a69058c02f ("docs: power: add it to to the main documentation index")
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+from Linus' tree and commit:
+
+  97689a1a3fda ("doc: Add doc for the Ingenic TCU hardware")
+
+from the mips tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/index.rst
+index 2df5a3da563c,87214feda41f..000000000000
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@@ -145,7 -143,7 +145,8 @@@ implementation
+     arm64/index
+     ia64/index
+     m68k/index
++    mips/index
+ +   powerpc/index
+     riscv/index
+     s390/index
+     sh/index
+
+--Sig_/YELST0//HVa5J11uvx0/NHc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1QonMACgkQAVBC80lX
+0GxbQgf/Sql0Ef+sJWJQLwaqXLG1aYx1sLNgM5WunCV/I9VkullGEeD69w6tEfEJ
+hH0VcYtONbCV8/5O2nBcusBzeTP/y9QmQ206H0FORA9ARrB9Sq+XJANoPGkWhXG0
+0h9bxZJp6WNSb1MFdPK0CNaTf6/gD5aDAM3Vs/estDs8rfOGBjK/NxqT+zQ8L75s
+FcH5ggQLlXUS4kiMLWPS/NeWyLLCka8g1Gpy78gDMPQWHY+G39NH+goqOOdTucZ0
+lPSBY0aiM2H6IVSwhSOEPVYySICRhSDNUNSKGk8o9kjYIwnvSsYC4y5v1KBZGF96
+Nmx2PkIQsLpa0MNwZKTdAOw0S10/Yg==
+=ZsZr
+-----END PGP SIGNATURE-----
+
+--Sig_/YELST0//HVa5J11uvx0/NHc--
