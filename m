@@ -2,134 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD3FD894E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 01:42:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75311894EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 01:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfHKXmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 19:42:11 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19432 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726055AbfHKXmL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 19:42:11 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7BNfPGC112113
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 19:42:10 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uaqy2f4jp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 19:42:10 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 12 Aug 2019 00:42:09 +0100
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 12 Aug 2019 00:42:04 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7BNg3LT34603330
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 11 Aug 2019 23:42:03 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1BBD3B2064;
-        Sun, 11 Aug 2019 23:42:03 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EDA91B205F;
-        Sun, 11 Aug 2019 23:42:02 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.138.198])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Aug 2019 23:42:02 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id C0E5A16C9A70; Sun, 11 Aug 2019 16:42:05 -0700 (PDT)
-Date:   Sun, 11 Aug 2019 16:42:05 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, max.byungchul.park@gmail.com,
-        byungchul.park@lge.com, Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
-        kernel-team@lge.com, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Rao Shoaib <rao.shoaib@oracle.com>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC v1 2/2] rcuperf: Add kfree_rcu performance Tests
-Reply-To: paulmck@linux.ibm.com
-References: <20190806212041.118146-1-joel@joelfernandes.org>
- <20190806212041.118146-2-joel@joelfernandes.org>
- <20190807002915.GV28441@linux.ibm.com>
- <20190811020154.GA74292@google.com>
+        id S1726640AbfHKXqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 19:46:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726164AbfHKXqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Aug 2019 19:46:16 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79CB52084D;
+        Sun, 11 Aug 2019 23:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565567176;
+        bh=hxZGXq+1QClkJfpjPXEQ6VhU1iaPfgemO6jldgiK4ig=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MprxUavY8cQ6/cK9n6f1O0oHgjE9X38sSHpyXM3LvHswaNqflKU9ROrO5pDwSRbEk
+         yAG/II7kSV3UVtPsliGyxkWlwMFGyTM4FcFFi2CkTMAI+HNoOsQwAmKvCqdn41gf+b
+         clMk2UeA9ioWkiLaJJpl4S0Sa7srBhLMO2ljV9K8=
+Date:   Sun, 11 Aug 2019 19:46:14 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, ltp@lists.linux.it,
+        Li Wang <liwang@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Cyril Hrubis <chrubis@suse.cz>, xishi.qiuxishi@alibaba-inc.com
+Subject: Re: [PATCH] hugetlbfs: fix hugetlb page migration/fault race causing
+ SIGBUS
+Message-ID: <20190811234614.GZ17747@sasha-vm>
+References: <20190808000533.7701-1-mike.kravetz@oracle.com>
+ <20190808074607.GI11812@dhcp22.suse.cz>
+ <20190808074736.GJ11812@dhcp22.suse.cz>
+ <416ee59e-9ae8-f72d-1b26-4d3d31501330@oracle.com>
+ <20190808185313.GG18351@dhcp22.suse.cz>
+ <20190808163928.118f8da4f4289f7c51b8ffd4@linux-foundation.org>
+ <20190809064633.GK18351@dhcp22.suse.cz>
+ <20190809151718.d285cd1f6d0f1cf02cb93dc8@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190811020154.GA74292@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19081123-0064-0000-0000-000004078049
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011583; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01245479; UDB=6.00657181; IPR=6.01026976;
- MB=3.00028138; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-11 23:42:07
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081123-0065-0000-0000-00003EA20A5A
-Message-Id: <20190811234205.GB28441@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-11_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=906 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908110265
+In-Reply-To: <20190809151718.d285cd1f6d0f1cf02cb93dc8@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 10, 2019 at 10:01:54PM -0400, Joel Fernandes wrote:
-> On Tue, Aug 06, 2019 at 05:29:15PM -0700, Paul E. McKenney wrote:
-> > On Tue, Aug 06, 2019 at 05:20:41PM -0400, Joel Fernandes (Google) wrote:
+On Fri, Aug 09, 2019 at 03:17:18PM -0700, Andrew Morton wrote:
+>On Fri, 9 Aug 2019 08:46:33 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+>
+>> > Maybe we should introduce the Fixes-no-stable: tag.  That should get
+>> > their attention.
+>>
+>> No please, Fixes shouldn't be really tight to any stable tree rules. It
+>> is a very useful indication of which commit has introduced bug/problem
+>> or whatever that the patch follows up to. We in Suse are using this tag
+>> to evaluate potential fixes as the stable is not reliable. We could live
+>> with Fixes-no-stable or whatever other name but does it really makes
+>> sense to complicate the existing state when stable maintainers are doing
+>> whatever they want anyway? Does a tag like that force AI from selecting
+>> a patch? I am not really convinced.
+>
+>It should work if we ask stable trees maintainers not to backport
+>such patches.
+>
+>Sasha, please don't backport patches which are marked Fixes-no-stable:
+>and which lack a cc:stable tag.
 
-[ . . . ]
+I'll add it to my filter, thank you!
 
-> > It is really easy to confuse "l" and "1" in some fonts, so please use
-> > a different name.  (From the "showing my age" department:  On typical
-> > 1970s typewriters, there was no numeral "1" -- you typed the letter
-> > "l" instead, thus anticipating at least the first digit of "1337".)
-> 
-> Change l to loops ;). I did see typewriters around in my childhood, I thought
-> they were pretty odd machines :-D. I am sure my daughter will think the same
-> about land-line phones :-D
-
-Given your daughter's life expectancy, there will likely be a great many
-ca-2019 artifacts that will eventually seem quite odd to her.  ;-)
-
-[ . . . ]
-
-> > > +/*
-> > > + * shutdown kthread.  Just waits to be awakened, then shuts down system.
-> > > + */
-> > > +static int
-> > > +kfree_perf_shutdown(void *arg)
-> > > +{
-> > > +	do {
-> > > +		wait_event(shutdown_wq,
-> > > +			   atomic_read(&n_kfree_perf_thread_ended) >=
-> > > +			   kfree_nrealthreads);
-> > > +	} while (atomic_read(&n_kfree_perf_thread_ended) < kfree_nrealthreads);
-> > > +
-> > > +	smp_mb(); /* Wake before output. */
-> > > +
-> > > +	kfree_perf_cleanup();
-> > > +	kernel_power_off();
-> > > +	return -EINVAL;
-> > > +}
-> > 
-> > Is there some way to avoid (almost) duplicating rcu_perf_shutdown()?
-> 
-> At the moment, I don't see a good way to do this without passing in function
-> pointers or using macros which I think would look uglier than the above
-> addition. Sorry.
-
-No problem, just something to keep in mind.
-
-							Thanx, Paul
-
+--
+Thanks,
+Sasha
