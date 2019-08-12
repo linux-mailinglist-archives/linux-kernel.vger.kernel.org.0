@@ -2,112 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8BBB8A34D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 18:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4B28A350
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 18:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfHLQ1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 12:27:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:12657 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbfHLQ1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 12:27:54 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 097DF3083362;
-        Mon, 12 Aug 2019 16:27:54 +0000 (UTC)
-Received: from plouf.redhat.com (ovpn-117-165.ams2.redhat.com [10.36.117.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EF4FB5C1B5;
-        Mon, 12 Aug 2019 16:27:51 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     =?UTF-8?q?Bruno=20Pr=C3=A9mont?= <bonbons@linux-vserver.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Ping Cheng <pinglinux@gmail.com>,
-        Jason Gerecke <jason.gerecke@wacom.com>,
-        Jiri Kosina <jikos@kernel.org>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 2/2] HID: wacom: do not call hid_set_drvdata(hdev, NULL)
-Date:   Mon, 12 Aug 2019 18:27:40 +0200
-Message-Id: <20190812162740.15898-3-benjamin.tissoires@redhat.com>
-In-Reply-To: <20190812162740.15898-1-benjamin.tissoires@redhat.com>
-References: <20190812162740.15898-1-benjamin.tissoires@redhat.com>
+        id S1726956AbfHLQ22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 12:28:28 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42939 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbfHLQ21 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 12:28:27 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i30so1227435pfk.9
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 09:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nqNpCGFtDsa8a+HaBObToOYnGgLCkK9gOXb9jSunYpg=;
+        b=q9YeUqrOotnWphtWt+AmZhvUnYaPCLv3zf1CBf8qMjF4Lv+N1SlxcpneZ0RIDVmKx6
+         PEnkTk/klNoYA9mDPfS1ByJfxSqRYhoqgiKYO+g2npyQLOG5Qu+wZdc0UZqCNGTVj6Wl
+         yU8u4eqsgHXW5p3oDfzLjG2GK6p5qQBuoGkoO9mLVZFafWtSQt7TZy907yptEz88jId2
+         sNtQsXtA2kmDSUVFsniFeFTjWLU5ozKhQsrHSVVPnI2O/1vT2frMSBLVsPWgj6Grgo5A
+         dhUT541BM69IcvHQhcMqysd8tszX9+Cp6fSRHF9JnCnz5kf0KvGCK6wgfbGF/pPR2y98
+         InOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nqNpCGFtDsa8a+HaBObToOYnGgLCkK9gOXb9jSunYpg=;
+        b=DNNGPfcZ+YlsN26oB/mBx0bvFdPaAtldH0AiqHdke1WwyzyiaDCQ4DVV2a9WlOdYyI
+         d4e485BFSyuXo68cT+vYhbTmrO0zz9Tnv5H0hSHUa8LNnyAiK6bHG5yNbtcslJYdDHRy
+         ysVgqqv6Dj2szyN7JPGwvZaccpkTQSnInZunpT7y+kyUQkComP7hjlOvw5FdMw8V5Uca
+         bPESvxpMLAfok+8FrFq0vrzMH/MB/SaElqy52tRu2zZVrHx9qxcQQtj5jb/HFkRAt/oR
+         0JnvlJE1oL3CFJxPaokeSYA2aj23t5gcU8O5SjmpJyAHRTDH3h+/vd1wWP6C0Epc8+2P
+         H5+g==
+X-Gm-Message-State: APjAAAWX4ZWbKGu4eDsT09IQWbSZdaowsDlqY6YoG4us9/stNoB5c+17
+        hpGN7lH0xY6fl/pzmpWR/FmY0z8mmXwcmJBMIRbG0A==
+X-Google-Smtp-Source: APXvYqybiim5GktIVsZhGSf2Jvn0qjk2FW1kum2frzZ3BACvfGCTgX1Xu8z+cPROUCSeIpYWIdG1CQVhIXzzXj+xryA=
+X-Received: by 2002:a63:f94c:: with SMTP id q12mr30500912pgk.10.1565627306188;
+ Mon, 12 Aug 2019 09:28:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 12 Aug 2019 16:27:54 +0000 (UTC)
+References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
+ <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
+ <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
+ <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
+ <20190811020442.GA22736@archlinux-threadripper> <871efd6113ee2f6491410409511b871b7637f9e3.camel@perches.com>
+In-Reply-To: <871efd6113ee2f6491410409511b871b7637f9e3.camel@perches.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 12 Aug 2019 09:28:15 -0700
+Message-ID: <CAKwvOdmAj34xDcMUn7Fu_aXdtD-7xHjHuU20qY=rFcr_Kz7gpg@mail.gmail.com>
+Subject: Re: [PATCH] Makefile: Convert -Wimplicit-fallthrough=3 to just
+ -Wimplicit-fallthrough for clang
+To:     Joe Perches <joe@perches.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a common pattern in the HID drivers to reset the drvdata.
-However, this is actually already handled by driver core, so there
-is no need to do it manually.
+On Sat, Aug 10, 2019 at 8:06 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Sat, 2019-08-10 at 19:04 -0700, Nathan Chancellor wrote:
+> > On a tangential note, how are you planning on doing the fallthrough
+> > comment to attribute conversion? The reason I ask is clang does not
+> > support the comment annotations, meaning that when Nathan Huckleberry's
+> > patch is applied to clang (which has been accepted [1]), we are going
+> > to get slammed by the warnings. I just ran an x86 defconfig build at
+> > 296d05cb0d3c with his patch applied and I see 27673 instances of this
+> > warning... (mostly coming from some header files so nothing crazy but it
+> > will be super noisy).
+> >
+> > If you have something to share like a script or patch, I'd be happy to
+> > test it locally.
+> >
+> > [1]: https://reviews.llvm.org/D64838
+>
+> Something like this patch:
+>
+> https://lore.kernel.org/patchwork/patch/1108577/
+>
+> Maybe use:
+>
+> #define fallthrough [[fallthrough]]
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- drivers/hid/wacom_sys.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
-index 53bddb50aeba..69ccfdd51a6f 100644
---- a/drivers/hid/wacom_sys.c
-+++ b/drivers/hid/wacom_sys.c
-@@ -2718,14 +2718,12 @@ static int wacom_probe(struct hid_device *hdev,
- 	wacom_wac->features = *((struct wacom_features *)id->driver_data);
- 	features = &wacom_wac->features;
- 
--	if (features->check_for_hid_type && features->hid_type != hdev->type) {
--		error = -ENODEV;
--		goto fail;
--	}
-+	if (features->check_for_hid_type && features->hid_type != hdev->type)
-+		return -ENODEV;
- 
- 	error = kfifo_alloc(&wacom_wac->pen_fifo, WACOM_PKGLEN_MAX, GFP_KERNEL);
- 	if (error)
--		goto fail;
-+		return error;
- 
- 	wacom_wac->hid_data.inputmode = -1;
- 	wacom_wac->mode_report = -1;
-@@ -2743,12 +2741,12 @@ static int wacom_probe(struct hid_device *hdev,
- 	error = hid_parse(hdev);
- 	if (error) {
- 		hid_err(hdev, "parse failed\n");
--		goto fail;
-+		return error;
- 	}
- 
- 	error = wacom_parse_and_register(wacom, false);
- 	if (error)
--		goto fail;
-+		return error;
- 
- 	if (hdev->bus == BUS_BLUETOOTH) {
- 		error = device_create_file(&hdev->dev, &dev_attr_speed);
-@@ -2759,10 +2757,6 @@ static int wacom_probe(struct hid_device *hdev,
- 	}
- 
- 	return 0;
--
--fail:
--	hid_set_drvdata(hdev, NULL);
--	return error;
- }
- 
- static void wacom_remove(struct hid_device *hdev)
-@@ -2791,8 +2785,6 @@ static void wacom_remove(struct hid_device *hdev)
- 		wacom_release_resources(wacom);
- 
- 	kfifo_free(&wacom_wac->pen_fifo);
--
--	hid_set_drvdata(hdev, NULL);
- }
- 
- #ifdef CONFIG_PM
+Isn't [[fallthrough]] the C++ style attribute?  **eek** Seems to be a
+waste for Clang to implement __attribute__((fallthrough)) just as we
+switch the kernel to not use it.  Also, I'd recommend making the
+preprocessor define all caps to help folks recognize it's a
+preprocessor define.
 -- 
-2.19.2
-
+Thanks,
+~Nick Desaulniers
