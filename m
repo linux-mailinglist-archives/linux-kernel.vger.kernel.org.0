@@ -2,118 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E952D8A988
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:42:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54AF48A98D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfHLVm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 17:42:29 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39417 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbfHLVm3 (ORCPT
+        id S1727277AbfHLVoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 17:44:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19872 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726200AbfHLVoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 17:42:29 -0400
-Received: by mail-ot1-f68.google.com with SMTP id r21so158790831otq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 14:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Gx6QSLesJel3EOn97a01WuWFWtw8sELpqZv3XHH4TkE=;
-        b=L7tL6lnUwjerVWRjOf2iuk1/0vpIdnnLXUclicu9EOj4VQmxfw+195eNnnVP9D5A//
-         s33XOs62eRI5nqcXjWFQ7zf64nTA66h/zrxAzyAdDspuxAMzibZe3qyVg5FhfifXwsCp
-         d1faRADV2Hh1kbo/gA767R85R5ZSllgoT3i2cYwdPJDzTVQDFbgRsw4JWq6Cmuh5ecrL
-         TPgnjcLkuOCnVuSfTw3+YqYAW+2pvCdj7LD9jEOqRpWrXF25XodfN1JsNeAby0bYpmJs
-         yDqh2NyYAyvbvVOf3fQb9UZ6ZvC4ByheZUJwcFgaRyXh2XJcrBM7uJkg462XjZgeih92
-         /Zbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gx6QSLesJel3EOn97a01WuWFWtw8sELpqZv3XHH4TkE=;
-        b=lUSdSBCXw59nVTKuTId+6uCyRlhEcNQlyvcH29EktU/ede5MVsGvuIowIUCHwlns24
-         5gfsR955tgHL9HbnvuNIYtznFJTdTm2aCXDFvBJbLaWJHYErYUgXIzdNr7wAQhVsmsJx
-         /Q3gY5jFNe559jvxCC7iRaRg6jc0+KXm5K2jVzlR0NTRWWV8OUJkSwuSy/UoOLK8HDnG
-         tDvTRcpPri+5ubuH34PUwfnNi+vpqIan6wV6XFX8XVvcLy2Cvbt0y0MxFQ9Gp/yTu1qj
-         UFsBzWO2k/q2+OzBztF0AiQiOnl5LJj5o15X4JHBeW4dl7vyqKeWeL/fLO+Zrby/b3Qj
-         nYjQ==
-X-Gm-Message-State: APjAAAWbElFN3tr6xzZ/rwhvJ2W9+PR68C7NgxHoJMuqbJ2tAl5oz86r
-        +h8rDutjdtib1vRD4i1e3+ZzHNFz47YFemEKMldYCQ==
-X-Google-Smtp-Source: APXvYqwt49xvwotsJKc/cNOaXDlphf+EqnjZvINoE5+CnGxbY/po6fhZWP8cqKRsjzvFc2n4GYl/GZplqFVFtSSXUEY=
-X-Received: by 2002:a5d:9613:: with SMTP id w19mr6341798iol.140.1565646148509;
- Mon, 12 Aug 2019 14:42:28 -0700 (PDT)
+        Mon, 12 Aug 2019 17:44:20 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7CLhAia056358;
+        Mon, 12 Aug 2019 17:43:53 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ubep3bb1a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Aug 2019 17:43:53 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7CLhLfU057132;
+        Mon, 12 Aug 2019 17:43:53 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ubep3bb15-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Aug 2019 17:43:53 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7CLZOGc031449;
+        Mon, 12 Aug 2019 21:43:52 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma04wdc.us.ibm.com with ESMTP id 2u9nj6a4vg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Aug 2019 21:43:52 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7CLhphE44564940
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Aug 2019 21:43:51 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D0888112064;
+        Mon, 12 Aug 2019 21:43:51 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F087F112062;
+        Mon, 12 Aug 2019 21:43:48 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.165.146])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon, 12 Aug 2019 21:43:48 +0000 (GMT)
+References: <20190806052237.12525-1-bauerman@linux.ibm.com> <20190806052237.12525-9-bauerman@linux.ibm.com> <875zn2sgqs.fsf@concordia.ellerman.id.au>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Anshuman Khandual <anshuman.linux@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Subject: Re: [PATCH v3 08/16] powerpc/pseries/svm: Use shared memory for LPPACA structures
+In-reply-to: <875zn2sgqs.fsf@concordia.ellerman.id.au>
+Date:   Mon, 12 Aug 2019 18:43:45 -0300
+Message-ID: <87sgq6gium.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-References: <cover.1565188228.git.ilubashe@akamai.com> <bd8763b72ed4d58d0b42d44fbc7eb474d32e53a3.1565188228.git.ilubashe@akamai.com>
- <20190812202251.GG9280@kernel.org> <20190812202706.GH9280@kernel.org> <20190812202947.GI9280@kernel.org>
-In-Reply-To: <20190812202947.GI9280@kernel.org>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 12 Aug 2019 15:42:17 -0600
-Message-ID: <CANLsYkwjdhzVMwrWboTTOw+P3NajtoswxfxhodK0DdeexFCR3w@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] perf: Use CAP_SYS_ADMIN instead of euid==0 with ftrace
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Igor Lubashev <ilubashe@akamai.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        James Morris <jmorris@namei.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-12_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=872 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908120209
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Aug 2019 at 14:29, Arnaldo Carvalho de Melo
-<arnaldo.melo@gmail.com> wrote:
->
-> Em Mon, Aug 12, 2019 at 05:27:06PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Mon, Aug 12, 2019 at 05:22:51PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > > Em Wed, Aug 07, 2019 at 10:44:17AM -0400, Igor Lubashev escreveu:
-> > > > @@ -281,7 +283,7 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
-> > > >           .events = POLLIN,
-> > > >   };
-> > > >
-> > > > - if (geteuid() != 0) {
-> > > > + if (!perf_cap__capable(CAP_SYS_ADMIN)) {
-> > > >           pr_err("ftrace only works for root!\n");
-> > >
-> > > I guess we should update the error message too?
-> > >
-> >
-> > I.e. I applied this as a follow up patch:
-> >
-> > diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> > index 01a5bb58eb04..ba8b65c2f9dc 100644
-> > --- a/tools/perf/builtin-ftrace.c
-> > +++ b/tools/perf/builtin-ftrace.c
-> > @@ -284,7 +284,12 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
-> >       };
-> >
-> >       if (!perf_cap__capable(CAP_SYS_ADMIN)) {
-> > -             pr_err("ftrace only works for root!\n");
-> > +             pr_err("ftrace only works for %s!\n",
-> > +#ifdef HAVE_LIBCAP_SUPPORT
-> > +             "users with the SYS_ADMIN capability"
-> > +#else
-> > +             "root"
-> > +#endif
->
->                 );
->
-> :-)
->
-> >               return -1;
-> >       }
-> >
->
-> I've pushed the whole set to my tmp.perf/cap branch, please chec
 
-Please hold on before moving further - I'm getting a segmentation
-fault on ARM64 that I'm still trying to figure out.
+Michael Ellerman <mpe@ellerman.id.au> writes:
 
+> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
+>> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+>>
+>> LPPACA structures need to be shared with the host. Hence they need to be in
+>> shared memory. Instead of allocating individual chunks of memory for a
+>> given structure from memblock, a contiguous chunk of memory is allocated
+>> and then converted into shared memory. Subsequent allocation requests will
+>> come from the contiguous chunk which will be always shared memory for all
+>> structures.
+>>
+>> While we are able to use a kmem_cache constructor for the Debug Trace Log,
+>> LPPACAs are allocated very early in the boot process (before SLUB is
+>> available) so we need to use a simpler scheme here.
+>>
+>> Introduce helper is_svm_platform() which uses the S bit of the MSR to tell
+>> whether we're running as a secure guest.
+>>
+>> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+>> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+>> ---
+>>  arch/powerpc/include/asm/svm.h | 26 ++++++++++++++++++++
+>>  arch/powerpc/kernel/paca.c     | 43 +++++++++++++++++++++++++++++++++-
+>>  2 files changed, 68 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/svm.h b/arch/powerpc/include/asm/svm.h
+>> new file mode 100644
+>> index 000000000000..fef3740f46a6
+>> --- /dev/null
+>> +++ b/arch/powerpc/include/asm/svm.h
+>> @@ -0,0 +1,26 @@
+>> +/* SPDX-License-Identifier: GPL-2.0+ */
+>> +/*
+>> + * SVM helper functions
+>> + *
+>> + * Copyright 2019 Anshuman Khandual, IBM Corporation.
 >
-> - Arnaldo
+> Are we sure this copyright date is correct?
+
+I may be confused about which year the copyright refers to. I thought it
+was the year when the patch was committed. If it is the first time the
+patch was published then this one should be 2018.
+
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
