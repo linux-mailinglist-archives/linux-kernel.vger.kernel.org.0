@@ -2,171 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1821089AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06DA189ABE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:02:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbfHLKBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:01:34 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35660 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfHLKBd (ORCPT
+        id S1727668AbfHLKCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:02:35 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35571 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727447AbfHLKCf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:01:33 -0400
-Received: by mail-wm1-f66.google.com with SMTP id l2so11222505wmg.0;
-        Mon, 12 Aug 2019 03:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lWrWlWYj8cvJ3r/FmTFT+tjcuUTnaXDsUrXZMHuksYo=;
-        b=ar7EqkwRDl4xpHq7AvfU+gQfmaCoAx0Y5xv4UIH3A22fsLoa1bYP0OmScYRKH7+sm7
-         cdyo2gCE+RqLB4wPd4ZmdFEnrHNyi3oMc07+lRaOYIcG7SZ2H0NAW+98RQuHLW/Y6qab
-         577eq+Ax3qjdC06Yapg/VO4CQgJopb94nnJ6aDssiGX1GJKvrxdXinB25/bc7erswV0y
-         A9GZ5L02/zoR2WgNtvroCGwisa5J14PcsEajq8BH1g/MttOaw2vZheArGNnvPHmgCCe1
-         FEdFjG7+h6oMs79m/flFofwXY3u6zHPrJIwo+KNyQ+F9At/C0yyA4hv+rZpdT59aTqkg
-         PbBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lWrWlWYj8cvJ3r/FmTFT+tjcuUTnaXDsUrXZMHuksYo=;
-        b=XZHO4aElWcg0GG4OPN5rXJ9FNtlOSJLUQZ+WzMMh+U7x+EKASHN1eRKhFgNIZr1EGF
-         e1Lok/jhuKbtMvJpcoBis0fJbvaZg83q3UdzU6T6XefJBKuMY9GMmO5eRohb9HsI/QZS
-         WBWuILAtNA7zNf6NUGGyYTvYTfvhg5BSnRHZUGJzlFOXfygbuJwOlboSpupNQrmYPo/S
-         +RCyWK3xs/NLBYdefDoZN3+ulMDUqIJcx6KEO0AAbB2wMIrTVCjvYXNUrbQesm3FjMkM
-         NT8FZzDxtd/ByQ3scQh4KxPQiqtkjoODIe7xR49dG/GZBVGg+kvHwfH9Px+biOWYfuve
-         W0ww==
-X-Gm-Message-State: APjAAAXLBoz3zKi7Xt1fce3yGqvlzkueEFeW3cOvi4OVHqIdPpQYP24V
-        KgWErTdZKjVbQI9arNUKqkY=
-X-Google-Smtp-Source: APXvYqxDtGEc4QyyHF/B4+oUczVRvnYQ6PMqgZN8YjrpYNhCxVjC+msiBt4HMMk+Kaaf+7tJZEYpJQ==
-X-Received: by 2002:a1c:f20f:: with SMTP id s15mr25880744wmc.33.1565604089682;
-        Mon, 12 Aug 2019 03:01:29 -0700 (PDT)
-Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
-        by smtp.gmail.com with ESMTPSA id u5sm8764194wmc.17.2019.08.12.03.01.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 03:01:28 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 12:01:27 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
-        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
-        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
-        devicetree@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v8 11/21] clk: tegra: clk-dfll: Add suspend and resume
- support
-Message-ID: <20190812100127.GJ8903@ulmo>
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
+        Mon, 12 Aug 2019 06:02:35 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 0A47560008;
+        Mon, 12 Aug 2019 10:02:31 +0000 (UTC)
+Date:   Mon, 12 Aug 2019 12:02:31 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Code Kipper <codekipper@gmail.com>,
+        Christopher Obbard <chris@64studio.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
+Subject: Re: [linux-sunxi] Re: [PATCH v4 6/9] ASoC: sun4i-i2s: Add multi-lane
+ functionality
+Message-ID: <20190812100231.wlxitekfojr4jaki@flea>
+References: <20190603174735.21002-1-codekipper@gmail.com>
+ <2092329.vleAuWJ0xl@jernej-laptop>
+ <20190731122953.2u3iabd6gkn7jv7k@flea>
+ <1589203.0AjJVEASy3@jernej-laptop>
+ <CAGb2v66D4-QvWYPXE=rf6Zv93X1LjnxUgpk+5wdAL_b7MM3vaA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
+        protocol="application/pgp-signature"; boundary="4tzqsccmfdz6gxrw"
 Content-Disposition: inline
-In-Reply-To: <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAGb2v66D4-QvWYPXE=rf6Zv93X1LjnxUgpk+5wdAL_b7MM3vaA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---72k7VsmfIboquFwl
-Content-Type: text/plain; charset=us-ascii
+--4tzqsccmfdz6gxrw
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2019 at 04:46:50PM -0700, Sowjanya Komatineni wrote:
-> This patch implements DFLL suspend and resume operation.
->=20
-> During system suspend entry, CPU clock will switch CPU to safe
-> clock source of PLLP and disables DFLL clock output.
->=20
-> DFLL driver suspend confirms DFLL disable state and errors out on
-> being active.
->=20
-> DFLL is re-initialized during the DFLL driver resume as it goes
-> through complete reset during suspend entry.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-dfll.c               | 56 ++++++++++++++++++++++++=
-++++++
->  drivers/clk/tegra/clk-dfll.h               |  2 ++
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  1 +
->  3 files changed, 59 insertions(+)
->=20
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index f8688c2ddf1a..eb298a5d7be9 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1487,6 +1487,7 @@ static int dfll_init(struct tegra_dfll *td)
->  	td->last_unrounded_rate =3D 0;
-> =20
->  	pm_runtime_enable(td->dev);
-> +	pm_runtime_irq_safe(td->dev);
->  	pm_runtime_get_sync(td->dev);
-> =20
->  	dfll_set_mode(td, DFLL_DISABLED);
-> @@ -1513,6 +1514,61 @@ static int dfll_init(struct tegra_dfll *td)
->  	return ret;
->  }
-> =20
-> +/**
-> + * tegra_dfll_suspend - check DFLL is disabled
-> + * @dev: DFLL device *
-> + *
-> + * DFLL clock should be disabled by the CPUFreq driver. So, make
-> + * sure it is disabled and disable all clocks needed by the DFLL.
-> + */
-> +int tegra_dfll_suspend(struct device *dev)
-> +{
-> +	struct tegra_dfll *td =3D dev_get_drvdata(dev);
-> +
-> +	if (dfll_is_running(td)) {
-> +		dev_err(td->dev, "dfll is enabled while shouldn't be\n");
+On Tue, Aug 06, 2019 at 02:22:13PM +0800, Chen-Yu Tsai wrote:
+> On Thu, Aug 1, 2019 at 1:32 PM Jernej =C5=A0krabec <jernej.skrabec@gmail.=
+com> wrote:
+> >
+> > Dne sreda, 31. julij 2019 ob 14:29:53 CEST je Maxime Ripard napisal(a):
+> > > On Tue, Jul 30, 2019 at 07:57:10PM +0200, Jernej =C5=A0krabec wrote:
+> > > > Dne torek, 04. junij 2019 ob 11:38:44 CEST je Code Kipper napisal(a=
+):
+> > > > > On Tue, 4 Jun 2019 at 11:02, Christopher Obbard <chris@64studio.c=
+om>
+> > wrote:
+> > > > > > On Tue, 4 Jun 2019 at 09:43, Code Kipper <codekipper@gmail.com>=
+ wrote:
+> > > > > > > On Tue, 4 Jun 2019 at 09:58, Maxime Ripard
+> > > > > > > <maxime.ripard@bootlin.com>
+> > > >
+> > > > wrote:
+> > > > > > > > On Mon, Jun 03, 2019 at 07:47:32PM +0200, codekipper@gmail.=
+com
+> > wrote:
+> > > > > > > > > From: Marcus Cooper <codekipper@gmail.com>
+> > > > > > > > >
+> > > > > > > > > The i2s block supports multi-lane i2s output however this
+> > > > > > > > > functionality
+> > > > > > > > > is only possible in earlier SoCs where the pins are expos=
+ed and
+> > > > > > > > > for
+> > > > > > > > > the i2s block used for HDMI audio on the later SoCs.
+> > > > > > > > >
+> > > > > > > > > To enable this functionality, an optional property has be=
+en
+> > > > > > > > > added to
+> > > > > > > > > the bindings.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+> > > > > > > >
+> > > > > > > > I'd like to have Mark's input on this, but I'm really worri=
+ed
+> > > > > > > > about
+> > > > > > > > the interaction with the proper TDM support.
+> > > > > > > >
+> > > > > > > > Our fundamental issue is that the controller can have up to=
+ 8
+> > > > > > > > channels, but either on 4 lines (instead of 1), or 8 channe=
+ls on 1
+> > > > > > > > (like proper TDM) (or any combination between the two, but =
+that
+> > > > > > > > should
+> > > > > > > > be pretty rare).
+> > > > > > >
+> > > > > > > I understand...maybe the TDM needs to be extended to support =
+this to
+> > > > > > > consider channel mapping and multiple transfer lines. I was t=
+hinking
+> > > > > > > about the later when someone was requesting support on IIRC a=
+ while
+> > > > > > > ago, I thought masking might of been a solution. These can wa=
+it as
+> > > > > > > the
+> > > > > > > only consumer at the moment is LibreELEC and we can patch it =
+there.
+> > > > > >
+> > > > > > Hi Marcus,
+> > > > > >
+> > > > > > FWIW, the TI McASP driver has support for TDM & (i think?) mult=
+iple
+> > > > > > transfer lines which are called serializers.
+> > > > > > Maybe this can help with inspiration?
+> > > > > > see
+> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git/tre
+> > > > > > e/s
+> > > > > > ound/soc/ti/davinci-mcasp.c sample DTS:
+> > > > > >
+> > > > > > &mcasp0 {
+> > > > > >
+> > > > > >     #sound-dai-cells =3D <0>;
+> > > > > >     status =3D "okay";
+> > > > > >     pinctrl-names =3D "default";
+> > > > > >     pinctrl-0 =3D <&mcasp0_pins>;
+> > > > > >
+> > > > > >     op-mode =3D <0>;
+> > > > > >     tdm-slots =3D <8>;
+> > > > > >     serial-dir =3D <
+> > > > > >
+> > > > > >         2 0 1 0
+> > > > > >         0 0 0 0
+> > > > > >         0 0 0 0
+> > > > > >         0 0 0 0
+> > > > > >     >
+> > > > > >     >;
+> > > > > >
+> > > > > >     tx-num-evt =3D <1>;
+> > > > > >     rx-num-evt =3D <1>;
+> > > > > >
+> > > > > > };
+> > > > > >
+> > > > > > Cheers!
+> > > > >
+> > > > > Thanks, this looks good.
+> > > >
+> > > > I would really like to see this issue resolved, because HDMI audio =
+support
+> > > > in mainline Linux for those SoCs is long overdue.
+> > > >
+> > > > However, there is a possibility to still add HDMI audio suport (ste=
+reo
+> > > > only) even if this issue is not completely solved. If we agree that
+> > > > configuration of channels would be solved with additional property =
+as
+> > > > Christopher suggested, support for >2 channels can be left for a la=
+ter
+> > > > time when support for that property would be implemented. Currently,
+> > > > stereo HDMI audio support can be added with a few patches.
+> > > >
+> > > > I think all I2S cores are really the same, no matter if internally
+> > > > connected to HDMI controller or routed to pins, so it would make se=
+nse to
+> > > > use same compatible for all of them. It's just that those I2S cores=
+ which
+> > > > are routed to pins can use only one lane and >2 channels can be use=
+d only
+> > > > in TDM mode of operation, if I understand this correctly.
+> > > >
+> > > > New property would have to be optional, so it's omission would resu=
+lt in
+> > > > same channel configuration as it is already present, to preserve
+> > > > compatibility with old device trees. And this mode is already suffi=
+cient
+> > > > for stereo HDMI audio support.
+> > >
+> > > Yeah, it looks like a good plan.
+> > >
+> > > > Side note: HDMI audio with current sun4i-i2s driver has a delay (ab=
+out a
+> > > > second), supposedly because DW HDMI controller automatically genera=
+tes CTS
+> > > > value based on I2S clock (auto CTS value generation is enabled per
+> > > > DesignWare recomendation for DW HDMI I2S interface).
+> > >
+> > > Is that a constant delay during the audio playback, or only at startu=
+p?
+> >
+> > I think it's just at startup, e.g. if you're watching movie, audio is i=
+n sync,
+> > it's just that first second or so is silent.
+> >
+> > >
+> > > > I2S driver from BSP Linux solves that by having I2S clock output
+> > > > enabled all the time. Should this be flagged with some additional
+> > > > property in DT?
+> > >
+> > > I'd say that if the codec has that requirement, then it should be
+> > > between the codec and the DAI, the DT doesn't really have anything to
+> > > do with this.
+> >
+> > Ok, but how to communicate that fact to I2S driver then? BSP driver sol=
+ves
+> > that by using different compatible, but as I said before, I2S cores are=
+ not
+> > really different, so this seems wrong.
+>
+> Maybe we could make the DW-HDMI I2S driver require the I2S clock be on all
+> the time? You wouldn't need any changes to the DT.
 
-Minor nit: "DFLL" in the error message, just like you have in the
-kerneldoc comment above. Perhaps also make the error message a little
-more specific. "while shouldn't be" makes the user guess what that
-means. Perhaps better to say something like:
+That's an option, but I'd really like to avoid it if possible.
 
-	"DFLL still enabled while suspending\n"
+I guess we could also just add a delay in the powerup path in the HDMI
+case? Would it work?
 
-or perhaps even add a hint as to what could be the culprit:
+maxime
 
-	"DFLL still enabled while suspending, possibly a cpufreq driverbug\n"
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-The latter is somewhat long and the former is enough because the
-kerneldoc comment already explains that cpufreq might be the reason for
-this.
-
-With a more specific error message, this is:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---72k7VsmfIboquFwl
+--4tzqsccmfdz6gxrw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1ROPcACgkQ3SOs138+
-s6GNTQ//VCpA84fs+aIIyDiD3wn1shO+OCh67D3tZ+8ScJa6j54SmHrCHGGWY3GP
-9JVQr5VFX4tMxrslidnMe6laHcoM5JU+vPSovEq5dTqjZe2HTmjsMswUBABd/Jrg
-fid7ioVcpPfdbbO2qNMS42Q698Kx0IFAv1t4NmhmCDDaE6NerYN8eJ94KYrFx7TI
-p4mvNUV3WcR9aGEOLwVyAcUatmR5EReyZJJ8nSNdPxfdzrLHUUtI9oIP9q8ADgpl
-djfabIZYjrDWaNIx6X/HLQU+3zf3C/SvDMsDJd8/oOa1WkOXKy7Wsbgt6PWZpm8q
-DbMkl8e57/v5fEfaERkqq+U9C0GFdZfpriI7qofQvbi80rkVrDq8UKEAQa/KkfeN
-8wiHr9XVeIwddApapx1YilBL1gAAphRdD7NOzvxeO4KMKCzbuQ7upYReNtBEaMVA
-EwhjYNEVWuEMwg3S5ssxpjqyWMT11WUDIxmX3WqPswNzN1K/dNCrDzKye1IVIET/
-s66UjxKscWJVnsmQWUVE4LKw3S6Tct4BOR+Us7XDJd9f417iSCTTC8lsEoz2PCIv
-tWNEWekILl5Pg/yT5SXy6z8+0g0fsD9R3Pxe56vf9dnGiG9kGx0wmP02FENpKUs2
-T+fSap9ZYLgjVvT2L3WDyQZWbVDl8X31T5nCquBVXKYSWOQqwrM=
-=U0sL
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVE5NwAKCRDj7w1vZxhR
+xaLkAP9Dau8CFZaqjfYlG8eEMwwmDGnmJ3Qb+OfrtRI9IxfL8AEA9pf3QqqQHWty
+49bPYoHYZSaMSKd3MPMDdPL5aONO1Q8=
+=l/Kl
 -----END PGP SIGNATURE-----
 
---72k7VsmfIboquFwl--
+--4tzqsccmfdz6gxrw--
