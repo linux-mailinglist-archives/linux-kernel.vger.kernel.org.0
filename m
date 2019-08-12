@@ -2,50 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21AEE8A65E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82C2B8A655
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfHLSgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 14:36:10 -0400
-Received: from namei.org ([65.99.196.166]:40086 "EHLO namei.org"
+        id S1726539AbfHLSaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 14:30:11 -0400
+Received: from mga05.intel.com ([192.55.52.43]:24975 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbfHLSgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:36:10 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x7CHdH4p014540;
-        Mon, 12 Aug 2019 17:39:17 GMT
-Date:   Tue, 13 Aug 2019 03:39:17 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Matthew Garrett <mjg59@google.com>
-cc:     LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH V38 00/29] security: Add support for locking down the
- kernel
-In-Reply-To: <CACdnJusx3N_ZoH4=+tqt85K9J5wmUnC-+bTtG_5qSD_TYu74+A@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1908130339130.14197@namei.org>
-References: <20190808000721.124691-1-matthewgarrett@google.com> <alpine.LRH.2.21.1908101608260.25186@namei.org> <CACdnJusx3N_ZoH4=+tqt85K9J5wmUnC-+bTtG_5qSD_TYu74+A@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726090AbfHLSaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 14:30:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 11:30:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="178432066"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga003.jf.intel.com with ESMTP; 12 Aug 2019 11:30:09 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 8FF125806A0;
+        Mon, 12 Aug 2019 11:30:09 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v2 2/4] PCI: pciehp: Switch LED indicators with a single
+ write
+To:     Denis Efremov <efremov@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190811195944.23765-1-efremov@linux.com>
+ <20190811195944.23765-3-efremov@linux.com>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <e96f6fe1-c76d-f264-7692-fc3d1c40cba4@linux.intel.com>
+Date:   Mon, 12 Aug 2019 11:27:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190811195944.23765-3-efremov@linux.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Aug 2019, Matthew Garrett wrote:
+Hi,
 
-> On Fri, Aug 9, 2019 at 11:08 PM James Morris <jmorris@namei.org> wrote:
-> > Please verify and test, as I had to make a few minor fixups for my v5.2
-> > base.
-> 
-> Thanks James - there's a few small fixups required, would you like
-> those as separate patches or should I just send you a fixed copy of
-> the original patchset?
-
-Given there are a few, an updated copy of the patchset will be best.
+On 8/11/19 12:59 PM, Denis Efremov wrote:
+> This patch replaces all consecutive switches of power and attention
+> indicators with pciehp_set_indicators() call. Thus, performing only
+> single write to a register.
+>
+> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan 
+<sathyanarayanan.kuppuswamy@linux.intel.com>
+> ---
+>   drivers/pci/hotplug/pciehp_ctrl.c | 14 +++++---------
+>   drivers/pci/hotplug/pciehp_hpc.c  |  3 +--
+>   2 files changed, 6 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+> index 631ced0ab28a..258a4060466d 100644
+> --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> @@ -42,8 +42,7 @@ static void set_slot_off(struct controller *ctrl)
+>   		msleep(1000);
+>   	}
+>   
+> -	pciehp_green_led_off(ctrl);
+> -	pciehp_set_attention_status(ctrl, 1);
+> +	pciehp_set_indicators(ctrl, PWR_OFF, ATTN_ON);
+>   }
+>   
+>   /**
+> @@ -90,8 +89,7 @@ static int board_added(struct controller *ctrl)
+>   		}
+>   	}
+>   
+> -	pciehp_green_led_on(ctrl);
+> -	pciehp_set_attention_status(ctrl, 0);
+> +	pciehp_set_indicators(ctrl, PWR_ON, ATTN_OFF);
+>   	return 0;
+>   
+>   err_exit:
+> @@ -172,8 +170,7 @@ void pciehp_handle_button_press(struct controller *ctrl)
+>   				  slot_name(ctrl));
+>   		}
+>   		/* blink green LED and turn off amber */
+> -		pciehp_green_led_blink(ctrl);
+> -		pciehp_set_attention_status(ctrl, 0);
+> +		pciehp_set_indicators(ctrl, PWR_BLINK, ATTN_OFF);
+>   		schedule_delayed_work(&ctrl->button_work, 5 * HZ);
+>   		break;
+>   	case BLINKINGOFF_STATE:
+> @@ -187,12 +184,11 @@ void pciehp_handle_button_press(struct controller *ctrl)
+>   		cancel_delayed_work(&ctrl->button_work);
+>   		if (ctrl->state == BLINKINGOFF_STATE) {
+>   			ctrl->state = ON_STATE;
+> -			pciehp_green_led_on(ctrl);
+> +			pciehp_set_indicators(ctrl, PWR_ON, ATTN_OFF);
+>   		} else {
+>   			ctrl->state = OFF_STATE;
+> -			pciehp_green_led_off(ctrl);
+> +			pciehp_set_indicators(ctrl, PWR_OFF, ATTN_OFF);
+>   		}
+> -		pciehp_set_attention_status(ctrl, 0);
+>   		ctrl_info(ctrl, "Slot(%s): Action canceled due to button press\n",
+>   			  slot_name(ctrl));
+>   		break;
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+> index 5a690b1579ec..68b880bc30db 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -676,8 +676,7 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
+>   	if ((events & PCI_EXP_SLTSTA_PFD) && !ctrl->power_fault_detected) {
+>   		ctrl->power_fault_detected = 1;
+>   		ctrl_err(ctrl, "Slot(%s): Power fault\n", slot_name(ctrl));
+> -		pciehp_set_attention_status(ctrl, 1);
+> -		pciehp_green_led_off(ctrl);
+> +		pciehp_set_indicators(ctrl, PWR_OFF, ATTN_ON);
+>   	}
+>   
+>   	/*
 
 -- 
-James Morris
-<jmorris@namei.org>
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
