@@ -2,145 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F768A7AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D858A7B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:01:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfHLUB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 16:01:29 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46599 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbfHLUB2 (ORCPT
+        id S1727210AbfHLUBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 16:01:41 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41740 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726910AbfHLUBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:01:28 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q139so1944495pfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 13:01:28 -0700 (PDT)
+        Mon, 12 Aug 2019 16:01:40 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g17so7239917qkk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 13:01:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=t5IMBiad94ViMSwq7y4bsRJRQefPxt/6jC7yShC1dso=;
-        b=n8o7s9dEw4INP/Gexmh1KfkKcSDs1JDp64GxVvJ20IPEbhyNxIy6CFH4ehNjOnTIZa
-         0Bik+2eI1LoVNTuMoZM4V9FWFce0O+s4zKl11UbxQqloUMKdLQlmcgEasc7M5tKKOUnn
-         7yGao+KtB6s+BKLS8Jjqhq2YfQ9JaqCZxQXBY=
+        bh=mzJd9LfyI6OyvkYy9nxABgF/o+uPg/L4uhRhKYYKXK8=;
+        b=T+ABqL6cQJgPOi3/KuUg8dw9+u7TLkZl7ie+BEbOpts6p3A3W9mVODE3y46Nqai7kR
+         X/Y8oXA6FHUXaU21ggo2fHUEnuLty4utTuLosncCtowhrw421B8HtDtcDNedK5VJw8WB
+         CQoecsb0gLNIGPdcpTDScYJ8D/QGb34a380s3+/5r482y8yLTaGd81SuOLMnBErDd0lq
+         w2RybkThge83juCWZ0bWRj7Wn3+CMhUQWzFGmDjj7kM0pA7ENhgnqUxs39oUbhqAYfXn
+         coZLZzzxxGqqjw+5LEXeD+qn/tpmYXrP9UTfyDJjgRRPGvPNmfqmxkeUTvKVddz/vGNA
+         uHqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t5IMBiad94ViMSwq7y4bsRJRQefPxt/6jC7yShC1dso=;
-        b=gFPIIAllxBRIyAXFGrAKZwDVtXfkXBw4ni0BN1Re+/WNNAm66OIEHVAdt+/R1E4fuD
-         bnHumNOZ3BPcDYh5KGtm1pMezIr827RjX1sC8Fm+7b0pcNGeqCiDt6qzbwAlVjp3XLoz
-         zq/fScq03HnI7DOhZlvoFy4dcM6QUOVTFQUuwElq55uZhWFLNB9QQO1OYTSPn+exbpsd
-         DE/VT6JOgYwdFXrJoNY0SeK+7QHqRDopmWDtgvqOJRM45iz1iJHJkYr3n71MGgEdwooa
-         WLzY5r8l0ChKk5cH77obkawUSpAs4EM4cmRU+J5uupazIp/CgoICx7fxDtBh0F0HTH3N
-         JVVg==
-X-Gm-Message-State: APjAAAVi0w9m5YxZZ01DYosbrWczu/Hy2xfets96oRCPVQNLuavakUPf
-        YiOUS4SbsIJkpEfG85pdw6H3Fw==
-X-Google-Smtp-Source: APXvYqy8LE1ENBfsQb81cb0YkyW8PySj6pCY4WTueOPLC+/pgJQbLA/2FUi6hEKvzBnBJCvC5WOcjw==
-X-Received: by 2002:a62:198d:: with SMTP id 135mr36932026pfz.169.1565640088004;
-        Mon, 12 Aug 2019 13:01:28 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id br18sm407214pjb.20.2019.08.12.13.01.26
+        bh=mzJd9LfyI6OyvkYy9nxABgF/o+uPg/L4uhRhKYYKXK8=;
+        b=l6bPVhFUrxwFY6PlxOlcdO4/D1JdvFetETt1KD88HWUEIts/wkj3xWo94XAumtyoQS
+         zf7OvNh9pVEB7YeQil8xwPpchuxwqWx1La3s6Ws6JCx4+aUFG7C9GmuOMCP6EQ2n3tAQ
+         woWyBzTOggGVu5ehoqYC4Bj2dI8CWbk5t1SNM3RcUhBgCxC+7920vXmluc/5nOH/ViRW
+         DYUujAYQdyEdvdPdBDiV1A7Id7g8TvOJz6LXZ6wxShNcS9QitvyVtXOAhnx2/P/c9/4s
+         WRcoMYtlGfDv/NY4yQP/fFFEqYBA8qMOeCV+St0qZfXiEwR0f2JV6TQKt4DNf9V7gvwk
+         jNSw==
+X-Gm-Message-State: APjAAAX/WE3sEPxOxtQO3TF6WpkOoBePCezcthAM/Ce1nM4hVn4h97l+
+        yRJXx1SA8iFz7YuOwmwI/aM=
+X-Google-Smtp-Source: APXvYqy5EUKQpFOfiq5JMIN+wnSVRvYvH6S2RbGmJ5VoQBUBEx4uyhTG//pEJ9deZvUF58j6IEtE3w==
+X-Received: by 2002:ae9:f801:: with SMTP id x1mr28277094qkh.242.1565640099542;
+        Mon, 12 Aug 2019 13:01:39 -0700 (PDT)
+Received: from quaco.ghostprotocols.net (187-26-98-68.3g.claro.net.br. [187.26.98.68])
+        by smtp.gmail.com with ESMTPSA id f22sm5634753qkh.55.2019.08.12.13.01.37
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 13:01:27 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 16:01:25 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, rcu@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 3/3] driver/core: Fix build error when SRCU and lockdep
- disabled
-Message-ID: <20190812200125.GA161786@google.com>
-References: <20190811221111.99401-1-joel@joelfernandes.org>
- <20190811221111.99401-3-joel@joelfernandes.org>
- <20190812050256.GC5834@kroah.com>
- <20190812130310.GA27552@google.com>
- <20190812141119.6ec00a34@gandalf.local.home>
+        Mon, 12 Aug 2019 13:01:38 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id D585740340; Mon, 12 Aug 2019 17:01:34 -0300 (-03)
+Date:   Mon, 12 Aug 2019 17:01:34 -0300
+To:     Igor Lubashev <ilubashe@akamai.com>
+Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        James Morris <jmorris@namei.org>
+Subject: Re: [PATCH v3 2/4] perf: Use CAP_SYS_ADMIN with perf_event_paranoid
+ checks
+Message-ID: <20190812200134.GE9280@kernel.org>
+References: <cover.1565188228.git.ilubashe@akamai.com>
+ <ad56df5452eeafb99dda9fc3d30f0f487aace503.1565188228.git.ilubashe@akamai.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190812141119.6ec00a34@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ad56df5452eeafb99dda9fc3d30f0f487aace503.1565188228.git.ilubashe@akamai.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 02:11:19PM -0400, Steven Rostedt wrote:
-> On Mon, 12 Aug 2019 09:03:10 -0400
-> Joel Fernandes <joel@joelfernandes.org> wrote:
-> 
->   
-> > > >  drivers/base/core.c | 6 +++++-
-> > > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > > index 32cf83d1c744..fe25cf690562 100644
-> > > > --- a/drivers/base/core.c
-> > > > +++ b/drivers/base/core.c
-> > > > @@ -99,7 +99,11 @@ void device_links_read_unlock(int not_used)
-> > > >  
-> > > >  int device_links_read_lock_held(void)
-> > > >  {
-> > > > -	return lock_is_held(&device_links_lock);
-> > > > +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> > > > +	return lock_is_held(&(device_links_lock.dep_map));
-> > > > +#else
-> > > > +	return 1;
-> > > > +#endif  
-> > > 
-> > > return 1?  So the lock is always held?  
-> 
-> I was thinking the exact same thing.
-> 
-> > 
-> > This is just the pattern of an assert that is disabled, so that
-> > false-positives don't happen if lockdep is disabled.
-> > 
-> > So say someone writes a statement like:
-> > WARN_ON_ONCE(!device_links_read_lock_held());
-> > 
-> > Since lockdep is disabled, we cannot check whether lock is held or not. Yet,
-> > we don't want false positives by reporting that the lock is not held. In this
-> > case, it is better to report that the lock is held to suppress
-> > false-positives.  srcu_read_lock_held() also follows the same pattern.
-> > 
-> 
-> The real answer here is to make that WARN_ON_ONCE() dependent on
-> lockdep. Something like:
-> 
-> 
-> some/header/file.h:
-> 
-> #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> # define CHECK_DEVICE_LINKS_READ_LOCK_HELD() WARN_ON_ONCE(!defice_links_read_lock_held())
-> #else
-> # define CHECK_DEVICE_LINKS_READ_LOCK_HELD() do { } while (0)
-> #endif
-> 
-> And just use CHECK_DEVICE_LINK_READ_LOCK_HELD() in those places. I
-> agree with Greg. "device_links_read_lock_heald()" should *never*
-> blindly return 1. It's confusing.
+Em Wed, Aug 07, 2019 at 10:44:15AM -0400, Igor Lubashev escreveu:
+> +++ b/tools/perf/util/evsel.c
+> @@ -279,7 +279,7 @@ struct evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx)
+  
+>  static bool perf_event_can_profile_kernel(void)
+>  {
+> -	return geteuid() == 0 || perf_event_paranoid() == -1;
+> +	return perf_event_paranoid_check(-1);
+>  }
 
-Ok, then I will update the patch to do:
+While looking at your changes I think the pre-existing code is wrong,
+i.e. the check in sys_perf_event_open(), in the kernel is:
 
-#ifdef CONFIG_DEBUG_LOCK_ALLOC
-int device_links_read_lock_held(void)
+        if (!attr.exclude_kernel) {
+                if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+                        return -EACCES;
+        }
+
+And:
+
+static inline bool perf_paranoid_kernel(void)
 {
-	return lock_is_held(&device_links_lock);
+        return sysctl_perf_event_paranoid > 1;
 }
-#endif  
 
-That will also solve the build error. And callers can follow the above pattern you shared.
+So we have to change that perf_event_paranoit_check(-1) to pass 1
+instead?
 
-thanks,
+bool perf_event_paranoid_check(int max_level)
+{
+        return perf_cap__capable(CAP_SYS_ADMIN) ||
+                        perf_event_paranoid() <= max_level;
+}
 
- - Joel
+Also you defined perf_cap__capable(anything) as:
 
+#ifdef HAVE_LIBCAP_SUPPORT
+
+#include <sys/capability.h>
+
+bool perf_cap__capable(cap_value_t cap);
+        
+#else   
+
+static inline bool perf_cap__capable(int cap __maybe_unused)
+{               
+        return false;
+}       
+                
+#endif /* HAVE_LIBCAP_SUPPORT */
+
+
+I think we should have:
+
+#else
+
+static inline bool perf_cap__capable(int cap __maybe_unused)
+{
+        return geteuid() == 0;
+}
+
+#endif /* HAVE_LIBCAP_SUPPORT */
+
+Right?
+
+So I am removing the introduction of perf_cap__capable() from the first
+patch you sent, leaving it with _only_ the feature detection part, using
+that feature detection to do anything is then moved to a separate patch,
+after we finish this discussion about what we should fallback to when
+libcap-devel isn't available, i.e. we should use the previous checks,
+etc.
+
+- Arnaldo
