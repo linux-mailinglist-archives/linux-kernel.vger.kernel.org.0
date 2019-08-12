@@ -2,116 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00BD98A068
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC9028A070
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfHLOLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 10:11:25 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41389 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfHLOLZ (ORCPT
+        id S1727247AbfHLOL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 10:11:56 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39728 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727206AbfHLOLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 10:11:25 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x15so39204161pgg.8
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 07:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ImAPf5qAoKDn0lII01+6uoZ3xRG/c5SpeNPUt2AARos=;
-        b=ZoO19QxbIJseWz0TVsYkFhTzyEIuRAAI5FFh4s6LOZdchsiJXCQjXwEWJkXC4izGpG
-         l2WwfxYhsB1j51Ke52mdJSy+0LuSN2KBNeqGs+QtewhLmXlspMQm5wNPirkFRC5DZ/qQ
-         /FdMY5S+ejnsh1H3XeLK110auQ6vACdXSoRdvZynYradCKGcqnDsvoSQ6hJdZxxBd8Jo
-         VhRWas+5VMyPkxhUsdKcOjMo88wTdDXfdMMIkRomnrqVkLS8mCtdN4+nEXOt9greQtA4
-         noSVdOzU2tXSoz3unzRoLcjABZsiCYw5uLfhl50E7i1s1xvUU6eVAPnkvB9hBLIH988E
-         d57w==
+        Mon, 12 Aug 2019 10:11:55 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 125so3974702qkl.6;
+        Mon, 12 Aug 2019 07:11:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ImAPf5qAoKDn0lII01+6uoZ3xRG/c5SpeNPUt2AARos=;
-        b=ayqj5lhVBEo39kKPga74DApFUhVC0BRJ37yxbucJgNgObcegnDUhWMkuJhL41Uzcxy
-         +b1jiNYMtFbSlRl9zE+4Tp9vtnRoFD52X0IN6o69lQ4u4OeUaQFP+PrJzzxVBWW89CPc
-         E2BquE2EcFf5J2c6ibdKmBuQaB/o5rBF6w+pFBUOqlAbDpf1awnFhcPw7UWLjhpas3Hy
-         942pl+PJTfzHqNhmFsOl71oaoJaGMCzG3xBJ9KAabeHUomH1Fg+s4YoxrckpLLomxCof
-         5zqMUiuWU6Twq1qmujyvlR1CqqYQyc1XjTWeoWvl2zfyr0Qn4ZqfHnVqorMC4lwewyfN
-         BTeQ==
-X-Gm-Message-State: APjAAAVQMu0PmPsSiNMKp2rPLJZ6J0AxCppvD/7lIQON6z7GhURnGCDn
-        PJbcO7+D+TkTMfe/+adRZr6VeA==
-X-Google-Smtp-Source: APXvYqzrcGcueN/pZSePR9eTjLevBjvcXVR5oTmU7sd98e+a8Yu3MVSk2M4unjv/DE2mQhUq3e7xhA==
-X-Received: by 2002:a17:90a:ab0d:: with SMTP id m13mr22580054pjq.84.1565619084986;
-        Mon, 12 Aug 2019 07:11:24 -0700 (PDT)
-Received: from [192.168.1.188] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id ce20sm2293923pjb.16.2019.08.12.07.11.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2019 07:11:24 -0700 (PDT)
-Subject: Re: [PATCH] ata: ahci: Lookup PCS register offset based on PCI device
- ID
-To:     Stephen Douthit <stephend@silicom-usa.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20190808202415.25166-1-stephend@silicom-usa.com>
- <20190810074317.GA18582@infradead.org>
- <abfa4b20-2916-d89a-f4d3-b27fca5906b2@silicom-usa.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <679188f7-bb14-1de6-b533-687809fa7bc8@kernel.dk>
-Date:   Mon, 12 Aug 2019 08:11:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HckXkSELBT5jyRopE2pzV3JrBcZaAIu4qF7LSK+P/Zk=;
+        b=Le6/ABehm9ETT3puLLGQvgwqe8JavRVTGi/pbQF7plDOxMcDXm16SYrE6mLxav5ZBO
+         dMvA8Vdd5jBWf2FyP+ttnWFWtHZ84WDUP4gW6R8Fvg6ee2VWueZG5Jiqv/FEHeypiMzW
+         bcDWHxIQGEgrYCp2ZG4oJUBNQe5jF331dQO+c9qj8gMnUgOm7YgF6t6mDbM6UjmnECc/
+         S7xBP6aud+w4DBN2DTYBotlDbOPNHMTVF62bnI7M7TB4kSVvyKgjraTDT7QPBT4Np8H/
+         HWK/Hxwj4T46cvmXeOzLxNOIPrN+ED9B3mV8FpyDZpDv27y6ILvL0GSu3UZrtCYcVGJT
+         18TA==
+X-Gm-Message-State: APjAAAWJ4P2+Zx2olBZ4OuAmDBhjbXOXANAnHSBw5zjV0bJFZ4JToosX
+        G+IESdP4CTuQFjzrMiW4A86Y42uzKNebkl6e5wM=
+X-Google-Smtp-Source: APXvYqxtt7OhOLMOBKJ7ckgLW8+yi7AHTbnlSXtQb5z7c1RrTlQlkHiOx9q+BjSXgB4EEwuNQuPQFcogoxaDzLeahwc=
+X-Received: by 2002:a05:620a:b:: with SMTP id j11mr30315011qki.352.1565619114553;
+ Mon, 12 Aug 2019 07:11:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <abfa4b20-2916-d89a-f4d3-b27fca5906b2@silicom-usa.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-5-deepa.kernel@gmail.com>
+ <c508fe0116b77ff0496ebb17a69f756c47be62b7.camel@codethink.co.uk>
+ <CABeXuvruROn7j1DiCDbP6MLBt9SB4Pp3HoKqcQbUNPDJgGWLgw@mail.gmail.com> <53df9d81bfb4ee7ec64fabf1089f91d80dceb491.camel@codethink.co.uk>
+In-Reply-To: <53df9d81bfb4ee7ec64fabf1089f91d80dceb491.camel@codethink.co.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 12 Aug 2019 16:11:38 +0200
+Message-ID: <CAK8P3a0CADLUeXvsBHNAC8ekLoo0o0uYz2arBqZ=1N+Xp8HNvA@mail.gmail.com>
+Subject: Re: [Y2038] [PATCH 04/20] mount: Add mount warning for impending
+ timestamp expiry
+To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/12/19 6:02 AM, Stephen Douthit wrote:
-> On 8/10/19 3:43 AM, Christoph Hellwig wrote:
->> On Thu, Aug 08, 2019 at 08:24:31PM +0000, Stephen Douthit wrote:
->>> Intel moved the PCS register from 0x92 to 0x94 on Denverton for some
->>> reason, so now we get to check the device ID before poking it on reset.
->>
->> And now you just match on the new IDs, which means we'll perpetually
->> catch up on any new device.  Dan, can you reach out inside Intel to
->> figure out if there is a way to find out the PCS register location
->> without the PCI ID check?
->>
->>
->>>    static int ahci_pci_reset_controller(struct ata_host *host)
->>>    {
->>>    	struct pci_dev *pdev = to_pci_dev(host->dev);
->>> @@ -634,13 +669,14 @@ static int ahci_pci_reset_controller(struct ata_host *host)
->>>    
->>>    	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
->>>    		struct ahci_host_priv *hpriv = host->private_data;
->>> +		int pcs = ahci_pcs_offset(host);
->>>    		u16 tmp16;
->>>    
->>>    		/* configure PCS */
->>> -		pci_read_config_word(pdev, 0x92, &tmp16);
->>> +		pci_read_config_word(pdev, pcs, &tmp16);
->>>    		if ((tmp16 & hpriv->port_map) != hpriv->port_map) {
->>> -			tmp16 |= hpriv->port_map;
->>> -			pci_write_config_word(pdev, 0x92, tmp16);
->>> +			tmp16 |= hpriv->port_map & 0xff;
->>> +			pci_write_config_word(pdev, pcs, tmp16);
->>>    		}
->>>    	}
->>
->> And Stephen, while you are at it, can you split this Intel-specific
->> quirk into a separate helper?
-> 
-> I can do that.  I'll wait until we hear back from Dan if there's a
-> better scheme than a device ID lookup.
+On Mon, Aug 12, 2019 at 3:25 PM Ben Hutchings
+<ben.hutchings@codethink.co.uk> wrote:
+> On Sat, 2019-08-10 at 13:44 -0700, Deepa Dinamani wrote:
+> > On Mon, Aug 5, 2019 at 7:14 AM Ben Hutchings
+> > <ben.hutchings@codethink.co.uk> wrote:
+> > > On Mon, 2019-07-29 at 18:49 -0700, Deepa Dinamani wrote:
+> > > > The warning reuses the uptime max of 30 years used by the
+> > > > setitimeofday().
+> > > >
+> > > > Note that the warning is only added for new filesystem mounts
+> > > > through the mount syscall. Automounts do not have the same warning.
+> > > [...]
+> > >
+> > > Another thing - perhaps this warning should be suppressed for read-only
+> > > mounts?
+> >
+> > Many filesystems support read only mounts only. We do fill in right
+> > granularities and limits for these filesystems as well. In keeping
+> > with the trend, I have added the warning accordingly. I don't think I
+> > have a preference either way. But, not warning for the red only mounts
+> > adds another if case. If you have a strong preference, I could add it
+> > in.
+>
+> It seems to me that the warning is needed if there is a possibility of
+> data loss (incorrect timestamps, potentially leading to incorrect
+> decisions about which files are newer).  This can happen only when a
+> filesystem is mounted read-write, or when a filesystem image is
+> created.
+>
+> I think that warning for read-only mounts would be an annoyance to
+> users retrieving files from old filesystems.
 
-I'll drop the previous series for now.
+I agree, the warning is not helpful for read-only mounts. An earlier
+plan was to completely disallow writable mounts that might risk an
+overflow (in some configurations at least). The warning replaces that
+now, and I think it should also just warn for the cases that would
+otherwise have been dangerous.
 
--- 
-Jens Axboe
-
+       Arnd
