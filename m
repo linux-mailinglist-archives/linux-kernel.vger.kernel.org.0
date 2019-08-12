@@ -2,92 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1BCF898A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 258EC898A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfHLIYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:24:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45330 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726834AbfHLIYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:24:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1D034AE04;
-        Mon, 12 Aug 2019 08:24:14 +0000 (UTC)
-Date:   Mon, 12 Aug 2019 10:24:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     ndrw <ndrw.xf@redhazel.co.uk>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Artem S. Tashkinov" <aros@gmx.com>,
+        id S1727137AbfHLIY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 04:24:57 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:40730 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726834AbfHLIY5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 04:24:57 -0400
+X-UUID: e2401d4e653c481e87b5cab55e7c4c14-20190812
+X-UUID: e2401d4e653c481e87b5cab55e7c4c14-20190812
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 2145448533; Mon, 12 Aug 2019 16:24:48 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 12 Aug 2019 16:24:48 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 12 Aug 2019 16:24:48 +0800
+Message-ID: <1565598290.5872.6.camel@mtkswgap22>
+Subject: Re: [RFC PATCH v2] mm: slub: print kernel addresses in slub debug
+ messages
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
- inability to gracefully handle low memory pressure
-Message-ID: <20190812082411.GB5117@dhcp22.suse.cz>
-References: <20190808114826.GC18351@dhcp22.suse.cz>
- <806F5696-A8D6-481D-A82F-49DEC1F2B035@redhazel.co.uk>
- <20190808163228.GE18351@dhcp22.suse.cz>
- <5FBB0A26-0CFE-4B88-A4F2-6A42E3377EDB@redhazel.co.uk>
- <20190808185925.GH18351@dhcp22.suse.cz>
- <08e5d007-a41a-e322-5631-b89978b9cc20@redhazel.co.uk>
- <20190809085748.GN18351@dhcp22.suse.cz>
- <cdb392ee-e192-c136-41cb-48d9e4e4bf47@redhazel.co.uk>
- <20190809105016.GP18351@dhcp22.suse.cz>
- <33407eca-3c05-5900-0353-761db62feeea@redhazel.co.uk>
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Kees Cook <keescook@chromium.org>
+Date:   Mon, 12 Aug 2019 16:24:50 +0800
+In-Reply-To: <20190809142617.GO5482@bombadil.infradead.org>
+References: <20190809010837.24166-1-miles.chen@mediatek.com>
+         <20190809024644.GL5482@bombadil.infradead.org>
+         <1565359918.12824.20.camel@mtkswgap22>
+         <20190809142617.GO5482@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <33407eca-3c05-5900-0353-761db62feeea@redhazel.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 10-08-19 13:34:06, ndrw wrote:
-> On 09/08/2019 11:50, Michal Hocko wrote:
-> > We try to protect low amount of cache. Have a look at get_scan_count
-> > function. But the exact amount of the cache to be protected is really
-> > hard to know wihtout a crystal ball or understanding of the workload.
-> > The kernel doesn't have neither of the two.
+On Fri, 2019-08-09 at 07:26 -0700, Matthew Wilcox wrote:
+> On Fri, Aug 09, 2019 at 10:11:58PM +0800, Miles Chen wrote:
+> > On Thu, 2019-08-08 at 19:46 -0700, Matthew Wilcox wrote:
+> > > On Fri, Aug 09, 2019 at 09:08:37AM +0800, miles.chen@mediatek.com wrote:
+> > > > INFO: Slab 0x(____ptrval____) objects=25 used=10 fp=0x(____ptrval____)
+> > > 
+> > > ... you don't have any randomness on your platform?
+> > 
+> > We have randomized base on our platforms.
 > 
-> Thank you. I'm familiarizing myself with the code. Is there anyone I could
-> discuss some details with? I don't want to create too much noise here.
-
-linux-mm mailing list sounds like a good fit.
-
-> For example, are file pages created by mmaping files and are anon page
-> exclusively allocated on heap (RW data)? If so, where do "streaming IO"
-> pages belong to?
-
-Page cache will be generated by both buffered IO (read/write) and file
-mmaps. Anonymous memory by MAP_PRIVATE of file backed or MAP_ANON.
-Streaming IO is generally referred to by an single data pass IO that
-is not reused later (e.g. a backup).
-
-> > We have been thinking about this problem for a long time and couldn't
-> > come up with anything much better than we have now. PSI is the most recent
-> > improvement in that area. If you have better ideas then patches are
-> > always welcome.
+> Look at initialize_ptr_random().  If you have randomness, then you
+> get a siphash_1u32() of the address.  With no randomness, you get this
+> ___ptrval___ string instead.
 > 
-> In general, I found there are very few user accessible knobs for adjusting
-> caching, especially in the pre-OOM phase. On the other hand, swapping, dirty
-> page caching, have many options or can even be disabled completely.
-> 
-> For example, I would like to try disabling/limiting eviction of some/all
-> file pages (for example exec pages) akin to disabling swapping, but there is
-> no such mechanism. Yes, there would likely be problems with large RO mmapped
-> files that would need to be addressed, but in many applications users would
-> be interested in having such options.
-> 
-> Adjusting how aggressive/conservative the system should be with the OOM
-> killer also falls into this category.
+You are right. There is no randomness in this platform. (I ran my test
+code on Qemu with no randomness)
 
-What would that mean and how it would be configured?
--- 
-Michal Hocko
-SUSE Labs
+
+thanks again
+
