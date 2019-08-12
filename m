@@ -2,81 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 211A08A8FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:07:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2108A8EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfHLVHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 17:07:37 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44251 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbfHLVHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 17:07:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 14:06:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
-   d="scan'208";a="180983819"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 12 Aug 2019 14:06:33 -0700
-Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
-        by linux.intel.com (Postfix) with ESMTP id A6A615806A0;
-        Mon, 12 Aug 2019 14:06:33 -0700 (PDT)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v2 1/4] PCI: pciehp: Add pciehp_set_indicators() to
- jointly set LED indicators
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Denis Efremov <efremov@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        id S1727235AbfHLVEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 17:04:45 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:41605 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfHLVEo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 17:04:44 -0400
+Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id DE26C240003;
+        Mon, 12 Aug 2019 21:04:42 +0000 (UTC)
+Date:   Mon, 12 Aug 2019 23:04:42 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20190811195944.23765-1-efremov@linux.com>
- <20190811195944.23765-2-efremov@linux.com>
- <925a00be-c2b6-697d-d46b-a279856105b4@linux.intel.com>
- <d243b4e7-acd9-790f-9332-2654a908cf6e@linux.intel.com>
- <20190812204024.r54ihfwdcbwdj563@wunner.de>
-From:   sathyanarayanan kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <c9bb5e76-d6f6-9d59-d581-564e1385aa45@linux.intel.com>
-Date:   Mon, 12 Aug 2019 14:03:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+Subject: Re: [PATCH] rtc: mxc: use spin_lock_irqsave instead of spin_lock_irq
+ in IRQ context
+Message-ID: <20190812210442.GV3600@piout.net>
+References: <20190807082310.10135-1-huangfq.daxian@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190812204024.r54ihfwdcbwdj563@wunner.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807082310.10135-1-huangfq.daxian@gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/08/2019 16:23:10+0800, Fuqian Huang wrote:
+> As spin_unlock_irq will enable interrupts.
+> mxc_rtc_irq_enable is called from interrupt handler mxc_rtc_interrupt.
+> Interrupts are enabled in interrupt handler.
+> Use spin_lock_irqsave/spin_unlock_irqrestore instead of spin_(un)lock_irq
+> in IRQ context to avoid this.
+> 
+> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+> ---
+>  drivers/rtc/rtc-mxc.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+Applied, thanks.
 
-On 8/12/19 1:40 PM, Lukas Wunner wrote:
-> On Mon, Aug 12, 2019 at 11:49:23AM -0700, sathyanarayanan kuppuswamy wrote:
->>> On 8/11/19 12:59 PM, Denis Efremov wrote:
->>>> +    if ((!PWR_LED(ctrl)  || pwr  == PWR_NONE) &&
->>>> +        (!ATTN_LED(ctrl) || attn == ATTN_NONE))
->>>> +        return;
->> Also I think this condition needs to expand to handle the case whether pwr
->> != PWR_NONE and !PWR_LED(ctrl) is true.
->>
->> you need to return for case, pwr = PWR_ON, !PWR_LED(ctrl)=true ,
->> !ATTN_LED(ctrl)=false, attn=on
-> Why should we return in that case?  We need to update the Attention
-> Indicator Control to On.
-
-Attempting to PWR_ON when !PWR_LED(ctrl) is true is incorrect right ? 
-Even if you don't want to return (to handle ATTN part of the function), 
-may be you should skip updating PWR mask and cmd for this case.
-
->
-> Thanks,
->
-> Lukas
->
 -- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
