@@ -2,103 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4705E8A844
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62DE58A851
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbfHLUTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 16:19:55 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43649 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbfHLUTz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:19:55 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p13so31120114wru.10;
-        Mon, 12 Aug 2019 13:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TleJskMU/Gs7nM1zv+YQ7RMru93ffoX4OLITCZ719gM=;
-        b=qu0jbDcLH+TVuC2ZryTfR/GjZm1FEYmAkNFIKCdUprHw3+sD33RKG1D9ZxKyewy90T
-         spt9orpnXMO1a6tZlyjxqhymOpeafvjMdndj/Z3Do2x2Rsdr6Z8CVBioJB+SOLdv1rMC
-         QLuJSEC6Wx32JBx8Jm18nTqsNr67xvRRVfW3WCPWji1QZCHBajZ6HXrDBchQ3GyzkPcs
-         GdTAdLE+h03t+veS6B8sgWRroz92czCyaLaCKh4yeYGqfXDm/0i9l96MVKEIFM2tVeSk
-         B6lyFYX1KLgxiU3M6It2oSxEjg8Vm0qHtkGfvb9RvBBYG//z8KhiT+40Fa3RbiaF+bDc
-         5JGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TleJskMU/Gs7nM1zv+YQ7RMru93ffoX4OLITCZ719gM=;
-        b=NeXXIGEfju8u649rs9D1fBAFCyLlFzka86y3AcxAd32vN+CLaeKTd7hBSCrFo6i+Jd
-         yAS24l4yVhEhfgC9mO74YAJ4CLVyFRpYm11dbWodUYcS+TQ9f3WbtjZDZ+aXk2lqOWjA
-         ec2glzPrvhfc3fsvLaU6H1C+136cBETcaAcN5TsBijcZm/zD5ibkOiRDuy2PLsJjDtOI
-         CvRoZoFsNMDWx0f5+CxDVGG2ewK+KY9/OuXvXmnLE2MalLkYz3yWqwUphJnQdK3TJZoL
-         iVkmtPJ5y+b561w0RDyHXt6JEFHttw+YtL4h5t2/8pPA0ZCBq0X/1bHe3eCTLeDjrrTD
-         dkqw==
-X-Gm-Message-State: APjAAAVHB9J7X+Cw78BTJ/wZ3mJVf2dtZcxNSEg+IFRyrktz/rI3tC+X
-        IvXuJXRc4614KlB2RbyBEejn53NA
-X-Google-Smtp-Source: APXvYqwp1WYOnR+9J3xlwSNKvUobQTKhy0sJVhMJnlMrRLU5ZDWCTb3jg1qp1/PJErHNSeTOGR6QtQ==
-X-Received: by 2002:a05:6000:104f:: with SMTP id c15mr14740887wrx.225.1565641192235;
-        Mon, 12 Aug 2019 13:19:52 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.34.218])
-        by smtp.googlemail.com with ESMTPSA id r16sm30202778wrc.81.2019.08.12.13.19.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2019 13:19:51 -0700 (PDT)
-Subject: Re: [PATCH v10 09/15] dt-bindings: memory: tegra30: Convert to
- Tegra124 YAML
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190811210043.20122-1-digetx@gmail.com>
- <20190811210043.20122-10-digetx@gmail.com>
- <CAL_JsqJNwMOMyDaB=zqbCLwfn+ro6RcvXFkRbN_t-mEeUi3rVQ@mail.gmail.com>
- <CAL_Jsq+bcqwRvYK=3d0Qu8K-psxLGOgCazmV55bA=vz+5f573w@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <cd3b1328-4d7b-c757-4939-62fee45becdf@gmail.com>
-Date:   Mon, 12 Aug 2019 23:19:49 +0300
+        id S1727604AbfHLUXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 16:23:40 -0400
+Received: from mga06.intel.com ([134.134.136.31]:40802 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbfHLUXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 16:23:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 13:23:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="351319677"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 12 Aug 2019 13:23:38 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id D522B580372;
+        Mon, 12 Aug 2019 13:23:38 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v5 1/7] PCI/ATS: Fix pci_prg_resp_pasid_required()
+ dependency issues
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com
+References: <cover.1564702313.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <0d7e0e0d079c438897f4da8cdca4b55994b1233b.1564702313.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190812200418.GJ11785@google.com>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <09a2faf0-a26f-6374-130a-3b33b1b712d5@linux.intel.com>
+Date:   Mon, 12 Aug 2019 13:20:55 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+bcqwRvYK=3d0Qu8K-psxLGOgCazmV55bA=vz+5f573w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190812200418.GJ11785@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-12.08.2019 22:54, Rob Herring пишет:
-> On Mon, Aug 12, 2019 at 1:53 PM Rob Herring <robh+dt@kernel.org> wrote:
->>
->> On Sun, Aug 11, 2019 at 3:01 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>>
->>> The Tegra30 binding will actually differ from the Tegra124 a tad, in
->>> particular the EMEM configuration description. Hence rename the binding
->>> to Tegra124 during of the conversion to YAML.
->>>
->>> Reviewed-by: Rob Herring <robh@kernel.org>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  .../nvidia,tegra124-mc.yaml                   | 152 ++++++++++++++++++
->>>  .../memory-controllers/nvidia,tegra30-mc.txt  | 123 --------------
->>>  2 files changed, 152 insertions(+), 123 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
->>>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
->>
->> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> Wrong patch, but still R-by... :)
-> 
 
-Thanks!
+On 8/12/19 1:04 PM, Bjorn Helgaas wrote:
+> On Thu, Aug 01, 2019 at 05:05:58PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> Since pci_prg_resp_pasid_required() function has dependency on both
+>> PASID and PRI, define it only if both CONFIG_PCI_PRI and
+>> CONFIG_PCI_PASID config options are enabled.
+> I don't really like this.  It makes the #ifdefs more complicated and I
+> don't think it really buys us anything.  Will anything break if we
+> just drop this patch?
+Yes, this function uses "pri_lock" mutex which is only defined if 
+CONFIG_PCI_PRI is enabled. So not protecting this function within 
+CONFIG_PCI_PRI will lead to compilation issues.
+>
+>> Fixes: e5567f5f6762 ("PCI/ATS: Add pci_prg_resp_pasid_required()
+>> interface.")
+>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> ---
+>>   drivers/pci/ats.c       | 10 ++++++----
+>>   include/linux/pci-ats.h | 12 +++++++++---
+>>   2 files changed, 15 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+>> index e18499243f84..cdd936d10f68 100644
+>> --- a/drivers/pci/ats.c
+>> +++ b/drivers/pci/ats.c
+>> @@ -395,6 +395,8 @@ int pci_pasid_features(struct pci_dev *pdev)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pci_pasid_features);
+>>   
+>> +#ifdef CONFIG_PCI_PRI
+>> +
+>>   /**
+>>    * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
+>>    *				 status.
+>> @@ -402,10 +404,8 @@ EXPORT_SYMBOL_GPL(pci_pasid_features);
+>>    *
+>>    * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
+>>    *
+>> - * Even though the PRG response PASID status is read from PRI Status
+>> - * Register, since this API will mainly be used by PASID users, this
+>> - * function is defined within #ifdef CONFIG_PCI_PASID instead of
+>> - * CONFIG_PCI_PRI.
+>> + * Since this API has dependency on both PRI and PASID, protect it
+>> + * with both CONFIG_PCI_PRI and CONFIG_PCI_PASID.
+>>    */
+>>   int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+>>   {
+>> @@ -425,6 +425,8 @@ int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
+>>   
+>> +#endif
+>> +
+>>   #define PASID_NUMBER_SHIFT	8
+>>   #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
+>>   /**
+>> diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
+>> index 1ebb88e7c184..1a0bdaee2f32 100644
+>> --- a/include/linux/pci-ats.h
+>> +++ b/include/linux/pci-ats.h
+>> @@ -40,7 +40,6 @@ void pci_disable_pasid(struct pci_dev *pdev);
+>>   void pci_restore_pasid_state(struct pci_dev *pdev);
+>>   int pci_pasid_features(struct pci_dev *pdev);
+>>   int pci_max_pasids(struct pci_dev *pdev);
+>> -int pci_prg_resp_pasid_required(struct pci_dev *pdev);
+>>   
+>>   #else  /* CONFIG_PCI_PASID */
+>>   
+>> @@ -67,11 +66,18 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
+>>   	return -EINVAL;
+>>   }
+>>   
+>> +#endif /* CONFIG_PCI_PASID */
+>> +
+>> +#if defined(CONFIG_PCI_PRI) && defined(CONFIG_PCI_PASID)
+>> +
+>> +int pci_prg_resp_pasid_required(struct pci_dev *pdev);
+>> +
+>> +#else /* CONFIG_PCI_PASID && CONFIG_PCI_PRI */
+>> +
+>>   static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+>>   {
+>>   	return 0;
+>>   }
+>> -#endif /* CONFIG_PCI_PASID */
+>> -
+>> +#endif
+>>   
+>>   #endif /* LINUX_PCI_ATS_H*/
+>> -- 
+>> 2.21.0
+>>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
+
