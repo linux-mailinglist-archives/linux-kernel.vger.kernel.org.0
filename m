@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A688AA79
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 00:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 934B48AA83
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 00:36:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfHLWga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 18:36:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36397 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbfHLWg0 (ORCPT
+        id S1727303AbfHLWgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 18:36:46 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35063 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfHLWg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 18:36:26 -0400
-Received: by mail-pg1-f195.google.com with SMTP id l21so50192327pgm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 15:36:26 -0700 (PDT)
+        Mon, 12 Aug 2019 18:36:27 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u14so50442195pfn.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 15:36:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=G1GyJeHxK3pLSUGiO0YqwSLuWrA1RPqBG46rl6iGQ1s=;
-        b=geQsoQ49HygUno2jknhm/5tkiWZxIR99UnMgMqLmz+2kVJ+u+dULTQe2yvZxTIU9XE
-         mYN8oyWmjYVz5J+35rcExedP4HNSIYZORXL933ibyeyrh9j4x94vN7/CD7tKIgylySye
-         GV9xj5Og/JcK1Ve+R7xdxdJnaJCamxQnIY10w=
+        bh=ARqGVqps+UvD6gPycAavcJDE2CdT6bD5OYORFnIVyA4=;
+        b=P9G6y5o0oRHI87G+Axh3H0Q0lFVxG69Ev11gPscknQxS++hpSgrVr+Dz6m6gko17ad
+         ndY5JECMTxJve5nKky69rtBFiunmAm0EkOnERFYVcbyhmyFZL20WXAzpaT5zaevxqmZh
+         ICi/9Scec6pPJIaFjZ4EY496D2VMLbQFWuVF0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=G1GyJeHxK3pLSUGiO0YqwSLuWrA1RPqBG46rl6iGQ1s=;
-        b=E1SBWUWi0AaTv/wEAFczqRDsWUKSjEX1S3CkG+foqT7Z6USr++3GSKSOhefqmWyhXu
-         znu1tL/axIUM58+N7WfGLuIoz1f2xDdjL10CD+1qfznpeb2flkqrEAmNQPP8L5FhC70N
-         HXjkRBfnCTzgw9UZdaEvfq7SvuXM3lXsT4pF8SqlqSZtohnzAPOCIOj2TzvbN+e5YUzc
-         AOig33nUkfRJjZZG/JjXnD0Jzo9/8WEmxEqiJxIqAsEUDLzwLFgrop7+pIZszwU0lwv4
-         0qL9Zss3oc4Mua0onPbCCObJuw1od9p/EvnYum0awoZoanZoUOU+ozDBGdInDYJVcCTJ
-         UT8g==
-X-Gm-Message-State: APjAAAUv9FxB1UsCwMCLUU+7eX+JQD32UXr+ct5i4KHE75Ym8LcTbOyP
-        DQP60Um9XMIFN0U/1D4FheJuRLCHor1A5A==
-X-Google-Smtp-Source: APXvYqySaV6YpLXAdPxlUhjGdH9PpCPLsa2Hp/dqfsVZSEg/dLbajPrX4bseW4PkHigNheTRFb11Zg==
-X-Received: by 2002:a17:90a:8c90:: with SMTP id b16mr1357627pjo.133.1565649386242;
-        Mon, 12 Aug 2019 15:36:26 -0700 (PDT)
+        bh=ARqGVqps+UvD6gPycAavcJDE2CdT6bD5OYORFnIVyA4=;
+        b=bF+v2lm8WoMi/mOcY0d0bZ2Hu3L2/8ri2GtG9sTnEVzxMimtlFoE1Gmo+8XMedvcGq
+         ifb0NOlr+NTncieUJ4gRt3PHiRhQ9wiTfbSyvlrrORsGPQ1LYHu4GWsfJhSa6GhoikBc
+         ec01yBj73IcSmCqebU5Ony/v/pbTElzt90PZDgimahdJNrZd1+o151y8Rmq40cLEC3xu
+         6Z2m1FJBDbxdP6ElEzLdlRoSQMwU1kzbQEgBCPRKXlTPQYFihwgcEX9CHn2PdnFR0qLY
+         4t8/D9Qe3XqNOtxYLeYnRJzuT9fuOsD5gP08PVpdkpjkCkpbJ2mEmDdPKcd6OM1Aru3P
+         qL9w==
+X-Gm-Message-State: APjAAAUMuLzl6YOSUohkqvjH5jkyBIjz0NuEJ7iAqoEOwjYQk7lJLETe
+        dToJU1S7R2r9sc/HZ9XpBeFXfg==
+X-Google-Smtp-Source: APXvYqzUWfHrQolgxy4D/V0dl/A2RBuv86RieLCSdSWbN9BhIfnP3A1Tjww9sDQhKmaZIUj7PkFxRQ==
+X-Received: by 2002:a62:db43:: with SMTP id f64mr21707438pfg.38.1565649387079;
+        Mon, 12 Aug 2019 15:36:27 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id b6sm93911594pgq.26.2019.08.12.15.36.25
+        by smtp.gmail.com with ESMTPSA id b6sm93911594pgq.26.2019.08.12.15.36.26
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 15:36:25 -0700 (PDT)
+        Mon, 12 Aug 2019 15:36:26 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
@@ -52,9 +52,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Guenter Roeck <groeck@chromium.org>,
         Alexander Steffen <Alexander.Steffen@infineon.com>
-Subject: [PATCH v4 2/6] tpm: tpm_tis_spi: Introduce a flow control callback
-Date:   Mon, 12 Aug 2019 15:36:18 -0700
-Message-Id: <20190812223622.73297-3-swboyd@chromium.org>
+Subject: [PATCH v4 3/6] tpm: tpm_tis_spi: Add a pre-transfer callback
+Date:   Mon, 12 Aug 2019 15:36:19 -0700
+Message-Id: <20190812223622.73297-4-swboyd@chromium.org>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 In-Reply-To: <20190812223622.73297-1-swboyd@chromium.org>
 References: <20190812223622.73297-1-swboyd@chromium.org>
@@ -65,9 +65,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cr50 firmware has a different flow control protocol than the one used by
-this TPM PTP SPI driver. Introduce a flow control callback so we can
-override the standard sequence with the custom one that Cr50 uses.
+Cr50 firmware has a requirement to wait for the TPM to wakeup before
+sending commands over the SPI bus. Otherwise, the firmware could be in
+deep sleep and not respond. Add a hook to tpm_tis_spi_transfer() before
+we start a SPI transfer so we can keep track of the last time the TPM
+driver accessed the SPI bus.
 
 Cc: Andrey Pronin <apronin@chromium.org>
 Cc: Duncan Laurie <dlaurie@chromium.org>
@@ -78,101 +80,30 @@ Cc: Guenter Roeck <groeck@chromium.org>
 Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/char/tpm/tpm_tis_spi.c | 55 +++++++++++++++++++++-------------
- 1 file changed, 34 insertions(+), 21 deletions(-)
+ drivers/char/tpm/tpm_tis_spi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
-index 19513e622053..819602e85b34 100644
+index 819602e85b34..93f49b1941f0 100644
 --- a/drivers/char/tpm/tpm_tis_spi.c
 +++ b/drivers/char/tpm/tpm_tis_spi.c
-@@ -42,6 +42,8 @@
- struct tpm_tis_spi_phy {
- 	struct tpm_tis_data priv;
+@@ -44,6 +44,7 @@ struct tpm_tis_spi_phy {
  	struct spi_device *spi_device;
-+	int (*flow_control)(struct tpm_tis_spi_phy *phy,
-+			    struct spi_transfer *xfer);
+ 	int (*flow_control)(struct tpm_tis_spi_phy *phy,
+ 			    struct spi_transfer *xfer);
++	void (*pre_transfer)(struct tpm_tis_spi_phy *phy);
  	u8 *iobuf;
  };
  
-@@ -50,12 +52,39 @@ static inline struct tpm_tis_spi_phy *to_tpm_tis_spi_phy(struct tpm_tis_data *da
- 	return container_of(data, struct tpm_tis_spi_phy, priv);
- }
+@@ -129,6 +130,8 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
  
-+static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
-+				    struct spi_transfer *spi_xfer)
-+{
-+	struct spi_message m;
-+	int ret, i;
-+
-+	if ((phy->iobuf[3] & 0x01) == 0) {
-+		// handle SPI wait states
-+		phy->iobuf[0] = 0;
-+
-+		for (i = 0; i < TPM_RETRY; i++) {
-+			spi_xfer->len = 1;
-+			spi_message_init(&m);
-+			spi_message_add_tail(spi_xfer, &m);
-+			ret = spi_sync_locked(phy->spi_device, &m);
-+			if (ret < 0)
-+				return ret;
-+			if (phy->iobuf[0] & 0x01)
-+				break;
-+		}
-+
-+		if (i == TPM_RETRY)
-+			return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
- static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
- 				u8 *in, const u8 *out)
- {
- 	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
- 	int ret = 0;
--	int i;
- 	struct spi_message m;
- 	struct spi_transfer spi_xfer;
- 	u8 transfer_len;
-@@ -82,26 +111,9 @@ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+ 		spi_message_init(&m);
+ 		spi_message_add_tail(&spi_xfer, &m);
++		if (phy->pre_transfer)
++			phy->pre_transfer(phy);
+ 		ret = spi_sync_locked(phy->spi_device, &m);
  		if (ret < 0)
  			goto exit;
- 
--		if ((phy->iobuf[3] & 0x01) == 0) {
--			// handle SPI wait states
--			phy->iobuf[0] = 0;
--
--			for (i = 0; i < TPM_RETRY; i++) {
--				spi_xfer.len = 1;
--				spi_message_init(&m);
--				spi_message_add_tail(&spi_xfer, &m);
--				ret = spi_sync_locked(phy->spi_device, &m);
--				if (ret < 0)
--					goto exit;
--				if (phy->iobuf[0] & 0x01)
--					break;
--			}
--
--			if (i == TPM_RETRY) {
--				ret = -ETIMEDOUT;
--				goto exit;
--			}
--		}
-+		ret = phy->flow_control(phy, &spi_xfer);
-+		if (ret < 0)
-+			goto exit;
- 
- 		spi_xfer.cs_change = 0;
- 		spi_xfer.len = transfer_len;
-@@ -207,6 +219,7 @@ static int tpm_tis_spi_probe(struct spi_device *dev)
- 	phy->iobuf = devm_kmalloc(&dev->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
- 	if (!phy->iobuf)
- 		return -ENOMEM;
-+	phy->flow_control = tpm_tis_spi_flow_control;
- 
- 	/* If the SPI device has an IRQ then use that */
- 	if (dev->irq > 0)
 -- 
 Sent by a computer through tubes
 
