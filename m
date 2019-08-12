@@ -2,179 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C74498AB10
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 01:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 230788AB15
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 01:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbfHLXWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 19:22:33 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39706 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726144AbfHLXWc (ORCPT
+        id S1726689AbfHLXX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 19:23:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36448 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726144AbfHLXX5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 19:22:32 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7CNLtoM009116;
-        Mon, 12 Aug 2019 19:22:01 -0400
+        Mon, 12 Aug 2019 19:23:57 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7CNLsl6087075;
+        Mon, 12 Aug 2019 19:23:15 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ubcybhr29-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ubh68s0aj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Aug 2019 19:22:00 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7CNM0Jd009800;
-        Mon, 12 Aug 2019 19:22:00 -0400
+        Mon, 12 Aug 2019 19:23:15 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7CNMrfI089904;
+        Mon, 12 Aug 2019 19:23:14 -0400
 Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ubcybhr21-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ubh68s09u-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Aug 2019 19:22:00 -0400
+        Mon, 12 Aug 2019 19:23:14 -0400
 Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7CNKAce030901;
-        Mon, 12 Aug 2019 23:21:59 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma04wdc.us.ibm.com with ESMTP id 2u9nj6a6gr-1
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7CNKZf6031273;
+        Mon, 12 Aug 2019 23:23:13 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma04wdc.us.ibm.com with ESMTP id 2u9nj6a6hc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Aug 2019 23:21:59 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7CNLwRn19005716
+        Mon, 12 Aug 2019 23:23:13 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7CNNCsK48431482
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 12 Aug 2019 23:21:58 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1FE98C6059;
-        Mon, 12 Aug 2019 23:21:58 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E063EC6055;
-        Mon, 12 Aug 2019 23:21:54 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.165.146])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Mon, 12 Aug 2019 23:21:54 +0000 (GMT)
-References: <20190806052237.12525-1-bauerman@linux.ibm.com> <20190806052237.12525-12-bauerman@linux.ibm.com> <8736i6sfhn.fsf@concordia.ellerman.id.au>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Ryan Grimm <grimm@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3 11/16] powerpc/pseries/svm: Export guest SVM status to user space via sysfs
-In-reply-to: <8736i6sfhn.fsf@concordia.ellerman.id.au>
-Date:   Mon, 12 Aug 2019 20:21:50 -0300
-Message-ID: <87r25qgeb5.fsf@morokweng.localdomain>
+        Mon, 12 Aug 2019 23:23:12 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 89582B2066;
+        Mon, 12 Aug 2019 23:23:12 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A263B2064;
+        Mon, 12 Aug 2019 23:23:12 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Aug 2019 23:23:12 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id A127D16C0783; Mon, 12 Aug 2019 16:23:16 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 16:23:16 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH RFC tip/core/rcu 14/14] rcu/nohz: Make multi_cpu_stop()
+ enable tick on all online CPUs
+Message-ID: <20190812232316.GT28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190802151435.GA1081@linux.ibm.com>
+ <20190802151501.13069-14-paulmck@linux.ibm.com>
+ <20190812210232.GA3648@lenoir>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812210232.GA3648@lenoir>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-12_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=779 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908120229
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 12, 2019 at 11:02:33PM +0200, Frederic Weisbecker wrote:
+> On Fri, Aug 02, 2019 at 08:15:01AM -0700, Paul E. McKenney wrote:
+> > The multi_cpu_stop() function relies on the scheduler to gain control from
+> > whatever is running on the various online CPUs, including any nohz_full
+> > CPUs running long loops in kernel-mode code.  Lack of the scheduler-clock
+> > interrupt on such CPUs can delay multi_cpu_stop() for several minutes
+> > and can also result in RCU CPU stall warnings.  This commit therefore
+> > causes multi_cpu_stop() to enable the scheduler-clock interrupt on all
+> > online CPUs.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > ---
+> >  kernel/stop_machine.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+> > index b4f83f7bdf86..a2659f61ed92 100644
+> > --- a/kernel/stop_machine.c
+> > +++ b/kernel/stop_machine.c
+> > @@ -20,6 +20,7 @@
+> >  #include <linux/smpboot.h>
+> >  #include <linux/atomic.h>
+> >  #include <linux/nmi.h>
+> > +#include <linux/tick.h>
+> >  #include <linux/sched/wake_q.h>
+> >  
+> >  /*
+> > @@ -187,15 +188,19 @@ static int multi_cpu_stop(void *data)
+> >  {
+> >  	struct multi_stop_data *msdata = data;
+> >  	enum multi_stop_state curstate = MULTI_STOP_NONE;
+> > -	int cpu = smp_processor_id(), err = 0;
+> > +	int cpu, err = 0;
+> >  	const struct cpumask *cpumask;
+> >  	unsigned long flags;
+> >  	bool is_active;
+> >  
+> > +	for_each_online_cpu(cpu)
+> > +		tick_nohz_dep_set_cpu(cpu, TICK_DEP_MASK_RCU);
+> 
+> Looks like it's not the right fix but, should you ever need to set an
+> all-CPUs (system wide) tick dependency in the future, you can use tick_set_dep().
 
-Michael Ellerman <mpe@ellerman.id.au> writes:
+Indeed, I have dropped this patch, but I now do something similar in
+RCU's CPU-hotplug notifiers.  Which does have an effect, especially on
+the system that isn't subject to the insane-latency cpu_relax().
 
-> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
->> From: Ryan Grimm <grimm@linux.vnet.ibm.com>
->>
->> User space might want to know it's running in a secure VM.  It can't do
->> a mfmsr because mfmsr is a privileged instruction.
->>
->> The solution here is to create a cpu attribute:
->>
->> /sys/devices/system/cpu/svm
->>
->> which will read 0 or 1 based on the S bit of the guest's CPU 0.
->
-> Why CPU 0?
->
-> If we have different CPUs running with different MSR_S then something
-> has gone badly wrong, no?
+Plus I am having to put a similar workaround into RCU's quiescent-state
+forcing logic.
 
-Yes, that would be very bad.
+But how should this really be done?
 
-> So can't we just read the MSR on whatever CPU the sysfs code happens to
-> run on.
+Isn't there some sort of monitoring of nohz_full CPUs for accounting
+purposes?  If so, would it make sense for this monitoring to check for
+long-duration kernel execution and enable the tick in this case?  The
+RCU dyntick machinery can be used to remotely detect the long-duration
+kernel execution using something like the following:
 
-Good point. I made the change in the patch below.
+	int nohz_in_kernel_snap = rcu_dynticks_snap_cpu(cpu);
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+	...
 
+	if (rcu_dynticks_in_eqs_cpu(cpu, nohz_in_kernel_snap)
+		nohz_in_kernel_snap = rcu_dynticks_snap_cpu(cpu);
+	else
+		/* Turn on the tick! */
 
+I would supply rcu_dynticks_snap_cpu() and rcu_dynticks_in_eqs_cpu(),
+which would be simple wrappers around RCU's private rcu_dynticks_snap()
+and rcu_dynticks_in_eqs() functions.
 
-From 2d951305e118bf286f8e83cbf396448085186357 Mon Sep 17 00:00:00 2001
-From: Ryan Grimm <grimm@linux.vnet.ibm.com>
-Date: Tue, 15 Jan 2019 11:56:29 -0600
-Subject: [PATCH] powerpc/pseries/svm: Export guest SVM status to user space
- via sysfs
+Would this make sense as a general solution, or am I missing a corner
+case or three?
 
-User space might want to know it's running in a secure VM.  It can't do
-a mfmsr because mfmsr is a privileged instruction.
-
-The solution here is to create a cpu attribute:
-
-/sys/devices/system/cpu/svm
-
-which will read 0 or 1 based on the S bit of the current CPU.
-
-Signed-off-by: Ryan Grimm <grimm@linux.vnet.ibm.com>
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- arch/powerpc/kernel/sysfs.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
-index e2147d7c9e72..80a676da11cb 100644
---- a/arch/powerpc/kernel/sysfs.c
-+++ b/arch/powerpc/kernel/sysfs.c
-@@ -19,6 +19,7 @@
- #include <asm/smp.h>
- #include <asm/pmc.h>
- #include <asm/firmware.h>
-+#include <asm/svm.h>
- 
- #include "cacheinfo.h"
- #include "setup.h"
-@@ -715,6 +716,23 @@ static struct device_attribute pa6t_attrs[] = {
- #endif /* HAS_PPC_PMC_PA6T */
- #endif /* HAS_PPC_PMC_CLASSIC */
- 
-+#ifdef CONFIG_PPC_SVM
-+static ssize_t show_svm(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "%u\n", is_secure_guest());
-+}
-+static DEVICE_ATTR(svm, 0444, show_svm, NULL);
-+
-+static void create_svm_file(void)
-+{
-+	device_create_file(cpu_subsys.dev_root, &dev_attr_svm);
-+}
-+#else
-+static void create_svm_file(void)
-+{
-+}
-+#endif /* CONFIG_PPC_SVM */
-+
- static int register_cpu_online(unsigned int cpu)
- {
- 	struct cpu *c = &per_cpu(cpu_devices, cpu);
-@@ -1058,6 +1076,8 @@ static int __init topology_init(void)
- 	sysfs_create_dscr_default();
- #endif /* CONFIG_PPC64 */
- 
-+	create_svm_file();
-+
- 	return 0;
- }
- subsys_initcall(topology_init);
+							Thanx, Paul
