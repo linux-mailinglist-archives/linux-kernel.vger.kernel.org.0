@@ -2,101 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77009898ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:45:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A580C898F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbfHLIpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:45:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:45354 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbfHLIpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:45:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E936D15A2;
-        Mon, 12 Aug 2019 01:45:19 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 696BF3F718;
-        Mon, 12 Aug 2019 01:45:19 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 09:45:17 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Subject: Re: [PATCH 1/4] dt-bingings: PCI: Remove the num-lanes from Required
- properties
-Message-ID: <20190812084517.GW56241@e119886-lin.cambridge.arm.com>
-References: <20190812042435.25102-1-Zhiqiang.Hou@nxp.com>
- <20190812042435.25102-2-Zhiqiang.Hou@nxp.com>
+        id S1727217AbfHLIp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 04:45:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51790 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727092AbfHLIp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 04:45:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C4681AD46;
+        Mon, 12 Aug 2019 08:45:25 +0000 (UTC)
+Date:   Mon, 12 Aug 2019 10:45:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, ltp@lists.linux.it,
+        Li Wang <liwang@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Cyril Hrubis <chrubis@suse.cz>, xishi.qiuxishi@alibaba-inc.com
+Subject: Re: [PATCH] hugetlbfs: fix hugetlb page migration/fault race causing
+ SIGBUS
+Message-ID: <20190812084524.GC5117@dhcp22.suse.cz>
+References: <20190808000533.7701-1-mike.kravetz@oracle.com>
+ <20190808074607.GI11812@dhcp22.suse.cz>
+ <20190808074736.GJ11812@dhcp22.suse.cz>
+ <416ee59e-9ae8-f72d-1b26-4d3d31501330@oracle.com>
+ <20190808185313.GG18351@dhcp22.suse.cz>
+ <20190808163928.118f8da4f4289f7c51b8ffd4@linux-foundation.org>
+ <20190809064633.GK18351@dhcp22.suse.cz>
+ <20190809151718.d285cd1f6d0f1cf02cb93dc8@linux-foundation.org>
+ <20190811234614.GZ17747@sasha-vm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190812042435.25102-2-Zhiqiang.Hou@nxp.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20190811234614.GZ17747@sasha-vm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 04:22:16AM +0000, Z.q. Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On Sun 11-08-19 19:46:14, Sasha Levin wrote:
+> On Fri, Aug 09, 2019 at 03:17:18PM -0700, Andrew Morton wrote:
+> > On Fri, 9 Aug 2019 08:46:33 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+> > 
+> > > > Maybe we should introduce the Fixes-no-stable: tag.  That should get
+> > > > their attention.
+> > > 
+> > > No please, Fixes shouldn't be really tight to any stable tree rules. It
+> > > is a very useful indication of which commit has introduced bug/problem
+> > > or whatever that the patch follows up to. We in Suse are using this tag
+> > > to evaluate potential fixes as the stable is not reliable. We could live
+> > > with Fixes-no-stable or whatever other name but does it really makes
+> > > sense to complicate the existing state when stable maintainers are doing
+> > > whatever they want anyway? Does a tag like that force AI from selecting
+> > > a patch? I am not really convinced.
+> > 
+> > It should work if we ask stable trees maintainers not to backport
+> > such patches.
+> > 
+> > Sasha, please don't backport patches which are marked Fixes-no-stable:
+> > and which lack a cc:stable tag.
 > 
-> The num-lanes is not a mandatory property, e.g. on FSL
-> Layerscape SoCs, the PCIe link training is completed
-> automatically base on the selected SerDes protocol, it
-> doesn't need the num-lanes to set-up the link width.
-> 
-> It has been added in the Optional properties. This
-> patch is to remove it from the Required properties.
+> I'll add it to my filter, thank you!
 
-For clarity, maybe this paragraph can be reworded to:
+I would really prefer to stick with Fixes: tag and stable only picking
+up cc: stable patches. I really hate to see workarounds for sensible
+workflows (marking the Fixes) just because we are trying to hide
+something from stable maintainers. Seriously, if stable maintainers have
+a different idea about what should be backported, it is their call. They
+are the ones to deal with regressions and the backporting effort in
+those cases of disagreement.
 
-"It is previously in both Required and Optional properties,
- let's remove it from the Required properties".
-
-I don't understand why this property is previously in
-both required and optional...
-
-It looks like num-lanes was first made optional back in
-2015 and removed from the Required section (907fce090253).
-But then re-added back into the Required section in 2017
-with the adition of bindings for EP mode (b12befecd7de).
-
-Is num-lanes actually required for EP mode?
-
-Thanks,
-
-Andrew Murray
-
-> 
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
->  Documentation/devicetree/bindings/pci/designware-pcie.txt | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> index 5561a1c060d0..bd880df39a79 100644
-> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> @@ -11,7 +11,6 @@ Required properties:
->  	     the ATU address space.
->      (The old way of getting the configuration address space from "ranges"
->      is deprecated and should be avoided.)
-> -- num-lanes: number of lanes to use
->  RC mode:
->  - #address-cells: set to <3>
->  - #size-cells: set to <2>
-> -- 
-> 2.17.1
-> 
+-- 
+Michal Hocko
+SUSE Labs
