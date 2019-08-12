@@ -2,95 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49FA089879
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41D1F8987A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:12:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfHLIMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:12:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45669 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfHLIMR (ORCPT
+        id S1727120AbfHLIM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 04:12:29 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39593 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfHLIM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:12:17 -0400
-Received: by mail-wr1-f65.google.com with SMTP id q12so13497974wrj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 01:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=sokJZLkNPUnTH7UQDyFo6f/1noe8aK7eS7kzgH8GIsI=;
-        b=nr1hMmtXet+8ablw2NJEuHI3grRig1gViabXXqNU4/7QNt8V4U7TXNlFeQ8DGhKaP8
-         JguAloMyUujDSfJ8USZRlhk2e3FbDZ1dmHDkMcgEYuavSdF4y505YTssFvdX+3gytLm0
-         C00I0eclJJMDwKSvo+z/dNidPtfCto8si9PxbfeqQH7jZR5jalGquAyL+dqOSZpeVGjv
-         HX60RGTe/DOSRXd2wGkFiEJ4yILuzlnemPf52xtCt/+GqR+cl0j8m8BLP/AcgkN4EAcn
-         t3OVuvKD3KK82/dNMlw1zZRh2U+i1e2ZxgmIjrk6p/+0PUld1+Mz2l5+5jPMP+88fOfR
-         Et3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=sokJZLkNPUnTH7UQDyFo6f/1noe8aK7eS7kzgH8GIsI=;
-        b=g0EpytnaALRv+iYRfO0YWL97eLVMndouFZn/5binutJZAaq0OvgxWnWWIVrUMhZ3Mh
-         Ut7lUkwmfayQ3DVjhb+SEvbGuApP53S54WCRuknVVsm7gPB5JKucBOcmHiQ3QngBl9Mk
-         3PJW32BHVBeMVuQIXL7hhZdfbyu1hI0QZa7Htar1P/WQVQS1gsdKfws772PS7lpc2d7v
-         m9/PG9aA9qJNUKrPM7GLP5cE5e68zTdgahUPgxUN5gzv0fpkUTCs0+WMc992XVHj2Qik
-         yWn4rKVJ+mqX/goQufIJm/iep9pbjXadUB3yzIihdX5Qk5vH+sonKXLomKEdpJOOftUd
-         dCLw==
-X-Gm-Message-State: APjAAAVm74EKhjVf5P1CIibcn/Owg4ftssr2fAbZ2fAd5kSsp+QouulC
-        5Em/lHYNEUBQ4Jf7eZA1zpAcGQ==
-X-Google-Smtp-Source: APXvYqx1OQqxQ8Wnsp/z2cQM9KUTftZPue3b+SHzZf2Cf2qMFxI4cvxLIr4PdAu+/VKFD90VZNqm9g==
-X-Received: by 2002:a5d:634c:: with SMTP id b12mr18336536wrw.127.1565597535490;
-        Mon, 12 Aug 2019 01:12:15 -0700 (PDT)
-Received: from dell ([2.27.35.255])
-        by smtp.gmail.com with ESMTPSA id l3sm23964164wrb.41.2019.08.12.01.12.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 01:12:14 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 09:12:13 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: intel-lpss: Remove D3cold delay
-Message-ID: <20190812081213.GI4594@dell>
-References: <20190705045503.13379-1-kai.heng.feng@canonical.com>
+        Mon, 12 Aug 2019 04:12:29 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id F3092E000A;
+        Mon, 12 Aug 2019 08:12:25 +0000 (UTC)
+Date:   Mon, 12 Aug 2019 10:12:25 +0200
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        sd@queasysnail.net, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
+        allan.nielsen@microchip.com, camelia.groza@nxp.com,
+        Simon.Edelhaus@aquantia.com
+Subject: Re: [PATCH net-next v2 8/9] net: phy: mscc: macsec initialization
+Message-ID: <20190812081225.GC3698@kwain>
+References: <20190808140600.21477-1-antoine.tenart@bootlin.com>
+ <20190808140600.21477-9-antoine.tenart@bootlin.com>
+ <20190810165317.GB30120@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190705045503.13379-1-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190810165317.GB30120@lunn.ch>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 05 Jul 2019, Kai-Heng Feng wrote:
+Hi Andrew,
 
-> Goodix touchpad may drop its first couple input events when
-> i2c-designware-platdrv and intel-lpss it connects to took too long to
-> runtime resume from runtime suspended state.
+On Sat, Aug 10, 2019 at 06:53:17PM +0200, Andrew Lunn wrote:
+> > The MACsec read and write functions are wrapped into two versions: one
+> > called during the init phase, and the other one later on. This is
+> > because the init functions in the Microsemi Ocelot PHY driver are called
+> > while the MDIO bus lock is taken.
 > 
-> This issue happens becuase the touchpad has a rather small buffer to
-> store up to 13 input events, so if the host doesn't read those events in
-> time (i.e. runtime resume takes too long), events are dropped from the
-> touchpad's buffer.
-> 
-> The bottleneck is D3cold delay it waits when transitioning from D3cold
-> to D0, hence remove the delay to make the resume faster. I've tested
-> some systems with intel-lpss and haven't seen any regression.
-> 
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202683
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/mfd/intel-lpss-pci.c | 2 ++
->  1 file changed, 2 insertions(+)
+> It is nice you have wrapped it all up, but it is still messy. Sometime
+> in the future, we should maybe take another look at adding the concept
+> of initialisation of a package, before the initialization of the PHYs
+> in the package.
 
-Applied, thanks.
+I agree, it's still a hack to have those read/write functions acting
+differently based on an 'init' flag.
+
+> > +static u32 __vsc8584_macsec_phy_read(struct phy_device *phydev,
+> > +				     enum macsec_bank bank, u32 reg, bool init)
+> > +{
+> > +	u32 val, val_l = 0, val_h = 0;
+> > +	unsigned long deadline;
+> > +	int rc;
+> > +
+> > +	if (!init) {
+> > +		rc = phy_select_page(phydev, MSCC_PHY_PAGE_MACSEC);
+> > +		if (rc < 0)
+> > +			goto failed;
+> > +	} else {
+> > +		__phy_write_page(phydev, MSCC_PHY_PAGE_MACSEC);
+> > +	}
+> 
+> ...
+> 
+> > +	if (!init) {
+> > +failed:
+> > +		phy_restore_page(phydev, rc, rc);
+> > +	} else {
+> > +		__phy_write_page(phydev, MSCC_PHY_PAGE_STANDARD);
+> > +	}
+> 
+> Having the failed label inside the if is correct, but i think it is
+> potentially dangerous for future modifications to this function. I
+> would move the label before the if. I doubt it makes any difference to
+> the generated code, but it might prevent future bugs.
+
+Right, having readable code is always better. I'll fix that.
+
+Thanks!
+Antoine
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Antoine T�nart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
