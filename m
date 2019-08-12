@@ -2,168 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D6958A53E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44F118A552
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:06:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfHLSDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 14:03:41 -0400
-Received: from mga11.intel.com ([192.55.52.93]:50215 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726090AbfHLSDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:03:40 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 10:36:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
-   d="scan'208";a="194012289"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Aug 2019 10:36:26 -0700
-Date:   Mon, 12 Aug 2019 10:36:26 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 01/19] fs/locks: Export F_LAYOUT lease to user
- space
-Message-ID: <20190812173626.GB19746@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-2-ira.weiny@intel.com>
- <20190809235231.GC7777@dread.disaster.area>
+        id S1726821AbfHLSGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 14:06:19 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45968 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfHLSGS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 14:06:18 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o13so49865290pgp.12
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 11:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rkibUktkvDgvPaKzYudHbYv+zssBd9BVnmORpFK5sIM=;
+        b=Pm/i5Awv+1wuEbKCQ7G++ON3VKecwo9wUwhdvsO4/YJuS0PP46xEGXgjDrgypxhqB1
+         EZV4gC90lHCBFaUda5gn9lCqVYK6cLjjx5kHklAdvsV2533UxL6qZ5kKKQzdvSVhs8Yt
+         0baWDmWgyor6cBKVrjFhiZkMlh5ninhAuqSQ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rkibUktkvDgvPaKzYudHbYv+zssBd9BVnmORpFK5sIM=;
+        b=nBbdx50kVmrmKMPlL0AbD2F+rMV4KddpMlwC204JafADo6eB9xDKiuyt+Lj1XcMPGC
+         sBeuoDSpTsU/l9jOmPjWWpc9mTLbVHiVfuQJoSPdraObHbai3w8bAOaF8yoDC3B6o+fq
+         XiBqfSxvfQBeljWtTp0wf0hWTmlRWzZfINFtEukU4S8EzOUsiMBM23+bDPdEJcS20pkf
+         C6pl/UbRlsFz960/vnpoCKfcNK2L0XWohh3OJXNXEIA/yk4sV/TIO9gAUd1qopRuJpUR
+         6/4+wzzoRJMLT/x6I8hzWCgRiM9geS7/W4+X3GPkTGs2Bymc18FVlbByt6yeojPCrVAF
+         G8YA==
+X-Gm-Message-State: APjAAAUw2C3SPk8FMD+7DywTDflxvIizq1p2NVjYPEbxckcWHQAIHowg
+        FZiG5uq+4dvdfcpHsOiXWzJjgZckl1Q=
+X-Google-Smtp-Source: APXvYqwQNDswXhVN3SaWKfAiYZ9PFI71KTrt+N0THLB/Nq1EPI+5R3W5gBzqamh9PGPVG4SeUiySkA==
+X-Received: by 2002:aa7:8218:: with SMTP id k24mr35369354pfi.221.1565631483928;
+        Mon, 12 Aug 2019 10:38:03 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id u3sm153514pjn.5.2019.08.12.10.38.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Aug 2019 10:38:03 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 10:38:02 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Paul Chaignon <paul.chaignon@gmail.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] seccomp: allow BPF_MOD ALU instructions
+Message-ID: <201908121035.06695C79F@keescook>
+References: <20190809182621.GA4074@Nover>
+ <CAO5pjwSe+U70tSPjKOgFsqqF=gCKXPDREzYF81NCZ03kGAyWww@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190809235231.GC7777@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <CAO5pjwSe+U70tSPjKOgFsqqF=gCKXPDREzYF81NCZ03kGAyWww@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 10, 2019 at 09:52:31AM +1000, Dave Chinner wrote:
-> On Fri, Aug 09, 2019 at 03:58:15PM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > In order to support an opt-in policy for users to allow long term pins
-> > of FS DAX pages we need to export the LAYOUT lease to user space.
-> > 
-> > This is the first of 2 new lease flags which must be used to allow a
-> > long term pin to be made on a file.
-> > 
-> > After the complete series:
-> > 
-> > 0) Registrations to Device DAX char devs are not affected
-> > 
-> > 1) The user has to opt in to allowing page pins on a file with an exclusive
-> >    layout lease.  Both exclusive and layout lease flags are user visible now.
-> > 
-> > 2) page pins will fail if the lease is not active when the file back page is
-> >    encountered.
-> > 
-> > 3) Any truncate or hole punch operation on a pinned DAX page will fail.
-> > 
-> > 4) The user has the option of holding the lease or releasing it.  If they
-> >    release it no other pin calls will work on the file.
-> > 
-> > 5) Closing the file is ok.
-> > 
-> > 6) Unmapping the file is ok
-> > 
-> > 7) Pins against the files are tracked back to an owning file or an owning mm
-> >    depending on the internal subsystem needs.  With RDMA there is an owning
-> >    file which is related to the pined file.
-> > 
-> > 8) Only RDMA is currently supported
-> > 
-> > 9) Truncation of pages which are not actively pinned nor covered by a lease
-> >    will succeed.
+On Sun, Aug 11, 2019 at 10:58:33AM +0200, Paul Chaignon wrote:
+> On Fri, Aug 9, 2019 at 8:26 PM Paul Chaignon <paul.chaignon@orange.com> wrote:
+> >
+> > We need BPF_MOD to match system calls against whitelists encoded as 32-bit
+> > bit arrays.  The selection of the syscall's bit in the appropriate bit
+> > array requires a modulo operation such that X = 1 << nr % 32.
 > 
-> This has nothing to do with layout leases or what they provide
-> access arbitration over. Layout leases have _nothing_ to do with
-> page pinning or RDMA - they arbitrate behaviour the file offset ->
-> physical block device mapping within the filesystem and the
-> behaviour that will occur when a specific lease is held.
-> 
-> The commit descripting needs to describe what F_LAYOUT actually
-> protects, when they'll get broken, etc, not how RDMA is going to use
-> it.
+> Of course, X = 1 << nr & 0x1F, and we can do without BPF_MOD in our case.
+> I'll put that on a lack of sleep...
 
-Ok yes I've been lax in mixing the cover letter for the series and this first
-commit message.  My apologies.
+No worries! Changing the dialect of seccomp BPF isn't something I'd like
+to do without really good reason since it creates a split in the filter
+correctness from userspace (i.e. a filter using BPF_MOD on an older
+kernel will fail). So there would need to be a distinct flag set
+somewhere, etc. So, if you do end up discovering later you really want
+BPF_MOD, we can figure that out, but for now if you can get by with "&",
+that would be best. :)
+
+Thanks!
+
+-Kees
 
 > 
-> > @@ -2022,8 +2030,26 @@ static int do_fcntl_add_lease(unsigned int fd, struct file *filp, long arg)
-> >  	struct file_lock *fl;
-> >  	struct fasync_struct *new;
-> >  	int error;
-> > +	unsigned int flags = 0;
-> > +
-> > +	/*
-> > +	 * NOTE on F_LAYOUT lease
-> > +	 *
-> > +	 * LAYOUT lease types are taken on files which the user knows that
-> > +	 * they will be pinning in memory for some indeterminate amount of
-> > +	 * time.
-> 
-> Indeed, layout leases have nothing to do with pinning of memory.
+> >
+> > Signed-off-by: Paul Chaignon <paul.chaignon@orange.com>
+> > ---
+> >  kernel/seccomp.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > index 811b4a86cdf6..87de6532ff6d 100644
+> > --- a/kernel/seccomp.c
+> > +++ b/kernel/seccomp.c
+> > @@ -205,6 +205,8 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
+> >                 case BPF_ALU | BPF_MUL | BPF_X:
+> >                 case BPF_ALU | BPF_DIV | BPF_K:
+> >                 case BPF_ALU | BPF_DIV | BPF_X:
+> > +               case BPF_ALU | BPF_MOD | BPF_K:
+> > +               case BPF_ALU | BPF_MOD | BPF_X:
+> >                 case BPF_ALU | BPF_AND | BPF_K:
+> >                 case BPF_ALU | BPF_AND | BPF_X:
+> >                 case BPF_ALU | BPF_OR | BPF_K:
+> > --
+> > 2.17.1
 
-Yep, Fair enough.  I'll rework the comment.
-
-> That's something an application taht uses layout leases might do,
-> but it largely irrelevant to the functionality layout leases
-> provide. What needs to be done here is explain what the layout lease
-> API actually guarantees w.r.t. the physical file layout, not what
-> some application is going to do with a lease. e.g.
-> 
-> 	The layout lease F_RDLCK guarantees that the holder will be
-> 	notified that the physical file layout is about to be
-> 	changed, and that it needs to release any resources it has
-> 	over the range of this lease, drop the lease and then
-> 	request it again to wait for the kernel to finish whatever
-> 	it is doing on that range.
-> 
-> 	The layout lease F_RDLCK also allows the holder to modify
-> 	the physical layout of the file. If an operation from the
-> 	lease holder occurs that would modify the layout, that lease
-> 	holder does not get notification that a change will occur,
-> 	but it will block until all other F_RDLCK leases have been
-> 	released by their holders before going ahead.
-> 
-> 	If there is a F_WRLCK lease held on the file, then a F_RDLCK
-> 	holder will fail any operation that may modify the physical
-> 	layout of the file. F_WRLCK provides exclusive physical
-> 	modification access to the holder, guaranteeing nothing else
-> 	will change the layout of the file while it holds the lease.
-> 
-> 	The F_WRLCK holder can change the physical layout of the
-> 	file if it so desires, this will block while F_RDLCK holders
-> 	are notified and release their leases before the
-> 	modification will take place.
-> 
-> We need to define the semantics we expose to userspace first.....
-
-Agreed.  I believe I have implemented the semantics you describe above.  Do I
-have your permission to use your verbiage as part of reworking the comment and
-commit message?
-
-Thanks,
-Ira
-
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+-- 
+Kees Cook
