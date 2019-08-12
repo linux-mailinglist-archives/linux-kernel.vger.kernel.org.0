@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A2AB897AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 09:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6436897B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 09:24:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfHLHYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 03:24:12 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35030 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfHLHYL (ORCPT
+        id S1726979AbfHLHYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 03:24:38 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37215 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbfHLHYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 03:24:11 -0400
-Received: by mail-wm1-f68.google.com with SMTP id l2so10835467wmg.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 00:24:10 -0700 (PDT)
+        Mon, 12 Aug 2019 03:24:37 -0400
+Received: by mail-wm1-f65.google.com with SMTP id z23so10833522wmf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 00:24:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=pwmkS7iU8MzN5slwyQaJSxZdr6GIAFN6W/sXjAIcU0E=;
-        b=QzCOBffvYA4M4sQxKjmvWy5k2tl+iEivBNp2oh07KGvVKYytfsHKT7YyKz9ux9mHfP
-         lNBb4BpjK13SQyZomtRPsS2ftG0a+jsDwDSpPtDb+5rqNkptMtP0SQaQz1oUHgr/JTgh
-         TV4f5V10si/afJRpq3v29uzEePNjb2iNRTVpwkWHbsgatZaV+4ssIhz8c9PkEL4+4Ms+
-         QdqYA56WGiDO08GbCA1natKJm1RJB2V2n3Hsl1gZ6QFcYAynU11HCQt/TvKj7EHbRgHy
-         5sUaxl3s0hX6yWbJW+jGryDoz6gVH+ICu/o9AvNXVAz135Qw+9jOrk+/dpULDYUq/IBE
-         GLTg==
+        bh=/EQ4at7WuhC2wsgDOCnM8fQPkTZ0WBVqkzyUHM074KY=;
+        b=cHadjI9zYq9B7QDJFUqRjtNhwHVM7kGTATasOgCd5vgV8XXWRHzC/OeCEnqPlgvMam
+         Lp1/DmnrmZ54mI+HFQlU/vJ2R1utPJ82ZMev7iorrk9IAMEBq7gVunGCD/6YR4CVSBzp
+         HAabL7OFYT6qrCvfbazFbIjT0Up3D59nBmrhqxZNcdu69AhkOmNd/MChnWUNpSjdyhCX
+         xdXjR4AA+9yDPHFusoTpiOOhZUAGELmie4DjUG1opjf1I0A5QlQpospoqmAmdg9AuYu2
+         B6SuV0q/S92leIOq1a0DSdi+BTnfvrb79FH34CVKMDXdyLEC2K1iIqYrrf/sUI71o5X+
+         ct7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=pwmkS7iU8MzN5slwyQaJSxZdr6GIAFN6W/sXjAIcU0E=;
-        b=WHKxkd1/2jJOckMlnwz/BJXNjxYB2K0WoFFAjqDqlBtfdWiwH9SLm0Q77eF3nMumQA
-         38+wKAC3NGDVYWRh/3vwuD6SDeH7UeHPX4bG8BbjLBLkN3pcJ/JEumk7hvhKnoNB348g
-         121iZbhLwwEYfBwtGnc3HEfj/kxmzrTe2O9g+S0wWGJ1cxQqF8X42AivVhehCtDFSiYt
-         jfe5yz5ZodnlZsZV//Wl2oG3OsxHnkd2uYhfadRuTHm6FsDvIfP1gxScyWqVpCUTErhR
-         smD6ynwf6R8e9ObxShiy5unlN3K8Ys8FY7nptNi/7hfeTyu0E1UVFWQpUttBtX3Sfzf4
-         wCdw==
-X-Gm-Message-State: APjAAAXcUF3pP5cLIBPpDN65j99YK2RgBLj7hraYXRUTzLCzX6Sb5NQ8
-        bU84sUVPSGxm3qcEbimd/NBwUw==
-X-Google-Smtp-Source: APXvYqyNsmG7O/tFEv3dHk9dQ4P45YX8pR7VarVADvBbSodU53DtHEUZ+X47uLZr3XqRlm8fhmy96Q==
-X-Received: by 2002:a7b:cf0b:: with SMTP id l11mr27472604wmg.143.1565594649525;
-        Mon, 12 Aug 2019 00:24:09 -0700 (PDT)
+        bh=/EQ4at7WuhC2wsgDOCnM8fQPkTZ0WBVqkzyUHM074KY=;
+        b=IuYRrhwznDbyyhsvN4BEXkEqbXz2i5Do7yBCSAtwGQyx1OkoUj1piL4L5q3Zs3jRmx
+         V9CsMURIX3mVfmXlD0XjM2uT5eIGrRXsqGNPwMdy2zWpxmiGkuuvdL0pHp2S3zlO6t7Z
+         L3eJVgvViY0qnrqVEmTD7xtJwy8hq2xtlXCNK3J6q4S3rshlUIZJ7dncUVlL/IYrIVJe
+         HC+UlMBRjYt2m0YdJjurQ1M1lcl+XSgFBe8qfHK7HBEy5Tfy39IyGlgpojZO1eulHjes
+         GL20KFFRcU5cKZ3I+PdHZBpGJJBsdnRH1XqWmJQr2JQI180TQJOeypSbWw6xZzxkDvfj
+         4xqw==
+X-Gm-Message-State: APjAAAUrhU4ZSJtGZe/1KgZ9i6uRI/gBwqXpx2c1U7s2llH0Titu5NEL
+        m7RvXSXVTaJHChAeXCTca0I27w==
+X-Google-Smtp-Source: APXvYqz/0fItZ/jY3YSS40ttMi01zPdUVkC5lPKFpM+w2DRebnu3CDXWrCtrSkdWEa+5wFiLK0Qu9A==
+X-Received: by 2002:a1c:a1c1:: with SMTP id k184mr26714773wme.81.1565594674247;
+        Mon, 12 Aug 2019 00:24:34 -0700 (PDT)
 Received: from dell ([2.27.35.255])
-        by smtp.gmail.com with ESMTPSA id e10sm27225008wrn.33.2019.08.12.00.24.08
+        by smtp.gmail.com with ESMTPSA id f17sm18044659wmf.27.2019.08.12.00.24.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 00:24:09 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 08:24:07 +0100
+        Mon, 12 Aug 2019 00:24:33 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 08:24:31 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
@@ -68,17 +68,18 @@ Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Collabora kernel ML <kernel@collabora.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: Re: [PATCH v5 10/11] mfd: cros_ec: Use mfd_add_hotplug_devices()
- helper
-Message-ID: <20190812072407.GD4594@dell>
+Subject: Re: [PATCH v5 01/11] mfd / platform: cros_ec: Handle chained ECs as
+ platform devices
+Message-ID: <20190812072431.GE4594@dell>
 References: <20190722133257.9336-1-enric.balletbo@collabora.com>
- <20190722133257.9336-11-enric.balletbo@collabora.com>
+ <20190722133257.9336-2-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190722133257.9336-11-enric.balletbo@collabora.com>
+In-Reply-To: <20190722133257.9336-2-enric.balletbo@collabora.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -87,24 +88,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 22 Jul 2019, Enric Balletbo i Serra wrote:
 
-> Use mfd_add_hotplug_devices() helper to register the subdevices.
-
-You need to state why this change is useful/required.
-
+> An MFD is a device that contains several sub-devices (cells). For instance,
+> the ChromeOS EC fits in this description as usually contains a charger and
+> can have other devices with different functions like a Real-Time Clock,
+> an Audio codec, a Real-Time Clock, ...
+> 
+> If you look at the driver, though, we're doing something odd. We have
+> two MFD cros-ec drivers where one of them (cros-ec-core) instantiates
+> another MFD driver as sub-driver (cros-ec-dev), and the latest
+> instantiates the different sub-devices (Real-Time Clock, Audio codec,
+> etc).
+> 
+>                   MFD
+> ------------------------------------------
+>    cros-ec-core
+>        |___ mfd-cellA (cros-ec-dev)
+>        |       |__ mfd-cell0
+>        |       |__ mfd-cell1
+>        |       |__ ...
+>        |
+>        |___ mfd-cellB (cros-ec-dev)
+>                |__ mfd-cell0
+>                |__ mfd-cell1
+>                |__ ...
+> 
+> The problem that was trying to solve is to describe some kind of topology for
+> the case where we have an EC (cros-ec) chained with another EC
+> (cros-pd). Apart from that this extends the bounds of what MFD was
+> designed to do we might be interested on have other kinds of topology that
+> can't be implemented in that way.
+> 
+> Let's prepare the code to move the cros-ec-core part from MFD to
+> platform/chrome as this is clearly a platform specific thing non-related
+> to a MFD device.
+> 
+>   platform/chrome  |         MFD
+> ------------------------------------------
+>                    |
+>    cros-ec ________|___ cros-ec-dev
+>                    |       |__ mfd-cell0
+>                    |       |__ mfd-cell1
+>                    |       |__ ...
+>                    |
+>    cros-pd ________|___ cros-ec-dev
+>                    |        |__ mfd-cell0
+>                    |        |__ mfd-cell1
+>                    |        |__ ...
+> 
 > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
 > Tested-by: Gwendal Grignou <gwendal@chromium.org>
 > ---
 > 
-> Changes in v5: None
-> Changes in v4: None
+> Changes in v5:
+> - Rebased on top of 5.3-rc1
+> 
+> Changes in v4:
+> - Rebase again on top of for-mfd-next to avoid conflicts.
+> 
 > Changes in v3:
-> - Add a new patch to use mfd_add_hoplug_devices to register subdevices
+> - Collect more acks an tested-by
 > 
-> Changes in v2: None
+> Changes in v2:
+> - Collect acks received.
+> - Remove '[PATCH 07/10] mfd: cros_ec: Update with SPDX Licence identifier
+>   and fix description' to avoid conflicts with some tree-wide patches
+>   that actually updates the Licence identifier.
+> - Add '[PATCH 10/10] arm/arm64: defconfig: Update configs to use the new
+>   CROS_EC options' to update the defconfigs after change some config
+>   symbols.
 > 
->  drivers/mfd/cros_ec_dev.c | 18 ++++++------------
->  1 file changed, 6 insertions(+), 12 deletions(-)
+>  drivers/mfd/cros_ec.c                   | 61 +++++++++++++------------
+>  drivers/platform/chrome/cros_ec_i2c.c   |  8 ++++
+>  drivers/platform/chrome/cros_ec_lpc.c   |  3 +-
+>  drivers/platform/chrome/cros_ec_rpmsg.c |  2 +
+>  drivers/platform/chrome/cros_ec_spi.c   |  8 ++++
+>  include/linux/mfd/cros_ec.h             | 18 ++++++++
+>  6 files changed, 69 insertions(+), 31 deletions(-)
+
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
 Lee Jones [李琼斯]
