@@ -2,90 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A2F8A4F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4108A4FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfHLRzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 13:55:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40612 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfHLRzn (ORCPT
+        id S1726722AbfHLR4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 13:56:24 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40022 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfHLR4X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 13:55:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A5xx+suP+i+wlxI3r0bZSwnQIwSxHDhSzDl/aVQqy44=; b=CpEkLX+HQLoCnKFPMleBcK4Xn
-        mKlxeuVobdx5mF93JGhdufQwe0ywW5R1UusFok0w7dl5HYo1L/cJTtUn4YJOv6otPtNKfHoYA8ZEX
-        JgsCd3Dxb2/wjkhI7M8k4+OD2O+Z0NdVgAS/pPUqHtPLcsE525zZIYd9evXf7tZGSL3jlQC1f19Qj
-        26PeCW5S5Lo0FSCBAcWW0VctU4NPXPIg10lpE58scG80bmsk8FUnjBEoJZHG6OhidYhtvvcX1U+1a
-        xmqES2hTCBjiokk8omo7hEaBoMvubeW+zV+HFbr5T1/aCpZFbRMRlfyfAuwYBXxwrCQ9CkTtorvm0
-        AZZo0oyPw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hxEXl-000108-99; Mon, 12 Aug 2019 17:55:41 +0000
-Date:   Mon, 12 Aug 2019 10:55:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Troy Benjegerdes <troy.benjegerdes@sifive.com>
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org,
-        Allison Randal <allison@lohutok.net>,
-        ron minnich <rminnich@gmail.com>
-Subject: Re: [PATCH] RISC-V: Issue a local tlb flush if possible.
-Message-ID: <20190812175541.GA23733@infradead.org>
-References: <20190810014309.20838-1-atish.patra@wdc.com>
- <118B0DE7-EDCC-4947-88E5-7FF133A757D8@sifive.com>
+        Mon, 12 Aug 2019 13:56:23 -0400
+Received: by mail-ot1-f67.google.com with SMTP id c34so22133999otb.7;
+        Mon, 12 Aug 2019 10:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DwkJnZQwcd2vdtvKtixBQGDvtW9rbIGj3aJiuLEEfEw=;
+        b=Mux8a8LRF8dsI5HB6we1YRsuzPlDkVt/DE+bSeIlvt5J4wTpRiAMlxErc2mSeE8f5x
+         Ars+Buig/NYgI/C8GATm4HWWMrLMFIrgmPjcjRgnEtNoUcnrhnnUh6wRB4Erkco0b/5G
+         hp9C21qRYKvHXaEywD0D+Z3Kno+R6OKsKKXW1xHwOAAjUwkOg4GAiGsbkQNvaYMfVAXr
+         SjV/DIsIwfCQGFryADIe0tge0yDGBezynvYiMn+lbiuK8N/kbzV+9IsHgCAegQvmeGol
+         rS034sRa2Th+HSNdzjVzjEwQWInBZxxDY2EG8S1IduwwWjHTIhny76MJ25mgzpLY4bDs
+         +YWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DwkJnZQwcd2vdtvKtixBQGDvtW9rbIGj3aJiuLEEfEw=;
+        b=EkdqB1nwTi5DCV/ZEXu+qJHnRuaAA6iyBbYdpMTyDRAVquhibrBv3FKcH2GAj7KXXR
+         9SvYShEZX15zIxuF/PeXlXELmpmKRHyN29vw2lBChgdsSRMgT6NF5G4BE9JtzdxQBh/w
+         m+HY55vDOBf62hR3+O/F7+Sgs5cEw14dE2d/CdxRggOufo2GyDOSiLhUyZWiwqkofJPO
+         5OKQmEiWgM82WXb7cAQtG/cVQJZXIuRgy/lzcm6xmsfxhU//x/DOQaEh/Gze0iTjveCP
+         hpPNdMGdJ0IwtnFX6GnYJG82Owbxynf5rCSbGlUCyp1pQmi0HA1XoJvmioJ/KqIP52Fy
+         xVpQ==
+X-Gm-Message-State: APjAAAWmwJJcKVIkkCXM5A2E2/HtO/OJqniK9qBXTzDwmvbc6OBVBaJD
+        amp3BenJ1fS5sHQRCil1CHv35LLUiTlNYlnGq10=
+X-Google-Smtp-Source: APXvYqx3ZW8jVc7kI7rD18JChyHGb8gtCcVTNL5M4EJrHiQf0uMaV9kOvHszHGopenJZP0cGJ2qTzgDhoLL6yyjHdFY=
+X-Received: by 2002:a02:16c5:: with SMTP id a188mr22241140jaa.86.1565632582885;
+ Mon, 12 Aug 2019 10:56:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <118B0DE7-EDCC-4947-88E5-7FF133A757D8@sifive.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190717152458.22337-1-andrew.smirnov@gmail.com>
+ <20190717152458.22337-3-andrew.smirnov@gmail.com> <VI1PR0402MB3485E4DDB5E3BDCBC2AAAFE398C70@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0402MB3485E4DDB5E3BDCBC2AAAFE398C70@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Mon, 12 Aug 2019 10:56:11 -0700
+Message-ID: <CAHQ1cqF=7h=mcKSBNRoYX5mkRetEbvb8dGkDyqHcDf1TCpr40w@mail.gmail.com>
+Subject: Re: [PATCH v6 02/14] crypto: caam - simplfy clock initialization
+To:     Horia Geanta <horia.geanta@nxp.com>
+Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Chris Spencer <christopher.spencer@sea.co.uk>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 10:36:25AM -0500, Troy Benjegerdes wrote:
-> Is there anything other than convention and current usage that prevents
-> the kernel from natively handling TLB flushes without ever making the SBI
-> call?
+On Tue, Jul 23, 2019 at 7:17 AM Horia Geanta <horia.geanta@nxp.com> wrote:
+>
+> On 7/17/2019 6:25 PM, Andrey Smirnov wrote:
+> > Simplify clock initialization code by converting it to use clk-bulk,
+> > devres and soc_device_match() match table. No functional change
+> > intended.
+> >
+> Thanks.
+> Two nitpicks below.
+>
+> > +static int init_clocks(struct device *dev,
+> > +                    struct caam_drv_private *ctrlpriv,
+> > +                    const struct caam_imx_data *data)
+> > +{
+> > +     int ret;
+> > +
+> > +     ctrlpriv->num_clks = data->num_clks;
+> > +     ctrlpriv->clks = devm_kmemdup(dev, data->clks,
+> > +                                   data->num_clks * sizeof(data->clks[0]),
+> > +                                   GFP_KERNEL);
+> > +     if (!ctrlpriv->clks)
+> > +             return -ENOMEM;
+> > +
+> > +     ret = devm_clk_bulk_get(dev, ctrlpriv->num_clks, ctrlpriv->clks);
+> > +     if (ret) {
+> > +             dev_err(dev,
+> > +                     "Failed to request all necessary clocks\n");
+> > +             return ret;
+> > +     }
+> > +
+> > +     ret = clk_bulk_prepare_enable(ctrlpriv->num_clks, ctrlpriv->clks);
+> > +     if (ret) {
+> > +             dev_err(dev,
+> > +                     "Failed to prepare/enable all necessary clocks\n");
+> > +             return ret;
+> > +     }
+> > +
+> > +     ret = devm_add_action_or_reset(dev, disable_clocks, ctrlpriv);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return 0;
+> Or directly:
+>         return devm_add_action_or_reset(dev, disable_clocks, ctrlpriv);
+>
+> > +     imx_soc_match = soc_device_match(caam_imx_soc_table);
+> > +     if (imx_soc_match) {
+> > +             if (!imx_soc_match->data) {
+> > +                     dev_err(dev, "No clock data provided for i.MX SoC");
+> > +                     return -EINVAL;
+> [...]
+> > +             ret = init_clocks(dev, ctrlpriv, imx_soc_match->data);
+> ctrlpriv can be retrieved using dev_get_drvdata(dev), thus there's no need
+> to pass it as parameter.
+>
 
-Yes and no.
+Will fix in v7.
 
-In all existing RISC-V implementation remote TLB flushes are simply
-implementing using IPIs.  So you could trivially implement remote TLB
-flush using IPIs, and in fact Gary Guo posted a series to do that a
-while ago.
-
-But: the RISC privileged spec requires that IPIs are only issued from
-M-mode and only delivered to M-mode.  So what would be a trivial MMIO
-write plus interupt to wakeup the remote hart actually turns into
-a dance requiring multiple context switches between privile levels,
-and without additional optimizations that will be even slower than the
-current SBI based implementation.
-
-I've started a prototype implementation and spec edits to relax this
-and allow direct IPIs from S-mode to S-mode, which will speed up IPIs
-by about an order of magnitude, and I hope this will be how future
-RISC-V implementations work.
-
-> Someone is eventually going to want to run the linux kernel in machine mode,
-> likely for performance and/or security reasons, and this will require flushing TLBs
-> natively anyway.
-
-The nommu ports run in M-mode.  But running a MMU-enabled port in M-mode
-is rather painful if not impossible (trust me, I've tried) due to how
-the privileged spec says that M-mode generally runs without address
-translation.  There is a workaround using the MPRV bit in mstatus, but
-even that just uses the address translation for loads and stores, and
-not for the program text.
+Thanks,
+Andrey Smirnov
