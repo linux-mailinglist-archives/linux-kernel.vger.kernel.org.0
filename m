@@ -2,86 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A66289C6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 13:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45BEB89C76
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 13:15:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbfHLLLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 07:11:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38512 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728125AbfHLLLo (ORCPT
+        id S1728115AbfHLLPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 07:15:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39476 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727995AbfHLLPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 07:11:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VOU+A7N6Ee0Dhs3ArVSbBOqkU2CM/MzFu4Eo8Vtc5Hw=; b=ffEBe40YCHxGSxDqNpEbhChwl
-        zv4FStkFDOSl/qWyUyZ6fOe2c3rXVzDsbZ3T5DHT5qNx0EodSX1IQLIiG8DDtxo5RgJEHM2YiG68Q
-        E4qxh0O3IyC9Jz+J2iJCHMfyj5dvH8+0JHCDO2+NuMLvuuqqlfFhBOY8jRVu0utabE2aQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hx8Em-00013U-V9; Mon, 12 Aug 2019 11:11:41 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 7511D27430B7; Mon, 12 Aug 2019 12:11:40 +0100 (BST)
-Date:   Mon, 12 Aug 2019 12:11:40 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Raag Jadav <raagjadav@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: regulator: act8865 regulator modes and
- suspend states
-Message-ID: <20190812111140.GG4592@sirena.co.uk>
-References: <1565423335-3213-1-git-send-email-raagjadav@gmail.com>
- <1565423335-3213-3-git-send-email-raagjadav@gmail.com>
+        Mon, 12 Aug 2019 07:15:36 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hx8IP-0002cp-9I; Mon, 12 Aug 2019 11:15:25 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Zhou Wang <wangzhou1@hisilicon.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.or
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][crypto-next] crypto: hisilicon: fix spelling mistake "HZIP_COMSUMED_BYTE" -> "HZIP_CONSUMED_BYTE"
+Date:   Mon, 12 Aug 2019 12:15:25 +0100
+Message-Id: <20190812111525.574-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="w/VI3ydZO+RcZ3Ux"
-Content-Disposition: inline
-In-Reply-To: <1565423335-3213-3-git-send-email-raagjadav@gmail.com>
-X-Cookie: Decaffeinated coffee?  Just Say No.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---w/VI3ydZO+RcZ3Ux
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There is a spelling mistake in the hzip_dfx_regs array, fix this.
 
-On Sat, Aug 10, 2019 at 01:18:55PM +0530, Raag Jadav wrote:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/hisilicon/zip/zip_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> + * ACT8865 regulators as follows:
-> + * ACT8865_REGULATOR_MODE_FIXED:	It is specific to DCDC regulators and it
-> + *					specifies the usage of fixed-frequency
-> + *					PWM.
+diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
+index 6e0ca75585d4..00ecae387fdd 100644
+--- a/drivers/crypto/hisilicon/zip/zip_main.c
++++ b/drivers/crypto/hisilicon/zip/zip_main.c
+@@ -206,7 +206,7 @@ static struct debugfs_reg32 hzip_dfx_regs[] = {
+ 	{"HZIP_AVG_DELAY                 ",  0x28ull},
+ 	{"HZIP_MEM_VISIBLE_DATA          ",  0x30ull},
+ 	{"HZIP_MEM_VISIBLE_ADDR          ",  0x34ull},
+-	{"HZIP_COMSUMED_BYTE             ",  0x38ull},
++	{"HZIP_CONSUMED_BYTE             ",  0x38ull},
+ 	{"HZIP_PRODUCED_BYTE             ",  0x40ull},
+ 	{"HZIP_COMP_INF                  ",  0x70ull},
+ 	{"HZIP_PRE_OUT                   ",  0x78ull},
+-- 
+2.20.1
 
-Ah, _FIXED doesn't mean what it sounded like - this should map to _FAST.
-The reason you use forced PWM is to avoid any delay in the hardware
-figuring out that it needs to go into PWM mode in the case of rapid load
-changes.
-
---w/VI3ydZO+RcZ3Ux
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1RSWsACgkQJNaLcl1U
-h9BgOwf+L+0uD2AkY2mKb2rgbO4kz8XM2/qXa/Guj883xw8zawXENnnGXMu1g+i3
-0gO9qV1QdTKin8sA2YFzlSqIreIjIh5EBwxcTDBizvq7+QO40zJVxLi4kvMNEQcN
-O144ApoOUPDU4HhhaZM9fW9+kx13IAgn4cficrqDdnoL2pZ8sNWsQP28vjprfgWH
-45DxGYJqrrhnXW3unBkGBT/z6Cu5DhCo9NYnNY6+G2eQqNtD+UacEu2K+HQuVuUj
-g/0Tg8h9ZhsIX+z1eo2Idorf7jkvd4QctqaA4DJHIKezvyD+7STfmAIwyobXC0Nh
-fDr0HHOLg3E7HBBIXu8mX4GEVDJkZw==
-=mPsh
------END PGP SIGNATURE-----
-
---w/VI3ydZO+RcZ3Ux--
