@@ -2,102 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83D8989B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54E6F89B84
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbfHLKaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:30:13 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33251 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727564AbfHLKaN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:30:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so104213984wru.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 03:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=/xJkw3HJipqZsGqksy3Y3Kh8Zd6FZDx8Lzcx83UAp1E=;
-        b=ClsxrPQnDz+StEaMCZFcJZvBHropFOtgMNmG2NxTqoUDwh6xgtGinyNwjek/gGcDsb
-         QP1OJM6Xd1F2+jtVWeFLi1FSsRcufM8taxrEwcf0QUaqX+LUqCR3UVrdQTaqW2LpQ1y3
-         dsDIJaW+Js6+nyJmMmkLZcAHA2Op1QVU1Zz2KJtwS5ol4eh1LyS+b6Wmj6TYA8FAvXWD
-         8cfVzTGdcHIaSf4XbL3iIGj9rO5BeaiZuA8wzFzzEJc68yQgXpSSXAN0sTUNkAeyBUoj
-         Q+kMB94rY4bxav5iCDcv+Z52AxWXy7i9GHlFR5KcPojz5YMEn3iZ+w/apQKAo6E42J5I
-         Ux1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=/xJkw3HJipqZsGqksy3Y3Kh8Zd6FZDx8Lzcx83UAp1E=;
-        b=tQwB/vGbejfApzvmnX5RiTCbReq809EoDqfHsxvhB5y87QmUIMAglQ4loyvypg7W5l
-         lit/kdZgHkEBUbpCqrnke98c/cxq9SC8Quyg8HzxvhZmMqpy2kU2x/eUueOHeGk8QTvb
-         lDGOGPmojn6MWnBZuj2FxQS6GwQJOIFRyJ6v46g1BABtnvy+kobZuLRV8XInsNGD2sub
-         RnU6kB47qKCRU27bxzRcoShxjENJxRq9nObySMD4rT5yp+9hiWypgo+HwjBt1OmFIMVx
-         s9D9AOzxjhOa59iaIkXM3ga752+sKD5C6rvrGURhF7JckaZ6dsAPLxA989ZiWmnfSJYH
-         XA9A==
-X-Gm-Message-State: APjAAAU0YI2YrN6lGXvSEHsh+yv+cxD0Tc7jENsWgsvLLjzPBKRW8Aw6
-        63UBJhvEsF46ytk2pc3Ltp4CSA==
-X-Google-Smtp-Source: APXvYqysIRjAaDtd2ibOzQb9fjpi50O1qhEVT0kIXTChSIdIo1wq0xFRIV2BJs//0/kavloNGsljaA==
-X-Received: by 2002:adf:ef07:: with SMTP id e7mr21348509wro.242.1565605811394;
-        Mon, 12 Aug 2019 03:30:11 -0700 (PDT)
-Received: from dell ([2.27.35.255])
-        by smtp.gmail.com with ESMTPSA id n8sm90185885wro.89.2019.08.12.03.30.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 03:30:10 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 11:30:09 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] mfd: db8500-prcmu: Mark expected switch fall-throughs
-Message-ID: <20190812103009.GL26727@dell>
-References: <20190728235614.GA23618@embeddedor>
+        id S1727831AbfHLKc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:32:29 -0400
+Received: from mga18.intel.com ([134.134.136.126]:29383 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727744AbfHLKc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 06:32:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 03:31:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,377,1559545200"; 
+   d="scan'208";a="193928694"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 12 Aug 2019 03:31:48 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 12 Aug 2019 13:31:47 +0300
+Date:   Mon, 12 Aug 2019 13:31:47 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Pawel Laszczak <pawell@cadence.com>
+Cc:     Roger Quadros <rogerq@ti.com>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>
+Subject: Re: [PATCH v10 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Message-ID: <20190812103147.GA4691@kuha.fi.intel.com>
+References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
+ <1563733939-21214-6-git-send-email-pawell@cadence.com>
+ <88742d5b-ee10-cf4e-6724-58e7bdd19cb9@ti.com>
+ <BYAPR07MB47090BCA728600F0C2F4E129DDD00@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <1e557bcf-2d50-f600-0e81-1f9fba5499a1@ti.com>
+ <BYAPR07MB4709F306EC472B7AABEB7D4CDDD30@BYAPR07MB4709.namprd07.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190728235614.GA23618@embeddedor>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <BYAPR07MB4709F306EC472B7AABEB7D4CDDD30@BYAPR07MB4709.namprd07.prod.outlook.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 28 Jul 2019, Gustavo A. R. Silva wrote:
+Hi,
 
-> Mark switch cases where we are expecting to fall through.
+> >>>> +	real_role = cdsn3_real_role_switch_get(cdns->dev);
+> >>>> +
+> >>>> +	current_role = role;
+> >>>> +	dev_dbg(cdns->dev, "Switching role");
+> >>>> +
+> >>>> +	ret = cdns3_role_start(cdns, real_role);
+> >>>> +	if (ret) {
+> >>>> +		/* Back to current role */
+> >>>> +		dev_err(cdns->dev, "set %d has failed, back to %d\n",
+> >>>> +			role, current_role);
+> >>>> +		ret = cdns3_role_start(cdns, current_role);
+> >>>> +		if (ret)
+> >>>> +			dev_err(cdns->dev, "back to %d failed too\n",
+> >>>> +				current_role);
+> >>>> +	}
+> >>>> +exit:
+> >>>> +	pm_runtime_put_sync(cdns->dev);
+> >>>> +	return ret;
+> >>>> +}
+> >>>> +
+> >>>> +static const struct usb_role_switch_desc cdns3_switch_desc = {
+> >>>> +	.set = cdns3_role_switch_set,
+> >>>> +	.get = cdsn3_real_role_switch_get,
+> >>>> +	.allow_userspace_control = true,
+> >>>
+> >>> how does user initiated cdns3_role_switch_set() via sysfs co-exist with role
+> >>> changes done by hardware events. e.g. ID/VBUS?
+> >>>
+> >>
+> >> Do you expect any issues whit this,  have you seen any problem with this
+> >> on your  platform ?
+> >>
+> >> I assume that it should work in this way:
+> >> 1. user change role by sysfs
+> >> 2. Driver change the role according with user request.
+> >> 3. If we receive correct ID/VBUS then role should not be changed
+> >>     because new role is the same as current set in point 2.
+> >>
+> >
+> >I have not tested this series yet.
+> >My understanding is that if user sets role to "host" or "device" then it should
+> >remain in that role irrespective of ID/VBUS. Once user sets it to "none" then
+> >port should set role based on ID/VBUS.
 > 
-> This patch fixes the following warnings:
-> 
-> drivers/mfd/db8500-prcmu.c: In function 'dsiclk_rate':
-> drivers/mfd/db8500-prcmu.c:1592:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    div *= 2;
->    ~~~~^~~~
-> drivers/mfd/db8500-prcmu.c:1593:2: note: here
->   case PRCM_DSI_PLLOUT_SEL_PHI_2:
->   ^~~~
-> drivers/mfd/db8500-prcmu.c:1594:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    div *= 2;
->    ~~~~^~~~
-> drivers/mfd/db8500-prcmu.c:1595:2: note: here
->   case PRCM_DSI_PLLOUT_SEL_PHI:
->   ^~~~
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/mfd/db8500-prcmu.c | 2 ++
->  1 file changed, 2 insertions(+)
+> According with your understanding it works the same way as by debugfs. 
+> Now I have no doubts to remove debugfs.c file :)
 
-Applied, thanks.
+Hold on! The role "none" means that the connector should not be
+connected to either the host nor device.
+
+The sysfs file we expose from the class for the role switches is
+primarily meant for supporting proprietary protocols that require us
+to basically override the connector USB data role. The default role
+should always be selected in the drivers.
+
+With USB Type-C connectors and alternate modes, the "none" role is
+used for example when the connector is put into "USB Safe State". In
+case you guys are not familiar with USB Safe State, then it is a state
+(defined in USB PD specifications) for the connector where the data
+lines on the connector should not be physically connected to anything.
+The connector needs to be put into safe state always when entering
+or exiting an alternate mode, before the final mode (USB or alternate)
+is actually being set for the connector.
+
+
+thanks,
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+heikki
