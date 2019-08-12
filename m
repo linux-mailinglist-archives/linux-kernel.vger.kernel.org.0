@@ -2,156 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4888967D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 06:53:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8812189686
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 06:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbfHLExO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 00:53:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40272 "EHLO mail.kernel.org"
+        id S1726509AbfHLE5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 00:57:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbfHLExN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 00:53:13 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725822AbfHLE5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 00:57:36 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B6EF2087B;
-        Mon, 12 Aug 2019 04:53:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D326620842;
+        Mon, 12 Aug 2019 04:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565585592;
-        bh=U2DFlAsT9fiCibIRTlnmIj7xBh4FZ71yzSmmo/sRMDc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dcVsHGW3621y7F6SNvLxIU/nsBvDMBnezicKt9/5s2OijcY+XgzbnU2lkmzWSDlUi
-         U2dzKAf7FjGCC3HqwZDxj/bO7/1j/bhkrxB3hlE0Tjhn4p41VgSDPL1WP6twWVIe1Z
-         /hSpMvGD0yELB5uOF0J2BmPa9LMY8yHh8914ZD9w=
-Received: by mail-wr1-f52.google.com with SMTP id b16so6695635wrq.9;
-        Sun, 11 Aug 2019 21:53:12 -0700 (PDT)
-X-Gm-Message-State: APjAAAWr8DFAJCHMOjgF3u9Zsi4UDT89WE1xSGBOI6Vq1ogC5xfol641
-        BUzVWW7r6w79PJjhnxUcLRXOtxSd+e95W2Kla8U=
-X-Google-Smtp-Source: APXvYqzWTwxFBAger42CdK0YgxZARYvcqOa5DVNzRa6gk/EElcW+UHkrG2le3oAfyQ7okItaDDgPMMoxxRg8hCuxstI=
-X-Received: by 2002:adf:c613:: with SMTP id n19mr38373302wrg.109.1565585590646;
- Sun, 11 Aug 2019 21:53:10 -0700 (PDT)
+        s=default; t=1565585855;
+        bh=KG4ZmdjX9K6T7CBGRwekyId1/FvEn4buIVypXsfvxdE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n50q2x3WqPNsP3y+eR2IEK1COQjwzMeY8yNE/vtjj+nHM1icxAslvBs7ZGZX7pa3p
+         yXFgkk/WgFrgD+DnRJxj1C4EayNHeR5PB06HV/OnfEKDhqUZOnCmlqZwAPn5uHK6e4
+         v8CelaQMMZQkr3z35NMIn0zNuEJeH0+k+vw3eTNo=
+Date:   Mon, 12 Aug 2019 06:57:31 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Add SPDX kernel tree to linux-next
+Message-ID: <20190812045731.GA5834@kroah.com>
+References: <20190810115533.GA6302@kroah.com>
+ <20190812072659.606b2107@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190811203144.5999-1-peron.clem@gmail.com> <20190811203144.5999-2-peron.clem@gmail.com>
-In-Reply-To: <20190811203144.5999-2-peron.clem@gmail.com>
-From:   Chen-Yu Tsai <wens@kernel.org>
-Date:   Mon, 12 Aug 2019 12:52:59 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67T3h_KTVZ20NVWNd78xqCa2ZhYiCJr4oOwYjUM3OaZXA@mail.gmail.com>
-Message-ID: <CAGb2v67T3h_KTVZ20NVWNd78xqCa2ZhYiCJr4oOwYjUM3OaZXA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v5 1/3] arm64: dts: allwinner: Add SPDIF
- node for Allwinner H6
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812072659.606b2107@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Aug 12, 2019 at 07:26:59AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Sat, 10 Aug 2019 13:55:33 +0200 Greg KH <gregkh@linuxfoundation.org> wrote:
+> > 
+> > I realized that I've been sending patches to Linus from my "SPDX" kernel
+> > tree for a few releases now, and it's not included in linux-next, which
+> > is not good.
+> > 
+> > So, could you please add the kernel tree / branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/spdx.git spdx-linus
+> > 
+> > to linux-next?
+> 
+> Added from today.  One question: is this meant to be a -next tree or a
+> -fixes tree?
 
-On Mon, Aug 12, 2019 at 4:31 AM Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.c=
-om> wrote:
->
-> The Allwinner H6 has a SPDIF controller called OWA (One Wire Audio).
->
-> Only one pinmuxing is available so set it as default.
->
-> Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 38 ++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/bo=
-ot/dts/allwinner/sun50i-h6.dtsi
-> index 7628a7c83096..677eb374678d 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> @@ -83,6 +83,24 @@
->                 method =3D "smc";
->         };
->
-> +       sound-spdif {
-> +               compatible =3D "simple-audio-card";
-> +               simple-audio-card,name =3D "sun50i-h6-spdif";
-> +
-> +               simple-audio-card,cpu {
-> +                       sound-dai =3D <&spdif>;
-> +               };
-> +
-> +               simple-audio-card,codec {
-> +                       sound-dai =3D <&spdif_out>;
-> +               };
-> +       };
-> +
-> +       spdif_out: spdif-out {
-> +               #sound-dai-cells =3D <0>;
-> +               compatible =3D "linux,spdif-dit";
-> +       };
-> +
+A "-fixes" tree, it should be sent to Linus for the latest release.
 
-We've always had this part in the board dts. It isn't relevant to boards
-that don't have SPDIF output.
+thanks,
 
-Also, not so relevant here, but there are different simple sound card
-constructs. Some support multiple audio streams with dynamic PCM routing.
-How these are configured really depends on what interfaces are usable.
-
-So keeping this at the board level is IMO a better choice.
-
-ChenYu
-
-
->         timer {
->                 compatible =3D "arm,armv8-timer";
->                 interrupts =3D <GIC_PPI 13
-> @@ -282,6 +300,11 @@
->                                 bias-pull-up;
->                         };
->
-> +                       spdif_tx_pin: spdif-tx-pin {
-> +                               pins =3D "PH7";
-> +                               function =3D "spdif";
-> +                       };
-> +
->                         uart0_ph_pins: uart0-ph-pins {
->                                 pins =3D "PH0", "PH1";
->                                 function =3D "uart0";
-> @@ -411,6 +434,21 @@
->                         };
->                 };
->
-> +               spdif: spdif@5093000 {
-> +                       #sound-dai-cells =3D <0>;
-> +                       compatible =3D "allwinner,sun50i-h6-spdif";
-> +                       reg =3D <0x05093000 0x400>;
-> +                       interrupts =3D <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&ccu CLK_BUS_SPDIF>, <&ccu CLK_SPDIF>=
-;
-> +                       clock-names =3D "apb", "spdif";
-> +                       resets =3D <&ccu RST_BUS_SPDIF>;
-> +                       dmas =3D <&dma 2>;
-> +                       dma-names =3D "tx";
-> +                       pinctrl-names =3D "default";
-> +                       pinctrl-0 =3D <&spdif_tx_pin>;
-> +                       status =3D "disabled";
-> +               };
-> +
->                 usb2otg: usb@5100000 {
->                         compatible =3D "allwinner,sun50i-h6-musb",
->                                      "allwinner,sun8i-a33-musb";
-> --
-> 2.20.1
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to linux-sunxi+unsubscribe@googlegroups.com.
-> To view this discussion on the web, visit https://groups.google.com/d/msg=
-id/linux-sunxi/20190811203144.5999-2-peron.clem%40gmail.com.
+greg k-h
