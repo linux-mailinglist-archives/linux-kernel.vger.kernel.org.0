@@ -2,139 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5726989AE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 306B489ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:08:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfHLKHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:07:24 -0400
-Received: from mail-eopbgr770049.outbound.protection.outlook.com ([40.107.77.49]:36686
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727849AbfHLKHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:07:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eS8IJR/PneXuTKwgUHnQ8oYTDdsxut89qxHKYdzeCrXGTU+Au12UWLscd91tCHg3IPo5mbKTsOhmYLTnhV7eRR1ccl+R1A0B56O/oMkuPvvF223CUb84+HzWo0ILh4VzeFUvG7WXzxoVTI9X8Tfqaxpm7sJphM5NzjD7nVW0C1Zsp1wqQyE8whmudgPbsVhgoP/eqpkmlf0agxS/GHksHlpESVXx381ROnXEt4sRDdwvR5wWBaDfnYvcupvjo2180fK2L08ifN5B8Okx2KhRcD/0kCH6Be0FbSVgAH8W9XNjk9nZu/E45CBcFAdzXkbkaA2xwfgdI70GvwkjBehUhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4m+yLKEkI4oPVpayp+PbSWXKsIToVkpx2IkvRadQkbU=;
- b=P5y0Y2J0Gk0bmA3RcOwLb4VKMK9zgVCjhTj25FGRj0L/lB16egooLjH8yVFdfqdcy9X+p9SIrr6FS110b25GbnTarYdiiB7VSJzgkmghFNdTH6BjMwGM28O+ezj8b6qLonF6OR7FUlqq5KE9dbVmpZYsHlosdvvUBE7nUZPQzyLqryHk9RJSfg5r88MgmFvmLYmvKNR3f+JyNqgDBSz9kzM+be2B8Y9F2j45QEPjHUJHcZOKEXRBhnz2FrPvc7Fvo4ojSzf3BIt7l0WtA0s468vMoSlGj/cEgIyJEPCO2lkPgHeqb6vAXOtZj/MdJMEAsZW5qPYFvZgk5KDVEp2uMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
+        id S1727789AbfHLKHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:07:13 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33215 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727409AbfHLKHM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 06:07:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n9so104158710wru.0;
+        Mon, 12 Aug 2019 03:07:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4m+yLKEkI4oPVpayp+PbSWXKsIToVkpx2IkvRadQkbU=;
- b=nuOdWvEasu2D4ZZNT0fZVnx/Tyum6gmLf9zLt6EjLcQZg/dK2h4gXfMQYelz9MaxIPuQ8Neh/M2un0m9Th76U98Al9ImCWm6du33cWTl+GooJ1gHBvb+sx9A698a3Y5t/x6iyeHS3CWOxAMcNADGHbviO4zuV6OfsS85TyApEqE=
-Received: from MWHPR02CA0017.namprd02.prod.outlook.com (2603:10b6:300:4b::27)
- by SN6PR02MB4829.namprd02.prod.outlook.com (2603:10b6:805:98::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.20; Mon, 12 Aug
- 2019 10:07:20 +0000
-Received: from CY1NAM02FT030.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::207) by MWHPR02CA0017.outlook.office365.com
- (2603:10b6:300:4b::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.14 via Frontend
- Transport; Mon, 12 Aug 2019 10:07:19 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT030.mail.protection.outlook.com (10.152.75.163) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2157.15
- via Frontend Transport; Mon, 12 Aug 2019 10:07:19 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <appana.durga.rao@xilinx.com>)
-        id 1hx7EU-0002PM-RG; Mon, 12 Aug 2019 03:07:18 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <appana.durga.rao@xilinx.com>)
-        id 1hx7EP-0004b3-Nb; Mon, 12 Aug 2019 03:07:13 -0700
-Received: from xsj-pvapsmtp01 (smtp-fallback.xilinx.com [149.199.38.66] (may be forged))
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x7CA75ju003860;
-        Mon, 12 Aug 2019 03:07:05 -0700
-Received: from [10.140.6.6] (helo=xhdappanad40.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <appana.durga.rao@xilinx.com>)
-        id 1hx7EG-0004OP-H8; Mon, 12 Aug 2019 03:07:04 -0700
-From:   Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-To:     wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
-        michal.simek@xilinx.com
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Srinivas Neeli <srinivas.neeli@xilinx.com>,
-        Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-Subject: [PATCH v2 5/5] can: xilinx_can: Fix the data phase btr1 calculation
-Date:   Mon, 12 Aug 2019 15:36:46 +0530
-Message-Id: <1565604406-4920-6-git-send-email-appana.durga.rao@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1565604406-4920-1-git-send-email-appana.durga.rao@xilinx.com>
-References: <1565604406-4920-1-git-send-email-appana.durga.rao@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(396003)(136003)(376002)(2980300002)(199004)(189003)(106002)(305945005)(70206006)(2616005)(476003)(36386004)(336012)(9786002)(11346002)(5660300002)(486006)(70586007)(8676002)(6666004)(356004)(81166006)(426003)(81156014)(4326008)(446003)(54906003)(126002)(7696005)(76176011)(107886003)(186003)(51416003)(2906002)(26005)(50466002)(6636002)(16586007)(8936002)(47776003)(63266004)(48376002)(50226002)(14444005)(316002)(478600001)(36756003)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4829;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=62GUIJaxsBr0ns4SlEavg70SWuAMSrdfYiBgGd57XwE=;
+        b=koRkDpUJs8FTTEu+44bl2ey1mrNgtTjT+bTugu+eIyQg7hsNVOy5j7iOjWTJqAP8MQ
+         2LqlsSn95ssNqyFoIfESU563xqDB+zB0Oh3K8FXIGJyd+4JfZ4mQWYtfIh90UaoOME1f
+         o/4ZxOnvGrCE+I7z9oRMQaEyZs3Lx8iNk3yVd4QAp0f6AXu+lnPQeT2Oiom2zYDu2GR6
+         o/y1zD13X49NUWXxbMAzMyTfc5eshBlMerUT1Lf7Z86/RjC++8QYBFRoINc1RyqVWj+o
+         Q0uz7KoiRHoMeFBlEPVPGI46wBVUBoujXXN0UKElYyJ3vUiAt/Z6DpzVvAJ/O73dQGPi
+         ofxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=62GUIJaxsBr0ns4SlEavg70SWuAMSrdfYiBgGd57XwE=;
+        b=Kvf3WIjBFnnMBdakTG+YPkFcQCHkqEXxk4iPkK7Yb1I1C7A/EYA5SJMGGt/PY0Hq9e
+         GK1WsqHDI2Dn+3FIMqXD2sQn/KBVUbbIDbFbwtSMeTMQiVWeWoVfXIowRKojhj+BvYbr
+         5p70oLGWb0XEb5L6oQ2ZlzafDfdR7kf5zbjd1bfeiILXsXfmwt9VLqlpsbBZBuhkIrIN
+         S9IAotlT9ESorTEsz/6O/oGgGjlkF8loPwkaKDznpxGX8hMjh7g2sVA90RVr8O+jW+6I
+         OJ5a8seRVjJlW0P4tGl51SLtTn0/KCkuwMX7M1Z1HyjdDo9uxRgxrjJwBBfDFYnqWnX/
+         x3Eg==
+X-Gm-Message-State: APjAAAWYE3FqP6dzIcCiL5m7c/oySiy758LX9QIakBAaiycd9oe7szKR
+        1nwrBXdP7KBdJZMxieAMen0=
+X-Google-Smtp-Source: APXvYqyGe3Uwpwg7TpcsDIQdq3Bc6K7fyTqjMAwH5wH1xbomsRFtWiYH1mhqegRSYkgIiRW1ibmNkg==
+X-Received: by 2002:adf:f710:: with SMTP id r16mr5314208wrp.81.1565604428659;
+        Mon, 12 Aug 2019 03:07:08 -0700 (PDT)
+Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
+        by smtp.gmail.com with ESMTPSA id e4sm29119075wrh.39.2019.08.12.03.07.07
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 03:07:07 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 12:07:06 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
+        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
+        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v8 12/21] cpufreq: tegra124: Add suspend and resume
+ support
+Message-ID: <20190812100706.GK8903@ulmo>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-13-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b8274914-a311-47ff-bc5f-08d71f0cdc9f
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(4709080)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:SN6PR02MB4829;
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4829:
-X-Microsoft-Antispam-PRVS: <SN6PR02MB4829B16D1ADC1DDF7BDB3433DCD30@SN6PR02MB4829.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
-X-Forefront-PRVS: 012792EC17
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: NNEqc5HcNGfOm6Wi23MhfTNo9TaC5Rp188cmSfOImpEzSIiU5Gule7aD39v+8A5KrCfZWIpFOv8kxFjq0JJLuy4J9LTiQNvQkNfzOJCX0FzQWMPfpdo5j0ZJTnI5UJ8EnnZQbn7+ZrF4XlLIgcSe90JJeAqWfwxXsZ1w37L87WGsX8waP3ez8tORB8TWb4klF+zTuWpNPB54pfiNcexhofu5kY+LYLOvomACrQLQGlCzWKz0KfCswFH3wAZWUVuk8BVQZzZeOqUeoixex2nz9YY4DPr3vKKHOPj5cXBfEQFjItL86XPBXaQpX79MdziLWV9sd4Efn67bKFmRP3PDcysuH+Ldzk+uPQH1AMozj15KCmoERch1NUdOBudh3kw0lYBECaFADT8IJOJ1g/12T3i/8yK9j7hN6PJxmVeuFto=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2019 10:07:19.3792
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8274914-a311-47ff-bc5f-08d71f0cdc9f
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4829
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rwbb4r/vLufKlfJs"
+Content-Disposition: inline
+In-Reply-To: <1565308020-31952-13-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Neeli <srinivas.neeli@xilinx.com>
 
-While calculating bitrate for the data phase, the driver is using phase
-segment 1 of the arbitration phase instead of the data phase.
+--rwbb4r/vLufKlfJs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: c223da6 ("can: xilinx_can: Add support for CANFD FD frames")
-Signed-off-by: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
-Acked-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
- drivers/net/can/xilinx_can.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Aug 08, 2019 at 04:46:51PM -0700, Sowjanya Komatineni wrote:
+> This patch adds suspend and resume pm ops for cpufreq driver.
+>=20
+> PLLP is the safe clock source for CPU during system suspend and
+> resume as PLLP rate is below the CPU Fmax at Vmin.
+>=20
+> CPUFreq driver suspend switches the CPU clock source to PLLP and
+> disables the DFLL clock.
+>=20
+> During system resume, warmboot code powers up the CPU with PLLP
+> clock source. So CPUFreq driver resume enabled DFLL clock and
+> switches CPU back to DFLL clock source.
+>=20
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 60 insertions(+)
+>=20
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra12=
+4-cpufreq.c
+> index 4f0c637b3b49..e979a3370988 100644
+> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -6,6 +6,7 @@
+>  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+> =20
+>  #include <linux/clk.h>
+> +#include <linux/cpufreq.h>
+>  #include <linux/err.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> @@ -128,8 +129,67 @@ static int tegra124_cpufreq_probe(struct platform_de=
+vice *pdev)
+>  	return ret;
+>  }
+> =20
+> +static int __maybe_unused tegra124_cpufreq_suspend(struct device *dev)
+> +{
+> +	struct tegra124_cpufreq_priv *priv =3D dev_get_drvdata(dev);
+> +	int err;
+> +
+> +	/*
+> +	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
+> +	 * use during suspend and resume. So, switch the CPU clock source
+> +	 * to PLLP and disable DFLL.
+> +	 */
+> +	err =3D clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> +	if (err < 0) {
+> +		dev_err(dev, "failed to reparent to PLLP: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	/* disable DFLL clock */
+> +	clk_disable_unprepare(priv->dfll_clk);
 
-diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c
-index 4cb8c1c9..ab26691 100644
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -425,7 +425,7 @@ static int xcan_set_bittiming(struct net_device *ndev)
- 		btr0 = dbt->brp - 1;
- 
- 		/* Setting Time Segment 1 in BTR Register */
--		btr1 = dbt->prop_seg + bt->phase_seg1 - 1;
-+		btr1 = dbt->prop_seg + dbt->phase_seg1 - 1;
- 
- 		/* Setting Time Segment 2 in BTR Register */
- 		btr1 |= (dbt->phase_seg2 - 1) << priv->devtype.btr_ts2_shift;
--- 
-2.7.4
+This comment is superfluous since it doesn't explain anything that the
+code below doesn't explain already.
 
+Not sure who will end up merging this. If not me, then this is:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--rwbb4r/vLufKlfJs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1ROkoACgkQ3SOs138+
+s6EJKQ/+I3cbYEQ/nCqI+FT9m+vu0hLSkyzx0lJlJVnxlgxIi4AJGx6Pb3bXgNy4
+LEOQC2nlCzm1Lr9JeKBVpZ/AtP8axsHNXtAffRCITM3nfaXZhLCq1dhCXbf4uobC
+RCS8mOavaYc3hiqjb3Kg0V7CsGJ7TbNmAiCv32yIRKt21/vFz4nR+cyEEFZqYmkc
+BoCTX1+soYNwseydeRYxzCh619PxkfhENk41LrFlERSmQ7Ao4NVi1kq0FKLANmoi
+eY0Z++jK0OBTn74N2txmRuzguQe5UwqC6AAgMAzB7dvBHyFLc8iOJUmrNNL8bqj7
+vorJ7UK5f61JX9rEDC8Wq4i3RApb9aEyG+PiCpRTXlMbQOscpIZUnTU7P86DSfBt
+OxB1ZF2VZs9m/zoGOOKBPkO6ZpPNGKjjC+W1vhNNcHbB7uKolgABRgqvIK74wUrK
+ldM4+ba2hQxur5YU3Nrffaml2KORg2zBXm4YAm0DElONwx4Xtx0eQ1ymX2k9k/Dj
+KMiWTNSrN+jXruhyECkO90ogxk/DIzaBkVfieIDTzKYOggXKEo/PNUAepL0Osq7q
+IpQ576FFctxafQLakYMk0O89nTJnNtVkAUmdVi1BK2m0vKQclpzlE4w43UcJl3zb
+MYbIcsCnKZwWz9QsUmRI76d8JLPKsPiTtFjUopToIkOhSMcVO10=
+=xDLq
+-----END PGP SIGNATURE-----
+
+--rwbb4r/vLufKlfJs--
