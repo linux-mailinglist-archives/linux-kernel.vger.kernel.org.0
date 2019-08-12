@@ -2,77 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE328A834
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E0788A83A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfHLULg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 16:11:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:60662 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbfHLULf (ORCPT
+        id S1727422AbfHLUQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 16:16:05 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39308 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726910AbfHLUQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:11:35 -0400
-Received: from p200300ddd71876867e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7686:7e7a:91ff:fec9:8e25])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hxGf2-0005KS-ES; Mon, 12 Aug 2019 22:11:20 +0200
-Date:   Mon, 12 Aug 2019 22:11:14 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-cc:     Denis Efremov <efremov@linux.com>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Peter Jones <pjones@redhat.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        netdev@vger.kernel.org, x86@kernel.org, linux-s390@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] Add definition for the number of standard PCI BARs
-In-Reply-To: <20190812200134.GB11785@google.com>
-Message-ID: <alpine.DEB.2.21.1908122210300.7324@nanos.tec.linutronix.de>
-References: <20190811150802.2418-1-efremov@linux.com> <20190812200134.GB11785@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 12 Aug 2019 16:16:05 -0400
+Received: by mail-qt1-f194.google.com with SMTP id l9so104097493qtu.6
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 13:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5g7jjLU4VGzMwlr574F/Nchx2Tl+Lxpx7Ov3R6T4BKE=;
+        b=i9t3qgmaJCsaeHHeK2nlpOJj47Gwd9m1UtLytdg5UDY0zjcoorUwSZzu/yRhxvQo5M
+         iHJDjnl6Uunpv2ZEKwV3gFZqlqE2XptWcCehbcGKTyF1AHaunbVt/tFROPDUB5H4MgLQ
+         EO8BP/vurIIEXahX3IsBfoUUNK5Ce3IuHIaRUIZAzBAalIMY3BBRQFvX3fF+LEjCo69f
+         yeJcwAFMS/17W09iUh2XNBJdTXCsUJAeIeeSOMBbQ6yMM8p9IGzmTQTHk3HmlcT4RfMJ
+         2yNc5iEA73WZ8wQm/eLmQ3CyVFFFM2ZGMR2wUf29PfENq14xR38xrnntu93VRYxyZC+W
+         0fUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5g7jjLU4VGzMwlr574F/Nchx2Tl+Lxpx7Ov3R6T4BKE=;
+        b=kLSmaZUOt8m6rQzEY2C43hy5UjO7K/6AfC9XBHTps3JP922d+UelDA1DQWWSJ74VDd
+         Un8M+OyA2UwhDAlitTYRZy6NqCo0bBJz6vqTr5xH9c3iraTYzDpl/3lXsppWFYgkjrXu
+         WO67b/w4nfol01YYnpDNLRIi4QoX1vJB6WDIB5M69R4L3Q2smd7p2C0cAWn4lpW5KXEO
+         It09Tz2k7GeZOX910zu5hUVWtRor9JligRsHKxUvjNYZhoDY3ZwPCkGXqw/mnY2tGcLG
+         9WgSY7MFyUE/gYKNxl9F5W1RcWGDbw5vnE+dNzTZsdv7ITHTh5mJmz+8lWTOGdC32B4+
+         65tQ==
+X-Gm-Message-State: APjAAAWvrFmbA2GMPp17CdKPONG2IeNhl8vmqjqaqcq92MHzhef1H3IN
+        cN4j7c4e6T2N+uU/Frw0Eyo=
+X-Google-Smtp-Source: APXvYqxnYsfb4ZaAjNL+kcKuGEEEzX+ONF6YLS/dutUUvdL+dbcjtQNbcaKJzeXf7sJ8XoW/zFLdBw==
+X-Received: by 2002:ac8:296c:: with SMTP id z41mr5813520qtz.307.1565640963984;
+        Mon, 12 Aug 2019 13:16:03 -0700 (PDT)
+Received: from quaco.ghostprotocols.net (187-26-98-68.3g.claro.net.br. [187.26.98.68])
+        by smtp.gmail.com with ESMTPSA id d123sm49214177qkb.94.2019.08.12.13.16.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 13:16:01 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 7243E40340; Mon, 12 Aug 2019 17:15:57 -0300 (-03)
+Date:   Mon, 12 Aug 2019 17:15:57 -0300
+To:     Igor Lubashev <ilubashe@akamai.com>
+Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        James Morris <jmorris@namei.org>
+Subject: Re: [PATCH v3 2/4] perf: Use CAP_SYS_ADMIN with perf_event_paranoid
+ checks
+Message-ID: <20190812201557.GF9280@kernel.org>
+References: <cover.1565188228.git.ilubashe@akamai.com>
+ <ad56df5452eeafb99dda9fc3d30f0f487aace503.1565188228.git.ilubashe@akamai.com>
+ <20190812200134.GE9280@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812200134.GE9280@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Aug 2019, Bjorn Helgaas wrote:
-
-> On Sun, Aug 11, 2019 at 06:07:55PM +0300, Denis Efremov wrote:
-> > Code that iterates over all standard PCI BARs typically uses
-> > PCI_STD_RESOURCE_END, but this is error-prone because it requires
-> > "i <= PCI_STD_RESOURCE_END" rather than something like
-> > "i < PCI_STD_NUM_BARS". We could add such a definition and use it the same
-> > way PCI_SRIOV_NUM_BARS is used. There is already the definition
-> > PCI_BAR_COUNT for s390 only. Thus, this patchset introduces it globally.
-> > 
-> > The patch is splitted into 7 parts for different drivers/subsystems for
-> > easy readability.
+Em Mon, Aug 12, 2019 at 05:01:34PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, Aug 07, 2019 at 10:44:15AM -0400, Igor Lubashev escreveu:
+> > +++ b/tools/perf/util/evsel.c
+> > @@ -279,7 +279,7 @@ struct evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx)
+>   
+> >  static bool perf_event_can_profile_kernel(void)
+> >  {
+> > -	return geteuid() == 0 || perf_event_paranoid() == -1;
+> > +	return perf_event_paranoid_check(-1);
+> >  }
 > 
-> This looks good.  I can take all these together, since they all depend
-> on the first patch.  I have a few comments on the individual patches.
+> While looking at your changes I think the pre-existing code is wrong,
+> i.e. the check in sys_perf_event_open(), in the kernel is:
 > 
-> > Denis Efremov (7):
-> >   PCI: Add define for the number of standard PCI BARs
-> >   s390/pci: Replace PCI_BAR_COUNT with PCI_STD_NUM_BARS
-> >   x86/PCI: Use PCI_STD_NUM_BARS in loops instead of PCI_STD_RESOURCE_END
+>         if (!attr.exclude_kernel) {
+>                 if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+>                         return -EACCES;
+>         }
+> 
+> And:
+> 
+> static inline bool perf_paranoid_kernel(void)
+> {
+>         return sysctl_perf_event_paranoid > 1;
+> }
+> 
+> So we have to change that perf_event_paranoit_check(-1) to pass 1
+> instead?
+> 
+> bool perf_event_paranoid_check(int max_level)
+> {
+>         return perf_cap__capable(CAP_SYS_ADMIN) ||
+>                         perf_event_paranoid() <= max_level;
+> }
+> 
+> Also you defined perf_cap__capable(anything) as:
+> 
+> #ifdef HAVE_LIBCAP_SUPPORT
+> 
+> #include <sys/capability.h>
+> 
+> bool perf_cap__capable(cap_value_t cap);
+>         
+> #else   
+> 
+> static inline bool perf_cap__capable(int cap __maybe_unused)
+> {               
+>         return false;
+> }       
+>                 
+> #endif /* HAVE_LIBCAP_SUPPORT */
+> 
+> 
+> I think we should have:
+> 
+> #else
+> 
+> static inline bool perf_cap__capable(int cap __maybe_unused)
+> {
+>         return geteuid() == 0;
+> }
+> 
+> #endif /* HAVE_LIBCAP_SUPPORT */
+> 
+> Right?
+> 
+> So I am removing the introduction of perf_cap__capable() from the first
+> patch you sent, leaving it with _only_ the feature detection part, using
+> that feature detection to do anything is then moved to a separate patch,
+> after we finish this discussion about what we should fallback to when
+> libcap-devel isn't available, i.e. we should use the previous checks,
+> etc.
 
-Fine with me for the x86 part. That's your turf anyway :)
+So, please take a look at the tmp.perf/cap branch in my git repo:
 
-Thanks,
+https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/log/?h=tmp.perf/cap
 
-	tglx
+I split the patch and made perf_cap__capable() fallback to 'return
+geteuid() == 0;' when libcap-devel isn't available, i.e. keep the
+checks made prior to your patchset.
+
+Jiri, can I keep your Acked-by?
+
+- Arnaldo
