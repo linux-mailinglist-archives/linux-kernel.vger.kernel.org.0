@@ -2,160 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5DD289D88
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DB9489D8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbfHLMGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 08:06:21 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43471 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727059AbfHLMGU (ORCPT
+        id S1728398AbfHLMHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 08:07:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42397 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726987AbfHLMHc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 08:06:20 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r26so13421859pgl.10
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 05:06:20 -0700 (PDT)
+        Mon, 12 Aug 2019 08:07:32 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b16so7627497wrq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 05:07:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sgx0vew/l/5gv4406bm2WvE+6I0CHR07hqlrz86Z3sc=;
-        b=uJEt2ROVPd1UqcXIH8AZcEWJe2gU2l2WikWj/lTXEu5TAQO5UI7HxMZhSjWGSNpSM/
-         kD67Pst1Dyzx7qbYrLXSvu+Mr08ddVTHrPLPkSReXtjEyuOfJ2szasvJY7Q1juthSE+O
-         ZN5d5+3WpJ8VQexHVYk2PQhh6erlNiX5z9RVYgbCQIuL3cODpt1V8Jl+vCfCixh/0O7E
-         92/TSySWGPp9zO0p00eOTgQmAdQTHS88ikyrRrA73j948ugOl+8ULRHL2jU6SZXLcic4
-         YmfbiWs7shR+wQkLf29qMOFftl73S3yAhgbTADzXO1DxWuSyQjH0/iK3D3AGpyYzODyS
-         j5vw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PMduQLcYqJa9E1xoRdmMO8whZQuhJA1DUXAc3zPrO3g=;
+        b=ZSHKMJha6yfzKyUtd06NcDFZ3gN6HThtYSZHVhI1dWDon6ToPzcz/3Own8XjxQ6mgY
+         cNZxnu/TVZ+61qFCnUFdEJLOgky25gQCDhsH/+hNfvo1/tuwRFVAYIZ0rlF6tlIm0KyF
+         iUCMnmfJERpt/DBw38nE6bUD0UhHm32KkD+TwpX8kS784VDRNuZ4zM0XGH1+eHhHNIGF
+         rfG1P9vlqoj1SknmEStYhp/BpCNJvZPevmhinSS3o/GeDoPPCkItQDqi5o7p0o/Z19H4
+         V/l1fiLnkQUc1tJTXSRA6hZMqewIKizbra1XnWkTwB1TSx5TgqY0slk6QhUZjZoyT3JS
+         G5FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sgx0vew/l/5gv4406bm2WvE+6I0CHR07hqlrz86Z3sc=;
-        b=LbkpLzaCj8wF+6N+vBLk16kFI7AahmcVfMbnP5fYkL9mItPeiB3bjc8fdBMibkVEE3
-         mwO2/BhdRAssT08WnYl/ooyGcvw+JHjfAwPoQc/0gL+6IMskA89hIMQsKnMl4KWnFM+S
-         zGW17eb+MGGgpSVRhzYFUKPTDpXXcnkwLoDjEMxgKJpknI9Cvy6rmuaZrK0Dq7HnFe5B
-         ExTwQdrGvIGf0gA+QqbwKCnVWejLaGvtnXgL9MbLoFTJMSJa/STD2Tre6lZn789HkDX9
-         SK0W3SC/JXN9ndxY4aYo5eke3NRjDtL9O7ks+tAAzgQqBZuKv+oazDR6UJAz0M9/+KkZ
-         DwLg==
-X-Gm-Message-State: APjAAAW7YadvXFsNbzrz89f9ek2twypBPAYBmLOVeeSw9qdsKBaTP7rO
-        CS7LQqcmcIyIX2wo0KEn9frMrI1Fq4A7bUrO4rUTkg==
-X-Google-Smtp-Source: APXvYqzdCQuAop5oRPu4EMtfBSPg2dydPnlQBeJzj9Fz8EdqkN3nC2NN4tp/bM/cPBx2GTfWFoh9z4egZLpy0FJbn4E=
-X-Received: by 2002:aa7:86c6:: with SMTP id h6mr35801985pfo.51.1565611579482;
- Mon, 12 Aug 2019 05:06:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PMduQLcYqJa9E1xoRdmMO8whZQuhJA1DUXAc3zPrO3g=;
+        b=cY1BkikArC17L+ilPJfXyOSOjvzTNQgnUOZAXsq9FleDFN/xO51cIOHufZrxL7r0jV
+         Pf1BFl3qLEKbCIQ1yPay2KzQijxS+vd9sH1HDYjfaCJ36Z/4KX9I0fnMXR14ZBqZAl9i
+         PMvOMP4ILFLjVcwl34vElzN+dAnPJrkVSNczptwfm4jSZlTp5so0GBC+4C+TjHaqQ3mq
+         YIe9LLhGVvf0QI/8HrRWmUDiK0PiKR2ANDJL1mpRLkCH0SpItZU+ctphTDyhyoWo7ha9
+         Gaguwn0eApLN+7vghLH9fIMyT8Z0gPoB9oHim/xa7lpK5mdd7nmmGSJgzNsu2WsrFc3i
+         OEJw==
+X-Gm-Message-State: APjAAAVik3IhjArCsApqcwyVWtRRgB0vFc3dnJZHUm1FIRTbq/YtNLmC
+        IRAyyWbEj7FL6+fdfLhpOPf/Eg==
+X-Google-Smtp-Source: APXvYqwBXFdcnSm3N9WSnk3H4/5r6eeqaMC73NAcum/+jEQe399Q3DLr4ex5iwjbxozzlPA6mgZt0w==
+X-Received: by 2002:adf:e887:: with SMTP id d7mr24777870wrm.282.1565611649905;
+        Mon, 12 Aug 2019 05:07:29 -0700 (PDT)
+Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id j9sm1883415wrx.66.2019.08.12.05.07.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 05:07:29 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 0/8] drm/bridge: dw-hdmi: improve i2s support
+Date:   Mon, 12 Aug 2019 14:07:18 +0200
+Message-Id: <20190812120726.1528-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <0000000000005c056c058f9a5437@google.com>
-In-Reply-To: <0000000000005c056c058f9a5437@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Mon, 12 Aug 2019 14:06:08 +0200
-Message-ID: <CAAeHK+wcAgqNvEO_S_EXgdvhBN2qkQbPii8XVT_7UVnS1WaB6g@mail.gmail.com>
-Subject: Re: BUG: bad usercopy in ld_usb_read
-To:     syzbot <syzbot+45b2f40f0778cfa7634e@syzkaller.appspotmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, Qian Cai <cai@lca.pw>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 8, 2019 at 2:38 PM syzbot
-<syzbot+45b2f40f0778cfa7634e@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13aeaece600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=45b2f40f0778cfa7634e
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+45b2f40f0778cfa7634e@syzkaller.appspotmail.com
->
-> ldusb 6-1:0.124: Read buffer overflow, -131383996186150 bytes dropped
-> usercopy: Kernel memory exposure attempt detected from SLUB
-> object 'kmalloc-2k' (offset 8, size 65062)!
-> ------------[ cut here ]------------
-> kernel BUG at mm/usercopy.c:98!
-> invalid opcode: 0000 [#1] SMP KASAN
-> CPU: 0 PID: 15185 Comm: syz-executor.2 Not tainted 5.3.0-rc2+ #25
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:usercopy_abort+0xb9/0xbb mm/usercopy.c:98
-> Code: e8 c1 f7 d6 ff 49 89 d9 4d 89 e8 4c 89 e1 41 56 48 89 ee 48 c7 c7 e0
-> f3 cd 85 ff 74 24 08 41 57 48 8b 54 24 20 e8 15 98 c1 ff <0f> 0b e8 95 f7
-> d6 ff e8 80 9f fd ff 8b 54 24 04 49 89 d8 4c 89 e1
-> RSP: 0018:ffff8881ccb3fc38 EFLAGS: 00010286
-> RAX: 0000000000000067 RBX: ffffffff86a659d4 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff8128a0fd RDI: ffffed1039967f79
-> RBP: ffffffff85cdf2c0 R08: 0000000000000067 R09: fffffbfff11acdaa
-> R10: fffffbfff11acda9 R11: ffffffff88d66d4f R12: ffffffff86a696e8
-> R13: ffffffff85cdf180 R14: 000000000000fe26 R15: ffffffff85cdf140
-> FS:  00007ff6daf91700(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f1de6600000 CR3: 00000001ca554000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   __check_heap_object+0xdd/0x110 mm/slub.c:3914
->   check_heap_object mm/usercopy.c:234 [inline]
->   __check_object_size mm/usercopy.c:280 [inline]
->   __check_object_size+0x32d/0x39b mm/usercopy.c:250
->   check_object_size include/linux/thread_info.h:119 [inline]
->   check_copy_size include/linux/thread_info.h:150 [inline]
->   copy_to_user include/linux/uaccess.h:151 [inline]
->   ld_usb_read+0x304/0x780 drivers/usb/misc/ldusb.c:495
+The purpose of this patchset is to improve the support of the i2s
+interface of the synopsys hdmi controller.
 
-#syz dup: KASAN: use-after-free Read in ld_usb_release
+Once applied, the interface should support all the usual i2s bus formats,
+8 channels playback and properly setup the channel number and allocation
+in the infoframes.
 
->   __vfs_read+0x76/0x100 fs/read_write.c:425
->   vfs_read+0x1ea/0x430 fs/read_write.c:461
->   ksys_read+0x1e8/0x250 fs/read_write.c:587
->   do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x459829
-> Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ff6daf90c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
-> RDX: 000000000000fe26 RSI: 00000000200000c0 RDI: 0000000000000003
-> RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff6daf916d4
-> R13: 00000000004c6c73 R14: 00000000004dbee8 R15: 00000000ffffffff
-> Modules linked in:
-> ---[ end trace 4fe8dba032d24ceb ]---
-> RIP: 0010:usercopy_abort+0xb9/0xbb mm/usercopy.c:98
-> Code: e8 c1 f7 d6 ff 49 89 d9 4d 89 e8 4c 89 e1 41 56 48 89 ee 48 c7 c7 e0
-> f3 cd 85 ff 74 24 08 41 57 48 8b 54 24 20 e8 15 98 c1 ff <0f> 0b e8 95 f7
-> d6 ff e8 80 9f fd ff 8b 54 24 04 49 89 d8 4c 89 e1
-> RSP: 0018:ffff8881ccb3fc38 EFLAGS: 00010286
-> RAX: 0000000000000067 RBX: ffffffff86a659d4 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff8128a0fd RDI: ffffed1039967f79
-> RBP: ffffffff85cdf2c0 R08: 0000000000000067 R09: fffffbfff11acdaa
-> R10: fffffbfff11acda9 R11: ffffffff88d66d4f R12: ffffffff86a696e8
-> R13: ffffffff85cdf180 R14: 000000000000fe26 R15: ffffffff85cdf140
-> FS:  00007ff6daf91700(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f1de6600000 CR3: 00000001ca554000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Also, the dw-hdmi i2s interface will now provide the eld to the generic
+hdmi-codec so it can expose the related controls to user space.
+
+This work was inspired by Jonas Karlman's work, available here [0].
+
+This was tested the Amlogic meson-g12a-sei510 platform.
+For this specific platform, which uses codec2codec links, there is a
+runtime dependency for patch 8 on this ASoC series [1].
+
+Changes since v1 [2]:
+ * Fix copy size in .get_eld()
+
+[0]: https://github.com/Kwiboo/linux-rockchip/commits/rockchip-5.2-for-libreelec-v5.2.3
+[1]: https://lkml.kernel.org/r/20190725165949.29699-1-jbrunet@baylibre.com
+[2]: https://lkml.kernel.org/r/20190805134102.24173-1-jbrunet@baylibre.com
+
+Jerome Brunet (8):
+  drm/bridge: dw-hdmi-i2s: support more i2s format
+  drm/bridge: dw-hdmi: move audio channel setup out of ahb
+  drm/bridge: dw-hdmi: set channel count in the infoframes
+  drm/bridge: dw-hdmi-i2s: enable lpcm multi channels
+  drm/bridge: dw-hdmi-i2s: set the channel allocation
+  drm/bridge: dw-hdmi-i2s: reset audio fifo before applying new params
+  drm/bridge: dw-hdmi-i2s: enable only the required i2s lanes
+  drm/bridge: dw-hdmi-i2s: add .get_eld support
+
+ .../drm/bridge/synopsys/dw-hdmi-ahb-audio.c   | 20 ++-----
+ .../gpu/drm/bridge/synopsys/dw-hdmi-audio.h   |  1 +
+ .../drm/bridge/synopsys/dw-hdmi-i2s-audio.c   | 60 +++++++++++++++++--
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     | 37 ++++++++++++
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.h     | 13 +++-
+ include/drm/bridge/dw_hdmi.h                  |  2 +
+ 6 files changed, 108 insertions(+), 25 deletions(-)
+
+-- 
+2.21.0
+
