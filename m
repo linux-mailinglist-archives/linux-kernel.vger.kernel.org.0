@@ -2,124 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD94898F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4360B8990A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbfHLItV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:49:21 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:55959 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727017AbfHLItV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:49:21 -0400
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 8E8D6200006;
-        Mon, 12 Aug 2019 08:49:16 +0000 (UTC)
-Date:   Mon, 12 Aug 2019 10:49:15 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, wens@csie.org, mchehab+samsung@kernel.org,
-        davem@davemloft.net, gregkh@linuxfoundation.org,
-        Jonathan.Cameron@huawei.com, nicolas.ferre@microchip.com,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH v5 15/18] thermal: sun8i: allow to use custom temperature
- calculation function
-Message-ID: <20190812084915.lasb4dh25bfeoigr@flea>
-References: <20190810052829.6032-1-tiny.windzz@gmail.com>
- <20190810052829.6032-16-tiny.windzz@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="f4uotbkobwqxzt7r"
-Content-Disposition: inline
-In-Reply-To: <20190810052829.6032-16-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180716
+        id S1727220AbfHLIyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 04:54:25 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:58700 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726495AbfHLIyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 04:54:24 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C60F12002FB;
+        Mon, 12 Aug 2019 10:54:20 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1EE902002DF;
+        Mon, 12 Aug 2019 10:54:16 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0D067402D2;
+        Mon, 12 Aug 2019 16:54:09 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     wim@linux-watchdog.org, linux@roeck-us.net, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] watchdog: imx_sc: Remove unnecessary error log
+Date:   Mon, 12 Aug 2019 16:44:34 +0800
+Message-Id: <20190812084434.13316-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Anson Huang <Anson.Huang@nxp.com>
 
---f4uotbkobwqxzt7r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+An error message is already displayed by watchdog_register_device()
+when failed, so no need to have error log again for failure of
+calling devm_watchdog_register_device().
 
-Hi,
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/watchdog/imx_sc_wdt.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-On Sat, Aug 10, 2019 at 05:28:26AM +0000, Yangtao Li wrote:
-> From: Icenowy Zheng <icenowy@aosc.io>
->
-> The H5 temperature calculation function is strange. Firstly, it's
-> segmented. Secondly, the formula of two sensors are different in the
-> second segment.
->
-> Allow to use a custom temperature calculation function, in case of
-> the function is complex.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+diff --git a/drivers/watchdog/imx_sc_wdt.c b/drivers/watchdog/imx_sc_wdt.c
+index 78eaaf7..9260475 100644
+--- a/drivers/watchdog/imx_sc_wdt.c
++++ b/drivers/watchdog/imx_sc_wdt.c
+@@ -175,11 +175,8 @@ static int imx_sc_wdt_probe(struct platform_device *pdev)
+ 	watchdog_stop_on_unregister(wdog);
+ 
+ 	ret = devm_watchdog_register_device(dev, wdog);
+- 
+- 	if (ret) {
+- 		dev_err(dev, "Failed to register watchdog device\n");
++	if (ret)
+  		return ret;
+- 	}
+  
+ 	ret = imx_scu_irq_group_enable(SC_IRQ_GROUP_WDOG,
+ 				       SC_IRQ_WDOG,
+-- 
+2.7.4
 
-When you send a patch on someone else's behalf, you need to put your
-Signed-off-by as well.
-
-> ---
->  drivers/thermal/sun8i_thermal.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
-> index 3259081da841..a761e2afda08 100644
-> --- a/drivers/thermal/sun8i_thermal.c
-> +++ b/drivers/thermal/sun8i_thermal.c
-> @@ -76,6 +76,7 @@ struct ths_thermal_chip {
->  				     u16 *caldata, int callen);
->  	int		(*init)(struct ths_device *tmdev);
->  	int             (*irq_ack)(struct ths_device *tmdev);
-> +	int		(*calc_temp)(int id, int reg);
->  };
->
->  struct ths_device {
-> @@ -90,9 +91,12 @@ struct ths_device {
->
->  /* Temp Unit: millidegree Celsius */
->  static int sun8i_ths_reg2temp(struct ths_device *tmdev,
-> -			      int reg)
-> +			      int id, int reg)
->  {
-> -	return (reg + tmdev->chip->offset) * tmdev->chip->scale;
-> +	if (tmdev->chip->calc_temp)
-> +		return tmdev->chip->calc_temp(id, reg);
-> +	else
-> +		return (reg + tmdev->chip->offset) * tmdev->chip->scale;
-
-You're not consistent here compared to the other callbacks you have
-introduced: calibrate, init and irq_ack all need to be set and will
-fail (hard) if you don't set them, yet this one will have a different
-behaviour (that behaviour being to use the H6 formula, which is the
-latest SoC, which is a bit odd in itself).
-
-I guess we should either make it mandatory as the rest of the
-callbacks, or document which callbacks are mandatory and which are
-optional (and the behaviour when it's optional).
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---f4uotbkobwqxzt7r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVEoCwAKCRDj7w1vZxhR
-xfQmAP9xX6EXk3hDLg/bBSbrnJp6QkeJeiCQrfENROxox3MBTQD/Xm0PpUdxbQaF
-HD4uZ6W1In3fv39oufKd/j0DlKZ5Lwc=
-=i8aL
------END PGP SIGNATURE-----
-
---f4uotbkobwqxzt7r--
