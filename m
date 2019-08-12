@@ -2,88 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9060F8A11C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B343C8A123
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:31:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfHLObX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 10:31:23 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:60245 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726296AbfHLObW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 10:31:22 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 1CE9910D1;
-        Mon, 12 Aug 2019 10:31:21 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 12 Aug 2019 10:31:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=MaKylIMiNZvNJngSL+I7JUFSGoK
-        LzwNMJz4BsUiEcH0=; b=OgV1SYEikA9Hmho0eEZ2lhtqRFoju56jz7dSAjNRtzI
-        o2wBAxOuxN2+5eQvy4cqA9iUZSj8JeekWl5/Q4YX1E+wG9UXNW7vTCHFnBBSO3z+
-        e8OzqnozaUNNgkqxrR3QDHmK4VhD5bhp5Q/oxxHB2X0HPanwWrBLIAtuUMYbmTO3
-        tB5VIin5FYAw0dAiGZ0MoX9HmccJt2Ch13r3ZKqLfCvoW7oE+Apq7w5GEpTM3i+T
-        i/UTDuTWFNGwrexFamLFT7QNZbnvFt8PhSCh/wDNKZRwy42ECeSTwTaHJC0eoezp
-        I5tsl2MnMZQz0osvCJNIwPnkliWOYeQu1P4AOfWp6JA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=MaKylI
-        MiNZvNJngSL+I7JUFSGoKLzwNMJz4BsUiEcH0=; b=Y9FroYBWR7kIN3BsulRVJI
-        nR+ym8C6pBPdepllthzrfuQmPfcNB54BMxdfOPNtoXCY2Hp/BjOL0bzOh2FIEPyk
-        A1Fzvg7dZ1KUzvl9Lps0pSbJnrGxzVVpSGv1bIGHmFfMEzZSvzQDJoV0ve/PdSW6
-        C+ZO8aVNTTqcIKs6Zl6rSjxWRZf5a3zIv7NH0K6jS/osnZztNg3n/I0lK+qMFPye
-        zaRJNhnY/RP84b22LpgbJ/TfN2y28iiHngNtXcAcAlhDbO8NWsO/bomwrBSSotrM
-        xUItScGRx3bSeKn2Y5L/DjvLdFojDQjl1KVlAd9g5SNnB0a7jw2V7f4JMJuxm3Og
-        ==
-X-ME-Sender: <xms:N3hRXTAMXND5auInpcj70N7FBKo6qV_nPXc4huTMtKEETDZvNNMVNA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddruddvgedgjeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
-    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
-    vehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:N3hRXQMioMizuty-1KS6JsibI1GRCKY3E7a73f9drSPB_i4aMJME2w>
-    <xmx:N3hRXTCCLyHXwm2K58euEsPj7bGuEmAzEe0bS_0L0Ar13QNRaP9Vbw>
-    <xmx:N3hRXT_dsaewNhv68LWDWNA9-Zn6u26F7ofyExk6vsME8Lu6hgZP9g>
-    <xmx:OHhRXe2oTS_J6BgsjD3jbgyByz7GtyRq3CyayyXAJ61K3CLMFBpIRQ>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CCCAC380076;
-        Mon, 12 Aug 2019 10:31:18 -0400 (EDT)
-Date:   Mon, 12 Aug 2019 16:31:16 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        syzbot <syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, kirr@nexedi.com,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>, lkundrak@v3.sk,
-        logang@deltatee.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: KASAN: use-after-free Read in ld_usb_release
-Message-ID: <20190812143116.GA14068@kroah.com>
-References: <CAAeHK+xZgjD+gP=pCkk0uKVkuPG+XZ26mgNQCGzw2ea5mqFTJg@mail.gmail.com>
- <Pine.LNX.4.44L0.1908121020180.1659-100000@iolanthe.rowland.org>
+        id S1726964AbfHLObk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 10:31:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:15933 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbfHLObj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 10:31:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 07:31:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,377,1559545200"; 
+   d="scan'208";a="259812957"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 12 Aug 2019 07:31:34 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 882B42DD; Mon, 12 Aug 2019 17:31:33 +0300 (EEST)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Frederick Lawler <fred@fredlawl.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] PCI: pciehp: Do not disable interrupt twice on suspend
+Date:   Mon, 12 Aug 2019 17:31:32 +0300
+Message-Id: <20190812143133.75319-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1908121020180.1659-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 10:21:14AM -0400, Alan Stern wrote:
-> On Mon, 12 Aug 2019, Andrey Konovalov wrote:
-> 
-> > Alan, could you submit this patch (if you haven't already)? Looks like
-> > it fixes this bug (and might fix some others).
-> 
-> I will.  I was waiting to see if Greg KH had any comments.
+We try to keep PCIe hotplug ports runtime suspended when entering system
+suspend. Due to the fact that the PCIe portdrv sets NEVER_SKIP driver PM
+flag the PM core always calls system suspend/resume hooks even if the
+device is left runtime suspended. Since PCIe hotplug driver re-uses the
+same function for both it ends up disabling hotplug interrupt twice and
+the second time following is printed:
 
-Give me a few hours, it's in my queue to review...
+  pciehp 0000:03:01.0:pcie204: pcie_do_write_cmd: no response from device
+
+Prevent this from happening by checking whether the device is already
+runtime suspended when system suspend hook is called.
+
+Fixes: 9c62f0bfb832 ("PCI: pciehp: Implement runtime PM callbacks")
+Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+Changes from previous version:
+
+  * Move .resume inside CONFIG_PM_SLEEP
+  * Added tags from Kai-Heng and Rafael
+
+ drivers/pci/hotplug/pciehp_core.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index 6ad0d86762cb..e9f82afa3773 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -248,7 +248,7 @@ static bool pme_is_native(struct pcie_device *dev)
+ 	return pcie_ports_native || host->native_pme;
+ }
+ 
+-static int pciehp_suspend(struct pcie_device *dev)
++static void pciehp_disable_interrupt(struct pcie_device *dev)
+ {
+ 	/*
+ 	 * Disable hotplug interrupt so that it does not trigger
+@@ -256,7 +256,19 @@ static int pciehp_suspend(struct pcie_device *dev)
+ 	 */
+ 	if (pme_is_native(dev))
+ 		pcie_disable_interrupt(get_service_data(dev));
++}
+ 
++#ifdef CONFIG_PM_SLEEP
++static int pciehp_suspend(struct pcie_device *dev)
++{
++	/*
++	 * If the port is already runtime suspended we can keep it that
++	 * way.
++	 */
++	if (dev_pm_smart_suspend_and_suspended(&dev->port->dev))
++		return 0;
++
++	pciehp_disable_interrupt(dev);
+ 	return 0;
+ }
+ 
+@@ -274,6 +286,7 @@ static int pciehp_resume_noirq(struct pcie_device *dev)
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static int pciehp_resume(struct pcie_device *dev)
+ {
+@@ -287,6 +300,12 @@ static int pciehp_resume(struct pcie_device *dev)
+ 	return 0;
+ }
+ 
++static int pciehp_runtime_suspend(struct pcie_device *dev)
++{
++	pciehp_disable_interrupt(dev);
++	return 0;
++}
++
+ static int pciehp_runtime_resume(struct pcie_device *dev)
+ {
+ 	struct controller *ctrl = get_service_data(dev);
+@@ -313,10 +332,12 @@ static struct pcie_port_service_driver hpdriver_portdrv = {
+ 	.remove		= pciehp_remove,
+ 
+ #ifdef	CONFIG_PM
++#ifdef	CONFIG_PM_SLEEP
+ 	.suspend	= pciehp_suspend,
+ 	.resume_noirq	= pciehp_resume_noirq,
+ 	.resume		= pciehp_resume,
+-	.runtime_suspend = pciehp_suspend,
++#endif
++	.runtime_suspend = pciehp_runtime_suspend,
+ 	.runtime_resume	= pciehp_runtime_resume,
+ #endif	/* PM */
+ };
+-- 
+2.20.1
 
