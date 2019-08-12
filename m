@@ -2,196 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20D3A8997F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:10:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 956D48998E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:12:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfHLJKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 05:10:43 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57635 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727116AbfHLJKn (ORCPT
+        id S1727314AbfHLJMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 05:12:09 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43527 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbfHLJMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 05:10:43 -0400
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1hx6Ld-0006WE-VG; Mon, 12 Aug 2019 11:10:38 +0200
-Received: from [IPv6:2001:67c:670:202:595f:209f:a34b:fbc1] (unknown [IPv6:2001:67c:670:202:595f:209f:a34b:fbc1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits)
-         client-signature RSA-PSS (4096 bits))
-        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
-        (Authenticated sender: mkl@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id A634344310F;
-        Mon, 12 Aug 2019 09:10:35 +0000 (UTC)
-Subject: Re: [PATCH 0/5] can: xilinx_can: Bug fixes
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>,
-        wg@grandegger.com, davem@davemloft.net, michal.simek@xilinx.com
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1565594914-18999-1-git-send-email-appana.durga.rao@xilinx.com>
- <7ecaa7df-3202-21d8-de93-5f6af3582964@pengutronix.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <5571da8a-de1f-f420-f6b7-81c6d8932430@pengutronix.de>
-Date:   Mon, 12 Aug 2019 11:10:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 12 Aug 2019 05:12:09 -0400
+Received: by mail-ot1-f68.google.com with SMTP id e12so11980586otp.10
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 02:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=wdZyun565rMEMI5nrVFcxcYEx7GFK77k+ZNdL1lQ6FQ=;
+        b=bCiDFOiEutFtUSei8uS30/dZCyknXL3Y+sdcVYHReFPlkqv99B4MbUZDmE5THMle1N
+         zqnu8ePllUKJDrV9qFjij+kGlx4JmPzKOsqRArrYUoi3MZoc+6NEKRDcn7SI6hs9y0MZ
+         CQB1D6F/RHnIT2Ea4HtcG2wtOjni9GhfPr/3uYwWMa0kYKlcQMPpkH/5NeF9cxzmaDgY
+         58dWl6Zq4yHI2J3l4TLGgQ6ytnCLfquaos5ycEwAQA4ceJoUITiXxZR4vo0E4jzc5SuI
+         UX34bKGQ6Mukjc/hGlzSPoZ2esR+U/NcZa9+ibT9K+Qbo0LWvVJjPiJVak1Tf0y7EDSb
+         YuJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=wdZyun565rMEMI5nrVFcxcYEx7GFK77k+ZNdL1lQ6FQ=;
+        b=LptwenSqOxXnAYojuo1CpC4iIqGU8Pei5+JrKiOja5JKgQ3WBT7Kbrken4DJvHodvG
+         fe2JKoX+unlb1WXvYn/il+CuFumj3kz+nLNubeyHDypM7KmC+L2tXeOtkCtGmu66iW/O
+         EDYghgaD4YfK9l5pdEE3qroEQf0mjAhdnKuteQvQCZHJnSS0ejWgsOLVewStoClSamb5
+         Fa8HjnYHxxgAWnByS8lNhQ/d6Xdts4NUmuZG6+Bgnzd8+11xErF7RG2duWYUOxiCtKNn
+         wazCF/CLK1A1fp1xL4eISSO54q1Gs7PpQbytW7VyWrMSgf6ZZn4lfB+xz7Aav47KU/pe
+         psyg==
+X-Gm-Message-State: APjAAAU7hLPWRZnmESbDWltrFkMT7tFXZpumvQS9n9MsizDqyF8n8GX+
+        OPNOMWW1qq3Hh9dLLBtdhuBvs5r0sebbvg2PNRZ3Mg==
+X-Google-Smtp-Source: APXvYqzjxs1NKNev+ynqOpkaypGZyhAhPHyQqRrmfnNxDVkl/4mg+MgIbBda7CqtUUC7iUBpKhscpYIJ8hfrw+iGSAo=
+X-Received: by 2002:aca:6183:: with SMTP id v125mr12824531oib.6.1565601127888;
+ Mon, 12 Aug 2019 02:12:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7ecaa7df-3202-21d8-de93-5f6af3582964@pengutronix.de>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="n406Pf6ucFPRr81ZBCSfLv22f4uepOdOB"
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <6a38a3655bc8100764d85cb04dea5c2546a311e1.1565168564.git.baolin.wang@linaro.org>
+ <40127356a1acd1f2ff1be1d8a120b305a4e17af4.1565168564.git.baolin.wang@linaro.org>
+ <20190809091013.vguj4wty7qiab64t@pengutronix.de> <CAMz4kuLQsrBWjta1s=ZRPgxUd0_+_f-GbJV138tccuMLg2XCLA@mail.gmail.com>
+ <20190809144124.3as3rtctlywxkudr@pengutronix.de> <CAMz4ku+o6dCyxhR3-5yM+zr2nBpTQG5A8Pbnxpo7yRciwPbv3Q@mail.gmail.com>
+ <20190812083556.dvprpwv6mjy3cjae@pengutronix.de>
+In-Reply-To: <20190812083556.dvprpwv6mjy3cjae@pengutronix.de>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Mon, 12 Aug 2019 17:11:56 +0800
+Message-ID: <CAMz4kuJA81ZP6Kc63dPV1jEn1ah=jow6tQBfO=UDCcTzSf3y-A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pwm: sprd: Add Spreadtrum PWM support
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-pwm@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---n406Pf6ucFPRr81ZBCSfLv22f4uepOdOB
-Content-Type: multipart/mixed; boundary="Bh7iV2cCBX2dzNWNFNsLjKNDADYAoxdLa";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>,
- wg@grandegger.com, davem@davemloft.net, michal.simek@xilinx.com
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-ID: <5571da8a-de1f-f420-f6b7-81c6d8932430@pengutronix.de>
-Subject: Re: [PATCH 0/5] can: xilinx_can: Bug fixes
-References: <1565594914-18999-1-git-send-email-appana.durga.rao@xilinx.com>
- <7ecaa7df-3202-21d8-de93-5f6af3582964@pengutronix.de>
-In-Reply-To: <7ecaa7df-3202-21d8-de93-5f6af3582964@pengutronix.de>
+Hi Uwe,
 
---Bh7iV2cCBX2dzNWNFNsLjKNDADYAoxdLa
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+On Mon, 12 Aug 2019 at 16:36, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello Baolin,
+>
+> On Mon, Aug 12, 2019 at 03:29:07PM +0800, Baolin Wang wrote:
+> > Hi Uwe,
+> >
+> > On Fri, 9 Aug 2019 at 22:41, Uwe Kleine-K=C3=B6nig
+> > <u.kleine-koenig@pengutronix.de> wrote:
+> > > On Fri, Aug 09, 2019 at 06:06:21PM +0800, Baolin Wang wrote:
+> > > > On Fri, 9 Aug 2019 at 17:10, Uwe Kleine-K=C3=B6nig
+> > > > <u.kleine-koenig@pengutronix.de> wrote:
+> > > > > On Thu, Aug 08, 2019 at 04:59:39PM +0800, Baolin Wang wrote:
+> > > > > > +static void sprd_pwm_get_state(struct pwm_chip *chip, struct p=
+wm_device *pwm,
+> > > > > > +                            struct pwm_state *state)
+> > > > > > +{
+> > > > > > +     struct sprd_pwm_chip *spc =3D
+> > > > > > +             container_of(chip, struct sprd_pwm_chip, chip);
+> > > > > > +     struct sprd_pwm_chn *chn =3D &spc->chn[pwm->hwpwm];
+> > > > > > +     u32 enabled, duty, prescale;
+> > > > > > +     u64 tmp;
+> > > > > > +     int ret;
+> > > > > > +
+> > > > > > +     ret =3D clk_bulk_prepare_enable(SPRD_PWM_NUM_CLKS, chn->c=
+lks);
+> > > > > > +     if (ret) {
+> > > > > > +             dev_err(spc->dev, "failed to enable pwm%u clocks\=
+n",
+> > > > > > +                     pwm->hwpwm);
+> > > > > > +             return;
+> > > > > > +     }
+> > > > > > +
+> > > > > > +     chn->clk_enabled =3D true;
+> > > > > > +
+> > > > > > +     duty =3D sprd_pwm_read(spc, pwm->hwpwm, SPRD_PWM_DUTY) & =
+SPRD_PWM_REG_MSK;
+> > > > > > +     prescale =3D sprd_pwm_read(spc, pwm->hwpwm, SPRD_PWM_PRES=
+CALE) & SPRD_PWM_REG_MSK;
+> > > > > > +     enabled =3D sprd_pwm_read(spc, pwm->hwpwm, SPRD_PWM_ENABL=
+E) & SPRD_PWM_ENABLE_BIT;
+> > > > > > +
+> > > > > > +     /*
+> > > > > > +      * According to the datasheet, the period_ns and duty_ns =
+calculation
+> > > > > > +      * formula should be:
+> > > > > > +      * period_ns =3D 10^9 * (prescale + 1) * mod / clk_rate
+> > > > > > +      * duty_ns =3D 10^9 * (prescale + 1) * duty / clk_rate
+> > > > > > +      */
+> > > > > > +     tmp =3D (prescale + 1) * 1000000000ULL * SPRD_PWM_MOD_MAX=
+;
+> > > > > > +     state->period =3D div64_u64(tmp, chn->clk_rate);
+> > > > >
+> > > > > This is not idempotent. If you apply the configuration that is re=
+turned
+> > > > > here this shouldn't result in a reconfiguration.
+> > > >
+> > > > Since we may configure the  PWM in bootloader, so in kernel part we
+> > > > should get current PWM state to avoid reconfiguration if state
+> > > > configuration are same.
+> > >
+> > > This is also important as some consumers might do something like:
+> > >
+> > >         state =3D pwm_get_state(mypwm)
+> > >         if (something):
+> > >                 state->duty =3D 0
+> > >         else:
+> > >                 state->duty =3D state->period / 2
+> > >         pwm_set_state(mypwm, state)
+> > >
+> > > and then period shouldn't get smaller in each step.
+> > > (This won't happen as of now because the PWM framework caches the las=
+t
+> > > state that was set and returns this for pwm_get_state. Still getting
+> > > this right would be good.)
+> >
+> > I understood your concern, but the period can be configured in
+> > bootloader, we have no software things to save the accurate period.
+>
+> I don't understand what you're saying here. The bootloader configuring
+> the hardware is a usual use-case. That's why we have the .get_state
+> callback in the first place.
 
-On 8/12/19 11:05 AM, Marc Kleine-Budde wrote:
-> On 8/12/19 9:28 AM, Appana Durga Kedareswara rao wrote:
->> This patch series fixes below issues
->> --> Bugs in the driver w.r.to CANFD 2.0 IP support
->> --> Defer the probe if clock is not found
->>
->> Appana Durga Kedareswara rao (3):
->>   can: xilinx_can: Fix FSR register handling in the rx path
->>   can: xilinx_can: Fix the data updation logic for CANFD FD frames
->>   can: xilinx_can: Fix FSR register FL and RI mask values for canfd 2.=
-0
->>
->> Srinivas Neeli (1):
->>   can: xilinx_can: Fix the data phase btr1 calculation
->>
->> Venkatesh Yadav Abbarapu (1):
->>   can: xilinx_can: defer the probe if clock is not found
->=20
-> Please add your S-o-b to patches 4+5.
->=20
-> As these all are bugfixes please add a reference to the commit it fixes=
-:
->=20
->     Fixes: commitish ("description")
+Ah, sorry for confusing. I think I get your point now with below explanatio=
+n.
 
-Add this to your ~/.gitconfig:
+>
+> > Moreover I think I can change to use DIV_ROUND_CLOSET_ULL to keep the
+> > accuracy.
+>
+> DIV_ROUND_CLOSEST_ULL still doesn't match what the apply callback uses.
+> With the lack of an official statement from the maintainer I'd prefer
+> .apply to round down and implement .get_state such that
+>
+>         pwm_apply(pwm, pwm_get_state(pwm))
+>
+> is a no-op.
 
-[alias]
-        lfixes =3D log --pretty=3Dfixes
-[pretty]
-        fixes =3D Fixes: %h (\"%s\")
+OK.
 
-and then use $(git lfixes $commitish).
+>
+> > > > > > +
+> > > > > > +                     dev_err(spc->dev, "failed to get channel =
+clocks\n");
+> > > > > > +                     return ret;
+> > > > > > +             }
+> > > > > > +
+> > > > > > +             clk_pwm =3D chn->clks[1].clk;
+> > > > >
+> > > > > This 1 looks suspicious. Are you using all clocks provided in the=
+ dtb at
+> > > > > all? You're not using i in the loop at all, this doesn't look rig=
+ht.
+> > > >
+> > > > Like I said above, each channel has 2 clocks: enable clock and pwm
+> > > > clock, the 2nd clock of each channel's bulk clocks is the pwm clock=
+,
+> > > > which is used to set the source clock. I know this's not easy to re=
+ad,
+> > > > so do you have any good suggestion?
+> > >
+> > > Not sure this is easily possible to rework to make this clearer.
+> > >
+> > > Do these clks have different uses? e.g. one to enable register access
+> > > and the other to enable the pwm output? If so just using
+> >
+> > Yes.
+>
+> So assuming one of the clocks is for operation of the output and the
+> other for accessing the registers, the latter can be disabled at the end
 
-Marc
+Right.
+
+> of each callback?
+
+We can not disable the latter one when using the PWM channel, we must
+enable the pwm-enable clock, then enable pwm-output clock to make PWM
+work. When disabling PWM channel, we should disable the pwm-output
+clock, then pwm-enable clock.
+
+>
+> > > devm_clk_bulk_get isn't the right thing because you should be able kn=
+ow
+> > > if clks[0] or clks[1] is the one you need to enable the output (or
+> > > register access).
+> >
+> > We've fixed the clock order in bulk clocks by the array
+> > 'sprd_pwm_clks', maybe I should define one readable macro instead of
+> > magic number.
+>
+> ack.
+>
+> > > > > > +             if (!clk_set_parent(clk_pwm, clk_parent))
+> > > > > > +                     chn->clk_rate =3D clk_get_rate(clk_pwm);
+> > > > > > +             else
+> > > > > > +                     chn->clk_rate =3D SPRD_PWM_DEFAULT_CLK;
+> > > > >
+> > > > > I don't know all the clock framework details, but I think there a=
+re
+> > > > > better ways to ensure that a given clock is used as parent for an=
+other
+> > > > > given clock. Please read the chapter about "Assigned clock parent=
+s and
+> > > > > rates" in the clock bindings and check if this could be used for =
+the
+> > > > > purpose here and so simplify the driver.
+> > > >
+> > > > Actually there are many other drivers set the parent clock like thi=
+s,
+> > > > and we want a default clock if failed to set the parent clock.
+> > >
+> > > These might be older than the clk framework capabilities, or the
+> > > reviewers didn't pay attention to this detail; both shouldn't be a
+> > > reason to not make it better here.
+> >
+> > The clock framework supplies 'assigned-clocks' and
+> > 'assigned-clock-parents' properties to set parent, but for our case we
+> > still want to set a default clock rate if failed to set parent when
+> > met some abnormal things.
+>
+> Without understanding the complete problem I'd say this is out of the
+> area the driver should care about.
+
+Fair enough, I will try to use 'assigned-clocks' and
+'assigned-clock-parents' to simplify the code.
+
+Thanks.
 
 --=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---Bh7iV2cCBX2dzNWNFNsLjKNDADYAoxdLa--
-
---n406Pf6ucFPRr81ZBCSfLv22f4uepOdOB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEmvEkXzgOfc881GuFWsYho5HknSAFAl1RLQgACgkQWsYho5Hk
-nSA7iAf/SPKEeZgvTZ73lEBwv0Fw+6St3jUayWb22nfMohsOBtHE07DbuA4uewt8
-8VjnSvqK9MH44QayDP5vBVKGCnSYrSFQj51PgL1YOg/ftVQLWXCAkgq1SwWVykKk
-QI6HiYTLqV4t/0ebVq61nryUZmt0VYBg2maBaLtkutPWkrbweAX+tSfZHD6rVtwp
-RkMkA77gC5rK7iSWQTngUiiIRU0I2wUAtECbI+R/aa7FtkWT3GqlferXW++yJRBJ
-AMST2HsiTD9gLRj0t0GjpcO/kRhL25mcpcTlIcsNpMNBJAhBhj93PyOe5qFantC4
-JfbfGVETc+P9Wjf3B61ShI0/LlpFiQ==
-=lsBO
------END PGP SIGNATURE-----
-
---n406Pf6ucFPRr81ZBCSfLv22f4uepOdOB--
+Baolin Wang
+Best Regards
