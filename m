@@ -2,226 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F968A7DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:05:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AB828A7DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:08:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbfHLUF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 16:05:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:21621 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727193AbfHLUF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:05:26 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B27CBC0022F1;
-        Mon, 12 Aug 2019 20:05:25 +0000 (UTC)
-Received: from [10.36.116.42] (ovpn-116-42.ams2.redhat.com [10.36.116.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 78F061000182;
-        Mon, 12 Aug 2019 20:05:15 +0000 (UTC)
-Subject: Re: [RFC][Patch v12 1/2] mm: page_reporting: core infrastructure
-To:     Alexander Duyck <alexander.duyck@gmail.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, virtio-dev@lists.oasis-open.org,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>,
-        john.starks@microsoft.com, Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@suse.com>, cohuck@redhat.com
-References: <20190812131235.27244-1-nitesh@redhat.com>
- <20190812131235.27244-2-nitesh@redhat.com>
- <CAKgT0UcSabyrO=jUwq10KpJKLSuzorHDnKAGrtWVigKVgvD-6Q@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <ca362045-9668-18ff-39b0-de91fa72e73c@redhat.com>
-Date:   Mon, 12 Aug 2019 22:05:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727334AbfHLUIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 16:08:02 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38974 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727185AbfHLUIC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 16:08:02 -0400
+Received: by mail-pl1-f196.google.com with SMTP id z3so1471238pln.6;
+        Mon, 12 Aug 2019 13:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2syLlTVhNHsDTeVEzdI/tKwBsqEX2YHhMZRmgITX0Gs=;
+        b=JxvCjXtalTO/ZH3psxI0p4fVYL7O/Bckv3waQaYS67jgSWaT6h0yqzd4FHP/VRqBiN
+         bB7IR2su8uhxYQv3o24YD90FgnG84PoMxUg/HjVuFIYN/ZM3anjPlqU1CcJUQRQJaqhE
+         CbOY+2Gh7Ge+jPvvoulkRMxvDWMPy25NJTYOIz/PC+DP2psiqBhLI4ff3+asjYkn5eNK
+         RdKLYH78A7kvoxN0KwifiRwS+J7fZKHSlkTsNxNkK5w9MeG7zYTURpf1tmtH/8DE3cIR
+         IrJHRXy2uvL2r6Vmv6X/YGdjJgvM3cXeWeHsbIEwfkTF4WaILVhk5BT/F2R8gkm6I4aX
+         lhqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2syLlTVhNHsDTeVEzdI/tKwBsqEX2YHhMZRmgITX0Gs=;
+        b=SSWmpNtmUN0ZSmT9A+zoZGGfJCGuRgwPPYebuD8zgKZh0lOUPwxHuMG79ZYiAXxvtE
+         GXtxLMCDmMoFZqirD5+crxlRmu+DG0FuMZZya179FRmdt4tj0KCVCHZ7EpEeQwEWrbJP
+         R0Q05ZDvF3tKwYH4hutzPRJsufJ1TLt6MX2TLj+BcSaR5tkJT0GAVRfxjAVWYeNiZSqz
+         vlXpAzoUbI/CRbbsLxdnoi33xiq28gO9TsjT07MDn6SNNME973csigWVrY+0B5drWQgr
+         /BshsblCexRnYUHk1ajlVztGEIlbl2QAzgWbSQHtvFkLkIzsFg8Nvl/R0VKGohXuEUbE
+         Ahsg==
+X-Gm-Message-State: APjAAAXzdBy8yb/h068uROcbqUnulbi1mI/6rnGT9k/A0QFN61Ex5hnT
+        cZqELRpAYGLoW+Lhh88Whyj0pxEk
+X-Google-Smtp-Source: APXvYqyIBrUQF+p5m/tYM2DWPxvdNXsDMHIqc7zPN9b8bUl1QE5lqLdpFka/ELAo2wLt9gIQtxA6Ug==
+X-Received: by 2002:a17:902:59c3:: with SMTP id d3mr33378424plj.22.1565640480450;
+        Mon, 12 Aug 2019 13:08:00 -0700 (PDT)
+Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
+        by smtp.gmail.com with ESMTPSA id o14sm352844pjp.19.2019.08.12.13.07.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 13:07:59 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-crypto@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Spencer <christopher.spencer@sea.co.uk>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 00/15] crypto: caam - Add i.MX8MQ support
+Date:   Mon, 12 Aug 2019 13:07:24 -0700
+Message-Id: <20190812200739.30389-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UcSabyrO=jUwq10KpJKLSuzorHDnKAGrtWVigKVgvD-6Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 12 Aug 2019 20:05:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> ---
->>  include/linux/mmzone.h         |  11 ++
->>  include/linux/page_reporting.h |  63 +++++++
->>  mm/Kconfig                     |   6 +
->>  mm/Makefile                    |   1 +
->>  mm/page_alloc.c                |  42 ++++-
->>  mm/page_reporting.c            | 332 +++++++++++++++++++++++++++++++++
->>  6 files changed, 448 insertions(+), 7 deletions(-)
->>  create mode 100644 include/linux/page_reporting.h
->>  create mode 100644 mm/page_reporting.c
->>
->> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
->> index d77d717c620c..ba5f5b508f25 100644
->> --- a/include/linux/mmzone.h
->> +++ b/include/linux/mmzone.h
->> @@ -559,6 +559,17 @@ struct zone {
->>         /* Zone statistics */
->>         atomic_long_t           vm_stat[NR_VM_ZONE_STAT_ITEMS];
->>         atomic_long_t           vm_numa_stat[NR_VM_NUMA_STAT_ITEMS];
->> +#ifdef CONFIG_PAGE_REPORTING
->> +       /* Pointer to the bitmap in PAGE_REPORTING_MIN_ORDER granularity */
->> +       unsigned long *bitmap;
->> +       /* Preserve start and end PFN in case they change due to hotplug */
->> +       unsigned long base_pfn;
->> +       unsigned long end_pfn;
->> +       /* Free pages of granularity PAGE_REPORTING_MIN_ORDER */
->> +       atomic_t free_pages;
->> +       /* Number of bits required in the bitmap */
->> +       unsigned long nbits;
->> +#endif
->>  } ____cacheline_internodealigned_in_smp;
-> 
-> Okay, so the original thing this patch set had going for it was that
-> it was non-invasive. However, now you are adding a bunch of stuff to
-> the zone. That kind of loses the non-invasive argument for this patch
-> set compared to mine.
-> 
+Everyone:
 
-Adding something to "struct zone" is certainly less invasive than core
-buddy modifications, just saying (I agree that this is suboptimal. I
-would have guessed that all that's needed is a pointer to some private
-structure here). However, the migratetype thingy below looks fishy to me.
+Picking up where Chris left off (I chatted with him privately
+beforehead), this series adds support for i.MX8MQ to CAAM driver. Just
+like [v1], this series is i.MX8MQ only.
 
-> If we are going to continue further with this patch set then it might
-> be worth looking into dynamically allocating the space you need for
-> this block. At a minimum you could probably look at making the bitmap
-> an RCU based setup so you could define the base and end along with the
-> bitmap. It would probably help to resolve the hotplug issues you still
-> need to address.
+Feedback is welcome!
+Thanks,
+Andrey Smirnov
 
-Yeah, I guess that makes sense.
+Changes since [v6]:
 
-[...]
->> +
->> +static int process_free_page(struct page *page,
->> +                            struct page_reporting_config *phconf, int count)
->> +{
->> +       int mt, order, ret = 0;
->> +
->> +       mt = get_pageblock_migratetype(page);
->> +       order = page_private(page);
->> +       ret = __isolate_free_page(page, order);
->> +
+  - Fixed build problems in "crypto: caam - make CAAM_PTR_SZ dynamic"
 
-I just started looking into the wonderful world of
-isolation/compaction/migration.
+  - Collected Reviewied-by from Horia
 
-I don't think saving/restoring the migratetype is correct here. AFAIK,
-MOVABLE/UNMOVABLE/RECLAIMABLE is just a hint, doesn't mean that e.g.,
-movable pages and up in UNMOVABLE or ordinary kernel allocations on
-MOVABLE. So that shouldn't be an issue - I guess.
+  - "crypto: caam - force DMA address to 32-bit on 64-bit i.MX SoCs"
+    is changed to check 'caam_ptr_sz' instead of using 'caam_imx'
+    
+  - Incorporated feedback for "crypto: caam - request JR IRQ as the
+    last step" and "crypto: caam - simplfy clock initialization"
 
-1. You should never allocate something that is no
-MOVABLE/UNMOVABLE/RECLAIMABLE. Especially not, if you have ISOLATE or
-CMA here. There should at least be a !is_migrate_isolate_page() check
-somewhere
+Changes since [v5]:
 
-2. set_migratetype_isolate() takes the zone lock, so to avoid racing
-with isolation code, you have to hold the zone lock. Your code seems to
-do that, so at least you cannot race against isolation.
+  - Hunk replacing sizeof(*jrp->inpring) to SIZEOF_JR_INPENTRY in
+    "crypto: caam - don't hardcode inpentry size", lost in [v5], is
+    back
 
-3. You could end up temporarily allocating something in the
-ZONE_MOVABLE. The pages you allocate are, however, not movable. There
-would have to be a way to make alloc_contig_range()/offlining code
-properly wait until the pages have been processed. Not sure about the
-real implications, though - too many details in the code (I wonder if
-Alex' series has a way of dealing with that)
+  - Collected Tested-by from Iuliana
 
-When you restore the migratetype, you could suddenly overwrite e.g.,
-ISOLATE, which feels wrong.
+Changes since [v4]:
 
-[...]
-> So as per your comments in the cover page, the two functions above
-> should also probably be plugged into the zone resizing logic somewhere
-> so if a zone is resized the bitmap is adjusted.
-> 
->> +/**
->> + * zone_reporting_init - For each zone initializes the page reporting fields
->> + * and allocates the respective bitmap.
->> + *
->> + * This function returns 0 on successful initialization, -ENOMEM otherwise.
->> + */
->> +static int zone_reporting_init(void)
->> +{
->> +       struct zone *zone;
->> +       int ret;
->> +
->> +       for_each_populated_zone(zone) {
->> +#ifdef CONFIG_ZONE_DEVICE
->> +               /* we can not report pages which are not in the buddy */
->> +               if (zone_idx(zone) == ZONE_DEVICE)
->> +                       continue;
->> +#endif
-> 
-> I'm pretty sure this isn't needed since I don't think the ZONE_DEVICE
-> zone will be considered "populated".
-> 
-I think you are right (although it's confusing, we will have present
-sections part of a zone but the zone has no present_pages - screams like
-a re factoring - leftover from ZONE_DEVICE introduction).
+  - Fixed missing sentinel element in "crypto: caam - simplfy clock
+    initialization"
+    
+  - Squashed all of the devers related patches into a single one and
+    converted IRQ allocation to use devres while at it
+
+  - Added "crypto: caam - request JR IRQ as the last step" as
+    discussed
+
+Changes since [v3]:
+
+  - Patchset changed to select DMA size at runtime in order to enable
+    support for both i.MX8MQ and Layerscape at the same time. I only
+    tested the patches on i.MX6,7 and 8MQ, since I don't have access
+    to any of the Layerscape HW. Any help in that regard would be
+    appareciated.
+
+  - Bulk clocks and their number are now stored as a part of struct
+    caam_drv_private to simplify allocation and cleanup code (no
+    special context needed)
+    
+  - Renamed 'soc_attr' -> 'imx_soc_match' for clarity
+
+Changes since [v2]:
+
+  - Dropped "crypto: caam - do not initialise clocks on the i.MX8" and
+    replaced it with "crypto: caam - simplfy clock initialization" and 
+    "crypto: caam - add clock entry for i.MX8MQ"
+
+
+Changes since [v1]
+
+  - Series reworked to continue using register based interface for
+    queueing RNG initialization job, dropping "crypto: caam - use job
+    ring for RNG instantiation instead of DECO"
+
+  - Added a patch to share DMA mask selection code
+
+  - Added missing Signed-off-by for authors of original NXP tree
+    commits that this sereis is based on
+
+[v6] lore.kernel.org/r/20190717152458.22337-1-andrew.smirnov@gmail.com
+[v5] lore.kernel.org/r/20190715201942.17309-1-andrew.smirnov@gmail.com
+[v4] lore.kernel.org/r/20190703081327.17505-1-andrew.smirnov@gmail.com
+[v3] lore.kernel.org/r/20190617160339.29179-1-andrew.smirnov@gmail.com
+[v2] lore.kernel.org/r/20190607200225.21419-1-andrew.smirnov@gmail.com
+[v1] https://patchwork.kernel.org/cover/10825625/
+
+Andrey Smirnov (15):
+  crypto: caam - move DMA mask selection into a function
+  crypto: caam - simplfy clock initialization
+  crypto: caam - convert caam_jr_init() to use devres
+  crypto: caam - request JR IRQ as the last step
+  crytpo: caam - make use of iowrite64*_hi_lo in wr_reg64
+  crypto: caam - use ioread64*_hi_lo in rd_reg64
+  crypto: caam - drop 64-bit only wr/rd_reg64()
+  crypto: caam - share definition for MAX_SDLEN
+  crypto: caam - make CAAM_PTR_SZ dynamic
+  crypto: caam - move cpu_to_caam_dma() selection to runtime
+  crypto: caam - drop explicit usage of struct jr_outentry
+  crypto: caam - don't hardcode inpentry size
+  crypto: caam - force DMA address to 32-bit on 64-bit i.MX SoCs
+  crypto: caam - always select job ring via RSR on i.MX8MQ
+  crypto: caam - add clock entry for i.MX8MQ
+
+ drivers/crypto/caam/caamalg.c     |   2 +-
+ drivers/crypto/caam/caamalg_qi2.h |  27 ----
+ drivers/crypto/caam/caamhash.c    |   2 +-
+ drivers/crypto/caam/caampkc.c     |   8 +-
+ drivers/crypto/caam/caamrng.c     |   2 +-
+ drivers/crypto/caam/ctrl.c        | 220 ++++++++++++++----------------
+ drivers/crypto/caam/desc_constr.h |  47 ++++++-
+ drivers/crypto/caam/error.c       |   3 +
+ drivers/crypto/caam/intern.h      |  32 ++++-
+ drivers/crypto/caam/jr.c          |  93 ++++---------
+ drivers/crypto/caam/pdb.h         |  16 ++-
+ drivers/crypto/caam/pkc_desc.c    |   8 +-
+ drivers/crypto/caam/qi.h          |  26 ----
+ drivers/crypto/caam/regs.h        | 139 +++++++++++++------
+ 14 files changed, 326 insertions(+), 299 deletions(-)
 
 -- 
+2.21.0
 
-Thanks,
-
-David / dhildenb
