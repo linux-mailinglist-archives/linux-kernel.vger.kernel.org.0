@@ -2,145 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F128AA5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 00:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C46498AA62
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 00:25:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfHLWYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 18:24:22 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39770 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbfHLWYW (ORCPT
+        id S1727003AbfHLWZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 18:25:45 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:41212 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfHLWZp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 18:24:22 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r21so159170024otq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 15:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FD1szyxYIZRFxBXLh6OsEaGEchmLGdiUNjpQeITxC5M=;
-        b=x0gRCKA2MXc6jwpdoG/TD2IO5bNpn+KvoJBHqbuTFvYsphI9ZOW3AsLFTvGTGaBcYf
-         RXeEQjAS7obV+BaMTdZMP8wgP9cCdfivoRhOSSJlo1Z5CZcFaW9WRf5Nbz2vuEwz9BHO
-         CTPVnpm6p1Svao0hA1gPSbLM8aO2CgSELXaqp4B3NEVb2TYyFBGnZyWvtKuElCmEg9Y9
-         2684+SERAdl0y8BhILj5oAWGrfdVI2IqGuBac1Xq6S8MrelSVVIf8h5B+ZX8xtZ+Y4j8
-         0cIiaBzKvNv833gjthAES+x42kYGE7WEjgb+I7K5IyHz3cyOXJYFYRXUt4EGdLKdJPuu
-         QMeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FD1szyxYIZRFxBXLh6OsEaGEchmLGdiUNjpQeITxC5M=;
-        b=YCz5XsckpCDxKrt5WDV4EuDb/8L9PBWCnL5Ehlx8lR5e+TMGq2vCmm8ZaqihO3fbNM
-         JF4Xh8BrhLjzb47SwAlJSytvQe4tPhcDjTEU7VWHRKv/OiMTGYKwuYEcygscl1f/UYAr
-         9LxmYw+yzTW+GcVc9f2abXrrA7YlHGqXMW3udA/hRPSyCzf7u9sDunz6SDtCY/Ky4ujr
-         NMGOZLUiC0bQ4WrfhHNn9LJNsMtnp65QEOJQYGPLgrfhTna1THifTA7afILtqF9y0JdN
-         TgoZbkWRSvuM/LtSrT29U/iECpaaMRl8DDGR2XXx4u4X3IQjVGPQe0KnzOxAbncYHCzr
-         fS3A==
-X-Gm-Message-State: APjAAAXdEXTahGB+U0qiqj7N3/bJxRp4Z6nWQgiqlepLe15cEXdHeRON
-        udnefRg6ltuJRS+xISDDktTGMcchFuMcP81R8uNMuw==
-X-Google-Smtp-Source: APXvYqyTjBOGgU/+dTdLpyuKWrW67Z3rfVh/4MI7eXiUUJ6wgK016/SnhTUKO42pQZXtyuBZxQKUvdSL/kBmh0RvuUc=
-X-Received: by 2002:aca:be43:: with SMTP id o64mr912541oif.149.1565648660956;
- Mon, 12 Aug 2019 15:24:20 -0700 (PDT)
+        Mon, 12 Aug 2019 18:25:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1565648742; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fpvDPZt0n0JQQ2tsQ3wI+WD036Lk0j72y5P1ujGlN9w=;
+        b=SwUBhl3E5SStXfHzOGTIsHJnklbSw/wakKSDm4rX7pNOn2NE9XHaLmizr1nm//qRnZCiNo
+        PswTatfwpvXO5zgJoR4Ypd1XzG97jok8edh3xDk6nR9O2aBbQeK8CRXTF3Dk7VrmW/++lS
+        MV9eYOuVoE9dslfCLDMJlWZrBdiolQE=
+Date:   Tue, 13 Aug 2019 00:25:35 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 4/7] pwm: jz4740: Improve algorithm of clock calculation
+To:     Uwe =?iso-8859-1?q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>, od@zcrc.me,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mathieu Malaterre <malat@debian.org>,
+        Artur Rojek <contact@artur-rojek.eu>
+Message-Id: <1565648735.2007.4@crapouillou.net>
+In-Reply-To: <20190812214838.e5hyhnlcyykjfvsb@pengutronix.de>
+References: <20190809123031.24219-1-paul@crapouillou.net>
+        <20190809123031.24219-5-paul@crapouillou.net>
+        <20190809170551.u4ybilf5ay2rsvnn@pengutronix.de>
+        <1565370885.2091.2@crapouillou.net>
+        <20190812061520.lwzk3us4ginwwxov@pengutronix.de>
+        <1565642590.2007.1@crapouillou.net>
+        <20190812214838.e5hyhnlcyykjfvsb@pengutronix.de>
 MIME-Version: 1.0
-References: <20190812213158.22097.30576.stgit@localhost.localdomain> <20190812213324.22097.30886.stgit@localhost.localdomain>
-In-Reply-To: <20190812213324.22097.30886.stgit@localhost.localdomain>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 12 Aug 2019 15:24:09 -0700
-Message-ID: <CAPcyv4jEvPL3qQffDsJxKxkCJLo19FN=gd4+LtZ1FnARCr5wBw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/6] mm: Adjust shuffle code to allow for future coalescing
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     nitesh@redhat.com, KVM list <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtio-dev@lists.oasis-open.org,
-        Oscar Salvador <osalvador@suse.de>, yang.zhang.wz@gmail.com,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        lcapitulino@redhat.com, "Wang, Wei W" <wei.w.wang@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 2:33 PM Alexander Duyck
-<alexander.duyck@gmail.com> wrote:
->
-> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->
-> This patch is meant to move the head/tail adding logic out of the shuffle
+[Re-send my message in plain text, as it was bounced by the
+lists - sorry about that]
 
-s/This patch is meant to move/Move/
 
-> code and into the __free_one_page function since ultimately that is where
-> it is really needed anyway. By doing this we should be able to reduce the
-> overhead
+Le lun. 12 ao=FBt 2019 =E0 23:48, Uwe =3D?iso-8859-1?q?Kleine-K=3DF6nig?=3D=
+=20
+<u.kleine-koenig@pengutronix.de> a =E9crit :
+> Hello Paul,
+>=20
+> On Mon, Aug 12, 2019 at 10:43:10PM +0200, Paul Cercueil wrote:
+>>  Le lun. 12 ao=FBt 2019 =E0 8:15, Uwe =3D?iso-8859-1?q?Kleine-K=3DF6nig?=
+=3D
+>>  <u.kleine-koenig@pengutronix.de> a =E9crit :
+>>  > On Fri, Aug 09, 2019 at 07:14:45PM +0200, Paul Cercueil wrote:
+>>  > >  Le ven. 9 ao=FBt 2019 =E0 19:05, Uwe=20
+>> =3D?iso-8859-1?q?Kleine-K=3DF6nig?=3D
+>>  > >  <u.kleine-koenig@pengutronix.de> a =E9crit :
+>>  > >  > On Fri, Aug 09, 2019 at 02:30:28PM +0200, Paul Cercueil=20
+>> wrote:
+>>  > >  > > [...]
+>>  > >  > >  +	/* Reset the clock to the maximum rate, and we'll=20
+>> reduce it if needed */
+>>  > >  > >  +	ret =3D clk_set_max_rate(clk, parent_rate);
+>>  > >  >
+>>  > >  > What is the purpose of this call? IIUC this limits the=20
+>> allowed range of
+>>  > >  > rates for clk. I assume the idea is to prevent other=20
+>> consumers to change
+>>  > >  > the rate in a way that makes it unsuitable for this pwm. But=20
+>> this only
+>>  > >  > makes sense if you had a notifier for clk changes, doesn't=20
+>> it? I'm
+>>  > >  > confused.
+>>  > >
+>>  > >  Nothing like that. The second call to clk_set_max_rate() might=20
+>> have set
+>>  > >  a maximum clock rate that's lower than the parent's rate, and=20
+>> we want to
+>>  > >  undo that.
+>>  >
+>>  > I still don't get the purpose of this call. Why do you limit the=20
+>> clock
+>>  > rate at all?
+>>=20
+>>  As it says below, we "limit the clock to a maximum rate that still=20
+>> gives
+>>  us a period value which fits in 16 bits". So that the computed=20
+>> hardware
+>>  values won't overflow.
+>=20
+> But why not just using clk_set_rate? You want to have the clock=20
+> running
+> at a certain rate, not any rate below that certain rate, don't you?
 
-Is the overhead benefit observable? I would expect the overhead of
-get_random_u64() dominates.
+I'll let yourself answer yourself:
+https://patchwork.ozlabs.org/patch/1018969/
 
-> and can consolidate all of the list addition bits in one spot.
+It's enough to run it below a certain rate, yes. The actual rate doesn't
+actually matter that much.
 
-This sounds the better argument.
 
-[..]
-> diff --git a/mm/shuffle.h b/mm/shuffle.h
-> index 777a257a0d2f..add763cc0995 100644
-> --- a/mm/shuffle.h
-> +++ b/mm/shuffle.h
-> @@ -3,6 +3,7 @@
->  #ifndef _MM_SHUFFLE_H
->  #define _MM_SHUFFLE_H
->  #include <linux/jump_label.h>
-> +#include <linux/random.h>
->
->  /*
->   * SHUFFLE_ENABLE is called from the command line enabling path, or by
-> @@ -43,6 +44,32 @@ static inline bool is_shuffle_order(int order)
->                 return false;
->         return order >= SHUFFLE_ORDER;
->  }
-> +
-> +static inline bool shuffle_add_to_tail(void)
-> +{
-> +       static u64 rand;
-> +       static u8 rand_bits;
-> +       u64 rand_old;
-> +
-> +       /*
-> +        * The lack of locking is deliberate. If 2 threads race to
-> +        * update the rand state it just adds to the entropy.
-> +        */
-> +       if (rand_bits-- == 0) {
-> +               rand_bits = 64;
-> +               rand = get_random_u64();
-> +       }
-> +
-> +       /*
-> +        * Test highest order bit while shifting our random value. This
-> +        * should result in us testing for the carry flag following the
-> +        * shift.
-> +        */
-> +       rand_old = rand;
-> +       rand <<= 1;
-> +
-> +       return rand < rand_old;
-> +}
+>=20
+>>  E.g. if at a rate of 12 MHz your computed hardware value for the=20
+>> period
+>>  is 0xf000, then at a rate of 24 MHz it won't fit in 16 bits. So the=20
+>> clock
+>>  rate must be reduced to the highest possible that will still give=20
+>> you a
+>>  < 16-bit value.
+>>=20
+>>  We always want the highest possible clock rate that works, for the=20
+>> sake of
+>>  precision.
+>=20
+> This is dubious; but ok to keep the driver simple. (Consider a PWM=20
+> that
+> can run at i MHz for i in [1, .. 30]. If a period of 120 ns and a duty
+> cycle of 40 ns is requested you can get an exact match with 25 MHz,=20
+> but
+> not with 30 MHz.)
 
-This function seems too involved to be a static inline and I believe
-each compilation unit that might call this routine gets it's own copy
-of 'rand' and 'rand_bits' when the original expectation is that they
-are global. How about leave this bit to mm/shuffle.c and rename it
-coin_flip(), or something more generic, since it does not
-'add_to_tail'? The 'add_to_tail' action is something the caller
-decides.
+The clock rate is actually (parent_rate >> (2 * x) )
+for x =3D 0, 1, 2, ...
+
+So if your parent_rate is 30 MHz the next valid one is 7.5 MHz, and the
+next one is 1.875 MHz. It'd be very unlikely that you get a better=20
+match at a
+lower clock.
+
+
+>>  > >  Basically, we start from the maximum clock rate we can get for=20
+>> that PWM
+>>  > >  - which is the rate of the parent clk - and from that compute=20
+>> the maximum
+>>  > >  clock rate that we can support that still gives us < 16-bits=20
+>> hardware
+>>  > >  values for the period and duty.
+>>  > >
+>>  > >  We then pass that computed maximum clock rate to=20
+>> clk_set_max_rate(), which
+>>  > >  may or may not update the current PWM clock's rate to match=20
+>> the new limits.
+>>  > >  Finally we read back the PWM clock's rate and compute the=20
+>> period and duty
+>>  > >  from that.
+>>  >
+>>  > If you change the clk rate, is this externally visible on the PWM
+>>  > output? Does this affect other PWM instances?
+>>=20
+>>  The clock rate doesn't change the PWM output because the hardware=20
+>> values for
+>>  the period and duty are adapted accordingly to reflect the change.
+>=20
+> It doesn't change it in the end. But in the (short) time frame between
+> the call to change the clock and the update of the PWM registers there
+> is a glitch, right?
+
+The PWM is disabled, so the line is in inactive state, and will be in=20
+that state
+until the PWM is enabled again. No glitch to fear.
+
+
+> You didn't answer to the question about other PWM instances. Does that
+> mean others are not affected?
+
+Sorry. Yes, they are not affected - all PWM channels are independent.
+
+
+> Best regards
+> Uwe
+>=20
+> PS: It would be great if you could fix your mailer to not damage the
+> quoted mail. Also it doesn't seem to understand how my name is encoded
+> in the From line. I fixed up the quotes in my reply.
+
+I guess I'll submit a bug report to Geary then.
+
+
+>=20
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=F6nig       =20
+>     |
+> Industrial Linux Solutions                 |=20
+> http://www.pengutronix.de/  |
+
+=
+
