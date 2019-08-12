@@ -2,296 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40F28A121
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:31:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F9A28A125
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:33:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfHLObi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 10:31:38 -0400
-Received: from mga01.intel.com ([192.55.52.88]:37102 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbfHLObh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 10:31:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 07:31:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,377,1559545200"; 
-   d="scan'208";a="200152174"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 12 Aug 2019 07:31:34 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 9604111C; Mon, 12 Aug 2019 17:31:33 +0300 (EEST)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] PCI: pciehp: Prevent deadlock on disconnect
-Date:   Mon, 12 Aug 2019 17:31:33 +0300
-Message-Id: <20190812143133.75319-2-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190812143133.75319-1-mika.westerberg@linux.intel.com>
-References: <20190812143133.75319-1-mika.westerberg@linux.intel.com>
+        id S1727241AbfHLOcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 10:32:16 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43282 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbfHLOcQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 10:32:16 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2B3EA61230; Mon, 12 Aug 2019 14:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565620335;
+        bh=w8crrLL9haXBTnSHYdfkFARCnHukR+gTIrEu5wquuGI=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=GhyXBLc6suy/Bz/jL9AvI/qRrs0Y9DpmC/nzQ3ZZZTpC2Gkmf5apwM8yZgqWoO7Qo
+         ZkPK7OK3Ds9wZmJ2wzUzV7HYJWrFjmETmozIa0kBwN0RiqsY0j/wbZVVGJy4vW3yaY
+         EgojsDtcfV8tI5os4hM3do19A79vqBCF5TX5QWgU=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B046360EA5;
+        Mon, 12 Aug 2019 14:32:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565620333;
+        bh=w8crrLL9haXBTnSHYdfkFARCnHukR+gTIrEu5wquuGI=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=dipzXRcNxl5qADpUHOKhs9uV/1gy1uS40sOp5tXz1l5qYYOFBj0KDj1/hDpqEDD0M
+         bktOchuFqm009dWS8jgoi0DtrbkKZ5POI3LHP7vi5QkA0hWHysAoh4WWlSI3uO56aq
+         EMwAArS48E4AqRNq3BvAo1jV7tJWFLPag4Aw9280=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B046360EA5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Jes Sorensen <jes.sorensen@gmail.com>
+Cc:     Chris Chiu <chiu@endlessm.com>, davem@davemloft.net,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Daniel Drake <drake@endlessm.com>
+Subject: Re: [RFC PATCH v7] rtl8xxxu: Improve TX performance of RTL8723BU on rtl8xxxu driver
+References: <20190805131452.13257-1-chiu@endlessm.com>
+        <d0047834-957d-0cf3-5792-31faa5315ad1@gmail.com>
+Date:   Mon, 12 Aug 2019 17:32:08 +0300
+In-Reply-To: <d0047834-957d-0cf3-5792-31faa5315ad1@gmail.com> (Jes Sorensen's
+        message of "Mon, 12 Aug 2019 09:38:51 -0400")
+Message-ID: <87wofibgk7.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there are more than one PCIe switch with hotplug downstream ports
-hot-removing them leads to a following deadlock:
+Jes Sorensen <jes.sorensen@gmail.com> writes:
 
- INFO: task irq/126-pciehp:198 blocked for more than 120 seconds.
- "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
- irq/126-pciehp  D    0   198      2 0x80000000
- Call Trace:
-  __schedule+0x2a2/0x880
-  schedule+0x2c/0x80
-  schedule_timeout+0x246/0x350
-  ? ttwu_do_activate+0x67/0x90
-  wait_for_completion+0xb7/0x140
-  ? wake_up_q+0x80/0x80
-  kthread_stop+0x49/0x110
-  __free_irq+0x15c/0x2a0
-  free_irq+0x32/0x70
-  pcie_shutdown_notification+0x2f/0x50
-  pciehp_remove+0x27/0x50
-  pcie_port_remove_service+0x36/0x50
-  device_release_driver_internal+0x18c/0x250
-  device_release_driver+0x12/0x20
-  bus_remove_device+0xec/0x160
-  device_del+0x13b/0x350
-  ? pcie_port_find_device+0x60/0x60
-  device_unregister+0x1a/0x60
-  remove_iter+0x1e/0x30
-  device_for_each_child+0x56/0x90
-  pcie_port_device_remove+0x22/0x40
-  pcie_portdrv_remove+0x20/0x60
-  pci_device_remove+0x3e/0xc0
-  device_release_driver_internal+0x18c/0x250
-  device_release_driver+0x12/0x20
-  pci_stop_bus_device+0x6f/0x90
-  pci_stop_bus_device+0x31/0x90
-  pci_stop_and_remove_bus_device+0x12/0x20
-  pciehp_unconfigure_device+0x88/0x140
-  pciehp_disable_slot+0x6a/0x110
-  pciehp_handle_presence_or_link_change+0x263/0x400
-  pciehp_ist+0x1c9/0x1d0
-  ? irq_forced_thread_fn+0x80/0x80
-  irq_thread_fn+0x24/0x60
-  irq_thread+0xeb/0x190
-  ? irq_thread_fn+0x60/0x60
-  kthread+0x120/0x140
-  ? irq_thread_check_affinity+0xf0/0xf0
-  ? kthread_park+0x90/0x90
-  ret_from_fork+0x35/0x40
- INFO: task irq/190-pciehp:2288 blocked for more than 120 seconds.
- irq/190-pciehp  D    0  2288      2 0x80000000
- Call Trace:
-  __schedule+0x2a2/0x880
-  schedule+0x2c/0x80
-  schedule_preempt_disabled+0xe/0x10
-  __mutex_lock.isra.9+0x2e0/0x4d0
-  ? __mutex_lock_slowpath+0x13/0x20
-  __mutex_lock_slowpath+0x13/0x20
-  mutex_lock+0x2c/0x30
-  pci_lock_rescan_remove+0x15/0x20
-  pciehp_unconfigure_device+0x4d/0x140
-  pciehp_disable_slot+0x6a/0x110
-  pciehp_handle_presence_or_link_change+0x263/0x400
-  pciehp_ist+0x1c9/0x1d0
-  ? irq_forced_thread_fn+0x80/0x80
-  irq_thread_fn+0x24/0x60
-  irq_thread+0xeb/0x190
-  ? irq_thread_fn+0x60/0x60
-  kthread+0x120/0x140
-  ? irq_thread_check_affinity+0xf0/0xf0
-  ? kthread_park+0x90/0x90
-  ret_from_fork+0x35/0x40
+> On 8/5/19 9:14 AM, Chris Chiu wrote:
+>> We have 3 laptops which connect the wifi by the same RTL8723BU.
+>> The PCI VID/PID of the wifi chip is 10EC:B720 which is supported.
+>> They have the same problem with the in-kernel rtl8xxxu driver, the
+>> iperf (as a client to an ethernet-connected server) gets ~1Mbps.
+>> Nevertheless, the signal strength is reported as around -40dBm,
+>> which is quite good. From the wireshark capture, the tx rate for each
+>> data and qos data packet is only 1Mbps. Compare to the Realtek driver
+>> at https://github.com/lwfinger/rtl8723bu, the same iperf test gets
+>> ~12Mbps or better. The signal strength is reported similarly around
+>> -40dBm. That's why we want to improve.
+>> 
+>> After reading the source code of the rtl8xxxu driver and Realtek's, the
+>> major difference is that Realtek's driver has a watchdog which will keep
+>> monitoring the signal quality and updating the rate mask just like the
+>> rtl8xxxu_gen2_update_rate_mask() does if signal quality changes.
+>> And this kind of watchdog also exists in rtlwifi driver of some specific
+>> chips, ex rtl8192ee, rtl8188ee, rtl8723ae, rtl8821ae...etc. They have
+>> the same member function named dm_watchdog and will invoke the
+>> corresponding dm_refresh_rate_adaptive_mask to adjust the tx rate
+>> mask.
+>> 
+>> With this commit, the tx rate of each data and qos data packet will
+>> be 39Mbps (MCS4) with the 0xF00000 as the tx rate mask. The 20th bit
+>> to 23th bit means MCS4 to MCS7. It means that the firmware still picks
+>> the lowest rate from the rate mask and explains why the tx rate of
+>> data and qos data is always lowest 1Mbps because the default rate mask
+>> passed is always 0xFFFFFFF ranges from the basic CCK rate, OFDM rate,
+>> and MCS rate. However, with Realtek's driver, the tx rate observed from
+>> wireshark under the same condition is almost 65Mbps or 72Mbps, which
+>> indicating that rtl8xxxu could still be further improved.
+>> 
+>> Signed-off-by: Chris Chiu <chiu@endlessm.com>
+>> Reviewed-by: Daniel Drake <drake@endlessm.com>
+>> ---
+>
+> Looks good to me! Nice work! I am actually very curious if this will
+> improve performance 8192eu as well.
+>
+> Ideally I'd like to figure out how to make host controlled rates work,
+> but in all my experiments with that, I never really got it to work well.
+>
+> Signed-off-by: Jes Sorensen <Jes.Sorensen@gmail.com>
 
-What happens here is that the whole hierarchy is runtime resumed and the
-parent PCIe downstream port, who got the hot-remove event, starts
-removing devices below it taking pci_lock_rescan_remove() lock. When the
-child PCIe port is runtime resumed it calls pciehp_check_presence()
-which ends up calling pciehp_card_present() and pciehp_check_link_active().
-Both of these read their parts of PCIe config space by calling helper
-function pcie_capability_read_word(). Now, this function notices that
-the underlying device is already gone and returns PCIBIOS_DEVICE_NOT_FOUND
-with the capability value set to 0. When pciehp gets this value it
-thinks that its child device is also hot-removed and schedules its IRQ
-thread to handle the event.
+This is marked as RFC so I'm not sure what's the plan. Should I apply
+this?
 
-The deadlock happens when the child's IRQ thread runs and tries to
-acquire pci_lock_rescan_remove() which is already taken by the parent
-and the parent waits for the child's IRQ thread to finish.
-
-We can prevent this from happening by checking the return value of
-pcie_capability_read_word() and if it is PCIBIOS_DEVICE_NOT_FOUND stop
-performing any hot-removal activities.
-
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
-No changes from the previous version.
-
- drivers/pci/hotplug/pciehp.h      |  6 +++---
- drivers/pci/hotplug/pciehp_core.c | 11 ++++++++---
- drivers/pci/hotplug/pciehp_ctrl.c |  4 ++--
- drivers/pci/hotplug/pciehp_hpc.c  | 32 +++++++++++++++++++++++--------
- 4 files changed, 37 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
-index 8c51a04b8083..81c514ab9518 100644
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -173,10 +173,10 @@ int pciehp_query_power_fault(struct controller *ctrl);
- void pciehp_green_led_on(struct controller *ctrl);
- void pciehp_green_led_off(struct controller *ctrl);
- void pciehp_green_led_blink(struct controller *ctrl);
--bool pciehp_card_present(struct controller *ctrl);
--bool pciehp_card_present_or_link_active(struct controller *ctrl);
-+int pciehp_card_present(struct controller *ctrl);
-+int pciehp_card_present_or_link_active(struct controller *ctrl);
- int pciehp_check_link_status(struct controller *ctrl);
--bool pciehp_check_link_active(struct controller *ctrl);
-+int pciehp_check_link_active(struct controller *ctrl);
- void pciehp_release_ctrl(struct controller *ctrl);
- 
- int pciehp_sysfs_enable_slot(struct hotplug_slot *hotplug_slot);
-diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
-index e9f82afa3773..4c032d75c874 100644
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -134,10 +134,15 @@ static int get_adapter_status(struct hotplug_slot *hotplug_slot, u8 *value)
- {
- 	struct controller *ctrl = to_ctrl(hotplug_slot);
- 	struct pci_dev *pdev = ctrl->pcie->port;
-+	int ret;
- 
- 	pci_config_pm_runtime_get(pdev);
--	*value = pciehp_card_present_or_link_active(ctrl);
-+	ret = pciehp_card_present_or_link_active(ctrl);
- 	pci_config_pm_runtime_put(pdev);
-+	if (ret < 0)
-+		return ret;
-+
-+	*value = ret;
- 	return 0;
- }
- 
-@@ -153,13 +158,13 @@ static int get_adapter_status(struct hotplug_slot *hotplug_slot, u8 *value)
-  */
- static void pciehp_check_presence(struct controller *ctrl)
- {
--	bool occupied;
-+	int occupied;
- 
- 	down_read(&ctrl->reset_lock);
- 	mutex_lock(&ctrl->state_lock);
- 
- 	occupied = pciehp_card_present_or_link_active(ctrl);
--	if ((occupied && (ctrl->state == OFF_STATE ||
-+	if ((occupied > 0 && (ctrl->state == OFF_STATE ||
- 			  ctrl->state == BLINKINGON_STATE)) ||
- 	    (!occupied && (ctrl->state == ON_STATE ||
- 			   ctrl->state == BLINKINGOFF_STATE)))
-diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-index 631ced0ab28a..5a433cc8621f 100644
---- a/drivers/pci/hotplug/pciehp_ctrl.c
-+++ b/drivers/pci/hotplug/pciehp_ctrl.c
-@@ -221,7 +221,7 @@ void pciehp_handle_disable_request(struct controller *ctrl)
- 
- void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
- {
--	bool present, link_active;
-+	int present, link_active;
- 
- 	/*
- 	 * If the slot is on and presence or link has changed, turn it off.
-@@ -252,7 +252,7 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
- 	mutex_lock(&ctrl->state_lock);
- 	present = pciehp_card_present(ctrl);
- 	link_active = pciehp_check_link_active(ctrl);
--	if (!present && !link_active) {
-+	if (present <= 0 && link_active <= 0) {
- 		mutex_unlock(&ctrl->state_lock);
- 		return;
- 	}
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index bd990e3371e3..1f918b043adb 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -201,13 +201,16 @@ static void pcie_write_cmd_nowait(struct controller *ctrl, u16 cmd, u16 mask)
- 	pcie_do_write_cmd(ctrl, cmd, mask, false);
- }
- 
--bool pciehp_check_link_active(struct controller *ctrl)
-+int pciehp_check_link_active(struct controller *ctrl)
- {
- 	struct pci_dev *pdev = ctrl_dev(ctrl);
- 	u16 lnk_status;
--	bool ret;
-+	int ret;
-+
-+	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+	if (ret == PCIBIOS_DEVICE_NOT_FOUND)
-+		return -ENODEV;
- 
--	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
- 	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
- 
- 	if (ret)
-@@ -373,13 +376,17 @@ void pciehp_get_latch_status(struct controller *ctrl, u8 *status)
- 	*status = !!(slot_status & PCI_EXP_SLTSTA_MRLSS);
- }
- 
--bool pciehp_card_present(struct controller *ctrl)
-+int pciehp_card_present(struct controller *ctrl)
- {
- 	struct pci_dev *pdev = ctrl_dev(ctrl);
- 	u16 slot_status;
-+	int ret;
- 
--	pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &slot_status);
--	return slot_status & PCI_EXP_SLTSTA_PDS;
-+	ret = pcie_capability_read_word(pdev, PCI_EXP_SLTSTA, &slot_status);
-+	if (ret == PCIBIOS_DEVICE_NOT_FOUND)
-+		return -ENODEV;
-+
-+	return !!(slot_status & PCI_EXP_SLTSTA_PDS);
- }
- 
- /**
-@@ -390,10 +397,19 @@ bool pciehp_card_present(struct controller *ctrl)
-  * Presence Detect State bit, this helper also returns true if the Link Active
-  * bit is set.  This is a concession to broken hotplug ports which hardwire
-  * Presence Detect State to zero, such as Wilocity's [1ae9:0200].
-+ *
-+ * Returns: %1 if the slot is occupied and %0 if it is not. If the hotplug
-+ *	    port is not present anymore returns %-ENODEV.
-  */
--bool pciehp_card_present_or_link_active(struct controller *ctrl)
-+int pciehp_card_present_or_link_active(struct controller *ctrl)
- {
--	return pciehp_card_present(ctrl) || pciehp_check_link_active(ctrl);
-+	int ret;
-+
-+	ret = pciehp_card_present(ctrl);
-+	if (ret)
-+		return ret;
-+
-+	return pciehp_check_link_active(ctrl);
- }
- 
- int pciehp_query_power_fault(struct controller *ctrl)
 -- 
-2.20.1
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
