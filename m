@@ -2,84 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53991895F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 06:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBC8C895EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 06:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbfHLEOn convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 12 Aug 2019 00:14:43 -0400
-Received: from mail-238.innovazionedigitale.it ([93.62.133.238]:44978 "EHLO
-        mx2-cnappc.innovazionedigitale.it" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726126AbfHLEOn (ORCPT
+        id S1726236AbfHLEMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 00:12:53 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44801 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfHLEMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 00:14:43 -0400
-X-Envelope-From: <arch.daniela.baldacci@archiworld.it>
-Received: from cnappc-proxy-03.zimbra.id (relay.awn.local [10.111.1.15])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx2-cnappc.innovazionedigitale.it (Postfix) with ESMTPS id C301C419D9;
-        Mon, 12 Aug 2019 06:02:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by cnappc-proxy-03.zimbra.id (Postfix) with ESMTP id 3931F2812D5;
-        Mon, 12 Aug 2019 06:03:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at 
-Received: from cnappc-proxy-03.zimbra.id ([127.0.0.1])
-        by localhost (cnappc-proxy-03.zimbra.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id e_0z0wdRt68Z; Mon, 12 Aug 2019 06:03:02 +0200 (CEST)
-Received: from cnappc-store-02.zimbra.id (cnappc-store-02.zimbra.id [10.111.1.19])
-        by cnappc-proxy-03.zimbra.id (Postfix) with ESMTP id 9C284280F85;
-        Mon, 12 Aug 2019 06:02:51 +0200 (CEST)
-Date:   Mon, 12 Aug 2019 06:02:51 +0200 (CEST)
-From:   "Mr.WEHNER DAVID M" <arch.daniela.baldacci@archiworld.it>
-Reply-To: "Mr.WEHNER DAVID M" <info@zbukgroupltd.info>
-Message-ID: <1173683217.133077674.1565582571448.JavaMail.zimbra@archiworld.it>
-Subject: =?utf-8?Q?Geld_=C3=BCberwiesen?=
+        Mon, 12 Aug 2019 00:12:52 -0400
+Received: by mail-ed1-f66.google.com with SMTP id a21so1632070edt.11;
+        Sun, 11 Aug 2019 21:12:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oAP6t0pKBozy4Ru4dNG6hCmwdati3Pg/29On1WvuiE8=;
+        b=G1zWlhLBEBk5Qhu34ztoscprtrYGSJQyC88CkiuSKPHdn6ZsicuDBL8lfCKfFCalrX
+         YuHLCyb9W4ytUYeTMhv3uN3MzP79Q0sTvbH/C+h733xyT5YC1Z+FCRXKHRLtCDBd9ly8
+         S/oV4Pth5a2oGFOJk4nggqzU52sLKnJ1PrahHjMrCuz+9VQBjx24xPKUQNc8v36LNYfN
+         2N0J5GMYnPHNuN3owvK7sFIZ8EBdQWfj+l6bQLxd3sn+ddk77Ykyt7KLJyV3DSh8olZ6
+         wZ15hVDLrTnbULsoSQM5DAfROFD81TzpTmyRgS4FjFz/1SAk+LEA5dBgbWEpaBUP3dzm
+         x9FQ==
+X-Gm-Message-State: APjAAAVh0Udh2zh7y5BgHiZ7keHZfbE990qNN7le0Bbr0bmDHtVRqc5p
+        iDGnALyTBSSxzayHaZtx6rfpQiA1Hc0=
+X-Google-Smtp-Source: APXvYqzgtxu2/C3svbR2pHpD+DVaAmvSmwrvt7pBjQQRAWC6GCunsaarLJIHsnm/Lgn/pnYn6cjNrA==
+X-Received: by 2002:a17:907:39a:: with SMTP id ss26mr18836635ejb.278.1565583170546;
+        Sun, 11 Aug 2019 21:12:50 -0700 (PDT)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id m26sm425895edd.19.2019.08.11.21.12.49
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Aug 2019 21:12:49 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id b16so6649570wrq.9;
+        Sun, 11 Aug 2019 21:12:49 -0700 (PDT)
+X-Received: by 2002:a5d:568e:: with SMTP id f14mr37314937wrv.167.1565583169399;
+ Sun, 11 Aug 2019 21:12:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.111.1.16]
-X-Mailer: Zimbra 8.8.10_GA_3781 (ZimbraWebClient - FF52 (Win)/8.8.10_GA_3786)
-Thread-Index: rZ5a4XmW0+9Zluz6hnKFVOWwOenVlw==
-Thread-Topic: Geld =?utf-8?Q?=C3=BCberwiesen?=
-X-innovazionedigitale-Libra-ESVA-Information: Please contact innovazionedigitale for more information
-X-innovazionedigitale-Libra-ESVA-ID: C301C419D9.A7EB1
-X-innovazionedigitale-MailScanner-ESVA: Foundtobeclean
-X-innovazionedigitale-Libra-ESVA-From: arch.daniela.baldacci@archiworld.it
-X-innovazionedigitale-Libra-ESVA-Watermark: 1566187369.58436@QxZd3HCVyVVLs5iO6lHifA
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190811090503.32396-1-bshah@kde.org> <20190811090503.32396-2-bshah@kde.org>
+In-Reply-To: <20190811090503.32396-2-bshah@kde.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 12 Aug 2019 12:12:38 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67_GjWFOEiThMp5o8m+nqYrrTCrNdSkscRfe5vmoJM47Q@mail.gmail.com>
+Message-ID: <CAGb2v67_GjWFOEiThMp5o8m+nqYrrTCrNdSkscRfe5vmoJM47Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: allwinner: h6: add I2C nodes
+To:     Bhushan Shah <bshah@kde.org>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Büro des Leiters
-Internationale Überweisung
-Operation Zenith Bank
-(UK) Ltd LONDON United
-Königreich und Irland
-Tel .: +44 203 389 5674
-Fax: +44 704 307 1539
+On Sun, Aug 11, 2019 at 5:05 PM Bhushan Shah <bshah@kde.org> wrote:
+>
+> Add device-tree nodes for i2c0 to i2c2, and also add relevant pinctrl
+> nodes.
+>
+> Suggested-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Bhushan Shah <bshah@kde.org>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 54 ++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> index bcecca17d61d..1d9ad3ec0b65 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -329,6 +329,21 @@
+>                                 function = "hdmi";
+>                         };
+>
+> +                       i2c0_pins: i2c0-pins {
+> +                               pins = "PD25", "PD26";
+> +                               function = "i2c0";
+> +                       };
+> +
+> +                       i2c1_pins: i2c1-pins {
+> +                               pins = "PH5", "PH6";
+> +                               function = "i2c1";
+> +                       };
+> +
+> +                       i2c2_pins: i2c2-pins {
+> +                               pins = "PD23", "PD24";
+> +                               function = "i2c2";
+> +                       };
+> +
+>                         mmc0_pins: mmc0-pins {
+>                                 pins = "PF0", "PF1", "PF2", "PF3",
+>                                        "PF4", "PF5";
+> @@ -464,6 +479,45 @@
+>                         status = "disabled";
+>                 };
+>
+> +               i2c0: i2c@5002000 {
+> +                       compatible = "allwinner,sun6i-a31-i2c";
 
-Gruß,
+Please add an soc-specific compatible string, like "allwinner,sun50i-h6-i2c".
+This is a last-resort way out in case the hardware isn't so compatible with
+the A31.
 
-Ihre E-Mail-Adresse wurde zufällig in der Zentrale der Zenith Bank, International Transfer Operation in London, Großbritannien, gezogen.
+You'll also need to update the bindings in
 
-Ich bin Mr. WEHNER DAVID M. Ein persönlicher Buchhalter des verstorbenen Mr. Michael Blair, der bei Shell British Petroleum gearbeitet hat. Herr Michael Blair, ein bekannter Philanthrop, hat vor seinem Tod in einer Anwaltskanzlei ein Testament abgegeben, das besagt, dass 12,5 Millionen US-Dollar (nur zwölf Millionen fünfhunderttausend US-Dollar) an einen glücklichen Philanthrop oder eine Wohltätigkeitsorganisation im Ausland gespendet werden sollten.
-a
-Die Zenith Bank Plc ist mit dem verstorbenen Michael Blair einverstanden, den Fonds an eine glückliche Person in Amerika, Europa, Asien und Afrika zu spenden, um zur Verbesserung von Leben und Unternehmen beizutragen
+    Documentation/devicetree/bindings/i2c/marvell,mv64xxx-i2c.yaml
 
-Wir haben unsere Ziehung nach dem Zufallsprinzip durchgeführt und Ihre E-Mail-Adresse wurde ausgewählt, um diesen Fonds als Begünstigten seines Testaments zu erhalten. Bitte melde dich bei mir
-sobald Sie unsere E-Mail erhalten haben, um die Übertragung zu ermöglichen
-Die Operation weist Sie an, was als nächstes zu tun ist, um diesen Fonds legal zu erhalten.
+The file also shows that we do this for other chips, such as the A23,
+A64 and A83T.
 
-Es wird empfohlen, die folgenden Punkte erneut aufzunehmen:
+ChenYu
 
-VOLLSTÄNDIGER NAME:
-
-Vollständige Kontaktadresse:
-
-TELEFON- und FAXNUMMERN:
-
-Dein,
-Herr WEHNER DAVID M.
-Leiter Internationale Überweisung
-Zenith Bank (UK) Plc
+> +                       reg = <0x05002000 0x400>;
+> +                       interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_I2C0>;
+> +                       resets = <&ccu RST_BUS_I2C0>;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&i2c0_pins>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               i2c1: i2c@5002400 {
+> +                       compatible = "allwinner,sun6i-a31-i2c";
+> +                       reg = <0x05002400 0x400>;
+> +                       interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_I2C1>;
+> +                       resets = <&ccu RST_BUS_I2C1>;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&i2c1_pins>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               i2c2: i2c@5002800 {
+> +                       compatible = "allwinner,sun6i-a31-i2c";
+> +                       reg = <0x05002800 0x400>;
+> +                       interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_I2C2>;
+> +                       resets = <&ccu RST_BUS_I2C2>;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&i2c2_pins>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+>                 emac: ethernet@5020000 {
+>                         compatible = "allwinner,sun50i-h6-emac",
+>                                      "allwinner,sun50i-a64-emac";
+> --
+> 2.17.1
+>
