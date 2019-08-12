@@ -2,143 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B50CE89DAB
+	by mail.lfdr.de (Postfix) with ESMTP id 3D41689DAA
 	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:10:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbfHLMHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 08:07:54 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52120 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728471AbfHLMHi (ORCPT
+        id S1728559AbfHLMHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 08:07:48 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38578 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728517AbfHLMHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 08:07:38 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207so11932629wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 05:07:37 -0700 (PDT)
+        Mon, 12 Aug 2019 08:07:42 -0400
+Received: by mail-lf1-f66.google.com with SMTP id h28so73976444lfj.5;
+        Mon, 12 Aug 2019 05:07:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jc9/cSBhIwTuXPvQDL6txYFXAJblot8ynaeVI0KB+kI=;
-        b=JCgKaHjiK9nXytoYeRJc1oNQnDr/iTA4L8Cs/nMSQTvwrHCjI8V6q/fMKElW1iq4kH
-         QVfNygjYCJLIR2X+73dkH1YWR5jd4IZKoHby+j8qpmF4XhZajY4Kjk0JETHWN8nefT3I
-         BfO806OgbneAJNQFFiN1knQc1xLRpBUENeHPFywv44hICM1gob6lINnEr6lMqhzVnZI0
-         45ko6hz6x7sRZ4R5nYlMEf5MlYQPrQ0o3lAqjqwFZ8KdHKkua1sCJd0NOmLrjZP+qAlF
-         e2qBWgoDEBeqiW5bZLuERfieGV41O7+oENtJiTUejXx6Sj1XEVjw8F1jz4H8xldgpDiF
-         UFHg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4qOdEFC2M11gWaSPmcjDghbM0bbwUm04RK0v5uO2apg=;
+        b=bm6JFeaJrLhrdxvwrgL87KoQHBHCewBcUoT2U/byVHVE3ObbAAy6bppBP1Nqiz4YWx
+         PVT3ypwO0OkqNOcD5zyOeig2OqXTGd5gPHpwB+zawhlvxf5Or9WyAvnfeyPUOUtk7bGM
+         3FtpbcGVEaSca+wwR7PRR0ZR7n1a82+rJl2EAVaPQaJRxJs9AffhXzO9UQGoWge/o9jh
+         DhnJH2brcwMuBHEZObqjDOtHMb4ilsbmt6DkRoJYS25kZd9Fbc3JGSveoVNZ0750p8mm
+         T0lShpIinpgE8k0zgEE9/+Bn7xgnnFf5qoKooFWRigATHI93FlUhCn9fp8Zkik4Q/+n6
+         GgrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jc9/cSBhIwTuXPvQDL6txYFXAJblot8ynaeVI0KB+kI=;
-        b=AZOnZejPrJ7yvj5lPUuX2Xz+Xa/uKqZKACxShTfmiULZu4tktHDDiAI0COb1fDVzug
-         Jz6eQ4FSSE0tXTWpaM6kLGddB3iIt5kmV/myJSXwwK63s7SxJ4wOfaicESBJUqdPXzYc
-         8sDY8Rd95LAYrdWWfnMDweBuYzleOdRzZZXB6C7q608PlG0gW5HfOjxFzQ51ZpfJJezp
-         zeEqwkNC1/jTZc40q+OYR9HShr33PjmCopO4DBWyzsiXZW7Qrs6k/vNbNTEE42S6GD8V
-         j8eEQBalTS+laOlgmbvhEqaPVVZpUJd0pkEx91n7nfSu6C85DsH5y4zXZMCXfBbBDfji
-         hSsQ==
-X-Gm-Message-State: APjAAAV/9oYqzwbdE+W01EIW7IzvRSUkoNhN8hu+UDDEohQ+3RdCZRq0
-        ysVNp0wABbW8tXmEA2BRirAoNw==
-X-Google-Smtp-Source: APXvYqyA8FXUTAV5OWQlM4IOpnMuM4a1amICXKUVnbBgBqhQLoLXQVYGeXcaLrL4ghbO8MhHX2OFhw==
-X-Received: by 2002:a7b:cf3a:: with SMTP id m26mr28033074wmg.111.1565611657147;
-        Mon, 12 Aug 2019 05:07:37 -0700 (PDT)
-Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id j9sm1883415wrx.66.2019.08.12.05.07.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 05:07:36 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 8/8] drm/bridge: dw-hdmi-i2s: add .get_eld support
-Date:   Mon, 12 Aug 2019 14:07:26 +0200
-Message-Id: <20190812120726.1528-9-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190812120726.1528-1-jbrunet@baylibre.com>
-References: <20190812120726.1528-1-jbrunet@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4qOdEFC2M11gWaSPmcjDghbM0bbwUm04RK0v5uO2apg=;
+        b=CQiWhA+thKLQ+L9c29gGP5Hcf3388jlTIZ8hWruFG6WFrDmbEU+tosF/wnBxdyCdke
+         NffvkzMlL/ZK/KyrJi+0/eB/prF7DU7xEELrJEcrUy2nEB37nMJdcOJIcIdH55zHDG3a
+         qRiBtLApGhm31dK3fuuPEXBFhyU3mf/8mYVfkkmzqlKJxuvHut9IO1eid/Rr/fIL+M06
+         3qgBuxP1OV53ik4A3a4ONsFW3Rs3lLdnSyjupYecnBQLxRh0I+FypBW/zudINpf7ASdL
+         eydaWOwftuVTOhJ8pN7YdnewEe3o0ClouNR/KnDDXrgzWtM3AGACQfqLOuegeAjgO4Ww
+         pmwQ==
+X-Gm-Message-State: APjAAAXvdUi755WIY4k/MZHoeLHpwaRDxUwuvYJYON5hWi/9A+VumS6n
+        0QKn7F+GBvfX4YIlaAQ8CPxE6NyEkYF8uf/mFOnTWA==
+X-Google-Smtp-Source: APXvYqz3B/76maiN8iU2SHYGuDc8LbEmLoZtKd5InqL2eR3IO1G+3shPVco9MXX/jUMEsG+IcnjuF7rHRLMod6Vfdq4=
+X-Received: by 2002:ac2:484e:: with SMTP id 14mr19367643lfy.50.1565611659997;
+ Mon, 12 Aug 2019 05:07:39 -0700 (PDT)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <1564515200-5020-1-git-send-email-jrdr.linux@gmail.com> <CAFqt6zb5ySDbkHVpPkOKHTrF8jFuNh=dXtnwPKO6TuEHBCkYgg@mail.gmail.com>
+In-Reply-To: <CAFqt6zb5ySDbkHVpPkOKHTrF8jFuNh=dXtnwPKO6TuEHBCkYgg@mail.gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 12 Aug 2019 17:37:28 +0530
+Message-ID: <CAFqt6zYsA_0YpZcZ8+LrMEjeWDJ5mwUDJNvqOW1H4ewgKbp+aQ@mail.gmail.com>
+Subject: Re: [PATCH] video: fbdev:via: Remove dead code
+To:     FlorianSchandinat@gmx.de, b.zolnierkie@samsung.com
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide the eld to the generic hdmi-codec driver.
-This will let the driver enforce the maximum channel number and set the
-channel allocation depending on the hdmi sink.
+On Wed, Aug 7, 2019 at 2:11 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> On Wed, Jul 31, 2019 at 12:59 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > This is dead code since 3.15. If there is no plan to use
+> > it further, this can be removed forever.
+> >
+>
+> Any comment on this patch ?
 
-Cc: Jonas Karlman <jonas@kwiboo.se>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h     |  1 +
- drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 11 +++++++++++
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c           |  1 +
- 3 files changed, 13 insertions(+)
+Any comment on this patch ?
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h
-index 63b5756f463b..cb07dc0da5a7 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h
-@@ -14,6 +14,7 @@ struct dw_hdmi_audio_data {
- 
- struct dw_hdmi_i2s_audio_data {
- 	struct dw_hdmi *hdmi;
-+	u8 *eld;
- 
- 	void (*write)(struct dw_hdmi *hdmi, u8 val, int offset);
- 	u8 (*read)(struct dw_hdmi *hdmi, int offset);
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-index b8ece9c1ba2c..62e737b81462 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- 
- #include <drm/bridge/dw_hdmi.h>
-+#include <drm/drm_crtc.h>
- 
- #include <sound/hdmi-codec.h>
- 
-@@ -121,6 +122,15 @@ static void dw_hdmi_i2s_audio_shutdown(struct device *dev, void *data)
- 	dw_hdmi_audio_disable(hdmi);
- }
- 
-+static int dw_hdmi_i2s_get_eld(struct device *dev, void *data, uint8_t *buf,
-+			       size_t len)
-+{
-+	struct dw_hdmi_i2s_audio_data *audio = data;
-+
-+	memcpy(buf, audio->eld, min(sizeof(MAX_ELD_BYTES), len));
-+	return 0;
-+}
-+
- static int dw_hdmi_i2s_get_dai_id(struct snd_soc_component *component,
- 				  struct device_node *endpoint)
- {
-@@ -144,6 +154,7 @@ static int dw_hdmi_i2s_get_dai_id(struct snd_soc_component *component,
- static struct hdmi_codec_ops dw_hdmi_i2s_ops = {
- 	.hw_params	= dw_hdmi_i2s_hw_params,
- 	.audio_shutdown	= dw_hdmi_i2s_audio_shutdown,
-+	.get_eld	= dw_hdmi_i2s_get_eld,
- 	.get_dai_id	= dw_hdmi_i2s_get_dai_id,
- };
- 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index bed4bb017afd..8df69c9dbfad 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2797,6 +2797,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 		struct dw_hdmi_i2s_audio_data audio;
- 
- 		audio.hdmi	= hdmi;
-+		audio.eld	= hdmi->connector.eld;
- 		audio.write	= hdmi_writeb;
- 		audio.read	= hdmi_readb;
- 		hdmi->enable_audio = dw_hdmi_i2s_audio_enable;
--- 
-2.21.0
-
+>
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > ---
+> >  drivers/video/fbdev/via/via-core.c | 43 --------------------------------------
+> >  1 file changed, 43 deletions(-)
+> >
+> > diff --git a/drivers/video/fbdev/via/via-core.c b/drivers/video/fbdev/via/via-core.c
+> > index e2b2062..ffa2ca2 100644
+> > --- a/drivers/video/fbdev/via/via-core.c
+> > +++ b/drivers/video/fbdev/via/via-core.c
+> > @@ -221,49 +221,6 @@ void viafb_release_dma(void)
+> >  }
+> >  EXPORT_SYMBOL_GPL(viafb_release_dma);
+> >
+> > -
+> > -#if 0
+> > -/*
+> > - * Copy a single buffer from FB memory, synchronously.  This code works
+> > - * but is not currently used.
+> > - */
+> > -void viafb_dma_copy_out(unsigned int offset, dma_addr_t paddr, int len)
+> > -{
+> > -       unsigned long flags;
+> > -       int csr;
+> > -
+> > -       mutex_lock(&viafb_dma_lock);
+> > -       init_completion(&viafb_dma_completion);
+> > -       /*
+> > -        * Program the controller.
+> > -        */
+> > -       spin_lock_irqsave(&global_dev.reg_lock, flags);
+> > -       viafb_mmio_write(VDMA_CSR0, VDMA_C_ENABLE|VDMA_C_DONE);
+> > -       /* Enable ints; must happen after CSR0 write! */
+> > -       viafb_mmio_write(VDMA_MR0, VDMA_MR_TDIE);
+> > -       viafb_mmio_write(VDMA_MARL0, (int) (paddr & 0xfffffff0));
+> > -       viafb_mmio_write(VDMA_MARH0, (int) ((paddr >> 28) & 0xfff));
+> > -       /* Data sheet suggests DAR0 should be <<4, but it lies */
+> > -       viafb_mmio_write(VDMA_DAR0, offset);
+> > -       viafb_mmio_write(VDMA_DQWCR0, len >> 4);
+> > -       viafb_mmio_write(VDMA_TMR0, 0);
+> > -       viafb_mmio_write(VDMA_DPRL0, 0);
+> > -       viafb_mmio_write(VDMA_DPRH0, 0);
+> > -       viafb_mmio_write(VDMA_PMR0, 0);
+> > -       csr = viafb_mmio_read(VDMA_CSR0);
+> > -       viafb_mmio_write(VDMA_CSR0, VDMA_C_ENABLE|VDMA_C_START);
+> > -       spin_unlock_irqrestore(&global_dev.reg_lock, flags);
+> > -       /*
+> > -        * Now we just wait until the interrupt handler says
+> > -        * we're done.
+> > -        */
+> > -       wait_for_completion_interruptible(&viafb_dma_completion);
+> > -       viafb_mmio_write(VDMA_MR0, 0); /* Reset int enable */
+> > -       mutex_unlock(&viafb_dma_lock);
+> > -}
+> > -EXPORT_SYMBOL_GPL(viafb_dma_copy_out);
+> > -#endif
+> > -
+> >  /*
+> >   * Do a scatter/gather DMA copy from FB memory.  You must have done
+> >   * a successful call to viafb_request_dma() first.
+> > --
+> > 1.9.1
+> >
