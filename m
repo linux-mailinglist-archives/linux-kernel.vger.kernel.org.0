@@ -2,100 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFD9689EAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 898F689EB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:47:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbfHLMom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 08:44:42 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40913 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbfHLMok (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 08:44:40 -0400
-Received: by mail-lj1-f195.google.com with SMTP id e27so3002580ljb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 05:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CzrTbiHopzrJu+YLYHoIsujt53sT7XN4YE3jA26/XGg=;
-        b=CZL/I2MFhnHG7WsGfil0Lhj0/vUbG22b1Ey4JJ+4mOZyN1TTt0k7l4o5BUszI4UGSt
-         1n6tFYW9r96cIcKCqEuEC/X0AeIYX4H3btbse/XxA6HbmKV6iGxNC4/567RVUaDZR3nC
-         HaBGbThoAuqSmKQ7S0HRYvg4C1CynhZlxF5TTej5/B6iJps7QKNTM4USoP9kAw899Z8y
-         njUfwG3frFnuvYBLJG70NZ9gAM/sazFT3OtdhJd6YwKSg4tw6mibwBU/2nf6qJlB+PYs
-         nEdfm2RkSbLQDJX7Q+RXVjY0XgH2jzOz2zIp+b1IMwxFfO6/cYmvcAAZd1PeK0vVqpsO
-         voQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=CzrTbiHopzrJu+YLYHoIsujt53sT7XN4YE3jA26/XGg=;
-        b=D+0gQJMlHRUijCVotO4387HTxactd660g8m/p3UugMTpDpScgDb00Y0phWwBSUsdT6
-         sGGIU9x/XOz/sY69147nRJiGRqer7c4DPfuXfkPypjp1vjOHRk/GqchQyYeXkKDSVu8D
-         LyR2/dmUNC/nB3NZYGn1OWMMFQi/mCeldUJeZpJFsM2LX0kKemccNTXFy+5fHbMJzW2q
-         CQbdcGTlEbCwmoTDe2feYTCSplWC4QDnT+HaoPDgxLfNSzfQwzuJm+6JgwoLgNhSVid+
-         Q39QBF+5PgeDXcNJLGWo9KNU2PEueoEgskTY/xlxPBvJVN7KaMxTS2xPi2DY8GOPAUUD
-         iGbA==
-X-Gm-Message-State: APjAAAVYtsQWA7PPhVcSPw6ChbTTz0k/NOcOcH5STkFiZA/wMftdisV7
-        gGOQ8k+kG0Oz8YRiRVY4qvQZBA==
-X-Google-Smtp-Source: APXvYqwamKoAxWVn0ZtiV6XAfXemkV1C3L3E5zzwIiIeJc4CgQilmql9PxxJQosy2E9Ep5TEcoG4/g==
-X-Received: by 2002:a2e:1459:: with SMTP id 25mr18650455lju.153.1565613878719;
-        Mon, 12 Aug 2019 05:44:38 -0700 (PDT)
-Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id y25sm23432747lja.45.2019.08.12.05.44.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 05:44:38 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     bjorn.topel@intel.com, linux-mm@kvack.org
-Cc:     xdp-newbies@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, ast@kernel.org,
-        magnus.karlsson@intel.com,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v2 bpf-next] mm: mmap: increase sockets maximum memory size pgoff for 32bits
-Date:   Mon, 12 Aug 2019 15:43:26 +0300
-Message-Id: <20190812124326.32146-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190812113429.2488-1-ivan.khoronzhuk@linaro.org>
-References: <20190812113429.2488-1-ivan.khoronzhuk@linaro.org>
+        id S1728482AbfHLMq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 08:46:58 -0400
+Received: from mga07.intel.com ([134.134.136.100]:4684 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726496AbfHLMq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 08:46:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 05:46:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,377,1559545200"; 
+   d="asc'?scan'208";a="375932562"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by fmsmga006.fm.intel.com with ESMTP; 12 Aug 2019 05:46:29 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Roger Quadros <rogerq@ti.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Pawel Laszczak <pawell@cadence.com>
+Cc:     "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
+        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>
+Subject: Re: [PATCH v10 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+In-Reply-To: <d3bba104-9a85-df8d-c62d-6acb8913c3fe@ti.com>
+References: <1563733939-21214-1-git-send-email-pawell@cadence.com> <1563733939-21214-6-git-send-email-pawell@cadence.com> <88742d5b-ee10-cf4e-6724-58e7bdd19cb9@ti.com> <BYAPR07MB47090BCA728600F0C2F4E129DDD00@BYAPR07MB4709.namprd07.prod.outlook.com> <1e557bcf-2d50-f600-0e81-1f9fba5499a1@ti.com> <BYAPR07MB4709F306EC472B7AABEB7D4CDDD30@BYAPR07MB4709.namprd07.prod.outlook.com> <20190812103147.GA4691@kuha.fi.intel.com> <d3bba104-9a85-df8d-c62d-6acb8913c3fe@ti.com>
+Date:   Mon, 12 Aug 2019 15:46:25 +0300
+Message-ID: <874l2mtuu6.fsf@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AF_XDP sockets umem mapping interface uses XDP_UMEM_PGOFF_FILL_RING
-and XDP_UMEM_PGOFF_COMPLETION_RING offsets. The offsets seems like are
-established already and are part of configuration interface.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-But for 32-bit systems, while AF_XDP socket configuration, the values
-are to large to pass maximum allowed file size verification.
-The offsets can be tuned ofc, but instead of changing existent
-interface - extend max allowed file size for sockets.
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
+Hi,
 
-Based on bpf-next/master
+Roger Quadros <rogerq@ti.com> writes:
+>> The sysfs file we expose from the class for the role switches is
+>> primarily meant for supporting proprietary protocols that require us
+>> to basically override the connector USB data role. The default role
+>> should always be selected in the drivers.
+>
+> OK. Let's take this example
+> - Port is dual-role port micro AB.
+> - microAB to type-A adapter is connected which pulls ID low. port transit=
+ions
+> to "host" role by the controller driver.
+> - proprietary protocol want to switch role to device role so writes "devi=
+ce" to
+> mode switch sysfs. port transitions to "device" role.
+>
+> Now, how does controller driver know to fall back to HW based role switch=
+ing?
 
-v2..v1:
-	removed not necessarily #ifdev as ULL and UL for 64 has same size
+Use a 'disconnect' or 'suspend' event to go reset it? But that should,
+probably, be done at kernel space, no?
 
- mm/mmap.c | 3 +++
- 1 file changed, 3 insertions(+)
+=2D-=20
+balbi
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 7e8c3e8ae75f..578f52812361 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1358,6 +1358,9 @@ static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
- 	if (S_ISBLK(inode->i_mode))
- 		return MAX_LFS_FILESIZE;
- 
-+	if (S_ISSOCK(inode->i_mode))
-+		return MAX_LFS_FILESIZE;
-+
- 	/* Special "we do even unsigned file positions" case */
- 	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
- 		return 0;
--- 
-2.17.1
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl1RX6EACgkQzL64meEa
+mQZPthAAoPp+d2wATueMi3bs7y0hgbJbVUAfZwIcaCcrj0vG2JlU62N1tNjJhsP/
+xLLRKsXs7FKLNR0XjkYA0fhOjJwCkEjgnxEZOi+OdWi22avG4YQOP+UAXcuBLB7R
+m95XWGOjvW3Tpfh6Fc3F3cmrdbNhMP/+EA/tsdIKEtDZsNkJtWNAFVCnb2pwuaC2
+5oEsqDDgCeTDqNPqSH8T2Afkshwfr/rP7pQBunObvZdohJkR4FPteOnoVlFXIkrD
+FxBMrIs27xhPywv6U/OeQoCWbvSxnixEvpN7yZzAtZHBt0CuS9w2MvTXQ0l/5Guy
++tAuTdtT+g+Ypaxtp8VoO6SmohDO959TEGYm3OuITelPZKdM9rilRXp+agqWqCuD
+M2qfyD0z6AertZ/XzAESt1MHbpZLWxS2CY9QpDmd5RBM0HyS8TnlYNdXpQYpVi+q
+FrCqsew6ndcdFG0sr5i5aP5PyidrqMXJeV/hy3MVxbVq2CJATxasC36+ec0oagNO
+zkmg0zEHB+Kte/tf+QTGCaYZGjWbObPH++m+phTJpO2UN4EU5hcO0qu1AXTGBdEF
+Qnd1alBJim0s5KJ9+E2CUk7s/9l46f4zeTrCoxRtsbSQiBRPQR/SQcdUBRUVFvxW
+mPkQlndf37HU1ieYbdm6jC1SkUxtLJmlnv61PJ0I8M8CHwF36Lo=
+=A2Hp
+-----END PGP SIGNATURE-----
+--=-=-=--
