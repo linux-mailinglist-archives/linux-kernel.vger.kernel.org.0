@@ -2,189 +2,495 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA8DA8966F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 06:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2616189683
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 06:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726602AbfHLEt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 00:49:59 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3936 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725648AbfHLEt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 00:49:59 -0400
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id C8F5E60998AFACD9EDAC;
-        Mon, 12 Aug 2019 12:49:51 +0800 (CST)
-Received: from dggeme760-chm.china.huawei.com (10.3.19.106) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 12 Aug 2019 12:49:51 +0800
-Received: from [127.0.0.1] (10.57.37.248) by dggeme760-chm.china.huawei.com
- (10.3.19.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 12
- Aug 2019 12:49:51 +0800
-Subject: Re: [PATCH net] net: phy: rtl8211f: do a double read to get real time
- link status
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-CC:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <shiju.jose@huawei.com>
-References: <1565183772-44268-1-git-send-email-liuyonglong@huawei.com>
- <d67831ab-8902-a653-3db9-b2f55adacabd@gmail.com>
- <e663235c-93eb-702d-5a9c-8f781d631c42@huawei.com>
- <080b68c7-abe6-d142-da4b-26e8a7d4dc19@gmail.com>
- <c15f820b-cc80-9a93-4c48-1b60bc14f73a@huawei.com>
- <b1140603-f05b-2373-445f-c1d7a43ff012@gmail.com>
- <20190808194049.GM27917@lunn.ch>
- <26e2c5c9-915c-858b-d091-e5bfa7ab6a5b@gmail.com>
- <20190808203415.GO27917@lunn.ch>
- <414c6809-86a3-506c-b7b0-a32b7cd72fd6@huawei.com>
- <7f18113e-268b-6a4a-af83-236cfa337fcd@gmail.com>
-From:   Yonglong Liu <liuyonglong@huawei.com>
-Message-ID: <e752d04d-b62c-2979-a44a-62adfc04096e@huawei.com>
-Date:   Mon, 12 Aug 2019 12:49:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726796AbfHLEyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 00:54:17 -0400
+Received: from vip.corpemail.net ([162.243.126.186]:53950 "EHLO
+        vip.corpemail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfHLEyR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 00:54:17 -0400
+Received: from ([60.208.111.195])
+        by ssh248.corpemail.net (Antispam) with ASMTP (SSL) id DMI70947;
+        Mon, 12 Aug 2019 12:48:47 +0800
+Received: from mail-lj1-f182.google.com (10.100.1.52) by
+ Jtjnmail201618.home.langchao.com (10.100.2.18) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 12 Aug 2019 12:48:49 +0800
+Received: by mail-lj1-f182.google.com with SMTP id e24so430165ljg.11;
+        Sun, 11 Aug 2019 21:48:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAWKJ4BwevjtaK2JZplRQEsBqScsl6sGLlwKMFmbCxvNn4QuXa0y
+        069uGHyhT2Mbj5dLhNimRVh6dz/4otVBj5vraoQ=
+X-Google-Smtp-Source: APXvYqya7g4syo+ulfiRNZpIt4e2XDoTb6YSW/tHt2YWKXsG68vhLLZbETeUKdeMMGKg5GQE4i7vs4snIoj6fTHw6Tw=
+X-Received: by 2002:a2e:a415:: with SMTP id p21mr17927926ljn.111.1565585326010;
+ Sun, 11 Aug 2019 21:48:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7f18113e-268b-6a4a-af83-236cfa337fcd@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.37.248]
-X-ClientProxiedBy: dggeme720-chm.china.huawei.com (10.1.199.116) To
- dggeme760-chm.china.huawei.com (10.3.19.106)
-X-CFilter-Loop: Reflected
+References: <20190812025309.15702-1-wangzqbj@inspur.com> <6cf699d9-6efb-f701-d5ab-6f624e515ab8@roeck-us.net>
+In-Reply-To: <6cf699d9-6efb-f701-d5ab-6f624e515ab8@roeck-us.net>
+From:   John Wang <wangzqbj@inspur.com>
+Date:   Mon, 12 Aug 2019 12:48:34 +0800
+X-Gmail-Original-Message-ID: <CAHkHK0_wts97mEjSOpZrKU8bTWKzh0+HBxTg0fSmdkFBsrWjFA@mail.gmail.com>
+Message-ID: <CAHkHK0_wts97mEjSOpZrKU8bTWKzh0+HBxTg0fSmdkFBsrWjFA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] hwmon: pmbus: Add Inspur Power System power supply driver
+To:     Guenter Roeck <linux@roeck-us.net>
+CC:     <jdelvare@suse.com>, <corbet@lwn.net>,
+        <linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <miltonm@us.ibm.com>,
+        Yu Lei <mine260309@gmail.com>, <duanzhijia01@inspur.com>,
+        Joel Stanley <joel@jms.id.au>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Originating-IP: [10.100.1.52]
+X-ClientProxiedBy: jtjnmail201602.home.langchao.com (10.100.2.2) To
+ Jtjnmail201618.home.langchao.com (10.100.2.18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 12, 2019 at 12:21 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 8/11/19 7:53 PM, John Wang wrote:
+> > Add the driver to monitor Inspur Power System power supplies
+> > with hwmon over pmbus.
+> >
+> > This driver adds sysfs attributes for additional power supply data,
+> > including vendor, model, part_number, serial number,
+> > firmware revision, hardware revision, and psu mode(active/standby).
+> >
+> > Signed-off-by: John Wang <wangzqbj@inspur.com>
+> > ---
+> > v3:
+> >      - Sort kconfig/makefile entries alphabetically
+> >      - Remove unnecessary initialization
+> >      - Use ATTRIBUTE_GROUPS instead of expanding directly
+> >      - Use memscan to avoid reimplementation
+> > v2:
+> >      - Fix typos in commit message
+> >      - Invert Christmas tree
+> >      - Configure device with sysfs attrs, not debugfs entries
+> >      - Fix errno in fw_version_read, ENODATA to EPROTO
+> >      - Change the print format of fw-version
+> >      - Use sysfs_streq instead of strcmp("xxx" "\n", "xxx")
+> >      - Document sysfs attributes
+> > ---
+> >   Documentation/hwmon/inspur-ipsps1.rst |  79 +++++++++
+> >   drivers/hwmon/pmbus/Kconfig           |   9 +
+> >   drivers/hwmon/pmbus/Makefile          |  41 ++---
+> >   drivers/hwmon/pmbus/inspur-ipsps.c    | 226 ++++++++++++++++++++++++++
+> >   4 files changed, 335 insertions(+), 20 deletions(-)
+> >   create mode 100644 Documentation/hwmon/inspur-ipsps1.rst
+> >   create mode 100644 drivers/hwmon/pmbus/inspur-ipsps.c
+> >
+> > diff --git a/Documentation/hwmon/inspur-ipsps1.rst b/Documentation/hwmon/inspur-ipsps1.rst
+> > new file mode 100644
+> > index 000000000000..aa19f0ccc8b0
+> > --- /dev/null
+> > +++ b/Documentation/hwmon/inspur-ipsps1.rst
+> > @@ -0,0 +1,79 @@
+> > +Kernel driver inspur-ipsps1
+> > +=======================
+> > +
+> > +Supported chips:
+> > +
+> > +  * Inspur Power System power supply unit
+> > +
+> > +Author: John Wang <wangzqbj@inspur.com>
+> > +
+> > +Description
+> > +-----------
+> > +
+> > +This driver supports Inspur Power System power supplies. This driver
+> > +is a client to the core PMBus driver.
+> > +
+> > +Usage Notes
+> > +-----------
+> > +
+> > +This driver does not auto-detect devices. You will have to instantiate the
+> > +devices explicitly. Please see Documentation/i2c/instantiating-devices for
+> > +details.
+> > +
+> > +Sysfs entries
+> > +-------------
+> > +
+> > +The following attributes are supported:
+> > +
+> > +======================= ======================================================
+> > +curr1_input             Measured input current
+> > +curr1_label             "iin"
+> > +curr1_max               Maximum current
+> > +curr1_max_alarm         Current high alarm
+> > +curr2_input          Measured output current in mA.
+> > +curr2_label          "iout1"
+> > +curr2_crit              Critical maximum current
+> > +curr2_crit_alarm        Current critical high alarm
+> > +curr2_max               Maximum current
+> > +curr2_max_alarm         Current high alarm
+> > +
+> > +fan1_alarm           Fan 1 warning.
+> > +fan1_fault           Fan 1 fault.
+> > +fan1_input           Fan 1 speed in RPM.
+> > +
+> > +in1_alarm            Input voltage under-voltage alarm.
+> > +in1_input            Measured input voltage in mV.
+> > +in1_label            "vin"
+> > +in2_input            Measured output voltage in mV.
+> > +in2_label            "vout1"
+> > +in2_lcrit               Critical minimum output voltage
+> > +in2_lcrit_alarm         Output voltage critical low alarm
+> > +in2_max                 Maximum output voltage
+> > +in2_max_alarm           Output voltage high alarm
+> > +in2_min                 Minimum output voltage
+> > +in2_min_alarm           Output voltage low alarm
+> > +
+> > +power1_alarm         Input fault or alarm.
+> > +power1_input         Measured input power in uW.
+> > +power1_label         "pin"
+> > +power1_max              Input power limit
+> > +power2_max_alarm     Output power high alarm
+> > +power2_max              Output power limit
+> > +power2_input         Measured output power in uW.
+> > +power2_label         "pout"
+> > +
+> > +temp[1-3]_input              Measured temperature
+> > +temp[1-2]_max                Maximum temperature
+> > +temp[1-3]_max_alarm  Temperature high alarm
+> > +
+> > +vendor                  Manufacturer name
+> > +model                   Product model
+> > +part_number             Product part number
+> > +serial_number           Product serial number
+> > +fw_version              Firmware version
+> > +hw_version              Hardware version
+> > +mode                    Work mode. Can be set to active or
+> > +                        standby, when set to standby, PSU will
+> > +                        automatically switch between standby
+> > +                        and redundancy mode.
+> > +======================= ======================================================
+> > diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+> > index 30751eb9550a..2370fce6e816 100644
+> > --- a/drivers/hwmon/pmbus/Kconfig
+> > +++ b/drivers/hwmon/pmbus/Kconfig
+> > @@ -46,6 +46,15 @@ config SENSORS_IBM_CFFPS
+> >         This driver can also be built as a module. If so, the module will
+> >         be called ibm-cffps.
+> >
+> > +config SENSORS_INSPUR_IPSPS
+> > +     tristate "INSPUR Power System Power Supply"
+> > +     help
+> > +       If you say yes here you get hardware monitoring support for the INSPUR
+> > +       Power System power supply.
+> > +
+> > +       This driver can also be built as a module. If so, the module will
+> > +       be called inspur-ipsps.
+> > +
+> >   config SENSORS_IR35221
+> >       tristate "Infineon IR35221"
+> >       help
+> > diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+> > index 2219b9300316..c4f82f65f2ad 100644
+> > --- a/drivers/hwmon/pmbus/Makefile
+> > +++ b/drivers/hwmon/pmbus/Makefile
+> > @@ -3,23 +3,24 @@
+> >   # Makefile for PMBus chip drivers.
+> >   #
+> >
+> > -obj-$(CONFIG_PMBUS)          += pmbus_core.o
+> > -obj-$(CONFIG_SENSORS_PMBUS)  += pmbus.o
+> > -obj-$(CONFIG_SENSORS_ADM1275)        += adm1275.o
+> > -obj-$(CONFIG_SENSORS_IBM_CFFPS)      += ibm-cffps.o
+> > -obj-$(CONFIG_SENSORS_IR35221)        += ir35221.o
+> > -obj-$(CONFIG_SENSORS_IR38064)        += ir38064.o
+> > -obj-$(CONFIG_SENSORS_ISL68137)       += isl68137.o
+> > -obj-$(CONFIG_SENSORS_LM25066)        += lm25066.o
+> > -obj-$(CONFIG_SENSORS_LTC2978)        += ltc2978.o
+> > -obj-$(CONFIG_SENSORS_LTC3815)        += ltc3815.o
+> > -obj-$(CONFIG_SENSORS_MAX16064)       += max16064.o
+> > -obj-$(CONFIG_SENSORS_MAX20751)       += max20751.o
+> > -obj-$(CONFIG_SENSORS_MAX31785)       += max31785.o
+> > -obj-$(CONFIG_SENSORS_MAX34440)       += max34440.o
+> > -obj-$(CONFIG_SENSORS_MAX8688)        += max8688.o
+> > -obj-$(CONFIG_SENSORS_TPS40422)       += tps40422.o
+> > -obj-$(CONFIG_SENSORS_TPS53679)       += tps53679.o
+> > -obj-$(CONFIG_SENSORS_UCD9000)        += ucd9000.o
+> > -obj-$(CONFIG_SENSORS_UCD9200)        += ucd9200.o
+> > -obj-$(CONFIG_SENSORS_ZL6100) += zl6100.o
+> > +obj-$(CONFIG_PMBUS)                  += pmbus_core.o
+> > +obj-$(CONFIG_SENSORS_PMBUS)          += pmbus.o
+> > +obj-$(CONFIG_SENSORS_ADM1275)                += adm1275.o
+> > +obj-$(CONFIG_SENSORS_IBM_CFFPS)              += ibm-cffps.o
+> > +obj-$(CONFIG_SENSORS_INSPUR_IPSPS)   += inspur-ipsps.o
+> > +obj-$(CONFIG_SENSORS_IR35221)                += ir35221.o
+> > +obj-$(CONFIG_SENSORS_IR38064)                += ir38064.o
+> > +obj-$(CONFIG_SENSORS_ISL68137)               += isl68137.o
+> > +obj-$(CONFIG_SENSORS_LM25066)                += lm25066.o
+> > +obj-$(CONFIG_SENSORS_LTC2978)                += ltc2978.o
+> > +obj-$(CONFIG_SENSORS_LTC3815)                += ltc3815.o
+> > +obj-$(CONFIG_SENSORS_MAX16064)               += max16064.o
+> > +obj-$(CONFIG_SENSORS_MAX20751)               += max20751.o
+> > +obj-$(CONFIG_SENSORS_MAX31785)               += max31785.o
+> > +obj-$(CONFIG_SENSORS_MAX34440)               += max34440.o
+> > +obj-$(CONFIG_SENSORS_MAX8688)                += max8688.o
+> > +obj-$(CONFIG_SENSORS_TPS40422)               += tps40422.o
+> > +obj-$(CONFIG_SENSORS_TPS53679)               += tps53679.o
+> > +obj-$(CONFIG_SENSORS_UCD9000)                += ucd9000.o
+> > +obj-$(CONFIG_SENSORS_UCD9200)                += ucd9200.o
+> > +obj-$(CONFIG_SENSORS_ZL6100)         += zl6100.o
+>
+> Are you serious ? I am not going to accept this.
 
+Sorry for this commit.
 
-On 2019/8/10 4:05, Heiner Kallweit wrote:
-> On 09.08.2019 06:57, Yonglong Liu wrote:
->>
->>
->> On 2019/8/9 4:34, Andrew Lunn wrote:
->>> On Thu, Aug 08, 2019 at 10:01:39PM +0200, Heiner Kallweit wrote:
->>>> On 08.08.2019 21:40, Andrew Lunn wrote:
->>>>>> @@ -568,6 +568,11 @@ int phy_start_aneg(struct phy_device *phydev)
->>>>>>  	if (err < 0)
->>>>>>  		goto out_unlock;
->>>>>>  
->>>>>> +	/* The PHY may not yet have cleared aneg-completed and link-up bit
->>>>>> +	 * w/o this delay when the following read is done.
->>>>>> +	 */
->>>>>> +	usleep_range(1000, 2000);
->>>>>> +
->>>>>
->>>>> Hi Heiner
->>>>>
->>>>> Does 802.3 C22 say anything about this?
->>>>>
->>>> C22 says:
->>>> "The Auto-Negotiation process shall be restarted by setting bit 0.9 to a logic one. This bit is self-
->>>> clearing, and a PHY shall return a value of one in bit 0.9 until the Auto-Negotiation process has been
->>>> initiated."
->>>>
->>>> Maybe we should read bit 0.9 in genphy_update_link() after having read BMSR and report
->>>> aneg-complete and link-up as false (no matter of their current value) if 0.9 is set.
->>>
->>> Yes. That sounds sensible.
->>>
->>>      Andrew
->>>
->>> .
->>>
->>
->> Hi Heiner:
->> 	I have test more than 50 times, it works. Previously less
->> than 20 times must be recurrence. so I think this patch solved the
->> problem.
->> 	And I checked about 40 times of the time gap between read
->> and autoneg started, all of them is more than 2ms, as below:
->>
->>   kworker/u257:1-670   [015] ....    27.182632: mdio_access: mii-0000:bd:00.3 write phy:0x07 reg:0x00 val:0x1240
->>   kworker/u257:1-670   [015] ....    27.184670: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x7989
->>
->>
-> 
-> Instead of using this fixed delay, the following experimental patch
-> considers that fact that between triggering aneg start and actual
-> start of aneg (incl. clearing aneg-complete bit) Clause 22 requires
-> a PHY to keep bit 0.9 (aneg restart) set.
-> Could you please test this instead of the fixed-delay patch?
-> 
-> Thanks, Heiner
-> 
-> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> index b039632de..163295dbc 100644
-> --- a/drivers/net/phy/phy_device.c
-> +++ b/drivers/net/phy/phy_device.c
-> @@ -1741,7 +1741,17 @@ EXPORT_SYMBOL(genphy_aneg_done);
->   */
->  int genphy_update_link(struct phy_device *phydev)
->  {
-> -	int status;
-> +	int status = 0, bmcr;
-> +
-> +	bmcr = phy_read(phydev, MII_BMCR);
-> +	if (bmcr < 0)
-> +		return bmcr;
-> +
-> +	/* Autoneg is being started, therefore disregard BMSR value and
-> +	 * report link as down.
-> +	 */
-> +	if (bmcr & BMCR_ANRESTART)
-> +		goto done;
->  
->  	/* The link state is latched low so that momentary link
->  	 * drops can be detected. Do not double-read the status
-> 
+I just want to add SENSORS_INSPUR_IPSPS to the makefile in
+alphabetical order. But this will make the makefile look less tidy, so
+I added a tab to adjust.
 
-Hi Heiner:
-	Have test 50+ times, this patch can solved the problem too!
+So I should
 
-	Share the mdio trace after executing ifconfig ethx up:
-# tracer: nop
-#
-# entries-in-buffer/entries-written: 60/60   #P:128
-#
-#                              _-----=> irqs-off
-#                             / _----=> need-resched
-#                            | / _---=> hardirq/softirq
-#                            || / _--=> preempt-depth
-#                            ||| /     delay
-#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
-#              | |       |   ||||       |         |
-        ifconfig-1174  [005] ....    27.026691: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:1-670   [020] ....    27.026734: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x04 val:0x01e1
-  kworker/u257:1-670   [020] ....    27.026744: mdio_access: mii-0000:bd:00.3 write phy:0x07 reg:0x04 val:0x05e1
-  kworker/u257:1-670   [020] ....    27.026799: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79ad
-  kworker/u257:1-670   [020] ....    27.026834: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x09 val:0x0200
-  kworker/u257:1-670   [020] ....    27.026869: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:1-670   [020] ....    27.026879: mdio_access: mii-0000:bd:00.3 write phy:0x07 reg:0x00 val:0x1240
-  kworker/u257:1-670   [020] ....    27.026932: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1240
-  kworker/u257:1-670   [020] ....    28.031770: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:1-670   [020] ....    28.031837: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x7989
-  kworker/u257:1-670   [020] ....    29.055837: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:1-670   [020] ....    29.055873: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x7989
-  kworker/u257:0-8     [004] ....    30.079840: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:0-8     [004] ....    30.079875: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x7989
-  kworker/u257:0-8     [004] ....    31.103771: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:0-8     [004] ....    31.103839: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79a9
-  kworker/u257:0-8     [004] ....    31.103906: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x0a val:0x7803
-  kworker/u257:0-8     [004] ....    31.103973: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x09 val:0x0200
-  kworker/u257:0-8     [004] ....    31.104041: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x05 val:0xc1e1
-  kworker/u257:0-8     [004] ....    32.127814: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:0-8     [004] ....    32.127881: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79ad
-  kworker/u257:0-8     [004] ....    32.127948: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x0a val:0x4800
-  kworker/u257:0-8     [004] ....    32.128015: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x09 val:0x0200
-  kworker/u257:0-8     [004] ....    32.128082: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x05 val:0xc1e1
-  kworker/u257:0-8     [004] ....    33.151775: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:0-8     [004] ....    33.151815: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79ad
-  kworker/u257:1-670   [021] ....    34.175771: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-  kworker/u257:1-670   [021] ....    34.175838: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x01 val:0x79ad
-        ifconfig-1177  [005] ....    35.052340: mdio_access: mii-0000:bd:00.3 read  phy:0x07 reg:0x00 val:0x1040
-        ifconfig-1177  [005] ....    35.052350: mdio_access: mii-0000:bd:00.3 write phy:0x07 reg:0x00 val:0x1840
+1. Add SENSOR_INSPUR_IPSPS to the end of the file
+2. Add SENSOR_INSPUR_IPSPS in alphabetical order, without additional tab
+3. other suggestions
 
+Please let me know which one is better?
+
+Thanks for your review.
+
+>
+> Guenter
+>
+> > diff --git a/drivers/hwmon/pmbus/inspur-ipsps.c b/drivers/hwmon/pmbus/inspur-ipsps.c
+> > new file mode 100644
+> > index 000000000000..fa981b881a60
+> > --- /dev/null
+> > +++ b/drivers/hwmon/pmbus/inspur-ipsps.c
+> > @@ -0,0 +1,226 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Copyright 2019 Inspur Corp.
+> > + */
+> > +
+> > +#include <linux/debugfs.h>
+> > +#include <linux/device.h>
+> > +#include <linux/fs.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pmbus.h>
+> > +#include <linux/hwmon-sysfs.h>
+> > +
+> > +#include "pmbus.h"
+> > +
+> > +#define IPSPS_REG_VENDOR_ID  0x99
+> > +#define IPSPS_REG_MODEL              0x9A
+> > +#define IPSPS_REG_FW_VERSION 0x9B
+> > +#define IPSPS_REG_PN         0x9C
+> > +#define IPSPS_REG_SN         0x9E
+> > +#define IPSPS_REG_HW_VERSION 0xB0
+> > +#define IPSPS_REG_MODE               0xFC
+> > +
+> > +#define MODE_ACTIVE          0x55
+> > +#define MODE_STANDBY         0x0E
+> > +#define MODE_REDUNDANCY              0x00
+> > +
+> > +#define MODE_ACTIVE_STRING           "active"
+> > +#define MODE_STANDBY_STRING          "standby"
+> > +#define MODE_REDUNDANCY_STRING               "redundancy"
+> > +
+> > +enum ipsps_index {
+> > +     vendor,
+> > +     model,
+> > +     fw_version,
+> > +     part_number,
+> > +     serial_number,
+> > +     hw_version,
+> > +     mode,
+> > +     num_regs,
+> > +};
+> > +
+> > +static const u8 ipsps_regs[num_regs] = {
+> > +     [vendor] = IPSPS_REG_VENDOR_ID,
+> > +     [model] = IPSPS_REG_MODEL,
+> > +     [fw_version] = IPSPS_REG_FW_VERSION,
+> > +     [part_number] = IPSPS_REG_PN,
+> > +     [serial_number] = IPSPS_REG_SN,
+> > +     [hw_version] = IPSPS_REG_HW_VERSION,
+> > +     [mode] = IPSPS_REG_MODE,
+> > +};
+> > +
+> > +static ssize_t ipsps_string_show(struct device *dev,
+> > +                              struct device_attribute *devattr,
+> > +                              char *buf)
+> > +{
+> > +     u8 reg;
+> > +     int rc;
+> > +     char *p;
+> > +     char data[I2C_SMBUS_BLOCK_MAX + 1];
+> > +     struct i2c_client *client = to_i2c_client(dev->parent);
+> > +     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+> > +
+> > +     reg = ipsps_regs[attr->index];
+> > +     rc = i2c_smbus_read_block_data(client, reg, data);
+> > +     if (rc < 0)
+> > +             return rc;
+> > +
+> > +     /* filled with printable characters, ending with # */
+> > +     p = memscan(data, '#', rc);
+> > +     *p = '\0';
+> > +
+> > +     return snprintf(buf, PAGE_SIZE, "%s\n", data);
+> > +}
+> > +
+> > +static ssize_t ipsps_fw_version_show(struct device *dev,
+> > +                                  struct device_attribute *devattr,
+> > +                                  char *buf)
+> > +{
+> > +     u8 reg;
+> > +     int rc;
+> > +     u8 data[I2C_SMBUS_BLOCK_MAX] = { 0 };
+> > +     struct i2c_client *client = to_i2c_client(dev->parent);
+> > +     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+> > +
+> > +     reg = ipsps_regs[attr->index];
+> > +     rc = i2c_smbus_read_block_data(client, reg, data);
+> > +     if (rc < 0)
+> > +             return rc;
+> > +
+> > +     if (rc != 6)
+> > +             return -EPROTO;
+> > +
+> > +     return snprintf(buf, PAGE_SIZE, "%u.%02u%u-%u.%02u\n",
+> > +                     data[1], data[2]/* < 100 */, data[3]/*< 10*/,
+> > +                     data[4], data[5]/* < 100 */);
+> > +}
+> > +
+> > +static ssize_t ipsps_mode_show(struct device *dev,
+> > +                            struct device_attribute *devattr, char *buf)
+> > +{
+> > +     u8 reg;
+> > +     int rc;
+> > +     struct i2c_client *client = to_i2c_client(dev->parent);
+> > +     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+> > +
+> > +     reg = ipsps_regs[attr->index];
+> > +     rc = i2c_smbus_read_byte_data(client, reg);
+> > +     if (rc < 0)
+> > +             return rc;
+> > +
+> > +     switch (rc) {
+> > +     case MODE_ACTIVE:
+> > +             return snprintf(buf, PAGE_SIZE, "[%s] %s %s\n",
+> > +                             MODE_ACTIVE_STRING,
+> > +                             MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
+> > +     case MODE_STANDBY:
+> > +             return snprintf(buf, PAGE_SIZE, "%s [%s] %s\n",
+> > +                             MODE_ACTIVE_STRING,
+> > +                             MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
+> > +     case MODE_REDUNDANCY:
+> > +             return snprintf(buf, PAGE_SIZE, "%s %s [%s]\n",
+> > +                             MODE_ACTIVE_STRING,
+> > +                             MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
+> > +     default:
+> > +             return snprintf(buf, PAGE_SIZE, "unspecified\n");
+> > +     }
+> > +}
+> > +
+> > +static ssize_t ipsps_mode_store(struct device *dev,
+> > +                             struct device_attribute *devattr,
+> > +                             const char *buf, size_t count)
+> > +{
+> > +     u8 reg;
+> > +     int rc;
+> > +     struct i2c_client *client = to_i2c_client(dev->parent);
+> > +     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+> > +
+> > +     reg = ipsps_regs[attr->index];
+> > +     if (sysfs_streq(MODE_STANDBY_STRING, buf)) {
+> > +             rc = i2c_smbus_write_byte_data(client, reg,
+> > +                                            MODE_STANDBY);
+> > +             if (rc < 0)
+> > +                     return rc;
+> > +             return count;
+> > +     } else if (sysfs_streq(MODE_ACTIVE_STRING, buf)) {
+> > +             rc = i2c_smbus_write_byte_data(client, reg,
+> > +                                            MODE_ACTIVE);
+> > +             if (rc < 0)
+> > +                     return rc;
+> > +             return count;
+> > +     }
+> > +
+> > +     return -EINVAL;
+> > +}
+> > +
+> > +static SENSOR_DEVICE_ATTR_RO(vendor, ipsps_string, vendor);
+> > +static SENSOR_DEVICE_ATTR_RO(model, ipsps_string, model);
+> > +static SENSOR_DEVICE_ATTR_RO(part_number, ipsps_string, part_number);
+> > +static SENSOR_DEVICE_ATTR_RO(serial_number, ipsps_string, serial_number);
+> > +static SENSOR_DEVICE_ATTR_RO(hw_version, ipsps_string, hw_version);
+> > +static SENSOR_DEVICE_ATTR_RO(fw_version, ipsps_fw_version, fw_version);
+> > +static SENSOR_DEVICE_ATTR_RW(mode, ipsps_mode, mode);
+> > +
+> > +static struct attribute *ipsps_attrs[] = {
+> > +     &sensor_dev_attr_vendor.dev_attr.attr,
+> > +     &sensor_dev_attr_model.dev_attr.attr,
+> > +     &sensor_dev_attr_part_number.dev_attr.attr,
+> > +     &sensor_dev_attr_serial_number.dev_attr.attr,
+> > +     &sensor_dev_attr_hw_version.dev_attr.attr,
+> > +     &sensor_dev_attr_fw_version.dev_attr.attr,
+> > +     &sensor_dev_attr_mode.dev_attr.attr,
+> > +     NULL,
+> > +};
+> > +
+> > +ATTRIBUTE_GROUPS(ipsps);
+> > +
+> > +static struct pmbus_driver_info ipsps_info = {
+> > +     .pages = 1,
+> > +     .func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
+> > +             PMBUS_HAVE_IIN | PMBUS_HAVE_POUT | PMBUS_HAVE_PIN |
+> > +             PMBUS_HAVE_FAN12 | PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 |
+> > +             PMBUS_HAVE_TEMP3 | PMBUS_HAVE_STATUS_VOUT |
+> > +             PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT |
+> > +             PMBUS_HAVE_STATUS_TEMP | PMBUS_HAVE_STATUS_FAN12,
+> > +     .groups = ipsps_groups,
+> > +};
+> > +
+> > +static struct pmbus_platform_data ipsps_pdata = {
+> > +     .flags = PMBUS_SKIP_STATUS_CHECK,
+> > +};
+> > +
+> > +static int ipsps_probe(struct i2c_client *client,
+> > +                    const struct i2c_device_id *id)
+> > +{
+> > +     client->dev.platform_data = &ipsps_pdata;
+> > +     return pmbus_do_probe(client, id, &ipsps_info);
+> > +}
+> > +
+> > +static const struct i2c_device_id ipsps_id[] = {
+> > +     { "inspur_ipsps1", 0 },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, ipsps_id);
+> > +
+> > +static const struct of_device_id ipsps_of_match[] = {
+> > +     { .compatible = "inspur,ipsps1" },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(of, ipsps_of_match);
+> > +
+> > +static struct i2c_driver ipsps_driver = {
+> > +     .driver = {
+> > +             .name = "inspur-ipsps",
+> > +             .of_match_table = ipsps_of_match,
+> > +     },
+> > +     .probe = ipsps_probe,
+> > +     .remove = pmbus_do_remove,
+> > +     .id_table = ipsps_id,
+> > +};
+> > +
+> > +module_i2c_driver(ipsps_driver);
+> > +
+> > +MODULE_AUTHOR("John Wang");
+> > +MODULE_DESCRIPTION("PMBus driver for Inspur Power System power supplies");
+> > +MODULE_LICENSE("GPL");
+> >
+>
