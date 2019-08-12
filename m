@@ -2,42 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D677889CF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 13:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB5A489CF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 13:29:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbfHLL26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 07:28:58 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:18419 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727936AbfHLL24 (ORCPT
+        id S1728541AbfHLL3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 07:29:04 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17358 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727936AbfHLL3A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 07:28:56 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d514d820001>; Mon, 12 Aug 2019 04:29:06 -0700
+        Mon, 12 Aug 2019 07:29:00 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d514d7e0000>; Mon, 12 Aug 2019 04:29:02 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 12 Aug 2019 04:28:55 -0700
+  Mon, 12 Aug 2019 04:28:59 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 12 Aug 2019 04:28:55 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 12 Aug
- 2019 11:28:55 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 12 Aug 2019 11:28:55 +0000
+        by hqpgpgate101.nvidia.com on Mon, 12 Aug 2019 04:28:59 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 12 Aug
+ 2019 11:28:59 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 12 Aug
+ 2019 11:28:59 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 12 Aug 2019 11:28:59 +0000
 Received: from kyarlagadda-linux.nvidia.com (Not Verified[10.19.64.169]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d514d730001>; Mon, 12 Aug 2019 04:28:54 -0700
+        id <B5d514d770000>; Mon, 12 Aug 2019 04:28:58 -0700
 From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
 To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <jslaby@suse.com>
 CC:     <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Shardar Shariff Md <smohammed@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Subject: [PATCH 05/14] serial: tegra: flush the RX fifo on frame error
-Date:   Mon, 12 Aug 2019 16:58:14 +0530
-Message-ID: <1565609303-27000-6-git-send-email-kyarlagadda@nvidia.com>
+        "Krishna Yarlagadda" <kyarlagadda@nvidia.com>,
+        Shardar Shariff Md <smohammed@nvidia.com>
+Subject: [PATCH 06/14] serial: tegra: report error to upper tty layer
+Date:   Mon, 12 Aug 2019 16:58:15 +0530
+Message-ID: <1565609303-27000-7-git-send-email-kyarlagadda@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565609303-27000-1-git-send-email-kyarlagadda@nvidia.com>
 References: <1565609303-27000-1-git-send-email-kyarlagadda@nvidia.com>
@@ -45,67 +48,78 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565609346; bh=nCCKGiv628BbZmkkEihGSfqyEdAMaQQZVH2IpiR4RW8=;
+        t=1565609342; bh=lg7+2FM3LWtjdJ00yRSfWkWg11JYeWHpFHZ5bmji6R8=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=g1CNGvFzz0+Ne84kxC1sq4a8FVG5Q5msyTbcdeBR05j4FQxlssNV+vF4j8lsS5kLB
-         TJlLxpg4KyRUyAxLOQCphdhCg1P9LdnaXNFOdPPWODIxFQK2uIusuiTzE8saA5WIYK
-         8kvZnGOa0jDfjS63KWHHMT6QKSm19+jeZDFmfFXoTSudZdYKUIyxSY/6KD9K5JYQw+
-         5FgF+bzO3RAy3yUNcH5wPkFg6iQ++1fjLXW6Aji9ITUGya44G8b4RI6FKaZ2RskKOO
-         JnvIZmLjuF7yOIluH3iOgEf6qaOp498PsouUy68D1gM1yIQB6mFSvRE9jXwrwNP/qM
-         wxG9atHJH3gRA==
+        b=jVCm+sgaK0YWRNK/meHcf2zRZyRaDgzt61Kjp4RORDCO0dJ7jkEvcqitZHjc6besD
+         fP9cAbp6FqSip9JeguyKRbjPucIzfGkujdF4WR5W5fM6MMwX6rW/+3DPA4MwyRGmKI
+         gTPx/ptB9k2q7E5Zer7nAvmlaBN4Av0pe+DE30TRjEDnNUwQLFL7J73KTBvsJEYv7p
+         YvqnxPLne134/2bam0DNwMT93mtCMyfXNEMTA7rlSoC0inRfeVrUTGet53BOuxnEeM
+         2eJ9PeHs6vLbbI3+0n0hrRDV4/oQDOuXeyP7oB85YYhwyX+xVBz8GsG9n48tMV2R5z
+         OpYtR2ZcoC76A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shardar Shariff Md <smohammed@nvidia.com>
-
-FIFO reset/flush code implemented now does not follow programming
-guidelines. RTS line has to be turned off while flushing fifos to
-avoid new transfers. Also check LSR bits UART_LSR_TEMT and UART_LSR_DR
-to confirm fifos are flushed.
+Report overrun/parity/frame/break errors to top tty layer. Add support
+to ignore break character if IGNBRK is set.
 
 Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
 Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 ---
- drivers/tty/serial/serial-tegra.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/tty/serial/serial-tegra.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index ae7225c..f6a3f4e 100644
+index f6a3f4e..7ab81bb 100644
 --- a/drivers/tty/serial/serial-tegra.c
 +++ b/drivers/tty/serial/serial-tegra.c
-@@ -266,6 +266,10 @@ static void tegra_uart_wait_sym_time(struct tegra_uart_port *tup,
- static void tegra_uart_fifo_reset(struct tegra_uart_port *tup, u8 fcr_bits)
- {
- 	unsigned long fcr = tup->fcr_shadow;
-+	unsigned int lsr, tmout = 10000;
+@@ -374,13 +374,21 @@ static char tegra_uart_decode_rx_error(struct tegra_uart_port *tup,
+ 			tup->uport.icount.frame++;
+ 			dev_err(tup->uport.dev, "Got frame errors\n");
+ 		} else if (lsr & UART_LSR_BI) {
+-			dev_err(tup->uport.dev, "Got Break\n");
+-			tup->uport.icount.brk++;
+-			/* If FIFO read error without any data, reset Rx FIFO */
++			/*
++			 * Break error
++			 * If FIFO read error without any data, reset Rx FIFO
++			 */
+ 			if (!(lsr & UART_LSR_DR) && (lsr & UART_LSR_FIFOE))
+ 				tegra_uart_fifo_reset(tup, UART_FCR_CLEAR_RCVR);
++			if (tup->uport.ignore_status_mask & UART_LSR_BI)
++				return TTY_BREAK;
++			flag = TTY_BREAK;
++			tup->uport.icount.brk++;
++			dev_err(tup->uport.dev, "Got Break\n");
+ 		}
++		uart_insert_char(&tup->uport, lsr, UART_LSR_OE, 0, flag);
+ 	}
 +
-+	if (tup->rts_active)
-+		set_rts(tup, false);
- 
- 	if (tup->cdata->allow_txfifo_reset_fifo_mode) {
- 		fcr |= fcr_bits & (UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT);
-@@ -289,6 +293,17 @@ static void tegra_uart_fifo_reset(struct tegra_uart_port *tup, u8 fcr_bits)
- 	 * to propagate, otherwise data could be lost.
- 	 */
- 	tegra_uart_wait_cycle_time(tup, 32);
-+
-+	do {
-+		lsr = tegra_uart_read(tup, UART_LSR);
-+		if (lsr | UART_LSR_TEMT)
-+			if (!(lsr & UART_LSR_DR))
-+				break;
-+		udelay(1);
-+	} while (--tmout);
-+
-+	if (tup->rts_active)
-+		set_rts(tup, true);
+ 	return flag;
  }
  
- static int tegra_set_baudrate(struct tegra_uart_port *tup, unsigned int baud)
+@@ -562,6 +570,9 @@ static void tegra_uart_handle_rx_pio(struct tegra_uart_port *tup,
+ 			break;
+ 
+ 		flag = tegra_uart_decode_rx_error(tup, lsr);
++		if (flag != TTY_NORMAL)
++			continue;
++
+ 		ch = (unsigned char) tegra_uart_read(tup, UART_RX);
+ 		tup->uport.icount.rx++;
+ 
+@@ -1224,6 +1235,8 @@ static void tegra_uart_set_termios(struct uart_port *u,
+ 	/* Ignore all characters if CREAD is not set */
+ 	if ((termios->c_cflag & CREAD) == 0)
+ 		tup->uport.ignore_status_mask |= UART_LSR_DR;
++	if (termios->c_iflag & IGNBRK)
++		tup->uport.ignore_status_mask |= UART_LSR_BI;
+ 
+ 	spin_unlock_irqrestore(&u->lock, flags);
+ }
 -- 
 2.7.4
 
