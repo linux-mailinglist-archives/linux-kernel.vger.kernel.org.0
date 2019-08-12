@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAAA8A84B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C1EE8A855
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:27:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfHLUW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 16:22:57 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33819 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfHLUW5 (ORCPT
+        id S1727516AbfHLU1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 16:27:12 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45419 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbfHLU1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:22:57 -0400
-Received: by mail-qk1-f193.google.com with SMTP id m10so2794857qkk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 13:22:56 -0700 (PDT)
+        Mon, 12 Aug 2019 16:27:11 -0400
+Received: by mail-qk1-f196.google.com with SMTP id m2so4146949qki.12
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 13:27:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=x36Zdhrbd36jlNpMgEK+It3M4pd2ku8s6wizrey81eQ=;
-        b=ml/MGLzQ5saV9X1B44nl9UwnQZ9ePQjJ8hTKCvSAhp7c6bcvdAh4OZe95ApTh9vegf
-         7U0AP+JImas6NgvsFmb6eC9h0TGpUAsYpfb8e2mRNXJljiCH2SWbb/LcjVadT/cMwmGK
-         BW6iDS4c1Svm/aK4Tvl1sG5vHQloq3RuJJyVTlFZBDE+NkxNNbGBElrinkOXRp4TqABb
-         vUtgb14z9/9t/d39khykbMvzJNav11a4+QLlZsesEtYbCyowq5jpfqHcR+MysIDMeSOO
-         WmI9ass4AE8MEdKxp06RwJ5GbBjPBIn0PKyaI13Nc27NInqRoVosQ1aROr7YbO5b6F/k
-         xiKA==
+        bh=9zeU09HvL8h4sQQ/WE4AQZf/AMEHoTVJyw4VstGuzg0=;
+        b=bbz8xNwSmE0ajseU9lAnpKEuAIcEunhMu4RccUlNeUCFdhCL9MFdQ/KaQFJ/9JP+Ef
+         K49I5xb4koGhAod6mCKlHr4At6WEmrK1SZkSzJQndo85oyyDkBr0+KtAQUBR8HJYpcST
+         JTv5eI4q8DNxOZTus2sj4XKqXAsRKagTdM0I/HcLNGRzaMeoB/1C0qpNwsbtqyAfSuvD
+         mI0ln3TjFFG9sR8nn3/x673FV5RdNdFhGXDS82l4+eIBeECJtK50cqMmHAOIDOwlHzTQ
+         FScL9xCuWs4QJHn+R3El0eqm2cejEYwIL5fwxXdZ00zCmJlIevsbFysi6MOFL965x6wd
+         POQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x36Zdhrbd36jlNpMgEK+It3M4pd2ku8s6wizrey81eQ=;
-        b=T7n/GCtDB+ojloufRJZTKQnSkxke75d0o4JNCWinXR7tvyu5P0lTM4Mf/3msxQmvqm
-         P5UeD5FKfZ68IhzgkLqknkSB1GySr3IqFHXpZqZWtamSLCyrPyOIyrSJAcXZwqAjMQWM
-         7xatdzJjlr+NV2IaoqNcxGl9Nllk7vxQ1sFXTNX+H+XWlsSMaf+5ZFIdlgjrhO6Z4Z5N
-         KKXffn8bwEqdpLGRf79x9z06eOZrrgFVejgwV2s5XhBSFkv3qLaBdvZ9R9wF2qDlqWwk
-         rGJf5Ut9iJUYjjJaB24710H6pATJefCp1TxM8nlH/zKow92ieEWMSLuOVFQQd/4ZOtZd
-         2kBw==
-X-Gm-Message-State: APjAAAXikv0OIvo8QJwRHLlSo+tZ56U5C/ikd99IDFeiXwdAEYhdHzyl
-        +7IXq9BKS+sg9wobBDw3L3g=
-X-Google-Smtp-Source: APXvYqzgbzL5Mm5f07CLUKO1VvXHfZiq1D0qFMkqcfETjVjkbGxvLhwlN5nG0T0ITiIdLeWHJugQKw==
-X-Received: by 2002:ae9:d606:: with SMTP id r6mr30567211qkk.364.1565641375989;
-        Mon, 12 Aug 2019 13:22:55 -0700 (PDT)
+        bh=9zeU09HvL8h4sQQ/WE4AQZf/AMEHoTVJyw4VstGuzg0=;
+        b=I7J3xJemrtrKSat+3XV6KOv9fr87YzV+ii8hx7SYwlGwLFJpb5d9A5kUvEKyyhwf0m
+         EeND1ZtRvkGEC34hOnuzKZbXyz5MUJ3Lnu2I5KPMwBpcJJq4NfSZ3cSOn8hFrb3hPNie
+         Ho/NpttAI5rMJtX7lO/GCIJjT4HcKHvuFIv2yAHu+/MMx0/mJI54e9jxq4U404HNsjwY
+         mObsJ0B0oHTdIHwHsZvrXEQAlp31qfi68JNKskTitNnzx9U8j4rWLUgG6/9VUzHeamOf
+         hC7ArDK9JPgsMy+XIUPTYBXIy/xulter99aq6tGkTd4Vyd7EFjpWR5B80zA6QHmRHTOq
+         vC5Q==
+X-Gm-Message-State: APjAAAVSV6uDrmqyjR+RlH2S0Lr52mafy6srjL9God4WN854QIY9+Mio
+        qY4FdhSUOdWLjw1R98tgJtQ=
+X-Google-Smtp-Source: APXvYqxtGY6lLemTlys1bRmIOk/IUxz9wbXRq/fv3QDB1ZrLtFk/1sLAFxqz6JTiOmiRoJgeGESzeQ==
+X-Received: by 2002:a37:d245:: with SMTP id f66mr30971706qkj.59.1565641630935;
+        Mon, 12 Aug 2019 13:27:10 -0700 (PDT)
 Received: from quaco.ghostprotocols.net (187-26-98-68.3g.claro.net.br. [187.26.98.68])
-        by smtp.gmail.com with ESMTPSA id p32sm54442466qtb.67.2019.08.12.13.22.53
+        by smtp.gmail.com with ESMTPSA id t5sm2359942qkt.93.2019.08.12.13.27.09
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 13:22:54 -0700 (PDT)
+        Mon, 12 Aug 2019 13:27:10 -0700 (PDT)
 From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
 X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
 Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 3F25040340; Mon, 12 Aug 2019 17:22:51 -0300 (-03)
-Date:   Mon, 12 Aug 2019 17:22:51 -0300
+        id 70EC640340; Mon, 12 Aug 2019 17:27:06 -0300 (-03)
+Date:   Mon, 12 Aug 2019 17:27:06 -0300
 To:     Igor Lubashev <ilubashe@akamai.com>
 Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
@@ -63,13 +63,14 @@ Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
         James Morris <jmorris@namei.org>
 Subject: Re: [PATCH v3 4/4] perf: Use CAP_SYS_ADMIN instead of euid==0 with
  ftrace
-Message-ID: <20190812202251.GG9280@kernel.org>
+Message-ID: <20190812202706.GH9280@kernel.org>
 References: <cover.1565188228.git.ilubashe@akamai.com>
  <bd8763b72ed4d58d0b42d44fbc7eb474d32e53a3.1565188228.git.ilubashe@akamai.com>
+ <20190812202251.GG9280@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bd8763b72ed4d58d0b42d44fbc7eb474d32e53a3.1565188228.git.ilubashe@akamai.com>
+In-Reply-To: <20190812202251.GG9280@kernel.org>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,50 +78,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Aug 07, 2019 at 10:44:17AM -0400, Igor Lubashev escreveu:
-> Kernel requires CAP_SYS_ADMIN instead of euid==0 to mount debugfs for ftrace.
-> Make perf do the same.
+Em Mon, Aug 12, 2019 at 05:22:51PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, Aug 07, 2019 at 10:44:17AM -0400, Igor Lubashev escreveu:
+> > Kernel requires CAP_SYS_ADMIN instead of euid==0 to mount debugfs for ftrace.
+> > Make perf do the same.
+> > 
+> > Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
+> > ---
+> >  tools/perf/builtin-ftrace.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> > index ae1466aa3b26..d09eac8a6d57 100644
+> > --- a/tools/perf/builtin-ftrace.c
+> > +++ b/tools/perf/builtin-ftrace.c
+> > @@ -13,6 +13,7 @@
+> >  #include <signal.h>
+> >  #include <fcntl.h>
+> >  #include <poll.h>
+> > +#include <linux/capability.h>
+> >  
+> >  #include "debug.h"
+> >  #include <subcmd/parse-options.h>
+> > @@ -21,6 +22,7 @@
+> >  #include "target.h"
+> >  #include "cpumap.h"
+> >  #include "thread_map.h"
+> > +#include "util/cap.h"
+> >  #include "util/config.h"
+> >  
+> >  
+> > @@ -281,7 +283,7 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
+> >  		.events = POLLIN,
+> >  	};
+> >  
+> > -	if (geteuid() != 0) {
+> > +	if (!perf_cap__capable(CAP_SYS_ADMIN)) {
+> >  		pr_err("ftrace only works for root!\n");
 > 
-> Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
-> ---
->  tools/perf/builtin-ftrace.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> I guess we should update the error message too? 
 > 
-> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> index ae1466aa3b26..d09eac8a6d57 100644
-> --- a/tools/perf/builtin-ftrace.c
-> +++ b/tools/perf/builtin-ftrace.c
-> @@ -13,6 +13,7 @@
->  #include <signal.h>
->  #include <fcntl.h>
->  #include <poll.h>
-> +#include <linux/capability.h>
->  
->  #include "debug.h"
->  #include <subcmd/parse-options.h>
-> @@ -21,6 +22,7 @@
->  #include "target.h"
->  #include "cpumap.h"
->  #include "thread_map.h"
-> +#include "util/cap.h"
->  #include "util/config.h"
->  
->  
-> @@ -281,7 +283,7 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
->  		.events = POLLIN,
->  	};
->  
-> -	if (geteuid() != 0) {
-> +	if (!perf_cap__capable(CAP_SYS_ADMIN)) {
->  		pr_err("ftrace only works for root!\n");
 
-I guess we should update the error message too? 
+I.e. I applied this as a follow up patch:
 
->  		return -1;
->  	}
-> -- 
-> 2.7.4
-
--- 
-
-- Arnaldo
+diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+index 01a5bb58eb04..ba8b65c2f9dc 100644
+--- a/tools/perf/builtin-ftrace.c
++++ b/tools/perf/builtin-ftrace.c
+@@ -284,7 +284,12 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
+ 	};
+ 
+ 	if (!perf_cap__capable(CAP_SYS_ADMIN)) {
+-		pr_err("ftrace only works for root!\n");
++		pr_err("ftrace only works for %s!\n",
++#ifdef HAVE_LIBCAP_SUPPORT
++		"users with the SYS_ADMIN capability"
++#else
++		"root"
++#endif
+ 		return -1;
+ 	}
+ 
