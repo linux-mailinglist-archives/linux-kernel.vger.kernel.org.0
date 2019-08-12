@@ -2,116 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C1389580
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 05:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C0C89586
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 05:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbfHLC7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 22:59:51 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:47610 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726200AbfHLC7v (ORCPT
+        id S1726541AbfHLDEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 23:04:52 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43249 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbfHLDEw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 22:59:51 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TZD5MR7_1565578788;
-Received: from bn0418deMacBook-Pro.local(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TZD5MR7_1565578788)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 12 Aug 2019 10:59:48 +0800
-Subject: Re: [PATCH 1/2] genirq: introduce update_irq_devid()
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
-        tao.ma@linux.alibaba.com, gerry@linux.alibaba.com
-References: <cover.1565263723.git.luoben@linux.alibaba.com>
- <39a5009c77d07c3ce42ef784465c05e36d5f684d.1565263723.git.luoben@linux.alibaba.com>
- <alpine.DEB.2.21.1908082138410.2882@nanos.tec.linutronix.de>
-From:   luoben <luoben@linux.alibaba.com>
-Message-ID: <46a5b5ea-8832-470b-2577-d7412e6a9cbd@linux.alibaba.com>
-Date:   Mon, 12 Aug 2019 10:59:48 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        Sun, 11 Aug 2019 23:04:52 -0400
+Received: by mail-lj1-f194.google.com with SMTP id h15so3317852ljg.10;
+        Sun, 11 Aug 2019 20:04:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BQiSQRNit1pwC9yi8sjcdyIjfy8y+tALvc4Wl2a4X6M=;
+        b=tiYPxybzu8GIIn46WEKhu7lCRB7l7N8izZUpw/Oxeiz5uQNLSVcbaVw7m1AeyPuw3o
+         btjJJSdY98vX9SO5ctbb2Tbb4Cp43k7kLTcRnwPeLb5Bm9+1AafnoAt6IwA+4RMN7L0/
+         nu2OSPU7f6uwGlLA8kiGAQD3KbyyfSM7n++j7oxIX4YTmwIAp3DJghzarT4P9Ouej+9r
+         Z6SmkmFr+XnUqyNFAmOrywSGttG5KRHwrmG45+YOp77gXXJsvK+NNXIOobiB7eIEgyZg
+         Sfg3g1aYT+wxonfySvVKIqvHtCrIYvSp4O59tcCssnLDc9i5NbJn2lXaUia6lkqVA1Fu
+         HlKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BQiSQRNit1pwC9yi8sjcdyIjfy8y+tALvc4Wl2a4X6M=;
+        b=sQCfN9DUYPQLfhWTp3UkDsFL85RMu72Jki7Ghlm3MgPPNkIzCJWdd1zJePbiBGMS5O
+         7s0hpfgenD14NzYgBzLdVQFbB33ThHfxNDVIiSrsJA/UPUVUq2Qsu+YokRjqgTAVGCHy
+         9gvu+7PWbV6QfgbrDlJoTMonhXgJAC1wmEaNcKJlbVF0a/YkzgFr26IsGARirirLclTx
+         vdvn0M/r7wwofzwojMV84b9R3l1Z/H8PSbDeE5Rq3LEwIlT+fc5FTOgjdaxE6KtC8yyG
+         kbXlqLGVAc09sZyOv/6PyXBBTsm/FE4ys3NhayWZDMP+kxOvv9cE9WK8o4uypvdXoVz5
+         zOmw==
+X-Gm-Message-State: APjAAAXywBCbnrKT4ZGuzuJUnU8w3occ6qpWe0JABOqBtyd9uGUvduZM
+        MRfWxdn6VeITIoj/J5PAWJ9rqjIUEv6zoYFKtfVZ7S2YZgs=
+X-Google-Smtp-Source: APXvYqwc7JFeUTTkcSgKoeMJk5mKKbkw15fD85WlI/E++FNuUlFcT6t1H0ldF4qX9i8orVfgq+R+dxg16H4WVhR5N2c=
+X-Received: by 2002:a2e:480a:: with SMTP id v10mr17026609lja.94.1565579090393;
+ Sun, 11 Aug 2019 20:04:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1908082138410.2882@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20190810010758.16407-1-alistair.francis@wdc.com> <CALCETrVArr5TTbXayDZ9rz90iGoytGW2bnV5_ZOunhOsPR1u4g@mail.gmail.com>
+In-Reply-To: <CALCETrVArr5TTbXayDZ9rz90iGoytGW2bnV5_ZOunhOsPR1u4g@mail.gmail.com>
+From:   Alistair Francis <alistair23@gmail.com>
+Date:   Sun, 11 Aug 2019 20:04:22 -0700
+Message-ID: <CAKmqyKN58BfEr2R+W=08r795zRKAT1nK_G2v6U2kQSANr+90Vg@mail.gmail.com>
+Subject: Re: [PATCH] syscalls: Update the syscall #defines to match uapi
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Alistair Francis <alistair.francis@wdc.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-在 2019/8/9 上午3:56, Thomas Gleixner 写道:
-> On Thu, 8 Aug 2019, Ben Luo wrote:
->> +int update_irq_devid(unsigned int irq, void *dev_id, void *new_dev_id)
->> +{
->> +	struct irq_desc *desc = irq_to_desc(irq);
->> +	struct irqaction *action, **action_ptr;
->> +	unsigned long flags;
->> +
->> +	WARN(in_interrupt(),
->> +			"Trying to update IRQ %d from IRQ context!\n", irq);
-> This is broken. The function needs to return on that condition. Actually it
-> cannot even be called from non-preemptible code.
+On Sun, Aug 11, 2019 at 5:00 PM Andy Lutomirski <luto@kernel.org> wrote:
 >
-> What's worse is that if the interrupt in question is handled concurrently,
-> then it will either see the old or the new dev_id and because the interrupt
-> handler loop runs with desc->lock dropped even more crap can happen because
-> dev_id can be subject to load and store tearing.
+> On Fri, Aug 9, 2019 at 6:11 PM Alistair Francis
+> <alistair.francis@wdc.com> wrote:
+> >
+> > Update the #defines around sys_fstat64() and sys_fstatat64() to match
+> > the #defines around the __NR3264_fstatat and __NR3264_fstat definitions
+> > in include/uapi/asm-generic/unistd.h. This avoids compiler failures if
+> > one is defined.
 >
-> Staring at that, I see that there is the same issue in setup_irq() and
-> free_irq(). It's actually worse there. I'll have a look.
+> What do you mean by "if one is defined"?
 
-ok,  will return with an error code in v2 in this case
+Yeah, I guess that isn't clear. What I mean is that if
+__ARCH_WANT_NEW_STAT is defined but __ARCH_WANT_STAT64 isn't currently
+it will fail to build.
 
 >
->> +	/*
->> +	 * There can be multiple actions per IRQ descriptor, find the right
->> +	 * one based on the dev_id:
->> +	 */
->> +	action_ptr = &desc->action;
->> +	for (;;) {
->> +		action = *action_ptr;
->> +
->> +		if (!action) {
->> +			WARN(1, "Trying to update already-free IRQ %d\n", irq);
-> That's wrong in two aspects:
->
->         1) The warn should be outside of the locked region.
->
->         2) Just having the irq number is not useful for debugging either
->         	  when the interrupt is shared.
-will take care in v2
->> +			raw_spin_unlock_irqrestore(&desc->lock, flags);
->> +			chip_bus_sync_unlock(desc);
->> +			return -ENXIO;
->> +		}
->> +
->> +		if (action->dev_id == dev_id) {
->> +			action->dev_id = new_dev_id;
->> +			break;
->> +		}
->> +		action_ptr = &action->next;
->> +	}
->> +
->> +	raw_spin_unlock_irqrestore(&desc->lock, flags);
->> +	chip_bus_sync_unlock(desc);
->> +
->> +	/*
->> +	 * Make sure it's not being used on another CPU:
->> +	 * There is a risk of UAF for old *dev_id, if it is
->> +	 * freed in a short time after this func returns
->> +	 */
->> +	synchronize_irq(irq);
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL(update_irq_devid);
-> EXPORT_SYMBOL_GPL() please.
-thanks, will use EXPORT_SYMBOL_GPL in v2
->
-> Thanks,
->
-> 	tglx
+> The patch seems like it's probably okay, but I can't understand the changelog.
 
-Thanks,
+I can send a v2 with an updated commit message.
 
-      Ben
+Alistair
 
+>
+> --Andy
