@@ -2,126 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D03189EA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFD9689EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:44:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfHLMlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 08:41:50 -0400
-Received: from hel-mailgw-01.vaisala.com ([193.143.230.17]:64791 "EHLO
-        hel-mailgw-01.vaisala.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbfHLMlr (ORCPT
+        id S1728366AbfHLMom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 08:44:42 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40913 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbfHLMok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 08:41:47 -0400
-IronPort-SDR: 826mzmceumwPFScYSCPm+eF20YPkNW/ySU1RHPZC1SQDSh5FQz8EImeqFU/3OwHZIwSA4bO1W9
- XqOs6N2oXU7d3Ppp8VKiChB9Bqivo7hmDqTdopFYXzfBqabro+Od6mcTEwx8dnED5AVKHzLgmf
- 6OeQLEO/xyRO82NNiMYxWf2mrPC0oyYUVbZei55w8o4AoZuaIRFiKTmdfb6xqQ7DBmMicwFXK4
- idX0OCsk4T7VIypFoZBzTYwwplx688aaeuRaZHRaP2kvr19GXC39XAC4TarO5Iv8TFHjUZhIn/
- I2s=
-X-IronPort-AV: E=Sophos;i="5.64,377,1559509200"; 
-   d="scan'208";a="228268207"
-Subject: Re: drivers/power/reset/nvmem-reboot-mode.c:27:42: error: passing
- argument 2 of 'nvmem_cell_write' from incompatible pointer type
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Sebastian Reichel <sre@kernel.org>
-References: <201908110745.3Zksfatm%lkp@intel.com>
-From:   Nandor Han <nandor.han@vaisala.com>
-Message-ID: <03e59e9b-8647-c9b2-b60a-99817af5313d@vaisala.com>
-Date:   Mon, 12 Aug 2019 15:41:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <201908110745.3Zksfatm%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-OriginalArrivalTime: 12 Aug 2019 12:41:42.0313 (UTC) FILETIME=[4B100990:01D5510B]
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 12 Aug 2019 08:44:40 -0400
+Received: by mail-lj1-f195.google.com with SMTP id e27so3002580ljb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 05:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=CzrTbiHopzrJu+YLYHoIsujt53sT7XN4YE3jA26/XGg=;
+        b=CZL/I2MFhnHG7WsGfil0Lhj0/vUbG22b1Ey4JJ+4mOZyN1TTt0k7l4o5BUszI4UGSt
+         1n6tFYW9r96cIcKCqEuEC/X0AeIYX4H3btbse/XxA6HbmKV6iGxNC4/567RVUaDZR3nC
+         HaBGbThoAuqSmKQ7S0HRYvg4C1CynhZlxF5TTej5/B6iJps7QKNTM4USoP9kAw899Z8y
+         njUfwG3frFnuvYBLJG70NZ9gAM/sazFT3OtdhJd6YwKSg4tw6mibwBU/2nf6qJlB+PYs
+         nEdfm2RkSbLQDJX7Q+RXVjY0XgH2jzOz2zIp+b1IMwxFfO6/cYmvcAAZd1PeK0vVqpsO
+         voQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=CzrTbiHopzrJu+YLYHoIsujt53sT7XN4YE3jA26/XGg=;
+        b=D+0gQJMlHRUijCVotO4387HTxactd660g8m/p3UugMTpDpScgDb00Y0phWwBSUsdT6
+         sGGIU9x/XOz/sY69147nRJiGRqer7c4DPfuXfkPypjp1vjOHRk/GqchQyYeXkKDSVu8D
+         LyR2/dmUNC/nB3NZYGn1OWMMFQi/mCeldUJeZpJFsM2LX0kKemccNTXFy+5fHbMJzW2q
+         CQbdcGTlEbCwmoTDe2feYTCSplWC4QDnT+HaoPDgxLfNSzfQwzuJm+6JgwoLgNhSVid+
+         Q39QBF+5PgeDXcNJLGWo9KNU2PEueoEgskTY/xlxPBvJVN7KaMxTS2xPi2DY8GOPAUUD
+         iGbA==
+X-Gm-Message-State: APjAAAVYtsQWA7PPhVcSPw6ChbTTz0k/NOcOcH5STkFiZA/wMftdisV7
+        gGOQ8k+kG0Oz8YRiRVY4qvQZBA==
+X-Google-Smtp-Source: APXvYqwamKoAxWVn0ZtiV6XAfXemkV1C3L3E5zzwIiIeJc4CgQilmql9PxxJQosy2E9Ep5TEcoG4/g==
+X-Received: by 2002:a2e:1459:: with SMTP id 25mr18650455lju.153.1565613878719;
+        Mon, 12 Aug 2019 05:44:38 -0700 (PDT)
+Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
+        by smtp.gmail.com with ESMTPSA id y25sm23432747lja.45.2019.08.12.05.44.37
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 05:44:38 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     bjorn.topel@intel.com, linux-mm@kvack.org
+Cc:     xdp-newbies@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, ast@kernel.org,
+        magnus.karlsson@intel.com,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v2 bpf-next] mm: mmap: increase sockets maximum memory size pgoff for 32bits
+Date:   Mon, 12 Aug 2019 15:43:26 +0300
+Message-Id: <20190812124326.32146-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190812113429.2488-1-ivan.khoronzhuk@linaro.org>
+References: <20190812113429.2488-1-ivan.khoronzhuk@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/11/19 2:43 AM, kbuild test robot wrote:
-> Hi Han,
-> 
-> FYI, the error/warning still remains.
-> 
-> tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   dcbb4a153971ff8646af0c963f5698bf21bfbfdc
-> commit: 7a78a7f7695bf9ef9cef3c06fbc5fa4573fd0eef power: reset: nvmem-reboot-mode: use NVMEM as reboot mode write interface
-> date:   7 weeks ago
-> config: x86_64-randconfig-d003-201932 (attached as .config)
-> compiler: gcc-7 (Debian 7.4.0-10) 7.4.0
-> reproduce:
->          git checkout 7a78a7f7695bf9ef9cef3c06fbc5fa4573fd0eef
->          # save the attached .config to linux build tree
->          make ARCH=x86_64
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
->     drivers/power/reset/nvmem-reboot-mode.c: In function 'nvmem_reboot_mode_write':
->>> drivers/power/reset/nvmem-reboot-mode.c:27:42: error: passing argument 2 of 'nvmem_cell_write' from incompatible pointer type [-Werror=incompatible-pointer-types]
->       ret = nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
->                                               ^
->     In file included from drivers/power/reset/nvmem-reboot-mode.c:10:0:
->     include/linux/nvmem-consumer.h:120:19: note: expected 'const char *' but argument is of type 'unsigned int *'
->      static inline int nvmem_cell_write(struct nvmem_cell *cell,
->                        ^~~~~~~~~~~~~~~~
->     cc1: some warnings being treated as errors
-> 
-> vim +/nvmem_cell_write +27 drivers/power/reset/nvmem-reboot-mode.c
-> 
->      18	
->      19	static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot,
->      20					    unsigned int magic)
->      21	{
->      22		int ret;
->      23		struct nvmem_reboot_mode *nvmem_rbm;
->      24	
->      25		nvmem_rbm = container_of(reboot, struct nvmem_reboot_mode, reboot);
->      26	
->    > 27		ret = nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
->      28		if (ret < 0)
->      29			dev_err(reboot->dev, "update reboot mode bits failed\n");
->      30	
->      31		return ret;
->      32	}
->      33	
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+The AF_XDP sockets umem mapping interface uses XDP_UMEM_PGOFF_FILL_RING
+and XDP_UMEM_PGOFF_COMPLETION_RING offsets. The offsets seems like are
+established already and are part of configuration interface.
 
-Hi,
+But for 32-bit systems, while AF_XDP socket configuration, the values
+are to large to pass maximum allowed file size verification.
+The offsets can be tuned ofc, but instead of changing existent
+interface - extend max allowed file size for sockets.
 
-Seems that `nvmem-consumer.h` declares a different signature for 
-`nvmem_cell_write` method depending on `CONFIG_NVMEM` configuration:
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
 
-#if IS_ENABLED(CONFIG_NVMEM)
+Based on bpf-next/master
 
-...
+v2..v1:
+	removed not necessarily #ifdev as ULL and UL for 64 has same size
 
-int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len);
+ mm/mmap.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-...
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 7e8c3e8ae75f..578f52812361 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1358,6 +1358,9 @@ static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
+ 	if (S_ISBLK(inode->i_mode))
+ 		return MAX_LFS_FILESIZE;
+ 
++	if (S_ISSOCK(inode->i_mode))
++		return MAX_LFS_FILESIZE;
++
+ 	/* Special "we do even unsigned file positions" case */
+ 	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
+ 		return 0;
+-- 
+2.17.1
 
-#else
-
-...
-static inline int nvmem_cell_write(struct nvmem_cell *cell,
-                                     const char *buf, size_t len)
-{
-         return -EOPNOTSUPP;
-}
-
-...
-
-#endif /* CONFIG_NVMEM *
-
-What's the best approach here?
-
-Nandor
