@@ -2,110 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7121F8A9AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B80EC8A9BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbfHLVtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 17:49:36 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40739 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfHLVtg (ORCPT
+        id S1727640AbfHLVvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 17:51:24 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:40684 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727326AbfHLVvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 17:49:36 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c34so24775132otb.7;
-        Mon, 12 Aug 2019 14:49:35 -0700 (PDT)
+        Mon, 12 Aug 2019 17:51:23 -0400
+Received: by mail-pl1-f201.google.com with SMTP id s13so6011087plp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 14:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=VzbGHvSiySq50YMMXV5wIRss5YK1rFgm4/UGnmN70Bc=;
+        b=fAfaiSlH3IJrNJyZYLgYtoIVY8VZlqGfi5Z1XEd34Hclac8Tlt1XU022vSoo6lpHqW
+         WT5ZYdOnF51c3AJ+HgQLgSxq1DFgNbpPZFxvoOpgOi8CLocNEf/zT6VX0F2CI56S+DGU
+         emR9pGJLtKNGCGQGSx/vmN9VKkZcYZVXI6eXGk1DQEFDNeHCD/bdYD6Zet1y/2Gzi9uE
+         yf/jN+kbTfyFtb4u9PsKcmr7JPvUHlj3Oa0vtajMh2hl9bXBiepZSxxAR7vIHlyXgTiy
+         3qSQ1ycRcwY27pQbPVEKnAVbB3qlQm8NnHi8Ju6BN+Yoi5wFlqrTPtF5AwdB6r/eozZn
+         AJbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bId57j+xCMgHmNke4H/rs1zm5GrySxRkVxKOzngNvUM=;
-        b=gCBHpJHRlmd6lNJwpANJIKoeYFzIE9DYzReik3UDmdd2ovdHaDNVTyBEP4Wgk0vKhz
-         F4KS8OnBD+1+lsEa1rnt6i5/trEU6lzUmrTffNzrm+ePDhoHHjbjomNA1OSRb9yF5x/U
-         rHe9gNwAcUTHOXk/awqmceph7/Xky6H7533BDbg8pBbJi4S5d09T5aQgjvVBcmc6TfGg
-         t6YP9ayaAZQxZJOCPwK23zduQKH3d/JeUE5x9WHxwl8gDuvnTd0CMvZYVWV4GB4gM5db
-         jAklDAbSNKFZeP3xoz0+GuMo5GXQroQHC0N6L8bLUz94O+dBH26ZNBFBU5WuyG+Y7cZa
-         dOlQ==
-X-Gm-Message-State: APjAAAVTUPNyEdXOkd0crbDrGStIJlGgS1iahexNlejVKIWvrYLc0U+f
-        X7ReGaHfPFz1GktV5Q89Gg==
-X-Google-Smtp-Source: APXvYqydXCuTRQqJ+qulK7XUYr9oCHuac1Wfp89EYjWA89p2UUzerGucxvamiLfRUxWnafYzdRe2lA==
-X-Received: by 2002:a6b:fd10:: with SMTP id c16mr34339686ioi.217.1565646575229;
-        Mon, 12 Aug 2019 14:49:35 -0700 (PDT)
-Received: from localhost ([74.118.88.158])
-        by smtp.gmail.com with ESMTPSA id r5sm86648270iom.42.2019.08.12.14.49.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 14:49:34 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 15:49:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        linux-pwm@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
-        ck.hu@mediatek.com, stonea168@163.com
-Subject: Re: [PATCH v5 1/4] dt-bindings: display: mediatek: update dpi
-  supported chips
-Message-ID: <20190812214933.GA5954@bogus>
-References: <20190807060257.57007-1-jitao.shi@mediatek.com>
- <20190807060257.57007-2-jitao.shi@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807060257.57007-2-jitao.shi@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=VzbGHvSiySq50YMMXV5wIRss5YK1rFgm4/UGnmN70Bc=;
+        b=Gbf3ux6UgSyCO2vJETA40hh6IMCtcmuA2KekA9B+8g07lrF1Y3bXRwcxn90JGYJqPQ
+         X8dXCDjikRC2zFBcBjoj39IDiofQaFgG+GfsMKUb+8UlZqqejfemET0gzUxsjBmMpJWk
+         i++7UQnAtkzbOpmd6ErsDTk0FFMA3kTl40cwAPRSquPIg+ua7urVi1gxpnKbkx69k1Qq
+         lnymK/OjjGHVmWSPds/sIax+znQ05GGhR0i1J8CAJtI5yZcri9EM8ljN67hqCNq05hzh
+         NLLFS3Vl8tEnN+Qt3OMPmyXj/NuOUQuo1KDKu9uYJAiFaHE4cLkHNCeAKeoaNND6KBmq
+         FiWQ==
+X-Gm-Message-State: APjAAAWEXAJgb2NfdzSUPdYmCIBE8Z6c/7PnNQJ33Lct4GSnOMgGoPda
+        aH2OrAEuOspYbsmIF0UOWkdMtGcFVpxeYIiCAhM=
+X-Google-Smtp-Source: APXvYqxzQCyThBwBKrfD6856yni3bdzA7zdg2TImP8qBYmAZ8RHmc6ZzA/B5OR4SphKOBUyy2O28WZ+h0SMYwe93/kc=
+X-Received: by 2002:a63:2685:: with SMTP id m127mr31628780pgm.6.1565646682512;
+ Mon, 12 Aug 2019 14:51:22 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 14:50:34 -0700
+Message-Id: <20190812215052.71840-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH 01/16] s390/boot: fix section name escaping
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     akpm@linux-foundation.org
+Cc:     sedat.dilek@gmail.com, jpoimboe@redhat.com, yhs@fb.com,
+        miguel.ojeda.sandonis@gmail.com,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Philipp Rudo <prudo@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 02:02:54PM +0800, Jitao Shi wrote:
-> Add decriptions about supported chips, including MT2701 & MT8173 &
-> mt8183
-> 
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> ---
->  .../bindings/display/mediatek/mediatek,dpi.txt        | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt
-> index b6a7e7397b8b..cd6a1469c8b7 100644
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt
-> @@ -7,6 +7,7 @@ output bus.
->  
->  Required properties:
->  - compatible: "mediatek,<chip>-dpi"
-> +  the supported chips are mt2701 , mt8173 and mt8183.
->  - reg: Physical base address and length of the controller's registers
->  - interrupts: The interrupt signal from the function block.
->  - clocks: device clocks
-> @@ -16,6 +17,11 @@ Required properties:
->    Documentation/devicetree/bindings/graph.txt. This port should be connected
->    to the input port of an attached HDMI or LVDS encoder chip.
->  
-> +Optional properties:
-> +- dpi_pin_mode_swap: Swap the pin mode between dpi mode and gpio mode.
-> +- pinctrl-names: Contain "gpiomode" and "dpimode".
-> +- dpi_dual_edge: Control the RGB 24bit data on 12 pins or 24 pins.
+GCC unescapes escaped string section names while Clang does not. Because
+__section uses the `#` stringification operator for the section name, it
+doesn't need to be escaped.
 
-Nothing about this in the commit msg...
+This antipattern was found with:
+$ grep -e __section\(\" -e __section__\(\" -r
 
-The dpi* properties need vendor prefixes and use '-' rather than '_'.
+Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+ arch/s390/boot/startup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+diff --git a/arch/s390/boot/startup.c b/arch/s390/boot/startup.c
+index 7b0d05414618..26493c4ff04b 100644
+--- a/arch/s390/boot/startup.c
++++ b/arch/s390/boot/startup.c
+@@ -46,7 +46,7 @@ struct diag_ops __bootdata_preserved(diag_dma_ops) = {
+ 	.diag0c = _diag0c_dma,
+ 	.diag308_reset = _diag308_reset_dma
+ };
+-static struct diag210 _diag210_tmp_dma __section(".dma.data");
++static struct diag210 _diag210_tmp_dma __section(.dma.data);
+ struct diag210 *__bootdata_preserved(__diag210_tmp_dma) = &_diag210_tmp_dma;
+ void _swsusp_reset_dma(void);
+ unsigned long __bootdata_preserved(__swsusp_reset_dma) = __pa(_swsusp_reset_dma);
+-- 
+2.23.0.rc1.153.gdeed80330f-goog
+
