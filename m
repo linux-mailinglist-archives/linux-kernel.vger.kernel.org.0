@@ -2,136 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A4C8A52B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEF238A516
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:58:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfHLSAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 14:00:09 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37795 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbfHLSAJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:00:09 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f17so26800511otq.4;
-        Mon, 12 Aug 2019 11:00:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fGpuQrmzy1FwsMj9TWHIASi6W9ylGMJSZYJThCVeJRs=;
-        b=XB3wyrg/V5N1EHWm7v0n8Sh0CJ8wyH2LjlBLunj2JehIwNDmpUeAWK15ucBjUGy8Km
-         sR7ut9SSNvpGY/zJ734FVCR5WgLMbSOh34j+z7kwkWShV2+IMofxiJlFDGMGjsF7L0cf
-         eK15o16mTTFxFRp1T5uRrsW2o/1FcSfMWFz+FFo0WvPMB1GzjEf58j9xoMzqwmTr/EwC
-         W/GnmI6HLiJWSq7+qdc7pZMdiNC9yQcsuQLt/UG9Y9H8dR9Fk97XawSQmndTAEMSAvNc
-         CWyqL1ORXQxQusypiF4jmj9pMS2xxmLheMOpKULEVq9YrinTI0nz6gJPdaBBv91VkKHM
-         YvzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fGpuQrmzy1FwsMj9TWHIASi6W9ylGMJSZYJThCVeJRs=;
-        b=cSdbmiOaIqe+84PgvtJsyDl3LGzfiVUDVIUdezVw3jWULkdrdEnOtWgeA2Whd9/w7x
-         fbaxOIF0k8qSQai7ebjl9gG99iPbNF8cDuGSTvObQh4BYaR1ibKao62UFfJY0RCkflFQ
-         P4Y482YKP9rCKlUBLFUMjRAOzuFomRK9be76Ga1RfRVViZ/f0GQJDPMkQQCmA4/KFQjB
-         3sYj+wvIfKSXAcpbddnV2VwqP3sUJ+LQ46XmrNNwMYyiWQ1bDoVm8BrZhGO8NWBEoW+b
-         U0WAdFjlyNx9Au5ZtQYdUNugC636uGaOL6DEjHHjIRz66JujiJ9q8Q7QFCbI4Ijrnf9l
-         3+MA==
-X-Gm-Message-State: APjAAAU2a+inJ+7p/tuA9aRuqxcysnHm2sEScXdteCsk3CdgzMl7dDLg
-        pSaBCpBkcdrmuMTnMpsN0xpxXh00bCkJrhXhrMw=
-X-Google-Smtp-Source: APXvYqyssTKPXbJDSlF9l6L93EOn6Pvx11xwGZ+Lev+PZBmup9Uh5e7i7z/YF0ouyQXSq4LZoqtJDNNWy5G99o/EwUw=
-X-Received: by 2002:a5e:8a48:: with SMTP id o8mr26890028iom.287.1565632808028;
- Mon, 12 Aug 2019 11:00:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190717152458.22337-1-andrew.smirnov@gmail.com>
- <20190717152458.22337-5-andrew.smirnov@gmail.com> <VI1PR0402MB34854421031A02B1AE3F953098C70@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR0402MB34854421031A02B1AE3F953098C70@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Mon, 12 Aug 2019 10:59:56 -0700
-Message-ID: <CAHQ1cqEhS+rSW7avtP5Yt5o+6AH2wPzXCxpqKW9J7U6k7FMOBA@mail.gmail.com>
-Subject: Re: [PATCH v6 04/14] crypto: caam - request JR IRQ as the last step
-To:     Horia Geanta <horia.geanta@nxp.com>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Chris Spencer <christopher.spencer@sea.co.uk>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        id S1726671AbfHLR6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 13:58:06 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16540 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726090AbfHLR6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 13:58:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 10:52:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="376033949"
+Received: from megha-z97x-ud7-th.sc.intel.com ([143.183.85.162])
+  by fmsmga006.fm.intel.com with ESMTP; 12 Aug 2019 10:52:30 -0700
+Message-ID: <1565633624.7042.23.camel@intel.com>
+Subject: Re: [RFC V1 RESEND 5/6] PCI/MSI: Free MSI-X resources by group
+From:   Megha Dey <megha.dey@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+        ashok.raj@intel.com, jacob.jun.pan@linux.intel.com
+Date:   Mon, 12 Aug 2019 11:13:44 -0700
+In-Reply-To: <alpine.DEB.2.21.1908110912470.7324@nanos.tec.linutronix.de>
+References: <1561162778-12669-1-git-send-email-megha.dey@linux.intel.com>
+          <1561162778-12669-6-git-send-email-megha.dey@linux.intel.com>
+          <alpine.DEB.2.21.1906291002190.1802@nanos.tec.linutronix.de>
+         <1565118597.2401.116.camel@intel.com>
+         <alpine.DEB.2.21.1908110912470.7324@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 9:02 AM Horia Geanta <horia.geanta@nxp.com> wrote:
->
-> On 7/17/2019 6:25 PM, Andrey Smirnov wrote:
-> > In order to avoid any risk of JR IRQ request being handled while some
-> > of the resources used for that are not yet allocated move the code
-> > requesting said IRQ to the endo of caam_jr_init(). No functional
->                              ^ typo
-> > change intended.
-> >
-> What qualifies as a "functional change"?
-> I've seen this comment in several commits.
->
+On Sun, 2019-08-11 at 09:18 +0200, Thomas Gleixner wrote:
+> On Tue, 6 Aug 2019, Megha Dey wrote:
+> 
+> > 
+> > On Sat, 2019-06-29 at 10:08 +0200, Thomas Gleixner wrote:
+> > > 
+> > > Megha,
+> > > 
+> > > On Fri, 21 Jun 2019, Megha Dey wrote:
+> > > > 
+> > > > 
+> > > > +static int free_msi_irqs_grp(struct pci_dev *dev, int
+> > > > group_id)
+> > > > +{
+> > > > 
+> > > > +
+> > > > +	for_each_pci_msi_entry(entry, dev) {
+> > > > +		if (entry->group_id == group_id && entry->irq)
+> > > > +			for (i = 0; i < entry->nvec_used; i++)
+> > > > +				BUG_ON(irq_has_action(entry-
+> > > > >irq +
+> > > > i));
+> > > BUG_ON is wrong here. This can and must be handled gracefully.
+> > > 
+> > Hmm, I reused this code from the 'free_msi_irqs' function. I am not
+> > sure why it is wrong to use BUG_ON here but ok to use it there,
+> > please
+> > let me know.
+> We are not adding BUG_ON() anymore except for situations where there
+> is
+> absolutely no way out. Just because there is still older code having
+> BUG_ON() does not make it any better. Copying it surely is no
+> justification.
+> 
+> If there is really no way out, then you need to explain it.
+> 
 
-My intent was to mark refactoring only changes as such. Probably not
-appropriate for this commit. Will drop in v7.
+Ok, got it. I will look into it closely to see if the BUG_ON is
+absolutely required.
 
-> >       error = caam_reset_hw_jr(dev);
-> >       if (error)
-> > -             goto out_kill_deq;
-> > +             return error;
-> >
-> >       error = -ENOMEM;
-> >       jrp->inpring = dmam_alloc_coherent(dev, sizeof(*jrp->inpring) *
-> >                                          JOBR_DEPTH, &inpbusaddr,
-> >                                          GFP_KERNEL);
-> >       if (!jrp->inpring)
-> > -             goto out_kill_deq;
-> > +             return -ENOMEM;
-> Above there's "error = -ENOMEM;", so why not "return err;" here and
-> in all the other cases below?
->
+>  
+> > 
+> > > 
+> > > > 
+> > > > +static void pci_msix_shutdown_grp(struct pci_dev *dev, int
+> > > > group_id)
+> > > > +{
+> > > > +	struct msi_desc *entry;
+> > > > +	int grp_present = 0;
+> > > > +
+> > > > +	if (pci_dev_is_disconnected(dev)) {
+> > > > +		dev->msix_enabled = 0;
+> > > Huch? What's that? I can't figure out why this is needed and of
+> > > course it
+> > > completely lacks a comment explaining this. 
+> > > 
+> > Again, I have reused this code from the pci_msix_shutdown()
+> > function.
+> > So for the group case, this is not required?
+> Copy and paste is not an argument, really. Can this happen here? If
+> so,
+> then please add a comment.
+> 
 
-I was going to remove that "error = -ENOMEM;", but forgot. Will do in v7.
+Ok, will do.
+> > 
+> > > 
+> > > > 
+> > > > 
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > > +	/* Return the device with MSI-X masked as initial
+> > > > states
+> > > > */
+> > > > +	for_each_pci_msi_entry(entry, dev) {
+> > > > +		if (entry->group_id == group_id) {
+> > > > +			/* Keep cached states to be restored
+> > > > */
+> > > > +			__pci_msix_desc_mask_irq(entry, 1);
+> > > > +			grp_present = 1;
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > > +	if (!grp_present) {
+> > > > +		pci_err(dev, "Group to be disabled not
+> > > > present\n");
+> > > > +		return;
+> > > So you print an error and silently return
+> > > 
+> > This is a void function, hence no error value can be returned. What
+> > do
+> > you think is the right thing to do if someone wants to delete a
+> > group
+> > which is not present?
+> Well, you made it a void function. 
 
-> >
-> >       jrp->outring = dmam_alloc_coherent(dev, sizeof(*jrp->outring) *
-> >                                          JOBR_DEPTH, &outbusaddr,
-> >                                          GFP_KERNEL);
-> >       if (!jrp->outring)
-> > -             goto out_kill_deq;
-> > +             return -ENOMEM;
-> >
-> >       jrp->entinfo = devm_kcalloc(dev, JOBR_DEPTH, sizeof(*jrp->entinfo),
-> >                                   GFP_KERNEL);
-> >       if (!jrp->entinfo)
-> > -             goto out_kill_deq;
-> > +             return -ENOMEM;
-> >
-> >       for (i = 0; i < JOBR_DEPTH; i++)
-> >               jrp->entinfo[i].desc_addr_dma = !0;
-> > @@ -483,10 +472,19 @@ static int caam_jr_init(struct device *dev)
-> >                     (JOBR_INTC_COUNT_THLD << JRCFG_ICDCT_SHIFT) |
-> >                     (JOBR_INTC_TIME_THLD << JRCFG_ICTT_SHIFT));
-> >
-> > +     tasklet_init(&jrp->irqtask, caam_jr_dequeue, (unsigned long)dev);
-> > +
-> > +     /* Connect job ring interrupt handler. */
-> > +     error = devm_request_irq(dev, jrp->irq, caam_jr_interrupt, IRQF_SHARED,
-> > +                              dev_name(dev), dev);
-> > +     if (error) {
-> > +             dev_err(dev, "can't connect JobR %d interrupt (%d)\n",
-> > +                     jrp->ridx, jrp->irq);
-> > +             tasklet_kill(&jrp->irqtask);
-> > +             return error;
-> "return error;" should be moved out the if block.
->
+ok sure, got your point.
+>  
+> > 
+> > > 
+> > > > 
+> > > > 
+> > > > +	}
+> > > > +}
+> > > > +
+> > > > +int pci_disable_msix_grp(struct pci_dev *dev, int group_id)
+> > > > +{
+> > > > +	int num_vecs;
+> > > > +
+> > > > +	if (!pci_msi_enable || !dev)
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	pci_msix_shutdown_grp(dev, group_id);
+> > > > +	num_vecs = free_msi_irqs_grp(dev, group_id);
+> > > just to call in another function which has to do the same
+> > > group_id
+> > > lookup
+> > > muck again.
+> > Even with the new proposal, we are to have 2 sets of functions: one
+> > to
+> > delete all the msic_desc entries associated with the device, and
+> > the
+> > other to delete those only belonging a 'user specified' group. So
+> > we do
+> > need to pass a group_id to these functions right? Yes, internally
+> > the
+> > deletion would be straightforward with the new approach.
+> That does not matter. If pci_msix_shutdown_grp() does not find a
+> group, why
+> proceeding instead of having a proper error return and telling the
+> caller?
+> 
 
-Sure, will do in v7.
+Oh ok, I got it now, I will return a proper error code in the
+pci_msi_shutdown_grp and do the free_msi_irqs_grp only if the group is
+found.
 
-Thanks,
-Andrey Smirnov
+> Thanks,
+> 
+> 	tglx
