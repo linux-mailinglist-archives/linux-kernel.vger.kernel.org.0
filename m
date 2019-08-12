@@ -2,109 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4FE08A000
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 15:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50FD18A021
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 15:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbfHLNr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 09:47:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34744 "EHLO mail.kernel.org"
+        id S1727757AbfHLNyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 09:54:24 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:47299 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbfHLNr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 09:47:29 -0400
-Received: from X250 (37.80-203-192.nextgentel.com [80.203.192.37])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 980F920665;
-        Mon, 12 Aug 2019 13:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565617648;
-        bh=lDwE2JFlLkSjIPAZyakVJl0cY+OqVkRfz8MCjA0tf1I=;
+        id S1727136AbfHLNyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 09:54:23 -0400
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 466clc5Gzkz9sN1; Mon, 12 Aug 2019 23:54:20 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1565618060;
+        bh=M9fkWHdcEUWxow+UKyurPCc6awYRSJcQDFkH60t6zw4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cnhVXF6TBt1O/ZCoOa/JveRDnPwh9D7lHlkbIIhKRRlBBZ6LJIZFHHRn2zRJ1hLS6
-         Lk5BVQ81W5nJIl78G82G8wTslaNtl1qc+bH6T0zd654x3pY/41+ZtUnE2jKvSHLLLp
-         QS/B3TsU2UHKjheIZlm/wXhSyRwMmP9thb6F00/4=
-Date:   Mon, 12 Aug 2019 15:47:17 +0200
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Hui Song <hui.song_1@nxp.com>, Li Yang <leoyang.li@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: ls1028a: fix gpio nodes
-Message-ID: <20190812134716.GF27041@X250>
-References: <20190805065700.7601-1-hui.song_1@nxp.com>
+        b=XNfChPFXwvqdC699kOEIy0Vv+oqCy3B16t+DVeHfqEhPuYXrv4IbL35jznMyfU7fK
+         xOG5C9V9cbX93SGcIh3DMAgNEHFmoczgaOoRGnafCrGMLC0NYRRdQDDxDKSyaVS9X/
+         M9Vlcq+UBH20ge76b4ysegxd1UGPTyJxvCHp8GEQ=
+Date:   Mon, 12 Aug 2019 19:51:56 +1000
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Ram Pai <linuxram@us.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linuxppc-devel@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        Alexey Kardashevskiy <aik@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+Message-ID: <20190812095156.GD3947@umbus.fritz.box>
+References: <87zhrj8kcp.fsf@morokweng.localdomain>
+ <20190810143038-mutt-send-email-mst@kernel.org>
+ <20190810220702.GA5964@ram.ibm.com>
+ <20190811055607.GA12488@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NtwzykIc2mflq5ck"
 Content-Disposition: inline
-In-Reply-To: <20190805065700.7601-1-hui.song_1@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190811055607.GA12488@lst.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 02:57:00PM +0800, Hui Song wrote:
-> From: Song Hui <hui.song_1@nxp.com>
-> 
-> Update the nodes to include little-endian
-> property to be consistent with the hardware.
-> 
-> Signed-off-by: Song Hui <hui.song_1@nxp.com>
 
-@Leo, looks good?
+--NtwzykIc2mflq5ck
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shawn
+On Sun, Aug 11, 2019 at 07:56:07AM +0200, Christoph Hellwig wrote:
+> sev_active() is gone now in linux-next, at least as a global API.
+>=20
+> And once again this is entirely going in the wrong direction.  The only
+> way using the DMA API is going to work at all is if the device is ready
+> for it.  So we need a flag on the virtio device, exposed by the
+> hypervisor (or hardware for hw virtio devices) that says:  hey, I'm real,
+> don't take a shortcut.
 
-> ---
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index aef5b06..7ccbbfc 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -277,33 +277,36 @@
->  		};
->  
->  		gpio1: gpio@2300000 {
-> -			compatible = "fsl,qoriq-gpio";
-> +			compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
->  			reg = <0x0 0x2300000 0x0 0x10000>;
->  			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> +			little-endian;
->  		};
->  
->  		gpio2: gpio@2310000 {
-> -			compatible = "fsl,qoriq-gpio";
-> +			compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
->  			reg = <0x0 0x2310000 0x0 0x10000>;
->  			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> +			little-endian;
->  		};
->  
->  		gpio3: gpio@2320000 {
-> -			compatible = "fsl,qoriq-gpio";
-> +			compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
->  			reg = <0x0 0x2320000 0x0 0x10000>;
->  			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> +			little-endian;
->  		};
->  
->  		usb0: usb@3100000 {
-> -- 
-> 2.9.5
-> 
+There still seems to be a failure to understand each other here.  The
+limitation here simply *is not* a property of the device.  In fact,
+it's effectively a property of the memory the virtio device would be
+trying to access (because it's in secure mode it can't be directly
+accessed via the hypervisor).  There absolutely are cases where this
+is a device property (a physical virtio device being the obvious one),
+but this isn't one of them.
+
+Unfortunately, we're kind of stymied by the feature negotiation model
+of virtio.  AIUI the hypervisor / device presents a bunch of feature
+bits of which the guest / driver selects a subset.
+
+AFAICT we already kind of abuse this for the VIRTIO_F_IOMMU_PLATFORM,
+because to handle for cases where it *is* a device limitation, we
+assume that if the hypervisor presents VIRTIO_F_IOMMU_PLATFORM then
+the guest *must* select it.
+
+What we actually need here is for the hypervisor to present
+VIRTIO_F_IOMMU_PLATFORM as available, but not required.  Then we need
+a way for the platform core code to communicate to the virtio driver
+that *it* requires the IOMMU to be used, so that the driver can select
+or not the feature bit on that basis.
+
+> And that means on power and s390 qemu will always have to set thos if
+> you want to be ready for the ultravisor and co games.  It's not like we
+> haven't been through this a few times before, have we?
+
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
+
+--NtwzykIc2mflq5ck
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl1RNrcACgkQbDjKyiDZ
+s5IeEA//dnRJ6mVj+RhQveMWMmeAiLbWMfnm//uTigHRNS3wsKGZnHuzpbBnRoCc
+lEX8grJ+aGO69ZFe4N41Fad605IFGUjnxTtQn6kMx85m7F6z1+Bdi0B4H/k9iZ77
+jr/rVpXQ9lv93Sns8vg9rZloaLf3xt1ZBN7hjecvVNSN5esttOlczRXSCq8m3rGE
+2wYsyLox6y/juyLl/f+MOADagIb5ca652DrmInAaER3HgNnMmZGjr+gAjgvzNWRC
+iYF3i/T/+NQLSS2IgG3eo9kzz3TF9FxmbtpqCynyr/JOUOf+M6vN9IZnr6MDSspR
+OnUgRJLIOVjAUcG5EDwfoZQIbuJ7rJZ68/q75aJpMWpfrAsEiKPVD42lhDRtPzuT
+fyT2lVp0ZF+VfSL4lc7nFq/yEG8YCJO2ZtgulzCFo72mPieeMZj3UyBOn0eJZ6Ui
+lAOZHKgkDuhvNYXigewhujz+kTJ2UlV0ioZ0fOs9ohqOMd3t9RcIn2HIhI1j+2hN
+drDFJUL6roSn+3rMA8MxCqeumTjFXGEGa9K+MIrVHpCnfgLgxV3Z2Z/gy8TNdetk
+qobrJcniwJGse95D0BXoU6FDLRTOBsyNXa1ruMT0srHClrFIVRkGGr8fveJvUo/z
+9pxHx2HQa0ePV1VCTj0h9YficujWGsF+RwC57aQOeCUFqLYz+0c=
+=pHtB
+-----END PGP SIGNATURE-----
+
+--NtwzykIc2mflq5ck--
