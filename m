@@ -2,162 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 823E589C4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 13:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E95B489C5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 13:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfHLLF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 07:05:59 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44404 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728064AbfHLLF6 (ORCPT
+        id S1728181AbfHLLHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 07:07:22 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59360 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbfHLLHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 07:05:58 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7CB5rkm038865;
-        Mon, 12 Aug 2019 06:05:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565607953;
-        bh=cjivHJk4IodMTUukuihyQ2B6xNrqOnifJ+g4ftsgd5I=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=AQegVWfhEZIqplkFo780/I6OF6Zl/kZXqPv/PWjSUvueY6f9/dyx8OjcyW/d792K1
-         fbIRAWuI1T1KGJ5kOZHiJbfF77HrZl9D77Mtv6LWBnqP//Oi2y6+m+SaC8FvezTZLM
-         N1UuSk1QqdYa5eo1EkBM4HJMYbLgnd1PXGc92C6s=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7CB5q3q058043
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Aug 2019 06:05:53 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 12
- Aug 2019 06:05:52 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 12 Aug 2019 06:05:52 -0500
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7CB5nZX046855;
-        Mon, 12 Aug 2019 06:05:50 -0500
-Subject: Re: [PATCH v10 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Pawel Laszczak <pawell@cadence.com>
-CC:     "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Jayshri Dajiram Pawar <jpawar@cadence.com>,
-        Rahul Kumar <kurahul@cadence.com>,
-        Anil Joy Varughese <aniljoy@cadence.com>
-References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
- <1563733939-21214-6-git-send-email-pawell@cadence.com>
- <88742d5b-ee10-cf4e-6724-58e7bdd19cb9@ti.com>
- <BYAPR07MB47090BCA728600F0C2F4E129DDD00@BYAPR07MB4709.namprd07.prod.outlook.com>
- <1e557bcf-2d50-f600-0e81-1f9fba5499a1@ti.com>
- <BYAPR07MB4709F306EC472B7AABEB7D4CDDD30@BYAPR07MB4709.namprd07.prod.outlook.com>
- <20190812103147.GA4691@kuha.fi.intel.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <d3bba104-9a85-df8d-c62d-6acb8913c3fe@ti.com>
-Date:   Mon, 12 Aug 2019 14:05:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 12 Aug 2019 07:07:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DXHfdczzz0Ngw+McQkfe+Do33h0S24f/hNtYp5Nr2Ho=; b=Nv/NKn/6zoFeAuQr5jGDYm312
+        L3o64lDHq5rXTY9MV7JA5VtpYsL8fr05Wfrn9h7MmUF6suls3UKo6FDBD8e+1PQjx+2gel/b08krO
+        kh1l8qJWFLludx1SAcIG5KPn7JBt0amMVaydDs8uAcJZrT5/KvkWN2i3XOxdi39eSg0Dw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1hx8Aa-000123-8B; Mon, 12 Aug 2019 11:07:20 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 594B927430B7; Mon, 12 Aug 2019 12:07:19 +0100 (BST)
+Date:   Mon, 12 Aug 2019 12:07:19 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] regulator: core: Add devres versions of
+ regulator_enable/disable
+Message-ID: <20190812110719.GE4592@sirena.co.uk>
+References: <20190809030352.8387-1-hslester96@gmail.com>
+ <20190809151114.GD3963@sirena.co.uk>
+ <CANhBUQ09+q9_=7nMs63w4KRLGOhW1=z-AnuwOzAnUrWRY6uC6A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190812103147.GA4691@kuha.fi.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sfyO1m2EN8ZOtJL6"
+Content-Disposition: inline
+In-Reply-To: <CANhBUQ09+q9_=7nMs63w4KRLGOhW1=z-AnuwOzAnUrWRY6uC6A@mail.gmail.com>
+X-Cookie: Decaffeinated coffee?  Just Say No.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/08/2019 13:31, Heikki Krogerus wrote:
-> Hi,
-> 
->>>>>> +	real_role = cdsn3_real_role_switch_get(cdns->dev);
->>>>>> +
->>>>>> +	current_role = role;
->>>>>> +	dev_dbg(cdns->dev, "Switching role");
->>>>>> +
->>>>>> +	ret = cdns3_role_start(cdns, real_role);
->>>>>> +	if (ret) {
->>>>>> +		/* Back to current role */
->>>>>> +		dev_err(cdns->dev, "set %d has failed, back to %d\n",
->>>>>> +			role, current_role);
->>>>>> +		ret = cdns3_role_start(cdns, current_role);
->>>>>> +		if (ret)
->>>>>> +			dev_err(cdns->dev, "back to %d failed too\n",
->>>>>> +				current_role);
->>>>>> +	}
->>>>>> +exit:
->>>>>> +	pm_runtime_put_sync(cdns->dev);
->>>>>> +	return ret;
->>>>>> +}
->>>>>> +
->>>>>> +static const struct usb_role_switch_desc cdns3_switch_desc = {
->>>>>> +	.set = cdns3_role_switch_set,
->>>>>> +	.get = cdsn3_real_role_switch_get,
->>>>>> +	.allow_userspace_control = true,
->>>>>
->>>>> how does user initiated cdns3_role_switch_set() via sysfs co-exist with role
->>>>> changes done by hardware events. e.g. ID/VBUS?
->>>>>
->>>>
->>>> Do you expect any issues whit this,  have you seen any problem with this
->>>> on your  platform ?
->>>>
->>>> I assume that it should work in this way:
->>>> 1. user change role by sysfs
->>>> 2. Driver change the role according with user request.
->>>> 3. If we receive correct ID/VBUS then role should not be changed
->>>>     because new role is the same as current set in point 2.
->>>>
->>>
->>> I have not tested this series yet.
->>> My understanding is that if user sets role to "host" or "device" then it should
->>> remain in that role irrespective of ID/VBUS. Once user sets it to "none" then
->>> port should set role based on ID/VBUS.
->>
->> According with your understanding it works the same way as by debugfs. 
->> Now I have no doubts to remove debugfs.c file :)
-> 
-> Hold on! The role "none" means that the connector should not be
-> connected to either the host nor device.
 
-OK.
-> 
-> The sysfs file we expose from the class for the role switches is
-> primarily meant for supporting proprietary protocols that require us
-> to basically override the connector USB data role. The default role
-> should always be selected in the drivers.
+--sfyO1m2EN8ZOtJL6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-OK. Let's take this example
-- Port is dual-role port micro AB.
-- microAB to type-A adapter is connected which pulls ID low. port transitions
-to "host" role by the controller driver.
-- proprietary protocol want to switch role to device role so writes "device" to
-mode switch sysfs. port transitions to "device" role.
+On Sat, Aug 10, 2019 at 09:44:45AM +0800, Chuhong Yuan wrote:
+> On Fri, Aug 9, 2019 at 11:11 PM Mark Brown <broonie@kernel.org> wrote:
 
-Now, how does controller driver know to fall back to HW based role switching?
+> > I'm not super keen on managed versions of these functions since they're
+> > very likely to cause reference counting issues between the probe/remove
+> > path and the suspend/resume path which aren't obvious from the code, I'm
+> > especially worried about double frees on release.
 
-> 
-> With USB Type-C connectors and alternate modes, the "none" role is
-> used for example when the connector is put into "USB Safe State". In
-> case you guys are not familiar with USB Safe State, then it is a state
-> (defined in USB PD specifications) for the connector where the data
-> lines on the connector should not be physically connected to anything.
-> The connector needs to be put into safe state always when entering
-> or exiting an alternate mode, before the final mode (USB or alternate)
-> is actually being set for the connector.
-> 
-> 
-> thanks,
-> 
+> I find that 29 of 31 cases I found call regulator_disable() only when encounter
+> probe failure or in .remove.
+> So I think the devm versions of regulator_enable/disable() will not cause big
+> problems.
 
--- 
-cheers,
--roger
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+There's way more drivers using regulators than that...
+
+> I even found a driver to forget to disable regulator when encounter
+> probe failure,
+> which is drivers/iio/adc/ti-adc128s052.c.
+> And a devm version of regulator_enable() can prevent such mistakes.
+
+Yes, it's useful for that.
+
+--sfyO1m2EN8ZOtJL6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1RSGYACgkQJNaLcl1U
+h9BI5Qf+MjbM11UyOu1uRb8i9kBtXAhB3Nf++MDh5wUhKYEmZa3Jd9HPcfiSl1BI
+bG2CUtD8eHAktpenvf2YudwZ18GYuTA09RaauWbEu07aB3uUAzRykh9Af6yPj8wH
+tt3tn97PeEaYb5DaiJYQtbMyUALv2k0cWxrnXWIJvG9tClfuy4VWTKeEOfw0t09N
+pzsFWUE980VeemegI4ceyMYVQ7/aUxmsdvSFnQF0v5+qzeMH0Io1M9IU2YBUhvqz
+WuCdRXW81YoO+rhwbBguczlriy6cCN27ilwM+tpX9eilBYdhfFkUHIjptjYW1P01
+Jh1z5hndyvZrMvpMpM8iJam8nXgBEQ==
+=SvNi
+-----END PGP SIGNATURE-----
+
+--sfyO1m2EN8ZOtJL6--
