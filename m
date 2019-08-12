@@ -2,119 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50FD18A021
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 15:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA288A00F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 15:50:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfHLNyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 09:54:24 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:47299 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727136AbfHLNyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 09:54:23 -0400
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 466clc5Gzkz9sN1; Mon, 12 Aug 2019 23:54:20 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1565618060;
-        bh=M9fkWHdcEUWxow+UKyurPCc6awYRSJcQDFkH60t6zw4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XNfChPFXwvqdC699kOEIy0Vv+oqCy3B16t+DVeHfqEhPuYXrv4IbL35jznMyfU7fK
-         xOG5C9V9cbX93SGcIh3DMAgNEHFmoczgaOoRGnafCrGMLC0NYRRdQDDxDKSyaVS9X/
-         M9Vlcq+UBH20ge76b4ysegxd1UGPTyJxvCHp8GEQ=
-Date:   Mon, 12 Aug 2019 19:51:56 +1000
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Ram Pai <linuxram@us.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linuxppc-devel@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        Alexey Kardashevskiy <aik@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
-Message-ID: <20190812095156.GD3947@umbus.fritz.box>
-References: <87zhrj8kcp.fsf@morokweng.localdomain>
- <20190810143038-mutt-send-email-mst@kernel.org>
- <20190810220702.GA5964@ram.ibm.com>
- <20190811055607.GA12488@lst.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NtwzykIc2mflq5ck"
-Content-Disposition: inline
-In-Reply-To: <20190811055607.GA12488@lst.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1727890AbfHLNuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 09:50:01 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33363 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfHLNuB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 09:50:01 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c14so47809069plo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 06:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=kgjlojbfW5hiV8CTp3aJEp6Pk3hldkLco+LbMqOikOM=;
+        b=MFtKDTySLemv5hjlvnaqkMQcPHYei/01QsdYQ90ndYBeqByXLobvq0zenKaRVxHrIv
+         1RFnovoMSvqVoSC6n36SD48DvBnsQ+9cqxvriKmxsa36S64Xos4fFHLxXdJqbzQJ6j3I
+         bUy0drkxOJ+V4jNQUbbqN4bWhsS4Q3eTnF58HEb/b6ITQcu8tenx24pLiO90GgXX4w3m
+         MT5sh76ZIEAuww1SQJcgZjKot7H+j9+d7BA6xaYqMp9ZFTdzi200Vc+5XVMq/nwDg25J
+         O0Me39MucOuF3Zfq4sx1+nawOeUjSPSq37OgqsAXOtEW/rt4iu6SzGEIDgHOTyZKMI6Z
+         2byQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=kgjlojbfW5hiV8CTp3aJEp6Pk3hldkLco+LbMqOikOM=;
+        b=ogJEF2ljK1ovpfgGiEgrAJmD+zeJaYIf3wSr16nxWXX4E2azdyM/7huHo4OeeDa4Cf
+         hvuPo7gt/XSPRBujutecN7oKDq9ccXq1+kRmdNiWAFsamirfCS6ys2WVplhDtR9hNpxX
+         bkWNrt6t0qqWRXzEgZWI5YH8JL8dpswZzO5hOu2lwwMCDDqpToUFr9nvMaxy62diLTu0
+         llu6apuzzp/YccPsxsmG2xpuBN9nPLfSumSoeKGXKdZ0Jmhztqx/BWdXQ8XWgY/hqQSN
+         r+PVG8QAwkLMwnMMz6pbN9bJVGWJJ5EemKYz/JUtIj4dUDHNH9/3/JdiVD8aPq8Zvn/s
+         BsJg==
+X-Gm-Message-State: APjAAAXZxO6dF9NpBIOJlyp/IDIav5lzvV6tCMJX1BRuDcJ+HV6aGdFG
+        dY9HvugF+osN4dKqobYDcwo=
+X-Google-Smtp-Source: APXvYqw1VeItPTCPnM27HFTmOps2KtzHun1k8+c0C1iKwyvH0yUw9J39p7kW2kc9Wl9DTd3Yu0KxSw==
+X-Received: by 2002:a17:902:5a5:: with SMTP id f34mr18397733plf.178.1565617800304;
+        Mon, 12 Aug 2019 06:50:00 -0700 (PDT)
+Received: from satendra-MM061.ib-wrb304n.setup.in ([103.82.150.135])
+        by smtp.gmail.com with ESMTPSA id x9sm78656304pgp.75.2019.08.12.06.49.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 06:49:59 -0700 (PDT)
+From:   Satendra Singh Thakur <sst2005@gmail.com>
+Cc:     Satendra Singh Thakur <sst2005@gmail.com>,
+        Satendra Singh Thakur <satendrasingh.thakur@hcl.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] [semaphore] Removed redundant code from semaphore's down family of function
+Date:   Mon, 12 Aug 2019 19:18:59 +0530
+Message-Id: <20190812134859.16061-1-sst2005@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190812053014.27743-1-satendrasingh.thakur@hcl.com>
+References: <20190812053014.27743-1-satendrasingh.thakur@hcl.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+-The semaphore code has four funcs
+down,
+down_interruptible,
+down_killable,
+down_timeout
+-These four funcs have almost similar code except that
+they all call lower level function __down_xyz.
+-This lower level func in-turn call inline func
+__down_common with appropriate arguments.
+-This patch creates a common macro for above family of funcs
+so that duplicate code is eliminated.
+-Also, __down_common has been made noinline so that code is
+functionally similar to previous one
+-For example, earlier down_killable would call __down_killable
+, which in-turn would call inline func __down_common
+Now, down_killable calls noinline __down_common directly
+through a macro
+-The funcs __down_interruptible, __down_killable etc have been
+removed as they were just wrapper to __down_common
 
---NtwzykIc2mflq5ck
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Satendra Singh Thakur <satendrasingh.thakur@hcl.com>
+---
+ v1: removed disclaimer appended automatically by company mail policy
 
-On Sun, Aug 11, 2019 at 07:56:07AM +0200, Christoph Hellwig wrote:
-> sev_active() is gone now in linux-next, at least as a global API.
->=20
-> And once again this is entirely going in the wrong direction.  The only
-> way using the DMA API is going to work at all is if the device is ready
-> for it.  So we need a flag on the virtio device, exposed by the
-> hypervisor (or hardware for hw virtio devices) that says:  hey, I'm real,
-> don't take a shortcut.
+ kernel/locking/semaphore.c | 107 +++++++++++++------------------------
+ 1 file changed, 38 insertions(+), 69 deletions(-)
 
-There still seems to be a failure to understand each other here.  The
-limitation here simply *is not* a property of the device.  In fact,
-it's effectively a property of the memory the virtio device would be
-trying to access (because it's in secure mode it can't be directly
-accessed via the hypervisor).  There absolutely are cases where this
-is a device property (a physical virtio device being the obvious one),
-but this isn't one of them.
+diff --git a/kernel/locking/semaphore.c b/kernel/locking/semaphore.c
+index d9dd94defc0a..0468bc335908 100644
+--- a/kernel/locking/semaphore.c
++++ b/kernel/locking/semaphore.c
+@@ -33,11 +33,33 @@
+ #include <linux/spinlock.h>
+ #include <linux/ftrace.h>
+ 
+-static noinline void __down(struct semaphore *sem);
+-static noinline int __down_interruptible(struct semaphore *sem);
+-static noinline int __down_killable(struct semaphore *sem);
+-static noinline int __down_timeout(struct semaphore *sem, long timeout);
++static noinline int __sched __down_common(struct semaphore *sem, long state,
++								long timeout);
+ static noinline void __up(struct semaphore *sem);
++/**
++ * down_common - acquire the semaphore
++ * @sem: the semaphore to be acquired
++ * @state: new state of the task
++ * @timeout: either MAX_SCHEDULE_TIMEOUT or actual specified
++ * timeout
++ * Acquires the semaphore. If no more tasks are allowed to
++ * acquire the semaphore, calling this macro will put the task
++ * to sleep until the semaphore is released.
++ *
++ * This internally calls another func __down_common.
++ */
++#define down_common(sem, state, timeout)	\
++({	\
++	int ret = 0;	\
++	unsigned long flags;	\
++	raw_spin_lock_irqsave(&(sem)->lock, flags);	\
++	if (likely((sem)->count > 0))	\
++		(sem)->count--;	\
++	else	\
++		ret = __down_common(sem, state, timeout);	\
++	raw_spin_unlock_irqrestore(&(sem)->lock, flags);	\
++	ret;	\
++})
+ 
+ /**
+  * down - acquire the semaphore
+@@ -52,14 +74,7 @@ static noinline void __up(struct semaphore *sem);
+  */
+ void down(struct semaphore *sem)
+ {
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&sem->lock, flags);
+-	if (likely(sem->count > 0))
+-		sem->count--;
+-	else
+-		__down(sem);
+-	raw_spin_unlock_irqrestore(&sem->lock, flags);
++	down_common(sem, TASK_UNINTERRUPTIBLE, MAX_SCHEDULE_TIMEOUT);
+ }
+ EXPORT_SYMBOL(down);
+ 
+@@ -74,17 +89,7 @@ EXPORT_SYMBOL(down);
+  */
+ int down_interruptible(struct semaphore *sem)
+ {
+-	unsigned long flags;
+-	int result = 0;
+-
+-	raw_spin_lock_irqsave(&sem->lock, flags);
+-	if (likely(sem->count > 0))
+-		sem->count--;
+-	else
+-		result = __down_interruptible(sem);
+-	raw_spin_unlock_irqrestore(&sem->lock, flags);
+-
+-	return result;
++	return down_common(sem, TASK_INTERRUPTIBLE, MAX_SCHEDULE_TIMEOUT);
+ }
+ EXPORT_SYMBOL(down_interruptible);
+ 
+@@ -100,17 +105,7 @@ EXPORT_SYMBOL(down_interruptible);
+  */
+ int down_killable(struct semaphore *sem)
+ {
+-	unsigned long flags;
+-	int result = 0;
+-
+-	raw_spin_lock_irqsave(&sem->lock, flags);
+-	if (likely(sem->count > 0))
+-		sem->count--;
+-	else
+-		result = __down_killable(sem);
+-	raw_spin_unlock_irqrestore(&sem->lock, flags);
+-
+-	return result;
++	return down_common(sem, TASK_KILLABLE, MAX_SCHEDULE_TIMEOUT);
+ }
+ EXPORT_SYMBOL(down_killable);
+ 
+@@ -154,17 +149,7 @@ EXPORT_SYMBOL(down_trylock);
+  */
+ int down_timeout(struct semaphore *sem, long timeout)
+ {
+-	unsigned long flags;
+-	int result = 0;
+-
+-	raw_spin_lock_irqsave(&sem->lock, flags);
+-	if (likely(sem->count > 0))
+-		sem->count--;
+-	else
+-		result = __down_timeout(sem, timeout);
+-	raw_spin_unlock_irqrestore(&sem->lock, flags);
+-
+-	return result;
++	return down_common(sem, TASK_UNINTERRUPTIBLE, timeout);
+ }
+ EXPORT_SYMBOL(down_timeout);
+ 
+@@ -196,12 +181,15 @@ struct semaphore_waiter {
+ 	bool up;
+ };
+ 
+-/*
+- * Because this function is inlined, the 'state' parameter will be
+- * constant, and thus optimised away by the compiler.  Likewise the
+- * 'timeout' parameter for the cases without timeouts.
++/**
++ * __down_common - Adds the current task to wait list
++ * puts the task to sleep until signal, timeout or up flag
++ * @sem: the semaphore to be acquired
++ * @state: the state of the calling task
++ * @timeout: either MAX_SCHEDULE_TIMEOUT or actual specified
++ * timeout
+  */
+-static inline int __sched __down_common(struct semaphore *sem, long state,
++static noinline int __sched __down_common(struct semaphore *sem, long state,
+ 								long timeout)
+ {
+ 	struct semaphore_waiter waiter;
+@@ -232,25 +220,6 @@ static inline int __sched __down_common(struct semaphore *sem, long state,
+ 	return -EINTR;
+ }
+ 
+-static noinline void __sched __down(struct semaphore *sem)
+-{
+-	__down_common(sem, TASK_UNINTERRUPTIBLE, MAX_SCHEDULE_TIMEOUT);
+-}
+-
+-static noinline int __sched __down_interruptible(struct semaphore *sem)
+-{
+-	return __down_common(sem, TASK_INTERRUPTIBLE, MAX_SCHEDULE_TIMEOUT);
+-}
+-
+-static noinline int __sched __down_killable(struct semaphore *sem)
+-{
+-	return __down_common(sem, TASK_KILLABLE, MAX_SCHEDULE_TIMEOUT);
+-}
+-
+-static noinline int __sched __down_timeout(struct semaphore *sem, long timeout)
+-{
+-	return __down_common(sem, TASK_UNINTERRUPTIBLE, timeout);
+-}
+ 
+ static noinline void __sched __up(struct semaphore *sem)
+ {
+-- 
+2.17.1
 
-Unfortunately, we're kind of stymied by the feature negotiation model
-of virtio.  AIUI the hypervisor / device presents a bunch of feature
-bits of which the guest / driver selects a subset.
-
-AFAICT we already kind of abuse this for the VIRTIO_F_IOMMU_PLATFORM,
-because to handle for cases where it *is* a device limitation, we
-assume that if the hypervisor presents VIRTIO_F_IOMMU_PLATFORM then
-the guest *must* select it.
-
-What we actually need here is for the hypervisor to present
-VIRTIO_F_IOMMU_PLATFORM as available, but not required.  Then we need
-a way for the platform core code to communicate to the virtio driver
-that *it* requires the IOMMU to be used, so that the driver can select
-or not the feature bit on that basis.
-
-> And that means on power and s390 qemu will always have to set thos if
-> you want to be ready for the ultravisor and co games.  It's not like we
-> haven't been through this a few times before, have we?
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---NtwzykIc2mflq5ck
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl1RNrcACgkQbDjKyiDZ
-s5IeEA//dnRJ6mVj+RhQveMWMmeAiLbWMfnm//uTigHRNS3wsKGZnHuzpbBnRoCc
-lEX8grJ+aGO69ZFe4N41Fad605IFGUjnxTtQn6kMx85m7F6z1+Bdi0B4H/k9iZ77
-jr/rVpXQ9lv93Sns8vg9rZloaLf3xt1ZBN7hjecvVNSN5esttOlczRXSCq8m3rGE
-2wYsyLox6y/juyLl/f+MOADagIb5ca652DrmInAaER3HgNnMmZGjr+gAjgvzNWRC
-iYF3i/T/+NQLSS2IgG3eo9kzz3TF9FxmbtpqCynyr/JOUOf+M6vN9IZnr6MDSspR
-OnUgRJLIOVjAUcG5EDwfoZQIbuJ7rJZ68/q75aJpMWpfrAsEiKPVD42lhDRtPzuT
-fyT2lVp0ZF+VfSL4lc7nFq/yEG8YCJO2ZtgulzCFo72mPieeMZj3UyBOn0eJZ6Ui
-lAOZHKgkDuhvNYXigewhujz+kTJ2UlV0ioZ0fOs9ohqOMd3t9RcIn2HIhI1j+2hN
-drDFJUL6roSn+3rMA8MxCqeumTjFXGEGa9K+MIrVHpCnfgLgxV3Z2Z/gy8TNdetk
-qobrJcniwJGse95D0BXoU6FDLRTOBsyNXa1ruMT0srHClrFIVRkGGr8fveJvUo/z
-9pxHx2HQa0ePV1VCTj0h9YficujWGsF+RwC57aQOeCUFqLYz+0c=
-=pHtB
------END PGP SIGNATURE-----
-
---NtwzykIc2mflq5ck--
