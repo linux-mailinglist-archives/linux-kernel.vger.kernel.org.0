@@ -2,100 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0D0898B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:31:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1C52898BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:34:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfHLIbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:31:52 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41586 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbfHLIbw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:31:52 -0400
-Received: by mail-pl1-f193.google.com with SMTP id m9so47434586pls.8;
-        Mon, 12 Aug 2019 01:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=GkXc2q6hrKT3n5tKIOqt3FKeJIiJ+UpY638YqYejrko=;
-        b=nHv5Or8eGV6zJWYGj930jnePCX274A1UNwnrFU1OCWtmOI5K8gVQo46jqobYxJLJMG
-         gyhR2Lm92hfXVz1M6QgpSeC6uv85D/MN1PNLsAGqRRFz2I29w6d90EMgFMzEXSRandZE
-         RLEWH3SvOHQ/weg4HgPL1+c/yIMfNIvnBHCDweZ28QH14I0iKYFPb3bKqqYrXdrPpZdS
-         bFKDkbazfc4NNmanPJmfRRmZgAeUmplIPxBzI3f+w71Wa4O+hzRpExcYpqNnnHcWLDLj
-         1cQnfHGvR6EcL3MbZKIcODoSTSB4B+5gTB6YGGJwBVj4eyjOuSfWo+SjEKpeirDUXKbd
-         dGZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GkXc2q6hrKT3n5tKIOqt3FKeJIiJ+UpY638YqYejrko=;
-        b=aOzmMdCMe2jHRkOaQ5G72l/R9qoLa5QTjl4z+mUUo22FHNQJvbhqhqqYozYhRpstb3
-         uLl+Bd81leQw1GJQD+Vn6dCTQ57SLsG09ElEmLLcQxqdqs0AKLxumdL1eAo4ky5fmPqN
-         u4FPbBOm5Nz5kkgu4E585zXhYjUljb5kstoHjAc5U4JpmEfWhnV1Iq+dJmDpGrFFKP4a
-         Z4VL5cdR8Sd1Tvr4W2BH8seQoFrpcxmJgVWZHosNEOPiAv5ypXM4yo8KiwrxQvPMHR0X
-         SWaMCi/9r6DCEImiZd4Tcg3AiX0ojsnVZTVjZ1Aq7R7dt2ORgvlsndZ+6WA6vSf3GjDr
-         SIxg==
-X-Gm-Message-State: APjAAAU6Iyv2EjKkAx9L008XyQzvHIprMQeD4sOhW8nxKnWg8Pn+J5DS
-        34vvL9tyX7AjG8LcOxt6k5k=
-X-Google-Smtp-Source: APXvYqzDrULP/oJzmzyREYSwdnYyvzp7mxxgjDbGZr1nn/ZwUPLGo0KeKQdor5FN7PQP5LRHg8vnbg==
-X-Received: by 2002:a17:902:e30b:: with SMTP id cg11mr32341992plb.335.1565598711739;
-        Mon, 12 Aug 2019 01:31:51 -0700 (PDT)
-Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id w2sm9100203pjr.27.2019.08.12.01.31.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2019 01:31:50 -0700 (PDT)
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fuqian Huang <huangfq.daxian@gmail.com>
-Subject: [PATCH] scsi: lpfc: use spin_lock_irqsave instead of spin_lock_irq in IRQ context
-Date:   Mon, 12 Aug 2019 16:31:34 +0800
-Message-Id: <20190812083134.7033-1-huangfq.daxian@gmail.com>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+        id S1727156AbfHLIeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 04:34:21 -0400
+Received: from mga03.intel.com ([134.134.136.65]:19885 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726495AbfHLIeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 04:34:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 01:34:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,376,1559545200"; 
+   d="scan'208";a="193909168"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Aug 2019 01:34:16 -0700
+Subject: Re: [PATCH v1] Revert "mmc: sdhci-tegra: drop ->get_ro()
+ implementation"
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+References: <20190808222430.28477-1-digetx@gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <1771bc5f-864c-ea05-be06-f45d9260a446@intel.com>
+Date:   Mon, 12 Aug 2019 11:33:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190808222430.28477-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As spin_unlock_irq will enable interrupts.
-Function lpfc_findnode_rpi is called from
-    lpfc_sli_abts_err_handler (./drivers/scsi/lpfc/lpfc_sli.c)
- <- lpfc_sli_async_event_handler
- <- lpfc_sli_process_unsol_iocb
- <- lpfc_sli_handle_fast_ring_event
- <- lpfc_sli_fp_intr_handler
- <- lpfc_sli_intr_handler
- and lpfc_sli_intr_handler is an interrupt handler.
-Interrupts are enabled in interrupt handler.
-Use spin_lock_irqsave/spin_unlock_irqrestore instead of spin_(un)lock_irq
-in IRQ context to avoid this.
+On 9/08/19 1:24 AM, Dmitry Osipenko wrote:
+> The WRITE_PROTECT bit is always in a "protected mode" on Tegra and
+> WP-GPIO state need to be used instead. In a case of the GPIO absence,
+> write-enable should be assumed. External SD is writable once again as
+> a result of this patch because the offending commit changed behaviour for
+> the case of a missing WP-GPIO to fall back to WRITE_PROTECT bit-checking,
+> which is incorrect for Tegra.
+> 
+> Cc: stable@vger.kernel.org # v5.1+
+> Fixes: e8391453e27f ("mmc: sdhci-tegra: drop ->get_ro() implementation")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
----
- drivers/scsi/lpfc/lpfc_hbadisc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Can we get an Ack from someone from Nvidia
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index 28ecaa7fc715..cf02c352b324 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -6065,10 +6065,11 @@ lpfc_findnode_rpi(struct lpfc_vport *vport, uint16_t rpi)
- {
- 	struct Scsi_Host *shost = lpfc_shost_from_vport(vport);
- 	struct lpfc_nodelist *ndlp;
-+	unsigned long flags;
- 
--	spin_lock_irq(shost->host_lock);
-+	spin_lock_irqsave(shost->host_lock, flags);
- 	ndlp = __lpfc_findnode_rpi(vport, rpi);
--	spin_unlock_irq(shost->host_lock);
-+	spin_unlock_irqrestore(shost->host_lock, flags);
- 	return ndlp;
- }
- 
--- 
-2.11.0
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index f4d4761cf20a..02d8f524bb9e 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -258,6 +258,16 @@ static void tegra210_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
+>  	}
+>  }
+>  
+> +static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
+> +{
+> +	/*
+> +	 * Write-enable shall be assumed if GPIO is missing in a board's
+> +	 * device-tree because SDHCI's WRITE_PROTECT bit doesn't work on
+> +	 * Tegra.
+> +	 */
+> +	return mmc_gpio_get_ro(host->mmc);
+> +}
+> +
+>  static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -1224,6 +1234,7 @@ static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+>  };
+>  
+>  static const struct sdhci_ops tegra_sdhci_ops = {
+> +	.get_ro     = tegra_sdhci_get_ro,
+>  	.read_w     = tegra_sdhci_readw,
+>  	.write_l    = tegra_sdhci_writel,
+>  	.set_clock  = tegra_sdhci_set_clock,
+> @@ -1279,6 +1290,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+>  };
+>  
+>  static const struct sdhci_ops tegra114_sdhci_ops = {
+> +	.get_ro     = tegra_sdhci_get_ro,
+>  	.read_w     = tegra_sdhci_readw,
+>  	.write_w    = tegra_sdhci_writew,
+>  	.write_l    = tegra_sdhci_writel,
+> @@ -1332,6 +1344,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+>  };
+>  
+>  static const struct sdhci_ops tegra210_sdhci_ops = {
+> +	.get_ro     = tegra_sdhci_get_ro,
+>  	.read_w     = tegra_sdhci_readw,
+>  	.write_w    = tegra210_sdhci_writew,
+>  	.write_l    = tegra_sdhci_writel,
+> @@ -1366,6 +1379,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+>  };
+>  
+>  static const struct sdhci_ops tegra186_sdhci_ops = {
+> +	.get_ro     = tegra_sdhci_get_ro,
+>  	.read_w     = tegra_sdhci_readw,
+>  	.write_l    = tegra_sdhci_writel,
+>  	.set_clock  = tegra_sdhci_set_clock,
+> 
 
