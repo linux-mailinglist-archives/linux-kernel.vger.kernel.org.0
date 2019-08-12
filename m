@@ -2,173 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F3589B15
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F42089B04
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbfHLKMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:12:41 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35576 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727703AbfHLKMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:12:37 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2AF2EF66CD59304F08B0;
-        Mon, 12 Aug 2019 18:12:35 +0800 (CST)
-Received: from DESKTOP-6T4S3DQ.china.huawei.com (10.202.226.45) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 12 Aug 2019 18:12:26 +0800
-From:   Shiju Jose <shiju.jose@huawei.com>
-To:     <linux-acpi@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <rjw@rjwysocki.net>,
-        <lenb@kernel.org>, <james.morse@arm.com>, <tony.luck@intel.com>,
-        <bp@alien8.de>, <baicar@os.amperecomputing.com>
-CC:     <linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-        <tanxiaofei@huawei.com>, Shiju Jose <shiju.jose@huawei.com>
-Subject: [PATCH RFC 4/4] ACPI: APEI: Add log_arm_hw_error to the new notification method
-Date:   Mon, 12 Aug 2019 11:11:49 +0100
-Message-ID: <20190812101149.26036-5-shiju.jose@huawei.com>
-X-Mailer: git-send-email 2.19.2.windows.1
-In-Reply-To: <20190812101149.26036-1-shiju.jose@huawei.com>
-References: <Shiju Jose>
- <20190812101149.26036-1-shiju.jose@huawei.com>
+        id S1727837AbfHLKMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:12:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:47492 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727605AbfHLKMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 06:12:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8812015A2;
+        Mon, 12 Aug 2019 03:12:18 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19F893F706;
+        Mon, 12 Aug 2019 03:12:15 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 11:12:13 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>, kishon@ti.com
+Cc:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        pombredanne@nexb.com, shawn.lin@rock-chips.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCHv3 1/2] PCI: layerscape: Add the bar_fixed_64bit property
+ in EP driver.
+Message-ID: <20190812101213.GB20861@e121166-lin.cambridge.arm.com>
+References: <20190628013826.4705-1-xiaowei.bao@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.202.226.45]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190628013826.4705-1-xiaowei.bao@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds log_arm_hw_error to the new error notification
-method.
+First off:
 
-Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
----
- drivers/acpi/apei/ghes.c | 47 ++++++++++++++++++++++-------------------------
- drivers/ras/ras.c        |  5 ++++-
- include/linux/ras.h      |  7 +++++--
- 3 files changed, 31 insertions(+), 28 deletions(-)
+Trim the CC list, you CC'ed maintainers (and mailing lists) for no
+reasons whatsover.
 
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index ffc309c..013fea0 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -574,34 +574,27 @@ static void ghes_do_proc(struct ghes *ghes,
- 		if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
- 			fru_text = gdata->fru_text;
- 
--		if (guid_equal(sec_type, &CPER_SEC_PROC_ARM)) {
--			struct cper_sec_proc_arm *err = acpi_hest_get_payload(gdata);
--
--			log_arm_hw_error(err);
--		} else {
--			rcu_read_lock();
--			list_for_each_entry_rcu(err_notify,
--						&ghes_error_notify_list, list) {
--				if (guid_equal(&err_notify->sec_type,
--					       sec_type)) {
--					/* The notification is called in the
--					 * interrupt context, thus the handler
--					 * functions should be take care of it.
--					 */
--					err_notify->handle(gdata, sev,
--							   err_notify->data);
--					is_notify = 1;
--				}
-+		rcu_read_lock();
-+		list_for_each_entry_rcu(err_notify, &ghes_error_notify_list,
-+					list) {
-+			if (guid_equal(&err_notify->sec_type, sec_type)) {
-+				/* The notification is called in the
-+				 * interrupt context, thus the handler
-+				 * functions should be take care of it.
-+				 */
-+				err_notify->handle(gdata, sev,
-+						   err_notify->data);
-+				is_notify = 1;
- 			}
--			rcu_read_unlock();
-+		}
-+		rcu_read_unlock();
- 
--			if (!is_notify) {
--				void *err = acpi_hest_get_payload(gdata);
-+		if (!is_notify) {
-+			void *err = acpi_hest_get_payload(gdata);
- 
--				log_non_standard_event(sec_type, fru_id,
--						       fru_text, sec_sev, err,
--						       gdata->error_data_length);
--			}
-+			log_non_standard_event(sec_type, fru_id,
-+					       fru_text, sec_sev, err,
-+					       gdata->error_data_length);
- 		}
- 	}
- }
-@@ -1198,6 +1191,10 @@ struct ghes_err_handler_tab {
- 		.sec_type = CPER_SEC_PCIE,
- 		.handle = ghes_handle_aer,
- 	},
-+	{
-+		.sec_type = CPER_SEC_PROC_ARM,
-+		.handle = log_arm_hw_error,
-+	},
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
-index 95540ea..7ec3eeb 100644
---- a/drivers/ras/ras.c
-+++ b/drivers/ras/ras.c
-@@ -21,8 +21,11 @@ void log_non_standard_event(const guid_t *sec_type, const guid_t *fru_id,
- 	trace_non_standard_event(sec_type, fru_id, fru_text, sev, err, len);
- }
- 
--void log_arm_hw_error(struct cper_sec_proc_arm *err)
-+void log_arm_hw_error(struct acpi_hest_generic_data *gdata,
-+		      int sev, void *data)
- {
-+	struct cper_sec_proc_arm *err = acpi_hest_get_payload(gdata);
-+
- 	trace_arm_event(err);
- }
- 
-diff --git a/include/linux/ras.h b/include/linux/ras.h
-index 7c3debb..05b662d 100644
---- a/include/linux/ras.h
-+++ b/include/linux/ras.h
-@@ -5,6 +5,7 @@
- #include <asm/errno.h>
- #include <linux/uuid.h>
- #include <linux/cper.h>
-+#include <acpi/ghes.h>
- 
- #ifdef CONFIG_DEBUG_FS
- int ras_userspace_consumers(void);
-@@ -29,7 +30,8 @@ static inline void __init cec_init(void)	{ }
- void log_non_standard_event(const guid_t *sec_type,
- 			    const guid_t *fru_id, const char *fru_text,
- 			    const u8 sev, const u8 *err, const u32 len);
--void log_arm_hw_error(struct cper_sec_proc_arm *err);
-+void log_arm_hw_error(struct acpi_hest_generic_data *gdata,
-+		      int sev, void *data);
- #else
- static inline void
- log_non_standard_event(const guid_t *sec_type,
-@@ -37,7 +39,8 @@ void log_non_standard_event(const guid_t *sec_type,
- 		       const u8 sev, const u8 *err, const u32 len)
- { return; }
- static inline void
--log_arm_hw_error(struct cper_sec_proc_arm *err) { return; }
-+log_arm_hw_error(struct acpi_hest_generic_data *gdata,
-+		 int sev, void *data) { return; }
- #endif
- 
- #endif /* __RAS_H__ */
--- 
-1.9.1
+Then, read this:
 
+https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
 
+and make your patches compliant please.
+
+On Fri, Jun 28, 2019 at 09:38:25AM +0800, Xiaowei Bao wrote:
+> The PCIe controller of layerscape just have 4 BARs, BAR0 and BAR1
+> is 32bit, BAR3 and BAR4 is 64bit, this is determined by hardware,
+> so set the bar_fixed_64bit with 0x14.
+> 
+> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+> ---
+> v2:
+>  - Replace value 0x14 with a macro.
+> v3:
+>  - No change.
+> 
+>  drivers/pci/controller/dwc/pci-layerscape-ep.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> index be61d96..227c33b 100644
+> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> @@ -44,6 +44,7 @@ static int ls_pcie_establish_link(struct dw_pcie *pci)
+>  	.linkup_notifier = false,
+>  	.msi_capable = true,
+>  	.msix_capable = false,
+> +	.bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
+
+I would appreciate Kishon's ACK on this.
+
+Lorenzo
+
+>  };
+>  
+>  static const struct pci_epc_features*
+> -- 
+> 1.7.1
+> 
