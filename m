@@ -2,62 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30B9D897EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 09:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0970D897F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 09:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfHLHhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 03:37:24 -0400
-Received: from smtp1.goneo.de ([85.220.129.30]:55118 "EHLO smtp1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbfHLHhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 03:37:24 -0400
-X-Greylist: delayed 557 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Aug 2019 03:37:23 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by smtp1.goneo.de (Postfix) with ESMTP id 0FFD123F037;
-        Mon, 12 Aug 2019 09:28:04 +0200 (CEST)
-X-Virus-Scanned: by goneo
-X-Spam-Flag: NO
-X-Spam-Score: -3.095
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.095 tagged_above=-999 tests=[ALL_TRUSTED=-1,
-        AWL=-0.195, BAYES_00=-1.9] autolearn=ham
-Received: from smtp1.goneo.de ([127.0.0.1])
-        by localhost (smtp1.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id X6NG7wCyM0OW; Mon, 12 Aug 2019 09:28:03 +0200 (CEST)
-Received: from lem-wkst-02.lemonage (hq.lemonage.de [87.138.178.34])
-        by smtp1.goneo.de (Postfix) with ESMTPSA id E38F923FA49;
-        Mon, 12 Aug 2019 09:28:02 +0200 (CEST)
-Date:   Mon, 12 Aug 2019 09:40:49 +0200
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
-        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Subject: Re: [PING 2] [PATCH v5 1/7] nfc: pn533: i2c: "pn532" as dt
- compatible string
-Message-ID: <20190812074035.GA9797@lem-wkst-02.lemonage>
-References: <20190111161812.26325-1-poeschel@lemonage.de>
- <20190228104801.GA14788@lem-wkst-02.lemonage>
- <20190403094735.GA19351@lem-wkst-02.lemonage>
- <20190805124236.GG3574@localhost>
+        id S1727087AbfHLHi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 03:38:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45114 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726304AbfHLHi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 03:38:27 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C6624B928CFFF8E18AE1;
+        Mon, 12 Aug 2019 15:38:24 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 12 Aug 2019 15:38:14 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Mao Wenan" <maowenan@huawei.com>
+Subject: [PATCH linux-next] drivers: dma: Fix sparse warning for mux_configure32
+Date:   Mon, 12 Aug 2019 15:42:05 +0800
+Message-ID: <20190812074205.96759-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805124236.GG3574@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 02:42:36PM +0200, Johan Hovold wrote:
-> You may want to resend this series to netdev now. David Miller will be
-> picking up NFC patches directly from there.
+There is one sparse warning in drivers/dma/fsl-edma-common.c,
+fix it by setting mux_configure32() as static.
 
-Thank you very much for this information. Johannes Berg did reach out to
-me already.
-Rebase, test and resend is queued up for one of my next free timeslots.
+make allmodconfig ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+make C=2 drivers/dma/fsl-edma-common.o ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+drivers/dma/fsl-edma-common.c:93:6: warning: symbol 'mux_configure32' was not declared. Should it be static?
 
-Thanks again,
-Lars
+Fixes: 232a7f18cf8ec ("dmaengine: fsl-edma: add i.mx7ulp edma2 version support")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/dma/fsl-edma-common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 6d6d8a4..7dbf7df 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -90,8 +90,8 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+ 	iowrite8(val8, addr + off);
+ }
+ 
+-void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+-		     u32 off, u32 slot, bool enable)
++static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
++			    u32 off, u32 slot, bool enable)
+ {
+ 	u32 val;
+ 
+-- 
+2.7.4
+
