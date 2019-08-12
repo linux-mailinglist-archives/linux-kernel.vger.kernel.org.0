@@ -2,230 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B6CD89541
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 03:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FC6C89549
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 03:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfHLBu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 21:50:59 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41607 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbfHLBu6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 21:50:58 -0400
-Received: by mail-pl1-f194.google.com with SMTP id m9so47106182pls.8;
-        Sun, 11 Aug 2019 18:50:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5JtiWY0w31kuQOtn3l4X+8CaJzkxiVZy5vK9oZwhAyM=;
-        b=tN18OW3egtBoEIE9QN2L83YpkIuEmn8E/2vatlX2Rt8/d5Cz4UgSVajiq6e/mKLtaS
-         Y249S8PkRKY1XNNQCc1ShRk2rwVcEYBgq5dc/KhKvRDosjYbqzTKzsXamCtfiXYDc9Xp
-         e09h33F7vAARQiFw/FG8VCiqdIkvyyhBlY/mp3fdDfxf6u2KTJYoHRQkFO45IwfAa5bo
-         gJG8IrKfVZKwLlhGy/t3ERaR2nPJMfzZ5Lyz1p0oex5y7bLt3zvVM2vRFJ5rXSFt80t5
-         3snZBb+hSDGsUlRyup/QfXn5z03seNoHqcPJopyWhki+dM/QX6bD5iOeLfhwkSMlhTih
-         Gj3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5JtiWY0w31kuQOtn3l4X+8CaJzkxiVZy5vK9oZwhAyM=;
-        b=Wbw8fm51zM6+Z/vl5lKHDjQN3Y59AOd4sn6pZtN0WOw8imPTPeiG7cTMMo4KHaAus0
-         dVhn7Iqg6x04BP1+95q+p/1JvNJJ/WlwMbEBNMv1RDzRyUP+0Z/kND/ZM6HUzLVIPGtI
-         NHwYDUTJZjZKlwLHxxYOh3HebepGXJDwdR1SmEEoWOBG4nK5QXLBB/+vcdcw5UG2vwIT
-         dorfDQ7aEPMU38t0F29rsS6R8En6vbSmy/NljkfUoaBlLjCshnfBtsnPEhgs1OLwLJUq
-         GgoSa0AOaeut7w1PevjvvTFOTGUVzpRLVC1STjheZS7vc2YlPmABLRWrBNBqxUjFeuvX
-         qEGQ==
-X-Gm-Message-State: APjAAAVRkk8ukadmsDDEKmKl6OPedDj4d3rIjEH6QbD34MFA68Ir8tVa
-        XJNUutLZbhRWGfzdrRbPPEY=
-X-Google-Smtp-Source: APXvYqzBXwirWl6l+fEmHVCahvbTNzZTrBy2+Jlu3deIQj1LEMtfht+Rr+eRVfWYnMxSvK5SOCC2EQ==
-X-Received: by 2002:a17:902:e311:: with SMTP id cg17mr3605017plb.183.1565574657941;
-        Sun, 11 Aug 2019 18:50:57 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id j20sm100062363pfr.113.2019.08.11.18.50.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 11 Aug 2019 18:50:57 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Date:   Sun, 11 Aug 2019 18:50:44 -0700
-Message-Id: <20190812015044.26176-3-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190812015044.26176-1-jhubbard@nvidia.com>
-References: <20190812015044.26176-1-jhubbard@nvidia.com>
+        id S1726528AbfHLBzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 21:55:40 -0400
+Received: from mail-eopbgr150070.outbound.protection.outlook.com ([40.107.15.70]:31713
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726296AbfHLBzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Aug 2019 21:55:39 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JDZ3qHInw7k8ZzPNBuItmJC3KorO8XAv8+iOHv7dcHOzASlEisX0IvJHE4NoEV6AiHW5iWkq0iaDxqoJBo00hLz/oE2fg/oMGab8XvcUNtmH8OO3Iy5AJ34ecc8P0WTU0IBU1nFuzgpl+MJEIAwwT/Mjc8ObaCDpxqJqEi2azQHy8h2l6fE/aiOpEYjrvZcF3YYM31JU8hEnnFwsFZ96HONu5zktxtgEGh5tMkt1Utm9ozpbetI2ig9NurQQVbrgmMW+3v63JqqTmObVvF1k/pdjleFaW85ap+4z4du1/bEBTXS6jEv10Bdtz/4TP8H7BXLGCkgLl0yBiXh059UdGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GsUdGK8rnasLcuWkkQe0cbiFpQhK3QJw4AwM/CppBoE=;
+ b=MlUoDnjo40Ul2WmCNXmsHTtl5fG9STd91RxJCQpKX0CqwVpNh8CMP30jNnunB5ESIYiPRmVXgkv0hwU3uwRo4jb/ommxYMUld2CrEz7l18BGGitJkLOYGmvGyTUEr+rM8N+rad32yG9Tn9TtNgbl+7gIl+BgCPmz8hYruUVBh9cyu53QQlWgnBEXsftbBtjej5U5+sj4nCv11Ubq0x4wVXmcpekBxdDldzjBLX080mVJ0quLl7Tt7uqtY03kVk3UnSQrDYdbJKnGS0eRV345gdO9P5Wrk1oBYoq4Bayd9CfoBvRBiUEsjNUfKYWXrq/tm7no5wXroNvkeKG17AURKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GsUdGK8rnasLcuWkkQe0cbiFpQhK3QJw4AwM/CppBoE=;
+ b=lyklmQfx5pUUj251ATMy7mQbLOl086QNNgHzbWdnWs4WPKDaSMs/dzyEPOjvm9pnH0ZsJqCaqwahLFzmiDTus9awuMLte1Hnem+0l68zynPDm81GSMo3IC4LaU/Rx08fOITa3q6D2JiCawZPIx+pU10KJMOe7PzpJQcM8pl0lpU=
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
+ VI1PR04MB4525.eurprd04.prod.outlook.com (20.177.54.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.15; Mon, 12 Aug 2019 01:55:35 +0000
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::81ec:c8ec:54d9:5dc5]) by VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::81ec:c8ec:54d9:5dc5%2]) with mapi id 15.20.2136.026; Mon, 12 Aug 2019
+ 01:55:35 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Pawel Laszczak <pawell@cadence.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Topic: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Index: AQHVMyCHrosRTgN4B0yGGWLWy7uno6bAUmQAgAtATICAJB6EgIAFX+iAgAHnPhA=
+Date:   Mon, 12 Aug 2019 01:55:35 +0000
+Message-ID: <VI1PR04MB53279117788B7D7CC3080B398BD30@VI1PR04MB5327.eurprd04.prod.outlook.com>
+References: <1562324238-16655-1-git-send-email-pawell@cadence.com>
+ <1562324238-16655-6-git-send-email-pawell@cadence.com>
+ <877e8tm25r.fsf@linux.intel.com>
+ <BYAPR07MB4709152CB29B6B027ABEB688DDCF0@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <8736idnu0q.fsf@gmail.com>
+ <BYAPR07MB4709B0A4FADFB76183D651DCDDD10@BYAPR07MB4709.namprd07.prod.outlook.com>
+In-Reply-To: <BYAPR07MB4709B0A4FADFB76183D651DCDDD10@BYAPR07MB4709.namprd07.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 77293175-2c19-4e26-f5ff-08d71ec82aa4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR04MB4525;
+x-ms-traffictypediagnostic: VI1PR04MB4525:
+x-microsoft-antispam-prvs: <VI1PR04MB4525EF1655F5CC33E3361C588BD30@VI1PR04MB4525.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 012792EC17
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(346002)(366004)(376002)(136003)(51444003)(189003)(199004)(7696005)(66946007)(4326008)(14454004)(81156014)(44832011)(6246003)(7416002)(478600001)(6506007)(102836004)(9686003)(66446008)(55016002)(76116006)(86362001)(99286004)(229853002)(476003)(486006)(53936002)(2501003)(6436002)(256004)(11346002)(14444005)(25786009)(446003)(81166006)(8936002)(66476007)(66556008)(64756008)(76176011)(110136005)(186003)(5660300002)(26005)(6116002)(316002)(3846002)(52536014)(66066001)(8676002)(54906003)(305945005)(74316002)(2906002)(71200400001)(71190400001)(7736002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4525;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: bfZrFyN21pbhLcia0H66HJ2gpzuLsVUaiGxoq2IAqtyyOHNEDzIg+xnQvJTL+PCzqN5fBH1PLBoKcDTv/57WiDzFgbm64POrekeNAwqweuk2TxsT4nHilE5hNOX6WEyZUXGBDs4UxS6CZxYR/8nslY6sgVp98PS5v44kNCJIY9wjcN0ZJG/wLFfi/ieiXeXztowTAjtqh/gGltApBG5pY6tszIP06xNYWDAR631STovP8JD3No71kFBq++kgS5c0A1FrdO/zabZE3Te/jUyQLS3UsGZ1ZIbeqyH8QWxbZ8LcCK5N9yyQiPj/dx8itI9aM4I5empt49pSEwb4z6NkF4HADOo7moLbc4vVZKDLCFJcYDBbMdic6CrvOdrBQl0NS0c6KLRKYFo61QFYN8XDDoPbgClZ1GWn5+ZnEsb6Vg8=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77293175-2c19-4e26-f5ff-08d71ec82aa4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 01:55:35.2481
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: peter.chen@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4525
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+ =20
+>=20
+> Yes, driver frees not used buffers here.
+> I think that it's the safest place for this purpose.
+>=20
+> >
+> >>>> +				dma_free_coherent(priv_dev->sysdev, buf-
+> >size,
+> >>>> +						  buf->buf,
+> >>>> +						  buf->dma);
+> >>>> +				spin_lock_irqsave(&priv_dev->lock, flags);
+> >>>> +
+> >>>> +				kfree(buf);
+> >>>
+> >>>why do you even need this "garbage collector"?
+> >>
+> >> I need to free not used memory. The once allocated buffer will be
+> >> associated with request, but if request.length will be increased in
+> >> usb_request then driver will must allocate the  bigger buffer. As I
+> >> remember I couldn't call dma_free_coherent in interrupt context so I
+> >> had to move it to thread handled. This flag was used to avoid going th=
+rough
+> whole  aligned_buf_list  every time.
+> >> In most cases this part will never called int this place
+> >
+> >Did you try, btw, setting the quirk flag which tells gadget drivers to
+> >always allocate buffers aligned to MaxPacketSize? Wouldn't that be enoug=
+h?
+>=20
+> If found only  quirk_ep_out_aligned_size flag, but it align only buffer s=
+ize.
+>=20
+> DMA used by this controller must have buffer address aligned to 8.
+> I think that on most architecture kmalloc should guarantee such aligned.
+> The problem was detected on NXP testing board.
+> On my board all buffer address are alignment at least to 8.
+>=20
+=20
+This un-aligned request buffer address for 8 occurs for Ethernet Gadget (eg=
+, NCM),
+it allocates socket buffer with NET_IP_ALIGN, so the last byte of buffer ad=
+dress
+is always 2. Although this can be workaround by setting quirk_avoids_skb_re=
+serve,
+but we are not sure if all gadget request buffers can be 8 or Max Packet Si=
+ze aligned.
 
-This is the "vaddr_pin_pages" corresponding variant to
-get_user_pages_remote(), but with FOLL_PIN semantics: the implementation
-sets FOLL_PIN. That, in turn, means that the pages must ultimately be
-released by put_user_page*()--typically, via vaddr_unpin_pages*().
-
-Note that the put_user_page*() requirement won't be truly
-required until all of the call sites have been converted, and
-the tracking of pages is actually activated.
-
-Also introduce vaddr_unpin_pages(), in order to have a simpler
-call for the error handling cases.
-
-Use both of these new calls in the Infiniband drive, replacing
-get_user_pages_remote() and put_user_pages().
-
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- drivers/infiniband/core/umem_odp.c | 15 +++++----
- include/linux/mm.h                 |  7 +++++
- mm/gup.c                           | 50 ++++++++++++++++++++++++++++++
- 3 files changed, 66 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index 53085896d718..fdff034a8a30 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -534,7 +534,7 @@ static int ib_umem_odp_map_dma_single_page(
- 	}
- 
- out:
--	put_user_page(page);
-+	vaddr_unpin_pages(&page, 1, &umem_odp->umem.vaddr_pin);
- 
- 	if (remove_existing_mapping) {
- 		ib_umem_notifier_start_account(umem_odp);
-@@ -635,9 +635,10 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
- 		 * complex (and doesn't gain us much performance in most use
- 		 * cases).
- 		 */
--		npages = get_user_pages_remote(owning_process, owning_mm,
-+		npages = vaddr_pin_pages_remote(owning_process, owning_mm,
- 				user_virt, gup_num_pages,
--				flags, local_page_list, NULL, NULL);
-+				flags, local_page_list, NULL, NULL,
-+				&umem_odp->umem.vaddr_pin);
- 		up_read(&owning_mm->mmap_sem);
- 
- 		if (npages < 0) {
-@@ -657,7 +658,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
- 					ret = -EFAULT;
- 					break;
- 				}
--				put_user_page(local_page_list[j]);
-+				vaddr_unpin_pages(&local_page_list[j], 1,
-+						  &umem_odp->umem.vaddr_pin);
- 				continue;
- 			}
- 
-@@ -684,8 +686,9 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
- 			 * ib_umem_odp_map_dma_single_page().
- 			 */
- 			if (npages - (j + 1) > 0)
--				put_user_pages(&local_page_list[j+1],
--					       npages - (j + 1));
-+				vaddr_unpin_pages(&local_page_list[j+1],
-+						  npages - (j + 1),
-+						  &umem_odp->umem.vaddr_pin);
- 			break;
- 		}
- 	}
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 61b616cd9243..2bd76ad8787e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1606,6 +1606,13 @@ int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
- long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
- 		     unsigned int gup_flags, struct page **pages,
- 		     struct vaddr_pin *vaddr_pin);
-+long vaddr_pin_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
-+			    unsigned long start, unsigned long nr_pages,
-+			    unsigned int gup_flags, struct page **pages,
-+			    struct vm_area_struct **vmas, int *locked,
-+			    struct vaddr_pin *vaddr_pin);
-+void vaddr_unpin_pages(struct page **pages, unsigned long nr_pages,
-+		       struct vaddr_pin *vaddr_pin);
- void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
- 				  struct vaddr_pin *vaddr_pin, bool make_dirty);
- bool mapping_inode_has_layout(struct vaddr_pin *vaddr_pin, struct page *page);
-diff --git a/mm/gup.c b/mm/gup.c
-index 85f09958fbdc..bb95adfaf9b6 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -2518,6 +2518,38 @@ long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
- }
- EXPORT_SYMBOL(vaddr_pin_pages);
- 
-+/**
-+ * vaddr_pin_pages pin pages by virtual address and return the pages to the
-+ * user.
-+ *
-+ * @tsk:	the task_struct to use for page fault accounting, or
-+ *		NULL if faults are not to be recorded.
-+ * @mm:		mm_struct of target mm
-+ * @addr:	start address
-+ * @nr_pages:	number of pages to pin
-+ * @gup_flags:	flags to use for the pin
-+ * @pages:	array of pages returned
-+ * @vaddr_pin:	initialized meta information this pin is to be associated
-+ * with.
-+ *
-+ * This is the "vaddr_pin_pages" corresponding variant to
-+ * get_user_pages_remote(), but with FOLL_PIN semantics: the implementation sets
-+ * FOLL_PIN. That, in turn, means that the pages must ultimately be released
-+ * by put_user_page().
-+ */
-+long vaddr_pin_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
-+			    unsigned long start, unsigned long nr_pages,
-+			    unsigned int gup_flags, struct page **pages,
-+			    struct vm_area_struct **vmas, int *locked,
-+			    struct vaddr_pin *vaddr_pin)
-+{
-+	gup_flags |= FOLL_TOUCH | FOLL_REMOTE | FOLL_PIN;
-+
-+	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
-+				       locked, gup_flags, vaddr_pin);
-+}
-+EXPORT_SYMBOL(vaddr_pin_pages_remote);
-+
- /**
-  * vaddr_unpin_pages_dirty_lock - counterpart to vaddr_pin_pages
-  *
-@@ -2536,3 +2568,21 @@ void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
- 	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, make_dirty);
- }
- EXPORT_SYMBOL(vaddr_unpin_pages_dirty_lock);
-+
-+/**
-+ * vaddr_unpin_pages - simple, non-dirtying counterpart to vaddr_pin_pages
-+ *
-+ * @pages: array of pages returned
-+ * @nr_pages: number of pages in pages
-+ * @vaddr_pin: same information passed to vaddr_pin_pages
-+ *
-+ * Like vaddr_unpin_pages_dirty_lock, but for non-dirty pages. Useful in putting
-+ * back pages in an error case: they were never made dirty.
-+ */
-+void vaddr_unpin_pages(struct page **pages, unsigned long nr_pages,
-+		       struct vaddr_pin *vaddr_pin)
-+{
-+	__put_user_pages_dirty_lock(vaddr_pin, pages, nr_pages, false);
-+}
-+EXPORT_SYMBOL(vaddr_unpin_pages);
-+
--- 
-2.22.0
-
+Peter
