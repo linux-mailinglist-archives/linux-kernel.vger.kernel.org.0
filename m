@@ -2,77 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C019E8A1E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 17:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694638A1F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 17:06:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbfHLPFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 11:05:19 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:34431 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbfHLPFS (ORCPT
+        id S1728090AbfHLPGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 11:06:02 -0400
+Received: from mail-ot1-f71.google.com ([209.85.210.71]:50949 "EHLO
+        mail-ot1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbfHLPGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 11:05:18 -0400
-X-Originating-IP: 92.137.69.152
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id D09B9C0002;
-        Mon, 12 Aug 2019 15:05:15 +0000 (UTC)
-Date:   Mon, 12 Aug 2019 17:05:15 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Richard Genoud <richard.genoud@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tty/serial: atmel: remove redundant assignment to ret
-Message-ID: <20190812150515.GQ3600@piout.net>
-References: <20190809174042.6276-1-colin.king@canonical.com>
+        Mon, 12 Aug 2019 11:06:02 -0400
+Received: by mail-ot1-f71.google.com with SMTP id t26so550235otp.17
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 08:06:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=UdT6wUZ/D8ky7HtPCj9VpMdye4p6v52eVLFOfN7WQts=;
+        b=D56T+3AeXqkoOHhdj6xNG5dzJQAqhpDocWgt4pJCcbt/cdYiYQulPsEH80I2ppRO8z
+         hodmAdylf0Isosz/DW9VUJStiNJvAdheFEzdSp/46B8rq/9ayixcwpIZWOrPJEmqxcB1
+         di7/cSYpWfI7C8KLgEy9Roo+QdzxQS2VamRapDJiCWCOFp1wAKe95LY0EBPJvfHGjDV9
+         9cPi+4FltQs6jf7g/eZ4j/nlIUG6iNl74JQDr9a6fjkCl0+h/kUIUWCi13yj7H/tnfhj
+         x372Duh0weltdGC3RrVaNh21tnPYm+t7YLVpnE7vEQ5WkiGRd7jQF/nzFuO3K/wTCfAr
+         MJ6Q==
+X-Gm-Message-State: APjAAAXviYsAuukJ128vIUFmJoasnJUUNIdLs3JDOhqdwDF/lJqmCbEL
+        yC4LY4y22akDTNwuzRk2L8EK+nBFUApd2WHi5rTBChJXMoL4
+X-Google-Smtp-Source: APXvYqwxLBlryY9AUKUQMeg0vCZyhR/BAXzcWCPEWAR/D5r2dVoCbvnxs4b2xafrrXxYy2E7KpBMgX++6+Ns9fTe7IJHLPoTqUBj
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809174042.6276-1-colin.king@canonical.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Received: by 2002:a6b:bcc7:: with SMTP id m190mr24368313iof.107.1565622361221;
+ Mon, 12 Aug 2019 08:06:01 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 08:06:01 -0700
+In-Reply-To: <20190812144720.1980-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b1729e058fecdcee@google.com>
+Subject: Re: general protection fault in __pm_runtime_resume
+From:   syzbot <syzbot+3cbe5cd105d2ad56a1df@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, hdanton@sina.com,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        oneukum@suse.com, stern@rowland.harvard.edu,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/2019 18:40:42+0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable ret is initialized to a value that is never read and it
-> is re-assigned later. The initialization is redundant and can be
-> removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Hello,
 
-> ---
->  drivers/tty/serial/atmel_serial.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-> index 0b4f36905321..19a85d6fe3d2 100644
-> --- a/drivers/tty/serial/atmel_serial.c
-> +++ b/drivers/tty/serial/atmel_serial.c
-> @@ -2888,7 +2888,7 @@ static int atmel_serial_probe(struct platform_device *pdev)
->  	struct atmel_uart_port *atmel_port;
->  	struct device_node *np = pdev->dev.parent->of_node;
->  	void *data;
-> -	int ret = -ENODEV;
-> +	int ret;
->  	bool rs485_enabled;
->  
->  	BUILD_BUG_ON(ATMEL_SERIAL_RINGSIZE & (ATMEL_SERIAL_RINGSIZE - 1));
-> -- 
-> 2.20.1
-> 
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reported-and-tested-by:  
+syzbot+3cbe5cd105d2ad56a1df@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         7f7867ff usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=177252d2600000
+
+Note: testing is done by a robot and is best-effort only.
