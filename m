@@ -2,112 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C6128A88F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FCF78A898
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:47:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfHLUqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 16:46:38 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44185 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbfHLUqi (ORCPT
+        id S1726898AbfHLUr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 16:47:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3758 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726144AbfHLUrZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:46:38 -0400
-Received: by mail-pf1-f194.google.com with SMTP id c81so1285534pfc.11
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 13:46:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:from:cc:to:user-agent:date;
-        bh=9CfjXilodmw9BsgbwaSAlw+obuKZRe+IX22W8bs4rYc=;
-        b=IkVsjy3Qlswuptc8SNo3wFzVDH0wtJRsCr4rT8zG3fa+YDeYAYgW3a1Gbw/ow7XJMJ
-         jV4pTeMYAtCVs9ZBCZNbgn1B8wi29HRiG5r9Dwa0uZcPQFyabZVeeEwAW//9DoQ2iGQU
-         Qgfxy8Is7G+w517i9KgGGkwO1Ml89RglKyUZc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
-         :user-agent:date;
-        bh=9CfjXilodmw9BsgbwaSAlw+obuKZRe+IX22W8bs4rYc=;
-        b=In8ce6d7qoioe5w0OdAYN2mmYBh/quf3KxmCeaTQSz0SxejEnZHL/P2IOBNTexeB3W
-         vekiBtfTT86fj9z6v81TuLfi2cwn54y+kCWGLzd00hmAsf8wgBdMURT6i61elSnURNSV
-         H+Ul2uKPGJaxfVdyoIXPzqB1iPBz6fakn7HvHC0JW/9Pazsb/9vDWkVPARzLLh0v/PdK
-         2AdmsfMP+MXenrNW4M7vob3mCFHX9cC9XEce7TW6E1Hs3SBnOtX9kO/rjm+PP65Tf24+
-         fm2bA9ZMGWlPhwzkNZaTRfgTpqRHq6Yoo+Jvhan9TZ3La9iKF0dEzy+ROLb/ec9+u0ts
-         pOKA==
-X-Gm-Message-State: APjAAAVeshrO2ADxmxt1DRJk93bi5yIt+IFic9u6lI71kiCPyGT3Azx/
-        zYpvB5JmPJ1J6s7tNT/VIPQeCg==
-X-Google-Smtp-Source: APXvYqyDQqDbCcR+d7VFmdaWIiHiJ6hJdgKP21T2ghZY/bltbjkjp+2smqWYE/yUIBH9VWiQmY5Slg==
-X-Received: by 2002:a63:4612:: with SMTP id t18mr31918123pga.85.1565642797467;
-        Mon, 12 Aug 2019 13:46:37 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id k36sm107716672pgl.42.2019.08.12.13.46.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 13:46:36 -0700 (PDT)
-Message-ID: <5d51d02c.1c69fb81.6f113.f06a@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e7951cb251116e903cf0040ee6f271dc4e68ff2e.camel@linux.intel.com>
-References: <20190806220750.86597-1-swboyd@chromium.org> <20190806220750.86597-5-swboyd@chromium.org> <e7951cb251116e903cf0040ee6f271dc4e68ff2e.camel@linux.intel.com>
-Subject: Re: [PATCH v3 4/4] tpm: add driver for cr50 on SPI
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Andrey Pronin <apronin@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-User-Agent: alot/0.8.1
-Date:   Mon, 12 Aug 2019 13:46:35 -0700
+        Mon, 12 Aug 2019 16:47:25 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7CKLgtM086259;
+        Mon, 12 Aug 2019 16:47:21 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ubcdjxqxw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Aug 2019 16:47:21 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7CKhc0u136880;
+        Mon, 12 Aug 2019 16:47:21 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ubcdjxqxj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Aug 2019 16:47:20 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7CKjQsm022606;
+        Mon, 12 Aug 2019 20:47:20 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02dal.us.ibm.com with ESMTP id 2u9nj62mcs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Aug 2019 20:47:19 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7CKlFvh50070014
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Aug 2019 20:47:15 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C20BBE04F;
+        Mon, 12 Aug 2019 20:47:15 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F838BE053;
+        Mon, 12 Aug 2019 20:47:13 +0000 (GMT)
+Received: from akrowiak-ThinkPad-P50.ibm.com (unknown [9.85.204.7])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Mon, 12 Aug 2019 20:47:13 +0000 (GMT)
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@linux.ibm.com, borntraeger@de.ibm.com, cohuck@redhat.com,
+        frankja@linux.ibm.com, david@redhat.com, mjrosato@linux.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        pmorel@linux.ibm.com, pasic@linux.ibm.com,
+        alex.williamson@redhat.com, kwankhede@nvidia.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: [PATCH] s390: vfio-ap: remove unnecessary calls to disable queue interrupts
+Date:   Mon, 12 Aug 2019 16:47:09 -0400
+Message-Id: <1565642829-20157-1-git-send-email-akrowiak@linux.ibm.com>
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-12_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908120202
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jarkko Sakkinen (2019-08-09 13:31:04)
-> On Tue, 2019-08-06 at 15:07 -0700, Stephen Boyd wrote:
-> > From: Andrey Pronin <apronin@chromium.org>
-> >=20
-> > Add TPM2.0 PTP FIFO compatible SPI interface for chips with Cr50
-> > firmware. The firmware running on the currently supported H1
-> > Secure Microcontroller requires a special driver to handle its
-> > specifics:
-> >=20
-> >  - need to ensure a certain delay between spi transactions, or else
-> >    the chip may miss some part of the next transaction;
-> >  - if there is no spi activity for some time, it may go to sleep,
-> >    and needs to be waken up before sending further commands;
-> >  - access to vendor-specific registers.
->=20
-> Which Chromebook models have this chip?
+When an AP queue is reset (zeroized), interrupts are disabled. The queue
+reset function currently tries to disable interrupts unnecessarily. This patch
+removes the unnecessary calls to disable interrupts after queue reset.
 
-Pretty much all Chromebooks released in the last year or two have this
-chip in them. I don't have an exhaustive list, but you can usually check
-this by putting your device into dev mode and then looking at the driver
-attached to the TPM device in sysfs or by grepping the dmesg output for
-cr50.
+Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+---
+ drivers/s390/crypto/vfio_ap_ops.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
->=20
-> If I had an access to one, how do I do kernel testing with it i.e.
-> how do I get it to boot initramfs and bzImage from a USB stick?
->=20
->=20
-
-You can follow the developer guide[1] and build a USB image for the
-board you have. You can usually checkout the latest upstream kernel in
-place of where the kernel is built from in the chroot, typically
-~/trunk/src/third_party/kernel/<version number>. The build should pick
-up that it's an upstream tree and try to use some default defconfig.
-This driver isn't upstream yet, so you may need to enable it in the
-defconfig, located in
-~/trunk/src/third_party/chromiumos-overlay/eclass/cros-kernel/ so that
-the driver is actually built. After that, use 'cros flash' to flash the
-new kernel image to your USB stick and boot from USB with 'ctrl+u' and
-you should be on your way to chromeos kernel testing.
-
-[1] https://chromium.googlesource.com/chromiumos/docs/+/master/developer_gu=
-ide.md
+diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+index 0604b49a4d32..407c2f0f25f9 100644
+--- a/drivers/s390/crypto/vfio_ap_ops.c
++++ b/drivers/s390/crypto/vfio_ap_ops.c
+@@ -1114,18 +1114,19 @@ static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
+ 	return NOTIFY_OK;
+ }
+ 
+-static void vfio_ap_irq_disable_apqn(int apqn)
++static struct vfio_ap_queue *vfio_ap_find_qdev(int apqn)
+ {
+ 	struct device *dev;
+-	struct vfio_ap_queue *q;
++	struct vfio_ap_queue *q = NULL;
+ 
+ 	dev = driver_find_device(&matrix_dev->vfio_ap_drv->driver, NULL,
+ 				 &apqn, match_apqn);
+ 	if (dev) {
+ 		q = dev_get_drvdata(dev);
+-		vfio_ap_irq_disable(q);
+ 		put_device(dev);
+ 	}
++
++	return q;
+ }
+ 
+ int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
+@@ -1164,6 +1165,7 @@ static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
+ 	int rc = 0;
+ 	unsigned long apid, apqi;
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
++	struct vfio_ap_queue *q;
+ 
+ 	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm,
+ 			     matrix_mdev->matrix.apm_max + 1) {
+@@ -1177,7 +1179,10 @@ static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
+ 			 */
+ 			if (ret)
+ 				rc = ret;
+-			vfio_ap_irq_disable_apqn(AP_MKQID(apid, apqi));
++
++			q = vfio_ap_find_qdev(AP_MKQID(apid, apqi));
++			if (q)
++				vfio_ap_free_aqic_resources(q);
+ 		}
+ 	}
+ 
+-- 
+2.7.4
 
