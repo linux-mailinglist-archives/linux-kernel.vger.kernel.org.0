@@ -2,144 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D27A48A00A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 15:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E93A78A012
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 15:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfHLNt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 09:49:56 -0400
-Received: from UHIL19PA35.eemsg.mail.mil ([214.24.21.194]:52131 "EHLO
-        UHIL19PA35.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfHLNtz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 09:49:55 -0400
-X-EEMSG-check-017: 11718142|UHIL19PA35_ESA_OUT01.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.64,377,1559520000"; 
-   d="scan'208";a="11718142"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UHIL19PA35.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 12 Aug 2019 13:49:53 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1565617793; x=1597153793;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=XI4obDbT5jxk8krhNUG+JCTxrf4Ynwc9uGtR2DBTVBQ=;
-  b=CMBu7K6LbJas4FWCbM6+ddKmsIHsqsiKusFaBMbj6wP1Ph5/BVBmQoET
-   MF8GPbDJwHTSfh/0fgMUkopvQFvy3JhEuEHn1qHogYcgHbCbNbXiC1rJt
-   sAF9iFwy6NPj7HjvLADRHJEFCEhq63aCSvgN78GiZlQIao0XcJXgWBzb0
-   Raq/ZyRhOMkQP5hFWbIqWjpqTeJK6R5yBlRIcbHhVhYcNmPN2rUFmatrA
-   GwBq33IfsTulLoMN3Jf94y0UC+tThJwDtk1SU0NRNv2vBbL9ks3hQBfvj
-   +6kyvbJM3hg8Wy+hP2txNPsrL4hP0NhP1Jx/49uISZHgew5nsAAiGl8Vo
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.64,377,1559520000"; 
-   d="scan'208";a="31341783"
-IronPort-PHdr: =?us-ascii?q?9a23=3AuMvjtxUSylWIjoDNQgJY/X79pGzV8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYZReFuqdThVPEFb/W9+hDw7KP9fy5AypZu8rK7i1KWacPfi?=
- =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
- =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sBvdutMLjYd8Jas9xR?=
- =?us-ascii?q?rEr3tVcOlK2G1kIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
- =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
- =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
- =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhCufixjpOi3Tr36M1zv?=
- =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Uwzrx9JTEfx4jrPyKQL?=
- =?us-ascii?q?l+cdDRyU4qFw7dklifs5blPzST1u8Qsmab6OtgWv+xhG4jtgp8pSKgydsjio?=
- =?us-ascii?q?nOh4Ia107L+D5lwIc1OdK4SEl7bcSiEJtLrS6WLYR2QsQ8Q2xxvisx174IuY?=
- =?us-ascii?q?ajcSQXx5kqyATTZvyaf4SS/B7uW/idLS1liH9jZbmxnQy98VK6xe35TsS01V?=
- =?us-ascii?q?FKoTdbndTUrXAN0gDT6tCASvtg4ketwTaP2B7X6uFDOU00ibDUK4Qgwr4tjZ?=
- =?us-ascii?q?ofq1jDHy/ql0X2i6+abEMk9fSz6+v7eLnmo56cN4tshgH/NKQhhNC/DPwlPg?=
- =?us-ascii?q?UBUGWX4+Sx2KD58UHnT7hGkOc6nrTBvJDfP8sbp6q5AwFP0oYk7hayFy2p38?=
- =?us-ascii?q?gXnXkALVJKZQyIgpP1O1DOPP/4DfC/j06qkDdw3f/KJLLhApLTLnTbirfuYa?=
- =?us-ascii?q?5961JAyAo01d1f5YhbBa0CIP/oQU/xqcfYAQEjPwOowuftEM992Z8GWWKTHq?=
- =?us-ascii?q?+ZN7vfsUeS6eIyJ+mBf5cVtyzgK/gh/vLuiHg5mVgHfaa3x5cYdHe4HvF+KU?=
- =?us-ascii?q?WDfXXsmssBEXsNvgcmVuPqjVyCUSRRanu8XqI84io2CI2jDYjZR4CthKaN0z?=
- =?us-ascii?q?u8Hp1TfmpGEEyDEW/0d4WYXPcBcDmSLdFlkjwFU7ihVoAg2AqwtA/11bVnNP?=
- =?us-ascii?q?DY+i4GupL50th6+enTmQs19TxuAMSXy3uNQH1snmMUWz8227hyoUh8yleFzK?=
- =?us-ascii?q?h5jOVUFcdN6PxVTwc6L5/cz/B6CtzrXwLBecqGSEuiQtq4GjwxUN0xzMEUY0?=
- =?us-ascii?q?pnGNWtkArD3yy0DL8RjbCLA4Y08q3E1XjrO8l902rG1LUmj1Q+RstPNGumhr?=
- =?us-ascii?q?Nw9gTKCY7JiFiWmLi0dasC2C7A73mDzWWQs0FCSgJwUrvKXWoZZkTIqdT1/E?=
- =?us-ascii?q?TCT6WhCb4/KAtO1daCKrdWat3ulVhJWffjONPQYm2vn2ewAQ2Iy6iWbIX0Zm?=
- =?us-ascii?q?od3D/SCFQenw8P+naGMBA0Bj29rGLGEDxuCVXvblvu8el7r3O7VFU0zwCRb0?=
- =?us-ascii?q?B60bq64BsViuKdS/8J2bIEoighoS1uHFmhx9LWF8aApw15caVYYNM95kpH1G?=
- =?us-ascii?q?3Auwx+IJOgNaZiiUAacwlsoUPu2At4Cp9ancgpsnwq1gxyJryc0F9bcDOYx5?=
- =?us-ascii?q?/wafXrLTzQ9RbnSKfM0xmK0t+d+Y8U9e817V7x6kXhLkM/9z1C1N5P3jPI/p?=
- =?us-ascii?q?zXCCIKWI/1F0Mw8AJ34brdZ39uyZnT0ChFOLOztHft3NMlCe9tnh+rcNBePK?=
- =?us-ascii?q?6sCB75E8pcAdOnbuMthQ76PVo/IOlO+ftsbIudfPyc1fvuZb0xkQ=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2AFEwALbVFd/wHyM5BmHAEBAQQBAQcEAQGBZ4FuKoE/M?=
- =?us-ascii?q?iqEHo8lUQEBBoE2iVwOjzqBZwkBAQEBAQEBAQE0AQIBAYQ/AoJuIzgTAQQBA?=
- =?us-ascii?q?QEEAQEDAQkBAWyFM4I6KQGCZwECAyMVNgkCEAsOCgICHwcCAiE2BgEMBgIBA?=
- =?us-ascii?q?YJfP4FrAwkUq1SBMoVJgjMNX4FJgQwoi2QXeIEHgTiCaz6CGoF3ARIBgyqCW?=
- =?us-ascii?q?ASOXIY9lW5ACYIfkDmDcwYbgjCHL45ejVWJV5A7IWdxKwgCGAghDzuCbIJ6j?=
- =?us-ascii?q?ikjAzCBBgEBjBSCQwEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 12 Aug 2019 13:49:52 +0000
-Received: from moss-callisto.infosec.tycho.ncsc.mil (moss-callisto [192.168.25.136])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x7CDnp0H028739;
-        Mon, 12 Aug 2019 09:49:51 -0400
-Subject: Re: [Non-DoD Source] Re: [PATCH] fanotify, inotify, dnotify,
- security: add security hook for fs notifications
-To:     Jan Kara <jack@suse.cz>, Paul Moore <paul@paul-moore.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>, selinux@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20190731153443.4984-1-acgoide@tycho.nsa.gov>
- <CAHC9VhQUoDwBiLi+BiW=_Px18v3xMhhGYDD2mLdu9YZJDWw1yg@mail.gmail.com>
- <CAOQ4uxigYZunXgq0BubRFNM51Kh_g3wrtyNH77PozUX+3sM=aQ@mail.gmail.com>
- <CAHC9VhRpTuL2Lj1VFwHW4YLpx0hJVSxMnXefooHqsxpEUg6-0A@mail.gmail.com>
- <CAOQ4uxiGNXbZ-DWeXTkNM4ySFbBbo1XOF1=3pjknsf+EjbNuOw@mail.gmail.com>
- <16c7c0c4a60.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <20190812134145.GA11343@quack2.suse.cz>
-From:   Aaron Goidel <acgoide@tycho.nsa.gov>
-Message-ID: <f03baf3a-d688-b949-09e3-5c2beb2f6f07@tycho.nsa.gov>
-Date:   Mon, 12 Aug 2019 09:49:51 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190812134145.GA11343@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1727221AbfHLNui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 09:50:38 -0400
+Received: from mail-eopbgr710137.outbound.protection.outlook.com ([40.107.71.137]:63312
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726703AbfHLNui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 09:50:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eZwGpaqW3SgBGnRpnqQASy5kn1L6yj/aL0RtCopPBiFH6KaMADLNgUyMXXzGokNcPbT1rDNtgaaZ+NSABgXp19TlMM8ZGxgFe6Rvo2jXYL290j6+m/D37y86CDH5Jx3PqqwGy/Urt3cQQvlvbZ44cKZlONWl41k0+c/zuTTlurLcCVA+DePy54ENo6sehNkLZ8Cba+hvFXCv9rjBX8sX8Tf0OFOCcsemaTEuNThaEhMvBCH7lxVeXrgu3kB1aVSL363ghOEyh95uUO7M56zkiBtELeP1iPwtCwIS74vCE/jgXxefyemGYNd0A4DegzXf0o5zrGfQZJybc/1ybZJ6kQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NKwUl+iop+1fNOpIzXHF6+hYJuY8PEvgxiYMLDEmtsM=;
+ b=gP/MXZ4YmmDIKotmkqSP5ZfK5bWHnNerOpcWsFSjklW95264gQNHvKurpeFufglABIwQMCDjRTHLBGs6Wc045YPs3h8f6EtOwohXRbxN0DqIfFikFrT1XWV6wR/zpomak+Boq3xigCqpgcbtVuPDkf/EVUouHK3ztHNyyCwxuSC3OiLTAiWBMgxezh9W4+DLbDz4myw21RmnQezvy3jHYb/xmJYfQ1UKdGvjC/nN5CwKZmqzRoFIZU2Jszu+P19uDguayIjmMyE46i1PaZKY0YIdcrqQRJayEajR8jxKEnC0bfnkoVicEQji/jbKLZRyRVn37JzOKr2fISqQj88P+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NKwUl+iop+1fNOpIzXHF6+hYJuY8PEvgxiYMLDEmtsM=;
+ b=Iyrstbs2tF47TLljC5nVUnaqBI1JnceYTxVi81xjHklqW8QivXyvUJbf53InibFl3/n+eCtjnaQC8m8H5ZajDkDLnz9lFdYDE9WFMpqGsWwUsrBM+XymG0HrvMMj/AWX3KpsxBgHucE47PyJthFlyLH1ZNQ+MpzJMSswu6Wvvds=
+Received: from DM6PR21MB1337.namprd21.prod.outlook.com (20.179.53.80) by
+ DM6PR21MB1419.namprd21.prod.outlook.com (10.255.109.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.4; Mon, 12 Aug 2019 13:50:35 +0000
+Received: from DM6PR21MB1337.namprd21.prod.outlook.com
+ ([fe80::257a:6f7f:1126:a61d]) by DM6PR21MB1337.namprd21.prod.outlook.com
+ ([fe80::257a:6f7f:1126:a61d%6]) with mapi id 15.20.2178.006; Mon, 12 Aug 2019
+ 13:50:35 +0000
+From:   Haiyang Zhang <haiyangz@microsoft.com>
+To:     "sashal@kernel.org" <sashal@kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+CC:     KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "olaf@aepfle.de" <olaf@aepfle.de>, vkuznets <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] PCI: hv: Detect and fix Hyper-V PCI domain number
+ collision
+Thread-Topic: [PATCH v2] PCI: hv: Detect and fix Hyper-V PCI domain number
+ collision
+Thread-Index: AQHVTLH3GagQ2bG1NUyV/+P043l1Z6b3j4iA
+Date:   Mon, 12 Aug 2019 13:50:34 +0000
+Message-ID: <DM6PR21MB13379DCB3007D728204A0D8CCAD30@DM6PR21MB1337.namprd21.prod.outlook.com>
+References: <1565135484-31351-1-git-send-email-haiyangz@microsoft.com>
+In-Reply-To: <1565135484-31351-1-git-send-email-haiyangz@microsoft.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=haiyangz@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-08-12T13:50:33.2405330Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0327dcd0-4e67-4d5d-98c4-e691d1eeb84b;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=haiyangz@microsoft.com; 
+x-originating-ip: [96.61.92.94]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e308908a-44fa-499b-fe00-08d71f2c0cce
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600158)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR21MB1419;
+x-ms-traffictypediagnostic: DM6PR21MB1419:|DM6PR21MB1419:
+x-ms-exchange-transport-forked: True
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <DM6PR21MB1419A06A6327F53B67CB1DF0CAD30@DM6PR21MB1419.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 012792EC17
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(376002)(396003)(39860400002)(366004)(346002)(199004)(189003)(13464003)(33656002)(2501003)(8676002)(9686003)(99286004)(7736002)(25786009)(256004)(26005)(2201001)(66446008)(6506007)(66476007)(66946007)(229853002)(53546011)(64756008)(66556008)(86362001)(55016002)(478600001)(53936002)(102836004)(446003)(11346002)(6246003)(305945005)(476003)(76116006)(6116002)(186003)(3846002)(14454004)(486006)(8990500004)(74316002)(316002)(7696005)(2906002)(8936002)(76176011)(10290500003)(22452003)(6436002)(110136005)(10090500001)(52536014)(54906003)(66066001)(81156014)(81166006)(14444005)(5660300002)(4326008)(71190400001)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR21MB1419;H:DM6PR21MB1337.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: +7LK/9RweCkxRgOgeGWeGZ0W8BQZJHJ1j2KfRDlHsxkrdfWAiPNPOg1ySWU0yrAKsumeLuXcUwD9oSFxIolmEEpq9uR7c72fC7AdN0QHfNuQ1sCe3r/CPLQJQsJlzMlVA0P+4ybz2fyH03svuAX77KDodUguwf4msX2CM9J0lAhwqa47H/6QG08/0eBWQC/NvkI0mvLru6QLMqkoLrQ92Nj2gxSWQ0COymRCutT4PREsxSCsMCaLeg1jwf2Gx/wXdE4ptJxDYWjC/K4dzsfdvFach39um3HG4i29bzicV2aKWEt5Dbr2GJ4rzRYpSuJu4g73Cs1qlv0R0555pAMV/DAhG5Pw4GeKjqCwL/Nt4hNsZmr84YUxowh//vmp5LTjKTrHvuAmpX2miXCV2e1Ni05ximfAk6KDTsyXVBC/mcQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e308908a-44fa-499b-fe00-08d71f2c0cce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 13:50:34.8027
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: U1Xo4KBgVIcO9uCsgX+g+YeBFhxabdv/0Ykw1pfqs9d010S9pXRjmiusfmoCy8o7fhkCxLblXCnYYnu5pE7Nmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR21MB1419
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/12/19 9:41 AM, Jan Kara wrote:
-> On Sat 10-08-19 11:01:16, Paul Moore wrote:
->> On August 10, 2019 6:05:27 AM Amir Goldstein <amir73il@gmail.com> wrote:
->>
->>>>>> Other than Casey's comments, and ACK, I'm not seeing much commentary
->>>>>> on this patch so FS and LSM folks consider this your last chance - if
->>>>>> I don't hear any objections by the end of this week I'll plan on
->>>>>> merging this into selinux/next next week.
->>>>>
->>>>> Please consider it is summer time so people may be on vacation like I was...
->>>>
->>>> This is one of the reasons why I was speaking to the mailing list and
->>>> not a particular individual :)
->>>
->>> Jan is fsnotify maintainer, so I think you should wait for an explicit ACK
->>> from Jan or just merge the hook definition and ask Jan to merge to
->>> fsnotify security hooks.
->>
->> Aaron posted his first patch a month ago in the beginning of July and I
->> don't recall seeing any comments from Jan on any of the patch revisions.
->> I would feel much better with an ACK/Reviewed-by from Jan, or you - which
->> is why I sent that email - but I'm not going to wait forever and I'd like
->> to get this into -next soon so we can get some testing.
-> 
-> Yeah, sorry for the delays. I'm aware of the patch but I was also on
-> vacation and pretty busy at work so Amir always beat me in commenting on
-> the patch and I didn't have much to add. Once Aaron fixes the latest
-> comments from Amir, I'll give the patch the final look and give my ack.
-> 
-> 								Honza
-> 
 
-I already re-spun the patch with the changes Amir and I agreed to. There 
-was an email with the PATCH v2. It may have flown under the radar a bit, 
-so just wanted to point that out.
--- 
-Aaron
+
+> -----Original Message-----
+> From: LKML haiyangz <lkmlhyz@microsoft.com> On Behalf Of Haiyang
+> Zhang
+> Sent: Tuesday, August 6, 2019 7:52 PM
+> To: sashal@kernel.org; bhelgaas@google.com; lorenzo.pieralisi@arm.com;
+> linux-hyperv@vger.kernel.org; linux-pci@vger.kernel.org
+> Cc: Haiyang Zhang <haiyangz@microsoft.com>; KY Srinivasan
+> <kys@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
+> olaf@aepfle.de; vkuznets <vkuznets@redhat.com>; linux-
+> kernel@vger.kernel.org
+> Subject: [PATCH v2] PCI: hv: Detect and fix Hyper-V PCI domain number
+> collision
+>=20
+> Currently in Azure cloud, for passthrough devices including GPU, the
+> host sets the device instance ID's bytes 8 - 15 to a value derived from
+> the host HWID, which is the same on all devices in a VM. So, the device
+> instance ID's bytes 8 and 9 provided by the host are no longer unique.
+>=20
+> This can cause device passthrough to VMs to fail because the bytes 8 and
+> 9 is used as PCI domain number. So, as recommended by Azure host team,
+> we now use the bytes 4 and 5 which usually contain unique numbers as PCI
+> domain. The chance of collision is greatly reduced. In the rare cases of
+> collision, we will detect and find another number that is not in use.
+>=20
+> Thanks to Michael Kelley <mikelley@microsoft.com> for proposing this idea=
+.
+>=20
+> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Acked-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/pci/controller/pci-hyperv.c | 92
+
+Hi Lorenzo,
+
+This patch has been updated based on Bjorn's comments. Do you have any furt=
+her
+comments? Could you take it from your tree?
+
+Thanks,
+- Haiyang
