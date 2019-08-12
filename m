@@ -2,96 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AEE78A66E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:40:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4B778A66D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfHLSkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 14:40:25 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46042 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfHLSkZ (ORCPT
+        id S1726826AbfHLSkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 14:40:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39333 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfHLSkM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:40:25 -0400
-Received: by mail-pf1-f196.google.com with SMTP id w26so4852763pfq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 11:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wEHsTJtJkpVrJagTBHsYEXur21Gl4Q7vvn3wXU2PQh8=;
-        b=ThLZwOpG0O4bmdtkt2UnZX/MXyG86/QHR9MlVnhByElkQHIwAd35+0RY5UWMGcyGQJ
-         aw2P+B1KVo9TB47jb+KJMBw6U9RyBKalERMGDjB4SKkxxvBvVhkj7CjoGCa+YXm7fugs
-         SxiBsKNdbARGIsliHlsgE5zWCmN+3F56+Bbmt175GGBLHkC4PZkNF8Np6EVmCy160V8J
-         Yo3CiJXb0BB2VjnZGePMZqmHiXKOsKVDfPRpdGv67j9IfVIlXRQlq3aQEvz8TMe5GdR0
-         oICoptny0sOMxX9IEBC3jkYvbLo6o7H1EJZre5N5CJU50TD4JLi9+QgN3bD6om4D/6Wk
-         fI9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wEHsTJtJkpVrJagTBHsYEXur21Gl4Q7vvn3wXU2PQh8=;
-        b=a+Tl4oe0UY/hLQ7piNCOMI/b62+/6TWpcIH4QaUl3cE+g2QD06iP9FpJZJnYyE1lTC
-         JvbJTF2IGMbbRGFfwVMEXp4nQsYAEMMc8jlpnc9bo7kY7xfghFoHYN8vTfKXuJmGaj0o
-         jlNqIruKYzKl17F4aGsJHZyri+DLZPWZPIt5pHWnxNWrxbhYYWQXw9KXsepBP3arElSe
-         3pzlUQX88FqWadzFWq4UYINhC7ryBxe5SlsGe3w/o4pYVvo0mz9woUjjWH4P40eB+hAI
-         R52cf7mc5JV75l8/gKTgmtr7FOZDwMIasc27Up+wwRRefD1cYGe1bllbUpxNjcP0eLoY
-         gbjg==
-X-Gm-Message-State: APjAAAV+zmJORMveQiPIiZrvbT7PS1sygFMXop8bpao7+AB0QN9FVfSY
-        aM8mBiI2FxJSrxDiI+3s1EFy/mXV
-X-Google-Smtp-Source: APXvYqzkj5Qqa/vMdOxNgH0OewOSW8q2/FvbkwDsQw7xZNeVclwwuFxbcce6jZOfFLMr8kMYmAHljQ==
-X-Received: by 2002:a17:90a:3465:: with SMTP id o92mr641173pjb.20.1565635224168;
-        Mon, 12 Aug 2019 11:40:24 -0700 (PDT)
-Received: from localhost.localdomain ([203.109.114.129])
-        by smtp.gmail.com with ESMTPSA id d3sm301403pjz.31.2019.08.12.11.40.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 12 Aug 2019 11:40:23 -0700 (PDT)
-From:   Raag Jadav <raagjadav@gmail.com>
-To:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Raag Jadav <raagjadav@gmail.com>
-Subject: [PATCH] regulator: act8945a-regulator: fix ldo register addresses in set_mode hook
-Date:   Tue, 13 Aug 2019 00:09:54 +0530
-Message-Id: <1565635194-5816-1-git-send-email-raagjadav@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 12 Aug 2019 14:40:12 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7CIe4mL1022863
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 12 Aug 2019 11:40:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7CIe4mL1022863
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565635204;
+        bh=VVkFdFVroGhyDmjRnt7VReyMUDVmBw2IDP2RscEgPX4=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=w5anBHodtsn7EumhnQjtsZ4bEfoZwttNwSnsOC1z3UM6TIrxJzd7hO2TxRw75DfLe
+         V97UKhKDTrDM1HdfM+vnLAws2Ht9C1AtFVEeesb6RERHUvFBI9XdXTELgpTBGqe+DS
+         NeaUV0A+fcND2hk29Ewjas42ysBiniumFYs5F1RqDYfXBvXvp7VKvOpn/DKFK79NLs
+         iSyExCsbobq8D0tRt5cz6+rXS4WWwDKyuQDXfMGl5nm7F7wuEjN8Dtd7LkHCbhorGA
+         oeAdTkA3IHgtL8CGUE8Ti/+5nsCOuOCu2Wh+7M6kq1PmSTStneIh9dakts1xPsrrE9
+         5DTvYRNwznoeQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7CIe40I1022859;
+        Mon, 12 Aug 2019 11:40:04 -0700
+Date:   Mon, 12 Aug 2019 11:40:04 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-5785675dfef4f9edcee66edef7b3af21618d2707@git.kernel.org>
+Cc:     bp@suse.de, hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, bp@suse.de
+In-Reply-To: <20190811154036.29805-1-bp@alien8.de>
+References: <20190811154036.29805-1-bp@alien8.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/apic/32: Fix yet another implicit fallthrough
+ warning
+Git-Commit-ID: 5785675dfef4f9edcee66edef7b3af21618d2707
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to ACT8945A datasheet[1], operating modes for ldos are
-controlled by BIT(5) of their respective _CTRL registers.
+Commit-ID:  5785675dfef4f9edcee66edef7b3af21618d2707
+Gitweb:     https://git.kernel.org/tip/5785675dfef4f9edcee66edef7b3af21618d2707
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Sun, 11 Aug 2019 17:40:36 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 12 Aug 2019 20:35:04 +0200
 
-[1] https://active-semi.com/wp-content/uploads/ACT8945A_Datasheet.pdf
+x86/apic/32: Fix yet another implicit fallthrough warning
 
-Fixes: 7482d6ecc68e ("regulator: act8945a-regulator: Implement PM functionalities")
-Signed-off-by: Raag Jadav <raagjadav@gmail.com>
+Fix
+
+  arch/x86/kernel/apic/probe_32.c: In function ‘default_setup_apic_routing’:
+  arch/x86/kernel/apic/probe_32.c:146:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+      if (!APIC_XAPIC(version)) {
+         ^
+  arch/x86/kernel/apic/probe_32.c:151:3: note: here
+   case X86_VENDOR_HYGON:
+   ^~~~
+
+for 32-bit builds.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190811154036.29805-1-bp@alien8.de
+
 ---
- drivers/regulator/act8945a-regulator.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kernel/apic/probe_32.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
-index 5842849..d2f804d 100644
---- a/drivers/regulator/act8945a-regulator.c
-+++ b/drivers/regulator/act8945a-regulator.c
-@@ -169,16 +169,16 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
- 		reg = ACT8945A_DCDC3_CTRL;
- 		break;
- 	case ACT8945A_ID_LDO1:
--		reg = ACT8945A_LDO1_SUS;
-+		reg = ACT8945A_LDO1_CTRL;
- 		break;
- 	case ACT8945A_ID_LDO2:
--		reg = ACT8945A_LDO2_SUS;
-+		reg = ACT8945A_LDO2_CTRL;
- 		break;
- 	case ACT8945A_ID_LDO3:
--		reg = ACT8945A_LDO3_SUS;
-+		reg = ACT8945A_LDO3_CTRL;
- 		break;
- 	case ACT8945A_ID_LDO4:
--		reg = ACT8945A_LDO4_SUS;
-+		reg = ACT8945A_LDO4_CTRL;
- 		break;
- 	default:
- 		return -EINVAL;
--- 
-2.7.4
-
+diff --git a/arch/x86/kernel/apic/probe_32.c b/arch/x86/kernel/apic/probe_32.c
+index 1492799b8f43..ee2d91e382f1 100644
+--- a/arch/x86/kernel/apic/probe_32.c
++++ b/arch/x86/kernel/apic/probe_32.c
+@@ -184,7 +184,8 @@ void __init default_setup_apic_routing(void)
+ 				def_to_bigsmp = 0;
+ 				break;
+ 			}
+-			/* If P4 and above fall through */
++			/* P4 and above */
++			/* fall through */
+ 		case X86_VENDOR_HYGON:
+ 		case X86_VENDOR_AMD:
+ 			def_to_bigsmp = 1;
