@@ -2,184 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 961BD8971A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B63AC89720
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:19:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfHLGSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 02:18:06 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37057 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfHLGSG (ORCPT
+        id S1726982AbfHLGTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 02:19:30 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45313 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfHLGTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 02:18:06 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hx3ec-00040K-PE; Mon, 12 Aug 2019 08:18:02 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hx3ec-0001LT-ES; Mon, 12 Aug 2019 08:18:02 +0200
-Date:   Mon, 12 Aug 2019 08:18:02 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>, od@zcrc.me,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-Subject: Re: [PATCH 1/7] pwm: jz4740: Obtain regmap from parent node
-Message-ID: <20190812061802.oj45hhlooizge7dy@pengutronix.de>
-References: <20190809123031.24219-1-paul@crapouillou.net>
- <20190809123031.24219-2-paul@crapouillou.net>
- <20190809165147.wf7f5jfsvycysm5h@pengutronix.de>
- <1565370296.2091.1@crapouillou.net>
+        Mon, 12 Aug 2019 02:19:30 -0400
+Received: by mail-wr1-f66.google.com with SMTP id q12so13266750wrj.12
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 23:19:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=cXuEfz6dTLuH7k4JZkqkTjgK1i8dsH88adMzdKQ1sTc=;
+        b=R/4HYzdastzBW74NMy+sUW5qb3ISPh71xP4ZduZf6UWIMLAbGLhIUZ250/4laxSZfl
+         uUZ8sZd9vvrvet2alOQCk6D9W5sUdBeQ5eJ9/LUN6lYoXzQGI+ePTdxWZF+OFC/6nRk3
+         oYvtxAcuz7as6kOT85NsUgLdZ7sjC0NqZTze6V9/8GgvAyw/VTY76nshzViFM80jx9wf
+         FdsdGYEZs00yUKTIdOYKZDJ8EyK4NIKeSEFssI6qUHNVYtGzEVXehZSBPR+oN1QIT8Rn
+         2BWnFB7w1vhfX2t8AaHDHHO0SqGvPCywHVL8pLAwxc+j1E7dsJ1UFD17W/07aGrzIe3G
+         WbOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=cXuEfz6dTLuH7k4JZkqkTjgK1i8dsH88adMzdKQ1sTc=;
+        b=av7zdAUwDqY/oxVQYAqeXGLHKRg0cAMlfF+4V7cDAztwLOdjOFRY9bRUAtboFhXdIO
+         383m0N3E81Z4y4NFzDwfqEgFDCvpK704QVJlAQulrL+9RxgnDXIELV/sW8s11MEfQBti
+         wjBl0aJfZQ11zliBCTZVD+CcasJCxAyDENL+bG+1wHA433Zo8Tz2JkRkedprNmpQlUxt
+         u//E/d7ztqjpkNiW33SEN1UHXUxUhVsB5e3q1tvakb30M+mVKnxVAeAZpfuxEmz151eV
+         yeStmcwuWzJ2xJWSvK30/Eh7mpke03bhihvLWlP10e3DkiIZ0qyj1eyjelFPEekqxaYW
+         gW1Q==
+X-Gm-Message-State: APjAAAVwomE6XZtJwVUZbYXvQ+YF1dvm4Pu7rc+nXiZtp/tX9JrvbZRg
+        ywYLsNir6v22umnsQizC1pZOtJbRbos=
+X-Google-Smtp-Source: APXvYqx54CVqhDVPGxTi37PynpBJVCNcwZHegQUdr0PCtVMLeUoz6YdJ/YuNJv8pcMzjkEimW3KTOw==
+X-Received: by 2002:adf:dcc6:: with SMTP id x6mr38995179wrm.322.1565590767686;
+        Sun, 11 Aug 2019 23:19:27 -0700 (PDT)
+Received: from ogabbay-VM ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id 24sm9501633wmf.10.2019.08.11.23.19.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Aug 2019 23:19:27 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 09:19:25 +0300
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [git pull] habanalabs fixes for 5.3-rc5
+Message-ID: <20190812061925.GA19050@ogabbay-VM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1565370296.2091.1@crapouillou.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Paul,
+Hello Greg,
 
-On Fri, Aug 09, 2019 at 07:04:56PM +0200, Paul Cercueil wrote:
-> Le ven. 9 août 2019 à 18:51, Uwe =?iso-8859-1?q?Kleine-K=F6nig?=
-> <u.kleine-koenig@pengutronix.de> a écrit :
-> > On Fri, Aug 09, 2019 at 02:30:25PM +0200, Paul Cercueil wrote:
-> > >  The TCU registers are shared between a handful of drivers, accessing
-> > >  them through the same regmap.
-> > > 
-> > >  While this driver is devicetree-compatible, it is never (as of now)
-> > >  probed from devicetree, so this change does not introduce a ABI
-> > > problem
-> > >  with current devicetree files.
-> > 
-> > If you adapt the binding also update the binding doc please.
-> 
-> It's already updated, in mips-next, so it'll be in the next -rc1.
+This is habanalabs fixes pull request for 5.3-rc5. It is a bit larger than
+what I would like at this stage but it contains four very important fixes
+when running on s390 architecture. With these fixes the driver has been
+validated as fully functional on s390 (which is BE).
 
-This is a useful information for the commit log.
+In addition, it contain two more fixes for minor bugs. Specific details
+of the fixes are in the attached tag.
 
-> > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > >  Tested-by: Mathieu Malaterre <malat@debian.org>
-> > >  Tested-by: Artur Rojek <contact@artur-rojek.eu>
-> > 
-> > nitpick: put your S-o-b line after the other tags you added.
-> > 
-> > >  ---
-> > >   drivers/pwm/Kconfig      |  1 +
-> > >   drivers/pwm/pwm-jz4740.c | 80 ++++++++++++++++++++++++++--------------
-> > >   2 files changed, 53 insertions(+), 28 deletions(-)
-> > > 
-> > >  diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> > >  index a7e57516959e..cc4df0ec978a 100644
-> > >  --- a/drivers/pwm/Kconfig
-> > >  +++ b/drivers/pwm/Kconfig
-> > >  @@ -225,6 +225,7 @@ config PWM_IMX_TPM
-> > >   config PWM_JZ4740
-> > >   	tristate "Ingenic JZ47xx PWM support"
-> > >   	depends on MACH_INGENIC
-> > >  +	select MFD_SYSCON
-> > >   	help
-> > >   	  Generic PWM framework driver for Ingenic JZ47xx based
-> > >   	  machines.
-> > >  diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-> > >  index f901e8a0d33d..7aea5e0c6e18 100644
-> > >  --- a/drivers/pwm/pwm-jz4740.c
-> > >  +++ b/drivers/pwm/pwm-jz4740.c
-> > >  @@ -8,18 +8,20 @@
-> > >   #include <linux/err.h>
-> > >   #include <linux/gpio.h>
-> > >   #include <linux/kernel.h>
-> > >  +#include <linux/mfd/ingenic-tcu.h>
-> > >  +#include <linux/mfd/syscon.h>
-> > >   #include <linux/module.h>
-> > >   #include <linux/of_device.h>
-> > >   #include <linux/platform_device.h>
-> > >   #include <linux/pwm.h>
-> > >  -
-> > >  -#include <asm/mach-jz4740/timer.h>
-> > >  +#include <linux/regmap.h>
-> > > 
-> > >   #define NUM_PWM 8
-> > > 
-> > >   struct jz4740_pwm_chip {
-> > >   	struct pwm_chip chip;
-> > >   	struct clk *clk;
-> > >  +	struct regmap *map;
-> > >   };
-> > > 
-> > >   static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
-> > >  @@ -29,6 +31,8 @@ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
-> > > 
-> > >   static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
-> > >   {
-> > >  +	struct jz4740_pwm_chip *jz = to_jz4740(chip);
-> > >  +
-> > >   	/*
-> > >   	 * Timers 0 and 1 are used for system tasks, so they are unavailable
-> > >   	 * for use as PWMs.
-> > >  @@ -36,50 +40,53 @@ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
-> > >   	if (pwm->hwpwm < 2)
-> > >   		return -EBUSY;
-> > > 
-> > >  -	jz4740_timer_start(pwm->hwpwm);
-> > >  +	regmap_write(jz->map, TCU_REG_TSCR, BIT(pwm->hwpwm));
-> > 
-> > jz4740_timer_start does
-> > 
-> > 	writel(BIT(timer), jz4740_timer_base + JZ_REG_TIMER_STOP_CLEAR);
-> > 
-> > with
-> > 
-> > #define JZ_REG_TIMER_STOP_CLEAR         0x2C
-> > 
-> > and
-> > 
-> > #define TCU_REG_TSCR            0x3c
-> > 
-> > I wonder why the offsets are different.
-> 
-> The offset are different because the base is different.
+Thanks,
+Oded
 
-This is a useful information for the commit log.
- 
-> > > 
-> > >   	return 0;
-> > >   }
-> > > 
-> > >   static void jz4740_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
-> > >   {
-> > >  -	jz4740_timer_set_ctrl(pwm->hwpwm, 0);
-> > >  +	struct jz4740_pwm_chip *jz = to_jz4740(chip);
-> > > 
-> > >  -	jz4740_timer_stop(pwm->hwpwm);
-> > >  +	regmap_write(jz->map, TCU_REG_TSCR, BIT(pwm->hwpwm));
-> > 
-> > jz4740_timer_set_ctrl writes to offset (((pwm->hwpwm) * 0x10) + 0x3C)
-> > and jz4740_timer_stop to offset 0x1c. The regmap_write doesn't do both
-> > of them but instead writes to offset 0x3c.
-> 
-> I guess it should have been TCU_REG_TSSR ("Timer Stop Set Register") and
-> I didn't notice because the next patch drops this write anyway.
-> 
-> I'll do as you suggested in your other reply and swap the two patches if
-> it makes things easier, it'll get rid of this write.
+The following changes since commit d45331b00ddb179e291766617259261c112db872:
 
-ok.
+  Linux 5.3-rc4 (2019-08-11 13:26:41 -0700)
 
-Best regards
-Uwe
+are available in the Git repository at:
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+  git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-fixes-2019-08-12
+
+for you to fetch changes up to b421d83a3947369fd5718824aecfaebe1efbf7ed:
+
+  habanalabs: fix device IRQ unmasking for BE host (2019-08-12 09:01:10 +0300)
+
+----------------------------------------------------------------
+This tag contains a couple of important fixes:
+
+- Four fixes when running on s390 architecture (BE). With these fixes, the
+  driver is fully functional on Big-endian architectures. The fixes
+  include:
+
+  - Validation/Patching of user packets
+  - Completion queue handling
+  - Internal H/W queues submission
+  - Device IRQ unmasking operation
+
+- Fix to double free in an error path to avoid kernel corruption
+
+- Fix to DRAM usage accounting when a user process is terminated
+  forcefully.
+
+----------------------------------------------------------------
+Ben Segal (3):
+      habanalabs: fix endianness handling for packets from user
+      habanalabs: fix completion queue handling when host is BE
+      habanalabs: fix device IRQ unmasking for BE host
+
+Oded Gabbay (1):
+      habanalabs: fix endianness handling for internal QMAN submission
+
+Tomer Tayar (2):
+      habanalabs: Avoid double free in error flow
+      habanalabs: fix DRAM usage accounting on context tear down
+
+ drivers/misc/habanalabs/device.c                   |  5 +-
+ drivers/misc/habanalabs/goya/goya.c                | 72 ++++++++++++++--------
+ drivers/misc/habanalabs/goya/goyaP.h               |  2 +-
+ drivers/misc/habanalabs/habanalabs.h               |  9 ++-
+ drivers/misc/habanalabs/hw_queue.c                 | 14 ++---
+ .../misc/habanalabs/include/goya/goya_packets.h    | 13 ++++
+ drivers/misc/habanalabs/irq.c                      | 27 ++++----
+ drivers/misc/habanalabs/memory.c                   |  2 +
+ 8 files changed, 90 insertions(+), 54 deletions(-)
