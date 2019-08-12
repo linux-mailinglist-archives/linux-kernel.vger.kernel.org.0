@@ -2,62 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC42D8A169
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E6E18A171
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfHLOoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 10:44:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbfHLOoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 10:44:17 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65C10206A2;
-        Mon, 12 Aug 2019 14:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565621056;
-        bh=toCXGAQlrQmqPbXzj6Yxdb8DV5WuBICAjIActn4W/3o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZrtXwCYVP8fgAJ9kDPkA3Me2GdYBMgm7VIjH+4qrRFJXyYo/UCaHmj+HqUHuES8bQ
-         3Kuor05CCt6Oz8cuwxTH9jHuDUky7tNEqwv9ogMlQQHfGnO5Eqfj/vRCiPWul/5Wgn
-         nxg+Wv4MppJoOJcdqMBGlWtZoagMo+NjyH+N4Z4M=
-Date:   Mon, 12 Aug 2019 16:44:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, andrew@lunn.ch,
-        ruxandra.radulescu@nxp.com
-Subject: Re: [PATCH 03/10] staging: fsl-dpaa2/ethsw: add line terminator to
- all formats
-Message-ID: <20190812144414.GA25512@kroah.com>
-References: <1565602758-14434-1-git-send-email-ioana.ciornei@nxp.com>
- <1565602758-14434-4-git-send-email-ioana.ciornei@nxp.com>
+        id S1726806AbfHLOqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 10:46:01 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41935 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbfHLOqA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 10:46:00 -0400
+Received: by mail-lj1-f196.google.com with SMTP id d24so98516591ljg.8
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 07:45:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZaGlV5OBaG8I83pvsjihid45NFnJRTn9496TwujIaXI=;
+        b=WIRUIIjknYqkFNwJtm38+0CsZRBPiSpzwtVX5R6JN55OGVYc4XsWYFX8X4zJLPeJKq
+         CSjXoysXYS5Y5zwLr7gvMjHYEzFyJW8nEQ5lJPD4OIOjy0krjWl0/wh+o8ejQRuz8dyZ
+         ZaqWAyxRJ7FHf86RVRZPM4Mv6VjuL49tMSTt4P5WgBhgovdP1LV++xjkwR3yhDFVvLPl
+         hmishGIPfyKnJTy1MB+0lRaL3sbqpkDJCOfrhB1GQ4HFWcr+OZ9x0jy6TDwn/uN1uPdG
+         jAOMLThn9V5WAjgyQKOBQDWZf80kAvxutL41GmstiWeFCnC8KZ0QjGZXxGjSpq5BI5FW
+         sDvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZaGlV5OBaG8I83pvsjihid45NFnJRTn9496TwujIaXI=;
+        b=RE4Vv2nVJ9SSVuskEeOOUu5oxVmgA2SVxqy6QHiI487PsUV9jD+REaw7BsDQ8JuPFm
+         RT0TIPKmNSZD/wHcOzkppeRRErSVvW5l+I52/y1UE64UYiwyK7GBAYkDBeIM+xsRGhpJ
+         HSGJb72MhP1toqTO51YOJlK4mAa2/ll0sxcj+4f1zQ2NWo5e1ylShjLcDnucdBKevUr9
+         JLrZM7bHYRFT/OchHQMHdRwJcQHFfmPqjr3BHevKR6YeT3Hz07+NnsFcEN/hf0rroLKn
+         T7XK+8iR3/9kxVc0guyfFe4KSojQ/L2MsRrsMk1g6aKpjXR/0pNWZtK8aJIacNtWJt/k
+         YNyA==
+X-Gm-Message-State: APjAAAUoynjVJ7E6ZTWacNKeygI4lb3rcUJmOL4UpthBLFp3bz3okMlQ
+        Xjt/Hv7zlCImghZM8j05HbdnoVwtQvvSVoT0j7Mw
+X-Google-Smtp-Source: APXvYqzujkc2BH0FIqLuHrfT33Rlx6ggSYmZDFa3Ywl40gD0HkUkA9LWgXfs4wdbLflpo9wrcvV+NGkJ7yGDcN6IubE=
+X-Received: by 2002:a2e:9dc1:: with SMTP id x1mr6576889ljj.0.1565621158391;
+ Mon, 12 Aug 2019 07:45:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565602758-14434-4-git-send-email-ioana.ciornei@nxp.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190731153443.4984-1-acgoide@tycho.nsa.gov> <CAHC9VhQUoDwBiLi+BiW=_Px18v3xMhhGYDD2mLdu9YZJDWw1yg@mail.gmail.com>
+ <CAOQ4uxigYZunXgq0BubRFNM51Kh_g3wrtyNH77PozUX+3sM=aQ@mail.gmail.com>
+ <CAHC9VhRpTuL2Lj1VFwHW4YLpx0hJVSxMnXefooHqsxpEUg6-0A@mail.gmail.com>
+ <CAOQ4uxiGNXbZ-DWeXTkNM4ySFbBbo1XOF1=3pjknsf+EjbNuOw@mail.gmail.com>
+ <16c7c0c4a60.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com> <20190812134145.GA11343@quack2.suse.cz>
+In-Reply-To: <20190812134145.GA11343@quack2.suse.cz>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 12 Aug 2019 10:45:46 -0400
+Message-ID: <CAHC9VhTzQr3aUV8waM_VNQorDeWGz2SQuP9PVZO+oTWL+3oAHA@mail.gmail.com>
+Subject: Re: [PATCH] fanotify, inotify, dnotify, security: add security hook
+ for fs notifications
+To:     Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>, selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 12:39:11PM +0300, Ioana Ciornei wrote:
-> Add the '\n' line terminator to the string formats missing it.
-> 
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> ---
->  drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c |  2 +-
->  drivers/staging/fsl-dpaa2/ethsw/ethsw.c         | 10 +++++-----
->  2 files changed, 6 insertions(+), 6 deletions(-)
+On Mon, Aug 12, 2019 at 9:41 AM Jan Kara <jack@suse.cz> wrote:
+> On Sat 10-08-19 11:01:16, Paul Moore wrote:
+> > On August 10, 2019 6:05:27 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > >>>> Other than Casey's comments, and ACK, I'm not seeing much commentary
+> > >>>> on this patch so FS and LSM folks consider this your last chance - if
+> > >>>> I don't hear any objections by the end of this week I'll plan on
+> > >>>> merging this into selinux/next next week.
+> > >>>
+> > >>> Please consider it is summer time so people may be on vacation like I was...
+> > >>
+> > >> This is one of the reasons why I was speaking to the mailing list and
+> > >> not a particular individual :)
+> > >
+> > > Jan is fsnotify maintainer, so I think you should wait for an explicit ACK
+> > > from Jan or just merge the hook definition and ask Jan to merge to
+> > > fsnotify security hooks.
+> >
+> > Aaron posted his first patch a month ago in the beginning of July and I
+> > don't recall seeing any comments from Jan on any of the patch revisions.
+> > I would feel much better with an ACK/Reviewed-by from Jan, or you - which
+> > is why I sent that email - but I'm not going to wait forever and I'd like
+> > to get this into -next soon so we can get some testing.
+>
+> Yeah, sorry for the delays. I'm aware of the patch but I was also on
+> vacation and pretty busy at work so Amir always beat me in commenting on
+> the patch and I didn't have much to add. Once Aaron fixes the latest
+> comments from Amir, I'll give the patch the final look and give my ack.
 
-Are you sure none of these patches should have a "Reported-by:" tag on
-them?  These were all done based on a review, so someone did that
-review...
+That is prefect, thanks.
 
-Please fix up the whole series and resend.
-
-thanks,
-
-greg k-h
+-- 
+paul moore
+www.paul-moore.com
