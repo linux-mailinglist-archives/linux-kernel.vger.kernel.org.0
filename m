@@ -2,97 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DDC68A502
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B93298A517
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:58:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfHLR5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 13:57:01 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41736 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbfHLR5A (ORCPT
+        id S1726761AbfHLR6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 13:58:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45352 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbfHLR6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 13:57:00 -0400
-Received: by mail-ot1-f68.google.com with SMTP id o101so9230741ota.8;
-        Mon, 12 Aug 2019 10:57:00 -0700 (PDT)
+        Mon, 12 Aug 2019 13:58:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id o13so49853648pgp.12
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 10:58:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cu1PSO9C5Z82oaeLJkQVFAzUUfrU4eyOeJf2/ioPt3k=;
-        b=WRZkDvCOV26ZyXE/CbSb5sHEDyli4uhvIH7gvEWkxSIEYz31WVkzoPEydgnH4k5kRg
-         B5gT3HfQbebqxqVD2aUF2HxXIni0ochD31CB2mEDZeGX2qDR9WGbCosVvydleNRaDAbC
-         YkSlmmjaRo23i6YfOfTImXEABxNnDGZV5p3Nc3wMzUglvk+whKxmzsKOEPnuxJiylZJk
-         Zd8FO4uIhQf/DgtgtFFwp3xdl7GW4Oy3xlGvRwfMYO6T04fvWcoDS3gIeMMuwXDlHgMY
-         6dztTxjJsyt3UFLYPYHwk66/LkavPO67I5RilA5A4bkBpNxeCpk11X7qfyjZ1AAtel1n
-         IM8g==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1erNNaRmZnyWkQt/DrclmgvWnql7ho7Foo2FJUHD6as=;
+        b=lXXWzyMjDH5TeHtbdRFhkEjkV47HTYV3Vf7/YAcY2UCGzLQu8E5YZKbOSBBFievTjb
+         ruCp9bs6dq2WGfKVAjLkHHlc+CeX9kn/s6gzt3o6JhIP4qyV518mmIWUMrVCikmgwII1
+         2Lzno6qbDQW1yuALyl/iUbEeshVBxQnaVlCxU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cu1PSO9C5Z82oaeLJkQVFAzUUfrU4eyOeJf2/ioPt3k=;
-        b=Kqx1K8huY6uTYXLFaCyMU34athAiHJxlNckZ10nHBsiq/OMnJV1i8L4YOFdaR4Me+V
-         q1B3OZw4JqZcwBWyjLt4QB7BujfQ6PMrSr1kgSbdl4V7couZQydnVKvFQP2QAmQOLunA
-         Oswx03506bfPb/q5IhOWPXKWKELHIhChWFWRBFXNGrF+x/37qpp9regttKIEe3TivgiH
-         HkE5kq87IQPDQZb27oUKTOYkaDuCt5itvQ+i084BDw6N88bp/wAlxOt6yYb7rfg3DcPE
-         Gk3mziG5F71Rwxj0Rjs/4BdGwWnjzxnPDrJ7F39tLzcwM89+713T/c/sUlbFqi4/FA8P
-         +kLg==
-X-Gm-Message-State: APjAAAU8Ua+5yzI1NzCAV8kbhL9+g85JQRUtH6nZdTtWhWZ7Ryf6tOAE
-        42DWK/mbfjxRBK1HZoRYMTsHDvVxFlnWaoQhNZg=
-X-Google-Smtp-Source: APXvYqwioB/0o7g7gXKoeA4VY7ctTqqIDuqjjJVZU4vEp4Ft0NqbBVRD8cE8u8rvi0hyFQzjkIekgrfHtGo03XkBaiI=
-X-Received: by 2002:a6b:4107:: with SMTP id n7mr11444756ioa.12.1565632619742;
- Mon, 12 Aug 2019 10:56:59 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1erNNaRmZnyWkQt/DrclmgvWnql7ho7Foo2FJUHD6as=;
+        b=MRTUonJMnAhg4VlDAiZ7Hn2m45EjCzTylOSWcXAhK3rtx3htF8M7paQsdv0aAMItjt
+         Z45TukIrTQJv2wZSDR31F45J34yqomjzNKXRQgeNEqjRspVfPWRLCRlJ+XnL089ZNm7+
+         ukqPt3M1j1gti6LlnheOBG5owr9EdH/kCVI7dNjQfifC323WEEXB5TBDFtVB2/m0TfaS
+         Fx/wWNSkNpWZ7qezF+dFD8tNQyqWJkpyzO55LUgixpRh8sLA6y3bugPhZAD48GoryN5r
+         AzW3F2yysZ+yM9mB3RbhYdUnX8iiX2/MN+F7BE8g23A+4tO+zYeD/0EgloT/ho7xVH3b
+         yQbw==
+X-Gm-Message-State: APjAAAXjsjWmHH4zDB2imsq1LsbJkMgkLboc4P/48h7ELGggSCTtD6u5
+        dr8/3RMntuOjAIATkMLU4Qjlbg==
+X-Google-Smtp-Source: APXvYqzIL/ii78dQ8BFRBPLdJqqMoMehADxBmc3BeycFVL6zPCWpdl1sOBjIrPBoPs6B/tqvTB0XmA==
+X-Received: by 2002:a63:5f09:: with SMTP id t9mr31418071pgb.351.1565632693539;
+        Mon, 12 Aug 2019 10:58:13 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id n5sm113918495pfn.38.2019.08.12.10.58.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Aug 2019 10:58:12 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 10:58:11 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Cc:     akpm@linux-foundation.org, joe@perches.com,
+        johannes@sipsolutions.net, linux-kernel@vger.kernel.org,
+        yamada.masahiro@socionext.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Subject: Re: [PATCH v3 0/3] Add compile time sanity check of GENMASK inputs
+Message-ID: <201908121055.7DC9244@keescook>
+References: <20190801230358.4193-1-rikard.falkeborn@gmail.com>
+ <20190811184938.1796-1-rikard.falkeborn@gmail.com>
 MIME-Version: 1.0
-References: <20190717152458.22337-1-andrew.smirnov@gmail.com>
- <20190717152458.22337-9-andrew.smirnov@gmail.com> <VI1PR0402MB3485472C45A477FB0848802498C70@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR0402MB3485472C45A477FB0848802498C70@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Mon, 12 Aug 2019 10:56:48 -0700
-Message-ID: <CAHQ1cqEGZNUtAzprVLasM9aFL0rBBOUbtKVEt0KBkfQMvG0u0g@mail.gmail.com>
-Subject: Re: [PATCH v6 08/14] crypto: caam - make CAAM_PTR_SZ dynamic
-To:     Horia Geanta <horia.geanta@nxp.com>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Chris Spencer <christopher.spencer@sea.co.uk>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190811184938.1796-1-rikard.falkeborn@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 2:57 AM Horia Geanta <horia.geanta@nxp.com> wrote:
->
-> On 7/17/2019 6:25 PM, Andrey Smirnov wrote:
-> > In order to be able to configure CAAM pointer size at run-time, which
-> > needed to support i.MX8MQ, which is 64-bit SoC with 32-bit pointer
-> > size, convert CAAM_PTR_SZ to refer to a global variable of the same
-> > name ("caam_ptr_sz") and adjust the rest of the code accordingly. No
-> > functional change intended.
-> >
-> I am seeing compilation errors like:
->
-> In file included from drivers/crypto/caam/ctrl.c:25:0:
-> drivers/crypto/caam/qi.h:87:6: error: variably modified 'sh_desc' at file scope
->   u32 sh_desc[MAX_SDLEN];
->       ^
->
-> Adding comments for this commit, since it looks like the fixes
-> should be included here (related to DESC_JOB_IO_LEN vs. DESC_JOB_IO_LEN_MAX).
->
-> Please make sure caam/qi and and caam/qi2 drivers are at least compile-tested.
->
-> By caam/qi I am referring to:
-> CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI=y/m
->
-> and caam/qi2:
-> CONFIG_CRYPTO_DEV_FSL_DPAA2_CAAM=y/m
->
+On Sun, Aug 11, 2019 at 08:49:35PM +0200, Rikard Falkeborn wrote:
+> Hello,
+> 
+> A new attempt to try to add build time validity checks of GENMASK (and
+> GENMASK_ULL) inputs. There main differences from v2:
+> 
+> Remove a define of BUILD_BUG_ON in x86/boot to avoid a compiler warning
+> about redefining BUILD_BUG_ON. Instead, use the common one from
+> include/.
+> 
+> Drop patch 2 in v2 where GENMASK arguments where made more verbose.
+> 
+> Add a cast in the BUILD_BUG_ON_ZERO macro change the type to int to
+> avoid the somewhat clumpsy casts of BUILD_BUG_ON_ZERO. The second patch
+> in this series adds such a cast to BUILD_BUG_ON_ZERO, which makes it
+> possible to avoid casts when using BUILD_BUG_ON_ZERO in patch 3.
+> 
+> I have checked all users of BUILD_BUG_ON_ZERO and I did not find a case
+> where adding a cast to int would affect existing users but I'd feel much
+> more comfortable if someone else double (or tripple) checked (there are
+> ~80 instances plus ~10 copies in tools). Perhaps I should have CC:d
+> maintainers of files using BUILD_BUG_ON_ZERO?
+> 
+> Finally, use __builtin_constant_p instead of __is_constexpr. This avoids
+> pulling in kernel.h in bits.h.
 
-Sorry about that, should be fixed in v7.
+Cool; I like this. I spent some time convincing myself that the
+side-effects really aren't double-evaluated, and it looks fine to me. :)
 
-Thanks,
-Andrey Smirnov
+For the series:
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
