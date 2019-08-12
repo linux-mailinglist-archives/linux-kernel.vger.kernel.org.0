@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8D298A79C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 21:55:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECACB8A7A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 21:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbfHLTzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 15:55:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58462 "EHLO mail.kernel.org"
+        id S1727156AbfHLT5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 15:57:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726679AbfHLTzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 15:55:50 -0400
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        id S1726679AbfHLT5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 15:57:03 -0400
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F0D62075B;
-        Mon, 12 Aug 2019 19:55:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86ACD20673;
+        Mon, 12 Aug 2019 19:57:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565639749;
-        bh=H8Xhv7Khckzt74jzeAnKWMsHKHbCi3pvdlb0pyoVMsg=;
+        s=default; t=1565639822;
+        bh=0Wyq8gRX+YB6Hi9mvXeI7gj0j8jjRHI+9JPnbcW8S9k=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iLsz6UUaYG5QbWLuPF2JtmBkmkoQ7l+toi21t5vIO3lSwhkUMDCjhMMOym52ASmqL
-         J035G1vQNk7G9sIOrPPWgAI9WnpC4hCd5b/zCQvFggvu8dnQAr/L6tUeNNGyCgpkpW
-         HGMeH2mDyz+xEUOzrohi0fBgJ7515DL+C7uP4i3g=
-Received: by mail-qt1-f170.google.com with SMTP id u34so4806782qte.2;
-        Mon, 12 Aug 2019 12:55:49 -0700 (PDT)
-X-Gm-Message-State: APjAAAWzfbrBIOmGnpcK4d4mhjB2RrgaMO/O8/h/HDq9Q4gaYqHnkY31
-        KgeZSWOofJKdooP2a1kt3y7AotLmS7KOFXav3Q==
-X-Google-Smtp-Source: APXvYqxgrrQuxdjUAHwx+8y57Y1oC0lJZolGDWhss4A9td5L2Unq6eY4QpFEBS+YVZTAYINYoOF6GE3N6Z5S1sLW8jY=
-X-Received: by 2002:ac8:7593:: with SMTP id s19mr23762694qtq.136.1565639748468;
- Mon, 12 Aug 2019 12:55:48 -0700 (PDT)
+        b=LJu4yOIHhqmH6BXy4Nw59e/M8v1EyCT3TGXcdAST3HiE6E5LSwQL49TcrTpRoteST
+         cD52ZKhBWi4es8PfeqJaA5Uqdp2asYs+5ysUANAqWZpPggg1ULlio9DgPDPDC28pTY
+         Q/6XrBl7uJDvPp1bORip01fA5bUbhZyuRXmb+ZLQ=
+Received: by mail-qk1-f181.google.com with SMTP id d23so3107340qko.3;
+        Mon, 12 Aug 2019 12:57:02 -0700 (PDT)
+X-Gm-Message-State: APjAAAUm1509uiZkbe5FpU/XuoXhIXFM7S5jRw2d1TiEA85+Y/VPXmTC
+        BIRaJo+QjTiLsaMzwSN4RtyPrcZdFAnTzahvbQ==
+X-Google-Smtp-Source: APXvYqwbeDLDdSfYvvuPol6nSCJtYC7q7IPJxs7tKCRp0ktduhXYm+7IFcq7/0Xv4DtfRo5N7j0Aur9H62+Q+vIXD8w=
+X-Received: by 2002:a37:d8f:: with SMTP id 137mr24373612qkn.254.1565639821789;
+ Mon, 12 Aug 2019 12:57:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190811210043.20122-1-digetx@gmail.com> <20190811210043.20122-11-digetx@gmail.com>
-In-Reply-To: <20190811210043.20122-11-digetx@gmail.com>
+References: <20190811210043.20122-1-digetx@gmail.com> <20190811210043.20122-12-digetx@gmail.com>
+In-Reply-To: <20190811210043.20122-12-digetx@gmail.com>
 From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 12 Aug 2019 13:55:36 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLPAQ19UL4ZcRZBo+Zp3rLrOBC7O3u2kPZntzJMNwfOww@mail.gmail.com>
-Message-ID: <CAL_JsqLPAQ19UL4ZcRZBo+Zp3rLrOBC7O3u2kPZntzJMNwfOww@mail.gmail.com>
-Subject: Re: [PATCH v10 10/15] dt-bindings: memory: Add binding for NVIDIA
- Tegra30 Memory Controller
+Date:   Mon, 12 Aug 2019 13:56:50 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK3c+5FzcHMNJC7RnGeMZirMT-b3NZ8yCa5Mwy=Pq53aQ@mail.gmail.com>
+Message-ID: <CAL_JsqK3c+5FzcHMNJC7RnGeMZirMT-b3NZ8yCa5Mwy=Pq53aQ@mail.gmail.com>
+Subject: Re: [PATCH v10 11/15] dt-bindings: memory: Add binding for NVIDIA
+ Tegra30 External Memory Controller
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Joseph Lo <josephl@nvidia.com>,
@@ -58,12 +58,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sun, Aug 11, 2019 at 3:01 PM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> Add binding for the NVIDIA Tegra30 SoC Memory Controller.
+> Add device-tree binding for NVIDIA Tegra30 External Memory Controller.
+> The binding is based on the Tegra124 EMC binding since hardware is
+> similar, although there are couple significant differences.
 >
+> Note that the memory timing description is given in a platform-specific
+> form because there is no detailed information on how to convert a
+> typical-common DDR timing into the register values. The timing format is
+> borrowed from downstream kernel, hence there is no hurdle in regards to
+> upstreaming of memory timings for the boards.
+>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  .../memory-controllers/nvidia,tegra30-mc.yaml | 167 ++++++++++++++++++
->  1 file changed, 167 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
+>  .../nvidia,tegra30-emc.yaml                   | 336 ++++++++++++++++++
+>  1 file changed, 336 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
 
 Reviewed-by: Rob Herring <robh@kernel.org>
