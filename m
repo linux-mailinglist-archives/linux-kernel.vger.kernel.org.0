@@ -2,106 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 115B4894FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 01:55:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B0D89501
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 02:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfHKXzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 19:55:11 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.130]:31892 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726655AbfHKXzK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 19:55:10 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id B638717A44D
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 18:55:09 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id wxg5hWOz43Qi0wxg5hEikC; Sun, 11 Aug 2019 18:55:09 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yKwbRY2mzkRaJ05KgpOoqO2JTy1EKQ64ZrdyRyqRkM8=; b=j7ccFO9QZypPjQRoMtoJIfjAZR
-        7zJ7WUNAzwhixXYm3tR3Fcf0LU/ZSw/7IcF3SQLgAkz4APb0e23Yab0fYiQH+L9nT2xDDWdMwdQHf
-        Z3K+eNfMR62JKvEQsbqPvWjoDtO/s8limUAlMq1jXbmN0RwMzaBXYLCR5wcS2TPUwaXQqeKUkK2ns
-        Mdt7NVJJjAdnBGRaFMBK3QoJ6PFzM1FlfOr5gA0MkVjsHxfut8kICDpPUPsr7cPJ7VH9oSdG6OTZv
-        vAPAThh3fyiy5SMNFhmIRrt36YXw2LydxWiThy+70zfdSDoGQhxeNccwcjAaf8tSrDNZcazSggRd5
-        5oqGOV0w==;
-Received: from [187.192.11.120] (port=51864 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hwxg4-002Qg0-ID; Sun, 11 Aug 2019 18:55:08 -0500
-Date:   Sun, 11 Aug 2019 18:55:07 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] ima: ima_modsig: Fix use-after-free bug in
- ima_read_modsig
-Message-ID: <20190811235507.GA9587@embeddedor>
+        id S1726675AbfHLAA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 20:00:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725855AbfHLAA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Aug 2019 20:00:57 -0400
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1172A216F4
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 00:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565568056;
+        bh=1VR2kDuTcJAzssZCyY55GyJV2FkB68whuLXiv4whc9A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LpkknFfY58iEyc7Jqk2kqb1GAXOc7eyisIuALiBgT8Bdi33PLBiYPLo/qsBezUMyw
+         SMn7/VPPe3SBiuWN9Hq//SXnsr56BqwaIbiV3QUI/k5k98qODJc1SOtAhxA4njW05o
+         J8UfnuJbqRStWzFmsh8fRxWP61kBx29lBfPsJ6Qo=
+Received: by mail-wm1-f50.google.com with SMTP id u25so10226519wmc.4
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 17:00:55 -0700 (PDT)
+X-Gm-Message-State: APjAAAUIwPqBMID6CkyBMjCIdFNdsaO7amYAVKL8wUDHv7gMwN1vx1Vp
+        PfORi2dxhagrDTJmxjOvKSRgEzb1ThAovkVwYzMTgQ==
+X-Google-Smtp-Source: APXvYqzuNwp2LQBs/96UiHIoYBwZub/GPOLZba9N3shcHjXJ8lEROLaY3m1CuSYllFzvwevDON938nGwCaaJofXYIBY=
+X-Received: by 2002:a05:600c:22d7:: with SMTP id 23mr11820267wmg.0.1565568054462;
+ Sun, 11 Aug 2019 17:00:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1hwxg4-002Qg0-ID
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:51864
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190810010758.16407-1-alistair.francis@wdc.com>
+In-Reply-To: <20190810010758.16407-1-alistair.francis@wdc.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 11 Aug 2019 17:00:43 -0700
+X-Gmail-Original-Message-ID: <CALCETrVArr5TTbXayDZ9rz90iGoytGW2bnV5_ZOunhOsPR1u4g@mail.gmail.com>
+Message-ID: <CALCETrVArr5TTbXayDZ9rz90iGoytGW2bnV5_ZOunhOsPR1u4g@mail.gmail.com>
+Subject: Re: [PATCH] syscalls: Update the syscall #defines to match uapi
+To:     Alistair Francis <alistair.francis@wdc.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>, alistair23@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hdr is being freed and then dereferenced by accessing hdr->pkcs7_msg
+On Fri, Aug 9, 2019 at 6:11 PM Alistair Francis
+<alistair.francis@wdc.com> wrote:
+>
+> Update the #defines around sys_fstat64() and sys_fstatat64() to match
+> the #defines around the __NR3264_fstatat and __NR3264_fstat definitions
+> in include/uapi/asm-generic/unistd.h. This avoids compiler failures if
+> one is defined.
 
-Fix this by copying the value returned by PTR_ERR(hdr->pkcs7_msg) into
-automatic variable err for its safe use after freeing hdr.
+What do you mean by "if one is defined"?
 
-Addresses-Coverity-ID: 1485813 ("Read from pointer after free")
-Fixes: 39b07096364a ("ima: Implement support for module-style appended signatures")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- security/integrity/ima/ima_modsig.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The patch seems like it's probably okay, but I can't understand the changelog.
 
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index c412e31d1714..e681d4326145 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -91,8 +91,9 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 
- 	hdr->pkcs7_msg = pkcs7_parse_message(buf + buf_len, sig_len);
- 	if (IS_ERR(hdr->pkcs7_msg)) {
-+		int err = PTR_ERR(hdr->pkcs7_msg);
- 		kfree(hdr);
--		return PTR_ERR(hdr->pkcs7_msg);
-+		return err;
- 	}
- 
- 	memcpy(hdr->raw_pkcs7, buf + buf_len, sig_len);
--- 
-2.22.0
-
+--Andy
