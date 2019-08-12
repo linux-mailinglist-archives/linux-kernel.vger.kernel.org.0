@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E7BC8976A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9907589769
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:55:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbfHLGzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 02:55:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40712 "EHLO
+        id S1726961AbfHLGzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 02:55:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40722 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfHLGzd (ORCPT
+        with ESMTP id S1726869AbfHLGzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 02:55:33 -0400
+        Mon, 12 Aug 2019 02:55:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=b/1SYLwCRu5ERaaMVaIVgm/WJjkkAxvP0cPxYMfvmxg=; b=iP0z8EV+pbbylTdR8wLneXOgP2
-        kKToqwGy3QXjsfIkrX8OVuuOg4ufM97VYsJW0Hb/C/SoVlfAVB4BotohvpeUPkh0rUs+TZJvOa8QU
-        zt84qTKrogtTUMxDnwGI3iOs4EU1jk5Xk/AFpVI0Y+YCp4uIh0Q7QYeLnxbgKtQ+3/hj/1JsQEzAT
-        OH76bleQgiQbNN53z12DVsDzlW2L9wENKjeqLx/vur9wHwt4TMu6+a85NrNPvzCJT80MwGl2pDQWH
-        1l9sp2nVJm08NnarW4s3TTgEwnZphWr42lm2QjiF/n09ReyrOFq7HLSrggr8V9ZQYmTcKA9CrezEa
-        fBshxHOg==;
+        bh=eEfsk4EIgD1L3eONBAIGTr4XnmTT1gDDgePxeJqg1wA=; b=R2wmn5hN/weRd4e+LwDhydnvol
+        gkkWeIjKfxiPT0Lp/8s6mwrXTcjHaw/pf6k38+Ma5jT40E7Wa20uaJg4eV+hdMFd5W24TGKw0+Ru2
+        7p5z0Yh3vGvFqBftx36NbzrwrzdJa5Oi6y15kVA4GFIkgCtdo2M4FXybyDGddvDHY2qsKJe+PSrhC
+        OGa7ZUEuMFX90RoYtsIoYHtXWnYDAUuFSPHftSjmuRLIe0Xlz01QV0/74JsYF9S0iKgczzj4LqRIF
+        804yIWIbpYcan0QlA/Igk1+crSS4zdTvlYqTdB5IHCIBjNB+p1H0qQwVer1M47cdDsgbJhxOJxfLH
+        IsXw+FpA==;
 Received: from [2001:4bb8:180:1ec3:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hx4Eu-0000FE-TO; Mon, 12 Aug 2019 06:55:33 +0000
+        id 1hx4Ex-0000Fd-LI; Mon, 12 Aug 2019 06:55:36 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
 Cc:     linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] ia64: annotate switch fallthroughs in ia64_handle_unaligned
-Date:   Mon, 12 Aug 2019 08:55:22 +0200
-Message-Id: <20190812065524.19959-3-hch@lst.de>
+Subject: [PATCH 3/4] ia64/kprobes: remove the unused ia64_get_bsp_cfm function
+Date:   Mon, 12 Aug 2019 08:55:23 +0200
+Message-Id: <20190812065524.19959-4-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190812065524.19959-1-hch@lst.de>
 References: <20190812065524.19959-1-hch@lst.de>
@@ -44,45 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the "no break" comments with something that the compiler
-recognizes.
-
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/ia64/kernel/unaligned.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/ia64/kernel/kprobes.c | 26 --------------------------
+ 1 file changed, 26 deletions(-)
 
-diff --git a/arch/ia64/kernel/unaligned.c b/arch/ia64/kernel/unaligned.c
-index eb7d5df59fa3..2d4e65ba5c3e 100644
---- a/arch/ia64/kernel/unaligned.c
-+++ b/arch/ia64/kernel/unaligned.c
-@@ -1431,7 +1431,7 @@ ia64_handle_unaligned (unsigned long ifa, struct pt_regs *regs)
- 		if (u.insn.x)
- 			/* oops, really a semaphore op (cmpxchg, etc) */
- 			goto failure;
--		/* no break */
-+		/*FALLTHRU*/
- 	      case LDS_IMM_OP:
- 	      case LDSA_IMM_OP:
- 	      case LDFS_OP:
-@@ -1459,7 +1459,7 @@ ia64_handle_unaligned (unsigned long ifa, struct pt_regs *regs)
- 		if (u.insn.x)
- 			/* oops, really a semaphore op (cmpxchg, etc) */
- 			goto failure;
--		/* no break */
-+		/*FALLTHRU*/
- 	      case LD_IMM_OP:
- 	      case LDA_IMM_OP:
- 	      case LDBIAS_IMM_OP:
-@@ -1475,7 +1475,7 @@ ia64_handle_unaligned (unsigned long ifa, struct pt_regs *regs)
- 		if (u.insn.x)
- 			/* oops, really a semaphore op (cmpxchg, etc) */
- 			goto failure;
--		/* no break */
-+		/*FALLTHRU*/
- 	      case ST_IMM_OP:
- 	      case STREL_IMM_OP:
- 		ret = emulate_store_int(ifa, u.insn, regs);
+diff --git a/arch/ia64/kernel/kprobes.c b/arch/ia64/kernel/kprobes.c
+index 5de801a2c0f0..b8356edbde65 100644
+--- a/arch/ia64/kernel/kprobes.c
++++ b/arch/ia64/kernel/kprobes.c
+@@ -979,32 +979,6 @@ int __kprobes kprobe_exceptions_notify(struct notifier_block *self,
+ 	return ret;
+ }
+ 
+-struct param_bsp_cfm {
+-	unsigned long ip;
+-	unsigned long *bsp;
+-	unsigned long cfm;
+-};
+-
+-static void ia64_get_bsp_cfm(struct unw_frame_info *info, void *arg)
+-{
+-	unsigned long ip;
+-	struct param_bsp_cfm *lp = arg;
+-
+-	do {
+-		unw_get_ip(info, &ip);
+-		if (ip == 0)
+-			break;
+-		if (ip == lp->ip) {
+-			unw_get_bsp(info, (unsigned long*)&lp->bsp);
+-			unw_get_cfm(info, (unsigned long*)&lp->cfm);
+-			return;
+-		}
+-	} while (unw_unwind(info) >= 0);
+-	lp->bsp = NULL;
+-	lp->cfm = 0;
+-	return;
+-}
+-
+ unsigned long arch_deref_entry_point(void *entry)
+ {
+ 	return ((struct fnptr *)entry)->ip;
 -- 
 2.20.1
 
