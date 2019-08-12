@@ -2,121 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED3489688
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 06:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 764B98968C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 07:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfHLE61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 00:58:27 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:56737 "EHLO ozlabs.org"
+        id S1726753AbfHLFDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 01:03:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbfHLE61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 00:58:27 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1725838AbfHLFDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 01:03:00 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 466NsD2bwGz9s7T;
-        Mon, 12 Aug 2019 14:58:24 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1565585904;
-        bh=+XUql2QwatmOkcfblCGCbEXZU/3qsSW3+eNwYoAniSI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LbWJbdBDQ2eR3uXBKO8VGz0jd4039nyNGtt5f9z/n7T+bljBhg1f9YmQ6/tGUkwUG
-         rE547yfCUBlAiLagDpDxMXOLPwgCQthrJy6Tt2mX4sW8uBKaCvji587VnVUktCfrQh
-         2h9EvxAwZiMog2rglt+/KOkGMFbkHIvjRMQHcDLPHgh2zQGTpXtDl8pnkNt25mELTK
-         r4wMBxLWoKonPuUrYqacz8mBKcfy6xRf/UMZRvByn2bkrk+zOxvhVjOAEIi4uJVkYO
-         p/fTg12IZQGAeSh+9QNn6XV1rRrlITHDJRGw7c07G1uXswjG1ufgSJjn54vMzKNt7e
-         34a4fpN5gzE4Q==
-Date:   Mon, 12 Aug 2019 14:58:23 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     James Morris <jmorris@namei.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: linux-next: build failure after merge of the security tree
-Message-ID: <20190812145823.63d77573@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 49A7320842;
+        Mon, 12 Aug 2019 05:02:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565586178;
+        bh=dkXz6e/E5uuKCjklSsio9Wi/z0A/ofiJ0WK3lYOv9I0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fT8rKH3ZfEKa3aaCJ3w/qjJiTZogdSB366BUTlCy64cqkbHQjl/vPdnjNhGwe2rwq
+         Of+b8YNEsxtk4PrxSPLAjYq78YQY/NCTMajihlv/b0Es50X/F+xy/V951fFSFDauQy
+         jrIxTuXD6NzDJOHkwIOpOBm/SB28M2sirMimZZ+Y=
+Date:   Mon, 12 Aug 2019 07:02:56 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 3/3] driver/core: Fix build error when SRCU and lockdep
+ disabled
+Message-ID: <20190812050256.GC5834@kroah.com>
+References: <20190811221111.99401-1-joel@joelfernandes.org>
+ <20190811221111.99401-3-joel@joelfernandes.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/RfU=Qk4LgOsU_kXaWADIOuT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190811221111.99401-3-joel@joelfernandes.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/RfU=Qk4LgOsU_kXaWADIOuT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Aug 11, 2019 at 06:11:11PM -0400, Joel Fernandes (Google) wrote:
+> Properly check if lockdep lock checking is disabled at config time. If
+> so, then lock_is_held() is undefined so don't do any checking.
+> 
+> This fix is similar to the pattern used in srcu_read_lock_held().
+> 
+> Link: https://lore.kernel.org/lkml/201908080026.WSAFx14k%25lkp@intel.com/
+> Fixes: c9e4d3a2fee8 ("acpi: Use built-in RCU list checking for acpi_ioremaps list")
 
-Hi all,
+What tree is this commit in?
 
-After merging the security tree, today's linux-next build (arm
-multi_v7_defconfig) failed like below.
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+> This patch is based on the -rcu dev branch.
 
-Caused by commit
+Ah...
 
-  45d29f9e9b8b ("security: Support early LSMs")
+>  drivers/base/core.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 32cf83d1c744..fe25cf690562 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -99,7 +99,11 @@ void device_links_read_unlock(int not_used)
+>  
+>  int device_links_read_lock_held(void)
+>  {
+> -	return lock_is_held(&device_links_lock);
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	return lock_is_held(&(device_links_lock.dep_map));
+> +#else
+> +	return 1;
+> +#endif
 
-I have added the following fix for today:
+return 1?  So the lock is always held?
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 12 Aug 2019 14:54:20 +1000
-Subject: [PATCH] early_security_init() needs a stub got !CONFIG_SECURITY
+confused,
 
-An arm multi_v7_defconfig fails like this:
-
-init/main.c: In function 'start_kernel':
-init/main.c:596:2: error: implicit declaration of function 'early_security_=
-init'; did you mean 'security_init'? [-Werror=3Dimplicit-function-declarati=
-on]
-  early_security_init();
-  ^~~~~~~~~~~~~~~~~~~
-  security_init
-
-Fixes: 45d29f9e9b8b ("security: Support early LSMs")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/security.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 807dc0d24982..23e1c3f17d48 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -473,6 +473,11 @@ static inline int security_init(void)
- 	return 0;
- }
-=20
-+static inline int early_security_init(void)
-+{
-+	return 0;
-+}
-+
- static inline int security_binder_set_context_mgr(struct task_struct *mgr)
- {
- 	return 0;
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/RfU=Qk4LgOsU_kXaWADIOuT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1Q8e8ACgkQAVBC80lX
-0GzJ2Qf/VH0iQwwUX51/De5pNclfDGsUUFjGpIVppHxLw115/QW6A3n4aKsvEZem
-rIfj6nNJbbFk5NWa/LnmoU9+iL/U3EAqS8dTRQ6gtsMKnzvFy4vxlhI7pDSvXOQ5
-nXSMzJVPkzETaO4D5jfM6U8/ipJ/7OwJyeY8pz6Dpuvn3PEMRaXxorYnMu3vkTbX
-FyeENRKmUj2Uij+N++SqVAP2TOQt8iUMP+SsamiIiCKynHjhLvyxDsLzpE3N/A4X
-eQ8L+YfERAc7iLPKHZH8tVAut91+6AcgbTqQNij8n90ydnWdXdszHajfOMqxFgrG
-9W3dDz0Sfv3CcmI2VfKQMopgXU7Gsg==
-=IHKh
------END PGP SIGNATURE-----
-
---Sig_/RfU=Qk4LgOsU_kXaWADIOuT--
+greg k-h
