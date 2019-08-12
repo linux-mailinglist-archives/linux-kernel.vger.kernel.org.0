@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E35B98A0D8
+	by mail.lfdr.de (Postfix) with ESMTP id 79EB38A0D7
 	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:24:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbfHLOWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 10:22:21 -0400
-Received: from mail-eopbgr150103.outbound.protection.outlook.com ([40.107.15.103]:19221
+        id S1728981AbfHLOWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 10:22:20 -0400
+Received: from mail-eopbgr150112.outbound.protection.outlook.com ([40.107.15.112]:51614
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728956AbfHLOWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 10:22:16 -0400
+        id S1728965AbfHLOWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 10:22:18 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LzJMiJ0TA6/WIotfTqK6ggqn63X7qPt7J8fRMcO51YgN7oJy5/Hze6jJ6rAqelPH7KI10mgx4TTBObc44dx2rWSw7jouTVn/IWtPT6F3mvAPVVl9Q9gDZvwHzQPmaOdABQ9Z0ui4Pot4S+KPOScRmWkE7Phqfzc0XhsXi1TVLXnrCrXc1AbCMmuwU6Gfqt7fOba5qSfWI/Oq12JTT8o/RFzIPshEkzAyhM4BLcHG1wah+D6uWyAFhsCxgus62vjIqrGn1Qjpm3PepIws20b0T8oR8gzkBRj3k+DvF4vWAzU/HJwEZs5T6F/UAp6OwcCz3F+FrjwNsp6Y9N74J6H4Hg==
+ b=ajKnqoIuUDjrJKvRs2WM598i2cBf1iELCC4sgo9gPaSRfWF4kPJF0rAU+YJIKWuV/ZNlVp0M7wePvdtz+lIhb7KH3LKJVyrmJVn34DwRR2mq7bt021PLBP7Y4uVmn9Xx1kuKFaqytOTS/yntRR/VJraKXjhsXwDj8TSHgu4+y4CaVGNdGL5cobbFDZjIwli1KhLTk5v45NYqkLRBp7QczLHAq0k6Y7gZG4j8RefXc91MrCK1IJijKtA1LXq2usEe95De56HAAO5ZjfOcqM32ihNyS3r0lVc9+PvBgZPg/pCziEs51ijXFUtxISHXrPLr3tAs040w0HqhSof8KwI88Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jmMFf1xaDiXn9Xp9+Hwbl4j2YgT87jCUPpFjYuJi/Hg=;
- b=CmfLKfjStx7a3RbQCYzKfbZ8dv3TSt4sqheM3d0S/5oWE13Bb5X6BXa+Y2g98QtJa41f9CB3DIsutxYPw5/JaUDlgeovoogUPpAhJcOAKaVzoFVzkqmKTKPegq+Fo8+Wpb6jx7sT32zCjVhhxJsMfs/pYAwupi+S4YauLZvI4lKsvPKEtKAxbrxxXiQ3uDMrnRrV/mRREieg5JPPnJ6t9uff3z4lne2jEeS1J0Lmlrqj2Mu6GuBUPvfVdvhRZTh3+8D6LEJOtRhTzv00BnLLLGC6qm+EEx1AHZIY47h9AnAHBwbPAT7HOeUN768pC+ri0AiMIBfQi2MB4AX0hv3pPg==
+ bh=8tAr1GIzPqc9erXN+gVJpeUYVqBdlaXWfA3rv6//Yl4=;
+ b=HyNrA+4Yv2QA+xK74IAXI07VaTLlFs5Lkje5HI6aJrx0RzGfjs0nQO82kddDVZMDOpBftn8pqvctJ+4JKahCcI+vWeu5JYlzRga9qWzcb4b7WSOPYAiFdd3/i683knswcS6tV5UnNti2rJLaBkwN9RnOFWDGmF645iDP+v1jikIH3dzGQloZRzK6vFa8x/3XFkbKj/HVfqtapI9LHY8DW+dFkzPFt6Q350wk0TYE8QYlaASHkW8/y3yiJXTiKL8hT+p2La65knnOd+7dEMygxKJlXIun7LVdDv7oEn4o/MWzrnJuvUClJOaWTEHd9KDofBzl7OdjJ/9xL+K7/OUTIw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
  dkim=pass header.d=toradex.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jmMFf1xaDiXn9Xp9+Hwbl4j2YgT87jCUPpFjYuJi/Hg=;
- b=BeXViv0WWVvecUASh7htFSnqW3879oB/o4wRN63zm7NzuJdh7HpdevLBKi+Z1wvfqR4wyndQaM9aZwAulwukuhE9VHUwITMpwLMjmm2hDiyLLyme+M0pBO3vm++yeh/9pkB8/X7OTvTdAzUfBRlbcXuhyELZYegQZghjtkhxVQI=
+ bh=8tAr1GIzPqc9erXN+gVJpeUYVqBdlaXWfA3rv6//Yl4=;
+ b=aXXrZdqdwPxmYAKbeOIC6e1TD8bxykK+iUs10OiYGMIzAYbMnX0BN9dN66N8y+OHuAytP60MmJz7EaQP6C4wjYlozbhFXcBBUmPKmZjZeQahwUqSk+nzeh/wmUQPb+zYGHHfIGPaIwzZSybQPWFgcX7A0RZq7srQ5Ce+4Omg6fU=
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com (52.134.17.157) by
  VI1PR0502MB2942.eurprd05.prod.outlook.com (10.175.26.20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.21; Mon, 12 Aug 2019 14:21:45 +0000
+ 15.20.2157.21; Mon, 12 Aug 2019 14:21:47 +0000
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::8405:5b51:b25d:39a2]) by VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::8405:5b51:b25d:39a2%6]) with mapi id 15.20.2157.022; Mon, 12 Aug 2019
- 14:21:45 +0000
+ 14:21:47 +0000
 From:   Philippe Schenker <philippe.schenker@toradex.com>
 To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Max Krummenacher <max.krummenacher@toradex.com>,
@@ -43,22 +43,23 @@ To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        =?iso-8859-2?Q?Michal_Vok=E1=E8?= <michal.vokac@ysoft.com>,
+        =?utf-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
         Fabio Estevam <festevam@gmail.com>
-CC:     Philippe Schenker <philippe.schenker@toradex.com>,
+CC:     Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH v4 20/21] ARM: dts: imx7-colibri: Add UHS support to eval
- board
-Thread-Topic: [PATCH v4 20/21] ARM: dts: imx7-colibri: Add UHS support to eval
- board
-Thread-Index: AQHVURlFnRbeofYGyEy6mLRVDRVbVA==
-Date:   Mon, 12 Aug 2019 14:21:45 +0000
-Message-ID: <20190812142105.1995-21-philippe.schenker@toradex.com>
+Subject: [PATCH v4 21/21] ARM: dts: imx6qdl-colibri.dtsi: UHS-I support for
+ v1.1a hw
+Thread-Topic: [PATCH v4 21/21] ARM: dts: imx6qdl-colibri.dtsi: UHS-I support
+ for v1.1a hw
+Thread-Index: AQHVURlGJmcIK6KxnkK60xS6fTE6VQ==
+Date:   Mon, 12 Aug 2019 14:21:47 +0000
+Message-ID: <20190812142105.1995-22-philippe.schenker@toradex.com>
 References: <20190812142105.1995-1-philippe.schenker@toradex.com>
 In-Reply-To: <20190812142105.1995-1-philippe.schenker@toradex.com>
 Accept-Language: en-GB, en-US
@@ -74,74 +75,85 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.22.0
 x-originating-ip: [46.140.72.82]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 61fc014c-99a9-412e-0c88-08d71f3067c2
+x-ms-office365-filtering-correlation-id: bec61211-e0a6-463f-aa50-08d71f3068a4
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR0502MB2942;
 x-ms-traffictypediagnostic: VI1PR0502MB2942:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0502MB294207B36F196D8456F4927FF4D30@VI1PR0502MB2942.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:196;
+x-microsoft-antispam-prvs: <VI1PR0502MB2942D12104097B1D8C9ECACCF4D30@VI1PR0502MB2942.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
 x-forefront-prvs: 012792EC17
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(1496009)(376002)(136003)(39850400004)(346002)(366004)(396003)(199004)(189003)(5660300002)(54906003)(110136005)(316002)(478600001)(6486002)(86362001)(2201001)(66066001)(53936002)(6116002)(1076003)(3846002)(2906002)(4326008)(25786009)(66446008)(64756008)(66556008)(66946007)(66476007)(6436002)(8676002)(11346002)(476003)(2616005)(446003)(256004)(81166006)(81156014)(2501003)(44832011)(6512007)(14444005)(486006)(50226002)(71200400001)(71190400001)(7416002)(8936002)(36756003)(52116002)(7736002)(305945005)(99286004)(102836004)(386003)(14454004)(76176011)(186003)(6506007)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB2942;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(1496009)(376002)(136003)(39850400004)(346002)(366004)(396003)(199004)(189003)(5660300002)(54906003)(110136005)(316002)(478600001)(6486002)(86362001)(2201001)(66066001)(53936002)(6116002)(1076003)(3846002)(2906002)(4326008)(25786009)(66446008)(64756008)(66556008)(66946007)(66476007)(6436002)(8676002)(11346002)(476003)(2616005)(446003)(256004)(81166006)(81156014)(2501003)(44832011)(6512007)(14444005)(486006)(50226002)(71200400001)(71190400001)(7416002)(8936002)(36756003)(52116002)(7736002)(305945005)(99286004)(102836004)(386003)(14454004)(76176011)(186003)(6506007)(26005)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB2942;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: toradex.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: y/xOGY+sgTByHy+63+BRMGkxkiLYVz9hKGtVh9/ULH/xFojDGXfcrsXlVCRcgb9WA3KNLztvHdQ9ovm7oOKYSj6FrD46RbG5/vn0EP7cHJZuIe2xn7FYByEYD9ut+Bh5carUGQphkP4gOuURhPR84HuS+mU8dQCxssMjGD5kVm44Bh7VFL/VNxYzwo/ZDMR//0yXg2GHRnATCOV8A0RYgShO+QPQWepsJ/tsETXZDUUN+Of2qI5l9JudCNLZvcEK0t9wKSXaRTq8Mq7GlI0OHhSBCoKSect1emgUSTd47sJxj6fZiYWER2fgxvuryloidq/nJcuUZCgNtUGqRsBzLxfzmdRy5ZoVxiChZ/9ulTWp1EaOQDbSj0GGdbgOl9DBxxXHPLijKWnvXhn/TrxUuQyyhvqNFRbq2jVeRFJ+Mxg=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: PBPUIGfqklvjJtYGZGEQwJPWAuE9bLNT6VJsspJvXhZKU5kYdEK8vwkIeHBVTXAOHDHJ+AIZJHwP1hTiC/9v2dd5iHs6iSEwaNdDp2t2g27Xwe90dJtU7PVQTs8fZ2BN9J6dHlYnQhzbRptAYuuwOaefDFzRdAbCgy+3dbsguGsnlU4MvQh76jY3ilNLTcFajfpGRvUaz+zeLIcH23QttsB7wGVOhsB8xJ7mIpGTzVpgFVyQFlxcZkF9G2NevC+SXS6oe/kCsRt8hAOw7v0MMWchbP7eMDqF6gcAd5Dq3xH7zRRkgPVyPh0tcIeBLp0BvzUNMC0oiRyHg9Hu/+KB3D3TiyWGL66y62d1G7SxZzV4U4SBsvDdFBUTGAB/by+/x9GZJ/i0f63BpDPVZhiUssfnthF3+9BHjD2RKhV4RKI=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5E152F845EAF2941B1550AFAB2D71F5C@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61fc014c-99a9-412e-0c88-08d71f3067c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 14:21:45.8144
+X-MS-Exchange-CrossTenant-Network-Message-Id: bec61211-e0a6-463f-aa50-08d71f3068a4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 14:21:47.2486
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: W0U8NWRNlQ12ehnFdsvyvLKIdlST48lxQeq5RHQ9ccl2Xtlp4hunP8DDpxJ/wVV8FeEByVSnYTL4FkUy6mSLEj/mycbJ5oLWHyxM6IAznU4=
+X-MS-Exchange-CrossTenant-userprincipalname: p2bR9RbEdhp23xGRWW9hCtsM/ok4FJnG1wDF4VsTOcMHysaRAlbYpzwSaqyA3mrTE504HoFoi3QqS6NtlARNqnoiLvuT9+0kaMQrjsA+v+g=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0502MB2942
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds UHS capability to Toradex Eval Boards
-
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-
----
-
-Changes in v4: None
-Changes in v3:
-- New patch to make use of ARM: dts: imx7-colibri: fix 1.8V/UHS support
-
-Changes in v2: None
-
- arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dt=
-s/imx7-colibri-eval-v3.dtsi
-index 576dec9ff81c..90121fbe561f 100644
---- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-@@ -210,9 +210,16 @@
- };
-=20
- &usdhc1 {
--	keep-power-in-suspend;
--	wakeup-source;
-+	pinctrl-names =3D "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 =3D <&pinctrl_usdhc1 &pinctrl_cd_usdhc1>;
-+	pinctrl-1 =3D <&pinctrl_usdhc1_100mhz &pinctrl_cd_usdhc1>;
-+	pinctrl-2 =3D <&pinctrl_usdhc1_200mhz &pinctrl_cd_usdhc1>;
- 	vmmc-supply =3D <&reg_3v3>;
-+	vqmmc-supply =3D <&reg_LDO2>;
-+	cd-gpios =3D <&gpio1 0 GPIO_ACTIVE_LOW>;
-+	disable-wp;
-+	enable-sdio-wakeup;
-+	keep-power-in-suspend;
- 	status =3D "okay";
- };
-=20
---=20
-2.22.0
-
+RnJvbTogSWdvciBPcGFuaXVrIDxpZ29yLm9wYW5pdWtAdG9yYWRleC5jb20+DQoNClByb3ZpZGUg
+cHJvcGVyIGNvbmZpZ3VyYXRpb24gZm9yIFZHRU4zLCB0byBtYWtlIHN1cmUgaXQncyBpcyBhbHdh
+eXMgcG93ZXJlZA0Kd2hpY2ggYWxsb3dzIHRoYXQgcmFpbCB0byBiZSBhdXRvbWF0aWNhbGx5IHN3
+aXRjaGVkIHRvIDEuOCB2b2x0cw0KZm9yIHByb3BlciBVSFMtSSBvcGVyYXRpb24uIEJ5IGRlZmF1
+bHQgaXQncyBkaXNhYmxlZC4NCg0KV2l0aCBVSFMtSSBlbmFibGVkOg0KWyAgMTA0LjE1Mzg5OF0g
+bW1jMTogbmV3IHVsdHJhIGhpZ2ggc3BlZWQgU0RSMTA0IFNESEMgY2FyZCBhdCBhZGRyZXNzIDU5
+YjQNClsgIDEwNC4xNjYyMDJdIG1tY2JsazE6IG1tYzE6NTliNCBVU0QwMCAxNS4wIEdpQg0KWyAg
+MTA0LjE3MzkyM10gIG1tY2JsazE6IHAxDQoNCnJvb3RAY29saWJyaS1pbXg2On4jIGhkcGFybSAt
+dCAvZGV2L21tY2JsazENCi9kZXYvbW1jYmxrMToNClRpbWluZyBidWZmZXJlZCBkaXNrIHJlYWRz
+OiAyMjYgTUIgaW4gIDMuMDEgc2Vjb25kcyA9ICA3NS4wMSBNQi9zZWMNCg0KU2lnbmVkLW9mZi1i
+eTogSWdvciBPcGFuaXVrIDxpZ29yLm9wYW5pdWtAdG9yYWRleC5jb20+DQpTaWduZWQtb2ZmLWJ5
+OiBQaGlsaXBwZSBTY2hlbmtlciA8cGhpbGlwcGUuc2NoZW5rZXJAdG9yYWRleC5jb20+DQoNCi0t
+LQ0KDQpDaGFuZ2VzIGluIHY0Og0KLSBOZXcgcGF0Y2ggYXMgb2YgdGhlIHJlY29tbWVuZGF0aW9u
+IGZyb20gTWFyY2VsIG9uIE1MDQoNCkNoYW5nZXMgaW4gdjM6IE5vbmUNCkNoYW5nZXMgaW4gdjI6
+IE5vbmUNCg0KIGFyY2gvYXJtL2Jvb3QvZHRzL2lteDZxZGwtY29saWJyaS5kdHNpIHwgNDMgKysr
+KysrKysrKysrKysrKysrKysrKystLS0NCiAxIGZpbGUgY2hhbmdlZCwgMzkgaW5zZXJ0aW9ucygr
+KSwgNCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2lteDZx
+ZGwtY29saWJyaS5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnFkbC1jb2xpYnJpLmR0c2kN
+CmluZGV4IDlhNjNkZWJhYjBiNS4uMDI0MTYxM2I1ZTJiIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm0v
+Ym9vdC9kdHMvaW14NnFkbC1jb2xpYnJpLmR0c2kNCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2lt
+eDZxZGwtY29saWJyaS5kdHNpDQpAQCAtMjI2LDcgKzIyNiwxMiBAQA0KIAkJCQlyZWd1bGF0b3It
+YWx3YXlzLW9uOw0KIAkJCX07DQogDQotCQkJLyogdmdlbjM6IHVudXNlZCAqLw0KKwkJCXZnZW4z
+X3JlZzogdmdlbjMgew0KKwkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwxODAwMDAwPjsN
+CisJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MzMwMDAwMD47DQorCQkJCXJlZ3VsYXRv
+ci1ib290LW9uOw0KKwkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOw0KKwkJCX07DQogDQogCQkJdmdl
+bjRfcmVnOiB2Z2VuNCB7DQogCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDE4MDAwMDA+
+Ow0KQEAgLTM5NCwxMyArMzk5LDIxIEBADQogDQogLyogQ29saWJyaSBNTUMgKi8NCiAmdXNkaGMx
+IHsNCi0JcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsNCisJcGluY3RybC1uYW1lcyA9ICJkZWZh
+dWx0IiwgInN0YXRlXzEwMG1oeiIsICJzdGF0ZV8yMDBtaHoiOw0KIAlwaW5jdHJsLTAgPSA8JnBp
+bmN0cmxfdXNkaGMxICZwaW5jdHJsX21tY19jZD47DQorCXBpbmN0cmwtMSA9IDwmcGluY3RybF91
+c2RoYzFfMTAwbWh6ICZwaW5jdHJsX21tY19jZD47DQorCXBpbmN0cmwtMiA9IDwmcGluY3RybF91
+c2RoYzFfMjAwbWh6ICZwaW5jdHJsX21tY19jZD47DQorCXZxbW1jLXN1cHBseSA9IDwmdmdlbjNf
+cmVnPjsNCisJc2QtdWhzLXNkcjEyOw0KKwlzZC11aHMtc2RyMjU7DQorCXNkLXVocy1zZHI1MDsN
+CisJc2QtdWhzLXNkcjEwNDsNCisJbGFiZWwgPSAiTU1DMSI7DQogCWNkLWdwaW9zID0gPCZncGlv
+MiA1IEdQSU9fQUNUSVZFX0xPVz47IC8qIE1NQ0QgKi8NCiAJZGlzYWJsZS13cDsNCi0JdnFtbWMt
+c3VwcGx5ID0gPCZyZWdfbW9kdWxlXzN2Mz47DQorCWVuYWJsZS1zZGlvLXdha2V1cDsNCisJa2Vl
+cC1wb3dlci1pbi1zdXNwZW5kOw0KIAlidXMtd2lkdGggPSA8ND47DQotCW5vLTEtOC12Ow0KIAlz
+dGF0dXMgPSAiZGlzYWJsZWQiOw0KIH07DQogDQpAQCAtNzA2LDYgKzcxOSwyOCBAQA0KIAkJPjsN
+CiAJfTsNCiANCisJcGluY3RybF91c2RoYzFfMTAwbWh6OiB1c2RoYzFncnAxMDBtaHogew0KKwkJ
+ZnNsLHBpbnMgPSA8DQorCQkJTVg2UURMX1BBRF9TRDFfQ01EX19TRDFfQ01EICAgIDB4MTcwYjEN
+CisJCQlNWDZRRExfUEFEX1NEMV9DTEtfX1NEMV9DTEsgICAgMHgxMDBiMQ0KKwkJCU1YNlFETF9Q
+QURfU0QxX0RBVDBfX1NEMV9EQVRBMCAweDE3MGIxDQorCQkJTVg2UURMX1BBRF9TRDFfREFUMV9f
+U0QxX0RBVEExIDB4MTcwYjENCisJCQlNWDZRRExfUEFEX1NEMV9EQVQyX19TRDFfREFUQTIgMHgx
+NzBiMQ0KKwkJCU1YNlFETF9QQURfU0QxX0RBVDNfX1NEMV9EQVRBMyAweDE3MGIxDQorCQk+Ow0K
+Kwl9Ow0KKw0KKwlwaW5jdHJsX3VzZGhjMV8yMDBtaHo6IHVzZGhjMWdycDIwMG1oeiB7DQorCQlm
+c2wscGlucyA9IDwNCisJCQlNWDZRRExfUEFEX1NEMV9DTURfX1NEMV9DTUQgICAgMHgxNzBmMQ0K
+KwkJCU1YNlFETF9QQURfU0QxX0NMS19fU0QxX0NMSyAgICAweDEwMGYxDQorCQkJTVg2UURMX1BB
+RF9TRDFfREFUMF9fU0QxX0RBVEEwIDB4MTcwZjENCisJCQlNWDZRRExfUEFEX1NEMV9EQVQxX19T
+RDFfREFUQTEgMHgxNzBmMQ0KKwkJCU1YNlFETF9QQURfU0QxX0RBVDJfX1NEMV9EQVRBMiAweDE3
+MGYxDQorCQkJTVg2UURMX1BBRF9TRDFfREFUM19fU0QxX0RBVEEzIDB4MTcwZjENCisJCT47DQor
+CX07DQorDQogCXBpbmN0cmxfdXNkaGMzOiB1c2RoYzNncnAgew0KIAkJZnNsLHBpbnMgPSA8DQog
+CQkJTVg2UURMX1BBRF9TRDNfQ01EX19TRDNfQ01ECTB4MTcwNTkNCi0tIA0KMi4yMi4wDQoNCg==
