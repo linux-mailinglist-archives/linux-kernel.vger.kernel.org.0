@@ -2,131 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B56E78A8D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:01:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 326488A8DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbfHLVBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 17:01:19 -0400
-Received: from mga11.intel.com ([192.55.52.93]:63746 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727224AbfHLVBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 17:01:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 14:01:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
-   d="scan'208";a="176002236"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Aug 2019 14:01:17 -0700
-Date:   Mon, 12 Aug 2019 14:01:17 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
-Message-ID: <20190812210116.GD20634@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-16-ira.weiny@intel.com>
- <88d82639-c0b2-0b35-1919-999a8438031c@nvidia.com>
+        id S1727084AbfHLVCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 17:02:19 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39412 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbfHLVCT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 17:02:19 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7CKwfo2001766;
+        Mon, 12 Aug 2019 21:02:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=8v5ewYFjrCTDzF3BX4DOpWAFLC7ncCV9cpa2YE8L4Zw=;
+ b=JpCMSKJxNiBihN+XUr7Qs8Kp5uMED6z06VaIy3pKkJy9SZ7VMismJBXRbk3vtKfdVJDk
+ P1PCC57c2duWzRDccouM92uOuNlwtv5oHpnQg9rjg7tRgHZiSVYP50rNgyEFCvSobNbV
+ JXvjjDqTmWjqsKVxvSfznhK2c5ETbyyhaODZwQlWldYrWsNdsStE7HZNaGQmFieDNKX9
+ OV7X055033lqUUlO8LKJOj3z7Vv8WciYVtg39/EzPFeH/9lHw7cxaiBF5Ii+9Yaejwj1
+ jdKpK7TF8ytnQGO9rZTwf1BtrN749PZ55Y6TbZk+VnbAn5SiTNZchLfXgg7K4Eifad2Z JQ== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=8v5ewYFjrCTDzF3BX4DOpWAFLC7ncCV9cpa2YE8L4Zw=;
+ b=sCg5UXi7sqXmZxU6krn/lamt8vu2xvc7hSAkH9QOX5St7WH28xkvO2mg2vrEdLuW1LRK
+ +JTQrOJx2rye5RrmT83vs24IEHwtPWeG1jbWx1cmlTVhe5HGn4iD9gsOjPjg2/PgWUNm
+ 97gT3Ll4o8cRzC4kS1A6JycePb9xXvl8j/CFV8Jn31a627GrzIiEmPMTiZoriN/oEGOW
+ TtgSq5x19c5LSGQ1+NXiaNQh/NGEr4cNNl0SgTjTmqLZqHRr2BVHK6bRpUBThm9rQ4tj
+ ttU+XDYApUP/mywoX7b1hER9kSXy3O9bjVPYxfXAcNZqsTmdr3KXLXuTfs86Z8oqM3Mp 7Q== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2u9pjqa2em-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Aug 2019 21:02:07 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7CKva67017187;
+        Mon, 12 Aug 2019 21:02:07 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2u9nre9hqs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Aug 2019 21:02:06 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7CL25pr024438;
+        Mon, 12 Aug 2019 21:02:06 GMT
+Received: from parnassus.us.oracle.com (/10.39.240.231)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 12 Aug 2019 14:02:05 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/2] padata: initialize usable masks to reflect offlined CPU
+Date:   Mon, 12 Aug 2019 17:02:00 -0400
+Message-Id: <20190812210200.13653-1-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190809210603.20900-1-daniel.m.jordan@oracle.com>
+References: <20190809210603.20900-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88d82639-c0b2-0b35-1919-999a8438031c@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908120204
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908120204
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 11, 2019 at 04:07:23PM -0700, John Hubbard wrote:
-> On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > The addition of FOLL_LONGTERM has taken on additional meaning for CMA
-> > pages.
-> > 
-> > In addition subsystems such as RDMA require new information to be passed
-> > to the GUP interface to track file owning information.  As such a simple
-> > FOLL_LONGTERM flag is no longer sufficient for these users to pin pages.
-> > 
-> > Introduce a new GUP like call which takes the newly introduced vaddr_pin
-> > information.  Failure to pass the vaddr_pin object back to a vaddr_put*
-> > call will result in a failure if pins were created on files during the
-> > pin operation.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > 
-> 
-> I'm creating a new call site conversion series, to replace the 
-> "put_user_pages(): miscellaneous call sites" series. This uses
-> vaddr_pin_pages*() where appropriate. So it's based on your series here.
-> 
-> btw, while doing that, I noticed one more typo while re-reading some of the comments. 
-> Thought you probably want to collect them all for the next spin. Below...
-> 
-> > ---
-> > Changes from list:
-> > 	Change to vaddr_put_pages_dirty_lock
-> > 	Change to vaddr_unpin_pages_dirty_lock
-> > 
-> >  include/linux/mm.h |  5 ++++
-> >  mm/gup.c           | 59 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 64 insertions(+)
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 657c947bda49..90c5802866df 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -1603,6 +1603,11 @@ int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
-> >  int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
-> >  			struct task_struct *task, bool bypass_rlim);
-> >  
-> > +long vaddr_pin_pages(unsigned long addr, unsigned long nr_pages,
-> > +		     unsigned int gup_flags, struct page **pages,
-> > +		     struct vaddr_pin *vaddr_pin);
-> > +void vaddr_unpin_pages_dirty_lock(struct page **pages, unsigned long nr_pages,
-> > +				  struct vaddr_pin *vaddr_pin, bool make_dirty);
-> >  bool mapping_inode_has_layout(struct vaddr_pin *vaddr_pin, struct page *page);
-> >  
-> >  /* Container for pinned pfns / pages */
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index eeaa0ddd08a6..6d23f70d7847 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -2536,3 +2536,62 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
-> >  	return ret;
-> >  }
-> >  EXPORT_SYMBOL_GPL(get_user_pages_fast);
-> > +
-> > +/**
-> > + * vaddr_pin_pages pin pages by virtual address and return the pages to the
-> > + * user.
-> > + *
-> > + * @addr, start address
-> > + * @nr_pages, number of pages to pin
-> > + * @gup_flags, flags to use for the pin
-> > + * @pages, array of pages returned
-> > + * @vaddr_pin, initalized meta information this pin is to be associated
-> 
-> Typo:
->                   initialized
+__padata_remove_cpu clears the offlined CPU from the usable masks after
+padata_alloc_pd has initialized pd->cpu, which means pd->cpu could be
+initialized to this CPU, causing padata to wait indefinitely for the
+next job in padata_get_next.
 
-Thanks fixed.
-Ira
+Make the usable masks reflect the offline CPU when they're established
+in padata_setup_cpumasks so pd->cpu is initialized properly.
 
-> 
-> 
-> thanks,
-> -- 
-> John Hubbard
-> NVIDIA
+Fixes: 6fc4dbcf0276 ("padata: Replace delayed timer with immediate workqueue in padata_reorder")
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Hi, one more edge case.  All combinations of CPUs among
+parallel_cpumask, serial_cpumask, and CPU hotplug have now been tested
+in a 4-CPU VM, and an 8-CPU VM has run with random combinations of these
+settings for over an hour.
+
+ kernel/padata.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 01460ea1d160..c1002ac4720c 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -702,17 +702,27 @@ static int __padata_remove_cpu(struct padata_instance *pinst, int cpu)
+ 	struct parallel_data *pd = NULL;
+ 
+ 	if (cpumask_test_cpu(cpu, cpu_online_mask)) {
++		cpumask_var_t pcpu, cbcpu;
++
+ 		__padata_stop(pinst);
+ 
+-		pd = padata_alloc_pd(pinst, pinst->cpumask.pcpu,
+-				     pinst->cpumask.cbcpu);
++		/*
++		 * padata_alloc_pd uses cpu_online_mask to get the usable
++		 * masks, but @cpu hasn't been removed from it yet, so use
++		 * temporary masks that exclude @cpu so the usable masks show
++		 * @cpu as offline for pd->cpu's initialization.
++		 */
++		cpumask_copy(pcpu, pinst->cpumask.pcpu);
++		cpumask_copy(cbcpu, pinst->cpumask.cbcpu);
++		cpumask_clear_cpu(cpu, cbcpu);
++		cpumask_clear_cpu(cpu, pcpu);
++
++		pd = padata_alloc_pd(pinst, pcpu, cbcpu);
+ 		if (!pd)
+ 			return -ENOMEM;
+ 
+ 		padata_replace(pinst, pd);
+ 
+-		cpumask_clear_cpu(cpu, pd->cpumask.cbcpu);
+-		cpumask_clear_cpu(cpu, pd->cpumask.pcpu);
+ 		if (padata_validate_cpumask(pinst, pd->cpumask.pcpu) &&
+ 		    padata_validate_cpumask(pinst, pd->cpumask.cbcpu))
+ 			__padata_start(pinst);
+-- 
+2.22.0
+
