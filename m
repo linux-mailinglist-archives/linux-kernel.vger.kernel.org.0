@@ -2,218 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25AF189A1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:44:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C507B89A31
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbfHLJo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 05:44:28 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:50904 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727494AbfHLJoZ (ORCPT
+        id S1727709AbfHLJos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 05:44:48 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42275 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbfHLJop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 05:44:25 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E1A33C2175;
-        Mon, 12 Aug 2019 09:44:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1565603065; bh=RVdfzAnkLd2cFbezBg+5+IcJ5jUr94r8t2wC6fXWHBw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=PfYYqanjxndnblrG+5DUrlPCPx78aCvQKQrKzaxzuM0oVmpysCGkOeEy9Fbqi+D6m
-         jIeXVjq0pS44wsVXB4COBy46rmizPN8NbubE71zuBTXaDMcPcjhkKeE/u7GEQr1xyA
-         gBMmG+FaAyfR77rZscSmTEeU5OR1di3nbHtcZo5nYNYdOk1Xz8zxaUhsJ0lAWEfktI
-         8/OemqVooL/Zf1uFOrjQLf5JOuEV3k6tDnXuGkU6onlEidwvlGr5k/nUNmueF+qLy6
-         Adst0rMiegyubL1VA0VXK2R4kTfeIukJ2X9nJ58oDcRSp3kkMTDfFpjrXCXW6EFs0f
-         UeBLibNXme6IQ==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9B060A0080;
-        Mon, 12 Aug 2019 09:44:23 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 12/12] net: stmmac: selftests: Add selftest for VLAN TX Offload
-Date:   Mon, 12 Aug 2019 11:44:11 +0200
-Message-Id: <6ca59f405df8632e00fb4cae360f013bf0c289c6.1565602974.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1565602974.git.joabreu@synopsys.com>
-References: <cover.1565602974.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1565602974.git.joabreu@synopsys.com>
-References: <cover.1565602974.git.joabreu@synopsys.com>
+        Mon, 12 Aug 2019 05:44:45 -0400
+Received: by mail-ot1-f65.google.com with SMTP id j7so11756795ota.9
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 02:44:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=emXyL+F/wH+sxcGpBQLqfGU1iXCvM/vOXIvgqLtgxVw=;
+        b=CEerFixsNPVgu4xuOp6LvT5B0xdS4k5KLsyzpVfx39lh843gi/HnvK0KE7tgTPaO+t
+         ALx9YKmBhJVROWOLV+aUTanVB4YKNKkdGVrLRNetC2f6QwZrdwaKHvRzdC4rkJzgKpVm
+         bDGLSvkZ40MspeI71wmPX69UH7IMnR2nM5whHAajB8Cx0o6CRFYq4DKGlOV8UuU+9FED
+         QrZu1vw9AJu1Z1diu0agKw1zGaR1b3oLslx/ErXOaI5+TfXrr97s7EQbq7oenKPVcaE1
+         cZpr/n4Dk5M3cVnGRTyOhiUNNyY4O3uYxKUL7m4zVCXjfJmO4vbNjgdxTT2Gt9FDiUPi
+         QwPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=emXyL+F/wH+sxcGpBQLqfGU1iXCvM/vOXIvgqLtgxVw=;
+        b=jEv4xmVfYeeAd9eeAbPI3AwbLr5Iuf1mpg5WsjOz9keMk8xFQ7evCUSUYMKgJmxL2X
+         8diCg1Ld5WAYHw0FG2J+e1EFdKQJMtLgfXMNT3Vr+fVjow2tbFxMXbazQeY4Gtp9O8+B
+         0D/tJCt3KKRQusvgxd7wOfxL+KEful7yW/iyXiOIQuWXTulz1KMVRw1bisq8eMQqVY35
+         FgZk0UoQ0/yIVEeYJaNaoOa0OL0xN6uk7MTb1xr6yif5cBV5DodIqu3KkxpRuWaj47zC
+         FXAuNPVeERNdTf0dVehbh/I1v2h0vjF3fclAQngOD2QQ0VLSaFE3tU1qmDr5s7Cp7NH0
+         s4Yg==
+X-Gm-Message-State: APjAAAW6B1Ex0aPM1PMF39oz2r4VcCu0dV+APiGEdrLTx8EMC8chWQBR
+        nEZXgIrOeF8bGPg0Ua+2z8y5an6NY6Gpwg+hwlLhtw==
+X-Google-Smtp-Source: APXvYqwWOv/ymhTFLZiVDkMOSdWGJprk2GoYXetlvKNrzuA1w0diqLPVVDEIfu/+KUTqgspj9Rw2jp49mIcg6q9JnSY=
+X-Received: by 2002:a9d:590d:: with SMTP id t13mr19125502oth.281.1565603084896;
+ Mon, 12 Aug 2019 02:44:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1563782844.git.baolin.wang@linaro.org> <CAMz4ku+NjcqLY0tWRxrBCRUnkpyWih42LYieKaf0FO6WsqO2vA@mail.gmail.com>
+ <8abff7d6-0a3e-efe7-e8ec-9309fada9121@intel.com>
+In-Reply-To: <8abff7d6-0a3e-efe7-e8ec-9309fada9121@intel.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Mon, 12 Aug 2019 17:44:33 +0800
+Message-ID: <CAMz4kuKri79CtVA=g7Mzoda_fQBYAEXDzL77RGw7g+e0F48jcw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Add MMC packed function
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add 2 new selftests for VLAN Insertion offloading. Tests are for inner
-and outer VLAN offloading.
+Hi Adrian,
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+On Mon, 12 Aug 2019 at 16:59, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 12/08/19 8:20 AM, Baolin Wang wrote:
+> > Hi,
+> >
+> > On Mon, 22 Jul 2019 at 21:10, Baolin Wang <baolin.wang@linaro.org> wrote:
+> >>
+> >> Hi All,
+> >>
+> >> Now some SD/MMC controllers can support packed command or packed request,
+> >> that means it can package multiple requests to host controller to be handled
+> >> at one time, which can improve the I/O performence. Thus this patchset is
+> >> used to add the MMC packed function to support packed request or packed
+> >> command.
+> >>
+> >> In this patch set, I implemented the SD host ADMA3 transfer mode to support
+> >> packed request. The ADMA3 transfer mode can process a multi-block data transfer
+> >> by using a pair of command descriptor and ADMA2 descriptor. In future we can
+> >> easily expand the MMC packed function to support packed command.
+> >>
+> >> Below are some comparison data between packed request and non-packed request
+> >> with fio tool. The fio command I used is like below with changing the
+> >> '--rw' parameter and enabling the direct IO flag to measure the actual hardware
+> >> transfer speed.
+> >>
+> >> ./fio --filename=/dev/mmcblk0p30 --direct=1 --iodepth=20 --rw=read --bs=4K --size=512M --group_reporting --numjobs=20 --name=test_read
+> >>
+> >> My eMMC card working at HS400 Enhanced strobe mode:
+> >> [    2.229856] mmc0: new HS400 Enhanced strobe MMC card at address 0001
+> >> [    2.237566] mmcblk0: mmc0:0001 HBG4a2 29.1 GiB
+> >> [    2.242621] mmcblk0boot0: mmc0:0001 HBG4a2 partition 1 4.00 MiB
+> >> [    2.249110] mmcblk0boot1: mmc0:0001 HBG4a2 partition 2 4.00 MiB
+> >> [    2.255307] mmcblk0rpmb: mmc0:0001 HBG4a2 partition 3 4.00 MiB, chardev (248:0)
+> >>
+> >> 1. Non-packed request
+> >> I tested 3 times for each case and output a average speed.
+> >>
+> >> 1) Sequential read:
+> >> Speed: 28.9MiB/s, 26.4MiB/s, 30.9MiB/s
+> >> Average speed: 28.7MiB/s
+>
+> This seems surprising low for a HS400ES card.  Do you know why that is?
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 96 +++++++++++++++++++++-
- 1 file changed, 94 insertions(+), 2 deletions(-)
+I've set the clock to 400M, but it seems the hardware did not output
+the corresponding clock. I will check my hardware.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-index acfab86431b1..ecc8602c6799 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-@@ -296,7 +296,9 @@ static int __stmmac_test_loopback(struct stmmac_priv *priv,
- 	tpriv->pt.dev = priv->dev;
- 	tpriv->pt.af_packet_priv = tpriv;
- 	tpriv->packet = attr;
--	dev_add_pack(&tpriv->pt);
-+
-+	if (!attr->dont_wait)
-+		dev_add_pack(&tpriv->pt);
- 
- 	skb = stmmac_test_get_udp_skb(priv, attr);
- 	if (!skb) {
-@@ -319,7 +321,8 @@ static int __stmmac_test_loopback(struct stmmac_priv *priv,
- 	ret = !tpriv->ok;
- 
- cleanup:
--	dev_remove_pack(&tpriv->pt);
-+	if (!attr->dont_wait)
-+		dev_remove_pack(&tpriv->pt);
- 	kfree(tpriv);
- 	return ret;
- }
-@@ -731,6 +734,9 @@ static int stmmac_test_vlan_validate(struct sk_buff *skb,
- 	struct ethhdr *ehdr;
- 	struct udphdr *uhdr;
- 	struct iphdr *ihdr;
-+	u16 proto;
-+
-+	proto = tpriv->double_vlan ? ETH_P_8021AD : ETH_P_8021Q;
- 
- 	skb = skb_unshare(skb, GFP_ATOMIC);
- 	if (!skb)
-@@ -740,6 +746,12 @@ static int stmmac_test_vlan_validate(struct sk_buff *skb,
- 		goto out;
- 	if (skb_headlen(skb) < (STMMAC_TEST_PKT_SIZE - ETH_HLEN))
- 		goto out;
-+	if (tpriv->vlan_id) {
-+		if (skb->vlan_proto != htons(proto))
-+			goto out;
-+		if (skb->vlan_tci != tpriv->vlan_id)
-+			goto out;
-+	}
- 
- 	ehdr = (struct ethhdr *)skb_mac_header(skb);
- 	if (!ether_addr_equal(ehdr->h_dest, tpriv->packet->dst))
-@@ -1084,6 +1096,78 @@ static int stmmac_test_reg_sar(struct stmmac_priv *priv)
- 	return ret;
- }
- 
-+static int stmmac_test_vlanoff_common(struct stmmac_priv *priv, bool svlan)
-+{
-+	struct stmmac_packet_attrs attr = { };
-+	struct stmmac_test_priv *tpriv;
-+	struct sk_buff *skb = NULL;
-+	int ret = 0;
-+	u16 proto;
-+
-+	if (!priv->dma_cap.vlins)
-+		return -EOPNOTSUPP;
-+
-+	tpriv = kzalloc(sizeof(*tpriv), GFP_KERNEL);
-+	if (!tpriv)
-+		return -ENOMEM;
-+
-+	proto = svlan ? ETH_P_8021AD : ETH_P_8021Q;
-+
-+	tpriv->ok = false;
-+	tpriv->double_vlan = svlan;
-+	init_completion(&tpriv->comp);
-+
-+	tpriv->pt.type = svlan ? htons(ETH_P_8021Q) : htons(ETH_P_IP);
-+	tpriv->pt.func = stmmac_test_vlan_validate;
-+	tpriv->pt.dev = priv->dev;
-+	tpriv->pt.af_packet_priv = tpriv;
-+	tpriv->packet = &attr;
-+	tpriv->vlan_id = 0x123;
-+	dev_add_pack(&tpriv->pt);
-+
-+	ret = vlan_vid_add(priv->dev, htons(proto), tpriv->vlan_id);
-+	if (ret)
-+		goto cleanup;
-+
-+	attr.dst = priv->dev->dev_addr;
-+
-+	skb = stmmac_test_get_udp_skb(priv, &attr);
-+	if (!skb) {
-+		ret = -ENOMEM;
-+		goto vlan_del;
-+	}
-+
-+	__vlan_hwaccel_put_tag(skb, htons(proto), tpriv->vlan_id);
-+	skb->protocol = htons(proto);
-+
-+	skb_set_queue_mapping(skb, 0);
-+	ret = dev_queue_xmit(skb);
-+	if (ret)
-+		goto vlan_del;
-+
-+	wait_for_completion_timeout(&tpriv->comp, STMMAC_LB_TIMEOUT);
-+	ret = tpriv->ok ? 0 : -ETIMEDOUT;
-+
-+vlan_del:
-+	vlan_vid_del(priv->dev, htons(proto), tpriv->vlan_id);
-+cleanup:
-+	dev_remove_pack(&tpriv->pt);
-+	kfree(tpriv);
-+	return ret;
-+}
-+
-+static int stmmac_test_vlanoff(struct stmmac_priv *priv)
-+{
-+	return stmmac_test_vlanoff_common(priv, false);
-+}
-+
-+static int stmmac_test_svlanoff(struct stmmac_priv *priv)
-+{
-+	if (!priv->dma_cap.dvlan)
-+		return -EOPNOTSUPP;
-+	return stmmac_test_vlanoff_common(priv, true);
-+}
-+
- #define STMMAC_LOOPBACK_NONE	0
- #define STMMAC_LOOPBACK_MAC	1
- #define STMMAC_LOOPBACK_PHY	2
-@@ -1161,6 +1245,14 @@ static const struct stmmac_test {
- 		.name = "SA Replacement (reg)",
- 		.lb = STMMAC_LOOPBACK_PHY,
- 		.fn = stmmac_test_reg_sar,
-+	}, {
-+		.name = "VLAN TX Insertion   ",
-+		.lb = STMMAC_LOOPBACK_PHY,
-+		.fn = stmmac_test_vlanoff,
-+	}, {
-+		.name = "SVLAN TX Insertion  ",
-+		.lb = STMMAC_LOOPBACK_PHY,
-+		.fn = stmmac_test_svlanoff,
- 	},
- };
- 
+> >>
+> >> 2) Random read:
+> >> Speed: 18.2MiB/s, 8.9MiB/s, 15.8MiB/s
+> >> Average speed: 14.3MiB/s
+> >>
+> >> 3) Sequential write:
+> >> Speed: 21.1MiB/s, 27.9MiB/s, 25MiB/s
+> >> Average speed: 24.7MiB/s
+> >>
+> >> 4) Random write:
+> >> Speed: 21.5MiB/s, 18.1MiB/s, 18.1MiB/s
+> >> Average speed: 19.2MiB/s
+> >>
+> >> 2. Packed request
+> >> In packed request mode, I set the host controller can package maximum 10
+> >> requests at one time (Actually I can increase the package number), and I
+> >> enabled read/write packed request mode. Also I tested 3 times for each
+> >> case and output a average speed.
+> >>
+> >> 1) Sequential read:
+> >> Speed: 165MiB/s, 167MiB/s, 164MiB/s
+> >> Average speed: 165.3MiB/s
+> >>
+> >> 2) Random read:
+> >> Speed: 147MiB/s, 141MiB/s, 144MiB/s
+> >> Average speed: 144MiB/s
+> >>
+> >> 3) Sequential write:
+> >> Speed: 87.8MiB/s, 89.1MiB/s, 90.0MiB/s
+> >> Average speed: 89MiB/s
+> >>
+> >> 4) Random write:
+> >> Speed: 90.9MiB/s, 89.8MiB/s, 90.4MiB/s
+> >> Average speed: 90.4MiB/s
+> >>
+> >> Form above data, we can see the packed request can improve the performance greatly.
+> >> Any comments are welcome. Thanks a lot.
+> >
+> > Any comments for this patch set? Thanks.
+>
+> Did you consider adapting the CQE interface?
+
+I am not very familiar with CQE, since my controller did not support
+it. But the MMC packed function had introduced some callbacks to help
+for different controllers to do packed request, so I think it is easy
+to adapt the CQE interface.
+
 -- 
-2.7.4
-
+Baolin Wang
+Best Regards
