@@ -2,145 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CFD689999
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D33899A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:18:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbfHLJPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 05:15:47 -0400
-Received: from uho.ysoft.cz ([81.19.3.130]:39534 "EHLO uho.ysoft.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727170AbfHLJPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 05:15:47 -0400
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-        by uho.ysoft.cz (Postfix) with ESMTP id 9D261A32FB;
-        Mon, 12 Aug 2019 11:15:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-        s=20160406-ysoft-com; t=1565601344;
-        bh=7HwczNO4AaJxhz9DmNAJsQskuU0vcuHCLWic8ettZ1A=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jI/jY+UzM1VHcCwq+/3IO6TnBVWOVbl8u7LnYXJ1phUy7WgS6Ahm7lYGCQ7TFIV4M
-         DJuGH9XbOg+nKg/up1TxBvtRgezEW58h8Pt/pRrtW4Nkv9KgwjORu9eMonK1j6QvrO
-         UWjKg4NKenMQuhYLadJHl6CNyVQtoCNfDoMwTt34=
-Subject: Re: [PATCH v3 05/21] ARM: dts: add recovery for I2C for iMX7
-To:     Philippe Schenker <philippe.schenker@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabio Estevam <festevam@gmail.com>
-Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-References: <20190807082556.5013-1-philippe.schenker@toradex.com>
- <20190807082556.5013-6-philippe.schenker@toradex.com>
-From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Message-ID: <cd0da6ed-6b59-be60-34b2-74eb603aa10d@ysoft.com>
-Date:   Mon, 12 Aug 2019 11:15:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727307AbfHLJSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 05:18:04 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46771 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727154AbfHLJSE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 05:18:04 -0400
+Received: by mail-ed1-f65.google.com with SMTP id z51so15635111edz.13;
+        Mon, 12 Aug 2019 02:18:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qYfm+HhxiVLxwMRZpF6kOW9iq3of0f5g9KF9ckov0fc=;
+        b=cVXExtymyEjoZpWX0ovDJLW5SCLo+b+U7P4pTosqUARvfjcwtFd3VsaOuw5CLJ4gYx
+         Ui6SInKS2BXsZLMOEhVMlTfUu34DkUMkvCgK5qd6aDXZ8NSBNPREMqeCBoIENIwVMh1t
+         jUUNMkjG+tEDPc/Tu8ir/VJB6VDNs10YW8NjOul8oArMoZ3OoD+TM4x0EFJVrL2jsbrr
+         sTOwwhRhNnYUTksL86wxQMr43wwGe2Cl2vbL8Kq9WBjT/+Mxb/vg6mqlytoPEmaJ3oUf
+         6B2vwzlnmFTig8HHyk5Fpb9g4KPo1RY3o5lFK+3cv8QdUBTWuDkrO7MzKpM+n2gA9mis
+         M3/A==
+X-Gm-Message-State: APjAAAWUieWSFTXtE7P8qr+MxzM59a7r0J010MLNxZ/FnG7ykvRtT1oc
+        yUJOauTqbe4k/hhuQwIgOm0jyhNf59E=
+X-Google-Smtp-Source: APXvYqzK3Gd7c+stmPBEDXck6lIvUr4izmcWUK1wvlhoe6Bx1vfTv9cxeWM97fymb54Y17+cYoQQSA==
+X-Received: by 2002:a50:8b64:: with SMTP id l91mr15854796edl.258.1565601481313;
+        Mon, 12 Aug 2019 02:18:01 -0700 (PDT)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id l26sm438803ejg.70.2019.08.12.02.18.00
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Aug 2019 02:18:01 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id p17so103906122wrf.11;
+        Mon, 12 Aug 2019 02:18:00 -0700 (PDT)
+X-Received: by 2002:adf:dbce:: with SMTP id e14mr30773546wrj.9.1565601480549;
+ Mon, 12 Aug 2019 02:18:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190807082556.5013-6-philippe.schenker@toradex.com>
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190806155744.10263-1-megous@megous.com> <20190806155744.10263-2-megous@megous.com>
+In-Reply-To: <20190806155744.10263-2-megous@megous.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 12 Aug 2019 17:17:48 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66+L6_QrL-05fLHQxqavBAmP-pEFp9RWT5XeTQ2rpGa3w@mail.gmail.com>
+Message-ID: <CAGb2v66+L6_QrL-05fLHQxqavBAmP-pEFp9RWT5XeTQ2rpGa3w@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v8 1/4] arm64: dts: allwinner: orange-pi-3:
+ Enable ethernet
+To:     =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>
+Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07. 08. 19 10:26, Philippe Schenker wrote:
-> From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-> 
-> - add recovery mode for applicable i2c buses for
->    Colibri iMX7 module.
-> 
-> Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+On Tue, Aug 6, 2019 at 11:57 PM <megous@megous.com> wrote:
+>
+> From: Ondrej Jirman <megous@megous.com>
+>
+> Orange Pi 3 has two regulators that power the Realtek RTL8211E. According
+> to the phy datasheet, both regulators need to be enabled at the same time,
+> but we can only specify a single phy-supply in the DT.
+>
+> This can be achieved by making one regulator depedning on the other via
+> vin-supply. While it's not a technically correct description of the
+> hardware, it achieves the purpose.
+>
+> All values of RX/TX delay were tested exhaustively and a middle one of the
+> working values was chosen.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
 > ---
-Hi Philippe,
-
-since you are going to send v4 anyway I suggest you update the subject
-to be consistent across all the patches.
-
-	"ARM: dts: imx7-colibri: add recovery for I2C for iMX7"
-
-fits better I think.
-
-Thank you,
-Michal
-
-> 
-> Changes in v3: None
-> Changes in v2: None
-> 
->   arch/arm/boot/dts/imx7-colibri.dtsi | 25 +++++++++++++++++++++++--
->   1 file changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
-> index a8d992f3e897..2480623c92ff 100644
-> --- a/arch/arm/boot/dts/imx7-colibri.dtsi
-> +++ b/arch/arm/boot/dts/imx7-colibri.dtsi
-> @@ -140,8 +140,12 @@
->   
->   &i2c1 {
->   	clock-frequency = <100000>;
-> -	pinctrl-names = "default";
-> +	pinctrl-names = "default", "gpio";
->   	pinctrl-0 = <&pinctrl_i2c1 &pinctrl_i2c1_int>;
-> +	pinctrl-1 = <&pinctrl_i2c1_recovery &pinctrl_i2c1_int>;
-> +	scl-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-> +	sda-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+>  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> index 17d496990108..2c6807b74ff6 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> @@ -15,6 +15,7 @@
+>
+>         aliases {
+>                 serial0 = &uart0;
+> +               ethernet0 = &emac;
+>         };
+>
+>         chosen {
+> @@ -44,6 +45,27 @@
+>                 regulator-max-microvolt = <5000000>;
+>                 regulator-always-on;
+>         };
 > +
->   	status = "okay";
->   
->   	codec: sgtl5000@a {
-> @@ -242,8 +246,11 @@
->   
->   &i2c4 {
->   	clock-frequency = <100000>;
-> -	pinctrl-names = "default";
-> +	pinctrl-names = "default", "gpio";
->   	pinctrl-0 = <&pinctrl_i2c4>;
-> +	pinctrl-1 = <&pinctrl_i2c4_recovery>;
-> +	scl-gpios = <&gpio7 8 GPIO_ACTIVE_HIGH>;
-> +	sda-gpios = <&gpio7 9 GPIO_ACTIVE_HIGH>;
->   };
->   
->   &lcdif {
-> @@ -540,6 +547,13 @@
->   		>;
->   	};
->   
-> +	pinctrl_i2c4_recovery: i2c4-recoverygrp {
-> +		fsl,pins = <
-> +			MX7D_PAD_ENET1_RGMII_TD2__GPIO7_IO8	0x4000007f
-> +			MX7D_PAD_ENET1_RGMII_TD3__GPIO7_IO9	0x4000007f
-> +		>;
-> +	};
+> +       /*
+> +        * The board uses 2.5V RGMII signalling. Power sequence to enable
+> +        * the phy is to enable GMAC-2V5 and GMAC-3V (aldo2) power rails
+> +        * at the same time and to wait 100ms.
+> +        */
+> +       reg_gmac_2v5: gmac-2v5 {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "gmac-2v5";
+> +               regulator-min-microvolt = <2500000>;
+> +               regulator-max-microvolt = <2500000>;
+> +               startup-delay-us = <100000>;
+> +               enable-active-high;
+> +               gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
 > +
->   	pinctrl_lcdif_dat: lcdif-dat-grp {
->   		fsl,pins = <
->   			MX7D_PAD_LCD_DATA00__LCD_DATA0		0x79
-> @@ -740,6 +754,13 @@
->   		>;
->   	};
->   
-> +	pinctrl_i2c1_recovery: i2c1-recoverygrp {
-> +		fsl,pins = <
-> +			MX7D_PAD_LPSR_GPIO1_IO04__GPIO1_IO4	0x4000007f
-> +			MX7D_PAD_LPSR_GPIO1_IO05__GPIO1_IO5	0x4000007f
-> +		>;
-> +	};
-> +
->   	pinctrl_cd_usdhc1: usdhc1-cd-grp {
->   		fsl,pins = <
->   			MX7D_PAD_LPSR_GPIO1_IO00__GPIO1_IO0	0x59 /* CD */
-> 
+> +               /* The real parent of gmac-2v5 is reg_vcc5v, but we need to
+> +                * enable two regulators to power the phy. This is one way
+> +                * to achieve that.
+> +                */
+> +               vin-supply = <&reg_aldo2>; /* GMAC-3V */
+> +       };
 
+The RTL8211E datasheet I have says:
+
+    2.5V (or 1.8/1.5V) RGMII power should be risen simultaneously or slightly
+    earlier than 3.3V power. Rising 2.5V (or 1.8/1.5V) power later than 3.3V
+    power may lead to errors.
+
+Since you can't reverse the parent relationship in your patch, maybe it's
+time to add a phy-io-supply property?
+
+It also says the rise time for 3.3V must be between 1ms and 100ms. However
+the PMIC doesn't support voltage ramp control for the LDOs, nor does it list
+the ramp rate.
+
+ChenYu
+
+>  };
+>
+>  &cpu0 {
+> @@ -58,6 +80,28 @@
+>         status = "okay";
+>  };
+>
+> +&emac {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&ext_rgmii_pins>;
+> +       phy-mode = "rgmii";
+> +       phy-handle = <&ext_rgmii_phy>;
+> +       phy-supply = <&reg_gmac_2v5>;
+> +       allwinner,rx-delay-ps = <1500>;
+> +       allwinner,tx-delay-ps = <700>;
+> +       status = "okay";
+> +};
+> +
+> +&mdio {
+> +       ext_rgmii_phy: ethernet-phy@1 {
+> +               compatible = "ethernet-phy-ieee802.3-c22";
+> +               reg = <1>;
+> +
+> +               reset-gpios = <&pio 3 14 GPIO_ACTIVE_LOW>; /* PD14 */
+> +               reset-assert-us = <15000>;
+> +               reset-deassert-us = <40000>;
+> +       };
+> +};
+> +
+>  &mmc0 {
+>         vmmc-supply = <&reg_cldo1>;
+>         cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
+> --
+> 2.22.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20190806155744.10263-2-megous%40megous.com.
