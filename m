@@ -2,161 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BFD289564
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 04:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81BEB8956A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 04:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbfHLCh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 22:37:57 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44544 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbfHLCh5 (ORCPT
+        id S1726702AbfHLCmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 22:42:11 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38849 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfHLCmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 22:37:57 -0400
-Received: by mail-ot1-f65.google.com with SMTP id b7so103499874otl.11
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 19:37:56 -0700 (PDT)
+        Sun, 11 Aug 2019 22:42:10 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g17so103257517wrr.5;
+        Sun, 11 Aug 2019 19:42:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vVPUyU0J20dZaP14ZLtarTnmhaUFJnFvaSIBf/iSdHg=;
-        b=HqKR6v7rUVKSqH/801mtUb1b78SxT444rRCVYLlXNrRvp07ibQehYufIH7zwzwDso/
-         IS581UNC9Z8ELxE5VeWHqzl8I0+7/AQXjYXv8hZ5jV2ZTVsYRXf20Gb0EYxfA8/z28sr
-         MRqdBnWVDqq/ZnLG/D42iTpl6ZxPuVa3lXzrwNHq9DwTray9m9bCOh2gpZ+EmIDRQE3X
-         POb1arab6XlIRV+ysy2faIH4gXg345Z0QVuhpy+zodgkrp1iLRmWiEXFWjK5cfPbIixu
-         g8XwfRwS0rwmmuWSs5qBONARdmSm+i2T/G17QvWwhQ6D0z1fPGRlBZJ5mIPEQzYiiosh
-         Qc2w==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yf3qi63BI9X/BYxP9kfuXNqP3LoeT8xFrAy0fp782mo=;
+        b=dGYrhLjUkDj2WJPilmQW4xy3C/uREHCHQArXSMNPDpqIEW9bXvBveorN4AIx/dBEBe
+         0IkYNrxa9lAnkMJQXZ8wtfmbkrk+mazm1sj+6pmuwC6RtgaCLHWHvMBXtwwj5i4Bwr6z
+         XSdF0bZl23ZHz02JGh+C6o0Ogd7SV07ZxeFGWc5pLmEIv37r71wPOVREl39RsxL4WeQi
+         LjrWDs8vWNaphnVGSXNBpuEOY3FEWcLexSOZjN3/XqToEJ4aIAhvO6DSvpf3equX5y+N
+         A9BH5e2HrddMzVAAQqxQG5cw91i83TPYgUZrvmZWjx2Kl+fMd8XA4R1I8w25DqBfrbRi
+         yLKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vVPUyU0J20dZaP14ZLtarTnmhaUFJnFvaSIBf/iSdHg=;
-        b=d8WFrTLLfww2z9HOWcqZFK6Hr9h/0IRuXn91d0jPW8Aogo0u08UAioZBb9TGveUUjy
-         K7+ogBjFZb3oc3Gta2BIhBtVhHgqSj3IKmKjRULRSgM8ZmDpQg3JEYvBP8xifD8FOlQ6
-         GtGXGHNSWz4z4iua343SZDRKVaHqlic+2vtjWfKNvii9Gy4UsRpW9ZwUvv6YIHOPaAhE
-         MBAb4t/AidQMPpM5Q1OwEOW620nmUrlursKfyo/lByRsI+CmmB/DkIChrY9Hkd4x+CBB
-         LrMz+2LeUgefS1uGAEJCRQTC0eiMq7WfzdeNThN08uFs6kaTjweR+krtbfYc1iXWQW4Q
-         dPlg==
-X-Gm-Message-State: APjAAAXu0rF+C/lKKw+VWjqNmtaHjvYRDZ0hSGsv0PF6dCUZjKSjV+Q6
-        1BBEAeyfLEu0PgFDh0X+r6PisGcU3TPJDEg95TmXjw==
-X-Google-Smtp-Source: APXvYqy4/uubGIOKb1mot88/KCwAhXdUYNlH4ftJciezuK0kUKzJ1Q2YpBEmCO17/xgWuQUtu7VXOSNPqtPZCFhbso4=
-X-Received: by 2002:a9d:590d:: with SMTP id t13mr18027546oth.281.1565577475725;
- Sun, 11 Aug 2019 19:37:55 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yf3qi63BI9X/BYxP9kfuXNqP3LoeT8xFrAy0fp782mo=;
+        b=IX4ZrdCDZhYWmqZRr1riXnqtoJBxizo4pPHiF4E3NuQuayqtRZPtYtZVNAPaILr1CV
+         SOKQi8Tc6BXITOYVG+TKeubTClqg0gItL/SfTr2EfmhObPGh55uKa8n7bam3kEcX8ivx
+         wD0YqUhQ9sVvY4/RA+pDliRgEMLG2Ik6Yt0bffTMlknLREXd4tkqhuCDh6HisVll98Rs
+         GS5nH4XnuUeU0VDkGGb0d3gBKIjYnG4qmIoFOkY6sj+uHXIDvL2/SZagEwZMNEJxVvAy
+         b3NY3qglgrWPT1KChq8dKSrZkUNZgPUt89cOOuNXLFFAFfo0Fu6D7mfHIm7/Kq0BMYuC
+         gDCQ==
+X-Gm-Message-State: APjAAAU8e6Y+k+cIxQVGRT0mZ4Ypbexn1fyEyd7xptMMwnqflEs1c720
+        7paxix5gYRX0S5QVLkrxrMc=
+X-Google-Smtp-Source: APXvYqznAqEJ+GJ49TKqcvfBU6PxEdk43wnddnbNxpFj/DrvwKZy6Mob6j4soONcsG3hwYBtyUIFZg==
+X-Received: by 2002:adf:dbcc:: with SMTP id e12mr28643909wrj.205.1565577728170;
+        Sun, 11 Aug 2019 19:42:08 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id a26sm16705786wmg.45.2019.08.11.19.42.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 11 Aug 2019 19:42:07 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] powerpc: Avoid clang warnings around setjmp and longjmp
+Date:   Sun, 11 Aug 2019 19:32:15 -0700
+Message-Id: <20190812023214.107817-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.23.0.rc2
 MIME-Version: 1.0
-References: <1870ea18729f93fb36694affaf7e9443733dd988.1564035575.git.baolin.wang@linaro.org>
- <20190727182709.037fc595@archlinux> <CAMz4kuLLSYw0JRLRVN-JegxZcK1bdv4K2m4mVu7oep6xfb+xxg@mail.gmail.com>
- <20190805145037.0a03f21e@archlinux> <CAMz4kuK4GFfOi3vGvFOLdRfmqrwVLDs5CN+Xp_it3jG4=iKi=w@mail.gmail.com>
- <20190811090251.5fbd7d75@archlinux>
-In-Reply-To: <20190811090251.5fbd7d75@archlinux>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 12 Aug 2019 10:37:44 +0800
-Message-ID: <CAMz4ku+ansL1RJScmJRsvKR-dJVLNjAZqgTFqRSEJWQSYUy_Sg@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: sc27xx: Change to polling mode to read data
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        freeman.liu@unisoc.com,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Aug 2019 at 16:03, Jonathan Cameron <jic23@kernel.org> wrote:
->
-> On Tue, 6 Aug 2019 15:39:45 +0800
-> Baolin Wang <baolin.wang@linaro.org> wrote:
->
-> > Hi Jonathan,
-> >
-> > On Mon, 5 Aug 2019 at 21:50, Jonathan Cameron <jic23@kernel.org> wrote:
-> > >
-> > > On Mon, 29 Jul 2019 10:19:48 +0800
-> > > Baolin Wang <baolin.wang@linaro.org> wrote:
-> > >
-> > > > Hi Jonathan,
-> > > >
-> > > > On Sun, 28 Jul 2019 at 01:27, Jonathan Cameron <jic23@kernel.org> wrote:
-> > > > >
-> > > > > On Thu, 25 Jul 2019 14:33:50 +0800
-> > > > > Baolin Wang <baolin.wang@linaro.org> wrote:
-> > > > >
-> > > > > > From: Freeman Liu <freeman.liu@unisoc.com>
-> > > > > >
-> > > > > > On Spreadtrum platform, the headphone will read one ADC channel multiple
-> > > > > > times to identify the headphone type, and the headphone identification is
-> > > > > > sensitive of the ADC reading time. And we found it will take longer time
-> > > > > > to reading ADC data by using interrupt mode comparing with the polling
-> > > > > > mode, thus we should change to polling mode to improve the efficiency
-> > > > > > of reading data, which can identify the headphone type successfully.
-> > > > > >
-> > > > > > Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
-> > > > > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > My concerns with this sort of approach is that we may be sacrificing power
-> > > > > efficiency for some usecases to support one demanding one.
-> > > > >
-> > > > > The maximum sleep time is 1 second (I think) which is probably too long
-> > > > > to poll a register for in general.
-> > > >
-> > > > 1 second is the timeout time, that means something wrong when reading
-> > > > the data taking 1 second, and we will poll the register status every
-> > > > 500 us.
-> > > > From the testing, polling mode takes less time than interrupt mode
-> > > > when reading ADC data multiple times, so polling mode did not
-> > > > sacrifice power
-> > > > efficiency.
-> > >
-> > > Hmm.  I'll go with a probably on that, depends on interrupt response
-> > > latency etc so isn't entirely obvious.  Faster response doesn't necessarily
-> > > mean lower power.
-> > >
-> > > >
-> > > > > Is there some way we can bound that time and perhaps switch between
-> > > > > interrupt and polling modes depending on how long we expect to wait?
-> > > >
-> > > > I do not think the interrupt mode is needed any more, since the ADC
-> > > > reading is so fast enough usually. Thanks.
-> > > The reason for interrupts in such devices is usually precisely the opposite.
-> > >
-> > > You do it because things are slow enough that you can go to sleep
-> > > for a long time before the interrupt occurs.
-> > >
-> > > So question becomes whether there are circumstances in which we are
-> > > running with long timescales and would benefit from using interrupts.
-> >
-> > From our testing, the ADC version time is usually about 100us, it will
-> > be faster to get data if we poll every 50us in this case. But if we
-> > change to use interrupt mode, it will take millisecond level time to
-> > get data. That will cause problems for those time sensitive scenarios,
-> > like headphone detection, that's the main reason we can not use
-> > interrupt mode.
-> >
-> > For those non-time-sensitive scenarios, yes, I agree with you, the
-> > interrupt mode will get a better power efficiency. But ADC driver can
-> > not know what scenarios asked by consumers, so changing to polling
-> > mode seems the easiest way to solve the problem, and we've applied
-> > this patch in our downstream kernel for a while, we did not see any
-> > other problem.
-> >
-> > Thanks for your comments.
->
-> OK. It's not ideal but sometimes such is life ;)
+Commit aea447141c7e ("powerpc: Disable -Wbuiltin-requires-header when
+setjmp is used") disabled -Wbuiltin-requires-header because of a warning
+about the setjmp and longjmp declarations.
 
-Thanks for your understanding :)
+r367387 in clang added another diagnostic around this, complaining that
+there is no jmp_buf declaration.
 
->
-> So last question - fix or not?  If a fix, can I have a fixes tag
-> please.
+In file included from ../arch/powerpc/xmon/xmon.c:47:
+../arch/powerpc/include/asm/setjmp.h:10:13: error: declaration of
+built-in function 'setjmp' requires the declaration of the 'jmp_buf'
+type, commonly provided in the header <setjmp.h>.
+[-Werror,-Wincomplete-setjmp-declaration]
+extern long setjmp(long *);
+            ^
+../arch/powerpc/include/asm/setjmp.h:11:13: error: declaration of
+built-in function 'longjmp' requires the declaration of the 'jmp_buf'
+type, commonly provided in the header <setjmp.h>.
+[-Werror,-Wincomplete-setjmp-declaration]
+extern void longjmp(long *, long);
+            ^
+2 errors generated.
 
-This is a bigger patch, I am afraid it can not be merged into stable
-kernel, and original code can work at most scenarios. So I think no
-need add stable tag for this patch. Thanks.
+Take the same approach as the above commit by disabling the warning for
+the same reason, we provide our own longjmp/setjmp function.
 
+Cc: stable@vger.kernel.org # 4.19+
+Link: https://github.com/ClangBuiltLinux/linux/issues/625
+Link: https://github.com/llvm/llvm-project/commit/3be25e79477db2d31ac46493d97eca8c20592b07
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+It may be worth using -fno-builtin-setjmp and -fno-builtin-longjmp
+instead as it makes it clear to clang that we are not using the builtin
+longjmp and setjmp functions, which I think is why these warnings are
+appearing (at least according to the commit that introduced this waring).
+
+Sample patch:
+https://github.com/ClangBuiltLinux/linux/issues/625#issuecomment-519251372
+
+However, this is the most conservative approach, as I have already had
+someone notice this error when building LLVM with PGO on tip of tree
+LLVM.
+
+ arch/powerpc/kernel/Makefile | 5 +++--
+ arch/powerpc/xmon/Makefile   | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+index ea0c69236789..44e340ed4722 100644
+--- a/arch/powerpc/kernel/Makefile
++++ b/arch/powerpc/kernel/Makefile
+@@ -5,8 +5,9 @@
+ 
+ CFLAGS_ptrace.o		+= -DUTS_MACHINE='"$(UTS_MACHINE)"'
+ 
+-# Disable clang warning for using setjmp without setjmp.h header
+-CFLAGS_crash.o		+= $(call cc-disable-warning, builtin-requires-header)
++# Avoid clang warnings about longjmp and setjmp built-ins (inclusion of setjmp.h and declaration of jmp_buf type)
++CFLAGS_crash.o		+= $(call cc-disable-warning, builtin-requires-header) \
++			   $(call cc-disable-warning, incomplete-setjmp-declaration)
+ 
+ ifdef CONFIG_PPC64
+ CFLAGS_prom_init.o	+= $(NO_MINIMAL_TOC)
+diff --git a/arch/powerpc/xmon/Makefile b/arch/powerpc/xmon/Makefile
+index f142570ad860..53f341391210 100644
+--- a/arch/powerpc/xmon/Makefile
++++ b/arch/powerpc/xmon/Makefile
+@@ -1,8 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Makefile for xmon
+ 
+-# Disable clang warning for using setjmp without setjmp.h header
+-subdir-ccflags-y := $(call cc-disable-warning, builtin-requires-header)
++# Avoid clang warnings about longjmp and setjmp built-ins (inclusion of setjmp.h and declaration of jmp_buf type)
++subdir-ccflags-y := $(call cc-disable-warning, builtin-requires-header) \
++		    $(call cc-disable-warning, incomplete-setjmp-declaration)
+ 
+ GCOV_PROFILE := n
+ KCOV_INSTRUMENT := n
 -- 
-Baolin Wang
-Best Regards
+2.23.0.rc2
+
