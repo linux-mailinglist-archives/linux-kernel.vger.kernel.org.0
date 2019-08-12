@@ -2,92 +2,332 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A888A994
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63D398A99E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:48:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfHLVqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 17:46:44 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37982 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfHLVqo (ORCPT
+        id S1727453AbfHLVr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 17:47:59 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:54867 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727149AbfHLVr6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 17:46:44 -0400
-Received: by mail-ot1-f68.google.com with SMTP id r20so14930486ota.5;
-        Mon, 12 Aug 2019 14:46:43 -0700 (PDT)
+        Mon, 12 Aug 2019 17:47:58 -0400
+Received: by mail-pf1-f201.google.com with SMTP id y66so67070435pfb.21
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 14:47:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nkr+gIxBqJFzbWoJfHgW3m7rzqgw9KiVs/6RGjZDRIE=;
-        b=gb3s9Sv3HPzBuaC3EiLO0FNuc/94OYMO3ZLktnyjaS+lDLsYD/udOgs1bduzDvAQIp
-         wKA/z462vLytjz4AxyK4uufltfvTRd67Up6etwBvtOpZx6iX6Ev0eznFpRXZkUO3VRZ0
-         9aYqTU6+3Dy7SPqRIwbhzzGnxsMCbFcKFjSF2SiaVjWM8Qt4ZT3gpCj9d9HAeWGTY6jQ
-         9hyjTDQE6EStrFkTq/p0Uhqxa5vyLNHoCPaOqykjKt7dAEy3ueXRONeg+TkgVT9dZUWX
-         CFwX9wT3ycD/ni656k2S6FCk/ZecJ0/Qov43udnJ2dmslJokvq7fnfEjbM8Z2DoTvQBH
-         1dNg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=+RjtCqVpVQHEQV5UWqwn329eqcVzZZeuadC4ZfZTt8A=;
+        b=M2Hk8avNfUyA4J7Cb+Yy1mCRbgvxX8fzA6I2scRBaZ/M7miuptIwa6HTxyGVLPoKT9
+         W7h9Ad0djc6KxqaUl9cEenPCr+z+4hCFLxJakGR4jGzttbHbvtxOeMHbqtq8HkQJmWyS
+         ZxM1koknAzyYGEsUhOifQV20nqR8zB1gw7ATQnhBxn+g5clg+b0eU2c/ZgeSCn411W67
+         nCno95N6NgmkPGKoOfy48BZoSo9GqzPNrQhkXZo04sVJ1zMYG5MEJjoO4XK9+6v/1Bhz
+         Sw2rn9zN5pJe9E+3MByXg/CuxT6CJ8tftnhUo7PFqAdGLxh3Xsbr8nwEa/Ncu2iboK+6
+         VcCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nkr+gIxBqJFzbWoJfHgW3m7rzqgw9KiVs/6RGjZDRIE=;
-        b=KXem9y0r5Ijr9CpewkBnm6TBEz5eJqM0nflZ1yQaT9TWK5V3H9e5zuEZu2/DsWmow2
-         qSWAuTeL5UfnuenLBZNny1uh8GUxvuIrSlgBhhkiUeBLfo0BuIOdLshrHo613y/HJmhW
-         giO0TdqKKA8fq041r32BqT6shtC9tKLXDnuOxcru9H39eQRINInxHyN57pchdp+xmUoR
-         NMuzw0syf0ElQa1ADmo/B/nZF44/l6qRVo971x58yszlcssM4svcwBcI2VB9pEE6RFV4
-         vOgb96DZiuw7V2Tfk3bOrY820wXOsHP7jkEiXYfAqueNUtsXzr9+2BXykihfSygZhtz8
-         eICQ==
-X-Gm-Message-State: APjAAAUSKwrXdut20kWi8hwBdcr+M2WNzVlcBhi1c6jYXXTSP04czPhI
-        TN3qs8QwoZQ+L2FC2Cc9CVfvBdKjH+pKvD6GTB1cqw==
-X-Google-Smtp-Source: APXvYqwAyNV0aoo1JgRTizUlMZhcmLZp+ePIOOGhBR9XXQDREIsPzaMnEKBBtRT9HS5LeBuYLTV5wdHKDqyUhCqP3iI=
-X-Received: by 2002:a02:a1c7:: with SMTP id o7mr40873256jah.26.1565646402920;
- Mon, 12 Aug 2019 14:46:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190802120217.GA8712@toshiba> <A83A0A38-8AC8-4662-BBC1-3B48B707E97B@holtmann.org>
-In-Reply-To: <A83A0A38-8AC8-4662-BBC1-3B48B707E97B@holtmann.org>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Mon, 12 Aug 2019 14:46:32 -0700
-Message-ID: <CAKdAkRQP8DBbpdfA6yFZK6THw5eVUbdr+QnVQMkm-mLyEp5brg@mail.gmail.com>
-Subject: Re: [PATCH v2] Bluetooth: btusb: Fix suspend issue for Realtek devices
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Alex Lu <alex_lu@realsil.com.cn>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Max Chou <max.chou@realtek.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=+RjtCqVpVQHEQV5UWqwn329eqcVzZZeuadC4ZfZTt8A=;
+        b=dVrg8rNccw7hHqnuECmCMSESmx4wDbNMjpyyjTW8oOpNU4NkR7Ua823pG70Jg9Dx/Q
+         5wi4Kbwjq6iJH/sWszId4mTo8Lq7SCH7Z4BlcHJg6KMzYyl0igFDwjtvVnHF9vsS7alE
+         SqUOxmrNNJkZ6zvWLchvaw669gqSuBfXj+Js4YVYYTaeX+FLCeoK908KXsh9vBwx6XKH
+         Aq1tmDz57PvynrxWv9RaPhofBMkRRX496uWHnysdLr/iUsapZXdsk04ZcQa0ZM3byPky
+         kviSsb2cXYmVVF8rcdLWjvIrrb0LNe+CUvMMzFlgMZSRqmUWTNYTEeFLa6CF3OXqBbvQ
+         SBdA==
+X-Gm-Message-State: APjAAAVL8h0rQ65mxf0tZVnr+P8zyyhWyl98nnQZtMDbo8RCFdjoiEz1
+        IwKHUvVI9Cs4p1SOceUhLGYeWFiVyA==
+X-Google-Smtp-Source: APXvYqzzm8oWuZjIhx1FRg61W1F33xTwmFo8dZGb00GMhyZTJutqJgfJt7xt0vzGqPOWEM0SoYtcxiC5cA==
+X-Received: by 2002:a63:ee08:: with SMTP id e8mr32361203pgi.70.1565646477641;
+ Mon, 12 Aug 2019 14:47:57 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 14:47:11 -0700
+Message-Id: <20190812214711.83710-1-nhuck@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH] kbuild: Change fallthrough comments to attributes
+From:   Nathan Huckleberry <nhuck@google.com>
+To:     yamada.masahiro@socionext.com, michal.lkml@markovi.net
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, clang-built-linux@googlegroups.com,
+        Nathan Huckleberry <nhuck@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 9:36 AM Marcel Holtmann <marcel@holtmann.org> wrote=
-:
->
-> Hi Alex,
->
-> > From the perspective of controller, global suspend means there is no
-> > SET_FEATURE (DEVICE_REMOTE_WAKEUP) and controller would drop the
-> > firmware. It would consume less power. So we should not send this kind
-> > of SET_FEATURE when host goes to suspend state.
-> > Otherwise, when making device enter selective suspend, host should send
-> > SET_FEATURE to make sure the firmware remains.
-> >
-> > Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
-> > ---
-> > drivers/bluetooth/btusb.c | 34 ++++++++++++++++++++++++++++++----
-> > 1 file changed, 30 insertions(+), 4 deletions(-)
->
-> this one doesn=E2=80=99t apply cleanly to bluetooth-next. Can you please =
-send a version that does.
+Clang does not support the use of comments to label
+intentional fallthrough. This patch replaces some uses
+of comments to attributesto cut down a significant number
+of warnings on clang (from ~50000 to ~200). Only comments
+in commonly used header files have been replaced.
 
-Is this a chip issue or system issue? I.e. if in some system BT
-controller is wired so that it loses power over system suspend, this
-is quite different form chip itself losing firmware in certain
-situations, and this smells like a system issue and thus needs to be
-addressed on system level.
+Since there is still quite a bit of noise, this
+patch moves -Wimplicit-fallthrough to
+Makefile.extrawarn if you are compiling with
+clang.
 
-Thanks.
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+---
+ Makefile                   |  4 +++
+ include/linux/jhash.h      | 60 ++++++++++++++++++++++++++++----------
+ include/linux/mm.h         |  9 ++++--
+ include/linux/signal.h     | 14 +++++----
+ include/linux/skbuff.h     | 12 ++++----
+ lib/zstd/bitstream.h       | 10 +++----
+ scripts/Makefile.extrawarn |  3 ++
+ 7 files changed, 77 insertions(+), 35 deletions(-)
 
---=20
-Dmitry
+diff --git a/Makefile b/Makefile
+index c391fbb07195..875930c19619 100644
+--- a/Makefile
++++ b/Makefile
+@@ -847,7 +847,11 @@ NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+ KBUILD_CFLAGS += -Wdeclaration-after-statement
+ 
+ # Warn about unmarked fall-throughs in switch statement.
++# If the compiler is clang, this warning is only enabled if W=1 in
++# Makefile.extrawarn
++ifndef CONFIG_CC_IS_CLANG
+ KBUILD_CFLAGS += $(call cc-option,-Wimplicit-fallthrough,)
++endif
+ 
+ # Variable Length Arrays (VLAs) should not be used anywhere in the kernel
+ KBUILD_CFLAGS += -Wvla
+diff --git a/include/linux/jhash.h b/include/linux/jhash.h
+index ba2f6a9776b6..6cb2381501d1 100644
+--- a/include/linux/jhash.h
++++ b/include/linux/jhash.h
+@@ -86,19 +86,43 @@ static inline u32 jhash(const void *key, u32 length, u32 initval)
+ 	}
+ 	/* Last block: affect all 32 bits of (c) */
+ 	switch (length) {
+-	case 12: c += (u32)k[11]<<24;	/* fall through */
+-	case 11: c += (u32)k[10]<<16;	/* fall through */
+-	case 10: c += (u32)k[9]<<8;	/* fall through */
+-	case 9:  c += k[8];		/* fall through */
+-	case 8:  b += (u32)k[7]<<24;	/* fall through */
+-	case 7:  b += (u32)k[6]<<16;	/* fall through */
+-	case 6:  b += (u32)k[5]<<8;	/* fall through */
+-	case 5:  b += k[4];		/* fall through */
+-	case 4:  a += (u32)k[3]<<24;	/* fall through */
+-	case 3:  a += (u32)k[2]<<16;	/* fall through */
+-	case 2:  a += (u32)k[1]<<8;	/* fall through */
+-	case 1:  a += k[0];
++	case 12:
++		c += (u32)k[11]<<24;
++		__attribute__((fallthrough));
++	case 11:
++		c += (u32)k[10]<<16;
++		__attribute__((fallthrough));
++	case 10:
++		c += (u32)k[9]<<8;
++		__attribute__((fallthrough));
++	case 9:
++		c += k[8];
++		__attribute__((fallthrough));
++	case 8:
++		b += (u32)k[7]<<24;
++		__attribute__((fallthrough));
++	case 7:
++		b += (u32)k[6]<<16;
++		__attribute__((fallthrough));
++	case 6:
++		b += (u32)k[5]<<8;
++		__attribute__((fallthrough));
++	case 5:
++		b += k[4];
++		__attribute__((fallthrough));
++	case 4:
++		a += (u32)k[3]<<24;
++		__attribute__((fallthrough));
++	case 3:
++		a += (u32)k[2]<<16;
++		__attribute__((fallthrough));
++	case 2:
++		a += (u32)k[1]<<8;
++		__attribute__((fallthrough));
++	case 1:
++		a += k[0];
+ 		 __jhash_final(a, b, c);
++		break;
+ 	case 0: /* Nothing left to add */
+ 		break;
+ 	}
+@@ -132,10 +156,16 @@ static inline u32 jhash2(const u32 *k, u32 length, u32 initval)
+ 
+ 	/* Handle the last 3 u32's */
+ 	switch (length) {
+-	case 3: c += k[2];	/* fall through */
+-	case 2: b += k[1];	/* fall through */
+-	case 1: a += k[0];
++	case 3:
++		c += k[2];
++		__attribute__((fallthrough));
++	case 2:
++		b += k[1];
++		__attribute__((fallthrough));
++	case 1:
++		a += k[0];
+ 		__jhash_final(a, b, c);
++		break;
+ 	case 0:	/* Nothing left to add */
+ 		break;
+ 	}
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0334ca97c584..52d99f263ca3 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -158,11 +158,14 @@ static inline void __mm_zero_struct_page(struct page *page)
+ 
+ 	switch (sizeof(struct page)) {
+ 	case 80:
+-		_pp[9] = 0;	/* fallthrough */
++		_pp[9] = 0;
++		__attribute__((fallthrough));
+ 	case 72:
+-		_pp[8] = 0;	/* fallthrough */
++		_pp[8] = 0;
++		__attribute__((fallthrough));
+ 	case 64:
+-		_pp[7] = 0;	/* fallthrough */
++		_pp[7] = 0;
++		__attribute__((fallthrough));
+ 	case 56:
+ 		_pp[6] = 0;
+ 		_pp[5] = 0;
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index b5d99482d3fe..4fb0a0041a37 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -129,11 +129,11 @@ static inline void name(sigset_t *r, const sigset_t *a, const sigset_t *b) \
+ 		b3 = b->sig[3]; b2 = b->sig[2];				\
+ 		r->sig[3] = op(a3, b3);					\
+ 		r->sig[2] = op(a2, b2);					\
+-		/* fall through */					\
++		__attribute__((fallthrough));				\
+ 	case 2:								\
+ 		a1 = a->sig[1]; b1 = b->sig[1];				\
+ 		r->sig[1] = op(a1, b1);					\
+-		/* fall through */					\
++		__attribute__((fallthrough));				\
+ 	case 1:								\
+ 		a0 = a->sig[0]; b0 = b->sig[0];				\
+ 		r->sig[0] = op(a0, b0);					\
+@@ -163,9 +163,9 @@ static inline void name(sigset_t *set)					\
+ 	switch (_NSIG_WORDS) {						\
+ 	case 4:	set->sig[3] = op(set->sig[3]);				\
+ 		set->sig[2] = op(set->sig[2]);				\
+-		/* fall through */					\
++		__attribute__((fallthrough));				\
+ 	case 2:	set->sig[1] = op(set->sig[1]);				\
+-		/* fall through */					\
++		__attribute__((fallthrough));				\
+ 	case 1:	set->sig[0] = op(set->sig[0]);				\
+ 		    break;						\
+ 	default:							\
+@@ -186,7 +186,7 @@ static inline void sigemptyset(sigset_t *set)
+ 		memset(set, 0, sizeof(sigset_t));
+ 		break;
+ 	case 2: set->sig[1] = 0;
+-		/* fall through */
++		__attribute__((fallthrough));
+ 	case 1:	set->sig[0] = 0;
+ 		break;
+ 	}
+@@ -199,7 +199,7 @@ static inline void sigfillset(sigset_t *set)
+ 		memset(set, -1, sizeof(sigset_t));
+ 		break;
+ 	case 2: set->sig[1] = -1;
+-		/* fall through */
++		__attribute__((fallthrough));
+ 	case 1:	set->sig[0] = -1;
+ 		break;
+ 	}
+@@ -230,6 +230,7 @@ static inline void siginitset(sigset_t *set, unsigned long mask)
+ 		memset(&set->sig[1], 0, sizeof(long)*(_NSIG_WORDS-1));
+ 		break;
+ 	case 2: set->sig[1] = 0;
++		__attribute__((fallthrough));
+ 	case 1: ;
+ 	}
+ }
+@@ -242,6 +243,7 @@ static inline void siginitsetinv(sigset_t *set, unsigned long mask)
+ 		memset(&set->sig[1], -1, sizeof(long)*(_NSIG_WORDS-1));
+ 		break;
+ 	case 2: set->sig[1] = -1;
++		__attribute__((fallthrough));
+ 	case 1: ;
+ 	}
+ }
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index d8af86d995d6..4a1df6714dfe 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3639,19 +3639,19 @@ static inline bool __skb_metadata_differs(const struct sk_buff *skb_a,
+ #define __it(x, op) (x -= sizeof(u##op))
+ #define __it_diff(a, b, op) (*(u##op *)__it(a, op)) ^ (*(u##op *)__it(b, op))
+ 	case 32: diffs |= __it_diff(a, b, 64);
+-		 /* fall through */
++		__attribute__((fallthrough));
+ 	case 24: diffs |= __it_diff(a, b, 64);
+-		 /* fall through */
++		__attribute__((fallthrough));
+ 	case 16: diffs |= __it_diff(a, b, 64);
+-		 /* fall through */
++		__attribute__((fallthrough));
+ 	case  8: diffs |= __it_diff(a, b, 64);
+ 		break;
+ 	case 28: diffs |= __it_diff(a, b, 64);
+-		 /* fall through */
++		__attribute__((fallthrough));
+ 	case 20: diffs |= __it_diff(a, b, 64);
+-		 /* fall through */
++		__attribute__((fallthrough));
+ 	case 12: diffs |= __it_diff(a, b, 64);
+-		 /* fall through */
++		__attribute__((fallthrough));
+ 	case  4: diffs |= __it_diff(a, b, 32);
+ 		break;
+ 	}
+diff --git a/lib/zstd/bitstream.h b/lib/zstd/bitstream.h
+index 3a49784d5c61..cc311bae44da 100644
+--- a/lib/zstd/bitstream.h
++++ b/lib/zstd/bitstream.h
+@@ -259,15 +259,15 @@ ZSTD_STATIC size_t BIT_initDStream(BIT_DStream_t *bitD, const void *srcBuffer, s
+ 		bitD->bitContainer = *(const BYTE *)(bitD->start);
+ 		switch (srcSize) {
+ 		case 7: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[6]) << (sizeof(bitD->bitContainer) * 8 - 16);
+-			/* fall through */
++			__attribute__((fallthrough));
+ 		case 6: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[5]) << (sizeof(bitD->bitContainer) * 8 - 24);
+-			/* fall through */
++			__attribute__((fallthrough));
+ 		case 5: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[4]) << (sizeof(bitD->bitContainer) * 8 - 32);
+-			/* fall through */
++			__attribute__((fallthrough));
+ 		case 4: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[3]) << 24;
+-			/* fall through */
++			__attribute__((fallthrough));
+ 		case 3: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[2]) << 16;
+-			/* fall through */
++			__attribute__((fallthrough));
+ 		case 2: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[1]) << 8;
+ 		default:;
+ 		}
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index a74ce2e3c33e..e12359d69bb7 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -30,6 +30,9 @@ warning-1 += $(call cc-option, -Wunused-but-set-variable)
+ warning-1 += $(call cc-option, -Wunused-const-variable)
+ warning-1 += $(call cc-option, -Wpacked-not-aligned)
+ warning-1 += $(call cc-option, -Wstringop-truncation)
++ifdef CONFIG_CC_IS_CLANG
++KBUILD_CFLAGS += $(call cc-option,-Wimplicit-fallthrough,)
++endif
+ # The following turn off the warnings enabled by -Wextra
+ warning-1 += -Wno-missing-field-initializers
+ warning-1 += -Wno-sign-compare
+-- 
+2.23.0.rc1.153.gdeed80330f-goog
+
