@@ -2,95 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B0218986F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 782DA89875
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:10:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfHLIH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:07:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbfHLIH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:07:57 -0400
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62E70206C2;
-        Mon, 12 Aug 2019 08:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565597276;
-        bh=rfwD66AedIpA/3YE2dWFn8YCpnEehefOryrXd0y6bio=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TH581SWmFX5Vu6WBmaibZ4b8HqpSesdZ9B8gRjIiM+ftqFvUWyIG4J9oD/o8xDBaZ
-         4EOPkWYiJUWIBlolpVAenfFXazLeuyXQ4Owqj3+RBAyWEqHZvQyniCnt3m88lmuzbd
-         tnmIHtFxQyKlmk+kt7gW0A7xtcnNrGAQZcF73pBo=
-Date:   Mon, 12 Aug 2019 10:07:54 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 0/6] Support for Allwinner V3/S3L and Sochip S3
-Message-ID: <20190812080754.n7dgogopm3ytd6h5@flea>
-References: <20190728031227.49140-1-icenowy@aosc.io>
+        id S1727070AbfHLIJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 04:09:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42366 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726528AbfHLIJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 04:09:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1017FAF7E;
+        Mon, 12 Aug 2019 08:09:54 +0000 (UTC)
+Date:   Mon, 12 Aug 2019 10:09:47 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Miguel de Dios <migueldedios@google.com>,
+        Wei Wang <wvw@google.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [RFC PATCH] mm: drop mark_page_access from the unmap path
+Message-ID: <20190812080947.GA5117@dhcp22.suse.cz>
+References: <20190729083515.GD9330@dhcp22.suse.cz>
+ <20190730121110.GA184615@google.com>
+ <20190730123237.GR9330@dhcp22.suse.cz>
+ <20190730123935.GB184615@google.com>
+ <20190730125751.GS9330@dhcp22.suse.cz>
+ <20190731054447.GB155569@google.com>
+ <20190731072101.GX9330@dhcp22.suse.cz>
+ <20190806105509.GA94582@google.com>
+ <20190809124305.GQ18351@dhcp22.suse.cz>
+ <20190809183424.GA22347@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="he4xln2tfu7hadbz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190728031227.49140-1-icenowy@aosc.io>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190809183424.GA22347@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri 09-08-19 14:34:24, Johannes Weiner wrote:
+> On Fri, Aug 09, 2019 at 02:43:24PM +0200, Michal Hocko wrote:
+> > On Tue 06-08-19 19:55:09, Minchan Kim wrote:
+> > > On Wed, Jul 31, 2019 at 09:21:01AM +0200, Michal Hocko wrote:
+> > > > On Wed 31-07-19 14:44:47, Minchan Kim wrote:
+> > [...]
+> > > > > As Nick mentioned in the description, without mark_page_accessed in
+> > > > > zapping part, repeated mmap + touch + munmap never acticated the page
+> > > > > while several read(2) calls easily promote it.
+> > > > 
+> > > > And is this really a problem? If we refault the same page then the
+> > > > refaults detection should catch it no? In other words is the above still
+> > > > a problem these days?
+> > > 
+> > > I admit we have been not fair for them because read(2) syscall pages are
+> > > easily promoted regardless of zap timing unlike mmap-based pages.
+> > > 
+> > > However, if we remove the mark_page_accessed in the zap_pte_range, it
+> > > would make them more unfair in that read(2)-accessed pages are easily
+> > > promoted while mmap-based page should go through refault to be promoted.
+> > 
+> > I have really hard time to follow why an unmap special handling is
+> > making the overall state more reasonable.
+> > 
+> > Anyway, let me throw the patch for further discussion. Nick, Mel,
+> > Johannes what do you think?
+> > 
+> > From 3821c2e66347a2141358cabdc6224d9990276fec Mon Sep 17 00:00:00 2001
+> > From: Michal Hocko <mhocko@suse.com>
+> > Date: Fri, 9 Aug 2019 14:29:59 +0200
+> > Subject: [PATCH] mm: drop mark_page_access from the unmap path
+> > 
+> > Minchan has noticed that mark_page_access can take quite some time
+> > during unmap:
+> > : I had a time to benchmark it via adding some trace_printk hooks between
+> > : pte_offset_map_lock and pte_unmap_unlock in zap_pte_range. The testing
+> > : device is 2018 premium mobile device.
+> > :
+> > : I can get 2ms delay rather easily to release 2M(ie, 512 pages) when the
+> > : task runs on little core even though it doesn't have any IPI and LRU
+> > : lock contention. It's already too heavy.
+> > :
+> > : If I remove activate_page, 35-40% overhead of zap_pte_range is gone
+> > : so most of overhead(about 0.7ms) comes from activate_page via
+> > : mark_page_accessed. Thus, if there are LRU contention, that 0.7ms could
+> > : accumulate up to several ms.
+> > 
+> > bf3f3bc5e734 ("mm: don't mark_page_accessed in fault path") has replaced
+> > SetPageReferenced by mark_page_accessed arguing that the former is not
+> > sufficient when mark_page_accessed is removed from the fault path
+> > because it doesn't promote page to the active list. It is true that a
+> > page that is mapped by a single process might not get promoted even when
+> > referenced if the reclaim checks it after the unmap but does that matter
+> > that much? Can we cosider the page hot if there are no other
+> > users? Moreover we do have workingset detection in place since then and
+> > so a next refault would activate the page if it was really hot one.
+> 
+> I do think the pages can be very hot. Think of short-lived executables
+> and their libraries. Like shell commands. When they run a few times or
+> periodically, they should be promoted to the active list and not have
+> to compete with streaming IO on the inactive list - the PG_referenced
+> doesn't really help them there, see page_check_references().
 
---he4xln2tfu7hadbz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yeah, I am aware of that. We do rely on more processes to map the page
+which I've tried to explain in the changelog.
 
-On Sun, Jul 28, 2019 at 11:12:21AM +0800, Icenowy Zheng wrote:
-> This patchset tries to add support for Allwinner V3/S3L and Sochip S3.
+Btw. can we promote PageReferenced pages with zero mapcount? I am
+throwing that more as an idea because I haven't really thought that
+through yet.
+
+> Maybe the refaults will be fine - but latency expectations around
+> mapped page cache certainly are a lot higher than unmapped cache.
 >
-> Allwinner V3/V3s/S3L and Sochip S3 share the same die, but with
-> different package. V3 is BGA w/o co-packaged DDR, V3s is QFP w/ DDR2,
-> S3L is BGA w/ DDR2 and S3 is BGA w/ DDR3. (S3 and S3L is compatible
-> for pinout, but because of different DDR, DDR voltage is different
-> between the two variants). Because of the pin count of V3s is
-> restricted due to the package, some pins are not bound on V3s, but
-> they're bound on V3/S3/S3L.
->
-> Currently the kernel is only prepared for the features available on V3s.
-> This patchset adds the features missing on V3s for using them on
-> V3/S3/S3L, and add bindings for V3/S3/S3L. It also adds a S3 SoM by
-> Sipeed, called Lichee Zero Plus.
->
-> Icenowy Zheng (6):
->   pinctrl: sunxi: v3s: introduce support for V3
->   clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
->   clk: sunxi-ng: v3s: add Allwinner V3 support
->   ARM: sunxi: dts: s3/s3l/v3: add DTSI files for S3/S3L/V3 SoCs
->   dt-bindings: arm: sunxi: add binding for Lichee Zero Plus core board
->   ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
+> So I'm a bit reluctant about this patch. If Minchan can be happy with
+> the lock batching, I'd prefer that.
 
-Applied the patches 2 to 6, thanks!
-Maxime
+Yes, it seems that the regular lock drop&relock helps in Minchan's case
+but this is a kind of change that might have other subtle side effects.
+E.g. will-it-scale has noticed a regression [1], likely because the
+critical section is shorter and the overal throughput of the operation
+decreases. Now, the w-i-s is an artificial benchmark so I wouldn't lose
+much sleep over it normally but we have already seen real regressions
+when the locking pattern has changed in the past so I would by a bit
+cautious. 
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+As I've said, this RFC is mostly to open a discussion. I would really
+like to weigh the overhead of mark_page_accessed and potential scenario
+when refaults would be visible in practice. I can imagine that a short
+lived statically linked applications have higher chance of being the
+only user unlike libraries which are often being mapped via several
+ptes. But the main problem to evaluate this is that there are many other
+external factors to trigger the worst case.
 
---he4xln2tfu7hadbz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVEeWgAKCRDj7w1vZxhR
-xc1HAQC4pz8qSqTprqKaHx4vMzq28Cpy8SSZNQyYzojW9ba9VQEAuyb7C8zQZ1Qn
-xIEmEbly3ZpRq6N6RP/EFwfX+rg2HgM=
-=3RxS
------END PGP SIGNATURE-----
-
---he4xln2tfu7hadbz--
+[1] http://lkml.kernel.org/r/20190806070547.GA10123@xsang-OptiPlex-9020
+-- 
+Michal Hocko
+SUSE Labs
