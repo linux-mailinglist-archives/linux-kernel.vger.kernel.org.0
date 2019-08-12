@@ -2,93 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A1E98A146
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9A198A15B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 16:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfHLOhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 10:37:24 -0400
-Received: from ajax.cs.uga.edu ([128.192.4.6]:56548 "EHLO ajax.cs.uga.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726480AbfHLOhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 10:37:24 -0400
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-        (authenticated bits=0)
-        by ajax.cs.uga.edu (8.14.4/8.14.4) with ESMTP id x7CEbLnw046789
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Aug 2019 10:37:22 -0400
-Received: by mail-lj1-f174.google.com with SMTP id r9so98508484ljg.5;
-        Mon, 12 Aug 2019 07:37:22 -0700 (PDT)
-X-Gm-Message-State: APjAAAUq4y/aUsIswoRcA+NYjGPlUsoFngqk9beTMkpc7wNU561pK+Ts
-        7F2Hrk5hqsL12tGCbzfonO8VhlAZuqIGNGzLpc8=
-X-Google-Smtp-Source: APXvYqwHjweXtAnZiiWTex2gV+573FnnCM4Bigr6V0xRAj2PUVm5tKqJ0aEvN23cJIb7jhc7vNyJ3r75T6pPOtCVtDA=
-X-Received: by 2002:a2e:3c12:: with SMTP id j18mr3801850lja.50.1565620641004;
- Mon, 12 Aug 2019 07:37:21 -0700 (PDT)
+        id S1726747AbfHLOkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 10:40:49 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37866 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfHLOks (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 10:40:48 -0400
+Received: by mail-ed1-f66.google.com with SMTP id f22so1051438edt.4
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 07:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TVVRSVkI8qvD2lGSoeUmZF8tCfKzDhhlBaSpCOxArnc=;
+        b=obyctRCgWgERgLG9YsSV9pgUbXG+BwvEDlG9jtBCQVI1C6bvH5m/SwrLIrfFLjvksi
+         Nb++0xO4rLuuFAiTrBT5bfKhZ+5NertpHGXDs+rkxTUxu4hTb0OZXIaFsOM7Tn66afMB
+         kTPWRhTNqDQYBIXl3kU5jXapTQTYVkExo/dj4/fjNi8ouR1H402RS2li23UO7n+SNKeP
+         Er1e0U/BhDsZtcVRjl6/ZmkLMLJZxy7ds6Ru9Sd2mJSb3IWvTK8Tfob+eVyC+2mdKFAC
+         cnnSMRtKT0qLrb/oOKAFUOf9aKSemCcD+3010yGECqQfCkG0uGy57ishKgoJNuCWlBYb
+         kKOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TVVRSVkI8qvD2lGSoeUmZF8tCfKzDhhlBaSpCOxArnc=;
+        b=sNFxoAblHznVryx2Zpae1ozjWX12s2xc/YMzpG/XPtPVsHEo/4I4fKSnsH5aZKi4Ty
+         VYIKbnwALpX1SxOP7s9Z49oNZ4T/x7BDYSBsEuyxb2eLSNpAvp5/E4YBLeYUJ8fIEHtL
+         LiYP/DQm84moPP7rNHGHbT6Wn++JhHgd9v4blpiYBvDJ6to9waZ6KaB+jePRuoT1Mgza
+         z3v2PznXyDmdvcnHQNtp7C2ZK3JkhIOBg3F6/h2vmc+VyhXzkq0wZPsWk2zyqQb34gMk
+         DUkueVLYYR0iM1hdsa9ufqrXWgJK+IPzCawgLSuJ/8P771FcRmmr6ZYzIP2mNajsYJ+V
+         7prw==
+X-Gm-Message-State: APjAAAV4+iFXU9AReZDVgj40fJHS4uBnuZrLZjzjyPQYq5k5neGT1hO0
+        WKc/s0syKDMLLFRS9EkSzBjOSHVHaiU=
+X-Google-Smtp-Source: APXvYqypBJ+RY3iZXTAN7jD6cDv1ks62aJk3l8+yGMMR5/FdUnFK+mmnVy1HnYwJVFkIV/LR1grkLg==
+X-Received: by 2002:a50:a48a:: with SMTP id w10mr37395870edb.1.1565620846694;
+        Mon, 12 Aug 2019 07:40:46 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id r19sm1618456edy.52.2019.08.12.07.40.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Aug 2019 07:40:46 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id CB894100854; Mon, 12 Aug 2019 17:40:45 +0300 (+03)
+Date:   Mon, 12 Aug 2019 17:40:45 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Song Liu <songliubraving@fb.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        "srikar@linux.vnet.ibm.com" <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH v12 5/6] khugepaged: enable collapse pmd for pte-mapped
+ THP
+Message-ID: <20190812144045.tkvipsyit3nccvuk@box>
+References: <20190807233729.3899352-1-songliubraving@fb.com>
+ <20190807233729.3899352-6-songliubraving@fb.com>
+ <20190808163303.GB7934@redhat.com>
+ <770B3C29-CE8F-4228-8992-3C6E2B5487B6@fb.com>
+ <20190809152404.GA21489@redhat.com>
+ <3B09235E-5CF7-4982-B8E6-114C52196BE5@fb.com>
+ <4D8B8397-5107-456B-91FC-4911F255AE11@fb.com>
+ <20190812121144.f46abvpg6lvxwwzs@box>
+ <20190812132257.GB31560@redhat.com>
 MIME-Version: 1.0
-References: <1565591765-6461-1-git-send-email-wenwen@cs.uga.edu> <75e09920-4ae3-0a19-4c2a-112d16bb81a5@mellanox.com>
-In-Reply-To: <75e09920-4ae3-0a19-4c2a-112d16bb81a5@mellanox.com>
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-Date:   Mon, 12 Aug 2019 10:36:44 -0400
-X-Gmail-Original-Message-ID: <CAAa=b7dk37o-z=XNTCFOFMuR=G1_ig1bv+YRJaNwJSkgfQTVPw@mail.gmail.com>
-Message-ID: <CAAa=b7dk37o-z=XNTCFOFMuR=G1_ig1bv+YRJaNwJSkgfQTVPw@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx4_en: fix a memory leak bug
-To:     Tariq Toukan <tariqt@mellanox.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        "open list:MELLANOX ETHERNET DRIVER (mlx4_en)" 
-        <netdev@vger.kernel.org>,
-        "open list:MELLANOX MLX4 core VPI driver" 
-        <linux-rdma@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wenwen Wang <wenwen@cs.uga.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812132257.GB31560@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 5:05 AM Tariq Toukan <tariqt@mellanox.com> wrote:
->
-> Hi Wenwen,
->
-> Thanks for your patch.
->
-> On 8/12/2019 9:36 AM, Wenwen Wang wrote:
-> > In mlx4_en_config_rss_steer(), 'rss_map->indir_qp' is allocated through
-> > kzalloc(). After that, mlx4_qp_alloc() is invoked to configure RSS
-> > indirection. However, if mlx4_qp_alloc() fails, the allocated
-> > 'rss_map->indir_qp' is not deallocated, leading to a memory leak bug.
+On Mon, Aug 12, 2019 at 03:22:58PM +0200, Oleg Nesterov wrote:
+> On 08/12, Kirill A. Shutemov wrote:
 > >
-> > To fix the above issue, add the 'mlx4_err' label to free
-> > 'rss_map->indir_qp'.
+> > On Fri, Aug 09, 2019 at 06:01:18PM +0000, Song Liu wrote:
+> > > +		if (pte_none(*pte) || !pte_present(*pte))
+> > > +			continue;
 > >
->
-> Add a Fixes line.
->
-> > Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu> > ---
-> >   drivers/net/ethernet/mellanox/mlx4/en_rx.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> > index 6c01314..9476dbd 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> > @@ -1187,7 +1187,7 @@ int mlx4_en_config_rss_steer(struct mlx4_en_priv *priv)
-> >       err = mlx4_qp_alloc(mdev->dev, priv->base_qpn, rss_map->indir_qp);
-> >       if (err) {
-> >               en_err(priv, "Failed to allocate RSS indirection QP\n");
-> > -             goto rss_err;
-> > +             goto mlx4_err;
-> >       }
-> >
-> >       rss_map->indir_qp->event = mlx4_en_sqp_event;
-> > @@ -1241,6 +1241,7 @@ int mlx4_en_config_rss_steer(struct mlx4_en_priv *priv)
-> >                      MLX4_QP_STATE_RST, NULL, 0, 0, rss_map->indir_qp);
-> >       mlx4_qp_remove(mdev->dev, rss_map->indir_qp);
-> >       mlx4_qp_free(mdev->dev, rss_map->indir_qp);
-> > +mlx4_err:
->
-> I don't like the label name. It's too general and not informative.
-> Maybe qp_alloc_err?
+> > You don't need to check both. Present is never none.
+> 
+> Agreed.
+> 
+> Kirill, while you are here, shouldn't retract_page_tables() check
+> vma->anon_vma (and probably do mm_find_pmd) under vm_mm->mmap_sem?
+> 
+> Can't it race with, say, do_cow_fault?
 
-Thanks! I will rework the patch.
+vma->anon_vma can race, but it doesn't matter. False-negative is fine.
+It's attempt to avoid taking mmap_sem where it can be not productive.
 
-Wenwen
+mm_find_pmd() cannot race with do_cow_fault() since the page is locked.
+__do_fault() has to return locked page before we touch page tables.
+It is somewhat subtle, but I wanted to avoid taking mmap_sem where it is
+possible.
+
+-- 
+ Kirill A. Shutemov
