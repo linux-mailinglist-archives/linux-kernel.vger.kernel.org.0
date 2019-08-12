@@ -2,279 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 538AF89A3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C493689A45
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:45:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbfHLJpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 05:45:21 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:51062 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727570AbfHLJpT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 05:45:19 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost1.synopsys.com [10.12.135.161])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id CDE17C2143;
-        Mon, 12 Aug 2019 09:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1565603119; bh=5M20aLwwE0S58trhDLEhLTGPI5PpcsoKXDaUPfUNc8Y=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=F0QhhuwKywf5xY2E6b/jhnTjnxU6AEk9hLnoFJa9TVe0zZUkv3wVAuJTrw9ZgANOI
-         wMsxMZM+3Vl4xvpmLcdK82bpzIOiQtvgA1nBiSTzf+Nkd3cNw2fm7avbk4jn2eTaSp
-         +BFuDYwtywMS/omQPOwNgFnmyv90XUGLLBFqCdGKPKzJESmjx7NxBn9s0vbFVLz017
-         xPczYinO5oC39n7QOV9Ng7urDxVEc/LBqWhQolv6gMUUfZy5Iimexlf/KekBPYMSpU
-         Sf07BfxlGkc5HUgnWhLg7jHoQ8ucbjW4EvQgoQ4VAFWpmS84DbapZyW7mDvyXQfX32
-         N/DMfdyrXj4vQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 72888A008B;
-        Mon, 12 Aug 2019 09:45:17 +0000 (UTC)
-Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 12 Aug 2019 02:45:16 -0700
-Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.13.134.195)
- by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 12 Aug 2019 02:45:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gsU0sjbS9/8ydqKsapPrU9gMzr+lI8RfH1RQcYKkWaVRDbrHznYTyQL8nuk5ZXWLM/O3nZ4FjT6VSNRYf4uM6yKRkw3XyOOfVhk2M3VFx99viF/3rrGBQWmw6U0/nXdtd5BNkvUJu465RUk/Qt6A1ReVq6MRgbqEnyqKkfHsxhZD+LG/w+QBJgeLOjdvmQX/eOlRQm57gCQml3gc5bPZluXVIARgA2b1BVOKJZa8SJTqEZYGUqMN3JZTEOJWAfTvvMHmI97aGJsh4c/LmjAGZtHNNc2rqyj216DMGASZa2Rl4g5fczA6/5Hvsv6CJJhWzdtIfsATHxRUuv9cA2Txgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5M20aLwwE0S58trhDLEhLTGPI5PpcsoKXDaUPfUNc8Y=;
- b=DZD2izbT72/fCZfRcIPJWlhVZmsxDiAAmfN1MSBM+0bhpu9sU7Dbv9FGnuiNEXhCIO2/LCCBvb9h+2/23OoDwgyO+QE0WYcYhH1D9qrc9Tu275RKSWuGv3vnhDEWSXgRB68ZgyOEKL6+BaH+LK/GIgT9JcFyWCP7mpH8idYg+6c0dRSF6+rEQwgocz/Xb2TcMtzK0fYlPNmyp3YUetE0c8DYtGVR3KmP8//QKMdszzGlGymTbq2kuIbDQoK519oJ+SL035NdxzpWfYKCoIMRHA5aaPE3xkeBrDPI4+pJKaac7LVuAkHPbb0CfmDlNRnGPMidgvKIKXZuiQyUgGgGZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5M20aLwwE0S58trhDLEhLTGPI5PpcsoKXDaUPfUNc8Y=;
- b=MGuxSvwVmjFyA/m/K9dPx/aQZ14tRiFi5LlwEuJ5HhuLhhNB9dGXMz17vooo4rCrH7VxvL9wE1dxJ9HszZ75QzExtd0pW3ssbtRh8x2hvR1BLtwrl0w1fa+5KTCWWRdBgchH2hedT5X9lsxIq1SIsQEbbnteKQV3IiplIHJrpag=
-Received: from MN2PR12MB3710.namprd12.prod.outlook.com (10.255.236.23) by
- MN2PR12MB2941.namprd12.prod.outlook.com (20.179.80.76) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.16; Mon, 12 Aug 2019 09:45:15 +0000
-Received: from MN2PR12MB3710.namprd12.prod.outlook.com
- ([fe80::f50c:562b:fdc0:c2dd]) by MN2PR12MB3710.namprd12.prod.outlook.com
- ([fe80::f50c:562b:fdc0:c2dd%3]) with mapi id 15.20.2157.022; Mon, 12 Aug 2019
- 09:45:15 +0000
-From:   Luis de Oliveira <Luis.Oliveira@synopsys.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>
-CC:     Luis Oliveira <Luis.Oliveira@synopsys.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Rob Herring <robh@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Kishon Vijay Abraham I" <kishon@ti.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Linux Media Mailing List" <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joao Pinto <Joao.Pinto@synopsys.com>
-Subject: RE: [v4 2/6] media: platform: dwc: Add MIPI CSI-2 controller driver
-Thread-Topic: [v4 2/6] media: platform: dwc: Add MIPI CSI-2 controller driver
-Thread-Index: AQHVIIralF2QFkL0vUS66ixvvrgUPKbzNy0AgAGBY4CAAueZkA==
-Date:   Mon, 12 Aug 2019 09:45:15 +0000
-Message-ID: <MN2PR12MB3710E54A1E4BA4FD3AD77B87CBD30@MN2PR12MB3710.namprd12.prod.outlook.com>
-References: <1560280855-18085-1-git-send-email-luis.oliveira@synopsys.com>
- <1560280855-18085-3-git-send-email-luis.oliveira@synopsys.com>
- <20190809141000.GB864@valkosipuli.retiisi.org.uk>
- <CAHp75VeutP=W43GHtY+FKvVGjBnQrF+nKbdaq_QXy8ZCoS=k1g@mail.gmail.com>
-In-Reply-To: <CAHp75VeutP=W43GHtY+FKvVGjBnQrF+nKbdaq_QXy8ZCoS=k1g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=lolivei@synopsys.com; 
-x-originating-ip: [83.174.63.141]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: fcc866d3-569f-413f-bcb9-08d71f09c73e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR12MB2941;
-x-ms-traffictypediagnostic: MN2PR12MB2941:|MN2PR12MB2941:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR12MB29412CF3B77D0D33DE062E56CBD30@MN2PR12MB2941.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1122;
-x-forefront-prvs: 012792EC17
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(366004)(396003)(39850400004)(199004)(189003)(7736002)(186003)(305945005)(229853002)(26005)(25786009)(3846002)(5660300002)(6116002)(74316002)(71190400001)(107886003)(66066001)(6246003)(71200400001)(99286004)(52536014)(316002)(8676002)(9686003)(7416002)(7696005)(76176011)(54906003)(2906002)(81156014)(110136005)(53936002)(81166006)(478600001)(102836004)(55016002)(8936002)(86362001)(53546011)(6506007)(6436002)(14454004)(486006)(446003)(11346002)(66446008)(476003)(76116006)(64756008)(66556008)(66476007)(4326008)(66946007)(14444005)(33656002)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR12MB2941;H:MN2PR12MB3710.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lgMxGqFpC3jvf78AyF94Z0zkEqqGy/FIZihqzuujAztM4CyuqNoIaZKG1BuoaWe/dJLGcyii/jbPF0wNTUJHKWV85iP0DOLpATeWEvbuA0bPgiko+9QAJIQAkJBGIYl2OjcdZnBbeu2OF4FepFFGQrn2tm3D1QRiu0u4PM+PoRsPtDo/RyN2IuxdKTT+sT15STDPhR+HszmCP1mz9ba/SdHcSbRF6Y2d8azhT2URaS1MKPi+pnGJC2PQlR5f5y1C6BHzYDkxbX+D0WKu7WY7hyPtZ3AZmSGLk34C76BMGNb8va2O73hr9aDDk2QW3fwXB7Y9jGvs0X0bjSM6re8uuCc3XMJeyylY7fhcpfnBZufASMX9pHcUEH5l3m2r9LE1t5RQDgkcFOT+S+a8hbPvmTgBM6Az5OEd0M+3QYKjzis=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727815AbfHLJpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 05:45:41 -0400
+Received: from mga09.intel.com ([134.134.136.24]:34875 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727417AbfHLJpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 05:45:39 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 02:45:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,377,1559545200"; 
+   d="asc'?scan'208";a="375884173"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by fmsmga006.fm.intel.com with ESMTP; 12 Aug 2019 02:45:34 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Pawel Laszczak <pawell@cadence.com>,
+        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc:     "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "hdegoede\@redhat.com" <hdegoede@redhat.com>,
+        "heikki.krogerus\@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "robh+dt\@kernel.org" <robh+dt@kernel.org>,
+        "rogerq\@ti.com" <rogerq@ti.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
+        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen\@nxp.com" <peter.chen@nxp.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v9 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+In-Reply-To: <BYAPR07MB4709C07ED94C952886858F14DDD30@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1562324238-16655-1-git-send-email-pawell@cadence.com> <1562324238-16655-6-git-send-email-pawell@cadence.com> <877e8tm25r.fsf@linux.intel.com> <BYAPR07MB4709152CB29B6B027ABEB688DDCF0@BYAPR07MB4709.namprd07.prod.outlook.com> <8736idnu0q.fsf@gmail.com> <BYAPR07MB4709B0A4FADFB76183D651DCDDD10@BYAPR07MB4709.namprd07.prod.outlook.com> <87k1bjvtvi.fsf@gmail.com> <BYAPR07MB470926DA6241B54FC5AF3C2ADDD30@BYAPR07MB4709.namprd07.prod.outlook.com> <87imr2u77c.fsf@gmail.com> <BYAPR07MB4709C07ED94C952886858F14DDD30@BYAPR07MB4709.namprd07.prod.outlook.com>
+Date:   Mon, 12 Aug 2019 12:45:30 +0300
+Message-ID: <87d0hau37p.fsf@gmail.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcc866d3-569f-413f-bcb9-08d71f09c73e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 09:45:15.2149
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: muaALApS8mDAoX8wqrTmhU2VrY01R7UAsAsnnDG9Nith+xZmte2jjSxnv6Q8foO/uPzEmAZXFrsI93vez1LLJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB2941
-X-OriginatorOrg: synopsys.com
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgU2FrYXJpLCBBbmR5LA0KDQpGcm9tOiBBbmR5IFNoZXZjaGVua28gPGFuZHkuc2hldmNoZW5r
-b0BnbWFpbC5jb20+DQpEYXRlOiBTYXQsIEF1ZyAxMCwgMjAxOSBhdCAxNDowOToyMQ0KDQo+IE9u
-IEZyaSwgQXVnIDksIDIwMTkgYXQgNTozOCBQTSBTYWthcmkgQWlsdXMgPHNha2FyaS5haWx1c0Bp
-a2kuZmk+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgSnVuIDExLCAyMDE5IGF0IDA5OjIwOjUxUE0gKzAy
-MDAsIEx1aXMgT2xpdmVpcmEgd3JvdGU6DQo+ID4gPiBBZGQgdGhlIFN5bm9wc3lzIE1JUEkgQ1NJ
-LTIgY29udHJvbGxlciBkcml2ZXIuIFRoaXMNCj4gPiA+IGNvbnRyb2xsZXIgZHJpdmVyIGlzIGRp
-dmlkZWQgaW4gcGxhdGZvcm0gZnVuY3Rpb25zIGFuZCBjb3JlIGZ1bmN0aW9ucy4NCj4gPiA+IFRo
-aXMgd2F5IGl0IHNlcnZlcyBhcyBwbGF0Zm9ybSBmb3IgZnV0dXJlIERlc2lnbldhcmUgZHJpdmVy
-cy4NCj4gDQo+ID4gPiArY29uc3Qgc3RydWN0IG1pcGlfZHQgY3NpX2R0W10gPSB7DQo+ID4NCj4g
-PiBNYWtlIHRoaXMgc3RhdGljIG9yIHVzZSBhIGNvbW1vbiBwcmVmaXggdGhhdCBzb21laG93IHJl
-c2VtYmxlcyB0aGUgbmFtZQ0KPiA+IG5hbWUgb2YgdGhlIGRyaXZlci4NCg0KSSB3aWxsIGRvIGl0
-Lg0KDQo+ID4NCj4gPiA+ICsgICAgIHsNCj4gPiA+ICsgICAgICAgICAgICAgLmhleCA9IENTSV8y
-X1lVVjQyMF84LA0KPiA+ID4gKyAgICAgICAgICAgICAubmFtZSA9ICJZVVY0MjBfOGJpdHMiLA0K
-PiA+ID4gKyAgICAgfSwgew0KPiA+ID4gKyAgICAgICAgICAgICAuaGV4ID0gQ1NJXzJfWVVWNDIw
-XzEwLA0KPiA+ID4gKyAgICAgICAgICAgICAubmFtZSA9ICJZVVY0MjBfMTBiaXRzIiwNCj4gPiA+
-ICsgICAgIH0sIHsNCj4gPiA+ICsgICAgICAgICAgICAgLmhleCA9IENTSV8yX1lVVjQyMF84X0xF
-RywNCj4gPiA+ICsgICAgICAgICAgICAgLm5hbWUgPSAiWVVWNDIwXzhiaXRzX0xFR0FDWSIsDQo+
-ID4gPiArICAgICB9LCB7DQo+ID4gPiArICAgICAgICAgICAgIC5oZXggPSBDU0lfMl9ZVVY0MjBf
-OF9TSElGVCwNCj4gPiA+ICsgICAgICAgICAgICAgLm5hbWUgPSAiWVVWNDIwXzhiaXRzX1NISUZU
-IiwNCj4gPiA+ICsgICAgIH0sIHsNCj4gPiA+ICsgICAgICAgICAgICAgLmhleCA9IENTSV8yX1lV
-VjQyMF8xMF9TSElGVCwNCj4gPiA+ICsgICAgICAgICAgICAgLm5hbWUgPSAiWVVWNDIwXzEwYml0
-c19TSElGVCIsDQo+ID4gPiArICAgICB9LCB7DQo+ID4gPiArICAgICAgICAgICAgIC5oZXggPSBD
-U0lfMl9ZVVY0MjJfOCwNCj4gPiA+ICsgICAgICAgICAgICAgLm5hbWUgPSAiWVVWNDQyXzhiaXRz
-IiwNCj4gPiA+ICsgICAgIH0sIHsNCj4gPiA+ICsgICAgICAgICAgICAgLmhleCA9IENTSV8yX1lV
-VjQyMl8xMCwNCj4gPiA+ICsgICAgICAgICAgICAgLm5hbWUgPSAiWVVWNDQyXzEwYml0cyIsDQo+
-ID4gPiArICAgICB9LCB7DQo+ID4gPiArICAgICAgICAgICAgIC5oZXggPSBDU0lfMl9SR0I0NDQs
-DQo+ID4gPiArICAgICAgICAgICAgIC5uYW1lID0gIlJHQjQ0NCIsDQo+ID4gPiArICAgICB9LCB7
-DQo+ID4gPiArICAgICAgICAgICAgIC5oZXggPSBDU0lfMl9SR0I1NTUsDQo+ID4gPiArICAgICAg
-ICAgICAgIC5uYW1lID0gIlJHQjU1NSIsDQo+ID4gPiArICAgICB9LCB7DQo+ID4gPiArICAgICAg
-ICAgICAgIC5oZXggPSBDU0lfMl9SR0I1NjUsDQo+ID4gPiArICAgICAgICAgICAgIC5uYW1lID0g
-IlJHQjU2NSIsDQo+ID4gPiArICAgICB9LCB7DQo+ID4gPiArICAgICAgICAgICAgIC5oZXggPSBD
-U0lfMl9SR0I2NjYsDQo+ID4gPiArICAgICAgICAgICAgIC5uYW1lID0gIlJHQjY2NiIsDQo+ID4g
-PiArICAgICB9LCB7DQo+ID4gPiArICAgICAgICAgICAgIC5oZXggPSBDU0lfMl9SR0I4ODgsDQo+
-ID4gPiArICAgICAgICAgICAgIC5uYW1lID0gIlJHQjg4OCIsDQo+ID4gPiArICAgICB9LCB7DQo+
-ID4gPiArICAgICAgICAgICAgIC5oZXggPSBDU0lfMl9SQVc2LA0KPiA+ID4gKyAgICAgICAgICAg
-ICAubmFtZSA9ICJSQVc2IiwNCj4gPiA+ICsgICAgIH0sIHsNCj4gPiA+ICsgICAgICAgICAgICAg
-LmhleCA9IENTSV8yX1JBVzcsDQo+ID4gPiArICAgICAgICAgICAgIC5uYW1lID0gIlJBVzciLA0K
-PiA+ID4gKyAgICAgfSwgew0KPiA+ID4gKyAgICAgICAgICAgICAuaGV4ID0gQ1NJXzJfUkFXOCwN
-Cj4gPiA+ICsgICAgICAgICAgICAgLm5hbWUgPSAiUkFXOCIsDQo+ID4gPiArICAgICB9LCB7DQo+
-ID4gPiArICAgICAgICAgICAgIC5oZXggPSBDU0lfMl9SQVcxMCwNCj4gPiA+ICsgICAgICAgICAg
-ICAgLm5hbWUgPSAiUkFXMTAiLA0KPiA+ID4gKyAgICAgfSwgew0KPiA+ID4gKyAgICAgICAgICAg
-ICAuaGV4ID0gQ1NJXzJfUkFXMTIsDQo+ID4gPiArICAgICAgICAgICAgIC5uYW1lID0gIlJBVzEy
-IiwNCj4gPiA+ICsgICAgIH0sIHsNCj4gPiA+ICsgICAgICAgICAgICAgLmhleCA9IENTSV8yX1JB
-VzE0LA0KPiA+ID4gKyAgICAgICAgICAgICAubmFtZSA9ICJSQVcxNCIsDQo+ID4gPiArICAgICB9
-LCB7DQo+ID4gPiArICAgICAgICAgICAgIC5oZXggPSBDU0lfMl9SQVcxNiwNCj4gPiA+ICsgICAg
-ICAgICAgICAgLm5hbWUgPSAiUkFXMTYiLA0KPiA+ID4gKyAgICAgfSwNCj4gPiA+ICt9Ow0KPiAN
-Cj4gT25lIG1heSB1dGlsaXplIF9fc3RyaW5naWZ5KCkgbWFjcm8gYW5kIGRvIHNvbWVsaWtlDQo+
-IA0KPiAjZGVmaW5lIENTSV9GTVRfREVTQyhmbXQpIFwNCj4gIHsgLmhleCA9IENTSV8yXyMjZm10
-LCAubmFtZSA9IF9fc3RyaW5naWZ5KGZtdCksIH0NCj4gDQo+IEFuZCBkbw0KPiANCj4gIENTSV9G
-TVRfREVTQyhSQVcxNiksDQo+IA0KPiBldGMuDQo+IA0KDQpHcmVhdCwgdGhhbmtzISANCg0KPiA+
-ID4gKyAgICAgICAgICAgICByZXR1cm4gY2ZnID8gdjRsMl9zdWJkZXZfZ2V0X3RyeV9mb3JtYXQo
-JmRldi0+c2QsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBjZmcsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAwKSA6IE5VTEw7DQo+IA0KPiBUaGlzIGluZGVudGF0aW9u
-IGxvb2tzIHVnbHkuDQo+IEkgd291bGQgcmF0aGVyIHB1dCB0aGlzIG9uIG9uZSBsaW5lLg0KPiAN
-Cj4gPiA+ICsgICAgIGRldl9kYmcoZGV2LT5kZXYsDQo+ID4gPiArICAgICAgICAgICAgICIlcyBn
-b3QgdjRsMl9tYnVzX3BpeGVsY29kZS4gMHgleFxuIiwgX19mdW5jX18sDQo+ID4gPiArICAgICAg
-ICAgICAgIGRldi0+Zm9ybWF0LmNvZGUpOw0KPiA+ID4gKyAgICAgZGV2X2RiZyhkZXYtPmRldiwN
-Cj4gPiA+ICsgICAgICAgICAgICAgIiVzIGdvdCB3aWR0aC4gMHgleFxuIiwgX19mdW5jX18sDQo+
-ID4gPiArICAgICAgICAgICAgIGRldi0+Zm9ybWF0LndpZHRoKTsNCj4gPiA+ICsgICAgIGRldl9k
-YmcoZGV2LT5kZXYsDQo+ID4gPiArICAgICAgICAgICAgICIlcyBnb3QgaGVpZ2h0LiAweCV4XG4i
-LCBfX2Z1bmNfXywNCj4gPiA+ICsgICAgICAgICAgICAgZGV2LT5mb3JtYXQuaGVpZ2h0KTsNCj4g
-DQo+IF9fZnVuY19fIGlzIHVzdWFsbHkgcmVkdW5kYW50IChpZiBEeW5hbWljIERlYnVnIGluIHVz
-ZSBpdCBjYW4gYmUNCj4gc3dpdGNoZWQgYXQgcnVuLXRpbWUpLg0KPiANCg0KVGhhdCdzIHRydWUs
-IEkgZG9uJ3QgbmVlZCBpdC4NCg0KPiA+IEknZCBqdXN0IG9taXQgdGhlc2UgZGVidWcgcHJpbnRz
-IGluIGEgZHJpdmVyLiBCdXQgYWRkaW5nIHRoZW0gdG8gdGhlDQo+ID4gZnJhbWV3b3JrIG1pZ2h0
-IG1ha2Ugc2Vuc2UuIFdlIGRvbid0IGhhdmUgYSBsb3Qgb2YgZGVidWcgcHJpbnRzIGRlYWxpbmcN
-Cj4gPiB3aXRoIHVzZXIgcGFyYW1ldGVycyBpbiB0aGVyZS4gT1RPSCB0aGUgY29tbW9uIHRlc3Qg
-cHJvZ3JhbXMgbGFyZ2VseSBkbyB0aGUNCj4gPiBzYW1lIGFscmVhZHkuDQo+IA0KPiBJIHdvdWxk
-IHJhdGhlciBzZWUgdHJhY2Vwb2ludHMgaW5zdGVhZCBvZiBkZWJ1ZyBwcmludHMgaWYgd2UgYXJl
-DQo+IHRhbGtpbmcgYWJvdXQgZ2VuZXJpYyBzb2x1dGlvbiBmb3IgZW50aXJlIGZyYW1ld29yay4N
-Cj4gDQoNCkkgd2lsbCBjaGVjayB0aGF0Lg0KDQo+ID4NCj4gPiA+ICsgICAgIHJldHVybiAmZGV2
-LT5mb3JtYXQ7DQo+ID4gPiArfQ0KPiANCj4gPiA+ICsgICAgIHN0cnVjdCBtaXBpX2ZtdCAqZGV2
-X2ZtdDsNCj4gDQo+IFRoaXMgaXMgc2ltcGxlIGJhZCBuYW1lLiBXZSBoYXZlIGRldl9mbXQoKSBt
-YWNyby4gSSB3b3VsZCByYXRoZXIgYXZvaWQNCj4gcG90ZW50aWFsIGNvbGxpc2lvbnMuDQoNClRy
-dWUsIEkgd2lsbCBjaGFuZ2UgdGhlIG5hbWUuDQoNCj4gDQo+ID4gPiArICAgICBzdHJ1Y3QgdjRs
-Ml9tYnVzX2ZyYW1lZm10ICptZjsNCj4gPiA+ICsNCj4gPiA+ICsgICAgIG1mID0gZHdfbWlwaV9j
-c2lfZ2V0X2Zvcm1hdChkZXYsIGNmZywgZm10LT53aGljaCk7DQo+ID4gPiArICAgICBpZiAoIW1m
-KQ0KPiA+ID4gKyAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCj4gDQo+IENhbid0IHlvdSBy
-YXRoZXIgcmV0dXJuIGFuIGVycm9yIHBvaW50ZXIgaW4gdGhpcyBhbmQgc2ltaWxhciBjYXNlcz8N
-Cj4gDQoNClllcywgb2ZjLg0KDQo+ID4gPiArICAgICBkZXZfdmRiZyhkZXYtPmRldiwgIiVzOiBv
-bj0lZFxuIiwgX19mdW5jX18sIG9uKTsNCj4gDQo+IFRoaXMgaXMgbm9pc2UuIElmIHlvdSB3b3Vs
-ZCBsaWtlIHRvIGRlYnVnIEZ1bmN0aW9uIFRyYWNlciBpcyBhIGdvb2Qgc3RhcnQuDQo+IA0KDQpP
-ay4NCg0KPiA+ID4gKyAgICAgb2ZfaWQgPSBvZl9tYXRjaF9ub2RlKGR3X21pcGlfY3NpX29mX21h
-dGNoLCBkZXYtPm9mX25vZGUpOw0KPiA+ID4gKyAgICAgaWYgKCFvZl9pZCkNCj4gPiA+ICsgICAg
-ICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+IA0KPiBJcyBpdCBwb3NzaWJsZSB0byBoYXZlIHRo
-aXMgYXNzZXJ0ZWQ/DQo+IA0KDQpJIHdpbGwgcmVtb3ZlIGl0Lg0KIA0KPiA+ID4gKyAgICAgcmVz
-ID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYsIElPUkVTT1VSQ0VfTUVNLCAwKTsNCj4gDQo+
-ID4gPiArICAgICBpZiAoIXJlcykNCj4gPiA+ICsgICAgICAgICAgICAgcmV0dXJuIC1FTlhJTzsN
-Cj4gDQo+IFJlZHVuZGFudC4gQmVsb3cgZG9lcyB0aGUgY2hlY2sgZm9yIHlvdS4NCj4gDQoNClll
-cCwgdGhhbmtzLg0KDQo+ID4gPiArDQo+ID4gPiArICAgICBjc2ktPmJhc2VfYWRkcmVzcyA9IGRl
-dm1faW9yZW1hcF9yZXNvdXJjZShkZXYsIHJlcyk7DQo+ID4gPiArICAgICBpZiAoSVNfRVJSKGNz
-aS0+YmFzZV9hZGRyZXNzKSkgew0KPiANCj4gPiA+ICsgICAgICAgICAgICAgZGV2X2VycihkZXYs
-ICJCYXNlIGFkZHJlc3Mgbm90IHNldC5cbiIpOw0KPiANCj4gUmVkdW5kYW50LiBBYm92ZSBkb2Vz
-IHByaW50IGFuIGVycm9yIG1lc3NhZ2UgZm9yIHlvdS4NCj4gDQoNCk9rLg0KDQo+ID4gPiArICAg
-ICAgICAgICAgIHJldHVybiBQVFJfRVJSKGNzaS0+YmFzZV9hZGRyZXNzKTsNCj4gPiA+ICsgICAg
-IH0NCj4gDQo+IE1vcmVvdmVyLCB1c2UgZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKCkg
-aW5zdGVhZCBvZiBib3RoLg0KPiANCg0KTmljZSwgdGhhbmtzLg0KDQo+ID4gPiArICAgICBjc2kt
-PmN0cmxfaXJxX251bWJlciA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7DQo+ID4gPiArICAg
-ICBpZiAoY3NpLT5jdHJsX2lycV9udW1iZXIgPCAwKSB7DQo+IA0KPiA+ID4gKyAgICAgICAgICAg
-ICBkZXZfZXJyKGRldiwgImlycSBudW1iZXIgJWQgbm90IHNldC5cbiIsIGNzaS0+Y3RybF9pcnFf
-bnVtYmVyKTsNCj4gDQo+IFJlZHVuZGFudCBzaW5jZSB0aGlzIGN5Y2xlICh2NS40KS4NCj4gDQoN
-Ck9rLA0KDQo+ID4gPiArICAgICAgICAgICAgIHJldCA9IGNzaS0+Y3RybF9pcnFfbnVtYmVyOw0K
-PiANCj4gQmV0dGVyIHRvIGRvIHRoZSBvcHBvc2l0ZQ0KPiANCj4gcmV0ID0gcGxhdGZvcm1fZ2V0
-X2lycSgpOw0KPiBpZiAocmV0KQ0KPiAgZ290byBlbmQ7DQo+IC4uLiA9IHJldDsNCj4gDQo+ID4g
-PiArICAgICAgICAgICAgIGdvdG8gZW5kOw0KPiA+ID4gKyAgICAgfQ0KPiANCj4gPiA+ICsgICAg
-IHJldCA9IGRldm1fcmVxdWVzdF9pcnEoZGV2LCBjc2ktPmN0cmxfaXJxX251bWJlciwNCj4gPiA+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgZHdfbWlwaV9jc2lfaXJxMSwgSVJRRl9TSEFS
-RUQsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRldl9uYW1lKGRldiksIGNz
-aSk7DQo+ID4gPiArICAgICBpZiAocmV0KSB7DQo+ID4gPiArICAgICAgICAgICAgIGRldl9lcnIo
-ZGV2LCAiaXJxIGNzaSAlcyBmYWlsZWRcbiIsIG9mX2lkLT5uYW1lKTsNCj4gPiA+ICsNCj4gPiA+
-ICsgICAgICAgICAgICAgZ290byBlbmQ7DQo+ID4gPiArICAgICB9DQo+IA0KPiBkZXZtXyppcnEo
-KSBtaWdodCBiZSBhIGJhZCBpZGVhLiBJcyBpdCByYWNlIGZyZWUgaW4geW91ciBkcml2ZXI/DQo+
-IA0KDQpJIG5ldmVyIHRob3VnaHQgYWJvdXQgaXQgbGlrZSB0aGF0LiBTaG91bGQgSSB1c2UgcmVx
-dWVzdF9pcnEgYW5kIA0KZnJlZV9pcnE/IA0KDQo+ID4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBv
-Zl9kZXZpY2VfaWQgZHdfbWlwaV9jc2lfb2ZfbWF0Y2hbXSA9IHsNCj4gPiA+ICsgICAgIHsgLmNv
-bXBhdGlibGUgPSAic25wcyxkdy1jc2kiIH0sDQo+IA0KPiA+ID4gKyAgICAge30sDQo+IA0KPiBC
-ZXR0ZXIgd2l0aG91dCBjb21tYS4gVGVybWluYXRvciBtYXkgdGVybWluYXRlIGV2ZW4gYXQgY29t
-cGlsZSB0aW1lLg0KPiANCg0KT2suDQo+ID4gPiArfTsNCj4gDQo+ID4gPiArc3RhdGljIHNzaXpl
-X3QgY29yZV92ZXJzaW9uX3Nob3coc3RydWN0IGRldmljZSAqZGV2LA0KPiA+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLA0KPiA+
-ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNoYXIgKmJ1ZikNCj4gPiA+ICt7DQo+
-ID4gPiArICAgICBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2ID0gdG9fcGxhdGZvcm1fZGV2
-aWNlKGRldik7DQo+ID4gPiArICAgICBzdHJ1Y3QgdjRsMl9zdWJkZXYgKnNkID0gcGxhdGZvcm1f
-Z2V0X2RydmRhdGEocGRldik7DQo+ID4gPiArICAgICBzdHJ1Y3QgZHdfY3NpICpjc2lfZGV2ID0g
-c2RfdG9fbWlwaV9jc2lfZGV2KHNkKTsNCj4gDQo+ID4gPiArDQo+ID4gPiArICAgICBjaGFyIGJ1
-ZmZlclsxMF07DQo+ID4gPiArDQo+ID4gPiArICAgICBzbnByaW50ZihidWZmZXIsIDEwLCAidi4l
-ZC4lZCpcbiIsIGNzaV9kZXYtPmh3X3ZlcnNpb25fbWFqb3IsDQo+ID4gPiArICAgICAgICAgICAg
-ICBjc2lfZGV2LT5od192ZXJzaW9uX21pbm9yKTsNCj4gPiA+ICsNCj4gPiA+ICsgICAgIHJldHVy
-biBzdHJsY3B5KGJ1ZiwgYnVmZmVyLCBQQUdFX1NJWkUpOw0KPiANCj4gT2gsIGNhbid0IHlvdSBz
-aW1wbGUgd2l0aG91dCBhbnkgdGVtcHJvcmFyeSB1c2VsZXNzIGJ1ZmZlcnM/DQo+ICBzcHJpbnRm
-KGJ1ZiwgLi4uKT8NCj4gKFllcywgbm90ZSBfYWJzZW5jZV8gb2YgKm4qIHRoZXJlKQ0KDQpZb3Ug
-YXJlIHJpZ2h0Lg0KPiANCj4gPiA+ICt9DQo+IA0KPiA+ID4gK3N0YXRpYyBzc2l6ZV90IG5fbGFu
-ZXNfc3RvcmUoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlX2F0dHJpYnV0ZSAqYXR0
-ciwNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGNoYXIgKmJ1Ziwgc2l6
-ZV90IGNvdW50KQ0KPiA+ID4gK3sNCj4gPiA+ICsgICAgIGludCByZXQ7DQo+ID4gPiArICAgICB1
-bnNpZ25lZCBsb25nIGxhbmVzOw0KPiANCj4gPiA+ICsNCj4gDQo+IE1vcmUgYmxhbmsgbGluZXMh
-IFdlIG5lZWQgdGhlbSENCj4gDQoNCk9rLg0KDQo+ID4gPiArICAgICBzdHJ1Y3QgcGxhdGZvcm1f
-ZGV2aWNlICpwZGV2ID0gdG9fcGxhdGZvcm1fZGV2aWNlKGRldik7DQo+ID4gPiArICAgICBzdHJ1
-Y3QgdjRsMl9zdWJkZXYgKnNkID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRldik7DQo+ID4gPiAr
-ICAgICBzdHJ1Y3QgZHdfY3NpICpjc2lfZGV2ID0gc2RfdG9fbWlwaV9jc2lfZGV2KHNkKTsNCj4g
-PiA+ICsNCj4gPiA+ICsgICAgIHJldCA9IGtzdHJ0b3VsKGJ1ZiwgMTAsICZsYW5lcyk7DQo+ID4g
-PiArICAgICBpZiAocmV0IDwgMCkNCj4gPiA+ICsgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4g
-DQo+IENhbiBpdCByZXR1cm4gcG9zaXRpdmUgbnVtYmVyPw0KPiANCj4gPiA+ICsgICAgIGRldl9p
-bmZvKGRldiwgIkxhbmVzICVsdVxuIiwgbGFuZXMpOw0KPiANCj4gTm9pc2UuDQo+IFRoZSB1c2Vy
-IGdldHMgaXQsIHdoeSB0byBzcGFtIGtlcm5lbCBsb2c/Pz8NCj4gDQpPay4NCg0KPiA+ID4gKyAg
-ICAgY3NpX2Rldi0+aHcubnVtX2xhbmVzID0gbGFuZXM7DQo+ID4gPiArDQo+ID4gPiArICAgICBy
-ZXR1cm4gY291bnQ7DQo+ID4gPiArfQ0KPiANCj4gSSB0b2xkIG9uY2UsIGNhbiByZXBlYXQgYWdh
-aW4uIFN5bm9wc3lzIHBlcmhhcHMgbmVlZHMgYmV0dGVyIHJldmlld3MNCj4gaW5zaWRlIGNvbXBh
-bnkuIEVhY2ggdGltZSBJIHNlZSB0aGUgY29kZSwgaXQgcmVwZWF0cyBzYW1lIG1pc3Rha2VzDQo+
-IG92ZXIgYW5kIG92ZXIuIEhhdmUgeW91LCBndXlzLCBkbyBzb21ldGhpbmcgYWJvdXQgaXQ/DQoN
-CldlIGFyZSB3b3JraW5nIG9uIGl0LiBJdCB3aWxsIGdldCBiZXR0ZXIsIHNvcnJ5Lg0KPiANCj4g
-LS0gDQo+IFdpdGggQmVzdCBSZWdhcmRzLA0KPiBBbmR5IFNoZXZjaGVua28NCg0KVGhhbmtzLA0K
-THVpcw0K
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+
+Hi,
+
+Pawel Laszczak <pawell@cadence.com> writes:
+>>>>>>Quick question, then: these ISTS registers, are they masked interrupt
+>>>>>>status or raw interrupt status?
+>>>>>
+>>>>> Yes it's masked, but after masking them the new interrupts will not b=
+e reported
+>>>>> In ISTS registers. Form this reason I can mask only reported interrup=
+t.
+>>>>
+>>>>and what happens when you unmask the registers? Do they get reported?
+>>>
+>>> No they are not reported in case of USB_ISTS register.
+>>> They should be reported in case EP_ISTS, but I need to test it.
+>>
+>>okay, please _do_ test and verify the behavior. The description above
+>>sounds really surprising to me. Does it really mean that if you mask all
+>>USB_ISTS and then disconnect the cable while interrupt is masked, you
+>>won't know cable was disconnected?
+>
+> Yes, exactly.=20
+>
+> Initially I've tested it and it's work correct.=20
+> I can even simply write 0 to EP_IEN in hard irq and ~0 in thread handler.=
+=20
+> It's simplest and sufficient way.=20=20
+
+okay. Just to be sure I understand correctly. If you mask USB_IEN, then
+we would miss a cable disconnect event. Right?
+
+>>>>>>>>> +		struct cdns3_aligned_buf *buf, *tmp;
+>>>>>>>>> +
+>>>>>>>>> +		list_for_each_entry_safe(buf, tmp, &priv_dev->aligned_buf_list,
+>>>>>>>>> +					 list) {
+>>>>>>>>> +			if (!buf->in_use) {
+>>>>>>>>> +				list_del(&buf->list);
+>>>>>>>>> +
+>>>>>>>>> +				spin_unlock_irqrestore(&priv_dev->lock, flags);
+>>>>>>>>
+>>>>>>>>creates the possibility of a race condition
+>>>>>>> Why? In this place the buf can't be used.
+>>>>>>
+>>>>>>but you're reenabling interrupts, right?
+>>>>>
+>>>>> Yes, driver frees not used buffers here.
+>>>>> I think that it's the safest place for this purpose.
+>>>>
+>>>>I guess you missed the point a little. Since you reenable interrupts
+>>>>just to free the buffer, you end up creating the possibility for a race
+>>>>condition. Specially since you don't mask all interrupt events. The
+>>>>moment you reenable interrupts, one of your not-unmasked interrupt
+>>>>sources could trigger, then top-half gets scheduled which tries to wake
+>>>>up the IRQ thread again and things go boom.
+>>>
+>>> Ok, I think I understand.  So I have 3 options:
+>>> 1. Mask the USB_IEN and EP_IEN interrupts, but then I can lost some USB=
+_ISTS
+>>> events. It's dangerous options.
+>>
+>>sure sounds dangerous, but also sounds quite "peculiar" :-)
+>>
+>>> 2. Remove implementation of handling unaligned buffers and assume that
+>>>     upper layer will worry about this. What with vendor specific driver=
+s that
+>>>     can be used by companies and not upstreamed  ?
+>>>     It could be good to have such safety mechanism even if it is not cu=
+rrently used.
+>>
+>>dunno. It may become dead code that's NEVER used :-)
+>>
+>>> 3. Delegate this part of code for instance to separate thread that will=
+ be called
+>>>    In free time.
+>>
+>>Yet another thread? Can't you just run this right before giving back the
+>>USB request? So, don't do it from IRQ handler, but from giveback path?
+>
+> Do you mean in:
+> 	if (request->complete) {
+> 		spin_unlock(&priv_dev->lock);
+> 		if (priv_dev->run_garbage_collector) {
+> 			....
+> 		}
+> 		usb_gadget_giveback_request(&priv_ep->endpoint,
+> 					    request);
+> 		spin_lock(&priv_dev->lock);
+> 	}
+> ??
+
+right, you can do it right before giving back the request. Or right
+after.
+
+> I ask because this is finally also called from IRQ handler:
+>
+> cdns3_device_thread_irq_handler
+>     -> cdns3_check_ep_interrupt_proceed
+>         -> cdns3_transfer_completed
+>             -> cdns3_gadget_giveback
+>                 -> usb_gadget_giveback_request
+
+Did you notice that it doesn't reenable interrupts, though?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl1RNTsACgkQzL64meEa
+mQbzRg/+MLEj71b8djBbt+Uz57Ql2QhV8yYkwbxEZVfM1lmQO25GkANNKdDJxUWX
+3Xnlh+xsTNuEqzYtjQ+65SWjtWI3diK4WZL/5aATZi7/sDZK97nTSOINNJiHkOWR
+8nxps4bOeGXhSzB9c6V04nXR7HkGoZZExPImyb7crJWP3vhLpulSvSobgv0iDkEN
+0St25AbVuPeFL27ZJ9/ZWiv6A1t5jNZ1LifLskPMklWo6RD7QaumIMyBJzP1sDFu
+w9kd+scAAuXk4grmpZijRXk2chI+1a892z7MqTqIvQV69fJfXz34U7KLiVR3jpoK
+o10rSGhGUzlT33ljm2wp8tOGD+lSQLO9ukIqnlmWxC7ogRpK+wKQneV4yov+lUoG
+6EfJ0Bw/0w5HOyn3GLSTVQrZsOi3ikrua3B0jEJkMrCFRQddAR3YhCEmR40mFvMh
+zRYR73/m51o8AoLCcJOCI2dohKict/IR3pCBggUYr+kP+/V86Fm7vBnNvRnjjid0
+1DjttwA33SGioYVFs1pndHjv38CeMBfsYGuO233z+lXN1TlELaNv6WdmVqq4lZik
+6/YTM3UUQDq/stl+MeMfLwhSQdEdphK5zL54zucBlbsWW/YIFprfvoNb7CX+yNvB
+I4rW3mEfl1Ov3jCCmQd35px8QHQWtsfwozaAKNa6qBSivBzV+HE=
+=CUWd
+-----END PGP SIGNATURE-----
+--=-=-=--
