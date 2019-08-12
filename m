@@ -2,211 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37BA089AEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:09:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A88A89ACB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:06:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfHLKIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:08:50 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36715 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727605AbfHLKIt (ORCPT
+        id S1727736AbfHLKGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:06:55 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38998 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727409AbfHLKGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:08:49 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r3so10308566wrt.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 03:08:47 -0700 (PDT)
+        Mon, 12 Aug 2019 06:06:55 -0400
+Received: by mail-ot1-f66.google.com with SMTP id r21so150764996otq.6;
+        Mon, 12 Aug 2019 03:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=iSUWZthkT5NzdIgl34+cYotng+ccjbgaBsS9HBt2QpI=;
-        b=fDdqVHCRpjoHrQfUYYjb7rs/gyyidY3ytmy/UeoeKwQJgSBSpkd6BIOeUlatWuDg6c
-         Vq6aor2/IeaEEbMUdepTGe+20qI+GJBleu7gnh1fTEy0AtD22SaAt92/ljzmWtmBsD2h
-         J3MnfLJns9LGkZ22sSsN4sAGKQ7/ouMNxpU1Je/9KmVrTNcZCg7ueUrKhDzCekaHkgS7
-         a8r12ZS/0pRSGJL2RGV5tnrHH8IDbxRizpZK+cPLYVmLuZuWfJtiv9t6z08drKV3g2wA
-         GXQoNIfqsrvNEBJkoZh66iknbQh8ZpOYe+OtI21kj9Mfme5CnyyFRVCdC/0FnZscc6ka
-         2yFQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8nCPUFYSV3W2ZY/9ifJedm0QroBzrSP7heeMdjE0RYc=;
+        b=dUtQ31FuyY2lGlBy1y1AG4y7lkQyg7ft8JrEFprD4sPlp5AZvxcNbEfmxXBu/cQcnV
+         o/6S5ToiBsnRk2m7c2rYVo3Mx6LO20q4qXxSfMzmV36xwyLtb92p3crtdbN9w2rkfL43
+         ZSA1yR8NMWYNtBgKPex3VwSOWkuP9emYKXHLQ5P6tscw80wVV7D/fdjwmtMIhq1WqP9H
+         k3unDUqZENUGiurOH/iaTHrpZUh6nB4JHIR2W3Qxwmlp1bbIWJtszfXtedEo5R08z9th
+         EkaJ90LYXfqoRBSy2w0Po2NRFfNk9a+zezHKL1kKRwJX6R2jelWe/NuQi2qz2wIl+xU/
+         vNZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=iSUWZthkT5NzdIgl34+cYotng+ccjbgaBsS9HBt2QpI=;
-        b=X00aEvv546M4hpi78lecp4pJc3pPQDxFGRKwqv000QSiQte6+iMSKMS5TIIhn2G2Ur
-         yzFsn+YRIhKG7vkipmHFo5XDbU2DTNKoSpBLaGZh/tDOpFulwzXhUp85LsoGawgt8hD1
-         +OJ3QntoSRVvcMSvnj4W1lSDeoqbXWD07H/KTIflp24h+esLaxD2Z2cFPP5+yRo9dkd7
-         4rRnjMx2F2TRZEzDxIzZEtGyVgEvn4F0oI2m6xAKBoKfo69xz1zhF9U1/7R/KsJMHi/5
-         A+N+QIvvQKCPbb7j/fHXlxHjTRoc+gKNNVA6yAvzGk1J1XQoblQ0OKoo5hmbYp6JnFcL
-         3oJQ==
-X-Gm-Message-State: APjAAAUW49F3dFh2Ki/O9JgPvktG6u84wyU/aS0m7nagxh/wsWB2O5J8
-        W1TtgDZOiZ5Js1gLiBE6e4DwM7v3DDA=
-X-Google-Smtp-Source: APXvYqxXdcW7172rHwWqsloeJ92Ae2s3Za7LKpR+s//Kn+kNFnC//fGd81qnjDWE0u84R3aq4MlUUw==
-X-Received: by 2002:adf:c803:: with SMTP id d3mr41322658wrh.130.1565604526947;
-        Mon, 12 Aug 2019 03:08:46 -0700 (PDT)
-Received: from dell ([2.27.35.255])
-        by smtp.gmail.com with ESMTPSA id 4sm620554wmd.26.2019.08.12.03.08.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 03:08:46 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 11:08:44 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] mfd: mc13xxx: Add mc34708 adc support
-Message-ID: <20190812100844.GE26727@dell>
-References: <20190717222602.2912-1-lukma@denx.de>
- <20190717222602.2912-2-lukma@denx.de>
- <20190725123641.GJ23883@dell>
- <20190725182020.3948c8d9@jawa>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8nCPUFYSV3W2ZY/9ifJedm0QroBzrSP7heeMdjE0RYc=;
+        b=GI7aLP7S2mGV2YUdnxP0xgYnaQkDzfD1tC9PY8VfhkzzMYQq9Jbxbdhk9TgpujjLoZ
+         DFPe2xwXaNW2WFmOR+L67Kz5rd89hYVgef7HTTjHVwekhs6Oa4qKqaDlgb8r+BHxWgyM
+         zXBjhI/vcKbnbfJiUfNhOVV6WMpG2uQUlyzqqErWss+V3os8voTR5VUAWOaatXrWgkpp
+         yBFD895VbJIrwFAu+rytskENIv/iHo148h9UUGGig8aMCiRbPuo4a4I4OB2rrbLo8QEn
+         ESGD6ENJM6cvD2UoPLOCQy+LPz4IcVP8xZ2rLoJ0WRDI5zwrUvAwvqCcIK6osy7KorxR
+         +AnQ==
+X-Gm-Message-State: APjAAAVEUCKUzTxcUfLyC5G4vhca8ALH1oYr1nhRA6iNhwoleGj5D4pS
+        6q/Wq0w6ZXpNYgCXu69n21tu32HhQ7BiQN6czxY=
+X-Google-Smtp-Source: APXvYqxvqfA09aURLU8YM9tv/GT/gYr0AjzO6i/r2Gsv8wwZfS5HHnycPV8077bbQrYrQDoZ28O0i43Zg3+AJ/6SAy4=
+X-Received: by 2002:a5e:d817:: with SMTP id l23mr33366249iok.282.1565604413971;
+ Mon, 12 Aug 2019 03:06:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190725182020.3948c8d9@jawa>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190812094242.44735-1-marc@koderer.com>
+In-Reply-To: <20190812094242.44735-1-marc@koderer.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 12 Aug 2019 12:09:52 +0200
+Message-ID: <CAOi1vP_SDOKzh+oyhv8gKVZwdWNY8NpTZ+oM+xSn+k1KCnu_sg@mail.gmail.com>
+Subject: Re: [PATCH] net/ceph replace ceph_kvmalloc with kvmalloc
+To:     Marc Koderer <marc@koderer.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Jul 2019, Lukasz Majewski wrote:
-> > On Thu, 18 Jul 2019, Lukasz Majewski wrote:
-> > 
-> > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > 
-> > > The mc34708 has an improved adc. The older variants will always
-> > > convert a fixed order of channels. The mc34708 can do up to eight
-> > > conversions in arbitrary channel order. Currently this extended
-> > > feature is not supported. We only support touchscreen conversions
-> > > now, which will be sampled in a data format compatible to the older
-> > > chips in order to keep the API between the mfd and the touchscreen
-> > > driver.
-> > > 
-> > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > > Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> > > 
-> > > ---
-> > > Changes for v4:
-> > > - None
-> > > 
-> > > Changes for v3:
-> > > - None
-> > > 
-> > > Changes for v2:
-> > > - Change the return code patch when the mc13xxx ADC is performing
-> > > conversion
-> > > - Introduce new include/linux/mfd/mc34708.h header file for mc34708
-> > > specific defines
-> > > 
-> > > Changes from the original patches:
-> > > - ADC conversion functions prototypes added to fix build error
-> > > - Adjustments to make checkpatch clean (-ENOSYS, line over 80 char)
-> > > 
-> > > This patch applies on top of v5.2 - SHA1:
-> > > 0ecfebd2b52404ae0c54a878c872bb93363ada36 ---
-> > >  drivers/mfd/mc13xxx-core.c  | 102
-> > > +++++++++++++++++++++++++++++++++++++++++++-
-> > > drivers/mfd/mc13xxx.h       |   3 ++ include/linux/mfd/mc34708.h |
-> > > 37 ++++++++++++++++ 3 files changed, 141 insertions(+), 1
-> > > deletion(-) create mode 100644 include/linux/mfd/mc34708.h
-> > > 
-> > > diff --git a/drivers/mfd/mc13xxx-core.c b/drivers/mfd/mc13xxx-core.c
-> > > index 1abe7432aad8..01473d6fda21 100644
-> > > --- a/drivers/mfd/mc13xxx-core.c
-> > > +++ b/drivers/mfd/mc13xxx-core.c
-> > > @@ -12,6 +12,7 @@
-> > >  #include <linux/of_device.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/mfd/core.h>
-> > > +#include <linux/mfd/mc34708.h>
-> > >  
-> > >  #include "mc13xxx.h"
-> > >  
-> > > @@ -45,6 +46,8 @@
-> > >  
-> > >  #define MC13XXX_ADC2		45
-> > >  
-> > > +#define MC13XXX_ADC_WORKING		(1 << 0)  
-> > 
-> > BIT(0) ?
-> 
-> The same convention - i.e. (1 << 0) is used in the rest of the file.
+On Mon, Aug 12, 2019 at 11:42 AM Marc Koderer <marc@koderer.com> wrote:
+>
+> There is nearly no difference between both implemenations.
+> ceph_kvmalloc existed before kvmalloc which makes me think it's
+> a leftover.
+>
+> Signed-off-by: Marc Koderer <marc@koderer.com>
+> ---
+>  net/ceph/buffer.c      |  3 +--
+>  net/ceph/ceph_common.c | 11 -----------
+>  net/ceph/crypto.c      |  2 +-
+>  net/ceph/messenger.c   |  2 +-
+>  4 files changed, 3 insertions(+), 15 deletions(-)
+>
+> diff --git a/net/ceph/buffer.c b/net/ceph/buffer.c
+> index 5622763ad402..6ca273d2246a 100644
+> --- a/net/ceph/buffer.c
+> +++ b/net/ceph/buffer.c
+> @@ -7,7 +7,6 @@
+>
+>  #include <linux/ceph/buffer.h>
+>  #include <linux/ceph/decode.h>
+> -#include <linux/ceph/libceph.h> /* for ceph_kvmalloc */
+>
+>  struct ceph_buffer *ceph_buffer_new(size_t len, gfp_t gfp)
+>  {
+> @@ -17,7 +16,7 @@ struct ceph_buffer *ceph_buffer_new(size_t len, gfp_t gfp)
+>         if (!b)
+>                 return NULL;
+>
+> -       b->vec.iov_base = ceph_kvmalloc(len, gfp);
+> +       b->vec.iov_base = kvmalloc(len, gfp);
+>         if (!b->vec.iov_base) {
+>                 kfree(b);
+>                 return NULL;
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index 4eeea4d5c3ef..6c1769a815af 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -185,17 +185,6 @@ int ceph_compare_options(struct ceph_options *new_opt,
+>  }
+>  EXPORT_SYMBOL(ceph_compare_options);
+>
+> -void *ceph_kvmalloc(size_t size, gfp_t flags)
+> -{
+> -       if (size <= (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER)) {
+> -               void *ptr = kmalloc(size, flags | __GFP_NOWARN);
+> -               if (ptr)
+> -                       return ptr;
+> -       }
+> -
+> -       return __vmalloc(size, flags, PAGE_KERNEL);
+> -}
+> -
+>
+>  static int parse_fsid(const char *str, struct ceph_fsid *fsid)
+>  {
+> diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
+> index 5d6724cee38f..a9deead1e4ff 100644
+> --- a/net/ceph/crypto.c
+> +++ b/net/ceph/crypto.c
+> @@ -144,7 +144,7 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
+>  static const u8 *aes_iv = (u8 *)CEPH_AES_IV;
+>
+>  /*
+> - * Should be used for buffers allocated with ceph_kvmalloc().
+> + * Should be used for buffers allocated with kvmalloc().
+>   * Currently these are encrypt out-buffer (ceph_buffer) and decrypt
+>   * in-buffer (msg front).
+>   *
+> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> index 962f521c863e..f1f2fcc6f780 100644
+> --- a/net/ceph/messenger.c
+> +++ b/net/ceph/messenger.c
+> @@ -3334,7 +3334,7 @@ struct ceph_msg *ceph_msg_new2(int type, int front_len, int max_data_items,
+>
+>         /* front */
+>         if (front_len) {
+> -               m->front.iov_base = ceph_kvmalloc(front_len, flags);
+> +               m->front.iov_base = kvmalloc(front_len, flags);
+>                 if (m->front.iov_base == NULL) {
+>                         dout("ceph_msg_new can't allocate %d bytes\n",
+>                              front_len);
 
-Very well, but please consider converting it subsequently.
+Hi Marc,
 
-> > >  void mc13xxx_lock(struct mc13xxx *mc13xxx)
-> > >  {
-> > >  	if (!mutex_trylock(&mc13xxx->lock)) {
-> > > @@ -198,22 +201,30 @@ static void mc34708_print_revision(struct
-> > > mc13xxx *mc13xxx, u32 revision) maskval(revision,
-> > > MC34708_REVISION_FAB)); }
-> > >  
-> > > +static int mc13xxx_adc_conversion(struct mc13xxx *, unsigned int,
-> > > +				  unsigned int, u8, bool, unsigned
-> > > int *); +static int mc34708_adc_conversion(struct mc13xxx *,
-> > > unsigned int,
-> > > +				  unsigned int, u8, bool, unsigned
-> > > int *); +
-> > >  /* These are only exported for mc13xxx-i2c and mc13xxx-spi */
-> > >  struct mc13xxx_variant mc13xxx_variant_mc13783 = {
-> > >  	.name = "mc13783",
-> > >  	.print_revision = mc13xxx_print_revision,
-> > > +	.adc_do_conversion = mc13xxx_adc_conversion,
-> > >  };
-> > >  EXPORT_SYMBOL_GPL(mc13xxx_variant_mc13783);  
-> > 
-> > I'd prefer to keep the call-back functions as close to zero as
-> > possible.
-> 
-> If I may ask - what is wrong with having per device callback(s) ?
+I'm working on a patch for https://tracker.ceph.com/issues/40481 which
+changes ceph_kvmalloc() to properly deal with non-GFP_KERNEL contexts.
+We can't switch to kvmalloc() because it doesn't actually fall back to
+vmalloc() for GFP_NOFS or GFP_NOIO.
 
-Call-backs are ugly and hard to read/debug.
+Thanks,
 
-If they can be avoided, they should be, IMHO>
-
-> > It would be better to turn mc13xxx_adc_conversion() in to the catch
-> > function
-> 
-> Could you share any example? 
-
-Just put the code doing the conversion into mc13xxx_adc_conversion()
-and remove the call-back.
-
-> > choose an execution route based on some platform matching.
-> > 
-> 
-> Could you help me with giving a hint of how shall I do the "platform
-> matching" in this particular driver ? 
-
-We normally match on some platform ID, rather than passing around
-pointers to structures containing pointers to device specific
-functions.
-
-> The mc13xxx driver seems rather complex with SPI and I2C support and in
-> which the subdevices are added (e.g. rtc, adc, etc).
-
-Not sure I follow your point?
-
-> This particular patch just follows current driver design and fixes its
-> usability for mc13708 drvice.
-
-Right, but it is the current driver design that I'm trying to change.
-
-> > If you could do the same for print_revision too, that would be even
-> > better.
-> 
-> I would prefer to fix the driver (for mc13708) without the need to
-> change the working code.
-
-Okay, but no additional call-backs please.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+                Ilya
