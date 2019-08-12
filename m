@@ -2,92 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1DB489691
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 07:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD8A89694
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 07:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfHLFFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 01:05:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49492 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbfHLFFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 01:05:32 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7F1063B551;
-        Mon, 12 Aug 2019 05:05:32 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6B0E45D6D0;
-        Mon, 12 Aug 2019 05:05:32 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 553374A460;
-        Mon, 12 Aug 2019 05:05:32 +0000 (UTC)
-Date:   Mon, 12 Aug 2019 01:05:31 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     amit@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        virtualization@lists.linux-foundation.org, jasowang@redhat.com,
-        linux-kernel@vger.kernel.org, xiaohli@redhat.com
-Message-ID: <904809366.7828013.1565586331773.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190810141213-mutt-send-email-mst@kernel.org>
-References: <20190809064847.28918-1-pagupta@redhat.com> <20190809064847.28918-3-pagupta@redhat.com> <20190810141213-mutt-send-email-mst@kernel.org>
-Subject: Re: [PATCH v3 2/2] virtio: decrement avail idx with buffer detach
- for packed ring
+        id S1726826AbfHLFHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 01:07:05 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46008 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725648AbfHLFHF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 01:07:05 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q12so13163816wrj.12
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 22:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aP8VNbJwdQYaSZJ1imIyz0RI5Crt+YbRZvNDlL4/jpQ=;
+        b=AMZ7Kqc93TaUacKOBAYc7uklS99HA0k/mkqvk9yP3Zts5PfjWZ32QGlh0AcAmkyyR3
+         pz+JT/K2vJJBXZjFY3KylPNT3bcJLuJyh0axFIbghBqA58nXLl8QZFm+FPJ8QHYCkJnx
+         Dn8BEplVzVSnW/V084uYmssUioe6RJzX+TCmAb2HaLU5Pij9Aqd3Ls0EY3GUmPexHhCn
+         MqCLe+HGHbcmliU6OYooDNMqFTa63lckjB2lqoG6KTEVVceEJq9mcQybrnJOHI08YFTC
+         YNIPE2xj0YShqL9hsI/1eNwILNat72Pa4MmFK5UUQjrD6hdBjnsettYCLkHv2GUrM7Ei
+         cdVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aP8VNbJwdQYaSZJ1imIyz0RI5Crt+YbRZvNDlL4/jpQ=;
+        b=SzdJ6o/OpqtWFUfp4CQJzk45/QET4PSSe1E6LJVzc1ClFRj9GswvxUTcTu3J20fl+C
+         A3l+yJfNSJ0CGunZlJc/CiQigF6Xvd9Xe+omfMeKkXyXsqso6+PyXmLMABnWbkkqV7EO
+         RXO2ie361B9Bl8WaEZrdlrmPDB0rTSC7dhKm4WT7fCpMo1eJckjndv9GV5/eMeYLfonk
+         KQXDffiiW42g9LFNr2HGLwJB6kEQ8iTHMbdd4uYMBLY+4EvDstjNbbjUvosC0RgAqF3I
+         GsT/KtI/Z641JP22lVZrWJJ3EiuhzkP6sf2NolVZnCxBg+X9gyoqHhRjIw/NlzJw6U7h
+         /8eA==
+X-Gm-Message-State: APjAAAWAd3kNoVarmHh6HJsGOj/NhxYHHMS/yBrquLPYwzCKTK752PjI
+        +VncES28KmpaRXnkwsxyfgK6LQF2j/TXJkmrSZ4=
+X-Google-Smtp-Source: APXvYqxQT0vmwxz66zVU1Q++t5xosJoGJRxTW6fYwUtcWL0gm4jiEWPQjRbPqkBh2NsDqmRohe3dSXtbHwQRiQ3/8us=
+X-Received: by 2002:adf:91c2:: with SMTP id 60mr40582385wri.334.1565586423303;
+ Sun, 11 Aug 2019 22:07:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.104, 10.4.195.22]
-Thread-Topic: virtio: decrement avail idx with buffer detach for packed ring
-Thread-Index: MiSZup5kLcvoPG95SMeU4GQP1njEJA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 12 Aug 2019 05:05:32 +0000 (UTC)
+References: <20190809102310.27246-1-ming.lei@redhat.com> <20190809102310.27246-2-ming.lei@redhat.com>
+ <20190809144204.GA28515@localhost.localdomain> <CACVXFVMT=rkZC7LwK5quXgudS7fb7bQ_LunA1tEE-Z-9s1uvaA@mail.gmail.com>
+In-Reply-To: <CACVXFVMT=rkZC7LwK5quXgudS7fb7bQ_LunA1tEE-Z-9s1uvaA@mail.gmail.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Mon, 12 Aug 2019 13:06:49 +0800
+Message-ID: <CACVXFVNMu3tnEgi0+jcdgv5CD-ZAy7xnff4GxpPrVaKDh_fULA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] genirq/affinity: improve __irq_build_affinity_masks()
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Aug 10, 2019 at 7:05 AM Ming Lei <tom.leiming@gmail.com> wrote:
+>
+> On Fri, Aug 9, 2019 at 10:44 PM Keith Busch <kbusch@kernel.org> wrote:
+> >
+> > On Fri, Aug 09, 2019 at 06:23:09PM +0800, Ming Lei wrote:
+> > > One invariant of __irq_build_affinity_masks() is that all CPUs in the
+> > > specified masks( cpu_mask AND node_to_cpumask for each node) should be
+> > > covered during the spread. Even though all requested vectors have been
+> > > reached, we still need to spread vectors among left CPUs. The similar
+> > > policy has been taken in case of 'numvecs <= nodes'.
+> > >
+> > > So remove the following check inside the loop:
+> > >
+> > >       if (done >= numvecs)
+> > >               break;
+> > >
+> > > Meantime assign at least 1 vector for left nodes if 'numvecs' vectors
+> > > have been spread.
+> > >
+> > > Also, if the specified cpumask for one numa node is empty, simply not
+> > > spread vectors on this node.
+> > >
+> > > Cc: Christoph Hellwig <hch@lst.de>
+> > > Cc: Keith Busch <kbusch@kernel.org>
+> > > Cc: linux-nvme@lists.infradead.org,
+> > > Cc: Jon Derrick <jonathan.derrick@intel.com>
+> > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > > ---
+> > >  kernel/irq/affinity.c | 33 +++++++++++++++++++++------------
+> > >  1 file changed, 21 insertions(+), 12 deletions(-)
+> > >
+> > > diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> > > index 6fef48033f96..bc3652a2c61b 100644
+> > > --- a/kernel/irq/affinity.c
+> > > +++ b/kernel/irq/affinity.c
+> > > @@ -129,21 +129,32 @@ static int __irq_build_affinity_masks(unsigned int startvec,
+> > >       for_each_node_mask(n, nodemsk) {
+> > >               unsigned int ncpus, v, vecs_to_assign, vecs_per_node;
+> > >
+> > > -             /* Spread the vectors per node */
+> > > -             vecs_per_node = (numvecs - (curvec - firstvec)) / nodes;
+> > > -
+> > >               /* Get the cpus on this node which are in the mask */
+> > >               cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
+> > > -
+> > > -             /* Calculate the number of cpus per vector */
+> > >               ncpus = cpumask_weight(nmsk);
+> > > +             if (!ncpus)
+> > > +                     continue;
+> >
+> > This shouldn't be possible, right? The nodemsk we're looping  wouldn't
+> > have had that node set if no CPUs intersect the node_to_cpu_mask for
+> > that node, so the resulting cpumask should always have a non-zero weight.
+>
+>      cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
+>
+> It is often true, see the following cases:
+>
+> 1) all CPUs in one node are not present
+>
+> OR
+>
+> 2) all CPUs in one node are present
+>
+> >
+> > > @@ -153,16 +164,14 @@ static int __irq_build_affinity_masks(unsigned int startvec,
+> > >                       }
+> > >                       irq_spread_init_one(&masks[curvec].mask, nmsk,
+> > >                                               cpus_per_vec);
+> > > +                     if (++curvec >= last_affv)
+> > > +                             curvec = firstvec;
+> >
+> > I'm not so sure about wrapping the vector to share it across nodes. We
+>
+> The wrapping is always there, not added by this patch.
 
-> On Fri, Aug 09, 2019 at 12:18:47PM +0530, Pankaj Gupta wrote:
-> > This patch decrements 'next_avail_idx' count when detaching a buffer
-> > from vq for packed ring code. Split ring code already does this in
-> > virtqueue_detach_unused_buf_split function. This updates the
-> > 'next_avail_idx' to the previous correct index after an unused buffer
-> > is detatched from the vq.
-> > 
-> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> 
-> I would make this patch 1, not patch 2, otherwise
-> patch 1 corrupts the ring.
+We could avoid the wrapping completely given 'numvecs' > 'nodes', and
+it can be done by sorting each node's nr_cpus, will do it in V2.
 
-Sure. Will post this patch as patch 1 in next version.
 
 Thanks,
-Pankaj 
-
-> 
-> 
-> > ---
-> >  drivers/virtio/virtio_ring.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index c8be1c4f5b55..7c69181113e2 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -1537,6 +1537,12 @@ static void
-> > *virtqueue_detach_unused_buf_packed(struct virtqueue *_vq)
-> >  		/* detach_buf clears data, so grab it now. */
-> >  		buf = vq->packed.desc_state[i].data;
-> >  		detach_buf_packed(vq, i, NULL);
-> > +		vq->packed.next_avail_idx--;
-> > +		if (vq->packed.next_avail_idx < 0) {
-> > +			vq->packed.next_avail_idx = vq->packed.vring.num - 1;
-> > +			vq->packed.avail_wrap_counter ^= 1;
-> > +		}
-> > +
-> >  		END_USE(vq);
-> >  		return buf;
-> >  	}
-> > --
-> > 2.20.1
-> 
+Ming Lei
