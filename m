@@ -2,110 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7146189717
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B410C8971B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfHLGQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 02:16:15 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41458 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfHLGQO (ORCPT
+        id S1726976AbfHLGSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 02:18:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:2774 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725822AbfHLGSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 02:16:14 -0400
-Received: by mail-qt1-f195.google.com with SMTP id d17so22846677qtj.8
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2019 23:16:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dbIpa3QvrtCejLces/pQZFJyjalWhG4M7rcRZ55EUa0=;
-        b=ye2gV4JfL2nAT8vNoFz+z42w2bSfeQ8nCZnxxIN2EdGAhnxHWgkCeiEysTn/EDLv70
-         3VZ4pL75GkSqpVs4E9hHzHpmfVNMkAfNfeeqhNoqEXjSA1EHOcTUmJe2ju1lbjqKaQMe
-         6qSvAAbz4zjUbDPQsUpBo3R2RNQeyczkuX2p1rza/LwIgbVWaDkoR3Jmq/M4kWYsXkKA
-         PAfewAKu7bEJ3eACUnGtrZXHmliSSAd0oISre5/4ba2foi1CUZLYo5ZbeSt/VF1L+vEv
-         kfOlQXVldSrxKEArzabk2vIZ8dge0tjTuFTIfnsBx5HdRRJRKBIOXY8kWd7jXllrgvvg
-         cWfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dbIpa3QvrtCejLces/pQZFJyjalWhG4M7rcRZ55EUa0=;
-        b=JHNC+djQ/A/7F1L92W6b4PZeZzNLoue0zh6Nm69ifhkG3dB7ps0Jz1/QW3AesCn9rG
-         nzHwSfleY+0L/ieBA6/XozddAJNKRTBdvyvXZrMQJUw+I3T6e3MKcozZbft3vSOjOYws
-         tahDm/RR3kNxN7Fc/dky/eh5IQVhXJu3wW8rhhBPvBsADPwSYXbzMbn18HMtXZ/Af04r
-         JUUzfNrXvZrJKOg8UbGqLJQr33ZlNqCBY/PIGSpT+18+GwhQstPf7++b1TdwcJwb8nrV
-         Vkd9GFaRb3UEEUI9JfzyfbAfAPEn0pPtDEe6wdl01oJM+HXXZ4UFmBKUwyzYRkC85BMo
-         if+A==
-X-Gm-Message-State: APjAAAX8RpXM7qwAoQgwklmI7F68uVgoZwmt+vROtvDjMLzkxNcfG+hR
-        qlasrjtUvPXQYUDNThOMywaFWanIKF1bcMQIAoqdkw==
-X-Google-Smtp-Source: APXvYqyJsPNY8U+cNbiZ2m8C5OiF4T5hAyCx9qMi80uH1GKx/9MQmt1INUmwrJ5V0DROxIyZNiEUp3L8jC/md2qEw5Y=
-X-Received: by 2002:ad4:420c:: with SMTP id k12mr3385897qvp.94.1565590573743;
- Sun, 11 Aug 2019 23:16:13 -0700 (PDT)
+        Mon, 12 Aug 2019 02:18:07 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7C66nrR038018
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 02:18:06 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ub283rwtv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 02:18:05 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 12 Aug 2019 07:18:04 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Aug 2019 07:17:59 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7C6HxiO38011134
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Aug 2019 06:17:59 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF31FAE051;
+        Mon, 12 Aug 2019 06:17:58 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D106AE056;
+        Mon, 12 Aug 2019 06:17:58 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.59])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 12 Aug 2019 06:17:58 +0000 (GMT)
+Date:   Mon, 12 Aug 2019 09:17:56 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas@shipmail.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Steven Price <steven.price@arm.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: cleanup the walk_page_range interface
+References: <20190808154240.9384-1-hch@lst.de>
+ <CAHk-=wh3jZnD3zaYJpW276WL=N0Vgo4KGW8M2pcFymHthwf0Vg@mail.gmail.com>
+ <20190808215632.GA12773@lst.de>
 MIME-Version: 1.0
-References: <CAD8Lp448i7jOk9C5NJtC2wHMaGuRLD4pxVqK17YqRCuMVXhsOA@mail.gmail.com>
- <CAERHkruxfBc8DqNUr=fbYuQWrXrHC7cK6HnVR3xp0iLA9QtxiQ@mail.gmail.com>
- <alpine.DEB.2.21.1908010931550.1788@nanos.tec.linutronix.de>
- <CAERHkrtaVAQHDU1cj2_GLL59LPjp7E=3X0Zna0spfFB=Ve5__w@mail.gmail.com>
- <alpine.DEB.2.21.1908011011250.1788@nanos.tec.linutronix.de>
- <81666b28-d029-56c3-8978-90abc219d1b7@linux.intel.com> <alpine.DEB.2.21.1908011054210.1965@nanos.tec.linutronix.de>
- <3d14b0cc-3cca-1874-3521-4ee2ec52141d@amd.com> <alpine.DEB.2.21.1908082235590.2882@nanos.tec.linutronix.de>
- <5bf28ba4-b7c1-51de-88ae-feebae2a28db@amd.com> <alpine.DEB.2.21.1908082306220.2882@nanos.tec.linutronix.de>
- <75e59ac6-5165-bd0a-aec9-be16d662ece9@amd.com> <alpine.DEB.2.21.1908091443030.21433@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1908091443030.21433@nanos.tec.linutronix.de>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Mon, 12 Aug 2019 14:16:02 +0800
-Message-ID: <CAD8Lp46FgT6yoW9a4Yt8t=bVWzZbYHjw-Dqdk6Pvd2xzxfGHLQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/apic: Handle missing global clockevent gracefully
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Endless Linux Upstreaming Team <linux@endlessm.com>,
-        Jiri Slaby <jslaby@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808215632.GA12773@lst.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19081206-0020-0000-0000-0000035EB031
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081206-0021-0000-0000-000021B3BDAF
+Message-Id: <20190812061756.GA28471@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-12_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908120068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 8:54 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> Some newer machines do not advertise legacy timers. The kernel can handle
-> that situation if the TSC and the CPU frequency are enumerated by CPUID or
-> MSRs and the CPU supports TSC deadline timer. If the CPU does not support
-> TSC deadline timer the local APIC timer frequency has to be known as well.
->
-> Some Ryzens machines do not advertize legacy timers, but there is no
-> reliable way to determine the bus frequency which feeds the local APIC
-> timer when the machine allows overclocking of that frequency.
->
-> As there is no legacy timer the local APIC timer calibration crashes due to
-> a NULL pointer dereference when accessing the not installed global clock
-> event device.
->
-> Switch the calibration loop to a non interrupt based one, which polls
-> either TSC (frequency known) or jiffies. The latter requires a global
-> clockevent. As the machines which do not have a global clockevent installed
-> have a known TSC frequency this is a non issue. For older machines where
-> TSC frequency is not known, there is no known case where the legacy timers
-> do not exist as that would have been reported long ago.
+On Thu, Aug 08, 2019 at 11:56:32PM +0200, Christoph Hellwig wrote:
+> On Thu, Aug 08, 2019 at 10:50:37AM -0700, Linus Torvalds wrote:
+> > > Note that both Thomas and Steven have series touching this area pending,
+> > > and there are a couple consumer in flux too - the hmm tree already
+> > > conflicts with this series, and I have potential dma changes on top of
+> > > the consumers in Thomas and Steven's series, so we'll probably need a
+> > > git tree similar to the hmm one to synchronize these updates.
+> > 
+> > I'd be willing to just merge this now, if that helps. The conversion
+> > is mechanical, and my only slight worry would be that at least for my
+> > original patch I didn't build-test the (few) non-x86
+> > architecture-specific cases. But I did end up looking at them fairly
+> > closely  (basically using some grep/sed scripts to see that the
+> > conversions I did matched the same patterns). And your changes look
+> > like obvious improvements too where any mistake would have been caught
+> > by the compiler.
+> 
+> I did cross compile the s390 and powerpc bits, but I do not have an
+> openrisc compiler.
 
-This solves the problem I described in the thread:
-    setup_boot_APIC_clock() NULL dereference during early boot on
-reduced hardware platforms
+The openrisc defconfig builds fine.
+ 
+> > So I'm not all that worried from a functionality standpoint, and if
+> > this will help the next merge window, I'll happily pull now.
+> 
+> That would help with this series vs the others, but not with the other
+> series vs each other.
+> 
 
-Thanks for your quick support!
+-- 
+Sincerely yours,
+Mike.
 
-> Note: Only lightly tested, but of course not on an affected machine.
->
->       If that works reliably, then this needs some exhaustive testing
->       on a wide range of systems so we can risk backports to stable
->       kernels.
-
-I can do a bit of testing on other platforms too. Are there any
-specific tests I should run, other than checking that the system boots
-and doesn't have any timer watchdog complaints in the log?
-
-Thanks
-Daniel
