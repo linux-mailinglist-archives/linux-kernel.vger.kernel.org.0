@@ -2,114 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 267E58A43E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE0068A441
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfHLR1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 13:27:25 -0400
-Received: from mail-sy3aus01hn2080.outbound.protection.outlook.com ([52.103.199.80]:37243
-        "EHLO AUS01-SY3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726457AbfHLR1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 13:27:24 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E2fFcP9QX5nZXqg0tOVzTi9pLaLe4GsEwOO04MxJ1kSz3VJzhYm0wYNY1apRHfPcTl3KnenYo8Bq9dx98XEpQi1zRd+gHPExgGnHTioQwqB7InkUVQOys/b4flk213c85RW5drALe5s2puSiWzDfIMQNBQG3hNj9Gh5ePyI9HWmc2E7ZKNaaFvH2JyJysAZ6BeA0vD5EmItMwpWt42jsgOJVu+rBi4z0ME1WdAfINCj9fPI3fkLJAACtgme7ZdLYCPlfucwCECbuToJU00PlRLIGrp61kWBkvLz+77S9gXGNiaFvr60yoXXlsNnNSWT0FwzIPgFP8Is9830LLgZIzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/VFidb23qiM+TupwPfDpCFe6+g/KHhHfeSfUJDYG/Ls=;
- b=RzmFqbkN+ji96Q3J1Ky1kXK3doz4HK0ny3yB7g9sbJcShr+LnaVO1e9DTU726gxjkCwVi5O28pUietQp/OcLAA3l+oJVyyGotz1U/6Spa9EhJBiJCTX+c4ZyfslwIZeIKmPa+QitiU0fdy40bmYBUCUgM+EDUFObQw3vNj155e+WZ2l5WRBpAwrFdZZkFAAxkdOaq49sxyV5yvihWlm9qyoAIF3ogK8UWO6DSb8ZER0f2dRAfVivNU1Q+S5mN10bBv8EF3KO5FgFZoIgb4cw879g+H4esh4infljIUJUrZAQbNY1gIFc+COnhlxZa0Rx120qHun4g9AQnmGYdMJ7bg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=alumni.uts.edu.au; dmarc=pass action=none
- header.from=student.uts.edu.au; dkim=pass header.d=student.uts.edu.au;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=studentutsedu.onmicrosoft.com; s=selector2-studentutsedu-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/VFidb23qiM+TupwPfDpCFe6+g/KHhHfeSfUJDYG/Ls=;
- b=U2kb/B4HuBrMF7EDIqeCDJpOqX5YvPYfWn+mRAHYYRaJiETNd/LlYyXcXfzfYxlQAzvEA2KvEXQXn1TS3BQ3hXajAb/XIDufyaXR7Ld9/ose1ySwqjwB0A7BhE1bnjbdjGEP5wDESB8LGIsXxuqFCKf0iOO6COJL5ENZ9s3xtDs=
-Received: from SY2PR01MB2378.ausprd01.prod.outlook.com (52.134.168.148) by
- SY2PR01MB3033.ausprd01.prod.outlook.com (52.134.188.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.20; Mon, 12 Aug 2019 17:27:21 +0000
-Received: from SY2PR01MB2378.ausprd01.prod.outlook.com
- ([fe80::2002:4868:8e88:9014]) by SY2PR01MB2378.ausprd01.prod.outlook.com
- ([fe80::2002:4868:8e88:9014%7]) with mapi id 15.20.2157.022; Mon, 12 Aug 2019
- 17:27:21 +0000
-From:   Mrs Elizabeth <12414951@student.uts.edu.au>
-To:     Jia Yi Lim <JiaYi.Lim@alumni.uts.edu.au>
-Subject: Spende
-Thread-Topic: Spende
-Thread-Index: AQHVUTMybBIk6tPCaUOxl8EyDrd7yg==
-Date:   Mon, 12 Aug 2019 17:27:21 +0000
-Message-ID: <SY2PR01MB23781AB51C895F8D5CCF3A48A0D30@SY2PR01MB2378.ausprd01.prod.outlook.com>
-Reply-To: "maunoveutileina@gmail.com" <maunoveutileina@gmail.com>
-Accept-Language: en-AU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PR0P264CA0001.FRAP264.PROD.OUTLOOK.COM (2603:10a6:100::13)
- To SY2PR01MB2378.ausprd01.prod.outlook.com (2603:10c6:1:21::20)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=JiaYi.Lim@alumni.uts.edu.au; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-antivirus: Avast (VPS 190812-2, 08/12/2019), Outbound message
-x-antivirus-status: Clean
-x-originating-ip: [185.248.13.41]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a76cd214-a705-427c-5068-08d71f4a54db
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:SY2PR01MB3033;
-x-ms-traffictypediagnostic: SY2PR01MB3033:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <SY2PR01MB303311F5A3DC063FA65E47C6E0D30@SY2PR01MB3033.ausprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2000;
-x-forefront-prvs: 012792EC17
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(1496009)(136003)(346002)(376002)(39860400002)(366004)(396003)(189003)(199004)(43066004)(102836004)(26005)(55016002)(8796002)(71200400001)(8936002)(2171002)(53936002)(71190400001)(6436002)(476003)(88552002)(7116003)(25786009)(186003)(2906002)(6862004)(7696005)(99286004)(52116002)(33656002)(6116002)(386003)(6506007)(3846002)(486006)(478600001)(561924002)(7366002)(7336002)(66806009)(5003540100004)(4744005)(5660300002)(305945005)(14444005)(7736002)(256004)(52536014)(7416002)(7406005)(7276002)(66574012)(2860700004)(3480700005)(786003)(8676002)(316002)(966005)(42882007)(81156014)(81166006)(221733001)(22416003)(9686003)(6306002)(66066001)(66476007)(66446008)(74316002)(64756008)(66556008)(66946007)(14454004)(81742002);DIR:OUT;SFP:1501;SCL:1;SRVR:SY2PR01MB3033;H:SY2PR01MB2378.ausprd01.prod.outlook.com;FPR:;SPF:None;LANG:de;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: alumni.uts.edu.au does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nTl17ReFpEor2+fho7D0oSwGn3KkwNSkOHkPD9b0k6z9aC6q6mG8VMi21+SCYDspccT/VIPwpVvXZ8eayB7VDbZY6gYn/A0qaFppscWpSvJ97Sibh3oa6burRvpyiDD/DCzzadfm4sKA/TbYrV0+Xc6NFQRlyhNahV/MaPXthQb7i7Ry8fBsKpoysVEXSQtGeZhLHjVdh76913ebs4TqjSJfmXs4kOYYBqJoAtt9E+9HW1WG2fjr5apvUtdiwl/k0/UFWQwwqDESZbIxjLzIfvPLGomai1P5d0Q45mhYcKLvlh53UW0UOd3HX7oFClB9kPy3w/9/sMbj7gH87xOU722XUjhCLy2x3W9Hdt6opV2CXkJrAXurk5eV0ikouYyBJudynLTXMEi6OknOMRo7nAabNLwP70+ENq1M/yh424o=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <398E89D1FAE5B1428391D33F24ED7D74@ausprd01.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727152AbfHLR2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 13:28:24 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5734 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbfHLR2Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 13:28:24 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d51a1b70001>; Mon, 12 Aug 2019 10:28:23 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 12 Aug 2019 10:28:21 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 12 Aug 2019 10:28:21 -0700
+Received: from [10.110.103.110] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 12 Aug
+ 2019 17:28:20 +0000
+Subject: Re: [PATCH v8 14/21] clk: tegra210: Add suspend and resume support
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>,
+        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <rjw@rjwysocki.net>,
+        <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-15-git-send-email-skomatineni@nvidia.com>
+ <a21b7464-62c3-8461-04c2-a0e863bdde85@gmail.com>
+ <7d101ec9-c559-8b40-1764-6bf67a9c7a7a@nvidia.com>
+ <aa823801-00c7-df88-0f63-45338bffa854@gmail.com>
+ <cbe94f84-a17b-7e1a-811d-89db571784e1@nvidia.com>
+ <4397de5d-772d-2b04-5f87-b2988f6c96c8@gmail.com>
+ <805a825e-f19d-d056-83eb-8ed1cb1c089c@nvidia.com>
+ <ca90bd2b-8088-8b46-2816-95e58a4811b8@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <931b027d-fdf3-220b-167a-4177fa917781@nvidia.com>
+Date:   Mon, 12 Aug 2019 10:28:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-OriginatorOrg: student.uts.edu.au
-X-MS-Exchange-CrossTenant-Network-Message-Id: a76cd214-a705-427c-5068-08d71f4a54db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 17:27:21.0602
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e8911c26-cf9f-4a9c-878e-527807be8791
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6AeouavKhm+wmN43DQduOde04OOZqmKDD2DPC9J2CH5chJcAe0QVa9CKIKtqQTWla8IfG3HpOuNqGCAhE8mFCNQr2Qjwnh0cvYQEF19UVrs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY2PR01MB3033
+In-Reply-To: <ca90bd2b-8088-8b46-2816-95e58a4811b8@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565630903; bh=epFl0x6EpqyB3WqhcwkkGJnlJZrZbuY5zeXIEAKMK9c=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=L6NpDMl72xdKhdOUdTUKviynev//u7aFVp+yHIn4LoGRiFdjCyEadyZfL9bfEQTCY
+         mRW6rXRMRydNI9muFWl5MGTnuE6M3JEWIMckLTK7rd4WEmSy9sIglQc2c/zLVYCtYG
+         0VeO5ko4j6uuy2FW7t7dkocklvEDkH9lrQFwRrL/8jLL4hX6zjxBioKuL53ZUtfX7M
+         Mlzh66Jt8/Kt74KyWDa3+zh/X50a0MhPU2mroS/5K2LqFYj0zidc5mtwvDC1C77UqD
+         fp6OqY2ppD6I+oMKwGJUz4+e/Vwu9HB9nGFW4HOjkOKvEx/kQWreqRr+coYlNM07Ic
+         czRopTPGKH7cA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mein lieber Freund
 
-Ich bin Frau Elizabeth Kerli James aus Deutschland. Ich lebe mein ganzes Le=
-ben in
-Die Vereinigten Staaten.
-Ungef=E4hr zwei Jahre lang wurde bei mir Krebs diagnostiziert und jetzt l=
-=FCge ich die
-krankes Bett, ich m=F6chte, dass du mir hilfst, meinen letzten Wunsch auf E=
-rden zu erf=FCllen, der
-wird f=FCr Sie sehr profitabel sein. Ich w=FCrde diese gerne spenden
-6.470.000,00 EUR an Sie, ich m=F6chte, dass Sie teilen
-es zu einer Wohlt=E4tigkeitsorganisation nach Hause.
-F=FCr Ihre G=FCte in dieser Arbeit, die Sie durchf=FChren sollten, biete ic=
-h Ihnen
-40% wile der andere
-60% des Fonds gehen an Wohlt=E4tigkeitsorganisationen Ihrer Wahl
-Bitte kontaktieren Sie meinen Anwalt =FCber diese E-Mail f=FCr weitere Info=
-rmationen.
-maunoveutileina@gmail.com
-respektvoll
+On 8/12/19 9:25 AM, Dmitry Osipenko wrote:
+> 11.08.2019 22:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 8/11/19 10:39 AM, Dmitry Osipenko wrote:
+>>> 09.08.2019 21:40, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> On 8/9/19 11:18 AM, Dmitry Osipenko wrote:
+>>>>> 09.08.2019 19:19, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> On 8/9/19 6:56 AM, Dmitry Osipenko wrote:
+>>>>>>> 09.08.2019 2:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
+:
+>>>>>>>> This patch adds support for clk: tegra210: suspend-resume.
+>>>>>>>>
+>>>>>>>> All the CAR controller settings are lost on suspend when core
+>>>>>>>> power goes off.
+>>>>>>>>
+>>>>>>>> This patch has implementation for saving and restoring all PLLs
+>>>>>>>> and clocks context during system suspend and resume to have the
+>>>>>>>> clocks back to same state for normal operation.
+>>>>>>>>
+>>>>>>>> Clock driver suspend and resume are registered as syscore_ops as c=
+locks
+>>>>>>>> restore need to happen before the other drivers resume to have all=
+ their
+>>>>>>>> clocks back to the same state as before suspend.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>> ---
+>>>>>>>>  =C2=A0=C2=A0 drivers/clk/tegra/clk-tegra210.c | 103 +++++++++++++=
+++++++++++++++++++++++++--
+>>>>>>>>  =C2=A0=C2=A0 drivers/clk/tegra/clk.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 64 ++++++++++++++++++++++++
+>>>>>>>>  =C2=A0=C2=A0 drivers/clk/tegra/clk.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 ++
+>>>>>>>>  =C2=A0=C2=A0 3 files changed, 166 insertions(+), 4 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/=
+clk-tegra210.c
+>>>>>>>> index 998bf60b219a..8dd6f4f4debb 100644
+>>>>>>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>>>>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>>>>>>> @@ -9,13 +9,13 @@
+>>>>>>>>  =C2=A0=C2=A0 #include <linux/clkdev.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <linux/of.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <linux/of_address.h>
+>>>>>>>> +#include <linux/syscore_ops.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <linux/delay.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <linux/export.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <linux/mutex.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <linux/clk/tegra.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <dt-bindings/clock/tegra210-car.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <dt-bindings/reset/tegra210-car.h>
+>>>>>>>> -#include <linux/iopoll.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <linux/sizes.h>
+>>>>>>>>  =C2=A0=C2=A0 #include <soc/tegra/pmc.h>
+>>>>>>>>  =C2=A0=C2=A0 @@ -220,11 +220,15 @@
+>>>>>>>>  =C2=A0=C2=A0 #define CLK_M_DIVISOR_SHIFT 2
+>>>>>>>>  =C2=A0=C2=A0 #define CLK_M_DIVISOR_MASK 0x3
+>>>>>>>>  =C2=A0=C2=A0 +#define CLK_MASK_ARM=C2=A0=C2=A0=C2=A0 0x44
+>>>>>>>> +#define MISC_CLK_ENB=C2=A0=C2=A0=C2=A0 0x48
+>>>>>>>> +
+>>>>>>>>  =C2=A0=C2=A0 #define RST_DFLL_DVCO 0x2f4
+>>>>>>>>  =C2=A0=C2=A0 #define DVFS_DFLL_RESET_SHIFT 0
+>>>>>>>>  =C2=A0=C2=A0 =C2=A0 #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a=
+8
+>>>>>>>>  =C2=A0=C2=A0 #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+>>>>>>>> +#define CPU_SOFTRST_CTRL 0x380
+>>>>>>>>  =C2=A0=C2=A0 =C2=A0 #define LVL2_CLK_GATE_OVRA 0xf8
+>>>>>>>>  =C2=A0=C2=A0 #define LVL2_CLK_GATE_OVRC 0x3a0
+>>>>>>>> @@ -2825,6 +2829,7 @@ static int tegra210_enable_pllu(void)
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_clk_pll_freq_ta=
+ble *fentry;
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_clk_pll pllu;
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 reg;
+>>>>>>>> +=C2=A0=C2=A0=C2=A0 int ret;
+>>>>>>>>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (fentry =3D pll_u=
+_freq_table; fentry->input_rate; fentry++) {
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (=
+fentry->input_rate =3D=3D pll_ref_freq)
+>>>>>>>> @@ -2853,9 +2858,14 @@ static int tegra210_enable_pllu(void)
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg |=3D PLL_ENABLE;
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writel(reg, clk_base + PLLU_=
+BASE);
+>>>>>>>>  =C2=A0=C2=A0 -=C2=A0=C2=A0=C2=A0 readl_relaxed_poll_timeout_atomi=
+c(clk_base + PLLU_BASE, reg,
+>>>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg & PLL_B=
+ASE_LOCK, 2, 1000);
+>>>>>>>> -=C2=A0=C2=A0=C2=A0 if (!(reg & PLL_BASE_LOCK)) {
+>>>>>>>> +=C2=A0=C2=A0=C2=A0 /*
+>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * During clocks resume, same PLLU init a=
+nd enable sequence get
+>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * executed. So, readx_poll_timeout_atomi=
+c can't be used here as it
+>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * uses ktime_get() and timekeeping resum=
+e doesn't happen by that
+>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * time. So, using tegra210_wait_for_mask=
+ for PLL LOCK.
+>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>>>>> +=C2=A0=C2=A0=C2=A0 ret =3D tegra210_wait_for_mask(&pllu, PLLU_BAS=
+E, PLL_BASE_LOCK);
+>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (ret) {
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_e=
+rr("Timed out waiting for PLL_U to lock\n");
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retu=
+rn -ETIMEDOUT;
+>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>>>>>> @@ -3288,6 +3298,84 @@ static void tegra210_disable_cpu_clock(u32 =
+cpu)
+>>>>>>>>  =C2=A0=C2=A0 }
+>>>>>>>>  =C2=A0=C2=A0 =C2=A0 #ifdef CONFIG_PM_SLEEP
+>>>>>>>> +/*
+>>>>>>>> + * This array lists mask values for each peripheral clk bank
+>>>>>>>> + * to mask out reserved bits during the clocks state restore
+>>>>>>>> + * on SC7 resume to prevent accidental writes to these reserved
+>>>>>>>> + * bits.
+>>>>>>>> + */
+>>>>>>>> +static u32 periph_clk_rsvd_mask[TEGRA210_CAR_BANK_COUNT] =3D {
+>>>>>>> Should be more natural to have a "valid_mask" instead of "rsvd_mask=
+".
+>>>>>>>
+>>>>>>> What's actually wrong with touching of the reserved bits? They must=
+ be NO-OP.. or the
+>>>>>>> reserved bits are actually some kind of "secret" bits? If those bit=
+s have some use-case
+>>>>>>> outside of Silicon HW (like FPGA simulation), then this doesn't mat=
+ter for upstream
+>>>>>>> and you
+>>>>>>> have to keep the workaround locally in the downstream kernel or wha=
+tever.
+>>>>>> Will rename as valid_mask.
+>>>>>>
+>>>>>> some bits in these registers are undefined and is not good to write =
+to these bits as they
+>>>>>> can cause pslverr.
+>>>>> Okay, it should be explained in the comment.
+>>>>>
+>>>>> Is it possible to disable trapping of changing the undefined bits?
+>>>> No its internal to design
+>>> Okay.
+>>>
+>>> Also, what about to move the valid_mask into struct tegra_clk_periph_re=
+gs?
+>> No, we cannot move to tegra_clk_periph_regs as its in tegra/clk.c and is=
+ common for all tegra.
+>>
+>> Reserved bits are different on tegra chips so should come from Tegra chi=
+p specific clock
+>> driver like
+>>
+>> clk-tegra210 for Tegra210.
+> Could you please check whether the reserved bits are RAZ (read as zero)?
+>
+> [snip]
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+yes all reserved bits of clk_enb register is 0. This should not be set to 1=
+.
+
+As I will be changing to variable name to valid_mask instead of reserved=20
+mask, will also change values to valid mask so it can be used directly=20
+to write to clk_enb for enabling all peripherals clks.
 
