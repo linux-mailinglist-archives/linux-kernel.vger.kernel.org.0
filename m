@@ -2,114 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14AB08A4B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A895C8A4D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:49:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbfHLReX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 13:34:23 -0400
-Received: from mga06.intel.com ([134.134.136.31]:26428 "EHLO mga06.intel.com"
+        id S1726509AbfHLRtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 13:49:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:53596 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbfHLReV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 13:34:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 10:33:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
-   d="scan'208";a="376025887"
-Received: from megha-z97x-ud7-th.sc.intel.com ([143.183.85.162])
-  by fmsmga006.fm.intel.com with ESMTP; 12 Aug 2019 10:33:35 -0700
-Message-ID: <1565632489.7042.17.camel@intel.com>
-Subject: Re: [RFC V1 RESEND 2/6] PCI/MSI: Dynamic allocation of MSI-X
- vectors by group
-From:   Megha Dey <megha.dey@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com,
-        jacob.jun.pan@linux.intel.com
-Date:   Mon, 12 Aug 2019 10:54:49 -0700
-In-Reply-To: <alpine.DEB.2.21.1908110919310.7324@nanos.tec.linutronix.de>
-References: <1561162778-12669-1-git-send-email-megha.dey@linux.intel.com>
-         <1561162778-12669-3-git-send-email-megha.dey@linux.intel.com>
-         <alpine.DEB.2.21.1906280739100.32342@nanos.tec.linutronix.de>
-         <1565118316.2401.112.camel@intel.com>
-         <alpine.DEB.2.21.1908071525390.24014@nanos.tec.linutronix.de>
-         <48a44ffc-4b5b-5eef-73de-020f1710c41e@arm.com>
-         <alpine.DEB.2.21.1908110919310.7324@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1725901AbfHLRtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 13:49:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE68F15AB;
+        Mon, 12 Aug 2019 10:40:06 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6BE33F706;
+        Mon, 12 Aug 2019 10:40:04 -0700 (PDT)
+Subject: Re: [PATCH 01/14] sched: introduce task_se_h_load helper
+To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, pjt@google.com, peterz@infradead.org,
+        mingo@redhat.com, morten.rasmussen@arm.com, tglx@linutronix.de,
+        mgorman@techsingularity.net, vincent.guittot@linaro.org,
+        Josef Bacik <josef@toxicpanda.com>
+References: <20190722173348.9241-1-riel@surriel.com>
+ <20190722173348.9241-2-riel@surriel.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <ddfaa51b-2b4a-e235-031a-dca1092bab93@arm.com>
+Date:   Mon, 12 Aug 2019 19:40:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190722173348.9241-2-riel@surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-08-11 at 09:20 +0200, Thomas Gleixner wrote:
-> On Wed, 7 Aug 2019, Marc Zyngier wrote:
-> > 
-> > On 07/08/2019 14:56, Thomas Gleixner wrote:
-> > > 
-> > > On Tue, 6 Aug 2019, Megha Dey wrote:
-> > > > 
-> > > > On Sat, 2019-06-29 at 09:59 +0200, Thomas Gleixner wrote:
-> > > > > 
-> > > > > On Fri, 21 Jun 2019, Megha Dey wrote:
-> > > > Totally agreed. The request to add a dynamic MSI-X
-> > > > infrastructure came
-> > > > from some driver teams internally and currently they do not
-> > > > have
-> > > > bandwidth to come up with relevant test cases. <sigh>
-> > > Hahahaha.
-> > > 
-> > > > 
-> > > > But we hope that this patch set could serve as a precursor to
-> > > > the
-> > > > interrupt message store (IMS) patch set, and we can use this
-> > > > patch set
-> > > > as the baseline for the IMS patches.
-> > > If IMS needs the same functionality, then we need to think about
-> > > it
-> > > slightly differently because IMS is not necessarily tied to PCI.
-> > >  
-> > > IMS has some similarity to the ARM GIC ITS stuff IIRC, which
-> > > already
-> > > provides these things outside of PCI. Marc?
-> > Indeed. We have MSI-like functionality almost everywhere, and make
-> > heavy
-> > use of the generic MSI framework. Platform-MSI is probably the most
-> > generic example we have (it's the Far West transposed to MSIs).
-> > 
-> > > 
-> > > We probably need some generic infrastructure for this so PCI and
-> > > everything
-> > > else can use it.
-> > Indeed. Overall, I'd like the concept of MSI on whatever bus to
-> > have one
-> > single behaviour across the board, as long as it makes sense for
-> > that
-> > bus (nobody needs another PCI MultiMSI, for example).
-> Right.
+On 7/22/19 7:33 PM, Rik van Riel wrote:
+> Sometimes the hierarchical load of a sched_entity needs to be calculated.
+> Rename task_h_load to task_se_h_load, and directly pass a sched_entity to
+> that function.
 > 
-> @Intel: Is there documentation and perhaps early code for that IMS
-> muck to
-> 	look at?
-
-Hi Thomas,
-
-We have some early documentation on IMS which can be found here (part
-of the Scalable I/O Virtualization spec):
-
-https://software.intel.com/sites/default/files/managed/cc/0e/intel-scal
-able-io-virtualization-technical-specification.pdf
-(Section 3.4.1)
-
-Also, I do have some initial IMS patches that we use internally for
-testing. I will clean it up and send it as an RFC patchset shortly.
- 
+> Move the function declaration up above where it will be used later.
 > 
-> Thanks,
+> No functional changes.
 > 
-> 	tglx
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+
+[...]
+
+>  /* Give new sched_entity start runnable values to heavy its load in infant time */
+> @@ -1668,7 +1668,7 @@ static void task_numa_compare(struct task_numa_env *env,
+>  	/*
+>  	 * In the overloaded case, try and keep the load balanced.
+>  	 */
+> -	load = task_h_load(env->p) - task_h_load(cur);
+> +	load = task_se_h_load(env->p->se) - task_se_h_load(cur->se);
+
+Shouldn't this be:
+
+load = task_se_h_load(&env->p->se) - task_se_h_load(&cur->se);
+
+>  	if (!load)
+>  		goto assign;
+>  
+> @@ -1706,7 +1706,7 @@ static void task_numa_find_cpu(struct task_numa_env *env,
+>  	bool maymove = false;
+>  	int cpu;
+>  
+> -	load = task_h_load(env->p);
+> +	load = task_se_h_load(env->p->se);
+
+load = task_se_h_load(&env->p->se);
+
+[...]
