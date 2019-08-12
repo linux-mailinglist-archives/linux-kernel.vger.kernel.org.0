@@ -2,100 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BEA189E44
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:28:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BABF89E39
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:26:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbfHLM2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 08:28:16 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39260 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728242AbfHLM2Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 08:28:16 -0400
-Received: by mail-qk1-f196.google.com with SMTP id 125so3702921qkl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 05:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F3NVoBe9n1v2ZfRa55FdnUViyntY9dM8fBRiLu0L+fw=;
-        b=hj/Fuo5ytWHe0SJ+13jcDdQMsbU/i1ZIACgIViMzJiw64MJCvg0Xb2wHJG7iO+F4CY
-         aU/8Q4e5EoRTDQDpyyngxGAd8VRdCivVvM9K4kJH8VkohD0SyifJp3mGzN0GcVbvBsA6
-         4Y51i7Ejn6Y8PGCOwhEemjauQp1RbvuAk+XvQ3vNiR6Z8yE71AQmuSIriJA5+G1/cPmw
-         b9Fve7MbxQYSmPLxPc8WFWQFK9ggMft0bP6KTFKqQIAdoHpT+phxWGWiOfnw0VACG5Ib
-         rBDe3YqIH8M46+Mj9gTd05nIVBhQ30Y1/5SkXNdMnFNsQXrdNcqB8yDxa3rqTHlr6dLq
-         iK8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F3NVoBe9n1v2ZfRa55FdnUViyntY9dM8fBRiLu0L+fw=;
-        b=d+m2C8Xs+hyH9uPl3OIPC5xVGNkYc/Aa7PbqgHzonFvGI3o1r5XcmZ/eIoezk7svyI
-         OLYWAFXAO4uew3FPQ9l0NlaxKH1DTZZC2srMUKP2fBFxzUcNnodSxVpZvCIMZ2y/+02Z
-         wu/3E6CdiodoW6AAQAsE80cW+otCZ2JwcWJqN2zSJwVcGO67iublzoZptQm4iSY2PjSe
-         TKy2TZaZT5cqH2eu8fL+Omqq0yNq+IKHifYZId/NYEhElXJobbmZah8HIJVpbKfLWV6B
-         f8+X6y+VG8Q8343Yk2NbGzzUGJgQIUeQZ/CkoFe/jE3RRJHgMPfwvvAdpLYKJmZIW3xH
-         Z5dg==
-X-Gm-Message-State: APjAAAXF5xwKQUz8qtCOR2lS73gU2sf4eO3jUhCCgKyqyCOVqA62T9j5
-        m8X3xNko419bSgsEZTmCJY94Gw==
-X-Google-Smtp-Source: APXvYqwODBrrpXeLg1uZt60+w4xuw/RA5y0XlK9HIDJS76yjPxmVou6ZmWwl4OVp2Tm+2EwyPKY3dw==
-X-Received: by 2002:a05:620a:12d2:: with SMTP id e18mr29712440qkl.176.1565612895187;
-        Mon, 12 Aug 2019 05:28:15 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id z2sm9588656qtq.7.2019.08.12.05.28.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 05:28:14 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hx9Qs-00079D-9F; Mon, 12 Aug 2019 09:28:14 -0300
-Date:   Mon, 12 Aug 2019 09:28:14 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     ira.weiny@intel.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
-Message-ID: <20190812122814.GC24457@ziepe.ca>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-16-ira.weiny@intel.com>
+        id S1728798AbfHLMZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 08:25:13 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4660 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728464AbfHLMZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 08:25:12 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3FD46459B3490B51E00F;
+        Mon, 12 Aug 2019 20:25:10 +0800 (CST)
+Received: from RH5885H-V3.huawei.com (10.90.53.225) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 12 Aug 2019 20:25:03 +0800
+From:   Sun Ke <sunke32@huawei.com>
+To:     <sunke32@huawei.com>, <josef@toxicpanda.com>, <axboe@kernel.dk>,
+        <linux-block@vger.kernel.org>, <nbd@other.debian.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] nbd: add a missed nbd_config_put() in nbd_xmit_timeout()
+Date:   Mon, 12 Aug 2019 20:31:26 +0800
+Message-ID: <1565613086-13776-1-git-send-email-sunke32@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809225833.6657-16-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 03:58:29PM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> The addition of FOLL_LONGTERM has taken on additional meaning for CMA
-> pages.
-> 
-> In addition subsystems such as RDMA require new information to be passed
-> to the GUP interface to track file owning information.  As such a simple
-> FOLL_LONGTERM flag is no longer sufficient for these users to pin pages.
-> 
-> Introduce a new GUP like call which takes the newly introduced vaddr_pin
-> information.  Failure to pass the vaddr_pin object back to a vaddr_put*
-> call will result in a failure if pins were created on files during the
-> pin operation.
+When try to get the lock failed, before return, execute the
+nbd_config_put() to decrease the nbd->config_refs.
 
-Is this a 'vaddr' in the traditional sense, ie does it work with
-something returned by valloc?
+If the nbd->config_refs is added but not decreased. Then will not
+execute nbd_clear_sock() in nbd_config_put(). bd->task_setup will
+not be cleared away. Finally, print"Device being setup by another
+task" in nbd_add_sock() and nbd device can not be reused.
 
-Maybe another name would be better?
+Fixes: 8f3ea35929a0 ("nbd: handle unexpected replies better")
+Signed-off-by: Sun Ke <sunke32@huawei.com>
+---
+ drivers/block/nbd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I also wish GUP like functions took in a 'void __user *' instead of
-the unsigned long to make this clear :\
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index e21d2de..a69a90a 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -357,8 +357,10 @@ static enum blk_eh_timer_return nbd_xmit_timeout(struct request *req,
+ 	}
+ 	config = nbd->config;
+ 
+-	if (!mutex_trylock(&cmd->lock))
++	if (!mutex_trylock(&cmd->lock)) {
++		nbd_config_put(nbd);
+ 		return BLK_EH_RESET_TIMER;
++	}
+ 
+ 	if (config->num_connections > 1) {
+ 		dev_err_ratelimited(nbd_to_dev(nbd),
+-- 
+2.7.4
 
-Jason
