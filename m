@@ -2,68 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4360B8990A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 616FB89913
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:56:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbfHLIyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:54:25 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:58700 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726495AbfHLIyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:54:24 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C60F12002FB;
-        Mon, 12 Aug 2019 10:54:20 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1EE902002DF;
-        Mon, 12 Aug 2019 10:54:16 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0D067402D2;
-        Mon, 12 Aug 2019 16:54:09 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     wim@linux-watchdog.org, linux@roeck-us.net, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] watchdog: imx_sc: Remove unnecessary error log
-Date:   Mon, 12 Aug 2019 16:44:34 +0800
-Message-Id: <20190812084434.13316-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727276AbfHLI4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 04:56:25 -0400
+Received: from esa4.hc3370-68.iphmx.com ([216.71.155.144]:54120 "EHLO
+        esa4.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfHLI4Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 04:56:25 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Aug 2019 04:56:24 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1565600184;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=9ddt8p1x9c7vbOfw0mclslg4q+Z34NYzRueRbs1+UkU=;
+  b=YVkwg8NI9+t+ReHutfbmazeG181+gj/lsAwsSEzC5bIejq93nrYeCNiP
+   14sySFdkxsPWNsUlK5M7SYz58IVtnxbjlXb83WmFxXEIu12RaqAXuIh8P
+   LC6y2kEYaxlqRcf+6bb6kYZvdDy3m1Hm2N94dqOmHndxTHLoG+AO20E8S
+   8=;
+Authentication-Results: esa4.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
+  receiver=esa4.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa4.hc3370-68.iphmx.com: domain of
+  roger.pau@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa4.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa4.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: 2kSHKHm5HwQ9K+9+aCk8H5O3gYMiB2IUfZLmVfHUKEptE9LIH9+OD6maCgO3ZiIGmrovCFmIK5
+ PPeWKiBOqhF0O/FrUB6VJ0+d8fp+b2oLRON5ZckGESvAhEYkr9vuBubfJWJkF87dciK4evAC+x
+ HJPSsQxzctuHbmqJt2P99g3jzEhL0WiVbvl0+lITjxXj/DG5Bwn5DWFT09XV29Bzjpsy9EwPpn
+ ME/Yn4nYCbmyAeRNxKHa6rDy3eSVyYgc/276W+IMiylV9BKrrc0qF7K3N5d44K8TW+aoF9BhZ1
+ C4I=
+X-SBRS: 2.7
+X-MesageID: 4341947
+X-Ironport-Server: esa4.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.64,376,1559534400"; 
+   d="scan'208";a="4341947"
+Date:   Mon, 12 Aug 2019 10:49:11 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "moderated list:XEN BLOCK SUBSYSTEM" <xen-devel@lists.xenproject.org>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xen/blkback: fix memory leaks
+Message-ID: <20190812084911.25vfz6zu5omgtqqe@Air-de-Roger>
+References: <1565544202-3927-1-git-send-email-wenwen@cs.uga.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1565544202-3927-1-git-send-email-wenwen@cs.uga.edu>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On Sun, Aug 11, 2019 at 12:23:22PM -0500, Wenwen Wang wrote:
+> In read_per_ring_refs(), after 'req' and related memory regions are
+> allocated, xen_blkif_map() is invoked to map the shared frame, irq, and
+> etc. However, if this mapping process fails, no cleanup is performed,
+> leading to memory leaks. To fix this issue, invoke the cleanup before
+> returning the error.
+> 
+> Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
 
-An error message is already displayed by watchdog_register_device()
-when failed, so no need to have error log again for failure of
-calling devm_watchdog_register_device().
+Thanks!
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/watchdog/imx_sc_wdt.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> ---
+>  drivers/block/xen-blkback/xenbus.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> index 3ac6a5d..b90dbcd 100644
+> --- a/drivers/block/xen-blkback/xenbus.c
+> +++ b/drivers/block/xen-blkback/xenbus.c
+> @@ -965,6 +965,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+>  		}
+>  	}
+>  
+> +	err = -ENOMEM;
+>  	for (i = 0; i < nr_grefs * XEN_BLKIF_REQS_PER_PAGE; i++) {
+>  		req = kzalloc(sizeof(*req), GFP_KERNEL);
+>  		if (!req)
+> @@ -987,7 +988,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+>  	err = xen_blkif_map(ring, ring_ref, nr_grefs, evtchn);
 
-diff --git a/drivers/watchdog/imx_sc_wdt.c b/drivers/watchdog/imx_sc_wdt.c
-index 78eaaf7..9260475 100644
---- a/drivers/watchdog/imx_sc_wdt.c
-+++ b/drivers/watchdog/imx_sc_wdt.c
-@@ -175,11 +175,8 @@ static int imx_sc_wdt_probe(struct platform_device *pdev)
- 	watchdog_stop_on_unregister(wdog);
- 
- 	ret = devm_watchdog_register_device(dev, wdog);
-- 
-- 	if (ret) {
-- 		dev_err(dev, "Failed to register watchdog device\n");
-+	if (ret)
-  		return ret;
-- 	}
-  
- 	ret = imx_scu_irq_group_enable(SC_IRQ_GROUP_WDOG,
- 				       SC_IRQ_WDOG,
--- 
-2.7.4
+You could also move the xen_blkif_map cal before the allocation loop,
+since there's nothing in xen_blkif_map that uses the memory allocated
+AFAICT, but I'm fine either way.
 
+Acked-by: Roger Pau Monné <roger.pau@citrix.com>
+
+Roger.
