@@ -2,191 +2,460 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D7098959E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 05:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 341EA89583
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 05:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfHLDIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 11 Aug 2019 23:08:07 -0400
-Received: from mga17.intel.com ([192.55.52.151]:12631 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726885AbfHLDIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Aug 2019 23:08:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Aug 2019 20:08:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,375,1559545200"; 
-   d="scan'208";a="199987519"
-Received: from hao-dev.bj.intel.com ([10.238.157.65])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Aug 2019 20:08:02 -0700
-From:   Wu Hao <hao.wu@intel.com>
-To:     gregkh@linuxfoundation.org, mdf@kernel.org,
-        linux-fpga@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org,
-        Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
-Subject: [PATCH v5 9/9] Documentation: fpga: dfl: add descriptions for virtualization and new interfaces.
-Date:   Mon, 12 Aug 2019 10:50:04 +0800
-Message-Id: <1565578204-13969-10-git-send-email-hao.wu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1565578204-13969-1-git-send-email-hao.wu@intel.com>
-References: <1565578204-13969-1-git-send-email-hao.wu@intel.com>
+        id S1726634AbfHLDA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 11 Aug 2019 23:00:29 -0400
+Received: from unicom146.biz-email.net ([210.51.26.146]:4319 "EHLO
+        unicom146.biz-email.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfHLDA3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Aug 2019 23:00:29 -0400
+Received: from ([60.208.111.195])
+        by unicom146.biz-email.net (Antispam) with ASMTP (SSL) id DKN75718;
+        Mon, 12 Aug 2019 10:53:18 +0800
+Received: from localhost (10.100.1.52) by Jtjnmail201618.home.langchao.com
+ (10.100.2.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 12 Aug
+ 2019 10:53:09 +0800
+From:   John Wang <wangzqbj@inspur.com>
+To:     <jdelvare@suse.com>, <linux@roeck-us.net>, <corbet@lwn.net>,
+        <linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <miltonm@us.ibm.com>,
+        <mine260309@gmail.com>, <duanzhijia01@inspur.com>,
+        <joel@jms.id.au>, <openbmc@lists.ozlabs.org>
+Subject: [PATCH v3 2/2] hwmon: pmbus: Add Inspur Power System power supply driver
+Date:   Mon, 12 Aug 2019 10:53:09 +0800
+Message-ID: <20190812025309.15702-1-wangzqbj@inspur.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.100.1.52]
+X-ClientProxiedBy: jtjnmail201603.home.langchao.com (10.100.2.3) To
+ Jtjnmail201618.home.langchao.com (10.100.2.18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds virtualization support description for DFL based
-FPGA devices (based on PCIe SRIOV), and introductions to new
-interfaces added by new dfl private feature drivers.
+Add the driver to monitor Inspur Power System power supplies
+with hwmon over pmbus.
 
-[mdf@kernel.org: Fixed up to make it work with new reStructuredText docs]
-Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
+This driver adds sysfs attributes for additional power supply data,
+including vendor, model, part_number, serial number,
+firmware revision, hardware revision, and psu mode(active/standby).
+
+Signed-off-by: John Wang <wangzqbj@inspur.com>
 ---
- Documentation/fpga/dfl.rst | 105 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
+v3:
+    - Sort kconfig/makefile entries alphabetically
+    - Remove unnecessary initialization
+    - Use ATTRIBUTE_GROUPS instead of expanding directly
+    - Use memscan to avoid reimplementation
+v2:
+    - Fix typos in commit message
+    - Invert Christmas tree
+    - Configure device with sysfs attrs, not debugfs entries
+    - Fix errno in fw_version_read, ENODATA to EPROTO
+    - Change the print format of fw-version
+    - Use sysfs_streq instead of strcmp("xxx" "\n", "xxx")
+    - Document sysfs attributes
+---
+ Documentation/hwmon/inspur-ipsps1.rst |  79 +++++++++
+ drivers/hwmon/pmbus/Kconfig           |   9 +
+ drivers/hwmon/pmbus/Makefile          |  41 ++---
+ drivers/hwmon/pmbus/inspur-ipsps.c    | 226 ++++++++++++++++++++++++++
+ 4 files changed, 335 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/hwmon/inspur-ipsps1.rst
+ create mode 100644 drivers/hwmon/pmbus/inspur-ipsps.c
 
-diff --git a/Documentation/fpga/dfl.rst b/Documentation/fpga/dfl.rst
-index 2f125ab..6fa483f 100644
---- a/Documentation/fpga/dfl.rst
-+++ b/Documentation/fpga/dfl.rst
-@@ -87,6 +87,8 @@ The following functions are exposed through ioctls:
- - Get driver API version (DFL_FPGA_GET_API_VERSION)
- - Check for extensions (DFL_FPGA_CHECK_EXTENSION)
- - Program bitstream (DFL_FPGA_FME_PORT_PR)
-+- Assign port to PF (DFL_FPGA_FME_PORT_ASSIGN)
-+- Release port from PF (DFL_FPGA_FME_PORT_RELEASE)
+diff --git a/Documentation/hwmon/inspur-ipsps1.rst b/Documentation/hwmon/inspur-ipsps1.rst
+new file mode 100644
+index 000000000000..aa19f0ccc8b0
+--- /dev/null
++++ b/Documentation/hwmon/inspur-ipsps1.rst
+@@ -0,0 +1,79 @@
++Kernel driver inspur-ipsps1
++=======================
++
++Supported chips:
++
++  * Inspur Power System power supply unit
++
++Author: John Wang <wangzqbj@inspur.com>
++
++Description
++-----------
++
++This driver supports Inspur Power System power supplies. This driver
++is a client to the core PMBus driver.
++
++Usage Notes
++-----------
++
++This driver does not auto-detect devices. You will have to instantiate the
++devices explicitly. Please see Documentation/i2c/instantiating-devices for
++details.
++
++Sysfs entries
++-------------
++
++The following attributes are supported:
++
++======================= ======================================================
++curr1_input             Measured input current
++curr1_label             "iin"
++curr1_max               Maximum current
++curr1_max_alarm         Current high alarm
++curr2_input		Measured output current in mA.
++curr2_label		"iout1"
++curr2_crit              Critical maximum current
++curr2_crit_alarm        Current critical high alarm
++curr2_max               Maximum current
++curr2_max_alarm         Current high alarm
++
++fan1_alarm		Fan 1 warning.
++fan1_fault		Fan 1 fault.
++fan1_input		Fan 1 speed in RPM.
++
++in1_alarm		Input voltage under-voltage alarm.
++in1_input		Measured input voltage in mV.
++in1_label		"vin"
++in2_input		Measured output voltage in mV.
++in2_label		"vout1"
++in2_lcrit               Critical minimum output voltage
++in2_lcrit_alarm         Output voltage critical low alarm
++in2_max                 Maximum output voltage
++in2_max_alarm           Output voltage high alarm
++in2_min                 Minimum output voltage
++in2_min_alarm           Output voltage low alarm
++
++power1_alarm		Input fault or alarm.
++power1_input		Measured input power in uW.
++power1_label		"pin"
++power1_max              Input power limit
++power2_max_alarm	Output power high alarm
++power2_max              Output power limit
++power2_input		Measured output power in uW.
++power2_label		"pout"
++
++temp[1-3]_input		Measured temperature
++temp[1-2]_max		Maximum temperature
++temp[1-3]_max_alarm	Temperature high alarm
++
++vendor                  Manufacturer name
++model                   Product model
++part_number             Product part number
++serial_number           Product serial number
++fw_version              Firmware version
++hw_version              Hardware version
++mode                    Work mode. Can be set to active or
++                        standby, when set to standby, PSU will
++                        automatically switch between standby
++                        and redundancy mode.
++======================= ======================================================
+diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+index 30751eb9550a..2370fce6e816 100644
+--- a/drivers/hwmon/pmbus/Kconfig
++++ b/drivers/hwmon/pmbus/Kconfig
+@@ -46,6 +46,15 @@ config SENSORS_IBM_CFFPS
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called ibm-cffps.
  
- More functions are exposed through sysfs
- (/sys/class/fpga_region/regionX/dfl-fme.n/):
-@@ -102,6 +104,10 @@ More functions are exposed through sysfs
-      one FPGA device may have more than one port, this sysfs interface indicates
-      how many ports the FPGA device has.
++config SENSORS_INSPUR_IPSPS
++	tristate "INSPUR Power System Power Supply"
++	help
++	  If you say yes here you get hardware monitoring support for the INSPUR
++	  Power System power supply.
++
++	  This driver can also be built as a module. If so, the module will
++	  be called inspur-ipsps.
++
+ config SENSORS_IR35221
+ 	tristate "Infineon IR35221"
+ 	help
+diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+index 2219b9300316..c4f82f65f2ad 100644
+--- a/drivers/hwmon/pmbus/Makefile
++++ b/drivers/hwmon/pmbus/Makefile
+@@ -3,23 +3,24 @@
+ # Makefile for PMBus chip drivers.
+ #
  
-+ Global error reporting management (errors/)
-+     error reporting sysfs interfaces allow user to read errors detected by the
-+     hardware, and clear the logged errors.
+-obj-$(CONFIG_PMBUS)		+= pmbus_core.o
+-obj-$(CONFIG_SENSORS_PMBUS)	+= pmbus.o
+-obj-$(CONFIG_SENSORS_ADM1275)	+= adm1275.o
+-obj-$(CONFIG_SENSORS_IBM_CFFPS)	+= ibm-cffps.o
+-obj-$(CONFIG_SENSORS_IR35221)	+= ir35221.o
+-obj-$(CONFIG_SENSORS_IR38064)	+= ir38064.o
+-obj-$(CONFIG_SENSORS_ISL68137)	+= isl68137.o
+-obj-$(CONFIG_SENSORS_LM25066)	+= lm25066.o
+-obj-$(CONFIG_SENSORS_LTC2978)	+= ltc2978.o
+-obj-$(CONFIG_SENSORS_LTC3815)	+= ltc3815.o
+-obj-$(CONFIG_SENSORS_MAX16064)	+= max16064.o
+-obj-$(CONFIG_SENSORS_MAX20751)	+= max20751.o
+-obj-$(CONFIG_SENSORS_MAX31785)	+= max31785.o
+-obj-$(CONFIG_SENSORS_MAX34440)	+= max34440.o
+-obj-$(CONFIG_SENSORS_MAX8688)	+= max8688.o
+-obj-$(CONFIG_SENSORS_TPS40422)	+= tps40422.o
+-obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
+-obj-$(CONFIG_SENSORS_UCD9000)	+= ucd9000.o
+-obj-$(CONFIG_SENSORS_UCD9200)	+= ucd9200.o
+-obj-$(CONFIG_SENSORS_ZL6100)	+= zl6100.o
++obj-$(CONFIG_PMBUS)			+= pmbus_core.o
++obj-$(CONFIG_SENSORS_PMBUS)		+= pmbus.o
++obj-$(CONFIG_SENSORS_ADM1275)		+= adm1275.o
++obj-$(CONFIG_SENSORS_IBM_CFFPS)		+= ibm-cffps.o
++obj-$(CONFIG_SENSORS_INSPUR_IPSPS)	+= inspur-ipsps.o
++obj-$(CONFIG_SENSORS_IR35221)		+= ir35221.o
++obj-$(CONFIG_SENSORS_IR38064)		+= ir38064.o
++obj-$(CONFIG_SENSORS_ISL68137)		+= isl68137.o
++obj-$(CONFIG_SENSORS_LM25066)		+= lm25066.o
++obj-$(CONFIG_SENSORS_LTC2978)		+= ltc2978.o
++obj-$(CONFIG_SENSORS_LTC3815)		+= ltc3815.o
++obj-$(CONFIG_SENSORS_MAX16064)		+= max16064.o
++obj-$(CONFIG_SENSORS_MAX20751)		+= max20751.o
++obj-$(CONFIG_SENSORS_MAX31785)		+= max31785.o
++obj-$(CONFIG_SENSORS_MAX34440)		+= max34440.o
++obj-$(CONFIG_SENSORS_MAX8688)		+= max8688.o
++obj-$(CONFIG_SENSORS_TPS40422)		+= tps40422.o
++obj-$(CONFIG_SENSORS_TPS53679)		+= tps53679.o
++obj-$(CONFIG_SENSORS_UCD9000)		+= ucd9000.o
++obj-$(CONFIG_SENSORS_UCD9200)		+= ucd9200.o
++obj-$(CONFIG_SENSORS_ZL6100)		+= zl6100.o
+diff --git a/drivers/hwmon/pmbus/inspur-ipsps.c b/drivers/hwmon/pmbus/inspur-ipsps.c
+new file mode 100644
+index 000000000000..fa981b881a60
+--- /dev/null
++++ b/drivers/hwmon/pmbus/inspur-ipsps.c
+@@ -0,0 +1,226 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright 2019 Inspur Corp.
++ */
 +
- 
- FIU - PORT
- ==========
-@@ -143,6 +149,10 @@ More functions are exposed through sysfs:
-  Read Accelerator GUID (afu_id)
-      afu_id indicates which PR bitstream is programmed to this AFU.
- 
-+ Error reporting (errors/)
-+     error reporting sysfs interfaces allow user to read port/afu errors
-+     detected by the hardware, and clear the logged errors.
++#include <linux/debugfs.h>
++#include <linux/device.h>
++#include <linux/fs.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/pmbus.h>
++#include <linux/hwmon-sysfs.h>
 +
- 
- DFL Framework Overview
- ======================
-@@ -218,6 +228,101 @@ the compat_id exposed by the target FPGA region. This check is usually done by
- userspace before calling the reconfiguration IOCTL.
- 
- 
-+FPGA virtualization - PCIe SRIOV
-+================================
-+This section describes the virtualization support on DFL based FPGA device to
-+enable accessing an accelerator from applications running in a virtual machine
-+(VM). This section only describes the PCIe based FPGA device with SRIOV support.
++#include "pmbus.h"
 +
-+Features supported by the particular FPGA device are exposed through Device
-+Feature Lists, as illustrated below:
++#define IPSPS_REG_VENDOR_ID	0x99
++#define IPSPS_REG_MODEL		0x9A
++#define IPSPS_REG_FW_VERSION	0x9B
++#define IPSPS_REG_PN		0x9C
++#define IPSPS_REG_SN		0x9E
++#define IPSPS_REG_HW_VERSION	0xB0
++#define IPSPS_REG_MODE		0xFC
 +
-+::
++#define MODE_ACTIVE		0x55
++#define MODE_STANDBY		0x0E
++#define MODE_REDUNDANCY		0x00
 +
-+    +-------------------------------+  +-------------+
-+    |              PF               |  |     VF      |
-+    +-------------------------------+  +-------------+
-+        ^            ^         ^              ^
-+        |            |         |              |
-+  +-----|------------|---------|--------------|-------+
-+  |     |            |         |              |       |
-+  |  +-----+     +-------+ +-------+      +-------+   |
-+  |  | FME |     | Port0 | | Port1 |      | Port2 |   |
-+  |  +-----+     +-------+ +-------+      +-------+   |
-+  |                  ^         ^              ^       |
-+  |                  |         |              |       |
-+  |              +-------+ +------+       +-------+   |
-+  |              |  AFU  | |  AFU |       |  AFU  |   |
-+  |              +-------+ +------+       +-------+   |
-+  |                                                   |
-+  |            DFL based FPGA PCIe Device             |
-+  +---------------------------------------------------+
++#define MODE_ACTIVE_STRING		"active"
++#define MODE_STANDBY_STRING		"standby"
++#define MODE_REDUNDANCY_STRING		"redundancy"
 +
-+FME is always accessed through the physical function (PF).
++enum ipsps_index {
++	vendor,
++	model,
++	fw_version,
++	part_number,
++	serial_number,
++	hw_version,
++	mode,
++	num_regs,
++};
 +
-+Ports (and related AFUs) are accessed via PF by default, but could be exposed
-+through virtual function (VF) devices via PCIe SRIOV. Each VF only contains
-+1 Port and 1 AFU for isolation. Users could assign individual VFs (accelerators)
-+created via PCIe SRIOV interface, to virtual machines.
++static const u8 ipsps_regs[num_regs] = {
++	[vendor] = IPSPS_REG_VENDOR_ID,
++	[model] = IPSPS_REG_MODEL,
++	[fw_version] = IPSPS_REG_FW_VERSION,
++	[part_number] = IPSPS_REG_PN,
++	[serial_number] = IPSPS_REG_SN,
++	[hw_version] = IPSPS_REG_HW_VERSION,
++	[mode] = IPSPS_REG_MODE,
++};
 +
-+The driver organization in virtualization case is illustrated below:
-+::
++static ssize_t ipsps_string_show(struct device *dev,
++				 struct device_attribute *devattr,
++				 char *buf)
++{
++	u8 reg;
++	int rc;
++	char *p;
++	char data[I2C_SMBUS_BLOCK_MAX + 1];
++	struct i2c_client *client = to_i2c_client(dev->parent);
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 +
-+    +-------++------++------+             |
-+    | FME   || FME  || FME  |             |
-+    | FPGA  || FPGA || FPGA |             |
-+    |Manager||Bridge||Region|             |
-+    +-------++------++------+             |
-+    +-----------------------+  +--------+ |             +--------+
-+    |          FME          |  |  AFU   | |             |  AFU   |
-+    |         Module        |  | Module | |             | Module |
-+    +-----------------------+  +--------+ |             +--------+
-+          +-----------------------+       |       +-----------------------+
-+          | FPGA Container Device |       |       | FPGA Container Device |
-+          |  (FPGA Base Region)   |       |       |  (FPGA Base Region)   |
-+          +-----------------------+       |       +-----------------------+
-+            +------------------+          |         +------------------+
-+            | FPGA PCIE Module |          | Virtual | FPGA PCIE Module |
-+            +------------------+   Host   | Machine +------------------+
-+   -------------------------------------- | ------------------------------
-+             +---------------+            |          +---------------+
-+             | PCI PF Device |            |          | PCI VF Device |
-+             +---------------+            |          +---------------+
++	reg = ipsps_regs[attr->index];
++	rc = i2c_smbus_read_block_data(client, reg, data);
++	if (rc < 0)
++		return rc;
 +
-+FPGA PCIe device driver is always loaded first once a FPGA PCIe PF or VF device
-+is detected. It:
++	/* filled with printable characters, ending with # */
++	p = memscan(data, '#', rc);
++	*p = '\0';
 +
-+* Finishes enumeration on both FPGA PCIe PF and VF device using common
-+  interfaces from DFL framework.
-+* Supports SRIOV.
++	return snprintf(buf, PAGE_SIZE, "%s\n", data);
++}
 +
-+The FME device driver plays a management role in this driver architecture, it
-+provides ioctls to release Port from PF and assign Port to PF. After release
-+a port from PF, then it's safe to expose this port through a VF via PCIe SRIOV
-+sysfs interface.
++static ssize_t ipsps_fw_version_show(struct device *dev,
++				     struct device_attribute *devattr,
++				     char *buf)
++{
++	u8 reg;
++	int rc;
++	u8 data[I2C_SMBUS_BLOCK_MAX] = { 0 };
++	struct i2c_client *client = to_i2c_client(dev->parent);
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 +
-+To enable accessing an accelerator from applications running in a VM, the
-+respective AFU's port needs to be assigned to a VF using the following steps:
++	reg = ipsps_regs[attr->index];
++	rc = i2c_smbus_read_block_data(client, reg, data);
++	if (rc < 0)
++		return rc;
 +
-+#. The PF owns all AFU ports by default. Any port that needs to be
-+   reassigned to a VF must first be released through the
-+   DFL_FPGA_FME_PORT_RELEASE ioctl on the FME device.
++	if (rc != 6)
++		return -EPROTO;
 +
-+#. Once N ports are released from PF, then user can use command below
-+   to enable SRIOV and VFs. Each VF owns only one Port with AFU.
++	return snprintf(buf, PAGE_SIZE, "%u.%02u%u-%u.%02u\n",
++			data[1], data[2]/* < 100 */, data[3]/*< 10*/,
++			data[4], data[5]/* < 100 */);
++}
 +
-+   ::
++static ssize_t ipsps_mode_show(struct device *dev,
++			       struct device_attribute *devattr, char *buf)
++{
++	u8 reg;
++	int rc;
++	struct i2c_client *client = to_i2c_client(dev->parent);
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 +
-+      echo N > $PCI_DEVICE_PATH/sriov_numvfs
++	reg = ipsps_regs[attr->index];
++	rc = i2c_smbus_read_byte_data(client, reg);
++	if (rc < 0)
++		return rc;
 +
-+#. Pass through the VFs to VMs
++	switch (rc) {
++	case MODE_ACTIVE:
++		return snprintf(buf, PAGE_SIZE, "[%s] %s %s\n",
++				MODE_ACTIVE_STRING,
++				MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
++	case MODE_STANDBY:
++		return snprintf(buf, PAGE_SIZE, "%s [%s] %s\n",
++				MODE_ACTIVE_STRING,
++				MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
++	case MODE_REDUNDANCY:
++		return snprintf(buf, PAGE_SIZE, "%s %s [%s]\n",
++				MODE_ACTIVE_STRING,
++				MODE_STANDBY_STRING, MODE_REDUNDANCY_STRING);
++	default:
++		return snprintf(buf, PAGE_SIZE, "unspecified\n");
++	}
++}
 +
-+#. The AFU under VF is accessible from applications in VM (using the
-+   same driver inside the VF).
++static ssize_t ipsps_mode_store(struct device *dev,
++				struct device_attribute *devattr,
++				const char *buf, size_t count)
++{
++	u8 reg;
++	int rc;
++	struct i2c_client *client = to_i2c_client(dev->parent);
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
 +
-+Note that an FME can't be assigned to a VF, thus PR and other management
-+functions are only available via the PF.
++	reg = ipsps_regs[attr->index];
++	if (sysfs_streq(MODE_STANDBY_STRING, buf)) {
++		rc = i2c_smbus_write_byte_data(client, reg,
++					       MODE_STANDBY);
++		if (rc < 0)
++			return rc;
++		return count;
++	} else if (sysfs_streq(MODE_ACTIVE_STRING, buf)) {
++		rc = i2c_smbus_write_byte_data(client, reg,
++					       MODE_ACTIVE);
++		if (rc < 0)
++			return rc;
++		return count;
++	}
 +
- Device enumeration
- ==================
- This section introduces how applications enumerate the fpga device from
++	return -EINVAL;
++}
++
++static SENSOR_DEVICE_ATTR_RO(vendor, ipsps_string, vendor);
++static SENSOR_DEVICE_ATTR_RO(model, ipsps_string, model);
++static SENSOR_DEVICE_ATTR_RO(part_number, ipsps_string, part_number);
++static SENSOR_DEVICE_ATTR_RO(serial_number, ipsps_string, serial_number);
++static SENSOR_DEVICE_ATTR_RO(hw_version, ipsps_string, hw_version);
++static SENSOR_DEVICE_ATTR_RO(fw_version, ipsps_fw_version, fw_version);
++static SENSOR_DEVICE_ATTR_RW(mode, ipsps_mode, mode);
++
++static struct attribute *ipsps_attrs[] = {
++	&sensor_dev_attr_vendor.dev_attr.attr,
++	&sensor_dev_attr_model.dev_attr.attr,
++	&sensor_dev_attr_part_number.dev_attr.attr,
++	&sensor_dev_attr_serial_number.dev_attr.attr,
++	&sensor_dev_attr_hw_version.dev_attr.attr,
++	&sensor_dev_attr_fw_version.dev_attr.attr,
++	&sensor_dev_attr_mode.dev_attr.attr,
++	NULL,
++};
++
++ATTRIBUTE_GROUPS(ipsps);
++
++static struct pmbus_driver_info ipsps_info = {
++	.pages = 1,
++	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
++		PMBUS_HAVE_IIN | PMBUS_HAVE_POUT | PMBUS_HAVE_PIN |
++		PMBUS_HAVE_FAN12 | PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 |
++		PMBUS_HAVE_TEMP3 | PMBUS_HAVE_STATUS_VOUT |
++		PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT |
++		PMBUS_HAVE_STATUS_TEMP | PMBUS_HAVE_STATUS_FAN12,
++	.groups = ipsps_groups,
++};
++
++static struct pmbus_platform_data ipsps_pdata = {
++	.flags = PMBUS_SKIP_STATUS_CHECK,
++};
++
++static int ipsps_probe(struct i2c_client *client,
++		       const struct i2c_device_id *id)
++{
++	client->dev.platform_data = &ipsps_pdata;
++	return pmbus_do_probe(client, id, &ipsps_info);
++}
++
++static const struct i2c_device_id ipsps_id[] = {
++	{ "inspur_ipsps1", 0 },
++	{}
++};
++MODULE_DEVICE_TABLE(i2c, ipsps_id);
++
++static const struct of_device_id ipsps_of_match[] = {
++	{ .compatible = "inspur,ipsps1" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, ipsps_of_match);
++
++static struct i2c_driver ipsps_driver = {
++	.driver = {
++		.name = "inspur-ipsps",
++		.of_match_table = ipsps_of_match,
++	},
++	.probe = ipsps_probe,
++	.remove = pmbus_do_remove,
++	.id_table = ipsps_id,
++};
++
++module_i2c_driver(ipsps_driver);
++
++MODULE_AUTHOR("John Wang");
++MODULE_DESCRIPTION("PMBus driver for Inspur Power System power supplies");
++MODULE_LICENSE("GPL");
 -- 
-1.8.3.1
+2.17.1
 
