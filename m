@@ -2,251 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB1489949
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C38789955
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbfHLJEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 05:04:22 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:17530 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727434AbfHLJEU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 05:04:20 -0400
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7C92vhP010561;
-        Mon, 12 Aug 2019 05:03:58 -0400
-Received: from nam03-co1-obe.outbound.protection.outlook.com (mail-co1nam03lp2059.outbound.protection.outlook.com [104.47.40.59])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2u9qs7vuy3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 12 Aug 2019 05:03:57 -0400
+        id S1727334AbfHLJFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 05:05:43 -0400
+Received: from mail-eopbgr10084.outbound.protection.outlook.com ([40.107.1.84]:53509
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727181AbfHLJFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 05:05:43 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KZ3jBF/SeH+ooSWsepvxbCNhOR3wgCIu2/Mg0ca/GqEJsb2xTUleKN0creI3WHATCuWCqwthaluQVl5MD0/zd20mZADcsSYTPN0l8wTrFwBK6WHPoqD0gvKzMsG+ce0Ar1w4m/gDxPBeJedjCfGHYR98hIHuFa4pL7/g/TnC36JQwz9iHoy+H/LO15Bmc58cGsIwGqZpVZAC1S+xRM0X1XNZdxBW6pxVVpPoXjHAGkGjCe8OPih1o8wNJUM8hT6s3z57BbJ5jn9plB4XfVhtaypYIutkv29+viJLbmQRetbp1NIepgSk/8gfYd7PpkMEcGc8gcwji8YdaVz6Y+r98A==
+ b=cFmpaiDRtPGjKutyllLUgxvMBslQavPLQczVUqBSS1hVq+CmfZSVDrHms6IeJ2/9g2RsGsl0Nt8UGm6I1zg2hVHOysRQPvNB+D9LQDvwEl58q9XaLf31+1c+dnMGaq3QWROyuqB03yQ5Jp8R2p4ybCzI9o8vzjXMlInevU9zVMxMGHc9UO4YYX4tnGzs2vFgUG8aILamfeSm8XDGOkWbo6G14xHHqGJTihKmuPJg2DlrdVXwgRWWBQ7J5mU+n+7cxGQ2wHXf8QJbCYDK7ZOLqfnDed1qfn+JHdmWp0ZboezAukrGWgHY5MTRSNfR7QG0dBi/SeXYzQzuzDNicf6WVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=epHtDMWOJzGG65aGZ+LxWcP6wIzMkYggPWlv2yljkvY=;
- b=CJu0EGo8e2yvtYjMsNHlcHXXYeArVaVi36W5f46f6Oh5yBdyNfMwWLQV+6VIUlDMdDPzUMfdd0u9WKkAETYjyi5TBsFW1j0NqYJ8xHTKPkICuUJqVjJ1na4MtVT5IBJYO1Osc8GRwyGarGgK0ywZLT2ICUXRPS3RsbS9bp0MQxd0fD5y11QUgBuWKZga1p1FudQsR89LT4jouQeDDk2+ykc2nkbuIbwI3m0dwFhPl6SrKDAydeFoNirszpTdYZkKKHlUhYGJkOUpAsX4CygFJExK2gIujn1clvAZMZYIaoMItTqRWYam2nPD7lcsxL7xp2QXPmxJTCGo6tiJVIPJEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=metafoo.de smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ bh=xaKv4UiFyOgemcQmmsOdXQLdo1Si4yTTeYfHSZf9XgQ=;
+ b=E9WhdYqZ2Y7DA8FJHttHEercVAQaLV+FfQGgbOvtkf+1xGhCC80LXgPMA4gIBe52usA/qH3kfZVnEvr20so7zW33szVULNz9GJ3LlHQs8TQToGZCLVE/0nsIoEujsJKpLCZsJwWn30cczExtNino9iQZxqFNzkO+9Vt5Omi6WcSHQ9HU5aXVRwIVZ04V0vIoTa9EEejdqLxihZYA/FyUcSNnEUZ7tYzl3cmGXRKBeugd06pNnC+nsK9QfTlnUpULrm/u3vF8HJOfMNCkY551uUV1eyPLiajczqQPAdCwV2GPmeKvuvOHZjxNBkJYVcj548l2OpLXZ1o15ivShuLW8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=epHtDMWOJzGG65aGZ+LxWcP6wIzMkYggPWlv2yljkvY=;
- b=Bt6/evatCVDSToLbjpzTbLwgdbSn35q96b+c0n16GC4be9ebQEamhKcsrQ6WH6jSaX4qMAxsfZGeatLx1iH4qbQRG5yoOg++4E6RMOM0o1xCBVj5E9eiBj3C9ze2JARRY543zNXApgKHZ3thYIm6934SBbAuUljcmEXeSStfqHk=
-Received: from BN6PR03CA0075.namprd03.prod.outlook.com (2603:10b6:405:6f::13)
- by CY4PR03MB3224.namprd03.prod.outlook.com (2603:10b6:910:51::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.16; Mon, 12 Aug
- 2019 09:03:56 +0000
-Received: from CY1NAM02FT063.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::205) by BN6PR03CA0075.outlook.office365.com
- (2603:10b6:405:6f::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.18 via Frontend
- Transport; Mon, 12 Aug 2019 09:03:55 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- CY1NAM02FT063.mail.protection.outlook.com (10.152.75.161) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2157.15
- via Frontend Transport; Mon, 12 Aug 2019 09:03:53 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x7C93rHb009066
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Mon, 12 Aug 2019 02:03:53 -0700
-Received: from mircea-Latitude-E6540.ad.analog.com (10.48.65.115) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 12 Aug 2019 05:03:52 -0400
-From:   Mircea Caprioru <mircea.caprioru@analog.com>
-To:     <jic23@kernel.org>
-CC:     <Michael.Hennerich@analog.com>, <stefan.popa@analog.com>,
-        <lars@metafoo.de>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
-        Mircea Caprioru <mircea.caprioru@analog.com>
-Subject: [PATCH 4/4] dt-bindings: iio: adc: ad7192: Add binding documentation for AD7192
-Date:   Mon, 12 Aug 2019 12:03:41 +0300
-Message-ID: <20190812090341.27183-4-mircea.caprioru@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190812090341.27183-1-mircea.caprioru@analog.com>
-References: <20190812090341.27183-1-mircea.caprioru@analog.com>
+ bh=xaKv4UiFyOgemcQmmsOdXQLdo1Si4yTTeYfHSZf9XgQ=;
+ b=aPztfcN3uuIdyemXy4Vm7g5DXbh2aWQoEHAHW/20IRigfhCQdv34zXn9yQCpLBOa+QDpo7xhoMsX+1UZH5seqRLYGD6UyO2PzmrKqMO+Kyg8wsZcKKuoLtFsLA6kiiJl+5n5GgptaioUB1jT1z90TxrddjvUnIDA1qcaPB45OqI=
+Received: from DBBPR05MB6283.eurprd05.prod.outlook.com (20.179.40.84) by
+ DBBPR05MB6554.eurprd05.prod.outlook.com (20.179.44.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.20; Mon, 12 Aug 2019 09:04:59 +0000
+Received: from DBBPR05MB6283.eurprd05.prod.outlook.com
+ ([fe80::c5c1:c1d:85e9:a16a]) by DBBPR05MB6283.eurprd05.prod.outlook.com
+ ([fe80::c5c1:c1d:85e9:a16a%6]) with mapi id 15.20.2157.022; Mon, 12 Aug 2019
+ 09:04:59 +0000
+From:   Tariq Toukan <tariqt@mellanox.com>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+CC:     Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:MELLANOX ETHERNET DRIVER (mlx4_en)" 
+        <netdev@vger.kernel.org>,
+        "open list:MELLANOX MLX4 core VPI driver" 
+        <linux-rdma@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net/mlx4_en: fix a memory leak bug
+Thread-Topic: [PATCH] net/mlx4_en: fix a memory leak bug
+Thread-Index: AQHVUNg+K+c1E2gjG02bEtXNUDsXd6b3OFQA
+Date:   Mon, 12 Aug 2019 09:04:59 +0000
+Message-ID: <75e09920-4ae3-0a19-4c2a-112d16bb81a5@mellanox.com>
+References: <1565591765-6461-1-git-send-email-wenwen@cs.uga.edu>
+In-Reply-To: <1565591765-6461-1-git-send-email-wenwen@cs.uga.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: PR0P264CA0174.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:100:1c::18) To DBBPR05MB6283.eurprd05.prod.outlook.com
+ (2603:10a6:10:c1::20)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tariqt@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1a5ed917-807d-4454-05cc-08d71f0426e1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DBBPR05MB6554;
+x-ms-traffictypediagnostic: DBBPR05MB6554:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DBBPR05MB6554E94DDFDEB9B8981A0F44AED30@DBBPR05MB6554.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
+x-forefront-prvs: 012792EC17
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(396003)(366004)(136003)(199004)(189003)(25786009)(2171002)(54906003)(11346002)(446003)(2906002)(476003)(2616005)(52116002)(8676002)(76176011)(53936002)(3846002)(36756003)(6246003)(31686004)(6116002)(186003)(102836004)(6512007)(81156014)(99286004)(4326008)(86362001)(53546011)(386003)(31696002)(6506007)(256004)(14444005)(81166006)(26005)(66476007)(66446008)(64756008)(66556008)(66946007)(5660300002)(6486002)(66066001)(14454004)(6916009)(8936002)(229853002)(71190400001)(71200400001)(7736002)(6436002)(305945005)(316002)(486006)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6554;H:DBBPR05MB6283.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 1vvfTivX0uTIGkC7IFmnkz2JsJFtan30TcsWANDqBn8uf4ccdX0uRIgvaLwF9BmGcRwfD/P2qrkpJWqdFK8B3C6Gmim/bqS/HkmVHSZnMwXotvriusBnBV8oiP9lSETGXw6g1AI16r+YpxkA/Mp3AL6FxqBOqJISPiYLQW018bbhVcnvUp4yGiBoNvCL6FFQbFuWzuyQCvDEnXYoUwCkmPZZMd+Sa/qan441J5qdzQjzDIKaDCS+7kdrtr4ph10KXIP4/MkEZ/YQenW4rC0YW/nbt0VVFVqLowXBc7jDx/+AfE50370Hn+Pon4NMAu5QqQaXBYHjj6HqmkxrDVXnfz+TEQ50ktzYQhk8jIr2/l13lniYxDROO6VLGhJiT9hnSATojfkoOdqDxFKoQOjymwOTBSgMdG8ug/+wxQvrAYM=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2A6B1C4F980D244AB1DD60C0F10AF81E@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="y"
-Content-Transfer-Encoding: 8bit
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(346002)(39860400002)(2970300002)(189003)(199004)(316002)(336012)(11346002)(54906003)(446003)(2616005)(476003)(126002)(486006)(47776003)(426003)(44832011)(76176011)(26005)(2870700001)(2906002)(7696005)(14444005)(2351001)(6916009)(6666004)(186003)(106002)(356004)(5660300002)(70206006)(1076003)(86362001)(70586007)(50466002)(36756003)(305945005)(50226002)(966005)(8936002)(8676002)(6306002)(478600001)(7636002)(246002)(107886003)(53376002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB3224;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:3;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d48206e3-57a1-4441-6da4-08d71f04006b
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:CY4PR03MB3224;
-X-MS-TrafficTypeDiagnostic: CY4PR03MB3224:
-X-MS-Exchange-PUrlCount: 3
-X-Microsoft-Antispam-PRVS: <CY4PR03MB3224FF5A104178FF69CDE68581D30@CY4PR03MB3224.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-Forefront-PRVS: 012792EC17
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: +JnEVWgfKOO0zsdHn11+dchXHOoV73CV0l5x3fArvdsRXXjq9d/zVaHb3th+b7+JJr7T8oJia3YYceB2F6SGpiuAz62eS+jB7v3yDJSoimSXgYG0tv7QpIFk0e2kN2oICSTiBpSafqF2maMI4FbJzftrvylAHDvgKf9GGuq9Zh1deLfLhZHjExR/btpvKmhwaAi+tc6/3wh0hk1d0O6MNnIRzzGbumju997cS/PvZJ1p7ES2W5JyXJCzOGK4nqBaXOUi+aAfSSHurI4uBEaTXb69NPWa+5wavzCBlQPglxORt9SIGAaahWKkvZFoysmB9y7RZ/0nImVC4p1iPFuxQxNXkRe5Y3A59EHidbSNd/oYMx4r9ivY1jIN88F3cmxMUIdsrauUo9dxAP/iSyMIYJeimh1uR559fjwZYGFFj5w=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2019 09:03:53.8881
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a5ed917-807d-4454-05cc-08d71f0426e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 09:04:59.2144
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d48206e3-57a1-4441-6da4-08d71f04006b
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB3224
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908120102
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CBNUJPbCJSr1TBbko808d2mW2ELgjCQgyLDSnnOfq/0jrL6OuUk48PWTntDR87RECw8jPDnFqZo5c8D1onZ+EA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6554
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add device tree binding documentation for AD7192 adc in YAML
-format.
-
-Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
----
- .../bindings/iio/adc/adi,ad7192.yaml          | 123 ++++++++++++++++++
- 1 file changed, 123 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-new file mode 100644
-index 000000000000..a56ee391f6a8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-@@ -0,0 +1,123 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright 2019 Analog Devices Inc.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bindings/iio/adc/adi,ad7192.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices AD7192 ADC device driver
-+
-+maintainers:
-+  - Michael Hennerich <michael.hennerich@analog.com>
-+
-+description: |
-+  Bindings for the Analog Devices AD7192 ADC device. Datasheet can be
-+  found here:
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/AD7192.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ad7190
-+      - adi,ad7192
-+      - adi,ad7193
-+      - adi,ad7195
-+
-+  reg:
-+    description: SPI chip select number for the device
-+    maxItems: 1
-+
-+  spi-cpol: true
-+
-+  spi-cpha: true
-+
-+  clocks:
-+    maxItems: 1
-+    description: phandle to the master clock (mclk)
-+
-+  clock-names:
-+    items:
-+      - const: mclk
-+
-+  interrupts:
-+    description: IRQ line for the ADC
-+    maxItems: 1
-+
-+  dvdd-supply:
-+    description: DVdd voltage supply
-+    items:
-+      - const: dvdd
-+
-+  avdd-supply:
-+    description: AVdd voltage supply
-+    items:
-+      - const: avdd
-+
-+  adi,rejection-60-Hz-enable:
-+    description: |
-+      This bit enables a notch at 60 Hz when the first notch of the sinc
-+      filter is at 50 Hz. When REJ60 is set, a filter notch is placed at
-+      60 Hz when the sinc filter first notch is at 50 Hz. This allows
-+      simultaneous 50 Hz/ 60 Hz rejection.
-+    type: boolean
-+
-+  adi,refin2-pins-enable:
-+    description: |
-+      External reference applied between the P1/REFIN2(+) and P0/REFIN2(−) pins.
-+    type: boolean
-+
-+  adi,buffer-enable:
-+    description: |
-+      Enables the buffer on the analog inputs. If cleared, the analog inputs
-+      are unbuffered, lowering the power consumption of the device. If this
-+      bit is set, the analog inputs are buffered, allowing the user to place
-+      source impedances on the front end without contributing gain errors to
-+      the system.
-+    type: boolean
-+
-+  adi,burnout-currents-enable:
-+    description: |
-+      When this bit is set to 1, the 500 nA current sources in the signal
-+      path are enabled. When BURN = 0, the burnout currents are disabled.
-+      The burnout currents can be enabled only when the buffer is active
-+      and when chop is disabled.
-+    type: boolean
-+
-+  bipolar:
-+    description: see Documentation/devicetree/bindings/iio/adc/adc.txt
-+    type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - dvdd-supply
-+  - avdd-supply
-+  - spi-cpol
-+  - spi-cpha
-+
-+examples:
-+  - |
-+    spi0 {
-+      ad7192@0 {
-+        compatible = "adi,ad7192";
-+        reg = <0>;
-+        spi-max-frequency = <1000000>;
-+        spi-cpol;
-+        spi-cpha;
-+        clocks = <&ad7192_mclk>;
-+        clock-names = "mclk";
-+        #interrupt-cells = <2>;
-+        interrupts = <25 0x2>;
-+        interrupt-parent = <&gpio>;
-+        dvdd-supply = <&dvdd>;
-+        avdd-supply = <&avdd>;
-+
-+        adi,refin2-pins-enable;
-+        adi,rejection-60-Hz-enable;
-+        adi,buffer-enable;
-+        adi,burnout-currents-enable;
-+        };
-+    }
--- 
-2.17.1
-
+SGkgV2Vud2VuLA0KDQpUaGFua3MgZm9yIHlvdXIgcGF0Y2guDQoNCk9uIDgvMTIvMjAxOSA5OjM2
+IEFNLCBXZW53ZW4gV2FuZyB3cm90ZToNCj4gSW4gbWx4NF9lbl9jb25maWdfcnNzX3N0ZWVyKCks
+ICdyc3NfbWFwLT5pbmRpcl9xcCcgaXMgYWxsb2NhdGVkIHRocm91Z2gNCj4ga3phbGxvYygpLiBB
+ZnRlciB0aGF0LCBtbHg0X3FwX2FsbG9jKCkgaXMgaW52b2tlZCB0byBjb25maWd1cmUgUlNTDQo+
+IGluZGlyZWN0aW9uLiBIb3dldmVyLCBpZiBtbHg0X3FwX2FsbG9jKCkgZmFpbHMsIHRoZSBhbGxv
+Y2F0ZWQNCj4gJ3Jzc19tYXAtPmluZGlyX3FwJyBpcyBub3QgZGVhbGxvY2F0ZWQsIGxlYWRpbmcg
+dG8gYSBtZW1vcnkgbGVhayBidWcuDQo+IA0KPiBUbyBmaXggdGhlIGFib3ZlIGlzc3VlLCBhZGQg
+dGhlICdtbHg0X2VycicgbGFiZWwgdG8gZnJlZQ0KPiAncnNzX21hcC0+aW5kaXJfcXAnLg0KPiAN
+Cg0KQWRkIGEgRml4ZXMgbGluZS4NCg0KPiBTaWduZWQtb2ZmLWJ5OiBXZW53ZW4gV2FuZyA8d2Vu
+d2VuQGNzLnVnYS5lZHU+ID4gLS0tDQo+ICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gv
+bWx4NC9lbl9yeC5jIHwgMyArKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
+LCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQv
+bWVsbGFub3gvbWx4NC9lbl9yeC5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4
+NC9lbl9yeC5jDQo+IGluZGV4IDZjMDEzMTQuLjk0NzZkYmQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
+cnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDQvZW5fcnguYw0KPiArKysgYi9kcml2ZXJzL25l
+dC9ldGhlcm5ldC9tZWxsYW5veC9tbHg0L2VuX3J4LmMNCj4gQEAgLTExODcsNyArMTE4Nyw3IEBA
+IGludCBtbHg0X2VuX2NvbmZpZ19yc3Nfc3RlZXIoc3RydWN0IG1seDRfZW5fcHJpdiAqcHJpdikN
+Cj4gICAJZXJyID0gbWx4NF9xcF9hbGxvYyhtZGV2LT5kZXYsIHByaXYtPmJhc2VfcXBuLCByc3Nf
+bWFwLT5pbmRpcl9xcCk7DQo+ICAgCWlmIChlcnIpIHsNCj4gICAJCWVuX2Vycihwcml2LCAiRmFp
+bGVkIHRvIGFsbG9jYXRlIFJTUyBpbmRpcmVjdGlvbiBRUFxuIik7DQo+IC0JCWdvdG8gcnNzX2Vy
+cjsNCj4gKwkJZ290byBtbHg0X2VycjsNCj4gICAJfQ0KPiAgIA0KPiAgIAlyc3NfbWFwLT5pbmRp
+cl9xcC0+ZXZlbnQgPSBtbHg0X2VuX3NxcF9ldmVudDsNCj4gQEAgLTEyNDEsNiArMTI0MSw3IEBA
+IGludCBtbHg0X2VuX2NvbmZpZ19yc3Nfc3RlZXIoc3RydWN0IG1seDRfZW5fcHJpdiAqcHJpdikN
+Cj4gICAJCSAgICAgICBNTFg0X1FQX1NUQVRFX1JTVCwgTlVMTCwgMCwgMCwgcnNzX21hcC0+aW5k
+aXJfcXApOw0KPiAgIAltbHg0X3FwX3JlbW92ZShtZGV2LT5kZXYsIHJzc19tYXAtPmluZGlyX3Fw
+KTsNCj4gICAJbWx4NF9xcF9mcmVlKG1kZXYtPmRldiwgcnNzX21hcC0+aW5kaXJfcXApOw0KPiAr
+bWx4NF9lcnI6DQoNCkkgZG9uJ3QgbGlrZSB0aGUgbGFiZWwgbmFtZS4gSXQncyB0b28gZ2VuZXJh
+bCBhbmQgbm90IGluZm9ybWF0aXZlLg0KTWF5YmUgcXBfYWxsb2NfZXJyPw0KDQo+ICAgCWtmcmVl
+KHJzc19tYXAtPmluZGlyX3FwKTsNCj4gICAJcnNzX21hcC0+aW5kaXJfcXAgPSBOVUxMOw0KPiAg
+IHJzc19lcnI6DQo+IA0K
