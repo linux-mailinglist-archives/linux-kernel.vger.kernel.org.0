@@ -2,63 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B4E897F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 09:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A580897FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 09:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfHLHhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 03:37:43 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54842 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfHLHhm (ORCPT
+        id S1726694AbfHLHj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 03:39:29 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52315 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfHLHj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 03:37:42 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p74so11211209wme.4
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 00:37:41 -0700 (PDT)
+        Mon, 12 Aug 2019 03:39:28 -0400
+Received: by mail-wm1-f68.google.com with SMTP id s3so11223733wms.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 00:39:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=R1Be8onIeze9fs+7n3+/PpSy9/BtgjJpnC6Vyn42sUg=;
-        b=GcYFmOnFusv3pzYSHDeHRfSifYRIiQ5M0sh9Q379q5WLzcuPw+CyFod55Tb1tJYSfH
-         jrEDJxlOKgJc3ii8u4Mi8XyHKcHtQ7Sb8xykhjznT2KgkxCNZTbJkbsWrfe/FzbtTzMK
-         D2sAEHhjedRpH0Nd41ejwL8sGGYzu+QU3dfvyNIss+NMyyTLLs7rt5CIKZFYdVQlcOey
-         rKyG1SBQLz1cUGEGxGmKDgeiCQIoBhLp2eTxIkKVjk+8feijP+cHb+Fwh/PFstIOQoZN
-         U7yofqZjAt+Htg+5oNpKL94aMO3K8RNgMhDkU2xMZxSOi2cYgB2xlwn4zCL6OAcDOX0a
-         YJWw==
+        bh=M13tLMxCexcc8Z1uqfW6aAj4BpGJ9ZJbzcQPVQwL51o=;
+        b=W5kHaBH5ar5neih6e2V4kFpagCZINwjYVGEKK4Bqxuo9Ch5k8VnxdzthNOQ1kCwJgc
+         hfi0Qwyh/0b/ZgitbpGSibu0fJysjhL0nBEZPZHfwukaCuYsGXye9WX1ZIiu6hP09QsK
+         HMPX1mC+ibxRs37XnZnsU8NMnNjTW+36c96SQzlUnA+I6EYyhgdvqlBL3SQYJ9h9syWF
+         v+51aQzC3gLTR6bW4pYHoT6E9lyy/JVVLRqxwZJrGIplwGTvGfRbxGUDVTYHSxYZ/PC1
+         2vC6FbftV21+EwXRn30E0nmGX0qQIJVTLptRbvzNt+tM+KSuFAAf08ThidsG6yd/s1tL
+         oSgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=R1Be8onIeze9fs+7n3+/PpSy9/BtgjJpnC6Vyn42sUg=;
-        b=qb8SVJOITKs8RJ52duBM1uMp2uvbG0aG7w5qtxyOjGEqtvyclC7V2s2+Yo6ikrJ1OL
-         wI3Q/ktuFWNeW/eBA8H/cXC6TCZDj3VdvGJGsxIJHaKCaj/OmzRFoPMQDa3mLmLDWCKM
-         a3F3tiwavv+lm86Z3YQQUsyXEuKoirtqimYfq79zJldGne7rBGYE3GiXWl28mS50LczM
-         hEgZZD69ZpnUFhrvVLcoNj4ak1nDrBFQbG5pWCVUkM2JiWhUKkbl66uQk/HhFERO9TSI
-         ElBHVhhkAg5pu/5BRlmjz8iyXgOn5uMphRiod/eZ3z+jm39qS2XI3t2QZgodYRPDOpyw
-         8S+g==
-X-Gm-Message-State: APjAAAXscSFTaUqBBvjgIu43U/o/ZNQTGmoBFXdfvBUSWHrIl7kNtHjB
-        2btKRLpIZTnIfDod52I4Rydwlw==
-X-Google-Smtp-Source: APXvYqyzEw8ku2htf6irDObh2g/4qIFq1aLn5f8fIpvd4e6FGw4qI9x7R+jtgWQvPv3rN1ZGlGlvAw==
-X-Received: by 2002:a7b:c952:: with SMTP id i18mr11322397wml.44.1565595461020;
-        Mon, 12 Aug 2019 00:37:41 -0700 (PDT)
+        bh=M13tLMxCexcc8Z1uqfW6aAj4BpGJ9ZJbzcQPVQwL51o=;
+        b=Vk6ffKCnpF8G+k+E3JGUFYlfoTRv3DYBmqnZtQYdU4DoiUWwmhDcgD9LhYs7r5F5hT
+         Hha7D0ueysGpVHRt6CE1/wugdxNp/N6i/JC0ou5EaWwbFV4gLh6bvi2U2NzFAPsVRem9
+         QZEPzZDRVogdYjhCy6WY87IfAAt4x5BP/5Wp4M4q3HHMrkDqkD8u5ncJk+K1Xrvusm+T
+         ayhf8skmfAzql+p1UcF2fEHNTvRiQQy+THtghg8mmT8oK2+ohvpJTFrZYhIQYxs87BFf
+         zUTr8rQnCccWpauZqCHE0eK4HFawwvK+fxNax6wSoVH3fWquYnLS3KiXlt+utzMKmfzg
+         RQPQ==
+X-Gm-Message-State: APjAAAUP9W5yrNAjlEfLT7K16DyCeJfFD2ELO+A0LQfwgRzmSXtlDny3
+        IMSkDcJX3WBTnPppfIzOvimWQw==
+X-Google-Smtp-Source: APXvYqyGqn5ITtulwW9kTlid+OHGP9VuUkCGhXl/QBcHYrK9vTHNB4YheHPMWezSiIlzH2x6xBegVQ==
+X-Received: by 2002:a1c:c1cd:: with SMTP id r196mr12621147wmf.127.1565595566948;
+        Mon, 12 Aug 2019 00:39:26 -0700 (PDT)
 Received: from dell ([2.27.35.255])
-        by smtp.gmail.com with ESMTPSA id a142sm10839483wme.2.2019.08.12.00.37.40
+        by smtp.gmail.com with ESMTPSA id c12sm3076016wrx.46.2019.08.12.00.39.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 00:37:40 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 08:37:38 +0100
+        Mon, 12 Aug 2019 00:39:26 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 08:39:25 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: tps80031: convert to devm_i2c_new_dummy_device
-Message-ID: <20190812073738.GP4594@dell>
-References: <20190722172636.4589-1-wsa+renesas@sang-engineering.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Support Opensource <support.opensource@diasemi.com>
+Subject: Re: [PATCH] mfd: da9063: remove now unused platform_data
+Message-ID: <20190812073925.GQ4594@dell>
+References: <20190722182628.7533-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190722172636.4589-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190722182628.7533-1-wsa+renesas@sang-engineering.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -67,18 +68,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 22 Jul 2019, Wolfram Sang wrote:
 
-> Move from i2c_new_dummy() to devm_i2c_new_dummy_device(). So, we now get
-> an ERRPTR which we use in error handling and we can skip removal of the
-> created devices.
-> 
+> All preparational patches have been applied, we can now remove the
+> include file for platform_data. Yiha!
+
+Hiya,
+
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
-> 
-> Only build tested. Part of a tree-wide move to deprecate
-> i2c_new_dummy().
-> 
->  drivers/mfd/tps80031.c | 23 ++++++++---------------
->  1 file changed, 8 insertions(+), 15 deletions(-)
+>  include/Kbuild                   |  1 -
+>  include/linux/mfd/da9063/pdata.h | 60 --------------------------------
+>  2 files changed, 61 deletions(-)
+>  delete mode 100644 include/linux/mfd/da9063/pdata.h
 
 Applied, thanks.
 
