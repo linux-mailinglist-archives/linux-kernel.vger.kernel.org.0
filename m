@@ -2,102 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8128489872
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:09:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F00189860
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:03:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfHLIJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:09:50 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4232 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726528AbfHLIJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:09:50 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7551D3381FFC3A810CA8;
-        Mon, 12 Aug 2019 16:09:21 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Mon, 12 Aug 2019
- 16:09:14 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <marcel@holtmann.org>, <johan.hedberg@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] Bluetooth: hci_bcm: Fix -Wunused-const-variable warnings
-Date:   Mon, 12 Aug 2019 14:22:11 +0800
-Message-ID: <20190812062211.69984-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727012AbfHLIDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 04:03:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:13190 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726834AbfHLIDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 04:03:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 01:03:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,376,1559545200"; 
+   d="scan'208";a="180776919"
+Received: from unknown (HELO [10.239.196.241]) ([10.239.196.241])
+  by orsmga006.jf.intel.com with ESMTP; 12 Aug 2019 01:03:16 -0700
+Subject: Re: [PATCH] acpi/hmat: ACPI_HMAT_MEMORY_PD_VALID is deprecated in
+ ACPI-6.3
+To:     Daniel Black <daniel@linux.ibm.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        "open list:ACPI" <linux-acpi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190806042440.16445-1-daniel@linux.ibm.com>
+From:   Tao Xu <tao3.xu@intel.com>
+Message-ID: <67031b1d-5785-330d-ddd8-b862799e6f18@intel.com>
+Date:   Mon, 12 Aug 2019 16:03:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190806042440.16445-1-daniel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_ACPI is not set, gcc warn this:
+On 8/6/2019 12:24 PM, Daniel Black wrote:
+> ACPI-6.3 corresponds to when hmat revision was bumped from
+> 1 to 2. In this version ACPI_HMAT_MEMORY_PD_VALID was
+> deprecated and made reserved.
+> 
+> As such in revision 2+ we shouldn't be testing this flag.
+> 
+> This is as per ACPI-6.3, 5.2.27.3, Table 5-145
+> "Memory Proximity Domain Attributes Structure"
+> for Flags.
 
-drivers/bluetooth/hci_bcm.c:831:39: warning:
- acpi_bcm_int_last_gpios defined but not used [-Wunused-const-variable=]
-drivers/bluetooth/hci_bcm.c:838:39: warning:
- acpi_bcm_int_first_gpios defined but not used [-Wunused-const-variable=]
+Looks good to me.
 
-move them to #ifdef CONFIG_ACPI block.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/bluetooth/hci_bcm.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index ae2624f..4d9de20 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -824,6 +824,21 @@ static int bcm_resume(struct device *dev)
- }
- #endif
- 
-+/* Some firmware reports an IRQ which does not work (wrong pin in fw table?) */
-+static const struct dmi_system_id bcm_broken_irq_dmi_table[] = {
-+	{
-+		.ident = "Meegopad T08",
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_BOARD_VENDOR,
-+					"To be filled by OEM."),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "T3 MRD"),
-+			DMI_EXACT_MATCH(DMI_BOARD_VERSION, "V1.1"),
-+		},
-+	},
-+	{ }
-+};
-+
-+#ifdef CONFIG_ACPI
- static const struct acpi_gpio_params first_gpio = { 0, 0, false };
- static const struct acpi_gpio_params second_gpio = { 1, 0, false };
- static const struct acpi_gpio_params third_gpio = { 2, 0, false };
-@@ -842,21 +857,6 @@ static const struct acpi_gpio_mapping acpi_bcm_int_first_gpios[] = {
- 	{ },
- };
- 
--/* Some firmware reports an IRQ which does not work (wrong pin in fw table?) */
--static const struct dmi_system_id bcm_broken_irq_dmi_table[] = {
--	{
--		.ident = "Meegopad T08",
--		.matches = {
--			DMI_EXACT_MATCH(DMI_BOARD_VENDOR,
--					"To be filled by OEM."),
--			DMI_EXACT_MATCH(DMI_BOARD_NAME, "T3 MRD"),
--			DMI_EXACT_MATCH(DMI_BOARD_VERSION, "V1.1"),
--		},
--	},
--	{ }
--};
--
--#ifdef CONFIG_ACPI
- static int bcm_resource(struct acpi_resource *ares, void *data)
- {
- 	struct bcm_device *dev = data;
--- 
-2.7.4
-
+Reviewed-by: Tao Xu <tao3.xu@intel.com>
+> 
+> Signed-off-by: Daniel Black <daniel@linux.ibm.com>
+> ---
+>   drivers/acpi/hmat/hmat.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
+> index 96b7d39a97c6..e938e34673d9 100644
+> --- a/drivers/acpi/hmat/hmat.c
+> +++ b/drivers/acpi/hmat/hmat.c
+> @@ -382,7 +382,7 @@ static int __init hmat_parse_proximity_domain(union acpi_subtable_headers *heade
+>   		pr_info("HMAT: Memory Flags:%04x Processor Domain:%d Memory Domain:%d\n",
+>   			p->flags, p->processor_PD, p->memory_PD);
+>   
+> -	if (p->flags & ACPI_HMAT_MEMORY_PD_VALID) {
+> +	if (p->flags & ACPI_HMAT_MEMORY_PD_VALID && hmat_revision == 1) {
+>   		target = find_mem_target(p->memory_PD);
+>   		if (!target) {
+>   			pr_debug("HMAT: Memory Domain missing from SRAT\n");
+> 
 
