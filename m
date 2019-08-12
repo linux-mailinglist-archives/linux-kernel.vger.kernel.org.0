@@ -2,154 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBB8A8AAA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 00:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6611B8AAAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 00:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfHLWl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 18:41:26 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36316 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbfHLWl0 (ORCPT
+        id S1727196AbfHLWmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 18:42:55 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37344 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726993AbfHLWmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 18:41:26 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r7so50430124pfl.3;
-        Mon, 12 Aug 2019 15:41:25 -0700 (PDT)
+        Mon, 12 Aug 2019 18:42:55 -0400
+Received: by mail-ed1-f66.google.com with SMTP id f22so2417798edt.4;
+        Mon, 12 Aug 2019 15:42:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CMz7i9qw+sOH5k0dxWaG58ILkYNVc1L40HPXdZwUwoY=;
-        b=JT6Sj7wj9J0P2CanFSptW2tpxN5c3aNuFz/bFRJLsCNHmLBzMnOOxQ3GkBD4Fg4v+z
-         7TcWjaZyQJ1D/adzvGa/s1MMKgL4Bv7O+FKDnhVrcPXxd5if9NyyXG9bL783ozjA/8mm
-         IocUptMXLMRoto3PE6yiIOkXM02tI+ocGOypfqgRT6JSe4kFQJtiSzRXrZIjP4tRCl+V
-         +nOvEgM5u5OjdEL9GxKhVKUDAGQNHysc9NMJddkttfzkwGn9ICs4MbNoZpax+I7DO1xp
-         7Dx8HmJ6JxRZZMOskxW8hXC7BkpXYFAd4X4D+zIxB7wkvJasKByrORCuEwl3aDAAU6B3
-         oUNA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QUBJRxxlBoKDOtPGvaYl0LzRCrQs93fgZbNJb9pzsVM=;
+        b=HutFIDTYL6kWqcxuk2ZOU+gDDGZ7sptzDfhcTBXelsnOypyUhBliP1BKGfVK7K/eXX
+         u7gD3mE7UrrKY7GXmP3Prr8gL2QbxVVfTn3BCFRHqVwcrMk6icYvKuK6APeWtNBAEzR+
+         UlkVljHdlauattZbAVzeKEUrxcxN9QcqLTcxBDukDv6wivnIF8kzo+zNkxm/zfcqI0ww
+         ocsROxYgoun1TnHNxNeC7BkLBFQCE12jt7i3SchntHdfDUDRcxj0KA0P1nSiDyd6vVEb
+         hqkry+jMlDulUzlMkdKCseTmoWHKWzFvyMCLTp0BCGOR/5tPkeGsuZfcLWewMJhdjCuB
+         D35g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CMz7i9qw+sOH5k0dxWaG58ILkYNVc1L40HPXdZwUwoY=;
-        b=bE2wKTHoFNJ75veHtnp4Ap2Wgu3p2/RxHWu/ubHu9dgGMORLv5gmAirkGrSurwTzXP
-         VtYcChu2Wa6E4sj4W4S+JRAAo/a1wSJpzIO2bPqiVteBr5IU9aL3ojyDpkqI26WAtN1i
-         oY9tFT4MHurxVK+ohK3G8hTszBYADLw3JWkLoLp9OuIzRkubkTqXsVgOSbtgL1aj1tWb
-         n/PuxIrubDea8IEkTmctl5iW3MS8ScKpuI9cKpPWVdTU4qYhFgHjK4B4NF7UcPUqM2xe
-         AviablnpZyV6RbURDRIyJ/i2krqhVQezFwO2evhUHguDchIlL5xBi15RU8mycayUojOV
-         cuRg==
-X-Gm-Message-State: APjAAAWQSClc4Ql4AiJ1jvYd1hcR4RxCBXrBxOLZSDZSW3Vmpmljz4aR
-        YFVeJqC36a5I7j6o4+DHWlU=
-X-Google-Smtp-Source: APXvYqzPGgD8yq7ImIrKtk8x8BMHHumX1bpuHOOoNv6ukNJWAzfAaf/wxd88FUW1vPOkDz2Vcn4bKA==
-X-Received: by 2002:a63:3ec7:: with SMTP id l190mr32754296pga.334.1565649685155;
-        Mon, 12 Aug 2019 15:41:25 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id w1sm584147pjt.30.2019.08.12.15.41.24
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QUBJRxxlBoKDOtPGvaYl0LzRCrQs93fgZbNJb9pzsVM=;
+        b=UAaM+tDZQDvtyoBnbHIN42z3Ok7kx4iPlmDoHMyZyJk2ZXJXxjfXY5eNkWQCANFoCl
+         e0QiSbA1nhATdV0WDiiBWWdnIoYv8wQDleOFt1iuNAiNRmuyXWoaNSqg6jRipi5WZbZ9
+         PNQa1n+t8PLABEu+ufIDpAUVjc1pNbT+2xmWJOtvrKR6hWj0TsFLIP2Ey1XDQ3GPXsE6
+         JVOKbUQm9BHGARigN5FnpNUBc6X1CSTuIUCaqsvVCCwkAmUxfO/LunloRF4+7RB5DcrS
+         2vh5w/J/JRmiWCDOe9uvls8kQhsFRnUkWSiSHINFf24YSafDZpWWg4uQApicmPoS/JEr
+         +2Jw==
+X-Gm-Message-State: APjAAAVWzUVonBgHdSvDCXrPjQbf1gNtszaNfcsVsElr5AaiV81LhupX
+        WesGEwpo2tzHofoBSh7oXCMscYhTtKoH+g==
+X-Google-Smtp-Source: APXvYqyiLsbdP8VKcYz03FlnTneDzOyiHyRZD/jSMbxNrgMsudDeBN5ao3nvCdNwNsL7PQl5cblO0Q==
+X-Received: by 2002:a05:6402:1244:: with SMTP id l4mr115209edw.117.1565649773120;
+        Mon, 12 Aug 2019 15:42:53 -0700 (PDT)
+Received: from tazik.netherland ([188.187.106.181])
+        by smtp.gmail.com with ESMTPSA id z9sm3202067edd.18.2019.08.12.15.42.52
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 15:41:24 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, vdumpa@nvidia.com
-Subject: [PATCH] mmc: tegra: Implement enable_dma() to set dma_mask
-Date:   Mon, 12 Aug 2019 15:42:17 -0700
-Message-Id: <20190812224217.12423-1-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 12 Aug 2019 15:42:53 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 01:42:42 +0300
+From:   Vanya Lazeev <ivan.lazeev@gmail.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Fix fTPM on AMD Zen+ CPUs
+Message-ID: <20190812224242.GA3865@tazik.netherland>
+References: <20190811185218.16893-1-ivan.lazeev@gmail.com>
+ <20190812131003.GF24457@ziepe.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812131003.GF24457@ziepe.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 68481a7e1c84 ("mmc: tegra: Mark 64 bit dma broken on Tegra186")
-added a SDHCI_QUIRK2_BROKEN_64_BIT_DMA flag to let sdhci core fallback
-to 32-bit DMA so as to fit the 40-bit addressing on Tegra186. However,
-there's a common way, being mentioned in sdhci.c file, to set dma_mask
-via enable_dma() callback in the device driver directly.
+On Mon, Aug 12, 2019 at 10:10:03AM -0300, Jason Gunthorpe wrote:
+> On Sun, Aug 11, 2019 at 09:52:18PM +0300, ivan.lazeev@gmail.com wrote:
+> > From: Vanya Lazeev <ivan.lazeev@gmail.com>
+> > 
+> > The patch is an attempt to make fTPM on AMD Zen CPUs work.
+> > Bug link: https://bugzilla.kernel.org/show_bug.cgi?id=195657
+> > 
+> > The problem seems to be that tpm_crb driver doesn't expect tpm command
+> > and response memory regions to belong to different ACPI resources.
+> > 
+> > Tested on Asrock ITX motherboard with Ryzen 2600X CPU.
+> > However, I don't have any other hardware to test the changes on and no
+> > expertise to be sure that other TPMs won't break as a result.
+> > Hopefully, the patch will be useful.
+> > 
+> > Changes from v1:
+> > - use list_for_each_safe
+> > 
+> > Signed-off-by: Vanya Lazeev <ivan.lazeev@gmail.com>
+> >  drivers/char/tpm/tpm_crb.c | 146 ++++++++++++++++++++++++++++---------
+> >  1 file changed, 110 insertions(+), 36 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> > index e59f1f91d..b0e797464 100644
+> > +++ b/drivers/char/tpm/tpm_crb.c
+> > @@ -91,7 +91,6 @@ enum crb_status {
+> >  struct crb_priv {
+> >  	u32 sm;
+> >  	const char *hid;
+> > -	void __iomem *iobase;
+> >  	struct crb_regs_head __iomem *regs_h;
+> >  	struct crb_regs_tail __iomem *regs_t;
+> >  	u8 __iomem *cmd;
+> > @@ -108,6 +107,13 @@ struct tpm2_crb_smc {
+> >  	u32 smc_func_id;
+> >  };
+> >  
+> > +struct crb_resource {
+> > +	struct resource io_res;
+> > +	void __iomem *iobase;
+> > +
+> > +	struct list_head link;
+> > +};
+> > +
+> >  static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+> >  				unsigned long timeout)
+> >  {
+> > @@ -432,23 +438,69 @@ static const struct tpm_class_ops tpm_crb = {
+> >  	.req_complete_val = CRB_DRV_STS_COMPLETE,
+> >  };
+> >  
+> > +static void crb_free_resource_list(struct list_head *resources)
+> > +{
+> > +	struct list_head *position, *tmp;
+> > +
+> > +	list_for_each_safe(position, tmp, resources)
+> > +		kfree(list_entry(position, struct crb_resource, link));
+> > +}
+> > +
+> > +/**
+> > + * Checks if resource @io_res contains range with the specified @start and @size
+> > + * completely or, when @strict is false, at least it's beginning.
+> > + * Non-strict match is needed to work around broken BIOSes that return
+> > + * inconsistent values from ACPI regions vs registers.
+> > + */
+> > +static inline bool crb_resource_contains(const struct resource *io_res,
+> > +					 u64 start, u32 size, bool strict)
+> > +{
+> > +	return start >= io_res->start &&
+> > +		(start + size - 1 <= io_res->end ||
+> > +		 (!strict && start <= io_res->end));
+> > +}
+> > +
+> > +static struct crb_resource *crb_containing_resource(
+> > +		const struct list_head *resources,
+> > +		u64 start, u32 size, bool strict)
+> > +{
+> > +	struct list_head *pos;
+> > +
+> > +	list_for_each(pos, resources) {
+> > +		struct crb_resource *cres;
+> > +
+> > +		cres = list_entry(pos, struct crb_resource, link);
+> > +		if (crb_resource_contains(&cres->io_res, start, size, strict))
+> > +			return cres;
+> > +	}
+> > +
+> > +	return NULL;
+> > +}
+> 
+> This flow seems very strange, why isn't this part of crb_map_res?
+> 
 
-So this patch implements an enable_dma() callback in the sdhci-tegra,
-in order to set an accurate DMA_BIT_MASK, other than 32-bit or 64-bit.
+fTPM on Zen+ not only needs multiple mappings, it can also return
+inconsistent with ACPI values for range sizes (as for me and
+mikajhe from the bug thread), so results of crb_containing_resource 
+are also used to fix the inconsistencies with crb_fixup_cmd_size.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/mmc/host/sdhci-tegra.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+> >  static int crb_check_resource(struct acpi_resource *ares, void *data)
+> >  {
+> > -	struct resource *io_res = data;
+> > +	struct list_head *list = data;
+> > +	struct crb_resource *cres;
+> >  	struct resource_win win;
+> >  	struct resource *res = &(win.res);
+> >  
+> >  	if (acpi_dev_resource_memory(ares, res) ||
+> >  	    acpi_dev_resource_address_space(ares, &win)) {
+> > -		*io_res = *res;
+> > -		io_res->name = NULL;
+> > +		cres = kzalloc(sizeof(*cres), GFP_KERNEL);
+> > +		if (!cres)
+> > +			return -ENOMEM;
+> > +
+> > +		cres->io_res = *res;
+> > +		cres->io_res.name = NULL;
+> > +
+> > +		list_add_tail(&cres->link, list);
+> 
+> And why is this allocating memory inside the acpi table walker? It
+> seems to me like the memory should be allocated once the mapping is
+> made.
+> 
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index f4d4761cf20a..23289adb78d6 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -16,6 +16,7 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
-+#include <linux/dma-mapping.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
-@@ -104,6 +105,7 @@
- 
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
-+	u64 dma_bit_mask;
- 	u32 nvquirks;
- 	u8 min_tap_delay;
- 	u8 max_tap_delay;
-@@ -749,6 +751,19 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
- 	}
- }
- 
-+static int tegra_sdhci_enable_dma(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-+	struct device *dev = mmc_dev(host->mmc);
-+
-+	if (soc_data->dma_bit_mask)
-+		return dma_set_mask_and_coherent(dev, soc_data->dma_bit_mask);
-+
-+	return 0;
-+}
-+
- static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -1370,6 +1385,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
- 	.set_bus_width = sdhci_set_bus_width,
-+	.enable_dma = tegra_sdhci_enable_dma,
- 	.reset      = tegra_sdhci_reset,
- 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
- 	.voltage_switch = tegra_sdhci_voltage_switch,
-@@ -1384,20 +1400,13 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
--		   /* SDHCI controllers on Tegra186 support 40-bit addressing.
--		    * IOVA addresses are 48-bit wide on Tegra186.
--		    * With 64-bit dma mask used for SDHCI, accesses can
--		    * be broken. Disable 64-bit dma, which would fall back
--		    * to 32-bit dma mask. Ideally 40-bit dma mask would work,
--		    * But it is not supported as of now.
--		    */
--		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops  = &tegra186_sdhci_ops,
- };
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
- 	.pdata = &sdhci_tegra186_pdata,
-+	.dma_bit_mask = DMA_BIT_MASK(40),
- 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
- 		    NVQUIRK_HAS_PADCALIB |
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
-@@ -1410,6 +1419,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra194 = {
- 	.pdata = &sdhci_tegra186_pdata,
-+	.dma_bit_mask = DMA_BIT_MASK(39),
- 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
- 		    NVQUIRK_HAS_PADCALIB |
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
--- 
-2.17.1
+Yes, this looks bad. Letting the walker build the list and then using
+it is, probably, a better idea.
 
+> Maybe all the mappings should be created from the ACPI ranges right
+> away?
+> 
+
+I don't know if it's a good idea to just map them all instead of doing 
+so only for relevant ones. Maybe it is safe, here I need an advice
+from a more knowledgeable person.
+
+> > @@ -460,10 +512,16 @@ static void __iomem *crb_map_res(struct device *dev, struct crb_priv *priv,
+> >  	if (start != new_res.start)
+> >  		return (void __iomem *) ERR_PTR(-EINVAL);
+> >  
+> > -	if (!resource_contains(io_res, &new_res))
+> > +	if (!cres)
+> >  		return devm_ioremap_resource(dev, &new_res);
+> >  
+> > -	return priv->iobase + (new_res.start - io_res->start);
+> > +	if (!cres->iobase) {
+> > +		cres->iobase = devm_ioremap_resource(dev, &cres->io_res);
+> > +		if (IS_ERR(cres->iobase))
+> > +			return cres->iobase;
+> > +	}
+> 
+> It sounds likethe real bug is that the crb_map_res only considers a
+> single active mapping, while these AMD chips need more than one?
+> 
+
+Yes, this seems to be the issue.
