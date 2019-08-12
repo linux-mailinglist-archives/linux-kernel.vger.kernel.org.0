@@ -2,125 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 374F68A4B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0E3C8A4B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfHLReU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 13:34:20 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33446 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbfHLReU (ORCPT
+        id S1727306AbfHLReo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 13:34:44 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:41928 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbfHLReo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 13:34:20 -0400
-Received: by mail-pf1-f196.google.com with SMTP id g2so50038400pfq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 10:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=aYWUhLUhFWFaj2IBlyeqpyuiKYe3byR6cuy6O3+sAu0=;
-        b=fD5g47S8va3cncoYwUYSfFVsmYgZaWoR2hcX0eKKr+lM5nS0EMz/ThVSf72l3/xsfD
-         h4IlLKwvYcz9v/Oaar90eFTbIZObIY1NtQQTMtlIOPsoS+d/Hr8jTEWOrWaBCOZy1F7X
-         W4A6Isn4U+hPtfj0YcYUWhMCB7VYTpU36Nevk=
+        Mon, 12 Aug 2019 13:34:44 -0400
+Received: by mail-vk1-f194.google.com with SMTP id u64so20870530vku.8;
+        Mon, 12 Aug 2019 10:34:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=aYWUhLUhFWFaj2IBlyeqpyuiKYe3byR6cuy6O3+sAu0=;
-        b=Mw8hQIgwcgz4hOdEo8/o/341wmzxgDTPj4/BEn9pYCdTQsRlcTpkNSojcShRo7aSuX
-         gewfajytfQ4CXZAmdxAKshzE0yxukBqX/Ww2DlYpKCEm8JeqOSO3Zi1i+87cC5iOwmVM
-         7xLoynmVY7Mu7HL1OUUtWI/Vuzeo0WUAgtsFB2sbxFpU9FcsIksbYHbfk4wrMFq1mwow
-         N9UA0K2JXdwk5v/L8Ri0uJKB7SnYuc5N1ulK651fmx26Stt0v0/5cDYL3KVRjlx/+R3A
-         YltEh8HBqNDFFdqe+Ng1jUyICpBwwr4ZbEvB2f9RDaWwijOjxGuHGyOc9LksKGm58Vsk
-         0S/g==
-X-Gm-Message-State: APjAAAVALKaIWRldgVeamLAT9KBtRSqKk4VkDY9e8RWQPnv5eBt1E/Ox
-        erSHMXoloXG4J7f+X9shnxBiIiZFqRg=
-X-Google-Smtp-Source: APXvYqy7nuO9ZhZSKKRKRLzTnBsZpSlU4CtfOGJO2cEtb5hebTjlSiZu4egZRrDRFERHPfcTBeSvxw==
-X-Received: by 2002:a63:3c5:: with SMTP id 188mr30385877pgd.394.1565631259650;
-        Mon, 12 Aug 2019 10:34:19 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g11sm117389053pgu.11.2019.08.12.10.34.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 10:34:19 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 10:34:17 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     James Morris <jmorris@namei.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: linux-next: build failure after merge of the security tree
-Message-ID: <201908121033.BFBE9516AC@keescook>
-References: <20190812145823.63d77573@canb.auug.org.au>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XCsKdiFdCyUb9h1XpQVRtFcaXFlzTncnJBLcRKOgyMM=;
+        b=AnxMh+t8b0773ZzHDr31aS5lKDV9T9SzVCmQT/Sw3iVpt8oCqyN202akVsNfKec/4B
+         dep1gbQs/pKoJxl532mIRPpFyXSYpmNB+Lot3bcgzemFI4D5rIhrxkSNvCqyurS5nV79
+         ANj/uRGKGnw2Wv/3MDh82P52VMctHhOvyvjERGzOWPfrqwqHB4eEoHiYIhhm+waYyoIR
+         omYnxcomRI3zXRyWB+vMFC4c9HKDF9sqSAtf46SV/nnyQC+ep262OZzJQsX+YcrOtyR6
+         70wUaMV3/vKtHf7K8X860ADjdACgnZoWdMgxzxyTfpllnlMq0oL5fL1SQTllwijfxt0k
+         d9IA==
+X-Gm-Message-State: APjAAAVctJ51NxmI66r0mPP54LQ/en4JATnnaP+/KNYKBOF9FMOK0uwv
+        Moc5ohwGFZZ2fds4ElPcR54LFKuf2MkW6XUFIzs7KGxxXVMbUA==
+X-Google-Smtp-Source: APXvYqzcrQcBsk0/Yrys6c8GgXQrSpsNz4FqdTvJYCSbqFE1AU6tZPX+nx2Ca0ELNiwlAPTAwEcFEPS8L5YbFKICUH4=
+X-Received: by 2002:a1f:d687:: with SMTP id n129mr12600410vkg.71.1565631281261;
+ Mon, 12 Aug 2019 10:34:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190812145823.63d77573@canb.auug.org.au>
+References: <20190809002104.18599-1-stancheff@cray.com> <20190809002104.18599-2-stancheff@cray.com>
+ <CAK7LNAScm9P+QMZiqqSQnOoPsN54OTcTGpaDgxTbjJ_knoeGhA@mail.gmail.com>
+In-Reply-To: <CAK7LNAScm9P+QMZiqqSQnOoPsN54OTcTGpaDgxTbjJ_knoeGhA@mail.gmail.com>
+From:   Shaun Tancheff <shaun@tancheff.com>
+Date:   Mon, 12 Aug 2019 12:34:30 -0500
+Message-ID: <CAJ48U8Xp40is+R1dMW8sXq77ZS5D_h+hHte5Mq5eOrtpb41Qxw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] kbuild: recursive build of external kernel modules
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Shaun Tancheff <stancheff@cray.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Renninger <trenn@suse.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM mailing list <linux-pm@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 02:58:23PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the security tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like below.
-> 
-> Caused by commit
-> 
->   45d29f9e9b8b ("security: Support early LSMs")
-> 
-> I have added the following fix for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 12 Aug 2019 14:54:20 +1000
-> Subject: [PATCH] early_security_init() needs a stub got !CONFIG_SECURITY
-> 
-> An arm multi_v7_defconfig fails like this:
-> 
-> init/main.c: In function 'start_kernel':
-> init/main.c:596:2: error: implicit declaration of function 'early_security_init'; did you mean 'security_init'? [-Werror=implicit-function-declaration]
->   early_security_init();
->   ^~~~~~~~~~~~~~~~~~~
->   security_init
-> 
-> Fixes: 45d29f9e9b8b ("security: Support early LSMs")
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+On Mon, Aug 12, 2019 at 10:24 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Fri, Aug 9, 2019 at 9:21 AM Shaun Tancheff <shaun@tancheff.com> wrote:
+> >
+> > When building a tree of external modules stage 2 fails
+> > silently as the root modules.order is empty.
+> >
+> > Modify the modules.order location to be fixed to the
+> > root when KBUILD_EXTMOD is specified and write all
+> > module paths to the single modules.order file.
+>
+> Could you try v5.3-rc4 please?
 
-Acked-by: Kees Cook <keescook@chromium.org>
+So it seems we are using 'subdir-m' but that is now gone?
 
--Kees
+Is there a recommend pattern for backward compatibility?
 
-> ---
->  include/linux/security.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 807dc0d24982..23e1c3f17d48 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -473,6 +473,11 @@ static inline int security_init(void)
->  	return 0;
->  }
->  
-> +static inline int early_security_init(void)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int security_binder_set_context_mgr(struct task_struct *mgr)
->  {
->  	return 0;
-> -- 
-> 2.20.1
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-
-
-
--- 
-Kees Cook
+Thanks!
+>
+> > Signed-off-by: Shaun Tancheff <stancheff@cray.com>
+> > ---
+> >  Makefile               | 1 +
+> >  scripts/Makefile.build | 8 +++++++-
+> >  2 files changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 23cdf1f41364..a9964492f47e 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1622,6 +1622,7 @@ $(module-dirs): prepare $(objtree)/Module.symvers
+> >
+> >  modules: $(module-dirs)
+> >         @$(kecho) '  Building modules, stage 2.';
+> > +       $(Q)$rm -f $(KBUILD_EXTMOD)/modules.order
+> >         $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
+> >
+> >  PHONY += modules_install
+> > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> > index 0d434d0afc0b..f9908b3d59e0 100644
+> > --- a/scripts/Makefile.build
+> > +++ b/scripts/Makefile.build
+> > @@ -64,7 +64,13 @@ builtin-target := $(obj)/built-in.a
+> >  endif
+> >
+> >  ifeq ($(CONFIG_MODULES)$(need-modorder),y1)
+> > +ifneq ($(KBUILD_EXTMOD),)
+> > +modorder-target := $(KBUILD_EXTMOD)/modules.order
+> > +modorder-add := >>
+> > +else
+> >  modorder-target := $(obj)/modules.order
+> > +modorder-add := >
+> > +endif
+> >  endif
+> >
+> >  mod-targets := $(patsubst %.o, %.mod, $(obj-m))
+> > @@ -423,7 +429,7 @@ endif # builtin-target
+> >  $(modorder-target): $(subdir-ym) FORCE
+> >         $(Q){ $(foreach m, $(modorder), \
+> >         $(if $(filter %/modules.order, $m), cat $m, echo $m);) :; } \
+> > -       | $(AWK) '!x[$$0]++' - > $@
+> > +       | $(AWK) '!x[$$0]++' - $(modorder-add) $@
+> >
+> >  #
+> >  # Rule to compile a set of .o files into one .a file (with symbol table)
+> > --
+> > 2.20.1
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
