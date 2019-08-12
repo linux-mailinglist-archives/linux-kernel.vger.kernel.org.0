@@ -2,178 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0C18A306
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 18:11:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC428A30D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 18:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfHLQJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 12:09:45 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:29562 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725843AbfHLQJo (ORCPT
+        id S1726683AbfHLQK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 12:10:58 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53458 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbfHLQK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 12:09:44 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7CG91AI031365;
-        Mon, 12 Aug 2019 11:09:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=BOhCFqPI+D+pfHpXRqMVBc4hjnBNRMAkRbGZXOwrg7c=;
- b=GE3zqRpy8+qSWmKA+FLstRshm5giHjftIlH6/AzPrWnru0jVWba1WNWWfi8xzlPoN18Q
- KPeUNcRPrYVRAdC4Y8jMfuZ38a5xl8eCLNY1vjtoHz//JJ9u1Osgd5ekHXXbFmVVEMhk
- qqjaWkMo/m3eKKAhc49iP17GkAZnbTQADLqW06J9h3OWAHeKj0KYzox61VjBrei1xMvR
- i/3xJSD4cCe+KpoFsF8afe8M4z29KGa1L4EQUUH8BG1r6EutdK6UVuIv3IwSjb7ULVYc
- wvmpLxLdTn0NcGr4P/tEwo6FnbWK+H1CbtWEhp6kreW6J6motBjSQIlOIZCf9kW4Rm3Q kw== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([87.246.76.36])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2u9tbru2tm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 12 Aug 2019 11:09:38 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 12 Aug
- 2019 17:09:37 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Mon, 12 Aug 2019 17:09:37 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 183FD448;
-        Mon, 12 Aug 2019 17:09:37 +0100 (BST)
-Date:   Mon, 12 Aug 2019 17:09:37 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 2/2] mfd: madera: Add support for requesting the supply
- clocks
-Message-ID: <20190812160937.GM54126@ediswmail.ad.cirrus.com>
-References: <20190806151321.31137-1-ckeepax@opensource.cirrus.com>
- <20190806151321.31137-2-ckeepax@opensource.cirrus.com>
- <20190812103853.GM26727@dell>
+        Mon, 12 Aug 2019 12:10:57 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 10so68277wmp.3;
+        Mon, 12 Aug 2019 09:10:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VH0bD6Zqxl2UMVE/ud11TtREj58uFJR0VOEIpjfuEjY=;
+        b=D5HAHlqpU6pTku0pfGYqwy2A4bgUNc5r9L52lEoWEY1rE6eUVq8WOgo8PvqU/6mxY0
+         xlk1ba82jd12C7Scbd+rcpcNisq1GaSBTjikRcUeO86BqXyErWYe3vzh+hL9vYifJnl/
+         ggwEG1cRXgR9dDZ60R4T4eU5BNl9Qy1+m3jwk7NK8l2vLXXG4FsgFTmGdaSGiN4u7Vx0
+         WYICKKFIdYher1FFDlf4u0zGrWwKMdL79VRTu0OpHcBL+kr8j/Pok0N3AukmEwJw5Dpu
+         utWDwP+ZhrjmA9d8vYxxlvxBLvAFKrZznNlEuZSTApvZCAgXE9lCLvqE8hPsNawQ6NLp
+         sE2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VH0bD6Zqxl2UMVE/ud11TtREj58uFJR0VOEIpjfuEjY=;
+        b=g1KZNFAEdhVFNse7jU6bPMXDzeWX3WGL39R/851arXQK6lQMvM8cCXZLWau8zs4rj1
+         yTMMBh0CNQpwi9TPIoKB6sPw/8VN0HrWx2KqN0X6xu4ezOQL6s0lNAfO24/K91P76pc0
+         Zu2TgKQN9A42vzCeSlWOQcpvvDASBgfgI+7K2Je9IrKd1bpLJlLmxi/kaO6i40h0hWmF
+         7/ENKJOkNyLAbV6qUxe37LNCBGayBZmu15N24UdDXjOj/x0oSMJRFzV+Iz/SRhZGxKPe
+         Gz1YbYkKAEi10UYboBcT8uAKNufqf7nW/GH3PdbLowWLuh6+Of23o20JaUGk0VBZIgRJ
+         CVVQ==
+X-Gm-Message-State: APjAAAWh1lOKbI9t9LuOFZxo8QDNTE1HWs/gYH8RjQsQlgsgFGLhvudo
+        UjPbzJvTSFaaFNCrYqo7cAaF3pCFw3FQ5rUvFZAbiQ==
+X-Google-Smtp-Source: APXvYqzMmmiiBtu9iT+6ihajz+xiA3zVSQ+uVani2o/4ymn7ct6L10oLnal8jSYD96FkxAmLgS6mB2QQBpqen6xqqSs=
+X-Received: by 2002:a1c:4e10:: with SMTP id g16mr38319wmh.67.1565626255907;
+ Mon, 12 Aug 2019 09:10:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190812103853.GM26727@dell>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 lowpriorityscore=0
- spamscore=0 impostorscore=0 clxscore=1015 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
- definitions=main-1908120180
+References: <20190805102940.26024-1-colin.king@canonical.com>
+In-Reply-To: <20190805102940.26024-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 12 Aug 2019 12:10:42 -0400
+Message-ID: <CADnq5_MKp-x-aEEFtL3B8T7PJ+JusqJAykZwZ4Eu25ieOEPuhg@mail.gmail.com>
+Subject: Re: [PATCH][drm-next] drm/amd/powerplay: remove redundant duplicated
+ return check
+To:     Colin King <colin.king@canonical.com>
+Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 11:38:53AM +0100, Lee Jones wrote:
-> On Tue, 06 Aug 2019, Charles Keepax wrote:
-> 
-> > Add the ability to get the clock for each clock input pin of the chip
-> > and enable MCLK2 since that is expected to be a permanently enabled
-> > 32kHz clock.
-> > 
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> > ---
-> >  int madera_dev_init(struct madera *madera)
-> >  {
-> > +	static const char * const mclk_name[] = { "mclk1", "mclk2", "mclk3" };
-> >  	struct device *dev = madera->dev;
-> >  	unsigned int hwid;
-> >  	int (*patch_fn)(struct madera *) = NULL;
-> > @@ -450,6 +451,17 @@ int madera_dev_init(struct madera *madera)
-> >  		       sizeof(madera->pdata));
-> >  	}
-> >  
-> > +	BUILD_BUG_ON(ARRAY_SIZE(madera->mclk) != ARRAY_SIZE(mclk_name));
-> 
-> Not sure how this could happen.  Surely we don't need it.
-> 
+Applied.  thanks!
 
-mclk_name is defined locally in this function and the mclk array in
-include/linux/mfd/madera/core.h. This is to guard against one of
-them being updated but not the other. It is by no means essential
-but it feels like a good trade off given there is really limited
-downside.
+Alex
 
-> > +	for (i = 0; i < ARRAY_SIZE(madera->mclk); i++) {
-> > +		madera->mclk[i] = devm_clk_get_optional(madera->dev,
-> > +							mclk_name[i]);
-> > +		if (IS_ERR(madera->mclk[i])) {
-> > +			dev_warn(madera->dev, "Failed to get %s: %ld\n",
-> > +				 mclk_name[i], PTR_ERR(madera->mclk[i]));
-> 
-> Do we even want to warn on the non-acquisition of an optional clock?
-> 
-> Especially with a message that looks like something actually failed.
-> 
-
-devm_clk_get_optional will return NULL if the clock was not
-specified, so this is silent in that case. A warning in the case
-something actually went wrong seems reasonable even if the clock
-is optional as the user tried to do something and it didn't
-behave as they intended.
-
-> > +			madera->mclk[i] = NULL;
-> > +		}
-> > +	}
-> > +
-> >  	ret = madera_get_reset_gpio(madera);
-> >  	if (ret)
-> >  		return ret;
-> > @@ -660,13 +672,19 @@ int madera_dev_init(struct madera *madera)
-> >  	}
-> >  
-> >  	/* Init 32k clock sourced from MCLK2 */
-> > +	ret = clk_prepare_enable(madera->mclk[MADERA_MCLK2]);
-> > +	if (ret != 0) {
-> > +		dev_err(madera->dev, "Failed to enable 32k clock: %d\n", ret);
-> > +		goto err_reset;
-> > +	}
-> 
-> What happened to this being optional?
-> 
-
-The device needs the clock but specifying it through DT is
-optional (the clock framework functions are no-ops and return
-success if the clock pointer is NULL). Normally the 32kHz
-clock is always on, and more importantly no existing users of
-the driver will be specifying one.
-
-We could remove the optional status for MCLK2, but it could break
-existing users who don't yet specify the clock until they update
-their DT and it will complicate the code as the other clocks are
-definitely optional, so MCLK2 will need special handling.
-
-> >  	ret = regmap_update_bits(madera->regmap,
-> >  			MADERA_CLOCK_32K_1,
-> >  			MADERA_CLK_32K_ENA_MASK | MADERA_CLK_32K_SRC_MASK,
-> >  			MADERA_CLK_32K_ENA | MADERA_32KZ_MCLK2);
-> >  	if (ret) {
-> >  		dev_err(madera->dev, "Failed to init 32k clock: %d\n", ret);
-> > -		goto err_reset;
-> > +		goto err_clock;
-> >  	}
-> >  
-> >  	pm_runtime_set_active(madera->dev);
-> > @@ -687,6 +705,8 @@ int madera_dev_init(struct madera *madera)
-> >  
-> >  err_pm_runtime:
-> >  	pm_runtime_disable(madera->dev);
-> > +err_clock:
-> > +	clk_disable_unprepare(madera->mclk[MADERA_MCLK2]);
-> 
-> Where are the other clocks consumed?
-> 
-
-Other clocks will be consumed by the ASoC part of the driver for
-clocking the audio functionality and running the FLLs. I haven't
-sent those patches yet, but was planning on doing so once this
-was merged.
-
-Thanks,
-Charles
+On Mon, Aug 5, 2019 at 6:29 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The check on ret is duplicated in two places, it is redundant code.
+> Remove it.
+>
+> Addresses-Coverity: ("Logically dead code")
+> Fixes: b94afb61cdae ("drm/amd/powerplay: honor hw limit on fetching metrics data for navi10")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> index d62c2784b102..b272c8dc8f79 100644
+> --- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> +++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> @@ -941,8 +941,6 @@ static int navi10_get_gpu_power(struct smu_context *smu, uint32_t *value)
+>         ret = navi10_get_metrics_table(smu, &metrics);
+>         if (ret)
+>                 return ret;
+> -       if (ret)
+> -               return ret;
+>
+>         *value = metrics.AverageSocketPower << 8;
+>
+> @@ -1001,8 +999,6 @@ static int navi10_get_fan_speed_rpm(struct smu_context *smu,
+>         ret = navi10_get_metrics_table(smu, &metrics);
+>         if (ret)
+>                 return ret;
+> -       if (ret)
+> -               return ret;
+>
+>         *speed = metrics.CurrFanSpeed;
+>
+> --
+> 2.20.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
