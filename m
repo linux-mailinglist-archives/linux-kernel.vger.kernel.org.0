@@ -2,80 +2,269 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 406768A88E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E78B58A892
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfHLUpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 16:45:43 -0400
-Received: from smtprelay0111.hostedemail.com ([216.40.44.111]:38409 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726144AbfHLUpn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:45:43 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id B11C1182CF665;
-        Mon, 12 Aug 2019 20:45:41 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 64,4,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2332:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3653:3871:3874:3876:5007:8603:9389:10004:10400:10848:11232:11658:11914:12043:12297:12555:12760:13069:13311:13357:13439:14181:14394:14659:14721:21080:21451:21627:30054:30070,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: pets42_6bd28da236248
-X-Filterd-Recvd-Size: 2160
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 12 Aug 2019 20:45:40 +0000 (UTC)
-Message-ID: <2f374c3c27054b7f978115270d587c624d9962fc.camel@perches.com>
-Subject: [PATCH V2] checkpatch: Prefer __section over
- __attribute__((section(...)))
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Mon, 12 Aug 2019 13:45:39 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1726826AbfHLUrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 16:47:01 -0400
+Received: from mga02.intel.com ([134.134.136.20]:38434 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbfHLUrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 16:47:00 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 13:46:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="177592713"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2019 13:46:33 -0700
+Date:   Mon, 12 Aug 2019 13:46:33 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 12/19] mm/gup: Prep put_user_pages() to take an
+ vaddr_pin struct
+Message-ID: <20190812204633.GB20634@iweiny-DESK2.sc.intel.com>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-13-ira.weiny@intel.com>
+ <12b6a576-7a64-102c-f4d7-7a4ad34df710@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12b6a576-7a64-102c-f4d7-7a4ad34df710@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add another test for __attribute__((section("foo"))) uses
-that should be __section(foo)
+On Fri, Aug 09, 2019 at 05:30:00PM -0700, John Hubbard wrote:
+> On 8/9/19 3:58 PM, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > Once callers start to use vaddr_pin the put_user_pages calls will need
+> > to have access to this data coming in.  Prep put_user_pages() for this
+> > data.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Joe Perches <joe@perches.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
----
+[snip]
 
-V2: Remove (however dull) humor
-    Fix fix missing ) removal
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index a7a9d2f5278c..10cfd30ff668 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -24,30 +24,41 @@
+> >  
+> >  #include "internal.h"
+> >  
+> > -/**
+> > - * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
+> > - * @pages:  array of pages to be maybe marked dirty, and definitely released.
+> 
+> A couple comments from our circular review chain: some fellow with the same
+> last name as you, recommended wording it like this:
+> 
+>       @pages:  array of pages to be put
 
- scripts/checkpatch.pl | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Sure, see below...
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 1cdacb4fd207..d4153b81b1eb 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5901,6 +5901,18 @@ sub process {
- 			     "__aligned(size) is preferred over __attribute__((aligned(size)))\n" . $herecurr);
- 		}
- 
-+# Check for __attribute__ section, prefer __section
-+		if ($realfile !~ m@\binclude/uapi/@ &&
-+		    $line =~ /\b__attribute__\s*\(\s*\(.*_*section_*\s*\(\s*("[^"]*")/) {
-+			my $old = substr($rawline, $-[1], $+[1] - $-[1]);
-+			my $new = substr($old, 1, -1);
-+			if (WARN("PREFER_SECTION",
-+				 "__section($new) is preferred over __attribute__((section($old)))\n" . $herecurr) &&
-+			    $fix) {
-+				$fixed[$fixlinenr] =~ s/\b__attribute__\s*\(\s*\(\s*_*section_*\s*\(\s*\Q$old\E\s*\)\s*\)\s*\)/__section($new)/;
-+			}
-+		}
-+
- # Check for __attribute__ format(printf, prefer __printf
- 		if ($realfile !~ m@\binclude/uapi/@ &&
- 		    $line =~ /\b__attribute__\s*\(\s*\(\s*format\s*\(\s*printf/) {
+> 
+> > - * @npages: number of pages in the @pages array.
+> > - * @make_dirty: whether to mark the pages dirty
+> > - *
+> > - * "gup-pinned page" refers to a page that has had one of the get_user_pages()
+> > - * variants called on that page.
+> > - *
+> > - * For each page in the @pages array, make that page (or its head page, if a
+> > - * compound page) dirty, if @make_dirty is true, and if the page was previously
+> > - * listed as clean. In any case, releases all pages using put_user_page(),
+> > - * possibly via put_user_pages(), for the non-dirty case.
+> > - *
+> > - * Please see the put_user_page() documentation for details.
+> > - *
+> > - * set_page_dirty_lock() is used internally. If instead, set_page_dirty() is
+> > - * required, then the caller should a) verify that this is really correct,
+> > - * because _lock() is usually required, and b) hand code it:
+> > - * set_page_dirty_lock(), put_user_page().
+> > - *
+> > - */
+> > -void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+> > -			       bool make_dirty)
+> > +static void __put_user_page(struct vaddr_pin *vaddr_pin, struct page *page)
+> > +{
+> > +	page = compound_head(page);
+> > +
+> > +	/*
+> > +	 * For devmap managed pages we need to catch refcount transition from
+> > +	 * GUP_PIN_COUNTING_BIAS to 1, when refcount reach one it means the
+> > +	 * page is free and we need to inform the device driver through
+> > +	 * callback. See include/linux/memremap.h and HMM for details.
+> > +	 */
+> > +	if (put_devmap_managed_page(page))
+> > +		return;
+> > +
+> > +	if (put_page_testzero(page))
+> > +		__put_page(page);
+> > +}
+> > +
+> > +static void __put_user_pages(struct vaddr_pin *vaddr_pin, struct page **pages,
+> > +			     unsigned long npages)
+> > +{
+> > +	unsigned long index;
+> > +
+> > +	/*
+> > +	 * TODO: this can be optimized for huge pages: if a series of pages is
+> > +	 * physically contiguous and part of the same compound page, then a
+> > +	 * single operation to the head page should suffice.
+> > +	 */
+> 
+> As discussed in the other review thread (""), let's just delete that comment,
+> as long as you're moving things around.
 
+Done.
 
+> 
+> 
+> > +	for (index = 0; index < npages; index++)
+> > +		__put_user_page(vaddr_pin, pages[index]);
+> > +}
+> > +
+> > +static void __put_user_pages_dirty_lock(struct vaddr_pin *vaddr_pin,
+> > +					struct page **pages,
+> > +					unsigned long npages,
+> > +					bool make_dirty)
+> 
+> Elsewhere in this series, we pass vaddr_pin at the end of the arg list.
+> Here we pass it at the beginning, and it caused a minor jar when reading it.
+> Obviously just bike shedding at this point, though. Either way. :)
+
+Yea I guess that is odd...  I changed it.  Not a big deal.
+
+> 
+> >  {
+> >  	unsigned long index;
+> >  
+> > @@ -58,7 +69,7 @@ void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+> >  	 */
+> >  
+> >  	if (!make_dirty) {
+> > -		put_user_pages(pages, npages);
+> > +		__put_user_pages(vaddr_pin, pages, npages);
+> >  		return;
+> >  	}
+> >  
+> > @@ -86,9 +97,58 @@ void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+> >  		 */
+> >  		if (!PageDirty(page))
+> >  			set_page_dirty_lock(page);
+> > -		put_user_page(page);
+> > +		__put_user_page(vaddr_pin, page);
+> >  	}
+> >  }
+> > +
+> > +/**
+> > + * put_user_page() - release a gup-pinned page
+> > + * @page:            pointer to page to be released
+> > + *
+> > + * Pages that were pinned via get_user_pages*() must be released via
+> > + * either put_user_page(), or one of the put_user_pages*() routines
+> > + * below. This is so that eventually, pages that are pinned via
+> > + * get_user_pages*() can be separately tracked and uniquely handled. In
+> > + * particular, interactions with RDMA and filesystems need special
+> > + * handling.
+> > + *
+> > + * put_user_page() and put_page() are not interchangeable, despite this early
+> > + * implementation that makes them look the same. put_user_page() calls must
+> > + * be perfectly matched up with get_user_page() calls.
+> > + */
+> > +void put_user_page(struct page *page)
+> > +{
+> > +	__put_user_page(NULL, page);
+> > +}
+> > +EXPORT_SYMBOL(put_user_page);
+> > +
+> > +/**
+> > + * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
+> > + * @pages:  array of pages to be maybe marked dirty, and definitely released.
+> 
+> Same here:
+> 
+>       @pages:  array of pages to be put
+
+Actually here is the only place.  Above was removing the text to be put here...
+
+Done -- I'll made a lead in patch because this was just copied text.
+
+> 
+> > + * @npages: number of pages in the @pages array.
+> > + * @make_dirty: whether to mark the pages dirty
+> > + *
+> > + * "gup-pinned page" refers to a page that has had one of the get_user_pages()
+> > + * variants called on that page.
+> > + *
+> > + * For each page in the @pages array, make that page (or its head page, if a
+> > + * compound page) dirty, if @make_dirty is true, and if the page was previously
+> > + * listed as clean. In any case, releases all pages using put_user_page(),
+> > + * possibly via put_user_pages(), for the non-dirty case.
+> > + *
+> > + * Please see the put_user_page() documentation for details.
+> > + *
+> > + * set_page_dirty_lock() is used internally. If instead, set_page_dirty() is
+> > + * required, then the caller should a) verify that this is really correct,
+> > + * because _lock() is usually required, and b) hand code it:
+> > + * set_page_dirty_lock(), put_user_page().
+> > + *
+> > + */
+> > +void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+> > +			       bool make_dirty)
+> > +{
+> > +	__put_user_pages_dirty_lock(NULL, pages, npages, make_dirty);
+> > +}
+> >  EXPORT_SYMBOL(put_user_pages_dirty_lock);
+> >  
+> >  /**
+> > @@ -102,15 +162,7 @@ EXPORT_SYMBOL(put_user_pages_dirty_lock);
+> >   */
+> >  void put_user_pages(struct page **pages, unsigned long npages)
+> >  {
+> > -	unsigned long index;
+> > -
+> > -	/*
+> > -	 * TODO: this can be optimized for huge pages: if a series of pages is
+> > -	 * physically contiguous and part of the same compound page, then a
+> > -	 * single operation to the head page should suffice.
+> > -	 */
+> > -	for (index = 0; index < npages; index++)
+> > -		put_user_page(pages[index]);
+> > +	__put_user_pages(NULL, pages, npages);
+> >  }
+> >  EXPORT_SYMBOL(put_user_pages);
+> >  
+> > 
+> 
+> This all looks pretty good, so regardless of the outcome of the minor
+> points above,
+>    
+>     Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+
+Thanks,
+Ira
+
+> 
+> 
+> thanks,
+> -- 
+> John Hubbard
+> NVIDIA
