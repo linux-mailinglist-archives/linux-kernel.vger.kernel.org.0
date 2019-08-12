@@ -2,152 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B4989746
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D31348973F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:38:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfHLGir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 02:38:47 -0400
-Received: from mga11.intel.com ([192.55.52.93]:62393 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbfHLGiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 02:38:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Aug 2019 23:38:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,376,1559545200"; 
-   d="scan'208";a="193891549"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Aug 2019 23:38:41 -0700
-Subject: Re: [PATCH v4 1/2] perf machine: Support arch's specific kernel start
- address
-To:     Leo Yan <leo.yan@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        David Miller <davem@davemloft.net>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Donald Yandt <donald.yandt@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Wei Li <liwei391@huawei.com>, Mark Drayton <mbd@fb.com>,
-        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20190810072135.27072-1-leo.yan@linaro.org>
- <20190810072135.27072-2-leo.yan@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <c1818f6f-37df-6971-fddc-6663e5b6ff95@intel.com>
-Date:   Mon, 12 Aug 2019 09:37:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726941AbfHLGiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 02:38:04 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:54075 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725822AbfHLGiE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 02:38:04 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TZELKkr_1565591877;
+Received: from bn0418deMacBook-Pro.local(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TZELKkr_1565591877)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 12 Aug 2019 14:37:58 +0800
+Subject: Re: [PATCH 2/2] vfio_pci: make use of update_irq_devid and optimize
+ irq ops
+To:     Yunsheng Lin <linyunsheng@huawei.com>, tglx@linutronix.de,
+        alex.williamson@redhat.com, linux-kernel@vger.kernel.org
+Cc:     tao.ma@linux.alibaba.com, gerry@linux.alibaba.com
+References: <cover.1565263723.git.luoben@linux.alibaba.com>
+ <461a0d843c8ac4c31de61d08f4940884742f77b5.1565263723.git.luoben@linux.alibaba.com>
+ <6b11b0fa-06a9-fd92-084c-faaca116dc74@huawei.com>
+From:   luoben <luoben@linux.alibaba.com>
+Message-ID: <8988bbb2-b089-5a18-e8d0-1e7339832364@linux.alibaba.com>
+Date:   Mon, 12 Aug 2019 14:37:57 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190810072135.27072-2-leo.yan@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <6b11b0fa-06a9-fd92-084c-faaca116dc74@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/08/19 10:21 AM, Leo Yan wrote:
-> machine__get_kernel_start() gives out the kernel start address; some
-> architectures need to tweak the start address so that can reflect the
-> kernel start address correctly.  This is not only for x86_64 arch, but
-> it is also required by other architectures, e.g. arm/arm64 needs to
-> tweak the kernel start address so can include the kernel memory regions
-> which are used before the '_stext' symbol.
-> 
-> This patch refactors machine__get_kernel_start() by adding a weak
-> arch__fix_kernel_text_start(), any architecture can implement it to
-> tweak its specific start address; this also allows the arch specific
-> code to be placed into 'arch' folder.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/arch/x86/util/machine.c | 10 ++++++++++
->  tools/perf/util/machine.c          | 13 +++++++------
->  tools/perf/util/machine.h          |  2 ++
->  3 files changed, 19 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/perf/arch/x86/util/machine.c b/tools/perf/arch/x86/util/machine.c
-> index 1e9ec783b9a1..9f012131534a 100644
-> --- a/tools/perf/arch/x86/util/machine.c
-> +++ b/tools/perf/arch/x86/util/machine.c
-> @@ -101,4 +101,14 @@ int machine__create_extra_kernel_maps(struct machine *machine,
->  	return ret;
->  }
->  
-> +void arch__fix_kernel_text_start(u64 *start)
-> +{
-> +	/*
-> +	 * On x86_64, PTI entry trampolines are less than the
-> +	 * start of kernel text, but still above 2^63. So leave
-> +	 * kernel_start = 1ULL << 63 for x86_64.
-> +	 */
-> +	*start = 1ULL << 63;
-> +}
 
-That is needed for reporting x86 data on any arch i.e. it is not specific to
-the compile-time architecture, it is specific to the perf.data file
-architecture, which is what machine__is() compares. So, this looks wrong.
+在 2019/8/12 下午1:44, Yunsheng Lin 写道:
+> On 2019/8/8 20:07, Ben Luo wrote:
+>> When userspace (e.g. qemu) triggers a switch between KVM
+>> irqfd and userspace eventfd, only dev_id of irq action
+>> (i.e. the "trigger" in this patch's context) will be
+>> changed, but a free-then-request-irq action is taken in
+>> current code. And, irq affinity setting in VM will also
+>> trigger a free-then-request-irq action, which actully
+>> changes nothing, but only fires a producer re-registration
+>> to update irte in case that posted-interrupt is in use.
+>>
+>> This patch makes use of update_irq_devid() and optimize
+>> both cases above, which reduces the risk of losing interrupt
+>> and also cuts some overhead.
+>>
+>> Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
+>> Reviewed-by: Liu Jiang <gerry@linux.alibaba.com>
+>> ---
+>>   drivers/vfio/pci/vfio_pci_intrs.c | 100 +++++++++++++++++++++++---------------
+>>   1 file changed, 62 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+>> index 3fa3f72..1323dc8 100644
+>> --- a/drivers/vfio/pci/vfio_pci_intrs.c
+>> +++ b/drivers/vfio/pci/vfio_pci_intrs.c
+>> @@ -285,69 +285,93 @@ static int vfio_msi_set_vector_signal(struct vfio_pci_device *vdev,
+>>   				      int vector, int fd, bool msix)
+>>   {
+>>   	struct pci_dev *pdev = vdev->pdev;
+>> -	struct eventfd_ctx *trigger;
+>> +	struct eventfd_ctx *trigger = NULL;
+> struct eventfd_ctx *trigger = NULL;
+> struct pci_dev *pdev = vdev->pdev;
+>
+> to maintain reverse christmas tree?
+ok,  keep reverse christmas tree in v2
+>
+>>   	int irq, ret;
+>>   
+>>   	if (vector < 0 || vector >= vdev->num_ctx)
+>>   		return -EINVAL;
+>>   
+>> +	if (fd >= 0) {
+>> +		trigger = eventfd_ctx_fdget(fd);
+>> +		if (IS_ERR(trigger))
+>> +			return PTR_ERR(trigger);
+> It seems vdev->ctx[vector].trigger is freed even if  fd < 0 before
+> this patch. If it return here, vdev->ctx[vector].trigger is not free?
 
-> +
->  #endif
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index f6ee7fbad3e4..603518835692 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -2671,6 +2671,10 @@ int machine__nr_cpus_avail(struct machine *machine)
->  	return machine ? perf_env__nr_cpus_avail(machine->env) : 0;
->  }
->  
-> +void __weak arch__fix_kernel_text_start(u64 *start __maybe_unused)
-> +{
-> +}
-> +
->  int machine__get_kernel_start(struct machine *machine)
->  {
->  	struct map *map = machine__kernel_map(machine);
-> @@ -2687,14 +2691,11 @@ int machine__get_kernel_start(struct machine *machine)
->  	machine->kernel_start = 1ULL << 63;
->  	if (map) {
->  		err = map__load(map);
-> -		/*
-> -		 * On x86_64, PTI entry trampolines are less than the
-> -		 * start of kernel text, but still above 2^63. So leave
-> -		 * kernel_start = 1ULL << 63 for x86_64.
-> -		 */
-> -		if (!err && !machine__is(machine, "x86_64"))
-> +		if (!err)
->  			machine->kernel_start = map->start;
->  	}
-> +
-> +	arch__fix_kernel_text_start(&machine->kernel_start);
->  	return err;
->  }
->  
-> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-> index ef803f08ae12..9cb459f4bfbc 100644
-> --- a/tools/perf/util/machine.h
-> +++ b/tools/perf/util/machine.h
-> @@ -278,6 +278,8 @@ void machine__get_kallsyms_filename(struct machine *machine, char *buf,
->  int machine__create_extra_kernel_maps(struct machine *machine,
->  				      struct dso *kernel);
->  
-> +void arch__fix_kernel_text_start(u64 *start);
-> +
->  /* Kernel-space maps for symbols that are outside the main kernel map and module maps */
->  struct extra_kernel_map {
->  	u64 start;
-> 
+if fd < 0, it won't enter here
+
+if fd >= 0,  I think it's better to return and leave everything as it 
+was, and
+
+let the caller to deal with this bad fd case and disable msi to free the 
+resouces if it wants
+
+>
+>> +	}
+>> +
+>>   	irq = pci_irq_vector(pdev, vector);
+>>   
+>>   	if (vdev->ctx[vector].trigger) {
+>> -		free_irq(irq, vdev->ctx[vector].trigger);
+>> -		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+>> -		kfree(vdev->ctx[vector].name);
+>> -		eventfd_ctx_put(vdev->ctx[vector].trigger);
+>> -		vdev->ctx[vector].trigger = NULL;
+>> +		if (vdev->ctx[vector].trigger != trigger) {
+>> +			if (trigger) {
+>> +				ret = update_irq_devid(irq,
+>> +						vdev->ctx[vector].trigger, trigger);
+>> +				if (unlikely(ret)) {
+>> +					dev_info(&pdev->dev,
+>> +							"update_irq_devid %d (token %p) fails: %d\n",
+>> +							irq, vdev->ctx[vector].trigger, ret);
+>> +					eventfd_ctx_put(trigger);
+>> +					return ret;
+>> +				}
+>> +				irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+>> +				eventfd_ctx_put(vdev->ctx[vector].trigger);
+>> +				vdev->ctx[vector].producer.token = trigger;
+>> +				vdev->ctx[vector].trigger = trigger;
+>> +			} else {
+>> +				free_irq(irq, vdev->ctx[vector].trigger);
+>> +				irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+>> +				kfree(vdev->ctx[vector].name);
+>> +				eventfd_ctx_put(vdev->ctx[vector].trigger);
+>> +				vdev->ctx[vector].trigger = NULL;
+>> +			}
+>> +		} else
+>> +			irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+>>   	}
+> Maybe adjust it a litte to reduce indent and to improve readability?
+>
+> 	if (vdev->ctx[vector].trigger && vdev->ctx[vector].trigger == trigger) {
+> 		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+> 	} else if (vdev->ctx[vector].trigger && !trigger) {
+> 		free_irq(irq, vdev->ctx[vector].trigger);
+> 		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+> 		kfree(vdev->ctx[vector].name);
+> 		eventfd_ctx_put(vdev->ctx[vector].trigger);
+> 		vdev->ctx[vector].trigger = NULL;
+> 	} else if (vdev->ctx[vector].trigger) {
+> 		ret = update_irq_devid(irq, vdev->ctx[vector].trigger, trigger);
+> 		if (unlikely(ret)) {
+> 			dev_info(&pdev->dev,
+> 				 "update_irq_devid %d (token %p) fails: %d\n",
+> 				 irq, vdev->ctx[vector].trigger, ret);
+> 				 eventfd_ctx_put(trigger);
+> 				 return ret;
+> 		}
+> 		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+> 		eventfd_ctx_put(vdev->ctx[vector].trigger);
+> 		vdev->ctx[vector].producer.token = trigger;
+> 		vdev->ctx[vector].trigger = trigger;
+> 	}
+>
+I will reformat this chunk in v2
+>>   
+>>   	if (fd < 0)
+>>   		return 0;
+>>   
+>> -	vdev->ctx[vector].name = kasprintf(GFP_KERNEL, "vfio-msi%s[%d](%s)",
+>> -					   msix ? "x" : "", vector,
+>> -					   pci_name(pdev));
+>> -	if (!vdev->ctx[vector].name)
+>> -		return -ENOMEM;
+>> +	if (vdev->ctx[vector].trigger == NULL) {
+> It may be common to use the below check to do NULL checking:
+> If (!vdev->ctx[vector].trigger)
+ok, make it this way in v2
+>
+>> +		vdev->ctx[vector].name = kasprintf(GFP_KERNEL, "vfio-msi%s[%d](%s)",
+>> +						   msix ? "x" : "", vector,
+>> +						   pci_name(pdev));
+>> +		if (!vdev->ctx[vector].name) {
+>> +			eventfd_ctx_put(trigger);
+>> +			return -ENOMEM;
+>> +		}
+>>   
+>> -	trigger = eventfd_ctx_fdget(fd);
+>> -	if (IS_ERR(trigger)) {
+>> -		kfree(vdev->ctx[vector].name);
+>> -		return PTR_ERR(trigger);
+>> -	}
+>> +		/*
+>> +		 * The MSIx vector table resides in device memory which may be cleared
+>> +		 * via backdoor resets. We don't allow direct access to the vector
+>> +		 * table so even if a userspace driver attempts to save/restore around
+>> +		 * such a reset it would be unsuccessful. To avoid this, restore the
+>> +		 * cached value of the message prior to enabling.
+>> +		 */
+>> +		if (msix) {
+>> +			struct msi_msg msg;
+>>   
+>> -	/*
+>> -	 * The MSIx vector table resides in device memory which may be cleared
+>> -	 * via backdoor resets. We don't allow direct access to the vector
+>> -	 * table so even if a userspace driver attempts to save/restore around
+>> -	 * such a reset it would be unsuccessful. To avoid this, restore the
+>> -	 * cached value of the message prior to enabling.
+>> -	 */
+>> -	if (msix) {
+>> -		struct msi_msg msg;
+>> +			get_cached_msi_msg(irq, &msg);
+>> +			pci_write_msi_msg(irq, &msg);
+>> +		}
+>>   
+>> -		get_cached_msi_msg(irq, &msg);
+>> -		pci_write_msi_msg(irq, &msg);
+>> -	}
+>> +		ret = request_irq(irq, vfio_msihandler, 0,
+>> +				  vdev->ctx[vector].name, trigger);
+>> +		if (ret) {
+>> +			kfree(vdev->ctx[vector].name);
+>> +			eventfd_ctx_put(trigger);
+>> +			return ret;
+>> +		}
+>>   
+>> -	ret = request_irq(irq, vfio_msihandler, 0,
+>> -			  vdev->ctx[vector].name, trigger);
+>> -	if (ret) {
+>> -		kfree(vdev->ctx[vector].name);
+>> -		eventfd_ctx_put(trigger);
+>> -		return ret;
+>> +		vdev->ctx[vector].producer.token = trigger;
+>> +		vdev->ctx[vector].producer.irq = irq;
+>> +		vdev->ctx[vector].trigger = trigger;
+>>   	}
+>>   
+>> -	vdev->ctx[vector].producer.token = trigger;
+>> -	vdev->ctx[vector].producer.irq = irq;
+>> +	/* always update irte for posted mode */
+>>   	ret = irq_bypass_register_producer(&vdev->ctx[vector].producer);
+>>   	if (unlikely(ret))
+>>   		dev_info(&pdev->dev,
+>>   		"irq bypass producer (token %p) registration fails: %d\n",
+>>   		vdev->ctx[vector].producer.token, ret);
+>>   
+>> -	vdev->ctx[vector].trigger = trigger;
+>> -
+>>   	return 0;
+>>   }
+>>   
+
+Thanks,
+
+     Ben
 
