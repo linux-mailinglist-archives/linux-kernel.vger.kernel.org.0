@@ -2,129 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD74A89A02
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F410689A00
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbfHLJkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 05:40:16 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50468 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbfHLJje (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 05:39:34 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v15so11523108wml.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 02:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=59c3QHXShQnZeBOeVXyfZYyWKS3iXSLrYGkx5kM2ofQ=;
-        b=PwnqJLC1Guhk76m10HECrO9KNcWCjyUdJrIQOYPHNxV28xqc55Wbv/PBfqWoh7kFvV
-         bj+STLIRGB29npgk34GVpRMb6wWy5ufuZiGRfl3CpE3vTuD1p3kBmHMAGQL/36WvOEcB
-         5oufOskSKbLRlVLusJnfnY1jTGW3yoiwb+UbFAOr/RgBlrl7V28Fi2oPYa0luHHvmvSS
-         Na9hSZAoz7NZaF/NLOxYMoSduLrw+EQeJ+iGKijB2bJjab79RJsCMvwcpSDNvgT7+pqQ
-         gy7IkXPm8cB0Po0H/XoBZM/5lTZu5QLFOA53yKhMs0SMGnhyd1t6C3wTyTumuXpPTr59
-         AcsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=59c3QHXShQnZeBOeVXyfZYyWKS3iXSLrYGkx5kM2ofQ=;
-        b=lf35KVvBXnRTN3JS54lok/SfI2Z2cCupZOsr0etxzdmvkDIuzFjivzpLQVT1v+xeGx
-         Pd3H5vTblqqxHW/ZBBoonvb6dW8nwjT8D6dinZT+q1p5nm/IJAeFUeUQAB3dcddh4egn
-         g9iMVdBOevsrqL7CBEVIMPH4emo4Wir+PTQJ3wvC0BJaRFfDlFs+RRNzoHUqhilQ5x8k
-         9fvEbvBhRlz5tLrGNC1vDRD0503L/oB1+XguwnziryZAI5ol8fX4BAO4xgBOo0RmbFB8
-         f5/fjYmqu3DMYmSuV6irztLZFtAEhPv36nLlLGP1tp41v0D8/kxMYvP4z60r6dJzFk1X
-         yl5w==
-X-Gm-Message-State: APjAAAU4Xf92VwKzyk/3n53dHmNO8804Ys3B33m4lBCjk492xEQqO0Z0
-        oCKuLNsoolidj4D0WYPSEnOp0A==
-X-Google-Smtp-Source: APXvYqyKPNnnSt0LN3y13OrGNxqAfH0vDwGRaY5OjZILvIYA18kRJmmzSXZBB0dpTThOcM7G6iSlYw==
-X-Received: by 2002:a1c:1b97:: with SMTP id b145mr25393126wmb.158.1565602772035;
-        Mon, 12 Aug 2019 02:39:32 -0700 (PDT)
-Received: from dell ([2.27.35.255])
-        by smtp.gmail.com with ESMTPSA id o17sm12910169wrx.60.2019.08.12.02.39.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 02:39:30 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 10:39:28 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v6 27/57] mfd: Remove dev_err() usage after
- platform_get_irq()
-Message-ID: <20190812093928.GB26727@dell>
-References: <20190730181557.90391-1-swboyd@chromium.org>
- <20190730181557.90391-28-swboyd@chromium.org>
+        id S1727600AbfHLJkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 05:40:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727588AbfHLJkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 05:40:03 -0400
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C5CA20842;
+        Mon, 12 Aug 2019 09:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565602803;
+        bh=/plNdRQRHBEq6qvxvso4EuN5b9FnPD1xRMuPGqmRwTA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SLuOei9lChDsYwwW7g1GJU+7p3XrwM5Yxo08WjXwxfJgJJuhMLFNtTab71jhLTaa5
+         JUgN0eOQ3JwQ6S8DjBLqiDQ9tq27o8mLarficjY5umbrndouUDLXFmm0lhaowZQxA+
+         lkDZ37T2Kzzg73poMkUp8sZfqTlzPj/echbiV33g=
+Date:   Mon, 12 Aug 2019 11:40:00 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc:     mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] ARM64: dts: allwinner: Add devicetree for pine H64
+ modelA evaluation board
+Message-ID: <20190812094000.ebdmhyxx7xzbevef@flea>
+References: <20190808084253.10573-1-clabbe.montjoie@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qxku4lofbephj3it"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190730181557.90391-28-swboyd@chromium.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190808084253.10573-1-clabbe.montjoie@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Jul 2019, Stephen Boyd wrote:
 
-> We don't need dev_err() messages when platform_get_irq() fails now that
-> platform_get_irq() prints an error message itself when something goes
-> wrong. Let's remove these prints with a simple semantic patch.
-> 
-> // <smpl>
-> @@
-> expression ret;
-> struct platform_device *E;
-> @@
-> 
-> ret =
-> (
-> platform_get_irq(E, ...)
-> |
-> platform_get_irq_byname(E, ...)
-> );
-> 
-> if ( \( ret < 0 \| ret <= 0 \) )
-> {
-> (
-> -if (ret != -EPROBE_DEFER)
-> -{ ...
-> -dev_err(...);
-> -... }
-> |
-> ...
-> -dev_err(...);
-> )
-> ...
-> }
-> // </smpl>
-> 
-> While we're here, remove braces on if statements that only have one
-> statement (manually).
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+--qxku4lofbephj3it
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Aug 08, 2019 at 10:42:53AM +0200, Corentin Labbe wrote:
+> This patch adds the evaluation variant of the model A of the PineH64.
+> The model A has the same size of the pine64 and has a PCIE slot.
+>
+> The only devicetree difference with current pineH64, is the PHY
+> regulator.
+>
+> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 > ---
-> 
-> Please apply directly to subsystem trees
-> 
->  drivers/mfd/ab8500-debugfs.c       |  8 ++------
->  drivers/mfd/db8500-prcmu.c         |  4 +---
->  drivers/mfd/fsl-imx25-tsadc.c      |  4 +---
->  drivers/mfd/intel_soc_pmic_bxtwc.c |  4 +---
->  drivers/mfd/jz4740-adc.c           | 11 +++--------
->  drivers/mfd/qcom_rpm.c             | 12 +++---------
->  drivers/mfd/sm501.c                |  4 +---
->  7 files changed, 12 insertions(+), 35 deletions(-)
+>  arch/arm64/boot/dts/allwinner/Makefile        |  1 +
+>  .../sun50i-h6-pine-h64-modelA-eval.dts        | 26 +++++++++++++++++++
+>  2 files changed, 27 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+> index f6db0611cb85..9a02166cbf72 100644
+> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -25,3 +25,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-3.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-lite2.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
+> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64-modelA-eval.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
+> new file mode 100644
+> index 000000000000..d8ff02747efe
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> +/*
+> + * Copyright (C) 2019 Corentin Labbe <clabbe.montjoie@gmail.com>
+> + */
+> +
+> +#include "sun50i-h6-pine-h64.dts"
+> +
+> +/ {
+> +	model = "Pine H64 model A evaluation board";
+> +	compatible = "pine64,pine-h64-modelA-eval", "allwinner,sun50i-h6";
+> +
+> +	reg_gmac_3v3: gmac-3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc-gmac-3v3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		startup-delay-us = <100000>;
+> +		gpio = <&pio 2 16 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +	};
+> +
+> +};
+> +
+> +&emac {
+> +	phy-supply = <&reg_gmac_3v3>;
+> +};
 
-Applied, thanks.
+I might be missing some context here, but I'm pretty sure that the
+initial intent of the pine h64 DTS was to support the model A all
+along.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--qxku4lofbephj3it
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVEz8AAKCRDj7w1vZxhR
+xVT5AQCmtGrOG8xFK95J8ZjmGV7HZxfxvNxV172wPtPegEHT2gEAtbdxFg5Ppsz/
+TgtO+rT2XvcyllgsUSCaps9xmEidaAY=
+=GlSZ
+-----END PGP SIGNATURE-----
+
+--qxku4lofbephj3it--
