@@ -2,157 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 153118A4BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14AB08A4B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 19:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfHLRgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 13:36:08 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37609 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbfHLRgI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 13:36:08 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1so17022570pgp.4
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 10:36:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oZi4p9sU++IMNyLOoMu4O4MSpldoBC3la4O/D+JmVeE=;
-        b=RsNkwjciAZJFroOX5ILBuBvMy8TWcIT9hJzrTA5xuOZfMYJaav94/bNa1G1AZHA/sx
-         IqeuX0m5wrq1olWYnCUFdWcRs4HHNmD+fSaxGCDngxV9gs9hEaGvpwiel6l6FYROI+wM
-         b2h/J/0MtTn4wk+24P+lye5PvT7SR216V5ztbRz1yijbJD2TeXZKy39Wwf+AkV8DYbM0
-         CP6fjXz/iairhkQqUorj+Ear31cpwrY8D8/ls28sODMfPbYKCYDBl2dAo83EtHCePTLH
-         MGmTVzL/6+j8BOjr0vRr/sKO1HKHpXTj0Kqk+R5o3T3ezXSVTGqzUJFXtYU7FXUZdbq9
-         iK5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oZi4p9sU++IMNyLOoMu4O4MSpldoBC3la4O/D+JmVeE=;
-        b=fHEvlF0KAbj1FM8BfOEB/S4q0vwxtiUUB+XL3bxPpQtpGPaR/U4dKTKeDBc21ymY26
-         luD9JxmWVY9WZdbnejtsmtyGTU53U3MmIZc52t72hLJariTiqLD4ELWsZ0IFI4Oucvhc
-         dvzeimdW6gKe6aPlQU6aNB1kCXy+CywwJimmQyt21Brgsm/fRhrsXTss+jCGHWKCIoSF
-         8JXGb+bof1OOmp3ENJeki5ZQt4sfGVZL92Mt+muQOeU17V7jwscpr7bciay8ZPcewlcX
-         yGc3smst9gw6k5qI+LxH5mbRbowxz6xwpWRFeSeJtc0Ep18ULl0/7F1SQwVh11Fc35VT
-         /3ZQ==
-X-Gm-Message-State: APjAAAXQSssolG2j+73D4djyj5rjTmxPMXKNlmbg0HZwe2SLtFrc7CAH
-        qOTd/kV0U/iu3u33bYvaqG2w0b6OaM1lcijrIAlw7Q==
-X-Google-Smtp-Source: APXvYqy2zouhlUGYS7Kh1lajVcXBTrIvaZyDmn96K5pB0TaQUQP3OryMKFONA/xS83RgDSxvOsb01vVyUXq5xlXLvmE=
-X-Received: by 2002:a63:f94c:: with SMTP id q12mr30736518pgk.10.1565631367302;
- Mon, 12 Aug 2019 10:36:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190812023214.107817-1-natechancellor@gmail.com>
-In-Reply-To: <20190812023214.107817-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 12 Aug 2019 10:35:56 -0700
-Message-ID: <CAKwvOd=RzY2bkOOYUrvNSxZxz6B2VPn2siXA8pRFc9EP-W77qQ@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: Avoid clang warnings around setjmp and longjmp
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        "# 3.4.x" <stable@vger.kernel.org>
+        id S1727057AbfHLReX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 13:34:23 -0400
+Received: from mga06.intel.com ([134.134.136.31]:26428 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726267AbfHLReV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 13:34:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 10:33:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="376025887"
+Received: from megha-z97x-ud7-th.sc.intel.com ([143.183.85.162])
+  by fmsmga006.fm.intel.com with ESMTP; 12 Aug 2019 10:33:35 -0700
+Message-ID: <1565632489.7042.17.camel@intel.com>
+Subject: Re: [RFC V1 RESEND 2/6] PCI/MSI: Dynamic allocation of MSI-X
+ vectors by group
+From:   Megha Dey <megha.dey@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ashok.raj@intel.com,
+        jacob.jun.pan@linux.intel.com
+Date:   Mon, 12 Aug 2019 10:54:49 -0700
+In-Reply-To: <alpine.DEB.2.21.1908110919310.7324@nanos.tec.linutronix.de>
+References: <1561162778-12669-1-git-send-email-megha.dey@linux.intel.com>
+         <1561162778-12669-3-git-send-email-megha.dey@linux.intel.com>
+         <alpine.DEB.2.21.1906280739100.32342@nanos.tec.linutronix.de>
+         <1565118316.2401.112.camel@intel.com>
+         <alpine.DEB.2.21.1908071525390.24014@nanos.tec.linutronix.de>
+         <48a44ffc-4b5b-5eef-73de-020f1710c41e@arm.com>
+         <alpine.DEB.2.21.1908110919310.7324@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 11, 2019 at 7:42 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Commit aea447141c7e ("powerpc: Disable -Wbuiltin-requires-header when
-> setjmp is used") disabled -Wbuiltin-requires-header because of a warning
-> about the setjmp and longjmp declarations.
->
-> r367387 in clang added another diagnostic around this, complaining that
-> there is no jmp_buf declaration.
->
-> In file included from ../arch/powerpc/xmon/xmon.c:47:
-> ../arch/powerpc/include/asm/setjmp.h:10:13: error: declaration of
-> built-in function 'setjmp' requires the declaration of the 'jmp_buf'
-> type, commonly provided in the header <setjmp.h>.
-> [-Werror,-Wincomplete-setjmp-declaration]
-> extern long setjmp(long *);
->             ^
-> ../arch/powerpc/include/asm/setjmp.h:11:13: error: declaration of
-> built-in function 'longjmp' requires the declaration of the 'jmp_buf'
-> type, commonly provided in the header <setjmp.h>.
-> [-Werror,-Wincomplete-setjmp-declaration]
-> extern void longjmp(long *, long);
->             ^
-> 2 errors generated.
->
-> Take the same approach as the above commit by disabling the warning for
-> the same reason, we provide our own longjmp/setjmp function.
->
-> Cc: stable@vger.kernel.org # 4.19+
-> Link: https://github.com/ClangBuiltLinux/linux/issues/625
-> Link: https://github.com/llvm/llvm-project/commit/3be25e79477db2d31ac46493d97eca8c20592b07
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+On Sun, 2019-08-11 at 09:20 +0200, Thomas Gleixner wrote:
+> On Wed, 7 Aug 2019, Marc Zyngier wrote:
+> > 
+> > On 07/08/2019 14:56, Thomas Gleixner wrote:
+> > > 
+> > > On Tue, 6 Aug 2019, Megha Dey wrote:
+> > > > 
+> > > > On Sat, 2019-06-29 at 09:59 +0200, Thomas Gleixner wrote:
+> > > > > 
+> > > > > On Fri, 21 Jun 2019, Megha Dey wrote:
+> > > > Totally agreed. The request to add a dynamic MSI-X
+> > > > infrastructure came
+> > > > from some driver teams internally and currently they do not
+> > > > have
+> > > > bandwidth to come up with relevant test cases. <sigh>
+> > > Hahahaha.
+> > > 
+> > > > 
+> > > > But we hope that this patch set could serve as a precursor to
+> > > > the
+> > > > interrupt message store (IMS) patch set, and we can use this
+> > > > patch set
+> > > > as the baseline for the IMS patches.
+> > > If IMS needs the same functionality, then we need to think about
+> > > it
+> > > slightly differently because IMS is not necessarily tied to PCI.
+> > >  
+> > > IMS has some similarity to the ARM GIC ITS stuff IIRC, which
+> > > already
+> > > provides these things outside of PCI. Marc?
+> > Indeed. We have MSI-like functionality almost everywhere, and make
+> > heavy
+> > use of the generic MSI framework. Platform-MSI is probably the most
+> > generic example we have (it's the Far West transposed to MSIs).
+> > 
+> > > 
+> > > We probably need some generic infrastructure for this so PCI and
+> > > everything
+> > > else can use it.
+> > Indeed. Overall, I'd like the concept of MSI on whatever bus to
+> > have one
+> > single behaviour across the board, as long as it makes sense for
+> > that
+> > bus (nobody needs another PCI MultiMSI, for example).
+> Right.
+> 
+> @Intel: Is there documentation and perhaps early code for that IMS
+> muck to
+> 	look at?
 
-Thanks for the patch, Nathan.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Hi Thomas,
 
-> ---
->
-> It may be worth using -fno-builtin-setjmp and -fno-builtin-longjmp
-> instead as it makes it clear to clang that we are not using the builtin
-> longjmp and setjmp functions, which I think is why these warnings are
-> appearing (at least according to the commit that introduced this waring).
->
-> Sample patch:
-> https://github.com/ClangBuiltLinux/linux/issues/625#issuecomment-519251372
->
-> However, this is the most conservative approach, as I have already had
-> someone notice this error when building LLVM with PGO on tip of tree
-> LLVM.
->
->  arch/powerpc/kernel/Makefile | 5 +++--
->  arch/powerpc/xmon/Makefile   | 5 +++--
->  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-> index ea0c69236789..44e340ed4722 100644
-> --- a/arch/powerpc/kernel/Makefile
-> +++ b/arch/powerpc/kernel/Makefile
-> @@ -5,8 +5,9 @@
->
->  CFLAGS_ptrace.o                += -DUTS_MACHINE='"$(UTS_MACHINE)"'
->
-> -# Disable clang warning for using setjmp without setjmp.h header
-> -CFLAGS_crash.o         += $(call cc-disable-warning, builtin-requires-header)
-> +# Avoid clang warnings about longjmp and setjmp built-ins (inclusion of setjmp.h and declaration of jmp_buf type)
-> +CFLAGS_crash.o         += $(call cc-disable-warning, builtin-requires-header) \
-> +                          $(call cc-disable-warning, incomplete-setjmp-declaration)
->
->  ifdef CONFIG_PPC64
->  CFLAGS_prom_init.o     += $(NO_MINIMAL_TOC)
-> diff --git a/arch/powerpc/xmon/Makefile b/arch/powerpc/xmon/Makefile
-> index f142570ad860..53f341391210 100644
-> --- a/arch/powerpc/xmon/Makefile
-> +++ b/arch/powerpc/xmon/Makefile
-> @@ -1,8 +1,9 @@
->  # SPDX-License-Identifier: GPL-2.0
->  # Makefile for xmon
->
-> -# Disable clang warning for using setjmp without setjmp.h header
-> -subdir-ccflags-y := $(call cc-disable-warning, builtin-requires-header)
-> +# Avoid clang warnings about longjmp and setjmp built-ins (inclusion of setjmp.h and declaration of jmp_buf type)
-> +subdir-ccflags-y := $(call cc-disable-warning, builtin-requires-header) \
-> +                   $(call cc-disable-warning, incomplete-setjmp-declaration)
->
->  GCOV_PROFILE := n
->  KCOV_INSTRUMENT := n
-> --
-> 2.23.0.rc2
->
+We have some early documentation on IMS which can be found here (part
+of the Scalable I/O Virtualization spec):
 
+https://software.intel.com/sites/default/files/managed/cc/0e/intel-scal
+able-io-virtualization-technical-specification.pdf
+(Section 3.4.1)
 
--- 
-Thanks,
-~Nick Desaulniers
+Also, I do have some initial IMS patches that we use internally for
+testing. I will clean it up and send it as an RFC patchset shortly.
+ 
+> 
+> Thanks,
+> 
+> 	tglx
