@@ -2,149 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D40689D8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 303BF89D86
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 14:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbfHLMGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 08:06:25 -0400
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:57298 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728356AbfHLMGY (ORCPT
+        id S1728320AbfHLMFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 08:05:47 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:47077 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727059AbfHLMFr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 08:06:24 -0400
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7CC0dW0000630;
-        Mon, 12 Aug 2019 05:06:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=pfpt0818;
- bh=g8UGPPQL+Z7HQib+zGHctZgqYyhbQkfxiIsZz5kk00k=;
- b=tMcBup0LoE5pBKBDTKRnAXspeLng8mBT2JBxXbr863YTeeVfiS5/gP4eORrl+DpcWGkn
- oGXbaszHoR9el1zq7N4pFl1C5xLfYspUuD3Zfr3Iwq75+r28Ldf4oyVpXNoX2b7SiXE7
- 6h1ZaLWOUvzUzIZ9KYy8L5cM5ZPyHV6Z9X+q3KCDDYCU5tWHoR4WlQZCst9+/jVDEOME
- JGOzXjoDc/M/LMNg3DaUqRL7RzDcf/gD/IjOiHuQPT/pN1AroWOVTDhaFtlimONBfy+D
- cXhRf8vzb0zXGGG53M4r27OnyGbntK0FekhcIsVTTCi8+Mc+1nmZsl/TD1u714a0/jur ew== 
-Received: from sc-exch04.marvell.com ([199.233.58.184])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2u9u9qe8ht-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 12 Aug 2019 05:06:14 -0700
-Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH04.marvell.com
- (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 12 Aug
- 2019 05:05:27 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (104.47.33.54) by
- SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Mon, 12 Aug 2019 05:05:27 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TnRWpxCuQnxAa1TAQEL6RtPqc3Iyl8JaSEtoHJGfxD6Sbu8LQdPnhOEFzZ8wfNsRHpLjwUN4Kgi595lcWXvqYy8rtueE1mOO0FmIwaFAyvmGjppa0uirtLaVya+yuub1cISQpIzLHKgHhgIN2FeKKozychKjisvzrSK03zKBTZqy6/uQlDRIXFXxJruGutlTaPsUdmPRPEvLWMa+aK2jwCxwoJX7hvFSYovbjNP3vAKXyk7zNMH/fwfFJhoLNBMYAoAIL5+11qRRbi6OrYv7lZ8F2MgbVnUfxh1ta9H2vqMozKNZeZgUvdYYkvhARstTB0z7N8Am2HsLKeibZibwDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g8UGPPQL+Z7HQib+zGHctZgqYyhbQkfxiIsZz5kk00k=;
- b=W7tzod/wDMHvMsCO7ktahabFMHJsPZq7+djrdrb5S92O7zgVZckTmV+FLIgDMAmnwzHmxreB+mN7+vI896ERshTCQaR2MxJV6QINBlhgWdYXi/NR1Dxy4vhr4hYDOiXhPpSE5wjOXXGSkHf7VvnPS7kc0zT2eQAnCm6qeb8F6KVvZKxQm1KTw9XGOucLuRMd6/VWUZqOGMgeXXMAkTST4qHRzO7X/qEugNtAGDRGPpfy27jFEui4rd9g+qsHkVYFAV66LYQLJPI0G7u9UwnqFVbSKh9GvRfNA5LnCR3dGFzbOrDF8b9OTECDwIVJae59pnpuLKlQyHoQ3QCCjwy2lA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
+        Mon, 12 Aug 2019 08:05:47 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c2so47776136plz.13
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 05:05:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g8UGPPQL+Z7HQib+zGHctZgqYyhbQkfxiIsZz5kk00k=;
- b=tucfsSI5tVARqlaKfxal6o/Ot38O83bwg36ZLWPZYDe/zN2LFmgSovS4Sj8a6ixnKyE8iSzr9AYY6Zuy71X87r2k65kzcQIfcnwjxbtIyxMpLKl0eWW89VYIwLq4URsZxUL+HhPCcJl86Y8IjSLXp15ylIO6jNwunoiM6/Je9dM=
-Received: from MN2PR18MB3408.namprd18.prod.outlook.com (10.255.238.217) by
- MN2PR18MB2480.namprd18.prod.outlook.com (20.179.82.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.23; Mon, 12 Aug 2019 12:05:25 +0000
-Received: from MN2PR18MB3408.namprd18.prod.outlook.com
- ([fe80::1b3:8b34:63fe:aad2]) by MN2PR18MB3408.namprd18.prod.outlook.com
- ([fe80::1b3:8b34:63fe:aad2%6]) with mapi id 15.20.2157.022; Mon, 12 Aug 2019
- 12:05:25 +0000
-From:   Robert Richter <rrichter@marvell.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 02/24] EDAC, ghes: Fix grain calculation
-Thread-Topic: [PATCH v2 02/24] EDAC, ghes: Fix grain calculation
-Thread-Index: AQHVUQY528Xmn3pGVkWm7FH417vWZw==
-Date:   Mon, 12 Aug 2019 12:05:25 +0000
-Message-ID: <20190812120517.2kktugib244ujgvb@rric.localdomain>
-References: <20190624150758.6695-1-rrichter@marvell.com>
- <20190624150758.6695-3-rrichter@marvell.com> <20190809131559.GF2152@zn.tnic>
- <20190812064147.5czmkj7e6hxgvje3@rric.localdomain>
- <20190812073221.GA23772@zn.tnic>
-In-Reply-To: <20190812073221.GA23772@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR0701CA0067.eurprd07.prod.outlook.com
- (2603:10a6:3:64::11) To MN2PR18MB3408.namprd18.prod.outlook.com
- (2603:10b6:208:16c::25)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [31.208.96.227]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 90a105f3-fa89-42fe-f3e9-08d71f1d5bb2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR18MB2480;
-x-ms-traffictypediagnostic: MN2PR18MB2480:
-x-microsoft-antispam-prvs: <MN2PR18MB24800B203BDCB9DFAC82F244D9D30@MN2PR18MB2480.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4502;
-x-forefront-prvs: 012792EC17
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(396003)(39850400004)(366004)(346002)(189003)(199004)(9686003)(6486002)(76176011)(66946007)(66476007)(25786009)(229853002)(6436002)(5660300002)(2906002)(6512007)(316002)(66556008)(6916009)(86362001)(64756008)(66446008)(6246003)(54906003)(52116002)(4326008)(53936002)(81166006)(11346002)(305945005)(6506007)(186003)(81156014)(8676002)(446003)(71200400001)(1076003)(102836004)(14454004)(476003)(26005)(7736002)(486006)(53546011)(386003)(8936002)(4744005)(71190400001)(3846002)(6116002)(99286004)(478600001)(256004)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2480;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: aXrEFN+eA9o0P74qkqOx8qjz/GGkhSt0ghtJkePQW9UuiLOCYZ8hRoKW6llMwuouKd/N9XlwrMnvQS1o9OJWNDmmFnd76N+/AC3/xIF4GEkBLUH/QNcM4ayPz4GLwRRfMUlWz5orogS2OndrTTer0sk0EBbu+7e2qky3atWm8sXIr2yHumIyRlqv1FS0zRurVnVec11b9ZqiTOLN3DXohFo+7mG7/9f0XxHzv4gTfk49EhjWsYuRye5RAcaJIamy2VSmfruyZ3GnE+pq1iL4XUUVH04rp2J3/EFxXdKM1y/jFhmOhYLcl1xQPSmON5/5tPpStlBji7ZAppLtnbunPq5bmZUEIGbx8L64EBnT/Cj3U2DbWeYIBq9qdK/lxhg0E2pOPKnXat9aI3DGfxsMfP7zHd4TNb+LR/DiaYOXz9Q=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E74C6359FF15E942AA05DEB9CD815928@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PS1QX7iKyx0PhE61EmV9Yna7OuuWh4mhOTj2D+JV0A4=;
+        b=EgUfNpecwcUEljlePNlmURifGcZonf5uXLrgvHbttGCiKGlqIyWlrCvwXt6dMhM6Jy
+         gDXAg6bMroo4fgdS0p/7HtVG8HSGT4M0u/qlJyPzHBOxbZku4dtzbItOQYPsQtT0EpJd
+         6hJGi2IFYK0W0mPZU1qejGej19lRkcXa7u9kZ6PlFVzw4u2a1Y1YOB6K9eJCpALB9Hc0
+         AZuSNFafJ0GT8pOMlsSfOzQUR0ml4ugbHR8E9lDXvs3JhHjDANCsGYdXteuKlHwfWigN
+         DQahy23gXTBvZ+UgxT7SgU3I8uxfCC9T+Nl7QarlzuXVbOylwJ2k2a0/5U4WMAyQ7KCy
+         NKUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PS1QX7iKyx0PhE61EmV9Yna7OuuWh4mhOTj2D+JV0A4=;
+        b=EPP65B9KNOYTCLMtsSGWKcP0rY22/KLpYmNd9WgNIEOPGY4gQdwUvq2BTwn4gHpjAJ
+         nt6mBrOYvgoffr5XudLZLM6ypC2OE/npOqqfWj4r0UcJCOHAbiyax/Gcp0pgBnDOL9hd
+         vpgbiHqBP7rDgYSNQOuvf46u4inmxPSlKkcj45znj4IrXJuCQOaWS1SReVBZQALKYU54
+         sjJN90tZTYryuVEmX8xsyy/22jNA+viuSKxNd5iDZ7h1bRp9rQIxJ4RqJ6G8LxEzZbh9
+         iVpPYNGUJjiyvUmeJHpQTVmLW8H4N+IObRWTL2G2XujaQDTcs2X/PyBv/9Aj5mrPPXQi
+         OjGg==
+X-Gm-Message-State: APjAAAWeJffItAYFEBgQQ0nABQfZzzmq0rAvZAXXJ4awdmDtVpasVAe+
+        +TtJhNXLC3Nk+DLFL8JgABwmcWDRMjCns+rTUfQQLQ==
+X-Google-Smtp-Source: APXvYqxooOEIFr7cgeYHUa4q2pJCIIvwnE+2awsYT0GDGuW1kipVJPmuPXYGxSjagz7WzIHCrJMUuX2VPTojuB9PfB8=
+X-Received: by 2002:a17:902:8649:: with SMTP id y9mr5345375plt.252.1565611546212;
+ Mon, 12 Aug 2019 05:05:46 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90a105f3-fa89-42fe-f3e9-08d71f1d5bb2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 12:05:25.0680
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NGu76aKDuK41VVsj2F5hu60dyeRP3EaTI35KHqgSsKMcYBdgp+6dfI094MXW2X57pQ5+9nsxZm3SQHCaNRQMRw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2480
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
- definitions=2019-08-12_05:2019-08-09,2019-08-12 signatures=0
+References: <000000000000502536058faf0113@google.com>
+In-Reply-To: <000000000000502536058faf0113@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 12 Aug 2019 14:05:34 +0200
+Message-ID: <CAAeHK+z7k7fX+4YbQ+zad48aDAgU36o312m17uOCef8sy_TTyw@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in prepare_to_wait_event
+To:     syzbot <syzbot+332cbcbd8be3e03c62eb@syzkaller.appspotmail.com>
+Cc:     alexandre.belloni@bootlin.com, enric.balletbo@collabora.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kirr@nexedi.com, LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>, logang@deltatee.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.08.19 09:32:22, Borislav Petkov wrote:
-> On Mon, Aug 12, 2019 at 06:42:00AM +0000, Robert Richter wrote:
+On Fri, Aug 9, 2019 at 3:18 PM syzbot
+<syzbot+332cbcbd8be3e03c62eb@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10fbde8c600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=332cbcbd8be3e03c62eb
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127dd636600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171de9ce600000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+332cbcbd8be3e03c62eb@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: use-after-free in __lock_acquire+0x302a/0x3b50
+> kernel/locking/lockdep.c:3753
+> Read of size 8 at addr ffff8881d2a83238 by task syz-executor771/2979
+>
+> CPU: 0 PID: 2979 Comm: syz-executor771 Not tainted 5.3.0-rc2+ #25
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0xca/0x13e lib/dump_stack.c:113
+>   print_address_description+0x6a/0x32c mm/kasan/report.c:351
+>   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
+>   kasan_report+0xe/0x12 mm/kasan/common.c:612
+>   __lock_acquire+0x302a/0x3b50 kernel/locking/lockdep.c:3753
+>   lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+>   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>   _raw_spin_lock_irqsave+0x32/0x50 kernel/locking/spinlock.c:159
+>   prepare_to_wait_event+0x5b/0x650 kernel/sched/wait.c:263
+>   ld_usb_read+0x619/0x780 drivers/usb/misc/ldusb.c:480
 
-> > With the grain_bits calculation the mask is rounded up to the next
-> > power of 2 value.
->=20
-> mask	  =3D 0xffffffffff00ff00
+#syz dup: KASAN: use-after-free Read in ld_usb_release
 
-grain =3D ~mask + 1
-
-> ~mask	  =3D 0x0000000000ff00ff
-> ~mask + 1 =3D 0x0000000000ff0100
-
-grain_bits =3D fls_long(e->grain - 1);
-grain_bits =3D 24
-
-grain =3D 1 << grain_bits
-grain =3D 0x1000000
-
-So for masks in the range from 0xffffffffff000000 to
-0xffffffffff7fffff we have grain_bits set to 24, which corresponds to
-a grain of 0x1000000. Looks good to me.
-
->=20
-> Your "trick" of adding a 1 to get to the most significant bit simply
-> doesn't work here. Thus:
->=20
-> "I guess we can leave it like that for now until some "inventive"
-> firmware actually does it."
-
-Fine to me.
-
--Robert
+>   __vfs_read+0x76/0x100 fs/read_write.c:425
+>   vfs_read+0x1ea/0x430 fs/read_write.c:461
+>   ksys_read+0x1e8/0x250 fs/read_write.c:587
+>   do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x448859
+> Code: e8 ac e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 4b 06 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f9b31740ce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> RAX: ffffffffffffffda RBX: 00000000006dec48 RCX: 0000000000448859
+> RDX: 0000000000000049 RSI: 0000000020000080 RDI: 0000000000000004
+> RBP: 00000000006dec40 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dec4c
+> R13: 00007ffd58e161df R14: 00007f9b317419c0 R15: 00000000006dec4c
+>
+> Allocated by task 2705:
+>   save_stack+0x1b/0x80 mm/kasan/common.c:69
+>   set_track mm/kasan/common.c:77 [inline]
+>   __kasan_kmalloc mm/kasan/common.c:487 [inline]
+>   __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
+>   kmalloc include/linux/slab.h:552 [inline]
+>   kzalloc include/linux/slab.h:748 [inline]
+>   ld_usb_probe+0x6e/0xa65 drivers/usb/misc/ldusb.c:661
+>   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+>   really_probe+0x281/0x650 drivers/base/dd.c:548
+>   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+>   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+>   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x217/0x360 drivers/base/dd.c:882
+>   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+>   device_add+0xae6/0x16f0 drivers/base/core.c:2114
+>   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+>   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+>   usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+>   really_probe+0x281/0x650 drivers/base/dd.c:548
+>   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+>   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+>   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x217/0x360 drivers/base/dd.c:882
+>   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+>   device_add+0xae6/0x16f0 drivers/base/core.c:2114
+>   usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+>   hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+>   port_event drivers/usb/core/hub.c:5359 [inline]
+>   hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+>   process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+>   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+>   kthread+0x318/0x420 kernel/kthread.c:255
+>   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+>
+> Freed by task 2705:
+>   save_stack+0x1b/0x80 mm/kasan/common.c:69
+>   set_track mm/kasan/common.c:77 [inline]
+>   __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
+>   slab_free_hook mm/slub.c:1423 [inline]
+>   slab_free_freelist_hook mm/slub.c:1470 [inline]
+>   slab_free mm/slub.c:3012 [inline]
+>   kfree+0xe4/0x2f0 mm/slub.c:3953
+>   ld_usb_probe+0x728/0xa65 drivers/usb/misc/ldusb.c:744
+>   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+>   really_probe+0x281/0x650 drivers/base/dd.c:548
+>   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+>   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+>   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x217/0x360 drivers/base/dd.c:882
+>   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+>   device_add+0xae6/0x16f0 drivers/base/core.c:2114
+>   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+>   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+>   usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+>   really_probe+0x281/0x650 drivers/base/dd.c:548
+>   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+>   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+>   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x217/0x360 drivers/base/dd.c:882
+>   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+>   device_add+0xae6/0x16f0 drivers/base/core.c:2114
+>   usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+>   hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+>   port_event drivers/usb/core/hub.c:5359 [inline]
+>   hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+>   process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+>   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+>   kthread+0x318/0x420 kernel/kthread.c:255
+>   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+>
+> The buggy address belongs to the object at ffff8881d2a83180
+>   which belongs to the cache kmalloc-512 of size 512
+> The buggy address is located 184 bytes inside of
+>   512-byte region [ffff8881d2a83180, ffff8881d2a83380)
+> The buggy address belongs to the page:
+> page:ffffea00074aa080 refcount:1 mapcount:0 mapping:ffff8881da002500
+> index:0x0 compound_mapcount: 0
+> flags: 0x200000000010200(slab|head)
+> raw: 0200000000010200 dead000000000100 dead000000000122 ffff8881da002500
+> raw: 0000000000000000 00000000000c000c 00000001ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>   ffff8881d2a83100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>   ffff8881d2a83180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff8881d2a83200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                          ^
+>   ffff8881d2a83280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>   ffff8881d2a83300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
