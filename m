@@ -2,127 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C16A89CF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 13:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 168B189D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 13:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfHLL3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 07:29:01 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54464 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728473AbfHLL27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 07:28:59 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 988ECB04B9D23C81953D;
-        Mon, 12 Aug 2019 19:28:56 +0800 (CST)
-Received: from [127.0.0.1] (10.57.101.250) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Mon, 12 Aug 2019
- 19:28:47 +0800
-To:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, <linus.walleij@linaro.org>
-CC:     Linuxarm <linuxarm@huawei.com>, <xuwei5@hisilicon.com>,
-        "Shameerali Kolothum Thodi" <shameerali.kolothum.thodi@huawei.com>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "Salil Mehta" <salil.mehta@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>, <jinying@hisilicon.com>,
-        Zhangyi ac <zhangyi.ac@huawei.com>,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
-        Tangkunshan <tangkunshan@huawei.com>,
-        huangdaode <huangdaode@hisilicon.com>
-From:   Wei Xu <xuwei5@hisilicon.com>
-Subject: [PATCH] gpio: pl061: Fix the issue failed to register the ACPI
- interruption
-Message-ID: <5D514D6F.4090904@hisilicon.com>
-Date:   Mon, 12 Aug 2019 19:28:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        id S1728671AbfHLL3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 07:29:24 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:18479 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728231AbfHLL3W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 07:29:22 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d514d9c0002>; Mon, 12 Aug 2019 04:29:32 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 12 Aug 2019 04:29:22 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 12 Aug 2019 04:29:22 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 12 Aug
+ 2019 11:29:21 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 12 Aug 2019 11:29:21 +0000
+Received: from kyarlagadda-linux.nvidia.com (Not Verified[10.19.64.169]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d514d8e0000>; Mon, 12 Aug 2019 04:29:21 -0700
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <jslaby@suse.com>
+CC:     <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Shardar Shariff Md <smohammed@nvidia.com>
+Subject: [PATCH 12/14] serial: tegra: add support to adjust baud rate
+Date:   Mon, 12 Aug 2019 16:58:21 +0530
+Message-ID: <1565609303-27000-13-git-send-email-kyarlagadda@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1565609303-27000-1-git-send-email-kyarlagadda@nvidia.com>
+References: <1565609303-27000-1-git-send-email-kyarlagadda@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.101.250]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565609373; bh=4VuVn4if/4s3BnQNcEwaN+bWUnt5ZYouFMrUfkNcwAY=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=A5xhXGRAw2qNEvMFHKuMGOGcKVOZmqsMLyGTNu0Jdkv7g/hMZRzg+aCa9XCk0tYbb
+         0f6z0/AoiQ+fQgryXXQx+cr2en8jS89ueIiCZvy4PB+pJPRXXS8DGtlQ/JNTHoz3Sy
+         qWZZ88qfmRm9FSbviW1OeitlvTC2+darheXBf4GJ1KW4s7J//i3YamS6jaFiunQqmz
+         bj8guz1FfflcKQsrA+RGT0lPFWhNT68JLbg0SS6HqVYwIs9znkXmhn8+sZyO+Yw1US
+         moXPPvIgK5ik0YVLxc7weuE60MKDCtj3NoSVsZnyReLhlCv1cUInO1S2felxc1A+Wy
+         NvDxk1sHW6QPA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Invoke acpi_gpiochip_request_interrupts after the acpi data has been
-attached to the pl061 acpi node to register interruption.
+Add support to adjust baud rates to fall under supported tolerance
+range through DT.
 
-Otherwise it will be failed to register interruption for the ACPI case.
-Because in the gpiochip_add_data_with_key, acpi_gpiochip_add is invoked
-after gpiochip_add_irqchip but at that time the acpi data has not been
-attached yet.
+Tegra186 chip has a hardware issue resulting in frame errors when
+tolerance level for baud rate is negative. Provided entries to adjust
+baud rate to be within acceptable range and work with devices that
+can send negative baud rate. Also report error when baud rate set is
+out of tolerance range of controller updated in device tree.
 
-Tested with below steps on QEMU v4.1.0-rc3 and Linux kernel v5.3-rc4,
-and found pl061 interruption is missed in the /proc/interrupts:
-1.
-qemu-system-aarch64 \
--machine virt,gic-version=3 -cpu cortex-a57 \
--m 1G,maxmem=4G,slots=4 \
--kernel Image -initrd rootfs.cpio.gz \
--net none -nographic  \
--bios QEMU_EFI.fd  \
--append "console=ttyAMA0 acpi=force earlycon=pl011,0x9000000"
-
-2. cat /proc/interrupts in the guest console:
-estuary:/$ cat /proc/interrupts
-CPU0
-2:       3228     GICv3  27 Level     arch_timer
-4:         15     GICv3  33 Level     uart-pl011
-42:          0     GICv3  23 Level     arm-pmu
-IPI0:         0       Rescheduling interrupts
-IPI1:         0       Function call interrupts
-IPI2:         0       CPU stop interrupts
-IPI3:         0       CPU stop (for crash dump) interrupts
-IPI4:         0       Timer broadcast interrupts
-IPI5:         0       IRQ work interrupts
-IPI6:         0       CPU wake-up interrupts
-Err:          0
-
-Fixes: 04ce935c6b2a ("gpio: pl061: Pass irqchip when adding gpiochip")
-Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
+Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 ---
-  drivers/gpio/gpio-pl061.c | 7 +++++++
-  1 file changed, 7 insertions(+)
+ drivers/tty/serial/serial-tegra.c | 68 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 722ce5c..e1a434e 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -8,6 +8,7 @@
-   *
-   * Data sheet: ARM DDI 0190B, September 2000
-   */
-+#include <linux/acpi.h>
-  #include <linux/spinlock.h>
-  #include <linux/errno.h>
-  #include <linux/init.h>
-@@ -24,6 +25,9 @@
-  #include <linux/pinctrl/consumer.h>
-  #include <linux/pm.h>
-
-+#include "gpiolib.h"
-+#include "gpiolib-acpi.h"
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 03d1d20..3c9e5c5 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -91,6 +91,12 @@ struct tegra_uart_chip_data {
+ 	int	dma_burst_bytes;
+ };
+ 
++struct tegra_baud_tolerance {
++	u32 lower_range_baud;
++	u32 upper_range_baud;
++	s32 tolerance;
++};
 +
-  #define GPIODIR 0x400
-  #define GPIOIS  0x404
-  #define GPIOIBE 0x408
-@@ -345,6 +349,9 @@ static int pl061_probe(struct amba_device *adev, 
-const struct amba_id *id)
-      if (ret)
-          return ret;
-
-+    if (has_acpi_companion(dev))
-+        acpi_gpiochip_request_interrupts(&pl061->gc);
+ struct tegra_uart_port {
+ 	struct uart_port			uport;
+ 	const struct tegra_uart_chip_data	*cdata;
+@@ -127,6 +133,8 @@ struct tegra_uart_port {
+ 	dma_cookie_t				rx_cookie;
+ 	unsigned int				tx_bytes_requested;
+ 	unsigned int				rx_bytes_requested;
++	struct tegra_baud_tolerance		*baud_tolerance;
++	int					n_adjustable_baud_rates;
+ };
+ 
+ static void tegra_uart_start_next_tx(struct tegra_uart_port *tup);
+@@ -329,6 +337,21 @@ static void tegra_uart_fifo_reset(struct tegra_uart_port *tup, u8 fcr_bits)
+ 		set_rts(tup, true);
+ }
+ 
++static long tegra_get_tolerance_rate(struct tegra_uart_port *tup,
++				     unsigned int baud, long rate)
++{
++	int i;
 +
-      amba_set_drvdata(adev, pl061);
-      dev_info(dev, "PL061 GPIO chip registered\n");
-
++	for (i = 0; i < tup->n_adjustable_baud_rates; ++i) {
++		if (baud >= tup->baud_tolerance[i].lower_range_baud &&
++		    baud <= tup->baud_tolerance[i].upper_range_baud)
++			return (rate + (rate *
++				tup->baud_tolerance[i].tolerance) / 10000);
++	}
++
++	return rate;
++}
++
+ static int tegra_set_baudrate(struct tegra_uart_port *tup, unsigned int baud)
+ {
+ 	unsigned long rate;
+@@ -342,6 +365,9 @@ static int tegra_set_baudrate(struct tegra_uart_port *tup, unsigned int baud)
+ 
+ 	if (tup->cdata->support_clk_src_div) {
+ 		rate = baud * 16;
++		if (tup->n_adjustable_baud_rates)
++			rate = tegra_get_tolerance_rate(tup, baud, rate);
++
+ 		ret = clk_set_rate(tup->uart_clk, rate);
+ 		if (ret < 0) {
+ 			dev_err(tup->uport.dev,
+@@ -1312,6 +1338,12 @@ static int tegra_uart_parse_dt(struct platform_device *pdev,
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	int port;
++	int ret;
++	int index;
++	u32 pval;
++	int count;
++	int n_entries;
++
+ 
+ 	port = of_alias_get_id(np, "serial");
+ 	if (port < 0) {
+@@ -1322,6 +1354,42 @@ static int tegra_uart_parse_dt(struct platform_device *pdev,
+ 
+ 	tup->enable_modem_interrupt = of_property_read_bool(np,
+ 					"nvidia,enable-modem-interrupt");
++	n_entries = of_property_count_u32_elems(np, "nvidia,adjust-baud-rates");
++	if (n_entries > 0) {
++		tup->n_adjustable_baud_rates = n_entries / 3;
++		tup->baud_tolerance =
++		devm_kzalloc(&pdev->dev, (tup->n_adjustable_baud_rates) *
++			     sizeof(*tup->baud_tolerance), GFP_KERNEL);
++		if (!tup->baud_tolerance)
++			return -ENOMEM;
++		for (count = 0, index = 0; count < n_entries; count += 3,
++		     index++) {
++			ret =
++			of_property_read_u32_index(np,
++						   "nvidia,adjust-baud-rates",
++						   count, &pval);
++			if (!ret)
++				tup->baud_tolerance[index].lower_range_baud =
++				pval;
++			ret =
++			of_property_read_u32_index(np,
++						   "nvidia,adjust-baud-rates",
++						   count + 1, &pval);
++			if (!ret)
++				tup->baud_tolerance[index].upper_range_baud =
++				pval;
++			ret =
++			of_property_read_u32_index(np,
++						   "nvidia,adjust-baud-rates",
++						   count + 2, &pval);
++			if (!ret)
++				tup->baud_tolerance[index].tolerance =
++				(s32)pval;
++		}
++	} else {
++		tup->n_adjustable_baud_rates = 0;
++	}
++
+ 	return 0;
+ }
+ 
 -- 
-2.8.1
-
-
-.
+2.7.4
 
