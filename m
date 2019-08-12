@@ -2,328 +2,439 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9492F8A98B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42CE68A986
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 23:41:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfHLVnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 17:43:16 -0400
-Received: from mga17.intel.com ([192.55.52.151]:52083 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726527AbfHLVnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 17:43:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 14:43:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,379,1559545200"; 
-   d="scan'208";a="177608221"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2019 14:43:14 -0700
-Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
-        by linux.intel.com (Postfix) with ESMTP id B3AE15806A0;
-        Mon, 12 Aug 2019 14:43:14 -0700 (PDT)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v5 4/7] PCI/ATS: Add PRI support for PCIe VF devices
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com
-References: <cover.1564702313.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <827d051ef8c8bbfa815908ce927e607870780cb6.1564702313.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <20190812200456.GL11785@google.com>
-From:   sathyanarayanan kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <f6ee630d-6db5-a39e-6660-6c96a27189b4@linux.intel.com>
-Date:   Mon, 12 Aug 2019 14:40:31 -0700
+        id S1727138AbfHLVlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 17:41:06 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49444 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbfHLVlF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 17:41:05 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7CLf2eT027286;
+        Mon, 12 Aug 2019 16:41:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565646062;
+        bh=LrYi7GAYKhxzC78TSx/J78d4+BTwfUFqzvrItVQC2d8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=EsBrNYPolTliIhXGnJ5odFKM0trcYLOVPfvxnaamoYpweKKM6+8JA31yLhkdsvreC
+         f98rOR/c6qgTiO2qoYKYvvuXbf1kZ42+VjT3WQ7mWnbrgSORceC+yghRyBhMp4Bf4i
+         s8wqFOkYiLvQFDCQt3Cm4aqzRENGkqh61moXuaWo=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7CLf2ab061745
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Aug 2019 16:41:02 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 12
+ Aug 2019 16:41:01 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 12 Aug 2019 16:41:01 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7CLf1Ww036234;
+        Mon, 12 Aug 2019 16:41:01 -0500
+Subject: Re: [PATCH] rpmsg: add a description field
+To:     Fabien DESSENNE <fabien.dessenne@st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tero Kristo <t-kristo@ti.com>
+References: <20190809214005.32159-1-s-anna@ti.com>
+ <a11da259-e111-f5a2-8913-e3572d44ce02@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <75216f07-4b92-baff-2ade-b38e71376929@ti.com>
+Date:   Mon, 12 Aug 2019 16:41:01 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190812200456.GL11785@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <a11da259-e111-f5a2-8913-e3572d44ce02@st.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Fabien,
 
-On 8/12/19 1:04 PM, Bjorn Helgaas wrote:
-> On Thu, Aug 01, 2019 at 05:06:01PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On 8/12/19 8:43 AM, Fabien DESSENNE wrote:
+> Hi Suman,
+> 
+> See my remarks below
+
+Thank you for all the review comments.
+
+> 
+> BR
+> 
+> Fabien
+> 
+> 
+> On 09/08/2019 11:40 PM, Suman Anna wrote:
+>> From: Ohad Ben-Cohen <ohad@wizery.com>
 >>
->> When IOMMU tries to enable Page Request Interface (PRI) for VF device
->> in iommu_enable_dev_iotlb(), it always fails because PRI support for
->> PCIe VF device is currently broken. Current implementation expects
->> the given PCIe device (PF & VF) to implement PRI capability before
->> enabling the PRI support. But this assumption is incorrect. As per PCIe
->> spec r4.0, sec 9.3.7.11, all VFs associated with PF can only use the
->> PRI of the PF and not implement it. Hence we need to create exception
->> for handling the PRI support for PCIe VF device.
+>> Add a new description field to the rpmsg bus infrastructure
+>> that can be passed onto the rpmsg client drivers for additional
+>> information. The current rpmsg bus client drivers need to have
+>> a fixed id_table for proper matching, this new field can allow
+>> flexibility for the client drivers (eg: like creating unique
+>> cdevs).
 >>
->> Also, since PRI is a shared resource between PF/VF, following rules
->> should apply.
+>> The description field is published through an enhanced name
+>> service announcement message structure. The name service
+>> message processing logic is updated to maintain backward
+>> compatibility with the previous message structure.
 >>
->> 1. Use proper locking before accessing/modifying PF resources in VF
->>     PRI enable/disable call.
->> 2. Use reference count logic to track the usage of PRI resource.
->> 3. Disable PRI only if the PRI reference count (pri_ref_cnt) is zero.
+>> Based on an initial patch from Ohad Ben-Cohen.
 >>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Keith Busch <keith.busch@intel.com>
->> Suggested-by: Ashok Raj <ashok.raj@intel.com>
->> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+>> [s-anna@ti.com: forward port, add sysfs documentation, fixup qcom drivers]
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> [t-kristo@ti.com: reworked to support both rpmsg with/without the desc field]
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
 >> ---
->>   drivers/pci/ats.c   | 143 ++++++++++++++++++++++++++++++++++----------
->>   include/linux/pci.h |   2 +
->>   2 files changed, 112 insertions(+), 33 deletions(-)
+>>   Documentation/ABI/testing/sysfs-bus-rpmsg | 29 +++++++++++++++
+>>   drivers/rpmsg/qcom_glink_native.c         |  1 +
+>>   drivers/rpmsg/qcom_smd.c                  |  1 +
+> 
+> 
+> Should not you extend qcom_glink_create_ept() and qcom_smd_create_ept() 
+> so they compare both 'name' AND 'desc' (just like this is proposed in 
+> rpmsg_device_match()) ?
+
+I did not understand your comment against the qcom create_ept()s, we do
+not initialize it for the virtio_rpmsg_create_ept() either. The desc
+field is only for the rpmsg_device and is filled in before the
+rpmsg_register_device() function, and is already zero-initialized for
+the qcom transports in the qcom_glink_rx_open() and
+qcom_smd_create_device() functions.
+
+> 
+> 
+>>   drivers/rpmsg/rpmsg_char.c                |  1 +
+>>   drivers/rpmsg/rpmsg_core.c                |  6 ++++
+>>   drivers/rpmsg/virtio_rpmsg_bus.c          | 44 +++++++++++++++++++----
+>>   drivers/soc/qcom/wcnss_ctrl.c             |  1 +
+>>   include/linux/rpmsg.h                     |  4 +++
+>>   8 files changed, 80 insertions(+), 7 deletions(-)
 >>
->> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
->> index 1f4be27a071d..079dc5444444 100644
->> --- a/drivers/pci/ats.c
->> +++ b/drivers/pci/ats.c
->> @@ -189,6 +189,8 @@ void pci_pri_init(struct pci_dev *pdev)
->>   	if (pdev->is_virtfn)
->>   		return;
->>   
->> +	mutex_init(&pdev->pri_lock);
+>> diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
+>> index 990fcc420935..7f1b09ecc64d 100644
+>> --- a/Documentation/ABI/testing/sysfs-bus-rpmsg
+>> +++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
+>> @@ -93,3 +93,32 @@ Description:
+>>   		This sysfs entry allows the rpmsg driver for a rpmsg device
+>>   		to be specified which will override standard OF, ID table
+>>   		and name matching.
 >> +
->>   	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
->>   	if (!pos)
->>   		return;
->> @@ -221,29 +223,57 @@ int pci_enable_pri(struct pci_dev *pdev, u32 reqs)
->>   {
->>   	u16 control, status;
->>   	u32 max_requests;
->> +	int ret = 0;
->> +	struct pci_dev *pf = pci_physfn(pdev);
->>   
->> -	if (WARN_ON(pdev->pri_enabled))
->> -		return -EBUSY;
->> +	mutex_lock(&pf->pri_lock);
->>   
->> -	if (!pdev->pri_cap)
->> -		return -EINVAL;
->> +	if (WARN_ON(pdev->pri_enabled)) {
->> +		ret = -EBUSY;
->> +		goto pri_unlock;
->> +	}
->>   
->> -	pci_read_config_word(pdev, pdev->pri_cap + PCI_PRI_STATUS, &status);
->> -	if (!(status & PCI_PRI_STATUS_STOPPED))
->> -		return -EBUSY;
->> +	if (!pf->pri_cap) {
->> +		ret = -EINVAL;
->> +		goto pri_unlock;
->> +	}
+>> +What:		/sys/bus/rpmsg/devices/.../desc
+>> +Date:		August 2019
+>> +KernelVersion:	5.4
+>> +Contact:	Bjorn Andersson <bjorn.andersson@linaro.org>
+>> +Description:
+>> +		Every rpmsg device is a communication channel with a remote
+>> +		processor. Channels are identified by a textual name (see
+>> +		/sys/bus/rpmsg/devices/.../name above) and have a local
+>> +		("source") rpmsg address, and remote ("destination") rpmsg
+>> +		address.
 >> +
->> +	if (pdev->is_virtfn && pf->pri_enabled)
->> +		goto update_status;
+>> +		A channel is first created when an entity, whether local
+>> +		or remote, starts listening on it for messages (and is thus
+>> +		called an rpmsg server). When that happens, a "name service"
+>> +		announcement is sent to the other processor, in order to let
+>> +		it know about the creation of the channel (this way remote
+>> +		clients know they can start sending messages).
 >> +
->> +	/*
->> +	 * Before updating PRI registers, make sure there is no
->> +	 * outstanding PRI requests.
->> +	 */
->> +	pci_read_config_word(pf, pf->pri_cap + PCI_PRI_STATUS, &status);
->> +	if (!(status & PCI_PRI_STATUS_STOPPED)) {
->> +		ret = -EBUSY;
->> +		goto pri_unlock;
->> +	}
->>   
->> -	pci_read_config_dword(pdev, pdev->pri_cap + PCI_PRI_MAX_REQ,
->> -			      &max_requests);
->> +	pci_read_config_dword(pf, pf->pri_cap + PCI_PRI_MAX_REQ, &max_requests);
->>   	reqs = min(max_requests, reqs);
->> -	pdev->pri_reqs_alloc = reqs;
->> -	pci_write_config_dword(pdev, pdev->pri_cap + PCI_PRI_ALLOC_REQ, reqs);
->> +	pf->pri_reqs_alloc = reqs;
->> +	pci_write_config_dword(pf, pf->pri_cap + PCI_PRI_ALLOC_REQ, reqs);
->>   
->>   	control = PCI_PRI_CTRL_ENABLE;
->> -	pci_write_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, control);
->> +	pci_write_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, control);
->>   
->> -	pdev->pri_enabled = 1;
->> +	/*
->> +	 * If PRI is not already enabled in PF, increment the PF
->> +	 * pri_ref_cnt to track the usage of PRI interface.
->> +	 */
->> +	if (pdev->is_virtfn && !pf->pri_enabled) {
->> +		atomic_inc(&pf->pri_ref_cnt);
->> +		pf->pri_enabled = 1;
->> +	}
->>   
->> -	return 0;
->> +update_status:
->> +	atomic_inc(&pf->pri_ref_cnt);
->> +	pdev->pri_enabled = 1;
->> +pri_unlock:
->> +	mutex_unlock(&pf->pri_lock);
->> +	return ret;
->>   }
->>   EXPORT_SYMBOL_GPL(pci_enable_pri);
->>   
->> @@ -256,18 +286,30 @@ EXPORT_SYMBOL_GPL(pci_enable_pri);
->>   void pci_disable_pri(struct pci_dev *pdev)
->>   {
->>   	u16 control;
->> +	struct pci_dev *pf = pci_physfn(pdev);
->>   
->> -	if (WARN_ON(!pdev->pri_enabled))
->> -		return;
->> +	mutex_lock(&pf->pri_lock);
->>   
->> -	if (!pdev->pri_cap)
->> -		return;
->> +	if (WARN_ON(!pdev->pri_enabled) || !pf->pri_cap)
->> +		goto pri_unlock;
+>> +		The listening entity (or client) which communicates with a
+>> +		remote processor is referred as rpmsg driver. The rpmsg device
+>> +		and rpmsg driver are matched based on rpmsg device name (see
+>> +		/sys/bus/rpmsg/devices/.../name above) and rpmsg driver ID table.
 >> +
->> +	atomic_dec(&pf->pri_ref_cnt);
+>> +		This sysfs entry contains an additional optional description of
+>> +		the rpmsg device that can be optionally included as part of the
+>> +		"name service" announcement. This description is then passed on
+>> +		to the corresponding rpmsg drivers to further distinguish multiple
+>> +		devices associated with the same rpmsg driver.
+>> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+>> index f46c787733e8..cfdabddc15ac 100644
+>> --- a/drivers/rpmsg/qcom_glink_native.c
+>> +++ b/drivers/rpmsg/qcom_glink_native.c
+>> @@ -1456,6 +1456,7 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
+>>   		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+>>   		chinfo.src = RPMSG_ADDR_ANY;
+>>   		chinfo.dst = RPMSG_ADDR_ANY;
+>> +		chinfo.desc[0] = '\0';
 >>   
->> -	pci_read_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, &control);
->> +	/*
->> +	 * If pri_ref_cnt is not zero, then don't modify hardware
->> +	 * registers.
->> +	 */
->> +	if (atomic_read(&pf->pri_ref_cnt))
->> +		goto done;
->> +
->> +	pci_read_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, &control);
->>   	control &= ~PCI_PRI_CTRL_ENABLE;
->> -	pci_write_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, control);
->> +	pci_write_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, control);
+>>   		rpmsg_unregister_device(glink->dev, &chinfo);
+>>   	}
+>> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+>> index 4abbeea782fa..7cd6b9c47065 100644
+>> --- a/drivers/rpmsg/qcom_smd.c
+>> +++ b/drivers/rpmsg/qcom_smd.c
+>> @@ -1307,6 +1307,7 @@ static void qcom_channel_state_worker(struct work_struct *work)
+>>   		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+>>   		chinfo.src = RPMSG_ADDR_ANY;
+>>   		chinfo.dst = RPMSG_ADDR_ANY;
+>> +		chinfo.desc[0] = '\0';
+>>   		rpmsg_unregister_device(&edge->dev, &chinfo);
+>>   		channel->registered = false;
+>>   		spin_lock_irqsave(&edge->channels_lock, flags);
+>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+>> index eea5ebbb5119..4bd91445a2fd 100644
+>> --- a/drivers/rpmsg/rpmsg_char.c
+>> +++ b/drivers/rpmsg/rpmsg_char.c
+>> @@ -442,6 +442,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+>>   	chinfo.name[RPMSG_NAME_SIZE-1] = '\0';
+>>   	chinfo.src = eptinfo.src;
+>>   	chinfo.dst = eptinfo.dst;
+>> +	chinfo.desc[0] = '\0';
 >>   
->> +done:
->>   	pdev->pri_enabled = 0;
->> +pri_unlock:
->> +	mutex_unlock(&pf->pri_lock);
->>   }
->>   EXPORT_SYMBOL_GPL(pci_disable_pri);
->>   
->> @@ -277,17 +319,31 @@ EXPORT_SYMBOL_GPL(pci_disable_pri);
->>    */
->>   void pci_restore_pri_state(struct pci_dev *pdev)
->>   {
->> -	u16 control = PCI_PRI_CTRL_ENABLE;
->> -	u32 reqs = pdev->pri_reqs_alloc;
->> +	u16 control;
->> +	u32 reqs;
->> +	struct pci_dev *pf = pci_physfn(pdev);
->>   
->>   	if (!pdev->pri_enabled)
->>   		return;
->>   
->> -	if (!pdev->pri_cap)
->> +	if (!pf->pri_cap)
->>   		return;
->>   
->> -	pci_write_config_dword(pdev, pdev->pri_cap + PCI_PRI_ALLOC_REQ, reqs);
->> -	pci_write_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, control);
->> +	mutex_lock(&pf->pri_lock);
->> +
->> +	/* If PRI is already enabled by other VF's or PF, return */
->> +	pci_read_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, &control);
->> +	if (control & PCI_PRI_CTRL_ENABLE)
->> +		goto pri_unlock;
->> +
->> +	reqs = pf->pri_reqs_alloc;
->> +	control = PCI_PRI_CTRL_ENABLE;
->> +
->> +	pci_write_config_dword(pf, pf->pri_cap + PCI_PRI_ALLOC_REQ, reqs);
->> +	pci_write_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, control);
-> Why use "control" here instead of just PCI_PRI_CTRL_ENABLE?
-It can be done. Even in original code, using control did not serve any 
-purpose. I just left the implementation as original code.
->
->> +pri_unlock:
->> +	mutex_unlock(&pf->pri_lock);
->>   }
->>   EXPORT_SYMBOL_GPL(pci_restore_pri_state);
->>   
->> @@ -300,18 +356,32 @@ EXPORT_SYMBOL_GPL(pci_restore_pri_state);
->>    */
->>   int pci_reset_pri(struct pci_dev *pdev)
->>   {
->> +	struct pci_dev *pf = pci_physfn(pdev);
->>   	u16 control;
->> +	int ret = 0;
->>   
->> -	if (WARN_ON(pdev->pri_enabled))
->> -		return -EBUSY;
->> +	mutex_lock(&pf->pri_lock);
->>   
->> -	if (!pdev->pri_cap)
->> -		return -EINVAL;
->> +	if (WARN_ON(pdev->pri_enabled)) {
->> +		ret = -EBUSY;
->> +		goto done;
->> +	}
->> +
->> +	if (!pf->pri_cap) {
->> +		ret = -EINVAL;
->> +		goto done;
->> +	}
->> +
->> +	/* If PRI is already enabled by other VF's or PF, return 0 */
->> +	if (pf->pri_enabled)
->> +		goto done;
->>   
->>   	control = PCI_PRI_CTRL_RESET;
->> -	pci_write_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, control);
->>   
->> -	return 0;
->> +	pci_write_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, control);
-> Also here (you didn't add this one, but "control" is completely
-> pointless in this function).
->
->> +done:
->> +	mutex_unlock(&pf->pri_lock);
->> +	return ret;
->>   }
->>   EXPORT_SYMBOL_GPL(pci_reset_pri);
->>   #endif /* CONFIG_PCI_PRI */
->> @@ -475,11 +545,18 @@ EXPORT_SYMBOL_GPL(pci_pasid_features);
->>   int pci_prg_resp_pasid_required(struct pci_dev *pdev)
->>   {
->>   	u16 status;
->> +	struct pci_dev *pf = pci_physfn(pdev);
->> +
->> +	mutex_lock(&pf->pri_lock);
->>   
->> -	if (!pdev->pri_cap)
->> +	if (!pf->pri_cap) {
->> +		mutex_unlock(&pf->pri_lock);
+>>   	return rpmsg_eptdev_create(ctrldev, chinfo);
+>>   };
+> 
+> 
+> It would be good to add DEVICE_ATTR_RO(desc) / desc_show()
+
+I can add it, but it serves no purpose today on the rpmsg_char driver.
+It is not filled in with any value of use today.
+
+> 
+> 
+>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>> index ea88fd4e2a6e..334a50425b5c 100644
+>> --- a/drivers/rpmsg/rpmsg_core.c
+>> +++ b/drivers/rpmsg/rpmsg_core.c
+>> @@ -302,6 +302,10 @@ static int rpmsg_device_match(struct device *dev, void *data)
+>>   	if (strncmp(chinfo->name, rpdev->id.name, RPMSG_NAME_SIZE))
 >>   		return 0;
->> +	}
+>>   
+>> +	if (chinfo->desc && chinfo->desc != rpdev->desc &&
+> 
+> 
+> chinfo->desc is defined as 'char desc[RPMSG_NAME_SIZE]', so I do not 
+> think that you shall check chinfo->desc (can't be NULL)
+> 
+> Did you want to check *chinfo->desc ? (desc differs from '\0')
+> 
+> I can't understand the "chinfo->desc != rpdec->desc" test.
+
+Yeah, this can do with some cleanup.
+
+> 
+> 
+>> +	    strncmp(chinfo->desc, rpdev->desc, RPMSG_NAME_SIZE))
+>> +		return 0;
 >> +
->> +	pci_read_config_word(pf, pf->pri_cap + PCI_PRI_STATUS, &status);
+>>   	/* found a match ! */
+>>   	return 1;
+>>   }
+>> @@ -365,6 +369,7 @@ static DEVICE_ATTR_RW(field)
 >>   
->> -	pci_read_config_word(pdev, pdev->pri_cap + PCI_PRI_STATUS, &status);
->> +	mutex_unlock(&pf->pri_lock);
+>>   /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
+>>   rpmsg_show_attr(name, id.name, "%s\n");
+>> +rpmsg_show_attr(desc, desc, "%s\n");
+>>   rpmsg_show_attr(src, src, "0x%x\n");
+>>   rpmsg_show_attr(dst, dst, "0x%x\n");
+>>   rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
+>> @@ -386,6 +391,7 @@ static DEVICE_ATTR_RO(modalias);
 >>   
->>   	if (status & PCI_PRI_STATUS_PASID)
->>   		return 1;
->> diff --git a/include/linux/pci.h b/include/linux/pci.h
->> index 27224c0db849..3c9c4c82be27 100644
->> --- a/include/linux/pci.h
->> +++ b/include/linux/pci.h
->> @@ -455,8 +455,10 @@ struct pci_dev {
->>   	atomic_t	ats_ref_cnt;	/* Number of VFs with ATS enabled */
+>>   static struct attribute *rpmsg_dev_attrs[] = {
+>>   	&dev_attr_name.attr,
+>> +	&dev_attr_desc.attr,
+>>   	&dev_attr_modalias.attr,
+>>   	&dev_attr_dst.attr,
+>>   	&dev_attr_src.attr,
+> 
+> 
+> What about adding strncpy(desc) in rpmsg_dev_probe() ?
+
+chinfo variable in rpmsg_dev_probe is zero initialized. Again, we are
+not using the desc for the endpoints, only the rpmsg_device, and that is
+already copied before rpmsg_register_device().
+
+> 
+> 
+>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> index 376ebbf880d6..49901582ff0e 100644
+>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> @@ -110,6 +110,23 @@ struct rpmsg_ns_msg {
+>>   	u32 flags;
+>>   } __packed;
+>>   
+>> +/**
+>> + * struct rpmsg_ns_msg_ext - dynamic name service announcement message v2
+>> + * @name: name of remote service that is published
+>> + * @desc: description of remote service
+>> + * @addr: address of remote service that is published
+>> + * @flags: indicates whether service is created or destroyed
+>> + *
+>> + * Interchangeable nameservice message with rpmsg_ns_msg. This one has
+>> + * the addition of the desc field for extra flexibility.
+>> + */
+>> +struct rpmsg_ns_msg_ext {
+>> +	char name[RPMSG_NAME_SIZE];
+>> +	char desc[RPMSG_NAME_SIZE];
+> 
+> 
+> It may be better to use a dedicated value for desc length (#define 
+> RPMSG_DESC_SIZE).
+
+I still expect this to be a single word. If we were to increase this,
+how many characters do you think it should be? I picked the same size as
+the name field, 32 characters is decently large enough.
+
+> 
+> I also wonder if 32 chars are enough for a (text) description.
+
+desc is kinda a misnomer (coming from original patch), it is supposed to
+serve the equivalent of a dev_name since the virtio rpmsg devices are
+kinda non-DT legacy-style, name field serves as the compatible.
+
+> 
+> 
+>> +	u32 addr;
+>> +	u32 flags;
+>> +} __packed;
+>> +
+>>   /**
+>>    * enum rpmsg_ns_flags - dynamic name service announcement flags
+>>    *
+>> @@ -402,8 +419,9 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+>>   	if (tmp) {
+>>   		/* decrement the matched device's refcount back */
+>>   		put_device(tmp);
+>> -		dev_err(dev, "channel %s:%x:%x already exist\n",
+>> -				chinfo->name, chinfo->src, chinfo->dst);
+>> +		dev_err(dev, "channel %s:%s:%x:%x already exist\n",
+>> +			chinfo->name, chinfo->desc,
+>> +			chinfo->src, chinfo->dst);
+>>   		return NULL;
+>>   	}
+>>   
+>> @@ -419,6 +437,7 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+>>   	rpdev->src = chinfo->src;
+>>   	rpdev->dst = chinfo->dst;
+>>   	rpdev->ops = &virtio_rpmsg_ops;
+>> +	strncpy(rpdev->desc, chinfo->desc, RPMSG_NAME_SIZE);
+>>   
+>>   	/*
+>>   	 * rpmsg server channels has predefined local address (for now),
+>> @@ -816,18 +835,29 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+>>   		       void *priv, u32 src)
+>>   {
+>>   	struct rpmsg_ns_msg *msg = data;
+>> +	struct rpmsg_ns_msg_ext *msg_ext = data;
+>>   	struct rpmsg_device *newch;
+>>   	struct rpmsg_channel_info chinfo;
+>>   	struct virtproc_info *vrp = priv;
+>>   	struct device *dev = &vrp->vdev->dev;
+>>   	int ret;
+>> +	u32 addr;
+>> +	u32 flags;
+>>   
+>>   #if defined(CONFIG_DYNAMIC_DEBUG)
+>>   	dynamic_hex_dump("NS announcement: ", DUMP_PREFIX_NONE, 16, 1,
+>>   			 data, len, true);
 >>   #endif
->>   #ifdef CONFIG_PCI_PRI
->> +	struct mutex	pri_lock;	/* PRI enable lock */
->>   	u16		pri_cap;	/* PRI Capability offset */
->>   	u32		pri_reqs_alloc; /* Number of PRI requests allocated */
->> +	atomic_t	pri_ref_cnt;	/* Number of PF/VF PRI users */
->>   #endif
->>   #ifdef CONFIG_PCI_PASID
->>   	u16		pasid_cap;	/* PASID Capability offset */
->> -- 
->> 2.21.0
->>
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+>>   
+>> -	if (len != sizeof(*msg)) {
+>> +	if (len == sizeof(*msg)) {
+>> +		addr = msg->addr;
+>> +		flags = msg->flags;
+>> +		chinfo.desc[0] = '\0';
+>> +	} else if (len == sizeof(*msg_ext)) {
+>> +		addr = msg_ext->addr;
+>> +		flags = msg_ext->flags;
+>> +		strncpy(chinfo.desc, msg_ext->desc, sizeof(chinfo.desc));
+>> +	} else if (len != sizeof(*msg)) {
+> 
+> 
+> shall be 'else', not 'else if'
+
+Thanks for catching, will fix it in the next version.
+
+regards
+Suman
+
+> 
+> 
+>>   		dev_err(dev, "malformed ns msg (%d)\n", len);
+>>   		return -EINVAL;
+>>   	}
+>> @@ -847,14 +877,14 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+>>   	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+>>   
+>>   	dev_info(dev, "%sing channel %s addr 0x%x\n",
+>> -		 msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+>> -		 msg->name, msg->addr);
+>> +		 flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+>> +		 msg->name, addr);
+>>   
+>>   	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+>>   	chinfo.src = RPMSG_ADDR_ANY;
+>> -	chinfo.dst = msg->addr;
+>> +	chinfo.dst = addr;
+>>   
+>> -	if (msg->flags & RPMSG_NS_DESTROY) {
+>> +	if (flags & RPMSG_NS_DESTROY) {
+>>   		ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
+>>   		if (ret)
+>>   			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+>> diff --git a/drivers/soc/qcom/wcnss_ctrl.c b/drivers/soc/qcom/wcnss_ctrl.c
+>> index e5c68051fb17..ad9f28dc13f1 100644
+>> --- a/drivers/soc/qcom/wcnss_ctrl.c
+>> +++ b/drivers/soc/qcom/wcnss_ctrl.c
+>> @@ -276,6 +276,7 @@ struct rpmsg_endpoint *qcom_wcnss_open_channel(void *wcnss, const char *name, rp
+>>   	strscpy(chinfo.name, name, sizeof(chinfo.name));
+>>   	chinfo.src = RPMSG_ADDR_ANY;
+>>   	chinfo.dst = RPMSG_ADDR_ANY;
+>> +	chinfo.desc[0] = '\0';
+>>   
+>>   	return rpmsg_create_ept(_wcnss->channel->rpdev, cb, priv, chinfo);
+>>   }
+>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+>> index 9fe156d1c018..436faf04ba1c 100644
+>> --- a/include/linux/rpmsg.h
+>> +++ b/include/linux/rpmsg.h
+>> @@ -28,11 +28,13 @@ struct rpmsg_endpoint_ops;
+>>   /**
+>>    * struct rpmsg_channel_info - channel info representation
+>>    * @name: name of service
+>> + * @desc: description of service
+>>    * @src: local address
+>>    * @dst: destination address
+>>    */
+>>   struct rpmsg_channel_info {
+>>   	char name[RPMSG_NAME_SIZE];
+>> +	char desc[RPMSG_NAME_SIZE];
+>>   	u32 src;
+>>   	u32 dst;
+>>   };
+>> @@ -42,6 +44,7 @@ struct rpmsg_channel_info {
+>>    * @dev: the device struct
+>>    * @id: device id (used to match between rpmsg drivers and devices)
+>>    * @driver_override: driver name to force a match
+>> + * @desc: description of remote service
+>>    * @src: local address
+>>    * @dst: destination address
+>>    * @ept: the rpmsg endpoint of this channel
+>> @@ -51,6 +54,7 @@ struct rpmsg_device {
+>>   	struct device dev;
+>>   	struct rpmsg_device_id id;
+>>   	char *driver_override;
+>> +	char desc[RPMSG_NAME_SIZE];
+>>   	u32 src;
+>>   	u32 dst;
+>>   	struct rpmsg_endpoint *ept;
+> 
 
