@@ -2,155 +2,368 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A88A89ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22C0989AF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:10:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbfHLKGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:06:55 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38998 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbfHLKGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:06:55 -0400
-Received: by mail-ot1-f66.google.com with SMTP id r21so150764996otq.6;
-        Mon, 12 Aug 2019 03:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8nCPUFYSV3W2ZY/9ifJedm0QroBzrSP7heeMdjE0RYc=;
-        b=dUtQ31FuyY2lGlBy1y1AG4y7lkQyg7ft8JrEFprD4sPlp5AZvxcNbEfmxXBu/cQcnV
-         o/6S5ToiBsnRk2m7c2rYVo3Mx6LO20q4qXxSfMzmV36xwyLtb92p3crtdbN9w2rkfL43
-         ZSA1yR8NMWYNtBgKPex3VwSOWkuP9emYKXHLQ5P6tscw80wVV7D/fdjwmtMIhq1WqP9H
-         k3unDUqZENUGiurOH/iaTHrpZUh6nB4JHIR2W3Qxwmlp1bbIWJtszfXtedEo5R08z9th
-         EkaJ90LYXfqoRBSy2w0Po2NRFfNk9a+zezHKL1kKRwJX6R2jelWe/NuQi2qz2wIl+xU/
-         vNZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8nCPUFYSV3W2ZY/9ifJedm0QroBzrSP7heeMdjE0RYc=;
-        b=GI7aLP7S2mGV2YUdnxP0xgYnaQkDzfD1tC9PY8VfhkzzMYQq9Jbxbdhk9TgpujjLoZ
-         DFPe2xwXaNW2WFmOR+L67Kz5rd89hYVgef7HTTjHVwekhs6Oa4qKqaDlgb8r+BHxWgyM
-         zXBjhI/vcKbnbfJiUfNhOVV6WMpG2uQUlyzqqErWss+V3os8voTR5VUAWOaatXrWgkpp
-         yBFD895VbJIrwFAu+rytskENIv/iHo148h9UUGGig8aMCiRbPuo4a4I4OB2rrbLo8QEn
-         ESGD6ENJM6cvD2UoPLOCQy+LPz4IcVP8xZ2rLoJ0WRDI5zwrUvAwvqCcIK6osy7KorxR
-         +AnQ==
-X-Gm-Message-State: APjAAAVEUCKUzTxcUfLyC5G4vhca8ALH1oYr1nhRA6iNhwoleGj5D4pS
-        6q/Wq0w6ZXpNYgCXu69n21tu32HhQ7BiQN6czxY=
-X-Google-Smtp-Source: APXvYqxvqfA09aURLU8YM9tv/GT/gYr0AjzO6i/r2Gsv8wwZfS5HHnycPV8077bbQrYrQDoZ28O0i43Zg3+AJ/6SAy4=
-X-Received: by 2002:a5e:d817:: with SMTP id l23mr33366249iok.282.1565604413971;
- Mon, 12 Aug 2019 03:06:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190812094242.44735-1-marc@koderer.com>
-In-Reply-To: <20190812094242.44735-1-marc@koderer.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 12 Aug 2019 12:09:52 +0200
-Message-ID: <CAOi1vP_SDOKzh+oyhv8gKVZwdWNY8NpTZ+oM+xSn+k1KCnu_sg@mail.gmail.com>
-Subject: Re: [PATCH] net/ceph replace ceph_kvmalloc with kvmalloc
-To:     Marc Koderer <marc@koderer.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727723AbfHLKKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:10:53 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:60682 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727323AbfHLKKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 06:10:53 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0B00E200130;
+        Mon, 12 Aug 2019 12:10:50 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7D862002DF;
+        Mon, 12 Aug 2019 12:10:45 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7B4CA40305;
+        Mon, 12 Aug 2019 18:10:40 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     linux-devel@linux.nxdi.nxp.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, leoyang.li@nxp.com,
+        liviu.dudau@arm.com
+Cc:     Wen He <wen.he_1@nxp.com>
+Subject: [v1 1/3] clk: ls1028a: Add clock driver for Display output interface
+Date:   Mon, 12 Aug 2019 18:01:03 +0800
+Message-Id: <20190812100103.34393-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 11:42 AM Marc Koderer <marc@koderer.com> wrote:
->
-> There is nearly no difference between both implemenations.
-> ceph_kvmalloc existed before kvmalloc which makes me think it's
-> a leftover.
->
-> Signed-off-by: Marc Koderer <marc@koderer.com>
-> ---
->  net/ceph/buffer.c      |  3 +--
->  net/ceph/ceph_common.c | 11 -----------
->  net/ceph/crypto.c      |  2 +-
->  net/ceph/messenger.c   |  2 +-
->  4 files changed, 3 insertions(+), 15 deletions(-)
->
-> diff --git a/net/ceph/buffer.c b/net/ceph/buffer.c
-> index 5622763ad402..6ca273d2246a 100644
-> --- a/net/ceph/buffer.c
-> +++ b/net/ceph/buffer.c
-> @@ -7,7 +7,6 @@
->
->  #include <linux/ceph/buffer.h>
->  #include <linux/ceph/decode.h>
-> -#include <linux/ceph/libceph.h> /* for ceph_kvmalloc */
->
->  struct ceph_buffer *ceph_buffer_new(size_t len, gfp_t gfp)
->  {
-> @@ -17,7 +16,7 @@ struct ceph_buffer *ceph_buffer_new(size_t len, gfp_t gfp)
->         if (!b)
->                 return NULL;
->
-> -       b->vec.iov_base = ceph_kvmalloc(len, gfp);
-> +       b->vec.iov_base = kvmalloc(len, gfp);
->         if (!b->vec.iov_base) {
->                 kfree(b);
->                 return NULL;
-> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> index 4eeea4d5c3ef..6c1769a815af 100644
-> --- a/net/ceph/ceph_common.c
-> +++ b/net/ceph/ceph_common.c
-> @@ -185,17 +185,6 @@ int ceph_compare_options(struct ceph_options *new_opt,
->  }
->  EXPORT_SYMBOL(ceph_compare_options);
->
-> -void *ceph_kvmalloc(size_t size, gfp_t flags)
-> -{
-> -       if (size <= (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER)) {
-> -               void *ptr = kmalloc(size, flags | __GFP_NOWARN);
-> -               if (ptr)
-> -                       return ptr;
-> -       }
-> -
-> -       return __vmalloc(size, flags, PAGE_KERNEL);
-> -}
-> -
->
->  static int parse_fsid(const char *str, struct ceph_fsid *fsid)
->  {
-> diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-> index 5d6724cee38f..a9deead1e4ff 100644
-> --- a/net/ceph/crypto.c
-> +++ b/net/ceph/crypto.c
-> @@ -144,7 +144,7 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
->  static const u8 *aes_iv = (u8 *)CEPH_AES_IV;
->
->  /*
-> - * Should be used for buffers allocated with ceph_kvmalloc().
-> + * Should be used for buffers allocated with kvmalloc().
->   * Currently these are encrypt out-buffer (ceph_buffer) and decrypt
->   * in-buffer (msg front).
->   *
-> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-> index 962f521c863e..f1f2fcc6f780 100644
-> --- a/net/ceph/messenger.c
-> +++ b/net/ceph/messenger.c
-> @@ -3334,7 +3334,7 @@ struct ceph_msg *ceph_msg_new2(int type, int front_len, int max_data_items,
->
->         /* front */
->         if (front_len) {
-> -               m->front.iov_base = ceph_kvmalloc(front_len, flags);
-> +               m->front.iov_base = kvmalloc(front_len, flags);
->                 if (m->front.iov_base == NULL) {
->                         dout("ceph_msg_new can't allocate %d bytes\n",
->                              front_len);
+Add clock driver for QorIQ LS1028A Display output interfaces(LCD, DPHY),
+as implemented in TSMC CLN28HPM PLL, this PLL supports the programmable
+integer division and range of the display output pixel clock's 27-594MHz.
 
-Hi Marc,
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+---
+ drivers/clk/Kconfig      |   9 ++
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-plldig.c | 277 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 287 insertions(+)
+ create mode 100644 drivers/clk/clk-plldig.c
 
-I'm working on a patch for https://tracker.ceph.com/issues/40481 which
-changes ceph_kvmalloc() to properly deal with non-GFP_KERNEL contexts.
-We can't switch to kvmalloc() because it doesn't actually fall back to
-vmalloc() for GFP_NOFS or GFP_NOIO.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 801fa1cd0321..0e6c7027d637 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -223,6 +223,15 @@ config CLK_QORIQ
+ 	  This adds the clock driver support for Freescale QorIQ platforms
+ 	  using common clock framework.
+ 
++config CLK_PLLDIG
++        bool "Clock driver for LS1028A Display output"
++        depends on ARCH_LAYERSCAPE && OF
++        help
++          This driver support the Display output interfaces(LCD, DPHY) pixel clocks
++          of the QorIQ Layerscape LS1028A, as implemented TSMC CLN28HPM PLL. Not all
++          features of the PLL are currently supported by the driver. By default,
++          configured bypass mode with this PLL.
++
+ config COMMON_CLK_XGENE
+ 	bool "Clock driver for APM XGene SoC"
+ 	default ARCH_XGENE
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 0cad76021297..35277759ec03 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
+ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
+ obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
+ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
++obj-$(CONFIG_CLK_PLLDIG)		+= clk-plldig.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+ obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
+ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
+new file mode 100644
+index 000000000000..15c9bb623a70
+--- /dev/null
++++ b/drivers/clk/clk-plldig.c
+@@ -0,0 +1,277 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright 2019 NXP
++
++/*
++ * Clock driver for LS1028A Display output interfaces(LCD, DPHY).
++ *
++ * Author: Wen He <wen.he_1@nxp.com>
++ *
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++/* PLLDIG register offsets and bit masks */
++#define PLLDIG_REG_PLLSR            0x24
++#define PLLDIG_REG_PLLDV            0x28
++#define PLLDIG_REG_PLLFM            0x2c
++#define PLLDIG_REG_PLLFD            0x30
++#define PLLDIG_REG_PLLCAL1          0x38
++#define PLLDIG_REG_PLLCAL2          0x3c
++#define PLLDIG_DEFAULE_MULT         0x2c
++#define PLLDIG_LOCK_STATUS          BIT(3)
++#define PLLDIG_SSCGBYP_ENABLE       BIT(30)
++#define PLLDIG_FDEN                 BIT(30)
++#define PLLDIG_DTHRCTL              (0x3 << 16)
++
++/* macro to get/set values into register */
++#define PLLDIG_GET_MULT(x)          (((x) & ~(0xffffff00)) << 0)
++#define PLLDIG_GET_RFDPHI1(x)       ((u32)(x) >> 25)
++#define PLLDIG_SET_RFDPHI1(x)       ((u32)(x) << 25)
++
++struct clk_plldig {
++	struct clk_hw hw;
++	void __iomem *regs;
++};
++#define to_clk_plldig(_hw)	container_of(_hw, struct clk_plldig, hw)
++#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++
++static inline int plldig_wait_lock(struct clk_plldig *plldig)
++{
++	u32 csr;
++       /*
++	* Indicates whether PLL has acquired lock, if operating in bypass
++	* mode, the LOCK bit will still assert when the PLL acquires lock
++	* or negate when it loses lock.
++	*/
++	return readl_poll_timeout(plldig->regs + PLLDIG_REG_PLLSR, csr,
++				csr & PLLDIG_LOCK_STATUS, 0, LOCK_TIMEOUT_US);
++}
++
++static int plldig_enable(struct clk_hw *hw)
++{
++	struct clk_plldig *data = to_clk_plldig(hw);
++	u32 val;
++
++	val = readl(data->regs + PLLDIG_REG_PLLFM);
++	/*
++	 * Use Bypass mode with PLL off by default,the frequency overshoot
++	 * detector output was disable. SSCG Bypass mode should be enable.
++	 */
++	val |= PLLDIG_SSCGBYP_ENABLE;
++	writel(val, data->regs + PLLDIG_REG_PLLFM);
++
++	val = readl(data->regs + PLLDIG_REG_PLLFD);
++	/* Disable dither and Sigma delta modulation in bypass mode */
++	val |= (PLLDIG_FDEN | PLLDIG_DTHRCTL);
++	writel(val, data->regs + PLLDIG_REG_PLLFD);
++
++	return plldig_wait_lock(data);
++}
++
++static void plldig_disable(struct clk_hw *hw)
++{
++	struct clk_plldig *data = to_clk_plldig(hw);
++	u32 val;
++
++	val = readl(data->regs + PLLDIG_REG_PLLFM);
++
++	val &= ~PLLDIG_SSCGBYP_ENABLE;
++	writel(val, data->regs + PLLDIG_REG_PLLFM);
++}
++
++static int plldig_is_enabled(struct clk_hw *hw)
++{
++	struct clk_plldig *data = to_clk_plldig(hw);
++
++	return (readl(data->regs + PLLDIG_REG_PLLFM) & PLLDIG_SSCGBYP_ENABLE);
++}
++
++/*
++ * Clock configuration relationship between the PHI1 frequency(fpll_phi) and
++ * the output frequency of the PLL is determined by the PLLDV, according to
++ * the following equation:
++ * pxclk = fpll_phi / RFDPHI1 = (pll_ref x PLLDV[MFD]) / PLLDV[RFDPHI1].
++ */
++static bool plldig_is_valid_range(unsigned long rate, unsigned long parent_rate,
++		unsigned int *mult, unsigned int *rfdphi1,
++		unsigned long *round_rate_base)
++{
++	u32 div, div_temp, mfd = PLLDIG_DEFAULE_MULT;
++	unsigned long round_rate;
++
++	round_rate = parent_rate * mfd;
++
++	/* Range of the diliver for driving the PHI1 output clock */
++	for (div = 1; div <= 63; div++) {
++		/* Checking match with default mult number at first */
++		if (round_rate / div == rate) {
++			*rfdphi1 = div;
++			*round_rate_base = round_rate;
++			*mult = mfd;
++			return true;
++		}
++	}
++
++	for (div = 1; div <= 63; div++) {
++		mfd = (div * rate) / parent_rate;
++		/* Range of the muliplicationthe factor applied to the
++		 * output reference frequency
++		 */
++		if ((mfd >= 10) && (mfd <= 150)) {
++			div_temp = (parent_rate * mfd) / rate;
++			if ((div_temp * rate) == (mfd * parent_rate)) {
++				*rfdphi1 = div_temp;
++				*mult = mfd;
++				*round_rate_base = mfd * parent_rate;
++				return true;
++			}
++		}
++	}
++
++	return false;
++}
++
++static unsigned long plldig_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct clk_plldig *plldig = to_clk_plldig(hw);
++	u32 mult, div, val;
++
++	val = readl(plldig->regs + PLLDIG_REG_PLLDV);
++	pr_info("%s: current configuration: 0x%x\n", clk_hw_get_name(hw), val);
++
++	/* Check if PLL is bypassed */
++	if (val & PLLDIG_SSCGBYP_ENABLE)
++		return parent_rate;
++
++	/* Checkout multiplication factor divider value */
++	mult = val;
++	mult = PLLDIG_GET_MULT(mult);
++
++	/* Checkout divider value of the output frequency */
++	div = val;
++	div = PLLDIG_GET_RFDPHI1(div);
++
++	return (parent_rate * mult) / div;
++}
++
++static long plldig_round_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long *parent)
++{
++	unsigned long parent_rate = *parent;
++	unsigned long round_rate;
++	u32 mult = 0, rfdphi1 = 0;
++	bool found = false;
++
++	found = plldig_is_valid_range(rate, parent_rate, &mult,
++					&rfdphi1, &round_rate);
++	if (!found) {
++		pr_warn("%s: unable to round rate %lu, parent rate :%lu\n",
++				clk_hw_get_name(hw), rate, parent_rate);
++		return 0;
++	}
++
++	return round_rate / rfdphi1;
++}
++
++static int plldig_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_plldig *data = to_clk_plldig(hw);
++	bool valid = false;
++	unsigned long round_rate = 0;
++	u32 rfdphi1 = 0, val, mult = 0;
++
++	valid = plldig_is_valid_range(rate, parent_rate, &mult,
++					&rfdphi1, &round_rate);
++	if (!valid) {
++		pr_warn("%s: unable to support rate %lu, parent_rate: %lu\n",
++				clk_hw_get_name(hw), rate, parent_rate);
++		return -EINVAL;
++	}
++
++	val = readl(data->regs + PLLDIG_REG_PLLDV);
++	val = mult;
++	rfdphi1 = PLLDIG_SET_RFDPHI1(rfdphi1);
++	val |= rfdphi1;
++
++	writel(val, data->regs + PLLDIG_REG_PLLDV);
++
++	return plldig_wait_lock(data);
++}
++
++static const struct clk_ops plldig_clk_ops = {
++	.enable = plldig_enable,
++	.disable = plldig_disable,
++	.is_enabled = plldig_is_enabled,
++	.recalc_rate = plldig_recalc_rate,
++	.round_rate = plldig_round_rate,
++	.set_rate = plldig_set_rate,
++};
++
++struct clk_hw *_plldig_clk_init(const char *name, const char *parent_name,
++				void __iomem *regs)
++{
++	struct clk_plldig *plldig;
++	struct clk_hw *hw;
++	struct clk_init_data init;
++	int ret;
++
++	plldig = kzalloc(sizeof(*plldig), GFP_KERNEL);
++	if (!plldig)
++		return ERR_PTR(-ENOMEM);
++
++	plldig->regs = regs;
++
++	init.name = name;
++	init.ops = &plldig_clk_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
++
++	plldig->hw.init = &init;
++
++	hw = &plldig->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(plldig);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
++static void __init plldig_clk_init(struct device_node *node)
++{
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++
++	clk_data = kzalloc(struct_size(clk_data, hws, 1),
++			GFP_KERNEL);
++	if (!clk_data)
++		return;
++
++	clk_data->num = 1;
++	clks = clk_data->hws;
++
++	base = of_iomap(node, 0);
++	WARN_ON(!base);
++
++	clks[0] = _plldig_clk_init("pixel-clk",
++			of_clk_get_parent_name(node, 0), base);
++
++	of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
++}
++
++CLK_OF_DECLARE(plldig_clockgen, "fsl,ls1028a-plldig", plldig_clk_init);
+-- 
+2.17.1
 
-Thanks,
-
-                Ilya
