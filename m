@@ -2,102 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9CD8A55B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CB108A55E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:08:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfHLSIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 14:08:09 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43775 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfHLSII (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:08:08 -0400
-Received: by mail-pf1-f195.google.com with SMTP id v12so2291886pfn.10
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 11:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=AxMvcKPPSOt5h9tOESk6eM74C3v+cXx0BCMEFfeO5Dg=;
-        b=iytsO+zLrR4089ozDzpPc3tz1mmM3j8pqgVIx733CHvK6m0+n7kP80jjwnb85tAH9/
-         U1EbkVLTKURLnNI5KM09vWZjzObFj4srl8HjIIH9vkodhrdRjRRRbj9AXla1YegIc13q
-         dTH3dOLK3AklNGYSY25a02nAlqq4YmGfncrtA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AxMvcKPPSOt5h9tOESk6eM74C3v+cXx0BCMEFfeO5Dg=;
-        b=rn/IgtejAOyWNtiKZKq5p/VsL8WGknOA+tgdpod5sJZQl1yt3DGcU3OLd8/hjwDZWH
-         auvbmMaZ2jPmAE0d1AESe0duKEmnRSClglvxPS4I5DdDY199pKwRKWQv4UQVI1JFHO6F
-         0e5Bx3N1b0o2zkITTrr9V/gsSCLz+2lqAoYSwXI/y6PQXynw+ejebEK0ZJpFwYGCsqhp
-         By3G07fqAFOX5d2U90yrrfom15UDSYxf+G/pvK/6rZ5B3XZMrX358QYpOZS8Niy32AbN
-         UB5Dnufc7z6/xlxqps4ePEkebFlH0gjugFzrjy+3yLtLE8cr+OIS7O8wZXBNH2TIsRX/
-         od9g==
-X-Gm-Message-State: APjAAAWhY8DrmaWFj4X0RiAff6s2EGKlzPKO1pU0GZuzpJGeolmTPjjP
-        AdDZkE7gBBAowqXobsbGIYpHyQ==
-X-Google-Smtp-Source: APXvYqx7GB2qYifIkhLgbQzOkQXXpweNH/WY6CfmXeWoasPo9MTc+Yfo4Ft8gq7lm/41t9o2VRLAtw==
-X-Received: by 2002:a17:90a:c403:: with SMTP id i3mr494779pjt.110.1565633288008;
-        Mon, 12 Aug 2019 11:08:08 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o128sm114355469pfb.42.2019.08.12.11.08.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 11:08:07 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 11:08:06 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jan Glauber <jglauber@marvell.com>
-Subject: Re: [PATCH 4/6] lib/refcount: Move bulk of REFCOUNT_FULL
- implementation into header
-Message-ID: <201908121107.C3262BBB5@keescook>
-References: <20190802101000.12958-1-will@kernel.org>
- <20190802101000.12958-5-will@kernel.org>
- <20190802185222.GD2349@hirez.programming.kicks-ass.net>
- <201908021915.95BD6B26FC@keescook>
- <20190809160428.smumdvimrtn7rv6u@willie-the-truck>
+        id S1726804AbfHLSIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 14:08:44 -0400
+Received: from mga01.intel.com ([192.55.52.88]:56925 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726185AbfHLSIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 14:08:43 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 11:08:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="175965853"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Aug 2019 11:08:42 -0700
+Date:   Mon, 12 Aug 2019 11:08:42 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 08/19] fs/xfs: Fail truncate if page lease can't
+ be broken
+Message-ID: <20190812180841.GD19746@iweiny-DESK2.sc.intel.com>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-9-ira.weiny@intel.com>
+ <20190809232209.GA7777@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190809160428.smumdvimrtn7rv6u@willie-the-truck>
+In-Reply-To: <20190809232209.GA7777@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 05:04:28PM +0100, Will Deacon wrote:
-> On Fri, Aug 02, 2019 at 07:23:07PM -0700, Kees Cook wrote:
-> > On Fri, Aug 02, 2019 at 08:52:22PM +0200, Peter Zijlstra wrote:
-> > > On Fri, Aug 02, 2019 at 11:09:58AM +0100, Will Deacon wrote:
-> > > > In an effort to improve performance of the REFCOUNT_FULL implementation,
-> > > > move the bulk of its functions into linux/refcount.h. This allows them
-> > > > to be inlined in the same way as if they had been provided via
-> > > > CONFIG_ARCH_HAS_REFCOUNT.
-> > > 
-> > > Hehe, they started out this way, then Linus said to stuff them in a C
-> > > file :-)
+On Sat, Aug 10, 2019 at 09:22:09AM +1000, Dave Chinner wrote:
+> On Fri, Aug 09, 2019 at 03:58:22PM -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
 > > 
-> > I asked this at the time and didn't quite get a straight answer; Linus's
-> > request was private:
+> > If pages are under a lease fail the truncate operation.  We change the order of
+> > lease breaks to directly fail the operation if the lease exists.
 > > 
-> > https://lore.kernel.org/lkml/20170213180020.GK6500@twins.programming.kicks-ass.net/
+> > Select EXPORT_BLOCK_OPS for FS_DAX to ensure that xfs_break_lease_layouts() is
+> > defined for FS_DAX as well as pNFS.
 > > 
-> > It seemed sensible to me (then and now) to have them be inline if there
-> > were so many performance concerns about it, etc. Was it just the image
-> > size bloat due to the WARNs? So... since we're back to this topic. Why
-> > should they not be inline?
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > ---
+> >  fs/Kconfig        | 1 +
+> >  fs/xfs/xfs_file.c | 5 +++--
+> >  2 files changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/Kconfig b/fs/Kconfig
+> > index 14cd4abdc143..c10b91f92528 100644
+> > --- a/fs/Kconfig
+> > +++ b/fs/Kconfig
+> > @@ -48,6 +48,7 @@ config FS_DAX
+> >  	select DEV_PAGEMAP_OPS if (ZONE_DEVICE && !FS_DAX_LIMITED)
+> >  	select FS_IOMAP
+> >  	select DAX
+> > +	select EXPORTFS_BLOCK_OPS
+> >  	help
+> >  	  Direct Access (DAX) can be used on memory-backed block devices.
+> >  	  If the block device supports DAX and the filesystem supports DAX,
 > 
-> I mean, I can always just move this into an arm64-specific implementation
-> if I have to, but it seems a shame given that it's completely generic and
-> seems to perform just as well as the x86-specific implementation on my
-> laptop.
+> That looks wrong.
 
-Yeah, I prefer this being generic too. I continue to think the race
-isn't meaningful compared to the benefit of gaining a reliable and cheap
-"inc from zero" check.
+It may be...
 
--- 
-Kees Cook
+>
+> If you require xfs_break_lease_layouts() outside
+> of pnfs context, then move the function in the XFS code base to a
+> file that is built in. It's only external dependency is on the
+> break_layout() function, and XFS already has other unconditional
+> direct calls to break_layout()...
+
+I'll check.  This patch was part of the original series and I must admit I
+don't remember why I did it this way...
+
+Thanks,
+Ira
+
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
