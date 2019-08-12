@@ -2,233 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E717897A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 09:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FCF9897B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 09:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfHLHQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 03:16:45 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42905 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbfHLHQp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 03:16:45 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b16so6926346wrq.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 00:16:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Mod2oK0m77k6FtdEdfK0my77Z4ReG7ID/JEsVZ/Tdqk=;
-        b=uwx3t+e6UlvTSQlvSbhKGcDewJmKG7rIJGNeUnqZa0NWaVTltcT0PNwbLcC2iL0wvL
-         zx/zQNUi6ECu4WNQWi5IDPRej4+SzDQmygiNVYl6F1vDK/kvxNBq0wiHTaYUprh4Ao47
-         XW57FLp9mofYxJaRu2EtYcHfQuf8QsA+pi3s98DPtM3rASp3h0KSNZqCyl2jQ820aQL9
-         wXFBnPvx82bctqCp50fNueoe7veerljZ8ThwgAvcR59L4Q0uVMhT7+cxvuzDShR1yy1j
-         jBhtHei/32z3dgZwzIJcX9dju9jYABjHa2R0gklCeRscjaedyyVc0/QZiyeDOnvF6aEe
-         EyIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Mod2oK0m77k6FtdEdfK0my77Z4ReG7ID/JEsVZ/Tdqk=;
-        b=Tte7kTujMHRgxNiVUXD/IkYcSp7h+yxeqFjlqOVLECMsbtGK6nd1kXlHZR5jNcUjIL
-         8UZwkm2pdI961a+d6VtyNLHDZgVoh7m7YB10hH+V6zbiEjzM4RYqcncb6tS0FqEBCBlP
-         y9ePv9KyVHGNBxigfgAeMk3CZSLG0q8+OaHAfoRHgxCJnpAdq5b+OoaJc9miRs7eyJNp
-         ohTALvUqiNQSgZOaE2r8o8cIwRcj/f4O8ReBnITcAadU5DmTRG4bJhYGdgXRvK/Tajlv
-         q/KaT4kZVLktTz8bZh4HasGzTHHSQtjJdnNfL7kL9fwH4zmJmceAl4krSqpn2KXWPLsv
-         se7g==
-X-Gm-Message-State: APjAAAWAiIH7ILc5U13htpm6XqPAzjJtL3a2vduiMaEKKu3Bm6zoRYWE
-        beFBCfU8CQAh61b3UxEDgcQQRA==
-X-Google-Smtp-Source: APXvYqykskmaj8Vj9lYoV+Ik8HeRrMB2B+w+LtjsbGcGM0acn7XZVCZWrK5Vsm8RshkOp7ZkEqxHVw==
-X-Received: by 2002:adf:ffc2:: with SMTP id x2mr18408325wrs.338.1565594202848;
-        Mon, 12 Aug 2019 00:16:42 -0700 (PDT)
-Received: from dell ([2.27.35.255])
-        by smtp.gmail.com with ESMTPSA id p7sm75602362wrs.6.2019.08.12.00.16.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Aug 2019 00:16:41 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 08:16:39 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Collabora kernel ML <kernel@collabora.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Gwendal Grignou <gwendal@chromium.org>
-Subject: Re: [PATCH v5 08/11] mfd: cros_ec: Add convenience struct to define
- dedicated CrOS EC MCUs
-Message-ID: <20190812071639.GC4594@dell>
-References: <20190722133257.9336-1-enric.balletbo@collabora.com>
- <20190722133257.9336-9-enric.balletbo@collabora.com>
+        id S1726943AbfHLHYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 03:24:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:18977 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbfHLHYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 03:24:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 00:24:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,376,1559545200"; 
+   d="scan'208";a="193899225"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Aug 2019 00:24:28 -0700
+Subject: Re: [PATCH v4 1/2] perf machine: Support arch's specific kernel start
+ address
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        David Miller <davem@davemloft.net>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Donald Yandt <donald.yandt@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Wei Li <liwei391@huawei.com>, Mark Drayton <mbd@fb.com>,
+        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <20190810072135.27072-1-leo.yan@linaro.org>
+ <20190810072135.27072-2-leo.yan@linaro.org>
+ <c1818f6f-37df-6971-fddc-6663e5b6ff95@intel.com>
+ <20190812070236.GA8062@leoy-ThinkPad-X240s>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <250165c6-908a-c57e-8d83-03da4272f568@intel.com>
+Date:   Mon, 12 Aug 2019 10:23:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190812070236.GA8062@leoy-ThinkPad-X240s>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190722133257.9336-9-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Jul 2019, Enric Balletbo i Serra wrote:
+On 12/08/19 10:02 AM, Leo Yan wrote:
+> On Mon, Aug 12, 2019 at 09:37:33AM +0300, Adrian Hunter wrote:
+>> On 10/08/19 10:21 AM, Leo Yan wrote:
+>>> machine__get_kernel_start() gives out the kernel start address; some
+>>> architectures need to tweak the start address so that can reflect the
+>>> kernel start address correctly.  This is not only for x86_64 arch, but
+>>> it is also required by other architectures, e.g. arm/arm64 needs to
+>>> tweak the kernel start address so can include the kernel memory regions
+>>> which are used before the '_stext' symbol.
+>>>
+>>> This patch refactors machine__get_kernel_start() by adding a weak
+>>> arch__fix_kernel_text_start(), any architecture can implement it to
+>>> tweak its specific start address; this also allows the arch specific
+>>> code to be placed into 'arch' folder.
+>>>
+>>> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+>>> ---
+>>>  tools/perf/arch/x86/util/machine.c | 10 ++++++++++
+>>>  tools/perf/util/machine.c          | 13 +++++++------
+>>>  tools/perf/util/machine.h          |  2 ++
+>>>  3 files changed, 19 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/tools/perf/arch/x86/util/machine.c b/tools/perf/arch/x86/util/machine.c
+>>> index 1e9ec783b9a1..9f012131534a 100644
+>>> --- a/tools/perf/arch/x86/util/machine.c
+>>> +++ b/tools/perf/arch/x86/util/machine.c
+>>> @@ -101,4 +101,14 @@ int machine__create_extra_kernel_maps(struct machine *machine,
+>>>  	return ret;
+>>>  }
+>>>  
+>>> +void arch__fix_kernel_text_start(u64 *start)
+>>> +{
+>>> +	/*
+>>> +	 * On x86_64, PTI entry trampolines are less than the
+>>> +	 * start of kernel text, but still above 2^63. So leave
+>>> +	 * kernel_start = 1ULL << 63 for x86_64.
+>>> +	 */
+>>> +	*start = 1ULL << 63;
+>>> +}
+>>
+>> That is needed for reporting x86 data on any arch i.e. it is not specific to
+>> the compile-time architecture, it is specific to the perf.data file
+>> architecture, which is what machine__is() compares. So, this looks wrong.
+> 
+> Thanks for reviewing, Adrian.
+> 
+> If so, I think we should extend the function machine__get_kernel_start()
+> as below; for building successfully, will always define the macro
+> ARM_PRE_START_SIZE in Makefile.config.
+> 
+> @Arnaldo, @Adrian, Please let me know if this works for you?
 
-> With the increasing use of dedicated CrOS EC MCUs, it takes a fair amount
-> of boiler plate code to add those devices, add a struct that can be used
-> to specify a dedicated CrOS EC MCU so we can just add a new item to it to
-> define a new dedicated MCU.
+I don't know how you intend to calculate ARM_PRE_START_SIZE, but below is OK
+for x86.
+
 > 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> Tested-by: Gwendal Grignou <gwendal@chromium.org>
-> ---
-> 
-> Changes in v5: None
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
-> 
->  drivers/mfd/cros_ec_dev.c | 87 +++++++++++++++++++++------------------
->  1 file changed, 48 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index c6bf52d795f2..e0e18c0eb9f5 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -22,6 +22,41 @@ static struct class cros_class = {
->  	.name           = "chromeos",
->  };
->  
-> +/**
-> + * cros_feature_to_name - CrOS feature id to name/short description.
-> + * @id: The feature identifier.
-> + * @name: Device name associated with the feature id.
-> + * @desc: Short name that will be displayed.
-> + */
-> +struct cros_feature_to_name {
-> +	unsigned int id;
-> +	const char *name;
-> +	const char *desc;
-> +};
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index f6ee7fbad3e4..30a0ff627263 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -2687,13 +2687,26 @@ int machine__get_kernel_start(struct machine *machine)
+>         machine->kernel_start = 1ULL << 63;
+>         if (map) {
+>                 err = map__load(map);
+> +               if (err)
+> +                       return err;
 > +
-> +static const struct cros_feature_to_name cros_mcu_devices[] = {
-> +	{
-> +		.id	= EC_FEATURE_FINGERPRINT,
-> +		.name	= CROS_EC_DEV_FP_NAME,
-> +		.desc	= "Fingerprint",
-> +	},
-> +	{
-> +		.id	= EC_FEATURE_ISH,
-> +		.name	= CROS_EC_DEV_ISH_NAME,
-> +		.desc	= "Integrated Sensor Hub",
-> +	},
-> +	{
-> +		.id	= EC_FEATURE_SCP,
-> +		.name	= CROS_EC_DEV_SCP_NAME,
-> +		.desc	= "System Control Processor",
-> +	},
-> +	{
-> +		.id	= EC_FEATURE_TOUCHPAD,
-> +		.name	= CROS_EC_DEV_TP_NAME,
-> +		.desc	= "Touchpad",
-> +	},
-> +};
+>                 /*
+>                  * On x86_64, PTI entry trampolines are less than the
+>                  * start of kernel text, but still above 2^63. So leave
+>                  * kernel_start = 1ULL << 63 for x86_64.
+>                  */
+> -               if (!err && !machine__is(machine, "x86_64"))
+> +               if (!machine__is(machine, "x86_64"))
+>                         machine->kernel_start = map->start;
 > +
->  static int cros_ec_check_features(struct cros_ec_dev *ec, int feature)
->  {
->  	struct cros_ec_command *msg;
-> @@ -278,6 +313,7 @@ static int ec_device_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
->  	struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
-> +	int i;
->  
->  	if (!ec)
->  		return retval;
-> @@ -290,47 +326,20 @@ static int ec_device_probe(struct platform_device *pdev)
->  	ec->features[1] = -1U; /* Not cached yet */
->  	device_initialize(&ec->class_dev);
->  
-> -	/* Check whether this is actually a Fingerprint MCU rather than an EC */
-> -	if (cros_ec_check_features(ec, EC_FEATURE_FINGERPRINT)) {
-> -		dev_info(dev, "CrOS Fingerprint MCU detected.\n");
-> -		/*
-> -		 * Help userspace differentiating ECs from FP MCU,
-> -		 * regardless of the probing order.
-> -		 */
-> -		ec_platform->ec_name = CROS_EC_DEV_FP_NAME;
-> -	}
-> -
-> -	/*
-> -	 * Check whether this is actually an Integrated Sensor Hub (ISH)
-> -	 * rather than an EC.
-> -	 */
-> -	if (cros_ec_check_features(ec, EC_FEATURE_ISH)) {
-> -		dev_info(dev, "CrOS ISH MCU detected.\n");
-> -		/*
-> -		 * Help userspace differentiating ECs from ISH MCU,
-> -		 * regardless of the probing order.
-> -		 */
-> -		ec_platform->ec_name = CROS_EC_DEV_ISH_NAME;
-> -	}
-> -
-> -	/* Check whether this is actually a Touchpad MCU rather than an EC */
-> -	if (cros_ec_check_features(ec, EC_FEATURE_TOUCHPAD)) {
-> -		dev_info(dev, "CrOS Touchpad MCU detected.\n");
-> +	for (i = 0; i < ARRAY_SIZE(cros_mcu_devices); i++) {
->  		/*
-> -		 * Help userspace differentiating ECs from TP MCU,
-> -		 * regardless of the probing order.
-> +		 * Check whether this is actually a dedicated MCU rather
-> +		 * than an standard EC.
->  		 */
-> -		ec_platform->ec_name = CROS_EC_DEV_TP_NAME;
-> -	}
-> -
-> -	/* Check whether this is actually a SCP rather than an EC. */
-> -	if (cros_ec_check_features(ec, EC_FEATURE_SCP)) {
-> -		dev_info(dev, "CrOS SCP MCU detected.\n");
-> -		/*
-> -		 * Help userspace differentiating ECs from SCP,
-> -		 * regardless of the probing order.
-> -		 */
-> -		ec_platform->ec_name = CROS_EC_DEV_SCP_NAME;
-> +		if (cros_ec_check_features(ec, cros_mcu_devices[i].id)) {
-> +			dev_info(dev, "CrOS %s MCU detected\n",
-> +				 cros_mcu_devices[i].desc);
-> +			/*
-> +			 * Help userspace differentiating ECs from other MCU,
-> +			 * regardless of the probing order.
-> +			 */
-> +			ec_platform->ec_name = cros_mcu_devices[i].name;
+> +               /*
+> +                * On arm/arm64, some memory regions are prior to '_stext'
+> +                * symbol; to reflect the complete kernel address space,
+> +                * compensate these pre-defined regions for kernel start
+> +                * address.
+> +                */
+> +               if (machine__is(machine, "arm64") ||
+> +                   machine__is(machine, "arm"))
 
-I assume by "dedicated MCU", you mean it can only support one of these
-at a time?  If so, please make that clear by adding a break statement
-once the MCU type has been determined.
+machine__is() does not normalize the architecture, so you may want to use
+perf_env__arch() instead.
 
-> +		}
->  	}
->  
->  	/*
+> +                       machine->kernel_start -= ARM_PRE_START_SIZE;
+>         }
+>         return err;
+>  }
+> 
+> Thanks,
+> Leo Yan
+> 
+>>> +
+>>>  #endif
+>>> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+>>> index f6ee7fbad3e4..603518835692 100644
+>>> --- a/tools/perf/util/machine.c
+>>> +++ b/tools/perf/util/machine.c
+>>> @@ -2671,6 +2671,10 @@ int machine__nr_cpus_avail(struct machine *machine)
+>>>  	return machine ? perf_env__nr_cpus_avail(machine->env) : 0;
+>>>  }
+>>>  
+>>> +void __weak arch__fix_kernel_text_start(u64 *start __maybe_unused)
+>>> +{
+>>> +}
+>>> +
+>>>  int machine__get_kernel_start(struct machine *machine)
+>>>  {
+>>>  	struct map *map = machine__kernel_map(machine);
+>>> @@ -2687,14 +2691,11 @@ int machine__get_kernel_start(struct machine *machine)
+>>>  	machine->kernel_start = 1ULL << 63;
+>>>  	if (map) {
+>>>  		err = map__load(map);
+>>> -		/*
+>>> -		 * On x86_64, PTI entry trampolines are less than the
+>>> -		 * start of kernel text, but still above 2^63. So leave
+>>> -		 * kernel_start = 1ULL << 63 for x86_64.
+>>> -		 */
+>>> -		if (!err && !machine__is(machine, "x86_64"))
+>>> +		if (!err)
+>>>  			machine->kernel_start = map->start;
+>>>  	}
+>>> +
+>>> +	arch__fix_kernel_text_start(&machine->kernel_start);
+>>>  	return err;
+>>>  }
+>>>  
+>>> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+>>> index ef803f08ae12..9cb459f4bfbc 100644
+>>> --- a/tools/perf/util/machine.h
+>>> +++ b/tools/perf/util/machine.h
+>>> @@ -278,6 +278,8 @@ void machine__get_kallsyms_filename(struct machine *machine, char *buf,
+>>>  int machine__create_extra_kernel_maps(struct machine *machine,
+>>>  				      struct dso *kernel);
+>>>  
+>>> +void arch__fix_kernel_text_start(u64 *start);
+>>> +
+>>>  /* Kernel-space maps for symbols that are outside the main kernel map and module maps */
+>>>  struct extra_kernel_map {
+>>>  	u64 start;
+>>>
+>>
+> 
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
