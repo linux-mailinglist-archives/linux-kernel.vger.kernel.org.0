@@ -2,179 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895C18A26A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 17:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DDFE8A271
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 17:39:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbfHLPii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 11:38:38 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:17779 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfHLPih (ORCPT
+        id S1726722AbfHLPi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 11:38:59 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43116 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfHLPi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 11:38:37 -0400
-Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
-  Eugen.Hristev@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Eugen.Hristev@microchip.com";
-  x-sender="Eugen.Hristev@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa4.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Eugen.Hristev@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: HVM3Ypcbb0kWK83dM3HZJNGEUcROICj9HAvliyFvddmtdhq0O4P3epGeCOqYCmTQL4tLunYNvh
- lgjXYKqoC0fIRRBVbfa2EwYhrgbU/NTfUTUZicjDVzpQmexqzc0ZmsEaVnatwOjjsKOltjkw4v
- y/s4UTjXyJjr3jgSl432MMDUSASbFQFg0As968HbRCPQ0REZYsoVGMkDeVHEIQIpzRNgcByH+h
- nVnAl3ooZufeigdPplWdRIlx2MQrfPaobZUQWFh6V6ehcigTyv4u0DmS5D3O0Yru2it/7owuy9
- Yo0=
-X-IronPort-AV: E=Sophos;i="5.64,377,1559545200"; 
-   d="scan'208";a="44000997"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Aug 2019 08:38:35 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 12 Aug 2019 08:38:34 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
- Transport; Mon, 12 Aug 2019 08:38:34 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QDovpHfHa/eV+0caKiPB3G2/wfhYc0GKsshUxZ7rCbIqcuCKHN43mwvVB/lfa6DL1wIwXEHlegrcpdoOTQxGqDZ0cmgiIs0ENJiLSPx77YqwZahesE1j+QEjZUVEk/b7S62+cN2fhAoA4r+gFR4K8Fo9GoAIgpdzFjAMuRraO83zVgZ/C2PmX6OGC5YR8XIuJwD2dxVVEuXv1rDK2I3agjgg3C9ye6gdWoAKwdBZmQX2XewhcDtc7/yazkwzEJNo/xH7OSy8l5BsQ0Blt0xQuZSPp535hDWHDnxRoZDVz1bbkxfrYGds2bTRGH/ttYo7wEbyWcbGtOcx5EMAy+XccQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r76JbPtMf2px6tRkAqyMgwErJRKaGzYabwivHe7HpoE=;
- b=g3V+fPD2huko2N0/dQCrzMyjNuHAACj1zePN5ENQwT7RmBNdfruHzupJzEksMBlGTDlvczH4yunAHvIuwhoaFu+pyi5My/0erSw1dH+jOZS0GJsJlEiok+8Cnxt5ypDIDvmlCPf5SAA6RSPnjyFfrBeD8aSXhQmvm99VswVmx39ODl/9O7NwaLGPI92kcAhTadRzTcFSVWDiWi5hLTXVl/apNW1YkZOSjGkoEMRdsCm/miWU07u1XgAhNrgG6ya3ewp5bFVUCiA6Z/KXLahL3F2XrxPVEHh9GhtKQCUSUB7Iwcb6hEXfHASFdh2NIPU9Wfca036FeeGM3Da6C7yPyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+        Mon, 12 Aug 2019 11:38:59 -0400
+Received: by mail-ot1-f68.google.com with SMTP id e12so16113936otp.10
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 08:38:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r76JbPtMf2px6tRkAqyMgwErJRKaGzYabwivHe7HpoE=;
- b=NbkFVVmON7Q00Z+et9+xsFu2QzC+sHn3ADM+94mjKESVEmpjx5LD/xG2n20wOXSEz4wphMrna/w7hBP64gLQDmlNstIgW3VWXl25h4PEZ+7LhqVqMHw1CMkgBlMPwEqPZ913sarNfJpA7zIaUdnx7BHYUYp4FnaMUraUwvn01ss=
-Received: from DM5PR11MB1242.namprd11.prod.outlook.com (10.168.108.8) by
- DM5PR11MB2009.namprd11.prod.outlook.com (10.168.108.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.16; Mon, 12 Aug 2019 15:38:34 +0000
-Received: from DM5PR11MB1242.namprd11.prod.outlook.com
- ([fe80::c457:dc57:6e6f:f4f3]) by DM5PR11MB1242.namprd11.prod.outlook.com
- ([fe80::c457:dc57:6e6f:f4f3%10]) with mapi id 15.20.2157.022; Mon, 12 Aug
- 2019 15:38:34 +0000
-From:   <Eugen.Hristev@microchip.com>
-To:     <adrian.hunter@intel.com>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ulf.hansson@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: at91: sama5d27_som1_ek: add mmc
- capabilities for SDMMC0
-Thread-Topic: [PATCH 2/2] ARM: dts: at91: sama5d27_som1_ek: add mmc
- capabilities for SDMMC0
-Thread-Index: AQHVTcREWHJkbws9ckOkZIu1sPO5NabxMeQAgAAEQACAASQ2AIAFUKOA
-Date:   Mon, 12 Aug 2019 15:38:34 +0000
-Message-ID: <fa0debbb-b84c-1f74-f8b8-8fdd7812aaee@microchip.com>
-References: <1565252928-28994-1-git-send-email-eugen.hristev@microchip.com>
- <1565252928-28994-2-git-send-email-eugen.hristev@microchip.com>
- <20190808124217.wrmcxohw5i6ju2qe@M43218.corp.atmel.com>
- <04fd74c3-a828-1064-b77b-f3de07a26190@intel.com>
- <20190809062322.syuieymdqjs4e7lh@M43218.corp.atmel.com>
-In-Reply-To: <20190809062322.syuieymdqjs4e7lh@M43218.corp.atmel.com>
-Accept-Language: en-US, ro-RO
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR08CA0266.eurprd08.prod.outlook.com
- (2603:10a6:803:dc::39) To DM5PR11MB1242.namprd11.prod.outlook.com
- (2603:10b6:3:14::8)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tagtoolbar-keys: D20190812183317755
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c052edc5-a8a9-4649-7123-08d71f3b2274
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM5PR11MB2009;
-x-ms-traffictypediagnostic: DM5PR11MB2009:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM5PR11MB20099FA6D5D8E2608EAD259EE8D30@DM5PR11MB2009.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 012792EC17
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(39860400002)(376002)(346002)(199004)(189003)(31686004)(7736002)(5660300002)(6116002)(186003)(305945005)(229853002)(26005)(25786009)(3846002)(36756003)(71190400001)(71200400001)(66066001)(6246003)(99286004)(316002)(8676002)(6512007)(52116002)(53936002)(76176011)(2906002)(81156014)(110136005)(6486002)(102836004)(2201001)(386003)(31696002)(8936002)(86362001)(6506007)(53546011)(81166006)(6436002)(14454004)(486006)(446003)(11346002)(66446008)(476003)(2616005)(64756008)(66556008)(66476007)(66946007)(2501003)(478600001)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB2009;H:DM5PR11MB1242.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: XcgwdcFYRRMfeS3qmmj7blzXGADX5HaWZ2LbCGCyhqbZfcs9U9q3742QZNaleCdFRs7SYLrKeqHx65hqkij0oJaeEwow9cabszLYoq1mC8PetACaEvMmsId3If9zUpde8LpZCt/rVHDCE/mwVy4R8NLXRkjG5TYIOOjiy53/fxySEIUtf6rXm6QMuBUumnbIXzRm+6Z4ayWvGjbszXH4ETW/NS+1dgfC2OpmYPIShwc3tnwDqdB9yVnvkJQViyrtP91M/pj9dS6KCe25w7j0Nvf5z/l/sE+d8GT4GAiz7GUMLMOWSvjUZ6JWy1b+v/DcteJp+Or/SL487XU6skjPGok84DZod3SilX2dijjxdv0A1Ye6UqAe7vjdJri5qtPsJanlrQqDnlLq6P4V3r4JJLcnKs3SiY1UoKNsIy/YBBM=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1A3BA531877C9C438F08D84BC3EDC250@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=digitalocean.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zyjyZ9IF9yKP9YmOo1rW3lIJcoNsTg3G/mxjlSrkZUo=;
+        b=SM/72PMLIelCgb3lWyhM30lVs68LiFi8DHWN+LknWn/Quh++yBKmoxum74Yfqt4CXT
+         o9UnOy3vy4mgfQGk1vtF13V30voHjEZ6x0TR2/iDvIqffznKarydUaZcQrxzHrjM4gqP
+         u78rLuBlzrnVFuoSQjrPdOQuOuvgBcWAdiZzo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zyjyZ9IF9yKP9YmOo1rW3lIJcoNsTg3G/mxjlSrkZUo=;
+        b=bxCLfJt4RkMQzcYjcOXyApqHVyTJqGW5qKN+YNA3MChVDCs+RGjn8sP0hHJaLAutf7
+         57VvwiBJc3kH0G4zHSZj1hp6GX8OIJTPnkA7hHUZs9nZaqZzOBRiG7chM16cm61pUYAs
+         pGwTfWg7ouRr0J3L65KNC+weR+7R1dYsHYWs8fvz+RAQZxLXI4CFzCrWDnSy2cg/bo03
+         4QxnnBqnkOOt9hDBoA8bk6FdJHNlo0l3Wuh12PcMptN5PCkcVEOZLwGJ3RJkUjotckwY
+         7XW60SlePOnDWHaxpw2vtaiw4gNRNWM+9Qrlimvc2IWJ5puS+0yvC4bLfV98lj/um2ct
+         ukOA==
+X-Gm-Message-State: APjAAAUcXXbrCCk7daVsNht8qyaoZUJYvzTQI20zCbxAxp2xeALL3rT5
+        mSKqKv3f9s8uvZbd+gNdTzQx+SpC5ig3a9oaN05Atw==
+X-Google-Smtp-Source: APXvYqwfyn2DmWsZj2bhXfvA9i4/XqS8i/McjJrxQuPNIVYFjFINgDT10ZJoH33WOPTfzc89HlMzh99B6HddHW0ucJY=
+X-Received: by 2002:a05:6830:1249:: with SMTP id s9mr31776344otp.33.1565624337837;
+ Mon, 12 Aug 2019 08:38:57 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: c052edc5-a8a9-4649-7123-08d71f3b2274
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2019 15:38:34.2910
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KS5q9lG9iMvyEHChJiElEv8kRDVo1F5A8THFjqCQVnPIYm+6l+33c6Sh0320rxeG+YEF51EpPyaLB6QtgLN+g9qdKBwpzzbNb8NrHqJ7CUY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB2009
+References: <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
+ <20190802153715.GA18075@sinkpad> <f4778816-69e5-146c-2a30-ec42e7f1677f@linux.intel.com>
+ <20190806032418.GA54717@aaronlu> <e1c4a7ed-822e-93cb-ff1d-6a0842db115f@linux.intel.com>
+ <20190806171241.GQ2349@hirez.programming.kicks-ass.net> <21933a50-f796-3d28-664c-030cb7c98431@linux.intel.com>
+ <20190808064731.GA5121@aaronlu> <70d1ff90-9be9-7b05-f1ff-e751f266183b@linux.intel.com>
+ <b7a83fcb-5c34-9794-5688-55c52697fd84@linux.intel.com> <20190810141556.GA73644@aaronlu>
+In-Reply-To: <20190810141556.GA73644@aaronlu>
+From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
+Date:   Mon, 12 Aug 2019 11:38:44 -0400
+Message-ID: <CANaguZDEq4=5Q9pnFyWx0-Gfkoq-WxUXBYgiG6WKLTO5njAHUA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+To:     Aaron Lu <aaron.lu@linux.alibaba.com>
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA5LjA4LjIwMTkgMDk6MjMsIEx1ZG92aWMgRGVzcm9jaGVzIHdyb3RlOg0KPiBPbiBU
-aHUsIEF1ZyAwOCwgMjAxOSBhdCAwMzo1NzozMFBNICswMzAwLCBBZHJpYW4gSHVudGVyIHdyb3Rl
-Og0KPj4gT24gOC8wOC8xOSAzOjQyIFBNLCBMdWRvdmljIERlc3JvY2hlcyB3cm90ZToNCj4+PiBP
-biBUaHUsIEF1ZyAwOCwgMjAxOSBhdCAxMDozNTo0M0FNICswMjAwLCBFdWdlbiBIcmlzdGV2IC0g
-TTE4MjgyIHdyb3RlOg0KPj4+PiBGcm9tOiBFdWdlbiBIcmlzdGV2IDxldWdlbi5ocmlzdGV2QG1p
-Y3JvY2hpcC5jb20+DQo+Pj4+DQo+Pj4+IEFkZCBtbWMgY2FwYWJpbGl0aWVzIGZvciBTRE1NQzAg
-Zm9yIHRoaXMgYm9hcmQuDQo+Pj4+IFdpdGggdGhpcyBlbmFibGVkLCBlTU1DIGNvbm5lY3RlZCBj
-YXJkIGlzIGRldGVjdGVkIGFzOg0KPj4+Pg0KPj4+PiBtbWMwOiBuZXcgRERSIE1NQyBjYXJkIGF0
-IGFkZHJlc3MgMDAwMQ0KPj4+Pg0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBFdWdlbiBIcmlzdGV2IDxl
-dWdlbi5ocmlzdGV2QG1pY3JvY2hpcC5jb20+DQo+Pj4gQWNrZWQtYnk6IEx1ZG92aWMgRGVzcm9j
-aGVzIDxsdWRvdmljLmRlc3JvY2hlc0BtaWNyb2NoaXAuY29tPg0KPj4+DQo+Pj4gSSBhbSBpbnRl
-cmVzdGVkIHRvIGhhdmUgdGhlIHNvbWUgaW5zaWdodHMgYWJvdXQgdGhlIHVzZSBvZiBzZC11aHMt
-Kg0KPj4+IHByb3BlcnRpZXMuDQo+Pj4NCj4+PiBPdXIgSVAgY2FuJ3QgZGVhbCB3aXRoIDFWOCBi
-eSBpdHNlbGYuIEl0IGhhcyBhIDFWOFNFTCBzaWduYWwgd2hpY2ggY2FuDQo+Pj4gYmUgdXNlZCBh
-cyB0aGUgbG9naWMgY29udHJvbCBpbnB1dCBvZiBhIG11eC4gU28gZXZlbiBpZiB0aGUgSVAgY2xh
-aW1zDQo+Pj4gdG8gc3VwcG9ydCBVSFMgbW9kZXMsIGl0IGRlcGVuZHMgb24gdGhlIGJvYXJkLg0K
-Pj4+DQo+Pj4gQXJlIHRoZSBzZC11aHMtKiBwcm9wZXJ0aWVzIGEgd2F5IHRvIGRlYWwgd2l0aCB0
-aGlzPyBJIHRlbmQgdG8gdGhpbmsgbm8NCj4+PiBhcyBzZGhjaV9zZXR1cF9ob3N0KCkgd2lsbCBz
-ZXQgdGhlIGNhcHMgZGVwZW5kaW5nIG9uIHRoZSBjb250ZW50IG9mIHRoZQ0KPj4+IGNhcGFiaWxp
-dGllcyByZWdpc3Rlci4gRG8gd2UgaGF2ZSB0byB1c2UgdGhlIFNESENJX1FVSVJLX01JU1NJTkdf
-Q0FQUw0KPj4+IHF1aXJrIG9yIHNkaGNpLWNhcHMvc2RoY2ktY2Fwcy1tYXNrPw0KPj4NCj4+IFRo
-ZXJlIGlzICJuby0xLTgtdiIgd2hpY2ggaXQgbG9va3MgbGlrZSBzZGhjaS1vZi1hdDkxLmMgYWxy
-ZWFkeSBzdXBwb3J0czoNCj4+DQo+PiAgICBzZGhjaV9hdDkxX3Byb2JlKCkgLT4gc2RoY2lfZ2V0
-X29mX3Byb3BlcnR5KCkgLT4gc2RoY2lfZ2V0X3Byb3BlcnR5KCkNCj4+DQo+PiAgICAgIAlpZiAo
-ZGV2aWNlX3Byb3BlcnR5X3ByZXNlbnQoZGV2LCAibm8tMS04LXYiKSkNCj4+IAkJaG9zdC0+cXVp
-cmtzMiB8PSBTREhDSV9RVUlSSzJfTk9fMV84X1Y7DQo+Pg0KPiANCj4gUmlnaHQsIEkgZm9yZ290
-IHRoaXMgcHJvcGVydHkuIFRoYW5rcy4NCj4gDQo+IEV1Z2VuLCBkbyB5b3Ugc2VlIGNhc2VzIHdl
-IGNhbid0IGNvdmVyIHdpdGggdGhpcyBwcm9wZXJ0eT8NCg0KSGksDQoNCkZvciBjdXJyZW50IHJl
-cXVpcmVtZW50cyBhbmQgZHJpdmVyIHN1cHBvcnQsIHRoaXMgc2hvdWxkIGJlIGVub3VnaC4NCg0K
-SSBub3RpY2VkIG9uZSB0aGluZyByZWdhcmRpbmcgU0QtQ2FyZHMsIGlmIEkgYWRkIHByb3BlcnR5
-IHNkLXVocy1zZHIxMDQgDQp0aGUgY2xhc3MgMTAgdWhzMSBjYXJkcyBhcmUgZGV0ZWN0ZWQgYXMg
-U0RSMTA0IC4gV2l0aG91dCB0aGlzIHByb3BlcnR5IA0KdGhleSBhcmUgZGV0ZWN0ZWQgYXMgRERS
-NTAuIEFueSBpZGVhIHdoeSB0aGUgZGlmZmVyZW5jZSA/IFRoZSBjb250cm9sbGVyIA0KZG9lcyBu
-b3QgY2xhaW0gdG8gaGF2ZSBTRFIxMDQgc3VwcG9ydCA/ICBXZSBzaG91bGQgYWRkIGl0ID8NCg0K
-RXVnZW4NCg0KPiANCj4gUmVnYXJkcw0KPiANCj4gTHVkb3ZpYw0KPiANCj4+DQo+Pj4NCj4+PiBS
-ZWdhcmRzDQo+Pj4NCj4+PiBMdWRvdmljDQo+Pj4NCj4+Pj4gLS0tDQo+Pj4+ICAgYXJjaC9hcm0v
-Ym9vdC9kdHMvYXQ5MS1zYW1hNWQyN19zb20xX2VrLmR0cyB8IDEgKw0KPj4+PiAgIDEgZmlsZSBj
-aGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0v
-Ym9vdC9kdHMvYXQ5MS1zYW1hNWQyN19zb20xX2VrLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2F0
-OTEtc2FtYTVkMjdfc29tMV9lay5kdHMNCj4+Pj4gaW5kZXggMTQ5ZTUzOS4uMTk0YjNhMyAxMDA2
-NDQNCj4+Pj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvYXQ5MS1zYW1hNWQyN19zb20xX2VrLmR0
-cw0KPj4+PiArKysgYi9hcmNoL2FybS9ib290L2R0cy9hdDkxLXNhbWE1ZDI3X3NvbTFfZWsuZHRz
-DQo+Pj4+IEBAIC01NCw2ICs1NCw3IEBADQo+Pj4+ICAgDQo+Pj4+ICAgCQlzZG1tYzA6IHNkaW8t
-aG9zdEBhMDAwMDAwMCB7DQo+Pj4+ICAgCQkJYnVzLXdpZHRoID0gPDg+Ow0KPj4+PiArCQkJbW1j
-LWRkci0zXzN2Ow0KPj4+PiAgIAkJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7DQo+Pj4+ICAg
-CQkJcGluY3RybC0wID0gPCZwaW5jdHJsX3NkbW1jMF9kZWZhdWx0PjsNCj4+Pj4gICAJCQlzdGF0
-dXMgPSAib2theSI7DQo+Pj4+IC0tIA0KPj4+PiAyLjcuNA0KPj4+Pg0KPj4+DQo+Pg0KPiANCg==
+> I have two other small changes that I think are worth sending out.
+>
+> The first simplify logic in pick_task() and the 2nd avoid task pick all
+> over again when max is preempted. I also refined the previous hack patch to
+> make schedule always happen only for root cfs rq. Please see below for
+> details, thanks.
+>
+I see a potential issue here. With the simplification in pick_task,
+you might introduce a livelock where the match logic spins for ever.
+But you avoid that with the patch 2, by removing the loop if a pick
+preempts max. The potential problem is that, you miss a case where
+the newly picked task might have a match in the sibling on which max
+was selected before. By selecting idle, you ignore the potential match.
+As of now, the potential match check does not really work because,
+sched_core_find will always return the same task and we do not check
+the whole core_tree for a next match. This is in my TODO list to have
+sched_core_find to return the best next match, if match was preempted.
+But its a bit complex and needs more thought.
+
+Third patch looks good to me.
+
+Thanks,
+Vineeth
