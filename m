@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B03968A2E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 18:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 298A98A2EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 18:07:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfHLQGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726717AbfHLQGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 12 Aug 2019 12:06:50 -0400
-Received: from foss.arm.com ([217.140.110.172]:52304 "EHLO foss.arm.com"
+Received: from foss.arm.com ([217.140.110.172]:52322 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725923AbfHLQGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 12:06:48 -0400
+        id S1726681AbfHLQGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 12:06:49 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D24F1715;
-        Mon, 12 Aug 2019 09:06:48 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6357E174E;
+        Mon, 12 Aug 2019 09:06:49 -0700 (PDT)
 Received: from arrakis.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 29A6B3F718;
-        Mon, 12 Aug 2019 09:06:47 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6132C3F718;
+        Mon, 12 Aug 2019 09:06:48 -0700 (PDT)
 From:   Catalin Marinas <catalin.marinas@arm.com>
 To:     linux-mm@kvack.org
 Cc:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@kernel.org>,
         Matthew Wilcox <willy@infradead.org>, Qian Cai <cai@lca.pw>
-Subject: [PATCH v3 1/3] mm: kmemleak: Make the tool tolerant to struct scan_area allocation failures
-Date:   Mon, 12 Aug 2019 17:06:40 +0100
-Message-Id: <20190812160642.52134-2-catalin.marinas@arm.com>
+Subject: [PATCH v3 2/3] mm: kmemleak: Simple memory allocation pool for kmemleak objects
+Date:   Mon, 12 Aug 2019 17:06:41 +0100
+Message-Id: <20190812160642.52134-3-catalin.marinas@arm.com>
 X-Mailer: git-send-email 2.23.0.rc0
 In-Reply-To: <20190812160642.52134-1-catalin.marinas@arm.com>
 References: <20190812160642.52134-1-catalin.marinas@arm.com>
@@ -36,67 +36,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Object scan areas are an optimisation aimed to decrease the false
-positives and slightly improve the scanning time of large objects known
-to only have a few specific pointers. If a struct scan_area fails to
-allocate, kmemleak can still function normally by scanning the full
-object.
-
-Introduce an OBJECT_FULL_SCAN flag and mark objects as such when
-scan_area allocation fails.
+Add a memory pool for struct kmemleak_object in case the normal
+kmem_cache_alloc() fails under the gfp constraints passed by the caller.
+The mem_pool[] array size is currently fixed at 16000.
 
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 ---
- mm/kmemleak.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ mm/kmemleak.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 52 insertions(+), 2 deletions(-)
 
 diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index f6e602918dac..5ba7fad00fda 100644
+index 5ba7fad00fda..2fb86524d70b 100644
 --- a/mm/kmemleak.c
 +++ b/mm/kmemleak.c
-@@ -168,6 +168,8 @@ struct kmemleak_object {
- #define OBJECT_REPORTED		(1 << 1)
- /* flag set to not scan the object */
- #define OBJECT_NO_SCAN		(1 << 2)
-+/* flag set to fully scan the object when scan_area allocation failed */
-+#define OBJECT_FULL_SCAN	(1 << 3)
+@@ -180,11 +180,17 @@ struct kmemleak_object {
+ #define HEX_ASCII		1
+ /* max number of lines to be printed */
+ #define HEX_MAX_LINES		2
++/* memory pool size */
++#define MEM_POOL_SIZE		16000
  
- #define HEX_PREFIX		"    "
- /* number of bytes to print per line; must be 16 or 32 */
-@@ -773,12 +775,14 @@ static void add_scan_area(unsigned long ptr, size_t size, gfp_t gfp)
- 	}
- 
- 	area = kmem_cache_alloc(scan_area_cache, gfp_kmemleak_mask(gfp));
--	if (!area) {
--		pr_warn("Cannot allocate a scan area\n");
--		goto out;
--	}
- 
- 	spin_lock_irqsave(&object->lock, flags);
-+	if (!area) {
-+		pr_warn_once("Cannot allocate a scan area, scanning the full object\n");
-+		/* mark the object for full scan to avoid false positives */
-+		object->flags |= OBJECT_FULL_SCAN;
-+		goto out_unlock;
-+	}
- 	if (size == SIZE_MAX) {
- 		size = object->pointer + object->size - ptr;
- 	} else if (ptr + size > object->pointer + object->size) {
-@@ -795,7 +799,6 @@ static void add_scan_area(unsigned long ptr, size_t size, gfp_t gfp)
- 	hlist_add_head(&area->node, &object->area_list);
- out_unlock:
- 	spin_unlock_irqrestore(&object->lock, flags);
--out:
- 	put_object(object);
+ /* the list of all allocated objects */
+ static LIST_HEAD(object_list);
+ /* the list of gray-colored objects (see color_gray comment below) */
+ static LIST_HEAD(gray_list);
++/* memory pool allocation */
++static struct kmemleak_object mem_pool[MEM_POOL_SIZE];
++static int mem_pool_free_count = ARRAY_SIZE(mem_pool);
++static LIST_HEAD(mem_pool_free_list);
+ /* search tree for object boundaries */
+ static struct rb_root object_tree_root = RB_ROOT;
+ /* rw_lock protecting the access to object_list and object_tree_root */
+@@ -451,6 +457,50 @@ static int get_object(struct kmemleak_object *object)
+ 	return atomic_inc_not_zero(&object->use_count);
  }
  
-@@ -1408,7 +1411,8 @@ static void scan_object(struct kmemleak_object *object)
- 	if (!(object->flags & OBJECT_ALLOCATED))
- 		/* already freed object */
- 		goto out;
--	if (hlist_empty(&object->area_list)) {
-+	if (hlist_empty(&object->area_list) ||
-+	    object->flags & OBJECT_FULL_SCAN) {
- 		void *start = (void *)object->pointer;
- 		void *end = (void *)(object->pointer + object->size);
- 		void *next;
++/*
++ * Memory pool allocation and freeing. kmemleak_lock must not be held.
++ */
++static struct kmemleak_object *mem_pool_alloc(gfp_t gfp)
++{
++	unsigned long flags;
++	struct kmemleak_object *object;
++
++	/* try the slab allocator first */
++	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
++	if (object)
++		return object;
++
++	/* slab allocation failed, try the memory pool */
++	write_lock_irqsave(&kmemleak_lock, flags);
++	object = list_first_entry_or_null(&mem_pool_free_list,
++					  typeof(*object), object_list);
++	if (object)
++		list_del(&object->object_list);
++	else if (mem_pool_free_count)
++		object = &mem_pool[--mem_pool_free_count];
++	write_unlock_irqrestore(&kmemleak_lock, flags);
++
++	return object;
++}
++
++/*
++ * Return the object to either the slab allocator or the memory pool.
++ */
++static void mem_pool_free(struct kmemleak_object *object)
++{
++	unsigned long flags;
++
++	if (object < mem_pool || object >= mem_pool + ARRAY_SIZE(mem_pool)) {
++		kmem_cache_free(object_cache, object);
++		return;
++	}
++
++	/* add the object to the memory pool free list */
++	write_lock_irqsave(&kmemleak_lock, flags);
++	list_add(&object->object_list, &mem_pool_free_list);
++	write_unlock_irqrestore(&kmemleak_lock, flags);
++}
++
+ /*
+  * RCU callback to free a kmemleak_object.
+  */
+@@ -469,7 +519,7 @@ static void free_object_rcu(struct rcu_head *rcu)
+ 		hlist_del(&area->node);
+ 		kmem_cache_free(scan_area_cache, area);
+ 	}
+-	kmem_cache_free(object_cache, object);
++	mem_pool_free(object);
+ }
+ 
+ /*
+@@ -552,7 +602,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	struct rb_node **link, *rb_parent;
+ 	unsigned long untagged_ptr;
+ 
+-	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
++	object = mem_pool_alloc(gfp);
+ 	if (!object) {
+ 		pr_warn("Cannot allocate a kmemleak_object structure\n");
+ 		kmemleak_disable();
