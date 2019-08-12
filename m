@@ -2,144 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28F8C8A838
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4705E8A844
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 22:19:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfHLUNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 16:13:41 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:52184 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbfHLUNl (ORCPT
+        id S1727476AbfHLUTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 16:19:55 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43649 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbfHLUTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 16:13:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9bz98gX/vj4hZ9b018mnpxRR+6pAkprICagFvUhCrgM=; b=ijGBeVByqn7yrub+/0Bq/bmJ3f
-        vh8IFW5/ehKNhUkDdQaTE4zGJuNOmsLqFX006P97bXIq4UOO9KAD704fpKtz3P941bGa5Snjgl9wA
-        pFjr3SGzhTvWfD4MHzZk/aDPxingu1mZhFzxlSHdc81q/ipgNQ1j/Ay0n8RVk4+SRmjE=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:46986 helo=[172.16.1.50])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1hxGhO-0006Pt-Pn; Mon, 12 Aug 2019 22:13:46 +0200
-Subject: Re: 5.3-rc3-ish VM crash: RIP: 0010:tcp_trim_head+0x20/0xe0
-To:     Eric Dumazet <eric.dumazet@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <27aebb57-0ca9-fba3-092f-39131ad2b648@eikelenboom.it>
- <4d803565-b716-42ab-1db8-3dcade91e939@gmail.com>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <e670ed76-14bc-8afd-9763-a7e6c0db53d0@eikelenboom.it>
-Date:   Mon, 12 Aug 2019 22:17:40 +0200
+        Mon, 12 Aug 2019 16:19:55 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p13so31120114wru.10;
+        Mon, 12 Aug 2019 13:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TleJskMU/Gs7nM1zv+YQ7RMru93ffoX4OLITCZ719gM=;
+        b=qu0jbDcLH+TVuC2ZryTfR/GjZm1FEYmAkNFIKCdUprHw3+sD33RKG1D9ZxKyewy90T
+         spt9orpnXMO1a6tZlyjxqhymOpeafvjMdndj/Z3Do2x2Rsdr6Z8CVBioJB+SOLdv1rMC
+         QLuJSEC6Wx32JBx8Jm18nTqsNr67xvRRVfW3WCPWji1QZCHBajZ6HXrDBchQ3GyzkPcs
+         GdTAdLE+h03t+veS6B8sgWRroz92czCyaLaCKh4yeYGqfXDm/0i9l96MVKEIFM2tVeSk
+         B6lyFYX1KLgxiU3M6It2oSxEjg8Vm0qHtkGfvb9RvBBYG//z8KhiT+40Fa3RbiaF+bDc
+         5JGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TleJskMU/Gs7nM1zv+YQ7RMru93ffoX4OLITCZ719gM=;
+        b=NeXXIGEfju8u649rs9D1fBAFCyLlFzka86y3AcxAd32vN+CLaeKTd7hBSCrFo6i+Jd
+         yAS24l4yVhEhfgC9mO74YAJ4CLVyFRpYm11dbWodUYcS+TQ9f3WbtjZDZ+aXk2lqOWjA
+         ec2glzPrvhfc3fsvLaU6H1C+136cBETcaAcN5TsBijcZm/zD5ibkOiRDuy2PLsJjDtOI
+         CvRoZoFsNMDWx0f5+CxDVGG2ewK+KY9/OuXvXmnLE2MalLkYz3yWqwUphJnQdK3TJZoL
+         iVkmtPJ5y+b561w0RDyHXt6JEFHttw+YtL4h5t2/8pPA0ZCBq0X/1bHe3eCTLeDjrrTD
+         dkqw==
+X-Gm-Message-State: APjAAAVHB9J7X+Cw78BTJ/wZ3mJVf2dtZcxNSEg+IFRyrktz/rI3tC+X
+        IvXuJXRc4614KlB2RbyBEejn53NA
+X-Google-Smtp-Source: APXvYqwp1WYOnR+9J3xlwSNKvUobQTKhy0sJVhMJnlMrRLU5ZDWCTb3jg1qp1/PJErHNSeTOGR6QtQ==
+X-Received: by 2002:a05:6000:104f:: with SMTP id c15mr14740887wrx.225.1565641192235;
+        Mon, 12 Aug 2019 13:19:52 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.218])
+        by smtp.googlemail.com with ESMTPSA id r16sm30202778wrc.81.2019.08.12.13.19.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Aug 2019 13:19:51 -0700 (PDT)
+Subject: Re: [PATCH v10 09/15] dt-bindings: memory: tegra30: Convert to
+ Tegra124 YAML
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190811210043.20122-1-digetx@gmail.com>
+ <20190811210043.20122-10-digetx@gmail.com>
+ <CAL_JsqJNwMOMyDaB=zqbCLwfn+ro6RcvXFkRbN_t-mEeUi3rVQ@mail.gmail.com>
+ <CAL_Jsq+bcqwRvYK=3d0Qu8K-psxLGOgCazmV55bA=vz+5f573w@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <cd3b1328-4d7b-c757-4939-62fee45becdf@gmail.com>
+Date:   Mon, 12 Aug 2019 23:19:49 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <4d803565-b716-42ab-1db8-3dcade91e939@gmail.com>
+In-Reply-To: <CAL_Jsq+bcqwRvYK=3d0Qu8K-psxLGOgCazmV55bA=vz+5f573w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/08/2019 19:56, Eric Dumazet wrote:
+12.08.2019 22:54, Rob Herring пишет:
+> On Mon, Aug 12, 2019 at 1:53 PM Rob Herring <robh+dt@kernel.org> wrote:
+>>
+>> On Sun, Aug 11, 2019 at 3:01 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>>
+>>> The Tegra30 binding will actually differ from the Tegra124 a tad, in
+>>> particular the EMEM configuration description. Hence rename the binding
+>>> to Tegra124 during of the conversion to YAML.
+>>>
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  .../nvidia,tegra124-mc.yaml                   | 152 ++++++++++++++++++
+>>>  .../memory-controllers/nvidia,tegra30-mc.txt  | 123 --------------
+>>>  2 files changed, 152 insertions(+), 123 deletions(-)
+>>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+>>>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
+>>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
 > 
+> Wrong patch, but still R-by... :)
 > 
-> On 8/12/19 2:50 PM, Sander Eikelenboom wrote:
->> L.S.,
->>
->> While testing a somewhere-after-5.3-rc3 kernel (which included the latest net merge (33920f1ec5bf47c5c0a1d2113989bdd9dfb3fae9),
->> one of my Xen VM's (which gets quite some network load) crashed.
->> See below for the stacktrace.
->>
->> Unfortunately I haven't got a clear trigger, so bisection doesn't seem to be an option at the moment. 
->> I haven't encountered this on 5.2, so it seems to be an regression against 5.2.
->>
->> Any ideas ?
->>
->> --
->> Sander
->>
->>
->> [16930.653595] general protection fault: 0000 [#1] SMP NOPTI
->> [16930.653624] CPU: 0 PID: 3275 Comm: rsync Not tainted 5.3.0-rc3-20190809-doflr+ #1
->> [16930.653657] RIP: 0010:tcp_trim_head+0x20/0xe0
->> [16930.653677] Code: 2e 0f 1f 84 00 00 00 00 00 90 41 54 41 89 d4 55 48 89 fd 53 48 89 f3 f6 46 7e 01 74 2f 8b 86 bc 00 00 00 48 03 86 c0 00 00 00 <8b> 40 20 66 83 f8 01 74 19 31 d2 31 f6 b9 20 0a 00 00 48 89 df e8
->> [16930.653741] RSP: 0000:ffffc90000003ad8 EFLAGS: 00010286
->> [16930.653762] RAX: fffe888005bf62c0 RBX: ffff8880115fb800 RCX: 000000008010000b
-> 
-> crash in " mov    0x20(%rax),%eax"   and RAX=fffe888005bf62c0 (not a valid kernel address)
-> 
-> Look like one bit corruption maybe.
-> 
-> Nothing comes to mind really between 5.2 and 53 that could explain this.
 
-Hi Eric,
-
-Hmm could be it's a rare coincidence, sp that it just never occurred on pre 5.3 by chance.
-Let's wait and see if it reoccurs, will report back if it does.
-
-Thanks for your explanation.
-
---
-Sander
-
-
->> [16930.653791] RDX: 00000000000005a0 RSI: ffff8880115fb800 RDI: ffff888016b00880
->> [16930.653819] RBP: ffff888016b00880 R08: 0000000000000001 R09: 0000000000000000
->> [16930.653848] R10: ffff88800ae00800 R11: 00000000bfe632e6 R12: 00000000000005a0
->> [16930.653875] R13: 0000000000000001 R14: 00000000bfe62d46 R15: 0000000000000004
->> [16930.653913] FS:  00007fe71fe2cb80(0000) GS:ffff88801f200000(0000) knlGS:0000000000000000
->> [16930.653943] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [16930.653965] CR2: 000055de0f3e7000 CR3: 0000000011f32000 CR4: 00000000000006f0
->> [16930.653993] Call Trace:
->> [16930.654005]  <IRQ>
->> [16930.654018]  tcp_ack+0xbb0/0x1230
->> [16930.654033]  tcp_rcv_established+0x2e8/0x630
->> [16930.654053]  tcp_v4_do_rcv+0x129/0x1d0
->> [16930.654070]  tcp_v4_rcv+0xac9/0xcb0
->> [16930.654088]  ip_protocol_deliver_rcu+0x27/0x1b0
->> [16930.654109]  ip_local_deliver_finish+0x3f/0x50
->> [16930.654128]  ip_local_deliver+0x4d/0xe0
->> [16930.654145]  ? ip_protocol_deliver_rcu+0x1b0/0x1b0
->> [16930.654163]  ip_rcv+0x4c/0xd0
->> [16930.654179]  __netif_receive_skb_one_core+0x79/0x90
->> [16930.654200]  netif_receive_skb_internal+0x2a/0xa0
->> [16930.654219]  napi_gro_receive+0xe7/0x140
->> [16930.654237]  xennet_poll+0x9be/0xae0
->> [16930.654254]  net_rx_action+0x136/0x340
->> [16930.654271]  __do_softirq+0xdd/0x2cf
->> [16930.654287]  irq_exit+0x7a/0xa0
->> [16930.654304]  xen_evtchn_do_upcall+0x27/0x40
->> [16930.654320]  xen_hvm_callback_vector+0xf/0x20
->> [16930.654339]  </IRQ>
->> [16930.654349] RIP: 0033:0x55de0d87db99
->> [16930.654364] Code: 00 00 48 89 7c 24 f8 45 39 fe 45 0f 42 fe 44 89 7c 24 f4 eb 09 0f 1f 40 00 83 e9 01 74 3e 89 f2 48 63 f8 4c 01 d2 44 38 1c 3a <75> 25 44 38 6c 3a ff 75 1e 41 0f b6 3c 24 40 38 3a 75 14 41 0f b6
->> [16930.654432] RSP: 002b:00007ffd5531eec8 EFLAGS: 00000a87 ORIG_RAX: ffffffffffffff0c
->> [16930.655004] RAX: 0000000000000002 RBX: 000055de0f3e8e50 RCX: 000000000000007f
->> [16930.655034] RDX: 000055de0f3dc2d2 RSI: 0000000000003492 RDI: 0000000000000002
->> [16930.655062] RBP: 0000000000007fff R08: 00000000000080ea R09: 00000000000001f0
->> [16930.655089] R10: 000055de0f3d8e40 R11: 0000000000000094 R12: 000055de0f3e0f2a
->> [16930.655116] R13: 0000000000000010 R14: 0000000000007f16 R15: 0000000000000080
->> [16930.655144] Modules linked in:
->> [16930.655200] ---[ end trace 533367c95501b645 ]---
->> [16930.655223] RIP: 0010:tcp_trim_head+0x20/0xe0
->> [16930.655243] Code: 2e 0f 1f 84 00 00 00 00 00 90 41 54 41 89 d4 55 48 89 fd 53 48 89 f3 f6 46 7e 01 74 2f 8b 86 bc 00 00 00 48 03 86 c0 00 00 00 <8b> 40 20 66 83 f8 01 74 19 31 d2 31 f6 b9 20 0a 00 00 48 89 df e8
->> [16930.655312] RSP: 0000:ffffc90000003ad8 EFLAGS: 00010286
->> [16930.655331] RAX: fffe888005bf62c0 RBX: ffff8880115fb800 RCX: 000000008010000b
->> [16930.655360] RDX: 00000000000005a0 RSI: ffff8880115fb800 RDI: ffff888016b00880
->> [16930.655387] RBP: ffff888016b00880 R08: 0000000000000001 R09: 0000000000000000
->> [16930.655414] R10: ffff88800ae00800 R11: 00000000bfe632e6 R12: 00000000000005a0
->> [16930.655441] R13: 0000000000000001 R14: 00000000bfe62d46 R15: 0000000000000004
->> [16930.655475] FS:  00007fe71fe2cb80(0000) GS:ffff88801f200000(0000) knlGS:0000000000000000
->> [16930.655502] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [16930.655525] CR2: 000055de0f3e7000 CR3: 0000000011f32000 CR4: 00000000000006f0
->> [16930.655553] Kernel panic - not syncing: Fatal exception in interrupt
->> [16930.655789] Kernel Offset: disabled
->>
-
+Thanks!
