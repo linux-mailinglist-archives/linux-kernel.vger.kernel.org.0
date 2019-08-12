@@ -2,76 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A00198976C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D256C89772
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 08:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbfHLGzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 02:55:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40728 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfHLGzj (ORCPT
+        id S1726527AbfHLG7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 02:59:19 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43370 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfHLG7T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 02:55:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JIXHQp9s2CVKIRUydQ4Mw0MR2l1VaY1/v2KS1Lf2mlI=; b=AmB2oLLkWobqAZTUGGzUVYYcsW
-        AyKI21+qdSeWWM6l/MjdX574V7uUIZCnoTByOZ00FtFd/hBPT+c6YoGs/8U9JClmhDluYoMwYRDwX
-        kfDQfbufZ7msUl5mNu1xJk1VBbqWKHL2FoQI0WO2R/YgByxXIFODsZX5b15SnCmdPqOiVSZP/nMZZ
-        Fd/iFub55uJZecnjyyG9KLsBUUgCzKKZrHMVK2qzW051bXB+7Q9egGvFy9wT9eqc0x9zZ5LM6iFw0
-        bcxuLGomxWkFu69/gdj9EqP0PC0BBB75w2jZUqXzMREpEBXtQZ+JKpEeIO91CCzuJRN5HlHUiWK00
-        UQH6UetA==;
-Received: from [2001:4bb8:180:1ec3:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hx4F0-0000G5-8k; Mon, 12 Aug 2019 06:55:38 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Cc:     linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] kernel: only define task_struct_whitelist conditionally
-Date:   Mon, 12 Aug 2019 08:55:24 +0200
-Message-Id: <20190812065524.19959-5-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190812065524.19959-1-hch@lst.de>
-References: <20190812065524.19959-1-hch@lst.de>
+        Mon, 12 Aug 2019 02:59:19 -0400
+Received: by mail-pl1-f196.google.com with SMTP id 4so40513545pld.10;
+        Sun, 11 Aug 2019 23:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lU9sd0t6+gG5Nv5bhUpF/5WxDNzHrTOFuSzTVXXmTl8=;
+        b=YnvbXjUbXlQSkK3LpUAdhLpq46NSDWVuR665Ubu/270IW/4xBes43HY9xnyHv12M5L
+         +Wx7wmzdJBh+uBRFuUUZm3XjZ2HNz24aSt2C0tnHJ3N0X5qZnLPwkFIGhzROicOathdX
+         buPEuoqJdWYQUpDgQdVJAka7kd+5dOR64ba7JlpNiaaeGrvYnELpkHY1tEFeTbyWXdGo
+         iEnvuWvOT+Jc/xCSbJMmHGTLyahNWiHXdg/Cdp2GY2REf+QoIJ+2/MfttFp4T7wNohjV
+         Cgd5yZ4jZY1J4fHlp9NmGN1KS4pbrmsT/ParzL7gyOuhc+Vs880CYybK1BjIyTaP6bAl
+         lLWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lU9sd0t6+gG5Nv5bhUpF/5WxDNzHrTOFuSzTVXXmTl8=;
+        b=HFBjE5TvlZG9ebyJg2N/oWJoSd1KMEZF2gGEMiDccvdtzZzkEs34p6nvMO7YuESLe5
+         1nvcjQgdfxW+T3dkiPc0sd+lfpnd/pnMgAZlbJ5rGQfImg4pphhtBOWAUlgZ1+F5vMdd
+         cOBgxz72AyNBDQArcOzrMUXXcZKWEX+i2imPvU7ZNIiXeW6eqC0E191l5pvfkMjUJUmm
+         AtZHzjR7Qy3DZjhbdiZ4GT0oedE/gzR3J/fmvm+7kk5SXYfm64wt9L4lwkQpX2vZi2lv
+         0vcH2rlj6vt2UX6o7ElAXbdIIsx+b+YIAj0BLS3F97eRXKSzJOqXiSE5bMHmn6LiIsKx
+         5uNA==
+X-Gm-Message-State: APjAAAVsdvH14ytA/3tjxMax/PMZYdVn7oFrpDP87Ih4IeTaiyUJ4Eww
+        FbjKidr3B4KOI2CaO5HHqwI=
+X-Google-Smtp-Source: APXvYqxGQtAAm/9bZEb20DwM5smEC6IAD75c2e4mNLcMD5COWxsN4uscMrkfBX+siT1jauyZejyO5g==
+X-Received: by 2002:a17:902:b68f:: with SMTP id c15mr31825302pls.104.1565593158123;
+        Sun, 11 Aug 2019 23:59:18 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id n7sm118800185pff.59.2019.08.11.23.59.17
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 11 Aug 2019 23:59:17 -0700 (PDT)
+Date:   Sun, 11 Aug 2019 23:59:15 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Richard Gong <richard.gong@linux.intel.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] input: keyboard: gpio_keys: convert platform
+ driver to use dev_groups
+Message-ID: <20190812065915.GU178933@dtor-ws>
+References: <20190731124349.4474-1-gregkh@linuxfoundation.org>
+ <20190731124349.4474-4-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731124349.4474-4-gregkh@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_ARCH_TASK_STRUCT_ALLOCATOR is set task_struct_whitelist is
-never called, and thus generates a compiler warning.
+On Wed, Jul 31, 2019 at 02:43:42PM +0200, Greg Kroah-Hartman wrote:
+> Platform drivers now have the option to have the platform core create
+> and remove any needed sysfs attribute files.  So take advantage of that
+> and do not register "by hand" a bunch of sysfs files.
+> 
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-fbdev@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- kernel/fork.c | 2 ++
- 1 file changed, 2 insertions(+)
+Applied, thank you.
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2852d0e76ea3..f79e3da0caaf 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -768,6 +768,7 @@ static void set_max_threads(unsigned int max_threads_suggested)
- int arch_task_struct_size __read_mostly;
- #endif
- 
-+#ifndef CONFIG_ARCH_TASK_STRUCT_ALLOCATOR
- static void task_struct_whitelist(unsigned long *offset, unsigned long *size)
- {
- 	/* Fetch thread_struct whitelist for the architecture. */
-@@ -782,6 +783,7 @@ static void task_struct_whitelist(unsigned long *offset, unsigned long *size)
- 	else
- 		*offset += offsetof(struct task_struct, thread);
- }
-+#endif /* CONFIG_ARCH_TASK_STRUCT_ALLOCATOR */
- 
- void __init fork_init(void)
- {
+> ---
+>  drivers/input/keyboard/gpio_keys.c | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+> index 03f4d152f6b7..1373dc5b0765 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -351,10 +351,7 @@ static struct attribute *gpio_keys_attrs[] = {
+>  	&dev_attr_disabled_switches.attr,
+>  	NULL,
+>  };
+> -
+> -static const struct attribute_group gpio_keys_attr_group = {
+> -	.attrs = gpio_keys_attrs,
+> -};
+> +ATTRIBUTE_GROUPS(gpio_keys);
+>  
+>  static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
+>  {
+> @@ -851,13 +848,6 @@ static int gpio_keys_probe(struct platform_device *pdev)
+>  
+>  	fwnode_handle_put(child);
+>  
+> -	error = devm_device_add_group(dev, &gpio_keys_attr_group);
+> -	if (error) {
+> -		dev_err(dev, "Unable to export keys/switches, error: %d\n",
+> -			error);
+> -		return error;
+> -	}
+> -
+>  	error = input_register_device(input);
+>  	if (error) {
+>  		dev_err(dev, "Unable to register input device, error: %d\n",
+> @@ -1026,6 +1016,7 @@ static struct platform_driver gpio_keys_device_driver = {
+>  		.name	= "gpio-keys",
+>  		.pm	= &gpio_keys_pm_ops,
+>  		.of_match_table = gpio_keys_of_match,
+> +		.dev_groups	= gpio_keys_groups,
+>  	}
+>  };
+>  
+> -- 
+> 2.22.0
+> 
+
 -- 
-2.20.1
-
+Dmitry
