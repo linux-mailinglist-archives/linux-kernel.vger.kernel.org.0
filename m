@@ -2,109 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 022478A610
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D21A08A651
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 20:28:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfHLSZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 14:25:31 -0400
-Received: from mail-yb1-f201.google.com ([209.85.219.201]:42368 "EHLO
-        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbfHLSZa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 14:25:30 -0400
-Received: by mail-yb1-f201.google.com with SMTP id c133so6088000ybf.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 11:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=wKRiEgRg+/DU2DEnW3JXAo2ALm03Zt5EFSXAgxYeqSQ=;
-        b=nZnW3WMQCz05l6ICEKDk76hmQbTheMtNmdq6JZ/QeZtYLtrZAiLqFFk1eMlHLSI2Od
-         tokkC6/x0TWcLVC526+YvItwTB3ptDoHYp4j+cKEDqvfWUkOE8rrgMYMDQMcytdEnpVK
-         Javjy9SQgBLtDD2dU2xplDFS+oxT0Ga2sX3Ril4r8MutRMQa14VuakHxFBNsWNrIAS4h
-         DIRtjGVGWR9OjKG7snnTFLDSjqbzGtpfYXGEzsQCXJHzRILzFeuxO2G2H0dY4nW8xd59
-         l8IM2CEN0WEFxIOai8A1vQcyPfIG9qh+YILDCG39P1E9EDx0psdbHXaGAxoXDAVQ1+6l
-         UrzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=wKRiEgRg+/DU2DEnW3JXAo2ALm03Zt5EFSXAgxYeqSQ=;
-        b=W+xq+K3JYBjpP9rVtCb5pzP/0+h8yCiH0ZjRrDKA35t9f1hRi/F995DJpaw6B7V7cQ
-         en3Z4aO+uH96uE68OdKlFZplYePuRS8dN5vdl8UjjOctbOOXXg30z9FaSqyWRH0xbLq0
-         F7xil70bOp8roI7+B/2RcvUhfa9ExDGwl0AEY59d2KkASAEe7ZfyFPzI1SKoYl16lsq4
-         qlO5C78+/5Qzg+MhS1MafrIlFNpL42AWCuecRmeK/YTggVOGPqapUR2DnETLwS28ffvo
-         8rIjjujEe40rOsZ9nqQIg+FnvBAjuJVp+94rvim7h/bnhoOEQM/menLwBfLt4whcMeiO
-         372A==
-X-Gm-Message-State: APjAAAVeNBejz7CC4Fl5os/KAJZynHgBX2nKUg3NdT0WmTh14S/BkmmQ
-        8Bh8IuwAUguLcUIoXOcT8VMTWr1rTzVF/Y8tHYzDAA==
-X-Google-Smtp-Source: APXvYqxpxYTLOV5V1kn9LOQBhsmrb/fq8obCcCZvetERJ23Gxs2qvszs3YbcjsnmIpYv/bSBR6DeRIUcOWhVdcSb2iYi7g==
-X-Received: by 2002:a0d:ea06:: with SMTP id t6mr22043435ywe.186.1565634328967;
- Mon, 12 Aug 2019 11:25:28 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 11:24:21 -0700
-In-Reply-To: <20190812182421.141150-1-brendanhiggins@google.com>
-Message-Id: <20190812182421.141150-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190812182421.141150-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH v12 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>,
-        Iurii Zaikin <yzaikin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726835AbfHLS21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 14:28:27 -0400
+Received: from mga05.intel.com ([192.55.52.43]:24855 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726263AbfHLS21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 14:28:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 11:28:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,378,1559545200"; 
+   d="scan'208";a="177563176"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2019 11:28:26 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 6E6C95806A0;
+        Mon, 12 Aug 2019 11:28:26 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v2 1/4] PCI: pciehp: Add pciehp_set_indicators() to
+ jointly set LED indicators
+To:     Denis Efremov <efremov@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190811195944.23765-1-efremov@linux.com>
+ <20190811195944.23765-2-efremov@linux.com>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <925a00be-c2b6-697d-d46b-a279856105b4@linux.intel.com>
+Date:   Mon, 12 Aug 2019 11:25:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190811195944.23765-2-efremov@linux.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section,
-and add Iurii as a maintainer.
+Hi,
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+On 8/11/19 12:59 PM, Denis Efremov wrote:
+> Add pciehp_set_indicators() to set power and attention indicators with a
+> single register write. Thus, avoiding waiting twice for Command Complete.
+> enum pciehp_indicator introduced to switch between the indicators statuses.
+>
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>   drivers/pci/hotplug/pciehp.h     | 14 ++++++++++++
+>   drivers/pci/hotplug/pciehp_hpc.c | 38 ++++++++++++++++++++++++++++++++
+>   include/uapi/linux/pci_regs.h    |  2 ++
+>   3 files changed, 54 insertions(+)
+>
+> diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
+> index 8c51a04b8083..17305a6f01f1 100644
+> --- a/drivers/pci/hotplug/pciehp.h
+> +++ b/drivers/pci/hotplug/pciehp.h
+> @@ -150,6 +150,17 @@ struct controller {
+>   #define NO_CMD_CMPL(ctrl)	((ctrl)->slot_cap & PCI_EXP_SLTCAP_NCCS)
+>   #define PSN(ctrl)		(((ctrl)->slot_cap & PCI_EXP_SLTCAP_PSN) >> 19)
+>   
+> +enum pciehp_indicator {
+> +	ATTN_NONE  = -1,
+> +	ATTN_ON    =  1,
+> +	ATTN_BLINK =  2,
+> +	ATTN_OFF   =  3,
+> +	PWR_NONE   = -1,
+> +	PWR_ON     =  1,
+> +	PWR_BLINK  =  2,
+> +	PWR_OFF    =  3,
+> +};
+> +
+>   void pciehp_request(struct controller *ctrl, int action);
+>   void pciehp_handle_button_press(struct controller *ctrl);
+>   void pciehp_handle_disable_request(struct controller *ctrl);
+> @@ -167,6 +178,9 @@ int pciehp_power_on_slot(struct controller *ctrl);
+>   void pciehp_power_off_slot(struct controller *ctrl);
+>   void pciehp_get_power_status(struct controller *ctrl, u8 *status);
+>   
+> +void pciehp_set_indicators(struct controller *ctrl,
+> +			   enum pciehp_indicator pwr,
+> +			   enum pciehp_indicator attn);
+>   void pciehp_set_attention_status(struct controller *ctrl, u8 status);
+>   void pciehp_get_latch_status(struct controller *ctrl, u8 *status);
+>   int pciehp_query_power_fault(struct controller *ctrl);
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+> index bd990e3371e3..5a690b1579ec 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -443,6 +443,44 @@ void pciehp_set_attention_status(struct controller *ctrl, u8 value)
+>   		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, slot_cmd);
+>   }
+>   
+> +void pciehp_set_indicators(struct controller *ctrl,
+> +			   enum pciehp_indicator pwr,
+> +			   enum pciehp_indicator attn)
+> +{
+> +	u16 cmd = 0, mask = 0;
+> +
+> +	if ((!PWR_LED(ctrl)  || pwr  == PWR_NONE) &&
+> +	    (!ATTN_LED(ctrl) || attn == ATTN_NONE))
+> +		return;
+> +
+> +	switch (pwr) {
+> +	case PWR_ON:
+> +	case PWR_BLINK:
+> +	case PWR_OFF:
+> +		cmd = pwr << PCI_EXP_SLTCTL_PWR_IND_OFFSET;
+> +		mask = PCI_EXP_SLTCTL_PIC;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+Do we need to switch case here ? if (pwr > 0) {} should work right ?
+> +
+> +	switch (attn) {
+> +	case ATTN_ON:
+> +	case ATTN_BLINK:
+> +	case ATTN_OFF:
+> +		cmd |= attn << PCI_EXP_SLTCTL_ATTN_IND_OFFSET;
+> +		mask |= PCI_EXP_SLTCTL_AIC;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+Same here. if (attn > 0) {}
+> +
+> +	pcie_write_cmd_nowait(ctrl, cmd, mask);
+> +	ctrl_dbg(ctrl, "%s: SLOTCTRL %x write cmd %x\n", __func__,
+> +		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL,
+> +		 cmd);
+> +}
+> +
+>   void pciehp_green_led_on(struct controller *ctrl)
+>   {
+>   	if (!PWR_LED(ctrl))
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index f28e562d7ca8..18722d1f54a0 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -591,10 +591,12 @@
+>   #define  PCI_EXP_SLTCTL_CCIE	0x0010	/* Command Completed Interrupt Enable */
+>   #define  PCI_EXP_SLTCTL_HPIE	0x0020	/* Hot-Plug Interrupt Enable */
+>   #define  PCI_EXP_SLTCTL_AIC	0x00c0	/* Attention Indicator Control */
+> +#define  PCI_EXP_SLTCTL_ATTN_IND_OFFSET 0x6   /* Attention Indicator Offset */
+>   #define  PCI_EXP_SLTCTL_ATTN_IND_ON    0x0040 /* Attention Indicator on */
+>   #define  PCI_EXP_SLTCTL_ATTN_IND_BLINK 0x0080 /* Attention Indicator blinking */
+>   #define  PCI_EXP_SLTCTL_ATTN_IND_OFF   0x00c0 /* Attention Indicator off */
+>   #define  PCI_EXP_SLTCTL_PIC	0x0300	/* Power Indicator Control */
+> +#define  PCI_EXP_SLTCTL_PWR_IND_OFFSET 0x8    /* Power Indicator Offset */
+>   #define  PCI_EXP_SLTCTL_PWR_IND_ON     0x0100 /* Power Indicator on */
+>   #define  PCI_EXP_SLTCTL_PWR_IND_BLINK  0x0200 /* Power Indicator blinking */
+>   #define  PCI_EXP_SLTCTL_PWR_IND_OFF    0x0300 /* Power Indicator off */
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f0bd77e8a8a2f..0cac78807137b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12965,12 +12965,14 @@ F:	Documentation/filesystems/proc.txt
- PROC SYSCTL
- M:	Luis Chamberlain <mcgrof@kernel.org>
- M:	Kees Cook <keescook@chromium.org>
-+M:	Iurii Zaikin <yzaikin@google.com>
- L:	linux-kernel@vger.kernel.org
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
- 
- PS3 NETWORK SUPPORT
 -- 
-2.23.0.rc1.153.gdeed80330f-goog
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
