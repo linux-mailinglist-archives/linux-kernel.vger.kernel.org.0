@@ -2,95 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A55489BF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E1A889BF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbfHLKwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:52:02 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54539 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727981AbfHLKwB (ORCPT
+        id S1728143AbfHLKwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:52:23 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58911 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727981AbfHLKwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:52:01 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p74so11717264wme.4
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 03:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=O++uRsHIpORfNijsJuAZCfYZu5AagOJx1j5KC3QdVcw=;
-        b=WCSxhklfkSzS5/+kkOkukSkT1h+mFwRUtmjfny6WJSaaYvw0v6fTvhSsW6r6hAzwVC
-         5BgJtJT3vVGXk9r5T4lsxbDqI2LCyF2h6Fu7shSOjvhpwREZycWrzvbQS+m3Ml/ewaTz
-         +0UDCMfv3zAJNsMTO2IA3M7RXV/wp2tgbMPZ4xNSiysltMtC1gg4hLbu0Tm2+PFmyquF
-         e2DYyadblv3GIEFppUCdnxKa9mEhj+z70SgrdT81PHqMvSYRkCQ389pY9f1hAd9MIdki
-         WIC2EqA0miWwN9r+myF/979nOF72hXNpzSmRVx/FtLLWpUhlSHfBWHZkCd7eXV2jeID5
-         DnOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=O++uRsHIpORfNijsJuAZCfYZu5AagOJx1j5KC3QdVcw=;
-        b=g+srMdyzPyMwTdEhvjw7HTZHcf6Unx9FP3lvUqkAwPLkEyLIohs5Za5VDo638epeGX
-         Wf4Fos4msaeKU/AgAX55dlg4AeikBVjvP1A+boqtC8a7VoeftjPdBRvoi33x+emiO6tL
-         c0EBvCFkEdAqehFqY695/KN9JGQazaRrZ7MeUOE+N5lmHgAZb2tq8ftnTDSTaEtvHxpZ
-         sZCmu+hpHfIZLWNsZ+B9q7vmdZ9gdl0lHq7yAo59SqLpcuBkpVpCN+xWqBmWy1xf4VCl
-         rJed3n6kEptsdgP79kyshjMzprKyN8UIuH5NdiqdToYTTFyPd9033Dw45a/XBU4xewED
-         iS2w==
-X-Gm-Message-State: APjAAAXCTnBKgN9wpvKURaLj0Twlc5vgVAkJ393MlmBT7su1R4uqnAgY
-        2bMQRzkNuoQKS1Eym7MDZHmpiA==
-X-Google-Smtp-Source: APXvYqxdhoDzzqMbFWiHpr3b23pn8q93eGI6N4yLdQ3P0IvYGe4x45TxERM+VierDtKsKWPruWT1ZQ==
-X-Received: by 2002:a05:600c:224c:: with SMTP id a12mr13043785wmm.12.1565607119705;
-        Mon, 12 Aug 2019 03:51:59 -0700 (PDT)
-Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:e751:37a0:1e95:e65d])
-        by smtp.gmail.com with ESMTPSA id 74sm5169675wma.15.2019.08.12.03.51.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 03:51:59 -0700 (PDT)
-From:   Alessio Balsini <balsini@android.com>
-To:     gregkh@linuxfoundation.org
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Alessio Balsini <balsini@android.com>
-Subject: [PATCH 4.4.y] IB/mlx5: Fix leaking stack memory to userspace
-Date:   Mon, 12 Aug 2019 11:51:36 +0100
-Message-Id: <20190812105136.151840-1-balsini@android.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-In-Reply-To: <20190812104843.150191-1-balsini@android.com>
-References: <20190812104843.150191-1-balsini@android.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 12 Aug 2019 06:52:23 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7CAq3DV087905;
+        Mon, 12 Aug 2019 19:52:03 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Mon, 12 Aug 2019 19:52:03 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7CApwhv087660
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 12 Aug 2019 19:52:03 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] /dev/kmem : Debug preadv() progress.
+Date:   Mon, 12 Aug 2019 19:51:43 +0900
+Message-Id: <1565607103-6175-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+syzbot is reporting unkillable thread when reading /dev/mem . To check
+whether this is merely due to lack of fatal_signal_pending(current) test
+or unexpectedly fallen into infinite loop, add debug printk(). This patch
+is intended for linux-next only, and will be removed after the cause is
+fixed.
 
-mlx5_ib_create_qp_resp was never initialized and only the first 4 bytes
-were written.
+  INFO: task syz-executor.4:25539 can't die for more than 143 seconds.
+  syz-executor.4  R  running task    28400 25539  25531 0x80004006
+  Call Trace:
+   context_switch kernel/sched/core.c:3265 [inline]
+   __schedule+0x76e/0x17d0 kernel/sched/core.c:3937
+   preempt_schedule_irq+0xb5/0x160 kernel/sched/core.c:4185
+   retint_kernel+0x1b/0x2b
+  RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20 arch/x86/lib/copy_user_64.S:205
+  Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f 80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f 1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 89 d1 f3 a4
+  RSP: 0018:ffff88808d76fb68 EFLAGS: 00010206 ORIG_RAX: ffffffffffffff13
+  RAX: 0000000000040000 RBX: ffff8880925be2c0 RCX: 0000000000000c00
+  RDX: 0000000000001000 RSI: ffffc9000fbb2c00 RDI: ffff8880925beec0
+  RBP: ffff88808d76fb98 R08: ffff888060288440 R09: ffff8880aa402000
+  R10: 0000000000000000 R11: ffffea0002496f87 R12: 0000000000001000
+  R13: 00007ffffffff000 R14: ffffc9000fbb8000 R15: ffff888060288440
+   read_mem+0xfc/0x2c0 drivers/char/mem.c:163
+   do_loop_readv_writev fs/read_write.c:714 [inline]
+   do_loop_readv_writev fs/read_write.c:701 [inline]
+   do_iter_read+0x4a4/0x660 fs/read_write.c:935
+   vfs_readv+0xf0/0x160 fs/read_write.c:997
+   do_preadv+0x1c4/0x280 fs/read_write.c:1089
+   __do_sys_preadv fs/read_write.c:1139 [inline]
+   __se_sys_preadv fs/read_write.c:1134 [inline]
+   __x64_sys_preadv+0x9a/0xf0 fs/read_write.c:1134
+   do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: 41d902cb7c32 ("RDMA/mlx5: Fix definition of mlx5_ib_create_qp_resp")
-Cc: <stable@vger.kernel.org>
-Acked-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Alessio Balsini <balsini@android.com>
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=1469b8a6600000
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=160a00a6600000
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=16255326600000
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/infiniband/hw/mlx5/qp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/mem.c | 9 +++++++++
+ fs/read_write.c    | 6 ++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index 43d277a931c2..c035abfe8c55 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -865,7 +865,7 @@ static int create_qp_common(struct mlx5_ib_dev *dev, struct ib_pd *pd,
- {
- 	struct mlx5_ib_resources *devr = &dev->devr;
- 	struct mlx5_core_dev *mdev = dev->mdev;
--	struct mlx5_ib_create_qp_resp resp;
-+	struct mlx5_ib_create_qp_resp resp = {};
- 	struct mlx5_create_qp_mbox_in *in;
- 	struct mlx5_ib_create_qp ucmd;
- 	int inlen = sizeof(*in);
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index b08dc50..4c0225e 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -140,6 +140,9 @@ static ssize_t read_mem(struct file *file, char __user *buf,
+ 		int allowed, probe;
+ 
+ 		sz = size_inside_page(p, count);
++		if (IS_ENABLED(CONFIG_DEBUG_AID_FOR_SYZBOT) &&
++		    fatal_signal_pending(current))
++			printk("read_mem: sz=%ld count=%ld\n", sz, count);
+ 
+ 		err = -EPERM;
+ 		allowed = page_is_allowed(p >> PAGE_SHIFT);
+@@ -179,9 +182,15 @@ static ssize_t read_mem(struct file *file, char __user *buf,
+ 	kfree(bounce);
+ 
+ 	*ppos += read;
++	if (IS_ENABLED(CONFIG_DEBUG_AID_FOR_SYZBOT) &&
++	    fatal_signal_pending(current))
++		printk("read_mem: read=%ld *ppos=%lld\n", read, *ppos);
+ 	return read;
+ 
+ failed:
++	if (IS_ENABLED(CONFIG_DEBUG_AID_FOR_SYZBOT) &&
++	    fatal_signal_pending(current))
++		printk("read_mem: err=%d\n", err);
+ 	kfree(bounce);
+ 	return err;
+ }
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 1f5088d..f5c7da1 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -710,6 +710,9 @@ static ssize_t do_loop_readv_writev(struct file *filp, struct iov_iter *iter,
+ 		struct iovec iovec = iov_iter_iovec(iter);
+ 		ssize_t nr;
+ 
++		if (IS_ENABLED(CONFIG_DEBUG_AID_FOR_SYZBOT) &&
++		    fatal_signal_pending(current))
++			printk("do_loop_readv_writev: iter->count=%ld iovec.iov_len=%ld\n", iter->count, iovec.iov_len);
+ 		if (type == READ) {
+ 			nr = filp->f_op->read(filp, iovec.iov_base,
+ 					      iovec.iov_len, ppos);
+@@ -717,6 +720,9 @@ static ssize_t do_loop_readv_writev(struct file *filp, struct iov_iter *iter,
+ 			nr = filp->f_op->write(filp, iovec.iov_base,
+ 					       iovec.iov_len, ppos);
+ 		}
++		if (IS_ENABLED(CONFIG_DEBUG_AID_FOR_SYZBOT) &&
++		    fatal_signal_pending(current))
++			printk("do_loop_readv_writev: nr=%ld\n", nr);
+ 
+ 		if (nr < 0) {
+ 			if (!ret)
 -- 
-2.23.0.rc1.153.gdeed80330f-goog
+1.8.3.1
 
