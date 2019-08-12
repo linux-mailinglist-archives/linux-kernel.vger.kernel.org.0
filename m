@@ -2,89 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F42089B04
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:12:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13B5A89B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfHLKMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:12:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:47492 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727605AbfHLKMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:12:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8812015A2;
-        Mon, 12 Aug 2019 03:12:18 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19F893F706;
-        Mon, 12 Aug 2019 03:12:15 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 11:12:13 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>, kishon@ti.com
-Cc:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, leoyang.li@nxp.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
-        pombredanne@nexb.com, shawn.lin@rock-chips.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCHv3 1/2] PCI: layerscape: Add the bar_fixed_64bit property
- in EP driver.
-Message-ID: <20190812101213.GB20861@e121166-lin.cambridge.arm.com>
-References: <20190628013826.4705-1-xiaowei.bao@nxp.com>
+        id S1727324AbfHLKPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:15:09 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39435 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbfHLKPI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 06:15:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t16so13942520wra.6
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 03:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=MIUyKFqvrV6Iriy5J++Bt5lmEJciQ4Nm0oLpNRJua4s=;
+        b=JR4azrcfAINC79q/jxAC5q7wpl2GKtG+oqSduyMfzGNi7MCwG1x0vzQwWE5XWnUsqn
+         4rvq0ZyF2vO73A1od36hoy/HlgAwsQvByuaSCf7qgoFk0pOoRmactaeJq+N5rrNr4nL0
+         sMHmT+JJqQs1y47xUz0okyakzzuIzsZIQGoTNgr4MGMcXjg3SNLTpn0uQpJpePxfemI4
+         eB9TFJRJdK0BAqRd3cOv4t3yykDlaiC8dePribs8TWaAdBtswdtwqoRGP8NGraDpCip6
+         8mqPQZISI27VYMKq3Sw4FiBoVw8kpXQ/RGpijePMRLwvuqDyia8ETir7eum49Jot7nAU
+         gSnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=MIUyKFqvrV6Iriy5J++Bt5lmEJciQ4Nm0oLpNRJua4s=;
+        b=nb4Eo3bNOhVMNZbSSAJrpNMKB4+mHwrGnqRQyA+gZtP0b/qurPeSvX5zIhzrysnvo0
+         tFOnwkMtAhfV8R/P2MerufNVHCYQoB5h7TL0IEIo8HiGq92nF5IUyurNTzh0YY2eO9Lg
+         W/TBABANqcel/Lj5T9hGFISsu5cgXd4AOHg2DR6cezCXRhS5i8Oqm6GfgDsLyxs0upar
+         VJICFV9YgkpBSpacaIsfKNqtNv12AsxQMbF9V0wFQCucA0Y/V3UJFoojKjTIyF/QCnUv
+         tfXb6F1yiSAD+1+jzP2mHMoLaj2pHtL4489loujEFaJPrz4ZGlNQzNoSS3Y5MzF8LVKd
+         fkHQ==
+X-Gm-Message-State: APjAAAXjNhyD6Nglaq0pawEvQ0Dcp8YC1Rwzp4X/5AtcfT0TzM/NEn8/
+        d6b8+kbbDZsvlPSgVdW4w2JD3g==
+X-Google-Smtp-Source: APXvYqz48A5YFBe5piSydrG0TZ+rpOGZ4/18TlUR5pdHjlvP/9aDOmhZiCfxMVH17iE2WGkbx8bxMw==
+X-Received: by 2002:adf:f042:: with SMTP id t2mr39835533wro.139.1565604906881;
+        Mon, 12 Aug 2019 03:15:06 -0700 (PDT)
+Received: from dell ([2.27.35.255])
+        by smtp.gmail.com with ESMTPSA id d17sm14629320wrm.52.2019.08.12.03.15.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Aug 2019 03:15:06 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 11:15:04 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH 3/3] dt-bindings: aspeed: Remove mention of deprecated
+ compatibles
+Message-ID: <20190812101504.GF26727@dell>
+References: <20190724081313.12934-1-andrew@aj.id.au>
+ <20190724081313.12934-4-andrew@aj.id.au>
+ <CACRpkdZCJWeZO6CFvkq4uhnX+o_q_AfkDZ=a2kmUgbS3JtDqfA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190628013826.4705-1-xiaowei.bao@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZCJWeZO6CFvkq4uhnX+o_q_AfkDZ=a2kmUgbS3JtDqfA@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First off:
+On Mon, 05 Aug 2019, Linus Walleij wrote:
 
-Trim the CC list, you CC'ed maintainers (and mailing lists) for no
-reasons whatsover.
-
-Then, read this:
-
-https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
-
-and make your patches compliant please.
-
-On Fri, Jun 28, 2019 at 09:38:25AM +0800, Xiaowei Bao wrote:
-> The PCIe controller of layerscape just have 4 BARs, BAR0 and BAR1
-> is 32bit, BAR3 and BAR4 is 64bit, this is determined by hardware,
-> so set the bar_fixed_64bit with 0x14.
+> On Wed, Jul 24, 2019 at 10:13 AM Andrew Jeffery <andrew@aj.id.au> wrote:
 > 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> ---
-> v2:
->  - Replace value 0x14 with a macro.
-> v3:
->  - No change.
+> > Guide readers away from using the aspeed,g[45].* compatible patterns.
+> >
+> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 > 
->  drivers/pci/controller/dwc/pci-layerscape-ep.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> index be61d96..227c33b 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> @@ -44,6 +44,7 @@ static int ls_pcie_establish_link(struct dw_pcie *pci)
->  	.linkup_notifier = false,
->  	.msi_capable = true,
->  	.msix_capable = false,
-> +	.bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
+> Patch applied to the pinctrl tree.
 
-I would appreciate Kishon's ACK on this.
+With my Ack?
 
-Lorenzo
-
->  };
->  
->  static const struct pci_epc_features*
-> -- 
-> 1.7.1
-> 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
