@@ -2,92 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E7BD8A774
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 21:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDEF68A775
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 21:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfHLTpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 15:45:09 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52239 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfHLTpJ (ORCPT
+        id S1727059AbfHLTp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 15:45:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60609 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfHLTp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 15:45:09 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so665560wms.2;
-        Mon, 12 Aug 2019 12:45:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zbqcR8Gm7CUEaTh+RQEFIgeFFaQXE5F4/3ORKyv2UHE=;
-        b=lQfWb4yFhgQ4mRFnN01RTsLonKuYclvrzI3yhZrJfxK+IO6uNZI3yee4F1raLgB0c9
-         1UUTDmErlG1v+oNqGJp4ZYAd3vRLQ1FnAWycuLywbO7M3NZy0xzKmfQPwd45Io5HUXF1
-         uF3Ln9pUWp5/sKEmf65C3VgUEX0STyuMhsEuzItdAPk/Tstx0htxMKv7eumaWPddXq25
-         LPFx39t+pnKHhBSDeOJfHM16X4YLpgUHAKbXrs12/HCSMzSxvYa4kZSSpIT9e9jtf7BJ
-         eQ2MggDlyGHceQ7mh9f4wV150ON3UchpJG8RvSwq/5LRGayDcetKqbI3OSjaV7yBUWCy
-         cFSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zbqcR8Gm7CUEaTh+RQEFIgeFFaQXE5F4/3ORKyv2UHE=;
-        b=Jsws1uQT5T5lfNVbtZwQutLkjdXdm4Wn1hjqRDTs3SlA99rAQEtzknPQlVfI0gRcsh
-         dFZuHLeR9ncFJSBbqdLvVpr4wzePdtH3mcgtPaZbuF2E/IMARa+0cZbclWxA4y2FQYfp
-         NPiCvlVkZSeiGf99W9cFFryU2I3MXZduPGlUuaTUFUoNJ7V7GNhucxxoghvRWPJL5dLu
-         Bqcm3LpUUzudH7t/1OcxoXzKUgSy2gtMqNibAzNYsAdLb5+SdttFChCmbCNEWco8I3G4
-         lbGn/fBv/A3YBcUsPvHsEI1F2tYV4BhBQ8ZNHSfAfcKoerQgKTq2Y/OniuRrGpSz7ESL
-         ecoA==
-X-Gm-Message-State: APjAAAVpV5kiAR6KwGz9ad8ICJHGAQXxUsOzLmVPij46dkuwC8R+CqN2
-        j9/q4FLqbrSViSmxwoPBJcc=
-X-Google-Smtp-Source: APXvYqyqLvF1Fc7Eg5qhiPGnQdHLeN968UiUjTvxVBktu+SVk34L6MLUBhsdwqaNmHwT1Sb5ojMRGg==
-X-Received: by 2002:a7b:cb8e:: with SMTP id m14mr942713wmi.10.1565639106989;
-        Mon, 12 Aug 2019 12:45:06 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id f17sm443561wmf.27.2019.08.12.12.45.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 12:45:06 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 12:45:04 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jussi Kivilinna <jussi.kivilinna@iki.fi>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Vladimir Serbinenko <phcoder@gmail.com>,
-        gcrypt-devel <gcrypt-devel@gnupg.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH 3/5] lib/mpi: Fix for building for MIPS32 with Clang
-Message-ID: <20190812194504.GA121197@archlinux-threadripper>
-References: <20190812033120.43013-1-natechancellor@gmail.com>
- <20190812033120.43013-4-natechancellor@gmail.com>
- <ec4666a6-c7db-247b-de81-bb784bb9d649@iki.fi>
- <20190812171448.GA10039@archlinux-threadripper>
- <1ba05172-500b-6b42-00ad-27fb33eff070@iki.fi>
+        Mon, 12 Aug 2019 15:45:58 -0400
+Received: from p200300ddd71876867e7a91fffec98e25.dip0.t-ipconnect.de ([2003:dd:d718:7686:7e7a:91ff:fec9:8e25])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hxGGH-0004oy-4v; Mon, 12 Aug 2019 21:45:45 +0200
+Date:   Mon, 12 Aug 2019 21:45:39 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     syzbot <syzbot+c4521ac872a4ccc3afec@syzkaller.appspotmail.com>
+cc:     alexander.h.duyck@intel.com, amritha.nambiar@intel.com,
+        andriy.shevchenko@linux.intel.com, avagin@gmail.com,
+        davem@davemloft.net, dmitry.torokhov@gmail.com, dvyukov@google.com,
+        eric.dumazet@gmail.com, f.fainelli@gmail.com,
+        gregkh@linuxfoundation.org, idosch@mellanox.com, jiri@mellanox.com,
+        kimbrownkd@gmail.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tyhicks@canonical.com, wanghai26@huawei.com, yuehaibing@huawei.com
+Subject: Re: WARNING: ODEBUG bug in netdev_freemem (2)
+In-Reply-To: <000000000000ea2c30058f901624@google.com>
+Message-ID: <alpine.DEB.2.21.1908122143290.7324@nanos.tec.linutronix.de>
+References: <000000000000ea2c30058f901624@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ba05172-500b-6b42-00ad-27fb33eff070@iki.fi>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 10:40:49PM +0300, Jussi Kivilinna wrote:
-> That's quite complicated approach. Fast and easier process would be if you
-> just own the patch yourself. Libgcrypt (and target file in libgcrypt) 
-> is LGPL v2.1+, so the license is compatible with kernel and you are good 
-> to go with just your own (kernel DCO) signed-off-by.
+On Wed, 7 Aug 2019, syzbot wrote:
+
+> syzbot has found a reproducer for the following crash on:
 > 
-> -Jussi
+> HEAD commit:    13dfb3fa Merge git://git.kernel.org/pub/scm/linux/kernel/g..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1671e69a600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4cf1ffb87d590d7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c4521ac872a4ccc3afec
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170542c2600000
 
-I have gone this route as another developer pointed out that we can
-eliminate all of the inline asm umul_ppmm definitions because the kernel
-requires GCC 4.6 and newer and that is completely different from the
-libgcrypt patches.
+I can't reproduce that here. Can you please apply the patch from:
 
-https://lore.kernel.org/lkml/20190812193256.55103-1-natechancellor@gmail.com/
+  https://lore.kernel.org/lkml/alpine.DEB.2.21.1906241920540.32342@nanos.tec.linutronix.de
 
-Thanks for weighing in and cheers!
-Nathan
+and try to reproduce with that applied? That should give us more
+information about the actual delayed work.
+
+Thanks,
+
+	tglx
