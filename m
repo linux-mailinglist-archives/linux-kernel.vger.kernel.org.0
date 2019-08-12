@@ -2,93 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A22BB89BE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 846EA89BF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:52:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbfHLKti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:49:38 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43120 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbfHLKti (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:49:38 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p13so29559712wru.10
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 03:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bdFcpRX51nTJgSYeh6YwoFQsGKr/8XxEpuqMCCI0TMA=;
-        b=FUFyk0OXJt9AVBPVL0bewi/ZDRrfXTmeiOu/O9xHQICm6YE2z2AQ5/Q4M+vH/y/vS4
-         btUFDCIj4Y4r5Gs1mDEz+8lE/UrRmGgTamgetmJtOQ9MDlpPR2+0UR9Kg0l2FUfJWZMQ
-         GNKxGjkaXMqTqQNkdB6xkthtiun6tWeywwZ8m4J3GEK5o1GosqJ/M68SNKkhhF2tUjmF
-         l7UMS8MS/my6K3WhrOb1A36naP1DH+RLSpxbMBCFcrzB+ljAnq1X1S/EEYi30a1x1qqS
-         ycDhydgYPGDcB/07vc6FRJumvCqSOvs+URk01aglo5NegQJnFjU1Yl5mzt+fnJuaxjs8
-         x9CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bdFcpRX51nTJgSYeh6YwoFQsGKr/8XxEpuqMCCI0TMA=;
-        b=MF2VZDpl2Nct27QWapgzk/FwW52q+ryiIV1PtQKEx0ILmquS1+Bn1W6aXVRDa7WlFl
-         yeRURKhoryRJx7AY9R6B+nNH3+jcKGMnGrBBYqhdBRUMDFLKJkaagVQNgmr7doyBwdq6
-         Nz2TBWFqLLaTNSq5n4sHAAduV5nWiCCwy7f6q/ExGtu8Sh6aJROvBy7+V04M6ql3C6Qk
-         ND6LsLqtYnOIV076vwrR+tJ1hskSS1IxT90NvN/Vi+LH+fxBIBDGjgY+Yr6iOUNiCWJo
-         L8r8jQkWsnv/IOiK7EtoTR3CBPiXj3cu9zWLvHsMGwYpd613oRaGbMPC7fhEwFmVjpGi
-         Icig==
-X-Gm-Message-State: APjAAAWpjQCt64zL2zn4xPXVPhYcb0iSHj4E8PGWZFbu2xwTQJz6+3QG
-        /MkQzEpLLyjbDfXmL6UayadrEg==
-X-Google-Smtp-Source: APXvYqydkRjPp0cw1dNKy/JKTL6ZcK7VSUfljff+XkY2B/KtSlMeD7PmsI/XLbJSO2jN5NETGOm7IA==
-X-Received: by 2002:a05:6000:1186:: with SMTP id g6mr41532651wrx.17.1565606977391;
-        Mon, 12 Aug 2019 03:49:37 -0700 (PDT)
-Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:e751:37a0:1e95:e65d])
-        by smtp.gmail.com with ESMTPSA id p13sm37637661wrw.90.2019.08.12.03.49.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 03:49:36 -0700 (PDT)
-From:   Alessio Balsini <balsini@android.com>
-To:     gregkh@linuxfoundation.org
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Alessio Balsini <balsini@android.com>
-Subject: [PATCH 3.18.y] IB/mlx5: Fix leaking stack memory to userspace
-Date:   Mon, 12 Aug 2019 11:48:43 +0100
-Message-Id: <20190812104843.150191-1-balsini@android.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+        id S1728130AbfHLKwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:52:05 -0400
+Received: from mga17.intel.com ([192.55.52.151]:64367 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727981AbfHLKwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 06:52:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 03:52:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,377,1559545200"; 
+   d="scan'208";a="204671674"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Aug 2019 03:52:01 -0700
+Subject: Re: [RFC PATCH 0/7] Add MMC packed function
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org
+References: <cover.1563782844.git.baolin.wang@linaro.org>
+ <CAMz4ku+NjcqLY0tWRxrBCRUnkpyWih42LYieKaf0FO6WsqO2vA@mail.gmail.com>
+ <8abff7d6-0a3e-efe7-e8ec-9309fada9121@intel.com>
+ <CAMz4kuKri79CtVA=g7Mzoda_fQBYAEXDzL77RGw7g+e0F48jcw@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <8e447a05-a859-5c71-911f-b5a0a907e8a0@intel.com>
+Date:   Mon, 12 Aug 2019 13:50:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMz4kuKri79CtVA=g7Mzoda_fQBYAEXDzL77RGw7g+e0F48jcw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+On 12/08/19 12:44 PM, Baolin Wang wrote:
+> Hi Adrian,
+> 
+> On Mon, 12 Aug 2019 at 16:59, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>
+>> On 12/08/19 8:20 AM, Baolin Wang wrote:
+>>> Hi,
+>>>
+>>> On Mon, 22 Jul 2019 at 21:10, Baolin Wang <baolin.wang@linaro.org> wrote:
+>>>>
+>>>> Hi All,
+>>>>
+>>>> Now some SD/MMC controllers can support packed command or packed request,
+>>>> that means it can package multiple requests to host controller to be handled
+>>>> at one time, which can improve the I/O performence. Thus this patchset is
+>>>> used to add the MMC packed function to support packed request or packed
+>>>> command.
+>>>>
+>>>> In this patch set, I implemented the SD host ADMA3 transfer mode to support
+>>>> packed request. The ADMA3 transfer mode can process a multi-block data transfer
+>>>> by using a pair of command descriptor and ADMA2 descriptor. In future we can
+>>>> easily expand the MMC packed function to support packed command.
+>>>>
+>>>> Below are some comparison data between packed request and non-packed request
+>>>> with fio tool. The fio command I used is like below with changing the
+>>>> '--rw' parameter and enabling the direct IO flag to measure the actual hardware
+>>>> transfer speed.
+>>>>
+>>>> ./fio --filename=/dev/mmcblk0p30 --direct=1 --iodepth=20 --rw=read --bs=4K --size=512M --group_reporting --numjobs=20 --name=test_read
+>>>>
+>>>> My eMMC card working at HS400 Enhanced strobe mode:
+>>>> [    2.229856] mmc0: new HS400 Enhanced strobe MMC card at address 0001
+>>>> [    2.237566] mmcblk0: mmc0:0001 HBG4a2 29.1 GiB
+>>>> [    2.242621] mmcblk0boot0: mmc0:0001 HBG4a2 partition 1 4.00 MiB
+>>>> [    2.249110] mmcblk0boot1: mmc0:0001 HBG4a2 partition 2 4.00 MiB
+>>>> [    2.255307] mmcblk0rpmb: mmc0:0001 HBG4a2 partition 3 4.00 MiB, chardev (248:0)
+>>>>
+>>>> 1. Non-packed request
+>>>> I tested 3 times for each case and output a average speed.
+>>>>
+>>>> 1) Sequential read:
+>>>> Speed: 28.9MiB/s, 26.4MiB/s, 30.9MiB/s
+>>>> Average speed: 28.7MiB/s
+>>
+>> This seems surprising low for a HS400ES card.  Do you know why that is?
+> 
+> I've set the clock to 400M, but it seems the hardware did not output
+> the corresponding clock. I will check my hardware.
+> 
+>>>>
+>>>> 2) Random read:
+>>>> Speed: 18.2MiB/s, 8.9MiB/s, 15.8MiB/s
+>>>> Average speed: 14.3MiB/s
+>>>>
+>>>> 3) Sequential write:
+>>>> Speed: 21.1MiB/s, 27.9MiB/s, 25MiB/s
+>>>> Average speed: 24.7MiB/s
+>>>>
+>>>> 4) Random write:
+>>>> Speed: 21.5MiB/s, 18.1MiB/s, 18.1MiB/s
+>>>> Average speed: 19.2MiB/s
+>>>>
+>>>> 2. Packed request
+>>>> In packed request mode, I set the host controller can package maximum 10
+>>>> requests at one time (Actually I can increase the package number), and I
+>>>> enabled read/write packed request mode. Also I tested 3 times for each
+>>>> case and output a average speed.
+>>>>
+>>>> 1) Sequential read:
+>>>> Speed: 165MiB/s, 167MiB/s, 164MiB/s
+>>>> Average speed: 165.3MiB/s
+>>>>
+>>>> 2) Random read:
+>>>> Speed: 147MiB/s, 141MiB/s, 144MiB/s
+>>>> Average speed: 144MiB/s
+>>>>
+>>>> 3) Sequential write:
+>>>> Speed: 87.8MiB/s, 89.1MiB/s, 90.0MiB/s
+>>>> Average speed: 89MiB/s
+>>>>
+>>>> 4) Random write:
+>>>> Speed: 90.9MiB/s, 89.8MiB/s, 90.4MiB/s
+>>>> Average speed: 90.4MiB/s
+>>>>
+>>>> Form above data, we can see the packed request can improve the performance greatly.
+>>>> Any comments are welcome. Thanks a lot.
+>>>
+>>> Any comments for this patch set? Thanks.
+>>
+>> Did you consider adapting the CQE interface?
+> 
+> I am not very familiar with CQE, since my controller did not support
+> it. But the MMC packed function had introduced some callbacks to help
+> for different controllers to do packed request, so I think it is easy
+> to adapt the CQE interface.
+> 
 
-mlx5_ib_create_qp_resp was never initialized and only the first 4 bytes
-were written.
-
-Fixes: 41d902cb7c32 ("RDMA/mlx5: Fix definition of mlx5_ib_create_qp_resp")
-Cc: <stable@vger.kernel.org>
-Acked-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Alessio Balsini <balsini@android.com>
----
- drivers/infiniband/hw/mlx5/qp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index 5edb09e674a6..82c4e29c1213 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -811,7 +811,7 @@ static int create_qp_common(struct mlx5_ib_dev *dev, struct ib_pd *pd,
- 			    struct ib_udata *udata, struct mlx5_ib_qp *qp)
- {
- 	struct mlx5_ib_resources *devr = &dev->devr;
--	struct mlx5_ib_create_qp_resp resp;
-+	struct mlx5_ib_create_qp_resp resp = {};
- 	struct mlx5_create_qp_mbox_in *in;
- 	struct mlx5_general_caps *gen;
- 	struct mlx5_ib_create_qp ucmd;
--- 
-2.23.0.rc1.153.gdeed80330f-goog
-
+I meant did you consider using the CQE interface instead of creating another
+one?
