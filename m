@@ -2,132 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A1CE8991E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 10:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E367B8992E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 11:03:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfHLI7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 04:59:11 -0400
-Received: from mga12.intel.com ([192.55.52.136]:29065 "EHLO mga12.intel.com"
+        id S1727235AbfHLJDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 05:03:18 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59638 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbfHLI7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:59:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 01:59:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,376,1559545200"; 
-   d="scan'208";a="193913406"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Aug 2019 01:59:07 -0700
-Subject: Re: [RFC PATCH 0/7] Add MMC packed function
-To:     Baolin Wang <baolin.wang@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org
-References: <cover.1563782844.git.baolin.wang@linaro.org>
- <CAMz4ku+NjcqLY0tWRxrBCRUnkpyWih42LYieKaf0FO6WsqO2vA@mail.gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <8abff7d6-0a3e-efe7-e8ec-9309fada9121@intel.com>
-Date:   Mon, 12 Aug 2019 11:58:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAMz4ku+NjcqLY0tWRxrBCRUnkpyWih42LYieKaf0FO6WsqO2vA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727152AbfHLJDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 05:03:18 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C72F71A00A2;
+        Mon, 12 Aug 2019 11:03:15 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 801301A022F;
+        Mon, 12 Aug 2019 11:03:07 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 34174402D2;
+        Mon, 12 Aug 2019 17:02:57 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     wim@linux-watchdog.org, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux@armlinux.org.uk,
+        otavio@ossystems.com.br, leonard.crestez@nxp.com,
+        u.kleine-koenig@pengutronix.de, schnitzeltony@gmail.com,
+        jan.tuerk@emtrion.com, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2 1/4] dt-bindings: watchdog: Add i.MX7ULP bindings
+Date:   Mon, 12 Aug 2019 16:53:18 +0800
+Message-Id: <20190812085321.13823-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/08/19 8:20 AM, Baolin Wang wrote:
-> Hi,
-> 
-> On Mon, 22 Jul 2019 at 21:10, Baolin Wang <baolin.wang@linaro.org> wrote:
->>
->> Hi All,
->>
->> Now some SD/MMC controllers can support packed command or packed request,
->> that means it can package multiple requests to host controller to be handled
->> at one time, which can improve the I/O performence. Thus this patchset is
->> used to add the MMC packed function to support packed request or packed
->> command.
->>
->> In this patch set, I implemented the SD host ADMA3 transfer mode to support
->> packed request. The ADMA3 transfer mode can process a multi-block data transfer
->> by using a pair of command descriptor and ADMA2 descriptor. In future we can
->> easily expand the MMC packed function to support packed command.
->>
->> Below are some comparison data between packed request and non-packed request
->> with fio tool. The fio command I used is like below with changing the
->> '--rw' parameter and enabling the direct IO flag to measure the actual hardware
->> transfer speed.
->>
->> ./fio --filename=/dev/mmcblk0p30 --direct=1 --iodepth=20 --rw=read --bs=4K --size=512M --group_reporting --numjobs=20 --name=test_read
->>
->> My eMMC card working at HS400 Enhanced strobe mode:
->> [    2.229856] mmc0: new HS400 Enhanced strobe MMC card at address 0001
->> [    2.237566] mmcblk0: mmc0:0001 HBG4a2 29.1 GiB
->> [    2.242621] mmcblk0boot0: mmc0:0001 HBG4a2 partition 1 4.00 MiB
->> [    2.249110] mmcblk0boot1: mmc0:0001 HBG4a2 partition 2 4.00 MiB
->> [    2.255307] mmcblk0rpmb: mmc0:0001 HBG4a2 partition 3 4.00 MiB, chardev (248:0)
->>
->> 1. Non-packed request
->> I tested 3 times for each case and output a average speed.
->>
->> 1) Sequential read:
->> Speed: 28.9MiB/s, 26.4MiB/s, 30.9MiB/s
->> Average speed: 28.7MiB/s
+From: Anson Huang <Anson.Huang@nxp.com>
 
-This seems surprising low for a HS400ES card.  Do you know why that is?
+Add the watchdog bindings for Freescale i.MX7ULP.
 
->>
->> 2) Random read:
->> Speed: 18.2MiB/s, 8.9MiB/s, 15.8MiB/s
->> Average speed: 14.3MiB/s
->>
->> 3) Sequential write:
->> Speed: 21.1MiB/s, 27.9MiB/s, 25MiB/s
->> Average speed: 24.7MiB/s
->>
->> 4) Random write:
->> Speed: 21.5MiB/s, 18.1MiB/s, 18.1MiB/s
->> Average speed: 19.2MiB/s
->>
->> 2. Packed request
->> In packed request mode, I set the host controller can package maximum 10
->> requests at one time (Actually I can increase the package number), and I
->> enabled read/write packed request mode. Also I tested 3 times for each
->> case and output a average speed.
->>
->> 1) Sequential read:
->> Speed: 165MiB/s, 167MiB/s, 164MiB/s
->> Average speed: 165.3MiB/s
->>
->> 2) Random read:
->> Speed: 147MiB/s, 141MiB/s, 144MiB/s
->> Average speed: 144MiB/s
->>
->> 3) Sequential write:
->> Speed: 87.8MiB/s, 89.1MiB/s, 90.0MiB/s
->> Average speed: 89MiB/s
->>
->> 4) Random write:
->> Speed: 90.9MiB/s, 89.8MiB/s, 90.4MiB/s
->> Average speed: 90.4MiB/s
->>
->> Form above data, we can see the packed request can improve the performance greatly.
->> Any comments are welcome. Thanks a lot.
-> 
-> Any comments for this patch set? Thanks.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+No changes.
+---
+ .../bindings/watchdog/fsl-imx7ulp-wdt.txt          | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
 
-Did you consider adapting the CQE interface?
+diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+new file mode 100644
+index 0000000..d83fc5c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+@@ -0,0 +1,22 @@
++* Freescale i.MX7ULP Watchdog Timer (WDT) Controller
++
++Required properties:
++- compatible : Should be "fsl,imx7ulp-wdt"
++- reg : Should contain WDT registers location and length
++- interrupts : Should contain WDT interrupt
++- clocks: Should contain a phandle pointing to the gated peripheral clock.
++
++Optional properties:
++- timeout-sec : Contains the watchdog timeout in seconds
++
++Examples:
++
++wdog1: wdog@403d0000 {
++	compatible = "fsl,imx7ulp-wdt";
++	reg = <0x403d0000 0x10000>;
++	interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
++	assigned-clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
++	assigned-clocks-parents = <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>;
++	timeout-sec = <40>;
++};
+-- 
+2.7.4
+
