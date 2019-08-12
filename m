@@ -2,97 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A4B89AFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2D389B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 12:12:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbfHLKMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 06:12:05 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:54055 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727323AbfHLKMF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 06:12:05 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MS1G7-1hqoYI2gv5-00TT5D; Mon, 12 Aug 2019 12:11:57 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] dma: ti: unexport filter functions
-Date:   Mon, 12 Aug 2019 12:11:43 +0200
-Message-Id: <20190812101155.997721-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1727865AbfHLKM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 06:12:26 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35112 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727605AbfHLKMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 06:12:25 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id ED999F36D83503C6D975;
+        Mon, 12 Aug 2019 18:12:19 +0800 (CST)
+Received: from DESKTOP-6T4S3DQ.china.huawei.com (10.202.226.45) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 12 Aug 2019 18:12:11 +0800
+From:   Shiju Jose <shiju.jose@huawei.com>
+To:     <linux-acpi@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <rjw@rjwysocki.net>,
+        <lenb@kernel.org>, <james.morse@arm.com>, <tony.luck@intel.com>,
+        <bp@alien8.de>, <baicar@os.amperecomputing.com>
+CC:     <linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+        <tanxiaofei@huawei.com>, Shiju Jose <shiju.jose@huawei.com>
+Subject: [PATCH RFC 0/4] ACPI: APEI: Add support to notify the vendor specific HW errors
+Date:   Mon, 12 Aug 2019 11:11:45 +0100
+Message-ID: <20190812101149.26036-1-shiju.jose@huawei.com>
+X-Mailer: git-send-email 2.19.2.windows.1
+In-Reply-To: <Shiju Jose>
+References: <Shiju Jose>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:uBwRpCRy5yDjgNG/dokHF0MoW+SifCtPmbgwLmiKHzF83+qi8QO
- qxYJmM5hbw49pgx1evLZVOr/zFMJGJgToPOFyn1kY32HM6my5VhoN1YcSEqzg6DAbpSBLak
- PQR4jVF/b0P/Z1HxcC0Ck07SKFQ6LLEni1yH14x4t2+2w+R9OvNfNhhgBaAPtu5uCmQdN/R
- 5qqBhSxlExLjZg56HD3PA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zSDZ4EY2AbM=:hvDql46WjA+Aeh43ObcA68
- Ns4FfUQl7+VYKlgQC9V/hLAe9sl4DvP/c6054B0+8mO34E0KS+EUYLNtU+KTIr2dHg3fZIbGT
- /Z2JxAuzhQuk9Anl5ZdA7T8K6Qh3zH0ivxjSwMxJCK2PBbwEa2xFGc4WH2HVQ4BnvGXItdWAO
- mWP4VCghZohBMYE7mZItkSlG6gSx9+ApsRztI4lB8hQ+acNOonlED18GaduoItR9ue91z3mFl
- ck2tyNvTSaAS14M0vUj6ZZ7v6virZgv6QVxvw84Y1bSqiUv4Pi/3wL9bS1UA8xhU0DkHfKwTJ
- VtYZqz1X5jyyVm1XgyZuryaf3hUm+IIDOsThxgRvHTw8amWagZ/RqPKR5qgJQx0al+upGVmRl
- 7XIj9ySiLNIJ4yNB3//AOl0GOhf9ck+61BqTO77M5PAQqQhCpSg0isLs385IuQlodIAp/IZ5I
- iC2o0Y546I0ALmY2QoRgetCpWsySjIybf+e/+E94njyLrMn5xieGXRvyfC2qQ72rqCcSOVBeX
- iHj0EyqOcUv+K+x5RZCAY8xeq5cbsB/ryHlo4HOIn1i4cHOBphWsaP0uZ0hrVj6MuzBqNSsIk
- rWj09+de6iw8Z5jT5PLfw4Un74tgOXv4KXWrCP/Dl6dDEuN+j6L1BeNfFmMvKvdbnRrcVeQFM
- PYPhFiG0s5iBdmAc42QMk/Ot0nHkDmjtk25aiH7oHI2/9Kqhxrc3q4lB0LaHAxaNdqMvnRmxq
- iAfciNmaslYBCvGgiDqHeH+RwNLDVemYEDpUbg==
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The two filter functions are now marked static, but still exported,
-which triggers a coming build-time check:
+Presently kernel does not support reporting the vendor specific HW errors,
+in the non-standard format, to the vendor drivers for the recovery.
 
-WARNING: "omap_dma_filter_fn" [vmlinux] is a static EXPORT_SYMBOL_GPL
-WARNING: "edma_filter_fn" [vmlinux] is a static EXPORT_SYMBOL
+This patch set add this support and also move the existing handler
+functions for the standard errors to the new callback method.
+Also the CCIX RAS patches could be move to the proposed callback method.
+https://www.spinics.net/lists/linux-edac/msg10508.html
+https://patchwork.kernel.org/patch/10979491/
 
-Remove the unneeded exports as well, as originally intended.
+Shiju Jose (4):
+  ACPI: APEI: Add support to notify the vendor specific HW errors
+  ACPI: APEI: Add ghes_handle_memory_failure to the new notification
+    method
+  ACPI: APEI: Add ghes_handle_aer to the new notification method
+  ACPI: APEI: Add log_arm_hw_error to the new notification method
 
-Fixes: 9c71b9eb3cb2 ("dmaengine: omap-dma: make omap_dma_filter_fn private")
-Fixes: d2bfe7b5d182 ("dmaengine: edma: make edma_filter_fn private")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: fix typo in changelog
----
- drivers/dma/ti/edma.c     | 1 -
- drivers/dma/ti/omap-dma.c | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/acpi/apei/ghes.c | 170 +++++++++++++++++++++++++++++++++++++++++------
+ drivers/ras/ras.c        |   5 +-
+ include/acpi/ghes.h      |  47 +++++++++++++
+ include/linux/ras.h      |   7 +-
+ 4 files changed, 205 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-index f2549ee3fb49..ea028388451a 100644
---- a/drivers/dma/ti/edma.c
-+++ b/drivers/dma/ti/edma.c
-@@ -2540,7 +2540,6 @@ static bool edma_filter_fn(struct dma_chan *chan, void *param)
- 	}
- 	return match;
- }
--EXPORT_SYMBOL(edma_filter_fn);
- 
- static int edma_init(void)
- {
-diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
-index 49da402a1927..98b39bcb7b37 100644
---- a/drivers/dma/ti/omap-dma.c
-+++ b/drivers/dma/ti/omap-dma.c
-@@ -1652,7 +1652,6 @@ static bool omap_dma_filter_fn(struct dma_chan *chan, void *param)
- 	}
- 	return false;
- }
--EXPORT_SYMBOL_GPL(omap_dma_filter_fn);
- 
- static int omap_dma_init(void)
- {
 -- 
-2.20.0
+1.9.1
+
 
