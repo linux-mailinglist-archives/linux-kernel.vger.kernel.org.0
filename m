@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEAF789F4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 15:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25C3E89F37
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2019 15:10:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbfHLNKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 09:10:38 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40152 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbfHLNKF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728772AbfHLNKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 12 Aug 2019 09:10:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40102 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726458AbfHLNKE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 09:10:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Q9qcnlkxDXzQ76coxQL/CdrXQ/CkPfBxp6V88YMLlQI=; b=LdlKbGc7EU4i
-        ze96X1m3Zp+EPrzGQLJ2Nho6DedV4JwLZGHGG76uyiUlIOpLiVkqRJHZQ4XK/WQMPPQFLI3ccZToJ
-        uWovDRVa9xJKbqXAiCW0b9zIBQW5pR/M+F1EfV1mbOvvXyzs4juE/0dhgQmfYLmA68Rtc0RxKTPXI
-        z91Nw=;
+        List-Archive; bh=3sNecu+h/sBkIJYA1BBnNt/IkAXt6S+W553O/rgURsA=; b=wt3ZTOTgywjf
+        TCLCy0QgxFCzYswbhdngjdeaA29TPIN6x928WU12LEd2sCAPP3pvhr4+F37yNp8r2Pwyr36d4rAo+
+        If45K/cYMOSPreVCi0jE/C7kOMTJjc4j6l9H78lcmE0p0pW7mGMIH8x2qiKlQuh+m8X/DlOE6fNXW
+        ReQc0=;
 Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hxA59-0001M4-Ff; Mon, 12 Aug 2019 13:09:51 +0000
+        id 1hxA58-0001Ly-Up; Mon, 12 Aug 2019 13:09:51 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id DBD082740CB7; Mon, 12 Aug 2019 14:09:50 +0100 (BST)
+        id 5D45B2740CBD; Mon, 12 Aug 2019 14:09:50 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        devicetree@vger.kernel.org, festevam@gmail.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mark Brown <broonie@kernel.org>, mark.rutland@arm.com,
-        nicoleotsuka@gmail.com, Nicolin Chen <nicoleotsuka@gmail.com>,
-        robh+dt@kernel.org, timur@kernel.org, Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: fsl_esai: Add new compatible string for imx6ull" to the asoc tree
-In-Reply-To: <1565346467-5769-2-git-send-email-shengjiu.wang@nxp.com>
+To:     Szymon Mielczarek <szymonx.mielczarek@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: dapm: Invalidate only paths reachable for a given stream" to the asoc tree
+In-Reply-To: <20190809084034.26220-1-szymonx.mielczarek@linux.intel.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190812130950.DBD082740CB7@ypsilon.sirena.org.uk>
+Message-Id: <20190812130950.5D45B2740CBD@ypsilon.sirena.org.uk>
 Date:   Mon, 12 Aug 2019 14:09:50 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_esai: Add new compatible string for imx6ull
+   ASoC: dapm: Invalidate only paths reachable for a given stream
 
 has been applied to the asoc tree at
 
@@ -74,39 +73,93 @@ to this mail.
 Thanks,
 Mark
 
-From 9ea08f2a6d27b6a26d33dae5c58e4099672d6bb3 Mon Sep 17 00:00:00 2001
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Fri, 9 Aug 2019 18:27:47 +0800
-Subject: [PATCH] ASoC: fsl_esai: Add new compatible string for imx6ull
+From 872f3ac583cb00c14a4dc86b1511cf98618dd671 Mon Sep 17 00:00:00 2001
+From: Szymon Mielczarek <szymonx.mielczarek@linux.intel.com>
+Date: Fri, 9 Aug 2019 10:40:34 +0200
+Subject: [PATCH] ASoC: dapm: Invalidate only paths reachable for a given
+ stream
 
-Add new compatible string "fsl,imx6ull-esai" in the binding document.
+By resetting the cached number of endpoints for all card's widgets we may
+overwrite previously cached values for other streams. The situation may
+happen especially when running streams simultaneously.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Link: https://lore.kernel.org/r/1565346467-5769-2-git-send-email-shengjiu.wang@nxp.com
+Signed-off-by: Szymon Mielczarek <szymonx.mielczarek@linux.intel.com>
+Link: https://lore.kernel.org/r/20190809084034.26220-1-szymonx.mielczarek@linux.intel.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/fsl,esai.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ sound/soc/soc-dapm.c | 50 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 37 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl,esai.txt b/Documentation/devicetree/bindings/sound/fsl,esai.txt
-index 5b9914367610..0e6e2166f76c 100644
---- a/Documentation/devicetree/bindings/sound/fsl,esai.txt
-+++ b/Documentation/devicetree/bindings/sound/fsl,esai.txt
-@@ -7,8 +7,11 @@ other DSPs. It has up to six transmitters and four receivers.
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index d09bdca63c62..10819b3e0b98 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -1128,6 +1128,34 @@ static int dapm_widget_list_create(struct snd_soc_dapm_widget_list **list,
+ 	return 0;
+ }
  
- Required properties:
++/*
++ * Recursively reset the cached number of inputs or outputs for the specified
++ * widget and all widgets that can be reached via incoming or outcoming paths
++ * from the widget.
++ */
++static void invalidate_paths_ep(struct snd_soc_dapm_widget *widget,
++	enum snd_soc_dapm_direction dir)
++{
++	enum snd_soc_dapm_direction rdir = SND_SOC_DAPM_DIR_REVERSE(dir);
++	struct snd_soc_dapm_path *path;
++
++	widget->endpoints[dir] = -1;
++
++	snd_soc_dapm_widget_for_each_path(widget, rdir, path) {
++		if (path->weak || path->is_supply)
++			continue;
++
++		if (path->walking)
++			return;
++
++		if (path->connect) {
++			path->walking = 1;
++			invalidate_paths_ep(path->node[dir], dir);
++			path->walking = 0;
++		}
++	}
++}
++
+ /*
+  * Common implementation for is_connected_output_ep() and
+  * is_connected_input_ep(). The function is inlined since the combined size of
+@@ -1257,21 +1285,17 @@ int snd_soc_dapm_dai_get_connected_widgets(struct snd_soc_dai *dai, int stream,
  
--  - compatible		: Compatible list, must contain "fsl,imx35-esai" or
--			  "fsl,vf610-esai"
-+  - compatible		: Compatible list, should contain one of the following
-+			  compatibles:
-+			  "fsl,imx35-esai",
-+			  "fsl,vf610-esai",
-+			  "fsl,imx6ull-esai",
+ 	mutex_lock_nested(&card->dapm_mutex, SND_SOC_DAPM_CLASS_RUNTIME);
  
-   - reg			: Offset and length of the register set for the device.
+-	/*
+-	 * For is_connected_{output,input}_ep fully discover the graph we need
+-	 * to reset the cached number of inputs and outputs.
+-	 */
+-	list_for_each_entry(w, &card->widgets, list) {
+-		w->endpoints[SND_SOC_DAPM_DIR_IN] = -1;
+-		w->endpoints[SND_SOC_DAPM_DIR_OUT] = -1;
+-	}
+-
+-	if (stream == SNDRV_PCM_STREAM_PLAYBACK)
+-		paths = is_connected_output_ep(dai->playback_widget, &widgets,
++	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
++		w = dai->playback_widget;
++		invalidate_paths_ep(w, SND_SOC_DAPM_DIR_OUT);
++		paths = is_connected_output_ep(w, &widgets,
+ 				custom_stop_condition);
+-	else
+-		paths = is_connected_input_ep(dai->capture_widget, &widgets,
++	} else {
++		w = dai->capture_widget;
++		invalidate_paths_ep(w, SND_SOC_DAPM_DIR_IN);
++		paths = is_connected_input_ep(w, &widgets,
+ 				custom_stop_condition);
++	}
  
+ 	/* Drop starting point */
+ 	list_del(widgets.next);
 -- 
 2.20.1
 
