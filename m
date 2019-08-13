@@ -2,80 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2388BFE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 19:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71ED98BFFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 19:55:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbfHMRtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 13:49:22 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39750 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbfHMRtW (ORCPT
+        id S1728125AbfHMRz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 13:55:28 -0400
+Received: from zimbra.cs.ucla.edu ([131.179.128.68]:33280 "EHLO
+        zimbra.cs.ucla.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbfHMRz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 13:49:22 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f17so48023158pfn.6;
-        Tue, 13 Aug 2019 10:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F66mmM6EpiHfgT+wmNXzuAKlf0zawQ3GnOz6AOmAuGQ=;
-        b=bHz038m5C/2FpOEmiV6MVrcdI738f1BL3zH+kWhjdIpc/3B+H7IEhBTqCF66tmHMX1
-         C+vwor+2C3z8nK/0emr237nmk2ZncKxMqw32Wm1PjqQQopt1FVnXHfsPwqumOVRXckHB
-         6bLJLY+4/vErJ5Lg5Y1yDNxxtTjnZPwBHGFtqjBLm9/Es242+7GT+X/Uc5gHKS91PM4/
-         +DlMed5bfIsfef+XwPeg+Sf9HotWs6fd0is9rDklmDKRPa8GslHhHD9nA7Nq3k+6zpVP
-         vsidKZR+tIl2Yc3HA4ftwzb9JEdJlZ1aaKoEd1t/3CYWPAk6FVQZgA1nHFUIPCcOY51p
-         ILkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F66mmM6EpiHfgT+wmNXzuAKlf0zawQ3GnOz6AOmAuGQ=;
-        b=Fun2T+mJzUqWXOP9GUSiqaXYAYvW+P7D6wW2iPAjvzo0bTY871TxK0NPEcvYzKZtoQ
-         iUC1vE2uA34BXpQBU5rW+stcV1wkZtb4lRJkflrq5ojo2irmAROHK74N+DZF2G76HQvj
-         3m65f6g/ELS8cyuO3hNieyikp3K/PlrD4t8lYG4IEWkzULgn7iCgDxPgI4bC6WmtJCFM
-         yTA6FQkIKnwYlFT+ougVXv4xbA4wlfX3yh/fxql7XcrArQ6ZRWHggtcyL27lNPw/kTaC
-         mndGh9MeEy3gfjVlX1efp+b92CRrJhefFzhTVbkai4Ilz258yF7rCWJPLrE9hDHlJkYg
-         2h+g==
-X-Gm-Message-State: APjAAAXSg1qagzYtZ8zTs5kZyHFb23QT19TXg0RrVn5x/CBSN5ahlX02
-        zZY3YltkMpofdsDHpEVH4UE=
-X-Google-Smtp-Source: APXvYqxSIN440OuHNUQtrQGpo5lWr5OJoC/yqSvN5iAKUzLDFiFP2TPiu/T5h5+CIOFpui5kECxHZg==
-X-Received: by 2002:a17:90a:9ea:: with SMTP id 97mr3217519pjo.68.1565718561499;
-        Tue, 13 Aug 2019 10:49:21 -0700 (PDT)
-Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
-        by smtp.gmail.com with ESMTPSA id b3sm128953179pfp.65.2019.08.13.10.49.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 10:49:20 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 10:49:18 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+        Tue, 13 Aug 2019 13:55:27 -0400
+X-Greylist: delayed 381 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Aug 2019 13:55:26 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.cs.ucla.edu (Postfix) with ESMTP id A263716272D;
+        Tue, 13 Aug 2019 10:49:04 -0700 (PDT)
+Received: from zimbra.cs.ucla.edu ([127.0.0.1])
+        by localhost (zimbra.cs.ucla.edu [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Avtv7kHLBo3l; Tue, 13 Aug 2019 10:49:03 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.cs.ucla.edu (Postfix) with ESMTP id D6F6316272F;
+        Tue, 13 Aug 2019 10:49:03 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at zimbra.cs.ucla.edu
+Received: from zimbra.cs.ucla.edu ([127.0.0.1])
+        by localhost (zimbra.cs.ucla.edu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id B3FBW389qoKq; Tue, 13 Aug 2019 10:49:03 -0700 (PDT)
+Received: from [192.168.1.9] (cpe-23-242-74-103.socal.res.rr.com [23.242.74.103])
+        by zimbra.cs.ucla.edu (Postfix) with ESMTPSA id 4DC3F16272D;
+        Tue, 13 Aug 2019 10:49:03 -0700 (PDT)
+Subject: Re: New kernel interface for sys_tz and timewarp?
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Christopher S . Hall" <christopher.s.hall@intel.com>
-Subject: Re: [RFC PATCH 0/5] PTP: add support for Intel's TGPIO controller
-Message-ID: <20190813174918.GD3207@localhost>
-References: <20190716072038.8408-1-felipe.balbi@linux.intel.com>
- <20190718195040.GL25635@lunn.ch>
- <87h87isci5.fsf@linux.intel.com>
- <20190719132021.GC24930@lunn.ch>
- <87wofhy05t.fsf@gmail.com>
+        John Stultz <john.stultz@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Alistair Francis <alistair.francis@wdc.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Karel Zak <kzak@redhat.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+References: <CAK8P3a0VxM1BkjY1D2FfHi6L-ho_NH3v3+gBu45EfpjLF5NU5w@mail.gmail.com>
+ <CAHk-=wiO2CWONDBud4nxoPgUJN1JEewFWhHa5wAqY8G5rrTXRQ@mail.gmail.com>
+From:   Paul Eggert <eggert@cs.ucla.edu>
+Organization: UCLA Computer Science Department
+Message-ID: <ecf2742a-6cab-cc00-16ab-589fad07b8db@cs.ucla.edu>
+Date:   Tue, 13 Aug 2019 10:49:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wofhy05t.fsf@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHk-=wiO2CWONDBud4nxoPgUJN1JEewFWhHa5wAqY8G5rrTXRQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 10:50:06AM +0300, Felipe Balbi wrote:
-> If we do that we make it difficult for those reading specification and
-> trying to find the matching driver.
+Linus Torvalds wrote:
+> I assume/think that glibc uses (a) environment
+> variables and (b) a filesystem-set default (per-user file with a
+> system-wide default? I don't know what people do).
+glibc relies on the TZ environment variable, with a system-wide default 
+specified in /etc/localtime or suchlike (there is no per-user default). glibc 
+ignores the kernel's 'struct timezone' settings for of this, as 'struct 
+timezone' is obsolete/vestigial and doesn't contain enough info to do proper 
+conversions anyway.
 
-+1
+I've been thinking of adding NetBSD's localtime_rz etc. functions to glibc. 
+These functions let user programs specify the time zone for each conversion 
+between time_t and local time, and simplify and/or speed up applications dealing 
+with many requests coming from different time zones. These functions also ignore 
+'struct timezone'.
 
-Thanks,
-Richard
+There's no need to put any of this stuff into the kernel.
