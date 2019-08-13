@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 851CA8AFBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 643E78AFC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbfHMGP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 02:15:59 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39639 "EHLO
+        id S1727679AbfHMGQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 02:16:15 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36634 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbfHMGP6 (ORCPT
+        with ESMTP id S1727581AbfHMGQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 02:15:58 -0400
-Received: by mail-wm1-f65.google.com with SMTP id i63so367854wmg.4
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 23:15:57 -0700 (PDT)
+        Tue, 13 Aug 2019 02:16:10 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g67so375419wme.1;
+        Mon, 12 Aug 2019 23:16:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pwhmqWSkZkXK5PIssyQP4lQrBTS/FC4L2zJCnXKmTD0=;
-        b=dNFOoZvJiv54Udh9ANlNN6OrwAPZVfMudlH17fqCeCXnCc+c4sgZ/bgfUGViLtMfz5
-         g93DsVICMbcMDaMcrmMLDXSH0WplPGf52+hRizoRGTv8185edR9S8g2Lx35JWraWU99z
-         q4LNYLdWy5HxvedW6k/8V/kkVzo+o/dnzRH/jsl/vbNSGMEU2HO2goky3av3zNgGQCvj
-         KNxNQSNL8EUvV2iO292opePbC+BXbRk1hxnINh4P/pjLbAQo8SsuDiTV6um+8mczOaup
-         +1/6SKKjzaQP5HwULAC7zT7nsmdawoOPR6XhvEhAarp/XF4XnTeAQLq+zmLovfzebYz9
-         U/3g==
-X-Gm-Message-State: APjAAAXoqy1Ecy442VidVtROa3xCwfoIo/m/JLn7KFiUu+SfWmyh7URI
-        Ddn9AjJyru2aUx+2A2TrYeRaM6ODidU=
-X-Google-Smtp-Source: APXvYqzo+ft9DO0CBBiDxvH3zpmBWDs3avnFnYe8+g3hlfnALaKNcUHwSOvKaeJS/cXvpxHIkj5cqw==
-X-Received: by 2002:a7b:c310:: with SMTP id k16mr1009432wmj.133.1565676956514;
-        Mon, 12 Aug 2019 23:15:56 -0700 (PDT)
+        bh=XiR40mxLzkY39gMoWHbldefskq7y3+jPi2+rZpG3h6U=;
+        b=gXdQ321IO3PXUSHZRxhQo7puYy/kz5gxDK3CL4hRH+nOHYpwZid5Zf2JevmaTrJ/zB
+         L3NgKKvXphhaQvpbDQyuL0JKMuH3vkuDfV7DDBXYg7Xr3FC5BGkcXvzLhmiRRCapJBhD
+         3G8yYPiBjjHmu/zJg/j21JnIpE9XvhmLPGb0fNGGD7Dk/bo7vewBc9OZvCD/yoYYwONV
+         vzSdLDYFAUWlpYKaaMESOs3hJCdrkZ3iz4XM7eKwfYO29ixz7HxNcYV4NIaTwgmPQTG0
+         zrxXz661xDqWlB7a5HBeqfXBdwylXr0QBdIBk846P2Ex1cxWu9ZGd12w09kGbpOGXiT4
+         SHZA==
+X-Gm-Message-State: APjAAAVDEzOVC9+ap1ynXFwzLokDwMUybPqyB3Igvwq8kipzZ+G4876p
+        T/q/iau5Xab4XjuwtQYAVdBIanbYlwc=
+X-Google-Smtp-Source: APXvYqzDQwrLMXAKGqb9FZbRmn3w7CKgOwWVQcqZ4SbYC8oVnXy2FVD/F5QU1IcDRIwHQ/1UrESj/w==
+X-Received: by 2002:a7b:c85a:: with SMTP id c26mr1051974wml.77.1565676968383;
+        Mon, 12 Aug 2019 23:16:08 -0700 (PDT)
 Received: from localhost.localdomain (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.googlemail.com with ESMTPSA id p13sm40776514wrw.90.2019.08.12.23.15.54
+        by smtp.googlemail.com with ESMTPSA id o16sm24618135wrp.23.2019.08.12.23.16.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2019 23:15:56 -0700 (PDT)
+        Mon, 12 Aug 2019 23:16:07 -0700 (PDT)
 From:   Denis Efremov <efremov@linux.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Denis Efremov <efremov@linux.com>, joe@perches.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Federico Vaga <federico.vaga@cern.ch>,
-        Pat Riehecky <riehecky@fnal.gov>
-Subject: [PATCH] MAINTAINERS: Remove FMC subsystem
-Date:   Tue, 13 Aug 2019 09:15:47 +0300
-Message-Id: <20190813061547.17847-1-efremov@linux.com>
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Remove zoran driver
+Date:   Tue, 13 Aug 2019 09:16:02 +0300
+Message-Id: <20190813061602.18087-1-efremov@linux.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
 References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
@@ -53,37 +53,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup MAINTAINERS from FMC record since the subsystem was removed.
+Cleanup MAINTAINERS from zoran record since the driver was removed.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Federico Vaga <federico.vaga@cern.ch>
-Cc: Pat Riehecky <riehecky@fnal.gov>
-Fixes: 6a80b30086b8 ("fmc: Delete the FMC subsystem")
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-media@vger.kernel.org
+Fixes: 8dce4b265a53 ("media: zoran: remove deprecated driver")
 Signed-off-by: Denis Efremov <efremov@linux.com>
 ---
- MAINTAINERS | 9 ---------
- 1 file changed, 9 deletions(-)
+ MAINTAINERS | 8 --------
+ 1 file changed, 8 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index ab870920ea82..2548dd1efb2d 100644
+index 2548dd1efb2d..2ea3f82e256b 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -6330,15 +6330,6 @@ S:	Odd Fixes
- L:	linux-block@vger.kernel.org
- F:	drivers/block/floppy.c
+@@ -17794,14 +17794,6 @@ S:	Maintained
+ F:	mm/zpool.c
+ F:	include/linux/zpool.h
  
--FMC SUBSYSTEM
--M:	Alessandro Rubini <rubini@gnudd.com>
--W:	http://www.ohwr.org/projects/fmc-bus
--S:	Supported
--F:	drivers/fmc/
--F:	include/linux/fmc*.h
--F:	include/linux/ipmi-fru.h
--K:	fmc_d.*register
+-ZR36067 VIDEO FOR LINUX DRIVER
+-L:	mjpeg-users@lists.sourceforge.net
+-L:	linux-media@vger.kernel.org
+-W:	http://mjpeg.sourceforge.net/driver-zoran/
+-T:	hg https://linuxtv.org/hg/v4l-dvb
+-S:	Odd Fixes
+-F:	drivers/staging/media/zoran/
 -
- FPGA MANAGER FRAMEWORK
- M:	Moritz Fischer <mdf@kernel.org>
- L:	linux-fpga@vger.kernel.org
+ ZRAM COMPRESSED RAM BLOCK DEVICE DRVIER
+ M:	Minchan Kim <minchan@kernel.org>
+ M:	Nitin Gupta <ngupta@vflare.org>
 -- 
 2.21.0
 
