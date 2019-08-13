@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 191248B6A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B41588B6A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbfHML1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 07:27:40 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:41430 "EHLO
+        id S1727531AbfHML1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 07:27:42 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:59929 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727221AbfHML1g (ORCPT
+        with ESMTP id S1727317AbfHML1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Aug 2019 07:27:36 -0400
-X-UUID: 0f564156c2224fd1b34e5e34dec02874-20190813
-X-UUID: 0f564156c2224fd1b34e5e34dec02874-20190813
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+X-UUID: c4441ff3f7ba4f8586a339351d8959b2-20190813
+X-UUID: c4441ff3f7ba4f8586a339351d8959b2-20190813
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 2087766564; Tue, 13 Aug 2019 19:27:21 +0800
+        with ESMTP id 10343570; Tue, 13 Aug 2019 19:27:24 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 13 Aug 2019 19:27:15 +0800
+ 15.0.1395.4; Tue, 13 Aug 2019 19:27:17 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 13 Aug 2019 19:27:18 +0800
+ Transport; Tue, 13 Aug 2019 19:27:20 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -42,80 +42,70 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>,
-        Yu Chen <chenyu56@huawei.com>
-Subject: [PATCH next v9 01/11] dt-binding: usb: add usb-role-switch property
-Date:   Tue, 13 Aug 2019 19:27:04 +0800
-Message-ID: <1565695634-9711-2-git-send-email-chunfeng.yun@mediatek.com>
+        Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: [PATCH next v9 02/11] dt-bindings: connector: add optional properties for Type-B
+Date:   Tue, 13 Aug 2019 19:27:05 +0800
+Message-ID: <1565695634-9711-3-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1565695634-9711-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1565695634-9711-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 4D4870D9DDE1AA1DBBFF399EF85E13D5FA9F4047E26415FA4F7AADC57F32E04E2000:8
+X-TM-SNTS-SMTP: 74B3E05A1D087EC7962C899293E050E2312DEB91A7DAB81C884150FE646D4F992000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a property usb-role-switch to tell the driver that use
-USB Role Switch framework to handle the role switch,
-it's useful when the driver has already supported other ways,
-such as extcon framework etc.
+Add id-gpios, vbus-gpios, vbus-supply and pinctrl properties for
+usb-b-connector
 
-Cc: Biju Das <biju.das@bp.renesas.com>
-Cc: Yu Chen <chenyu56@huawei.com>
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
-v7~v9: no changes
+v6~v9 no changes
 
-v6:
-    1. merge into this series patch
-    2. add Reviewed-by
+v5 changes:
+ 1. add reviewed by Rob
 
-(no v4, v5)
+v4 no changes
 
-v3:
-    add property type, modify description suggested by Heikki
+v3 changes:
+ 1. add GPIO direction, and use fixed-regulator for GPIO controlled
+    VBUS regulator suggested by Rob;
 
-v2:
-    describe it in terms of h/w functionality suggested by Rob
-
-v1:
-    the property is discussed in:
-    [v2,2/7] dt-bindings: usb: renesas_usb3: add usb-role-switch property
-    https://patchwork.kernel.org/patch/10852497/
-
-    Mediatek and Hisilicon also try to use it:
-    [v4,3/6] dt-bindings: usb: mtu3: add properties about USB Role Switch
-    https://patchwork.kernel.org/patch/10918385/
-    [v4,6/6] usb: mtu3: register a USB Role Switch for dual role mode
-    https://patchwork.kernel.org/patch/10918367/
-
-    [v6,10/13] usb: dwc3: Registering a role switch in the DRD code
-    https://patchwork.kernel.org/patch/10909981/
+v2 changes:
+ 1. describe more clear for vbus-gpios and vbus-supply suggested by Hans
 ---
- Documentation/devicetree/bindings/usb/generic.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../bindings/connector/usb-connector.txt           | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/generic.txt b/Documentation/devicetree/bindings/usb/generic.txt
-index 0a74ab8dfdc2..cf5a1ad456e6 100644
---- a/Documentation/devicetree/bindings/usb/generic.txt
-+++ b/Documentation/devicetree/bindings/usb/generic.txt
-@@ -30,6 +30,10 @@ Optional properties:
- 			optional for OTG device.
-  - adp-disable: tells OTG controllers we want to disable OTG ADP, ADP is
- 			optional for OTG device.
-+ - usb-role-switch: boolean, indicates that the device is capable of assigning
-+			the USB data role (USB host or USB device) for a given
-+			USB connector, such as Type-C, Type-B(micro).
-+			see connector/usb-connector.txt.
+diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
+index cef556d4e5ee..d357987181ee 100644
+--- a/Documentation/devicetree/bindings/connector/usb-connector.txt
++++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
+@@ -17,6 +17,20 @@ Optional properties:
+ - self-powered: Set this property if the usb device that has its own power
+   source.
  
- This is an attribute to a USB controller such as:
- 
++Optional properties for usb-b-connector:
++- id-gpios: an input gpio for USB ID pin.
++- vbus-gpios: an input gpio for USB VBUS pin, used to detect presence of
++  VBUS 5V.
++  see gpio/gpio.txt.
++- vbus-supply: a phandle to the regulator for USB VBUS if needed when host
++  mode or dual role mode is supported.
++  Particularly, if use an output GPIO to control a VBUS regulator, should
++  model it as a regulator.
++  see regulator/fixed-regulator.yaml
++- pinctrl-names : a pinctrl state named "default" is optional
++- pinctrl-0 : pin control group
++  see pinctrl/pinctrl-bindings.txt
++
+ Optional properties for usb-c-connector:
+ - power-role: should be one of "source", "sink" or "dual"(DRP) if typec
+   connector has power support.
 -- 
 2.22.0
 
