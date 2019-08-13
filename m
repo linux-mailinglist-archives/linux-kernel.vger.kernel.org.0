@@ -2,174 +2,308 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B2E88B648
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 740C78B642
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:04:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728870AbfHMLEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 07:04:50 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48254 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbfHMLEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 07:04:42 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7DB4ZSO080361;
-        Tue, 13 Aug 2019 06:04:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565694276;
-        bh=RphDzxFxX4A2it0jGE40CN22zBssiMLusv2rS/n3his=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=YxTmSitQzReAz8S222tdrZhqc2RgzOl6TwrTen/nGxaGthS3w++07fEfGJFS8zRSF
-         4cZCqmdc0lm8krbAyc6jnw0SmSa+nRbMNZXwhJuFZo9Wy/Ek/meFxaDja6pFEgSLoB
-         6BVimV7MJ5EYu1z5QpCqFIombSpkdvQwgrMVYJKc=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7DB4ZSm001400
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Aug 2019 06:04:35 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 13
- Aug 2019 06:04:34 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 13 Aug 2019 06:04:34 -0500
-Received: from [10.1.3.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7DB4Vlf093713;
-        Tue, 13 Aug 2019 06:04:32 -0500
-Subject: Re: [PATCH 2/8] ARM: OMAP2+: Remove unconfigured midlemode for am3
- lcdc
-To:     Suman Anna <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>,
-        <linux-omap@vger.kernel.org>
-CC:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190723112811.44381-1-tony@atomide.com>
- <20190723112811.44381-3-tony@atomide.com>
- <bcc130a5-f7e0-e182-9f4b-5a48fc3d6e17@ti.com>
-From:   Jyri Sarha <jsarha@ti.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b5d757dc-6326-4b93-c2a2-2db02a440c26@ti.com>
-Date:   Tue, 13 Aug 2019 14:04:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728826AbfHMLEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 07:04:43 -0400
+Received: from mail-eopbgr40060.outbound.protection.outlook.com ([40.107.4.60]:17616
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728755AbfHMLEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 07:04:41 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cJR6mOwAOhtCFs4LUl2U87CM9FKJd0wYFPckFuACjIDVuf5qVEO6FP1ar5AdqxHKNdCVG54i45t7EYXbblcq9zbCrnKBiAEJN/UbkNAVmiyTsTjdzdCCo64jJlFjve9n8mUZ33WpMVW1Z5Q2OEK80qO04IMCZuWdnhIdIOCSuNwd/GsP96xfIRgkCy65q7Ha7HdKHQh+4X7Rvg13rkPG50KY7skX8s4nw04Mfi43tuLV4WmpcBv0o2iLYZXIxDp3eg8goZMtxl5S2piixzD8tKjydQoCryJh3lUrqMDGrtlzGhc+/Klwxr5niKcNAes0QLDLfQjowo9QOU7ElJI39w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RtBcMvUIM1r+atFZ0Y/zTOzkeqojgFRp3EwqwXTeWFU=;
+ b=j1lFtqJynyiD55T3gbNySMo1z/eSU595Ol1MlsZS+kptmFUtDMsfMr6neoSKL49vKMIMJFT8+qzL9Y+VCsVg2mU853UeeZYRjGaJL1/JzGRysBuOUU/krxHAShobcwDiSKbZrk5Bymvn/ytW8vFbU6GQ6Gy/hRio4cbW10YiWtJuqqQlCiD3H5kAv4oKif0eBiBBTLiI8aozxCMCX3b5AGooMtsCPhUmIBGRaC3NsFQ1nKrNnL3Pg0CiNafIsqdimcvQULEk8Sv6CYVrwjfpNo2FGEdrn34RZkfqachuFAQHtDJP2YZSBkB0AgD4hrznmFvckjB7RPzronsamIRlQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RtBcMvUIM1r+atFZ0Y/zTOzkeqojgFRp3EwqwXTeWFU=;
+ b=V5Q2lSjrxy0wfroEZyOX9SBt2kAMiD7NCAfHCglL464RVo8t+x0ZmAY5o+TBl6Up5k4PZ/gt+WcCF4HI8b3qBEKawgf7kVS6k1YjDY4msblqr0eQBmA56NeGYJzop8X+WdL5pJmgwwGtbsSImYPNB/BQdGAPXEpVDdqbWCVJ114=
+Received: from DB8PR04MB6747.eurprd04.prod.outlook.com (20.179.250.159) by
+ DB8PR04MB7035.eurprd04.prod.outlook.com (52.135.61.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.13; Tue, 13 Aug 2019 11:04:33 +0000
+Received: from DB8PR04MB6747.eurprd04.prod.outlook.com
+ ([fe80::19ec:cddf:5e07:37eb]) by DB8PR04MB6747.eurprd04.prod.outlook.com
+ ([fe80::19ec:cddf:5e07:37eb%3]) with mapi id 15.20.2157.015; Tue, 13 Aug 2019
+ 11:04:33 +0000
+From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
+To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "m.karthikeyan@mobiveil.co.in" <m.karthikeyan@mobiveil.co.in>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>,
+        "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Subject: [PATCHv8 6/7] arm64: dts: lx2160a: Add PCIe controller DT nodes
+Thread-Topic: [PATCHv8 6/7] arm64: dts: lx2160a: Add PCIe controller DT nodes
+Thread-Index: AQHVUcbiclK4Xh0kSE+qaqj34nPcmA==
+Date:   Tue, 13 Aug 2019 11:04:33 +0000
+Message-ID: <20190813110557.45643-7-Zhiqiang.Hou@nxp.com>
+References: <20190813110557.45643-1-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20190813110557.45643-1-Zhiqiang.Hou@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2PR02CA0199.apcprd02.prod.outlook.com
+ (2603:1096:201:20::11) To DB8PR04MB6747.eurprd04.prod.outlook.com
+ (2603:10a6:10:10b::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=zhiqiang.hou@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0e93736b-281d-4ea1-1d2a-08d71fde0555
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB8PR04MB7035;
+x-ms-traffictypediagnostic: DB8PR04MB7035:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB8PR04MB703575995BD43AE0B027D52784D20@DB8PR04MB7035.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:363;
+x-forefront-prvs: 01283822F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(376002)(396003)(136003)(366004)(189003)(199004)(256004)(14444005)(66066001)(50226002)(316002)(4326008)(66556008)(66946007)(1076003)(186003)(64756008)(66476007)(386003)(71190400001)(6486002)(6506007)(26005)(7736002)(71200400001)(110136005)(486006)(305945005)(2501003)(53936002)(54906003)(52116002)(81166006)(6116002)(7416002)(3846002)(25786009)(478600001)(102836004)(36756003)(66446008)(76176011)(5660300002)(14454004)(6512007)(81156014)(446003)(99286004)(11346002)(8936002)(86362001)(2906002)(6436002)(2616005)(2201001)(8676002)(476003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB8PR04MB7035;H:DB8PR04MB6747.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7+Z+vGhOPDreU2aA4R9NuZ4GrjK2J2Vd4t9jHYQzueeUqEfjq2UDPdhfpzx2dJIJ632j1NDa+yHct4y1rYt6fFjnm49y/i/xd9Hy3QdPVtHFotac7vDQtMBQrEj9mMq/KxEWkiEgSO1lGbhJUFFvyzq+Ckw3XN9Ue6spSsEYX2ut+c+47KjGNk33qxEmIbKPXwgascdgJ4qumkCr3v8wUXmmHynK7opgXUZ/EG27FjvsOrBW25IYAGIK5MNGBrumk0txNXNq09AUL4yxxaymsevINScX24YmW9ZlGouPVmGguNXeAuUz/870xEbifZah12ADcumHHSaHydTTXt1IoAt/OyXqhzkCKqBzoWLHYqrlGHtDhBud1Gz3TC4wRqN29wLV7PqodMyzb8v+odKjwL4EEQRfmXKP6it9kJCk93M=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <bcc130a5-f7e0-e182-9f4b-5a48fc3d6e17@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e93736b-281d-4ea1-1d2a-08d71fde0555
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2019 11:04:33.0898
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2HKdt+XFOR5gNT9+dgLpmdDmLs/SyOryNxaFpzuGeAM9+3WrvPYwT8EJ/UeUWajQokTMAdNVl27Dhx9tqpH6Ag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7035
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/07/2019 22:03, Suman Anna wrote:
-> + Jyri
-> 
-> On 7/23/19 6:28 AM, Tony Lindgren wrote:
->> We currently get a warning for lcdc because of a difference
->> with dts provided configuration compared to the legacy platform
->> data. This is because lcdc has SYSC_HAS_MIDLEMODE configured in
->> the platform data without configuring the modes.
-> 
-> Hi Tony,
-> While I understand that you are trying to match the DT data with the
-> existing legacy data, do you know if there was a reason why this was
-> omitted in the first place? Should we be really adding the MSTANDBY_
-> flags and fix up the DTS node accordingly? I tried looking through the
-> git log, and the initial commit itself didn't add the MSTANDBY_ flags
-> but used the SYSC_HAS_MIDLEMODE.
-> 
-> Jyri,
-> Do you know the history?
-> 
+From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-Sorry. This all has happened before my time. This is all new to me.
+The LX2160A integrated 6 PCIe Gen4 controllers.
 
+Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+---
+V8:
+ - No change.
 
-BR,
-Jyri
+ .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 163 ++++++++++++++++++
+ 1 file changed, 163 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/bo=
+ot/dts/freescale/fsl-lx2160a.dtsi
+index 4720a8e7304c..1856b0691e0b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -977,5 +977,168 @@
+ 				};
+ 			};
+ 		};
++
++		pcie@3400000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
++			       0x80 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0x80 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
++
++		pcie@3500000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
++			       0x88 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0x88 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
++
++		pcie@3600000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
++			       0x90 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <256>;
++			ppio-wins =3D <24>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0x90 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
++
++		pcie@3700000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03700000 0x0 0x00100000   /* controller registers */
++			       0x98 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0x98 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
++
++		pcie@3800000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03800000 0x0 0x00100000   /* controller registers */
++			       0xa0 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <256>;
++			ppio-wins =3D <24>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0xa0 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
++
++		pcie@3900000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03900000 0x0 0x00100000   /* controller registers */
++			       0xa8 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0xa8 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
++
+ 	};
+ };
+--=20
+2.17.1
 
-
-> regards
-> Suman
-> 
->>
->> Let's fix the warning by removing SYSC_HAS_MIDLEMODE. Note that
->> the am335x TRM lists SYSC_HAS_MIDLEMODE, but it is unused.
-> 
-> 
-> 
->>
->> Signed-off-by: Tony Lindgren <tony@atomide.com>
->> ---
->>  arch/arm/mach-omap2/omap_hwmod_33xx_data.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
->> --- a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
->> @@ -231,7 +231,7 @@ static struct omap_hwmod am33xx_control_hwmod = {
->>  static struct omap_hwmod_class_sysconfig lcdc_sysc = {
->>  	.rev_offs	= 0x0,
->>  	.sysc_offs	= 0x54,
->> -	.sysc_flags	= (SYSC_HAS_SIDLEMODE | SYSC_HAS_MIDLEMODE),
->> +	.sysc_flags	= SYSC_HAS_SIDLEMODE,
->>  	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
->>  	.sysc_fields	= &omap_hwmod_sysc_type2,
->>  };
->>
-> 
-
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
