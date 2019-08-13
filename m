@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 572EE8B298
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA1EB8B29A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfHMIf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:35:57 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37260 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727824AbfHMIf4 (ORCPT
+        id S1728207AbfHMIgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:36:01 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38299 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727979AbfHMIf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 04:35:56 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z23so694397wmf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 01:35:55 -0700 (PDT)
+        Tue, 13 Aug 2019 04:35:57 -0400
+Received: by mail-wm1-f66.google.com with SMTP id m125so693645wmm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 01:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gf8oMUZD9BuH1tA5WiPMc3a88iyFztlGdMksig5IF5U=;
-        b=oUiDtvrDAjvg9ztkMAJkZpYGsIowQdXup3NVYcaeYbQ8jEbkayG7R9N4CjqmQO4Kr5
-         X5zCuTrRM6491pBfc5NrTZYz/5KRoRSIlTcqmz0TY0WtZlywAomKwVO0fiZYd7UagbOh
-         B5csnV3iwxXsQCojKDVaxEBBLVpi+G9Sw5WKVAUs4iO11IPsLFC51wCAYhZOlZNXk8yH
-         A6vdzWk+nUtYIki63Y6P0jvBht+OzbVl0A0sIx7NxmUZc9oIyup//bWkAJJoIUTazaeo
-         NKrD/2NjfGFDbwU04mefMhPaxiceHZDD1SmdiPXXLJHAT5EaWQAHOE3de7m7oY8xuzue
-         6Aow==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=47pjUZtlYEQsWYFM2ZKdkX9DO8aXhwyKbVTpMW5dD0M=;
+        b=mtkkTc2za4MBew4vaNmst2IsNgchFGrls0sMOvN2UhPHs9lHa2U93xFQ5xAKx0CpfE
+         KQlsxsYeHq6f4pzn2C0P8AycDtTJr1i+m6XGHohquv8ndV8JTM3VNYq0pGDIajQ4ipsp
+         42RTztSe+QkgPim00XYgEC6UFfNpm4kgA5SN5/Gv4/os+EoUuhFvpQ6y2GZD2cvhh8yB
+         dAA3XpTMCufeDzI2CUEuBRrZoFpTGbWzg0gn7m/qLDh/Lezo4c0raD++1ElZhdyecGSP
+         v1G+d5N5+NKrl8INbMURU99BWGpg1TderUW+X/jciZtLZSi85m9oImE1ogDDEbMFmepC
+         i8Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gf8oMUZD9BuH1tA5WiPMc3a88iyFztlGdMksig5IF5U=;
-        b=k56aSKtYvTmth7ye7+1DsHO1Ok2Yu8269pTPaxByYfsRs1E0kKLMcY5T9LgHhm5Wiy
-         jQ60UuiAJ+/+/QrvTutVJulr28zLulPu0DN4yeWz9skfYx9FHtUkmGCipoWsHNEMVyr7
-         m2OPHPLYpxKvuPkmARJaD56+v3MGhVbuggw6xE4kjrWKHpchuwbAwfJcY5qUdOQDYcDA
-         TxlLeNFsAOO9RaTD3fwHAqBREhhLIX/+nBK4OJCJ+plW1zpcZa5Y2DzUy+4Nhx+qqpM6
-         2d9rEjNmCXlqlcmbgfTXGmLVDp9ArvPVv6036xjiw7xgKxRg5iChnJh+tnTw3F7M1sGT
-         S5Ew==
-X-Gm-Message-State: APjAAAV754OjJzvamLWAowNClKwqxszOd15Q/jphZixy2U/uISvWIWuE
-        4PbnoFBOlFTndhjngNq/Q5Xw+w==
-X-Google-Smtp-Source: APXvYqz+ArjE/b8LuqDHeWnFSPWhCxhwZjmprL6QzONacS3RLaBmL8Zvrs6NzQ4qdiW32u562cRerg==
-X-Received: by 2002:a1c:cc0d:: with SMTP id h13mr1714803wmb.119.1565685354389;
-        Tue, 13 Aug 2019 01:35:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=47pjUZtlYEQsWYFM2ZKdkX9DO8aXhwyKbVTpMW5dD0M=;
+        b=UaeYxKm7C3+CGR4N2HwIBSW4DzXGX/F/44acUtEepRskyEO7UrTcXjCX2owcpSBVy1
+         DiegMW6ICBj4eSmbGjumy/+G7LlReIq+wqgVwuECFDeR5QHzZb/bE1qg6qflzRab2czk
+         /J+zL8o0wycgEexqTHMGZXgddGxAu27esZYo4aG2eu03gB9dQ0KZqXHZ6PIb2HiDwNjT
+         UFIlcDJi5g0yNGK018iZYubHCci+kxS50lrDogu7YjY8TrUwaRa4Z1JjUnmsdr4d4BV6
+         cLbvWogqJkDdWK8RsO5+SicimONslaa4gjSRGhHTNOvjxhQFe8+L6yqBROt2ZXn77++2
+         hmzQ==
+X-Gm-Message-State: APjAAAVT1aOufVKtzyAGEzgX51EOuKl18O0Uszyr0wbhEipN0lRV3bMp
+        Xr6E0s2yUN+QtLNYCWj0+l8/FA==
+X-Google-Smtp-Source: APXvYqy7DQnahHv4WYLvvV3qcT2SkUUHTBk00iCKoTTLBlhFu6Xsp5qL9efPIajKTBxlJAkv8lkmFw==
+X-Received: by 2002:a05:600c:2292:: with SMTP id 18mr1755383wmf.156.1565685355813;
+        Tue, 13 Aug 2019 01:35:55 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id o11sm8651822wrw.19.2019.08.13.01.35.53
+        by smtp.gmail.com with ESMTPSA id o11sm8651822wrw.19.2019.08.13.01.35.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2019 01:35:53 -0700 (PDT)
+        Tue, 13 Aug 2019 01:35:55 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     vkoul@kernel.org, broonie@kernel.org
 Cc:     bgoswami@codeaurora.org, plai@codeaurora.org,
@@ -53,10 +53,12 @@ Cc:     bgoswami@codeaurora.org, plai@codeaurora.org,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         spapothi@codeaurora.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 0/5] soundwire: Add support to Qualcomm SoundWire master
-Date:   Tue, 13 Aug 2019 09:35:45 +0100
-Message-Id: <20190813083550.5877-1-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 1/5] soundwire: Add compute_params callback
+Date:   Tue, 13 Aug 2019 09:35:46 +0100
+Message-Id: <20190813083550.5877-2-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190813083550.5877-1-srinivas.kandagatla@linaro.org>
+References: <20190813083550.5877-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,56 +66,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for reviewing the RFC patchset.
-Here is new patchset addressing all the comments from RFC.
+From: Vinod Koul <vkoul@kernel.org>
 
-This patchset adds support for Qualcomm SoundWire Master Controller
-found in most of Qualcomm SoCs and WCD audio codecs.
+This callback allows masters to compute the bus parameters required.
 
-This driver along with WCD934x codec and WSA881x Class-D Smart Speaker Amplifier
-drivers is on DragonBoard DB845c based of SDM845 SoC.
-WCD934x and WSA881x patches will be posted soon.
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/soundwire/stream.c    | 10 ++++++++++
+ include/linux/soundwire/sdw.h |  2 ++
+ 2 files changed, 12 insertions(+)
 
-SoundWire controller on SDM845 is integrated in WCD934x audio codec via
-SlimBus interface.
-
-Currently this driver is very minimal and only supports PDM.
-
-Most of the code in this driver is rework of Qualcomm downstream drivers
-used in Andriod. Credits to Banajit Goswami and Patrick Lai's Team.
-
-TODO:
-	Test and add PCM support.
-
-Thanks,
-srini
-
-Changes since RFC:
-- updated bindings as suggested to take care of more bus parameters.
-- fixed error code of snd_soc_dai_get_sdw_stream() dummy function.
-- Cleaned up driver to handle read/writes in same way without special casing.
-- removed unused defines
-
-Srinivas Kandagatla (4):
-  soundwire: stream: make stream name a const pointer
-  ASoC: core: add support to snd_soc_dai_get_sdw_stream()
-  dt-bindings: soundwire: add bindings for Qcom controller
-  soundwire: qcom: add support for SoundWire controller
-
-Vinod Koul (1):
-  soundwire: Add compute_params callback
-
- .../bindings/soundwire/qcom,sdw.txt           | 167 ++++
- drivers/soundwire/Kconfig                     |   9 +
- drivers/soundwire/Makefile                    |   4 +
- drivers/soundwire/qcom.c                      | 919 ++++++++++++++++++
- drivers/soundwire/stream.c                    |  12 +-
- include/linux/soundwire/sdw.h                 |   6 +-
- include/sound/soc-dai.h                       |  10 +
- 7 files changed, 1124 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soundwire/qcom,sdw.txt
- create mode 100644 drivers/soundwire/qcom.c
-
+diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+index a0476755a459..60bc2fe42928 100644
+--- a/drivers/soundwire/stream.c
++++ b/drivers/soundwire/stream.c
+@@ -1483,6 +1483,16 @@ static int _sdw_prepare_stream(struct sdw_stream_runtime *stream)
+ 		bus->params.bandwidth += m_rt->stream->params.rate *
+ 			m_rt->ch_count * m_rt->stream->params.bps;
+ 
++		/* Compute params */
++		if (bus->compute_params) {
++			ret = bus->compute_params(bus);
++			if (ret < 0) {
++				dev_err(bus->dev, "Compute params failed: %d",
++					ret);
++				return ret;
++			}
++		}
++
+ 		/* Program params */
+ 		ret = sdw_program_params(bus);
+ 		if (ret < 0) {
+diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
+index bea46bd8b6ce..aac68e879fae 100644
+--- a/include/linux/soundwire/sdw.h
++++ b/include/linux/soundwire/sdw.h
+@@ -718,6 +718,7 @@ struct sdw_master_ops {
+  * Bit set implies used number, bit clear implies unused number.
+  * @bus_lock: bus lock
+  * @msg_lock: message lock
++ * @compute_params: points to Bus resource management implementation
+  * @ops: Master callback ops
+  * @port_ops: Master port callback ops
+  * @params: Current bus parameters
+@@ -739,6 +740,7 @@ struct sdw_bus {
+ 	DECLARE_BITMAP(assigned, SDW_MAX_DEVICES);
+ 	struct mutex bus_lock;
+ 	struct mutex msg_lock;
++	int (*compute_params)(struct sdw_bus *bus);
+ 	const struct sdw_master_ops *ops;
+ 	const struct sdw_master_port_ops *port_ops;
+ 	struct sdw_bus_params params;
 -- 
 2.21.0
 
