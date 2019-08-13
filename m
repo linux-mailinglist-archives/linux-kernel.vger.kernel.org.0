@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D718B6A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:27:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC3948B6AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:27:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfHML1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 07:27:48 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:2453 "EHLO
+        id S1727714AbfHML1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 07:27:55 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:24237 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727528AbfHML1n (ORCPT
+        with ESMTP id S1727621AbfHML1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 07:27:43 -0400
-X-UUID: 51018e3408d54fd5842d36009152c5e3-20190813
-X-UUID: 51018e3408d54fd5842d36009152c5e3-20190813
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        Tue, 13 Aug 2019 07:27:53 -0400
+X-UUID: 88a89932e486408993bf215e3f3c0db9-20190813
+X-UUID: 88a89932e486408993bf215e3f3c0db9-20190813
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 539781132; Tue, 13 Aug 2019 19:27:41 +0800
+        with ESMTP id 623384704; Tue, 13 Aug 2019 19:27:45 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 13 Aug 2019 19:27:30 +0800
+ 15.0.1395.4; Tue, 13 Aug 2019 19:27:31 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 13 Aug 2019 19:27:33 +0800
+ Transport; Tue, 13 Aug 2019 19:27:34 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -43,15 +43,15 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-mediatek@lists.infradead.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [PATCH next v9 06/11] device connection: Add fwnode_connection_find_match()
-Date:   Tue, 13 Aug 2019 19:27:09 +0800
-Message-ID: <1565695634-9711-7-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH next v9 07/11] usb: roles: Add fwnode_usb_role_switch_get() function
+Date:   Tue, 13 Aug 2019 19:27:10 +0800
+Message-ID: <1565695634-9711-8-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1565695634-9711-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1565695634-9711-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 6D8D592384081873BE174AEFE859F8BB2EDAFCB19E351BA8B58C9383231D37D62000:8
+X-TM-SNTS-SMTP: 0BBD1601647DB845A688B58D523127A64EE973D2E8AD0D1215CE514D218026862000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,122 +60,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-The fwnode_connection_find_match() function is exactly the
-same as device_connection_find_match(), except it takes
-struct fwnode_handle as parameter instead of struct device.
-That allows locating device connections before the device
-entries have been created.
+The fwnode_usb_role_switch_get() function is exactly the
+same as usb_role_switch_get(), except that it takes struct
+fwnode_handle as parameter instead of struct device.
 
 Suggested-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Tested-by: Biju Das <biju.das@bp.renesas.com>
 ---
 v9:
-    replace signed-off-by by suggested-by Heikki
+ replace signed-off-by by suggested-by Heikki
 
 v8: no changes
 
-v7:
-  rebased on Rafael's tree [1] (after rc4), provided by Heikki
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=linux-next
+v7: 
+ add signed-off-by Chunfeng and tested-by Biju
 
 v6:
   new patch
 ---
- drivers/base/devcon.c  | 43 ++++++++++++++++++++++++++++++------------
- include/linux/device.h | 10 +++++++---
- 2 files changed, 38 insertions(+), 15 deletions(-)
+ drivers/usb/roles/class.c | 20 ++++++++++++++++++++
+ include/linux/usb/role.h  |  7 +++++++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index 1d488dc5dd0c..14e2178e09f8 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -12,9 +12,6 @@
- static DEFINE_MUTEX(devcon_lock);
- static LIST_HEAD(devcon_list);
- 
--typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
--				   void *data);
--
- static void *
- fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
- 			  void *data, devcon_match_fn_t match)
-@@ -60,6 +57,34 @@ fwnode_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
- 	return NULL;
+diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+index 0526efbc4922..2abb6fe384ca 100644
+--- a/drivers/usb/roles/class.c
++++ b/drivers/usb/roles/class.c
+@@ -123,6 +123,26 @@ struct usb_role_switch *usb_role_switch_get(struct device *dev)
  }
+ EXPORT_SYMBOL_GPL(usb_role_switch_get);
  
 +/**
-+ * fwnode_connection_find_match - Find connection from a device node
-+ * @fwnode: Device node with the connection
-+ * @con_id: Identifier for the connection
-+ * @data: Data for the match function
-+ * @match: Function to check and convert the connection description
++ * fwnode_usb_role_switch_get - Find USB role switch linked with the caller
++ * @fwnode: The caller device node
 + *
-+ * Find a connection with unique identifier @con_id between @fwnode and another
-+ * device node. @match will be used to convert the connection description to
-+ * data the caller is expecting to be returned.
++ * This is similar to the usb_role_switch_get() function above, but it searches
++ * the switch using fwnode instead of device entry.
 + */
-+void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
-+				   const char *con_id, void *data,
-+				   devcon_match_fn_t match)
++struct usb_role_switch *fwnode_usb_role_switch_get(struct fwnode_handle *fwnode)
 +{
-+	void *ret;
++	struct usb_role_switch *sw;
 +
-+	if (!fwnode || !match)
-+		return NULL;
++	sw = fwnode_connection_find_match(fwnode, "usb-role-switch", NULL,
++					  usb_role_switch_match);
++	if (!IS_ERR_OR_NULL(sw))
++		WARN_ON(!try_module_get(sw->dev.parent->driver->owner));
 +
-+	ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
-+	if (ret)
-+		return ret;
-+
-+	return fwnode_devcon_match(fwnode, con_id, data, match);
++	return sw;
 +}
-+EXPORT_SYMBOL_GPL(fwnode_connection_find_match);
++EXPORT_SYMBOL_GPL(fwnode_usb_role_switch_get);
 +
  /**
-  * device_connection_find_match - Find physical connection to a device
-  * @dev: Device with the connection
-@@ -83,15 +108,9 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 	if (!match)
- 		return NULL;
+  * usb_role_switch_put - Release handle to a switch
+  * @sw: USB Role Switch
+diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+index da2b9641b877..2d77f97df72d 100644
+--- a/include/linux/usb/role.h
++++ b/include/linux/usb/role.h
+@@ -47,6 +47,7 @@ struct usb_role_switch_desc {
+ int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
+ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
+ struct usb_role_switch *usb_role_switch_get(struct device *dev);
++struct usb_role_switch *fwnode_usb_role_switch_get(struct fwnode_handle *node);
+ void usb_role_switch_put(struct usb_role_switch *sw);
  
--	if (fwnode) {
--		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
--		if (ret)
--			return ret;
--
--		ret = fwnode_devcon_match(fwnode, con_id, data, match);
--		if (ret)
--			return ret;
--	}
-+	ret = fwnode_connection_find_match(fwnode, con_id, data, match);
-+	if (ret)
-+		return ret;
+ struct usb_role_switch *
+@@ -70,6 +71,12 @@ static inline struct usb_role_switch *usb_role_switch_get(struct device *dev)
+ 	return ERR_PTR(-ENODEV);
+ }
  
- 	mutex_lock(&devcon_lock);
- 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 8ae3f4b47293..93626476c9ae 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1009,10 +1009,14 @@ struct device_connection {
- 	struct list_head	list;
- };
- 
-+typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
-+				   void *data);
++static inline struct usb_role_switch *
++fwnode_usb_role_switch_get(struct fwnode_handle *node)
++{
++	return ERR_PTR(-ENODEV);
++}
 +
-+void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
-+				   const char *con_id, void *data,
-+				   devcon_match_fn_t match);
- void *device_connection_find_match(struct device *dev, const char *con_id,
--				void *data,
--				void *(*match)(struct device_connection *con,
--					       int ep, void *data));
-+				   void *data, devcon_match_fn_t match);
+ static inline void usb_role_switch_put(struct usb_role_switch *sw) { }
  
- struct device *device_connection_find(struct device *dev, const char *con_id);
- 
+ static inline struct usb_role_switch *
 -- 
 2.22.0
 
