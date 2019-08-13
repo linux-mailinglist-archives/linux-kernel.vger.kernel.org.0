@@ -2,205 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 916AA8AC78
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 03:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F6A8AC80
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 03:55:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbfHMBmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 21:42:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:29636 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726236AbfHMBms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 21:42:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 18:42:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,379,1559545200"; 
-   d="scan'208";a="177657704"
-Received: from rfried-mobl1.iil.intel.com ([143.185.152.137])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2019 18:42:46 -0700
-From:   Ramon Fried <ramon.fried@linux.intel.com>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        stefan.wahren@i2se.com
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] gpiolib: Take MUX usage into account
-Date:   Tue, 13 Aug 2019 04:42:10 +0300
-Message-Id: <20190813014210.15519-1-ramon.fried@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726592AbfHMBzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 21:55:22 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40300 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfHMBzW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 21:55:22 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1rXGO036396;
+        Tue, 13 Aug 2019 01:54:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=SYAQIRoMCOUWC/dnAEtYfhr7+UppLGKt5YYkaWCo30Q=;
+ b=aDDxWTInuti323aiPo+BAVCOwDreT1zgEK9gwstr2Mc0B9MoW3KtA9l9bFE6Wlsv8in4
+ mS6kGiOGM2O9sxabXIqsVfmUhUPkStZpkqFetNiWG6uuk+6qDb/eI8M56SsqfiDeHLEw
+ 9+j4peLEFZMqDXbyxeREukao1SS7Dopa3GkDNBjdPzoZPg3j3vxSDp+KFc1Zp8IA3RRB
+ SF2jAMzy2LAWXxMr9TFK6mH9BGGp6RDVZUaVOUCmBwjWkAjamRq5g1ux41qOv57MphYF
+ Zw54dG/Y2OhhnGbhC+mL7gVlfGOpg0Q8yCot8GaqNuLUUza+Fs+aePL/BRGMIkVFeU4k Sg== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=SYAQIRoMCOUWC/dnAEtYfhr7+UppLGKt5YYkaWCo30Q=;
+ b=minwhby8GEz8P5Fp95/9QqKztJ1Ut3jEMr8eo7I+k/kt7gPdKBmajAz2O6nuh435oyzP
+ qOL56hk+rKRssHdVIIZvwp1687WK5Oy9Z5QJOMAKYSqr22ChBji6WiWbcdjkW/us1J3T
+ EHBGvWq+yvok10sRCqxdcBBKXdSxkMvTqb2FeDZYYPOXJViW1qGHILyEu1gTm0z2X5mW
+ E82bYfjZ6U8K3VQkaNK7V3dADoSQbovSOTWRTdaVl61duiolGuSeR9meI/PesZtTi16B
+ UnnVV383APpc4mVYPiR3aoiEERemss8U+82qPRMx4fyqv3Q7YJzHmuiP/UIWv+PVV1u2 rA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2u9nvp331s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Aug 2019 01:54:44 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1rWik166526;
+        Tue, 13 Aug 2019 01:54:44 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2u9m0asjsx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Aug 2019 01:54:44 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7D1seFW023232;
+        Tue, 13 Aug 2019 01:54:40 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 12 Aug 2019 18:54:39 -0700
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-arm-kernel@lists.infradead.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: fas216: Mark expected switch fall-throughs
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190806082902.GA11122@embeddedor>
+Date:   Mon, 12 Aug 2019 21:54:37 -0400
+In-Reply-To: <20190806082902.GA11122@embeddedor> (Gustavo A. R. Silva's
+        message of "Tue, 6 Aug 2019 03:29:02 -0500")
+Message-ID: <yq1d0h996ea.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=773
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908130018
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=840 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908130018
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
 
-The user space like gpioinfo only see the GPIO usage but not the
-MUX usage (e.g. I2C or SPI usage) of a pin. As a user we want to know which
-pin is free/safe to use. So take the MUX usage of strict pinmux controllers
-into account to get a more realistic view for ioctl GPIO_GET_LINEINFO_IOCTL.
+Gustavo,
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Tested-by: Ramon Fried <rfried.dev@gmail.com>
-Signed-off-by: Ramon Fried <rfried.dev@gmail.com>
----
-v2: Address review from linus:
-* ** Please notive logic was reversed **
-* renamed pinctrl_gpio_is_in_use() to pinctrl_gpio_can_use_line()
-* renamed pinmux_is_in_use() to pinmux_can_be_used_for_gpio()
-* changed dev_err to dev_dbg (Linus suggested removing it altogether, I
-  find it better to keep it for debug).
+> Mark switch cases where we are expecting to fall through.
 
- drivers/gpio/gpiolib.c           |  3 ++-
- drivers/pinctrl/core.c           | 28 ++++++++++++++++++++++++++++
- drivers/pinctrl/pinmux.c         | 27 +++++++++++++++++++++++++++
- drivers/pinctrl/pinmux.h         |  8 ++++++++
- include/linux/pinctrl/consumer.h |  6 ++++++
- 5 files changed, 71 insertions(+), 1 deletion(-)
+Applied to 5.4/scsi-queue. Thanks!
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f497003f119c..52937bf8e514 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1084,7 +1084,8 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		    test_bit(FLAG_IS_HOGGED, &desc->flags) ||
- 		    test_bit(FLAG_USED_AS_IRQ, &desc->flags) ||
- 		    test_bit(FLAG_EXPORT, &desc->flags) ||
--		    test_bit(FLAG_SYSFS, &desc->flags))
-+		    test_bit(FLAG_SYSFS, &desc->flags) ||
-+		    !pinctrl_gpio_can_use_line(chip->base + lineinfo.line_offset))
- 			lineinfo.flags |= GPIOLINE_FLAG_KERNEL;
- 		if (test_bit(FLAG_IS_OUT, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_IS_OUT;
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index b70df27874d1..2bbd8ee93507 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -736,6 +736,34 @@ int pinctrl_get_group_selector(struct pinctrl_dev *pctldev,
- 	return -EINVAL;
- }
- 
-+bool pinctrl_gpio_can_use_line(unsigned gpio)
-+{
-+	struct pinctrl_dev *pctldev;
-+	struct pinctrl_gpio_range *range;
-+	bool result;
-+	int pin;
-+
-+	/*
-+	 * Try to obtain GPIO range, if it fails
-+	 * we're probably dealing with GPIO driver
-+	 * without a backing pin controller - bail out.
-+	 */
-+	if (pinctrl_get_device_gpio_range(gpio, &pctldev, &range))
-+		return true;
-+
-+	mutex_lock(&pctldev->mutex);
-+
-+	/* Convert to the pin controllers number space */
-+	pin = gpio_to_pin(range, gpio);
-+
-+	result = pinmux_can_be_used_for_gpio(pctldev, pin);
-+
-+	mutex_unlock(&pctldev->mutex);
-+
-+	return result;
-+}
-+EXPORT_SYMBOL_GPL(pinctrl_gpio_can_use_line);
-+
- /**
-  * pinctrl_gpio_request() - request a single pin to be used as GPIO
-  * @gpio: the GPIO pin number from the GPIO subsystem number space
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index 020e54f843f9..7e42a5738d82 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -70,6 +70,33 @@ int pinmux_validate_map(const struct pinctrl_map *map, int i)
- 	return 0;
- }
- 
-+/**
-+ * pinmux_can_be_used_for_gpio() - check if a specific pin
-+ *	is either muxed to a different function or used as gpio.
-+ *
-+ * @pin: the pin number in the global pin space
-+ *
-+ * Controllers not defined as strict will always return true,
-+ * menaning that the gpio can be used.
-+ */
-+bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev, unsigned pin)
-+{
-+	struct pin_desc *desc = pin_desc_get(pctldev, pin);
-+	const struct pinmux_ops *ops = pctldev->desc->pmxops;
-+
-+	if (!desc) {
-+		dev_dbg(pctldev->dev,
-+			"pin %u is not registered so it cannot be requested\n",
-+			pin);
-+		return true;
-+	}
-+
-+	if (ops->strict && desc->mux_usecount)
-+		return false;
-+
-+	return !(ops->strict && !!desc->gpio_owner);
-+}
-+
- /**
-  * pin_request() - request a single pin to be muxed in, typically for GPIO
-  * @pin: the pin number in the global pin space
-diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
-index 794cb3a003ff..78c3a31be882 100644
---- a/drivers/pinctrl/pinmux.h
-+++ b/drivers/pinctrl/pinmux.h
-@@ -15,6 +15,8 @@ int pinmux_check_ops(struct pinctrl_dev *pctldev);
- 
- int pinmux_validate_map(const struct pinctrl_map *map, int i);
- 
-+bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev, unsigned pin);
-+
- int pinmux_request_gpio(struct pinctrl_dev *pctldev,
- 			struct pinctrl_gpio_range *range,
- 			unsigned pin, unsigned gpio);
-@@ -42,6 +44,12 @@ static inline int pinmux_validate_map(const struct pinctrl_map *map, int i)
- 	return 0;
- }
- 
-+static inline bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev,
-+					       unsigned pin)
-+{
-+	return true;
-+}
-+
- static inline int pinmux_request_gpio(struct pinctrl_dev *pctldev,
- 			struct pinctrl_gpio_range *range,
- 			unsigned pin, unsigned gpio)
-diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
-index 86720a5a384f..7f8c7d9583d3 100644
---- a/include/linux/pinctrl/consumer.h
-+++ b/include/linux/pinctrl/consumer.h
-@@ -24,6 +24,7 @@ struct device;
- #ifdef CONFIG_PINCTRL
- 
- /* External interface to pin control */
-+extern bool pinctrl_gpio_can_use_line(unsigned gpio);
- extern int pinctrl_gpio_request(unsigned gpio);
- extern void pinctrl_gpio_free(unsigned gpio);
- extern int pinctrl_gpio_direction_input(unsigned gpio);
-@@ -61,6 +62,11 @@ static inline int pinctrl_pm_select_idle_state(struct device *dev)
- 
- #else /* !CONFIG_PINCTRL */
- 
-+static inline bool pinctrl_gpio_can_use_line(unsigned gpio)
-+{
-+	return true;
-+}
-+
- static inline int pinctrl_gpio_request(unsigned gpio)
- {
- 	return 0;
 -- 
-2.20.1
-
+Martin K. Petersen	Oracle Linux Engineering
