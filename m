@@ -2,185 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEDD88B1DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A871D8B1EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:02:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727927AbfHMH7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 03:59:30 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:28424 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726986AbfHMH7a (ORCPT
+        id S1727614AbfHMICl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:02:41 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44239 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbfHMICk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:59:30 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7D7wkVX015820;
-        Tue, 13 Aug 2019 02:59:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=drWtMvMOAVnhK8sSftAQV6/8V0+8UJy3F8iMkB2QTgk=;
- b=BuR1tuqDlRal7QIiMhpyfz40pfaoc+tN9CYekkRSsIbfdERQZXrEgMF8AVMipZ0dreSh
- rZNJ8eC5IrQaA9WpGgPbY8Idwo33n39NdCYG7hEtNImzsH1oE8Hm0SLGbsXjTI28RfAe
- J/Me83MaLYbghlvtmQiIhcM5WT/T+hP9B2U5xox18bBNXPCo3I6Qwwf5RUKbxiAqQvVL
- y+UQXLthLDjzBHI599FLCUyUixcEQJWJa6/tVghreZpBgEQ4TjWT4wL1FRRoNUkLagTH
- vIfC3QGIK9kDgL2Hjxs/BlS7PR6FoQrP1z+JJ1z4BuWIVZdaaqF1JTTPmtu26RzmJCMC oQ== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([87.246.76.36])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2ubf9brmee-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 13 Aug 2019 02:59:25 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 13 Aug
- 2019 08:59:23 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Tue, 13 Aug 2019 08:59:23 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 1D51345;
-        Tue, 13 Aug 2019 08:59:23 +0100 (BST)
-Date:   Tue, 13 Aug 2019 08:59:23 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 2/2] mfd: madera: Add support for requesting the supply
- clocks
-Message-ID: <20190813075923.GN54126@ediswmail.ad.cirrus.com>
-References: <20190806151321.31137-1-ckeepax@opensource.cirrus.com>
- <20190806151321.31137-2-ckeepax@opensource.cirrus.com>
- <20190812103853.GM26727@dell>
- <20190812160937.GM54126@ediswmail.ad.cirrus.com>
- <20190813071814.GY26727@dell>
+        Tue, 13 Aug 2019 04:02:40 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c81so2131552pfc.11;
+        Tue, 13 Aug 2019 01:02:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=k/6wKTc53OC0UoKco+IHEoMX3rwe81VTNIAepCWXh/w=;
+        b=tj4sQol176Upm6T0xavK0OYlwKCkQiO0Eylg00C+Q2aEkT3zNyzepErrKnXAhBNOA9
+         XTbASJ6cNDSu/hJ0jSzAUKlHkxt7MOcylyDIYU33ZiS6PBYdsFvHmbGR31IvpyqPRNEu
+         ZanywJH3P+DPqb51mWZVLvTP4A+WzXCpJakQaN6s1CQ7Tz4g+I6QnvBxZqLCrl3Wpy+b
+         RE08m+1+h4nZon8iRKlqeDdmwePZHsbDnHe5GBe5N21roExt5GjBO/odnO+ErpFq9MJx
+         zbKlxKTizUwtMIDVD6bUqPReIR5GyMFPXBGa7mkk9p6nflVcIUSzl3deZQ1kJASAzUjc
+         Z3nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k/6wKTc53OC0UoKco+IHEoMX3rwe81VTNIAepCWXh/w=;
+        b=JC2Z0AtVX/p3m3jCFrtmYQRpsF9XlmVSD7WBdDz+qxE+3D1Q+bZxgrukjFtyWAaWAU
+         Tj+Bl/S5lDjqFUnz21chiI7ofj5pWyiIQi9mFfGj/nouXcrzVOAi2GJT4PRWL/YhciDa
+         wCNsRsFb/qoE2vykzuMtdfl8/aAIHvTDhS7Z1D/kMc5YWGDuPvLpcV5CPmay819C4wNJ
+         R/cwafxQscuScdyW08K+CKorc9mv2QKAtPc/jkUPWcUMA+xJeI5Aj7S7/B/eRg1O5Fdi
+         KowEIVf10rDDLXBf6ziX7B5Z/+bi5vXk+H9m5HpNKLbIz82YRIx/0wqNCDpmuGzjdv0J
+         ne9w==
+X-Gm-Message-State: APjAAAW7iMrsY20QAogjMtQBNBngUo4wRzxYJVitUD8+/1mpvIBJHdbm
+        EAAnPmd/bZXy47xXLxutMOKyrKum
+X-Google-Smtp-Source: APXvYqzg+LpLRDxEnrzIayn33qIS4rLLIS+1xej7SVfd8zkZpsH/hvU8xhpaYTXutpa7glcZBqPZdw==
+X-Received: by 2002:a65:690f:: with SMTP id s15mr32542467pgq.432.1565683359926;
+        Tue, 13 Aug 2019 01:02:39 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f14sm35410531pgu.8.2019.08.13.01.02.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Aug 2019 01:02:38 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 01:02:37 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Max Staudt <max@enpas.org>
+Cc:     linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jean Delvare <jdelvare@suse.com>, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org, glaubitz@physik.fu-berlin.de
+Subject: Re: [PATCH v2 3/4] hwmon/ltc2990: Add platform_data support
+Message-ID: <20190813080237.GA29986@roeck-us.net>
+References: <20190812235237.21797-1-max@enpas.org>
+ <20190812235237.21797-3-max@enpas.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813071814.GY26727@dell>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 spamscore=0 adultscore=0 suspectscore=0 mlxscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 mlxlogscore=999
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1908130088
+In-Reply-To: <20190812235237.21797-3-max@enpas.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 08:18:14AM +0100, Lee Jones wrote:
-> On Mon, 12 Aug 2019, Charles Keepax wrote:
-> > On Mon, Aug 12, 2019 at 11:38:53AM +0100, Lee Jones wrote:
-> > > On Tue, 06 Aug 2019, Charles Keepax wrote:
-> > > 
-> > > > Add the ability to get the clock for each clock input pin of the chip
-> > > > and enable MCLK2 since that is expected to be a permanently enabled
-> > > > 32kHz clock.
-> > > > 
-> > > > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> > > > ---
-> > > >  int madera_dev_init(struct madera *madera)
-> > > >  {
-> > > > +	static const char * const mclk_name[] = { "mclk1", "mclk2", "mclk3" };
-> > > >  	struct device *dev = madera->dev;
-> > > >  	unsigned int hwid;
-> > > >  	int (*patch_fn)(struct madera *) = NULL;
-> > > > @@ -450,6 +451,17 @@ int madera_dev_init(struct madera *madera)
-> > > >  		       sizeof(madera->pdata));
-> > > >  	}
-> > > >  
-> > > > +	BUILD_BUG_ON(ARRAY_SIZE(madera->mclk) != ARRAY_SIZE(mclk_name));
-> > > 
-> > > Not sure how this could happen.  Surely we don't need it.
-> > > 
-> > 
-> > mclk_name is defined locally in this function and the mclk array in
-> > include/linux/mfd/madera/core.h. This is to guard against one of
-> > them being updated but not the other. It is by no means essential
-> > but it feels like a good trade off given there is really limited
-> > downside.
+On Tue, Aug 13, 2019 at 01:52:36AM +0200, Max Staudt wrote:
+> This allows code using i2c_new_device() to specify a measurement mode.
 > 
-> It's fine in general I guess.  How likely would it be for anyone to
-> update either of the definitions?  Can there be more/less clocks on a
-> supported platform?
+> Signed-off-by: Max Staudt <max@enpas.org>
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  drivers/hwmon/ltc2990.c               |  9 +++++++++
+>  include/linux/platform_data/ltc2990.h | 11 +++++++++++
+>  2 files changed, 20 insertions(+)
+>  create mode 100644 include/linux/platform_data/ltc2990.h
 > 
+> diff --git a/drivers/hwmon/ltc2990.c b/drivers/hwmon/ltc2990.c
+> index f9431ad43..f19b9c50c 100644
+> --- a/drivers/hwmon/ltc2990.c
+> +++ b/drivers/hwmon/ltc2990.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/platform_data/ltc2990.h>
+>  
+>  #define LTC2990_STATUS	0x00
+>  #define LTC2990_CONTROL	0x01
+> @@ -206,6 +207,7 @@ static int ltc2990_i2c_probe(struct i2c_client *i2c,
+>  	int ret;
+>  	struct device *hwmon_dev;
+>  	struct ltc2990_data *data;
+> +	struct ltc2990_platform_data *pdata = dev_get_platdata(&i2c->dev);
+>  	struct device_node *of_node = i2c->dev.of_node;
+>  
+>  	if (!i2c_check_functionality(i2c->adapter, I2C_FUNC_SMBUS_BYTE_DATA |
+> @@ -227,6 +229,13 @@ static int ltc2990_i2c_probe(struct i2c_client *i2c,
+>  		if (data->mode[0] & ~LTC2990_MODE0_MASK ||
+>  		    data->mode[1] & ~LTC2990_MODE1_MASK)
+>  			return -EINVAL;
+> +	} else if (pdata) {
+> +		data->mode[0] = pdata->meas_mode[0];
+> +		data->mode[1] = pdata->meas_mode[1];
+> +
+> +		if (data->mode[0] & ~LTC2990_MODE0_MASK ||
+> +		    data->mode[1] & ~LTC2990_MODE1_MASK)
+> +			return -EINVAL;
 
-It's not super likely but if the hardware guys make a new spin
-out chip with an extra clock pin which is possible. But my
-problem here is there really is no down side to this check, we
-have two things that need to be in sync and if the compiler can
-warn me if they are not in sync that is clearly a win.
-
-> > > > +	for (i = 0; i < ARRAY_SIZE(madera->mclk); i++) {
-> > > > +		madera->mclk[i] = devm_clk_get_optional(madera->dev,
-> > > > +							mclk_name[i]);
-> > > > +		if (IS_ERR(madera->mclk[i])) {
-> > > > +			dev_warn(madera->dev, "Failed to get %s: %ld\n",
-> > > > +				 mclk_name[i], PTR_ERR(madera->mclk[i]));
-> > > 
-> > > Do we even want to warn on the non-acquisition of an optional clock?
-> > > 
-> > > Especially with a message that looks like something actually failed.
-> > > 
-> > 
-> > devm_clk_get_optional will return NULL if the clock was not
-> > specified, so this is silent in that case. A warning in the case
-> > something actually went wrong seems reasonable even if the clock
-> > is optional as the user tried to do something and it didn't
-> > behave as they intended.
-> 
-> If something actually went wrong, then doesn't then become and error
-> and should be reported (returned)?
-> 
-
-Yeah I guess its a judgement call but there is not really any
-reason we need to proceed in the case of an error. I will update
-to fail probe here.
-
-> > > > +			madera->mclk[i] = NULL;
-> > > > +		}
-> > > > +	}
-> > > > +
-> > > >  	ret = madera_get_reset_gpio(madera);
-> > > >  	if (ret)
-> > > >  		return ret;
-> > > > @@ -660,13 +672,19 @@ int madera_dev_init(struct madera *madera)
-> > > >  	}
-> > > >  
-> > > >  	/* Init 32k clock sourced from MCLK2 */
-> > > > +	ret = clk_prepare_enable(madera->mclk[MADERA_MCLK2]);
-> > > > +	if (ret != 0) {
-> > > > +		dev_err(madera->dev, "Failed to enable 32k clock: %d\n", ret);
-> > > > +		goto err_reset;
-> > > > +	}
-> > > 
-> > > What happened to this being optional?
-> > > 
-> > 
-> > The device needs the clock but specifying it through DT is
-> > optional (the clock framework functions are no-ops and return
-> > success if the clock pointer is NULL). Normally the 32kHz
-> > clock is always on, and more importantly no existing users of
-> > the driver will be specifying one.
-> > 
-> > We could remove the optional status for MCLK2, but it could break
-> > existing users who don't yet specify the clock until they update
-> > their DT and it will complicate the code as the other clocks are
-> > definitely optional, so MCLK2 will need special handling.
-> 
-> I'd prefer the code to reflect the actual situation.  If the clock is
-> not optional it doesn't sound correct to specify it as such.  Maybe as
-> an intermediary step we attempt to obtain it, but ignore missing
-> clocks (with a message and comment) if it is not yet specified.  We
-> can look to change the behaviour once users have had the chance to
-> update their DTs.
-> 
-
-Ok I will add a print for a missing MCLK2.
+I would prefer if the driver was modified to accept device
+properties, and if those were set using the appropriate
+fwnode function. Any reason for not doing that ?
 
 Thanks,
-Charles
+Guenter
