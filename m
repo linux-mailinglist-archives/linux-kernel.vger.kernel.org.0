@@ -2,84 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D63A8BF61
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 19:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EC2B8BF6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 19:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbfHMRJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 13:09:22 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36456 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbfHMRJW (ORCPT
+        id S1726942AbfHMRKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 13:10:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:9340 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726484AbfHMRKt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 13:09:22 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j17so23256994lfp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 10:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GVzAnVzEMjxkSBqu8V9mlBdGqDjrrYQzVhEjxzd+3hI=;
-        b=I4qWR+mzqRT7c1SEkHGhKmL6s1EYBMsgtyPriDKNziH+B4FMxlEGuvrJH5HcS4lcUd
-         oEuShorJ4j1kTmfzSPRIGn/stYQAr97GOiXpjAyAAXj4cxkN8Dy0uFFDrdXb/ecYQt9m
-         1yniZalDerzD5yTNTTGHitP5LFfOrIUdgwpGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GVzAnVzEMjxkSBqu8V9mlBdGqDjrrYQzVhEjxzd+3hI=;
-        b=OquOjVbJxpkvBABTgd8oYqkOhyBji9H0XgCndqtJwpG8tyegl2ytXKu/8lRVhlePCx
-         vhq5COq6Z+lF7KA6lSZCJBDQgKI1yTyoWrk3xQB8bcG2hvTby68WyCbHnZl8EwmAR7Nx
-         N0N80jXPyGLfGcC+wPNpdXP540l6vaVcmQdre3ai7vyAoJWd7187hlcs0tOtH2lnXeWW
-         FrbtGor2ECZyHSNm8nq03H1OOjKzjDhUTpSXFNr0nzypjab7SH5Ov74KL8nkWXueIbeX
-         ihd9KJBsTVApk3hzGWnOxezridK3bC8v4XcHR2Ia01P3LAEemxP35eT6MSx0BKOXqb/B
-         aKlA==
-X-Gm-Message-State: APjAAAU5BVtvJl1bt6i9Hl2UdK6HbHOkSwRu4v12WjobHFaMXmLASHtJ
-        FDXyDfIsbNMeggq4GONIznpbZanfw5s=
-X-Google-Smtp-Source: APXvYqzKd2jvOAIAq9QQLTcwQP4nSrgD+IXI5AK0cETe3HbZ3YK8qzpsZJgBJaQW1SqQN9dxr3KoIA==
-X-Received: by 2002:ac2:546c:: with SMTP id e12mr14842973lfn.133.1565716159959;
-        Tue, 13 Aug 2019 10:09:19 -0700 (PDT)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id t5sm21364322ljj.10.2019.08.13.10.09.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Aug 2019 10:09:17 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id c9so77222363lfh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 10:09:17 -0700 (PDT)
-X-Received: by 2002:a19:641a:: with SMTP id y26mr22803433lfb.29.1565716156648;
- Tue, 13 Aug 2019 10:09:16 -0700 (PDT)
+        Tue, 13 Aug 2019 13:10:49 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7DH71bF130347
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 13:10:48 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uc0ptssaa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 13:10:47 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
+        Tue, 13 Aug 2019 18:10:46 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 13 Aug 2019 18:10:41 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7DHAeM240304730
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Aug 2019 17:10:40 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7C435A404D;
+        Tue, 13 Aug 2019 17:10:40 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9251FA405B;
+        Tue, 13 Aug 2019 17:10:38 +0000 (GMT)
+Received: from naverao1-tp.ibmuc.com (unknown [9.85.107.69])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 13 Aug 2019 17:10:38 +0000 (GMT)
+From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jiong Wang <jiong.wang@netronome.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, <bpf@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] bpf: handle 32-bit zext during constant blinding
+Date:   Tue, 13 Aug 2019 22:40:18 +0530
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190813145341.28530-1-georgi.djakov@linaro.org> <20190813145341.28530-4-georgi.djakov@linaro.org>
-In-Reply-To: <20190813145341.28530-4-georgi.djakov@linaro.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 13 Aug 2019 10:08:40 -0700
-X-Gmail-Original-Message-ID: <CAE=gft6ZpM6x21X+SxCbNDdNS5B51yYAFA0XBbViqLmr99n5SQ@mail.gmail.com>
-Message-ID: <CAE=gft6ZpM6x21X+SxCbNDdNS5B51yYAFA0XBbViqLmr99n5SQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] interconnect: qcom: Add tagging and wake/sleep
- support for sdm845
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     linux-pm@vger.kernel.org, David Dai <daidavid1@codeaurora.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        amit.kucheria@linaro.org, Doug Anderson <dianders@chromium.org>,
-        Sean Sweeney <seansw@qti.qualcomm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19081317-4275-0000-0000-000003589A30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081317-4276-0000-0000-0000386AAAB6
+Message-Id: <20190813171018.28221-1-naveen.n.rao@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-13_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=826 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908130164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 7:53 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->
-> From: David Dai <daidavid1@codeaurora.org>
->
-> Add support for wake and sleep commands by using a tag to indicate
-> whether or not the aggregate and set requests fall into execution
-> state specific bucket.
->
-> Signed-off-by: David Dai <daidavid1@codeaurora.org>
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Since BPF constant blinding is performed after the verifier pass, there
+are certain ALU32 instructions inserted which don't have a corresponding
+zext instruction inserted after. This is causing a kernel oops on
+powerpc and can be reproduced by running 'test_cgroup_storage' with
+bpf_jit_harden=2.
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+Fix this by emitting BPF_ZEXT during constant blinding if
+prog->aux->verifier_zext is set.
+
+Fixes: a4b1d3c1ddf6cb ("bpf: verifier: insert zero extension according to analysis result")
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+---
+This approach (the location where zext is being introduced below, in 
+particular) works for powerpc, but I am not entirely sure if this is 
+sufficient for other architectures as well. This is broken on v5.3-rc4.
+
+- Naveen
+
+
+ kernel/bpf/core.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index 8191a7db2777..d84146e6fd9e 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -890,7 +890,8 @@ int bpf_jit_get_func_addr(const struct bpf_prog *prog,
+ 
+ static int bpf_jit_blind_insn(const struct bpf_insn *from,
+ 			      const struct bpf_insn *aux,
+-			      struct bpf_insn *to_buff)
++			      struct bpf_insn *to_buff,
++			      bool emit_zext)
+ {
+ 	struct bpf_insn *to = to_buff;
+ 	u32 imm_rnd = get_random_int();
+@@ -939,6 +940,8 @@ static int bpf_jit_blind_insn(const struct bpf_insn *from,
+ 		*to++ = BPF_ALU32_IMM(BPF_MOV, BPF_REG_AX, imm_rnd ^ from->imm);
+ 		*to++ = BPF_ALU32_IMM(BPF_XOR, BPF_REG_AX, imm_rnd);
+ 		*to++ = BPF_ALU32_REG(from->code, from->dst_reg, BPF_REG_AX);
++		if (emit_zext)
++			*to++ = BPF_ZEXT_REG(from->dst_reg);
+ 		break;
+ 
+ 	case BPF_ALU64 | BPF_ADD | BPF_K:
+@@ -992,6 +995,10 @@ static int bpf_jit_blind_insn(const struct bpf_insn *from,
+ 			off -= 2;
+ 		*to++ = BPF_ALU32_IMM(BPF_MOV, BPF_REG_AX, imm_rnd ^ from->imm);
+ 		*to++ = BPF_ALU32_IMM(BPF_XOR, BPF_REG_AX, imm_rnd);
++		if (emit_zext) {
++			*to++ = BPF_ZEXT_REG(BPF_REG_AX);
++			off--;
++		}
+ 		*to++ = BPF_JMP32_REG(from->code, from->dst_reg, BPF_REG_AX,
+ 				      off);
+ 		break;
+@@ -1005,6 +1012,8 @@ static int bpf_jit_blind_insn(const struct bpf_insn *from,
+ 	case 0: /* Part 2 of BPF_LD | BPF_IMM | BPF_DW. */
+ 		*to++ = BPF_ALU32_IMM(BPF_MOV, BPF_REG_AX, imm_rnd ^ aux[0].imm);
+ 		*to++ = BPF_ALU32_IMM(BPF_XOR, BPF_REG_AX, imm_rnd);
++		if (emit_zext)
++			*to++ = BPF_ZEXT_REG(BPF_REG_AX);
+ 		*to++ = BPF_ALU64_REG(BPF_OR,  aux[0].dst_reg, BPF_REG_AX);
+ 		break;
+ 
+@@ -1088,7 +1097,8 @@ struct bpf_prog *bpf_jit_blind_constants(struct bpf_prog *prog)
+ 		    insn[1].code == 0)
+ 			memcpy(aux, insn, sizeof(aux));
+ 
+-		rewritten = bpf_jit_blind_insn(insn, aux, insn_buff);
++		rewritten = bpf_jit_blind_insn(insn, aux, insn_buff,
++						clone->aux->verifier_zext);
+ 		if (!rewritten)
+ 			continue;
+ 
+-- 
+2.22.0
+
