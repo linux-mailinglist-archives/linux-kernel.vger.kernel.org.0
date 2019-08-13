@@ -2,74 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84A1F8B8D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:43:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 734758B8E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:43:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfHMMnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:43:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50908 "EHLO mail.kernel.org"
+        id S1728663AbfHMMno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 08:43:44 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:51586 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728327AbfHMMnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:43:02 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0B2120578;
-        Tue, 13 Aug 2019 12:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565700181;
-        bh=VXKk41Wt478iNXMKBAO+rPvFh8uyaEaq4alpvMMP20o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IyOUegnCHWbh8RCFC75gcic4L8wPxpBirABdegJnRLEJX4C7tQucNYndyztZSP724
-         UYModhg9f7I2RkRlKcvd6mchu86mbMqfnhNWx9TxSBwCt8vQbxL9deEgwDLR+2RsNq
-         0wVXO+RVmE+jrghw9+cu0r+0pIKiccAiCRhkzOCc=
-Date:   Tue, 13 Aug 2019 14:42:59 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Matthias Maennich <maennich@google.com>
-Cc:     linux-kernel@vger.kernel.org, maco@android.com,
-        kernel-team@android.com, arnd@arndb.de, geert@linux-m68k.org,
-        hpa@zytor.com, jeyu@kernel.org, joel@joelfernandes.org,
-        kstewart@linuxfoundation.org, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-usb@vger.kernel.org, lucas.de.marchi@gmail.com,
-        maco@google.com, michal.lkml@markovi.net, mingo@redhat.com,
-        oneukum@suse.com, pombredanne@nexb.com, sam@ravnborg.org,
-        sboyd@codeaurora.org, sspatil@google.com,
-        stern@rowland.harvard.edu, tglx@linutronix.de,
-        usb-storage@lists.one-eyed-alien.net, x86@kernel.org,
-        yamada.masahiro@socionext.com
-Subject: Re: [PATCH v2 09/10] usb-storage: remove single-use define for
- debugging
-Message-ID: <20190813124259.GC14284@kroah.com>
-References: <20180716122125.175792-1-maco@android.com>
- <20190813121733.52480-1-maennich@google.com>
- <20190813121733.52480-10-maennich@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190813121733.52480-10-maennich@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1728412AbfHMMnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 08:43:15 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E466720079D;
+        Tue, 13 Aug 2019 14:43:12 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D7B9420078C;
+        Tue, 13 Aug 2019 14:43:12 +0200 (CEST)
+Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 963682060E;
+        Tue, 13 Aug 2019 14:43:12 +0200 (CEST)
+From:   Ioana Ciornei <ioana.ciornei@nxp.com>
+To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Cc:     joe@perches.com, andrew@lunn.ch, ruxandra.radulescu@nxp.com,
+        Ioana Ciornei <ioana.ciornei@nxp.com>
+Subject: [PATCH v3 03/10] staging: fsl-dpaa2/ethsw: add line terminator to all formats
+Date:   Tue, 13 Aug 2019 15:43:00 +0300
+Message-Id: <1565700187-16048-4-git-send-email-ioana.ciornei@nxp.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
+References: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
+Reply-to: ioana.ciornei@nxp.com
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 01:17:06PM +0100, Matthias Maennich wrote:
-> USB_STORAGE was defined as "usb-storage: " and used in a single location
-> as argument to printk. In order to be able to use the name
-> 'USB_STORAGE', drop the definition and use the string directly for the
-> printk call.
-> 
-> Signed-off-by: Matthias Maennich <maennich@google.com>
-> ---
->  drivers/usb/storage/debug.h    | 2 --
->  drivers/usb/storage/scsiglue.c | 2 +-
->  2 files changed, 1 insertion(+), 3 deletions(-)
+Add the '\n' line terminator to the string formats missing it.
 
-I'll go take this today.  The module really should just be using
-dev_err() there.  It needs to be cleaned up :(
+Reported-by: Joe Perches <joe@perches.com>
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+---
+Changes in v2:
+ - added Reported-by tag
+Changes in v3:
+ - none
 
-thanks,
+ drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c |  2 +-
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c         | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-greg k-h
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
+index 926a0c053e18..95e9f1096999 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
+@@ -65,7 +65,7 @@ static void ethsw_get_drvinfo(struct net_device *netdev,
+ 				     port_priv->idx,
+ 				     &state);
+ 	if (err) {
+-		netdev_err(netdev, "ERROR %d getting link state", err);
++		netdev_err(netdev, "ERROR %d getting link state\n", err);
+ 		goto out;
+ 	}
+ 
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index 302842c3bdfe..9ade73928e60 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -722,12 +722,12 @@ static irqreturn_t ethsw_irq0_handler_thread(int irq_num, void *arg)
+ 	err = dpsw_get_irq_status(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 				  DPSW_IRQ_INDEX_IF, &status);
+ 	if (err) {
+-		dev_err(dev, "Can't get irq status (err %d)", err);
++		dev_err(dev, "Can't get irq status (err %d)\n", err);
+ 
+ 		err = dpsw_clear_irq_status(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 					    DPSW_IRQ_INDEX_IF, 0xFFFFFFFF);
+ 		if (err)
+-			dev_err(dev, "Can't clear irq status (err %d)", err);
++			dev_err(dev, "Can't clear irq status (err %d)\n", err);
+ 		goto out;
+ 	}
+ 
+@@ -772,21 +772,21 @@ static int ethsw_setup_irqs(struct fsl_mc_device *sw_dev)
+ 					IRQF_NO_SUSPEND | IRQF_ONESHOT,
+ 					dev_name(dev), dev);
+ 	if (err) {
+-		dev_err(dev, "devm_request_threaded_irq(): %d", err);
++		dev_err(dev, "devm_request_threaded_irq(): %d\n", err);
+ 		goto free_irq;
+ 	}
+ 
+ 	err = dpsw_set_irq_mask(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 				DPSW_IRQ_INDEX_IF, mask);
+ 	if (err) {
+-		dev_err(dev, "dpsw_set_irq_mask(): %d", err);
++		dev_err(dev, "dpsw_set_irq_mask(): %d\n", err);
+ 		goto free_devm_irq;
+ 	}
+ 
+ 	err = dpsw_set_irq_enable(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 				  DPSW_IRQ_INDEX_IF, 1);
+ 	if (err) {
+-		dev_err(dev, "dpsw_set_irq_enable(): %d", err);
++		dev_err(dev, "dpsw_set_irq_enable(): %d\n", err);
+ 		goto free_devm_irq;
+ 	}
+ 
+-- 
+1.9.1
+
