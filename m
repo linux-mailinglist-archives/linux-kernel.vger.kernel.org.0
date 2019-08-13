@@ -2,92 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB0668B201
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06F468B207
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbfHMIJB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 13 Aug 2019 04:09:01 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42606 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbfHMIJB (ORCPT
+        id S1727900AbfHMIJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:09:36 -0400
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:15328 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfHMIJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 04:09:01 -0400
-Received: by mail-qt1-f196.google.com with SMTP id t12so16918005qtp.9;
-        Tue, 13 Aug 2019 01:09:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3QYn8xVPbDnU8yCH5QG2DkGvPPJ9yAG+CBaSbT63l5s=;
-        b=iJneErmhHSA8ngZdte/oUIlKi1cEx3iAt6/kzCBDMCiaSipNogDSey8W6B4iGCRlyA
-         KFy+B4v1nZx5a9vJGASB5T2/ZWSlz8kzQPhvv6Q5ZtlHCHD731eh5zaOw1zb5l4Lri3p
-         YXHvyuR5DwwZ9f8dbL5ivYK7FrAngXHApqsQ37UzcJZNf4OSLMjoeFAorRC0khw8hO2i
-         dIeUK45MdzPXqEVWex2gWldGPy+DNrrNaR91PSo6WTvtA6MccaM5JhxXhaFLjmh/qQXu
-         h7SS2WQvcnCM/veU0ZZCvyntl5jOuH6UoJcx6728wYojyGenroTW/NqeM8Qb9i51rgWg
-         wMSQ==
-X-Gm-Message-State: APjAAAXPmfBwZRWcrCtTeC2+aBEcPuZdfpgpGYDfJtiQHlxa4XuBhEDa
-        PuQLdPwMZ1/tF06z8UnYRqGhsHOgw0QLTYuIpzY=
-X-Google-Smtp-Source: APXvYqzQY3jw5cidojWGquR6Ywd0UV4rVnIr4Q175ebPJlWm5I+ETbY/lAleI6WDMLSOu84QmW6hk+yfSbxvjbk+0xI=
-X-Received: by 2002:ac8:117:: with SMTP id e23mr17771674qtg.18.1565683740433;
- Tue, 13 Aug 2019 01:09:00 -0700 (PDT)
+        Tue, 13 Aug 2019 04:09:36 -0400
+IronPort-SDR: zPXjHNeTtWka6OWrCsMSK3dZl0YuvYNBSsn3UZPrHcsI2AtZp19FZMUl9wxleapPHsAs34R8KO
+ oPXNxcNOeCIw3jrmCxbTLNNTupuKiLNlMl9+8T8D9Uhz2tX0e2v1h0ZgwHTAweKzsf4bDUmuI+
+ GzQ6EE2g82C4AHYuGkVMQS6J1DSZRu7Oc+IXgIrCc1MJUTQpszO3yx1ZU81O5T2ey8/2D/Mlh4
+ ciP2ojNKryTYpKohy4RmFKVG7tn6zDbuYPNmREjFZm9eDVAEId+JR0/ByFveNHT+j6QMEraXgE
+ a+Q=
+X-IronPort-AV: E=Sophos;i="5.64,380,1559548800"; 
+   d="scan'208";a="42205101"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa1.mentor.iphmx.com with ESMTP; 13 Aug 2019 00:09:35 -0800
+IronPort-SDR: s8i8PDGueMbmlQfnUAaS19Tsqell/mfvnFkq/xLV+c6Mvg1QS+O8rOEEed7+gWO09HiWSbEf9T
+ H41h+H+DMvQltBWGAyy5HHC68McfvWqIWrDIKnBJHSESLPnAWIYfQIDhoDGG2wzF4wDLxMR0Nh
+ NuouB1TujG0qBL738FEgR6nYDBUikYeOPQEJjxt68yT5R4qvZHVt8YEExDc7XZk7vZ8flbes3X
+ UzijmW94hIOpzXnSpfL1C1ShCluC6JB3qD0EWxpJETOndWNv/gMrlY3RBXZpCntd+OHa9Nd3+d
+ hLI=
+From:   "Schmid, Carsten" <Carsten_Schmid@mentor.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Wei Yang <richard.weiyang@gmail.com>
+CC:     "bp@suse.de" <bp@suse.de>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "richardw.yang@linux.intel.com" <richardw.yang@linux.intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: AW: Resend [PATCH] kernel/resource.c: invalidate parent when freed
+ resource has childs
+Thread-Topic: Resend [PATCH] kernel/resource.c: invalidate parent when freed
+ resource has childs
+Thread-Index: AQHVTrktoAw70LsxJE6oaOICoAXoo6bzWCGAgAACFoCABWNbkA==
+Date:   Tue, 13 Aug 2019 08:09:29 +0000
+Message-ID: <421b9738bee141648d87a5b1c1b4d4aa@SVR-IES-MBX-03.mgc.mentorg.com>
+References: <1565278859475.1962@mentor.com> <1565358624103.3694@mentor.com>
+ <20190809223831.fk4uyrzscr366syr@master>
+ <CAHk-=wi_9sdMxurjZ1MbNnxt-pA=dqoyf8Fdn9aYc8xvjjnTBg@mail.gmail.com>
+In-Reply-To: <CAHk-=wi_9sdMxurjZ1MbNnxt-pA=dqoyf8Fdn9aYc8xvjjnTBg@mail.gmail.com>
+Accept-Language: de-DE, en-IE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [137.202.0.90]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <cover.1565367567.git.agx@sigxcpu.org> <e0562d8bb4098dc4cdb4023b41fb75b312be22a5.1565367567.git.agx@sigxcpu.org>
-In-Reply-To: <e0562d8bb4098dc4cdb4023b41fb75b312be22a5.1565367567.git.agx@sigxcpu.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 13 Aug 2019 10:08:44 +0200
-Message-ID: <CAK8P3a3Vrd+sttJrQwD-jA9p_egG4x-hc41eGK8H-_aVm-uoYw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] arm64: imx8mq: add imx8mq iomux-gpr field defines
-To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 6:24 PM Guido Günther <agx@sigxcpu.org> wrote:
->
-> This adds all the gpr registers and the define needed for selecting
-> the input source in the imx-nwl drm bridge.
->
-> Signed-off-by: Guido Günther <agx@sigxcpu.org>
-> +
-> +#define IOMUXC_GPR0    0x00
-> +#define IOMUXC_GPR1    0x04
-> +#define IOMUXC_GPR2    0x08
-> +#define IOMUXC_GPR3    0x0c
-> +#define IOMUXC_GPR4    0x10
-> +#define IOMUXC_GPR5    0x14
-> +#define IOMUXC_GPR6    0x18
-> +#define IOMUXC_GPR7    0x1c
-(more of the same)
-
-huh?
-
-> +/* i.MX8Mq iomux gpr register field defines */
-> +#define IMX8MQ_GPR13_MIPI_MUX_SEL              BIT(2)
-
-I think this define should probably be local to the pinctrl driver, to
-ensure that no other drivers fiddle with the registers manually.
-
-     Arnd
+PiA+DQo+ID4gSW4gdGhlb3J5LCBjaGlsZCBtYXkgaGF2ZSBzaWJsaW5ncy4gV291bGQgaXQgYmUg
+cG9zc2libGUgdG8gaGF2ZSBzZXZlcmFsDQo+ID4gZGV2aWNlcyB1bmRlciB4aGNpLWhjZD8NCj4g
+DQo+IEknbSBsZXNzIGludGVyZXN0ZWQgaW4gdGhlIHhoY2ktaGNkIGNhc2UgLSB3aGljaCBJIGNl
+cnRhaW5seSAqaG9wZSogaXMNCj4gZml4ZWQgYWxyZWFkeT8gLSB0aGFuIGluICJpZiB0aGlzIGhh
+cHBlbnMgc29tZXdoZXJlIGVsc2UiLg0KPiANCj4gU28gaWYgd2UgZG8gd2FudCB0byByZW1vdmUg
+dGhlIHBhcmVudCAod2hpY2ggbWF5IGJlIGEgZ29vZCBpZGVhIHdpdGggYQ0KPiB3YXJuaW5nKSwg
+YW5kIHdhbnQgdG8gbWFrZSBzdXJlIHRoYXQgdGhlIGNoaWxkcmVuIGFyZSByZWFsbHkgcmVtb3Zl
+ZA0KPiBmcm9tIHRoZSByZXNvdXJjZSBoaWVyYXJjaHksIHdlIHNob3VsZCBkbyBzb21ldGhpaW5n
+IGxpa2UNCj4gDQo+ICAgc3RhdGljIGJvb2wgZGV0YWNoX2NoaWxkcmVuKHN0cnVjdCByZXNvdXJj
+ZSAqcmVzKQ0KPiAgIHsNCj4gICAgICAgICByZXMgPSByZXMtPmNoaWxkOw0KPiAgICAgICAgIGlm
+ICghcmVzKQ0KPiAgICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOw0KPiAgICAgICAgIGRvIHsN
+Cj4gICAgICAgICAgICAgICAgIHJlcy0+cGFyZW50ID0gTlVMTDsNCj4gICAgICAgICAgICAgICAg
+IHJlcyA9IHJlcy0+c2libGluZzsNCj4gICAgICAgICB9IHdoaWxlIChyZXMpOw0KPiAgICAgICAg
+IHJldHVybiB0cnVlOw0KPiAgIH0NCj4gDQo+IGFuZCB0aGVuIHdlIGNvdWxkIHdyaXRlIHRoZSBf
+X3JlbGVhc2VfcmVnaW9uKCkgd2FybmluZyBhcw0KPiANCj4gICAgICAgICAvKiBZb3Ugc2hvdWxk
+IG5vdCByZWxlYXNlIGEgcmVzb3VyY2UgdGhhdCBoYXMgY2hpbGRyZW4gKi8NCj4gICAgICAgICBX
+QVJOX09OX09OQ0UoZGV0YWNoX2NoaWxkcmVuKHJlcykpOw0KPiANCj4gb3Igc29tZXRoaW5nPw0K
+PiANCi4uLiBhbmQgYSBjaGlsZCBtYXkgaGF2ZSBjaGlsZHJlbiB0b28gLi4uDQoNClRoZXJlIGlz
+IGEgX19yZWxlYXNlX2NoaWxkX3Jlc291cmNlcyBpbiByZXNvdXJjZS5jIGFyb3VuZCBsaW5lIDI0
+Mi4NCkEgYml0IG5vaXN5LCBhbmQgZG9lcyBhIHNpbWlsYXIgdGhpbmcgeW91IG91dGxpbmVkIGFi
+b3ZlLg0KSSdtIHRoaW5raW5nIGFib3V0IHRvIHJlLXVzZSB0aGF0LCBidXQgd2l0aCBtb3JlIHBy
+ZWNpc2Ugb3V0cHV0DQphbmQgV0FSTl9PTl9PTkNFLg0KDQpTdWdnZXN0aW9ucyBiZWZvcmUgaSBz
+dGFydCB3b3JrIG9uIHRoYXQ/DQoNCkJlc3QgcmVnYXJkcw0KQ2Fyc3Rlbg0K
