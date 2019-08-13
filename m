@@ -2,285 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B76A78B152
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:41:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F2F18B15A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbfHMHlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 03:41:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58234 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbfHMHlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:41:24 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D49C8308A968;
-        Tue, 13 Aug 2019 07:41:23 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2DBD91710C;
-        Tue, 13 Aug 2019 07:41:16 +0000 (UTC)
-Date:   Tue, 13 Aug 2019 15:41:14 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Jon Derrick <jonathan.derrick@intel.com>
-Subject: Re: [PATCH V2 2/3] genirq/affinity: Spread vectors on node according
- to nr_cpu ratio
-Message-ID: <20190813074112.GA8610@ming.t460p>
-References: <20190812095709.25623-1-ming.lei@redhat.com>
- <20190812095709.25623-3-ming.lei@redhat.com>
- <20190812152718.GA32550@localhost.localdomain>
+        id S1727816AbfHMHnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 03:43:45 -0400
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:58158 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726489AbfHMHnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 03:43:45 -0400
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7D7bGLs029977;
+        Tue, 13 Aug 2019 00:43:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=3gPzBNxlmaU1Gg3uNHgZi3NTdISovTOMND2EkpF5yiQ=;
+ b=Ttvq6B75pel0fSfYP9sf5wwOAhrdldqWLm2OjHybp4qzSNT/vD6ij80whbtNXvlopaKv
+ YLlzJ3j2j4iCGWfyhrMzDB4qE9XqbYLTCh6WSReYlJVAxE7M0jq23/sK/x9JWPOo0cyw
+ q7lDgQJ0pdXxXCN19RNABMMKsg4Zn5sx7m7LRrGgfYAHwNxvZLw1lagh/bTtwpgbgWsV
+ t2qA7CZrO0CsuTAyNe1bPL5GD4FBA8s7EAlDWyNuoG1AAwIiNlF7joZxqSliBu4dGo45
+ 4W1C8Brl9NHzZUOda/EOdFYKZI7l0K5VF19FudkUBMN1KQ2c1BwrshHOsTW984KUqWR/ Yw== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=aniljoy@cadence.com
+Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2056.outbound.protection.outlook.com [104.47.42.56])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2u9tfs94xa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 13 Aug 2019 00:43:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KyaXYO0zghu2gq78s7HBX2GiSny9oE50ClW/vvErVebq+qbyaXN7EYJ7OI54uEM7QPdMCQJkpjtw3eEzZC5wOLDCjR2K95zs6zxPOdq+PXmGBrus+NszbZzgITrGyq1IO1UjnduiNqpHIClAAT6Tm5SEwcpi9kuz8git1CbHQQmLAYpLRe8rf7sBeyc1kDJ1Exk7QRCHywHvi4bhY6Ab0ZmpEVHl5VrbiGWzjVeFSbm8dTjfKWAhbGBE/6NfkEDQfuS82NeGwKeQ2PsqFmLb7cAtsz4gB+g3bd4YUsfcbxRMuuQ4P49jPRgapsfzJQx9G7vTFG02UHM+iiKtkdV8Vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3gPzBNxlmaU1Gg3uNHgZi3NTdISovTOMND2EkpF5yiQ=;
+ b=gjrmpnI3CaKNdiF4zegPBFrGofaDDyPLazKicwrwV92yktDtJrwGXkgFjrvZ7bl3YDMD0+fI/4sxk4x7191yyzxDy+obkUKRmhQNiC/zxeekO6nuIPp+Q+unradSj/vLtJgeino+zBeDq5C5WOrIHJ7P2t2Pu0Gl5pJ2dDpas6ImMgPXHwFNCauB/6GxD0SeA/UI/OqwscjJncBhGEw9Y1alU8hI7G22kf4EnXtl2+rypPiO9p5fqD49Kb5gUI8I0lHBFfUnHE8ViJlo1q+RUuX+DCDbfEA+Um8cx8rNh7chZL7BwF1hGNTt0gctNskoU3AjTxzCnIeJZDabcbFPdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 199.43.4.28) smtp.rcpttodomain=synopsys.com smtp.mailfrom=cadence.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=cadence.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3gPzBNxlmaU1Gg3uNHgZi3NTdISovTOMND2EkpF5yiQ=;
+ b=mkWntboTC0JNlQfxwSL8MqmkhsEwZtC+f0DggDoiNzSs98ByrQ8mkfx0oRXjROTqBCRlXTuuFh+2EVYu2j45lI64e0E4VGdUfOUelGtRWmv3vCZAt3/Gr0aHSQeDVWedJNTSQRTZIi7MrCIeyWwPnrii2Gq12FbNEUhbubrtz6A=
+Received: from DM5PR07CA0044.namprd07.prod.outlook.com (2603:10b6:3:16::30) by
+ DM6PR07MB4348.namprd07.prod.outlook.com (2603:10b6:5:c1::31) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.20; Tue, 13 Aug 2019 07:43:22 +0000
+Received: from CO1NAM05FT058.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e50::204) by DM5PR07CA0044.outlook.office365.com
+ (2603:10b6:3:16::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2157.16 via Frontend
+ Transport; Tue, 13 Aug 2019 07:43:21 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 199.43.4.28 as permitted sender)
+Received: from rmmaillnx1.cadence.com (199.43.4.28) by
+ CO1NAM05FT058.mail.protection.outlook.com (10.152.96.176) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2178.6 via Frontend Transport; Tue, 13 Aug 2019 07:43:21 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x7D7hG9c030480
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Tue, 13 Aug 2019 03:43:18 -0400
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Tue, 13 Aug 2019 09:42:13 +0200
+Received: from lvlogina.cadence.com (10.165.176.102) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Tue, 13 Aug 2019 09:42:13 +0200
+Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x7D7hFew028822;
+        Tue, 13 Aug 2019 08:43:15 +0100
+Received: (from aniljoy@localhost)
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x7D7hAxo028730;
+        Tue, 13 Aug 2019 08:43:10 +0100
+From:   Anil Varughese <aniljoy@cadence.com>
+To:     <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
+        <pedrom.sousa@synopsys.com>
+CC:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>, <hare@suse.de>,
+        <aniljoy@cadence.com>, <rafalc@cadence.com>, <mparab@cadence.com>,
+        <jank@cadence.com>, <vigneshr@ti.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1] scsi: ufs: Disable local LCC in .link_startup_notify() in Cadence UFS
+Date:   Tue, 13 Aug 2019 08:42:50 +0100
+Message-ID: <20190813074250.28177-1-aniljoy@cadence.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190812152718.GA32550@localhost.localdomain>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 13 Aug 2019 07:41:24 +0000 (UTC)
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(39860400002)(376002)(136003)(2980300002)(36092001)(189003)(199004)(70206006)(476003)(70586007)(2616005)(186003)(426003)(47776003)(126002)(48376002)(336012)(2906002)(26005)(54906003)(486006)(50466002)(76130400001)(51416003)(1076003)(86362001)(26826003)(14444005)(16586007)(8676002)(81166006)(81156014)(42186006)(4326008)(305945005)(316002)(110136005)(53936002)(50226002)(478600001)(8936002)(87636003)(356004)(6666004)(36756003)(2201001)(5660300002)(142923001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4348;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7bbe1237-c500-4cee-d513-08d71fc1ea56
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:DM6PR07MB4348;
+X-MS-TrafficTypeDiagnostic: DM6PR07MB4348:
+X-Microsoft-Antispam-PRVS: <DM6PR07MB434874AFF3C8ABEE325CB1E5A8D20@DM6PR07MB4348.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2399;
+X-Forefront-PRVS: 01283822F8
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: 2g+YsreDelWvDzEupcsM+0UVL7dUryAdTzD9KlOGPuiTsKfadoeY5Pu57y9fkMtdm1uAjvGngIokhWZ+9Y16MhNrxjkeyXPYmbff1mPqGh1Y+Fyrqxg18jg2G0YwbH+aK+dkUduvccFjOgIzlwKBBMQIECuor7CpSbi1XGYgSVWGDY9i55xPjGOtjRI0IBwsyRkHvA9xEowZ4G7clKFJN2KIXr9XUtcaOkxgUTafSnq5P4cUqnHNGi/zGVESEYivde02+U1tS18k1lKygZOSZz/6N5PTA8v6+XXTTouP7+uooYCSlbi7mfSu54JrgBggZRAVVl0zBoFZEb97JLMfDLMRYccZpDaydd5STTOkFDpY2yD0ovtVz9ZkLMqtRNQ1qjZMz5hPERe65MG/Ws4rbLlx6Wd06Ub7X2WdbrFEKI8=
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2019 07:43:21.2599
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7bbe1237-c500-4cee-d513-08d71fc1ea56
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4348
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
+ include:mktomail.com include:spf-0014ca01.pphosted.com
+ include:spf.protection.outlook.com include:auth.msgapp.com
+ include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-13_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=874 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908130083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 09:27:18AM -0600, Keith Busch wrote:
-> On Mon, Aug 12, 2019 at 05:57:08PM +0800, Ming Lei wrote:
-> > Now __irq_build_affinity_masks() spreads vectors evenly per node, and
-> > all vectors may not be spread in case that each numa node has different
-> > CPU number, then the following warning in irq_build_affinity_masks() can
-> > be triggered:
-> > 
-> > 	if (nr_present < numvecs)
-> > 		WARN_ON(nr_present + nr_others < numvecs);
-> > 
-> > Improve current spreading algorithm by assigning vectors according to
-> > the ratio of node's nr_cpu to nr_remaining_cpus, meantime running the
-> > assignment from smaller nodes to bigger nodes to guarantee that every
-> > active node gets allocated at least one vector, then we can avoid
-> > cross-node spread.
-> > 
-> > Meantime the reported warning can be fixed.
-> > 
-> > Another big goodness is that the spread approach becomes more fair if
-> > node has different CPU number.
-> > 
-> > For example, on the following machine:
-> > 	[root@ktest-01 ~]# lscpu
-> > 	...
-> > 	CPU(s):              16
-> > 	On-line CPU(s) list: 0-15
-> > 	Thread(s) per core:  1
-> > 	Core(s) per socket:  8
-> > 	Socket(s):           2
-> > 	NUMA node(s):        2
-> > 	...
-> > 	NUMA node0 CPU(s):   0,1,3,5-9,11,13-15
-> > 	NUMA node1 CPU(s):   2,4,10,12
-> > 
-> > When driver requests to allocate 8 vectors, the following spread can
-> > be got:
-> > 	irq 31, cpu list 2,4
-> > 	irq 32, cpu list 10,12
-> > 	irq 33, cpu list 0-1
-> > 	irq 34, cpu list 3,5
-> > 	irq 35, cpu list 6-7
-> > 	irq 36, cpu list 8-9
-> > 	irq 37, cpu list 11,13
-> > 	irq 38, cpu list 14-15
-> > 
-> > Without this patch, kernel warning is triggered on above situation, and
-> > allocation result was supposed to be 4 vectors for each node.
-> > 
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: Keith Busch <kbusch@kernel.org>
-> > Cc: linux-nvme@lists.infradead.org,
-> > Cc: Jon Derrick <jonathan.derrick@intel.com>
-> > Cc: Jens Axboe <axboe@kernel.dk>
-> > Reported-by: Jon Derrick <jonathan.derrick@intel.com>
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > ---
-> >  kernel/irq/affinity.c | 141 +++++++++++++++++++++++++++++++++++-------
-> >  1 file changed, 117 insertions(+), 24 deletions(-)
-> > 
-> > diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> > index c7cca942bd8a..927dcbe80482 100644
-> > --- a/kernel/irq/affinity.c
-> > +++ b/kernel/irq/affinity.c
-> > @@ -7,6 +7,7 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/cpu.h>
-> > +#include <linux/sort.h>
-> >  
-> >  static void irq_spread_init_one(struct cpumask *irqmsk, struct cpumask *nmsk,
-> >  				unsigned int cpus_per_vec)
-> > @@ -94,6 +95,87 @@ static int get_nodes_in_cpumask(cpumask_var_t *node_to_cpumask,
-> >  	return nodes;
-> >  }
-> >  
-> > +struct node_nr_vectors {
-> > +	unsigned n;
-> > +
-> > +	union {
-> > +		unsigned nvectors;
-> > +		unsigned ncpus;
-> > +	};
-> > +};
-> > +
-> > +static int ncpus_cmp_func(const void *l, const void *r)
-> > +{
-> > +	const struct node_nr_vectors *ln = l;
-> > +	const struct node_nr_vectors *rn = r;
-> > +
-> > +	if (ln->ncpus < rn->ncpus)
-> > +		return -1;
-> > +	if (ln->ncpus > rn->ncpus)
-> > +		return 1;
-> > +	return 0;
-> 
-> You can collapse these to one line:
-> 
-> 	return ln->ncpus - rn->ncpus;
+Some UFS devices have issues if LCC is enabled. So we
+are setting PA_LOCAL_TX_LCC_Enable to 0 before link
+startup which will make sure that both host and device
+TX LCC are disabled once link startup is completed.
 
-OK.
+Signed-off-by: Anil Varughese <aniljoy@cadence.com>
+---
+ drivers/scsi/ufs/cdns-pltfrm.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-> 
-> > +}
-> > +
-> > +static void alloc_nodes_vectors(unsigned int numvecs,
-> > +				const cpumask_var_t *node_to_cpumask,
-> > +				const struct cpumask *cpu_mask,
-> > +				const nodemask_t nodemsk,
-> > +				struct cpumask *nmsk,
-> > +				struct node_nr_vectors *node_vectors)
-> > +{
-> > +	unsigned remaining_ncpus = 0;
-> > +	unsigned n;
-> > +
-> > +	for (n = 0; n < nr_node_ids; n++) {
-> > +		node_vectors[n].n = n;
-> > +		node_vectors[n].ncpus = UINT_MAX;
-> > +	}
-> > +
-> > +	for_each_node_mask(n, nodemsk) {
-> > +		unsigned ncpus;
-> > +
-> > +		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
-> > +		ncpus = cpumask_weight(nmsk);
-> > +
-> > +		if (!ncpus)
-> > +			continue;
-> > +		remaining_ncpus += ncpus;
-> > +		node_vectors[n].ncpus = ncpus;
-> > +	}
-> > +
-> > +	sort(node_vectors, nr_node_ids, sizeof(node_vectors[0]),
-> > +	     ncpus_cmp_func, NULL);
-> > +
-> > +	/*
-> > +	 * Allocate vectors for each node according to the ratio of this
-> > +	 * node's nr_cpus to remaining un-assigned ncpus. 'numvecs' is
-> > +	 * bigger than number of active numa nodes. Always start the
-> > +	 * allocation from the node with minimized nr_cpus.
-> > +	 *
-> > +	 * This way guarantees that each active node gets allocated at
-> > +	 * least one vector, and the theory is simple: over-allocation
-> > +	 * is only done when this node is assigned by one vector, so
-> > +	 * other nodes will be allocated >= 1 vector, since 'numvecs' is
-> > +	 * bigger than number of numa nodes.
-> > +	 */
-> > +	for (n = 0; n < nr_node_ids; n++) {
-> > +		unsigned nvectors, ncpus;
-> > +
-> > +		if (node_vectors[n].ncpus == UINT_MAX)
-> > +			continue;
-> > +
-> > +		WARN_ON_ONCE(numvecs == 0);
-> > +
-> > +		ncpus = node_vectors[n].ncpus;
-> > +		nvectors = max_t(unsigned, 1,
-> > +				 numvecs * ncpus / remaining_ncpus);
-> > +
-> > +		node_vectors[n].nvectors = nvectors;
-> > +		remaining_ncpus -= ncpus;
-> > +		numvecs -= nvectors;
-> > +	}
-> 
-> This looks good to me.
-> 
-> > +}
-> > +
-> >  static int __irq_build_affinity_masks(unsigned int startvec,
-> >  				      unsigned int numvecs,
-> >  				      unsigned int firstvec,
-> > @@ -102,10 +184,11 @@ static int __irq_build_affinity_masks(unsigned int startvec,
-> >  				      struct cpumask *nmsk,
-> >  				      struct irq_affinity_desc *masks)
-> >  {
-> > -	unsigned int n, nodes, cpus_per_vec, extra_vecs, done = 0;
-> > +	unsigned int i, n, nodes, cpus_per_vec, extra_vecs, done = 0;
-> >  	unsigned int last_affv = firstvec + numvecs;
-> >  	unsigned int curvec = startvec;
-> >  	nodemask_t nodemsk = NODE_MASK_NONE;
-> > +	struct node_nr_vectors *node_vectors;
-> >  
-> >  	if (!cpumask_weight(cpu_mask))
-> >  		return 0;
-> > @@ -126,8 +209,23 @@ static int __irq_build_affinity_masks(unsigned int startvec,
-> >  		return numvecs;
-> >  	}
-> >  
-> > -	for_each_node_mask(n, nodemsk) {
-> > -		unsigned int ncpus, v, vecs_to_assign, vecs_per_node;
-> > +	node_vectors = kcalloc(nr_node_ids,
-> > +			       sizeof(struct node_nr_vectors),
-> > +			       GFP_KERNEL);
-> > +	if (!node_vectors)
-> > +		return 0;
-> 
-> I think we need to get this -ENOMEM condition back to the caller and
-> have that condition handled.
+diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
+index 993519080..b2af04c57 100644
+--- a/drivers/scsi/ufs/cdns-pltfrm.c
++++ b/drivers/scsi/ufs/cdns-pltfrm.c
+@@ -77,6 +77,31 @@ static int cdns_ufs_hce_enable_notify(struct ufs_hba *hba,
+ 	return cdns_ufs_set_hclkdiv(hba);
+ }
+ 
++/**
++ * Called before and after Link startup is carried out.
++ * @hba: host controller instance
++ * @status: notify stage (pre, post change)
++ *
++ * Return zero for success and non-zero for failure
++ */
++static int cdns_ufs_link_startup_notify(struct ufs_hba *hba,
++					enum ufs_notify_change_status status)
++{
++	if (status != PRE_CHANGE)
++		return 0;
++
++	/*
++	 * Some UFS devices have issues if LCC is enabled.
++	 * So we are setting PA_Local_TX_LCC_Enable to 0
++	 * before link startup which will make sure that both host
++	 * and device TX LCC are disabled once link startup is
++	 * completed.
++	 */
++	ufshcd_dme_set(hba, UIC_ARG_MIB(PA_LOCAL_TX_LCC_ENABLE), 0);
++
++	return 0;
++}
++
+ /**
+  * cdns_ufs_init - performs additional ufs initialization
+  * @hba: host controller instance
+@@ -114,12 +139,14 @@ static int cdns_ufs_m31_16nm_phy_initialization(struct ufs_hba *hba)
+ static const struct ufs_hba_variant_ops cdns_ufs_pltfm_hba_vops = {
+ 	.name = "cdns-ufs-pltfm",
+ 	.hce_enable_notify = cdns_ufs_hce_enable_notify,
++	.link_startup_notify = cdns_ufs_link_startup_notify,
+ };
+ 
+ static const struct ufs_hba_variant_ops cdns_ufs_m31_16nm_pltfm_hba_vops = {
+ 	.name = "cdns-ufs-pltfm",
+ 	.init = cdns_ufs_init,
+ 	.hce_enable_notify = cdns_ufs_hce_enable_notify,
++	.link_startup_notify = cdns_ufs_link_startup_notify,
+ 	.phy_initialization = cdns_ufs_m31_16nm_phy_initialization,
+ };
+ 
+-- 
+2.15.0
 
-Good point.
-
-> 
-> > @@ -165,13 +250,21 @@ static int __irq_build_affinity_masks(unsigned int startvec,
-> >  			}
-> >  			irq_spread_init_one(&masks[curvec].mask, nmsk,
-> >  						cpus_per_vec);
-> > +			/*
-> > +			 * alloc_nodes_vectors() is intelligent enough to
-> > +			 * allocate vectors on all nodes, so wrapping
-> > +			 * shouldn't be triggered usually. However, if it
-> > +			 * happens when allocated vectors is bigger than
-> > +			 * node's CPU number becasue of round down, wraps
-> > +			 * to the first vector allocated for this node, then
-> > +			 * cross-node spread can be avoided.
-> > +			 */
-> > +			if (curvec >= last_affv)
-> > +				curvec -= v;
-> 
-> Could you explain again how this could happen? The round-down should mean we
-> apply a vector to more CPUs so that the number of vectors applied to a
-> node wthin the loop should never require wrapping to hit all those CPUs.
-> And if that's true, the check should probably be a warn because it
-> should never happen.
-
-You are right.
-
-We should simply spread from the 1st vector for this node if there is
-more vectors not done.
-
-> 
-> In any case, if you can hit that condition where curvec >= last_affv,
-> the assignment to masks[curvec] just above may be out-of-bounds.
-
-Yeah, 'curvec >= last_affv' shouldn't be needed.
-
-Will fix them in V3.
-
-
-Thanks,
-Ming
