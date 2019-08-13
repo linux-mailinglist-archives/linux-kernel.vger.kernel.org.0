@@ -2,445 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8898C2B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D32C78C293
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:03:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfHMVD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 17:03:58 -0400
-Received: from mga09.intel.com ([134.134.136.24]:18661 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727275AbfHMVDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 17:03:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 14:03:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,382,1559545200"; 
-   d="scan'208";a="194276008"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by fmsmga001.fm.intel.com with ESMTP; 13 Aug 2019 14:03:42 -0700
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v8 14/14] Introduce arch_prctl(ARCH_X86_CET_MARK_LEGACY_CODE)
-Date:   Tue, 13 Aug 2019 13:53:59 -0700
-Message-Id: <20190813205359.12196-15-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190813205359.12196-1-yu-cheng.yu@intel.com>
-References: <20190813205359.12196-1-yu-cheng.yu@intel.com>
+        id S1727151AbfHMVDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 17:03:24 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40277 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727140AbfHMVDW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 17:03:22 -0400
+Received: by mail-ot1-f66.google.com with SMTP id c34so37361847otb.7
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 14:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=q/tq0J9ADbe9GkNWVaHD9QAS+rJhqu7CATlDgV//5SE=;
+        b=fXtPZ3S0p6tfagYECMpB+kExsFKebrXX3vbg2qNrvpveYDkZEq+CyuHOTXhrGP1ayF
+         8V9f90Gp8IMPmiPDan+vxWIc+J2pSHwbnK6L9w16U7sQ+hOFVNsStsfXvM4C7rEKv9bo
+         R/tmhgsaAOrMT+88oASxBgCR13rDlRbjkU4BIwN77kbLic0fRK9jd1vvMxOM6jDCDrdf
+         QpMfyFqBQy6xHIEzuVllZWBRLh+E+fM9+oRiNUSkUgwllTCCXBgH4u4NDWuJlFgfcUJy
+         GEQr68mBjMgrXXgqBHjR6h1XfyJ/E+t7oztQI2scqecOcb8uh03q/GzNCofE8QcfR3Vc
+         yKOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=q/tq0J9ADbe9GkNWVaHD9QAS+rJhqu7CATlDgV//5SE=;
+        b=Yx2dBPJK9hB9N5uV9NHzcVOv+dZLWpS2y/+hsN+Ea61YMBGl6qu2RRNQ6sY+tP5z1G
+         kP/V2XHsTzbYPuiIV5Wjcfo213AouL2gZakJRjlcrBFh86PatkytkJbXaqu+75nmXP0w
+         9kxWnCDZFffxLKKwL2t+KxrMGXhN84GWCgPVeyQ+bWjRVyU2jvG6veHNbtRXPHVrO0ee
+         lpR2PwARSMwm7mvC74eZ0rWjVi+bqUKfHeCucn0YsP1dA5Mpp3Qia1777rTIKAb/YGZi
+         xGUq+pFA9C0+Re8ZWvuNwuxoT34ghwss169B/hSzSctSv14MKUlz6UoG/cn537G1pM9H
+         HSww==
+X-Gm-Message-State: APjAAAU1RrSr8Efem8sjtJ0gUxJbDkOHVoD5TQtCSL7IaMFvdZT5f2pe
+        Kc5GNaJl4TmN1DGnMyjyJXu99w==
+X-Google-Smtp-Source: APXvYqwqpLcNilHMNePInAYsPu8XqFoSf4UtCXsBc9IBylPbk1c0yWtb7xx4vAbu7jyk9D7zwWiQWA==
+X-Received: by 2002:a5e:9308:: with SMTP id k8mr27757300iom.143.1565730201709;
+        Tue, 13 Aug 2019 14:03:21 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id p12sm3323996ioh.72.2019.08.13.14.03.20
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 13 Aug 2019 14:03:21 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 14:03:20 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Christoph Hellwig <hch@infradead.org>
+cc:     linux-riscv@lists.infradead.org, schwab@suse.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: fix flush_tlb_range() end address for
+ flush_tlb_page()
+In-Reply-To: <20190812144337.GA26897@infradead.org>
+Message-ID: <alpine.DEB.2.21.9999.1908131359280.19217@viisi.sifive.com>
+References: <alpine.DEB.2.21.9999.1908080923320.31070@viisi.sifive.com> <20190812144337.GA26897@infradead.org>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CET Indirect Branch Tracking (IBT) is enabled, the processor expects
-every branch target is an ENDBR instruction, or the target's address is
-marked as legacy in the legacy code bitmap.  The bitmap covers the whole
-user-mode address space (TASK_SIZE_MAX for 64-bit, TASK_SIZE for IA32),
-and each bit represents one page of linear address range.  The bitmap is
-located at the topmost address: (TASK_SIZE - IBT_BITMAP_SIZE).
+On Mon, 12 Aug 2019, Christoph Hellwig wrote:
 
-It is allocated only when the first time ARCH_X86_MARK_LEGACY_CODE
-is called from an application.
+> >  #define flush_tlb_range(vma, start, end) \
+> >  	remote_sfence_vma(mm_cpumask((vma)->vm_mm), start, (end) - (start))
+> > -#define flush_tlb_mm(mm) \
+> > +
+> > +static inline void flush_tlb_page(struct vm_area_struct *vma,
+> > +				  unsigned long addr) {
+> > +	flush_tlb_range(vma, addr, addr + PAGE_SIZE);
+> > +}
+> 
+> Please put the opening brace on a line of its own.
+> 
+> Otherwise looks fine:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-The IBT bitmap is visiable from user-mode, but not writable.
+Thanks, updated patch below.
 
-Introduce:
+Looks like checkpatch.pl is no longer issuing warnings about this type of 
+brace placement issue.
 
-arch_prctl(ARCH_X86_CET_MARK_LEGACY_CODE, unsigned long *buf)
-    Mark an address range as IBT legacy code.
+Queuing for v5.3-rc.
 
-    *buf: starting linear address
-    *(buf + 1): size of the legacy code
-    *(buf + 2): set (1); clear (0)
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+- Paul
+
+From: Paul Walmsley <paul.walmsley@sifive.com>
+Date: Wed, 7 Aug 2019 19:07:34 -0700
+Subject: [PATCH] riscv: fix flush_tlb_range() end address for flush_tlb_page()
+
+The RISC-V kernel implementation of flush_tlb_page() when CONFIG_SMP
+is set is wrong.  It passes zero to flush_tlb_range() as the final
+address to flush, but it should be at least 'addr'.
+
+Some other Linux architecture ports use the beginning address to
+flush, plus PAGE_SIZE, as the final address to flush.  This might
+flush slightly more than what's needed, but it seems unlikely that
+being more clever would improve anything.  So let's just take that
+implementation for now.
+
+While here, convert the macro into a static inline function, primarily
+to avoid unintentional multiple evaluations of 'addr'.
+
+This second version of the patch fixes a coding style issue found by
+Christoph Hellwig <hch@lst.de>.
+
+Reported-by: Andreas Schwab <schwab@suse.de>
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/x86/include/asm/cet.h        |   3 +
- arch/x86/include/asm/processor.h  |  13 +-
- arch/x86/include/uapi/asm/prctl.h |   1 +
- arch/x86/kernel/Makefile          |   2 +-
- arch/x86/kernel/cet_bitmap.c      | 210 ++++++++++++++++++++++++++++++
- arch/x86/kernel/cet_prctl.c       |  15 +++
- mm/memory.c                       |   8 ++
- 7 files changed, 250 insertions(+), 2 deletions(-)
- create mode 100644 arch/x86/kernel/cet_bitmap.c
+ arch/riscv/include/asm/tlbflush.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index 2561efe081ad..d5f693d082b0 100644
---- a/arch/x86/include/asm/cet.h
-+++ b/arch/x86/include/asm/cet.h
-@@ -4,6 +4,7 @@
- 
- #ifndef __ASSEMBLY__
- #include <linux/types.h>
-+#include <asm/processor.h>
- 
- struct task_struct;
- struct sc_ext;
-@@ -30,6 +31,7 @@ void cet_disable_free_shstk(struct task_struct *p);
- int cet_restore_signal(bool ia32, struct sc_ext *sc);
- int cet_setup_signal(bool ia32, unsigned long rstor, struct sc_ext *sc);
- int cet_setup_ibt(void);
-+int cet_mark_legacy_code(unsigned long addr, unsigned long size, unsigned long set);
- void cet_disable_ibt(void);
- #else
- static inline int prctl_cet(int option, unsigned long arg2) { return -EINVAL; }
-@@ -42,6 +44,7 @@ static inline int cet_restore_signal(bool ia32, struct sc_ext *sc) { return -EIN
- static inline int cet_setup_signal(bool ia32, unsigned long rstor,
- 				   struct sc_ext *sc) { return -EINVAL; }
- static inline int cet_setup_ibt(void) { return -EINVAL; }
-+static inline int cet_mark_legacy_code(unsigned long addr, unsigned long size, unsigned long set) { return -EINVAL; }
- static inline void cet_disable_ibt(void) {}
- #endif
- 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 0f9bc7fd1351..af3bdd545a55 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -888,7 +888,18 @@ static inline void spin_lock_prefetch(const void *x)
- #define TASK_SIZE_OF(child)	((test_tsk_thread_flag(child, TIF_ADDR32)) ? \
- 					IA32_PAGE_OFFSET : TASK_SIZE_MAX)
- 
--#define STACK_TOP		TASK_SIZE_LOW
-+#define MMAP_MAX		(unsigned long)(test_thread_flag(TIF_ADDR32) ? \
-+					TASK_SIZE : TASK_SIZE_MAX)
-+
-+#define IBT_BITMAP_SIZE		(round_up(MMAP_MAX, PAGE_SIZE * BITS_PER_BYTE) / \
-+					(PAGE_SIZE * BITS_PER_BYTE))
-+
-+#define IBT_BITMAP_ADDR		(TASK_SIZE - IBT_BITMAP_SIZE)
-+
-+#define STACK_TOP		(TASK_SIZE_LOW < IBT_BITMAP_ADDR - PAGE_SIZE ? \
-+					TASK_SIZE_LOW : \
-+					IBT_BITMAP_ADDR - PAGE_SIZE)
-+
- #define STACK_TOP_MAX		TASK_SIZE_MAX
- 
- #define INIT_THREAD  {						\
-diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
-index 02243127dcf6..da39d4bde4e1 100644
---- a/arch/x86/include/uapi/asm/prctl.h
-+++ b/arch/x86/include/uapi/asm/prctl.h
-@@ -20,5 +20,6 @@
- #define ARCH_X86_CET_ALLOC_SHSTK	0x3004
- #define ARCH_X86_CET_GET_LEGACY_BITMAP	0x3005 /* deprecated */
- #define ARCH_X86_CET_SET_LEGACY_BITMAP	0x3006 /* deprecated */
-+#define ARCH_X86_CET_MARK_LEGACY_CODE	0x3007
- 
- #endif /* _ASM_X86_PRCTL_H */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 311829335521..228906364513 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -140,7 +140,7 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
- obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
- obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
- 
--obj-$(CONFIG_X86_INTEL_CET)		+= cet.o cet_prctl.o
-+obj-$(CONFIG_X86_INTEL_CET)		+= cet.o cet_prctl.o cet_bitmap.o
- 
- ###
- # 64 bit specific files
-diff --git a/arch/x86/kernel/cet_bitmap.c b/arch/x86/kernel/cet_bitmap.c
-new file mode 100644
-index 000000000000..25eb441eb094
---- /dev/null
-+++ b/arch/x86/kernel/cet_bitmap.c
-@@ -0,0 +1,210 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/bits.h>
-+#include <linux/err.h>
-+#include <linux/memcontrol.h>
-+#include <linux/mm.h>
-+#include <linux/mman.h>
-+#include <linux/oom.h>
-+#include <linux/pagemap.h>
-+#include <linux/rmap.h>
-+#include <linux/swap.h>
-+#include <asm/cet.h>
-+#include <asm/fpu/internal.h>
-+
-+/*
-+ * For read fault, provide the zero page.  For write fault coming from
-+ * get_user_pages(), clear the page already allocated.
-+ */
-+static vm_fault_t bitmap_fault(const struct vm_special_mapping *sm,
-+			       struct vm_area_struct *vma, struct vm_fault *vmf)
-+{
-+	if (!(vmf->flags & FAULT_FLAG_WRITE)) {
-+		vmf->page = ZERO_PAGE(vmf->address);
-+		return 0;
-+	} else {
-+		vm_fault_t r;
-+
-+		if (!vmf->cow_page)
-+			return VM_FAULT_ERROR;
-+
-+		clear_user_highpage(vmf->cow_page, vmf->address);
-+		__SetPageUptodate(vmf->cow_page);
-+		r = finish_fault(vmf);
-+		return r ? r : VM_FAULT_DONE_COW;
-+	}
-+}
-+
-+static int bitmap_mremap(const struct vm_special_mapping *sm,
-+			 struct vm_area_struct *vma)
-+{
-+	return -EINVAL;
-+}
-+
-+static const struct vm_special_mapping bitmap_mapping = {
-+	.name	= "[ibt_bitmap]",
-+	.fault	= bitmap_fault,
-+	.mremap	= bitmap_mremap,
-+};
-+
-+static int alloc_bitmap(void)
-+{
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
-+	u64 msr_ia32_u_cet;
-+	int r = 0;
-+
-+	if (down_write_killable(&mm->mmap_sem))
-+		return -EINTR;
-+
-+	vma = _install_special_mapping(mm, IBT_BITMAP_ADDR, IBT_BITMAP_SIZE,
-+				       VM_READ | VM_MAYREAD | VM_MAYWRITE,
-+				       &bitmap_mapping);
-+
-+	if (IS_ERR(vma))
-+		r = PTR_ERR(vma);
-+
-+	up_write(&mm->mmap_sem);
-+
-+	if (r)
-+		return r;
-+
-+	current->thread.cet.ibt_bitmap_used = 1;
-+
-+	modify_fpu_regs_begin();
-+	rdmsrl(MSR_IA32_U_CET, msr_ia32_u_cet);
-+	msr_ia32_u_cet |= (MSR_IA32_CET_LEG_IW_EN | IBT_BITMAP_ADDR);
-+	wrmsrl(MSR_IA32_U_CET, msr_ia32_u_cet);
-+	modify_fpu_regs_end();
-+	return 0;
-+}
-+
-+/*
-+ * Set bits in the IBT legacy code bitmap, which is read-only user memory.
-+ */
-+static int set_bits(unsigned long start_bit, unsigned long end_bit,
-+		    unsigned long set)
-+{
-+	unsigned long start_ul, end_ul, nr_ul;
-+	unsigned long start_ul_addr, tmp_addr, len;
-+	int i, j;
-+
-+	start_ul = start_bit / BITS_PER_LONG;
-+	end_ul = end_bit / BITS_PER_LONG;
-+	i = start_bit % BITS_PER_LONG;
-+	j = end_bit % BITS_PER_LONG;
-+
-+	start_ul_addr = IBT_BITMAP_ADDR + start_ul * sizeof(0UL);
-+	nr_ul = end_ul - start_ul + 1;
-+
-+	tmp_addr = start_ul_addr;
-+	len = nr_ul * sizeof(0UL);
-+
-+	down_read(&current->mm->mmap_sem);
-+	while (len) {
-+		unsigned long *first, *last, mask, bytes;
-+		int ret, offset;
-+		void *kern_page_addr;
-+		struct page *page = NULL;
-+
-+		ret = get_user_pages(tmp_addr, 1, FOLL_WRITE | FOLL_FORCE,
-+				     &page, NULL);
-+
-+		if (ret <= 0) {
-+			up_read(&current->mm->mmap_sem);
-+			return ret;
-+		}
-+
-+		kern_page_addr = kmap(page);
-+
-+		bytes = len;
-+		offset = tmp_addr & (PAGE_SIZE - 1);
-+
-+		/* Is end_ul in this page? */
-+		if (bytes > (PAGE_SIZE - offset)) {
-+			bytes = PAGE_SIZE - offset;
-+			last = NULL;
-+		} else {
-+			last = (unsigned long *)(kern_page_addr + offset + bytes) - 1;
-+		}
-+
-+		/* Is start_ul in this page? */
-+		if (tmp_addr == start_ul_addr)
-+			first = (unsigned long *)(kern_page_addr + offset);
-+		else
-+			first = NULL;
-+
-+		if (nr_ul == 1) {
-+			mask = GENMASK(j, i);
-+
-+			if (set)
-+				*first |= mask;
-+			else
-+				*first &= ~mask;
-+		} else {
-+			if (first) {
-+				mask = GENMASK(BITS_PER_LONG - 1, i);
-+
-+				if (set)
-+					*first |= mask;
-+				else
-+					*first &= ~mask;
-+			}
-+
-+			if (last) {
-+				mask = GENMASK(j, 0);
-+
-+				if (set)
-+					*last |= mask;
-+				else
-+					*last &= ~mask;
-+			}
-+
-+			if (nr_ul > 2) {
-+				void *p = kern_page_addr + offset;
-+				int cnt = bytes;
-+
-+				if (first) {
-+					p += sizeof(*first);
-+					cnt -= sizeof(*first);
-+				}
-+
-+				if (last)
-+					cnt -= sizeof(*last);
-+
-+				if (set)
-+					memset(p, 0xff, cnt);
-+				else
-+					memset(p, 0, cnt);
-+			}
-+		}
-+
-+		set_page_dirty_lock(page);
-+		kunmap(page);
-+		put_page(page);
-+
-+		len -= bytes;
-+		tmp_addr += bytes;
-+	}
-+	up_read(&current->mm->mmap_sem);
-+	return 0;
-+}
-+
-+int cet_mark_legacy_code(unsigned long addr, unsigned long size, unsigned long set)
-+{
-+	int r;
-+
-+	if (!current->thread.cet.ibt_enabled)
-+		return -EINVAL;
-+
-+	if ((addr >= IBT_BITMAP_ADDR) || (addr + size > IBT_BITMAP_ADDR))
-+		return -EINVAL;
-+
-+	if (!current->thread.cet.ibt_bitmap_used) {
-+		r = alloc_bitmap();
-+		if (r)
-+			return r;
-+	}
-+
-+	return set_bits(addr / PAGE_SIZE, (addr + size - 1) / PAGE_SIZE, set);
-+}
-diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
-index 09d8c4ea935c..eec5baf8b0da 100644
---- a/arch/x86/kernel/cet_prctl.c
-+++ b/arch/x86/kernel/cet_prctl.c
-@@ -57,6 +57,18 @@ static int handle_alloc_shstk(unsigned long arg2)
- 	return 0;
+diff --git a/arch/riscv/include/asm/tlbflush.h b/arch/riscv/include/asm/tlbflush.h
+index 687dd19735a7..4d9bbe8438bf 100644
+--- a/arch/riscv/include/asm/tlbflush.h
++++ b/arch/riscv/include/asm/tlbflush.h
+@@ -53,10 +53,17 @@ static inline void remote_sfence_vma(struct cpumask *cmask, unsigned long start,
  }
  
-+static int handle_mark_legacy_code(unsigned long arg2)
+ #define flush_tlb_all() sbi_remote_sfence_vma(NULL, 0, -1)
+-#define flush_tlb_page(vma, addr) flush_tlb_range(vma, addr, 0)
++
+ #define flush_tlb_range(vma, start, end) \
+ 	remote_sfence_vma(mm_cpumask((vma)->vm_mm), start, (end) - (start))
+-#define flush_tlb_mm(mm) \
++
++static inline void flush_tlb_page(struct vm_area_struct *vma,
++				  unsigned long addr)
 +{
-+	unsigned long addr, size, set;
-+
-+	if (get_user(addr, (unsigned long __user *)arg2) ||
-+	    get_user(size, (unsigned long __user *)arg2 + 1) ||
-+	    get_user(set, (unsigned long __user *)arg2 + 2))
-+		return -EFAULT;
-+
-+	return cet_mark_legacy_code(addr, size, set);
++	flush_tlb_range(vma, addr, addr + PAGE_SIZE);
 +}
 +
- int prctl_cet(int option, unsigned long arg2)
- {
- 	if (!cpu_x86_cet_enabled())
-@@ -83,6 +95,9 @@ int prctl_cet(int option, unsigned long arg2)
- 	case ARCH_X86_CET_ALLOC_SHSTK:
- 		return handle_alloc_shstk(arg2);
++#define flush_tlb_mm(mm)				\
+ 	remote_sfence_vma(mm_cpumask(mm), 0, -1)
  
-+	case ARCH_X86_CET_MARK_LEGACY_CODE:
-+		return handle_mark_legacy_code(arg2);
-+
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/mm/memory.c b/mm/memory.c
-index be93a73b5152..75076f727be0 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3290,6 +3290,12 @@ vm_fault_t alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 
- 	flush_icache_page(vma, page);
- 	entry = mk_pte(page, vma->vm_page_prot);
-+
-+	if (is_zero_pfn(pte_pfn(entry))) {
-+		entry = pte_mkspecial(entry);
-+		goto alloc_set_pte_out;
-+	}
-+
- 	if (write)
- 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
- 	/* copy-on-write page */
-@@ -3302,6 +3308,8 @@ vm_fault_t alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 		inc_mm_counter_fast(vma->vm_mm, mm_counter_file(page));
- 		page_add_file_rmap(page, false);
- 	}
-+
-+alloc_set_pte_out:
- 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, entry);
- 
- 	/* no need to invalidate: a not-present page won't be cached */
+ #endif /* CONFIG_SMP */
 -- 
-2.17.1
+2.23.0.rc1
 
