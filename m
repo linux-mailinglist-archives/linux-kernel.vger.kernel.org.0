@@ -2,192 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F2F18B15A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA7A8B157
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfHMHnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 03:43:45 -0400
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:58158 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726489AbfHMHnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:43:45 -0400
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7D7bGLs029977;
-        Tue, 13 Aug 2019 00:43:25 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=proofpoint;
- bh=3gPzBNxlmaU1Gg3uNHgZi3NTdISovTOMND2EkpF5yiQ=;
- b=Ttvq6B75pel0fSfYP9sf5wwOAhrdldqWLm2OjHybp4qzSNT/vD6ij80whbtNXvlopaKv
- YLlzJ3j2j4iCGWfyhrMzDB4qE9XqbYLTCh6WSReYlJVAxE7M0jq23/sK/x9JWPOo0cyw
- q7lDgQJ0pdXxXCN19RNABMMKsg4Zn5sx7m7LRrGgfYAHwNxvZLw1lagh/bTtwpgbgWsV
- t2qA7CZrO0CsuTAyNe1bPL5GD4FBA8s7EAlDWyNuoG1AAwIiNlF7joZxqSliBu4dGo45
- 4W1C8Brl9NHzZUOda/EOdFYKZI7l0K5VF19FudkUBMN1KQ2c1BwrshHOsTW984KUqWR/ Yw== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=aniljoy@cadence.com
-Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2056.outbound.protection.outlook.com [104.47.42.56])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2u9tfs94xa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 13 Aug 2019 00:43:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KyaXYO0zghu2gq78s7HBX2GiSny9oE50ClW/vvErVebq+qbyaXN7EYJ7OI54uEM7QPdMCQJkpjtw3eEzZC5wOLDCjR2K95zs6zxPOdq+PXmGBrus+NszbZzgITrGyq1IO1UjnduiNqpHIClAAT6Tm5SEwcpi9kuz8git1CbHQQmLAYpLRe8rf7sBeyc1kDJ1Exk7QRCHywHvi4bhY6Ab0ZmpEVHl5VrbiGWzjVeFSbm8dTjfKWAhbGBE/6NfkEDQfuS82NeGwKeQ2PsqFmLb7cAtsz4gB+g3bd4YUsfcbxRMuuQ4P49jPRgapsfzJQx9G7vTFG02UHM+iiKtkdV8Vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3gPzBNxlmaU1Gg3uNHgZi3NTdISovTOMND2EkpF5yiQ=;
- b=gjrmpnI3CaKNdiF4zegPBFrGofaDDyPLazKicwrwV92yktDtJrwGXkgFjrvZ7bl3YDMD0+fI/4sxk4x7191yyzxDy+obkUKRmhQNiC/zxeekO6nuIPp+Q+unradSj/vLtJgeino+zBeDq5C5WOrIHJ7P2t2Pu0Gl5pJ2dDpas6ImMgPXHwFNCauB/6GxD0SeA/UI/OqwscjJncBhGEw9Y1alU8hI7G22kf4EnXtl2+rypPiO9p5fqD49Kb5gUI8I0lHBFfUnHE8ViJlo1q+RUuX+DCDbfEA+Um8cx8rNh7chZL7BwF1hGNTt0gctNskoU3AjTxzCnIeJZDabcbFPdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 199.43.4.28) smtp.rcpttodomain=synopsys.com smtp.mailfrom=cadence.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=cadence.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3gPzBNxlmaU1Gg3uNHgZi3NTdISovTOMND2EkpF5yiQ=;
- b=mkWntboTC0JNlQfxwSL8MqmkhsEwZtC+f0DggDoiNzSs98ByrQ8mkfx0oRXjROTqBCRlXTuuFh+2EVYu2j45lI64e0E4VGdUfOUelGtRWmv3vCZAt3/Gr0aHSQeDVWedJNTSQRTZIi7MrCIeyWwPnrii2Gq12FbNEUhbubrtz6A=
-Received: from DM5PR07CA0044.namprd07.prod.outlook.com (2603:10b6:3:16::30) by
- DM6PR07MB4348.namprd07.prod.outlook.com (2603:10b6:5:c1::31) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.20; Tue, 13 Aug 2019 07:43:22 +0000
-Received: from CO1NAM05FT058.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::204) by DM5PR07CA0044.outlook.office365.com
- (2603:10b6:3:16::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2157.16 via Frontend
- Transport; Tue, 13 Aug 2019 07:43:21 +0000
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 199.43.4.28 as permitted sender)
-Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- CO1NAM05FT058.mail.protection.outlook.com (10.152.96.176) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2178.6 via Frontend Transport; Tue, 13 Aug 2019 07:43:21 +0000
-Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x7D7hG9c030480
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        id S1727555AbfHMHnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 13 Aug 2019 03:43:18 -0400
-X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
-Received: from maileu3.global.cadence.com (10.160.88.99) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Tue, 13 Aug 2019 09:42:13 +0200
-Received: from lvlogina.cadence.com (10.165.176.102) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Tue, 13 Aug 2019 09:42:13 +0200
-Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x7D7hFew028822;
-        Tue, 13 Aug 2019 08:43:15 +0100
-Received: (from aniljoy@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x7D7hAxo028730;
-        Tue, 13 Aug 2019 08:43:10 +0100
-From:   Anil Varughese <aniljoy@cadence.com>
-To:     <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
-        <pedrom.sousa@synopsys.com>
-CC:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>, <hare@suse.de>,
-        <aniljoy@cadence.com>, <rafalc@cadence.com>, <mparab@cadence.com>,
-        <jank@cadence.com>, <vigneshr@ti.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] scsi: ufs: Disable local LCC in .link_startup_notify() in Cadence UFS
-Date:   Tue, 13 Aug 2019 08:42:50 +0100
-Message-ID: <20190813074250.28177-1-aniljoy@cadence.com>
-X-Mailer: git-send-email 2.15.0
+Received: from smtprelay0107.hostedemail.com ([216.40.44.107]:43637 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726810AbfHMHnS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 03:43:18 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id BBDD75009;
+        Tue, 13 Aug 2019 07:43:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3871:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:7903:9025:10004:10400:10848:11232:11658:11914:12043:12297:12555:12679:12698:12737:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21627:30012:30054:30060:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: van78_1c3a8abe7f93e
+X-Filterd-Recvd-Size: 2204
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 13 Aug 2019 07:43:13 +0000 (UTC)
+Message-ID: <2a6c7952793a7973c7edc6b2c44ac3c2587562fd.camel@perches.com>
+Subject: Re: [PATCH v2] kbuild: Change fallthrough comments to attributes
+From:   Joe Perches <joe@perches.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Huckleberry <nhuck@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date:   Tue, 13 Aug 2019 00:43:12 -0700
+In-Reply-To: <3078e553a777976655f72718d088791363544caa.camel@perches.com>
+References: <20190812214711.83710-1-nhuck@google.com>
+         <20190812221416.139678-1-nhuck@google.com>
+         <814c1b19141022946d3e0f7e24d69658d7a512e4.camel@perches.com>
+         <CAKwvOdnpXqoQDmHVRCh0qX=Yh-8UpEWJ0C3S=syn1KN8rB3OGQ@mail.gmail.com>
+         <20190813063327.GA46858@archlinux-threadripper>
+         <3078e553a777976655f72718d088791363544caa.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-OrganizationHeadersPreserved: maileu3.global.cadence.com
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(39860400002)(376002)(136003)(2980300002)(36092001)(189003)(199004)(70206006)(476003)(70586007)(2616005)(186003)(426003)(47776003)(126002)(48376002)(336012)(2906002)(26005)(54906003)(486006)(50466002)(76130400001)(51416003)(1076003)(86362001)(26826003)(14444005)(16586007)(8676002)(81166006)(81156014)(42186006)(4326008)(305945005)(316002)(110136005)(53936002)(50226002)(478600001)(8936002)(87636003)(356004)(6666004)(36756003)(2201001)(5660300002)(142923001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4348;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7bbe1237-c500-4cee-d513-08d71fc1ea56
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:DM6PR07MB4348;
-X-MS-TrafficTypeDiagnostic: DM6PR07MB4348:
-X-Microsoft-Antispam-PRVS: <DM6PR07MB434874AFF3C8ABEE325CB1E5A8D20@DM6PR07MB4348.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2399;
-X-Forefront-PRVS: 01283822F8
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 2g+YsreDelWvDzEupcsM+0UVL7dUryAdTzD9KlOGPuiTsKfadoeY5Pu57y9fkMtdm1uAjvGngIokhWZ+9Y16MhNrxjkeyXPYmbff1mPqGh1Y+Fyrqxg18jg2G0YwbH+aK+dkUduvccFjOgIzlwKBBMQIECuor7CpSbi1XGYgSVWGDY9i55xPjGOtjRI0IBwsyRkHvA9xEowZ4G7clKFJN2KIXr9XUtcaOkxgUTafSnq5P4cUqnHNGi/zGVESEYivde02+U1tS18k1lKygZOSZz/6N5PTA8v6+XXTTouP7+uooYCSlbi7mfSu54JrgBggZRAVVl0zBoFZEb97JLMfDLMRYccZpDaydd5STTOkFDpY2yD0ovtVz9ZkLMqtRNQ1qjZMz5hPERe65MG/Ws4rbLlx6Wd06Ub7X2WdbrFEKI8=
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2019 07:43:21.2599
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bbe1237-c500-4cee-d513-08d71fc1ea56
-X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4348
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
- include:mktomail.com include:spf-0014ca01.pphosted.com
- include:spf.protection.outlook.com include:auth.msgapp.com
- include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-13_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=874 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908130083
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some UFS devices have issues if LCC is enabled. So we
-are setting PA_LOCAL_TX_LCC_Enable to 0 before link
-startup which will make sure that both host and device
-TX LCC are disabled once link startup is completed.
+On Tue, 2019-08-13 at 00:04 -0700, Joe Perches wrote:
+> On Mon, 2019-08-12 at 23:33 -0700, Nathan Chancellor wrote:
+[]
+> > a disagreement between GCC and Clang on
+> > emitting a warning when falling through to a case statement that is
+> > either the last one and empty or simply breaks..
+[]
+> > I personally think that GCC is right and Clang should adapt but I don't
+> > know enough about the Clang codebase to know how feasible this is.
+> 
+> I think gcc is wrong here and code like
+> 
+> 	switch (foo) {
+> 	case 1:
+> 		bar = 1;
+> 	default:
+> 		break;
+> 	}
+> 
+> should emit a fallthrough warning.
 
-Signed-off-by: Anil Varughese <aniljoy@cadence.com>
----
- drivers/scsi/ufs/cdns-pltfrm.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+btw: I just filed https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91432
 
-diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
-index 993519080..b2af04c57 100644
---- a/drivers/scsi/ufs/cdns-pltfrm.c
-+++ b/drivers/scsi/ufs/cdns-pltfrm.c
-@@ -77,6 +77,31 @@ static int cdns_ufs_hce_enable_notify(struct ufs_hba *hba,
- 	return cdns_ufs_set_hclkdiv(hba);
- }
- 
-+/**
-+ * Called before and after Link startup is carried out.
-+ * @hba: host controller instance
-+ * @status: notify stage (pre, post change)
-+ *
-+ * Return zero for success and non-zero for failure
-+ */
-+static int cdns_ufs_link_startup_notify(struct ufs_hba *hba,
-+					enum ufs_notify_change_status status)
-+{
-+	if (status != PRE_CHANGE)
-+		return 0;
-+
-+	/*
-+	 * Some UFS devices have issues if LCC is enabled.
-+	 * So we are setting PA_Local_TX_LCC_Enable to 0
-+	 * before link startup which will make sure that both host
-+	 * and device TX LCC are disabled once link startup is
-+	 * completed.
-+	 */
-+	ufshcd_dme_set(hba, UIC_ARG_MIB(PA_LOCAL_TX_LCC_ENABLE), 0);
-+
-+	return 0;
-+}
-+
- /**
-  * cdns_ufs_init - performs additional ufs initialization
-  * @hba: host controller instance
-@@ -114,12 +139,14 @@ static int cdns_ufs_m31_16nm_phy_initialization(struct ufs_hba *hba)
- static const struct ufs_hba_variant_ops cdns_ufs_pltfm_hba_vops = {
- 	.name = "cdns-ufs-pltfm",
- 	.hce_enable_notify = cdns_ufs_hce_enable_notify,
-+	.link_startup_notify = cdns_ufs_link_startup_notify,
- };
- 
- static const struct ufs_hba_variant_ops cdns_ufs_m31_16nm_pltfm_hba_vops = {
- 	.name = "cdns-ufs-pltfm",
- 	.init = cdns_ufs_init,
- 	.hce_enable_notify = cdns_ufs_hce_enable_notify,
-+	.link_startup_notify = cdns_ufs_link_startup_notify,
- 	.phy_initialization = cdns_ufs_m31_16nm_phy_initialization,
- };
- 
--- 
-2.15.0
 
