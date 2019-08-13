@@ -2,104 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01ACC8ABC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 02:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B9928ABD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 02:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfHMAGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 20:06:31 -0400
-Received: from mga18.intel.com ([134.134.136.126]:23189 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbfHMAGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 20:06:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 17:06:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,379,1559545200"; 
-   d="scan'208";a="194074953"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Aug 2019 17:06:04 -0700
-Date:   Mon, 12 Aug 2019 17:06:04 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, mst@redhat.com, rkrcmar@redhat.com,
-        jmattson@google.com
-Subject: Re: [PATCH v6 3/8] KVM: x86: Implement CET CPUID enumeration for
- Guest
-Message-ID: <20190813000604.GI4996@linux.intel.com>
-References: <20190725031246.8296-1-weijiang.yang@intel.com>
- <20190725031246.8296-4-weijiang.yang@intel.com>
+        id S1727068AbfHMAJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 20:09:04 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18115 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbfHMAJE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 20:09:04 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d51ffa10000>; Mon, 12 Aug 2019 17:09:05 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 12 Aug 2019 17:09:03 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 12 Aug 2019 17:09:03 -0700
+Received: from [10.2.165.207] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 13 Aug
+ 2019 00:09:02 +0000
+Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
+To:     Ira Weiny <ira.weiny@intel.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>
+References: <20190812015044.26176-1-jhubbard@nvidia.com>
+ <20190812015044.26176-3-jhubbard@nvidia.com>
+ <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
+Date:   Mon, 12 Aug 2019 17:07:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725031246.8296-4-weijiang.yang@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565654945; bh=/wUWIK2KCWN+EdOxtD3Lx3ieNzAYWw6oiQTfkMzs1z4=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=fabDrYOKwUNPuchzbriK5AMZnZocxegfpaGb1YYxCqXZ4wtcHIpx96Odw5k4ICzzT
+         iZpl3veS/CAV9dLRwYMRBkNIHfdxLkUfpXyqIoX7MnrHx9s6pT4udv1r1a/a5c/3h5
+         tZHPEp/ZLWCUEqqdJKpiANdAJLbkVzkBAV3TndttzDMnleK2AIW2H4b2DkINQlezTT
+         BY2P2+pn0RTBJfIR0Wmogyu9RLO4dLaugR7l4KAw9fjioVlORt5yAHDM2QgWHJyzK5
+         1JQeOscC3TwaeYqzJdN7IzLWb1tfFJadyhCYQA7OwMUGp3YXh4J32EZuea9IBQ1jgA
+         GWeSN2C/h30cw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 11:12:41AM +0800, Yang Weijiang wrote:
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 652b3876ea5c..ce1d6fe21780 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1637,6 +1637,11 @@ static inline bool vmx_feature_control_msr_valid(struct kvm_vcpu *vcpu,
->  	return !(val & ~valid_bits);
->  }
->  
-> +static inline u64 vmx_supported_xss(void)
-> +{
-> +	return host_xss;
-
-Do you know if the kernel will ever enable CET_USER but not CET_KERNEL,
-and vice versa?  I tried hunting down the logic in the main CET enabling
-series but couldn't find the relevant code.
-
-If the kernel does enable USER vs. KERNEL independently, are we sure that
-KVM can correctly virtualize that state and that the guest OS won't die
-due to expecting all CET features or no CET features?
-
-In other words, do we want to return host_xss as is, or do we want to
-make CET_USER and CET_KERNEL a bundle deal and avoid the headache, e.g.:
-
-	if (!(host_xss & XFEATURE_MASK_CET_USER) ||
-	    !(host_xss & XFEATURE_MASK_CET_KERNEL))
-		return host_xss & ~(XFEATURE_MASK_CET_USER |
-				    XFEATURE_MASK_CET_KERNEL);
-	return host_xss; 
-
-> +}
-> +
->  static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
->  {
->  	switch (msr->index) {
-> @@ -7724,6 +7729,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
->  	.get_vmcs12_pages = NULL,
->  	.nested_enable_evmcs = NULL,
->  	.need_emulation_on_page_fault = vmx_need_emulation_on_page_fault,
-> +	.supported_xss = vmx_supported_xss,
->  };
->  
->  static void vmx_cleanup_l1d_flush(void)
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index a470ff0868c5..6a1870044752 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -288,6 +288,10 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, unsigned long cr2,
->  				| XFEATURE_MASK_YMM | XFEATURE_MASK_BNDREGS \
->  				| XFEATURE_MASK_BNDCSR | XFEATURE_MASK_AVX512 \
->  				| XFEATURE_MASK_PKRU)
-> +
-> +#define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER \
-> +				| XFEATURE_MASK_CET_KERNEL)
-> +
->  extern u64 host_xcr0;
->  
->  extern u64 kvm_supported_xcr0(void);
-> -- 
-> 2.17.2
+On 8/12/19 4:49 PM, Ira Weiny wrote:
+> On Sun, Aug 11, 2019 at 06:50:44PM -0700, john.hubbard@gmail.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+...
+>> diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+>> index 53085896d718..fdff034a8a30 100644
+>> --- a/drivers/infiniband/core/umem_odp.c
+>> +++ b/drivers/infiniband/core/umem_odp.c
+>> @@ -534,7 +534,7 @@ static int ib_umem_odp_map_dma_single_page(
+>>   	}
+>>   
+>>   out:
+>> -	put_user_page(page);
+>> +	vaddr_unpin_pages(&page, 1, &umem_odp->umem.vaddr_pin);
+>>   
+>>   	if (remove_existing_mapping) {
+>>   		ib_umem_notifier_start_account(umem_odp);
+>> @@ -635,9 +635,10 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
+>>   		 * complex (and doesn't gain us much performance in most use
+>>   		 * cases).
+>>   		 */
+>> -		npages = get_user_pages_remote(owning_process, owning_mm,
+>> +		npages = vaddr_pin_pages_remote(owning_process, owning_mm,
+>>   				user_virt, gup_num_pages,
+>> -				flags, local_page_list, NULL, NULL);
+>> +				flags, local_page_list, NULL, NULL,
+>> +				&umem_odp->umem.vaddr_pin);
 > 
+> Thinking about this part of the patch... is this pin really necessary?  This
+> code is not doing a long term pin.  The page just needs a reference while we
+> map it into the devices page tables.  Once that is done we should get notifiers
+> if anything changes and we can adjust.  right?
+> 
+
+OK, now it's a little interesting: the FOLL_PIN is necessary, but maybe not
+FOLL_LONGTERM. Illustrating once again that it's actually necessary to allow
+these flags to vary independently.
+
+And that leads to another API refinement idea: let's set FOLL_PIN within the
+vaddr_pin_pages*() wrappers, and set FOLL_LONGTER in the *callers* of those
+wrappers, yes?
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
