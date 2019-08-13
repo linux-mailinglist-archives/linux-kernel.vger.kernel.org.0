@@ -2,148 +2,471 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 686FE8B952
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DFB58B92A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbfHMM7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:59:32 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38052 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728289AbfHMM7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:59:32 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A4520AA611A670BAC016;
-        Tue, 13 Aug 2019 20:43:46 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 13 Aug 2019
- 20:43:41 +0800
-Subject: Re: [PATCH] PCI: hv: Fix build error without CONFIG_SYSFS
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <20190531150923.12376-1-yuehaibing@huawei.com>
- <BYAPR21MB12211EEA95200F437C8E37ECD71A0@BYAPR21MB1221.namprd21.prod.outlook.com>
- <7d8ca05e-7519-45d8-e694-d31e221696d5@huawei.com>
- <b049b0f9-e31e-897a-6f2e-e30d6d865f24@huawei.com>
- <20190813101845.GB14977@e121166-lin.cambridge.arm.com>
-CC:     Michael Kelley <mikelley@microsoft.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <7c651711-7bf6-f2ca-cd4e-edcc0a7438e2@huawei.com>
-Date:   Tue, 13 Aug 2019 20:43:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1728389AbfHMMv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 08:51:59 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41106 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfHMMv6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 08:51:58 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dafna)
+        with ESMTPSA id 1349F28A58F
+From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+To:     dafna.hirschfeld@collabora.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, ezequiel@collabora.com,
+        kernel@collabora.com,
+        Gary Bisson <gary.bisson@boundarydevices.com>,
+        Troy Kisky <troy.kisky@boundarydevices.com>
+Subject: [PATCH v3 2/2] arm64: dts: imx: Add i.mx8mq nitrogen8m basic dts support
+Date:   Tue, 13 Aug 2019 14:51:46 +0200
+Message-Id: <20190813125147.29605-1-dafna.hirschfeld@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190813101845.GB14977@e121166-lin.cambridge.arm.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/13 18:18, Lorenzo Pieralisi wrote:
-> On Sat, Jun 15, 2019 at 02:48:24PM +0800, Yuehaibing wrote:
->> +cc Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> 
-> Can we drop this patch and merge:
-> 
-> https://patchwork.ozlabs.org/patch/1131444/
-> 
-> instead ?
+From: Gary Bisson <gary.bisson@boundarydevices.com>
 
-Ok, it looks good to me, thanks!
+Add basic dts support for i.MX8MQ NITROGEN8M.
 
-> 
-> Thanks,
-> Lorenzo
-> 
->>
->> On 2019/6/15 14:18, Yuehaibing wrote:
->>>
->>> On 2019/6/2 6:59, Michael Kelley wrote:
->>>> From: YueHaibing <yuehaibing@huawei.com>  Sent: Friday, May 31, 2019 8:09 AM
->>>>>
->>>>> while building without CONFIG_SYSFS, fails as below:
->>>>>
->>>>> drivers/pci/controller/pci-hyperv.o: In function 'hv_pci_assign_slots':
->>>>> pci-hyperv.c:(.text+0x40a): undefined reference to 'pci_create_slot'
->>>>> drivers/pci/controller/pci-hyperv.o: In function 'pci_devices_present_work':
->>>>> pci-hyperv.c:(.text+0xc02): undefined reference to 'pci_destroy_slot'
->>>>> drivers/pci/controller/pci-hyperv.o: In function 'hv_pci_remove':
->>>>> pci-hyperv.c:(.text+0xe50): undefined reference to 'pci_destroy_slot'
->>>>> drivers/pci/controller/pci-hyperv.o: In function 'hv_eject_device_work':
->>>>> pci-hyperv.c:(.text+0x11f9): undefined reference to 'pci_destroy_slot'
->>>>>
->>>>> Select SYSFS while PCI_HYPERV is set to fix this.
->>>>>
->>>>
->>>> I'm wondering if is the right way to fix the problem.  Conceptually
->>>> is it possible to setup & operate virtual PCI devices like 
->>>> pci-hyperv.c does, even if sysfs is not present?  Or is it right to
->>>> always required sysfs?
->>>>
->>>> The function pci_dev_assign_slot() in slot.c has a null implementation
->>>> in include/linux/pci.h when CONFIG_SYSFS is not defined, which
->>>> seems to be trying to solve the same problem for that function.  And
->>>> if CONFIG_HOTPLUG_PCI is defined but CONFIG_SYSFS is not,
->>>> pci_hp_create_module_link() and pci_hp_remove_module_link()
->>>> look like they would have the same problem.  Maybe there should
->>>> be degenerate implementations of pci_create_slot() and
->>>> pci_destroy_slot() for cases when CONFIG_SYSFS is not defined?
->>>>
->>>> But I'll admit I don't know the full story behind how PCI slots
->>>> are represented and used, so maybe I'm off base.  I just noticed
->>>> the inconsistency in how other functions in slot.c are handled.
->>>>
->>>> Thoughts?
->>>
->>> 268a03a42d33 ("PCI: drivers/pci/slot.c should depend on CONFIG_SYSFS")
->>>
->>> make slot.o depends CONFIG_SYSFS
->>>
->>> commit 268a03a42d3377d5fb41e6e7cbdec4e0b65cab2e
->>> Author: Alex Chiang <achiang@hp.com>
->>> Date:   Wed Jun 17 19:03:57 2009 -0600
->>>
->>>     PCI: drivers/pci/slot.c should depend on CONFIG_SYSFS
->>>
->>>     There is no way to interact with a physical PCI slot without
->>>     sysfs, so encode the dependency and prevent this build error:
->>>
->>>         drivers/pci/slot.c: In function 'pci_hp_create_module_link':
->>>         drivers/pci/slot.c:327: error: 'module_kset' undeclared
->>>
->>>     This patch _should_ make pci-sysfs.o depend on CONFIG_SYSFS too,
->>>     but we cannot (yet) because the PCI core merrily assumes the
->>>     existence of sysfs:
->>>
->>>         drivers/built-in.o: In function `pci_bus_add_device':
->>>         drivers/pci/bus.c:89: undefined reference to `pci_create_sysfs_dev_files'
->>>         drivers/built-in.o: In function `pci_stop_dev':
->>>         drivers/pci/remove.c:24: undefined reference to `pci_remove_sysfs_dev_files'
->>>
->>>     So do the minimal bit for now and figure out how to untangle it
->>>     later.
->>>
->>> If No CONFIG_SYSFS, slot.o is not build
->>>
->>>>
->>>> Michael
->>>>
->>>>
->>>
->>>
->>> .
->>>
->>
-> 
-> .
-> 
+Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+Signed-off-by: Troy Kisky <troy.kisky@boundarydevices.com>
+[Dafna: porting vendor's code to mainline]
+Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+---
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../boot/dts/freescale/imx8mq-nitrogen.dts    | 400 ++++++++++++++++++
+ 2 files changed, 401 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-nitrogen.dts
+
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 8c0c4343e586..e2c6c93f47b6 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -25,6 +25,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mm-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mn-ddr4-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-librem5-devkit.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mq-nitrogen.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-pico-pi.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-rmb3.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-zest.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-nitrogen.dts b/arch/arm64/boot/dts/freescale/imx8mq-nitrogen.dts
+new file mode 100644
+index 000000000000..da25ea9055cd
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mq-nitrogen.dts
+@@ -0,0 +1,400 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2018 Boundary Devices
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/input/input.h>
++#include "imx8mq.dtsi"
++
++/ {
++	model = "Boundary Devices i.MX8MQ Nitrogen8M";
++	compatible = "boundary,imx8mq-nitrogen8m", "fsl,imx8mq";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0x00000000 0x40000000 0 0x80000000>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_keys>;
++
++		power {
++			label = "Power Button";
++			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			gpio-key,wakeup;
++		};
++	};
++
++	reg_vref_0v9: regulator-vref-0v9 {
++		compatible = "regulator-fixed";
++		regulator-name = "vref-0v9";
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <900000>;
++	};
++
++	reg_vref_1v8: regulator-vref-1v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "vref-1v8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
++
++	reg_vref_2v5: regulator-vref-2v5 {
++		compatible = "regulator-fixed";
++		regulator-name = "vref-2v5";
++		regulator-min-microvolt = <2500000>;
++		regulator-max-microvolt = <2500000>;
++	};
++
++	reg_vref_3v3: regulator-vref-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vref-3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	reg_vref_5v: regulator-vref-5v {
++		compatible = "regulator-fixed";
++		regulator-name = "vref-5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++};
++
++
++&fec1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_fec1>;
++	phy-mode = "rgmii-id";
++	phy-handle = <&ethphy0>;
++	fsl,magic-packet;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy0: ethernet-phy@4 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <4>;
++			interrupts-extended = <&gpio1 11 IRQ_TYPE_LEVEL_LOW>;
++		};
++	};
++};
++
++&i2c1 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c1>;
++	status = "okay";
++
++	i2cmux@70 {
++		compatible = "nxp,pca9546";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_i2c1_pca9546>;
++		reg = <0x70>;
++		reset-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		i2c1a: i2c1@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg_arm_dram: regulator@60 {
++				compatible = "fcs,fan53555";
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_reg_arm_dram>;
++				reg = <0x60>;
++				regulator-min-microvolt =  <900000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++				vsel-gpios = <&gpio3 24 GPIO_ACTIVE_HIGH>;
++			};
++		};
++
++		i2c1b: i2c1@1 {
++			reg = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg_dram_1p1v: regulator@60 {
++				compatible = "fcs,fan53555";
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_reg_dram_1p1v>;
++				reg = <0x60>;
++				regulator-min-microvolt = <1100000>;
++				regulator-max-microvolt = <1100000>;
++				regulator-always-on;
++				vsel-gpios = <&gpio2 11 GPIO_ACTIVE_HIGH>;
++			};
++		};
++
++		i2c1c: i2c1@2 {
++			reg = <2>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg_soc_gpu_vpu: regulator@60 {
++				compatible = "fcs,fan53555";
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_reg_soc_gpu_vpu>;
++				reg = <0x60>;
++				regulator-min-microvolt =  <900000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++				vsel-gpios = <&gpio2 20 GPIO_ACTIVE_HIGH>;
++			};
++		};
++
++		i2c1d: i2c1@3 {
++			reg = <3>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			rtc@68 {
++				compatible = "microcrystal,rv4162";
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_i2c1d_rv4162>;
++				reg = <0x68>;
++				interrupts-extended = <&gpio1 6 IRQ_TYPE_LEVEL_LOW>;
++				wakeup-source;
++			};
++		};
++	};
++};
++
++&uart1 { /* console */
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart1>;
++	assigned-clocks = <&clk IMX8MQ_CLK_UART1>;
++	assigned-clock-parents = <&clk IMX8MQ_CLK_25M>;
++	status = "okay";
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart2>;
++	assigned-clocks = <&clk IMX8MQ_CLK_UART2>;
++	assigned-clock-parents = <&clk IMX8MQ_CLK_25M>;
++	status = "okay";
++};
++
++&usdhc1 {
++	bus-width = <8>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usdhc1>;
++	non-removable;
++	vmmc-supply = <&reg_vref_1v8>;
++	status = "okay";
++};
++
++&wdog1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_wdog>;
++	fsl,ext-reset-output;
++	status = "okay";
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hog>;
++	pinctrl_hog: hoggrp {
++		fsl,pins = <
++			/* J17 connector, odd */
++			MX8MQ_IOMUXC_SAI1_RXFS_GPIO4_IO0		0x19	/* Pin 19 */
++			MX8MQ_IOMUXC_SAI1_RXC_GPIO4_IO1			0x19	/* Pin 21 */
++			MX8MQ_IOMUXC_SAI1_RXD1_GPIO4_IO3		0x19	/* Pin 23 */
++			MX8MQ_IOMUXC_SAI1_RXD2_GPIO4_IO4		0x19	/* Pin 25 */
++			MX8MQ_IOMUXC_SAI1_RXD3_GPIO4_IO5		0x19	/* Pin 27 */
++			MX8MQ_IOMUXC_SAI1_RXD4_GPIO4_IO6		0x19	/* Pin 29 */
++			MX8MQ_IOMUXC_SAI1_RXD5_GPIO4_IO7		0x19	/* Pin 31 */
++			MX8MQ_IOMUXC_SAI1_RXD6_GPIO4_IO8		0x19	/* Pin 33 */
++			MX8MQ_IOMUXC_SAI1_RXD7_GPIO4_IO9		0x19	/* Pin 35 */
++			MX8MQ_IOMUXC_SAI1_TXD1_GPIO4_IO13		0x19	/* Pin 39 */
++			MX8MQ_IOMUXC_SAI1_TXD2_GPIO4_IO14		0x19	/* Pin 41 */
++			MX8MQ_IOMUXC_SAI1_TXD3_GPIO4_IO15		0x19	/* Pin 43 */
++			MX8MQ_IOMUXC_SAI1_TXD4_GPIO4_IO16		0x19	/* Pin 45 */
++			MX8MQ_IOMUXC_SAI1_TXD5_GPIO4_IO17		0x19	/* Pin 47 */
++			MX8MQ_IOMUXC_SAI1_TXD6_GPIO4_IO18		0x19	/* Pin 49 */
++			MX8MQ_IOMUXC_SAI1_TXD7_GPIO4_IO19		0x19	/* Pin 51 */
++
++			/* J17 connector, even */
++			MX8MQ_IOMUXC_SAI3_RXFS_GPIO4_IO28		0x19	/* Pin 44 */
++			MX8MQ_IOMUXC_SAI3_RXC_GPIO4_IO29		0x19	/* Pin 48 */
++			MX8MQ_IOMUXC_GPIO1_IO10_GPIO1_IO10		0x19	/* Pin 50 */
++			MX8MQ_IOMUXC_GPIO1_IO03_GPIO1_IO3		0x19	/* Pin 54 */
++			MX8MQ_IOMUXC_GPIO1_IO05_GPIO1_IO5		0x19	/* Pin 56 */
++
++			/* J18 connector, odd */
++			MX8MQ_IOMUXC_NAND_CE3_B_GPIO3_IO4		0x19	/* Pin 41 */
++			MX8MQ_IOMUXC_NAND_CLE_GPIO3_IO5			0x19	/* Pin 43 */
++			MX8MQ_IOMUXC_NAND_READY_B_GPIO3_IO16		0x19	/* Pin 45 */
++			MX8MQ_IOMUXC_NAND_DATA05_GPIO3_IO11		0x19	/* Pin 47 */
++			MX8MQ_IOMUXC_NAND_WP_B_GPIO3_IO18		0x19	/* Pin 49 */
++			MX8MQ_IOMUXC_NAND_DQS_GPIO3_IO14		0x19	/* Pin 53 */
++
++			/* J18 connector, even */
++			MX8MQ_IOMUXC_NAND_ALE_GPIO3_IO0			0x19	/* Pin 32 */
++			MX8MQ_IOMUXC_NAND_CE0_B_GPIO3_IO1		0x19	/* Pin 36 */
++			MX8MQ_IOMUXC_NAND_DATA00_GPIO3_IO6		0x19	/* Pin 38 */
++			MX8MQ_IOMUXC_NAND_DATA01_GPIO3_IO7		0x19	/* Pin 40 */
++			MX8MQ_IOMUXC_NAND_DATA02_GPIO3_IO8		0x19	/* Pin 42 */
++			MX8MQ_IOMUXC_NAND_DATA03_GPIO3_IO9		0x19	/* Pin 44 */
++			MX8MQ_IOMUXC_NAND_DATA04_GPIO3_IO10		0x19	/* Pin 46 */
++
++			/* J13 Pin 2, WL_WAKE */
++			MX8MQ_IOMUXC_SAI5_RXD2_GPIO3_IO23		0xd6
++			/* J13 Pin 4, WL_IRQ, not needed for Silex */
++			MX8MQ_IOMUXC_SAI5_RXD0_GPIO3_IO21		0xd6
++			/* J13 pin 9, unused */
++			MX8MQ_IOMUXC_SD2_CD_B_GPIO2_IO12		0x19
++			/* J13 Pin 41, BT_CLK_REQ */
++			MX8MQ_IOMUXC_SAI5_RXD1_GPIO3_IO22		0xd6
++			/* J13 Pin 42, BT_HOST_WAKE */
++			MX8MQ_IOMUXC_SAI5_MCLK_GPIO3_IO25		0xd6
++
++			/* Clock for both CSI1 and CSI2 */
++			MX8MQ_IOMUXC_GPIO1_IO15_CCMSRCGPCMIX_CLKO2	0x07
++			/* test points */
++			MX8MQ_IOMUXC_GPIO1_IO04_GPIO1_IO4		0xc1	/* TP87 */
++		>;
++	};
++
++	pinctrl_fec1: fec1grp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_ENET_MDC_ENET1_MDC			0x3
++			MX8MQ_IOMUXC_ENET_MDIO_ENET1_MDIO		0x23
++			MX8MQ_IOMUXC_ENET_TX_CTL_ENET1_RGMII_TX_CTL	0x1f
++			MX8MQ_IOMUXC_ENET_TXC_ENET1_RGMII_TXC		0x1f
++			MX8MQ_IOMUXC_ENET_TD0_ENET1_RGMII_TD0		0x1f
++			MX8MQ_IOMUXC_ENET_TD1_ENET1_RGMII_TD1		0x1f
++			MX8MQ_IOMUXC_ENET_TD2_ENET1_RGMII_TD2		0x1f
++			MX8MQ_IOMUXC_ENET_TD3_ENET1_RGMII_TD3		0x1f
++			MX8MQ_IOMUXC_ENET_RX_CTL_ENET1_RGMII_RX_CTL	0x91
++			MX8MQ_IOMUXC_ENET_RXC_ENET1_RGMII_RXC		0x91
++			MX8MQ_IOMUXC_ENET_RD0_ENET1_RGMII_RD0		0x91
++			MX8MQ_IOMUXC_ENET_RD1_ENET1_RGMII_RD1		0x91
++			MX8MQ_IOMUXC_ENET_RD2_ENET1_RGMII_RD2		0x91
++			MX8MQ_IOMUXC_ENET_RD3_ENET1_RGMII_RD3		0x91
++			MX8MQ_IOMUXC_GPIO1_IO09_GPIO1_IO9		0x19
++			MX8MQ_IOMUXC_GPIO1_IO11_GPIO1_IO11		0x59
++		>;
++	};
++
++	pinctrl_gpio_keys: gpio-keysgrp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_GPIO1_IO07_GPIO1_IO7		0x19
++		>;
++	};
++
++
++	pinctrl_i2c1: i2c1grp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_I2C1_SCL_I2C1_SCL			0x4000007f
++			MX8MQ_IOMUXC_I2C1_SDA_I2C1_SDA			0x4000007f
++		>;
++	};
++
++	pinctrl_i2c1_pca9546: i2c1-pca9546grp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_GPIO1_IO08_GPIO1_IO8		0x49
++		>;
++	};
++
++	pinctrl_i2c1d_rv4162: i2c1d-rv4162grp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_GPIO1_IO06_GPIO1_IO6		0x49
++		>;
++	};
++
++	pinctrl_reg_arm_dram: reg-arm-dram {
++		fsl,pins = <
++			MX8MQ_IOMUXC_SAI5_RXD3_GPIO3_IO24	0x16
++		>;
++	};
++
++	pinctrl_reg_dram_1p1v: reg-dram-1p1v {
++		fsl,pins = <
++			MX8MQ_IOMUXC_SD1_STROBE_GPIO2_IO11	0x16
++		>;
++	};
++
++	pinctrl_reg_soc_gpu_vpu: reg-soc-gpu-vpu {
++		fsl,pins = <
++			MX8MQ_IOMUXC_SD2_WP_GPIO2_IO20		0x16
++		>;
++	};
++
++	pinctrl_uart1: uart1grp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_UART1_RXD_UART1_DCE_RX		0x45
++			MX8MQ_IOMUXC_UART1_TXD_UART1_DCE_TX		0x45
++		>;
++	};
++
++	pinctrl_uart2: uart2grp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_UART2_RXD_UART2_DCE_RX		0x45
++			MX8MQ_IOMUXC_UART2_TXD_UART2_DCE_TX		0x45
++		>;
++	};
++
++	pinctrl_usdhc1: usdhc1grp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_SD1_CLK_USDHC1_CLK			0x83
++			MX8MQ_IOMUXC_SD1_CMD_USDHC1_CMD			0xc3
++			MX8MQ_IOMUXC_SD1_DATA0_USDHC1_DATA0		0xc3
++			MX8MQ_IOMUXC_SD1_DATA1_USDHC1_DATA1		0xc3
++			MX8MQ_IOMUXC_SD1_DATA2_USDHC1_DATA2		0xc3
++			MX8MQ_IOMUXC_SD1_DATA3_USDHC1_DATA3		0xc3
++			MX8MQ_IOMUXC_SD1_DATA4_USDHC1_DATA4		0xc3
++			MX8MQ_IOMUXC_SD1_DATA5_USDHC1_DATA5		0xc3
++			MX8MQ_IOMUXC_SD1_DATA6_USDHC1_DATA6		0xc3
++			MX8MQ_IOMUXC_SD1_DATA7_USDHC1_DATA7		0xc3
++			MX8MQ_IOMUXC_SD1_RESET_B_GPIO2_IO10		0x41
++		>;
++	};
++
++	pinctrl_usdhc1_100mhz: usdhc1grp100mhz {
++		fsl,pins = <
++			MX8MQ_IOMUXC_SD1_CLK_USDHC1_CLK			0x8d
++			MX8MQ_IOMUXC_SD1_CMD_USDHC1_CMD			0xcd
++			MX8MQ_IOMUXC_SD1_DATA0_USDHC1_DATA0		0xcd
++			MX8MQ_IOMUXC_SD1_DATA1_USDHC1_DATA1		0xcd
++			MX8MQ_IOMUXC_SD1_DATA2_USDHC1_DATA2		0xcd
++			MX8MQ_IOMUXC_SD1_DATA3_USDHC1_DATA3		0xcd
++			MX8MQ_IOMUXC_SD1_DATA4_USDHC1_DATA4		0xcd
++			MX8MQ_IOMUXC_SD1_DATA5_USDHC1_DATA5		0xcd
++			MX8MQ_IOMUXC_SD1_DATA6_USDHC1_DATA6		0xcd
++			MX8MQ_IOMUXC_SD1_DATA7_USDHC1_DATA7		0xcd
++		>;
++	};
++
++	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
++		fsl,pins = <
++			MX8MQ_IOMUXC_SD1_CLK_USDHC1_CLK			0x9f
++			MX8MQ_IOMUXC_SD1_CMD_USDHC1_CMD			0xdf
++			MX8MQ_IOMUXC_SD1_DATA0_USDHC1_DATA0		0xdf
++			MX8MQ_IOMUXC_SD1_DATA1_USDHC1_DATA1		0xdf
++			MX8MQ_IOMUXC_SD1_DATA2_USDHC1_DATA2		0xdf
++			MX8MQ_IOMUXC_SD1_DATA3_USDHC1_DATA3		0xdf
++			MX8MQ_IOMUXC_SD1_DATA4_USDHC1_DATA4		0xdf
++			MX8MQ_IOMUXC_SD1_DATA5_USDHC1_DATA5		0xdf
++			MX8MQ_IOMUXC_SD1_DATA6_USDHC1_DATA6		0xdf
++			MX8MQ_IOMUXC_SD1_DATA7_USDHC1_DATA7		0xdf
++		>;
++	};
++
++	pinctrl_wdog: wdoggrp {
++		fsl,pins = <
++		MX8MQ_IOMUXC_GPIO1_IO02_WDOG1_WDOG_B	0xc6
++		>;
++	};
++};
+-- 
+2.20.1
 
