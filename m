@@ -2,82 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3086D8C381
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:20:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A18B8C38B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:22:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbfHMVUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 17:20:31 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:51852 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbfHMVUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 17:20:31 -0400
-Received: from zn.tnic (p200300EC2F0D24001434546E6F7AC9DD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:2400:1434:546e:6f7a:c9dd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B02FC1EC09A0;
-        Tue, 13 Aug 2019 23:20:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565731229;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=2yTRFcfoQAJUotojrKw6EZh+Y8eKJ3yXx+6PAGXWMgg=;
-        b=X5QM0mr9JTQP4ZnEJ04D8BqJ1yHp5EX8vWX8ENk92UuCs/bHE3vG6Q3SmSkHQEaM9aUkPn
-        GmR8Q9NC2vm3Ej/fISqATF8PebO5YXnlqSeNDCaW+AJVn84IMMQEXUjiGXMF95FScPAb1R
-        URwaO/CVUZrPD9vdwYqqqUZj75q2QIU=
-Date:   Tue, 13 Aug 2019 23:21:15 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kernel User <linux-kernel@riseup.net>
-Cc:     linux-kernel@vger.kernel.org, mhocko@suse.com, x86@kernel.org
-Subject: Re: /sys/devices/system/cpu/vulnerabilities/ doesn't show all known
- CPU vulnerabilities
-Message-ID: <20190813212115.GO16770@zn.tnic>
-References: <20190813232829.3a1962cc@localhost>
+        id S1726940AbfHMVWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 17:22:08 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34062 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfHMVWH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 17:22:07 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 8B47280848; Tue, 13 Aug 2019 23:21:52 +0200 (CEST)
+Date:   Tue, 13 Aug 2019 23:22:04 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Eric Blau <eblau@eblau.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Subject: Re: [Regression] MacBook Pro - suspend does not power off - reaches
+ dangerously hot temps
+Message-ID: <20190813212204.GA14654@amd>
+References: <CADU241M42pe_vFD4QriuVm_CjnpQe0LyBUDihaDkxm5k6o7X3g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
 Content-Disposition: inline
-In-Reply-To: <20190813232829.3a1962cc@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CADU241M42pe_vFD4QriuVm_CjnpQe0LyBUDihaDkxm5k6o7X3g@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 11:28:29PM +0300, Kernel User wrote:
-> Hi,
-> 
-> 'ls /sys/devices/system/cpu/vulnerabilities/' doesn't show all known
-> CPU vulnerabilities and their variants. Only some of them:
-> 
-> l1tf  mds  meltdown  spec_store_bypass  spectre_v1  spectre_v2
-> 
-> Wikipedia shows more variants:
-> 
-> https://en.wikipedia.org/wiki/Meltdown_(security_vulnerability)#Speculative_execution_security_vulnerabilities
-> 
-> It would be good to have a full list with statuses. Then one won't need to use external (potentially non-safe) tools like https://github.com/speed47/spectre-meltdown-checker to find out the vulnerabilities of a system.
-> 
 
-You have to consider that some of those are addressed by a single
-mitigation like MDS; the mitigation for others like lazy FPU restore
-is not even present in /sys/devices/system/cpu/vulnerabilities/. Also,
-depending on the CPU, some are not even affected.
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So maintaining this in the kernel is unnecessary to say the least.
+Hi!
 
-We could use a writeup somewhere which maps each vulnerability name -
-and they're a gazillion by now - to the respective mitigation and what
-is required but I'm not aware of such a writeup.
+You may want to cc maintainers...
 
-Documentation/admin-guide/hw-vuln/ could be a good start and
-Documentation/admin-guide/hw-vuln/mds.rst could be a good example how
-one should document the vulnerabilities and their mitigation. But that
-would need to be exhaustive.
+M:      "Rafael J. Wysocki" <rjw@rjwysocki.net>
+M:      Pavel Machek <pavel@ucw.cz>
+L:      linux-pm@vger.kernel.org
 
-IMHO of course.
+> I have a MacBook Pro 12,1 model where I've hit a regression since
+> upgrading to 5.2.x. When I enter hybrid-sleep mode with "systemctl
+> hybrid-sleep", the laptop appears to enter suspend (screen turns off
+> and keyboard backlights go out) but actually is still on with the CPU
+> fan powered off.
+>=20
+> When I first noticed this, I had put my laptop away in my bag and
+> noticed it got extremely hot to the point of being dangerously close
+> to a fire hazard. It was too hot to touch and would not resume
+> successfully either from suspend or, after powering off, from
+> hibernate.
 
--- 
-Regards/Gruss,
-    Boris.
+If you are able to push the CPU over 100C, it is a hardware
+bug. Hardware should protect itself.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> I've had no issues on 5.1 through 5.1.16 but every version of 5.2.x
+> I've tried (5.2 through 5.2.8) has exhibited this problem. Is there a
+> known regression in suspend handling in the kernel? I noticed some
+> traffic about suspend and NVMe devices but I do not have an NVMe
+> drive.
+>=20
+> If nobody else has reported this issue, I would be glad to do a bisect
+> to help resolve it.
+
+You may want to try latest 5.3-rc and -next... And perform basic
+debugging such as making sure that normal suspend works and normal
+poweroff works.
+
+But yes, if you can bisect it, it will make stuff easy...
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1TKfwACgkQMOfwapXb+vLwQQCeIKWWTjWb5sq6glJ4XSkYyVSm
+yzkAnAlqlQbWuqVZ93/XoffeK7yTEEf9
+=bmFZ
+-----END PGP SIGNATURE-----
+
+--ReaqsoxgOBHFXBhH--
