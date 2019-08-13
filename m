@@ -2,132 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2EBD8B738
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FFA38B748
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:38:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfHMLhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 07:37:40 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:47542 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726600AbfHMLhj (ORCPT
+        id S1728103AbfHMLiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 07:38:06 -0400
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:37339 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726600AbfHMLiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 07:37:39 -0400
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hxV7M-0007C4-Or; Tue, 13 Aug 2019 12:37:32 +0100
-Received: from ben by deadeye with local (Exim 4.92)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1hxV7M-0002gA-GJ; Tue, 13 Aug 2019 12:37:32 +0100
-Message-ID: <8861ca0e9c4a171390b231941cd958189ca6ef33.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 043/157] ext4: brelse all indirect buffer 
- inext4_ind_remove_space()
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Jari Ruusu <jariruusu@users.sourceforge.net>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        Hulk Robot <hulkci@huawei.com>, Jan Kara <jack@suse.cz>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, Theodore Ts'o <tytso@mit.edu>
-Date:   Tue, 13 Aug 2019 12:37:27 +0100
-In-Reply-To: <5D523729.B7BF986@users.sourceforge.net>
-References: <lsq.1565469607.761898531@decadent.org.uk>
-         <5D523729.B7BF986@users.sourceforge.net>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-x6352Adav+lzE9GJZMu/"
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 13 Aug 2019 07:38:05 -0400
+Received: from [IPv6:2001:420:44c1:2579:155e:93d7:78eb:5531] ([IPv6:2001:420:44c1:2579:155e:93d7:78eb:5531])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id xV7hhKyl4qTdhxV7lh9QWs; Tue, 13 Aug 2019 13:38:03 +0200
+Subject: Re: [PATCH v6 7/8] drm: dw-hdmi: use cec_notifier_conn_(un)register
+To:     Dariusz Marcinkiewicz <darekm@google.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190813110300.83025-1-darekm@google.com>
+ <20190813110300.83025-8-darekm@google.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <41c95313-fe39-b201-5238-24df7e72879a@xs4all.nl>
+Date:   Tue, 13 Aug 2019 13:37:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <20190813110300.83025-8-darekm@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfIBagj28XgFXymMISKdyrWMjFt9IjTRiBXHeYQ8i3w0U4Wmg+lnZ4GDTQICxwIRE85AT9cLb1gSIzU3XCyCFb06QnkcTTCxjaQdd9IIIDbMS7bs5/Seq
+ 6wtzY0AoNHNv4XZ9VmC4qEaDiqB6IEjBr73ptDVWgMelCSl9YXJXPJMO0ivIG5B+CrTxcI74sSrvID5kdg2f3tMIENv57PbTFy18gzjJWLz8G69CYhaLdIJz
+ gMo7szk+Ysud2+ULZN5BuGjhvxHqCqnMiZ16x26Rz8wqkJ0p/cfuKBvLRUYrcGOn9drZjQbC4+oqfiWwh8v0Lvjs3JaFCiCsoygSJQh5oMbS2ewOC0gZGHVt
+ 0YESTERspXC9yG9j6vUXZ1TUnXIRm6tfqYNysThfBOgkTmKKaLe147ZJvmvPuR6PJH8sXGBX0mcmwtqs+IUyDjRYLoiAFuQ9JYadKltmz5Yhwca6jxnFEH3U
+ U67fCyYxZK+6Pnl6kTZhZc4B+Q8g1stYW7QHS6V+mT0Z5YCwKrDhxjfoZrL/GmNGU7Q6W504ilzQ5oDoP103BJ4w5pT4uu3R/AIvZSJ35782yKdbmWgkCJuE
+ X8lcNgQisp/ICI9RN+zYMhIHhskKnJQY5rqthEzspk/T/Y6zGuWxT0oHh4mWuC/g0Mkq6mKFAvRcwbQY8IY6faGxg/Xj8TlZtw63BtR/VMCeRA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 8/13/19 1:02 PM, Dariusz Marcinkiewicz wrote:
+> Use the new cec_notifier_conn_(un)register() functions to
+> (un)register the notifier for the HDMI connector, and fill in
+> the cec_connector_info.
+> 
+> Changes since v4:
+> 	- typo fix
+> Changes since v2:
+> 	- removed unnecessary NULL check before a call to
+> 	cec_notifier_conn_unregister,
+> 	- use cec_notifier_phys_addr_invalidate to invalidate physical
+> 	address.
+> Changes since v1:
+> 	Add memory barrier to make sure that the notifier
+> 	becomes visible to the irq thread once it is fully
+> 	constructed.
+> 
+> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+> Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 36 ++++++++++++++---------
+>  1 file changed, 22 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> index 83b94b66e464e..c00184700bb9d 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -2194,6 +2194,8 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+>  	struct dw_hdmi *hdmi = bridge->driver_private;
+>  	struct drm_encoder *encoder = bridge->encoder;
+>  	struct drm_connector *connector = &hdmi->connector;
+> +	struct cec_connector_info conn_info;
+> +	struct cec_notifier *notifier;
+>  
+>  	connector->interlace_allowed = 1;
+>  	connector->polled = DRM_CONNECTOR_POLL_HPD;
+> @@ -2207,6 +2209,18 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+>  
+>  	drm_connector_attach_encoder(connector, encoder);
+>  
+> +	cec_fill_conn_info_from_drm(&conn_info, connector);
+> +
+> +	notifier = cec_notifier_conn_register(hdmi->dev, NULL, &conn_info);
+> +	if (!notifier)
+> +		return -ENOMEM;
+> +	/*
+> +	 * Make sure that dw_hdmi_irq thread does see the notifier
+> +	 * when it fully constructed.
+> +	 */
+> +	smp_wmb();
+> +	hdmi->cec_notifier = notifier;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -2373,9 +2387,13 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+>  				       phy_stat & HDMI_PHY_HPD,
+>  				       phy_stat & HDMI_PHY_RX_SENSE);
+>  
+> -		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0)
+> -			cec_notifier_set_phys_addr(hdmi->cec_notifier,
+> -						   CEC_PHYS_ADDR_INVALID);
+> +		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0) {
+> +			struct cec_notifier *notifier;
+> +
+> +			notifier = READ_ONCE(hdmi->cec_notifier);
+> +			if (notifier)
+> +				cec_notifier_phys_addr_invalidate(notifier);
+> +		}
+>  	}
+>  
+>  	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
+> @@ -2693,12 +2711,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>  	if (ret)
+>  		goto err_iahb;
+>  
+> -	hdmi->cec_notifier = cec_notifier_get(dev);
+> -	if (!hdmi->cec_notifier) {
+> -		ret = -ENOMEM;
+> -		goto err_iahb;
+> -	}
+> -
+>  	/*
+>  	 * To prevent overflows in HDMI_IH_FC_STAT2, set the clk regenerator
+>  	 * N and cts values before enabling phy
+> @@ -2796,9 +2808,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>  		hdmi->ddc = NULL;
+>  	}
+>  
+> -	if (hdmi->cec_notifier)
+> -		cec_notifier_put(hdmi->cec_notifier);
+> -
+>  	clk_disable_unprepare(hdmi->iahb_clk);
+>  	if (hdmi->cec_clk)
+>  		clk_disable_unprepare(hdmi->cec_clk);
+> @@ -2820,8 +2829,7 @@ static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
+>  	/* Disable all interrupts */
+>  	hdmi_writeb(hdmi, ~0, HDMI_IH_MUTE_PHY_STAT0);
+>  
+> -	if (hdmi->cec_notifier)
+> -		cec_notifier_put(hdmi->cec_notifier);
+> +	cec_notifier_conn_unregister(hdmi->cec_notifier);
 
---=-x6352Adav+lzE9GJZMu/
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Russell's review caused me to take another look at this series, and it made
+wonder if cec_notifier_conn_unregister() shouldn't be called from bridge_detach?
 
-On Tue, 2019-08-13 at 07:06 +0300, Jari Ruusu wrote:
-> Ben Hutchings wrote:
-> > From: "zhangyi (F)" <yi.zhang@huawei.com>
-> >=20
-> > commit 674a2b27234d1b7afcb0a9162e81b2e53aeef217 upstream.
->=20
-> [snip]
->=20
-> > --- a/fs/ext4/indirect.c
-> > +++ b/fs/ext4/indirect.c
-> > @@ -1481,10 +1481,14 @@ end_range:
-> >                                            partial->p + 1,
-> >                                            partial2->p,
-> >                                            (chain+n-1) - partial);
-> > -                       BUFFER_TRACE(partial->bh, "call brelse");
-> > -                       brelse(partial->bh);
-> > -                       BUFFER_TRACE(partial2->bh, "call brelse");
-> > -                       brelse(partial2->bh);
-> > +                       while (partial > chain) {
-> > +                               BUFFER_TRACE(partial->bh, "call brelse"=
-);
-> > +                               brelse(partial->bh);
-> > +                       }
-> > +                       while (partial2 > chain2) {
-> > +                               BUFFER_TRACE(partial2->bh, "call brelse=
-");
-> > +                               brelse(partial2->bh);
-> > +                       }
-> >                         return 0;
-> >                 }
-> >=20
->=20
-> Above patch is really messed up. Alone that patch is livelocking
-> and file system corrupting. Look at those new while loops. Once the
-> while condition is true once, it is ALWAYS true, so it livelocks.
+Regards,
 
-Thank you very much for this information.
+	Hans
 
-> It absolutely needs follow-up patch from <yi.zhang@huawei.com>
-> "ext4: cleanup bh release code in ext4_ind_remove_space()"
-> upstream commit 5e86bdda41534e17621d5a071b294943cae4376e.
->=20
-> For more info about how to trigger that bug, see this earlier email
->=20
-> https://marc.info/?l=3Dlinux-kernel&m=3D155419973129522&w=3D2
->=20
-> For 3.16 kernels you may need to set CONFIG_EXT4_USE_FOR_EXT23=3Dy
-> so that ext4 code handles ext3 file systems.
+>  
+>  	clk_disable_unprepare(hdmi->iahb_clk);
+>  	clk_disable_unprepare(hdmi->isfr_clk);
+> 
 
-As I want to release the update right now, I'll defer both of these.
-
-Ben.
-
---=20
-Ben Hutchings
-When in doubt, use brute force. - Ken Thompson
-
-
-
---=-x6352Adav+lzE9GJZMu/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl1SoPcACgkQ57/I7JWG
-EQlMJg//W6aEnzB7UJEVpTqTkKayKeMrMjoKMV1KE+pzvoggh1QVopvFR1MoHk1T
-41wwKsnQhqOchtMnay3jvW3X++2lcjREYa8ckFDz2bZxOKEHwnDyx/A+TAVmZFf5
-vvn2PiV9NskLAPousCPMb/IFki6n9rM3nmYmyVwk8KmQCccX/drr6xItV9attkGI
-UNF/nKoEmCqQ9XrEb3t34H4aytbHQO9MAGVQy7PHxD+XlfSpU61NTQDjOisvef/U
-GxU6yVIGjhcaB/NT5x3tINMQok1G/NWmPiNkP3uAqdKQRQISpPh2SZ1lDRDI3XH1
-/gdBjPtKfB6KTMA6OfRPnkZrrUUyvcOVsmjiJrUt941h0S7xMbXh9rMkxv28k6fc
-0kHB8r9iwgbHH3MhWPKJ0YZeAaolSiFIAywAo/YZPnbQYDZWACtwcN+v78wVaUSw
-21wFH4eksHqF4mwn57Fzip3IS6G2mMSZ2Yfz5RMg7Knr2lgm2xYZ+Ky+J5RkkFvh
-8sVZp1OT5qtuVwnx6jVGgjATSP352ZD1ygVvMUpAePS6CpWIvwm0Xndx3JBIfXZm
-DJ27DezImMDTpTZKFEcG9x3P4Ch3CUxvI1b/oqzqEQjncHRxbIIUhjPvGAkWUgci
-xiADS7j+d+DwR3iGU07l3P5vS22oeYqY0T6IyzXpZbsL/iuF2/g=
-=j5b8
------END PGP SIGNATURE-----
-
---=-x6352Adav+lzE9GJZMu/--
