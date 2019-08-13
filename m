@@ -2,129 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCEFD8ADCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 06:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CA638ADD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 06:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfHMEfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 00:35:47 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:32829 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbfHMEfq (ORCPT
+        id S1726801AbfHMEiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 00:38:00 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:51800 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfHMEh7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 00:35:46 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g2so50853152pfq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 21:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=FF+t4OfbpbPXQydk92H3dHyz9qzlzYP9A0YiDR+Zrp4=;
-        b=iNaElT5f9Fx0JFXWcMllOYGAivHnGcZ+vAM3BC3rgxbs2WuFyVvLRHFAOhKrL+YaV6
-         z4JcM7+aOYlFXjnWVj1awatGh+783+1nLO6LLl7QZl2dU4Wmk9A85sK+MkJmrUlWJMK8
-         TRHu4+K61SJOmnfUm4ya3/IcajvfQYbQ79zAFEeeu6W9IJTjhEvk5nh15iboQ/wGTMaf
-         5QjJvoojXjz449lXHAcAsWBtZVDd4RJnqX/wgE8Yp6F9+m5kYUmnb7fSAXbnTsHVWstD
-         tpvENKw3ez5w6WoYBNRjAoNU5Dj5DJZXpB3/67rZFjiHWc4SQjL6AnFg2OMihpRLGQ7B
-         gbkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FF+t4OfbpbPXQydk92H3dHyz9qzlzYP9A0YiDR+Zrp4=;
-        b=JYQpD91pAo9dlavRbHEVJj037jykWM9RqpyBmQxfiIVFZCQkO4tCQpyn+8jlv7avUs
-         LhQdjdoAKcm8lLQq2EBYbRSwllcpmjPcno6Us8Jl91U2SuaPULoneMd32afLYv0R7nTL
-         3U6/2XM0dRPiY/CVh0UVNqLCOk3EhhLal5f1sMXyW7+sznB0StvmehjCIWreazVy4aCn
-         aUFo3NdZNcSpYXhVNZV0IqCHUbO3QZp/49+ox0jRts7wdE4G4yKS7o3Trvb0qGtETeg+
-         nffrsmxGz/+gtXe2TReXSdq3waGivCcfjp4gd4iDACLGlXhh6Bi2bOHHo6bcmbSOTsfH
-         GGeQ==
-X-Gm-Message-State: APjAAAWKU/jevA4+oYrkqYyZwhr4VCNtCvi2eQNrGr22Izas/xr+gNer
-        CxzOjvNaUiMZaQep0DNSrBA=
-X-Google-Smtp-Source: APXvYqzEzXsJoI3psN7SGb0fuqOoaUnY2iJI3t6Aq5SFnCKzdy+WBtSTfPJ6Wh29XUp6lD6gDLQfZg==
-X-Received: by 2002:a62:8246:: with SMTP id w67mr39913715pfd.226.1565670946206;
-        Mon, 12 Aug 2019 21:35:46 -0700 (PDT)
-Received: from [10.0.2.15] ([122.163.110.75])
-        by smtp.gmail.com with ESMTPSA id q69sm530641pjb.0.2019.08.12.21.35.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2019 21:35:45 -0700 (PDT)
-Subject: Re: [PATCH] bus: ti-sysc: Remove if-block in sysc_check_children()
-To:     Roger Quadros <rogerq@ti.com>, tony@atomide.com,
-        linux-kernel@vger.kernel.org, "Kristo, Tero" <t-kristo@ti.com>
-References: <20190808074042.15403-1-nishkadg.linux@gmail.com>
- <2038cdcd-1506-84c6-520d-6dda50d4f317@ti.com>
-From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
-Message-ID: <a1f56fcc-2207-fa32-83bc-cd219c2b893c@gmail.com>
-Date:   Tue, 13 Aug 2019 10:05:41 +0530
+        Tue, 13 Aug 2019 00:37:59 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7D4bfUa075008;
+        Mon, 12 Aug 2019 23:37:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565671061;
+        bh=FwJydpcr667N2/XPMOBcxx0wD/N0E+SUJhtqvw4Uofc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZXoSPIGRf5bEd9CXF5888bXKA/dJVvEzd12eMCDYSiOBzIJd/NWnMSHge97ZmfqVN
+         jA3URMmrInM0u4TPbHr4inRbz1sDP3l5hWoeqXrEouBhjPpUcrcUgWWTRIQ9IomKS4
+         Zt2tRMZTzHzVZ8Oi58P4pW6t9AIgx3ylM/vzgs9I=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7D4bflI032016
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Aug 2019 23:37:41 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 12
+ Aug 2019 23:37:40 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 12 Aug 2019 23:37:40 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7D4bZp5072921;
+        Mon, 12 Aug 2019 23:37:36 -0500
+Subject: Re: [PATCH 1/4] dt-bingings: PCI: Remove the num-lanes from Required
+ properties
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        Andrew Murray <andrew.murray@arm.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>
+References: <20190812042435.25102-1-Zhiqiang.Hou@nxp.com>
+ <20190812042435.25102-2-Zhiqiang.Hou@nxp.com>
+ <20190812084517.GW56241@e119886-lin.cambridge.arm.com>
+ <DB8PR04MB67476309D3F7E30FE35C47DF84D20@DB8PR04MB6747.eurprd04.prod.outlook.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <286ea8d2-5467-6cc2-07cb-7707db13ad1a@ti.com>
+Date:   Tue, 13 Aug 2019 10:05:42 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <2038cdcd-1506-84c6-520d-6dda50d4f317@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <DB8PR04MB67476309D3F7E30FE35C47DF84D20@DB8PR04MB6747.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="gbk"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/08/19 7:25 PM, Roger Quadros wrote:
-> Nishka,
+Hi,
+
+On 13/08/19 8:37 AM, Z.q. Hou wrote:
+> Hi Andrew,
 > 
-> On 08/08/2019 10:40, Nishka Dasgupta wrote:
->> In function sysc_check_children, there is an if-statement checking
->> whether the value returned by function sysc_check_one_child is non-zero.
->> However, sysc_check_one_child always returns 0, and hence this check is
->> not needed. Hence remove this if-block.
+> Thanks a lot for your comments!
+> 
+>> -----Original Message-----
+>> From: Andrew Murray <andrew.murray@arm.com>
+>> Sent: 2019Äê8ÔÂ12ÈÕ 16:45
+>> To: Z.q. Hou <zhiqiang.hou@nxp.com>
+>> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org;
+>> linux-kernel@vger.kernel.org; gustavo.pimentel@synopsys.com;
+>> jingoohan1@gmail.com; bhelgaas@google.com; robh+dt@kernel.org;
+>> mark.rutland@arm.com; shawnguo@kernel.org; Leo Li
+>> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com; M.h. Lian
+>> <minghuan.lian@nxp.com>; Kishon Vijay Abraham I <kishon@ti.com>;
+>> Gabriele Paoloni <gabriele.paoloni@huawei.com>
+>> Subject: Re: [PATCH 1/4] dt-bingings: PCI: Remove the num-lanes from
+>> Required properties
 >>
->> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
->> ---
->>   drivers/bus/ti-sysc.c | 2 --
->>   1 file changed, 2 deletions(-)
+>> On Mon, Aug 12, 2019 at 04:22:16AM +0000, Z.q. Hou wrote:
+>>> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>>>
+>>> The num-lanes is not a mandatory property, e.g. on FSL Layerscape
+>>> SoCs, the PCIe link training is completed automatically base on the
+>>> selected SerDes protocol, it doesn't need the num-lanes to set-up the
+>>> link width.
+>>>
+>>> It has been added in the Optional properties. This patch is to remove
+>>> it from the Required properties.
 >>
->> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
->> index e6deabd8305d..bc8082ae7cb5 100644
->> --- a/drivers/bus/ti-sysc.c
->> +++ b/drivers/bus/ti-sysc.c
->> @@ -637,8 +637,6 @@ static int sysc_check_children(struct sysc *ddata)
->>   
->>   	for_each_child_of_node(ddata->dev->of_node, child) {
->>   		error = sysc_check_one_child(ddata, child);
->> -		if (error)
->> -			return error;
-> 
-> We cannot assume that sysc_check_one_child() will never return error in the future.
-> If it can never return an error then why does it have an int return type?
-
-I'm not sure why it has an int return type, unfortunately. This is the 
-function in its entirety:
-
-static int sysc_check_one_child(struct sysc *ddata,
-				struct device_node *np)
-{
-	const char *name;
-
-	name = of_get_property(np, "ti,hwmods", NULL);
-	if (name)
-		dev_warn(ddata->dev, "really a child ti,hwmods property?");
-
-	sysc_check_quirk_stdout(ddata, np);
-	sysc_parse_dts_quirks(ddata, np, true);
-
-	return 0;
-}
-
-I'm not sure how to understand this function. Do dev_warn() or 
-sysc_check_quirk_stdout() or sysc_parse_dts_quirks() cause a non-zero 
-return from sysc_check_one_child()? Should I drop my patch?
-
-Thanking you,
-Nishka
-> 
->>   	}
->>   
->>   	return 0;
+>> For clarity, maybe this paragraph can be reworded to:
 >>
+>> "It is previously in both Required and Optional properties,  let's remove it
+>> from the Required properties".
 > 
-> cheers,
-> -roger
+> Agree and will change in v2.
 > 
+>>
+>> I don't understand why this property is previously in both required and
+>> optional...
+>>
+>> It looks like num-lanes was first made optional back in
+>> 2015 and removed from the Required section (907fce090253).
+>> But then re-added back into the Required section in 2017 with the adition of
+>> bindings for EP mode (b12befecd7de).
+>>
+>> Is num-lanes actually required for EP mode?
+> 
+> Kishon, please help to answer this query?
 
+It should be optional for EP too.
+
+Thanks
+Kishon
