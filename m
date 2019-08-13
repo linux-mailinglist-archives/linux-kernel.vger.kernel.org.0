@@ -2,66 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4750B8BB60
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:23:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B7058BB65
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729579AbfHMOXD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 13 Aug 2019 10:23:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33934 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729151AbfHMOXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 10:23:03 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1133C3064FD4;
-        Tue, 13 Aug 2019 14:23:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4365360852;
-        Tue, 13 Aug 2019 14:23:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CACT4Y+bjLBwVK_6fz2H8fXm0baAVX+vRJ4UbVWG_7yNUO-SOUg@mail.gmail.com>
-References: <CACT4Y+bjLBwVK_6fz2H8fXm0baAVX+vRJ4UbVWG_7yNUO-SOUg@mail.gmail.com> <0000000000004c2416058c594b30@google.com> <24282.1562074644@warthog.procyon.org.uk> <CACT4Y+YjdV8CqX5=PzKsHnLsJOzsydqiq3igYDm_=nSdmFo2YQ@mail.gmail.com> <20330.1564583454@warthog.procyon.org.uk> <CACT4Y+Y4cRgaRPJ_gz_53k85inDKq+X+bWmOTv1gPLo=Yod1=A@mail.gmail.com> <22318.1564586386@warthog.procyon.org.uk>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     dhowells@redhat.com,
-        syzbot <syzbot+1e0edc4b8b7494c28450@syzkaller.appspotmail.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: kernel BUG at net/rxrpc/local_object.c:LINE!
+        id S1729595AbfHMOXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 10:23:38 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37285 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729493AbfHMOXi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 10:23:38 -0400
+Received: by mail-qt1-f195.google.com with SMTP id y26so106521992qto.4
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 07:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=y1ZEdaOi94u94z+ebuqvGlapSogYpo4cbHAgruEQQ4U=;
+        b=ZwfYN35YX8mhQPQt5FZI9cTGY2XJPexvicmwAb0R96q1jswLieAfDhHUf0QRWTSw7D
+         584cBpiDhyJJDaJ1OrlpX4cuI+tGNmJZqthdp821BKzrY7NqRvw3DwUg+IGW5QUlAiLI
+         xSV8hl6oOSiBTYTR+rn1rzHCAw4Ij5z4Bwloris3UF+2Ty50XsRjfoyxhe0Ppx/sWlyW
+         QVNRF/tJGb7nK9gsDR7fyDkz2zX+uQfwsz/Uecv/1G7C1Z8RU2k1MgxUu6J6YyAYUBEM
+         FMrpDsIU5RGCPbPwpFataD3+hxuAQIif3ZHGXVOjr8KyxiUNNQapLtSyCmByZ25vaCJ0
+         aP0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y1ZEdaOi94u94z+ebuqvGlapSogYpo4cbHAgruEQQ4U=;
+        b=VwGNFGaTyid7VTAsQElXmx2FezjXm9v4VEbRrkbbP5moJvWsz0nznEOWijzOEfeIVM
+         VZuDevPN2IlVZWjTPHW3JU2x13GJFFi/+fC9QI6vWIgsRwGLEXrnSHjwldQvEk3fpteN
+         Qp2LYG2nocQMvp8E96Kc0icxteMlLh0BQgtKcYXprvDX/afNEveY+ofgV/TRxsR8AD21
+         3ucYX/kAXm9LngoTGsLRthty4uOTtK27UWOhsXwsPCXV9J2zcKyg71NHWX9aaCi0Td/w
+         MmOZ2y3yjeuQNb6DGAgwK1VjqVBl19prWR74lFWu6fjyc27IYRt3lRiuNGB72aKwMwGE
+         IFJg==
+X-Gm-Message-State: APjAAAUamxPTKz8LVpKaRfJ0DXVSXIjZIXI0jSs5/t7furFFkLircz01
+        lArZBYo9KX/KQr4TLbql+mI=
+X-Google-Smtp-Source: APXvYqwYnUzFg0eKUYnOygTHC8dz6Jqi5NcJkttA4X9QYORBsBQO6e2yUiUBj30VabYZO64G2YewjQ==
+X-Received: by 2002:ac8:670a:: with SMTP id e10mr5673620qtp.244.1565706217217;
+        Tue, 13 Aug 2019 07:23:37 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id p59sm48730550qtd.75.2019.08.13.07.23.36
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 13 Aug 2019 07:23:36 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 1E1A840340; Tue, 13 Aug 2019 11:23:34 -0300 (-03)
+Date:   Tue, 13 Aug 2019 11:23:34 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Tan Xiaojun <tanxiaojun@huawei.com>, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, songliubraving@fb.com, rostedt@goodmis.org,
+        kan.liang@linux.intel.com, tz.stoyanov@gmail.com,
+        alexey.budankov@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf record: Support aarch64 random socket_id assignment
+Message-ID: <20190813142334.GE12299@kernel.org>
+References: <1564717737-21602-1-git-send-email-tanxiaojun@huawei.com>
+ <20190802130926.GB27223@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3134.1565706180.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 13 Aug 2019 15:23:00 +0100
-Message-ID: <3135.1565706180@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 13 Aug 2019 14:23:03 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802130926.GB27223@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov <dvyukov@google.com> wrote:
+Em Fri, Aug 02, 2019 at 03:09:26PM +0200, Jiri Olsa escreveu:
+> On Fri, Aug 02, 2019 at 11:48:57AM +0800, Tan Xiaojun wrote:
+> > Same as the commit 01766229533f ("perf record: Support s390 random
+> > socket_id assignment"), aarch64 also have this problem.
+> > 
+> > Without this fix:
+> >   [root@localhost perf]# ./perf report --header -I -v
+> >   ...
+> >   socket_id number is too big.You may need to upgrade the perf tool.
+> > 
+> >   # ========
+> >   # captured on    : Thu Aug  1 22:58:38 2019
+> >   # header version : 1
+> >   ...
+> >   # Core ID and Socket ID information is not available
+> >   ...
+> > 
+> > With this fix:
+> >   [root@localhost perf]# ./perf report --header -I -v
 
-> > > Please send a patch for testing that enables this tracing
-> > > unconditionally. This should have the same effect. There is no way to
-> > > hook into a middle of the automated process and arbitrary tune things.
-> >
-> > I don't know how to do that off hand.  Do you have an example?
-> 
-> Few messages above I asked it to test:
-> https://groups.google.com/d/msg/syzkaller-bugs/gEnZkmEWf1s/r2_X_KVQAQAJ
-> 
-> Basically, git repo + branch + patch. Here are the docs:
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
+Thanks, applied.
 
-I meant that I don't know how to turn a tracepoint on from inside the kernel.
-
-David
+- Arnaldo
