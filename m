@@ -2,119 +2,278 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A688B176
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D59E38B182
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:53:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbfHMHxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 03:53:42 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39387 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbfHMHxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:53:41 -0400
-Received: by mail-pg1-f195.google.com with SMTP id u17so50826163pgi.6
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 00:53:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1w6tEv+UsY5F/hdJoPjOc+8EZA8fHnLVH5Ee68+K+14=;
-        b=nVz7SRzwhp+sIStWQOhdw7+eMounsWwWY4b9W+H2splMtvxXWG/v8uX0oyrPhi9Pc/
-         DbYNbNpkCoegNiTUpPMiXg34BXPrPJrAjoIA7DyPnMkZHZfSastxpDXvu6zpEH76cIXz
-         2ipKiw0wJIDxWMLZyrA5y40OVaB5InZkV31euGDTlfUD9NGVPd2AdaFiZI2HUpl+1Z71
-         eZE6OVlRYXpa7v0Ieb0+s2HPAU8hcA299XGRboiSsBb0Wz4QiBbaFXHTBKHp4dwxoDYm
-         Lyn/gNUB2QMFaYgVWF7lBw/U70QsznbaxSpwZOVQK35ds3v4ks7lmHH71KHdUCsOoz7q
-         RS4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1w6tEv+UsY5F/hdJoPjOc+8EZA8fHnLVH5Ee68+K+14=;
-        b=HgcrlIQVRRvnIBqS1c6A70nI76KYBkEHhUW3S/7N8dCcAoLGcHPPCW4NbLkQZEwuFB
-         9LqcK82wMpS9x9ginIvJi0Cr09d2ROT5bFn8vycN4RERy/b5NdCKACJ4spk03ghd6wyx
-         DC9j0g2V14YRiB5LF/tJUEbkXiMQ5GCS5Wahimq+13y2mWBQ1w775krsOZ+b+PFscPz7
-         i5IlVjOv0LRI+JpzXSXVepmxe7iaaccIhGue8IyRVv3EILiE7HobM4WgdOSgVcMRzAC6
-         dwkZC1zS7qCLv/tAzF7GbCs/+yzGdE5B8hIyQJiElkFx8xtjanqO6Akxas9CpGRYAzDC
-         Pbsw==
-X-Gm-Message-State: APjAAAWKWyEYqSymKGvGl4nGNISfQq70RXDGV0Zl0o1B1IXku4DFtfv2
-        Yky/PVvES05G82TOSXaxebJqDvJHNlkuFrfe/TeF0A==
-X-Google-Smtp-Source: APXvYqwRt249N6Nnc3lDOtyH2RE286o2POCGTN4Y9Dd+KQhTUzxvnzvxmCpITQmOohY+Myh1tvYfqlbmJVebyc0CKlY=
-X-Received: by 2002:a63:b919:: with SMTP id z25mr33087981pge.201.1565682820534;
- Tue, 13 Aug 2019 00:53:40 -0700 (PDT)
+        id S1727885AbfHMHx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 03:53:58 -0400
+Received: from mga09.intel.com ([134.134.136.24]:44494 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727777AbfHMHx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 03:53:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 00:53:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,380,1559545200"; 
+   d="scan'208";a="166982586"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by orsmga007.jf.intel.com with ESMTP; 13 Aug 2019 00:53:54 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     netdev@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Christopher S . Hall" <christopher.s.hall@intel.com>
+Subject: Re: [RFC PATCH 4/5] PTP: Add flag for non-periodic output
+In-Reply-To: <20190718164121.GB1533@localhost>
+References: <20190716072038.8408-1-felipe.balbi@linux.intel.com> <20190716072038.8408-5-felipe.balbi@linux.intel.com> <20190716163927.GA2125@localhost> <87k1ch2m1i.fsf@linux.intel.com> <20190717173645.GD1464@localhost> <87ftn3iuqp.fsf@linux.intel.com> <20190718164121.GB1533@localhost>
+Date:   Tue, 13 Aug 2019 10:53:53 +0300
+Message-ID: <87tvalxzzi.fsf@gmail.com>
 MIME-Version: 1.0
-References: <20190812182421.141150-1-brendanhiggins@google.com>
- <20190812182421.141150-11-brendanhiggins@google.com> <20190813042455.4A04320644@mail.kernel.org>
- <CAFd5g46LHq1sQaio2Vj5jt54YN-Y2HuCT8FbALQhJoekkYJ-uQ@mail.gmail.com> <20190813055707.8B2BB206C2@mail.kernel.org>
-In-Reply-To: <20190813055707.8B2BB206C2@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 13 Aug 2019 00:53:28 -0700
-Message-ID: <CAFd5g45rLTB965BX24DKFauumbdbn=m4kxtzgwr_4uj66Vmzmw@mail.gmail.com>
-Subject: Re: [PATCH v12 10/18] kunit: test: add tests for kunit test abort
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 10:57 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Brendan Higgins (2019-08-12 22:06:04)
-> > On Mon, Aug 12, 2019 at 9:24 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Brendan Higgins (2019-08-12 11:24:13)
-> > > > +
-> > > > +static int kunit_try_catch_test_init(struct kunit *test)
-> > > > +{
-> > > > +       struct kunit_try_catch_test_context *ctx;
-> > > > +
-> > > > +       ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-> > >
-> > > Can this fail? Should return -ENOMEM in that case?
-> >
-> > Yes, I should do that.
->
-> Looks like it's asserted to not be an error. If it's pushed into the API
-> then there's nothing to do here, and you can have my reviewed-by on this
-> patch.
->
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-Cool, thanks!
+Hi,
+
+Richard Cochran <richardcochran@gmail.com> writes:
+
+> On Thu, Jul 18, 2019 at 11:59:10AM +0300, Felipe Balbi wrote:
+>> no problem, anything in particular in mind? Just create new versions of
+>> all the IOCTLs so we can actually use the reserved fields in the future?
+>
+> Yes, please!
+
+before I send a new series built on top of this change, I thought I'd
+check with you if I'm on the right path. Below you can find my current
+take at the new IOCTLs. I maintained the same exact structures so that
+there's no maintenance burden. Also introduce a new IOCTL for every
+single one of the previously existing ones even though not all of them
+needed changes. The reason for that was just to make it easier for
+libary authors to update their library by a simple sed script adding '2'
+to the end of the IOCTL macro.
+
+Let me know if you want anything to be changed or had a different idea
+about any of this. Also, if you prefer that I finish the entire series
+before you review, no worries either ;-)
+
+Cheers, patch follows:
+
+From bc2aa511d4c2e2228590fb29604c6c33b56527ad Mon Sep 17 00:00:00 2001
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
+Date: Tue, 13 Aug 2019 10:32:35 +0300
+Subject: [PATCH] PTP: introduce new versions of IOCTLs
+
+The current version of the IOCTL have a small problem which prevents
+us from extending the API by making use of reserved fields. In these
+new IOCTLs, we are now making sure that flags and rsv fields are zero
+which will allow us to extend the API in the future.
+
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+---
+ drivers/ptp/ptp_chardev.c      | 105 +++++++++++++++++++++++++++++++++
+ include/uapi/linux/ptp_clock.h |  12 ++++
+ 2 files changed, 117 insertions(+)
+
+diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+index 18ffe449efdf..94775073527b 100644
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -126,6 +126,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 	switch (cmd) {
+ 
+ 	case PTP_CLOCK_GETCAPS:
++	case PTP_CLOCK_GETCAPS2:
+ 		memset(&caps, 0, sizeof(caps));
+ 		caps.max_adj = ptp->info->max_adj;
+ 		caps.n_alarm = ptp->info->n_alarm;
+@@ -153,6 +154,28 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		err = ops->enable(ops, &req, enable);
+ 		break;
+ 
++	case PTP_EXTTS_REQUEST2:
++		memset(&req, 0, sizeof(req));
++		if (copy_from_user(&req.extts, (void __user *)arg,
++				   sizeof(req.extts))) {
++			err = -EFAULT;
++			break;
++		}
++		if (req.extts.flags || req.extts.rsv[0]
++				|| req.extts.rsv[1]) {
++			err = -EINVAL;
++			break;
++		}
++			
++		if (req.extts.index >= ops->n_ext_ts) {
++			err = -EINVAL;
++			break;
++		}
++		req.type = PTP_CLK_REQ_EXTTS;
++		enable = req.extts.flags & PTP_ENABLE_FEATURE ? 1 : 0;
++		err = ops->enable(ops, &req, enable);
++		break;
++
+ 	case PTP_PEROUT_REQUEST:
+ 		if (copy_from_user(&req.perout, (void __user *)arg,
+ 				   sizeof(req.perout))) {
+@@ -168,6 +191,28 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		err = ops->enable(ops, &req, enable);
+ 		break;
+ 
++	case PTP_PEROUT_REQUEST2:
++		memset(&req, 0, sizeof(req));
++		if (copy_from_user(&req.perout, (void __user *)arg,
++				   sizeof(req.perout))) {
++			err = -EFAULT;
++			break;
++		}
++		if (req.perout.flags || req.perout.rsv[0]
++				|| req.perout.rsv[1] || req.perout.rsv[2]
++				|| req.perout.rsv[3]) {
++			err = -EINVAL;
++			break;
++		}
++		if (req.perout.index >= ops->n_per_out) {
++			err = -EINVAL;
++			break;
++		}
++		req.type = PTP_CLK_REQ_PEROUT;
++		enable = req.perout.period.sec || req.perout.period.nsec;
++		err = ops->enable(ops, &req, enable);
++		break;
++
+ 	case PTP_ENABLE_PPS:
+ 		if (!capable(CAP_SYS_TIME))
+ 			return -EPERM;
+@@ -176,7 +221,17 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		err = ops->enable(ops, &req, enable);
+ 		break;
+ 
++	case PTP_ENABLE_PPS2:
++		if (!capable(CAP_SYS_TIME))
++			return -EPERM;
++		memset(&req, 0, sizeof(req));
++		req.type = PTP_CLK_REQ_PPS;
++		enable = arg ? 1 : 0;
++		err = ops->enable(ops, &req, enable);
++		break;
++
+ 	case PTP_SYS_OFFSET_PRECISE:
++	case PTP_SYS_OFFSET_PRECISE2:
+ 		if (!ptp->info->getcrosststamp) {
+ 			err = -EOPNOTSUPP;
+ 			break;
+@@ -201,6 +256,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_SYS_OFFSET_EXTENDED:
++	case PTP_SYS_OFFSET_EXTENDED2:
+ 		if (!ptp->info->gettimex64) {
+ 			err = -EOPNOTSUPP;
+ 			break;
+@@ -232,6 +288,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_SYS_OFFSET:
++	case PTP_SYS_OFFSET2:
+ 		sysoff = memdup_user((void __user *)arg, sizeof(*sysoff));
+ 		if (IS_ERR(sysoff)) {
+ 			err = PTR_ERR(sysoff);
+@@ -284,6 +341,31 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 			err = -EFAULT;
+ 		break;
+ 
++	case PTP_PIN_GETFUNC2:
++		memset(&pd, 0, sizeof(pd));
++		if (copy_from_user(&pd, (void __user *)arg, sizeof(pd))) {
++			err = -EFAULT;
++			break;
++		}
++		if (pd.rsv[0] || pd.rsv[1] || pd.rsv[2]
++				|| pd.rsv[3] || pd.rsv[4]) {
++			err = -EINVAL;
++			break;
++		}
++		pin_index = pd.index;
++		if (pin_index >= ops->n_pins) {
++			err = -EINVAL;
++			break;
++		}
++		pin_index = array_index_nospec(pin_index, ops->n_pins);
++		if (mutex_lock_interruptible(&ptp->pincfg_mux))
++			return -ERESTARTSYS;
++		pd = ops->pin_config[pin_index];
++		mutex_unlock(&ptp->pincfg_mux);
++		if (!err && copy_to_user((void __user *)arg, &pd, sizeof(pd)))
++			err = -EFAULT;
++		break;
++
+ 	case PTP_PIN_SETFUNC:
+ 		if (copy_from_user(&pd, (void __user *)arg, sizeof(pd))) {
+ 			err = -EFAULT;
+@@ -301,6 +383,29 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		mutex_unlock(&ptp->pincfg_mux);
+ 		break;
+ 
++	case PTP_PIN_SETFUNC2:
++		memset(&pd, 0, sizeof(pd));
++		if (copy_from_user(&pd, (void __user *)arg, sizeof(pd))) {
++			err = -EFAULT;
++			break;
++		}
++		if (pd.rsv[0] || pd.rsv[1] || pd.rsv[2]
++				|| pd.rsv[3] || pd.rsv[4]) {
++			err = -EINVAL;
++			break;
++		}
++		pin_index = pd.index;
++		if (pin_index >= ops->n_pins) {
++			err = -EINVAL;
++			break;
++		}
++		pin_index = array_index_nospec(pin_index, ops->n_pins);
++		if (mutex_lock_interruptible(&ptp->pincfg_mux))
++			return -ERESTARTSYS;
++		err = ptp_set_pinfunc(ptp, pin_index, pd.func, pd.chan);
++		mutex_unlock(&ptp->pincfg_mux);
++		break;
++
+ 	default:
+ 		err = -ENOTTY;
+ 		break;
+diff --git a/include/uapi/linux/ptp_clock.h b/include/uapi/linux/ptp_clock.h
+index 1bc794ad957a..039cd62ec706 100644
+--- a/include/uapi/linux/ptp_clock.h
++++ b/include/uapi/linux/ptp_clock.h
+@@ -149,6 +149,18 @@ struct ptp_pin_desc {
+ #define PTP_SYS_OFFSET_EXTENDED \
+ 	_IOWR(PTP_CLK_MAGIC, 9, struct ptp_sys_offset_extended)
+ 
++#define PTP_CLOCK_GETCAPS2  _IOR(PTP_CLK_MAGIC, 10, struct ptp_clock_caps)
++#define PTP_EXTTS_REQUEST2  _IOW(PTP_CLK_MAGIC, 11, struct ptp_extts_request)
++#define PTP_PEROUT_REQUEST2 _IOW(PTP_CLK_MAGIC, 12, struct ptp_perout_request)
++#define PTP_ENABLE_PPS2     _IOW(PTP_CLK_MAGIC, 13, int)
++#define PTP_SYS_OFFSET2     _IOW(PTP_CLK_MAGIC, 14, struct ptp_sys_offset)
++#define PTP_PIN_GETFUNC2    _IOWR(PTP_CLK_MAGIC, 15, struct ptp_pin_desc)
++#define PTP_PIN_SETFUNC2    _IOW(PTP_CLK_MAGIC, 16, struct ptp_pin_desc)
++#define PTP_SYS_OFFSET_PRECISE2 \
++	_IOWR(PTP_CLK_MAGIC, 17, struct ptp_sys_offset_precise)
++#define PTP_SYS_OFFSET_EXTENDED2 \
++	_IOWR(PTP_CLK_MAGIC, 18, struct ptp_sys_offset_extended)
++
+ struct ptp_extts_event {
+ 	struct ptp_clock_time t; /* Time event occured. */
+ 	unsigned int index;      /* Which channel produced the event. */
+-- 
+2.22.0
+
+
+
+-- 
+balbi
