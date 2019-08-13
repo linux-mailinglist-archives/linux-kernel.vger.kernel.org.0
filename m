@@ -2,99 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A578B23C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1AA58B244
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbfHMIWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:22:17 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44001 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbfHMIWR (ORCPT
+        id S1727900AbfHMIXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:23:48 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34379 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbfHMIXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 04:22:17 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8EC188053B; Tue, 13 Aug 2019 10:22:01 +0200 (CEST)
-Date:   Tue, 13 Aug 2019 10:22:13 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Pawel Laszczak <pawell@cadence.com>
-Cc:     Roger Quadros <rogerq@ti.com>, Pavel Machek <pavel@denx.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Jayshri Dajiram Pawar <jpawar@cadence.com>,
-        Rahul Kumar <kurahul@cadence.com>,
-        Anil Joy Varughese <aniljoy@cadence.com>
-Subject: Re: [PATCH v10 0/6] Introduced new Cadence USBSS DRD Driver.
-Message-ID: <20190813082213.GA9298@amd>
-References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
- <20190721190335.GA19831@xo-6d-61-c0.localdomain>
- <BYAPR07MB470904ACCD1ED91B10BB6BEFDDC40@BYAPR07MB4709.namprd07.prod.outlook.com>
- <20190722114839.GA10515@kroah.com>
- <20190722115644.GA12069@amd>
- <20190722210021.GA25235@amd>
- <BYAPR07MB470966850323EE3003B3097ADDC70@BYAPR07MB4709.namprd07.prod.outlook.com>
- <93b4a702-227b-0410-a414-76873088ad72@ti.com>
- <BYAPR07MB47095895491CFD211EE9E051DDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
+        Tue, 13 Aug 2019 04:23:47 -0400
+Received: by mail-pl1-f193.google.com with SMTP id i2so49016934plt.1;
+        Tue, 13 Aug 2019 01:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=stvogd1hkvJXZgKB6OLWaibDhlbVIThoBJwPFux4Mto=;
+        b=csYbmlqBYBEZ0wo+pfsMfUVQxz+qxIomUn5IJJkfYIkRteILtiwvkfJ5KgtAgolKfj
+         dTmRf7+7kNPKW5D12vAlPjC5UBhUcnByJGuXHBMiaU15rs3vdFAZNGP9OGd8rFYrt/TN
+         c2jKPh8BGoFdGNOjUt3nPt11HgCJA/AMwWhSH3F2n0lLiFx7zHM04VTEWgCSiy2v6nvh
+         BqlUlQTdh7JGSEIOpOrJJHK/9nVMlvsORaLEwnUpM2GbpmctOcpPD6cXNIwpPUapryqG
+         fQq3+6AvZiCMT9IgtUiNCxZrWs2WaWzPQTKLGOJCtPGJoWiM2C5bGNE+aPnMamA2U0im
+         qehQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=stvogd1hkvJXZgKB6OLWaibDhlbVIThoBJwPFux4Mto=;
+        b=dJZJ419CteXCz2H6w5YGuKrNAeLklswOI6sbWlf4ZZSn0qwob47Qy/Oq9ys9nVSoO0
+         hOE1cA0MUgnYpMTXYMC3qybNd8zA5Un1GfMrdjjlOJqYC42b0SkKesE9HyeifcrlM6m8
+         wXwm0LZsF6sQw7vm2lbeTd5YkUtIJ9UaRbeI1/yJhamqJI06KTV+o4RGF1DUbaUqTiXW
+         TXNxVJ1dq5LFA1IJ1EUEPtiBmrGXdROCM6Ze9tSOagAqrTJWtPLp6Dh1VqwCkXIzxLoS
+         HWv/E1XrLlgb6V/opyFI3o0xt5RUGloikTlgbYmvO9Wr5NClcF6bllRjZCDa5DuUJ1dt
+         fbFw==
+X-Gm-Message-State: APjAAAVZp0QxybN8PZcD8r16qQUpYcpDN+WmMROdjPymZCL5ql3mQCkJ
+        Enpu0oq+gzmeB66Z/Dyj+A3u5rS4zJI3AOxSFgs=
+X-Google-Smtp-Source: APXvYqzV4aOqpDg5RTevHTInlk7N9+aOJl0HMiG38aQT8avNQkmUWiiBAbGJuiJTqjQrPn1S9id3aDivQM87fQCyJTE=
+X-Received: by 2002:a17:902:9348:: with SMTP id g8mr3815480plp.18.1565684627093;
+ Tue, 13 Aug 2019 01:23:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
-Content-Disposition: inline
-In-Reply-To: <BYAPR07MB47095895491CFD211EE9E051DDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190809190130.30773-1-kai.heng.feng@canonical.com>
+ <CAHp75VeGs8K+da+4CaqNjm_ci86KoLcmhY8GaJO7jm__J0TcSQ@mail.gmail.com>
+ <93860D98-9CB7-4D3D-8917-E15591BD1EC4@canonical.com> <20190813061228.GH6670@kroah.com>
+In-Reply-To: <20190813061228.GH6670@kroah.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 13 Aug 2019 11:23:35 +0300
+Message-ID: <CAHp75VedrnJDOoJGuYJiFAx3ODGAMFx7nTKuoErNn3NWYSn_gA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] serial: 8250_pci: Add support for Sunix serial boards
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Morris Ku <morris_ku@sunix.com>,
+        Debbie Liu <debbie_liu@sunix.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 13, 2019 at 9:12 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Aug 13, 2019 at 12:36:40PM +0800, Kai-Heng Feng wrote:
+> > at 21:18, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > > On Fri, Aug 9, 2019 at 10:05 PM Kai-Heng Feng
+> > > <kai.heng.feng@canonical.com> wrote:
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > > Can you, please, split out the Sunix quirk driver to a separate module
+> > > (see examples like: 8250_exar, 8250_lpss, 8250_mid)?
+> > > And then with a fewer LOCs add a new boards.
+> >
+> > Greg asked Sunix to use existing 8250_pci.c instead of its own module.
+> > It only needs a special setup function, other parts are just 8250_pci.
+>
+> Agreed.  And this patch is already in my tree :)
+>
+> If people really worry about size issues, start carving this up by
+> different configuration options, or yes, split it up into tiny modules
+> (but note the overhead there when things get too tiny, it's a
+> diminishing return).
 
-Hi!
+It's always a trade off and associative pros and cons. If Sunix is a
+simple one, I tend to agree that 8250_pci is a good place. For rather
+big quirk modules, like Exar one, the separate sounds better (and as
+we can see from retrospective of maintenance).
 
-> I think that I understand your concerns. My idea was not to expand the su=
-pported=20
-> dr_mode. Rather I wanted to have possibility to limit this (only for test=
-ing).=20
->=20
-> Eg.=20
-> If  cdns->dr_mode =3D USB_DR_MODE_OTG
-> then we can limit mode to HOST or DEVICE or DRD
-> if cdns->dr_mode =3D=3D USB_DR_MODE_HOST ||=20
->    cdns->dr_mode =3D=3D USB_DR_MODE_PERIPHERAL)=20
-> then driver can't change anything
->=20
-> It allows me for testing some functionality using only single board=20
-> and even with lacking right cable for proper otg detection.=20
+>
+> > Why does split them a better idea? I even think of squashing 8250_moxa into
+> > 8250_pci.
+>
+> I would agree with you, I bet you save space if you do that.
 
-Yes, and it looks like people need this functionality in production,
-too, so it should be in sysfs (and not debugfs).
 
-If it means sysfs interface need to be extended to cover all the
-cases, so be it.
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---pf9I7BMVVzbSWLtt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1SczUACgkQMOfwapXb+vJaHwCgj0Z1ZJUsMMMCPML7HzUkrMP+
-AAIAnRi/ojI3Y/dmV1HgjQJmSt62O69r
-=hZ0K
------END PGP SIGNATURE-----
-
---pf9I7BMVVzbSWLtt--
+-- 
+With Best Regards,
+Andy Shevchenko
