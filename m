@@ -2,99 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE6D8BB5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D94EF8BB5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729569AbfHMOVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 10:21:32 -0400
-Received: from orion.archlinux.org ([88.198.91.70]:54934 "EHLO
-        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbfHMOVc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 10:21:32 -0400
-Received: from orion.archlinux.org (localhost [127.0.0.1])
-        by orion.archlinux.org (Postfix) with ESMTP id D29FB1477D7B20;
-        Tue, 13 Aug 2019 14:21:29 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on orion.archlinux.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
-        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-BL-Results: 
-Received: from saetre (unknown [154.53.1.40])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: ffy00)
-        by orion.archlinux.org (Postfix) with ESMTPSA;
-        Tue, 13 Aug 2019 14:21:29 +0000 (UTC)
-Message-ID: <d558b953e88558b8d7955e591fefbe898edeb3ae.camel@archlinux.org>
-Subject: Re: [PATCH 0/2] Fix support of a few Logitech devices broken in 5.3
-From:   Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20190813133807.12384-1-benjamin.tissoires@redhat.com>
-References: <20190813133807.12384-1-benjamin.tissoires@redhat.com>
-Organization: Archlinux
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-C0SorkiN9smqF35MFDat"
-Date:   Tue, 13 Aug 2019 15:21:28 +0100
+        id S1729530AbfHMOWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 10:22:12 -0400
+Received: from mga18.intel.com ([134.134.136.126]:63366 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729151AbfHMOWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 10:22:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 07:22:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,381,1559545200"; 
+   d="scan'208";a="260138342"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 13 Aug 2019 07:22:10 -0700
+Received: from dalyrusx-mobl.amr.corp.intel.com (unknown [10.251.3.205])
+        by linux.intel.com (Postfix) with ESMTP id 7A825580238;
+        Tue, 13 Aug 2019 07:22:10 -0700 (PDT)
+Subject: Re: [alsa-devel] [PATCH] soundwire: Don't build sound.o without
+ CONFIG_ACPI
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Cc:     clang-built-linux@googlegroups.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20190813061014.45015-1-natechancellor@gmail.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <445d16e1-6b00-6797-82df-42a49a5e79e3@linux.intel.com>
+Date:   Tue, 13 Aug 2019 09:22:29 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-User-Agent: Evolution 3.32.4 
+In-Reply-To: <20190813061014.45015-1-natechancellor@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 8/13/19 1:10 AM, Nathan Chancellor wrote:
+> clang warns when CONFIG_ACPI is unset:
+> 
+> ../drivers/soundwire/slave.c:16:12: warning: unused function
+> 'sdw_slave_add' [-Wunused-function]
+> static int sdw_slave_add(struct sdw_bus *bus,
+>             ^
+> 1 warning generated.
+> 
+> Before commit 8676b3ca4673 ("soundwire: fix regmap dependencies and
+> align with other serial links"), this code would only be compiled when
+> ACPI was set because it was only selected by SOUNDWIRE_INTEL, which
+> depends on ACPI.
+> 
+> Now, this code can be compiled without CONFIG_ACPI, which causes the
+> above warning. The IS_ENABLED(CONFIG_ACPI) guard could be moved to avoid
+> compiling the function; however, slave.c only contains three functions,
+> two of which are static. Only compile slave.o when CONFIG_ACPI is set,
+> where it will actually be used. bus.h contains a stub for
+> sdw_acpi_find_slaves so there will be no issues with an undefined
+> function.
+> 
+> This has been build tested with CONFIG_ACPI set and unset in combination
+> with CONFIG_SOUNDWIRE unset, built in, and a module.
 
---=-C0SorkiN9smqF35MFDat
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch. Do you have a .config you can share offline so 
+that we add it to our tests?
 
-On Tue, 2019-08-13 at 15:38 +0200, Benjamin Tissoires wrote:
-> Hi Jiri,
->=20
-> another set of patches to send to Linus ASAP.
-> It turns out that we have been breaking devices, so this should
-> be sent before 5.3 final.
->=20
-> Cheers,
-> Benjamin
->=20
-> Benjamin Tissoires (2):
->   Revert "HID: logitech-hidpp: add USB PID for a few more supported
->     mice"
->   HID: logitech-hidpp: remove support for the G700 over USB
->=20
->  drivers/hid/hid-logitech-hidpp.c | 22 ----------------------
->  1 file changed, 22 deletions(-)
->=20
+> 
+> Fixes: 8676b3ca4673 ("soundwire: fix regmap dependencies and align with other serial links")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/637
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>   drivers/soundwire/Makefile | 6 +++++-
+>   drivers/soundwire/slave.c  | 3 ---
+>   2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
+> index 45b7e5001653..226090902716 100644
+> --- a/drivers/soundwire/Makefile
+> +++ b/drivers/soundwire/Makefile
+> @@ -4,9 +4,13 @@
+>   #
+>   
+>   #Bus Objs
+> -soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o
+> +soundwire-bus-objs := bus_type.o bus.o mipi_disco.o stream.o
+>   obj-$(CONFIG_SOUNDWIRE) += soundwire-bus.o
+>   
+> +ifdef CONFIG_ACPI
+> +soundwire-bus-objs += slave.o
+> +endif
 
-Reviewed-by: Filipe La=C3=ADns <lains@archlinux.org>
+I am fine with the change, but we might as well rename the file 
+acpi_slave.c then?
 
-Thanks,
-Filipe La=C3=ADns
+> +
+>   #Cadence Objs
+>   soundwire-cadence-objs := cadence_master.o
+>   obj-$(CONFIG_SOUNDWIRE_CADENCE) += soundwire-cadence.o
+> diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
+> index f39a5815e25d..0dc188e6873b 100644
+> --- a/drivers/soundwire/slave.c
+> +++ b/drivers/soundwire/slave.c
+> @@ -60,7 +60,6 @@ static int sdw_slave_add(struct sdw_bus *bus,
+>   	return ret;
+>   }
+>   
+> -#if IS_ENABLED(CONFIG_ACPI)
+>   /*
+>    * sdw_acpi_find_slaves() - Find Slave devices in Master ACPI node
+>    * @bus: SDW bus instance
+> @@ -110,5 +109,3 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
+>   
+>   	return 0;
+>   }
+> -
+> -#endif
+> 
 
---=-C0SorkiN9smqF35MFDat
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0jW0leqs33gyftiw+JPGdIFqqV0FAl1Sx18ACgkQ+JPGdIFq
-qV0PSBAAtHhcycfda272Ii5CyvMWH8Xh965T8lnde3yUPyiBb6Yr913OAx13DCqa
-WWj4m+HTXVyrHR6ykuVwZhGX8M5WwCq5UnkIygup7+tHSzaPHtPmvOoJYqkjtsgp
-IMeH7swN9o7nHpjHcyUyM5mimbBhn/qX4mhJ6GTpF1vMtlJcbBvlj6H/Kl1XbxGA
-S2dc//wfJUOyxh6lp1Wxb4f/l87cZghX8meuWS3amzVkZm2LHcIIkzefs77Fj8P1
-bnaBsn1eh7vFFs4H154RBHxUM4qDW/i6WWGEUXAuEAE51XbzQoZIrVofipky553U
-/4We0roMJiOt423VG8tm90WuXFeDrPjW5CT/ud9x9Zc8NxXIP68tlrfDJsCZLaiI
-YQsOopy2k7fDrNBFSXQ8Ak5D6N7WPuJ7DXCPOK2+zEaPb3R7iEL5eBTaFFLq/oEj
-2GemuiWsHcXWo5SxhyeuMNlbVA9oZLtvLieG6tod8PI9r6c4H497N8+jfFQZohxO
-f/3lAmHen3LILBmcZXmfgma2avGHRq1PChoEMAyn0+Ef6xBgwlipGFKTveZ8nc8S
-7f1Sqp3H14oo/oS09NybkLgXHPaqTrmFTPDNR7qwuJxOA4ZwnE1l9r1sYYws9VTp
-Ug36Lp+Mj7vDQraqrwi7kYrxIHf8AqZRbx/diGRKdWtaPSmB3VA=
-=UHMC
------END PGP SIGNATURE-----
-
---=-C0SorkiN9smqF35MFDat--
