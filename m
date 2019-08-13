@@ -2,86 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32AEA8B9FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D24708BA05
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbfHMNX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 09:23:26 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:56790 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728713AbfHMNX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:23:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=YCHZ3K8mmCIRGs587/Fkq0X6NLVBIcMaI9O+DVE1psw=; b=eF7GmDgMgA1p4uWVsKBK+77zei
-        /20hCu8XCVXTYsIyvLQB4DFzBsGSLw6smKcwkPPLoLGtvP7og8ewHSM9gALv5Vj8dueWVOceFKtpM
-        hxclsGJlT4iTIbCjon8EoDSkUDju6egUvcdVssu8Q5U5JzyeicnT5ThM9W5gRMd9aaWc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hxWll-0001Js-2X; Tue, 13 Aug 2019 15:23:21 +0200
-Date:   Tue, 13 Aug 2019 15:23:21 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Harini Katakam <harinik@xilinx.com>
-Cc:     Harini Katakam <harini.katakam@xilinx.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        radhey.shyam.pandey@xilinx.com
-Subject: Re: [PATCH 2/2] net: gmii2rgmii: Switch priv field in mdio device
- structure
-Message-ID: <20190813132321.GF15047@lunn.ch>
-References: <1564565779-29537-1-git-send-email-harini.katakam@xilinx.com>
- <1564565779-29537-3-git-send-email-harini.katakam@xilinx.com>
- <20190801040648.GJ2713@lunn.ch>
- <CAFcVEC+DyVhLzbMdSDsadivbnZJxSEg-0kUF5_Q+mtSbBnmhSA@mail.gmail.com>
+        id S1729099AbfHMNXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 09:23:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54352 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728713AbfHMNXy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 09:23:54 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hxWmD-00057b-DS; Tue, 13 Aug 2019 13:23:49 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Satish Kharat <satishkh@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: fnic: remove redundant assignment of variable rc
+Date:   Tue, 13 Aug 2019 14:23:49 +0100
+Message-Id: <20190813132349.8720-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFcVEC+DyVhLzbMdSDsadivbnZJxSEg-0kUF5_Q+mtSbBnmhSA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 04:46:40PM +0530, Harini Katakam wrote:
-> Hi Andrew,
-> 
-> On Thu, Aug 1, 2019 at 9:36 AM Andrew Lunn <andrew@lunn.ch> wrote:
-> >
-> > On Wed, Jul 31, 2019 at 03:06:19PM +0530, Harini Katakam wrote:
-> > > Use the priv field in mdio device structure instead of the one in
-> > > phy device structure. The phy device priv field may be used by the
-> > > external phy driver and should not be overwritten.
-> >
-> > Hi Harini
-> >
-> > I _think_ you could use dev_set_drvdata(&mdiodev->dev) in xgmiitorgmii_probe() and
-> > dev_get_drvdata(&phydev->mdiomdio.dev) in _read_status()
-> 
-> Thanks for the review. This works if I do:
-> dev_set_drvdata(&priv->phy_dev->mdio.dev->dev) in probe
-> and then
-> dev_get_drvdata(&phydev->mdio.dev) in _read_status()
-> 
-> i.e mdiodev in gmii2rgmii probe and priv->phy_dev->mdio are not the same.
-> 
-> If this is acceptable, I can send a v2.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Harini
+Variable ret is initialized to a value that is never read and it is
+re-assigned later and immediatetly returns. Clean up the code by
+removing rc and just returning 0.
 
-I think this is better, making use of the central driver
-infrastructure, rather than inventing something new.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/fnic/fnic_debugfs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-The kernel does have a few helper, spi_get_drvdata, pci_get_drvdata,
-hci_get_drvdata. So maybe had add phydev_get_drvdata(struct phy_device
-*phydev)?
+diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
+index 21991c99db7c..13f7d88d6e57 100644
+--- a/drivers/scsi/fnic/fnic_debugfs.c
++++ b/drivers/scsi/fnic/fnic_debugfs.c
+@@ -52,7 +52,6 @@ static struct fc_trace_flag_type *fc_trc_flag;
+  */
+ int fnic_debugfs_init(void)
+ {
+-	int rc = -1;
+ 	fnic_trace_debugfs_root = debugfs_create_dir("fnic", NULL);
+ 
+ 	fnic_stats_debugfs_root = debugfs_create_dir("statistics",
+@@ -70,8 +69,7 @@ int fnic_debugfs_init(void)
+ 		fc_trc_flag->fc_clear = 4;
+ 	}
+ 
+-	rc = 0;
+-	return rc;
++	return 0;
+ }
+ 
+ /*
+-- 
+2.20.1
 
-	Thanks
-		Andrew
