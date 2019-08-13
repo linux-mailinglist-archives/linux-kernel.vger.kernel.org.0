@@ -2,62 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8E508ADE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 06:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 327A98ADDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 06:39:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfHMEjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 00:39:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58492 "EHLO mail.kernel.org"
+        id S1726867AbfHMEjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 00:39:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725298AbfHMEjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 00:39:31 -0400
-Received: from localhost (unknown [106.201.103.22])
+        id S1725298AbfHMEjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 00:39:01 -0400
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 366ED2054F;
-        Tue, 13 Aug 2019 04:39:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 661F82054F;
+        Tue, 13 Aug 2019 04:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565671171;
-        bh=Yq3xjgq9j2Zb+0ptLtoV2Vl9gStxTv3sh2uj5jTv/4k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hPwpGrIvgTxtkfOL3WGglWuwIKmyDZsJHU/qtEEfGMyLgQ3WgMSwHwiVV9zpZPW2C
-         C5h0JSbW+KMT4MGShNUQEaKgx+JzQpLtl2dirI6PVbmkc0MOOfb3pxTYvIbWTcfsSY
-         5MjQtn1/bN2ZjUB/g7VENKRWhRvD1d3z+8gku1kc=
-Date:   Tue, 13 Aug 2019 10:08:18 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Li Yang <leoyang.li@nxp.com>, Zhang Wei <zw@zh-kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linuxppc-dev@lists.ozlabs.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: fsldma: Mark expected switch fall-through
-Message-ID: <20190813043818.GQ12733@vkoul-mobl.Dlink>
-References: <20190812002159.GA26899@embeddedor>
+        s=default; t=1565671139;
+        bh=3xMxQdsEpxtjj+1yTxgV9WOlUO2WQ552exvs56/rr1o=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=LR11it/I3O8CGTrv+Ng5zvucPa8uUkEfa3LmKFjw6O5u9qhsOj4v0EPjTnoOYONrH
+         u/tnKqLjb2VOMamzmBD+bQ92PSyu/l9yjopx4tVHE3QOH9DwxrVN/Ixn8t2s8dlBob
+         UQtw5MZJLoTm4I6qlCWqOvb7Iah3ocYPA4XTG7DY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190812002159.GA26899@embeddedor>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190812182421.141150-15-brendanhiggins@google.com>
+References: <20190812182421.141150-1-brendanhiggins@google.com> <20190812182421.141150-15-brendanhiggins@google.com>
+Subject: Re: [PATCH v12 14/18] kunit: defconfig: add defconfigs for building KUnit tests
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, shuah@kernel.org,
+        tytso@mit.edu, yamada.masahiro@socionext.com
+User-Agent: alot/0.8.1
+Date:   Mon, 12 Aug 2019 21:38:58 -0700
+Message-Id: <20190813043859.661F82054F@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-08-19, 19:22, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
-> 
-> Fix the following warning (Building: powerpc-ppa8548_defconfig powerpc):
-> 
-> drivers/dma/fsldma.c: In function ‘fsl_dma_chan_probe’:
-> drivers/dma/fsldma.c:1165:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    chan->toggle_ext_pause = fsl_chan_toggle_ext_pause;
->    ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/dma/fsldma.c:1166:2: note: here
->   case FSL_DMA_IP_83XX:
->   ^~~~
+Quoting Brendan Higgins (2019-08-12 11:24:17)
+> diff --git a/arch/um/configs/kunit_defconfig b/arch/um/configs/kunit_defc=
+onfig
+> new file mode 100644
+> index 0000000000000..bfe49689038f1
+> --- /dev/null
+> +++ b/arch/um/configs/kunit_defconfig
+> @@ -0,0 +1,8 @@
+> +CONFIG_OF=3Dy
+> +CONFIG_OF_UNITTEST=3Dy
+> +CONFIG_OF_OVERLAY=3Dy
+> +CONFIG_I2C=3Dy
+> +CONFIG_I2C_MUX=3Dy
+> +CONFIG_KUNIT=3Dy
+> +CONFIG_KUNIT_TEST=3Dy
+> +CONFIG_KUNIT_EXAMPLE_TEST=3Dy
+> diff --git a/tools/testing/kunit/configs/all_tests.config b/tools/testing=
+/kunit/configs/all_tests.config
+> new file mode 100644
+> index 0000000000000..bfe49689038f1
+> --- /dev/null
+> +++ b/tools/testing/kunit/configs/all_tests.config
+> @@ -0,0 +1,8 @@
+> +CONFIG_OF=3Dy
+> +CONFIG_OF_UNITTEST=3Dy
+> +CONFIG_OF_OVERLAY=3Dy
+> +CONFIG_I2C=3Dy
+> +CONFIG_I2C_MUX=3Dy
 
-Applied, thanks
+Are these above config options necessary? I don't think they're part of
+the patch series anymore so it looks odd to enable the OF unittests and
+i2c configs.
 
--- 
-~Vinod
+> +CONFIG_KUNIT=3Dy
+> +CONFIG_KUNIT_TEST=3Dy
+> +CONFIG_KUNIT_EXAMPLE_TEST=3Dy
