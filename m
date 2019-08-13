@@ -2,358 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE3FE8C08A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 20:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 160748C092
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 20:30:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbfHMSZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 14:25:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728169AbfHMSZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 14:25:21 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2914520665;
-        Tue, 13 Aug 2019 18:25:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565720720;
-        bh=Ie6mnm3VS3AB7zBMzK2ZlH+k5xAOHrd7oRaYd0fQuVA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eQuKq1LwBhejRxWOGpFRz4GC+ydilZkoM/1DsKJ8YRuMkTccf/XmG8MgjopyZJixq
-         5gcKbvTDDUBfrW98KK4WZXtal0KKbgRjIVdqLTbI0rZNFHw6ZLZPem3gNFV6+q3t/0
-         r7mYqgyckrZ1lk6tEos4sWIh5pu1B8hO8DtwDRJQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190812100103.34393-1-wen.he_1@nxp.com>
-References: <20190812100103.34393-1-wen.he_1@nxp.com>
-Subject: Re: [v1 1/3] clk: ls1028a: Add clock driver for Display output interface
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Wen He <wen.he_1@nxp.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Wen He <wen.he_1@nxp.com>, leoyang.li@nxp.com,
-        linux-clk@vger.kernel.org, linux-devel@linux.nxdi.nxp.com,
-        linux-kernel@vger.kernel.org, liviu.dudau@arm.com
-User-Agent: alot/0.8.1
-Date:   Tue, 13 Aug 2019 11:25:19 -0700
-Message-Id: <20190813182520.2914520665@mail.kernel.org>
+        id S1728583AbfHMSaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 14:30:09 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36846 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728433AbfHMSaH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 14:30:07 -0400
+Received: by mail-ot1-f65.google.com with SMTP id k18so44168191otr.3;
+        Tue, 13 Aug 2019 11:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:message-id:in-reply-to:references:subject
+         :mime-version:content-transfer-encoding;
+        bh=xYr3qwvR0G9d1flmc14vpOBBlilcrrIu468KDrr2XHQ=;
+        b=QI5bK8/eet4TBpDuU0lZi/msYy53LqfP7K1xLN3L6OP/ASss2EGtHLRDczEOyapwTL
+         +tUkiFfPYjViS/NC4as9wVkxGJPMD6+NauR7ra5L9/G8wsNTjfBJEPOTlkaEU/A+VoXi
+         1cg/RH/hM8x1G35aqSIq0VurvcriiDDnxDFUR2VZb9DswJnEobz2lPxcX2RNl3AqTv75
+         z8LFP6CjFhtknWJ/XUjspx6Sn3xHZ7ulHMhaPaaiSfso3Uwk3qSOJzy5AmO6TSmN7wAb
+         6DXAefjUa4k26yCMiSOTQ0xTxxWSpZgyG3On3ePJhYWK97Vy7WwYjxidzeRq6JonNQ1X
+         L3ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
+         :references:subject:mime-version:content-transfer-encoding;
+        bh=xYr3qwvR0G9d1flmc14vpOBBlilcrrIu468KDrr2XHQ=;
+        b=tLlQ2JfmXKLRM1BMwHVe6yjocuOwO+q9qYWCsOk6FNGrjzUdEoDwdqAOWUkB43SVXR
+         Lmim8D1hgnMnaB9h7KD9XhQdI8mqDw9gN4iJ9bzkQYS+D/RVRjPp63lNXNDxUrEpGbzo
+         zeNRJQtn9kRwYuiWKx5Qdo+ziGkPOeW/9tGHmUXO2CkRTfWjCtuL+eTDWH0ac/ZrHi19
+         R1l7v0ZbwLYZdWne4yaIPCL2u13+8tnsgj+t15bJdWBG6mfoNlIG5soafp5GHSY2b4/S
+         w8xbCRlzsHQEg2U944KMRDv/ljsZnw46n5pzB+kFN8lC/MfoY0lF9SSy/YfOXKS3y3fA
+         ubAw==
+X-Gm-Message-State: APjAAAWvT4GY9xCYOalmDjDrBownaGYtajh8/5KXQKAz087tHIQwxSX6
+        jogTlBIP2GfOFnZoY8WiMoU=
+X-Google-Smtp-Source: APXvYqxP/aFWNNueAjq4+kTAeWaefJRH8kwpW9GRpVXfKHy9xCCn3AurjdyUEzt4Jl+MAqnYPwsSlw==
+X-Received: by 2002:a6b:6516:: with SMTP id z22mr40554668iob.7.1565721006799;
+        Tue, 13 Aug 2019 11:30:06 -0700 (PDT)
+Received: from localhost ([184.63.162.180])
+        by smtp.gmail.com with ESMTPSA id p12sm2849404ioh.72.2019.08.13.11.30.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 13 Aug 2019 11:30:06 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 11:30:00 -0700
+From:   John Fastabend <john.fastabend@gmail.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>
+Cc:     Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+dcdc9deefaec44785f32@syzkaller.appspotmail.com>,
+        aviadye@mellanox.com, borisp@mellanox.com, daniel@iogearbox.net,
+        davejwatson@fb.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        oss-drivers@netronome.com, syzkaller-bugs@googlegroups.com,
+        willemb@google.com
+Message-ID: <5d5301a82578_268d2b12c8efa5b470@john-XPS-13-9370.notmuch>
+In-Reply-To: <20190813102705.1f312b67@cakuba.netronome.com>
+References: <000000000000f5d619058faea744@google.com>
+ <20190810135900.2820-1-hdanton@sina.com>
+ <5d52f09299e91_40c72adb748b25c0d3@john-XPS-13-9370.notmuch>
+ <20190813102705.1f312b67@cakuba.netronome.com>
+Subject: Re: general protection fault in tls_write_space
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Wen He (2019-08-12 03:01:03)
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 801fa1cd0321..0e6c7027d637 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -223,6 +223,15 @@ config CLK_QORIQ
->           This adds the clock driver support for Freescale QorIQ platforms
->           using common clock framework.
-> =20
-> +config CLK_PLLDIG
-> +        bool "Clock driver for LS1028A Display output"
-> +        depends on ARCH_LAYERSCAPE && OF
+Jakub Kicinski wrote:
+> On Tue, 13 Aug 2019 10:17:06 -0700, John Fastabend wrote:
+> > > Followup of commit 95fa145479fb
+> > > ("bpf: sockmap/tls, close can race with map free")
+> > > 
+> > > --- a/net/tls/tls_main.c
+> > > +++ b/net/tls/tls_main.c
+> > > @@ -308,6 +308,9 @@ static void tls_sk_proto_close(struct so
+> > >  	if (free_ctx)
+> > >  		icsk->icsk_ulp_data = NULL;
+> > >  	sk->sk_prot = ctx->sk_proto;
+> > > +	/* tls will go; restore sock callback before enabling bh */
+> > > +	if (sk->sk_write_space == tls_write_space)
+> > > +		sk->sk_write_space = ctx->sk_write_space;
+> > >  	write_unlock_bh(&sk->sk_callback_lock);
+> > >  	release_sock(sk);
+> > >  	if (ctx->tx_conf == TLS_SW)  
+> > 
+> > Hi Hillf,
+> > 
+> > We need this patch (although slightly updated for bpf tree) do
+> > you want to send it? Otherwise I can. We should only set this if
+> > TX path was enabled otherwise we null it. Checking against
+> > tls_write_space seems best to me as well.
+> > 
+> > Against bpf this patch should fix it.
+> > 
+> > diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+> > index ce6ef56a65ef..43252a801c3f 100644
+> > --- a/net/tls/tls_main.c
+> > +++ b/net/tls/tls_main.c
+> > @@ -308,7 +308,8 @@ static void tls_sk_proto_close(struct sock *sk, long timeout)
+> >         if (free_ctx)
+> >                 icsk->icsk_ulp_data = NULL;
+> >         sk->sk_prot = ctx->sk_proto;
+> > -       sk->sk_write_space = ctx->sk_write_space;
+> > +       if (sk->sk_write_space == tls_write_space)
+> > +               sk->sk_write_space = ctx->sk_write_space;
+> >         write_unlock_bh(&sk->sk_callback_lock);
+> >         release_sock(sk);
+> >         if (ctx->tx_conf == TLS_SW)
+> 
+> This is already in net since Friday:
 
-Does it actually depend on either of these to build? Probabl not, so
-maybe just default ARCH_LAYERSCAPE && OF? Also, can your Kconfig
-variable be named something more specific like CLK_LS1028A_PLLDIG?
+Don't we need to guard that with an
 
-> +        help
-> +          This driver support the Display output interfaces(LCD, DPHY) p=
-ixel clocks
-> +          of the QorIQ Layerscape LS1028A, as implemented TSMC CLN28HPM =
-PLL. Not all
-> +          features of the PLL are currently supported by the driver. By =
-default,
-> +          configured bypass mode with this PLL.
-> +
->  config COMMON_CLK_XGENE
->         bool "Clock driver for APM XGene SoC"
->         default ARCH_XGENE
-> diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
-> new file mode 100644
-> index 000000000000..15c9bb623a70
-> --- /dev/null
-> +++ b/drivers/clk/clk-plldig.c
-> @@ -0,0 +1,277 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright 2019 NXP
-> +
-> +/*
-> + * Clock driver for LS1028A Display output interfaces(LCD, DPHY).
-> + *
-> + * Author: Wen He <wen.he_1@nxp.com>
-> + *
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
+  if (sk->sk_write_space == tls_write_space)
 
-PLease remove this unused include.
+or something similar? Where is ctx->sk_write_space set in the rx only
+case? In do_tls_setsockop_conf() we have this block
 
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
+	if (tx) {
+		ctx->sk_write_space = sk->sk_write_space;
+		sk->sk_write_space = tls_write_space;
+	} else {
+		sk->sk_socket->ops = &tls_sw_proto_ops;
+	}
 
-Only makes sense to include this if it's a platform device driver.
+which makes me think ctx->sk_write_space may not be set correctly in
+all cases.
 
-> +#include <linux/slab.h>
-> +
-[...]
-> +
-> +static inline int plldig_wait_lock(struct clk_plldig *plldig)
-> +{
-> +       u32 csr;
-> +       /*
-> +       * Indicates whether PLL has acquired lock, if operating in bypass
-> +       * mode, the LOCK bit will still assert when the PLL acquires lock
-> +       * or negate when it loses lock.
-> +       */
-> +       return readl_poll_timeout(plldig->regs + PLLDIG_REG_PLLSR, csr,
-> +                               csr & PLLDIG_LOCK_STATUS, 0, LOCK_TIMEOUT=
-_US);
-> +}
-> +
-> +static int plldig_enable(struct clk_hw *hw)
-> +{
-> +       struct clk_plldig *data =3D to_clk_plldig(hw);
-> +       u32 val;
-> +
-> +       val =3D readl(data->regs + PLLDIG_REG_PLLFM);
-> +       /*
-> +        * Use Bypass mode with PLL off by default,the frequency overshoot
+Thanks.
 
-Please add a space after comma,
-
-> +        * detector output was disable. SSCG Bypass mode should be enable.
-> +        */
-> +       val |=3D PLLDIG_SSCGBYP_ENABLE;
-> +       writel(val, data->regs + PLLDIG_REG_PLLFM);
-> +
-[...]
-> +
-> +static int plldig_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct clk_plldig *data =3D to_clk_plldig(hw);
-> +
-> +       return (readl(data->regs + PLLDIG_REG_PLLFM) & PLLDIG_SSCGBYP_ENA=
-BLE);
-
-Please remove extraneous parenthesis.
-
-> +}
-> +
-> +/*
-> + * Clock configuration relationship between the PHI1 frequency(fpll_phi)=
- and
-> + * the output frequency of the PLL is determined by the PLLDV, according=
- to
-> + * the following equation:
-> + * pxclk =3D fpll_phi / RFDPHI1 =3D (pll_ref x PLLDV[MFD]) / PLLDV[RFDPH=
-I1].
-> + */
-> +static bool plldig_is_valid_range(unsigned long rate, unsigned long pare=
-nt_rate,
-> +               unsigned int *mult, unsigned int *rfdphi1,
-> +               unsigned long *round_rate_base)
-> +{
-> +       u32 div, div_temp, mfd =3D PLLDIG_DEFAULE_MULT;
-> +       unsigned long round_rate;
-> +
-> +       round_rate =3D parent_rate * mfd;
-> +
-> +       /* Range of the diliver for driving the PHI1 output clock */
-
-divider? Not diliver, right?
-
-> +       for (div =3D 1; div <=3D 63; div++) {
-> +               /* Checking match with default mult number at first */
-> +               if (round_rate / div =3D=3D rate) {
-> +                       *rfdphi1 =3D div;
-> +                       *round_rate_base =3D round_rate;
-> +                       *mult =3D mfd;
-> +                       return true;
-> +               }
-> +       }
-> +
-> +       for (div =3D 1; div <=3D 63; div++) {
-> +               mfd =3D (div * rate) / parent_rate;
-> +               /* Range of the muliplicationthe factor applied to the
-
-/*
- * Please make multi line comments look like this
- */
-
-> +                * output reference frequency
-> +                */
-> +               if ((mfd >=3D 10) && (mfd <=3D 150)) {
-> +                       div_temp =3D (parent_rate * mfd) / rate;
-> +                       if ((div_temp * rate) =3D=3D (mfd * parent_rate))=
- {
-> +                               *rfdphi1 =3D div_temp;
-> +                               *mult =3D mfd;
-> +                               *round_rate_base =3D mfd * parent_rate;
-> +                               return true;
-> +                       }
-> +               }
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +static unsigned long plldig_recalc_rate(struct clk_hw *hw,
-> +               unsigned long parent_rate)
-> +{
-> +       struct clk_plldig *plldig =3D to_clk_plldig(hw);
-> +       u32 mult, div, val;
-> +
-> +       val =3D readl(plldig->regs + PLLDIG_REG_PLLDV);
-> +       pr_info("%s: current configuration: 0x%x\n", clk_hw_get_name(hw),=
- val);
-
-Remove debug prints please.
-
-> +
-> +       /* Check if PLL is bypassed */
-> +       if (val & PLLDIG_SSCGBYP_ENABLE)
-> +               return parent_rate;
-> +
-> +       /* Checkout multiplication factor divider value */
-> +       mult =3D val;
-> +       mult =3D PLLDIG_GET_MULT(mult);
-> +
-> +       /* Checkout divider value of the output frequency */
-> +       div =3D val;
-> +       div =3D PLLDIG_GET_RFDPHI1(div);
-> +
-> +       return (parent_rate * mult) / div;
-> +}
-> +
-> +static long plldig_round_rate(struct clk_hw *hw, unsigned long rate,
-> +               unsigned long *parent)
-> +{
-> +       unsigned long parent_rate =3D *parent;
-> +       unsigned long round_rate;
-> +       u32 mult =3D 0, rfdphi1 =3D 0;
-> +       bool found =3D false;
-> +
-> +       found =3D plldig_is_valid_range(rate, parent_rate, &mult,
-> +                                       &rfdphi1, &round_rate);
-> +       if (!found) {
-> +               pr_warn("%s: unable to round rate %lu, parent rate :%lu\n=
-",
-> +                               clk_hw_get_name(hw), rate, parent_rate);
-> +               return 0;
-> +       }
-> +
-> +       return round_rate / rfdphi1;
-> +}
-> +
-> +static int plldig_set_rate(struct clk_hw *hw, unsigned long rate,
-> +               unsigned long parent_rate)
-> +{
-> +       struct clk_plldig *data =3D to_clk_plldig(hw);
-> +       bool valid =3D false;
-> +       unsigned long round_rate =3D 0;
-> +       u32 rfdphi1 =3D 0, val, mult =3D 0;
-> +
-> +       valid =3D plldig_is_valid_range(rate, parent_rate, &mult,
-> +                                       &rfdphi1, &round_rate);
-> +       if (!valid) {
-> +               pr_warn("%s: unable to support rate %lu, parent_rate: %lu=
-\n",
-> +                               clk_hw_get_name(hw), rate, parent_rate);
-> +               return -EINVAL;
-> +       }
-> +
-> +       val =3D readl(data->regs + PLLDIG_REG_PLLDV);
-> +       val =3D mult;
-> +       rfdphi1 =3D PLLDIG_SET_RFDPHI1(rfdphi1);
-> +       val |=3D rfdphi1;
-> +
-> +       writel(val, data->regs + PLLDIG_REG_PLLDV);
-> +
-> +       return plldig_wait_lock(data);
-> +}
-> +
-[...]
-> +
-> +struct clk_hw *_plldig_clk_init(const char *name, const char *parent_nam=
-e,
-> +                               void __iomem *regs)
-> +{
-> +       struct clk_plldig *plldig;
-> +       struct clk_hw *hw;
-> +       struct clk_init_data init;
-> +       int ret;
-> +
-> +       plldig =3D kzalloc(sizeof(*plldig), GFP_KERNEL);
-> +       if (!plldig)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       plldig->regs =3D regs;
-> +
-> +       init.name =3D name;
-> +       init.ops =3D &plldig_clk_ops;
-> +       init.parent_names =3D &parent_name;
-> +       init.num_parents =3D 1;
-> +       init.flags =3D CLK_SET_RATE_GATE;
-> +
-> +       plldig->hw.init =3D &init;
-> +
-> +       hw =3D &plldig->hw;
-> +       ret =3D clk_hw_register(NULL, hw);
-> +       if (ret) {
-> +               kfree(plldig);
-> +               hw =3D ERR_PTR(ret);
-> +       }
-> +
-> +       return hw;
-> +}
-> +
-> +static void __init plldig_clk_init(struct device_node *node)
-> +{
-> +       struct clk_hw_onecell_data *clk_data;
-> +       struct clk_hw **clks;
-> +       void __iomem *base;
-> +
-> +       clk_data =3D kzalloc(struct_size(clk_data, hws, 1),
-> +                       GFP_KERNEL);
-> +       if (!clk_data)
-> +               return;
-> +
-> +       clk_data->num =3D 1;
-> +       clks =3D clk_data->hws;
-> +
-> +       base =3D of_iomap(node, 0);
-> +       WARN_ON(!base);
-> +
-> +       clks[0] =3D _plldig_clk_init("pixel-clk",
-> +                       of_clk_get_parent_name(node, 0), base);
-
-Can you use the new way of specifying clk parents instead of calling
-of_clk_get-parent_name() here? It would be simpler to just indicate
-which index it is (I guess 0) or what the name is going to be in
-"clock-names" in this DT node.
-
-> +
-> +       of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-
-Why is this a #clock-cells =3D <1> device? It provides one clk, so
-presumably it can be #clock-cells =3D <0> and then this can use
-of_clk_hw_simple_get() instead.
-
-> +}
-> +
-> +CLK_OF_DECLARE(plldig_clockgen, "fsl,ls1028a-plldig", plldig_clk_init);
-
-IS there a reason why this can't be a platform driver? It would be nice
-to use platform device APIs.
+> 
+> commit 57c722e932cfb82e9820bbaae1b1f7222ea97b52
+> Author: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Date:   Fri Aug 9 18:36:23 2019 -0700
+> 
+>     net/tls: swap sk_write_space on close
+>     
+>     Now that we swap the original proto and clear the ULP pointer
+>     on close we have to make sure no callback will try to access
+>     the freed state. sk_write_space is not part of sk_prot, remember
+>     to swap it.
+>     
+>     Reported-by: syzbot+dcdc9deefaec44785f32@syzkaller.appspotmail.com
+>     Fixes: 95fa145479fb ("bpf: sockmap/tls, close can race with map free")
+>     Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+>     Signed-off-by: David S. Miller <davem@davemloft.net>
+> 
+> diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+> index 9cbbae606ced..ce6ef56a65ef 100644
+> --- a/net/tls/tls_main.c
+> +++ b/net/tls/tls_main.c
+> @@ -308,6 +308,7 @@ static void tls_sk_proto_close(struct sock *sk, long timeout)
+>         if (free_ctx)
+>                 icsk->icsk_ulp_data = NULL;
+>         sk->sk_prot = ctx->sk_proto;
+> +       sk->sk_write_space = ctx->sk_write_space;
+>         write_unlock_bh(&sk->sk_callback_lock);
+>         release_sock(sk);
+>         if (ctx->tx_conf == TLS_SW)
 
