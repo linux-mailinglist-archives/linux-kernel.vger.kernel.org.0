@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71F4A8B318
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55138B314
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:55:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbfHMIzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:55:23 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:56080 "EHLO inva020.nxp.com"
+        id S1728179AbfHMIyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:54:54 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:41500 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727683AbfHMIyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727848AbfHMIyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Aug 2019 04:54:53 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 450EB1A075F;
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 959ED200779;
         Tue, 13 Aug 2019 10:54:51 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 387AD1A02B4;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 89615200769;
         Tue, 13 Aug 2019 10:54:51 +0200 (CEST)
 Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E2E372060E;
-        Tue, 13 Aug 2019 10:54:50 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 477B62060E;
+        Tue, 13 Aug 2019 10:54:51 +0200 (CEST)
 From:   Ioana Ciornei <ioana.ciornei@nxp.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     joe@perches.com, andrew@lunn.ch, ruxandra.radulescu@nxp.com,
         Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v2 02/10] staging: fsl-dpaa2/ethsw: enable switch ports only on dev_open
-Date:   Tue, 13 Aug 2019 11:54:31 +0300
-Message-Id: <1565686479-32577-3-git-send-email-ioana.ciornei@nxp.com>
+Subject: [PATCH v2 03/10] staging: fsl-dpaa2/ethsw: add line terminator to all formats
+Date:   Tue, 13 Aug 2019 11:54:32 +0300
+Message-Id: <1565686479-32577-4-git-send-email-ioana.ciornei@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1565686479-32577-1-git-send-email-ioana.ciornei@nxp.com>
 References: <1565686479-32577-1-git-send-email-ioana.ciornei@nxp.com>
@@ -37,112 +37,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At probe time, only the DPSW object should be enabled without the
-associated ports, which will get enabled on dev_open. Remove the
-ethsw_open() and ethsw_stop() functions and replace them only with
-dpsw_enable()/_disable().
+Add the '\n' line terminator to the string formats missing it.
 
-Reported-by: Andrew Lunn <andrew@lunn.ch>
+Reported-by: Joe Perches <joe@perches.com>
 Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
 Changes in v2:
  - added Reported-by tag
 
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 59 ++++-----------------------------
- 1 file changed, 6 insertions(+), 53 deletions(-)
+ drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c |  2 +-
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c         | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index 8032314d5cae..302842c3bdfe 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -1363,48 +1363,6 @@ static int ethsw_register_notifier(struct device *dev)
- 	return err;
- }
- 
--static int ethsw_open(struct ethsw_core *ethsw)
--{
--	struct ethsw_port_priv *port_priv = NULL;
--	int i, err;
--
--	err = dpsw_enable(ethsw->mc_io, 0, ethsw->dpsw_handle);
--	if (err) {
--		dev_err(ethsw->dev, "dpsw_enable err %d\n", err);
--		return err;
--	}
--
--	for (i = 0; i < ethsw->sw_attr.num_ifs; i++) {
--		port_priv = ethsw->ports[i];
--		err = dev_open(port_priv->netdev, NULL);
--		if (err) {
--			netdev_err(port_priv->netdev, "dev_open err %d\n", err);
--			return err;
--		}
--	}
--
--	return 0;
--}
--
--static int ethsw_stop(struct ethsw_core *ethsw)
--{
--	struct ethsw_port_priv *port_priv = NULL;
--	int i, err;
--
--	for (i = 0; i < ethsw->sw_attr.num_ifs; i++) {
--		port_priv = ethsw->ports[i];
--		dev_close(port_priv->netdev);
--	}
--
--	err = dpsw_disable(ethsw->mc_io, 0, ethsw->dpsw_handle);
--	if (err) {
--		dev_err(ethsw->dev, "dpsw_disable err %d\n", err);
--		return err;
--	}
--
--	return 0;
--}
--
- static int ethsw_init(struct fsl_mc_device *sw_dev)
- {
- 	struct device *dev = &sw_dev->dev;
-@@ -1586,9 +1544,7 @@ static int ethsw_remove(struct fsl_mc_device *sw_dev)
- 
- 	destroy_workqueue(ethsw_owq);
- 
--	rtnl_lock();
--	ethsw_stop(ethsw);
--	rtnl_unlock();
-+	dpsw_disable(ethsw->mc_io, 0, ethsw->dpsw_handle);
- 
- 	for (i = 0; i < ethsw->sw_attr.num_ifs; i++) {
- 		port_priv = ethsw->ports[i];
-@@ -1708,12 +1664,11 @@ static int ethsw_probe(struct fsl_mc_device *sw_dev)
- 			goto err_free_ports;
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
+index 926a0c053e18..95e9f1096999 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
+@@ -65,7 +65,7 @@ static void ethsw_get_drvinfo(struct net_device *netdev,
+ 				     port_priv->idx,
+ 				     &state);
+ 	if (err) {
+-		netdev_err(netdev, "ERROR %d getting link state", err);
++		netdev_err(netdev, "ERROR %d getting link state\n", err);
+ 		goto out;
  	}
  
--	/* Switch starts up enabled */
--	rtnl_lock();
--	err = ethsw_open(ethsw);
--	rtnl_unlock();
--	if (err)
-+	err = dpsw_enable(ethsw->mc_io, 0, ethsw->dpsw_handle);
-+	if (err) {
-+		dev_err(ethsw->dev, "dpsw_enable err %d\n", err);
- 		goto err_free_ports;
-+	}
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index 302842c3bdfe..9ade73928e60 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -722,12 +722,12 @@ static irqreturn_t ethsw_irq0_handler_thread(int irq_num, void *arg)
+ 	err = dpsw_get_irq_status(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 				  DPSW_IRQ_INDEX_IF, &status);
+ 	if (err) {
+-		dev_err(dev, "Can't get irq status (err %d)", err);
++		dev_err(dev, "Can't get irq status (err %d)\n", err);
  
- 	/* Setup IRQs */
- 	err = ethsw_setup_irqs(sw_dev);
-@@ -1724,9 +1679,7 @@ static int ethsw_probe(struct fsl_mc_device *sw_dev)
- 	return 0;
+ 		err = dpsw_clear_irq_status(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 					    DPSW_IRQ_INDEX_IF, 0xFFFFFFFF);
+ 		if (err)
+-			dev_err(dev, "Can't clear irq status (err %d)", err);
++			dev_err(dev, "Can't clear irq status (err %d)\n", err);
+ 		goto out;
+ 	}
  
- err_stop:
--	rtnl_lock();
--	ethsw_stop(ethsw);
--	rtnl_unlock();
-+	dpsw_disable(ethsw->mc_io, 0, ethsw->dpsw_handle);
+@@ -772,21 +772,21 @@ static int ethsw_setup_irqs(struct fsl_mc_device *sw_dev)
+ 					IRQF_NO_SUSPEND | IRQF_ONESHOT,
+ 					dev_name(dev), dev);
+ 	if (err) {
+-		dev_err(dev, "devm_request_threaded_irq(): %d", err);
++		dev_err(dev, "devm_request_threaded_irq(): %d\n", err);
+ 		goto free_irq;
+ 	}
  
- err_free_ports:
- 	/* Cleanup registered ports only */
+ 	err = dpsw_set_irq_mask(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 				DPSW_IRQ_INDEX_IF, mask);
+ 	if (err) {
+-		dev_err(dev, "dpsw_set_irq_mask(): %d", err);
++		dev_err(dev, "dpsw_set_irq_mask(): %d\n", err);
+ 		goto free_devm_irq;
+ 	}
+ 
+ 	err = dpsw_set_irq_enable(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 				  DPSW_IRQ_INDEX_IF, 1);
+ 	if (err) {
+-		dev_err(dev, "dpsw_set_irq_enable(): %d", err);
++		dev_err(dev, "dpsw_set_irq_enable(): %d\n", err);
+ 		goto free_devm_irq;
+ 	}
+ 
 -- 
 1.9.1
 
