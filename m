@@ -2,88 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D56518C24D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 22:46:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A58B8C268
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 22:57:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfHMUqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 16:46:40 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44854 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbfHMUqk (ORCPT
+        id S1726533AbfHMU5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 16:57:48 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45320 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbfHMU5r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 16:46:40 -0400
-Received: by mail-pf1-f193.google.com with SMTP id c81so3260268pfc.11
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 13:46:40 -0700 (PDT)
+        Tue, 13 Aug 2019 16:57:47 -0400
+Received: by mail-ot1-f68.google.com with SMTP id m24so24339560otp.12;
+        Tue, 13 Aug 2019 13:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lS7QbCBfWDAKJJ9AaXuhhnNJr4mtIGuJ160cegSICyM=;
-        b=XbX84biYjSyDgS6LxVzDQYkOcojz78WOlfZYnpj3lki92gGfubayTt/V04/ES1ESh4
-         5uieAy8/ybLD3n3wn8crXsm7826/o7NSknPmLlhmX9p+0FMDH8FnH3gjqF/T9l3XIcLo
-         XMWSGcF8jlWJ05xs7S21a08YMT1zxM1DYaoSI=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0sZ/hWlDeEr31hV45AP4cLUTgr2xCQPFlUeit0Vpzfc=;
+        b=XSp7U9v6O2RaTJaeqm4ZDpoPVV4rWPuldeHU40O/1P9XOkNo83/AnutIAg1vrMOT/r
+         2sgq0wH78MQecRogPrvMzy54Zd1U374aXlC3IBb4sJVkWAsKV0whjFToesL8Rfj2nU9H
+         5GIP4RAlurjghLnesLm83VfdBBciLU+FH86Hvb1boAYH/A1H9Fh1Hd4aYskRjGjFAkt4
+         sTA5CBRpHPQeE0+AlrbYjL/LuYhVOXaaDzT+f27xT7ECPtez9aFKq6Ve1mABErJAlKNh
+         olI49TYFiW2+Xhj5F6dUUW6toU0c7phoS9yiVjmrhRRmT7xnoMn13vAZN39vpZL9mM3e
+         CxGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lS7QbCBfWDAKJJ9AaXuhhnNJr4mtIGuJ160cegSICyM=;
-        b=ZP5ePgJ8CJR2lHuss5W54SPIwCqd/rvmrhAR/K/FHFuMdVpUXJrlgpk031qymRvuHQ
-         E2cAQazyRU7uHME0Dpmb6Mhun9goXF74UFRKtVh2XK5Ivfw3ZmT1mJMYDdGMFFjCCP6N
-         BObMqiNE7tdPokWPpOMgr0JtyhV8NbHj0rT8+lKq00GbNhKdS3pQu74ibSqTuEywXtsb
-         a2ZR1DOjSjBlLCJ0qhXUauJkofy19K7wSjgHQ9C4FfewxKwXaBQNMRMSrXSOuYwlDZZH
-         sFxP4gp0GA95ZTZSk+YoY8IK/3jD4lpI13d2mPvL+h8ykYo55MGqG0NHVFGopGKCO/4L
-         GizQ==
-X-Gm-Message-State: APjAAAUm2r4vZJuAwDApgRe+cPGoiJB7Kq6NRbvmsSkLmwURo6V4r/M9
-        T/cTlTArqzj/EKMuOIYnovU0DQ==
-X-Google-Smtp-Source: APXvYqyZj8SFNh8W8z2W8pR3iGEVcZWS7eycNEWabRA94Sd257PTZI0RRr7/3l/UmxBxc/RfktxIOg==
-X-Received: by 2002:a62:38d7:: with SMTP id f206mr18947803pfa.102.1565729199815;
-        Tue, 13 Aug 2019 13:46:39 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id e188sm70041869pfa.76.2019.08.13.13.46.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Aug 2019 13:46:38 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 13:46:34 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v6 4/4] net: phy: realtek: Add LED configuration support
- for RTL8211E
-Message-ID: <20190813204634.GR250418@google.com>
-References: <20190813191147.19936-1-mka@chromium.org>
- <20190813191147.19936-5-mka@chromium.org>
- <20190813201411.GL15047@lunn.ch>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0sZ/hWlDeEr31hV45AP4cLUTgr2xCQPFlUeit0Vpzfc=;
+        b=su3AfnaKE4qloXkW5fOw2+SRel2R4q8XGrvuLDcKTTDQhm/zyXjogDSEgVsIjPB0Bl
+         lVvLYEYKSEzXfO8B5yWEPpjUAUEEveqpx8prLi6B33OJrCZzoCW7n9Kw8t3ECqe7WFId
+         x8m1pW/sgwzdWiVyDwxMjj3+1eFidUugN7Dhqze+Fsq7h58D4Dl/aSq1sVuat/J+LOIr
+         pxCzlv9UW/cX9/z/oRzA2NUElHKGWJu25uB58y+4u027xzepRdDnjuHXoPIgB1EFdX1f
+         X+3fVmNtpvXjzFlSrdbZnPW19t2zHol9eyQVIFvh3lSIAb9PELOLmX6+/nlHjK+nupks
+         Ysjw==
+X-Gm-Message-State: APjAAAWAWL8X0tnvR/AOTckDeZRo6HFLmspCItgXd9gvR5I/A3nbivRN
+        ZGvyrkQIeoubZUG6DHb9MP4=
+X-Google-Smtp-Source: APXvYqwehOn7jV6aPdr6lJPcigvHXY980bnDGQKJJN8qtV8jg5dWBlAEl5Ft7o+nDMsmPiBvA58OLw==
+X-Received: by 2002:a5d:8f02:: with SMTP id f2mr22096767iof.192.1565729867212;
+        Tue, 13 Aug 2019 13:57:47 -0700 (PDT)
+Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id y25sm12874419iol.59.2019.08.13.13.57.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 13 Aug 2019 13:57:46 -0700 (PDT)
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skunberg.kelsey@gmail.com
+Subject: [PATCH v2 0/3] PCI: pci-sysfs.c cleanup
+Date:   Tue, 13 Aug 2019 14:45:10 -0600
+Message-Id: <20190813204513.4790-1-skunberg.kelsey@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190809195721.34237-1-skunberg.kelsey@gmail.com>
+References: <20190809195721.34237-1-skunberg.kelsey@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190813201411.GL15047@lunn.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 10:14:11PM +0200, Andrew Lunn wrote:
-> > +static int rtl8211e_config_led(struct phy_device *phydev, int led,
-> > +			       struct phy_led_config *cfg)
-> > +{
-> > +	u16 lacr_bits = 0, lcr_bits = 0;
-> > +	int oldpage, ret;
-> > +
-> 
-> You should probably check that led is 0 or 1. 
+This series is designed to clean up device attributes and permissions in
+pci-sysfs.c. Then move the sysfs SR-IOV functions from pci-sysfs.c to
+iov.c for better organization. Patches build off of each other.
 
-Actually this PHY has up to 3 LEDs, but yes, good point to validate
-the parameter. I'll wait a day or two for if there is other feedback
-and send a new version with the check.
+Patch 1: Define device attributes with DEVICE_ATTR*() instead of __ATTR*().
 
-> Otherwise this looks good.
+Patch 2: Change permissions from symbolic to the preferred octal.
 
-Thanks for the reviews!
+Patch 3: Move sysfs SR-IOV functions to iov.c to keep the feature's code
+together.
 
-Matthias
+Changes since v1:
+        Add patch 1 and 2 to fix the way device attributes are defined
+        and change permissions from symbolic to octal. Patch 3 which moves
+        sysfs SR-IOV functions to iov.c will then apply cleaner.
+
+
+Kelsey Skunberg (3):
+  PCI: sysfs: Define device attributes with DEVICE_ATTR*()
+  PCI: sysfs: Change permissions from symbolic to octal
+  PCI/IOV: Move sysfs SR-IOV functions to iov.c
+
+ drivers/pci/iov.c       | 168 +++++++++++++++++++++++++++++++
+ drivers/pci/pci-sysfs.c | 217 ++++------------------------------------
+ drivers/pci/pci.h       |   2 +-
+ 3 files changed, 188 insertions(+), 199 deletions(-)
+
+-- 
+2.20.1
+
