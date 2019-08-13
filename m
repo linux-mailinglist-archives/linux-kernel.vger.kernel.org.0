@@ -2,75 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2226C8B821
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B65C8B7F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:06:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbfHMMKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:10:07 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48290 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbfHMMKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:10:06 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7DC9su1053904;
-        Tue, 13 Aug 2019 07:09:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565698194;
-        bh=cTM7S2PLpa3mnQ4eBvwPzdCvn8W5H1f6uFiW2fuHzLE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=IwVoj/JJDYlvqMb88DXh1W4/LfS9IGheVUuU65L6FAgfn8e7qrdz7e/DjCyJFluLZ
-         /4aDQ6gpwuTf+EYGnXRlcXzzOpUvzIO0WBWa4hcUclDsGloytKPIsIvBwRLc6dFkKX
-         p4YfaSxpYzgqAkpPQKruHi/jYXrxN0jNay5ncj8Y=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7DC9sGS071766
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Aug 2019 07:09:54 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 13
- Aug 2019 07:09:54 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 13 Aug 2019 07:09:54 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7DC9pug081737;
-        Tue, 13 Aug 2019 07:09:52 -0500
-Subject: Re: [PATCH] soc: ti: pm33xx: Fix static checker warnings
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <t-kristo@ti.com>,
-        <d-gerlach@ti.com>, <dan.carpenter@oracle.com>
-References: <20190626075014.2911-1-j-keerthy@ti.com>
- <20190813120453.GW52127@atomide.com>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <e66d31bb-1e03-919a-184f-32a1a5124009@ti.com>
-Date:   Tue, 13 Aug 2019 17:40:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727797AbfHMMG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 08:06:29 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3087 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726935AbfHMMG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 08:06:28 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id CF558F30528089ECDCC9;
+        Tue, 13 Aug 2019 20:06:26 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 13 Aug 2019 20:06:26 +0800
+Received: from 138 (10.175.124.28) by dggeme762-chm.china.huawei.com
+ (10.3.19.108) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 13
+ Aug 2019 20:06:25 +0800
+Date:   Tue, 13 Aug 2019 20:23:32 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Pavel Machek <pavel@denx.de>
+CC:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Jaegeuk Kim" <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v7 08/24] erofs: add namei functions
+Message-ID: <20190813122332.GA17429@138>
+References: <20190813091326.84652-1-gaoxiang25@huawei.com>
+ <20190813091326.84652-9-gaoxiang25@huawei.com>
+ <20190813114821.GB11559@amd>
 MIME-Version: 1.0
-In-Reply-To: <20190813120453.GW52127@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190813114821.GB11559@amd>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Originating-IP: [10.175.124.28]
+X-ClientProxiedBy: dggeme716-chm.china.huawei.com (10.1.199.112) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Pavel,
 
-
-On 13/08/19 5:34 PM, Tony Lindgren wrote:
-> * Keerthy <j-keerthy@ti.com> [190626 00:50]:
->> The patch fixes a bunch of static checker warnings.
+On Tue, Aug 13, 2019 at 01:48:21PM +0200, Pavel Machek wrote:
+> Hi!
 > 
-> Sorry I just noticed that this one is still pending, applying
-> into fixes.
+> > +	/*
+> > +	 * on-disk error, let's only BUG_ON in the debugging mode.
+> > +	 * otherwise, it will return 1 to just skip the invalid name
+> > +	 * and go on (in consideration of the lookup performance).
+> > +	 */
+> > +	DBG_BUGON(qd->name > qd->end);
+> 
+> I believe you should check for errors in non-debug mode, too.
 
-Thanks Tony
+Thanks for your kindly reply!
+
+The following is just my personal thought... If I am wrong, please
+kindly point out...
+
+As you can see, this is a new prefixed string binary search algorithm
+which can provide similar performance with hashed approach (but no
+need to store hash value at all), so I really care about its lookup
+performance.
+
+There is something needing to be concerned, is, whether namei() should
+report any potential on-disk issues or just return -ENOENT for these
+corrupted dirs, I think I tend to use the latter one.
+
+The reason (in my opinion) is if you consider another some another
+complicated non-transverse ondisk implementation, it cannot transverse
+all the entires so they could/couldn't report all potential issues
+in namei() (For such corrupted dir, they can return -ENOENT due
+to lack of information of course, just avoiding crashing the kernel
+is OK).
+
+Therefore, in my thought, such issue can be reported by fsck-like
+tools such as erofs.fsck. And actually readdir() will also report
+all issues as well, thus we can have performance gain on lookup.
 
 > 
-> Tony
 > 
+> > +			if (unlikely(!ndirents)) {
+> > +				DBG_BUGON(1);
+> > +				kunmap_atomic(de);
+> > +				put_page(page);
+> > +				page = ERR_PTR(-EIO);
+> > +				goto out;
+> > +			}
+> 
+> -EUCLEAN is right error code for corrupted filesystem. (And you
+>  probably want to print something to the syslog, too).
+
+Yes, you are right :) -EUCLEAN/EFSCORRUPTED is actually for such thing,
+nowadays, EROFS treats all EFSCORRUPTED cases into EIO, and I will
+update that in one patch... (Yes, it needs to print something of course :))
+
+Thanks,
+Gao Xiang
+
+> 
+> 								Pavel
+> -- 
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+
