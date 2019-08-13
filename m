@@ -2,87 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 643E78AFC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5ADA8AFC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbfHMGQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 02:16:15 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36634 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727581AbfHMGQK (ORCPT
+        id S1727585AbfHMGQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 02:16:13 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39664 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727582AbfHMGQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 02:16:10 -0400
-Received: by mail-wm1-f65.google.com with SMTP id g67so375419wme.1;
-        Mon, 12 Aug 2019 23:16:09 -0700 (PDT)
+        Tue, 13 Aug 2019 02:16:11 -0400
+Received: by mail-wm1-f68.google.com with SMTP id i63so368368wmg.4
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 23:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Uq6joo7/5ZR7hjpnc1juLuWW3DBC5KKl2gE88hrhoaY=;
+        b=YYWko3dGkkv+jThy9YuZcvodd+UYEd0mTcJGPmmz4J2S9ESI65Kiy+JOnQxUG3oCIU
+         Xl4NxQ4AJK22eQYTr80DPTgydWN3ygOCQR22rIZDLn61qsSStEDdj5NoR6fg5B56l1Q9
+         ufNHqBICHOZ25bxK+emULpL86gqZTDMGZDPMjC0flAgL7u2EfzgE42oGj5KD7ZUpAqBJ
+         26MENyeJmrsYYGKRerqaXbVPjrU6upM7rWRc+AUPGyqpm1nTvZ7xnNGA7SqvH2yF006c
+         Ybpk00bGC71bXicQ4SmnxbKWRtmnugElwGB+T5B1dv94dcXbvyzzPduggBm5Ohj3igH7
+         VLHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XiR40mxLzkY39gMoWHbldefskq7y3+jPi2+rZpG3h6U=;
-        b=gXdQ321IO3PXUSHZRxhQo7puYy/kz5gxDK3CL4hRH+nOHYpwZid5Zf2JevmaTrJ/zB
-         L3NgKKvXphhaQvpbDQyuL0JKMuH3vkuDfV7DDBXYg7Xr3FC5BGkcXvzLhmiRRCapJBhD
-         3G8yYPiBjjHmu/zJg/j21JnIpE9XvhmLPGb0fNGGD7Dk/bo7vewBc9OZvCD/yoYYwONV
-         vzSdLDYFAUWlpYKaaMESOs3hJCdrkZ3iz4XM7eKwfYO29ixz7HxNcYV4NIaTwgmPQTG0
-         zrxXz661xDqWlB7a5HBeqfXBdwylXr0QBdIBk846P2Ex1cxWu9ZGd12w09kGbpOGXiT4
-         SHZA==
-X-Gm-Message-State: APjAAAVDEzOVC9+ap1ynXFwzLokDwMUybPqyB3Igvwq8kipzZ+G4876p
-        T/q/iau5Xab4XjuwtQYAVdBIanbYlwc=
-X-Google-Smtp-Source: APXvYqzDQwrLMXAKGqb9FZbRmn3w7CKgOwWVQcqZ4SbYC8oVnXy2FVD/F5QU1IcDRIwHQ/1UrESj/w==
-X-Received: by 2002:a7b:c85a:: with SMTP id c26mr1051974wml.77.1565676968383;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Uq6joo7/5ZR7hjpnc1juLuWW3DBC5KKl2gE88hrhoaY=;
+        b=sSzNkZLzaTlziDA7G9Zp4Em0KLG9tPPrA3pGntM6DWnUzu4qvtigJZatLNEtIBElm0
+         cJTbl18wZN2zKC/HRSVXD7sZFwxE6b550nYSwvnlRpO4jFc2Txd5z/mCn+S2fHOwAe2Q
+         L6R3NV6h7iyrg8g8PNufv930gov/nCk02lAZUIV4ujEG3WytquV87Y1Ba9OI7bs8W5M6
+         z352vCSecYsHMm7UzP43fkkj8Y/GqEnLFYK7bcKoSPeEXkGxpUQlHAtvTU6j1jweMYas
+         Atvw7A771GVFp02MplTdDdbfzzqkNrcKdeISbIe1rt6Ypct3bKezXIuo+nuCe5/7QEVP
+         jpew==
+X-Gm-Message-State: APjAAAWp2qdHEnnAws5mLrLp0QqLxeSq2QQbMWgjRhnytOigfkMWlcjb
+        w3IiszWh3V3SBp+DDXoi45LEQg==
+X-Google-Smtp-Source: APXvYqx/xUpYpYDABRie20RVCnuk+h8wt/leE8chLfH2LpmPa5EJrwQshklrXhdvRbgCRM6FGnJPvA==
+X-Received: by 2002:a7b:c857:: with SMTP id c23mr1142210wml.51.1565676969063;
+        Mon, 12 Aug 2019 23:16:09 -0700 (PDT)
+Received: from dell ([2.27.35.255])
+        by smtp.gmail.com with ESMTPSA id b3sm18957790wrm.72.2019.08.12.23.16.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Mon, 12 Aug 2019 23:16:08 -0700 (PDT)
-Received: from localhost.localdomain (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.googlemail.com with ESMTPSA id o16sm24618135wrp.23.2019.08.12.23.16.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2019 23:16:07 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Denis Efremov <efremov@linux.com>, joe@perches.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Remove zoran driver
-Date:   Tue, 13 Aug 2019 09:16:02 +0300
-Message-Id: <20190813061602.18087-1-efremov@linux.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
+Date:   Tue, 13 Aug 2019 07:16:06 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     linux-kernel@vger.kernel.org, joe@perches.com,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] MAINTAINERS: altera-sysmgr: Fix typo in a filepath
+Message-ID: <20190813061606.GX26727@dell>
 References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
+ <20190813055841.9816-1-efremov@linux.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190813055841.9816-1-efremov@linux.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup MAINTAINERS from zoran record since the driver was removed.
+On Tue, 13 Aug 2019, Denis Efremov wrote:
 
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-media@vger.kernel.org
-Fixes: 8dce4b265a53 ("media: zoran: remove deprecated driver")
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- MAINTAINERS | 8 --------
- 1 file changed, 8 deletions(-)
+> Fix typo (s/sysgmr/sysmgr/) in the header filepath.
+> 
+> Cc: Thor Thayer <thor.thayer@linux.intel.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Fixes: f36e789a1f8d ("mfd: altera-sysmgr: Add SOCFPGA System Manager")
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2548dd1efb2d..2ea3f82e256b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17794,14 +17794,6 @@ S:	Maintained
- F:	mm/zpool.c
- F:	include/linux/zpool.h
- 
--ZR36067 VIDEO FOR LINUX DRIVER
--L:	mjpeg-users@lists.sourceforge.net
--L:	linux-media@vger.kernel.org
--W:	http://mjpeg.sourceforge.net/driver-zoran/
--T:	hg https://linuxtv.org/hg/v4l-dvb
--S:	Odd Fixes
--F:	drivers/staging/media/zoran/
--
- ZRAM COMPRESSED RAM BLOCK DEVICE DRVIER
- M:	Minchan Kim <minchan@kernel.org>
- M:	Nitin Gupta <ngupta@vflare.org>
+Applied, thanks.
+
 -- 
-2.21.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
