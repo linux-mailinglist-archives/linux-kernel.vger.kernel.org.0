@@ -2,398 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA368AC7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 03:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 916AA8AC78
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 03:42:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfHMBnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 21:43:53 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58584 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbfHMBnx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 21:43:53 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1cr3q011095;
-        Tue, 13 Aug 2019 01:42:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=AWrIfLdhfDA8NCFcIQD/AQqNushc7mLII+SffaCbHoU=;
- b=bUnixvT+jMV9WCUoG1ZoDTfqyZye4pD4HfX0SKc8NDIoAVyXOrhIjI3Y7qk3Wzb9+ueJ
- pCizaqZPgmBlZ6zotywnfH2c81NJ4pZH/ju7sP8hK5iXfQD1QrJNUj1jrRfe4ckzoxGX
- aJruVeJIg/YMwa0Vve6/NgtccPYXuNGS+PBFSOHVJJitDhUxhdtyYUyXoCIzqFlJjUVh
- BPmQUxj02vI3d6gLgwZzDYQp0uWOsO5e+XLM2ZQ76ImQRjo2KAGT1or+/UNDLLpGnQsp
- oEv3aq5P6k0fz8fQLGcgA12QScLuzrkd6BASwg9zT0pX8r5lYuvv262gagFyggYCeD4F NA== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=AWrIfLdhfDA8NCFcIQD/AQqNushc7mLII+SffaCbHoU=;
- b=tfCtR3JoM8K6hOhyodo3w4a953AfO/DFhLiuSD2FYGw93/gk5275PiPnKQ3mzKtd75fn
- 5iW8oE9k8+49yEjeVQqgS36n8afjmK5v1K+AlzBb58vDFMEV76XZzNUd+BvtDVHJBK7w
- +DJE29O1IGT+GxYbiEOIY+Oa0sCJWwEUWC2YTC7HC4TfZ6FeS8CtlVokddj+ZdarrsBP
- mLKiIr/2k+c0MYJqOtgjG5H8E8qU8ndyrXLq/EtNmkDiOoEcGRBk04EY+Rk8JyOVelfE
- fCljOpG8Yx+1BrYtWJL1kIkWMk8AJ4ZJhkykvf80+zTppMpKJcNouux6NnpMx5doWbNy KQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2u9pjqax59-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 01:42:34 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1cWd6058167;
-        Tue, 13 Aug 2019 01:40:34 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2u9k1vw1nv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 01:40:34 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7D1eWAm005147;
-        Tue, 13 Aug 2019 01:40:32 GMT
-Received: from concerto.internal (/10.154.133.246)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 12 Aug 2019 18:40:31 -0700
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-To:     akpm@linux-foundation.org, vbabka@suse.cz,
-        mgorman@techsingularity.net, mhocko@suse.com,
-        dan.j.williams@intel.com
-Cc:     Khalid Aziz <khalid.aziz@oracle.com>, osalvador@suse.de,
-        richard.weiyang@gmail.com, hannes@cmpxchg.org,
-        arunks@codeaurora.org, rppt@linux.vnet.ibm.com, jgg@ziepe.ca,
-        amir73il@gmail.com, alexander.h.duyck@linux.intel.com,
-        linux-mm@kvack.org, linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org,
-        Bharath Vedartham <linux.bhar@gmail.com>,
-        Vandana BN <bnvandana@gmail.com>
-Subject: [RFC PATCH 2/2] mm/vmscan: Add fragmentation and page starvation prediction to kswapd
-Date:   Mon, 12 Aug 2019 19:40:12 -0600
-Message-Id: <20190813014012.30232-3-khalid.aziz@oracle.com>
+        id S1726600AbfHMBmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 21:42:49 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29636 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726236AbfHMBms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 21:42:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 18:42:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,379,1559545200"; 
+   d="scan'208";a="177657704"
+Received: from rfried-mobl1.iil.intel.com ([143.185.152.137])
+  by fmsmga007.fm.intel.com with ESMTP; 12 Aug 2019 18:42:46 -0700
+From:   Ramon Fried <ramon.fried@linux.intel.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        stefan.wahren@i2se.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] gpiolib: Take MUX usage into account
+Date:   Tue, 13 Aug 2019 04:42:10 +0300
+Message-Id: <20190813014210.15519-1-ramon.fried@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190813014012.30232-1-khalid.aziz@oracle.com>
-References: <20190813014012.30232-1-khalid.aziz@oracle.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908130015
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908130015
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds proactive memory reclamation to kswapd using the
-free page exhaustion/fragmentation prediction based upon memory
-consumption trend. It uses the least squares fit algorithm introduced
-earlier for this prediction. A new function node_trend_analysis()
-iterates through all zones and updates trend data in the lookback
-window for least square fit algorithm. At the same time it flags any
-zones that have potential for exhaustion/fragmentation by setting
-ZONE_POTENTIAL_FRAG flag.
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-prepare_kswapd_sleep() calls node_trend_analysis() to check if the
-node has potential exhaustion/fragmentation. If so, kswapd will
-continue reclamataion. balance_pgdat has been modified to take
-potential fragmentation into account when deciding when to wake
-kcompactd up. Any zones that have potential severe fragmentation get
-watermark boosted to reclaim and compact free pages proactively.
+The user space like gpioinfo only see the GPIO usage but not the
+MUX usage (e.g. I2C or SPI usage) of a pin. As a user we want to know which
+pin is free/safe to use. So take the MUX usage of strict pinmux controllers
+into account to get a more realistic view for ioctl GPIO_GET_LINEINFO_IOCTL.
 
-Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-Tested-by: Vandana BN <bnvandana@gmail.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Tested-by: Ramon Fried <rfried.dev@gmail.com>
+Signed-off-by: Ramon Fried <rfried.dev@gmail.com>
 ---
- include/linux/mmzone.h |  38 ++++++++++++++
- mm/page_alloc.c        |  27 ----------
- mm/vmscan.c            | 116 ++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 148 insertions(+), 33 deletions(-)
+v2: Address review from linus:
+* ** Please notive logic was reversed **
+* renamed pinctrl_gpio_is_in_use() to pinctrl_gpio_can_use_line()
+* renamed pinmux_is_in_use() to pinmux_can_be_used_for_gpio()
+* changed dev_err to dev_dbg (Linus suggested removing it altogether, I
+  find it better to keep it for debug).
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 9a0e5cab7171..a523476b5ce1 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -587,6 +587,12 @@ struct zone {
- 
- 	bool			contiguous;
- 
-+	/*
-+	 * Structures to use for memory consumption prediction for
-+	 * each order
-+	 */
-+	struct lsq_struct	mem_prediction[MAX_ORDER];
-+
- 	ZONE_PADDING(_pad3_)
- 	/* Zone statistics */
- 	atomic_long_t		vm_stat[NR_VM_ZONE_STAT_ITEMS];
-@@ -611,6 +617,9 @@ enum zone_flags {
- 	ZONE_BOOSTED_WATERMARK,		/* zone recently boosted watermarks.
- 					 * Cleared when kswapd is woken.
- 					 */
-+	ZONE_POTENTIAL_FRAG,		/* zone detected with a potential
-+					 * external fragmentation event.
-+					 */
- };
- 
- extern int mem_predict(struct frag_info *frag_vec, struct zone *zone);
-@@ -1130,6 +1139,35 @@ static inline struct zoneref *first_zones_zonelist(struct zonelist *zonelist,
- #define for_each_zone_zonelist(zone, z, zlist, highidx) \
- 	for_each_zone_zonelist_nodemask(zone, z, zlist, highidx, NULL)
- 
-+extern int watermark_boost_factor;
-+
-+static inline void boost_watermark(struct zone *zone)
-+{
-+	unsigned long max_boost;
-+
-+	if (!watermark_boost_factor)
-+		return;
-+
-+	max_boost = mult_frac(zone->_watermark[WMARK_HIGH],
-+			watermark_boost_factor, 10000);
-+
-+	/*
-+	 * high watermark may be uninitialised if fragmentation occurs
-+	 * very early in boot so do not boost. We do not fall
-+	 * through and boost by pageblock_nr_pages as failing
-+	 * allocations that early means that reclaim is not going
-+	 * to help and it may even be impossible to reclaim the
-+	 * boosted watermark resulting in a hang.
-+	 */
-+	if (!max_boost)
-+		return;
-+
-+	max_boost = max(pageblock_nr_pages, max_boost);
-+
-+	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
-+		max_boost);
-+}
-+
- #ifdef CONFIG_SPARSEMEM
- #include <asm/sparsemem.h>
- #endif
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 272c6de1bf4e..1b4e6ba16f1c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2351,33 +2351,6 @@ static bool can_steal_fallback(unsigned int order, int start_mt)
- 	return false;
+ drivers/gpio/gpiolib.c           |  3 ++-
+ drivers/pinctrl/core.c           | 28 ++++++++++++++++++++++++++++
+ drivers/pinctrl/pinmux.c         | 27 +++++++++++++++++++++++++++
+ drivers/pinctrl/pinmux.h         |  8 ++++++++
+ include/linux/pinctrl/consumer.h |  6 ++++++
+ 5 files changed, 71 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index f497003f119c..52937bf8e514 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1084,7 +1084,8 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		    test_bit(FLAG_IS_HOGGED, &desc->flags) ||
+ 		    test_bit(FLAG_USED_AS_IRQ, &desc->flags) ||
+ 		    test_bit(FLAG_EXPORT, &desc->flags) ||
+-		    test_bit(FLAG_SYSFS, &desc->flags))
++		    test_bit(FLAG_SYSFS, &desc->flags) ||
++		    !pinctrl_gpio_can_use_line(chip->base + lineinfo.line_offset))
+ 			lineinfo.flags |= GPIOLINE_FLAG_KERNEL;
+ 		if (test_bit(FLAG_IS_OUT, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_IS_OUT;
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index b70df27874d1..2bbd8ee93507 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -736,6 +736,34 @@ int pinctrl_get_group_selector(struct pinctrl_dev *pctldev,
+ 	return -EINVAL;
  }
  
--static inline void boost_watermark(struct zone *zone)
--{
--	unsigned long max_boost;
--
--	if (!watermark_boost_factor)
--		return;
--
--	max_boost = mult_frac(zone->_watermark[WMARK_HIGH],
--			watermark_boost_factor, 10000);
--
--	/*
--	 * high watermark may be uninitialised if fragmentation occurs
--	 * very early in boot so do not boost. We do not fall
--	 * through and boost by pageblock_nr_pages as failing
--	 * allocations that early means that reclaim is not going
--	 * to help and it may even be impossible to reclaim the
--	 * boosted watermark resulting in a hang.
--	 */
--	if (!max_boost)
--		return;
--
--	max_boost = max(pageblock_nr_pages, max_boost);
--
--	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
--		max_boost);
--}
--
- /*
-  * This function implements actual steal behaviour. If order is large enough,
-  * we can steal whole pageblock. If not, we first move freepages in this
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 44df66a98f2a..b9cf6658c83d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -51,6 +51,7 @@
- #include <linux/printk.h>
- #include <linux/dax.h>
- #include <linux/psi.h>
-+#include <linux/jiffies.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/div64.h>
-@@ -3397,14 +3398,82 @@ static void clear_pgdat_congested(pg_data_t *pgdat)
- 	clear_bit(PGDAT_WRITEBACK, &pgdat->flags);
- }
- 
-+/*
-+ * Update  trend data and perform trend analysis for a zone to foresee
-+ * a low memory or severe fragmentation event
-+ */
-+static int zone_trend_analysis(struct zone *zone)
++bool pinctrl_gpio_can_use_line(unsigned gpio)
 +{
-+	struct frag_info frag_vec[MAX_ORDER];
-+	int order, result;
-+	unsigned long total_free_pages;
-+	unsigned long curr_free_pages;
++	struct pinctrl_dev *pctldev;
++	struct pinctrl_gpio_range *range;
++	bool result;
++	int pin;
 +
-+	total_free_pages = frag_vec[0].free_pages = 0;
-+	for (order = 0; order < MAX_ORDER; order++) {
-+		curr_free_pages = zone->free_area[order].nr_free << order;
-+		total_free_pages += curr_free_pages;
++	/*
++	 * Try to obtain GPIO range, if it fails
++	 * we're probably dealing with GPIO driver
++	 * without a backing pin controller - bail out.
++	 */
++	if (pinctrl_get_device_gpio_range(gpio, &pctldev, &range))
++		return true;
 +
-+		if (order < MAX_ORDER - 1) {
-+			frag_vec[order + 1].free_pages =
-+				frag_vec[order].free_pages + curr_free_pages;
-+			frag_vec[order + 1].time =
-+				jiffies64_to_msecs(get_jiffies_64()
-+				- INITIAL_JIFFIES);
-+		}
-+	}
-+	frag_vec[0].free_pages = total_free_pages;
-+	frag_vec[0].time = frag_vec[MAX_ORDER - 1].time;
++	mutex_lock(&pctldev->mutex);
 +
-+	result = mem_predict(frag_vec, zone);
++	/* Convert to the pin controllers number space */
++	pin = gpio_to_pin(range, gpio);
++
++	result = pinmux_can_be_used_for_gpio(pctldev, pin);
++
++	mutex_unlock(&pctldev->mutex);
 +
 +	return result;
 +}
++EXPORT_SYMBOL_GPL(pinctrl_gpio_can_use_line);
 +
-+/*
-+ * Perform trend analysis for memory usage for each zone in the node to
-+ * detect potential upcoming low memory or fragmented memory conditions
+ /**
+  * pinctrl_gpio_request() - request a single pin to be used as GPIO
+  * @gpio: the GPIO pin number from the GPIO subsystem number space
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index 020e54f843f9..7e42a5738d82 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -70,6 +70,33 @@ int pinmux_validate_map(const struct pinctrl_map *map, int i)
+ 	return 0;
+ }
+ 
++/**
++ * pinmux_can_be_used_for_gpio() - check if a specific pin
++ *	is either muxed to a different function or used as gpio.
++ *
++ * @pin: the pin number in the global pin space
++ *
++ * Controllers not defined as strict will always return true,
++ * menaning that the gpio can be used.
 + */
-+static int node_trend_analysis(pg_data_t *pgdat, int classzone_idx)
++bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev, unsigned pin)
 +{
-+	struct zone *zone = NULL;
-+	int i, retval = 0;
++	struct pin_desc *desc = pin_desc_get(pctldev, pin);
++	const struct pinmux_ops *ops = pctldev->desc->pmxops;
 +
-+	for (i = 0; i <= classzone_idx; i++) {
-+		int zoneval;
-+
-+		zone = pgdat->node_zones + i;
-+
-+		if (!managed_zone(zone))
-+			continue;
-+
-+		/*
-+		 * Check if trend analysis shows potential fragmentation
-+		 * in near future
-+		 */
-+		zoneval = zone_trend_analysis(zone);
-+		if (zoneval & MEMPREDICT_COMPACT)
-+			set_bit(ZONE_POTENTIAL_FRAG, &zone->flags);
-+		if (zoneval & MEMPREDICT_RECLAIM)
-+			boost_watermark(zone);
-+		retval |= zoneval;
++	if (!desc) {
++		dev_dbg(pctldev->dev,
++			"pin %u is not registered so it cannot be requested\n",
++			pin);
++		return true;
 +	}
 +
-+	return retval;
++	if (ops->strict && desc->mux_usecount)
++		return false;
++
++	return !(ops->strict && !!desc->gpio_owner);
 +}
 +
- /*
-  * Prepare kswapd for sleeping. This verifies that there are no processes
-  * waiting in throttle_direct_reclaim() and that watermarks have been met.
-+ * It also checks if this node could have a potential external fragmentation
-+ * event which could lead to direct reclaim/compaction stalls.
-  *
-  * Returns true if kswapd is ready to sleep
-  */
- static bool prepare_kswapd_sleep(pg_data_t *pgdat, int order, int classzone_idx)
+ /**
+  * pin_request() - request a single pin to be muxed in, typically for GPIO
+  * @pin: the pin number in the global pin space
+diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
+index 794cb3a003ff..78c3a31be882 100644
+--- a/drivers/pinctrl/pinmux.h
++++ b/drivers/pinctrl/pinmux.h
+@@ -15,6 +15,8 @@ int pinmux_check_ops(struct pinctrl_dev *pctldev);
+ 
+ int pinmux_validate_map(const struct pinctrl_map *map, int i);
+ 
++bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev, unsigned pin);
++
+ int pinmux_request_gpio(struct pinctrl_dev *pctldev,
+ 			struct pinctrl_gpio_range *range,
+ 			unsigned pin, unsigned gpio);
+@@ -42,6 +44,12 @@ static inline int pinmux_validate_map(const struct pinctrl_map *map, int i)
+ 	return 0;
+ }
+ 
++static inline bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev,
++					       unsigned pin)
++{
++	return true;
++}
++
+ static inline int pinmux_request_gpio(struct pinctrl_dev *pctldev,
+ 			struct pinctrl_gpio_range *range,
+ 			unsigned pin, unsigned gpio)
+diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
+index 86720a5a384f..7f8c7d9583d3 100644
+--- a/include/linux/pinctrl/consumer.h
++++ b/include/linux/pinctrl/consumer.h
+@@ -24,6 +24,7 @@ struct device;
+ #ifdef CONFIG_PINCTRL
+ 
+ /* External interface to pin control */
++extern bool pinctrl_gpio_can_use_line(unsigned gpio);
+ extern int pinctrl_gpio_request(unsigned gpio);
+ extern void pinctrl_gpio_free(unsigned gpio);
+ extern int pinctrl_gpio_direction_input(unsigned gpio);
+@@ -61,6 +62,11 @@ static inline int pinctrl_pm_select_idle_state(struct device *dev)
+ 
+ #else /* !CONFIG_PINCTRL */
+ 
++static inline bool pinctrl_gpio_can_use_line(unsigned gpio)
++{
++	return true;
++}
++
+ static inline int pinctrl_gpio_request(unsigned gpio)
  {
-+	int retval;
-+
- 	/*
- 	 * The throttled processes are normally woken up in balance_pgdat() as
- 	 * soon as allow_direct_reclaim() is true. But there is a potential
-@@ -3425,6 +3494,21 @@ static bool prepare_kswapd_sleep(pg_data_t *pgdat, int order, int classzone_idx)
- 	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
- 		return true;
- 
-+	/*
-+	 * Check whether this node could have a potential memory
-+	 * exhaustion in near future. If trend analysis shows such
-+	 * an event occurring, don't allow kswapd to sleep so
-+	 * reclamation starts now to prevent memory exhaustion. If
-+	 * trend analysis shows no impending memory exhaustion but
-+	 * shows impending severe fragmentation, return true to
-+	 * wake up kcompactd.
-+	 */
-+	retval = node_trend_analysis(pgdat, classzone_idx);
-+	if (retval & MEMPREDICT_RECLAIM)
-+		return false;
-+	if (retval & MEMPREDICT_COMPACT)
-+		return true;
-+
- 	if (pgdat_balanced(pgdat, order, classzone_idx)) {
- 		clear_pgdat_congested(pgdat);
- 		return true;
-@@ -3498,6 +3582,8 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
- 	unsigned long nr_boost_reclaim;
- 	unsigned long zone_boosts[MAX_NR_ZONES] = { 0, };
- 	bool boosted;
-+	bool potential_frag = 0;
-+	bool need_compact;
- 	struct zone *zone;
- 	struct scan_control sc = {
- 		.gfp_mask = GFP_KERNEL,
-@@ -3524,9 +3610,27 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
- 
- 		nr_boost_reclaim += zone->watermark_boost;
- 		zone_boosts[i] = zone->watermark_boost;
-+
-+		/*
-+		 * Check if any of the zones could have a potential
-+		 * fragmentation event.
-+		 */
-+		if (test_bit(ZONE_POTENTIAL_FRAG, &zone->flags)) {
-+			potential_frag = 1;
-+			clear_bit(ZONE_POTENTIAL_FRAG, &zone->flags);
-+		}
- 	}
- 	boosted = nr_boost_reclaim;
- 
-+	/*
-+	 * If kswapd is woken up because of watermark boosting or forced
-+	 * to run another balance_pgdat run because it detected an
-+	 * external fragmentation event, run compaction after
-+	 * reclaiming some pages. need_compact is true if such compaction
-+	 * is required.
-+	 */
-+	need_compact = boosted || potential_frag;
-+
- restart:
- 	sc.priority = DEF_PRIORITY;
- 	do {
-@@ -3645,7 +3749,6 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
- 		 */
- 		nr_reclaimed = sc.nr_reclaimed - nr_reclaimed;
- 		nr_boost_reclaim -= min(nr_boost_reclaim, nr_reclaimed);
--
- 		/*
- 		 * If reclaim made no progress for a boost, stop reclaim as
- 		 * IO cannot be queued and it could be an infinite loop in
-@@ -3676,13 +3779,14 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
- 			zone->watermark_boost -= min(zone->watermark_boost, zone_boosts[i]);
- 			spin_unlock_irqrestore(&zone->lock, flags);
- 		}
-+	}
- 
--		/*
--		 * As there is now likely space, wakeup kcompact to defragment
--		 * pageblocks.
--		 */
-+	/*
-+	 * As there is now likely space, wakeup kcompactd to defragment
-+	 * pageblocks.
-+	 */
-+	if (need_compact)
- 		wakeup_kcompactd(pgdat, pageblock_order, classzone_idx);
--	}
- 
- 	snapshot_refaults(NULL, pgdat);
- 	__fs_reclaim_release();
+ 	return 0;
 -- 
 2.20.1
 
