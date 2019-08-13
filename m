@@ -2,149 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D37388AC72
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 03:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 231848AC79
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 03:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfHMBeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 21:34:05 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45590 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbfHMBeF (ORCPT
+        id S1726692AbfHMBmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 21:42:54 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:55158 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfHMBmy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 21:34:05 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a30so12525719lfk.12
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 18:34:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xhOMsZgraPbofDXHGlEAPblhYgeF7xROTk8w4FSX/Q8=;
-        b=pqX+AsGxsOOmro0DhzbCC8yIL18XGXrlTdxb1jh2O7AQ4Zpxtc3qR66hu/oqhESsq7
-         lruMije3Zt2EqNSnR5czmrGtEA4wnN5fIAo2BEK7CYe5z3SQ4bs1oCx/sSg8LmGpwP6Q
-         RCNhUECyMsRJmV5xsX8q48Aq7xOvj0C7qZw6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xhOMsZgraPbofDXHGlEAPblhYgeF7xROTk8w4FSX/Q8=;
-        b=F9Z9IJWmFCrKNet/mEpstAzCMSF9u7qiPMOR5hoR5p9LHZubOFYtEdsEcv/NM3mN/D
-         xlhhrm3mjrbzoZn4Y9ZQKTt+epOoeEdpOGer0IVE6WmUrr6vv18c/g2O2na22+nSYiZR
-         sO0CIMQXyG1dqf2cgbRegU9hjRMaLd5qUYXw/DdUxvmEtBFh1UwNIb6+vkarmZIl9n6y
-         Ec/UmkA0awgUWjgHbZIa8ApwHluDbVVbgZaxMELoOakRxXC43jdOnWozrn9abejmrcq1
-         9pj+Ra1NDHhgeKY8ok48SYNiIjc0DzZEB8/mYDFOkyxVVTIaHAfW/Hd3VYdkov0icvq/
-         RHtQ==
-X-Gm-Message-State: APjAAAW0uyQeQOLZuySi2xcFMIgej3yOout9ghzwVetTyL+oT2+/EWJU
-        3L4EHoH1v8g1cVl56hODqiNQTJo3sA88dexom5O8BQ==
-X-Google-Smtp-Source: APXvYqywVV126qBkpvCj9wilDgs7/ubL/o2+AGR81L9EPWfdcToV8DH6PE+74TIUSlJiAqOlP4zxXU+RTHhqUSv+3kY=
-X-Received: by 2002:ac2:5394:: with SMTP id g20mr22731532lfh.112.1565660042882;
- Mon, 12 Aug 2019 18:34:02 -0700 (PDT)
+        Mon, 12 Aug 2019 21:42:54 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1csG5025908;
+        Tue, 13 Aug 2019 01:42:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2019-08-05; bh=BBBgJHWDpE3974ehXMOJUCh+tK0rPjMp6VqtBjvyEG0=;
+ b=XasiF8h71/edNlrX+r7tIBi/Nvz/KTzyFLfnI64/Ase4ZARfJ4OvjW+AcLIx9hjAcxsb
+ h2c2AIRx7+qJsKhUndSsS74cubMAlMIRYcSWwekqPrTAZVnZ66Btiz0KkHhZ+T+KBskN
+ /vuHsQVH8+e5pu+QdGvDg1Sacxj2/rYBXaoTZ9JcdRzqCz981eI4UtjH36r2MvQhKkN5
+ FLLL7KTpf+8RGKe7LhCAtMRS+oo8h+cAl2l50mRZ0QhdUWy5hxWqAcpNrhTqJ0svzC00
+ U6f9npIhLO6/fc4mbX3fkTf88abdv3jRfkGwFRlBLfK3bAJcA1k5Gprd7rXt5qgpufsF eQ== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2018-07-02; bh=BBBgJHWDpE3974ehXMOJUCh+tK0rPjMp6VqtBjvyEG0=;
+ b=wa69hRGWfqFlJoRwatoK1folQCoYJXGWr9xsbj+RkhmqOZtdWOSVv59eqU6qfpi9W/zh
+ sVovN3NplULVs/2axclYD1n3SZzSVkQsh33NGtMsnEiI7K0+aYz7LtIs8nRClOqzLpdW
+ L1jHOx4mLaJCTkVFnQed7Ex71pUchNQUVVzPFFfp/9GZTmh6XFUKJtlIaFBMRkrQ4MdH
+ ymU8ZSGRDdFbIpC6afca6VnsWxrucwaSvejIAPG9Wg3FvZJIFUZg4AObvewC7THT+QtA
+ vOsChfmJW4j9XMjJ7MZCS4cbufn329JRLHP7YnWLHG4+TjteIDsNYHxAcGHPc6K4SVa1 4A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2u9nvp31w0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Aug 2019 01:42:35 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1bVDt072860;
+        Tue, 13 Aug 2019 01:40:34 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2u9n9hje19-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Aug 2019 01:40:34 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7D1ePJU005027;
+        Tue, 13 Aug 2019 01:40:25 GMT
+Received: from concerto.internal (/10.154.133.246)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 12 Aug 2019 18:40:25 -0700
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+To:     akpm@linux-foundation.org, vbabka@suse.cz,
+        mgorman@techsingularity.net, mhocko@suse.com,
+        dan.j.williams@intel.com
+Cc:     Khalid Aziz <khalid.aziz@oracle.com>, osalvador@suse.de,
+        richard.weiyang@gmail.com, hannes@cmpxchg.org,
+        arunks@codeaurora.org, rppt@linux.vnet.ibm.com, jgg@ziepe.ca,
+        amir73il@gmail.com, alexander.h.duyck@linux.intel.com,
+        linux-mm@kvack.org, linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/2] Add predictive memory reclamation and compaction
+Date:   Mon, 12 Aug 2019 19:40:10 -0600
+Message-Id: <20190813014012.30232-1-khalid.aziz@oracle.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190802151435.GA1081@linux.ibm.com> <20190802151501.13069-14-paulmck@linux.ibm.com>
- <20190812210232.GA3648@lenoir> <20190812232316.GT28441@linux.ibm.com>
-In-Reply-To: <20190812232316.GT28441@linux.ibm.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Mon, 12 Aug 2019 21:33:51 -0400
-Message-ID: <CAEXW_YRm6cBp-J3tPeRH+Jx=38LaAtNoCM9f0FeFG+ZBZKBH6w@mail.gmail.com>
-Subject: Re: [PATCH RFC tip/core/rcu 14/14] rcu/nohz: Make multi_cpu_stop()
- enable tick on all online CPUs
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        dipankar <dipankar@in.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Peter Zilstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908130015
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908130015
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 7:23 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
->
-> On Mon, Aug 12, 2019 at 11:02:33PM +0200, Frederic Weisbecker wrote:
-> > On Fri, Aug 02, 2019 at 08:15:01AM -0700, Paul E. McKenney wrote:
-> > > The multi_cpu_stop() function relies on the scheduler to gain control from
-> > > whatever is running on the various online CPUs, including any nohz_full
-> > > CPUs running long loops in kernel-mode code.  Lack of the scheduler-clock
-> > > interrupt on such CPUs can delay multi_cpu_stop() for several minutes
-> > > and can also result in RCU CPU stall warnings.  This commit therefore
-> > > causes multi_cpu_stop() to enable the scheduler-clock interrupt on all
-> > > online CPUs.
-> > >
-> > > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > ---
-> > >  kernel/stop_machine.c | 9 ++++++++-
-> > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-> > > index b4f83f7bdf86..a2659f61ed92 100644
-> > > --- a/kernel/stop_machine.c
-> > > +++ b/kernel/stop_machine.c
-> > > @@ -20,6 +20,7 @@
-> > >  #include <linux/smpboot.h>
-> > >  #include <linux/atomic.h>
-> > >  #include <linux/nmi.h>
-> > > +#include <linux/tick.h>
-> > >  #include <linux/sched/wake_q.h>
-> > >
-> > >  /*
-> > > @@ -187,15 +188,19 @@ static int multi_cpu_stop(void *data)
-> > >  {
-> > >     struct multi_stop_data *msdata = data;
-> > >     enum multi_stop_state curstate = MULTI_STOP_NONE;
-> > > -   int cpu = smp_processor_id(), err = 0;
-> > > +   int cpu, err = 0;
-> > >     const struct cpumask *cpumask;
-> > >     unsigned long flags;
-> > >     bool is_active;
-> > >
-> > > +   for_each_online_cpu(cpu)
-> > > +           tick_nohz_dep_set_cpu(cpu, TICK_DEP_MASK_RCU);
-> >
-> > Looks like it's not the right fix but, should you ever need to set an
-> > all-CPUs (system wide) tick dependency in the future, you can use tick_set_dep().
->
-> Indeed, I have dropped this patch, but I now do something similar in
-> RCU's CPU-hotplug notifiers.  Which does have an effect, especially on
-> the system that isn't subject to the insane-latency cpu_relax().
->
-> Plus I am having to put a similar workaround into RCU's quiescent-state
-> forcing logic.
->
-> But how should this really be done?
->
-> Isn't there some sort of monitoring of nohz_full CPUs for accounting
-> purposes?  If so, would it make sense for this monitoring to check for
-> long-duration kernel execution and enable the tick in this case?  The
-> RCU dyntick machinery can be used to remotely detect the long-duration
-> kernel execution using something like the following:
->
->         int nohz_in_kernel_snap = rcu_dynticks_snap_cpu(cpu);
->
->         ...
->
->         if (rcu_dynticks_in_eqs_cpu(cpu, nohz_in_kernel_snap)
->                 nohz_in_kernel_snap = rcu_dynticks_snap_cpu(cpu);
->         else
->                 /* Turn on the tick! */
 
-This solution does make sense to me and is simpler than the
-rcu_nmi_exit_common() solution you proposed in the other thread.
+Page reclamation and compaction is triggered in response to reaching low
+watermark. This makes reclamation/compaction reactive based upon a
+snapshot of the system at a point in time. When that point is reached,
+system is already suffering from free memory shortage and must now try
+to recover. Recovery can often land system in direct
+reclamation/compaction path and while recovery happens, workloads start
+to experience unpredictable memory allocation latencies. In real life,
+forced direct reclamation has been seen to cause sudden spike in time it
+takes to populate a new database or an extraordinary unpredictable
+latency in launching a new server on cloud platform. These events create
+SLA violations which are expensive for businesses.
 
-Though I am not sure about the intricacies of remotely enabling the
-timer tick for a CPU. But overall, the above solution does seem
-simpler.
+If the kernel could foresee a potential free page exhaustion or
+fragmentation event well before it happens, it could start reclamation
+proactively instead to avoid allocation stalls. A time based trend line
+for available free pages can show such potential future events by
+charting the current memory consumption trend on the system.
 
-thanks,
+These patches propose a way to capture enough memory usage information
+to compute a trend line based upon most recent data. Trend line is
+graphed with x-axis showing time and y-axis showing number of free
+pages. The proposal is to capture the number of free pages at opportune
+moments along with the current timestamp. Once system has enough data
+points (the lookback window for trend analysis), fit a line of the form
+y=mx+c to these points using least sqaure regression method.  As time
+advances, these points can be updated with new data points and a new
+best fit line can be computed. Capturing these data points and computing
+trend line for pages of order 0-MAX_ORDER allows us to not only foresee
+free pages exhaustion point but also severe fragmentation points in
+future.
 
- - Joel
+If the line representing trend for total free pages has a negative slope
+(hence trending downward), solving y=mx+c for x with y=0 tells us if
+the current trend continues, at what point would the system run out of
+free pages. If average rate of page reclamation is computed by observing
+page reclamation behavior, that information can be used to compute the
+time to start reclamation at so that number of free pages does not fall
+to 0 or below low watermark if current memory consumption trend were to
+continue.
+
+Similarly, if kernel tracks the level of fragmentation for each order
+page (which can be done by computing the number of free pages below this
+order), a trend line for each order can be used to compute the point in
+time when no more pages of that order will be available for allocation.
+If the trend line represents number of unusable pages for that order,
+the intersection of this line with line representing number of free
+pages is the point of 100% fragmentation. This holds true because at
+this intersection point all free pages are of lower order. Intersetion
+point for two lines y0=m0x0+c0 and y1=m1x1+c1 can be computed
+mathematically which yields x and y coordinates on time and free pages
+graph. If average rate of compaction is computed by timing previous
+compaction runs, kernel can compute how soon does it need to start
+compaction to avoid this 100% fragmentation point.
+
+Patch 1 adds code to maintain a sliding lookback window of (time, number
+of free pages) points which can be updated continuously and adds code to
+compute best fit line across these points. It also adds code to use the
+best fit lines to determine if kernel must start reclamation or
+compaction.
+
+Patch 2 adds code to collect data points on free pages of various orders
+at different points in time, uses code in patch 1 to update sliding
+lookback window with these points and kicks off reclamation or
+compaction based upon the results it gets.
+
+Patch 1 maintains a fixed size lookback window. A fixed size lookback
+window limits the amount of data that has to be maintained to compute a
+best fit line. Routine mem_predict() in patch 1 uses best fit line to
+determine the immediate need for reclamation or compaction. To simplify
+initial concept implementation, it uses a fixed time threshold when
+compaction should start in anticipation of impending fragmentation.
+Similarly it uses a fixed minimum precentage free pages as criteria to
+detrmine if it is time to start reclamation if the current trend line
+shows continued drop in number of free pages. Both of these criteria can
+be improved upon in final implementation by taking rate of compaction
+and rate of reclamation into account.
+
+Patch 2 collects data points for best fit line in kswapd before we
+decide if kswapd should go to sleep or continue reclamation. It then
+uses that data to delay kswapd from sleeping and continue reclamation.
+Potential fragmentation information obtained from best fit line is used
+to decide if zone watermark should be boosted to avert impending
+fragmentation. This data is also used in balance_pgdat() to determine if
+kcompatcd should be woken up to start compaction.
+get_page_from_freelist() might be a better place to gather data points
+and make decision on starting reclamation or comapction but it can also
+impact page allocation latency. Another possibility is to create a
+separate kernel thread that gathers page usage data periodically and
+wakes up kswapd or kcompactd as needed based upon trend analysis. This
+is something that can be finalized before final implementation of this
+proposal.
+
+Impact of this implementation was measured using two sets of tests.
+First test consists of three concurrent dd processes writing large
+amounts of data (66 GB, 131 GB and 262 GB) to three different SSDs
+causing large number of free pages to be used up for buffer/page cache.
+Number of cumulative allocation stalls as reported by /proc/vmstat were
+recorded for 5 runs of this test.
+
+5.3-rc2
+-------
+
+allocstall_dma 0
+allocstall_dma32 0
+allocstall_normal 15
+allocstall_movable 1629
+compact_stall 0
+
+Total = 1644
+
+
+5.3-rc2 + this patch series
+---------------------------
+
+allocstall_dma 0
+allocstall_dma32 0
+allocstall_normal 182
+allocstall_movable 1266
+compact_stall 0
+
+Total = 1544
+
+There was no significant change in system time between these runs. This
+was a ~6.5% improvement in number of allocation stalls.
+
+A scond test used was the parallel dd test from mmtests. Average number
+of stalls over 4 runs with unpatched 5.3-rc2 kernel was 6057. Average
+number of stalls over 4 runs after applying these patches was 5584. This
+was an ~8% improvement in number of allocation stalls.
+
+This work is complementary to other allocation/compaction stall
+improvements. It attempts to address potential stalls proactively before
+they happen and will make use of any improvements made to the
+reclamation/compaction code.
+
+Any feedback on this proposal and associated implementation will be
+greatly appreciated. This is work in progress.
+
+Khalid Aziz (2):
+  mm: Add trend based prediction algorithm for memory usage
+  mm/vmscan: Add fragmentation prediction to kswapd
+
+ include/linux/mmzone.h |  72 +++++++++++
+ mm/Makefile            |   2 +-
+ mm/lsq.c               | 273 +++++++++++++++++++++++++++++++++++++++++
+ mm/page_alloc.c        |  27 ----
+ mm/vmscan.c            | 116 ++++++++++++++++-
+ 5 files changed, 456 insertions(+), 34 deletions(-)
+ create mode 100644 mm/lsq.c
+
+-- 
+2.20.1
+
