@@ -2,95 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F10D58C387
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:21:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3086D8C381
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfHMVVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 17:21:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54302 "EHLO mail.kernel.org"
+        id S1726675AbfHMVUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 17:20:31 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:51852 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbfHMVVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 17:21:17 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1726124AbfHMVUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 17:20:31 -0400
+Received: from zn.tnic (p200300EC2F0D24001434546E6F7AC9DD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:2400:1434:546e:6f7a:c9dd])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC7FD20842;
-        Tue, 13 Aug 2019 21:21:14 +0000 (UTC)
-Date:   Tue, 13 Aug 2019 17:21:12 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Wang Nan <wangnan0@huawei.com>, He Kuang <hekuang@huawei.com>,
-        Michal Marek <mmarek@suse.com>,
-        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Stephane Eranian <eranian@google.com>,
-        Paul Turner <pjt@google.com>,
-        David Carrillo-Cisneros <davidcc@google.com>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: Re: [PATCH] tools lib traceevent: Fix "robust" test of
- do_generate_dynamic_list_file
-Message-ID: <20190813172112.34fadd4e@gandalf.local.home>
-In-Reply-To: <20190805130150.25acfeb1@gandalf.local.home>
-References: <20190805130150.25acfeb1@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B02FC1EC09A0;
+        Tue, 13 Aug 2019 23:20:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565731229;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=2yTRFcfoQAJUotojrKw6EZh+Y8eKJ3yXx+6PAGXWMgg=;
+        b=X5QM0mr9JTQP4ZnEJ04D8BqJ1yHp5EX8vWX8ENk92UuCs/bHE3vG6Q3SmSkHQEaM9aUkPn
+        GmR8Q9NC2vm3Ej/fISqATF8PebO5YXnlqSeNDCaW+AJVn84IMMQEXUjiGXMF95FScPAb1R
+        URwaO/CVUZrPD9vdwYqqqUZj75q2QIU=
+Date:   Tue, 13 Aug 2019 23:21:15 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kernel User <linux-kernel@riseup.net>
+Cc:     linux-kernel@vger.kernel.org, mhocko@suse.com, x86@kernel.org
+Subject: Re: /sys/devices/system/cpu/vulnerabilities/ doesn't show all known
+ CPU vulnerabilities
+Message-ID: <20190813212115.GO16770@zn.tnic>
+References: <20190813232829.3a1962cc@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190813232829.3a1962cc@localhost>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 5 Aug 2019 13:01:50 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> [
->   Not sure why I wasn't Cc'd on the original patch (or the one before that)
->   but I guess I need to add tools/lib/traceevent under MAINTAINERs for
->   perhaps tracing?
-> ]
+On Tue, Aug 13, 2019 at 11:28:29PM +0300, Kernel User wrote:
+> Hi,
+> 
+> 'ls /sys/devices/system/cpu/vulnerabilities/' doesn't show all known
+> CPU vulnerabilities and their variants. Only some of them:
+> 
+> l1tf  mds  meltdown  spec_store_bypass  spectre_v1  spectre_v2
+> 
+> Wikipedia shows more variants:
+> 
+> https://en.wikipedia.org/wiki/Meltdown_(security_vulnerability)#Speculative_execution_security_vulnerabilities
+> 
+> It would be good to have a full list with statuses. Then one won't need to use external (potentially non-safe) tools like https://github.com/speed47/spectre-meltdown-checker to find out the vulnerabilities of a system.
 > 
 
-Ping?
+You have to consider that some of those are addressed by a single
+mitigation like MDS; the mitigation for others like lazy FPU restore
+is not even present in /sys/devices/system/cpu/vulnerabilities/. Also,
+depending on the CPU, some are not even affected.
 
--- Steve
+So maintaining this in the kernel is unnecessary to say the least.
 
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> The tools/lib/traceevent/Makefile had a test added to it to detect a failure
-> of the "nm" when making the dynamic list file (whatever that is). The
-> problem is that the test sorts the values "U W w" and some versions of sort
-> will place "w" ahead of "W" (even though it has a higher ASCII value, and
-> break the test.
-> 
-> Add 'tr "w" "W"' to merge the two and not worry about the ordering.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 6467753d61399 ("tools lib traceevent: Robustify do_generate_dynamic_list_file")
-> Reported-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  tools/lib/traceevent/Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-> index 3292c290654f..8352d53dcb5a 100644
-> --- a/tools/lib/traceevent/Makefile
-> +++ b/tools/lib/traceevent/Makefile
-> @@ -266,8 +266,8 @@ endef
->  
->  define do_generate_dynamic_list_file
->  	symbol_type=`$(NM) -u -D $1 | awk 'NF>1 {print $$1}' | \
-> -	xargs echo "U W w" | tr ' ' '\n' | sort -u | xargs echo`;\
-> -	if [ "$$symbol_type" = "U W w" ];then				\
-> +	xargs echo "U w W" | tr 'w ' 'W\n' | sort -u | xargs echo`;\
-> +	if [ "$$symbol_type" = "U W" ];then				\
->  		(echo '{';						\
->  		$(NM) -u -D $1 | awk 'NF>1 {print "\t"$$2";"}' | sort -u;\
->  		echo '};';						\
+We could use a writeup somewhere which maps each vulnerability name -
+and they're a gazillion by now - to the respective mitigation and what
+is required but I'm not aware of such a writeup.
 
+Documentation/admin-guide/hw-vuln/ could be a good start and
+Documentation/admin-guide/hw-vuln/mds.rst could be a good example how
+one should document the vulnerabilities and their mitigation. But that
+would need to be exhaustive.
+
+IMHO of course.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
