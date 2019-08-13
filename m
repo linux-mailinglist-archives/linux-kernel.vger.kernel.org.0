@@ -2,78 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E3328BB8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D0CB8BBA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:36:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbfHMOac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 10:30:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43712 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729304AbfHMOac (ORCPT
+        id S1729574AbfHMOgN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 13 Aug 2019 10:36:13 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43538 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbfHMOgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 10:30:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KSaal6YlN7wPFno+cbdIpqACxfsSyDYqcjwHpJgXWLQ=; b=qLqSPm9h565BOHuhfNAhNZ3T6
-        8IbwVyae2EnRhi7GEy8egxUKyDgVc8w1jOX6WqZ46CNH+Vjl8iRVm4hMON6gAnvCVgfezsmNE0ZHG
-        p6LgsnWqlZQf+i533xf6fVWyifJmAYGsODHrN7FSgn3KpDzdu4BhWAd9F/Kvrte/59YiBOHq5FGIC
-        hdfn1tuPP1fTro5E5XzXIw+XdrD2vxJjhmchCHDYn2lmKJm4ORX0FRGeToXq7AvX/qd+zc4kLZamB
-        IAZ+EVO0J7iPW3BfCneMF+jPaUbB/buUStYWhqbdFjsBfb/jSMQsk+WAY9v1Mz8u6rDW9dbn9rETU
-        zFXHShNJA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hxXoh-0003B5-FW; Tue, 13 Aug 2019 14:30:27 +0000
-Date:   Tue, 13 Aug 2019 07:30:27 -0700
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Atish Patra <Atish.Patra@wdc.com>
-Cc:     "hch@infradead.org" <hch@infradead.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "allison@lohutok.net" <allison@lohutok.net>
-Subject: Re: [PATCH] RISC-V: Issue a local tlb flush if possible.
-Message-ID: <20190813143027.GA31668@infradead.org>
-References: <20190810014309.20838-1-atish.patra@wdc.com>
- <20190812145631.GC26897@infradead.org>
- <f58814e156b918531f058acfac944abef34f5fb1.camel@wdc.com>
+        Tue, 13 Aug 2019 10:36:13 -0400
+Received: by mail-qk1-f193.google.com with SMTP id m2so15523180qkd.10
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 07:36:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZjanPZgBBEyPxWCrNvo0+y8QHT418sTUREN8w8Bqq60=;
+        b=bPD9ni2PnGozJhSf+I9FLzQTX6UKgRIO2y7UxUQgH0+B8OOymsQ+X8ze/9ZIsoHQen
+         jmWVCEwHOwKxJ476hYFv8uqmqcXdhuOUoPR38467DixM2aXdKg/yYVAwzTJrWmh5yQh0
+         QMCXhnvUx8HlhK5U1aP+t0l75nyGqnQGC6NU9bKHBBvaIVl7A+SFmJmeunx8rWwwBRdJ
+         fmuVSRmleDdR3uzuKyl/JypoRVZkrCq9Pdk5WSWTkHZKHhe1sBbtlR4khcJg1muD0iYv
+         O/5vkJWs3RF8Sl89w2m5y8Fo8kaQe07Oj81lcmOlLKUpxFZ0DEcZr5iP+1VGNDbg0Ax2
+         jRLw==
+X-Gm-Message-State: APjAAAUEQY0peeUilgtJyOKLW8ioet7jCutETN/zljWZWPPc3i5+kdqM
+        bo3IzEZDOn6g5W+gHi74sIP981f8CUOhNuNyfr3JNw==
+X-Google-Smtp-Source: APXvYqzRol019NvPSrNTT/VjJtyRE4DhuaWy8x//z/XoJpF7W6l814UutHYRA0WSSHYSqXPbS+8qa/qvhBuu0aJxris=
+X-Received: by 2002:a37:9bce:: with SMTP id d197mr22500298qke.230.1565706972142;
+ Tue, 13 Aug 2019 07:36:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f58814e156b918531f058acfac944abef34f5fb1.camel@wdc.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190813133807.12384-1-benjamin.tissoires@redhat.com> <d558b953e88558b8d7955e591fefbe898edeb3ae.camel@archlinux.org>
+In-Reply-To: <d558b953e88558b8d7955e591fefbe898edeb3ae.camel@archlinux.org>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 13 Aug 2019 16:36:01 +0200
+Message-ID: <CAO-hwJL+u+ELM4W5hwzGmh-sDO33wk1yxjqoqf9wz=qn88ROsg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Fix support of a few Logitech devices broken in 5.3
+To:     =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 12:15:15AM +0000, Atish Patra wrote:
-> I thought if it recieves an empty cpumask, then it should at least do a
-> local flush is the expected behavior. Are you saying that we should
-> just skip all and return ? 
+On Tue, Aug 13, 2019 at 4:21 PM Filipe Laíns <lains@archlinux.org> wrote:
+>
+> On Tue, 2019-08-13 at 15:38 +0200, Benjamin Tissoires wrote:
+> > Hi Jiri,
+> >
+> > another set of patches to send to Linus ASAP.
+> > It turns out that we have been breaking devices, so this should
+> > be sent before 5.3 final.
+> >
+> > Cheers,
+> > Benjamin
+> >
+> > Benjamin Tissoires (2):
+> >   Revert "HID: logitech-hidpp: add USB PID for a few more supported
+> >     mice"
+> >   HID: logitech-hidpp: remove support for the G700 over USB
+> >
+> >  drivers/hid/hid-logitech-hidpp.c | 22 ----------------------
+> >  1 file changed, 22 deletions(-)
+> >
+>
+> Reviewed-by: Filipe Laíns <lains@archlinux.org>
 
-How could we ever receive an empty cpu mask?  I think it could only
-be empty without the current cpu.  At least that is my reading of
-the callers and a few other implementations.
+Thanks.
 
-> > 	if (!cpumask || cpumask_test_cpu(cpu, cpumask) {
-> > 		if ((start == 0 && size == -1) || size > PAGE_SIZE)
-> > 			local_flush_tlb_all();
-> > 		else if (size == PAGE_SIZE)
-> > 			local_flush_tlb_page(start);
-> > 		cpumask_clear_cpu(cpuid, cpumask);
-> 
-> This will modify the original cpumask which is not correct. clear part
-> has to be done on hmask to avoid a copy.
+I have schedule those 2 patches into for-5.3/upstream-fixes.
 
-Indeed.  But looking at the x86 tlbflush implementation it seems like we
-could use cpumask_any_but() to avoid having to modify the passed in
-cpumask.
+Cheers,
+Benjamin
