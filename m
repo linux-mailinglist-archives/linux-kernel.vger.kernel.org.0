@@ -2,61 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C038BB06
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D5388BB0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:02:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729461AbfHMOCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 10:02:00 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56163 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729384AbfHMOCA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 10:02:00 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hxXN2-0007nU-8v; Tue, 13 Aug 2019 14:01:52 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: sb: remove redundant assignment to variable result
-Date:   Tue, 13 Aug 2019 15:01:51 +0100
-Message-Id: <20190813140151.9865-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1729469AbfHMOCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 10:02:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36028 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728095AbfHMOCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 10:02:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E0524AD95;
+        Tue, 13 Aug 2019 14:02:22 +0000 (UTC)
+Date:   Tue, 13 Aug 2019 16:02:17 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Joe Lawrence <joe.lawrence@redhat.com>, heiko.carstens@de.ibm.com,
+        gor@linux.ibm.com, borntraeger@de.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jikos@kernel.org, pmladek@suse.com, nstange@suse.de,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH] s390/livepatch: Implement reliable stack tracing for
+ the consistency model
+In-Reply-To: <20190728203053.q3pafkwnzm5j3ccs@treble>
+Message-ID: <alpine.LSU.2.21.1908131602040.10477@pobox.suse.cz>
+References: <20190710105918.22487-1-mbenes@suse.cz> <20190716184549.GA26084@redhat.com> <alpine.LSU.2.21.1907171223540.4492@pobox.suse.cz> <20190728203053.q3pafkwnzm5j3ccs@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, 28 Jul 2019, Josh Poimboeuf wrote:
 
-Variable result is initialized to a value that is never read and it is
-re-assigned later. The initialization is redundant and can be removed.
+> On Wed, Jul 17, 2019 at 01:01:27PM +0200, Miroslav Benes wrote:
+> > > On a related note, do you think it would be feasible to extend (in
+> > > another patchset) the reliable stack unwinding code a bit so that we
+> > > could feed it pre-baked stacks ... then we could verify that the code
+> > > was finding interesting scenarios.  That was a passing thought I had
+> > > back when Nicolai and I were debugging the ppc64le exception frame
+> > > marker bug, but didn't think it worth the time/effort at the time.
+> > 
+> > That is an interesting thought. It would help the testing a lot. I will 
+> > make a note in my todo list.
+> 
+> Another idea I had for reliable unwinder testing: add a
+> CONFIG_RELIABLE_STACKTRACE_DEBUG option which does a periodic stack
+> trace and warns if it doesn't reach the end.  It could triggered from a
+> periodic NMI, or from schedule().
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/isa/sb/sb_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Noted as well. 
 
-diff --git a/sound/isa/sb/sb_common.c b/sound/isa/sb/sb_common.c
-index 162338f1b68a..ff031d670400 100644
---- a/sound/isa/sb/sb_common.c
-+++ b/sound/isa/sb/sb_common.c
-@@ -80,7 +80,7 @@ int snd_sbdsp_reset(struct snd_sb *chip)
- 
- static int snd_sbdsp_version(struct snd_sb * chip)
- {
--	unsigned int result = -ENODEV;
-+	unsigned int result;
- 
- 	snd_sbdsp_command(chip, SB_DSP_GET_VERSION);
- 	result = (short) snd_sbdsp_get_byte(chip) << 8;
--- 
-2.20.1
-
+Miroslav
