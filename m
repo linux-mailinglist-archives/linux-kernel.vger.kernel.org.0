@@ -2,113 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14FDC8B002
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAA4D8AFF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbfHMGir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 02:38:47 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:42262 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726600AbfHMGip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 02:38:45 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 705381A02E1;
-        Tue, 13 Aug 2019 08:38:43 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2665A1A0135;
-        Tue, 13 Aug 2019 08:38:35 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CD44B40305;
-        Tue, 13 Aug 2019 14:38:24 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        minghuan.Lian@nxp.com, mingkai.hu@nxp.com, roy.zang@nxp.com,
-        l.stach@pengutronix.de, kishon@ti.com, tpiepho@impinj.com,
-        leonard.crestez@nxp.com, andrew.smirnov@gmail.com,
-        yue.wang@amlogic.com, hayashi.kunihiko@socionext.com,
-        dwmw@amazon.co.uk, jonnyc@amazon.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        id S1726915AbfHMGdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 02:33:13 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54895 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfHMGdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 02:33:12 -0400
+Received: by mail-wm1-f65.google.com with SMTP id p74so394848wme.4
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 23:33:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sz3hBlZrKToKuC257EuHXyI7IFd+9vCG5NtLH+UK5dE=;
+        b=ncdUri9GYh+Rd72L+an4rJWauXy8o5V6RLSX8R94P2Q1DbdlOrGGqsjEsl/ZpXPuMm
+         BLFquhX5hBDhoibbPiTKUkrpzYAg55oIt01wQhx9S9lSSnE5x/d5Y+Ej3pattBy28FKq
+         71Upg+mGRmUuGkpdJ+zbrKgmClDF0pifmJ92lLByKNHCqrwEtWOjhmJ/YMl22ablmCRN
+         QAAPtHlxS99EYRLKkcI8t+KEackXhpRZ2Lhfrx2I8Epcdq7MLrIAnrfcLnY+IrEGh4mW
+         uIcMwJzsqK3bgIwib4EZLWGV2Yv1pXkhAX4QpSWCG9OaKZFvb2JfYa+5oX3g/oXOM+Xk
+         Q7Mg==
+X-Gm-Message-State: APjAAAUL1Is04Dcdos5V6/qIZoEoXih0sB9xlyLt4ngX4a4HMzQidpw4
+        4OhAGwOv/zK0WeqlV+/NYPIaJPH5nlw=
+X-Google-Smtp-Source: APXvYqxMgeV+8orhH6cQ52RcH1PBjaI1BCrIQSLyKerSVwcKSkQ3fLMDFSOHumSk0HLOz0nQgV+MIA==
+X-Received: by 2002:a1c:9e4b:: with SMTP id h72mr1097686wme.99.1565677990805;
+        Mon, 12 Aug 2019 23:33:10 -0700 (PDT)
+Received: from localhost.localdomain (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
+        by smtp.googlemail.com with ESMTPSA id v124sm488763wmf.23.2019.08.12.23.33.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Aug 2019 23:33:10 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Denis Efremov <efremov@linux.com>, joe@perches.com,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         linux-arm-kernel@lists.infradead.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv5 2/2] PCI: layerscape: Add CONFIG_PCI_LAYERSCAPE_EP to build EP/RC separately
-Date:   Tue, 13 Aug 2019 14:28:40 +0800
-Message-Id: <20190813062840.2733-2-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190813062840.2733-1-xiaowei.bao@nxp.com>
-References: <20190813062840.2733-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Subject: [RESEND PATCH] MAINTAINERS: Update path to physmap-versatile.c
+Date:   Tue, 13 Aug 2019 09:32:51 +0300
+Message-Id: <20190813063251.21842-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190813061024.15428-1-efremov@linux.com>
+References: <20190813061024.15428-1-efremov@linux.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add CONFIG_PCI_LAYERSCAPE_EP to build EP/RC separately.
+Update MAINTAINERS record to reflect the filename change
+from physmap_of_versatile.c to physmap-versatile.c
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+Cc: Boris Brezillon <bbrezillon@kernel.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Fixes: 6ca15cfa0788 ("mtd: maps: Rename physmap_of_{versatile, gemini} into physmap-{versatile, gemini}")
+Signed-off-by: Denis Efremov <efremov@linux.com>
 ---
-v2:
- - No change.
-v3:
- - modify the commit message.
-v4:
- - send the patch again with '--to'.
-v5:
- - No change.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/pci/controller/dwc/Kconfig  | 20 ++++++++++++++++++--
- drivers/pci/controller/dwc/Makefile |  3 ++-
- 2 files changed, 20 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 6ea778a..869c645 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -131,13 +131,29 @@ config PCI_KEYSTONE_EP
- 	  DesignWare core functions to implement the driver.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d42b478f2673..eeeb4097d5bd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1221,7 +1221,7 @@ F:	arch/arm/boot/dts/versatile*
+ F:	drivers/clk/versatile/
+ F:	drivers/i2c/busses/i2c-versatile.c
+ F:	drivers/irqchip/irq-versatile-fpga.c
+-F:	drivers/mtd/maps/physmap_of_versatile.c
++F:	drivers/mtd/maps/physmap-versatile.c
+ F:	drivers/power/reset/arm-versatile-reboot.c
+ F:	drivers/soc/versatile/
  
- config PCI_LAYERSCAPE
--	bool "Freescale Layerscape PCIe controller"
-+	bool "Freescale Layerscape PCIe controller - Host mode"
- 	depends on OF && (ARM || ARCH_LAYERSCAPE || COMPILE_TEST)
- 	depends on PCI_MSI_IRQ_DOMAIN
- 	select MFD_SYSCON
- 	select PCIE_DW_HOST
- 	help
--	  Say Y here if you want PCIe controller support on Layerscape SoCs.
-+	  Say Y here if you want to enable PCIe controller support on Layerscape
-+	  SoCs to work in Host mode.
-+	  This controller can work either as EP or RC. The RCW[HOST_AGT_PEX]
-+	  determines which PCIe controller works in EP mode and which PCIe
-+	  controller works in RC mode.
-+
-+config PCI_LAYERSCAPE_EP
-+	bool "Freescale Layerscape PCIe controller - Endpoint mode"
-+	depends on OF && (ARM || ARCH_LAYERSCAPE || COMPILE_TEST)
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	help
-+	  Say Y here if you want to enable PCIe controller support on Layerscape
-+	  SoCs to work in Endpoint mode.
-+	  This controller can work either as EP or RC. The RCW[HOST_AGT_PEX]
-+	  determines which PCIe controller works in EP mode and which PCIe
-+	  controller works in RC mode.
- 
- config PCI_HISI
- 	depends on OF && (ARM64 || COMPILE_TEST)
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index b085dfd..824fde7 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -8,7 +8,8 @@ obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
- obj-$(CONFIG_PCI_IMX6) += pci-imx6.o
- obj-$(CONFIG_PCIE_SPEAR13XX) += pcie-spear13xx.o
- obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone.o
--obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o pci-layerscape-ep.o
-+obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
-+obj-$(CONFIG_PCI_LAYERSCAPE_EP) += pci-layerscape-ep.o
- obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
- obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
- obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
 -- 
-2.9.5
+2.21.0
 
