@@ -2,134 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A60D8BAD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6A768BAEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbfHMNxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 09:53:52 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54530 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729385AbfHMNxs (ORCPT
+        id S1729301AbfHMN6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 09:58:18 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33175 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727427AbfHMN6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:53:48 -0400
-Received: by mail-wm1-f68.google.com with SMTP id p74so1602107wme.4
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 06:53:47 -0700 (PDT)
+        Tue, 13 Aug 2019 09:58:18 -0400
+Received: by mail-qt1-f193.google.com with SMTP id v38so14010887qtb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 06:58:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nCHf5t+smj+/MDbcCuVPNgK/OsWIUKLyWUiDOFrtLtU=;
-        b=g5RiEuelAKHYbOXJhybcoqTHPgzEFVgzpJaTcegc9Df5sED0c7/DYZUDu7OzVVEXg9
-         BfekqT/BcsvnclmDDFljCQhylXrEYfxwjhx1oMxONxvvc334jvI9lwiLZceB6BITRBzF
-         3BhgyCs5e9mrhhdzu+9I4ueE4MsZQkWXRM1vFk8VJWiYlZXbrGNJJuitkixf79mc+Njr
-         L8XL1tGbXEgRLATkspWhV312603VrHc319n9H3a7OjSGvwZyISehcFpU+Yquh3cmK8Bo
-         lH19GhzxgL5DGDTkEL2lslZqqzpYc1EYVrA61Xq+1kfqjY+eJK+ScitAu3DE8XrBBOzI
-         zswA==
-X-Gm-Message-State: APjAAAVNfaqVA+k56ZQ9kfjo0H0bZWS4VbwXdk3glH0g/4U/7Kzlu774
-        WRaY+Jikf9wJ1eTtHJAa8ELyRg==
-X-Google-Smtp-Source: APXvYqwwbjx6HehIQwKISH00/Hji0I4JRkndO+nCLUekpySx2CNpHKLHhWjcndRwSCLW92rmdjJdZw==
-X-Received: by 2002:a1c:cb01:: with SMTP id b1mr3362214wmg.69.1565704426865;
-        Tue, 13 Aug 2019 06:53:46 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id k1sm15205820wru.49.2019.08.13.06.53.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 06:53:46 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH v4 7/7] x86: KVM: svm: eliminate hardcoded RIP advancement from vmrun_interception()
-Date:   Tue, 13 Aug 2019 15:53:35 +0200
-Message-Id: <20190813135335.25197-8-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190813135335.25197-1-vkuznets@redhat.com>
-References: <20190813135335.25197-1-vkuznets@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UPqVMYRKgPny4jLiI9xhCyK5fHo3cjEgQkb61xfTW14=;
+        b=Ht/wlkQ3/o7iL/GMhB7+8huXacIDzH6/udFZQ/tuB6daV1LqAt6+UyB5aEPHl1M1fy
+         zYE3Xf3qfo4kK6n/Ml3RsncFshlE9HIg+Kaju6MKxcFK8y+gRmh3oJ4045zz6jhLpl7e
+         vs1Gzi6+CtMRhsa6R5cNCaoKmksiFG83CMT8A1Q6GKZBsbzfbgGR8hGCt1INOiVwICLH
+         54+UhFkbDzCED8W+APXwN5IEsM+LT00YT45h9ZjnOrAQvcCz0UmJqTrxHiRiGEeIPyXF
+         +IXkNw7nnuhLLT5TeB8Elqnw2zxhDlTF8Mc0Vmab+g20sjhaRsRW23SLekhm4vigRJvC
+         /qIA==
+X-Gm-Message-State: APjAAAVoTyv/Es6fIFAYghTb51fsv3Z05nZXwLpjMOjS+dUbyP3A5baI
+        oklH69ENBFwj5mlUeBdCprFxMnfE4obZtOOtokVnIA==
+X-Google-Smtp-Source: APXvYqxy/SPlI+Cs61J60nUWTgxDhSCy4ll/DIFc9AjaGYIslLEaCx/268hAHASOAYIHZAC4N3artjmCpjkrdYYGjIA=
+X-Received: by 2002:ac8:33c7:: with SMTP id d7mr20342902qtb.294.1565704696825;
+ Tue, 13 Aug 2019 06:58:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190812162105.13428-1-benjamin.tissoires@redhat.com> <CADyDSO4x49GWdRVkW=cytvMc7rM3NJkJ4-Sj-FjM9Gday7C-iw@mail.gmail.com>
+In-Reply-To: <CADyDSO4x49GWdRVkW=cytvMc7rM3NJkJ4-Sj-FjM9Gday7C-iw@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 13 Aug 2019 15:58:05 +0200
+Message-ID: <CAO-hwJ+z0szwuQrUxpQhii2z_jwxMX91df0ynK5QbZpMhg79-g@mail.gmail.com>
+Subject: Re: [PATCH] HID: uhid: actually use the err number from userspace
+To:     David Rheinsberg <david.rheinsberg@gmail.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like we do with other intercepts, in vmrun_interception() we should be
-doing kvm_skip_emulated_instruction() and not just RIP += 3. Also, it is
-wrong to increment RIP before nested_svm_vmrun() as it can result in
-kvm_inject_gp().
+On Tue, Aug 13, 2019 at 12:50 PM David Rheinsberg
+<david.rheinsberg@gmail.com> wrote:
+>
+> Hey
+>
+> On Mon, Aug 12, 2019 at 6:21 PM Benjamin Tissoires
+> <benjamin.tissoires@redhat.com> wrote:
+> >
+> > This can help debugging the situation
+> >
+> > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> > ---
+> >
+> > Hi,
+> >
+> > not entirely sure if we can use this in a such simple way.
+> >
+> > However, this is useful to mimic device behaviour from userspace.
+> >
+> > Cheers,
+> > Benjamin
+> >
+> >  drivers/hid/uhid.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
+> > index fa0cc0899827..2fa32e7fc733 100644
+> > --- a/drivers/hid/uhid.c
+> > +++ b/drivers/hid/uhid.c
+> > @@ -284,7 +284,7 @@ static int uhid_hid_set_report(struct hid_device *hid, unsigned char rnum,
+> >                 goto unlock;
+> >
+> >         if (uhid->report_buf.u.set_report_reply.err)
+> > -               ret = -EIO;
+> > +               ret = -uhid->report_buf.u.set_report_reply.err;
+>
+> I am generally in favor of this. But:
+>
+> 1) can you do this for both set_report *and* get_report?
 
-We can't call kvm_skip_emulated_instruction() after nested_svm_vmrun() so
-move it inside.
+right :)
 
-Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/svm.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+>
+> 2) I think you have to filter some of the error codes. For instance,
+> if you return one of the -ERESTARTSYS codes, this might cause the
+> syscall to restart (if auto-restart is enabled on this context). At
+> the same time, this is not *that* bad. It might even be useful for the
+> userspace driver to trigger an EINTR. At least we should be aware of
+> this. So maybe filters are not necessary.. Mhhh. Comments?
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 51c39b608ef7..8473cbea7e8b 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3588,7 +3588,7 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
- 
- static int nested_svm_vmrun(struct vcpu_svm *svm)
- {
--	int rc;
-+	int ret;
- 	struct vmcb *nested_vmcb;
- 	struct vmcb *hsave = svm->nested.hsave;
- 	struct vmcb *vmcb = svm->vmcb;
-@@ -3597,13 +3597,16 @@ static int nested_svm_vmrun(struct vcpu_svm *svm)
- 
- 	vmcb_gpa = svm->vmcb->save.rax;
- 
--	rc = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(vmcb_gpa), &map);
--	if (rc) {
--		if (rc == -EINVAL)
--			kvm_inject_gp(&svm->vcpu, 0);
-+	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(vmcb_gpa), &map);
-+	if (ret == EINVAL) {
-+		kvm_inject_gp(&svm->vcpu, 0);
- 		return 1;
-+	} else if (ret) {
-+		return kvm_skip_emulated_instruction(&svm->vcpu);
- 	}
- 
-+	ret = kvm_skip_emulated_instruction(&svm->vcpu);
-+
- 	nested_vmcb = map.hva;
- 
- 	if (!nested_vmcb_checks(nested_vmcb)) {
-@@ -3614,7 +3617,7 @@ static int nested_svm_vmrun(struct vcpu_svm *svm)
- 
- 		kvm_vcpu_unmap(&svm->vcpu, &map, true);
- 
--		return 1;
-+		return ret;
- 	}
- 
- 	trace_kvm_nested_vmrun(svm->vmcb->save.rip, vmcb_gpa,
-@@ -3667,7 +3670,7 @@ static int nested_svm_vmrun(struct vcpu_svm *svm)
- 		nested_svm_vmexit(svm);
- 	}
- 
--	return 1;
-+	return ret;
- }
- 
- static void nested_svm_vmloadsave(struct vmcb *from_vmcb, struct vmcb *to_vmcb)
-@@ -3743,9 +3746,6 @@ static int vmrun_interception(struct vcpu_svm *svm)
- 	if (nested_svm_check_permissions(svm))
- 		return 1;
- 
--	/* Save rip after vmrun instruction */
--	kvm_rip_write(&svm->vcpu, kvm_rip_read(&svm->vcpu) + 3);
--
- 	return nested_svm_vmrun(svm);
- }
- 
--- 
-2.20.1
+I haven't thought at all of the side effects of letting the user
+return a random error code.
+I have the impression that anything below EHWPOISON (133) is
+relatively safe. So maybe we should just make sure the error code is
+below 134?
 
+The ERESTARTSYS has a few warnings in the include file, so I guess the
+side effects might be too much for what we want to deal with.
+
+Cheers,
+Benjamin
+
+>
+> Thanks
+> David
+>
+> >         else
+> >                 ret = count;
+> >
+> > --
+> > 2.19.2
+> >
