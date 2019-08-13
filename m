@@ -2,120 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6A768BAEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05BB98BAF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:58:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbfHMN6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 09:58:18 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33175 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727427AbfHMN6S (ORCPT
+        id S1729398AbfHMN6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 09:58:48 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32788 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727427AbfHMN6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:58:18 -0400
-Received: by mail-qt1-f193.google.com with SMTP id v38so14010887qtb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 06:58:18 -0700 (PDT)
+        Tue, 13 Aug 2019 09:58:46 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n9so107968792wru.0;
+        Tue, 13 Aug 2019 06:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zfy6948lUCOH92chkbvQy5u5Vo5igoZFuLdDnErvh/A=;
+        b=siHyO+zpdjCbmYJUB8AsKVn3x5BCxwl2tdS+wgEd51z0mxogY/e7MqaZp7UtV2u/LY
+         Jo+scdY/Tuv1p39KbQOMUa++vBzRJk3ULd7ruis7M4CX1KZjBX6pDtErNC3BCJlMwiU6
+         wQ8T4006wJaBMfzGp1Xqg7BXzepb1zjn6q0SkD8Pmhw6t0Gdvw2gXduZ4slbwPlmWbW3
+         pOSMee4YOfv97mCHzkZLoIWy6XTmVbcpvu991oOjSQju5vrZjp3h2aDRxm8y3jbNsKt6
+         DeNxCbdboaTkvOyclEtebepz+KTExLHBv7Q2OBlbln72g/JSlDf+OWJDa+j7ZHbikQwu
+         t40w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UPqVMYRKgPny4jLiI9xhCyK5fHo3cjEgQkb61xfTW14=;
-        b=Ht/wlkQ3/o7iL/GMhB7+8huXacIDzH6/udFZQ/tuB6daV1LqAt6+UyB5aEPHl1M1fy
-         zYE3Xf3qfo4kK6n/Ml3RsncFshlE9HIg+Kaju6MKxcFK8y+gRmh3oJ4045zz6jhLpl7e
-         vs1Gzi6+CtMRhsa6R5cNCaoKmksiFG83CMT8A1Q6GKZBsbzfbgGR8hGCt1INOiVwICLH
-         54+UhFkbDzCED8W+APXwN5IEsM+LT00YT45h9ZjnOrAQvcCz0UmJqTrxHiRiGEeIPyXF
-         +IXkNw7nnuhLLT5TeB8Elqnw2zxhDlTF8Mc0Vmab+g20sjhaRsRW23SLekhm4vigRJvC
-         /qIA==
-X-Gm-Message-State: APjAAAVoTyv/Es6fIFAYghTb51fsv3Z05nZXwLpjMOjS+dUbyP3A5baI
-        oklH69ENBFwj5mlUeBdCprFxMnfE4obZtOOtokVnIA==
-X-Google-Smtp-Source: APXvYqxy/SPlI+Cs61J60nUWTgxDhSCy4ll/DIFc9AjaGYIslLEaCx/268hAHASOAYIHZAC4N3artjmCpjkrdYYGjIA=
-X-Received: by 2002:ac8:33c7:: with SMTP id d7mr20342902qtb.294.1565704696825;
- Tue, 13 Aug 2019 06:58:16 -0700 (PDT)
+        bh=zfy6948lUCOH92chkbvQy5u5Vo5igoZFuLdDnErvh/A=;
+        b=Qutms+zIMWRVuHPrMiFZBBH0Bvh2Vew7hdZmfKHJs1GFn5uCFanegyF5HlnGpW8vmi
+         Qb0+HrUGwIhnuz4zsDHPl5ajNXjKGgX+gNwKt3rE+/V9YHXvJRgy/DeTM1bZgTX0mKDY
+         HZMVCQb4u5UZtOK02leQ45HArcOSXy3DyXvkYNppeIbZMU5MyXBuCqQxsX28W6BvYUGz
+         616mI4kkcO2no7CDi/AmSn3H2fbgdGJ2e/FgKCef5jLbjbEmGiYH/LO7GjDJr0FMag7s
+         44uLWtcyjBBnhQrSznd7RSN1TNaQ3hh7mQHrwCjUcgP7wMv8dw87hRH52RRVQLjTEMpU
+         9JSg==
+X-Gm-Message-State: APjAAAWGAggU55QVz8ts00bqjjxQ7mloWCOvUe3ACu9sRqydQAeqnPbk
+        UX8eDa6fvu8Sya53Y74pI/xpvU6p+KDwFUZDn+A=
+X-Google-Smtp-Source: APXvYqxxFFU/uYf0Bs2fkypX/f2q7giWV1wCz2O0fpuwjUUfiCJon9Ab+ZGb6Su5aKytZMAno3nfTqkgLxpw3afkFuc=
+X-Received: by 2002:adf:f94a:: with SMTP id q10mr43676562wrr.341.1565704723878;
+ Tue, 13 Aug 2019 06:58:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190812162105.13428-1-benjamin.tissoires@redhat.com> <CADyDSO4x49GWdRVkW=cytvMc7rM3NJkJ4-Sj-FjM9Gday7C-iw@mail.gmail.com>
-In-Reply-To: <CADyDSO4x49GWdRVkW=cytvMc7rM3NJkJ4-Sj-FjM9Gday7C-iw@mail.gmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 13 Aug 2019 15:58:05 +0200
-Message-ID: <CAO-hwJ+z0szwuQrUxpQhii2z_jwxMX91df0ynK5QbZpMhg79-g@mail.gmail.com>
-Subject: Re: [PATCH] HID: uhid: actually use the err number from userspace
-To:     David Rheinsberg <david.rheinsberg@gmail.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+References: <20190813103340.11051-1-colin.king@canonical.com>
+In-Reply-To: <20190813103340.11051-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 13 Aug 2019 09:58:31 -0400
+Message-ID: <CADnq5_MihuON5NRn7gbjbD9br37=vL+ZtjNqqFE2XQGrA_P7Zw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/powerplay: fix spelling mistake "unsuported"
+ -> "unsupported"
+To:     Colin King <colin.king@canonical.com>
+Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 12:50 PM David Rheinsberg
-<david.rheinsberg@gmail.com> wrote:
->
-> Hey
->
-> On Mon, Aug 12, 2019 at 6:21 PM Benjamin Tissoires
-> <benjamin.tissoires@redhat.com> wrote:
-> >
-> > This can help debugging the situation
-> >
-> > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > ---
-> >
-> > Hi,
-> >
-> > not entirely sure if we can use this in a such simple way.
-> >
-> > However, this is useful to mimic device behaviour from userspace.
-> >
-> > Cheers,
-> > Benjamin
-> >
-> >  drivers/hid/uhid.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
-> > index fa0cc0899827..2fa32e7fc733 100644
-> > --- a/drivers/hid/uhid.c
-> > +++ b/drivers/hid/uhid.c
-> > @@ -284,7 +284,7 @@ static int uhid_hid_set_report(struct hid_device *hid, unsigned char rnum,
-> >                 goto unlock;
-> >
-> >         if (uhid->report_buf.u.set_report_reply.err)
-> > -               ret = -EIO;
-> > +               ret = -uhid->report_buf.u.set_report_reply.err;
->
-> I am generally in favor of this. But:
->
-> 1) can you do this for both set_report *and* get_report?
+Applied.  Thanks!
 
-right :)
+Alex
 
+On Tue, Aug 13, 2019 at 6:33 AM Colin King <colin.king@canonical.com> wrote:
 >
-> 2) I think you have to filter some of the error codes. For instance,
-> if you return one of the -ERESTARTSYS codes, this might cause the
-> syscall to restart (if auto-restart is enabled on this context). At
-> the same time, this is not *that* bad. It might even be useful for the
-> userspace driver to trigger an EINTR. At least we should be aware of
-> this. So maybe filters are not necessary.. Mhhh. Comments?
-
-I haven't thought at all of the side effects of letting the user
-return a random error code.
-I have the impression that anything below EHWPOISON (133) is
-relatively safe. So maybe we should just make sure the error code is
-below 134?
-
-The ERESTARTSYS has a few warnings in the include file, so I guess the
-side effects might be too much for what we want to deal with.
-
-Cheers,
-Benjamin
-
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Thanks
-> David
+> There is a spelling mistake in a pr_err error message. Fix it. Also
+> add a space after a comma to clean up a checkpatch warning.
 >
-> >         else
-> >                 ret = count;
-> >
-> > --
-> > 2.19.2
-> >
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/amd/powerplay/smu_v11_0.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+> index 8bbcf034799c..d324bd28934d 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smu_v11_0.c
+> @@ -288,7 +288,7 @@ static int smu_v11_0_check_fw_version(struct smu_context *smu)
+>                 smu->smc_if_version = SMU11_DRIVER_IF_VERSION_NV14;
+>                 break;
+>         default:
+> -               pr_err("smu unsuported asic type:%d.\n",smu->adev->asic_type);
+> +               pr_err("smu unsupported asic type:%d.\n", smu->adev->asic_type);
+>                 smu->smc_if_version = SMU11_DRIVER_IF_VERSION_INV;
+>                 break;
+>         }
+> --
+> 2.20.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
