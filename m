@@ -2,73 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9AA8BF68
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 19:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69FC18BF6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 19:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbfHMRKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 13:10:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725923AbfHMRKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 13:10:45 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCE5E20679;
-        Tue, 13 Aug 2019 17:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565716244;
-        bh=3HAujAOVhRvVLw9Wr49q0ihG1ZR2YhR/IpIuwrI01jM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VSoIwMBNPftQwtRHK78noD6VrYTtEw2/zdtVMnZa+W21+JNwBjt4M/+CUmJoAKYgm
-         vxnL6pOXtRJd3CWe1kfjMMNi8OVv8A4+2H2XXoExvno/NOG8KwCkt3EU/SRc/RJnOy
-         8Wu9Xp1qau4NNWdG7KQeXOPxv1afsB4fLI53LFeo=
-Date:   Tue, 13 Aug 2019 18:10:40 +0100
-From:   Will Deacon <will@kernel.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     Zhen Lei <thunder.leizhen@huawei.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        jean-philippe@linaro.org
-Subject: Re: [PATCH] iommu/arm-smmu-v3: add nr_ats_masters to avoid
- unnecessary operations
-Message-ID: <20190813171039.y64wslo4dzgyis3e@willie-the-truck>
-References: <20190801122040.26024-1-thunder.leizhen@huawei.com>
- <b5866f7a-013a-5900-6fce-268052f2ba0a@huawei.com>
+        id S1727095AbfHMRLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 13:11:07 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36360 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbfHMRLG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 13:11:06 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so14718611wrt.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 10:11:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=21RkXx6R3GQDrR2TjCOw5Y6zUcvqwwn5X36NDyY9IGA=;
+        b=M3QsG5uBdUAuYCJmjgUqL7PLM8GNt0QTYmfqU57XtJrC/nyx8IrUHSdvTi4iexA1sX
+         loPorAFak91PNqBo4JqbP4kg1cs7x3HL3YJtyO8ty8l155jnxA2ujDYhS9RmlwLlrWEv
+         5mh9EnmZ6cYx3cbAXsaPxhn2SJlsMJCHhVcEOvnyCkloSyEEW2GRtwZDolkmECBpTwlY
+         KbDnIJvcADo9kBpTIvHAmzm0H/qEPnY/eGLXJDK09WQuEba0D3uIPUAz3/Frp6zGxrSZ
+         8FZDGh4xZvJAQDZCBB0+f+gUPK8y+2z19tEOLMjciOIK2wUns1qcj/cf8NnB/THInnun
+         8WWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=21RkXx6R3GQDrR2TjCOw5Y6zUcvqwwn5X36NDyY9IGA=;
+        b=TZpDOtAxQIj3GxUm4Od1gu1/QgUdmWpj73OQ6SN/wDtM2kMTcan3Ci0illbX8LUenJ
+         1gr7gWZ7UcU+I72SzwCIAWuLdMdWQ2iNHxVHQnZa91E/i4F6bVVcwa534b+zjO6KtcjY
+         JqlNnbU4ojwXZWS1IJWmfx/DRk9bm6Brx7BVG6sdunhfIRra2MIWdtyAEpfl5gQJKiP4
+         9UjIU0FJ/wVO6aLlOBf5OuRifrSoTbUl7otUHTUMef8bxcHVlSy17EMZ95fFQrN+2D2M
+         jhZfAORp5QabTTSU1m6KaS2XU0CFP/PJ3/sZKxuBvyMLFot4sAy9tlZqwg9YOOjgihuM
+         PotQ==
+X-Gm-Message-State: APjAAAVu6Qo1vmnoriifIQ2TRBqEapOSmFR2iRhsJPvxvucCPcOQPPXw
+        oMaS0/5CG0GZs5r9rHDsH4uLlEdswk1FvW7V7/S7mA==
+X-Google-Smtp-Source: APXvYqzjDFccoFO2mqXij8jWkci8wYnJ1b/+SDrh1fyGfofH/xTWjFwC9cQZ90IWHFUAEUa2hu1TFIDjWrGaX7esF8c=
+X-Received: by 2002:adf:ed4a:: with SMTP id u10mr50841803wro.284.1565716264841;
+ Tue, 13 Aug 2019 10:11:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5866f7a-013a-5900-6fce-268052f2ba0a@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <CAK8P3a0VxM1BkjY1D2FfHi6L-ho_NH3v3+gBu45EfpjLF5NU5w@mail.gmail.com>
+In-Reply-To: <CAK8P3a0VxM1BkjY1D2FfHi6L-ho_NH3v3+gBu45EfpjLF5NU5w@mail.gmail.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 13 Aug 2019 10:10:53 -0700
+Message-ID: <CALAqxLUde4OTEm3Kik0Fvydhp+i-Xo-axS2wRKEBJyT9hY=wCg@mail.gmail.com>
+Subject: Re: New kernel interface for sys_tz and timewarp?
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Alistair Francis <alistair.francis@wdc.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Karel Zak <kzak@redhat.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 11:42:17AM +0100, John Garry wrote:
-> On 01/08/2019 13:20, Zhen Lei wrote:
-> > When (smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS) is true, even if a
-> > smmu domain does not contain any ats master, the operations of
-> > arm_smmu_atc_inv_to_cmd() and lock protection in arm_smmu_atc_inv_domain()
-> > are always executed. This will impact performance, especially in
-> > multi-core and stress scenarios. For my FIO test scenario, about 8%
-> > performance reduced.
-> > 
-> > In fact, we can use a atomic member to record how many ats masters the
-> > smmu contains. And check that without traverse the list and check all
-> > masters one by one in the lock protection.
-> > 
-> 
-> Hi Will, Robin, Jean-Philippe,
-> 
-> Can you kindly check this issue? We have seen a signifigant performance
-> regression here.
+On Tue, Aug 13, 2019 at 2:06 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> Now, to the actual questions:
+>
+> * Should we allow setting the sys_tz on new architectures that use only
+>   time64 interfaces at all, or should we try to get away from that anyway?
 
-Sorry, John: Robin and Jean-Philippe are off at the moment and I've been
-swamped dealing with the arm64 queue. I'll try to get to this tomorrow.
+So I'd probably cut this question a bit differently:
 
-Will
+1) Do we want to deprecate sys_tz tracking in the kernel? If new
+architectures don't have ways to set it, for consistency we should
+probably deprecate in-kernel tracking of that value (start returning
+an error when folks try to set it and always return 0 when its
+accessed).
+
+2) If we deprecate the sys_tz tracking in the kernel, how do we
+address the in-kernel systohc syncing with local-time (non-UTC) RTCs
+on x86 systems (I'm not aware of other arches that utilize non-UTC
+RTCs)
+
+
+> * Should the NTP timewarp setting ("int persistent_clock_is_local" and
+>   its offset) be controllable separately from the timezone used in other
+>   drivers?
+
+For the discussion, I'm not sure I'd call this NTP timewarp, but maybe
+systohc rtc offset is more clear?
+
+Its really not connected to NTP, except that we only want to
+automatically sync the RTC to the system clock when we know the system
+clock is right (and that signal comes from NTP).
+
+
+> * If we want keep having a way to set the sys_tz, what interface
+> should that use?
+>
+>   Suggestions so far include
+>    - adding a clock_settimeofday_time64() syscall on all 32-bit architectures to
+>      maintain the traditional behavior,
+
+If the answer to #1 above is no, we want to preserve the
+functionality, then I think this is probably the best solution.
+Alternatively one could add a new syscall/sysctrl that just sets the
+timezone, but most 64 bit architectures already have
+clock_settimeofday_time64() equiv call, so this is probably the least
+duplicative.
+
+>    - adding a sysctl interface for accessing sys_tz.tz_tminuteswest,
+>    - using a new field in 'struct timex' for the timewarp offset, and
+
+I'd push back on this one. The timewarp offset is really a RTC offset,
+and has nothing to do with ntp, so we shoudn't be adding things to
+adjtimex about it.
+
+>    - adding an ioctl command on /dev/rtc/ to control the timewarp
+>      offset of that particular device.
+
+If the answer to #1 above is yes, then I think this makes more sense
+to me, since the offset is a property of how we interpret the RTC (ie:
+is it UTC or local time).
+
+Getting more aggressive, from irc discussions, it sounded like
+Alexandre would like to deprecate the in-kernel systohc and hctosys
+logic, so if that were the case, and the answer to #1 above was yes,
+then we could probably skip all of this and just drop systohc work and
+keep the UTC/local logic to userland.
+
+thanks
+-john
