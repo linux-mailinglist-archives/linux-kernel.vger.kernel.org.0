@@ -2,149 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A0888B76E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:46:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A678B774
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfHMLqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 07:46:52 -0400
-Received: from retiisi.org.uk ([95.216.213.190]:53126 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726810AbfHMLqw (ORCPT
+        id S1727689AbfHMLrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 07:47:09 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35682 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727631AbfHMLrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 07:46:52 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id D8AB3634C88;
-        Tue, 13 Aug 2019 14:46:43 +0300 (EEST)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1hxVGF-0000fC-7e; Tue, 13 Aug 2019 14:46:43 +0300
-Date:   Tue, 13 Aug 2019 14:46:43 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     mchehab@kernel.org, robh+dt@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        c.barrett@framos.com, a.brela@framos.com
-Subject: Re: [PATCH v2 1/3] dt-bindings: media: i2c: Add IMX290 CMOS sensor
- binding
-Message-ID: <20190813114643.GA2527@valkosipuli.retiisi.org.uk>
-References: <20190806130938.19916-1-manivannan.sadhasivam@linaro.org>
- <20190806130938.19916-2-manivannan.sadhasivam@linaro.org>
- <20190813094526.GG835@valkosipuli.retiisi.org.uk>
- <20190813113358.GA28877@Mani-XPS-13-9360>
+        Tue, 13 Aug 2019 07:47:08 -0400
+Received: by mail-qt1-f194.google.com with SMTP id u34so6683308qte.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 04:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=A5jSIc/RY/hZ7f+bEkMhOVRTEXKJZMsh3LcoJICOYZA=;
+        b=QCZ4PvH+HERINAIC/rIX57CfHFpykExOSCWoiRBdSClOqTC5WAYKVE/wNtLd1ZCdXb
+         KZp5v/22WAqZ0EMeHD9gQcL9jjBHQrauhwB1tY41cMyXOMQcHirf3q33hSp3+J4vow0U
+         GPXzEq3gqF2wrMV1Rw/sgqnEqIShtnXpz04NN7ACpnW2Kb2z/8KWS7MN/hESlyb75tlS
+         YMQH3uuf6z8f1q/jLKcYyFLyOZd7D+SDwoKD8lO4RahnM5opPz9OKgrwrp/X5BI8wvMd
+         OzyT60/eIe57jrf+8q2zyLqpHM8YRV9JQevqDnSiRM5+NRuM8rm/DiPdBJOWMMsLftQz
+         b4GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=A5jSIc/RY/hZ7f+bEkMhOVRTEXKJZMsh3LcoJICOYZA=;
+        b=nriVQ92dW7oLsV37YZVC6xjVgZMtMM7ViEajC7Cg9NQCN7j02W4YtY6B52SelhQFLQ
+         MX6naPFA97GYcvVSUOhIU/6I7W3oyoV9Ha5+vl5rnjeERpGKs+hll6RPfLJHZQS93xe3
+         Z4e2x686BHanSckmL8aI1EVL/8qP4QYExwfjA4+rKNDpZb+AW3bfNjg4x/3POWg0bfsj
+         woJ/QNbFkqCAZ13G8VvdTAmBNVw09jhCVfOTnkaas1KHwDFzWQgvFhRgD2snU7HrpH45
+         oo58BEVCF5596BU5OWZQIEcmJ+gZch0ytZJ0Qaf3jQQS25Rdf8sTQlsoaM2LlIvFMJLW
+         WXGg==
+X-Gm-Message-State: APjAAAWZFSFJaBQtlb9XCA62JSw32MB9zoyzvREDhHMsSjWlk1h/1Zop
+        aYz63Ytp9XsVzvi5IzGvIZhTTQ==
+X-Google-Smtp-Source: APXvYqxNaQQNPStukKuBzbe7ho0VUZGNKPG9lP34sc9j+nxvDvhp77mkTMuiRQNU50cP5mt/nBqv4g==
+X-Received: by 2002:ac8:3f86:: with SMTP id d6mr30794575qtk.346.1565696827682;
+        Tue, 13 Aug 2019 04:47:07 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id 67sm47417797qkh.108.2019.08.13.04.47.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Aug 2019 04:47:07 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hxVGc-0007jx-3A; Tue, 13 Aug 2019 08:47:06 -0300
+Date:   Tue, 13 Aug 2019 08:47:06 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 15/19] mm/gup: Introduce vaddr_pin_pages()
+Message-ID: <20190813114706.GA29508@ziepe.ca>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-16-ira.weiny@intel.com>
+ <20190812122814.GC24457@ziepe.ca>
+ <20190812214854.GF20634@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813113358.GA28877@Mani-XPS-13-9360>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190812214854.GF20634@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Manivannan,
-
-On Tue, Aug 13, 2019 at 05:03:58PM +0530, Manivannan Sadhasivam wrote:
-> Hi Sakari,
-> 
-> Thanks for the review!
-> 
-> On Tue, Aug 13, 2019 at 12:45:26PM +0300, Sakari Ailus wrote:
-> > Hi Manivannan,
-> > 
-> > On Tue, Aug 06, 2019 at 06:39:36PM +0530, Manivannan Sadhasivam wrote:
-> > > Add devicetree binding for IMX290 CMOS image sensor.
+On Mon, Aug 12, 2019 at 02:48:55PM -0700, Ira Weiny wrote:
+> On Mon, Aug 12, 2019 at 09:28:14AM -0300, Jason Gunthorpe wrote:
+> > On Fri, Aug 09, 2019 at 03:58:29PM -0700, ira.weiny@intel.com wrote:
+> > > From: Ira Weiny <ira.weiny@intel.com>
 > > > 
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > >  .../devicetree/bindings/media/i2c/imx290.txt  | 51 +++++++++++++++++++
-> > >  1 file changed, 51 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx290.txt
+> > > The addition of FOLL_LONGTERM has taken on additional meaning for CMA
+> > > pages.
 > > > 
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/imx290.txt b/Documentation/devicetree/bindings/media/i2c/imx290.txt
-> > > new file mode 100644
-> > > index 000000000000..7535b5b5b24b
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/media/i2c/imx290.txt
-> > > @@ -0,0 +1,51 @@
-> > > +* Sony IMX290 1/2.8-Inch CMOS Image Sensor
-> > > +
-> > > +The Sony IMX290 is a 1/2.8-Inch CMOS Solid-state image sensor with
-> > > +Square Pixel for Color Cameras. It is programmable through I2C and 4-wire
-> > > +interfaces. The sensor output is available via CMOS logic parallel SDR output,
-> > > +Low voltage LVDS DDR output and CSI-2 serial data output.
+> > > In addition subsystems such as RDMA require new information to be passed
+> > > to the GUP interface to track file owning information.  As such a simple
+> > > FOLL_LONGTERM flag is no longer sufficient for these users to pin pages.
+> > > 
+> > > Introduce a new GUP like call which takes the newly introduced vaddr_pin
+> > > information.  Failure to pass the vaddr_pin object back to a vaddr_put*
+> > > call will result in a failure if pins were created on files during the
+> > > pin operation.
 > > 
-> > If there are three to choose from, then you should specify which one is in
-> > use. Given that I think chances remain slim we'd add support for the other
-> > two (it's certainly not ruled out though), CSI-2 could be the default. But
-> > this needs to be documented.
-> > 
+> > Is this a 'vaddr' in the traditional sense, ie does it work with
+> > something returned by valloc?
 > 
-> Hmm... I'm not sure here. Bindings should describe the hardware and not the
-> limitations of the driver. Here as you said, the sensor can output frames
-> in 3 different modes/formats but the driver only supports CSI2. I can add a
-> note in the driver but not sure whether dt-binding is the right place or not!
+> ...or malloc in user space, yes.  I think the idea is that it is a user virtual
+> address.
 
-I guess alternatively you could document the necessary bindings for the
-other two busses.
+valloc is a kernel call
 
-But what I'm saying here is that it's highly unlikely they'll be ever
-needed, and it'd be mostly a waste of time to implement that. (That said, I
-have nothing against the use of these busses, but I've never seen anyone
-using them.) Many other devices use defaults for more contentious settings.
+> So I'm open to suggestions.  Jan gave me this one, so I figured it was safer to
+> suggest it...
 
+Should have the word user in it, imho
+
+> > I also wish GUP like functions took in a 'void __user *' instead of
+> > the unsigned long to make this clear :\
 > 
-> > > +
-> > > +Required Properties:
-> > > +- compatible: Should be "sony,imx290"
-> > > +- reg: I2C bus address of the device
-> > > +- clocks: Reference to the xclk clock.
-> > > +- clock-names: Should be "xclk".
-> > > +- clock-frequency: Frequency of the xclk clock.
-> > 
-> > ...in Hz.
-> > 
+> Not a bad idea.  But I only see a couple of call sites who actually use a 'void
+> __user *' to pass into GUP...  :-/
 > 
-> Ack.
-> 
-> > > +- vdddo-supply: Sensor digital IO regulator.
-> > > +- vdda-supply: Sensor analog regulator.
-> > > +- vddd-supply: Sensor digital core regulator.
-> > > +
-> > > +Optional Properties:
-> > > +- reset-gpios: Sensor reset GPIO
-> > > +
-> > > +The imx290 device node should contain one 'port' child node with
-> > > +an 'endpoint' subnode. For further reading on port node refer to
-> > > +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> > 
-> > Which other properties are relevant for the device?
-> 
-> Not much other than, clock/data lanes.
+> For RDMA the address is _never_ a 'void __user *' AFAICS.
 
-Please document data-lanes, and which values it may have.
+That is actually a bug, converting from u64 to a 'user VA' needs to go
+through u64_to_user_ptr().
 
-> 
-> > I suppose you can't change the lane order, so clock-lanes is redundant
-> > (don't use it in the example) and data-lanes should be monotonically
-> > incrementing series from 1 to 4.
-> > 
-> 
-> We can change the order and the example here illustrates how it has been
-> wired in FRAMOS module. If I change the lane order like you said, it won't
-> work.
-
-I highly doubt that. Neither the driver nor the sensor uses the lane
-ordering information.
-
-And even if the driver only supported four lanes, then it should check the
-number of lanes is actually four.
-
--- 
-Regards,
-
-Sakari Ailus
+Jason
