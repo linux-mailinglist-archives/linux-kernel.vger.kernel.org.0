@@ -2,110 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A22B8C4CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 01:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB9A8C4D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 01:36:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbfHMXbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 19:31:38 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36783 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbfHMXbi (ORCPT
+        id S1726696AbfHMXgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 19:36:19 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:58944 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbfHMXgS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 19:31:38 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g4so3427529plo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 16:31:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=D76e59tgTT4fezI865GZqOOIIhHiE8Pz1mvIdiTRYog=;
-        b=QlqMQuV+hLDHY43nxqRuLY882x3N3q7FhzRdnEtDOkbYGGrf8gIuaIMb9Dy/XVkrSC
-         QKfMtfAs3gYKOFmSMG4UESwnRiRKC1D8JpHMPFtxjjx3ke8KjRQnOEWCNs3yAwFUM+gN
-         S4OEUPPh1H+2HFvBBiTIctOOU69HwlxYQ2LaE3axijBsYzFAgcufRlU5lYnWzXK/7k8v
-         3mDs7onMy+HIZSEGXATbroj9J2Tq3JY4jRKQW+XEsGaZjJ5se4c+81n++TQQaQumrpHT
-         qXOQHKEu28o8IpP8J3WuEco5Ba7RZIA31/U7FUzgNubTGu7xmsk3ZJs839mLPOXwxQBx
-         6UBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=D76e59tgTT4fezI865GZqOOIIhHiE8Pz1mvIdiTRYog=;
-        b=bwh2PIlXtCvFQrm6kQRcDB3ory/olGi9MGka26jtsekDipwJqAxWc2PAkiXf/Fz0KK
-         /yQnFeG7bfehBY6eFcaahPnM3IJfLgZaLyfy+eBR3WuBd2zgR8GWIkeyBFpHH89Xj0pM
-         6U+Np74OcR+hOOV4nTUAov491d3XBh1FaSvjaFW1EcTb1nEn7CaKJSZv2qUB9/y2IejY
-         9t65QzUcPd7w7mKsn/WS5NG9TTBRdx0BvMNhw/5bOr26kUVt8DosAeoAKzu5wndy8Cej
-         K9R9+VTSYKz2q0tBEUMxQWi5u+0/1XnycVyjRcbITIYK2GtZwgU947XSYFtp5szeVRoU
-         wJCg==
-X-Gm-Message-State: APjAAAWySeWxJBY9C9FLzVlUvjNQtpxdOYNqvnC4X0t1fJXQDHz3oY34
-        QpUAizp+Tcr4XEIyjqnpCp5sQBmpHVA=
-X-Google-Smtp-Source: APXvYqye3wWNbrVXfL7AlwcDjxnVPIKFZs78APEFo8F+LDE4XyMBjtlCEd17D10uCu0tIqye0ruyMw==
-X-Received: by 2002:a17:902:2f43:: with SMTP id s61mr5825768plb.238.1565739096913;
-        Tue, 13 Aug 2019 16:31:36 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id u7sm109745096pfm.96.2019.08.13.16.31.35
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 16:31:36 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 16:31:35 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [patch] mm, page_alloc: move_freepages should not examine struct
- page of reserved memory
-In-Reply-To: <20190813141630.bd8cee48e6a83ca77eead6ad@linux-foundation.org>
-Message-ID: <alpine.DEB.2.21.1908131625310.224017@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1908122036560.10779@chino.kir.corp.google.com> <20190813141630.bd8cee48e6a83ca77eead6ad@linux-foundation.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 13 Aug 2019 19:36:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1565739379; x=1597275379;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hJ0wcybIy8p5lozhUIdtK566sZh2c4A4f6FV+GFHlHc=;
+  b=izk76Jg7uzPl9TTanVLCxw+kb8tMYBp1fdYa0J5bPGd3ehBkzw2e3W54
+   TL8pZb4fpK1pc0Zt/gzOdA1YpbYQ4Xb/pah5dpZn2osFaziLhfinNhoEq
+   Hj3LvnGGG9FePLY2pC5u2b2yqyw5niQiTfQas5vOC2pp2bmkGd0up/DK7
+   7pWXE+taDSnmg3xgXvMCmRzEGQF8gC5Z37v30m/jlCbUlft4t3KqSnKo5
+   oWvvkkL4E/NltYSarQjZDapRNJuofaiv3FzW4Zh9tF4pvAgOwQ9HrNCl5
+   POyZQa2QRh392XBN5ivBztNpVg0s/w3KlxjYc/5RsRLiogCfzC8I/7njV
+   A==;
+IronPort-SDR: D/8LcQ6T+0QqG/0frjsX0n85iA5vtb2d9NLirVVFFli1Gpd1tsofqM0QCyrE4dviRRxpAPKLrl
+ RvUELTJIsWSkuAHEokk8L+yT3VmNoRGQa8Qi4nPJXwLmO54GrlQN0H7Nmy7/X/GtxeJyw4qih/
+ kF7ItpKQdGpNAXOvBKy3K4SZZFQ9aharUcm2LtyBH7Rd9RLIp50FTgJYT+4gA45hElzhGsdKYC
+ 7/XDCogMPrMmD15c06hfgsc9cGRLClcDnireKMsx1CqByvbrzxHlZ63YMG5LVTv2Zv99lzLNIg
+ VTc=
+X-IronPort-AV: E=Sophos;i="5.64,382,1559491200"; 
+   d="scan'208";a="120378575"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Aug 2019 07:36:19 +0800
+IronPort-SDR: JO6W7a+S/HJmWgqKzy6HyUz73paSJNE+JzMJRrT/UsJu+7W+IpH6vScYp6uufJ2/rF3Bk1zuc8
+ 9zWdbLWo85mAp1m9W50B+S9VfuWDIy9+HEegCqFno2RBuRkQG0F2jDrWr7J3YFvn9VqzK24E9V
+ Zw2HNZ4bbmBD1cGL8KNWwdqlN0d1X6TSkL4vHegX7q3xooSOJhXPFHM6pHT2IeBzGdsCJXg2tF
+ /ZYJDL/iR/2q55XLit40lm+mwVsP1+HIYEhu8ouDE2JJpVZ1ua316pDYgFA+OKk+u3l62anH5W
+ HTGeb/UDkLqzj0h5oBOgU65B
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 16:33:53 -0700
+IronPort-SDR: ynWM70NmSGSvm/NBmL4NJAHKIplLilDhmM0Icvg9oUo2nD7XK7CY1V7Xtlq1hKhgdt7gMKOcVo
+ xwyOruqZ1/sWh9jdqv942QJsZgxOpMb9Fy2ECnCJKchmDbNBVLpHZ8op+Exa3K7WAyMIKRBnR5
+ rq/hh5QY4tcCW5zefAvYI2F4KLsxfbGXM0CD7Te0dYo4/AZhZ2fkiQEOINbdEndJ3qhudjQy8H
+ 2beb3ouwLSBCofBJtZN9spTyo2PkQHkd6AUOD501Mv/xVpRseLZGM4a+eA1lobG0HZZwLUPTGI
+ ssY=
+Received: from risc6-mainframe.sdcorp.global.sandisk.com (HELO risc6-mainframe.int.fusionio.com) ([10.196.157.58])
+  by uls-op-cesaip02.wdc.com with ESMTP; 13 Aug 2019 16:36:19 -0700
+From:   Alistair Francis <alistair.francis@wdc.com>
+To:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Cc:     alistair23@gmail.com, Alistair Francis <alistair.francis@wdc.com>
+Subject: [PATCH 1/2] riscv: rv32_defconfig: Update the defconfig
+Date:   Tue, 13 Aug 2019 16:32:29 -0700
+Message-Id: <20190813233230.21804-1-alistair.francis@wdc.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Aug 2019, Andrew Morton wrote:
+Update the rv32_defconfig:
+ - Add 'CONFIG_DEVTMPFS_MOUNT=y' to match the RISC-V defconfig
+ - Add CONFIG_HW_RANDOM=y and CONFIG_HW_RANDOM_VIRTIO=y to enable
+   VirtIORNG when running on QEMU
 
-> > After commit 907ec5fca3dc ("mm: zero remaining unavailable struct pages"),
-> > struct page of reserved memory is zeroed.  This causes page->flags to be 0
-> > and fixes issues related to reading /proc/kpageflags, for example, of
-> > reserved memory.
-> > 
-> > The VM_BUG_ON() in move_freepages_block(), however, assumes that
-> > page_zone() is meaningful even for reserved memory.  That assumption is no
-> > longer true after the aforementioned commit.
-> > 
-> > There's no reason why move_freepages_block() should be testing the
-> > legitimacy of page_zone() for reserved memory; its scope is limited only
-> > to pages on the zone's freelist.
-> > 
-> > Note that pfn_valid() can be true for reserved memory: there is a backing
-> > struct page.  The check for page_to_nid(page) is also buggy but reserved
-> > memory normally only appears on node 0 so the zeroing doesn't affect this.
-> > 
-> > Move the debug checks to after verifying PageBuddy is true.  This isolates
-> > the scope of the checks to only be for buddy pages which are on the zone's
-> > freelist which move_freepages_block() is operating on.  In this case, an
-> > incorrect node or zone is a bug worthy of being warned about (and the
-> > examination of struct page is acceptable bcause this memory is not
-> > reserved).
-> 
-> I'm thinking Fixes:907ec5fca3dc and Cc:stable?  But 907ec5fca3dc is
-> almost a year old, so you were doing something special to trigger this?
-> 
+Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+---
+ arch/riscv/configs/rv32_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-We noticed it almost immediately after bringing 907ec5fca3dc in on 
-CONFIG_DEBUG_VM builds.  It depends on finding specific free pages in the 
-per-zone free area where the math in move_freepages() will bring the start 
-or end pfn into reserved memory and wanting to claim that entire pageblock 
-as a new migratetype.  So the path will be rare, require CONFIG_DEBUG_VM, 
-and require fallback to a different migratetype.
+diff --git a/arch/riscv/configs/rv32_defconfig b/arch/riscv/configs/rv32_defconfig
+index d5449ef805a3..7da93e494445 100644
+--- a/arch/riscv/configs/rv32_defconfig
++++ b/arch/riscv/configs/rv32_defconfig
+@@ -34,6 +34,7 @@ CONFIG_PCIEPORTBUS=y
+ CONFIG_PCI_HOST_GENERIC=y
+ CONFIG_PCIE_XILINX=y
+ CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_VIRTIO_BLK=y
+ CONFIG_BLK_DEV_SD=y
+@@ -53,6 +54,8 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
+ CONFIG_HVC_RISCV_SBI=y
++CONFIG_HW_RANDOM=y
++CONFIG_HW_RANDOM_VIRTIO=y
+ # CONFIG_PTP_1588_CLOCK is not set
+ CONFIG_DRM=y
+ CONFIG_DRM_RADEON=y
+-- 
+2.22.0
 
-Some struct pages were already zeroed from reserve pages before 
-907ec5fca3c so it theoretically could trigger before this commit.  I think 
-it's rare enough under a config option that most people don't run that 
-others may not have noticed.  I wouldn't argue against a stable tag and 
-the backport should be easy enough, but probably wouldn't single out a 
-commit that this is fixing.
