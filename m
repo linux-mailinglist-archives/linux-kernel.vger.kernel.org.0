@@ -2,137 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB8C88AF50
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0005B8AF4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbfHMGKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 02:10:44 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36631 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfHMGKo (ORCPT
+        id S1727515AbfHMGKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 02:10:37 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36115 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfHMGKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 02:10:44 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r3so12874655wrt.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 23:10:42 -0700 (PDT)
+        Tue, 13 Aug 2019 02:10:37 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p28so356116edi.3;
+        Mon, 12 Aug 2019 23:10:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kBSt0AC9Wj3a2Ydwo1maYp10w7mbRorMD87B4HpPB2I=;
-        b=EFNBrpf4FGy8XSbk7pjxipP5hP7dxFcpKbU3qvMtIJzOf1VB3T4nl+m93RK9SIgQWd
-         vy7SOw3tnXpYDGANVBfSKDzG/RsM9zs7UFu7YLtphmPEJKaloc4faCWDOFcQRDOOq9PQ
-         3XSrvcy07BVqhiWRJfjFJ54qSIVtFTblfvgZkGdRcuXPCOdc69btchprsNzrw4ADSt2X
-         x6SOn+jSzWm9wAJjJirCqA9XSE+DiVWzJa59OFWJ50s6dTWqmu2BFEWSNeuVkiAv9x2W
-         uLwHurY2yVU71+w7fEzw6p97QvGn781V0D2zUCGZ/ZX8y1kcQpCIrULkWAqbAexFqNMQ
-         zrvA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nDqwpC1PppEk839MgFZPsscd9ykxNNHqiMTtehSc/zo=;
+        b=Fe5iapZq7OOYHH5az8a2OmwaeUZo7LYmEH/pXBcrEYRZLstiljVxGNHow5U4z5RIh8
+         RJDBweOkt4NWgKKYdysVug58aW7GzWS4TJHTsr/o8F5Wnz4EEtHs9wv5MphGnEHY7mMR
+         vKeD0pwuU6ri0O2sMuZDAtkLLv+KV0VeKRReP65rVMvLxtzrKS3TajypcHyVRsE0ysXT
+         EXJ1QHOMF+XF17gAHIyHOK4Z/T4jVHQM/mWjB8BdEHca0uCS6mrYJr7CdK5rn9JAluyX
+         lefiA/s1W1YxedERV4XyQv5wmtwOtKYn//hlCE6T6kd0H25v+BNJ+EOE8a5FLVP02kPx
+         8VEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kBSt0AC9Wj3a2Ydwo1maYp10w7mbRorMD87B4HpPB2I=;
-        b=B6so5bL/lmWT1edWQlCE37obw+ryCwi1R9ROp8P3SWnlagSsPEM1FG5v1KCTiGzIeu
-         Vw/avNXI+pXvJb1hQ6uIZDAV9n4oomzizyKrbMGuEwFVauBBwUrh6DRgj/nIWUiwaMeb
-         VMvVSLJqavdUT6z3Vbjre6dHfgsR979VJOcfUpHdTb17CdjaNqq58X9qBOx63wWwwlgQ
-         buAFifPPdgkkz82dQB1VpaP80l05X2fS2oabmgBQlgbllfRLgRpwqaSkXKo3i+ociouD
-         B220ZBiIKt8vGqwfKG1wImR3isXPkDg677T2/uJWBwicfubyR1ye3izE+b9Pi8+rr8UF
-         OmCw==
-X-Gm-Message-State: APjAAAWinNvxXHRWqUWQiFhzfiF6FqXSDYW2SIfUndc1N32RqhBhyzJ1
-        KLqq+gDvXgLGFwSxSV2n+TQ=
-X-Google-Smtp-Source: APXvYqxGqC2rz8hc6nTl6Ie7zwuqOcKOu6mYW+16lrACD1nVavptVxrdjPIR+Sgem/E5tC8bo9nZsg==
-X-Received: by 2002:a5d:424d:: with SMTP id s13mr25409745wrr.178.1565676641744;
-        Mon, 12 Aug 2019 23:10:41 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id c1sm416096wmc.40.2019.08.12.23.10.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 23:10:41 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] soundwire: Don't build sound.o without CONFIG_ACPI
-Date:   Mon, 12 Aug 2019 23:10:14 -0700
-Message-Id: <20190813061014.45015-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.23.0.rc2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nDqwpC1PppEk839MgFZPsscd9ykxNNHqiMTtehSc/zo=;
+        b=RZYD0AfJFDWeH5ZpNPW8l7iaQXRPWyM7YZ1CAVz8m2NuQeM4eXlmv1dPr6bY6vNsL6
+         4S4CRmgG0hPfpR61BEcvMnQ4l8hIEFawAzdWOltLVGAnK8uIcvHSJdCwLpxHb4EAnd6q
+         fEhW8LhqmQn8cP7VuVE4yfnIxUYkn8SytuiQa4p5VvMQC9r7mukwYmaXMQ0qnwkPoKA1
+         gVE5HJA1C8jELnMk3HreY2DhzGdmwWN9Qj1P+4crH+vBJRNLdiLeu8SMV3/Xiw7Sg4JN
+         5ii+qOkVFb4imkErjX7AhUz0W0TPIXdceZl0Ri+RAM9+uOSxX/EjwPEZSpRZURZWJJCd
+         StGw==
+X-Gm-Message-State: APjAAAUiwp5VGqy6U10nV977zGoBOHF5YRwEYV6vDx1E8Vm8nD9EKv5P
+        b9jwwefjskhJbY2iG8kxVF9AFMyLmoI1aS/luyA=
+X-Google-Smtp-Source: APXvYqyHX5dcmE4UHIKGY5NpLFRCXSJoPQaFcBUcTG6uiWonwqF2tldHAIbIEtrKDwn1CYazb48p3zjt9Wk/kLjTztA=
+X-Received: by 2002:aa7:d781:: with SMTP id s1mr40421978edq.20.1565676635498;
+ Mon, 12 Aug 2019 23:10:35 -0700 (PDT)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <20190808131100.24751-1-hslester96@gmail.com> <20190808133510.tre6twn764pv3e7m@Air-de-Roger>
+In-Reply-To: <20190808133510.tre6twn764pv3e7m@Air-de-Roger>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Tue, 13 Aug 2019 14:10:24 +0800
+Message-ID: <CANhBUQ3rN+nLOHFGEAaQV6rB7Ob2wf9iLUiP8pjWM0NDMC4Qxg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] xen/blkback: Use refcount_t for refcount
+To:     =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>
+Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clang warns when CONFIG_ACPI is unset:
+On Thu, Aug 8, 2019 at 9:35 PM Roger Pau Monn=C3=A9 <roger.pau@citrix.com> =
+wrote:
+>
+> On Thu, Aug 08, 2019 at 09:11:00PM +0800, Chuhong Yuan wrote:
+> > Reference counters are preferred to use refcount_t instead of
+> > atomic_t.
+> > This is because the implementation of refcount_t can prevent
+> > overflows and detect possible use-after-free.
+> > So convert atomic_t ref counters to refcount_t.
+>
+> Thanks!
+>
+> I think there are more reference counters in blkback than
+> the one you fixed. There's also an inflight field in xen_blkif_ring,
+> and a pendcnt in pending_req which look like possible candidates to
+> switch to use refcount_t, have you looked into switching those two
+> also?
+>
 
-../drivers/soundwire/slave.c:16:12: warning: unused function
-'sdw_slave_add' [-Wunused-function]
-static int sdw_slave_add(struct sdw_bus *bus,
-           ^
-1 warning generated.
+It seems that xen_blkif_ring::inflight is 0-based and cannot be directly
+converted to refcount_t.
+This is because the implementation of refcount_t will warn on increasing
+a 0 ref count.
+Therefore I only convert pending_req::pendcnt in v2.
 
-Before commit 8676b3ca4673 ("soundwire: fix regmap dependencies and
-align with other serial links"), this code would only be compiled when
-ACPI was set because it was only selected by SOUNDWIRE_INTEL, which
-depends on ACPI.
-
-Now, this code can be compiled without CONFIG_ACPI, which causes the
-above warning. The IS_ENABLED(CONFIG_ACPI) guard could be moved to avoid
-compiling the function; however, slave.c only contains three functions,
-two of which are static. Only compile slave.o when CONFIG_ACPI is set,
-where it will actually be used. bus.h contains a stub for
-sdw_acpi_find_slaves so there will be no issues with an undefined
-function.
-
-This has been build tested with CONFIG_ACPI set and unset in combination
-with CONFIG_SOUNDWIRE unset, built in, and a module.
-
-Fixes: 8676b3ca4673 ("soundwire: fix regmap dependencies and align with other serial links")
-Link: https://github.com/ClangBuiltLinux/linux/issues/637
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/soundwire/Makefile | 6 +++++-
- drivers/soundwire/slave.c  | 3 ---
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
-index 45b7e5001653..226090902716 100644
---- a/drivers/soundwire/Makefile
-+++ b/drivers/soundwire/Makefile
-@@ -4,9 +4,13 @@
- #
- 
- #Bus Objs
--soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o
-+soundwire-bus-objs := bus_type.o bus.o mipi_disco.o stream.o
- obj-$(CONFIG_SOUNDWIRE) += soundwire-bus.o
- 
-+ifdef CONFIG_ACPI
-+soundwire-bus-objs += slave.o
-+endif
-+
- #Cadence Objs
- soundwire-cadence-objs := cadence_master.o
- obj-$(CONFIG_SOUNDWIRE_CADENCE) += soundwire-cadence.o
-diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
-index f39a5815e25d..0dc188e6873b 100644
---- a/drivers/soundwire/slave.c
-+++ b/drivers/soundwire/slave.c
-@@ -60,7 +60,6 @@ static int sdw_slave_add(struct sdw_bus *bus,
- 	return ret;
- }
- 
--#if IS_ENABLED(CONFIG_ACPI)
- /*
-  * sdw_acpi_find_slaves() - Find Slave devices in Master ACPI node
-  * @bus: SDW bus instance
-@@ -110,5 +109,3 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
- 
- 	return 0;
- }
--
--#endif
--- 
-2.23.0.rc2
-
+> Roger.
