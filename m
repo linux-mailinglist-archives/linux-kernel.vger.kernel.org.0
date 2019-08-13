@@ -2,214 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B9F28B309
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8B928B2FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbfHMIxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:53:52 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:16221 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727937AbfHMIxe (ORCPT
+        id S1728199AbfHMIxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:53:36 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:47713 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728089AbfHMIxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Aug 2019 04:53:34 -0400
-X-UUID: c7f4f8f3d41f4b269a4693c7148c42f3-20190813
-X-UUID: c7f4f8f3d41f4b269a4693c7148c42f3-20190813
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <light.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1338583607; Tue, 13 Aug 2019 16:53:28 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 13 Aug 2019 16:53:23 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 13 Aug 2019 16:53:20 +0800
-From:   Light Hsieh <light.hsieh@mediatek.com>
-To:     <linus.walleij@linaro.org>
-CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
-        Light Hsieh <light.hsieh@mediatek.com>
-Subject: [PATCH v1 5/5] pinctrl: mediatek: Add support for pin configuration dump via sysfs.
-Date:   Tue, 13 Aug 2019 16:53:20 +0800
-Message-ID: <1565686400-5711-6-git-send-email-light.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1565686400-5711-1-git-send-email-light.hsieh@mediatek.com>
-References: <1565686400-5711-1-git-send-email-light.hsieh@mediatek.com>
+X-Originating-IP: 92.137.69.152
+Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 4683E1C000B;
+        Tue, 13 Aug 2019 08:53:32 +0000 (UTC)
+Date:   Tue, 13 Aug 2019 10:53:31 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 39/57] rtc: Remove dev_err() usage after
+ platform_get_irq()
+Message-ID: <20190813085331.GX3600@piout.net>
+References: <20190730181557.90391-1-swboyd@chromium.org>
+ <20190730181557.90391-40-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 41BE2C130F025CE26F677411444F68295D1EEB5E0CD0F50C791DA3A9105C9AF72000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730181557.90391-40-swboyd@chromium.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Light Hsieh <light.hsieh@mediatek.com>
+On 30/07/2019 11:15:39-0700, Stephen Boyd wrote:
+> We don't need dev_err() messages when platform_get_irq() fails now that
+> platform_get_irq() prints an error message itself when something goes
+> wrong. Let's remove these prints with a simple semantic patch.
+> 
+> // <smpl>
+> @@
+> expression ret;
+> struct platform_device *E;
+> @@
+> 
+> ret =
+> (
+> platform_get_irq(E, ...)
+> |
+> platform_get_irq_byname(E, ...)
+> );
+> 
+> if ( \( ret < 0 \| ret <= 0 \) )
+> {
+> (
+> -if (ret != -EPROBE_DEFER)
+> -{ ...
+> -dev_err(...);
+> -... }
+> |
+> ...
+> -dev_err(...);
+> )
+> ...
+> }
+> // </smpl>
+> 
+> While we're here, remove braces on if statements that only have one
+> statement (manually).
+> 
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: linux-rtc@vger.kernel.org
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+> 
+> Please apply directly to subsystem trees
+> 
+>  drivers/rtc/rtc-88pm80x.c    | 1 -
+>  drivers/rtc/rtc-88pm860x.c   | 4 +---
+>  drivers/rtc/rtc-ac100.c      | 4 +---
+>  drivers/rtc/rtc-armada38x.c  | 5 +----
+>  drivers/rtc/rtc-asm9260.c    | 4 +---
+>  drivers/rtc/rtc-at91rm9200.c | 4 +---
+>  drivers/rtc/rtc-at91sam9.c   | 4 +---
+>  drivers/rtc/rtc-bd70528.c    | 5 +----
+>  drivers/rtc/rtc-davinci.c    | 4 +---
+>  drivers/rtc/rtc-jz4740.c     | 4 +---
+>  drivers/rtc/rtc-max77686.c   | 5 +----
+>  drivers/rtc/rtc-mt7622.c     | 1 -
+>  drivers/rtc/rtc-pic32.c      | 4 +---
+>  drivers/rtc/rtc-pm8xxx.c     | 4 +---
+>  drivers/rtc/rtc-puv3.c       | 8 ++------
+>  drivers/rtc/rtc-pxa.c        | 8 ++------
+>  drivers/rtc/rtc-rk808.c      | 6 +-----
+>  drivers/rtc/rtc-s3c.c        | 8 ++------
+>  drivers/rtc/rtc-sc27xx.c     | 4 +---
+>  drivers/rtc/rtc-spear.c      | 4 +---
+>  drivers/rtc/rtc-stm32.c      | 1 -
+>  drivers/rtc/rtc-sun6i.c      | 4 +---
+>  drivers/rtc/rtc-sunxi.c      | 4 +---
+>  drivers/rtc/rtc-tegra.c      | 4 +---
+>  drivers/rtc/rtc-vt8500.c     | 4 +---
+>  drivers/rtc/rtc-xgene.c      | 4 +---
+>  drivers/rtc/rtc-zynqmp.c     | 8 ++------
+>  27 files changed, 28 insertions(+), 92 deletions(-)
+> 
+Applied, thanks.
 
-Add support for pin configuration dump via catting
-/sys/kernel/debug/pinctrl/$platform_dependent_path/pinconf-pins.
-pinctrl framework had already support such dump. This patch implement the
-operation function pointer to fullfill this dump.
-
-Change-Id: Ib59212eb47febcd84140cbf84e1bd7286769beb0
----
- drivers/pinctrl/mediatek/pinctrl-paris.c | 88 ++++++++++++++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-paris.h | 30 +++++++++++
- 2 files changed, 118 insertions(+)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 0a9440a..91d6e72 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -531,12 +531,99 @@ static int mtk_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+int mtk_hw_get_value_wrap(struct mtk_pinctrl *hw, unsigned int gpio, int field)
-+{
-+	const struct mtk_pin_desc *desc;
-+	int value, err;
-+
-+	if (gpio > hw->soc->npins)
-+		return -EINVAL;
-+
-+	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
-+
-+	err = mtk_hw_get_value(hw, desc, field, &value);
-+	if (err)
-+		return err;
-+
-+	return value;
-+}
-+
-+ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
-+	unsigned int gpio, char *buf, unsigned int bufLen)
-+{
-+	const struct mtk_pin_desc *desc;
-+	int pinmux, pullup, pullen, r1 = -1, r0 = -1, len = 0;
-+
-+	if (gpio > hw->soc->npins)
-+		return -EINVAL;
-+
-+	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
-+	pinmux = mtk_pctrl_get_pinmux(hw, gpio);
-+	if (pinmux >= hw->soc->nfuncs)
-+		pinmux -= hw->soc->nfuncs;
-+
-+	mtk_pinconf_bias_get_combo(hw, desc, &pullup, &pullen);
-+	if (pullen == MTK_PUPD_SET_R1R0_00) {
-+		pullen = 0;
-+		r1 = 0;
-+		r0 = 0;
-+	} else if (pullen == MTK_PUPD_SET_R1R0_01) {
-+		pullen = 1;
-+		r1 = 0;
-+		r0 = 1;
-+	} else if (pullen == MTK_PUPD_SET_R1R0_10) {
-+		pullen = 1;
-+		r1 = 1;
-+		r0 = 0;
-+	} else if (pullen == MTK_PUPD_SET_R1R0_11) {
-+		pullen = 1;
-+		r1 = 1;
-+		r0 = 1;
-+	} else if (pullen != MTK_DISABLE && pullen != MTK_ENABLE) {
-+		pullen = 0;
-+	}
-+	len += snprintf(buf + len, bufLen - len,
-+			"%03d: %1d%1d%1d%1d%02d%1d%1d%1d%1d",
-+			gpio,
-+			pinmux,
-+			mtk_pctrl_get_direction(hw, gpio),
-+			mtk_pctrl_get_out(hw, gpio),
-+			mtk_pctrl_get_in(hw, gpio),
-+			mtk_pctrl_get_driving(hw, gpio),
-+			mtk_pctrl_get_smt(hw, gpio),
-+			mtk_pctrl_get_ies(hw, gpio),
-+			pullen,
-+			pullup);
-+
-+	if (r1 != -1) {
-+		len += snprintf(buf + len, bufLen - len, " (%1d %1d)\n",
-+			r1, r0);
-+	} else {
-+		len += snprintf(buf + len, bufLen - len, "\n");
-+	}
-+
-+	return len;
-+}
-+
-+#define PIN_DBG_BUF_SZ 96
-+static void mtk_pctrl_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
-+			  unsigned int gpio)
-+{
-+	struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
-+	char buf[PIN_DBG_BUF_SZ];
-+
-+	(void)mtk_pctrl_show_one_pin(hw, gpio, buf, PIN_DBG_BUF_SZ);
-+
-+	seq_printf(s, "%s", buf);
-+}
-+
- static const struct pinctrl_ops mtk_pctlops = {
- 	.dt_node_to_map		= mtk_pctrl_dt_node_to_map,
- 	.dt_free_map		= pinctrl_utils_free_map,
- 	.get_groups_count	= mtk_pctrl_get_groups_count,
- 	.get_group_name		= mtk_pctrl_get_group_name,
- 	.get_group_pins		= mtk_pctrl_get_group_pins,
-+	.pin_dbg_show           = mtk_pctrl_dbg_show,
- };
- 
- static int mtk_pmx_get_funcs_cnt(struct pinctrl_dev *pctldev)
-@@ -633,6 +720,7 @@ static int mtk_pconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
- 	.pin_config_get = mtk_pinconf_get,
- 	.pin_config_group_get	= mtk_pconf_group_get,
- 	.pin_config_group_set	= mtk_pconf_group_set,
-+	.is_generic = true,
- };
- 
- static struct pinctrl_desc mtk_desc = {
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.h b/drivers/pinctrl/mediatek/pinctrl-paris.h
-index 3d43771..d73f4b6 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.h
-@@ -60,6 +60,36 @@
- int mtk_paris_pinctrl_probe(struct platform_device *pdev,
- 			    const struct mtk_pin_soc *soc);
- 
-+int mtk_hw_get_value_wrap(struct mtk_pinctrl *hw, unsigned int gpio, int field);
-+
-+#define mtk_pctrl_get_pinmux(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_MODE)
-+
-+/* MTK HW use 0 as input, 1 for output
-+ * This interface is for get direct register value,
-+ * so don't reverse
-+ */
-+#define mtk_pctrl_get_direction(hw, gpio)		\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DIR)
-+
-+#define mtk_pctrl_get_out(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DO)
-+
-+#define mtk_pctrl_get_in(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DI)
-+
-+#define mtk_pctrl_get_smt(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_SMT)
-+
-+#define mtk_pctrl_get_ies(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_IES)
-+
-+#define mtk_pctrl_get_driving(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DRV)
-+
-+ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
-+	unsigned int gpio, char *buf, unsigned int bufLen);
-+
- extern const struct dev_pm_ops mtk_paris_pinctrl_pm_ops;
- 
- #endif /* __PINCTRL_PARIS_H */
 -- 
-1.8.1.1.dirty
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
