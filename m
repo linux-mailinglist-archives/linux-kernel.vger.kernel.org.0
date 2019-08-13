@@ -2,140 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF3358BC12
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E54AD8BC19
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:53:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbfHMOwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 10:52:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37416 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbfHMOws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 10:52:48 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 65C4D30BA084;
-        Tue, 13 Aug 2019 14:52:47 +0000 (UTC)
-Received: from x1.home (ovpn-116-99.phx2.redhat.com [10.3.116.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E6DC228D02;
-        Tue, 13 Aug 2019 14:52:46 +0000 (UTC)
-Date:   Tue, 13 Aug 2019 08:52:46 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Parav Pandit <parav@mellanox.com>
-Cc:     Kirti Wankhede <kwankhede@nvidia.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "cjia@nvidia.com" <cjia@nvidia.com>
-Subject: Re: [PATCH v2 0/2] Simplify mtty driver and mdev core
-Message-ID: <20190813085246.1d642ae5@x1.home>
-In-Reply-To: <AM0PR05MB4866993536C0C8ACEA2F92DBD1D20@AM0PR05MB4866.eurprd05.prod.outlook.com>
-References: <20190802065905.45239-1-parav@mellanox.com>
-        <20190808141255.45236-1-parav@mellanox.com>
-        <20190808170247.1fc2c4c4@x1.home>
-        <77ffb1f8-e050-fdf5-e306-0a81614f7a88@nvidia.com>
-        <AM0PR05MB4866993536C0C8ACEA2F92DBD1D20@AM0PR05MB4866.eurprd05.prod.outlook.com>
-Organization: Red Hat
+        id S1729506AbfHMOxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 10:53:48 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36001 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729580AbfHMOxs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 10:53:48 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j17so22944913lfp.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 07:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ebrdQpGbryAbE+PVSjTFqlvSSqkSS1ZgUmlnEvCria0=;
+        b=ePZ0JHbra+U1kuq1bS8PxUS1CRnF7QVaKlFGUIrgNjPDCu4+CCfrMg478Kb1CtUJH5
+         vwdSrpBbXu81gGSt/pIg2vEHaMMOkhg+qpcLnEPCeBtgzNkT5Sw77IW4fkugaERdtQ6k
+         gBW79xeVntMdVPqPn+LET9tGnch6A4FieJNKmotqtgIaWkiqCiktVaIjlgkJbLXo3Am1
+         UeuWkhbrgOeNuAdaSume6zhNLlQ5n3/wgIU52bR+GtcKp6Bi40tqRsggtqc1+JbrP/gn
+         O0bBpACubGme787uuCgKQbTv0V7zSZcmi1+d2rw/QseVTywbyZcdZFKF9mEVvWQK+zHU
+         eGoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ebrdQpGbryAbE+PVSjTFqlvSSqkSS1ZgUmlnEvCria0=;
+        b=fH8tOHb1Bi/znbcx+K/kpjLVh3E/gtBQYVz/4Gt4hUL/eDFLriWUs4Myg8LddU1pPs
+         cisVGhcUru/DD2bZhvRa/TnwVA/oEI6FJF8/u7cjC47DqPP+W3ASUCVDLe+TxFTBE+FS
+         VlfymTDy040DMFCF4lOMSuDP3dmGCyfv/T+7/ydWdkktsXLwyVmoAeuONhz6Zj7vWTHX
+         k8ii24K1CP+MLz1CfCZUbkMM4HF+inWITYFWBTrYiG1V/1C5audrEEBal9HB1nulkH3J
+         HKiqcCWYXQsev38gcAUYwr5nIA+x8lR4GjDpRR3qgEjhnPZ/WV3tJJp3B6EZZggFleSB
+         ku1A==
+X-Gm-Message-State: APjAAAUk45QKhZ9g8fycKub/c9MU3GkX0/xJPABpXBJ78o89tXuyEAy9
+        TmwDpcJ14hhJ7Pn+GjsrVw6bZw==
+X-Google-Smtp-Source: APXvYqxGmBjxCMEseACgPnI5Cfymrnnc2nKAKmnZdzJtjplWsZFE5p5T7yf6fHNJ8shzOl5yl71onA==
+X-Received: by 2002:ac2:550c:: with SMTP id j12mr18293687lfk.171.1565708026123;
+        Tue, 13 Aug 2019 07:53:46 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id r68sm19628100lff.52.2019.08.13.07.53.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 13 Aug 2019 07:53:45 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     linux-pm@vger.kernel.org, evgreen@chromium.org
+Cc:     daidavid1@codeaurora.org, vincent.guittot@linaro.org,
+        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
+        dianders@chromium.org, seansw@qti.qualcomm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
+Subject: [PATCH v4 0/3] interconnect: Add path tagging support
+Date:   Tue, 13 Aug 2019 17:53:38 +0300
+Message-Id: <20190813145341.28530-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 13 Aug 2019 14:52:47 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Aug 2019 14:40:02 +0000
-Parav Pandit <parav@mellanox.com> wrote:
+SoCs that have multiple coexisting CPUs and DSPs, may have shared
+interconnect buses between them. In such cases, each CPU/DSP may have
+different bandwidth needs, depending on whether it is active or sleeping.
+This means that we have to keep different bandwidth configurations for
+the CPU (active/sleep). In such systems, usually there is a way to
+communicate and synchronize this information with some firmware or pass
+it to another processor responsible for monitoring and switching the
+interconnect configurations based on the state of each CPU/DSP.
 
-> > -----Original Message-----
-> > From: Kirti Wankhede <kwankhede@nvidia.com>
-> > Sent: Monday, August 12, 2019 5:06 PM
-> > To: Alex Williamson <alex.williamson@redhat.com>; Parav Pandit
-> > <parav@mellanox.com>
-> > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org; cohuck@redhat.com;
-> > cjia@nvidia.com
-> > Subject: Re: [PATCH v2 0/2] Simplify mtty driver and mdev core
-> > 
-> > 
-> > 
-> > On 8/9/2019 4:32 AM, Alex Williamson wrote:  
-> > > On Thu,  8 Aug 2019 09:12:53 -0500
-> > > Parav Pandit <parav@mellanox.com> wrote:
-> > >  
-> > >> Currently mtty sample driver uses mdev state and UUID in convoluated
-> > >> way to generate an interrupt.
-> > >> It uses several translations from mdev_state to mdev_device to mdev uuid.
-> > >> After which it does linear search of long uuid comparision to find
-> > >> out mdev_state in mtty_trigger_interrupt().
-> > >> mdev_state is already available while generating interrupt from which
-> > >> all such translations are done to reach back to mdev_state.
-> > >>
-> > >> This translations are done during interrupt generation path.
-> > >> This is unnecessary and reduandant.  
-> > >
-> > > Is the interrupt handling efficiency of this particular sample driver
-> > > really relevant, or is its purpose more to illustrate the API and
-> > > provide a proof of concept?  If we go to the trouble to optimize the
-> > > sample driver and remove this interface from the API, what do we lose?
-> > >
-> > > This interface was added via commit:
-> > >
-> > > 99e3123e3d72 vfio-mdev: Make mdev_device private and abstract
-> > > interfaces
-> > >
-> > > Where the goal was to create a more formal interface and abstract
-> > > driver access to the struct mdev_device.  In part this served to make
-> > > out-of-tree mdev vendor drivers more supportable; the object is
-> > > considered opaque and access is provided via an API rather than
-> > > through direct structure fields.
-> > >
-> > > I believe that the NVIDIA GRID mdev driver does make use of this
-> > > interface and it's likely included in the sample driver specifically
-> > > so that there is an in-kernel user for it (ie. specifically to avoid
-> > > it being removed so casually).  An interesting feature of the NVIDIA
-> > > mdev driver is that I believe it has portions that run in userspace.
-> > > As we know, mdevs are named with a UUID, so I can imagine there are
-> > > some efficiencies to be gained in having direct access to the UUID for
-> > > a device when interacting with userspace, rather than repeatedly
-> > > parsing it from a device name.  
-> > 
-> > That's right.
-> >   
-> > >  Is that really something we want to make more difficult in order to
-> > > optimize a sample driver?  Knowing that an mdev device uses a UUID for
-> > > it's name, as tools like libvirt and mdevctl expect, is it really
-> > > worthwhile to remove such a trivial API?
-> > >  
-> > >> Hence,
-> > >> Patch-1 simplifies mtty sample driver to directly use mdev_state.
-> > >>
-> > >> Patch-2, Since no production driver uses mdev_uuid(), simplifies and
-> > >> removes redandant mdev_uuid() exported symbol.  
-> > >
-> > > s/no production driver/no in-kernel production driver/
-> > >
-> > > I'd be interested to hear how the NVIDIA folks make use of this API
-> > > interface.  Thanks,
-> > >  
-> > 
-> > Yes, NVIDIA mdev driver do use this interface. I don't agree on removing
-> > mdev_uuid() interface.
-> >   
-> We need to ask Greg or Linus on the kernel policy on whether an API
-> should exist without in-kernel driver. We don't add such API in
-> netdev, rdma and possibly other subsystem. Where can we find this
-> mdev driver in-tree?
+The above problem can be solved by introducing the path tagging concept,
+that allows consumers to optionally attach a tag to each path they use.
+This tag is used to differentiate between the aggregated bandwidth values
+for each state. The tag is generic and how it's handled is up to the
+platform specific interconnect provider drivers.
 
-We probably would not have added the API only for an out of tree
-driver, but we do have a sample driver that uses it, even if it's
-rather convoluted.  The sample driver is showing an example of using the
-API, which is rather its purpose more so than absolutely efficient
-interrupt handling.  Also, let's not overstate what this particular
-API callback provides, it's simply access to the uuid of the device,
-which is a fundamental property of a mediated device.  This API was
-added simply to provide data abstraction, allowing the struct
-mdev_device to be opaque to vendor drivers.  Thanks,
+v4:
+- Picked Reviewed-by tags (Thanks Evan!)
+- Addressed comments on patch 3.
 
-Alex
+v3: https://lore.kernel.org/lkml/20190809121325.8138-1-georgi.djakov@linaro.org/
+- New patch to add a pre_aggregate() callback.
+
+v2: https://lore.kernel.org/lkml/20190618091724.28232-1-georgi.djakov@linaro.org/
+- Store tag with the request. (Evan)
+- Reorganize the code to save bandwidth values into buckets and use the
+  tag as a bitfield. (Evan)
+- Clear the aggregated values after icc_set().
+
+v1: https://lore.kernel.org/lkml/20190208172152.1807-1-georgi.djakov@linaro.org/
+
+
+David Dai (1):
+  interconnect: qcom: Add tagging and wake/sleep support for sdm845
+
+Georgi Djakov (2):
+  interconnect: Add support for path tags
+  interconnect: Add pre_aggregate() callback
+
+ drivers/interconnect/core.c           |  27 ++++-
+ drivers/interconnect/qcom/sdm845.c    | 141 ++++++++++++++++++++------
+ include/linux/interconnect-provider.h |   7 +-
+ include/linux/interconnect.h          |   5 +
+ 4 files changed, 145 insertions(+), 35 deletions(-)
+
