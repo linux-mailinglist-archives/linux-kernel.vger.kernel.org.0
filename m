@@ -2,112 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B048B6D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 244558B6ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 13:32:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfHMLaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 07:30:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60400 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726650AbfHMLaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 07:30:12 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 17BC98535C;
-        Tue, 13 Aug 2019 11:30:12 +0000 (UTC)
-Received: from gondolin (dhcp-192-232.str.redhat.com [10.33.192.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 82C315799C;
-        Tue, 13 Aug 2019 11:29:59 +0000 (UTC)
-Date:   Tue, 13 Aug 2019 13:29:57 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@linux.ibm.com, borntraeger@de.ibm.com,
-        frankja@linux.ibm.com, david@redhat.com, mjrosato@linux.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        pmorel@linux.ibm.com, pasic@linux.ibm.com,
-        alex.williamson@redhat.com, kwankhede@nvidia.com
-Subject: Re: [PATCH] s390: vfio-ap: remove unnecessary calls to disable
- queue interrupts
-Message-ID: <20190813132957.7fafad2d.cohuck@redhat.com>
-In-Reply-To: <1565642829-20157-1-git-send-email-akrowiak@linux.ibm.com>
-References: <1565642829-20157-1-git-send-email-akrowiak@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1727425AbfHMLb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 07:31:57 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54617 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfHMLb5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 07:31:57 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 39BDF8073E; Tue, 13 Aug 2019 13:31:42 +0200 (CEST)
+Date:   Tue, 13 Aug 2019 13:31:54 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     syzbot <syzbot+e1a4f80c370d2381e49f@syzkaller.appspotmail.com>
+Cc:     Julia.Lawall@lip6.fr, bp@alien8.de, dan.j.williams@intel.com,
+        dave.hansen@linux.intel.com, dave.jiang@intel.com,
+        dvyukov@google.com, haozhong.zhang@intel.com, hpa@zytor.com,
+        jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, luto@kernel.org, mingo@redhat.com,
+        pbonzini@redhat.com, peterz@infradead.org, rkrcmar@redhat.com,
+        rpurdie@rpsys.net, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
+Subject: Re: WARNING in untrack_pfn
+Message-ID: <20190813113154.GA8420@amd>
+References: <000000000000f70a0e0571ad8ffb@google.com>
+ <000000000000c3fe1b058ffd7c99@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 13 Aug 2019 11:30:12 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+Content-Disposition: inline
+In-Reply-To: <000000000000c3fe1b058ffd7c99@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Aug 2019 16:47:09 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
-> When an AP queue is reset (zeroized), interrupts are disabled. The queue
-> reset function currently tries to disable interrupts unnecessarily. This patch
-> removes the unnecessary calls to disable interrupts after queue reset.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> ---
->  drivers/s390/crypto/vfio_ap_ops.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index 0604b49a4d32..407c2f0f25f9 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -1114,18 +1114,19 @@ static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
->  	return NOTIFY_OK;
->  }
->  
-> -static void vfio_ap_irq_disable_apqn(int apqn)
-> +static struct vfio_ap_queue *vfio_ap_find_qdev(int apqn)
->  {
->  	struct device *dev;
-> -	struct vfio_ap_queue *q;
-> +	struct vfio_ap_queue *q = NULL;
->  
->  	dev = driver_find_device(&matrix_dev->vfio_ap_drv->driver, NULL,
->  				 &apqn, match_apqn);
->  	if (dev) {
->  		q = dev_get_drvdata(dev);
-> -		vfio_ap_irq_disable(q);
->  		put_device(dev);
->  	}
-> +
-> +	return q;
->  }
->  
->  int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
-> @@ -1164,6 +1165,7 @@ static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
->  	int rc = 0;
->  	unsigned long apid, apqi;
->  	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-> +	struct vfio_ap_queue *q;
->  
->  	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm,
->  			     matrix_mdev->matrix.apm_max + 1) {
-> @@ -1177,7 +1179,10 @@ static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
->  			 */
->  			if (ret)
->  				rc = ret;
-> -			vfio_ap_irq_disable_apqn(AP_MKQID(apid, apqi));
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Might be useful to stick a comment in this function that resetting the
-queue has also disabled the interrupts, as the architecture
-documentation for that is not publicly available.
+On Tue 2019-08-13 03:56:06, syzbot wrote:
+> syzbot has found a reproducer for the following crash on:
 
-> +
-> +			q = vfio_ap_find_qdev(AP_MKQID(apid, apqi));
-> +			if (q)
-> +				vfio_ap_free_aqic_resources(q);
->  		}
->  	}
->  
+Unsigned emails are ugly. Could the "From: " be modified to include
+name of responsible person?
 
-Trusting your reading of the architecture,
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> HEAD commit:    d45331b0 Linux 5.3-rc4
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16130d4a600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D3d7eaed8496da=
+4da
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3De1a4f80c370d238=
+1e49f
+> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D131f8e0e600=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10e1a1ee600000
+>=20
+> The bug was bisected to:
+>=20
+> commit c68729119f4d2993bec3c9cb999ad76de5aeddba
+> Author: Julia Lawall <Julia.Lawall@lip6.fr>
+> Date:   Sat Jul 15 09:58:19 2017 +0000
+>=20
+>     leds: tlc591xx: add missing of_node_put
+
+And this looks like mistake. I don't think this commit is causing the
+crash. Can you somehow verify?
+
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1Sn6oACgkQMOfwapXb+vI4QwCgoymvNRbg/fcRXs34awljQPfa
+GAwAnRWHuMB93tZPDz5C4dE+LjyU11lj
+=Llkh
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
