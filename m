@@ -2,218 +2,318 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6FB98B949
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0578F8B956
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbfHMM7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:59:01 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39055 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728682AbfHMM7A (ORCPT
+        id S1728678AbfHMNBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 09:01:01 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44259 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727607AbfHMNBB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:59:00 -0400
-Received: by mail-pl1-f194.google.com with SMTP id z3so2437362pln.6
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 05:59:00 -0700 (PDT)
+        Tue, 13 Aug 2019 09:01:01 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a21so3997048edt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 06:00:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DhHHMldNA11v/SK2WsSGLAU/UTQ6fOX7HQpywB8nTAU=;
-        b=tCss9UF0DCoJJ290xSMja7MfUntYGAEA1DeuVnFyDUwT89HpJGVAWMYMXZB77kRjR4
-         GadDe3W7BIM704633FeIsD26lvjvTcSbYvl09t42QRUgUh4XIKkAB4t3vupGgkTEXqcB
-         +UihTQ4zJKnWd8y9aQOdY3uQduUEix1nIyy4hD7vR/+oD8jjW7o/8N0UCK89Jihl4RHK
-         8zvT1b3Txgr4bcUOHfFRlnWMOIRg0fa36KMkyr3I9HN0yBk4OG6OXgjv1sTW5odPuUE/
-         AVZ2WF7HvtsCFzMQcNZ/oPdo31vxHWCT3eLMk1aC/fhljxrnOLZHyBDCwm8m97Mnnvz/
-         9yAg==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=jw7GBMJNYyFLID0p5XpWkfZoTmjEtuVkSfYWM++/WuI=;
+        b=Y2DVy9bgxl3qr0tepAM0744yvZsjLyl6JZ7ja4E6hcgbHVaD21macVLLDp1FhpzuQk
+         /bHjM8JUNPZwTp0dRnNGpBXTQnUOzZ6A9ERd1Fsi2U7RpVh5YHL/1jktLxgDQZCZTL5B
+         B6XV1mxYaxcmgbWiewFYU9ZNJhA7/IzoyO3VI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DhHHMldNA11v/SK2WsSGLAU/UTQ6fOX7HQpywB8nTAU=;
-        b=a3PPuXMoOq90iChsZ9KT+pbYLw4/V78ru4aaV8086CBgW1c/pOWyqTZD9fS7FEGrc2
-         wklUjPQJV8kQ1EtDbtb1GvIoT1SNROtvlP8+rvVxjzvoRpChPwG5J4MbJVmcUUZ9pdrF
-         JKCPxfNMwzHhqbc+ceXqJo9BnpqrE469kEInR8EmI2blxYo/Tc/0twaOjgR+7kcQa2aK
-         JJ3bbDRbsGfbiMOsE+3hC/fs589wlBVgFZuPUQ4opwoEiMdVUR92Mdpe9QLrcogko+Dl
-         AjWislmIJ35poo6v2xVBKjPrb0lWKMz35hHlLjXqkD0oLRTkXvV2yRbPPLEqc27m8lFo
-         zhgg==
-X-Gm-Message-State: APjAAAUaBqDvYP+cYjp3JXGJdLpAxW6zseft2xSr7JQWtdaPDe+4+6/K
-        b4bkYVdXALm+NbNwFdxkdFbs4DBi4Gv8u4LUYgYb6w==
-X-Google-Smtp-Source: APXvYqzIOrQplJqd1l29SMBrKZETtZ3wT3HiZ92VFmevqGu0OWai1bWa1/BQWF/Fyd0j9dW0uRCuRvFkZ72wLiuF4LQ=
-X-Received: by 2002:a17:902:bb94:: with SMTP id m20mr5204966pls.336.1565701139685;
- Tue, 13 Aug 2019 05:58:59 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=jw7GBMJNYyFLID0p5XpWkfZoTmjEtuVkSfYWM++/WuI=;
+        b=ALRDx8Iqp7cH4mJNQ3KNBcCzmiE8QlC/UIWJ9MYBzFKajGYOBtxWVglZmoXh77DSmN
+         +l6WoPr8fg2S/EBDcdOdQ869ay9GJBW46V1HJBvpQsibQpJRel3HACnWs01Ay3hR/Hm6
+         uJTab4m4rQoNCVY5c6op/uGWPPZQqnWQwkYIz0RgSe1qN8YZzbnkjbiLU+r+PVXaa3J4
+         F0dvOiamoHcgRXkyII9jEggAuunXDhiiCes0YCt97bMPU87x4Za9e8LlhI49GD0dVRmz
+         Bou3bszOFxDW7JdCWxpg+naI/7TRwapLuscr2BafRIktbXG8dtCnvLI10uhXEKllF997
+         3P2Q==
+X-Gm-Message-State: APjAAAVJU/jYEcwaf0ctuVa4zoqpTIoZTg2PjRYaEeIjEHF9OPCC6Yzw
+        iH5ey0yqs5MewHt8hb56kb+IAw==
+X-Google-Smtp-Source: APXvYqw4O18XMwypjF709hoyagj1Ar8BObPxYPF/G0+8do+OEeHR+HfazZ5Sges7vszfme1yHLYebA==
+X-Received: by 2002:a50:cdd9:: with SMTP id h25mr13715067edj.231.1565701258942;
+        Tue, 13 Aug 2019 06:00:58 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id b15sm17954051ejp.7.2019.08.13.06.00.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 13 Aug 2019 06:00:57 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 15:00:55 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/26] drm/dp_mst: Destroy mstbs from
+ destroy_connector_work
+Message-ID: <20190813130055.GS7444@phenom.ffwll.local>
+Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
+        dri-devel@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Harry Wentland <hwentlan@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+References: <20190718014329.8107-1-lyude@redhat.com>
+ <20190718014329.8107-3-lyude@redhat.com>
 MIME-Version: 1.0
-References: <000000000000c08c230587e6e01e@google.com>
-In-Reply-To: <000000000000c08c230587e6e01e@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 13 Aug 2019 14:58:48 +0200
-Message-ID: <CAAeHK+zug7cAxPxhziuXzufxuBf=+=JDYix+BTyv2qz8VTRM_Q@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in v4l2_fh_del
-To:     syzbot <syzbot+d53275bc1af5eb01bfff@syzkaller.appspotmail.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
-        USB list <linux-usb@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190718014329.8107-3-lyude@redhat.com>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 2, 2019 at 2:36 PM syzbot
-<syzbot+d53275bc1af5eb01bfff@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=145cd8ff200000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4183eeef650d1234
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d53275bc1af5eb01bfff
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+d53275bc1af5eb01bfff@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: use-after-free in __lock_acquire+0x2930/0x37c0
-> kernel/locking/lockdep.c:3573
-> Read of size 8 at addr ffff88806b57ec90 by task v4l_id/7959
->
-> CPU: 0 PID: 7959 Comm: v4l_id Not tainted 5.1.0-rc3-319004-g43151d6 #6
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xe8/0x16e lib/dump_stack.c:113
->   print_address_description+0x6c/0x236 mm/kasan/report.c:187
->   kasan_report.cold+0x1a/0x3c mm/kasan/report.c:317
->   __lock_acquire+0x2930/0x37c0 kernel/locking/lockdep.c:3573
->   lock_acquire+0x10d/0x2f0 kernel/locking/lockdep.c:4211
->   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->   _raw_spin_lock_irqsave+0x44/0x60 kernel/locking/spinlock.c:152
->   v4l2_fh_del+0x4e/0x270 drivers/media/v4l2-core/v4l2-fh.c:81
->   v4l2_fh_release+0x46/0x70 drivers/media/v4l2-core/v4l2-fh.c:104
->   v4l2_release+0x2f0/0x390 drivers/media/v4l2-core/v4l2-dev.c:459
->   __fput+0x2df/0x8c0 fs/file_table.c:278
->   task_work_run+0x149/0x1c0 kernel/task_work.c:113
->   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->   exit_to_usermode_loop+0x243/0x270 arch/x86/entry/common.c:166
->   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->   do_syscall_64+0x40c/0x4f0 arch/x86/entry/common.c:293
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x7fd157cde2b0
-> Code: 40 75 0b 31 c0 48 83 c4 08 e9 0c ff ff ff 48 8d 3d c5 32 08 00 e8 c0
-> 07 02 00 83 3d 45 a3 2b 00 00 75 10 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff
-> ff 73 31 c3 48 83 ec 08 e8 ce 8a 01 00 48 89 04 24
-> RSP: 002b:00007ffcf08bde38 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-> RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00007fd157cde2b0
-> RDX: 0000000000000013 RSI: 0000000080685600 RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000400884
-> R13: 00007ffcf08bdf90 R14: 0000000000000000 R15: 0000000000000000
->
-> Allocated by task 17:
->   set_track mm/kasan/common.c:87 [inline]
->   __kasan_kmalloc mm/kasan/common.c:497 [inline]
->   __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:470
->   slab_post_alloc_hook mm/slab.h:437 [inline]
->   slab_alloc_node mm/slub.c:2756 [inline]
->   __kmalloc_node_track_caller+0xf3/0x320 mm/slub.c:4372
->   alloc_dr drivers/base/devres.c:103 [inline]
->   devm_kmalloc+0x8c/0x190 drivers/base/devres.c:793
->   devm_kzalloc include/linux/device.h:679 [inline]
->   usb_raremono_probe+0x34/0x235 drivers/media/radio/radio-raremono.c:298
->   usb_probe_interface+0x31d/0x820 drivers/usb/core/driver.c:361
->   really_probe+0x2da/0xb10 drivers/base/dd.c:509
->   driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
->   __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
->   bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x223/0x3a0 drivers/base/dd.c:844
->   bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
->   device_add+0xad2/0x16e0 drivers/base/core.c:2106
->   usb_set_configuration+0xdf7/0x1740 drivers/usb/core/message.c:2023
->   generic_probe+0xa2/0xda drivers/usb/core/generic.c:210
->   usb_probe_device+0xc0/0x150 drivers/usb/core/driver.c:266
->   really_probe+0x2da/0xb10 drivers/base/dd.c:509
->   driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
->   __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
->   bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
->   __device_attach+0x223/0x3a0 drivers/base/dd.c:844
->   bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
->   device_add+0xad2/0x16e0 drivers/base/core.c:2106
->   usb_new_device.cold+0x537/0xccf drivers/usb/core/hub.c:2534
->   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
->   port_event drivers/usb/core/hub.c:5350 [inline]
->   hub_event+0x138e/0x3b00 drivers/usb/core/hub.c:5432
->   process_one_work+0x90f/0x1580 kernel/workqueue.c:2269
->   process_scheduled_works kernel/workqueue.c:2331 [inline]
->   worker_thread+0x7b0/0xe20 kernel/workqueue.c:2417
->   kthread+0x313/0x420 kernel/kthread.c:253
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
->
-> Freed by task 17:
->   set_track mm/kasan/common.c:87 [inline]
->   __kasan_slab_free+0x130/0x180 mm/kasan/common.c:459
->   slab_free_hook mm/slub.c:1429 [inline]
->   slab_free_freelist_hook+0x5e/0x140 mm/slub.c:1456
->   slab_free mm/slub.c:3003 [inline]
->   kfree+0xce/0x290 mm/slub.c:3958
->   release_nodes+0x4ac/0x920 drivers/base/devres.c:508
->   devres_release_all+0x79/0xc8 drivers/base/devres.c:529
->   __device_release_driver drivers/base/dd.c:1086 [inline]
->   device_release_driver_internal+0x23a/0x4f0 drivers/base/dd.c:1113
->   bus_remove_device+0x302/0x5c0 drivers/base/bus.c:556
->   device_del+0x467/0xb90 drivers/base/core.c:2269
->   usb_disable_device+0x242/0x790 drivers/usb/core/message.c:1237
->   usb_disconnect+0x298/0x870 drivers/usb/core/hub.c:2197
->   hub_port_connect drivers/usb/core/hub.c:4940 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
->   port_event drivers/usb/core/hub.c:5350 [inline]
->   hub_event+0xcd2/0x3b00 drivers/usb/core/hub.c:5432
->   process_one_work+0x90f/0x1580 kernel/workqueue.c:2269
->   process_scheduled_works kernel/workqueue.c:2331 [inline]
->   worker_thread+0x7b0/0xe20 kernel/workqueue.c:2417
->   kthread+0x313/0x420 kernel/kthread.c:253
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
->
-> The buggy address belongs to the object at ffff88806b57e600
->   which belongs to the cache kmalloc-4k of size 4096
-> The buggy address is located 1680 bytes inside of
->   4096-byte region [ffff88806b57e600, ffff88806b57f600)
-> The buggy address belongs to the page:
-> page:ffffea0001ad5e00 count:1 mapcount:0 mapping:ffff88812c3f4600 index:0x0
-> compound_mapcount: 0
-> flags: 0xfff00000010200(slab|head)
-> raw: 00fff00000010200 0000000000000000 0000000100000001 ffff88812c3f4600
-> raw: 0000000000000000 0000000000070007 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->   ffff88806b57eb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff88806b57ec00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff88806b57ec80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                           ^
->   ffff88806b57ed00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff88806b57ed80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
+On Wed, Jul 17, 2019 at 09:42:25PM -0400, Lyude Paul wrote:
+> Currently we remove MST branch devices from the in-memory topology
+> immediately when their topology refcount reaches 0. This works just fine
+> at the moment, but since we're about to add suspend/resume reprobing for
+> MST topologies we're going to need to be able to travel through the
+> topology and drop topology refs on branch devices while holding
+> mgr->mutex. Since we currently can't do this due to the circular locking
+> dependencies that would incur, move all of the actual work for
+> drm_dp_destroy_mst_branch_device() into drm_dp_destroy_connector_work()
+> so we can drop topology refs on MSTBs in any locking context.
 
-#syz dup: KASAN: use-after-free Read in v4l2_ioctl
+Would be good to point at where exactly the problem is here, maybe also
+mentioned the exact future patch that causes the problem. I did go look
+around a bit, but didn't spot it.
 
->
->
+> 
+> Cc: Juston Li <juston.li@intel.com>
+> Cc: Imre Deak <imre.deak@intel.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Cc: Harry Wentland <hwentlan@amd.com>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>  drivers/gpu/drm/drm_dp_mst_topology.c | 121 +++++++++++++++++---------
+>  include/drm/drm_dp_mst_helper.h       |  10 +++
+>  2 files changed, 90 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+> index 998081b9b205..d7c3d9233834 100644
+> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> @@ -1108,34 +1108,17 @@ static void drm_dp_destroy_mst_branch_device(struct kref *kref)
+>  	struct drm_dp_mst_branch *mstb =
+>  		container_of(kref, struct drm_dp_mst_branch, topology_kref);
+>  	struct drm_dp_mst_topology_mgr *mgr = mstb->mgr;
+> -	struct drm_dp_mst_port *port, *tmp;
+> -	bool wake_tx = false;
+> -
+> -	mutex_lock(&mgr->lock);
+> -	list_for_each_entry_safe(port, tmp, &mstb->ports, next) {
+> -		list_del(&port->next);
+> -		drm_dp_mst_topology_put_port(port);
+> -	}
+> -	mutex_unlock(&mgr->lock);
+> -
+> -	/* drop any tx slots msg */
+> -	mutex_lock(&mstb->mgr->qlock);
+> -	if (mstb->tx_slots[0]) {
+> -		mstb->tx_slots[0]->state = DRM_DP_SIDEBAND_TX_TIMEOUT;
+> -		mstb->tx_slots[0] = NULL;
+> -		wake_tx = true;
+> -	}
+> -	if (mstb->tx_slots[1]) {
+> -		mstb->tx_slots[1]->state = DRM_DP_SIDEBAND_TX_TIMEOUT;
+> -		mstb->tx_slots[1] = NULL;
+> -		wake_tx = true;
+> -	}
+> -	mutex_unlock(&mstb->mgr->qlock);
+>  
+> -	if (wake_tx)
+> -		wake_up_all(&mstb->mgr->tx_waitq);
+> +	INIT_LIST_HEAD(&mstb->destroy_next);
+>  
+> -	drm_dp_mst_put_mstb_malloc(mstb);
+> +	/*
+> +	 * This can get called under mgr->mutex, so we need to perform the
+> +	 * actual destruction of the mstb in another worker
+> +	 */
+> +	mutex_lock(&mgr->destroy_connector_lock);
+> +	list_add(&mstb->destroy_next, &mgr->destroy_branch_device_list);
+> +	mutex_unlock(&mgr->destroy_connector_lock);
+> +	schedule_work(&mgr->destroy_connector_work);
+>  }
+>  
+>  /**
+> @@ -3618,10 +3601,56 @@ static void drm_dp_tx_work(struct work_struct *work)
+>  	mutex_unlock(&mgr->qlock);
+>  }
+>  
+> +static inline void
+> +drm_dp_finish_destroy_port(struct drm_dp_mst_port *port)
+
+Bikeshed: I'd call this _delayed_destroy, I think that makes a bit clearer
+why there's 2 stages to destroying stuff.
+
+> +{
+> +	INIT_LIST_HEAD(&port->next);
+> +
+> +	port->mgr->cbs->destroy_connector(port->mgr, port->connector);
+> +
+> +	drm_dp_port_teardown_pdt(port, port->pdt);
+> +	port->pdt = DP_PEER_DEVICE_NONE;
+> +
+> +	drm_dp_mst_put_port_malloc(port);
+> +}
+> +
+> +static inline void
+> +drm_dp_finish_destroy_mst_branch_device(struct drm_dp_mst_branch *mstb)
+> +{
+> +	struct drm_dp_mst_topology_mgr *mgr = mstb->mgr;
+> +	struct drm_dp_mst_port *port, *tmp;
+> +	bool wake_tx = false;
+> +
+> +	mutex_lock(&mgr->lock);
+> +	list_for_each_entry_safe(port, tmp, &mstb->ports, next) {
+> +		list_del(&port->next);
+> +		drm_dp_mst_topology_put_port(port);
+> +	}
+> +	mutex_unlock(&mgr->lock);
+> +
+> +	/* drop any tx slots msg */
+> +	mutex_lock(&mstb->mgr->qlock);
+> +	if (mstb->tx_slots[0]) {
+> +		mstb->tx_slots[0]->state = DRM_DP_SIDEBAND_TX_TIMEOUT;
+> +		mstb->tx_slots[0] = NULL;
+> +		wake_tx = true;
+> +	}
+> +	if (mstb->tx_slots[1]) {
+> +		mstb->tx_slots[1]->state = DRM_DP_SIDEBAND_TX_TIMEOUT;
+> +		mstb->tx_slots[1] = NULL;
+> +		wake_tx = true;
+> +	}
+> +	mutex_unlock(&mstb->mgr->qlock);
+> +
+> +	if (wake_tx)
+> +		wake_up_all(&mstb->mgr->tx_waitq);
+> +
+> +	drm_dp_mst_put_mstb_malloc(mstb);
+> +}
+> +
+>  static void drm_dp_destroy_connector_work(struct work_struct *work)
+>  {
+>  	struct drm_dp_mst_topology_mgr *mgr = container_of(work, struct drm_dp_mst_topology_mgr, destroy_connector_work);
+> -	struct drm_dp_mst_port *port;
+>  	bool send_hotplug = false;
+>  	/*
+>  	 * Not a regular list traverse as we have to drop the destroy
+> @@ -3629,24 +3658,33 @@ static void drm_dp_destroy_connector_work(struct work_struct *work)
+>  	 * ordering between this lock and the config mutex.
+>  	 */
+>  	for (;;) {
+> +		struct drm_dp_mst_branch *mstb = NULL;
+> +		struct drm_dp_mst_port *port = NULL;
+> +
+> +		/* Destroy any MSTBs first, and then their ports second */
+>  		mutex_lock(&mgr->destroy_connector_lock);
+> -		port = list_first_entry_or_null(&mgr->destroy_connector_list, struct drm_dp_mst_port, next);
+> -		if (!port) {
+> -			mutex_unlock(&mgr->destroy_connector_lock);
+> -			break;
+> +		mstb = list_first_entry_or_null(&mgr->destroy_branch_device_list,
+> +						struct drm_dp_mst_branch,
+> +						destroy_next);
+> +		if (mstb) {
+> +			list_del(&mstb->destroy_next);
+> +		} else {
+> +			port = list_first_entry_or_null(&mgr->destroy_connector_list,
+> +							struct drm_dp_mst_port,
+> +							next);
+> +			if (port)
+> +				list_del(&port->next);
+>  		}
+
+Control flow looks rather awkward here. I'd do either two loops, or if you
+want to have just one, rename it to ->delayed_destroy_list and have a
+->delayed_destry_cb next to it?
+
+Cheers, Daniel
+
+
+> -		list_del(&port->next);
+>  		mutex_unlock(&mgr->destroy_connector_lock);
+>  
+> -		INIT_LIST_HEAD(&port->next);
+> -
+> -		mgr->cbs->destroy_connector(mgr, port->connector);
+> -
+> -		drm_dp_port_teardown_pdt(port, port->pdt);
+> -		port->pdt = DP_PEER_DEVICE_NONE;
+> -
+> -		drm_dp_mst_put_port_malloc(port);
+> -		send_hotplug = true;
+> +		if (mstb) {
+> +			drm_dp_finish_destroy_mst_branch_device(mstb);
+> +		} else if (port) {
+> +			drm_dp_finish_destroy_port(port);
+> +			send_hotplug = true;
+> +		} else {
+> +			break;
+> +		}
+>  	}
+>  	if (send_hotplug)
+>  		drm_kms_helper_hotplug_event(mgr->dev);
+> @@ -3840,6 +3878,7 @@ int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
+>  	mutex_init(&mgr->destroy_connector_lock);
+>  	INIT_LIST_HEAD(&mgr->tx_msg_downq);
+>  	INIT_LIST_HEAD(&mgr->destroy_connector_list);
+> +	INIT_LIST_HEAD(&mgr->destroy_branch_device_list);
+>  	INIT_WORK(&mgr->work, drm_dp_mst_link_probe_work);
+>  	INIT_WORK(&mgr->tx_work, drm_dp_tx_work);
+>  	INIT_WORK(&mgr->destroy_connector_work, drm_dp_destroy_connector_work);
+> diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+> index 8c97a5f92c47..c01f3ea72756 100644
+> --- a/include/drm/drm_dp_mst_helper.h
+> +++ b/include/drm/drm_dp_mst_helper.h
+> @@ -143,6 +143,12 @@ struct drm_dp_mst_branch {
+>  	 */
+>  	struct kref malloc_kref;
+>  
+> +	/**
+> +	 * @destroy_next: linked-list entry used by
+> +	 * drm_dp_destroy_connector_work()
+> +	 */
+> +	struct list_head destroy_next;
+> +
+>  	u8 rad[8];
+>  	u8 lct;
+>  	int num_ports;
+> @@ -578,6 +584,10 @@ struct drm_dp_mst_topology_mgr {
+>  	 * @destroy_connector_list: List of to be destroyed connectors.
+>  	 */
+>  	struct list_head destroy_connector_list;
+> +	/**
+> +	 * @destroy_branch_device_list: List of to be destroyed branch devices
+> +	 */
+> +	struct list_head destroy_branch_device_list;
+>  	/**
+>  	 * @destroy_connector_lock: Protects @connector_list.
+>  	 */
+> -- 
+> 2.21.0
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
