@@ -2,67 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 877308B559
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 12:23:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F3E78B55F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 12:23:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbfHMKXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 06:23:11 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:52392 "EHLO honk.sigxcpu.org"
+        id S1728880AbfHMKX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 06:23:29 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:33948 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727632AbfHMKXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 06:23:11 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id BA4B5FB03;
-        Tue, 13 Aug 2019 12:23:08 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0wcZcnLC9pE5; Tue, 13 Aug 2019 12:23:07 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 88682416CC; Tue, 13 Aug 2019 12:23:07 +0200 (CEST)
-Date:   Tue, 13 Aug 2019 12:23:07 +0200
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Robert Chiras <robert.chiras@nxp.com>
-Cc:     Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/10] Improvements and fixes for mxsfb DRM driver
-Message-ID: <20190813102307.GA22623@bogon.m.sigxcpu.org>
-References: <1561555938-21595-1-git-send-email-robert.chiras@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1561555938-21595-1-git-send-email-robert.chiras@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727632AbfHMKX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 06:23:27 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8B36F20016D;
+        Tue, 13 Aug 2019 12:23:24 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DA86C200154;
+        Tue, 13 Aug 2019 12:23:19 +0200 (CEST)
+Received: from lsv03124.swis.in-blr01.nxp.com (lsv03124.swis.in-blr01.nxp.com [92.120.146.121])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2D359402BF;
+        Tue, 13 Aug 2019 18:23:14 +0800 (SGT)
+From:   Ashish Kumar <Ashish.Kumar@nxp.com>
+To:     linux-kernel@vger.kernel.org, broonie@kernel.org,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-next@vger.kernel.org, Ashish Kumar <Ashish.Kumar@nxp.com>,
+        Kuldeep Singh <kuldeep.singh@nxp.com>,
+        Ashish Kumar <ashish.kumar@nxp.com>
+Subject: [Patch v4 1/3] dt-bindings: spi: spi-fsl-qspi: Add ls2080a compatibility string to bindings
+Date:   Tue, 13 Aug 2019 15:53:09 +0530
+Message-Id: <1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
-On Wed, Jun 26, 2019 at 04:32:08PM +0300, Robert Chiras wrote:
-> This patch-set improves the use of eLCDIF block on iMX 8 SoCs (like 8MQ, 8MM
-> and 8QXP). Following, are the new features added and fixes from this
-> patch-set:
+There are 2 version of QSPI-IP, according to which controller registers sets
+can be big endian or little endian.There are some other minor changes like
+RX fifo depth etc.
 
-There was some feedback on various patches, do you intend to pick that
-up again? That would be cool since there's some overlapping work popping
-up already e.g. in
+The big endian version uses driver compatible "fsl,ls1021a-qspi" and
+little endian version uses driver compatible "fsl,ls2080a-qspi"
 
-    https://patchwork.freedesktop.org/series/64595/
+Signed-off-by: Kuldeep Singh <kuldeep.singh@nxp.com>
+Signed-off-by: Ashish Kumar <ashish.kumar@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Han Xu <han.xu@nxp.com>
+---
+v4:
+-Rebase to spi.git,
+-Add new patch to series.
+-Previous versions reviewed here http://patchwork.ozlabs.org/patch/1118639/
+v3:
+Rebase to top
+v2: 
+Convert to patch series and rebasing done on top of tree
 
-showing up and it's the base for the tiny
+ Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-    https://patchwork.freedesktop.org/series/64300/    
+diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+index e8f1d62..6d7c9ec 100644
+--- a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
++++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+@@ -3,9 +3,8 @@
+ Required properties:
+   - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
+ 		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
+-		 "fsl,ls1021a-qspi"
++		 "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
+ 		 or
+-		 "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
+ 		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
+   - reg : the first contains the register location and length,
+           the second contains the memory mapping address and length
+-- 
+2.7.4
 
-Cheers,
- -- Guido
