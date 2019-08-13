@@ -2,145 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61AC28C186
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 21:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3EEB8C18B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 21:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfHMTa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 15:30:26 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33465 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbfHMTaZ (ORCPT
+        id S1726654AbfHMTbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 15:31:32 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37502 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfHMTba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 15:30:25 -0400
-Received: by mail-ot1-f68.google.com with SMTP id q20so23848122otl.0;
-        Tue, 13 Aug 2019 12:30:25 -0700 (PDT)
+        Tue, 13 Aug 2019 15:31:30 -0400
+Received: by mail-qt1-f196.google.com with SMTP id y26so107594471qto.4;
+        Tue, 13 Aug 2019 12:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:message-id:in-reply-to:references:subject
-         :mime-version:content-transfer-encoding;
-        bh=LkUkZZHHOpjUjyUqkx+tcRPy0nV/QGKvYnmWNcLuDl4=;
-        b=f9ZIYlS5lQQ52mdpooEjRmTvYZAKY8ghh1EQk6/OQkmluIyHtKO3bRWmKNMq4SEmrk
-         3S71XcA7F8B0+25/Aq9HBAcPzXB+1D1UPrN8Rp33Lx+thWM0T8Xn/sYjTVaEzn5dKBUW
-         TDnZMHRInPOADY6TvSWFBIGlP2R+9Z3ShTXQdfJZPFRCmVVV0FQLOKPm2/XiMT7r+qZQ
-         FUKBRle/vtx6o+R9X9l+CP1l61zyLm1QnlZIrhkDU0PSVvhIXruk5OWguyd0M38hyy2+
-         WYTM645MfdAhX8l2xh7nXdRW87U4LdeifspoJDdnKIalB+NXzxwPP852htL1kEdMvFKG
-         mWTg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZrsJ75uAl0CvFW97qeOMuBabIxioxFuZCHkYM94A0LA=;
+        b=oeUsGepxWxGwvAWqyLXN21B4JepvWUV9hHbolgX2xKRyBoUoRrxCEddc4hAtHT7HQ+
+         AoGnnCk3xWvxMnSmHdAk5aCTAE7fCx7UhHQI3uTM40S6/5E07y/arn0Lek8qRxQOxBuP
+         TV3lGCGcNuGw+zYZGj5NTx1fc7zCiJgDk1xjJ8X/ewyQcNAgQodATlqbCVeq7ynHJQhj
+         8xGZkD5otdl/CmNVMLERUUQjGYc1NBi62Nlnk9ih6xntQI6cwyGrS8tS0MnI+kSXnv4s
+         yR78QP1gwLm77D+paUklwomMEzbYtajHT3C2V2KTZFQpsvOdzRiy/99dKhisq8+oyIfV
+         9f3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
-         :references:subject:mime-version:content-transfer-encoding;
-        bh=LkUkZZHHOpjUjyUqkx+tcRPy0nV/QGKvYnmWNcLuDl4=;
-        b=XqYybT/1nWtS7bS9ldutbhmNeYr3UnXvb6Ub6QJZJWUPI7lwuHc3IaaTfAMYXaV7B3
-         8Kx3BHoMy7hJvgnouTMSEb1zDKHgLES9cPpGbZgex3QbMgDp5opOOaYq/dkdcW0cP5L8
-         bz6YPFCabgnDfx0tjOg6XMT1X9YTEwNM8iroGEZKSf9SJkHaRp1BaJLghaC3CL9bcKtt
-         mW2T63vieela2fiXZ15FIjOzU6r4+AoC5Gt4+Ie3wuIfkkefi+gpz1Zt1mTlbGFFzY5a
-         cYLHWZSAOjaHpLRgMZgUfBftWlp+eebbzB/Oi3yTnDU0y3HqkNh0Ig1KvfH2dcnyeQEq
-         HTBQ==
-X-Gm-Message-State: APjAAAWxf2Y34WGX74EGPRs9m86ePpWLdBeSot6b07Sl4jY/pGcgE9LF
-        XGKD1caTMrymPAhv5397AQs=
-X-Google-Smtp-Source: APXvYqx1uZGEU/FWdg1qWuUCtfHp2p88R4pDcIZNEXpcKK8j+wiJV4izI9Z8HxKohjgmzX3tRSOAag==
-X-Received: by 2002:a6b:fb10:: with SMTP id h16mr1126617iog.195.1565724624745;
-        Tue, 13 Aug 2019 12:30:24 -0700 (PDT)
-Received: from localhost ([184.63.162.180])
-        by smtp.gmail.com with ESMTPSA id w17sm3247806ior.23.2019.08.13.12.30.22
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZrsJ75uAl0CvFW97qeOMuBabIxioxFuZCHkYM94A0LA=;
+        b=iUgW++zOBS1kFXWlr0zC513lf4CZJT9Hiqc2UH9JmgcqQFp3yLkiFwT6zxDZ0UJJ5y
+         26E2xXZ6WjElWIw3HdcD+pzAj1PrpOIK1MO0N3S0baZhjPYIe9MyTAV7ki0fwscgiVtj
+         x8E3RNhMhyPwtCvS78fHyoBAWsYRSsKDN2P6PIfRLQCZ6wfff7lMLN1Ta6C9TWyvDZzs
+         wBok/D5ux0+HHebBKyNJpFulpvcGT6qNnO8BlQiRQzI9fqFAqIK750NsT4XyFpxJIOZW
+         hHMxupIHJG+pVzDCxm9WnnlKc+jPPKrL1NL1D/q/v7jaCLUVq83wfj0prdmaJCsZrjxn
+         3VXw==
+X-Gm-Message-State: APjAAAWSL0TbNUGKOGOq2ES2oyXFAX97oymP+YDfdYJhbkI1HIULiKRN
+        x/QPaLtarQwByTK7fdLF/Mk=
+X-Google-Smtp-Source: APXvYqyE30ghXoW4lyuazBzGdIN1K2YIYdWEw1TaM6LGrPL7xJwCrZqQ6LKihXqLCTqfIS7vkKFSEA==
+X-Received: by 2002:ac8:2b47:: with SMTP id 7mr26123152qtv.116.1565724689118;
+        Tue, 13 Aug 2019 12:31:29 -0700 (PDT)
+Received: from rodrigo-note.semfio.usp.br ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id 145sm2382399qkm.1.2019.08.13.12.31.25
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 12:30:24 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 12:30:17 -0700
-From:   John Fastabend <john.fastabend@gmail.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        John Fastabend <john.fastabend@gmail.com>
-Cc:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+dcdc9deefaec44785f32@syzkaller.appspotmail.com>,
-        aviadye@mellanox.com, borisp@mellanox.com, daniel@iogearbox.net,
-        davejwatson@fb.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        oss-drivers@netronome.com, syzkaller-bugs@googlegroups.com,
-        willemb@google.com
-Message-ID: <5d530fc91c07a_74d72b1d12a065b810@john-XPS-13-9370.notmuch>
-In-Reply-To: <20190813115948.5f57b272@cakuba.netronome.com>
-References: <000000000000f5d619058faea744@google.com>
- <20190810135900.2820-1-hdanton@sina.com>
- <5d52f09299e91_40c72adb748b25c0d3@john-XPS-13-9370.notmuch>
- <20190813102705.1f312b67@cakuba.netronome.com>
- <5d5301a82578_268d2b12c8efa5b470@john-XPS-13-9370.notmuch>
- <20190813115948.5f57b272@cakuba.netronome.com>
-Subject: Re: general protection fault in tls_write_space
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Aug 2019 12:31:28 -0700 (PDT)
+From:   Rodrigo Ribeiro <rodrigorsdc@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kernel-usp@googlegroups.com, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Rodrigo Ribeiro Carvalho <rodrigorsdc@gmail.com>
+Subject: [PATCH v2] staging: iio: accel: adis16240: Improve readability on write_raw function
+Date:   Tue, 13 Aug 2019 16:31:01 -0300
+Message-Id: <20190813193101.26867-1-rodrigorsdc@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jakub Kicinski wrote:
-> On Tue, 13 Aug 2019 11:30:00 -0700, John Fastabend wrote:
-> > Jakub Kicinski wrote:
-> > > On Tue, 13 Aug 2019 10:17:06 -0700, John Fastabend wrote:  
-> > > > > Followup of commit 95fa145479fb
-> > > > > ("bpf: sockmap/tls, close can race with map free")
-> > > > > 
-> > > > > --- a/net/tls/tls_main.c
-> > > > > +++ b/net/tls/tls_main.c
-> > > > > @@ -308,6 +308,9 @@ static void tls_sk_proto_close(struct so
-> > > > >  	if (free_ctx)
-> > > > >  		icsk->icsk_ulp_data = NULL;
-> > > > >  	sk->sk_prot = ctx->sk_proto;
-> > > > > +	/* tls will go; restore sock callback before enabling bh */
-> > > > > +	if (sk->sk_write_space == tls_write_space)
-> > > > > +		sk->sk_write_space = ctx->sk_write_space;
-> > > > >  	write_unlock_bh(&sk->sk_callback_lock);
-> > > > >  	release_sock(sk);
-> > > > >  	if (ctx->tx_conf == TLS_SW)    
-> > > > 
-> > > > Hi Hillf,
-> > > > 
-> > > > We need this patch (although slightly updated for bpf tree) do
-> > > > you want to send it? Otherwise I can. We should only set this if
-> > > > TX path was enabled otherwise we null it. Checking against
-> > > > tls_write_space seems best to me as well.
-> > > > 
-> > > > Against bpf this patch should fix it.
-> > > > 
-> > > > diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-> > > > index ce6ef56a65ef..43252a801c3f 100644
-> > > > --- a/net/tls/tls_main.c
-> > > > +++ b/net/tls/tls_main.c
-> > > > @@ -308,7 +308,8 @@ static void tls_sk_proto_close(struct sock *sk, long timeout)
-> > > >         if (free_ctx)
-> > > >                 icsk->icsk_ulp_data = NULL;
-> > > >         sk->sk_prot = ctx->sk_proto;
-> > > > -       sk->sk_write_space = ctx->sk_write_space;
-> > > > +       if (sk->sk_write_space == tls_write_space)
-> > > > +               sk->sk_write_space = ctx->sk_write_space;
-> > > >         write_unlock_bh(&sk->sk_callback_lock);
-> > > >         release_sock(sk);
-> > > >         if (ctx->tx_conf == TLS_SW)  
-> > > 
-> > > This is already in net since Friday:  
-> > 
-> > Don't we need to guard that with an
-> > 
-> >   if (sk->sk_write_space == tls_write_space)
-> > 
-> > or something similar? Where is ctx->sk_write_space set in the rx only
-> > case? In do_tls_setsockop_conf() we have this block
-> > 
-> > 	if (tx) {
-> > 		ctx->sk_write_space = sk->sk_write_space;
-> > 		sk->sk_write_space = tls_write_space;
-> > 	} else {
-> > 		sk->sk_socket->ops = &tls_sw_proto_ops;
-> > 	}
-> > 
-> > which makes me think ctx->sk_write_space may not be set correctly in
-> > all cases.
-> 
-> Ah damn, you're right I remember looking at that but then I went down
-> the rabbit hole of trying to repro and forgot :/
-> 
-> Do you want to send an incremental change?
+Replace shift and minus operation by GENMASK macro and remove the local
+variables used to store intermediate data.
 
-Sure I'll send something out this afternoon.
+Signed-off-by: Rodrigo Ribeiro Carvalho <rodrigorsdc@gmail.com>
+---
+v2:
+   - Leave switch statement instead of replace by if statement
+ drivers/staging/iio/accel/adis16240.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/staging/iio/accel/adis16240.c b/drivers/staging/iio/accel/adis16240.c
+index 62f4b3b1b457..82099db4bf0c 100644
+--- a/drivers/staging/iio/accel/adis16240.c
++++ b/drivers/staging/iio/accel/adis16240.c
+@@ -309,15 +309,12 @@ static int adis16240_write_raw(struct iio_dev *indio_dev,
+ 			       long mask)
+ {
+ 	struct adis *st = iio_priv(indio_dev);
+-	int bits = 10;
+-	s16 val16;
+ 	u8 addr;
+ 
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_CALIBBIAS:
+-		val16 = val & ((1 << bits) - 1);
+ 		addr = adis16240_addresses[chan->scan_index][0];
+-		return adis_write_reg_16(st, addr, val16);
++		return adis_write_reg_16(st, addr, val & GENMASK(9, 0));
+ 	}
+ 	return -EINVAL;
+ }
+-- 
+2.20.1
 
