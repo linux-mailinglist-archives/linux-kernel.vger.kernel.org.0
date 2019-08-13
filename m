@@ -2,127 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE8B8BB01
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:01:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 005EC8BB0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:02:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbfHMOBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 10:01:21 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52987 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbfHMOBV (ORCPT
+        id S1729483AbfHMOCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 10:02:46 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:23032 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728095AbfHMOCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 10:01:21 -0400
-Received: by mail-wm1-f68.google.com with SMTP id o4so1497362wmh.2;
-        Tue, 13 Aug 2019 07:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ky/0G1r/E47b3qMLySEW2K0XYi/tp5CsA6kbQT1Docg=;
-        b=XQe6qEESNVu+84o4mpV5IxOP2tMWBF13A5AN5TPmm/op1NRmPd4aktWCNwQXabIi7B
-         fXY+jgumHgPnZREKODcMeVrB7KU04CuH1SH55gsE02AQWXpSvKBdSXw2iIyyjmMQdfPe
-         H4MTrbDzEDVQBgTjLd4kQHxld74QGElq76UZGX5/yhOS9Aw8Q91vfgb5k7gXTVmIywQP
-         Y8lzROWvFROz6fJ7Pamrqvb8IgOuoKIpZbxZXQ0PgcYYBN+tmEtVaNODLQxdfSQHbKvZ
-         gkNgfQxY9LPnXuU8sR/p2BfmQxvgQ91A8gCzkdKQIkA0IzIknY/wB1rWOkzZmLUIEban
-         xYeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ky/0G1r/E47b3qMLySEW2K0XYi/tp5CsA6kbQT1Docg=;
-        b=aFxwRgRkmihJ7tgZv+Ymf8C1ah2Lu1Dsn2yyUhHYbQAb+Z1RohTrXdSiS0pC83J0fM
-         R1OJDDsToP+aX6rqod1BRDJuvZE8khkEUROGSQl0+6PzqVDj81NoReQFohf4T+cr14qY
-         oT6lUGT5MbSPFQ6Q0SLxn5TYhKysw3Uytb/CaO7CuygjaUtIr+nkVxNMNBig293tg+Ze
-         VmBTXp1bTIvPc811+ck3hvjQP/YBVr4rnT1xQQsg3TBV/+lQ03l2EFFaM2dFRfGfiLjU
-         AZmbKoRGl8fzH2Jt+xQjbLvRr8Dg7SjRfkgBQF8PC0mePlONKzM9zgwIXIMUedSa2CYD
-         qimQ==
-X-Gm-Message-State: APjAAAUQbtDSLmNLpRkZfprEwi3YOHNQdPn43T7r27oz4HqTPN7nDw2N
-        ckwzYJ6ruz8U+yAdK+Kx/+nE9zYg9lwVx/i0frMdGw==
-X-Google-Smtp-Source: APXvYqw0zbnDhh4DoH9t3jQVCRnpoZ6VJUK22NeN6UMrTRQB4NrXBEh1FXH9qFACsgkt1dFtqQfiMO8ZNbOh03Mn11E=
-X-Received: by 2002:a1c:1d42:: with SMTP id d63mr3197633wmd.34.1565704878839;
- Tue, 13 Aug 2019 07:01:18 -0700 (PDT)
+        Tue, 13 Aug 2019 10:02:45 -0400
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x7DE2LBr008312;
+        Tue, 13 Aug 2019 23:02:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x7DE2LBr008312
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1565704942;
+        bh=z65fPGDahcnryu8DhIatCdFIBN0i5WPEfMnwm+YXA4g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CI39gKp3izRC6qSGFBNX/kCIo5zgwhcHNjJ0klwyhnrPKDe70/O+hr0H0NAEI+kmH
+         I/BcqgEknJ5q3Iat9Pvs9Pz4WY1DCCUwuwQ5UYuJytIBBYuLLQ0cfgbj8UAk5h7Xua
+         OI6/a/EzUjQTx0TgtRh1KNgXwU1F8Mdsv4PldBFWjVswQZ0Ys80IGDGEBerwy+WrwN
+         Kq5Gc+2NDwqyWvUvsA6jp+kNhyGgryADdwCTTK0IFiuKJ45yRqkX6SZuMaZOxLwtQp
+         MhNVqr/ZygQcS/T+WCZMlPCxydJZinc5VDZsqeDIFPNr0RrbXksEFbMMvnPVscA24A
+         gQFUvg95pt//w==
+X-Nifty-SrcIP: [209.85.221.174]
+Received: by mail-vk1-f174.google.com with SMTP id b69so21478385vkb.3;
+        Tue, 13 Aug 2019 07:02:22 -0700 (PDT)
+X-Gm-Message-State: APjAAAVPobbB7OiPvcBIaUSZH0PVAPSnz7E7qNnDGRpBlFk3VXdXrj71
+        IzfNOXt5kbFRjUV6LZDzck7HIGqHqq9Y+JPRb/0=
+X-Google-Smtp-Source: APXvYqz3aFljvtlpAD72NHlQRrKDuY3wG9MXnKaFwqB+6BzT7mQJE2e654j7yBwvhbrjtVpBWbbnXPRoD2cX9MXmRDs=
+X-Received: by 2002:a1f:5dc2:: with SMTP id r185mr8458472vkb.64.1565704940854;
+ Tue, 13 Aug 2019 07:02:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190813181038.2c6aafb9@canb.auug.org.au> <MN2PR12MB3309141545B644DCA7F144B7ECD20@MN2PR12MB3309.namprd12.prod.outlook.com>
-In-Reply-To: <MN2PR12MB3309141545B644DCA7F144B7ECD20@MN2PR12MB3309.namprd12.prod.outlook.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 13 Aug 2019 10:01:07 -0400
-Message-ID: <CADnq5_MA-9pT=cZJYCZ62VXjwNtxaCLH2kb5ig5TLFKx4wsmjA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the amdgpu tree
-To:     "Huang, Ray" <Ray.Huang@amd.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+References: <cover.92d76bb4f6dcedc971d0b72a49e8e459a98bca54.1565676440.git-series.knut.omang@oracle.com>
+ <be2c361eac49ded2848b2a555b75e30cc3c24e71.1565676440.git-series.knut.omang@oracle.com>
+In-Reply-To: <be2c361eac49ded2848b2a555b75e30cc3c24e71.1565676440.git-series.knut.omang@oracle.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 13 Aug 2019 23:01:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASX4jPRxRxD+JafAfKqjck=x27HuHZgPV1VFfW8MzcwZA@mail.gmail.com>
+Message-ID: <CAK7LNASX4jPRxRxD+JafAfKqjck=x27HuHZgPV1VFfW8MzcwZA@mail.gmail.com>
+Subject: Re: [RFC 01/19] kbuild: Fixes to rules for host-cshlib and host-cxxshlib
+To:     Knut Omang <knut.omang@oracle.com>
+Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Liu, Aaron" <Aaron.Liu@amd.com>
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shreyans Devendra Doshi <0xinfosect0r@gmail.com>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Hidenori Yamaji <hidenori.yamaji@sony.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Timothy Bird <Tim.Bird@sony.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Daniel Vetter <daniel@ffwll.ch>,
+        Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 4:21 AM Huang, Ray <Ray.Huang@amd.com> wrote:
+On Tue, Aug 13, 2019 at 3:13 PM Knut Omang <knut.omang@oracle.com> wrote:
 >
-> > -----Original Message-----
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Sent: Tuesday, August 13, 2019 4:11 PM
-> > To: Alex Deucher <alexdeucher@gmail.com>
-> > Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel
-> > Mailing List <linux-kernel@vger.kernel.org>; Liu, Aaron
-> > <Aaron.Liu@amd.com>; Huang, Ray <Ray.Huang@amd.com>
-> > Subject: linux-next: build failure after merge of the amdgpu tree
-> >
-> > Hi all,
-> >
-> > After merging the amdgpu tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >
-> > drivers/gpu/drm/amd/amdgpu/psp_v12_0.c:39:17: error: expected
-> > declaration specifiers or '...' before string constant
-> > MODULE_FIRMWARE("amdgpu/renoir_asd.bin");
-> >                  ^~~~~~~~~~~~~~~~~~~~~~~
-> >
-> > Caused by commit
-> >
-> >   6a7a0bdbfa0c ("drm/amdgpu: add psp_v12_0 for renoir (v2)")
-> >
-> > I have applied the following patch for today:
-> >
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Tue, 13 Aug 2019 18:03:16 +1000
-> > Subject: [PATCH] drm/amdgpu: MODULE_FIRMWARE requires
-> > linux/module.h
-> >
-> > Fixes: 6a7a0bdbfa0c ("drm/amdgpu: add psp_v12_0 for renoir (v2)")
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> C++ libraries interfacing to C APIs might sometimes need some glue
+> logic more easily written in C.
+> Allow a C++ library to also contain 0 or more C objects.
 >
-> Thanks!
+> Also fix rules for both C and C++ shared libraries:
+> - C++ shared libraries depended on .c instead of .cc files
+> - Rules were referenced as -objs instead of the intended
+>   -cobjs and -cxxobjs following the pattern from hostprogs*.
 >
-> Reviewed-by: Huang Rui <ray.huang@amd.com>
->
+> Signed-off-by: Knut Omang <knut.omang@oracle.com>
 
-Applied.  thanks!
 
-Alex
+How is this patch related to the rest of this series?
 
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/psp_v12_0.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
-> > b/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
-> > index f37b8af4b986..b474dfb79375 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
-> > @@ -21,6 +21,7 @@
-> >   */
-> >
-> >  #include <linux/firmware.h>
-> > +#include <linux/module.h>
-> >  #include "amdgpu.h"
-> >  #include "amdgpu_psp.h"
-> >  #include "amdgpu_ucode.h"
-> > --
-> > 2.20.1
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
+
+This patch breaks GCC-plugins.
+Did you really compile-test this patch before the submission?
+
+
+
+--
+Best Regards
+
+Masahiro Yamada
