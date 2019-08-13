@@ -2,107 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E75368B8DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DE4A8B8E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:43:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbfHMMnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:43:25 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:51686 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728457AbfHMMnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:43:17 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9CCEF20078C;
-        Tue, 13 Aug 2019 14:43:15 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8E63520079B;
-        Tue, 13 Aug 2019 14:43:15 +0200 (CEST)
-Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 443A32060E;
-        Tue, 13 Aug 2019 14:43:15 +0200 (CEST)
-From:   Ioana Ciornei <ioana.ciornei@nxp.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     joe@perches.com, andrew@lunn.ch, ruxandra.radulescu@nxp.com,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v3 10/10] staging: fsl-dpaa2/ethsw: do not force user to bring interface down
-Date:   Tue, 13 Aug 2019 15:43:07 +0300
-Message-Id: <1565700187-16048-11-git-send-email-ioana.ciornei@nxp.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
-References: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
-Reply-to: ioana.ciornei@nxp.com
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728688AbfHMMnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 08:43:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38764 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726903AbfHMMno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 08:43:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 22B2CACD8;
+        Tue, 13 Aug 2019 12:43:43 +0000 (UTC)
+Message-ID: <1565700220.7043.8.camel@suse.com>
+Subject: Re: KMSAN: uninit-value in smsc75xx_bind
+From:   Oliver Neukum <oneukum@suse.com>
+To:     syzbot <syzbot+6966546b78d050bb0b5d@syzkaller.appspotmail.com>,
+        davem@davemloft.net, glider@google.com,
+        syzkaller-bugs@googlegroups.com, steve.glendinning@shawell.net,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org
+Date:   Tue, 13 Aug 2019 14:43:40 +0200
+In-Reply-To: <0000000000009f4316058fab3bd7@google.com>
+References: <0000000000009f4316058fab3bd7@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Link settings can be changed only when the interface is down. Disable
-and re-enable the interface, if necessary, behind the scenes so that we do
-not force users to an if down/up sequence.
+Am Freitag, den 09.08.2019, 01:48 -0700 schrieb syzbot:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    beaab8a3 fix KASAN build
+> git tree:       kmsan
 
-Reported-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
----
-Changes in v2:
- - added Reported-by tag
-Changes in v3:
- - fixup error path by swapping the return and netdev_err
+[..]
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+>   kmsan_report+0x162/0x2d0 mm/kmsan/kmsan_report.c:109
+>   __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:294
+>   smsc75xx_wait_ready drivers/net/usb/smsc75xx.c:976 [inline]
+>   smsc75xx_bind+0x541/0x12d0 drivers/net/usb/smsc75xx.c:1483
 
- drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c | 32 ++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 9 deletions(-)
+> 
+> Local variable description: ----buf.i93@smsc75xx_bind
+> Variable was created at:
+>   __smsc75xx_read_reg drivers/net/usb/smsc75xx.c:83 [inline]
+>   smsc75xx_wait_ready drivers/net/usb/smsc75xx.c:969 [inline]
+>   smsc75xx_bind+0x44c/0x12d0 drivers/net/usb/smsc75xx.c:1483
+>   usbnet_probe+0x10d3/0x3950 drivers/net/usb/usbnet.c:1722
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
-index 0f9f8345e534..4f0bff86e43e 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
-@@ -88,16 +88,21 @@ static void ethsw_get_drvinfo(struct net_device *netdev,
- 			 const struct ethtool_link_ksettings *link_ksettings)
- {
- 	struct ethsw_port_priv *port_priv = netdev_priv(netdev);
-+	struct ethsw_core *ethsw = port_priv->ethsw_data;
- 	struct dpsw_link_cfg cfg = {0};
--	int err = 0;
--
--	/* Due to a temporary MC limitation, the DPSW port must be down
--	 * in order to be able to change link settings. Taking steps to let
--	 * the user know that.
--	 */
--	if (netif_running(netdev)) {
--		netdev_info(netdev, "Sorry, interface must be brought down first.\n");
--		return -EACCES;
-+	bool if_running;
-+	int err = 0, ret;
-+
-+	/* Interface needs to be down to change link settings */
-+	if_running = netif_running(netdev);
-+	if (if_running) {
-+		err = dpsw_if_disable(ethsw->mc_io, 0,
-+				      ethsw->dpsw_handle,
-+				      port_priv->idx);
-+		if (err) {
-+			netdev_err(netdev, "dpsw_if_disable err %d\n", err);
-+			return err;
-+		}
- 	}
- 
- 	cfg.rate = link_ksettings->base.speed;
-@@ -115,6 +120,15 @@ static void ethsw_get_drvinfo(struct net_device *netdev,
- 				   port_priv->idx,
- 				   &cfg);
- 
-+	if (if_running) {
-+		ret = dpsw_if_enable(ethsw->mc_io, 0,
-+				     ethsw->dpsw_handle,
-+				     port_priv->idx);
-+		if (ret) {
-+			netdev_err(netdev, "dpsw_if_enable err %d\n", ret);
-+			return ret;
-+		}
-+	}
- 	return err;
- }
- 
--- 
-1.9.1
+Hi,
+
+this looks like a false positive to me.
+The offending code is likely this:
+
+        if (size) {
+                buf = kmalloc(size, GFP_KERNEL);
+                if (!buf)
+                        goto out;
+        }
+
+        err = usb_control_msg(dev->udev, usb_rcvctrlpipe(dev->udev, 0),
+                              cmd, reqtype, value, index, buf, size,
+                              USB_CTRL_GET_TIMEOUT);
+
+which uses 'buf' uninitialized. But it is used for input.
+What is happening here?
+
+	Regards
+		Oliver
+
+
 
