@@ -2,170 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16E198AFD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A6988AFB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:14:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbfHMGQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 02:16:57 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34277 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbfHMGQ4 (ORCPT
+        id S1727665AbfHMGNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 02:13:51 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:47817 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727160AbfHMGNu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 02:16:56 -0400
-Received: by mail-pl1-f195.google.com with SMTP id i2so48881435plt.1;
-        Mon, 12 Aug 2019 23:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lB2W34FFRFhSU+6xsPtiaBhXXvBNBgq1m83tH9jQCgk=;
-        b=lR0mpVGl7S5m6GiFXrWKwRq9XC7qJOtZEOUALc7cmgel+BKbdeD2iiqbSm6eSQvJMy
-         nOuO40CVTkMbqWBy/vbyR1IBBGNQFVd/w+pb6qlW5FYWdsIqviQBhejEhP/0xveynMmI
-         vYEX5DvPhD6WtMhiBVmS6NoNE8EpTDP2nprVIoqp1dD4M8iwW/ZIbzIrdvUnnxOlfiwW
-         3X2olAWRnWo5GuLkRTzNn2959BE6SlZ5JD72dOEX0yCVy9I8Ty+6ERxWw4yJSBnqZNq2
-         WH47O9SfGx1ufW3OOF+gpMj4koZoFQX2Ejw6wNAJrtnGzpt+Z5JDDBMandk4lOtnQLVE
-         SzOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lB2W34FFRFhSU+6xsPtiaBhXXvBNBgq1m83tH9jQCgk=;
-        b=BcNU7JozQCrJnYAzxRcCbP9BwJTRJm7uevM3n4f0/Jv5SZKl79TncumAPB3EY4b1H3
-         8nuiA3ssuGsdqxcD/RmezF/t1lSKTBjhSrcLoqg6KDVSF64E5QYcxvJ0UOofyoMu21vQ
-         PN+BUJjh9fjsEbZl7a9YLp9NEvGX1DtDkzrSYdcoFlR8H8Ymm+a9XiDZy4qppN5IQDx1
-         PwIo66n4oF1f+5aR5h/s5zeDpWnyXdwH6GZtx4eW2TShRonZn5oJ5Zlr4qAXywOuIPb+
-         7FfrYYxBb8XJpZueUMvUgK6OdY4N003jxXwgBhXl7ldDu7HEtFP38f5VrkLsYHObvtel
-         Fzjw==
-X-Gm-Message-State: APjAAAXGIiqVDD5JkPkbDCQtysKWuErrGbXdbEkLi+yZ0wh5JOWvG5Is
-        LATyJzF9ZbH07hbHbo+h/Ig=
-X-Google-Smtp-Source: APXvYqy02phZk28jrMxAd/3ZbPtBeJasaqaq1E4b04hPXcUojIzejAySe0BILM0w/izcaXiRSARIRg==
-X-Received: by 2002:a17:902:7202:: with SMTP id ba2mr37151447plb.266.1565677015327;
-        Mon, 12 Aug 2019 23:16:55 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id j15sm140141434pfn.150.2019.08.12.23.16.52
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 23:16:54 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2 3/3] xen/blkback: Use refcount_t for refcount
-Date:   Tue, 13 Aug 2019 14:16:50 +0800
-Message-Id: <20190813061650.5483-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 13 Aug 2019 02:13:50 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190813061347epoutp01df45365a9a9cb2701ee541c99d69eb05~6ZseAIAUC1572815728epoutp01P
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 06:13:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190813061347epoutp01df45365a9a9cb2701ee541c99d69eb05~6ZseAIAUC1572815728epoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1565676827;
+        bh=Xwj0sV5zR7XRN9JsppcP+03CQuzpX+VyXv5U3/Qahdw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=t8tB56C0LVWph7/uYpYyCO2569fT0+RmWVZlLghkU77NNtBBsncvxKQSqJu+wd3iv
+         oBqyLylOzH5yLKuJ3gYhlE4nvps16zzRLed/vjwIsvbXSgrpTrygTbQkzbmem29zG8
+         1SviHyp6JuNOSz8cirwHB54xPS8wpN6En6BdEFhg=
+Received: from epsnrtp6.localdomain (unknown [182.195.42.167]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190813061346epcas1p4dd6a6b6d56622b5d4c0b0cb19d0e8b14~6ZsdTkDF00949109491epcas1p4g;
+        Tue, 13 Aug 2019 06:13:46 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp6.localdomain (Postfix) with ESMTP id 4672Th37xtzMqYkc; Tue, 13 Aug
+        2019 06:13:44 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C8.B7.04085.815525D5; Tue, 13 Aug 2019 15:13:44 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190813061343epcas1p3bb333a7ccbb59c83c9b53d2b3f19ed3a~6ZsarhEst0550605506epcas1p3f;
+        Tue, 13 Aug 2019 06:13:43 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190813061343epsmtrp15a3de5ec4bba0edf932904ec3adb5909~6Zsaqtnf82809428094epsmtrp1y;
+        Tue, 13 Aug 2019 06:13:43 +0000 (GMT)
+X-AuditID: b6c32a39-cebff70000000ff5-24-5d5255187eb4
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DF.D3.03638.715525D5; Tue, 13 Aug 2019 15:13:43 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190813061343epsmtip10738a981ac385fbd3d6c7a7ff029371c~6ZsaTwK5n2339723397epsmtip1G;
+        Tue, 13 Aug 2019 06:13:43 +0000 (GMT)
+Subject: Re: [RFC PATCH 00/11] Simple QoS for exynos-bus driver using
+ interconnect
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     krzk@kernel.org, myungjoo.ham@samsung.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, georgi.djakov@linaro.org,
+        m.szyprowski@samsung.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <6be31199-a93d-c440-e0cd-7453e3ac1648@samsung.com>
+Date:   Tue, 13 Aug 2019 15:17:29 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDJsWRmVeSWpSXmKPExsWy7bCmga5EaFCsQec7MYtDx7ayW8w/co7V
+        4srX92wW0/duYrOYdH8Ci8X58xvYLTY9vsZqcXnXHDaLz71HGC1mnN/HZLH2yF12i9uNK9gs
+        Zkx+yebA67FpVSebx51re9g87ncfZ/LYvKTe4+C7PUwefVtWMXp83iQXwB6VbZORmpiSWqSQ
+        mpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdK2SQlliTilQKCCxuFhJ
+        386mKL+0JFUhI7+4xFYptSAlp8CyQK84Mbe4NC9dLzk/18rQwMDIFKgwITtjUsNtxoK7chXz
+        p+xla2B8L9HFyMkhIWAise7BIqYuRi4OIYEdjBKzZ/xhB0kICXxilNh8QRwi8Y1RovfmLqAE
+        B1hH+yF/iPheRol3T34yQjjvGSVez9rKAtItLBAicXzzV0YQW0SgnUmieaMDSBGzwERGiefH
+        /zOBJNgEtCT2v7jBBmLzCyhKXP3xGKyBV8BO4nHPWVYQm0VAVeL4nFtg9aICERKfHhxmhagR
+        lDg58wnYMk4BJ4muo+1gc5gFxCVuPZnPBGHLSzRvnc0MslhCYB27xPPJy1ggnnaRuP65jxHC
+        FpZ4dXwLO4QtJfGyvw3KrpZYefIIG0RzB6PElv0XWCESxhL7l05mAoUFs4CmxPpd+hBhRYmd
+        v+cyQizmk3j3tYcVEly8Eh1tQhAlyhKXH9xlgrAlJRa3d7JNYFSaheSdWUhemIXkhVkIyxYw
+        sqxiFEstKM5NTy02LDBFju1NjOCUrGW5g/HYOZ9DjAIcjEo8vBUJgbFCrIllxZW5hxglOJiV
+        RHgvmQTFCvGmJFZWpRblxxeV5qQWH2I0BYb2RGYp0eR8YL7IK4k3NDUyNja2MDE0MzU0VBLn
+        XfjDIlZIID2xJDU7NbUgtQimj4mDU6qBUcPOy2rX8/XCm7mznU/qen+ysJ11c7LCkds8H170
+        Nixcv+oga9aP2V9ufOGe9O9s1veJT9vmmk3JCNvObvvN+W7ik/6IBo76eR2e4dfDYy19Xv9f
+        LPImpmKKkc9dl0UhRZE/HnVOOZhUtH7Ov9oGp66iG4GdZ+tPrK//sff016dqnX1vH3Pc8lVi
+        Kc5INNRiLipOBAC9LmVj3wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsWy7bCSnK54aFCswcouY4tDx7ayW8w/co7V
+        4srX92wW0/duYrOYdH8Ci8X58xvYLTY9vsZqcXnXHDaLz71HGC1mnN/HZLH2yF12i9uNK9gs
+        Zkx+yebA67FpVSebx51re9g87ncfZ/LYvKTe4+C7PUwefVtWMXp83iQXwB7FZZOSmpNZllqk
+        b5fAlTGp4TZjwV25ivlT9rI1ML6X6GLk4JAQMJFoP+TfxcjFISSwm1Hi1N+rbF2MnEBxSYlp
+        F48yQ9QISxw+XAxR85ZRYlHTNbAaYYEQieObvzKCJEQE2pkkulu3gjnMAhMZJR4fXssM0TKV
+        UWL9z9ssIC1sAloS+1/cAGvnF1CUuPrjMSOIzStgJ/G45ywriM0ioCpxfM4tJhBbVCBC4vCO
+        WVA1ghInZz4Bm8Mp4CTRdbQdbA6zgLrEn3mXmCFscYlbT+YzQdjyEs1bZzNPYBSehaR9FpKW
+        WUhaZiFpWcDIsopRMrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIzg+tbR2MJ44EX+IUYCD
+        UYmHtyIhMFaINbGsuDL3EKMEB7OSCO8lk6BYId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzy+cci
+        hQTSE0tSs1NTC1KLYLJMHJxSDYwFfMvemAiVGrdavxZylUg4NqOEQyc0OiqjppY/fkLQba4f
+        CsKMj640/u9+UOzqpfBC4s2NTW7F1nF3bc++Yev59mPG5HzPa2kWqnuebF3Dfqy0c9r5mMSf
+        0qczsqbM/q4dEP3y5a2LF2+fi10hvOvGiztyy/gcp4iu/3FavihMdMf3Dxec799UYinOSDTU
+        Yi4qTgQAsaEb6ssCAAA=
+X-CMS-MailID: 20190813061343epcas1p3bb333a7ccbb59c83c9b53d2b3f19ed3a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190723122022eucas1p2f568f74f981f9de9012eb693c3b446d5
+References: <CGME20190723122022eucas1p2f568f74f981f9de9012eb693c3b446d5@eucas1p2.samsung.com>
+        <20190723122016.30279-1-a.swigon@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reference counters are preferred to use refcount_t instead of
-atomic_t.
-This is because the implementation of refcount_t can prevent
-overflows and detect possible use-after-free.
-So convert atomic_t ref counters to refcount_t.
+Hi Artur.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
-Changes in v2:
-  - Also convert pending_req::pendcnt to refcount_t.
+The patch1-4 in this series depend on other patches[1] on mainline.
+On next v2 version, please make some patches based on patches[1]
+in order to prevent the merge conflict. 
 
- drivers/block/xen-blkback/blkback.c | 6 +++---
- drivers/block/xen-blkback/common.h  | 9 +++++----
- drivers/block/xen-blkback/xenbus.c  | 2 +-
- 3 files changed, 9 insertions(+), 8 deletions(-)
+[1] [RESEND PATCH v5 0/4] add coupled regulators for Exynos5422/5800
+- https://lkml.org/lkml/2019/8/8/217
 
-diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index fd1e19f1a49f..b24bb0aea35f 100644
---- a/drivers/block/xen-blkback/blkback.c
-+++ b/drivers/block/xen-blkback/blkback.c
-@@ -1098,7 +1098,7 @@ static void __end_block_io_op(struct pending_req *pending_req,
- 	 * the grant references associated with 'request' and provide
- 	 * the proper response on the ring.
- 	 */
--	if (atomic_dec_and_test(&pending_req->pendcnt))
-+	if (refcount_dec_and_test(&pending_req->pendcnt))
- 		xen_blkbk_unmap_and_respond(pending_req);
- }
- 
-@@ -1395,7 +1395,7 @@ static int dispatch_rw_block_io(struct xen_blkif_ring *ring,
- 		bio_set_op_attrs(bio, operation, operation_flags);
- 	}
- 
--	atomic_set(&pending_req->pendcnt, nbio);
-+	refcount_set(&pending_req->pendcnt, nbio);
- 	blk_start_plug(&plug);
- 
- 	for (i = 0; i < nbio; i++)
-@@ -1424,7 +1424,7 @@ static int dispatch_rw_block_io(struct xen_blkif_ring *ring,
-  fail_put_bio:
- 	for (i = 0; i < nbio; i++)
- 		bio_put(biolist[i]);
--	atomic_set(&pending_req->pendcnt, 1);
-+	refcount_set(&pending_req->pendcnt, 1);
- 	__end_block_io_op(pending_req, BLK_STS_RESOURCE);
- 	msleep(1); /* back off a bit */
- 	return -EIO;
-diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
-index 1d3002d773f7..824d64a8339b 100644
---- a/drivers/block/xen-blkback/common.h
-+++ b/drivers/block/xen-blkback/common.h
-@@ -35,6 +35,7 @@
- #include <linux/wait.h>
- #include <linux/io.h>
- #include <linux/rbtree.h>
-+#include <linux/refcount.h>
- #include <asm/setup.h>
- #include <asm/pgalloc.h>
- #include <asm/hypervisor.h>
-@@ -309,7 +310,7 @@ struct xen_blkif {
- 	struct xen_vbd		vbd;
- 	/* Back pointer to the backend_info. */
- 	struct backend_info	*be;
--	atomic_t		refcnt;
-+	refcount_t		refcnt;
- 	/* for barrier (drain) requests */
- 	struct completion	drain_complete;
- 	atomic_t		drain;
-@@ -343,7 +344,7 @@ struct pending_req {
- 	struct xen_blkif_ring   *ring;
- 	u64			id;
- 	int			nr_segs;
--	atomic_t		pendcnt;
-+	refcount_t		pendcnt;
- 	unsigned short		operation;
- 	int			status;
- 	struct list_head	free_list;
-@@ -362,10 +363,10 @@ struct pending_req {
- 			 (_v)->bdev->bd_part->nr_sects : \
- 			  get_capacity((_v)->bdev->bd_disk))
- 
--#define xen_blkif_get(_b) (atomic_inc(&(_b)->refcnt))
-+#define xen_blkif_get(_b) (refcount_inc(&(_b)->refcnt))
- #define xen_blkif_put(_b)				\
- 	do {						\
--		if (atomic_dec_and_test(&(_b)->refcnt))	\
-+		if (refcount_dec_and_test(&(_b)->refcnt))	\
- 			schedule_work(&(_b)->free_work);\
- 	} while (0)
- 
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index 3ac6a5d18071..ecc5f9c5bf3f 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -169,7 +169,7 @@ static struct xen_blkif *xen_blkif_alloc(domid_t domid)
- 		return ERR_PTR(-ENOMEM);
- 
- 	blkif->domid = domid;
--	atomic_set(&blkif->refcnt, 1);
-+	refcount_set(&blkif->refcnt, 1);
- 	init_completion(&blkif->drain_complete);
- 	INIT_WORK(&blkif->free_work, xen_blkif_deferred_free);
- 
+Also, as I commented, we better to discuss it before sending the v2.
+
+On 19. 7. 23. 오후 9:20, Artur Świgoń wrote:
+> The following patchset adds interconnect[1][2] framework support to the
+> exynos-bus devfreq driver. Extending the devfreq driver with interconnect
+> capabilities started as a response to the issue referenced in [3]. The
+> patches can be subdivided into four logical groups:
+> 
+> (a) Refactoring the existing devfreq driver in order to improve readability
+> and accommodate for adding new code (patches 01--04/11).
+> 
+> (b) Tweaking the interconnect framework to support the exynos-bus use case
+> (patches 05--07/11). Exporting of_icc_get_from_provider() allows us to
+> avoid hardcoding every single graph edge in the DT or driver source, and
+> relaxing the requirement contained in that function removes the need to
+> provide dummy node IDs in the DT. Adjusting the logic in
+> apply_constraints() (drivers/interconnect/core.c) accounts for the fact
+> that every bus is a separate entity and therefore a separate interconnect
+> provider, albeit constituting a part of a larger hierarchy.
+> 
+> (c) Implementing interconnect providers in the exynos-bus devfreq driver
+> and adding required DT properties for one selected platform, namely
+> Exynos4412 (patches 08--09/11). Due to the fact that this aims to be a
+> generic driver for various Exynos SoCs, node IDs are generated dynamically
+> rather than hardcoded. This has been determined to be a simpler approach,
+> but depends on changes described in (b).
+> 
+> (d) Implementing a sample interconnect consumer for exynos-mixer targeted
+> at the issue referenced in [3], again with DT info only for Exynos4412
+> (patches 10--11/11).
+> 
+> Integration of devfreq and interconnect functionalities comes down to one
+> extra line in the devfreq target() callback, which selects either the
+> frequency calculated by the devfreq governor, or the one requested with the
+> interconnect API, whichever is higher. All new code works equally well when
+> CONFIG_INTERCONNECT is 'n' (as in exynos_defconfig) in which case all
+> interconnect API functions are no-ops.
+> 
+> ---
+> Artur Świgoń
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> ---
+> References:
+> [1] Documentation/interconnect/interconnect.rst
+> [2] Documentation/devicetree/bindings/interconnect/interconnect.txt
+> [3] https://patchwork.kernel.org/patch/10861757
+> 
+> Artur Świgoń (10):
+>   devfreq: exynos-bus: Extract exynos_bus_profile_init()
+>   devfreq: exynos-bus: Extract exynos_bus_profile_init_passive()
+>   devfreq: exynos-bus: Change goto-based logic to if-else logic
+>   devfreq: exynos-bus: Clean up code
+>   icc: Export of_icc_get_from_provider()
+>   icc: Relax requirement in of_icc_get_from_provider()
+>   icc: Relax condition in apply_constraints()
+>   arm: dts: exynos: Add parents and #interconnect-cells to Exynos4412
+>   devfreq: exynos-bus: Add interconnect functionality to exynos-bus
+>   arm: dts: exynos: Add interconnects to Exynos4412 mixer
+> 
+> Marek Szyprowski (1):
+>   drm: exynos: mixer: Add interconnect support
+> 
+>  .../boot/dts/exynos4412-odroid-common.dtsi    |   1 +
+>  arch/arm/boot/dts/exynos4412.dtsi             |  10 +
+>  drivers/devfreq/exynos-bus.c                  | 296 ++++++++++++++----
+>  drivers/gpu/drm/exynos/exynos_mixer.c         |  68 +++-
+>  drivers/interconnect/core.c                   |  12 +-
+>  include/linux/interconnect-provider.h         |   6 +
+>  6 files changed, 314 insertions(+), 79 deletions(-)
+> 
+
+
 -- 
-2.20.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
