@@ -2,87 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25C4F8B338
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 11:02:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9368B333
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 11:02:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbfHMJCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 05:02:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37326 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbfHMJCP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 05:02:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rwawfSmb1AGqD9EUztZX7iOxqE00kp2qBT1NnM3L8EE=; b=jzWEnGhDyuUs/Xztk9bAldlrCL
-        TT3mbvpcwRiez6Qr/bfQeAGr6GiGDLEBOwvYOEaE4tny/QgYmRlRrDlPiiWWUa+zdQrwGVr225os4
-        6bHBUFMCKS2vSEmeUSChZ2NcL+x4kce8ziOHKiohPsIrO+0HYfmSdbYZBDMwxjnk8cxJN7Cy0ZTUY
-        7gg3iE8TcwZ0UXy20KD78ob+8B+O9eCPP9Zqwk/uR6PRYBJyWj+U/iqLA52F2QhYJgg3xaBZ11Gas
-        gHa8cqEgZGhp5Cm52y694WTFleZFyUdQuRiW2Wug8k5dAHjacmQVfLHEGH+IjLYwVUVCYCmiMQ9Nj
-        /wrh+0vg==;
-Received: from [2001:4bb8:180:1ec3:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hxSgw-0006a0-L3; Tue, 13 Aug 2019 09:02:07 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, x86@kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S1728331AbfHMJCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 05:02:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728298AbfHMJCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 05:02:06 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2143C20840;
+        Tue, 13 Aug 2019 09:02:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565686925;
+        bh=lIZNtL4gojHH4sWQIqOF9yVEEqhU5Vt9LRIRR6QoW30=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BVOzItnDYzw85kp2QrS+hvwSTcjym4DShBh8/HxiG9vSmIA2QCl4JkxiF8DU+WJ9C
+         LdTc3VjyV5FgYQoLNEOJ2CYCX+PK387d5j+FX1YyfRmCE8MWU/OSIo8O/q4RzXngsS
+         4xRq9r4M/VuD9hPc9kgdUtjhAaoRg6ueM4NT/dgY=
+Date:   Tue, 13 Aug 2019 10:02:01 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] x86: remove the unused set_pages_array_wt function
-Date:   Tue, 13 Aug 2019 11:01:46 +0200
-Message-Id: <20190813090146.26377-7-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190813090146.26377-1-hch@lst.de>
-References: <20190813090146.26377-1-hch@lst.de>
+Subject: Re: "arm64/for-next/core" causes boot panic
+Message-ID: <20190813090200.h2rz4xphgnb5j5bc@willie-the-truck>
+References: <1565646695.8572.6.camel@lca.pw>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1565646695.8572.6.camel@lca.pw>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/x86/include/asm/set_memory.h | 1 -
- arch/x86/mm/pageattr.c            | 6 ------
- 2 files changed, 7 deletions(-)
+Hi Qian,
 
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index 2ee8e469dcf5..cff5e07c1e19 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -49,7 +49,6 @@ int set_memory_np_noalias(unsigned long addr, int numpages);
- 
- int set_pages_array_uc(struct page **pages, int addrinarray);
- int set_pages_array_wc(struct page **pages, int addrinarray);
--int set_pages_array_wt(struct page **pages, int addrinarray);
- int set_pages_array_wb(struct page **pages, int addrinarray);
- 
- /*
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 9acd568c4faa..255c90d6aaa7 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2047,12 +2047,6 @@ int set_pages_array_wc(struct page **pages, int numpages)
- }
- EXPORT_SYMBOL(set_pages_array_wc);
- 
--int set_pages_array_wt(struct page **pages, int numpages)
--{
--	return _set_pages_array(pages, numpages, _PAGE_CACHE_MODE_WT);
--}
--EXPORT_SYMBOL_GPL(set_pages_array_wt);
--
- int set_pages_wb(struct page *page, int numpages)
- {
- 	unsigned long addr = (unsigned long)page_address(page);
--- 
-2.20.1
+Thanks for the report.
 
+On Mon, Aug 12, 2019 at 05:51:35PM -0400, Qian Cai wrote:
+> Booting today's linux-next on an arm64 server triggers a panic with
+> CONFIG_KASAN_SW_TAGS=y pointing to this line,
+
+Is this the only change on top of defconfig? If not, please can you share
+your full .config?
+
+> kfree()->virt_to_head_page()->compound_head()
+> 
+> unsigned long head = READ_ONCE(page->compound_head);
+> 
+> The bisect so far indicates one of those could be bad,
+
+I guess that means the issue is reproducible on the arm64 for-next/core
+branch. Once I have your .config, I'll give it a go.
+
+> [    0.000000][    T0] Unable to handle kernel paging request at virtual address
+> 0030ffe001e01588
+> [    0.000000][    T0] Mem abort info:
+> [    0.000000][    T0]   ESR = 0x96000004
+> [    0.000000][    T0]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    0.000000][    T0]   SET = 0, FnV = 0
+> [    0.000000][    T0]   EA = 0, S1PTW = 0
+> [    0.000000][    T0] Data abort info:
+> [    0.000000][    T0]   ISV = 0, ISS = 0x00000004
+> [    0.000000][    T0]   CM = 0, WnR = 0
+> [    0.000000][    T0] [0030ffe001e01588] address between user and kernel
+> address ranges
+
+Hmm, nice address...
+
+I suppose we're looking at the interaction of 52-bit VA, untagged pointers
+and KASAN using sw tags. Lovely.
+
+Thanks, and please keep us updated on the bisection.
+
+Will
