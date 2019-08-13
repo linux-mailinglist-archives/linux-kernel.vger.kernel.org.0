@@ -2,146 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D0348B158
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 532E98B15B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfHMHna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 03:43:30 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:45910 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfHMHn3 (ORCPT
+        id S1727818AbfHMHoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 03:44:44 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41744 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726489AbfHMHoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:43:29 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7D7hQux130497;
-        Tue, 13 Aug 2019 02:43:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565682206;
-        bh=jmgSYaqwXk9iNyRQAajzZfYkuGasJs2iYaU0WIsQS5c=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=V6iFRYRxSpilYbvZmXi2hXkDdYAnfmXMZEUqjecqu8wlzVAo3/LZgUYdyuLYd2NTH
-         3jHCC6mxY7gZ7n25oGBU3R1HEiUkpboPd8eYpsVkySxiWy2Vp7ONsgLS3zHnD2Rfio
-         eOT//UlU08G2aDuSx8np/mGXzLXae9CNA6N2ynqk=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7D7hQsj006144
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Aug 2019 02:43:26 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 13
- Aug 2019 02:43:26 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 13 Aug 2019 02:43:26 -0500
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7D7hP5g027084;
-        Tue, 13 Aug 2019 02:43:25 -0500
-Subject: Re: [PATCH v2] bus: ti-sysc: sysc_check_one_child(): Change return
- type to void
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>, <tony@atomide.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20190813071714.27970-1-nishkadg.linux@gmail.com>
- <85a1d7eb-dd9a-2276-ed13-67291188538e@ti.com>
- <5285a1f4-644c-9e97-6e1c-9b3e66948dca@gmail.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <a9b27fbd-8db0-4ba7-fab0-0c118adff765@ti.com>
-Date:   Tue, 13 Aug 2019 10:43:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 13 Aug 2019 03:44:44 -0400
+Received: by mail-pg1-f195.google.com with SMTP id x15so40473529pgg.8
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 00:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wGWISY3VrJOIlFf6UspJXH4MK7kN0CsW/Y8ULJ0Kwsg=;
+        b=gr2P6VZATnnB9+lPemtkV6oz7hDqDZRqLEIsHSwg3T/hclit7LQRxjp93NpWl2MES2
+         Um+PzAS1Kko5EqOad+bjxXZKqx+uymm1exp3k8E1foMXH74iYttXfc4Iy13TYyEllztv
+         hUB/V1Le4fDSi6DYbcaFO7khLFTIlpHwS5Qy8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wGWISY3VrJOIlFf6UspJXH4MK7kN0CsW/Y8ULJ0Kwsg=;
+        b=eHraWCI/xDeRddSiEVdKI5OENlK75R07ZfratELi9ttJm+mNTKY5ACR/ypjCnmCMwg
+         Td/59FLwOm1QDdUdL8tpbJPea5k8b8KFeCoEIYwbx27BpE6OjQUjZr/jrTA5ZXRf1r5r
+         KJNO3W9INcnWpR5Gt2mgKQTrEELpAvito2ZLTjyoO3yqUm+USLIDB5K4zwEKpIQYrfBv
+         xZFxRiPAjM5pfF71eqrHd1jOmr6ZL+bYoxreR8WIH/8ZesjKxgsHbCqM8q9/oKpWsBFG
+         3Gmsh9gh1JJPgurBXEkUV3NY7EQdK7cfrTLkO5AsIep+pqw1o/gAVwVIuhAi4PbJw7Ph
+         uSeA==
+X-Gm-Message-State: APjAAAUpACzyTZsfghxnPvT0xNrPVawEScr2Svox/oxgci4BKFTNdeYj
+        rwCcbC6j96yNYQkvln52lNBngsK7j7M=
+X-Google-Smtp-Source: APXvYqzkzDTF0AwWSIcaHQgPLZiwdVjeEy+ci5i4EwVLcCB8uW8sIMX56ixAY+7bZj0RLkfelhwRAg==
+X-Received: by 2002:a63:db45:: with SMTP id x5mr16250861pgi.293.1565682283264;
+        Tue, 13 Aug 2019 00:44:43 -0700 (PDT)
+Received: from localhost ([2401:fa00:1:10:79b4:bd83:e4a5:a720])
+        by smtp.gmail.com with ESMTPSA id p3sm682260pjo.3.2019.08.13.00.44.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Aug 2019 00:44:42 -0700 (PDT)
+From:   Cheng-Yi Chiang <cychiang@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
+        dgreid@chromium.org, tzungbi@chromium.org,
+        zhengxing@rock-chips.com, cain.cai@rock-chips.com,
+        eddie.cai@rock-chips.com, jeffy.chen@rock-chips.com,
+        enric.balletbo@collabora.com, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Cheng-Yi Chiang <cychiang@chromium.org>
+Subject: [PATCH] ASoC: rockchip: rockchip_max98090: Set period size to 240
+Date:   Tue, 13 Aug 2019 15:44:30 +0800
+Message-Id: <20190813074430.191791-1-cychiang@chromium.org>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 MIME-Version: 1.0
-In-Reply-To: <5285a1f4-644c-9e97-6e1c-9b3e66948dca@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From stress testing of arecord, we found that period size
+greater than ~900 will bring pl330 to DYING state and
+can not recover within 100 iterations.
+The result is that arecord will stuck and get I/O error,
+and issue can not be recovered until reboot.
 
+This issue does not happen when period size is small.
+Set constraint of period size to 240 to prevent such issue.
+With the constraint, there will be no issue after 2000 iterations.
 
-On 13/08/2019 10:37, Nishka Dasgupta wrote:
-> On 13/08/19 12:58 PM, Roger Quadros wrote:
->>
->>
->> On 13/08/2019 10:17, Nishka Dasgupta wrote:
->>> Change return type of function sysc_check_one_child() from int to void
->>> as it always returns 0. Accordingly, at its callsite, delete the
->>> variable that previously stored the return value.
->>>
->>> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
->>> ---
->>> Changes in v2:
->>> - Remove error variable entirely.
->>> - Change return type of sysc_check_one_child().
->>>
->>>   drivers/bus/ti-sysc.c | 9 +++------
->>>   1 file changed, 3 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
->>> index e6deabd8305d..1c30fa58d70c 100644
->>> --- a/drivers/bus/ti-sysc.c
->>> +++ b/drivers/bus/ti-sysc.c
->>> @@ -615,8 +615,8 @@ static void sysc_check_quirk_stdout(struct sysc *ddata,
->>>    * node but children have "ti,hwmods". These belong to the interconnect
->>>    * target node and are managed by this driver.
->>>    */
->>> -static int sysc_check_one_child(struct sysc *ddata,
->>> -                struct device_node *np)
->>> +static void sysc_check_one_child(struct sysc *ddata,
->>> +                 struct device_node *np)
->>>   {
->>>       const char *name;
->>>   
->>
->> You didn't remove the "return 0" at end of this function.
->> Doesn't it complain during build?
->>
->>> @@ -633,12 +633,9 @@ static int sysc_check_one_child(struct sysc *ddata,
->>>   static int sysc_check_children(struct sysc *ddata)
->>>   {
->>
->> This could return void as well.
-> 
-> Okay. Sorry for the errors; I'll fix-up and resend.
-> 
-> However, while building it, I'm running into a compilation problem:
-> on line 764 (function sysc_ioremap) there is apparently an "undeclared variable", "SZ_1K". Is it a problem with the architecture? What arch should I compile it with?
+We can revert this patch once the root cause is found
+in rockchip's pl330 implementation.
 
-make ARCH=arm omap2plus_defconfig
-make -j4 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+---
+ sound/soc/rockchip/rockchip_max98090.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> 
-> Thanking you,
-> Nishka
-> 
->>
->>>       struct device_node *child;
->>> -    int error;
->>>         for_each_child_of_node(ddata->dev->of_node, child) {
->>> -        error = sysc_check_one_child(ddata, child);
->>> -        if (error)
->>> -            return error;
->>> +        sysc_check_one_child(ddata, child);
->>>       }
->>
->> You don't need the braces { }.
->>
->> Please run ./scripts/checkpatch.pl --strict on your patch and fix any
->> issues.
->>
->>>         return 0;
->>>
->>
->> return not required.
->>
->> You will also need to fix all instances using sysc_check_children()
->>
-
-cheers,
--roger
+diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
+index 7b0c21fa6dca..0097df1fae66 100644
+--- a/sound/soc/rockchip/rockchip_max98090.c
++++ b/sound/soc/rockchip/rockchip_max98090.c
+@@ -137,8 +137,19 @@ static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
++static int rk_aif1_startup(struct snd_pcm_substream *substream)
++{
++	/*
++	 * Set period size to 240 because pl330 has issue
++	 * dealing with larger period in stress testing.
++	 */
++	return snd_pcm_hw_constraint_minmax(substream->runtime,
++			SNDRV_PCM_HW_PARAM_PERIOD_SIZE, 240, 240);
++}
++
+ static const struct snd_soc_ops rk_aif1_ops = {
+ 	.hw_params = rk_aif1_hw_params,
++	.startup = rk_aif1_startup,
+ };
+ 
+ SND_SOC_DAILINK_DEFS(hifi,
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.23.0.rc1.153.gdeed80330f-goog
+
