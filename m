@@ -2,99 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A18B8C38B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07E0F8C38E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfHMVWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 17:22:08 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34062 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfHMVWH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 17:22:07 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8B47280848; Tue, 13 Aug 2019 23:21:52 +0200 (CEST)
-Date:   Tue, 13 Aug 2019 23:22:04 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Eric Blau <eblau@eblau.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Subject: Re: [Regression] MacBook Pro - suspend does not power off - reaches
- dangerously hot temps
-Message-ID: <20190813212204.GA14654@amd>
-References: <CADU241M42pe_vFD4QriuVm_CjnpQe0LyBUDihaDkxm5k6o7X3g@mail.gmail.com>
+        id S1726949AbfHMVW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 17:22:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726102AbfHMVW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 17:22:29 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EA2E20844;
+        Tue, 13 Aug 2019 21:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565731348;
+        bh=61BEBiism8+ah6KfYnPIAoueUmImP8BoQp3cWp1WYxw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QO927A/DHs15dKgl0uKA8E/PQY35yt2Fo1OFYfRmf998P122pPT5lvN4KSBMGd4sM
+         XEaopRMIrtZESspUSyXgCBciNM/mvRbOqVtaLvj030AuZRit3cEVm7YYH6AGG3pYMK
+         Ri24fFbSGjzGbbGIUswMvcQNC80RaWVAunXzAklM=
+Received: by mail-qt1-f178.google.com with SMTP id 44so76852554qtg.11;
+        Tue, 13 Aug 2019 14:22:28 -0700 (PDT)
+X-Gm-Message-State: APjAAAXV46AhZD6lAPNH1c4lzajlB9Y7AbZAH7+MSCU1uyD8tXKGvN1V
+        c6P6A4r/BQ6uE4TtozEkgxgOY923/VrObRkJDQ==
+X-Google-Smtp-Source: APXvYqxSBfgtU0Qq0DmuHIKF4215omaq3x32du27czWIrPeuK1YLiDC7YDd/MNctQx5C2gGeVR82JMJ4pAiB4fPkMXY=
+X-Received: by 2002:ac8:7593:: with SMTP id s19mr27846131qtq.136.1565731347578;
+ Tue, 13 Aug 2019 14:22:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-Content-Disposition: inline
-In-Reply-To: <CADU241M42pe_vFD4QriuVm_CjnpQe0LyBUDihaDkxm5k6o7X3g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190813125147.29605-1-dafna.hirschfeld@collabora.com> <20190813125147.29605-2-dafna.hirschfeld@collabora.com>
+In-Reply-To: <20190813125147.29605-2-dafna.hirschfeld@collabora.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 13 Aug 2019 15:22:16 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJxQu1CYG3ZTFDME13cUwWgCt7hkQg41bdJKvY27JcCZQ@mail.gmail.com>
+Message-ID: <CAL_JsqJxQu1CYG3ZTFDME13cUwWgCt7hkQg41bdJKvY27JcCZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: imx: add imx8mq nitrogen support
+To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>, kernel@collabora.com,
+        Gary Bisson <gary.bisson@boundarydevices.com>,
+        Troy Kisky <troy.kisky@boundarydevices.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 13, 2019 at 6:51 AM Dafna Hirschfeld
+<dafna.hirschfeld@collabora.com> wrote:
+>
+> From: Gary Bisson <gary.bisson@boundarydevices.com>
+>
+> The Nitrogen8M is an ARM based single board computer (SBC)
+> designed to leverage the full capabilities of NXP=E2=80=99s i.MX8M
+> Quad processor.
+>
+> Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+> Signed-off-by: Troy Kisky <troy.kisky@boundarydevices.com>
+> [Dafna: porting vendor's code to mainline]
+> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-You may want to cc maintainers...
-
-M:      "Rafael J. Wysocki" <rjw@rjwysocki.net>
-M:      Pavel Machek <pavel@ucw.cz>
-L:      linux-pm@vger.kernel.org
-
-> I have a MacBook Pro 12,1 model where I've hit a regression since
-> upgrading to 5.2.x. When I enter hybrid-sleep mode with "systemctl
-> hybrid-sleep", the laptop appears to enter suspend (screen turns off
-> and keyboard backlights go out) but actually is still on with the CPU
-> fan powered off.
->=20
-> When I first noticed this, I had put my laptop away in my bag and
-> noticed it got extremely hot to the point of being dangerously close
-> to a fire hazard. It was too hot to touch and would not resume
-> successfully either from suspend or, after powering off, from
-> hibernate.
-
-If you are able to push the CPU over 100C, it is a hardware
-bug. Hardware should protect itself.
-
-> I've had no issues on 5.1 through 5.1.16 but every version of 5.2.x
-> I've tried (5.2 through 5.2.8) has exhibited this problem. Is there a
-> known regression in suspend handling in the kernel? I noticed some
-> traffic about suspend and NVMe devices but I do not have an NVMe
-> drive.
->=20
-> If nobody else has reported this issue, I would be glad to do a bisect
-> to help resolve it.
-
-You may want to try latest 5.3-rc and -next... And perform basic
-debugging such as making sure that normal suspend works and normal
-poweroff works.
-
-But yes, if you can bisect it, it will make stuff easy...
-
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1TKfwACgkQMOfwapXb+vLwQQCeIKWWTjWb5sq6glJ4XSkYyVSm
-yzkAnAlqlQbWuqVZ93/XoffeK7yTEEf9
-=bmFZ
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
+Reviewed-by: Rob Herring <robh@kernel.org>
