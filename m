@@ -2,149 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A69A28AC32
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 02:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE55C8AC4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 02:55:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfHMAxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 20:53:08 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54988 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbfHMAxI (ORCPT
+        id S1726869AbfHMAzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 20:55:43 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36797 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfHMAzm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 20:53:08 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D0nMoh183576;
-        Tue, 13 Aug 2019 00:52:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=mzpN7aIIjiVBw2Ca3IS9VSdJfpiIorifKKRhclI4kho=;
- b=ljj1/Fuq0hyvIN7i+4u9WhWw2wkqMeexjNOyMcmP99ZA1RLcOBNgWDXtxSByPo+wtQMi
- MUS9XqYWUPuKkSc0fBuZClQnz3MH1zE2SzebB4EWZcnmTLFU1Ul3KpDuLboiiX5EDe/a
- EeGvZdrfDcuEeki1JpmoFkeAqpu0DDmgJOfPIDwuUofYSvW6MZgkl1Mm+io3XMv5Fw3R
- 69bMEcStAmN/91o1O50wwtLLy/Gav3aUPebJ03/dTOvgn+8U5Y5xezNYtrVKaDWCxWF0
- qxQ4mCiU03wFIi13yZ1XPf8a/cKijoA04kCnoFjYBCHKQqurLcZJiaVxiPRrCPVUlYHh fA== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=mzpN7aIIjiVBw2Ca3IS9VSdJfpiIorifKKRhclI4kho=;
- b=BgVBxJBHev7Zu9RTdJBcylfHMUBmsdIHd2MmvgpZ3fik7OYkb48bUsqZfx4JWGXQjjHz
- z30aVMY2vdAdtWBU+99HRd7hX6vPwy1kLKz1Lrlz7sXguatKSfDqYuNr991ScCS4uyNZ
- C0WQEo2VPSTJd/rmHRg0hHwOvaEkZbeHJ5w5+WuzPQusPHJ2TGvXQlf1ycyDQl8W8/9t
- jPb3UoKPrVvm79KulFhaWR4/z6yU2np3v7G1xwCeWcXCP/ENa32rJl1D5Qyi+OJLiPEP
- m02RClK8puoaPkPKYMvNC1hmCX6WuqYsB7MevQQzPt4gj1iaGQ0YZRmJUBFrmiTkR8G5 Pg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2u9nvp2v4d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 00:52:48 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D0nI3q152604;
-        Tue, 13 Aug 2019 00:52:48 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2u9k1vuuyv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 00:52:48 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7D0ql07003301;
-        Tue, 13 Aug 2019 00:52:47 GMT
-Received: from parnassus.us.oracle.com (/10.39.240.231)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 12 Aug 2019 17:52:46 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] padata: remove cpu_index from the parallel_queue
-Date:   Mon, 12 Aug 2019 20:52:24 -0400
-Message-Id: <20190813005224.30779-10-daniel.m.jordan@oracle.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190813005224.30779-1-daniel.m.jordan@oracle.com>
-References: <20190813005224.30779-1-daniel.m.jordan@oracle.com>
+        Mon, 12 Aug 2019 20:55:42 -0400
+Received: by mail-ot1-f67.google.com with SMTP id k18so34095076otr.3;
+        Mon, 12 Aug 2019 17:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=tWuGMpfvpi8rnoPC1nxIMSH77huA/siJ3AWEzI3xTs4=;
+        b=cdoqbO7X+MHlqsYbY8wcYKMu8ZiVU/PnEECnYlul350769xA+jJ/DHDldH73SJHM9x
+         jCLEZaXj0eOs0lrUj/ZbAkmBErQaxUQK4lgaGUk0G8vW1Hm6UkVtac5jxe1WMHj74dDn
+         sJuOrHlmsazBackDrzbtX8BaRJCxCqX7DxYWMpizL9scBtr3lJM9wDIkOX15UNTQZstN
+         H8dTO/vlWkBYZlbVfI4x6A4UmaX1W8N3IJhwl1Y+AkRAb58zX+Y070wQY3OU61v7fixw
+         tX+2QdSDxNJABKy99euf/v0NwPY0pItxvKVSa+rBMsZnBoY1V/Nmu7ol86/vv9BqD4h4
+         Bscg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tWuGMpfvpi8rnoPC1nxIMSH77huA/siJ3AWEzI3xTs4=;
+        b=tqJo4HMbxz9RHyhHdKTSFGgggln4JoaOtdO6q3DbfkPuoC5XHS0vEh9oIaYUIEar1H
+         RCNacQ7CaDbOPMXy4cdbPs7Rs6aqBiF5XWUmOb9eitoxF2vesMrbDmqaFYKreXaeOhsQ
+         bbRjFPo8hj4dRa3QqNeWMaaogW3FdBzr9ZCe49qIgqM1bnlyjW/XwxrCH29x4cG5dLC2
+         SqdRwqSS7UT/u0QAOQeurbZvAZbxrE8Kpo4/Ifoe+NB6NIkPAA9n8ITDa2P76TbLRLDO
+         6IZgK/iNJEUhfN6f3XLrkMI3tOsfznD6WQG5RMWeDaMshPOqViyHk5q6SQNqGwg/bmBa
+         BwcA==
+X-Gm-Message-State: APjAAAX03r16gPkf/DeHbeXzrP1NNv08SwZFRoMt0DTIoA8lLm+c8xXD
+        Ua/bb9fw+wHaEYCEHw5U8pVl8p9eYlhNHkH+0Hk=
+X-Google-Smtp-Source: APXvYqxFUejRwv90klmWLQY0ZnGSa/zWt+ZB47N82vsS2BbcZs9ZZ7OVLxQ2jCM+HFwTwqP1mrDp6dwz7pFH0Le1m4w=
+X-Received: by 2002:a9d:1b02:: with SMTP id l2mr28824055otl.45.1565657741864;
+ Mon, 12 Aug 2019 17:55:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908130005
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908130005
+References: <1564643196-7797-1-git-send-email-wanpengli@tencent.com>
+ <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com> <c3fe182f-627f-88ad-cb4d-a4189202b438@redhat.com>
+ <20190803202058.GA9316@amt.cnet>
+In-Reply-To: <20190803202058.GA9316@amt.cnet>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Tue, 13 Aug 2019 08:55:29 +0800
+Message-ID: <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when dedicated
+ physical CPUs are available
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the removal of the ENODATA case from padata_get_next, the cpu_index
-field is no longer useful, so it can go away.
+On Sun, 4 Aug 2019 at 04:21, Marcelo Tosatti <mtosatti@redhat.com> wrote:
+>
+> On Thu, Aug 01, 2019 at 06:54:49PM +0200, Paolo Bonzini wrote:
+> > On 01/08/19 18:51, Rafael J. Wysocki wrote:
+> > > On 8/1/2019 9:06 AM, Wanpeng Li wrote:
+> > >> From: Wanpeng Li <wanpengli@tencent.com>
+> > >>
+> > >> The downside of guest side polling is that polling is performed even
+> > >> with other runnable tasks in the host. However, even if poll in kvm
+> > >> can aware whether or not other runnable tasks in the same pCPU, it
+> > >> can still incur extra overhead in over-subscribe scenario. Now we ca=
+n
+> > >> just enable guest polling when dedicated pCPUs are available.
+> > >>
+> > >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > >> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> > >> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> > >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > >
+> > > Paolo, Marcelo, any comments?
+> >
+> > Yes, it's a good idea.
+> >
+> > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+> >
+> > Paolo
+>
 
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- include/linux/padata.h |  2 --
- kernel/padata.c        | 13 ++-----------
- 2 files changed, 2 insertions(+), 13 deletions(-)
+Hi Marcelo,
 
-diff --git a/include/linux/padata.h b/include/linux/padata.h
-index cc420064186f..a39c7b9cec3c 100644
---- a/include/linux/padata.h
-+++ b/include/linux/padata.h
-@@ -75,14 +75,12 @@ struct padata_serial_queue {
-  * @swork: work struct for serialization.
-  * @work: work struct for parallelization.
-  * @num_obj: Number of objects that are processed by this cpu.
-- * @cpu_index: Index of the cpu.
-  */
- struct padata_parallel_queue {
-        struct padata_list    parallel;
-        struct padata_list    reorder;
-        struct work_struct    work;
-        atomic_t              num_obj;
--       int                   cpu_index;
- };
- 
- /**
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 5615f6b60dab..32e810bd4c47 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -399,21 +399,12 @@ static void padata_init_squeues(struct parallel_data *pd)
- /* Initialize all percpu queues used by parallel workers */
- static void padata_init_pqueues(struct parallel_data *pd)
- {
--	int cpu_index, cpu;
-+	int cpu;
- 	struct padata_parallel_queue *pqueue;
- 
--	cpu_index = 0;
--	for_each_possible_cpu(cpu) {
-+	for_each_cpu(cpu, pd->cpumask.pcpu) {
- 		pqueue = per_cpu_ptr(pd->pqueue, cpu);
- 
--		if (!cpumask_test_cpu(cpu, pd->cpumask.pcpu)) {
--			pqueue->cpu_index = -1;
--			continue;
--		}
--
--		pqueue->cpu_index = cpu_index;
--		cpu_index++;
--
- 		__padata_list_init(&pqueue->reorder);
- 		__padata_list_init(&pqueue->parallel);
- 		INIT_WORK(&pqueue->work, padata_parallel_worker);
--- 
-2.22.0
+Sorry for the late response.
 
+> I think KVM_HINTS_REALTIME is being abused somewhat.
+> It has no clear meaning and used in different locations
+> for different purposes.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+KVM_HINTS_REALTIME 0                      guest checks this feature bit to
+
+determine that vCPUs are never
+
+preempted for an unlimited time
+
+allowing optimizations
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Now it disables pv queued spinlock, pv tlb shootdown, pv sched yield
+which are not expected present in vCPUs are never preempted for an
+unlimited time scenario.
+
+>
+> For example, i think that using pv queued spinlocks and
+> haltpoll is a desired scenario, which the patch below disallows.
+
+So even if dedicated pCPU is available, pv queued spinlocks should
+still be chose if something like vhost-kthreads are used instead of
+DPDK/vhost-user. kvm adaptive halt-polling will compete with
+vhost-kthreads, however, poll in guest unaware other runnable tasks in
+the host which will defeat vhost-kthreads.
+
+Regards,
+Wanpeng Li
