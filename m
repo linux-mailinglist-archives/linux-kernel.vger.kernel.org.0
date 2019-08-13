@@ -2,95 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B7058BB65
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:23:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B0EA8BB6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729595AbfHMOXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 10:23:38 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37285 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729493AbfHMOXi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 10:23:38 -0400
-Received: by mail-qt1-f195.google.com with SMTP id y26so106521992qto.4
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 07:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y1ZEdaOi94u94z+ebuqvGlapSogYpo4cbHAgruEQQ4U=;
-        b=ZwfYN35YX8mhQPQt5FZI9cTGY2XJPexvicmwAb0R96q1jswLieAfDhHUf0QRWTSw7D
-         584cBpiDhyJJDaJ1OrlpX4cuI+tGNmJZqthdp821BKzrY7NqRvw3DwUg+IGW5QUlAiLI
-         xSV8hl6oOSiBTYTR+rn1rzHCAw4Ij5z4Bwloris3UF+2Ty50XsRjfoyxhe0Ppx/sWlyW
-         QVNRF/tJGb7nK9gsDR7fyDkz2zX+uQfwsz/Uecv/1G7C1Z8RU2k1MgxUu6J6YyAYUBEM
-         FMrpDsIU5RGCPbPwpFataD3+hxuAQIif3ZHGXVOjr8KyxiUNNQapLtSyCmByZ25vaCJ0
-         aP0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y1ZEdaOi94u94z+ebuqvGlapSogYpo4cbHAgruEQQ4U=;
-        b=VwGNFGaTyid7VTAsQElXmx2FezjXm9v4VEbRrkbbP5moJvWsz0nznEOWijzOEfeIVM
-         VZuDevPN2IlVZWjTPHW3JU2x13GJFFi/+fC9QI6vWIgsRwGLEXrnSHjwldQvEk3fpteN
-         Qp2LYG2nocQMvp8E96Kc0icxteMlLh0BQgtKcYXprvDX/afNEveY+ofgV/TRxsR8AD21
-         3ucYX/kAXm9LngoTGsLRthty4uOTtK27UWOhsXwsPCXV9J2zcKyg71NHWX9aaCi0Td/w
-         MmOZ2y3yjeuQNb6DGAgwK1VjqVBl19prWR74lFWu6fjyc27IYRt3lRiuNGB72aKwMwGE
-         IFJg==
-X-Gm-Message-State: APjAAAUamxPTKz8LVpKaRfJ0DXVSXIjZIXI0jSs5/t7furFFkLircz01
-        lArZBYo9KX/KQr4TLbql+mI=
-X-Google-Smtp-Source: APXvYqwYnUzFg0eKUYnOygTHC8dz6Jqi5NcJkttA4X9QYORBsBQO6e2yUiUBj30VabYZO64G2YewjQ==
-X-Received: by 2002:ac8:670a:: with SMTP id e10mr5673620qtp.244.1565706217217;
-        Tue, 13 Aug 2019 07:23:37 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id p59sm48730550qtd.75.2019.08.13.07.23.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 07:23:36 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 1E1A840340; Tue, 13 Aug 2019 11:23:34 -0300 (-03)
-Date:   Tue, 13 Aug 2019 11:23:34 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Tan Xiaojun <tanxiaojun@huawei.com>, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, songliubraving@fb.com, rostedt@goodmis.org,
-        kan.liang@linux.intel.com, tz.stoyanov@gmail.com,
-        alexey.budankov@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf record: Support aarch64 random socket_id assignment
-Message-ID: <20190813142334.GE12299@kernel.org>
-References: <1564717737-21602-1-git-send-email-tanxiaojun@huawei.com>
- <20190802130926.GB27223@krava>
+        id S1728990AbfHMOZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 10:25:23 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4682 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728026AbfHMOZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 10:25:21 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CF207AC49668D1AD9C28;
+        Tue, 13 Aug 2019 22:25:18 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Tue, 13 Aug 2019
+ 22:25:09 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ASoC: soc-core: Fix -Wunused-const-variable warning
+Date:   Tue, 13 Aug 2019 22:25:01 +0800
+Message-ID: <20190813142501.13080-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802130926.GB27223@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Aug 02, 2019 at 03:09:26PM +0200, Jiri Olsa escreveu:
-> On Fri, Aug 02, 2019 at 11:48:57AM +0800, Tan Xiaojun wrote:
-> > Same as the commit 01766229533f ("perf record: Support s390 random
-> > socket_id assignment"), aarch64 also have this problem.
-> > 
-> > Without this fix:
-> >   [root@localhost perf]# ./perf report --header -I -v
-> >   ...
-> >   socket_id number is too big.You may need to upgrade the perf tool.
-> > 
-> >   # ========
-> >   # captured on    : Thu Aug  1 22:58:38 2019
-> >   # header version : 1
-> >   ...
-> >   # Core ID and Socket ID information is not available
-> >   ...
-> > 
-> > With this fix:
-> >   [root@localhost perf]# ./perf report --header -I -v
+If CONFIG_DMI is not set, gcc warns:
 
-Thanks, applied.
+sound/soc/soc-core.c:81:27: warning:
+ dmi_blacklist defined but not used [-Wunused-const-variable=]
 
-- Arnaldo
+Add #ifdef guard around it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/soc-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index bb1e9e2..dcf39eb 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -73,6 +73,7 @@ static int pmdown_time = 5000;
+ module_param(pmdown_time, int, 0);
+ MODULE_PARM_DESC(pmdown_time, "DAPM stream powerdown time (msecs)");
+ 
++#ifdef CONFIG_DMI
+ /*
+  * If a DMI filed contain strings in this blacklist (e.g.
+  * "Type2 - Board Manufacturer" or "Type1 - TBD by OEM"), it will be taken
+@@ -87,6 +88,7 @@ static const char * const dmi_blacklist[] = {
+ 	"Board Product Name",
+ 	NULL,	/* terminator */
+ };
++#endif
+ 
+ static ssize_t pmdown_time_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+-- 
+2.7.4
+
+
