@@ -2,100 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBAD28B0F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE59E8B11B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfHMH05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 03:26:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56566 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbfHMH0z (ORCPT
+        id S1727664AbfHMH24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 03:28:56 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:43934 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfHMH24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:26:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=35Wov8xFMRqPypDnINHOhGjn1zV2YlFcYXBEGdDF8FY=; b=D1oIymfJL+GLsXY9L33m81Dx88
-        rXlxlzKY/RU9MPxLwHlBcnCaZwsWPaADpHA920JRPva5sACCppVFLmOVUVGeqMC2gyHhT7SYiEQ+W
-        gPSjJdssM6Qmmapb9bt2TDr9WjFBkU2Xt8Dz3rU59XT+S4HiQWpJBzmCHgImLP5d/f3ZESPfUJm3t
-        F/r2UJcE2imqBGeALOvpl/yrOqqvu4bPTl2rH1xyG4oyfcK5xPi/lbmhh4TgBh9Fm4TunT5RT9Qa0
-        C+h7sfYsWJJtqEE4kTeZSTOVqzG4ZJbWPT4K2yk63YpseKtLIDTejBfT4lDEFiD6QEobmKiDVMSob
-        wJss1V+w==;
-Received: from [2001:4bb8:180:1ec3:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hxRCk-0007Fc-Uo; Tue, 13 Aug 2019 07:26:51 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-ia64@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 28/28] genirq: remove the is_affinity_mask_valid hook
-Date:   Tue, 13 Aug 2019 09:25:14 +0200
-Message-Id: <20190813072514.23299-29-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190813072514.23299-1-hch@lst.de>
-References: <20190813072514.23299-1-hch@lst.de>
+        Tue, 13 Aug 2019 03:28:56 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7D7Sr2q126775;
+        Tue, 13 Aug 2019 02:28:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565681333;
+        bh=RTJzoiXVMikkp9s2WOQF+duohDPE5hWSoOGZjoZeRLs=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=y1Nui8YcwJE9ULpLNZwAn4uZeyoitISl9jFLdJPYVk62gPOe372RQxvmmiRx3MGVp
+         yYt84xTsCfCPPFD6YoOGuvLnip/UvDBPxXxgemVsntJYJt+owLvNVodU/v6X32JmIL
+         kOTCfdcw4yFgcG4o/XSK25MJAB5eBPwc6nkcshuY=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7D7SrqS117369
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 13 Aug 2019 02:28:53 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 13
+ Aug 2019 02:28:52 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 13 Aug 2019 02:28:52 -0500
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7D7SpZw054000;
+        Tue, 13 Aug 2019 02:28:51 -0500
+Subject: Re: [PATCH v2] bus: ti-sysc: sysc_check_one_child(): Change return
+ type to void
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>, <tony@atomide.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20190813071714.27970-1-nishkadg.linux@gmail.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <85a1d7eb-dd9a-2276-ed13-67291188538e@ti.com>
+Date:   Tue, 13 Aug 2019 10:28:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190813071714.27970-1-nishkadg.linux@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This override was only used by the ia64 SGI SN2 platform, which is
-gone now.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- kernel/irq/proc.c | 14 --------------
- 1 file changed, 14 deletions(-)
 
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index da9addb8d655..cfc4f088a0e7 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -100,10 +100,6 @@ static int irq_affinity_hint_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--#ifndef is_affinity_mask_valid
--#define is_affinity_mask_valid(val) 1
--#endif
--
- int no_irq_affinity;
- static int irq_affinity_proc_show(struct seq_file *m, void *v)
- {
-@@ -136,11 +132,6 @@ static ssize_t write_irq_affinity(int type, struct file *file,
- 	if (err)
- 		goto free_cpumask;
- 
--	if (!is_affinity_mask_valid(new_value)) {
--		err = -EINVAL;
--		goto free_cpumask;
--	}
--
- 	/*
- 	 * Do not allow disabling IRQs completely - it's a too easy
- 	 * way to make the system unusable accidentally :-) At least
-@@ -232,11 +223,6 @@ static ssize_t default_affinity_write(struct file *file,
- 	if (err)
- 		goto out;
- 
--	if (!is_affinity_mask_valid(new_value)) {
--		err = -EINVAL;
--		goto out;
--	}
--
- 	/*
- 	 * Do not allow disabling IRQs completely - it's a too easy
- 	 * way to make the system unusable accidentally :-) At least
+On 13/08/2019 10:17, Nishka Dasgupta wrote:
+> Change return type of function sysc_check_one_child() from int to void
+> as it always returns 0. Accordingly, at its callsite, delete the
+> variable that previously stored the return value.
+> 
+> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+> ---
+> Changes in v2:
+> - Remove error variable entirely.
+> - Change return type of sysc_check_one_child().
+> 
+>  drivers/bus/ti-sysc.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+> index e6deabd8305d..1c30fa58d70c 100644
+> --- a/drivers/bus/ti-sysc.c
+> +++ b/drivers/bus/ti-sysc.c
+> @@ -615,8 +615,8 @@ static void sysc_check_quirk_stdout(struct sysc *ddata,
+>   * node but children have "ti,hwmods". These belong to the interconnect
+>   * target node and are managed by this driver.
+>   */
+> -static int sysc_check_one_child(struct sysc *ddata,
+> -				struct device_node *np)
+> +static void sysc_check_one_child(struct sysc *ddata,
+> +				 struct device_node *np)
+>  {
+>  	const char *name;
+>  
+
+You didn't remove the "return 0" at end of this function.
+Doesn't it complain during build?
+
+> @@ -633,12 +633,9 @@ static int sysc_check_one_child(struct sysc *ddata,
+>  static int sysc_check_children(struct sysc *ddata)
+>  {
+
+This could return void as well.
+
+>  	struct device_node *child;
+> -	int error;
+>  
+>  	for_each_child_of_node(ddata->dev->of_node, child) {
+> -		error = sysc_check_one_child(ddata, child);
+> -		if (error)
+> -			return error;
+> +		sysc_check_one_child(ddata, child);
+>  	}
+
+You don't need the braces { }.
+
+Please run ./scripts/checkpatch.pl --strict on your patch and fix any
+issues.
+
+>  
+>  	return 0;
+> 
+
+return not required.
+
+You will also need to fix all instances using sysc_check_children()
+
+cheers,
+-roger
 -- 
-2.20.1
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
