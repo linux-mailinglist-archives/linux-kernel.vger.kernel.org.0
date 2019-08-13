@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E02B8B8E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 038C08B8D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbfHMMnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:43:55 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:51544 "EHLO inva021.nxp.com"
+        id S1728484AbfHMMnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 08:43:18 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:51566 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728327AbfHMMnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:43:13 -0400
+        id S1728361AbfHMMnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 08:43:15 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BDFA200791;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93384200796;
         Tue, 13 Aug 2019 14:43:12 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2E8E420078C;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8656A20078C;
         Tue, 13 Aug 2019 14:43:12 +0200 (CEST)
 Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CB0E12060E;
-        Tue, 13 Aug 2019 14:43:11 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3CC172060E;
+        Tue, 13 Aug 2019 14:43:12 +0200 (CEST)
 From:   Ioana Ciornei <ioana.ciornei@nxp.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     joe@perches.com, andrew@lunn.ch, ruxandra.radulescu@nxp.com,
         Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v3 01/10] staging: fsl-dpaa2/ethsw: remove IGMP default address
-Date:   Tue, 13 Aug 2019 15:42:58 +0300
-Message-Id: <1565700187-16048-2-git-send-email-ioana.ciornei@nxp.com>
+Subject: [PATCH v3 02/10] staging: fsl-dpaa2/ethsw: enable switch ports only on dev_open
+Date:   Tue, 13 Aug 2019 15:42:59 +0300
+Message-Id: <1565700187-16048-3-git-send-email-ioana.ciornei@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
 References: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
@@ -37,8 +37,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not add an IGMP multicast address by default since we do not support
-Rx/Tx ar the moment.
+At probe time, only the DPSW object should be enabled without the
+associated ports, which will get enabled on dev_open. Remove the
+ethsw_open() and ethsw_stop() functions and replace them only with
+dpsw_enable()/_disable().
 
 Reported-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
@@ -48,36 +50,101 @@ Changes in v2:
 Changes in v3:
  - none
 
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 59 ++++-----------------------------
+ 1 file changed, 6 insertions(+), 53 deletions(-)
 
 diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index aac98ece2335..8032314d5cae 100644
+index 8032314d5cae..302842c3bdfe 100644
 --- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
 +++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -1506,7 +1506,6 @@ static int ethsw_init(struct fsl_mc_device *sw_dev)
- 
- static int ethsw_port_init(struct ethsw_port_priv *port_priv, u16 port)
- {
--	const char def_mcast[ETH_ALEN] = {0x01, 0x00, 0x5e, 0x00, 0x00, 0x01};
- 	struct net_device *netdev = port_priv->netdev;
- 	struct ethsw_core *ethsw = port_priv->ethsw_data;
- 	struct dpsw_vlan_if_cfg vcfg;
-@@ -1532,12 +1531,10 @@ static int ethsw_port_init(struct ethsw_port_priv *port_priv, u16 port)
- 
- 	err = dpsw_vlan_remove_if(ethsw->mc_io, 0, ethsw->dpsw_handle,
- 				  DEFAULT_VLAN_ID, &vcfg);
--	if (err) {
-+	if (err)
- 		netdev_err(netdev, "dpsw_vlan_remove_if err %d\n", err);
--		return err;
--	}
- 
--	return ethsw_port_fdb_add_mc(port_priv, def_mcast);
-+	return err;
+@@ -1363,48 +1363,6 @@ static int ethsw_register_notifier(struct device *dev)
+ 	return err;
  }
  
- static void ethsw_unregister_notifier(struct device *dev)
+-static int ethsw_open(struct ethsw_core *ethsw)
+-{
+-	struct ethsw_port_priv *port_priv = NULL;
+-	int i, err;
+-
+-	err = dpsw_enable(ethsw->mc_io, 0, ethsw->dpsw_handle);
+-	if (err) {
+-		dev_err(ethsw->dev, "dpsw_enable err %d\n", err);
+-		return err;
+-	}
+-
+-	for (i = 0; i < ethsw->sw_attr.num_ifs; i++) {
+-		port_priv = ethsw->ports[i];
+-		err = dev_open(port_priv->netdev, NULL);
+-		if (err) {
+-			netdev_err(port_priv->netdev, "dev_open err %d\n", err);
+-			return err;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int ethsw_stop(struct ethsw_core *ethsw)
+-{
+-	struct ethsw_port_priv *port_priv = NULL;
+-	int i, err;
+-
+-	for (i = 0; i < ethsw->sw_attr.num_ifs; i++) {
+-		port_priv = ethsw->ports[i];
+-		dev_close(port_priv->netdev);
+-	}
+-
+-	err = dpsw_disable(ethsw->mc_io, 0, ethsw->dpsw_handle);
+-	if (err) {
+-		dev_err(ethsw->dev, "dpsw_disable err %d\n", err);
+-		return err;
+-	}
+-
+-	return 0;
+-}
+-
+ static int ethsw_init(struct fsl_mc_device *sw_dev)
+ {
+ 	struct device *dev = &sw_dev->dev;
+@@ -1586,9 +1544,7 @@ static int ethsw_remove(struct fsl_mc_device *sw_dev)
+ 
+ 	destroy_workqueue(ethsw_owq);
+ 
+-	rtnl_lock();
+-	ethsw_stop(ethsw);
+-	rtnl_unlock();
++	dpsw_disable(ethsw->mc_io, 0, ethsw->dpsw_handle);
+ 
+ 	for (i = 0; i < ethsw->sw_attr.num_ifs; i++) {
+ 		port_priv = ethsw->ports[i];
+@@ -1708,12 +1664,11 @@ static int ethsw_probe(struct fsl_mc_device *sw_dev)
+ 			goto err_free_ports;
+ 	}
+ 
+-	/* Switch starts up enabled */
+-	rtnl_lock();
+-	err = ethsw_open(ethsw);
+-	rtnl_unlock();
+-	if (err)
++	err = dpsw_enable(ethsw->mc_io, 0, ethsw->dpsw_handle);
++	if (err) {
++		dev_err(ethsw->dev, "dpsw_enable err %d\n", err);
+ 		goto err_free_ports;
++	}
+ 
+ 	/* Setup IRQs */
+ 	err = ethsw_setup_irqs(sw_dev);
+@@ -1724,9 +1679,7 @@ static int ethsw_probe(struct fsl_mc_device *sw_dev)
+ 	return 0;
+ 
+ err_stop:
+-	rtnl_lock();
+-	ethsw_stop(ethsw);
+-	rtnl_unlock();
++	dpsw_disable(ethsw->mc_io, 0, ethsw->dpsw_handle);
+ 
+ err_free_ports:
+ 	/* Cleanup registered ports only */
 -- 
 1.9.1
 
