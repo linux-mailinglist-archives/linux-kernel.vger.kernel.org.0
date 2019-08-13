@@ -2,116 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D87198BBEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E4F8BBBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 16:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbfHMOrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 10:47:47 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37969 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbfHMOrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 10:47:46 -0400
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 467Ftl594Dz9sN1; Wed, 14 Aug 2019 00:47:43 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1565707663;
-        bh=YSf4/YKDTs2wsPKYpWpVsROZ9TkPMAXnHxWQNLas4ZQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RL7wRDBnOANeQePVqkn3FJuiHQUYJQd/cb/dQZ/3SDxdB92pdJf/cJeJiDGnTLJCl
-         rBSj0c8hn7JlnGn2go3uzHbhLJcFsA97E5o9TJgefD0W+kXcz8Fww9xsPBQGXHpdmu
-         iQo4GX9xOdCk3vr3TirWKAtH2Rhs2p3fGutGDX0E=
-Date:   Wed, 14 Aug 2019 00:24:39 +1000
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Ram Pai <linuxram@us.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linuxppc-devel@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        Alexey Kardashevskiy <aik@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
-Message-ID: <20190813142439.GO3947@umbus.fritz.box>
-References: <87zhrj8kcp.fsf@morokweng.localdomain>
- <20190810143038-mutt-send-email-mst@kernel.org>
- <20190810220702.GA5964@ram.ibm.com>
- <20190811055607.GA12488@lst.de>
- <20190812095156.GD3947@umbus.fritz.box>
- <20190813132617.GA6426@lst.de>
+        id S1729675AbfHMOke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 10:40:34 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4251 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728189AbfHMOke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 10:40:34 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4C0FBE3692B21E72ED1B;
+        Tue, 13 Aug 2019 22:40:31 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Tue, 13 Aug 2019
+ 22:40:21 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.c>,
+        <tiwai@suse.com>, <matthias.bgg@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ASoC: mediatek: mt8183-da7219-max98357: remove unused variable
+Date:   Tue, 13 Aug 2019 22:39:52 +0800
+Message-ID: <20190813143952.29232-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xexMVKTdXPhpRiVT"
-Content-Disposition: inline
-In-Reply-To: <20190813132617.GA6426@lst.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c:120:1: warning:
+ mt8183_da7219_max98357_dapm_widgets defined but not used [-Wunused-const-variable=]
+sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c:124:40: warning:
+ mt8183_da7219_max98357_dapm_routes defined but not used [-Wunused-const-variable=]
 
---xexMVKTdXPhpRiVT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+They are never used, so can be removed.
 
-On Tue, Aug 13, 2019 at 03:26:17PM +0200, Christoph Hellwig wrote:
-> On Mon, Aug 12, 2019 at 07:51:56PM +1000, David Gibson wrote:
-> > AFAICT we already kind of abuse this for the VIRTIO_F_IOMMU_PLATFORM,
-> > because to handle for cases where it *is* a device limitation, we
-> > assume that if the hypervisor presents VIRTIO_F_IOMMU_PLATFORM then
-> > the guest *must* select it.
-> >=20
-> > What we actually need here is for the hypervisor to present
-> > VIRTIO_F_IOMMU_PLATFORM as available, but not required.  Then we need
-> > a way for the platform core code to communicate to the virtio driver
-> > that *it* requires the IOMMU to be used, so that the driver can select
-> > or not the feature bit on that basis.
->=20
-> I agree with the above, but that just brings us back to the original
-> issue - the whole bypass of the DMA OPS should be an option that the
-> device can offer, not the other way around.  And we really need to
-> fix that root cause instead of doctoring around it.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-I'm not exactly sure what you mean by "device" in this context.  Do
-you mean the hypervisor (qemu) side implementation?
+diff --git a/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c b/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+index 59076e2..b0db8a5 100644
+--- a/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
++++ b/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+@@ -116,15 +116,6 @@ static int mt8183_i2s_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+ 	return 0;
+ }
+ 
+-static const struct snd_soc_dapm_widget
+-mt8183_da7219_max98357_dapm_widgets[] = {
+-	SND_SOC_DAPM_OUTPUT("IT6505_8CH"),
+-};
+-
+-static const struct snd_soc_dapm_route mt8183_da7219_max98357_dapm_routes[] = {
+-	{"IT6505_8CH", NULL, "TDM"},
+-};
+-
+ /* FE */
+ SND_SOC_DAILINK_DEFS(playback1,
+ 	DAILINK_COMP_ARRAY(COMP_CPU("DL1")),
+-- 
+2.7.4
 
-You're right that this was the wrong way around to begin with, but as
-well as being hard to change now, I don't see how it really addresses
-the current problem.  The device could default to IOMMU and allow
-bypass, but the driver would still need to get information from the
-platform to know that it *can't* accept that option in the case of a
-secure VM.  Reversed sense, but the same basic problem.
 
-The hypervisor does not, and can not be aware of the secure VM
-restrictions - only the guest side platform code knows that.
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---xexMVKTdXPhpRiVT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl1SyCcACgkQbDjKyiDZ
-s5I4bQ//S4EUhoZcI/LsW/VYsc9vUb4nR5PFUpsfHBRPpz5LSCyiE0zj6HPD0NEw
-xx7wFiEoEoijTK2eUAql0bciMMkjU4bktaIRNxHL0gHTJ+bYC0JQK42DBFC6t/9L
-2D5DD8K9CYwIwxjYOPlxaxCEJfVKLLCMwBXmO3n1wbp3DO4ejeOq6TcsFfzF079C
-rj1ofD3aAdjKicydMAWXVOly4fcAimPwCI+CU/hEuAiT5OOsvl3RkOcPQ2psC0kr
-AhWUtFFDmdTosz+3HvByFrQoIsWS833CETD/+h7QPRfcgdDnoctb5QY9oyqSCxvH
-phO1O07WExt8rXrRAWJvP81K0n+b4cTuw8aUKp8qchHopQUrSiUfwM0vLFgbHmPj
-qG+x3Z1XfdMRWJjnst0aF/EMnI3GXl+d2hzMJLbXicj0F4HLnn/F2mkQbXRkOcFw
-8gilmJLNmOhUWo8viy7dc90YU2i0HOQd6h0j+5fyfhYKf+4fWvodL6thBGHWWiTk
-g63CjmoEZByRc5iDwuGf3vRBsFU26hDHYXh3mk8+AEmfZ0zMfE+6NvgEdPOvU82A
-bwQU186bnnTF1AjRiGfC69gX4Dfe077FiFjcDwS6ojR+21MojjdITMsVOKw4ZwfQ
-wwnomYbPb7NjK2QJcSM8AqbQftwvqAIzBtjPEOsknnb4VyoVTXs=
-=2Lh2
------END PGP SIGNATURE-----
-
---xexMVKTdXPhpRiVT--
