@@ -2,87 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F5668B247
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377468B252
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbfHMIY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:24:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727166AbfHMIY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 04:24:28 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728086AbfHMIZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:25:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48640 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727029AbfHMIZl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 04:25:41 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DB61A607DE; Tue, 13 Aug 2019 08:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565684740;
+        bh=POHCskCBMH1ZdCeQ/s1wr7SV0EammuFdxrlrI4KWC7Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F+3YgV5ieTKv1XlDc+0RfiorOfMs9Jmdg7l83A8gMSn9U/WiSNBOcj/08RHoIwMI9
+         x6bBh7wpmImdlVlVllKNJ7cTvvmX7F8UvetSCNhPlL02lKBJpya1Zeudj2rXZ2IQFf
+         On8BcVpcvGxB/ncL6TaPV22Qi1ffuFVocCqISdg0=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 427AB20663;
-        Tue, 13 Aug 2019 08:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565684667;
-        bh=Rz+v3dkBfs3QN68t0zxLnFK2Q8XWGYQrgM1IhEDbkD4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fRRSt2XOeK52+/CQl/KBGdbbiwjT89hcNEti95svIwNmYHskbJKcXkc2I8CPK2P9C
-         9tJLWBJTLIK0FRG5YQ+0y9iMKjN6MzqLYUZSx+zcLOxQYwcNozEKPeffNOR6hRib7X
-         UntY9jHYNSeahSoizepsqZYapYT9UZtp1DU/0dRo=
-Date:   Tue, 13 Aug 2019 09:24:23 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Atish Patra <atish.patra@wdc.com>
-Subject: Re: linux-next: manual merge of the risc-v tree with the arm64 tree
-Message-ID: <20190813082422.lecgqtknnn5g4dyj@willie-the-truck>
-References: <20190813093447.747a5853@canb.auug.org.au>
+        (Authenticated sender: mkshah@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A3F4E60709;
+        Tue, 13 Aug 2019 08:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565684740;
+        bh=POHCskCBMH1ZdCeQ/s1wr7SV0EammuFdxrlrI4KWC7Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F+3YgV5ieTKv1XlDc+0RfiorOfMs9Jmdg7l83A8gMSn9U/WiSNBOcj/08RHoIwMI9
+         x6bBh7wpmImdlVlVllKNJ7cTvvmX7F8UvetSCNhPlL02lKBJpya1Zeudj2rXZ2IQFf
+         On8BcVpcvGxB/ncL6TaPV22Qi1ffuFVocCqISdg0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A3F4E60709
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+From:   Maulik Shah <mkshah@codeaurora.org>
+To:     agross@kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        bjorn.andersson@linaro.org, evgreen@chromium.org,
+        dianders@chromium.org, swboyd@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org, ulf.hansson@linaro.org,
+        Maulik Shah <mkshah@codeaurora.org>
+Subject: [PATCH 0/4] Add RSC power domain support
+Date:   Tue, 13 Aug 2019 13:54:38 +0530
+Message-Id: <20190813082442.25796-1-mkshah@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190813093447.747a5853@canb.auug.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 09:34:47AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the risc-v tree got a conflict in:
-> 
->   arch/arm64/kernel/topology.c
-> 
-> between commit:
-> 
->   98dc19902a0b ("arm64: topology: Use PPTT to determine if PE is a thread")
-> 
-> from the arm64 tree and commit:
-> 
->   60c1b220d8bc ("cpu-topology: Move cpu topology code to common code.")
-> 
-> from the risc-v tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Resource State Coordinator (RSC) is responsible for powering off/lowering
+the requirements from CPU subsystem for the associated hardware like buses,
+clocks, and regulators when all CPUs and cluster is powered down.
 
-Thanks, Stephen.
+RSC power domain uses last-man activities provided by genpd framework based on
+Ulf Hansoon's patch series[1], when the cluster of CPUs enter deepest idle
+states. As a part of domain poweroff, RSC can lower resource state requirements
+by flushing the cached sleep and wake state votes for resources.
 
-Paul, Palmer -- If it's not too late, then it would probably be best to
-stick this commit (60c1b220d8bc) and any dependencies on their own stable
-branch so that we can both pull it into our respective trees and I can
-resolve this conflict in the arm64 tree, which I'll send early during the
-merge window.
+Dependencies:
 
-Looking at your tree, I guess I could just pull in
-common/for-v5.4-rc1/cpu-topology if you promise never to rebase it. Failing
-that, you could fork a new branch from 60c1b220d8bc and I could just pull
-that part instead.
+[1] https://lkml.org/lkml/2019/5/13/839
 
-Please let me know.
+Maulik Shah (4):
+  drivers: qcom: rpmh: fix macro to accept NULL argument
+  drivers: qcom: rpmh: remove rpmh_flush export
+  dt-bindings: soc: qcom: Add RSC power domain specifier
+  drivers: qcom: rpmh-rsc: Add RSC power domain support
 
-Will
+ .../devicetree/bindings/soc/qcom/rpmh-rsc.txt |  7 ++
+ drivers/soc/qcom/rpmh-internal.h              |  3 +
+ drivers/soc/qcom/rpmh-rsc.c                   | 96 +++++++++++++++++++
+ drivers/soc/qcom/rpmh.c                       | 22 ++---
+ include/soc/qcom/rpmh.h                       |  5 -
+ 5 files changed, 116 insertions(+), 17 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, hosted by The Linux Foundation.
