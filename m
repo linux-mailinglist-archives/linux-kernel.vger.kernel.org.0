@@ -2,89 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA3B8AC8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 04:07:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C44578AC9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 04:13:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbfHMCHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 22:07:06 -0400
-Received: from mga14.intel.com ([192.55.52.115]:31293 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbfHMCHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 22:07:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 19:07:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,379,1559545200"; 
-   d="scan'208";a="327539466"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga004.jf.intel.com with ESMTP; 12 Aug 2019 19:07:02 -0700
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     akpm@linux-foundation.org, osalvador@suse.de, mhocko@suse.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: [PATCH] mm/hotplug: prevent memory leak when reuse pgdat
-Date:   Tue, 13 Aug 2019 10:06:08 +0800
-Message-Id: <20190813020608.10194-1-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726826AbfHMCNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 22:13:32 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42234 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726488AbfHMCNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Aug 2019 22:13:32 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A4171CD0CBA6D6613AF4;
+        Tue, 13 Aug 2019 09:57:01 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 13 Aug 2019
+ 09:56:50 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <tglx@linutronix.de>, <jason@lakedaemon.net>, <maz@kernel.org>,
+        <paul@crapouillou.net>, <malat@debian.org>, <paul.burton@mips.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] irqchip/irq-ingenic-tcu: Fix COMPILE_TEST building
+Date:   Tue, 13 Aug 2019 09:56:02 +0800
+Message-ID: <20190813015602.30576-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When offline a node in try_offline_node, pgdat is not released. So that
-pgdat could be reused in hotadd_new_pgdat. While we re-allocate
-pgdat->per_cpu_nodestats if this pgdat is reused.
+While do COMPILE_TEST building, if GENERIC_IRQ_CHIP is
+not selected, it fails:
 
-This patch prevents the memory leak by just allocate per_cpu_nodestats
-when it is a new pgdat.
+drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_intc_cascade':
+irq-ingenic-tcu.c:(.text+0x13f): undefined reference to `irq_get_domain_generic_chip'
+drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_irq_init':
+irq-ingenic-tcu.c:(.init.text+0x97): undefined reference to `irq_generic_chip_ops'
+irq-ingenic-tcu.c:(.init.text+0xdd): undefined reference to `__irq_alloc_domain_generic_chips'
+irq-ingenic-tcu.c:(.init.text+0x10b): undefined reference to `irq_get_domain_generic_chip'
 
-NOTE: This is not tested since I didn't manage to create a case to
-offline a whole node. If my analysis is not correct, please let me know.
+select GENERIC_IRQ_CHIP to fix this.
 
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 9536eba03ec7 ("irqchip: Add irq-ingenic-tcu driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- mm/memory_hotplug.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/irqchip/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index c73f09913165..efaf9e6f580a 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -933,8 +933,11 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
- 		if (!pgdat)
- 			return NULL;
- 
-+		pgdat->per_cpu_nodestats =
-+			alloc_percpu(struct per_cpu_nodestat);
- 		arch_refresh_nodedata(nid, pgdat);
- 	} else {
-+		int cpu;
- 		/*
- 		 * Reset the nr_zones, order and classzone_idx before reuse.
- 		 * Note that kswapd will init kswapd_classzone_idx properly
-@@ -943,6 +946,12 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
- 		pgdat->nr_zones = 0;
- 		pgdat->kswapd_order = 0;
- 		pgdat->kswapd_classzone_idx = 0;
-+		for_each_online_cpu(cpu) {
-+			struct per_cpu_nodestat *p;
-+
-+			p = per_cpu_ptr(pgdat->per_cpu_nodestats, cpu);
-+			memset(p, 0, sizeof(*p));
-+		}
- 	}
- 
- 	/* we can use NODE_DATA(nid) from here */
-@@ -952,7 +961,6 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
- 
- 	/* init node's zones as empty zones, we don't have any present pages.*/
- 	free_area_init_core_hotplug(nid);
--	pgdat->per_cpu_nodestats = alloc_percpu(struct per_cpu_nodestat);
- 
- 	/*
- 	 * The node we allocated has no zone fallback lists. For avoiding
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 3c8308e..ccbb897 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -320,6 +320,7 @@ config INGENIC_TCU_IRQ
+ 	default MACH_INGENIC
+ 	depends on MIPS || COMPILE_TEST
+ 	select MFD_SYSCON
++	select GENERIC_IRQ_CHIP
+ 	help
+ 	  Support for interrupts in the Timer/Counter Unit (TCU) of the Ingenic
+ 	  JZ47xx SoCs.
 -- 
-2.17.1
+2.7.4
+
 
