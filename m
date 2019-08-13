@@ -2,32 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4DB58B8D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E02B8B8E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728428AbfHMMnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:43:14 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:59802 "EHLO inva020.nxp.com"
+        id S1728704AbfHMMnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 08:43:55 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:51544 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726903AbfHMMnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728327AbfHMMnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Aug 2019 08:43:13 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C6D5E1A0234;
-        Tue, 13 Aug 2019 14:43:11 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BDFA200791;
+        Tue, 13 Aug 2019 14:43:12 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BB48B1A0132;
-        Tue, 13 Aug 2019 14:43:11 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2E8E420078C;
+        Tue, 13 Aug 2019 14:43:12 +0200 (CEST)
 Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 651B22060E;
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CB0E12060E;
         Tue, 13 Aug 2019 14:43:11 +0200 (CEST)
 From:   Ioana Ciornei <ioana.ciornei@nxp.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     joe@perches.com, andrew@lunn.ch, ruxandra.radulescu@nxp.com,
         Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v3 00/10] staging: fsl-dpaa2/ethsw: code cleanup
-Date:   Tue, 13 Aug 2019 15:42:57 +0300
-Message-Id: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
+Subject: [PATCH v3 01/10] staging: fsl-dpaa2/ethsw: remove IGMP default address
+Date:   Tue, 13 Aug 2019 15:42:58 +0300
+Message-Id: <1565700187-16048-2-git-send-email-ioana.ciornei@nxp.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
+References: <1565700187-16048-1-git-send-email-ioana.ciornei@nxp.com>
 Reply-to: ioana.ciornei@nxp.com
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
@@ -35,33 +37,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set addresses some of the feedback received on the dpaa2-ethsw
-driver: https://lore.kernel.org/patchwork/patch/1113335/.
+Do not add an IGMP multicast address by default since we do not support
+Rx/Tx ar the moment.
 
-There are no functional changes but rather just code cleanup.
-
+Reported-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+---
 Changes in v2:
- - added Reported-by and Suggested-by tags
+ - added Reported-by tag
 Changes in v3:
- - fix error path in patch 10/10
+ - none
 
-Ioana Ciornei (10):
-  staging: fsl-dpaa2/ethsw: remove IGMP default address
-  staging: fsl-dpaa2/ethsw: enable switch ports only on dev_open
-  staging: fsl-dpaa2/ethsw: add line terminator to all formats
-  staging: fsl-dpaa2/ethsw: remove debug message
-  staging: fsl-dpaa2/ethsw: use bool when encoding learning/flooding
-    state
-  staging: fsl-dpaa2/ethsw: remove unnecessary memset
-  staging: fsl-dpaa2/ethsw: remove redundant VLAN check
-  staging: fsl-dpaa2/ethsw: reword error message
-  staging: fsl-dpaa2/ethsw: register_netdev only when ready
-  staging: fsl-dpaa2/ethsw: do not force user to bring interface down
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
- drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c |  44 +++++-----
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c         | 110 ++++++------------------
- 2 files changed, 50 insertions(+), 104 deletions(-)
-
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index aac98ece2335..8032314d5cae 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -1506,7 +1506,6 @@ static int ethsw_init(struct fsl_mc_device *sw_dev)
+ 
+ static int ethsw_port_init(struct ethsw_port_priv *port_priv, u16 port)
+ {
+-	const char def_mcast[ETH_ALEN] = {0x01, 0x00, 0x5e, 0x00, 0x00, 0x01};
+ 	struct net_device *netdev = port_priv->netdev;
+ 	struct ethsw_core *ethsw = port_priv->ethsw_data;
+ 	struct dpsw_vlan_if_cfg vcfg;
+@@ -1532,12 +1531,10 @@ static int ethsw_port_init(struct ethsw_port_priv *port_priv, u16 port)
+ 
+ 	err = dpsw_vlan_remove_if(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 				  DEFAULT_VLAN_ID, &vcfg);
+-	if (err) {
++	if (err)
+ 		netdev_err(netdev, "dpsw_vlan_remove_if err %d\n", err);
+-		return err;
+-	}
+ 
+-	return ethsw_port_fdb_add_mc(port_priv, def_mcast);
++	return err;
+ }
+ 
+ static void ethsw_unregister_notifier(struct device *dev)
 -- 
 1.9.1
 
