@@ -2,178 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A098AECA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 07:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DED148AEBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 07:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfHMF1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 01:27:35 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40241 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbfHMF1f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 01:27:35 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hxPLF-0003wl-Lj; Tue, 13 Aug 2019 07:27:29 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hxPLC-00075Q-7Y; Tue, 13 Aug 2019 07:27:26 +0200
-Date:   Tue, 13 Aug 2019 07:27:26 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>, od@zcrc.me,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 4/7] pwm: jz4740: Improve algorithm of clock calculation
-Message-ID: <20190813052726.g37upws5rlvrszc4@pengutronix.de>
-References: <20190809123031.24219-1-paul@crapouillou.net>
- <20190809123031.24219-5-paul@crapouillou.net>
- <20190809170551.u4ybilf5ay2rsvnn@pengutronix.de>
- <1565370885.2091.2@crapouillou.net>
- <20190812061520.lwzk3us4ginwwxov@pengutronix.de>
- <1565642590.2007.1@crapouillou.net>
- <20190812214838.e5hyhnlcyykjfvsb@pengutronix.de>
- <1565648183.2007.3@crapouillou.net>
+        id S1726721AbfHMF0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 01:26:17 -0400
+Received: from mga07.intel.com ([134.134.136.100]:18045 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725842AbfHMF0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 01:26:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 22:25:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,380,1559545200"; 
+   d="scan'208";a="176105661"
+Received: from unknown (HELO localhost) ([10.239.159.128])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Aug 2019 22:25:49 -0700
+Date:   Tue, 13 Aug 2019 13:27:33 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com, mst@redhat.com,
+        rkrcmar@redhat.com, jmattson@google.com
+Subject: Re: [PATCH v6 3/8] KVM: x86: Implement CET CPUID enumeration for
+ Guest
+Message-ID: <20190813052733.GA2037@local-michael-cet-test>
+References: <20190725031246.8296-1-weijiang.yang@intel.com>
+ <20190725031246.8296-4-weijiang.yang@intel.com>
+ <20190813000604.GI4996@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1565648183.2007.3@crapouillou.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190813000604.GI4996@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Paul,
+On Mon, Aug 12, 2019 at 05:06:04PM -0700, Sean Christopherson wrote:
+> On Thu, Jul 25, 2019 at 11:12:41AM +0800, Yang Weijiang wrote:
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index 652b3876ea5c..ce1d6fe21780 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -1637,6 +1637,11 @@ static inline bool vmx_feature_control_msr_valid(struct kvm_vcpu *vcpu,
+> >  	return !(val & ~valid_bits);
+> >  }
+> >  
+> > +static inline u64 vmx_supported_xss(void)
+> > +{
+> > +	return host_xss;
+> 
+> Do you know if the kernel will ever enable CET_USER but not CET_KERNEL,
+> and vice versa?  I tried hunting down the logic in the main CET enabling
+> series but couldn't find the relevant code.
+> 
+> If the kernel does enable USER vs. KERNEL independently, are we sure that
+> KVM can correctly virtualize that state and that the guest OS won't die
+> due to expecting all CET features or no CET features?
+> 
+> In other words, do we want to return host_xss as is, or do we want to
+> make CET_USER and CET_KERNEL a bundle deal and avoid the headache, e.g.:
+> 
+> 	if (!(host_xss & XFEATURE_MASK_CET_USER) ||
+> 	    !(host_xss & XFEATURE_MASK_CET_KERNEL))
+> 		return host_xss & ~(XFEATURE_MASK_CET_USER |
+> 				    XFEATURE_MASK_CET_KERNEL);
+> 	return host_xss; 
+>
+Hi, Sean,
+Thanks for review! CET_USER and CET_KERNEL are two independent parts of
+CET, but CET_KERNEL part has not been fully implemented yet, the final target
+is to enable CET_USER + CET_KERNEL in kernel. In the VMM patch, it's supposed
+to enable both CET_USER and CET_KERNEL mode at one time, so the patches expose
+all the features of CET to guest OS as long as platform and host kernel
+support so.
 
-[adding Stephen Boyd to Cc]
-
-On Tue, Aug 13, 2019 at 12:16:23AM +0200, Paul Cercueil wrote:
-> Le lun. 12 août 2019 à 23:48, Uwe Kleine-König a écrit :
-> > On Mon, Aug 12, 2019 at 10:43:10PM +0200, Paul Cercueil wrote:
-> > > Le lun. 12 août 2019 à 8:15, Uwe Kleine-König a écrit :
-> > > > On Fri, Aug 09, 2019 at 07:14:45PM +0200, Paul Cercueil wrote:
-> > > > > Le ven. 9 août 2019 à 19:05, Uwe Kleine-König a écrit :
-> > > > > > On Fri, Aug 09, 2019 at 02:30:28PM +0200, Paul Cercueil wrote:
-> > > > > > > [...]
-> > > > > > >  +	/* Reset the clock to the maximum rate, and we'll reduce it if needed */
-> > > > > > >  +	ret = clk_set_max_rate(clk, parent_rate);
-> > > > > >
-> > > > > > What is the purpose of this call? IIUC this limits the allowed range of
-> > > > > > rates for clk. I assume the idea is to prevent other consumers to change
-> > > > > > the rate in a way that makes it unsuitable for this pwm. But this only
-> > > > > > makes sense if you had a notifier for clk changes, doesn't it? I'm
-> > > > > > confused.
-> > > > >
-> > > > > Nothing like that. The second call to clk_set_max_rate() might have set
-> > > > > a maximum clock rate that's lower than the parent's rate, and we want to
-> > > > > undo that.
-> > > >
-> > > > I still don't get the purpose of this call. Why do you limit the clock
-> > > > rate at all?
-> > >
-> > > As it says below, we "limit the clock to a maximum rate that still gives
-> > > us a period value which fits in 16 bits". So that the computed hardware
-> > > values won't overflow.
+> > +}
+> > +
+> >  static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
+> >  {
+> >  	switch (msr->index) {
+> > @@ -7724,6 +7729,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+> >  	.get_vmcs12_pages = NULL,
+> >  	.nested_enable_evmcs = NULL,
+> >  	.need_emulation_on_page_fault = vmx_need_emulation_on_page_fault,
+> > +	.supported_xss = vmx_supported_xss,
+> >  };
+> >  
+> >  static void vmx_cleanup_l1d_flush(void)
+> > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> > index a470ff0868c5..6a1870044752 100644
+> > --- a/arch/x86/kvm/x86.h
+> > +++ b/arch/x86/kvm/x86.h
+> > @@ -288,6 +288,10 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, unsigned long cr2,
+> >  				| XFEATURE_MASK_YMM | XFEATURE_MASK_BNDREGS \
+> >  				| XFEATURE_MASK_BNDCSR | XFEATURE_MASK_AVX512 \
+> >  				| XFEATURE_MASK_PKRU)
+> > +
+> > +#define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER \
+> > +				| XFEATURE_MASK_CET_KERNEL)
+> > +
+> >  extern u64 host_xcr0;
+> >  
+> >  extern u64 kvm_supported_xcr0(void);
+> > -- 
+> > 2.17.2
 > > 
-> > But why not just using clk_set_rate? You want to have the clock running
-> > at a certain rate, not any rate below that certain rate, don't you?
-> 
-> I'll let yourself answer yourself:
-> https://patchwork.ozlabs.org/patch/1018969/
-
-In that thread I claimed that you used clk_round_rate wrongly, not that
-you should use clk_set_max_rate(). (The claim was somewhat weakend by
-Stephen, but still I think that clk_round_rate is the right approach.)
-
-The upside of clk_round_rate is that it allows you to test for the
-capabilities of the clock without actually changing it before you found
-a setting you consider to be good.
-
-> It's enough to run it below a certain rate, yes. The actual rate doesn't
-> actually matter that much.
-
-1 Hz would be fine? I doubt it.
-
-> > >  E.g. if at a rate of 12 MHz your computed hardware value for the period
-> > >  is 0xf000, then at a rate of 24 MHz it won't fit in 16 bits. So the clock
-> > >  rate must be reduced to the highest possible that will still give you a
-> > >  < 16-bit value.
-> > > 
-> > >  We always want the highest possible clock rate that works, for the sake of
-> > >  precision.
-> > 
-> > This is dubious; but ok to keep the driver simple. (Consider a PWM that
-> > can run at i MHz for i in [1, .. 30]. If a period of 120 ns and a duty
-> > cycle of 40 ns is requested you can get an exact match with 25 MHz, but
-> > not with 30 MHz.)
-> 
-> The clock rate is actually (parent_rate >> (2 * x) )
-> for x = 0, 1, 2, ...
-> 
-> So if your parent_rate is 30 MHz the next valid one is 7.5 MHz, and the
-> next one is 1.875 MHz. It'd be very unlikely that you get a better match at
-> a lower clock.
-
-If the smaller freqs are all dividers of the fastest that's fine. Please
-note in a code comment that you're assuming this.
- 
-> > >  > >  Basically, we start from the maximum clock rate we can get for that PWM
-> > >  > >  - which is the rate of the parent clk - and from that compute the maximum
-> > >  > >  clock rate that we can support that still gives us < 16-bits hardware
-> > >  > >  values for the period and duty.
-> > >  > >
-> > >  > >  We then pass that computed maximum clock rate to clk_set_max_rate(), which
-> > >  > >  may or may not update the current PWM clock's rate to match the new limits.
-> > >  > >  Finally we read back the PWM clock's rate and compute the period and duty
-> > >  > >  from that.
-> > >  >
-> > >  > If you change the clk rate, is this externally visible on the PWM
-> > >  > output? Does this affect other PWM instances?
-> > > 
-> > >  The clock rate doesn't change the PWM output because the hardware values for
-> > >  the period and duty are adapted accordingly to reflect the change.
-> > 
-> > It doesn't change it in the end. But in the (short) time frame between
-> > the call to change the clock and the update of the PWM registers there
-> > is a glitch, right?
-> 
-> The PWM is disabled, so the line is in inactive state, and will be in that state
-> until the PWM is enabled again. No glitch to fear.
-
-ok, please note in the commit log that the reordering doesn't affect the
-output because the PWM is off and are done to make it more obvious what
-happens.
-
-> > You didn't answer to the question about other PWM instances. Does that
-> > mean others are not affected?
-> 
-> Sorry. Yes, they are not affected - all PWM channels are independent.
-
-ok.
-
-> > PS: It would be great if you could fix your mailer to not damage the
-> > quoted mail. Also it doesn't seem to understand how my name is encoded
-> > in the From line. I fixed up the quotes in my reply.
-> 
-> I switched Geary to "rich text". Is that better?
-
-No. It looks exactly like the copy you bounced to the list. See
-https://patchwork.ozlabs.org/comment/2236355/ for how it looks.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
