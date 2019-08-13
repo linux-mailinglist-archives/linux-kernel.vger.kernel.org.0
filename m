@@ -2,104 +2,297 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C238ADDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 06:38:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B824D8ADD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 06:36:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfHMEiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 00:38:55 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:51936 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbfHMEiz (ORCPT
+        id S1726402AbfHMEgs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 00:36:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35576 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfHMEgs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 00:38:55 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7D4cMHO075138;
-        Mon, 12 Aug 2019 23:38:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565671102;
-        bh=Ew8tzQEV3bzDzArZx0dSvuT8DgjzVr1McyreXZiBsSc=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=vZT9vUuHjeJfqpbHC4JPY+yhxRma4e4qSkeST+7paoKsG84W2UZByMArh6fPFnWJq
-         dIgNfQbSX2IfvtZnQIUuh1wRrWHV1Cl2fSl/20zrLzPmdAg0BUy5hJ4UdsWDpJTgAV
-         ZryYQFfcBi+I0FwLxytw7j2IyY14hveNKE/bPrU8=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7D4cMeS030426
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Aug 2019 23:38:22 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 12
- Aug 2019 23:38:21 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 12 Aug 2019 23:38:21 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7D4cDdj022723;
-        Mon, 12 Aug 2019 23:38:14 -0500
-Subject: Re: [PATCHv4 1/2] PCI: layerscape: Add the bar_fixed_64bit property
- in EP driver.
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>, <lorenzo.pieralisi@arm.com>,
-        <bhelgaas@google.com>, <minghuan.Lian@nxp.com>,
-        <mingkai.hu@nxp.com>, <roy.zang@nxp.com>, <l.stach@pengutronix.de>,
-        <tpiepho@impinj.com>, <leonard.crestez@nxp.com>,
-        <andrew.smirnov@gmail.com>, <yue.wang@amlogic.com>,
-        <hayashi.kunihiko@socionext.com>, <dwmw@amazon.co.uk>,
-        <jonnyc@amazon.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190813025317.48290-1-xiaowei.bao@nxp.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <4a456d72-f5b5-e860-0215-dd215e2edf09@ti.com>
-Date:   Tue, 13 Aug 2019 10:06:20 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190813025317.48290-1-xiaowei.bao@nxp.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        Tue, 13 Aug 2019 00:36:48 -0400
+Received: from mail-pg1-f200.google.com ([209.85.215.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hxOY9-00046m-Oj
+        for linux-kernel@vger.kernel.org; Tue, 13 Aug 2019 04:36:45 +0000
+Received: by mail-pg1-f200.google.com with SMTP id t19so65837408pgh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 21:36:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zFNNqzXjQ0yjbObjfHqjVXuP+2T5AGKqC2ATOQC3yys=;
+        b=aSR61R3zFRZalBURnOMBGOErKcwz1a2OtTfEmvRCvPv+VaXbBH6HnqIrYvWWCEiejx
+         FSTUt2gEQ2apTKtJ2g4rtWI8ET2oHC7aHJUuTG94atKPSsXuTKepoC2jJzW6tJ4/a+X/
+         kyBnhmriJD7Cou25nCjCQiHAIPWNMfJEzjFxq/zZyl0J2RDCqq6jsynSMZjRT4VJ9Wpl
+         bdyUSTS8KzlyxHY6LuhOSRMH3PDFi2fMKvKsl7wtsqoUuqmk5aMaWbXkM69zCHz8Mnb/
+         An35JxfeMTJZfTwr24d4FeQ7Sk+rlJ1oqotNrsFAt2i3I32Uf8pn4ESgbSMr5Qa2CtFz
+         Qf3w==
+X-Gm-Message-State: APjAAAXcLg+wockS3nMdzJdwEXklnT07E1VHo2Kcm0CV90fi/70i7rmL
+        NGgZY48H1Hkf0ailYtwdDTStpD8gvFHccb7amMPF3M708T46Q/DQM+a8LxXPNuaplWZEGXKLn09
+        SaSFoxx/QnTF/75/4NertMwwAVRs+z4kXTLC02Vx6Tg==
+X-Received: by 2002:a17:902:f46:: with SMTP id 64mr36333911ply.235.1565671004419;
+        Mon, 12 Aug 2019 21:36:44 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxla4PiCTVvYhmEKMk4sIAAd11RYUGdMyaNFy6ansYHhuWuja0N7Am8eKBWb9ui4mmQBOiUmg==
+X-Received: by 2002:a17:902:f46:: with SMTP id 64mr36333891ply.235.1565671004182;
+        Mon, 12 Aug 2019 21:36:44 -0700 (PDT)
+Received: from 2001-b011-380f-37d3-69dc-5ce4-19b8-561b.dynamic-ip6.hinet.net (2001-b011-380f-37d3-69dc-5ce4-19b8-561b.dynamic-ip6.hinet.net. [2001:b011:380f:37d3:69dc:5ce4:19b8:561b])
+        by smtp.gmail.com with ESMTPSA id z13sm110842857pfa.94.2019.08.12.21.36.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Aug 2019 21:36:43 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH v2 1/2] serial: 8250_pci: Add support for Sunix serial
+ boards
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <CAHp75VeGs8K+da+4CaqNjm_ci86KoLcmhY8GaJO7jm__J0TcSQ@mail.gmail.com>
+Date:   Tue, 13 Aug 2019 12:36:40 +0800
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Morris Ku <morris_ku@sunix.com>,
+        Debbie Liu <debbie_liu@sunix.com>
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-Id: <93860D98-9CB7-4D3D-8917-E15591BD1EC4@canonical.com>
+References: <20190809190130.30773-1-kai.heng.feng@canonical.com>
+ <CAHp75VeGs8K+da+4CaqNjm_ci86KoLcmhY8GaJO7jm__J0TcSQ@mail.gmail.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andy,
+
+at 21:18, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+
+> On Fri, Aug 9, 2019 at 10:05 PM Kai-Heng Feng
+> <kai.heng.feng@canonical.com> wrote:
+>> Add support to Sunix serial boards with up to 16 ports.
+>>
+>> Sunix board need its own setup callback instead of using Timedia's, to
+>> properly support more than 4 ports.
+>
+> Can you, please, split out the Sunix quirk driver to a separate module
+> (see examples like: 8250_exar, 8250_lpss, 8250_mid)?
+> And then with a fewer LOCs add a new boards.
+
+Greg asked Sunix to use existing 8250_pci.c instead of its own module.
+It only needs a special setup function, other parts are just 8250_pci.
+
+Why does split them a better idea? I even think of squashing 8250_moxa into  
+8250_pci.
+
+Kai-Heng
+
+>
+>> Cc: Morris Ku <morris_ku@sunix.com>
+>> Cc: Debbie Liu <debbie_liu@sunix.com>
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> ---
+>> v2:
+>>  use div64_s64() instead of do_div()
+>>
+>>  drivers/tty/serial/8250/8250_pci.c  | 93 +++++++++++++++++++++++------
+>>  drivers/tty/serial/8250/8250_port.c |  8 +++
+>>  include/uapi/linux/serial_core.h    |  3 +
+>>  3 files changed, 87 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/8250/8250_pci.c  
+>> b/drivers/tty/serial/8250/8250_pci.c
+>> index 7f740b37700b..b2a5c2228858 100644
+>> --- a/drivers/tty/serial/8250/8250_pci.c
+>> +++ b/drivers/tty/serial/8250/8250_pci.c
+>> @@ -1692,6 +1692,30 @@ pci_wch_ch38x_setup(struct serial_private *priv,
+>>         return pci_default_setup(priv, board, port, idx);
+>>  }
+>>
+>> +static int
+>> +pci_sunix_setup(struct serial_private *priv,
+>> +               const struct pciserial_board *board,
+>> +               struct uart_8250_port *port, int idx)
+>> +{
+>> +       int bar;
+>> +       int offset;
+>> +
+>> +       port->port.flags |= UPF_FIXED_TYPE;
+>> +       port->port.type = PORT_SUNIX;
+>> +
+>> +       if (idx < 4) {
+>> +               bar = 0;
+>> +               offset = idx * board->uart_offset;
+>> +       } else {
+>> +               bar = 1;
+>> +               idx -= 4;
+>> +               idx = div_s64_rem(idx, 4, &offset);
+>> +               offset = idx * 64 + offset * board->uart_offset;
+>> +       }
+>> +
+>> +       return setup_port(priv, port, bar, offset, 0);
+>> +}
+>> +
+>>  #define PCI_VENDOR_ID_SBSMODULARIO     0x124B
+>>  #define PCI_SUBVENDOR_ID_SBSMODULARIO  0x124B
+>>  #define PCI_DEVICE_ID_OCTPRO           0x0001
+>> @@ -2289,21 +2313,14 @@ static struct pci_serial_quirk  
+>> pci_serial_quirks[] __refdata = {
+>>                 .setup          = pci_timedia_setup,
+>>         },
+>>         /*
+>> -        * SUNIX (Timedia) cards
+>> -        * Do not "probe" for these cards as there is at least one  
+>> combination
+>> -        * card that should be handled by parport_pc that doesn't match  
+>> the
+>> -        * rule in pci_timedia_probe.
+>> -        * It is part number is MIO5079A but its subdevice ID is 0x0102.
+>> -        * There are some boards with part number SER5037AL that report
+>> -        * subdevice ID 0x0002.
+>> +        * Sunix PCI serial boards
+>>          */
+>>         {
+>>                 .vendor         = PCI_VENDOR_ID_SUNIX,
+>>                 .device         = PCI_DEVICE_ID_SUNIX_1999,
+>>                 .subvendor      = PCI_VENDOR_ID_SUNIX,
+>>                 .subdevice      = PCI_ANY_ID,
+>> -               .init           = pci_timedia_init,
+>> -               .setup          = pci_timedia_setup,
+>> +               .setup          = pci_sunix_setup,
+>>         },
+>>         /*
+>>          * Xircom cards
+>> @@ -2757,6 +2774,11 @@ enum pci_board_num_t {
+>>         pbn_pericom_PI7C9X7952,
+>>         pbn_pericom_PI7C9X7954,
+>>         pbn_pericom_PI7C9X7958,
+>> +       pbn_sunix_pci_1s,
+>> +       pbn_sunix_pci_2s,
+>> +       pbn_sunix_pci_4s,
+>> +       pbn_sunix_pci_8s,
+>> +       pbn_sunix_pci_16s,
+>>  };
+>>
+>>  /*
+>> @@ -3494,6 +3516,31 @@ static struct pciserial_board pci_boards[] = {
+>>                 .base_baud      = 921600,
+>>                 .uart_offset    = 0x8,
+>>         },
+>> +       [pbn_sunix_pci_1s] = {
+>> +               .num_ports      = 1,
+>> +               .base_baud      = 921600,
+>> +               .uart_offset    = 0x8,
+>> +       },
+>> +       [pbn_sunix_pci_2s] = {
+>> +               .num_ports      = 2,
+>> +               .base_baud      = 921600,
+>> +               .uart_offset    = 0x8,
+>> +       },
+>> +       [pbn_sunix_pci_4s] = {
+>> +               .num_ports      = 4,
+>> +               .base_baud      = 921600,
+>> +               .uart_offset    = 0x8,
+>> +       },
+>> +       [pbn_sunix_pci_8s] = {
+>> +               .num_ports      = 8,
+>> +               .base_baud      = 921600,
+>> +               .uart_offset    = 0x8,
+>> +       },
+>> +       [pbn_sunix_pci_16s] = {
+>> +               .num_ports      = 16,
+>> +               .base_baud      = 921600,
+>> +               .uart_offset    = 0x8,
+>> +       },
+>>  };
+>>
+>>  static const struct pci_device_id blacklist[] = {
+>> @@ -4532,17 +4579,29 @@ static const struct pci_device_id  
+>> serial_pci_tbl[] = {
+>>                 pbn_b0_bt_1_921600 },
+>>
+>>         /*
+>> -        * SUNIX (TIMEDIA)
+>> +        * Sunix PCI serial boards
+>>          */
+>>         {       PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+>> -               PCI_VENDOR_ID_SUNIX, PCI_ANY_ID,
+>> -               PCI_CLASS_COMMUNICATION_SERIAL << 8, 0xffff00,
+>> -               pbn_b0_bt_1_921600 },
+>> -
+>> +               PCI_VENDOR_ID_SUNIX, 0x0001, 0, 0,
+>> +               pbn_sunix_pci_1s },
+>>         {       PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+>> -               PCI_VENDOR_ID_SUNIX, PCI_ANY_ID,
+>> -               PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
+>> -               pbn_b0_bt_1_921600 },
+>> +               PCI_VENDOR_ID_SUNIX, 0x0002, 0, 0,
+>> +               pbn_sunix_pci_2s },
+>> +       {       PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+>> +               PCI_VENDOR_ID_SUNIX, 0x0004, 0, 0,
+>> +               pbn_sunix_pci_4s },
+>> +       {       PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+>> +               PCI_VENDOR_ID_SUNIX, 0x0084, 0, 0,
+>> +               pbn_sunix_pci_4s },
+>> +       {       PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+>> +               PCI_VENDOR_ID_SUNIX, 0x0008, 0, 0,
+>> +               pbn_sunix_pci_8s },
+>> +       {       PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+>> +               PCI_VENDOR_ID_SUNIX, 0x0088, 0, 0,
+>> +               pbn_sunix_pci_8s },
+>> +       {       PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+>> +               PCI_VENDOR_ID_SUNIX, 0x0010, 0, 0,
+>> +               pbn_sunix_pci_16s },
+>>
+>>         /*
+>>          * AFAVLAB serial card, from Harald Welte <laforge@gnumonks.org>
+>> diff --git a/drivers/tty/serial/8250/8250_port.c  
+>> b/drivers/tty/serial/8250/8250_port.c
+>> index c1cec808571b..8900112ed232 100644
+>> --- a/drivers/tty/serial/8250/8250_port.c
+>> +++ b/drivers/tty/serial/8250/8250_port.c
+>> @@ -308,6 +308,14 @@ static const struct serial8250_config uart_config[]  
+>> = {
+>>                 .rxtrig_bytes   = {1, 4, 8, 14},
+>>                 .flags          = UART_CAP_FIFO,
+>>         },
+>> +       [PORT_SUNIX] = {
+>> +               .name           = "Sunix",
+>> +               .fifo_size      = 128,
+>> +               .tx_loadsz      = 128,
+>> +               .fcr            = UART_FCR_ENABLE_FIFO |  
+>> UART_FCR_R_TRIG_10,
+>> +               .rxtrig_bytes   = {1, 32, 64, 112},
+>> +               .flags          = UART_CAP_FIFO | UART_CAP_SLEEP,
+>> +       },
+>>  };
+>>
+>>  /* Uart divisor latch read */
+>> diff --git a/include/uapi/linux/serial_core.h  
+>> b/include/uapi/linux/serial_core.h
+>> index 3cc3af1c2ee1..055626ca0a40 100644
+>> --- a/include/uapi/linux/serial_core.h
+>> +++ b/include/uapi/linux/serial_core.h
+>> @@ -290,4 +290,7 @@
+>>  /* SiFive UART */
+>>  #define PORT_SIFIVE_V0 120
+>>
+>> +/* Sunix UART */
+>> +#define PORT_SUNIX     121
+>> +
+>>  #endif /* _UAPILINUX_SERIAL_CORE_H */
+>> --
+>> 2.17.1
+>
+>
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 
 
-On 13/08/19 8:23 AM, Xiaowei Bao wrote:
-> The PCIe controller of layerscape just have 4 BARs, BAR0 and BAR1
-> is 32bit, BAR3 and BAR4 is 64bit, this is determined by hardware,
-
-Do you mean BAR2 instead of BAR3 here?
-
-Thanks
-Kishon
-
-> so set the bar_fixed_64bit with 0x14.
-> 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> ---
-> v2:
->  - Replace value 0x14 with a macro.
-> v3:
->  - No change.
-> v4:
->  - send the patch again with '--to'.
-> 
->  drivers/pci/controller/dwc/pci-layerscape-ep.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> index be61d96..227c33b 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> @@ -44,6 +44,7 @@ static int ls_pcie_establish_link(struct dw_pcie *pci)
->  	.linkup_notifier = false,
->  	.msi_capable = true,
->  	.msix_capable = false,
-> +	.bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
->  };
->  
->  static const struct pci_epc_features*
-> 
