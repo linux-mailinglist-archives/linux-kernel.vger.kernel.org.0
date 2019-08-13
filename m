@@ -2,72 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E90E8C40D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 00:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 997258C416
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 00:08:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfHMWAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 18:00:50 -0400
-Received: from mx1.riseup.net ([198.252.153.129]:33330 "EHLO mx1.riseup.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726155AbfHMWAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 18:00:50 -0400
-Received: from capuchin.riseup.net (capuchin-pn.riseup.net [10.0.1.176])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "*.riseup.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (verified OK))
-        by mx1.riseup.net (Postfix) with ESMTPS id 658A01A0DDB;
-        Tue, 13 Aug 2019 15:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-        t=1565733649; bh=snueQ5ea0m316y6QFWnWrb6K2FiHwMRYrFbwQgo1Rms=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:Reply-To:From;
-        b=jfQM7BGdUk5wGjhgKAngxXLvykzdhjqI+LKCH2qVzvYctcHY7jWTmm/7hbobo7+Y6
-         lNgEqdlqpxj0gf0RpkFV8CNKPxxrS9RLeHHmUpeCuPJ6yPyco8+Dp0hoJxfX8l/NZD
-         HDOHwRyiKbZ4GLXxm95RhwjyhlHwVFOugc50GnqA=
-X-Riseup-User-ID: FB2E98594011E55C4CB89A6E24A970AA2E7F65BED2E8F68C161F2CB88B360DD8
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-         by capuchin.riseup.net (Postfix) with ESMTPSA id C84E812087B;
-        Tue, 13 Aug 2019 15:00:46 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 01:00:41 +0300
-From:   Kernel User <linux-kernel@riseup.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     mhocko@suse.com, x86@kernel.org
-Subject: Re: /sys/devices/system/cpu/vulnerabilities/ doesn't show all known
- CPU vulnerabilities
-Message-ID: <20190814010041.098fe4be@localhost>
-In-Reply-To: <20190813212115.GO16770@zn.tnic>
-References: <20190813232829.3a1962cc@localhost>
-        <20190813212115.GO16770@zn.tnic>
-Reply-To: linux-kernel@vger.kernel.org
+        id S1727151AbfHMWIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 18:08:18 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37170 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbfHMWIS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 18:08:18 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c9so77810206lfh.4;
+        Tue, 13 Aug 2019 15:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JFGwhT3banpa12Fxx8S2CP3E/IXNhK9b8PVywok9QKs=;
+        b=t4wwaGnkEzTCH3aAm+M2T9hNat1FD2i9kGrvuSgfmh8LphQjLAsxzT4ijEZIuJk0Qi
+         f/xKb1Mv8EbJwxMRfmJ4XG0jv1DxbaGRbwE8FeccDUjy4lQqMVFvd/KG6hztxGFG9HWV
+         r1uvRLLQVzISnKiN6cFp76CCYtesxB+oO6RRQWNM9W7U5JB9tIBKNfQhnJc2pwLxdRRk
+         ZLYwBKIhyxQCSNNM3wefSWq5jJPosdxoEi7jwOuSIZZctD5nQAkAdVEs8nxzAIoZRYjt
+         Tpy7JD6s6tm52tJEf4GV0aHGzixCdO0XRjFc/3nbvTpdNkj9nXjNgn0qpZ5txKIXSlcS
+         qPow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JFGwhT3banpa12Fxx8S2CP3E/IXNhK9b8PVywok9QKs=;
+        b=b/dEOMZFDkxNxiOtSLwcyMesUr5iZ/qmmKk22BazvgzXETmIF47otL0Jr46+c6SejN
+         vD4XayL6u5hU08qwd0tFYpp60Z4WKSUA46++2Rj1+XZfeKHYC9BvQA6e2DXHxfQSJ8/Y
+         BvSv3LUcPzWnydZaMXBdYQ6QbAsHidVG+YuRCEheEgKE3N6mO7EuTd92eIDJuv1iZmBM
+         9m6T/GG4M7uXKctG6VgrULbJjfzEhJoolz0GNBzznLWp4Sm/DPjXx505+99MsMRRt6hi
+         cyDk1Ph8b60dLQSobW7/WmPN7EI4oX7jH+MSpJ1+sal56RnCtDqSPFUpUuiMlweSFl9R
+         mHcg==
+X-Gm-Message-State: APjAAAVBomedNIoZPMVjHJfs+LDNq6M68UMcxIMvnoXmSryVQHoKHSMR
+        aQahcM1MuHX7LbuelAdD1eVeJrz2iyUeUuAgwoI=
+X-Google-Smtp-Source: APXvYqzs0CxK5xXugyGLQxoO1rILU6zVMMZR8e35OF07ixB51ImwzgOCuVP9v621dPVZEl1v3zsg98mnUzf1ZYC/RtU=
+X-Received: by 2002:a19:c6d4:: with SMTP id w203mr23887675lff.135.1565734096262;
+ Tue, 13 Aug 2019 15:08:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190810010758.16407-1-alistair.francis@wdc.com>
+ <CAK8P3a2wYMsBRm1X-TFo1d7-B7Xug9gwqF77HitoE7wmOqD7rw@mail.gmail.com>
+ <CAKmqyKNH7G=_gs2Hfc3OZMFaHzUwU8fSomfu_r92hJrnJHJT3A@mail.gmail.com> <CAK8P3a0phB6hb=Da6V=CWWmi_oYwUcpSRi6CZTqAPz7QXKFJTA@mail.gmail.com>
+In-Reply-To: <CAK8P3a0phB6hb=Da6V=CWWmi_oYwUcpSRi6CZTqAPz7QXKFJTA@mail.gmail.com>
+From:   Alistair Francis <alistair23@gmail.com>
+Date:   Tue, 13 Aug 2019 15:04:24 -0700
+Message-ID: <CAKmqyKMxN1_DQOngTeUkh2EOX28trcbgsfOEXCaN2YK9EBdD8g@mail.gmail.com>
+Subject: Re: [PATCH] syscalls: Update the syscall #defines to match uapi
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alistair Francis <alistair.francis@wdc.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Aug 2019 23:21:15 +0200 Borislav Petkov wrote:
+On Tue, Aug 13, 2019 at 12:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Aug 13, 2019 at 9:01 PM Alistair Francis <alistair23@gmail.com> wrote:
+> > On Mon, Aug 12, 2019 at 2:49 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> > > > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> > > > index 2bcef4c70183..e4bf5e480d60 100644
+> > > > --- a/include/linux/syscalls.h
+> > > > +++ b/include/linux/syscalls.h
+> > > > @@ -512,7 +512,7 @@ asmlinkage long sys_readlinkat(int dfd, const char __user *path, char __user *bu
+> > > >  asmlinkage long sys_newfstatat(int dfd, const char __user *filename,
+> > > >                                struct stat __user *statbuf, int flag);
+> > > >  asmlinkage long sys_newfstat(unsigned int fd, struct stat __user *statbuf);
+> > > > -#if defined(__ARCH_WANT_STAT64) || defined(__ARCH_WANT_COMPAT_STAT64)
+> > > > +#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
+> > > >  asmlinkage long sys_fstat64(unsigned long fd, struct stat64 __user *statbuf);
+> > > >  asmlinkage long sys_fstatat64(int dfd, const char __user *filename,
+> > > >                                struct stat64 __user *statbuf, int flag);
+> > >
+> > > I think this is wrong: when __ARCH_WANT_NEW_STAT is set, we are
+> > > on a 64-bit architecture and only want the sys_newfstat{,at} system
+> > > calls, not sys_fstat{,at}64 that gets used on 32-bit machines.
+> >
+> > Ah, that would make sense then. I don't think you will see the error then.
+>
+> So we don't need this patch to build riscv32 kernels, right? It's possible
+> that it was the result of an incorrect forward port of some other patch,
+> as older riscv32 kernels did provide stat64(), but newer ones only have
+> statx().
 
-> You have to consider that some of those are addressed by a single
-mitigation like MDS
+The issue came up when I was just changing some things for testing and
+I thought it was a bug that others might run into. It isn't directly
+related to the riscv32 kernel.
 
-That could be clarified like:
+Alistair
 
-vulnerability1 - mitigation MDS
-vulnerability2 - mitigation MDS
-vulnerability3 - mitigation 3 (another mitigation)
-...
-
-> the mitigation for others like lazy FPU restore is not even present
-> in /sys/devices/system/cpu/vulnerabilities/.
-
-Then it could be a file with content saying "No mitigation".
-
-> Also, depending on the CPU, some are not even affected.
-
-That could say "Not affected" (which AFAIK is the case for some cases).
-
-> So maintaining this in the kernel is unnecessary to say the least.
-
-Knowing that there is no mitigation or that a CPU is not affected is
-quite different from not knowing anything. So I don't see why you
-conclude that knowledge is unnecessary.
+>
+>        Arnd
