@@ -2,76 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1C268C3BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB52B8C3C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfHMVcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 17:32:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbfHMVco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 17:32:44 -0400
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E24320874;
-        Tue, 13 Aug 2019 21:32:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565731963;
-        bh=ocGtIgTgq9tRn05MEA2AseiewpPV58nDV6Bz5EJeVWk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Ryp35nFyB4LnjvwmcCk+mgcBlhlO9BoGGEbJqCuysxgMYE3QrXhMpNU3pFzcephid
-         2eNvhTsz6fl6tXCc9h5oWhr8XJ2JVTIdVMNyhKFCFQNvMRXbeO3LBh7o0ekIv+8Jvk
-         RiHcWeAQT0plw55xtzmZyqe1cwYGYxCeQwnApwjo=
-Received: by mail-qt1-f178.google.com with SMTP id z4so108023057qtc.3;
-        Tue, 13 Aug 2019 14:32:43 -0700 (PDT)
-X-Gm-Message-State: APjAAAX8a7WihbC08SvvG/YBZisgrmqmBVGbcRu4RecmfWD96/PT5jEh
-        qHtxKQwPkFywDxZHSGXBvkq2tYhn7+iy/oDh3w==
-X-Google-Smtp-Source: APXvYqx48HpN2WmRdaQx2jqeMfSS99pR9DuL4bLmyJdzDJvvyzz7a7PeTjZtWFPiQUCpm5ztHYxh1a0HIsggmFI0ZZU=
-X-Received: by 2002:ac8:368a:: with SMTP id a10mr35482240qtc.143.1565731962734;
- Tue, 13 Aug 2019 14:32:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190813124744.32614-1-mripard@kernel.org> <20190813124744.32614-3-mripard@kernel.org>
-In-Reply-To: <20190813124744.32614-3-mripard@kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 13 Aug 2019 15:32:31 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL5v1nd85FuuU1aHDDvojnWqs-4aDZAUDm0iCR0akhF9g@mail.gmail.com>
-Message-ID: <CAL_JsqL5v1nd85FuuU1aHDDvojnWqs-4aDZAUDm0iCR0akhF9g@mail.gmail.com>
-Subject: Re: [PATCH 3/5] dt-bindings: watchdog: sun4i: Add the watchdog interrupts
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
+        id S1727239AbfHMVdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 17:33:02 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41208 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727197AbfHMVdA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 17:33:00 -0400
+Received: by mail-qt1-f194.google.com with SMTP id d17so28997497qtj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 14:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=qCbB+P5oHA9cZT/nz3Y/aGC8nM9/7bB2HylO7P1DLH0=;
+        b=bR3xyAb5DYDi5lyhiOo5mBPz5yoUVJC933X8edJw5MHjQdVxcXXzUDSUvmJcNyOdjo
+         YUGyXFKe4XJZ3RCAhhN6rmlBuf6N7UOCckovrJ6QPsaTrsTEndmO2rtY0BAvttWKiXr8
+         X775u1AfnnXV2oWsGhrphvYMdWIgWHj4VXvHVeLmHN+Dp6ZdDFZ8QRSx9hFiCMTMbqVs
+         WW3G/WB8dCIlt3S10CJRxOxsr8D9/KsZYTGznxZAr6A+fC+TXHKUWYMBSpBbwQihOMQW
+         s/YGmq1LvJ3mTTGkIu9EfqCSubl0Kpgg6Mw/b8kzXW9WS8hBt/XyLYIpj6u/1byZU6Az
+         G/+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=qCbB+P5oHA9cZT/nz3Y/aGC8nM9/7bB2HylO7P1DLH0=;
+        b=GSx572mPuQJHZO0HwIyoUek77GjQj/AU2I80H0xwbcpPq+i7Zi1qqtY5wqLhq4Q8GV
+         lOlU+n7VTabJuyRc0kJRdJv91jThRSw6Q4aIeOaj/2XsO5YAit3EhCOpRa0xOISRbehU
+         +4NOskvf9NrmBorZvbS8bHfjqrgqWlEeisIjbQ8P36tI/PV4Bm3hGMjrYJnW/sZ8a5NA
+         aAkCOu4XHQmCQ4VlgdxsaK9nNwL1x8PG4RaydUo6oUBwbYpEbIIZB+xcR4Lv2W8R81rM
+         MiK9gBlBW6OIt3g3mN/Z7F00m3awDSpVbm5TitIHOFUraehzjSbCq+aTXJRVMUdPa14A
+         c4Zw==
+X-Gm-Message-State: APjAAAVgUxB2wG6pgo8G8HG/YGN7ZAG6Zlhiu/H7+/0e4A/GmXZFKlB1
+        cQ2BaZxMSR1HcyVoam+d5ppj1w==
+X-Google-Smtp-Source: APXvYqzl5VHWHWJkDK+Cj5EMkuSBm4Co/Zg0gkn5tC+QN2hCZnLwbpKQmICGAhd+7CI3BeVXbt5plw==
+X-Received: by 2002:ac8:24b4:: with SMTP id s49mr11675536qts.255.1565731978799;
+        Tue, 13 Aug 2019 14:32:58 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id o18sm5935478qtt.4.2019.08.13.14.32.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Aug 2019 14:32:58 -0700 (PDT)
+Message-ID: <1565731976.8572.16.camel@lca.pw>
+Subject: "PM / wakeup: Show wakeup sources stats in sysfs" causes boot
+ warnings
+From:   Qian Cai <cai@lca.pw>
+To:     Tri Vo <trong@android.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <swboyd@chromium.org>, rafael@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 13 Aug 2019 17:32:56 -0400
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 6:47 AM Maxime Ripard <mripard@kernel.org> wrote:
->
-> From: Maxime Ripard <maxime.ripard@bootlin.com>
->
-> The Allwinner watchdog has an interrupt, either shared or dedicated
-> depending on the SoC, that has been described in some DT, but not all of
-> them.
->
-> The binding is also completely missing that description. Let's add that
-> property to be consistent.
+The linux-next commit "PM / wakeup: Show wakeup sources stats in sysfs" [1]
+introduced some baddies during boot on several x86 servers. Reverted the commit
+fixed the issue.
 
-I'm fine with fixing errors like this in the conversion patch.
+[1] https://lore.kernel.org/lkml/20190807014846.143949-4-trong@android.com/
 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  .../bindings/watchdog/allwinner,sun4i-a10-wdt.yaml           | 5 +++++
->  1 file changed, 5 insertions(+)
+[   39.195053][    T1] serio: i8042 KBD port at 0x60,0x64 irq 1
+[   39.197347][    T1] kobject_add_internal failed for wakeup (error: -2 parent:
+serio0)
+[   39.199845][    T1] INFO: trying to register non-static key.
+[   39.201582][    T1] the code is fine but needs lockdep annotation.
+[   39.203477][    T1] turning off the locking correctness validator.
+[   39.205399][    T1] CPU: 12 PID: 1 Comm: swapper/0 Not tainted 5.3.0-rc4-
+next-20190813 #3
+[   39.207938][    T1] Hardware name: HP ProLiant XL420 Gen9/ProLiant XL420
+Gen9, BIOS U19 12/27/2015
+[   39.210606][    T1] Call Trace:
+[   39.210606][    T1]  dump_stack+0x62/0x9a
+[   39.210606][    T1]  register_lock_class+0x95a/0x960
+[   39.210606][    T1]  ? __platform_driver_probe+0xcd/0x230
+[   39.210606][    T1]  ? __platform_create_bundle+0xc0/0xe0
+[   39.210606][    T1]  ? i8042_init+0x4ec/0x578
+[   39.210606][    T1]  ? do_one_initcall+0xfe/0x45a
+[   39.219571][    T1]  ? kernel_init_freeable+0x614/0x6a7
+[   39.219571][    T1]  ? kernel_init+0x11/0x138
+[   39.219571][    T1]  ? ret_from_fork+0x35/0x40
+[   39.219571][    T1]  ? is_dynamic_key+0xf0/0xf0
+[   39.219571][    T1]  ? rwlock_bug.part.0+0x60/0x60
+[   39.219571][    T1]  ? __debug_check_no_obj_freed+0x8e/0x250
+[   39.219571][    T1]  __lock_acquire.isra.13+0x5f/0x830
+[   39.229491][    T1]  ? __debug_check_no_obj_freed+0x152/0x250
+[   39.229491][    T1]  lock_acquire+0x107/0x220
+[   39.229491][    T1]  ? __pm_relax.part.2+0x21/0xa0
+[   39.229491][    T1]  _raw_spin_lock_irqsave+0x35/0x50
+[   39.229491][    T1]  ? __pm_relax.part.2+0x21/0xa0
+[   39.229491][    T1]  __pm_relax.part.2+0x21/0xa0
+[   39.239588][    T1]  wakeup_source_destroy.part.3+0x18/0x190
+[   39.239588][    T1]  wakeup_source_register+0x43/0x50
+[   39.239588][    T1]  device_wakeup_enable+0x76/0x170
+[   39.239588][    T1]  device_set_wakeup_enable+0x13/0x20
+[   39.239588][    T1]  i80probe+0x921/0xa45
+[   39.339546][    T1]  ? i8042_toggle_aux+0xeb/0xeb
+[   39.349486][    T1]  ? kernfs_create_link+0xce/0x100
+[   39.349486][    T1]  ? sysfs_do_create_link_sd+0x7b/0xe0
+[   39.349486][    T1]  ? acpi_dev_pm_attach+0x31/0xf0
+[   39.349486][    T1]  platform_drv_probe+0x51/0xe0
+[   39.349486][    T1]  really_probe+0x1a2/0x630
+[   39.349486][    T1]  ? device_driver_attach+0xa0/0xa0
+[   39.349486][    T1]  driver_probe_device+0xcd/0x1f0
+[   39.359562][    T1]  ? device_driver_attach+0xa0/0xa0
+[   39.359562][    T1]  device_driver_attach+0x8f/0xa0
+[   39.359562][    T1]  __driver_attach+0xc7/0x1a0
+[   39.359562][    T1]  bus_for_each_dev+0xfe/0x160
+[   39.359562][    T1]  ? subsys_dev_iter_init+0x80/0x80
+[   39.359562][    T1]  ? __kasan_check_read+0x11/0x20
+[   39.359562][    T1]  ? _raw_spin_unlock+0x27/0x40
+[   39.369488][    T1]  driver_attach+0x2b/0x30
+[   39.369488][    T1]  bus_add_driver+0x298/0x350
+[   39.369488][    T1]  driver_register+0xdc/0x1d0
+[   39.369488][    T1]  ? i8042_toggle_aux+0xeb/0xeb
+[   39.369488][    T1]  __platform_driver_probe+0xcd/0x230
+[   39.3  __platform_create_bundle+0xc0/0xe0
+[   39.769489][    T1]  ? i8042_toggle_aux+0xeb/0xeb
+[   39.779556][    T1]  ? i8042_probe+0xa45/0xa45
+[   39.779556][    T1]  i8042_init+0x4ec/0x578
+[   39.779556][    T1]  ? i8042_probe+0xa45/0xa45
+[   39.779556][    T1]  ? netdev_run_todo+0x2f/0x4a0
+[   39.779556][    T1]  ? qdisc_create_dflt+0xf0/0xf0
+[   39.779556][    T1]  ? net_olddevs_init+0x67/0x67
+[   39.779556][    T1]  ? i8042_probe+0xa45/0xa45
+[   39.789486][    T1]  do_one_initcall+0xfe/0x45a
+[   39.789486][    T1]  ? initcall_blacklisted+0x150/0x150
+[   39.789486][    T1]  ? __kasan_check_write+0x14/0x20
+[   39.789486][    T1]  ? up_write+0xee/0x2a0
+[   39.789486][    T1]  kernel_init_freeable+0x614/0x6a7
+[   39.789486][    T1]  ? rest_init+0x188/0x188
+[   39.789486][    T1]  kernel_init+0x11/0x138
+[   39.799563][    T1]  ? rest_init+0x188/0x188
+[   39.799563][    T1]  ret_from_fork+0x35/0x40
+[   39.803412][    T1] serio: i8042 AUX port at 0x60,0x64 irq 12
 
-Either way:
-
-Reviewed-by: Rob Herring <robh@kernel.org>
