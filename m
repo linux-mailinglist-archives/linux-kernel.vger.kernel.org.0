@@ -2,172 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 339638BD63
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 17:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEBB18BD6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 17:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729750AbfHMPkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 11:40:33 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37009 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbfHMPkc (ORCPT
+        id S1730093AbfHMPl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 11:41:27 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42745 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbfHMPl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 11:40:32 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z28so47768131ljn.4;
-        Tue, 13 Aug 2019 08:40:30 -0700 (PDT)
+        Tue, 13 Aug 2019 11:41:26 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j7so29409418ota.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 08:41:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=grRxknooNSCd8hm27khhdzHAI12l4taNDmLzaqAQyQI=;
-        b=kEVhWDoO+B+Ku5M+8OzOpU5xxN+3Sp7BqONI7OL8AmaXZbaEP7hKctLtk7CXodnRBp
-         WRJS+2njmLt5fHpbBhD1G6Vk6KCup177ml2I77ZceGXNjgvVG8ew3t7eWtVgqoB+W7J/
-         rbyhWa11rAJLHfETT9TQvJv2eZymHUipqR4ZoaPjtdDeCDSso+xPqoKxoiSxk5xbxc7T
-         oJvD4sbfxo34ekgH62QI+mhEAh1nkUsGrVgKj7sjz82y/I0SORFP3btgnQO2SRSQqMU+
-         MIAla2B045s/LzcfViAjmZh+vlSkfG381DGKzwnaD/qrDU3UuQHNOBZzH4hhHD41EZbI
-         nyXg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MTdtKCAFd9Jy/7ibMRAuyCjCVrja1NtEGRgDRccZP3s=;
+        b=uw9/eV5N0ZExRUVoCgJf8G+srilhjSZQGDy5IBC5b4v/wcuzr+Uw4cZNlYPOWtRP+l
+         3o5dtvf03dScoKE2SWAEtOoXv0C9YjnC0pVbiJQifIrMpUSH/roSYaqja1BcWza3cNqn
+         tmQ70HlvmL5aGUkwVK4o0q2+NXAi3mdOjN/SjouEdsZmGxcCFsCYBAfdP0Vz0NoXuURd
+         AkEbJUG2f5dTQNDs3ypBfxleNmvcO65GGXpuhvQZ4i3yRffgE/U5TP19aBcLzVtQVxu/
+         oAv467iy4QAb744hHdwVvgVVHO1RAhbxc35afTD2zkqXAXWulAa0c4vJA27HYjBSRElo
+         5e/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=grRxknooNSCd8hm27khhdzHAI12l4taNDmLzaqAQyQI=;
-        b=N2njeLeNeIz/QTYqnU3dKdY4MtQ1eFmAYk+qSjh2modiX88WKo8I4H7yrZWBdv2C2J
-         mRD+fpPi4sYZ8hhKZZnvPtfChl2yKeBoQ9GY7SgMRLI+p+kqmChbi7GYAzweFOiNPW2f
-         F+MaePuyBtcLecVrCrU1bx1RsSeO2qbpVjGOHN5/H8xP+TlNBEEcl6UqFghhUSeY+YRI
-         H0Sj8RBqaOBybobSg5Gtpod92+SszrLQbzJZfH6vLElLHFKq/p9/qSke2ynhUa+ruv/z
-         1vkvCrWsQkjSquez0E+vUaicPNpPTTJVRlMdH1kCKG8wsOUVbdp7kd7VNTK79udP6fHs
-         LPlg==
-X-Gm-Message-State: APjAAAVHwPkCJ2Hj+YNBBc3kyKqq2kNvijzQ3SRYvkRW33OrDVia90G6
-        2SEBSRslZ0QasDHXW1xzCB/6x1kN
-X-Google-Smtp-Source: APXvYqxAFOz1NUVs/mdjkn/UnN+U+n+li/AQArfgSUv1WWxJXV4ZtcwT26+LgyVk/W+37FCM6Cb8xw==
-X-Received: by 2002:a2e:b0c6:: with SMTP id g6mr11530171ljl.60.1565710829780;
-        Tue, 13 Aug 2019 08:40:29 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.34.218])
-        by smtp.googlemail.com with ESMTPSA id i9sm19783873lfl.10.2019.08.13.08.40.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Aug 2019 08:40:28 -0700 (PDT)
-Subject: Re: [PATCH v1 2/2] irqchip/tegra: Clean up coding style
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190811183044.13925-1-digetx@gmail.com>
- <20190811183044.13925-2-digetx@gmail.com> <86a7cdnmpx.wl-maz@kernel.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4fbc5a90-e110-b020-15d3-c4bbe81b15cc@gmail.com>
-Date:   Tue, 13 Aug 2019 18:40:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MTdtKCAFd9Jy/7ibMRAuyCjCVrja1NtEGRgDRccZP3s=;
+        b=NRI/wN3D6jk+e73uVLvtGSrJTYnFWH+Seb21K/E3EdS/uYfh7zqMrLZhtFF3HNVnq8
+         Gngg+ztRgbfgYRgUVHngFDTKmbAzMq6Xw0Z3agWxzkQQKGWxFqRsM0KgptZBU5QNXfbd
+         pNxWhptF7wNRyDFDk60A71ewLU1NshZ+W+mGtTtjVvT+9xcl1j6TlEjp5pas6cC0/7kk
+         O84iHIH6SMamBub0dbOf3DseRsYvtKvHp7FyAb3vUswgoctzJyMt0h4zVQ0Y6Yp1TIxn
+         CJc/Z3BqqSPlt8TdwASOz+yiOv/Sr15/jFugjK7uR59wAg24Z3vh/LOsJYVhhkcgcw4J
+         Vfpg==
+X-Gm-Message-State: APjAAAVh/pAVkuB1hOAvCRgcuJjBKvoWBO160JgGzKJuphn1vWGyXt3X
+        mnnR2ezKfaIgYTqyd/4BK4n81xLq0cVS55utM5BVfqFyBFIgZQ==
+X-Google-Smtp-Source: APXvYqy0Gr24iQpZBx4GGZNCq6qo1HJdpVtqntwwwEkKInWAr7LkPZicBlh5Px02dy2tsSSNvomzY4JkCTDDIxQJ/k8=
+X-Received: by 2002:aca:dd55:: with SMTP id u82mr2003223oig.68.1565710885153;
+ Tue, 13 Aug 2019 08:41:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <86a7cdnmpx.wl-maz@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190807171559.182301-1-joel@joelfernandes.org>
+ <CAG48ez0ysprvRiENhBkLeV9YPTN_MB18rbu2HDa2jsWo5FYR8g@mail.gmail.com> <20190813153020.GC14622@google.com>
+In-Reply-To: <20190813153020.GC14622@google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 13 Aug 2019 17:40:58 +0200
+Message-ID: <CAG48ez1xEt1zyMjwqS4Ysy7Vwtf4M1OOtYiPTdAmOGjViRCDvQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] mm/page_idle: Add per-pid idle page tracking using
+ virtual index
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>,
+        Daniel Colascione <dancol@google.com>, fmayer@google.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        kernel-team <kernel-team@android.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Minchan Kim <minchan@kernel.org>, namhyung@google.com,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-13.08.2019 17:50, Marc Zyngier пишет:
-> On Sun, 11 Aug 2019 19:30:44 +0100,
-> Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> Make coding style to conform to the kernel's standard by fixing checkpatch
->> warnings about "line over 80 characters".
-> 
-> The last time I used a VT100 was about 30 years ago. I still think
-> this was one of the most brilliant piece of equipment DEC ever
-> produced, but I replaced it at the time with a Wyse 50 that had a 132
-> column mode. But even then, I could make my XTerm as wide as I wanted,
-> and things haven't regressed much since.
-> 
-> More seriously, I don't consider the 80 column limit a hard one, and
-> I'm pretty happy with code that spans more that 80 columns if that
-> allows to read an expression without messing with the flow.
+On Tue, Aug 13, 2019 at 5:30 PM Joel Fernandes <joel@joelfernandes.org> wrote:
+> On Mon, Aug 12, 2019 at 08:14:38PM +0200, Jann Horn wrote:
+> [snip]
+> > > +/* Helper to get the start and end frame given a pos and count */
+> > > +static int page_idle_get_frames(loff_t pos, size_t count, struct mm_struct *mm,
+> > > +                               unsigned long *start, unsigned long *end)
+> > > +{
+> > > +       unsigned long max_frame;
+> > > +
+> > > +       /* If an mm is not given, assume we want physical frames */
+> > > +       max_frame = mm ? (mm->task_size >> PAGE_SHIFT) : max_pfn;
+> > > +
+> > > +       if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
+> > > +               return -EINVAL;
+> > > +
+> > > +       *start = pos * BITS_PER_BYTE;
+> > > +       if (*start >= max_frame)
+> > > +               return -ENXIO;
+> > > +
+> > > +       *end = *start + count * BITS_PER_BYTE;
+> > > +       if (*end > max_frame)
+> > > +               *end = max_frame;
+> > > +       return 0;
+> > > +}
+> >
+> > You could add some overflow checks for the multiplications. I haven't
+> > seen any place where it actually matters, but it seems unclean; and in
+> > particular, on a 32-bit architecture where the maximum user address is
+> > very high (like with a 4G:4G split), it looks like this function might
+> > theoretically return with `*start > *end`, which could be confusing to
+> > callers.
+>
+> I could store the multiplication result in unsigned long long (since we are
+> bounds checking with max_frame, start > end would not occur). Something like
+> the following (with extraneous casts). But I'll think some more about the
+> point you are raising.
 
-Usually I have multiple source files opened side-by-side and the view sizes are tuned for 80
-chars, it messes at least my flow when something goes over 80 chars.
+check_mul_overflow() exists and could make that a bit cleaner.
 
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/irqchip/irq-tegra.c | 15 +++++----------
->>  1 file changed, 5 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
->> index 14dcacc2ad38..f829a5990dae 100644
->> --- a/drivers/irqchip/irq-tegra.c
->> +++ b/drivers/irqchip/irq-tegra.c
->> @@ -74,7 +74,7 @@ static struct tegra_ictlr_info *lic;
->>  
->>  static inline void tegra_ictlr_write_mask(struct irq_data *d, unsigned long reg)
->>  {
->> -	void __iomem *base = (void __iomem __force *)d->chip_data;
->> +	void __iomem *base = lic->base[d->hwirq / 32];
-> 
-> (1) This is an undocumented change
 
-In my opinion this is a very trivial change and then the end result is absolutely the same,
-hence nothing to document here. Just read the code, I'd say.
+> > This means that BITMAP_CHUNK_SIZE is UAPI on big-endian systems,
+> > right? My opinion is that it would be slightly nicer to design the
+> > UAPI such that incrementing virtual addresses are mapped to
+> > incrementing offsets in the buffer (iow, either use bytewise access or
+> > use little-endian), but I'm not going to ask you to redesign the UAPI
+> > this late.
+>
+> That would also be slow and consume more memory in userspace buffers.
+> Currently, a 64-bit (8 byte) chunk accounts for 64 pages worth or 256KB.
 
-> (2) Why do you think that moving from a per-interrupt base that is
->     known at setup time to something that has to be recomputed on each
->     and every access is a good thing?
+I still wanted to use one bit per page; I just wanted to rearrange the
+bits. So the first byte would always contain 8 bits corresponding to
+the first 8 pages, instead of corresponding to pages 56-63 on some
+systems depending on endianness. Anyway, this is a moot point, since
+as you said...
 
-I think that there is no practical difference and the new variant is a bit more obvious and
-readable.
+> Also I wanted to keep the interface consistent with the global
+> /sys/kernel/mm/page_idle interface.
 
-> 
->>  	u32 mask;
->>  
->>  	mask = BIT(d->hwirq % 32);
->> @@ -142,7 +142,8 @@ static int tegra_ictlr_suspend(void)
->>  		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
->>  
->>  		/* Enable the wakeup sources of ictlr */
->> -		writel_relaxed(lic->ictlr_wake_mask[i], ictlr + ICTLR_CPU_IER_SET);
->> +		writel_relaxed(lic->ictlr_wake_mask[i],
->> +			       ictlr + ICTLR_CPU_IER_SET);
->>  	}
->>  	local_irq_restore(flags);
->>  
->> @@ -222,7 +223,6 @@ static int tegra_ictlr_domain_alloc(struct irq_domain *domain,
->>  {
->>  	struct irq_fwspec *fwspec = data;
->>  	struct irq_fwspec parent_fwspec;
->> -	struct tegra_ictlr_info *info = domain->host_data;
->>  	irq_hw_number_t hwirq;
->>  	unsigned int i;
->>  
->> @@ -235,13 +235,9 @@ static int tegra_ictlr_domain_alloc(struct irq_domain *domain,
->>  	if (hwirq >= (num_ictlrs * 32))
->>  		return -EINVAL;
->>  
->> -	for (i = 0; i < nr_irqs; i++) {
->> -		int ictlr = (hwirq + i) / 32;
->> -
->> +	for (i = 0; i < nr_irqs; i++)
->>  		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
->> -					      &tegra_ictlr_chip,
->> -					      (void __force *)info->base[ictlr]);
->> -	}
->> +					      &tegra_ictlr_chip, NULL);
->>  
->>  	parent_fwspec = *fwspec;
->>  	parent_fwspec.fwnode = domain->parent->fwnode;
->> @@ -312,7 +308,6 @@ static int __init tegra_ictlr_init(struct device_node *node,
->>  	     "%pOF: Found %u interrupt controllers in DT; expected %u.\n",
->>  	     node, num_ictlrs, soc->num_ictlrs);
->>  
->> -
->>  	domain = irq_domain_add_hierarchy(parent_domain, 0, num_ictlrs * 32,
->>  					  node, &tegra_ictlr_domain_ops,
->>  					  lic);
->> -- 
->> 2.22.0
->>
-> 
-
+Sorry, I missed that this is already UAPI in the global interface. I
+agree, using a different API for the per-process interface would be a
+bad idea.
