@@ -2,110 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD5E8B1AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E5FC8B1BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbfHMH4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 03:56:16 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39567 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbfHMH4M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:56:12 -0400
-Received: by mail-pl1-f196.google.com with SMTP id z3so2129485pln.6
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 00:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=h+Z7GdmKyN86mzegYGQq2TLQN0XZVaQV18q5hjkA4xg=;
-        b=LTXyAVbhb3SEvPydQz1X+raCFPgwJyBB49RiP2qTc5K4/k5PDnJIxld642kBvPFBg1
-         LBdHrKqKA750ez550nxXWAEOW3/BZwkZypcQb5BYSFiqrudwrKBoeXAaxI4JJvoA4P7t
-         LOcq+dNCjRXwOR/qu3dB3FoTUSuwrJDYzCrb1th0qVQ6H2khKgCjZvcbQf3XmGDeGj9o
-         NlQSL/YR8GsAobDyK0ac7wY0t1m6S2gOuyM6AU2hXN4RezkwHV6kZsMG9NMI94DKBTP+
-         01+rf0oe63RSuHYI1MrRRB4x5IIejLCj+F/Q3gNOnvYidRjevwVy7h0JTAGZzwz1C25d
-         RgsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=h+Z7GdmKyN86mzegYGQq2TLQN0XZVaQV18q5hjkA4xg=;
-        b=q9y1EhkZ6R2Tq/f/bkTMu4YzxD21c7owLQaFemBzui1vj3xg2GONRizCCMalc6qg7a
-         qdrvawSBbXcosG8qVhsEgltMsY73gWHpl/bic9nTJ0MQVJ5X2ppI+lG4ANwvwtliEmPH
-         c+Ow6EH7I7yubjmM3tYo2NW3ufyglamUlF6pfMy3YFdIQuMUjWUWePCYFfyf5eyc8BC3
-         X6UNj3mzjCVbxn3C3Fxbps1BNGgXdcNJMIj1TG0q9AZxQXIr+3fyw61ksZog+cDKqCl0
-         b0TURGg7HKP7ydvabo6EAAexRaqdBkl39YusCaNOYFwt1Br9JzKeLsDIobAJa/CkfZiU
-         2+cg==
-X-Gm-Message-State: APjAAAUJuW0mnfjzNvqlj8WPl6H2oTIPJih/IPyK+m14zv8Aqlidp0qo
-        pFv2VdvlBbtCmjhG1M6dMCN2nzdr
-X-Google-Smtp-Source: APXvYqz7Cg27UpGkbl5jF9+BN4LBJMO9LR7W3KFgO7J+PsiMZLznjsVyqKZafCLA8Wn0wRUxKWXtnQ==
-X-Received: by 2002:a17:902:74c4:: with SMTP id f4mr35054352plt.13.1565682971742;
-        Tue, 13 Aug 2019 00:56:11 -0700 (PDT)
-Received: from localhost.localdomain ([122.163.110.75])
-        by smtp.gmail.com with ESMTPSA id y16sm10713834pfc.36.2019.08.13.00.56.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 00:56:11 -0700 (PDT)
-From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
-To:     tony@atomide.com, rogerq@ti.com, linux-kernel@vger.kernel.org
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH v3 2/2] bus: ti-sysc: sysc_check_children(): Change return type to void
-Date:   Tue, 13 Aug 2019 13:25:53 +0530
-Message-Id: <20190813075553.2354-2-nishkadg.linux@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190813075553.2354-1-nishkadg.linux@gmail.com>
-References: <20190813071714.27970-1-nishkadg.linux@gmail.com>
- <20190813075553.2354-1-nishkadg.linux@gmail.com>
+        id S1727855AbfHMH5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 03:57:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36278 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726551AbfHMH5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 03:57:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 34D64AD3A;
+        Tue, 13 Aug 2019 07:57:08 +0000 (UTC)
+Date:   Tue, 13 Aug 2019 09:57:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, osalvador@suse.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/hotplug: prevent memory leak when reuse pgdat
+Message-ID: <20190813075707.GA17933@dhcp22.suse.cz>
+References: <20190813020608.10194-1-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813020608.10194-1-richardw.yang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change return type of function sysc_check_children() from int to void as
-it always returns 0. Remove its return statement as well.
-At call site, remove the variable that was used to store the return
-value, as well as the check on the return value.
+On Tue 13-08-19 10:06:08, Wei Yang wrote:
+> When offline a node in try_offline_node, pgdat is not released. So that
+> pgdat could be reused in hotadd_new_pgdat. While we re-allocate
+> pgdat->per_cpu_nodestats if this pgdat is reused.
+> 
+> This patch prevents the memory leak by just allocate per_cpu_nodestats
+> when it is a new pgdat.
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
----
-- This is a new patch; labelled v3 only because it is in the same series
-  as the previous patch.
+Yes this makes sense! I was slightly confused why we haven't initialized
+the allocated pcp area because __alloc_percpu does GFP_KERNEL without
+__GFP_ZERO but then I've just found out that the zeroying is done
+regardless. A bit unexpected...
 
- drivers/bus/ti-sysc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+> NOTE: This is not tested since I didn't manage to create a case to
+> offline a whole node. If my analysis is not correct, please let me know.
+> 
+> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 9c6d3e121d37..a2eae8f36ef8 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -628,14 +628,12 @@ static void sysc_check_one_child(struct sysc *ddata,
- 	sysc_parse_dts_quirks(ddata, np, true);
- }
- 
--static int sysc_check_children(struct sysc *ddata)
-+static void sysc_check_children(struct sysc *ddata)
- {
- 	struct device_node *child;
- 
- 	for_each_child_of_node(ddata->dev->of_node, child)
- 		sysc_check_one_child(ddata, child);
--
--	return 0;
- }
- 
- /*
-@@ -788,9 +786,7 @@ static int sysc_map_and_check_registers(struct sysc *ddata)
- 	if (error)
- 		return error;
- 
--	error = sysc_check_children(ddata);
--	if (error)
--		return error;
-+	sysc_check_children(ddata);
- 
- 	error = sysc_parse_registers(ddata);
- 	if (error)
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+Thanks!
+
+> ---
+>  mm/memory_hotplug.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index c73f09913165..efaf9e6f580a 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -933,8 +933,11 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
+>  		if (!pgdat)
+>  			return NULL;
+>  
+> +		pgdat->per_cpu_nodestats =
+> +			alloc_percpu(struct per_cpu_nodestat);
+>  		arch_refresh_nodedata(nid, pgdat);
+>  	} else {
+> +		int cpu;
+>  		/*
+>  		 * Reset the nr_zones, order and classzone_idx before reuse.
+>  		 * Note that kswapd will init kswapd_classzone_idx properly
+> @@ -943,6 +946,12 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
+>  		pgdat->nr_zones = 0;
+>  		pgdat->kswapd_order = 0;
+>  		pgdat->kswapd_classzone_idx = 0;
+> +		for_each_online_cpu(cpu) {
+> +			struct per_cpu_nodestat *p;
+> +
+> +			p = per_cpu_ptr(pgdat->per_cpu_nodestats, cpu);
+> +			memset(p, 0, sizeof(*p));
+> +		}
+>  	}
+>  
+>  	/* we can use NODE_DATA(nid) from here */
+> @@ -952,7 +961,6 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
+>  
+>  	/* init node's zones as empty zones, we don't have any present pages.*/
+>  	free_area_init_core_hotplug(nid);
+> -	pgdat->per_cpu_nodestats = alloc_percpu(struct per_cpu_nodestat);
+>  
+>  	/*
+>  	 * The node we allocated has no zone fallback lists. For avoiding
+> -- 
+> 2.17.1
+> 
+
 -- 
-2.19.1
-
+Michal Hocko
+SUSE Labs
