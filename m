@@ -2,91 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E9C8B9FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694C28BA00
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:23:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbfHMNXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 09:23:02 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45851 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729004AbfHMNXB (ORCPT
+        id S1729087AbfHMNXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 09:23:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15026 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728713AbfHMNXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:23:01 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w26so6341057pfq.12
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 06:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5OimHuLZ+hHOhfUejEMlGFM0cbw0bW0viYw6V8eRjvg=;
-        b=jl3oAbI8nXaJN8u9zrckaYcQN83teECbAHKgeFCY7YXAbWo5QSGAmC7AX83Kg81jrR
-         wHIfECyD17DuOQN1q+8WpBA0Y7Azud+nPsri/AfhlU88cVcwXD0i8Lv6x8UFbF/l/ro4
-         jIcYE6GK8r0fh6Du7FtRXatWz0q5hIF91UiKU6t+CQOI0AjDBqmWZgDB+/wH8LmmU1Rn
-         LJ0z2UW5KbZrsxYA0r/Ujs4nyuUB9h4MLLYGZecGHgF4443X9mNo0fvVPaYLZuSOQPKd
-         RRRHtjIdfKwqBDwiOeS9PtHuw1eYRhIgU2u8dFfFYg7ZmCq+FQnO1XAX+mrZJIUHS8H6
-         cSQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5OimHuLZ+hHOhfUejEMlGFM0cbw0bW0viYw6V8eRjvg=;
-        b=hJcVycjgpv/T1124FuZDjcQFZC4aZycmLEJlnqi1NMObW2oEsJJHwUV/8NIeWI6J38
-         kBYYht6ZO1I0NiD1pxQpk5wl8uHOdHVSLBKOlATYWLG6gba4421sW47PsVIRdWHVunah
-         s9V4QbrfCCkfkZpnV1HYycF0U6qEsr3dKSr3+vX5UepBGnmjTQrTJJp3n5B/IqSAfPdr
-         IUUSLyoXcZ/oRYXoaokJgcVYDXRssSW89yYtNLlMb/n66X3skL1PpnKnJebv++LMnQZA
-         w+kvTw9gWfpsPXv4zfdhXmYzslL15mdEfEotinu7FjFdvKHPUjj768meDEXahlPFdKpL
-         SPHQ==
-X-Gm-Message-State: APjAAAXtR2m+eqt/hgMP4HEN0dhWS8niS18TIOr8JXalLnyZVXWUtfhx
-        vKB9bNt0NpEW+FSBZB7WK1KcyqsRLsHGfV99GgdoJA==
-X-Google-Smtp-Source: APXvYqwpT7K5eeL/AsaPFi5DSDv8bbucf1KzbZhnGHmNuw6OMjnJDLCL+9deXz0+3L8EuMYCkEMcejLnCOAp6T2m+zs=
-X-Received: by 2002:a63:c442:: with SMTP id m2mr35234947pgg.286.1565702580714;
- Tue, 13 Aug 2019 06:23:00 -0700 (PDT)
+        Tue, 13 Aug 2019 09:23:34 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7DDMJxx090997;
+        Tue, 13 Aug 2019 09:23:28 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ubwduhwjw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Aug 2019 09:23:28 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7DDMJct091083;
+        Tue, 13 Aug 2019 09:23:28 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ubwduhwj6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Aug 2019 09:23:28 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7DDJoUI000337;
+        Tue, 13 Aug 2019 13:23:27 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma02dal.us.ibm.com with ESMTP id 2u9nj63ctf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Aug 2019 13:23:27 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7DDNMnd40305086
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Aug 2019 13:23:23 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8077136072;
+        Tue, 13 Aug 2019 13:23:22 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0BA6B13607D;
+        Tue, 13 Aug 2019 13:23:20 +0000 (GMT)
+Received: from [9.85.180.3] (unknown [9.85.180.3])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 13 Aug 2019 13:23:20 +0000 (GMT)
+Subject: Re: [PATCH] s390: vfio-ap: remove unnecessary calls to disable queue
+ interrupts
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@linux.ibm.com, borntraeger@de.ibm.com,
+        frankja@linux.ibm.com, david@redhat.com, mjrosato@linux.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        pmorel@linux.ibm.com, pasic@linux.ibm.com,
+        alex.williamson@redhat.com, kwankhede@nvidia.com
+References: <1565642829-20157-1-git-send-email-akrowiak@linux.ibm.com>
+ <20190813132957.7fafad2d.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Message-ID: <0d5b92ea-a16b-c38c-da15-0de150b28adf@linux.ibm.com>
+Date:   Tue, 13 Aug 2019 09:23:20 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CAAeHK+zPDgvDr_Bao9dz_7hGEg+Ud6-tj7pZaihKeYHJ8M386Q@mail.gmail.com>
- <00000000000054f8bd058ddfa341@google.com>
-In-Reply-To: <00000000000054f8bd058ddfa341@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 13 Aug 2019 15:22:49 +0200
-Message-ID: <CAAeHK+xZRH9-ue0QyEdiWmbFJF6P3RXMud+tE6t3x6Orcxnbkg@mail.gmail.com>
-Subject: Re: KASAN: global-out-of-bounds Read in dvb_pll_attach
-To:     syzbot <syzbot+8a8f48672560c8ca59dd@syzkaller.appspotmail.com>,
-        bnvandana@gmail.com
-Cc:     allison@lohutok.net, hverkuil-cisco@xs4all.nl,
-        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
-        USB list <linux-usb@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        rfontana@redhat.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tskd08@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190813132957.7fafad2d.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908130143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 2:29 PM syzbot
-<syzbot+8a8f48672560c8ca59dd@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot has tested the proposed patch and the reproducer did not trigger
-> crash:
->
-> Reported-and-tested-by:
-> syzbot+8a8f48672560c8ca59dd@syzkaller.appspotmail.com
->
-> Tested on:
->
-> commit:         6a3599ce usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d90745bdf884fc0a
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=1454f4d0600000
->
-> Note: testing is done by a robot and is best-effort only.
+On 8/13/19 7:29 AM, Cornelia Huck wrote:
+> On Mon, 12 Aug 2019 16:47:09 -0400
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> 
+>> When an AP queue is reset (zeroized), interrupts are disabled. The queue
+>> reset function currently tries to disable interrupts unnecessarily. This patch
+>> removes the unnecessary calls to disable interrupts after queue reset.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> ---
+>>   drivers/s390/crypto/vfio_ap_ops.c | 13 +++++++++----
+>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>> index 0604b49a4d32..407c2f0f25f9 100644
+>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -1114,18 +1114,19 @@ static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
+>>   	return NOTIFY_OK;
+>>   }
+>>   
+>> -static void vfio_ap_irq_disable_apqn(int apqn)
+>> +static struct vfio_ap_queue *vfio_ap_find_qdev(int apqn)
+>>   {
+>>   	struct device *dev;
+>> -	struct vfio_ap_queue *q;
+>> +	struct vfio_ap_queue *q = NULL;
+>>   
+>>   	dev = driver_find_device(&matrix_dev->vfio_ap_drv->driver, NULL,
+>>   				 &apqn, match_apqn);
+>>   	if (dev) {
+>>   		q = dev_get_drvdata(dev);
+>> -		vfio_ap_irq_disable(q);
+>>   		put_device(dev);
+>>   	}
+>> +
+>> +	return q;
+>>   }
+>>   
+>>   int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
+>> @@ -1164,6 +1165,7 @@ static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
+>>   	int rc = 0;
+>>   	unsigned long apid, apqi;
+>>   	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>> +	struct vfio_ap_queue *q;
+>>   
+>>   	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm,
+>>   			     matrix_mdev->matrix.apm_max + 1) {
+>> @@ -1177,7 +1179,10 @@ static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
+>>   			 */
+>>   			if (ret)
+>>   				rc = ret;
+>> -			vfio_ap_irq_disable_apqn(AP_MKQID(apid, apqi));
+> 
+> Might be useful to stick a comment in this function that resetting the
+> queue has also disabled the interrupts, as the architecture
+> documentation for that is not publicly available.
 
-Hi bnvandana,
+Will do.
 
-Could you submit this patch? Syzbot testing shows that is fixes the issue.
+> 
+>> +
+>> +			q = vfio_ap_find_qdev(AP_MKQID(apid, apqi));
+>> +			if (q)
+>> +				vfio_ap_free_aqic_resources(q);
+>>   		}
+>>   	}
+>>   
+> 
+> Trusting your reading of the architecture,
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> 
 
-Thanks!
