@@ -2,84 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE4A8B8E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA0228B8EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:44:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbfHMMnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:43:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38764 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726903AbfHMMno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:43:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 22B2CACD8;
-        Tue, 13 Aug 2019 12:43:43 +0000 (UTC)
-Message-ID: <1565700220.7043.8.camel@suse.com>
-Subject: Re: KMSAN: uninit-value in smsc75xx_bind
-From:   Oliver Neukum <oneukum@suse.com>
-To:     syzbot <syzbot+6966546b78d050bb0b5d@syzkaller.appspotmail.com>,
-        davem@davemloft.net, glider@google.com,
-        syzkaller-bugs@googlegroups.com, steve.glendinning@shawell.net,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org
-Date:   Tue, 13 Aug 2019 14:43:40 +0200
-In-Reply-To: <0000000000009f4316058fab3bd7@google.com>
-References: <0000000000009f4316058fab3bd7@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728729AbfHMMof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 08:44:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728290AbfHMMof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 08:44:35 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 350A720578;
+        Tue, 13 Aug 2019 12:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565700274;
+        bh=4lux6yzclVlNzDLsmndEIT6hVCOxBFLTgWTeazzHxYM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XP2ar++xOgoTzbdf3R0qY7+PRC7JV/s1rpD5lsEk2BH7d8XouLHwH1qwwkysDnxTp
+         BCdvvqDfNMCxqqvVkA7kRt1FMSuFaaeCvQmI0E8RHZJTcbPrhFgRZD6SAnE1Xb0qWx
+         tHxPXYbnoM/KJ5ZCx0APTUWSC/Z5ckgIjnIrYXUc=
+Date:   Tue, 13 Aug 2019 14:44:32 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Matthias Maennich <maennich@google.com>
+Cc:     linux-kernel@vger.kernel.org, maco@android.com,
+        kernel-team@android.com, arnd@arndb.de, geert@linux-m68k.org,
+        hpa@zytor.com, jeyu@kernel.org, joel@joelfernandes.org,
+        kstewart@linuxfoundation.org, linux-arch@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-usb@vger.kernel.org, lucas.de.marchi@gmail.com,
+        maco@google.com, michal.lkml@markovi.net, mingo@redhat.com,
+        oneukum@suse.com, pombredanne@nexb.com, sam@ravnborg.org,
+        sboyd@codeaurora.org, sspatil@google.com,
+        stern@rowland.harvard.edu, tglx@linutronix.de,
+        usb-storage@lists.one-eyed-alien.net, x86@kernel.org,
+        yamada.masahiro@socionext.com, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        cocci@systeme.lip6.fr
+Subject: Re: [PATCH v2 08/10] scripts: Coccinelle script for namespace
+ dependencies.
+Message-ID: <20190813124432.GA12475@kroah.com>
+References: <20180716122125.175792-1-maco@android.com>
+ <20190813121733.52480-1-maennich@google.com>
+ <20190813121733.52480-9-maennich@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813121733.52480-9-maennich@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 09.08.2019, 01:48 -0700 schrieb syzbot:
-> Hello,
+On Tue, Aug 13, 2019 at 01:17:05PM +0100, Matthias Maennich wrote:
+> A script that uses the '<module>.ns_deps' file generated by modpost to
+> automatically add the required symbol namespace dependencies to each
+> module.
 > 
-> syzbot found the following crash on:
+> Usage:
+> 1) Move some symbols to a namespace with EXPORT_SYMBOL_NS() or define
+>    DEFAULT_SYMBOL_NAMESPACE
+> 2) Run 'make' (or 'make modules') and get warnings about modules not
+>    importing that namespace.
+> 3) Run 'make nsdeps' to automatically add required import statements
+>    to said modules.
 > 
-> HEAD commit:    beaab8a3 fix KASAN build
-> git tree:       kmsan
-
-[..]
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
->   kmsan_report+0x162/0x2d0 mm/kmsan/kmsan_report.c:109
->   __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:294
->   smsc75xx_wait_ready drivers/net/usb/smsc75xx.c:976 [inline]
->   smsc75xx_bind+0x541/0x12d0 drivers/net/usb/smsc75xx.c:1483
-
+> This makes it easer for subsystem maintainers to introduce and maintain
+> symbol namespaces into their codebase.
 > 
-> Local variable description: ----buf.i93@smsc75xx_bind
-> Variable was created at:
->   __smsc75xx_read_reg drivers/net/usb/smsc75xx.c:83 [inline]
->   smsc75xx_wait_ready drivers/net/usb/smsc75xx.c:969 [inline]
->   smsc75xx_bind+0x44c/0x12d0 drivers/net/usb/smsc75xx.c:1483
->   usbnet_probe+0x10d3/0x3950 drivers/net/usb/usbnet.c:1722
+> Co-developed-by: Martijn Coenen <maco@android.com>
+> Signed-off-by: Martijn Coenen <maco@android.com>
+> Signed-off-by: Matthias Maennich <maennich@google.com>
+> ---
 
-Hi,
+I really can't express just how cool this patch is.  I was amazed when I
+first saw it in action a long time ago, and still am.
 
-this looks like a false positive to me.
-The offending code is likely this:
-
-        if (size) {
-                buf = kmalloc(size, GFP_KERNEL);
-                if (!buf)
-                        goto out;
-        }
-
-        err = usb_control_msg(dev->udev, usb_rcvctrlpipe(dev->udev, 0),
-                              cmd, reqtype, value, index, buf, size,
-                              USB_CTRL_GET_TIMEOUT);
-
-which uses 'buf' uninitialized. But it is used for input.
-What is happening here?
-
-	Regards
-		Oliver
-
-
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
