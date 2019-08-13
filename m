@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE908BD95
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 17:48:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 447488BD9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 17:48:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbfHMPsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 11:48:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45466 "EHLO
+        id S1730242AbfHMPsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 11:48:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45742 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730220AbfHMPsS (ORCPT
+        with ESMTP id S1730220AbfHMPsV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 11:48:18 -0400
+        Tue, 13 Aug 2019 11:48:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=4ocWky3c08iK0yepv2gQs0SBg5KjT+xunPaTv4oC5uw=; b=VzqSeg024MPgT38ebHjaoRdYHZ
-        tc+XO/PgSP0m1eeNOHyyRt+aW32TudL7AnzaNCR3jlgmcoJJBkOwQcsrT7FyGwLrpos1sF48krYs+
-        M46ifnf7ML9MP4r8Ni2XjI5bcbz7v2X/m+kvfAy5OxtT7VTUxrNGYpchwYjr5cM7jEcfVQd8GTEMv
-        ziBSaDjz0bP6qz2E4Hw0/oX6IQ+ieH5XhRaAAIDa3t1aDeoAHXu3agnTbZpnx+ZL4KVcBEspvW5Iq
-        OEbj7+AvXXfkVsDZPG4Sa26y+QbtSTu+aTJRxS9uz92u8T/dE0vDHjoeBypOHbWdYDu9+ZWG6vnZb
-        wVjRS3hQ==;
+        bh=bYwo6s1TNuLWxh58ivSNB10DHzRaGAerqpg52+GdtOI=; b=MGTe2BnACmDFReW2kk7/EXTTs2
+        xc0WfLFviefoFUs4zx9BpXn39tZjAsahRzZL6zLIyhCN7+wFPP888OlrZJQV+rcM6w3QQmEAzLpxz
+        c7mNAtmxir5utJEBtpZShiVeJrxQKj7ZEUOl5tBjjn+VmOnYs1edE/G7SjyNpnxIdBBUMT7RAWHsn
+        tFzEia29CEV4iMFoy0fi1JE3R48ng3/3Doq+gMG05/4PQaIT2oMhtBQYIwpjnnfS4OInYxmJSGjfd
+        NeiI2AQTTCcTQJtPOhCd6sMEDiXDU0lV+XmdFg888ngQR3i9XEiolEwCZuRjRN09gaD8zxTAEuKx8
+        mUbWlTRA==;
 Received: from [2001:4bb8:180:1ec3:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hxZ20-0005AQ-PT; Tue, 13 Aug 2019 15:48:17 +0000
+        id 1hxZ23-0005Dh-BD; Tue, 13 Aug 2019 15:48:19 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>
 Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/15] riscv: poison SBI calls for M-mode
-Date:   Tue, 13 Aug 2019 17:47:42 +0200
-Message-Id: <20190813154747.24256-11-hch@lst.de>
+Subject: [PATCH 11/15] riscv: don't allow selecting SBI-based drivers for M-mode
+Date:   Tue, 13 Aug 2019 17:47:43 +0200
+Message-Id: <20190813154747.24256-12-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190813154747.24256-1-hch@lst.de>
 References: <20190813154747.24256-1-hch@lst.de>
@@ -46,33 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no SBI when we run in M-mode, so fail the compile for any code
-trying to use SBI calls.
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
+Do not allow selecting SBI related options with MMU option not set.
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/include/asm/sbi.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/tty/hvc/Kconfig    | 2 +-
+ drivers/tty/serial/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index 21134b3ef404..1e17f07eadaf 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -8,6 +8,7 @@
+diff --git a/drivers/tty/hvc/Kconfig b/drivers/tty/hvc/Kconfig
+index 4d22b911111f..5a1ab6b536ff 100644
+--- a/drivers/tty/hvc/Kconfig
++++ b/drivers/tty/hvc/Kconfig
+@@ -89,7 +89,7 @@ config HVC_DCC
  
- #include <linux/types.h>
+ config HVC_RISCV_SBI
+ 	bool "RISC-V SBI console support"
+-	depends on RISCV
++	depends on RISCV && !M_MODE
+ 	select HVC_DRIVER
+ 	help
+ 	  This enables support for console output via RISC-V SBI calls, which
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 3083dbae35f7..b2d07e150203 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -88,7 +88,7 @@ config SERIAL_EARLYCON_ARM_SEMIHOST
  
-+#ifndef CONFIG_M_MODE
- #define SBI_SET_TIMER 0
- #define SBI_CONSOLE_PUTCHAR 1
- #define SBI_CONSOLE_GETCHAR 2
-@@ -94,4 +95,5 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
- 	SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
- }
- 
--#endif
-+#endif /* CONFIG_M_MODE */
-+#endif /* _ASM_RISCV_SBI_H */
+ config SERIAL_EARLYCON_RISCV_SBI
+ 	bool "Early console using RISC-V SBI"
+-	depends on RISCV
++	depends on RISCV && !M_MODE
+ 	select SERIAL_CORE
+ 	select SERIAL_CORE_CONSOLE
+ 	select SERIAL_EARLYCON
 -- 
 2.20.1
 
