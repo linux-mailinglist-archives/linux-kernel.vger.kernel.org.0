@@ -2,99 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8208C452
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 00:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29F948C467
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 00:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfHMWgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 18:36:52 -0400
-Received: from mail-pf1-f178.google.com ([209.85.210.178]:44731 "EHLO
-        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfHMWgw (ORCPT
+        id S1727422AbfHMWmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 18:42:23 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:40528 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfHMWmW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 18:36:52 -0400
-Received: by mail-pf1-f178.google.com with SMTP id c81so3399571pfc.11;
-        Tue, 13 Aug 2019 15:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=mJjg+agyQMMusNhpHfXdEcabVsvoypkfvaemt2NLQGo=;
-        b=Jrl2rgKgWlJkS1vJk1OKALCLNOonNZJAxKeI7jdn7W98mdiqekpWrA0+CnqN5MYMb5
-         4D8Hza7sYoH1Idnp5AOdNC2Q1D5nU6Zn6nKG0sPbDvgsF3VN0YIb2fFD7eDOeo8fY867
-         Wz3hkxO6OEoMX0yZk1hkas9zqBYJUrHL/ohCEQvcucWxcCHIQs824sPJRl4i2jxFYxmF
-         Ypi7KJwhR2JkLFTlaySF4VEiS/wLvO98ppIiPHcJWIrhKUPV1m0TDnjzPUMiMtzPtLNH
-         MojPvZbUSchxQ40Fabr4+HfMhusGXL33bTvzkEnN8eUV93ilAKweREBcoNdhbuUksaG0
-         aNZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mJjg+agyQMMusNhpHfXdEcabVsvoypkfvaemt2NLQGo=;
-        b=ckjqPjUHUMj57MzbfoxAacL1bcZsUkMaYjftAe2OlOZlqo0oiXXW+5/H3V8ieN0Mbu
-         PtIyzjp48ulFVUdoVIopNUIxkc7ynQigPaJ2DLFISJtre+fuPKZljCdCbLXLyw7A51am
-         B/2kAjy/C3/FyOJ0J2fG24vPjcj8wtmXYsznX9xpu4sjayP+VxNqzbTcVgaQ4w12hq1z
-         eq1EJkWlFoxA3R3Dahd/GcY3UdndNWrxoA31Q9X6A2SgnYNFKrSE3TIUK/mERmVbu+O+
-         ivJqpWa7L7aRRiC1tJpe9foelUcmFFYabNBVezhkSqtgRPuZ8sj6ML7H/zaHONP5j1Ql
-         ilzg==
-X-Gm-Message-State: APjAAAVLndN9X8qGOZ6K05YFv6OMGdIHw967uJzn53TVoodhuiq/PNWu
-        sdH/OOJ7UCFrsAS1uzPXxhzqlRv8
-X-Google-Smtp-Source: APXvYqzJTQ/17lMvJG2ROjPMrO073k+f6FbvHqChuE9J9oEWUWFCstj/Q+SWMtGdrJnovHv7T3r1Jw==
-X-Received: by 2002:a63:e10:: with SMTP id d16mr36605007pgl.444.1565735811417;
-        Tue, 13 Aug 2019 15:36:51 -0700 (PDT)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id 16sm48393441pfc.66.2019.08.13.15.36.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 15:36:50 -0700 (PDT)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
-To:     linux-media@vger.kernel.org
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] media: docs-rst: Clarify duration of LP-11 mode
-Date:   Tue, 13 Aug 2019 15:36:44 -0700
-Message-Id: <20190813223645.13720-1-steve_longerbeam@mentor.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 13 Aug 2019 18:42:22 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1029)
+        id CD4FE20B7187; Tue, 13 Aug 2019 11:49:40 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CD4FE20B7187
+Received: from localhost (localhost [127.0.0.1])
+        by linux.microsoft.com (Postfix) with ESMTP id 039FE3005457;
+        Tue, 13 Aug 2019 11:49:40 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 11:49:39 -0700 (PDT)
+From:   Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+X-X-Sender: jaskarankhurana@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
+To:     Mike Snitzer <snitzer@redhat.com>
+cc:     gmazyland@gmail.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, scottsh@microsoft.com,
+        ebiggers@google.com, jmorris@namei.org, dm-devel@redhat.com,
+        mpatocka@redhat.com, agk@redhat.com
+Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig
+ validation.
+In-Reply-To: <20190625182004.GA32075@redhat.com>
+Message-ID: <alpine.LRH.2.21.1908131147390.95186@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com> <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com> <20190625182004.GA32075@redhat.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
 
-Add a sentence that makes it more clear when the CSI-2 transmitter
-must, if possible, exit LP-11 mode. That is, maintain LP-11 mode
-until stream on, at which point the transmitter activates the clock
-lane and transition to HS mode.
+Hello Mike,
+On Tue, 25 Jun 2019, Mike Snitzer wrote:
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
----
-Changes in v2:
-- change wording "Only until stream on ..." to "Only at stream on ..."
----
- Documentation/media/kapi/csi2.rst | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> On Wed, Jun 19 2019 at  3:10pm -0400,
+> Jaskaran Khurana <jaskarankhurana@linux.microsoft.com> wrote:
+>
+>> The verification is to support cases where the roothash is not secured by
+>> Trusted Boot, UEFI Secureboot or similar technologies.
+>> One of the use cases for this is for dm-verity volumes mounted after boot,
+>> the root hash provided during the creation of the dm-verity volume has to
+>> be secure and thus in-kernel validation implemented here will be used
+>> before we trust the root hash and allow the block device to be created.
+>>
+>> The signature being provided for verification must verify the root hash and
+>> must be trusted by the builtin keyring for verification to succeed.
+>>
+>> The hash is added as a key of type "user" and the description is passed to
+>> the kernel so it can look it up and use it for verification.
+>>
+>> Kernel commandline parameter will indicate whether to check (only if
+>> specified) or force (for all dm verity volumes) roothash signature
+>> verification.
+>>
+>> Kernel commandline: dm_verity.verify_sig=1 or 2 for check/force root hash
+>> signature validation respectively.
+>>
+>> Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+>
+> Milan and/or others: could you please provide review and if you're OK
+> with this patch respond accordingly?
+>
 
-diff --git a/Documentation/media/kapi/csi2.rst b/Documentation/media/kapi/csi2.rst
-index a7e75e2eba85..f87c413cd433 100644
---- a/Documentation/media/kapi/csi2.rst
-+++ b/Documentation/media/kapi/csi2.rst
-@@ -49,9 +49,13 @@ where
- 
- The transmitter drivers must, if possible, configure the CSI-2
- transmitter to *LP-11 mode* whenever the transmitter is powered on but
--not active. Some transmitters do this automatically but some have to
--be explicitly programmed to do so, and some are unable to do so
--altogether due to hardware constraints.
-+not active, and maintain *LP-11 mode* until stream on. Only at stream
-+on should the transmitter activate the clock on the clock lane and
-+transition to *HS mode*.
-+
-+Some transmitters do this automatically but some have to be explicitly
-+programmed to do so, and some are unable to do so altogether due to
-+hardware constraints.
- 
- Stopping the transmitter
- ^^^^^^^^^^^^^^^^^^^^^^^^
--- 
-2.17.1
+The v7 of this patch was Reviewed and Tested by Milan Broz. Could you tell 
+me when this will be merged/next steps, if required I can post the patches 
+again.
 
+> Thanks,
+> Mike
+>
+Regards,
+Jaskaran
