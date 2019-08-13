@@ -2,301 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C76A8B237
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67A578B23C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbfHMIV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:21:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727029AbfHMIVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 04:21:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D780A2063F;
-        Tue, 13 Aug 2019 08:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565684514;
-        bh=9Awm6tVnBeBOk3gkiRRTt+sYYPfHbq98Oz0l4SNxvKU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fl8IGEyYwdVaVkq22pRkWfNEsRJaHHQ8SsZMEqF5XZcUQiqHW0XLrXtUJe5OAdjUu
-         E1p+ZDq4eVuV/1r7guQM0d3tWlTx34yTnoc5NnW3QHBGPexHWwz8f5lVm+ZgpbvLVk
-         0qoQqUDxbJX7dYm3ixFCfNeemaJ56tSCVrAY7920=
-Date:   Tue, 13 Aug 2019 10:21:52 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Knut Omang <knut.omang@oracle.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Shreyans Devendra Doshi <0xinfosect0r@gmail.com>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Hidenori Yamaji <hidenori.yamaji@sony.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Timothy Bird <Tim.Bird@sony.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Daniel Vetter <daniel@ffwll.ch>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC 06/19] ktf: A simple debugfs interface to test results
-Message-ID: <20190813082152.GA17627@kroah.com>
-References: <cover.92d76bb4f6dcedc971d0b72a49e8e459a98bca54.1565676440.git-series.knut.omang@oracle.com>
- <ae6c38384e2338aa3cfb8a4e4dd1002833789253.1565676440.git-series.knut.omang@oracle.com>
+        id S1728030AbfHMIWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:22:17 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44001 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbfHMIWR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 04:22:17 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 8EC188053B; Tue, 13 Aug 2019 10:22:01 +0200 (CEST)
+Date:   Tue, 13 Aug 2019 10:22:13 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Pawel Laszczak <pawell@cadence.com>
+Cc:     Roger Quadros <rogerq@ti.com>, Pavel Machek <pavel@denx.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>
+Subject: Re: [PATCH v10 0/6] Introduced new Cadence USBSS DRD Driver.
+Message-ID: <20190813082213.GA9298@amd>
+References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
+ <20190721190335.GA19831@xo-6d-61-c0.localdomain>
+ <BYAPR07MB470904ACCD1ED91B10BB6BEFDDC40@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <20190722114839.GA10515@kroah.com>
+ <20190722115644.GA12069@amd>
+ <20190722210021.GA25235@amd>
+ <BYAPR07MB470966850323EE3003B3097ADDC70@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <93b4a702-227b-0410-a414-76873088ad72@ti.com>
+ <BYAPR07MB47095895491CFD211EE9E051DDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
 Content-Disposition: inline
-In-Reply-To: <ae6c38384e2338aa3cfb8a4e4dd1002833789253.1565676440.git-series.knut.omang@oracle.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <BYAPR07MB47095895491CFD211EE9E051DDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 08:09:21AM +0200, Knut Omang wrote:
-> From: Alan Maguire <alan.maguire@oracle.com>
-> 
-> While test results is available via netlink from user space, sometimes
-> it may be useful to be able to access the results from the kernel as well,
-> for instance due to a crash. Make that possible via debugfs.
-> 
-> ktf_debugfs.h:   Support for creating a debugfs representation of test
-> 
-> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-> Signed-off-by: Knut Omang <knut.omang@oracle.com>
-> ---
->  tools/testing/selftests/ktf/kernel/ktf_debugfs.c | 356 ++++++++++++++++-
->  tools/testing/selftests/ktf/kernel/ktf_debugfs.h |  34 ++-
->  2 files changed, 390 insertions(+)
->  create mode 100644 tools/testing/selftests/ktf/kernel/ktf_debugfs.c
->  create mode 100644 tools/testing/selftests/ktf/kernel/ktf_debugfs.h
-> 
-> diff --git a/tools/testing/selftests/ktf/kernel/ktf_debugfs.c b/tools/testing/selftests/ktf/kernel/ktf_debugfs.c
-> new file mode 100644
-> index 0000000..a20fbd2
-> --- /dev/null
-> +++ b/tools/testing/selftests/ktf/kernel/ktf_debugfs.c
-> @@ -0,0 +1,356 @@
-> +/*
-> + * Copyright (c) 2009, 2017, Oracle and/or its affiliates. All rights reserved.
-> + *    Author: Alan Maguire <alan.maguire@oracle.com>
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
 
-Has to be the first line of the file, did you run this through
-checkpatch?
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +static int ktf_run_test_open(struct inode *inode, struct file *file)
-> +{
-> +	struct ktf_test *t;
-> +
-> +	if (!try_module_get(THIS_MODULE))
-> +		return -EIO;
+Hi!
 
-This is an anti-pattern, and one guaranteed to not work properly.  NEVER
-do this.
+> I think that I understand your concerns. My idea was not to expand the su=
+pported=20
+> dr_mode. Rather I wanted to have possibility to limit this (only for test=
+ing).=20
+>=20
+> Eg.=20
+> If  cdns->dr_mode =3D USB_DR_MODE_OTG
+> then we can limit mode to HOST or DEVICE or DRD
+> if cdns->dr_mode =3D=3D USB_DR_MODE_HOST ||=20
+>    cdns->dr_mode =3D=3D USB_DR_MODE_PERIPHERAL)=20
+> then driver can't change anything
+>=20
+> It allows me for testing some functionality using only single board=20
+> and even with lacking right cable for proper otg detection.=20
 
-> +
-> +	t = (struct ktf_test *)inode->i_private;
-> +
-> +	return single_open(file, ktf_debugfs_run, t);
-> +}
-> +
-> +static int ktf_debugfs_release(struct inode *inode, struct file *file)
-> +{
-> +	module_put(THIS_MODULE);
+Yes, and it looks like people need this functionality in production,
+too, so it should be in sysfs (and not debugfs).
 
-Same here, not ok.
+If it means sysfs interface need to be extended to cover all the
+cases, so be it.
 
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-> +	return single_release(inode, file);
-> +}
-> +
-> +static const struct file_operations ktf_run_test_fops = {
-> +	.open = ktf_run_test_open,
-> +	.read = seq_read,
-> +	.llseek = seq_lseek,
-> +	.release = ktf_debugfs_release,
-> +};
-> +
-> +static int ktf_results_test_open(struct inode *inode, struct file *file)
-> +{
-> +	struct ktf_test *t;
-> +
-> +	if (!try_module_get(THIS_MODULE))
-> +		return -EIO;
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Nope!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-And why -EIO?  That is not an io issue.
+iEYEARECAAYFAl1SczUACgkQMOfwapXb+vJaHwCgj0Z1ZJUsMMMCPML7HzUkrMP+
+AAIAnRi/ojI3Y/dmV1HgjQJmSt62O69r
+=hZ0K
+-----END PGP SIGNATURE-----
 
-> +void ktf_debugfs_create_test(struct ktf_test *t)
-> +{
-> +	struct ktf_case *testset = ktf_case_find(t->tclass);
-> +
-> +	if (!testset)
-> +		return;
-> +
-> +	memset(&t->debugfs, 0, sizeof(t->debugfs));
-> +
-> +	t->debugfs.debugfs_results_test =
-> +		debugfs_create_file(t->name, S_IFREG | 0444,
-> +				    testset->debugfs.debugfs_results_test,
-> +				 t, &ktf_results_test_fops);
-> +
-> +	if (t->debugfs.debugfs_results_test) {
-
-How can that variable ever be NULL (hint, it can not.)
-
-> +		t->debugfs.debugfs_run_test =
-> +			debugfs_create_file(t->name, S_IFREG | 0444,
-> +					    testset->debugfs.debugfs_run_test,
-> +				 t, &ktf_run_test_fops);
-> +		if (!t->debugfs.debugfs_run_test) {
-> +			_ktf_debugfs_destroy_test(t);
-> +		} else {
-> +			/* Take reference for test for debugfs */
-> +			ktf_test_get(t);
-> +		}
-> +	}
-
-Never test the result of any debugfs call, you do not need to.  Just
-call it and move on, your code flow should NEVER be different with, or
-without, a successful debugfs call.
-
-
-> +static int ktf_run_testset_open(struct inode *inode, struct file *file)
-> +{
-> +	struct ktf_case *testset;
-> +
-> +	if (!try_module_get(THIS_MODULE))
-> +		return -EIO;
-
-Again no.  I hate to know what code you copied this all from, as that
-code is very wrong.  Do you have a pointer to that code anywhere so we
-can fix that up?
-
-> +
-> +	testset = (struct ktf_case *)inode->i_private;
-> +
-> +	return single_open(file, ktf_debugfs_run_all, testset);
-> +}
-> +
-> +static const struct file_operations ktf_run_testset_fops = {
-> +	.open = ktf_run_testset_open,
-> +	.read = seq_read,
-> +	.llseek = seq_lseek,
-> +	.release = ktf_debugfs_release,
-
-If you really care about module references you should be setting the
-owner of the module here.
-
-> +};
-> +
-> +static void _ktf_debugfs_destroy_testset(struct ktf_case *testset)
-> +{
-> +	debugfs_remove(testset->debugfs.debugfs_run_testset);
-> +	debugfs_remove(testset->debugfs.debugfs_run_test);
-> +	debugfs_remove(testset->debugfs.debugfs_results_testset);
-> +	debugfs_remove(testset->debugfs.debugfs_results_test);
-
-Why not just recursivly remove the directory?  That way you do not have
-to keep track of any individual files.
-
-
-> +}
-> +
-> +void ktf_debugfs_create_testset(struct ktf_case *testset)
-> +{
-> +	char tests_subdir[KTF_DEBUGFS_NAMESZ];
-> +	const char *name = ktf_case_name(testset);
-> +
-> +	memset(&testset->debugfs, 0, sizeof(testset->debugfs));
-> +
-> +	/* First add /sys/kernel/debug/ktf/[results|run]/<testset> */
-> +	testset->debugfs.debugfs_results_testset =
-> +		debugfs_create_file(name, S_IFREG | 0444,
-> +				    ktf_debugfs_resultsdir,
-> +				 testset, &ktf_results_testset_fops);
-> +	if (!testset->debugfs.debugfs_results_testset)
-> +		goto err;
-
-Again, can never happen, and again, do not do different things depending
-on the result of a debugfs call.
-
-> +
-> +	testset->debugfs.debugfs_run_testset =
-> +		debugfs_create_file(name, S_IFREG | 0444,
-> +				    ktf_debugfs_rundir,
-> +				    testset, &ktf_run_testset_fops);
-> +	if (!testset->debugfs.debugfs_run_testset)
-> +		goto err;
-
-Again, nope.
-
-> +
-> +	/* Now add parent directories for individual test result/run tests
-> +	 * which live in
-> +	 * /sys/kernel/debug/ktf/[results|run]/<testset>-tests/<testname>
-> +	 */
-> +	(void)snprintf(tests_subdir, sizeof(tests_subdir), "%s%s",
-> +			name, KTF_DEBUGFS_TESTS_SUFFIX);
-
-why (void)?
-
-
-> +
-> +	testset->debugfs.debugfs_results_test =
-> +		debugfs_create_dir(tests_subdir, ktf_debugfs_resultsdir);
-> +	if (!testset->debugfs.debugfs_results_test)
-> +		goto err;
-
-nope :)
-
-> +
-> +	testset->debugfs.debugfs_run_test =
-> +		debugfs_create_dir(tests_subdir, ktf_debugfs_rundir);
-> +	if (!testset->debugfs.debugfs_run_test)
-> +		goto err;
-
-Nope :)
-
-> +
-> +	/* Take reference count for testset.  One will do as we will always
-> +	 * free testset debugfs resources together.
-> +	 */
-> +	ktf_case_get(testset);
-> +	return;
-> +err:
-> +	_ktf_debugfs_destroy_testset(testset);
-> +}
-> +
-> +void ktf_debugfs_destroy_testset(struct ktf_case *testset)
-> +{
-> +	tlog(T_DEBUG, "Destroying debugfs testset %s", ktf_case_name(testset));
-> +	_ktf_debugfs_destroy_testset(testset);
-> +	/* Remove our debugfs reference cout to testset */
-> +	ktf_case_put(testset);
-> +}
-> +
-> +/* /sys/kernel/debug/ktf/coverage shows coverage statistics. */
-> +static int ktf_debugfs_cov(struct seq_file *seq, void *v)
-> +{
-> +	ktf_cov_seq_print(seq);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ktf_cov_open(struct inode *inode, struct file *file)
-> +{
-> +	if (!try_module_get(THIS_MODULE))
-> +		return -EIO;
-
-{sigh}  I'll stop reviewing now :)
-
-thanks,
-
-greg k-h
+--pf9I7BMVVzbSWLtt--
