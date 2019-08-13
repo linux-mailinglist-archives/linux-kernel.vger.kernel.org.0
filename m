@@ -2,85 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B9368B333
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 11:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 529638B33C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 11:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbfHMJCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 05:02:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728298AbfHMJCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 05:02:06 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2143C20840;
-        Tue, 13 Aug 2019 09:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565686925;
-        bh=lIZNtL4gojHH4sWQIqOF9yVEEqhU5Vt9LRIRR6QoW30=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BVOzItnDYzw85kp2QrS+hvwSTcjym4DShBh8/HxiG9vSmIA2QCl4JkxiF8DU+WJ9C
-         LdTc3VjyV5FgYQoLNEOJ2CYCX+PK387d5j+FX1YyfRmCE8MWU/OSIo8O/q4RzXngsS
-         4xRq9r4M/VuD9hPc9kgdUtjhAaoRg6ueM4NT/dgY=
-Date:   Tue, 13 Aug 2019 10:02:01 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: "arm64/for-next/core" causes boot panic
-Message-ID: <20190813090200.h2rz4xphgnb5j5bc@willie-the-truck>
-References: <1565646695.8572.6.camel@lca.pw>
+        id S1727594AbfHMJC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 05:02:28 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42157 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfHMJC0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 05:02:26 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s19so13555466lfb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 02:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zbadPFLbmftsI8N+IuNnBjaQB4827jD6fnEJgLKNTZs=;
+        b=hLZf25bqcvbX25xNuMZbR5PzvxV6GImnoNKHQjbf8sETv7Ar9mx/GVJVNlFBiUoI+x
+         OaBu+PCv1W1Alu6XSNHoHrNCp537Atpgj+R9HmRLZFXqzKsJ80D0kddeGkeb1Dqn7Kh4
+         2qCin8I2SdptK0jFV8ULLCBJ5lOvpY0rk8B58UyCaS71IqEbPmstIIGYsGLKFiUdRVeg
+         4x0pTMXVaKNeZJQeADuHIPNtlLphOYlT0XTQncnLpdJrQPPcNRRt+vf/l9AFxpkaF5yX
+         xnhwZBqi6uccNYt04vgFRAZzxWAC+/fwgCCIT+XdyRKjlzxTa9KCw0iUesn6i5pyFpVa
+         Nq0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zbadPFLbmftsI8N+IuNnBjaQB4827jD6fnEJgLKNTZs=;
+        b=TrIdJSoXycizfAhkQjk9ZKBuEd1iQwn80xYX69e6RTlb8vZ4KSj2/clKHF8MiYxWii
+         US1JTbv48aW5SkzuDN00sFv0rUtnN1SgQONsq/z67xZ/2Hd0l6P+i89NCwk/ukPLONo2
+         8TeR7jWf/mATQBXuB9JTvV4ntzwZGX0XrobTLnpGH4rAMpNef5uJZOj+LY8I04laicM3
+         3Uwlt8kEoCuIYkMjMD5dofqh9aQwjocvoeSxsCu8okKKcRoBqR8eoRZNLgUAqNYwrIT6
+         rdXgLXVw984mnWAr+L1s+78rguV9eYq6zyQcbhL8HvBptURp7bdhg5Nx9cS08sykGyts
+         +RZw==
+X-Gm-Message-State: APjAAAXeFu5QcTbRkK2GR8yI/xr2aVx+Jhb6uSOebqKFvLymRzhHojro
+        g/vFjY98HBuu5dDe/mYjq/E=
+X-Google-Smtp-Source: APXvYqy8fBTXU8joNbGcSdpzVSvcOsS+2SxvVrN6+XsBFW7jGeYY3vigBmz3AZfzQPtQkVS+Jua7Zg==
+X-Received: by 2002:ac2:4948:: with SMTP id o8mr1126632lfi.13.1565686944834;
+        Tue, 13 Aug 2019 02:02:24 -0700 (PDT)
+Received: from pc636 ([37.212.214.187])
+        by smtp.gmail.com with ESMTPSA id o3sm19538418lfb.40.2019.08.13.02.02.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Aug 2019 02:02:24 -0700 (PDT)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Tue, 13 Aug 2019 11:02:14 +0200
+To:     Michel Lespinasse <walken@google.com>
+Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Roman Gushchin <guro@fb.com>, Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 2/2] mm/vmalloc: use generated callback to populate
+ subtree_max_size
+Message-ID: <20190813090214.xy6tgvar6kiartkb@pc636>
+References: <20190811184613.20463-1-urezki@gmail.com>
+ <20190811184613.20463-3-urezki@gmail.com>
+ <CANN689Hh-Pr-3r9HD7w=FcNGfj_E7-9HVsHu3J9gZts_DYug8A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1565646695.8572.6.camel@lca.pw>
+In-Reply-To: <CANN689Hh-Pr-3r9HD7w=FcNGfj_E7-9HVsHu3J9gZts_DYug8A@mail.gmail.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Qian,
-
-Thanks for the report.
-
-On Mon, Aug 12, 2019 at 05:51:35PM -0400, Qian Cai wrote:
-> Booting today's linux-next on an arm64 server triggers a panic with
-> CONFIG_KASAN_SW_TAGS=y pointing to this line,
-
-Is this the only change on top of defconfig? If not, please can you share
-your full .config?
-
-> kfree()->virt_to_head_page()->compound_head()
+On Sun, Aug 11, 2019 at 05:39:23PM -0700, Michel Lespinasse wrote:
+> On Sun, Aug 11, 2019 at 11:46 AM Uladzislau Rezki (Sony)
+> <urezki@gmail.com> wrote:
+> > RB_DECLARE_CALLBACKS_MAX defines its own callback to update the
+> > augmented subtree information after a node is modified. It makes
+> > sense to use it instead of our own propagate implementation.
+> >
+> > Apart of that, in case of using generated callback we can eliminate
+> > compute_subtree_max_size() function and get rid of duplication.
+> >
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 > 
-> unsigned long head = READ_ONCE(page->compound_head);
+> Reviewed-by: Michel Lespinasse <walken@google.com>
 > 
-> The bisect so far indicates one of those could be bad,
+> Love it. Thanks a lot for the cleanup!
+Thank you for review!
 
-I guess that means the issue is reproducible on the arm64 for-next/core
-branch. Once I have your .config, I'll give it a go.
-
-> [    0.000000][    T0] Unable to handle kernel paging request at virtual address
-> 0030ffe001e01588
-> [    0.000000][    T0] Mem abort info:
-> [    0.000000][    T0]   ESR = 0x96000004
-> [    0.000000][    T0]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    0.000000][    T0]   SET = 0, FnV = 0
-> [    0.000000][    T0]   EA = 0, S1PTW = 0
-> [    0.000000][    T0] Data abort info:
-> [    0.000000][    T0]   ISV = 0, ISS = 0x00000004
-> [    0.000000][    T0]   CM = 0, WnR = 0
-> [    0.000000][    T0] [0030ffe001e01588] address between user and kernel
-> address ranges
-
-Hmm, nice address...
-
-I suppose we're looking at the interaction of 52-bit VA, untagged pointers
-and KASAN using sw tags. Lovely.
-
-Thanks, and please keep us updated on the bisection.
-
-Will
+--
+Vlad Rezki
