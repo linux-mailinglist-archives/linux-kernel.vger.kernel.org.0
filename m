@@ -2,95 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 732478AD2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 05:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E688AD36
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 05:42:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfHMDkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 23:40:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47134 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbfHMDkE (ORCPT
+        id S1726927AbfHMDmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 23:42:38 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:39389 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfHMDmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 23:40:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MeYDkUsLDE3HJKNLmJURvhZjxxlPNj8tQNSu9T9NQrI=; b=piRoiynOO/vnH67Q8hGEt6NTH
-        CurQbOM0OiL/kEpT3Iubz1ie8OIA6InO4taHmxSep4Fsz2ElZQcdwRLGGV3COvyZHpp3GHXULPHQ1
-        MgYyNrX8srPbkUAJ1ItoIrungP5j+2UcMzQ6gNfIVPonHw0fc+cNRyeD7qZQzKWbKlAkr7nhdp+/9
-        oE682wegj+bhNxc0u3fIq1Y2Qyy0vCJmyzpXRq72EQMGxCMWN2RPJRaP104hxiLGO5s6ebh+M0W0L
-        LwYooE5BMSqLXHTeVXL+GhCs8JwZFTW7Qksq/G01tpIRUG3iEiifP5Vf5eGAqUwNhwD9bb9zvTTY+
-        KtF/8Rq6A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hxNfC-0006Zg-RK; Tue, 13 Aug 2019 03:39:58 +0000
-Date:   Mon, 12 Aug 2019 20:39:58 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     akpm@linux-foundation.org, mgorman@techsingularity.net,
-        vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/mmap.c: rb_parent is not necessary in __vma_link_list
-Message-ID: <20190813033958.GB5307@bombadil.infradead.org>
-References: <20190813032656.16625-1-richardw.yang@linux.intel.com>
+        Mon, 12 Aug 2019 23:42:37 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x7D3gYlt011959, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x7D3gYlt011959
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 13 Aug 2019 11:42:34 +0800
+Received: from fc30.localdomain (172.21.177.138) by RTITCASV01.realtek.com.tw
+ (172.21.6.18) with Microsoft SMTP Server id 14.3.468.0; Tue, 13 Aug 2019
+ 11:42:33 +0800
+From:   Hayes Wang <hayeswang@realtek.com>
+To:     <netdev@vger.kernel.org>
+CC:     <nic_swsd@realtek.com>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, Hayes Wang <hayeswang@realtek.com>
+Subject: [PATCH net-next v2 0/5] r8152: RX improve
+Date:   Tue, 13 Aug 2019 11:42:04 +0800
+Message-ID: <1394712342-15778-295-albertk@realtek.com>
+X-Mailer: Microsoft Office Outlook 11
+In-Reply-To: <1394712342-15778-289-Taiwan-albertk@realtek.com>
+References: <1394712342-15778-289-Taiwan-albertk@realtek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190813032656.16625-1-richardw.yang@linux.intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [172.21.177.138]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 11:26:56AM +0800, Wei Yang wrote:
-> Now we use rb_parent to get next, while this is not necessary.
-> 
-> When prev is NULL, this means vma should be the first element in the
-> list. Then next should be current first one (mm->mmap), no matter
-> whether we have parent or not.
-> 
-> After removing it, the code shows the beauty of symmetry.
+v2:
+For patch #2, replace list_for_each_safe with list_for_each_entry_safe.
+Remove unlikely in WARN_ON. Adjust the coding style.
 
-Uhh ... did you test this?
+For patch #4, replace list_for_each_safe with list_for_each_entry_safe.
+Remove "else" after "continue".
 
-> @@ -273,12 +273,8 @@ void __vma_link_list(struct mm_struct *mm, struct vm_area_struct *vma,
->  		next = prev->vm_next;
->  		prev->vm_next = vma;
->  	} else {
-> +		next = mm->mmap;
->  		mm->mmap = vma;
-> -		if (rb_parent)
-> -			next = rb_entry(rb_parent,
-> -					struct vm_area_struct, vm_rb);
-> -		else
-> -			next = NULL;
->  	}
+For patch #5. replace sysfs with ethtool to modify rx_copybreak and
+rx_pending.
 
-The full context is:
+v1:
+The different chips use different rx buffer size.
 
-        if (prev) {
-                next = prev->vm_next;
-                prev->vm_next = vma;
-        } else {
-                mm->mmap = vma;
-                if (rb_parent)
-                        next = rb_entry(rb_parent,
-                                        struct vm_area_struct, vm_rb);
-                else
-                        next = NULL;
-        }
+Use skb_add_rx_frag() to reduce memory copy for RX.
 
-Let's imagine we have a small tree with three ranges in it.
+Hayes Wang (5):
+  r8152: separate the rx buffer size
+  r8152: replace array with linking list for rx information
+  r8152: use alloc_pages for rx buffer
+  r8152: support skb_add_rx_frag
+  r8152: change rx_copybreak and rx_pending through ethtool
 
-A: 5-7
-B: 8-10
-C: 11-13
+ drivers/net/usb/r8152.c | 374 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 304 insertions(+), 70 deletions(-)
 
-I would imagine an rbtree for this case has B at the top with A
-to its left and B to its right.
+-- 
+2.21.0
 
-Now we're going to add range D at 3-4.  'next' should clearly be range A.
-It will have NULL prev.  Your code is going to make 'B' next, not A.
-Right?
