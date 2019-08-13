@@ -2,79 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E43D68B319
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66CF58B30E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbfHMIzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:55:25 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:56112 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727377AbfHMIyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 04:54:53 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 02E431A0765;
-        Tue, 13 Aug 2019 10:54:52 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EAC7D1A02F4;
-        Tue, 13 Aug 2019 10:54:51 +0200 (CEST)
-Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 98D7F2060E;
-        Tue, 13 Aug 2019 10:54:51 +0200 (CEST)
-From:   Ioana Ciornei <ioana.ciornei@nxp.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     joe@perches.com, andrew@lunn.ch, ruxandra.radulescu@nxp.com,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v2 04/10] staging: fsl-dpaa2/ethsw: remove debug message
-Date:   Tue, 13 Aug 2019 11:54:33 +0300
-Message-Id: <1565686479-32577-5-git-send-email-ioana.ciornei@nxp.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1565686479-32577-1-git-send-email-ioana.ciornei@nxp.com>
-References: <1565686479-32577-1-git-send-email-ioana.ciornei@nxp.com>
-Reply-to: ioana.ciornei@nxp.com
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727769AbfHMIyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:54:47 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36461 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbfHMIyr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 04:54:47 -0400
+Received: by mail-lj1-f194.google.com with SMTP id u15so5854312ljl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 01:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D/NjDHCBpNI3hTJvACxzfGuX2r0xk5dG/sv+AEvcJ7A=;
+        b=gkZXLCWkhjhC/5Lmktp4rggT4C6E0LPBwrZKBVvaXiVXxRFx9HFppSXsslq67fs5WB
+         XNx8VxnNJrc2WJwNoMJdm4UpFqhLVQhnQHSqkGmnOncQR/AD9PK7acOBJG5R/L1j7EQ7
+         BbkfyN9ETUiohOpnhbk1DvSENYmp50pUggggJiYMHMLYKWODQf+I7yzSkLTREFXGR9K0
+         nsjOatCJdmvzRktGC0T6PQvVrTEf+Ri3VFMQdtmO/vABf4oXFqwpAeHvPh4CS+tq2lJb
+         +tqVGk1pqEEERIZ7dGBprSh7bLSlostsK/7SVS44/ME6AtuP4w0o5BpMqcj++UVe+l04
+         6h+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D/NjDHCBpNI3hTJvACxzfGuX2r0xk5dG/sv+AEvcJ7A=;
+        b=JgbxXuu/WEIZ1MwUn55F+HawN65xZ7RMb0mgmIAlBFSNMx/ezV06Lv73DxX47uUQnC
+         BjiCuKX6+rCfoo5+j9br55N02QQIafeo74CZga/xtyLhDkuC3hmdVy+SkaoTkjZH6Vxh
+         7wM8/3vcuB1aS6IPDQLXSOLK40HkJxltJQybEvkuPZQFifUjfIPLqgnMgrk99+WYQPFS
+         6sZ32Y70/XGph2sXbyBGx9cRy3AQU/jsLUSO8fj3lFO/9Kxe8sBoJ79RiLa0jlS3TPXk
+         F7mK4hHyRdQfY2WEXT4Yy3z1zG6DHK8pms2n8Bg5MwaMiqnsusvmHzmZdaVJYem34ccZ
+         WOww==
+X-Gm-Message-State: APjAAAUqCz7j209xD0RM2RcVFBZIdaYkhCiGAvD7pUdVOYXLhF+z2zTE
+        nsFVcNqSGUWsoy1uTMWDNd/XeiRiGESc6tlqUclgA+a3vds=
+X-Google-Smtp-Source: APXvYqzNUJF+d1XDwgYxjEbgL9UQ/nw8H1K68K4k/nmhFRTUbn/REEdAzOZ0fxRXpAWLugosAYWf9uwKnRePvW4bqkI=
+X-Received: by 2002:a2e:810b:: with SMTP id d11mr2047486ljg.62.1565686485396;
+ Tue, 13 Aug 2019 01:54:45 -0700 (PDT)
+MIME-Version: 1.0
+References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com> <20190813061547.17847-1-efremov@linux.com>
+In-Reply-To: <20190813061547.17847-1-efremov@linux.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 13 Aug 2019 10:54:33 +0200
+Message-ID: <CACRpkdaAE6RA1iQ-iqK3GGHOovTkuDDqi8vcoFnmG8UBwuim8w@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Remove FMC subsystem
+To:     Denis Efremov <efremov@linux.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Federico Vaga <federico.vaga@cern.ch>,
+        Pat Riehecky <riehecky@fnal.gov>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since ethtool will be loud enough if the .set_link_ksettings() callback
-fails, remove the debug messages which do not add additional
-information.
+On Tue, Aug 13, 2019 at 8:15 AM Denis Efremov <efremov@linux.com> wrote:
 
-Reported-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
----
-Changes in v2:
- - added Reported-by tag
+> Cleanup MAINTAINERS from FMC record since the subsystem was removed.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Federico Vaga <federico.vaga@cern.ch>
+> Cc: Pat Riehecky <riehecky@fnal.gov>
+> Fixes: 6a80b30086b8 ("fmc: Delete the FMC subsystem")
+> Signed-off-by: Denis Efremov <efremov@linux.com>
 
- drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c | 7 -------
- 1 file changed, 7 deletions(-)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
-index 95e9f1096999..12e33a3a1bf1 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
-@@ -91,8 +91,6 @@ static void ethsw_get_drvinfo(struct net_device *netdev,
- 	struct dpsw_link_cfg cfg = {0};
- 	int err = 0;
- 
--	netdev_dbg(netdev, "Setting link parameters...");
--
- 	/* Due to a temporary MC limitation, the DPSW port must be down
- 	 * in order to be able to change link settings. Taking steps to let
- 	 * the user know that.
-@@ -116,11 +114,6 @@ static void ethsw_get_drvinfo(struct net_device *netdev,
- 				   port_priv->ethsw_data->dpsw_handle,
- 				   port_priv->idx,
- 				   &cfg);
--	if (err)
--		/* ethtool will be loud enough if we return an error; no point
--		 * in putting our own error message on the console by default
--		 */
--		netdev_dbg(netdev, "ERROR %d setting link cfg", err);
- 
- 	return err;
- }
--- 
-1.9.1
+Do you need help to merge the patch? I can take it in the
+GPIO tree since the subsystem was removed there.
 
+Yours,
+Linus Walleij
