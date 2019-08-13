@@ -2,71 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD7318B1C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EEE18B1D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 09:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfHMH5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 03:57:38 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:45641 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbfHMH5h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 03:57:37 -0400
-Received: by mail-qk1-f195.google.com with SMTP id m2so5128643qki.12;
-        Tue, 13 Aug 2019 00:57:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ajCXkLrc00rBA8ZUOVEgUaqN7M+DNR8LSQCK9+5f2+g=;
-        b=hR+W5SmZI7SOo4BGVPvIZJQxosWsVYirJtPWKqtwYUG4h951MUobU8A1IHUGe5qzao
-         TtBr/p8Vxy/lFiVmXGpiO5WBm9R51Xr5vthjncjDN/KKXlFmWgnFqZ65m0OAyiXtfElZ
-         S01PGGYrZpuQGqKrLZjUqz0Cuaezj6p/oemrkWZ/CFVWL9LDRx4WCoEiJAbOsMgdThK5
-         pTJksOW3/Wr0V/4IgjzceOz+3Ja3Uu7gbOzZsQc7cww6PUuOZb+yxyfGnQM/hj2ZCEsr
-         dG6uBKfeTPfR1sdzFe7Laj17gw9ztsrmbJDJQVTdqEy0Yco6QuRQiN8WV/xkJgzI5kZ3
-         BgnA==
-X-Gm-Message-State: APjAAAUJKhd+IZvDnXoyjnHErtGyZP31WaDrwgE5/ua5ZdHOnT0QZRoU
-        /f64Z+ixBn77xHjrSk3J4cN8pPVZl2sSLyG2qvo=
-X-Google-Smtp-Source: APXvYqyIdILv2tk5XVUYMgnMBZrQuAyYo/zEfj71JpNLscoa1cfLXGZuogSNmLMW/R63aVun8nd4KC2DKl1/nuu3cXA=
-X-Received: by 2002:a37:76c5:: with SMTP id r188mr32664415qkc.394.1565683056420;
- Tue, 13 Aug 2019 00:57:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190812215052.71840-1-ndesaulniers@google.com> <20190812215052.71840-13-ndesaulniers@google.com>
-In-Reply-To: <20190812215052.71840-13-ndesaulniers@google.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 13 Aug 2019 09:57:20 +0200
-Message-ID: <CAK8P3a2fSKT7AJXwfKQOJ5N3=NtwMOCw_5tuD+oOsmh2g-Kokw@mail.gmail.com>
-Subject: Re: [PATCH 13/16] include/asm-generic: prefer __section from compiler_attributes.h
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, sedat.dilek@gmail.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Yonghong Song <yhs@fb.com>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
+        id S1728041AbfHMH56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 03:57:58 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:58531 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727232AbfHMH55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 03:57:57 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4674nt6YRbz9sNm;
+        Tue, 13 Aug 2019 17:57:54 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565683075;
+        bh=yDggRPhc2GSkJIFl1/H+L4pY1wqdl7Q3/g0mgM7BCN8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=GtRHyITLNkWDBznY3EVnN8w6l8seMv/kXr3mTsM00/im9x6U1ikD7AjUMaN6I9aiu
+         6UhTmJknBIw4FBPEWQwxxgJNYFkt8EWGDamNAynpsz6rVrn17PRj1ZeqYNdpSz4qtK
+         j5iEHeh8KDfOcjytEV+lCD3UU08Ayyppq6QwGlo9j5H0Q22lFeZDIqbrKKMfZZuAT2
+         FTzVCTEpWUBrVbILbGrePYAcKxnoyPE2FdAHpjc2pLy83b/YN+L2yIekJGv6vkPaeJ
+         8A2LOLAHn/yLQajevIoL8PgKQdchqmYEheiHIWkDEv3kOstLbVRn5H3sKarSeHW6x/
+         0/SpcvmN+mLkQ==
+Date:   Tue, 13 Aug 2019 17:57:32 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: linux-next: build failure after merge of the rcu tree
+Message-ID: <20190813175732.2c97d412@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/PMBweslkJGQ1tTeaDx.LUR/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 11:52 PM 'Nick Desaulniers' via Clang Built
-Linux <clang-built-linux@googlegroups.com> wrote:
->
-> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+--Sig_/PMBweslkJGQ1tTeaDx.LUR/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The patch looks fine, but it looks like you forgot to add a description.
+Hi all,
 
-       Arnd
+After merging the rcu tree, today's linux-next build (powerpc allnoconfig)
+failed like this:
+
+drivers/base/core.c: In function 'device_links_read_lock_held':
+drivers/base/core.c:106:9: error: implicit declaration of function 'lock_is=
+_held'; did you mean 'lockref_get'? [-Werror=3Dimplicit-function-declaratio=
+n]
+  return lock_is_held(&device_links_lock);
+         ^~~~~~~~~~~~
+         lockref_get
+
+Caused by commit
+
+  4a3a5474b4c1 ("driver/core: Convert to use built-in RCU list checking")
+
+lock_is_held() us only available if CONFIG_LOCKDEP is set.
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/PMBweslkJGQ1tTeaDx.LUR/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1SbWwACgkQAVBC80lX
+0Gw6Xwf/YS2mW2kJX45IJzGSD4sICLGkWoPxzKloHd8v7tcc/hhuwDZEB4iCzoM8
+FVu+veUZoHOh17Hi7eNDqHKfClKF8OjTDvSSbw4xdWOWZNB3Asz5iiyMMhdOsFz5
+hKFTvA89oS+4cWk2WSK3PsFgak5oRxSsrI7aRIvFoM9PuYt3uoFO/6tLP7qpPXbG
+0K18yWhmwQvRbUgORAREBKixxx8sckxS3YfAH2d1iiPLV3fKI6gReukVY1CLHEsk
+HWBustLBQIAoyrPhRyYl7LO52B2DUxzh+8yQqAG8zbYgjSo+3P3K9eo5h2UKWU0J
+q4NYBb5VsAPs5zPyZv9ht3A3e5BoCw==
+=JoNt
+-----END PGP SIGNATURE-----
+
+--Sig_/PMBweslkJGQ1tTeaDx.LUR/--
