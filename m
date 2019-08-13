@@ -2,81 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EEAE8B02B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:53:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EC68B032
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:54:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfHMGx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 02:53:27 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45593 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfHMGx1 (ORCPT
+        id S1727144AbfHMGye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 02:54:34 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36390 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbfHMGye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 02:53:27 -0400
-Received: by mail-ot1-f66.google.com with SMTP id m24so15626751otp.12;
-        Mon, 12 Aug 2019 23:53:26 -0700 (PDT)
+        Tue, 13 Aug 2019 02:54:34 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r3so12962143wrt.3;
+        Mon, 12 Aug 2019 23:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HmxWmdZQp2h3Mf8R3shm0zEHrmQAZMBjreMOHj/d7CE=;
+        b=vBQlbgXq5tVGz+djZUyAcs3vXxa5uTILuPadfGsIj0rhPqciYisx+jWAI9vvQOOp6W
+         aRNnSv4N/xEoeNJFj4/OTCc70xdq5k+DlkAdH1GPvhUvPs9NqaqNFkdLun9IFFdeDTPI
+         Art5aI1FM/5aCRnL8N7IJ1z3pahFR7Ne4lnSUHbeUxhvJNW64K/TfCKhYXK4a8UXumoD
+         4GeT6FMZsuDgqvN7WK1BlOZJr2KYXJmuxMkIe3b559PL3gSfpeLCEN19H805KY3scMqh
+         yvtcrMjhH5rFXupU1ng9AzOO/CLz4oNK7Mie4j/hPU6EGJOAVN0S4xhao+PNO90nGdQH
+         Y+vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vz3G11PqHYeCzc37P34uoD1vhwXZtRmIg5ogdMOlp8Y=;
-        b=kXY0qAyCMENcVwrKoVuaKTUJKKY8OtPQHZVn9R6067vh4M/lpSfXMAwt3PNmAmHFb4
-         Mb3BgEs+z254KdpqPaGjPPrNVpb+B+pkc8trU4pERCDoEg2clZR8N7iMDO+YXOhkfnpS
-         ShWWmkH3382PzTBcpWPXFCK8PUxLQxsMd6u5T2h7bvzpHnEXHCemiqQ5xASKkJV+wIPw
-         Harkj4FagGLS4Y8jZCQQCxi2K7HJpIQweOUKs2KzUL+lxC87GkxUwnfyPmNj4khkW3QA
-         vSu2PoyxVlCmIfnKkqjVvt9691OHC+1QVhl3koYoFJgnf527dm8PL9pBojxW+fvStgOA
-         3hng==
-X-Gm-Message-State: APjAAAXqgCZc+4SsWlwX/sQhelU2JmRs7Y+Pz+pl824omAWsUNQCU0jA
-        2ZQvzgn//40v5p3Z99T/8fkeYsnBzcaZPIBkipKUQg==
-X-Google-Smtp-Source: APXvYqxMLv1ABsas1WFYO66GujeO/vB0usB7gDbIYXEPS6g7MCLQzXHL1a7g5P39z2LryIdQg8rzU18p4abRSAQJzrQ=
-X-Received: by 2002:a9d:5c11:: with SMTP id o17mr30441928otk.107.1565679206247;
- Mon, 12 Aug 2019 23:53:26 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HmxWmdZQp2h3Mf8R3shm0zEHrmQAZMBjreMOHj/d7CE=;
+        b=Fcs2DlfX+zhDC4EQaS88OYHPW9DbWco+wfFCqq0dMBHLo/xTr6WsyoFX+EVZS6Dd8R
+         tW9MZoNGiJquIzl+1ao5TyNNmbstZ1jny4lONh9ntrDh6i6w8n5OIiqNwrmZ3P9dsPWL
+         MHGC+uPK2EDXjbyxQOEM+fgmaGsMgchiASlsQHp0XhrVjbIml/5lxRszV0WJtDrKc1Vc
+         XrC4r4KcVPKuODTIVkkaDAPYDQYub09DrkkLYkQFRy3zbNHpU7nhfgHenvT1za72qG9o
+         FJoPgAmRO3K8jTRIVuArxkLUT870r6S4LQ8EaHXUrSXeyEj197FvPji5WQcTG/bGh5M+
+         Yhew==
+X-Gm-Message-State: APjAAAUa5c990bbtH5bTISSRPzfIKCJG7QNRaCaOziSFglaBlLPg4uia
+        5fJD1J6gIbcnMnVsJX7WRpI=
+X-Google-Smtp-Source: APXvYqxCJe3WTU002Why8JfSlUSWeI3zWhooqTf6uJI7z7tieUSxWHXyZzgZ38Mwnb2pRpSoO2jdCg==
+X-Received: by 2002:adf:db49:: with SMTP id f9mr42709084wrj.112.1565679271277;
+        Mon, 12 Aug 2019 23:54:31 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id 4sm953644wmd.26.2019.08.12.23.54.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Aug 2019 23:54:30 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 08:54:29 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     linux-kernel@vger.kernel.org, joe@perches.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: N900: Remove isp1704_charger.h record
+Message-ID: <20190813065429.xhlqgcdyaxlqp537@pali>
+References: <20190325212737.27322-1-joe@perches.com>
+ <20190813061358.17223-1-efremov@linux.com>
 MIME-Version: 1.0
-References: <20190811043253.24938-1-max@enpas.org> <CAMuHMdVJJxjH-gPraW==smrkOOMcGYPKB8BPzrYPU4bstASX3A@mail.gmail.com>
- <0d61e12f-5fc5-7cb6-755f-298ebf4c935f@enpas.org>
-In-Reply-To: <0d61e12f-5fc5-7cb6-755f-298ebf4c935f@enpas.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 13 Aug 2019 08:53:14 +0200
-Message-ID: <CAMuHMdWr8VNBBVjgcu9wtdby-0pznEtg=GeVmAcrk78Of7gwNA@mail.gmail.com>
-Subject: Re: [PATCH] i2c/busses: Add i2c-icy for I2C on m68k/Amiga
-To:     Max Staudt <max@enpas.org>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "Linux/m68k" <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="74iuywupsfvvy3b7"
+Content-Disposition: inline
+In-Reply-To: <20190813061358.17223-1-efremov@linux.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Max,
 
-On Tue, Aug 13, 2019 at 12:21 AM Max Staudt <max@enpas.org> wrote:
-> On 08/12/2019 11:37 AM, Geert Uytterhoeven wrote:
-> >> +       iowrite8(val, address);
-> >
-> > As this is on a Zorro bus, z_writeb()?
->
-> I forgot to ask about this.
->
-> What is the reasoning behind having a separate z_writeb() for Zorro?
-> As far as I can see in arch/m68k/include/asm this maps 1:1 to a direct memory access, and it prohibits cross-arch code as in i2c-elektor.
+--74iuywupsfvvy3b7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-write*() and friends are intended for PCI, and thus little endian, while
-the Zorro bus is big endian. For byte accesses this doesn't matter,
-obviously.
+On Tuesday 13 August 2019 09:13:58 Denis Efremov wrote:
+> Update MAINTAINERS to reflect that isp1704_charger.h file was removed.
+>=20
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Cc: linux-pm@vger.kernel.org
+> Fixes: f5d782d46aa5 ("power: supply: isp1704: switch to gpiod API")
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 29514fc19b01..2776e0797ae3 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11400,7 +11400,6 @@ NOKIA N900 POWER SUPPLY DRIVERS
+>  R:	Pali Roh=C3=A1r <pali.rohar@gmail.com>
+>  F:	include/linux/power/bq2415x_charger.h
+>  F:	include/linux/power/bq27xxx_battery.h
+> -F:	include/linux/power/isp1704_charger.h
+>  F:	drivers/power/supply/bq2415x_charger.c
+>  F:	drivers/power/supply/bq27xxx_battery.c
+>  F:	drivers/power/supply/bq27xxx_battery_i2c.c
 
-Note that this predates iowrite*(), which does have *be variants.
-If you want to add compile-testing to your driver, using iowrite*() is fine.
+Reviewed-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
 
-Gr{oetje,eeting}s,
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
-                        Geert
+--74iuywupsfvvy3b7
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXVJeowAKCRCL8Mk9A+RD
+Uu+7AJ9RfV1sAm7mMwwT23afLImsnB2TeQCfQV5ZJR+KocAVqw2e7tHcJGU8D6w=
+=ssDQ
+-----END PGP SIGNATURE-----
+
+--74iuywupsfvvy3b7--
