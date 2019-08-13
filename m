@@ -2,52 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 231848AC79
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 03:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9898C8AC76
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 03:41:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfHMBmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 12 Aug 2019 21:42:54 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55158 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbfHMBmy (ORCPT
+        id S1726551AbfHMBk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 12 Aug 2019 21:40:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46348 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfHMBk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Aug 2019 21:42:54 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1csG5025908;
-        Tue, 13 Aug 2019 01:42:35 GMT
+        Mon, 12 Aug 2019 21:40:58 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1delh194811;
+        Tue, 13 Aug 2019 01:40:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2019-08-05; bh=BBBgJHWDpE3974ehXMOJUCh+tK0rPjMp6VqtBjvyEG0=;
- b=XasiF8h71/edNlrX+r7tIBi/Nvz/KTzyFLfnI64/Ase4ZARfJ4OvjW+AcLIx9hjAcxsb
- h2c2AIRx7+qJsKhUndSsS74cubMAlMIRYcSWwekqPrTAZVnZ66Btiz0KkHhZ+T+KBskN
- /vuHsQVH8+e5pu+QdGvDg1Sacxj2/rYBXaoTZ9JcdRzqCz981eI4UtjH36r2MvQhKkN5
- FLLL7KTpf+8RGKe7LhCAtMRS+oo8h+cAl2l50mRZ0QhdUWy5hxWqAcpNrhTqJ0svzC00
- U6f9npIhLO6/fc4mbX3fkTf88abdv3jRfkGwFRlBLfK3bAJcA1k5Gprd7rXt5qgpufsF eQ== 
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=W7olyqMEnKkatUqz1lQyWN3evuwwaasu9s6VIUHKsQ8=;
+ b=oS74yJ1HzTk3k/0/Vx4Au/r7pQfcRQF50hVFvrj9hNF1IXD/SVOyKYVth8cm0WEweqlT
+ pZCBVObu4sI/NtzZIYrOtuLCdfFcZhEpcNkcTjRWQY+z3d4RGBOaN7tgtYz8WlVk3JHG
+ bRYQXSwgsQiMgB3PkDH5n0ZdbTwAer7rwwb/rufiBcLWy4wSS3SYL8YPfNdDmo9BP1Cd
+ nxBQo7cWyWsd2FL+2HrgBiBDpAni2sIazP9In364iLzA1SIDjQ8eKPpta/ffEkMTAaiJ
+ 3CDp04RpryX9wF/trwtqWhJXHE51TXf+p0Fn9VIfnliEHGg5uUkmnbb/oPXFlNs3dLsG hw== 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2018-07-02; bh=BBBgJHWDpE3974ehXMOJUCh+tK0rPjMp6VqtBjvyEG0=;
- b=wa69hRGWfqFlJoRwatoK1folQCoYJXGWr9xsbj+RkhmqOZtdWOSVv59eqU6qfpi9W/zh
- sVovN3NplULVs/2axclYD1n3SZzSVkQsh33NGtMsnEiI7K0+aYz7LtIs8nRClOqzLpdW
- L1jHOx4mLaJCTkVFnQed7Ex71pUchNQUVVzPFFfp/9GZTmh6XFUKJtlIaFBMRkrQ4MdH
- ymU8ZSGRDdFbIpC6afca6VnsWxrucwaSvejIAPG9Wg3FvZJIFUZg4AObvewC7THT+QtA
- vOsChfmJW4j9XMjJ7MZCS4cbufn329JRLHP7YnWLHG4+TjteIDsNYHxAcGHPc6K4SVa1 4A== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2u9nvp31w0-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=W7olyqMEnKkatUqz1lQyWN3evuwwaasu9s6VIUHKsQ8=;
+ b=nofqohuov3BP+Cc9QNke9ajQeTqL8hus5PbtpQG5mUay3H1CIzmwiqXxqJtkPZ6qV9WU
+ Qy4cTX5nFYkCmdMGoNQV+LRI85AJYQM/TQTvyOMy4BgFgTNTaZpSxywR8qbp5B/dkcvC
+ 97kqr/mWN4DkpGjbcI4g3E1h5ZDzMSkcArPeV+uvgki6uDLp5CUitHhkwOttY8D1jBvk
+ 3SbXBq/x50GrfMHHelCMEcIeA5dmv6FNk05NhsUk5qqMwJFkGBLJeXeYbQGX+HITFyE2
+ Ev/6YBhlk++rZKJbpfxp0nIQ2GOVIsoA5HC9M62/rAlB3fmMJnPrAcKtMVicP6WWmswh 4Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2u9nbtb1gp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 01:42:35 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1bVDt072860;
+        Tue, 13 Aug 2019 01:40:35 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D1cZPR138460;
         Tue, 13 Aug 2019 01:40:34 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2u9n9hje19-1
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2u9m0asa3d-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Tue, 13 Aug 2019 01:40:34 +0000
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7D1ePJU005027;
-        Tue, 13 Aug 2019 01:40:25 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7D1eUDM014871;
+        Tue, 13 Aug 2019 01:40:30 GMT
 Received: from concerto.internal (/10.154.133.246)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 12 Aug 2019 18:40:25 -0700
+        with ESMTP ; Mon, 12 Aug 2019 18:40:29 -0700
 From:   Khalid Aziz <khalid.aziz@oracle.com>
 To:     akpm@linux-foundation.org, vbabka@suse.cz,
         mgorman@techsingularity.net, mhocko@suse.com,
@@ -57,11 +59,15 @@ Cc:     Khalid Aziz <khalid.aziz@oracle.com>, osalvador@suse.de,
         arunks@codeaurora.org, rppt@linux.vnet.ibm.com, jgg@ziepe.ca,
         amir73il@gmail.com, alexander.h.duyck@linux.intel.com,
         linux-mm@kvack.org, linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/2] Add predictive memory reclamation and compaction
-Date:   Mon, 12 Aug 2019 19:40:10 -0600
-Message-Id: <20190813014012.30232-1-khalid.aziz@oracle.com>
+        linux-kernel@vger.kernel.org,
+        Bharath Vedartham <linux.bhar@gmail.com>,
+        Vandana BN <bnvandana@gmail.com>
+Subject: [RFC PATCH 1/2] mm: Add trend based prediction algorithm for memory usage
+Date:   Mon, 12 Aug 2019 19:40:11 -0600
+Message-Id: <20190813014012.30232-2-khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190813014012.30232-1-khalid.aziz@oracle.com>
+References: <20190813014012.30232-1-khalid.aziz@oracle.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
@@ -71,7 +77,7 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 ma
  engine=8.0.1-1906280000 definitions=main-1908130015
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
  definitions=main-1908130015
@@ -80,157 +86,370 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Direct page reclamation and compaction have high and unpredictable
+latency costs for applications. This patch adds code to predict if
+system is about to run out of free memory by watching the historical
+memory consumption trends. It computes a best fit line to this
+historical data using method of least squares. it can then compute if
+system will run out of memory if the current trend continues.
+Historical data is held in a new data structure lsq_struct for each
+zone and each order within the zone. Size of the window for historical
+data is given by LSQ_LOOKBACK.
 
-Page reclamation and compaction is triggered in response to reaching low
-watermark. This makes reclamation/compaction reactive based upon a
-snapshot of the system at a point in time. When that point is reached,
-system is already suffering from free memory shortage and must now try
-to recover. Recovery can often land system in direct
-reclamation/compaction path and while recovery happens, workloads start
-to experience unpredictable memory allocation latencies. In real life,
-forced direct reclamation has been seen to cause sudden spike in time it
-takes to populate a new database or an extraordinary unpredictable
-latency in launching a new server on cloud platform. These events create
-SLA violations which are expensive for businesses.
-
-If the kernel could foresee a potential free page exhaustion or
-fragmentation event well before it happens, it could start reclamation
-proactively instead to avoid allocation stalls. A time based trend line
-for available free pages can show such potential future events by
-charting the current memory consumption trend on the system.
-
-These patches propose a way to capture enough memory usage information
-to compute a trend line based upon most recent data. Trend line is
-graphed with x-axis showing time and y-axis showing number of free
-pages. The proposal is to capture the number of free pages at opportune
-moments along with the current timestamp. Once system has enough data
-points (the lookback window for trend analysis), fit a line of the form
-y=mx+c to these points using least sqaure regression method.  As time
-advances, these points can be updated with new data points and a new
-best fit line can be computed. Capturing these data points and computing
-trend line for pages of order 0-MAX_ORDER allows us to not only foresee
-free pages exhaustion point but also severe fragmentation points in
-future.
-
-If the line representing trend for total free pages has a negative slope
-(hence trending downward), solving y=mx+c for x with y=0 tells us if
-the current trend continues, at what point would the system run out of
-free pages. If average rate of page reclamation is computed by observing
-page reclamation behavior, that information can be used to compute the
-time to start reclamation at so that number of free pages does not fall
-to 0 or below low watermark if current memory consumption trend were to
-continue.
-
-Similarly, if kernel tracks the level of fragmentation for each order
-page (which can be done by computing the number of free pages below this
-order), a trend line for each order can be used to compute the point in
-time when no more pages of that order will be available for allocation.
-If the trend line represents number of unusable pages for that order,
-the intersection of this line with line representing number of free
-pages is the point of 100% fragmentation. This holds true because at
-this intersection point all free pages are of lower order. Intersetion
-point for two lines y0=m0x0+c0 and y1=m1x1+c1 can be computed
-mathematically which yields x and y coordinates on time and free pages
-graph. If average rate of compaction is computed by timing previous
-compaction runs, kernel can compute how soon does it need to start
-compaction to avoid this 100% fragmentation point.
-
-Patch 1 adds code to maintain a sliding lookback window of (time, number
-of free pages) points which can be updated continuously and adds code to
-compute best fit line across these points. It also adds code to use the
-best fit lines to determine if kernel must start reclamation or
-compaction.
-
-Patch 2 adds code to collect data points on free pages of various orders
-at different points in time, uses code in patch 1 to update sliding
-lookback window with these points and kicks off reclamation or
-compaction based upon the results it gets.
-
-Patch 1 maintains a fixed size lookback window. A fixed size lookback
-window limits the amount of data that has to be maintained to compute a
-best fit line. Routine mem_predict() in patch 1 uses best fit line to
-determine the immediate need for reclamation or compaction. To simplify
-initial concept implementation, it uses a fixed time threshold when
-compaction should start in anticipation of impending fragmentation.
-Similarly it uses a fixed minimum precentage free pages as criteria to
-detrmine if it is time to start reclamation if the current trend line
-shows continued drop in number of free pages. Both of these criteria can
-be improved upon in final implementation by taking rate of compaction
-and rate of reclamation into account.
-
-Patch 2 collects data points for best fit line in kswapd before we
-decide if kswapd should go to sleep or continue reclamation. It then
-uses that data to delay kswapd from sleeping and continue reclamation.
-Potential fragmentation information obtained from best fit line is used
-to decide if zone watermark should be boosted to avert impending
-fragmentation. This data is also used in balance_pgdat() to determine if
-kcompatcd should be woken up to start compaction.
-get_page_from_freelist() might be a better place to gather data points
-and make decision on starting reclamation or comapction but it can also
-impact page allocation latency. Another possibility is to create a
-separate kernel thread that gathers page usage data periodically and
-wakes up kswapd or kcompactd as needed based upon trend analysis. This
-is something that can be finalized before final implementation of this
-proposal.
-
-Impact of this implementation was measured using two sets of tests.
-First test consists of three concurrent dd processes writing large
-amounts of data (66 GB, 131 GB and 262 GB) to three different SSDs
-causing large number of free pages to be used up for buffer/page cache.
-Number of cumulative allocation stalls as reported by /proc/vmstat were
-recorded for 5 runs of this test.
-
-5.3-rc2
--------
-
-allocstall_dma 0
-allocstall_dma32 0
-allocstall_normal 15
-allocstall_movable 1629
-compact_stall 0
-
-Total = 1644
-
-
-5.3-rc2 + this patch series
----------------------------
-
-allocstall_dma 0
-allocstall_dma32 0
-allocstall_normal 182
-allocstall_movable 1266
-compact_stall 0
-
-Total = 1544
-
-There was no significant change in system time between these runs. This
-was a ~6.5% improvement in number of allocation stalls.
-
-A scond test used was the parallel dd test from mmtests. Average number
-of stalls over 4 runs with unpatched 5.3-rc2 kernel was 6057. Average
-number of stalls over 4 runs after applying these patches was 5584. This
-was an ~8% improvement in number of allocation stalls.
-
-This work is complementary to other allocation/compaction stall
-improvements. It attempts to address potential stalls proactively before
-they happen and will make use of any improvements made to the
-reclamation/compaction code.
-
-Any feedback on this proposal and associated implementation will be
-greatly appreciated. This is work in progress.
-
-Khalid Aziz (2):
-  mm: Add trend based prediction algorithm for memory usage
-  mm/vmscan: Add fragmentation prediction to kswapd
-
- include/linux/mmzone.h |  72 +++++++++++
+Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+Reviewed-by: Vandana BN <bnvandana@gmail.com>
+---
+ include/linux/mmzone.h |  34 +++++
  mm/Makefile            |   2 +-
  mm/lsq.c               | 273 +++++++++++++++++++++++++++++++++++++++++
- mm/page_alloc.c        |  27 ----
- mm/vmscan.c            | 116 ++++++++++++++++-
- 5 files changed, 456 insertions(+), 34 deletions(-)
+ 3 files changed, 308 insertions(+), 1 deletion(-)
  create mode 100644 mm/lsq.c
 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index d77d717c620c..9a0e5cab7171 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -355,6 +355,38 @@ struct per_cpu_nodestat {
+ 
+ #endif /* !__GENERATING_BOUNDS.H */
+ 
++/*
++ * Size of lookback window for the free memory exhaustion prediction
++ * algorithm. Keep it to less than 16 to keep data manageable
++ */
++#define LSQ_LOOKBACK 8
++
++/*
++ * How far forward to look when determining if memory exhaustion would
++ * become an issue.
++ */
++extern unsigned long mempredict_threshold;
++
++/*
++ * Structure to keep track of current values required to compute the best
++ * fit line using method of least squares
++ */
++struct lsq_struct {
++	bool ready;
++	int next;
++	u64 x[LSQ_LOOKBACK];
++	unsigned long y[LSQ_LOOKBACK];
++};
++
++struct frag_info {
++	unsigned long free_pages;
++	unsigned long time;
++};
++
++/* Possile bits to be set by mem_predict in its return value */
++#define MEMPREDICT_RECLAIM	0x01
++#define MEMPREDICT_COMPACT	0x02
++
+ enum zone_type {
+ #ifdef CONFIG_ZONE_DMA
+ 	/*
+@@ -581,6 +613,8 @@ enum zone_flags {
+ 					 */
+ };
+ 
++extern int mem_predict(struct frag_info *frag_vec, struct zone *zone);
++
+ static inline unsigned long zone_managed_pages(struct zone *zone)
+ {
+ 	return (unsigned long)atomic_long_read(&zone->managed_pages);
+diff --git a/mm/Makefile b/mm/Makefile
+index 338e528ad436..fb7b3c19dd13 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -39,7 +39,7 @@ obj-y			:= filemap.o mempool.o oom_kill.o fadvise.o \
+ 			   mm_init.o mmu_context.o percpu.o slab_common.o \
+ 			   compaction.o vmacache.o \
+ 			   interval_tree.o list_lru.o workingset.o \
+-			   debug.o gup.o $(mmu-y)
++			   debug.o gup.o lsq.o $(mmu-y)
+ 
+ # Give 'page_alloc' its own module-parameter namespace
+ page-alloc-y := page_alloc.o
+diff --git a/mm/lsq.c b/mm/lsq.c
+new file mode 100644
+index 000000000000..6005a2b2f44d
+--- /dev/null
++++ b/mm/lsq.c
+@@ -0,0 +1,273 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * lsq.c: Provide a prediction on whether free memory exhaustion is
++ *	imminent or not by using a best fit line based upon method of
++ *	least squares. Best fit line is based upon recent historical
++ *	data. This historical data forms the lookback window for the
++ *	algorithm.
++ *
++ *
++ * Author: Robert Harris
++ * Author: Khalid Aziz <khalid.aziz@oracle.com>
++ *
++ * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include <linux/mm.h>
++#include <linux/mmzone.h>
++#include <linux/math64.h>
++
++/*
++ * How far forward to look when determining if fragmentation would
++ * become an issue. The unit for this is same as the unit for the
++ * x-axis of graph where sample points for memory utilization are being
++ * plotted. We start with a default value of 1000 units but can tweak it
++ * dynamically to get better prediction results. With data points for
++ * memory being gathered with granularity of milliseconds, this translates
++ * to a look ahead of 1 second. If system is 1 second away from severe
++ * fragmentation, start compaction now to avoid direct comapction.
++ */
++unsigned long mempredict_threshold = 1000;
++
++/*
++ * Threshold for number of free pages that should trigger reclamation,
++ * expressed as percentage of total number of pages
++ */
++#define MEMRECLAMATION_THRESHOLD	20
++
++/*
++ * This function inserts the given value into the list of most recently seen
++ * data and returns the parameters, m and c, of a straight line of the form
++ * y = (mx/100) + c that, according to the the method of least squares
++ * fits them best. This implementation looks at just the last few data points
++ * (lookback window) which allows for fixed amount of storage required for
++ * data points and a nearly fixed time to calculate best fit line. Using
++ * line equation of the form y=(mx/100)+c instead of y=mx+c allows us to
++ * avoid floating point operations since m can be fractional often.
++ */
++static int
++lsq_fit(struct lsq_struct *lsq, unsigned long new_y, u64 new_x,
++	long long *m, long long *c)
++{
++	u64 sigma_x, sigma_y;
++	u64 sigma_xy, sigma_xx;
++	long long slope_divisor;
++	int i, next;
++	u64 x_offset;
++
++	next = lsq->next++;
++	lsq->x[next] = new_x;
++	lsq->y[next] = new_y;
++
++	if (lsq->next == LSQ_LOOKBACK) {
++		lsq->next = 0;
++		/*
++		 * Lookback window is fill which means a reasonable
++		 * best fit line can be computed. Flag enough data
++		 * is available in lookback window now.
++		 */
++		lsq->ready = true;
++	}
++
++	/*
++	 * If lookback window is not full, do not continue with
++	 * computing slope and intercept of best fit line.
++	 */
++	if (!lsq->ready)
++		return -1;
++
++	/*
++	 * If lookback window is full, compute slope and intercept
++	 * for the best fit line. In the process of computing those, we need
++	 * to compute squares of values along x-axis. Sqaure values can be
++	 * large enough to overflow 64-bits if they are large enough to
++	 * begin with. To solve this problem, transform the line on
++	 * x-axis so the first point falls at x=0. Since lsq->x is a
++	 * circular buffer, lsq->next points to the oldest entry in this
++	 * buffer.
++	 */
++	x_offset = lsq->x[lsq->next];
++	for (i = 0; i < LSQ_LOOKBACK; i++)
++		lsq->x[i] -= x_offset;
++
++	/*
++	 * Lookback window is full. Compute slope and intercept
++	 * for the best fit line
++	 */
++	sigma_x = sigma_y = sigma_xy = sigma_xx = 0;
++	for (i = 0; i < LSQ_LOOKBACK; i++) {
++		sigma_x += lsq->x[i];
++		sigma_y += lsq->y[i];
++		sigma_xy += (lsq->x[i] * lsq->y[i]);
++		sigma_xx += (lsq->x[i] * lsq->x[i]);
++	}
++
++	/*
++	 * guard against divide-by-zero
++	 */
++	slope_divisor = LSQ_LOOKBACK * sigma_xx - sigma_x * sigma_x;
++	if (slope_divisor == 0)
++		return -1;
++	*m = div64_s64(((LSQ_LOOKBACK * sigma_xy - sigma_x * sigma_y) * 100),
++			slope_divisor);
++
++	*c = div64_long((sigma_y - *m * sigma_x), LSQ_LOOKBACK);
++
++	/*
++	 * Restore original values for x-axis
++	 */
++	for (i = 0; i < LSQ_LOOKBACK; ++i)
++		lsq->x[i] += x_offset;
++
++	return 0;
++}
++
++/*
++ * This function determines whether it is necessary to begin
++ * reclamation/compaction now in order to avert exhaustion of any of the
++ * free lists.
++ *
++ * Its basis is a simple model in which the total free memory, f_T, is
++ * consumed at a constant rate, R_T, i.e.
++ *
++ *	f_T(t) = R_T * t + f_T(0)
++ *
++ * For any given order, o > 0, members of subordinate lists constitute
++ * fragmented free memory, f_f(o): the blocks are notionally free but
++ * they are unavailable for allocation. The fragmented free memory is
++ * also assumed to behave linearly and in the absence of compaction is
++ * given by
++ *
++ *	f_f(o, t) = R_f(o) t + f_f(o, 0)
++ *
++ * Order 0 function represents current trend line for total free pages
++ * instead.
++ *
++ * It is assumed that all allocations will be made from contiguous
++ * memory meaning that, under net memory pressure and with no change in
++ * fragmentation, f_T will become equal to f_f and subsequent allocations
++ * will stall in either direct compaction or reclaim. Preemptive compaction
++ * will delay the onset of exhaustion but, to be useful, must begin early
++ * enough and must proceed at a sufficient rate.
++ *
++ * On each invocation, this function obtains estimates for the
++ * parameters f_T(0), R_T, f_f(o, 0) and R_f(o). Using the best fit
++ * line, it then determines if reclamation or compaction should be started
++ * now to avert free pages exhaustion or severe fragmentation. Return value
++ * is a set of bits which represent which condition has been observed -
++ * potential free memory exhaustion, and potential severe fragmentation.
++ */
++int mem_predict(struct frag_info *frag_vec, struct zone *zone)
++{
++	int order, retval = 0;
++	long long m[MAX_ORDER];
++	long long c[MAX_ORDER];
++	bool is_ready = true;
++	long long x_cross;
++	struct lsq_struct *lsq = zone->mem_prediction;
++
++	/*
++	 * Compute the trend line for fragmentation on each order page.
++	 * For order 0 pages, it will be a trend line showing rate
++	 * of consumption of pages. For higher order pages, trend line
++	 * shows loss/gain of pages of that order. When the trend line
++	 * for example for order n pages intersects with trend line for
++	 * total free pages, it means all available pages are of order
++	 * (n-1) or lower and there is 100% fragmentation of order n
++	 * pages. Kernel must compact pages at this point to gain
++	 * new order n pages.
++	 */
++	for (order = 0; order < MAX_ORDER; order++) {
++		if (lsq_fit(&lsq[order], frag_vec[order].free_pages,
++				frag_vec[order].time, &m[order],
++				&c[order]) == -1)
++			is_ready = false;
++	}
++
++	if (!is_ready)
++		return 0;
++
++	/*
++	 * Trend line for each order page is available now. If the trend
++	 * line for overall free pages is trending upwards (positive
++	 * slope), there is no need to reclaim pages but there may be
++	 * need to compact pages if system is running out of contiguous pages
++	 * for higher orders.
++	 */
++	if (m[0] >= 0) {
++		for (order = 1; order < MAX_ORDER; order++) {
++			/*
++			 * If lines are parallel, then they never intersect.
++			 */
++			if (m[0] == m[order])
++				continue;
++			/*
++			 * Find the point of intersection of the two lines.
++			 * The point of intersection represents 100%
++			 * fragmentation for this order.
++			 */
++			x_cross = div64_s64(((c[0] - c[order]) * 100),
++					(m[order] - m[0]));
++
++			/*
++			 * If they intersect anytime soon in the future
++			 * or intersected recently in the past, then it
++			 * is time for compaction and there is no need
++			 * to continue evaluating remaining order pages
++			 *
++			 * TODO: Instead of a fixed time threshold,
++			 * track compaction rate on the system and compute
++			 * how soon should compaction be started with the
++			 * current compaction rate to avoid direct
++			 * compaction
++			 */
++			if ((x_cross < mempredict_threshold) &&
++				(x_cross > -mempredict_threshold)) {
++				retval |= MEMPREDICT_COMPACT;
++				return retval;
++			}
++		}
++	} else {
++		unsigned long threshold;
++
++		/*
++		 * Trend line for overall free pages is showing a
++		 * negative trend. Check if less than threshold
++		 * pages are free. If so, start reclamation now to stave
++		 * off memory exhaustion
++		 *
++		 * TODO: This is not the best way to use trend analysis.
++		 * The right way to determine if it is time to start
++		 * reclamation to avoid memory exhaustion is to compute
++		 * how far away is exhaustion (least square fit
++		 * line can provide that) and what is the average rate of
++		 * memory reclamation. Using those two rates, compute how
++		 * far in advance of exhaustion should reclamation be
++		 * started to avoid exhaustion. This can be done after
++		 * additional code has been added to keep track of current
++		 * rate of reclamation.
++		 */
++		threshold = (zone_managed_pages(zone)*MEMRECLAMATION_THRESHOLD)
++				/100;
++		if (frag_vec[0].free_pages < threshold)
++			retval |= MEMPREDICT_RECLAIM;
++	}
++
++	return retval;
++}
 -- 
 2.20.1
 
