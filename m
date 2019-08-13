@@ -2,146 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 297248C3ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:47:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89C3F8C3F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 23:50:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbfHMVrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 17:47:45 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41142 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726565AbfHMVrp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 17:47:45 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7DLleWq006164;
-        Tue, 13 Aug 2019 14:47:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=x3UWO+LBB6O0hTYfEASivfqkFHYJbO2Lt4ssFr3OqOE=;
- b=RGA0D3VWGY1FwfS8IO7LeMuTboCJJDhyOWNDa7YZa7xXbLoAxEnjoUFUOaxVbyRRgc70
- C7J6zbTOGHRP6MN6pZaid0OrX7CSe54eX5qFEEyVHjnkAm3CkemoOrPBgXnjNc+QuXoU
- 5Cc2oHAec3y7+dUU9bwmnX5Jx7nxkm5p8Aw= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2uc0t6s9py-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 13 Aug 2019 14:47:40 -0700
-Received: from ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) by
- ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 13 Aug 2019 14:47:37 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Tue, 13 Aug 2019 14:47:37 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PrBkv2ya+oozEGdKaorBXP0qfynmUyhGOQRmrR7bMZOVoVjwo6hkliE81MoCH0wT/7yoNM2/6aEnk1PeNjyYLhyYlvXyKBkE//ONrq7Y+uYzNz1RcnC5t1dtZCJjQAeytFENr/o/H7gAk+vkXT3CEF7SplF05VXhqxY5uxL8kir0ea+Zz65P7HQDGVyDX7d/JhDzLHCHRvM6qZVo944RqzLTuYrktEqn2pOcAy+YHvbyRqHv8DA380nSuT0ZXzKWWogAYsR8AGSm126lky32rqjI0qvhjypjlSSxsdwFz1A1qoCgI4asP5zcVcsyXRZXYGCy699XTIXamWvRX7odGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x3UWO+LBB6O0hTYfEASivfqkFHYJbO2Lt4ssFr3OqOE=;
- b=UjrLMy9jOD79sk7LBK6DKy1JxFbItJhuNd1hzZjENJXDmXgqDzIjrKkC8Jt+UgsYZMWjCZJ8BcK9TXLgOoZQINQICwb0SrCYouXJiBfVN+dV4ujaRT6tHE+CvHCPV3rS/tY5yk9VbCPrv09WeCBTmbesnUx2uUB8dOSN6/gbWTlFOn/FultSwcHCT6QXL6f569VozGUPtQPWno/sdkv1UdtRQ3Lb6KSwFPnzeaa98xkzRiAlqkuwrZdmrJO/vNRbT2prOjfrWnUNzCmVPqoi+JseK8BzkJm1iNsqzhNn+dvyPa+uniTpunyv74KJ5Oo0RafC95epsTWdHdimNB7hGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x3UWO+LBB6O0hTYfEASivfqkFHYJbO2Lt4ssFr3OqOE=;
- b=PcJGkN2/uh6nAXyYDNyHJank00xUQM3b7nliIYgQKyehByzD6pn+ztkFkTc2w9tIx02h5uH/ZrP4UrPl6ZnHP0N5bFlbr2I3GQAn6xo0IaNkg7TBvkLdGFgjAQkDZ8Ew4xsKreW8NBRP7mcumAxfAP28rP0cuMKGAVjy/Y7zRC8=
-Received: from DM6PR15MB2635.namprd15.prod.outlook.com (20.179.161.152) by
- DM6PR15MB2620.namprd15.prod.outlook.com (20.179.161.93) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.20; Tue, 13 Aug 2019 21:47:35 +0000
-Received: from DM6PR15MB2635.namprd15.prod.outlook.com
- ([fe80::d1fc:b5c5:59a1:bd7e]) by DM6PR15MB2635.namprd15.prod.outlook.com
- ([fe80::d1fc:b5c5:59a1:bd7e%3]) with mapi id 15.20.2157.022; Tue, 13 Aug 2019
- 21:47:35 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] mm: memcontrol: flush percpu vmevents before releasing
- memcg
-Thread-Topic: [PATCH] mm: memcontrol: flush percpu vmevents before releasing
- memcg
-Thread-Index: AQHVUWcJo041kAovIUqPQ99aFT9BKqb5mhOAgAAEiYA=
-Date:   Tue, 13 Aug 2019 21:47:35 +0000
-Message-ID: <20190813214731.GB20632@tower.DHCP.thefacebook.com>
-References: <20190812233754.2570543-1-guro@fb.com>
- <20190813143117.885bef5929813445ef39fa61@linux-foundation.org>
-In-Reply-To: <20190813143117.885bef5929813445ef39fa61@linux-foundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MW2PR16CA0016.namprd16.prod.outlook.com (2603:10b6:907::29)
- To DM6PR15MB2635.namprd15.prod.outlook.com (2603:10b6:5:1a6::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::1f63]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ad6b0a52-885e-4828-c597-08d72037da26
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM6PR15MB2620;
-x-ms-traffictypediagnostic: DM6PR15MB2620:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR15MB26207C1E587E7E1A820A28D6BED20@DM6PR15MB2620.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 01283822F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39860400002)(346002)(366004)(136003)(189003)(52314003)(199004)(6436002)(6916009)(478600001)(6486002)(66476007)(229853002)(52116002)(186003)(102836004)(6506007)(8936002)(4326008)(386003)(66446008)(2906002)(64756008)(66946007)(7736002)(6246003)(14454004)(446003)(46003)(476003)(486006)(11346002)(6116002)(66556008)(76176011)(9686003)(8676002)(54906003)(71190400001)(5660300002)(316002)(33656002)(1076003)(25786009)(256004)(4744005)(305945005)(99286004)(71200400001)(86362001)(81156014)(81166006)(6512007)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR15MB2620;H:DM6PR15MB2635.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: AoKrMjp1mi18SrBkvNmzL7zbopmDWI9xJtOt90nmWFs9NmIQ0rdUQud8h5QqXauKjEMXXV5Sp8axw1vaGVBiy5WSCJwkpYtlhM61h6JPQJGip6tbivSsE4sBR6pOwOgDX3PjAT33vCkgXP8l10RriQkTmxp9Lqt2beWUClXKG60hMC5wsBbaGWmSEbFsrOqlcFDtIe/hRoV75LTrmTCAT+fephzesvDccZv8UimngqCz1LbfEuyLTKwd2b06fB+95f7FMRKBd1D13wNofJSsBNH7MDd1Uzj6xywsgNeoek486Y9eO/4xDxI3Ew4DbP2KHRSghznMeR/pJyeXgi/qVwkCA+z3AAYAvYatGMsCckUMm/NlZpi9ANc0Nq9bNePb8bn7Hgqy73vcRd7SZZjG0b3ED0k0IbZNBqMzoPCcDoA=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FF10EAA14CB20F40918937449AAD0EE5@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726809AbfHMVuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 17:50:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35822 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726066AbfHMVuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 17:50:11 -0400
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03A8A20842;
+        Tue, 13 Aug 2019 21:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565733010;
+        bh=qZlws6v+N8kI1UKOVdpEHH2UF31aMI5gwG/rOfFqHzw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sqrnJ/m/lZjwrQjDTqlrzGi1anuWpCof3q1L4UIhTXIXaYkQySPbMoiC5CnzVwWWc
+         9148vWRJwV4fBbIZRDHWDqWS4brABGhBzsHkksdoqSgu5KWedwbYeyOfL7UBBRyoJR
+         Bz5WUcSlul2NfHeUcZ1jzK8ApAkBqsJYaJLA/Zfo=
+Received: by mail-qk1-f177.google.com with SMTP id s145so80982484qke.7;
+        Tue, 13 Aug 2019 14:50:09 -0700 (PDT)
+X-Gm-Message-State: APjAAAU5X3DWyr5I4q02Mjg0VEzG1I5wYL4UzGnYxWx3SnylrQ+6hVUW
+        BS2B8dVgUTWTDJsdvhL+A7ev9Hy3z6pqQbicnQ==
+X-Google-Smtp-Source: APXvYqzMYP4+7zj4XfcIegLbEaqHi41gyoiH8MyCXiN9EIcjrt64BloYhGN0yKxe/9u4lsm4KPn2KKl8nfimpDdfVJk=
+X-Received: by 2002:a37:a44a:: with SMTP id n71mr34676994qke.393.1565733009197;
+ Tue, 13 Aug 2019 14:50:09 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad6b0a52-885e-4828-c597-08d72037da26
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2019 21:47:35.3267
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HHxUzls8Ee3DmxjbT7OI7b59LBttVmVMskQC5x/uxHT3+l+38eNTuFjzjWSeCDyp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB2620
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-13_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=588 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908130204
-X-FB-Internal: deliver
+References: <20190808140153.9156-1-dinguyen@kernel.org>
+In-Reply-To: <20190808140153.9156-1-dinguyen@kernel.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 13 Aug 2019 15:49:58 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLJN3n6A3NWX=pEYSPfnvQFsdBYwqr9iREHWGFwL2wHYQ@mail.gmail.com>
+Message-ID: <CAL_JsqLJN3n6A3NWX=pEYSPfnvQFsdBYwqr9iREHWGFwL2wHYQ@mail.gmail.com>
+Subject: Re: [PATCHv3] drivers/amba: add reset control to amba bus probe
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 02:31:17PM -0700, Andrew Morton wrote:
-> On Mon, 12 Aug 2019 16:37:54 -0700 Roman Gushchin <guro@fb.com> wrote:
->=20
-> > Similar to vmstats, percpu caching of local vmevents leads to an
-> > accumulation of errors on non-leaf levels. This happens because
-> > some leftovers may remain in percpu caches, so that they are
-> > never propagated up by the cgroup tree and just disappear into
-> > nonexistence with on releasing of the memory cgroup.
-> >=20
-> > To fix this issue let's accumulate and propagate percpu vmevents
-> > values before releasing the memory cgroup similar to what we're
-> > doing with vmstats.
-> >=20
-> > Since on cpu hotplug we do flush percpu vmstats anyway, we can
-> > iterate only over online cpus.
-> >=20
-> > Fixes: 42a300353577 ("mm: memcontrol: fix recursive statistics correctn=
-ess & scalabilty")
->=20
-> No cc:stable?
->=20
++Russell
 
-Here too, cc:stable is definitely missing. Adding now. Thanks!
+On Thu, Aug 8, 2019 at 8:02 AM Dinh Nguyen <dinguyen@kernel.org> wrote:
+>
+> The primecell controller on some SoCs, i.e. SoCFPGA, is held in reset by
+> default. Until recently, the DMA controller was brought out of reset by the
+> bootloader(i.e. U-Boot). But a recent change in U-Boot, the peripherals that
+> are not used are held in reset and are left to Linux to bring them out of
+> reset.
+>
+> Add a mechanism for getting the reset property and de-assert the primecell
+> module from reset if found. This is a not a hard fail if the reset property
+> is not present in the device tree node, so the driver will continue to probe.
+>
+> Because there are different variants of the controller that may have multiple
+> reset signals, the code will find all reset(s) specified and de-assert them.
+>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v3: add a reset_control_put()
+>     add error handling for -EPROBE_DEFER
+> v2: move reset control to bus code
+>     find all reset properties and de-assert them
+> ---
+>  drivers/amba/bus.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>
+> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+> index 100e798a5c82..00e68ea416ca 100644
+> --- a/drivers/amba/bus.c
+> +++ b/drivers/amba/bus.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/limits.h>
+>  #include <linux/clk/clk-conf.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/reset.h>
+>
+>  #include <asm/irq.h>
+>
+> @@ -401,6 +402,28 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
+>         ret = amba_get_enable_pclk(dev);
+>         if (ret == 0) {
+>                 u32 pid, cid;
+> +               int count;
+> +               struct reset_control *rstc;
+> +
+> +               /*
+> +                * Find reset control(s) of the amba bus and de-assert them.
+> +                */
+> +               count = reset_control_get_count(&dev->dev);
+> +               while (count > 0) {
+> +                       rstc = of_reset_control_get_shared_by_index(dev->dev.of_node, count - 1);
+> +                       if (IS_ERR(rstc)) {
+> +                               if (PTR_ERR(rstc) == -EPROBE_DEFER) {
+> +                                       ret = -EPROBE_DEFER;
+> +                               } else {
+> +                                       dev_err(&dev->dev, "Can't get amba reset!\n");
+> +                               }
+> +                               break;
+> +                       } else {
+
+You can remove the else here and save some indentation on the rest.
+
+Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+
+> +                               reset_control_deassert(rstc);
+> +                               reset_control_put(rstc);
+> +                               count--;
+> +                       }
+> +               }
+>
+>                 /*
+>                  * Read pid and cid based on size of resource
+> --
+> 2.20.0
+>
