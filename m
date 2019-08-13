@@ -2,108 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 916238AECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 07:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB0238AEDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 07:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbfHMFaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 01:30:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39948 "EHLO mail.kernel.org"
+        id S1726124AbfHMFhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 01:37:02 -0400
+Received: from mga02.intel.com ([134.134.136.20]:14276 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbfHMFaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 01:30:25 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC86120651;
-        Tue, 13 Aug 2019 05:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565674223;
-        bh=VMaXsgEnAY9aCCxyP30CJ4opmlruKjGx3jZfaWtT7oo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=b+x/EVyc+E3zWFnrfVKPUrmepXMkItHnO4h9gJR6rp/LIS1Sn024SYTxwH90D+l4/
-         Gset4RenPo4NOQsJtTXoRsrQJbqUm4juDNrJMYDU2D162dtEY+pi2t/RqfKrx3Cp+a
-         wH8fFAI3YyaJEQdx6DYfPvuFUe+c59vIG08jHvTw=
-Content-Type: text/plain; charset="utf-8"
+        id S1725781AbfHMFhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 01:37:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 22:36:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,380,1559545200"; 
+   d="scan'208";a="327576483"
+Received: from unknown (HELO localhost) ([10.239.159.128])
+  by orsmga004.jf.intel.com with ESMTP; 12 Aug 2019 22:36:34 -0700
+Date:   Tue, 13 Aug 2019 13:38:18 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com, mst@redhat.com,
+        rkrcmar@redhat.com, jmattson@google.com
+Subject: Re: [PATCH v6 5/8] KVM: VMX: Load Guest CET via VMCS when CET is
+ enabled in Guest
+Message-ID: <20190813053818.GA2432@local-michael-cet-test>
+References: <20190725031246.8296-1-weijiang.yang@intel.com>
+ <20190725031246.8296-6-weijiang.yang@intel.com>
+ <20190812235632.GH4996@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFd5g46PJNTOUAA4GOOrW==74Zy7u1sRESTanL_BXBn6QykscA@mail.gmail.com>
-References: <20190812182421.141150-1-brendanhiggins@google.com> <20190812182421.141150-4-brendanhiggins@google.com> <20190812225520.5A67C206A2@mail.kernel.org> <20190812233336.GA224410@google.com> <20190812235940.100842063F@mail.kernel.org> <CAFd5g44xciLPBhH_J3zUcY3TedWTijdnWgF055qffF+dAguhPQ@mail.gmail.com> <20190813045623.F3D9520842@mail.kernel.org> <CAFd5g46PJNTOUAA4GOOrW==74Zy7u1sRESTanL_BXBn6QykscA@mail.gmail.com>
-Subject: Re: [PATCH v12 03/18] kunit: test: add string_stream a std::stream like string builder
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-To:     Brendan Higgins <brendanhiggins@google.com>
-User-Agent: alot/0.8.1
-Date:   Mon, 12 Aug 2019 22:30:22 -0700
-Message-Id: <20190813053023.CC86120651@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812235632.GH4996@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-08-12 22:02:59)
-> On Mon, Aug 12, 2019 at 9:56 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Brendan Higgins (2019-08-12 17:41:05)
-> > > On Mon, Aug 12, 2019 at 4:59 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > > kunit_resource_destroy (respective equivalents to devm_kfree, and
-> > > > > devres_destroy) and use kunit_kfree here?
-> > > > >
-> > > >
-> > > > Yes, or drop the API entirely? Does anything need this functionalit=
-y?
-> > >
-> > > Drop the kunit_resource API? I would strongly prefer not to.
-> >
-> > No. I mean this API, string_stream_clear(). Does anything use it?
->=20
-> Oh, right. No.
->=20
-> However, now that I added the kunit_resource_destroy, I thought it
-> might be good to free the string_stream after I use it in each call to
-> kunit_assert->format(...) in which case I will be using this logic.
->=20
-> So I think the right thing to do is to expose string_stream_destroy so
-> kunit_do_assert can clean up when it's done, and then demote
-> string_stream_clear to static. Sound good?
+On Mon, Aug 12, 2019 at 04:56:32PM -0700, Sean Christopherson wrote:
+> On Thu, Jul 25, 2019 at 11:12:43AM +0800, Yang Weijiang wrote:
+> > "Load Guest CET state" bit controls whether Guest CET states
+> > will be loaded at Guest entry. Before doing that, KVM needs
+> > to check if CPU CET feature is enabled on host and available
+> > to Guest.
+> > 
+> > Note: SHSTK and IBT features share one control MSR:
+> > MSR_IA32_{U,S}_CET, which means it's difficult to hide
+> > one feature from another in the case of SHSTK != IBT,
+> > after discussed in community, it's agreed to allow Guest
+> > control two features independently as it won't introduce
+> > security hole.
+> > 
+> > Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> > Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> > ---
+> >  arch/x86/kvm/vmx/vmx.c | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> > 
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index ce5d1e45b7a5..fbf9c335cf7b 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -44,6 +44,7 @@
+> >  #include <asm/spec-ctrl.h>
+> >  #include <asm/virtext.h>
+> >  #include <asm/vmx.h>
+> > +#include <asm/cet.h>
+> >  
+> >  #include "capabilities.h"
+> >  #include "cpuid.h"
+> > @@ -2923,6 +2924,18 @@ int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+> >  		if (!nested_vmx_allowed(vcpu) || is_smm(vcpu))
+> >  			return 1;
+> >  	}
+> > +	if (cpu_x86_cet_enabled() &&
+> 
+> It'd probably be better to check a KVM function here, e.g. a wrapper of
+> kvm_supported_xss().  I don't think it will ever matter, but it'd be nice
+> to have a single kill switch given the variety of different enable bits
+> for CET.
+>
+OK, will try to make it nicer in next version.
 
-Ok, sure. I don't really see how clearing it explicitly when the
-assertion prints vs. never allocating it to begin with is really any
-different. Maybe I've missed something though.
-
+> > +	    (guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
+> > +	    guest_cpuid_has(vcpu, X86_FEATURE_IBT))) {
+> > +		if (cr4 & X86_CR4_CET)
+> > +			vmcs_set_bits(VM_ENTRY_CONTROLS,
+> > +				      VM_ENTRY_LOAD_GUEST_CET_STATE);
+> > +		else
+> > +			vmcs_clear_bits(VM_ENTRY_CONTROLS,
+> > +					VM_ENTRY_LOAD_GUEST_CET_STATE);
+> > +	} else if (cr4 & X86_CR4_CET) {
+> > +		return 1;
+> > +	}
+> >  
+> >  	if (to_vmx(vcpu)->nested.vmxon && !nested_cr4_valid(vcpu, cr4))
+> >  		return 1;
+> > -- 
+> > 2.17.2
+> > 
