@@ -2,114 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DED148AEBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 07:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD5A8AED6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 07:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfHMF0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 01:26:17 -0400
-Received: from mga07.intel.com ([134.134.136.100]:18045 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfHMF0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 01:26:16 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Aug 2019 22:25:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,380,1559545200"; 
-   d="scan'208";a="176105661"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Aug 2019 22:25:49 -0700
-Date:   Tue, 13 Aug 2019 13:27:33 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com, mst@redhat.com,
-        rkrcmar@redhat.com, jmattson@google.com
-Subject: Re: [PATCH v6 3/8] KVM: x86: Implement CET CPUID enumeration for
- Guest
-Message-ID: <20190813052733.GA2037@local-michael-cet-test>
-References: <20190725031246.8296-1-weijiang.yang@intel.com>
- <20190725031246.8296-4-weijiang.yang@intel.com>
- <20190813000604.GI4996@linux.intel.com>
+        id S1726402AbfHMFb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 01:31:28 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:34351 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfHMFb2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 01:31:28 -0400
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+        by 156.147.23.51 with ESMTP; 13 Aug 2019 14:31:25 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
+        by 156.147.1.127 with ESMTP; 13 Aug 2019 14:31:25 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Tue, 13 Aug 2019 14:29:54 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Byungchul Park <max.byungchul.park@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rao Shoaib <rao.shoaib@oracle.com>, kernel-team@android.com,
+        kernel-team <kernel-team@lge.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu <rcu@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC v1 1/2] rcu/tree: Add basic support for kfree_rcu
+ batching
+Message-ID: <20190813052954.GA18373@X58A-UD3R>
+References: <20190807175215.GE28441@linux.ibm.com>
+ <20190808095232.GA30401@X58A-UD3R>
+ <20190808125607.GB261256@google.com>
+ <CANrsvRPU_u6oKpjZ1368Evto+1hGboNYeOuMdbdzaOfXhSO=5g@mail.gmail.com>
+ <20190808180916.GP28441@linux.ibm.com>
+ <20190811083626.GA9486@X58A-UD3R>
+ <20190811084950.GB9486@X58A-UD3R>
+ <20190811234939.GC28441@linux.ibm.com>
+ <20190812101052.GA10478@X58A-UD3R>
+ <20190812131234.GC27552@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813000604.GI4996@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190812131234.GC27552@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 05:06:04PM -0700, Sean Christopherson wrote:
-> On Thu, Jul 25, 2019 at 11:12:41AM +0800, Yang Weijiang wrote:
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 652b3876ea5c..ce1d6fe21780 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -1637,6 +1637,11 @@ static inline bool vmx_feature_control_msr_valid(struct kvm_vcpu *vcpu,
-> >  	return !(val & ~valid_bits);
-> >  }
-> >  
-> > +static inline u64 vmx_supported_xss(void)
-> > +{
-> > +	return host_xss;
+On Mon, Aug 12, 2019 at 09:12:34AM -0400, Joel Fernandes wrote:
+> On Mon, Aug 12, 2019 at 07:10:52PM +0900, Byungchul Park wrote:
+> > On Sun, Aug 11, 2019 at 04:49:39PM -0700, Paul E. McKenney wrote:
+> > > Maybe.  Note well that I said "potential issue".  When I checked a few
+> > > years ago, none of the uses of rcu_barrier() cared about kfree_rcu().
+> > > They cared instead about call_rcu() callbacks that accessed code or data
+> > > that was going to disappear soon, for example, due to module unload or
+> > > filesystem unmount.
+> > > 
+> > > So it -might- be that rcu_barrier() can stay as it is, but with changes
+> > > as needed to documentation.
 > 
-> Do you know if the kernel will ever enable CET_USER but not CET_KERNEL,
-> and vice versa?  I tried hunting down the logic in the main CET enabling
-> series but couldn't find the relevant code.
-> 
-> If the kernel does enable USER vs. KERNEL independently, are we sure that
-> KVM can correctly virtualize that state and that the guest OS won't die
-> due to expecting all CET features or no CET features?
-> 
-> In other words, do we want to return host_xss as is, or do we want to
-> make CET_USER and CET_KERNEL a bundle deal and avoid the headache, e.g.:
-> 
-> 	if (!(host_xss & XFEATURE_MASK_CET_USER) ||
-> 	    !(host_xss & XFEATURE_MASK_CET_KERNEL))
-> 		return host_xss & ~(XFEATURE_MASK_CET_USER |
-> 				    XFEATURE_MASK_CET_KERNEL);
-> 	return host_xss; 
->
-Hi, Sean,
-Thanks for review! CET_USER and CET_KERNEL are two independent parts of
-CET, but CET_KERNEL part has not been fully implemented yet, the final target
-is to enable CET_USER + CET_KERNEL in kernel. In the VMM patch, it's supposed
-to enable both CET_USER and CET_KERNEL mode at one time, so the patches expose
-all the features of CET to guest OS as long as platform and host kernel
-support so.
+> Right, we should update the docs. Byungchul, do you mind sending a patch that
+> documents the rcu_barrier() behavior?
 
-> > +}
-> > +
-> >  static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
-> >  {
-> >  	switch (msr->index) {
-> > @@ -7724,6 +7729,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
-> >  	.get_vmcs12_pages = NULL,
-> >  	.nested_enable_evmcs = NULL,
-> >  	.need_emulation_on_page_fault = vmx_need_emulation_on_page_fault,
-> > +	.supported_xss = vmx_supported_xss,
-> >  };
-> >  
-> >  static void vmx_cleanup_l1d_flush(void)
-> > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> > index a470ff0868c5..6a1870044752 100644
-> > --- a/arch/x86/kvm/x86.h
-> > +++ b/arch/x86/kvm/x86.h
-> > @@ -288,6 +288,10 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, unsigned long cr2,
-> >  				| XFEATURE_MASK_YMM | XFEATURE_MASK_BNDREGS \
-> >  				| XFEATURE_MASK_BNDCSR | XFEATURE_MASK_AVX512 \
-> >  				| XFEATURE_MASK_PKRU)
-> > +
-> > +#define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER \
-> > +				| XFEATURE_MASK_CET_KERNEL)
-> > +
-> >  extern u64 host_xcr0;
-> >  
-> >  extern u64 kvm_supported_xcr0(void);
-> > -- 
-> > 2.17.2
+Are you trying to give me the chance? I feel thankful. It doens't matter
+to try it at the moment though, I can't follow-up until September. I'd
+better do that in Septamber or give it up this time.
+
+Thanks,
+Byungchul
+
+> > > It also -might- be, maybe now or maybe some time in the future, that
+> > > there will need to be a kfree_rcu_barrier() or some such.  But if so,
+> > > let's not create it until it is needed.  For one thing, it is reasonably
+> > > likely that something other than a kfree_rcu_barrier() would really
+> > > be what was needed.  After all, the main point would be to make sure
+> > > that the old memory really was freed before allocating new memory.
 > > 
+> > Now I fully understand what you meant thanks to you. Thank you for
+> > explaining it in detail.
+> > 
+> > > But if the system had ample memory, why wait?  In that case you don't
+> > > really need to wait for all the old memory to be freed, but rather for
+> > > sufficient memory to be available for allocation.
+> > 
+> > Agree. Totally make sense.
+> 
+> Agreed, all makes sense.
+> 
+> thanks,
+> 
+>  - Joel
+> 
+> [snip]
