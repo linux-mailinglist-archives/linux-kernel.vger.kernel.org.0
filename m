@@ -2,171 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0B008C0A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 20:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E2828C0A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 20:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfHMSda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 14:33:30 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35859 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726903AbfHMSd1 (ORCPT
+        id S1726688AbfHMSdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 14:33:23 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34103 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbfHMSdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 14:33:27 -0400
-Received: by mail-pf1-f194.google.com with SMTP id w2so1262498pfi.3;
-        Tue, 13 Aug 2019 11:33:26 -0700 (PDT)
+        Tue, 13 Aug 2019 14:33:21 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b24so1571953pfp.1;
+        Tue, 13 Aug 2019 11:33:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2Fxl2mdmPp+CUi6nNXci38jhpqj842L6ifzHHMtUOyk=;
-        b=rz5nBf95blCv7hlr9Gqzk+Sn+hA778WfynJlQONK+tpNScOr2ni6u6d3r47GNexgig
-         AmJWHsemDHh9TMbzBqpiELKTdD3vhDnaeMsc+l03vFXDaHNYdI6xpn4xGDPMgf0BaMGc
-         DJeGespV1L3trhD9koE7IM4ag8tckJrni8OQG1WojXydMhKn3pkYOx9HS11roL7T6J7N
-         3Tu0M5vwkOZsikByUtFsPb6ZqsFP9QmDCAEJAFmATMhg9sN5fyIJBXJDX3eHWZ+MV9pQ
-         Tc/x4xKUW0yrJgKWR3ozjk+DRngMWqNrzmPOXD5k52nVnOVUgpj7ANGue349DyAiw8ur
-         Np6A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version;
+        bh=w11YVFyoLhs+BNlDPKgWqoZJ95LEfsQBBxyoZnnFeNE=;
+        b=JXS1wIa7Asipg0jcfsj8uWKX+etctXxHpwJRJbAFNgqXrt3eObuuXS66gp5hdjk69D
+         osQZW+muNqqcBsj2hwEsdy/Nic3Wk+eBkWjETfGIxD4ovlMjcFYwsHFw63/lv6h4Hcd2
+         Fhepa7HRvjRjKwsWNYs9tx2jo3v02jq68xR6Z0krWE4Qk3zyelI6wT/5jyvpKPJHok4Y
+         Yk6ZMgkNKtK7qdbqgXAKWfhvCGhCxXl5QTBVxc+6O9ntTBXoUMD7Plf4DlDxz9rWzXh6
+         7RXgatQ/ExkJUVo62PW+mZ2UBlG7plWd91mSpeGLnnRWi6NuCjZcMW2oPvyCx1J1nhva
+         3zdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2Fxl2mdmPp+CUi6nNXci38jhpqj842L6ifzHHMtUOyk=;
-        b=g0tg3yDfsrjW4eHcxnfLUkSbP8sGXlDbLQj0K+TB4mQ4gXGihoaOFDfoCuOqpyywaj
-         QH3+8tSjyHG+WC361lesoK2iQwkhahPIZzV3Tv4K9q7wavY6hqrsdnBqX33owLsOv3H8
-         /5h+u59dA9yUUUyHHOErL0tADZXvAkIfSzP+X+0RuM3tp54zoNbY4J5iJ+r20VwHVAJe
-         m8hXlfA0LFtSR7pJ9+uhh4/jVY7xlAOiO46iUrJHYq0YJIi1FKrITyhfGozUPveYV02p
-         PEK4hrgI+KlE4BfxOvAeCCxupgayv4tTsyWiIFZP8RZNhfNZVPuricBiLDmO5m9orPGw
-         g6Bw==
-X-Gm-Message-State: APjAAAUhoDO0aDvzakE6oiEvZUPo9On35tmsqNwVqYtKUdMmWgmviCRu
-        0CddsPl9VYvrghH/09PSOwWZAxWftuM=
-X-Google-Smtp-Source: APXvYqw0SET6ggnTd84Mh85ohTTJzNPk8TFm+221qUCDiWviHsqoi+XL4RZxBZ/u3V7IrzYBZAJdmw==
-X-Received: by 2002:a65:6552:: with SMTP id a18mr36446579pgw.208.1565721205966;
-        Tue, 13 Aug 2019 11:33:25 -0700 (PDT)
-Received: from localhost.localdomain ([219.91.191.55])
-        by smtp.gmail.com with ESMTPSA id g2sm176911142pfq.88.2019.08.13.11.33.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 13 Aug 2019 11:33:25 -0700 (PDT)
-From:   Raag Jadav <raagjadav@gmail.com>
-To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Raag Jadav <raagjadav@gmail.com>
-Subject: [PATCH v2 2/2] dt-bindings: regulator: act8865 regulator modes and suspend states
-Date:   Wed, 14 Aug 2019 00:02:56 +0530
-Message-Id: <1565721176-8955-3-git-send-email-raagjadav@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1565721176-8955-1-git-send-email-raagjadav@gmail.com>
-References: <1565721176-8955-1-git-send-email-raagjadav@gmail.com>
+         :references:mime-version;
+        bh=w11YVFyoLhs+BNlDPKgWqoZJ95LEfsQBBxyoZnnFeNE=;
+        b=gOIGgU21W6vSk4LlkPaO7JRZNG2p+y+uAFMk5RM2/mcH/ns6QwNsRe8+ovEkDc/PXn
+         YiPmfO69HSf2FheC+PwkPeFJ6a+FhDXfj4/IyaGl0eqG1M8lSPvjRagbSa7mOAqlDrlN
+         jBRDbPjFaP8MuHH+fwJ2qgo96H2RFw7mKZSmDGGgIrPqJjjUSVzpiOv9bP5NYpx5OXKb
+         UVlSEKKrlSw+X4KmMb0xmRGLkFav0De4MlIAVCN0Ymx4gvQR/+YAMnMAY6FMoQdIuskK
+         BjVeR8rrBeqRO/m3RQu4F7XTjlGtsFaAnc6jyHuZA1+mzQ0MomwV01c1tF0IR4kyv8Cc
+         Bimw==
+X-Gm-Message-State: APjAAAVpH0lmqpQt3u1081voDHR59yMZee490dfGC8HTRFPbJtXUxIR1
+        ZOqkskxz2P1tOf1yPVqh63w=
+X-Google-Smtp-Source: APXvYqwAT2LtSdQBLIiqXEDE3epqcWCW/8drmQhiid5gI8BRWCHDuOAagb4aRZijqrEwz/mqbNSDIA==
+X-Received: by 2002:a65:43c2:: with SMTP id n2mr35769951pgp.110.1565721200412;
+        Tue, 13 Aug 2019 11:33:20 -0700 (PDT)
+Received: from [172.20.41.143] ([2620:10d:c090:200::3:ec2a])
+        by smtp.gmail.com with ESMTPSA id b68sm134603729pfb.149.2019.08.13.11.33.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Aug 2019 11:33:19 -0700 (PDT)
+From:   "Jonathan Lemon" <jonathan.lemon@gmail.com>
+To:     "Ivan Khoronzhuk" <ivan.khoronzhuk@linaro.org>
+Cc:     magnus.karlsson@intel.com, bjorn.topel@intel.com,
+        davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+        jakub.kicinski@netronome.com, daniel@iogearbox.net,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        xdp-newbies@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 2/3] xdp: xdp_umem: replace kmap on vmap for umem
+ map
+Date:   Tue, 13 Aug 2019 11:33:18 -0700
+X-Mailer: MailMate (1.12.5r5635)
+Message-ID: <BC98A490-2892-452B-AC3E-C9B9F9BA121C@gmail.com>
+In-Reply-To: <20190813183023.GA2856@khorivan>
+References: <20190813102318.5521-1-ivan.khoronzhuk@linaro.org>
+ <20190813102318.5521-3-ivan.khoronzhuk@linaro.org>
+ <9F98648A-8654-4767-97B5-CF4BC939393C@flugsvamp.com>
+ <20190813183023.GA2856@khorivan>
+MIME-Version: 1.0
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for act8865 regulator modes and suspend states.
-Add active-semi,8865-regulator.h file for device tree binding constants
-for act8865 regulators.
+On 13 Aug 2019, at 11:30, Ivan Khoronzhuk wrote:
 
-Signed-off-by: Raag Jadav <raagjadav@gmail.com>
----
- .../bindings/regulator/act8865-regulator.txt       | 27 +++++++++++++++++++--
- .../regulator/active-semi,8865-regulator.h         | 28 ++++++++++++++++++++++
- 2 files changed, 53 insertions(+), 2 deletions(-)
- create mode 100644 include/dt-bindings/regulator/active-semi,8865-regulator.h
+> On Tue, Aug 13, 2019 at 10:42:18AM -0700, Jonathan Lemon wrote:
+>>
+>>
+>> On 13 Aug 2019, at 3:23, Ivan Khoronzhuk wrote:
+>>
+>>> For 64-bit there is no reason to use vmap/vunmap, so use 
+>>> page_address
+>>> as it was initially. For 32 bits, in some apps, like in samples
+>>> xdpsock_user.c when number of pgs in use is quite big, the kmap
+>>> memory can be not enough, despite on this, kmap looks like is
+>>> deprecated in such cases as it can block and should be used rather
+>>> for dynamic mm.
+>>>
+>>> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+>>
+>> Seems a bit overkill - if not high memory, kmap() falls back
+>> to just page_address(), unlike vmap().
+>
+>> -- Jonathan
+>
+> So, as kmap has limitation... if I correctly understood, you propose
+> to avoid macros and do smth like kmap:
+>
+> 	void *addr;
+> 	if (!PageHighMem(&umem->pgs[i]))
+> 		addr =  page_address(page);
+> 	else
+> 		addr = vmap(&umem->pgs[i], 1, VM_MAP, PAGE_KERNEL);
+>
+> 	umem->pages[i].addr = addr;
+>
+> and while unmap
+>
+> 	if (!PageHighMem(&umem->pgs[i]))
+> 		vunmap(umem->pages[i].addr);
+>
+> I can try it, and add this in v2 if no objection.
 
-diff --git a/Documentation/devicetree/bindings/regulator/act8865-regulator.txt b/Documentation/devicetree/bindings/regulator/act8865-regulator.txt
-index 3ae9f10..b9f58e4 100644
---- a/Documentation/devicetree/bindings/regulator/act8865-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/act8865-regulator.txt
-@@ -34,6 +34,9 @@ Optional input supply properties:
-   - inl67-supply: The input supply for LDO_REG3 and LDO_REG4
- 
- Any standard regulator properties can be used to configure the single regulator.
-+regulator-initial-mode, regulator-allowed-modes and regulator-mode could be specified
-+for act8865 using mode values from dt-bindings/regulator/active-semi,8865-regulator.h
-+file.
- 
- The valid names for regulators are:
- 	- for act8846:
-@@ -47,6 +50,8 @@ The valid names for regulators are:
- Example:
- --------
- 
-+#include <dt-bindings/regulator/active-semi,8865-regulator.h>
-+
- 		i2c1: i2c@f0018000 {
- 			pmic: act8865@5b {
- 				compatible = "active-semi,act8865";
-@@ -65,9 +70,19 @@ Example:
- 						regulator-name = "VCC_1V2";
- 						regulator-min-microvolt = <1100000>;
- 						regulator-max-microvolt = <1300000>;
--						regulator-suspend-mem-microvolt = <1150000>;
--						regulator-suspend-standby-microvolt = <1150000>;
- 						regulator-always-on;
-+
-+						regulator-allowed-modes = <ACT8865_REGULATOR_MODE_FIXED>,
-+									  <ACT8865_REGULATOR_MODE_LOWPOWER>;
-+						regulator-initial-mode = <ACT8865_REGULATOR_MODE_FIXED>;
-+
-+						regulator-state-mem {
-+							regulator-on-in-suspend;
-+							regulator-suspend-min-microvolt = <1150000>;
-+							regulator-suspend-max-microvolt = <1150000>;
-+							regulator-changeable-in-suspend;
-+							regulator-mode = <ACT8865_REGULATOR_MODE_LOWPOWER>;
-+						};
- 					};
- 
- 					vcc_3v3_reg: DCDC_REG3 {
-@@ -82,6 +97,14 @@ Example:
- 						regulator-min-microvolt = <3300000>;
- 						regulator-max-microvolt = <3300000>;
- 						regulator-always-on;
-+
-+						regulator-allowed-modes = <ACT8865_REGULATOR_MODE_NORMAL>,
-+									  <ACT8865_REGULATOR_MODE_LOWPOWER>;
-+						regulator-initial-mode = <ACT8865_REGULATOR_MODE_NORMAL>;
-+
-+						regulator-state-mem {
-+							regulator-off-in-suspend;
-+						};
- 					};
- 
- 					vddfuse_reg: LDO_REG2 {
-diff --git a/include/dt-bindings/regulator/active-semi,8865-regulator.h b/include/dt-bindings/regulator/active-semi,8865-regulator.h
-new file mode 100644
-index 0000000..15473db
---- /dev/null
-+++ b/include/dt-bindings/regulator/active-semi,8865-regulator.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Device Tree binding constants for the ACT8865 PMIC regulators
-+ */
-+
-+#ifndef _DT_BINDINGS_REGULATOR_ACT8865_H
-+#define _DT_BINDINGS_REGULATOR_ACT8865_H
-+
-+/*
-+ * These constants should be used to specify regulator modes in device tree for
-+ * ACT8865 regulators as follows:
-+ * ACT8865_REGULATOR_MODE_FIXED:	It is specific to DCDC regulators and it
-+ *					specifies the usage of fixed-frequency
-+ *					PWM.
-+ *
-+ * ACT8865_REGULATOR_MODE_NORMAL:	It is specific to LDO regulators and it
-+ *					specifies the usage of normal mode.
-+ *
-+ * ACT8865_REGULATOR_MODE_LOWPOWER:	For DCDC and LDO regulators; it specify
-+ *					the usage of proprietary power-saving
-+ *					mode.
-+ */
-+
-+#define ACT8865_REGULATOR_MODE_FIXED		1
-+#define ACT8865_REGULATOR_MODE_NORMAL		2
-+#define ACT8865_REGULATOR_MODE_LOWPOWER	3
-+
-+#endif
+Seems like a reasonable compromise to me.
 -- 
-2.7.4
+Jonathan
 
+
+>
+>>
+>>> ---
+>>> net/xdp/xdp_umem.c | 16 ++++++++++++----
+>>> 1 file changed, 12 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
+>>> index a0607969f8c0..907c9019fe21 100644
+>>> --- a/net/xdp/xdp_umem.c
+>>> +++ b/net/xdp/xdp_umem.c
+>>> @@ -14,7 +14,7 @@
+>>> #include <linux/netdevice.h>
+>>> #include <linux/rtnetlink.h>
+>>> #include <linux/idr.h>
+>>> -#include <linux/highmem.h>
+>>> +#include <linux/vmalloc.h>
+>>>
+>>> #include "xdp_umem.h"
+>>> #include "xsk_queue.h"
+>>> @@ -167,10 +167,12 @@ void xdp_umem_clear_dev(struct xdp_umem *umem)
+>>>
+>>> static void xdp_umem_unmap_pages(struct xdp_umem *umem)
+>>> {
+>>> +#if BITS_PER_LONG == 32
+>>> 	unsigned int i;
+>>>
+>>> 	for (i = 0; i < umem->npgs; i++)
+>>> -		kunmap(umem->pgs[i]);
+>>> +		vunmap(umem->pages[i].addr);
+>>> +#endif
+>>> }
+>>>
+>>> static void xdp_umem_unpin_pages(struct xdp_umem *umem)
+>>> @@ -378,8 +380,14 @@ static int xdp_umem_reg(struct xdp_umem *umem, 
+>>> struct xdp_umem_reg *mr)
+>>> 		goto out_account;
+>>> 	}
+>>>
+>>> -	for (i = 0; i < umem->npgs; i++)
+>>> -		umem->pages[i].addr = kmap(umem->pgs[i]);
+>>> +	for (i = 0; i < umem->npgs; i++) {
+>>> +#if BITS_PER_LONG == 32
+>>> +		umem->pages[i].addr = vmap(&umem->pgs[i], 1, VM_MAP,
+>>> +					   PAGE_KERNEL);
+>>> +#else
+>>> +		umem->pages[i].addr = page_address(umem->pgs[i]);
+>>> +#endif
+>>> +	}
+>>>
+>>> 	return 0;
+>>>
+>>> -- 
+>>> 2.17.1
+>
+> -- 
+> Regards,
+> Ivan Khoronzhuk
