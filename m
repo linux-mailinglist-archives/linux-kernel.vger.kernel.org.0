@@ -2,55 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28EFD8BD0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 17:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40338BD0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 17:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfHMP2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 11:28:02 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:44932 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbfHMP2C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 11:28:02 -0400
-Received: from [167.98.27.226] (helo=[10.35.5.101])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hxYiN-0006Cf-ER; Tue, 13 Aug 2019 16:27:59 +0100
-Subject: Re: [PATCH 01/16] ARM: remove ks8695 platform
-To:     Arnd Bergmann <arnd@arndb.de>, soc@kernel.org
-Cc:     Greg Ungerer <gerg@kernel.org>, Andrew Victor <linux@maxim.org.za>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190809202749.742267-1-arnd@arndb.de>
- <20190809202749.742267-2-arnd@arndb.de>
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-Message-ID: <3d6c7162-f802-6869-77cb-27aa456b237d@codethink.co.uk>
-Date:   Tue, 13 Aug 2019 16:27:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190809202749.742267-2-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1727806AbfHMP2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 11:28:11 -0400
+Received: from 8bytes.org ([81.169.241.247]:48928 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727404AbfHMP2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 11:28:11 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id D84F1391; Tue, 13 Aug 2019 17:28:09 +0200 (CEST)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 0/3 4.19-stable] Sync mappings in vmalloc/ioremap areas
+Date:   Tue, 13 Aug 2019 17:28:02 +0200
+Message-Id: <20190813152805.5251-1-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/2019 21:27, Arnd Bergmann wrote:
-> ks8695 is an older SoC originally made by Kendin, which was later acquired
-> by Micrel, and subsequently by Microchip.
-> 
-> The platform port was originally contributed by Andrew Victor and Ben
-> Dooks, and later maintained by Greg Ungerer.
-> 
-> When I recently submitted cleanups, but Greg noted that the platform no
-> longer boots and nobody is using it any more, we decided to remove it.
-> 
-> Cc: Greg Ungerer <gerg@kernel.org>
-> Cc: Andrew Victor <linux@maxim.org.za>
-> Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-> Link: https://wikidevi.com/wiki/Micrel
-> Link: https://lore.kernel.org/linux-arm-kernel/2bc41895-d4f9-896c-0726-0b2862fcbf25@kernel.org/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Ben Dooks <ben-linux@fluff.org>
+From: Joerg Roedel <jroedel@suse.de>
+
+Backport commits from upstream to fix a data corruption
+issue that gets exposed when using PTI on x86-32.
+
+Please consider them for inclusion into stable-4.19.
+
+Joerg Roedel (3):
+  x86/mm: Check for pfn instead of page in vmalloc_sync_one()
+  x86/mm: Sync also unmappings in vmalloc_sync_all()
+  mm/vmalloc: Sync unmappings in __purge_vmap_area_lazy()
+
+ arch/x86/mm/fault.c | 15 ++++++---------
+ mm/vmalloc.c        |  9 +++++++++
+ 2 files changed, 15 insertions(+), 9 deletions(-)
+
+-- 
+2.16.4
+
