@@ -2,128 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B65C8B7F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 235D78B827
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 14:14:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbfHMMG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 08:06:29 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:3087 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726935AbfHMMG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 08:06:28 -0400
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id CF558F30528089ECDCC9;
-        Tue, 13 Aug 2019 20:06:26 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 13 Aug 2019 20:06:26 +0800
-Received: from 138 (10.175.124.28) by dggeme762-chm.china.huawei.com
- (10.3.19.108) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 13
- Aug 2019 20:06:25 +0800
-Date:   Tue, 13 Aug 2019 20:23:32 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Pavel Machek <pavel@denx.de>
-CC:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v7 08/24] erofs: add namei functions
-Message-ID: <20190813122332.GA17429@138>
-References: <20190813091326.84652-1-gaoxiang25@huawei.com>
- <20190813091326.84652-9-gaoxiang25@huawei.com>
- <20190813114821.GB11559@amd>
+        id S1727616AbfHMMOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 08:14:10 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36151 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbfHMMOJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 08:14:09 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g4so2733590plo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 05:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qSoVEIqNaOExh67Z6AKi/3gvBhmET7Q2JnQdOFBkG+Y=;
+        b=xVsKlQndmoKfmKjbH3yVxeW1V/Qao83PlCF8Fr+rgXVqfzS1f2OUp/FODQ3Lc4vbbC
+         bhIgdsO7DHtzKL4eq86oSP6AwFG2yq2b6WJjGtz862ByPdIwzwKCiL5ZnONtBN803mzJ
+         Hp0GoSDNg1ePUSOg6yarxQgtha3y4tfhUTUZ/IMU0HZzdbASQmt2Th8IirIdvaay0wHd
+         +OapeDH7N9/2fGO93QtWLxDHTanzS+lk6Jww5APWnGxcrvib4QPLAmq1BY+pqJux9KvG
+         1EM8U1fZC4sVg44n0gmoRPjyqLDBIh9QVCahB1Qo28qL9NEdIlH3SbMjA/l1Ehxu6m81
+         9CZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qSoVEIqNaOExh67Z6AKi/3gvBhmET7Q2JnQdOFBkG+Y=;
+        b=YalPVb6atm57KZTJS7Gp8zCSXh5GbgCxx5vy9VmcxQJaoIuPUpLDxzK2iHC5Pq/WRM
+         NnxDDDOviCzEv9bOgDJQHYOgn3fycCEQRM1z5HndQ7ECNY4I0dJntxsizBgNEYBB8SDz
+         P66rUPfHrl7G4Z7yXgdbKRZZZXp6qqhiOFeWNenHfHIHCz7AME0nLRYgMCV3tfHxB98u
+         kaIIsUVmh7bTd5gWzUZcqAjzNUJPdzVmJZo34xty47L2ssnCBiPbB+BAml8eOuzLCa/K
+         epMW2QxSlsMXvz3CSdu1/OEbPtPqCCVOE1xwz3+Ux44THC1Q/tPLvs97JICXYZMrK6EK
+         SoJA==
+X-Gm-Message-State: APjAAAUzityZfqWMijXtREygEBfgqUcpZ9Q3M5jEN9AXGVP/cPYv4kyw
+        E0GcfzfkbRS3WZppqcyfYoxn
+X-Google-Smtp-Source: APXvYqyqk5l2TCDeiILn8sdBnKDZ03tP2u4wc3zOtMi6rIRkZXzhbn5iaUNzL/6GdHA2nfzu68C0NQ==
+X-Received: by 2002:a17:902:d70e:: with SMTP id w14mr8185306ply.339.1565698448530;
+        Tue, 13 Aug 2019 05:14:08 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:649c:6ce0:9d44:669c:5d6c:bc5f])
+        by smtp.gmail.com with ESMTPSA id i124sm195773668pfe.61.2019.08.13.05.14.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Aug 2019 05:14:07 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 17:44:00 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     mchehab@kernel.org, robh+dt@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        c.barrett@framos.com, a.brela@framos.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: media: i2c: Add IMX290 CMOS sensor
+ binding
+Message-ID: <20190813121400.GA29378@Mani-XPS-13-9360>
+References: <20190806130938.19916-1-manivannan.sadhasivam@linaro.org>
+ <20190806130938.19916-2-manivannan.sadhasivam@linaro.org>
+ <20190813094526.GG835@valkosipuli.retiisi.org.uk>
+ <20190813113358.GA28877@Mani-XPS-13-9360>
+ <20190813114643.GA2527@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813114821.GB11559@amd>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Originating-IP: [10.175.124.28]
-X-ClientProxiedBy: dggeme716-chm.china.huawei.com (10.1.199.112) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190813114643.GA2527@valkosipuli.retiisi.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+Hi Sakari,
 
-On Tue, Aug 13, 2019 at 01:48:21PM +0200, Pavel Machek wrote:
-> Hi!
+On Tue, Aug 13, 2019 at 02:46:43PM +0300, Sakari Ailus wrote:
+> Hi Manivannan,
 > 
-> > +	/*
-> > +	 * on-disk error, let's only BUG_ON in the debugging mode.
-> > +	 * otherwise, it will return 1 to just skip the invalid name
-> > +	 * and go on (in consideration of the lookup performance).
-> > +	 */
-> > +	DBG_BUGON(qd->name > qd->end);
+> On Tue, Aug 13, 2019 at 05:03:58PM +0530, Manivannan Sadhasivam wrote:
+> > Hi Sakari,
+> > 
+> > Thanks for the review!
+> > 
+> > On Tue, Aug 13, 2019 at 12:45:26PM +0300, Sakari Ailus wrote:
+> > > Hi Manivannan,
+> > > 
+> > > On Tue, Aug 06, 2019 at 06:39:36PM +0530, Manivannan Sadhasivam wrote:
+> > > > Add devicetree binding for IMX290 CMOS image sensor.
+> > > > 
+> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > ---
+> > > >  .../devicetree/bindings/media/i2c/imx290.txt  | 51 +++++++++++++++++++
+> > > >  1 file changed, 51 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx290.txt
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/media/i2c/imx290.txt b/Documentation/devicetree/bindings/media/i2c/imx290.txt
+> > > > new file mode 100644
+> > > > index 000000000000..7535b5b5b24b
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/media/i2c/imx290.txt
+> > > > @@ -0,0 +1,51 @@
+> > > > +* Sony IMX290 1/2.8-Inch CMOS Image Sensor
+> > > > +
+> > > > +The Sony IMX290 is a 1/2.8-Inch CMOS Solid-state image sensor with
+> > > > +Square Pixel for Color Cameras. It is programmable through I2C and 4-wire
+> > > > +interfaces. The sensor output is available via CMOS logic parallel SDR output,
+> > > > +Low voltage LVDS DDR output and CSI-2 serial data output.
+> > > 
+> > > If there are three to choose from, then you should specify which one is in
+> > > use. Given that I think chances remain slim we'd add support for the other
+> > > two (it's certainly not ruled out though), CSI-2 could be the default. But
+> > > this needs to be documented.
+> > > 
+> > 
+> > Hmm... I'm not sure here. Bindings should describe the hardware and not the
+> > limitations of the driver. Here as you said, the sensor can output frames
+> > in 3 different modes/formats but the driver only supports CSI2. I can add a
+> > note in the driver but not sure whether dt-binding is the right place or not!
 > 
-> I believe you should check for errors in non-debug mode, too.
-
-Thanks for your kindly reply!
-
-The following is just my personal thought... If I am wrong, please
-kindly point out...
-
-As you can see, this is a new prefixed string binary search algorithm
-which can provide similar performance with hashed approach (but no
-need to store hash value at all), so I really care about its lookup
-performance.
-
-There is something needing to be concerned, is, whether namei() should
-report any potential on-disk issues or just return -ENOENT for these
-corrupted dirs, I think I tend to use the latter one.
-
-The reason (in my opinion) is if you consider another some another
-complicated non-transverse ondisk implementation, it cannot transverse
-all the entires so they could/couldn't report all potential issues
-in namei() (For such corrupted dir, they can return -ENOENT due
-to lack of information of course, just avoiding crashing the kernel
-is OK).
-
-Therefore, in my thought, such issue can be reported by fsck-like
-tools such as erofs.fsck. And actually readdir() will also report
-all issues as well, thus we can have performance gain on lookup.
-
+> I guess alternatively you could document the necessary bindings for the
+> other two busses.
 > 
+> But what I'm saying here is that it's highly unlikely they'll be ever
+> needed, and it'd be mostly a waste of time to implement that. (That said, I
+> have nothing against the use of these busses, but I've never seen anyone
+> using them.) Many other devices use defaults for more contentious settings.
 > 
-> > +			if (unlikely(!ndirents)) {
-> > +				DBG_BUGON(1);
-> > +				kunmap_atomic(de);
-> > +				put_page(page);
-> > +				page = ERR_PTR(-EIO);
-> > +				goto out;
-> > +			}
-> 
-> -EUCLEAN is right error code for corrupted filesystem. (And you
->  probably want to print something to the syslog, too).
 
-Yes, you are right :) -EUCLEAN/EFSCORRUPTED is actually for such thing,
-nowadays, EROFS treats all EFSCORRUPTED cases into EIO, and I will
-update that in one patch... (Yes, it needs to print something of course :))
+Agree with you but my question was, whether I could document the supported
+mode in bindings or not! I have seen comments from Rob in the past that the
+binding should not document the limitations of the driver. But anyway, one
+can infer from the current binding that only CSI2 is supported for now, it's
+just stating it explicitly makes me doubtful!
+
+> > 
+> > > > +
+> > > > +Required Properties:
+> > > > +- compatible: Should be "sony,imx290"
+> > > > +- reg: I2C bus address of the device
+> > > > +- clocks: Reference to the xclk clock.
+> > > > +- clock-names: Should be "xclk".
+> > > > +- clock-frequency: Frequency of the xclk clock.
+> > > 
+> > > ...in Hz.
+> > > 
+> > 
+> > Ack.
+> > 
+> > > > +- vdddo-supply: Sensor digital IO regulator.
+> > > > +- vdda-supply: Sensor analog regulator.
+> > > > +- vddd-supply: Sensor digital core regulator.
+> > > > +
+> > > > +Optional Properties:
+> > > > +- reset-gpios: Sensor reset GPIO
+> > > > +
+> > > > +The imx290 device node should contain one 'port' child node with
+> > > > +an 'endpoint' subnode. For further reading on port node refer to
+> > > > +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> > > 
+> > > Which other properties are relevant for the device?
+> > 
+> > Not much other than, clock/data lanes.
+> 
+> Please document data-lanes, and which values it may have.
+>
+
+Ack.
+
+> > 
+> > > I suppose you can't change the lane order, so clock-lanes is redundant
+> > > (don't use it in the example) and data-lanes should be monotonically
+> > > incrementing series from 1 to 4.
+> > > 
+> > 
+> > We can change the order and the example here illustrates how it has been
+> > wired in FRAMOS module. If I change the lane order like you said, it won't
+> > work.
+> 
+> I highly doubt that. Neither the driver nor the sensor uses the lane
+> ordering information.
+> 
+
+Agree but CSI2 host will need this informtion, right? Please correct me if
+I'm wrong!
+
+> And even if the driver only supported four lanes, then it should check the
+> number of lanes is actually four.
+> 
+
+Ack. Sensor works with 2/4 lanes but the driver only handles 4 for now. Will
+add the check in driver.
 
 Thanks,
-Gao Xiang
+Mani
 
-> 
-> 								Pavel
 > -- 
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
-
+> Regards,
+> 
+> Sakari Ailus
