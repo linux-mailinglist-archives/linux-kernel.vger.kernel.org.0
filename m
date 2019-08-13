@@ -2,71 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC9348B241
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F5668B247
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:24:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbfHMIXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:23:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45340 "EHLO mail.kernel.org"
+        id S1728023AbfHMIY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:24:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727099AbfHMIXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 04:23:39 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1727166AbfHMIY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 04:24:28 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E618E20663;
-        Tue, 13 Aug 2019 08:23:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 427AB20663;
+        Tue, 13 Aug 2019 08:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565684618;
-        bh=LhM0YKarXZmrtosEYHZKw3JO5KA+rrW+R4sA+dxYHo4=;
+        s=default; t=1565684667;
+        bh=Rz+v3dkBfs3QN68t0zxLnFK2Q8XWGYQrgM1IhEDbkD4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xmY33onqh5s/0F6Nes4hp0T2wWMVFsQaxmazfIV2RL982CY2WeAYpOoF8h6kqDeD9
-         Yyz6s1UfIANHyURdX3zrsq7tPGixoS7RNG5Ks7RSBiuJ3BYa3EJGad52XRjzLo8XwC
-         at44eKlZCbmOxqbltAbKELSpiyAF0WY/JsSmtXWg=
-Date:   Tue, 13 Aug 2019 10:23:36 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Knut Omang <knut.omang@oracle.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Shreyans Devendra Doshi <0xinfosect0r@gmail.com>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Hidenori Yamaji <hidenori.yamaji@sony.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Timothy Bird <Tim.Bird@sony.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Daniel Vetter <daniel@ffwll.ch>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC 00/19] Integration of Kernel Test Framework (KTF) into the
- kernel tree
-Message-ID: <20190813082336.GB17627@kroah.com>
-References: <cover.92d76bb4f6dcedc971d0b72a49e8e459a98bca54.1565676440.git-series.knut.omang@oracle.com>
+        b=fRRSt2XOeK52+/CQl/KBGdbbiwjT89hcNEti95svIwNmYHskbJKcXkc2I8CPK2P9C
+         9tJLWBJTLIK0FRG5YQ+0y9iMKjN6MzqLYUZSx+zcLOxQYwcNozEKPeffNOR6hRib7X
+         UntY9jHYNSeahSoizepsqZYapYT9UZtp1DU/0dRo=
+Date:   Tue, 13 Aug 2019 09:24:23 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul@pwsan.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Atish Patra <atish.patra@wdc.com>
+Subject: Re: linux-next: manual merge of the risc-v tree with the arm64 tree
+Message-ID: <20190813082422.lecgqtknnn5g4dyj@willie-the-truck>
+References: <20190813093447.747a5853@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.92d76bb4f6dcedc971d0b72a49e8e459a98bca54.1565676440.git-series.knut.omang@oracle.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190813093447.747a5853@canb.auug.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 08:09:15AM +0200, Knut Omang wrote:
-> and in the making::
+On Tue, Aug 13, 2019 at 09:34:47AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> kunit/			  (kernel only (UML))
+> Today's linux-next merge of the risc-v tree got a conflict in:
+> 
+>   arch/arm64/kernel/topology.c
+> 
+> between commit:
+> 
+>   98dc19902a0b ("arm64: topology: Use PPTT to determine if PE is a thread")
+> 
+> from the arm64 tree and commit:
+> 
+>   60c1b220d8bc ("cpu-topology: Move cpu topology code to common code.")
+> 
+> from the risc-v tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-You are going to have to integrate this with kunit, to come up with a
-superset of both in the end.
+Thanks, Stephen.
 
-And I do not think that kunit is only UML, it's just that seems to be
-what Brendan tests with, but should work with other arches as well.
+Paul, Palmer -- If it's not too late, then it would probably be best to
+stick this commit (60c1b220d8bc) and any dependencies on their own stable
+branch so that we can both pull it into our respective trees and I can
+resolve this conflict in the arm64 tree, which I'll send early during the
+merge window.
 
-thanks,
+Looking at your tree, I guess I could just pull in
+common/for-v5.4-rc1/cpu-topology if you promise never to rebase it. Failing
+that, you could fork a new branch from 60c1b220d8bc and I could just pull
+that part instead.
 
-greg k-h
+Please let me know.
+
+Will
