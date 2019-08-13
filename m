@@ -2,147 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7466D8C4C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 01:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 242FF8C4D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 01:35:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfHMX1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 19:27:00 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:65239 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726126AbfHMX1A (ORCPT
+        id S1726631AbfHMXfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 19:35:01 -0400
+Received: from proxima.lasnet.de ([78.47.171.185]:45164 "EHLO
+        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbfHMXfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 19:27:00 -0400
-Received: from 79.184.255.155.ipv4.supernova.orange.pl (79.184.255.155) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
- id 24945f829697e88f; Wed, 14 Aug 2019 01:26:56 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/5] PCI / PM: Check for error when reading PME status
-Date:   Wed, 14 Aug 2019 01:26:56 +0200
-Message-ID: <2341382.rHjnX2mYrU@kreacher>
-In-Reply-To: <20190806133638.GQ151852@google.com>
-References: <20190805205214.194981-1-helgaas@kernel.org> <CAJZ5v0i5oVuZMxFmYiLnYPk=BsFGGiYntez3m1V5xeWgTgA4hg@mail.gmail.com> <20190806133638.GQ151852@google.com>
+        Tue, 13 Aug 2019 19:35:00 -0400
+X-Greylist: delayed 416 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Aug 2019 19:35:00 EDT
+Received: from localhost.localdomain (unknown [5.148.42.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: stefan@datenfreihafen.org)
+        by proxima.lasnet.de (Postfix) with ESMTPSA id 77AC9CB70F;
+        Wed, 14 Aug 2019 01:28:03 +0200 (CEST)
+Subject: Re: [PATCH] net: ieee802154: remove redundant assignment to rc
+To:     Colin King <colin.king@canonical.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190813142818.15022-1-colin.king@canonical.com>
+From:   Stefan Schmidt <stefan@datenfreihafen.org>
+Message-ID: <a3262e25-209d-209d-59fc-a09511fb9280@datenfreihafen.org>
+Date:   Wed, 14 Aug 2019 01:28:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20190813142818.15022-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, August 6, 2019 3:36:38 PM CEST Bjorn Helgaas wrote:
-> On Mon, Aug 05, 2019 at 11:02:51PM +0200, Rafael J. Wysocki wrote:
-> > On Mon, Aug 5, 2019 at 10:52 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > >
-> > > pci_check_pme_status() reads the Power Management capability to determine
-> > > whether a device has generated a PME.  The capability is in config space,
-> > > which is accessible in D0, D1, D2, and D3hot, but not in D3cold.
-> > >
-> > > If we call pci_check_pme_status() on a device that's in D3cold, config
-> > > reads fail and return ~0 data, which we erroneously interpreted as "the
-> > > device has generated a PME".
-> > >
-> > > 000dd5316e1c ("PCI: Do not poll for PME if the device is in D3cold")
-> > > avoided many of these problems by avoiding pci_check_pme_status() if we
-> > > think the device is in D3cold.  However, it is not a complete fix because
-> > > the device may go to D3cold after we check its power state but before
-> > > pci_check_pme_status() reads the Power Management Status Register.
-> > >
-> > > Return false ("device has not generated a PME") if we get an error response
-> > > reading the Power Management Status Register.
-> > >
-> > > Fixes: 000dd5316e1c ("PCI: Do not poll for PME if the device is in D3cold")
-> > > Fixes: 71a83bd727cc ("PCI/PM: add runtime PM support to PCIe port")
-> > > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > > ---
-> > >  drivers/pci/pci.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > > index 984171d40858..af6a97d7012b 100644
-> > > --- a/drivers/pci/pci.c
-> > > +++ b/drivers/pci/pci.c
-> > > @@ -2008,6 +2008,9 @@ bool pci_check_pme_status(struct pci_dev *dev)
-> > >
-> > >         pmcsr_pos = dev->pm_cap + PCI_PM_CTRL;
-> > >         pci_read_config_word(dev, pmcsr_pos, &pmcsr);
-> > > +       if (pmcsr == (u16) PCI_ERROR_RESPONSE)
-> > > +               return false;
-> > 
-> > No, sorry.
-> > 
-> > We tried that and it didn't work.
-> > 
-> > pcie_pme_handle_request() depends on this returning "true" for all
-> > bits set, as from its perspective "device is not accessible" may very
-> > well mean "device may have signaled PME".
+Hello.
+
+On 13.08.19 16:28, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Right, it's obviously wrong in the case of devices that advertise
-> D3cold in PME_Support, i.e., devices that can generate PME even with
-> main power off.  Also, we may want to try to wake up devices if the
-> config read fails for a reason other than the device being in D3cold.
+> Variable rc is initialized to a value that is never read and it is
+> re-assigned later. The initialization is redundant and can be removed.
 > 
-> What I don't like about the current code is that it checks
-> PCI_PM_CTRL_PME_STATUS in data that may be completely bogus.
-
-Whether or not the other bits in the register make sense doesn't
-matter here.  Only the PME_STATUS bit matters.
-
-> Do you think it would be better to do something like this:
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  net/ieee802154/socket.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->   pci_read_config_word(dev, pmcsr_pos, &pmcsr);
->   if (pmcsr == (u16) PCI_ERROR_RESPONSE) {
->     if (pci_pme_capable(dev, PCI_PM_CAP_PME_D3cold))
->       return true;
->     return false;
->   }
+> diff --git a/net/ieee802154/socket.c b/net/ieee802154/socket.c
+> index dacbd58e1799..badc5cfe4dc6 100644
+> --- a/net/ieee802154/socket.c
+> +++ b/net/ieee802154/socket.c
+> @@ -1092,7 +1092,7 @@ static struct packet_type ieee802154_packet_type = {
+>  
+>  static int __init af_ieee802154_init(void)
+>  {
+> -	int rc = -EINVAL;
+> +	int rc;
+>  
+>  	rc = proto_register(&ieee802154_raw_prot, 1);
+>  	if (rc)
 > 
-> or maybe this:
-> 
->   pci_read_config_word(dev, pmcsr_pos, &pmcsr);
->   if (pmcsr == (u16) PCI_ERROR_RESPONSE)
->     return true;
-
-In this case it still would be prudent to check PME_ENABLE before
-returning true and so there is no practical difference between
-ERROR_RESPONSE and the valid data with PME_STATUS set.
-
-Except that in the ERROR_RESPONSE case we may as well avoid the
-PMCSR write which is not going to make a difference.
-
-> We should get PCI_ERROR_RESPONSE pretty reliably from devices in
-> D3cold, so the first possibility would cover that case.
->
-> But since pci_check_pme_status() basically returns a hint ("true"
-> means a device *may* have generated a PME), and even if the hint is
-> wrong, the worst that happens is an unnecessary wakeup, maybe the
-> second possibility is safer.
-> 
-> What do you think?
-
-So if you really want to avoid the PMCSR write in the ERROR_RESPONSE case,
-something like this can be done IMO:
-
- 			return false;
- 
- 	/* Clear PME status. */
--	pmcsr |= PCI_PM_CTRL_PME_STATUS;
- 	if (pmcsr & PCI_PM_CTRL_PME_ENABLE) {
-+		if (pmcsr == (u16) PCI_ERROR_RESPONSE)
-+			return true;
-+
- 		/* Disable PME to avoid interrupt flood. */
- 		pmcsr &= ~PCI_PM_CTRL_PME_ENABLE;
- 		ret = true;
 
 
+This patch has been applied to the wpan tree and will be
+part of the next pull request to net. Thanks!
 
-
+regards
+Stefan Schmidt
