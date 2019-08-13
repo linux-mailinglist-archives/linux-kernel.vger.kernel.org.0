@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 547FA8B2A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0EF98B29B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 10:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbfHMIgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 04:36:16 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34034 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728048AbfHMIf7 (ORCPT
+        id S1728254AbfHMIgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 04:36:01 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39521 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728192AbfHMIf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Aug 2019 04:35:59 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 31so106982939wrm.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 01:35:57 -0700 (PDT)
+Received: by mail-wm1-f65.google.com with SMTP id i63so692241wmg.4
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 01:35:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yY3j+tzAidsewEpOKH7pvngWyOrXZYN1znzf8G8c2/o=;
-        b=z1KFlnpe7m6oruIQ8cwwyUe0xYtx70XatCj0QTT3fQG0wWPqOetxuINiLncLjFTWTm
-         99H1BtzfFj+UnuZcErc7bAJTBHGV4j1+4Z5/JyC7VOEUNZIcuuvAzstG9O1gv1RCckId
-         TzAMy2Yy5ely6dY38GSWw68qaAwxhYG8sqLPPCksZXgXydyiUuJ0K3sGK/2ut4K19N5Y
-         1RF8aEmiY8gLCqkR3QzdAwpqB9f7CbTOvf5THnii6yVLwT6BZA0ObfQ3ZdJYT2W8rKoY
-         ZD6dc/JtTu+Oukif2+WVSMwzax90gO1e/MjO1I4Phxk/93Ispzxbp3zCuDhM3ZTKwCEt
-         bcFA==
+        bh=B9rsr1/dgfaWkUD61V9rwU3U5jz+C8FjG7cuo0AJp/Q=;
+        b=NIbQsuQ2GpNnu739xoBeBF5FbMINwGQO+uIiIC0oSLND+QmbFVEfIMFPovy+35DF/K
+         wg++6jFE3Z9x5YLYZzPdq3Td/haqQlmOjOe2kkrJEYAeG2DEXu1cUrNyCr8UXuRtNjJ2
+         M8cpQ+NGVZzfmBjrrbQVSi09Fk1hcLN0wTa2gbd8aT6C4hJ/bV1Ty/wgvnZIzTzLNq1C
+         GMCi/GaYWG04/R8YjyoIM97doonDiD9mxrNim+ql2pMM+zsPLw2Il2hxXPIg5EMx5Sva
+         4N/VaFxQyREtZdPogXXXuqNfJn5TUJyO7KtYv/4svBoYj4qUzg1iZ2KBR5awYOXaAwFI
+         NSeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yY3j+tzAidsewEpOKH7pvngWyOrXZYN1znzf8G8c2/o=;
-        b=X/WkpvHe1wIbUi81PVe9UC3QD9IjuANxOL1Tp7xO+ACMwmisnvMkgt1E9nuJwnV4nc
-         mkryDLRXzWS/gz19I/Sxsbc0Jf4TXYbPfORSUjjC422Xr4vkLFlxfg3N0AAOO+7SpDmA
-         QDiaNIN/LfdIsCHNsN64ioebLmTbfkCJtdq7wWkgRNEXO1UeJ7/+5M2D3EaJ4gQijp4t
-         4Xmlbgt7ojee0KYgLP+jphQHyPSEpce/8uq0q2L+0h+J8nJAC6TnIxWT7Dw7vTe2rSpR
-         nWUv9qTQMA0ApvJckdbWU32XG1u32lYzdxjEoN2G7OTtvZn+VPR3SWnVqzLEagwvpPTm
-         KDRg==
-X-Gm-Message-State: APjAAAWha3rj/0Ku9ez22mf4+j+FZ+R57u5m2C1w6/etITxT0OoLDRrY
-        tbv3ox4M1IjZLIaNmAwctNmfNQ==
-X-Google-Smtp-Source: APXvYqySdA0FxJMGYIhbPWPNlaaNMqY14nOQdlvcbZOf6sDtJJSN0OFSBC4FzOtGc7e8Ynj8q0FmxA==
-X-Received: by 2002:adf:dc51:: with SMTP id m17mr47047026wrj.256.1565685356898;
-        Tue, 13 Aug 2019 01:35:56 -0700 (PDT)
+        bh=B9rsr1/dgfaWkUD61V9rwU3U5jz+C8FjG7cuo0AJp/Q=;
+        b=XdV6lk+2Hvd8EjY6T2yvYGjdMtsSMDtU5LavmyzgccclHpkNh7/eHb7jr6ICMfOGl/
+         XznzndzKcEm3mX28/rlHCwJolIyXzwSp0tlkNLitaWH2PCbD/ZdYj5Ol5zQvNharHm9I
+         Kjllnf5Vw6Fp1wyVPZ9lU978j6tRDwTUUxgPBYyZ2yvuvEdtjERPQGxuYqo0cu5TvZQW
+         xIIzsOAR5LVvLZUC7U3EkV+D/uzK6oDyN44IwzlUTDNtYx7MpejM/B5n5KENKNeosoXW
+         0P9zQ6WQXzhEOSZXXVQhLj0mg2pBn561BrGhhCZw+TLNS0d1AxBwwuKivQ+aYEK11z7n
+         Zu9w==
+X-Gm-Message-State: APjAAAWMMrOp828Xg3vEnPJB5dcZdt2cq9IxzGlJgK1l/8o1OrH7wU3H
+        zt9lQawVhQUWdCpgxHwFF5SSNA==
+X-Google-Smtp-Source: APXvYqwP5gWmgCWzPHvhUEOHEmYJug9XD6Ru09g/P4GV8esa71ue0cYftUlFH20psboRMPK85MePTg==
+X-Received: by 2002:a1c:7a12:: with SMTP id v18mr1765791wmc.56.1565685358047;
+        Tue, 13 Aug 2019 01:35:58 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id o11sm8651822wrw.19.2019.08.13.01.35.55
+        by smtp.gmail.com with ESMTPSA id o11sm8651822wrw.19.2019.08.13.01.35.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2019 01:35:56 -0700 (PDT)
+        Tue, 13 Aug 2019 01:35:57 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     vkoul@kernel.org, broonie@kernel.org
 Cc:     bgoswami@codeaurora.org, plai@codeaurora.org,
@@ -53,9 +53,9 @@ Cc:     bgoswami@codeaurora.org, plai@codeaurora.org,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         spapothi@codeaurora.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 2/5] soundwire: stream: make stream name a const pointer
-Date:   Tue, 13 Aug 2019 09:35:47 +0100
-Message-Id: <20190813083550.5877-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 3/5] ASoC: core: add support to snd_soc_dai_get_sdw_stream()
+Date:   Tue, 13 Aug 2019 09:35:48 +0100
+Message-Id: <20190813083550.5877-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190813083550.5877-1-srinivas.kandagatla@linaro.org>
 References: <20190813083550.5877-1-srinivas.kandagatla@linaro.org>
@@ -66,49 +66,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make stream name const pointer
+On platforms which have smart speaker amplifiers connected via
+soundwire and modeled as aux devices in ASoC, in such usecases machine
+driver should be able to get sdw master stream from dai so that it can
+use the runtime stream to setup slave streams.
+
+soundwire already as a set function, get function would provide more
+flexibility to above configurations.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/soundwire/stream.c    | 2 +-
- include/linux/soundwire/sdw.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ include/sound/soc-dai.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-index 60bc2fe42928..49ce21320f52 100644
---- a/drivers/soundwire/stream.c
-+++ b/drivers/soundwire/stream.c
-@@ -863,7 +863,7 @@ EXPORT_SYMBOL(sdw_release_stream);
-  * sdw_alloc_stream should be called only once per stream. Typically
-  * invoked from ALSA/ASoC machine/platform driver.
-  */
--struct sdw_stream_runtime *sdw_alloc_stream(char *stream_name)
-+struct sdw_stream_runtime *sdw_alloc_stream(const char *stream_name)
- {
- 	struct sdw_stream_runtime *stream;
+diff --git a/include/sound/soc-dai.h b/include/sound/soc-dai.h
+index dc48fe081a20..1e01f4a302e0 100644
+--- a/include/sound/soc-dai.h
++++ b/include/sound/soc-dai.h
+@@ -202,6 +202,7 @@ struct snd_soc_dai_ops {
  
-diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index aac68e879fae..5e61ad065d32 100644
---- a/include/linux/soundwire/sdw.h
-+++ b/include/linux/soundwire/sdw.h
-@@ -830,7 +830,7 @@ struct sdw_stream_params {
-  * @m_rt_count: Count of Master runtime(s) in this stream
-  */
- struct sdw_stream_runtime {
--	char *name;
-+	const char *name;
- 	struct sdw_stream_params params;
- 	enum sdw_stream_state state;
- 	enum sdw_stream_type type;
-@@ -838,7 +838,7 @@ struct sdw_stream_runtime {
- 	int m_rt_count;
- };
+ 	int (*set_sdw_stream)(struct snd_soc_dai *dai,
+ 			void *stream, int direction);
++	void *(*get_sdw_stream)(struct snd_soc_dai *dai, int direction);
+ 	/*
+ 	 * DAI digital mute - optional.
+ 	 * Called by soc-core to minimise any pops.
+@@ -410,4 +411,13 @@ static inline int snd_soc_dai_set_sdw_stream(struct snd_soc_dai *dai,
+ 		return -ENOTSUPP;
+ }
  
--struct sdw_stream_runtime *sdw_alloc_stream(char *stream_name);
-+struct sdw_stream_runtime *sdw_alloc_stream(const char *stream_name);
- void sdw_release_stream(struct sdw_stream_runtime *stream);
- int sdw_stream_add_master(struct sdw_bus *bus,
- 		struct sdw_stream_config *stream_config,
++static inline void *snd_soc_dai_get_sdw_stream(struct snd_soc_dai *dai,
++					       int direction)
++{
++	if (dai->driver->ops->get_sdw_stream)
++		return dai->driver->ops->get_sdw_stream(dai, direction);
++	else
++		return ERR_PTR(-ENOTSUPP);
++}
++
+ #endif
 -- 
 2.21.0
 
