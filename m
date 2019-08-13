@@ -2,95 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02CAA8B4EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 12:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 243638B4F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 12:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbfHMKED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 06:04:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:33110 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728559AbfHMKEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 06:04:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A0511570;
-        Tue, 13 Aug 2019 03:04:02 -0700 (PDT)
-Received: from red-moon (red-moon.cambridge.arm.com [10.1.197.39])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CCC683F774;
-        Tue, 13 Aug 2019 03:03:59 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 11:04:09 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Cc:     bhelgaas@google.com, minghuan.Lian@nxp.com, mingkai.hu@nxp.com,
-        roy.zang@nxp.com, l.stach@pengutronix.de, kishon@ti.com,
-        tpiepho@impinj.com, leonard.crestez@nxp.com,
-        andrew.smirnov@gmail.com, yue.wang@amlogic.com,
-        hayashi.kunihiko@socionext.com, dwmw@amazon.co.uk,
-        jonnyc@amazon.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv5 1/2] PCI: layerscape: Add the bar_fixed_64bit property
- in EP driver.
-Message-ID: <20190813100409.GB10070@red-moon>
-References: <20190813062840.2733-1-xiaowei.bao@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190813062840.2733-1-xiaowei.bao@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1728792AbfHMKFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 06:05:17 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:32983 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728410AbfHMKFR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 06:05:17 -0400
+Received: by mail-yw1-f66.google.com with SMTP id e65so2285362ywh.0;
+        Tue, 13 Aug 2019 03:05:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QOJLmQUkpsoGCMPbck1Kq5bC18tcOyqr58P4itm/OgA=;
+        b=ocWi80EaZD05lrd9gO5lQuxHjbRbh227mPFFH0rzjW/zmCwX9CaOo85ffTMO24cH5V
+         SZmLHcgrgOthsyNbzC7ODH4046TeCov+qZlfpnLLrKRH5E5fH0lM8TSZpc+APubjev6q
+         HJNfDBgKvU92O2Otdm6x9O8NwOP2HntM86Q3Qc7U33/dj/MnKWxNoDK98Eo7xnHMErCg
+         L+qgL7+K0MOHNTZKlyOg11+ZTtobz3CKUasdTCjEmAciKM89DRQcRHMJfGDi42WXJOB2
+         Mnd1vrl3eWk1017o9rJ4pljIhfDYWQ0HtdtpvOhfY9YCcqS6yR/zz9datloHF/T5HmzQ
+         YwUg==
+X-Gm-Message-State: APjAAAU1nBSJ/euIvCxHgCno0RslDje3K66EOBbfBv9j3Q5IddOx7hhW
+        v8j5aD8EgB0mkriLd3BIEu0=
+X-Google-Smtp-Source: APXvYqwwuwtTOn9hZoDhBXnvqPqw+Qi6eA4c2mCw0sHcWfGmgnNmMD6+s+pZGJspZoJCEr12sJ53CA==
+X-Received: by 2002:a81:5c45:: with SMTP id q66mr13607307ywb.101.1565690715738;
+        Tue, 13 Aug 2019 03:05:15 -0700 (PDT)
+Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
+        by smtp.gmail.com with ESMTPSA id w206sm1485314ywc.51.2019.08.13.03.05.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 13 Aug 2019 03:05:14 -0700 (PDT)
+From:   Wenwen Wang <wenwen@cs.uga.edu>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     Ariel Elior <aelior@marvell.com>,
+        GR-everest-linux-l2@marvell.com (supporter:QLOGIC QL4xxx ETHERNET
+        DRIVER), "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org (open list:QLOGIC QL4xxx ETHERNET DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] qed: Add cleanup in qed_slowpath_start()
+Date:   Tue, 13 Aug 2019 05:05:09 -0500
+Message-Id: <1565690709-3186-1-git-send-email-wenwen@cs.uga.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-git log --oneline --follow drivers/pci/controller/dwc/pci-layerscape.c
+If qed_mcp_send_drv_version() fails, no cleanup is executed, leading to
+memory leaks. To fix this issue, redirect the execution to the label 'err3'
+before returning the error.
 
-Do you see any commit with a $SUBJECT ending with a period ?
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+---
+ drivers/net/ethernet/qlogic/qed/qed_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is not. So remove it from yours too.
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
+index 829dd60..d16a251 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -1325,7 +1325,7 @@ static int qed_slowpath_start(struct qed_dev *cdev,
+ 					      &drv_version);
+ 		if (rc) {
+ 			DP_NOTICE(cdev, "Failed sending drv version command\n");
+-			return rc;
++			goto err3;
+ 		}
+ 	}
+ 
+-- 
+2.7.4
 
-On Tue, Aug 13, 2019 at 02:28:39PM +0800, Xiaowei Bao wrote:
-> The PCIe controller of layerscape just have 4 BARs, BAR0 and BAR1
-> is 32bit, BAR2 and BAR4 is 64bit, this is determined by hardware,
-> so set the bar_fixed_64bit with 0x14.
-> 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> ---
-> v2:
->  - Replace value 0x14 with a macro.
-> v3:
->  - No change.
-> v4:
->  - send the patch again with '--to'.
-> v5:
->  - fix the commit message.
-> 
->  drivers/pci/controller/dwc/pci-layerscape-ep.c | 1 +
->  1 file changed, 1 insertion(+)
-
-scripts/get_maintainer.pl -f drivers/pci/controller/dwc/pci-layerscape-ep.c
-Now, with the output you get justify all the people you send this email
-to.
-
-So, again, trim the CC list and it is the last time I tell you.
-
-Before sending patches on mailing lists use git --dry-run to check
-the emails you are sending.
-
-Thanks,
-Lorenzo
-
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> index be61d96..ca9aa45 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> @@ -44,6 +44,7 @@ static const struct pci_epc_features ls_pcie_epc_features = {
->  	.linkup_notifier = false,
->  	.msi_capable = true,
->  	.msix_capable = false,
-> +	.bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
->  };
->  
->  static const struct pci_epc_features*
-> -- 
-> 2.9.5
-> 
