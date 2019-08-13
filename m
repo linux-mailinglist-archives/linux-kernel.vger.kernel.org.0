@@ -2,76 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDF8E8B9BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:12:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDFA78B9C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:13:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbfHMNMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 09:12:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727607AbfHMNMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:12:52 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E6292067D;
-        Tue, 13 Aug 2019 13:12:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565701970;
-        bh=L4V4NnUCcPwkaHDuIEzj1wBMHu2rN4+F8P2KbW0qMcg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NTiK1YkN0iFfcQd4shHsoKiVF/OhIISMCpuTLiTGe9E+xQeltJ7AcCGIfbp2WCogB
-         u2DT4EcrhjTFu7WQYB/giay3KFFnIEK8gsgpgM9Pk3RknQpfAigaK//w01ZKYXM+go
-         lyAlKlFL1ZemHIDcOh1IKMUykV5UOO/cFoLKMG1o=
-Date:   Tue, 13 Aug 2019 15:12:48 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Matthias Maennich <maennich@google.com>
-Cc:     linux-kernel@vger.kernel.org, maco@android.com,
-        kernel-team@android.com, arnd@arndb.de, geert@linux-m68k.org,
-        hpa@zytor.com, jeyu@kernel.org, joel@joelfernandes.org,
-        kstewart@linuxfoundation.org, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-usb@vger.kernel.org, lucas.de.marchi@gmail.com,
-        maco@google.com, michal.lkml@markovi.net, mingo@redhat.com,
-        oneukum@suse.com, pombredanne@nexb.com, sam@ravnborg.org,
-        sboyd@codeaurora.org, sspatil@google.com,
-        stern@rowland.harvard.edu, tglx@linutronix.de,
-        usb-storage@lists.one-eyed-alien.net, x86@kernel.org,
-        yamada.masahiro@socionext.com
-Subject: Re: [PATCH v2 09/10] usb-storage: remove single-use define for
- debugging
-Message-ID: <20190813131248.GB16399@kroah.com>
-References: <20180716122125.175792-1-maco@android.com>
- <20190813121733.52480-1-maennich@google.com>
- <20190813121733.52480-10-maennich@google.com>
- <20190813124259.GC14284@kroah.com>
+        id S1729008AbfHMNNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 09:13:17 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44064 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728134AbfHMNNR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 09:13:17 -0400
+Received: by mail-ed1-f66.google.com with SMTP id a21so4033924edt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 06:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ubTbMeSv2M83GvfRwkB/P+VL404uyP8HpfpedP/OoAY=;
+        b=LbiMr+LUmaZQrw0UyPVfcE20C2rhk/qkyZVK+3mYVCagAEE8U/paBXrjyllhdz6qtK
+         Wzyo4uPi6N3fin0E1mVY9if56H4zb9YiKT42Fw945pXhXBVv8S0YTiidT67x5mLUlNDf
+         g9b3ExT+UD6gq0KpgfVTPNpdEYLQUgk6xdw1mGSodufjLObjZ8vlHlJcOkuIqQRHQs2h
+         i5tMQILnrg1tWoOOFbCbnBec0cRn2C0XZDoQpYkUbEh1S7kiLV6VU2k6/2ERXkSFxH+s
+         +jkQs/sxXRCPpGZ0782kYlorhUlcaFR7Hnm3JOSxGlLlFVSUG0SKHT6NxMTgWJKS5Sbj
+         1vSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ubTbMeSv2M83GvfRwkB/P+VL404uyP8HpfpedP/OoAY=;
+        b=g8mX1oa0UScWrmcPpPUok3xE/tBKh9u6j1p8fS+5S7NlC/kc4gX6DYOm4LxVRjfCiY
+         JHb6Nt37CjYlnHFnuyRwCk3tSS9gM4Ml+0dcyURH9uZ4bsRBJ1/N3m5Znn4cALj4dzWI
+         MdlgjJZDwsAyJayPl2pIAQ6haULriST2Fl4YRIsZtAmcYSjQ5upFyLkXvAI3lQqo5KrK
+         ckmTW7+7ZiSqX2RA+r27MijFWwlbJ42RvVqTY8Vg3C7xEP70WUYXFXRqv66qOBYZ58HU
+         KXCMHEJF+3e5XX00ZZMfzf3W9QBahKULb0RpII8RL8sABZ0+qLwNmSbTdke5bvxMaH7b
+         FM0g==
+X-Gm-Message-State: APjAAAW0rs3IGZ0lh62H17oEb9t5nWv/p91N4YZ9CCh4tRh7AowsKGU3
+        5fen+tC73hdWjon9MCNTpPI=
+X-Google-Smtp-Source: APXvYqwdvW3aE7k5RgRuOYmrOfG36rPCpQtWz80XoYTilWeyUOHf94znm2sC9lo7U0BNc43D3/8rag==
+X-Received: by 2002:a50:f285:: with SMTP id f5mr29025998edm.109.1565701995522;
+        Tue, 13 Aug 2019 06:13:15 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id z9sm3562897edd.18.2019.08.13.06.13.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Aug 2019 06:13:14 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 13:13:12 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        akpm@linux-foundation.org, osalvador@suse.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/hotplug: prevent memory leak when reuse pgdat
+Message-ID: <20190813131312.l4pzy7ornmc4a5yj@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20190813020608.10194-1-richardw.yang@linux.intel.com>
+ <20190813075707.GA17933@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813124259.GC14284@kroah.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190813075707.GA17933@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 02:42:59PM +0200, Greg KH wrote:
-> On Tue, Aug 13, 2019 at 01:17:06PM +0100, Matthias Maennich wrote:
-> > USB_STORAGE was defined as "usb-storage: " and used in a single location
-> > as argument to printk. In order to be able to use the name
-> > 'USB_STORAGE', drop the definition and use the string directly for the
-> > printk call.
-> > 
-> > Signed-off-by: Matthias Maennich <maennich@google.com>
-> > ---
-> >  drivers/usb/storage/debug.h    | 2 --
-> >  drivers/usb/storage/scsiglue.c | 2 +-
-> >  2 files changed, 1 insertion(+), 3 deletions(-)
-> 
-> I'll go take this today.  The module really should just be using
-> dev_err() there.  It needs to be cleaned up :(
+On Tue, Aug 13, 2019 at 09:57:07AM +0200, Michal Hocko wrote:
+>On Tue 13-08-19 10:06:08, Wei Yang wrote:
+>> When offline a node in try_offline_node, pgdat is not released. So that
+>> pgdat could be reused in hotadd_new_pgdat. While we re-allocate
+>> pgdat->per_cpu_nodestats if this pgdat is reused.
+>> 
+>> This patch prevents the memory leak by just allocate per_cpu_nodestats
+>> when it is a new pgdat.
+>
+>Yes this makes sense! I was slightly confused why we haven't initialized
+>the allocated pcp area because __alloc_percpu does GFP_KERNEL without
+>__GFP_ZERO but then I've just found out that the zeroying is done
+>regardless. A bit unexpected...
+>
+>> NOTE: This is not tested since I didn't manage to create a case to
+>> offline a whole node. If my analysis is not correct, please let me know.
+>> 
+>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>
+>Acked-by: Michal Hocko <mhocko@suse.com>
+>
+>Thanks!
+>
 
-Now applied to the usb git tree, thanks.
+Thanks :-)
 
-greg k-h
+>> ---
+>>  mm/memory_hotplug.c | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>> index c73f09913165..efaf9e6f580a 100644
+>> --- a/mm/memory_hotplug.c
+>> +++ b/mm/memory_hotplug.c
+>> @@ -933,8 +933,11 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
+>>  		if (!pgdat)
+>>  			return NULL;
+>>  
+>> +		pgdat->per_cpu_nodestats =
+>> +			alloc_percpu(struct per_cpu_nodestat);
+>>  		arch_refresh_nodedata(nid, pgdat);
+>>  	} else {
+>> +		int cpu;
+>>  		/*
+>>  		 * Reset the nr_zones, order and classzone_idx before reuse.
+>>  		 * Note that kswapd will init kswapd_classzone_idx properly
+>> @@ -943,6 +946,12 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
+>>  		pgdat->nr_zones = 0;
+>>  		pgdat->kswapd_order = 0;
+>>  		pgdat->kswapd_classzone_idx = 0;
+>> +		for_each_online_cpu(cpu) {
+>> +			struct per_cpu_nodestat *p;
+>> +
+>> +			p = per_cpu_ptr(pgdat->per_cpu_nodestats, cpu);
+>> +			memset(p, 0, sizeof(*p));
+>> +		}
+>>  	}
+>>  
+>>  	/* we can use NODE_DATA(nid) from here */
+>> @@ -952,7 +961,6 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
+>>  
+>>  	/* init node's zones as empty zones, we don't have any present pages.*/
+>>  	free_area_init_core_hotplug(nid);
+>> -	pgdat->per_cpu_nodestats = alloc_percpu(struct per_cpu_nodestat);
+>>  
+>>  	/*
+>>  	 * The node we allocated has no zone fallback lists. For avoiding
+>> -- 
+>> 2.17.1
+>> 
+>
+>-- 
+>Michal Hocko
+>SUSE Labs
+
+-- 
+Wei Yang
+Help you, Help me
