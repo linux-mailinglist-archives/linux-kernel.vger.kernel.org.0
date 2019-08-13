@@ -2,145 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDFA78B9C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:13:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DECE8B9E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:19:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbfHMNNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 09:13:17 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44064 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728134AbfHMNNR (ORCPT
+        id S1729037AbfHMNT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 09:19:26 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39030 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728416AbfHMNTZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:13:17 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a21so4033924edt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 06:13:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ubTbMeSv2M83GvfRwkB/P+VL404uyP8HpfpedP/OoAY=;
-        b=LbiMr+LUmaZQrw0UyPVfcE20C2rhk/qkyZVK+3mYVCagAEE8U/paBXrjyllhdz6qtK
-         Wzyo4uPi6N3fin0E1mVY9if56H4zb9YiKT42Fw945pXhXBVv8S0YTiidT67x5mLUlNDf
-         g9b3ExT+UD6gq0KpgfVTPNpdEYLQUgk6xdw1mGSodufjLObjZ8vlHlJcOkuIqQRHQs2h
-         i5tMQILnrg1tWoOOFbCbnBec0cRn2C0XZDoQpYkUbEh1S7kiLV6VU2k6/2ERXkSFxH+s
-         +jkQs/sxXRCPpGZ0782kYlorhUlcaFR7Hnm3JOSxGlLlFVSUG0SKHT6NxMTgWJKS5Sbj
-         1vSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ubTbMeSv2M83GvfRwkB/P+VL404uyP8HpfpedP/OoAY=;
-        b=g8mX1oa0UScWrmcPpPUok3xE/tBKh9u6j1p8fS+5S7NlC/kc4gX6DYOm4LxVRjfCiY
-         JHb6Nt37CjYlnHFnuyRwCk3tSS9gM4Ml+0dcyURH9uZ4bsRBJ1/N3m5Znn4cALj4dzWI
-         MdlgjJZDwsAyJayPl2pIAQ6haULriST2Fl4YRIsZtAmcYSjQ5upFyLkXvAI3lQqo5KrK
-         ckmTW7+7ZiSqX2RA+r27MijFWwlbJ42RvVqTY8Vg3C7xEP70WUYXFXRqv66qOBYZ58HU
-         KXCMHEJF+3e5XX00ZZMfzf3W9QBahKULb0RpII8RL8sABZ0+qLwNmSbTdke5bvxMaH7b
-         FM0g==
-X-Gm-Message-State: APjAAAW0rs3IGZ0lh62H17oEb9t5nWv/p91N4YZ9CCh4tRh7AowsKGU3
-        5fen+tC73hdWjon9MCNTpPI=
-X-Google-Smtp-Source: APXvYqwdvW3aE7k5RgRuOYmrOfG36rPCpQtWz80XoYTilWeyUOHf94znm2sC9lo7U0BNc43D3/8rag==
-X-Received: by 2002:a50:f285:: with SMTP id f5mr29025998edm.109.1565701995522;
-        Tue, 13 Aug 2019 06:13:15 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id z9sm3562897edd.18.2019.08.13.06.13.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Aug 2019 06:13:14 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 13:13:12 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, osalvador@suse.de, linux-mm@kvack.org,
+        Tue, 13 Aug 2019 09:19:25 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7DDEOUi005488;
+        Tue, 13 Aug 2019 13:19:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=k7TTtVj2NunJ0RECYPXm4Q9yMluI1ySqxRPbjTuFfSc=;
+ b=kKYKcwkW7vRoJWzTqTE/HiDcA+NQYIkHTejMTDgTCnISFmhFK/t4tSol6FFQmo4qqv4F
+ NGitYrBuvjUaiwUi9RWsMsyy5FOZy5ysLIeSV5swOx+CIm7e31aOHOYspxjv8bKWCNKc
+ g67Rxs94k1V3hy7+zdKbtjSrlSlW1KLCgx+hSPoRsliA4kXdwIN35A8kP5S/KjGq4sOb
+ 4kcLf2OXVfzNICwg+LdTviaY1eapQfriPFbbqTQosSs261JvqeaEeyLjTBO7WmSdW/6V
+ VtZhR2bTppwEqnw1hX88/okPc8+hSOxjH5iKE8Vo60ZhEvlartkxZ9mRYppn/p042Uay Sw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2u9pjqe5c9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Aug 2019 13:19:11 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7DDHqcK090516;
+        Tue, 13 Aug 2019 13:19:10 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2ubwcwscwd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Aug 2019 13:19:10 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7DDJ7Oa004970;
+        Tue, 13 Aug 2019 13:19:07 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 13 Aug 2019 06:19:07 -0700
+Date:   Tue, 13 Aug 2019 16:14:20 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Colin King <colin.king@canonical.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/hotplug: prevent memory leak when reuse pgdat
-Message-ID: <20190813131312.l4pzy7ornmc4a5yj@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20190813020608.10194-1-richardw.yang@linux.intel.com>
- <20190813075707.GA17933@dhcp22.suse.cz>
+Subject: Re: [PATCH] scsi: sym53c8xx_2: remove redundant assignment to retv
+Message-ID: <20190813131420.GS1974@kadam>
+References: <20190809175932.10197-1-colin.king@canonical.com>
+ <20190809181733.GQ5482@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813075707.GA17933@dhcp22.suse.cz>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190809181733.GQ5482@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908130142
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908130142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 09:57:07AM +0200, Michal Hocko wrote:
->On Tue 13-08-19 10:06:08, Wei Yang wrote:
->> When offline a node in try_offline_node, pgdat is not released. So that
->> pgdat could be reused in hotadd_new_pgdat. While we re-allocate
->> pgdat->per_cpu_nodestats if this pgdat is reused.
->> 
->> This patch prevents the memory leak by just allocate per_cpu_nodestats
->> when it is a new pgdat.
->
->Yes this makes sense! I was slightly confused why we haven't initialized
->the allocated pcp area because __alloc_percpu does GFP_KERNEL without
->__GFP_ZERO but then I've just found out that the zeroying is done
->regardless. A bit unexpected...
->
->> NOTE: This is not tested since I didn't manage to create a case to
->> offline a whole node. If my analysis is not correct, please let me know.
->> 
->> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->
->Acked-by: Michal Hocko <mhocko@suse.com>
->
->Thanks!
->
+On Fri, Aug 09, 2019 at 11:17:33AM -0700, Matthew Wilcox wrote:
+> On Fri, Aug 09, 2019 at 06:59:32PM +0100, Colin King wrote:
+> > Variable retv is initialized to a value that is never read and it
+> > is re-assigned later. The initialization is redundant and can be
+> > removed.
+> 
+> Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> Seems like a bit of a pointless class of warnings, given that gcc now
+> initialises all locals.  But I'm happy for James or Martin to pick it up.
 
-Thanks :-)
+GCC doesn't initialize all locals.  Just some depending on the
+optimization level.  It's related to a bug that's several years old.
 
->> ---
->>  mm/memory_hotplug.c | 10 +++++++++-
->>  1 file changed, 9 insertions(+), 1 deletion(-)
->> 
->> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
->> index c73f09913165..efaf9e6f580a 100644
->> --- a/mm/memory_hotplug.c
->> +++ b/mm/memory_hotplug.c
->> @@ -933,8 +933,11 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
->>  		if (!pgdat)
->>  			return NULL;
->>  
->> +		pgdat->per_cpu_nodestats =
->> +			alloc_percpu(struct per_cpu_nodestat);
->>  		arch_refresh_nodedata(nid, pgdat);
->>  	} else {
->> +		int cpu;
->>  		/*
->>  		 * Reset the nr_zones, order and classzone_idx before reuse.
->>  		 * Note that kswapd will init kswapd_classzone_idx properly
->> @@ -943,6 +946,12 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
->>  		pgdat->nr_zones = 0;
->>  		pgdat->kswapd_order = 0;
->>  		pgdat->kswapd_classzone_idx = 0;
->> +		for_each_online_cpu(cpu) {
->> +			struct per_cpu_nodestat *p;
->> +
->> +			p = per_cpu_ptr(pgdat->per_cpu_nodestats, cpu);
->> +			memset(p, 0, sizeof(*p));
->> +		}
->>  	}
->>  
->>  	/* we can use NODE_DATA(nid) from here */
->> @@ -952,7 +961,6 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
->>  
->>  	/* init node's zones as empty zones, we don't have any present pages.*/
->>  	free_area_init_core_hotplug(nid);
->> -	pgdat->per_cpu_nodestats = alloc_percpu(struct per_cpu_nodestat);
->>  
->>  	/*
->>  	 * The node we allocated has no zone fallback lists. For avoiding
->> -- 
->> 2.17.1
->> 
->
->-- 
->Michal Hocko
->SUSE Labs
+This warning does find some bugs.  The common one is where people forget
+to check the return.
 
--- 
-Wei Yang
-Help you, Help me
+	ret = something();
+	// blank line here indicates that ret is never checked again.
+
+regards,
+dan carpenter
+
