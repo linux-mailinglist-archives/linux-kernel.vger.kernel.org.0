@@ -2,113 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C10338AFA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB8C88AF50
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 08:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbfHMGMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 02:12:31 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33392 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbfHMGM3 (ORCPT
+        id S1727528AbfHMGKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 02:10:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36631 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfHMGKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 02:12:29 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D68sM0010867;
-        Tue, 13 Aug 2019 06:12:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=XQCN31heGj0fx7iiZojr/ruGjvl/p/j3e97NBhsXhJ4=;
- b=Hh5QxY6oi4DhiIPJ94kk53OFSbFbraE7zsVJEFTCxJO8rt8AXjCqA2KTyWyUGjzB6WXA
- zZDJjGk53FDT3N27xLaGM8A4Khycl96/dZJD4n9Ju9zEwmwZDT9Xyp7j2zylN1CavrgX
- lqXzVJzEiSikgYf0SAqrEo5zemw2MaWAI9KwBzfG50SBRMdMTLuNjWSXr0hWy1dEYj8j
- BiIod3M6WAAw0G99ArhzvNHSzWO0B6mvB0v2g0gL6gLHvErMXTAxSg12AqGBXi7Lodj0
- fB+Ai1xgho8B1knHCd3ZI635InhUTgHK/1c8qEOEMVIj1aZ1V32Wfz5adNNTVENhtchg 6A== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=XQCN31heGj0fx7iiZojr/ruGjvl/p/j3e97NBhsXhJ4=;
- b=IGJKk4EZ/+fm1qA7ajNbNJKALRXXJIHrIT8J3xdTfeXfqmhdA+5UzIg6P+IyX57b81x7
- 4Y1uZ2Zf45QhdpAqXWGCuEpFUKsRkW/pBFaY19lFPPGDeDRc9AY/kz0OsuepBgBz+jTv
- 1H76K34VkPA5tZHeLTKwRiv8LpgNh8NKbCHTNVjIrC+Fc50F1tsiVO2wf67kvKK4GCTd
- agDuynlJpl6xpbZX5aAb69Ys2ve/cvJhtCd9VOsfatc8ILfpGmxvCSp8WWbbwOQwKR4W
- 32asHbzwRU5Vu2Mt/hwqjlCtjBWKl6adJ/XeaSDoZyOFF7ROKsii88U1Xde9xRvMOH1k JA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2u9nbtc171-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 06:12:05 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7D68auX050030;
-        Tue, 13 Aug 2019 06:12:05 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2u9k1w4239-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 06:12:04 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7D6C3Hg026964;
-        Tue, 13 Aug 2019 06:12:03 GMT
-Received: from abi.no.oracle.com (/10.172.144.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 12 Aug 2019 23:12:03 -0700
-From:   Knut Omang <knut.omang@oracle.com>
-To:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shreyans Devendra Doshi <0xinfosect0r@gmail.com>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Hidenori Yamaji <hidenori.yamaji@sony.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Timothy Bird <Tim.Bird@sony.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, Daniel Vetter <daniel@ffwll.ch>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Knut Omang <knut.omang@oracle.com>
-Subject: [RFC 19/19] Documentation/dev-tools: Add index entry for KTF documentation
-Date:   Tue, 13 Aug 2019 08:09:34 +0200
-Message-Id: <a4367b69bbfde842ca5bda21a5b07b601a703df0.1565676440.git-series.knut.omang@oracle.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.92d76bb4f6dcedc971d0b72a49e8e459a98bca54.1565676440.git-series.knut.omang@oracle.com>
-References: <cover.92d76bb4f6dcedc971d0b72a49e8e459a98bca54.1565676440.git-series.knut.omang@oracle.com>
+        Tue, 13 Aug 2019 02:10:44 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r3so12874655wrt.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2019 23:10:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kBSt0AC9Wj3a2Ydwo1maYp10w7mbRorMD87B4HpPB2I=;
+        b=EFNBrpf4FGy8XSbk7pjxipP5hP7dxFcpKbU3qvMtIJzOf1VB3T4nl+m93RK9SIgQWd
+         vy7SOw3tnXpYDGANVBfSKDzG/RsM9zs7UFu7YLtphmPEJKaloc4faCWDOFcQRDOOq9PQ
+         3XSrvcy07BVqhiWRJfjFJ54qSIVtFTblfvgZkGdRcuXPCOdc69btchprsNzrw4ADSt2X
+         x6SOn+jSzWm9wAJjJirCqA9XSE+DiVWzJa59OFWJ50s6dTWqmu2BFEWSNeuVkiAv9x2W
+         uLwHurY2yVU71+w7fEzw6p97QvGn781V0D2zUCGZ/ZX8y1kcQpCIrULkWAqbAexFqNMQ
+         zrvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kBSt0AC9Wj3a2Ydwo1maYp10w7mbRorMD87B4HpPB2I=;
+        b=B6so5bL/lmWT1edWQlCE37obw+ryCwi1R9ROp8P3SWnlagSsPEM1FG5v1KCTiGzIeu
+         Vw/avNXI+pXvJb1hQ6uIZDAV9n4oomzizyKrbMGuEwFVauBBwUrh6DRgj/nIWUiwaMeb
+         VMvVSLJqavdUT6z3Vbjre6dHfgsR979VJOcfUpHdTb17CdjaNqq58X9qBOx63wWwwlgQ
+         buAFifPPdgkkz82dQB1VpaP80l05X2fS2oabmgBQlgbllfRLgRpwqaSkXKo3i+ociouD
+         B220ZBiIKt8vGqwfKG1wImR3isXPkDg677T2/uJWBwicfubyR1ye3izE+b9Pi8+rr8UF
+         OmCw==
+X-Gm-Message-State: APjAAAWinNvxXHRWqUWQiFhzfiF6FqXSDYW2SIfUndc1N32RqhBhyzJ1
+        KLqq+gDvXgLGFwSxSV2n+TQ=
+X-Google-Smtp-Source: APXvYqxGqC2rz8hc6nTl6Ie7zwuqOcKOu6mYW+16lrACD1nVavptVxrdjPIR+Sgem/E5tC8bo9nZsg==
+X-Received: by 2002:a5d:424d:: with SMTP id s13mr25409745wrr.178.1565676641744;
+        Mon, 12 Aug 2019 23:10:41 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id c1sm416096wmc.40.2019.08.12.23.10.40
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 23:10:41 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] soundwire: Don't build sound.o without CONFIG_ACPI
+Date:   Mon, 12 Aug 2019 23:10:14 -0700
+Message-Id: <20190813061014.45015-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.23.0.rc2
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908130067
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9347 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908130067
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Knut Omang <knut.omang@oracle.com>
----
- Documentation/dev-tools/index.rst | 1 +
- 1 file changed, 1 insertion(+)
+clang warns when CONFIG_ACPI is unset:
 
-diff --git a/Documentation/dev-tools/index.rst b/Documentation/dev-tools/index.rst
-index b0522a4..f155205 100644
---- a/Documentation/dev-tools/index.rst
-+++ b/Documentation/dev-tools/index.rst
-@@ -24,6 +24,7 @@ whole; patches welcome!
-    gdb-kernel-debugging
-    kgdb
-    kselftest
-+   ktf/index
+../drivers/soundwire/slave.c:16:12: warning: unused function
+'sdw_slave_add' [-Wunused-function]
+static int sdw_slave_add(struct sdw_bus *bus,
+           ^
+1 warning generated.
+
+Before commit 8676b3ca4673 ("soundwire: fix regmap dependencies and
+align with other serial links"), this code would only be compiled when
+ACPI was set because it was only selected by SOUNDWIRE_INTEL, which
+depends on ACPI.
+
+Now, this code can be compiled without CONFIG_ACPI, which causes the
+above warning. The IS_ENABLED(CONFIG_ACPI) guard could be moved to avoid
+compiling the function; however, slave.c only contains three functions,
+two of which are static. Only compile slave.o when CONFIG_ACPI is set,
+where it will actually be used. bus.h contains a stub for
+sdw_acpi_find_slaves so there will be no issues with an undefined
+function.
+
+This has been build tested with CONFIG_ACPI set and unset in combination
+with CONFIG_SOUNDWIRE unset, built in, and a module.
+
+Fixes: 8676b3ca4673 ("soundwire: fix regmap dependencies and align with other serial links")
+Link: https://github.com/ClangBuiltLinux/linux/issues/637
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/soundwire/Makefile | 6 +++++-
+ drivers/soundwire/slave.c  | 3 ---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
+index 45b7e5001653..226090902716 100644
+--- a/drivers/soundwire/Makefile
++++ b/drivers/soundwire/Makefile
+@@ -4,9 +4,13 @@
+ #
  
+ #Bus Objs
+-soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o
++soundwire-bus-objs := bus_type.o bus.o mipi_disco.o stream.o
+ obj-$(CONFIG_SOUNDWIRE) += soundwire-bus.o
  
- .. only::  subproject and html
++ifdef CONFIG_ACPI
++soundwire-bus-objs += slave.o
++endif
++
+ #Cadence Objs
+ soundwire-cadence-objs := cadence_master.o
+ obj-$(CONFIG_SOUNDWIRE_CADENCE) += soundwire-cadence.o
+diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
+index f39a5815e25d..0dc188e6873b 100644
+--- a/drivers/soundwire/slave.c
++++ b/drivers/soundwire/slave.c
+@@ -60,7 +60,6 @@ static int sdw_slave_add(struct sdw_bus *bus,
+ 	return ret;
+ }
+ 
+-#if IS_ENABLED(CONFIG_ACPI)
+ /*
+  * sdw_acpi_find_slaves() - Find Slave devices in Master ACPI node
+  * @bus: SDW bus instance
+@@ -110,5 +109,3 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
+ 
+ 	return 0;
+ }
+-
+-#endif
 -- 
-git-series 0.9.1
+2.23.0.rc2
+
